@@ -50,8 +50,18 @@
     <Compile Include="Documentation\RoslynDocumentationProviderFactory.cs" />
     <Compile Include="Glyphs\GlyphHelper.cs" />
     <Compile Include="Glyphs\RoslynGlyphService.cs" />
+    <Compile Include="Intellisense\Completions\Classification\CompletionClassifier.cs" />
+    <Compile Include="Intellisense\Completions\Classification\CompletionKindTextColorHelper.cs" />
+    <Compile Include="Intellisense\Completions\CommandTargetFilter.cs" />
+    <Compile Include="Intellisense\Completions\CompletionImageHelper.cs" />
+    <Compile Include="Intellisense\Completions\CompletionInfo.cs" />
+    <Compile Include="Intellisense\Completions\CompletionKind.cs" />
+    <Compile Include="Intellisense\Completions\CompletionSource.cs" />
+    <Compile Include="Intellisense\Completions\CompletionToolTipProvider.cs" />
     <Compile Include="Intellisense\Completions\MruCompletionService.cs" />
+    <Compile Include="Intellisense\Completions\RoslynCompletion.cs" />
     <Compile Include="Intellisense\Completions\RoslynCompletionSet.cs" />
+    <Compile Include="Intellisense\Completions\RoslynIntellisenseFilters.cs" />
     <Compile Include="Intellisense\QuickInfo\CommandTargetFilter.cs" />
     <Compile Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml.cs">
       <DependentUpon>InformationQuickInfoContentControl.xaml</DependentUpon>
@@ -71,32 +81,22 @@
     <Compile Include="Intellisense\SignatureHelp\SignatureHelpTagger.cs" />
     <Compile Include="Intellisense\SignatureHelp\SignatureHelpTaggerEx.cs" />
     <Compile Include="Optimizations\FirstUseOptimization.cs" />
-    <Compile Include="Text\Classification\HackTaggedTextClassifier.cs" />
-    <Compile Include="Text\Classification\ITaggedTextElementProvider.cs" />
-    <Compile Include="Text\Classification\ITaggedTextElementProviderService.cs" />
-    <Compile Include="Text\Classification\TaggedTextClassifier.cs" />
-    <Compile Include="Text\Classification\TaggedTextClassifierContext.cs" />
-    <Compile Include="Text\Classification\TaggedTextElementProvider.cs" />
-    <Compile Include="Text\Classification\TaggedTextElementProviderService.cs" />
-    <Compile Include="Text\Classification\TextTagsHelper.cs" />
-    <Compile Include="Intellisense\Completions\Classification\CompletionClassifier.cs" />
-    <Compile Include="Intellisense\Completions\Classification\CompletionKindTextColorHelper.cs" />
-    <Compile Include="Intellisense\Completions\CommandTargetFilter.cs" />
-    <Compile Include="Intellisense\Completions\CompletionImageHelper.cs" />
-    <Compile Include="Intellisense\Completions\CompletionInfo.cs" />
-    <Compile Include="Intellisense\Completions\CompletionKind.cs" />
-    <Compile Include="Intellisense\Completions\CompletionSource.cs" />
-    <Compile Include="Intellisense\Completions\CompletionToolTipProvider.cs" />
-    <Compile Include="Intellisense\Completions\RoslynCompletion.cs" />
-    <Compile Include="Intellisense\Completions\RoslynIntellisenseFilters.cs" />
     <Compile Include="Properties\dnSpy.Roslyn.Shared.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Roslyn.Shared.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\Classification\HackTaggedTextClassifier.cs" />
+    <Compile Include="Text\Classification\ITaggedTextElementProvider.cs" />
+    <Compile Include="Text\Classification\ITaggedTextElementProviderService.cs" />
     <Compile Include="Text\Classification\RoslynClassificationTypes.cs" />
     <Compile Include="Text\Classification\RoslynClassifier.cs" />
+    <Compile Include="Text\Classification\TaggedTextClassifier.cs" />
+    <Compile Include="Text\Classification\TaggedTextClassifierContext.cs" />
+    <Compile Include="Text\Classification\TaggedTextElementProvider.cs" />
+    <Compile Include="Text\Classification\TaggedTextElementProviderService.cs" />
+    <Compile Include="Text\Classification\TextTagsHelper.cs" />
     <Compile Include="Text\Editor\RoslynAppearanceCategoryConstants.cs" />
     <Compile Include="Text\Editor\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Extensions.cs" />
@@ -149,6 +149,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Roslyn.Shared.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.de.resx" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\Class.png" />
     <Resource Include="Images\CSharpFile.png" />
     <Resource Include="Images\Delegate.png" />
@@ -167,19 +177,9 @@
     <Resource Include="Images\VisualBasicFile.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.Roslyn.Shared.Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.de.resx" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

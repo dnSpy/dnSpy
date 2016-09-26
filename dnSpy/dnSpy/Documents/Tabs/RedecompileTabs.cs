@@ -21,8 +21,8 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Extension;
 
 namespace dnSpy.Documents.Tabs {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]

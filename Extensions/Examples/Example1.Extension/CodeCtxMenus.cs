@@ -5,8 +5,8 @@ using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Menus;
 using Microsoft.VisualStudio.Text;
 

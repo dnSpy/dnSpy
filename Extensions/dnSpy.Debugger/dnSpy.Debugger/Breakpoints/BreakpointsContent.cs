@@ -23,8 +23,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Utilities;
 

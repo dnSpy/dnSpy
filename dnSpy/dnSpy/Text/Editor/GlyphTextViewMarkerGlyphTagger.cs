@@ -25,7 +25,6 @@ using System.Windows;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Tagging;

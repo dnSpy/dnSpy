@@ -21,8 +21,8 @@ using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.MainApp {

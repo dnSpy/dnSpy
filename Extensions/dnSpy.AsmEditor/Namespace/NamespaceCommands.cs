@@ -28,8 +28,8 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.AsmEditor.Namespace {

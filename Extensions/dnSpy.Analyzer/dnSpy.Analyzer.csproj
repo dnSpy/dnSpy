@@ -44,10 +44,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalyzerTreeNodeDataContext.cs" />
     <Compile Include="AnalyzerService.cs" />
     <Compile Include="AnalyzerSettings.cs" />
     <Compile Include="AnalyzerToolWindowContent.cs" />
+    <Compile Include="AnalyzerTreeNodeDataContext.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Properties\dnSpy.Analyzer.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -109,11 +109,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Copy.png" />
-    <Resource Include="Images\Delete.png" />
-    <Resource Include="Images\Search.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
       <Link>Properties\AssemblyInfo.Shared.cs</Link>
     </Compile>
@@ -129,6 +124,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\Search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

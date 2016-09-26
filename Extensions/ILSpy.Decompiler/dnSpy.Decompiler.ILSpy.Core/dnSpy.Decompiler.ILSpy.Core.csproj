@@ -44,20 +44,20 @@
     <Compile Include="CSharp\DecompilePartialTransform.cs" />
     <Compile Include="CSharp\DecompileTypeMethodsTransform.cs" />
     <Compile Include="CSharp\ThreadSafeObjectPool.cs" />
+    <Compile Include="ILAst\ILAstDecompiler.cs" />
+    <Compile Include="IL\ILDecompiler.cs" />
     <Compile Include="IL\ILDecompilerUtils.cs" />
     <Compile Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Decompiler.ILSpy.Core.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ILAst\ILAstDecompiler.cs" />
-    <Compile Include="IL\ILDecompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\CSharpVBDecompilerSettings.cs" />
+    <Compile Include="Settings\DecompilerSettingsService.cs" />
     <Compile Include="Settings\ILAstDecompilerSettings.cs" />
     <Compile Include="Settings\ILDecompilerSettings.cs" />
     <Compile Include="Settings\ILSettings.cs" />
-    <Compile Include="Settings\CSharpVBDecompilerSettings.cs" />
-    <Compile Include="Settings\DecompilerSettingsService.cs" />
     <Compile Include="Text\ContentTypesInternal.cs" />
     <Compile Include="VisualBasic\ILSpyEnvironmentProvider.cs" />
     <Compile Include="VisualBasic\VBDecompiler.cs" />

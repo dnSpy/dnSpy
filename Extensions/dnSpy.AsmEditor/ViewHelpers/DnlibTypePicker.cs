@@ -23,8 +23,8 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
 

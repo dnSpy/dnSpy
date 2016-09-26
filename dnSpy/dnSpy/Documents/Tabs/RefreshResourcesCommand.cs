@@ -22,11 +22,11 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Documents.Tabs {

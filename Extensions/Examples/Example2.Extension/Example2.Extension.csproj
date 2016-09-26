@@ -43,11 +43,11 @@
   <ItemGroup>
     <Compile Include="AssemblyChildNodeTabContent.cs" />
     <Compile Include="Colorizer.cs" />
+    <Compile Include="DocumentViewerToolTipProvider.cs" />
     <Compile Include="NewDsDocument.cs" />
     <Compile Include="OutputTextPane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TheExtension.cs" />
-    <Compile Include="DocumentViewerToolTipProvider.cs" />
     <Compile Include="ToolWindowContent.cs" />
     <Compile Include="ToolWindowControl.xaml.cs">
       <DependentUpon>ToolWindowControl.xaml</DependentUpon>
@@ -73,19 +73,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\EntryPoint.png" />
+    <Resource Include="Images\Strings.png" />
+    <Resource Include="Images\TextFile.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Include="Themes\resourcedict.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ToolWindowControl.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\EntryPoint.png" />
-    <Resource Include="Images\Strings.png" />
-    <Resource Include="Images\TextFile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

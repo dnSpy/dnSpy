@@ -58,10 +58,10 @@
     <Compile Include="Settings\CSharpDecompilerSettingsTab.cs" />
     <Compile Include="Settings\DecompilerAppSettingsModifiedListener.cs" />
     <Compile Include="Settings\DecompilerSettingsImpl.cs" />
+    <Compile Include="Settings\DecompilerSettingsServiceImpl.cs" />
     <Compile Include="Settings\DecompilerSettingsTabProvider.cs" />
     <Compile Include="Settings\ILDecompilerSettingsTab.cs" />
     <Compile Include="Settings\ILSettingsImpl.cs" />
-    <Compile Include="Settings\DecompilerSettingsServiceImpl.cs" />
     <Compile Include="Settings\SettingsConstants.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="VisualBasic\DecompilerCreator.cs" />
@@ -100,18 +100,18 @@
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Themes\wpf.styles.templates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
       <Link>Properties\AssemblyInfo.Shared.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

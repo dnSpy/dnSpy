@@ -22,8 +22,8 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.ToolBars;
 

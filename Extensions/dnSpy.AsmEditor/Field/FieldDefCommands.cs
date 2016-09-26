@@ -29,9 +29,9 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Utilities;
 

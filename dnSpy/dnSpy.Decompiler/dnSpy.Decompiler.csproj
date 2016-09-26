@@ -42,13 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharp\SimpleCSharpPrinter.cs" />
+    <Compile Include="DecompilerBase.cs" />
     <Compile Include="FilenameUtils.cs" />
     <Compile Include="IL\ILLanguageHelper.cs" />
     <Compile Include="IL\InstructionBytesReader.cs" />
     <Compile Include="IL\InstructionUtils.cs" />
     <Compile Include="IL\ModifiedInstructionBytesReader.cs" />
     <Compile Include="IL\OriginalInstructionBytesReader.cs" />
-    <Compile Include="DecompilerBase.cs" />
     <Compile Include="MSBuild\AppConfigProjectFile.cs" />
     <Compile Include="MSBuild\ApplicationIcon.cs" />
     <Compile Include="MSBuild\ApplicationManifest.cs" />

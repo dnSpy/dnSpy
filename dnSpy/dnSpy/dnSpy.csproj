@@ -90,21 +90,19 @@
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
-    <Compile Include="Controls\WpfCommandService.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
+    <Compile Include="Controls\WpfCommandService.cs" />
     <Compile Include="Controls\WpfFocusService.cs" />
     <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="Culture\Commands.cs" />
     <Compile Include="Culture\CultureService.cs" />
     <Compile Include="Culture\CultureSettings.cs" />
     <Compile Include="Culture\LanguageInfo.cs" />
+    <Compile Include="Decompiler\DecompilerService.cs" />
+    <Compile Include="Decompiler\DecompilerServiceSettings.cs" />
     <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
+    <Compile Include="Decompiler\DummyDecompiler.cs" />
     <Compile Include="Decompiler\MethodDebugService.cs" />
-    <Compile Include="Events\WeakEventList.cs" />
-    <Compile Include="Extension\ExtensionConfig.cs" />
-    <Compile Include="Extension\ExtensionConfigReader.cs" />
-    <Compile Include="Extension\ExtensionService.cs" />
-    <Compile Include="Extension\LoadedExtension.cs" />
     <Compile Include="Documents\AssemblyResolver.cs" />
     <Compile Include="Documents\DefaultDsDocumentLoader.cs" />
     <Compile Include="Documents\DefaultDsDocumentProvider.cs" />
@@ -124,14 +122,14 @@
     <Compile Include="Documents\Tabs\DefaultDecompileNode.cs" />
     <Compile Include="Documents\Tabs\DefaultDocumentList.cs" />
     <Compile Include="Documents\Tabs\DefaultDocumentTabContentProvider.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\DocumentListColumnConverter.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\DocumentListPrinter.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\DocumentListVM.cs" />
     <Compile Include="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
       <DependentUpon>ExportToProjectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Documents\Tabs\Dialogs\ExportToProjectSettings.cs" />
     <Compile Include="Documents\Tabs\Dialogs\ExportToProjectVM.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\DocumentListColumnConverter.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\DocumentListPrinter.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\DocumentListVM.cs" />
     <Compile Include="Documents\Tabs\Dialogs\GACFileColumnConverter.cs" />
     <Compile Include="Documents\Tabs\Dialogs\GACFileFinder.cs" />
     <Compile Include="Documents\Tabs\Dialogs\GACFilePrinter.cs" />
@@ -154,11 +152,25 @@
     <Compile Include="Documents\Tabs\Dialogs\TabsVM.cs" />
     <Compile Include="Documents\Tabs\Dialogs\TabsVMSettings.cs" />
     <Compile Include="Documents\Tabs\Dialogs\TabVM.cs" />
-    <Compile Include="Documents\Tabs\DsDocumentInfoSerializer.cs" />
+    <Compile Include="Documents\Tabs\DocumentList.cs" />
+    <Compile Include="Documents\Tabs\DocumentListLoader.cs" />
+    <Compile Include="Documents\Tabs\DocumentListService.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabContentFactoryContext.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabContentFactoryService.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabSerializer.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabService.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabServiceLoader.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabServiceSettings.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabUIContextLocator.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabUIContextLocatorProvider.cs" />
+    <Compile Include="Documents\Tabs\DocumentTreeNodeDecompiler.cs" />
     <Compile Include="Documents\Tabs\DocViewer\BracePairCollection.cs" />
     <Compile Include="Documents\Tabs\DocViewer\BracePairDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\BracePairService.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Commands.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DebugInfoDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DecompileDocumentTabContent.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DecompileNodeContext.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewer.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandInfoProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandTargetFilter.cs" />
@@ -183,20 +195,17 @@
     <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerDocumentViewerListener.cs" />
     <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerServiceDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipSettings.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipWriter.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\DnlibReferenceDocumentViewerToolTipProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\ToolTips\DocumentViewerToolTipService.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\ToolTipProviderContext.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\WaitAdorner.xaml.cs">
+      <DependentUpon>WaitAdorner.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Documents\Tabs\DsDocumentInfoSerializer.cs" />
     <Compile Include="Documents\Tabs\EntryPointCommands.cs" />
-    <Compile Include="Documents\Tabs\DocumentList.cs" />
-    <Compile Include="Documents\Tabs\DocumentListLoader.cs" />
-    <Compile Include="Documents\Tabs\DocumentListService.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabContentFactoryContext.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabContentFactoryService.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabService.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabServiceLoader.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabServiceSettings.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabSerializer.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabUIContextLocator.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabUIContextLocatorProvider.cs" />
-    <Compile Include="Documents\Tabs\DocumentTreeNodeDecompiler.cs" />
     <Compile Include="Documents\Tabs\GoToTokenCommand.cs" />
     <Compile Include="Documents\Tabs\IDecompilationCache.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabUIContextLocatorProvider.cs" />
@@ -216,17 +225,6 @@
     <Compile Include="Documents\Tabs\TabCommands.cs" />
     <Compile Include="Documents\Tabs\TabContentImpl.cs" />
     <Compile Include="Documents\Tabs\TabHistory.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Commands.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DecompileDocumentTabContent.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DecompileNodeContext.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipSettings.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipWriter.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\DnlibReferenceDocumentViewerToolTipProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\ToolTipProviderContext.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\WaitAdorner.xaml.cs">
-      <DependentUpon>WaitAdorner.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Documents\Tabs\TabMiscOptionProvider.cs" />
     <Compile Include="Documents\Tabs\TreeNodeReferenceDocumentTabContentProvider.cs" />
     <Compile Include="Documents\TreeView\AssemblyDocumentNode.cs" />
@@ -237,15 +235,15 @@
     <Compile Include="Documents\TreeView\DerivedTypeNode.cs" />
     <Compile Include="Documents\TreeView\DerivedTypesFinder.cs" />
     <Compile Include="Documents\TreeView\DerivedTypesFolderNode.cs" />
-    <Compile Include="Documents\TreeView\DsDocumentNode.cs" />
-    <Compile Include="Documents\TreeView\EventNode.cs" />
-    <Compile Include="Documents\TreeView\FieldNode.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeNodeDataContext.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeNodeGroups.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeView.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeViewAppSettingsModifiedListener.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeViewProvider.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeViewSettings.cs" />
+    <Compile Include="Documents\TreeView\DsDocumentNode.cs" />
+    <Compile Include="Documents\TreeView\EventNode.cs" />
+    <Compile Include="Documents\TreeView\FieldNode.cs" />
     <Compile Include="Documents\TreeView\MessageNode.cs" />
     <Compile Include="Documents\TreeView\MethodNode.cs" />
     <Compile Include="Documents\TreeView\ModuleDocumentNode.cs" />
@@ -266,23 +264,25 @@
     <Compile Include="Documents\TreeView\RootNode.cs" />
     <Compile Include="Documents\TreeView\TypeNode.cs" />
     <Compile Include="Documents\TreeView\UnknownDocumentNode.cs" />
+    <Compile Include="Events\WeakEventList.cs" />
+    <Compile Include="Extension\ExtensionConfig.cs" />
+    <Compile Include="Extension\ExtensionConfigReader.cs" />
+    <Compile Include="Extension\ExtensionService.cs" />
+    <Compile Include="Extension\LoadedExtension.cs" />
     <Compile Include="Images\DotNetImageService.cs" />
     <Compile Include="Images\ImageService.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
-    <Compile Include="Decompiler\DummyDecompiler.cs" />
-    <Compile Include="Decompiler\DecompilerService.cs" />
-    <Compile Include="Decompiler\DecompilerServiceSettings.cs" />
     <Compile Include="Language\Intellisense\AttributeImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregator.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregatorService.cs" />
     <Compile Include="Language\Intellisense\Classification\FilterMatchCompletionClassifier.cs" />
     <Compile Include="Language\Intellisense\CollectionBooleanToVisibilityConverter.cs" />
+    <Compile Include="Language\Intellisense\CompletionBroker.cs" />
     <Compile Include="Language\Intellisense\CompletionImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionPresenter.cs" />
     <Compile Include="Language\Intellisense\CompletionPresenterControl.xaml.cs">
       <DependentUpon>CompletionPresenterControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Language\Intellisense\CompletionBroker.cs" />
     <Compile Include="Language\Intellisense\CompletionPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionSession.cs" />
     <Compile Include="Language\Intellisense\CompletionSessionCommandTargetFilter.cs" />
@@ -341,11 +341,11 @@
       <DependentUpon>AskDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\AskVM.cs" />
+    <Compile Include="MainApp\DocumentTreeViewWindowContent.cs" />
     <Compile Include="MainApp\DsLoaderControl.xaml.cs">
       <DependentUpon>DsLoaderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\DsLoaderService.cs" />
-    <Compile Include="MainApp\DocumentTreeViewWindowContent.cs" />
     <Compile Include="MainApp\DsToolWindowServiceCommands.cs" />
     <Compile Include="MainApp\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -403,9 +403,9 @@
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Search\SearchControlVM.cs" />
-    <Compile Include="Search\SearchService.cs" />
     <Compile Include="Search\SearchResult.cs" />
     <Compile Include="Search\SearchResultContext.cs" />
+    <Compile Include="Search\SearchService.cs" />
     <Compile Include="Search\SearchSettings.cs" />
     <Compile Include="Search\SearchToolWindowContent.cs" />
     <Compile Include="Search\SearchType.cs" />
@@ -417,9 +417,9 @@
     <Compile Include="Settings\Dialog\DynamicAppSettingsTabProvider.cs" />
     <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
-    <Compile Include="Settings\SettingsService.cs" />
     <Compile Include="Settings\SettingsSection.cs" />
     <Compile Include="Settings\SettingsSectionProvider.cs" />
+    <Compile Include="Settings\SettingsService.cs" />
     <Compile Include="Settings\XmlSettingsConstants.cs" />
     <Compile Include="Settings\XmlSettingsReader.cs" />
     <Compile Include="Settings\XmlSettingsWriter.cs" />
@@ -790,72 +790,77 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\..\LicenseInfo\CREDITS.txt">
+      <Link>CREDITS.txt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <Page Include="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Language\Intellisense\CompletionPresenterControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Language\Intellisense\QuickInfoPresenterControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Language\Intellisense\SignatureHelpPresenterControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainApp\App.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Documents\Tabs\Dialogs\OpenDocumentListDlg.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Documents\Tabs\Dialogs\OpenFromGACDlg.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Documents\Tabs\Dialogs\TabsDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Documents\Tabs\DocViewer\WaitAdorner.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Language\Intellisense\CompletionPresenterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Language\Intellisense\QuickInfoPresenterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Language\Intellisense\SignatureHelpPresenterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainApp\App.xaml">
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainApp\AskDlg.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainApp\DsLoaderControl.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainApp\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainApp\MsgBoxDlg.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Output\OutputControl.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Search\SearchControl.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Settings\Dialog\AppSettingsDlg.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Text\Editor\Search\SearchControl.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -899,8 +904,8 @@
     <Resource Include="Images\DelegateProtectedInternal.png" />
     <Resource Include="Images\DerivedTypesClosed.png" />
     <Resource Include="Images\DerivedTypesOpened.png" />
-    <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\dnSpy-Big.png" />
+    <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\EntryPoint.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\EnumInternal.png" />
@@ -1072,11 +1077,6 @@
     <Resource Include="Images\XmlFile.png" />
     <Resource Include="Images\XsdFile.png" />
     <Resource Include="Images\XsltFile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\LicenseInfo\CREDITS.txt">
-      <Link>CREDITS.txt</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -40,8 +40,8 @@
     <Compile Include="Dummy.cs" />
     <Compile Include="EditorFeaturesResources.cs" />
     <Compile Include="Editor\ContentTypeNames.cs" />
-    <Compile Include="Extensions\Extensions2.cs" />
     <Compile Include="Extensions\DocumentHelpers.cs" />
+    <Compile Include="Extensions\Extensions2.cs" />
     <Compile Include="Extensions\ITextSnapshotLineExtensions.cs" />
     <Compile Include="Extensions\TextSpanExtensions.cs" />
     <Compile Include="Host\IWaitContext.cs" />
@@ -57,9 +57,6 @@
     <Compile Include="TextStructureNavigation\CSharp\TextStructureNavigatorProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">
       <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
       <Name>dnSpy.Roslyn.Internal</Name>
@@ -68,6 +65,9 @@
       <Project>{844eef8a-c7b6-4299-8cf0-4bd21dddd4a8}</Project>
       <Name>dnSpy.Roslyn.Shared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

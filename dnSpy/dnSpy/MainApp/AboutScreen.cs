@@ -27,15 +27,15 @@ using System.Reflection;
 using System.Text;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
-using dnSpy.Extension;
 using dnSpy.Documents.Tabs.DocViewer;
+using dnSpy.Extension;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Utilities;
 

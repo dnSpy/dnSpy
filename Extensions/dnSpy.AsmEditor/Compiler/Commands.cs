@@ -29,11 +29,11 @@ using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 

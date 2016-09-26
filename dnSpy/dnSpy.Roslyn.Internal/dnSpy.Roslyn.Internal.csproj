@@ -38,6 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\TaggedTextExtensions.cs" />
     <Compile Include="GlyphExtensions.cs" />
     <Compile Include="Helpers\SymbolDisplayPartExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -65,7 +66,6 @@
     <Compile Include="SmartIndent\CSharp\CSharpIndentationService.Indenter.cs" />
     <Compile Include="SmartIndent\Helpers.cs" />
     <Compile Include="SmartIndent\IIndentationService.cs" />
-    <Compile Include="Extensions\TaggedTextExtensions.cs" />
     <Compile Include="VBHelpers\SyntaxNodeExtensions.cs" />
     <Compile Include="VBHelpers\SyntaxTokenExtensions.cs" />
     <Compile Include="VBHelpers\SyntaxTreeExtensions.cs" />

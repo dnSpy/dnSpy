@@ -48,83 +48,83 @@
   <ItemGroup>
     <Compile Include="Annotations.cs" />
     <Compile Include="BamlDecompiler.cs" />
+    <Compile Include="BamlDisassembler.cs" />
+    <Compile Include="BamlElement.cs" />
+    <Compile Include="BamlResourceElementNode.cs" />
+    <Compile Include="BamlResourceNodeProvider.cs" />
+    <Compile Include="BamlSettings.cs" />
     <Compile Include="BamlTabSaver.cs" />
     <Compile Include="BamlToolTipProvider.cs" />
-    <Compile Include="Baml\KnownThings.cs" />
+    <Compile Include="Baml\BamlContext.cs" />
+    <Compile Include="Baml\BamlDocument.cs" />
+    <Compile Include="Baml\BamlNode.cs" />
+    <Compile Include="Baml\BamlReader.cs" />
+    <Compile Include="Baml\BamlRecords.cs" />
+    <Compile Include="Baml\BamlWriter.cs" />
     <Compile Include="Baml\KnownMembers.cs" />
-    <None Include="Baml\KnownThings.gen.cs" />
+    <Compile Include="Baml\KnownThings.cs" />
+    <Compile Include="Baml\KnownThings.g.cs" />
     <Compile Include="ContentTypeDefinitions.cs" />
+    <Compile Include="IHandlers.cs" />
+    <Compile Include="IRewritePass.cs" />
+    <Compile Include="MenuCommands.cs" />
+    <Compile Include="Rewrite\AttributeRewritePass.cs" />
+    <Compile Include="Rewrite\ConnectionIdRewritePass.cs" />
+    <Compile Include="Rewrite\DocumentRewritePass.cs" />
+    <Compile Include="Rewrite\MarkupExtensionRewritePass.cs" />
+    <Compile Include="Rewrite\XClassRewritePass.cs" />
+    <Compile Include="TheExtension.cs" />
+    <Compile Include="XamlContext.cs" />
+    <Compile Include="XamlDecompiler.cs" />
+    <Compile Include="Xaml\NamespaceMap.cs" />
+    <Compile Include="Xaml\XamlExtension.cs" />
+    <Compile Include="Xaml\XamlPathDeserializer.cs" />
+    <Compile Include="Xaml\XamlProperty.cs" />
+    <Compile Include="Xaml\XamlResourceKey.cs" />
+    <Compile Include="Xaml\XamlType.cs" />
+    <Compile Include="Xaml\XamlUtils.cs" />
+    <Compile Include="XmlnsDictionary.cs" />
+    <None Include="Baml\KnownThings.gen.cs" />
+    <Compile Include="Baml\KnownTypes.cs" />
+    <Compile Include="Handlers\Blocks\ConstructorParametersHandler.cs" />
+    <Compile Include="Handlers\Blocks\DocumentHandler.cs" />
+    <Compile Include="Handlers\Blocks\ElementHandler.cs" />
+    <Compile Include="Handlers\Blocks\KeyElementStartHandler.cs" />
+    <Compile Include="Handlers\Blocks\PropertyArrayHandler.cs" />
+    <Compile Include="Handlers\Blocks\PropertyComplexHandler.cs" />
+    <Compile Include="Handlers\Blocks\PropertyDictionaryHandler.cs" />
+    <Compile Include="Handlers\Blocks\PropertyListHandler.cs" />
+    <Compile Include="Handlers\Records\AssemblyInfoHandler.cs" />
+    <Compile Include="Handlers\Records\AttributeInfoHandler.cs" />
+    <Compile Include="Handlers\Records\ConnectionIdHandler.cs" />
+    <Compile Include="Handlers\Records\ConstructorParameterTypeHandler.cs" />
+    <Compile Include="Handlers\Records\ContentPropertyHandler.cs" />
+    <Compile Include="Handlers\Records\DefAttributeHandler.cs" />
+    <Compile Include="Handlers\Records\DefAttributeKeyStringHandler.cs" />
+    <Compile Include="Handlers\Records\DefAttributeKeyTypeHandler.cs" />
+    <Compile Include="Handlers\Records\DeferableContentStartHandler.cs" />
+    <Compile Include="Handlers\Records\LineNumberAndPositionHandler.cs" />
+    <Compile Include="Handlers\Records\LinePositionHandler.cs" />
+    <Compile Include="Handlers\Records\LiteralContentHandler.cs" />
+    <Compile Include="Handlers\Records\OptimizedStaticResourceHandler.cs" />
+    <Compile Include="Handlers\Records\PIMappingHandler.cs" />
+    <Compile Include="Handlers\Records\PresentationOptionsAttributeHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyCustomHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyTypeReferenceHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyWithConverterHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyWithExtensionHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyWithStaticResourceIdHandler.cs" />
+    <Compile Include="Handlers\Records\TextHandler.cs" />
+    <Compile Include="Handlers\Records\TextWithConverterHandler.cs" />
+    <Compile Include="Handlers\Records\TypeInfoHandler.cs" />
+    <Compile Include="Handlers\Records\XmlnsPropertyHandler.cs" />
     <Compile Include="Properties\dnSpy.BamlDecompiler.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.BamlDecompiler.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Handlers\Blocks\ConstructorParametersHandler.cs" />
-    <Compile Include="Handlers\Blocks\PropertyArrayHandler.cs" />
-    <Compile Include="Handlers\Blocks\KeyElementStartHandler.cs" />
-    <Compile Include="Handlers\Blocks\PropertyComplexHandler.cs" />
-    <Compile Include="Handlers\Blocks\PropertyListHandler.cs" />
-    <Compile Include="Handlers\Blocks\PropertyDictionaryHandler.cs" />
-    <Compile Include="Handlers\Blocks\ElementHandler.cs" />
-    <Compile Include="Handlers\Records\AttributeInfoHandler.cs" />
-    <Compile Include="Handlers\Blocks\DocumentHandler.cs" />
-    <Compile Include="Handlers\Records\AssemblyInfoHandler.cs" />
-    <Compile Include="Handlers\Records\ContentPropertyHandler.cs" />
-    <Compile Include="Handlers\Records\ConstructorParameterTypeHandler.cs" />
-    <Compile Include="Handlers\Records\DefAttributeHandler.cs" />
-    <Compile Include="Handlers\Records\DefAttributeKeyTypeHandler.cs" />
-    <Compile Include="Handlers\Records\OptimizedStaticResourceHandler.cs" />
-    <Compile Include="Handlers\Records\PropertyWithStaticResourceIdHandler.cs" />
-    <Compile Include="Handlers\Records\PropertyTypeReferenceHandler.cs" />
-    <Compile Include="Handlers\Records\DefAttributeKeyStringHandler.cs" />
-    <Compile Include="Handlers\Records\LineNumberAndPositionHandler.cs" />
-    <Compile Include="Handlers\Records\LinePositionHandler.cs" />
-    <Compile Include="Handlers\Records\ConnectionIdHandler.cs" />
-    <Compile Include="Handlers\Records\LiteralContentHandler.cs" />
-    <Compile Include="Handlers\Records\TextWithConverterHandler.cs" />
-    <Compile Include="Handlers\Records\TextHandler.cs" />
-    <Compile Include="Handlers\Records\PropertyHandler.cs" />
-    <Compile Include="Handlers\Records\PresentationOptionsAttributeHandler.cs" />
-    <Compile Include="Handlers\Records\PropertyCustomHandler.cs" />
-    <Compile Include="Handlers\Records\PropertyWithExtensionHandler.cs" />
-    <Compile Include="Handlers\Records\PropertyWithConverterHandler.cs" />
-    <Compile Include="Handlers\Records\PIMappingHandler.cs" />
-    <Compile Include="Handlers\Records\DeferableContentStartHandler.cs" />
-    <Compile Include="Handlers\Records\XmlnsPropertyHandler.cs" />
-    <Compile Include="Handlers\Records\TypeInfoHandler.cs" />
-    <Compile Include="IRewritePass.cs" />
-    <Compile Include="IHandlers.cs" />
-    <Compile Include="BamlSettings.cs" />
-    <Compile Include="MenuCommands.cs" />
-    <Compile Include="Rewrite\AttributeRewritePass.cs" />
-    <Compile Include="Rewrite\ConnectionIdRewritePass.cs" />
-    <Compile Include="Rewrite\MarkupExtensionRewritePass.cs" />
-    <Compile Include="Rewrite\DocumentRewritePass.cs" />
-    <Compile Include="Rewrite\XClassRewritePass.cs" />
-    <Compile Include="TheExtension.cs" />
-    <Compile Include="XamlContext.cs" />
-    <Compile Include="XamlDecompiler.cs" />
-    <Compile Include="BamlDisassembler.cs" />
-    <Compile Include="BamlElement.cs" />
-    <Compile Include="BamlResourceElementNode.cs" />
-    <Compile Include="BamlResourceNodeProvider.cs" />
-    <Compile Include="Baml\BamlContext.cs" />
-    <Compile Include="Baml\BamlDocument.cs" />
-    <Compile Include="Baml\BamlNode.cs" />
-    <Compile Include="Baml\BamlRecords.cs" />
-    <Compile Include="Baml\BamlReader.cs" />
-    <Compile Include="Baml\BamlWriter.cs" />
-    <Compile Include="Baml\KnownTypes.cs" />
-    <Compile Include="Baml\KnownThings.g.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Xaml\XamlExtension.cs" />
-    <Compile Include="Xaml\XamlPathDeserializer.cs" />
-    <Compile Include="Xaml\XamlResourceKey.cs" />
-    <Compile Include="Xaml\XamlUtils.cs" />
-    <Compile Include="Xaml\XamlProperty.cs" />
-    <Compile Include="Xaml\NamespaceMap.cs" />
-    <Compile Include="Xaml\XamlType.cs" />
-    <Compile Include="XmlnsDictionary.cs" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -150,15 +150,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="BamlSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\XamlFile.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.BamlDecompiler.Resources.Designer.cs</LastGenOutput>
@@ -173,6 +164,15 @@
     <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
       <Link>Properties\AssemblyInfo.Shared.cs</Link>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\XamlFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="BamlSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

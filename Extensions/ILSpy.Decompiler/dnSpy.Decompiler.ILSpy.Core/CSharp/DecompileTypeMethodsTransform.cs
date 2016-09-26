@@ -21,8 +21,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.Contracts.Text;
-using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.TypeSystem;

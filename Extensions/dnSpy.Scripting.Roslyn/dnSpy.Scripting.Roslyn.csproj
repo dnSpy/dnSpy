@@ -85,12 +85,16 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TheExtension.cs" />
-    <None Include="VisualBasic\VisualBasicReplSettingsImpl.cs" />
-    <None Include="VisualBasic\Constants.cs" />
-    <None Include="VisualBasic\TextEditorFormatDefinition.cs" />
-    <None Include="VisualBasic\VisualBasicContent.cs" />
-    <None Include="VisualBasic\VisualBasicControlVM.cs" />
+    <None Include="CSharpInteractive.rsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="VisualBasicInteractive.rsp" />
     <None Include="VisualBasic\VisualBasicToolWindowContent.cs" />
+    <None Include="VisualBasic\VisualBasicReplSettingsImpl.cs" />
+    <None Include="VisualBasic\VisualBasicControlVM.cs" />
+    <None Include="VisualBasic\VisualBasicContent.cs" />
+    <None Include="VisualBasic\TextEditorFormatDefinition.cs" />
+    <None Include="VisualBasic\Constants.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
@@ -122,11 +126,18 @@
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSharpInteractive.rsp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="project.json" />
-    <None Include="VisualBasicInteractive.rsp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Common\ScriptControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ArrowDown.png" />
@@ -141,17 +152,6 @@
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\VBInteractiveWindow.png" />
     <Resource Include="Images\WordWrap.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Common\ScriptControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
-      <Link>Properties\AssemblyInfo.Shared.cs</Link>
-    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

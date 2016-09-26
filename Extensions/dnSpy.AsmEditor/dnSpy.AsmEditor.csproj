@@ -65,12 +65,26 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assembly\AssemblyCommands.cs" />
+    <Compile Include="Assembly\AssemblyOptions.cs" />
+    <Compile Include="Assembly\AssemblyOptionsDlg.xaml.cs">
+      <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Assembly\AssemblyOptionsVM.cs" />
+    <Compile Include="Commands\AsmEditorContext.cs" />
     <Compile Include="Commands\ClipboardDataHolder.cs" />
+    <Compile Include="Commands\CodeContextMenuHandler.cs" />
+    <Compile Include="Commands\CodeContextMenuHandlerCommandProxy.cs" />
     <Compile Include="Commands\CommandUtils.cs" />
     <Compile Include="Commands\ContextMenuHandler.cs" />
+    <Compile Include="Commands\DeletableNodes.cs" />
+    <Compile Include="Commands\DocumentsContextMenuHandler.cs" />
     <Compile Include="Commands\EditedMethodBodyUpdater.cs" />
+    <Compile Include="Commands\EditMenuHandler.cs" />
+    <Compile Include="Commands\EditMenuHandlerCommandProxy.cs" />
     <Compile Include="Commands\EventNodeCreator.cs" />
     <Compile Include="Commands\FieldNodeCreator.cs" />
+    <Compile Include="Commands\FileMenuHandler.cs" />
     <Compile Include="Commands\IIndexedItem.cs" />
     <Compile Include="Commands\IndexObservableCollection.cs" />
     <Compile Include="Commands\InstructionCommands.cs" />
@@ -80,6 +94,7 @@
     <Compile Include="Commands\NamespaceNodeCreator.cs" />
     <Compile Include="Commands\NestedTypeNodeCreator.cs" />
     <Compile Include="Commands\PropertyNodeCreator.cs" />
+    <Compile Include="Commands\RefFinder.cs" />
     <Compile Include="Commands\RootDocumentNodeCreator.cs" />
     <Compile Include="Commands\TypeNodeCreator.cs" />
     <Compile Include="Compiler\AddUpdatedNodesHelper.cs" />
@@ -109,77 +124,8 @@
     <Compile Include="Compiler\ModuleImporter.cs" />
     <Compile Include="Compiler\ModuleImporter.MemberLookup.cs" />
     <Compile Include="Compiler\PlatformHelper.cs" />
-    <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="Hex\AsmEdHexDocument.cs" />
-    <Compile Include="Commands\AsmEditorContext.cs" />
-    <Compile Include="Hex\HexAddressReferenceFileTabContentProvider.cs" />
-    <Compile Include="Hex\HexBoxDocumentTabContent.cs" />
-    <Compile Include="Hex\HexBoxUIState.cs" />
-    <Compile Include="Hex\HexBoxUIStateSerializer.cs" />
-    <Compile Include="Hex\HexBoxUndoService.cs" />
-    <Compile Include="Hex\HexTabSaver.cs" />
-    <Compile Include="Hex\HexUndoableDocumentsProvider.cs" />
-    <Compile Include="Hex\IUndoHexDocument.cs" />
-    <Compile Include="Hex\Nodes\HexField.cs" />
-    <Compile Include="Hex\Nodes\HexDocumentTabContent.cs" />
-    <Compile Include="Hex\Nodes\HexDocumentTreeNodeDataFinder.cs" />
-    <Compile Include="Hex\Nodes\HexNode.cs" />
-    <Compile Include="Hex\Nodes\HexUtils.cs" />
-    <Compile Include="Hex\Nodes\HexVM.cs" />
-    <Compile Include="Hex\Nodes\ImageCor20HeaderNode.cs" />
-    <Compile Include="Hex\Nodes\ImageCor20HeaderVM.cs" />
-    <Compile Include="Hex\Nodes\ImageDosHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\ImageDosHeaderVM.cs" />
-    <Compile Include="Hex\Nodes\ImageFileHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\ImageFileHeaderVM.cs" />
-    <Compile Include="Hex\Nodes\ImageOptionalHeader32Node.cs" />
-    <Compile Include="Hex\Nodes\ImageOptionalHeader32VM.cs" />
-    <Compile Include="Hex\Nodes\ImageOptionalHeader64Node.cs" />
-    <Compile Include="Hex\Nodes\ImageOptionalHeader64VM.cs" />
-    <Compile Include="Hex\Nodes\ImageOptionalHeaderVM.cs" />
-    <Compile Include="Hex\Nodes\ImageSectionHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\ImageSectionHeaderVM.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableRecordNode.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableRecordVM.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableNode.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableVM.cs" />
-    <Compile Include="Hex\Nodes\PENode.cs" />
-    <Compile Include="Hex\Nodes\PETreeNodeDataProvider.cs" />
-    <Compile Include="Hex\Nodes\StorageHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\StorageHeaderVM.cs" />
-    <Compile Include="Hex\Nodes\StorageSignatureNode.cs" />
-    <Compile Include="Hex\Nodes\StorageSignatureVM.cs" />
-    <Compile Include="Hex\Nodes\StorageStreamNode.cs" />
-    <Compile Include="Hex\Nodes\StorageStreamVM.cs" />
-    <Compile Include="Hex\Nodes\TablesStreamNode.cs" />
-    <Compile Include="Hex\Nodes\TablesStreamVM.cs" />
-    <Compile Include="Hex\Nodes\TokenReferenceDocumentTabContentProvider.cs" />
-    <Compile Include="Hex\Nodes\VirtualizedList.cs" />
-    <Compile Include="MethodBody\BodyCommandUtils.cs" />
-    <Compile Include="Properties\dnSpy.AsmEditor.Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>dnSpy.AsmEditor.Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SaveModule\DocumentSaver.cs" />
-    <Compile Include="SaveModule\MmapDisabler.cs" />
-    <Compile Include="TheExtension.cs" />
-    <Compile Include="Themes\TextEditorResourceColorInitializer.cs" />
-    <Compile Include="UndoRedo\DsDocumentUndoableDocumentsProvider.cs" />
-    <Compile Include="UndoRedo\IUndoableDocumentsProvider.cs" />
-    <Compile Include="UndoRedo\UndoCommandServiceEventArgs.cs" />
-    <Compile Include="UndoRedo\UndoRoutedCommands.cs" />
-    <Compile Include="Assembly\AssemblyCommands.cs" />
-    <Compile Include="Assembly\AssemblyOptions.cs" />
-    <Compile Include="Assembly\AssemblyOptionsDlg.xaml.cs">
-      <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Assembly\AssemblyOptionsVM.cs" />
-    <Compile Include="Commands\CodeContextMenuHandler.cs" />
-    <Compile Include="Commands\CodeContextMenuHandlerCommandProxy.cs" />
     <Compile Include="Converters\CilObjectConverter.cs" />
     <Compile Include="Converters\InstructionOperandTextBoxStyleConverter.cs" />
-    <Compile Include="Commands\DeletableNodes.cs" />
     <Compile Include="DnlibDialogs\CAArgumentVM.cs" />
     <Compile Include="DnlibDialogs\CANamedArgumentControl.xaml.cs">
       <DependentUpon>CANamedArgumentControl.xaml</DependentUpon>
@@ -345,32 +291,71 @@
     <Compile Include="DnlibDialogs\TypeSigCreatorOptions.cs" />
     <Compile Include="DnlibDialogs\TypeSigCreatorVM.cs" />
     <Compile Include="DnlibDialogs\TypeSigVM.cs" />
-    <Compile Include="Commands\EditMenuHandler.cs" />
-    <Compile Include="Commands\EditMenuHandlerCommandProxy.cs" />
     <Compile Include="Event\EventDefCommands.cs" />
     <Compile Include="Event\EventDefOptions.cs" />
     <Compile Include="Event\EventOptionsDlg.xaml.cs">
       <DependentUpon>EventOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Event\EventOptionsVM.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Field\FieldDefCommands.cs" />
     <Compile Include="Field\FieldDefOptions.cs" />
     <Compile Include="Field\FieldOptionsDlg.xaml.cs">
       <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Field\FieldOptionsVM.cs" />
-    <Compile Include="Commands\FileMenuHandler.cs" />
-    <Compile Include="Commands\DocumentsContextMenuHandler.cs" />
-    <Compile Include="Hex\HexDocumentService.cs" />
+    <Compile Include="Hex\AsmEdHexDocument.cs" />
     <Compile Include="Hex\Commands.cs" />
+    <Compile Include="Hex\HexAddressReferenceFileTabContentProvider.cs" />
+    <Compile Include="Hex\HexBoxDocumentTabContent.cs" />
+    <Compile Include="Hex\HexBoxUIState.cs" />
+    <Compile Include="Hex\HexBoxUIStateSerializer.cs" />
     <Compile Include="Hex\HexBoxUndoCommand.cs" />
+    <Compile Include="Hex\HexBoxUndoService.cs" />
+    <Compile Include="Hex\HexDocumentService.cs" />
+    <Compile Include="Hex\HexTabSaver.cs" />
+    <Compile Include="Hex\HexUndoableDocumentsProvider.cs" />
     <Compile Include="Hex\InstructionUtils.cs" />
+    <Compile Include="Hex\IUndoHexDocument.cs" />
     <Compile Include="Hex\MDTableContextMenuCommands.cs" />
+    <Compile Include="Hex\Nodes\HexDocumentTabContent.cs" />
+    <Compile Include="Hex\Nodes\HexDocumentTreeNodeDataFinder.cs" />
+    <Compile Include="Hex\Nodes\HexField.cs" />
+    <Compile Include="Hex\Nodes\HexNode.cs" />
+    <Compile Include="Hex\Nodes\HexUtils.cs" />
+    <Compile Include="Hex\Nodes\HexVM.cs" />
+    <Compile Include="Hex\Nodes\ImageCor20HeaderNode.cs" />
+    <Compile Include="Hex\Nodes\ImageCor20HeaderVM.cs" />
+    <Compile Include="Hex\Nodes\ImageDosHeaderNode.cs" />
+    <Compile Include="Hex\Nodes\ImageDosHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\ImageFileHeaderNode.cs" />
+    <Compile Include="Hex\Nodes\ImageFileHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeader32Node.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeader32VM.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeader64Node.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeader64VM.cs" />
+    <Compile Include="Hex\Nodes\ImageOptionalHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\ImageSectionHeaderNode.cs" />
+    <Compile Include="Hex\Nodes\ImageSectionHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\MetaDataTableNode.cs" />
+    <Compile Include="Hex\Nodes\MetaDataTableRecordNode.cs" />
+    <Compile Include="Hex\Nodes\MetaDataTableRecordVM.cs" />
+    <Compile Include="Hex\Nodes\MetaDataTableVM.cs" />
+    <Compile Include="Hex\Nodes\PENode.cs" />
+    <Compile Include="Hex\Nodes\PETreeNodeDataProvider.cs" />
+    <Compile Include="Hex\Nodes\StorageHeaderNode.cs" />
+    <Compile Include="Hex\Nodes\StorageHeaderVM.cs" />
+    <Compile Include="Hex\Nodes\StorageSignatureNode.cs" />
+    <Compile Include="Hex\Nodes\StorageSignatureVM.cs" />
+    <Compile Include="Hex\Nodes\StorageStreamNode.cs" />
+    <Compile Include="Hex\Nodes\StorageStreamVM.cs" />
+    <Compile Include="Hex\Nodes\TablesStreamNode.cs" />
+    <Compile Include="Hex\Nodes\TablesStreamVM.cs" />
+    <Compile Include="Hex\Nodes\TokenReferenceDocumentTabContentProvider.cs" />
+    <Compile Include="Hex\Nodes\VirtualizedList.cs" />
     <Compile Include="Hex\TableSorter.cs" />
     <Compile Include="Hex\WriteHexUndoCommand.cs" />
-    <Compile Include="UndoRedo\Commands.cs" />
-    <Compile Include="UndoRedo\IUndoCommand.cs" />
-    <Compile Include="UndoRedo\IUndoObject.cs" />
+    <Compile Include="MethodBody\BodyCommandUtils.cs" />
     <Compile Include="MethodBody\BodyUtils.cs" />
     <Compile Include="MethodBody\CilBodyOptions.cs" />
     <Compile Include="MethodBody\CilBodyVM.cs" />
@@ -434,6 +419,11 @@
       <DependentUpon>NamespaceDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Namespace\NamespaceVM.cs" />
+    <Compile Include="Properties\dnSpy.AsmEditor.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.AsmEditor.Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property\PropertyDefCommands.cs" />
     <Compile Include="Property\PropertyDefOptions.cs" />
@@ -441,7 +431,6 @@
       <DependentUpon>PropertyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Property\PropertyOptionsVM.cs" />
-    <Compile Include="Commands\RefFinder.cs" />
     <Compile Include="Resources\ImageListDlg.xaml.cs">
       <DependentUpon>ImageListDlg.xaml</DependentUpon>
     </Compile>
@@ -477,6 +466,8 @@
     <Compile Include="Resources\ResourceVM.cs" />
     <Compile Include="Resources\UserTypeVM.cs" />
     <Compile Include="SaveModule\CharacteristicsHelper.cs" />
+    <Compile Include="SaveModule\DocumentSaver.cs" />
+    <Compile Include="SaveModule\MmapDisabler.cs" />
     <Compile Include="SaveModule\ModuleSaver.cs" />
     <Compile Include="SaveModule\PathUtils.cs" />
     <Compile Include="SaveModule\SaveHexOptionsDlg.xaml.cs">
@@ -498,17 +489,26 @@
     <Compile Include="SaveModule\SaveSingleModuleDlg.xaml.cs">
       <DependentUpon>SaveSingleModuleDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UndoRedo\ToolbarCommands.cs" />
+    <Compile Include="TheExtension.cs" />
+    <Compile Include="Themes\TextEditorResourceColorInitializer.cs" />
     <Compile Include="Types\TypeDefCommands.cs" />
     <Compile Include="Types\TypeDefOptions.cs" />
     <Compile Include="Types\TypeOptionsDlg.xaml.cs">
       <DependentUpon>TypeOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Types\TypeOptionsVM.cs" />
+    <Compile Include="UndoRedo\Commands.cs" />
+    <Compile Include="UndoRedo\DsDocumentUndoableDocumentsProvider.cs" />
+    <Compile Include="UndoRedo\IUndoableDocumentsProvider.cs" />
+    <Compile Include="UndoRedo\IUndoCommand.cs" />
+    <Compile Include="UndoRedo\IUndoObject.cs" />
+    <Compile Include="UndoRedo\ToolbarCommands.cs" />
     <Compile Include="UndoRedo\UndoCommandService.cs" />
+    <Compile Include="UndoRedo\UndoCommandServiceEventArgs.cs" />
     <Compile Include="UndoRedo\UndoObject.cs" />
     <Compile Include="UndoRedo\UndoRedoIFileListListener.cs" />
     <Compile Include="UndoRedo\UndoRedoMenuCommands.cs" />
+    <Compile Include="UndoRedo\UndoRoutedCommands.cs" />
     <Compile Include="Utilities\UIUtils.cs" />
     <Compile Include="ViewHelpers\CreateConstantType.cs" />
     <Compile Include="ViewHelpers\CreateMethodPropertySig.cs" />
@@ -543,13 +543,32 @@
     <Compile Include="ViewHelpers\TypeSigCreator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.AsmEditor.Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.zh-CN.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.pt-PT.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.de.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Include="Assembly\AssemblyOptionsDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Compiler\EditCodeDlg.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="DnlibDialogs\CANamedArgumentControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -861,25 +880,6 @@
     <Resource Include="Images\StatusWarning.png" />
     <Resource Include="Images\ToUncondBranch.png" />
     <Resource Include="Images\Undo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.AsmEditor.Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.de.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
-      <Link>Properties\AssemblyInfo.Shared.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
