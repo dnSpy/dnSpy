@@ -44,5 +44,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// The code writes to the reference
 		/// </summary>
 		IsWrite						= 0x00000004,
+
+		/// <summary>
+		/// Reference shouldn't be highlighted
+		/// </summary>
+		Hidden						= 0x00000008,
 	}
 }

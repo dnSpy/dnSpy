@@ -157,7 +157,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			currentSpanReference = GetCurrentSpanReference();
 		}
 
-		SpanData<ReferenceInfo>? GetCurrentReference() => canHighlightReferences ? documentViewer?.SelectedReference : null;
+		SpanData<ReferenceInfo>? GetCurrentReference() {
+			var spanData = canHighlightReferences ? documentViewer?.SelectedReference : null;
+			return spanData == null || spanData.Value.Data.IsHidden ? (SpanData<ReferenceInfo>?)null : spanData;
+		}
 
 		SpanData<ReferenceAndId>? GetCurrentSpanReference() {
 			if (documentViewer == null)
@@ -247,6 +250,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					foreach (var spanData in documentViewer.Content.ReferenceCollection.Find(span.Span)) {
 						Debug.Assert(spanData.Span.End <= snapshot.Length);
 						if (spanData.Span.End > snapshot.Length)
+							continue;
+						if (spanData.Data.IsHidden)
 							continue;
 						var tag = TryGetTextMarkerTag(spanData);
 						if (tag == null)

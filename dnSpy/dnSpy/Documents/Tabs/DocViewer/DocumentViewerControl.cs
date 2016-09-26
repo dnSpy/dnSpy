@@ -479,9 +479,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			var spanData = GetCurrentReferenceInfo();
-			if (spanData != null) {
+			if (spanData != null && !spanData.Value.Data.IsHidden) {
 				foreach (var newSpanData in GetReferenceInfosFrom(spanData.Value.Span.Start, forward)) {
-					if (SpanDataReferenceInfoExtensions.CompareReferences(newSpanData.Data, spanData.Value.Data)) {
+					if (!newSpanData.Data.IsHidden && SpanDataReferenceInfoExtensions.CompareReferences(newSpanData.Data, spanData.Value.Data)) {
 						MoveCaretToSpan(newSpanData.Span);
 						break;
 					}

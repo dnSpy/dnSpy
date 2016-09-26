@@ -51,6 +51,11 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		public bool IsWrite => (Flags & DecompilerReferenceFlags.IsWrite) != 0;
 
 		/// <summary>
+		/// true if reference shouldn't be highlighted
+		/// </summary>
+		public bool IsHidden => (Flags & DecompilerReferenceFlags.Hidden) != 0;
+
+		/// <summary>
 		/// Gets the span or null if it's unknown
 		/// </summary>
 		public Span? Span { get; }
