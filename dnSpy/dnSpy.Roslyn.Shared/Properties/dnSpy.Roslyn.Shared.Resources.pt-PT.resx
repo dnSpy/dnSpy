@@ -120,6 +120,9 @@
   <data name="ClassesToolTip" xml:space="preserve">
     <value>Classes</value>
   </data>
+  <data name="CompletionSet_All" xml:space="preserve">
+    <value>All</value>
+  </data>
   <data name="ConstantsToolTip" xml:space="preserve">
     <value>Contantes</value>
   </data>

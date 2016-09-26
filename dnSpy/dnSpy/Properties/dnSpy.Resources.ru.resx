@@ -834,9 +834,6 @@
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
     <value>_Каталог</value>
   </data>
-  <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
-    <value>_Не ссылаться на mscorlib.dll</value>
-  </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
     <value>Будет декомпилирован один файл. Для того, чтобы декомпилировать больше файлов, выберите больше сборок.</value>
   </data>

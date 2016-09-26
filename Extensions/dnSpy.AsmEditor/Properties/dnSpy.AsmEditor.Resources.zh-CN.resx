@@ -310,7 +310,7 @@
     <value>一个 TypeSig 剩余</value>
   </data>
   <data name="CustomAttributesTab" xml:space="preserve">
-    <value>自定义属性</value>
+    <value>自定义标签</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
     <value>剪切(_T)</value>
@@ -410,31 +410,31 @@
     <value>移除...</value>
   </data>
   <data name="Event_RTSpecialName" xml:space="preserve">
-    <value>RT特殊名称(_R)</value>
+    <value>_RTSpecialName</value>
   </data>
   <data name="Event_SpecialName" xml:space="preserve">
     <value>特殊名称</value>
   </data>
   <data name="FieldAccess_Assembly" xml:space="preserve">
-    <value>程序集</value>
+    <value>Assembly</value>
   </data>
   <data name="FieldAccess_Family" xml:space="preserve">
-    <value>族</value>
+    <value>Family</value>
   </data>
   <data name="FieldAccess_FamilyAndAssembly" xml:space="preserve">
-    <value>族和程序集</value>
+    <value>Family and Assembly</value>
   </data>
   <data name="FieldAccess_FamilyOrAssembly" xml:space="preserve">
-    <value>族或程序集</value>
+    <value>Family or Assembly</value>
   </data>
   <data name="FieldAccess_Private" xml:space="preserve">
-    <value>私有</value>
+    <value>Private</value>
   </data>
   <data name="FieldAccess_PrivateScope" xml:space="preserve">
-    <value>区域私有</value>
+    <value>PrivateScope</value>
   </data>
   <data name="FieldAccess_Public" xml:space="preserve">
-    <value>公共</value>
+    <value>Public</value>
   </data>
   <data name="FieldType" xml:space="preserve">
     <value>字段类型: {0}</value>
@@ -464,7 +464,7 @@
     <value>S_pecialName</value>
   </data>
   <data name="Field_Flags_Static" xml:space="preserve">
-    <value>静态(_S)</value>
+    <value>_Static</value>
   </data>
   <data name="Field_InitialValue" xml:space="preserve">
     <value>初始值(_V)</value>
@@ -1073,7 +1073,7 @@
     <value>追加(_P)</value>
   </data>
   <data name="Button_Assembly" xml:space="preserve">
-    <value>程序集</value>
+    <value>Assembly</value>
   </data>
   <data name="ClearHistoryToolBarToolTip" xml:space="preserve">
     <value>清除撤消/重做历史</value>
@@ -1508,13 +1508,13 @@
     <value>Hex Paste Method Body</value>
   </data>
   <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
-    <value>Hex Write Empty Body</value>
+    <value>十六进制写入空方法体</value>
   </data>
   <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
-    <value>Hex Write 'return false' Body</value>
+    <value>十六进制写入方法体“return false”</value>
   </data>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
-    <value>Hex Write 'return true' Body</value>
+    <value>十六进制写入方法体“return true”</value>
   </data>
   <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
     <value>Fill {0} bytes @ {1:X8}</value>
@@ -2177,7 +2177,7 @@
     <value>S_pecialName</value>
   </data>
   <data name="Method_Flags_Static" xml:space="preserve">
-    <value>静态(_S)</value>
+    <value>_Static</value>
   </data>
   <data name="Method_Flags_UnmanagedExport" xml:space="preserve">
     <value>UnmanagedE_xport</value>
@@ -2270,7 +2270,7 @@
     <value>DllCharacteristics</value>
   </data>
   <data name="Property_Flags_RTSpecialName" xml:space="preserve">
-    <value>RT特殊名称(_R)</value>
+    <value>_RTSpecialName</value>
   </data>
   <data name="Property_Flags_SpecialName" xml:space="preserve">
     <value>特殊名称</value>
@@ -2372,7 +2372,7 @@
     <value>Layo_ut</value>
   </data>
   <data name="Type_Flags_RTSpecialName" xml:space="preserve">
-    <value>RT特殊名称(_R)</value>
+    <value>_RTSpecialName</value>
   </data>
   <data name="Type_Flags_Sealed" xml:space="preserve">
     <value>Seale_d</value>
@@ -2414,10 +2414,10 @@
     <value>Ctrl+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edit {0} Code...</value>
+    <value>修改 {0} 代码...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
-    <value>Edit Code</value>
+    <value>修改代码</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
     <value>反编译中…</value>

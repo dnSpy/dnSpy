@@ -834,9 +834,6 @@
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
     <value>Pasta</value>
   </data>
-  <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
-    <value>Não referêncie mscorlib. dll</value>
-  </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
     <value>Um ficheiro será descompilado. Selecione mais de um assembly para descompilar mais de um ficheiro.</value>
   </data>

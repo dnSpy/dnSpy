@@ -316,7 +316,7 @@
     <value>文件(_F)</value>
   </data>
   <data name="Menu_Help" xml:space="preserve">
-    <value>帮助 (_H)</value>
+    <value>帮助(_H)</value>
   </data>
   <data name="Menu_Themes" xml:space="preserve">
     <value>主题(_T)</value>
@@ -640,7 +640,7 @@
     <value>Ctrl+B</value>
   </data>
   <data name="SearchWindow_Assembly" xml:space="preserve">
-    <value>程序集</value>
+    <value>Assembly</value>
   </data>
   <data name="SearchWindow_AssemblyRef" xml:space="preserve">
     <value>AssemblyRef</value>
@@ -833,9 +833,6 @@
   </data>
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
     <value>文件夹(_F)</value>
-  </data>
-  <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
-    <value>不引用 mscorlib.dll (_D)</value>
   </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
     <value>一个文件将反编译。要反编译多个文件请选择多个程序集。</value>

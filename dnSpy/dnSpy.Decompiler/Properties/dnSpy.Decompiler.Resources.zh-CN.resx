@@ -178,13 +178,13 @@
     <value>类型:</value>
   </data>
   <data name="Decompile_AnyCPU32BitPreferred" xml:space="preserve">
-    <value>AnyCPU (32-位优先)</value>
+    <value>AnyCPU (32位优先)</value>
   </data>
   <data name="Decompile_AnyCPU64BitPreferred" xml:space="preserve">
-    <value>AnyCPU (64-位优先)</value>
+    <value>AnyCPU (64位优先)</value>
   </data>
   <data name="Decompile_Architecture" xml:space="preserve">
-    <value>Architecture:</value>
+    <value>架构:</value>
   </data>
   <data name="Decompile_EntryPoint" xml:space="preserve">
     <value>入口点:</value>
@@ -202,7 +202,7 @@
     <value>此程序集包含非托管的代码。</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
-    <value>时间间隔: {0:X8} ({1})</value>
+    <value>时间戳: {0:X8} ({1})</value>
   </data>
   <data name="MSBuild_CreateResource" xml:space="preserve">
     <value>创建资源 {0}</value>

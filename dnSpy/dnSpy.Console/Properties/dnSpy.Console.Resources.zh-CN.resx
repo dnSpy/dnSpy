@@ -217,7 +217,7 @@
     <value>程序集</value>
   </data>
   <data name="CmdLineDescription_AsmPath" xml:space="preserve">
-    <value>程序集搜索路径。路径可以用 '{0}' 分隔。或您可以使用多个 asm 路径</value>
+    <value>程序集搜索路径。路径可以用 '{0}' 分隔。亦可使用多个--asm-path来指定多个路径。</value>
   </data>
   <data name="CmdLineDescription_GACFile" xml:space="preserve">
     <value>反编译 gac 中的程序集。使用完整的程序集名称来使用准确的版本。</value>
@@ -229,7 +229,7 @@
     <value>decompile the member with metadata token N to stdout</value>
   </data>
   <data name="CmdLineDescription_NoBAML" xml:space="preserve">
-    <value>不反编译 xaml 到 baml</value>
+    <value>不将BAML反编译为XAML</value>
   </data>
   <data name="CmdLineDescription_NoGAC" xml:space="preserve">
     <value>don't use the GAC to look up assemblies. Useful with --no-stdlib</value>
@@ -247,7 +247,7 @@
     <value>不要让项目引用 mscorlib库</value>
   </data>
   <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
-    <value>工作线程的数目。默认使用一个线程。</value>
+    <value>工作线程的数目。默认每个CPU核心使用一个线程。</value>
   </data>
   <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
     <value>输出目录：</value>
@@ -262,7 +262,7 @@
     <value>.sln 解决方案文件的名称</value>
   </data>
   <data name="CmdLineDescription_Type1" xml:space="preserve">
-    <value>反编译的类型与指定的名称到 stdout。命名空间.名称 或名称，不区分大小写</value>
+    <value>反编译指定名称的类型到标准输出流。指定名称的格式为[命名空间.名称] 或 [名称]，不区分大小写</value>
   </data>
   <data name="CmdLineDescription_Type2" xml:space="preserve">
     <value>与 -t 相同</value>
@@ -316,6 +316,6 @@
     <value>Number of spaces must be between {0} and {1}</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>缺失的参数</value>
+    <value>缺少参数</value>
   </data>
 </root>

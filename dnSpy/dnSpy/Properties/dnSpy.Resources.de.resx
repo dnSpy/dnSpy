@@ -834,9 +834,6 @@
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
     <value>_Verzeichnis</value>
   </data>
-  <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
-    <value>_Nicht auf mscorlib.dll verweisen</value>
-  </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
     <value>Eine Datei wird dekompiliert. Wählen Sie mehr als eine Assembly, um mehr als eine Datei zu dekompilieren.</value>
   </data>
@@ -1146,6 +1143,6 @@
     <value>{0} von {1}</value>
   </data>
   <data name="UriFollowLinkMessage" xml:space="preserve">
-    <value>CTRL + click to follow link</value>
+    <value>Strg+Klicken um Link zu folgen</value>
   </data>
 </root>
