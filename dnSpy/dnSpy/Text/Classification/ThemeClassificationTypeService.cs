@@ -174,7 +174,6 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ReplLineNumberInput1),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ReplLineNumberInput2),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ReplLineNumberOutput),
-				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Link),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.VisibleWhitespace),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SelectedText),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.InactiveSelectedText),

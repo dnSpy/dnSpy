@@ -96,7 +96,6 @@
 		<color name="repllinenumberinput1" fg="#D69D85" />
 		<color name="repllinenumberinput2" fg="#497F49" />
 		<color name="repllinenumberoutput" fg="#2B91AF" />
-		<color name="link" fg="#CCFF33" />
 		<color name="visiblewhitespace" fg="#FF144852" />
 		<color name="selectedtext" bg="#FF3399FF" />
 		<color name="inactiveselectedtext" bg="#FF565656" />

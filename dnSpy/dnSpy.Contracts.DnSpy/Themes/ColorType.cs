@@ -167,7 +167,6 @@ namespace dnSpy.Contracts.Themes {
 		ReplLineNumberInput1,
 		ReplLineNumberInput2,
 		ReplLineNumberOutput,
-		Link,
 		VisibleWhitespace,
 		SelectedText,
 		InactiveSelectedText,

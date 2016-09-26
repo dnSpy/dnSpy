@@ -743,11 +743,6 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string ReplLineNumberOutput = "Theme-" + nameof(ReplLineNumberOutput);
 
 		/// <summary>
-		/// <see cref="TextColor.Link"/>
-		/// </summary>
-		public const string Link = "Theme-" + nameof(Link);
-
-		/// <summary>
 		/// <see cref="TextColor.VisibleWhitespace"/>
 		/// </summary>
 		public const string VisibleWhitespace = "Theme-" + nameof(VisibleWhitespace);

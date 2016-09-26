@@ -766,11 +766,6 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition ReplLineNumberOutputClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.Link)]
-		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LinkClassificationTypeDefinition;
-
-		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.VisibleWhitespace)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition VisibleWhitespaceClassificationTypeDefinition;
@@ -2347,15 +2342,6 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class ReplLineNumberOutput : ThemeClassificationFormatDefinition {
 			ReplLineNumberOutput() : base(TextColor.ReplLineNumberOutput) { }
-		}
-
-		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Link)]
-		[Name(ThemeClassificationTypeNameKeys.Link)]
-		[UserVisible(true)]
-		[Order(After = Priority.Default)]
-		sealed class Link : ThemeClassificationFormatDefinition {
-			Link() : base(TextColor.Link) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

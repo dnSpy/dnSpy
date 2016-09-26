@@ -169,7 +169,6 @@ namespace dnSpy.Contracts.Text {
 		ReplLineNumberInput1,
 		ReplLineNumberInput2,
 		ReplLineNumberOutput,
-		Link,
 		VisibleWhitespace,
 		SelectedText,
 		InactiveSelectedText,
@@ -385,7 +384,6 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object ReplLineNumberInput1 = TextColor.ReplLineNumberInput1;
 		public static readonly object ReplLineNumberInput2 = TextColor.ReplLineNumberInput2;
 		public static readonly object ReplLineNumberOutput = TextColor.ReplLineNumberOutput;
-		public static readonly object Link = TextColor.Link;
 		public static readonly object VisibleWhitespace = TextColor.VisibleWhitespace;
 		public static readonly object SelectedText = TextColor.SelectedText;
 		public static readonly object InactiveSelectedText = TextColor.InactiveSelectedText;
@@ -603,7 +601,6 @@ namespace dnSpy.Contracts.Text {
 			ReplLineNumberInput1,
 			ReplLineNumberInput2,
 			ReplLineNumberOutput,
-			Link,
 			VisibleWhitespace,
 			SelectedText,
 			InactiveSelectedText,

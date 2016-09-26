@@ -1827,7 +1827,6 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.ReplLineNumberInput1, "REPL line number #1 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput2, "REPL line number #2 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberOutput, "REPL line number (output)"),
-			new BrushColorInfo(ColorType.Link, "Link"),
 			new BrushColorInfo(ColorType.VisibleWhitespace, "Visible whitespace"),
 			new BrushColorInfo(ColorType.HighlightedReference, "Highlighted Reference"),
 			new BrushColorInfo(ColorType.HighlightedWrittenReference, "Highlighted Written Reference"),
