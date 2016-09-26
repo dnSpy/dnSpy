@@ -154,7 +154,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickEnumType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var type = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_EnumType, new FlagsFileTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
+			var type = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_EnumType, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
 			if (type != null)
 				EnumType = type;
 		}

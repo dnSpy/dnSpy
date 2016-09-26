@@ -37,7 +37,7 @@ namespace dnSpy.Text.Editor {
 			new HorizontalScrollBarMargin(wpfTextViewHost);
 	}
 
-	sealed class HorizontalScrollBarMargin : DnSpyScrollBar, IWpfTextViewMargin {
+	sealed class HorizontalScrollBarMargin : DsScrollBar, IWpfTextViewMargin {
 		public bool Enabled => wpfTextViewHost.TextView.Options.IsHorizontalScrollBarEnabled();
 		public double MarginSize => ActualHeight;
 		public FrameworkElement VisualElement => this;

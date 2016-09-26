@@ -26,19 +26,19 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(ILogEditorProvider))]
 	sealed class LogEditorProvider : ILogEditorProvider {
-		readonly IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService;
+		readonly IDsTextEditorFactoryService dsTextEditorFactoryService;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 
 		[ImportingConstructor]
-		LogEditorProvider(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
-			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
+		LogEditorProvider(IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+			this.dsTextEditorFactoryService = dsTextEditorFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 		}
 
-		public ILogEditor Create(LogEditorOptions options) => new LogEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOptionsFactoryService);
+		public ILogEditor Create(LogEditorOptions options) => new LogEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOptionsFactoryService);
 	}
 }

@@ -27,9 +27,9 @@ using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	interface IDocumentSaver {
@@ -45,23 +45,23 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 	[Export(typeof(IDocumentSaver))]
 	sealed class DocumentSaver : IDocumentSaver {
-		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly Lazy<IMmapDisabler> mmapDisabler;
 		readonly IAppWindow appWindow;
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		DocumentSaver(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IMmapDisabler> mmapDisabler, IFileTabManager fileTabManager, IAppWindow appWindow) {
-			this.undoCommandManager = undoCommandManager;
+		DocumentSaver(Lazy<IUndoCommandService> undoCommandService, Lazy<IMmapDisabler> mmapDisabler, IDocumentTabService documentTabService, IAppWindow appWindow) {
+			this.undoCommandService = undoCommandService;
 			this.mmapDisabler = mmapDisabler;
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 			this.appWindow = appWindow;
 		}
 
-		IEnumerable<object> Distinct(IEnumerable<object> objs) => undoCommandManager.Value.GetUniqueDocuments(objs);
+		IEnumerable<object> Distinct(IEnumerable<object> objs) => undoCommandService.Value.GetUniqueDocuments(objs);
 
 		public bool AskUserToSaveIfModified(IEnumerable<object> docs) {
-			var modifiedDocs = Distinct(docs).Where(a => undoCommandManager.Value.IsModified(undoCommandManager.Value.GetUndoObject(a))).ToArray();
+			var modifiedDocs = Distinct(docs).Where(a => undoCommandService.Value.IsModified(undoCommandService.Value.GetUndoObject(a))).ToArray();
 			if (modifiedDocs.Length == 0)
 				return true;
 
@@ -80,9 +80,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 			if (objsAry.Length == 1) {
 				SaveOptionsVM options;
 
-				var file = objsAry[0] as IDnSpyFile;
-				if (file != null) {
-					var optsData = new SaveModuleOptionsVM(file);
+				var document = objsAry[0] as IDsDocument;
+				if (document != null) {
+					var optsData = new SaveModuleOptionsVM(document);
 					var optsWin = new SaveModuleOptionsDlg();
 					optsWin.Owner = appWindow.MainWindow;
 					optsWin.DataContext = optsData;
@@ -128,18 +128,18 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (!vm.WasSaved(doc))
 					allSaved = false;
 				else {
-					undoCommandManager.Value.MarkAsSaved(undoCommandManager.Value.GetUndoObject(doc));
-					var file = doc as IDnSpyFile;
-					if (file != null && string.IsNullOrEmpty(file.Filename)) {
+					undoCommandService.Value.MarkAsSaved(undoCommandService.Value.GetUndoObject(doc));
+					var document = doc as IDsDocument;
+					if (document != null && string.IsNullOrEmpty(document.Filename)) {
 						var filename = vm.GetSavedFileName(doc);
-						if (!string.IsNullOrWhiteSpace(filename) && file.ModuleDef != null) {
-							file.ModuleDef.Location = filename;
-							file.Filename = filename;
-							var modNode = fileTabManager.FileTreeView.FindNode(file.ModuleDef) as IModuleFileNode;
+						if (!string.IsNullOrWhiteSpace(filename) && document.ModuleDef != null) {
+							document.ModuleDef.Location = filename;
+							document.Filename = filename;
+							var modNode = documentTabService.DocumentTreeView.FindNode(document.ModuleDef) as IModuleDocumentNode;
 							Debug.Assert(modNode != null);
 							if (modNode != null) {
 								modNode.TreeNode.RefreshUI();
-								fileTabManager.RefreshModifiedFile(modNode.DnSpyFile);
+								documentTabService.RefreshModifiedDocument(modNode.Document);
 							}
 						}
 					}

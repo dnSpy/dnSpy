@@ -37,20 +37,20 @@ namespace dnSpy.Search {
 			SearchRoutedCommand.InputGestures.Add(new KeyGesture(Key.K, ModifierKeys.Control));
 		}
 
-		readonly IMainToolWindowManager mainToolWindowManager;
-		readonly Lazy<ISearchManager> searchManager;
+		readonly IDsToolWindowService toolWindowService;
+		readonly Lazy<ISearchService> searchService;
 
 		[ImportingConstructor]
-		SearchCommandLoader(IMainToolWindowManager mainToolWindowManager, Lazy<ISearchManager> searchManager, IWpfCommandManager wpfCommandManager) {
-			this.mainToolWindowManager = mainToolWindowManager;
-			this.searchManager = searchManager;
+		SearchCommandLoader(IDsToolWindowService toolWindowService, Lazy<ISearchService> searchService, IWpfCommandService wpfCommandService) {
+			this.toolWindowService = toolWindowService;
+			this.searchService = searchService;
 
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(SearchRoutedCommand, Search, CanSearch);
 		}
 
 		void CanSearch(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
-		void Search(object sender, ExecutedRoutedEventArgs e) => mainToolWindowManager.Show(SearchToolWindowContent.THE_GUID);
+		void Search(object sender, ExecutedRoutedEventArgs e) => toolWindowService.Show(SearchToolWindowContent.THE_GUID);
 	}
 
 	[ExportToolBarButton(Icon = "Find", ToolTip = "res:SearchAssembliesToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
@@ -68,11 +68,11 @@ namespace dnSpy.Search {
 	}
 
 	abstract class OpenReferenceCtxMenuCommandBase : MenuItemBase {
-		readonly Lazy<ISearchManager> searchManager;
+		readonly Lazy<ISearchService> searchService;
 		readonly bool newTab;
 
-		protected OpenReferenceCtxMenuCommandBase(Lazy<ISearchManager> searchManager, bool newTab) {
-			this.searchManager = searchManager;
+		protected OpenReferenceCtxMenuCommandBase(Lazy<ISearchService> searchService, bool newTab) {
+			this.searchService = searchService;
 			this.newTab = newTab;
 		}
 
@@ -80,7 +80,7 @@ namespace dnSpy.Search {
 			var res = GetReference(context);
 			if (res == null)
 				return;
-			searchManager.Value.FollowResult(res, newTab);
+			searchService.Value.FollowResult(res, newTab);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
@@ -95,16 +95,16 @@ namespace dnSpy.Search {
 	[ExportMenuItem(Header = "res:GoToReferenceCommand", InputGestureText = "res:GoToReferenceKey", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 0)]
 	sealed class OpenReferenceCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceCtxMenuCommand(Lazy<ISearchManager> searchManager)
-			: base(searchManager, false) {
+		OpenReferenceCtxMenuCommand(Lazy<ISearchService> searchService)
+			: base(searchService, false) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:OpenInNewTabCommand", InputGestureText = "res:OpenInNewTabKey4", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 10)]
 	sealed class OpenReferenceNewTabCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceNewTabCtxMenuCommand(Lazy<ISearchManager> searchManager)
-			: base(searchManager, true) {
+		OpenReferenceNewTabCtxMenuCommand(Lazy<ISearchService> searchService)
+			: base(searchService, true) {
 		}
 	}
 

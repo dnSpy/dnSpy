@@ -23,17 +23,17 @@ using dnSpy.Contracts.HexEditor;
 namespace dnSpy.AsmEditor.Hex {
 	//TODO: This class should be removed once the UndoObject prop has been removed
 	sealed class AsmEdHexDocument : HexDocument, IUndoHexDocument {
-		readonly IUndoCommandManager undoCommandManager;
+		readonly IUndoCommandService undoCommandService;
 
-		public AsmEdHexDocument(IUndoCommandManager undoCommandManager, string filename)
+		public AsmEdHexDocument(IUndoCommandService undoCommandService, string filename)
 			: base(filename) {
-			this.undoCommandManager = undoCommandManager;
+			this.undoCommandService = undoCommandService;
 			this.undoObject = new UndoObject(this);
 		}
 
-		public AsmEdHexDocument(IUndoCommandManager undoCommandManager, byte[] data, string filename)
+		public AsmEdHexDocument(IUndoCommandService undoCommandService, byte[] data, string filename)
 			: base(data, filename) {
-			this.undoCommandManager = undoCommandManager;
+			this.undoCommandService = undoCommandService;
 			this.undoObject = new UndoObject(this);
 		}
 
@@ -41,6 +41,6 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly UndoObject undoObject;
 
 		void IUndoHexDocument.WriteUndo(ulong startOffset, byte[] newData, string descr) =>
-			WriteHexUndoCommand.AddAndExecute(undoCommandManager, this, startOffset, newData, descr);
+			WriteHexUndoCommand.AddAndExecute(undoCommandService, this, startOffset, newData, descr);
 	}
 }

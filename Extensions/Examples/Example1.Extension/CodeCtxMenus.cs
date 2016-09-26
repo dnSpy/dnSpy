@@ -6,7 +6,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using Microsoft.VisualStudio.Text;
 
@@ -29,8 +29,8 @@ namespace Example1.Extension {
 		static readonly RoutedCommand Option1Command = new RoutedCommand("Option1Command", typeof(CommandLoader));
 
 		[ImportingConstructor]
-		CommandLoader(IWpfCommandManager wpfCommandManager, MySettings mySettings) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
+		CommandLoader(IWpfCommandService wpfCommandService, MySettings mySettings) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			// This command will be added to all text editors
 			cmds.Add(Option1Command,
 				(s, e) => mySettings.BoolOption1 = !mySettings.BoolOption1,

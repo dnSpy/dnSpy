@@ -24,7 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Utilities;
 
@@ -32,8 +32,8 @@ namespace dnSpy.Debugger.Breakpoints {
 	[ExportAutoLoaded]
 	sealed class BreakpointsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		BreakpointsContentCommandLoader(IWpfCommandManager wpfCommandManager, CopyBreakpointCtxMenuCommand copyCmd, DeleteBreakpointCtxMenuCommand deleteCmd, GoToSourceBreakpointCtxMenuCommand gotoSrcCmd, GoToSourceNewTabBreakpointCtxMenuCommand gotoSrcNewTabCmd, ToggleEnableBreakpointCtxMenuCommand toggleBpCmd) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_LISTVIEW);
+		BreakpointsContentCommandLoader(IWpfCommandService wpfCommandService, CopyBreakpointCtxMenuCommand copyCmd, DeleteBreakpointCtxMenuCommand deleteCmd, GoToSourceBreakpointCtxMenuCommand gotoSrcCmd, GoToSourceNewTabBreakpointCtxMenuCommand gotoSrcNewTabCmd, ToggleEnableBreakpointCtxMenuCommand toggleBpCmd) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new BreakpointCtxMenuCommandProxy(copyCmd));
 			cmds.Add(ApplicationCommands.Delete, new BreakpointCtxMenuCommandProxy(deleteCmd));
 			cmds.Add(new BreakpointCtxMenuCommandProxy(gotoSrcCmd), ModifierKeys.None, Key.Enter);
@@ -70,27 +70,27 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly BreakpointsControl breakpointsControl;
 
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 
 		public IBreakpointsVM BreakpointsVM => vmBreakpoints.Value;
 		readonly Lazy<IBreakpointsVM> vmBreakpoints;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		BreakpointsContent(IWpfCommandManager wpfCommandManager, Lazy<IBreakpointsVM> breakpointsVM, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager, IModuleIdProvider moduleIdProvider) {
+		BreakpointsContent(IWpfCommandService wpfCommandService, Lazy<IBreakpointsVM> breakpointsVM, Lazy<IModuleLoader> moduleLoader, IDocumentTabService documentTabService, IModuleIdProvider moduleIdProvider) {
 			this.breakpointsControl = new BreakpointsControl();
 			this.moduleLoader = moduleLoader;
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 			this.vmBreakpoints = breakpointsVM;
 			this.moduleIdProvider = moduleIdProvider;
 
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_CONTROL, breakpointsControl);
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_LISTVIEW, breakpointsControl.ListView);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_CONTROL, breakpointsControl);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_LISTVIEW, breakpointsControl.ListView);
 		}
 
 		void BreakpointsControl_BreakpointsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdProvider, fileTabManager, moduleLoader, this.BreakpointsControl.ListView.SelectedItem as BreakpointVM, newTab);
+			GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdProvider, documentTabService, moduleLoader, this.BreakpointsControl.ListView.SelectedItem as BreakpointVM, newTab);
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(BreakpointsControl.ListView);

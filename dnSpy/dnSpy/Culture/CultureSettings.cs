@@ -48,14 +48,14 @@ namespace dnSpy.Culture {
 	sealed class CultureSettingsImpl : CultureSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("4D05C47D-3F6A-429E-9CB3-232E10D45468");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		CultureSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		CultureSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.UIName = sect.Attribute<string>(nameof(UIName)) ?? this.UIName;
 			this.disableSave = false;
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Culture {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UIName), UIName);
 		}
 	}

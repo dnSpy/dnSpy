@@ -108,7 +108,7 @@ namespace dnSpy.Debugger {
 		void CallOnProcessStateChanged(DnDebugger dbg) => CallOnProcessStateChanged(dbg ?? debugger, DebuggerEventArgs.Empty);
 
 		void CallOnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			// InMemoryModuleManager should be notified here. It needs to execute first so it can
+			// InMemoryModuleService should be notified here. It needs to execute first so it can
 			// call LoadEverything() and load all dynamic modules so ResolveToken() of new methods
 			// and types work.
 			OnProcessStateChanged_First?.Invoke(sender, e);

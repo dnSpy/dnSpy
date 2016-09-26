@@ -47,8 +47,8 @@ namespace dnSpy.Contracts.Text.Editor {
 			PredefinedTextViewRoles.PrimaryDocument,
 			PredefinedTextViewRoles.Structured,
 			PredefinedTextViewRoles.Zoomable,
-			PredefinedDnSpyTextViewRoles.CanHaveBackgroundImage,
-			PredefinedDnSpyTextViewRoles.CodeEditor,
+			PredefinedDsTextViewRoles.CanHaveBackgroundImage,
+			PredefinedDsTextViewRoles.CodeEditor,
 		};
 
 		/// <summary>

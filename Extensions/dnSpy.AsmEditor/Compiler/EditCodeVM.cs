@@ -41,7 +41,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class EditCodeVM : ViewModelBase, IDisposable {
-		readonly IImageManager imageManager;
+		readonly IImageService imageService;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
 		readonly ILanguageCompiler languageCompiler;
@@ -60,8 +60,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
-		public object AddAssemblyReferenceImageObject => imageManager.GetImage(new ImageReference(GetType().Assembly, "Open"), BackgroundType.DialogWindow);
-		public object AddGacReferenceImageObject => imageManager.GetImage(new ImageReference(GetType().Assembly, "Library"), BackgroundType.DialogWindow);
+		public object AddAssemblyReferenceImageObject => imageService.GetImage(new ImageReference(GetType().Assembly, "Open"), BackgroundType.DialogWindow);
+		public object AddGacReferenceImageObject => imageService.GetImage(new ImageReference(GetType().Assembly, "Library"), BackgroundType.DialogWindow);
 
 		public bool CanCompile {
 			get { return canCompile; }
@@ -77,8 +77,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		public sealed class CodeDocument {
 			public string Name => codeDocument.Name;
 			public string NameNoExtension => codeDocument.NameNoExtension;
-			public IDnSpyWpfTextView TextView => codeDocument.TextView;
-			public IDnSpyWpfTextViewHost TextViewHost => codeDocument.TextViewHost;
+			public IDsWpfTextView TextView => codeDocument.TextView;
+			public IDsWpfTextViewHost TextViewHost => codeDocument.TextViewHost;
 
 			readonly ICodeDocument codeDocument;
 			SnapshotPoint initialPosition;
@@ -124,9 +124,9 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
-		public EditCodeVM(IImageManager imageManager, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit) {
+		public EditCodeVM(IImageService imageService, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit) {
 			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
-			this.imageManager = imageManager;
+			this.imageService = imageService;
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = openAssembly;
 			this.languageCompiler = languageCompiler;
@@ -456,7 +456,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var imageName = GetImageName(diag.Severity);
 			if (imageName == null)
 				return null;
-			return imageManager.GetImage(new ImageReference(GetType().Assembly, imageName), null);
+			return imageService.GetImage(new ImageReference(GetType().Assembly, imageName), null);
 		}
 
 		static string GetImageName(CompilerDiagnosticSeverity severity) {

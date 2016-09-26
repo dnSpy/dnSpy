@@ -29,8 +29,8 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
@@ -82,12 +82,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					var obj = res.Object;
 
 					if (obj is AssemblyDef && filter.GetResult(obj as AssemblyDef).IsMatch)
-						return res.DnSpyFile;
+						return res.Document;
 					if (obj is ModuleDef && filter.GetResult(obj as ModuleDef).IsMatch)
-						return res.DnSpyFile;
-					if (obj is IDnSpyFile && filter.GetResult(obj as IDnSpyFile).IsMatch)
-						return (IDnSpyFile)obj;
-					if (obj is string && filter.GetResult((string)obj, res.DnSpyFile).IsMatch)
+						return res.Document;
+					if (obj is IDsDocument && filter.GetResult(obj as IDsDocument).IsMatch)
+						return (IDsDocument)obj;
+					if (obj is string && filter.GetResult((string)obj, res.Document).IsMatch)
 						return (string)obj;
 					if (obj is TypeDef && filter.GetResult(obj as TypeDef).IsMatch)
 						return obj;
@@ -105,15 +105,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 						return (ModuleRef)obj;
 				}
 
-				var item = fileTreeView.TreeView.FromImplNode(SelectedItem);
+				var item = documentTreeView.TreeView.FromImplNode(SelectedItem);
 				if (item != null) {
-					if (item is IAssemblyFileNode && filter.GetResult((item as IAssemblyFileNode).DnSpyFile.AssemblyDef).IsMatch)
-						return ((IAssemblyFileNode)item).DnSpyFile;
-					else if (item is IModuleFileNode && filter.GetResult((item as IModuleFileNode).DnSpyFile.ModuleDef).IsMatch)
-						return ((IModuleFileNode)item).DnSpyFile;
-					else if (item is IDnSpyFileNode && filter.GetResult((item as IDnSpyFileNode).DnSpyFile).IsMatch)
-						return ((IDnSpyFileNode)item).DnSpyFile;
-					if (item is INamespaceNode && filter.GetResult((item as INamespaceNode).Name, ((item as INamespaceNode).TreeNode.Parent.Data as IModuleFileNode).DnSpyFile).IsMatch)
+					if (item is IAssemblyDocumentNode && filter.GetResult((item as IAssemblyDocumentNode).Document.AssemblyDef).IsMatch)
+						return ((IAssemblyDocumentNode)item).Document;
+					else if (item is IModuleDocumentNode && filter.GetResult((item as IModuleDocumentNode).Document.ModuleDef).IsMatch)
+						return ((IModuleDocumentNode)item).Document;
+					else if (item is IDsDocumentNode && filter.GetResult((item as IDsDocumentNode).Document).IsMatch)
+						return ((IDsDocumentNode)item).Document;
+					if (item is INamespaceNode && filter.GetResult((item as INamespaceNode).Name, ((item as INamespaceNode).TreeNode.Parent.Data as IModuleDocumentNode).Document).IsMatch)
 						return ((INamespaceNode)item).Name;
 					if (item is ITypeNode && filter.GetResult((item as ITypeNode).TypeDef).IsMatch)
 						return ((ITypeNode)item).TypeDef;
@@ -196,7 +196,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ISearchResult searchResult;
 
-		public IEnumerable<IDecompiler> AllLanguages => decompilerManager.AllDecompilers;
+		public IEnumerable<IDecompiler> AllLanguages => decompilerService.AllDecompilers;
 
 		public IDecompiler Language {
 			get { return decompiler; }
@@ -209,10 +209,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 		IDecompiler decompiler;
-		readonly IDecompilerManager decompilerManager;
-		readonly IFileTreeView fileTreeView;
-		readonly IFileTreeNodeFilter filter;
-		readonly IFileSearcherProvider fileSearcherProvider;
+		readonly IDecompilerService decompilerService;
+		readonly IDocumentTreeView documentTreeView;
+		readonly IDocumentTreeNodeFilter filter;
+		readonly IDocumentSearcherProvider fileSearcherProvider;
 
 		public bool SyntaxHighlight { get; set; }
 		public string Title { get; }
@@ -220,12 +220,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool MatchWholeWords { get; }
 		bool MatchAnySearchTerm { get; }
 
-		public MemberPickerVM(IFileSearcherProvider fileSearcherProvider, IFileTreeView fileTreeView, IDecompilerManager decompilerManager, IFileTreeNodeFilter filter, string title, IEnumerable<IDnSpyFile> assemblies) {
+		public MemberPickerVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, IDocumentTreeNodeFilter filter, string title, IEnumerable<IDsDocument> assemblies) {
 			this.Title = title;
 			this.fileSearcherProvider = fileSearcherProvider;
-			this.decompilerManager = decompilerManager;
-			this.fileTreeView = fileTreeView;
-			this.decompiler = decompilerManager.Decompiler;
+			this.decompilerService = decompilerService;
+			this.documentTreeView = documentTreeView;
+			this.decompiler = decompilerService.Decompiler;
 			this.filter = filter;
 			this.delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
 			this.SearchResults = new ObservableCollection<ISearchResult>();
@@ -233,9 +233,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
 
 			foreach (var file in assemblies)
-				fileTreeView.FileManager.ForceAdd(file, false, null);
+				documentTreeView.DocumentService.ForceAdd(file, false, null);
 
-			fileTreeView.FileManager.CollectionChanged += (s, e) => Restart();
+			documentTreeView.DocumentService.CollectionChanged += (s, e) => Restart();
 
 			this.CaseSensitive = false;
 			this.MatchWholeWords = false;
@@ -244,18 +244,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public bool SelectItem(object item) {
-			var node = fileTreeView.FindNode(item);
+			var node = documentTreeView.FindNode(item);
 			if (node == null)
 				return false;
 
-			fileTreeView.TreeView.SelectItems(new ITreeNodeData[] { node });
-			SelectedItem = fileTreeView.TreeView.ToImplNode(node);
+			documentTreeView.TreeView.SelectItems(new ITreeNodeData[] { node });
+			SelectedItem = documentTreeView.TreeView.ToImplNode(node);
 
 			return true;
 		}
 
 		void RefreshTreeView() {
-			fileTreeView.SetDecompiler(Language);
+			documentTreeView.SetDecompiler(Language);
 			Restart();
 		}
 
@@ -267,7 +267,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (file == null)
 				return;
 
-			fileTreeView.FileManager.GetOrAdd(file);
+			documentTreeView.DocumentService.GetOrAdd(file);
 		}
 
 		void DelayStartSearch() => Restart();
@@ -277,7 +277,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (string.IsNullOrEmpty(SearchText))
 				SearchResults.Clear();
 			else {
-				var options = new FileSearcherOptions {
+				var options = new DocumentSearcherOptions {
 					SearchComparer = SearchComparerFactory.Create(SearchText, CaseSensitive, MatchWholeWords, MatchAnySearchTerm),
 					Filter = filter,
 					SearchDecompiledData = false,
@@ -288,10 +288,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				fileSearcher.BackgroundType = BackgroundType.Search;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
-				fileSearcher.Start(fileTreeView.TreeView.Root.DataChildren.OfType<IDnSpyFileNode>());
+				fileSearcher.Start(documentTreeView.TreeView.Root.DataChildren.OfType<IDsDocumentNode>());
 			}
 		}
-		IFileSearcher fileSearcher;
+		IDocumentSearcher fileSearcher;
 		bool searchCompleted;
 
 		void FileSearcher_OnSearchCompleted(object sender, EventArgs e) {

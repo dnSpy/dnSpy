@@ -23,13 +23,13 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefsVM : ListVM<ParamDefVM, ParamDef> {
-		public ParamDefsVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base(dnSpy_AsmEditor_Resources.EditParameter, dnSpy_AsmEditor_Resources.CreateParameter, ownerModule, decompilerManager, ownerType, ownerMethod) {
+		public ParamDefsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+			: base(dnSpy_AsmEditor_Resources.EditParameter, dnSpy_AsmEditor_Resources.CreateParameter, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 
-		protected override ParamDefVM Create(ParamDef model) => new ParamDefVM(new ParamDefOptions(model), OwnerModule, decompilerManager, ownerType, ownerMethod);
-		protected override ParamDefVM Clone(ParamDefVM obj) => new ParamDefVM(obj.CreateParamDefOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
-		protected override ParamDefVM Create() => new ParamDefVM(new ParamDefOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
+		protected override ParamDefVM Create(ParamDef model) => new ParamDefVM(new ParamDefOptions(model), OwnerModule, decompilerService, ownerType, ownerMethod);
+		protected override ParamDefVM Clone(ParamDefVM obj) => new ParamDefVM(obj.CreateParamDefOptions(), OwnerModule, decompilerService, ownerType, ownerMethod);
+		protected override ParamDefVM Create() => new ParamDefVM(new ParamDefOptions(), OwnerModule, decompilerService, ownerType, ownerMethod);
 
 		protected override int GetAddIndex(ParamDefVM obj) {
 			ushort sequence = obj.Sequence.Value;

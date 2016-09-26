@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 	[Export(typeof(IQuickInfoSourceProvider))]
-	[Name(PredefinedDnSpyQuickInfoSourceProviders.Roslyn)]
+	[Name(PredefinedDsQuickInfoSourceProviders.Roslyn)]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class QuickInfoSourceProvider : IQuickInfoSourceProvider {
 		readonly IQuickInfoContentCreatorProvider quickInfoContentCreatorProvider;

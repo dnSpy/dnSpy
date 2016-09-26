@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class AsmEditorContext {
-		public IFileTreeNodeData[] Nodes { get; }
+		public IDocumentTreeNodeData[] Nodes { get; }
 
-		public AsmEditorContext(IFileTreeNodeData[] nodes) {
+		public AsmEditorContext(IDocumentTreeNodeData[] nodes) {
 			this.Nodes = nodes;
 		}
 	}

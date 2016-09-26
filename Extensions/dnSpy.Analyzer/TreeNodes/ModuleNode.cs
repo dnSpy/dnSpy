@@ -33,7 +33,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.module = module;
 		}
 
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(module);
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(module);
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Module, NameUtilities.CleanIdentifier(module.Name));
 	}

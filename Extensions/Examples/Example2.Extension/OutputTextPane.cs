@@ -35,8 +35,8 @@ namespace Example2.Extension {
 		[ExportAutoLoaded(Order = double.MinValue)]
 		sealed class InitializeLogger : IAutoLoaded {
 			[ImportingConstructor]
-			InitializeLogger(IOutputManager outputManager) {
-				Instance = outputManager.Create(THE_GUID, "My Logger");
+			InitializeLogger(IOutputService outputService) {
+				Instance = outputService.Create(THE_GUID, "My Logger");
 				Instance.WriteLine("Logger initialized!");
 			}
 		}

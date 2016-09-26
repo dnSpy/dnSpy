@@ -82,7 +82,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickMethod() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
+			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null)
 				Method = newMethod;
 		}

@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using dndbg.Engine;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 
@@ -35,10 +35,10 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		abstract class CommandBase : MenuItemBase<Context> {
-			readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+			readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 
-			protected CommandBase(Lazy<IInMemoryModuleManager> inMemoryModuleManager) {
-				this.inMemoryModuleManager = inMemoryModuleManager;
+			protected CommandBase(Lazy<IInMemoryModuleService> inMemoryModuleService) {
+				this.inMemoryModuleService = inMemoryModuleService;
 			}
 
 			protected sealed override Context CreateContext(IMenuItemContext context) {
@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 
 			MemoryModuleDefFile GetFile(IMenuItemContext context) {
-				var mfile = GetTreeNode(context).GetModuleNode()?.DnSpyFile as MemoryModuleDefFile;
+				var mfile = GetTreeNode(context).GetModuleNode()?.Document as MemoryModuleDefFile;
 				if (mfile == null)
 					return null;
 				if (mfile.Process.HasExited || mfile.Process.Debugger.ProcessState == DebuggerProcessState.Terminated)
@@ -55,29 +55,29 @@ namespace dnSpy.Debugger.IMModules {
 				return mfile;
 			}
 
-			protected abstract IFileTreeNodeData GetTreeNode(IMenuItemContext context);
+			protected abstract IDocumentTreeNodeData GetTreeNode(IMenuItemContext context);
 			protected void ExecuteInternal(Context context) =>
-				inMemoryModuleManager.Value.UpdateModuleMemory(context.MemoryModuleDefFile);
+				inMemoryModuleService.Value.UpdateModuleMemory(context.MemoryModuleDefFile);
 		}
 
-		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_FILES_DEBUGRT, Order = 0)]
+		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUGRT, Order = 0)]
 		sealed class FilesCommand : CommandBase {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IInMemoryModuleManager> inMemoryModuleManager)
-				: base(inMemoryModuleManager) {
+			FilesCommand(Lazy<IInMemoryModuleService> inMemoryModuleService)
+				: base(inMemoryModuleService) {
 			}
 
 			public override void Execute(Context context) => ExecuteInternal(context);
 
-			protected override IFileTreeNodeData GetTreeNode(IMenuItemContext context) {
-				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+			protected override IDocumentTreeNodeData GetTreeNode(IMenuItemContext context) {
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				var nodes = context.Find<ITreeNodeData[]>();
 				if (nodes != null && nodes.Length != 0)
-					return nodes[0] as IFileTreeNodeData;
+					return nodes[0] as IDocumentTreeNodeData;
 				return null;
 			}
 		}
@@ -87,19 +87,19 @@ namespace dnSpy.Debugger.IMModules {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
 
-			readonly IFileTreeView fileTreeView;
+			readonly IDocumentTreeView documentTreeView;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IInMemoryModuleManager> inMemoryModuleManager, IFileTreeView fileTreeView)
-				: base(inMemoryModuleManager) {
-				this.fileTreeView = fileTreeView;
+			CodeCommand(Lazy<IInMemoryModuleService> inMemoryModuleService, IDocumentTreeView documentTreeView)
+				: base(inMemoryModuleService) {
+				this.documentTreeView = documentTreeView;
 			}
 
 			public override void Execute(Context context) => ExecuteInternal(context);
 
-			protected override IFileTreeNodeData GetTreeNode(IMenuItemContext context) {
+			protected override IDocumentTreeNodeData GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
-					return fileTreeView.TreeView.SelectedItem as IFileTreeNodeData;
+					return documentTreeView.TreeView.SelectedItem as IDocumentTreeNodeData;
 				return null;
 			}
 		}

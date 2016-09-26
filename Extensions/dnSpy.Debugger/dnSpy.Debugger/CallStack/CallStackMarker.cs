@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Debugger.CallStack {
 	[Export(typeof(ILoadBeforeDebug))]
 	sealed class CallStackMarker : ILoadBeforeDebug {
-		readonly IStackFrameManager stackFrameManager;
+		readonly IStackFrameService stackFrameService;
 		readonly IGlyphTextMarkerService glyphTextMarkerService;
 		readonly IClassificationType classificationTypeCurrentStatement;
 		readonly IClassificationType classificationTypeCallReturn;
@@ -41,16 +41,16 @@ namespace dnSpy.Debugger.CallStack {
 		IGlyphTextMethodMarker callReturnMarker;
 
 		[ImportingConstructor]
-		CallStackMarker(IStackFrameManager stackFrameManager, IGlyphTextMarkerService glyphTextMarkerService, IClassificationTypeRegistryService classificationTypeRegistryService, Lazy<ActiveStatementService> activeStatementService) {
-			this.stackFrameManager = stackFrameManager;
+		CallStackMarker(IStackFrameService stackFrameService, IGlyphTextMarkerService glyphTextMarkerService, IClassificationTypeRegistryService classificationTypeRegistryService, Lazy<ActiveStatementService> activeStatementService) {
+			this.stackFrameService = stackFrameService;
 			this.glyphTextMarkerService = glyphTextMarkerService;
 			this.classificationTypeCurrentStatement = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentStatement);
 			this.classificationTypeCallReturn = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CallReturn);
 			this.activeStatementService = activeStatementService;
-			stackFrameManager.NewFrames += StackFrameManager_NewFrames;
+			stackFrameService.NewFrames += StackFrameService_NewFrames;
 		}
 
-		void StackFrameManager_NewFrames(object sender, NewFramesEventArgs e) {
+		void StackFrameService_NewFrames(object sender, NewFramesEventArgs e) {
 			switch (e.Kind) {
 			case NewFramesKind.NewFrames:
 				ClearMarkers();
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.CallStack {
 			Debug.Assert(currentStatementMarker == null);
 			Debug.Assert(callReturnMarker == null);
 			bool tooManyFrames;
-			var frames = stackFrameManager.GetFrames(out tooManyFrames);
+			var frames = stackFrameService.GetFrames(out tooManyFrames);
 
 			if (frames.Count == 0)
 				return;
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.CallStack {
 					textViewFilter);
 			}
 
-			int selectedFrameNumber = stackFrameManager.SelectedFrameNumber;
+			int selectedFrameNumber = stackFrameService.SelectedFrameNumber;
 			methodOffset = selectedFrameNumber != 0 && selectedFrameNumber < frames.Count ? GetModuleTokenId(frames[selectedFrameNumber]) : null;
 			if (methodOffset != null) {
 				callReturnMarker = glyphTextMarkerService.AddMarker(

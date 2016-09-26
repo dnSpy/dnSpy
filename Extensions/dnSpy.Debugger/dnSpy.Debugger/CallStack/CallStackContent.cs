@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
@@ -49,33 +49,33 @@ namespace dnSpy.Debugger.CallStack {
 
 		readonly CallStackControl callStackControl;
 		readonly ICallStackVM vmCallStack;
-		readonly Lazy<IStackFrameManager> stackFrameManager;
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IStackFrameService> stackFrameService;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		CallStackContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, ICallStackVM callStackVM, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
+		CallStackContent(IWpfCommandService wpfCommandService, IThemeService themeService, ICallStackVM callStackVM, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
 			this.callStackControl = new CallStackControl();
 			this.vmCallStack = callStackVM;
-			this.stackFrameManager = stackFrameManager;
-			this.fileTabManager = fileTabManager;
+			this.stackFrameService = stackFrameService;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.moduleIdProvider = moduleIdProvider;
 			this.callStackControl.DataContext = this.vmCallStack;
 			this.callStackControl.CallStackListViewDoubleClick += CallStackControl_CallStackListViewDoubleClick;
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_CONTROL, callStackControl);
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW, callStackControl.ListView);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_CONTROL, callStackControl);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW, callStackControl.ListView);
 		}
 
 		void CallStackControl_CallStackListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			SwitchToFrameCallStackCtxMenuCommand.Execute(moduleIdProvider, stackFrameManager.Value, fileTabManager, moduleLoader.Value, callStackControl.ListView.SelectedItem as CallStackFrameVM, newTab);
+			SwitchToFrameCallStackCtxMenuCommand.Execute(moduleIdProvider, stackFrameService.Value, documentTabService, moduleLoader.Value, callStackControl.ListView.SelectedItem as CallStackFrameVM, newTab);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmCallStack.RefreshThemeFields();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmCallStack.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(callStackControl.ListView);
 		public void OnClose() => vmCallStack.IsEnabled = false;
 		public void OnShow() => vmCallStack.IsEnabled = true;

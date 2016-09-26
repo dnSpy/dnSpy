@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files.Tabs.DocViewer.ToolTips;
+using dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.BamlDecompiler {

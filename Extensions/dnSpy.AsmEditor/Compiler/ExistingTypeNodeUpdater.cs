@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class ExistingTypeNodeUpdater {
@@ -36,8 +36,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly PropertyNodeCreator[] properties;
 		readonly EditedMethodBodyUpdater[] editedMethods;
 
-		public ExistingTypeNodeUpdater(Lazy<IMethodAnnotations> methodAnnotations, IModuleFileNode modNode, MergedImportedType type) {
-			this.typeNode = modNode.Context.FileTreeView.FindNode(type.TargetType);
+		public ExistingTypeNodeUpdater(Lazy<IMethodAnnotations> methodAnnotations, IModuleDocumentNode modNode, MergedImportedType type) {
+			this.typeNode = modNode.Context.DocumentTreeView.FindNode(type.TargetType);
 			if (this.typeNode == null)
 				throw new InvalidOperationException();
 			this.nestedTypes1 = type.NewNestedTypes.OfType<MergedImportedType>().Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();

@@ -25,14 +25,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CANamedArgumentsVM : ListVM<CANamedArgumentVM, CANamedArgument> {
 		readonly Predicate<CANamedArgumentsVM> canAdd;
 
-		public CANamedArgumentsVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod, Predicate<CANamedArgumentsVM> canAdd)
-			: base(null, null, ownerModule, decompilerManager, ownerType, ownerMethod, true) {
+		public CANamedArgumentsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, Predicate<CANamedArgumentsVM> canAdd)
+			: base(null, null, ownerModule, decompilerService, ownerType, ownerMethod, true) {
 			this.canAdd = canAdd;
 		}
 
-		protected override CANamedArgumentVM Create(CANamedArgument model) => new CANamedArgumentVM(OwnerModule, model, new TypeSigCreatorOptions(OwnerModule, decompilerManager));
-		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj) => new CANamedArgumentVM(OwnerModule, obj.CreateCANamedArgument(), new TypeSigCreatorOptions(OwnerModule, decompilerManager));
-		protected override CANamedArgumentVM Create() => new CANamedArgumentVM(OwnerModule, new CANamedArgument(false, OwnerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(OwnerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(OwnerModule, decompilerManager));
+		protected override CANamedArgumentVM Create(CANamedArgument model) => new CANamedArgumentVM(OwnerModule, model, new TypeSigCreatorOptions(OwnerModule, decompilerService));
+		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj) => new CANamedArgumentVM(OwnerModule, obj.CreateCANamedArgument(), new TypeSigCreatorOptions(OwnerModule, decompilerService));
+		protected override CANamedArgumentVM Create() => new CANamedArgumentVM(OwnerModule, new CANamedArgument(false, OwnerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(OwnerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(OwnerModule, decompilerService));
 		protected override bool AddItemCanExecute() => canAdd == null || canAdd(this);
 	}
 }

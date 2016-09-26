@@ -45,7 +45,7 @@ namespace dnSpy.Text.Editor {
 			new VerticalScrollBarMargin(scrollMapFactoryService, wpfTextViewHost);
 	}
 
-	sealed class VerticalScrollBarMargin : DnSpyScrollBar, IWpfTextViewMargin {
+	sealed class VerticalScrollBarMargin : DsScrollBar, IWpfTextViewMargin {
 		public bool Enabled => wpfTextViewHost.TextView.Options.IsVerticalScrollBarEnabled();
 		public double MarginSize => ActualWidth;
 		public FrameworkElement VisualElement => this;

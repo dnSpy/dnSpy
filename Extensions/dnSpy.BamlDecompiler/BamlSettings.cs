@@ -26,7 +26,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Settings.Dialog;
@@ -59,14 +59,14 @@ namespace dnSpy.BamlDecompiler {
 	sealed class BamlSettingsImpl : BamlSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("D9809EB3-1605-4E05-A84F-6EE241FAAD6C");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		BamlSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		BamlSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.DisassembleBaml = sect.Attribute<bool?>(nameof(DisassembleBaml)) ?? this.DisassembleBaml;
 			this.disableSave = false;
 		}
@@ -75,7 +75,7 @@ namespace dnSpy.BamlDecompiler {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(DisassembleBaml), DisassembleBaml);
 		}
 	}
@@ -118,17 +118,17 @@ namespace dnSpy.BamlDecompiler {
 
 	[ExportAutoLoaded]
 	sealed class BamlRefresher : IAutoLoaded {
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		BamlRefresher(BamlSettingsImpl bamlSettings, IFileTabManager fileTabManager) {
-			this.fileTabManager = fileTabManager;
+		BamlRefresher(BamlSettingsImpl bamlSettings, IDocumentTabService documentTabService) {
+			this.documentTabService = documentTabService;
 			bamlSettings.PropertyChanged += BamlSettings_PropertyChanged;
 		}
 
 		void BamlSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(BamlSettings.DisassembleBaml))
-				fileTabManager.Refresh<BamlResourceElementNode>();
+				documentTabService.Refresh<BamlResourceElementNode>();
 		}
 	}
 }

@@ -21,16 +21,16 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Exceptions {
 	interface IExceptionContext {
-		IExceptionManager ExceptionManager { get; }
+		IExceptionService ExceptionService { get; }
 		bool SyntaxHighlight { get; }
 	}
 
 	sealed class ExceptionContext : IExceptionContext {
-		public IExceptionManager ExceptionManager { get; }
+		public IExceptionService ExceptionService { get; }
 		public bool SyntaxHighlight { get; set; }
 
-		public ExceptionContext(IExceptionManager exceptionManager) {
-			this.ExceptionManager = exceptionManager;
+		public ExceptionContext(IExceptionService exceptionService) {
+			this.ExceptionService = exceptionService;
 		}
 	}
 
@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Exceptions {
 				if (ExceptionInfo.BreakOnFirstChance != value) {
 					ExceptionInfo.BreakOnFirstChance = value;
 					OnPropertyChanged(nameof(BreakOnFirstChance));
-					Context.ExceptionManager.BreakOnFirstChanceChanged(ExceptionInfo);
+					Context.ExceptionService.BreakOnFirstChanceChanged(ExceptionInfo);
 				}
 			}
 		}

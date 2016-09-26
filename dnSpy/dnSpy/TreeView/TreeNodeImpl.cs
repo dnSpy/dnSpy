@@ -25,7 +25,7 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.TreeView {
 	sealed class TreeNodeImpl : ITreeNode {
 		public TreeViewImpl TreeView { get; }
-		public DnSpySharpTreeNode Node => nodeList.Node;
+		public DsSharpTreeNode Node => nodeList.Node;
 		public ITreeNodeData Data { get; }
 		public IEnumerable<ITreeNodeData> DataChildren => Children.Select(a => a.Data);
 
@@ -34,7 +34,7 @@ namespace dnSpy.TreeView {
 
 		public ITreeNode Parent {
 			get {
-				var parent = (DnSpySharpTreeNode)nodeList.Node.Parent;
+				var parent = (DsSharpTreeNode)nodeList.Node.Parent;
 				return parent == null ? null : parent.TreeNodeImpl;
 			}
 		}
@@ -66,8 +66,8 @@ namespace dnSpy.TreeView {
 		}
 
 		public void AddChild(ITreeNode node) => TreeView.AddSorted(this, node);
-		public IEnumerable<ITreeNode> Descendants() => Node.Descendants().Select(a => ((DnSpySharpTreeNode)a).TreeNodeImpl);
-		public IEnumerable<ITreeNode> DescendantsAndSelf() => Node.DescendantsAndSelf().Select(a => ((DnSpySharpTreeNode)a).TreeNodeImpl);
+		public IEnumerable<ITreeNode> Descendants() => Node.Descendants().Select(a => ((DsSharpTreeNode)a).TreeNodeImpl);
+		public IEnumerable<ITreeNode> DescendantsAndSelf() => Node.DescendantsAndSelf().Select(a => ((DsSharpTreeNode)a).TreeNodeImpl);
 
 		public void RefreshUI() {
 			Data.OnRefreshUI();

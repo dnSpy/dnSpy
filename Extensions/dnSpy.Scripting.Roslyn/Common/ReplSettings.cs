@@ -53,15 +53,15 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	}
 
 	abstract class ReplSettingsImplBase : ReplSettings {
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 		readonly Guid guid;
 
-		protected ReplSettingsImplBase(Guid guid, ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		protected ReplSettingsImplBase(Guid guid, ISettingsService settingsService) {
+			this.settingsService = settingsService;
 			this.guid = guid;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(guid);
+			var sect = settingsService.GetOrCreateSection(guid);
 			this.WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? this.WordWrapStyle;
 			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
 			this.disableSave = false;
@@ -71,7 +71,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(guid);
+			var sect = settingsService.RecreateSection(guid);
 			sect.Attribute(nameof(WordWrapStyle), WordWrapStyle);
 			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);
 		}

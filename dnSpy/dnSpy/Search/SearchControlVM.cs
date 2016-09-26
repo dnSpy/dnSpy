@@ -26,7 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Data;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
@@ -136,14 +136,14 @@ namespace dnSpy.Search {
 		}
 		BackgroundType backgroundType;
 
-		readonly IImageManager imageManager;
-		readonly IFileSearcherProvider fileSearcherProvider;
-		readonly IFileTreeView fileTreeView;
+		readonly IImageService imageService;
+		readonly IDocumentSearcherProvider fileSearcherProvider;
+		readonly IDocumentTreeView documentTreeView;
 
-		public SearchControlVM(IImageManager imageManager, IFileSearcherProvider fileSearcherProvider, IFileTreeView fileTreeView, ISearchSettings searchSettings) {
-			this.imageManager = imageManager;
+		public SearchControlVM(IImageService imageService, IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, ISearchSettings searchSettings) {
+			this.imageService = imageService;
 			this.fileSearcherProvider = fileSearcherProvider;
-			this.fileTreeView = fileTreeView;
+			this.documentTreeView = documentTreeView;
 			this.SearchSettings = searchSettings;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			this.delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
@@ -183,7 +183,7 @@ namespace dnSpy.Search {
 		}
 
 		void Add(SearchType searchType, string name, string icon, string toolTip, VisibleMembersFlags flags) =>
-			SearchTypeVMs.Add(new SearchTypeVM(imageManager, searchType, name, toolTip, icon, flags));
+			SearchTypeVMs.Add(new SearchTypeVM(imageService, searchType, name, toolTip, icon, flags));
 		void DelayStartSearch() => Restart();
 
 		void StartSearch() {
@@ -196,9 +196,9 @@ namespace dnSpy.Search {
 			if (string.IsNullOrEmpty(SearchText))
 				SearchResults.Clear();
 			else {
-				var options = new FileSearcherOptions {
+				var options = new DocumentSearcherOptions {
 					SearchComparer = CreateSearchComparer(),
-					Filter = new FlagsFileTreeNodeFilter(selectedSearchTypeVM.Flags),
+					Filter = new FlagsDocumentTreeNodeFilter(selectedSearchTypeVM.Flags),
 					SearchDecompiledData = SearchSettings.SearchDecompiledData,
 				};
 				fileSearcher = fileSearcherProvider.Create(options);
@@ -230,29 +230,29 @@ namespace dnSpy.Search {
 				}
 			}
 		}
-		IFileSearcher fileSearcher;
+		IDocumentSearcher fileSearcher;
 		bool searchCompleted;
 
-		bool CanSearchFile(IDnSpyFileNode node) =>
-			SearchSettings.SearchGacAssemblies || !GacInfo.IsGacPath(node.DnSpyFile.Filename);
-		IEnumerable<IDnSpyFileNode> GetAllFilesToSearch() =>
-			fileTreeView.TreeView.Root.DataChildren.OfType<IDnSpyFileNode>().Where(a => CanSearchFile(a));
-		IEnumerable<IDnSpyFileNode> GetSelectedFilesToSearch() =>
-			fileTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => a != null && CanSearchFile(a)).Distinct();
+		bool CanSearchFile(IDsDocumentNode node) =>
+			SearchSettings.SearchGacAssemblies || !GacInfo.IsGacPath(node.Document.Filename);
+		IEnumerable<IDsDocumentNode> GetAllFilesToSearch() =>
+			documentTreeView.TreeView.Root.DataChildren.OfType<IDsDocumentNode>().Where(a => CanSearchFile(a));
+		IEnumerable<IDsDocumentNode> GetSelectedFilesToSearch() =>
+			documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => a != null && CanSearchFile(a)).Distinct();
 
-		IEnumerable<IDnSpyFileNode> GetAllFilesInSameDirToSearch() {
-			var dirsEnum = GetSelectedFilesToSearch().Where(a => File.Exists(a.DnSpyFile.Filename)).Select(a => Path.GetDirectoryName(a.DnSpyFile.Filename));
+		IEnumerable<IDsDocumentNode> GetAllFilesInSameDirToSearch() {
+			var dirsEnum = GetSelectedFilesToSearch().Where(a => File.Exists(a.Document.Filename)).Select(a => Path.GetDirectoryName(a.Document.Filename));
 			var dirs = new HashSet<string>(dirsEnum, StringComparer.OrdinalIgnoreCase);
-			return GetAllFilesToSearch().Where(a => File.Exists(a.DnSpyFile.Filename) && dirs.Contains(Path.GetDirectoryName(a.DnSpyFile.Filename)));
+			return GetAllFilesToSearch().Where(a => File.Exists(a.Document.Filename) && dirs.Contains(Path.GetDirectoryName(a.Document.Filename)));
 		}
 
 		IEnumerable<SearchTypeInfo> GetSelectedTypeToSearch() {
-			foreach (var node in fileTreeView.TreeView.TopLevelSelection.Select(a => a.GetAncestorOrSelf<ITypeNode>()).Where(a => a != null).Distinct()) {
-				var fileNode = node.GetDnSpyFileNode();
+			foreach (var node in documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetAncestorOrSelf<ITypeNode>()).Where(a => a != null).Distinct()) {
+				var fileNode = node.GetDocumentNode();
 				Debug.Assert(fileNode != null);
 				if (fileNode == null)
 					continue;
-				yield return new SearchTypeInfo(fileNode.DnSpyFile, node.TypeDef);
+				yield return new SearchTypeInfo(fileNode.Document, node.TypeDef);
 			}
 		}
 

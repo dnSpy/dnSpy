@@ -46,16 +46,16 @@ namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionListSettings : IExceptionListSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("102DCD2E-BE0A-477C-B4D0-600C5CA28A6A");
 
-		readonly IExceptionManager exceptionManager;
-		readonly ISettingsManager settingsManager;
+		readonly IExceptionService exceptionService;
+		readonly ISettingsService settingsService;
 		readonly Lazy<IDefaultExceptionSettings> defaultExceptionSettings;
 
 		[ImportingConstructor]
-		ExceptionListSettings(IExceptionManager exceptionManager, ISettingsManager settingsManager, Lazy<IDefaultExceptionSettings> defaultExceptionSettings) {
-			this.exceptionManager = exceptionManager;
-			this.settingsManager = settingsManager;
+		ExceptionListSettings(IExceptionService exceptionService, ISettingsService settingsService, Lazy<IDefaultExceptionSettings> defaultExceptionSettings) {
+			this.exceptionService = exceptionService;
+			this.settingsService = settingsService;
 			this.defaultExceptionSettings = defaultExceptionSettings;
-			exceptionManager.Changed += ExceptionManager_Changed;
+			exceptionService.Changed += ExceptionService_Changed;
 
 			disableSaveCounter++;
 			Load();
@@ -63,11 +63,11 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 		int disableSaveCounter;
 
-		void ExceptionManager_Changed(object sender, ExceptionManagerEventArgs e) => Save();
+		void ExceptionService_Changed(object sender, ExceptionServiceEventArgs e) => Save();
 
 		void Load() {
-			exceptionManager.RestoreDefaults();
-			var section = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			exceptionService.RestoreDefaults();
+			var section = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			foreach (var exx in section.SectionsWithName("Exception")) {
 				var exceptionType = exx.Attribute<ExceptionType?>("ExceptionType");
 				var fullName = exx.Attribute<string>("FullName");
@@ -85,13 +85,13 @@ namespace dnSpy.Debugger.Exceptions {
 				var key = new ExceptionInfoKey(exceptionType.Value, fullName);
 				switch (diffType.Value) {
 				case ExceptionDiffType.Remove:
-					exceptionManager.Remove(key);
+					exceptionService.Remove(key);
 					break;
 
 				case ExceptionDiffType.AddOrUpdate:
 					if (breakOnFirstChance == null)
 						continue;
-					exceptionManager.AddOrUpdate(key, breakOnFirstChance.Value, isOtherExceptions);
+					exceptionService.AddOrUpdate(key, breakOnFirstChance.Value, isOtherExceptions);
 					break;
 
 				default:
@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.Exceptions {
 		void Save() {
 			if (disableSaveCounter != 0)
 				return;
-			var section = settingsManager.RecreateSection(SETTINGS_GUID);
+			var section = settingsService.RecreateSection(SETTINGS_GUID);
 			foreach (var tuple in GetDiff()) {
 				var exx = section.CreateSection("Exception");
 				exx.Attribute("ExceptionType", tuple.Item2.ExceptionType);
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Exceptions {
 			foreach (var info in defaultExceptionSettings.Value.ExceptionInfos)
 				defaultInfos[info.Key] = info;
 
-			foreach (var info in exceptionManager.ExceptionInfos) {
+			foreach (var info in exceptionService.ExceptionInfos) {
 				if (info.IsOtherExceptions) {
 					if (!info.BreakOnFirstChance)
 						continue;

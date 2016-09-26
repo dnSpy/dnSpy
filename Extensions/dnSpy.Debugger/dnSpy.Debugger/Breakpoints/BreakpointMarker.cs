@@ -37,16 +37,16 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly ILCodeBreakpointGlyphTextMarkerHandler ilCodeBreakpointGlyphTextMarkerHandler;
 
 		[ImportingConstructor]
-		BreakpointMarker(IBreakpointManager breakpointManager, IGlyphTextMarkerService glyphTextMarkerService, IClassificationTypeRegistryService classificationTypeRegistryService, ILCodeBreakpointGlyphTextMarkerHandler ilCodeBreakpointGlyphTextMarkerHandler) {
+		BreakpointMarker(IBreakpointService breakpointService, IGlyphTextMarkerService glyphTextMarkerService, IClassificationTypeRegistryService classificationTypeRegistryService, ILCodeBreakpointGlyphTextMarkerHandler ilCodeBreakpointGlyphTextMarkerHandler) {
 			this.glyphTextMarkerService = glyphTextMarkerService;
 			this.classificationTypeEnabledBreakpoint = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement);
 			this.toMethodMarkers = new Dictionary<ILCodeBreakpoint, IGlyphTextMethodMarker>();
 			this.ilCodeBreakpointGlyphTextMarkerHandler = ilCodeBreakpointGlyphTextMarkerHandler;
-			breakpointManager.BreakpointsAdded += BreakpointManager_BreakpointsAdded;
-			breakpointManager.BreakpointsRemoved += BreakpointManager_BreakpointsRemoved;
+			breakpointService.BreakpointsAdded += BreakpointService_BreakpointsAdded;
+			breakpointService.BreakpointsRemoved += BreakpointService_BreakpointsRemoved;
 		}
 
-		void BreakpointManager_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
+		void BreakpointService_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
 			foreach (var bp in e.Breakpoints) {
 				var ilbp = bp as ILCodeBreakpoint;
 				if (ilbp != null)
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		void BreakpointManager_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
+		void BreakpointService_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
 			foreach (var bp in e.Breakpoints) {
 				var ilbp = bp as ILCodeBreakpoint;
 				if (ilbp != null)

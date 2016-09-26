@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	sealed class TextViewMouseProcessorCollection {
 		readonly IWpfTextView wpfTextView;
-		readonly IDnSpyWpfTextViewImpl dnSpyWpfTextView;
+		readonly IDsWpfTextViewImpl dsWpfTextView;
 		readonly Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly Func<MouseEventArgs, bool> allowEventDelegate;
@@ -39,7 +39,7 @@ namespace dnSpy.Text.Editor {
 
 		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.wpfTextView = wpfTextView;
-			this.dnSpyWpfTextView = wpfTextView as IDnSpyWpfTextViewImpl;
+			this.dsWpfTextView = wpfTextView as IDsWpfTextViewImpl;
 			this.mouseProcessorProviders = Orderer.Order(mouseProcessorProviders).ToArray();
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.allowEventDelegate = AllowMouseEvent;
@@ -49,7 +49,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool AllowMouseEvent(MouseEventArgs e) {
-			if (dnSpyWpfTextView != null && dnSpyWpfTextView.IsMouseOverOverlayLayerElement(e)) {
+			if (dsWpfTextView != null && dsWpfTextView.IsMouseOverOverlayLayerElement(e)) {
 				e.Handled = true;
 				return false;
 			}

@@ -47,7 +47,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
 
-			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedField, FindReferencesInType);
+			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.DocumentService, analyzedField, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}

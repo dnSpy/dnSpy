@@ -19,7 +19,7 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Contracts.Search {
 	/// <summary>
@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Owner file
 		/// </summary>
-		public IDnSpyFile DnSpyFile { get; }
+		public IDsDocument Document { get; }
 
 		/// <summary>
 		/// Type to search
@@ -39,14 +39,14 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="file">File</param>
+		/// <param name="document">Document</param>
 		/// <param name="type">Type</param>
-		public SearchTypeInfo(IDnSpyFile file, TypeDef type) {
-			if (file == null)
-				throw new ArgumentNullException(nameof(file));
+		public SearchTypeInfo(IDsDocument document, TypeDef type) {
+			if (document == null)
+				throw new ArgumentNullException(nameof(document));
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
-			this.DnSpyFile = file;
+			this.Document = document;
 			this.Type = type;
 		}
 	}

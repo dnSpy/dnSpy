@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
-	sealed class RoslynCompletion : DnSpyCompletion {
+	sealed class RoslynCompletion : DsCompletion {
 		public CompletionItem CompletionItem { get; }
 		readonly IImageMonikerService imageMonikerService;
 

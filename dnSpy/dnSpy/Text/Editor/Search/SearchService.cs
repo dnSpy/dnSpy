@@ -59,7 +59,7 @@ namespace dnSpy.Text.Editor.Search {
 	sealed class SearchService : ViewModelBase, ISearchService {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(PredefinedDnSpyAdornmentLayers.Search)]
+		[Name(PredefinedDsAdornmentLayers.Search)]
 		[LayerKind(LayerKind.Overlay)]
 		static AdornmentLayerDefinition searchServiceAdornmentLayerDefinition;
 #pragma warning restore 0169
@@ -382,7 +382,7 @@ namespace dnSpy.Text.Editor.Search {
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			}
 			if (layer == null)
-				layer = wpfTextView.GetAdornmentLayer(PredefinedDnSpyAdornmentLayers.Search);
+				layer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.Search);
 			if (layer.IsEmpty) {
 				layer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, searchControl, null);
 				wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;

@@ -19,7 +19,7 @@
 
 using System;
 using System.Windows.Controls;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Controls {
@@ -33,8 +33,8 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of <see cref="IDocumentViewer"/> UI control</summary>
 		public static readonly Guid GUID_DOCUMENTVIEWER_UICONTEXT = new Guid("38542BD9-D8E0-4281-8B71-6470F1342689");
 
-		/// <summary>Guid of file <see cref="ITreeView"/></summary>
-		public static readonly Guid GUID_FILE_TREEVIEW = new Guid("E0ABA20F-5CD7-4CFD-A9D4-F9F3C655DD4A");
+		/// <summary>Guid of document <see cref="ITreeView"/></summary>
+		public static readonly Guid GUID_DOCUMENT_TREEVIEW = new Guid("E0ABA20F-5CD7-4CFD-A9D4-F9F3C655DD4A");
 
 		/// <summary>Guid of analyzer <see cref="ITreeView"/></summary>
 		public static readonly Guid GUID_ANALYZER_TREEVIEW = new Guid("6C62342D-8CBE-4EC4-9E05-828DDCCFE934");

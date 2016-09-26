@@ -21,14 +21,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class MetaDataTableRecordNode : HexNode {
-		public override Guid Guid => new Guid(FileTVConstants.MDTBLREC_NODE_GUID);
+		public override Guid Guid => new Guid(DocumentTreeViewConstants.MDTBLREC_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, index.ToString());
 		public override object VMObject => Record;
 

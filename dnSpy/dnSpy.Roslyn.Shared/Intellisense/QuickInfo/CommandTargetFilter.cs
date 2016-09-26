@@ -41,7 +41,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 			return null;
 		}
 		static readonly string[] roles = new string[] {
-			PredefinedDnSpyTextViewRoles.RoslynCodeEditor,
+			PredefinedDsTextViewRoles.RoslynCodeEditor,
 			PredefinedTextViewRoles.Editable,
 		};
 	}

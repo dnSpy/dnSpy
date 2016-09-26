@@ -26,15 +26,15 @@ using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Menus {
 	sealed class ContextMenuProvider : IContextMenuProvider {
-		readonly MenuManager menuManager;
+		readonly MenuService menuService;
 		readonly FrameworkElement element;
 		readonly Guid guid;
 		readonly IGuidObjectsProvider provider;
 		readonly IContextMenuInitializer initCtxMenu;
 		readonly Guid ctxMenuGuid;
 
-		public ContextMenuProvider(MenuManager menuManager, FrameworkElement elem, Guid guid, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
-			this.menuManager = menuManager;
+		public ContextMenuProvider(MenuService menuService, FrameworkElement elem, Guid guid, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
+			this.menuService = menuService;
 			this.element = elem;
 			this.guid = guid;
 			this.provider = provider;
@@ -67,7 +67,7 @@ namespace dnSpy.Menus {
 			if (IsIgnored(sender, e))
 				return;
 
-			bool? b = menuManager.ShowContextMenu(e, element, ctxMenuGuid, ctxMenuGuid, new GuidObject(guid, element), provider, initCtxMenu, e.CursorLeft == -1 && e.CursorTop == -1);
+			bool? b = menuService.ShowContextMenu(e, element, ctxMenuGuid, ctxMenuGuid, new GuidObject(guid, element), provider, initCtxMenu, e.CursorLeft == -1 && e.CursorTop == -1);
 			if (b == null)
 				return;
 			if (!b.Value)
@@ -75,7 +75,7 @@ namespace dnSpy.Menus {
 		}
 
 		public void Show(FrameworkElement elem) {
-			bool? b = menuManager.ShowContextMenu(0, elem, ctxMenuGuid, ctxMenuGuid, new GuidObject(guid, element), provider, initCtxMenu, false);
+			bool? b = menuService.ShowContextMenu(0, elem, ctxMenuGuid, ctxMenuGuid, new GuidObject(guid, element), provider, initCtxMenu, false);
 			if (b == true) {
 				elem.ContextMenu.Placement = PlacementMode.Bottom;
 				elem.ContextMenu.PlacementTarget = elem;

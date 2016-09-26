@@ -27,11 +27,11 @@ using dnSpy.Contracts.ToolWindows.App;
 namespace dnSpy.MainApp {
 	[Export(typeof(IAppCommandLineArgsHandler))]
 	sealed class AppCommandLineArgsHandler : IAppCommandLineArgsHandler {
-		readonly IMainToolWindowManager mainToolWindowManager;
+		readonly IDsToolWindowService toolWindowService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(IMainToolWindowManager mainToolWindowManager) {
-			this.mainToolWindowManager = mainToolWindowManager;
+		AppCommandLineArgsHandler(IDsToolWindowService toolWindowService) {
+			this.toolWindowService = toolWindowService;
 		}
 
 		public double Order => 0;
@@ -47,16 +47,16 @@ namespace dnSpy.MainApp {
 
 		public void OnNewArgs(IAppCommandLineArgs args) {
 			foreach (var info in GetToolWindowInfos(args.HideToolWindow))
-				mainToolWindowManager.Close(info.Guid);
+				toolWindowService.Close(info.Guid);
 			foreach (var info in GetToolWindowInfos(args.ShowToolWindow)) {
-				var content = mainToolWindowManager.Show(info.Guid, info.Location);
+				var content = toolWindowService.Show(info.Guid, info.Location);
 				Debug.Assert(content != null);
 				if (content == null)
 					continue;
 				if (info.Location == null)
 					continue;
-				if (mainToolWindowManager.CanMove(content, info.Location.Value))
-					mainToolWindowManager.Move(content, info.Location.Value);
+				if (toolWindowService.CanMove(content, info.Location.Value))
+					toolWindowService.Move(content, info.Location.Value);
 			}
 		}
 

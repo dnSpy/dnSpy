@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	sealed class StorageStreamNode : HexNode {
-		public override Guid Guid => new Guid(FileTVConstants.STRGSTREAM_NODE_GUID);
+		public override Guid Guid => new Guid(DocumentTreeViewConstants.STRGSTREAM_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, StreamNumber.ToString());
 		public StorageStreamType StorageStreamType { get; }
 		public override object VMObject => storageStreamVM;

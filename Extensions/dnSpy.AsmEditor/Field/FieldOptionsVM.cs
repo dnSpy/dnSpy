@@ -179,9 +179,9 @@ namespace dnSpy.AsmEditor.Field {
 
 		readonly ModuleDef ownerModule;
 
-		public FieldOptionsVM(FieldDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType) {
+		public FieldOptionsVM(FieldDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -192,12 +192,12 @@ namespace dnSpy.AsmEditor.Field {
 			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
 			this.origOptions = options;
 
 			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Field_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerManager, ownerType, null);
+			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType, null);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 			this.FieldOffset = new NullableUInt32VM(a => HasErrorUpdated());
 			this.InitialValue = new HexStringVM(a => HasErrorUpdated());

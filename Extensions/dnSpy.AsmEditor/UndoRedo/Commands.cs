@@ -28,23 +28,23 @@ using dnSpy.Contracts.Extension;
 namespace dnSpy.AsmEditor.UndoRedo {
 	[ExportAutoLoaded]
 	sealed class UndoRedoCommmandLoader : IAutoLoaded {
-		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		UndoRedoCommmandLoader(IWpfCommandManager wpfCommandManager, Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IMessageBoxService messageBoxService) {
-			this.undoCommandManager = undoCommandManager;
+		UndoRedoCommmandLoader(IWpfCommandService wpfCommandService, Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IMessageBoxService messageBoxService) {
+			this.undoCommandService = undoCommandService;
 			this.messageBoxService = messageBoxService;
 
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
-			cmds.Add(UndoRoutedCommands.Undo, (s, e) => undoCommandManager.Value.Undo(), (s, e) => e.CanExecute = undoCommandManager.Value.CanUndo);
-			cmds.Add(UndoRoutedCommands.Redo, (s, e) => undoCommandManager.Value.Redo(), (s, e) => e.CanExecute = undoCommandManager.Value.CanRedo);
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
+			cmds.Add(UndoRoutedCommands.Undo, (s, e) => undoCommandService.Value.Undo(), (s, e) => e.CanExecute = undoCommandService.Value.CanUndo);
+			cmds.Add(UndoRoutedCommands.Redo, (s, e) => undoCommandService.Value.Redo(), (s, e) => e.CanExecute = undoCommandService.Value.CanRedo);
 
 			appWindow.MainWindowClosing += AppWindow_MainWindowClosing;
 		}
 
 		void AppWindow_MainWindowClosing(object sender, CancelEventArgs e) {
-			var count = undoCommandManager.Value.NumberOfModifiedDocuments;
+			var count = undoCommandService.Value.NumberOfModifiedDocuments;
 			if (count == 0)
 				return;
 

@@ -21,13 +21,13 @@ using System;
 using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageSectionHeaderNode : HexNode {
-		public override Guid Guid => new Guid(FileTVConstants.IMGSECTHEADER_NODE_GUID);
+		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMGSECTHEADER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, SectionNumber.ToString());
 		public override object VMObject => imageSectionHeaderVM;
 

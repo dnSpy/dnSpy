@@ -52,8 +52,8 @@ namespace dnSpy.Text.Editor {
 		public object Tag { get; set; }
 		public IReplEditorOperations ReplEditorOperations { get; }
 		public ICommandTargetCollection CommandTarget => wpfTextView.CommandTarget;
-		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
-		public IDnSpyWpfTextViewHost TextViewHost => wpfTextViewHost;
+		public IDsWpfTextView TextView => wpfTextViewHost.TextView;
+		public IDsWpfTextViewHost TextViewHost => wpfTextViewHost;
 
 		public string PrimaryPrompt { get; }
 		public string SecondaryPrompt { get; }
@@ -63,8 +63,8 @@ namespace dnSpy.Text.Editor {
 
 		readonly Dispatcher dispatcher;
 		readonly CachedColorsList cachedColorsList;
-		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
-		readonly IDnSpyWpfTextView wpfTextView;
+		readonly IDsWpfTextViewHost wpfTextViewHost;
+		readonly IDsWpfTextView wpfTextView;
 		readonly IPickSaveFilename pickSaveFilename;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename) {
+		public ReplEditor(ReplEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.pickSaveFilename = pickSaveFilename;
 			options = options?.Clone() ?? new ReplEditorOptions();
@@ -95,9 +95,9 @@ namespace dnSpy.Text.Editor {
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
-			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
-			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
-			var wpfTextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
+			var roles = dsTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
+			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
+			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.wpfTextView = wpfTextViewHost.TextView;
 			ReplEditorUtils.AddInstance(this, wpfTextView);
@@ -108,7 +108,7 @@ namespace dnSpy.Text.Editor {
 			//TODO: ReplEditorOperations doesn't support virtual space
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId, false);
 			//TODO: Support box selection
-			wpfTextView.Options.SetOptionValue(DefaultDnSpyTextViewOptions.AllowBoxSelectionId, false);
+			wpfTextView.Options.SetOptionValue(DefaultDsTextViewOptions.AllowBoxSelectionId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultValue);
 			wpfTextView.InitializeLocalZoomLevel();
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;

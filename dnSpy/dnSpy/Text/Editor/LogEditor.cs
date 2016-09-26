@@ -38,8 +38,8 @@ namespace dnSpy.Text.Editor {
 		public IInputElement FocusedElement => wpfTextView.VisualElement;
 		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
-		public IDnSpyWpfTextView TextView => wpfTextViewHost.TextView;
-		public IDnSpyWpfTextViewHost TextViewHost => wpfTextViewHost;
+		public IDsWpfTextView TextView => wpfTextViewHost.TextView;
+		public IDsWpfTextViewHost TextViewHost => wpfTextViewHost;
 
 		public WordWrapStyles WordWrapStyle {
 			get { return wpfTextView.Options.WordWrapStyle(); }
@@ -51,8 +51,8 @@ namespace dnSpy.Text.Editor {
 			set { wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value); }
 		}
 
-		readonly IDnSpyWpfTextViewHost wpfTextViewHost;
-		readonly IDnSpyWpfTextView wpfTextView;
+		readonly IDsWpfTextViewHost wpfTextViewHost;
+		readonly IDsWpfTextView wpfTextView;
 		readonly CachedColorsList cachedColorsList;
 		readonly Dispatcher dispatcher;
 		CachedTextColorsCollection cachedTextColorsCollection;
@@ -72,13 +72,13 @@ namespace dnSpy.Text.Editor {
 		static readonly string[] defaultRoles = new string[] {
 			PredefinedTextViewRoles.Interactive,
 			PredefinedTextViewRoles.Zoomable,
-			PredefinedDnSpyTextViewRoles.CanHaveCurrentLineHighlighter,
-			PredefinedDnSpyTextViewRoles.CanHaveBackgroundImage,
-			PredefinedDnSpyTextViewRoles.CanHaveLineNumberMargin,
-			PredefinedDnSpyTextViewRoles.LogEditor,
+			PredefinedDsTextViewRoles.CanHaveCurrentLineHighlighter,
+			PredefinedDsTextViewRoles.CanHaveBackgroundImage,
+			PredefinedDsTextViewRoles.CanHaveLineNumberMargin,
+			PredefinedDsTextViewRoles.LogEditor,
 		};
 
-		public LogEditor(LogEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		public LogEditor(LogEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.cachedColorsList = new CachedColorsList();
 			options = options?.Clone() ?? new LogEditorOptions();
@@ -89,9 +89,9 @@ namespace dnSpy.Text.Editor {
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var rolesList = new List<string>(defaultRoles);
 			rolesList.AddRange(options.ExtraRoles);
-			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(rolesList);
-			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
-			var wpfTextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
+			var roles = dsTextEditorFactoryService.CreateTextViewRoleSet(rolesList);
+			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
+			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.wpfTextView = wpfTextViewHost.TextView;
 			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);

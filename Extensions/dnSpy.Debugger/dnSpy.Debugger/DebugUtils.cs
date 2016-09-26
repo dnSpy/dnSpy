@@ -22,32 +22,32 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
-		public static void GoToIL(IModuleIdProvider moduleIdProvider, IFileTabManager fileTabManager, IModuleLoader moduleLoader, ModuleId moduleId, uint token, uint ilOffset, bool newTab) {
+		public static void GoToIL(IModuleIdProvider moduleIdProvider, IDocumentTabService documentTabService, IModuleLoader moduleLoader, ModuleId moduleId, uint token, uint ilOffset, bool newTab) {
 			var file = moduleLoader.LoadModule(moduleId, canLoadDynFile: true, diskFileOk: false, isAutoLoaded: true);
-			GoToIL(moduleIdProvider, fileTabManager, file, token, ilOffset, newTab);
+			GoToIL(moduleIdProvider, documentTabService, file, token, ilOffset, newTab);
 		}
 
-		public static bool GoToIL(IModuleIdProvider moduleIdProvider, IFileTabManager fileTabManager, IDnSpyFile file, uint token, uint ilOffset, bool newTab) {
-			if (file == null)
+		public static bool GoToIL(IModuleIdProvider moduleIdProvider, IDocumentTabService documentTabService, IDsDocument document, uint token, uint ilOffset, bool newTab) {
+			if (document == null)
 				return false;
 
-			var method = file.ModuleDef.ResolveToken(token) as MethodDef;
+			var method = document.ModuleDef.ResolveToken(token) as MethodDef;
 			if (method == null)
 				return false;
 
 			var modId = moduleIdProvider.Create(method.Module);
 			var key = new ModuleTokenId(modId, method.MDToken);
 
-			bool found = fileTabManager.FileTreeView.FindNode(method.Module) != null;
+			bool found = documentTabService.DocumentTreeView.FindNode(method.Module) != null;
 			if (found) {
-				fileTabManager.FollowReference(method, newTab, true, e => {
+				documentTabService.FollowReference(method, newTab, true, e => {
 					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
 					if (e.Success && !e.HasMovedCaret) {
 						MoveCaretTo(e.Tab.UIContext as IDocumentViewer, key, ilOffset);
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger {
 			}
 
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				fileTabManager.FollowReference(method, newTab, true, e => {
+				documentTabService.FollowReference(method, newTab, true, e => {
 					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
 					if (e.Success && !e.HasMovedCaret) {
 						MoveCaretTo(e.Tab.UIContext as IDocumentViewer, key, ilOffset);

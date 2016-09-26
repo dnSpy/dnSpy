@@ -152,14 +152,14 @@ namespace dnSpy.Debugger.Logger {
 	sealed class OutputLoggerSettingsImpl : OutputLoggerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("87C84585-355B-4BF2-B5EE-C61BC1975552");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		OutputLoggerSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		OutputLoggerSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.ShowExceptionMessages = sect.Attribute<bool?>(nameof(ShowExceptionMessages)) ?? this.ShowExceptionMessages;
 			this.ShowStepFilteringMessages = sect.Attribute<bool?>(nameof(ShowStepFilteringMessages)) ?? this.ShowStepFilteringMessages;
 			this.ShowModuleLoadMessages = sect.Attribute<bool?>(nameof(ShowModuleLoadMessages)) ?? this.ShowModuleLoadMessages;
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.Logger {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowExceptionMessages), ShowExceptionMessages);
 			sect.Attribute(nameof(ShowStepFilteringMessages), ShowStepFilteringMessages);
 			sect.Attribute(nameof(ShowModuleLoadMessages), ShowModuleLoadMessages);

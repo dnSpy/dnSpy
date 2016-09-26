@@ -37,7 +37,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewCreationListener))]
 	[TextViewRole(PredefinedTextViewRoles.Document)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveCurrentLineHighlighter)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveCurrentLineHighlighter)]
 	[ContentType(ContentTypes.Any)]
 	sealed class CurrentLineHighlighterWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		readonly IEditorFormatMapService editorFormatMapService;
@@ -58,12 +58,12 @@ namespace dnSpy.Text.Editor {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.CurrentLineHighlighter)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Caret)]
 		[Order(Before = PredefinedAdornmentLayers.Selection)]
 		[Order(Before = PredefinedAdornmentLayers.Text)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
-		[Order(Before = PredefinedDnSpyAdornmentLayers.GlyphTextMarker)]
+		[Order(Before = PredefinedDsAdornmentLayers.GlyphTextMarker)]
 		[Order(After = PredefinedAdornmentLayers.Outlining)]
 		static AdornmentLayerDefinition theAdornmentLayerDefinition;
 #pragma warning restore 0169

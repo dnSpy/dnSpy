@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnlib.PE;
 using dnSpy.AsmEditor.UndoRedo;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	interface IMmapDisabler {
@@ -32,32 +32,32 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 	[Export(typeof(IMmapDisabler))]
 	sealed class MmapDisabler : IMmapDisabler {
-		readonly IFileTreeView fileTreeView;
-		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly IDocumentTreeView documentTreeView;
+		readonly Lazy<IUndoCommandService> undoCommandService;
 
 		[ImportingConstructor]
-		MmapDisabler(IFileTreeView fileTreeView, Lazy<IUndoCommandManager> undoCommandManager) {
-			this.fileTreeView = fileTreeView;
-			this.undoCommandManager = undoCommandManager;
+		MmapDisabler(IDocumentTreeView documentTreeView, Lazy<IUndoCommandService> undoCommandService) {
+			this.documentTreeView = documentTreeView;
+			this.undoCommandService = undoCommandService;
 		}
 
 		public void Disable(IEnumerable<string> filenames) {
 			var hash = new HashSet<string>(filenames, StringComparer.OrdinalIgnoreCase);
 
-			var filesHash = new HashSet<IDnSpyFile>(GetFiles());
-			foreach (var f in filesHash)
-				DisableMemoryMappedIO(hash, f.PEImage);
+			var documentsHash = new HashSet<IDsDocument>(GetDocuments());
+			foreach (var d in documentsHash)
+				DisableMemoryMappedIO(hash, d.PEImage);
 		}
 
-		IEnumerable<IDnSpyFile> GetFiles() {
-			foreach (var n in fileTreeView.GetAllCreatedDnSpyFileNodes())
-				yield return n.DnSpyFile;
-			foreach (var f in fileTreeView.FileManager.GetFiles()) {
+		IEnumerable<IDsDocument> GetDocuments() {
+			foreach (var n in documentTreeView.GetAllCreatedDocumentNodes())
+				yield return n.Document;
+			foreach (var f in documentTreeView.DocumentService.GetDocuments()) {
 				foreach (var c in f.GetAllChildrenAndSelf())
 					yield return c;
 			}
-			foreach (var uo in undoCommandManager.Value.GetAllObjects()) {
-				var f = DnSpyFileUndoableDocumentsProvider.TryGetDnSpyFile(uo);
+			foreach (var uo in undoCommandService.Value.GetAllObjects()) {
+				var f = DsDocumentUndoableDocumentsProvider.TryGetDocument(uo);
 				if (f != null)
 					yield return f;
 			}

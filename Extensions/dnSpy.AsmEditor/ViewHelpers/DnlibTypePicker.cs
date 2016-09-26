@@ -24,31 +24,31 @@ using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class DnlibTypePicker : IDnlibTypePicker {
 		static IAppWindow appWindow;
-		static IFileTreeView fileTreeView;
-		static IImageManager imageManager;
-		static IFileSearcherProvider fileSearcherProvider;
-		static IDecompilerManager decompilerManager;
-		static IFileTreeViewProvider fileTreeViewProvider;
-		static IFileTreeViewSettings fileTreeViewSettings;
+		static IDocumentTreeView documentTreeView;
+		static IImageService imageService;
+		static IDocumentSearcherProvider fileSearcherProvider;
+		static IDecompilerService decompilerService;
+		static IDocumentTreeViewProvider documentTreeViewProvider;
+		static IDocumentTreeViewSettings documentTreeViewSettings;
 
 		[ExportAutoLoaded]
 		sealed class Loader : IAutoLoaded {
 			[ImportingConstructor]
-			Loader(IAppWindow appWindow, IImageManager imageManager, IFileTreeView fileTreeView, IFileSearcherProvider fileSearcherProvider, IDecompilerManager decompilerManager, IFileTreeViewProvider fileTreeViewProvider, IFileTreeViewSettings fileTreeViewSettings) {
+			Loader(IAppWindow appWindow, IImageService imageService, IDocumentTreeView documentTreeView, IDocumentSearcherProvider fileSearcherProvider, IDecompilerService decompilerService, IDocumentTreeViewProvider documentTreeViewProvider, IDocumentTreeViewSettings documentTreeViewSettings) {
 				DnlibTypePicker.appWindow = appWindow;
-				DnlibTypePicker.imageManager = imageManager;
-				DnlibTypePicker.fileTreeView = fileTreeView;
+				DnlibTypePicker.imageService = imageService;
+				DnlibTypePicker.documentTreeView = documentTreeView;
 				DnlibTypePicker.fileSearcherProvider = fileSearcherProvider;
-				DnlibTypePicker.decompilerManager = decompilerManager;
-				DnlibTypePicker.fileTreeViewProvider = fileTreeViewProvider;
-				DnlibTypePicker.fileTreeViewSettings = fileTreeViewSettings;
+				DnlibTypePicker.decompilerService = decompilerService;
+				DnlibTypePicker.documentTreeViewProvider = documentTreeViewProvider;
+				DnlibTypePicker.documentTreeViewSettings = documentTreeViewSettings;
 			}
 		}
 
@@ -62,12 +62,12 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public T GetDnlibType<T>(string title, IFileTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
-			var newFileTreeView = fileTreeViewProvider.Create(filter);
+		public T GetDnlibType<T>(string title, IDocumentTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
+			var newDocumentTreeView = documentTreeViewProvider.Create(filter);
 			try {
-				var data = new MemberPickerVM(fileSearcherProvider, newFileTreeView, decompilerManager, filter, title, fileTreeView.FileManager.GetFiles());
-				data.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
-				var win = new MemberPickerDlg(fileTreeView, newFileTreeView, imageManager);
+				var data = new MemberPickerVM(fileSearcherProvider, newDocumentTreeView, decompilerService, filter, title, documentTreeView.DocumentService.GetDocuments());
+				data.SyntaxHighlight = documentTreeViewSettings.SyntaxHighlight;
+				var win = new MemberPickerDlg(documentTreeView, newDocumentTreeView, imageService);
 				win.DataContext = data;
 				win.Owner = ownerWindow ?? appWindow.MainWindow;
 				data.SelectItem(selectedObject);
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				return ImportObject(ownerModule, data.SelectedDnlibObject) as T;
 			}
 			finally {
-				newFileTreeView.Dispose();
+				newDocumentTreeView.Dispose();
 			}
 		}
 
@@ -96,7 +96,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			if (method != null && method.IsMethod)
 				return importer.Import(method);
 
-			// DnSpyFile, namespace, PropertyDef, EventDef, AssemblyRef, ModuleRef
+			// DsDocument, namespace, PropertyDef, EventDef, AssemblyRef, ModuleRef
 			return obj;
 		}
 	}

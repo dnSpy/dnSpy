@@ -35,31 +35,31 @@ namespace dnSpy.Culture {
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Guid = Constants.LANGUAGE_GUID, Header = "res:LanguageCommand", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 10000)]
 	sealed class LanguagesCommand : MenuItemBase {
-		readonly ICultureManager cultureManager;
+		readonly ICultureService cultureService;
 
 		[ImportingConstructor]
-		LanguagesCommand(ICultureManager cultureManager) {
-			this.cultureManager = cultureManager;
+		LanguagesCommand(ICultureService cultureService) {
+			this.cultureService = cultureService;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => cultureManager.HasExtraLanguages;
+		public override bool IsVisible(IMenuItemContext context) => cultureService.HasExtraLanguages;
 		public override void Execute(IMenuItemContext context) => Debug.Fail("Shouldn't execute");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.LANGUAGE_GUID, Group = Constants.GROUP_LANGUAGE, Order = 0)]
 	sealed class ShowSupportedLanguagesCommand : MenuItemBase, IMenuItemProvider {
-		readonly ICultureManager cultureManager;
+		readonly ICultureService cultureService;
 
 		[ImportingConstructor]
-		ShowSupportedLanguagesCommand(ICultureManager cultureManager) {
-			this.cultureManager = cultureManager;
+		ShowSupportedLanguagesCommand(ICultureService cultureService) {
+			this.cultureService = cultureService;
 		}
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
-			var langs = cultureManager.AllLanguages.OrderBy(a => a, LanguageInfoComparer.Instance);
+			var langs = cultureService.AllLanguages.OrderBy(a => a, LanguageInfoComparer.Instance);
 			foreach (var lang in langs) {
 				var attr = new ExportMenuItemAttribute { Header = UIUtilities.EscapeMenuItemHeader(lang.UIName) };
-				yield return new CreatedMenuItem(attr, new SwitchLanguageCommand(cultureManager, lang));
+				yield return new CreatedMenuItem(attr, new SwitchLanguageCommand(cultureService, lang));
 			}
 		}
 
@@ -67,19 +67,19 @@ namespace dnSpy.Culture {
 	}
 
 	sealed class SwitchLanguageCommand : MenuItemBase {
-		readonly ICultureManager cultureManager;
+		readonly ICultureService cultureService;
 		readonly LanguageInfo langInfo;
 
-		public SwitchLanguageCommand(ICultureManager cultureManager, LanguageInfo langInfo) {
-			this.cultureManager = cultureManager;
+		public SwitchLanguageCommand(ICultureService cultureService, LanguageInfo langInfo) {
+			this.cultureService = cultureService;
 			this.langInfo = langInfo;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) => cultureManager.Language.Equals(langInfo);
+		public override bool IsChecked(IMenuItemContext context) => cultureService.Language.Equals(langInfo);
 
 		public override void Execute(IMenuItemContext context) {
-			if (!cultureManager.Language.Equals(langInfo)) {
-				cultureManager.Language = langInfo;
+			if (!cultureService.Language.Equals(langInfo)) {
+				cultureService.Language = langInfo;
 				MsgBox.Instance.ShowIgnorableMessage(new Guid("778A97E0-E7F8-4965-B2A0-BB6E0281B9F9"), dnSpy_Resources.LanguageSwitchMessage);
 			}
 		}

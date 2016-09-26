@@ -18,18 +18,18 @@
 */
 
 using System;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {
-		public IFileTreeNodeData[] Nodes { get; }
+		public IDocumentTreeNodeData[] Nodes { get; }
 		public bool IsDefinition { get; }
 		public IMenuItemContext MenuItemContextOrNull { get; }
 
-		public CodeContext(IFileTreeNodeData[] nodes, bool isDefinition, IMenuItemContext menuItemContext) {
-			this.Nodes = nodes ?? Array.Empty<IFileTreeNodeData>();
+		public CodeContext(IDocumentTreeNodeData[] nodes, bool isDefinition, IMenuItemContext menuItemContext) {
+			this.Nodes = nodes ?? Array.Empty<IDocumentTreeNodeData>();
 			this.IsDefinition = isDefinition;
 			this.MenuItemContextOrNull = menuItemContext;
 		}
@@ -41,10 +41,10 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public sealed override bool IsVisible(CodeContext context) => IsEnabled(context);
 
-		readonly IFileTreeView fileTreeView;
+		readonly IDocumentTreeView documentTreeView;
 
-		protected CodeContextMenuHandler(IFileTreeView fileTreeView) {
-			this.fileTreeView = fileTreeView;
+		protected CodeContextMenuHandler(IDocumentTreeView documentTreeView) {
+			this.documentTreeView = documentTreeView;
 		}
 
 		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
@@ -53,8 +53,8 @@ namespace dnSpy.AsmEditor.Commands {
 			var textRef = context.Find<TextReference>();
 			if (textRef == null)
 				return null;
-			var node = fileTreeView.FindNode(textRef.Reference);
-			var nodes = node == null ? Array.Empty<IFileTreeNodeData>() : new IFileTreeNodeData[] { node };
+			var node = documentTreeView.FindNode(textRef.Reference);
+			var nodes = node == null ? Array.Empty<IDocumentTreeNodeData>() : new IDocumentTreeNodeData[] { node };
 			return new CodeContext(nodes, textRef.IsDefinition, context);
 		}
 	}

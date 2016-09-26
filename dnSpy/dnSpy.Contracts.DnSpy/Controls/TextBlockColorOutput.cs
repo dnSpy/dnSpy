@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Controls {
 					offs += defaultTextLength;
 
 					if (tokenLength != 0) {
-						var hlColor = GetTextColor(themeManager.Theme, color);
+						var hlColor = GetTextColor(themeService.Theme, color);
 						var text = textBlockText.Substring(offs, tokenLength);
 						var elem = new Run(text);
 						if (hlColor.FontStyle != null)
@@ -138,13 +138,13 @@ namespace dnSpy.Contracts.Controls {
 		public override string ToString() => Text;
 
 		[ExportAutoLoaded]
-		sealed class ThemeManagerLoader : IAutoLoaded {
+		sealed class ThemeServiceLoader : IAutoLoaded {
 			[ImportingConstructor]
-			ThemeManagerLoader(IThemeManager themeManager) {
-				TextBlockColorOutput.themeManager = themeManager;
+			ThemeServiceLoader(IThemeService themeService) {
+				TextBlockColorOutput.themeService = themeService;
 			}
 		}
-		static IThemeManager themeManager;
+		static IThemeService themeService;
 
 		sealed class TextSrc : TextSource, FastTextBlock.IFastTextSource {
 			FastTextBlock parent;
@@ -227,7 +227,7 @@ namespace dnSpy.Contracts.Controls {
 				index += defaultTextLength;
 
 				if (tokenLength != 0) {
-					var tc = GetTextColor(themeManager.Theme, color);
+					var tc = GetTextColor(themeService.Theme, color);
 					var tokenText = text.Substring(index, tokenLength);
 
 					var textProps = new TextProps();

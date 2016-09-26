@@ -51,34 +51,34 @@ namespace dnSpy.MainApp {
 		}
 		bool useNewRenderer_HexEditor = false;
 
-		public bool UseNewRenderer_FileTreeView {
-			get { return useNewRenderer_FileTreeView; }
+		public bool UseNewRenderer_DocumentTreeView {
+			get { return useNewRenderer_DocumentTreeView; }
 			set {
-				if (useNewRenderer_FileTreeView != value) {
-					useNewRenderer_FileTreeView = value;
-					OnPropertyChanged(nameof(UseNewRenderer_FileTreeView));
+				if (useNewRenderer_DocumentTreeView != value) {
+					useNewRenderer_DocumentTreeView = value;
+					OnPropertyChanged(nameof(UseNewRenderer_DocumentTreeView));
 					OnModified();
 				}
 			}
 		}
-		bool useNewRenderer_FileTreeView = false;
+		bool useNewRenderer_DocumentTreeView = false;
 	}
 
 	[Export, Export(typeof(IAppSettings))]
 	sealed class AppSettingsImpl : AppSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("071CF92D-ACFA-46A1-8EEF-DFAC1D01E644");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		AppSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		AppSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.UseNewRenderer_TextEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_TextEditor)) ?? this.UseNewRenderer_TextEditor;
 			this.UseNewRenderer_HexEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_HexEditor)) ?? this.UseNewRenderer_HexEditor;
-			this.UseNewRenderer_FileTreeView = sect.Attribute<bool?>(nameof(UseNewRenderer_FileTreeView)) ?? this.UseNewRenderer_FileTreeView;
+			this.UseNewRenderer_DocumentTreeView = sect.Attribute<bool?>(nameof(UseNewRenderer_DocumentTreeView)) ?? this.UseNewRenderer_DocumentTreeView;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -86,10 +86,10 @@ namespace dnSpy.MainApp {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseNewRenderer_TextEditor), UseNewRenderer_TextEditor);
 			sect.Attribute(nameof(UseNewRenderer_HexEditor), UseNewRenderer_HexEditor);
-			sect.Attribute(nameof(UseNewRenderer_FileTreeView), UseNewRenderer_FileTreeView);
+			sect.Attribute(nameof(UseNewRenderer_DocumentTreeView), UseNewRenderer_DocumentTreeView);
 		}
 	}
 }

@@ -23,12 +23,12 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class DeclSecuritiesVM : ListVM<DeclSecurityVM, DeclSecurity> {
-		public DeclSecuritiesVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base(dnSpy_AsmEditor_Resources.EditSecurityDeclaration, dnSpy_AsmEditor_Resources.CreateSecurityDeclaration, ownerModule, decompilerManager, ownerType, ownerMethod) {
+		public DeclSecuritiesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+			: base(dnSpy_AsmEditor_Resources.EditSecurityDeclaration, dnSpy_AsmEditor_Resources.CreateSecurityDeclaration, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 
-		protected override DeclSecurityVM Create(DeclSecurity model) => new DeclSecurityVM(new DeclSecurityOptions(model), OwnerModule, decompilerManager, ownerType, ownerMethod);
-		protected override DeclSecurityVM Clone(DeclSecurityVM obj) => new DeclSecurityVM(obj.CreateDeclSecurityOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
-		protected override DeclSecurityVM Create() => new DeclSecurityVM(new DeclSecurityOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
+		protected override DeclSecurityVM Create(DeclSecurity model) => new DeclSecurityVM(new DeclSecurityOptions(model), OwnerModule, decompilerService, ownerType, ownerMethod);
+		protected override DeclSecurityVM Clone(DeclSecurityVM obj) => new DeclSecurityVM(obj.CreateDeclSecurityOptions(), OwnerModule, decompilerService, ownerType, ownerMethod);
+		protected override DeclSecurityVM Create() => new DeclSecurityVM(new DeclSecurityOptions(), OwnerModule, decompilerService, ownerType, ownerMethod);
 	}
 }

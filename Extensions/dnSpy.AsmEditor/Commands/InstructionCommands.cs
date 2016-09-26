@@ -31,9 +31,9 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.IL;
@@ -42,21 +42,21 @@ namespace dnSpy.AsmEditor.Commands {
 	[ExportAutoLoaded]
 	sealed class CopyILBytesLoader : IAutoLoaded {
 		static readonly RoutedCommand CopyILBytesCommand = new RoutedCommand("CopyILBytesCommand", typeof(CopyILBytesLoader));
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
 
 		[ImportingConstructor]
-		CopyILBytesLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
-			this.fileTabManager = fileTabManager;
+		CopyILBytesLoader(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations) {
+			this.documentTabService = documentTabService;
 			this.methodAnnotations = methodAnnotations;
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			cmds.Add(CopyILBytesCommand, CopyILBytesExecuted, CopyILBytesCanExecute, ModifierKeys.Control, Key.B);
 		}
 
 		void CopyILBytesCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
-			e.CanExecute = CopyILBytesCodeCommand.CanExecute(fileTabManager.ActiveTab.TryGetDocumentViewer());
+			e.CanExecute = CopyILBytesCodeCommand.CanExecute(documentTabService.ActiveTab.TryGetDocumentViewer());
 		void CopyILBytesExecuted(object sender, ExecutedRoutedEventArgs e) =>
-			CopyILBytesCodeCommand.Execute(fileTabManager.ActiveTab.TryGetDocumentViewer(), methodAnnotations);
+			CopyILBytesCodeCommand.Execute(documentTabService.ActiveTab.TryGetDocumentViewer(), methodAnnotations);
 	}
 
 	[ExportMenuItem(Header = "res:CopyILBytesCommand", Icon = "Copy", InputGestureText = "res:CopyILBytesKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 20)]

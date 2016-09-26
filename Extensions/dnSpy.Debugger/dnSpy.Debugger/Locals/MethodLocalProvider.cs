@@ -23,8 +23,8 @@ using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.Locals {
@@ -38,11 +38,11 @@ namespace dnSpy.Debugger.Locals {
 	sealed class MethodLocalProvider : IMethodLocalProvider, IDocumentViewerListener {
 		public event EventHandler NewMethodInfoAvailable;
 
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		MethodLocalProvider(IFileTabManager fileTabManager) {
-			this.fileTabManager = fileTabManager;
+		MethodLocalProvider(IDocumentTabService documentTabService) {
+			this.documentTabService = documentTabService;
 		}
 
 		public void OnEvent(DocumentViewerEventArgs e) {
@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Locals {
 			locals = null;
 			decompilerLocals = null;
 
-			foreach (var tab in fileTabManager.VisibleFirstTabs) {
+			foreach (var tab in documentTabService.VisibleFirstTabs) {
 				if (parameters != null && decompilerLocals != null)
 					break;
 

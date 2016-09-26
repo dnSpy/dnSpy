@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.Contracts.App {
 	/// <summary>
@@ -30,8 +30,8 @@ namespace dnSpy.Contracts.App {
 		public static readonly object Delay = new object();
 
 		/// <summary>
-		/// Order of <see cref="IFileTabManager"/>'s <see cref="IDnSpyLoader"/> instance
+		/// Order of <see cref="IDocumentTabService"/>'s <see cref="IDsLoader"/> instance
 		/// </summary>
-		public const double ORDER_FILETABMANAGER = 1000;
+		public const double ORDER_DOCUMENTTABMANAGER = 1000;
 	}
 }

@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 
-// This file adds custom file tab content when the user clicks on our new AssemblyChildNode tree node.
+// This file adds custom document tab content when the user clicks on our new AssemblyChildNode tree node.
 // This node is created by TreeNodeDataProvider.cs.
 
 namespace Example2.Extension {
-	[ExportFileTabContentFactory]
-	sealed class AssemblyChildNodeTabContentFactory : IFileTabContentFactory {
+	[ExportDocumentTabContentFactory]
+	sealed class AssemblyChildNodeTabContentFactory : IDocumentTabContentFactory {
 		// Called to create a new IFileTabContent. If it's our new tree node, create a new IFileTabContent for it
-		public IFileTabContent Create(IFileTabContentFactoryContext context) {
+		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) {
 			if (context.Nodes.Length == 1 && context.Nodes[0] is AssemblyChildNode)
 				return new AssemblyChildNodeTabContent((AssemblyChildNode)context.Nodes[0]);
 			return null;
@@ -23,7 +23,7 @@ namespace Example2.Extension {
 		//TODO: Use your own guid
 		static readonly Guid GUID_SerializedContent = new Guid("FC6D2EC8-6FF8-4071-928E-EB07735A6402");
 
-		public IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context) {
+		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent) {
 				// Serialize() doesn't add anything extra to 'section', but if it did, you'd have to
 				// get that info here and return null if the serialized data wasn't found.
@@ -34,7 +34,7 @@ namespace Example2.Extension {
 			return null;
 		}
 
-		public Guid? Serialize(IFileTabContent content, ISettingsSection section) {
+		public Guid? Serialize(IDocumentTabContent content, ISettingsSection section) {
 			if (content is AssemblyChildNodeTabContent) {
 				// There's nothing else we need to serialize it, but if there were, use 'section'
 				// to write the info needed by Deserialize() above.
@@ -44,12 +44,12 @@ namespace Example2.Extension {
 		}
 	}
 
-	sealed class AssemblyChildNodeTabContent : IFileTabContent {
+	sealed class AssemblyChildNodeTabContent : IDocumentTabContent {
 		// Initialized by the owner
-		public IFileTab FileTab { get; set; }
+		public IDocumentTab DocumentTab { get; set; }
 
 		// Returns all nodes used to generate the content
-		public IEnumerable<IFileTreeNodeData> Nodes {
+		public IEnumerable<IDocumentTreeNodeData> Nodes {
 			get { yield return node; }
 		}
 
@@ -63,12 +63,12 @@ namespace Example2.Extension {
 		}
 
 		// Called when the user opens a new tab
-		public IFileTabContent Clone() => new AssemblyChildNodeTabContent(node);
+		public IDocumentTabContent Clone() => new AssemblyChildNodeTabContent(node);
 
 		// Gets called to create the UI context. It can be shared by any IFileTabContent in this tab.
 		// Eg. there's only one text editor per tab, shared by all IFileTabContents that need a text
 		// editor.
-		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
+		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) {
 			// This custom view object is shared by all nodes of the same type. If we didn't want it
 			// to be shared, we could use 'node' or 'this' as the key.
 			var key = node.GetType();
@@ -92,9 +92,9 @@ namespace Example2.Extension {
 		public void OnUnselected() { }
 	}
 
-	sealed class AssemblyChildNodeUIContext : IFileTabUIContext {
+	sealed class AssemblyChildNodeUIContext : IDocumentTabUIContext {
 		// Initialized by the owner
-		public IFileTab FileTab { get; set; }
+		public IDocumentTab DocumentTab { get; set; }
 
 		// The element inside UIObject that gets the focus when the tool window should be focused.
 		// If it's not as easy as calling FocusedElement.Focus() to focus it, you must implement

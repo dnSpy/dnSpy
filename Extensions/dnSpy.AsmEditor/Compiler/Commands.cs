@@ -30,10 +30,10 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 
@@ -43,8 +43,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		static readonly RoutedCommand EditBodyCommand = new RoutedCommand("EditBodyCommand", typeof(CommandLoader));
 
 		[ImportingConstructor]
-		CommandLoader(IWpfCommandManager wpfCommandManager, EditBodyCommand editBodyCmd) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
+		CommandLoader(IWpfCommandService wpfCommandService, EditBodyCommand editBodyCmd) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 			ICommand editBodyCmd2 = editBodyCmd;
 			cmds.Add(EditBodyCommand,
 				(s, e) => editBodyCmd2.Execute(null),
@@ -55,16 +55,16 @@ namespace dnSpy.AsmEditor.Compiler {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class EditMethodBodyCodeCommand : IUndoCommand {
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_ILED, Order = 10)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 10)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 			readonly IAppWindow appWindow;
 			readonly EditCodeVMCreator editCodeVMCreator;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, EditCodeVMCreator editCodeVMCreator) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, EditCodeVMCreator editCodeVMCreator) {
+				this.undoCommandService = undoCommandService;
 				this.methodAnnotations = methodAnnotations;
 				this.appWindow = appWindow;
 				this.editCodeVMCreator = editCodeVMCreator;
@@ -73,20 +73,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override ImageReference? GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon();
 			public override string GetHeader(AsmEditorContext context) => editCodeVMCreator.GetHeader();
 			public override bool IsVisible(AsmEditorContext context) => EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
-			public override void Execute(AsmEditorContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandService, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 40)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 			readonly IAppWindow appWindow;
 			readonly EditCodeVMCreator editCodeVMCreator;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, EditCodeVMCreator editCodeVMCreator)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, EditCodeVMCreator editCodeVMCreator)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.methodAnnotations = methodAnnotations;
 				this.appWindow = appWindow;
 				this.editCodeVMCreator = editCodeVMCreator;
@@ -95,20 +95,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override ImageReference? GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon();
 			public override string GetHeader(AsmEditorContext context) => editCodeVMCreator.GetHeader();
 			public override bool IsVisible(AsmEditorContext context) => EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
-			public override void Execute(AsmEditorContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandService, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 10)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 			readonly IAppWindow appWindow;
 			readonly EditCodeVMCreator editCodeVMCreator;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, EditCodeVMCreator editCodeVMCreator)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, EditCodeVMCreator editCodeVMCreator)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.methodAnnotations = methodAnnotations;
 				this.appWindow = appWindow;
 				this.editCodeVMCreator = editCodeVMCreator;
@@ -117,13 +117,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override ImageReference? GetIcon(CodeContext context) => editCodeVMCreator.GetIcon();
 			public override string GetHeader(CodeContext context) => editCodeVMCreator.GetHeader();
 			public override bool IsEnabled(CodeContext context) => !EditBodyCommand.IsVisibleInternal(editCodeVMCreator, context.MenuItemContextOrNull) && context.IsDefinition && EditMethodBodyCodeCommand.CanExecute(editCodeVMCreator, context.Nodes);
-			public override void Execute(CodeContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandService, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, IDocumentTreeNodeData[] nodes) =>
 			editCodeVMCreator.CanCreate && nodes.Length == 1 && nodes[0] is IMethodNode;
 
-		internal static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes, IList<MethodSourceStatement> statements = null) {
+		internal static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes, IList<MethodSourceStatement> statements = null) {
 			if (!CanExecute(editCodeVMCreator, nodes))
 				return;
 
@@ -132,7 +132,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				throw new InvalidOperationException();
-			var module = modNode.DnSpyFile.ModuleDef;
+			var module = modNode.Document.ModuleDef;
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
@@ -149,13 +149,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			Debug.Assert(vm.Result != null);
 
-			undoCommandManager.Value.Add(new EditMethodBodyCodeCommand(methodAnnotations, modNode, vm.Result));
+			undoCommandService.Value.Add(new EditMethodBodyCodeCommand(methodAnnotations, modNode, vm.Result));
 			vm.Dispose();
 		}
 
 		readonly AddUpdatedNodesHelper addUpdatedNodesHelper;
 
-		EditMethodBodyCodeCommand(Lazy<IMethodAnnotations> methodAnnotations, IModuleFileNode modNode, ModuleImporter importer) {
+		EditMethodBodyCodeCommand(Lazy<IMethodAnnotations> methodAnnotations, IModuleDocumentNode modNode, ModuleImporter importer) {
 			this.addUpdatedNodesHelper = new AddUpdatedNodesHelper(methodAnnotations, modNode, importer);
 		}
 
@@ -167,14 +167,14 @@ namespace dnSpy.AsmEditor.Compiler {
 
 	[Export, ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 0)]
 	sealed class EditBodyCommand : MenuItemBase, ICommand {
-		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
 		readonly IAppWindow appWindow;
 		readonly EditCodeVMCreator editCodeVMCreator;
 
 		[ImportingConstructor]
-		EditBodyCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, EditCodeVMCreator editCodeVMCreator) {
-			this.undoCommandManager = undoCommandManager;
+		EditBodyCommand(Lazy<IUndoCommandService> undoCommandService, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, EditCodeVMCreator editCodeVMCreator) {
+			this.undoCommandService = undoCommandService;
 			this.methodAnnotations = methodAnnotations;
 			this.appWindow = appWindow;
 			this.editCodeVMCreator = editCodeVMCreator;
@@ -200,13 +200,13 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var method = list[0].Method;
-			var methodNode = appWindow.FileTreeView.FindNode(method);
+			var methodNode = appWindow.DocumentTreeView.FindNode(method);
 			if (methodNode == null) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
 				return;
 			}
 
-			EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandManager, appWindow, new IFileTreeNodeData[] { methodNode }, list);
+			EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandService, appWindow, new IDocumentTreeNodeData[] { methodNode }, list);
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {
@@ -215,7 +215,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		IList<MethodSourceStatement> GetStatements() {
-			var documentViewer = appWindow.FileTabManager.ActiveTab.TryGetDocumentViewer();
+			var documentViewer = appWindow.DocumentTabService.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)

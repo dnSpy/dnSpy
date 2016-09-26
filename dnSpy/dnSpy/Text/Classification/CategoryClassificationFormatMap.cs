@@ -62,7 +62,7 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 		readonly IEditorFormatMap editorFormatMap;
 		readonly Dictionary<IClassificationType, ClassificationInfo> toClassificationInfo;
 		readonly Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>> toEditorFormatDefinition;
@@ -85,16 +85,16 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		public CategoryClassificationFormatMap(IThemeManager themeManager, IEditorFormatMap editorFormatMap, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
-			if (themeManager == null)
-				throw new ArgumentNullException(nameof(themeManager));
+		public CategoryClassificationFormatMap(IThemeService themeService, IEditorFormatMap editorFormatMap, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+			if (themeService == null)
+				throw new ArgumentNullException(nameof(themeService));
 			if (editorFormatMap == null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
 			if (editorFormatDefinitionService == null)
 				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
-			this.themeManager = themeManager;
+			this.themeService = themeService;
 			this.editorFormatMap = editorFormatMap;
 			this.toClassificationInfo = new Dictionary<IClassificationType, ClassificationInfo>();
 			this.toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>>(editorFormatDefinitionService.ClassificationFormatDefinitions.Length);
@@ -189,7 +189,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		void CreateExplicitTextProperties(ClassificationInfo info) {
-			var props = info.Lazy.Value.CreateThemeResourceDictionary(themeManager.Theme);
+			var props = info.Lazy.Value.CreateThemeResourceDictionary(themeService.Theme);
 			info.ExplicitResourceDictionary = props;
 			info.ExplicitTextProperties = ClassificationFontUtils.Create(info.ExplicitResourceDictionary);
 		}

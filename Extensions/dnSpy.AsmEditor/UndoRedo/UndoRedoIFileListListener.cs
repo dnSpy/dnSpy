@@ -22,34 +22,34 @@ using System.ComponentModel.Composition;
 using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	[ExportFileListListener]
-	sealed class UndoRedoIFileListListener : IFileListListener {
-		readonly Lazy<IUndoCommandManager> undoCommandManager;
-		readonly Lazy<IHexDocumentManager> hexDocumentManager;
+	[ExportDocumentListListener]
+	sealed class UndoRedoIFileListListener : IDocumentListListener {
+		readonly Lazy<IUndoCommandService> undoCommandService;
+		readonly Lazy<IHexDocumentService> hexDocumentService;
 		readonly IMessageBoxService messageBoxService;
 
 		public bool CanLoad => true;
 		public bool CanReload => true;
 
 		[ImportingConstructor]
-		UndoRedoIFileListListener(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IMessageBoxService messageBoxService) {
-			this.undoCommandManager = undoCommandManager;
-			this.hexDocumentManager = hexDocumentManager;
+		UndoRedoIFileListListener(Lazy<IUndoCommandService> undoCommandService, Lazy<IHexDocumentService> hexDocumentService, IMessageBoxService messageBoxService) {
+			this.undoCommandService = undoCommandService;
+			this.hexDocumentService = hexDocumentService;
 			this.messageBoxService = messageBoxService;
 		}
 
 		public void BeforeLoad(bool isReload) {
-			undoCommandManager.Value.Clear();
-			hexDocumentManager.Value.Clear();
+			undoCommandService.Value.Clear();
+			hexDocumentService.Value.Clear();
 		}
 
 		public void AfterLoad(bool isReload) { }
 
 		public bool CheckCanLoad(bool isReload) {
-			int count = undoCommandManager.Value.NumberOfModifiedDocuments;
+			int count = undoCommandService.Value.NumberOfModifiedDocuments;
 			if (count == 0)
 				return true;
 

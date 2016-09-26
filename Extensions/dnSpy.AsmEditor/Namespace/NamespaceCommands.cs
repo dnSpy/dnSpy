@@ -29,46 +29,46 @@ using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.AsmEditor.Namespace {
 	[ExportAutoLoaded]
 	sealed class CommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CommandLoader(IWpfCommandManager wpfCommandManager, DeleteNamespaceCommand.EditMenuCommand removeCmd) {
-			wpfCommandManager.AddRemoveCommand(removeCmd);
+		CommandLoader(IWpfCommandService wpfCommandService, DeleteNamespaceCommand.EditMenuCommand removeCmd) {
+			wpfCommandService.AddRemoveCommand(removeCmd);
 		}
 	}
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteNamespaceCommand : IUndoCommand {
-		[ExportMenuItem(Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 70)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 70)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteNamespaceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
-				: base(fileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
+				: base(documentTreeView) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteNamespaceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
 		}
 
@@ -78,18 +78,18 @@ namespace dnSpy.AsmEditor.Namespace {
 				string.Format(dnSpy_AsmEditor_Resources.DeleteNamespacesCommand, count);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
 				nodes.All(a => a is INamespaceNode);
 		}
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var nsNodes = nodes.Cast<INamespaceNode>().ToArray();
-			undoCommandManager.Value.Add(new DeleteNamespaceCommand(nsNodes));
+			undoCommandService.Value.Add(new DeleteNamespaceCommand(nsNodes));
 		}
 
 		struct DeleteModelNodes {
@@ -107,7 +107,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 			}
 
-			public void Delete(INamespaceNode[] nodes, IFileTreeNodeData[] parents) {
+			public void Delete(INamespaceNode[] nodes, IDocumentTreeNodeData[] parents) {
 				Debug.Assert(parents != null && nodes.Length == parents.Length);
 				Debug.Assert(infos == null);
 				if (infos != null)
@@ -138,7 +138,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 			}
 
-			public void Restore(INamespaceNode[] nodes, IFileTreeNodeData[] parents) {
+			public void Restore(INamespaceNode[] nodes, IDocumentTreeNodeData[] parents) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -157,12 +157,12 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 		}
 
-		IFileTreeNodeData[] parents;
+		IDocumentTreeNodeData[] parents;
 		DeletableNodes<INamespaceNode> nodes;
 		DeleteModelNodes modelNodes;
 
 		DeleteNamespaceCommand(INamespaceNode[] nodes) {
-			this.parents = nodes.Select(a => (IFileTreeNodeData)a.TreeNode.Parent.Data).ToArray();
+			this.parents = nodes.Select(a => (IDocumentTreeNodeData)a.TreeNode.Parent.Data).ToArray();
 			this.nodes = new DeletableNodes<INamespaceNode>(nodes);
 			this.modelNodes = new DeleteModelNodes();
 		}
@@ -194,34 +194,34 @@ namespace dnSpy.AsmEditor.Namespace {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 0)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 0)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandService, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 0)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
-				: base(fileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
+				: base(documentTreeView) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandService, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
 				nodes.All(a => a is INamespaceNode) &&
@@ -231,7 +231,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				nodes[0].TreeNode.Parent.DataChildren.Any(a => a is INamespaceNode && ((INamespaceNode)a).Name == string.Empty);
 		}
 
-		static bool IsInSameModule(IFileTreeNodeData[] nodes) {
+		static bool IsInSameModule(IDocumentTreeNodeData[] nodes) {
 			if (nodes == null || nodes.Length == 0)
 				return false;
 			var module = nodes[0].GetModule();
@@ -244,14 +244,14 @@ namespace dnSpy.AsmEditor.Namespace {
 			return true;
 		}
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			undoCommandManager.Value.Add(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
+			undoCommandService.Value.Add(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
 		}
 
-		MoveNamespaceTypesToEmptypNamespaceCommand(IFileTreeNodeData[] nodes) {
+		MoveNamespaceTypesToEmptypNamespaceCommand(IDocumentTreeNodeData[] nodes) {
 			var nsNodes = nodes.Cast<INamespaceNode>().Where(a => a.Name != string.Empty).ToArray();
 			Debug.Assert(nsNodes.Length > 0);
 			this.nodes = new DeletableNodes<INamespaceNode>(nsNodes);
@@ -342,44 +342,44 @@ namespace dnSpy.AsmEditor.Namespace {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class RenameNamespaceCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:RenameNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 10)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:RenameNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 10)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => RenameNamespaceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RenameNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => RenameNamespaceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) {
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is INamespaceNode;
 		}
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -395,14 +395,14 @@ namespace dnSpy.AsmEditor.Namespace {
 			if (nsNode.Name == data.Name)
 				return;
 
-			undoCommandManager.Value.Add(new RenameNamespaceCommand(data.Name, nsNode));
+			undoCommandService.Value.Add(new RenameNamespaceCommand(data.Name, nsNode));
 		}
 
 		readonly string newName;
 		readonly string origName;
 		readonly INamespaceNode nsNode;
 		readonly INamespaceNode existingNsNode;
-		readonly IFileTreeNodeData origParentNode;
+		readonly IDocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly UTF8String[] typeNamespaces;
 		readonly ITypeNode[] origChildren;
@@ -429,7 +429,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			this.origParentNode = (IFileTreeNodeData)nsNode.TreeNode.Parent.Data;
+			this.origParentNode = (IDocumentTreeNodeData)nsNode.TreeNode.Parent.Data;
 			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(nsNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)

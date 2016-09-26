@@ -40,22 +40,22 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "DeleteHistory", ToolTip = "res:ClearHistoryToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 20)]
 	sealed class DeleteHistoryAsmEdCommand : ToolBarButtonBase {
-		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		DeleteHistoryAsmEdCommand(Lazy<IUndoCommandManager> undoCommandManager, IMessageBoxService messageBoxService) {
-			this.undoCommandManager = undoCommandManager;
+		DeleteHistoryAsmEdCommand(Lazy<IUndoCommandService> undoCommandService, IMessageBoxService messageBoxService) {
+			this.undoCommandService = undoCommandService;
 			this.messageBoxService = messageBoxService;
 		}
 
 		public override bool IsEnabled(IToolBarItemContext context) =>
-			undoCommandManager.Value.CanUndo || undoCommandManager.Value.CanRedo;
+			undoCommandService.Value.CanUndo || undoCommandService.Value.CanRedo;
 
 		public override void Execute(IToolBarItemContext context) {
 			var res = messageBoxService.ShowIgnorableMessage(new Guid("FC8FC68F-4285-4CDF-BEC0-FF6498EEC4AA"), dnSpy_AsmEditor_Resources.AskClearUndoHistory, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res == null || res == MsgBoxButton.Yes)
-				undoCommandManager.Value.Clear();
+				undoCommandService.Value.Clear();
 		}
 	}
 }

@@ -22,59 +22,59 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class PETreeNodeDataProviderBase : ITreeNodeDataProvider {
-		readonly Lazy<IHexDocumentManager> hexDocumentManager;
+		readonly Lazy<IHexDocumentService> hexDocumentService;
 
-		protected PETreeNodeDataProviderBase(Lazy<IHexDocumentManager> hexDocumentManager) {
-			this.hexDocumentManager = hexDocumentManager;
+		protected PETreeNodeDataProviderBase(Lazy<IHexDocumentService> hexDocumentService) {
+			this.hexDocumentService = hexDocumentService;
 		}
 
 		public IEnumerable<ITreeNodeData> Create(TreeNodeDataProviderContext context) {
-			var fileNode = context.Owner.Data as IDnSpyFileNode;
+			var fileNode = context.Owner.Data as IDsDocumentNode;
 			Debug.Assert(fileNode != null);
 			if (fileNode == null)
 				yield break;
 
 			bool hasPENode = HasPENode(fileNode);
-			var peImage = fileNode.DnSpyFile.PEImage;
+			var peImage = fileNode.Document.PEImage;
 			Debug.Assert(!hasPENode || peImage != null);
 			if (hasPENode && peImage != null)
-				yield return new PENode(hexDocumentManager.Value, peImage, fileNode.DnSpyFile.ModuleDef as ModuleDefMD);
+				yield return new PENode(hexDocumentService.Value, peImage, fileNode.Document.ModuleDef as ModuleDefMD);
 		}
 
-		public static bool HasPENode(IDnSpyFileNode node) {
+		public static bool HasPENode(IDsDocumentNode node) {
 			if (node == null)
 				return false;
 
-			var peImage = node.DnSpyFile.PEImage;
+			var peImage = node.Document.PEImage;
 
 			// Only show the PE node if it was loaded from a file. The hex document is always loaded
 			// from a file, so if the PEImage wasn't loaded from the same file, conversion to/from
 			// RVA/FileOffset won't work and the wrong data will be displayed, eg. in the .NET
 			// storage stream nodes.
-			bool loadedFromFile = node.DnSpyFile.Key is FilenameKey;
+			bool loadedFromFile = node.Document.Key is FilenameKey;
 			return loadedFromFile && peImage != null;
 		}
 	}
 
-	[ExportTreeNodeDataProvider(Guid = FileTVConstants.MODULE_NODE_GUID)]
+	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.MODULE_NODE_GUID)]
 	sealed class ModulePETreeNodeDataProvider : PETreeNodeDataProviderBase {
 		[ImportingConstructor]
-		ModulePETreeNodeDataProvider(Lazy<IHexDocumentManager> hexDocumentManager)
-			: base(hexDocumentManager) {
+		ModulePETreeNodeDataProvider(Lazy<IHexDocumentService> hexDocumentService)
+			: base(hexDocumentService) {
 		}
 	}
 
-	[ExportTreeNodeDataProvider(Guid = FileTVConstants.PEFILE_NODE_GUID)]
+	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.PEDOCUMENT_NODE_GUID)]
 	sealed class PEFilePETreeNodeDataProvider : PETreeNodeDataProviderBase {
 		[ImportingConstructor]
-		PEFilePETreeNodeDataProvider(Lazy<IHexDocumentManager> hexDocumentManager)
-			: base(hexDocumentManager) {
+		PEFilePETreeNodeDataProvider(Lazy<IHexDocumentService> hexDocumentService)
+			: base(hexDocumentService) {
 		}
 	}
 }

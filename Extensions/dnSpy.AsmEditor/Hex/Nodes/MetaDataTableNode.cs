@@ -23,14 +23,14 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class MetaDataTableNode : HexNode {
-		public override Guid Guid => new Guid(FileTVConstants.MDTBL_NODE_GUID);
+		public override Guid Guid => new Guid(DocumentTreeViewConstants.MDTBL_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, ((byte)MetaDataTableVM.Table).ToString());
 		public override object VMObject => MetaDataTableVM;
 

@@ -27,15 +27,15 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Classification {
 	[Export(typeof(IClassificationFormatMapService))]
 	sealed class ClassificationFormatMapService : IClassificationFormatMapService {
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly Dictionary<IEditorFormatMap, IClassificationFormatMap> toCategoryMap;
 
 		[ImportingConstructor]
-		ClassificationFormatMapService(IThemeManager themeManager, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
-			this.themeManager = themeManager;
+		ClassificationFormatMapService(IThemeService themeService, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+			this.themeService = themeService;
 			this.editorFormatMapService = editorFormatMapService;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
@@ -68,7 +68,7 @@ namespace dnSpy.Text.Classification {
 			IClassificationFormatMap map;
 			if (toCategoryMap.TryGetValue(editorFormatMap, out map))
 				return map;
-			map = new CategoryClassificationFormatMap(themeManager, editorFormatMap, editorFormatDefinitionService, classificationTypeRegistryService);
+			map = new CategoryClassificationFormatMap(themeService, editorFormatMap, editorFormatDefinitionService, classificationTypeRegistryService);
 			toCategoryMap.Add(editorFormatMap, map);
 			return map;
 		}

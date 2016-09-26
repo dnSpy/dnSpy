@@ -196,7 +196,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 
-			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(title, new FlagsFileTreeNodeFilter(flags), null, options.OwnerModule);
+			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(title, new FlagsDocumentTreeNodeFilter(flags), null, options.OwnerModule);
 			if (type == null)
 				return null;
 

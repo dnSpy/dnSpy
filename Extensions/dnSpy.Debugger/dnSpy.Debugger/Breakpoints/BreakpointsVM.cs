@@ -53,13 +53,13 @@ namespace dnSpy.Debugger.Breakpoints {
 		object selectedItem;
 
 		readonly BreakpointContext breakpointContext;
-		readonly IBreakpointManager breakpointManager;
+		readonly IBreakpointService breakpointService;
 		readonly ITheDebugger theDebugger;
 
 		[ImportingConstructor]
-		BreakpointsVM(IDecompilerManager decompilerManager, IImageManager imageManager, IThemeManager themeManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointManager breakpointManager, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleManager inMemoryModuleManager) {
-			this.breakpointContext = new BreakpointContext(imageManager, moduleLoader) {
-				Decompiler = decompilerManager.Decompiler,
+		BreakpointsVM(IDecompilerService decompilerService, IImageService imageService, IThemeService themeService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointService breakpointService, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleService inMemoryModuleService) {
+			this.breakpointContext = new BreakpointContext(imageService, moduleLoader) {
+				Decompiler = decompilerService.Decompiler,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				ShowTokens = breakpointSettings.ShowTokens,
@@ -71,28 +71,28 @@ namespace dnSpy.Debugger.Breakpoints {
 				ShowNamespaces = breakpointSettings.ShowNamespaces,
 				ShowTypeKeywords = breakpointSettings.ShowTypeKeywords,
 			};
-			this.breakpointManager = breakpointManager;
+			this.breakpointService = breakpointService;
 			this.theDebugger = theDebugger;
 			this.breakpointList = new ObservableCollection<BreakpointVM>();
 			breakpointSettings.PropertyChanged += BreakpointSettings_PropertyChanged;
-			breakpointManager.BreakpointsAdded += BreakpointManager_BreakpointsAdded;
-			breakpointManager.BreakpointsRemoved += BreakpointManager_BreakpointsRemoved;
+			breakpointService.BreakpointsAdded += BreakpointService_BreakpointsAdded;
+			breakpointService.BreakpointsRemoved += BreakpointService_BreakpointsRemoved;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			decompilerManager.DecompilerChanged += DecompilerManager_DecompilerChanged;
-			inMemoryModuleManager.DynamicModulesLoaded += InMemoryModuleManager_DynamicModulesLoaded;
-			foreach (var bp in breakpointManager.GetBreakpoints())
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
+			inMemoryModuleService.DynamicModulesLoaded += InMemoryModuleService_DynamicModulesLoaded;
+			foreach (var bp in breakpointService.GetBreakpoints())
 				AddBreakpoint(bp);
 		}
 
 		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
-			var decompilerManager = (IDecompilerManager)sender;
-			breakpointContext.Decompiler = decompilerManager.Decompiler;
+			var decompilerService = (IDecompilerService)sender;
+			breakpointContext.Decompiler = decompilerService.Decompiler;
 			RefreshLanguageFields();
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshThemeFields();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshThemeFields();
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
@@ -122,7 +122,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		void InMemoryModuleManager_DynamicModulesLoaded(object sender, EventArgs e) {
+		void InMemoryModuleService_DynamicModulesLoaded(object sender, EventArgs e) {
 			if (nameErrorCounter != 0) {
 				foreach (var moduleId in pendingModules) {
 					foreach (var vm in breakpointList)
@@ -198,15 +198,15 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		public void Remove(IEnumerable<BreakpointVM> bps) {
 			foreach (var bp in bps)
-				breakpointManager.Remove(bp.Breakpoint);
+				breakpointService.Remove(bp.Breakpoint);
 		}
 
-		void BreakpointManager_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
+		void BreakpointService_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
 			foreach (var bp in e.Breakpoints)
 				AddBreakpoint(bp);
 		}
 
-		void BreakpointManager_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
+		void BreakpointService_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
 			foreach (var bp in e.Breakpoints)
 				RemoveBreakpoint(bp);
 		}

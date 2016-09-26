@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Contracts.BackgroundImage {

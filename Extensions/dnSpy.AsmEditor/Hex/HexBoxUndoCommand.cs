@@ -25,7 +25,7 @@ using dnSpy.Contracts.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	/// <summary>
-	/// A command that gets added to <see cref="UndoCommandManager"/> after it's already been
+	/// A command that gets added to <see cref="UndoCommandService"/> after it's already been
 	/// executed once.
 	/// </summary>
 	[DebuggerDisplay("{Description}")]

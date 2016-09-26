@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		readonly ModuleDef ownerModule;
 
-		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager) {
+		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, IDecompilerService decompilerService) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged(nameof(AssemblyFullName)));
@@ -200,8 +200,8 @@ namespace dnSpy.AsmEditor.Assembly {
 			this.VersionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
 			this.VersionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
 			this.PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
-			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerManager, null, null);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, null, null);
 			Reinitialize();
 		}
 

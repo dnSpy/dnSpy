@@ -22,7 +22,7 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.Threading;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	/// <summary>
@@ -30,41 +30,41 @@ namespace dnSpy.Analyzer.TreeNodes {
 	/// </summary>
 	sealed class ScopedWhereUsedAnalyzer<T> {
 		readonly ModuleDef moduleScope;
-		readonly IFileManager fileManager;
+		readonly IDsDocumentService documentService;
 		TypeDef typeScope;
 
 		readonly Accessibility memberAccessibility = Accessibility.Public;
 		Accessibility typeAccessibility = Accessibility.Public;
 		readonly Func<TypeDef, IEnumerable<T>> typeAnalysisFunction;
 
-		public ScopedWhereUsedAnalyzer(IFileManager fileManager, TypeDef type, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef type, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction) {
 			this.typeScope = type;
 			this.moduleScope = type.Module;
 			this.typeAnalysisFunction = typeAnalysisFunction;
-			this.fileManager = fileManager;
+			this.documentService = documentService;
 		}
 
-		public ScopedWhereUsedAnalyzer(IFileManager fileManager, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(fileManager, method.DeclaringType, typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
+			: this(documentService, method.DeclaringType, typeAnalysisFunction) {
 			this.memberAccessibility = GetMethodAccessibility(method);
 		}
 
-		public ScopedWhereUsedAnalyzer(IFileManager fileManager, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(fileManager, property.DeclaringType, typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
+			: this(documentService, property.DeclaringType, typeAnalysisFunction) {
 			Accessibility getterAccessibility = (property.GetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
 			Accessibility setterAccessibility = (property.SetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
 			this.memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
 		}
 
-		public ScopedWhereUsedAnalyzer(IFileManager fileManager, EventDef eventDef, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(fileManager, eventDef.DeclaringType, typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, EventDef eventDef, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
+			: this(documentService, eventDef.DeclaringType, typeAnalysisFunction) {
 			// we only have to check the accessibility of the the get method
 			// [CLS Rule 30: The accessibility of an event and of its accessors shall be identical.]
 			this.memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
 		}
 
-		public ScopedWhereUsedAnalyzer(IFileManager fileManager, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(fileManager, field.DeclaringType, typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
+			: this(documentService, field.DeclaringType, typeAnalysisFunction) {
 			switch (field.Attributes & FieldAttributes.FieldAccessMask) {
 			case FieldAttributes.Private:
 			default:
@@ -243,7 +243,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var m in mod.Assembly.Modules.GetSafeEnumerable())
 				yield return m;
 
-			var assemblies = fileManager.GetFiles().Where(a => a.AssemblyDef != null);
+			var assemblies = documentService.GetDocuments().Where(a => a.AssemblyDef != null);
 
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
@@ -285,7 +285,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 
 				if (friendAssemblies.Count > 0) {
-					var assemblies = fileManager.GetFiles().Where(a => a.AssemblyDef != null);
+					var assemblies = documentService.GetDocuments().Where(a => a.AssemblyDef != null);
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();

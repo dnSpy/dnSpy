@@ -20,38 +20,38 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows.Input;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.Breakpoints {
 	[Export(typeof(IGlyphTextMarkerMouseProcessorProvider))]
-	[Name(PredefinedDnSpyGlyphTextMarkerMouseProcessorProviderNames.DebuggerBreakpoints)]
+	[Name(PredefinedDsGlyphTextMarkerMouseProcessorProviderNames.DebuggerBreakpoints)]
 	[TextViewRole(PredefinedTextViewRoles.Debuggable)]
 	sealed class GlyphTextMarkerMouseProcessorProvider : IGlyphTextMarkerMouseProcessorProvider {
-		readonly Lazy<IBreakpointManager> breakpointManager;
+		readonly Lazy<IBreakpointService> breakpointService;
 
 		[ImportingConstructor]
-		GlyphTextMarkerMouseProcessorProvider(Lazy<IBreakpointManager> breakpointManager) {
-			this.breakpointManager = breakpointManager;
+		GlyphTextMarkerMouseProcessorProvider(Lazy<IBreakpointService> breakpointService) {
+			this.breakpointService = breakpointService;
 		}
 
 		public IGlyphTextMarkerMouseProcessor GetAssociatedMouseProcessor(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin) =>
-			new GlyphTextMarkerMouseProcessor(wpfTextViewHost, breakpointManager);
+			new GlyphTextMarkerMouseProcessor(wpfTextViewHost, breakpointService);
 	}
 
 	sealed class GlyphTextMarkerMouseProcessor : GlyphTextMarkerMouseProcessorBase {
 		readonly IWpfTextViewHost wpfTextViewHost;
-		readonly Lazy<IBreakpointManager> breakpointManager;
+		readonly Lazy<IBreakpointService> breakpointService;
 
-		public GlyphTextMarkerMouseProcessor(IWpfTextViewHost wpfTextViewHost, Lazy<IBreakpointManager> breakpointManager) {
+		public GlyphTextMarkerMouseProcessor(IWpfTextViewHost wpfTextViewHost, Lazy<IBreakpointService> breakpointService) {
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (breakpointManager == null)
-				throw new ArgumentNullException(nameof(breakpointManager));
+			if (breakpointService == null)
+				throw new ArgumentNullException(nameof(breakpointService));
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.breakpointManager = breakpointManager;
+			this.breakpointService = breakpointService;
 			wpfTextViewHost.TextView.Closed += TextView_Closed;
 			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
 		}
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				e.Handled = true;
 				var documentViewer = wpfTextViewHost.TextView.TextBuffer.TryGetDocumentViewer();
 				if (documentViewer != null)
-					breakpointManager.Value.Toggle(documentViewer, context.Line.Start.Position);
+					breakpointService.Value.Toggle(documentViewer, context.Line.Start.Position);
 			}
 		}
 

@@ -24,20 +24,20 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.Locals {
 	interface IPrinterContext {
-		IImageManager ImageManager { get; }
+		IImageService ImageService { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 		TypePrinterFlags TypePrinterFlags { get; }
 	}
 
 	sealed class PrinterContext : IPrinterContext {
-		public IImageManager ImageManager { get; }
+		public IImageService ImageService { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public TypePrinterFlags TypePrinterFlags { get; set; }
 
-		public PrinterContext(IImageManager imageManager) {
-			this.ImageManager = imageManager;
+		public PrinterContext(IImageService imageService) {
+			this.ImageService = imageService;
 		}
 	}
 

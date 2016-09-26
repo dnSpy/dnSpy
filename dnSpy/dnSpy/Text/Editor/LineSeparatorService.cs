@@ -39,7 +39,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewCreationListener))]
 	[TextViewRole(PredefinedTextViewRoles.Document)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveLineSeparator)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveLineSeparator)]
 	[ContentType(ContentTypes.Text)]
 	sealed class LineSeparatorWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		readonly ILineSeparatorServiceProvider lineSeparatorServiceProvider;
@@ -78,8 +78,8 @@ namespace dnSpy.Text.Editor {
 	sealed class LineSeparatorService {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(PredefinedDnSpyAdornmentLayers.LineSeparator)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[Name(PredefinedDsAdornmentLayers.LineSeparator)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Squiggle)]
 		static AdornmentLayerDefinition theAdornmentLayerDefinition;
 #pragma warning restore 0169
@@ -113,7 +113,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultDnSpyTextViewOptions.LineSeparatorId.Name)
+			if (e.OptionId == DefaultDsTextViewOptions.LineSeparatorId.Name)
 				UpdateLineSeparator();
 		}
 
@@ -123,7 +123,7 @@ namespace dnSpy.Text.Editor {
 				if (tagAggregator != null)
 					throw new InvalidOperationException();
 				if (adornmentLayer == null)
-					adornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDnSpyAdornmentLayers.LineSeparator);
+					adornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.LineSeparator);
 				if (editorFormatMap == null)
 					editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextView);
 				tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<ILineSeparatorTag>(wpfTextView);

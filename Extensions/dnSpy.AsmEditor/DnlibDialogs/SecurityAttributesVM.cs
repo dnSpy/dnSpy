@@ -23,12 +23,12 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class SecurityAttributesVM : ListVM<SecurityAttributeVM, SecurityAttribute> {
-		public SecurityAttributesVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base(dnSpy_AsmEditor_Resources.EditSecurityAttribute, dnSpy_AsmEditor_Resources.CreateSecurityAttribute, ownerModule, decompilerManager, ownerType, ownerMethod) {
+		public SecurityAttributesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+			: base(dnSpy_AsmEditor_Resources.EditSecurityAttribute, dnSpy_AsmEditor_Resources.CreateSecurityAttribute, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 
-		protected override SecurityAttributeVM Create(SecurityAttribute model) => new SecurityAttributeVM(model, OwnerModule, decompilerManager, ownerType, ownerMethod);
-		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj) => new SecurityAttributeVM(obj.CreateSecurityAttribute(), OwnerModule, decompilerManager, ownerType, ownerMethod);
-		protected override SecurityAttributeVM Create() => new SecurityAttributeVM(new SecurityAttribute(), OwnerModule, decompilerManager, ownerType, ownerMethod);
+		protected override SecurityAttributeVM Create(SecurityAttribute model) => new SecurityAttributeVM(model, OwnerModule, decompilerService, ownerType, ownerMethod);
+		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj) => new SecurityAttributeVM(obj.CreateSecurityAttribute(), OwnerModule, decompilerService, ownerType, ownerMethod);
+		protected override SecurityAttributeVM Create() => new SecurityAttributeVM(new SecurityAttribute(), OwnerModule, decompilerService, ownerType, ownerMethod);
 	}
 }

@@ -57,12 +57,12 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Raised when selection has changed
 		/// </summary>
-		event EventHandler<TVSelectionChangedEventArgs> SelectionChanged;
+		event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
 
 		/// <summary>
 		/// Raised when a node has been removed
 		/// </summary>
-		event EventHandler<TVNodeRemovedEventArgs> NodeRemoved;
+		event EventHandler<TreeViewNodeRemovedEventArgs> NodeRemoved;
 
 		/// <summary>
 		/// Gets the selected node or null

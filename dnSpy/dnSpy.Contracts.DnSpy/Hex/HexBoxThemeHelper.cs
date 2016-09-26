@@ -28,15 +28,15 @@ namespace dnSpy.Contracts.Hex {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
 	sealed class HexBoxThemeHelper : IAutoLoaded {
 		[ImportingConstructor]
-		HexBoxThemeHelper(IThemeManager themeManager) {
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			UpdateColors(themeManager);
+		HexBoxThemeHelper(IThemeService themeService) {
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			UpdateColors(themeService);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateColors((IThemeManager)sender);
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateColors((IThemeService)sender);
 
-		void UpdateColors(IThemeManager themeManager) {
-			var theme = themeManager.Theme;
+		void UpdateColors(IThemeService themeService) {
+			var theme = themeService.Theme;
 
 			var color = theme.GetColor(ColorType.HexText);
 			Application.Current.Resources[GetBackgroundResourceKey(ColorType.HexText)] = GetBrush(color.Background);

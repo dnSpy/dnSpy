@@ -23,18 +23,18 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackFrameContext {
-		IImageManager ImageManager { get; }
+		IImageService ImageService { get; }
 		TypePrinterFlags TypePrinterFlags { get; }
 		bool SyntaxHighlight { get; }
 	}
 
 	sealed class CallStackFrameContext : ICallStackFrameContext {
-		public IImageManager ImageManager { get; }
+		public IImageService ImageService { get; }
 		public TypePrinterFlags TypePrinterFlags { get; set; }
 		public bool SyntaxHighlight { get; set; }
 
-		public CallStackFrameContext(IImageManager ImageManager) {
-			this.ImageManager = ImageManager;
+		public CallStackFrameContext(IImageService ImageService) {
+			this.ImageService = ImageService;
 		}
 	}
 

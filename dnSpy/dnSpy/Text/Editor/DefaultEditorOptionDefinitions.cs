@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class IndentStyleEditorOptionDefinition : EditorOptionDefinition<IndentStyle> {
-		public override EditorOptionKey<IndentStyle> Key => DefaultDnSpyOptions.IndentStyleOptionId;
+		public override EditorOptionKey<IndentStyle> Key => DefaultDsOptions.IndentStyleOptionId;
 		public override IndentStyle Default => IndentStyle.Smart;
 	}
 }

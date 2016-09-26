@@ -37,7 +37,7 @@ namespace dnSpy.BackgroundImage {
 
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(PredefinedDnSpyAdornmentLayers.BackgroundImage)]
+		[Name(PredefinedDsAdornmentLayers.BackgroundImage)]
 		[LayerKind(LayerKind.Underlay)]
 		static AdornmentLayerDefinition backgroundImageAdornmentLayerDefinition;
 #pragma warning restore 0169
@@ -70,7 +70,7 @@ namespace dnSpy.BackgroundImage {
 
 		public void OnEnabled() {
 			if (adornmentLayer == null)
-				adornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDnSpyAdornmentLayers.BackgroundImage);
+				adornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.BackgroundImage);
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 		}
 

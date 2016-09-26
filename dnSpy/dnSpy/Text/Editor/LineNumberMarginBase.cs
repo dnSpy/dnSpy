@@ -85,7 +85,7 @@ namespace dnSpy.Text.Editor {
 			else if (!Enabled) {
 				// Ignore all other options when it's disabled
 			}
-			else if (e.OptionId == DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name) {
+			else if (e.OptionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededId.Name) {
 				UpdateForceClearTypeIfNeeded();
 				OnTextPropertiesChanged();
 			}

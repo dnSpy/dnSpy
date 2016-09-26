@@ -75,10 +75,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly SecurityAttribute origSa;
 		readonly ModuleDef ownerModule;
 
-		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origSa = sa;
 			this.ownerModule = ownerModule;
-			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerManager, ownerType, ownerMethod, a => {
+			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerService, ownerType, ownerMethod, a => {
 				// The named args blob length must also be at most 0x1FFFFFFF bytes but we can't verify it here
 				return a.Collection.Count < ModelUtils.COMPRESSED_UINT32_MAX;
 			});
@@ -112,7 +112,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickAttributeType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newAttrType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
+			var newAttrType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
 			if (newAttrType != null)
 				AttributeType = newAttrType;
 		}

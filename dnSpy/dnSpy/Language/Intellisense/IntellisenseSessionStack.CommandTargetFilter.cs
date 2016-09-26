@@ -27,12 +27,12 @@ namespace dnSpy.Language.Intellisense {
 	sealed partial class IntellisenseSessionStack {
 		sealed class CommandTargetFilter : ICommandTargetFilter {
 			readonly IntellisenseSessionStack owner;
-			readonly IDnSpyWpfTextView wpfTextView;
+			readonly IDsWpfTextView wpfTextView;
 			bool hasHookedKeyboard;
 
 			public CommandTargetFilter(IntellisenseSessionStack owner) {
 				this.owner = owner;
-				this.wpfTextView = owner.wpfTextView as IDnSpyWpfTextView;
+				this.wpfTextView = owner.wpfTextView as IDsWpfTextView;
 				Debug.Assert(wpfTextView != null);
 			}
 

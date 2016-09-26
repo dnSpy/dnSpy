@@ -23,39 +23,39 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.PE;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	[ExportReferenceFileTabContentProvider(Order = TabConstants.ORDER_CONTENTPROVIDER_HEXADDRREF)]
-	sealed class HexAddressReferenceFileTabContentCreator : IReferenceFileTabContentProvider {
-		readonly Lazy<IHexBoxFileTabContentCreator> hexBoxFileTabContentCreator;
+	[ExportReferenceDocumentTabContentProvider(Order = TabConstants.ORDER_CONTENTPROVIDER_HEXADDRREF)]
+	sealed class HexAddressReferenceFileTabContentCreator : IReferenceDocumentTabContentProvider {
+		readonly Lazy<IHexBoxDocumentTabContentCreator> hexBoxDocumentTabContentCreator;
 
 		[ImportingConstructor]
-		HexAddressReferenceFileTabContentCreator(Lazy<IHexBoxFileTabContentCreator> hexBoxFileTabContentCreator, IFileTreeView fileTreeView) {
-			this.hexBoxFileTabContentCreator = hexBoxFileTabContentCreator;
+		HexAddressReferenceFileTabContentCreator(Lazy<IHexBoxDocumentTabContentCreator> hexBoxDocumentTabContentCreator, IDocumentTreeView documentTreeView) {
+			this.hexBoxDocumentTabContentCreator = hexBoxDocumentTabContentCreator;
 		}
 
-		public FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, IDocumentTabContent sourceContent, object @ref) {
 			var addrRef = @ref as AddressReference;
 			if (addrRef == null)
 				addrRef = (@ref as TextReference)?.Reference as AddressReference;
 			if (addrRef != null)
-				return Create(addrRef, fileTabManager.FileTreeView);
+				return Create(addrRef, documentTabService.DocumentTreeView);
 			return null;
 		}
 
-		FileTabReferenceResult Create(AddressReference addrRef, IFileTreeView fileTreeView) {
-			var content = hexBoxFileTabContentCreator.Value.TryCreate(addrRef.Filename);
+		DocumentTabReferenceResult Create(AddressReference addrRef, IDocumentTreeView documentTreeView) {
+			var content = hexBoxDocumentTabContentCreator.Value.TryCreate(addrRef.Filename);
 			if (content == null)
 				return null;
-			ulong? fileOffset = GetFileOffset(addrRef, fileTreeView);
-			return new FileTabReferenceResult(content, null, e => {
+			ulong? fileOffset = GetFileOffset(addrRef, documentTreeView);
+			return new DocumentTabReferenceResult(content, null, e => {
 				if (e.Success) {
 					Debug.Assert(e.Tab.Content == content);
-					var uiContext = e.Tab.UIContext as HexBoxFileTabUIContext;
+					var uiContext = e.Tab.UIContext as HexBoxDocumentTabUIContext;
 					Debug.Assert(uiContext != null);
 					if (uiContext != null && fileOffset != null) {
 						if (!IsVisible(uiContext.DnHexBox, fileOffset.Value, addrRef.Length))
@@ -76,16 +76,16 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return start >= dnHexBox.StartOffset && end <= dnHexBox.EndOffset;
 		}
 
-		ulong? GetFileOffset(AddressReference addrRef, IFileTreeView fileTreeView) {
+		ulong? GetFileOffset(AddressReference addrRef, IDocumentTreeView documentTreeView) {
 			if (!addrRef.IsRVA)
 				return addrRef.Address;
 			if (string.IsNullOrEmpty(addrRef.Filename))
 				return null;
 
-			var file = fileTreeView.GetAllCreatedDnSpyFileNodes().FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.DnSpyFile.Filename, addrRef.Filename));
+			var file = documentTreeView.GetAllCreatedDocumentNodes().FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.Document.Filename, addrRef.Filename));
 			if (file == null)
 				return null;
-			var pe = file.DnSpyFile.PEImage;
+			var pe = file.Document.PEImage;
 			if (pe == null)
 				return null;
 			return (ulong)pe.ToFileOffset((RVA)addrRef.Address);

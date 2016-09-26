@@ -122,10 +122,10 @@ namespace dnSpy.MainApp {
 
 		public ToolWindowUIState Save(AppToolWindowLocation location, MainWindowControl.ToolWindowUI ui) {
 			this.Location = location;
-			this.StackedContentState = ((ToolWindowGroupManager)ui.ToolWindowGroupManager).StackedContentState;
-			var groups = ui.ToolWindowGroupManager.TabGroups.ToList();
-			this.Index = groups.IndexOf(ui.ToolWindowGroupManager.ActiveTabGroup);
-			this.IsHorizontal = ui.ToolWindowGroupManager.IsHorizontal;
+			this.StackedContentState = ((ToolWindowGroupService)ui.ToolWindowGroupService).StackedContentState;
+			var groups = ui.ToolWindowGroupService.TabGroups.ToList();
+			this.Index = groups.IndexOf(ui.ToolWindowGroupService.ActiveTabGroup);
+			this.IsHorizontal = ui.ToolWindowGroupService.IsHorizontal;
 			foreach (var g in groups)
 				Groups.Add(new ToolWindowGroupState().Save(g));
 			return this;
@@ -135,7 +135,7 @@ namespace dnSpy.MainApp {
 			if (Groups.Count == 0)
 				return;
 
-			var mgr = ui.ToolWindowGroupManager;
+			var mgr = ui.ToolWindowGroupService;
 			mgr.IsHorizontal = IsHorizontal;
 
 			foreach (var gs in Groups) {
@@ -157,7 +157,7 @@ namespace dnSpy.MainApp {
 				mgr.ActiveTabGroup = groups[Index];
 			else if (groups.Count > 0)
 				mgr.ActiveTabGroup = groups[0];
-			((ToolWindowGroupManager)mgr).StackedContentState = this.StackedContentState;
+			((ToolWindowGroupService)mgr).StackedContentState = this.StackedContentState;
 			foreach (var g in groups) {
 				if (!g.TabContents.Any())
 					mgr.Close(g);
@@ -272,8 +272,8 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[Export, Export(typeof(IMainToolWindowManager))]
-	sealed class MainWindowControl : IStackedContentChild, IMainToolWindowManager {
+	[Export, Export(typeof(IDsToolWindowService))]
+	sealed class MainWindowControl : IStackedContentChild, IDsToolWindowService {
 		readonly StackedContent<IStackedContentChild> horizontalContent;
 		readonly StackedContent<IStackedContentChild> verticalContent;
 		readonly Dictionary<AppToolWindowLocation, ToolWindowUI> toolWindowUIs;
@@ -283,20 +283,20 @@ namespace dnSpy.MainApp {
 		public object UIObject => horizontalContent.UIObject;
 
 		[ImportingConstructor]
-		MainWindowControl(IToolWindowManagerProvider toolWindowManagerProvider, [ImportMany] Lazy<IMainToolWindowContentProvider>[] mainToolWindowContentProviders) {
+		MainWindowControl(IToolWindowServiceProvider toolWindowServiceProvider, [ImportMany] Lazy<IMainToolWindowContentProvider>[] mainToolWindowContentProviders) {
 			this.horizontalContent = new StackedContent<IStackedContentChild>(true);
 			this.verticalContent = new StackedContent<IStackedContentChild>(false);
 			this.toolWindowUIs = new Dictionary<AppToolWindowLocation, ToolWindowUI>();
-			var toolWindowManager = toolWindowManagerProvider.Create();
+			var toolWindowService = toolWindowServiceProvider.Create();
 			this.mainToolWindowContentProviders = mainToolWindowContentProviders.ToArray();
 			this.savedLocations = new Dictionary<Guid, AppToolWindowLocation>();
 
 			var guid = new Guid(MenuConstants.GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID);
 			const double HORIZ_WIDTH = 250, VERT_HEIGHT = 250;
-			toolWindowUIs.Add(AppToolWindowLocation.Left, new ToolWindowUI(this, AppToolWindowLocation.Left, HORIZ_WIDTH, horizontalContent, false, toolWindowManager.Create(new ToolWindowGroupManagerOptions(guid))));
-			toolWindowUIs.Add(AppToolWindowLocation.Right, new ToolWindowUI(this, AppToolWindowLocation.Right, HORIZ_WIDTH, horizontalContent, true, toolWindowManager.Create(new ToolWindowGroupManagerOptions(guid))));
-			toolWindowUIs.Add(AppToolWindowLocation.Top, new ToolWindowUI(this, AppToolWindowLocation.Top, VERT_HEIGHT, verticalContent, false, toolWindowManager.Create(new ToolWindowGroupManagerOptions(guid))));
-			toolWindowUIs.Add(AppToolWindowLocation.Bottom, new ToolWindowUI(this, AppToolWindowLocation.Bottom, VERT_HEIGHT, verticalContent, true, toolWindowManager.Create(new ToolWindowGroupManagerOptions(guid))));
+			toolWindowUIs.Add(AppToolWindowLocation.Left, new ToolWindowUI(this, AppToolWindowLocation.Left, HORIZ_WIDTH, horizontalContent, false, toolWindowService.Create(new ToolWindowGroupServiceOptions(guid))));
+			toolWindowUIs.Add(AppToolWindowLocation.Right, new ToolWindowUI(this, AppToolWindowLocation.Right, HORIZ_WIDTH, horizontalContent, true, toolWindowService.Create(new ToolWindowGroupServiceOptions(guid))));
+			toolWindowUIs.Add(AppToolWindowLocation.Top, new ToolWindowUI(this, AppToolWindowLocation.Top, VERT_HEIGHT, verticalContent, false, toolWindowService.Create(new ToolWindowGroupServiceOptions(guid))));
+			toolWindowUIs.Add(AppToolWindowLocation.Bottom, new ToolWindowUI(this, AppToolWindowLocation.Bottom, VERT_HEIGHT, verticalContent, true, toolWindowService.Create(new ToolWindowGroupServiceOptions(guid))));
 		}
 
 		public sealed class ToolWindowUI {
@@ -304,23 +304,23 @@ namespace dnSpy.MainApp {
 			public readonly AppToolWindowLocation Location;
 			public readonly StackedContent<IStackedContentChild> StackedContent;
 			public readonly bool InsertLast;
-			public readonly IToolWindowGroupManager ToolWindowGroupManager;
+			public readonly IToolWindowGroupService ToolWindowGroupService;
 
 			public double Length { get; set; }
 			public bool IsAdded { get; set; }
 			public IStackedContentChild StackedContentChild { get; set; }
 
-			public ToolWindowUI(MainWindowControl mainWindowControl, AppToolWindowLocation location, double length, StackedContent<IStackedContentChild> stackedContent, bool insertLast, IToolWindowGroupManager mgr) {
+			public ToolWindowUI(MainWindowControl mainWindowControl, AppToolWindowLocation location, double length, StackedContent<IStackedContentChild> stackedContent, bool insertLast, IToolWindowGroupService mgr) {
 				this.mainWindowControl = mainWindowControl;
 				this.Location = location;
 				this.Length = length;
 				this.StackedContent = stackedContent;
 				this.InsertLast = insertLast;
-				this.ToolWindowGroupManager = mgr;
-				ToolWindowGroupManager.TabGroupCollectionChanged += ToolWindowGroupManager_TabGroupCollectionChanged;
+				this.ToolWindowGroupService = mgr;
+				ToolWindowGroupService.TabGroupCollectionChanged += ToolWindowGroupService_TabGroupCollectionChanged;
 			}
 
-			void ToolWindowGroupManager_TabGroupCollectionChanged(object sender, ToolWindowGroupCollectionChangedEventArgs e) {
+			void ToolWindowGroupService_TabGroupCollectionChanged(object sender, ToolWindowGroupCollectionChangedEventArgs e) {
 				mainWindowControl.TabGroupCollectionChanged(this);
 			}
 
@@ -378,7 +378,7 @@ namespace dnSpy.MainApp {
 			foreach (var kv in savedLocations)
 				state.SavedLocations[kv.Key] = kv.Value;
 			foreach (var ui in toolWindowUIs.Values) {
-				foreach (var g in ui.ToolWindowGroupManager.TabGroups) {
+				foreach (var g in ui.ToolWindowGroupService.TabGroups) {
 					foreach (var c in g.TabContents)
 						state.SavedLocations[c.Guid] = ui.Location;
 				}
@@ -448,9 +448,9 @@ namespace dnSpy.MainApp {
 			if (!toolWindowUIs.TryGetValue(Convert(location), out ui))
 				throw new ArgumentException();
 			Show(ui);
-			var g = ui.ToolWindowGroupManager.ActiveTabGroup;
+			var g = ui.ToolWindowGroupService.ActiveTabGroup;
 			if (g == null)
-				g = ui.ToolWindowGroupManager.Create();
+				g = ui.ToolWindowGroupService.Create();
 			return g;
 		}
 
@@ -479,7 +479,7 @@ namespace dnSpy.MainApp {
 			SaveUILengths();
 			int index = ui.InsertLast ? ui.StackedContent.Count : 0;
 			if (ui.StackedContentChild == null)
-				ui.StackedContentChild = StackedContentChildImpl.GetOrCreate(ui.ToolWindowGroupManager, ui.ToolWindowGroupManager.UIObject);
+				ui.StackedContentChild = StackedContentChildImpl.GetOrCreate(ui.ToolWindowGroupService, ui.ToolWindowGroupService.UIObject);
 			ui.StackedContent.AddChild(ui.StackedContentChild, ui.GetSizeInfo(), index);
 			ui.IsAdded = true;
 		}
@@ -488,7 +488,7 @@ namespace dnSpy.MainApp {
 		public bool IsShown(Guid guid) => GetToolWindowGroup(guid) != null;
 
 		void Hide(ToolWindowUI ui) {
-			Debug.Assert(!ui.ToolWindowGroupManager.TabGroups.Any());
+			Debug.Assert(!ui.ToolWindowGroupService.TabGroups.Any());
 			SaveLength(ui);
 			ui.StackedContent.Remove(ui.StackedContentChild);
 			ui.IsAdded = false;
@@ -530,13 +530,13 @@ namespace dnSpy.MainApp {
 		}
 
 		void TabGroupCollectionChanged(ToolWindowUI ui) {
-			if (!ui.ToolWindowGroupManager.TabGroups.Any())
+			if (!ui.ToolWindowGroupService.TabGroups.Any())
 				Hide(ui);
 		}
 
 		Tuple<ToolWindowUI, IToolWindowGroup> GetToolWindowGroup(Guid guid) {
 			foreach (var ui in this.toolWindowUIs.Values) {
-				foreach (var g in ui.ToolWindowGroupManager.TabGroups) {
+				foreach (var g in ui.ToolWindowGroupService.TabGroups) {
 					foreach (var c in g.TabContents) {
 						if (c.Guid == guid)
 							return Tuple.Create(ui, g);
@@ -548,7 +548,7 @@ namespace dnSpy.MainApp {
 
 		Tuple<ToolWindowUI, IToolWindowGroup> GetToolWindowGroup(IToolWindowContent content) {
 			foreach (var ui in this.toolWindowUIs.Values) {
-				foreach (var g in ui.ToolWindowGroupManager.TabGroups) {
+				foreach (var g in ui.ToolWindowGroupService.TabGroups) {
 					if (g.TabContents.Contains(content))
 						return Tuple.Create(ui, g);
 				}
@@ -558,7 +558,7 @@ namespace dnSpy.MainApp {
 
 		Tuple<ToolWindowUI, IToolWindowGroup> GetToolWindowGroup(IToolWindowGroup group) {
 			foreach (var ui in this.toolWindowUIs.Values) {
-				if (ui.ToolWindowGroupManager.TabGroups.Contains(group))
+				if (ui.ToolWindowGroupService.TabGroups.Contains(group))
 					return Tuple.Create(ui, group);
 			}
 			return null;
@@ -584,7 +584,7 @@ namespace dnSpy.MainApp {
 			if (toolWindowGroup == null)
 				return false;
 			foreach (var ui in toolWindowUIs.Values) {
-				if (ui.ToolWindowGroupManager.TabGroups.Contains(toolWindowGroup))
+				if (ui.ToolWindowGroupService.TabGroups.Contains(toolWindowGroup))
 					return true;
 			}
 			return false;

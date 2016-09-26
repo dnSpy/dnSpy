@@ -27,7 +27,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class RoslynReplCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.RoslynRepl) != true)
+			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.RoslynRepl) != true)
 				return null;
 
 			return new RoslynReplCommandTargetFilter(textView);

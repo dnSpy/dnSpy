@@ -158,14 +158,14 @@ namespace dnSpy.Contracts.Hex {
 	sealed class HexEditorSettingsImpl : HexEditorSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("4EFA9642-600F-42AD-9FC0-7B4B9D792225");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		HexEditorSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		HexEditorSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			BytesGroupCount = sect.Attribute<int?>(nameof(BytesGroupCount)) ?? BytesGroupCount;
 			BytesPerLine = sect.Attribute<int?>(nameof(BytesPerLine)) ?? BytesPerLine;
 			UseHexPrefix = sect.Attribute<bool?>(nameof(UseHexPrefix)) ?? UseHexPrefix;
@@ -181,7 +181,7 @@ namespace dnSpy.Contracts.Hex {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(BytesGroupCount), this.BytesGroupCount);
 			sect.Attribute(nameof(BytesPerLine), this.BytesPerLine);
 			sect.Attribute(nameof(UseHexPrefix), this.UseHexPrefix);

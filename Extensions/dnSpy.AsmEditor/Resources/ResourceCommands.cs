@@ -31,10 +31,10 @@ using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.TreeView;
@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Resources {
 	[ExportAutoLoaded]
 	sealed class CommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CommandLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager,
+		CommandLoader(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService,
 			DeleteResourceCommand.EditMenuCommand removeCmd1,
 			DeleteResourceElementCommand.EditMenuCommand removeCmd2,
 			DeleteResourceCommand.CodeCommand removeCmd3,
@@ -60,78 +60,78 @@ namespace dnSpy.AsmEditor.Resources {
 			SerializedImageResourceElementSettingsCommand.CodeCommand settingsCmd41,
 			SerializedImageListStreamerResourceElementSettingsCommand.EditMenuCommand settingsCmd50,
 			SerializedImageListStreamerResourceElementSettingsCommand.CodeCommand settingsCmd51) {
-			wpfCommandManager.AddRemoveCommand(removeCmd1);
-			wpfCommandManager.AddRemoveCommand(removeCmd2);
-			wpfCommandManager.AddRemoveCommand(removeCmd3, fileTabManager);
-			wpfCommandManager.AddRemoveCommand(removeCmd4, fileTabManager);
-			wpfCommandManager.AddSettingsCommand(fileTabManager, settingsCmd10, settingsCmd11);
-			wpfCommandManager.AddSettingsCommand(fileTabManager, settingsCmd20, settingsCmd21);
-			wpfCommandManager.AddSettingsCommand(fileTabManager, settingsCmd30, settingsCmd31);
-			wpfCommandManager.AddSettingsCommand(fileTabManager, settingsCmd40, settingsCmd41);
-			wpfCommandManager.AddSettingsCommand(fileTabManager, settingsCmd50, settingsCmd51);
+			wpfCommandService.AddRemoveCommand(removeCmd1);
+			wpfCommandService.AddRemoveCommand(removeCmd2);
+			wpfCommandService.AddRemoveCommand(removeCmd3, documentTabService);
+			wpfCommandService.AddRemoveCommand(removeCmd4, documentTabService);
+			wpfCommandService.AddSettingsCommand(documentTabService, settingsCmd10, settingsCmd11);
+			wpfCommandService.AddSettingsCommand(documentTabService, settingsCmd20, settingsCmd21);
+			wpfCommandService.AddSettingsCommand(documentTabService, settingsCmd30, settingsCmd31);
+			wpfCommandService.AddSettingsCommand(documentTabService, settingsCmd40, settingsCmd41);
+			wpfCommandService.AddSettingsCommand(documentTabService, settingsCmd50, settingsCmd51);
 		}
 	}
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteResourceCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 80)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 80)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteResourceCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => DeleteResourceCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 80)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
-				: base(fileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
+				: base(documentTreeView) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteResourceCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => DeleteResourceCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 80)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
-				: base(fileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
+				: base(documentTreeView) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => DeleteResourceCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(CodeContext context) => DeleteResourceCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(CodeContext context) => DeleteResourceCommand.GetHeader(context.Nodes);
 		}
 
-		static string GetHeader(IFileTreeNodeData[] nodes) {
+		static string GetHeader(IDocumentTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
 				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteResourcesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IResourceNode);
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IResourceNode);
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var rsrcNodes = nodes.Cast<IResourceNode>().ToArray();
-			undoCommandManager.Value.Add(new DeleteResourceCommand(rsrcNodes));
+			undoCommandService.Value.Add(new DeleteResourceCommand(rsrcNodes));
 		}
 
 		struct DeleteModelNodes {
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 
-			public void Delete(IResourceNode[] nodes, IFileTreeNodeData[] parents) {
+			public void Delete(IResourceNode[] nodes, IDocumentTreeNodeData[] parents) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -212,64 +212,64 @@ namespace dnSpy.AsmEditor.Resources {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteResourceElementCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 90)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 90)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteResourceElementCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => DeleteResourceElementCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 90)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
-				: base(fileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
+				: base(documentTreeView) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteResourceElementCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => DeleteResourceElementCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteResourceCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 90)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
-				: base(fileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
+				: base(documentTreeView) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => DeleteResourceElementCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(CodeContext context) => DeleteResourceElementCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(CodeContext context) => DeleteResourceElementCommand.GetHeader(context.Nodes);
 		}
 
-		static string GetHeader(IFileTreeNodeData[] nodes) {
+		static string GetHeader(IDocumentTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
 				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteResourcesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IResourceElementNode);
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IResourceElementNode);
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var rsrcNodes = nodes.Cast<IResourceElementNode>().ToArray();
-			undoCommandManager.Value.Add(new DeleteResourceElementCommand(rsrcNodes));
+			undoCommandService.Value.Add(new DeleteResourceElementCommand(rsrcNodes));
 		}
 
 		sealed class ModuleInfo {
@@ -375,7 +375,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		protected IResourceDataProvider[] FilesGetResourceNodes(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
 
 			var selNodes = context.Find<ITreeNodeData[]>();
@@ -385,7 +385,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (selNodes.Length == 1 && selNodes[0] is IResourcesFolderNode) {
 				var rlist = (IResourcesFolderNode)selNodes[0];
 				rlist.TreeNode.EnsureChildrenLoaded();
-				selNodes = rlist.TreeNode.DataChildren.Cast<IFileTreeNodeData>().ToArray();
+				selNodes = rlist.TreeNode.DataChildren.Cast<IDocumentTreeNodeData>().ToArray();
 			}
 			return Filter(selNodes.Where(a => a is IResourceDataProvider).Cast<IResourceDataProvider>().ToArray());
 		}
@@ -406,9 +406,9 @@ namespace dnSpy.AsmEditor.Resources {
 			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => CodeGetResourceNodes(context);
 		}
 
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 0)]
-		sealed class FilesCommand : SaveResourcesCommandBase {
-			public FilesCommand()
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SAVE, Order = 0)]
+		sealed class DocumentsCommand : SaveResourcesCommandBase {
+			public DocumentsCommand()
 				: base(false, ResourceDataType.Deserialized) {
 			}
 
@@ -435,9 +435,9 @@ namespace dnSpy.AsmEditor.Resources {
 			public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
 		}
 
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 10)]
-		sealed class FilesCommand : SaveResourcesCommandBase {
-			public FilesCommand()
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SAVE, Order = 10)]
+		sealed class DocumentsCommand : SaveResourcesCommandBase {
+			public DocumentsCommand()
 				: base(true, ResourceDataType.Deserialized) {
 			}
 
@@ -461,9 +461,9 @@ namespace dnSpy.AsmEditor.Resources {
 			protected override IResourceDataProvider[] GetResourceNodes(IMenuItemContext context) => CodeGetResourceNodes(context);
 		}
 
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 20)]
-		sealed class FilesCommand : SaveResourcesCommandBase {
-			public FilesCommand()
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SAVE, Order = 20)]
+		sealed class DocumentsCommand : SaveResourcesCommandBase {
+			public DocumentsCommand()
 				: base(false, ResourceDataType.Serialized) {
 			}
 
@@ -490,9 +490,9 @@ namespace dnSpy.AsmEditor.Resources {
 			public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
 		}
 
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 30)]
-		sealed class FilesCommand : SaveResourcesCommandBase {
-			public FilesCommand()
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SAVE, Order = 30)]
+		sealed class DocumentsCommand : SaveResourcesCommandBase {
+			public DocumentsCommand()
 				: base(true, ResourceDataType.Serialized) {
 			}
 
@@ -506,9 +506,9 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	static class ResUtils {
-		public static bool CanExecuteResourceListCommand(IFileTreeNodeData[] nodes) => GetResourceListTreeNode(nodes) != null;
+		public static bool CanExecuteResourceListCommand(IDocumentTreeNodeData[] nodes) => GetResourceListTreeNode(nodes) != null;
 
-		public static IResourcesFolderNode GetResourceListTreeNode(IFileTreeNodeData[] nodes) {
+		public static IResourcesFolderNode GetResourceListTreeNode(IDocumentTreeNodeData[] nodes) {
 			if (nodes.Length != 1)
 				return null;
 			var rsrcListNode = nodes[0] as IResourcesFolderNode;
@@ -518,7 +518,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (rsrcListNode != null)
 				return rsrcListNode;
 
-			var modNode = nodes[0] as IModuleFileNode;
+			var modNode = nodes[0] as IModuleDocumentNode;
 			if (modNode == null)
 				return null;
 			modNode.TreeNode.EnsureChildrenLoaded();
@@ -534,62 +534,62 @@ namespace dnSpy.AsmEditor.Resources {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateFileResourceCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:CreateFileResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 100)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateFileResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 100)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateFileResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFileResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFileResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 100)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateFileResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFileResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateFileResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 100)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateFileResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(CodeContext context) => CreateFileResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -611,8 +611,8 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			var newNodes = new IResourceNode[fnames.Length];
-			var treeView = appWindow.FileTreeView.TreeView;
-			var treeNodeGroup = appWindow.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceTreeNodeGroup);
+			var treeView = appWindow.DocumentTreeView.TreeView;
+			var treeNodeGroup = appWindow.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceTreeNodeGroup);
 			for (int i = 0; i < fnames.Length; i++) {
 				var fn = fnames[i];
 				try {
@@ -625,8 +625,8 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 
-			undoCommandManager.Value.Add(new CreateFileResourceCommand(rsrcListNode, newNodes));
-			appWindow.FileTabManager.FollowReference(newNodes[0]);
+			undoCommandService.Value.Add(new CreateFileResourceCommand(rsrcListNode, newNodes));
+			appWindow.DocumentTabService.FollowReference(newNodes[0]);
 		}
 
 		readonly ModuleDef module;
@@ -705,62 +705,62 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateMultiFileResourceCommand : CreateResourceTreeNodeCommand {
-		[ExportMenuItem(Header = "res:CreateMultiFileResourceCommand", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 110)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateMultiFileResourceCommand", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 110)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateMultiFileResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateMultiFileResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateMultiFileResourceCommand", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 110)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateMultiFileResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateMultiFileResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateMultiFileResourceCommand", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 110)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateMultiFileResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateMultiFileResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(CodeContext context) => CreateMultiFileResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -787,12 +787,12 @@ namespace dnSpy.AsmEditor.Resources {
 			var outStream = new MemoryStream();
 			ResourceWriter.Write(module, outStream, new ResourceElementSet());
 			var er = new EmbeddedResource(data.Name, outStream.ToArray(), data.Attributes);
-			var treeView = appWindow.FileTreeView.TreeView;
-			var treeNodeGroup = appWindow.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceTreeNodeGroup);
+			var treeView = appWindow.DocumentTreeView.TreeView;
+			var treeNodeGroup = appWindow.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceTreeNodeGroup);
 			var node = (IResourceNode)treeView.Create(resourceNodeFactory.Create(module, er, treeNodeGroup)).Data;
 
-			undoCommandManager.Value.Add(new CreateMultiFileResourceCommand(rsrcListNode, node));
-			appWindow.FileTabManager.FollowReference(node);
+			undoCommandService.Value.Add(new CreateMultiFileResourceCommand(rsrcListNode, node));
+			appWindow.DocumentTabService.FollowReference(node);
 		}
 
 		CreateMultiFileResourceCommand(IResourcesFolderNode rsrcListNode, IResourceNode resTreeNode)
@@ -803,62 +803,62 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateAssemblyLinkedResourceCommand : CreateResourceTreeNodeCommand {
-		[ExportMenuItem(Header = "res:CreateAssemblyLinkedResourceCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 120)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateAssemblyLinkedResourceCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 120)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateAssemblyLinkedResourceCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 120)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateAssemblyLinkedResourceCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 120)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(CodeContext context) => CreateAssemblyLinkedResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -883,11 +883,11 @@ namespace dnSpy.AsmEditor.Resources {
 			if (win.ShowDialog() != true)
 				return;
 
-			var treeView = appWindow.FileTreeView.TreeView;
-			var treeNodeGroup = appWindow.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceTreeNodeGroup);
+			var treeView = appWindow.DocumentTreeView.TreeView;
+			var treeNodeGroup = appWindow.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceTreeNodeGroup);
 			var node = (IResourceNode)treeView.Create(resourceNodeFactory.Create(module, new AssemblyLinkedResource(data.Name, data.Assembly, data.Attributes), treeNodeGroup)).Data;
-			undoCommandManager.Value.Add(new CreateAssemblyLinkedResourceCommand(rsrcListNode, node));
-			appWindow.FileTabManager.FollowReference(node);
+			undoCommandService.Value.Add(new CreateAssemblyLinkedResourceCommand(rsrcListNode, node));
+			appWindow.DocumentTabService.FollowReference(node);
 		}
 
 		CreateAssemblyLinkedResourceCommand(IResourcesFolderNode rsrcListNode, IResourceNode resTreeNode)
@@ -898,62 +898,62 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateFileLinkedResourceCommand : CreateResourceTreeNodeCommand {
-		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 130)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewModule", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 130)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFileLinkedResourceCommand", Icon = "NewModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 130)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateFileLinkedResourceCommand", Icon = "NewModule", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 130)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(CodeContext context) => CreateFileLinkedResourceCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => ResUtils.CanExecuteResourceListCommand(nodes);
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -979,11 +979,11 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			var opts = data.CreateResourceOptions();
-			var treeView = appWindow.FileTreeView.TreeView;
-			var treeNodeGroup = appWindow.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceTreeNodeGroup);
+			var treeView = appWindow.DocumentTreeView.TreeView;
+			var treeNodeGroup = appWindow.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceTreeNodeGroup);
 			var node = (IResourceNode)treeView.Create(resourceNodeFactory.Create(module, new LinkedResource(opts.Name, opts.File, opts.Attributes), treeNodeGroup)).Data;
-			undoCommandManager.Value.Add(new CreateFileLinkedResourceCommand(rsrcListNode, node));
-			appWindow.FileTabManager.FollowReference(node);
+			undoCommandService.Value.Add(new CreateFileLinkedResourceCommand(rsrcListNode, node));
+			appWindow.DocumentTabService.FollowReference(node);
 		}
 
 		CreateFileLinkedResourceCommand(IResourcesFolderNode rsrcListNode, IResourceNode resTreeNode)
@@ -995,56 +995,56 @@ namespace dnSpy.AsmEditor.Resources {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class ResourceSettingsCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 80)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 80)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => ResourceSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => ResourceSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 90)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => ResourceSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => ResourceSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 90)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsEnabled(CodeContext context) => ResourceSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => ResourceSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => ResourceSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IResourceNode;
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IResourceNode;
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1062,13 +1062,13 @@ namespace dnSpy.AsmEditor.Resources {
 			if (win.ShowDialog() != true)
 				return;
 
-			undoCommandManager.Value.Add(new ResourceSettingsCommand(rsrcNode, data.CreateResourceOptions()));
+			undoCommandService.Value.Add(new ResourceSettingsCommand(rsrcNode, data.CreateResourceOptions()));
 		}
 
 		readonly IResourceNode rsrcNode;
 		readonly ResourceOptions newOptions;
 		readonly ResourceOptions origOptions;
-		readonly IFileTreeNodeData origParentNode;
+		readonly IDocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
@@ -1077,7 +1077,7 @@ namespace dnSpy.AsmEditor.Resources {
 			this.newOptions = options;
 			this.origOptions = new ResourceOptions(rsrcNode.Resource);
 
-			this.origParentNode = (IFileTreeNodeData)rsrcNode.TreeNode.Parent.Data;
+			this.origParentNode = (IDocumentTreeNodeData)rsrcNode.TreeNode.Parent.Data;
 			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(rsrcNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)
@@ -1179,64 +1179,64 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateImageResourceElementCommand : CreateResourceElementCommandBase {
-		[ExportMenuItem(Header = "res:CreateBitMapIconResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 140)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateBitMapIconResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 140)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateImageResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateImageResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateBitMapIconResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 140)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateImageResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateImageResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateBitMapIconResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 140)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateImageResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateImageResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(CodeContext context) => CreateImageResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
 			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1262,8 +1262,8 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			var newNodes = new List<IResourceElementNode>(fnames.Length);
-			var treeView = appWindow.FileTreeView.TreeView;
-			var treeNodeGroup = appWindow.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceElementTreeNodeGroup);
+			var treeView = appWindow.DocumentTreeView.TreeView;
+			var treeNodeGroup = appWindow.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceElementTreeNodeGroup);
 			string error = null;
 			for (int i = 0; i < fnames.Length; i++) {
 				var fn = fnames[i];
@@ -1280,8 +1280,8 @@ namespace dnSpy.AsmEditor.Resources {
 			if (newNodes.Count == 0)
 				return;
 
-			undoCommandManager.Value.Add(new CreateImageResourceElementCommand(rsrcSetNode, newNodes.ToArray()));
-			appWindow.FileTabManager.FollowReference(newNodes[0]);
+			undoCommandService.Value.Add(new CreateImageResourceElementCommand(rsrcSetNode, newNodes.ToArray()));
+			appWindow.DocumentTabService.FollowReference(newNodes[0]);
 		}
 
 		CreateImageResourceElementCommand(IResourceElementSetNode rsrcSetNode, IResourceElementNode[] nodes)
@@ -1292,64 +1292,64 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateImageListResourceElementCommand : CreateResourceElementCommandBase {
-		[ExportMenuItem(Header = "res:CreateImageListStreamerResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 150)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateImageListStreamerResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 150)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateImageListResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateImageListResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateImageListStreamerResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 150)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateImageListResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateImageListResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateImageListStreamerResourceCommand", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 150)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateImageListResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateImageListResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(CodeContext context) => CreateImageListResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
 			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1391,11 +1391,11 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 			}
 
-			var treeView = appWindow.FileTreeView.TreeView;
-			var treeNodeGroup = appWindow.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceElementTreeNodeGroup);
+			var treeView = appWindow.DocumentTreeView.TreeView;
+			var treeNodeGroup = appWindow.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceElementTreeNodeGroup);
 			var newNode = (ISerializedImageListStreamerResourceElementNode)treeView.Create(resourceNodeFactory.Create(module, opts.Create(), treeNodeGroup)).Data;
-			undoCommandManager.Value.Add(new CreateImageListResourceElementCommand(rsrcSetNode, newNode));
-			appWindow.FileTabManager.FollowReference(newNode);
+			undoCommandService.Value.Add(new CreateImageListResourceElementCommand(rsrcSetNode, newNode));
+			appWindow.DocumentTabService.FollowReference(newNode);
 		}
 
 		CreateImageListResourceElementCommand(IResourceElementSetNode rsrcSetNode, ISerializedImageListStreamerResourceElementNode node)
@@ -1406,70 +1406,70 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateByteArrayResourceElementCommand : CreateResourceElementCommandBase {
-		[ExportMenuItem(Header = "res:CreateByteArrayResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 160)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateByteArrayResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 160)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateByteArrayResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 170)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateByteArrayResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 170)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(CodeContext context) => CreateByteArrayResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
 			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
-			Execute(undoCommandManager, appWindow, resourceNodeFactory, nodes, ResourceTypeCode.ByteArray, (a, b) => new CreateByteArrayResourceElementCommand(a, b));
+			Execute(undoCommandService, appWindow, resourceNodeFactory, nodes, ResourceTypeCode.ByteArray, (a, b) => new CreateByteArrayResourceElementCommand(a, b));
 		}
 
-		internal static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes, ResourceTypeCode typeCode, Func<IResourceElementSetNode, IResourceElementNode[], IUndoCommand> createCommand) {
+		internal static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes, ResourceTypeCode typeCode, Func<IResourceElementSetNode, IResourceElementNode[], IUndoCommand> createCommand) {
 			var rsrcSetNode = nodes[0] as IResourceElementSetNode;
 			if (rsrcSetNode == null)
 				rsrcSetNode = nodes[0].TreeNode.Parent.Data as IResourceElementSetNode;
@@ -1492,8 +1492,8 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			var newNodes = new IResourceElementNode[fnames.Length];
-			var treeView = appWindow.FileTreeView.TreeView;
-			var treeNodeGroup = appWindow.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceElementTreeNodeGroup);
+			var treeView = appWindow.DocumentTreeView.TreeView;
+			var treeNodeGroup = appWindow.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceElementTreeNodeGroup);
 			for (int i = 0; i < fnames.Length; i++) {
 				var fn = fnames[i];
 				try {
@@ -1509,8 +1509,8 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 
-			undoCommandManager.Value.Add(createCommand(rsrcSetNode, newNodes.ToArray()));
-			appWindow.FileTabManager.FollowReference(newNodes[0]);
+			undoCommandService.Value.Add(createCommand(rsrcSetNode, newNodes.ToArray()));
+			appWindow.DocumentTabService.FollowReference(newNodes[0]);
 		}
 
 		CreateByteArrayResourceElementCommand(IResourceElementSetNode rsrcSetNode, IResourceElementNode[] nodes)
@@ -1521,67 +1521,67 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateStreamResourceElementCommand : CreateResourceElementCommandBase {
-		[ExportMenuItem(Header = "res:CreateStreamResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 170)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateStreamResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 170)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateStreamResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateStreamResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateStreamResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 180)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateStreamResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateStreamResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateStreamResourceCommand", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 180)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateStreamResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateStreamResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, context.Nodes);
+			public override void Execute(CodeContext context) => CreateStreamResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
 			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
-			CreateByteArrayResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, nodes, ResourceTypeCode.Stream, (a, b) => new CreateStreamResourceElementCommand(a, b));
+			CreateByteArrayResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, nodes, ResourceTypeCode.Stream, (a, b) => new CreateStreamResourceElementCommand(a, b));
 		}
 
 		CreateStreamResourceElementCommand(IResourceElementSetNode rsrcSetNode, IResourceElementNode[] nodes)
@@ -1592,70 +1592,70 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class CreateResourceElementCommand : CreateResourceElementCommandBase {
-		[ExportMenuItem(Header = "res:CreateResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 190)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 190)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
-			readonly IFileTreeViewSettings fileTreeViewSettings;
+			readonly IDocumentTreeViewSettings documentTreeViewSettings;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeViewSettings fileTreeViewSettings) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeViewSettings documentTreeViewSettings) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
-				this.fileTreeViewSettings = fileTreeViewSettings;
+				this.documentTreeViewSettings = documentTreeViewSettings;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, documentTreeViewSettings, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 190)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
-			readonly IFileTreeViewSettings fileTreeViewSettings;
+			readonly IDocumentTreeViewSettings documentTreeViewSettings;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeViewSettings fileTreeViewSettings)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeViewSettings documentTreeViewSettings)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
-				this.fileTreeViewSettings = fileTreeViewSettings;
+				this.documentTreeViewSettings = documentTreeViewSettings;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, documentTreeViewSettings, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateResourceCommand", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 190)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 			readonly IResourceNodeFactory resourceNodeFactory;
-			readonly IFileTreeViewSettings fileTreeViewSettings;
+			readonly IDocumentTreeViewSettings documentTreeViewSettings;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeViewSettings fileTreeViewSettings)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeViewSettings documentTreeViewSettings)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 				this.resourceNodeFactory = resourceNodeFactory;
-				this.fileTreeViewSettings = fileTreeViewSettings;
+				this.documentTreeViewSettings = documentTreeViewSettings;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && CreateResourceElementCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => CreateResourceElementCommand.Execute(undoCommandManager, appWindow, resourceNodeFactory, fileTreeViewSettings, context.Nodes);
+			public override void Execute(CodeContext context) => CreateResourceElementCommand.Execute(undoCommandService, appWindow, resourceNodeFactory, documentTreeViewSettings, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
 			(nodes[0] is IResourceElementSetNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is IResourceElementSetNode));
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IFileTreeViewSettings fileTreeViewSettings, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IResourceNodeFactory resourceNodeFactory, IDocumentTreeViewSettings documentTreeViewSettings, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1673,7 +1673,7 @@ namespace dnSpy.AsmEditor.Resources {
 				Name = string.Empty,
 				ResourceData = new BuiltInResourceData(ResourceTypeCode.String, string.Empty),
 			});
-			var data = new ResourceElementVM(options, module, fileTreeViewSettings.DeserializeResources);
+			var data = new ResourceElementVM(options, module, documentTreeViewSettings.DeserializeResources);
 			var win = new ResourceElementDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateResourceCommand2;
 			win.DataContext = data;
@@ -1682,11 +1682,11 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			var opts = data.CreateResourceElementOptions();
-			var treeView = appWindow.FileTreeView.TreeView;
-			var treeNodeGroup = appWindow.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceElementTreeNodeGroup);
+			var treeView = appWindow.DocumentTreeView.TreeView;
+			var treeNodeGroup = appWindow.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceElementTreeNodeGroup);
 			var node = (IResourceElementNode)treeView.Create(resourceNodeFactory.Create(module, opts.Create(), treeNodeGroup)).Data;
-			undoCommandManager.Value.Add(new CreateResourceElementCommand(rsrcSetNode, node));
-			appWindow.FileTabManager.FollowReference(node);
+			undoCommandService.Value.Add(new CreateResourceElementCommand(rsrcSetNode, node));
+			appWindow.DocumentTabService.FollowReference(node);
 		}
 
 		CreateResourceElementCommand(IResourceElementSetNode rsrcSetNode, IResourceElementNode node)
@@ -1783,65 +1783,65 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class ResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
-		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 90)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 90)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
-			readonly IFileTreeViewSettings fileTreeViewSettings;
+			readonly IDocumentTreeViewSettings documentTreeViewSettings;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeViewSettings fileTreeViewSettings) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeViewSettings documentTreeViewSettings) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
-				this.fileTreeViewSettings = fileTreeViewSettings;
+				this.documentTreeViewSettings = documentTreeViewSettings;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => ResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
+			public override void Execute(AsmEditorContext context) => ResourceElementSettingsCommand.Execute(undoCommandService, appWindow, documentTreeViewSettings, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 100)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
-			readonly IFileTreeViewSettings fileTreeViewSettings;
+			readonly IDocumentTreeViewSettings documentTreeViewSettings;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeViewSettings fileTreeViewSettings)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeViewSettings documentTreeViewSettings)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
-				this.fileTreeViewSettings = fileTreeViewSettings;
+				this.documentTreeViewSettings = documentTreeViewSettings;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => ResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
+			public override void Execute(AsmEditorContext context) => ResourceElementSettingsCommand.Execute(undoCommandService, appWindow, documentTreeViewSettings, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 100)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
-			readonly IFileTreeViewSettings fileTreeViewSettings;
+			readonly IDocumentTreeViewSettings documentTreeViewSettings;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeViewSettings fileTreeViewSettings)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeViewSettings documentTreeViewSettings)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
-				this.fileTreeViewSettings = fileTreeViewSettings;
+				this.documentTreeViewSettings = documentTreeViewSettings;
 			}
 
 			public override bool IsEnabled(CodeContext context) => ResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => ResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, fileTreeViewSettings, context.Nodes);
+			public override void Execute(CodeContext context) => ResourceElementSettingsCommand.Execute(undoCommandService, appWindow, documentTreeViewSettings, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
 			(nodes[0] is IBuiltInResourceElementNode ||
 			nodes[0] is IUnknownSerializedResourceElementNode);
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeViewSettings fileTreeViewSettings, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeViewSettings documentTreeViewSettings, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1852,7 +1852,7 @@ namespace dnSpy.AsmEditor.Resources {
 				throw new InvalidOperationException();
 
 			var options = new ResourceElementOptions(rsrcElNode.ResourceElement);
-			var data = new ResourceElementVM(options, module, fileTreeViewSettings.DeserializeResources);
+			var data = new ResourceElementVM(options, module, documentTreeViewSettings.DeserializeResources);
 			data.CanChangeType = false;
 			var win = new ResourceElementDlg();
 			win.Title = dnSpy_AsmEditor_Resources.EditResourceCommand2;
@@ -1874,7 +1874,7 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 			}
 
-			undoCommandManager.Value.Add(new ResourceElementSettingsCommand(rsrcElNode, opts));
+			undoCommandService.Value.Add(new ResourceElementSettingsCommand(rsrcElNode, opts));
 		}
 
 		ResourceElementSettingsCommand(IResourceElementNode rsrcElNode, ResourceElementOptions options)
@@ -1885,57 +1885,57 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class ImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
-		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 100)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 100)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 110)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 110)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsEnabled(CodeContext context) => ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => ImageResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 && nodes[0] is IImageResourceElementNode;
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1963,7 +1963,7 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 			}
 
-			undoCommandManager.Value.Add(new ImageResourceElementSettingsCommand(imgRsrcElNode, opts));
+			undoCommandService.Value.Add(new ImageResourceElementSettingsCommand(imgRsrcElNode, opts));
 		}
 
 		ImageResourceElementSettingsCommand(IResourceElementNode rsrcElNode, ResourceElementOptions options)
@@ -1974,56 +1974,56 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class SerializedImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
-		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 110)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 110)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 120)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 120)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsEnabled(CodeContext context) => SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => SerializedImageResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is ISerializedImageResourceElementNode;
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is ISerializedImageResourceElementNode;
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -2051,7 +2051,7 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 			}
 
-			undoCommandManager.Value.Add(new SerializedImageResourceElementSettingsCommand(imgRsrcElNode, opts));
+			undoCommandService.Value.Add(new SerializedImageResourceElementSettingsCommand(imgRsrcElNode, opts));
 		}
 
 		SerializedImageResourceElementSettingsCommand(IResourceElementNode rsrcElNode, ResourceElementOptions options)
@@ -2062,57 +2062,57 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	sealed class SerializedImageListStreamerResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
-		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 120)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 120)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 130)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditResourceCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 130)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsEnabled(CodeContext context) => SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => SerializedImageListStreamerResourceElementSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 && nodes[0] is ISerializedImageListStreamerResourceElementNode;
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -2147,7 +2147,7 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 			}
 
-			undoCommandManager.Value.Add(new SerializedImageListStreamerResourceElementSettingsCommand(imgNode, opts));
+			undoCommandService.Value.Add(new SerializedImageListStreamerResourceElementSettingsCommand(imgNode, opts));
 		}
 
 		SerializedImageListStreamerResourceElementSettingsCommand(IResourceElementNode rsrcElNode, ResourceElementOptions options)

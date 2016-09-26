@@ -28,39 +28,39 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Classification {
 	sealed class CategoryEditorFormatMapUpdater {
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 		readonly ITextEditorFontSettings textEditorFontSettings;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
 		readonly IEditorFormatMap editorFormatMap;
 
-		public CategoryEditorFormatMapUpdater(IThemeManager themeManager, ITextEditorFontSettings textEditorFontSettings, IEditorFormatDefinitionService editorFormatDefinitionService, IEditorFormatMap editorFormatMap) {
-			if (themeManager == null)
-				throw new ArgumentNullException(nameof(themeManager));
+		public CategoryEditorFormatMapUpdater(IThemeService themeService, ITextEditorFontSettings textEditorFontSettings, IEditorFormatDefinitionService editorFormatDefinitionService, IEditorFormatMap editorFormatMap) {
+			if (themeService == null)
+				throw new ArgumentNullException(nameof(themeService));
 			if (textEditorFontSettings == null)
 				throw new ArgumentNullException(nameof(textEditorFontSettings));
 			if (editorFormatDefinitionService == null)
 				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
 			if (editorFormatMap == null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
-			this.themeManager = themeManager;
+			this.themeService = themeService;
 			this.textEditorFontSettings = textEditorFontSettings;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
 			this.editorFormatMap = editorFormatMap;
 
-			themeManager.ThemeChangedHighPriority += ThemeManager_ThemeChangedHighPriority;
+			themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
 			textEditorFontSettings.SettingsChanged += TextEditorFontSettings_SettingsChanged;
 			InitializeAll();
 		}
 
 		void TextEditorFontSettings_SettingsChanged(object sender, EventArgs e) => InitializeAll();
-		void ThemeManager_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) => InitializeAll();
+		void ThemeService_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) => InitializeAll();
 
 		void InitializeAll() {
 			bool callBeginEndUpdate = !editorFormatMap.IsInBatchUpdate;
 			if (callBeginEndUpdate)
 				editorFormatMap.BeginBatchUpdate();
 
-			var theme = themeManager.Theme;
+			var theme = themeService.Theme;
 			var textProps = textEditorFontSettings.CreateResourceDictionary(theme);
 			var winbg = textProps[EditorFormatMapConstants.TextViewBackgroundId] as Brush ?? SystemColors.WindowBrush;
 			var winbgRes = editorFormatMap.GetProperties(EditorFormatMapConstants.TextViewBackgroundId);

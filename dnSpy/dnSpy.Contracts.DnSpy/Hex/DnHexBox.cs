@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Hex {
 
 		readonly IHexEditorSettings hexEditorSettings;
 
-		public DnHexBox(IMenuManager menuManager, IHexEditorSettings hexEditorSettings) {
+		public DnHexBox(IMenuService menuService, IHexEditorSettings hexEditorSettings) {
 			this.hexEditorSettings = hexEditorSettings;
 			SetBinding(Control.FontFamilyProperty, new Binding(nameof(hexEditorSettings.FontFamily)) { Source = hexEditorSettings });
 			SetBinding(Control.FontSizeProperty, new Binding(nameof(hexEditorSettings.FontSize)) { Source = hexEditorSettings });
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Hex {
 			SetResourceReference(Control.FontStyleProperty, HexBoxThemeHelper.GetFontStyleResourceKey(ColorType.HexText));
 			SetResourceReference(Control.FontWeightProperty, HexBoxThemeHelper.GetFontWeightResourceKey(ColorType.HexText));
 
-			menuManager.InitializeContextMenu(this, MenuConstants.GUIDOBJ_HEXBOX_GUID, null, new ContextMenuInitializer());
+			menuService.InitializeContextMenu(this, MenuConstants.GUIDOBJ_HEXBOX_GUID, null, new ContextMenuInitializer());
 
 			BytesGroupCount = null;
 			BytesPerLine = null;

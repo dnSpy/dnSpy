@@ -73,17 +73,17 @@ namespace dnSpy.Text.Editor {
 	sealed class TextMarkerServiceWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 		readonly IEditorFormatMapService editorFormatMapService;
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 
 		[ImportingConstructor]
-		TextMarkerServiceWpfTextViewCreationListener(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, IThemeManager themeManager) {
+		TextMarkerServiceWpfTextViewCreationListener(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, IThemeService themeService) {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			this.editorFormatMapService = editorFormatMapService;
-			this.themeManager = themeManager;
+			this.themeService = themeService;
 		}
 
 		public void TextViewCreated(IWpfTextView textView) =>
-			new TextMarkerService(textView, viewTagAggregatorFactoryService.CreateTagAggregator<ITextMarkerTag>(textView), editorFormatMapService.GetEditorFormatMap(textView), themeManager);
+			new TextMarkerService(textView, viewTagAggregatorFactoryService.CreateTagAggregator<ITextMarkerTag>(textView), editorFormatMapService.GetEditorFormatMap(textView), themeService);
 	}
 
 	sealed class TextMarkerService {
@@ -92,14 +92,14 @@ namespace dnSpy.Text.Editor {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(NEGATIVE_TEXT_MARK_LAYER_NAME)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
-		[Order(Before = PredefinedDnSpyAdornmentLayers.GlyphTextMarker, After = PredefinedAdornmentLayers.Outlining)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
+		[Order(Before = PredefinedDsAdornmentLayers.GlyphTextMarker, After = PredefinedAdornmentLayers.Outlining)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
 		static AdornmentLayerDefinition negativeTextMarkerAdornmentLayerDefinition;
 
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.TextMarker)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Selection, After = PredefinedAdornmentLayers.Outlining)]
 		static AdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
 #pragma warning restore 0169
@@ -110,22 +110,22 @@ namespace dnSpy.Text.Editor {
 		readonly IAdornmentLayer textMarkerAdornmentLayer;
 		readonly IAdornmentLayer negativeTextMarkerAdornmentLayer;
 		readonly List<MarkerElement> markerElements;
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 		bool useReducedOpacityForHighContrast;
 
-		public TextMarkerService(IWpfTextView wpfTextView, ITagAggregator<ITextMarkerTag> tagAggregator, IEditorFormatMap editorFormatMap, IThemeManager themeManager) {
+		public TextMarkerService(IWpfTextView wpfTextView, ITagAggregator<ITextMarkerTag> tagAggregator, IEditorFormatMap editorFormatMap, IThemeService themeService) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (tagAggregator == null)
 				throw new ArgumentNullException(nameof(tagAggregator));
 			if (editorFormatMap == null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
-			if (themeManager == null)
-				throw new ArgumentNullException(nameof(themeManager));
+			if (themeService == null)
+				throw new ArgumentNullException(nameof(themeService));
 			this.wpfTextView = wpfTextView;
 			this.tagAggregator = tagAggregator;
 			this.editorFormatMap = editorFormatMap;
-			this.themeManager = themeManager;
+			this.themeService = themeService;
 			this.textMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.TextMarker);
 			this.negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(NEGATIVE_TEXT_MARK_LAYER_NAME);
 			this.markerElements = new List<MarkerElement>();
@@ -141,7 +141,7 @@ namespace dnSpy.Text.Editor {
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId.Name) {
 				useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-				if (themeManager.Theme.IsHighContrast)
+				if (themeService.Theme.IsHighContrast)
 					RefreshExistingMarkers();
 			}
 		}
@@ -332,7 +332,7 @@ namespace dnSpy.Text.Editor {
 				newBrush.Freeze();
 			}
 
-			if (useReducedOpacityForHighContrast && themeManager.Theme.IsHighContrast) {
+			if (useReducedOpacityForHighContrast && themeService.Theme.IsHighContrast) {
 				newBrush = newBrush.Clone();
 				newBrush.Opacity = BG_BRUSH_HIGHCONTRAST_OPACITY;
 				if (newBrush.CanFreeze)

@@ -48,7 +48,7 @@ namespace dnSpy.BackgroundImage {
 
 		public string LastSelectedId { get; set; }
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 		readonly Dictionary<string, SettingsInfo> settingsInfos;
 
 		sealed class SettingsInfo {
@@ -66,8 +66,8 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		[ImportingConstructor]
-		BackgroundImageSettingsService(ISettingsManager settingsManager, IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService) {
-			this.settingsManager = settingsManager;
+		BackgroundImageSettingsService(ISettingsService settingsService, IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService) {
+			this.settingsService = settingsService;
 			this.settingsInfos = new Dictionary<string, SettingsInfo>(backgroundImageOptionDefinitionService.AllSettings.Length, StringComparer.Ordinal);
 
 			foreach (var lazy in backgroundImageOptionDefinitionService.AllSettings) {
@@ -77,7 +77,7 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			var allSettingsIds = new HashSet<string>(backgroundImageOptionDefinitionService.AllSettings.Select(a => a.Value.Id), StringComparer.Ordinal);
-			var rootSection = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var rootSection = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			foreach (var section in rootSection.SectionsWithName(SettingsName)) {
 				var rawSettings = new RawSettings(section);
 				if (!rawSettings.IsValid)
@@ -121,7 +121,7 @@ namespace dnSpy.BackgroundImage {
 				info.RawSettings.CopyFrom(rs);
 				info.BackgroundImageSettings.RaiseSettingsChanged();
 				if (info.Lazy.Value.UserVisible) {
-					var rootSection = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+					var rootSection = settingsService.GetOrCreateSection(SETTINGS_GUID);
 					if (info.SettingsSection != null)
 						rootSection.RemoveSection(info.SettingsSection);
 					info.SettingsSection = rootSection.CreateSection(SettingsName);

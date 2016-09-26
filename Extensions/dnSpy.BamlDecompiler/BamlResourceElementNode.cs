@@ -28,9 +28,9 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -42,7 +42,7 @@ namespace dnSpy.BamlDecompiler {
 		readonly BamlSettings bamlSettings;
 
 		public bool DisassembleBaml => bamlSettings.DisassembleBaml;
-		public override Guid Guid => new Guid(FileTVConstants.BAML_RESOURCE_ELEMENT_NODE_GUID);
+		public override Guid Guid => new Guid(DocumentTreeViewConstants.BAML_RESOURCE_ELEMENT_NODE_GUID);
 		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "XamlFile");
 
 		public BamlResourceElementNode(ModuleDef module, ResourceElement resourceElement, byte[] bamlData, ITreeNodeGroup treeNodeGroup, BamlSettings bamlSettings)

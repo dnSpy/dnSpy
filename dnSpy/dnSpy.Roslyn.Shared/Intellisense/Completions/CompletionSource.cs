@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	[Export(typeof(ICompletionSourceProvider))]
-	[Name(PredefinedDnSpyCompletionSourceProviders.Roslyn)]
+	[Name(PredefinedDsCompletionSourceProviders.Roslyn)]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class CompletionSourceProvider : ICompletionSourceProvider {
 		readonly IImageMonikerService imageMonikerService;

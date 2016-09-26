@@ -57,7 +57,7 @@ namespace dnSpy.BackgroundImage {
 	}
 
 	sealed class ImageSourceService : IImageSourceService {
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 		readonly IBackgroundImageSettings backgroundImageSettings;
 		readonly List<IImageSourceServiceListener> listeners;
 		ImageIterator imageIterator;
@@ -425,17 +425,17 @@ namespace dnSpy.BackgroundImage {
 			public void Dispose() => currentEnumeratorInfo?.Dispose();
 		}
 
-		public ImageSourceService(IThemeManager themeManager, IBackgroundImageSettings backgroundImageSettings) {
-			if (themeManager == null)
-				throw new ArgumentNullException(nameof(themeManager));
+		public ImageSourceService(IThemeService themeService, IBackgroundImageSettings backgroundImageSettings) {
+			if (themeService == null)
+				throw new ArgumentNullException(nameof(themeService));
 			if (backgroundImageSettings == null)
 				throw new ArgumentNullException(nameof(backgroundImageSettings));
-			this.themeManager = themeManager;
+			this.themeService = themeService;
 			this.backgroundImageSettings = backgroundImageSettings;
 			this.listeners = new List<IImageSourceServiceListener>();
 		}
 
-		void ThemeManager_ThemeChangedLowPriority(object sender, ThemeChangedEventArgs e) {
+		void ThemeService_ThemeChangedLowPriority(object sender, ThemeChangedEventArgs e) {
 			if (backgroundImageSettings.IsEnabled && imageIterator.HasThemeImages)
 				OnSettingsChanged();
 		}
@@ -449,7 +449,7 @@ namespace dnSpy.BackgroundImage {
 				Debug.Assert(imageIterator == null);
 				imageIterator = new ImageIterator(backgroundImageSettings.IsRandom);
 				backgroundImageSettings.SettingsChanged += BackgroundImageSettings_SettingsChanged;
-				themeManager.ThemeChangedLowPriority += ThemeManager_ThemeChangedLowPriority;
+				themeService.ThemeChangedLowPriority += ThemeService_ThemeChangedLowPriority;
 				OnSettingsChanged();
 			}
 			listeners.Add(listener);
@@ -469,7 +469,7 @@ namespace dnSpy.BackgroundImage {
 			if (listeners.Count == 0) {
 				DisposeTimer();
 				backgroundImageSettings.SettingsChanged -= BackgroundImageSettings_SettingsChanged;
-				themeManager.ThemeChangedLowPriority -= ThemeManager_ThemeChangedLowPriority;
+				themeService.ThemeChangedLowPriority -= ThemeService_ThemeChangedLowPriority;
 				Debug.Assert(imageIterator != null);
 				imageIterator.Dispose();
 				imageIterator = null;
@@ -504,7 +504,7 @@ namespace dnSpy.BackgroundImage {
 
 		void OnSettingsChanged() {
 			if (backgroundImageSettings.IsEnabled)
-				imageIterator.SetImagePaths(backgroundImageSettings.Images, backgroundImageSettings.IsRandom, themeManager.Theme);
+				imageIterator.SetImagePaths(backgroundImageSettings.Images, backgroundImageSettings.IsRandom, themeService.Theme);
 			UpdateEnabled();
 			UpdateTimer();
 			NotifySettingsChanged();

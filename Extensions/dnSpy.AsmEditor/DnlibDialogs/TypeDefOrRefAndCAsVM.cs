@@ -28,20 +28,20 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				throw new InvalidOperationException("TModel is an invalid type");
 		}
 
-		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base(editString, createString, ownerModule, decompilerManager, ownerType, ownerMethod) {
+		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+			: base(editString, createString, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 
 		protected override TypeDefOrRefAndCAVM Create(TModel model) {
 			var gpc = model as GenericParamConstraint;
 			if (gpc != null)
-				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), OwnerModule, decompilerManager, ownerType, ownerMethod);
-			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), OwnerModule, decompilerManager, ownerType, ownerMethod);
+				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), OwnerModule, decompilerService, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), OwnerModule, decompilerService, ownerType, ownerMethod);
 		}
 
 		protected override TypeDefOrRefAndCAVM Clone(TypeDefOrRefAndCAVM obj) =>
-			new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
+			new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), OwnerModule, decompilerService, ownerType, ownerMethod);
 		protected override TypeDefOrRefAndCAVM Create() =>
-			new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
+			new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), OwnerModule, decompilerService, ownerType, ownerMethod);
 	}
 }

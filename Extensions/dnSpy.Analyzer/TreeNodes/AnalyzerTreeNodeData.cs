@@ -22,7 +22,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -32,10 +32,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override Guid Guid => Guid.Empty;
 		public sealed override bool SingleClickExpandsChildren => Context.SingleClickExpandsChildren;
 		public IAnalyzerTreeNodeDataContext Context { get; set; }
-		protected abstract ImageReference GetIcon(IDotNetImageManager dnImgMgr);
-		protected virtual ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) => null;
-		public sealed override ImageReference Icon => GetIcon(this.Context.DotNetImageManager);
-		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.DotNetImageManager);
+		protected abstract ImageReference GetIcon(IDotNetImageService dnImgMgr);
+		protected virtual ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => null;
+		public sealed override ImageReference Icon => GetIcon(this.Context.DotNetImageService);
+		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.DotNetImageService);
 
 		public sealed override object Text {
 			get {
@@ -65,8 +65,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public sealed override void OnRefreshUI() => cachedText = null;
-		public abstract bool HandleAssemblyListChanged(IDnSpyFile[] removedAssemblies, IDnSpyFile[] addedAssemblies);
-		public abstract bool HandleModelUpdated(IDnSpyFile[] files);
+		public abstract bool HandleAssemblyListChanged(IDsDocument[] removedAssemblies, IDsDocument[] addedAssemblies);
+		public abstract bool HandleModelUpdated(IDsDocument[] documents);
 
 		public static void CancelSelfAndChildren(ITreeNodeData node) {
 			foreach (var c in node.DescendantsAndSelf()) {
@@ -76,7 +76,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public static void HandleAssemblyListChanged(ITreeNode node, IDnSpyFile[] removedAssemblies, IDnSpyFile[] addedAssemblies) {
+		public static void HandleAssemblyListChanged(ITreeNode node, IDsDocument[] removedAssemblies, IDsDocument[] addedAssemblies) {
 			var children = node.DataChildren.ToArray();
 			for (int i = children.Length - 1; i >= 0; i--) {
 				var c = children[i];
@@ -88,12 +88,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public static void HandleModelUpdated(ITreeNode node, IDnSpyFile[] files) {
+		public static void HandleModelUpdated(ITreeNode node, IDsDocument[] documents) {
 			var children = node.DataChildren.ToArray();
 			for (int i = children.Length - 1; i >= 0; i--) {
 				var c = children[i];
 				var n = c as IAnalyzerTreeNodeData;
-				if (n == null || !n.HandleModelUpdated(files)) {
+				if (n == null || !n.HandleModelUpdated(documents)) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(c);
 					node.Children.RemoveAt(i);
 				}

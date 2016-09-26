@@ -23,7 +23,7 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointContext {
-		IImageManager ImageManager { get; }
+		IImageService ImageService { get; }
 		IDecompiler Decompiler { get; }
 		IModuleLoader ModuleLoader { get; }
 		bool SyntaxHighlight { get; }
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	}
 
 	sealed class BreakpointContext : IBreakpointContext {
-		public IImageManager ImageManager { get; }
+		public IImageService ImageService { get; }
 		public IDecompiler Decompiler { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
@@ -55,8 +55,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		public IModuleLoader ModuleLoader => moduleLoader.Value;
 		readonly Lazy<IModuleLoader> moduleLoader;
 
-		public BreakpointContext(IImageManager imageManager, Lazy<IModuleLoader> moduleLoader) {
-			this.ImageManager = imageManager;
+		public BreakpointContext(IImageService imageService, Lazy<IModuleLoader> moduleLoader) {
+			this.ImageService = imageService;
 			this.moduleLoader = moduleLoader;
 		}
 	}

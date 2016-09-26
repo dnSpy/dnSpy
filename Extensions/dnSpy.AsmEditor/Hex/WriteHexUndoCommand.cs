@@ -33,21 +33,21 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly byte[] origData;
 		readonly string descr;
 
-		public static void AddAndExecute(IUndoCommandManager undoCommandManager, IHexDocumentManager hexDocumentManager, string filename, ulong offset, byte[] data, string descr = null) {
+		public static void AddAndExecute(IUndoCommandService undoCommandService, IHexDocumentService hexDocumentService, string filename, ulong offset, byte[] data, string descr = null) {
 			if (string.IsNullOrEmpty(filename))
 				throw new ArgumentException();
-			var doc = hexDocumentManager.GetOrCreate(filename);
+			var doc = hexDocumentService.GetOrCreate(filename);
 			if (doc == null)
 				return;
-			AddAndExecute(undoCommandManager, doc, offset, data, descr);
+			AddAndExecute(undoCommandService, doc, offset, data, descr);
 		}
 
-		public static void AddAndExecute(IUndoCommandManager undoCommandManager, HexDocument doc, ulong offset, byte[] data, string descr = null) {
+		public static void AddAndExecute(IUndoCommandService undoCommandService, HexDocument doc, ulong offset, byte[] data, string descr = null) {
 			if (doc == null)
 				throw new ArgumentNullException(nameof(doc));
 			if (data == null || data.Length == 0)
 				return;
-			undoCommandManager.Add(new WriteHexUndoCommand(doc, offset, data, descr));
+			undoCommandService.Add(new WriteHexUndoCommand(doc, offset, data, descr));
 		}
 
 		WriteHexUndoCommand(HexDocument doc, ulong offset, byte[] data, string descr) {

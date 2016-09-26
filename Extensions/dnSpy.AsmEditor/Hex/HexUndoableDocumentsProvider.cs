@@ -26,14 +26,14 @@ using dnSpy.AsmEditor.UndoRedo;
 namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IUndoableDocumentsProvider))]
 	sealed class HexUndoableDocumentsProvider : IUndoableDocumentsProvider {
-		readonly Lazy<IHexDocumentManager> hexDocumentManager;
+		readonly Lazy<IHexDocumentService> hexDocumentService;
 
 		[ImportingConstructor]
-		HexUndoableDocumentsProvider(Lazy<IHexDocumentManager> hexDocumentManager) {
-			this.hexDocumentManager = hexDocumentManager;
+		HexUndoableDocumentsProvider(Lazy<IHexDocumentService> hexDocumentService) {
+			this.hexDocumentService = hexDocumentService;
 		}
 
-		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexDocumentManager.Value.GetDocuments().Select(a => GetUndoObject(a));
+		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexDocumentService.Value.GetDocuments().Select(a => GetUndoObject(a));
 
 		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			var doc = obj as AsmEdHexDocument;

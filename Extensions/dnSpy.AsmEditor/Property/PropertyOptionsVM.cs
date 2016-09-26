@@ -99,11 +99,11 @@ namespace dnSpy.AsmEditor.Property {
 
 		readonly ModuleDef ownerModule;
 
-		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType) {
+		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
@@ -117,10 +117,10 @@ namespace dnSpy.AsmEditor.Property {
 			this.MethodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.MethodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
-			this.GetMethodsVM = new MethodDefsVM(ownerModule, decompilerManager);
-			this.SetMethodsVM = new MethodDefsVM(ownerModule, decompilerManager);
-			this.OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerManager);
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
+			this.GetMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
+			this.SetMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
+			this.OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
 			this.ConstantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Property_DefaultValue);
 			this.ConstantVM.PropertyChanged += constantVM_PropertyChanged;
 

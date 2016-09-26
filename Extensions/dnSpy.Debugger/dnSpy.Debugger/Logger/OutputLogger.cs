@@ -33,18 +33,18 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.Logger {
 	[Export(typeof(ILoadBeforeDebug))]
-	[ExportOutputManagerListener]
-	sealed class OutputLogger : ILoadBeforeDebug, IOutputManagerListener {
+	[ExportOutputServiceListener]
+	sealed class OutputLogger : ILoadBeforeDebug, IOutputServiceListener {
 		public static readonly Guid GUID_OUTPUT_LOGGER_DEBUG = new Guid("7B6E802A-B58C-4689-877E-3358FCDCEFAC");
 
-		readonly IOutputManager outputManager;
+		readonly IOutputService outputService;
 		readonly IOutputTextPane textPane;
 		readonly IOutputLoggerSettings outputLoggerSettings;
 
 		[ImportingConstructor]
-		OutputLogger(IOutputManager outputManager, ITheDebugger theDebugger, IOutputLoggerSettings outputLoggerSettings, IContentTypeRegistryService contentTypeRegistryService) {
-			this.outputManager = outputManager;
-			this.textPane = outputManager.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, contentTypeRegistryService.GetContentType(ContentTypes.OutputDebug));
+		OutputLogger(IOutputService outputService, ITheDebugger theDebugger, IOutputLoggerSettings outputLoggerSettings, IContentTypeRegistryService contentTypeRegistryService) {
+			this.outputService = outputService;
+			this.textPane = outputService.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, contentTypeRegistryService.GetContentType(ContentTypes.OutputDebug));
 			this.outputLoggerSettings = outputLoggerSettings;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Logger {
 			switch (dbg.ProcessState) {
 			case DebuggerProcessState.Starting:
 				if (outputLoggerSettings.ShowDebugOutputLog)
-					outputManager.Select(GUID_OUTPUT_LOGGER_DEBUG);
+					outputService.Select(GUID_OUTPUT_LOGGER_DEBUG);
 
 				debugState?.Dispose();
 				debugState = null;

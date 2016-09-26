@@ -21,33 +21,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenAssembly : IOpenAssembly {
-		readonly IFileManager fileManager;
+		readonly IDsDocumentService documentService;
 
-		public OpenAssembly(IFileManager fileManager) {
-			this.fileManager = fileManager;
+		public OpenAssembly(IDsDocumentService documentService) {
+			this.documentService = documentService;
 		}
 
-		public IDnSpyFile Open() => Open(false).FirstOrDefault();
-		public IDnSpyFile[] OpenMany() => Open(true);
+		public IDsDocument Open() => Open(false).FirstOrDefault();
+		public IDsDocument[] OpenMany() => Open(true);
 
-		IDnSpyFile[] Open(bool many) {
+		IDsDocument[] Open(bool many) {
 			var dialog = new OpenFileDialog() {
 				Filter = PickFilenameConstants.DotNetAssemblyOrModuleFilter,
 				RestoreDirectory = true,
 				Multiselect = many,
 			};
 			if (dialog.ShowDialog() != DialogResult.OK)
-				return Array.Empty<IDnSpyFile>();
+				return Array.Empty<IDsDocument>();
 
-			var list = new List<IDnSpyFile>(dialog.FileNames.Length);
+			var list = new List<IDsDocument>(dialog.FileNames.Length);
 			foreach (var filename in dialog.FileNames) {
-				var info = DnSpyFileInfo.CreateFile(filename);
-				var file = fileManager.TryGetOrCreate(info);
+				var info = DsDocumentInfo.CreateDocument(filename);
+				var file = documentService.TryGetOrCreate(info);
 				if (file != null)
 					list.Add(file);
 			}

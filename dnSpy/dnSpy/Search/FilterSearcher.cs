@@ -25,9 +25,9 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Resources;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
 
@@ -44,13 +44,13 @@ namespace dnSpy.Search {
 
 		bool IsMatch(string text, object obj) => options.SearchComparer.IsMatch(text, obj);
 
-		public void SearchAssemblies(IEnumerable<IDnSpyFileNode> fileNodes) {
+		public void SearchAssemblies(IEnumerable<IDsDocumentNode> fileNodes) {
 			foreach (var fileNode in fileNodes) {
 				options.CancellationToken.ThrowIfCancellationRequested();
-				if (fileNode is IAssemblyFileNode)
-					SearchAssemblyInternal((IAssemblyFileNode)fileNode);
-				else if (fileNode is IModuleFileNode)
-					SearchModule(fileNode.DnSpyFile);
+				if (fileNode is IAssemblyDocumentNode)
+					SearchAssemblyInternal((IAssemblyDocumentNode)fileNode);
+				else if (fileNode is IModuleDocumentNode)
+					SearchModule(fileNode.Document);
 			}
 		}
 
@@ -58,13 +58,13 @@ namespace dnSpy.Search {
 			foreach (var info in types) {
 				options.CancellationToken.ThrowIfCancellationRequested();
 				if (info.Type.DeclaringType == null)
-					Search(info.DnSpyFile, info.Type.Namespace, info.Type);
+					Search(info.Document, info.Type.Namespace, info.Type);
 				else
-					Search(info.DnSpyFile, info.Type);
+					Search(info.Document, info.Type);
 			}
 		}
 
-		void CheckCustomAttributes(IDnSpyFile file, IHasCustomAttribute hca, object parent) {
+		void CheckCustomAttributes(IDsDocument file, IHasCustomAttribute hca, object parent) {
 			var res = options.Filter.GetResultAttributes(hca);
 			if (!res.IsMatch)
 				return;
@@ -83,7 +83,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		bool CheckCA(IDnSpyFile file, IHasCustomAttribute hca, object parent, CAArgument o) {
+		bool CheckCA(IDsDocument file, IHasCustomAttribute hca, object parent, CAArgument o) {
 			var value = o.Value;
 			var u = value as UTF8String;
 			if (!ReferenceEquals(u, null))
@@ -97,57 +97,57 @@ namespace dnSpy.Search {
 				ObjectImageReference = GetImageReference(hca),
 				LocationObject = parent is string ? new NamespaceSearchResult((string)parent) : parent,
 				LocationImageReference = GetImageReference(parent),
-				DnSpyFile = file,
+				Document = file,
 			});
 			return true;
 		}
 
 		ImageReference GetImageReference(object obj) {
 			if (obj is ModuleDef)
-				return options.DotNetImageManager.GetImageReference((ModuleDef)obj);
+				return options.DotNetImageService.GetImageReference((ModuleDef)obj);
 			if (obj is AssemblyDef)
-				return options.DotNetImageManager.GetImageReference((AssemblyDef)obj);
+				return options.DotNetImageService.GetImageReference((AssemblyDef)obj);
 			if (obj is TypeDef)
-				return options.DotNetImageManager.GetImageReference((TypeDef)obj);
+				return options.DotNetImageService.GetImageReference((TypeDef)obj);
 			if (obj is MethodDef)
-				return options.DotNetImageManager.GetImageReference((MethodDef)obj);
+				return options.DotNetImageService.GetImageReference((MethodDef)obj);
 			if (obj is FieldDef)
-				return options.DotNetImageManager.GetImageReference((FieldDef)obj);
+				return options.DotNetImageService.GetImageReference((FieldDef)obj);
 			if (obj is PropertyDef)
-				return options.DotNetImageManager.GetImageReference((PropertyDef)obj);
+				return options.DotNetImageService.GetImageReference((PropertyDef)obj);
 			if (obj is EventDef)
-				return options.DotNetImageManager.GetImageReference((EventDef)obj);
+				return options.DotNetImageService.GetImageReference((EventDef)obj);
 			if (obj is ParamDef)
-				return options.DotNetImageManager.GetImageReferenceParameter();
+				return options.DotNetImageService.GetImageReferenceParameter();
 			if (obj is GenericParam)
-				return options.DotNetImageManager.GetImageReferenceGenericParameter();
+				return options.DotNetImageService.GetImageReferenceGenericParameter();
 			if (obj is string)
-				return options.DotNetImageManager.GetNamespaceImageReference();
+				return options.DotNetImageService.GetNamespaceImageReference();
 
 			return new ImageReference();
 		}
 
-		void SearchAssemblyInternal(IAssemblyFileNode asmNode) {
+		void SearchAssemblyInternal(IAssemblyDocumentNode asmNode) {
 			if (asmNode == null)
 				return;
-			var asm = asmNode.DnSpyFile.AssemblyDef;
+			var asm = asmNode.Document.AssemblyDef;
 			Debug.Assert(asm != null);
 			if (asm == null)
 				return;
 			var res = options.Filter.GetResult(asm);
 			if (res.FilterType == FilterType.Hide)
 				return;
-			CheckCustomAttributes(asmNode.DnSpyFile, asm, null);
+			CheckCustomAttributes(asmNode.Document, asm, null);
 
-			if (res.IsMatch && (IsMatch(asm.FullName, asmNode.DnSpyFile) || IsMatch(asm.Name, null))) {
+			if (res.IsMatch && (IsMatch(asm.FullName, asmNode.Document) || IsMatch(asm.Name, null))) {
 				options.OnMatch(new SearchResult {
 					Context = options.Context,
 					Object = asm,
 					NameObject = asm,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(asmNode.DnSpyFile.ModuleDef),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(asmNode.Document.ModuleDef),
 					LocationObject = null,
 					LocationImageReference = new ImageReference(),
-					DnSpyFile = asmNode.DnSpyFile,
+					Document = asmNode.Document,
 				});
 			}
 
@@ -156,17 +156,17 @@ namespace dnSpy.Search {
 					asmNode.TreeNode.EnsureChildrenLoaded();
 				}));
 			}
-			var modChildren = asmNode.TreeNode.DataChildren.OfType<IModuleFileNode>().ToArray();
+			var modChildren = asmNode.TreeNode.DataChildren.OfType<IModuleDocumentNode>().ToArray();
 
 			foreach (var node in asmNode.TreeNode.DataChildren) {
 				options.CancellationToken.ThrowIfCancellationRequested();
-				var modNode = node as IModuleFileNode;
+				var modNode = node as IModuleDocumentNode;
 				if (modNode != null)
-					SearchModule(modNode.DnSpyFile);
+					SearchModule(modNode.Document);
 			}
 		}
 
-		void SearchModule(IDnSpyFile module) {
+		void SearchModule(IDsDocument module) {
 			if (module == null)
 				return;
 			var mod = module.ModuleDef;
@@ -185,10 +185,10 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = mod,
 					NameObject = mod,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(mod),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(mod),
 					LocationObject = mod.Assembly,
-					LocationImageReference = mod.Assembly != null ? options.DotNetImageManager.GetImageReference(mod.Assembly.ManifestModule) : new ImageReference(),
-					DnSpyFile = module,
+					LocationImageReference = mod.Assembly != null ? options.DotNetImageService.GetImageReference(mod.Assembly.ManifestModule) : new ImageReference(),
+					Document = module,
 				});
 			}
 
@@ -201,7 +201,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void SearchModAsmReferences(IDnSpyFile module) {
+		void SearchModAsmReferences(IDsDocument module) {
 			var res = options.Filter.GetResult((IReferencesFolderNode)null);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -217,10 +217,10 @@ namespace dnSpy.Search {
 						Context = options.Context,
 						Object = asmRef,
 						NameObject = asmRef,
-						ObjectImageReference = options.DotNetImageManager.GetImageReferenceAssemblyRef(),
+						ObjectImageReference = options.DotNetImageService.GetImageReferenceAssemblyRef(),
 						LocationObject = module.ModuleDef,
-						LocationImageReference = options.DotNetImageManager.GetImageReference(module.ModuleDef),
-						DnSpyFile = module,
+						LocationImageReference = options.DotNetImageService.GetImageReference(module.ModuleDef),
+						Document = module,
 					});
 				}
 			}
@@ -236,16 +236,16 @@ namespace dnSpy.Search {
 						Context = options.Context,
 						Object = modRef,
 						NameObject = modRef,
-						ObjectImageReference = options.DotNetImageManager.GetImageReferenceModuleRef(),
+						ObjectImageReference = options.DotNetImageService.GetImageReferenceModuleRef(),
 						LocationObject = module.ModuleDef,
-						LocationImageReference = options.DotNetImageManager.GetImageReference(module.ModuleDef),
-						DnSpyFile = module,
+						LocationImageReference = options.DotNetImageService.GetImageReference(module.ModuleDef),
+						Document = module,
 					});
 				}
 			}
 		}
 
-		void SearchResources(IDnSpyFile module) {
+		void SearchResources(IDsDocument module) {
 			var res = options.Filter.GetResult((IResourcesFolderNode)null);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -256,7 +256,7 @@ namespace dnSpy.Search {
 
 			var resNodes = new List<IResourceNode>();
 			options.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => {
-				var modNode = options.FileTreeView.FindNode(module.ModuleDef);
+				var modNode = options.DocumentTreeView.FindNode(module.ModuleDef);
 				if (modNode == null)
 					return;
 				modNode.TreeNode.EnsureChildrenLoaded();
@@ -285,7 +285,7 @@ namespace dnSpy.Search {
 			return string.Empty;
 		}
 
-		void SearchResourceTreeNodes(IDnSpyFile module, IResourceNode resTreeNode) {
+		void SearchResourceTreeNodes(IDsDocument module, IResourceNode resTreeNode) {
 			var res = options.Filter.GetResult(resTreeNode);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -297,8 +297,8 @@ namespace dnSpy.Search {
 					NameObject = resTreeNode,
 					ObjectImageReference = resTreeNode.Icon,
 					LocationObject = module.ModuleDef,
-					LocationImageReference = options.DotNetImageManager.GetImageReference(module.ModuleDef),
-					DnSpyFile = module,
+					LocationImageReference = options.DotNetImageService.GetImageReference(module.ModuleDef),
+					Document = module,
 				});
 			}
 
@@ -318,7 +318,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void SearchResourceElementTreeNode(IDnSpyFile module, IResourceNode resTreeNode, IResourceElementNode resElNode) {
+		void SearchResourceElementTreeNode(IDsDocument module, IResourceNode resTreeNode, IResourceElementNode resElNode) {
 			var res = options.Filter.GetResult(resElNode);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -344,7 +344,7 @@ namespace dnSpy.Search {
 						ObjectImageReference = resElNode.Icon,
 						LocationObject = resTreeNode,
 						LocationImageReference = resTreeNode.Icon,
-						DnSpyFile = module,
+						Document = module,
 					});
 				}
 			}
@@ -363,7 +363,7 @@ namespace dnSpy.Search {
 			return ns;
 		}
 
-		void SearchNonNetFile(IDnSpyFile nonNetFile) {
+		void SearchNonNetFile(IDsDocument nonNetFile) {
 			if (nonNetFile == null)
 				return;
 			var res = options.Filter.GetResult(nonNetFile);
@@ -375,15 +375,15 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = nonNetFile,
 					NameObject = nonNetFile,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(nonNetFile.PEImage),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(nonNetFile.PEImage),
 					LocationObject = null,
 					LocationImageReference = new ImageReference(),
-					DnSpyFile = nonNetFile,
+					Document = nonNetFile,
 				});
 			}
 		}
 
-		void Search(IDnSpyFile ownerModule, string ns, List<TypeDef> types) {
+		void Search(IDsDocument ownerModule, string ns, List<TypeDef> types) {
 			var res = options.Filter.GetResult(ns, ownerModule);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -393,10 +393,10 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = ns,
 					NameObject = new NamespaceSearchResult(ns),
-					ObjectImageReference = options.DotNetImageManager.GetNamespaceImageReference(),
+					ObjectImageReference = options.DotNetImageService.GetNamespaceImageReference(),
 					LocationObject = ownerModule.ModuleDef,
-					LocationImageReference = options.DotNetImageManager.GetImageReference(ownerModule.ModuleDef),
-					DnSpyFile = ownerModule,
+					LocationImageReference = options.DotNetImageService.GetImageReference(ownerModule.ModuleDef),
+					Document = ownerModule,
 				});
 			}
 
@@ -406,7 +406,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(IDnSpyFile ownerModule, string nsOwner, TypeDef type) {
+		void Search(IDsDocument ownerModule, string nsOwner, TypeDef type) {
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -417,10 +417,10 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = type,
 					NameObject = type,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(type),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(type),
 					LocationObject = new NamespaceSearchResult(nsOwner),
-					LocationImageReference = options.DotNetImageManager.GetNamespaceImageReference(),
-					DnSpyFile = ownerModule,
+					LocationImageReference = options.DotNetImageService.GetNamespaceImageReference(),
+					Document = ownerModule,
 				});
 			}
 
@@ -432,7 +432,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(IDnSpyFile ownerModule, TypeDef type) {
+		void Search(IDsDocument ownerModule, TypeDef type) {
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -443,17 +443,17 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = type,
 					NameObject = type,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(type),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(type),
 					LocationObject = type.DeclaringType,
-					LocationImageReference = options.DotNetImageManager.GetImageReference(type.DeclaringType),
-					DnSpyFile = ownerModule,
+					LocationImageReference = options.DotNetImageService.GetImageReference(type.DeclaringType),
+					Document = ownerModule,
 				});
 			}
 
 			SearchMembers(ownerModule, type);
 		}
 
-		void SearchMembers(IDnSpyFile ownerModule, TypeDef type) {
+		void SearchMembers(IDsDocument ownerModule, TypeDef type) {
 			foreach (var method in type.Methods) {
 				options.CancellationToken.ThrowIfCancellationRequested();
 				Search(ownerModule, type, method);
@@ -472,7 +472,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(IDnSpyFile ownerModule, TypeDef type, MethodDef method) {
+		void Search(IDsDocument ownerModule, TypeDef type, MethodDef method) {
 			var res = options.Filter.GetResult(method);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -484,10 +484,10 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = method,
 					NameObject = method,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(method),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(method),
 					LocationObject = type,
-					LocationImageReference = options.DotNetImageManager.GetImageReference(type),
-					DnSpyFile = ownerModule,
+					LocationImageReference = options.DotNetImageService.GetImageReference(type),
+					Document = ownerModule,
 				});
 				return;
 			}
@@ -505,10 +505,10 @@ namespace dnSpy.Search {
 							Context = options.Context,
 							Object = method,
 							NameObject = method,
-							ObjectImageReference = options.DotNetImageManager.GetImageReference(method),
+							ObjectImageReference = options.DotNetImageService.GetImageReference(method),
 							LocationObject = type,
-							LocationImageReference = options.DotNetImageManager.GetImageReference(type),
-							DnSpyFile = ownerModule,
+							LocationImageReference = options.DotNetImageService.GetImageReference(type),
+							Document = ownerModule,
 						});
 						return;
 					}
@@ -518,7 +518,7 @@ namespace dnSpy.Search {
 			SearchBody(ownerModule, type, method);
 		}
 
-		void SearchBody(IDnSpyFile ownerModule, TypeDef type, MethodDef method) {
+		void SearchBody(IDsDocument ownerModule, TypeDef type, MethodDef method) {
 			CilBody body;
 
 			var res = options.Filter.GetResultLocals(method);
@@ -537,10 +537,10 @@ namespace dnSpy.Search {
 							Context = options.Context,
 							Object = method,
 							NameObject = method,
-							ObjectImageReference = options.DotNetImageManager.GetImageReference(method),
+							ObjectImageReference = options.DotNetImageService.GetImageReference(method),
 							LocationObject = type,
-							LocationImageReference = options.DotNetImageManager.GetImageReference(type),
-							DnSpyFile = ownerModule,
+							LocationImageReference = options.DotNetImageService.GetImageReference(type),
+							Document = ownerModule,
 						});
 						return;
 					}
@@ -587,10 +587,10 @@ namespace dnSpy.Search {
 						Context = options.Context,
 						Object = method,
 						NameObject = method,
-						ObjectImageReference = options.DotNetImageManager.GetImageReference(method),
+						ObjectImageReference = options.DotNetImageService.GetImageReference(method),
 						LocationObject = type,
-						LocationImageReference = options.DotNetImageManager.GetImageReference(type),
-						DnSpyFile = ownerModule,
+						LocationImageReference = options.DotNetImageService.GetImageReference(type),
+						Document = ownerModule,
 						ObjectInfo = new BodyResult(instr.Offset),
 					});
 					break;
@@ -598,7 +598,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(IDnSpyFile ownerModule, TypeDef type, FieldDef field) {
+		void Search(IDsDocument ownerModule, TypeDef type, FieldDef field) {
 			var res = options.Filter.GetResult(field);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -610,15 +610,15 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = field,
 					NameObject = field,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(field),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(field),
 					LocationObject = type,
-					LocationImageReference = options.DotNetImageManager.GetImageReference(type),
-					DnSpyFile = ownerModule,
+					LocationImageReference = options.DotNetImageService.GetImageReference(type),
+					Document = ownerModule,
 				});
 			}
 		}
 
-		void Search(IDnSpyFile ownerModule, TypeDef type, PropertyDef prop) {
+		void Search(IDsDocument ownerModule, TypeDef type, PropertyDef prop) {
 			var res = options.Filter.GetResult(prop);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -629,15 +629,15 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = prop,
 					NameObject = prop,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(prop),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(prop),
 					LocationObject = type,
-					LocationImageReference = options.DotNetImageManager.GetImageReference(type),
-					DnSpyFile = ownerModule,
+					LocationImageReference = options.DotNetImageService.GetImageReference(type),
+					Document = ownerModule,
 				});
 			}
 		}
 
-		void Search(IDnSpyFile ownerModule, TypeDef type, EventDef evt) {
+		void Search(IDsDocument ownerModule, TypeDef type, EventDef evt) {
 			var res = options.Filter.GetResult(evt);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -648,10 +648,10 @@ namespace dnSpy.Search {
 					Context = options.Context,
 					Object = evt,
 					NameObject = evt,
-					ObjectImageReference = options.DotNetImageManager.GetImageReference(evt),
+					ObjectImageReference = options.DotNetImageService.GetImageReference(evt),
 					LocationObject = type,
-					LocationImageReference = options.DotNetImageManager.GetImageReference(type),
-					DnSpyFile = ownerModule,
+					LocationImageReference = options.DotNetImageService.GetImageReference(type),
+					Document = ownerModule,
 				});
 			}
 		}

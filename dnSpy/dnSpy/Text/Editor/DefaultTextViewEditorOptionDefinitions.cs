@@ -24,92 +24,92 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class CanChangeOverwriteModeEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CanChangeOverwriteModeId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.CanChangeOverwriteModeId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class CanChangeUseVisibleWhitespaceEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CanChangeUseVisibleWhitespaceId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.CanChangeUseVisibleWhitespaceId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class CanChangeWordWrapStyleEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CanChangeWordWrapStyleId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.CanChangeWordWrapStyleId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class AllowBoxSelectionEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.AllowBoxSelectionId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.AllowBoxSelectionId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class RefreshScreenOnChangeEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.RefreshScreenOnChangeId;
 		public override bool Default => false;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class RefreshScreenOnChangeWaitMilliSecondsEditorOptionDefinition : ViewOptionDefinition<int> {
-		public override EditorOptionKey<int> Key => DefaultDnSpyTextViewOptions.RefreshScreenOnChangeWaitMilliSecondsId;
-		public override int Default => DefaultDnSpyTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSeconds;
+		public override EditorOptionKey<int> Key => DefaultDsTextViewOptions.RefreshScreenOnChangeWaitMilliSecondsId;
+		public override int Default => DefaultDsTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSeconds;
 		public override bool IsValid(ref int proposedValue) => proposedValue >= 0;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class EnableColorizationEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.EnableColorizationId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.EnableColorizationId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class ReferenceHighlightingEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.ReferenceHighlightingId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.ReferenceHighlightingId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class BraceMatchingEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.BraceMatchingId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.BraceMatchingId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class LineSeparatorEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.LineSeparatorId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.LineSeparatorId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class HighlightRelatedKeywordsEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.HighlightRelatedKeywordsId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.HighlightRelatedKeywordsId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class CompressEmptyOrWhitespaceLinesEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CompressEmptyOrWhitespaceLinesId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class CompressNonLetterLinesEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.CompressNonLetterLinesId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.CompressNonLetterLinesId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class ShowStructureLinesEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.ShowStructureLinesId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.ShowStructureLinesId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class RemoveExtraTextLineVerticalPixelsEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyTextViewOptions.RemoveExtraTextLineVerticalPixelsId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId;
 		public override bool Default => false;
 	}
 }

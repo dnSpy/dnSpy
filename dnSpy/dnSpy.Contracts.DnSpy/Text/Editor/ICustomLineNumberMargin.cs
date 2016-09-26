@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Custom line number margin. The <see cref="ITextView"/> must have the
-	/// <see cref="PredefinedDnSpyTextViewRoles.CustomLineNumberMargin"/> role and
+	/// <see cref="PredefinedDsTextViewRoles.CustomLineNumberMargin"/> role and
 	/// you must call <see cref="SetOwner(ITextView, ICustomLineNumberMarginOwner)"/>.
 	/// Option <see cref="DefaultTextViewHostOptions.LineNumberMarginId"/> is used
 	/// to show or hide it after creation.

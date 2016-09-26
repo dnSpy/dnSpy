@@ -29,14 +29,14 @@ using dnSpy.Properties;
 namespace dnSpy.Search {
 	[Export(typeof(IMainToolWindowContentProvider))]
 	sealed class SearchToolWindowContentProvider : IMainToolWindowContentProvider {
-		readonly Lazy<ISearchManager> searchManager;
+		readonly Lazy<ISearchService> searchService;
 
-		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchManager));
+		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchService));
 		SearchToolWindowContent searchToolWindowContent;
 
 		[ImportingConstructor]
-		SearchToolWindowContentProvider(Lazy<ISearchManager> searchManager) {
-			this.searchManager = searchManager;
+		SearchToolWindowContentProvider(Lazy<ISearchService> searchService) {
+			this.searchService = searchService;
 		}
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
@@ -54,27 +54,27 @@ namespace dnSpy.Search {
 		public static readonly Guid THE_GUID = new Guid("8E359BE0-C8CD-4CA7-B228-8C836219AF85");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement => searchManager.Value.FocusedElement;
-		public FrameworkElement ScaleElement => searchManager.Value.ScaleElement;
+		public IInputElement FocusedElement => searchService.Value.FocusedElement;
+		public FrameworkElement ScaleElement => searchService.Value.ScaleElement;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Resources.SearchWindow_Title;
 		public object ToolTip => null;
-		public object UIObject => searchManager.Value.UIObject;
+		public object UIObject => searchService.Value.UIObject;
 		public bool CanFocus => true;
 
-		readonly Lazy<ISearchManager> searchManager;
+		readonly Lazy<ISearchService> searchService;
 
-		public SearchToolWindowContent(Lazy<ISearchManager> searchManager) {
-			this.searchManager = searchManager;
+		public SearchToolWindowContent(Lazy<ISearchService> searchService) {
+			this.searchService = searchService;
 		}
 
 		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			if (visEvent == ToolWindowContentVisibilityEvent.Removed)
-				searchManager.Value.OnClose();
+				searchService.Value.OnClose();
 			else if (visEvent == ToolWindowContentVisibilityEvent.Added)
-				searchManager.Value.OnShow();
+				searchService.Value.OnShow();
 		}
 
-		public void Focus() => searchManager.Value.Focus();
+		public void Focus() => searchService.Value.Focus();
 	}
 }

@@ -27,19 +27,19 @@ using dnSpy.Contracts.Themes;
 namespace dnSpy.AsmEditor.Themes {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
 	sealed class TextEditorResourceColorInitializer : IAutoLoaded {
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 
 		[ImportingConstructor]
-		TextEditorResourceColorInitializer(IThemeManager themeManager) {
-			this.themeManager = themeManager;
-			this.themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+		TextEditorResourceColorInitializer(IThemeService themeService) {
+			this.themeService = themeService;
+			this.themeService.ThemeChanged += ThemeService_ThemeChanged;
 			InitializeResources();
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => InitializeResources();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => InitializeResources();
 
 		void InitializeResources() {
-			var theme = themeManager.Theme;
+			var theme = themeService.Theme;
 
 			foreach (var f in typeof(TextColor).GetFields()) {
 				if (!f.IsLiteral)
@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.Themes {
 		}
 
 		void UpdateTextEditorResource(TextColor colorType, string name) {
-			var theme = themeManager.Theme;
+			var theme = themeService.Theme;
 
 			var color = theme.GetTextColor(colorType.ToColorType());
 			Application.Current.Resources[GetTextInheritedForegroundResourceKey(name)] = GetBrush(color.Foreground);

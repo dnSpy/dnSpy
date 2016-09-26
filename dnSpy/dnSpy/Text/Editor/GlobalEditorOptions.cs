@@ -46,11 +46,11 @@ namespace dnSpy.Text.Editor {
 			globalOptions.OptionChanged += EditorOptions_OptionChanged;
 			globalOptions.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, textEditorSettings.HighlightCurrentLine);
 			globalOptions.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, textEditorSettings.TextViewZoomLevel);
-			globalOptions.SetOptionValue(DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId, textEditorSettings.ForceClearTypeIfNeeded);
+			globalOptions.SetOptionValue(DefaultDsWpfViewOptions.ForceClearTypeIfNeededId, textEditorSettings.ForceClearTypeIfNeeded);
 			globalOptions.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, textEditorSettings.ShowLineNumbers);
 			globalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, textEditorSettings.WordWrapStyle);
 			globalOptions.SetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId, textEditorSettings.ConvertTabsToSpaces);
-			globalOptions.SetOptionValue(DefaultDnSpyTextViewOptions.ReferenceHighlightingId, textEditorSettings.HighlightReferences);
+			globalOptions.SetOptionValue(DefaultDsTextViewOptions.ReferenceHighlightingId, textEditorSettings.HighlightReferences);
 		}
 
 		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -58,7 +58,7 @@ namespace dnSpy.Text.Editor {
 				textEditorSettings.HighlightCurrentLine = globalOptions.IsHighlightCurrentLineEnabled();
 			else if (e.OptionId == DefaultWpfViewOptions.ZoomLevelId.Name)
 				textEditorSettings.TextViewZoomLevel = globalOptions.ZoomLevel();
-			else if (e.OptionId == DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name)
+			else if (e.OptionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededId.Name)
 				textEditorSettings.ForceClearTypeIfNeeded = globalOptions.IsForceClearTypeIfNeededEnabled();
 			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
 				textEditorSettings.ShowLineNumbers = globalOptions.IsLineNumberMarginEnabled();
@@ -66,7 +66,7 @@ namespace dnSpy.Text.Editor {
 				textEditorSettings.WordWrapStyle = globalOptions.WordWrapStyle();
 			else if (e.OptionId == DefaultOptions.ConvertTabsToSpacesOptionId.Name)
 				textEditorSettings.ConvertTabsToSpaces = globalOptions.IsConvertTabsToSpacesEnabled();
-			else if (e.OptionId == DefaultDnSpyTextViewOptions.ReferenceHighlightingId.Name)
+			else if (e.OptionId == DefaultDsTextViewOptions.ReferenceHighlightingId.Name)
 				textEditorSettings.HighlightReferences = globalOptions.IsReferenceHighlightingEnabled();
 		}
 	}

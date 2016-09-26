@@ -47,17 +47,17 @@ namespace dnSpy.Debugger.Locals {
 		readonly ILocalsVM vmLocals;
 
 		[ImportingConstructor]
-		LocalsContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, ILocalsVM localsVM) {
+		LocalsContent(IWpfCommandService wpfCommandService, IThemeService themeService, ILocalsVM localsVM) {
 			this.localsControl = new LocalsControl();
 			this.vmLocals = localsVM;
 			this.localsControl.DataContext = this.vmLocals;
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmLocals.RefreshThemeFields();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmLocals.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(localsControl.ListView);
 		public void OnClose() => vmLocals.IsEnabled = false;
 		public void OnShow() => vmLocals.IsEnabled = true;

@@ -32,9 +32,9 @@ namespace dnSpy.Contracts.Tabs {
 		object Tag { get; set; }
 
 		/// <summary>
-		/// Gets the owner <see cref="ITabGroupManager"/> instance
+		/// Gets the owner <see cref="ITabGroupService"/> instance
 		/// </summary>
-		ITabGroupManager TabGroupManager { get; }
+		ITabGroupService TabGroupService { get; }
 
 		/// <summary>
 		/// Gets all <see cref="ITabContent"/> instances

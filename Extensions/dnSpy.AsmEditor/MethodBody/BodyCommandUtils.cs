@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 

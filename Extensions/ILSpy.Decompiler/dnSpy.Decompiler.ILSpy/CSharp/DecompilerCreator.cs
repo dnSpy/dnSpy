@@ -26,13 +26,13 @@ using dnSpy.Decompiler.ILSpy.Core.Settings;
 namespace dnSpy.Decompiler.ILSpy.CSharp {
 	[Export(typeof(IDecompilerCreator))]
 	sealed class MyDecompilerCreator : IDecompilerCreator {
-		readonly DecompilerSettingsManager decompilerSettingsManager;
+		readonly DecompilerSettingsService decompilerSettingsService;
 
 		[ImportingConstructor]
-		MyDecompilerCreator(DecompilerSettingsManager decompilerSettingsManager) {
-			this.decompilerSettingsManager = decompilerSettingsManager;
+		MyDecompilerCreator(DecompilerSettingsService decompilerSettingsService) {
+			this.decompilerSettingsService = decompilerSettingsService;
 		}
 
-		public IEnumerable<IDecompiler> Create() => new DecompilerProvider(decompilerSettingsManager).Create();
+		public IEnumerable<IDecompiler> Create() => new DecompilerProvider(decompilerSettingsService).Create();
 	}
 }

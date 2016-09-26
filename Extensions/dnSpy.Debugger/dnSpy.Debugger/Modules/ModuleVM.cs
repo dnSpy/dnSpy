@@ -27,20 +27,20 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Modules {
 	interface IModuleContext {
-		IImageManager ImageManager { get; }
+		IImageService ImageService { get; }
 		ITheDebugger TheDebugger { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 	}
 
 	sealed class ModuleContext : IModuleContext {
-		public IImageManager ImageManager { get; }
+		public IImageService ImageService { get; }
 		public ITheDebugger TheDebugger { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 
-		public ModuleContext(IImageManager imageManager, ITheDebugger theDebugger) {
-			this.ImageManager = imageManager;
+		public ModuleContext(IImageService imageService, ITheDebugger theDebugger) {
+			this.ImageService = imageService;
 			this.TheDebugger = theDebugger;
 		}
 	}

@@ -63,18 +63,18 @@ namespace Example1.Extension {
 		//TODO: Use your own guid
 		static readonly Guid SETTINGS_GUID = new Guid("A308405D-0DF5-4C56-8B1E-8CE7BA6365E1");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
-		// Tell MEF to pass in the required ISettingsManager instance exported by dnSpy
+		// Tell MEF to pass in the required ISettingsService instance exported by dnSpy
 		[ImportingConstructor]
-		MySettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		MySettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			// Read the settings from the file or use the default values if our settings haven't
 			// been saved to it yet.
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			BoolOption1 = sect.Attribute<bool?>(nameof(BoolOption1)) ?? BoolOption1;
 			BoolOption2 = sect.Attribute<bool?>(nameof(BoolOption2)) ?? BoolOption2;
 			StringOption3 = sect.Attribute<string>(nameof(StringOption3)) ?? StringOption3;
@@ -89,7 +89,7 @@ namespace Example1.Extension {
 
 			// Save the settings
 
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(BoolOption1), BoolOption1);
 			sect.Attribute(nameof(BoolOption2), BoolOption2);
 			sect.Attribute(nameof(StringOption3), StringOption3);

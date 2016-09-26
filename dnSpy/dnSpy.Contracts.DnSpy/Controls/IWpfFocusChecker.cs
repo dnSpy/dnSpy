@@ -21,11 +21,11 @@ using System.Windows;
 
 namespace dnSpy.Contracts.Controls {
 	/// <summary>
-	/// Can prevent <see cref="IWpfFocusManager"/> from calling <see cref="UIElement.Focus()"/>
+	/// Can prevent <see cref="IWpfFocusService"/> from calling <see cref="UIElement.Focus()"/>
 	/// </summary>
 	public interface IWpfFocusChecker {
 		/// <summary>
-		/// true if <see cref="IWpfFocusManager"/> can give focus to a <see cref="UIElement"/>,
+		/// true if <see cref="IWpfFocusService"/> can give focus to a <see cref="UIElement"/>,
 		/// false otherwise
 		/// </summary>
 		bool CanFocus { get; }

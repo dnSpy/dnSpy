@@ -36,11 +36,11 @@ using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Settings;
 using dnSpy.Culture;
 using dnSpy.Extension;
-using dnSpy.Files.Tabs.Dialogs;
+using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
@@ -70,15 +70,15 @@ namespace dnSpy.MainApp {
 		[Import]
 		AppWindow appWindow = null;
 		[Import]
-		SettingsManager settingsManager = null;
+		SettingsService settingsService = null;
 		[Import]
-		ExtensionManager extensionManager = null;
+		ExtensionService extensionService = null;
 		[Import]
-		IDnSpyLoaderManager dnSpyLoaderManager = null;
+		IDsLoaderService dsLoaderService = null;
 		[Import]
-		Lazy<IFileTabManager> fileTabManager = null;
+		Lazy<IDocumentTabService> documentTabService = null;
 		[Import]
-		Lazy<IDecompilerManager> decompilerManager = null;
+		Lazy<IDecompilerService> decompilerService = null;
 		[ImportMany]
 		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
@@ -99,7 +99,7 @@ namespace dnSpy.MainApp {
 
 			InitializeMEF(readSettings);
 			compositionContainer.ComposeParts(this);
-			this.extensionManager.LoadedExtensions = this.loadedExtensions;
+			this.extensionService.LoadedExtensions = this.loadedExtensions;
 			this.appWindow.CommandLineArgs = this.args;
 
 			this.Exit += App_Exit;
@@ -117,16 +117,16 @@ namespace dnSpy.MainApp {
 			compositionContainer = InitializeCompositionContainer();
 			compositionContainer.GetExportedValue<ServiceLocator>().SetCompositionContainer(compositionContainer);
 			if (readSettings) {
-				var settingsManager = compositionContainer.GetExportedValue<ISettingsManager>();
+				var settingsService = compositionContainer.GetExportedValue<ISettingsService>();
 				try {
-					new XmlSettingsReader(settingsManager).Read();
+					new XmlSettingsReader(settingsService).Read();
 				}
 				catch {
 				}
 			}
 
-			var cultureManager = compositionContainer.GetExportedValue<CultureManager>();
-			cultureManager.Initialize(this.args);
+			var cultureService = compositionContainer.GetExportedValue<CultureService>();
+			cultureService.Initialize(this.args);
 		}
 
 		CompositionContainer InitializeCompositionContainer() {
@@ -320,10 +320,10 @@ namespace dnSpy.MainApp {
 		}
 
 		void App_Exit(object sender, ExitEventArgs e) {
-			extensionManager.OnAppExit();
-			dnSpyLoaderManager.Save();
+			extensionService.OnAppExit();
+			dsLoaderService.Save();
 			try {
-				new XmlSettingsWriter(settingsManager).Write();
+				new XmlSettingsWriter(settingsService).Write();
 			}
 			catch {
 			}
@@ -359,16 +359,16 @@ namespace dnSpy.MainApp {
 
 			var win = appWindow.InitializeMainWindow();
 			appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
-			dnSpyLoaderManager.OnAppLoaded += DnSpyLoaderManager_OnAppLoaded;
-			dnSpyLoaderManager.Initialize(appWindow, win, args);
-			extensionManager.LoadExtensions(this.Resources.MergedDictionaries);
+			dsLoaderService.OnAppLoaded += DsLoaderService_OnAppLoaded;
+			dsLoaderService.Initialize(appWindow, win, args);
+			extensionService.LoadExtensions(this.Resources.MergedDictionaries);
 			win.Show();
 		}
 
-		void DnSpyLoaderManager_OnAppLoaded(object sender, EventArgs e) {
-			dnSpyLoaderManager.OnAppLoaded -= DnSpyLoaderManager_OnAppLoaded;
+		void DsLoaderService_OnAppLoaded(object sender, EventArgs e) {
+			dsLoaderService.OnAppLoaded -= DsLoaderService_OnAppLoaded;
 			appWindow.AppLoaded = true;
-			extensionManager.OnAppLoaded();
+			extensionService.OnAppLoaded();
 			HandleAppArgs(args);
 		}
 
@@ -378,17 +378,17 @@ namespace dnSpy.MainApp {
 
 			var decompiler = GetDecompiler(appArgs.Language);
 			if (decompiler != null)
-				decompilerManager.Value.Decompiler = decompiler;
+				decompilerService.Value.Decompiler = decompiler;
 
 			if (appArgs.FullScreen != null)
 				appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
 
 			if (appArgs.NewTab)
-				fileTabManager.Value.OpenEmptyTab();
+				documentTabService.Value.OpenEmptyTab();
 
 			var files = appArgs.Filenames.ToArray();
 			if (files.Length > 0)
-				OpenFilesHelper.OpenFiles(fileTabManager.Value.FileTreeView, appWindow.MainWindow, files, false);
+				OpenDocumentsHelper.OpenDocuments(documentTabService.Value.DocumentTreeView, appWindow.MainWindow, files, false);
 
 			// The files were lazily added to the treeview. Make sure they've been added to the TV
 			// before we process the remaining command line args.
@@ -409,13 +409,13 @@ namespace dnSpy.MainApp {
 
 			Guid guid;
 			if (Guid.TryParse(language, out guid)) {
-				var lang = decompilerManager.Value.Find(guid);
+				var lang = decompilerService.Value.Find(guid);
 				if (lang != null)
 					return lang;
 			}
 
-			return decompilerManager.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
-				decompilerManager.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
+			return decompilerService.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
+				decompilerService.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
 		}
 	}
 }

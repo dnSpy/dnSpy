@@ -142,9 +142,9 @@ namespace dnSpy.AsmEditor.Event {
 
 		readonly ModuleDef ownerModule;
 
-		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType) {
+		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
@@ -155,8 +155,8 @@ namespace dnSpy.AsmEditor.Event {
 			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
-			this.OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			this.OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
 
 			this.origOptions = options;
 
@@ -175,7 +175,7 @@ namespace dnSpy.AsmEditor.Event {
 		MethodDef PickMethod(MethodDef origMethod) {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			return dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameModuleFileTreeNodeFilter(ownerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
+			return dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameModuleDocumentTreeNodeFilter(ownerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
 		}
 
 		void PickAddMethod() {

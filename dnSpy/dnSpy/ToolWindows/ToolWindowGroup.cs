@@ -27,7 +27,7 @@ using dnSpy.Contracts.ToolWindows;
 namespace dnSpy.ToolWindows {
 	sealed class ToolWindowGroup : IToolWindowGroup {
 		public ITabGroup TabGroup { get; }
-		public IToolWindowGroupManager ToolWindowGroupManager { get; }
+		public IToolWindowGroupService ToolWindowGroupService { get; }
 		IEnumerable<TabContentImpl> TabContentImpls => TabGroup.TabContents.Cast<TabContentImpl>();
 		public IEnumerable<IToolWindowContent> TabContents => TabContentImpls.Select(a => a.Content);
 
@@ -43,8 +43,8 @@ namespace dnSpy.ToolWindows {
 			}
 		}
 
-		public ToolWindowGroup(IToolWindowGroupManager toolWindowGroupManager, ITabGroup tabGroup) {
-			this.ToolWindowGroupManager = toolWindowGroupManager;
+		public ToolWindowGroup(IToolWindowGroupService toolWindowGroupService, ITabGroup tabGroup) {
+			this.ToolWindowGroupService = toolWindowGroupService;
 			this.TabGroup = tabGroup;
 			this.TabGroup.Tag = this;
 			this.TabGroup.TabContentAttached += TabGroup_TabContentAttached;

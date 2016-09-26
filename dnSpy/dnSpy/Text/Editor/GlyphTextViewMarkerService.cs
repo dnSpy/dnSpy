@@ -181,7 +181,7 @@ namespace dnSpy.Text.Editor {
 			this.onRemovedDelegate = OnRemoved;
 			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
 			this.TextView = wpfTextView;
-			this.markerLayer = wpfTextView.GetAdornmentLayer(PredefinedDnSpyAdornmentLayers.GlyphTextMarker);
+			this.markerLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.GlyphTextMarker);
 			this.markerAndSpanCollection = new MarkerAndSpanCollection(this);
 			this.markerElements = new List<MarkerElement>();
 			this.editorFormatMap = glyphTextMarkerServiceImpl.EditorFormatMapService.GetEditorFormatMap(wpfTextView);
@@ -484,7 +484,7 @@ namespace dnSpy.Text.Editor {
 			else
 				return null;
 
-			if (useReducedOpacityForHighContrast && glyphTextMarkerServiceImpl.ThemeManager.Theme.IsHighContrast) {
+			if (useReducedOpacityForHighContrast && glyphTextMarkerServiceImpl.ThemeService.Theme.IsHighContrast) {
 				newBrush = newBrush.Clone();
 				newBrush.Opacity = BG_BRUSH_HIGHCONTRAST_OPACITY;
 				if (newBrush.CanFreeze)
@@ -649,7 +649,7 @@ namespace dnSpy.Text.Editor {
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId.Name) {
 				useReducedOpacityForHighContrast = TextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-				if (glyphTextMarkerServiceImpl.ThemeManager.Theme.IsHighContrast)
+				if (glyphTextMarkerServiceImpl.ThemeService.Theme.IsHighContrast)
 					RefreshExistingMarkers();
 			}
 		}
@@ -699,7 +699,7 @@ namespace dnSpy.Text.Editor {
 			if (glyphTag.ImageReference.IsDefault)
 				return null;
 
-			var source = glyphTextMarkerServiceImpl.ImageManager.GetImage(glyphTag.ImageReference, BackgroundType.GlyphMargin);
+			var source = glyphTextMarkerServiceImpl.ImageService.GetImage(glyphTag.ImageReference, BackgroundType.GlyphMargin);
 			const double DEFAULT_IMAGE_LENGTH = 16;
 			const double EXTRA_LENGTH = 2;
 			double imageLength = Math.Min(DEFAULT_IMAGE_LENGTH, line.Height + EXTRA_LENGTH);

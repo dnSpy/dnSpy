@@ -33,10 +33,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public TypeSigCreatorVM TypeSigCreator { get; }
 		public CustomAttributesVM CustomAttributesVM { get; }
 
-		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += TypeSigCreator_PropertyChanged;
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
 
 			Reinitialize();
 		}

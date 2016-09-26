@@ -33,17 +33,17 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		[ExportAutoLoaded]
-		sealed class ThemeManagerLoader : IAutoLoaded {
+		sealed class ThemeServiceLoader : IAutoLoaded {
 			[ImportingConstructor]
-			ThemeManagerLoader(IThemeManager themeManager) {
-				LocalsControl.themeManager = themeManager;
+			ThemeServiceLoader(IThemeService themeService) {
+				LocalsControl.themeService = themeService;
 			}
 		}
-		static IThemeManager themeManager;
+		static IThemeService themeService;
 
 		static void InitializeTreeView(SharpTreeView treeView) {
-			treeView.GetPreviewInsideTextBackground = () => themeManager.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
-			treeView.GetPreviewInsideForeground = () => themeManager.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
+			treeView.GetPreviewInsideTextBackground = () => themeService.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
+			treeView.GetPreviewInsideForeground = () => themeService.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
 		}
 	}
 }

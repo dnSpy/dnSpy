@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.SaveModule;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.AsmEditor.Hex {
 	[ExportTabSaverProvider(Order = TabConstants.ORDER_HEXTABSAVERPROVIDER)]
@@ -34,15 +34,15 @@ namespace dnSpy.AsmEditor.Hex {
 			this.documentSaver = documentSaver;
 		}
 
-		public ITabSaver Create(IFileTab tab) => HexTabSaver.TryCreate(documentSaver, tab);
+		public ITabSaver Create(IDocumentTab tab) => HexTabSaver.TryCreate(documentSaver, tab);
 	}
 
 	sealed class HexTabSaver : ITabSaver {
 		public bool CanSave => true;
 		public string MenuHeader => dnSpy_AsmEditor_Resources.Save;
 
-		public static ITabSaver TryCreate(Lazy<IDocumentSaver> documentSaver, IFileTab tab) {
-			var uiContext = tab.UIContext as HexBoxFileTabUIContext;
+		public static ITabSaver TryCreate(Lazy<IDocumentSaver> documentSaver, IDocumentTab tab) {
+			var uiContext = tab.UIContext as HexBoxDocumentTabUIContext;
 			if (uiContext == null)
 				return null;
 			var doc = uiContext.DnHexBox.Document as AsmEdHexDocument;

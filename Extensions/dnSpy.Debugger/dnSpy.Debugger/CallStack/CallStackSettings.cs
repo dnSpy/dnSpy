@@ -165,14 +165,14 @@ namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackSettingsImpl : CallStackSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("7280C4EB-1135-4F39-B6E0-57BD0A2454D6");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		CallStackSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		CallStackSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ShowModuleNames = sect.Attribute<bool?>(nameof(ShowModuleNames)) ?? ShowModuleNames;
 			ShowParameterTypes = sect.Attribute<bool?>(nameof(ShowParameterTypes)) ?? ShowParameterTypes;
 			ShowParameterNames = sect.Attribute<bool?>(nameof(ShowParameterNames)) ?? ShowParameterNames;
@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.CallStack {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowModuleNames), ShowModuleNames);
 			sect.Attribute(nameof(ShowParameterTypes), ShowParameterTypes);
 			sect.Attribute(nameof(ShowParameterNames), ShowParameterNames);

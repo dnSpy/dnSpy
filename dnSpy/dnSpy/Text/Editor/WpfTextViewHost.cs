@@ -31,10 +31,10 @@ using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
-	sealed class WpfTextViewHost : ContentControl, IDnSpyWpfTextViewHost {
+	sealed class WpfTextViewHost : ContentControl, IDsWpfTextViewHost {
 		public bool IsClosed { get; set; }
 		IWpfTextView IWpfTextViewHost.TextView => TextView;
-		public IDnSpyWpfTextView TextView { get; }
+		public IDsWpfTextView TextView { get; }
 		public event EventHandler Closed;
 		public Control HostControl => this;
 
@@ -42,7 +42,7 @@ namespace dnSpy.Text.Editor {
 		readonly Grid grid;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
-		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IDnSpyWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
+		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IDsWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
 			if (wpfTextViewMarginProviderCollectionProvider == null)
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
 			if (wpfTextView == null)

@@ -20,21 +20,21 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Input;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContextMenuHandlerCommandProxy : ICommand {
 		readonly CodeContextMenuHandler command;
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 
-		public CodeContextMenuHandlerCommandProxy(CodeContextMenuHandler command, IFileTabManager fileTabManager) {
+		public CodeContextMenuHandlerCommandProxy(CodeContextMenuHandler command, IDocumentTabService documentTabService) {
 			this.command = command;
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 		}
 
 		CodeContext CreateContext() {
-			var documentViewer = fileTabManager.ActiveTab.TryGetDocumentViewer();
+			var documentViewer = documentTabService.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
@@ -44,8 +44,8 @@ namespace dnSpy.AsmEditor.Commands {
 			if (refInfo == null)
 				return null;
 
-			var node = fileTabManager.FileTreeView.FindNode(refInfo.Value.Data.Reference);
-			var nodes = node == null ? Array.Empty<IFileTreeNodeData>() : new IFileTreeNodeData[] { node };
+			var node = documentTabService.DocumentTreeView.FindNode(refInfo.Value.Data.Reference);
+			var nodes = node == null ? Array.Empty<IDocumentTreeNodeData>() : new IDocumentTreeNodeData[] { node };
 			return new CodeContext(nodes, refInfo.Value.Data.IsDefinition, null);
 		}
 

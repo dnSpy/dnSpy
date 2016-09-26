@@ -28,11 +28,11 @@ namespace dnSpy.Debugger.Memory {
 	[ExportAutoLoaded]
 	sealed class MemoryContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		MemoryContentCommandLoader(IWpfCommandManager wpfCommandManager, MemoryToolWindowContentProvider memoryToolWindowContentProvider, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
+		MemoryContentCommandLoader(IWpfCommandService wpfCommandService, MemoryToolWindowContentProvider memoryToolWindowContentProvider, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			for (int i = 0; i < DebugRoutedCommands.ShowMemoryCommands.Length; i++) {
 				var info = memoryToolWindowContentProvider.Contents[i];
-				cmds.Add(DebugRoutedCommands.ShowMemoryCommands[i], new RelayCommand(a => mainToolWindowManager.Show(info.Guid)));
+				cmds.Add(DebugRoutedCommands.ShowMemoryCommands[i], new RelayCommand(a => toolWindowService.Show(info.Guid)));
 			}
 			for (int i = 0; i < DebugRoutedCommands.ShowMemoryCommands.Length && i < 10; i++) {
 				var cmd = DebugRoutedCommands.ShowMemoryCommands[i];

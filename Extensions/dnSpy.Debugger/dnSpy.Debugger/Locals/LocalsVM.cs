@@ -88,18 +88,18 @@ namespace dnSpy.Debugger.Locals {
 		readonly IMethodLocalProvider methodLocalProvider;
 		readonly Dispatcher dispatcher;
 		readonly IDebuggerSettings debuggerSettings;
-		readonly IStackFrameManager stackFrameManager;
+		readonly IStackFrameService stackFrameService;
 
 		[ImportingConstructor]
-		LocalsVM(IImageManager imageManager, IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameManager stackFrameManager, ITheDebugger theDebugger, IAskUser askUser) {
+		LocalsVM(IImageService imageService, IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameService stackFrameService, ITheDebugger theDebugger, IAskUser askUser) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.askUser = askUser;
 			this.methodLocalProvider = methodLocalProvider;
 			this.debuggerSettings = debuggerSettings;
-			this.stackFrameManager = stackFrameManager;
+			this.stackFrameService = stackFrameService;
 			this.TheDebugger = theDebugger;
 
-			this.printerContext = new PrinterContext(imageManager) {
+			this.printerContext = new PrinterContext(imageService) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				TypePrinterFlags = TypePrinterFlags.ShowArrayValueSizes,
@@ -109,8 +109,8 @@ namespace dnSpy.Debugger.Locals {
 
 			methodLocalProvider.NewMethodInfoAvailable += MethodLocalProvider_NewMethodInfoAvailable;
 			this.Root = new SharpTreeNode();
-			stackFrameManager.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
-			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
+			stackFrameService.StackFramesUpdated += StackFrameService_StackFramesUpdated;
+			stackFrameService.PropertyChanged += StackFrameService_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.Locals {
 				break;
 
 			case DebuggerProcessState.Paused:
-				// Handled in StackFrameManager_StackFramesUpdated
+				// Handled in StackFrameService_StackFramesUpdated
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -218,12 +218,12 @@ namespace dnSpy.Debugger.Locals {
 			public override int GetHashCode() => ValueContext.Function == null ? 0 : ValueContext.Function.GetHashCode();
 		}
 
-		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(IStackFrameManager.SelectedFrameNumber))
+		void StackFrameService_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == nameof(IStackFrameService.SelectedFrameNumber))
 				InitializeLocals(LocalInitType.Full);
 		}
 
-		void StackFrameManager_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
+		void StackFrameService_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeLocals() is called when the process has been running for a little while. Speeds up stepping.
@@ -254,9 +254,9 @@ namespace dnSpy.Debugger.Locals {
 				return;
 			}
 
-			var thread = stackFrameManager.SelectedThread;
-			var frame = stackFrameManager.SelectedFrame;
-			int frameNo = stackFrameManager.SelectedFrameNumber;
+			var thread = stackFrameService.SelectedThread;
+			var frame = stackFrameService.SelectedFrame;
+			int frameNo = stackFrameService.SelectedFrameNumber;
 			DnProcess process;
 			if (thread == null) {
 				process = TheDebugger.Debugger.Processes.FirstOrDefault();

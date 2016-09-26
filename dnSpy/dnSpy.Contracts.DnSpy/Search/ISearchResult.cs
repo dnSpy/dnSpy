@@ -19,8 +19,8 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 
 namespace dnSpy.Contracts.Search {
 	/// <summary>
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Search {
 	/// </summary>
 	public interface ISearchResult : IComparable<ISearchResult> {
 		/// <summary>
-		/// <see cref="IDnSpyFile"/> if it's a non-.NET file. <see cref="AssemblyDef"/>,
+		/// <see cref="IDsDocument"/> if it's a non-.NET file. <see cref="AssemblyDef"/>,
 		/// <see cref="ModuleDef"/>, <see cref="dnlib.DotNet.AssemblyRef"/>, <see cref="ModuleRef"/>,
 		/// <see cref="IResourceNode"/>, <see cref="IResourceElementNode"/>, <see cref="string"/>
 		/// (namespace), <see cref="TypeDef"/>, <see cref="MethodDef"/>, <see cref="FieldDef"/>,
@@ -39,11 +39,11 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Owner file
 		/// </summary>
-		IDnSpyFile DnSpyFile { get; }
+		IDsDocument Document { get; }
 
 		/// <summary>
 		/// Refreshes UI fields. Should be called if the theme,
-		/// <see cref="IFileSearcher.SyntaxHighlight"/> or <see cref="IFileSearcher.Decompiler"/>
+		/// <see cref="IDocumentSearcher.SyntaxHighlight"/> or <see cref="IDocumentSearcher.Decompiler"/>
 		/// changes.
 		/// </summary>
 		void RefreshUI();

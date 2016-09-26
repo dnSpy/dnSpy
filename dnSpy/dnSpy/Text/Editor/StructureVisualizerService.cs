@@ -55,8 +55,8 @@ namespace dnSpy.Text.Editor {
 	sealed class StructureVisualizerService : IStructureVisualizerService {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(PredefinedDnSpyAdornmentLayers.StructureVisualizer)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[Name(PredefinedDsAdornmentLayers.StructureVisualizer)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.InterLine)]
 		static AdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
 #pragma warning restore 0169
@@ -187,7 +187,7 @@ namespace dnSpy.Text.Editor {
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
-			if (e.OptionId == DefaultDnSpyTextViewOptions.ShowStructureLinesId.Name)
+			if (e.OptionId == DefaultDsTextViewOptions.ShowStructureLinesId.Name)
 				UpdateEnabled();
 		}
 
@@ -198,7 +198,7 @@ namespace dnSpy.Text.Editor {
 			enabled = newValue;
 			if (enabled) {
 				if (layer == null)
-					layer = wpfTextView.GetAdornmentLayer(PredefinedDnSpyAdornmentLayers.StructureVisualizer);
+					layer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.StructureVisualizer);
 				if (editorFormatMap == null)
 					editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextView);
 				RegisterEvents();

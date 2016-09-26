@@ -128,19 +128,19 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CANamedArgumentsVM CANamedArgumentsVM { get; }
 
 		readonly ModuleDef ownerModule;
-		readonly IDecompilerManager decompilerManager;
+		readonly IDecompilerService decompilerService;
 		readonly TypeDef ownerType;
 		readonly MethodDef ownerMethod;
 
-		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 			this.ownerModule = ownerModule;
-			this.decompilerManager = decompilerManager;
+			this.decompilerService = decompilerService;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 
 			this.RawData = new HexStringVM(a => HasErrorUpdated());
-			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerManager, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
+			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerService, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
 			ConstructorArguments.CollectionChanged += Args_CollectionChanged;
 			CANamedArgumentsVM.Collection.CollectionChanged += Args_CollectionChanged;
 
@@ -175,7 +175,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ConstructorArguments.RemoveAt(ConstructorArguments.Count - 1);
 			while (ConstructorArguments.Count < count) {
 				var type = Constructor.MethodSig.Params[ConstructorArguments.Count];
-				ConstructorArguments.Add(new CAArgumentVM(ownerModule, CreateCAArgument(type), new TypeSigCreatorOptions(ownerModule, decompilerManager), type));
+				ConstructorArguments.Add(new CAArgumentVM(ownerModule, CreateCAArgument(type), new TypeSigCreatorOptions(ownerModule, decompilerService), type));
 			}
 		}
 
@@ -184,7 +184,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickConstructor() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newCtor = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Constructor, new FlagsFileTreeNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor, ownerModule);
+			var newCtor = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Constructor, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor, ownerModule);
 			if (newCtor != null)
 				Constructor = newCtor;
 		}
@@ -202,7 +202,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				TypeSig type = null;
 				if (sig != null && i < sig.Params.Count)
 					type = sig.Params[i];
-				ConstructorArguments.Add(new CAArgumentVM(ownerModule, options.ConstructorArguments[i], new TypeSigCreatorOptions(ownerModule, decompilerManager), type));
+				ConstructorArguments.Add(new CAArgumentVM(ownerModule, options.ConstructorArguments[i], new TypeSigCreatorOptions(ownerModule, decompilerService), type));
 			}
 			CANamedArgumentsVM.InitializeFrom(options.NamedArguments);
 			CreateArguments();

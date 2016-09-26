@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -12,7 +12,7 @@ using dnSpy.Contracts.TreeView;
 
 namespace Example2.Extension {
 	// This class adds a new child node to all assembly nodes
-	[ExportTreeNodeDataProvider(Guid = FileTVConstants.ASSEMBLY_NODE_GUID)]
+	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.ASSEMBLY_NODE_GUID)]
 	sealed class AssemblyTreeNodeDataProvider : ITreeNodeDataProvider {
 		public IEnumerable<ITreeNodeData> Create(TreeNodeDataProviderContext context) {
 			yield return new AssemblyChildNode();
@@ -20,14 +20,14 @@ namespace Example2.Extension {
 	}
 
 	// This class adds a new child node to all module nodes
-	[ExportTreeNodeDataProvider(Guid = FileTVConstants.MODULE_NODE_GUID)]
+	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.MODULE_NODE_GUID)]
 	sealed class ModuleTreeNodeDataProvider : ITreeNodeDataProvider {
 		public IEnumerable<ITreeNodeData> Create(TreeNodeDataProviderContext context) {
 			yield return new ModuleChildNode();
 		}
 	}
 
-	sealed class AssemblyChildNode : FileTreeNodeData { // All file tree nodes should implement IFileTreeNodeData or derive from FileTreeNodeData
+	sealed class AssemblyChildNode : DocumentTreeNodeData { // All file tree nodes should implement IDocumentTreeNodeData or derive from DocumentTreeNodeData
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("6CF91674-16CE-44EA-B9E8-80B68C327D30");
 
@@ -35,7 +35,7 @@ namespace Example2.Extension {
 		public override NodePathName NodePathName => new NodePathName(Guid);
 
 		// The image must be in an Images folder (in the resources) and have a .png extension
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "EntryPoint");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "EntryPoint");
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, "Assembly Child");
@@ -66,7 +66,7 @@ namespace Example2.Extension {
 	}
 
 	// This class can decompile its own output and implements IDecompileSelf
-	sealed class ModuleChildNode : FileTreeNodeData, IDecompileSelf { // All file tree nodes should implement IFileTreeNodeData or derive from FileTreeNodeData
+	sealed class ModuleChildNode : DocumentTreeNodeData, IDecompileSelf { // All file tree nodes should implement IDocumentTreeNodeData or derive from DocumentTreeNodeData
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("C8892F6C-6A49-4537-AAA0-D0DEF1E87277");
 
@@ -91,7 +91,7 @@ namespace Example2.Extension {
 		}
 
 		// The image must be in an Images folder (in the resources) and have a .png extension
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			output.Write(BoxedTextColor.Text, "Module Child");
@@ -152,7 +152,7 @@ namespace Example2.Extension {
 		}
 	}
 
-	sealed class SomeMessageNode : FileTreeNodeData {
+	sealed class SomeMessageNode : DocumentTreeNodeData {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("1751CD40-68CE-4F8A-84AF-99371B6FD843");
 
@@ -164,7 +164,7 @@ namespace Example2.Extension {
 
 		public override Guid Guid => THE_GUID;
 		public override NodePathName NodePathName => new NodePathName(THE_GUID, Message);
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Comment, Message);
@@ -196,7 +196,7 @@ namespace Example2.Extension {
 	// those nodes.
 	[ExportDecompileNode]
 	sealed class SomeMessageNodeDecompiler : IDecompileNode {
-		public bool Decompile(IDecompileNodeContext context, IFileTreeNodeData node) {
+		public bool Decompile(IDecompileNodeContext context, IDocumentTreeNodeData node) {
 			var msgNode = node as SomeMessageNode;
 			if (msgNode == null)
 				return false;

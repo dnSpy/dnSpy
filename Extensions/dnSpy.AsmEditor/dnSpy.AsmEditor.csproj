@@ -80,7 +80,7 @@
     <Compile Include="Commands\NamespaceNodeCreator.cs" />
     <Compile Include="Commands\NestedTypeNodeCreator.cs" />
     <Compile Include="Commands\PropertyNodeCreator.cs" />
-    <Compile Include="Commands\RootDnSpyFileNodeCreator.cs" />
+    <Compile Include="Commands\RootDocumentNodeCreator.cs" />
     <Compile Include="Commands\TypeNodeCreator.cs" />
     <Compile Include="Compiler\AddUpdatedNodesHelper.cs" />
     <Compile Include="Compiler\AssemblyReferenceResolver.cs" />
@@ -113,16 +113,16 @@
     <Compile Include="Hex\AsmEdHexDocument.cs" />
     <Compile Include="Commands\AsmEditorContext.cs" />
     <Compile Include="Hex\HexAddressReferenceFileTabContentProvider.cs" />
-    <Compile Include="Hex\HexBoxFileTabContent.cs" />
+    <Compile Include="Hex\HexBoxDocumentTabContent.cs" />
     <Compile Include="Hex\HexBoxUIState.cs" />
     <Compile Include="Hex\HexBoxUIStateSerializer.cs" />
-    <Compile Include="Hex\HexBoxUndoManager.cs" />
+    <Compile Include="Hex\HexBoxUndoService.cs" />
     <Compile Include="Hex\HexTabSaver.cs" />
     <Compile Include="Hex\HexUndoableDocumentsProvider.cs" />
     <Compile Include="Hex\IUndoHexDocument.cs" />
     <Compile Include="Hex\Nodes\HexField.cs" />
-    <Compile Include="Hex\Nodes\HexFileTabContent.cs" />
-    <Compile Include="Hex\Nodes\HexFileTreeNodeDataFinder.cs" />
+    <Compile Include="Hex\Nodes\HexDocumentTabContent.cs" />
+    <Compile Include="Hex\Nodes\HexDocumentTreeNodeDataFinder.cs" />
     <Compile Include="Hex\Nodes\HexNode.cs" />
     <Compile Include="Hex\Nodes\HexUtils.cs" />
     <Compile Include="Hex\Nodes\HexVM.cs" />
@@ -153,7 +153,7 @@
     <Compile Include="Hex\Nodes\StorageStreamVM.cs" />
     <Compile Include="Hex\Nodes\TablesStreamNode.cs" />
     <Compile Include="Hex\Nodes\TablesStreamVM.cs" />
-    <Compile Include="Hex\Nodes\TokenReferenceFileTabContentProvider.cs" />
+    <Compile Include="Hex\Nodes\TokenReferenceDocumentTabContentProvider.cs" />
     <Compile Include="Hex\Nodes\VirtualizedList.cs" />
     <Compile Include="MethodBody\BodyCommandUtils.cs" />
     <Compile Include="Properties\dnSpy.AsmEditor.Resources.Designer.cs">
@@ -165,9 +165,9 @@
     <Compile Include="SaveModule\MmapDisabler.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="Themes\TextEditorResourceColorInitializer.cs" />
-    <Compile Include="UndoRedo\DnSpyFileUndoableDocumentsProvider.cs" />
+    <Compile Include="UndoRedo\DsDocumentUndoableDocumentsProvider.cs" />
     <Compile Include="UndoRedo\IUndoableDocumentsProvider.cs" />
-    <Compile Include="UndoRedo\UndoCommandManagerEventArgs.cs" />
+    <Compile Include="UndoRedo\UndoCommandServiceEventArgs.cs" />
     <Compile Include="UndoRedo\UndoRoutedCommands.cs" />
     <Compile Include="Assembly\AssemblyCommands.cs" />
     <Compile Include="Assembly\AssemblyOptions.cs" />
@@ -360,8 +360,8 @@
     </Compile>
     <Compile Include="Field\FieldOptionsVM.cs" />
     <Compile Include="Commands\FileMenuHandler.cs" />
-    <Compile Include="Commands\FilesContextMenuHandler.cs" />
-    <Compile Include="Hex\HexDocumentManager.cs" />
+    <Compile Include="Commands\DocumentsContextMenuHandler.cs" />
+    <Compile Include="Hex\HexDocumentService.cs" />
     <Compile Include="Hex\Commands.cs" />
     <Compile Include="Hex\HexBoxUndoCommand.cs" />
     <Compile Include="Hex\InstructionUtils.cs" />
@@ -505,7 +505,7 @@
       <DependentUpon>TypeOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Types\TypeOptionsVM.cs" />
-    <Compile Include="UndoRedo\UndoCommandManager.cs" />
+    <Compile Include="UndoRedo\UndoCommandService.cs" />
     <Compile Include="UndoRedo\UndoObject.cs" />
     <Compile Include="UndoRedo\UndoRedoIFileListListener.cs" />
     <Compile Include="UndoRedo\UndoRedoMenuCommands.cs" />

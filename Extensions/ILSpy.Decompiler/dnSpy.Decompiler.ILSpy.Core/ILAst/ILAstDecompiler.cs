@@ -31,23 +31,23 @@ using ICSharpCode.Decompiler.ILAst;
 
 namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 	sealed class DecompilerProvider : IDecompilerProvider {
-		readonly DecompilerSettingsManager decompilerSettingsManager;
+		readonly DecompilerSettingsService decompilerSettingsService;
 
 		// Keep the default ctor. It's used by dnSpy.Console.exe
 		public DecompilerProvider()
-			: this(DecompilerSettingsManager.__Instance_DONT_USE) {
+			: this(DecompilerSettingsService.__Instance_DONT_USE) {
 		}
 
-		public DecompilerProvider(DecompilerSettingsManager decompilerSettingsManager) {
-			Debug.Assert(decompilerSettingsManager != null);
-			if (decompilerSettingsManager == null)
-				throw new ArgumentNullException(nameof(decompilerSettingsManager));
-			this.decompilerSettingsManager = decompilerSettingsManager;
+		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
+			Debug.Assert(decompilerSettingsService != null);
+			if (decompilerSettingsService == null)
+				throw new ArgumentNullException(nameof(decompilerSettingsService));
+			this.decompilerSettingsService = decompilerSettingsService;
 		}
 
 		public IEnumerable<IDecompiler> Create() {
 #if DEBUG
-			foreach (var l in ILAstDecompiler.GetDebugDecompilers(decompilerSettingsManager))
+			foreach (var l in ILAstDecompiler.GetDebugDecompilers(decompilerSettingsService))
 				yield return l;
 #endif
 			yield break;
@@ -283,17 +283,17 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 		}
 
-		internal static IEnumerable<ILAstDecompiler> GetDebugDecompilers(DecompilerSettingsManager decompilerSettingsManager) {
+		internal static IEnumerable<ILAstDecompiler> GetDebugDecompilers(DecompilerSettingsService decompilerSettingsService) {
 			double orderUI = DecompilerConstants.ILAST_ILSPY_DEBUG_ORDERUI;
 			uint id = 0x64A926A5;
-			yield return new ILAstDecompiler(decompilerSettingsManager.ILAstDecompilerSettings, orderUI++) {
+			yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++) {
 				uniqueNameUI = "ILAst (unoptimized)",
 				uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 				inlineVariables = false
 			};
 			string nextName = "ILAst (variable splitting)";
 			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
-				yield return new ILAstDecompiler(decompilerSettingsManager.ILAstDecompilerSettings, orderUI++) {
+				yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++) {
 					uniqueNameUI = nextName,
 					uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 					abortBeforeStep = step

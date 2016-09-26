@@ -22,8 +22,8 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodDefsVM : ListVM<MethodDefVM, MethodDef> {
-		public MethodDefsVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType = null, MethodDef ownerMethod = null)
-			: base(null, null, ownerModule, decompilerManager, ownerType, ownerMethod) {
+		public MethodDefsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType = null, MethodDef ownerMethod = null)
+			: base(null, null, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 
 		protected override MethodDefVM Create(MethodDef model) => new MethodDefVM(model);

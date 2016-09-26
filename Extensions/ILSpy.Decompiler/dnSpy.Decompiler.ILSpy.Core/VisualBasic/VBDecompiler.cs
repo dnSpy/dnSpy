@@ -34,22 +34,22 @@ using ICSharpCode.NRefactory.VB.Visitors;
 
 namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 	sealed class DecompilerProvider : IDecompilerProvider {
-		readonly DecompilerSettingsManager decompilerSettingsManager;
+		readonly DecompilerSettingsService decompilerSettingsService;
 
 		// Keep the default ctor. It's used by dnSpy.Console.exe
 		public DecompilerProvider()
-			: this(DecompilerSettingsManager.__Instance_DONT_USE) {
+			: this(DecompilerSettingsService.__Instance_DONT_USE) {
 		}
 
-		public DecompilerProvider(DecompilerSettingsManager decompilerSettingsManager) {
-			Debug.Assert(decompilerSettingsManager != null);
-			if (decompilerSettingsManager == null)
-				throw new ArgumentNullException(nameof(decompilerSettingsManager));
-			this.decompilerSettingsManager = decompilerSettingsManager;
+		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
+			Debug.Assert(decompilerSettingsService != null);
+			if (decompilerSettingsService == null)
+				throw new ArgumentNullException(nameof(decompilerSettingsService));
+			this.decompilerSettingsService = decompilerSettingsService;
 		}
 
 		public IEnumerable<IDecompiler> Create() {
-			yield return new VBDecompiler(decompilerSettingsManager.CSharpVBDecompilerSettings);
+			yield return new VBDecompiler(decompilerSettingsService.CSharpVBDecompilerSettings);
 		}
 	}
 

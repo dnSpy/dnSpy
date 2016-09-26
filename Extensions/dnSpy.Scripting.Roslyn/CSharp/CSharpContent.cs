@@ -33,8 +33,8 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 	[Export(typeof(ICSharpContent))]
 	sealed class CSharpContent : ScriptContent, ICSharpContent {
 		[ImportingConstructor]
-		CSharpContent(IThemeManager themeManager, IReplEditorProvider replEditorProvider, CSharpReplSettingsImpl replSettings, IServiceLocator serviceLocator)
-			: base(themeManager, replEditorProvider, CreateReplEditorOptions(), replSettings, serviceLocator, Constants.REPL_CSharp) {
+		CSharpContent(IThemeService themeService, IReplEditorProvider replEditorProvider, CSharpReplSettingsImpl replSettings, IServiceLocator serviceLocator)
+			: base(themeService, replEditorProvider, CreateReplEditorOptions(), replSettings, serviceLocator, Constants.REPL_CSharp) {
 		}
 
 		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator, ReplSettings replSettings) =>
@@ -45,7 +45,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
 				ContentTypeString = ContentTypes.CSharpRoslyn,
 			};
-			options.Roles.Add(PredefinedDnSpyTextViewRoles.CSharpRepl);
+			options.Roles.Add(PredefinedDsTextViewRoles.CSharpRepl);
 			return options;
 		}
 	}

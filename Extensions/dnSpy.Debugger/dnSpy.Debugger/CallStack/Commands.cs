@@ -28,7 +28,7 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
@@ -38,8 +38,8 @@ namespace dnSpy.Debugger.CallStack {
 	[ExportAutoLoaded]
 	sealed class CallStackContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CallStackContentCommandLoader(IWpfCommandManager wpfCommandManager, CopyCallStackCtxMenuCommand copyCmd, RunToCursorCallStackCtxMenuCommand runToCursorCmd, SwitchToFrameCallStackCtxMenuCommand switchToFrameCmd, SwitchToFrameNewTabCallStackCtxMenuCommand switchToFrameNewTabCmd) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW);
+		CallStackContentCommandLoader(IWpfCommandService wpfCommandService, CopyCallStackCtxMenuCommand copyCmd, RunToCursorCallStackCtxMenuCommand runToCursorCmd, SwitchToFrameCallStackCtxMenuCommand switchToFrameCmd, SwitchToFrameNewTabCallStackCtxMenuCommand switchToFrameNewTabCmd) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new CallStackCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new CallStackCtxMenuCommandProxy(runToCursorCmd), ModifierKeys.Control, Key.F10);
 			cmds.Add(new CallStackCtxMenuCommandProxy(switchToFrameCmd), ModifierKeys.None, Key.Enter);
@@ -51,10 +51,10 @@ namespace dnSpy.Debugger.CallStack {
 	[ExportAutoLoaded]
 	sealed class CallStackCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CallStackCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
+		CallStackCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 
-			cmds.Add(DebugRoutedCommands.ShowCallStack, new RelayCommand(a => mainToolWindowManager.Show(CallStackToolWindowContent.THE_GUID)));
+			cmds.Add(DebugRoutedCommands.ShowCallStack, new RelayCommand(a => toolWindowService.Show(CallStackToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowCallStack, ModifierKeys.Control | ModifierKeys.Alt, Key.C);
 			cmds.Add(DebugRoutedCommands.ShowCallStack, ModifierKeys.Alt, Key.D7);
 			cmds.Add(DebugRoutedCommands.ShowCallStack, ModifierKeys.Alt, Key.NumPad7);
@@ -155,16 +155,16 @@ namespace dnSpy.Debugger.CallStack {
 
 	[Export, ExportMenuItem(Header = "res:SwitchToFrameCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 0)]
 	sealed class SwitchToFrameCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		readonly Lazy<IStackFrameManager> stackFrameManager;
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IStackFrameService> stackFrameService;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		SwitchToFrameCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
+		SwitchToFrameCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
 			: base(theDebugger, callStackContent) {
-			this.stackFrameManager = stackFrameManager;
-			this.fileTabManager = fileTabManager;
+			this.stackFrameService = stackFrameService;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.moduleIdProvider = moduleIdProvider;
 		}
@@ -176,12 +176,12 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public override void Execute(CallStackCtxMenuContext context) =>
-			Execute(moduleIdProvider, stackFrameManager.Value, fileTabManager, moduleLoader.Value, GetFrame(context), false);
+			Execute(moduleIdProvider, stackFrameService.Value, documentTabService, moduleLoader.Value, GetFrame(context), false);
 
-		internal static void Execute(IModuleIdProvider moduleIdProvider, IStackFrameManager stackFrameManager, IFileTabManager fileTabManager, IModuleLoader moduleLoader, CallStackFrameVM vm, bool newTab) {
+		internal static void Execute(IModuleIdProvider moduleIdProvider, IStackFrameService stackFrameService, IDocumentTabService documentTabService, IModuleLoader moduleLoader, CallStackFrameVM vm, bool newTab) {
 			if (vm != null) {
-				stackFrameManager.SelectedFrameNumber = vm.Index;
-				FrameUtils.GoTo(moduleIdProvider, fileTabManager, moduleLoader, vm.Frame, newTab);
+				stackFrameService.SelectedFrameNumber = vm.Index;
+				FrameUtils.GoTo(moduleIdProvider, documentTabService, moduleLoader, vm.Frame, newTab);
 			}
 		}
 
@@ -190,35 +190,35 @@ namespace dnSpy.Debugger.CallStack {
 
 	[Export, ExportMenuItem(Header = "res:SwitchToFrameNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 10)]
 	sealed class SwitchToFrameNewTabCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		readonly Lazy<IStackFrameManager> stackFrameManager;
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IStackFrameService> stackFrameService;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		SwitchToFrameNewTabCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
+		SwitchToFrameNewTabCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
 			: base(theDebugger, callStackContent) {
-			this.stackFrameManager = stackFrameManager;
-			this.fileTabManager = fileTabManager;
+			this.stackFrameService = stackFrameService;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
 		public override void Execute(CallStackCtxMenuContext context) =>
-			SwitchToFrameCallStackCtxMenuCommand.Execute(moduleIdProvider, stackFrameManager.Value, fileTabManager, moduleLoader.Value, SwitchToFrameCallStackCtxMenuCommand.GetFrame(context), true);
+			SwitchToFrameCallStackCtxMenuCommand.Execute(moduleIdProvider, stackFrameService.Value, documentTabService, moduleLoader.Value, SwitchToFrameCallStackCtxMenuCommand.GetFrame(context), true);
 		public override bool IsEnabled(CallStackCtxMenuContext context) => SwitchToFrameCallStackCtxMenuCommand.GetFrame(context) != null;
 	}
 
 	[ExportMenuItem(Header = "res:GoToCodeCommand", Icon = "GoToSourceCode", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 20)]
 	sealed class GoToSourceCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		GoToSourceCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
+		GoToSourceCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
 			: base(theDebugger, callStackContent) {
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.moduleIdProvider = moduleIdProvider;
 		}
@@ -226,7 +226,7 @@ namespace dnSpy.Debugger.CallStack {
 		public override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
-				FrameUtils.GoToIL(moduleIdProvider, fileTabManager, moduleLoader.Value, vm.Frame, false);
+				FrameUtils.GoToIL(moduleIdProvider, documentTabService, moduleLoader.Value, vm.Frame, false);
 		}
 
 		public override bool IsEnabled(CallStackCtxMenuContext context) =>
@@ -252,22 +252,22 @@ namespace dnSpy.Debugger.CallStack {
 
 	[Export, ExportMenuItem(Header = "res:RunToCursorCommand", Icon = "Cursor", InputGestureText = "res:ShortCutKeyCtrlF10", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 40)]
 	sealed class RunToCursorCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		readonly Lazy<IDebugManager> debugManager;
+		readonly Lazy<IDebugService> debugService;
 
 		[ImportingConstructor]
-		RunToCursorCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IDebugManager> debugManager)
+		RunToCursorCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IDebugService> debugService)
 			: base(theDebugger, callStackContent) {
-			this.debugManager = debugManager;
+			this.debugService = debugService;
 		}
 
 		public override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
-				debugManager.Value.RunTo(vm.Frame);
+				debugService.Value.RunTo(vm.Frame);
 		}
 
 		public override bool IsEnabled(CallStackCtxMenuContext context) =>
-			debugManager.Value.CanRunTo(SwitchToFrameCallStackCtxMenuCommand.GetFrame(context)?.Frame);
+			debugService.Value.CanRunTo(SwitchToFrameCallStackCtxMenuCommand.GetFrame(context)?.Frame);
 	}
 
 	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_HEXOPTS, Order = 0)]

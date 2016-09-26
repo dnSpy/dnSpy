@@ -30,15 +30,15 @@ namespace dnSpy.MainApp {
 		public object UIObject => toolBar;
 		readonly ToolBar toolBar;
 
-		readonly IToolBarManager toolBarManager;
+		readonly IToolBarService toolBarService;
 
 		[ImportingConstructor]
-		public AppToolBar(IToolBarManager toolBarManager) {
-			this.toolBarManager = toolBarManager;
+		public AppToolBar(IToolBarService toolBarService) {
+			this.toolBarService = toolBarService;
 			this.toolBar = new ToolBar { FocusVisualStyle = null };
 		}
 
 		internal void Initialize(Window window) =>
-			toolBarManager.InitializeToolBar(toolBar, new Guid(ToolBarConstants.APP_TB_GUID), window);
+			toolBarService.InitializeToolBar(toolBar, new Guid(ToolBarConstants.APP_TB_GUID), window);
 	}
 }

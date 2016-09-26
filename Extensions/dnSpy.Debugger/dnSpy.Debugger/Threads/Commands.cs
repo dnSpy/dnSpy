@@ -27,7 +27,7 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
@@ -39,8 +39,8 @@ namespace dnSpy.Debugger.Threads {
 	[ExportAutoLoaded]
 	sealed class ThreadsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		ThreadsContentCommandLoader(IWpfCommandManager wpfCommandManager, CopyCallThreadsCtxMenuCommand copyCmd, SwitchToThreadThreadsCtxMenuCommand switchCmd, SwitchToThreadNewTabThreadsCtxMenuCommand switchNewTabCmd) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW);
+		ThreadsContentCommandLoader(IWpfCommandService wpfCommandService, CopyCallThreadsCtxMenuCommand copyCmd, SwitchToThreadThreadsCtxMenuCommand switchCmd, SwitchToThreadNewTabThreadsCtxMenuCommand switchNewTabCmd) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new ThreadsCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new ThreadsCtxMenuCommandProxy(switchCmd), ModifierKeys.None, Key.Enter);
 			cmds.Add(new ThreadsCtxMenuCommandProxy(switchNewTabCmd), ModifierKeys.Control, Key.Enter);
@@ -51,9 +51,9 @@ namespace dnSpy.Debugger.Threads {
 	[ExportAutoLoaded]
 	sealed class ThreadsCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		ThreadsCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
-			cmds.Add(DebugRoutedCommands.ShowThreads, new RelayCommand(a => mainToolWindowManager.Show(ThreadsToolWindowContent.THE_GUID)));
+		ThreadsCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
+			cmds.Add(DebugRoutedCommands.ShowThreads, new RelayCommand(a => toolWindowService.Show(ThreadsToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowThreads, ModifierKeys.Control | ModifierKeys.Alt, Key.H);
 		}
 	}
@@ -188,58 +188,58 @@ namespace dnSpy.Debugger.Threads {
 
 	[Export, ExportMenuItem(Header = "res:SwitchToThreadCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
 	sealed class SwitchToThreadThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		readonly Lazy<IStackFrameManager> stackFrameManager;
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IStackFrameService> stackFrameService;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		SwitchToThreadThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
+		SwitchToThreadThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
 			: base(theDebugger, threadsContent) {
-			this.stackFrameManager = stackFrameManager;
-			this.fileTabManager = fileTabManager;
+			this.stackFrameService = stackFrameService;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
 		public override void Execute(ThreadsCtxMenuContext context) {
-			GoTo(moduleIdProvider, stackFrameManager, fileTabManager, moduleLoader, context, false);
+			GoTo(moduleIdProvider, stackFrameService, documentTabService, moduleLoader, context, false);
 		}
 
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => CanGoToThread(context);
 		internal static bool CanGoToThread(ThreadsCtxMenuContext context) => context.SelectedItems.Length == 1;
 
-		internal static void GoTo(IModuleIdProvider moduleIdProvider, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, ThreadsCtxMenuContext context, bool newTab) {
+		internal static void GoTo(IModuleIdProvider moduleIdProvider, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, ThreadsCtxMenuContext context, bool newTab) {
 			if (context.SelectedItems.Length == 0)
 				return;
-			GoTo(moduleIdProvider, fileTabManager, moduleLoader.Value, stackFrameManager.Value, context.SelectedItems[0], newTab);
+			GoTo(moduleIdProvider, documentTabService, moduleLoader.Value, stackFrameService.Value, context.SelectedItems[0], newTab);
 		}
 
-		internal static void GoTo(IModuleIdProvider moduleIdProvider, IFileTabManager fileTabManager, IModuleLoader moduleLoader, IStackFrameManager stackFrameManager, ThreadVM vm, bool newTab) {
+		internal static void GoTo(IModuleIdProvider moduleIdProvider, IDocumentTabService documentTabService, IModuleLoader moduleLoader, IStackFrameService stackFrameService, ThreadVM vm, bool newTab) {
 			if (vm == null)
 				return;
-			stackFrameManager.SelectedThread = vm.Thread;
-			FrameUtils.GoTo(moduleIdProvider, fileTabManager, moduleLoader, vm.Thread.AllFrames.FirstOrDefault(f => f.IsILFrame), newTab);
+			stackFrameService.SelectedThread = vm.Thread;
+			FrameUtils.GoTo(moduleIdProvider, documentTabService, moduleLoader, vm.Thread.AllFrames.FirstOrDefault(f => f.IsILFrame), newTab);
 		}
 	}
 
 	[Export, ExportMenuItem(Header = "res:SwitchToThreadNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
 	sealed class SwitchToThreadNewTabThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		readonly Lazy<IStackFrameManager> stackFrameManager;
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IStackFrameService> stackFrameService;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		SwitchToThreadNewTabThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
+		SwitchToThreadNewTabThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider)
 			: base(theDebugger, threadsContent) {
-			this.stackFrameManager = stackFrameManager;
-			this.fileTabManager = fileTabManager;
+			this.stackFrameService = stackFrameService;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
-		public override void Execute(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.GoTo(moduleIdProvider, stackFrameManager, fileTabManager, moduleLoader, context, true);
+		public override void Execute(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.GoTo(moduleIdProvider, stackFrameService, documentTabService, moduleLoader, context, true);
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.CanGoToThread(context);
 	}
 

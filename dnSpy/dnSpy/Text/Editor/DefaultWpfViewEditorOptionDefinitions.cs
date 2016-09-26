@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class ForceClearTypeIfNeededEditorOptionDefinition : WpfViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId;
+		public override EditorOptionKey<bool> Key => DefaultDsWpfViewOptions.ForceClearTypeIfNeededId;
 		public override bool Default => true;
 	}
 }

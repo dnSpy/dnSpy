@@ -29,8 +29,8 @@ using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Utilities;
 
@@ -38,73 +38,73 @@ namespace dnSpy.AsmEditor.Event {
 	[ExportAutoLoaded]
 	sealed class CommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CommandLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, DeleteEventDefCommand.EditMenuCommand removeCmd, DeleteEventDefCommand.CodeCommand removeCmd2, EventDefSettingsCommand.EditMenuCommand settingsCmd, EventDefSettingsCommand.CodeCommand settingsCmd2) {
-			wpfCommandManager.AddRemoveCommand(removeCmd);
-			wpfCommandManager.AddRemoveCommand(removeCmd2, fileTabManager);
-			wpfCommandManager.AddSettingsCommand(fileTabManager, settingsCmd, settingsCmd2);
+		CommandLoader(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, DeleteEventDefCommand.EditMenuCommand removeCmd, DeleteEventDefCommand.CodeCommand removeCmd2, EventDefSettingsCommand.EditMenuCommand settingsCmd, EventDefSettingsCommand.CodeCommand settingsCmd2) {
+			wpfCommandService.AddRemoveCommand(removeCmd);
+			wpfCommandService.AddRemoveCommand(removeCmd2, documentTabService);
+			wpfCommandService.AddSettingsCommand(documentTabService, settingsCmd, settingsCmd2);
 		}
 	}
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteEventDefCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:DeleteEventCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 60)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:DeleteEventCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 60)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteEventDefCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => DeleteEventDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteEventCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 60)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
-				: base(fileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
+				: base(documentTreeView) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteEventDefCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => DeleteEventDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteEventCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 60)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
-				: base(fileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
+				: base(documentTreeView) {
+				this.undoCommandService = undoCommandService;
 			}
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteEventDefCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => DeleteEventDefCommand.Execute(undoCommandManager, context.Nodes);
+			public override void Execute(CodeContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(CodeContext context) => DeleteEventDefCommand.GetHeader(context.Nodes);
 		}
 
-		static string GetHeader(IFileTreeNodeData[] nodes) {
+		static string GetHeader(IDocumentTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
 				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteEvents, nodes.Length);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IEventNode);
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IEventNode);
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var eventNodes = nodes.Cast<IEventNode>().ToArray();
-			undoCommandManager.Value.Add(new DeleteEventDefCommand(eventNodes));
+			undoCommandService.Value.Add(new DeleteEventDefCommand(eventNodes));
 		}
 
 		struct DeleteModelNodes {
@@ -206,46 +206,46 @@ namespace dnSpy.AsmEditor.Event {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateEventDefCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:CreateEventCommand", Icon = "NewEvent", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 90)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:CreateEventCommand", Icon = "NewEvent", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 90)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateEventDefCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateEventDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateEventCommand", Icon = "NewEvent", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 90)]
 		sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateEventDefCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateEventDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateEventCommand", Icon = "NewEvent", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 90)]
 		sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
@@ -255,20 +255,20 @@ namespace dnSpy.AsmEditor.Event {
 					context.Nodes[0] is ITypeNode;
 			}
 
-			public override void Execute(CodeContext context) => CreateEventDefCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => CreateEventDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) =>
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
 			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var ownerNode = nodes[0];
 			if (!(ownerNode is ITypeNode))
-				ownerNode = (IFileTreeNodeData)ownerNode.TreeNode.Parent.Data;
+				ownerNode = (IDocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
 			var typeNode = ownerNode as ITypeNode;
 			Debug.Assert(typeNode != null);
 			if (typeNode == null)
@@ -289,8 +289,8 @@ namespace dnSpy.AsmEditor.Event {
 				return;
 
 			var cmd = new CreateEventDefCommand(typeNode, data.CreateEventDefOptions());
-			undoCommandManager.Value.Add(cmd);
-			appWindow.FileTabManager.FollowReference(cmd.eventNode);
+			undoCommandService.Value.Add(cmd);
+			appWindow.DocumentTabService.FollowReference(cmd.eventNode);
 		}
 
 		readonly ITypeNode ownerNode;
@@ -324,56 +324,56 @@ namespace dnSpy.AsmEditor.Event {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class EventDefSettingsCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:EditEventCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 70)]
-		sealed class FilesCommand : FilesContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+		[ExportMenuItem(Header = "res:EditEventCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 70)]
+		sealed class DocumentsCommand : DocumentsContextMenuHandler {
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
-				this.undoCommandManager = undoCommandManager;
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => EventDefSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => EventDefSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditEventCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 70)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => EventDefSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => EventDefSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditEventCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 70)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
-				: base(appWindow.FileTreeView) {
-				this.undoCommandManager = undoCommandManager;
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
+				: base(appWindow.DocumentTreeView) {
+				this.undoCommandService = undoCommandService;
 				this.appWindow = appWindow;
 			}
 
 			public override bool IsEnabled(CodeContext context) => EventDefSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => EventDefSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => EventDefSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		static bool CanExecute(IFileTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IEventNode;
+		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IEventNode;
 
-		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -391,13 +391,13 @@ namespace dnSpy.AsmEditor.Event {
 			if (win.ShowDialog() != true)
 				return;
 
-			undoCommandManager.Value.Add(new EventDefSettingsCommand(eventNode, data.CreateEventDefOptions()));
+			undoCommandService.Value.Add(new EventDefSettingsCommand(eventNode, data.CreateEventDefOptions()));
 		}
 
 		readonly IEventNode eventNode;
 		readonly EventDefOptions newOptions;
 		readonly EventDefOptions origOptions;
-		readonly IFileTreeNodeData origParentNode;
+		readonly IDocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
@@ -406,7 +406,7 @@ namespace dnSpy.AsmEditor.Event {
 			this.newOptions = options;
 			this.origOptions = new EventDefOptions(eventNode.EventDef);
 
-			this.origParentNode = (IFileTreeNodeData)eventNode.TreeNode.Parent.Data;
+			this.origParentNode = (IDocumentTreeNodeData)eventNode.TreeNode.Parent.Data;
 			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(eventNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)

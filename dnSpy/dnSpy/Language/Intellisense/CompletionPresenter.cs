@@ -74,7 +74,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		readonly IImageMonikerService imageMonikerService;
-		readonly IImageManager imageManager;
+		readonly IImageService imageService;
 		readonly ICompletionSession session;
 		readonly ICompletionTextElementProvider completionTextElementProvider;
 		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
@@ -94,11 +94,11 @@ namespace dnSpy.Language.Intellisense {
 		const double defaultMinWidth = 150;
 		const double toolTipDelayMilliSeconds = 250;
 
-		public CompletionPresenter(IImageMonikerService imageMonikerService, IImageManager imageManager, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
+		public CompletionPresenter(IImageMonikerService imageMonikerService, IImageService imageService, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
 			if (imageMonikerService == null)
 				throw new ArgumentNullException(nameof(imageMonikerService));
-			if (imageManager == null)
-				throw new ArgumentNullException(nameof(imageManager));
+			if (imageService == null)
+				throw new ArgumentNullException(nameof(imageService));
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 			if (completionTextElementProvider == null)
@@ -106,7 +106,7 @@ namespace dnSpy.Language.Intellisense {
 			if (completionUIElementProviders == null)
 				throw new ArgumentNullException(nameof(completionUIElementProviders));
 			this.imageMonikerService = imageMonikerService;
-			this.imageManager = imageManager;
+			this.imageService = imageService;
 			this.session = session;
 			this.completionTextElementProvider = completionTextElementProvider;
 			this.completionUIElementProviders = completionUIElementProviders;
@@ -608,7 +608,7 @@ namespace dnSpy.Language.Intellisense {
 			var c2 = completionIcon as CompletionIcon2;
 			if (c2 == null)
 				return completionIcon.IconSource;
-			bool fixImage = (completionIcon as IDnSpyCompletionIcon)?.FixImage ?? false;
+			bool fixImage = (completionIcon as IDsCompletionIcon)?.FixImage ?? false;
 			return GetImageSource(imageMonikerService.ToImageReference(c2.IconMoniker), fixImage);
 		}
 
@@ -629,8 +629,8 @@ namespace dnSpy.Language.Intellisense {
 			if (imageReference.IsDefault)
 				return null;
 			if (fixImage)
-				return imageManager.GetImage(imageReference, BackgroundType.ListBoxItem);
-			return imageManager.GetImage(imageReference, null);
+				return imageService.GetImage(imageReference, BackgroundType.ListBoxItem);
+			return imageService.GetImage(imageReference, null);
 		}
 
 		public FrameworkElement GetDisplayText(Completion completion) => CreateFrameworkElement(completion, CompletionClassifierKind.DisplayText);

@@ -24,7 +24,7 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
@@ -167,16 +167,16 @@ namespace dnSpy.Debugger {
 
 	[ExportMenuItem(Header = "res:DebugAssemblyCommand", Icon = "StartDebugging", InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 0)]
 	sealed class DebugAssemblyDebugCtxMenuCommand : DebugCtxMenuCommand {
-		readonly Lazy<IDebugManager> debugManager;
+		readonly Lazy<IDebugService> debugService;
 
 		[ImportingConstructor]
-		public DebugAssemblyDebugCtxMenuCommand(Lazy<IDebugManager> debugManager)
+		public DebugAssemblyDebugCtxMenuCommand(Lazy<IDebugService> debugService)
 			: base(DebugRoutedCommands.DebugCurrentAssembly) {
-			this.debugManager = debugManager;
+			this.debugService = debugService;
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
-			var asm = debugManager.Value.GetCurrentExecutableAssembly(context);
+			var asm = debugService.Value.GetCurrentExecutableAssembly(context);
 			if (asm == null)
 				return null;
 			return string.Format(dnSpy_Debugger_Resources.DebugProgramX, UIUtilities.EscapeMenuItemHeader(asm.GetShortName()));
@@ -184,22 +184,22 @@ namespace dnSpy.Debugger {
 
 		protected override bool IsValidElement(GuidObject element) =>
 			element.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) ||
-			element.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
+			element.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 	}
 
 	[ExportMenuItem(Icon = "BreakpointMenu", InputGestureText = "res:ShortCutKeyF9", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 10)]
 	sealed class ToggleBreakpointDebugCtxMenuCommand : DebugCtxMenuCommand {
-		readonly Lazy<IBreakpointManager> breakpointManager;
+		readonly Lazy<IBreakpointService> breakpointService;
 
 		[ImportingConstructor]
-		public ToggleBreakpointDebugCtxMenuCommand(Lazy<IBreakpointManager> breakpointManager)
+		public ToggleBreakpointDebugCtxMenuCommand(Lazy<IBreakpointService> breakpointService)
 			: base(DebugRoutedCommands.ToggleBreakpoint) {
-			this.breakpointManager = breakpointManager;
+			this.breakpointService = breakpointService;
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
 			int count;
-			bool? enabled = breakpointManager.Value.GetAddRemoveBreakpointsInfo(out count);
+			bool? enabled = breakpointService.Value.GetAddRemoveBreakpointsInfo(out count);
 
 			if (enabled == null)
 				return dnSpy_Debugger_Resources.AddBreakpointCommand;
@@ -211,23 +211,23 @@ namespace dnSpy.Debugger {
 
 	[ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlF9", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 20)]
 	sealed class EnableDisableBreakpointDebugCtxMenuCommand : DebugCtxMenuCommand {
-		readonly Lazy<IBreakpointManager> breakpointManager;
+		readonly Lazy<IBreakpointService> breakpointService;
 
 		[ImportingConstructor]
-		public EnableDisableBreakpointDebugCtxMenuCommand(Lazy<IBreakpointManager> breakpointManager)
+		public EnableDisableBreakpointDebugCtxMenuCommand(Lazy<IBreakpointService> breakpointService)
 			: base(DebugRoutedCommands.DisableBreakpoint) {
-			this.breakpointManager = breakpointManager;
+			this.breakpointService = breakpointService;
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) {
 			int count;
-			bool enabled = breakpointManager.Value.GetEnableDisableBreakpointsInfo(out count);
+			bool enabled = breakpointService.Value.GetEnableDisableBreakpointsInfo(out count);
 			return IsMenuItemEnabledInternal(count);
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
 			int count;
-			bool enabled = breakpointManager.Value.GetEnableDisableBreakpointsInfo(out count);
+			bool enabled = breakpointService.Value.GetEnableDisableBreakpointsInfo(out count);
 			return GetHeaderInternal(enabled, count);
 		}
 
@@ -535,14 +535,14 @@ namespace dnSpy.Debugger {
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.GLYPHMARGIN_GUID, Header = "res:DeleteBreakpointCommand", Icon = "BreakpointMenu", Group = MenuConstants.GROUP_GLYPHMARGIN_DEBUG_BPS, Order = 0)]
 	sealed class DeleteBreakpointCommand : GlyphMarginCommand {
-		readonly Lazy<IBreakpointManager> breakpointManager;
+		readonly Lazy<IBreakpointService> breakpointService;
 
 		[ImportingConstructor]
-		DeleteBreakpointCommand(Lazy<IBreakpointManager> breakpointManager) {
-			this.breakpointManager = breakpointManager;
+		DeleteBreakpointCommand(Lazy<IBreakpointService> breakpointService) {
+			this.breakpointService = breakpointService;
 		}
 
-		public override void Execute(ILCodeBreakpoint context) => breakpointManager.Value.Remove(context);
+		public override void Execute(ILCodeBreakpoint context) => breakpointService.Value.Remove(context);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.GLYPHMARGIN_GUID, InputGestureText = "res:ShortCutKeyCtrlF9", Group = MenuConstants.GROUP_GLYPHMARGIN_DEBUG_BPS, Order = 10)]

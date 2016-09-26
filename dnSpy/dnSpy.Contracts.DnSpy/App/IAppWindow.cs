@@ -23,8 +23,8 @@ using System.Reflection;
 using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Contracts.App {
@@ -63,24 +63,24 @@ namespace dnSpy.Contracts.App {
 		IAppStatusBar StatusBar { get; }
 
 		/// <summary>
-		/// Gets the <see cref="IFileTabManager"/> instance
+		/// Gets the <see cref="IDocumentTabService"/> instance
 		/// </summary>
-		IFileTabManager FileTabManager { get; }
+		IDocumentTabService DocumentTabService { get; }
 
 		/// <summary>
-		/// Gets the <see cref="IFileTreeView"/> instance
+		/// Gets the <see cref="IDocumentTreeView"/> instance
 		/// </summary>
-		IFileTreeView FileTreeView { get; }
+		IDocumentTreeView DocumentTreeView { get; }
 
 		/// <summary>
-		/// Gets the <see cref="IMainToolWindowManager"/> instance
+		/// Gets the <see cref="IDsToolWindowService"/> instance
 		/// </summary>
-		IMainToolWindowManager ToolWindowManager { get; }
+		IDsToolWindowService ToolWindowService { get; }
 
 		/// <summary>
-		/// Gets the <see cref="IDecompilerManager"/> instance
+		/// Gets the <see cref="IDecompilerService"/> instance
 		/// </summary>
-		IDecompilerManager DecompilerManager { get; }
+		IDecompilerService DecompilerManager { get; }
 
 		/// <summary>
 		/// true if the app has been loaded

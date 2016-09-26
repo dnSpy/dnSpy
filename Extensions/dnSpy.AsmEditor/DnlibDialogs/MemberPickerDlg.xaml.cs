@@ -25,24 +25,24 @@ using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class MemberPickerDlg : WindowBase {
-		public MemberPickerDlg(IFileTreeView globalFileTreeView, IFileTreeView newFileTreeView, IImageManager imageManager) {
+		public MemberPickerDlg(IDocumentTreeView globalDocumentTreeView, IDocumentTreeView newDocumentTreeView, IImageService imageService) {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MemberPickerVM;
 				if (data != null) {
-					data.OpenAssembly = new OpenAssembly(globalFileTreeView.FileManager);
+					data.OpenAssembly = new OpenAssembly(globalDocumentTreeView.DocumentService);
 					data.PropertyChanged += MemberPickerVM_PropertyChanged;
 				}
 			};
-			openImage.Source = imageManager.GetImage(new ImageReference(GetType().Assembly, "Open"), BackgroundType.DialogWindow);
+			openImage.Source = imageService.GetImage(new ImageReference(GetType().Assembly, "Open"), BackgroundType.DialogWindow);
 
-			var treeView = (Control)newFileTreeView.TreeView.UIObject;
+			var treeView = (Control)newDocumentTreeView.TreeView.UIObject;
 			cpTreeView.Content = treeView;
 			System.Windows.Controls.Validation.SetErrorTemplate(treeView, (ControlTemplate)FindResource("noRedBorderOnValidationError"));
 			treeView.AllowDrop = false;

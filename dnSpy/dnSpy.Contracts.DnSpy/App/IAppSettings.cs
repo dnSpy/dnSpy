@@ -37,6 +37,6 @@ namespace dnSpy.Contracts.App {
 		/// <summary>
 		/// File TreeView: true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
 		/// </summary>
-		bool UseNewRenderer_FileTreeView { get; }
+		bool UseNewRenderer_DocumentTreeView { get; }
 	}
 }

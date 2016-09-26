@@ -20,9 +20,9 @@ namespace Example2.Extension {
 		public static readonly RoutedCommand OpenToolWindow = new RoutedCommand("OpenToolWindow", typeof(ToolWindowLoader));
 
 		[ImportingConstructor]
-		ToolWindowLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
-			cmds.Add(OpenToolWindow, new RelayCommand(a => mainToolWindowManager.Show(ToolWindowContent.THE_GUID)));
+		ToolWindowLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
+			cmds.Add(OpenToolWindow, new RelayCommand(a => toolWindowService.Show(ToolWindowContent.THE_GUID)));
 			cmds.Add(OpenToolWindow, ModifierKeys.Control | ModifierKeys.Alt, Key.Z);
 		}
 	}

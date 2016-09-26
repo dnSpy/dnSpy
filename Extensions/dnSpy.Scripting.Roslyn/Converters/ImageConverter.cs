@@ -26,13 +26,13 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.Scripting.Roslyn.Converters {
 	sealed class ImageConverter : IValueConverter {
-		static IImageManager imageManager;
+		static IImageService imageService;
 
 		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
 		sealed class Loader : IAutoLoaded {
 			[ImportingConstructor]
-			Loader(IImageManager imageManager) {
-				ImageConverter.imageManager = imageManager;
+			Loader(IImageService imageService) {
+				ImageConverter.imageService = imageService;
 			}
 		}
 
@@ -40,7 +40,7 @@ namespace dnSpy.Scripting.Roslyn.Converters {
 			var ary = ((string)parameter).Split(seps, 2);
 			var bgType = (BackgroundType)Enum.Parse(typeof(BackgroundType), ary[0]);
 			var asm = GetType().Assembly;
-			return imageManager.GetImage(new ImageReference(asm, ary[1]), bgType);
+			return imageService.GetImage(new ImageReference(asm, ary[1]), bgType);
 		}
 		static readonly char[] seps = new char[1] { '_' };
 

@@ -33,8 +33,8 @@ using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
@@ -48,8 +48,8 @@ namespace dnSpy.Debugger.Modules {
 	[ExportAutoLoaded]
 	sealed class ModulesContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		ModulesContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowManager> memoryWindowManager, CopyCallModulesCtxMenuCommand copyCmd, GoToModuleModulesCtxMenuCommand goToCmd, GoToModuleNewTabModulesCtxMenuCommand goToNewTabCmd, ShowInMemoryModulesCtxMenuCommand showInMemoryCmd) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW);
+		ModulesContentCommandLoader(IWpfCommandService wpfCommandService, Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowService> memoryWindowService, CopyCallModulesCtxMenuCommand copyCmd, GoToModuleModulesCtxMenuCommand goToCmd, GoToModuleNewTabModulesCtxMenuCommand goToNewTabCmd, ShowInMemoryModulesCtxMenuCommand showInMemoryCmd) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW);
 
 			cmds.Add(ApplicationCommands.Copy, new ModulesCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new ModulesCtxMenuCommandProxy(goToCmd), ModifierKeys.None, Key.Enter);
@@ -57,17 +57,17 @@ namespace dnSpy.Debugger.Modules {
 			cmds.Add(new ModulesCtxMenuCommandProxy(goToNewTabCmd), ModifierKeys.Shift, Key.Enter);
 			cmds.Add(new ModulesCtxMenuCommandProxy(showInMemoryCmd), ModifierKeys.Control, Key.X);
 			for (int i = 0; i < MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS && i < 10; i++)
-				cmds.Add(new ModulesCtxMenuCommandProxy(new ShowInMemoryWindowModulesCtxMenuCommand(theDebugger, modulesContent, i, memoryWindowManager)), ModifierKeys.Control, Key.D0 + (i + 1) % 10);
+				cmds.Add(new ModulesCtxMenuCommandProxy(new ShowInMemoryWindowModulesCtxMenuCommand(theDebugger, modulesContent, i, memoryWindowService)), ModifierKeys.Control, Key.D0 + (i + 1) % 10);
 		}
 	}
 
 	[ExportAutoLoaded]
 	sealed class ModulesCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		ModulesCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
+		ModulesCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 
-			cmds.Add(DebugRoutedCommands.ShowModules, new RelayCommand(a => mainToolWindowManager.Show(ModulesToolWindowContent.THE_GUID)));
+			cmds.Add(DebugRoutedCommands.ShowModules, new RelayCommand(a => toolWindowService.Show(ModulesToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowModules, ModifierKeys.Control | ModifierKeys.Alt, Key.U);
 		}
 	}
@@ -186,39 +186,39 @@ namespace dnSpy.Debugger.Modules {
 
 	[Export, ExportMenuItem(Header = "res:GoToModuleCommand", Icon = "Module", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
 	sealed class GoToModuleModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 
 		[ImportingConstructor]
-		GoToModuleModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+		GoToModuleModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService)
 			: base(theDebugger, modulesContent) {
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
-			this.inMemoryModuleManager = inMemoryModuleManager;
+			this.inMemoryModuleService = inMemoryModuleService;
 		}
 
 		public override void Execute(ModulesCtxMenuContext context) =>
-			ExecuteInternal(fileTabManager, inMemoryModuleManager, moduleLoader, context, false);
+			ExecuteInternal(documentTabService, inMemoryModuleService, moduleLoader, context, false);
 		public override bool IsEnabled(ModulesCtxMenuContext context) => CanGoToModule(context);
 		internal static bool CanGoToModule(ModulesCtxMenuContext context) => context != null && context.SelectedItems.Length != 0;
 
-		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, Lazy<IModuleLoader> moduleLoader, ModulesCtxMenuContext context, bool newTab) {
+		internal static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IInMemoryModuleService> inMemoryModuleService, Lazy<IModuleLoader> moduleLoader, ModulesCtxMenuContext context, bool newTab) {
 			if (context == null || context.SelectedItems.Length == 0)
 				return;
-			ExecuteInternal(fileTabManager, inMemoryModuleManager, moduleLoader, context.SelectedItems[0], newTab);
+			ExecuteInternal(documentTabService, inMemoryModuleService, moduleLoader, context.SelectedItems[0], newTab);
 		}
 
-		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, Lazy<IModuleLoader> moduleLoader, ModuleVM vm, bool newTab) {
+		internal static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IInMemoryModuleService> inMemoryModuleService, Lazy<IModuleLoader> moduleLoader, ModuleVM vm, bool newTab) {
 			if (vm == null)
 				return;
-			if (ShowErrorIfDynamic(inMemoryModuleManager, vm.Module))
-				GoToFile(fileTabManager, moduleLoader.Value.LoadModule(vm.Module, canLoadDynFile: true, isAutoLoaded: false), newTab);
+			if (ShowErrorIfDynamic(inMemoryModuleService, vm.Module))
+				GoToFile(documentTabService, moduleLoader.Value.LoadModule(vm.Module, canLoadDynFile: true, isAutoLoaded: false), newTab);
 		}
 
-		internal static bool ShowErrorIfDynamic(Lazy<IInMemoryModuleManager> inMemoryModuleManager, DnModule module, bool canShowDlgBox = true) {
+		internal static bool ShowErrorIfDynamic(Lazy<IInMemoryModuleService> inMemoryModuleService, DnModule module, bool canShowDlgBox = true) {
 			if (module.IsDynamic && module.Debugger.ProcessState != DebuggerProcessState.Paused) {
-				if (inMemoryModuleManager.Value.LoadFile(module, false) == null) {
+				if (inMemoryModuleService.Value.LoadDocument(module, false) == null) {
 					if (canShowDlgBox)
 						MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
 					return false;
@@ -227,44 +227,44 @@ namespace dnSpy.Debugger.Modules {
 			return true;
 		}
 
-		internal static void GoToFile(IFileTabManager fileTabManager, IDnSpyFile file, bool newTab) {
-			if (file == null)
+		internal static void GoToFile(IDocumentTabService documentTabService, IDsDocument document, bool newTab) {
+			if (document == null)
 				return;
-			var obj = (object)file.ModuleDef ?? file;
+			var obj = (object)document.ModuleDef ?? document;
 			// The file could've been added lazily to the list so add a short delay before we select it
-			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => fileTabManager.FollowReference(obj, newTab)));
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => documentTabService.FollowReference(obj, newTab)));
 		}
 	}
 
 	[Export]
 	sealed class GoToModuleNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 
 		[ImportingConstructor]
-		GoToModuleNewTabModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+		GoToModuleNewTabModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService)
 			: base(theDebugger, modulesContent) {
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
-			this.inMemoryModuleManager = inMemoryModuleManager;
+			this.inMemoryModuleService = inMemoryModuleService;
 		}
 
 		public override void Execute(ModulesCtxMenuContext context) =>
-			GoToModuleModulesCtxMenuCommand.ExecuteInternal(fileTabManager, inMemoryModuleManager, moduleLoader, context, true);
+			GoToModuleModulesCtxMenuCommand.ExecuteInternal(documentTabService, inMemoryModuleService, moduleLoader, context, true);
 		public override bool IsEnabled(ModulesCtxMenuContext context) => GoToModuleModulesCtxMenuCommand.CanGoToModule(context);
 	}
 
 	[ExportMenuItem(Icon = "Module", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
 	sealed class LoadModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 
 		[ImportingConstructor]
-		LoadModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+		LoadModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService)
 			: base(theDebugger, modulesContent) {
 			this.moduleLoader = moduleLoader;
-			this.inMemoryModuleManager = inMemoryModuleManager;
+			this.inMemoryModuleService = inMemoryModuleService;
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.SelectedItems.Length > 1;
@@ -279,7 +279,7 @@ namespace dnSpy.Debugger.Modules {
 			bool canShowDlgBox = true;
 			foreach (var vm in context.SelectedItems) {
 				var mod = vm.Module;
-				bool res = GoToModuleModulesCtxMenuCommand.ShowErrorIfDynamic(inMemoryModuleManager, mod, canShowDlgBox);
+				bool res = GoToModuleModulesCtxMenuCommand.ShowErrorIfDynamic(inMemoryModuleService, mod, canShowDlgBox);
 				if (!res)
 					canShowDlgBox = false;
 				if (res)
@@ -290,18 +290,18 @@ namespace dnSpy.Debugger.Modules {
 
 	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = "Module", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
 	sealed class OpenModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
+		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		OpenModuleFromMemoryModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IFileTabManager fileTabManager)
+		OpenModuleFromMemoryModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IInMemoryModuleService> inMemoryModuleService, IDocumentTabService documentTabService)
 			: base(theDebugger, modulesContent) {
-			this.inMemoryModuleManager = inMemoryModuleManager;
-			this.fileTabManager = fileTabManager;
+			this.inMemoryModuleService = inMemoryModuleService;
+			this.documentTabService = documentTabService;
 		}
 
 		public override void Execute(ModulesCtxMenuContext context) =>
-			ExecuteInternal(fileTabManager, inMemoryModuleManager, context, false);
+			ExecuteInternal(documentTabService, inMemoryModuleService, context, false);
 		public override bool IsVisible(ModulesCtxMenuContext context) => IsEnabled(context);
 		public override bool IsEnabled(ModulesCtxMenuContext context) => CanGoToModule(context);
 
@@ -312,18 +312,18 @@ namespace dnSpy.Debugger.Modules {
 			return !vm.Module.IsDynamic && !vm.Module.IsInMemory;
 		}
 
-		static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, ModulesCtxMenuContext context, bool newTab) {
+		static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IInMemoryModuleService> inMemoryModuleService, ModulesCtxMenuContext context, bool newTab) {
 			if (context == null || context.SelectedItems.Length == 0)
 				return;
-			ExecuteInternal(fileTabManager, inMemoryModuleManager, context.SelectedItems[0], newTab);
+			ExecuteInternal(documentTabService, inMemoryModuleService, context.SelectedItems[0], newTab);
 		}
 
-		static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, ModuleVM vm, bool newTab) {
+		static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IInMemoryModuleService> inMemoryModuleService, ModuleVM vm, bool newTab) {
 			if (vm == null)
 				return;
 
-			if (GoToModuleModulesCtxMenuCommand.ShowErrorIfDynamic(inMemoryModuleManager, vm.Module))
-				GoToModuleModulesCtxMenuCommand.GoToFile(fileTabManager, inMemoryModuleManager.Value.LoadFile(vm.Module, true), newTab);
+			if (GoToModuleModulesCtxMenuCommand.ShowErrorIfDynamic(inMemoryModuleService, vm.Module))
+				GoToModuleModulesCtxMenuCommand.GoToFile(documentTabService, inMemoryModuleService.Value.LoadDocument(vm.Module, true), newTab);
 		}
 	}
 
@@ -347,13 +347,13 @@ namespace dnSpy.Debugger.Modules {
 		readonly Tuple<IMenuItem, string, string>[] subCmds;
 
 		[ImportingConstructor]
-		ShowInMemoryXModulesSubCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowManager> memoryWindowManager)
+		ShowInMemoryXModulesSubCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowService> memoryWindowService)
 			: base(theDebugger, modulesContent) {
 			subCmds = new Tuple<IMenuItem, string, string>[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < subCmds.Length; i++) {
 				var header = MemoryWindowsHelper.GetHeaderText(i);
 				var inputGestureText = MemoryWindowsHelper.GetCtrlInputGestureText(i);
-				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowModulesCtxMenuCommand(theDebugger, modulesContent, i, memoryWindowManager), header, inputGestureText);
+				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowModulesCtxMenuCommand(theDebugger, modulesContent, i, memoryWindowService), header, inputGestureText);
 			}
 		}
 
@@ -377,18 +377,18 @@ namespace dnSpy.Debugger.Modules {
 
 	[Export]
 	sealed class ShowInMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		readonly Lazy<IMemoryWindowManager> memoryWindowManager;
+		readonly Lazy<IMemoryWindowService> memoryWindowService;
 
 		[ImportingConstructor]
-		ShowInMemoryModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowManager> memoryWindowManager)
+		ShowInMemoryModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowService> memoryWindowService)
 			: base(theDebugger, modulesContent) {
-			this.memoryWindowManager = memoryWindowManager;
+			this.memoryWindowService = memoryWindowService;
 		}
 
 		public override void Execute(ModulesCtxMenuContext context) {
 			var vm = ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context);
 			if (vm != null)
-				memoryWindowManager.Value.Show(vm.Module.Address, vm.Module.Size);
+				memoryWindowService.Value.Show(vm.Module.Address, vm.Module.Size);
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) => ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context) != null;
@@ -396,18 +396,18 @@ namespace dnSpy.Debugger.Modules {
 
 	sealed class ShowInMemoryWindowModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly int windowIndex;
-		readonly Lazy<IMemoryWindowManager> memoryWindowManager;
+		readonly Lazy<IMemoryWindowService> memoryWindowService;
 
-		public ShowInMemoryWindowModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, int windowIndex, Lazy<IMemoryWindowManager> memoryWindowManager)
+		public ShowInMemoryWindowModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, int windowIndex, Lazy<IMemoryWindowService> memoryWindowService)
 			: base(theDebugger, modulesContent) {
 			this.windowIndex = windowIndex;
-			this.memoryWindowManager = memoryWindowManager;
+			this.memoryWindowService = memoryWindowService;
 		}
 
 		public override void Execute(ModulesCtxMenuContext context) {
 			var vm = GetModule(context);
 			if (vm != null)
-				memoryWindowManager.Value.Show(vm.Module.Address, vm.Module.Size, windowIndex);
+				memoryWindowService.Value.Show(vm.Module.Address, vm.Module.Size, windowIndex);
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) => GetModule(context) != null;

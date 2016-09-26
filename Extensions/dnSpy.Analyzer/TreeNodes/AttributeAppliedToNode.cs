@@ -280,7 +280,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var m in asm.Modules.GetSafeEnumerable())
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, this.analyzedType);
 
-			var assemblies = Context.FileManager.GetFiles().Where(a => a.AssemblyDef != null);
+			var assemblies = Context.DocumentService.GetDocuments().Where(a => a.AssemblyDef != null);
 
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
@@ -326,7 +326,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 
 				if (friendAssemblies.Count > 0) {
-					var assemblies = Context.FileManager.GetFiles().Where(a => a.AssemblyDef != null);
+					var assemblies = Context.DocumentService.GetDocuments().Where(a => a.AssemblyDef != null);
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();

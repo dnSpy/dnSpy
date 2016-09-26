@@ -22,7 +22,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {

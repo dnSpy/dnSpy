@@ -55,16 +55,16 @@ namespace dnSpy.Debugger.Exceptions {
 		readonly Lazy<IExceptionsVM> vmExceptions;
 
 		[ImportingConstructor]
-		ExceptionsContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, Lazy<IExceptionsVM> exceptionsVM) {
+		ExceptionsContent(IWpfCommandService wpfCommandService, IThemeService themeService, Lazy<IExceptionsVM> exceptionsVM) {
 			this.exceptionsControl = new ExceptionsControl();
 			this.vmExceptions = exceptionsVM;
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL, exceptionsControl);
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW, exceptionsControl.ListBox);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL, exceptionsControl);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW, exceptionsControl.ListBox);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmExceptions.Value.RefreshThemeFields();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmExceptions.Value.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(ExceptionsControl.ListBox);
 
 		public void FocusSearchTextBox() {

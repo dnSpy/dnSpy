@@ -20,8 +20,8 @@
 using System;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
@@ -80,9 +80,9 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_SETTINGS_TAB_MISC = 100000;
 
 		/// <summary>
-		/// Order of <see cref="IFileManager"/>'s <see cref="IAppSettingsModifiedListener"/> instance
+		/// Order of <see cref="IDsDocumentService"/>'s <see cref="IAppSettingsModifiedListener"/> instance
 		/// </summary>
-		public const double ORDER_SETTINGS_LISTENER_FILEMANAGER = double.MinValue;	// It must be first since it disables mmap'd I/O
+		public const double ORDER_SETTINGS_LISTENER_DOCUMENTMANAGER = double.MinValue;	// It must be first since it disables mmap'd I/O
 
 		/// <summary>
 		/// Order of decompiler's <see cref="IAppSettingsModifiedListener"/> instance
@@ -90,9 +90,9 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_SETTINGS_LISTENER_DECOMPILER = 1000;
 
 		/// <summary>
-		/// Order of <see cref="IFileTreeView"/>'s <see cref="IAppSettingsModifiedListener"/> instance
+		/// Order of <see cref="IDocumentTreeView"/>'s <see cref="IAppSettingsModifiedListener"/> instance
 		/// </summary>
-		public const double ORDER_SETTINGS_LISTENER_FILETREEVIEW = 2000;
+		public const double ORDER_SETTINGS_LISTENER_DOCUMENTTREEVIEW = 2000;
 
 		/// <summary>
 		/// Guid of app settings tab "Misc"

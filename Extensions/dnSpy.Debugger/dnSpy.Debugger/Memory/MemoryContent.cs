@@ -45,12 +45,12 @@ namespace dnSpy.Debugger.Memory {
 		readonly MemoryControl memoryControl;
 		readonly IMemoryVM vmMemory;
 
-		public MemoryContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, IMenuManager menuManager, IHexEditorSettings hexEditorSettings, IMemoryVM memoryVM, IAppSettings appSettings) {
+		public MemoryContent(IWpfCommandService wpfCommandService, IThemeService themeService, IMenuService menuService, IHexEditorSettings hexEditorSettings, IMemoryVM memoryVM, IAppSettings appSettings) {
 			this.memoryControl = new MemoryControl();
 			this.vmMemory = memoryVM;
 			this.vmMemory.SetRefreshLines(() => this.memoryControl.DnHexBox.RedrawModifiedLines());
 			this.memoryControl.DataContext = this.vmMemory;
-			var dnHexBox = new DnHexBox(menuManager, hexEditorSettings) {
+			var dnHexBox = new DnHexBox(menuService, hexEditorSettings) {
 				CacheLineBytes = true,
 				IsMemory = true,
 			};
@@ -62,8 +62,8 @@ namespace dnSpy.Debugger.Memory {
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
 			UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
 
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_MEMORY_CONTROL, memoryControl);
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_MEMORY_HEXBOX, memoryControl.DnHexBox);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MEMORY_CONTROL, memoryControl);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MEMORY_HEXBOX, memoryControl.DnHexBox);
 		}
 
 		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {

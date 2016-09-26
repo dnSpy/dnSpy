@@ -22,7 +22,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 
@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Resources {
 		void PickType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
+			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
 			if (newType != null)
 				TypeFullName = newType.AssemblyQualifiedName;
 		}

@@ -26,7 +26,7 @@ namespace dnSpy.Themes {
 	sealed class ThemeSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("34CF0AF5-D265-4393-BC68-9B8C9B8EA622");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		public Guid? ThemeGuid {
 			get { return themeGuid; }
@@ -51,11 +51,11 @@ namespace dnSpy.Themes {
 		bool showAllThemes = false;
 
 		[ImportingConstructor]
-		ThemeSettings(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		ThemeSettings(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.ThemeGuid = sect.Attribute<Guid?>(nameof(ThemeGuid));
 			this.ShowAllThemes = sect.Attribute<bool?>(nameof(ShowAllThemes)) ?? ShowAllThemes;
 			this.disableSave = false;
@@ -65,7 +65,7 @@ namespace dnSpy.Themes {
 		void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ThemeGuid), ThemeGuid);
 			sect.Attribute(nameof(ShowAllThemes), ShowAllThemes);
 		}

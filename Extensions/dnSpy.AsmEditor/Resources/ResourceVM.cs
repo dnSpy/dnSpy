@@ -23,7 +23,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 
@@ -143,7 +143,7 @@ namespace dnSpy.AsmEditor.Resources {
 		void PickAssembly() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newAsm = dnlibTypePicker.GetDnlibType<IDnSpyFile>(dnSpy_AsmEditor_Resources.Pick_Assembly, new FlagsFileTreeNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
+			var newAsm = dnlibTypePicker.GetDnlibType<IDsDocument>(dnSpy_AsmEditor_Resources.Pick_Assembly, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
 			if (newAsm != null && newAsm.AssemblyDef != null)
 				Assembly = newAsm.AssemblyDef.ToAssemblyRef();
 		}

@@ -24,8 +24,8 @@ using System.Globalization;
 using System.Text;
 using System.Windows;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
@@ -36,11 +36,11 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Debugger.Breakpoints {
 	[Export(typeof(ILCodeBreakpointGlyphTextMarkerHandler))]
 	sealed class ILCodeBreakpointGlyphTextMarkerHandler : IGlyphTextMarkerHandler {
-		readonly IDecompilerManager decompilerManager;
+		readonly IDecompilerService decompilerService;
 
 		[ImportingConstructor]
-		ILCodeBreakpointGlyphTextMarkerHandler(IDecompilerManager decompilerManager) {
-			this.decompilerManager = decompilerManager;
+		ILCodeBreakpointGlyphTextMarkerHandler(IDecompilerService decompilerService) {
+			this.decompilerService = decompilerService;
 		}
 
 		IGlyphTextMarkerHandlerMouseProcessor IGlyphTextMarkerHandler.MouseProcessor => null;
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			if (statement != null) {
 				sb.Append(" ('");
-				var decompiler = (documentViewer?.FileTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerManager.Decompiler;
+				var decompiler = (documentViewer?.DocumentTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
 				decompiler.Write(new StringBuilderTextColorOutput(sb), statement.Value.Method, SimplePrinterFlags.Default);
 				sb.Append("')");
 			}

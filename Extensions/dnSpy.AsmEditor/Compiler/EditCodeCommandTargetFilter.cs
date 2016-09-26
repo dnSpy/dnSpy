@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class ReplCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.CodeEditor) != true)
+			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.CodeEditor) != true)
 				return null;
 
 			return new EditCodeCommandTargetFilter(textView);

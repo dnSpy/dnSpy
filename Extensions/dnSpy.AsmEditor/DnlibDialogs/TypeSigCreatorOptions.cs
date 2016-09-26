@@ -57,12 +57,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		IDecompiler decompiler;
 
-		public IDecompilerManager DecompilerManager { get; }
+		public IDecompilerService DecompilerManager { get; }
 
-		public TypeSigCreatorOptions(ModuleDef ownerModule, IDecompilerManager decompilerManager) {
+		public TypeSigCreatorOptions(ModuleDef ownerModule, IDecompilerService decompilerService) {
 			this.OwnerModule = ownerModule;
-			this.Decompiler = decompilerManager.Decompiler;
-			this.DecompilerManager = decompilerManager;
+			this.Decompiler = decompilerService.Decompiler;
+			this.DecompilerManager = decompilerService;
 		}
 
 		public TypeSigCreatorOptions Clone() => (TypeSigCreatorOptions)MemberwiseClone();

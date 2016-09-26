@@ -19,7 +19,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
 
@@ -32,7 +32,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "Search");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "Search");
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			Debug.Assert(asyncFetchChildrenHelper == null);
@@ -58,7 +58,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public override bool HandleAssemblyListChanged(IDnSpyFile[] removedAssemblies, IDnSpyFile[] addedAssemblies) {
+		public override bool HandleAssemblyListChanged(IDsDocument[] removedAssemblies, IDsDocument[] addedAssemblies) {
 			// only cancel a running analysis if user has manually added/removed assemblies
 			bool manualAdd = false;
 			foreach (var asm in addedAssemblies) {
@@ -71,7 +71,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return true;
 		}
 
-		public override bool HandleModelUpdated(IDnSpyFile[] files) {
+		public override bool HandleModelUpdated(IDsDocument[] documents) {
 			CancelAndClearChildren();
 			return true;
 		}

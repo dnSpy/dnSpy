@@ -21,20 +21,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class MethodNodeCreator {
-		public IEnumerable<IFileTreeNodeData> OriginalNodes {
+		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
 			get { yield return ownerNode; }
 		}
 
 		readonly ITypeNode ownerNode;
 		readonly IMethodNode methodNode;
 
-		public MethodNodeCreator(IModuleFileNode modNode, ITypeNode ownerNode, MethodDef method) {
+		public MethodNodeCreator(IModuleDocumentNode modNode, ITypeNode ownerNode, MethodDef method) {
 			this.ownerNode = ownerNode;
-			this.methodNode = modNode.Context.FileTreeView.Create(method);
+			this.methodNode = modNode.Context.DocumentTreeView.Create(method);
 		}
 
 		public void Add() {

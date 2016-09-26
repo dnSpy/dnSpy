@@ -107,46 +107,46 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		readonly IDebuggerSettings debuggerSettings;
-		readonly IExceptionManager exceptionManager;
+		readonly IExceptionService exceptionService;
 		readonly IExceptionListSettings exceptionListSettings;
 		ISelectedItemsProvider<ExceptionVM> selectedItemsProvider;
 		readonly IGetNewExceptionName getNewExceptionName;
 		readonly ExceptionContext exceptionContext;
 
 		[ImportingConstructor]
-		ExceptionsVM(IDebuggerSettings debuggerSettings, IExceptionManager exceptionManager, IExceptionListSettings exceptionListSettings, IGetNewExceptionName getNewExceptionName) {
+		ExceptionsVM(IDebuggerSettings debuggerSettings, IExceptionService exceptionService, IExceptionListSettings exceptionListSettings, IGetNewExceptionName getNewExceptionName) {
 			this.debuggerSettings = debuggerSettings;
-			this.exceptionManager = exceptionManager;
+			this.exceptionService = exceptionService;
 			this.exceptionListSettings = exceptionListSettings;
 			this.getNewExceptionName = getNewExceptionName;
-			this.exceptionContext = new ExceptionContext(exceptionManager) {
+			this.exceptionContext = new ExceptionContext(exceptionService) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightExceptions,
 			};
 			this.exceptionsList = new ObservableCollection<ExceptionVM>();
 			this.CollectionView = CollectionViewSource.GetDefaultView(exceptionsList);
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
-			exceptionManager.Changed += ExceptionManager_Changed;
+			exceptionService.Changed += ExceptionService_Changed;
 			InitializeDefaultExceptions();
 		}
 
 		public void Initialize(ISelectedItemsProvider<ExceptionVM> selectedItemsProvider) =>
 			this.selectedItemsProvider = selectedItemsProvider;
 
-		void ExceptionManager_Changed(object sender, ExceptionManagerEventArgs e) {
+		void ExceptionService_Changed(object sender, ExceptionServiceEventArgs e) {
 			switch (e.EventType) {
-			case ExceptionManagerEventType.Restored:
+			case ExceptionServiceEventType.Restored:
 				InitializeDefaultExceptions();
 				break;
 
-			case ExceptionManagerEventType.Removed:
+			case ExceptionServiceEventType.Removed:
 				Remove((List<ExceptionInfo>)e.Argument);
 				break;
 
-			case ExceptionManagerEventType.Added:
+			case ExceptionServiceEventType.Added:
 				Add((ExceptionInfo)e.Argument);
 				break;
 
-			case ExceptionManagerEventType.ExceptionInfoPropertyChanged:
+			case ExceptionServiceEventType.ExceptionInfoPropertyChanged:
 				break;
 
 			default:
@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		void InitializeDefaultExceptions() {
 			Collection.Clear();
-			foreach (var info in Sort(exceptionManager.ExceptionInfos))
+			foreach (var info in Sort(exceptionService.ExceptionInfos))
 				Collection.Add(new ExceptionVM(info, exceptionContext));
 		}
 
@@ -207,13 +207,13 @@ namespace dnSpy.Debugger.Exceptions {
 		public void AddException(ExceptionType type, string name) {
 			if (name == null)
 				return;
-			exceptionManager.Add(new ExceptionInfoKey(type, name));
+			exceptionService.Add(new ExceptionInfoKey(type, name));
 		}
 
 		public void BreakWhenThrown(ExceptionType type, string name) {
 			var key = new ExceptionInfoKey(type, name);
-			if (!exceptionManager.Exists(key))
-				exceptionManager.Add(key);
+			if (!exceptionService.Exists(key))
+				exceptionService.Add(key);
 			var vm = Collection.FirstOrDefault(a => a.ExceptionInfo.Key.Equals(key));
 			Debug.Assert(vm != null);
 			if (vm != null)
@@ -231,12 +231,12 @@ namespace dnSpy.Debugger.Exceptions {
 			Collection.Insert(i, vm);
 		}
 
-		ExceptionVM[] GetRemovableExceptions(ExceptionVM[] items) => items.Where(a => exceptionManager.CanRemove(a.ExceptionInfo)).ToArray();
+		ExceptionVM[] GetRemovableExceptions(ExceptionVM[] items) => items.Where(a => exceptionService.CanRemove(a.ExceptionInfo)).ToArray();
 		public bool CanRemoveExceptions => GetRemovableExceptions(selectedItemsProvider.SelectedItems).Length != 0;
 
 		public void RemoveExceptions() {
 			var items = GetRemovableExceptions(selectedItemsProvider.SelectedItems);
-			exceptionManager.RemoveExceptions(items.Select(a => a.ExceptionInfo));
+			exceptionService.RemoveExceptions(items.Select(a => a.ExceptionInfo));
 		}
 
 		void Remove(List<ExceptionInfo> infos) {
@@ -254,7 +254,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public bool CanRestoreDefaults => true;
 
 		public void RestoreDefaults() {
-			exceptionManager.RestoreDefaults();
+			exceptionService.RestoreDefaults();
 			FilterText = string.Empty;
 			ShowOnlyEnabledExceptions = false;
 		}
@@ -278,6 +278,6 @@ namespace dnSpy.Debugger.Exceptions {
 			// Don't Refilter() now since items could be hidden
 		}
 
-		public bool Exists(ExceptionType type, string name) => exceptionManager.Exists(new ExceptionInfoKey(type, name));
+		public bool Exists(ExceptionType type, string name) => exceptionService.Exists(new ExceptionInfoKey(type, name));
 	}
 }

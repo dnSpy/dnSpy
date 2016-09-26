@@ -23,12 +23,12 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CustomAttributesVM : ListVM<CustomAttributeVM, CustomAttribute> {
-		public CustomAttributesVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType = null, MethodDef ownerMethod = null)
-			: base(dnSpy_AsmEditor_Resources.EditCustomAttribute, dnSpy_AsmEditor_Resources.CreateCustomAttribute, ownerModule, decompilerManager, ownerType, ownerMethod) {
+		public CustomAttributesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType = null, MethodDef ownerMethod = null)
+			: base(dnSpy_AsmEditor_Resources.EditCustomAttribute, dnSpy_AsmEditor_Resources.CreateCustomAttribute, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 
-		protected override CustomAttributeVM Create(CustomAttribute model) => new CustomAttributeVM(new CustomAttributeOptions(model), OwnerModule, decompilerManager, ownerType, ownerMethod);
-		protected override CustomAttributeVM Clone(CustomAttributeVM obj) => new CustomAttributeVM(obj.CreateCustomAttributeOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
-		protected override CustomAttributeVM Create() => new CustomAttributeVM(new CustomAttributeOptions(), OwnerModule, decompilerManager, ownerType, ownerMethod);
+		protected override CustomAttributeVM Create(CustomAttribute model) => new CustomAttributeVM(new CustomAttributeOptions(model), OwnerModule, decompilerService, ownerType, ownerMethod);
+		protected override CustomAttributeVM Clone(CustomAttributeVM obj) => new CustomAttributeVM(obj.CreateCustomAttributeOptions(), OwnerModule, decompilerService, ownerType, ownerMethod);
+		protected override CustomAttributeVM Create() => new CustomAttributeVM(new CustomAttributeOptions(), OwnerModule, decompilerService, ownerType, ownerMethod);
 	}
 }

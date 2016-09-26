@@ -19,15 +19,15 @@
 
 using dnSpy.Analyzer.TreeNodes;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Analyzer {
 	sealed class AnalyzerTreeNodeDataContext : IAnalyzerTreeNodeDataContext {
-		public IDotNetImageManager DotNetImageManager { get; set; }
+		public IDotNetImageService DotNetImageService { get; set; }
 		public IDecompiler Decompiler { get; set; }
-		public IFileManager FileManager { get; set; }
-		public IAnalyzerManager AnalyzerManager { get; set; }
+		public IDsDocumentService DocumentService { get; set; }
+		public IAnalyzerService AnalyzerService { get; set; }
 		public bool ShowToken { get; set; }
 		public bool SingleClickExpandsChildren { get; set; }
 		public bool SyntaxHighlight { get; set; }

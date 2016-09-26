@@ -21,20 +21,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class FieldNodeCreator {
-		public IEnumerable<IFileTreeNodeData> OriginalNodes {
+		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
 			get { yield return ownerNode; }
 		}
 
 		readonly ITypeNode ownerNode;
 		readonly IFieldNode fieldNode;
 
-		public FieldNodeCreator(IModuleFileNode modNode, ITypeNode ownerNode, FieldDef field) {
+		public FieldNodeCreator(IModuleDocumentNode modNode, ITypeNode ownerNode, FieldDef field) {
 			this.ownerNode = ownerNode;
-			this.fieldNode = modNode.Context.FileTreeView.Create(field);
+			this.fieldNode = modNode.Context.DocumentTreeView.Create(field);
 		}
 
 		public void Add() {

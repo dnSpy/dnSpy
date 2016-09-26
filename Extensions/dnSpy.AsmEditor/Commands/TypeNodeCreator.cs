@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	/// <summary>
@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly IList<TypeDef> ownerList;
 		readonly ITypeNode typeNode;
 
-		public IEnumerable<IFileTreeNodeData> OriginalNodes {
+		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
 			get {
 				foreach (var n in nsNodeCreator.OriginalNodes)
 					yield return n;
@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		public TypeNodeCreator(IModuleFileNode modNode, TypeDef type) {
+		public TypeNodeCreator(IModuleDocumentNode modNode, TypeDef type) {
 			if (modNode == null)
 				throw new ArgumentNullException(nameof(modNode));
 			if (type == null)
@@ -49,9 +49,9 @@ namespace dnSpy.AsmEditor.Commands {
 			// Can't be a nested type, and can't be part of a module yet
 			if (type.DeclaringType != null || type.Module != null)
 				throw new ArgumentException();
-			this.ownerList = modNode.DnSpyFile.ModuleDef.Types;
+			this.ownerList = modNode.Document.ModuleDef.Types;
 			this.nsNodeCreator = new NamespaceNodeCreator(type.Namespace, modNode);
-			this.typeNode = modNode.Context.FileTreeView.Create(type);
+			this.typeNode = modNode.Context.DocumentTreeView.Create(type);
 		}
 
 		public void Add() {

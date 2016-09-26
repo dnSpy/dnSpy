@@ -19,19 +19,19 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	abstract class HexNode : FileTreeNodeData, IDecompileSelf {
+	abstract class HexNode : DocumentTreeNodeData, IDecompileSelf {
 		protected abstract IEnumerable<HexVM> HexVMs { get; }
 		public abstract object VMObject { get; }
 		public virtual bool IsVirtualizingCollectionVM => false;
 		public ulong StartOffset { get; }
 		public ulong EndOffset { get; }
-		protected sealed override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, IconName);
+		protected sealed override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, IconName);
 		protected abstract string IconName { get; }
 
 		protected HexNode(ulong start, ulong end) {
@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.EndOffset = end;
 		}
 
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(this).FilterType;
+		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeString = context.Decompiler.ContentTypeString;

@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor {
 	[TextViewRole(PredefinedTextViewRoles.EmbeddedPeekTextView)]
 	[TextViewRole(PredefinedTextViewRoles.PreviewTextView)]
 	[TextViewRole(PredefinedTextViewRoles.Printable)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveLineCompressor)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveLineCompressor)]
 	sealed class LineCompressorProvider : ILineTransformSourceProvider {
 		public ILineTransformSource Create(IWpfTextView textView) => new LineCompressor(textView);
 	}
@@ -71,7 +71,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultDnSpyTextViewOptions.CompressEmptyOrWhitespaceLinesId.Name || e.OptionId == DefaultDnSpyTextViewOptions.CompressNonLetterLinesId.Name)
+			if (e.OptionId == DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId.Name || e.OptionId == DefaultDsTextViewOptions.CompressNonLetterLinesId.Name)
 				InitializeOptions(true);
 		}
 

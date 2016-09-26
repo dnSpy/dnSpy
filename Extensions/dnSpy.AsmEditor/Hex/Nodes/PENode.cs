@@ -26,28 +26,28 @@ using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	sealed class PENode : FileTreeNodeData, IDecompileSelf {
-		readonly IHexDocumentManager hexDocMgr;
+	sealed class PENode : DocumentTreeNodeData, IDecompileSelf {
+		readonly IHexDocumentService hexDocMgr;
 		readonly IPEImage peImage;
 		readonly ModuleDefMD module;
 
-		public PENode(IHexDocumentManager hexDocMgr, IPEImage peImage, ModuleDefMD module) {
+		public PENode(IHexDocumentService hexDocMgr, IPEImage peImage, ModuleDefMD module) {
 			this.hexDocMgr = hexDocMgr;
 			this.peImage = peImage;
 			this.module = module;
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => new ImageReference(GetType().Assembly, "ModuleFile");
-		public override FilterType GetFilterType(IFileTreeNodeFilter filter) => filter.GetResult(this).FilterType;
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "ModuleFile");
+		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			Debug.Assert(TreeNode.Children.Count == 0 && weakDocListener == null);
@@ -149,13 +149,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_AsmEditor_Resources.HexNode_PE);
-		public override Guid Guid => new Guid(FileTVConstants.PE_NODE_GUID);
+		public override Guid Guid => new Guid(DocumentTreeViewConstants.PE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override ITreeNodeGroup TreeNodeGroup => PETreeNodeGroup.Instance;
 	}
 
 	sealed class PETreeNodeGroup : ITreeNodeGroup {
-		public static readonly PETreeNodeGroup Instance = new PETreeNodeGroup(FileTVConstants.ORDER_MODULE_PE);
+		public static readonly PETreeNodeGroup Instance = new PETreeNodeGroup(DocumentTreeViewConstants.ORDER_MODULE_PE);
 
 		public PETreeNodeGroup(double order) {
 			this.Order = order;

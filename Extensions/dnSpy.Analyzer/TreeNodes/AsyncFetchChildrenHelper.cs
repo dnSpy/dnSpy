@@ -19,7 +19,7 @@
 
 using System;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
 

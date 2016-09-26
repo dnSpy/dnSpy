@@ -116,15 +116,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.Number = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
-			this.TypeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>(dnSpy_AsmEditor_Resources.EditGenericParameterConstraint, dnSpy_AsmEditor_Resources.CreateGenericParameterConstraint, ownerModule, decompilerManager, ownerType, ownerMethod);
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager);
+			this.TypeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>(dnSpy_AsmEditor_Resources.EditGenericParameterConstraint, dnSpy_AsmEditor_Resources.CreateGenericParameterConstraint, ownerModule, decompilerService, ownerType, ownerMethod);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
 			this.GPVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,

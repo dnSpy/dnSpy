@@ -24,15 +24,15 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
 	sealed class SharpTreeNodeChildrenList : IList<ITreeNode> {
-		public DnSpySharpTreeNode Node => node;
-		readonly DnSpySharpTreeNode node;
+		public DsSharpTreeNode Node => node;
+		readonly DsSharpTreeNode node;
 
 		public SharpTreeNodeChildrenList(TreeNodeImpl owner) {
-			this.node = new DnSpySharpTreeNode(owner);
+			this.node = new DsSharpTreeNode(owner);
 		}
 
 		public ITreeNode this[int index] {
-			get { return ((DnSpySharpTreeNode)node.Children[index]).TreeNodeImpl; }
+			get { return ((DsSharpTreeNode)node.Children[index]).TreeNodeImpl; }
 			set { node.Children[index] = GetAndVerifyTreeNodeImpl(value).Node; }
 		}
 
@@ -52,17 +52,17 @@ namespace dnSpy.TreeView {
 			if (arrayIndex < 0 || arrayIndex + node.Children.Count > array.Length)
 				throw new InvalidOperationException();
 			for (int i = 0; i < node.Children.Count; i++)
-				array[i + arrayIndex] = ((DnSpySharpTreeNode)node.Children[i]).TreeNodeImpl;
+				array[i + arrayIndex] = ((DsSharpTreeNode)node.Children[i]).TreeNodeImpl;
 		}
 
 		public IEnumerator<ITreeNode> GetEnumerator() {
-			foreach (DnSpySharpTreeNode n in node.Children)
+			foreach (DsSharpTreeNode n in node.Children)
 				yield return n.TreeNodeImpl;
 		}
 
 		public int IndexOf(ITreeNode item) {
 			for (int i = 0; i < node.Children.Count; i++) {
-				if (((DnSpySharpTreeNode)node.Children[i]).TreeNodeImpl == item)
+				if (((DsSharpTreeNode)node.Children[i]).TreeNodeImpl == item)
 					return i;
 			}
 			return -1;
@@ -92,7 +92,7 @@ namespace dnSpy.TreeView {
 		}
 
 		public void RemoveAt(int index) {
-			var removedNode = (DnSpySharpTreeNode)node.Children[index];
+			var removedNode = (DsSharpTreeNode)node.Children[index];
 			node.Children.RemoveAt(index);
 			node.TreeNodeImpl.TreeView.OnRemoved(removedNode.TreeNodeImpl.Data);
 		}

@@ -28,8 +28,8 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class CodeEditor : ICodeEditor {
-		public IDnSpyWpfTextView TextView => TextViewHost.TextView;
-		public IDnSpyWpfTextViewHost TextViewHost { get; }
+		public IDsWpfTextView TextView => TextViewHost.TextView;
+		public IDsWpfTextViewHost TextViewHost { get; }
 		public ITextBuffer TextBuffer => TextViewHost.TextView.TextBuffer;
 		public object UIObject => TextViewHost.HostControl;
 		public IInputElement FocusedElement => TextViewHost.TextView.VisualElement;
@@ -48,18 +48,18 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public CodeEditor(CodeEditorOptions options, IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		public CodeEditor(CodeEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			options = options?.Clone() ?? new CodeEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = options.TextBuffer;
 			if (textBuffer == null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
-			var roles = dnSpyTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
-			var textView = dnSpyTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
-			TextViewHost = dnSpyTextEditorFactoryService.CreateTextViewHost(textView, false);
+			var roles = dsTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
+			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
+			TextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
-			TextViewHost.TextView.Options.SetOptionValue(DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId, true);
+			TextViewHost.TextView.Options.SetOptionValue(DefaultDsTextViewOptions.RefreshScreenOnChangeId, true);
 			TextViewHost.TextView.InitializeLocalZoomLevel();
 		}
 

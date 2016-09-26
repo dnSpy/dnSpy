@@ -28,26 +28,26 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[Export(typeof(EditCodeVMCreator))]
 	sealed class EditCodeVMCreator {
-		readonly IImageManager imageManager;
+		readonly IImageService imageService;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
-		readonly IDecompilerManager decompilerManager;
+		readonly IDecompilerService decompilerService;
 		readonly ILanguageCompilerProvider[] languageCompilerProviders;
 
 		public bool CanCreate => TryGetUsedLanguage() != null;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(IImageManager imageManager, IOpenFromGAC openFromGAC, IFileTreeView fileTreeView, IDecompilerManager decompilerManager, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
-			this.imageManager = imageManager;
+		EditCodeVMCreator(IImageService imageService, IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
+			this.imageService = imageService;
 			this.openFromGAC = openFromGAC;
-			this.openAssembly = new OpenAssembly(fileTreeView.FileManager);
-			this.decompilerManager = decompilerManager;
+			this.openAssembly = new OpenAssembly(documentTreeView.DocumentService);
+			this.decompilerService = decompilerService;
 			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}
 
@@ -78,11 +78,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		IDecompiler TryGetUsedLanguage() {
-			var defaultDecompiler = decompilerManager.Decompiler;
+			var defaultDecompiler = decompilerService.Decompiler;
 			if (IsSupportedLanguage(defaultDecompiler))
 				return defaultDecompiler;
-			return decompilerManager.AllDecompilers.FirstOrDefault(a => a.GenericGuid == defaultDecompiler.GenericGuid && IsSupportedLanguage(a)) ??
-					decompilerManager.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a));
+			return decompilerService.AllDecompilers.FirstOrDefault(a => a.GenericGuid == defaultDecompiler.GenericGuid && IsSupportedLanguage(a)) ??
+					decompilerService.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a));
 		}
 
 		public EditCodeVM Create(MethodDef method, IList<MethodSourceStatement> statements) {
@@ -100,7 +100,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (serviceCreator == null)
 				throw new InvalidOperationException();
 
-			return new EditCodeVM(imageManager, openFromGAC, openAssembly, serviceCreator.Create(), language, method, statements);
+			return new EditCodeVM(imageService, openFromGAC, openAssembly, serviceCreator.Create(), language, method, statements);
 		}
 	}
 }

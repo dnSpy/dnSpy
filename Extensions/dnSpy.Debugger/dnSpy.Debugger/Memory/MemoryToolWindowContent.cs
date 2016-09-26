@@ -60,18 +60,18 @@ namespace dnSpy.Debugger.Memory {
 			}
 		}
 
-		readonly IWpfCommandManager wpfCommandManager;
-		readonly IThemeManager themeManager;
-		readonly IMenuManager menuManager;
+		readonly IWpfCommandService wpfCommandService;
+		readonly IThemeService themeService;
+		readonly IMenuService menuService;
 		readonly IHexEditorSettings hexEditorSettings;
 		readonly Lazy<ITheDebugger> theDebugger;
 		readonly IAppSettings appSettings;
 
 		[ImportingConstructor]
-		MemoryToolWindowContentProvider(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, IMenuManager menuManager, IHexEditorSettings hexEditorSettings, Lazy<ITheDebugger> theDebugger, IAppSettings appSettings) {
-			this.wpfCommandManager = wpfCommandManager;
-			this.themeManager = themeManager;
-			this.menuManager = menuManager;
+		MemoryToolWindowContentProvider(IWpfCommandService wpfCommandService, IThemeService themeService, IMenuService menuService, IHexEditorSettings hexEditorSettings, Lazy<ITheDebugger> theDebugger, IAppSettings appSettings) {
+			this.wpfCommandService = wpfCommandService;
+			this.themeService = themeService;
+			this.menuService = menuService;
 			this.hexEditorSettings = hexEditorSettings;
 			this.theDebugger = theDebugger;
 			this.appSettings = appSettings;
@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		IMemoryContent CreateMemoryContent(TWContent info) =>
-			new MemoryContent(wpfCommandManager, themeManager, menuManager, hexEditorSettings, new MemoryVM(theDebugger.Value), appSettings);
+			new MemoryContent(wpfCommandService, themeService, menuService, hexEditorSettings, new MemoryVM(theDebugger.Value), appSettings);
 	}
 
 	sealed class MemoryToolWindowContent : IToolWindowContent {

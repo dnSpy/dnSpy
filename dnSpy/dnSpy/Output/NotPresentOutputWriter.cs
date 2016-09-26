@@ -26,20 +26,20 @@ namespace dnSpy.Output {
 	sealed class NotPresentOutputWriter : IOutputTextPane {
 		public Guid Guid => guid;
 
-		readonly OutputManager outputManager;
+		readonly OutputService outputService;
 		readonly Guid guid;
 
 		IOutputTextPane TextPane {
 			get {
 				if (textPane != null)
 					return textPane;
-				return (textPane = outputManager.Find(guid)) ?? NullOutputTextPane.Instance;
+				return (textPane = outputService.Find(guid)) ?? NullOutputTextPane.Instance;
 			}
 		}
 		IOutputTextPane textPane;
 
-		public NotPresentOutputWriter(OutputManager outputManager, Guid guid) {
-			this.outputManager = outputManager;
+		public NotPresentOutputWriter(OutputService outputService, Guid guid) {
+			this.outputService = outputService;
 			this.guid = guid;
 		}
 

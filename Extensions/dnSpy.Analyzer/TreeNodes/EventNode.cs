@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -41,7 +41,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override void Initialize() => this.TreeNode.LazyLoading = true;
 		public override IMemberRef Member => analyzedEvent;
 		public override IMDTokenProvider Reference => analyzedEvent;
-		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) => dnImgMgr.GetImageReference(analyzedEvent);
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedEvent);
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			if (hidesParent) {

@@ -36,9 +36,9 @@ namespace dnSpy.Debugger.CallStack {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
 				if (vm.Index == 0)
-					return vm.Context.ImageManager.GetImage(new ImageReference(GetType().Assembly, "CurrentStatement"), BackgroundType.GridViewItem);
+					return vm.Context.ImageService.GetImage(new ImageReference(GetType().Assembly, "CurrentStatement"), BackgroundType.GridViewItem);
 				if (vm.IsCurrentFrame)
-					return vm.Context.ImageManager.GetImage(new ImageReference(GetType().Assembly, "CallReturn"), BackgroundType.GridViewItem);
+					return vm.Context.ImageService.GetImage(new ImageReference(GetType().Assembly, "CallReturn"), BackgroundType.GridViewItem);
 				return null;
 			}
 

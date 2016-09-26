@@ -77,20 +77,20 @@ namespace dnSpy.Debugger.Threads {
 		object selectedItem;
 
 		readonly ITheDebugger theDebugger;
-		readonly IStackFrameManager stackFrameManager;
+		readonly IStackFrameService stackFrameService;
 		readonly ThreadContext threadContext;
 
 		[ImportingConstructor]
-		ThreadsVM(ITheDebugger theDebugger, IStackFrameManager stackFrameManager, IDebuggerSettings debuggerSettings, IImageManager imageManager) {
+		ThreadsVM(ITheDebugger theDebugger, IStackFrameService stackFrameService, IDebuggerSettings debuggerSettings, IImageService imageService) {
 			this.theDebugger = theDebugger;
-			this.stackFrameManager = stackFrameManager;
-			this.threadContext = new ThreadContext(imageManager, theDebugger, debuggerSettings) {
+			this.stackFrameService = stackFrameService;
+			this.threadContext = new ThreadContext(imageService, theDebugger, debuggerSettings) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightThreads,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 			};
 			this.threadsList = new ObservableCollection<ThreadVM>();
-			stackFrameManager.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
-			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
+			stackFrameService.StackFramesUpdated += StackFrameService_StackFramesUpdated;
+			stackFrameService.PropertyChanged += StackFrameService_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
@@ -140,12 +140,12 @@ namespace dnSpy.Debugger.Threads {
 			}
 		}
 
-		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(IStackFrameManager.SelectedThread))
+		void StackFrameService_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == nameof(IStackFrameService.SelectedThread))
 				UpdateSelectedThread();
 		}
 
-		void StackFrameManager_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
+		void StackFrameService_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeThreads() is called when the process has been running for a little while. Speeds up stepping.
@@ -176,14 +176,14 @@ namespace dnSpy.Debugger.Threads {
 			}
 
 			foreach (var vm in Collection) {
-				vm.IsCurrent = stackFrameManager.SelectedThread == vm.Thread;
+				vm.IsCurrent = stackFrameService.SelectedThread == vm.Thread;
 				vm.UpdateFields();
 			}
 		}
 
 		void UpdateSelectedThread() {
 			foreach (var vm in Collection)
-				vm.IsCurrent = stackFrameManager.SelectedThread == vm.Thread;
+				vm.IsCurrent = stackFrameService.SelectedThread == vm.Thread;
 		}
 
 		public void RefreshThemeFields() {

@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
 				string img = vm.IsEnabled ? "Breakpoint" : "DisabledBreakpoint";
-				return vm.Context.ImageManager.GetImage(new ImageReference(GetType().Assembly, img), BackgroundType.GridViewItem);
+				return vm.Context.ImageService.GetImage(new ImageReference(GetType().Assembly, img), BackgroundType.GridViewItem);
 			}
 
 			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);

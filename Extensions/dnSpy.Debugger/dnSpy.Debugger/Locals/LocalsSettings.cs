@@ -74,14 +74,14 @@ namespace dnSpy.Debugger.Locals {
 	sealed class LocalsSettingsImpl : LocalsSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("33608C69-6696-4721-8011-81ECCCC80C64");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		LocalsSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		LocalsSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
 			ShowTypeKeywords = sect.Attribute<bool?>(nameof(ShowTypeKeywords)) ?? ShowTypeKeywords;
 			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.Locals {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowNamespaces), ShowNamespaces);
 			sect.Attribute(nameof(ShowTypeKeywords), ShowTypeKeywords);
 			sect.Attribute(nameof(ShowTokens), ShowTokens);

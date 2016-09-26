@@ -41,20 +41,20 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointListSettings : IBreakpointListSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly IBreakpointManager breakpointManager;
+		readonly IBreakpointService breakpointService;
 
 		[ImportingConstructor]
-		BreakpointListSettings(ISettingsManager settingsManager, Lazy<IModuleLoader> moduleLoader, IBreakpointManager breakpointManager) {
-			this.settingsManager = settingsManager;
+		BreakpointListSettings(ISettingsService settingsService, Lazy<IModuleLoader> moduleLoader, IBreakpointService breakpointService) {
+			this.settingsService = settingsService;
 			this.moduleLoader = moduleLoader;
-			this.breakpointManager = breakpointManager;
-			breakpointManager.BreakpointsAdded += BreakpointManager_BreakpointsAdded;
-			breakpointManager.BreakpointsRemoved += BreakpointManager_BreakpointsRemoved;
+			this.breakpointService = breakpointService;
+			breakpointService.BreakpointsAdded += BreakpointService_BreakpointsAdded;
+			breakpointService.BreakpointsRemoved += BreakpointService_BreakpointsRemoved;
 
 			// Prevent Save() from opening assemblies when all files are closed (Close All)
-			breakpointManager.OnRemoveBreakpoints = a => {
+			breakpointService.OnRemoveBreakpoints = a => {
 				if (a == null)
 					return new DisableSaveHelper(this);
 				((DisableSaveHelper)a).Dispose();
@@ -81,13 +81,13 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		void BreakpointManager_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
+		void BreakpointService_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
 			foreach (var bp in e.Breakpoints)
 				bp.PropertyChanged += Breakpoint_PropertyChanged;
 			Save();
 		}
 
-		void BreakpointManager_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
+		void BreakpointService_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
 			foreach (var bp in e.Breakpoints)
 				bp.PropertyChanged -= Breakpoint_PropertyChanged;
 			Save();
@@ -110,8 +110,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		int disableSaveCounter;
 
 		void LoadInternal() {
-			var section = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			breakpointManager.Clear();
+			var section = settingsService.GetOrCreateSection(SETTINGS_GUID);
+			breakpointService.Clear();
 			foreach (var bpx in section.SectionsWithName("Breakpoint")) {
 				uint? token = bpx.Attribute<uint?>("Token");
 				string asmFullName = bpx.Attribute<string>("AssemblyFullName");
@@ -145,7 +145,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				}
 
 				var bp = new ILCodeBreakpoint(key, ilOffset.Value, isEnabled.Value);
-				breakpointManager.Add(bp);
+				breakpointService.Add(bp);
 			}
 		}
 
@@ -156,9 +156,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (disableSaveCounter != 0)
 				return;
 
-			var section = settingsManager.RecreateSection(SETTINGS_GUID);
+			var section = settingsService.RecreateSection(SETTINGS_GUID);
 
-			foreach (var bp in breakpointManager.GetBreakpoints()) {
+			foreach (var bp in breakpointService.GetBreakpoints()) {
 				var ilbp = bp as ILCodeBreakpoint;
 				if (ilbp != null) {
 					if (string.IsNullOrEmpty(ilbp.MethodToken.Module.ModuleName))

@@ -31,7 +31,7 @@ using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.AsmEditor.Utilities;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
@@ -41,13 +41,13 @@ using dnSpy.Contracts.Utilities;
 namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IInitializeDataTemplate))]
 	sealed class InitializeMDTableKeyboardShortcuts : IInitializeDataTemplate {
-		readonly IFileTabManager fileTabManager;
-		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly IDocumentTabService documentTabService;
+		readonly Lazy<IUndoCommandService> undoCommandService;
 
 		[ImportingConstructor]
-		InitializeMDTableKeyboardShortcuts(IFileTabManager fileTabManager, Lazy<IUndoCommandManager> undoCommandManager) {
-			this.fileTabManager = fileTabManager;
-			this.undoCommandManager = undoCommandManager;
+		InitializeMDTableKeyboardShortcuts(IDocumentTabService documentTabService, Lazy<IUndoCommandService> undoCommandService) {
+			this.documentTabService = documentTabService;
+			this.undoCommandService = undoCommandService;
 		}
 
 		public void Initialize(DependencyObject d) {
@@ -57,12 +57,12 @@ namespace dnSpy.AsmEditor.Hex {
 			if (!(lv.DataContext is MetaDataTableVM))
 				return;
 
-			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(fileTabManager, new SortMDTableCommand.TheMenuMDTableCommand(undoCommandManager)), Key.T, ModifierKeys.Shift | ModifierKeys.Control));
-			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(fileTabManager, new CopyAsTextMDTableCommand.TheMenuMDTableCommand()), Key.C, ModifierKeys.Shift | ModifierKeys.Control));
-			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(fileTabManager, new GoToRidMDTableCommand.TheMenuMDTableCommand()), Key.G, ModifierKeys.Control));
-			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(fileTabManager, new ShowInHexEditorMDTableCommand.TheMenuMDTableCommand(fileTabManager)), Key.X, ModifierKeys.Control));
-			Add(lv, ApplicationCommands.Copy, new CtxMenuMDTableCommandProxy(fileTabManager, new CopyMDTableCommand.TheMenuMDTableCommand()));
-			Add(lv, ApplicationCommands.Paste, new CtxMenuMDTableCommandProxy(fileTabManager, new PasteMDTableCommand.TheMenuMDTableCommand(undoCommandManager)));
+			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(documentTabService, new SortMDTableCommand.TheMenuMDTableCommand(undoCommandService)), Key.T, ModifierKeys.Shift | ModifierKeys.Control));
+			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(documentTabService, new CopyAsTextMDTableCommand.TheMenuMDTableCommand()), Key.C, ModifierKeys.Shift | ModifierKeys.Control));
+			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(documentTabService, new GoToRidMDTableCommand.TheMenuMDTableCommand()), Key.G, ModifierKeys.Control));
+			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(documentTabService, new ShowInHexEditorMDTableCommand.TheMenuMDTableCommand(documentTabService)), Key.X, ModifierKeys.Control));
+			Add(lv, ApplicationCommands.Copy, new CtxMenuMDTableCommandProxy(documentTabService, new CopyMDTableCommand.TheMenuMDTableCommand()));
+			Add(lv, ApplicationCommands.Paste, new CtxMenuMDTableCommandProxy(documentTabService, new PasteMDTableCommand.TheMenuMDTableCommand(undoCommandService)));
 		}
 
 		static void Add(UIElement elem, ICommand cmd, ICommand realCmd) {
@@ -97,16 +97,16 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	sealed class CtxMenuMDTableCommandProxy : ICommand {
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly MenuItemBase<MDTableContext> cmd;
 
-		public CtxMenuMDTableCommandProxy(IFileTabManager fileTabManager, MenuItemBase<MDTableContext> cmd) {
-			this.fileTabManager = fileTabManager;
+		public CtxMenuMDTableCommandProxy(IDocumentTabService documentTabService, MenuItemBase<MDTableContext> cmd) {
+			this.documentTabService = documentTabService;
 			this.cmd = cmd;
 		}
 
 		MDTableContext CreateMDTableContext() {
-			var tab = fileTabManager.ActiveTab;
+			var tab = documentTabService.ActiveTab;
 			if (tab != null) {
 				var listView = FindListView(tab);
 				if (listView != null && UIUtils.HasSelectedChildrenFocus(listView))
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return null;
 		}
 
-		static ListView FindListView(IFileTab tab) {
+		static ListView FindListView(IDocumentTab tab) {
 			var o = tab.UIContext.UIObject as DependencyObject;
 			while (o != null) {
 				var lv = o as ListView;
@@ -176,41 +176,41 @@ namespace dnSpy.AsmEditor.Hex {
 	static class SortMDTableCommand {
 		[ExportMenuItem(Header = "res:SortMetadataTableCommand", InputGestureText = "res:ShortCutKeyCtrlShiftT", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_MD, Order = 0)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			TheCtxMenuMDTableCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			TheCtxMenuMDTableCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
-			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SortMetadataTableCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, InputGestureText = "res:ShortCutKeyCtrlShiftT", Order = 0)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			public TheMenuMDTableCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			public TheMenuMDTableCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
-			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
-		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) =>
-			SortTable(undoCommandManager, context.MetaDataTableVM, 1, context.MetaDataTableVM.Rows, string.Format(dnSpy_AsmEditor_Resources.SortMetadataTableCommand2, context.MetaDataTableVM.Table));
+		static void ExecuteInternal(Lazy<IUndoCommandService> undoCommandService, MDTableContext context) =>
+			SortTable(undoCommandService, context.MetaDataTableVM, 1, context.MetaDataTableVM.Rows, string.Format(dnSpy_AsmEditor_Resources.SortMetadataTableCommand2, context.MetaDataTableVM.Table));
 
-		internal static void SortTable(Lazy<IUndoCommandManager> undoCommandManager, MetaDataTableVM mdTblVM, uint rid, uint count, string descr) {
+		internal static void SortTable(Lazy<IUndoCommandService> undoCommandService, MetaDataTableVM mdTblVM, uint rid, uint count, string descr) {
 			var doc = mdTblVM.Document;
 			int len = (int)count * mdTblVM.TableInfo.RowSize;
 			var data = new byte[len];
 			ulong startOffset = mdTblVM.StartOffset + (rid - 1) * (ulong)mdTblVM.TableInfo.RowSize;
 			doc.Read(startOffset, data, 0, data.Length);
 			TableSorter.Sort(mdTblVM.TableInfo, data);
-			WriteHexUndoCommand.AddAndExecute(undoCommandManager.Value, doc, startOffset, data, descr);
+			WriteHexUndoCommand.AddAndExecute(undoCommandService.Value, doc, startOffset, data, descr);
 		}
 
 		static bool IsEnabledInternal(MDTableContext context) => TableSorter.CanSort(context.MetaDataTableVM.TableInfo);
@@ -219,34 +219,34 @@ namespace dnSpy.AsmEditor.Hex {
 	static class SortSelectionMDTableCommand {
 		[ExportMenuItem(Header = "res:SortSelectionCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_MD, Order = 10)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			TheCtxMenuMDTableCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			TheCtxMenuMDTableCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
-			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SortSelectionCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 10)]
 		sealed class TheMenuMDTableCommand : MenuMDTableCommand {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			TheMenuMDTableCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			TheMenuMDTableCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
-			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
-		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) {
+		static void ExecuteInternal(Lazy<IUndoCommandService> undoCommandService, MDTableContext context) {
 			uint rid = context.Records[0].Token.Rid;
 			uint count = (uint)context.Records.Length;
-			SortMDTableCommand.SortTable(undoCommandManager, context.MetaDataTableVM, rid, count, string.Format(dnSpy_AsmEditor_Resources.SortTable_RowIdentifier, context.MetaDataTableVM.Table, rid, rid + count - 1));
+			SortMDTableCommand.SortTable(undoCommandService, context.MetaDataTableVM, rid, count, string.Format(dnSpy_AsmEditor_Resources.SortTable_RowIdentifier, context.MetaDataTableVM.Table, rid, rid + count - 1));
 		}
 
 		static bool IsEnabledInternal(MDTableContext context) =>
@@ -294,34 +294,34 @@ namespace dnSpy.AsmEditor.Hex {
 	static class ShowInHexEditorMDTableCommand {
 		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_MD, Order = 30)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
-			readonly IFileTabManager fileTabManager;
+			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			TheCtxMenuMDTableCommand(IFileTabManager fileTabManager) {
-				this.fileTabManager = fileTabManager;
+			TheCtxMenuMDTableCommand(IDocumentTabService documentTabService) {
+				this.documentTabService = documentTabService;
 			}
 
-			public override void Execute(MDTableContext context) => ExecuteInternal(fileTabManager, context);
+			public override void Execute(MDTableContext context) => ExecuteInternal(documentTabService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 30)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
-			readonly IFileTabManager fileTabManager;
+			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			public TheMenuMDTableCommand(IFileTabManager fileTabManager) {
-				this.fileTabManager = fileTabManager;
+			public TheMenuMDTableCommand(IDocumentTabService documentTabService) {
+				this.documentTabService = documentTabService;
 			}
 
-			public override void Execute(MDTableContext context) => ExecuteInternal(fileTabManager, context);
+			public override void Execute(MDTableContext context) => ExecuteInternal(documentTabService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
-		static void ExecuteInternal(IFileTabManager fileTabManager, MDTableContext context) {
+		static void ExecuteInternal(IDocumentTabService documentTabService, MDTableContext context) {
 			var @ref = GetAddressReference(context);
 			if (@ref != null)
-				fileTabManager.FollowReference(@ref);
+				documentTabService.FollowReference(@ref);
 		}
 
 		static bool IsEnabledInternal(MDTableContext context) => GetAddressReference(context) != null;
@@ -411,40 +411,40 @@ namespace dnSpy.AsmEditor.Hex {
 	static class PasteMDTableCommand {
 		[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_COPY, Order = 20)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			TheCtxMenuMDTableCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			TheCtxMenuMDTableCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
-			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 			public override string GetHeader(MDTableContext context) => GetHeaderInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 20)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
-			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			public TheMenuMDTableCommand(Lazy<IUndoCommandManager> undoCommandManager) {
-				this.undoCommandManager = undoCommandManager;
+			public TheMenuMDTableCommand(Lazy<IUndoCommandService> undoCommandService) {
+				this.undoCommandService = undoCommandService;
 			}
 
-			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandManager, context);
+			public override void Execute(MDTableContext context) => ExecuteInternal(undoCommandService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 			public override string GetHeader(MDTableContext context) => GetHeaderInternal(context);
 		}
 
-		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) {
+		static void ExecuteInternal(Lazy<IUndoCommandService> undoCommandService, MDTableContext context) {
 			var data = GetPasteData(context);
 			if (data == null)
 				return;
 
 			var doc = context.MetaDataTableVM.Document;
 			int recs = data.Length / context.MetaDataTableVM.TableInfo.RowSize;
-			WriteHexUndoCommand.AddAndExecute(undoCommandManager.Value, doc, context.Records[0].StartOffset, data,
+			WriteHexUndoCommand.AddAndExecute(undoCommandService.Value, doc, context.Records[0].StartOffset, data,
 				string.Format(recs == 1 ? dnSpy_AsmEditor_Resources.Hex_Undo_Message_Paste_Record : dnSpy_AsmEditor_Resources.Hex_Undo_Message_Paste_Records,
 						recs, context.MetaDataTableVM.Table, context.Records[0].StartOffset, context.Records[0].Token.Rid));
 		}

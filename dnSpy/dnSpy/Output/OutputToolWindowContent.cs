@@ -75,10 +75,10 @@ namespace dnSpy.Output {
 		public static readonly RoutedCommand ShowOutputWindowRoutedCommand = new RoutedCommand("ShowOutputWindowRoutedCommand", typeof(ShowOutputWindowCommandLoader));
 
 		[ImportingConstructor]
-		ShowOutputWindowCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
+		ShowOutputWindowCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowOutputWindowRoutedCommand,
-				(s, e) => mainToolWindowManager.Show(OutputToolWindowContent.THE_GUID),
+				(s, e) => toolWindowService.Show(OutputToolWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true);
 			cmds.Add(ShowOutputWindowRoutedCommand, ModifierKeys.Alt, Key.D2);
 		}

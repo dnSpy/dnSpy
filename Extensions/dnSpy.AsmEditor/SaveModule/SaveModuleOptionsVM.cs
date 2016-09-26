@@ -25,15 +25,15 @@ using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveModuleOptionsVM : SaveOptionsVM {
 		public override SaveOptionsType Type => SaveOptionsType.Module;
 		public ModuleDef Module { get; }
-		public override object UndoDocument => dnSpyFile;
-		readonly IDnSpyFile dnSpyFile;
+		public override object UndoDocument => document;
+		readonly IDsDocument document;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public bool CanSaveMixedModeModule => Module is ModuleDefMD;
@@ -142,9 +142,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public Cor20HeaderOptionsVM Cor20HeaderOptions { get; }
 		public MetaDataOptionsVM MetaDataOptions { get; }
 
-		public SaveModuleOptionsVM(IDnSpyFile dnSpyFile) {
-			this.dnSpyFile = dnSpyFile;
-			this.Module = dnSpyFile.ModuleDef;
+		public SaveModuleOptionsVM(IDsDocument document) {
+			this.document = document;
+			this.Module = document.ModuleDef;
 			this.PEHeadersOptions = new PEHeadersOptionsVM(Module.Machine, GetSubsystem(Module.Kind));
 			this.Cor20HeaderOptions = new Cor20HeaderOptionsVM();
 			this.MetaDataOptions = new MetaDataOptionsVM();
@@ -213,7 +213,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			options.ModuleKind = (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem;
 		}
 
-		public SaveModuleOptionsVM Clone() => CopyTo(new SaveModuleOptionsVM(dnSpyFile));
+		public SaveModuleOptionsVM Clone() => CopyTo(new SaveModuleOptionsVM(document));
 
 		public SaveModuleOptionsVM CopyTo(SaveModuleOptionsVM other) {
 			other.FileName = FileName;

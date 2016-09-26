@@ -21,13 +21,13 @@ using System;
 using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageOptionalHeader64Node : HexNode {
-		public override Guid Guid => new Guid(FileTVConstants.IMGOPTHEADER64_NODE_GUID);
+		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMGOPTHEADER64_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override object VMObject => imageOptionalHeader64VM;
 		protected override string IconName => "BinaryFile";

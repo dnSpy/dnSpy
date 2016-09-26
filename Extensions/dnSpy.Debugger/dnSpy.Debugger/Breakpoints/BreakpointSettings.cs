@@ -139,14 +139,14 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointSettingsImpl : BreakpointSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("42CB1310-641D-4EB7-971D-16DC5CF9A40D");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		BreakpointSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		BreakpointSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
 			ShowModuleNames = sect.Attribute<bool?>(nameof(ShowModuleNames)) ?? ShowModuleNames;
 			ShowParameterTypes = sect.Attribute<bool?>(nameof(ShowParameterTypes)) ?? ShowParameterTypes;
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowTokens), ShowTokens);
 			sect.Attribute(nameof(ShowModuleNames), ShowModuleNames);
 			sect.Attribute(nameof(ShowParameterTypes), ShowParameterTypes);

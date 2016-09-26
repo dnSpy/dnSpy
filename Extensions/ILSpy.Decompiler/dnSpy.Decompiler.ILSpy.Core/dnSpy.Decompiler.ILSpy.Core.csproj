@@ -57,7 +57,7 @@
     <Compile Include="Settings\ILDecompilerSettings.cs" />
     <Compile Include="Settings\ILSettings.cs" />
     <Compile Include="Settings\CSharpVBDecompilerSettings.cs" />
-    <Compile Include="Settings\DecompilerSettingsManager.cs" />
+    <Compile Include="Settings\DecompilerSettingsService.cs" />
     <Compile Include="Text\ContentTypesInternal.cs" />
     <Compile Include="VisualBasic\ILSpyEnvironmentProvider.cs" />
     <Compile Include="VisualBasic\VBDecompiler.cs" />

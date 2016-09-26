@@ -25,20 +25,20 @@ using dndbg.DotNet;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.Debugger.IMModules {
 	/// <summary>
 	/// Loads all new classes from dynamic modules
 	/// </summary>
 	sealed class ClassLoader {
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly Window ownerWindow;
 		readonly Dictionary<DnModule, HashSet<uint>> loadedClasses;
 
-		public ClassLoader(IFileTabManager fileTabManager, Window ownerWindow) {
-			this.fileTabManager = fileTabManager;
+		public ClassLoader(IDocumentTabService documentTabService, Window ownerWindow) {
+			this.documentTabService = documentTabService;
 			this.ownerWindow = ownerWindow;
 			this.loadedClasses = new Dictionary<DnModule, HashSet<uint>>();
 		}
@@ -65,11 +65,11 @@ namespace dnSpy.Debugger.IMModules {
 
 		struct ModuleState {
 			public CorModuleDefFile CorModuleDefFile;
-			public IModuleFileNode ModuleNode;
+			public IModuleDocumentNode ModuleNode;
 			public HashSet<uint> ModifiedTypes;
 			public HashSet<uint> LoadClassHash;
 
-			public ModuleState(CorModuleDefFile corModuleDefFile, IModuleFileNode moduleNode, HashSet<uint> modifiedTypes, HashSet<uint> loadClassHash) {
+			public ModuleState(CorModuleDefFile corModuleDefFile, IModuleDocumentNode moduleNode, HashSet<uint> modifiedTypes, HashSet<uint> loadClassHash) {
 				this.CorModuleDefFile = corModuleDefFile;
 				this.ModuleNode = moduleNode;
 				this.ModifiedTypes = modifiedTypes;
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		public void LoadNewClasses(Dictionary<CorModuleDefFile, IModuleFileNode> visibleModules) {
+		public void LoadNewClasses(Dictionary<CorModuleDefFile, IModuleDocumentNode> visibleModules) {
 			var oldLoadedClasses = new Dictionary<DnModule, HashSet<uint>>(loadedClasses);
 			loadedClasses.Clear();
 			if (visibleModules.Count == 0)
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.IMModules {
 			LoadEverything(states.Where(a => a.ModifiedTypes.Count != 0 || (a.LoadClassHash != null && a.LoadClassHash.Count != 0)).Select(a => a.CorModuleDefFile.DnModule.CorModuleDef));
 
 			foreach (var state in states)
-				new TreeViewUpdater(fileTabManager, state.CorModuleDefFile, state.ModuleNode, state.ModifiedTypes, state.LoadClassHash).Update();
+				new TreeViewUpdater(documentTabService, state.CorModuleDefFile, state.ModuleNode, state.ModifiedTypes, state.LoadClassHash).Update();
 		}
 
 		HashSet<uint> GetModifiedTypesList(CorModuleDefFile cmdf) {

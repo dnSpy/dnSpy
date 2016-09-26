@@ -285,9 +285,9 @@ namespace dnSpy.AsmEditor.Method {
 
 		readonly ModuleDef ownerModule;
 
-		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = ownerMethod == null || ownerMethod.GenericParameters.Count > 0,
@@ -305,11 +305,11 @@ namespace dnSpy.AsmEditor.Method {
 			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
 			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerManager, ownerType, ownerMethod);
-			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerManager, ownerType, ownerMethod);
-			this.ParamDefsVM = new ParamDefsVM(ownerModule, decompilerManager, ownerType, ownerMethod);
-			this.GenericParamsVM = new GenericParamsVM(ownerModule, decompilerManager, ownerType, ownerMethod);
-			this.MethodOverridesVM = new MethodOverridesVM(ownerModule, decompilerManager, ownerType, ownerMethod);
+			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			this.ParamDefsVM = new ParamDefsVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			this.GenericParamsVM = new GenericParamsVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			this.MethodOverridesVM = new MethodOverridesVM(ownerModule, decompilerService, ownerType, ownerMethod);
 
 			this.origOptions = options;
 

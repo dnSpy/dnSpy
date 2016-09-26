@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.IMModules;
@@ -49,31 +49,31 @@ namespace dnSpy.Debugger.Modules {
 
 		readonly ModulesControl modulesControl;
 		readonly IModulesVM vmModules;
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 
 		[ImportingConstructor]
-		ModulesContent(IWpfCommandManager wpfCommandManager, IThemeManager themeManager, IModulesVM modulesVM, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager) {
+		ModulesContent(IWpfCommandService wpfCommandService, IThemeService themeService, IModulesVM modulesVM, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService) {
 			this.modulesControl = new ModulesControl();
 			this.vmModules = modulesVM;
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
-			this.inMemoryModuleManager = inMemoryModuleManager;
+			this.inMemoryModuleService = inMemoryModuleService;
 			this.modulesControl.DataContext = this.vmModules;
 			this.modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);
 		}
 
 		void ModulesControl_ModulesListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			GoToModuleModulesCtxMenuCommand.ExecuteInternal(fileTabManager, inMemoryModuleManager, moduleLoader, modulesControl.ListView.SelectedItem as ModuleVM, newTab);
+			GoToModuleModulesCtxMenuCommand.ExecuteInternal(documentTabService, inMemoryModuleService, moduleLoader, modulesControl.ListView.SelectedItem as ModuleVM, newTab);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmModules.RefreshThemeFields();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmModules.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(modulesControl.ListView);
 		public void OnClose() => vmModules.IsEnabled = false;
 		public void OnShow() => vmModules.IsEnabled = true;

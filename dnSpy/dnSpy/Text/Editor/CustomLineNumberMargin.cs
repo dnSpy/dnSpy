@@ -32,9 +32,9 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewMarginProvider))]
 	[MarginContainer(PredefinedMarginNames.LeftSelection)]
-	[Name(PredefinedDnSpyMarginNames.CustomLineNumber)]
+	[Name(PredefinedDsMarginNames.CustomLineNumber)]
 	[ContentType(ContentTypes.Text)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CustomLineNumberMargin)]
+	[TextViewRole(PredefinedDsTextViewRoles.CustomLineNumberMargin)]
 	[Order(Before = PredefinedMarginNames.Spacer)]
 	sealed class CustomLineNumberMarginProvider : IWpfTextViewMarginProvider {
 		readonly IClassificationFormatMapService classificationFormatMapService;
@@ -54,7 +54,7 @@ namespace dnSpy.Text.Editor {
 		ICustomLineNumberMarginOwner owner;
 
 		public CustomLineNumberMarginImpl(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, ITextFormatterProvider textFormatterProvider)
-			: base(PredefinedDnSpyMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) {
+			: base(PredefinedDsMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) {
 			CustomLineNumberMargin.SetMargin(wpfTextViewHost.TextView, this);
 		}
 

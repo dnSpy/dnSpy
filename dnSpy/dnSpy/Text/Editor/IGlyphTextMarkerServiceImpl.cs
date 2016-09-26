@@ -28,8 +28,8 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Editor {
 	interface IGlyphTextMarkerServiceImpl : IGlyphTextMarkerService {
-		IThemeManager ThemeManager { get; }
-		IImageManager ImageManager { get; }
+		IThemeService ThemeService { get; }
+		IImageService ImageService { get; }
 		IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		IEditorFormatMapService EditorFormatMapService { get; }
 		IEnumerable<IGlyphTextMarkerImpl> AllMarkers { get; }

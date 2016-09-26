@@ -19,30 +19,30 @@
 
 using System.ComponentModel.Composition;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
 	[ExportModuleIdFactoryProvider(ModuleIdFactoryProviderConstants.OrderDebugger)]
 	sealed class DebuggerModuleIdFactoryProvider : IModuleIdFactoryProvider {
-		readonly IFileTreeView fileTreeView;
+		readonly IDocumentTreeView documentTreeView;
 
 		[ImportingConstructor]
-		DebuggerModuleIdFactoryProvider(IFileTreeView fileTreeView) {
-			this.fileTreeView = fileTreeView;
+		DebuggerModuleIdFactoryProvider(IDocumentTreeView documentTreeView) {
+			this.documentTreeView = documentTreeView;
 		}
 
-		public IModuleIdFactory Create() => new ModuleIdFactory(fileTreeView);
+		public IModuleIdFactory Create() => new ModuleIdFactory(documentTreeView);
 
 		sealed class ModuleIdFactory : IModuleIdFactory {
-			readonly IFileTreeView fileTreeView;
+			readonly IDocumentTreeView documentTreeView;
 
-			public ModuleIdFactory(IFileTreeView fileTreeView) {
-				this.fileTreeView = fileTreeView;
+			public ModuleIdFactory(IDocumentTreeView documentTreeView) {
+				this.documentTreeView = documentTreeView;
 			}
 
 			public ModuleId? Create(ModuleDef module) {
-				var midHolder = fileTreeView.FindNode(module)?.DnSpyFile as IModuleIdHolder;
+				var midHolder = documentTreeView.FindNode(module)?.Document as IModuleIdHolder;
 				if (midHolder != null)
 					return midHolder.ModuleId;
 				return null;

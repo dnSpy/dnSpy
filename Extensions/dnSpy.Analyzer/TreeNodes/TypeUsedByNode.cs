@@ -40,7 +40,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedType, FindTypeUsage);
+			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindTypeUsage);
 			return analyzer.PerformAnalysis(ct)
 				.Cast<EntityNode>()
 				.Where(n => n.Member.DeclaringType != analyzedType)

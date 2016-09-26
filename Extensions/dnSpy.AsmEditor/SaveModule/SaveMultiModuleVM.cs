@@ -30,7 +30,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
@@ -197,13 +197,13 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		static SaveOptionsVM Create(object obj) {
-			var file = obj as IDnSpyFile;
-			if (file != null)
-				return new SaveModuleOptionsVM(file);
+			var document = obj as IDsDocument;
+			if (document != null)
+				return new SaveModuleOptionsVM(document);
 
-			var doc = obj as AsmEdHexDocument;
-			if (doc != null)
-				return new SaveHexOptionsVM(doc);
+			var hexDocument = obj as AsmEdHexDocument;
+			if (hexDocument != null)
+				return new SaveHexOptionsVM(hexDocument);
 
 			throw new InvalidOperationException();
 		}

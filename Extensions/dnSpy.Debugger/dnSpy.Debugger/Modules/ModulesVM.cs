@@ -67,9 +67,9 @@ namespace dnSpy.Debugger.Modules {
 		readonly ModuleContext moduleContext;
 
 		[ImportingConstructor]
-		ModulesVM(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings, IImageManager imageManager) {
+		ModulesVM(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings, IImageService imageService) {
 			this.theDebugger = theDebugger;
-			this.moduleContext = new ModuleContext(imageManager, theDebugger) {
+			this.moduleContext = new ModuleContext(imageService, theDebugger) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightModules,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 			};

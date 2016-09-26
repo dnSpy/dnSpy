@@ -65,10 +65,10 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		public static readonly RoutedCommand ShowVisualBasicInteractiveRoutedCommand = new RoutedCommand("ShowVisualBasicInteractiveRoutedCommand", typeof(ShowVisualBasicInteractiveCommandLoader));
 
 		[ImportingConstructor]
-		ShowVisualBasicInteractiveCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+		ShowVisualBasicInteractiveCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(CommandConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowVisualBasicInteractiveRoutedCommand,
-				(s, e) => mainToolWindowManager.Show(VisualBasicToolWindowContent.THE_GUID),
+				(s, e) => toolWindowService.Show(VisualBasicToolWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true);
 			cmds.Add(ShowVisualBasicInteractiveRoutedCommand, ModifierKeys.Control | ModifierKeys.Alt, Key.I);
 		}

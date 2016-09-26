@@ -31,12 +31,12 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Analyzer {
 	abstract class OpenReferenceCtxMenuCommandBase : MenuItemBase {
-		readonly Lazy<IAnalyzerManager> analyzerManager;
+		readonly Lazy<IAnalyzerService> analyzerService;
 		readonly bool newTab;
 		readonly bool useCodeRef;
 
-		protected OpenReferenceCtxMenuCommandBase(Lazy<IAnalyzerManager> analyzerManager, bool newTab, bool useCodeRef) {
-			this.analyzerManager = analyzerManager;
+		protected OpenReferenceCtxMenuCommandBase(Lazy<IAnalyzerService> analyzerService, bool newTab, bool useCodeRef) {
+			this.analyzerService = analyzerService;
 			this.newTab = newTab;
 			this.useCodeRef = useCodeRef;
 		}
@@ -45,7 +45,7 @@ namespace dnSpy.Analyzer {
 			var @ref = GetReference(context);
 			if (@ref == null)
 				return;
-			analyzerManager.Value.FollowNode(@ref, newTab, useCodeRef);
+			analyzerService.Value.FollowNode(@ref, newTab, useCodeRef);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
@@ -60,7 +60,7 @@ namespace dnSpy.Analyzer {
 
 			var tokenNode = nodes[0] as IMDTokenNode;
 			if (tokenNode != null && tokenNode.Reference != null) {
-				if (!analyzerManager.Value.CanFollowNode(nodes[0], useCodeRef))
+				if (!analyzerService.Value.CanFollowNode(nodes[0], useCodeRef))
 					return null;
 				return nodes[0];
 			}
@@ -72,65 +72,65 @@ namespace dnSpy.Analyzer {
 	[ExportMenuItem(Header = "res:GoToReferenceInCodeCommand", InputGestureText = "res:DoubleClick", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 0)]
 	sealed class OpenReferenceInCodeCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceInCodeCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
-			: base(analyzerManager, false, true) {
+		OpenReferenceInCodeCtxMenuCommand(Lazy<IAnalyzerService> analyzerService)
+			: base(analyzerService, false, true) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:GoToReferenceInCodeNewTabCommand", InputGestureText = "res:ShiftDoubleClick", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 10)]
 	sealed class OpenReferenceInCodeNewTabCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceInCodeNewTabCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
-			: base(analyzerManager, true, true) {
+		OpenReferenceInCodeNewTabCtxMenuCommand(Lazy<IAnalyzerService> analyzerService)
+			: base(analyzerService, true, true) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:GoToReferenceCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 20)]
 	sealed class OpenReferenceCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
-			: base(analyzerManager, false, false) {
+		OpenReferenceCtxMenuCommand(Lazy<IAnalyzerService> analyzerService)
+			: base(analyzerService, false, false) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:GoToReferenceNewTabCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 30)]
 	sealed class OpenReferenceNewTabCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceNewTabCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
-			: base(analyzerManager, true, false) {
+		OpenReferenceNewTabCtxMenuCommand(Lazy<IAnalyzerService> analyzerService)
+			: base(analyzerService, true, false) {
 		}
 	}
 
 	[ExportAutoLoaded]
 	sealed class BreakpointsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		BreakpointsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<IAnalyzerManager> analyzerManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
+		BreakpointsContentCommandLoader(IWpfCommandService wpfCommandService, Lazy<IAnalyzerService> analyzerService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
 			cmds.Add(ApplicationCommands.Copy,
-				(s, e) => CopyCtxMenuCommand.ExecuteInternal(analyzerManager),
-				(s, e) => e.CanExecute = CopyCtxMenuCommand.CanExecuteInternal(analyzerManager));
+				(s, e) => CopyCtxMenuCommand.ExecuteInternal(analyzerService),
+				(s, e) => e.CanExecute = CopyCtxMenuCommand.CanExecuteInternal(analyzerService));
 		}
 	}
 
 	[ExportMenuItem(Header = "res:CopyCommand", InputGestureText = "res:ShortCutKeyCtrlC", Icon = "Copy", Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = -1)]
 	sealed class CopyCtxMenuCommand : MenuItemBase {
-		readonly Lazy<IAnalyzerManager> analyzerManager;
+		readonly Lazy<IAnalyzerService> analyzerService;
 
 		[ImportingConstructor]
-		CopyCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager) {
-			this.analyzerManager = analyzerManager;
+		CopyCtxMenuCommand(Lazy<IAnalyzerService> analyzerService) {
+			this.analyzerService = analyzerService;
 		}
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
-		public override bool IsEnabled(IMenuItemContext context) => CanExecuteInternal(analyzerManager);
-		public override void Execute(IMenuItemContext context) => ExecuteInternal(analyzerManager);
-		public static bool CanExecuteInternal(Lazy<IAnalyzerManager> analyzerManager) => analyzerManager.Value.TreeView.SelectedItems.Length > 0;
+		public override bool IsEnabled(IMenuItemContext context) => CanExecuteInternal(analyzerService);
+		public override void Execute(IMenuItemContext context) => ExecuteInternal(analyzerService);
+		public static bool CanExecuteInternal(Lazy<IAnalyzerService> analyzerService) => analyzerService.Value.TreeView.SelectedItems.Length > 0;
 
-		public static void ExecuteInternal(Lazy<IAnalyzerManager> analyzerManager) {
-			var items = analyzerManager.Value.TreeView.SelectedItems;
+		public static void ExecuteInternal(Lazy<IAnalyzerService> analyzerService) {
+			var items = analyzerService.Value.TreeView.SelectedItems;
 			var sb = new StringBuilder();
 			int count = 0;
-			foreach (var t in GetNodes(analyzerManager.Value.TreeView, items)) {
+			foreach (var t in GetNodes(analyzerService.Value.TreeView, items)) {
 				if (count > 0)
 					sb.Append(Environment.NewLine);
 				sb.Append(new string('\t', t.Item1));

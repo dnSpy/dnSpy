@@ -24,7 +24,7 @@ namespace dnSpy.Search {
 	sealed class SearchResultContext {
 		public bool SyntaxHighlight { get; set; }
 		public IDecompiler Decompiler { get; set; }
-		public IImageManager ImageManager { get; set; }
+		public IImageService ImageService { get; set; }
 		public BackgroundType BackgroundType { get; set; }
 
 		public SearchResultContext() {

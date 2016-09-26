@@ -20,13 +20,13 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
 using Emit = dnlib.DotNet.Emit;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class EditedMethodBodyUpdater {
-		public IEnumerable<IFileTreeNodeData> OriginalNodes {
+		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
 			get { yield return ownerNode; }
 		}
 
@@ -60,9 +60,9 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly BodyState originalBodyState;
 		readonly BodyState newBodyState;
 
-		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, IModuleFileNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes) {
+		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, IModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes) {
 			this.methodAnnotations = methodAnnotations;
-			this.ownerNode = modNode.Context.FileTreeView.FindNode(originalMethod);
+			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
 			this.method = originalMethod;

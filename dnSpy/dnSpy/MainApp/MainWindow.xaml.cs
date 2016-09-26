@@ -24,24 +24,24 @@ using dnSpy.Contracts.Themes;
 
 namespace dnSpy.MainApp {
 	sealed partial class MainWindow : MetroWindow {
-		readonly IImageManager imageManager;
+		readonly IImageService imageService;
 
-		public MainWindow(IThemeManager themeManager, IImageManager imageManager, object content) {
-			this.imageManager = imageManager;
+		public MainWindow(IThemeService themeService, IImageService imageService, object content) {
+			this.imageService = imageService;
 			InitializeComponent();
 			this.contentPresenter.Content = content;
 			UpdateSystemMenuImage();
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 			this.Activated += (s, e) => UpdateSystemMenuImage();
 			this.Deactivated += (s, e) => UpdateSystemMenuImage();
 			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateSystemMenuImage();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateSystemMenuImage();
 
 		void UpdateSystemMenuImage() {
 			var bgType = IsActive ? BackgroundType.TitleAreaActive : BackgroundType.TitleAreaInactive;
-			SystemMenuImage = imageManager.GetImage(new ImageReference(GetType().Assembly, "Assembly"), bgType);
+			SystemMenuImage = imageService.GetImage(new ImageReference(GetType().Assembly, "Assembly"), bgType);
 		}
 	}
 }

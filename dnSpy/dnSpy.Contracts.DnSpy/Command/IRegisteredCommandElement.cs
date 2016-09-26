@@ -21,11 +21,11 @@ using System.Windows;
 
 namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Created by <see cref="ICommandManager.Register(UIElement, object)"/>
+	/// Created by <see cref="ICommandService.Register(UIElement, object)"/>
 	/// </summary>
 	public interface IRegisteredCommandElement : ICommandTargetCollectionProvider {
 		/// <summary>
-		/// Unregisters it from <see cref="ICommandManager"/>
+		/// Unregisters it from <see cref="ICommandService"/>
 		/// </summary>
 		void Unregister();
 	}

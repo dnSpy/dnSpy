@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 	[Export(typeof(ISignatureHelpSourceProvider))]
-	[Name(PredefinedDnSpySignatureHelpSourceProviders.Roslyn)]
+	[Name(PredefinedDsSignatureHelpSourceProviders.Roslyn)]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class SignatureHelpSourceProvider : ISignatureHelpSourceProvider {
 		public ISignatureHelpSource TryCreateSignatureHelpSource(ITextBuffer textBuffer) => new SignatureHelpSource();

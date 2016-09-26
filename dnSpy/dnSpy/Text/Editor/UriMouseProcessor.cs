@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IMouseProcessorProvider))]
-	[Name(PredefinedDnSpyMouseProcessorProviders.Uri)]
+	[Name(PredefinedDsMouseProcessorProviders.Uri)]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class UriMouseProcessorProvider : IMouseProcessorProvider {

@@ -366,14 +366,14 @@ namespace dnSpy.Debugger {
 	sealed class DebuggerSettingsImpl : DebuggerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("91F1ED94-1BEA-4853-9240-B542A7D022CA");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		DebuggerSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		DebuggerSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			UseHexadecimal = sect.Attribute<bool?>(nameof(UseHexadecimal)) ?? UseHexadecimal;
 			SyntaxHighlightCallStack = sect.Attribute<bool?>(nameof(SyntaxHighlightCallStack)) ?? SyntaxHighlightCallStack;
 			SyntaxHighlightBreakpoints = sect.Attribute<bool?>(nameof(SyntaxHighlightBreakpoints)) ?? SyntaxHighlightBreakpoints;
@@ -400,7 +400,7 @@ namespace dnSpy.Debugger {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseHexadecimal), UseHexadecimal);
 			sect.Attribute(nameof(SyntaxHighlightCallStack), SyntaxHighlightCallStack);
 			sect.Attribute(nameof(SyntaxHighlightBreakpoints), SyntaxHighlightBreakpoints);

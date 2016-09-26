@@ -112,12 +112,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		readonly MethodDef ownerMethod;
 
-		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
+		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
 			this.OwnerModule = ownerModule;
 			this.ownerMethod = ownerMethod;
 			this.origOptions = options;
 
-			TypeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
+			TypeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				CanAddGenericTypeVar = ownerType.HasGenericParameters,
 				CanAddGenericMethodVar = ownerMethod.MethodSig.GetGenParamCount() > 0,
 				OwnerType = ownerType,

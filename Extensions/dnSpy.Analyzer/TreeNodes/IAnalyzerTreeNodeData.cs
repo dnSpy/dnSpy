@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -36,18 +36,18 @@ namespace dnSpy.Analyzer.TreeNodes {
 		string ToString(IDecompiler decompiler);
 
 		/// <summary>
-		/// Called when files have been added/removed from the files list
+		/// Called when documents have been added/removed from the documents list
 		/// </summary>
-		/// <param name="removedAssemblies">Removed files</param>
-		/// <param name="addedAssemblies">Added files</param>
+		/// <param name="removedAssemblies">Removed documents</param>
+		/// <param name="addedAssemblies">Added documents</param>
 		/// <returns></returns>
-		bool HandleAssemblyListChanged(IDnSpyFile[] removedAssemblies, IDnSpyFile[] addedAssemblies);
+		bool HandleAssemblyListChanged(IDsDocument[] removedAssemblies, IDsDocument[] addedAssemblies);
 
 		/// <summary>
-		/// Called when a file has been modified
+		/// Called when documents have been modified
 		/// </summary>
-		/// <param name="file">Files</param>
+		/// <param name="documents">Documents</param>
 		/// <returns></returns>
-		bool HandleModelUpdated(IDnSpyFile[] files);
+		bool HandleModelUpdated(IDsDocument[] documents);
 	}
 }

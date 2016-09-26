@@ -28,7 +28,7 @@ using dnSpy.Contracts.Command;
 namespace dnSpy.Commands {
 	sealed class RegisteredCommandElement : IRegisteredCommandElement {
 		public ICommandTargetCollection CommandTarget { get; }
-		readonly CommandManager commandManager;
+		readonly CommandService commandService;
 		readonly KeyShortcutCollection keyShortcutCollection;
 		readonly List<CommandTargetFilterInfo> commandTargetInfos;
 		WeakReference weakSourceElement;
@@ -109,16 +109,16 @@ namespace dnSpy.Commands {
 			}
 		}
 
-		public RegisteredCommandElement(CommandManager commandManager, UIElement sourceElement, KeyShortcutCollection keyShortcutCollection, object target) {
-			if (commandManager == null)
-				throw new ArgumentNullException(nameof(commandManager));
+		public RegisteredCommandElement(CommandService commandService, UIElement sourceElement, KeyShortcutCollection keyShortcutCollection, object target) {
+			if (commandService == null)
+				throw new ArgumentNullException(nameof(commandService));
 			if (sourceElement == null)
 				throw new ArgumentNullException(nameof(sourceElement));
 			if (keyShortcutCollection == null)
 				throw new ArgumentNullException(nameof(keyShortcutCollection));
 			if (target == null)
 				throw new ArgumentNullException(nameof(target));
-			this.commandManager = commandManager;
+			this.commandService = commandService;
 			this.weakSourceElement = new WeakReference(sourceElement);
 			this.weakTarget = new WeakReference(target);
 			this.keyShortcutCollection = keyShortcutCollection;
@@ -196,7 +196,7 @@ namespace dnSpy.Commands {
 			if (target == null)
 				return;
 
-			var cmd = commandManager.CreateCommandInfo(target, e.Text);
+			var cmd = commandService.CreateCommandInfo(target, e.Text);
 			if (cmd == null)
 				return;
 

@@ -33,7 +33,7 @@ namespace dnSpy.Text.Editor {
 	[Name(PredefinedMarginNames.LineNumber)]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Document)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveLineNumberMargin)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveLineNumberMargin)]
 	[Order(Before = PredefinedMarginNames.Spacer)]
 	sealed class LineNumberMarginProvider : IWpfTextViewMarginProvider {
 		readonly IClassificationFormatMapService classificationFormatMapService;
@@ -48,7 +48,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) {
-			if (wpfTextViewHost.TextView.Roles.Contains(PredefinedDnSpyTextViewRoles.CustomLineNumberMargin))
+			if (wpfTextViewHost.TextView.Roles.Contains(PredefinedDsTextViewRoles.CustomLineNumberMargin))
 				return null;
 			return new LineNumberMargin(wpfTextViewHost, classificationFormatMapService, themeClassificationTypeService, textFormatterProvider);
 		}

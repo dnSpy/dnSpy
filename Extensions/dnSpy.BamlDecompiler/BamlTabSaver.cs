@@ -25,8 +25,8 @@ using System.Threading;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Decompiler;
 using Microsoft.Win32;
 
@@ -40,14 +40,14 @@ namespace dnSpy.BamlDecompiler {
 			this.messageBoxService = messageBoxService;
 		}
 
-		public ITabSaver Create(IFileTab tab) => BamlTabSaver.TryCreate(tab, messageBoxService);
+		public ITabSaver Create(IDocumentTab tab) => BamlTabSaver.TryCreate(tab, messageBoxService);
 	}
 
 	sealed class BamlTabSaver : ITabSaver {
 		public bool CanSave => true;
 		public string MenuHeader => bamlNode.DisassembleBaml ? dnSpy_BamlDecompiler_Resources.SaveBAML : dnSpy_BamlDecompiler_Resources.SaveXAML;
 
-		public static BamlTabSaver TryCreate(IFileTab tab, IMessageBoxService messageBoxService) {
+		public static BamlTabSaver TryCreate(IDocumentTab tab, IMessageBoxService messageBoxService) {
 			var uiContext = tab.UIContext as IDocumentViewer;
 			if (uiContext == null)
 				return null;
@@ -61,12 +61,12 @@ namespace dnSpy.BamlDecompiler {
 			return new BamlTabSaver(tab, bamlNode, uiContext, messageBoxService);
 		}
 
-		readonly IFileTab tab;
+		readonly IDocumentTab tab;
 		readonly BamlResourceElementNode bamlNode;
 		readonly IDocumentViewer documentViewer;
 		readonly IMessageBoxService messageBoxService;
 
-		BamlTabSaver(IFileTab tab, BamlResourceElementNode bamlNode, IDocumentViewer documentViewer, IMessageBoxService messageBoxService) {
+		BamlTabSaver(IDocumentTab tab, BamlResourceElementNode bamlNode, IDocumentViewer documentViewer, IMessageBoxService messageBoxService) {
 			this.tab = tab;
 			this.bamlNode = bamlNode;
 			this.documentViewer = documentViewer;

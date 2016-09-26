@@ -46,8 +46,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		readonly ScriptControl scriptControl;
 		readonly ScriptControlVM scriptControlVM;
 
-		protected ScriptContent(IThemeManager themeManager, IReplEditorProvider replEditorProvider, ReplEditorOptions replOpts, ReplSettings replSettings, IServiceLocator serviceLocator, string appearanceCategory) {
-			replOpts.Roles.Add(PredefinedDnSpyTextViewRoles.RoslynRepl);
+		protected ScriptContent(IThemeService themeService, IReplEditorProvider replEditorProvider, ReplEditorOptions replOpts, ReplSettings replSettings, IServiceLocator serviceLocator, string appearanceCategory) {
+			replOpts.Roles.Add(PredefinedDsTextViewRoles.RoslynRepl);
 			this.replEditor = replEditorProvider.Create(replOpts);
 			replEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, appearanceCategory);
 			this.scriptControl = new ScriptControl();
@@ -57,7 +57,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			RoslynReplEditorUtils.AddInstance(scriptControlVM, replEditor.TextView);
 			this.replEditor.Tag = this;
 			this.scriptControl.DataContext = this.scriptControlVM;
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 		}
 
 		void ScriptControlVM_OnCommandExecuted(object sender, EventArgs e) {
@@ -67,7 +67,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		public static ScriptContent GetScriptContent(IReplEditor replEditor) => (ScriptContent)replEditor.Tag;
 		protected abstract ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator, ReplSettings replSettings);
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) =>
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) =>
 			scriptControlVM.RefreshThemeFields();
 		public void OnClose() { }
 		public void OnShow() { }

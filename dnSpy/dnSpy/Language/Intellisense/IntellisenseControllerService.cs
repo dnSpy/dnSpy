@@ -36,7 +36,7 @@ namespace dnSpy.Language.Intellisense {
 	[ContentType(ContentTypes.Any)]
 	[TextViewRole(PredefinedTextViewRoles.Editable)]
 	[TextViewRole(PredefinedTextViewRoles.EmbeddedPeekTextView)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveIntellisenseControllers)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveIntellisenseControllers)]
 	sealed class IntellisenseControllerService : IWpfTextViewConnectionListener {
 		readonly Lazy<IIntellisenseControllerProvider, IContentTypeMetadata>[] intellisenseControllerProviders;
 

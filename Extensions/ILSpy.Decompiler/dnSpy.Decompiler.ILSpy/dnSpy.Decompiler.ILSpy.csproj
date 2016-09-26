@@ -61,7 +61,7 @@
     <Compile Include="Settings\DecompilerSettingsTabProvider.cs" />
     <Compile Include="Settings\ILDecompilerSettingsTab.cs" />
     <Compile Include="Settings\ILSettingsImpl.cs" />
-    <Compile Include="Settings\DecompilerSettingsManagerImpl.cs" />
+    <Compile Include="Settings\DecompilerSettingsServiceImpl.cs" />
     <Compile Include="Settings\SettingsConstants.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="VisualBasic\DecompilerCreator.cs" />

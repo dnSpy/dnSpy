@@ -46,7 +46,7 @@ namespace dnSpy.BackgroundImage {
 					@"d|pack://application:,,,/dnSpy;component/Images/DefaultWatermarkDark.png",
 				},
 			};
-			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDnSpyTextViewRoles.DocumentViewer);
+			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer);
 		}
 
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_Repl)]
@@ -56,7 +56,7 @@ namespace dnSpy.BackgroundImage {
 			public double UIOrder => BackgroundImageOptionDefinitionConstants.UIOrder_Repl;
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
-			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDnSpyTextViewRoles.ReplEditor);
+			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.ReplEditor);
 		}
 
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_CodeEditor)]
@@ -66,7 +66,7 @@ namespace dnSpy.BackgroundImage {
 			public double UIOrder => BackgroundImageOptionDefinitionConstants.UIOrder_CodeEditor;
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
-			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDnSpyTextViewRoles.CodeEditor);
+			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.CodeEditor);
 		}
 
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_Logger)]
@@ -76,7 +76,7 @@ namespace dnSpy.BackgroundImage {
 			public double UIOrder => BackgroundImageOptionDefinitionConstants.UIOrder_Logger;
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
-			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDnSpyTextViewRoles.LogEditor);
+			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.LogEditor);
 		}
 	}
 }

@@ -17,7 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -27,12 +27,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public SourceRef? SourceRef { get; set; }
 
 		public override bool Activate() {
-			Context.AnalyzerManager.OnActivated(this);
+			Context.AnalyzerService.OnActivated(this);
 			return true;
 		}
 
-		public override bool HandleAssemblyListChanged(IDnSpyFile[] removedAssemblies, IDnSpyFile[] addedAssemblies) {
-			foreach (IDnSpyFile asm in removedAssemblies) {
+		public override bool HandleAssemblyListChanged(IDsDocument[] removedAssemblies, IDsDocument[] addedAssemblies) {
+			foreach (var asm in removedAssemblies) {
 				if (this.Member.Module == asm.ModuleDef)
 					return false; // remove this node
 			}
@@ -40,13 +40,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return true;
 		}
 
-		public override bool HandleModelUpdated(IDnSpyFile[] files) {
+		public override bool HandleModelUpdated(IDsDocument[] documents) {
 			if (this.Member.Module == null)
 				return false; // remove this node
 			if ((this.Member is IField || this.Member is IMethod || this.Member is PropertyDef || this.Member is EventDef) &&
 				this.Member.DeclaringType == null)
 				return false;
-			HandleModelUpdated(this.TreeNode, files);
+			HandleModelUpdated(this.TreeNode, documents);
 			return true;
 		}
 	}

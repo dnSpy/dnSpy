@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	/// <summary>
@@ -26,13 +26,13 @@ namespace dnSpy.AsmEditor.Commands {
 	/// the same <see cref="INamespaceNode"/> is used all the time.
 	/// </summary>
 	sealed class NamespaceNodeCreator {
-		readonly IModuleFileNode modNode;
+		readonly IModuleDocumentNode modNode;
 		readonly INamespaceNode nsNode;
 		readonly bool nsNodeCreated;
 
 		public INamespaceNode NamespaceNode => nsNode;
 
-		public IEnumerable<IFileTreeNodeData> OriginalNodes {
+		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
 			get {
 				yield return modNode;
 				if (!nsNodeCreated)
@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		public NamespaceNodeCreator(string ns, IModuleFileNode modNode) {
+		public NamespaceNodeCreator(string ns, IModuleDocumentNode modNode) {
 			this.modNode = modNode;
 			this.nsNode = modNode.FindNode(ns);
 			if (this.nsNode == null) {

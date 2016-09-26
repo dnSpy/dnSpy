@@ -25,8 +25,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	sealed class RoslynCodeDocument : ICodeDocument {
 		public string Name => Info.Name;
 		public string NameNoExtension { get; }
-		public IDnSpyWpfTextView TextView => codeEditor.TextView;
-		public IDnSpyWpfTextViewHost TextViewHost => codeEditor.TextViewHost;
+		public IDsWpfTextView TextView => codeEditor.TextView;
+		public IDsWpfTextViewHost TextViewHost => codeEditor.TextViewHost;
 		public DocumentInfo Info { get; }
 
 		readonly ICodeEditor codeEditor;

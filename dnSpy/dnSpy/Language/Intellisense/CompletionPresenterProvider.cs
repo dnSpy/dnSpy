@@ -34,14 +34,14 @@ namespace dnSpy.Language.Intellisense {
 	[ContentType(ContentTypes.Any)]
 	sealed class CompletionPresenterProvider : IIntellisensePresenterProvider {
 		readonly IImageMonikerService imageMonikerService;
-		readonly IImageManager imageManager;
+		readonly IImageService imageService;
 		readonly Lazy<ICompletionTextElementProviderService> completionTextElementProviderService;
 		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
 
 		[ImportingConstructor]
-		CompletionPresenterProvider(IImageMonikerService imageMonikerService, IImageManager imageManager, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>> completionUIElementProviders) {
+		CompletionPresenterProvider(IImageMonikerService imageMonikerService, IImageService imageService, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>> completionUIElementProviders) {
 			this.imageMonikerService = imageMonikerService;
-			this.imageManager = imageManager;
+			this.imageService = imageService;
 			this.completionTextElementProviderService = completionTextElementProviderService;
 			this.completionUIElementProviders = Orderer.Order(completionUIElementProviders).ToArray();
 		}
@@ -50,7 +50,7 @@ namespace dnSpy.Language.Intellisense {
 			var completionSession = session as ICompletionSession;
 			if (completionSession == null)
 				return null;
-			return new CompletionPresenter(imageMonikerService, imageManager, completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
+			return new CompletionPresenter(imageMonikerService, imageService, completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
 		}
 	}
 }

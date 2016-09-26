@@ -30,21 +30,21 @@ namespace dnSpy.Roslyn.Shared.Glyphs {
 
 	[Export(typeof(IRoslynGlyphService))]
 	sealed class RoslynGlyphService : IRoslynGlyphService {
-		readonly IImageManager imageManager;
+		readonly IImageService imageService;
 
 		[ImportingConstructor]
-		RoslynGlyphService(IImageManager imageManager) {
-			this.imageManager = imageManager;
+		RoslynGlyphService(IImageService imageService) {
+			this.imageService = imageService;
 		}
 
 		public ImageSource GetImage(Glyph glyph, BackgroundType bgType) {
 			var imgRef = glyph.GetImageReference();
-			return imgRef == null ? null : imageManager.GetImage(imgRef.Value, bgType);
+			return imgRef == null ? null : imageService.GetImage(imgRef.Value, bgType);
 		}
 
 		public ImageSource GetImage(Glyph glyph, Color? color) {
 			var imgRef = glyph.GetImageReference();
-			return imgRef == null ? null : imageManager.GetImage(imgRef.Value, color);
+			return imgRef == null ? null : imageService.GetImage(imgRef.Value, color);
 		}
 	}
 }

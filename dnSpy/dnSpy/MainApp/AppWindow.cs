@@ -28,8 +28,8 @@ using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Themes;
@@ -39,15 +39,15 @@ using dnSpy.Events;
 
 namespace dnSpy.MainApp {
 	[Export, Export(typeof(IAppWindow))]
-	sealed class AppWindow : IAppWindow, IDnSpyLoaderContentProvider {
-		public IFileTabManager FileTabManager => fileTabManager;
-		readonly IFileTabManager fileTabManager;
+	sealed class AppWindow : IAppWindow, IDsLoaderContentProvider {
+		public IDocumentTabService DocumentTabService => documentTabService;
+		readonly IDocumentTabService documentTabService;
 
-		public IFileTreeView FileTreeView => fileTabManager.FileTreeView;
+		public IDocumentTreeView DocumentTreeView => documentTabService.DocumentTreeView;
 
-		public IMainToolWindowManager ToolWindowManager => mainWindowControl;
+		public IDsToolWindowService ToolWindowService => mainWindowControl;
 
-		public IDecompilerManager DecompilerManager => decompilerManager;
+		public IDecompilerService DecompilerManager => decompilerService;
 
 		public IAppStatusBar StatusBar => statusBar;
 		readonly AppStatusBar statusBar;
@@ -74,54 +74,54 @@ namespace dnSpy.MainApp {
 			const string SAVEDWINDOWSTATE_SECTION = "SavedWindowState";
 			const string MAINWINDOWCONTROLSTATE_SECTION = "MainWindowControlState";
 
-			readonly ISettingsManager settingsManager;
+			readonly ISettingsService settingsService;
 
 			public SavedWindowState SavedWindowState;
 			public MainWindowControlState MainWindowControlState;
 
-			public UISettings(ISettingsManager settingsManager) {
-				this.settingsManager = settingsManager;
+			public UISettings(ISettingsService settingsService) {
+				this.settingsService = settingsService;
 			}
 
 			public void Read() {
-				var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+				var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 				this.SavedWindowState = new SavedWindowState().Read(sect.GetOrCreateSection(SAVEDWINDOWSTATE_SECTION));
 				this.MainWindowControlState = new MainWindowControlState().Read(sect.GetOrCreateSection(MAINWINDOWCONTROLSTATE_SECTION));
 			}
 
 			public void Write() {
-				var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+				var sect = settingsService.RecreateSection(SETTINGS_GUID);
 				SavedWindowState.Write(sect.GetOrCreateSection(SAVEDWINDOWSTATE_SECTION));
 				MainWindowControlState.Write(sect.GetOrCreateSection(MAINWINDOWCONTROLSTATE_SECTION));
 			}
 		}
 
 		readonly UISettings uiSettings;
-		readonly IWpfCommandManager wpfCommandManager;
+		readonly IWpfCommandService wpfCommandService;
 		readonly StackedContent<IStackedContentChild> stackedContent;
-		readonly IThemeManager themeManager;
-		readonly IImageManager imageManager;
+		readonly IThemeService themeService;
+		readonly IImageService imageService;
 		readonly AppToolBar appToolBar;
 		readonly MainWindowControl mainWindowControl;
-		readonly IDecompilerManager decompilerManager;
+		readonly IDecompilerService decompilerService;
 
 		[ImportingConstructor]
-		AppWindow(IThemeManager themeManager, IImageManager imageManager, IAppSettings appSettings, ISettingsManager settingsManager, IFileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager, IDecompilerManager decompilerManager) {
+		AppWindow(IThemeService themeService, IImageService imageService, IAppSettings appSettings, ISettingsService settingsService, IDocumentTabService documentTabService, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandService wpfCommandService, IDecompilerService decompilerService) {
 			this.assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
-			this.uiSettings = new UISettings(settingsManager);
+			this.uiSettings = new UISettings(settingsService);
 			this.uiSettings.Read();
 			this.appSettings = appSettings;
 			this.stackedContent = new StackedContent<IStackedContentChild>(margin: new Thickness(6));
-			this.themeManager = themeManager;
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			this.imageManager = imageManager;
-			this.fileTabManager = fileTabManager;
+			this.themeService = themeService;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			this.imageService = imageService;
+			this.documentTabService = documentTabService;
 			this.statusBar = new AppStatusBar();
 			this.appToolBar = appToolBar;
 			this.mainWindowControl = mainWindowControl;
-			this.wpfCommandManager = wpfCommandManager;
-			this.decompilerManager = decompilerManager;
-			this.mainWindowCommands = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
+			this.wpfCommandService = wpfCommandService;
+			this.decompilerService = decompilerService;
+			this.mainWindowCommands = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();
 		}
@@ -135,7 +135,7 @@ namespace dnSpy.MainApp {
 			return asm.GetName().Version.ToString();
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshToolBar();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshToolBar();
 
 		static readonly Rect DefaultWindowLocation = new Rect(10, 10, 1300, 730);
 		public Window InitializeMainWindow() {
@@ -143,9 +143,9 @@ namespace dnSpy.MainApp {
 			sc.AddChild(appToolBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			sc.AddChild(stackedContent, StackedContentChildInfo.CreateVertical(new GridLength(1, GridUnitType.Star)));
 			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
-			mainWindow = new MainWindow(themeManager, imageManager, sc.UIObject);
+			mainWindow = new MainWindow(themeService, imageService, sc.UIObject);
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
-			wpfCommandManager.Add(ControlConstants.GUID_MAINWINDOW, mainWindow);
+			wpfCommandService.Add(ControlConstants.GUID_MAINWINDOW, mainWindow);
 			new SavedWindowStateRestorer(mainWindow, uiSettings.SavedWindowState, DefaultWindowLocation);
 			mainWindow.Closing += MainWindow_Closing;
 			mainWindow.Closed += MainWindow_Closed;
@@ -154,15 +154,15 @@ namespace dnSpy.MainApp {
 			return mainWindow;
 		}
 
-		void IDnSpyLoaderContentProvider.SetLoadingContent(object content) {
+		void IDsLoaderContentProvider.SetLoadingContent(object content) {
 			Debug.Assert(stackedContent.Count == 0);
 			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(content, content));
 		}
 
-		void IDnSpyLoaderContentProvider.RemoveLoadingContent() {
+		void IDsLoaderContentProvider.RemoveLoadingContent() {
 			stackedContent.Clear();
 			stackedContent.AddChild(mainWindowControl);
-			mainWindowControl.Initialize(StackedContentChildImpl.GetOrCreate(fileTabManager.TabGroupManager, fileTabManager.TabGroupManager.UIObject), uiSettings.MainWindowControlState);
+			mainWindowControl.Initialize(StackedContentChildImpl.GetOrCreate(documentTabService.TabGroupService, documentTabService.TabGroupService.UIObject), uiSettings.MainWindowControlState);
 		}
 
 		void MainWindow_Closing(object sender, CancelEventArgs e) {
@@ -179,7 +179,7 @@ namespace dnSpy.MainApp {
 
 		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			if (e.NewFocus == MainWindow) {
-				var g = fileTabManager.TabGroupManager.ActiveTabGroup;
+				var g = documentTabService.TabGroupService.ActiveTabGroup;
 				if (g != null && g.ActiveTabContent != null) {
 					g.SetFocus(g.ActiveTabContent);
 					e.Handled = true;

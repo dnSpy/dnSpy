@@ -28,8 +28,8 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 		static readonly Guid SETTINGS_GUID = new Guid("13C22A09-E143-430E-B2D9-91DA7B2A5388");
 
 		[ImportingConstructor]
-		CSharpReplSettingsImpl(ISettingsManager settingsManager)
-			: base(SETTINGS_GUID, settingsManager) {
+		CSharpReplSettingsImpl(ISettingsService settingsService)
+			: base(SETTINGS_GUID, settingsService) {
 		}
 	}
 }

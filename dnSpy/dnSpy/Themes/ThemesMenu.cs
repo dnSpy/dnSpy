@@ -37,11 +37,11 @@ namespace dnSpy.Themes {
 
 	[ExportMenuItem(OwnerGuid = ThemesConstants.THEMES_GUID, Group = MenuConstants.GROUP_APP_MENU_THEMES_THEMES, Order = 0)]
 	sealed class ThemesMenu : MenuItemBase, IMenuItemProvider {
-		readonly ThemeManager themeManager;
+		readonly ThemeService themeService;
 
 		[ImportingConstructor]
-		ThemesMenu(ThemeManager themeManager) {
-			this.themeManager = themeManager;
+		ThemesMenu(ThemeService themeService) {
+			this.themeService = themeService;
 		}
 
 		public override void Execute(IMenuItemContext context) { }
@@ -63,12 +63,12 @@ namespace dnSpy.Themes {
 		}
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
-			foreach (var theme in themeManager.AllThemesSorted) {
-				if (!themeManager.Settings.ShowAllThemes && !themeManager.IsHighContrast && theme.IsHighContrast)
+			foreach (var theme in themeService.AllThemesSorted) {
+				if (!themeService.Settings.ShowAllThemes && !themeService.IsHighContrast && theme.IsHighContrast)
 					continue;
 				var attr = new ExportMenuItemAttribute { Header = GetThemeHeaderName(theme) };
 				var tmp = theme;
-				var item = new MyMenuItem(ctx => themeManager.Theme = tmp, theme == themeManager.Theme);
+				var item = new MyMenuItem(ctx => themeService.Theme = tmp, theme == themeService.Theme);
 				yield return new CreatedMenuItem(attr, item);
 			}
 		}

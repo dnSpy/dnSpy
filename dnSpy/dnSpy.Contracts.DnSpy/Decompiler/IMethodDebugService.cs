@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
 using Microsoft.VisualStudio.Text;
 

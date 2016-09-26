@@ -23,7 +23,7 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Utilities;
 
@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.IMModules {
 	/// <summary>
 	/// A class that reads the module from the debugged process' address space.
 	/// </summary>
-	sealed class MemoryModuleDefFile : DnSpyDotNetFileBase, IModuleIdHolder {
-		sealed class MyKey : IDnSpyFilenameKey {
+	sealed class MemoryModuleDefFile : DsDotNetDocumentBase, IModuleIdHolder {
+		sealed class MyKey : IDsDocumentNameKey {
 			readonly DnProcess process;
 			readonly ulong address;
 
@@ -57,8 +57,8 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		public override IDnSpyFilenameKey Key => CreateKey(Process, Address);
-		public override DnSpyFileInfo? SerializedFile => null;
+		public override IDsDocumentNameKey Key => CreateKey(Process, Address);
+		public override DsDocumentInfo? SerializedDocument => null;
 		public bool AutoUpdateMemory { get; }
 		public DnProcess Process { get; }
 		public ulong Address { get; }
@@ -75,10 +75,10 @@ namespace dnSpy.Debugger.IMModules {
 			this.AutoUpdateMemory = autoUpdateMemory;
 		}
 
-		public static IDnSpyFilenameKey CreateKey(DnProcess process, ulong address) => new MyKey(process, address);
+		public static IDsDocumentNameKey CreateKey(DnProcess process, ulong address) => new MyKey(process, address);
 
-		protected override List<IDnSpyFile> CreateChildren() {
-			var list = new List<IDnSpyFile>();
+		protected override List<IDsDocument> CreateChildren() {
+			var list = new List<IDsDocument>();
 			if (files != null) {
 				list.AddRange(files);
 				files = null;

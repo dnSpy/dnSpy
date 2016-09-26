@@ -32,14 +32,14 @@ using dnSpy.Contracts.Resources;
 
 namespace dnSpy.AsmEditor.Commands {
 	[ExportAutoLoaded]
-	sealed class ListBoxHelperBase_ImageManagerLoader : IAutoLoaded {
+	sealed class ListBoxHelperBase_ImageServiceLoader : IAutoLoaded {
 		[ImportingConstructor]
-		ListBoxHelperBase_ImageManagerLoader(IImageManager imageManager) {
-			ListBoxHelperBase_ImageManagerLoader.imageManager = imageManager;
+		ListBoxHelperBase_ImageServiceLoader(IImageService imageService) {
+			ListBoxHelperBase_ImageServiceLoader.imageService = imageService;
 		}
 
-		public static IImageManager ImageManager => imageManager;
-		static IImageManager imageManager;
+		public static IImageService ImageService => imageService;
+		static IImageService imageService;
 	}
 
 	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem {
@@ -271,7 +271,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		protected static void Add16x16Image(MenuItem menuItem, string icon, bool isCtxMenu, bool? enable = null) =>
-			ListBoxHelperBase_ImageManagerLoader.ImageManager.Add16x16Image(menuItem, new ImageReference(typeof(ListBoxHelperBase<T>).Assembly, icon), isCtxMenu, enable);
+			ListBoxHelperBase_ImageServiceLoader.ImageService.Add16x16Image(menuItem, new ImageReference(typeof(ListBoxHelperBase<T>).Assembly, icon), isCtxMenu, enable);
 
 		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();

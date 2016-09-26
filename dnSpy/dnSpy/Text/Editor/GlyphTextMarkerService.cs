@@ -53,15 +53,15 @@ namespace dnSpy.Text.Editor {
 
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(PredefinedDnSpyAdornmentLayers.GlyphTextMarker)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[Name(PredefinedDsAdornmentLayers.GlyphTextMarker)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Selection, After = PredefinedAdornmentLayers.Outlining)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
 		static AdornmentLayerDefinition glyphTextMarkerAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public IThemeManager ThemeManager { get; }
-		public IImageManager ImageManager { get; }
+		public IThemeService ThemeService { get; }
+		public IImageService ImageService { get; }
 		public IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		public IEditorFormatMapService EditorFormatMapService { get; }
 		public IEnumerable<IGlyphTextMarkerImpl> AllMarkers => glyphTextMarkers;
@@ -71,10 +71,10 @@ namespace dnSpy.Text.Editor {
 		readonly HashSet<IGlyphTextMarkerImpl> glyphTextMarkers;
 
 		[ImportingConstructor]
-		GlyphTextMarkerService(IModuleIdProvider moduleIdProvider, IThemeManager themeManager, IImageManager imageManager, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, [ImportMany] IEnumerable<Lazy<IGlyphTextMarkerMouseProcessorProvider, IGlyphTextMarkerMouseProcessorProviderMetadata>> glyphTextMarkerMouseProcessorProviders) {
+		GlyphTextMarkerService(IModuleIdProvider moduleIdProvider, IThemeService themeService, IImageService imageService, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, [ImportMany] IEnumerable<Lazy<IGlyphTextMarkerMouseProcessorProvider, IGlyphTextMarkerMouseProcessorProviderMetadata>> glyphTextMarkerMouseProcessorProviders) {
 			this.moduleIdProvider = moduleIdProvider;
-			ThemeManager = themeManager;
-			ImageManager = imageManager;
+			ThemeService = themeService;
+			ImageService = imageService;
 			ViewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			EditorFormatMapService = editorFormatMapService;
 			this.glyphTextMarkers = new HashSet<IGlyphTextMarkerImpl>();

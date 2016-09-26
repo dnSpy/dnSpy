@@ -22,17 +22,17 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
 	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_SETTINGS_LISTENER_DECOMPILER)]
 	sealed class DecompilerAppSettingsModifiedListener : IAppSettingsModifiedListener {
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		DecompilerAppSettingsModifiedListener(IFileTabManager fileTabManager) {
-			this.fileTabManager = fileTabManager;
+		DecompilerAppSettingsModifiedListener(IDocumentTabService documentTabService) {
+			this.documentTabService = documentTabService;
 		}
 
 		public void OnSettingsModified(IAppRefreshSettings appRefreshSettings) {
@@ -57,9 +57,9 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 				RefreshCode<Core.VisualBasic.VBDecompiler>();
 		}
 
-		IEnumerable<Tuple<IFileTab, IDecompiler>> DecompilerTabs {
+		IEnumerable<Tuple<IDocumentTab, IDecompiler>> DecompilerTabs {
 			get {
-				foreach (var tab in fileTabManager.VisibleFirstTabs) {
+				foreach (var tab in documentTabService.VisibleFirstTabs) {
 					var decompiler = (tab.Content as IDecompilerTabContent)?.Decompiler;
 					if (decompiler != null)
 						yield return Tuple.Create(tab, decompiler);
@@ -67,6 +67,6 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			}
 		}
 
-		void RefreshCode<T>() => fileTabManager.Refresh(DecompilerTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
+		void RefreshCode<T>() => documentTabService.Refresh(DecompilerTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
 	}
 }

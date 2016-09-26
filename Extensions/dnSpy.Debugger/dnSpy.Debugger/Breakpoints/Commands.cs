@@ -29,7 +29,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
@@ -40,15 +40,15 @@ namespace dnSpy.Debugger.Breakpoints {
 	[ExportAutoLoaded]
 	sealed class BreakpointsCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		BreakpointsCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<BreakpointManager> breakpointManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
-			cmds.Add(DebugRoutedCommands.DeleteAllBreakpoints, (s, e) => breakpointManager.Value.ClearAskUser(), (s, e) => e.CanExecute = breakpointManager.Value.CanClear, ModifierKeys.Control | ModifierKeys.Shift, Key.F9);
-			cmds.Add(DebugRoutedCommands.ToggleBreakpoint, (s, e) => breakpointManager.Value.ToggleBreakpoint(), (s, e) => e.CanExecute = breakpointManager.Value.CanToggleBreakpoint, ModifierKeys.None, Key.F9);
-			cmds.Add(DebugRoutedCommands.DisableBreakpoint, (s, e) => breakpointManager.Value.DisableBreakpoint(), (s, e) => e.CanExecute = breakpointManager.Value.CanDisableBreakpoint, ModifierKeys.Control, Key.F9);
-			cmds.Add(DebugRoutedCommands.DisableAllBreakpoints, (s, e) => breakpointManager.Value.DisableAllBreakpoints(), (s, e) => e.CanExecute = breakpointManager.Value.CanDisableAllBreakpoints);
-			cmds.Add(DebugRoutedCommands.EnableAllBreakpoints, (s, e) => breakpointManager.Value.EnableAllBreakpoints(), (s, e) => e.CanExecute = breakpointManager.Value.CanEnableAllBreakpoints);
+		BreakpointsCommandLoader(IWpfCommandService wpfCommandService, Lazy<BreakpointService> breakpointService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
+			cmds.Add(DebugRoutedCommands.DeleteAllBreakpoints, (s, e) => breakpointService.Value.ClearAskUser(), (s, e) => e.CanExecute = breakpointService.Value.CanClear, ModifierKeys.Control | ModifierKeys.Shift, Key.F9);
+			cmds.Add(DebugRoutedCommands.ToggleBreakpoint, (s, e) => breakpointService.Value.ToggleBreakpoint(), (s, e) => e.CanExecute = breakpointService.Value.CanToggleBreakpoint, ModifierKeys.None, Key.F9);
+			cmds.Add(DebugRoutedCommands.DisableBreakpoint, (s, e) => breakpointService.Value.DisableBreakpoint(), (s, e) => e.CanExecute = breakpointService.Value.CanDisableBreakpoint, ModifierKeys.Control, Key.F9);
+			cmds.Add(DebugRoutedCommands.DisableAllBreakpoints, (s, e) => breakpointService.Value.DisableAllBreakpoints(), (s, e) => e.CanExecute = breakpointService.Value.CanDisableAllBreakpoints);
+			cmds.Add(DebugRoutedCommands.EnableAllBreakpoints, (s, e) => breakpointService.Value.EnableAllBreakpoints(), (s, e) => e.CanExecute = breakpointService.Value.CanEnableAllBreakpoints);
 
-			cmds.Add(DebugRoutedCommands.ShowBreakpoints, new RelayCommand(a => mainToolWindowManager.Show(BreakpointsToolWindowContent.THE_GUID)));
+			cmds.Add(DebugRoutedCommands.ShowBreakpoints, new RelayCommand(a => toolWindowService.Show(BreakpointsToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowBreakpoints, ModifierKeys.Control | ModifierKeys.Alt, Key.B);
 			cmds.Add(DebugRoutedCommands.ShowBreakpoints, ModifierKeys.Alt, Key.F9);
 		}
@@ -109,20 +109,20 @@ namespace dnSpy.Debugger.Breakpoints {
 
 	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 0)]
 	sealed class CopyBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		readonly IDecompilerManager decompilerManager;
+		readonly IDecompilerService decompilerService;
 		readonly IDebuggerSettings debuggerSettings;
 
 		[ImportingConstructor]
-		CopyBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, IDecompilerManager decompilerManager, IDebuggerSettings debuggerSettings)
+		CopyBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, IDecompilerService decompilerService, IDebuggerSettings debuggerSettings)
 			: base(breakpointsContent) {
-			this.decompilerManager = decompilerManager;
+			this.decompilerService = decompilerService;
 			this.debuggerSettings = debuggerSettings;
 		}
 
 		public override void Execute(BreakpointCtxMenuContext context) {
 			var output = new StringBuilderTextColorOutput();
 			foreach (var vm in context.SelectedItems) {
-				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, decompilerManager.Decompiler);
+				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, decompilerService.Decompiler);
 				printer.WriteName(vm);
 				output.Write(BoxedTextColor.Text, "\t");
 				printer.WriteAssembly(vm);
@@ -211,29 +211,29 @@ namespace dnSpy.Debugger.Breakpoints {
 	[Export, ExportMenuItem(Header = "res:GoToCodeCommand", Icon = "GoToSourceCode", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 0)]
 	sealed class GoToSourceBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		GoToSourceBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager, IModuleIdProvider moduleIdProvider)
+		GoToSourceBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, Lazy<IModuleLoader> moduleLoader, IDocumentTabService documentTabService, IModuleIdProvider moduleIdProvider)
 			: base(breakpointsContent) {
 			this.moduleLoader = moduleLoader;
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
 		public override void Execute(BreakpointCtxMenuContext context) {
 			if (context.SelectedItems.Length == 1)
-				GoTo(moduleIdProvider, fileTabManager, moduleLoader, context.SelectedItems[0], false);
+				GoTo(moduleIdProvider, documentTabService, moduleLoader, context.SelectedItems[0], false);
 		}
 
-		internal static void GoTo(IModuleIdProvider moduleIdProvider, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, BreakpointVM vm, bool newTab) {
+		internal static void GoTo(IModuleIdProvider moduleIdProvider, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, BreakpointVM vm, bool newTab) {
 			if (vm == null)
 				return;
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp == null)
 				return;
-			DebugUtils.GoToIL(moduleIdProvider, fileTabManager, moduleLoader.Value, ilbp.MethodToken.Module, ilbp.MethodToken.Token, ilbp.ILOffset, newTab);
+			DebugUtils.GoToIL(moduleIdProvider, documentTabService, moduleLoader.Value, ilbp.MethodToken.Module, ilbp.MethodToken.Token, ilbp.ILOffset, newTab);
 		}
 
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
@@ -242,20 +242,20 @@ namespace dnSpy.Debugger.Breakpoints {
 	[Export, ExportMenuItem(Header = "res:GoToCodeNewTabCommand", Icon = "GoToSourceCode", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 10)]
 	sealed class GoToSourceNewTabBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		GoToSourceNewTabBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, Lazy<IModuleLoader> moduleLoader, IFileTabManager fileTabManager, IModuleIdProvider moduleIdProvider)
+		GoToSourceNewTabBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, Lazy<IModuleLoader> moduleLoader, IDocumentTabService documentTabService, IModuleIdProvider moduleIdProvider)
 			: base(breakpointsContent) {
 			this.moduleLoader = moduleLoader;
-			this.fileTabManager = fileTabManager;
+			this.documentTabService = documentTabService;
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
 		public override void Execute(BreakpointCtxMenuContext context) {
 			if (context.SelectedItems.Length == 1)
-				GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdProvider, fileTabManager, moduleLoader, context.SelectedItems[0], true);
+				GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdProvider, documentTabService, moduleLoader, context.SelectedItems[0], true);
 		}
 
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;

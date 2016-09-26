@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 
@@ -16,9 +16,9 @@ using dnSpy.Contracts.TreeView;
 namespace Example1.Extension {
 	sealed class TVContext {
 		public bool SomeValue { get; }
-		public IFileTreeNodeData[] Nodes { get; }
+		public IDocumentTreeNodeData[] Nodes { get; }
 
-		public TVContext(bool someValue, IEnumerable<IFileTreeNodeData> nodes) {
+		public TVContext(bool someValue, IEnumerable<IDocumentTreeNodeData> nodes) {
 			this.SomeValue = someValue;
 			this.Nodes = nodes.ToArray();
 		}
@@ -30,14 +30,14 @@ namespace Example1.Extension {
 
 		protected sealed override TVContext CreateContext(IMenuItemContext context) {
 			// Make sure it's the file treeview
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
 
 			// Extract the data needed by the context
 			var nodes = context.Find<ITreeNodeData[]>();
 			if (nodes == null)
 				return null;
-			var newNodes = nodes.OfType<IFileTreeNodeData>();
+			var newNodes = nodes.OfType<IDocumentTreeNodeData>();
 
 			bool someValue = true;
 			return new TVContext(someValue, newNodes);
@@ -78,7 +78,7 @@ namespace Example1.Extension {
 	[ExportMenuItem(Header = "Command #4", Group = Constants.GROUP_TREEVIEW, Order = 30)]
 	sealed class TVCommand4 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) => MsgBox.Instance.Show("Command #4");
-		public override bool IsEnabled(TVContext context) => context.Nodes.Length == 1 && context.Nodes[0] is IModuleFileNode;
+		public override bool IsEnabled(TVContext context) => context.Nodes.Length == 1 && context.Nodes[0] is IModuleDocumentNode;
 	}
 
 	[ExportMenuItem(Group = Constants.GROUP_TREEVIEW, Order = 40)]

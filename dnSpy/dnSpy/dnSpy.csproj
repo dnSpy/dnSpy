@@ -77,7 +77,7 @@
     <Compile Include="BackgroundImage\ImageSourceServiceProvider.cs" />
     <Compile Include="BackgroundImage\RawSettings.cs" />
     <Compile Include="BackgroundImage\WpfTextViewCreationListener.cs" />
-    <Compile Include="Commands\CommandManager.cs" />
+    <Compile Include="Commands\CommandService.cs" />
     <Compile Include="Commands\DefaultCommandInfoProvider.cs" />
     <Compile Include="Commands\KeyShortcutCollection.cs" />
     <Compile Include="Commands\ProviderAndCommand.cs" />
@@ -90,12 +90,12 @@
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
-    <Compile Include="Controls\WpfCommandManager.cs" />
+    <Compile Include="Controls\WpfCommandService.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
-    <Compile Include="Controls\WpfFocusManager.cs" />
+    <Compile Include="Controls\WpfFocusService.cs" />
     <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="Culture\Commands.cs" />
-    <Compile Include="Culture\CultureManager.cs" />
+    <Compile Include="Culture\CultureService.cs" />
     <Compile Include="Culture\CultureSettings.cs" />
     <Compile Include="Culture\LanguageInfo.cs" />
     <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
@@ -103,175 +103,175 @@
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Extension\ExtensionConfig.cs" />
     <Compile Include="Extension\ExtensionConfigReader.cs" />
-    <Compile Include="Extension\ExtensionManager.cs" />
+    <Compile Include="Extension\ExtensionService.cs" />
     <Compile Include="Extension\LoadedExtension.cs" />
-    <Compile Include="Files\AssemblyResolver.cs" />
-    <Compile Include="Files\DefaultDnSpyFileLoader.cs" />
-    <Compile Include="Files\DefaultDnSpyFileProvider.cs" />
-    <Compile Include="Files\FileLoader.cs" />
-    <Compile Include="Files\FileManager.cs" />
-    <Compile Include="Files\FileManagerAppSettingsModifiedListener.cs" />
-    <Compile Include="Files\FileManagerOptionProvider.cs" />
-    <Compile Include="Files\FileManagerProvider.cs" />
-    <Compile Include="Files\FileManagerSettings.cs" />
-    <Compile Include="Files\IDnSpyFileLoader.cs" />
-    <Compile Include="Files\MethodAnnotations.cs" />
-    <Compile Include="Files\Tabs\AppCommandLineArgsHandler.cs" />
-    <Compile Include="Files\Tabs\AsyncShowResult.cs" />
-    <Compile Include="Files\Tabs\Commands.cs" />
-    <Compile Include="Files\Tabs\CopyTokenCommand.cs" />
-    <Compile Include="Files\Tabs\DecompilationCache.cs" />
-    <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
-    <Compile Include="Files\Tabs\DefaultFileList.cs" />
-    <Compile Include="Files\Tabs\DefaultFileTabContentProvider.cs" />
-    <Compile Include="Files\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
+    <Compile Include="Documents\AssemblyResolver.cs" />
+    <Compile Include="Documents\DefaultDsDocumentLoader.cs" />
+    <Compile Include="Documents\DefaultDsDocumentProvider.cs" />
+    <Compile Include="Documents\DsDocumentLoader.cs" />
+    <Compile Include="Documents\DsDocumentService.cs" />
+    <Compile Include="Documents\DsDocumentServiceAppSettingsModifiedListener.cs" />
+    <Compile Include="Documents\DsDocumentServiceOptionProvider.cs" />
+    <Compile Include="Documents\DsDocumentServiceProvider.cs" />
+    <Compile Include="Documents\DsDocumentServiceSettings.cs" />
+    <Compile Include="Documents\IDsDocumentLoader.cs" />
+    <Compile Include="Documents\MethodAnnotations.cs" />
+    <Compile Include="Documents\Tabs\AppCommandLineArgsHandler.cs" />
+    <Compile Include="Documents\Tabs\AsyncShowResult.cs" />
+    <Compile Include="Documents\Tabs\Commands.cs" />
+    <Compile Include="Documents\Tabs\CopyTokenCommand.cs" />
+    <Compile Include="Documents\Tabs\DecompilationCache.cs" />
+    <Compile Include="Documents\Tabs\DefaultDecompileNode.cs" />
+    <Compile Include="Documents\Tabs\DefaultDocumentList.cs" />
+    <Compile Include="Documents\Tabs\DefaultDocumentTabContentProvider.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
       <DependentUpon>ExportToProjectDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Files\Tabs\Dialogs\ExportToProjectSettings.cs" />
-    <Compile Include="Files\Tabs\Dialogs\ExportToProjectVM.cs" />
-    <Compile Include="Files\Tabs\Dialogs\FileListColumnConverter.cs" />
-    <Compile Include="Files\Tabs\Dialogs\FileListPrinter.cs" />
-    <Compile Include="Files\Tabs\Dialogs\FileListVM.cs" />
-    <Compile Include="Files\Tabs\Dialogs\GACFileColumnConverter.cs" />
-    <Compile Include="Files\Tabs\Dialogs\GACFileFinder.cs" />
-    <Compile Include="Files\Tabs\Dialogs\GACFilePrinter.cs" />
-    <Compile Include="Files\Tabs\Dialogs\GACFileVM.cs" />
-    <Compile Include="Files\Tabs\Dialogs\OpenFileListDlg.xaml.cs">
-      <DependentUpon>OpenFileListDlg.xaml</DependentUpon>
+    <Compile Include="Documents\Tabs\Dialogs\ExportToProjectSettings.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\ExportToProjectVM.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\DocumentListColumnConverter.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\DocumentListPrinter.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\DocumentListVM.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\GACFileColumnConverter.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\GACFileFinder.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\GACFilePrinter.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\GACFileVM.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListDlg.xaml.cs">
+      <DependentUpon>OpenDocumentListDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Files\Tabs\Dialogs\OpenFileListVM.cs" />
-    <Compile Include="Files\Tabs\Dialogs\OpenFilesHelper.cs" />
-    <Compile Include="Files\Tabs\Dialogs\OpenFromGAC.cs" />
-    <Compile Include="Files\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
+    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListVM.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentsHelper.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\OpenFromGAC.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
       <DependentUpon>OpenFromGACDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Files\Tabs\Dialogs\OpenFromGACVM.cs" />
-    <Compile Include="Files\Tabs\Dialogs\TabColumnConverter.cs" />
-    <Compile Include="Files\Tabs\Dialogs\TabPrinter.cs" />
-    <Compile Include="Files\Tabs\Dialogs\TabsDlg.xaml.cs">
+    <Compile Include="Documents\Tabs\Dialogs\OpenFromGACVM.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\TabColumnConverter.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\TabPrinter.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\TabsDlg.xaml.cs">
       <DependentUpon>TabsDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Files\Tabs\Dialogs\TabsVM.cs" />
-    <Compile Include="Files\Tabs\Dialogs\TabsVMSettings.cs" />
-    <Compile Include="Files\Tabs\Dialogs\TabVM.cs" />
-    <Compile Include="Files\Tabs\DnSpyFileInfoSerializer.cs" />
-    <Compile Include="Files\Tabs\DocViewer\BracePairCollection.cs" />
-    <Compile Include="Files\Tabs\DocViewer\BracePairDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\BracePairService.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DebugInfoDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewer.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerCommandInfoProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerCommandTargetFilter.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerCommandTargetFilterProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerControl.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerHighlightReferencesTagger.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerMouseProcessor.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerOutput.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DocumentViewerService.cs" />
-    <Compile Include="Files\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
-    <Compile Include="Files\Tabs\DocViewer\HighlightRelatedKeywordsDocumentViewerReferenceEnabler.cs" />
-    <Compile Include="Files\Tabs\DocViewer\LazyStructureVisualizerCollection.cs" />
-    <Compile Include="Files\Tabs\DocViewer\LineSeparatorCollection.cs" />
-    <Compile Include="Files\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\LineSeparatorViewTagger.cs" />
-    <Compile Include="Files\Tabs\DocViewer\MethodDebugInfoMethodOffsetSpanMap.cs" />
-    <Compile Include="Files\Tabs\DocViewer\SpanDataCollectionUtilities.cs" />
-    <Compile Include="Files\Tabs\DocViewer\SpanDataReferenceInfoExtensions.cs" />
-    <Compile Include="Files\Tabs\DocViewer\SpanReferenceDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\StructureVisualizerCollection.cs" />
-    <Compile Include="Files\Tabs\DocViewer\StructureVisualizerDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\StructureVisualizerDocumentViewerListener.cs" />
-    <Compile Include="Files\Tabs\DocViewer\StructureVisualizerServiceDataProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\DocumentViewerToolTipService.cs" />
-    <Compile Include="Files\Tabs\EntryPointCommands.cs" />
-    <Compile Include="Files\Tabs\FileList.cs" />
-    <Compile Include="Files\Tabs\FileListLoader.cs" />
-    <Compile Include="Files\Tabs\FileListManager.cs" />
-    <Compile Include="Files\Tabs\FileTabContentFactoryContext.cs" />
-    <Compile Include="Files\Tabs\FileTabContentFactoryManager.cs" />
-    <Compile Include="Files\Tabs\FileTabManager.cs" />
-    <Compile Include="Files\Tabs\FileTabManagerLoader.cs" />
-    <Compile Include="Files\Tabs\FileTabManagerSettings.cs" />
-    <Compile Include="Files\Tabs\FileTabSerializer.cs" />
-    <Compile Include="Files\Tabs\FileTabUIContextLocator.cs" />
-    <Compile Include="Files\Tabs\FileTabUIContextLocatorProvider.cs" />
-    <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
-    <Compile Include="Files\Tabs\GoToTokenCommand.cs" />
-    <Compile Include="Files\Tabs\IDecompilationCache.cs" />
-    <Compile Include="Files\Tabs\IFileTabUIContextLocatorProvider.cs" />
-    <Compile Include="Files\Tabs\NavigationCommands.cs" />
-    <Compile Include="Files\Tabs\NodeDecompiler.cs" />
-    <Compile Include="Files\Tabs\NodeReferenceFileTabContentProvider.cs" />
-    <Compile Include="Files\Tabs\NodeTabSaver.cs" />
-    <Compile Include="Files\Tabs\NullObjects.cs" />
-    <Compile Include="Files\Tabs\RedecompileTabs.cs" />
-    <Compile Include="Files\Tabs\RefreshResourcesCommand.cs" />
-    <Compile Include="Files\Tabs\ResourceCommands.cs" />
-    <Compile Include="Files\Tabs\SaveCommands.cs" />
-    <Compile Include="Files\Tabs\SaveManager.cs" />
-    <Compile Include="Files\Tabs\SearchMsdnCommand.cs" />
-    <Compile Include="Files\Tabs\SerializedTabs.cs" />
-    <Compile Include="Files\Tabs\Settings\DisplaySettingsTab.cs" />
-    <Compile Include="Files\Tabs\TabCommands.cs" />
-    <Compile Include="Files\Tabs\TabContentImpl.cs" />
-    <Compile Include="Files\Tabs\TabHistory.cs" />
-    <Compile Include="Files\Tabs\DocViewer\Commands.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DecompileFileTabContent.cs" />
-    <Compile Include="Files\Tabs\DocViewer\DecompileNodeContext.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipSettings.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\CodeToolTipWriter.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\DnlibReferenceDocumentViewerToolTipProvider.cs" />
-    <Compile Include="Files\Tabs\DocViewer\ToolTips\ToolTipProviderContext.cs" />
-    <Compile Include="Files\Tabs\DocViewer\WaitAdorner.xaml.cs">
+    <Compile Include="Documents\Tabs\Dialogs\TabsVM.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\TabsVMSettings.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\TabVM.cs" />
+    <Compile Include="Documents\Tabs\DsDocumentInfoSerializer.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\BracePairCollection.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\BracePairDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\BracePairService.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DebugInfoDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewer.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandInfoProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandTargetFilter.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandTargetFilterProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerControl.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerHighlightReferencesTagger.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerMouseProcessor.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerOutput.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerService.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\HighlightRelatedKeywordsDocumentViewerReferenceEnabler.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\LazyStructureVisualizerCollection.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\LineSeparatorCollection.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\LineSeparatorViewTagger.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\MethodDebugInfoMethodOffsetSpanMap.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\SpanDataCollectionUtilities.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\SpanDataReferenceInfoExtensions.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\SpanReferenceDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerCollection.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerDocumentViewerListener.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerServiceDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\DocumentViewerToolTipService.cs" />
+    <Compile Include="Documents\Tabs\EntryPointCommands.cs" />
+    <Compile Include="Documents\Tabs\DocumentList.cs" />
+    <Compile Include="Documents\Tabs\DocumentListLoader.cs" />
+    <Compile Include="Documents\Tabs\DocumentListService.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabContentFactoryContext.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabContentFactoryService.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabService.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabServiceLoader.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabServiceSettings.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabSerializer.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabUIContextLocator.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabUIContextLocatorProvider.cs" />
+    <Compile Include="Documents\Tabs\DocumentTreeNodeDecompiler.cs" />
+    <Compile Include="Documents\Tabs\GoToTokenCommand.cs" />
+    <Compile Include="Documents\Tabs\IDecompilationCache.cs" />
+    <Compile Include="Documents\Tabs\IDocumentTabUIContextLocatorProvider.cs" />
+    <Compile Include="Documents\Tabs\NavigationCommands.cs" />
+    <Compile Include="Documents\Tabs\NodeDecompiler.cs" />
+    <Compile Include="Documents\Tabs\NodeReferenceDocumentTabContentProvider.cs" />
+    <Compile Include="Documents\Tabs\NodeTabSaver.cs" />
+    <Compile Include="Documents\Tabs\NullObjects.cs" />
+    <Compile Include="Documents\Tabs\RedecompileTabs.cs" />
+    <Compile Include="Documents\Tabs\RefreshResourcesCommand.cs" />
+    <Compile Include="Documents\Tabs\ResourceCommands.cs" />
+    <Compile Include="Documents\Tabs\SaveCommands.cs" />
+    <Compile Include="Documents\Tabs\SaveService.cs" />
+    <Compile Include="Documents\Tabs\SearchMsdnCommand.cs" />
+    <Compile Include="Documents\Tabs\SerializedTabs.cs" />
+    <Compile Include="Documents\Tabs\Settings\DisplaySettingsTab.cs" />
+    <Compile Include="Documents\Tabs\TabCommands.cs" />
+    <Compile Include="Documents\Tabs\TabContentImpl.cs" />
+    <Compile Include="Documents\Tabs\TabHistory.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Commands.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DecompileDocumentTabContent.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DecompileNodeContext.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipSettings.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipWriter.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\DnlibReferenceDocumentViewerToolTipProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\ToolTips\ToolTipProviderContext.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\WaitAdorner.xaml.cs">
       <DependentUpon>WaitAdorner.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Files\Tabs\TabMiscOptionProvider.cs" />
-    <Compile Include="Files\Tabs\TreeNodeReferenceFileTabContentProvider.cs" />
-    <Compile Include="Files\TreeView\AssemblyFileNode.cs" />
-    <Compile Include="Files\TreeView\AssemblyReferenceNode.cs" />
-    <Compile Include="Files\TreeView\BaseTypeFolderNode.cs" />
-    <Compile Include="Files\TreeView\BaseTypeNode.cs" />
-    <Compile Include="Files\TreeView\DefaultDnSpyFileNodeProvider.cs" />
-    <Compile Include="Files\TreeView\DerivedTypeNode.cs" />
-    <Compile Include="Files\TreeView\DerivedTypesFinder.cs" />
-    <Compile Include="Files\TreeView\DerivedTypesFolderNode.cs" />
-    <Compile Include="Files\TreeView\DnSpyFileNode.cs" />
-    <Compile Include="Files\TreeView\EventNode.cs" />
-    <Compile Include="Files\TreeView\FieldNode.cs" />
-    <Compile Include="Files\TreeView\FileTreeNodeDataContext.cs" />
-    <Compile Include="Files\TreeView\FileTreeNodeGroups.cs" />
-    <Compile Include="Files\TreeView\FileTreeView.cs" />
-    <Compile Include="Files\TreeView\FileTreeViewAppSettingsModifiedListener.cs" />
-    <Compile Include="Files\TreeView\FileTreeViewProvider.cs" />
-    <Compile Include="Files\TreeView\FileTreeViewSettings.cs" />
-    <Compile Include="Files\TreeView\MessageNode.cs" />
-    <Compile Include="Files\TreeView\MethodNode.cs" />
-    <Compile Include="Files\TreeView\ModuleFileNode.cs" />
-    <Compile Include="Files\TreeView\ModuleReferenceNode.cs" />
-    <Compile Include="Files\TreeView\NamespaceNode.cs" />
-    <Compile Include="Files\TreeView\PEFileNode.cs" />
-    <Compile Include="Files\TreeView\PropertyNode.cs" />
-    <Compile Include="Files\TreeView\ReferencesFolderNode.cs" />
-    <Compile Include="Files\TreeView\ResourcesFolderNode.cs" />
-    <Compile Include="Files\TreeView\Resources\BuiltInResourceElementNode.cs" />
-    <Compile Include="Files\TreeView\Resources\ImageResourceNode.cs" />
-    <Compile Include="Files\TreeView\Resources\ResourceElementSetNode.cs" />
-    <Compile Include="Files\TreeView\Resources\ResourceNodeFactory.cs" />
-    <Compile Include="Files\TreeView\Resources\SerializedImageListStreamerResourceElementNode.cs" />
-    <Compile Include="Files\TreeView\Resources\SerializedImageResourceElementNode.cs" />
-    <Compile Include="Files\TreeView\Resources\UnknownResourceNode.cs" />
-    <Compile Include="Files\TreeView\Resources\UnknownSerializedResourceElementNode.cs" />
-    <Compile Include="Files\TreeView\RootNode.cs" />
-    <Compile Include="Files\TreeView\TypeNode.cs" />
-    <Compile Include="Files\TreeView\UnknownFileNode.cs" />
-    <Compile Include="Images\DotNetImageManager.cs" />
-    <Compile Include="Images\ImageManager.cs" />
+    <Compile Include="Documents\Tabs\TabMiscOptionProvider.cs" />
+    <Compile Include="Documents\Tabs\TreeNodeReferenceDocumentTabContentProvider.cs" />
+    <Compile Include="Documents\TreeView\AssemblyDocumentNode.cs" />
+    <Compile Include="Documents\TreeView\AssemblyReferenceNode.cs" />
+    <Compile Include="Documents\TreeView\BaseTypeFolderNode.cs" />
+    <Compile Include="Documents\TreeView\BaseTypeNode.cs" />
+    <Compile Include="Documents\TreeView\DefaultDsDocumentNodeProvider.cs" />
+    <Compile Include="Documents\TreeView\DerivedTypeNode.cs" />
+    <Compile Include="Documents\TreeView\DerivedTypesFinder.cs" />
+    <Compile Include="Documents\TreeView\DerivedTypesFolderNode.cs" />
+    <Compile Include="Documents\TreeView\DsDocumentNode.cs" />
+    <Compile Include="Documents\TreeView\EventNode.cs" />
+    <Compile Include="Documents\TreeView\FieldNode.cs" />
+    <Compile Include="Documents\TreeView\DocumentTreeNodeDataContext.cs" />
+    <Compile Include="Documents\TreeView\DocumentTreeNodeGroups.cs" />
+    <Compile Include="Documents\TreeView\DocumentTreeView.cs" />
+    <Compile Include="Documents\TreeView\DocumentTreeViewAppSettingsModifiedListener.cs" />
+    <Compile Include="Documents\TreeView\DocumentTreeViewProvider.cs" />
+    <Compile Include="Documents\TreeView\DocumentTreeViewSettings.cs" />
+    <Compile Include="Documents\TreeView\MessageNode.cs" />
+    <Compile Include="Documents\TreeView\MethodNode.cs" />
+    <Compile Include="Documents\TreeView\ModuleDocumentNode.cs" />
+    <Compile Include="Documents\TreeView\ModuleReferenceNode.cs" />
+    <Compile Include="Documents\TreeView\NamespaceNode.cs" />
+    <Compile Include="Documents\TreeView\PEDocumentNode.cs" />
+    <Compile Include="Documents\TreeView\PropertyNode.cs" />
+    <Compile Include="Documents\TreeView\ReferencesFolderNode.cs" />
+    <Compile Include="Documents\TreeView\ResourcesFolderNode.cs" />
+    <Compile Include="Documents\TreeView\Resources\BuiltInResourceElementNode.cs" />
+    <Compile Include="Documents\TreeView\Resources\ImageResourceNode.cs" />
+    <Compile Include="Documents\TreeView\Resources\ResourceElementSetNode.cs" />
+    <Compile Include="Documents\TreeView\Resources\ResourceNodeFactory.cs" />
+    <Compile Include="Documents\TreeView\Resources\SerializedImageListStreamerResourceElementNode.cs" />
+    <Compile Include="Documents\TreeView\Resources\SerializedImageResourceElementNode.cs" />
+    <Compile Include="Documents\TreeView\Resources\UnknownResourceNode.cs" />
+    <Compile Include="Documents\TreeView\Resources\UnknownSerializedResourceElementNode.cs" />
+    <Compile Include="Documents\TreeView\RootNode.cs" />
+    <Compile Include="Documents\TreeView\TypeNode.cs" />
+    <Compile Include="Documents\TreeView\UnknownDocumentNode.cs" />
+    <Compile Include="Images\DotNetImageService.cs" />
+    <Compile Include="Images\ImageService.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="Decompiler\DummyDecompiler.cs" />
-    <Compile Include="Decompiler\DecompilerManager.cs" />
-    <Compile Include="Decompiler\DecompilerManagerSettings.cs" />
+    <Compile Include="Decompiler\DecompilerService.cs" />
+    <Compile Include="Decompiler\DecompilerServiceSettings.cs" />
     <Compile Include="Language\Intellisense\AttributeImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregator.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregatorService.cs" />
@@ -341,12 +341,12 @@
       <DependentUpon>AskDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\AskVM.cs" />
-    <Compile Include="MainApp\DnSpyLoaderControl.xaml.cs">
-      <DependentUpon>DnSpyLoaderControl.xaml</DependentUpon>
+    <Compile Include="MainApp\DsLoaderControl.xaml.cs">
+      <DependentUpon>DsLoaderControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainApp\DnSpyLoaderManager.cs" />
-    <Compile Include="MainApp\FileTreeViewWindowContent.cs" />
-    <Compile Include="MainApp\MainToolWindowManagerCommands.cs" />
+    <Compile Include="MainApp\DsLoaderService.cs" />
+    <Compile Include="MainApp\DocumentTreeViewWindowContent.cs" />
+    <Compile Include="MainApp\DsToolWindowServiceCommands.cs" />
     <Compile Include="MainApp\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -364,7 +364,7 @@
     <Compile Include="Menus\AppMenus.cs" />
     <Compile Include="Menus\ContextMenuProvider.cs" />
     <Compile Include="Menus\MenuItemContext.cs" />
-    <Compile Include="Menus\MenuManager.cs" />
+    <Compile Include="Menus\MenuService.cs" />
     <Compile Include="Metadata\ModuleIdProvider.cs" />
     <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="Output\CachedWriter.cs" />
@@ -378,8 +378,8 @@
     <Compile Include="Output\OutputControl.xaml.cs">
       <DependentUpon>OutputControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Output\OutputManager.cs" />
-    <Compile Include="Output\OutputManagerSettings.cs" />
+    <Compile Include="Output\OutputService.cs" />
+    <Compile Include="Output\OutputServiceSettings.cs" />
     <Compile Include="Output\OutputTextEditorFormatDefinition.cs" />
     <Compile Include="Output\OutputToolWindowContent.cs" />
     <Compile Include="Properties\AssemblyInfo.Shared.cs" />
@@ -395,15 +395,15 @@
     <Compile Include="Scripting\ServiceLocator.cs" />
     <Compile Include="Search\AppCommandLineArgsHandler.cs" />
     <Compile Include="Search\Commands.cs" />
-    <Compile Include="Search\FileSearcher.cs" />
-    <Compile Include="Search\FileSearcherProvider.cs" />
+    <Compile Include="Search\DocumentSearcher.cs" />
+    <Compile Include="Search\DocumentSearcherProvider.cs" />
     <Compile Include="Search\FilterSearcher.cs" />
     <Compile Include="Search\FilterSearcherOptions.cs" />
     <Compile Include="Search\SearchControl.xaml.cs">
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Search\SearchControlVM.cs" />
-    <Compile Include="Search\SearchManager.cs" />
+    <Compile Include="Search\SearchService.cs" />
     <Compile Include="Search\SearchResult.cs" />
     <Compile Include="Search\SearchResultContext.cs" />
     <Compile Include="Search\SearchSettings.cs" />
@@ -417,7 +417,7 @@
     <Compile Include="Settings\Dialog\DynamicAppSettingsTabProvider.cs" />
     <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
-    <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="Settings\SettingsService.cs" />
     <Compile Include="Settings\SettingsSection.cs" />
     <Compile Include="Settings\SettingsSectionProvider.cs" />
     <Compile Include="Settings\XmlSettingsConstants.cs" />
@@ -427,10 +427,10 @@
     <Compile Include="Tabs\FileTabBackgroundConverter.cs" />
     <Compile Include="Tabs\TabElementScaler.cs" />
     <Compile Include="Tabs\TabGroup.cs" />
-    <Compile Include="Tabs\TabGroupManager.cs" />
+    <Compile Include="Tabs\TabGroupService.cs" />
     <Compile Include="Tabs\TabItemImpl.cs" />
-    <Compile Include="Tabs\TabManager.cs" />
-    <Compile Include="Tabs\TabManagerProvider.cs" />
+    <Compile Include="Tabs\TabService.cs" />
+    <Compile Include="Tabs\TabServiceProvider.cs" />
     <Compile Include="Tabs\TabUtils.cs" />
     <Compile Include="Text\Adornments\ToolTipProvider.cs" />
     <Compile Include="Text\Adornments\ToolTipProviderFactory.cs" />
@@ -508,7 +508,7 @@
     <Compile Include="Text\Editor\DefaultTextViewEditorOptionDefinitions.cs" />
     <Compile Include="Text\Editor\DefaultTextViewMouseProcessor.cs" />
     <Compile Include="Text\Editor\DefaultWpfViewEditorOptionDefinitions.cs" />
-    <Compile Include="Text\Editor\DnSpyScrollBar.cs" />
+    <Compile Include="Text\Editor\DsScrollBar.cs" />
     <Compile Include="Text\Editor\EditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptionsFactoryService.cs" />
     <Compile Include="Text\Editor\EditorPositionState.cs" />
@@ -701,33 +701,42 @@
     <Compile Include="Themes\ColorInfos.cs" />
     <Compile Include="Themes\Theme.cs" />
     <Compile Include="Themes\ThemeColor.cs" />
-    <Compile Include="Themes\ThemeManager.cs" />
+    <Compile Include="Themes\ThemeService.cs" />
     <Compile Include="Themes\ThemeSettings.cs" />
     <Compile Include="Themes\ThemesMenu.cs" />
     <Compile Include="ToolBars\ToolBarButtonVM.cs" />
     <Compile Include="ToolBars\ToolBarItemContext.cs" />
-    <Compile Include="ToolBars\ToolBarManager.cs" />
+    <Compile Include="ToolBars\ToolBarService.cs" />
     <Compile Include="ToolWindows\TabContentImpl.cs" />
     <Compile Include="ToolWindows\ToolWindowGroup.cs" />
-    <Compile Include="ToolWindows\ToolWindowGroupManager.cs" />
-    <Compile Include="ToolWindows\ToolWindowManager.cs" />
-    <Compile Include="ToolWindows\ToolWindowManagerProvider.cs" />
-    <Compile Include="TreeView\DnSpySharpTreeNode.cs" />
+    <Compile Include="ToolWindows\ToolWindowGroupService.cs" />
+    <Compile Include="ToolWindows\ToolWindowService.cs" />
+    <Compile Include="ToolWindows\ToolWindowServiceProvider.cs" />
+    <Compile Include="TreeView\DsSharpTreeNode.cs" />
     <Compile Include="TreeView\SharpTreeNodeChildrenList.cs" />
     <Compile Include="TreeView\TreeNodeDataImpl.cs" />
     <Compile Include="TreeView\TreeNodeImpl.cs" />
     <Compile Include="TreeView\TreeViewImpl.cs" />
-    <Compile Include="TreeView\TreeViewManager.cs" />
+    <Compile Include="TreeView\TreeViewService.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Resources.de.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Resources.ru.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Resources.zh-CN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Resources.pt-PT.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Resources.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
@@ -781,7 +790,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Files\Tabs\Dialogs\ExportToProjectDlg.xaml">
+    <Page Include="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -800,19 +809,19 @@
     <Page Include="MainApp\App.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Files\Tabs\Dialogs\OpenFileListDlg.xaml">
+    <Page Include="Documents\Tabs\Dialogs\OpenDocumentListDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Files\Tabs\Dialogs\OpenFromGACDlg.xaml">
+    <Page Include="Documents\Tabs\Dialogs\OpenFromGACDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Files\Tabs\Dialogs\TabsDlg.xaml">
+    <Page Include="Documents\Tabs\Dialogs\TabsDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Files\Tabs\DocViewer\WaitAdorner.xaml">
+    <Page Include="Documents\Tabs\DocViewer\WaitAdorner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -820,7 +829,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainApp\DnSpyLoaderControl.xaml">
+    <Page Include="MainApp\DsLoaderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

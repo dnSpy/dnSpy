@@ -25,11 +25,11 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	static class CompletionExtensions {
 		/// <summary>
-		/// Gets the filter text or null. This is <see cref="IDnSpyCompletion.FilterText"/> or <see cref="Completion.DisplayText"/>
-		/// if <paramref name="completion"/> is not a <see cref="IDnSpyCompletion"/>
+		/// Gets the filter text or null. This is <see cref="IDsCompletion.FilterText"/> or <see cref="Completion.DisplayText"/>
+		/// if <paramref name="completion"/> is not a <see cref="IDsCompletion"/>
 		/// </summary>
 		/// <param name="completion">Completion</param>
 		/// <returns></returns>
-		public static string TryGetFilterText(this Completion completion) => (completion as IDnSpyCompletion)?.FilterText ?? completion.DisplayText;
+		public static string TryGetFilterText(this Completion completion) => (completion as IDsCompletion)?.FilterText ?? completion.DisplayText;
 	}
 }

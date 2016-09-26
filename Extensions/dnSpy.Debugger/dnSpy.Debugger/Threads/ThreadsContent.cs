@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
@@ -50,33 +50,33 @@ namespace dnSpy.Debugger.Threads {
 
 		readonly ThreadsControl threadsControl;
 		readonly IThreadsVM vmThreads;
-		readonly Lazy<IStackFrameManager> stackFrameManager;
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IStackFrameService> stackFrameService;
+		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		ThreadsContent(IWpfCommandManager wpfCommandManager, IThreadsVM threadsVM, IThemeManager themeManager, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
-			this.stackFrameManager = stackFrameManager;
-			this.fileTabManager = fileTabManager;
+		ThreadsContent(IWpfCommandService wpfCommandService, IThreadsVM threadsVM, IThemeService themeService, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
+			this.stackFrameService = stackFrameService;
+			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.threadsControl = new ThreadsControl();
 			this.vmThreads = threadsVM;
 			this.moduleIdProvider = moduleIdProvider;
 			this.threadsControl.DataContext = this.vmThreads;
 			this.threadsControl.ThreadsListViewDoubleClick += ThreadsControl_ThreadsListViewDoubleClick;
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_THREADS_CONTROL, threadsControl);
-			wpfCommandManager.Add(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW, threadsControl.ListView);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_CONTROL, threadsControl);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW, threadsControl.ListView);
 		}
 
 		void ThreadsControl_ThreadsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			SwitchToThreadThreadsCtxMenuCommand.GoTo(moduleIdProvider, fileTabManager, moduleLoader.Value, stackFrameManager.Value, threadsControl.ListView.SelectedItem as ThreadVM, newTab);
+			SwitchToThreadThreadsCtxMenuCommand.GoTo(moduleIdProvider, documentTabService, moduleLoader.Value, stackFrameService.Value, threadsControl.ListView.SelectedItem as ThreadVM, newTab);
 		}
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmThreads.RefreshThemeFields();
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmThreads.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(threadsControl.ListView);
 		public void OnClose() => vmThreads.IsEnabled = false;
 		public void OnShow() => vmThreads.IsEnabled = true;

@@ -42,7 +42,7 @@
     <Compile Include="Breakpoints\BreakpointColumnConverter.cs" />
     <Compile Include="Breakpoints\BreakpointContext.cs" />
     <Compile Include="Breakpoints\BreakpointListSettings.cs" />
-    <Compile Include="Breakpoints\BreakpointManager.cs" />
+    <Compile Include="Breakpoints\BreakpointService.cs" />
     <Compile Include="Breakpoints\BreakpointMarker.cs" />
     <Compile Include="Breakpoints\BreakpointPrinter.cs" />
     <Compile Include="Breakpoints\BreakpointsContent.cs" />
@@ -73,7 +73,7 @@
     <Compile Include="CallStack\CallStackVM.cs" />
     <Compile Include="CallStack\Commands.cs" />
     <Compile Include="CallStack\FrameUtils.cs" />
-    <Compile Include="CallStack\StackFrameManager.cs" />
+    <Compile Include="CallStack\StackFrameService.cs" />
     <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
     <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="DebugCommands.cs" />
@@ -81,8 +81,8 @@
     <Compile Include="DebuggerAppSettingsTab.cs" />
     <Compile Include="DebuggerModuleIdFactoryProvider.cs" />
     <Compile Include="DebuggerSettings.cs" />
-    <Compile Include="DebugManager.cs" />
-    <Compile Include="DebugManagerCommands.cs" />
+    <Compile Include="DebugService.cs" />
+    <Compile Include="DebugServiceCommandLoader.cs" />
     <Compile Include="DebugOutputUtils.cs" />
     <Compile Include="DebugRoutedCommands.cs" />
     <Compile Include="DebugUtils.cs" />
@@ -128,7 +128,7 @@
     <Compile Include="Exceptions\ExceptionInfo.cs" />
     <Compile Include="Exceptions\ExceptionInfoKey.cs" />
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
-    <Compile Include="Exceptions\ExceptionManager.cs" />
+    <Compile Include="Exceptions\ExceptionService.cs" />
     <Compile Include="Exceptions\ExceptionPrinter.cs" />
     <Compile Include="Exceptions\ExceptionsContent.cs" />
     <Compile Include="Exceptions\ExceptionState.cs" />
@@ -142,7 +142,7 @@
     <Compile Include="IMModules\ClassLoader.cs" />
     <Compile Include="IMModules\Commands.cs" />
     <Compile Include="IMModules\CorModuleDefFile.cs" />
-    <Compile Include="IMModules\InMemoryModuleManager.cs" />
+    <Compile Include="IMModules\InMemoryModuleService.cs" />
     <Compile Include="IMModules\LastValidRids.cs" />
     <Compile Include="IMModules\LoadEverythingDlg.xaml.cs">
       <DependentUpon>LoadEverythingDlg.xaml</DependentUpon>
@@ -175,7 +175,7 @@
     </Compile>
     <Compile Include="Memory\MemoryToolWindowContent.cs" />
     <Compile Include="Memory\MemoryVM.cs" />
-    <Compile Include="Memory\MemoryWindowManager.cs" />
+    <Compile Include="Memory\MemoryWindowService.cs" />
     <Compile Include="Memory\MemoryWindowsHelper.cs" />
     <Compile Include="Memory\ProcessHexStream.cs" />
     <Compile Include="MenuItemCommandProxy.cs" />

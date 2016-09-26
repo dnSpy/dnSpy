@@ -65,10 +65,10 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 		public static readonly RoutedCommand ShowCSharpInteractiveRoutedCommand = new RoutedCommand("ShowCSharpInteractiveRoutedCommand", typeof(ShowCSharpInteractiveCommandLoader));
 
 		[ImportingConstructor]
-		ShowCSharpInteractiveCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
+		ShowCSharpInteractiveCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowCSharpInteractiveRoutedCommand,
-				(s, e) => mainToolWindowManager.Show(CSharpToolWindowContent.THE_GUID),
+				(s, e) => toolWindowService.Show(CSharpToolWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true);
 			cmds.Add(ShowCSharpInteractiveRoutedCommand, ModifierKeys.Control | ModifierKeys.Alt, Key.N);
 		}

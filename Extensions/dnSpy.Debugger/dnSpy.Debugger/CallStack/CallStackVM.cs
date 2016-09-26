@@ -90,23 +90,23 @@ namespace dnSpy.Debugger.CallStack {
 		readonly IDebuggerSettings debuggerSettings;
 		readonly ICallStackSettings callStackSettings;
 		readonly ITheDebugger theDebugger;
-		readonly IStackFrameManager stackFrameManager;
+		readonly IStackFrameService stackFrameService;
 		readonly CallStackFrameContext callStackFrameContext;
 
 		[ImportingConstructor]
-		CallStackVM(IDebuggerSettings debuggerSettings, ICallStackSettings callStackSettings, IStackFrameManager stackFrameManager, ITheDebugger theDebugger, IImageManager imageManager) {
+		CallStackVM(IDebuggerSettings debuggerSettings, ICallStackSettings callStackSettings, IStackFrameService stackFrameService, ITheDebugger theDebugger, IImageService imageService) {
 			this.debuggerSettings = debuggerSettings;
 			this.callStackSettings = callStackSettings;
 			this.theDebugger = theDebugger;
-			this.stackFrameManager = stackFrameManager;
+			this.stackFrameService = stackFrameService;
 			this.framesList = new ObservableCollection<ICallStackFrameVM>();
-			this.callStackFrameContext = new CallStackFrameContext(imageManager) {
+			this.callStackFrameContext = new CallStackFrameContext(imageService) {
 				TypePrinterFlags = TypePrinterFlags,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightCallStack,
 			};
 
-			stackFrameManager.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
-			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
+			stackFrameService.StackFramesUpdated += StackFrameService_StackFramesUpdated;
+			stackFrameService.PropertyChanged += StackFrameService_PropertyChanged;
 			callStackSettings.PropertyChanged += CallStackSettings_PropertyChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
@@ -151,16 +151,16 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(IStackFrameManager.SelectedThread)) {
+		void StackFrameService_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == nameof(IStackFrameService.SelectedThread)) {
 				framesList.Clear();
 				InitializeStackFrames();
 			}
-			else if (e.PropertyName == nameof(IStackFrameManager.SelectedFrameNumber))
+			else if (e.PropertyName == nameof(IStackFrameService.SelectedFrameNumber))
 				UpdateSelectedFrame(e as VMPropertyChangedEventArgs<int>);
 		}
 
-		void StackFrameManager_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
+		void StackFrameService_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeStackFrames() is called when the process has been running for a little while. Speeds up stepping.
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 
 			bool tooManyFrames;
-			var newFrames = stackFrameManager.GetFrames(out tooManyFrames);
+			var newFrames = stackFrameService.GetFrames(out tooManyFrames);
 
 			bool oldHadTooManyFrames = framesList.Count > 0 && framesList[framesList.Count - 1] is MessageCallStackFrameVM;
 			int oldVisibleFramesCount = framesList.Count - (oldHadTooManyFrames ? 1 : 0);
@@ -200,7 +200,7 @@ namespace dnSpy.Debugger.CallStack {
 				for (int i = 0; i < framesToAdd; i++) {
 					var frame = newFrames[i];
 					var vm = new CallStackFrameVM(callStackFrameContext, i, frame, process);
-					vm.IsCurrentFrame = i == stackFrameManager.SelectedFrameNumber;
+					vm.IsCurrentFrame = i == stackFrameService.SelectedFrameNumber;
 					vm.IsUserCode = IsUserCode(frame);
 
 					if (framesList.Count == i)
@@ -220,7 +220,7 @@ namespace dnSpy.Debugger.CallStack {
 				var frame = newFrames[i];
 
 				vm.Index = i;
-				vm.IsCurrentFrame = i == stackFrameManager.SelectedFrameNumber;
+				vm.IsCurrentFrame = i == stackFrameService.SelectedFrameNumber;
 				vm.IsUserCode = IsUserCode(frame);
 				vm.SetFrame(frame, process);
 			}

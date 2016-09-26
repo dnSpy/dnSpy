@@ -28,8 +28,8 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		static readonly Guid SETTINGS_GUID = new Guid("EF6A2672-0D75-440B-9113-320EE04EBBB2");
 
 		[ImportingConstructor]
-		VisualBasicReplSettingsImpl(ISettingsManager settingsManager)
-			: base(SETTINGS_GUID, settingsManager) {
+		VisualBasicReplSettingsImpl(ISettingsService settingsService)
+			: base(SETTINGS_GUID, settingsService) {
 		}
 	}
 }

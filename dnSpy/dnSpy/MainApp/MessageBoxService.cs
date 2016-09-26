@@ -45,19 +45,19 @@ namespace dnSpy.MainApp {
 		public bool CanEnableAllWarnings => ignoredMessages.Count > 0;
 
 		readonly IAppWindow appWindow;
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 		readonly HashSet<Guid> ignoredMessages;
 
 		[ImportingConstructor]
-		MessageBoxService(IAppWindow appWindow, ISettingsManager settingsManager) {
+		MessageBoxService(IAppWindow appWindow, ISettingsService settingsService) {
 			this.appWindow = appWindow;
-			this.settingsManager = settingsManager;
+			this.settingsService = settingsService;
 			this.ignoredMessages = new HashSet<Guid>();
 			ReadSettings();
 		}
 
 		void ReadSettings() {
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			foreach (var ignoredSect in sect.SectionsWithName(IGNORED_SECTION)) {
 				var id = ignoredSect.Attribute<string>(IGNORED_ATTR);
 				Guid guid;
@@ -73,7 +73,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void SaveSettings() {
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			foreach (var id in ignoredMessages) {
 				var ignoredSect = sect.CreateSection(IGNORED_SECTION);
 				ignoredSect.Attribute(IGNORED_ATTR, id);

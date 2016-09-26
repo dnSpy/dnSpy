@@ -20,16 +20,16 @@
 using System;
 using System.Threading;
 using System.Windows.Threading;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
 
 namespace dnSpy.Search {
 	sealed class FilterSearcherOptions {
 		public Dispatcher Dispatcher { get; set; }
-		public IFileTreeView FileTreeView { get; set; }
-		public IDotNetImageManager DotNetImageManager { get; set; }
-		public IFileTreeNodeFilter Filter { get; set; }
+		public IDocumentTreeView DocumentTreeView { get; set; }
+		public IDotNetImageService DotNetImageService { get; set; }
+		public IDocumentTreeNodeFilter Filter { get; set; }
 		public ISearchComparer SearchComparer { get; set; }
 		public Action<SearchResult> OnMatch { get; set; }
 		public SearchResultContext Context { get; set; }

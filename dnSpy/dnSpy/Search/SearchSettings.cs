@@ -125,14 +125,14 @@ namespace dnSpy.Search {
 	sealed class SearchSettingsImpl : SearchSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("68377C1D-228A-4317-AB10-11796F6DEB18");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		SearchSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		SearchSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
 			this.MatchWholeWords = sect.Attribute<bool?>(nameof(MatchWholeWords)) ?? this.MatchWholeWords;
 			this.CaseSensitive = sect.Attribute<bool?>(nameof(CaseSensitive)) ?? this.CaseSensitive;
@@ -146,7 +146,7 @@ namespace dnSpy.Search {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 			sect.Attribute(nameof(MatchWholeWords), MatchWholeWords);
 			sect.Attribute(nameof(CaseSensitive), CaseSensitive);

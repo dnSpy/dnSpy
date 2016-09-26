@@ -28,7 +28,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
@@ -39,14 +39,14 @@ namespace dnSpy.Debugger.Exceptions {
 	[ExportAutoLoaded]
 	sealed class ExceptionsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		ExceptionsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<IExceptionsContent> exceptionsContent, CopyCallExceptionsCtxMenuCommand copyCmd, AddExceptionsCtxMenuCommand addExCmd, RemoveExceptionsCtxMenuCommand removeExCmd, ToggleEnableExceptionsCtxMenuCommand toggleExCmd) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW);
+		ExceptionsContentCommandLoader(IWpfCommandService wpfCommandService, Lazy<IExceptionsContent> exceptionsContent, CopyCallExceptionsCtxMenuCommand copyCmd, AddExceptionsCtxMenuCommand addExCmd, RemoveExceptionsCtxMenuCommand removeExCmd, ToggleEnableExceptionsCtxMenuCommand toggleExCmd) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new ExceptionsCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new ExceptionsCtxMenuCommandProxy(addExCmd), ModifierKeys.None, Key.Insert);
 			cmds.Add(new ExceptionsCtxMenuCommandProxy(removeExCmd), ModifierKeys.None, Key.Delete);
 			cmds.Add(new ExceptionsCtxMenuCommandProxy(toggleExCmd), ModifierKeys.None, Key.Space);
 
-			cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL);
+			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.E);
 		}
@@ -55,10 +55,10 @@ namespace dnSpy.Debugger.Exceptions {
 	[ExportAutoLoaded]
 	sealed class CallStackCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CallStackCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
+		CallStackCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 
-			cmds.Add(DebugRoutedCommands.ShowExceptions, new RelayCommand(a => mainToolWindowManager.Show(ExceptionsToolWindowContent.THE_GUID)));
+			cmds.Add(DebugRoutedCommands.ShowExceptions, new RelayCommand(a => toolWindowService.Show(ExceptionsToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowExceptions, ModifierKeys.Control | ModifierKeys.Alt, Key.E);
 		}
 	}
@@ -300,7 +300,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_FILES_DEBUG, Order = 0)]
+		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 0)]
 		sealed class FilesCommand : CommandBase {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
@@ -310,7 +310,7 @@ namespace dnSpy.Debugger.Exceptions {
 				: base(exceptionsContent) {
 			}
 
-			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
+			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 		}
 
 		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 1000)]

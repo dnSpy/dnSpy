@@ -99,7 +99,7 @@ namespace dnSpy.Tabs {
 			if (impl == null)
 				throw new InvalidOperationException();
 			tabControl.SelectedItem = impl;
-			tabGroupManager.SetActive(this);
+			tabGroupService.SetActive(this);
 			SetFocus2(impl.TabContent);
 		}
 
@@ -116,11 +116,11 @@ namespace dnSpy.Tabs {
 				var uiel = fel as UIElement;
 				if (uiel != null && !uiel.IsVisible)
 					new SetFocusWhenVisible(this, content, uiel, () => {
-						if (wpfFocusManager.CanFocus)
+						if (wpfFocusService.CanFocus)
 							focusable.Focus();
 					});
 				else {
-					if (wpfFocusManager.CanFocus)
+					if (wpfFocusService.CanFocus)
 						focusable.Focus();
 				}
 			}
@@ -140,7 +140,7 @@ namespace dnSpy.Tabs {
 			Debug.Assert(uiel != null && uiel.Focusable);
 			if (uiel == null)
 				return;
-			wpfFocusManager.Focus(uiel);
+			wpfFocusService.Focus(uiel);
 		}
 
 		bool IsActiveTab(ITabContent content) {
@@ -149,9 +149,9 @@ namespace dnSpy.Tabs {
 				return false;
 			if (impl != ActiveTabItemImpl)
 				return false;
-			if (TabGroupManager.ActiveTabGroup != this)
+			if (TabGroupService.ActiveTabGroup != this)
 				return false;
-			if (TabGroupManager.TabManager.ActiveTabGroupManager != TabGroupManager)
+			if (TabGroupService.TabService.ActiveTabGroupService != TabGroupService)
 				return false;
 
 			return true;
@@ -195,14 +195,14 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		public ITabGroupManager TabGroupManager => tabGroupManager;
-		readonly TabGroupManager tabGroupManager;
+		public ITabGroupService TabGroupService => tabGroupService;
+		readonly TabGroupService tabGroupService;
 
 		object IStackedContentChild.UIObject => tabControl;
 
 		readonly TabControl tabControl;
-		readonly IWpfFocusManager wpfFocusManager;
-		readonly TabGroupManagerOptions options;
+		readonly IWpfFocusService wpfFocusService;
+		readonly TabGroupServiceOptions options;
 
 		public IContextMenuProvider ContextMenuProvider => contextMenuProvider;
 		readonly IContextMenuProvider contextMenuProvider;
@@ -219,20 +219,20 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		public TabGroup(TabGroupManager tabGroupManager, IMenuManager menuManager, IWpfFocusManager wpfFocusManager, TabGroupManagerOptions options) {
+		public TabGroup(TabGroupService tabGroupService, IMenuService menuService, IWpfFocusService wpfFocusService, TabGroupServiceOptions options) {
 			this.options = options;
 			this.tabContentAttached = new WeakEventList<TabContentAttachedEventArgs>();
-			this.tabGroupManager = tabGroupManager;
-			this.wpfFocusManager = wpfFocusManager;
+			this.tabGroupService = tabGroupService;
+			this.wpfFocusService = wpfFocusService;
 			this.tabControl = new TabControl();
 			this.tabControl.DataContext = this;
 			this.tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
 			this.tabControl.SelectionChanged += TabControl_SelectionChanged;
 			this.tabControl.PreviewKeyDown += TabControl_PreviewKeyDown;
 			if (options.InitializeContextMenu != null)
-				this.contextMenuProvider = options.InitializeContextMenu(menuManager, this, this.tabControl);
+				this.contextMenuProvider = options.InitializeContextMenu(menuService, this, this.tabControl);
 			else if (options.TabGroupGuid != Guid.Empty)
-				this.contextMenuProvider = menuManager.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsProvider(this));
+				this.contextMenuProvider = menuService.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsProvider(this));
 		}
 
 		void TabControl_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -262,8 +262,8 @@ namespace dnSpy.Tabs {
 					return;
 			}
 
-			tabGroupManager.SetActive(this);
-			tabGroupManager.OnSelectionChanged(this, selected, unselected);
+			tabGroupService.SetActive(this);
+			tabGroupService.OnSelectionChanged(this, selected, unselected);
 		}
 
 		internal bool Contains(TabItemImpl impl) => tabControl.Items.Contains(impl);
@@ -297,7 +297,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void tabItem_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
-			tabGroupManager.SetActive(this);
+			tabGroupService.SetActive(this);
 			var tabItem = GetTabItemImpl(sender);
 			if (tabItem != null)
 				tabItem.IsActive = true;
@@ -357,7 +357,7 @@ namespace dnSpy.Tabs {
 				SetFocus2(tabItem.TabContent);
 
 			if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed) {
-				tabGroupManager.SetActive(this);
+				tabGroupService.SetActive(this);
 				tabControl.SelectedItem = tabItem;
 			}
 
@@ -415,9 +415,9 @@ namespace dnSpy.Tabs {
 			tabGroupSource = tabControlSource.DataContext as TabGroup;
 			if (tabGroupTarget == null || tabGroupSource == null)
 				return false;
-			if (tabGroupTarget.tabGroupManager.TabManager != tabGroupSource.tabGroupManager.TabManager)
+			if (tabGroupTarget.tabGroupService.TabService != tabGroupSource.tabGroupService.TabService)
 				return false;
-			if (tabGroupTarget.tabGroupManager != this.tabGroupManager)
+			if (tabGroupTarget.tabGroupService != this.tabGroupService)
 				return false;
 
 			return true;
@@ -445,7 +445,7 @@ namespace dnSpy.Tabs {
 				return;
 
 			if (tabGroupSource.MoveToAndSelect(tabGroupTarget, tabItemSource, tabItemTarget))
-				tabGroupTarget.tabGroupManager.SetActive(tabGroupTarget);
+				tabGroupTarget.tabGroupService.SetActive(tabGroupTarget);
 		}
 
 		public void Add(ITabContent content) {
@@ -479,7 +479,7 @@ namespace dnSpy.Tabs {
 		void NotifyIfEmtpy() {
 			if (tabControl.Items.Count == 0) {
 				OnStylePropChange();
-				tabGroupManager.Remove(this);
+				tabGroupService.Remove(this);
 			}
 		}
 
@@ -517,7 +517,7 @@ namespace dnSpy.Tabs {
 			dstTabGroup.AttachTabItem(srcTabItem, insertIndex);
 
 			if (srcTabItem.IsKeyboardFocusWithin) {
-				tabGroupManager.SetActiveTab(srcTabItem);
+				tabGroupService.SetActiveTab(srcTabItem);
 				this.IsActive = false;
 				dstTabGroup.IsActive = true;
 			}

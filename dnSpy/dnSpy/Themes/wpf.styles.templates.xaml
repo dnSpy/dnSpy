@@ -5,7 +5,7 @@
                     xmlns:ctrls="clr-namespace:dnSpy.Controls"
                     xmlns:ctrls2="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
                     xmlns:tabs="clr-namespace:dnSpy.Tabs"
-                    xmlns:tabssettings="clr-namespace:dnSpy.Files.Tabs.Settings"
+                    xmlns:tabssettings="clr-namespace:dnSpy.Documents.Tabs.Settings"
                     xmlns:decompiler="clr-namespace:dnSpy.Decompiler"
                     xmlns:mainapp="clr-namespace:dnSpy.MainApp"
                     xmlns:tw="clr-namespace:dnSpy.ToolWindows"
@@ -5879,13 +5879,13 @@
                 <StackPanel Margin="3">
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowLineNumbers}"/>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.HighlightReferences}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_HighlightReferences}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTabManagerSettings.DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTabManagerSettings.RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowTokens}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyVersion}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyVersion}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyPublicKeyToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyPublicKeyToken}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SingleClickExpandsTreeViewChildren}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SingleClickExpandNodes}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SyntaxHighlightTreeView}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTabServiceSettings.DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTabServiceSettings.RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.ShowToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowTokens}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.ShowAssemblyVersion}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyVersion}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.ShowAssemblyPublicKeyToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyPublicKeyToken}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.SingleClickExpandsTreeViewChildren}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SingleClickExpandNodes}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SyntaxHighlightTreeView}"/>
                     <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.DisplaySettings_MemberOrder}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -5926,7 +5926,7 @@
                            Text="{x:Static p:dnSpy_Resources.UseNewRendererInfo}" />
                 <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRenderer_TextEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_TextEditor}" />
                 <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_HexEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_HexEditor}" />
-                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_FileTreeView}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_FileTreeView}" />
+                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_DocumentTreeView}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_FileTreeView}" />
             </Grid>
         </GroupBox>
     </DataTemplate>

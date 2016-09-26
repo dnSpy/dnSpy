@@ -25,11 +25,11 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.MVVM {
 	[Export(typeof(IInitializeDataTemplate))]
 	sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
-		readonly IMenuManager menuManager;
+		readonly IMenuService menuService;
 
 		[ImportingConstructor]
-		InitializeDataTemplateContextMenu(IMenuManager menuManager) {
-			this.menuManager = menuManager;
+		InitializeDataTemplateContextMenu(IMenuService menuService) {
+			this.menuService = menuService;
 		}
 
 		public void Initialize(DependencyObject d) {
@@ -37,7 +37,7 @@ namespace dnSpy.MVVM {
 			if (fwe == null)
 				return;
 
-			menuManager.InitializeContextMenu(fwe, MenuConstants.GUIDOBJ_UNKNOWN_GUID);
+			menuService.InitializeContextMenu(fwe, MenuConstants.GUIDOBJ_UNKNOWN_GUID);
 		}
 	}
 }

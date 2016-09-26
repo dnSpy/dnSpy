@@ -28,43 +28,43 @@ using System.Text;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
 using dnSpy.Extension;
-using dnSpy.Files.Tabs.DocViewer;
+using dnSpy.Documents.Tabs.DocViewer;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.MainApp {
-	[ExportFileTabContentFactory(Order = double.MaxValue)]
-	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
+	[ExportDocumentTabContentFactory(Order = double.MaxValue)]
+	sealed class AboutScreenDocumentTabContentFactory : IDocumentTabContentFactory {
 		readonly IAppWindow appWindow;
-		readonly IExtensionManager extensionManager;
+		readonly IExtensionService extensionService;
 		readonly IContentType aboutContentType;
 
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IAppWindow appWindow, IExtensionManager extensionManager, IContentTypeRegistryService contentTypeRegistryService) {
+		AboutScreenDocumentTabContentFactory(IAppWindow appWindow, IExtensionService extensionService, IContentTypeRegistryService contentTypeRegistryService) {
 			this.appWindow = appWindow;
-			this.extensionManager = extensionManager;
+			this.extensionService = extensionService;
 			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
-		public IFileTabContent Create(IFileTabContentFactoryContext context) => null;
+		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
 
 		static readonly Guid GUID_SerializedContent = new Guid("1C931C0F-D968-4664-B22D-87287A226EEC");
 
-		public IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context) {
+		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
-				return new AboutScreenFileTabContent(appWindow, extensionManager, aboutContentType);
+				return new AboutScreenDocumentTabContent(appWindow, extensionService, aboutContentType);
 			return null;
 		}
 
-		public Guid? Serialize(IFileTabContent content, ISettingsSection section) {
-			if (content is AboutScreenFileTabContent)
+		public Guid? Serialize(IDocumentTabContent content, ISettingsSection section) {
+			if (content is AboutScreenDocumentTabContent)
 				return GUID_SerializedContent;
 			return null;
 		}
@@ -72,30 +72,30 @@ namespace dnSpy.MainApp {
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_Menu", Group = MenuConstants.GROUP_APP_MENU_HELP_ABOUT, Order = 1000000)]
 	sealed class AboutScreenMenuItem : MenuItemBase {
-		readonly IFileTabManager fileTabManager;
+		readonly IDocumentTabService documentTabService;
 		readonly IAppWindow appWindow;
-		readonly IExtensionManager extensionManager;
+		readonly IExtensionService extensionService;
 		readonly IContentType aboutContentType;
 
 		[ImportingConstructor]
-		AboutScreenMenuItem(IFileTabManager fileTabManager, IAppWindow appWindow, IExtensionManager extensionManager, IContentTypeRegistryService contentTypeRegistryService) {
-			this.fileTabManager = fileTabManager;
+		AboutScreenMenuItem(IDocumentTabService documentTabService, IAppWindow appWindow, IExtensionService extensionService, IContentTypeRegistryService contentTypeRegistryService) {
+			this.documentTabService = documentTabService;
 			this.appWindow = appWindow;
-			this.extensionManager = extensionManager;
+			this.extensionService = extensionService;
 			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			var tab = fileTabManager.GetOrCreateActiveTab();
-			tab.Show(new AboutScreenFileTabContent(appWindow, extensionManager, aboutContentType), null, null);
-			fileTabManager.SetFocus(tab);
+			var tab = documentTabService.GetOrCreateActiveTab();
+			tab.Show(new AboutScreenDocumentTabContent(appWindow, extensionService, aboutContentType), null, null);
+			documentTabService.SetFocus(tab);
 		}
 	}
 
-	sealed class AboutScreenFileTabContent : IFileTabContent {
-		public IFileTab FileTab { get; set; }
+	sealed class AboutScreenDocumentTabContent : IDocumentTabContent {
+		public IDocumentTab DocumentTab { get; set; }
 
-		public IEnumerable<IFileTreeNodeData> Nodes {
+		public IEnumerable<IDocumentTreeNodeData> Nodes {
 			get { yield break; }
 		}
 
@@ -103,17 +103,17 @@ namespace dnSpy.MainApp {
 		public object ToolTip => null;
 
 		readonly IAppWindow appWindow;
-		readonly IExtensionManager extensionManager;
+		readonly IExtensionService extensionService;
 		readonly IContentType aboutContentType;
 
-		public AboutScreenFileTabContent(IAppWindow appWindow, IExtensionManager extensionManager, IContentType aboutContentType) {
+		public AboutScreenDocumentTabContent(IAppWindow appWindow, IExtensionService extensionService, IContentType aboutContentType) {
 			this.appWindow = appWindow;
-			this.extensionManager = extensionManager;
+			this.extensionService = extensionService;
 			this.aboutContentType = aboutContentType;
 		}
 
-		public IFileTabContent Clone() => new AboutScreenFileTabContent(appWindow, extensionManager, aboutContentType);
-		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
+		public IDocumentTabContent Clone() => new AboutScreenDocumentTabContent(appWindow, extensionService, aboutContentType);
+		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
 		public void OnHide() { }
 		public void OnSelected() { }
 		public void OnUnselected() { }
@@ -239,12 +239,12 @@ namespace dnSpy.MainApp {
 			infos.Add(new Info(GetType().Assembly, CreateDnSpyInfo()));
 
 			var toExtension = new Dictionary<Assembly, IExtension>();
-			foreach (var extension in extensionManager.Extensions)
+			foreach (var extension in extensionService.Extensions)
 				toExtension[extension.GetType().Assembly] = extension;
 
 			// Show the extensions in random order
 			var random = new Random();
-			foreach (var x in extensionManager.LoadedExtensions.OrderBy(a => random.Next())) {
+			foreach (var x in extensionService.LoadedExtensions.OrderBy(a => random.Next())) {
 				ExtensionInfo extensionInfo;
 				IExtension extension;
 				if (toExtension.TryGetValue(x.Assembly, out extension))

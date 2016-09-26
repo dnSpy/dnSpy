@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IQuickInfoSourceProvider))]
-	[Name(PredefinedDnSpyQuickInfoSourceProviders.Uri)]
+	[Name(PredefinedDsQuickInfoSourceProviders.Uri)]
 	[ContentType(ContentTypes.Text)]
 	sealed class UriQuickInfoSourceProvider : IQuickInfoSourceProvider {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;

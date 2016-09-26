@@ -115,7 +115,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		RoslynCodeDocument CreateDocument(ProjectId projectId, IDecompiledDocument doc) {
 			var options = new CodeEditorOptions();
 			options.ContentTypeString = ContentType;
-			options.Roles.Add(PredefinedDnSpyTextViewRoles.RoslynCodeEditor);
+			options.Roles.Add(PredefinedDsTextViewRoles.RoslynCodeEditor);
 			options.Roles.Add(TextViewRole);
 			var codeEditor = codeEditorProvider.Create(options);
 			codeEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategory);

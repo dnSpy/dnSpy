@@ -27,14 +27,14 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 	sealed class DecompilerSettingsImpl : DecompilerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("6745457F-254B-4B7B-90F1-F948F0721C3B");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		DecompilerSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		DecompilerSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			// Only read those settings that can be changed in the dialog box
 			this.DecompilationObject0 = sect.Attribute<DecompilationObject?>(nameof(DecompilationObject0)) ?? this.DecompilationObject0;
 			this.DecompilationObject1 = sect.Attribute<DecompilationObject?>(nameof(DecompilationObject1)) ?? this.DecompilationObject1;
@@ -79,7 +79,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			if (disableSave)
 				return;
 
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			// Only save those settings that can be changed in the dialog box
 			sect.Attribute(nameof(DecompilationObject0), DecompilationObject0);
 			sect.Attribute(nameof(DecompilationObject1), DecompilationObject1);

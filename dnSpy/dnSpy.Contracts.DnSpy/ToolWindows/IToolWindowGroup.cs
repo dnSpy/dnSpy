@@ -25,9 +25,9 @@ namespace dnSpy.Contracts.ToolWindows {
 	/// </summary>
 	public interface IToolWindowGroup {
 		/// <summary>
-		/// Gets the owner <see cref="IToolWindowGroupManager"/> instance
+		/// Gets the owner <see cref="IToolWindowGroupService"/> instance
 		/// </summary>
-		IToolWindowGroupManager ToolWindowGroupManager { get; }
+		IToolWindowGroupService ToolWindowGroupService { get; }
 
 		/// <summary>
 		/// Gets all <see cref="IToolWindowContent"/> instances

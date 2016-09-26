@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	//TODO: This object is attached to AsmEdHexDocument and DnSpyFile. The UndoCommandManager should
+	//TODO: This object is attached to AsmEdHexDocument and DsDocument. The UndoCommandService should
 	//		internally store this state so this class (and AsmEdHexDocument) can be removed.
 	sealed class UndoObject : IUndoObject {
 		public bool IsDirty { get; set; }

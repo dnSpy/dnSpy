@@ -25,8 +25,8 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.BackgroundImage {
 	[Export(typeof(IWpfTextViewCreationListener))]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.DocumentViewer)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveBackgroundImage)]
+	[TextViewRole(PredefinedDsTextViewRoles.DocumentViewer)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveBackgroundImage)]
 	[ContentType(ContentTypes.Any)]
 	sealed class WpfTextViewCreationListener : IWpfTextViewCreationListener {
 		readonly IImageSourceServiceProvider imageSourceServiceProvider;

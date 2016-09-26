@@ -24,7 +24,7 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;

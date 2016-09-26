@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IMarginContextMenuHandlerProvider))]
 	[MarginName(PredefinedMarginNames.Glyph)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveGlyphTextMarkerService)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveGlyphTextMarkerService)]
 	sealed class GlyphTextMarkerContextMenuHandlerProvider : IMarginContextMenuHandlerProvider {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 
@@ -52,10 +52,10 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(IGlyphMouseProcessorProvider))]
-	[Name(PredefinedDnSpyGlyphMouseProcessorProviders.GlyphTextMarkerService)]
+	[Name(PredefinedDsGlyphMouseProcessorProviders.GlyphTextMarkerService)]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveGlyphTextMarkerService)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveGlyphTextMarkerService)]
 	sealed class GlyphTextMarkerServiceMouseProcessorProvider : IGlyphMouseProcessorProvider {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 

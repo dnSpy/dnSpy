@@ -161,11 +161,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Gets the text view
 		/// </summary>
-		IDnSpyWpfTextView TextView { get; }
+		IDsWpfTextView TextView { get; }
 
 		/// <summary>
 		/// Gets the text view host
 		/// </summary>
-		IDnSpyWpfTextViewHost TextViewHost { get; }
+		IDsWpfTextViewHost TextViewHost { get; }
 	}
 }

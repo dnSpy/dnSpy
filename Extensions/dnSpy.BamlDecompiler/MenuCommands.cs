@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.BamlDecompiler {
@@ -46,7 +46,7 @@ namespace dnSpy.BamlDecompiler {
 			var uiContext = context.Find<IDocumentViewer>();
 			if (uiContext == null)
 				return false;
-			var nodes = uiContext.FileTab.Content.Nodes.ToArray();
+			var nodes = uiContext.DocumentTab.Content.Nodes.ToArray();
 			return nodes.Length == 1 && nodes[0] is BamlResourceElementNode;
 		}
 	}

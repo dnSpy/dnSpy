@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -28,8 +28,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		bool SyntaxHighlight { get; }
 		bool ShowToken { get; }
 		IDecompiler Decompiler { get; }
-		IDotNetImageManager DotNetImageManager { get; }
-		IFileManager FileManager { get; }
-		IAnalyzerManager AnalyzerManager { get; }
+		IDotNetImageService DotNetImageService { get; }
+		IDsDocumentService DocumentService { get; }
+		IAnalyzerService AnalyzerService { get; }
 	}
 }

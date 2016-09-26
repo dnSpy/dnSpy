@@ -32,22 +32,22 @@ using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy.Decompiler.ILSpy.Core.IL {
 	sealed class DecompilerProvider : IDecompilerProvider {
-		readonly DecompilerSettingsManager decompilerSettingsManager;
+		readonly DecompilerSettingsService decompilerSettingsService;
 
 		// Keep the default ctor. It's used by dnSpy.Console.exe
 		public DecompilerProvider()
-			: this(DecompilerSettingsManager.__Instance_DONT_USE) {
+			: this(DecompilerSettingsService.__Instance_DONT_USE) {
 		}
 
-		public DecompilerProvider(DecompilerSettingsManager decompilerSettingsManager) {
-			Debug.Assert(decompilerSettingsManager != null);
-			if (decompilerSettingsManager == null)
-				throw new ArgumentNullException(nameof(decompilerSettingsManager));
-			this.decompilerSettingsManager = decompilerSettingsManager;
+		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
+			Debug.Assert(decompilerSettingsService != null);
+			if (decompilerSettingsService == null)
+				throw new ArgumentNullException(nameof(decompilerSettingsService));
+			this.decompilerSettingsService = decompilerSettingsService;
 		}
 
 		public IEnumerable<IDecompiler> Create() {
-			yield return new ILDecompiler(decompilerSettingsManager.ILDecompilerSettings);
+			yield return new ILDecompiler(decompilerSettingsService.ILDecompilerSettings);
 		}
 	}
 

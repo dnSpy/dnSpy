@@ -35,24 +35,24 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	sealed class DecompilerProvider : IDecompilerProvider {
-		readonly DecompilerSettingsManager decompilerSettingsManager;
+		readonly DecompilerSettingsService decompilerSettingsService;
 
 		// Keep the default ctor. It's used by dnSpy.Console.exe
 		public DecompilerProvider()
-			: this(DecompilerSettingsManager.__Instance_DONT_USE) {
+			: this(DecompilerSettingsService.__Instance_DONT_USE) {
 		}
 
-		public DecompilerProvider(DecompilerSettingsManager decompilerSettingsManager) {
-			Debug.Assert(decompilerSettingsManager != null);
-			if (decompilerSettingsManager == null)
-				throw new ArgumentNullException(nameof(decompilerSettingsManager));
-			this.decompilerSettingsManager = decompilerSettingsManager;
+		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
+			Debug.Assert(decompilerSettingsService != null);
+			if (decompilerSettingsService == null)
+				throw new ArgumentNullException(nameof(decompilerSettingsService));
+			this.decompilerSettingsService = decompilerSettingsService;
 		}
 
 		public IEnumerable<IDecompiler> Create() {
-			yield return new CSharpDecompiler(decompilerSettingsManager.CSharpVBDecompilerSettings, DecompilerConstants.CSHARP_ILSPY_ORDERUI);
+			yield return new CSharpDecompiler(decompilerSettingsService.CSharpVBDecompilerSettings, DecompilerConstants.CSHARP_ILSPY_ORDERUI);
 #if DEBUG
-			foreach (var l in CSharpDecompiler.GetDebugDecompilers(decompilerSettingsManager.CSharpVBDecompilerSettings))
+			foreach (var l in CSharpDecompiler.GetDebugDecompilers(decompilerSettingsService.CSharpVBDecompilerSettings))
 				yield return l;
 #endif
 		}

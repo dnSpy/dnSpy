@@ -24,15 +24,15 @@ using System.Diagnostics;
 using System.IO;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.IMModules;
 
 namespace dnSpy.Debugger {
 	interface IModuleLoader {
-		IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile, bool isAutoLoaded);
-		IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile, bool isAutoLoaded);
-		IDnSpyFile LoadModule(ModuleId moduleId, bool canLoadDynFile, bool diskFileOk, bool isAutoLoaded);
+		IDsDocument LoadModule(CorModule module, bool canLoadDynFile, bool isAutoLoaded);
+		IDsDocument LoadModule(DnModule module, bool canLoadDynFile, bool isAutoLoaded);
+		IDsDocument LoadModule(ModuleId moduleId, bool canLoadDynFile, bool diskFileOk, bool isAutoLoaded);
 		DnModule GetDnModule(CorModule module);
 	}
 
@@ -42,16 +42,16 @@ namespace dnSpy.Debugger {
 
 		readonly Lazy<ITheDebugger> theDebugger;
 		readonly IDebuggerSettings debuggerSettings;
-		readonly IFileManager fileManager;
-		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+		readonly IDsDocumentService documentService;
+		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		ModuleLoader(Lazy<ITheDebugger> theDebugger, IDebuggerSettings debuggerSettings, IFileManager fileManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager, IModuleIdProvider moduleIdProvider) {
+		ModuleLoader(Lazy<ITheDebugger> theDebugger, IDebuggerSettings debuggerSettings, IDsDocumentService documentService, Lazy<IInMemoryModuleService> inMemoryModuleService, IModuleIdProvider moduleIdProvider) {
 			this.theDebugger = theDebugger;
 			this.debuggerSettings = debuggerSettings;
-			this.fileManager = fileManager;
-			this.inMemoryModuleManager = inMemoryModuleManager;
+			this.documentService = documentService;
+			this.inMemoryModuleService = inMemoryModuleService;
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		public IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile, bool isAutoLoaded) {
+		public IDsDocument LoadModule(CorModule module, bool canLoadDynFile, bool isAutoLoaded) {
 			if (module == null)
 				return null;
 
@@ -90,23 +90,23 @@ namespace dnSpy.Debugger {
 			return LoadModule(module.DnModuleId.ToModuleId(), canLoadDynFile, diskFileOk: false, isAutoLoaded: isAutoLoaded);
 		}
 
-		public IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile, bool isAutoLoaded) {
+		public IDsDocument LoadModule(DnModule module, bool canLoadDynFile, bool isAutoLoaded) {
 			if (module == null)
 				return null;
 			if (UseMemoryModules || module.IsDynamic || module.IsInMemory)
-				return inMemoryModuleManager.Value.LoadFile(module, canLoadDynFile);
-			var file = inMemoryModuleManager.Value.FindFile(module);
+				return inMemoryModuleService.Value.LoadDocument(module, canLoadDynFile);
+			var file = inMemoryModuleService.Value.FindDocument(module);
 			if (file != null)
 				return file;
 			var moduleId = module.DnModuleId;
 			return LoadModule(moduleId.ToModuleId(), canLoadDynFile, diskFileOk: false, isAutoLoaded: isAutoLoaded);
 		}
 
-		IEnumerable<IDnSpyFile> AllDnSpyFiles => inMemoryModuleManager.Value.AllDnSpyFiles;
+		IEnumerable<IDsDocument> AllDocuments => inMemoryModuleService.Value.AllDocuments;
 
-		IEnumerable<IDnSpyFile> AllActiveDnSpyFiles {
+		IEnumerable<IDsDocument> AllActiveDocuments {
 			get {
-				foreach (var file in AllDnSpyFiles) {
+				foreach (var file in AllDocuments) {
 					var cmdf = file as CorModuleDefFile;
 					if (cmdf != null) {
 						if (cmdf.DnModule.Process.HasExited || cmdf.DnModule.Debugger.ProcessState == DebuggerProcessState.Terminated)
@@ -128,24 +128,24 @@ namespace dnSpy.Debugger {
 			}
 		}
 
-		IDnSpyFile LoadNonDiskFile(ModuleId moduleId, bool canLoadDynFile) {
+		IDsDocument LoadNonDiskFile(ModuleId moduleId, bool canLoadDynFile) {
 			if (UseMemoryModules || moduleId.IsDynamic || moduleId.IsInMemory) {
 				var dnModule = GetDnModule(moduleId);
 				if (dnModule != null)
-					return inMemoryModuleManager.Value.LoadFile(dnModule, canLoadDynFile);
+					return inMemoryModuleService.Value.LoadDocument(dnModule, canLoadDynFile);
 			}
 
 			return null;
 		}
 
-		IDnSpyFile LoadExisting(ModuleId moduleId) {
-			foreach (var file in AllActiveDnSpyFiles) {
+		IDsDocument LoadExisting(ModuleId moduleId) {
+			foreach (var file in AllActiveDocuments) {
 				var otherId = moduleIdProvider.Create(file.ModuleDef);
 				if (otherId.Equals(moduleId))
 					return file;
 			}
 
-			foreach (var file in AllDnSpyFiles) {
+			foreach (var file in AllDocuments) {
 				var moduleIdFile = moduleIdProvider.Create(file.ModuleDef);
 				if (moduleIdFile.Equals(moduleId))
 					return file;
@@ -154,17 +154,17 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		public IDnSpyFile LoadModule(ModuleId moduleId, bool canLoadDynFile, bool diskFileOk, bool isAutoLoaded) {
-			IDnSpyFile file;
+		public IDsDocument LoadModule(ModuleId moduleId, bool canLoadDynFile, bool diskFileOk, bool isAutoLoaded) {
+			IDsDocument document;
 			if (diskFileOk) {
-				file = LoadExisting(moduleId) ?? LoadNonDiskFile(moduleId, canLoadDynFile);
-				if (file != null)
-					return file;
+				document = LoadExisting(moduleId) ?? LoadNonDiskFile(moduleId, canLoadDynFile);
+				if (document != null)
+					return document;
 			}
 			else {
-				file = LoadNonDiskFile(moduleId, canLoadDynFile) ?? LoadExisting(moduleId);
-				if (file != null)
-					return file;
+				document = LoadNonDiskFile(moduleId, canLoadDynFile) ?? LoadExisting(moduleId);
+				if (document != null)
+					return document;
 			}
 
 			if (moduleId.IsDynamic || moduleId.IsInMemory)
@@ -176,22 +176,22 @@ namespace dnSpy.Debugger {
 			string asmFilename = GetAssemblyFilename(moduleFilename, moduleId.AssemblyFullName, moduleId.ModuleNameOnly);
 
 			if (!string.IsNullOrEmpty(asmFilename)) {
-				file = fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(asmFilename), isAutoLoaded);
-				if (file == null)
-					file = fileManager.Resolve(new AssemblyNameInfo(moduleId.AssemblyFullName), null);
-				if (file != null) {
+				document = documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(asmFilename), isAutoLoaded);
+				if (document == null)
+					document = documentService.Resolve(new AssemblyNameInfo(moduleId.AssemblyFullName), null);
+				if (document != null) {
 					// Common case is a one-file assembly or first module of a multifile assembly
 					if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
-						return file;
+						return document;
 
-					foreach (var child in file.Children) {
+					foreach (var child in document.Children) {
 						if (child.Filename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
 							return child;
 					}
 				}
 			}
 
-			return fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(moduleFilename), isAutoLoaded);
+			return documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(moduleFilename), isAutoLoaded);
 		}
 
 		static string GetAssemblyFilename(string moduleFilename, string assemblyFullName, bool moduleNameOnly) {

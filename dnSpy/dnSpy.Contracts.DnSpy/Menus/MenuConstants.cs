@@ -18,7 +18,7 @@
 */
 
 using System.Windows.Controls;
-using dnSpy.Contracts.Files.Tabs.DocViewer;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
@@ -81,8 +81,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>An unknown object</summary>
 		public static readonly string GUIDOBJ_UNKNOWN_GUID = "9BD7C228-91A0-4140-8E8B-AB0450B418CA";
 
-		/// <summary>Files treeview</summary>
-		public static readonly string GUIDOBJ_FILES_TREEVIEW_GUID = "F64505EB-6D8B-4332-B697-73B2D1EE6C37";
+		/// <summary>Documents treeview</summary>
+		public static readonly string GUIDOBJ_DOCUMENTS_TREEVIEW_GUID = "F64505EB-6D8B-4332-B697-73B2D1EE6C37";
 
 		/// <summary>Analyzer's treeview</summary>
 		public static readonly string GUIDOBJ_ANALYZER_TREEVIEW_GUID = "4C7D6317-C84A-42E6-A582-FCE3ED35EBE6";
@@ -99,8 +99,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="TextReference"/></summary>
 		public static readonly string GUIDOBJ_CODE_REFERENCE_GUID = "751F4075-D420-4196-BCF0-A0149A8948A4";
 
-		/// <summary>Files <see cref="TabControl"/></summary>
-		public static readonly string GUIDOBJ_FILES_TABCONTROL_GUID = "AB1B4BCE-D8C1-43BE-8822-C124FBCAC260";
+		/// <summary>Document <see cref="TabControl"/></summary>
+		public static readonly string GUIDOBJ_DOCUMENTS_TABCONTROL_GUID = "AB1B4BCE-D8C1-43BE-8822-C124FBCAC260";
 
 		/// <summary><see cref="ITabGroup"/></summary>
 		public static readonly string GUIDOBJ_TABGROUP_GUID = "87B2F94A-D80B-45FD-BB31-71E390CA6C01";
@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="ILogEditor"/></summary>
 		public static readonly string GUIDOBJ_LOG_EDITOR_GUID = "7ED3CA27-F8F2-4EB8-B9CA-690B27243403";
 
-		/// <summary><see cref="IOutputManager"/></summary>
+		/// <summary><see cref="IOutputService"/></summary>
 		public static readonly string GUIDOBJ_OUTPUT_MANAGER_GUID = "FB4F524A-7096-46CD-BCE2-EC2550EFCC92";
 
 		/// <summary>Active <see cref="IOutputTextPane"/></summary>
@@ -351,38 +351,38 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Analyzer, Group: Options</summary>
 		public const string GROUP_CTX_ANALYZER_OPTIONS = "10000,FD6E5D84-A83C-4D0A-8A77-EE755DE76999";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: Tabs</summary>
-		public const string GROUP_CTX_FILES_TABS = "0,3FEF128B-8320-4ED0-B03B-0932FCCDA98E";
+		/// <summary>Group: Context Menu, Type: Documents, Group: Tabs</summary>
+		public const string GROUP_CTX_DOCUMENTS_TABS = "0,3FEF128B-8320-4ED0-B03B-0932FCCDA98E";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: AsmEditor Save</summary>
-		public const string GROUP_CTX_FILES_ASMED_SAVE = "1000,9495E6B9-0C5C-484A-9354-A5D19A5010DE";
+		/// <summary>Group: Context Menu, Type: Documents, Group: AsmEditor Save</summary>
+		public const string GROUP_CTX_DOCUMENTS_ASMED_SAVE = "1000,9495E6B9-0C5C-484A-9354-A5D19A5010DE";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: AsmEditor Delete</summary>
-		public const string GROUP_CTX_FILES_ASMED_DELETE = "2000,17B24EE5-C1C0-441D-9B6F-C7632AF4C539";
+		/// <summary>Group: Context Menu, Type: Documents, Group: AsmEditor Delete</summary>
+		public const string GROUP_CTX_DOCUMENTS_ASMED_DELETE = "2000,17B24EE5-C1C0-441D-9B6F-C7632AF4C539";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: AsmEditor Misc</summary>
-		public const string GROUP_CTX_FILES_ASMED_MISC = "3000,928EDD44-E4A9-4EA9-93FF-55709943A088";
+		/// <summary>Group: Context Menu, Type: Documents, Group: AsmEditor Misc</summary>
+		public const string GROUP_CTX_DOCUMENTS_ASMED_MISC = "3000,928EDD44-E4A9-4EA9-93FF-55709943A088";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: AsmEditor New</summary>
-		public const string GROUP_CTX_FILES_ASMED_NEW = "4000,05FD56B0-CAF9-48E1-9CED-5221E8A13140";
+		/// <summary>Group: Context Menu, Type: Documents, Group: AsmEditor New</summary>
+		public const string GROUP_CTX_DOCUMENTS_ASMED_NEW = "4000,05FD56B0-CAF9-48E1-9CED-5221E8A13140";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: AsmEditor Settings</summary>
-		public const string GROUP_CTX_FILES_ASMED_SETTINGS = "5000,2247C4DB-73B8-4926-96EB-1C16EAF4A3E4";
+		/// <summary>Group: Context Menu, Type: Documents, Group: AsmEditor Settings</summary>
+		public const string GROUP_CTX_DOCUMENTS_ASMED_SETTINGS = "5000,2247C4DB-73B8-4926-96EB-1C16EAF4A3E4";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: AsmEditor IL ED</summary>
-		public const string GROUP_CTX_FILES_ASMED_ILED = "6000,9E0E8539-751E-47EA-A0E9-EAB3A45724E3";
+		/// <summary>Group: Context Menu, Type: Documents, Group: AsmEditor IL ED</summary>
+		public const string GROUP_CTX_DOCUMENTS_ASMED_ILED = "6000,9E0E8539-751E-47EA-A0E9-EAB3A45724E3";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: Tokens</summary>
-		public const string GROUP_CTX_FILES_TOKENS = "7000,C98101AD-1A59-42AE-B446-16545F39DC7A";
+		/// <summary>Group: Context Menu, Type: Documents, Group: Tokens</summary>
+		public const string GROUP_CTX_DOCUMENTS_TOKENS = "7000,C98101AD-1A59-42AE-B446-16545F39DC7A";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: Debug RT</summary>
-		public const string GROUP_CTX_FILES_DEBUGRT = "9000,9A151E30-AC16-4745-A819-24AA199E82CB";
+		/// <summary>Group: Context Menu, Type: Documents, Group: Debug RT</summary>
+		public const string GROUP_CTX_DOCUMENTS_DEBUGRT = "9000,9A151E30-AC16-4745-A819-24AA199E82CB";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: Debug</summary>
-		public const string GROUP_CTX_FILES_DEBUG = "10000,080A553F-F066-41DC-9CC6-B4CCF2C48675";
+		/// <summary>Group: Context Menu, Type: Documents, Group: Debug</summary>
+		public const string GROUP_CTX_DOCUMENTS_DEBUG = "10000,080A553F-F066-41DC-9CC6-B4CCF2C48675";
 
-		/// <summary>Group: Context Menu, Type: Files, Group: Other</summary>
-		public const string GROUP_CTX_FILES_OTHER = "11000,15776535-8A1D-4255-8C3D-331163324C7C";
+		/// <summary>Group: Context Menu, Type: Document, Group: Other</summary>
+		public const string GROUP_CTX_DOCUMENTS_OTHER = "11000,15776535-8A1D-4255-8C3D-331163324C7C";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Copy</summary>
 		public const string GROUP_CTX_DBG_BPS_COPY = "0,FB604477-5E55-4B55-91A4-0E06762FED83";

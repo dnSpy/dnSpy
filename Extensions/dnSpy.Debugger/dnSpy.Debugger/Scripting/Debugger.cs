@@ -41,8 +41,8 @@ namespace dnSpy.Debugger.Scripting {
 		readonly Dispatcher dispatcher;
 
 		readonly ITheDebugger theDebugger;
-		readonly Lazy<IStackFrameManager> stackFrameManager;
-		readonly Lazy<IDebugManager> debugManager;
+		readonly Lazy<IStackFrameService> stackFrameService;
+		readonly Lazy<IDebugService> debugService;
 		readonly ManualResetEvent pausedOrTerminatedEvent;
 		readonly ManualResetEvent runningEvent;
 		// Cache this so it's possible for scripts to read process memory from any thread
@@ -78,17 +78,17 @@ namespace dnSpy.Debugger.Scripting {
 		public bool IsPaused => State == DebuggerProcessState.Paused;
 		public bool IsTerminated => State == DebuggerProcessState.Terminated;
 		public bool IsDebugging => dispatcher.UI(() => theDebugger.IsDebugging);
-		public bool HasAttached => dispatcher.UI(() => debugManager.Value.HasAttached);
-		public bool IsEvaluating => dispatcher.UI(() => debugManager.Value.IsEvaluating);
-		public bool EvalCompleted => dispatcher.UI(() => debugManager.Value.EvalCompleted);
+		public bool HasAttached => dispatcher.UI(() => debugService.Value.HasAttached);
+		public bool IsEvaluating => dispatcher.UI(() => debugService.Value.IsEvaluating);
+		public bool EvalCompleted => dispatcher.UI(() => debugService.Value.EvalCompleted);
 
 		[ImportingConstructor]
-		Debugger(ITheDebugger theDebugger, Lazy<IStackFrameManager> stackFrameManager, Lazy<IDebugManager> debugManager) {
+		Debugger(ITheDebugger theDebugger, Lazy<IStackFrameService> stackFrameService, Lazy<IDebugService> debugService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.theDebugger = theDebugger;
 			this.theDebugger.OnProcessStateChanged_Last += TheDebugger_OnProcessStateChanged_Last;
-			this.stackFrameManager = stackFrameManager;
-			this.debugManager = debugManager;
+			this.stackFrameService = stackFrameService;
+			this.debugService = debugService;
 			this.pausedOrTerminatedEvent = new ManualResetEvent(false);
 			this.runningEvent = new ManualResetEvent(false);
 			InitializeProcessHandle();
@@ -225,9 +225,9 @@ namespace dnSpy.Debugger.Scripting {
 			return index != WaitHandle.WaitTimeout;
 		}
 
-		public bool Start() => dispatcher.UI(() => debugManager.Value.DebugAssembly());
+		public bool Start() => dispatcher.UI(() => debugService.Value.DebugAssembly());
 		public bool Start(DebugOptions options) =>
-			dispatcher.UI(() => debugManager.Value.DebugAssembly(Utils.Convert(options, debugManager.Value.DebuggerSettings, new DBG.DesktopCLRTypeDebugInfo())));
+			dispatcher.UI(() => debugService.Value.DebugAssembly(Utils.Convert(options, debugService.Value.DebuggerSettings, new DBG.DesktopCLRTypeDebugInfo())));
 
 		public bool Start(string filename, string cmdLine, string cwd, BreakProcessKind breakKind) {
 			var options = new DebugOptions {
@@ -239,9 +239,9 @@ namespace dnSpy.Debugger.Scripting {
 			return Start(options);
 		}
 
-		public bool StartCoreCLR() => dispatcher.UI(() => debugManager.Value.DebugCoreCLRAssembly());
+		public bool StartCoreCLR() => dispatcher.UI(() => debugService.Value.DebugCoreCLRAssembly());
 		public bool StartCoreCLR(CoreCLRDebugOptions options) =>
-			dispatcher.UI(() => debugManager.Value.DebugAssembly(Utils.Convert(options.Options, debugManager.Value.DebuggerSettings, new DBG.CoreCLRTypeDebugInfo(options.DbgShimFilename ?? debugManager.Value.DebuggerSettings.CoreCLRDbgShimFilename, options.HostFilename, options.HostCommandLine))));
+			dispatcher.UI(() => debugService.Value.DebugAssembly(Utils.Convert(options.Options, debugService.Value.DebuggerSettings, new DBG.CoreCLRTypeDebugInfo(options.DbgShimFilename ?? debugService.Value.DebuggerSettings.CoreCLRDbgShimFilename, options.HostFilename, options.HostCommandLine))));
 
 		public bool StartCoreCLR(string filename, string cmdLine, string cwd, BreakProcessKind breakKind, string hostFilename, string hostCommandLine) {
 			var options = new CoreCLRDebugOptions();
@@ -254,9 +254,9 @@ namespace dnSpy.Debugger.Scripting {
 			return StartCoreCLR(options);
 		}
 
-		public bool Attach() => dispatcher.UI(() => debugManager.Value.Attach());
+		public bool Attach() => dispatcher.UI(() => debugService.Value.Attach());
 		public bool Attach(AttachOptions options) =>
-			dispatcher.UI(() => debugManager.Value.Attach(Utils.Convert(options, debugManager.Value.DebuggerSettings)));
+			dispatcher.UI(() => debugService.Value.Attach(Utils.Convert(options, debugService.Value.DebuggerSettings)));
 
 		public bool Attach(int pid) {
 			var options = new AttachOptions {
@@ -265,11 +265,11 @@ namespace dnSpy.Debugger.Scripting {
 			return Attach(options);
 		}
 
-		public void Restart() => dispatcher.UI(() => debugManager.Value.Restart());
-		public void Break() => dispatcher.UI(() => debugManager.Value.Break());
-		public void Stop() => dispatcher.UI(() => debugManager.Value.Stop());
-		public void Detach() => dispatcher.UI(() => debugManager.Value.Detach());
-		public void Continue() => dispatcher.UI(() => debugManager.Value.Continue());
+		public void Restart() => dispatcher.UI(() => debugService.Value.Restart());
+		public void Break() => dispatcher.UI(() => debugService.Value.Break());
+		public void Stop() => dispatcher.UI(() => debugService.Value.Stop());
+		public void Detach() => dispatcher.UI(() => debugService.Value.Detach());
+		public void Continue() => dispatcher.UI(() => debugService.Value.Continue());
 
 		public Task<bool> ContinueAsync(int millisecondsTimeout) {
 			Continue();
@@ -286,8 +286,8 @@ namespace dnSpy.Debugger.Scripting {
 			return Wait(token, millisecondsTimeout);
 		}
 
-		public void StepInto() => dispatcher.UI(() => debugManager.Value.StepInto());
-		public void StepInto(IStackFrame frame) => dispatcher.UI(() => debugManager.Value.StepInto(((StackFrame)frame).CorFrame));
+		public void StepInto() => dispatcher.UI(() => debugService.Value.StepInto());
+		public void StepInto(IStackFrame frame) => dispatcher.UI(() => debugService.Value.StepInto(((StackFrame)frame).CorFrame));
 
 		public Task<bool> StepIntoAsync(int millisecondsTimeout) {
 			StepInto();
@@ -319,8 +319,8 @@ namespace dnSpy.Debugger.Scripting {
 			return Wait(token, millisecondsTimeout);
 		}
 
-		public void StepOver() => dispatcher.UI(() => debugManager.Value.StepOver());
-		public void StepOver(IStackFrame frame) => dispatcher.UI(() => debugManager.Value.StepOver(((StackFrame)frame).CorFrame));
+		public void StepOver() => dispatcher.UI(() => debugService.Value.StepOver());
+		public void StepOver(IStackFrame frame) => dispatcher.UI(() => debugService.Value.StepOver(((StackFrame)frame).CorFrame));
 
 		public Task<bool> StepOverAsync(int millisecondsTimeout) {
 			StepOver();
@@ -352,8 +352,8 @@ namespace dnSpy.Debugger.Scripting {
 			return Wait(token, millisecondsTimeout);
 		}
 
-		public void StepOut() => dispatcher.UI(() => debugManager.Value.StepOut());
-		public void StepOut(IStackFrame frame) => dispatcher.UI(() => debugManager.Value.StepOut(((StackFrame)frame).CorFrame));
+		public void StepOut() => dispatcher.UI(() => debugService.Value.StepOut());
+		public void StepOut(IStackFrame frame) => dispatcher.UI(() => debugService.Value.StepOut(((StackFrame)frame).CorFrame));
 
 		public Task<bool> StepOutAsync(int millisecondsTimeout) {
 			StepOut();
@@ -385,7 +385,7 @@ namespace dnSpy.Debugger.Scripting {
 			return Wait(token, millisecondsTimeout);
 		}
 
-		public bool RunTo(IStackFrame frame) => dispatcher.UI(() => debugManager.Value.RunTo(((StackFrame)frame).CorFrame));
+		public bool RunTo(IStackFrame frame) => dispatcher.UI(() => debugService.Value.RunTo(((StackFrame)frame).CorFrame));
 
 		public Task<bool> RunToAsync(IStackFrame frame, int millisecondsTimeout) {
 			RunTo(frame);
@@ -404,42 +404,42 @@ namespace dnSpy.Debugger.Scripting {
 
 		public bool SetOffset(int offset) => dispatcher.UI(() => {
 			string errMsg;
-			return debugManager.Value.SetOffset((uint)offset, out errMsg);
+			return debugService.Value.SetOffset((uint)offset, out errMsg);
 		});
 
 		public bool SetOffset(uint offset) => dispatcher.UI(() => {
 			string errMsg;
-			return debugManager.Value.SetOffset(offset, out errMsg);
+			return debugService.Value.SetOffset(offset, out errMsg);
 		});
 
 		public bool SetNativeOffset(int offset) => dispatcher.UI(() => {
 			string errMsg;
-			return debugManager.Value.SetNativeOffset((uint)offset, out errMsg);
+			return debugService.Value.SetNativeOffset((uint)offset, out errMsg);
 		});
 
 		public bool SetNativeOffset(uint offset) => dispatcher.UI(() => {
 			string errMsg;
-			return debugManager.Value.SetNativeOffset(offset, out errMsg);
+			return debugService.Value.SetNativeOffset(offset, out errMsg);
 		});
 
 		public bool SetOffset(IStackFrame frame, int offset) => dispatcher.UI(() => {
 			string errMsg;
-			return debugManager.Value.SetOffset(((StackFrame)frame).CorFrame, (uint)offset, out errMsg);
+			return debugService.Value.SetOffset(((StackFrame)frame).CorFrame, (uint)offset, out errMsg);
 		});
 
 		public bool SetOffset(IStackFrame frame, uint offset) => dispatcher.UI(() => {
 			string errMsg;
-			return debugManager.Value.SetOffset(((StackFrame)frame).CorFrame, offset, out errMsg);
+			return debugService.Value.SetOffset(((StackFrame)frame).CorFrame, offset, out errMsg);
 		});
 
 		public bool SetNativeOffset(IStackFrame frame, int offset) => dispatcher.UI(() => {
 			string errMsg;
-			return debugManager.Value.SetNativeOffset(((StackFrame)frame).CorFrame, (uint)offset, out errMsg);
+			return debugService.Value.SetNativeOffset(((StackFrame)frame).CorFrame, (uint)offset, out errMsg);
 		});
 
 		public bool SetNativeOffset(IStackFrame frame, uint offset) => dispatcher.UI(() => {
 			string errMsg;
-			return debugManager.Value.SetNativeOffset(((StackFrame)frame).CorFrame, offset, out errMsg);
+			return debugService.Value.SetNativeOffset(((StackFrame)frame).CorFrame, offset, out errMsg);
 		});
 
 		public IEnumerable<IDebuggerThread> Threads => dispatcher.UIIter(GetThreadsUI);
@@ -458,31 +458,31 @@ namespace dnSpy.Debugger.Scripting {
 		public IDebuggerThread ActiveThread {
 			get {
 				return dispatcher.UI(() => {
-					var thread = debugManager.Value.StackFrameManager.SelectedThread;
+					var thread = debugService.Value.StackFrameService.SelectedThread;
 					return thread == null ? null : new DebuggerThread(this, thread);
 				});
 			}
-			set { dispatcher.UI(() => debugManager.Value.StackFrameManager.SelectedThread = ((DebuggerThread)value)?.DnThread); }
+			set { dispatcher.UI(() => debugService.Value.StackFrameService.SelectedThread = ((DebuggerThread)value)?.DnThread); }
 		}
 
 		public IStackFrame ActiveFrame {
 			get {
 				return dispatcher.UI(() => {
-					var frame = debugManager.Value.StackFrameManager.SelectedFrame;
-					return frame == null ? null : new StackFrame(this, frame, debugManager.Value.StackFrameManager.SelectedFrameNumber);
+					var frame = debugService.Value.StackFrameService.SelectedFrame;
+					return frame == null ? null : new StackFrame(this, frame, debugService.Value.StackFrameService.SelectedFrameNumber);
 				});
 			}
-			set { dispatcher.UI(() => debugManager.Value.StackFrameManager.SelectedFrameNumber = value == null ? 0 : ((StackFrame)value).Index); }
+			set { dispatcher.UI(() => debugService.Value.StackFrameService.SelectedFrameNumber = value == null ? 0 : ((StackFrame)value).Index); }
 		}
 
 		public IStackFrame ActiveILFrame => dispatcher.UI(() => {
-			var frame = debugManager.Value.StackFrameManager.FirstILFrame;
-			return frame == null ? null : new StackFrame(this, frame, debugManager.Value.StackFrameManager.SelectedFrameNumber);
+			var frame = debugService.Value.StackFrameService.FirstILFrame;
+			return frame == null ? null : new StackFrame(this, frame, debugService.Value.StackFrameService.SelectedFrameNumber);
 		});
 
 		public int ActiveFrameIndex {
-			get { return dispatcher.UI(() => debugManager.Value.StackFrameManager.SelectedFrameNumber); }
-			set { dispatcher.UI(() => debugManager.Value.StackFrameManager.SelectedFrameNumber = value); }
+			get { return dispatcher.UI(() => debugService.Value.StackFrameService.SelectedFrameNumber); }
+			set { dispatcher.UI(() => debugService.Value.StackFrameService.SelectedFrameNumber = value); }
 		}
 
 		public IEnumerable<IAppDomain> AppDomains => dispatcher.UIIter(GetAppDomainsUI);

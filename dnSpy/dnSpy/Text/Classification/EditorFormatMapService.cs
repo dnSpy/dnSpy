@@ -28,7 +28,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Classification {
 	[Export(typeof(IEditorFormatMapService))]
 	sealed class EditorFormatMapService : IEditorFormatMapService {
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 		readonly ITextEditorFontSettingsService textEditorFontSettingsService;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
 		readonly Dictionary<ITextEditorFontSettings, IEditorFormatMap> toCategoryMap;
@@ -36,8 +36,8 @@ namespace dnSpy.Text.Classification {
 		readonly Dispatcher dispatcher;
 
 		[ImportingConstructor]
-		public EditorFormatMapService(IThemeManager themeManager, ITextEditorFontSettingsService textEditorFontSettingsService, IEditorFormatDefinitionService editorFormatDefinitionService) {
-			this.themeManager = themeManager;
+		public EditorFormatMapService(IThemeService themeService, ITextEditorFontSettingsService textEditorFontSettingsService, IEditorFormatDefinitionService editorFormatDefinitionService) {
+			this.themeService = themeService;
 			this.textEditorFontSettingsService = textEditorFontSettingsService;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
 			this.toCategoryMap = new Dictionary<ITextEditorFontSettings, IEditorFormatMap>();
@@ -72,7 +72,7 @@ namespace dnSpy.Text.Classification {
 			if (toCategoryMap.TryGetValue(textEditorFontSettings, out map))
 				return map;
 			map = new CategoryEditorFormatMap(dispatcher, editorFormatDefinitionService);
-			var updater = new CategoryEditorFormatMapUpdater(themeManager, textEditorFontSettings, editorFormatDefinitionService, map);
+			var updater = new CategoryEditorFormatMapUpdater(themeService, textEditorFontSettings, editorFormatDefinitionService, map);
 			cachedUpdaters.Add(updater);
 			toCategoryMap.Add(textEditorFontSettings, map);
 			return map;

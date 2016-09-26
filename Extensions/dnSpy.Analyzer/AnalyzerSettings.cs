@@ -97,14 +97,14 @@ namespace dnSpy.Analyzer {
 	sealed class AnalyzerSettingsImpl : AnalyzerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("0A9208EC-CFAB-41C2-82C6-FCDA44A8E684");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		AnalyzerSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		AnalyzerSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
 			this.ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? this.ShowToken;
 			this.SingleClickExpandsChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsChildren)) ?? this.SingleClickExpandsChildren;
@@ -116,7 +116,7 @@ namespace dnSpy.Analyzer {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 			sect.Attribute(nameof(ShowToken), ShowToken);
 			sect.Attribute(nameof(SingleClickExpandsChildren), SingleClickExpandsChildren);

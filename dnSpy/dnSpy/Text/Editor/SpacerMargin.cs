@@ -36,7 +36,7 @@ namespace dnSpy.Text.Editor {
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	[Order(After = PredefinedMarginNames.LineNumber)]
-	[Order(After = PredefinedDnSpyMarginNames.CustomLineNumber)]
+	[Order(After = PredefinedDsMarginNames.CustomLineNumber)]
 	sealed class SpacerMarginProvider : IWpfTextViewMarginProvider {
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;

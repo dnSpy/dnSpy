@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	[Export(typeof(IMouseProcessorProvider))]
-	[Name(PredefinedDnSpyMouseProcessorProviders.IntellisensePresenter)]
+	[Name(PredefinedDsMouseProcessorProviders.IntellisensePresenter)]
 	[ContentType(ContentTypes.Any)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class PresenterMouseProcessorProvider : IMouseProcessorProvider {

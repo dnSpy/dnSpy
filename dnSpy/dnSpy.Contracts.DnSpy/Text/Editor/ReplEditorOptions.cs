@@ -64,10 +64,10 @@ namespace dnSpy.Contracts.Text.Editor {
 			PredefinedTextViewRoles.Editable,
 			PredefinedTextViewRoles.Interactive,
 			PredefinedTextViewRoles.Zoomable,
-			PredefinedDnSpyTextViewRoles.CanHaveCurrentLineHighlighter,
-			PredefinedDnSpyTextViewRoles.CanHaveBackgroundImage,
-			PredefinedDnSpyTextViewRoles.CustomLineNumberMargin,
-			PredefinedDnSpyTextViewRoles.ReplEditor,
+			PredefinedDsTextViewRoles.CanHaveCurrentLineHighlighter,
+			PredefinedDsTextViewRoles.CanHaveBackgroundImage,
+			PredefinedDsTextViewRoles.CustomLineNumberMargin,
+			PredefinedDsTextViewRoles.ReplEditor,
 		};
 
 		/// <summary>

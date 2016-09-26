@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IReplEditorProvider))]
 	sealed class ReplEditorProvider : IReplEditorProvider {
-		readonly IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService;
+		readonly IDsTextEditorFactoryService dsTextEditorFactoryService;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
@@ -40,8 +40,8 @@ namespace dnSpy.Text.Editor {
 		readonly IPickSaveFilename pickSaveFilename;
 
 		[ImportingConstructor]
-		ReplEditorProvider(IDnSpyTextEditorFactoryService dnSpyTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename) {
-			this.dnSpyTextEditorFactoryService = dnSpyTextEditorFactoryService;
+		ReplEditorProvider(IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename) {
+			this.dsTextEditorFactoryService = dsTextEditorFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
@@ -51,6 +51,6 @@ namespace dnSpy.Text.Editor {
 			this.pickSaveFilename = pickSaveFilename;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dnSpyTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypeService, pickSaveFilename);
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypeService, pickSaveFilename);
 	}
 }

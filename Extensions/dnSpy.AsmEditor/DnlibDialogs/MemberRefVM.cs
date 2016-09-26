@@ -24,7 +24,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 
@@ -115,7 +115,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void InitializeFromField() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newField = dnlibTypePicker.GetDnlibType<IField>(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsFileTreeNodeFilter(VisibleMembersFlags.FieldDef), null, typeSigCreatorOptions.OwnerModule);
+			var newField = dnlibTypePicker.GetDnlibType<IField>(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.FieldDef), null, typeSigCreatorOptions.OwnerModule);
 			if (newField != null)
 				InitializeFrom(new MemberRefOptions(typeSigCreatorOptions.OwnerModule.Import(newField)));
 		}
@@ -123,7 +123,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void InitializeFromMethod() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newMethod = dnlibTypePicker.GetDnlibType<IMethod>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), null, typeSigCreatorOptions.OwnerModule);
+			var newMethod = dnlibTypePicker.GetDnlibType<IMethod>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), null, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null) {
 				var mr = typeSigCreatorOptions.OwnerModule.Import(newMethod) as MemberRef;
 				if (mr != null)
@@ -134,7 +134,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), Class as ITypeDefOrRef, typeSigCreatorOptions.OwnerModule);
+			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), Class as ITypeDefOrRef, typeSigCreatorOptions.OwnerModule);
 			if (newType != null)
 				Class = newType;
 		}
@@ -151,7 +151,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickMethodDef() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameAssemblyFileTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
+			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameAssemblyDocumentTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null) {
 				var md = newMethod as MethodDef;
 				Debug.Assert(md != null);
@@ -163,9 +163,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickModuleRef() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var file = dnlibTypePicker.GetDnlibType<IDnSpyFile>(dnSpy_AsmEditor_Resources.Pick_Module, new SameAssemblyFileTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
-			if (file != null) {
-				var module = file.ModuleDef;
+			var document = dnlibTypePicker.GetDnlibType<IDsDocument>(dnSpy_AsmEditor_Resources.Pick_Module, new SameAssemblyDocumentTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
+			if (document != null) {
+				var module = document.ModuleDef;
 				if (module != null) {
 					var modRef = new ModuleRefUser(typeSigCreatorOptions.OwnerModule, module.Name);
 					Class = typeSigCreatorOptions.OwnerModule.UpdateRowId(modRef);

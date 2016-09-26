@@ -18,7 +18,7 @@
 */
 
 using dnlib.DotNet;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	interface IDnlibTypePicker {
@@ -31,6 +31,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// <param name="selectedObject">null or the object that should be selected in the UI</param>
 		/// <param name="ownerModule">Module owning the returned reference</param>
 		/// <returns></returns>
-		T GetDnlibType<T>(string title, IFileTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class;
+		T GetDnlibType<T>(string title, IDocumentTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class;
 	}
 }

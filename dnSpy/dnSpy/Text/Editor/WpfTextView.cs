@@ -44,11 +44,11 @@ using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
-	interface IDnSpyWpfTextViewImpl : IDnSpyWpfTextView {
+	interface IDsWpfTextViewImpl : IDsWpfTextView {
 		bool IsMouseOverOverlayLayerElement(MouseEventArgs e);
 	}
 
-	sealed partial class WpfTextView : Canvas, IDnSpyWpfTextView, ILineTransformSource, IDnSpyWpfTextViewImpl {
+	sealed partial class WpfTextView : Canvas, IDsWpfTextView, ILineTransformSource, IDsWpfTextViewImpl {
 		public IBufferGraph BufferGraph { get; }
 		public PropertyCollection Properties { get; }
 		public FrameworkElement VisualElement => this;
@@ -117,24 +117,24 @@ namespace dnSpy.Text.Editor {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.Text)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Caret)]
 		static readonly AdornmentLayerDefinition textAdornmentLayerDefinition;
 
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.Caret)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Text)]
 		static readonly AdornmentLayerDefinition caretAdornmentLayerDefinition;
 
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.Selection)]
-		[Order(After = PredefinedDnSpyAdornmentLayers.BottomLayer, Before = PredefinedDnSpyAdornmentLayers.TopLayer)]
+		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Text)]
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandManager commandManager, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
+		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
 			if (textViewModel == null)
 				throw new ArgumentNullException(nameof(textViewModel));
 			if (roles == null)
@@ -143,8 +143,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(parentOptions));
 			if (editorOptionsFactoryService == null)
 				throw new ArgumentNullException(nameof(editorOptionsFactoryService));
-			if (commandManager == null)
-				throw new ArgumentNullException(nameof(commandManager));
+			if (commandService == null)
+				throw new ArgumentNullException(nameof(commandService));
 			if (smartIndentationService == null)
 				throw new ArgumentNullException(nameof(smartIndentationService));
 			if (formattedTextSourceFactoryService == null)
@@ -226,7 +226,7 @@ namespace dnSpy.Text.Editor {
 			UpdateRemoveExtraTextLineVerticalPixels();
 
 			if (Roles.Contains(PredefinedTextViewRoles.Interactive))
-				RegisteredCommandElement = commandManager.Register(VisualElement, this);
+				RegisteredCommandElement = commandService.Register(VisualElement, this);
 			else
 				RegisteredCommandElement = NullRegisteredCommandElement.Instance;
 
@@ -398,13 +398,13 @@ namespace dnSpy.Text.Editor {
 			}
 			else if (e.OptionId == DefaultOptions.TabSizeOptionId.Name)
 				InvalidateFormattedLineSource(true);
-			else if (e.OptionId == DefaultDnSpyTextViewOptions.RefreshScreenOnChangeId.Name) {
+			else if (e.OptionId == DefaultDsTextViewOptions.RefreshScreenOnChangeId.Name) {
 				if (!Options.IsRefreshScreenOnChangeEnabled())
 					StopRefreshTimer();
 			}
-			else if (e.OptionId == DefaultDnSpyTextViewOptions.EnableColorizationId.Name)
+			else if (e.OptionId == DefaultDsTextViewOptions.EnableColorizationId.Name)
 				InvalidateFormattedLineSource(true);
-			else if (e.OptionId == DefaultDnSpyTextViewOptions.RemoveExtraTextLineVerticalPixelsId.Name)
+			else if (e.OptionId == DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId.Name)
 				UpdateRemoveExtraTextLineVerticalPixels();
 		}
 
@@ -633,7 +633,7 @@ namespace dnSpy.Text.Editor {
 
 		void InitializeOptions() {
 			UpdateOption(DefaultWpfViewOptions.ZoomLevelId.Name);
-			UpdateOption(DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name);
+			UpdateOption(DefaultDsWpfViewOptions.ForceClearTypeIfNeededId.Name);
 		}
 
 		void UpdateOption(string optionId) {
@@ -643,7 +643,7 @@ namespace dnSpy.Text.Editor {
 				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
 					ZoomLevel = Options.ZoomLevel();
 			}
-			else if (optionId == DefaultDnSpyWpfViewOptions.ForceClearTypeIfNeededId.Name)
+			else if (optionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededId.Name)
 				UpdateForceClearTypeIfNeeded();
 		}
 

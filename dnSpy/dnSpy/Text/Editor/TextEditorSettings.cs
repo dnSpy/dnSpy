@@ -143,14 +143,14 @@ namespace dnSpy.Text.Editor {
 	sealed class TextEditorSettingsImpl : TextEditorSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("9D40E1AD-5922-4BBA-B386-E6BABE5D185D");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		TextEditorSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		TextEditorSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultTextEditorFont());
 			this.FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? this.FontSize;
 			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
@@ -167,7 +167,7 @@ namespace dnSpy.Text.Editor {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(FontFamily), FontFamily.Source);
 			sect.Attribute(nameof(FontSize), FontSize);
 			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);

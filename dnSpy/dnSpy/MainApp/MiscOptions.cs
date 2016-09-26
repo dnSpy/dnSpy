@@ -149,7 +149,7 @@ namespace dnSpy.MainApp {
 				const int MAX = 3;
 				int count = (UseNewRenderer_TextEditor ? 1 : 0) +
 							(UseNewRenderer_HexEditor ? 1 : 0) +
-							(UseNewRenderer_FileTreeView ? 1 : 0);
+							(UseNewRenderer_DocumentTreeView ? 1 : 0);
 				return count == 0 ? false : count == MAX ? (bool?)true : null;
 			}
 			set {
@@ -157,7 +157,7 @@ namespace dnSpy.MainApp {
 					return;
 				UseNewRenderer_TextEditor = value.Value;
 				UseNewRenderer_HexEditor = value.Value;
-				UseNewRenderer_FileTreeView = value.Value;
+				UseNewRenderer_DocumentTreeView = value.Value;
 			}
 		}
 
@@ -185,17 +185,17 @@ namespace dnSpy.MainApp {
 		}
 		bool useNewRenderer_HexEditor = false;
 
-		public bool UseNewRenderer_FileTreeView {
-			get { return useNewRenderer_FileTreeView; }
+		public bool UseNewRenderer_DocumentTreeView {
+			get { return useNewRenderer_DocumentTreeView; }
 			set {
-				if (useNewRenderer_FileTreeView != value) {
-					useNewRenderer_FileTreeView = value;
-					OnPropertyChanged(nameof(UseNewRenderer_FileTreeView));
+				if (useNewRenderer_DocumentTreeView != value) {
+					useNewRenderer_DocumentTreeView = value;
+					OnPropertyChanged(nameof(UseNewRenderer_DocumentTreeView));
 					OnPropertyChanged(nameof(UseNewRenderer));
 				}
 			}
 		}
-		bool useNewRenderer_FileTreeView = false;
+		bool useNewRenderer_DocumentTreeView = false;
 
 		readonly AppSettingsImpl appSettings;
 
@@ -203,13 +203,13 @@ namespace dnSpy.MainApp {
 			this.appSettings = appSettings;
 			this.UseNewRenderer_TextEditor = appSettings.UseNewRenderer_TextEditor;
 			this.UseNewRenderer_HexEditor = appSettings.UseNewRenderer_HexEditor;
-			this.UseNewRenderer_FileTreeView = appSettings.UseNewRenderer_FileTreeView;
+			this.UseNewRenderer_DocumentTreeView = appSettings.UseNewRenderer_DocumentTreeView;
 		}
 
 		public void Save() {
 			appSettings.UseNewRenderer_TextEditor = this.UseNewRenderer_TextEditor;
 			appSettings.UseNewRenderer_HexEditor = this.UseNewRenderer_HexEditor;
-			appSettings.UseNewRenderer_FileTreeView = this.UseNewRenderer_FileTreeView;
+			appSettings.UseNewRenderer_DocumentTreeView = this.UseNewRenderer_DocumentTreeView;
 		}
 	}
 }

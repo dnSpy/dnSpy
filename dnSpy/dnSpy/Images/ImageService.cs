@@ -1,0 +1,101 @@
+﻿/*
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Themes;
+
+namespace dnSpy.Images {
+	[Export(typeof(IImageService))]
+	sealed class ImageService : IImageService {
+		readonly Dictionary<Tuple<string, Color?>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color?>, BitmapSource>();
+		bool isHighContrast;
+		readonly IThemeService themeService;
+
+		[ImportingConstructor]
+		ImageService(IThemeService themeService) {
+			this.themeService = themeService;
+			this.themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
+		}
+
+		void ThemeService_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) {
+			imageCache.Clear();
+			isHighContrast = themeService.Theme.IsHighContrast;
+		}
+
+		Color GetColor(BackgroundType bgType) {
+			switch (bgType) {
+			case BackgroundType.Button:				return GetColorBackground(ColorType.CommonControlsButtonIconBackground);
+			case BackgroundType.TextEditor:			return GetColorBackground(ColorType.DefaultText);
+			case BackgroundType.DialogWindow:		return GetColorBackground(ColorType.DialogWindow);
+			case BackgroundType.TextBox:			return GetColorBackground(ColorType.CommonControlsTextBox);
+			case BackgroundType.TreeNode:			return GetColorBackground(ColorType.TreeView);
+			case BackgroundType.Search:				return GetColorBackground(ColorType.ListBoxBackground);
+			case BackgroundType.ComboBox:			return GetColorBackground(ColorType.CommonControlsComboBoxBackground);
+			case BackgroundType.ToolBar:			return GetColorBackground(ColorType.ToolBarIconBackground);
+			case BackgroundType.AppMenuMenuItem:	return GetColorBackground(ColorType.ToolBarIconVerticalBackground);
+			case BackgroundType.ContextMenuItem:	return GetColorBackground(ColorType.ContextMenuRectangleFill);
+			case BackgroundType.GridViewItem:		return GetColorBackground(ColorType.GridViewBackground);
+			case BackgroundType.ListBoxItem:		return GetColorBackground(ColorType.ListBoxBackground);
+			case BackgroundType.QuickInfo:			return GetColorBackground(ColorType.QuickInfo);
+			case BackgroundType.SignatureHelp:		return GetColorBackground(ColorType.SignatureHelp);
+			case BackgroundType.TitleAreaActive:	return GetColorBackground(ColorType.EnvironmentMainWindowActiveCaption);
+			case BackgroundType.TitleAreaInactive:	return GetColorBackground(ColorType.EnvironmentMainWindowInactiveCaption);
+			case BackgroundType.CommandBar:			return GetColorBackground(ColorType.EnvironmentCommandBarIcon);
+			case BackgroundType.GlyphMargin:		return GetColorBackground(ColorType.GlyphMargin);
+			default:
+				Debug.Fail("Invalid bg type");
+				return GetColorBackground(ColorType.SystemColorsWindow);
+			}
+		}
+
+		Color GetColorBackground(ColorType colorType) {
+			var c = themeService.Theme.GetColor(colorType).Background as SolidColorBrush;
+			Debug.WriteLineIf(c == null, string.Format("Background color is null: {0}", colorType));
+			return c.Color;
+		}
+
+		public BitmapSource GetImage(ImageReference imageReference, BackgroundType bgType) =>
+			GetImage(imageReference, GetColor(bgType));
+
+		public BitmapSource GetImage(ImageReference imageReference, Color? bgColor) {
+			var name = imageReference.Assembly.GetName();
+			var uri = "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/Images/" + imageReference.Name + ".png";
+			return GetImageUsingUri(uri, bgColor);
+		}
+
+		BitmapSource GetImageUsingUri(string uri, Color? bgColor) {
+			var key = Tuple.Create(uri, bgColor);
+			BitmapSource image;
+			if (imageCache.TryGetValue(key, out image))
+				return image;
+
+			image = new BitmapImage(new Uri(uri));
+			if (bgColor != null)
+				image = ThemedImageCreator.CreateThemedBitmapSource(image, bgColor.Value, isHighContrast);
+			imageCache.Add(key, image);
+			return image;
+		}
+	}
+}

@@ -23,9 +23,9 @@ using System.Windows.Media;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
@@ -41,8 +41,8 @@ namespace dnSpy.Search {
 			get {
 				var ns = Object as string;
 				if (ns != null)
-					return new NamespaceRef(DnSpyFile, ns);
-				var node = Object as IFileTreeNodeData;
+					return new NamespaceRef(Document, ns);
+				var node = Object as IDocumentTreeNodeData;
 				if (node != null)
 					return node;
 				return Reference2;
@@ -55,7 +55,7 @@ namespace dnSpy.Search {
 		public ImageReference ObjectImageReference { get; set; }
 		public object LocationObject { get; set; }
 		public ImageReference LocationImageReference { get; set; }
-		public IDnSpyFile DnSpyFile { get; set; }
+		public IDsDocument Document { get; set; }
 		public object ObjectInfo { get; set; }
 
 		public void RefreshUI() {
@@ -69,7 +69,7 @@ namespace dnSpy.Search {
 		ImageSource GetImage(ImageReference imgRef) {
 			if (imgRef.IsDefault)
 				return null;
-			return Context.ImageManager.GetImage(imgRef, Context.BackgroundType);
+			return Context.ImageService.GetImage(imgRef, Context.BackgroundType);
 		}
 
 		public ImageSource Image => GetImage(ObjectImageReference);
@@ -77,12 +77,12 @@ namespace dnSpy.Search {
 
 		public string ToolTip {
 			get {
-				var dnSpyFile = DnSpyFile;
-				if (dnSpyFile == null)
+				var dsDocument = Document;
+				if (dsDocument == null)
 					return null;
-				var module = dnSpyFile.ModuleDef;
+				var module = dsDocument.ModuleDef;
 				if (module == null)
-					return dnSpyFile.Filename;
+					return dsDocument.Filename;
 				if (!string.IsNullOrWhiteSpace(module.Location))
 					return module.Location;
 				if (!string.IsNullOrWhiteSpace(module.Name))
@@ -178,9 +178,9 @@ namespace dnSpy.Search {
 			}
 
 			// non-.NET file
-			var file = o as IDnSpyFile;
-			if (file != null) {
-				output.Write(BoxedTextColor.Text, file.GetShortName());
+			var document = o as IDsDocument;
+			if (document != null) {
+				output.Write(BoxedTextColor.Text, document.GetShortName());
 				return;
 			}
 

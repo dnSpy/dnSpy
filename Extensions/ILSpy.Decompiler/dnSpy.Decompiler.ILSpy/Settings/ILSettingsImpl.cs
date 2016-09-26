@@ -27,14 +27,14 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 	sealed class ILSettingsImpl : ILSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("DD6752B1-5336-4601-A9B2-0879E18AE9F3");
 
-		readonly ISettingsManager settingsManager;
+		readonly ISettingsService settingsService;
 
 		[ImportingConstructor]
-		ILSettingsImpl(ISettingsManager settingsManager) {
-			this.settingsManager = settingsManager;
+		ILSettingsImpl(ISettingsService settingsService) {
+			this.settingsService = settingsService;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.ShowILComments = sect.Attribute<bool?>(nameof(ShowILComments)) ?? this.ShowILComments;
 			this.ShowXmlDocumentation = sect.Attribute<bool?>(nameof(ShowXmlDocumentation)) ?? this.ShowXmlDocumentation;
 			this.ShowTokenAndRvaComments = sect.Attribute<bool?>(nameof(ShowTokenAndRvaComments)) ?? this.ShowTokenAndRvaComments;
@@ -48,7 +48,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			if (disableSave)
 				return;
 
-			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowILComments), ShowILComments);
 			sect.Attribute(nameof(ShowXmlDocumentation), ShowXmlDocumentation);
 			sect.Attribute(nameof(ShowTokenAndRvaComments), ShowTokenAndRvaComments);

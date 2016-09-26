@@ -20,7 +20,7 @@
 using System.Windows.Documents;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.AsmEditor.Commands {
 	static class CommandUtils {
@@ -29,24 +29,24 @@ namespace dnSpy.AsmEditor.Commands {
 			SettingsRoutedCommand.InputGestures.Add(new KeyGesture(Key.Enter, ModifierKeys.Alt));
 		}
 
-		public static void AddRemoveCommand(this IWpfCommandManager wpfCommandManager, EditMenuHandler settingsCmd) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_FILE_TREEVIEW);
+		public static void AddRemoveCommand(this IWpfCommandService wpfCommandService, EditMenuHandler settingsCmd) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENT_TREEVIEW);
 			cmds.Add(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(settingsCmd));
 		}
 
-		public static void AddRemoveCommand(this IWpfCommandManager wpfCommandManager, CodeContextMenuHandler settingsCmd, IFileTabManager fileTabManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
-			cmds.Add(EditingCommands.Delete, new CodeContextMenuHandlerCommandProxy(settingsCmd, fileTabManager), ModifierKeys.None, Key.Delete);
+		public static void AddRemoveCommand(this IWpfCommandService wpfCommandService, CodeContextMenuHandler settingsCmd, IDocumentTabService documentTabService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
+			cmds.Add(EditingCommands.Delete, new CodeContextMenuHandlerCommandProxy(settingsCmd, documentTabService), ModifierKeys.None, Key.Delete);
 		}
 
-		public static void AddSettingsCommand(this IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, EditMenuHandler treeViewCmd, CodeContextMenuHandler textEditorCmd) {
+		public static void AddSettingsCommand(this IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, EditMenuHandler treeViewCmd, CodeContextMenuHandler textEditorCmd) {
 			if (treeViewCmd != null) {
-				var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_FILE_TREEVIEW);
+				var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENT_TREEVIEW);
 				cmds.Add(SettingsRoutedCommand, new EditMenuHandlerCommandProxy(treeViewCmd));
 			}
 			if (textEditorCmd != null) {
-				var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
-				cmds.Add(SettingsRoutedCommand, new CodeContextMenuHandlerCommandProxy(textEditorCmd, fileTabManager), ModifierKeys.Alt, Key.Enter);
+				var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
+				cmds.Add(SettingsRoutedCommand, new CodeContextMenuHandlerCommandProxy(textEditorCmd, documentTabService), ModifierKeys.Alt, Key.Enter);
 			}
 		}
 	}

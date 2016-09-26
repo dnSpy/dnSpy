@@ -22,7 +22,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.MainApp {
@@ -31,10 +31,10 @@ namespace dnSpy.MainApp {
 		static readonly RoutedCommand CollapseUnusedNodesCommand = new RoutedCommand("CollapseUnusedNodesCommand", typeof(FullScreenInit));
 
 		[ImportingConstructor]
-		FullScreenInit(IAppWindow appWindow, IFileTreeView fileTreeView) {
+		FullScreenInit(IAppWindow appWindow, IDocumentTreeView documentTreeView) {
 			var fullScreenCommand = new FullScreenCommand(appWindow);
 			appWindow.MainWindowCommands.Add(MetroWindow.FullScreenCommand, (s, e) => fullScreenCommand.FullScreen(), (s, e) => e.CanExecute = true, ModifierKeys.Shift | ModifierKeys.Alt, Key.Enter);
-			appWindow.MainWindowCommands.Add(CollapseUnusedNodesCommand, (s, e) => fileTreeView.TreeView.CollapseUnusedNodes(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Shift, Key.W);
+			appWindow.MainWindowCommands.Add(CollapseUnusedNodesCommand, (s, e) => documentTreeView.TreeView.CollapseUnusedNodes(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Shift, Key.W);
 		}
 	}
 
@@ -61,13 +61,13 @@ namespace dnSpy.MainApp {
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:CollapseTreeViewNodesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftW", Icon = "OneLevelUp", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 30)]
 	sealed class CollapseTreeViewCommand : MenuItemBase {
-		readonly IFileTreeView fileTreeView;
+		readonly IDocumentTreeView documentTreeView;
 
 		[ImportingConstructor]
-		CollapseTreeViewCommand(IFileTreeView fileTreeView) {
-			this.fileTreeView = fileTreeView;
+		CollapseTreeViewCommand(IDocumentTreeView documentTreeView) {
+			this.documentTreeView = documentTreeView;
 		}
 
-		public override void Execute(IMenuItemContext context) => fileTreeView.TreeView.CollapseUnusedNodes();
+		public override void Execute(IMenuItemContext context) => documentTreeView.TreeView.CollapseUnusedNodes();
 	}
 }

@@ -21,20 +21,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnSpy.AsmEditor.Commands;
-using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class AddUpdatedNodesHelper {
-		readonly IModuleFileNode modNode;
+		readonly IModuleDocumentNode modNode;
 		readonly TypeNodeCreator[] newTypeNodeCreators;
 		readonly ExistingTypeNodeUpdater[] existingTypeNodeUpdaters;
 
-		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, IModuleFileNode modNode, ModuleImporter importer) {
+		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, IModuleDocumentNode modNode, ModuleImporter importer) {
 			this.modNode = modNode;
 			this.newTypeNodeCreators = importer.NewNonNestedTypes.Select(a => new TypeNodeCreator(modNode, a.TargetType)).ToArray();
 			this.existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
-			if (!importer.MergedNonNestedTypes.All(a => a.TargetType.Module == modNode.DnSpyFile.ModuleDef))
+			if (!importer.MergedNonNestedTypes.All(a => a.TargetType.Module == modNode.Document.ModuleDef))
 				throw new InvalidOperationException();
 		}
 

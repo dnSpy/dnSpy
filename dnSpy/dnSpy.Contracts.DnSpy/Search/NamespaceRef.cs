@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Contracts.Search {
 	/// <summary>
@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Module
 		/// </summary>
-		public IDnSpyFile Module { get; }
+		public IDsDocument Module { get; }
 
 		/// <summary>
 		/// Namespace
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Search {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="namespace">Namespace</param>
-		public NamespaceRef(IDnSpyFile module, string @namespace) {
+		public NamespaceRef(IDsDocument module, string @namespace) {
 			Module = module;
 			Namespace = @namespace;
 		}

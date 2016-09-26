@@ -33,7 +33,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
-	sealed class RoslynCompletionSet : DnSpyCompletionSet {
+	sealed class RoslynCompletionSet : DsCompletionSet {
 		readonly IMruCompletionService mruCompletionService;
 		readonly CompletionService completionService;
 		readonly ITextView textView;

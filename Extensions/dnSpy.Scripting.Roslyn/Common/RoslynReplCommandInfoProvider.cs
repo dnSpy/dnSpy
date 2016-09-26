@@ -29,7 +29,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class RoslynReplCommandInfoProvider : ICommandInfoProvider {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.RoslynRepl) != true)
+			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.RoslynRepl) != true)
 				yield break;
 
 			yield return CommandShortcut.Control(Key.S, RoslynReplIds.SaveText.ToCommandInfo());

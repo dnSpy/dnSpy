@@ -270,13 +270,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string TypeString => NativeType.SelectedItem.ToString();
 		void TypeStringUpdated() => OnPropertyChanged(nameof(TypeString));
 
-		public MarshalTypeVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod) {
+		public MarshalTypeVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(this.NativeType, false);
 			this.RawMarshalType_Data = new HexStringVM(a => { HasErrorUpdated(); TypeStringUpdated(); });
 			this.FixedSysStringMarshalType_Size = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
 			this.SafeArrayMarshalType_VariantType = new EnumListVM(variantTypeList, (a, b) => { OnSafeArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, decompilerManager, ownerType, ownerMethod, true, safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged);
+			this.SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, decompilerService, ownerType, ownerMethod, true, safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged);
 			this.FixedArrayMarshalType_Size = new NullableCompressedUInt32(a => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			this.FixedArrayMarshalType_NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(FixedArrayMarshalType_NativeType, true);
@@ -285,7 +285,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.ArrayMarshalType_ParamNum = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			this.ArrayMarshalType_NumElems = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			this.ArrayMarshalType_Flags = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.CustomMarshalType_CustMarshaler_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, decompilerManager, ownerType, ownerMethod, true, customMarshalType_custMarshaler_typeSigCreator_PropertyChanged);
+			this.CustomMarshalType_CustMarshaler_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, decompilerService, ownerType, ownerMethod, true, customMarshalType_custMarshaler_typeSigCreator_PropertyChanged);
 			this.InterfaceMarshalType_IidParamIndex = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
 		}
 
@@ -340,8 +340,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			HasErrorUpdated();
 		}
 
-		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod, bool allowNullTypeSig, PropertyChangedEventHandler handler) {
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerManager) {
+		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, bool allowNullTypeSig, PropertyChangedEventHandler handler) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,

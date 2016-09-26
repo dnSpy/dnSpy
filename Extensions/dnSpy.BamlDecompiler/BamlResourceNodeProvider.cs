@@ -25,12 +25,12 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.BamlDecompiler.Baml;
-using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.BamlDecompiler {
-	[ExportResourceNodeProvider(Order = FileTVConstants.ORDER_RSRCPROVIDER_BAML_NODE)]
+	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_BAML_NODE)]
 	sealed class BamlResourceNodeProvider : IResourceNodeProvider {
 		readonly BamlSettingsImpl bamlSettings;
 

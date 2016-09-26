@@ -19,7 +19,7 @@
 
 using System;
 using System.Linq;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.AsmEditor.Commands {
@@ -27,10 +27,10 @@ namespace dnSpy.AsmEditor.Commands {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		readonly IFileTreeView fileTreeView;
+		readonly IDocumentTreeView documentTreeView;
 
-		protected FileMenuHandler(IFileTreeView fileTreeView) {
-			this.fileTreeView = fileTreeView;
+		protected FileMenuHandler(IDocumentTreeView documentTreeView) {
+			this.documentTreeView = documentTreeView;
 		}
 
 		protected sealed override AsmEditorContext CreateContext(IMenuItemContext context) {
@@ -39,6 +39,6 @@ namespace dnSpy.AsmEditor.Commands {
 			return CreateContext();
 		}
 
-		public AsmEditorContext CreateContext() => new AsmEditorContext(fileTreeView.TreeView.TopLevelSelection.OfType<IFileTreeNodeData>().ToArray());
+		public AsmEditorContext CreateContext() => new AsmEditorContext(documentTreeView.TreeView.TopLevelSelection.OfType<IDocumentTreeNodeData>().ToArray());
 	}
 }

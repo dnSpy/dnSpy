@@ -25,11 +25,11 @@ using dnSpy.Contracts.Output;
 namespace dnSpy.Output {
 	sealed class LogEditorCtxMenuContext {
 		public readonly IOutputTextPane TextPane;
-		public readonly IOutputManagerInternal Owner;
+		public readonly IOutputServiceInternal Owner;
 
-		public LogEditorCtxMenuContext(IOutputTextPane pane, IOutputManagerInternal outputManager) {
+		public LogEditorCtxMenuContext(IOutputTextPane pane, IOutputServiceInternal outputService) {
 			this.TextPane = pane;
-			this.Owner = outputManager;
+			this.Owner = outputService;
 		}
 	}
 
@@ -44,11 +44,11 @@ namespace dnSpy.Output {
 			if (textPane == null)
 				return null;
 
-			var outputManager = context.Find<IOutputManagerInternal>();
-			if (outputManager == null)
+			var outputService = context.Find<IOutputServiceInternal>();
+			if (outputService == null)
 				return null;
 
-			return new LogEditorCtxMenuContext(textPane, outputManager);
+			return new LogEditorCtxMenuContext(textPane, outputService);
 		}
 
 		protected LogEditorCtxMenuCommand(ICommand realCommand)

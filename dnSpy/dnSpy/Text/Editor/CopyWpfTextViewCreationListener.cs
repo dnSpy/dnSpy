@@ -31,13 +31,13 @@ namespace dnSpy.Text.Editor {
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class CopyWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		public void TextViewCreated(IWpfTextView textView) {
-			var dnSpyTextView = textView as IDnSpyWpfTextView;
-			if (dnSpyTextView == null)
+			var dsTextView = textView as IDsWpfTextView;
+			if (dsTextView == null)
 				return;
-			textView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (s, e) => dnSpyTextView.CommandTarget.Execute(CommandConstants.StandardGroup, (int)StandardIds.Cut), (s, e) => e.CanExecute = dnSpyTextView.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.Cut) == CommandTargetStatus.Handled));
-			textView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (s, e) => dnSpyTextView.CommandTarget.Execute(CommandConstants.StandardGroup, (int)StandardIds.Copy), (s, e) => e.CanExecute = dnSpyTextView.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.Copy) == CommandTargetStatus.Handled));
-			textView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (s, e) => dnSpyTextView.CommandTarget.Execute(CommandConstants.StandardGroup, (int)StandardIds.Paste), (s, e) => e.CanExecute = dnSpyTextView.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.Paste) == CommandTargetStatus.Handled));
-			textView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, (s, e) => dnSpyTextView.CommandTarget.Execute(CommandConstants.TextEditorGroup, (int)TextEditorIds.SELECTALL), (s, e) => e.CanExecute = dnSpyTextView.CommandTarget.CanExecute(CommandConstants.TextEditorGroup, (int)TextEditorIds.SELECTALL) == CommandTargetStatus.Handled));
+			textView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (s, e) => dsTextView.CommandTarget.Execute(CommandConstants.StandardGroup, (int)StandardIds.Cut), (s, e) => e.CanExecute = dsTextView.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.Cut) == CommandTargetStatus.Handled));
+			textView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (s, e) => dsTextView.CommandTarget.Execute(CommandConstants.StandardGroup, (int)StandardIds.Copy), (s, e) => e.CanExecute = dsTextView.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.Copy) == CommandTargetStatus.Handled));
+			textView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (s, e) => dsTextView.CommandTarget.Execute(CommandConstants.StandardGroup, (int)StandardIds.Paste), (s, e) => e.CanExecute = dsTextView.CommandTarget.CanExecute(CommandConstants.StandardGroup, (int)StandardIds.Paste) == CommandTargetStatus.Handled));
+			textView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, (s, e) => dsTextView.CommandTarget.Execute(CommandConstants.TextEditorGroup, (int)TextEditorIds.SELECTALL), (s, e) => e.CanExecute = dsTextView.CommandTarget.CanExecute(CommandConstants.TextEditorGroup, (int)TextEditorIds.SELECTALL) == CommandTargetStatus.Handled));
 		}
 	}
 }

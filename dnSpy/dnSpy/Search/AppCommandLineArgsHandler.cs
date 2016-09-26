@@ -26,13 +26,13 @@ using dnSpy.Contracts.ToolWindows.App;
 namespace dnSpy.Search {
 	[Export(typeof(IAppCommandLineArgsHandler))]
 	sealed class AppCommandLineArgsHandler : IAppCommandLineArgsHandler {
-		readonly IMainToolWindowManager mainToolWindowManager;
-		readonly Lazy<ISearchManager> searchManager;
+		readonly IDsToolWindowService toolWindowService;
+		readonly Lazy<ISearchService> searchService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(IMainToolWindowManager mainToolWindowManager, Lazy<ISearchManager> searchManager) {
-			this.mainToolWindowManager = mainToolWindowManager;
-			this.searchManager = searchManager;
+		AppCommandLineArgsHandler(IDsToolWindowService toolWindowService, Lazy<ISearchService> searchService) {
+			this.toolWindowService = toolWindowService;
+			this.searchService = searchService;
 		}
 
 		public double Order => 1000;
@@ -45,21 +45,21 @@ namespace dnSpy.Search {
 
 			if (loc != null) {
 				show = true;
-				searchManager.Value.SearchLocation = loc.Value;
+				searchService.Value.SearchLocation = loc.Value;
 			}
 
 			if (typ != null) {
 				show = true;
-				searchManager.Value.SearchType = typ.Value;
+				searchService.Value.SearchType = typ.Value;
 			}
 
 			if (args.SearchText != null) {
 				show = true;
-				searchManager.Value.SearchText = args.SearchText;
+				searchService.Value.SearchText = args.SearchText;
 			}
 
 			if (show)
-				mainToolWindowManager.Show(SearchToolWindowContent.THE_GUID);
+				toolWindowService.Show(SearchToolWindowContent.THE_GUID);
 		}
 
 		SearchLocation? GetSearchLocation(string searchLocation) {

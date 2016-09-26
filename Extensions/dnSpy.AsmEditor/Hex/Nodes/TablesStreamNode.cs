@@ -22,14 +22,14 @@ using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class TablesStreamNode : HexNode {
-		public override Guid Guid => new Guid(FileTVConstants.TBLSSTREAM_NODE_GUID);
+		public override Guid Guid => new Guid(DocumentTreeViewConstants.TBLSSTREAM_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override object VMObject => tablesStreamVM;
 

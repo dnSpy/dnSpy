@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class EditCodeCommandInfoProvider : ICommandInfoProvider {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;
-			if (textView?.Roles.Contains(PredefinedDnSpyTextViewRoles.CodeEditor) != true)
+			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.CodeEditor) != true)
 				yield break;
 
 			yield return CommandShortcut.Create(Key.F6, EditCodeIds.Compile.ToCommandInfo());

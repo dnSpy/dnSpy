@@ -61,16 +61,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly string editString;
 		readonly string createString;
-		protected readonly IDecompilerManager decompilerManager;
+		protected readonly IDecompilerService decompilerService;
 		protected readonly TypeDef ownerType;
 		protected readonly MethodDef ownerMethod;
 		readonly bool inlineEditing;
 
-		protected ListVM(string editString, string createString, ModuleDef ownerModule, IDecompilerManager decompilerManager, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
+		protected ListVM(string editString, string createString, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
 			this.editString = editString;
 			this.createString = createString;
 			this.OwnerModule = ownerModule;
-			this.decompilerManager = decompilerManager;
+			this.decompilerService = decompilerService;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 			this.inlineEditing = inlineEditing;

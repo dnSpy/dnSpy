@@ -27,17 +27,17 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionSessionCommandTargetFilter : ICommandTargetFilter {
 		readonly ICompletionSession completionSession;
-		readonly IDnSpyWpfTextView dnSpyWpfTextView;
+		readonly IDsWpfTextView dsWpfTextView;
 		readonly int minimumCaretPosition;
 
 		public CompletionSessionCommandTargetFilter(ICompletionSession completionSession) {
 			if (completionSession == null)
 				throw new ArgumentNullException(nameof(completionSession));
 			this.completionSession = completionSession;
-			this.dnSpyWpfTextView = completionSession.TextView as IDnSpyWpfTextView;
-			Debug.Assert(dnSpyWpfTextView != null);
+			this.dsWpfTextView = completionSession.TextView as IDsWpfTextView;
+			Debug.Assert(dsWpfTextView != null);
 
-			dnSpyWpfTextView?.CommandTarget.AddFilter(this, CommandConstants.CMDTARGETFILTER_ORDER_DEFAULT_STATEMENTCOMPLETION);
+			dsWpfTextView?.CommandTarget.AddFilter(this, CommandConstants.CMDTARGETFILTER_ORDER_DEFAULT_STATEMENTCOMPLETION);
 			completionSession.TextView.Caret.PositionChanged += Caret_PositionChanged;
 
 			// Make sure that pressing backspace at start pos dismisses the session
@@ -64,7 +64,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public void Close() {
-			dnSpyWpfTextView?.CommandTarget.RemoveFilter(this);
+			dsWpfTextView?.CommandTarget.RemoveFilter(this);
 			completionSession.TextView.Caret.PositionChanged -= Caret_PositionChanged;
 		}
 

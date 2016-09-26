@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.IMModules {
@@ -29,8 +29,8 @@ namespace dnSpy.Debugger.IMModules {
 	/// A class holding a <see cref="dndbg.DotNet.CorModuleDef"/> reference. Should only be used if
 	/// it's a dynamic module since it uses <c>IMetaDataImport</c> to read the MD.
 	/// </summary>
-	sealed class CorModuleDefFile : DnSpyDotNetFileBase, IModuleIdHolder {
-		sealed class MyKey : IDnSpyFilenameKey {
+	sealed class CorModuleDefFile : DsDotNetDocumentBase, IModuleIdHolder {
+		sealed class MyKey : IDsDocumentNameKey {
 			readonly DnModule dnModule;
 
 			public MyKey(DnModule dnModule) {
@@ -45,11 +45,11 @@ namespace dnSpy.Debugger.IMModules {
 			public override int GetHashCode() => dnModule.GetHashCode();
 		}
 
-		public override IDnSpyFilenameKey Key => CreateKey(DnModule);
+		public override IDsDocumentNameKey Key => CreateKey(DnModule);
 		public ModuleId ModuleId => Contracts.Metadata.ModuleId.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory);
-		public override DnSpyFileInfo? SerializedFile => null;
+		public override DsDocumentInfo? SerializedDocument => null;
 		public DnModule DnModule { get; }
-		public static IDnSpyFilenameKey CreateKey(DnModule module) => new MyKey(module);
+		public static IDsDocumentNameKey CreateKey(DnModule module) => new MyKey(module);
 
 		public LastValidRids LastValidRids => lastValidRids;
 		LastValidRids lastValidRids;
@@ -67,8 +67,8 @@ namespace dnSpy.Debugger.IMModules {
 			return file;
 		}
 
-		protected override List<IDnSpyFile> CreateChildren() {
-			var list = new List<IDnSpyFile>();
+		protected override List<IDsDocument> CreateChildren() {
+			var list = new List<IDsDocument>();
 			if (files != null) {
 				list.AddRange(files);
 				files = null;

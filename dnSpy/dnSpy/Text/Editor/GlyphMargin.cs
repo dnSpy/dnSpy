@@ -46,10 +46,10 @@ namespace dnSpy.Text.Editor {
 	[Name(PredefinedMarginNames.Glyph)]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
-	[TextViewRole(PredefinedDnSpyTextViewRoles.CanHaveGlyphTextMarkerService)]
+	[TextViewRole(PredefinedDsTextViewRoles.CanHaveGlyphTextMarkerService)]
 	[Order(Before = PredefinedMarginNames.LeftSelection)]
 	sealed class GlyphMarginProvider : IWpfTextViewMarginProvider {
-		readonly IMenuManager menuManager;
+		readonly IMenuService menuService;
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] glyphMouseProcessorProviders;
@@ -57,8 +57,8 @@ namespace dnSpy.Text.Editor {
 		readonly IMarginContextMenuService marginContextMenuHandlerProviderService;
 
 		[ImportingConstructor]
-		GlyphMarginProvider(IMenuManager menuManager, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, [ImportMany] IEnumerable<Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>> glyphMouseProcessorProviders, [ImportMany] IEnumerable<Lazy<IGlyphFactoryProvider, IGlyphMetadata>> glyphFactoryProviders, IMarginContextMenuService marginContextMenuHandlerProviderService) {
-			this.menuManager = menuManager;
+		GlyphMarginProvider(IMenuService menuService, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, [ImportMany] IEnumerable<Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>> glyphMouseProcessorProviders, [ImportMany] IEnumerable<Lazy<IGlyphFactoryProvider, IGlyphMetadata>> glyphFactoryProviders, IMarginContextMenuService marginContextMenuHandlerProviderService) {
+			this.menuService = menuService;
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			this.editorFormatMapService = editorFormatMapService;
 			this.glyphMouseProcessorProviders = Orderer.Order(glyphMouseProcessorProviders).ToArray();
@@ -67,7 +67,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
-			new GlyphMargin(menuManager, wpfTextViewHost, viewTagAggregatorFactoryService, editorFormatMapService, glyphMouseProcessorProviders, glyphFactoryProviders, marginContextMenuHandlerProviderService);
+			new GlyphMargin(menuService, wpfTextViewHost, viewTagAggregatorFactoryService, editorFormatMapService, glyphMouseProcessorProviders, glyphFactoryProviders, marginContextMenuHandlerProviderService);
 	}
 
 	sealed class GlyphMargin : Canvas, IWpfTextViewMargin {
@@ -136,9 +136,9 @@ namespace dnSpy.Text.Editor {
 		// Need to make it a constant since ActualWidth isn't always valid when we need it
 		const double MARGIN_WIDTH = 17;
 
-		public GlyphMargin(IMenuManager menuManager, IWpfTextViewHost wpfTextViewHost, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] glyphMouseProcessorProviders, Lazy<IGlyphFactoryProvider, IGlyphMetadata>[] glyphFactoryProviders, IMarginContextMenuService marginContextMenuHandlerProviderService) {
-			if (menuManager == null)
-				throw new ArgumentNullException(nameof(menuManager));
+		public GlyphMargin(IMenuService menuService, IWpfTextViewHost wpfTextViewHost, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] glyphMouseProcessorProviders, Lazy<IGlyphFactoryProvider, IGlyphMetadata>[] glyphFactoryProviders, IMarginContextMenuService marginContextMenuHandlerProviderService) {
+			if (menuService == null)
+				throw new ArgumentNullException(nameof(menuService));
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
 			if (viewTagAggregatorFactoryService == null)
@@ -160,7 +160,7 @@ namespace dnSpy.Text.Editor {
 			UpdateVisibility();
 			Width = MARGIN_WIDTH;
 			ClipToBounds = true;
-			menuManager.InitializeContextMenu(VisualElement, new Guid(MenuConstants.GUIDOBJ_GLYPHMARGIN_GUID), marginContextMenuHandlerProviderService.Create(wpfTextViewHost, this, PredefinedMarginNames.Glyph), null, new Guid(MenuConstants.GLYPHMARGIN_GUID));
+			menuService.InitializeContextMenu(VisualElement, new Guid(MenuConstants.GUIDOBJ_GLYPHMARGIN_GUID), marginContextMenuHandlerProviderService.Create(wpfTextViewHost, this, PredefinedMarginNames.Glyph), null, new Guid(MenuConstants.GLYPHMARGIN_GUID));
 		}
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;

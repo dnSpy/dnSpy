@@ -45,43 +45,43 @@ namespace dnSpy.Debugger.Locals {
 	sealed class AutoShowDebuggerWindowsLoader : IAutoLoaded {
 		readonly IDebuggerSettings debuggerSettings;
 		readonly ITheDebugger theDebugger;
-		readonly IMainToolWindowManager mainToolWindowManager;
+		readonly IDsToolWindowService toolWindowService;
 
 		[ImportingConstructor]
-		AutoShowDebuggerWindowsLoader(IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IMainToolWindowManager mainToolWindowManager) {
+		AutoShowDebuggerWindowsLoader(IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IDsToolWindowService toolWindowService) {
 			this.debuggerSettings = debuggerSettings;
 			this.theDebugger = theDebugger;
-			this.mainToolWindowManager = mainToolWindowManager;
+			this.toolWindowService = toolWindowService;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			if (debuggerSettings.AutoOpenLocalsWindow && theDebugger.ProcessState == DebuggerProcessState.Starting)
-				mainToolWindowManager.Show(LocalsToolWindowContent.THE_GUID);
+				toolWindowService.Show(LocalsToolWindowContent.THE_GUID);
 		}
 	}
 
 	[ExportAutoLoaded]
 	sealed class LocalsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		LocalsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager, CopyLocalsCtxMenuCommand copyCmd, EditValueLocalsCtxMenuCommand editValueCmd, CopyValueLocalsCtxMenuCommand copyValueCmd, ToggleCollapsedLocalsCtxMenuCommand toggleCollapsedCmd, ShowInMemoryLocalsCtxMenuCommand showInMemCmd) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW);
+		LocalsContentCommandLoader(IWpfCommandService wpfCommandService, Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowService memoryWindowService, CopyLocalsCtxMenuCommand copyCmd, EditValueLocalsCtxMenuCommand editValueCmd, CopyValueLocalsCtxMenuCommand copyValueCmd, ToggleCollapsedLocalsCtxMenuCommand toggleCollapsedCmd, ShowInMemoryLocalsCtxMenuCommand showInMemCmd) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW);
 			cmds.Add(ApplicationCommands.Copy, new LocalsCtxMenuCommandProxy(copyCmd));
 			cmds.Add(new LocalsCtxMenuCommandProxy(editValueCmd), ModifierKeys.None, Key.F2);
 			cmds.Add(new LocalsCtxMenuCommandProxy(copyValueCmd), ModifierKeys.Control | ModifierKeys.Shift, Key.C);
 			cmds.Add(new LocalsCtxMenuCommandProxy(toggleCollapsedCmd), ModifierKeys.None, Key.Enter);
 			cmds.Add(new LocalsCtxMenuCommandProxy(showInMemCmd), ModifierKeys.Control, Key.X);
 			for (int i = 0; i < Memory.MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS && i < 10; i++)
-				cmds.Add(new LocalsCtxMenuCommandProxy(new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowManager, i)), ModifierKeys.Control, Key.D0 + (i + 1) % 10);
+				cmds.Add(new LocalsCtxMenuCommandProxy(new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowService, i)), ModifierKeys.Control, Key.D0 + (i + 1) % 10);
 		}
 	}
 
 	[ExportAutoLoaded]
 	sealed class CallStackCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CallStackCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
-			var cmds = wpfCommandManager.GetCommands(ControlConstants.GUID_MAINWINDOW);
-			cmds.Add(DebugRoutedCommands.ShowLocals, new RelayCommand(a => mainToolWindowManager.Show(LocalsToolWindowContent.THE_GUID)));
+		CallStackCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
+			cmds.Add(DebugRoutedCommands.ShowLocals, new RelayCommand(a => toolWindowService.Show(LocalsToolWindowContent.THE_GUID)));
 			cmds.Add(DebugRoutedCommands.ShowLocals, ModifierKeys.Alt, Key.D4);
 		}
 	}
@@ -408,11 +408,11 @@ namespace dnSpy.Debugger.Locals {
 		readonly Tuple<IMenuItem, string, string>[] subCmds;
 
 		[ImportingConstructor]
-		ShowInMemoryXLocalsSubCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager)
+		ShowInMemoryXLocalsSubCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowService memoryWindowService)
 			: base(theDebugger, localsContent) {
 			subCmds = new Tuple<IMenuItem, string, string>[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < subCmds.Length; i++)
-				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowManager, i), MemoryWindowsHelper.GetHeaderText(i), MemoryWindowsHelper.GetCtrlInputGestureText(i));
+				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowService, i), MemoryWindowsHelper.GetHeaderText(i), MemoryWindowsHelper.GetCtrlInputGestureText(i));
 		}
 
 		public override void Execute(LocalsCtxMenuContext context) { }
@@ -435,25 +435,25 @@ namespace dnSpy.Debugger.Locals {
 
 	[Export]
 	sealed class ShowInMemoryLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		readonly IMemoryWindowManager memoryWindowManager;
+		readonly IMemoryWindowService memoryWindowService;
 
 		[ImportingConstructor]
-		ShowInMemoryLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager)
+		ShowInMemoryLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowService memoryWindowService)
 			: base(theDebugger, localsContent) {
-			this.memoryWindowManager = memoryWindowManager;
+			this.memoryWindowService = memoryWindowService;
 		}
 
 		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context);
 			if (addrRange != null)
-				memoryWindowManager.Show(addrRange.Value.Address, addrRange.Value.Size);
+				memoryWindowService.Show(addrRange.Value.Address, addrRange.Value.Size);
 		}
 
 		public override bool IsEnabled(LocalsCtxMenuContext context) => ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context) != null;
 	}
 
 	sealed class ShowInMemoryWindowLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		readonly IMemoryWindowManager memoryWindowManager;
+		readonly IMemoryWindowService memoryWindowService;
 		readonly int windowIndex;
 
 		internal struct AddrRange {
@@ -465,16 +465,16 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public ShowInMemoryWindowLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager, int windowIndex)
+		public ShowInMemoryWindowLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowService memoryWindowService, int windowIndex)
 			: base(theDebugger, localsContent) {
-			this.memoryWindowManager = memoryWindowManager;
+			this.memoryWindowService = memoryWindowService;
 			this.windowIndex = windowIndex;
 		}
 
 		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = GetValue(context);
 			if (addrRange != null)
-				memoryWindowManager.Show(addrRange.Value.Address, addrRange.Value.Size, windowIndex);
+				memoryWindowService.Show(addrRange.Value.Address, addrRange.Value.Size, windowIndex);
 		}
 
 		public override bool IsEnabled(LocalsCtxMenuContext context) => GetValue(context) != null;

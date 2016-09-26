@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	}
 
 	sealed class VisualBasicLanguageCompiler : RoslynLanguageCompiler {
-		protected override string TextViewRole => PredefinedDnSpyTextViewRoles.RoslynVisualBasicCodeEditor;
+		protected override string TextViewRole => PredefinedDsTextViewRoles.RoslynVisualBasicCodeEditor;
 		protected override string ContentType => ContentTypes.VisualBasicRoslyn;
 		protected override string LanguageName => LanguageNames.VisualBasic;
 		protected override CompilationOptions CompilationOptions => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);

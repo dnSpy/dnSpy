@@ -29,21 +29,21 @@ using dnSpy.Contracts.ToolWindows.App;
 namespace dnSpy.Analyzer {
 	[Export(typeof(IMainToolWindowContentProvider))]
 	sealed class AnalyzerToolWindowContentProvider : IMainToolWindowContentProvider {
-		readonly Lazy<IAnalyzerManager> analyzerManager;
+		readonly Lazy<IAnalyzerService> analyzerService;
 
-		public AnalyzerToolWindowContent FileTreeViewWindowContent => analyzerToolWindowContent ?? (analyzerToolWindowContent = new AnalyzerToolWindowContent(analyzerManager));
+		public AnalyzerToolWindowContent DocumentTreeViewWindowContent => analyzerToolWindowContent ?? (analyzerToolWindowContent = new AnalyzerToolWindowContent(analyzerService));
 		AnalyzerToolWindowContent analyzerToolWindowContent;
 
 		[ImportingConstructor]
-		AnalyzerToolWindowContentProvider(Lazy<IAnalyzerManager> analyzerManager) {
-			this.analyzerManager = analyzerManager;
+		AnalyzerToolWindowContentProvider(Lazy<IAnalyzerService> analyzerService) {
+			this.analyzerService = analyzerService;
 		}
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(AnalyzerToolWindowContent.THE_GUID, AnalyzerToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_ANALYZER, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) => guid == AnalyzerToolWindowContent.THE_GUID ? FileTreeViewWindowContent : null;
+		public IToolWindowContent GetOrCreate(Guid guid) => guid == AnalyzerToolWindowContent.THE_GUID ? DocumentTreeViewWindowContent : null;
 	}
 
 	sealed class AnalyzerToolWindowContent : IToolWindowContent, IFocusable {
@@ -51,24 +51,24 @@ namespace dnSpy.Analyzer {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement => null;
-		public FrameworkElement ScaleElement => analyzerManager.Value.TreeView.UIObject as FrameworkElement;
+		public FrameworkElement ScaleElement => analyzerService.Value.TreeView.UIObject as FrameworkElement;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Analyzer_Resources.AnalyzerWindowTitle;
 		public object ToolTip => null;
-		public object UIObject => analyzerManager.Value.TreeView.UIObject;
+		public object UIObject => analyzerService.Value.TreeView.UIObject;
 		public bool CanFocus => true;
 
-		readonly Lazy<IAnalyzerManager> analyzerManager;
+		readonly Lazy<IAnalyzerService> analyzerService;
 
-		public AnalyzerToolWindowContent(Lazy<IAnalyzerManager> analyzerManager) {
-			this.analyzerManager = analyzerManager;
+		public AnalyzerToolWindowContent(Lazy<IAnalyzerService> analyzerService) {
+			this.analyzerService = analyzerService;
 		}
 
 		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			if (visEvent == ToolWindowContentVisibilityEvent.Removed)
-				analyzerManager.Value.OnClose();
+				analyzerService.Value.OnClose();
 		}
 
-		public void Focus() => analyzerManager.Value.TreeView.Focus();
+		public void Focus() => analyzerService.Value.TreeView.Focus();
 	}
 }

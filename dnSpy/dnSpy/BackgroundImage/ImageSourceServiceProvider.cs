@@ -31,14 +31,14 @@ namespace dnSpy.BackgroundImage {
 
 	[Export(typeof(IImageSourceServiceProvider))]
 	sealed class ImageSourceServiceProvider : IImageSourceServiceProvider {
-		readonly IThemeManager themeManager;
+		readonly IThemeService themeService;
 		readonly IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService;
 		readonly IBackgroundImageSettingsService backgroundImageSettingsService;
 		readonly Dictionary<IBackgroundImageOptionDefinition, IImageSourceService> imageSourceServices;
 
 		[ImportingConstructor]
-		ImageSourceServiceProvider(IThemeManager themeManager, IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService, IBackgroundImageSettingsService backgroundImageSettingsService) {
-			this.themeManager = themeManager;
+		ImageSourceServiceProvider(IThemeService themeService, IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService, IBackgroundImageSettingsService backgroundImageSettingsService) {
+			this.themeService = themeService;
 			this.backgroundImageOptionDefinitionService = backgroundImageOptionDefinitionService;
 			this.backgroundImageSettingsService = backgroundImageSettingsService;
 			this.imageSourceServices = new Dictionary<IBackgroundImageOptionDefinition, IImageSourceService>();
@@ -50,7 +50,7 @@ namespace dnSpy.BackgroundImage {
 			var lazy = backgroundImageOptionDefinitionService.GetOptionDefinition(wpfTextView);
 			IImageSourceService imageSourceService;
 			if (!imageSourceServices.TryGetValue(lazy.Value, out imageSourceService))
-				imageSourceServices.Add(lazy.Value, imageSourceService = new ImageSourceService(themeManager, backgroundImageSettingsService.GetSettings(lazy)));
+				imageSourceServices.Add(lazy.Value, imageSourceService = new ImageSourceService(themeService, backgroundImageSettingsService.GetSettings(lazy)));
 			return imageSourceService;
 		}
 	}
