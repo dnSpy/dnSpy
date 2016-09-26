@@ -834,9 +834,6 @@
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
     <value>_Folder</value>
   </data>
-  <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
-    <value>_Do not reference mscorlib.dll</value>
-  </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
     <value>One file will be decompiled. Select more than one assembly to decompile more than one file.</value>
   </data>

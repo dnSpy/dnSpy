@@ -891,15 +891,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Do not reference mscorlib.dll.
-        /// </summary>
-        public static string ExportToProject_DontReferenceStdLib {
-            get {
-                return ResourceManager.GetString("ExportToProject_DontReferenceStdLib", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error log.
         /// </summary>
         public static string ExportToProject_ErrorLogMsg {
