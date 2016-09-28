@@ -45,6 +45,17 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			this.completionService = completionService;
 			this.textView = textView;
 			this.originalSnapshot = applicableTo.TextBuffer.CurrentSnapshot;
+			InitializeCompletions(completions);
+			InitializeCompletions(completionBuilders);
+		}
+
+		void InitializeCompletions(IEnumerable<Completion> completions) {
+			foreach (var c in completions) {
+				var rc = c as RoslynCompletion;
+				Debug.Assert(rc != null);
+				if (rc != null)
+					rc.CompletionSet = this;
+			}
 		}
 
 		public static RoslynCompletionSet Create(IImageMonikerService imageMonikerService, IMruCompletionService mruCompletionService, CompletionList completionList, CompletionService completionService, ITextView textView, string moniker, string displayName, ITrackingSpan applicableTo) {
@@ -124,12 +135,9 @@ matched:
 			}
 		}
 
-		public override void Commit() {
-			var completion = SelectionStatus.Completion as RoslynCompletion;
-			if (completion == null) {
-				base.Commit();
-				return;
-			}
+		public void Commit(RoslynCompletion completion) {
+			if (completion == null)
+				throw new ArgumentNullException(nameof(completion));
 
 			mruCompletionService.AddText(completion.DisplayText);
 

@@ -25,8 +25,9 @@ using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
-	sealed class RoslynCompletion : DsCompletion {
+	sealed class RoslynCompletion : DsCompletion, ICustomCommit {
 		public CompletionItem CompletionItem { get; }
+		public RoslynCompletionSet CompletionSet { get; set; }
 		readonly IImageMonikerService imageMonikerService;
 
 		public override string Description {
@@ -53,5 +54,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				return new[] { new CompletionIcon2(imageMonikerService.ToImageMoniker(CompletionImageHelper.GetWarningImageReference()), null, null) };
 			return null;
 		}
+
+		void ICustomCommit.Commit() => CompletionSet.Commit(this);
 	}
 }

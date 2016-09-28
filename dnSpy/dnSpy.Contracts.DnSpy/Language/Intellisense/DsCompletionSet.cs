@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// <see cref="Completion"/> collection
 	/// </summary>
-	public class DsCompletionSet : CompletionSet2, ICustomCommit {
+	public class DsCompletionSet : CompletionSet2 {
 		readonly Completion[] allCompletions;
 		readonly Completion[] allCompletionBuilders;
 		readonly FilteredCompletionCollection filteredCompletions;
@@ -204,10 +204,5 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="completion">Completion item</param>
 		/// <returns></returns>
 		protected virtual int GetMruIndex(Completion completion) => int.MaxValue;
-
-		/// <summary>
-		/// Commits the currently selected <see cref="Completion"/>
-		/// </summary>
-		public virtual void Commit() => (SelectionStatus.Completion as IDsCompletion)?.Commit(ApplicableTo);
 	}
 }
