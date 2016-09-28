@@ -157,10 +157,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			currentSpanReference = GetCurrentSpanReference();
 		}
 
-		SpanData<ReferenceInfo>? GetCurrentReference() {
-			var spanData = canHighlightReferences ? documentViewer?.SelectedReference : null;
-			return spanData == null || spanData.Value.Data.IsHidden ? (SpanData<ReferenceInfo>?)null : spanData;
-		}
+		SpanData<ReferenceInfo>? GetCurrentReference() => canHighlightReferences ? documentViewer?.SelectedReference : null;
 
 		SpanData<ReferenceAndId>? GetCurrentSpanReference() {
 			if (documentViewer == null)
