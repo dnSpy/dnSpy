@@ -34,6 +34,7 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Text;
@@ -66,7 +67,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				Header = "res:NopInstrCommand",
 				HeaderPlural = "res:NopInstrsCommand",
 				Command = cilBodyVM.ReplaceInstructionWithNopCommand,
-				Icon = "NOP",
+				Icon = null,
 				InputGestureText = "res:ShortCutKeyN",
 				Modifiers = ModifierKeys.None,
 				Key = Key.N,
@@ -75,7 +76,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				Header = "res:InvertBranchCommand",
 				HeaderPlural = "res:InvertBranchesCommand",
 				Command = cilBodyVM.InvertBranchCommand,
-				Icon = "Branch",
+				Icon = DsImages.Branch,
 				InputGestureText = "res:ShortCutKeyI",
 				Modifiers = ModifierKeys.None,
 				Key = Key.I,
@@ -84,7 +85,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				Header = "res:ConvertUncondBranchCommand",
 				HeaderPlural = "res:ConvertUncondBranchesCommand",
 				Command = cilBodyVM.ConvertBranchToUnconditionalBranchCommand,
-				Icon = "ToUncondBranch",
+				Icon = null,
 				InputGestureText = "res:ShortCutKeyB",
 				Modifiers = ModifierKeys.None,
 				Key = Key.B,
@@ -339,21 +340,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Type,
 					Command = new RelayCommand(a => AddType(opvm)),
 				});
-				Add16x16Image(menuItem, "Class", true, true);
+				Add16x16Image(menuItem, DsImages.ClassPublic, true, true);
 			}
 			if ((flags & MenuCommandFlags.TypeSpec) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_TypeSpec,
 					Command = new RelayCommand(a => AddTypeSpec(opvm)),
 				});
-				Add16x16Image(menuItem, "Generic", true, true);
+				Add16x16Image(menuItem, DsImages.Template, true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodDef) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Method,
 					Command = new RelayCommand(a => AddMethodDef(opvm)),
 				});
-				Add16x16Image(menuItem, "Method", true, true);
+				Add16x16Image(menuItem, DsImages.MethodPublic, true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
@@ -372,7 +373,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Field,
 					Command = new RelayCommand(a => AddFieldDef(opvm)),
 				});
-				Add16x16Image(menuItem, "Field", true, true);
+				Add16x16Image(menuItem, DsImages.FieldPublic, true, true);
 			}
 			if ((flags & MenuCommandFlags.FieldMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {

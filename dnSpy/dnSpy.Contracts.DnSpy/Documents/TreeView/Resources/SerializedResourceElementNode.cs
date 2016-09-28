@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		}
 
 		/// <inheritdoc/>
-		protected override ImageReference GetIcon() => new ImageReference(Context.DocumentTreeView.GetType().Assembly, "UserDefinedDataType");
+		protected override ImageReference GetIcon() => DsImages.UserDefinedDataType;
 
 		/// <summary>
 		/// Constructor

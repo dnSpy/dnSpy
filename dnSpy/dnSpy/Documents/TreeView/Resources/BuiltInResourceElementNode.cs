@@ -36,10 +36,10 @@ namespace dnSpy.Documents.TreeView.Resources {
 		protected override ImageReference GetIcon() {
 			var asm = GetType().Assembly;
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.String)
-				return new ImageReference(asm, "Strings");
+				return DsImages.String;
 			else if (ResourceElement.ResourceData.Code >= ResourceTypeCode.UserTypes)
-				return new ImageReference(asm, "UserDefinedDataType");
-			return ResourceUtilities.TryGetImageReference(asm, ResourceElement.Name) ?? new ImageReference(asm, "Binary");
+				return DsImages.UserDefinedDataType;
+			return ResourceUtilities.TryGetImageReference(asm, ResourceElement.Name) ?? DsImages.Binary;
 		}
 
 		public BuiltInResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)

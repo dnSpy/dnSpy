@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
@@ -278,7 +279,7 @@ namespace dnSpy.Contracts.Hex {
 		public override string GetHeader(DnHexBox context) => context.Selection != null ? dnSpy_Contracts_DnSpy_Resources.ClearSelectedBytesCommand : dnSpy_Contracts_DnSpy_Resources.ClearByteCommand;
 	}
 
-	[ExportMenuItem(Header = "res:FillSelectionCommand", Icon = "Fill", Group = MenuConstants.GROUP_CTX_HEXBOX_EDIT, Order = 10)]
+	[ExportMenuItem(Header = "res:FillSelectionCommand", Icon = DsImagesAttribute.Fill, Group = MenuConstants.GROUP_CTX_HEXBOX_EDIT, Order = 10)]
 	sealed class WriteToSelectionSelectionHexBoxCtxMenuCommand : HexBoxCommand {
 		readonly IMessageBoxService messageBoxService;
 
@@ -468,7 +469,7 @@ namespace dnSpy.Contracts.Hex {
 		public override bool IsEnabled(DnHexBox dnHexBox) => dnHexBox.Selection != null;
 	}
 
-	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 0)]
+	[ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 0)]
 	sealed class CopyHexBoxCtxMenuCommand : CopyBaseHexBoxCtxMenuCommand {
 		public override void Execute(DnHexBox dnHexBox) => dnHexBox.Copy();
 	}
@@ -503,7 +504,7 @@ namespace dnSpy.Contracts.Hex {
 		public override void Execute(DnHexBox dnHexBox) => dnHexBox.CopyOffset();
 	}
 
-	[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:PasteKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 70)]
+	[ExportMenuItem(Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:PasteKey", Group = MenuConstants.GROUP_CTX_HEXBOX_COPY, Order = 70)]
 	sealed class PasteHexBoxCtxMenuCommand : HexBoxCommand {
 		public override void Execute(DnHexBox dnHexBox) => dnHexBox.Paste();
 		public override bool IsVisible(DnHexBox dnHexBox) => true;

@@ -170,15 +170,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you want to clear the undo/redo history?.
-        /// </summary>
-        public static string AskClearUndoHistory {
-            get {
-                return ResourceManager.GetString("AskClearUndoHistory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to There could be code in some assembly that references this field. Are you sure you want to delete the field?.
         /// </summary>
         public static string AskDeleteField {
@@ -535,15 +526,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ClearCharacter_ToolTip {
             get {
                 return ResourceManager.GetString("ClearCharacter_ToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear Undo/Redo History.
-        /// </summary>
-        public static string ClearHistoryToolBarToolTip {
-            get {
-                return ResourceManager.GetString("ClearHistoryToolBarToolTip", resourceCulture);
             }
         }
         

@@ -115,12 +115,9 @@ namespace Example2.Extension {
 			this.document = document;
 		}
 
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
-			new ImageReference(GetType().Assembly, "TextFile");
-
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.TextFile;
+		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.WriteFilename(Path.GetFileName(document.Filename));
-		}
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeString = ContentTypes.PlainText;

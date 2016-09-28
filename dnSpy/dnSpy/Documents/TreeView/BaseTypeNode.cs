@@ -37,7 +37,7 @@ namespace dnSpy.Documents.TreeView {
 			var td = TryGetTypeDef();
 			if (td != null)
 				return dnImgMgr.GetImageReference(td);
-			return new ImageReference(GetType().Assembly, isBaseType ? "Class" : "Interface");
+			return isBaseType ? DsImages.ClassPublic : DsImages.InterfacePublic;
 		}
 
 		ITypeDefOrRef TryGetTypeDefOrRef() => (ITypeDefOrRef)weakRefTypeDefOrRef.Target;

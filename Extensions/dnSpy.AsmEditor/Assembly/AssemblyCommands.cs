@@ -33,6 +33,7 @@ using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
@@ -84,7 +85,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class RemoveAssemblyCommand : IGCUndoCommand {
-		[ExportMenuItem(Header = "res:RemoveAssemblyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 0)]
+		[ExportMenuItem(Header = "res:RemoveAssemblyCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 0)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IDocumentSaver> documentSaver;
@@ -102,7 +103,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			public override string GetHeader(AsmEditorContext context) => RemoveAssemblyCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveAssemblyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 0)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveAssemblyCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 0)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IDocumentSaver> documentSaver;
@@ -240,7 +241,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class AssemblySettingsCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:EditAssemblyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 0)]
+		[ExportMenuItem(Header = "res:EditAssemblyCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 0)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -255,7 +256,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			public override void Execute(AsmEditorContext context) => AssemblySettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditAssemblyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 0)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditAssemblyCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 0)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -354,7 +355,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateAssemblyCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:CreateAssemblyCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 0)]
+		[ExportMenuItem(Header = "res:CreateAssemblyCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 0)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -369,7 +370,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			public override void Execute(AsmEditorContext context) => CreateAssemblyCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateAssemblyCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateAssemblyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 0)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;

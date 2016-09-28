@@ -28,6 +28,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
@@ -110,7 +111,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
 	sealed class CopyCallThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly IDebuggerSettings debuggerSettings;
 
@@ -161,7 +162,7 @@ namespace dnSpy.Debugger.Threads {
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
 	sealed class SelectAllThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)

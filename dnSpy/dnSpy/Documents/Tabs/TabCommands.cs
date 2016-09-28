@@ -26,6 +26,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.TreeView;
@@ -126,7 +127,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(TabGroupContext context) => context.TabGroup.CloseActiveTab();
 	}
 
-	[ExportMenuItem(Header = "res:CloseAllTabsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 20)]
+	[ExportMenuItem(Header = "res:CloseAllTabsCommand", Icon = DsImagesAttribute.CloseDocumentGroup, Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 20)]
 	sealed class CloseAllTabsCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabsCtxMenuCommand(IDocumentTabService documentTabService)
@@ -160,7 +161,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(TabGroupContext context) => InstallTabCommands.OpenNewTabInternal(documentTabService);
 	}
 
-	[ExportMenuItem(Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 0)]
+	[ExportMenuItem(Header = "res:NewHorizontalTabGroupCommand", Icon = DsImagesAttribute.SplitScreenHorizontally, Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 0)]
 	sealed class NewHorizontalTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		NewHorizontalTabGroupCtxMenuCommand(IDocumentTabService documentTabService)
@@ -171,7 +172,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(TabGroupContext context) => context.TabGroupService.NewHorizontalTabGroup();
 	}
 
-	[ExportMenuItem(Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 10)]
+	[ExportMenuItem(Header = "res:NewVerticalTabGroupCommand", Icon = DsImagesAttribute.SplitScreenVertically, Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		NewVerticalTabGroupCtxMenuCommand(IDocumentTabService documentTabService)
@@ -281,7 +282,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(TabGroupContext context) => context.TabGroupService.MergeAllTabGroups();
 	}
 
-	[ExportMenuItem(Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 0)]
+	[ExportMenuItem(Header = "res:UseVerticalTabGroupsCommand", Icon = DsImagesAttribute.SplitScreenVertically, Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 0)]
 	sealed class UseVerticalTabGroupsCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		UseVerticalTabGroupsCtxMenuCommand(IDocumentTabService documentTabService)
@@ -292,7 +293,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(TabGroupContext context) => context.TabGroupService.UseVerticalTabGroups();
 	}
 
-	[ExportMenuItem(Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 10)]
+	[ExportMenuItem(Header = "res:UseHorizontalTabGroupsCommand", Icon = DsImagesAttribute.SplitScreenHorizontally, Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 10)]
 	sealed class UseHorizontalTabGroupsCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		UseHorizontalTabGroupsCtxMenuCommand(IDocumentTabService documentTabService)
@@ -376,7 +377,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewWindowCommand", Icon = "NewWindow", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewWindowCommand", Icon = DsImagesAttribute.NewWindow, Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 0)]
 	sealed class NewWindowCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		NewWindowCommand(IDocumentTabService documentTabService)
@@ -398,7 +399,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(MenuTabGroupContext context) => context.TabGroup?.CloseActiveTab();
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewHorizontalTabGroupCommand", Icon = DsImagesAttribute.SplitScreenHorizontally, Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 0)]
 	sealed class NewHorizontalTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		NewHorizontalTabGroupCommand(IDocumentTabService documentTabService)
@@ -409,7 +410,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(MenuTabGroupContext context) => context.TabGroupService.NewHorizontalTabGroup();
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewVerticalTabGroupCommand", Icon = DsImagesAttribute.SplitScreenVertically, Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		NewVerticalTabGroupCommand(IDocumentTabService documentTabService)
@@ -464,7 +465,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(MenuTabGroupContext context) => context.TabGroupService.MoveAllToPreviousTabGroup();
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseAllTabsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 60)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseAllTabsCommand", Icon = DsImagesAttribute.CloseDocumentGroup, Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 60)]
 	sealed class CloseAllTabsCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabsCommand(IDocumentTabService documentTabService)
@@ -531,7 +532,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(MenuTabGroupContext context) => context.TabGroupService.MergeAllTabGroups();
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:UseVerticalTabGroupsCommand", Icon = DsImagesAttribute.SplitScreenVertically, Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 0)]
 	sealed class UseVerticalTabGroupsCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		UseVerticalTabGroupsCommand(IDocumentTabService documentTabService)
@@ -542,7 +543,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(MenuTabGroupContext context) => context.TabGroupService.UseVerticalTabGroups();
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:UseHorizontalTabGroupsCommand", Icon = DsImagesAttribute.SplitScreenHorizontally, Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 10)]
 	sealed class UseHorizontalTabGroupsCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		UseHorizontalTabGroupsCommand(IDocumentTabService documentTabService)

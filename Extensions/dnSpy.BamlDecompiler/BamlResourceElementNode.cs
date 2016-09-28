@@ -43,7 +43,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public bool DisassembleBaml => bamlSettings.DisassembleBaml;
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.BAML_RESOURCE_ELEMENT_NODE_GUID);
-		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "XamlFile");
+		protected override ImageReference GetIcon() => DsImages.WPFFile;
 
 		public BamlResourceElementNode(ModuleDef module, ResourceElement resourceElement, byte[] bamlData, ITreeNodeGroup treeNodeGroup, BamlSettings bamlSettings)
 			: base(treeNodeGroup, resourceElement) {

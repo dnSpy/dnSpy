@@ -30,6 +30,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
 
@@ -54,14 +55,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 		void SaveAll_Execute() => documentSaver.Value.Save(GetDirtyDocs());
 	}
 
-	[ExportToolBarButton(Icon = "SaveAll", ToolTip = "res:SaveAllToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
+	[ExportToolBarButton(Icon = DsImagesAttribute.SaveAll, ToolTip = "res:SaveAllToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
 	sealed class SaveAllToolbarCommand : ToolBarButtonCommand {
 		SaveAllToolbarCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = "SaveAll", InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = DsImagesAttribute.SaveAll, InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 30)]
 	sealed class SaveAllCommand : MenuItemCommand {
 		SaveAllCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {

@@ -17,17 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:UndoCommand", InputGestureText = "res:ShortCutKeyCtrlZ", Icon = "Undo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:UndoCommand", InputGestureText = "res:ShortCutKeyCtrlZ", Icon = DsImagesAttribute.Undo, Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 0)]
 	sealed class UndoMainMenuEntryCommand : MenuItemCommand {
 		public UndoMainMenuEntryCommand()
 			: base(UndoRoutedCommands.Undo) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RedoCommand", InputGestureText = "res:ShortCutKeyCtrlY", Icon = "Redo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RedoCommand", InputGestureText = "res:ShortCutKeyCtrlY", Icon = DsImagesAttribute.Redo, Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 10)]
 	sealed class RedoMainMenuEntryCommand : MenuItemCommand {
 		public RedoMainMenuEntryCommand()
 			: base(UndoRoutedCommands.Redo) {

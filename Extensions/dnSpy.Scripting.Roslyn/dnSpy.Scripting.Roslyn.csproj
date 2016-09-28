@@ -139,20 +139,6 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\ArrowDown.png" />
-    <Resource Include="Images\ArrowUp.png" />
-    <Resource Include="Images\ClearWindowContent.png" />
-    <Resource Include="Images\Copy.png" />
-    <Resource Include="Images\CopyItem.png" />
-    <Resource Include="Images\CSInteractiveWindow.png" />
-    <Resource Include="Images\Cut.png" />
-    <Resource Include="Images\Paste.png" />
-    <Resource Include="Images\Reset.png" />
-    <Resource Include="Images\Save.png" />
-    <Resource Include="Images\VBInteractiveWindow.png" />
-    <Resource Include="Images\WordWrap.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -31,8 +31,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public virtual bool IsVirtualizingCollectionVM => false;
 		public ulong StartOffset { get; }
 		public ulong EndOffset { get; }
-		protected sealed override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, IconName);
-		protected abstract string IconName { get; }
+		protected sealed override ImageReference GetIcon(IDotNetImageService dnImgMgr) => IconReference;
+		protected abstract ImageReference IconReference { get; }
 
 		protected HexNode(ulong start, ulong end) {
 			this.StartOffset = start;

@@ -159,24 +159,6 @@
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Shared.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Class.png" />
-    <Resource Include="Images\CSharpFile.png" />
-    <Resource Include="Images\Delegate.png" />
-    <Resource Include="Images\Enum.png" />
-    <Resource Include="Images\Event.png" />
-    <Resource Include="Images\ExtensionMethod.png" />
-    <Resource Include="Images\Field.png" />
-    <Resource Include="Images\Interface.png" />
-    <Resource Include="Images\Literal.png" />
-    <Resource Include="Images\Local.png" />
-    <Resource Include="Images\Method.png" />
-    <Resource Include="Images\Module.png" />
-    <Resource Include="Images\Namespace.png" />
-    <Resource Include="Images\Property.png" />
-    <Resource Include="Images\Struct.png" />
-    <Resource Include="Images\VisualBasicFile.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

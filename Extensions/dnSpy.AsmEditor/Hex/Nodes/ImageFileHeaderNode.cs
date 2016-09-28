@@ -23,11 +23,12 @@ using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageFileHeaderNode : HexNode {
-		protected override string IconName => "BinaryFile";
+		protected override ImageReference IconReference => DsImages.BinaryFile;
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMGFILEHEADER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override object VMObject => imageFileHeaderVM;

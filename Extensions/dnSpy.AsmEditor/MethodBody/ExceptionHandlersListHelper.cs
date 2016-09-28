@@ -29,6 +29,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
 
@@ -55,7 +56,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.coll.CollectionChanged += coll_CollectionChanged;
 			InitializeExceptionHandlers(this.coll);
 
-			AddStandardMenuHandlers("AddException");
+			AddStandardMenuHandlers();
 			Add(new ContextMenuHandler {
 				Header = "res:CopyMetaDataToken",
 				HeaderPlural = "res:CopyMetaDataTokens",

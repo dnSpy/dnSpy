@@ -30,10 +30,8 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView {
 	sealed class ResourcesFolderNode : DocumentTreeNodeData, IResourcesFolderNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.RESOURCES_FOLDER_NODE_GUID);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
-			new ImageReference(GetType().Assembly, "FolderClosed");
-		protected override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) =>
-			new ImageReference(GetType().Assembly, "FolderOpened");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.FolderClosed;
+		protected override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => DsImages.FolderOpened;
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
 		public override ITreeNodeGroup TreeNodeGroup { get; }

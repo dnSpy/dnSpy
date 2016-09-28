@@ -269,7 +269,9 @@
     <Compile Include="Extension\ExtensionConfigReader.cs" />
     <Compile Include="Extension\ExtensionService.cs" />
     <Compile Include="Extension\LoadedExtension.cs" />
+    <Compile Include="Images\DefaultImageSourceInfoProvider.cs" />
     <Compile Include="Images\DotNetImageService.cs" />
+    <Compile Include="Images\ImageReferenceHelper.cs" />
     <Compile Include="Images\ImageService.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="Language\Intellisense\AttributeImageReferenceConverter.cs" />
@@ -815,6 +817,838 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Images\Add.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\AddReference.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Assembly.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\AssemblyError.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\AssemblyExe.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\AutoSizeOptimize.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Backwards.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Binary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\BinaryFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Branch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\BreakpointDisabled.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\BreakpointEnabled.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\BreakpointsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\BuildSolution.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CallReturnInstructionPointer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CallStackWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Cancel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CheckDot.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ClassInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ClassPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ClassProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ClassPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ClassShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ClearBreakpointGroup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ClearWindowContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CloseAll.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CloseDocumentGroup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CloseSolution.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ConstantInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ConstantPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ConstantProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ConstantPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ConstantSealed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ConstantShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Copy.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CopyItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CSFileNode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CSInteractiveWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CSProjectNode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\CurrentInstructionPointer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Cursor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Cut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DelegateInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DelegatePrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DelegateProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DelegatePublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DelegateShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Dialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DisableAllBreakpoints.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DisassemblyWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DownloadNoColor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\DraggedCurrentInstructionPointer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Editor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnableAllBreakpoints.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EntryPoint.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationItemInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationItemPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationItemProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationItemPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationItemSealed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationItemShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EnumerationShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EventInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EventPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EventProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EventPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EventSealed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\EventShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ExceptionInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ExceptionPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ExceptionProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ExceptionPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ExceptionSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ExceptionShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ExtensionMethod.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\FieldInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\FieldPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\FieldProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\FieldPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\FieldSealed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\FieldShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Fill.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Filter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\FolderClosed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\FolderOpened.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Forwards.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\GoToNext.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\GoToNextInList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\GoToSourceCode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Image.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\IntellisenseKeyword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\InterfaceInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\InterfacePrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\InterfaceProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\InterfacePublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\InterfaceShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Label.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Library.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\LocalsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\LocalVariable.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MarkupTag.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MemoryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Metadata.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MethodInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MethodPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MethodProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MethodPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MethodSealed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MethodShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ModuleFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ModuleInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ModulePrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ModuleProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ModulePublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ModulesWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\MoveUp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Namespace.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewClass.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewDocument.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewEvent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewField.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewImage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewMethod.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewProperty.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NewWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\NuGet.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\OneLevelUp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\OpenFolder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\OperatorInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\OperatorPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\OperatorProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\OperatorPublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\OperatorSealed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\OperatorShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Output.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Parameter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Paste.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Pause.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Process.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Property.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\PropertyInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\PropertyPrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\PropertyProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\PropertySealed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\PropertyShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\QuestionMark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Redo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Reference.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Refresh.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\RemoveCommand.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Restart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Run.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\RunOutline.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Save.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\SaveAll.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Search.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Select.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Settings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Snippet.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Solution.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\SourceFileGroup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\SplitScreenHorizontally.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\SplitScreenVertically.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StatusError.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StatusHidden.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StatusInformation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StatusWarning.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StepInto.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StepOut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StepOver.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Stop.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\String.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StructureInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StructurePrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StructureProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StructurePublic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\StructureShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\TableViewNameOnly.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Template.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\TemplateInternal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\TemplatePrivate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\TemplateProtected.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\TemplateShortcut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\TextFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Thread.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ToggleAllBreakpoints.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ToolstripPanelBottom.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ToolstripPanelLeft.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ToolstripPanelRight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\ToolstripPanelTop.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Type.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Undo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\UndoCheckBoxList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\UserDefinedDataType.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\VBFileNode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\VBInteractiveWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\VBProjectNode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\Watch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\WordWrap.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\WPFFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\XMLFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\XMLSchema.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Images\XSLTransform.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Language\Intellisense\CompletionPresenterControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -868,215 +1702,217 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\AddReference.png" />
-    <Resource Include="Images\Assembly.png" />
-    <Resource Include="Images\AssemblyExe.png" />
-    <Resource Include="Images\AssemblyReference.png" />
-    <Resource Include="Images\AssemblyWarning.png" />
-    <Resource Include="Images\Backward.png" />
-    <Resource Include="Images\BaseTypeClosed.png" />
-    <Resource Include="Images\BaseTypeOpened.png" />
-    <Resource Include="Images\Binary.png" />
-    <Resource Include="Images\Class.png" />
-    <Resource Include="Images\ClassInternal.png" />
-    <Resource Include="Images\ClassPrivate.png" />
-    <Resource Include="Images\ClassProtected.png" />
-    <Resource Include="Images\ClassProtectedInternal.png" />
-    <Resource Include="Images\ClearWindowContent.png" />
-    <Resource Include="Images\Close.png" />
-    <Resource Include="Images\CloseAll.png" />
-    <Resource Include="Images\CloseDocuments.png" />
-    <Resource Include="Images\Constructor.png" />
-    <Resource Include="Images\ConstructorCompilerControlled.png" />
-    <Resource Include="Images\ConstructorInternal.png" />
-    <Resource Include="Images\ConstructorPrivate.png" />
-    <Resource Include="Images\ConstructorProtected.png" />
-    <Resource Include="Images\ConstructorProtectedInternal.png" />
-    <Resource Include="Images\Copy.png" />
-    <Resource Include="Images\CSharpFile.png" />
-    <Resource Include="Images\CSProjectNode.png" />
+    <Resource Include="Images\Add.16.16.png" />
+    <Resource Include="Images\AddReference.16.16.png" />
+    <Resource Include="Images\Assembly.16.16.png" />
+    <Resource Include="Images\AssemblyError.16.16.png" />
+    <Resource Include="Images\AssemblyExe.16.16.png" />
+    <Resource Include="Images\AutoSizeOptimize.16.16.png" />
+    <Resource Include="Images\Backwards.16.16.png" />
+    <Resource Include="Images\Binary.16.16.png" />
+    <Resource Include="Images\BinaryFile.16.16.png" />
+    <Resource Include="Images\Branch.16.16.png" />
+    <Resource Include="Images\BreakpointDisabled.16.16.png" />
+    <Resource Include="Images\BreakpointEnabled.16.16.png" />
+    <Resource Include="Images\BreakpointsWindow.16.16.png" />
+    <Resource Include="Images\BuildSolution.16.16.png" />
+    <Resource Include="Images\CallReturnInstructionPointer.16.16.png" />
+    <Resource Include="Images\CallStackWindow.16.16.png" />
+    <Resource Include="Images\Cancel.16.16.png" />
+    <Resource Include="Images\CheckDot.16.16.png" />
+    <Resource Include="Images\ClassInternal.16.16.png" />
+    <Resource Include="Images\ClassPrivate.16.16.png" />
+    <Resource Include="Images\ClassProtected.16.16.png" />
+    <Resource Include="Images\ClassPublic.16.16.png" />
+    <Resource Include="Images\ClassShortcut.16.16.png" />
+    <Resource Include="Images\ClearBreakpointGroup.16.16.png" />
+    <Resource Include="Images\ClearWindowContent.16.16.png" />
+    <Resource Include="Images\CloseAll.16.16.png" />
+    <Resource Include="Images\CloseDocumentGroup.16.16.png" />
+    <Resource Include="Images\CloseSolution.16.16.png" />
+    <Resource Include="Images\ConstantInternal.16.16.png" />
+    <Resource Include="Images\ConstantPrivate.16.16.png" />
+    <Resource Include="Images\ConstantProtected.16.16.png" />
+    <Resource Include="Images\ConstantPublic.16.16.png" />
+    <Resource Include="Images\ConstantSealed.16.16.png" />
+    <Resource Include="Images\ConstantShortcut.16.16.png" />
+    <Resource Include="Images\Copy.16.16.png" />
+    <Resource Include="Images\CopyItem.16.16.png" />
+    <Resource Include="Images\CSFileNode.16.16.png" />
+    <Resource Include="Images\CSInteractiveWindow.16.16.png" />
+    <Resource Include="Images\CSProjectNode.16.16.png" />
+    <Resource Include="Images\CurrentInstructionPointer.16.16.png" />
+    <Resource Include="Images\Cursor.16.16.png" />
+    <Resource Include="Images\Cut.16.16.png" />
     <Resource Include="Images\DefaultWatermarkDark.png" />
     <Resource Include="Images\DefaultWatermarkLight.png" />
-    <Resource Include="Images\Delegate.png" />
-    <Resource Include="Images\DelegateInternal.png" />
-    <Resource Include="Images\DelegatePrivate.png" />
-    <Resource Include="Images\DelegateProtected.png" />
-    <Resource Include="Images\DelegateProtectedInternal.png" />
-    <Resource Include="Images\DerivedTypesClosed.png" />
-    <Resource Include="Images\DerivedTypesOpened.png" />
-    <Resource Include="Images\dnSpy-Big.png" />
+    <Resource Include="Images\DelegateInternal.16.16.png" />
+    <Resource Include="Images\DelegatePrivate.16.16.png" />
+    <Resource Include="Images\DelegateProtected.16.16.png" />
+    <Resource Include="Images\DelegatePublic.16.16.png" />
+    <Resource Include="Images\DelegateShortcut.16.16.png" />
+    <Resource Include="Images\Dialog.16.16.png" />
+    <Resource Include="Images\DisableAllBreakpoints.16.16.png" />
+    <Resource Include="Images\DisassemblyWindow.16.16.png" />
     <Resource Include="Images\dnSpy.ico" />
-    <Resource Include="Images\EntryPoint.png" />
-    <Resource Include="Images\Enum.png" />
-    <Resource Include="Images\EnumInternal.png" />
-    <Resource Include="Images\EnumPrivate.png" />
-    <Resource Include="Images\EnumProtected.png" />
-    <Resource Include="Images\EnumProtectedInternal.png" />
-    <Resource Include="Images\EnumValue.png" />
-    <Resource Include="Images\EnumValueCompilerControlled.png" />
-    <Resource Include="Images\EnumValueInternal.png" />
-    <Resource Include="Images\EnumValuePrivate.png" />
-    <Resource Include="Images\EnumValueProtected.png" />
-    <Resource Include="Images\EnumValueProtectedInternal.png" />
-    <Resource Include="Images\Event.png" />
-    <Resource Include="Images\EventCompilerControlled.png" />
-    <Resource Include="Images\EventInternal.png" />
-    <Resource Include="Images\EventPrivate.png" />
-    <Resource Include="Images\EventProtected.png" />
-    <Resource Include="Images\EventProtectedInternal.png" />
-    <Resource Include="Images\Exception.png" />
-    <Resource Include="Images\ExceptionInternal.png" />
-    <Resource Include="Images\ExceptionPrivate.png" />
-    <Resource Include="Images\ExceptionProtected.png" />
-    <Resource Include="Images\ExceptionProtectedInternal.png" />
-    <Resource Include="Images\ExtensionMethod.png" />
-    <Resource Include="Images\Field.png" />
-    <Resource Include="Images\FieldCompilerControlled.png" />
-    <Resource Include="Images\FieldInternal.png" />
-    <Resource Include="Images\FieldPrivate.png" />
-    <Resource Include="Images\FieldProtected.png" />
-    <Resource Include="Images\FieldProtectedInternal.png" />
-    <Resource Include="Images\FieldReadOnly.png" />
-    <Resource Include="Images\FieldReadOnlyCompilerControlled.png" />
-    <Resource Include="Images\FieldReadOnlyInternal.png" />
-    <Resource Include="Images\FieldReadOnlyPrivate.png" />
-    <Resource Include="Images\FieldReadOnlyProtected.png" />
-    <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
-    <Resource Include="Images\Find.png" />
-    <Resource Include="Images\FolderClosed.png" />
-    <Resource Include="Images\FolderOpened.png" />
-    <Resource Include="Images\Forward.png" />
-    <Resource Include="Images\FullScreen.png" />
-    <Resource Include="Images\Generic.png" />
-    <Resource Include="Images\GenericInternal.png" />
-    <Resource Include="Images\GenericParameter.png" />
-    <Resource Include="Images\GenericPrivate.png" />
-    <Resource Include="Images\GenericProtected.png" />
-    <Resource Include="Images\GenericProtectedInternal.png" />
-    <Resource Include="Images\HorizontalTabGroup.png" />
-    <Resource Include="Images\ImageFile.png" />
-    <Resource Include="Images\IntellisenseKeyword.png" />
-    <Resource Include="Images\Interface.png" />
-    <Resource Include="Images\InterfaceInternal.png" />
-    <Resource Include="Images\InterfacePrivate.png" />
-    <Resource Include="Images\InterfaceProtected.png" />
-    <Resource Include="Images\InterfaceProtectedInternal.png" />
-    <Resource Include="Images\Label.png" />
-    <Resource Include="Images\Library.png" />
-    <Resource Include="Images\Literal.png" />
-    <Resource Include="Images\LiteralCompilerControlled.png" />
-    <Resource Include="Images\LiteralInternal.png" />
-    <Resource Include="Images\LiteralPrivate.png" />
-    <Resource Include="Images\LiteralProtected.png" />
-    <Resource Include="Images\LiteralProtectedInternal.png" />
-    <Resource Include="Images\Local.png" />
-    <Resource Include="Images\MarkUpTag.png" />
-    <Resource Include="Images\Method.png" />
-    <Resource Include="Images\MethodCompilerControlled.png" />
-    <Resource Include="Images\MethodInternal.png" />
-    <Resource Include="Images\MethodPrivate.png" />
-    <Resource Include="Images\MethodProtected.png" />
-    <Resource Include="Images\MethodProtectedInternal.png" />
-    <Resource Include="Images\Module.png" />
-    <Resource Include="Images\ModuleInternal.png" />
-    <Resource Include="Images\ModulePrivate.png" />
-    <Resource Include="Images\ModuleProtected.png" />
-    <Resource Include="Images\ModuleReference.png" />
-    <Resource Include="Images\Namespace.png" />
-    <Resource Include="Images\NewWindow.png" />
-    <Resource Include="Images\NuGet.png" />
-    <Resource Include="Images\OneLevelUp.png" />
-    <Resource Include="Images\Open.png" />
-    <Resource Include="Images\Operator.png" />
-    <Resource Include="Images\OperatorCompilerControlled.png" />
-    <Resource Include="Images\OperatorInternal.png" />
-    <Resource Include="Images\OperatorPrivate.png" />
-    <Resource Include="Images\OperatorProtected.png" />
-    <Resource Include="Images\OperatorProtectedInternal.png" />
-    <Resource Include="Images\Output.png" />
-    <Resource Include="Images\Parameter.png" />
-    <Resource Include="Images\PInvokeMethod.png" />
-    <Resource Include="Images\PInvokeMethodCompilerControlled.png" />
-    <Resource Include="Images\PInvokeMethodInternal.png" />
-    <Resource Include="Images\PInvokeMethodPrivate.png" />
-    <Resource Include="Images\PInvokeMethodProtected.png" />
-    <Resource Include="Images\PInvokeMethodProtectedInternal.png" />
-    <Resource Include="Images\Property.png" />
-    <Resource Include="Images\PropertyCompilerControlled.png" />
-    <Resource Include="Images\PropertyInternal.png" />
-    <Resource Include="Images\PropertyPrivate.png" />
-    <Resource Include="Images\PropertyProtected.png" />
-    <Resource Include="Images\PropertyProtectedInternal.png" />
-    <Resource Include="Images\ReferenceFolder.png" />
-    <Resource Include="Images\Resource.png" />
-    <Resource Include="Images\ResourcesFile.png" />
-    <Resource Include="Images\Save.png" />
-    <Resource Include="Images\Search.png" />
-    <Resource Include="Images\Settings.png" />
-    <Resource Include="Images\Snippet.png" />
-    <Resource Include="Images\Solution.png" />
-    <Resource Include="Images\StaticClass.png" />
-    <Resource Include="Images\StaticEvent.png" />
-    <Resource Include="Images\StaticEventCompilerControlled.png" />
-    <Resource Include="Images\StaticEventInternal.png" />
-    <Resource Include="Images\StaticEventPrivate.png" />
-    <Resource Include="Images\StaticEventProtected.png" />
-    <Resource Include="Images\StaticEventProtectedInternal.png" />
-    <Resource Include="Images\StaticMethod.png" />
-    <Resource Include="Images\StaticMethodCompilerControlled.png" />
-    <Resource Include="Images\StaticMethodInternal.png" />
-    <Resource Include="Images\StaticMethodPrivate.png" />
-    <Resource Include="Images\StaticMethodProtected.png" />
-    <Resource Include="Images\StaticMethodProtectedInternal.png" />
-    <Resource Include="Images\StaticProperty.png" />
-    <Resource Include="Images\StaticPropertyCompilerControlled.png" />
-    <Resource Include="Images\StaticPropertyInternal.png" />
-    <Resource Include="Images\StaticPropertyPrivate.png" />
-    <Resource Include="Images\StaticPropertyProtected.png" />
-    <Resource Include="Images\StaticPropertyProtectedInternal.png" />
-    <Resource Include="Images\StatusError.png" />
-    <Resource Include="Images\StatusInformation.png" />
-    <Resource Include="Images\StatusWarning.png" />
-    <Resource Include="Images\Strings.png" />
-    <Resource Include="Images\Struct.png" />
-    <Resource Include="Images\StructInternal.png" />
-    <Resource Include="Images\StructPrivate.png" />
-    <Resource Include="Images\StructProtected.png" />
-    <Resource Include="Images\StructProtectedInternal.png" />
-    <Resource Include="Images\tableviewnameonly.png" />
-    <Resource Include="Images\TextFile.png" />
-    <Resource Include="Images\toolstrippanelbottom.png" />
-    <Resource Include="Images\toolstrippanelleft.png" />
-    <Resource Include="Images\toolstrippanelright.png" />
-    <Resource Include="Images\toolstrippaneltop.png" />
-    <Resource Include="Images\Type.png" />
-    <Resource Include="Images\UserDefinedDataType.png" />
-    <Resource Include="Images\VBProjectNode.png" />
-    <Resource Include="Images\VerticalTabGroup.png" />
-    <Resource Include="Images\VirtualEvent.png" />
-    <Resource Include="Images\VirtualEventCompilerControlled.png" />
-    <Resource Include="Images\VirtualEventInternal.png" />
-    <Resource Include="Images\VirtualEventPrivate.png" />
-    <Resource Include="Images\VirtualEventProtected.png" />
-    <Resource Include="Images\VirtualEventProtectedInternal.png" />
-    <Resource Include="Images\VirtualMethod.png" />
-    <Resource Include="Images\VirtualMethodCompilerControlled.png" />
-    <Resource Include="Images\VirtualMethodInternal.png" />
-    <Resource Include="Images\VirtualMethodPrivate.png" />
-    <Resource Include="Images\VirtualMethodProtected.png" />
-    <Resource Include="Images\VirtualMethodProtectedInternal.png" />
-    <Resource Include="Images\VirtualProperty.png" />
-    <Resource Include="Images\VirtualPropertyCompilerControlled.png" />
-    <Resource Include="Images\VirtualPropertyInternal.png" />
-    <Resource Include="Images\VirtualPropertyPrivate.png" />
-    <Resource Include="Images\VirtualPropertyProtected.png" />
-    <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
-    <Resource Include="Images\VisualBasicFile.png" />
-    <Resource Include="Images\WordWrap.png" />
-    <Resource Include="Images\XamlFile.png" />
-    <Resource Include="Images\XmlFile.png" />
-    <Resource Include="Images\XsdFile.png" />
-    <Resource Include="Images\XsltFile.png" />
+    <Resource Include="Images\DownloadNoColor.16.16.png" />
+    <Resource Include="Images\DraggedCurrentInstructionPointer.16.16.png" />
+    <Resource Include="Images\Editor.16.16.png" />
+    <Resource Include="Images\EnableAllBreakpoints.16.16.png" />
+    <Resource Include="Images\EntryPoint.16.16.png" />
+    <Resource Include="Images\EnumerationInternal.16.16.png" />
+    <Resource Include="Images\EnumerationItemInternal.16.16.png" />
+    <Resource Include="Images\EnumerationItemPrivate.16.16.png" />
+    <Resource Include="Images\EnumerationItemProtected.16.16.png" />
+    <Resource Include="Images\EnumerationItemPublic.16.16.png" />
+    <Resource Include="Images\EnumerationItemSealed.16.16.png" />
+    <Resource Include="Images\EnumerationItemShortcut.16.16.png" />
+    <Resource Include="Images\EnumerationPrivate.16.16.png" />
+    <Resource Include="Images\EnumerationProtected.16.16.png" />
+    <Resource Include="Images\EnumerationPublic.16.16.png" />
+    <Resource Include="Images\EnumerationShortcut.16.16.png" />
+    <Resource Include="Images\EventInternal.16.16.png" />
+    <Resource Include="Images\EventPrivate.16.16.png" />
+    <Resource Include="Images\EventProtected.16.16.png" />
+    <Resource Include="Images\EventPublic.16.16.png" />
+    <Resource Include="Images\EventSealed.16.16.png" />
+    <Resource Include="Images\EventShortcut.16.16.png" />
+    <Resource Include="Images\ExceptionInternal.16.16.png" />
+    <Resource Include="Images\ExceptionPrivate.16.16.png" />
+    <Resource Include="Images\ExceptionProtected.16.16.png" />
+    <Resource Include="Images\ExceptionPublic.16.16.png" />
+    <Resource Include="Images\ExceptionSettings.16.16.png" />
+    <Resource Include="Images\ExceptionShortcut.16.16.png" />
+    <Resource Include="Images\ExtensionMethod.16.16.png" />
+    <Resource Include="Images\FieldInternal.16.16.png" />
+    <Resource Include="Images\FieldPrivate.16.16.png" />
+    <Resource Include="Images\FieldProtected.16.16.png" />
+    <Resource Include="Images\FieldPublic.16.16.png" />
+    <Resource Include="Images\FieldSealed.16.16.png" />
+    <Resource Include="Images\FieldShortcut.16.16.png" />
+    <Resource Include="Images\Fill.16.16.png" />
+    <Resource Include="Images\Filter.16.16.png" />
+    <Resource Include="Images\FolderClosed.16.16.png" />
+    <Resource Include="Images\FolderOpened.16.16.png" />
+    <Resource Include="Images\Forwards.16.16.png" />
+    <Resource Include="Images\GoToNext.16.16.png" />
+    <Resource Include="Images\GoToNextInList.16.16.png" />
+    <Resource Include="Images\GoToSourceCode.16.16.png" />
+    <Resource Include="Images\Image.16.16.png" />
+    <Resource Include="Images\IntellisenseKeyword.16.16.png" />
+    <Resource Include="Images\InterfaceInternal.16.16.png" />
+    <Resource Include="Images\InterfacePrivate.16.16.png" />
+    <Resource Include="Images\InterfaceProtected.16.16.png" />
+    <Resource Include="Images\InterfacePublic.16.16.png" />
+    <Resource Include="Images\InterfaceShortcut.16.16.png" />
+    <Resource Include="Images\Label.16.16.png" />
+    <Resource Include="Images\Library.16.16.png" />
+    <Resource Include="Images\LocalsWindow.16.16.png" />
+    <Resource Include="Images\LocalVariable.16.16.png" />
+    <Resource Include="Images\MarkupTag.16.16.png" />
+    <Resource Include="Images\MemoryWindow.16.16.png" />
+    <Resource Include="Images\Metadata.16.16.png" />
+    <Resource Include="Images\MethodInternal.16.16.png" />
+    <Resource Include="Images\MethodPrivate.16.16.png" />
+    <Resource Include="Images\MethodProtected.16.16.png" />
+    <Resource Include="Images\MethodPublic.16.16.png" />
+    <Resource Include="Images\MethodSealed.16.16.png" />
+    <Resource Include="Images\MethodShortcut.16.16.png" />
+    <Resource Include="Images\ModuleFile.16.16.png" />
+    <Resource Include="Images\ModuleInternal.16.16.png" />
+    <Resource Include="Images\ModulePrivate.16.16.png" />
+    <Resource Include="Images\ModuleProtected.16.16.png" />
+    <Resource Include="Images\ModulePublic.16.16.png" />
+    <Resource Include="Images\ModulesWindow.16.16.png" />
+    <Resource Include="Images\MoveUp.16.16.png" />
+    <Resource Include="Images\Namespace.16.16.png" />
+    <Resource Include="Images\NewClass.16.16.png" />
+    <Resource Include="Images\NewDocument.16.16.png" />
+    <Resource Include="Images\NewEvent.16.16.png" />
+    <Resource Include="Images\NewField.16.16.png" />
+    <Resource Include="Images\NewImage.16.16.png" />
+    <Resource Include="Images\NewItem.16.16.png" />
+    <Resource Include="Images\NewMethod.16.16.png" />
+    <Resource Include="Images\NewProperty.16.16.png" />
+    <Resource Include="Images\NewWindow.16.16.png" />
+    <Resource Include="Images\NuGet.16.16.png" />
+    <Resource Include="Images\OneLevelUp.16.16.png" />
+    <Resource Include="Images\OpenFolder.16.16.png" />
+    <Resource Include="Images\OperatorInternal.16.16.png" />
+    <Resource Include="Images\OperatorPrivate.16.16.png" />
+    <Resource Include="Images\OperatorProtected.16.16.png" />
+    <Resource Include="Images\OperatorPublic.16.16.png" />
+    <Resource Include="Images\OperatorSealed.16.16.png" />
+    <Resource Include="Images\OperatorShortcut.16.16.png" />
+    <Resource Include="Images\Output.16.16.png" />
+    <Resource Include="Images\Parameter.16.16.png" />
+    <Resource Include="Images\Paste.16.16.png" />
+    <Resource Include="Images\Pause.16.16.png" />
+    <Resource Include="Images\Process.16.16.png" />
+    <Resource Include="Images\Property.16.16.png" />
+    <Resource Include="Images\PropertyInternal.16.16.png" />
+    <Resource Include="Images\PropertyPrivate.16.16.png" />
+    <Resource Include="Images\PropertyProtected.16.16.png" />
+    <Resource Include="Images\PropertySealed.16.16.png" />
+    <Resource Include="Images\PropertyShortcut.16.16.png" />
+    <Resource Include="Images\QuestionMark.16.16.png" />
+    <Resource Include="Images\Redo.16.16.png" />
+    <Resource Include="Images\Reference.16.16.png" />
+    <Resource Include="Images\Refresh.16.16.png" />
+    <Resource Include="Images\RemoveCommand.16.16.png" />
+    <Resource Include="Images\Restart.16.16.png" />
+    <Resource Include="Images\Run.16.16.png" />
+    <Resource Include="Images\RunOutline.16.16.png" />
+    <Resource Include="Images\Save.16.16.png" />
+    <Resource Include="Images\SaveAll.16.16.png" />
+    <Resource Include="Images\Search.16.16.png" />
+    <Resource Include="Images\Select.16.16.png" />
+    <Resource Include="Images\Settings.16.16.png" />
+    <Resource Include="Images\Snippet.16.16.png" />
+    <Resource Include="Images\Solution.16.16.png" />
+    <Resource Include="Images\SourceFileGroup.16.16.png" />
+    <Resource Include="Images\SplitScreenHorizontally.16.16.png" />
+    <Resource Include="Images\SplitScreenVertically.16.16.png" />
+    <Resource Include="Images\StatusError.16.16.png" />
+    <Resource Include="Images\StatusHidden.16.16.png" />
+    <Resource Include="Images\StatusInformation.16.16.png" />
+    <Resource Include="Images\StatusWarning.16.16.png" />
+    <Resource Include="Images\StepInto.16.16.png" />
+    <Resource Include="Images\StepOut.16.16.png" />
+    <Resource Include="Images\StepOver.16.16.png" />
+    <Resource Include="Images\Stop.16.16.png" />
+    <Resource Include="Images\String.16.16.png" />
+    <Resource Include="Images\StructureInternal.16.16.png" />
+    <Resource Include="Images\StructurePrivate.16.16.png" />
+    <Resource Include="Images\StructureProtected.16.16.png" />
+    <Resource Include="Images\StructurePublic.16.16.png" />
+    <Resource Include="Images\StructureShortcut.16.16.png" />
+    <Resource Include="Images\TableViewNameOnly.16.16.png" />
+    <Resource Include="Images\Template.16.16.png" />
+    <Resource Include="Images\TemplateInternal.16.16.png" />
+    <Resource Include="Images\TemplatePrivate.16.16.png" />
+    <Resource Include="Images\TemplateProtected.16.16.png" />
+    <Resource Include="Images\TemplateShortcut.16.16.png" />
+    <Resource Include="Images\TextFile.16.16.png" />
+    <Resource Include="Images\Thread.16.16.png" />
+    <Resource Include="Images\ToggleAllBreakpoints.16.16.png" />
+    <Resource Include="Images\ToolstripPanelBottom.16.16.png" />
+    <Resource Include="Images\ToolstripPanelLeft.16.16.png" />
+    <Resource Include="Images\ToolstripPanelRight.16.16.png" />
+    <Resource Include="Images\ToolstripPanelTop.16.16.png" />
+    <Resource Include="Images\Type.16.16.png" />
+    <Resource Include="Images\Undo.16.16.png" />
+    <Resource Include="Images\UndoCheckBoxList.16.16.png" />
+    <Resource Include="Images\UserDefinedDataType.16.16.png" />
+    <Resource Include="Images\VBFileNode.16.16.png" />
+    <Resource Include="Images\VBInteractiveWindow.16.16.png" />
+    <Resource Include="Images\VBProjectNode.16.16.png" />
+    <Resource Include="Images\Watch.16.16.png" />
+    <Resource Include="Images\WordWrap.16.16.png" />
+    <Resource Include="Images\WPFFile.16.16.png" />
+    <Resource Include="Images\XMLFile.16.16.png" />
+    <Resource Include="Images\XMLSchema.16.16.png" />
+    <Resource Include="Images\XSLTransform.16.16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\EmbedInteropTypes.targets" />

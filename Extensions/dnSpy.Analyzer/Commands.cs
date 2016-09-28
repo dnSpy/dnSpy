@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 
@@ -112,7 +113,7 @@ namespace dnSpy.Analyzer {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:CopyCommand", InputGestureText = "res:ShortCutKeyCtrlC", Icon = "Copy", Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = -1)]
+	[ExportMenuItem(Header = "res:CopyCommand", InputGestureText = "res:ShortCutKeyCtrlC", Icon = DsImagesAttribute.Copy, Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = -1)]
 	sealed class CopyCtxMenuCommand : MenuItemBase {
 		readonly Lazy<IAnalyzerService> analyzerService;
 

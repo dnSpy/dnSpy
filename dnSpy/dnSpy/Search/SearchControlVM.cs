@@ -154,35 +154,35 @@ namespace dnSpy.Search {
 			this.SearchLocationVM = new EnumListVM(searchLocationList, (a, b) => Restart());
 			this.SearchLocationVM.SelectedItem = SearchLocation.AllFiles;
 
-			Add(SearchType.AssemblyDef, dnSpy_Resources.SearchWindow_Assembly, "Assembly", null, VisibleMembersFlags.AssemblyDef);
-			Add(SearchType.ModuleDef, dnSpy_Resources.SearchWindow_Module, "Module", null, VisibleMembersFlags.ModuleDef);
-			Add(SearchType.Namespace, dnSpy_Resources.SearchWindow_Namespace, "Namespace", null, VisibleMembersFlags.Namespace);
-			Add(SearchType.TypeDef, dnSpy_Resources.SearchWindow_Type, "Class", dnSpy_Resources.SearchWindow_Type_Key, VisibleMembersFlags.TypeDef);
-			Add(SearchType.FieldDef, dnSpy_Resources.SearchWindow_Field, "Field", dnSpy_Resources.SearchWindow_Field_Key, VisibleMembersFlags.FieldDef);
-			Add(SearchType.MethodDef, dnSpy_Resources.SearchWindow_Method, "Method", dnSpy_Resources.SearchWindow_Method_Key, VisibleMembersFlags.MethodDef);
-			Add(SearchType.PropertyDef, dnSpy_Resources.SearchWindow_Property, "Property", dnSpy_Resources.SearchWindow_Property_Key, VisibleMembersFlags.PropertyDef);
-			Add(SearchType.EventDef, dnSpy_Resources.SearchWindow_Event, "Event", dnSpy_Resources.SearchWindow_Event_Key, VisibleMembersFlags.EventDef);
-			Add(SearchType.ParamDef, dnSpy_Resources.SearchWindow_Parameter, "Parameter", dnSpy_Resources.SearchWindow_Parameter_Key, VisibleMembersFlags.ParamDef);
-			Add(SearchType.Local, dnSpy_Resources.SearchWindow_Local, "Local", dnSpy_Resources.SearchWindow_Local_Key, VisibleMembersFlags.Local);
-			Add(SearchType.ParamLocal, dnSpy_Resources.SearchWindow_ParameterLocal, "Parameter", dnSpy_Resources.SearchWindow_ParameterLocal_Key, VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local);
-			Add(SearchType.AssemblyRef, dnSpy_Resources.SearchWindow_AssemblyRef, "AssemblyReference", null, VisibleMembersFlags.AssemblyRef);
-			Add(SearchType.ModuleRef, dnSpy_Resources.SearchWindow_ModuleRef, "ModuleReference", null, VisibleMembersFlags.ModuleRef);
-			Add(SearchType.Resource, dnSpy_Resources.SearchWindow_Resource, "Resource", dnSpy_Resources.SearchWindow_Resource_Key, VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement);
-			Add(SearchType.GenericTypeDef, dnSpy_Resources.SearchWindow_Generic, "Generic", null, VisibleMembersFlags.GenericTypeDef);
-			Add(SearchType.NonGenericTypeDef, dnSpy_Resources.SearchWindow_NonGeneric, "Class", null, VisibleMembersFlags.NonGenericTypeDef);
-			Add(SearchType.EnumTypeDef, dnSpy_Resources.SearchWindow_Enum, "Enum", null, VisibleMembersFlags.EnumTypeDef);
-			Add(SearchType.InterfaceTypeDef, dnSpy_Resources.SearchWindow_Interface, "Interface", null, VisibleMembersFlags.InterfaceTypeDef);
-			Add(SearchType.ClassTypeDef, dnSpy_Resources.SearchWindow_Class, "Class", null, VisibleMembersFlags.ClassTypeDef);
-			Add(SearchType.StructTypeDef, dnSpy_Resources.SearchWindow_Struct, "Struct", null, VisibleMembersFlags.StructTypeDef);
-			Add(SearchType.DelegateTypeDef, dnSpy_Resources.SearchWindow_Delegate, "Delegate", null, VisibleMembersFlags.DelegateTypeDef);
-			Add(SearchType.Member, dnSpy_Resources.SearchWindow_Member, "Property", dnSpy_Resources.SearchWindow_Member_Key, VisibleMembersFlags.MethodDef | VisibleMembersFlags.FieldDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef);
-			Add(SearchType.Any, dnSpy_Resources.SearchWindow_AllAbove, "Class", dnSpy_Resources.SearchWindow_AllAbove_Key, VisibleMembersFlags.TreeViewAll | VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local);
-			Add(SearchType.Literal, dnSpy_Resources.SearchWindow_Literal, "Literal", dnSpy_Resources.SearchWindow_Literal_Key, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Attributes);
+			Add(SearchType.AssemblyDef, dnSpy_Resources.SearchWindow_Assembly, DsImages.Assembly, null, VisibleMembersFlags.AssemblyDef);
+			Add(SearchType.ModuleDef, dnSpy_Resources.SearchWindow_Module, DsImages.ModulePublic, null, VisibleMembersFlags.ModuleDef);
+			Add(SearchType.Namespace, dnSpy_Resources.SearchWindow_Namespace, DsImages.Namespace, null, VisibleMembersFlags.Namespace);
+			Add(SearchType.TypeDef, dnSpy_Resources.SearchWindow_Type, DsImages.ClassPublic, dnSpy_Resources.SearchWindow_Type_Key, VisibleMembersFlags.TypeDef);
+			Add(SearchType.FieldDef, dnSpy_Resources.SearchWindow_Field, DsImages.FieldPublic, dnSpy_Resources.SearchWindow_Field_Key, VisibleMembersFlags.FieldDef);
+			Add(SearchType.MethodDef, dnSpy_Resources.SearchWindow_Method, DsImages.MethodPublic, dnSpy_Resources.SearchWindow_Method_Key, VisibleMembersFlags.MethodDef);
+			Add(SearchType.PropertyDef, dnSpy_Resources.SearchWindow_Property, DsImages.Property, dnSpy_Resources.SearchWindow_Property_Key, VisibleMembersFlags.PropertyDef);
+			Add(SearchType.EventDef, dnSpy_Resources.SearchWindow_Event, DsImages.EventPublic, dnSpy_Resources.SearchWindow_Event_Key, VisibleMembersFlags.EventDef);
+			Add(SearchType.ParamDef, dnSpy_Resources.SearchWindow_Parameter, DsImages.Parameter, dnSpy_Resources.SearchWindow_Parameter_Key, VisibleMembersFlags.ParamDef);
+			Add(SearchType.Local, dnSpy_Resources.SearchWindow_Local, DsImages.LocalVariable, dnSpy_Resources.SearchWindow_Local_Key, VisibleMembersFlags.Local);
+			Add(SearchType.ParamLocal, dnSpy_Resources.SearchWindow_ParameterLocal, DsImages.LocalVariable, dnSpy_Resources.SearchWindow_ParameterLocal_Key, VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local);
+			Add(SearchType.AssemblyRef, dnSpy_Resources.SearchWindow_AssemblyRef, DsImages.Reference, null, VisibleMembersFlags.AssemblyRef);
+			Add(SearchType.ModuleRef, dnSpy_Resources.SearchWindow_ModuleRef, DsImages.Reference, null, VisibleMembersFlags.ModuleRef);
+			Add(SearchType.Resource, dnSpy_Resources.SearchWindow_Resource, DsImages.Dialog, dnSpy_Resources.SearchWindow_Resource_Key, VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement);
+			Add(SearchType.GenericTypeDef, dnSpy_Resources.SearchWindow_Generic, DsImages.Template, null, VisibleMembersFlags.GenericTypeDef);
+			Add(SearchType.NonGenericTypeDef, dnSpy_Resources.SearchWindow_NonGeneric, DsImages.ClassPublic, null, VisibleMembersFlags.NonGenericTypeDef);
+			Add(SearchType.EnumTypeDef, dnSpy_Resources.SearchWindow_Enum, DsImages.EnumerationPublic, null, VisibleMembersFlags.EnumTypeDef);
+			Add(SearchType.InterfaceTypeDef, dnSpy_Resources.SearchWindow_Interface, DsImages.InterfacePublic, null, VisibleMembersFlags.InterfaceTypeDef);
+			Add(SearchType.ClassTypeDef, dnSpy_Resources.SearchWindow_Class, DsImages.ClassPublic, null, VisibleMembersFlags.ClassTypeDef);
+			Add(SearchType.StructTypeDef, dnSpy_Resources.SearchWindow_Struct, DsImages.StructurePublic, null, VisibleMembersFlags.StructTypeDef);
+			Add(SearchType.DelegateTypeDef, dnSpy_Resources.SearchWindow_Delegate, DsImages.DelegatePublic, null, VisibleMembersFlags.DelegateTypeDef);
+			Add(SearchType.Member, dnSpy_Resources.SearchWindow_Member, DsImages.Property, dnSpy_Resources.SearchWindow_Member_Key, VisibleMembersFlags.MethodDef | VisibleMembersFlags.FieldDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef);
+			Add(SearchType.Any, dnSpy_Resources.SearchWindow_AllAbove, DsImages.ClassPublic, dnSpy_Resources.SearchWindow_AllAbove_Key, VisibleMembersFlags.TreeViewAll | VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local);
+			Add(SearchType.Literal, dnSpy_Resources.SearchWindow_Literal, DsImages.ConstantPublic, dnSpy_Resources.SearchWindow_Literal_Key, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Attributes);
 
 			this.SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
 		}
 
-		void Add(SearchType searchType, string name, string icon, string toolTip, VisibleMembersFlags flags) =>
+		void Add(SearchType searchType, string name, ImageReference icon, string toolTip, VisibleMembersFlags flags) =>
 			SearchTypeVMs.Add(new SearchTypeVM(imageService, searchType, name, toolTip, icon, flags));
 		void DelayStartSearch() => Restart();
 

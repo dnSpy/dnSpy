@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Scripting.Roslyn.Common;
@@ -74,7 +75,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:Window_CSharp", InputGestureText = "res:ShortCutKeyCtrlAltN", Icon = "CSInteractiveWindow", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:Window_CSharp", InputGestureText = "res:ShortCutKeyCtrlAltN", Icon = DsImagesAttribute.CSInteractiveWindow, Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 30)]
 	sealed class ShowCSharpInteractiveCommand : MenuItemCommand {
 		ShowCSharpInteractiveCommand()
 			: base(ShowCSharpInteractiveCommandLoader.ShowCSharpInteractiveRoutedCommand) {

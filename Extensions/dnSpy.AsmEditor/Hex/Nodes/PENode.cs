@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "ModuleFile");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.ModulePublic;
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(this).FilterType;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

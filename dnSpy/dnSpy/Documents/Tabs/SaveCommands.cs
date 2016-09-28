@@ -35,6 +35,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Tabs;
@@ -51,7 +52,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ExportToProjectCommand", Icon = "Solution", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ExportToProjectCommand", Icon = DsImagesAttribute.Solution, Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 0)]
 	sealed class ExportProjectCommand : MenuItemBase {
 		readonly IAppWindow appWindow;
 		readonly IDocumentTreeView documentTreeView;
@@ -314,7 +315,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, InputGestureText = "res:SaveKey", Icon = "Save", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, InputGestureText = "res:SaveKey", Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 10)]
 	sealed class MenuSaveCommand : MenuItemCommand {
 		readonly ISaveService saveService;
 		readonly IDocumentTabService documentTabService;
@@ -329,7 +330,7 @@ namespace dnSpy.Documents.Tabs {
 		public override string GetHeader(IMenuItemContext context) => saveService.GetMenuHeader(documentTabService.ActiveTab);
 	}
 
-	[ExportMenuItem(InputGestureText = "res:SaveKey", Icon = "Save", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 0)]
+	[ExportMenuItem(InputGestureText = "res:SaveKey", Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 0)]
 	sealed class SaveTabCtxMenuCommand : MenuItemCommand {
 		readonly ISaveService saveService;
 		readonly IDocumentTabService documentTabService;

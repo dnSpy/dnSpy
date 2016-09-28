@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
@@ -60,7 +61,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:HideToolWindowCommand", InputGestureText = "res:ShortCutKeyShiftEsc", Icon = "tableviewnameonly", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 10)]
+	[ExportMenuItem(Header = "res:HideToolWindowCommand", InputGestureText = "res:ShortCutKeyShiftEsc", Icon = DsImagesAttribute.TableViewNameOnly, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 10)]
 	sealed class HideTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		HideTWCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -71,7 +72,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroup.CloseActiveTab();
 	}
 
-	[ExportMenuItem(Header = "res:HideAllToolWindowsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 20)]
+	[ExportMenuItem(Header = "res:HideAllToolWindowsCommand", Icon = DsImagesAttribute.CloseDocumentGroup, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 20)]
 	sealed class CloseAllTabsTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabsTWCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -110,7 +111,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => Debug.Fail("Shouldn't be here");
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveTopCommand", Icon = "toolstrippaneltop", Group = Constants.GROUP_MOVE_CONTENT, Order = 0)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveTopCommand", Icon = DsImagesAttribute.ToolstripPanelTop, Group = Constants.GROUP_MOVE_CONTENT, Order = 0)]
 	sealed class MoveTWTopCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWTopCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -121,7 +122,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.DsToolWindowService.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Top);
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveLeftCommand", Icon = "toolstrippanelleft", Group = Constants.GROUP_MOVE_CONTENT, Order = 10)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveLeftCommand", Icon = DsImagesAttribute.ToolstripPanelLeft, Group = Constants.GROUP_MOVE_CONTENT, Order = 10)]
 	sealed class MoveTWLeftCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWLeftCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -132,7 +133,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.DsToolWindowService.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Left);
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveRightCommand", Icon = "toolstrippanelright", Group = Constants.GROUP_MOVE_CONTENT, Order = 20)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveRightCommand", Icon = DsImagesAttribute.ToolstripPanelRight, Group = Constants.GROUP_MOVE_CONTENT, Order = 20)]
 	sealed class MoveTWRightCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWRightCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -143,7 +144,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.DsToolWindowService.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Right);
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveBottomCommand", Icon = "toolstrippanelbottom", Group = Constants.GROUP_MOVE_CONTENT, Order = 30)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveBottomCommand", Icon = DsImagesAttribute.ToolstripPanelBottom, Group = Constants.GROUP_MOVE_CONTENT, Order = 30)]
 	sealed class MoveTWBottomCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWBottomCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -154,7 +155,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.DsToolWindowService.Move(context.ToolWindowGroup.ActiveTabContent, AppToolWindowLocation.Bottom);
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveTopCommand", Icon = "toolstrippaneltop", Group = Constants.GROUP_MOVE_GROUP, Order = 0)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveTopCommand", Icon = DsImagesAttribute.ToolstripPanelTop, Group = Constants.GROUP_MOVE_GROUP, Order = 0)]
 	sealed class MoveGroupTWTopCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWTopCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -165,7 +166,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.DsToolWindowService.Move(context.ToolWindowGroup, AppToolWindowLocation.Top);
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveLeftCommand", Icon = "toolstrippanelleft", Group = Constants.GROUP_MOVE_GROUP, Order = 10)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveLeftCommand", Icon = DsImagesAttribute.ToolstripPanelLeft, Group = Constants.GROUP_MOVE_GROUP, Order = 10)]
 	sealed class MoveGroupTWLeftCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWLeftCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -176,7 +177,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.DsToolWindowService.Move(context.ToolWindowGroup, AppToolWindowLocation.Left);
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveRightCommand", Icon = "toolstrippanelright", Group = Constants.GROUP_MOVE_GROUP, Order = 20)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveRightCommand", Icon = DsImagesAttribute.ToolstripPanelRight, Group = Constants.GROUP_MOVE_GROUP, Order = 20)]
 	sealed class MoveGroupTWRightCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWRightCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -187,7 +188,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.DsToolWindowService.Move(context.ToolWindowGroup, AppToolWindowLocation.Right);
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveBottomCommand", Icon = "toolstrippanelbottom", Group = Constants.GROUP_MOVE_GROUP, Order = 30)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveBottomCommand", Icon = DsImagesAttribute.ToolstripPanelBottom, Group = Constants.GROUP_MOVE_GROUP, Order = 30)]
 	sealed class MoveGroupTWBottomCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWBottomCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -198,7 +199,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.DsToolWindowService.Move(context.ToolWindowGroup, AppToolWindowLocation.Bottom);
 	}
 
-	[ExportMenuItem(Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 0)]
+	[ExportMenuItem(Header = "res:NewHorizontalTabGroupCommand", Icon = DsImagesAttribute.SplitScreenHorizontally, Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 0)]
 	sealed class NewHorizontalTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		NewHorizontalTabGroupCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -209,7 +210,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupService.NewHorizontalTabGroup();
 	}
 
-	[ExportMenuItem(Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 10)]
+	[ExportMenuItem(Header = "res:NewVerticalTabGroupCommand", Icon = DsImagesAttribute.SplitScreenVertically, Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		NewVerticalTabGroupCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -319,7 +320,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupService.MergeAllTabGroups();
 	}
 
-	[ExportMenuItem(Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 0)]
+	[ExportMenuItem(Header = "res:UseVerticalTabGroupsCommand", Icon = DsImagesAttribute.SplitScreenVertically, Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 0)]
 	sealed class UseVerticalTabGroupsCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		UseVerticalTabGroupsCtxMenuCommand(IDsToolWindowService toolWindowService)
@@ -330,7 +331,7 @@ namespace dnSpy.MainApp {
 		public override void Execute(ToolWindowGroupContext context) => context.ToolWindowGroupService.UseVerticalTabGroups();
 	}
 
-	[ExportMenuItem(Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 10)]
+	[ExportMenuItem(Header = "res:UseHorizontalTabGroupsCommand", Icon = DsImagesAttribute.SplitScreenHorizontally, Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 10)]
 	sealed class UseHorizontalTabGroupsCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		UseHorizontalTabGroupsCtxMenuCommand(IDsToolWindowService toolWindowService)

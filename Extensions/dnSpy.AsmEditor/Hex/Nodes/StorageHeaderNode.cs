@@ -23,6 +23,7 @@ using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -30,7 +31,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.STRGHEADER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override object VMObject => storageHeaderVM;
-		protected override string IconName => "BinaryFile";
+		protected override ImageReference IconReference => DsImages.BinaryFile;
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return storageHeaderVM; }

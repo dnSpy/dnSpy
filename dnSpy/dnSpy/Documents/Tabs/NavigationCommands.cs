@@ -24,18 +24,19 @@ using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.ToolBars;
 
 namespace dnSpy.Documents.Tabs {
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateBackCommand", Icon = "Backward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 0)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateBackCommand", Icon = DsImagesAttribute.Backwards, Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 0)]
 	sealed class BrowseBackCommand : ToolBarButtonCommand {
 		public BrowseBackCommand()
 			: base(NavigationCommands.BrowseBack) {
 		}
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateForwardCommand", Icon = "Forward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateForwardCommand", Icon = DsImagesAttribute.Forwards, Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
 	sealed class BrowseForwardCommand : ToolBarButtonCommand {
 		public BrowseForwardCommand()
 			: base(NavigationCommands.BrowseForward) {

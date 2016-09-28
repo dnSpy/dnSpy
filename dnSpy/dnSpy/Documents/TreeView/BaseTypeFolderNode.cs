@@ -31,8 +31,8 @@ namespace dnSpy.Documents.TreeView {
 	sealed class BaseTypeFolderNode : DocumentTreeNodeData, IBaseTypeFolderNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.BASETYPEFOLDER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "BaseTypeClosed");
-		protected override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "BaseTypeOpened");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.FolderClosed;
+		protected override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => DsImages.FolderOpened;
 		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		readonly TypeDef type;

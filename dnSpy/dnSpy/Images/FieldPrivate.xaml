@@ -1,0 +1,22 @@
+﻿<Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="16" Height="16">
+  <Rectangle Width="16" Height="16">
+    <Shape.Fill>
+      <DrawingBrush>
+        <DrawingBrush.Drawing>
+          <DrawingGroup>
+            <DrawingGroup.Children>
+              <GeometryDrawing Brush="#00FFFFFF" Geometry="F1 M16,16 L0,16 L0,0 L16,0" />
+              <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1 M6.7391999999999994,-0.000199999999999534 L0.000200000000000422,3.3697999999999997 L0.000200000000000422,8.6058 L4.7892,10.999799999999999 L5.2092,10.999799999999999 L11.9992,7.6057999999999994 L11.9992,2.3697999999999997 L7.2631999999999994,-0.000199999999999534" />
+              <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1 M15.9199,11 C15.7959,9.8259999999999987 15.348899999999999,8.031 12.5939,8.031 C9.6859,8.031 9.2259,9.871 9.0769,11 L8.9999,11 L8.9999,12.562999999999999 L8.9999,16 L15.999899999999999,16" />
+              <GeometryDrawing Brush="#FF00529C" Geometry="F1 M5,5 L3,4 L7,2 L9,3 M1,4 L1,8 L5,10 L11,7 L11,3 L7,1" />
+              <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1 M3,4 L5,5 L9,3 L7,2" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M11.0186,11.5625 C11.0786,10.833499999999999 11.352599999999999,10.0215 12.593599999999999,10.0215 C13.8426,10.0215 13.984599999999999,10.8165 13.997599999999999,11.5625 L14.9636,11.5625 C14.878599999999999,10.4435 14.820599999999999,9.0315 12.593599999999999,9.0315 C10.198599999999999,9.0315 10.1486,10.4375 10.0176,11.5625" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M13,14 L12,14 L12,13 L13,13 M14,12 L11,12 L10,12 L10,15 L15,15 L15,12" />
+              <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1 M12,14 L13,14 L13,13 L12,13" />
+            </DrawingGroup.Children>
+          </DrawingGroup>
+        </DrawingBrush.Drawing>
+      </DrawingBrush>
+    </Shape.Fill>
+  </Rectangle>
+</Viewbox>

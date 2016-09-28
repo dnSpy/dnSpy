@@ -33,6 +33,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Resources;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Images;
 
 namespace dnSpy.ToolBars {
 	abstract class ToolBarItemMD {
@@ -209,8 +210,11 @@ namespace dnSpy.ToolBars {
 			}
 
 			BitmapSource imageSource = null;
-			if (!string.IsNullOrEmpty(icon))
-				imageSource = imageService.GetImage(new ImageReference(item.GetType().Assembly, icon), BackgroundType.ToolBar);
+			if (!string.IsNullOrEmpty(icon)) {
+				var imgRef = ImageReferenceHelper.GetImageReference(item, icon);
+				if (imgRef != null)
+					imageSource = imageService.GetImage(imgRef.Value, BackgroundType.ToolBar);
+			}
 
 			var toggleButtonCmd = item as IToolBarToggleButton;
 			Debug.Assert(md2.IsToggleButton == (toggleButtonCmd != null), "Implement IToolBarToggleButton if IsToggleButton is true");

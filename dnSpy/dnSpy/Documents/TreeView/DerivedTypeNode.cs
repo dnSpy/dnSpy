@@ -40,7 +40,7 @@ namespace dnSpy.Documents.TreeView {
 			var td = TryGetTypeDef();
 			if (td != null)
 				return dnImgMgr.GetImageReference(td);
-			return new ImageReference(GetType().Assembly, "Class");
+			return DsImages.ClassPublic;
 		}
 
 		public DerivedTypeNode(ITreeNodeGroup treeNodeGroup, TypeDef type) {

@@ -27,6 +27,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
@@ -97,7 +98,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:AssemblyExplorerCommand", InputGestureText = "res:AssemblyExplorerKey", Icon = "Assembly", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:AssemblyExplorerCommand", InputGestureText = "res:AssemblyExplorerKey", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 10)]
 	sealed class ShowDocumentTreeViewCommand : MenuItemCommand {
 		ShowDocumentTreeViewCommand()
 			: base(ShowDocumentTreeViewCommandLoader.ShowDocumentTreeViewRoutedCommand) {

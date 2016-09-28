@@ -31,8 +31,8 @@ namespace dnSpy.Documents.TreeView {
 	sealed class DerivedTypesFolderNode : DocumentTreeNodeData, IDerivedTypesFolderNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.DERIVEDTYPESFOLDER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "DerivedTypesClosed");
-		protected override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "DerivedTypesOpened");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.FolderClosed;
+		protected override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => DsImages.FolderOpened;
 		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		readonly TypeDef type;

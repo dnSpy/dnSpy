@@ -54,7 +54,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		readonly ModuleDef module;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.RESOURCE_ELEMENT_SET_NODE_GUID);
-		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ResourcesFile");
+		protected override ImageReference GetIcon() => DsImages.SourceFileGroup;
 
 		public ResourceElementSetNode(ITreeNodeGroup treeNodeGroup, ModuleDef module, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {

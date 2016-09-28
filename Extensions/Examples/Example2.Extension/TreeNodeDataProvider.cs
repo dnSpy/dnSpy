@@ -35,7 +35,7 @@ namespace Example2.Extension {
 		public override NodePathName NodePathName => new NodePathName(Guid);
 
 		// The image must be in an Images folder (in the resources) and have a .png extension
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "EntryPoint");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.EntryPoint;
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, "Assembly Child");
@@ -91,7 +91,7 @@ namespace Example2.Extension {
 		}
 
 		// The image must be in an Images folder (in the resources) and have a .png extension
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.String;
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			output.Write(BoxedTextColor.Text, "Module Child");
@@ -164,7 +164,7 @@ namespace Example2.Extension {
 
 		public override Guid Guid => THE_GUID;
 		public override NodePathName NodePathName => new NodePathName(THE_GUID, Message);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "Strings");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.String;
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Comment, Message);

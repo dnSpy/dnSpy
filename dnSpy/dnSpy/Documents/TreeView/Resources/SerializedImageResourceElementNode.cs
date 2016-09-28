@@ -55,7 +55,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		byte[] imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE);
-		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ImageFile");
+		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public SerializedImageResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
 			: base(treeNodeGroup, resourceElement) {

@@ -60,8 +60,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
-		public object AddAssemblyReferenceImageObject => imageService.GetImage(new ImageReference(GetType().Assembly, "Open"), BackgroundType.DialogWindow);
-		public object AddGacReferenceImageObject => imageService.GetImage(new ImageReference(GetType().Assembly, "Library"), BackgroundType.DialogWindow);
+		public object AddAssemblyReferenceImageObject => imageService.GetImage(DsImages.OpenFolder, BackgroundType.DialogWindow);
+		public object AddGacReferenceImageObject => imageService.GetImage(DsImages.Library, BackgroundType.DialogWindow);
 
 		public bool CanCompile {
 			get { return canCompile; }
@@ -453,18 +453,18 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		object CreateImage(CompilerDiagnostic diag) {
-			var imageName = GetImageName(diag.Severity);
+			var imageName = GetImageReference(diag.Severity);
 			if (imageName == null)
 				return null;
-			return imageService.GetImage(new ImageReference(GetType().Assembly, imageName), null);
+			return imageService.GetImage(imageName.Value, null);
 		}
 
-		static string GetImageName(CompilerDiagnosticSeverity severity) {
+		static ImageReference? GetImageReference(CompilerDiagnosticSeverity severity) {
 			switch (severity) {
-			case CompilerDiagnosticSeverity.Hidden:	return "StatusHidden";
-			case CompilerDiagnosticSeverity.Info:	return "StatusInformation";
-			case CompilerDiagnosticSeverity.Warning:return "StatusWarning";
-			case CompilerDiagnosticSeverity.Error:	return "StatusError";
+			case CompilerDiagnosticSeverity.Hidden:	return DsImages.StatusHidden;
+			case CompilerDiagnosticSeverity.Info:	return DsImages.StatusInformation;
+			case CompilerDiagnosticSeverity.Warning:return DsImages.StatusWarning;
+			case CompilerDiagnosticSeverity.Error:	return DsImages.StatusError;
 			default: Debug.Fail($"Unknown severity: {severity}"); return null;
 			}
 		}

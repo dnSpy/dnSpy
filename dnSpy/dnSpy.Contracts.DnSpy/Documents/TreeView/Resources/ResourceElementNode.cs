@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (!imgRef.IsDefault)
 				return imgRef;
 			var asm = dnImgMgr.GetType().Assembly;
-			return ResourceUtilities.TryGetImageReference(asm, resourceElement.Name) ?? new ImageReference(asm, "Resource");
+			return ResourceUtilities.TryGetImageReference(asm, resourceElement.Name) ?? DsImages.Dialog;
 		}
 
 		/// <summary>

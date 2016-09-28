@@ -1,0 +1,24 @@
+﻿<Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="16" Height="16">
+  <Rectangle Width="16" Height="16">
+    <Shape.Fill>
+      <DrawingBrush>
+        <DrawingBrush.Drawing>
+          <DrawingGroup>
+            <DrawingGroup.Children>
+              <GeometryDrawing Brush="#00FFFFFF" Geometry="F1 M16,16 L0,16 L0,0 L16,0" />
+              <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1 M2,0 L15,0 L15,15 L2,15" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M7,14 L8,14 L8,13 L7,13" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M5,14 L6,14 L6,13 L5,13" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M3,14 L4,14 L4,13 L3,13" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M9,14 L10,14 L10,13 L9,13" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M11,14 L12,14 L12,13 L11,13" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M13,14 L14.001,14 L14.001,13 L13,13" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M3,1 L3,12 L4,12 L4,2 L13,2 L13,12 L14,12 L14,1" />
+              <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1 M13,12 L4,12 L4,2 L13,2" />
+            </DrawingGroup.Children>
+          </DrawingGroup>
+        </DrawingBrush.Drawing>
+      </DrawingBrush>
+    </Shape.Fill>
+  </Rectangle>
+</Viewbox>

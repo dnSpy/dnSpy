@@ -30,6 +30,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
@@ -107,7 +108,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 0)]
 	sealed class CopyBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly IDecompilerService decompilerService;
 		readonly IDebuggerSettings debuggerSettings;
@@ -144,7 +145,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 10)]
 	sealed class SelectAllBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent)
@@ -155,7 +156,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[Export, ExportMenuItem(Header = "res:DeleteCommand", Icon = "Delete", InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 20)]
+	[Export, ExportMenuItem(Header = "res:DeleteCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 20)]
 	sealed class DeleteBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		[ImportingConstructor]
 		DeleteBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent)
@@ -166,7 +167,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override void Execute(BreakpointCtxMenuContext context) => context.VM.Remove(context.SelectedItems);
 	}
 
-	[ExportMenuItem(Header = "res:DeleteAllBreakpointsCommand2", Icon = "DeleteAllBreakpoints", InputGestureText = "res:ShortCutKeyCtrlShiftF9", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 30)]
+	[ExportMenuItem(Header = "res:DeleteAllBreakpointsCommand2", Icon = DsImagesAttribute.ClearBreakpointGroup, InputGestureText = "res:ShortCutKeyCtrlShiftF9", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 30)]
 	sealed class DeleteAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly IAppWindow appWindow;
 
@@ -180,7 +181,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => DebugRoutedCommands.DeleteAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
 
-	[ExportMenuItem(Header = "res:EnableAllBreakpointsCommand", Icon = "EnableAllBreakpoints", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 40)]
+	[ExportMenuItem(Header = "res:EnableAllBreakpointsCommand", Icon = DsImagesAttribute.EnableAllBreakpoints, Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 40)]
 	sealed class EnableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly IAppWindow appWindow;
 
@@ -194,7 +195,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override bool IsVisible(BreakpointCtxMenuContext context) => DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
 
-	[ExportMenuItem(Header = "res:DisableAllBreakpointsCommand", Icon = "DisableAllBreakpoints", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 50)]
+	[ExportMenuItem(Header = "res:DisableAllBreakpointsCommand", Icon = DsImagesAttribute.DisableAllBreakpoints, Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 50)]
 	sealed class DisableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly IAppWindow appWindow;
 
@@ -208,7 +209,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override bool IsVisible(BreakpointCtxMenuContext context) => DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
 
-	[Export, ExportMenuItem(Header = "res:GoToCodeCommand", Icon = "GoToSourceCode", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:GoToCodeCommand", Icon = DsImagesAttribute.GoToSourceCode, InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 0)]
 	sealed class GoToSourceBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IDocumentTabService documentTabService;
@@ -239,7 +240,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
 	}
 
-	[Export, ExportMenuItem(Header = "res:GoToCodeNewTabCommand", Icon = "GoToSourceCode", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 10)]
+	[Export, ExportMenuItem(Header = "res:GoToCodeNewTabCommand", Icon = DsImagesAttribute.GoToSourceCode, InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 10)]
 	sealed class GoToSourceNewTabBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IDocumentTabService documentTabService;
@@ -261,7 +262,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
 	}
 
-	[ExportMenuItem(Header = "res:GoToDisassemblyCommand", Icon = "DisassemblyWindow", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 20)]
+	[ExportMenuItem(Header = "res:GoToDisassemblyCommand", Icon = DsImagesAttribute.DisassemblyWindow, Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 20)]
 	sealed class GoToDisassemblyBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		[ImportingConstructor]
 		GoToDisassemblyBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent)

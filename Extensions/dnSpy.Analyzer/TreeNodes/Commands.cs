@@ -29,6 +29,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolWindows.App;
@@ -108,7 +109,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	}
 
 	static class AnalyzeCommand {
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 0)]
 		sealed class FilesCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			readonly IDecompilerService decompilerService;
@@ -146,7 +147,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, GetMemberRefs(context));
 		}
 
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
 		sealed class AnalyzerCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			readonly IDecompilerService decompilerService;
@@ -166,7 +167,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, GetMemberRefs(context));
 		}
 
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 0)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			readonly IDecompilerService decompilerService;
@@ -199,7 +200,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, GetMemberRefs(context));
 		}
 
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
 		sealed class SearchCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			readonly IDecompilerService decompilerService;
@@ -315,7 +316,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:RemoveCommand", Icon = "Delete", InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
+	[ExportMenuItem(Header = "res:RemoveCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 	sealed class RemoveAnalyzeCtxMenuCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) => GetNodes(context) != null;
 

@@ -22,11 +22,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Settings.Dialog {
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:OptionsCommand", Icon = "Settings", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTSDLG, Order = 1000000)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:OptionsCommand", Icon = DsImagesAttribute.Settings, Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTSDLG, Order = 1000000)]
 	sealed class ShowOptionsCommand : MenuItemBase {
 		readonly IAppWindow appWindow;
 		readonly Lazy<IAppSettingsTabProvider>[] appSettingsTabProviders;

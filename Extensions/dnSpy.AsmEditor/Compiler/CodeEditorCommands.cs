@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text.Editor;
 
@@ -59,42 +60,42 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected override ICommandTarget GetCommandTarget(CodeEditorContext context) => context.CodeEditor.TextView.CommandTarget;
 	}
 
-	[ExportMenuItem(Header = "res:Button_Compile", Icon = "BuildSolution", InputGestureText = "res:ShortCutKeyF6", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COMPILE, Order = 0)]
+	[ExportMenuItem(Header = "res:Button_Compile", Icon = DsImagesAttribute.BuildSolution, InputGestureText = "res:ShortCutKeyF6", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COMPILE, Order = 0)]
 	sealed class CompileContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		CompileContexMenuEntry()
 			: base(EditCodeIds.Compile) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:CutCommand", Icon = "Cut", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 0)]
+	[ExportMenuItem(Header = "res:CutCommand", Icon = DsImagesAttribute.Cut, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 0)]
 	sealed class CutContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		CutContexMenuEntry()
 			: base(StandardIds.Cut) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 10)]
 	sealed class CopyContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		CopyContexMenuEntry()
 			: base(StandardIds.Copy) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 20)]
+	[ExportMenuItem(Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COPY, Order = 20)]
 	sealed class PasteContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		PasteContexMenuEntry()
 			: base(StandardIds.Paste) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:FindCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlF", Group = MenuConstants.GROUP_CTX_CODEEDITOR_FIND, Order = 0)]
+	[ExportMenuItem(Header = "res:FindCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlF", Group = MenuConstants.GROUP_CTX_CODEEDITOR_FIND, Order = 0)]
 	sealed class FindInCodeContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		FindInCodeContexMenuEntry()
 			: base(StandardIds.Find) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = "Find", InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_CODEEDITOR_FIND, Order = 10)]
+	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_CODEEDITOR_FIND, Order = 10)]
 	sealed class IncrementalSearchForwardContexMenuEntry : CodeEditorCommandTargetMenuItemBase {
 		IncrementalSearchForwardContexMenuEntry()
 			: base(StandardIds.IncrementalSearchForward) {

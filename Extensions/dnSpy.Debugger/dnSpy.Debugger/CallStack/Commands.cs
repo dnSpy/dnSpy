@@ -29,6 +29,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
@@ -113,7 +114,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 0)]
 	sealed class CopyCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		[ImportingConstructor]
 		CopyCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent)
@@ -139,7 +140,7 @@ namespace dnSpy.Debugger.CallStack {
 		public override bool IsEnabled(CallStackCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 10)]
 	sealed class SelectAllCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent)
@@ -209,7 +210,7 @@ namespace dnSpy.Debugger.CallStack {
 		public override bool IsEnabled(CallStackCtxMenuContext context) => SwitchToFrameCallStackCtxMenuCommand.GetFrame(context) != null;
 	}
 
-	[ExportMenuItem(Header = "res:GoToCodeCommand", Icon = "GoToSourceCode", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 20)]
+	[ExportMenuItem(Header = "res:GoToCodeCommand", Icon = DsImagesAttribute.GoToSourceCode, Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 20)]
 	sealed class GoToSourceCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
@@ -233,7 +234,7 @@ namespace dnSpy.Debugger.CallStack {
 			FrameUtils.CanGoToIL(SwitchToFrameCallStackCtxMenuCommand.GetFrame(context)?.Frame);
 	}
 
-	[ExportMenuItem(Header = "res:GoToDisassemblyCommand2", Icon = "DisassemblyWindow", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 30)]
+	[ExportMenuItem(Header = "res:GoToDisassemblyCommand2", Icon = DsImagesAttribute.DisassemblyWindow, Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 30)]
 	sealed class GoToDisassemblyCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		[ImportingConstructor]
 		GoToDisassemblyCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent)
@@ -250,7 +251,7 @@ namespace dnSpy.Debugger.CallStack {
 			FrameUtils.CanGoToDisasm(SwitchToFrameCallStackCtxMenuCommand.GetFrame(context)?.Frame);
 	}
 
-	[Export, ExportMenuItem(Header = "res:RunToCursorCommand", Icon = "Cursor", InputGestureText = "res:ShortCutKeyCtrlF10", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 40)]
+	[Export, ExportMenuItem(Header = "res:RunToCursorCommand", Icon = DsImagesAttribute.Cursor, InputGestureText = "res:ShortCutKeyCtrlF10", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 40)]
 	sealed class RunToCursorCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly Lazy<IDebugService> debugService;
 

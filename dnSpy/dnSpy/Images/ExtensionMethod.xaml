@@ -1,0 +1,36 @@
+﻿<Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="16" Height="16">
+  <Rectangle Width="16" Height="16">
+    <Shape.Fill>
+      <DrawingBrush>
+        <DrawingBrush.Drawing>
+          <DrawingGroup>
+            <DrawingGroup.Children>
+              <GeometryDrawing Brush="#00FFFFFF" Geometry="F1 M16,16 L0,16 L0,0 L16,0" />
+              <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1 M9.9999,5.0001999999999995 L9.9999,9.5852 L7.9998999999999993,7.5862 L7.9998999999999993,12.4142 L11.585899999999999,16.0002 L12.4139,16.0002 L15.999899999999999,12.4142 L15.999899999999999,7.5862 L14.0009,9.5852 L14.0009,5.0001999999999995" />
+              <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1 M0.16699999999999998,8.4257999999999988 L0.16699999999999998,2.8568 L5.051,0.386799999999999 L9.754999999999999,2.8678 L9.754999999999999,8.3808 L5.2909999999999995,11.653799999999999" />
+              <GeometryDrawing Brush="#FF642C90" Geometry="F1 M8.1904,7.5985999999999994 L5.6144,9.4546 L5.6144,5.9925999999999995 L8.1904,4.4256 M4.9704,9.5616 L4.9704,9.5776 L4.9613999999999994,9.5696 L4.9533999999999994,9.5776 L4.9533999999999994,9.5616 L1.7864,7.4966 L1.7864,4.1776 L4.9954,5.9706 L4.9954,9.5436 M4.9954,2.1875999999999998 L8.0654,3.7016 L5.2014,5.4196 L2.1064,3.6546 M8.7544,7.8736 L8.7544,3.4705999999999997 L5.0413999999999994,1.5115999999999998 L1.1674,3.4705999999999997 L1.1674,7.8736 L5.2484,10.4446" />
+              <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1 M4.9951,2.1875 L8.0651,3.7015 L5.2010999999999994,5.4194999999999993 L2.1061,3.6544999999999996">
+                <GeometryDrawing.Pen>
+                  <Pen Brush="#FF642C90" Thickness="0.15000006556510925" DashCap="Flat" />
+                </GeometryDrawing.Pen>
+              </GeometryDrawing>
+              <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1 M4.9707,9.5614999999999988 L4.9707,9.5774999999999988 L4.9607,9.5695 L4.9527,9.5774999999999988 L4.9527,9.5614999999999988 L1.7856999999999998,7.4975 L1.7856999999999998,4.1775 L4.9947,5.9704999999999995 L4.9947,9.5435">
+                <GeometryDrawing.Pen>
+                  <Pen Brush="#FF642C90" Thickness="0.15000006556510925" DashCap="Flat" />
+                </GeometryDrawing.Pen>
+              </GeometryDrawing>
+              <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1 M8.1904,7.5985999999999994 L5.6144,9.4546 L5.6144,5.9925999999999995 L8.1904,4.4256">
+                <GeometryDrawing.Pen>
+                  <Pen Brush="#FF642C90" Thickness="0.15000006556510925" DashCap="Flat" />
+                </GeometryDrawing.Pen>
+              </GeometryDrawing>
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M12,15 L9,12 L9,10 L11,12 L11,10 L13,10 L13,12 L15,10 L15,12" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M11,9 L13,9 L13,8 L11,8" />
+              <GeometryDrawing Brush="#FF414141" Geometry="F1 M11,7 L13,7 L13,6 L11,6" />
+            </DrawingGroup.Children>
+          </DrawingGroup>
+        </DrawingBrush.Drawing>
+      </DrawingBrush>
+    </Shape.Fill>
+  </Rectangle>
+</Viewbox>

@@ -51,7 +51,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		sealed class MessageNode : TreeNodeData {
 			public override Guid Guid => Guid.Empty;
-			public override ImageReference Icon => new ImageReference(GetType().Assembly, "Search");
+			public override ImageReference Icon => DsImages.Search;
 			public override object Text => dnSpy_Analyzer_Resources.Searching;
 			public override object ToolTip => null;
 			public override void OnRefreshUI() { }

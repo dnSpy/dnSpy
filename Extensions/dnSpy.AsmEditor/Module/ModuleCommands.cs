@@ -34,6 +34,7 @@ using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 
@@ -49,7 +50,7 @@ namespace dnSpy.AsmEditor.Module {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateNetModuleCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:CreateNetModuleCommand", Icon = "NewModule", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 30)]
+		[ExportMenuItem(Header = "res:CreateNetModuleCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 30)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -64,7 +65,7 @@ namespace dnSpy.AsmEditor.Module {
 			public override void Execute(AsmEditorContext context) => CreateNetModuleCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateNetModuleCommand", Icon = "NewModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateNetModuleCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 30)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -125,7 +126,7 @@ namespace dnSpy.AsmEditor.Module {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class ConvertNetModuleToAssemblyCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:ConvNetModuleToAssemblyCommand", Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 20)]
+		[ExportMenuItem(Header = "res:ConvNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 20)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -138,7 +139,7 @@ namespace dnSpy.AsmEditor.Module {
 			public override void Execute(AsmEditorContext context) => ConvertNetModuleToAssemblyCommand.Execute(undoCommandService, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ConvNetModuleToAssemblyCommand", Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ConvNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 20)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -260,7 +261,7 @@ namespace dnSpy.AsmEditor.Module {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class ConvertAssemblyToNetModuleCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:ConvAssemblyToNetModuleCommand", Icon = "AssemblyToModule", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 30)]
+		[ExportMenuItem(Header = "res:ConvAssemblyToNetModuleCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 30)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -274,7 +275,7 @@ namespace dnSpy.AsmEditor.Module {
 			public override void Execute(AsmEditorContext context) => ConvertAssemblyToNetModuleCommand.Execute(undoCommandService, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ConvAssemblyToNetModuleCommand", Icon = "AssemblyToModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ConvAssemblyToNetModuleCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 30)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -451,7 +452,7 @@ namespace dnSpy.AsmEditor.Module {
 	}
 
 	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
-		[ExportMenuItem(Header = "res:AddNewNetModuleToAssemblyCommand", Icon = "NewModule", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 10)]
+		[ExportMenuItem(Header = "res:AddNewNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 10)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -466,7 +467,7 @@ namespace dnSpy.AsmEditor.Module {
 			public override void Execute(AsmEditorContext context) => AddNewNetModuleToAssemblyCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:AddNewNetModuleToAssemblyCommand", Icon = "NewModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:AddNewNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -514,7 +515,7 @@ namespace dnSpy.AsmEditor.Module {
 	}
 
 	sealed class AddExistingNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
-		[ExportMenuItem(Header = "res:AddExistingNetModuleToAssemblyCommand", Icon = "NewModule", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 20)]
+		[ExportMenuItem(Header = "res:AddExistingNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 20)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -529,7 +530,7 @@ namespace dnSpy.AsmEditor.Module {
 			public override void Execute(AsmEditorContext context) => AddExistingNetModuleToAssemblyCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:AddExistingNetModuleToAssemblyCommand", Icon = "NewModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:AddExistingNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 20)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -583,7 +584,7 @@ namespace dnSpy.AsmEditor.Module {
 	}
 
 	sealed class RemoveNetModuleFromAssemblyCommand : IUndoCommand2 {
-		[ExportMenuItem(Header = "res:RemoveNetModuleCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 10)]
+		[ExportMenuItem(Header = "res:RemoveNetModuleCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 10)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IDocumentSaver> documentSaver;
@@ -601,7 +602,7 @@ namespace dnSpy.AsmEditor.Module {
 			public override void Execute(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.Execute(undoCommandService, documentSaver, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveNetModuleCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 10)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveNetModuleCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 10)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IDocumentSaver> documentSaver;
@@ -707,7 +708,7 @@ namespace dnSpy.AsmEditor.Module {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class ModuleSettingsCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:EditModuleCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 10)]
+		[ExportMenuItem(Header = "res:EditModuleCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 10)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -722,7 +723,7 @@ namespace dnSpy.AsmEditor.Module {
 			public override void Execute(AsmEditorContext context) => ModuleSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditModuleCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 10)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditModuleCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 10)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;

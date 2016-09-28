@@ -31,6 +31,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Resources;
+using dnSpy.Images;
 
 namespace dnSpy.Menus {
 	sealed class MenuItemMD {
@@ -293,7 +294,7 @@ namespace dnSpy.Menus {
 
 			string header = ResourceHelper.GetString(item, metadata.Header);
 			string inputGestureText = ResourceHelper.GetString(item, metadata.InputGestureText);
-			ImageReference? iconImgRef = string.IsNullOrEmpty(metadata.Icon) ? (ImageReference?)null : new ImageReference(item.GetType().Assembly, metadata.Icon);
+			ImageReference? iconImgRef = ImageReferenceHelper.GetImageReference(item, metadata.Icon);
 
 			var mi2 = item as IMenuItem2;
 			if (mi2 != null) {

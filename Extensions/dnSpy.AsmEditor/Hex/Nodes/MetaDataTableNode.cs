@@ -25,6 +25,7 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -38,7 +39,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			get { yield return MetaDataTableVM; }
 		}
 
-		protected override string IconName => "MetaData";
+		protected override ImageReference IconReference => DsImages.Metadata;
 		public override bool IsVirtualizingCollectionVM => true;
 		public MetaDataTableVM MetaDataTableVM { get; }
 

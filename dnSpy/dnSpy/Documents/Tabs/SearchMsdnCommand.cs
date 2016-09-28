@@ -23,6 +23,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 
@@ -32,7 +33,7 @@ namespace dnSpy.Documents.Tabs {
 		// More args: ";k(TargetFrameworkMoniker-{0})", ";k(DevLang-{0})"
 		const string msdnAddress = "https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k({0})&rd=true#content";
 
-		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
 			static IMemberRef GetMemberRef(IMenuItemContext context) => GetMemberRef(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
@@ -46,14 +47,14 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 10)]
 		sealed class SearchCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
 			static IMemberRef GetMemberRef(IMenuItemContext context) => CodeCommand.GetMemberRef(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
 			public override void Execute(IMenuItemContext context) => SearchMsdn(GetMemberRef(context));
 		}
 
-		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 10)]
 		sealed class DocumentsCommand : MenuItemBase {
 			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) => GetNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 			public override bool IsVisible(IMenuItemContext context) => GetNodes(context).Any();
@@ -83,7 +84,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 		sealed class AnalyzerCommand : MenuItemBase {
 			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) => DocumentsCommand.GetNodes(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 			public override bool IsVisible(IMenuItemContext context) => GetNodes(context).Any();

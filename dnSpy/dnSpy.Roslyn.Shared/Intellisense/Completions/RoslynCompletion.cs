@@ -51,7 +51,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 
 		IEnumerable<CompletionIcon> GetAttributeIcons() {
 			if (CompletionItem.Tags.Contains(CompletionTags.Warning))
-				return new[] { new CompletionIcon2(imageMonikerService.ToImageMoniker(CompletionImageHelper.GetWarningImageReference()), null, null) };
+				return new[] { new CompletionIcon2(imageMonikerService.ToImageMoniker(DsImages.StatusWarning), null, null) };
 			return null;
 		}
 

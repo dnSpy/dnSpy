@@ -41,37 +41,27 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public static ImageReference? TryGetImageReference(Assembly dnSpyAsm, string name) {
 			// Don't use Path.GetExtension() since it can throw
 			int index = name.LastIndexOf('.');
-			string rsrcName = null;
 			if (index >= 0) {
 				switch (name.Substring(index + 1).ToUpperInvariant()) {
 				case "CS":
 				case "CSX":
-					rsrcName = "CSharpFile";
-					break;
+					return DsImages.CSFileNode;
 				case "VB":
 				case "VBX":
-					rsrcName = "VisualBasicFile";
-					break;
+					return DsImages.VBFileNode;
 				case "TXT":
-					rsrcName = "TextFile";
-					break;
+					return DsImages.TextFile;
 				case "XAML":
 				case "BAML":
-					rsrcName = "XamlFile";
-					break;
+					return DsImages.WPFFile;
 				case "XML":
-					rsrcName = "XmlFile";
-					break;
+					return DsImages.XMLFile;
 				case "XSD":
-					rsrcName = "XsdFile";
-					break;
+					return DsImages.XMLSchema;
 				case "XSLT":
-					rsrcName = "XsltFile";
-					break;
+					return DsImages.XSLTransform;
 				}
 			}
-			if (rsrcName != null)
-				return new ImageReference(dnSpyAsm, rsrcName);
 			return null;
 		}
 

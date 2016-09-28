@@ -40,5 +40,13 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="bgColor">Background color or null to not modify the image</param>
 		/// <returns></returns>
 		BitmapSource GetImage(ImageReference imageReference, Color? bgColor);
+
+		/// <summary>
+		/// Returns an image
+		/// </summary>
+		/// <param name="imageReference">Image reference</param>
+		/// <param name="options">Image options</param>
+		/// <returns></returns>
+		BitmapSource GetImage(ImageReference imageReference, ImageOptions options);
 	}
 }

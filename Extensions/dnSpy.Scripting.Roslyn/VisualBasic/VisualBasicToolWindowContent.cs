@@ -22,8 +22,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
@@ -74,7 +75,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:Window_VisualBasic", InputGestureText = "res:ShortCutKeyCtrlAltI", Icon = "VBInteractiveWindow", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 40)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:Window_VisualBasic", InputGestureText = "res:ShortCutKeyCtrlAltI", Icon = DsImagesAttribute.VBInteractiveWindow, Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 40)]
 	sealed class ShowVisualBasicInteractiveCommand : MenuItemCommand {
 		ShowVisualBasicInteractiveCommand()
 			: base(ShowVisualBasicInteractiveCommandLoader.ShowVisualBasicInteractiveRoutedCommand) {

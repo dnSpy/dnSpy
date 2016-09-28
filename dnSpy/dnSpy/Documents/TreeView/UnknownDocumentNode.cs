@@ -35,8 +35,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.UNKNOWN_DOCUMENT_NODE_GUID);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
-			new ImageReference(GetType().Assembly, "AssemblyWarning");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.AssemblyError;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var document in Document.Children)

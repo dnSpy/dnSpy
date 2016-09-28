@@ -33,6 +33,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
@@ -171,7 +172,7 @@ namespace dnSpy.Debugger.Locals {
 		public override bool IsEnabled(LocalsCtxMenuContext context) => GetValueVM(context) != null;
 	}
 
-	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 0)]
 	sealed class CopyLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		readonly IDebuggerSettings debuggerSettings;
 
@@ -209,7 +210,7 @@ namespace dnSpy.Debugger.Locals {
 		public override bool IsEnabled(LocalsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 10)]
 	sealed class SelectAllLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
@@ -267,7 +268,7 @@ namespace dnSpy.Debugger.Locals {
 		public override bool IsEnabled(LocalsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:LocalsAddWatchCommand", Icon = "Watch", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 20)]
+	[ExportMenuItem(Header = "res:LocalsAddWatchCommand", Icon = DsImagesAttribute.Watch, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 20)]
 	sealed class AddWatchLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		[ImportingConstructor]
 		AddWatchLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
@@ -283,7 +284,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:LocalsSaveCommand", Icon = "Save", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 30)]
+	[ExportMenuItem(Header = "res:LocalsSaveCommand", Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 30)]
 	sealed class SaveDataLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		readonly IMessageBoxService messageBoxService;
 
@@ -393,7 +394,7 @@ namespace dnSpy.Debugger.Locals {
 		public override void Execute(IMenuItemContext context) => action(context);
 	}
 
-	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 40)]
+	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = DsImagesAttribute.MemoryWindow, Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 40)]
 	sealed class ShowInMemoryXLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		[ImportingConstructor]
 		ShowInMemoryXLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
@@ -425,7 +426,7 @@ namespace dnSpy.Debugger.Locals {
 
 			for (int i = 0; i < subCmds.Length; i++) {
 				var info = subCmds[i];
-				var attr = new ExportMenuItemAttribute { Header = info.Item2, Icon = "MemoryWindow" };
+				var attr = new ExportMenuItemAttribute { Header = info.Item2, Icon = DsImagesAttribute.MemoryWindow };
 				if (!string.IsNullOrEmpty(info.Item3))
 					attr.InputGestureText = info.Item3;
 				yield return new CreatedMenuItem(attr, info.Item1);
@@ -519,7 +520,7 @@ namespace dnSpy.Debugger.Locals {
 		public override bool IsChecked(LocalsCtxMenuContext context) => debuggerSettings.UseHexadecimal;
 	}
 
-	[ExportMenuItem(Header = "res:LocalsCollapseParentNodeCommand", Icon = "OneLevelUp", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 0)]
+	[ExportMenuItem(Header = "res:LocalsCollapseParentNodeCommand", Icon = DsImagesAttribute.OneLevelUp, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 0)]
 	sealed class CollapseParentLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		[ImportingConstructor]
 		CollapseParentLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
@@ -544,7 +545,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:LocalsExpandChildrenNodesCommand", Icon = "SuperTypesOpen", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 10)]
+	[ExportMenuItem(Header = "res:LocalsExpandChildrenNodesCommand", Icon = DsImagesAttribute.FolderOpened, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 10)]
 	sealed class ExpandChildrenLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		[ImportingConstructor]
 		ExpandChildrenLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
@@ -583,7 +584,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:LocalsCollapseChildrenNodesCommand", Icon = "SuperTypes", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 20)]
+	[ExportMenuItem(Header = "res:LocalsCollapseChildrenNodesCommand", Icon = DsImagesAttribute.FolderClosed, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 20)]
 	sealed class CollapseChildrenLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		[ImportingConstructor]
 		CollapseChildrenLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)

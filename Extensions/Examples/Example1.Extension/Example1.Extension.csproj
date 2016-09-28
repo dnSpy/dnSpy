@@ -74,9 +74,6 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Assembly.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="MySettingsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

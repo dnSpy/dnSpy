@@ -28,6 +28,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
 
@@ -96,7 +97,7 @@ namespace dnSpy.MainApp {
 		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) => comboBox;
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "FullScreen", Header = "res:FullScreenToolBarCommand", IsToggleButton = true, Group = ToolBarConstants.GROUP_APP_TB_MAIN_FULLSCREEN, Order = 0)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = DsImagesAttribute.AutoSizeOptimize, Header = "res:FullScreenToolBarCommand", IsToggleButton = true, Group = ToolBarConstants.GROUP_APP_TB_MAIN_FULLSCREEN, Order = 0)]
 	sealed class FullScreenToolbarCommand : ToolBarButtonBase, IToolBarToggleButton {
 		[Import]
 		AppWindow appWindow = null;

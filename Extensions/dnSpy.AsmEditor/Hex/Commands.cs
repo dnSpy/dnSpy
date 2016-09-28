@@ -40,6 +40,7 @@ using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -169,7 +170,7 @@ namespace dnSpy.AsmEditor.Hex {
 				ModifierKeys.Control, Key.X);
 		}
 
-		[ExportMenuItem(Header = "res:OpenHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 0)]
+		[ExportMenuItem(Header = "res:OpenHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 0)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -184,7 +185,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(documentTabService, methodAnnotations, context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:OpenHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:OpenHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 0)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -262,7 +263,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowAddressReferenceInHexEditorCommand {
-		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 10)]
+		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 10)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 
@@ -275,7 +276,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 10)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IDocumentTabService documentTabService)
@@ -327,7 +328,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowBinSpanInHexEditorCommand {
-		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 20)]
+		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 20)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -342,7 +343,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(methodAnnotations, context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInstrsInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 20)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -403,7 +404,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowHexNodeInHexEditorCommand {
-		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 30)]
+		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 30)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -418,7 +419,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(methodAnnotations, context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 30)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -461,7 +462,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowStorageStreamDataInHexEditorCommand {
-		[ExportMenuItem(Header = "res:ShowDataInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 40)]
+		[ExportMenuItem(Header = "res:ShowDataInHexEditorCommand", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 40)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -476,7 +477,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(methodAnnotations, context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowDataInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 40)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowDataInHexEditorCommand", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 40)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -536,7 +537,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVShowMethodInstructionsInHexEditorCommand {
-		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 50)]
+		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 50)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -551,7 +552,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(methodAnnotations, context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 50)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInstrsInHexEditorCommand", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 50)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -615,7 +616,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVShowMethodHeaderInHexEditorCommand {
-		[ExportMenuItem(Header = "res:ShowMethodBodyInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 60)]
+		[ExportMenuItem(Header = "res:ShowMethodBodyInHexEditorCommand", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 60)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 
@@ -628,7 +629,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowMethodBodyInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 60)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowMethodBodyInHexEditorCommand", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 60)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IDocumentTabService documentTabService)
@@ -657,7 +658,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVShowFieldInitialValueInHexEditorCommand {
-		[ExportMenuItem(Header = "res:ShowInitialValueInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 70)]
+		[ExportMenuItem(Header = "res:ShowInitialValueInHexEditorCommand", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 70)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 
@@ -670,7 +671,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInitialValueInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 70)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInitialValueInHexEditorCommand", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 70)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IDocumentTabService documentTabService)
@@ -703,7 +704,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVShowResourceInHexEditorCommand {
-		[ExportMenuItem(Header = "res:ShowInHexEditorCommand2", Icon = "Binary", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 80)]
+		[ExportMenuItem(Header = "res:ShowInHexEditorCommand2", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 80)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
 
@@ -716,7 +717,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand2", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 80)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand2", Icon = DsImagesAttribute.Binary, Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 80)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IDocumentTabService documentTabService)

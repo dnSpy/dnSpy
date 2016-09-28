@@ -23,6 +23,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.MainApp {
@@ -38,7 +39,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:FullScreenCommand", InputGestureText = "res:FullScreenKey", Icon = "FullScreen", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:FullScreenCommand", InputGestureText = "res:FullScreenKey", Icon = DsImagesAttribute.AutoSizeOptimize, Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 20)]
 	sealed class FullScreenCommand : MenuItemCommand {
 		readonly MetroWindow window;
 
@@ -52,14 +53,14 @@ namespace dnSpy.MainApp {
 		public void FullScreen() => window.IsFullScreen = !window.IsFullScreen;
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ExitAppCommand", Icon = "Close", InputGestureText = "res:ExitAppKey", Group = MenuConstants.GROUP_APP_MENU_FILE_EXIT, Order = 1000000)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ExitAppCommand", Icon = DsImagesAttribute.CloseSolution, InputGestureText = "res:ExitAppKey", Group = MenuConstants.GROUP_APP_MENU_FILE_EXIT, Order = 1000000)]
 	sealed class MenuFileExitCommand : MenuItemCommand {
 		public MenuFileExitCommand()
 			: base(ApplicationCommands.Close) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:CollapseTreeViewNodesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftW", Icon = "OneLevelUp", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:CollapseTreeViewNodesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftW", Icon = DsImagesAttribute.OneLevelUp, Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 30)]
 	sealed class CollapseTreeViewCommand : MenuItemBase {
 		readonly IDocumentTreeView documentTreeView;
 

@@ -124,7 +124,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		readonly byte[] imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMAGE_RESOURCE_NODE_GUID);
-		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ImageFile");
+		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public ImageResourceNode(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
@@ -161,7 +161,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		byte[] imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMAGE_RESOURCE_ELEMENT_NODE_GUID);
-		protected override ImageReference GetIcon() => new ImageReference(GetType().Assembly, "ImageFile");
+		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public ImageResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
 			: base(treeNodeGroup, resourceElement) {

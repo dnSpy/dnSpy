@@ -33,6 +33,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
@@ -292,7 +293,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowInHexEditorMDTableCommand {
-		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_MD, Order = 30)]
+		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_MD, Order = 30)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			readonly IDocumentTabService documentTabService;
 
@@ -305,7 +306,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 30)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			readonly IDocumentTabService documentTabService;
 
@@ -370,13 +371,13 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class CopyMDTableCommand {
-		[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_COPY, Order = 10)]
+		[ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_COPY, Order = 10)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			public override void Execute(MDTableContext context) => ExecuteInternal(context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 10)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			public override void Execute(MDTableContext context) => ExecuteInternal(context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
@@ -409,7 +410,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class PasteMDTableCommand {
-		[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_COPY, Order = 20)]
+		[ExportMenuItem(Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX_COPY, Order = 20)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -423,7 +424,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override string GetHeader(MDTableContext context) => GetHeaderInternal(context);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 20)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 

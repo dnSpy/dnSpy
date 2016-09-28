@@ -30,6 +30,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.AsmEditor.Namespace {
@@ -43,7 +44,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteNamespaceCommand : IUndoCommand {
-		[ExportMenuItem(Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 70)]
+		[ExportMenuItem(Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 70)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -57,7 +58,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			public override string GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -194,7 +195,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 0)]
+		[ExportMenuItem(Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = DsImagesAttribute.Namespace, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 0)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -207,7 +208,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandService, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = DsImagesAttribute.Namespace, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 0)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -342,7 +343,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class RenameNamespaceCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:RenameNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 10)]
+		[ExportMenuItem(Header = "res:RenameNamespaceCommand", Icon = DsImagesAttribute.Namespace, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 10)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -357,7 +358,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RenameNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RenameNamespaceCommand", Icon = DsImagesAttribute.Namespace, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;

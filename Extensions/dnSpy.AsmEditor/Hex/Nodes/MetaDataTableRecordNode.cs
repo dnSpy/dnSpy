@@ -23,6 +23,7 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 
@@ -36,7 +37,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			get { yield return Record; }
 		}
 
-		protected override string IconName => "MetaData";
+		protected override ImageReference IconReference => DsImages.Metadata;
 		MetaDataTableNode MDParent => (MetaDataTableNode)TreeNode.Parent.Data;
 		MetaDataTableRecordVM Record => MDParent.MetaDataTableVM.Get(index);
 		public override bool SingleClickExpandsChildren => false;

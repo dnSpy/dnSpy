@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolBars;
@@ -53,14 +54,14 @@ namespace dnSpy.Search {
 		void Search(object sender, ExecutedRoutedEventArgs e) => toolWindowService.Show(SearchToolWindowContent.THE_GUID);
 	}
 
-	[ExportToolBarButton(Icon = "Find", ToolTip = "res:SearchAssembliesToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
+	[ExportToolBarButton(Icon = DsImagesAttribute.Search, ToolTip = "res:SearchAssembliesToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
 	sealed class SearchAssembliesToolBarButtonCommand : ToolBarButtonCommand {
 		public SearchAssembliesToolBarButtonCommand()
 			: base(SearchCommandLoader.SearchRoutedCommand) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SearchAssembliesCommand", InputGestureText = "res:SearchAssembliesKey", Icon = "Find", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SearchAssembliesCommand", InputGestureText = "res:SearchAssembliesKey", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
 	sealed class SearchAssembliesMenuItemCommand : MenuItemCommand {
 		public SearchAssembliesMenuItemCommand()
 			: base(SearchCommandLoader.SearchRoutedCommand) {

@@ -56,9 +56,9 @@ namespace dnSpy.Debugger.Locals {
 		bool isEditingValue;
 
 		public virtual bool CanEdit => false;
-		protected abstract string IconName { get; }
+		protected abstract ImageReference IconReference { get; }
 		public IPrinterContext PrinterContext => context.LocalsOwner.PrinterContext;
-		public sealed override object Icon => context.LocalsOwner.PrinterContext.ImageService.GetImage(new ImageReference(GetType().Assembly, IconName), BackgroundType.TreeNode);
+		public sealed override object Icon => context.LocalsOwner.PrinterContext.ImageService.GetImage(IconReference, BackgroundType.TreeNode);
 		public sealed override bool ShowIcon => true;
 
 		public CachedOutput CachedOutputValue {
@@ -175,7 +175,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class MessageValueVM : ValueVM {
-		protected override string IconName => "StatusError";
+		protected override ImageReference IconReference => DsImages.StatusError;
 
 		public static MessageValueVM CreateError(ValueContext context, string msg) => new MessageValueVM(context, msg);
 
@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class LiteralFieldValueVM : ValueVM {
-		protected override string IconName => FieldValueType.GetIconName(info.OwnerType, info.Attributes);
+		protected override ImageReference IconReference => FieldValueType.GetIconName(info.OwnerType, info.Attributes);
 		public object Constant => info.Constant;
 
 		/*readonly*/ CorFieldInfo info;
@@ -222,7 +222,7 @@ namespace dnSpy.Debugger.Locals {
 		protected const int ERROR_CantEvaluate = -5;
 
 		public override bool CanEdit => ReadOnlyCorValue != null && valueType.CanEdit;
-		protected override string IconName => CorValueError ? "StatusError" : valueType.IconName;
+		protected override ImageReference IconReference => CorValueError ? DsImages.StatusError : valueType.IconReference;
 
 		bool CorValueError {
 			get { return corValueError; }
@@ -1154,7 +1154,7 @@ namespace dnSpy.Debugger.Locals {
 
 	abstract class NormalValueType {
 		public virtual bool CanEdit => true;
-		public abstract string IconName { get; }
+		public abstract ImageReference IconReference { get; }
 		public abstract void WriteName(ITextColorWriter output);
 		public NormalValueVM Owner {
 			get { return owner; }
@@ -1167,7 +1167,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class LocalValueType : NormalValueType {
-		public override string IconName => "Field";
+		public override ImageReference IconReference => DsImages.FieldPublic;
 		public int Index { get; }
 
 		public LocalValueType(int index) {
@@ -1191,7 +1191,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class ArgumentValueType : NormalValueType {
-		public override string IconName => "Field";
+		public override ImageReference IconReference => DsImages.FieldPublic;
 		public int Index { get; }
 
 		public ArgumentValueType(int index) {
@@ -1221,7 +1221,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class ExceptionValueType : NormalValueType {
-		public override string IconName => "Exception";
+		public override ImageReference IconReference => DsImages.ExceptionPublic;
 		public override bool CanEdit => false;
 
 		public override void WriteName(ITextColorWriter output) =>
@@ -1229,7 +1229,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class ArrayElementValueType : NormalValueType {
-		public override string IconName => "Field";
+		public override ImageReference IconReference => DsImages.FieldPublic;
 
 		readonly uint index;
 		readonly ArrayState state;
@@ -1273,7 +1273,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class FieldValueType : NormalValueType {
-		public override string IconName => GetIconName(vm.OwnerType, vm.FieldAttributes);
+		public override ImageReference IconReference => GetIconName(vm.OwnerType, vm.FieldAttributes);
 		bool IsEnum => vm.OwnerType.IsEnum;
 
 		readonly string name;
@@ -1284,79 +1284,61 @@ namespace dnSpy.Debugger.Locals {
 			this.vm = vm;
 		}
 
-		internal static string GetIconName(CorType ownerType, FieldAttributes attrs) {
+		internal static ImageReference GetIconName(CorType ownerType, FieldAttributes attrs) {
 			var access = attrs & FieldAttributes.FieldAccessMask;
 
 			if ((attrs & FieldAttributes.SpecialName) == 0 && ownerType.IsEnum) {
 				switch (access) {
 				default:
 				case FieldAttributes.Public:
-					return "EnumValue";
+					return DsImages.EnumerationItemPublic;
 				case FieldAttributes.Private:
-					return "EnumValuePrivate";
+					return DsImages.EnumerationItemPrivate;
 				case FieldAttributes.Family:
-					return "EnumValueProtected";
+					return DsImages.EnumerationItemProtected;
 				case FieldAttributes.Assembly:
 				case FieldAttributes.FamANDAssem:
-					return "EnumValueInternal";
+					return DsImages.EnumerationItemInternal;
 				case FieldAttributes.CompilerControlled:
-					return "EnumValueCompilerControlled";
+					return DsImages.EnumerationItemSealed;
 				case FieldAttributes.FamORAssem:
-					return "EnumValueProtectedInternal";
+					return DsImages.EnumerationItemShortcut;
 				}
 			}
 			else if ((attrs & FieldAttributes.Literal) != 0) {
 				switch (access) {
 				default:
 				case FieldAttributes.Public:
-					return "Literal";
+					return DsImages.ConstantPublic;
 				case FieldAttributes.Private:
-					return "LiteralPrivate";
+					return DsImages.ConstantPrivate;
 				case FieldAttributes.Family:
-					return "LiteralProtected";
+					return DsImages.ConstantProtected;
 				case FieldAttributes.Assembly:
 				case FieldAttributes.FamANDAssem:
-					return "LiteralInternal";
+					return DsImages.ConstantInternal;
 				case FieldAttributes.CompilerControlled:
-					return "LiteralCompilerControlled";
+					return DsImages.ConstantSealed;
 				case FieldAttributes.FamORAssem:
-					return "LiteralProtectedInternal";
-				}
-			}
-			else if ((attrs & FieldAttributes.InitOnly) != 0) {
-				switch (access) {
-				default:
-				case FieldAttributes.Public:
-					return "FieldReadOnly";
-				case FieldAttributes.Private:
-					return "FieldReadOnlyPrivate";
-				case FieldAttributes.Family:
-					return "FieldReadOnlyProtected";
-				case FieldAttributes.Assembly:
-				case FieldAttributes.FamANDAssem:
-					return "FieldReadOnlyInternal";
-				case FieldAttributes.CompilerControlled:
-					return "FieldReadOnlyCompilerControlled";
-				case FieldAttributes.FamORAssem:
-					return "FieldReadOnlyProtectedInternal";
+					return DsImages.ConstantShortcut;
 				}
 			}
 			else {
 				switch (access) {
 				default:
 				case FieldAttributes.Public:
-					return "Field";
+					return DsImages.FieldPublic;
 				case FieldAttributes.Private:
-					return "FieldPrivate";
+					return DsImages.FieldPrivate;
 				case FieldAttributes.Family:
-					return "FieldProtected";
+					return DsImages.FieldProtected;
 				case FieldAttributes.Assembly:
 				case FieldAttributes.FamANDAssem:
-					return "FieldInternal";
+					return DsImages.FieldInternal;
 				case FieldAttributes.CompilerControlled:
-					return "FieldCompilerControlled";
+					return DsImages.FieldSealed;
 				case FieldAttributes.FamORAssem:
-					return "FieldProtectedInternal";
+					return DsImages.FieldShortcut;
 				}
 			}
 		}
@@ -1386,7 +1368,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class PropertyValueType : NormalValueType {
-		public override string IconName => GetIconName(vm.OwnerType, vm.GetMethodAttributes);
+		public override ImageReference IconReference => GetIconName(vm.OwnerType, vm.GetMethodAttributes);
 
 		readonly string name;
 		readonly PropertyValueVM vm;
@@ -1396,62 +1378,24 @@ namespace dnSpy.Debugger.Locals {
 			this.vm = vm;
 		}
 
-		internal static string GetIconName(CorType ownerType, MethodAttributes attrs) {
+		internal static ImageReference GetIconName(CorType ownerType, MethodAttributes attrs) {
 			var access = attrs & MethodAttributes.MemberAccessMask;
-
-			if ((attrs & MethodAttributes.Static) != 0) {
-				switch (access) {
-				default:
-				case MethodAttributes.Public:
-					return "StaticProperty";
-				case MethodAttributes.Private:
-					return "StaticPropertyPrivate";
-				case MethodAttributes.Family:
-					return "StaticPropertyProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "StaticPropertyInternal";
-				case MethodAttributes.CompilerControlled:
-					return "StaticPropertyCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "StaticPropertyProtectedInternal";
-				}
-			}
-
-			if ((attrs & MethodAttributes.Virtual) != 0) {
-				switch (access) {
-				default:
-				case MethodAttributes.Public:
-					return "VirtualProperty";
-				case MethodAttributes.Private:
-					return "VirtualPropertyPrivate";
-				case MethodAttributes.Family:
-					return "VirtualPropertyProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "VirtualPropertyInternal";
-				case MethodAttributes.CompilerControlled:
-					return "VirtualPropertyCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "VirtualPropertyProtectedInternal";
-				}
-			}
 
 			switch (access) {
 			default:
 			case MethodAttributes.Public:
-				return "Property";
+				return DsImages.Property;
 			case MethodAttributes.Private:
-				return "PropertyPrivate";
+				return DsImages.PropertyPrivate;
 			case MethodAttributes.Family:
-				return "PropertyProtected";
+				return DsImages.PropertyProtected;
 			case MethodAttributes.Assembly:
 			case MethodAttributes.FamANDAssem:
-				return "PropertyInternal";
+				return DsImages.PropertyInternal;
 			case MethodAttributes.CompilerControlled:
-				return "PropertyCompilerControlled";
+				return DsImages.PropertySealed;
 			case MethodAttributes.FamORAssem:
-				return "PropertyProtectedInternal";
+				return DsImages.PropertyShortcut;
 			}
 		}
 
@@ -1531,7 +1475,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class GenericVariableValueVM : ValueVM {
-		protected override string IconName => "GenericParameter";
+		protected override ImageReference IconReference => DsImages.FieldPublic;
 		protected sealed override CachedOutput CreateCachedOutputValue() => CachedOutput.Create(type, TypePrinterFlags);
 		protected sealed override CachedOutput CreateCachedOutputType() => CreateCachedOutputValue();
 
@@ -1573,7 +1517,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class TypeVariablesValueVM : ValueVM {
-		protected override string IconName => "GenericParameter";
+		protected override ImageReference IconReference => DsImages.FieldPublic;
 
 		static string Read(List<TokenAndName> list, int index) {
 			if ((uint)index >= (uint)list.Count)

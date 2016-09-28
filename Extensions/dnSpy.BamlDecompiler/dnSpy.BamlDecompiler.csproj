@@ -166,9 +166,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\XamlFile.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="BamlSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

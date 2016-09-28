@@ -32,6 +32,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Utilities;
 
@@ -48,7 +49,7 @@ namespace dnSpy.AsmEditor.Field {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteFieldDefCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:DeleteFieldCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 40)]
+		[ExportMenuItem(Header = "res:DeleteFieldCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 40)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -62,7 +63,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override string GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteFieldCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 40)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteFieldCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 40)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -77,7 +78,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override string GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:DeleteFieldCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 40)]
+		[Export, ExportMenuItem(Header = "res:DeleteFieldCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 40)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
@@ -183,7 +184,7 @@ namespace dnSpy.AsmEditor.Field {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateFieldDefCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:CreateFieldCommand", Icon = "NewField", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 70)]
+		[ExportMenuItem(Header = "res:CreateFieldCommand", Icon = DsImagesAttribute.NewField, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 70)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -198,7 +199,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override void Execute(AsmEditorContext context) => CreateFieldDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFieldCommand", Icon = "NewField", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 70)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateFieldCommand", Icon = DsImagesAttribute.NewField, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 70)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -214,7 +215,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override void Execute(AsmEditorContext context) => CreateFieldDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:CreateFieldCommand", Icon = "NewField", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 70)]
+		[ExportMenuItem(Header = "res:CreateFieldCommand", Icon = DsImagesAttribute.NewField, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 70)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -331,7 +332,7 @@ namespace dnSpy.AsmEditor.Field {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class FieldDefSettingsCommand : IUndoCommand {
-		[ExportMenuItem(Header = "res:EditFieldCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 50)]
+		[ExportMenuItem(Header = "res:EditFieldCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 50)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -346,7 +347,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override void Execute(AsmEditorContext context) => FieldDefSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditFieldCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 50)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditFieldCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 50)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;
@@ -362,7 +363,7 @@ namespace dnSpy.AsmEditor.Field {
 			public override void Execute(AsmEditorContext context) => FieldDefSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
 		}
 
-		[Export, ExportMenuItem(Header = "res:EditFieldCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 50)]
+		[Export, ExportMenuItem(Header = "res:EditFieldCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 50)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly IAppWindow appWindow;

@@ -23,6 +23,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 
@@ -35,7 +36,7 @@ namespace dnSpy.Documents.Tabs {
 			return tab.Content.Nodes.FirstOrDefault().GetModule();
 		}
 
-		[ExportMenuItem(Header = "res:GoToEntryPointCommand", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TOKENS, Order = 0)]
+		[ExportMenuItem(Header = "res:GoToEntryPointCommand", Icon = DsImagesAttribute.EntryPoint, Group = MenuConstants.GROUP_CTX_DOCVIEWER_TOKENS, Order = 0)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IDocumentTabService documentTabService;
 
@@ -60,7 +61,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:GoToEntryPointCommand", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_DOCUMENTS_TOKENS, Order = 0)]
+		[ExportMenuItem(Header = "res:GoToEntryPointCommand", Icon = DsImagesAttribute.EntryPoint, Group = MenuConstants.GROUP_CTX_DOCUMENTS_TOKENS, Order = 0)]
 		sealed class DocumentsCommand : MenuItemBase {
 			readonly IDocumentTabService documentTabService;
 

@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.CallStack {
 				currentStatementMarker = glyphTextMarkerService.AddMarker(
 					methodOffset.Value.Key,
 					methodOffset.Value.Value,
-					new ImageReference(GetType().Assembly, "CurrentStatement"),
+					DsImages.CurrentInstructionPointer,
 					ThemeClassificationTypeNameKeys.CurrentStatementMarker,
 					null,
 					classificationTypeCurrentStatement,
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.CallStack {
 				callReturnMarker = glyphTextMarkerService.AddMarker(
 					methodOffset.Value.Key,
 					methodOffset.Value.Value,
-					new ImageReference(GetType().Assembly, "CallReturn"),
+					DsImages.CallReturnInstructionPointer,
 					ThemeClassificationTypeNameKeys.CallReturnMarker,
 					null,
 					classificationTypeCallReturn,

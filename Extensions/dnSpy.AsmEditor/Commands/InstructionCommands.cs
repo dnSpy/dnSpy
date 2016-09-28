@@ -34,6 +34,7 @@ using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.IL;
@@ -59,7 +60,7 @@ namespace dnSpy.AsmEditor.Commands {
 			CopyILBytesCodeCommand.Execute(documentTabService.ActiveTab.TryGetDocumentViewer(), methodAnnotations);
 	}
 
-	[ExportMenuItem(Header = "res:CopyILBytesCommand", Icon = "Copy", InputGestureText = "res:CopyILBytesKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 20)]
+	[ExportMenuItem(Header = "res:CopyILBytesCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:CopyILBytesKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 20)]
 	sealed class CopyILBytesCodeCommand : MenuItemBase {
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
 

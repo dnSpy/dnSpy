@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// true if it's the default instance
 		/// </summary>
-		public bool IsDefault => Assembly == null;
+		public bool IsDefault => Assembly == null && Name == null;
 
 		/// <summary>
 		/// Assembly of image
@@ -43,11 +43,9 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="assembly">Assembly of image</param>
+		/// <param name="assembly">Assembly of image or null if <paramref name="name"/> is a pack: URI</param>
 		/// <param name="name">Name of image</param>
 		public ImageReference(Assembly assembly, string name) {
-			if (assembly == null)
-				throw new ArgumentNullException(nameof(assembly));
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			this.Assembly = assembly;

@@ -121,14 +121,14 @@ namespace dnSpy.Debugger.Breakpoints {
 			IClassificationType classificationType;
 			int zIndex;
 			if (ilbp.IsEnabled) {
-				imgRef = new ImageReference(GetType().Assembly, "Breakpoint");
+				imgRef = DsImages.BreakpointEnabled;
 				markerTypeName = ThemeClassificationTypeNameKeys.BreakpointStatementMarker;
 				selectedMarkerTypeName = ThemeClassificationTypeNameKeys.SelectedBreakpointStatementMarker;
 				classificationType = classificationTypeEnabledBreakpoint;
 				zIndex = GlyphTextMarkerServiceZIndexes.EnabledBreakpoint;
 			}
 			else {
-				imgRef = new ImageReference(GetType().Assembly, "DisabledBreakpoint");
+				imgRef = DsImages.BreakpointDisabled;
 				markerTypeName = ThemeClassificationTypeNameKeys.DisabledBreakpointStatementMarker;
 				selectedMarkerTypeName = null;
 				classificationType = null;

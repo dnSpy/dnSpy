@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Globalization;
+using System.Reflection;
 using System.Windows.Data;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
@@ -39,8 +40,8 @@ namespace dnSpy.Debugger.Converters {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var ary = ((string)parameter).Split(seps, 2);
 			var bgType = (BackgroundType)Enum.Parse(typeof(BackgroundType), ary[0]);
-			var asm = GetType().Assembly;
-			return imageService.GetImage(new ImageReference(asm, ary[1]), bgType);
+			var imgRef = (ImageReference)typeof(DsImages).GetProperty(ary[1], BindingFlags.Public | BindingFlags.Static).GetValue(null);
+			return imageService.GetImage(imgRef, bgType);
 		}
 		static readonly char[] seps = new char[1] { '_' };
 

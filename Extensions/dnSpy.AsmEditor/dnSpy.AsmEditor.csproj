@@ -831,56 +831,6 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\AddException.png" />
-    <Resource Include="Images\AddLocal.png" />
-    <Resource Include="Images\AddNewItem.png" />
-    <Resource Include="Images\ArrowDown.png" />
-    <Resource Include="Images\ArrowUp.png" />
-    <Resource Include="Images\AssemblyToModule.png" />
-    <Resource Include="Images\Binary.png" />
-    <Resource Include="Images\BinaryFile.png" />
-    <Resource Include="Images\Branch.png" />
-    <Resource Include="Images\BuildSolution.png" />
-    <Resource Include="Images\Class.png" />
-    <Resource Include="Images\Copy.png" />
-    <Resource Include="Images\Cut.png" />
-    <Resource Include="Images\Delete.png" />
-    <Resource Include="Images\DeleteHistory.png" />
-    <Resource Include="Images\Field.png" />
-    <Resource Include="Images\Find.png" />
-    <Resource Include="Images\Generic.png" />
-    <Resource Include="Images\ILEditor.png" />
-    <Resource Include="Images\Library.png" />
-    <Resource Include="Images\MetaData.png" />
-    <Resource Include="Images\Method.png" />
-    <Resource Include="Images\ModuleFile.png" />
-    <Resource Include="Images\ModuleToAssembly.png" />
-    <Resource Include="Images\NameSpace.png" />
-    <Resource Include="Images\NewAssembly.png" />
-    <Resource Include="Images\NewBinary.png" />
-    <Resource Include="Images\NewClass.png" />
-    <Resource Include="Images\NewEvent.png" />
-    <Resource Include="Images\NewField.png" />
-    <Resource Include="Images\NewImage.png" />
-    <Resource Include="Images\NewMethod.png" />
-    <Resource Include="Images\NewModule.png" />
-    <Resource Include="Images\NewProperty.png" />
-    <Resource Include="Images\NewResource.png" />
-    <Resource Include="Images\NewResourcesFile.png" />
-    <Resource Include="Images\NOP.png" />
-    <Resource Include="Images\Open.png" />
-    <Resource Include="Images\Paste.png" />
-    <Resource Include="Images\Redo.png" />
-    <Resource Include="Images\SaveAll.png" />
-    <Resource Include="Images\Settings.png" />
-    <Resource Include="Images\StatusError.png" />
-    <Resource Include="Images\StatusHidden.png" />
-    <Resource Include="Images\StatusInformation.png" />
-    <Resource Include="Images\StatusWarning.png" />
-    <Resource Include="Images\ToUncondBranch.png" />
-    <Resource Include="Images\Undo.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

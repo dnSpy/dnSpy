@@ -23,6 +23,7 @@ using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -35,7 +36,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			get { yield return imageSectionHeaderVM; }
 		}
 
-		protected override string IconName => "BinaryFile";
+		protected override ImageReference IconReference => DsImages.BinaryFile;
 		public int SectionNumber { get; }
 
 		readonly ImageSectionHeaderVM imageSectionHeaderVM;

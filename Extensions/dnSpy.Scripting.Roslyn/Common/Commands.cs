@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Scripting.Roslyn.Commands;
@@ -88,32 +89,32 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected sealed override ICommandTarget GetCommandTarget(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget;
 	}
 
-	[ExportMenuItem(Header = "res:Script_ToolTip_Reset", Icon = "Reset", Group = MenuConstants.GROUP_CTX_REPL_RESET, Order = 0)]
+	[ExportMenuItem(Header = "res:Script_ToolTip_Reset", Icon = DsImagesAttribute.Restart, Group = MenuConstants.GROUP_CTX_REPL_RESET, Order = 0)]
 	sealed class ResetReplEditorCtxMenuCommand : ReplEditorCtxMenuCommandTargetCommand {
 		ResetReplEditorCtxMenuCommand() : base(RoslynReplIds.Reset) { }
 	}
 
-	[ExportMenuItem(Header = "res:CutCommand", Icon = "Cut", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 0)]
+	[ExportMenuItem(Header = "res:CutCommand", Icon = DsImagesAttribute.Cut, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 0)]
 	sealed class CutReplEditorCtxMenuCommand : ReplEditorCtxMenuCommandTargetCommand {
 		CutReplEditorCtxMenuCommand() : base(StandardIds.Cut) { }
 	}
 
-	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 10)]
 	sealed class CopyReplEditorCtxMenuCommand : ReplEditorCtxMenuCommandTargetCommand {
 		CopyReplEditorCtxMenuCommand() : base(StandardIds.Copy) { }
 	}
 
-	[ExportMenuItem(Header = "res:CopyCodeCommand", Icon = "CopyItem", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 20)]
+	[ExportMenuItem(Header = "res:CopyCodeCommand", Icon = DsImagesAttribute.CopyItem, InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 20)]
 	sealed class CopyCodeReplEditorCtxMenuCommand : ReplEditorCtxMenuCommandTargetCommand {
 		CopyCodeReplEditorCtxMenuCommand() : base(ReplIds.CopyCode) { }
 	}
 
-	[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 30)]
+	[ExportMenuItem(Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 30)]
 	sealed class PasteReplEditorCtxMenuCommand : ReplEditorCtxMenuCommandTargetCommand {
 		PasteReplEditorCtxMenuCommand() : base(StandardIds.Paste) { }
 	}
 
-	[ExportMenuItem(Header = "res:SaveCommand", Icon = "Save", InputGestureText = "res:ShortCutKeyCtrlS", Group = MenuConstants.GROUP_CTX_REPL_SAVE, Order = 0)]
+	[ExportMenuItem(Header = "res:SaveCommand", Icon = DsImagesAttribute.Save, InputGestureText = "res:ShortCutKeyCtrlS", Group = MenuConstants.GROUP_CTX_REPL_SAVE, Order = 0)]
 	sealed class SaveReplEditorCtxMenuCommand : ReplEditorCtxMenuCommandTargetCommand {
 		SaveReplEditorCtxMenuCommand() : base(RoslynReplIds.SaveText) { }
 	}
@@ -123,7 +124,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		SaveCodeReplEditorCtxMenuCommand() : base(RoslynReplIds.SaveCode) { }
 	}
 
-	[ExportMenuItem(Header = "res:ClearScreenCommand", Icon = "ClearWindowContent", InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_REPL_CLEAR, Order = 0)]
+	[ExportMenuItem(Header = "res:ClearScreenCommand", Icon = DsImagesAttribute.ClearWindowContent, InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_REPL_CLEAR, Order = 0)]
 	sealed class ClearReplEditorCtxMenuCommand : ReplEditorCtxMenuCommandTargetCommand {
 		ClearReplEditorCtxMenuCommand() : base(ReplIds.ClearScreen) { }
 	}
@@ -134,7 +135,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public override bool IsChecked(ReplEditorCtxMenuContext context) => context.UI.TextView.Options.IsLineNumberMarginEnabled();
 	}
 
-	[ExportMenuItem(Header = "res:WordWrapHeader", InputGestureText = "res:ShortCutKeyCtrlECtrlW", Icon = "WordWrap", Group = MenuConstants.GROUP_CTX_REPL_SETTINGS, Order = 10)]
+	[ExportMenuItem(Header = "res:WordWrapHeader", InputGestureText = "res:ShortCutKeyCtrlECtrlW", Icon = DsImagesAttribute.WordWrap, Group = MenuConstants.GROUP_CTX_REPL_SETTINGS, Order = 10)]
 	sealed class WordWrapReplEditorCtxMenuCommand : ReplEditorCtxMenuCommandTargetCommand {
 		WordWrapReplEditorCtxMenuCommand() : base(TextEditorIds.TOGGLEWORDWRAP) { }
 		public override bool IsChecked(ReplEditorCtxMenuContext context) => (context.UI.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;

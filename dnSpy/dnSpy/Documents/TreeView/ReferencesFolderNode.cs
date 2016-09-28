@@ -31,7 +31,7 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView {
 	sealed class ReferencesFolderNode : DocumentTreeNodeData, IReferencesFolderNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.REFERENCES_FOLDER_NODE_GUID);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "ReferenceFolder");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Reference;
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
 		public override ITreeNodeGroup TreeNodeGroup { get; }

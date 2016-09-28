@@ -34,12 +34,12 @@ namespace dnSpy.Search {
 
 		readonly IImageService imageService;
 
-		public SearchTypeVM(IImageService imageService, SearchType searchType, string name, string toolTip, string imageName, VisibleMembersFlags flags) {
+		public SearchTypeVM(IImageService imageService, SearchType searchType, string name, string toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
 			this.imageService = imageService;
 			this.SearchType = searchType;
 			this.Name = name;
 			this.ToolTip = toolTip;
-			this.imageReference = new ImageReference(GetType().Assembly, imageName);
+			this.imageReference = imageReference;
 			this.Flags = flags;
 		}
 

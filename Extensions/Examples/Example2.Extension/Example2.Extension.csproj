@@ -73,11 +73,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\EntryPoint.png" />
-    <Resource Include="Images\Strings.png" />
-    <Resource Include="Images\TextFile.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="Themes\resourcedict.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

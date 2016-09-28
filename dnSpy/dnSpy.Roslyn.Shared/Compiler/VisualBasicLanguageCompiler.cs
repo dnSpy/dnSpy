@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	[Export(typeof(ILanguageCompilerProvider))]
 	sealed class VisualBasicLanguageCompilerCreator : ILanguageCompilerProvider {
 		public double Order => 0;
-		public ImageReference? Icon => new ImageReference(GetType().Assembly, "VisualBasicFile");
+		public ImageReference? Icon => DsImages.VBFileNode;
 		public Guid Language => DecompilerConstants.LANGUAGE_VISUALBASIC;
 		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(codeEditorProvider, docFactory, roslynDocumentChangedService);
 

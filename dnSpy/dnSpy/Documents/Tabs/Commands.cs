@@ -30,6 +30,7 @@ using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.TreeView;
@@ -64,14 +65,14 @@ namespace dnSpy.Documents.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenCommand", InputGestureText = "res:OpenKey", Icon = "Open", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenCommand", InputGestureText = "res:OpenKey", Icon = DsImagesAttribute.OpenFolder, Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 0)]
 	sealed class MenuFileOpenCommand : MenuItemCommand {
 		public MenuFileOpenCommand()
 			: base(ApplicationCommands.Open) {
 		}
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Open", ToolTip = "res:OpenToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 0)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = DsImagesAttribute.OpenFolder, ToolTip = "res:OpenToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 0)]
 	sealed class ToolbarFileOpenCommand : ToolBarButtonCommand {
 		public ToolbarFileOpenCommand()
 			: base(ApplicationCommands.Open) {
@@ -95,7 +96,7 @@ namespace dnSpy.Documents.Tabs {
 		void Execute() => openFromGAC.OpenAssemblies(true);
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenGACCommand", InputGestureText = "res:ShortCutKeyCtrlShiftO", Icon = "Library", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenGACCommand", InputGestureText = "res:ShortCutKeyCtrlShiftO", Icon = DsImagesAttribute.Library, Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
 	sealed class OpenFromGacCommand : MenuItemCommand {
 		OpenFromGacCommand()
 			: base(OpenFromGacCommandLoader.OpenFromGac) {
@@ -168,7 +169,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(IMenuItemContext context) => documentListLoader.Reload();
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:CloseAllCommand", Icon = "CloseAll", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:CloseAllCommand", Icon = DsImagesAttribute.CloseAll, Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
 	sealed class CloseAllDocumentsCommand : MenuItemBase {
 		readonly IDocumentListLoader documentListLoader;
 
@@ -211,7 +212,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:ShowCodeCommand", InputGestureText = "res:ShowCodeKey", Icon = "MarkUpTag", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:ShowCodeCommand", InputGestureText = "res:ShowCodeKey", Icon = DsImagesAttribute.MarkupTag, Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 0)]
 	sealed class ShowCodeEditorCommand : MenuItemCommand {
 		ShowCodeEditorCommand()
 			: base(ShowCodeEditorCommandLoader.ShowCodeEditorRoutedCommand) {

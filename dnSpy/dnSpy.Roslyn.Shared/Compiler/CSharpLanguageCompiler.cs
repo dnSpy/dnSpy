@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 	[Export(typeof(ILanguageCompilerProvider))]
 	sealed class CSharpLanguageCompilerProvider : ILanguageCompilerProvider {
 		public double Order => 0;
-		public ImageReference? Icon => new ImageReference(GetType().Assembly, "CSharpFile");
+		public ImageReference? Icon => DsImages.CSFileNode;
 		public Guid Language => DecompilerConstants.LANGUAGE_CSHARP;
 		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider, docFactory, roslynDocumentChangedService);
 

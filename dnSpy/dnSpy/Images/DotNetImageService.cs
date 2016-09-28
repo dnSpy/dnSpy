@@ -29,47 +29,42 @@ namespace dnSpy.Images {
 	sealed class DotNetImageService : IDotNetImageService {
 		public ImageReference GetImageReference(IPEImage peImage) =>
 			GetImageReference(peImage.ImageNTHeaders.FileHeader.Characteristics);
-		public ImageReference GetNamespaceImageReference() =>
-			new ImageReference(GetType().Assembly, "Namespace");
-		public ImageReference GetImageReference(ModuleDef mod) =>
-			new ImageReference(GetType().Assembly, "Module");
-		public ImageReference GetImageReference(TypeDef type) =>
-			new ImageReference(GetType().Assembly, GetImageName(type));
-
-		static string GetImageName(TypeDef type) {
+		public ImageReference GetNamespaceImageReference() => DsImages.Namespace;
+		public ImageReference GetImageReference(ModuleDef mod) => DsImages.ModulePublic;
+		public ImageReference GetImageReference(TypeDef type) {
 			if (type.IsValueType) {
 				if (type.IsEnum) {
 					switch (type.Visibility) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
-						return "Enum";
+						return DsImages.EnumerationPublic;
 					case TypeAttributes.NestedPrivate:
-						return "EnumPrivate";
+						return DsImages.EnumerationPrivate;
 					case TypeAttributes.NestedFamily:
-						return "EnumProtected";
+						return DsImages.EnumerationProtected;
 					case TypeAttributes.NotPublic:
 					case TypeAttributes.NestedAssembly:
 					case TypeAttributes.NestedFamANDAssem:
-						return "EnumInternal";
+						return DsImages.EnumerationInternal;
 					case TypeAttributes.NestedFamORAssem:
-						return "EnumProtectedInternal";
+						return DsImages.EnumerationShortcut;
 					}
 				}
 				else {
 					switch (type.Visibility) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
-						return "Struct";
+						return DsImages.StructurePublic;
 					case TypeAttributes.NestedPrivate:
-						return "StructPrivate";
+						return DsImages.StructurePrivate;
 					case TypeAttributes.NestedFamily:
-						return "StructProtected";
+						return DsImages.StructureProtected;
 					case TypeAttributes.NotPublic:
 					case TypeAttributes.NestedAssembly:
 					case TypeAttributes.NestedFamANDAssem:
-						return "StructInternal";
+						return DsImages.StructureInternal;
 					case TypeAttributes.NestedFamORAssem:
-						return "StructProtectedInternal";
+						return DsImages.StructureShortcut;
 					}
 				}
 			}
@@ -78,92 +73,90 @@ namespace dnSpy.Images {
 					switch (type.Visibility) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
-						return "Interface";
+						return DsImages.InterfacePublic;
 					case TypeAttributes.NestedPrivate:
-						return "InterfacePrivate";
+						return DsImages.InterfacePrivate;
 					case TypeAttributes.NestedFamily:
-						return "InterfaceProtected";
+						return DsImages.InterfaceProtected;
 					case TypeAttributes.NotPublic:
 					case TypeAttributes.NestedAssembly:
 					case TypeAttributes.NestedFamANDAssem:
-						return "InterfaceInternal";
+						return DsImages.InterfaceInternal;
 					case TypeAttributes.NestedFamORAssem:
-						return "InterfaceProtectedInternal";
+						return DsImages.InterfaceShortcut;
 					}
 				}
 				else if (IsDelegate(type)) {
 					switch (type.Visibility) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
-						return "Delegate";
+						return DsImages.DelegatePublic;
 					case TypeAttributes.NestedPrivate:
-						return "DelegatePrivate";
+						return DsImages.DelegatePrivate;
 					case TypeAttributes.NestedFamily:
-						return "DelegateProtected";
+						return DsImages.DelegateProtected;
 					case TypeAttributes.NotPublic:
 					case TypeAttributes.NestedAssembly:
 					case TypeAttributes.NestedFamANDAssem:
-						return "DelegateInternal";
+						return DsImages.DelegateInternal;
 					case TypeAttributes.NestedFamORAssem:
-						return "DelegateProtectedInternal";
+						return DsImages.DelegateShortcut;
 					}
 				}
 				else if (IsException(type)) {
 					switch (type.Visibility) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
-						return "Exception";
+						return DsImages.ExceptionPublic;
 					case TypeAttributes.NestedPrivate:
-						return "ExceptionPrivate";
+						return DsImages.ExceptionPrivate;
 					case TypeAttributes.NestedFamily:
-						return "ExceptionProtected";
+						return DsImages.ExceptionProtected;
 					case TypeAttributes.NotPublic:
 					case TypeAttributes.NestedAssembly:
 					case TypeAttributes.NestedFamANDAssem:
-						return "ExceptionInternal";
+						return DsImages.ExceptionInternal;
 					case TypeAttributes.NestedFamORAssem:
-						return "ExceptionProtectedInternal";
+						return DsImages.ExceptionShortcut;
 					}
 				}
 				else if (type.GenericParameters.Count > 0) {
 					switch (type.Visibility) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
-						return "Generic";
+						return DsImages.Template;
 					case TypeAttributes.NestedPrivate:
-						return "GenericPrivate";
+						return DsImages.TemplatePrivate;
 					case TypeAttributes.NestedFamily:
-						return "GenericProtected";
+						return DsImages.TemplateProtected;
 					case TypeAttributes.NotPublic:
 					case TypeAttributes.NestedAssembly:
 					case TypeAttributes.NestedFamANDAssem:
-						return "GenericInternal";
+						return DsImages.TemplateInternal;
 					case TypeAttributes.NestedFamORAssem:
-						return "GenericProtectedInternal";
+						return DsImages.TemplateShortcut;
 					}
 				}
-				else if (IsStaticClass(type))
-					return "StaticClass";
 				else {
 					switch (type.Visibility) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
-						return "Class";
+						return DsImages.ClassPublic;
 					case TypeAttributes.NestedPrivate:
-						return "ClassPrivate";
+						return DsImages.ClassPrivate;
 					case TypeAttributes.NestedFamily:
-						return "ClassProtected";
+						return DsImages.ClassProtected;
 					case TypeAttributes.NotPublic:
 					case TypeAttributes.NestedAssembly:
 					case TypeAttributes.NestedFamANDAssem:
-						return "ClassInternal";
+						return DsImages.ClassInternal;
 					case TypeAttributes.NestedFamORAssem:
-						return "ClassProtectedInternal";
+						return DsImages.ClassShortcut;
 					}
 				}
 			}
 			Debug.Fail("Impossible to get here");
-			return null;
+			return default(ImageReference);
 		}
 
 		static bool IsDelegate(TypeDef type) =>
@@ -187,28 +180,23 @@ namespace dnSpy.Images {
 			type.Namespace == "System" &&
 			type.Name == "Exception" &&
 			type.DefinitionAssembly.IsCorLib();
-		static bool IsStaticClass(TypeDef type) =>
-			type.IsSealed && type.IsAbstract;
-		public ImageReference GetImageReference(FieldDef field) =>
-			new ImageReference(GetType().Assembly, GetImageName(field));
-
-		static string GetImageName(FieldDef field) {
+		public ImageReference GetImageReference(FieldDef field) {
 			if (field.DeclaringType.IsEnum && !field.IsSpecialName) {
 				switch (field.Access) {
 				default:
 				case FieldAttributes.Public:
-					return "EnumValue";
+					return DsImages.EnumerationItemPublic;
 				case FieldAttributes.Private:
-					return "EnumValuePrivate";
+					return DsImages.EnumerationItemPrivate;
 				case FieldAttributes.Family:
-					return "EnumValueProtected";
+					return DsImages.EnumerationItemProtected;
 				case FieldAttributes.Assembly:
 				case FieldAttributes.FamANDAssem:
-					return "EnumValueInternal";
+					return DsImages.EnumerationItemInternal;
 				case FieldAttributes.CompilerControlled:
-					return "EnumValueCompilerControlled";
+					return DsImages.EnumerationItemSealed;
 				case FieldAttributes.FamORAssem:
-					return "EnumValueProtectedInternal";
+					return DsImages.EnumerationItemShortcut;
 				}
 			}
 
@@ -216,333 +204,144 @@ namespace dnSpy.Images {
 				switch (field.Access) {
 				default:
 				case FieldAttributes.Public:
-					return "Literal";
+					return DsImages.ConstantPublic;
 				case FieldAttributes.Private:
-					return "LiteralPrivate";
+					return DsImages.ConstantPrivate;
 				case FieldAttributes.Family:
-					return "LiteralProtected";
+					return DsImages.ConstantProtected;
 				case FieldAttributes.Assembly:
 				case FieldAttributes.FamANDAssem:
-					return "LiteralInternal";
+					return DsImages.ConstantInternal;
 				case FieldAttributes.CompilerControlled:
-					return "LiteralCompilerControlled";
+					return DsImages.ConstantSealed;
 				case FieldAttributes.FamORAssem:
-					return "LiteralProtectedInternal";
-				}
-			}
-			else if (field.IsInitOnly) {
-				switch (field.Access) {
-				default:
-				case FieldAttributes.Public:
-					return "FieldReadOnly";
-				case FieldAttributes.Private:
-					return "FieldReadOnlyPrivate";
-				case FieldAttributes.Family:
-					return "FieldReadOnlyProtected";
-				case FieldAttributes.Assembly:
-				case FieldAttributes.FamANDAssem:
-					return "FieldReadOnlyInternal";
-				case FieldAttributes.CompilerControlled:
-					return "FieldReadOnlyCompilerControlled";
-				case FieldAttributes.FamORAssem:
-					return "FieldReadOnlyProtectedInternal";
+					return DsImages.ConstantShortcut;
 				}
 			}
 			else {
 				switch (field.Access) {
 				default:
 				case FieldAttributes.Public:
-					return "Field";
+					return DsImages.FieldPublic;
 				case FieldAttributes.Private:
-					return "FieldPrivate";
+					return DsImages.FieldPrivate;
 				case FieldAttributes.Family:
-					return "FieldProtected";
+					return DsImages.FieldProtected;
 				case FieldAttributes.Assembly:
 				case FieldAttributes.FamANDAssem:
-					return "FieldInternal";
+					return DsImages.FieldInternal;
 				case FieldAttributes.CompilerControlled:
-					return "FieldCompilerControlled";
+					return DsImages.FieldSealed;
 				case FieldAttributes.FamORAssem:
-					return "FieldProtectedInternal";
+					return DsImages.FieldShortcut;
 				}
 			}
 		}
 
-		static bool IsSystemDecimal(TypeSig ts) =>
-			ts != null && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
+		static bool IsSystemDecimal(TypeSig ts) => ts != null && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
+		static bool IsDecimalConstant(FieldDef field) => IsSystemDecimal(field.FieldType) && field.CustomAttributes.IsDefined("System.Runtime.CompilerServices.DecimalConstantAttribute");
 
-		static bool IsDecimalConstant(FieldDef field) => IsSystemDecimal(field.FieldType) &&
-	field.CustomAttributes.IsDefined("System.Runtime.CompilerServices.DecimalConstantAttribute");
-
-		public ImageReference GetImageReference(MethodDef method) =>
-			new ImageReference(GetType().Assembly, GetImageName(method));
-
-		static string GetImageName(MethodDef method) {
+		public ImageReference GetImageReference(MethodDef method) {
 			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal)) {
 				switch (method.Access) {
 				default:
 				case MethodAttributes.Public:
-					return "Operator";
+					return DsImages.OperatorPublic;
 				case MethodAttributes.Private:
-					return "OperatorPrivate";
+					return DsImages.OperatorPrivate;
 				case MethodAttributes.Family:
-					return "OperatorProtected";
+					return DsImages.OperatorProtected;
 				case MethodAttributes.Assembly:
 				case MethodAttributes.FamANDAssem:
-					return "OperatorInternal";
+					return DsImages.OperatorInternal;
 				case MethodAttributes.CompilerControlled:
-					return "OperatorCompilerControlled";
+					return DsImages.OperatorSealed;
 				case MethodAttributes.FamORAssem:
-					return "OperatorProtectedInternal";
+					return DsImages.OperatorShortcut;
 				}
 			}
 
 			if (method.IsStatic && method.CustomAttributes.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute"))
-				return "ExtensionMethod";
+				return DsImages.ExtensionMethod;
 
-			if (method.IsConstructor) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "Constructor";
-				case MethodAttributes.Private:
-					return "ConstructorPrivate";
-				case MethodAttributes.Family:
-					return "ConstructorProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "ConstructorInternal";
-				case MethodAttributes.CompilerControlled:
-					return "ConstructorCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "ConstructorProtectedInternal";
-				}
-			}
-
-			if (method.HasImplMap) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "PInvokeMethod";
-				case MethodAttributes.Private:
-					return "PInvokeMethodPrivate";
-				case MethodAttributes.Family:
-					return "PInvokeMethodProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "PInvokeMethodInternal";
-				case MethodAttributes.CompilerControlled:
-					return "PInvokeMethodCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "PInvokeMethodProtectedInternal";
-				}
-			}
-
-			if (method.IsStatic) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "StaticMethod";
-				case MethodAttributes.Private:
-					return "StaticMethodPrivate";
-				case MethodAttributes.Family:
-					return "StaticMethodProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "StaticMethodInternal";
-				case MethodAttributes.CompilerControlled:
-					return "StaticMethodCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "StaticMethodProtectedInternal";
-				}
-			}
-
-			if (method.IsVirtual) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "VirtualMethod";
-				case MethodAttributes.Private:
-					return "VirtualMethodPrivate";
-				case MethodAttributes.Family:
-					return "VirtualMethodProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "VirtualMethodInternal";
-				case MethodAttributes.CompilerControlled:
-					return "VirtualMethodCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "VirtualMethodProtectedInternal";
-				}
-			}
 			switch (method.Access) {
 			default:
 			case MethodAttributes.Public:
-				return "Method";
+				return DsImages.MethodPublic;
 			case MethodAttributes.Private:
-				return "MethodPrivate";
+				return DsImages.MethodPrivate;
 			case MethodAttributes.Family:
-				return "MethodProtected";
+				return DsImages.MethodProtected;
 			case MethodAttributes.Assembly:
 			case MethodAttributes.FamANDAssem:
-				return "MethodInternal";
+				return DsImages.MethodInternal;
 			case MethodAttributes.CompilerControlled:
-				return "MethodCompilerControlled";
+				return DsImages.MethodSealed;
 			case MethodAttributes.FamORAssem:
-				return "MethodProtectedInternal";
+				return DsImages.MethodShortcut;
 			}
 		}
 
-		public ImageReference GetImageReference(EventDef @event) =>
-			new ImageReference(GetType().Assembly, GetImageName(@event));
-
-		static string GetImageName(EventDef @event) {
+		public ImageReference GetImageReference(EventDef @event) {
 			var method = @event.AddMethod ?? @event.RemoveMethod;
 			if (method == null)
-				return "Event";
-
-			if (method.IsStatic) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "StaticEvent";
-				case MethodAttributes.Private:
-					return "StaticEventPrivate";
-				case MethodAttributes.Family:
-					return "StaticEventProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "StaticEventInternal";
-				case MethodAttributes.CompilerControlled:
-					return "StaticEventCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "StaticEventProtectedInternal";
-				}
-			}
-
-			if (method.IsVirtual) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "VirtualEvent";
-				case MethodAttributes.Private:
-					return "VirtualEventPrivate";
-				case MethodAttributes.Family:
-					return "VirtualEventProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "VirtualEventInternal";
-				case MethodAttributes.CompilerControlled:
-					return "VirtualEventCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "VirtualEventProtectedInternal";
-				}
-			}
+				return DsImages.EventPublic;
 
 			switch (method.Access) {
 			default:
 			case MethodAttributes.Public:
-				return "Event";
+				return DsImages.EventPublic;
 			case MethodAttributes.Private:
-				return "EventPrivate";
+				return DsImages.EventPrivate;
 			case MethodAttributes.Family:
-				return "EventProtected";
+				return DsImages.EventProtected;
 			case MethodAttributes.Assembly:
 			case MethodAttributes.FamANDAssem:
-				return "EventInternal";
+				return DsImages.EventInternal;
 			case MethodAttributes.CompilerControlled:
-				return "EventCompilerControlled";
+				return DsImages.EventSealed;
 			case MethodAttributes.FamORAssem:
-				return "EventProtectedInternal";
+				return DsImages.EventShortcut;
 			}
 		}
 
-		public ImageReference GetImageReference(PropertyDef property) =>
-			new ImageReference(GetType().Assembly, GetImageName(property));
-
-		static string GetImageName(PropertyDef property) {
+		public ImageReference GetImageReference(PropertyDef property) {
 			var method = property.GetMethod ?? property.SetMethod;
 			if (method == null)
-				return "Property";
-
-			if (method.IsStatic) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "StaticProperty";
-				case MethodAttributes.Private:
-					return "StaticPropertyPrivate";
-				case MethodAttributes.Family:
-					return "StaticPropertyProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "StaticPropertyInternal";
-				case MethodAttributes.CompilerControlled:
-					return "StaticPropertyCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "StaticPropertyProtectedInternal";
-				}
-			}
-
-			if (method.IsVirtual) {
-				switch (method.Access) {
-				default:
-				case MethodAttributes.Public:
-					return "VirtualProperty";
-				case MethodAttributes.Private:
-					return "VirtualPropertyPrivate";
-				case MethodAttributes.Family:
-					return "VirtualPropertyProtected";
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return "VirtualPropertyInternal";
-				case MethodAttributes.CompilerControlled:
-					return "VirtualPropertyCompilerControlled";
-				case MethodAttributes.FamORAssem:
-					return "VirtualPropertyProtectedInternal";
-				}
-			}
+				return DsImages.Property;
 
 			switch (method.Access) {
 			default:
 			case MethodAttributes.Public:
-				return "Property";
+				return DsImages.Property;
 			case MethodAttributes.Private:
-				return "PropertyPrivate";
+				return DsImages.PropertyPrivate;
 			case MethodAttributes.Family:
-				return "PropertyProtected";
+				return DsImages.PropertyProtected;
 			case MethodAttributes.Assembly:
 			case MethodAttributes.FamANDAssem:
-				return "PropertyInternal";
+				return DsImages.PropertyInternal;
 			case MethodAttributes.CompilerControlled:
-				return "PropertyCompilerControlled";
+				return DsImages.PropertySealed;
 			case MethodAttributes.FamORAssem:
-				return "PropertyProtectedInternal";
+				return DsImages.PropertyShortcut;
 			}
 		}
 
-		public ImageReference GetImageReferenceModuleRef() =>
-			new ImageReference(GetType().Assembly, "ModuleReference");
+		public ImageReference GetImageReferenceModuleRef() => DsImages.Reference;
 		public ImageReference GetImageReference(AssemblyDef assembly) =>
 			GetImageReference(assembly.ManifestModule?.Characteristics ?? Characteristics.Dll);
-		public ImageReference GetImageReferenceAssemblyRef() =>
-			new ImageReference(GetType().Assembly, "AssemblyReference");
-		public ImageReference GetImageReferenceGenericParameter() =>
-			new ImageReference(GetType().Assembly, "GenericParameter");
-		public ImageReference GetImageReferenceLocal() =>
-			new ImageReference(GetType().Assembly, "Local");
-		public ImageReference GetImageReferenceParameter() =>
-			new ImageReference(GetType().Assembly, "Local");
-		public ImageReference GetImageReferenceType() =>
-			new ImageReference(GetType().Assembly, "Class");
-		public ImageReference GetImageReferenceMethod() =>
-			new ImageReference(GetType().Assembly, "Method");
-		public ImageReference GetImageReferenceField() =>
-			new ImageReference(GetType().Assembly, "Field");
+		public ImageReference GetImageReferenceAssemblyRef() => DsImages.Reference;
+		public ImageReference GetImageReferenceGenericParameter() => DsImages.Type;
+		public ImageReference GetImageReferenceLocal() => DsImages.LocalVariable;
+		public ImageReference GetImageReferenceParameter() => DsImages.LocalVariable;
+		public ImageReference GetImageReferenceType() => DsImages.ClassPublic;
+		public ImageReference GetImageReferenceMethod() => DsImages.MethodPublic;
+		public ImageReference GetImageReferenceField() => DsImages.FieldPublic;
 
 		ImageReference GetImageReference(Characteristics ch) {
 			bool isExe = (ch & Characteristics.Dll) == 0;
-			return new ImageReference(GetType().Assembly, isExe ? "AssemblyExe" : "Assembly");
+			return isExe ? DsImages.AssemblyExe : DsImages.Assembly;
 		}
 	}
 }

@@ -24,6 +24,7 @@ using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
@@ -43,7 +44,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override NodePathName NodePathName => new NodePathName(Guid, StreamNumber.ToString());
 		public StorageStreamType StorageStreamType { get; }
 		public override object VMObject => storageStreamVM;
-		protected override string IconName => "BinaryFile";
+		protected override ImageReference IconReference => DsImages.BinaryFile;
 		public int StreamNumber { get; }
 
 		protected override IEnumerable<HexVM> HexVMs {

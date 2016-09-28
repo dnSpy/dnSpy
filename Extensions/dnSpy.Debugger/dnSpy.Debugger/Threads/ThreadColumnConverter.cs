@@ -34,22 +34,22 @@ namespace dnSpy.Debugger.Threads {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CurrentImage")) {
 				if (vm.IsCurrent)
-					return vm.Context.ImageService.GetImage(new ImageReference(GetType().Assembly, "CurrentStatement"), BackgroundType.GridViewItem);
+					return vm.Context.ImageService.GetImage(DsImages.CurrentInstructionPointer, BackgroundType.GridViewItem);
 				if (vm.Type == ThreadType.Main)
-					return vm.Context.ImageService.GetImage(new ImageReference(GetType().Assembly, "DraggedCurrentInstructionPointer"), BackgroundType.GridViewItem);
+					return vm.Context.ImageService.GetImage(DsImages.DraggedCurrentInstructionPointer, BackgroundType.GridViewItem);
 				return null;
 			}
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CategoryImage")) {
 				switch (vm.Type) {
 				case ThreadType.Unknown:
 				case ThreadType.Terminated:
-					return vm.Context.ImageService.GetImage(new ImageReference(GetType().Assembly, "QuestionMark"), BackgroundType.GridViewItem);
+					return vm.Context.ImageService.GetImage(DsImages.QuestionMark, BackgroundType.GridViewItem);
 				case ThreadType.Main:
-					return vm.Context.ImageService.GetImage(new ImageReference(GetType().Assembly, "Thread"), BackgroundType.GridViewItem);
+					return vm.Context.ImageService.GetImage(DsImages.Thread, BackgroundType.GridViewItem);
 				case ThreadType.BGCOrFinalizer:
 				case ThreadType.ThreadPool:
 				case ThreadType.Worker:
-					return vm.Context.ImageService.GetImage(new ImageReference(GetType().Assembly, "Process"), BackgroundType.GridViewItem);
+					return vm.Context.ImageService.GetImage(DsImages.Process, BackgroundType.GridViewItem);
 				default:
 					Debug.Fail(string.Format("Unknown thread type: {0}", vm.Type));
 					goto case ThreadType.Unknown;

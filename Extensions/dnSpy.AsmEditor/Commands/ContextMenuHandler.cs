@@ -18,12 +18,13 @@
 */
 
 using System.Windows.Input;
+using dnSpy.Contracts.Images;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class ContextMenuHandler {
 		public string Header;
 		public string HeaderPlural;
-		public string Icon;
+		public ImageReference? Icon;
 		public string InputGestureText;
 		public ModifierKeys Modifiers = ModifierKeys.None;
 		public Key Key = Key.None;

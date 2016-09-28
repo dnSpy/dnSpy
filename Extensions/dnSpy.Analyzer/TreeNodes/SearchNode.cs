@@ -32,7 +32,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => new ImageReference(GetType().Assembly, "Search");
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Search;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			Debug.Assert(asyncFetchChildrenHelper == null);

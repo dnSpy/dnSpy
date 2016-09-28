@@ -1034,9 +1034,6 @@
     <value>The save is being canceled.
 Are you sure you want to close the window?</value>
   </data>
-  <data name="AskClearUndoHistory" xml:space="preserve">
-    <value>Do you want to clear the undo/redo history?</value>
-  </data>
   <data name="AskDeleteField" xml:space="preserve">
     <value>There could be code in some assembly that references this field. Are you sure you want to delete the field?</value>
   </data>
@@ -1075,9 +1072,6 @@ Are you sure you want to close the window?</value>
   </data>
   <data name="Button_Assembly" xml:space="preserve">
     <value>Assembly</value>
-  </data>
-  <data name="ClearHistoryToolBarToolTip" xml:space="preserve">
-    <value>Clear Undo/Redo History</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
     <value>Convert Assembly to NetModule</value>
