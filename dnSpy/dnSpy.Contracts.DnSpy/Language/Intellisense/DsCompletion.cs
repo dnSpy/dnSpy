@@ -56,13 +56,13 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="iconAutomationText">Icon automation text or null</param>
 		/// <param name="attributeIcons">Attribute icons shown on the right side</param>
 		/// <param name="suffix">Text shown after the normal completion text</param>
-		public DsCompletion(string displayText, string filterText = null, string insertionText = null, string description = null, ImageMoniker? iconMoniker = null, string iconAutomationText = null, IEnumerable<CompletionIcon2> attributeIcons = null, string suffix = null)
+		public DsCompletion(string displayText, string filterText = null, string insertionText = null, string description = null, ImageMoniker iconMoniker = default(ImageMoniker), string iconAutomationText = null, IEnumerable<CompletionIcon2> attributeIcons = null, string suffix = null)
 			: base(displayText, insertionText, description, default(ImageMoniker), iconAutomationText, attributeIcons, suffix) {
 			if (displayText == null)
 				throw new ArgumentNullException(nameof(displayText));
 			FilterText = filterText ?? displayText;
 			InsertionText = insertionText ?? displayText;
-			this.iconMoniker = iconMoniker;
+			this.iconMoniker = iconMoniker.Id == 0 && iconMoniker.Guid == Guid.Empty ? (ImageMoniker?)null : iconMoniker;
 		}
 
 		/// <summary>

@@ -1079,6 +1079,7 @@
     <Resource Include="Images\XsltFile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\EmbedInteropTypes.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(TargetDir)FileLists" 2&gt; NUL
 copy "$(ProjectDir)FileLists\*.FileList.xml" "$(TargetDir)FileLists"
