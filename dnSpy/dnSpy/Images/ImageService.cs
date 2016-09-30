@@ -27,6 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 
@@ -37,25 +38,23 @@ namespace dnSpy.Images {
 		readonly Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>> imageSourceInfoProvidersDict;
 		bool isHighContrast;
 		readonly IThemeService themeService;
+		readonly IDpiService dpiService;
 
 		struct InternalImageOptions : IEquatable<InternalImageOptions> {
 			public Color? BackgroundColor { get; set; }
-			public Size LogicalSize { get; set; }
-			public Size RealPixelSize { get; set; }
+			public Size PhysicalSize { get; set; }
 			public Size Dpi { get; set; }
 
 			public bool Equals(InternalImageOptions other) =>
 				Nullable.Equals(BackgroundColor, other.BackgroundColor) &&
-				LogicalSize.Equals(other.LogicalSize) &&
-				RealPixelSize.Equals(other.RealPixelSize) &&
+				PhysicalSize.Equals(other.PhysicalSize) &&
 				Dpi.Equals(other.Dpi);
 
 			public override bool Equals(object obj) => obj is InternalImageOptions && Equals((InternalImageOptions)obj);
 
 			public override int GetHashCode() =>
 				(BackgroundColor?.GetHashCode() ?? 0) ^
-				LogicalSize.GetHashCode() ^
-				RealPixelSize.GetHashCode() ^
+				PhysicalSize.GetHashCode() ^
 				Dpi.GetHashCode();
 		}
 
@@ -75,8 +74,9 @@ namespace dnSpy.Images {
 		}
 
 		[ImportingConstructor]
-		ImageService(IThemeService themeService, [ImportMany] IEnumerable<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> imageSourceInfoProviders) {
+		ImageService(IThemeService themeService, IDpiService dpiService, [ImportMany] IEnumerable<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> imageSourceInfoProviders) {
 			this.themeService = themeService;
+			this.dpiService = dpiService;
 			this.imageCache = new Dictionary<ImageKey, BitmapSource>();
 			this.imageSourceInfoProvidersDict = new Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>>();
 			this.themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
@@ -124,6 +124,7 @@ namespace dnSpy.Images {
 				return null;
 
 			switch (bgType.Value) {
+			case BackgroundType.None:				return null;
 			case BackgroundType.Button:				return GetColorBackground(ColorType.CommonControlsButtonIconBackground);
 			case BackgroundType.TextEditor:			return GetColorBackground(ColorType.DefaultText);
 			case BackgroundType.DialogWindow:		return GetColorBackground(ColorType.DialogWindow);
@@ -154,25 +155,41 @@ namespace dnSpy.Images {
 			return c.Color;
 		}
 
-		public BitmapSource GetImage(ImageReference imageReference, BackgroundType bgType) =>
-			GetImage(imageReference, new ImageOptions { BackgroundType = bgType });
+		Size GetDpi(DependencyObject dpiObject, Size dpi) {
+			if (dpiObject != null) {
+				var window = Window.GetWindow(dpiObject) as MetroWindow;
+				if (window != null)
+					return window.WindowDpi;
+			}
 
-		public BitmapSource GetImage(ImageReference imageReference, Color? bgColor) =>
-			GetImage(imageReference, new ImageOptions { BackgroundColor = bgColor });
+			if (dpi != new Size(0, 0))
+				return dpi;
+
+			return dpiService.MainWindowDpi;
+		}
+
+		static Size Round(Size size) => new Size(Math.Round(size.Width), Math.Round(size.Height));
 
 		public BitmapSource GetImage(ImageReference imageReference, ImageOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
 			if (imageReference.Name == null)
 				return null;
 
 			var internalOptions = new InternalImageOptions();
 			internalOptions.BackgroundColor = options.BackgroundColor ?? GetColor(options.BackgroundType);
-			internalOptions.LogicalSize = options.LogicalSize;
-			if (internalOptions.LogicalSize == new Size(0, 0))
-				internalOptions.LogicalSize = new Size(16, 16);
-			internalOptions.Dpi = new Size(96, 96);//TODO:
-			internalOptions.RealPixelSize = new Size(internalOptions.LogicalSize.Width * (internalOptions.Dpi.Width / 96), internalOptions.LogicalSize.Height * (internalOptions.Dpi.Height / 96));
+			var logicalSize = options.LogicalSize;
+			if (logicalSize == new Size(0, 0))
+				logicalSize = new Size(16, 16);
+			internalOptions.Dpi = GetDpi(options.DpiObject, options.Dpi);
+			if (options.Zoom != new Size(0, 0))
+				internalOptions.Dpi = new Size(internalOptions.Dpi.Width * options.Zoom.Width, internalOptions.Dpi.Height * options.Zoom.Height);
+			internalOptions.Dpi = Round(internalOptions.Dpi);
+			if (internalOptions.Dpi.Width == 0 || internalOptions.Dpi.Height == 0)
+				return null;
+			internalOptions.PhysicalSize = Round(new Size(logicalSize.Width * internalOptions.Dpi.Width / 96, logicalSize.Height * internalOptions.Dpi.Height / 96));
 
-			if (internalOptions.RealPixelSize.Width == 0 || internalOptions.RealPixelSize.Height == 0)
+			if (internalOptions.PhysicalSize.Width == 0 || internalOptions.PhysicalSize.Height == 0)
 				return null;
 
 			if (imageReference.Assembly != null) {
@@ -188,21 +205,21 @@ namespace dnSpy.Images {
 							return 0;
 
 						// Try exact size first
-						if ((a.Size == internalOptions.RealPixelSize) != (b.Size == internalOptions.RealPixelSize))
-							return a.Size == internalOptions.RealPixelSize ? -1 : 1;
+						if ((a.Size == internalOptions.PhysicalSize) != (b.Size == internalOptions.PhysicalSize))
+							return a.Size == internalOptions.PhysicalSize ? -1 : 1;
 
 						// Try any-size (xaml images)
 						if ((a.Size == ImageSourceInfo.AnySize) != (b.Size == ImageSourceInfo.AnySize))
 							return a.Size == ImageSourceInfo.AnySize ? -1 : 1;
 
 						// Closest size (using height)
-						if (a.Size.Height >= internalOptions.RealPixelSize.Height) {
-							if (b.Size.Height < internalOptions.RealPixelSize.Height)
+						if (a.Size.Height >= internalOptions.PhysicalSize.Height) {
+							if (b.Size.Height < internalOptions.PhysicalSize.Height)
 								return -1;
 							return a.Size.Height.CompareTo(b.Size.Height);
 						}
 						else {
-							if (b.Size.Height >= internalOptions.RealPixelSize.Height)
+							if (b.Size.Height >= internalOptions.PhysicalSize.Height)
 								return 1;
 							return b.Size.Height.CompareTo(a.Size.Height);
 						}
@@ -231,7 +248,7 @@ namespace dnSpy.Images {
 			if (imageCache.TryGetValue(key, out image))
 				return image;
 
-			image = TryLoadImage(uriString, options.RealPixelSize, options.Dpi);
+			image = TryLoadImage(uriString, options.PhysicalSize);
 			if (image == null)
 				return null;
 
@@ -241,28 +258,22 @@ namespace dnSpy.Images {
 			return image;
 		}
 
-		BitmapSource TryLoadImage(string uriString, Size realPixelSize, Size dpi) {
+		BitmapSource TryLoadImage(string uriString, Size physicalSize) {
 			try {
-				var uriKind = UriKind.RelativeOrAbsolute;
-				if (uriString.StartsWith("pack:") || uriString.StartsWith("file:"))
-					uriKind = UriKind.Absolute;
-				var uri = new Uri(uriString, uriKind);
+				var uri = new Uri(uriString, UriKind.RelativeOrAbsolute);
 				var info = Application.GetResourceStream(uri);
 				if (info.ContentType.Equals("application/xaml+xml", StringComparison.OrdinalIgnoreCase) || info.ContentType.Equals("application/baml+xml", StringComparison.OrdinalIgnoreCase)) {
 					var component = Application.LoadComponent(uri);
 					var elem = component as FrameworkElement;
 					if (elem != null)
-						return ResizeElement(elem, realPixelSize, dpi);
-					var bitmapSource = component as BitmapSource;
-					if (bitmapSource != null)
-						return ResizeImage(bitmapSource, realPixelSize, dpi);
+						return ResizeElement(elem, physicalSize);
 					return null;
 				}
 				else if (info.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)) {
 					var decoder = BitmapDecoder.Create(info.Stream, BitmapCreateOptions.None, BitmapCacheOption.OnDemand);
 					if (decoder.Frames.Count == 0)
 						return null;
-					return ResizeImage(decoder.Frames[0], realPixelSize, dpi);
+					return ResizeImage(decoder.Frames[0], physicalSize);
 				}
 				else
 					return null;
@@ -272,25 +283,27 @@ namespace dnSpy.Images {
 			}
 		}
 
-		static BitmapSource ResizeImage(BitmapSource bitmapImage, Size realPixelSize, Size dpi) {
-			if (bitmapImage.PixelWidth == realPixelSize.Width && bitmapImage.PixelHeight == realPixelSize.Height)
+		static BitmapSource ResizeImage(BitmapSource bitmapImage, Size physicalSize) {
+			if (bitmapImage.PixelWidth == physicalSize.Width && bitmapImage.PixelHeight == physicalSize.Height)
 				return bitmapImage;
 			var image = new Image { Source = bitmapImage };
 			RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
-			return ResizeElement(image, realPixelSize, dpi);
+			return ResizeElement(image, physicalSize);
 		}
 
-		static BitmapSource ResizeElement(FrameworkElement elem, Size realPixelSize, Size dpi) {
-			elem.Width = realPixelSize.Width;
-			elem.Height = realPixelSize.Height;
-			elem.Measure(realPixelSize);
-			elem.Arrange(new Rect(realPixelSize));
+		static BitmapSource ResizeElement(FrameworkElement elem, Size physicalSize) {
+			elem.Width = physicalSize.Width;
+			elem.Height = physicalSize.Height;
+			elem.Measure(physicalSize);
+			elem.Arrange(new Rect(physicalSize));
 			var dv = new DrawingVisual();
 			using (var dc = dv.RenderOpen()) {
 				var brush = new VisualBrush(elem) { Stretch = Stretch.Uniform };
-				dc.DrawRectangle(brush, null, new Rect(realPixelSize));
+				dc.DrawRectangle(brush, null, new Rect(physicalSize));
 			}
-			var renderBmp = new RenderTargetBitmap((int)realPixelSize.Width, (int)realPixelSize.Height, dpi.Width, dpi.Height, PixelFormats.Pbgra32);
+			Debug.Assert((int)physicalSize.Width == physicalSize.Width);
+			Debug.Assert((int)physicalSize.Height == physicalSize.Height);
+			var renderBmp = new RenderTargetBitmap((int)physicalSize.Width, (int)physicalSize.Height, 96, 96, PixelFormats.Pbgra32);
 			renderBmp.Render(dv);
 			return new FormatConvertedBitmap(renderBmp, PixelFormats.Bgra32, null, 0);
 		}

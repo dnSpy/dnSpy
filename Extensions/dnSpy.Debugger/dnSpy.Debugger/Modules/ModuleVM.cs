@@ -28,6 +28,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.Debugger.Modules {
 	interface IModuleContext {
 		IImageService ImageService { get; }
+		ImageOptions ImageOptions { get; }
 		ITheDebugger TheDebugger { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
@@ -36,6 +37,7 @@ namespace dnSpy.Debugger.Modules {
 	sealed class ModuleContext : IModuleContext {
 		public IImageService ImageService { get; }
 		public ITheDebugger TheDebugger { get; }
+		public ImageOptions ImageOptions { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 

@@ -58,8 +58,22 @@ namespace dnSpy.Debugger.Locals {
 		public virtual bool CanEdit => false;
 		protected abstract ImageReference IconReference { get; }
 		public IPrinterContext PrinterContext => context.LocalsOwner.PrinterContext;
-		public sealed override object Icon => context.LocalsOwner.PrinterContext.ImageService.GetImage(IconReference, BackgroundType.TreeNode);
 		public sealed override bool ShowIcon => true;
+
+		public sealed override object Icon {
+			get {
+				var ctx = context.LocalsOwner.PrinterContext;
+				if (ctx.ImageOptions == null)
+					return null;
+				var options = new ImageOptions {
+					BackgroundType = BackgroundType.TreeNode,
+					Zoom = ctx.ImageOptions.Zoom,
+					DpiObject = ctx.ImageOptions.DpiObject,
+					Dpi = ctx.ImageOptions.Dpi,
+				};
+				return ctx.ImageService.GetImage(IconReference, options);
+			}
+		}
 
 		public CachedOutput CachedOutputValue {
 			get {

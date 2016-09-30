@@ -102,7 +102,7 @@ namespace Example2.Extension {
 		public IInputElement FocusedElement => content;
 
 		// The element in UIObject that gets the scale transform. null can be returned to disable scaling.
-		public FrameworkElement ScaleElement => content;
+		public FrameworkElement ZoomElement => content;
 
 		// The UI object shown in the tab. Should be a WPF control (eg. UserControl) or a .NET object
 		// with a DataTemplate.
@@ -110,6 +110,7 @@ namespace Example2.Extension {
 
 		public void OnHide() { }
 		public void OnShow() { }
+		public void OnZoomChanged(double value) { }
 
 		readonly ContentPresenter content;
 		readonly AssemblyChildNodeVM vm;

@@ -59,9 +59,9 @@ namespace dnSpy.Search {
 			}
 		}
 
-		public BackgroundType BackgroundType {
-			get { return filterSearcherOptions.Context.BackgroundType; }
-			set { filterSearcherOptions.Context.BackgroundType = value; }
+		public ImageOptions ImageOptions {
+			get { return filterSearcherOptions.Context.ImageOptions; }
+			set { filterSearcherOptions.Context.ImageOptions = value; }
 		}
 
 		public bool TooManyResults { get; set; }

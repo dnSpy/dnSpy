@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.Modules {
 		bool IsVisible { get; set; }
 
 		void RefreshThemeFields();
+		void SetImageOptions(ImageOptions imageOptions);
 	}
 
 	[Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug))]
@@ -53,7 +54,15 @@ namespace dnSpy.Debugger.Modules {
 
 		public bool IsEnabled {//TODO: Use it
 			get { return isEnabled; }
-			set { isEnabled = value; }
+			set {
+				if (isEnabled == value)
+					return;
+				isEnabled = value;
+				if (isEnabled) {
+					// Make sure the images have been refreshed (the DPI could've changed while the control was closed)
+					RefreshThemeFields();
+				}
+			}
 		}
 		bool isEnabled;
 
@@ -78,6 +87,11 @@ namespace dnSpy.Debugger.Modules {
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			if (theDebugger.ProcessState != DebuggerProcessState.Terminated)
 				InstallDebuggerHooks(theDebugger.Debugger);
+		}
+
+		void IModulesVM.SetImageOptions(ImageOptions imageOptions) {
+			moduleContext.ImageOptions = imageOptions;
+			RefreshThemeFields();
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {

@@ -30,6 +30,7 @@ using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 	sealed class InformationQuickInfoContentVM {
@@ -49,7 +50,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		public object ExceptionObject { get; }
 		public bool HasExceptionObject => ExceptionObject != null;
 
-		public InformationQuickInfoContentVM(InformationQuickInfoContent content, IRoslynGlyphService roslynGlyphService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
+		public InformationQuickInfoContentVM(ITextView textView, InformationQuickInfoContent content, IRoslynGlyphService roslynGlyphService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			if (roslynGlyphService == null)
@@ -59,10 +62,11 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			var sb = new StringBuilder();
+			var options = new ImageOptions(textView) { BackgroundType = BackgroundType.QuickInfo };
 			if (content.SymbolGlyph != null)
-				SymbolImageSource = roslynGlyphService.GetImage(content.SymbolGlyph.Value, BackgroundType.QuickInfo);
+				SymbolImageSource = roslynGlyphService.GetImage(content.SymbolGlyph.Value, options);
 			if (content.WarningGlyph != null)
-				WarningImageSource = roslynGlyphService.GetImage(content.WarningGlyph.Value, BackgroundType.QuickInfo);
+				WarningImageSource = roslynGlyphService.GetImage(content.WarningGlyph.Value, options);
 			MainDescriptionObject = TryCreateObject(sb, content.MainDescription, classificationFormatMap, themeClassificationTypeService);
 			DocumentationObject = TryCreateObject(sb, content.Documentation, classificationFormatMap, themeClassificationTypeService);
 			UsageObject = TryCreateObject(sb, content.UsageText, classificationFormatMap, themeClassificationTypeService);

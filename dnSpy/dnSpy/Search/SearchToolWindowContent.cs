@@ -55,7 +55,7 @@ namespace dnSpy.Search {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement => searchService.Value.FocusedElement;
-		public FrameworkElement ScaleElement => searchService.Value.ScaleElement;
+		public FrameworkElement ZoomElement => searchService.Value.ZoomElement;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Resources.SearchWindow_Title;
 		public object ToolTip => null;
@@ -76,5 +76,6 @@ namespace dnSpy.Search {
 		}
 
 		public void Focus() => searchService.Value.Focus();
+		public void OnZoomChanged(double value) => searchService.Value.OnZoomChanged(value);
 	}
 }

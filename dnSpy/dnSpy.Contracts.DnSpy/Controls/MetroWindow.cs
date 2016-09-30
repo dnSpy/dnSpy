@@ -40,6 +40,11 @@ namespace dnSpy.Contracts.Controls {
 		public static readonly RoutedCommand FullScreenCommand = new RoutedCommand("FullScreen", typeof(MetroWindow));
 
 		/// <summary>
+		/// Raised when a new <see cref="MetroWindow"/> instance has been created
+		/// </summary>
+		internal static EventHandler<MetroWindowCreatedEventArgs> MetroWindowCreated;
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		public MetroWindow() {
@@ -47,6 +52,7 @@ namespace dnSpy.Contracts.Controls {
 			// Since the system menu had to be disabled, we must add this command
 			var cmd = new RelayCommand(a => ShowSystemMenu(this), a => !IsFullScreen);
 			InputBindings.Add(new KeyBinding(cmd, Key.Space, ModifierKeys.Alt));
+			MetroWindowCreated?.Invoke(this, new MetroWindowCreatedEventArgs(this));
 		}
 
 		internal bool DisableDpiScalingAtStartup { get; set; }
@@ -63,7 +69,7 @@ namespace dnSpy.Contracts.Controls {
 
 				var w = Width;
 				var h = Height;
-				Dpi = GetDpi(hwndSource.Handle) ?? wpfDpi;
+				WindowDpi = GetDpi(hwndSource.Handle) ?? wpfDpi;
 
 				// For some reason, we can't initialize the non-fit-to-size property, so always force
 				// manual mode. When we're here, we should already have a valid Width and Height
@@ -140,7 +146,7 @@ namespace dnSpy.Contracts.Controls {
 					int newDpiY = (ushort)(wParam.ToInt64() >> 16);
 					int newDpiX = (ushort)wParam.ToInt64();
 
-					Dpi = new Size(newDpiX, newDpiY);
+					WindowDpi = new Size(newDpiX, newDpiY);
 
 					if (!wpfSupportsPerMonitorDpi) {
 						const int SWP_NOZORDER = 0x0004;
@@ -186,7 +192,7 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Gets the DPI
 		/// </summary>
-		public Size Dpi {
+		public Size WindowDpi {
 			get { return windowDpi; }
 			private set {
 				if (windowDpi != value) {
@@ -208,7 +214,7 @@ namespace dnSpy.Contracts.Controls {
 						ScaleWindow(WpfPixelScaleFactor);
 					}
 
-					WindowDPIChanged?.Invoke(this, EventArgs.Empty);
+					WindowDpiChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}
@@ -216,9 +222,9 @@ namespace dnSpy.Contracts.Controls {
 		Size wpfDpi;
 
 		/// <summary>
-		/// Raised when the DPI has changed
+		/// Raised when the DPI (<see cref="WindowDpi"/>) has changed
 		/// </summary>
-		public event EventHandler WindowDPIChanged;
+		public event EventHandler WindowDpiChanged;
 
 		void UpdateWindowChromeProperties() {
 			if (wpfSupportsPerMonitorDpi)
@@ -792,7 +798,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void SetTextFormattingMode(DependencyObject textObj, double scale) {
 			if (scale == 1) {
-				if (Dpi == new Size(96, 96))
+				if (WindowDpi == new Size(96, 96))
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Display);
 				else
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Ideal);

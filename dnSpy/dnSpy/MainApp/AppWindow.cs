@@ -100,20 +100,21 @@ namespace dnSpy.MainApp {
 		readonly IWpfCommandService wpfCommandService;
 		readonly StackedContent<IStackedContentChild> stackedContent;
 		readonly IThemeService themeService;
+		readonly IDpiService dpiService;
 		readonly IImageService imageService;
 		readonly AppToolBar appToolBar;
 		readonly MainWindowControl mainWindowControl;
 		readonly IDecompilerService decompilerService;
 
 		[ImportingConstructor]
-		AppWindow(IThemeService themeService, IImageService imageService, IAppSettings appSettings, ISettingsService settingsService, IDocumentTabService documentTabService, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandService wpfCommandService, IDecompilerService decompilerService) {
+		AppWindow(IThemeService themeService, IDpiService dpiService, IImageService imageService, IAppSettings appSettings, ISettingsService settingsService, IDocumentTabService documentTabService, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandService wpfCommandService, IDecompilerService decompilerService) {
 			this.assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
 			this.uiSettings = new UISettings(settingsService);
 			this.uiSettings.Read();
 			this.appSettings = appSettings;
 			this.stackedContent = new StackedContent<IStackedContentChild>(margin: new Thickness(6));
 			this.themeService = themeService;
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			this.dpiService = dpiService;
 			this.imageService = imageService;
 			this.documentTabService = documentTabService;
 			this.statusBar = new AppStatusBar();
@@ -124,6 +125,8 @@ namespace dnSpy.MainApp {
 			this.mainWindowCommands = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();
+			dpiService.DpiChanged += DpiService_DpiChanged;
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 		}
 
 		static string CalculateAssemblyInformationalVersion(Assembly asm) {
@@ -135,10 +138,15 @@ namespace dnSpy.MainApp {
 			return asm.GetName().Version.ToString();
 		}
 
+		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
+			if (e.Window == mainWindow)
+				RefreshToolBar();
+		}
+
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshToolBar();
 
 		static readonly Rect DefaultWindowLocation = new Rect(10, 10, 1300, 730);
-		public Window InitializeMainWindow() {
+		public MetroWindow InitializeMainWindow() {
 			var sc = new StackedContent<IStackedContentChild>(false);
 			sc.AddChild(appToolBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			sc.AddChild(stackedContent, StackedContentChildInfo.CreateVertical(new GridLength(1, GridUnitType.Star)));
@@ -175,7 +183,11 @@ namespace dnSpy.MainApp {
 			uiSettings.Write();
 		}
 
-		void MainWindow_Closed(object sender, EventArgs e) => mainWindowClosed.Raise(this, e);
+		void MainWindow_Closed(object sender, EventArgs e) {
+			dpiService.DpiChanged -= DpiService_DpiChanged;
+			themeService.ThemeChanged -= ThemeService_ThemeChanged;
+			mainWindowClosed.Raise(this, e);
+		}
 
 		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			if (e.NewFocus == MainWindow) {

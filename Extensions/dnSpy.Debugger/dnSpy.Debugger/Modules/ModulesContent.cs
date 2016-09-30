@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.IMModules;
@@ -43,7 +44,7 @@ namespace dnSpy.Debugger.Modules {
 	sealed class ModulesContent : IModulesContent {
 		public object UIObject => modulesControl;
 		public IInputElement FocusedElement => modulesControl.ListView;
-		public FrameworkElement ScaleElement => modulesControl;
+		public FrameworkElement ZoomElement => modulesControl;
 		public ListView ListView => modulesControl.ListView;
 		public IModulesVM ModulesVM => vmModules;
 
@@ -52,9 +53,10 @@ namespace dnSpy.Debugger.Modules {
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
+		double zoomLevel;
 
 		[ImportingConstructor]
-		ModulesContent(IWpfCommandService wpfCommandService, IThemeService themeService, IModulesVM modulesVM, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService) {
+		ModulesContent(IWpfCommandService wpfCommandService, IThemeService themeService, IDpiService dpiService, IModulesVM modulesVM, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService) {
 			this.modulesControl = new ModulesControl();
 			this.vmModules = modulesVM;
 			this.documentTabService = documentTabService;
@@ -63,14 +65,29 @@ namespace dnSpy.Debugger.Modules {
 			this.modulesControl.DataContext = this.vmModules;
 			this.modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			dpiService.DpiChanged += DpiService_DpiChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);
+			UpdateImageOptions();
+		}
+
+		void UpdateImageOptions() {
+			var options = new ImageOptions {
+				Zoom = new Size(zoomLevel, zoomLevel),
+				DpiObject = modulesControl,
+			};
+			vmModules.SetImageOptions(options);
 		}
 
 		void ModulesControl_ModulesListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			GoToModuleModulesCtxMenuCommand.ExecuteInternal(documentTabService, inMemoryModuleService, moduleLoader, modulesControl.ListView.SelectedItem as ModuleVM, newTab);
+		}
+
+		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
+			if (e.Window == Window.GetWindow(modulesControl))
+				vmModules.RefreshThemeFields();
 		}
 
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmModules.RefreshThemeFields();
@@ -79,5 +96,12 @@ namespace dnSpy.Debugger.Modules {
 		public void OnShow() => vmModules.IsEnabled = true;
 		public void OnHidden() => vmModules.IsVisible = false;
 		public void OnVisible() => vmModules.IsVisible = true;
+
+		public void OnZoomChanged(double value) {
+			if (zoomLevel == value)
+				return;
+			zoomLevel = value;
+			UpdateImageOptions();
+		}
 	}
 }

@@ -17,10 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
 

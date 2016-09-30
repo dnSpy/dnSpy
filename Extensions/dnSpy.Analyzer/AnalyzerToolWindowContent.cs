@@ -51,7 +51,7 @@ namespace dnSpy.Analyzer {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement => null;
-		public FrameworkElement ScaleElement => analyzerService.Value.TreeView.UIObject as FrameworkElement;
+		public FrameworkElement ZoomElement => analyzerService.Value.TreeView.UIObject;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Analyzer_Resources.AnalyzerWindowTitle;
 		public object ToolTip => null;
@@ -70,5 +70,6 @@ namespace dnSpy.Analyzer {
 		}
 
 		public void Focus() => analyzerService.Value.TreeView.Focus();
+		public void OnZoomChanged(double value) => analyzerService.Value.TreeView.OnZoomChanged(value);
 	}
 }

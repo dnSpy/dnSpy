@@ -233,7 +233,8 @@ namespace dnSpy.Menus {
 				return false;
 
 			var menu = new ContextMenu();
-			var allItems = CreateMenuItems(ctx, groups, null, null, true);
+			var imageOptions = new ImageOptions { DpiObject = ctxMenuElem };
+			var allItems = CreateMenuItems(imageOptions, ctx, groups, null, null, true);
 			if (allItems.Count == 0)
 				return false;
 			foreach (var i in allItems)
@@ -250,7 +251,7 @@ namespace dnSpy.Menus {
 			return true;
 		}
 
-		List<object> CreateMenuItems(MenuItemContext ctx, List<MenuItemGroupMD> groups, IInputElement commandTarget, MenuItem firstMenuItem, bool isCtxMenu) {
+		List<object> CreateMenuItems(ImageOptions imageOptions, MenuItemContext ctx, List<MenuItemGroupMD> groups, IInputElement commandTarget, MenuItem firstMenuItem, bool isCtxMenu) {
 			var allItems = new List<object>();
 
 			var items = new List<MenuItemMD>();
@@ -271,13 +272,13 @@ namespace dnSpy.Menus {
 					var itemProvider = item.MenuItem as IMenuItemProvider;
 					if (itemProvider != null) {
 						foreach (var createdItem in itemProvider.Create(ctx)) {
-							var menuItem = Create(createdItem.MenuItem, createdItem.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
+							var menuItem = Create(imageOptions, createdItem.MenuItem, createdItem.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
 							firstMenuItem = null;
 							allItems.Add(menuItem);
 						}
 					}
 					else {
-						var menuItem = Create(item.MenuItem, item.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
+						var menuItem = Create(imageOptions, item.MenuItem, item.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
 						firstMenuItem = null;
 						allItems.Add(menuItem);
 					}
@@ -287,7 +288,7 @@ namespace dnSpy.Menus {
 			return allItems;
 		}
 
-		MenuItem Create(IMenuItem item, IMenuItemMetadata metadata, MenuItemContext ctx, IInputElement commandTarget, MenuItem menuItem, bool isCtxMenu) {
+		MenuItem Create(ImageOptions imageOptions, IMenuItem item, IMenuItemMetadata metadata, MenuItemContext ctx, IInputElement commandTarget, MenuItem menuItem, bool isCtxMenu) {
 			if (menuItem == null)
 				menuItem = new MenuItem();
 			menuItem.CommandTarget = commandTarget;
@@ -316,7 +317,7 @@ namespace dnSpy.Menus {
 					var routedCommand = cmdHolder.Command as RoutedCommand;
 					lastIsEnabledCallValue = commandTarget == null || routedCommand == null || routedCommand.CanExecute(ctx, commandTarget);
 				}
-				imageService.Add16x16Image(menuItem, iconImgRef.Value, isCtxMenu, lastIsEnabledCallValue);
+				imageService.Add16x16Image(imageOptions, menuItem, iconImgRef.Value, isCtxMenu, lastIsEnabledCallValue);
 			}
 
 			if (metadata.Guid != null) {
@@ -326,7 +327,7 @@ namespace dnSpy.Menus {
 					menuItem.Items.Add(new MenuItem());
 					menuItem.SubmenuOpened += (s, e) => {
 						if (e.Source == menuItem)
-							InitializeSubMenu(menuItem, ctx, itemGuid, commandTarget, isCtxMenu);
+							InitializeSubMenu(imageOptions, menuItem, ctx, itemGuid, commandTarget, isCtxMenu);
 					};
 					menuItem.SubmenuClosed += (s, e) => {
 						if (e.Source == menuItem) {
@@ -348,7 +349,7 @@ namespace dnSpy.Menus {
 					return false;
 				bool b = item.IsEnabled(ctx);
 				if (lastIsEnabledCallValue != b && iconImgRef != null)
-					imageService.Add16x16Image(menuItem, iconImgRef.Value, isCtxMenu, lastIsEnabledCallValue = b);
+					imageService.Add16x16Image(imageOptions, menuItem, iconImgRef.Value, isCtxMenu, lastIsEnabledCallValue = b);
 				return b;
 			});
 
@@ -364,7 +365,7 @@ namespace dnSpy.Menus {
 			}
 		}
 
-		void InitializeSubMenu(MenuItem menuItem, MenuItemContext ctx, Guid ownerMenuGuid, IInputElement commandTarget, bool isCtxMenu) {
+		void InitializeSubMenu(ImageOptions imageOptions, MenuItem menuItem, MenuItemContext ctx, Guid ownerMenuGuid, IInputElement commandTarget, bool isCtxMenu) {
 			Reinitialize(menuItem);
 
 			List<MenuItemGroupMD> groups;
@@ -372,7 +373,7 @@ namespace dnSpy.Menus {
 			Debug.Assert(b);
 			if (b) {
 				var firstMenuItem = menuItem.Items.Count == 1 ? menuItem.Items[0] as MenuItem : null;
-				var allItems = CreateMenuItems(ctx, groups, commandTarget, firstMenuItem, isCtxMenu);
+				var allItems = CreateMenuItems(imageOptions, ctx, groups, commandTarget, firstMenuItem, isCtxMenu);
 				foreach (var i in allItems) {
 					if (firstMenuItem != i)
 						menuItem.Items.Add(i);
@@ -380,7 +381,7 @@ namespace dnSpy.Menus {
 			}
 		}
 
-		MenuItemContext InitializeMainSubMenu(MenuItem menuItem, MenuMD md, IInputElement commandTarget) {
+		MenuItemContext InitializeMainSubMenu(ImageOptions imageOptions, MenuItem menuItem, MenuMD md, IInputElement commandTarget) {
 			Reinitialize(menuItem);
 
 			List<MenuItemGroupMD> groups;
@@ -390,7 +391,7 @@ namespace dnSpy.Menus {
 			if (b) {
 				var ctx = new MenuItemContext(guid, true, new GuidObject(guid, null), null);
 				var firstMenuItem = menuItem.Items.Count == 1 ? menuItem.Items[0] as MenuItem : null;
-				var allItems = CreateMenuItems(ctx, groups, commandTarget, firstMenuItem, false);
+				var allItems = CreateMenuItems(imageOptions, ctx, groups, commandTarget, firstMenuItem, false);
 				foreach (var i in allItems) {
 					if (firstMenuItem != i)
 						menuItem.Items.Add(i);
@@ -401,7 +402,9 @@ namespace dnSpy.Menus {
 			return null;
 		}
 
-		public Menu CreateMenu(Guid menuGuid, IInputElement commandTarget) {
+		public Menu CreateMenu(Guid menuGuid, ImageOptions imageOptions, IInputElement commandTarget) {
+			if (imageOptions == null)
+				throw new ArgumentNullException(nameof(imageOptions));
 			InitializeMenuItemObjects();
 
 			var menu = new Menu();
@@ -423,7 +426,7 @@ namespace dnSpy.Menus {
 				topMenuItem.SubmenuOpened += (s, e) => {
 					if (e.Source == topMenuItem) {
 						ctxTmp?.Dispose();
-						ctxTmp = InitializeMainSubMenu(topMenuItem, mdTmp, commandTarget);
+						ctxTmp = InitializeMainSubMenu(imageOptions, topMenuItem, mdTmp, commandTarget);
 					}
 				};
 				topMenuItem.SubmenuClosed += (s, e) => {

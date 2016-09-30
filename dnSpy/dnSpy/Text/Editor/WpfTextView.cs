@@ -628,7 +628,7 @@ namespace dnSpy.Text.Editor {
 			spaceReservationStack.GotAggregateFocus -= SpaceReservationStack_GotAggregateFocus;
 			spaceReservationStack.LostAggregateFocus -= SpaceReservationStack_LostAggregateFocus;
 			if (metroWindow != null)
-				metroWindow.WindowDPIChanged -= MetroWindow_WindowDPIChanged;
+				metroWindow.WindowDpiChanged -= MetroWindow_WindowDpiChanged;
 		}
 
 		void InitializeOptions() {
@@ -871,8 +871,8 @@ namespace dnSpy.Text.Editor {
 			if (window != null && metroWindow == null)
 				return;
 			if (metroWindow != null) {
-				metroWindow.WindowDPIChanged += MetroWindow_WindowDPIChanged;
-				MetroWindow_WindowDPIChanged(metroWindow, EventArgs.Empty);
+				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
+				MetroWindow_WindowDpiChanged(metroWindow, EventArgs.Empty);
 				ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(ZoomLevel, LayoutTransform));
 				return;
 			}
@@ -887,14 +887,14 @@ namespace dnSpy.Text.Editor {
 			metroWindow = window as MetroWindow;
 			Debug.Assert(window != null);
 			if (metroWindow != null) {
-				metroWindow.WindowDPIChanged += MetroWindow_WindowDPIChanged;
-				MetroWindow_WindowDPIChanged(metroWindow, EventArgs.Empty);
+				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
+				MetroWindow_WindowDpiChanged(metroWindow, EventArgs.Empty);
 				ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(ZoomLevel, LayoutTransform));
 				return;
 			}
 		}
 
-		void MetroWindow_WindowDPIChanged(object sender, EventArgs e) {
+		void MetroWindow_WindowDpiChanged(object sender, EventArgs e) {
 			Debug.Assert(sender != null && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(this, ZoomLevel / 100);
 		}

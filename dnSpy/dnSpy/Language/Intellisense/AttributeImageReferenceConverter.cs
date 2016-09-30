@@ -20,12 +20,11 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class AttributeImageReferenceConverter : IMultiValueConverter {
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-			var completionIcon = (CompletionIcon)values[0];
+			var completionIcon = (CompletionIconVM)values[0];
 			var presenter = (CompletionPresenter)values[1];
 			if (completionIcon == null || presenter == null)
 				return null;

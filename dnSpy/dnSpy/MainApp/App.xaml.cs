@@ -127,6 +127,9 @@ namespace dnSpy.MainApp {
 
 			var cultureService = compositionContainer.GetExportedValue<CultureService>();
 			cultureService.Initialize(this.args);
+
+			// Make sure IDpiService gets created before any MetroWindows
+			compositionContainer.GetExportedValue<IDpiService>();
 		}
 
 		CompositionContainer InitializeCompositionContainer() {

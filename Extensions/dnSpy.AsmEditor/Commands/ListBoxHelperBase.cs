@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Extension;
@@ -270,8 +271,8 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		protected static void Add16x16Image(MenuItem menuItem, ImageReference iconReference, bool isCtxMenu, bool? enable = null) =>
-			ListBoxHelperBase_ImageServiceLoader.ImageService.Add16x16Image(menuItem, iconReference, isCtxMenu, enable);
+		protected static void Add16x16Image(DependencyObject dpiObject, MenuItem menuItem, ImageReference iconReference, bool isCtxMenu, bool? enable = null) =>
+			ListBoxHelperBase_ImageServiceLoader.ImageService.Add16x16Image(dpiObject, menuItem, iconReference, isCtxMenu, enable);
 
 		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();
@@ -289,7 +290,7 @@ namespace dnSpy.AsmEditor.Commands {
 				var tmpHandler = handler;
 				menuItem.Click += (s, e2) => tmpHandler.Command.Execute(parameter);
 				if (handler.Icon != null)
-					Add16x16Image(menuItem, handler.Icon.Value, true, menuItem.IsEnabled);
+					Add16x16Image(listBox, menuItem, handler.Icon.Value, true, menuItem.IsEnabled);
 				if (handler.InputGestureText != null)
 					menuItem.InputGestureText = ResourceHelper.GetString(handler, handler.InputGestureText);
 

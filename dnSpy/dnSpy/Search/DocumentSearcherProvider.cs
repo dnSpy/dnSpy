@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
@@ -26,25 +27,26 @@ using dnSpy.Contracts.Search;
 namespace dnSpy.Search {
 	[Export(typeof(IDocumentSearcherProvider))]
 	sealed class DocumentSearcherProvider : IDocumentSearcherProvider {
-		readonly IDocumentTreeView documentTreeView;
 		readonly IImageService imageService;
 		readonly IDotNetImageService dotNetImageService;
 		readonly IDecompilerService decompilerService;
 
 		[ImportingConstructor]
-		DocumentSearcherProvider(IDocumentTreeView documentTreeView, IImageService imageService, IDotNetImageService dotNetImageService, IDecompilerService decompilerService) {
-			this.documentTreeView = documentTreeView;
+		DocumentSearcherProvider(IImageService imageService, IDotNetImageService dotNetImageService, IDecompilerService decompilerService) {
 			this.imageService = imageService;
 			this.dotNetImageService = dotNetImageService;
 			this.decompilerService = decompilerService;
 		}
 
-		public IDocumentSearcher Create(DocumentSearcherOptions options) {
+		public IDocumentSearcher Create(DocumentSearcherOptions options, IDocumentTreeView documentTreeView) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			if (documentTreeView == null)
+				throw new ArgumentNullException(nameof(documentTreeView));
 			var searchResultContext = new SearchResultContext {
 				SyntaxHighlight = true,
 				Decompiler = decompilerService.Decompiler,
 				ImageService = imageService,
-				BackgroundType = BackgroundType.Search,
 			};
 			return new DocumentSearcher(options, documentTreeView, dotNetImageService, searchResultContext);
 		}

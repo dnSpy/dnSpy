@@ -47,10 +47,10 @@ namespace dnSpy.Contracts.Search {
 		IDecompiler Decompiler { get; set; }
 
 		/// <summary>
-		/// Used by <see cref="ISearchResult"/>. Background type for images.
+		/// Used by <see cref="ISearchResult"/>. Image options for images.
 		/// <see cref="ISearchResult.RefreshUI()"/> must be called if this gets updated.
 		/// </summary>
-		BackgroundType BackgroundType { get; set; }
+		ImageOptions ImageOptions { get; set; }
 
 		/// <summary>
 		/// A search result that was added to indicate that it's searching. Should be removed from

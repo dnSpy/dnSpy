@@ -17,14 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Images {
 	/// <summary>
 	/// Image options
 	/// </summary>
-	public struct ImageOptions {
+	public sealed class ImageOptions {
 		/// <summary>
 		/// Background color
 		/// </summary>
@@ -39,5 +42,47 @@ namespace dnSpy.Contracts.Images {
 		/// Image size in logical pixels. 16x16 is used if this is 0x0
 		/// </summary>
 		public Size LogicalSize { get; set; }
+
+		/// <summary>
+		/// Total zoom applied to the element containing the image or (0,0) if the property shouldn't be used.
+		/// 1.0 == 100%
+		/// </summary>
+		public Size Zoom { get; set; }
+
+		/// <summary>
+		/// If initialized, the DPI of its containing window will be used and <see cref="Dpi"/> doesn't have to be initialized.
+		/// </summary>
+		public DependencyObject DpiObject { get; set; }
+
+		/// <summary>
+		/// DPI or (0,0) to use the default DPI (DPI of main window)
+		/// </summary>
+		public Size Dpi { get; set; }
+
+		/// <summary>
+		/// Clones this instance
+		/// </summary>
+		/// <returns></returns>
+		public ImageOptions Clone() => (ImageOptions)MemberwiseClone();
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ImageOptions() { }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="textView">Text view with which to initialize <see cref="Zoom"/> and <see cref="DpiObject"/></param>
+		public ImageOptions(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			var wpfTextView = textView as IWpfTextView;
+			Debug.Assert(wpfTextView != null);
+			if (wpfTextView != null) {
+				Zoom = new Size(wpfTextView.ZoomLevel / 100, wpfTextView.ZoomLevel / 100);
+				DpiObject = wpfTextView.VisualElement;
+			}
+		}
 	}
 }

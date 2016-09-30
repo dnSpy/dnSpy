@@ -26,11 +26,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
@@ -48,7 +50,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IDecompiler decompiler;
 		readonly AssemblyReferenceResolver assemblyReferenceResolver;
 
-		internal Window OwnerWindow { get; set; }
+		internal MetroWindow OwnerWindow {
+			get { return ownerWindow; }
+			set {
+				if (ownerWindow != value) {
+					ownerWindow = value;
+					RefreshThemeFields();
+				}
+			}
+		}
+		MetroWindow ownerWindow;
 
 		// Make all types, methods, fields public so we don't get a compilation error when trying
 		// to reference an internal type or a private method in the original assembly.
@@ -60,8 +71,18 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
-		public object AddAssemblyReferenceImageObject => imageService.GetImage(DsImages.OpenFolder, BackgroundType.DialogWindow);
-		public object AddGacReferenceImageObject => imageService.GetImage(DsImages.Library, BackgroundType.DialogWindow);
+		public object AddAssemblyReferenceImageObject => GetImage(DsImages.OpenFolder);
+		public object AddGacReferenceImageObject => GetImage(DsImages.Library);
+
+		BitmapSource GetImage(ImageReference imageReference) {
+			if (OwnerWindow == null)
+				return null;
+			var options = new ImageOptions {
+				BackgroundType = BackgroundType.DialogWindow,
+				Dpi = OwnerWindow.WindowDpi,
+			};
+			return imageService.GetImage(imageReference, options);
+		}
 
 		public bool CanCompile {
 			get { return canCompile; }
@@ -456,7 +477,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			var imageName = GetImageReference(diag.Severity);
 			if (imageName == null)
 				return null;
-			return imageService.GetImage(imageName.Value, null);
+			var options = new ImageOptions {
+				// The images aren't themable so don't set a bg
+				Dpi = OwnerWindow?.WindowDpi ?? new Size(0, 0),
+			};
+			return imageService.GetImage(imageName.Value, options);
 		}
 
 		static ImageReference? GetImageReference(CompilerDiagnosticSeverity severity) {
@@ -508,6 +533,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			catch (Exception ex) {
 				MsgBox.Instance.Show(ex);
 			}
+		}
+
+		public void RefreshThemeFields() {
+			OnPropertyChanged(nameof(AddAssemblyReferenceImageObject));
+			OnPropertyChanged(nameof(AddGacReferenceImageObject));
+			foreach (var vm in Diagnostics)
+				vm.ImageObj = CreateImage(vm.Diagnostic);
 		}
 
 		public void Dispose() {

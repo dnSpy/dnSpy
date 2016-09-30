@@ -28,6 +28,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 	sealed class CodeToolTipProvider : ICodeToolTipProvider {
@@ -36,13 +37,16 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		public ICodeToolTipWriter Output => writers[writers.Count - 1];
 		readonly List<CodeToolTipWriter> writers;
 
+		readonly IWpfTextView wpfTextView;
 		readonly IImageService imageService;
 		readonly IDotNetImageService dotNetImageService;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly bool syntaxHighlight;
 
-		public CodeToolTipProvider(IImageService imageService, IDotNetImageService dotNetImageService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
+		public CodeToolTipProvider(IWpfTextView wpfTextView, IImageService imageService, IDotNetImageService dotNetImageService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
+			if (wpfTextView == null)
+				throw new ArgumentNullException(nameof(wpfTextView));
 			if (imageService == null)
 				throw new ArgumentNullException(nameof(imageService));
 			if (dotNetImageService == null)
@@ -51,6 +55,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.wpfTextView = wpfTextView;
 			this.imageService = imageService;
 			this.dotNetImageService = dotNetImageService;
 			this.classificationFormatMap = classificationFormatMap;
@@ -74,10 +79,11 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 					res.Children.Add(output.Create());
 			}
 			if (Image != null) {
+				var options = new ImageOptions(wpfTextView) { BackgroundType = BackgroundType.QuickInfo };
 				var img = new Image {
 					Width = 16,
 					Height = 16,
-					Source = imageService.GetImage(Image.Value, BackgroundType.QuickInfo),
+					Source = imageService.GetImage(Image.Value, options),
 					Margin = new Thickness(0, 0, 4, 0),
 					VerticalAlignment = VerticalAlignment.Top,
 					HorizontalAlignment = HorizontalAlignment.Left,

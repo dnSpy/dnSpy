@@ -75,7 +75,6 @@
     <Compile Include="CallStack\FrameUtils.cs" />
     <Compile Include="CallStack\StackFrameService.cs" />
     <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
-    <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="DebugCommands.cs" />
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
     <Compile Include="DebuggerAppSettingsTab.cs" />
@@ -117,6 +116,7 @@
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionPrinter.cs" />
     <Compile Include="Exceptions\ExceptionsContent.cs" />
+    <Compile Include="Exceptions\ExceptionsConverter.cs" />
     <Compile Include="Exceptions\ExceptionService.cs" />
     <Compile Include="Exceptions\ExceptionState.cs" />
     <Compile Include="Exceptions\ExceptionsToolWindowContent.cs" />

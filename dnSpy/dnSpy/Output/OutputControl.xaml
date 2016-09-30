@@ -24,7 +24,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Output"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
-             xmlns:vc="clr-namespace:dnSpy.Converters"
              xmlns:p="clr-namespace:dnSpy.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
@@ -35,7 +34,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
             <Grid.Resources>
-                <vc:ImageConverter x:Key="imageConverter" />
+                <local:OutputControlConverter x:Key="outputControlConverter" />
             </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -70,14 +69,14 @@
                 </ComboBox>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding ClearAllCommand}" ToolTip="{x:Static p:dnSpy_Resources.Output_ClearAll_ToolTip}">
-                    <Image Source="{Binding ClearAllImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_ClearWindowContent}" Width="16" Height="16"/>
+                    <Image Source="{Binding ClearAllImageObject, Mode=OneWay, Converter={StaticResource outputControlConverter}, ConverterParameter=ClearAllImage}" Width="16" Height="16"/>
                 </Button>
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding SaveCommand}" ToolTip="{x:Static p:dnSpy_Resources.Output_Save_ToolTip}">
-                    <Image Source="{Binding SaveImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_Save}" Width="16" Height="16"/>
+                    <Image Source="{Binding SaveImageObject, Mode=OneWay, Converter={StaticResource outputControlConverter}, ConverterParameter=SaveImage}" Width="16" Height="16"/>
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <CheckBox Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding WordWrap}" ToolTip="{x:Static p:dnSpy_Resources.Output_WordWrap_ToolTip}">
-                    <Image Source="{Binding ToggleWordWrapImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_WordWrap}" Width="16" Height="16"/>
+                    <Image Source="{Binding ToggleWordWrapImageObject, Mode=OneWay, Converter={StaticResource outputControlConverter}, ConverterParameter=ToggleWordWrapImage}" Width="16" Height="16"/>
                 </CheckBox>
             </StackPanel>
         </Grid>

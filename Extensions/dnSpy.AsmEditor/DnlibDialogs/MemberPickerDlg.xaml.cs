@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,7 +32,10 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class MemberPickerDlg : WindowBase {
+		readonly IImageService imageService;
+
 		public MemberPickerDlg(IDocumentTreeView globalDocumentTreeView, IDocumentTreeView newDocumentTreeView, IImageService imageService) {
+			this.imageService = imageService;
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MemberPickerVM;
@@ -40,11 +44,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					data.PropertyChanged += MemberPickerVM_PropertyChanged;
 				}
 			};
-			openImage.Source = imageService.GetImage(DsImages.OpenFolder, BackgroundType.DialogWindow);
+			WindowDpiChanged += MemberPickerDlg_WindowDpiChanged;
+			UpdateImages();
 
-			var treeView = (Control)newDocumentTreeView.TreeView.UIObject;
+			var treeView = newDocumentTreeView.TreeView.UIObject;
 			cpTreeView.Content = treeView;
-			System.Windows.Controls.Validation.SetErrorTemplate(treeView, (ControlTemplate)FindResource("noRedBorderOnValidationError"));
+			Validation.SetErrorTemplate(treeView, (ControlTemplate)FindResource("noRedBorderOnValidationError"));
 			treeView.AllowDrop = false;
 			treeView.BorderThickness = new Thickness(1);
 
@@ -63,6 +68,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			});
 			InputBindings.Add(new KeyBinding(cmd, Key.E, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
+		}
+
+		void MemberPickerDlg_WindowDpiChanged(object sender, EventArgs e) => UpdateImages();
+
+		void UpdateImages() {
+			var options = new ImageOptions {
+				BackgroundType = BackgroundType.DialogWindow,
+				Dpi = WindowDpi,
+			};
+			openImage.Source = imageService.GetImage(DsImages.OpenFolder, options);
 		}
 
 		void MemberPickerVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {

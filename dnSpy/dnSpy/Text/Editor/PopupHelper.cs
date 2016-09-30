@@ -36,6 +36,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public static void SetScaleTransform(IWpfTextView wpfTextView, FrameworkElement popupElement) {
+			if (wpfTextView == null)
+				return;
 			var metroWindow = Window.GetWindow(wpfTextView.VisualElement) as MetroWindow;
 			if (metroWindow == null)
 				return;

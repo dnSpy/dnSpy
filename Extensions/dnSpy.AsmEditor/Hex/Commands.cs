@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -131,7 +130,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (documentViewer != null && documentViewer.UIObject.IsKeyboardFocusWithin)
 				return CreateContext(documentViewer);
 
-			if (((UIElement)documentTabService.DocumentTreeView.TreeView.UIObject).IsKeyboardFocusWithin)
+			if (documentTabService.DocumentTreeView.TreeView.UIObject.IsKeyboardFocusWithin)
 				return CreateContext(documentTabService.DocumentTreeView);
 
 			if (documentTabService.DocumentTreeView.TreeView.SelectedItems.Length != 0) {

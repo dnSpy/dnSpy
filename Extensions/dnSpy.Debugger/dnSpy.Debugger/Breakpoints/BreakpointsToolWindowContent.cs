@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement => breakpointsContent.Value.FocusedElement;
-		public FrameworkElement ScaleElement => breakpointsContent.Value.ScaleElement;
+		public FrameworkElement ZoomElement => breakpointsContent.Value.ZoomElement;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Debugger_Resources.Window_Breakpoints;
 		public object ToolTip => null;
@@ -73,11 +73,15 @@ namespace dnSpy.Debugger.Breakpoints {
 				breakpointsContent.Value.OnClose();
 				break;
 			case ToolWindowContentVisibilityEvent.Visible:
+				breakpointsContent.Value.OnVisible();
+				break;
 			case ToolWindowContentVisibilityEvent.Hidden:
+				breakpointsContent.Value.OnHidden();
 				break;
 			}
 		}
 
 		public void Focus() => breakpointsContent.Value.Focus();
+		public void OnZoomChanged(double value) => breakpointsContent.Value.OnZoomChanged(value);
 	}
 }

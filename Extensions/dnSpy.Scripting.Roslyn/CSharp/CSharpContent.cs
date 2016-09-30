@@ -19,6 +19,8 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Text;
@@ -33,12 +35,12 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 	[Export(typeof(ICSharpContent))]
 	sealed class CSharpContent : ScriptContent, ICSharpContent {
 		[ImportingConstructor]
-		CSharpContent(IThemeService themeService, IReplEditorProvider replEditorProvider, CSharpReplSettingsImpl replSettings, IServiceLocator serviceLocator)
-			: base(themeService, replEditorProvider, CreateReplEditorOptions(), replSettings, serviceLocator, Constants.REPL_CSharp) {
+		CSharpContent(IImageService imageService, IThemeService themeService, IDpiService dpiService, IReplEditorProvider replEditorProvider, CSharpReplSettingsImpl replSettings, IServiceLocator serviceLocator)
+			: base(imageService, themeService, dpiService, replEditorProvider, CreateReplEditorOptions(), replSettings, serviceLocator, Constants.REPL_CSharp) {
 		}
 
-		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator, ReplSettings replSettings) =>
-			new CSharpControlVM(replEditor, replSettings, serviceLocator);
+		protected override ScriptControlVM CreateScriptControlVM(IImageService imageService, IReplEditor replEditor, IServiceLocator serviceLocator, ReplSettings replSettings) =>
+			new CSharpControlVM(imageService, replEditor, replSettings, serviceLocator);
 
 		static ReplEditorOptions CreateReplEditorOptions() {
 			var options = new ReplEditorOptions {

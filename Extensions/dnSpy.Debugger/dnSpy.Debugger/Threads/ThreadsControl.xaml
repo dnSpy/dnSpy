@@ -47,8 +47,16 @@
                     <GridViewColumn Header="" Width="16">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
+                                <!-- Using just an Image doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
+                                         so use this weird way of showing an image. -->
                                 <!-- Fix hard coded 6,0,6,0 margin -->
-                                <Image Margin="-6 0" Source="{Binding CurrentImageObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}, ConverterParameter=CurrentImage}" Stretch="None" Height="16" Width="16" />
+                                <ContentPresenter Margin="-6 0" Content="{Binding CurrentImageObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}, ConverterParameter=CurrentImage}">
+                                    <ContentPresenter.ContentTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding}" Width="16" Height="16" />
+                                        </DataTemplate>
+                                    </ContentPresenter.ContentTemplate>
+                                </ContentPresenter>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -74,7 +82,15 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Image Grid.Column="0" Margin="0 0 0 0" Source="{Binding CategoryImageObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}, ConverterParameter=CategoryImage}" Stretch="None" Height="16" Width="16" />
+                                    <!-- Using just an Image doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
+                                             so use this weird way of showing an image. -->
+                                    <ContentPresenter Grid.Column="0" Margin="0 0 0 0" Content="{Binding CategoryImageObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}, ConverterParameter=CategoryImage}">
+                                        <ContentPresenter.ContentTemplate>
+                                            <DataTemplate>
+                                                <Image Source="{Binding}" Width="16" Height="16" />
+                                            </DataTemplate>
+                                        </ContentPresenter.ContentTemplate>
+                                    </ContentPresenter>
                                     <ContentPresenter Grid.Column="1" Margin="5 0 0 0" Content="{Binding CategoryTextObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}, ConverterParameter=CategoryText}" />
                                 </Grid>
                             </DataTemplate>

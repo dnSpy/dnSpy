@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Settings;
@@ -87,7 +88,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class HexDocumentTabUIContext : IDocumentTabUIContext {
 		public IDocumentTab DocumentTab { get; set; }
 		public IInputElement FocusedElement => uiObj is ScrollViewer ? (IInputElement)((ScrollViewer)uiObj).Content : uiObj;
-		public FrameworkElement ScaleElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
+		public FrameworkElement ZoomElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
 		public object UIObject => uiObj;
 
 		readonly FrameworkElement uiObj;
@@ -119,5 +120,6 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void OnShow() { }
 		public void SaveSerialized(ISettingsSection section, object obj) { }
 		public object Serialize() => null;
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 	}
 }

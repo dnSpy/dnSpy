@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs {
 					newValue = new NullDocumentTabUIContext();
 				if (uiContext != newValue) {
 					uiContext.OnHide();
-					elementScaler.InstallScale(newValue, newValue.ScaleElement);
+					elementZoomer.InstallZoom(newValue, newValue.ZoomElement);
 					newValue.OnShow();
 					uiContext = newValue;
 					UIObject = uiContext.UIObject;
@@ -116,10 +116,10 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTabUIContextLocator documentTabUIContextLocator;
 		readonly Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders;
 		readonly Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders;
-		readonly TabElementScaler elementScaler;
+		readonly TabElementZoomer elementZoomer;
 
 		public TabContentImpl(DocumentTabService documentTabService, IDocumentTabUIContextLocator documentTabUIContextLocator, Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders, Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders) {
-			this.elementScaler = new TabElementScaler();
+			this.elementZoomer = new TabElementZoomer();
 			this.tabHistory = new TabHistory();
 			this.tabHistory.SetCurrent(new NullDocumentTabContent(), false);
 			this.documentTabService = documentTabService;
@@ -161,7 +161,7 @@ namespace dnSpy.Documents.Tabs {
 
 			if (visEvent == TabContentVisibilityEvent.Removed) {
 				CancelAsyncWorker();
-				elementScaler.Dispose();
+				elementZoomer.Dispose();
 				var id = documentTabUIContextLocator as IDisposable;
 				Debug.Assert(id != null);
 				if (id != null)
@@ -413,15 +413,15 @@ namespace dnSpy.Documents.Tabs {
 			OnSelected();
 		}
 
-		const string SCALE_ATTR = "scale";
+		const string ZOOM_ATTR = "zoom";
 
 		public void DeserializeUI(ISettingsSection tabContentUI) {
-			double? scale = tabContentUI.Attribute<double?>(SCALE_ATTR);
-			elementScaler.ScaleValue = scale ?? 1.0;
+			double? zoom = tabContentUI.Attribute<double?>(ZOOM_ATTR);
+			elementZoomer.ZoomValue = zoom ?? 1.0;
 		}
 
 		public void SerializeUI(ISettingsSection tabContentUI) =>
-			tabContentUI.Attribute(SCALE_ATTR, elementScaler.ScaleValue);
+			tabContentUI.Attribute(ZOOM_ATTR, elementZoomer.ZoomValue);
 
 		public void OnNodesRemoved(HashSet<IDsDocumentNode> removedDocuments, Func<IDocumentTabContent> createEmptyContent) {
 			tabHistory.RemoveFromBackwardList(a => CheckRemove(a, removedDocuments));

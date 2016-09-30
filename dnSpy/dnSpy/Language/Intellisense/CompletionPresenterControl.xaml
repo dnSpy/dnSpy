@@ -60,7 +60,7 @@
                         <Image Grid.Column="0" Height="16" Width="16" Margin="1 1 3 1">
                             <Image.Source>
                                 <MultiBinding Converter="{StaticResource CompletionImageReferenceConverter}">
-                                    <Binding Mode="OneWay"/>
+                                    <Binding Mode="OneWay" Path="ImageObject"/>
                                     <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
                                 </MultiBinding>
                             </Image.Source>
@@ -68,7 +68,7 @@
                         <ContentPresenter Grid.Column="1" Margin="2 0 2 0">
                             <ContentPresenter.Content>
                                 <MultiBinding Converter="{StaticResource CompletionTextConverter}" ConverterParameter="DisplayText">
-                                    <Binding Mode="OneWay"/>
+                                    <Binding Mode="OneWay" Path="DisplayTextObject"/>
                                     <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
                                 </MultiBinding>
                             </ContentPresenter.Content>
@@ -76,7 +76,7 @@
                         <ContentPresenter Grid.Column="2">
                             <ContentPresenter.Content>
                                 <MultiBinding Converter="{StaticResource CompletionTextConverter}" ConverterParameter="Suffix">
-                                    <Binding Mode="OneWay"/>
+                                    <Binding Mode="OneWay" Path="SuffixObject"/>
                                     <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
                                 </MultiBinding>
                             </ContentPresenter.Content>
@@ -92,7 +92,7 @@
                                     <Image Height="16" Width="16">
                                         <Image.Source>
                                             <MultiBinding Converter="{StaticResource AttributeImageReferenceConverter}">
-                                                <Binding Mode="OneWay"/>
+                                                <Binding Mode="OneWay" Path="ImageObject"/>
                                                 <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
                                             </MultiBinding>
                                         </Image.Source>
@@ -117,7 +117,7 @@
                         <Image Height="16" Width="16" Margin="0 0 0 0">
                             <Image.Source>
                                 <MultiBinding Converter="{StaticResource FilterImageReferenceConverter}">
-                                    <Binding Mode="OneWay"/>
+                                    <Binding Mode="OneWay" Path="ImageObject" />
                                     <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
                                 </MultiBinding>
                             </Image.Source>

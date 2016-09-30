@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
@@ -46,7 +47,13 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Gets the treeview UI object
 		/// </summary>
-		object UIObject { get; }
+		Control UIObject { get; }
+
+		/// <summary>
+		/// Should be called if its UI object has been zoomed (indirectly or directly)
+		/// </summary>
+		/// <param name="value">New zoom value, where 1.0 == 100%</param>
+		void OnZoomChanged(double value);
 
 		/// <summary>
 		/// Select items

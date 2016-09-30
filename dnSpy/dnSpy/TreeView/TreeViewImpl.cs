@@ -38,7 +38,7 @@ namespace dnSpy.TreeView {
 
 		public Guid Guid { get; }
 
-		public object UIObject => sharpTreeView;
+		public Control UIObject => sharpTreeView;
 		readonly SharpTreeView sharpTreeView;
 
 		object IStackedContentChild.UIObject => sharpTreeView;
@@ -109,8 +109,26 @@ namespace dnSpy.TreeView {
 
 		static ITreeNodeData[] Convert(System.Collections.IEnumerable list) =>
 			list.Cast<DsSharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
-		internal object GetIcon(ImageReference imgRef) =>
-			imageService.GetImage(imgRef, BackgroundType.TreeNode);
+
+		internal object GetIcon(ImageReference imgRef) {
+			if (double.IsNaN(zoomValue))
+				return null;
+			var options = new ImageOptions {
+				BackgroundType = BackgroundType.TreeNode,
+				Zoom = new Size(zoomValue, zoomValue),
+				DpiObject = UIObject,
+			};
+			return imageService.GetImage(imgRef, options);
+		}
+
+		public void OnZoomChanged(double value) {
+			if (zoomValue == value)
+				return;
+			zoomValue = value;
+			RefreshAllNodes();
+		}
+		double zoomValue = 1;
+
 		ITreeNode ITreeView.Create(ITreeNodeData data) => Create(data);
 
 		TreeNodeImpl Create(ITreeNodeData data) {

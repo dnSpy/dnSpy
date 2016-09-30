@@ -22,6 +22,7 @@ using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
@@ -33,6 +34,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		static IAppWindow appWindow;
 		static IDocumentTreeView documentTreeView;
 		static IImageService imageService;
+		static IDpiService dpiService;
 		static IDocumentSearcherProvider fileSearcherProvider;
 		static IDecompilerService decompilerService;
 		static IDocumentTreeViewProvider documentTreeViewProvider;
@@ -41,9 +43,10 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		[ExportAutoLoaded]
 		sealed class Loader : IAutoLoaded {
 			[ImportingConstructor]
-			Loader(IAppWindow appWindow, IImageService imageService, IDocumentTreeView documentTreeView, IDocumentSearcherProvider fileSearcherProvider, IDecompilerService decompilerService, IDocumentTreeViewProvider documentTreeViewProvider, IDocumentTreeViewSettings documentTreeViewSettings) {
+			Loader(IAppWindow appWindow, IImageService imageService, IDpiService dpiService, IDocumentTreeView documentTreeView, IDocumentSearcherProvider fileSearcherProvider, IDecompilerService decompilerService, IDocumentTreeViewProvider documentTreeViewProvider, IDocumentTreeViewSettings documentTreeViewSettings) {
 				DnlibTypePicker.appWindow = appWindow;
 				DnlibTypePicker.imageService = imageService;
+				DnlibTypePicker.dpiService = dpiService;
 				DnlibTypePicker.documentTreeView = documentTreeView;
 				DnlibTypePicker.fileSearcherProvider = fileSearcherProvider;
 				DnlibTypePicker.decompilerService = decompilerService;
@@ -64,10 +67,11 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public T GetDnlibType<T>(string title, IDocumentTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
 			var newDocumentTreeView = documentTreeViewProvider.Create(filter);
+			MemberPickerVM data = null;
 			try {
-				var data = new MemberPickerVM(fileSearcherProvider, newDocumentTreeView, decompilerService, filter, title, documentTreeView.DocumentService.GetDocuments());
-				data.SyntaxHighlight = documentTreeViewSettings.SyntaxHighlight;
 				var win = new MemberPickerDlg(documentTreeView, newDocumentTreeView, imageService);
+				data = new MemberPickerVM(win, dpiService, fileSearcherProvider, newDocumentTreeView, decompilerService, filter, title, documentTreeView.DocumentService.GetDocuments());
+				data.SyntaxHighlight = documentTreeViewSettings.SyntaxHighlight;
 				win.DataContext = data;
 				win.Owner = ownerWindow ?? appWindow.MainWindow;
 				data.SelectItem(selectedObject);
@@ -77,6 +81,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				return ImportObject(ownerModule, data.SelectedDnlibObject) as T;
 			}
 			finally {
+				data?.Dispose();
 				newDocumentTreeView.Dispose();
 			}
 		}

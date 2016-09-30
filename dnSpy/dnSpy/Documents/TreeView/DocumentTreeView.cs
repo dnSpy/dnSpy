@@ -93,18 +93,20 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		[ImportingConstructor]
-		DocumentTreeView(IThemeService themeService, ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentService documentService, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProviders, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders)
-			: this(true, null, themeService, treeViewService, decompilerService, documentService, documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, appSettings, dsDocumentNodeProviders, mefFinders) {
+		DocumentTreeView(IThemeService themeService, IDpiService dpiService, ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentService documentService, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProviders, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders)
+			: this(true, null, themeService, dpiService, treeViewService, decompilerService, documentService, documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, appSettings, dsDocumentNodeProviders, mefFinders) {
 		}
 
 		readonly IDecompilerService decompilerService;
 		readonly IThemeService themeService;
+		readonly IDpiService dpiService;
 		readonly IDocumentTreeViewSettings documentTreeViewSettings;
 		readonly IAppSettings appSettings;
 
-		public DocumentTreeView(bool isGlobal, IDocumentTreeNodeFilter filter, IThemeService themeService, ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentService documentService, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProvider, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders) {
+		public DocumentTreeView(bool isGlobal, IDocumentTreeNodeFilter filter, IThemeService themeService, IDpiService dpiService, ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentService documentService, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProvider, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders) {
 			this.decompilerService = decompilerService;
 			this.themeService = themeService;
+			this.dpiService = dpiService;
 			this.documentTreeViewSettings = documentTreeViewSettings;
 			this.appSettings = appSettings;
 
@@ -141,14 +143,15 @@ namespace dnSpy.Documents.TreeView {
 			documentService.CollectionChanged += DocumentService_CollectionChanged;
 			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			dpiService.DpiChanged += DpiService_DpiChanged;
 			documentTreeViewSettings.PropertyChanged += DocumentTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
 
 			this.WpfCommands = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENT_TREEVIEW);
 
 			if (isGlobal) {
-				menuService.InitializeContextMenu((FrameworkElement)this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
-				wpfCommandService.Add(ControlConstants.GUID_DOCUMENT_TREEVIEW, (UIElement)TreeView.UIObject);
+				menuService.InitializeContextMenu(this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
+				wpfCommandService.Add(ControlConstants.GUID_DOCUMENT_TREEVIEW, TreeView.UIObject);
 			}
 
 			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();
@@ -178,6 +181,7 @@ namespace dnSpy.Documents.TreeView {
 			DocumentService.CollectionChanged -= DocumentService_CollectionChanged;
 			decompilerService.DecompilerChanged -= DecompilerManager_DecompilerChanged;
 			themeService.ThemeChanged -= ThemeService_ThemeChanged;
+			dpiService.DpiChanged -= DpiService_DpiChanged;
 			documentTreeViewSettings.PropertyChanged -= DocumentTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged -= AppSettings_PropertyChanged;
 			DocumentService.Clear();
@@ -265,6 +269,11 @@ namespace dnSpy.Documents.TreeView {
 		void NotifyNodesTextRefreshed() => NodesTextChanged?.Invoke(this, EventArgs.Empty);
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshNodes();
 		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) => UpdateDecompiler(((IDecompilerService)sender).Decompiler);
+
+		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
+			if (e.Window == Window.GetWindow(TreeView.UIObject))
+				RefreshNodes();
+		}
 
 		void UpdateDecompiler(IDecompiler newDecompiler) {
 			this.context.Decompiler = newDecompiler;

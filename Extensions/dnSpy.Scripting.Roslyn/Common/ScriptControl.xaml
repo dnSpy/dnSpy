@@ -25,7 +25,6 @@
              xmlns:local="clr-namespace:dnSpy.Scripting.Roslyn.Common"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Scripting.Roslyn.Properties"
-             xmlns:vc="clr-namespace:dnSpy.Scripting.Roslyn.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="1000">
     <Grid>
@@ -35,7 +34,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
             <Grid.Resources>
-                <vc:ImageConverter x:Key="imageConverter" />
+                <local:ScriptControlConverter x:Key="scriptControlConverter" />
             </Grid.Resources>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <StackPanel.Resources>
@@ -48,23 +47,23 @@
                     </Style>
                 </StackPanel.Resources>
                 <Button Margin="5 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding ResetCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_Reset}">
-                    <Image Source="{Binding ResetImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_Restart}" Width="16" Height="16"/>
+                    <Image Source="{Binding ResetImageObject, Mode=OneWay, Converter={StaticResource scriptControlConverter}, ConverterParameter=ResetImage}" Width="16" Height="16"/>
                 </Button>
                 <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding ClearCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_ClearScreen}">
-                    <Image Source="{Binding ClearWindowContentImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_ClearWindowContent}" Width="16" Height="16"/>
+                    <Image Source="{Binding ClearWindowContentImageObject, Mode=OneWay, Converter={StaticResource scriptControlConverter}, ConverterParameter=ClearWindowContentImage}" Width="16" Height="16"/>
                 </Button>
                 <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding HistoryPreviousCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_HistoryPrevious}">
-                    <Image Source="{Binding HistoryPreviousImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_MoveUp}" Width="16" Height="16"/>
+                    <Image Source="{Binding HistoryPreviousImageObject, Mode=OneWay, Converter={StaticResource scriptControlConverter}, ConverterParameter=HistoryPreviousImage}" Width="16" Height="16"/>
                 </Button>
                 <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding HistoryNextCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_HistoryNext}">
-                    <Image Source="{Binding HistoryNextImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_DownloadNoColor}" Width="16" Height="16"/>
+                    <Image Source="{Binding HistoryNextImageObject, Mode=OneWay, Converter={StaticResource scriptControlConverter}, ConverterParameter=HistoryNextImage}" Width="16" Height="16"/>
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding SaveCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Repl_Save_ToolTip}">
-                    <Image Source="{Binding SaveImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_Save}" Width="16" Height="16"/>
+                    <Image Source="{Binding SaveImageObject, Mode=OneWay, Converter={StaticResource scriptControlConverter}, ConverterParameter=SaveImage}" Width="16" Height="16"/>
                 </Button>
                 <CheckBox Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding WordWrap}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Repl_WordWrap_ToolTip}">
-                    <Image Source="{Binding ToggleWordWrapImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_WordWrap}" Width="16" Height="16"/>
+                    <Image Source="{Binding ToggleWordWrapImageObject, Mode=OneWay, Converter={StaticResource scriptControlConverter}, ConverterParameter=ToggleWordWrapImage}" Width="16" Height="16"/>
                 </CheckBox>
             </StackPanel>
         </Grid>

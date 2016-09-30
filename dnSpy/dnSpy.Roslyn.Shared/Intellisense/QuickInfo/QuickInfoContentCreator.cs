@@ -25,10 +25,11 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Internal.QuickInfo;
 using dnSpy.Roslyn.Shared.Glyphs;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 	interface IQuickInfoContentCreatorProvider {
-		IQuickInfoContentCreator Create();
+		IQuickInfoContentCreator Create(ITextView textView);
 	}
 
 	interface IQuickInfoContentCreator {
@@ -48,24 +49,28 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 			this.roslynGlyphService = roslynGlyphService;
 		}
 
-		public IQuickInfoContentCreator Create() => new QuickInfoContentCreator(roslynGlyphService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService);
+		public IQuickInfoContentCreator Create(ITextView textView) => new QuickInfoContentCreator(roslynGlyphService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService, textView);
 	}
 
 	sealed class QuickInfoContentCreator : IQuickInfoContentCreator {
 		readonly IRoslynGlyphService roslynGlyphService;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly ITextView textView;
 
-		public QuickInfoContentCreator(IRoslynGlyphService roslynGlyphService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
+		public QuickInfoContentCreator(IRoslynGlyphService roslynGlyphService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, ITextView textView) {
 			if (roslynGlyphService == null)
 				throw new ArgumentNullException(nameof(roslynGlyphService));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
 			this.roslynGlyphService = roslynGlyphService;
 			this.classificationFormatMap = classificationFormatMap;
 			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.textView = textView;
 		}
 
 		public IEnumerable<object> Create(QuickInfoItem item) {
@@ -87,7 +92,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 
 		IEnumerable<object> Create(InformationQuickInfoContent content) {
 			yield return new InformationQuickInfoContentControl {
-				DataContext = new InformationQuickInfoContentVM(content, roslynGlyphService, classificationFormatMap, themeClassificationTypeService),
+				DataContext = new InformationQuickInfoContentVM(textView, content, roslynGlyphService, classificationFormatMap, themeClassificationTypeService),
 			};
 		}
 

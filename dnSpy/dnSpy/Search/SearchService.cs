@@ -90,7 +90,7 @@ namespace dnSpy.Search {
 
 		public IInputElement FocusedElement => searchControl.SearchTextBox;
 
-		public FrameworkElement ScaleElement => searchControl;
+		public FrameworkElement ZoomElement => searchControl;
 
 		public object UIObject => searchControl;
 
@@ -108,20 +108,21 @@ namespace dnSpy.Search {
 		}
 
 		[ImportingConstructor]
-		SearchService(IImageService imageService, IDecompilerService decompilerService, IThemeService themeService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService) {
+		SearchService(IImageService imageService, IDecompilerService decompilerService, IThemeService themeService, IDpiService dpiService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService) {
 			this.documentTabService = documentTabService;
 			this.searchControl = new SearchControl();
 			this.vmSearch = new SearchControlVM(imageService, fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
 				Decompiler = decompilerService.Decompiler,
-				BackgroundType = BackgroundType.Search,
 			};
 			this.searchControl.DataContext = this.vmSearch;
+			UpdateImageOptionsNoRefreshUI();
 
 			menuService.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
 			wpfCommandService.Add(ControlConstants.GUID_SEARCH_CONTROL, this.searchControl);
 			wpfCommandService.Add(ControlConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
 			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			dpiService.DpiChanged += DpiService_DpiChanged;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 
@@ -202,9 +203,16 @@ namespace dnSpy.Search {
 			RefreshSearchResults();
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+		void RefreshUI() {
 			RefreshSearchResults();
 			RefreshComboBox();
+		}
+
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshUI();
+
+		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
+			if (e.Window == Window.GetWindow(searchControl))
+				RefreshUI();
 		}
 
 		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -220,7 +228,7 @@ namespace dnSpy.Search {
 
 		void RefreshComboBox() {
 			foreach (var vm in vmSearch.SearchTypeVMs)
-				vm.RefreshUI();
+				vm.RefreshUI(vmSearch.ImageOptions);
 		}
 
 		public void Focus() {
@@ -229,6 +237,8 @@ namespace dnSpy.Search {
 		}
 
 		public void OnShow() {
+			// Make sure the images have been refreshed (the DPI could've changed while the control was closed)
+			RefreshUI();
 			this.vmSearch.CanSearch = true;
 		}
 
@@ -266,6 +276,23 @@ namespace dnSpy.Search {
 
 			documentViewer.MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start);
 			return true;
+		}
+
+		public void OnZoomChanged(double value) {
+			if (zoomLevel == value)
+				return;
+			zoomLevel = value;
+			UpdateImageOptionsNoRefreshUI();
+			RefreshUI();
+		}
+		double zoomLevel = 1;
+
+		void UpdateImageOptionsNoRefreshUI() {
+			vmSearch.ImageOptions = new ImageOptions {
+				BackgroundType = BackgroundType.Search,
+				Zoom = new Size(zoomLevel, zoomLevel),
+				DpiObject = searchControl,
+			};
 		}
 	}
 }

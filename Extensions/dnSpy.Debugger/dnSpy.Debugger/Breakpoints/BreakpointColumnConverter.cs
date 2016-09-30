@@ -34,8 +34,16 @@ namespace dnSpy.Debugger.Breakpoints {
 				return null;
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
+				if (vm.Context.ImageOptions == null)
+					return null;
 				var img = vm.IsEnabled ? DsImages.BreakpointEnabled : DsImages.BreakpointDisabled;
-				return vm.Context.ImageService.GetImage(img, BackgroundType.GridViewItem);
+				var options = new ImageOptions {
+					BackgroundType = BackgroundType.GridViewItem,
+					Zoom = vm.Context.ImageOptions.Zoom,
+					DpiObject = vm.Context.ImageOptions.DpiObject,
+					Dpi = vm.Context.ImageOptions.Dpi,
+				};
+				return vm.Context.ImageService.GetImage(img, options);
 			}
 
 			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);

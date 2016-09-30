@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.Windows;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
@@ -33,7 +34,7 @@ namespace dnSpy.Text.Editor {
 		public ITextBuffer TextBuffer => TextViewHost.TextView.TextBuffer;
 		public object UIObject => TextViewHost.HostControl;
 		public IInputElement FocusedElement => TextViewHost.TextView.VisualElement;
-		public FrameworkElement ScaleElement => TextViewHost.TextView.VisualElement;
+		public FrameworkElement ZoomElement => TextViewHost.TextView.VisualElement;
 		public object Tag { get; set; }
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
@@ -62,6 +63,8 @@ namespace dnSpy.Text.Editor {
 			TextViewHost.TextView.Options.SetOptionValue(DefaultDsTextViewOptions.RefreshScreenOnChangeId, true);
 			TextViewHost.TextView.InitializeLocalZoomLevel();
 		}
+
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 
 		public void Dispose() {
 			if (!TextViewHost.IsClosed)

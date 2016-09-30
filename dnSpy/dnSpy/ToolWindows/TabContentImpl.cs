@@ -74,7 +74,7 @@ namespace dnSpy.ToolWindows {
 							e.Handled = true;
 						}
 					};
-					UpdateScaleElement();
+					UpdateZoomElement();
 					contentPresenter.InputBindings.Add(new KeyBinding(CloseCommand, Key.Escape, ModifierKeys.Shift));
 					// Needed if the content already has keyboard focus, eg. happens when moving
 					// the tool window from one side to the other.
@@ -85,7 +85,7 @@ namespace dnSpy.ToolWindows {
 		}
 		ContentPresenter contentPresenter;
 
-		void UpdateScaleElement() => elementScaler.InstallScale(Content, Content.ScaleElement);
+		void UpdateZoomElement() => elementZoomer.InstallZoom(Content, Content.ZoomElement);
 
 		void ContentPresenter_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var cp = (ContentPresenter)sender;
@@ -135,10 +135,10 @@ namespace dnSpy.ToolWindows {
 		}
 		ToolWindowGroup owner;
 
-		readonly TabElementScaler elementScaler;
+		readonly TabElementZoomer elementZoomer;
 
 		public TabContentImpl(ToolWindowGroup owner, IToolWindowContent content) {
-			this.elementScaler = new TabElementScaler();
+			this.elementZoomer = new TabElementZoomer();
 			this.owner = owner;
 			this.Content = content;
 			AddEvents();
@@ -184,7 +184,7 @@ namespace dnSpy.ToolWindows {
 
 			switch (visEvent) {
 			case TabContentVisibilityEvent.Removed:
-				elementScaler.Dispose();
+				elementZoomer.Dispose();
 				RemoveEvents();
 				if (contentPresenter != null)
 					contentPresenter.Content = null;
@@ -241,8 +241,8 @@ namespace dnSpy.ToolWindows {
 				OnPropertyChanged(nameof(ToolTip));
 			else if (e.PropertyName == nameof(IToolWindowContent.UIObject) && contentUIObject_initd)
 				ContentUIObject = Content.UIObject;
-			else if (e.PropertyName == nameof(IToolWindowContent.ScaleElement) && contentUIObject_initd)
-				UpdateScaleElement();
+			else if (e.PropertyName == nameof(IToolWindowContent.ZoomElement) && contentUIObject_initd)
+				UpdateZoomElement();
 		}
 
 		bool CanClose => true;

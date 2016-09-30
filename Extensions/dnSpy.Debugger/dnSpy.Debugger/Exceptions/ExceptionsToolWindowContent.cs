@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement => exceptionsContent.Value.FocusedElement;
-		public FrameworkElement ScaleElement => exceptionsContent.Value.ScaleElement;
+		public FrameworkElement ZoomElement => exceptionsContent.Value.ZoomElement;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Debugger_Resources.Window_ExceptionSettings;
 		public object ToolTip => null;
@@ -64,7 +64,24 @@ namespace dnSpy.Debugger.Exceptions {
 			this.exceptionsContent = exceptionsContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) { }
+		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+			switch (visEvent) {
+			case ToolWindowContentVisibilityEvent.Added:
+				exceptionsContent.Value.OnShow();
+				break;
+			case ToolWindowContentVisibilityEvent.Removed:
+				exceptionsContent.Value.OnClose();
+				break;
+			case ToolWindowContentVisibilityEvent.Visible:
+				exceptionsContent.Value.OnVisible();
+				break;
+			case ToolWindowContentVisibilityEvent.Hidden:
+				exceptionsContent.Value.OnHidden();
+				break;
+			}
+		}
+
 		public void Focus() => exceptionsContent.Value.Focus();
+		public void OnZoomChanged(double value) => exceptionsContent.Value.OnZoomChanged(value);
 	}
 }

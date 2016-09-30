@@ -101,6 +101,7 @@
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FontUtilities.cs" />
     <Compile Include="Controls\GlyphRunFormatter.cs" />
+    <Compile Include="Controls\IDpiService.cs" />
     <Compile Include="Controls\IFocusable.cs" />
     <Compile Include="Controls\IUIObjectProvider.cs" />
     <Compile Include="Controls\IWpfCommands.cs" />
@@ -109,8 +110,10 @@
     <Compile Include="Controls\IWpfFocusService.cs" />
     <Compile Include="Controls\IZoomable.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
+    <Compile Include="Controls\MetroWindowCreatedEventArgs.cs" />
     <Compile Include="Controls\TextBlockColorOutput.cs" />
     <Compile Include="Controls\WindowBase.cs" />
+    <Compile Include="Controls\WindowDpiChangedEventArgs.cs" />
     <Compile Include="Decompiler\IDecompilerService.cs" />
     <Compile Include="Decompiler\IDecompilerSettingsTab.cs" />
     <Compile Include="Decompiler\IDecompilerSettingsTabProvider.cs" />

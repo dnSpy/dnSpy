@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Roslyn;
@@ -149,12 +150,25 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			yield return new ResetCommand();
 		}
 
+		internal IImageService ImageService { get; }
+		internal ImageOptions ImageOptions {
+			get { return imageOptions; }
+			set {
+				if (imageOptions != value) {
+					imageOptions = value;
+					RefreshThemeFields();
+				}
+			}
+		}
+		ImageOptions imageOptions;
+
 		readonly Dispatcher dispatcher;
 		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly IClassificationType defaultClassificationType;
 		readonly ReplSettings replSettings;
 
-		protected ScriptControlVM(IReplEditor replEditor, ReplSettings replSettings, IServiceLocator serviceLocator) {
+		protected ScriptControlVM(IImageService imageService, IReplEditor replEditor, ReplSettings replSettings, IServiceLocator serviceLocator) {
+			ImageService = imageService;
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.replSettings = replSettings;
 			this.replSettings.PropertyChanged += ReplSettings_PropertyChanged;

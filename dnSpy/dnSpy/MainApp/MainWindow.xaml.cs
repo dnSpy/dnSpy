@@ -32,6 +32,8 @@ namespace dnSpy.MainApp {
 			this.contentPresenter.Content = content;
 			UpdateSystemMenuImage();
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			this.Closed += (s, e) => themeService.ThemeChanged -= ThemeService_ThemeChanged;
+			this.WindowDpiChanged += (s, e) => UpdateSystemMenuImage();
 			this.Activated += (s, e) => UpdateSystemMenuImage();
 			this.Deactivated += (s, e) => UpdateSystemMenuImage();
 			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));
@@ -40,8 +42,11 @@ namespace dnSpy.MainApp {
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateSystemMenuImage();
 
 		void UpdateSystemMenuImage() {
-			var bgType = IsActive ? BackgroundType.TitleAreaActive : BackgroundType.TitleAreaInactive;
-			SystemMenuImage = imageService.GetImage(DsImages.Assembly, bgType);
+			var options = new ImageOptions {
+				BackgroundType = IsActive ? BackgroundType.TitleAreaActive : BackgroundType.TitleAreaInactive,
+				Dpi = WindowDpi,
+			};
+			SystemMenuImage = imageService.GetImage(DsImages.Assembly, options);
 		}
 	}
 }

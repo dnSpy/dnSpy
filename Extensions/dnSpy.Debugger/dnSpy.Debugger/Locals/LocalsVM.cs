@@ -52,6 +52,7 @@ namespace dnSpy.Debugger.Locals {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
 		void RefreshThemeFields();
+		void SetImageOptions(ImageOptions imageOptions);
 	}
 
 	[Export(typeof(ILocalsVM)), Export(typeof(ILoadBeforeDebug))]
@@ -115,6 +116,10 @@ namespace dnSpy.Debugger.Locals {
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			localsSettings.PropertyChanged += LocalsSettings_PropertyChanged;
+		}
+		void ILocalsVM.SetImageOptions(ImageOptions imageOptions) {
+			printerContext.ImageOptions = imageOptions;
+			RefreshThemeFields();
 		}
 
 		static void Update(bool b, TypePrinterFlags f, ref TypePrinterFlags flags) {

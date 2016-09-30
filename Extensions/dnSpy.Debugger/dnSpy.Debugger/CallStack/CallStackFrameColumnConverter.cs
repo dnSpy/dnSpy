@@ -36,9 +36,9 @@ namespace dnSpy.Debugger.CallStack {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
 				if (vm.Index == 0)
-					return vm.Context.ImageService.GetImage(DsImages.CurrentInstructionPointer, BackgroundType.GridViewItem);
+					return GetImage(vm, DsImages.CurrentInstructionPointer);
 				if (vm.IsCurrentFrame)
-					return vm.Context.ImageService.GetImage(DsImages.CallReturnInstructionPointer, BackgroundType.GridViewItem);
+					return GetImage(vm, DsImages.CallReturnInstructionPointer);
 				return null;
 			}
 
@@ -49,6 +49,18 @@ namespace dnSpy.Debugger.CallStack {
 				return null;
 
 			return gen.CreateResult(true);
+		}
+
+		object GetImage(ICallStackFrameVM vm, ImageReference imageReference) {
+			if (vm.Context.ImageOptions == null)
+				return null;
+			var options = new ImageOptions {
+				BackgroundType = BackgroundType.GridViewItem,
+				Zoom = vm.Context.ImageOptions.Zoom,
+				DpiObject = vm.Context.ImageOptions.DpiObject,
+				Dpi = vm.Context.ImageOptions.Dpi,
+			};
+			return vm.Context.ImageService.GetImage(imageReference, options);
 		}
 
 		void CreateContent(ITextColorWriter output, CachedOutput cachedOutput, bool highlight) {

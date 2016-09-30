@@ -19,8 +19,9 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows;
 using System.Windows.Controls;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Controls;
 
@@ -38,7 +39,12 @@ namespace dnSpy.MainApp {
 			this.toolBar = new ToolBar { FocusVisualStyle = null };
 		}
 
-		internal void Initialize(Window window) =>
-			toolBarService.InitializeToolBar(toolBar, new Guid(ToolBarConstants.APP_TB_GUID), window);
+		internal void Initialize(MetroWindow window) {
+			var options = new ImageOptions {
+				BackgroundType = BackgroundType.ToolBar,
+				Dpi = window.WindowDpi,
+			};
+			toolBarService.InitializeToolBar(toolBar, new Guid(ToolBarConstants.APP_TB_GUID), window, options);
+		}
 	}
 }

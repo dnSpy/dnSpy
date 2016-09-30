@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.Memory {
 
 	sealed class MemoryToolWindowContent : IToolWindowContent {
 		public IInputElement FocusedElement => memoryContent.Value.FocusedElement;
-		public FrameworkElement ScaleElement => memoryContent.Value.ScaleElement;
+		public FrameworkElement ZoomElement => memoryContent.Value.ZoomElement;
 		public Guid Guid { get; }
 		public string Title => string.Format(dnSpy_Debugger_Resources.Window_Memory_N, windowIndex + 1);
 		public object ToolTip => null;
@@ -140,5 +140,7 @@ namespace dnSpy.Debugger.Memory {
 				break;
 			}
 		}
+
+		public void OnZoomChanged(double value) => memoryContent.Value.OnZoomChanged(value);
 	}
 }

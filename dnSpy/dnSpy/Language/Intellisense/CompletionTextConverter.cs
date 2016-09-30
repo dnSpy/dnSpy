@@ -21,7 +21,6 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
-using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionTextConverter : IMultiValueConverter {
@@ -29,7 +28,7 @@ namespace dnSpy.Language.Intellisense {
 			var func = parameter as string;
 			if (func == null)
 				return null;
-			var completion = (Completion)values[0];
+			var completion = (CompletionVM)values[0];
 			var presenter = (CompletionPresenter)values[1];
 			if (completion == null || presenter == null)
 				return null;

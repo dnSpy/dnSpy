@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Images {
 		public bool IsDefault => Assembly == null && Name == null;
 
 		/// <summary>
-		/// Assembly of image
+		/// Assembly of image or null if <see cref="Name"/> is a URI
 		/// </summary>
 		public Assembly Assembly { get; }
 
@@ -50,6 +50,18 @@ namespace dnSpy.Contracts.Images {
 				throw new ArgumentNullException(nameof(name));
 			this.Assembly = assembly;
 			this.Name = name;
+		}
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() {
+			if (IsDefault)
+				return "<uninit>";
+			if (Assembly == null)
+				return Name;
+			return $"{Assembly.GetName().Name}: {Name}";
 		}
 	}
 }

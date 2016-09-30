@@ -43,12 +43,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptToolWindowContent : IToolWindowContent, IZoomable {
 		protected abstract IScriptContent ScriptContent { get; }
 		public IInputElement FocusedElement => ScriptContent.FocusedElement;
-		public FrameworkElement ScaleElement => ScriptContent.ScaleElement;
+		public FrameworkElement ZoomElement => ScriptContent.ZoomElement;
 		public Guid Guid { get; }
 		public abstract string Title { get; }
 		public object ToolTip => null;
 		public object UIObject => ScriptContent.UIObject;
-		double IZoomable.ScaleValue => ScriptContent.ZoomLevel / 100.0;
+		double IZoomable.ZoomValue => ScriptContent.ZoomLevel / 100.0;
 
 		public ScriptToolWindowContent(Guid contentGuid) {
 			this.Guid = contentGuid;
@@ -70,5 +70,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				break;
 			}
 		}
+
+		public void OnZoomChanged(double value) => ScriptContent.OnZoomChanged(value);
 	}
 }

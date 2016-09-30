@@ -97,7 +97,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 				return;
 
 			applicableToSpan = info.Snapshot.CreateTrackingSpan(item.TextSpan.ToSpan(), SpanTrackingMode.EdgeInclusive);
-			foreach (var o in quickInfoContentCreatorProvider.Create().Create(item))
+			foreach (var o in quickInfoContentCreatorProvider.Create(session.TextView).Create(item))
 				quickInfoContent.Add(o);
 		}
 

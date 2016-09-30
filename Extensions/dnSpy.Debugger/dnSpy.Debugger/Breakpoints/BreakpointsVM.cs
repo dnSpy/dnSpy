@@ -33,7 +33,9 @@ using dnSpy.Debugger.IMModules;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointsVM {
+		void SetImageOptions(ImageOptions imageOptions);
 		void Remove(IEnumerable<BreakpointVM> bps);
+		void RefreshImageFields();
 	}
 
 	[Export(typeof(IBreakpointsVM)), Export(typeof(ILoadBeforeDebug))]
@@ -84,6 +86,11 @@ namespace dnSpy.Debugger.Breakpoints {
 			inMemoryModuleService.DynamicModulesLoaded += InMemoryModuleService_DynamicModulesLoaded;
 			foreach (var bp in breakpointService.GetBreakpoints())
 				AddBreakpoint(bp);
+		}
+
+		void IBreakpointsVM.SetImageOptions(ImageOptions imageOptions) {
+			breakpointContext.ImageOptions = imageOptions;
+			RefreshImageFields();
 		}
 
 		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
@@ -224,6 +231,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 			Debug.Fail("Breakpoint got removed but it wasn't in BreakpointsVM's list");
 		}
+
+		public void RefreshImageFields() => RefreshThemeFields();
 
 		void RefreshThemeFields() {
 			foreach (var vm in breakpointList)

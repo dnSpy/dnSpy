@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Documents.TreeView;
+
 namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// Creates <see cref="IDocumentSearcher"/> instances
@@ -26,7 +28,8 @@ namespace dnSpy.Contracts.Search {
 		/// Creates a new <see cref="IDocumentSearcher"/> instance
 		/// </summary>
 		/// <param name="options">Options</param>
+		/// <param name="documentTreeView">Document treeview</param>
 		/// <returns></returns>
-		IDocumentSearcher Create(DocumentSearcherOptions options);
+		IDocumentSearcher Create(DocumentSearcherOptions options, IDocumentTreeView documentTreeView);
 	}
 }

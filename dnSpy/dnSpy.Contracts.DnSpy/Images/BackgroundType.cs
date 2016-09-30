@@ -27,6 +27,7 @@ namespace dnSpy.Contracts.Images {
 		// ONLY APPEND VALUES. DON'T REMOVE SORT OR RENAME ANYTHING. (unless you can recompile
 		// EVERYTHING that depend on these values)
 		// ********************************************************************************
+		None,
 		Button,
 		TextEditor,
 		DialogWindow,

@@ -54,7 +54,15 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <CheckBox Grid.Column="0" Focusable="False" IsChecked="{Binding IsEnabled}" />
-                                    <Image Grid.Column="1" Margin="5 0 0 0" Source="{Binding ImageObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Image}" Stretch="None" Height="16" Width="16" />
+                                    <!-- Using just an Image doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
+                                         so use this weird way of showing an image. -->
+                                    <ContentPresenter Grid.Column="1" Margin="5 0 0 0" Content="{Binding ImageObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Image}">
+                                        <ContentPresenter.ContentTemplate>
+                                            <DataTemplate>
+                                                <Image Source="{Binding}" Width="16" Height="16" />
+                                            </DataTemplate>
+                                        </ContentPresenter.ContentTemplate>
+                                    </ContentPresenter>
                                     <ContentPresenter Grid.Column="2" Margin="5 0 0 0" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Name}" />
                                 </Grid>
                             </DataTemplate>

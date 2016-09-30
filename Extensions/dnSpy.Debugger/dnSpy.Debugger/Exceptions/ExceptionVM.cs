@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public bool SyntaxHighlight { get; set; }
 
 		public ExceptionContext(IExceptionService exceptionService) {
-			this.ExceptionService = exceptionService;
+			ExceptionService = exceptionService;
 		}
 	}
 

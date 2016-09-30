@@ -82,6 +82,7 @@
     <Compile Include="Commands\KeyShortcutCollection.cs" />
     <Compile Include="Commands\ProviderAndCommand.cs" />
     <Compile Include="Commands\RegisteredCommandElement.cs" />
+    <Compile Include="Controls\DpiService.cs" />
     <Compile Include="Controls\FastTreeNodeView.cs" />
     <Compile Include="Controls\IStackedContentChild.cs" />
     <Compile Include="Controls\Screen.cs" />
@@ -93,7 +94,6 @@
     <Compile Include="Controls\WpfCommands.cs" />
     <Compile Include="Controls\WpfCommandService.cs" />
     <Compile Include="Controls\WpfFocusService.cs" />
-    <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="Culture\Commands.cs" />
     <Compile Include="Culture\CultureService.cs" />
     <Compile Include="Culture\CultureSettings.cs" />
@@ -280,6 +280,8 @@
     <Compile Include="Language\Intellisense\Classification\FilterMatchCompletionClassifier.cs" />
     <Compile Include="Language\Intellisense\CollectionBooleanToVisibilityConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionBroker.cs" />
+    <Compile Include="Language\Intellisense\CompletionCollectionVM.cs" />
+    <Compile Include="Language\Intellisense\CompletionIconVM.cs" />
     <Compile Include="Language\Intellisense\CompletionImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionPresenter.cs" />
     <Compile Include="Language\Intellisense\CompletionPresenterControl.xaml.cs">
@@ -291,6 +293,7 @@
     <Compile Include="Language\Intellisense\CompletionTextConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProviderService.cs" />
+    <Compile Include="Language\Intellisense\CompletionVM.cs" />
     <Compile Include="Language\Intellisense\CurrentLineSpaceReservationService.cs" />
     <Compile Include="Language\Intellisense\FilterImageReferenceConverter.cs" />
     <Compile Include="Language\Intellisense\FilterToolTipConverter.cs" />
@@ -380,6 +383,7 @@
     <Compile Include="Output\OutputControl.xaml.cs">
       <DependentUpon>OutputControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Output\OutputControlConverter.cs" />
     <Compile Include="Output\OutputService.cs" />
     <Compile Include="Output\OutputServiceSettings.cs" />
     <Compile Include="Output\OutputTextEditorFormatDefinition.cs" />
@@ -427,7 +431,7 @@
     <Compile Include="Settings\XmlSettingsWriter.cs" />
     <Compile Include="Settings\XmlUtils.cs" />
     <Compile Include="Tabs\FileTabBackgroundConverter.cs" />
-    <Compile Include="Tabs\TabElementScaler.cs" />
+    <Compile Include="Tabs\TabElementZoomer.cs" />
     <Compile Include="Tabs\TabGroup.cs" />
     <Compile Include="Tabs\TabGroupService.cs" />
     <Compile Include="Tabs\TabItemImpl.cs" />

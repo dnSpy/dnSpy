@@ -25,11 +25,10 @@ namespace dnSpy.Search {
 		public bool SyntaxHighlight { get; set; }
 		public IDecompiler Decompiler { get; set; }
 		public IImageService ImageService { get; set; }
-		public BackgroundType BackgroundType { get; set; }
+		public ImageOptions ImageOptions { get; set; }
 
 		public SearchResultContext() {
 			this.SyntaxHighlight = true;
-			this.BackgroundType = BackgroundType.Search;
 		}
 	}
 }

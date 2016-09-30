@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.CallStack {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
 		void RefreshThemeFields();
+		void SetImageOptions(ImageOptions imageOptions);
 	}
 
 	[Export(typeof(ICallStackVM))]
@@ -110,6 +111,11 @@ namespace dnSpy.Debugger.CallStack {
 			callStackSettings.PropertyChanged += CallStackSettings_PropertyChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
+		}
+
+		void ICallStackVM.SetImageOptions(ImageOptions imageOptions) {
+			callStackFrameContext.ImageOptions = imageOptions;
+			RefreshThemeFields();
 		}
 
 		void TheDebugger_ProcessRunning(object sender, EventArgs e) => InitializeStackFrames();

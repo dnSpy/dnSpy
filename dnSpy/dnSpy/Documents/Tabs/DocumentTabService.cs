@@ -163,12 +163,9 @@ namespace dnSpy.Documents.Tabs {
 			this.decompilationCache = decompilationCache;
 			this.referenceDocumentTabContentProviders = referenceDocumentTabContentProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.defaultDocumentTabContentProviders = defaultDocumentTabContentProviders.OrderBy(a => a.Metadata.Order).ToArray();
-			var tvElem = documentTreeView.TreeView.UIObject as UIElement;
-			Debug.Assert(tvElem != null);
-			if (tvElem != null) {
-				tvElem.IsVisibleChanged += TreeView_IsVisibleChanged;
-				isTreeViewVisible = tvElem.IsVisible;
-			}
+			var tvElem = documentTreeView.TreeView.UIObject;
+			tvElem.IsVisibleChanged += TreeView_IsVisibleChanged;
+			isTreeViewVisible = tvElem.IsVisible;
 			this.DocumentTreeView = documentTreeView;
 			this.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 			this.DocumentTreeView.SelectionChanged += DocumentTreeView_SelectionChanged;
@@ -393,7 +390,7 @@ namespace dnSpy.Documents.Tabs {
 			// The treeview steals the focus so remember the current focused element. Don't restore
 			// the focus if it's a node in the treeview.
 			var focusedElem = Keyboard.FocusedElement;
-			if (((UIElement)DocumentTreeView.TreeView.UIObject).IsKeyboardFocusWithin)
+			if (DocumentTreeView.TreeView.UIObject.IsKeyboardFocusWithin)
 				focusedElem = null;
 			bool tabGroupHasFocus = TabGroupService.TabGroups.Any(a => a.IsKeyboardFocusWithin);
 

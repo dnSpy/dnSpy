@@ -34,22 +34,22 @@ namespace dnSpy.Debugger.Threads {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CurrentImage")) {
 				if (vm.IsCurrent)
-					return vm.Context.ImageService.GetImage(DsImages.CurrentInstructionPointer, BackgroundType.GridViewItem);
+					return GetImage(vm, DsImages.CurrentInstructionPointer);
 				if (vm.Type == ThreadType.Main)
-					return vm.Context.ImageService.GetImage(DsImages.DraggedCurrentInstructionPointer, BackgroundType.GridViewItem);
+					return GetImage(vm, DsImages.DraggedCurrentInstructionPointer);
 				return null;
 			}
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CategoryImage")) {
 				switch (vm.Type) {
 				case ThreadType.Unknown:
 				case ThreadType.Terminated:
-					return vm.Context.ImageService.GetImage(DsImages.QuestionMark, BackgroundType.GridViewItem);
+					return GetImage(vm, DsImages.QuestionMark);
 				case ThreadType.Main:
-					return vm.Context.ImageService.GetImage(DsImages.Thread, BackgroundType.GridViewItem);
+					return GetImage(vm, DsImages.Thread);
 				case ThreadType.BGCOrFinalizer:
 				case ThreadType.ThreadPool:
 				case ThreadType.Worker:
-					return vm.Context.ImageService.GetImage(DsImages.Process, BackgroundType.GridViewItem);
+					return GetImage(vm, DsImages.Process);
 				default:
 					Debug.Fail(string.Format("Unknown thread type: {0}", vm.Type));
 					goto case ThreadType.Unknown;
@@ -84,6 +84,18 @@ namespace dnSpy.Debugger.Threads {
 				return null;
 
 			return gen.CreateResult(true);
+		}
+
+		object GetImage(ThreadVM vm, ImageReference imageReference) {
+			if (vm.Context.ImageOptions == null)
+				return null;
+			var options = new ImageOptions {
+				BackgroundType = BackgroundType.GridViewItem,
+				Zoom = vm.Context.ImageOptions.Zoom,
+				DpiObject = vm.Context.ImageOptions.DpiObject,
+				Dpi = vm.Context.ImageOptions.Dpi,
+			};
+			return vm.Context.ImageService.GetImage(imageReference, options);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

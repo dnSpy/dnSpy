@@ -61,6 +61,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		public ICodeToolTipProvider Create() =>
-			new CodeToolTipProvider(imageService, dotNetImageService, classificationFormatMap, themeClassificationTypeService, codeToolTipSettings.SyntaxHighlight);
+			new CodeToolTipProvider(DocumentViewer.TextView, imageService, dotNetImageService, classificationFormatMap, themeClassificationTypeService, codeToolTipSettings.SyntaxHighlight);
 	}
 }

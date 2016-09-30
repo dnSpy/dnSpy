@@ -20,6 +20,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Menus {
 	/// <summary>
@@ -52,8 +53,9 @@ namespace dnSpy.Contracts.Menus {
 		/// Creates a <see cref="Menu"/>
 		/// </summary>
 		/// <param name="menuGuid">Guid of menu, eg. <see cref="MenuConstants.APP_MENU_GUID"/></param>
+		/// <param name="imageOptions">Image options</param>
 		/// <param name="commandTarget">Command target for menu items, eg. the owner window, or null</param>
 		/// <returns></returns>
-		Menu CreateMenu(Guid menuGuid, IInputElement commandTarget);
+		Menu CreateMenu(Guid menuGuid, ImageOptions imageOptions, IInputElement commandTarget);
 	}
 }

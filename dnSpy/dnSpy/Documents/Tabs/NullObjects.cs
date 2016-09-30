@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Settings;
@@ -72,12 +73,13 @@ namespace dnSpy.Documents.Tabs {
 
 		public IInputElement FocusedElement => null;
 		public object UIObject => string.Empty;
-		public FrameworkElement ScaleElement => null;
+		public FrameworkElement ZoomElement => null;
 		public void OnShow() { }
 		public void OnHide() { }
 		public void Deserialize(object obj) { }
 		public object Serialize() => null;
 		public object CreateSerialized(ISettingsSection section) => null;
 		public void SaveSerialized(ISettingsSection section, object obj) { }
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 	}
 }

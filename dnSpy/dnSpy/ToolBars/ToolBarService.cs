@@ -138,7 +138,7 @@ namespace dnSpy.ToolBars {
 		readonly IEnumerable<Lazy<IToolBarButton, IToolBarButtonMetadata>> tbButtonMef;
 		readonly IEnumerable<Lazy<IToolBarObject, IToolBarObjectMetadata>> tbObjectMef;
 
-		public ToolBar InitializeToolBar(ToolBar toolBar, Guid toolBarGuid, IInputElement commandTarget) {
+		public ToolBar InitializeToolBar(ToolBar toolBar, Guid toolBarGuid, IInputElement commandTarget, ImageOptions imageOptions) {
 			InitializeToolBarItems();
 			if (toolBar == null) {
 				toolBar = new ToolBar();
@@ -168,7 +168,7 @@ namespace dnSpy.ToolBars {
 					needSeparator = true;
 
 					foreach (var item in items) {
-						var obj = Create(item, ctx, commandTarget);
+						var obj = Create(item, ctx, commandTarget, imageOptions);
 						if (obj != null)
 							toolBar.Items.Add(obj);
 					}
@@ -179,10 +179,10 @@ namespace dnSpy.ToolBars {
 			return toolBar;
 		}
 
-		object Create(ToolBarItemMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
+		object Create(ToolBarItemMD md, IToolBarItemContext ctx, IInputElement commandTarget, ImageOptions imageOptions) {
 			var mdButton = md as ToolBarButtonMD;
 			if (mdButton != null)
-				return Create(mdButton, ctx, commandTarget);
+				return Create(mdButton, ctx, commandTarget, imageOptions);
 
 			var mdObj = md as ToolBarObjectMD;
 			if (mdObj != null)
@@ -192,7 +192,7 @@ namespace dnSpy.ToolBars {
 			return null;
 		}
 
-		object Create(ToolBarButtonMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
+		object Create(ToolBarButtonMD md, IToolBarItemContext ctx, IInputElement commandTarget, ImageOptions imageOptions) {
 			var item = (IToolBarButton)md.ToolBarItem;
 			var md2 = (IToolBarButtonMetadata)md.Metadata;
 
@@ -213,7 +213,7 @@ namespace dnSpy.ToolBars {
 			if (!string.IsNullOrEmpty(icon)) {
 				var imgRef = ImageReferenceHelper.GetImageReference(item, icon);
 				if (imgRef != null)
-					imageSource = imageService.GetImage(imgRef.Value, BackgroundType.ToolBar);
+					imageSource = imageService.GetImage(imgRef.Value, imageOptions);
 			}
 
 			var toggleButtonCmd = item as IToolBarToggleButton;

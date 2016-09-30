@@ -29,6 +29,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Output;
@@ -56,6 +57,8 @@ namespace dnSpy.Output {
 		void RefreshThemeFields();
 		OutputBufferVM SelectedOutputBufferVM { get; }
 		double ZoomLevel { get; }
+		ImageOptions ImageOptions { get; set; }
+		IImageService ImageService { get; }
 	}
 
 	[Export(typeof(IOutputServiceInternal)), Export(typeof(IOutputService))]
@@ -136,7 +139,8 @@ namespace dnSpy.Output {
 		readonly IMenuService menuService;
 
 		[ImportingConstructor]
-		OutputService(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorProvider logEditorProvider, OutputServiceSettingsImpl outputServiceSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuService menuService, [ImportMany] IEnumerable<Lazy<IOutputServiceListener, IOutputServiceListenerMetadata>> outputServiceListeners) {
+		OutputService(IImageService imageService, IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorProvider logEditorProvider, OutputServiceSettingsImpl outputServiceSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuService menuService, [ImportMany] IEnumerable<Lazy<IOutputServiceListener, IOutputServiceListenerMetadata>> outputServiceListeners) {
+			ImageService = imageService;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.logEditorProvider = logEditorProvider;
 			this.outputServiceSettingsImpl = outputServiceSettingsImpl;
@@ -153,6 +157,19 @@ namespace dnSpy.Output {
 				}
 			}));
 		}
+
+		public IImageService ImageService { get; }
+
+		public ImageOptions ImageOptions {
+			get { return imageOptions; }
+			set {
+				if (imageOptions != value) {
+					imageOptions = value;
+					RefreshThemeFields();
+				}
+			}
+		}
+		ImageOptions imageOptions;
 
 		void OutputBuffers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (SelectedOutputBufferVM == null)

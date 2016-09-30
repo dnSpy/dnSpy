@@ -36,6 +36,7 @@ namespace dnSpy.Documents.TreeView {
 	[Export(typeof(IDocumentTreeViewProvider))]
 	sealed class DocumentTreeViewProvider : IDocumentTreeViewProvider {
 		readonly IThemeService themeService;
+		readonly IDpiService dpiService;
 		readonly ITreeViewService treeViewService;
 		readonly IDecompilerService decompilerService;
 		readonly IDsDocumentServiceProvider documentServiceProvider;
@@ -49,8 +50,9 @@ namespace dnSpy.Documents.TreeView {
 		readonly Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>[] mefFinders;
 
 		[ImportingConstructor]
-		DocumentTreeViewProvider(IThemeService themeService, ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentServiceProvider documentServiceProvider, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProviders, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders) {
+		DocumentTreeViewProvider(IThemeService themeService, IDpiService dpiService, ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentServiceProvider documentServiceProvider, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProviders, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders) {
 			this.themeService = themeService;
+			this.dpiService = dpiService;
 			this.treeViewService = treeViewService;
 			this.decompilerService = decompilerService;
 			this.documentServiceProvider = documentServiceProvider;
@@ -66,6 +68,6 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public IDocumentTreeView Create(IDocumentTreeNodeFilter filter) =>
-			new DocumentTreeView(false, filter, themeService, treeViewService, decompilerService, documentServiceProvider.Create(), documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, appSettings, dsDocumentNodeProviders.ToArray(), mefFinders.ToArray());
+			new DocumentTreeView(false, filter, themeService, dpiService, treeViewService, decompilerService, documentServiceProvider.Create(), documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, appSettings, dsDocumentNodeProviders.ToArray(), mefFinders.ToArray());
 	}
 }

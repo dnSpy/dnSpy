@@ -55,12 +55,12 @@ namespace dnSpy.Output {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement => outputContent.Value.FocusedElement;
-		public FrameworkElement ScaleElement => outputContent.Value.ScaleElement;
+		public FrameworkElement ZoomElement => outputContent.Value.ZoomElement;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Resources.Window_Output;
 		public object ToolTip => null;
 		public object UIObject => outputContent.Value.UIObject;
-		double IZoomable.ScaleValue => outputContent.Value.ZoomLevel / 100.0;
+		double IZoomable.ZoomValue => outputContent.Value.ZoomLevel / 100.0;
 
 		readonly Lazy<IOutputContent> outputContent;
 
@@ -68,7 +68,24 @@ namespace dnSpy.Output {
 			this.outputContent = outputContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) { }
+		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+			switch (visEvent) {
+			case ToolWindowContentVisibilityEvent.Added:
+				outputContent.Value.OnShow();
+				break;
+			case ToolWindowContentVisibilityEvent.Removed:
+				outputContent.Value.OnClose();
+				break;
+			case ToolWindowContentVisibilityEvent.Visible:
+				outputContent.Value.OnVisible();
+				break;
+			case ToolWindowContentVisibilityEvent.Hidden:
+				outputContent.Value.OnHidden();
+				break;
+			}
+		}
+
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 	}
 
 	[ExportAutoLoaded]

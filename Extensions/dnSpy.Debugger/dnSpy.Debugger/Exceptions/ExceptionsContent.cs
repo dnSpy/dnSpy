@@ -22,11 +22,16 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.Exceptions {
 	interface IExceptionsContent : IUIObjectProvider {
+		void OnShow();
+		void OnClose();
+		void OnVisible();
+		void OnHidden();
 		void Focus();
 		void FocusSearchTextBox();
 		ListBox ListBox { get; }
@@ -37,39 +42,81 @@ namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionsContent : IExceptionsContent {
 		public object UIObject => ExceptionsControl;
 		public IInputElement FocusedElement => ExceptionsControl.ListBox;
-		public FrameworkElement ScaleElement => ExceptionsControl;
+		public FrameworkElement ZoomElement => ExceptionsControl;
 		public ListBox ListBox => ExceptionsControl.ListBox;
-		public IExceptionsVM ExceptionsVM => vmExceptions.Value;
+
+		public IExceptionsVM ExceptionsVM {
+			get {
+				if (!initd) {
+					initd = true;
+					UpdateImageOptions(vmExceptions.Value);
+				}
+				return vmExceptions.Value;
+			}
+		}
+		bool initd;
+		readonly Lazy<IExceptionsVM> vmExceptions;
 
 		ExceptionsControl ExceptionsControl {
 			get {
 				if (exceptionsControl.DataContext == null) {
-					vmExceptions.Value.Initialize(new SelectedItemsProvider<ExceptionVM>(exceptionsControl.ListBox));
-					exceptionsControl.DataContext = this.vmExceptions.Value;
+					ExceptionsVM.Initialize(new SelectedItemsProvider<ExceptionVM>(exceptionsControl.ListBox));
+					exceptionsControl.DataContext = ExceptionsVM;
 				}
 				return exceptionsControl;
 			}
 		}
 		readonly ExceptionsControl exceptionsControl;
 
-		readonly Lazy<IExceptionsVM> vmExceptions;
+		double zoomLevel;
 
 		[ImportingConstructor]
-		ExceptionsContent(IWpfCommandService wpfCommandService, IThemeService themeService, Lazy<IExceptionsVM> exceptionsVM) {
+		ExceptionsContent(IWpfCommandService wpfCommandService, IThemeService themeService, IDpiService dpiService, Lazy<IExceptionsVM> exceptionsVM) {
 			this.exceptionsControl = new ExceptionsControl();
 			this.vmExceptions = exceptionsVM;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			dpiService.DpiChanged += DpiService_DpiChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL, exceptionsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW, exceptionsControl.ListBox);
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmExceptions.Value.RefreshThemeFields();
+		void UpdateImageOptions(IExceptionsVM vm) {
+			var options = new ImageOptions {
+				Zoom = new Size(zoomLevel, zoomLevel),
+				DpiObject = exceptionsControl,
+			};
+			vm.ImageOptions = options;
+		}
+
+		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
+			if (e.Window == Window.GetWindow(exceptionsControl))
+				ExceptionsVM.RefreshThemeFields();
+		}
+
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => ExceptionsVM.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(ExceptionsControl.ListBox);
 
 		public void FocusSearchTextBox() {
 			ExceptionsControl.SearchTextBox.Focus();
 			ExceptionsControl.SearchTextBox.SelectAll();
+		}
+
+		public void OnShow() { }
+		public void OnClose() { }
+		public void OnHidden() { }
+
+		public void OnVisible() {
+			// Make sure the images have been refreshed (the DPI could've changed while the control was closed)
+			ExceptionsVM.RefreshThemeFields();
+		}
+
+		public void OnZoomChanged(double value) {
+			if (zoomLevel == value)
+				return;
+			zoomLevel = value;
+			if (initd)
+				UpdateImageOptions(ExceptionsVM);
 		}
 	}
 }

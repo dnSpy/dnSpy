@@ -20,9 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.TreeView;
@@ -63,7 +61,7 @@ namespace dnSpy.MainApp {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultVertical;
 
 		public IInputElement FocusedElement => null;
-		public FrameworkElement ScaleElement => treeView.UIObject as FrameworkElement;
+		public FrameworkElement ZoomElement => treeView.UIObject;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Resources.AssemblyExplorerTitle;
 		public object ToolTip => null;
@@ -74,14 +72,12 @@ namespace dnSpy.MainApp {
 
 		public DocumentTreeViewWindowContent(ITreeView treeView) {
 			this.treeView = treeView;
-			var control = treeView.UIObject as Control;
-			Debug.Assert(control != null);
-			if (control != null)
-				control.Padding = new Thickness(0, 2, 0, 0);
+			treeView.UIObject.Padding = new Thickness(0, 2, 0, 0);
 		}
 
 		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) { }
 		public void Focus() => treeView.Focus();
+		public void OnZoomChanged(double value) => treeView.OnZoomChanged(value);
 	}
 
 	[ExportAutoLoaded]

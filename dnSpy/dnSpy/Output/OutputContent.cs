@@ -24,10 +24,15 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Output {
 	interface IOutputContent : IUIObjectProvider {
+		void OnShow();
+		void OnClose();
+		void OnVisible();
+		void OnHidden();
 		double ZoomLevel { get; }
 	}
 
@@ -35,9 +40,19 @@ namespace dnSpy.Output {
 	sealed class OutputContent : IOutputContent {
 		public object UIObject => OutputControl;
 		public IInputElement FocusedElement => OutputService.FocusedElement;
-		public FrameworkElement ScaleElement => OutputControl;
-		public double ZoomLevel => vmOutput.Value.ZoomLevel;
-		IOutputServiceInternal OutputService => vmOutput.Value;
+		public FrameworkElement ZoomElement => OutputControl;
+		public double ZoomLevel => OutputService.ZoomLevel;
+
+		IOutputServiceInternal OutputService {
+			get {
+				if (!initd) {
+					initd = true;
+					UpdateImageOptions(vmOutput.Value);
+				}
+				return vmOutput.Value;
+			}
+		}
+		bool initd;
 
 		OutputControl OutputControl {
 			get {
@@ -51,10 +66,11 @@ namespace dnSpy.Output {
 		readonly Lazy<IOutputServiceInternal> vmOutput;
 
 		[ImportingConstructor]
-		OutputContent(IWpfCommandService wpfCommandService, IThemeService themeService, Lazy<IOutputServiceInternal> outputVM) {
+		OutputContent(IWpfCommandService wpfCommandService, IThemeService themeService, IDpiService dpiService, Lazy<IOutputServiceInternal> outputVM) {
 			this.outputControl = new OutputControl();
 			this.vmOutput = outputVM;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			dpiService.DpiChanged += DpiService_DpiChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_OUTPUT_CONTROL, outputControl);
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_OUTPUT_CONTROL);
@@ -88,6 +104,11 @@ namespace dnSpy.Output {
 			outputControl.PreviewKeyDown += OutputControl_PreviewKeyDown;
 		}
 
+		void UpdateImageOptions(IOutputServiceInternal outputService) {
+			var options = new ImageOptions { DpiObject = outputControl };
+			outputService.ImageOptions = options;
+		}
+
 		void OutputControl_PreviewKeyDown(object sender, KeyEventArgs e) {
 			if (!waitingForSecondKey && e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.E) {
 				waitingForSecondKey = true;
@@ -118,6 +139,22 @@ namespace dnSpy.Output {
 			}));
 		}
 
+		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
+			if (e.Window == Window.GetWindow(outputControl))
+				OutputService.RefreshThemeFields();
+		}
+
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => OutputService.RefreshThemeFields();
+
+		public void OnShow() { }
+		public void OnClose() { }
+		public void OnHidden() { }
+
+		public void OnVisible() {
+			// Make sure the images have been refreshed (the DPI could've changed while the control was closed)
+			OutputService.RefreshThemeFields();
+		}
+
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 	}
 }

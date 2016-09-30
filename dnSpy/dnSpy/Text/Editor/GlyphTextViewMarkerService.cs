@@ -699,10 +699,15 @@ namespace dnSpy.Text.Editor {
 			if (glyphTag.ImageReference.IsDefault)
 				return null;
 
-			var source = glyphTextMarkerServiceImpl.ImageService.GetImage(glyphTag.ImageReference, BackgroundType.GlyphMargin);
 			const double DEFAULT_IMAGE_LENGTH = 16;
 			const double EXTRA_LENGTH = 2;
 			double imageLength = Math.Min(DEFAULT_IMAGE_LENGTH, line.Height + EXTRA_LENGTH);
+
+			var options = new ImageOptions(TextView) {
+				LogicalSize = new Size(imageLength, imageLength),
+				BackgroundType = BackgroundType.GlyphMargin,
+			};
+			var source = glyphTextMarkerServiceImpl.ImageService.GetImage(glyphTag.ImageReference, options);
 			var image = new Image {
 				Width = imageLength,
 				Height = imageLength,

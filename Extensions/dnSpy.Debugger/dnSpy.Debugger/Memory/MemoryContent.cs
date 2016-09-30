@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Memory {
 	sealed class MemoryContent : IMemoryContent {
 		public object UIObject => memoryControl;
 		public IInputElement FocusedElement => memoryControl.DnHexBox;
-		public FrameworkElement ScaleElement => memoryControl;
+		public FrameworkElement ZoomElement => memoryControl;
 		public DnHexBox DnHexBox => memoryControl.DnHexBox;
 
 		readonly MemoryControl memoryControl;
@@ -77,5 +77,6 @@ namespace dnSpy.Debugger.Memory {
 		public void OnShow() => vmMemory.IsEnabled = true;
 		public void OnHidden() => vmMemory.IsVisible = false;
 		public void OnVisible() => vmMemory.IsVisible = true;
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 	}
 }

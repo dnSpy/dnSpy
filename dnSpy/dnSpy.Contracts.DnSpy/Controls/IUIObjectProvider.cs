@@ -38,7 +38,13 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
 		/// </summary>
-		FrameworkElement ScaleElement { get; }
+		FrameworkElement ZoomElement { get; }
+
+		/// <summary>
+		/// Called whenever <see cref="ZoomElement"/> gets a new scale transform
+		/// </summary>
+		/// <param name="value">New zoom value, where 1.0 == 100%</param>
+		void OnZoomChanged(double value);
 	}
 
 	/// <summary>

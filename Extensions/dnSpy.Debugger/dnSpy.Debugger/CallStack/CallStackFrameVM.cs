@@ -24,12 +24,14 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackFrameContext {
 		IImageService ImageService { get; }
+		ImageOptions ImageOptions { get; }
 		TypePrinterFlags TypePrinterFlags { get; }
 		bool SyntaxHighlight { get; }
 	}
 
 	sealed class CallStackFrameContext : ICallStackFrameContext {
 		public IImageService ImageService { get; }
+		public ImageOptions ImageOptions { get; set; }
 		public TypePrinterFlags TypePrinterFlags { get; set; }
 		public bool SyntaxHighlight { get; set; }
 

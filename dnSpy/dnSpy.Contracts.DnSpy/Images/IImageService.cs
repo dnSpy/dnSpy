@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace dnSpy.Contracts.Images {
@@ -25,22 +24,6 @@ namespace dnSpy.Contracts.Images {
 	/// Image service
 	/// </summary>
 	public interface IImageService {
-		/// <summary>
-		/// Returns a 16x16 image
-		/// </summary>
-		/// <param name="imageReference">Image reference</param>
-		/// <param name="bgType">Background type</param>
-		/// <returns></returns>
-		BitmapSource GetImage(ImageReference imageReference, BackgroundType bgType);
-
-		/// <summary>
-		/// Returns a 16x16 image
-		/// </summary>
-		/// <param name="imageReference">Image reference</param>
-		/// <param name="bgColor">Background color or null to not modify the image</param>
-		/// <returns></returns>
-		BitmapSource GetImage(ImageReference imageReference, Color? bgColor);
-
 		/// <summary>
 		/// Returns an image
 		/// </summary>

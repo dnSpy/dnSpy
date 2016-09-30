@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Threads {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement => threadsContent.Value.FocusedElement;
-		public FrameworkElement ScaleElement => threadsContent.Value.ScaleElement;
+		public FrameworkElement ZoomElement => threadsContent.Value.ZoomElement;
 		public Guid Guid => THE_GUID;
 		public string Title => dnSpy_Debugger_Resources.Window_Threads;
 		public object ToolTip => null;
@@ -82,5 +82,6 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		public void Focus() => threadsContent.Value.Focus();
+		public void OnZoomChanged(double value) => threadsContent.Value.OnZoomChanged(value);
 	}
 }

@@ -50,7 +50,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public event EventHandler<DocumentViewerRemovedEventArgs> Removed;
 
 		FrameworkElement IDocumentViewer.UIObject => documentViewerControl;
-		double IZoomable.ScaleValue => documentViewerControl.TextView.ZoomLevel / 100.0;
+		double IZoomable.ZoomValue => documentViewerControl.TextView.ZoomLevel / 100.0;
 		IDsWpfTextViewHost IDocumentViewer.TextViewHost => documentViewerControl.TextViewHost;
 		public IDsWpfTextView TextView => documentViewerControl.TextView;
 		ITextCaret IDocumentViewer.Caret => documentViewerControl.TextView.Caret;
@@ -144,7 +144,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public FrameworkElement ScaleElement {
+		public FrameworkElement ZoomElement {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -343,6 +343,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new ArgumentNullException(nameof(onCancel));
 			documentViewerControl.ShowCancelButton(onCancel, message);
 		}
+
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 
 		bool isDisposed;
 		public void Dispose() {

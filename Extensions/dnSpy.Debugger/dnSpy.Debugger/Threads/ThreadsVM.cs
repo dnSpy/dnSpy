@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.Threads {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
 		void RefreshThemeFields();
+		void SetImageOptions(ImageOptions imageOptions);
 	}
 
 	[Export(typeof(IThreadsVM)), Export(typeof(ILoadBeforeDebug))]
@@ -94,6 +95,11 @@ namespace dnSpy.Debugger.Threads {
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
+		}
+
+		void IThreadsVM.SetImageOptions(ImageOptions imageOptions) {
+			threadContext.ImageOptions = imageOptions;
+			RefreshThemeFields();
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {

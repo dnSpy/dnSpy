@@ -24,7 +24,18 @@ using dnSpy.Contracts.Search;
 
 namespace dnSpy.Search {
 	sealed class SearchTypeVM : ViewModelBase {
-		public ImageSource Image => imageService.GetImage(imageReference, BackgroundType.ComboBox);
+		public ImageSource Image {
+			get {
+				var options = new ImageOptions {
+					BackgroundType = BackgroundType.ComboBox,
+					Zoom = imageOptions.Zoom,
+					DpiObject = imageOptions.DpiObject,
+					Dpi = imageOptions.Dpi,
+				};
+				return imageService.GetImage(imageReference, options);
+			}
+		}
+
 		readonly ImageReference imageReference;
 
 		public string Name { get; }
@@ -33,9 +44,11 @@ namespace dnSpy.Search {
 		public VisibleMembersFlags Flags { get; }
 
 		readonly IImageService imageService;
+		ImageOptions imageOptions;
 
-		public SearchTypeVM(IImageService imageService, SearchType searchType, string name, string toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
+		public SearchTypeVM(IImageService imageService, ImageOptions imageOptions, SearchType searchType, string name, string toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
 			this.imageService = imageService;
+			this.imageOptions = imageOptions;
 			this.SearchType = searchType;
 			this.Name = name;
 			this.ToolTip = toolTip;
@@ -43,7 +56,8 @@ namespace dnSpy.Search {
 			this.Flags = flags;
 		}
 
-		public void RefreshUI() {
+		public void RefreshUI(ImageOptions imageOptions) {
+			this.imageOptions = imageOptions;
 			OnPropertyChanged(nameof(Image));
 			OnPropertyChanged(nameof(Name));
 		}

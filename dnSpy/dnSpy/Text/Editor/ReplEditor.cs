@@ -29,6 +29,7 @@ using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
@@ -48,7 +49,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ReplEditor : IReplEditor2 {
 		public object UIObject => wpfTextViewHost.HostControl;
 		public IInputElement FocusedElement => wpfTextView.VisualElement;
-		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
+		public FrameworkElement ZoomElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
 		public IReplEditorOperations ReplEditorOperations { get; }
 		public ICommandTargetCollection CommandTarget => wpfTextView.CommandTarget;
@@ -776,6 +777,8 @@ namespace dnSpy.Text.Editor {
 				return new ReplSubBuffer(IsCommandMode ? ReplBufferKind.Code : ReplBufferKind.Output, startOffset, endOffset);
 			}
 		}
+
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 
 		public void Dispose() {
 			if (!wpfTextViewHost.IsClosed)

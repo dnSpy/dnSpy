@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
@@ -36,7 +37,7 @@ namespace dnSpy.Text.Editor {
 	sealed class LogEditor : ILogEditor {
 		public object UIObject => wpfTextViewHost.HostControl;
 		public IInputElement FocusedElement => wpfTextView.VisualElement;
-		public FrameworkElement ScaleElement => wpfTextView.VisualElement;
+		public FrameworkElement ZoomElement => wpfTextView.VisualElement;
 		public object Tag { get; set; }
 		public IDsWpfTextView TextView => wpfTextViewHost.TextView;
 		public IDsWpfTextViewHost TextViewHost => wpfTextViewHost;
@@ -228,6 +229,8 @@ namespace dnSpy.Text.Editor {
 				pendingOutput_dispatching = false;
 			}
 		}
+
+		void IUIObjectProvider.OnZoomChanged(double value) { }
 
 		public void Dispose() {
 			if (!wpfTextViewHost.IsClosed)

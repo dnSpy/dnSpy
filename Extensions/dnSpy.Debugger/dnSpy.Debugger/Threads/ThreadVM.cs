@@ -43,6 +43,7 @@ namespace dnSpy.Debugger.Threads {
 
 	interface IThreadContext {
 		IImageService ImageService { get; }
+		ImageOptions ImageOptions { get; }
 		ITheDebugger TheDebugger { get; }
 		IDebuggerSettings DebuggerSettings { get; }
 		bool SyntaxHighlight { get; }
@@ -52,6 +53,7 @@ namespace dnSpy.Debugger.Threads {
 	sealed class ThreadContext : IThreadContext {
 		public IImageService ImageService { get; }
 		public ITheDebugger TheDebugger { get; }
+		public ImageOptions ImageOptions { get; set; }
 		public IDebuggerSettings DebuggerSettings { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }

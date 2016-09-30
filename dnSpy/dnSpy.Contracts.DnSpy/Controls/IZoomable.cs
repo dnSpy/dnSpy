@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Gets the current scale value (1.0 == 100%)
 		/// </summary>
-		double ScaleValue { get; }
+		double ZoomValue { get; }
 	}
 
 	/// <summary>

@@ -26,6 +26,8 @@ namespace dnSpy.Language.Intellisense {
 	sealed class FilterVM : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		public object ImageObject => this;
+
 		public bool IsChecked {
 			get { return filter.IsChecked; }
 			set {
@@ -62,6 +64,9 @@ namespace dnSpy.Language.Intellisense {
 			this.filter = filter;
 			this.owner = owner;
 		}
+
+		public void RefreshImages() =>
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageObject)));
 
 		public void Dispose() { }
 	}

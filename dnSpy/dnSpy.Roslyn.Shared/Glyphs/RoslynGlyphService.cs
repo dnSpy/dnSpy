@@ -24,8 +24,7 @@ using dnSpy.Roslyn.Internal;
 
 namespace dnSpy.Roslyn.Shared.Glyphs {
 	interface IRoslynGlyphService {
-		ImageSource GetImage(Glyph glyph, BackgroundType bgType);
-		ImageSource GetImage(Glyph glyph, Color? color);
+		ImageSource GetImage(Glyph glyph, ImageOptions options);
 	}
 
 	[Export(typeof(IRoslynGlyphService))]
@@ -37,14 +36,9 @@ namespace dnSpy.Roslyn.Shared.Glyphs {
 			this.imageService = imageService;
 		}
 
-		public ImageSource GetImage(Glyph glyph, BackgroundType bgType) {
+		public ImageSource GetImage(Glyph glyph, ImageOptions options) {
 			var imgRef = glyph.GetImageReference();
-			return imgRef == null ? null : imageService.GetImage(imgRef.Value, bgType);
-		}
-
-		public ImageSource GetImage(Glyph glyph, Color? color) {
-			var imgRef = glyph.GetImageReference();
-			return imgRef == null ? null : imageService.GetImage(imgRef.Value, color);
+			return imgRef == null ? null : imageService.GetImage(imgRef.Value, options);
 		}
 	}
 }

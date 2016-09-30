@@ -18,32 +18,39 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
 using System.Globalization;
-using System.Reflection;
 using System.Windows.Data;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 
-namespace dnSpy.Converters {
-	sealed class ImageConverter : IValueConverter {
-		static IImageService imageService;
-
-		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions)]
-		sealed class Loader : IAutoLoaded {
-			[ImportingConstructor]
-			Loader(IImageService imageService) {
-				ImageConverter.imageService = imageService;
-			}
-		}
-
+namespace dnSpy.Output {
+	sealed class OutputControlConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-			var ary = ((string)parameter).Split(seps, 2);
-			var bgType = (BackgroundType)Enum.Parse(typeof(BackgroundType), ary[0]);
-			var imgRef = (ImageReference)typeof(DsImages).GetProperty(ary[1], BindingFlags.Public | BindingFlags.Static).GetValue(null);
-			return imageService.GetImage(imgRef, bgType);
+			var vm = value as IOutputServiceInternal;
+			var s = parameter as string;
+			if (vm == null || s == null)
+				return null;
+
+			if (s == "ClearAllImage")
+				return GetImage(vm, DsImages.ClearWindowContent);
+			if (s == "SaveImage")
+				return GetImage(vm, DsImages.Save);
+			if (s == "ToggleWordWrapImage")
+				return GetImage(vm, DsImages.WordWrap);
+
+			return null;
 		}
-		static readonly char[] seps = new char[1] { '_' };
+
+		object GetImage(IOutputServiceInternal vm, ImageReference imageReference) {
+			if (vm.ImageOptions == null)
+				return null;
+			var options = new ImageOptions {
+				BackgroundType = BackgroundType.CommandBar,
+				Zoom = vm.ImageOptions.Zoom,
+				DpiObject = vm.ImageOptions.DpiObject,
+				Dpi = vm.ImageOptions.Dpi,
+			};
+			return vm.ImageService.GetImage(imageReference, options);
+		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
 			throw new NotImplementedException();

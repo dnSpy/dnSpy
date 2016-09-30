@@ -26,18 +26,28 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class CompilerDiagnosticVM : ViewModelBase {
-		readonly CompilerDiagnostic diag;
+		public CompilerDiagnostic Diagnostic { get; }
 
-		public object ImageObj { get; }
-		public string Code => diag.Id;
-		public string Description => diag.Description;
-		public string File => GetFilename(diag.Filename);
-		public string FullPath => diag.Filename;
-		public string Line => diag.LineLocationSpan == null ? string.Empty : (diag.LineLocationSpan.Value.StartLinePosition.Line + 1).ToString();
-		public LineLocationSpan? LineLocationSpan => diag.LineLocationSpan;
+		public object ImageObj {
+			get { return imageObj; }
+			set {
+				if (imageObj != value) {
+					imageObj = value;
+					OnPropertyChanged(nameof(ImageObj));
+				}
+			}
+		}
+		object imageObj;
+
+		public string Code => Diagnostic.Id;
+		public string Description => Diagnostic.Description;
+		public string File => GetFilename(Diagnostic.Filename);
+		public string FullPath => Diagnostic.Filename;
+		public string Line => Diagnostic.LineLocationSpan == null ? string.Empty : (Diagnostic.LineLocationSpan.Value.StartLinePosition.Line + 1).ToString();
+		public LineLocationSpan? LineLocationSpan => Diagnostic.LineLocationSpan;
 
 		public CompilerDiagnosticVM(CompilerDiagnostic diag, object image) {
-			this.diag = diag;
+			this.Diagnostic = diag;
 			ImageObj = image;
 		}
 
@@ -54,12 +64,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void WriteSeverity(StringBuilder sb) {
-			switch (diag.Severity) {
+			switch (Diagnostic.Severity) {
 			case CompilerDiagnosticSeverity.Hidden:	sb.Append(dnSpy_AsmEditor_Resources.StatusHidden); break;
 			case CompilerDiagnosticSeverity.Info:	sb.Append(dnSpy_AsmEditor_Resources.StatusInfo); break;
 			case CompilerDiagnosticSeverity.Warning:sb.Append(dnSpy_AsmEditor_Resources.StatusWarning); break;
 			case CompilerDiagnosticSeverity.Error:	sb.Append(dnSpy_AsmEditor_Resources.StatusError); break;
-			default: Debug.Fail($"Unknown severity {diag.Severity}"); sb.Append("???"); break;
+			default: Debug.Fail($"Unknown severity {Diagnostic.Severity}"); sb.Append("???"); break;
 			}
 		}
 

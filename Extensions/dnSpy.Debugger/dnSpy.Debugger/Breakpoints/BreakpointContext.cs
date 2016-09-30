@@ -26,6 +26,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		IImageService ImageService { get; }
 		IDecompiler Decompiler { get; }
 		IModuleLoader ModuleLoader { get; }
+		ImageOptions ImageOptions { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 		bool ShowTokens { get; }
@@ -41,6 +42,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointContext : IBreakpointContext {
 		public IImageService ImageService { get; }
 		public IDecompiler Decompiler { get; set; }
+		public ImageOptions ImageOptions { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public bool ShowTokens { get; set; }

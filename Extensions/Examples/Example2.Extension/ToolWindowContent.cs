@@ -88,7 +88,7 @@ namespace Example2.Extension {
 
 		// The element that gets scaled when the user zooms in or out. Return null if zooming isn't
 		// possible
-		public FrameworkElement ScaleElement => toolWindowControl;
+		public FrameworkElement ZoomElement => toolWindowControl;
 
 		readonly ToolWindowControl toolWindowControl;
 		readonly ToolWindowVM toolWindowVM;
@@ -119,6 +119,10 @@ namespace Example2.Extension {
 				toolWindowVM.IsVisible = false;
 				break;
 			}
+		}
+
+		// Called when the zoom value has changed
+		public void OnZoomChanged(double value) {
 		}
 	}
 
