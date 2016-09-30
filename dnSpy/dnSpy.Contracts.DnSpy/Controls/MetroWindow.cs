@@ -798,7 +798,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void SetTextFormattingMode(DependencyObject textObj, double scale) {
 			if (scale == 1) {
-				if (WindowDpi == new Size(96, 96))
+				if (wpfSupportsPerMonitorDpi || WindowDpi == new Size(96, 96))
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Display);
 				else
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Ideal);
