@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,10 +49,7 @@ namespace dnSpy.Contracts.Controls {
 			InputBindings.Add(new KeyBinding(cmd, Key.Space, ModifierKeys.Alt));
 		}
 
-		/// <summary>
-		/// true to disable DPI scale at startup
-		/// </summary>
-		public bool DisableDpiScaleAtStartup { get; set; }
+		internal bool DisableDpiScalingAtStartup { get; set; }
 
 		/// <inheritdoc/>
 		protected override void OnSourceInitialized(EventArgs e) {
@@ -61,11 +59,11 @@ namespace dnSpy.Contracts.Controls {
 			Debug.Assert(hwndSource != null);
 			if (hwndSource != null) {
 				hwndSource.AddHook(WndProc);
-				wpfDpi = 96.0 * hwndSource.CompositionTarget.TransformToDevice.M11;
+				wpfDpi = new Size(96.0 * hwndSource.CompositionTarget.TransformToDevice.M11, 96.0 * hwndSource.CompositionTarget.TransformToDevice.M22);
 
 				var w = Width;
 				var h = Height;
-				WindowDPI = GetDpi(hwndSource.Handle, (int)wpfDpi);
+				Dpi = GetDpi(hwndSource.Handle) ?? wpfDpi;
 
 				// For some reason, we can't initialize the non-fit-to-size property, so always force
 				// manual mode. When we're here, we should already have a valid Width and Height
@@ -74,7 +72,7 @@ namespace dnSpy.Contracts.Controls {
 				SizeToContent = SizeToContent.Manual;
 
 				if (!wpfSupportsPerMonitorDpi) {
-					double scale = DisableDpiScaleAtStartup ? 1 : WpfPixelScaleFactor;
+					double scale = DisableDpiScalingAtStartup ? 1 : WpfPixelScaleFactor;
 					Width = w * scale;
 					Height = h * scale;
 
@@ -89,9 +87,9 @@ namespace dnSpy.Contracts.Controls {
 		}
 
 		static bool? canCall_GetDpi = null;
-		static int GetDpi(IntPtr hWnd, int defaultValue) {
+		static Size? GetDpi(IntPtr hWnd) {
 			if (canCall_GetDpi == false)
-				return defaultValue;
+				return null;
 			try {
 				var res = GetDpi_Win81(hWnd);
 				canCall_GetDpi = true;
@@ -102,10 +100,11 @@ namespace dnSpy.Contracts.Controls {
 			catch (DllNotFoundException) {
 			}
 			canCall_GetDpi = false;
-			return defaultValue;
+			return null;
 		}
 
-		static int GetDpi_Win81(IntPtr hWnd) {
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		static Size GetDpi_Win81(IntPtr hWnd) {
 			const int MONITOR_DEFAULTTONEAREST = 0x00000002;
 			var hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
 			int dpiX, dpiY;
@@ -113,8 +112,8 @@ namespace dnSpy.Contracts.Controls {
 			int hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, out dpiX, out dpiY);
 			Debug.Assert(hr == 0);
 			if (hr != 0)
-				return 96;
-			return dpiX;
+				return new Size(96, 96);
+			return new Size(dpiX, dpiY);
 		}
 
 		struct RECT {
@@ -138,9 +137,10 @@ namespace dnSpy.Contracts.Controls {
 					return IntPtr.Zero;
 				WM_DPICHANGED_counter++;
 				try {
-					int newDpi = (ushort)(wParam.ToInt64() >> 16);
+					int newDpiY = (ushort)(wParam.ToInt64() >> 16);
+					int newDpiX = (ushort)wParam.ToInt64();
 
-					WindowDPI = newDpi;
+					Dpi = new Size(newDpiX, newDpiY);
 
 					if (!wpfSupportsPerMonitorDpi) {
 						const int SWP_NOZORDER = 0x0004;
@@ -166,7 +166,7 @@ namespace dnSpy.Contracts.Controls {
 			get {
 				if (wpfSupportsPerMonitorDpi)
 					return 1;
-				if (wpfDpi == 0)
+				if (wpfDpi.Width == 0)
 					return 1;
 				return WpfPixelScaleFactor;
 			}
@@ -176,16 +176,19 @@ namespace dnSpy.Contracts.Controls {
 			get {
 				if (wpfSupportsPerMonitorDpi)
 					return 1;
-				Debug.Assert(wpfDpi != 0);
-				if (wpfDpi == 0)
+				Debug.Assert(wpfDpi.Width != 0);
+				if (wpfDpi.Width == 0)
 					return 1;
-				return windowDpi / wpfDpi;
+				return windowDpi.Width / wpfDpi.Width;
 			}
 		}
 
-		int WindowDPI {
+		/// <summary>
+		/// Gets the DPI
+		/// </summary>
+		public Size Dpi {
 			get { return windowDpi; }
-			set {
+			private set {
 				if (windowDpi != value) {
 					if (wpfSupportsPerMonitorDpi) {
 						windowDpi = value;
@@ -209,8 +212,8 @@ namespace dnSpy.Contracts.Controls {
 				}
 			}
 		}
-		int windowDpi;
-		double wpfDpi;
+		Size windowDpi;
+		Size wpfDpi;
 
 		/// <summary>
 		/// Raised when the DPI has changed
@@ -678,7 +681,7 @@ namespace dnSpy.Contracts.Controls {
 
 		static MetroWindow() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroWindow), new FrameworkPropertyMetadata(typeof(MetroWindow)));
-			// Available in .NET Framework 4.6.2
+			//TODO: Remove this field when targetting .NET Framework 4.6.2 or later
 			wpfSupportsPerMonitorDpi = typeof(Window).GetEvent("DpiChanged") != null;
 		}
 		static readonly bool wpfSupportsPerMonitorDpi;
@@ -789,7 +792,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void SetTextFormattingMode(DependencyObject textObj, double scale) {
 			if (scale == 1) {
-				if (WindowDPI == 96)
+				if (Dpi == new Size(96, 96))
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Display);
 				else
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Ideal);
