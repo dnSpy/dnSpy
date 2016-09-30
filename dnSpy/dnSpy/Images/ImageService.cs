@@ -34,7 +34,7 @@ using dnSpy.Contracts.Themes;
 namespace dnSpy.Images {
 	[Export(typeof(IImageService))]
 	sealed class ImageService : IImageService {
-		readonly Dictionary<ImageKey, BitmapSource> imageCache;
+		readonly Dictionary<ImageKey, WeakReference> imageCache;
 		readonly Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>> imageSourceInfoProvidersDict;
 		bool isHighContrast;
 		readonly IThemeService themeService;
@@ -77,7 +77,7 @@ namespace dnSpy.Images {
 		ImageService(IThemeService themeService, IDpiService dpiService, [ImportMany] IEnumerable<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> imageSourceInfoProviders) {
 			this.themeService = themeService;
 			this.dpiService = dpiService;
-			this.imageCache = new Dictionary<ImageKey, BitmapSource>();
+			this.imageCache = new Dictionary<ImageKey, WeakReference>();
 			this.imageSourceInfoProvidersDict = new Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>>();
 			this.themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
 			foreach (var lz in imageSourceInfoProviders.OrderBy(a => a.Metadata.Order)) {
@@ -244,9 +244,13 @@ namespace dnSpy.Images {
 				return null;
 
 			var key = new ImageKey(uriString, options);
+			WeakReference weakImage;
 			BitmapSource image;
-			if (imageCache.TryGetValue(key, out image))
-				return image;
+			if (imageCache.TryGetValue(key, out weakImage)) {
+				image = weakImage.Target as BitmapSource;
+				if (image != null)
+					return image;
+			}
 
 			image = TryLoadImage(uriString, options.PhysicalSize);
 			if (image == null)
@@ -254,7 +258,7 @@ namespace dnSpy.Images {
 
 			if (options.BackgroundColor != null)
 				image = ThemedImageCreator.CreateThemedBitmapSource(image, options.BackgroundColor.Value, isHighContrast);
-			imageCache.Add(key, image);
+			imageCache[key] = new WeakReference(image);
 			return image;
 		}
 
