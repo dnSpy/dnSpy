@@ -172,6 +172,9 @@ namespace dnSpy.Images {
 			internalOptions.Dpi = new Size(96, 96);//TODO:
 			internalOptions.RealPixelSize = new Size(internalOptions.LogicalSize.Width * (internalOptions.Dpi.Width / 96), internalOptions.LogicalSize.Height * (internalOptions.Dpi.Height / 96));
 
+			if (internalOptions.RealPixelSize.Width == 0 || internalOptions.RealPixelSize.Height == 0)
+				return null;
+
 			if (imageReference.Assembly != null) {
 				var name = imageReference.Name;
 				foreach (var provider in GetProviders(imageReference.Assembly)) {

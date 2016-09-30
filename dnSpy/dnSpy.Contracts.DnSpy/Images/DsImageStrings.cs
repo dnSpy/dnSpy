@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Images {
 	/// <summary>
 	/// Image references to images used by dnSpy
 	/// </summary>
-	public static class DsImagesStrings {
+	static class DsImageStrings {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string Add = nameof(Add);
 		public const string AddReference = nameof(AddReference);

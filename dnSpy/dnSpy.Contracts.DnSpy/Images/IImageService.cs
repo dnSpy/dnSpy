@@ -22,11 +22,11 @@ using System.Windows.Media.Imaging;
 
 namespace dnSpy.Contracts.Images {
 	/// <summary>
-	/// Image manager
+	/// Image service
 	/// </summary>
 	public interface IImageService {
 		/// <summary>
-		/// Returns an image
+		/// Returns a 16x16 image
 		/// </summary>
 		/// <param name="imageReference">Image reference</param>
 		/// <param name="bgType">Background type</param>
@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Images {
 		BitmapSource GetImage(ImageReference imageReference, BackgroundType bgType);
 
 		/// <summary>
-		/// Returns an image
+		/// Returns a 16x16 image
 		/// </summary>
 		/// <param name="imageReference">Image reference</param>
 		/// <param name="bgColor">Background color or null to not modify the image</param>

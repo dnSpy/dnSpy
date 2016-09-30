@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Reflection;
 
 namespace dnSpy.Contracts.Images {
 	/// <summary>

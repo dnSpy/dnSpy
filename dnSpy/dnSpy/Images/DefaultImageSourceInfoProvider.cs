@@ -69,14 +69,14 @@ namespace dnSpy.Images {
 								var nameNoExt = RemoveExtension(imageName);
 								string nameKey = null;
 								ImageSourceInfo? info = null;
-								if (imageName.EndsWith(".xaml") || imageName.EndsWith(".baml")) {
+								if (imageName.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase) || imageName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
 									nameKey = nameNoExt;
 									info = new ImageSourceInfo {
 										Uri = baseUri + RemoveExtension(elem.Name) + ".xaml",
 										Size = ImageSourceInfo.AnySize,
 									};
 								}
-								else if (imageName.EndsWith(".png")) {
+								else if (imageName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)) {
 									info = new ImageSourceInfo {
 										Uri = baseUri + elem.Name,
 										Size = GetImageSize(nameNoExt, out nameKey) ?? new Size(16, 16),

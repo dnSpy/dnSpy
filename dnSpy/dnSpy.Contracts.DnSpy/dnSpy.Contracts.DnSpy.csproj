@@ -300,7 +300,7 @@
     <Compile Include="Images\BackgroundType.cs" />
     <Compile Include="Images\DsImages.cs" />
     <Compile Include="Images\DsImagesAttribute.cs" />
-    <Compile Include="Images\DsImagesStrings.cs" />
+    <Compile Include="Images\DsImageStrings.cs" />
     <Compile Include="Images\IDotNetImageService.cs" />
     <Compile Include="Images\IImageService.cs" />
     <Compile Include="Images\IImageSourceInfoProvider.cs" />

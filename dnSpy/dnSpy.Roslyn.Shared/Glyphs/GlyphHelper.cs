@@ -18,7 +18,6 @@
 */
 
 using System.Diagnostics;
-using System.Reflection;
 using dnSpy.Contracts.Images;
 using dnSpy.Roslyn.Internal;
 

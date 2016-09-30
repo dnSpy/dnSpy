@@ -25,19 +25,9 @@ namespace dnSpy.Contracts.Images {
 	/// </summary>
 	public struct ImageSourceInfo {
 		/// <summary>
-		/// Any width
-		/// </summary>
-		public static readonly int AnyWidth = 0;
-
-		/// <summary>
 		/// Any size
 		/// </summary>
-		public static readonly int AnyHeight = 0;
-
-		/// <summary>
-		/// Any size
-		/// </summary>
-		public static readonly Size AnySize = new Size(AnyWidth, AnyHeight);
+		public static readonly Size AnySize = new Size(0, 0);
 
 		/// <summary>
 		/// URI of image
@@ -45,7 +35,7 @@ namespace dnSpy.Contracts.Images {
 		public string Uri { get; set; }
 
 		/// <summary>
-		/// Size of image in pixels
+		/// Size of image in pixels or <see cref="AnySize"/>
 		/// </summary>
 		public Size Size { get; set; }
 	}

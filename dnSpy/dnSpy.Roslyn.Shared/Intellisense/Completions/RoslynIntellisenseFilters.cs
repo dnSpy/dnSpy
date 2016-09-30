@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Reflection;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Shared.Properties;
