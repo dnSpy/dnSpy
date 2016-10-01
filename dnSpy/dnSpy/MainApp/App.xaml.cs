@@ -48,6 +48,11 @@ using dnSpy.Settings;
 namespace dnSpy.MainApp {
 	sealed partial class App : Application {
 		static App() {
+			// Make sure we have a ref to the assembly. The file is copied to the correct location
+			// but unless we have a reference to it in the code (or XAML), it could easily happen
+			// that someone accidentally removes the reference. This code makes sure there'll be
+			// a compilation error if that ever happens.
+			var t = typeof(Images.Dummy);
 			InstallExceptionHandlers();
 		}
 

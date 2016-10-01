@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Images {
 	/// Contains image reference strings that can be used in attributes, eg. menu item attributes
 	/// </summary>
 	public static class DsImagesAttribute {
-		const string Prefix = "img:dnSpy,";
+		const string Prefix = "img:dnSpy.Images,";
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string Add = Prefix + DsImageStrings.Add;
 		public const string AddReference = Prefix + DsImageStrings.AddReference;

@@ -73,6 +73,8 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "dnSpy.Roslyn.VisualBasic.Ed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.EditorFeatures", "dnSpy\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj", "{F10A60DA-4716-45F6-AB2E-4690440C0C7C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Images", "dnSpy\dnSpy.Images\dnSpy.Images.csproj", "{83BBD76B-4ECD-42E1-BF9C-AF8114E52317}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -195,6 +197,10 @@ Global
 		{F10A60DA-4716-45F6-AB2E-4690440C0C7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F10A60DA-4716-45F6-AB2E-4690440C0C7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F10A60DA-4716-45F6-AB2E-4690440C0C7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83BBD76B-4ECD-42E1-BF9C-AF8114E52317}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83BBD76B-4ECD-42E1-BF9C-AF8114E52317}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83BBD76B-4ECD-42E1-BF9C-AF8114E52317}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83BBD76B-4ECD-42E1-BF9C-AF8114E52317}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -232,5 +238,6 @@ Global
 		{8B774E77-C956-4ABC-BBFE-8756CB4111C8} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{30057546-DED0-450E-89C3-0354B4FF9CCD} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{F10A60DA-4716-45F6-AB2E-4690440C0C7C} = {293F0A13-6653-4580-9116-1D255F4C4E69}
+		{83BBD76B-4ECD-42E1-BF9C-AF8114E52317} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 	EndGlobalSection
 EndGlobal

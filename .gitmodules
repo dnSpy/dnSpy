@@ -10,3 +10,6 @@
 [submodule "Plugins/ILSpy.Decompiler/ICSharpCode.Decompiler"]
 	path = Extensions/ILSpy.Decompiler/ICSharpCode.Decompiler
 	url = https://github.com/0xd4d/ILSpy.git
+[submodule "dnSpy/dnSpy.Images"]
+	path = dnSpy/dnSpy.Images
+	url = https://github.com/0xd4d/dnSpy.Images.git

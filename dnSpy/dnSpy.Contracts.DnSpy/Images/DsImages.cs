@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Images {
 	/// Image references to images used by dnSpy
 	/// </summary>
 	public static class DsImages {
-		static readonly Assembly assembly = System.Reflection.Assembly.Load("dnSpy");
+		static readonly Assembly assembly = System.Reflection.Assembly.Load("dnSpy.Images");
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static ImageReference Add { get; } = new ImageReference(assembly, DsImageStrings.Add);
 		public static ImageReference AddReference { get; } = new ImageReference(assembly, DsImageStrings.AddReference);
