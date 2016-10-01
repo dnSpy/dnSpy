@@ -151,6 +151,8 @@ namespace dnSpy.Images {
 			return c.Color;
 		}
 
+		Color? GetColor(Brush brush) => (brush as SolidColorBrush)?.Color;
+
 		Size GetDpi(DependencyObject dpiObject, Size dpi) {
 			if (dpiObject != null) {
 				var window = Window.GetWindow(dpiObject) as MetroWindow;
@@ -173,7 +175,7 @@ namespace dnSpy.Images {
 				return null;
 
 			var internalOptions = new InternalImageOptions();
-			internalOptions.BackgroundColor = options.BackgroundColor ?? GetColor(options.BackgroundType);
+			internalOptions.BackgroundColor = options.BackgroundColor ?? GetColor(options.BackgroundBrush) ?? GetColor(options.BackgroundType);
 			var logicalSize = options.LogicalSize;
 			if (logicalSize == new Size(0, 0))
 				logicalSize = new Size(16, 16);

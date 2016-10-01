@@ -34,6 +34,11 @@ namespace dnSpy.Contracts.Images {
 		public Color? BackgroundColor { get; set; }
 
 		/// <summary>
+		/// Background brush or null. Only <see cref="SolidColorBrush"/>es are supported.
+		/// </summary>
+		public Brush BackgroundBrush { get; set; }
+
+		/// <summary>
 		/// Background type
 		/// </summary>
 		public BackgroundType? BackgroundType { get; set; }
