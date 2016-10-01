@@ -5257,14 +5257,12 @@
                                     WindowChrome.IsHitTestVisibleInChrome="True"
                                     Command="{x:Static ctrls2:MetroWindow.ShowSystemMenuCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
-                                    Width="16"
-                                    Height="16"
                                     Margin="4 7 4 7"
                                     Padding="0 0 0 0"
                                     Background="Transparent"
                                     VerticalAlignment="Center"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMenuButton, Converter={StaticResource BooleanToVisibilityConverter}}" >
-                                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SystemMenuImage}" />
+                                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SystemMenuImage}" Width="16" Height="16" />
                                 </ctrls:SysMenuButton>
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
                                     <ctrls:WinSysButton x:Name="minButton" WinSysType="Minimize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMinimizeButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
