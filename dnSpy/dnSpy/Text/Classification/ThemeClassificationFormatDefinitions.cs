@@ -926,6 +926,11 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition StructureVisualizerTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerModule)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerModuleClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.StructureVisualizerValueType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition StructureVisualizerValueTypeClassificationTypeDefinition;
@@ -1026,9 +1031,19 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition StructureVisualizerFixedClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerSwitch)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerSwitchClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.StructureVisualizerCase)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition StructureVisualizerCaseClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.StructureVisualizerLocalFunction)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition StructureVisualizerLocalFunctionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.StructureVisualizerOther)]
@@ -2643,6 +2658,15 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerModule)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerModule)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerModule : ThemeMarkerFormatDefinition {
+			StructureVisualizerModule() : base(TextColor.StructureVisualizerModule) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerValueType)]
 		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerValueType)]
 		[UserVisible(true)]
@@ -2823,12 +2847,30 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerSwitch)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerSwitch)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerSwitch : ThemeMarkerFormatDefinition {
+			StructureVisualizerSwitch() : base(TextColor.StructureVisualizerSwitch) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerCase)]
 		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerCase)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class StructureVisualizerCase : ThemeMarkerFormatDefinition {
 			StructureVisualizerCase() : base(TextColor.StructureVisualizerCase) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerLocalFunction)]
+		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerLocalFunction)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class StructureVisualizerLocalFunction : ThemeMarkerFormatDefinition {
+			StructureVisualizerLocalFunction() : base(TextColor.StructureVisualizerLocalFunction) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

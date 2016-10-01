@@ -32,6 +32,7 @@
 		<color name="findmatchhighlightmarker" bg="#FF008000" />
 		<color name="structurevisualizernamespace" fg="#FFFFFFFF" />
 		<color name="structurevisualizertype" fg="#FFFFFFFF" />
+		<color name="structurevisualizermodule" fg="#FFFFFFFF" />
 		<color name="structurevisualizervaluetype" fg="#FFFFFFFF" />
 		<color name="structurevisualizerinterface" fg="#FFFFFFFF" />
 		<color name="structurevisualizermethod" fg="#FFFFFFFF" />
@@ -52,7 +53,9 @@
 		<color name="structurevisualizerlock" fg="#FFFFFFFF" />
 		<color name="structurevisualizerusing" fg="#FFFFFFFF" />
 		<color name="structurevisualizerfixed" fg="#FFFFFFFF" />
+		<color name="structurevisualizerswitch" fg="#FFFFFFFF" />
 		<color name="structurevisualizercase" fg="#FFFFFFFF" />
+		<color name="structurevisualizerlocalfunction" fg="#FFFFFFFF" />
 		<color name="structurevisualizerother" fg="#FFFFFFFF" />
 		<color name="completionmatchhighlight" bold="true" />
 		<color name="signaturehelpdocumentation" bold="true" />

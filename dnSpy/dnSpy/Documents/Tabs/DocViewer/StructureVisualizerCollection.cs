@@ -151,6 +151,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			switch (flags.ToBlockKind()) {
 			case CodeBracesRangeFlags.BlockKind_Namespace:		return StructureVisualizerDataBlockKind.Namespace;
 			case CodeBracesRangeFlags.BlockKind_Type:			return StructureVisualizerDataBlockKind.Type;
+			case CodeBracesRangeFlags.BlockKind_Module:			return StructureVisualizerDataBlockKind.Module;
 			case CodeBracesRangeFlags.BlockKind_ValueType:		return StructureVisualizerDataBlockKind.ValueType;
 			case CodeBracesRangeFlags.BlockKind_Interface:		return StructureVisualizerDataBlockKind.Interface;
 			case CodeBracesRangeFlags.BlockKind_Method:			return StructureVisualizerDataBlockKind.Method;
@@ -171,7 +172,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			case CodeBracesRangeFlags.BlockKind_Lock:			return StructureVisualizerDataBlockKind.Lock;
 			case CodeBracesRangeFlags.BlockKind_Using:			return StructureVisualizerDataBlockKind.Using;
 			case CodeBracesRangeFlags.BlockKind_Fixed:			return StructureVisualizerDataBlockKind.Fixed;
+			case CodeBracesRangeFlags.BlockKind_Switch:			return StructureVisualizerDataBlockKind.Switch;
 			case CodeBracesRangeFlags.BlockKind_Case:			return StructureVisualizerDataBlockKind.Case;
+			case CodeBracesRangeFlags.BlockKind_LocalFunction:	return StructureVisualizerDataBlockKind.LocalFunction;
 			case CodeBracesRangeFlags.BlockKind_Other:			return StructureVisualizerDataBlockKind.Other;
 			default:
 				Debug.Fail($"Unknown block kind: {flags.ToBlockKind()}");

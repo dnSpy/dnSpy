@@ -201,6 +201,7 @@ namespace dnSpy.Contracts.Text {
 		FindMatchHighlightMarker,
 		StructureVisualizerNamespace,
 		StructureVisualizerType,
+		StructureVisualizerModule,
 		StructureVisualizerValueType,
 		StructureVisualizerInterface,
 		StructureVisualizerMethod,
@@ -221,7 +222,9 @@ namespace dnSpy.Contracts.Text {
 		StructureVisualizerLock,
 		StructureVisualizerUsing,
 		StructureVisualizerFixed,
+		StructureVisualizerSwitch,
 		StructureVisualizerCase,
+		StructureVisualizerLocalFunction,
 		StructureVisualizerOther,
 		CompletionMatchHighlight,
 		SignatureHelpDocumentation,
@@ -416,6 +419,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object FindMatchHighlightMarker = TextColor.FindMatchHighlightMarker;
 		public static readonly object StructureVisualizerNamespace = TextColor.StructureVisualizerNamespace;
 		public static readonly object StructureVisualizerType = TextColor.StructureVisualizerType;
+		public static readonly object StructureVisualizerModule = TextColor.StructureVisualizerModule;
 		public static readonly object StructureVisualizerValueType = TextColor.StructureVisualizerValueType;
 		public static readonly object StructureVisualizerInterface = TextColor.StructureVisualizerInterface;
 		public static readonly object StructureVisualizerMethod = TextColor.StructureVisualizerMethod;
@@ -436,7 +440,9 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object StructureVisualizerLock = TextColor.StructureVisualizerLock;
 		public static readonly object StructureVisualizerUsing = TextColor.StructureVisualizerUsing;
 		public static readonly object StructureVisualizerFixed = TextColor.StructureVisualizerFixed;
+		public static readonly object StructureVisualizerSwitch = TextColor.StructureVisualizerSwitch;
 		public static readonly object StructureVisualizerCase = TextColor.StructureVisualizerCase;
+		public static readonly object StructureVisualizerLocalFunction = TextColor.StructureVisualizerLocalFunction;
 		public static readonly object StructureVisualizerOther = TextColor.StructureVisualizerOther;
 		public static readonly object CompletionMatchHighlight = TextColor.CompletionMatchHighlight;
 		public static readonly object SignatureHelpDocumentation = TextColor.SignatureHelpDocumentation;
@@ -633,6 +639,7 @@ namespace dnSpy.Contracts.Text {
 			FindMatchHighlightMarker,
 			StructureVisualizerNamespace,
 			StructureVisualizerType,
+			StructureVisualizerModule,
 			StructureVisualizerValueType,
 			StructureVisualizerInterface,
 			StructureVisualizerMethod,
@@ -653,7 +660,9 @@ namespace dnSpy.Contracts.Text {
 			StructureVisualizerLock,
 			StructureVisualizerUsing,
 			StructureVisualizerFixed,
+			StructureVisualizerSwitch,
 			StructureVisualizerCase,
+			StructureVisualizerLocalFunction,
 			StructureVisualizerOther,
 			CompletionMatchHighlight,
 			SignatureHelpDocumentation,

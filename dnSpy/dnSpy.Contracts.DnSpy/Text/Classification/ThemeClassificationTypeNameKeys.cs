@@ -903,6 +903,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string StructureVisualizerType = nameof(StructureVisualizerType);
 
 		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerModule"/>
+		/// </summary>
+		public const string StructureVisualizerModule = nameof(StructureVisualizerModule);
+
+		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerValueType"/>
 		/// </summary>
 		public const string StructureVisualizerValueType = nameof(StructureVisualizerValueType);
@@ -1003,9 +1008,19 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string StructureVisualizerFixed = nameof(StructureVisualizerFixed);
 
 		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerSwitch"/>
+		/// </summary>
+		public const string StructureVisualizerSwitch = nameof(StructureVisualizerSwitch);
+
+		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerCase"/>
 		/// </summary>
 		public const string StructureVisualizerCase = nameof(StructureVisualizerCase);
+
+		/// <summary>
+		/// <see cref="TextColor.StructureVisualizerLocalFunction"/>
+		/// </summary>
+		public const string StructureVisualizerLocalFunction = nameof(StructureVisualizerLocalFunction);
 
 		/// <summary>
 		/// <see cref="TextColor.StructureVisualizerOther"/>
