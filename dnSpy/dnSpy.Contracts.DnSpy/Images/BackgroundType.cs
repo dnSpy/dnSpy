@@ -28,10 +28,7 @@ namespace dnSpy.Contracts.Images {
 		// EVERYTHING that depend on these values)
 		// ********************************************************************************
 		None,
-		Button,
-		TextEditor,
 		DialogWindow,
-		TextBox,
 		TreeNode,
 		Search,
 		ComboBox,
@@ -41,7 +38,6 @@ namespace dnSpy.Contracts.Images {
 		GridViewItem,
 		ListBoxItem,
 		QuickInfo,
-		SignatureHelp,
 		TitleAreaActive,
 		TitleAreaInactive,
 		CommandBar,

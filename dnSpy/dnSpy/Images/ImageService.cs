@@ -125,10 +125,7 @@ namespace dnSpy.Images {
 
 			switch (bgType.Value) {
 			case BackgroundType.None:				return null;
-			case BackgroundType.Button:				return GetColorBackground(ColorType.CommonControlsButtonIconBackground);
-			case BackgroundType.TextEditor:			return GetColorBackground(ColorType.DefaultText);
 			case BackgroundType.DialogWindow:		return GetColorBackground(ColorType.DialogWindow);
-			case BackgroundType.TextBox:			return GetColorBackground(ColorType.CommonControlsTextBox);
 			case BackgroundType.TreeNode:			return GetColorBackground(ColorType.TreeView);
 			case BackgroundType.Search:				return GetColorBackground(ColorType.ListBoxBackground);
 			case BackgroundType.ComboBox:			return GetColorBackground(ColorType.CommonControlsComboBoxBackground);
@@ -138,7 +135,6 @@ namespace dnSpy.Images {
 			case BackgroundType.GridViewItem:		return GetColorBackground(ColorType.GridViewBackground);
 			case BackgroundType.ListBoxItem:		return GetColorBackground(ColorType.ListBoxBackground);
 			case BackgroundType.QuickInfo:			return GetColorBackground(ColorType.QuickInfo);
-			case BackgroundType.SignatureHelp:		return GetColorBackground(ColorType.SignatureHelp);
 			case BackgroundType.TitleAreaActive:	return GetColorBackground(ColorType.EnvironmentMainWindowActiveCaption);
 			case BackgroundType.TitleAreaInactive:	return GetColorBackground(ColorType.EnvironmentMainWindowInactiveCaption);
 			case BackgroundType.CommandBar:			return GetColorBackground(ColorType.EnvironmentCommandBarIcon);
