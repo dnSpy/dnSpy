@@ -30,15 +30,12 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		public IDocumentViewer DocumentViewer { get; }
 		public IDecompiler Decompiler { get; }
 
-		readonly IImageService imageService;
 		readonly IDotNetImageService dotNetImageService;
 		readonly ICodeToolTipSettings codeToolTipSettings;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
-		public ToolTipProviderContext(IImageService imageService, IDotNetImageService dotNetImageService, IDecompiler decompiler, ICodeToolTipSettings codeToolTipSettings, IDocumentViewer documentViewer, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
-			if (imageService == null)
-				throw new ArgumentNullException(nameof(imageService));
+		public ToolTipProviderContext(IDotNetImageService dotNetImageService, IDecompiler decompiler, ICodeToolTipSettings codeToolTipSettings, IDocumentViewer documentViewer, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
 			if (dotNetImageService == null)
 				throw new ArgumentNullException(nameof(dotNetImageService));
 			if (decompiler == null)
@@ -52,7 +49,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.DocumentViewer = documentViewer;
-			this.imageService = imageService;
 			this.dotNetImageService = dotNetImageService;
 			this.Decompiler = decompiler;
 			this.codeToolTipSettings = codeToolTipSettings;
@@ -61,6 +57,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		public ICodeToolTipProvider Create() =>
-			new CodeToolTipProvider(DocumentViewer.TextView, imageService, dotNetImageService, classificationFormatMap, themeClassificationTypeService, codeToolTipSettings.SyntaxHighlight);
+			new CodeToolTipProvider(DocumentViewer.TextView, dotNetImageService, classificationFormatMap, themeClassificationTypeService, codeToolTipSettings.SyntaxHighlight);
 	}
 }

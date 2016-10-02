@@ -30,7 +30,7 @@ namespace dnSpy.Images {
 		public ImageReference GetImageReference(IPEImage peImage) =>
 			GetImageReference(peImage.ImageNTHeaders.FileHeader.Characteristics);
 		public ImageReference GetNamespaceImageReference() => DsImages.Namespace;
-		public ImageReference GetImageReference(ModuleDef mod) => DsImages.ModulePublic;
+		public ImageReference GetImageReference(ModuleDef module) => DsImages.ModulePublic;
 		public ImageReference GetImageReference(TypeDef type) {
 			if (type.IsValueType) {
 				if (type.IsEnum) {

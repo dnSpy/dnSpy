@@ -28,9 +28,9 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// Gets an image
 		/// </summary>
-		/// <param name="mod">Module</param>
+		/// <param name="module">Module</param>
 		/// <returns></returns>
-		ImageReference GetImageReference(ModuleDef mod);
+		ImageReference GetImageReference(ModuleDef module);
 
 		/// <summary>
 		/// Gets an image

@@ -38,17 +38,14 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly List<CodeToolTipWriter> writers;
 
 		readonly IWpfTextView wpfTextView;
-		readonly IImageService imageService;
 		readonly IDotNetImageService dotNetImageService;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly bool syntaxHighlight;
 
-		public CodeToolTipProvider(IWpfTextView wpfTextView, IImageService imageService, IDotNetImageService dotNetImageService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
+		public CodeToolTipProvider(IWpfTextView wpfTextView, IDotNetImageService dotNetImageService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			if (imageService == null)
-				throw new ArgumentNullException(nameof(imageService));
 			if (dotNetImageService == null)
 				throw new ArgumentNullException(nameof(dotNetImageService));
 			if (classificationFormatMap == null)
@@ -56,7 +53,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.wpfTextView = wpfTextView;
-			this.imageService = imageService;
 			this.dotNetImageService = dotNetImageService;
 			this.classificationFormatMap = classificationFormatMap;
 			this.themeClassificationTypeService = themeClassificationTypeService;

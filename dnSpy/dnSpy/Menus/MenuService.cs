@@ -80,11 +80,8 @@ namespace dnSpy.Menus {
 
 	[Export, Export(typeof(IMenuService))]
 	sealed class MenuService : IMenuService {
-		readonly IImageService imageService;
-
 		[ImportingConstructor]
-		MenuService(IImageService imageService, [ImportMany] IEnumerable<Lazy<IMenu, IMenuMetadata>> mefMenus, [ImportMany] IEnumerable<Lazy<IMenuItem, IMenuItemMetadata>> mefMenuItems) {
-			this.imageService = imageService;
+		MenuService([ImportMany] IEnumerable<Lazy<IMenu, IMenuMetadata>> mefMenus, [ImportMany] IEnumerable<Lazy<IMenuItem, IMenuItemMetadata>> mefMenuItems) {
 			this.guidToGroups = null;
 			this.mefMenus = mefMenus;
 			this.mefMenuItems = mefMenuItems;
@@ -320,7 +317,7 @@ namespace dnSpy.Menus {
 					var routedCommand = cmdHolder.Command as RoutedCommand;
 					lastIsEnabledCallValue = commandTarget == null || routedCommand == null || routedCommand.CanExecute(ctx, commandTarget);
 				}
-				imageService.Add16x16Image(menuItem, iconImgRef.Value, lastIsEnabledCallValue);
+				Add16x16Image(menuItem, iconImgRef.Value, lastIsEnabledCallValue);
 			}
 
 			if (metadata.Guid != null) {
@@ -352,11 +349,18 @@ namespace dnSpy.Menus {
 					return false;
 				bool b = item.IsEnabled(ctx);
 				if (lastIsEnabledCallValue != b && iconImgRef != null)
-					imageService.Add16x16Image(menuItem, iconImgRef.Value, lastIsEnabledCallValue = b);
+					Add16x16Image(menuItem, iconImgRef.Value, lastIsEnabledCallValue = b);
 				return b;
 			});
 
 			return menuItem;
+		}
+
+		static void Add16x16Image(MenuItem menuItem, ImageReference imageReference, bool? enable = null) {
+			var image = new DsImage { ImageReference = imageReference };
+			menuItem.Icon = image;
+			if (enable == false)
+				image.Opacity = 0.3;
 		}
 
 		void Reinitialize(MenuItem menuItem) {

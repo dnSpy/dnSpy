@@ -121,7 +121,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 	[Export(typeof(DocumentViewerToolTipServiceProvider))]
 	sealed class DocumentViewerToolTipServiceProvider {
-		readonly IImageService imageService;
 		readonly IDotNetImageService dotNetImageService;
 		readonly ICodeToolTipSettings codeToolTipSettings;
 		readonly IQuickInfoBroker quickInfoBroker;
@@ -130,8 +129,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders;
 
 		[ImportingConstructor]
-		DocumentViewerToolTipServiceProvider(IImageService imageService, IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, IQuickInfoBroker quickInfoBroker, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, [ImportMany] IEnumerable<Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>> documentViewerToolTipProviders) {
-			this.imageService = imageService;
+		DocumentViewerToolTipServiceProvider(IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, IQuickInfoBroker quickInfoBroker, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, [ImportMany] IEnumerable<Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>> documentViewerToolTipProviders) {
 			this.dotNetImageService = dotNetImageService;
 			this.codeToolTipSettings = codeToolTipSettings;
 			this.quickInfoBroker = quickInfoBroker;
@@ -141,7 +139,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		public DocumentViewerToolTipService GetService(IDocumentViewer documentViewer) =>
-			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(imageService, dotNetImageService, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService));
+			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(dotNetImageService, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService));
 	}
 
 	[Export(typeof(IQuickInfoSourceProvider))]
@@ -179,7 +177,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 	}
 
 	sealed class DocumentViewerToolTipService {
-		readonly IImageService imageService;
 		readonly IDotNetImageService dotNetImageService;
 		readonly ICodeToolTipSettings codeToolTipSettings;
 		readonly Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders;
@@ -188,9 +185,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
-		public DocumentViewerToolTipService(IImageService imageService, IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer, IQuickInfoBroker quickInfoBroker, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
-			if (imageService == null)
-				throw new ArgumentNullException(nameof(imageService));
+		public DocumentViewerToolTipService(IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer, IQuickInfoBroker quickInfoBroker, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
 			if (dotNetImageService == null)
 				throw new ArgumentNullException(nameof(dotNetImageService));
 			if (codeToolTipSettings == null)
@@ -205,7 +200,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.imageService = imageService;
 			this.dotNetImageService = dotNetImageService;
 			this.codeToolTipSettings = codeToolTipSettings;
 			this.documentViewerToolTipProviders = documentViewerToolTipProviders;
@@ -272,7 +266,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			if (@ref == null)
 				return null;
 
-			var ctx = new ToolTipProviderContext(imageService, dotNetImageService, decompiler, codeToolTipSettings, documentViewer, classificationFormatMap, themeClassificationTypeService);
+			var ctx = new ToolTipProviderContext(dotNetImageService, decompiler, codeToolTipSettings, documentViewer, classificationFormatMap, themeClassificationTypeService);
 			foreach (var provider in documentViewerToolTipProviders) {
 				var toolTipContent = provider.Value.Create(ctx, @ref);
 				if (toolTipContent != null)

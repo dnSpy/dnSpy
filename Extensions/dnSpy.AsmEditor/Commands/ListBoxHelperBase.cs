@@ -19,29 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Resources;
 
 namespace dnSpy.AsmEditor.Commands {
-	[ExportAutoLoaded]
-	sealed class ListBoxHelperBase_ImageServiceLoader : IAutoLoaded {
-		[ImportingConstructor]
-		ListBoxHelperBase_ImageServiceLoader(IImageService imageService) {
-			ListBoxHelperBase_ImageServiceLoader.imageService = imageService;
-		}
-
-		public static IImageService ImageService => imageService;
-		static IImageService imageService;
-	}
-
 	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem {
 		protected readonly ListBox listBox;
 		protected IndexObservableCollection<T> coll;
@@ -270,8 +257,12 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		protected static void Add16x16Image(MenuItem menuItem, ImageReference iconReference, bool? enable = null) =>
-			ListBoxHelperBase_ImageServiceLoader.ImageService.Add16x16Image(menuItem, iconReference, enable);
+		protected static void Add16x16Image(MenuItem menuItem, ImageReference imageReference, bool? enable = null) {
+			var image = new DsImage { ImageReference = imageReference };
+			menuItem.Icon = image;
+			if (enable == false)
+				image.Opacity = 0.3;
+		}
 
 		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();
