@@ -132,7 +132,7 @@ namespace dnSpy.Contracts.Controls {
 			return textBlock;
 		}
 
-		static IThemeTextColor GetTextColor(ITheme theme, object data) =>
+		static IThemeColor GetTextColor(ITheme theme, object data) =>
 			theme.GetTextColor((data as TextColor? ?? TextColor.Text).ToColorType());
 
 		public override string ToString() => Text;

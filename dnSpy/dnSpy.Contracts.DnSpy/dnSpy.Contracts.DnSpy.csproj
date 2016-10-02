@@ -569,10 +569,8 @@
     <Compile Include="Themes\ITheme.cs" />
     <Compile Include="Themes\IThemeColor.cs" />
     <Compile Include="Themes\IThemeService.cs" />
-    <Compile Include="Themes\IThemeTextColor.cs" />
     <Compile Include="Themes\ThemeChangedEventArgs.cs" />
     <Compile Include="Themes\ThemeConstants.cs" />
-    <Compile Include="Themes\ThemeTextColor.cs" />
     <Compile Include="ToolBars\IToolBarButton.cs" />
     <Compile Include="ToolBars\IToolBarItem.cs" />
     <Compile Include="ToolBars\IToolBarItemContext.cs" />
