@@ -52,13 +52,13 @@ namespace dnSpy.TreeView {
 		public ITreeNodeData[] SelectedItems => Convert(sharpTreeView.SelectedItems);
 		public ITreeNodeData[] TopLevelSelection => Convert(sharpTreeView.GetTopLevelSelection());
 
-		readonly ITreeViewService treeViewService;
+		readonly ITreeViewServiceImpl treeViewService;
 		readonly ITreeViewListener treeViewListener;
 
 		public event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
 		public event EventHandler<TreeViewNodeRemovedEventArgs> NodeRemoved;
 
-		public TreeViewImpl(ITreeViewService treeViewService, IThemeService themeService, Guid guid, TreeViewOptions options) {
+		public TreeViewImpl(ITreeViewServiceImpl treeViewService, IThemeService themeService, Guid guid, TreeViewOptions options) {
 			this.Guid = guid;
 			this.treeViewService = treeViewService;
 			this.treeViewListener = options.TreeViewListener;

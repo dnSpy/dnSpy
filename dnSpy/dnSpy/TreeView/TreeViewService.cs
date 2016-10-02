@@ -26,8 +26,12 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
+	interface ITreeViewServiceImpl : ITreeViewService {
+		IEnumerable<ITreeNodeDataProvider> GetProviders(Guid guid);
+	}
+
 	[Export(typeof(ITreeViewService))]
-	sealed class TreeViewService : ITreeViewService {
+	sealed class TreeViewService : ITreeViewServiceImpl {
 		readonly IThemeService themeService;
 		readonly Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>> guidToProvider;
 

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
@@ -32,12 +31,5 @@ namespace dnSpy.Contracts.TreeView {
 		/// <param name="options">Treeview options</param>
 		/// <returns></returns>
 		ITreeView Create(Guid guid, TreeViewOptions options);
-
-		/// <summary>
-		/// Gets <see cref="ITreeNodeDataProvider"/>s
-		/// </summary>
-		/// <param name="guid">Guid of owner tree node (<see cref="ITreeView.Guid"/>)</param>
-		/// <returns></returns>
-		IEnumerable<ITreeNodeDataProvider> GetProviders(Guid guid);
 	}
 }
