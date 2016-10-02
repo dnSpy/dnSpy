@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// <see cref="IReplEditor"/> options
 	/// </summary>
-	public sealed class ReplEditorOptions : CommonTextEditorOptions {
+	sealed class ReplEditorOptions : CommonTextEditorOptions {
 		/// <summary>
 		/// Default <see cref="PrimaryPrompt"/> value
 		/// </summary>

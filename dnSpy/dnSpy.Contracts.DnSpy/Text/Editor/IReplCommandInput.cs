@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// REPL command input
 	/// </summary>
-	public interface IReplCommandInput {
+	interface IReplCommandInput {
 		/// <summary>
 		/// Gets the current input
 		/// </summary>
