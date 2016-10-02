@@ -297,13 +297,10 @@ namespace dnSpy.Menus {
 			string inputGestureText = ResourceHelper.GetString(item, metadata.InputGestureText);
 			ImageReference? iconImgRef = ImageReferenceHelper.GetImageReference(item, metadata.Icon);
 
-			var mi2 = item as IMenuItem2;
-			if (mi2 != null) {
-				header = mi2.GetHeader(ctx) ?? header;
-				inputGestureText = mi2.GetInputGestureText(ctx) ?? inputGestureText;
-				iconImgRef = mi2.GetIcon(ctx) ?? iconImgRef;
-				menuItem.IsChecked = mi2.IsChecked(ctx);
-			}
+			header = item.GetHeader(ctx) ?? header;
+			inputGestureText = item.GetInputGestureText(ctx) ?? inputGestureText;
+			iconImgRef = item.GetIcon(ctx) ?? iconImgRef;
+			menuItem.IsChecked = item.IsChecked(ctx);
 
 			menuItem.Header = header;
 			menuItem.InputGestureText = inputGestureText;

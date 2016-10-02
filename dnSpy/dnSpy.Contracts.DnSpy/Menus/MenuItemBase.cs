@@ -21,9 +21,9 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Menus {
 	/// <summary>
-	/// Menu item base class, implements <see cref="IMenuItem"/> and <see cref="IMenuItem2"/>
+	/// Menu item base class, implements <see cref="IMenuItem"/>
 	/// </summary>
-	public abstract class MenuItemBase : IMenuItem, IMenuItem2 {
+	public abstract class MenuItemBase : IMenuItem {
 		/// <inheritdoc/>
 		public abstract void Execute(IMenuItemContext context);
 		/// <inheritdoc/>
@@ -41,10 +41,10 @@ namespace dnSpy.Contracts.Menus {
 	}
 
 	/// <summary>
-	/// Menu item base class, implements <see cref="IMenuItem"/> and <see cref="IMenuItem2"/>
+	/// Menu item base class, implements <see cref="IMenuItem"/>
 	/// </summary>
 	/// <typeparam name="TContext">Context type</typeparam>
-	public abstract class MenuItemBase<TContext> : IMenuItem, IMenuItem2 where TContext : class {
+	public abstract class MenuItemBase<TContext> : IMenuItem where TContext : class {
 		/// <summary>
 		/// Creates the context
 		/// </summary>
@@ -86,22 +86,22 @@ namespace dnSpy.Contracts.Menus {
 			return ctx != null && IsVisible(ctx);
 		}
 
-		string IMenuItem2.GetHeader(IMenuItemContext context) {
+		string IMenuItem.GetHeader(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
 			return ctx != null ? GetHeader(ctx) : null;
 		}
 
-		ImageReference? IMenuItem2.GetIcon(IMenuItemContext context) {
+		ImageReference? IMenuItem.GetIcon(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
 			return ctx != null ? GetIcon(ctx) : null;
 		}
 
-		string IMenuItem2.GetInputGestureText(IMenuItemContext context) {
+		string IMenuItem.GetInputGestureText(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
 			return ctx != null ? GetInputGestureText(ctx) : null;
 		}
 
-		bool IMenuItem2.IsChecked(IMenuItemContext context) {
+		bool IMenuItem.IsChecked(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
 			return ctx != null ? IsChecked(ctx) : false;
 		}

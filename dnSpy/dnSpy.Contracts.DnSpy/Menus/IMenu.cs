@@ -17,10 +17,56 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
+
 namespace dnSpy.Contracts.Menus {
 	/// <summary>
 	/// A menu
 	/// </summary>
 	public interface IMenu {
+	}
+
+	/// <summary>Metadata</summary>
+	public interface IMenuMetadata {
+		/// <summary>See <see cref="ExportMenuAttribute.OwnerGuid"/></summary>
+		string OwnerGuid { get; }
+		/// <summary>See <see cref="ExportMenuAttribute.Guid"/></summary>
+		string Guid { get; }
+		/// <summary>See <see cref="ExportMenuAttribute.Order"/></summary>
+		double Order { get; }
+		/// <summary>See <see cref="ExportMenuAttribute.Header"/></summary>
+		string Header { get; }
+	}
+
+	/// <summary>
+	/// Exports a menu (<see cref="IMenu"/>)
+	/// </summary>
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class ExportMenuAttribute : ExportAttribute, IMenuMetadata {
+		/// <summary>Constructor</summary>
+		public ExportMenuAttribute()
+			: base(typeof(IMenu)) {
+		}
+
+		/// <summary>
+		/// Guid of menu or null to use <see cref="MenuConstants.APP_MENU_GUID"/>
+		/// </summary>
+		public string OwnerGuid { get; set; }
+
+		/// <summary>
+		/// Guid of this item
+		/// </summary>
+		public string Guid { get; set; }
+
+		/// <summary>
+		/// Order within the menu, eg. <see cref="MenuConstants.ORDER_APP_MENU_FILE"/>
+		/// </summary>
+		public double Order { get; set; }
+
+		/// <summary>
+		/// Menu header, eg. "_File"
+		/// </summary>
+		public string Header { get; set; }
 	}
 }

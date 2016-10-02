@@ -49,8 +49,7 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>
 		/// Gets or creates user state that can be saved in the context to prevent re-generating the
-		/// same state when various <see cref="IMenuItem"/> or <see cref="IMenuItem2"/> methods get
-		/// called.
+		/// same state when various <see cref="IMenuItem"/> methods get called.
 		/// </summary>
 		/// <typeparam name="T">State type</typeparam>
 		/// <param name="key">Key, eg. a guid or a static key in some base command class</param>

@@ -336,8 +336,6 @@
     <Compile Include="Language\Intellisense\SignatureHelpConstants.cs" />
     <Compile Include="Menus\CommandTargetMenuItemBase.cs" />
     <Compile Include="Menus\CreatedMenuItem.cs" />
-    <Compile Include="Menus\ExportMenuAttribute.cs" />
-    <Compile Include="Menus\ExportMenuItemAttribute.cs" />
     <Compile Include="Menus\GuidObject.cs" />
     <Compile Include="Menus\GuidObjectsProviderArgs.cs" />
     <Compile Include="Menus\IContextMenuInitializer.cs" />
@@ -346,9 +344,7 @@
     <Compile Include="Menus\IMenu.cs" />
     <Compile Include="Menus\IMenuItem.cs" />
     <Compile Include="Menus\IMenuItemContext.cs" />
-    <Compile Include="Menus\IMenuItemMetadata.cs" />
     <Compile Include="Menus\IMenuItemProvider.cs" />
-    <Compile Include="Menus\IMenuMetadata.cs" />
     <Compile Include="Menus\IMenuService.cs" />
     <Compile Include="Menus\MenuConstants.cs" />
     <Compile Include="Menus\MenuItemBase.cs" />
