@@ -168,7 +168,6 @@
     <Compile Include="Documents\Tabs\IDocumentTabContentFactory.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabContentFactoryContext.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabService.cs" />
-    <Compile Include="Documents\Tabs\IDocumentTabServiceSettings.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabUIContext.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabUIContextLocator.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabUIContextProvider.cs" />

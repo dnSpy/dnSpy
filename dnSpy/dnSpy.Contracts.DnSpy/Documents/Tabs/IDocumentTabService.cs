@@ -28,11 +28,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 	/// </summary>
 	public interface IDocumentTabService {
 		/// <summary>
-		/// Gets the settings
-		/// </summary>
-		IDocumentTabServiceSettings Settings { get; }
-
-		/// <summary>
 		/// Gets the <see cref="IDocumentTreeView"/> instance
 		/// </summary>
 		IDocumentTreeView DocumentTreeView { get; }

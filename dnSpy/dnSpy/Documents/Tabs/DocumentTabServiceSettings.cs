@@ -18,12 +18,17 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Documents.Tabs {
+	interface IDocumentTabServiceSettings : INotifyPropertyChanged {
+		bool RestoreTabs { get; }
+		bool DecompileFullType { get; }
+	}
+
 	class DocumentTabServiceSettings : ViewModelBase, IDocumentTabServiceSettings {
 		protected virtual void OnModified() { }
 
