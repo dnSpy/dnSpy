@@ -27,13 +27,11 @@ using dnSpy.Contracts.Search;
 namespace dnSpy.Search {
 	[Export(typeof(IDocumentSearcherProvider))]
 	sealed class DocumentSearcherProvider : IDocumentSearcherProvider {
-		readonly IImageService imageService;
 		readonly IDotNetImageService dotNetImageService;
 		readonly IDecompilerService decompilerService;
 
 		[ImportingConstructor]
-		DocumentSearcherProvider(IImageService imageService, IDotNetImageService dotNetImageService, IDecompilerService decompilerService) {
-			this.imageService = imageService;
+		DocumentSearcherProvider(IDotNetImageService dotNetImageService, IDecompilerService decompilerService) {
 			this.dotNetImageService = dotNetImageService;
 			this.decompilerService = decompilerService;
 		}
@@ -46,7 +44,6 @@ namespace dnSpy.Search {
 			var searchResultContext = new SearchResultContext {
 				SyntaxHighlight = true,
 				Decompiler = decompilerService.Decompiler,
-				ImageService = imageService,
 			};
 			return new DocumentSearcher(options, documentTreeView, dotNetImageService, searchResultContext);
 		}

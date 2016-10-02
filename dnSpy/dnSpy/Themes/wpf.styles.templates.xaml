@@ -14,6 +14,8 @@
                     xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
                     xmlns:search="clr-namespace:dnSpy.Search"
                     xmlns:bgImg="clr-namespace:dnSpy.BackgroundImage.Dialog"
+                    xmlns:img2="clr-namespace:dnSpy.Images"
+                    xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -31,6 +33,25 @@
     <Geometry x:Key="Checkmark">F1M5,11L3,7 5,7 6,9 9,3 11,3 7,11 5,11z</Geometry>
 	<Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
 	<SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
+    <img2:DsImageConverter x:Key="dsImageConverter" />
+
+    <Style x:Key="{x:Type img:DsImage}" TargetType="{x:Type img:DsImage}">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Source">
+            <Setter.Value>
+                <MultiBinding Mode="OneWay" Converter="{StaticResource dsImageConverter}">
+                    <Binding Mode="OneWay" Path="Width" RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay" Path="Height" RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay" Path="ImageReference" RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay" Path="(img:DsImage.BackgroundColor)" RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay" Path="(img:DsImage.BackgroundBrush)" RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay" Path="(img:DsImage.Zoom)" RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay" Path="(img:DsImage.Dpi)" RelativeSource="{RelativeSource Self}" />
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 	<Style x:Key="{x:Type ContentPresenter}"
 		   TargetType="{x:Type ContentPresenter}">
@@ -4395,6 +4416,7 @@
     </Style.Triggers>
 	-->
     <Setter Property="Background" Value="{DynamicResource ToolBarHorizontalBackground}"/>
+    <Setter Property="img:DsImage.BackgroundBrush" Value="{DynamicResource ToolBarIconBackground}" />
     <Setter Property="Template">
         <Setter.Value>
             <ControlTemplate TargetType="{x:Type ToolBar}">
@@ -4712,6 +4734,8 @@
                 Value="{DynamicResource TreeViewBackground}"/>
         <Setter Property="BorderBrush"
                 Value="{DynamicResource TreeViewBorder}"/>
+        <Setter Property="img:DsImage.BackgroundBrush"
+                Value="{Binding Background, RelativeSource={RelativeSource Self}}"/>
         <Setter Property="AlternationCount" Value="1"/>
         <Style.Triggers>
             <Trigger Property="ShowRoot"
@@ -4881,7 +4905,7 @@
                                                   Focusable="False">
                             		<ContentPresenter.ContentTemplate>
                                 		<DataTemplate>
-                            				<Image Source="{Binding}"/>
+                            				<img:DsImage Source="{Binding}"/>
                             			</DataTemplate>
                                 	</ContentPresenter.ContentTemplate>
                             	</ContentPresenter>
@@ -4970,7 +4994,7 @@
                                                   Focusable="False">
                                 <ContentPresenter.ContentTemplate>
                                     <DataTemplate>
-                                        <Image Source="{Binding}"/>
+                                        <img:DsImage ImageReference="{Binding}"/>
                                     </DataTemplate>
                                 </ContentPresenter.ContentTemplate>
                             </ContentPresenter>
@@ -5020,6 +5044,8 @@
     <Style x:Key="SharpTreeViewGridViewStyle"
            BasedOn="{StaticResource {x:Static GridView.GridViewStyleKey}}"
            TargetType="{x:Type shtv:SharpTreeView}">
+        <Setter Property="img:DsImage.BackgroundBrush"
+                Value="{Binding Background, RelativeSource={RelativeSource Self}}"/>
     </Style>
 
 	<!-- See FixEditorContextMenuStyle() in App.xaml.cs for more info -->
@@ -5031,7 +5057,7 @@
     <DataTemplate DataType="{x:Type tb:ToolBarButtonVM}">
         <Button ToolTipService.ShowOnDisabled="True" ToolTip="{Binding ToolTip}" Command="{Binding Command}" CommandTarget="{Binding CommandTarget}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" FocusVisualStyle="{x:Null}" Focusable="False">
             <Button.Resources>
-                <Style TargetType="{x:Type Image}">
+                <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
                             <Setter Property="Opacity" Value="0.30" />
@@ -5040,7 +5066,7 @@
                 </Style>
             </Button.Resources>
             <StackPanel Orientation="Horizontal">
-                <Image Width="16" Height="16" Source="{Binding Image}" />
+                <img:DsImage ImageReference="{Binding ImageReference}" />
                 <TextBlock Margin="5 0 5 0"  Text="{Binding Header}" Visibility="{Binding HasHeader, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </StackPanel>
         </Button>
@@ -5253,6 +5279,8 @@
                                 TextElement.Foreground="{TemplateBinding ActiveCaptionText}"
                                 >
                                 <ctrls:SysMenuButton
+                                    x:Name="sysMenuButton"
+                                    img:DsImage.BackgroundBrush="{DynamicResource EnvironmentMainWindowActiveCaption}"
                                     DockPanel.Dock="Left"
                                     WindowChrome.IsHitTestVisibleInChrome="True"
                                     Command="{x:Static ctrls2:MetroWindow.ShowSystemMenuCommand}"
@@ -5262,7 +5290,7 @@
                                     Background="Transparent"
                                     VerticalAlignment="Center"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMenuButton, Converter={StaticResource BooleanToVisibilityConverter}}" >
-                                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SystemMenuImage}" Width="16" Height="16" />
+                                    <img:DsImage ImageReference="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SystemMenuImage}" />
                                 </ctrls:SysMenuButton>
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
                                     <ctrls:WinSysButton x:Name="minButton" WinSysType="Minimize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMinimizeButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -5291,6 +5319,9 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsActive" Value="False">
+                            <Setter TargetName="sysMenuButton" Property="img:DsImage.BackgroundBrush" Value="{DynamicResource EnvironmentMainWindowInactiveCaption}" />
+                        </Trigger>
                         <Trigger Property="IsFullScreen" Value="True">
                             <Setter Property="WindowState" Value="Maximized" />
                             <Setter TargetName="titleBar" Property="Visibility" Value="Collapsed" />
@@ -5936,14 +5967,14 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Image Grid.Column="0" Height="16" Width="16" Source="{Binding Image}" HorizontalAlignment="Center" />
+            <img:DsImage Grid.Column="0" ImageReference="{Binding ObjectImageReference}" HorizontalAlignment="Center" />
             <ContentPresenter Grid.Column="1" Content="{Binding NameUI}" />
             <Grid Grid.Column="2" HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Height="16" Width="16" Source="{Binding LocationImage}" HorizontalAlignment="Center" />
+                <img:DsImage Grid.Column="0" ImageReference="{Binding LocationImageReference}" HorizontalAlignment="Center" />
                 <ContentPresenter Grid.Column="1" Content="{Binding LocationUI}" Margin="0 0 2 0" />
             </Grid>
         </Grid>

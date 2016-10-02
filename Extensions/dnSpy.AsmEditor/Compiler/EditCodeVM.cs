@@ -26,7 +26,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
@@ -43,23 +42,13 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class EditCodeVM : ViewModelBase, IDisposable {
-		readonly IImageService imageService;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
 		readonly ILanguageCompiler languageCompiler;
 		readonly IDecompiler decompiler;
 		readonly AssemblyReferenceResolver assemblyReferenceResolver;
 
-		internal MetroWindow OwnerWindow {
-			get { return ownerWindow; }
-			set {
-				if (ownerWindow != value) {
-					ownerWindow = value;
-					RefreshThemeFields();
-				}
-			}
-		}
-		MetroWindow ownerWindow;
+		internal MetroWindow OwnerWindow { get; set; }
 
 		// Make all types, methods, fields public so we don't get a compilation error when trying
 		// to reference an internal type or a private method in the original assembly.
@@ -71,18 +60,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
-		public object AddAssemblyReferenceImageObject => GetImage(DsImages.OpenFolder);
-		public object AddGacReferenceImageObject => GetImage(DsImages.Library);
-
-		BitmapSource GetImage(ImageReference imageReference) {
-			if (OwnerWindow == null)
-				return null;
-			var options = new ImageOptions {
-				BackgroundType = BackgroundType.DialogWindow,
-				Dpi = OwnerWindow.WindowDpi,
-			};
-			return imageService.GetImage(imageReference, options);
-		}
 
 		public bool CanCompile {
 			get { return canCompile; }
@@ -145,9 +122,8 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
-		public EditCodeVM(IImageService imageService, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit) {
+		public EditCodeVM(IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit) {
 			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
-			this.imageService = imageService;
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = openAssembly;
 			this.languageCompiler = languageCompiler;
@@ -470,18 +446,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			Diagnostics.Clear();
 			Diagnostics.AddRange(diags.OrderBy(a => a, CompilerDiagnosticComparer.Instance).
 				Where(a => a.Severity != CompilerDiagnosticSeverity.Hidden).
-				Select(a => new CompilerDiagnosticVM(a, CreateImage(a))));
-		}
-
-		object CreateImage(CompilerDiagnostic diag) {
-			var imageName = GetImageReference(diag.Severity);
-			if (imageName == null)
-				return null;
-			var options = new ImageOptions {
-				// The images aren't themable so don't set a bg
-				Dpi = OwnerWindow?.WindowDpi ?? new Size(0, 0),
-			};
-			return imageService.GetImage(imageName.Value, options);
+				Select(a => new CompilerDiagnosticVM(a, GetImageReference(a.Severity) ?? default(ImageReference))));
 		}
 
 		static ImageReference? GetImageReference(CompilerDiagnosticSeverity severity) {
@@ -533,13 +498,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			catch (Exception ex) {
 				MsgBox.Instance.Show(ex);
 			}
-		}
-
-		public void RefreshThemeFields() {
-			OnPropertyChanged(nameof(AddAssemblyReferenceImageObject));
-			OnPropertyChanged(nameof(AddGacReferenceImageObject));
-			foreach (var vm in Diagnostics)
-				vm.ImageObj = CreateImage(vm.Diagnostic);
 		}
 
 		public void Dispose() {

@@ -23,15 +23,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Language.Intellisense"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              Name="theControl"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <local:CompletionImageReferenceConverter x:Key="CompletionImageReferenceConverter" />
-        <local:AttributeImageReferenceConverter x:Key="AttributeImageReferenceConverter" />
         <local:CollectionBooleanToVisibilityConverter x:Key="CollectionBooleanToVisibilityConverter" />
         <local:CompletionTextConverter x:Key="CompletionTextConverter" />
-        <local:FilterImageReferenceConverter x:Key="FilterImageReferenceConverter" />
         <local:FilterToolTipConverter x:Key="FilterToolTipConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
@@ -45,6 +43,7 @@
         <ListBox Grid.Row="1"
                  Name="completionsListBox"
                  SelectionMode="Single"
+                 img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
                  VirtualizingStackPanel.IsVirtualizing="True"
                  VirtualizingStackPanel.VirtualizationMode="Recycling"
                  HorizontalContentAlignment="Stretch">
@@ -57,14 +56,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Height="16" Width="16" Margin="1 1 3 1">
-                            <Image.Source>
-                                <MultiBinding Converter="{StaticResource CompletionImageReferenceConverter}">
-                                    <Binding Mode="OneWay" Path="ImageObject"/>
-                                    <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
-                                </MultiBinding>
-                            </Image.Source>
-                        </Image>
+                        <ContentPresenter Grid.Column="0" Margin="1 1 3 1" Content="{Binding ImageUIObject}" />
                         <ContentPresenter Grid.Column="1" Margin="2 0 2 0">
                             <ContentPresenter.Content>
                                 <MultiBinding Converter="{StaticResource CompletionTextConverter}" ConverterParameter="DisplayText">
@@ -89,14 +81,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Image Height="16" Width="16">
-                                        <Image.Source>
-                                            <MultiBinding Converter="{StaticResource AttributeImageReferenceConverter}">
-                                                <Binding Mode="OneWay" Path="ImageObject"/>
-                                                <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
-                                            </MultiBinding>
-                                        </Image.Source>
-                                    </Image>
+                                    <ContentPresenter Content="{Binding ImageUIObject}" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -105,7 +90,15 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ItemsControl Grid.Row="2" ItemsSource="{Binding Filters}" Visibility="{Binding HasFilters, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{DynamicResource ListBoxBackground}" BorderBrush="{DynamicResource ListBoxBorder}" BorderThickness="1 0 1 1" VerticalContentAlignment="Center" >
+        <ItemsControl
+            Grid.Row="2"
+            ItemsSource="{Binding Filters}"
+            Visibility="{Binding HasFilters, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Background="{DynamicResource ListBoxBackground}"
+            img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
+            BorderBrush="{DynamicResource ListBoxBorder}"
+            BorderThickness="1 0 1 1"
+            VerticalContentAlignment="Center">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />
@@ -114,14 +107,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <CheckBox Margin="0 0 0 0" Width="24" Height="24" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding IsChecked}" IsEnabled="{Binding IsEnabled}">
-                        <Image Height="16" Width="16" Margin="0 0 0 0">
-                            <Image.Source>
-                                <MultiBinding Converter="{StaticResource FilterImageReferenceConverter}">
-                                    <Binding Mode="OneWay" Path="ImageObject" />
-                                    <Binding Mode="OneWay" Path="DataContext" ElementName="theControl"/>
-                                </MultiBinding>
-                            </Image.Source>
-                        </Image>
+                        <img:DsImage Margin="0 0 0 0" ImageReference="{Binding ImageReference}"/>
                         <CheckBox.ToolTip>
                             <MultiBinding Converter="{StaticResource FilterToolTipConverter}">
                                 <Binding Mode="OneWay"/>

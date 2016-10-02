@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Search {
 	/// <summary>
@@ -45,12 +44,6 @@ namespace dnSpy.Contracts.Search {
 		/// <see cref="ISearchResult.RefreshUI()"/> must be called if this gets updated.
 		/// </summary>
 		IDecompiler Decompiler { get; set; }
-
-		/// <summary>
-		/// Used by <see cref="ISearchResult"/>. Image options for images.
-		/// <see cref="ISearchResult.RefreshUI()"/> must be called if this gets updated.
-		/// </summary>
-		ImageOptions ImageOptions { get; set; }
 
 		/// <summary>
 		/// A search result that was added to indicate that it's searching. Should be removed from

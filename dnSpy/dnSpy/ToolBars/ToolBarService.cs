@@ -27,7 +27,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
@@ -75,11 +74,8 @@ namespace dnSpy.ToolBars {
 
 	[Export(typeof(IToolBarService))]
 	sealed class ToolBarService : IToolBarService {
-		readonly IImageService imageService;
-
 		[ImportingConstructor]
-		ToolBarService(IImageService imageService, [ImportMany] IEnumerable<Lazy<IToolBarButton, IToolBarButtonMetadata>> tbButtonMef, [ImportMany] IEnumerable<Lazy<IToolBarObject, IToolBarObjectMetadata>> tbObjectMef) {
-			this.imageService = imageService;
+		ToolBarService([ImportMany] IEnumerable<Lazy<IToolBarButton, IToolBarButtonMetadata>> tbButtonMef, [ImportMany] IEnumerable<Lazy<IToolBarObject, IToolBarObjectMetadata>> tbObjectMef) {
 			this.tbButtonMef = tbButtonMef;
 			this.tbObjectMef = tbObjectMef;
 		}
@@ -138,7 +134,7 @@ namespace dnSpy.ToolBars {
 		readonly IEnumerable<Lazy<IToolBarButton, IToolBarButtonMetadata>> tbButtonMef;
 		readonly IEnumerable<Lazy<IToolBarObject, IToolBarObjectMetadata>> tbObjectMef;
 
-		public ToolBar InitializeToolBar(ToolBar toolBar, Guid toolBarGuid, IInputElement commandTarget, ImageOptions imageOptions) {
+		public ToolBar InitializeToolBar(ToolBar toolBar, Guid toolBarGuid, IInputElement commandTarget) {
 			InitializeToolBarItems();
 			if (toolBar == null) {
 				toolBar = new ToolBar();
@@ -168,7 +164,7 @@ namespace dnSpy.ToolBars {
 					needSeparator = true;
 
 					foreach (var item in items) {
-						var obj = Create(item, ctx, commandTarget, imageOptions);
+						var obj = Create(item, ctx, commandTarget);
 						if (obj != null)
 							toolBar.Items.Add(obj);
 					}
@@ -179,10 +175,10 @@ namespace dnSpy.ToolBars {
 			return toolBar;
 		}
 
-		object Create(ToolBarItemMD md, IToolBarItemContext ctx, IInputElement commandTarget, ImageOptions imageOptions) {
+		object Create(ToolBarItemMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
 			var mdButton = md as ToolBarButtonMD;
 			if (mdButton != null)
-				return Create(mdButton, ctx, commandTarget, imageOptions);
+				return Create(mdButton, ctx, commandTarget);
 
 			var mdObj = md as ToolBarObjectMD;
 			if (mdObj != null)
@@ -192,7 +188,7 @@ namespace dnSpy.ToolBars {
 			return null;
 		}
 
-		object Create(ToolBarButtonMD md, IToolBarItemContext ctx, IInputElement commandTarget, ImageOptions imageOptions) {
+		object Create(ToolBarButtonMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
 			var item = (IToolBarButton)md.ToolBarItem;
 			var md2 = (IToolBarButtonMetadata)md.Metadata;
 
@@ -209,30 +205,22 @@ namespace dnSpy.ToolBars {
 				toolTip = item2.GetToolTip(ctx) ?? toolTip;
 			}
 
-			BitmapSource imageSource = null;
-			if (!string.IsNullOrEmpty(icon)) {
-				var imgRef = ImageReferenceHelper.GetImageReference(item, icon);
-				if (imgRef != null)
-					imageSource = imageService.GetImage(imgRef.Value, imageOptions);
-			}
+			var imgRef = default(ImageReference);
+			if (!string.IsNullOrEmpty(icon))
+				imgRef = ImageReferenceHelper.GetImageReference(item, icon) ?? default(ImageReference);
 
 			var toggleButtonCmd = item as IToolBarToggleButton;
 			Debug.Assert(md2.IsToggleButton == (toggleButtonCmd != null), "Implement IToolBarToggleButton if IsToggleButton is true");
 			if (toggleButtonCmd != null)
-				return CreateToggleButton(toggleButtonCmd.GetBinding(ctx), cmd, commandTarget, header, toolTip, imageSource);
-			return new ToolBarButtonVM(cmd, commandTarget, header, toolTip, imageSource);
+				return CreateToggleButton(toggleButtonCmd.GetBinding(ctx), cmd, commandTarget, header, toolTip, imgRef);
+			return new ToolBarButtonVM(cmd, commandTarget, header, toolTip, imgRef);
 		}
 
-		object CreateToggleButton(Binding binding, ICommand command, IInputElement commandTarget, string header, string toolTip, BitmapSource image) {
+		object CreateToggleButton(Binding binding, ICommand command, IInputElement commandTarget, string header, string toolTip, ImageReference imgRef) {
 			var sp = new StackPanel();
 			sp.Orientation = Orientation.Horizontal;
-			if (image != null) {
-				sp.Children.Add(new Image {
-					Width = 16,
-					Height = 16,
-					Source = image,
-				});
-			}
+			if (!imgRef.IsDefault)
+				sp.Children.Add(new DsImage { ImageReference = imgRef });
 			if (!string.IsNullOrEmpty(header)) {
 				sp.Children.Add(new TextBlock {
 					Text = header,

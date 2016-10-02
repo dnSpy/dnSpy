@@ -21,7 +21,6 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 
@@ -46,32 +45,16 @@ namespace dnSpy.Debugger.Locals {
 
 		readonly LocalsControl localsControl;
 		readonly ILocalsVM vmLocals;
-		double zoomLevel;
 
 		[ImportingConstructor]
-		LocalsContent(IWpfCommandService wpfCommandService, IThemeService themeService, IDpiService dpiService, ILocalsVM localsVM) {
+		LocalsContent(IWpfCommandService wpfCommandService, IThemeService themeService, ILocalsVM localsVM) {
 			this.localsControl = new LocalsControl();
 			this.vmLocals = localsVM;
 			this.localsControl.DataContext = this.vmLocals;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
-			dpiService.DpiChanged += DpiService_DpiChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
-			UpdateImageOptions();
-		}
-
-		void UpdateImageOptions() {
-			var options = new ImageOptions {
-				Zoom = new Size(zoomLevel, zoomLevel),
-				DpiObject = localsControl,
-			};
-			vmLocals.SetImageOptions(options);
-		}
-
-		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
-			if (e.Window == Window.GetWindow(localsControl))
-				vmLocals.RefreshThemeFields();
 		}
 
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmLocals.RefreshThemeFields();
@@ -80,12 +63,5 @@ namespace dnSpy.Debugger.Locals {
 		public void OnShow() => vmLocals.IsEnabled = true;
 		public void OnHidden() => vmLocals.IsVisible = false;
 		public void OnVisible() => vmLocals.IsVisible = true;
-
-		public void OnZoomChanged(double value) {
-			if (zoomLevel == value)
-				return;
-			zoomLevel = value;
-			UpdateImageOptions();
-		}
 	}
 }

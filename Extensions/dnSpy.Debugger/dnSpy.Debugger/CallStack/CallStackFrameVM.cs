@@ -23,21 +23,13 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackFrameContext {
-		IImageService ImageService { get; }
-		ImageOptions ImageOptions { get; }
 		TypePrinterFlags TypePrinterFlags { get; }
 		bool SyntaxHighlight { get; }
 	}
 
 	sealed class CallStackFrameContext : ICallStackFrameContext {
-		public IImageService ImageService { get; }
-		public ImageOptions ImageOptions { get; set; }
 		public TypePrinterFlags TypePrinterFlags { get; set; }
 		public bool SyntaxHighlight { get; set; }
-
-		public CallStackFrameContext(IImageService ImageService) {
-			this.ImageService = ImageService;
-		}
 	}
 
 	interface ICallStackFrameVM {
@@ -52,7 +44,7 @@ namespace dnSpy.Debugger.CallStack {
 		public int Index { get; }
 		public bool IsCurrentFrame => false;
 		public string Name => CachedOutput.ToString();
-		public object ImageObject => this;
+		public ImageReference ImageReference => default(ImageReference);
 		public object NameObject => this;
 		public CachedOutput CachedOutput { get; }
 		public ICallStackFrameContext Context { get; }
@@ -72,8 +64,7 @@ namespace dnSpy.Debugger.CallStack {
 					int oldIndex = index;
 					index = value;
 					OnPropertyChanged(nameof(Index));
-					if (index == 0 || oldIndex == 0)
-						RefreshImage();
+					OnPropertyChanged(nameof(ImageReference));
 				}
 			}
 		}
@@ -96,7 +87,7 @@ namespace dnSpy.Debugger.CallStack {
 				if (isCurrentFrame != value) {
 					isCurrentFrame = value;
 					OnPropertyChanged(nameof(IsCurrentFrame));
-					RefreshImage();
+					OnPropertyChanged(nameof(ImageReference));
 				}
 			}
 		}
@@ -111,7 +102,16 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		CachedOutput? cachedOutput;
 
-		public object ImageObject => this;
+		public ImageReference ImageReference {
+			get {
+				if (Index == 0)
+					return DsImages.CurrentInstructionPointer;
+				if (IsCurrentFrame)
+					return DsImages.CallReturnInstructionPointer;
+				return default(ImageReference);
+			}
+		}
+
 		public object NameObject => this;
 		public string Name => ComputeName();
 
@@ -158,17 +158,11 @@ namespace dnSpy.Debugger.CallStack {
 			return output.ToString();
 		}
 
-		public void RefreshThemeFields() {
-			if (Index == 0 || IsCurrentFrame)
-				RefreshImage();
-			RefreshName();
-		}
+		public void RefreshThemeFields() => RefreshName();
 
 		public void RefreshName() {
 			cachedOutput = null;
 			OnPropertyChanged(nameof(NameObject));
 		}
-
-		void RefreshImage() => OnPropertyChanged(nameof(ImageObject));
 	}
 }

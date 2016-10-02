@@ -22,6 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
@@ -42,11 +43,15 @@ namespace dnSpy.Language.Intellisense {
 		readonly List<CompletionVM> list;
 		readonly IList<Completion> completionList;
 		readonly INotifyCollectionChanged completionListNotifyCollectionChanged;
+		readonly IImageMonikerService imageMonikerService;
 
-		public CompletionCollectionVM(IList<Completion> completionList) {
+		public CompletionCollectionVM(IList<Completion> completionList, IImageMonikerService imageMonikerService) {
 			if (completionList == null)
 				throw new ArgumentNullException(nameof(completionList));
+			if (imageMonikerService == null)
+				throw new ArgumentNullException(nameof(imageMonikerService));
 			this.completionList = completionList;
+			this.imageMonikerService = imageMonikerService;
 			this.completionListNotifyCollectionChanged = completionList as INotifyCollectionChanged;
 			if (completionListNotifyCollectionChanged != null)
 				completionListNotifyCollectionChanged.CollectionChanged += CompletionList_CollectionChanged;
@@ -98,17 +103,12 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		CompletionVM GetOrCreateVM(Completion completion) => CompletionVM.TryGet(completion) ?? new CompletionVM(completion);
+		CompletionVM GetOrCreateVM(Completion completion) => CompletionVM.TryGet(completion) ?? new CompletionVM(completion, imageMonikerService);
 
 		void ReinitializeList() {
 			list.Clear();
 			foreach (var c in completionList)
 				list.Add(GetOrCreateVM(c));
-		}
-
-		public void RefreshImages() {
-			foreach (var vm in list)
-				vm.RefreshImages();
 		}
 
 		public bool Contains(object value) => list.Contains(value as CompletionVM);

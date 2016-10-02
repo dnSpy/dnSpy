@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Settings;
@@ -120,6 +119,5 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void OnShow() { }
 		public void SaveSerialized(ISettingsSection section, object obj) { }
 		public object Serialize() => null;
-		void IUIObjectProvider.OnZoomChanged(double value) { }
 	}
 }

@@ -19,7 +19,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Windows.Media;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
@@ -59,23 +58,10 @@ namespace dnSpy.Search {
 		public object ObjectInfo { get; set; }
 
 		public void RefreshUI() {
-			OnPropertyChanged(nameof(Image));
-			OnPropertyChanged(nameof(LocationImage));
 			OnPropertyChanged(nameof(NameUI));
 			OnPropertyChanged(nameof(LocationUI));
 			OnPropertyChanged(nameof(ToolTip));
 		}
-
-		ImageSource GetImage(ImageReference imgRef) {
-			if (imgRef.IsDefault)
-				return null;
-			if (Context.ImageOptions == null)
-				return null;
-			return Context.ImageService.GetImage(imgRef, Context.ImageOptions);
-		}
-
-		public ImageSource Image => GetImage(ObjectImageReference);
-		public ImageSource LocationImage => GetImage(LocationImageReference);
 
 		public string ToolTip {
 			get {

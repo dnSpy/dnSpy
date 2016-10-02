@@ -27,6 +27,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shell;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Contracts.Controls {
@@ -215,6 +216,7 @@ namespace dnSpy.Contracts.Controls {
 					}
 
 					WindowDpiChanged?.Invoke(this, EventArgs.Empty);
+					DsImage.SetDpi(this, windowDpi.Width);
 				}
 			}
 		}
@@ -290,14 +292,14 @@ namespace dnSpy.Contracts.Controls {
 		/// System menu image property
 		/// </summary>
 		public static readonly DependencyProperty SystemMenuImageProperty =
-			DependencyProperty.Register(nameof(SystemMenuImage), typeof(ImageSource), typeof(MetroWindow),
-			new FrameworkPropertyMetadata(null));
+			DependencyProperty.Register(nameof(SystemMenuImage), typeof(ImageReference), typeof(MetroWindow),
+			new FrameworkPropertyMetadata(default(ImageReference)));
 
 		/// <summary>
 		/// Gets/sets the system menu image
 		/// </summary>
-		public ImageSource SystemMenuImage {
-			get { return (ImageSource)GetValue(SystemMenuImageProperty); }
+		public ImageReference SystemMenuImage {
+			get { return (ImageReference)GetValue(SystemMenuImageProperty); }
 			set { SetValue(SystemMenuImageProperty, value); }
 		}
 

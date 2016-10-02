@@ -60,20 +60,7 @@ namespace dnSpy.Debugger.Locals {
 		public IPrinterContext PrinterContext => context.LocalsOwner.PrinterContext;
 		public sealed override bool ShowIcon => true;
 
-		public sealed override object Icon {
-			get {
-				var ctx = context.LocalsOwner.PrinterContext;
-				if (ctx.ImageOptions == null)
-					return null;
-				var options = new ImageOptions {
-					BackgroundType = BackgroundType.TreeNode,
-					Zoom = ctx.ImageOptions.Zoom,
-					DpiObject = ctx.ImageOptions.DpiObject,
-					Dpi = ctx.ImageOptions.Dpi,
-				};
-				return ctx.ImageService.GetImage(IconReference, options);
-			}
-		}
+		public sealed override object Icon => IconReference;
 
 		public CachedOutput CachedOutputValue {
 			get {
@@ -137,8 +124,6 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		internal void RefreshThemeFields() {
-			RaisePropertyChanged(nameof(Icon));
-			RaisePropertyChanged(nameof(ExpandedIcon));
 			RaisePropertyChanged(nameof(NameObject));
 			InvalidateValueObject();
 			InvalidateTypeObject();

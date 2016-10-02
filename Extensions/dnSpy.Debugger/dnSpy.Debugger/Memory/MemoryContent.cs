@@ -77,6 +77,5 @@ namespace dnSpy.Debugger.Memory {
 		public void OnShow() => vmMemory.IsEnabled = true;
 		public void OnHidden() => vmMemory.IsVisible = false;
 		public void OnVisible() => vmMemory.IsVisible = true;
-		void IUIObjectProvider.OnZoomChanged(double value) { }
 	}
 }

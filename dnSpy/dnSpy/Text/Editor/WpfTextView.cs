@@ -29,6 +29,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
@@ -175,6 +176,7 @@ namespace dnSpy.Text.Editor {
 			this.invalidatedRegions = new List<SnapshotSpan>();
 			this.formattedTextSourceFactoryService = formattedTextSourceFactoryService;
 			this.zoomLevel = ZoomConstants.DefaultZoom;
+			DsImage.SetZoom(VisualElement, zoomLevel / 100);
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
 			this.lineTransformProviderService = lineTransformProviderService;
 			this.wpfTextViewCreationListeners = wpfTextViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
@@ -499,6 +501,9 @@ namespace dnSpy.Text.Editor {
 		public double ZoomLevel {
 			get { return zoomLevel; }
 			set {
+				if (IsClosed)
+					return;
+
 				double newValue = value;
 				newValue = Math.Min(ZoomConstants.MaxZoom, newValue);
 				newValue = Math.Max(ZoomConstants.MinZoom, newValue);
@@ -508,9 +513,10 @@ namespace dnSpy.Text.Editor {
 					return;
 
 				zoomLevel = newValue;
+
 				metroWindow?.SetScaleTransform(this, zoomLevel / 100);
-				if (!IsClosed)
-					ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(newValue, LayoutTransform));
+				ZoomLevelChanged?.Invoke(this, new ZoomLevelChangedEventArgs(newValue, LayoutTransform));
+				DsImage.SetZoom(VisualElement, zoomLevel / 100);
 			}
 		}
 		double zoomLevel;

@@ -33,6 +33,7 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#663399FF",
 			},
 			new BrushColorInfo(ColorType.GlyphMargin, "Indicator Margin") {
+				BackgroundResourceKey = "GlyphMarginBackground",
 				DefaultBackground = "#FFE6E7E8",
 			},
 			new BrushColorInfo(ColorType.CurrentLine, "Current line") {
@@ -164,6 +165,10 @@ namespace dnSpy.Themes {
 				ForegroundResourceKey = "DialogWindowInactiveCaptionText",
 				DefaultBackground = "#FFEEEEF2",
 				BackgroundResourceKey = "DialogWindowInactiveCaption",
+			},
+			new BrushColorInfo(ColorType.EnvironmentBackgroundBrush, "MainWindow background (brush)") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentBackgroundBrush",
 			},
 			new LinearGradientColorInfo(ColorType.EnvironmentBackground, new Point(0, 1), "MainWindow background", 0, 0.4, 0.6, 1) {
 				ResourceKey = "EnvironmentBackground",
@@ -348,6 +353,7 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#F6F6F6",
 			},
 			new BrushColorInfo(ColorType.ToolBarIconVerticalBackground, "ToolBar icon vertical background. Makes sure icons look good with this background color.") {
+				BackgroundResourceKey = "ToolBarIconVerticalBackground",
 				DefaultBackground = "#F6F6F6",
 			},
 			new LinearGradientColorInfo(ColorType.ToolBarVerticalBackground, new Point(1, 0), "Toolbar vertical header. Color of left vertical part of menu items.", 0, 0.5, 1) {
@@ -357,6 +363,7 @@ namespace dnSpy.Themes {
 				DefaultColor3 = "#F6F6F6",
 			},
 			new BrushColorInfo(ColorType.ToolBarIconBackground, "ToolBar icon background. Makes sure icons look good with this background color.") {
+				BackgroundResourceKey = "ToolBarIconBackground",
 				DefaultBackground = "#EEEEF2",
 			},
 			new LinearGradientColorInfo(ColorType.ToolBarHorizontalBackground, new Point(0, 1), "Toolbar horizontal background", 0, 0.5, 1) {

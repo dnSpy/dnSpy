@@ -24,7 +24,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
@@ -54,10 +53,9 @@ namespace dnSpy.Debugger.CallStack {
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
-		double zoomLevel;
 
 		[ImportingConstructor]
-		CallStackContent(IWpfCommandService wpfCommandService, IThemeService themeService, IDpiService dpiService, ICallStackVM callStackVM, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
+		CallStackContent(IWpfCommandService wpfCommandService, IThemeService themeService, ICallStackVM callStackVM, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
 			this.callStackControl = new CallStackControl();
 			this.vmCallStack = callStackVM;
 			this.stackFrameService = stackFrameService;
@@ -67,24 +65,9 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackControl.DataContext = this.vmCallStack;
 			this.callStackControl.CallStackListViewDoubleClick += CallStackControl_CallStackListViewDoubleClick;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
-			dpiService.DpiChanged += DpiService_DpiChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_CONTROL, callStackControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW, callStackControl.ListView);
-			UpdateImageOptions();
-		}
-
-		void UpdateImageOptions() {
-			var options = new ImageOptions {
-				Zoom = new Size(zoomLevel, zoomLevel),
-				DpiObject = callStackControl,
-			};
-			vmCallStack.SetImageOptions(options);
-		}
-
-		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
-			if (e.Window == Window.GetWindow(callStackControl))
-				vmCallStack.RefreshThemeFields();
 		}
 
 		void CallStackControl_CallStackListViewDoubleClick(object sender, EventArgs e) {
@@ -98,12 +81,5 @@ namespace dnSpy.Debugger.CallStack {
 		public void OnShow() => vmCallStack.IsEnabled = true;
 		public void OnHidden() => vmCallStack.IsVisible = false;
 		public void OnVisible() => vmCallStack.IsVisible = true;
-
-		public void OnZoomChanged(double value) {
-			if (zoomLevel == value)
-				return;
-			zoomLevel = value;
-			UpdateImageOptions();
-		}
 	}
 }

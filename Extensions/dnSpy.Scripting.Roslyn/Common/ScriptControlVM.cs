@@ -29,7 +29,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Scripting.Roslyn;
@@ -70,12 +69,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);
 		public ICommand HistoryPreviousCommand => new RelayCommand(a => ReplEditor.SelectPreviousCommand(), a => ReplEditor.CanSelectPreviousCommand);
 		public ICommand HistoryNextCommand => new RelayCommand(a => ReplEditor.SelectNextCommand(), a => ReplEditor.CanSelectNextCommand);
-		public object ResetImageObject => this;
-		public object ClearWindowContentImageObject => this;
-		public object HistoryPreviousImageObject => this;
-		public object HistoryNextImageObject => this;
-		public object ToggleWordWrapImageObject => this;
-		public object SaveImageObject => this;
 		public bool CanReset => hasInitialized && (execState == null || !execState.IsInitializing);
 
 		public bool CanSaveText => ReplEditor.CanSaveText;
@@ -150,25 +143,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			yield return new ResetCommand();
 		}
 
-		internal IImageService ImageService { get; }
-		internal ImageOptions ImageOptions {
-			get { return imageOptions; }
-			set {
-				if (imageOptions != value) {
-					imageOptions = value;
-					RefreshThemeFields();
-				}
-			}
-		}
-		ImageOptions imageOptions;
-
 		readonly Dispatcher dispatcher;
 		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly IClassificationType defaultClassificationType;
 		readonly ReplSettings replSettings;
 
-		protected ScriptControlVM(IImageService imageService, IReplEditor replEditor, ReplSettings replSettings, IServiceLocator serviceLocator) {
-			ImageService = imageService;
+		protected ScriptControlVM(IReplEditor replEditor, ReplSettings replSettings, IServiceLocator serviceLocator) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.replSettings = replSettings;
 			this.replSettings.PropertyChanged += ReplSettings_PropertyChanged;
@@ -220,15 +200,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}
 			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
 				replSettings.ShowLineNumbers = ShowLineNumbers;
-		}
-
-		public void RefreshThemeFields() {
-			OnPropertyChanged(nameof(ResetImageObject));
-			OnPropertyChanged(nameof(ClearWindowContentImageObject));
-			OnPropertyChanged(nameof(HistoryPreviousImageObject));
-			OnPropertyChanged(nameof(HistoryNextImageObject));
-			OnPropertyChanged(nameof(ToggleWordWrapImageObject));
-			OnPropertyChanged(nameof(SaveImageObject));
 		}
 
 		public bool IsCommand(string text) {

@@ -21,7 +21,6 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.CallStack {
@@ -34,14 +33,6 @@ namespace dnSpy.Debugger.CallStack {
 			if (s == null)
 				return null;
 
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
-				if (vm.Index == 0)
-					return GetImage(vm, DsImages.CurrentInstructionPointer);
-				if (vm.IsCurrentFrame)
-					return GetImage(vm, DsImages.CallReturnInstructionPointer);
-				return null;
-			}
-
 			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				CreateContent(gen.Output, vm.CachedOutput, vm.Context.SyntaxHighlight);
@@ -49,18 +40,6 @@ namespace dnSpy.Debugger.CallStack {
 				return null;
 
 			return gen.CreateResult(true);
-		}
-
-		object GetImage(ICallStackFrameVM vm, ImageReference imageReference) {
-			if (vm.Context.ImageOptions == null)
-				return null;
-			var options = new ImageOptions {
-				BackgroundType = BackgroundType.GridViewItem,
-				Zoom = vm.Context.ImageOptions.Zoom,
-				DpiObject = vm.Context.ImageOptions.DpiObject,
-				Dpi = vm.Context.ImageOptions.Dpi,
-			};
-			return vm.Context.ImageService.GetImage(imageReference, options);
 		}
 
 		void CreateContent(ITextColorWriter output, CachedOutput cachedOutput, bool highlight) {

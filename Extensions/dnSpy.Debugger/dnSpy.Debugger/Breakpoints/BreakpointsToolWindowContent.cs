@@ -82,6 +82,5 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public void Focus() => breakpointsContent.Value.Focus();
-		public void OnZoomChanged(double value) => breakpointsContent.Value.OnZoomChanged(value);
 	}
 }

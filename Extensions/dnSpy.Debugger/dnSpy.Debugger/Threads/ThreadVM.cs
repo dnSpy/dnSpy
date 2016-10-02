@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
@@ -42,8 +43,6 @@ namespace dnSpy.Debugger.Threads {
 	}
 
 	interface IThreadContext {
-		IImageService ImageService { get; }
-		ImageOptions ImageOptions { get; }
 		ITheDebugger TheDebugger { get; }
 		IDebuggerSettings DebuggerSettings { get; }
 		bool SyntaxHighlight { get; }
@@ -51,15 +50,12 @@ namespace dnSpy.Debugger.Threads {
 	}
 
 	sealed class ThreadContext : IThreadContext {
-		public IImageService ImageService { get; }
 		public ITheDebugger TheDebugger { get; }
-		public ImageOptions ImageOptions { get; set; }
 		public IDebuggerSettings DebuggerSettings { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 
-		public ThreadContext(IImageService imageService, ITheDebugger theDebugger, IDebuggerSettings debuggerSettings) {
-			this.ImageService = imageService;
+		public ThreadContext(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings) {
 			this.TheDebugger = theDebugger;
 			this.DebuggerSettings = debuggerSettings;
 		}
@@ -72,7 +68,7 @@ namespace dnSpy.Debugger.Threads {
 				if (isCurrent != value) {
 					isCurrent = value;
 					OnPropertyChanged(nameof(IsCurrent));
-					OnPropertyChanged(nameof(CurrentImageObject));
+					OnPropertyChanged(nameof(CurrentImageReference));
 				}
 			}
 		}
@@ -84,8 +80,8 @@ namespace dnSpy.Debugger.Threads {
 				if (threadType != value) {
 					threadType = value;
 					OnPropertyChanged(nameof(Type));
-					OnPropertyChanged(nameof(CurrentImageObject));
-					OnPropertyChanged(nameof(CategoryImageObject));
+					OnPropertyChanged(nameof(CurrentImageReference));
+					OnPropertyChanged(nameof(CategoryImageReference));
 					OnPropertyChanged(nameof(CategoryTextObject));
 				}
 			}
@@ -132,10 +128,37 @@ namespace dnSpy.Debugger.Threads {
 		}
 		CorDebugUserState userState;
 
-		public object CurrentImageObject => this;
+		public ImageReference CurrentImageReference {
+			get {
+				if (IsCurrent)
+					return DsImages.CurrentInstructionPointer;
+				if (Type == ThreadType.Main)
+					return DsImages.DraggedCurrentInstructionPointer;
+				return default(ImageReference);
+			}
+		}
+
+		public ImageReference CategoryImageReference {
+			get {
+				switch (Type) {
+				case ThreadType.Unknown:
+				case ThreadType.Terminated:
+					return DsImages.QuestionMark;
+				case ThreadType.Main:
+					return DsImages.Thread;
+				case ThreadType.BGCOrFinalizer:
+				case ThreadType.ThreadPool:
+				case ThreadType.Worker:
+					return DsImages.Process;
+				default:
+					Debug.Fail(string.Format("Unknown thread type: {0}", Type));
+					goto case ThreadType.Unknown;
+				}
+			}
+		}
+
 		public object IdObject => this;
 		public object ManagedIdObject => this;
-		public object CategoryImageObject => this;
 		public object CategoryTextObject => this;
 		public object NameObject => this;
 		public object LocationObject => this;
@@ -339,10 +362,9 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		internal void RefreshThemeFields() {
-			OnPropertyChanged(nameof(CurrentImageObject));
 			OnPropertyChanged(nameof(IdObject));
 			OnPropertyChanged(nameof(ManagedIdObject));
-			OnPropertyChanged(nameof(CategoryImageObject));
+			OnPropertyChanged(nameof(CategoryImageReference));
 			OnPropertyChanged(nameof(CategoryTextObject));
 			OnPropertyChanged(nameof(NameObject));
 			OnPropertyChanged(nameof(LocationObject));

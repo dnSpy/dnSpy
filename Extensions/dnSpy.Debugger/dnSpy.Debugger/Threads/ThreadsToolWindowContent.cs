@@ -82,6 +82,5 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		public void Focus() => threadsContent.Value.Focus();
-		public void OnZoomChanged(double value) => threadsContent.Value.OnZoomChanged(value);
 	}
 }

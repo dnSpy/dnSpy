@@ -25,7 +25,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Themes;
@@ -33,9 +32,7 @@ using dnSpy.Debugger.IMModules;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointsVM {
-		void SetImageOptions(ImageOptions imageOptions);
 		void Remove(IEnumerable<BreakpointVM> bps);
-		void RefreshImageFields();
 	}
 
 	[Export(typeof(IBreakpointsVM)), Export(typeof(ILoadBeforeDebug))]
@@ -59,8 +56,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly ITheDebugger theDebugger;
 
 		[ImportingConstructor]
-		BreakpointsVM(IDecompilerService decompilerService, IImageService imageService, IThemeService themeService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointService breakpointService, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleService inMemoryModuleService) {
-			this.breakpointContext = new BreakpointContext(imageService, moduleLoader) {
+		BreakpointsVM(IDecompilerService decompilerService, IThemeService themeService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointService breakpointService, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleService inMemoryModuleService) {
+			this.breakpointContext = new BreakpointContext(moduleLoader) {
 				Decompiler = decompilerService.Decompiler,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
@@ -86,11 +83,6 @@ namespace dnSpy.Debugger.Breakpoints {
 			inMemoryModuleService.DynamicModulesLoaded += InMemoryModuleService_DynamicModulesLoaded;
 			foreach (var bp in breakpointService.GetBreakpoints())
 				AddBreakpoint(bp);
-		}
-
-		void IBreakpointsVM.SetImageOptions(ImageOptions imageOptions) {
-			breakpointContext.ImageOptions = imageOptions;
-			RefreshImageFields();
 		}
 
 		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
@@ -231,8 +223,6 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 			Debug.Fail("Breakpoint got removed but it wasn't in BreakpointsVM's list");
 		}
-
-		public void RefreshImageFields() => RefreshThemeFields();
 
 		void RefreshThemeFields() {
 			foreach (var vm in breakpointList)

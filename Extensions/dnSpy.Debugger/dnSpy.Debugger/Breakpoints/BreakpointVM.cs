@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 
@@ -28,10 +29,15 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointVM : ViewModelBase, IDisposable {
 		public bool IsEnabled {
 			get { return Breakpoint.IsEnabled; }
-			set { Breakpoint.IsEnabled = value; }
+			set {
+				if (Breakpoint.IsEnabled == value)
+					return;
+				Breakpoint.IsEnabled = value;
+				OnPropertyChanged(nameof(ImageReference));
+			}
 		}
 
-		public object ImageObject => this;
+		public ImageReference ImageReference => IsEnabled ? DsImages.BreakpointEnabled : DsImages.BreakpointDisabled;
 		public object NameObject => this;
 		public object AssemblyObject => this;
 		public object ModuleObject => this;
@@ -63,12 +69,11 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Breakpoint_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(Breakpoints.Breakpoint.IsEnabled)) {
 				OnPropertyChanged(nameof(IsEnabled));
-				RefreshImage();
+				OnPropertyChanged(nameof(ImageReference));
 			}
 		}
 
 		internal void RefreshThemeFields() {
-			RefreshImage();
 			RefreshNameField();
 			OnPropertyChanged(nameof(AssemblyObject));
 			OnPropertyChanged(nameof(ModuleObject));
@@ -76,7 +81,6 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		internal void RefreshNameField() => OnPropertyChanged(nameof(NameObject));
-		void RefreshImage() => OnPropertyChanged(nameof(ImageObject));
 
 		internal void RefreshIfNameError(ModuleId moduleId) {
 			if (!NameError)

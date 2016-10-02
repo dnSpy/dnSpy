@@ -275,6 +275,7 @@ namespace dnSpy.Contracts.Themes {
 		DialogWindowButtonInactiveGlyph,
 		DialogWindowInactiveBorder,
 		DialogWindowInactiveCaption,
+		EnvironmentBackgroundBrush,
 		EnvironmentBackground,
 		EnvironmentForeground,
 		EnvironmentMainWindowActiveCaption,

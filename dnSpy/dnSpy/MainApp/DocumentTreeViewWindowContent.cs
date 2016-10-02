@@ -77,7 +77,6 @@ namespace dnSpy.MainApp {
 
 		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) { }
 		public void Focus() => treeView.Focus();
-		public void OnZoomChanged(double value) => treeView.OnZoomChanged(value);
 	}
 
 	[ExportAutoLoaded]

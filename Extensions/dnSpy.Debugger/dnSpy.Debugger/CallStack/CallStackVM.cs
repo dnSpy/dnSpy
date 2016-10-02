@@ -24,7 +24,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
 
@@ -33,7 +32,6 @@ namespace dnSpy.Debugger.CallStack {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
 		void RefreshThemeFields();
-		void SetImageOptions(ImageOptions imageOptions);
 	}
 
 	[Export(typeof(ICallStackVM))]
@@ -95,13 +93,13 @@ namespace dnSpy.Debugger.CallStack {
 		readonly CallStackFrameContext callStackFrameContext;
 
 		[ImportingConstructor]
-		CallStackVM(IDebuggerSettings debuggerSettings, ICallStackSettings callStackSettings, IStackFrameService stackFrameService, ITheDebugger theDebugger, IImageService imageService) {
+		CallStackVM(IDebuggerSettings debuggerSettings, ICallStackSettings callStackSettings, IStackFrameService stackFrameService, ITheDebugger theDebugger) {
 			this.debuggerSettings = debuggerSettings;
 			this.callStackSettings = callStackSettings;
 			this.theDebugger = theDebugger;
 			this.stackFrameService = stackFrameService;
 			this.framesList = new ObservableCollection<ICallStackFrameVM>();
-			this.callStackFrameContext = new CallStackFrameContext(imageService) {
+			this.callStackFrameContext = new CallStackFrameContext() {
 				TypePrinterFlags = TypePrinterFlags,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightCallStack,
 			};
@@ -111,11 +109,6 @@ namespace dnSpy.Debugger.CallStack {
 			callStackSettings.PropertyChanged += CallStackSettings_PropertyChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
-		}
-
-		void ICallStackVM.SetImageOptions(ImageOptions imageOptions) {
-			callStackFrameContext.ImageOptions = imageOptions;
-			RefreshThemeFields();
 		}
 
 		void TheDebugger_ProcessRunning(object sender, EventArgs e) => InitializeStackFrames();

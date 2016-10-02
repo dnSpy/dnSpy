@@ -26,9 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Controls;
@@ -74,7 +72,6 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		readonly IImageMonikerService imageMonikerService;
-		readonly IImageService imageService;
 		readonly ICompletionSession session;
 		readonly ICompletionTextElementProvider completionTextElementProvider;
 		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
@@ -94,11 +91,9 @@ namespace dnSpy.Language.Intellisense {
 		const double defaultMinWidth = 150;
 		const double toolTipDelayMilliSeconds = 250;
 
-		public CompletionPresenter(IImageMonikerService imageMonikerService, IImageService imageService, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
+		public CompletionPresenter(IImageMonikerService imageMonikerService, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
 			if (imageMonikerService == null)
 				throw new ArgumentNullException(nameof(imageMonikerService));
-			if (imageService == null)
-				throw new ArgumentNullException(nameof(imageService));
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 			if (completionTextElementProvider == null)
@@ -106,7 +101,6 @@ namespace dnSpy.Language.Intellisense {
 			if (completionUIElementProviders == null)
 				throw new ArgumentNullException(nameof(completionUIElementProviders));
 			this.imageMonikerService = imageMonikerService;
-			this.imageService = imageService;
 			this.session = session;
 			this.completionTextElementProvider = completionTextElementProvider;
 			this.completionUIElementProviders = completionUIElementProviders;
@@ -158,7 +152,6 @@ namespace dnSpy.Language.Intellisense {
 			if (wpfTextView != null && oldZoomLevel != wpfTextView.ZoomLevel) {
 				oldZoomLevel = wpfTextView.ZoomLevel;
 				HideToolTip();
-				RefreshImages();
 			}
 			if (e.HorizontalTranslation || e.VerticalTranslation)
 				HideToolTip();
@@ -512,7 +505,7 @@ namespace dnSpy.Language.Intellisense {
 				var completionSetFilters = filterCompletionSet.Filters;
 				if (completionSetFilters != null) {
 					foreach (var filter in completionSetFilters)
-						filters.Add(new FilterVM(filter, this));
+						filters.Add(new FilterVM(filter, this, imageMonikerService.ToImageReference(filter.Moniker)));
 				}
 			}
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Filters)));
@@ -547,7 +540,7 @@ namespace dnSpy.Language.Intellisense {
 			completionCollectionVM = null;
 			if (completions == null)
 				return null;
-			completionCollectionVM = new CompletionCollectionVM(completions);
+			completionCollectionVM = new CompletionCollectionVM(completions, imageMonikerService);
 			return completionCollectionVM;
 		}
 		CompletionCollectionVM completionCollectionVM;
@@ -620,46 +613,6 @@ namespace dnSpy.Language.Intellisense {
 			control.completionsListBox.ItemsSource = null;
 			completionCollectionVM?.Dispose();
 			completionCollectionVM = null;
-		}
-
-		public ImageSource GetImageSource(CompletionIconVM completionIcon) {
-			if (session.IsDismissed)
-				return null;
-			if (completionIcon == null)
-				throw new ArgumentNullException(nameof(completionIcon));
-			var c2 = completionIcon.CompletionIcon as CompletionIcon2;
-			if (c2 == null)
-				return completionIcon.CompletionIcon.IconSource;
-			bool fixImage = (completionIcon.CompletionIcon as IDsCompletionIcon)?.FixImage ?? false;
-			return GetImageSource(imageMonikerService.ToImageReference(c2.IconMoniker), fixImage);
-		}
-
-		public ImageSource GetImageSource(CompletionVM completion) {
-			if (completion == null)
-				throw new ArgumentNullException(nameof(completion));
-			var c3 = completion.Completion as Completion3;
-			if (c3 == null)
-				return completion.Completion.IconSource;
-			return GetImageSource(imageMonikerService.ToImageReference(c3.IconMoniker), true);
-		}
-
-		public ImageSource GetImageSource(FilterVM filterVM) => GetImageSource(imageMonikerService.ToImageReference(filterVM.Moniker), true);
-
-		ImageSource GetImageSource(ImageReference imageReference, bool fixImage) {
-			if (session.IsDismissed)
-				return null;
-			if (imageReference.IsDefault)
-				return null;
-			var options = new ImageOptions(session.TextView) {
-				BackgroundType = fixImage ? BackgroundType.ListBoxItem : BackgroundType.None,
-			};
-			return imageService.GetImage(imageReference, options);
-		}
-
-		void RefreshImages() {
-			foreach (var vm in filters)
-				vm.RefreshImages();
-			completionCollectionVM?.RefreshImages();
 		}
 
 		public FrameworkElement GetDisplayText(CompletionVM vm) => CreateFrameworkElement(vm.Completion, CompletionClassifierKind.DisplayText);

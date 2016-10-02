@@ -25,7 +25,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
@@ -247,8 +246,6 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public void OnHide() { }
 		public void OnShow() { }
-
-		void IUIObjectProvider.OnZoomChanged(double value) { }
 
 		public void Dispose() {
 			appSettings.PropertyChanged -= AppSettings_PropertyChanged;

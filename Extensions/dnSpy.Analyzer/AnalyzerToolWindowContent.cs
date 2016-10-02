@@ -70,6 +70,5 @@ namespace dnSpy.Analyzer {
 		}
 
 		public void Focus() => analyzerService.Value.TreeView.Focus();
-		public void OnZoomChanged(double value) => analyzerService.Value.TreeView.OnZoomChanged(value);
 	}
 }

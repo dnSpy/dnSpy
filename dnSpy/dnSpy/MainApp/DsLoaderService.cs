@@ -23,17 +23,13 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings;
-using dnSpy.Contracts.Themes;
 
 namespace dnSpy.MainApp {
 	interface IDsLoaderService {
-		void Initialize(IDsLoaderContentProvider content, MetroWindow window, IAppCommandLineArgs args);
+		void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs args);
 		void Save();
 		event EventHandler OnAppLoaded;
 	}
@@ -45,8 +41,6 @@ namespace dnSpy.MainApp {
 
 	[Export(typeof(IDsLoaderService))]
 	sealed class DsLoaderService : IDsLoaderService {
-		readonly IImageService imageService;
-		readonly IThemeService themeService;
 		readonly ISettingsService settingsService;
 		readonly Lazy<IDsLoader, IDsLoaderMetadata>[] loaders;
 
@@ -55,15 +49,13 @@ namespace dnSpy.MainApp {
 		public event EventHandler OnAppLoaded;
 
 		[ImportingConstructor]
-		DsLoaderService(IImageService imageService, IThemeService themeService, ISettingsService settingsService, [ImportMany] IEnumerable<Lazy<IDsLoader, IDsLoaderMetadata>> mefLoaders) {
-			this.imageService = imageService;
-			this.themeService = themeService;
+		DsLoaderService(ISettingsService settingsService, [ImportMany] IEnumerable<Lazy<IDsLoader, IDsLoaderMetadata>> mefLoaders) {
 			this.settingsService = settingsService;
 			this.loaders = mefLoaders.OrderBy(a => a.Metadata.Order).ToArray();
-			this.windowLoader = new WindowLoader(this, imageService, themeService, settingsService, loaders);
+			this.windowLoader = new WindowLoader(this, settingsService, loaders);
 		}
 
-		public void Initialize(IDsLoaderContentProvider content, MetroWindow window, IAppCommandLineArgs args) {
+		public void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs args) {
 			Debug.Assert(windowLoader != null);
 			windowLoader.Initialize(content, window, args);
 		}
@@ -83,47 +75,30 @@ namespace dnSpy.MainApp {
 	sealed class WindowLoader {
 		const int EXEC_TIME_BEFORE_DELAY_MS = 40;
 		readonly DsLoaderService dsLoaderService;
-		readonly IImageService imageService;
-		readonly IThemeService themeService;
 		readonly ISettingsService settingsService;
 		readonly Lazy<IDsLoader, IDsLoaderMetadata>[] loaders;
 
-		MetroWindow window;
+		Window window;
 		IDsLoaderContentProvider content;
 		DsLoaderControl dsLoaderControl;
 		IEnumerator<object> loaderEnumerator;
 		IAppCommandLineArgs appArgs;
 
-		public WindowLoader(DsLoaderService dsLoaderService, IImageService imageService, IThemeService themeService, ISettingsService settingsService, Lazy<IDsLoader, IDsLoaderMetadata>[] loaders) {
+		public WindowLoader(DsLoaderService dsLoaderService, ISettingsService settingsService, Lazy<IDsLoader, IDsLoaderMetadata>[] loaders) {
 			this.dsLoaderService = dsLoaderService;
-			this.imageService = imageService;
-			this.themeService = themeService;
 			this.settingsService = settingsService;
 			this.loaders = loaders;
 		}
 
-		public void Initialize(IDsLoaderContentProvider content, MetroWindow window, IAppCommandLineArgs appArgs) {
+		public void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs appArgs) {
 			this.window = window;
 			this.appArgs = appArgs;
 			this.dsLoaderControl = new DsLoaderControl();
 			this.content = content;
-			this.window.WindowDpiChanged += Window_WindowDpiChanged;
 			this.content.SetLoadingContent(this.dsLoaderControl);
 
 			this.window.ContentRendered += Window_ContentRendered;
 			this.window.IsEnabled = false;
-			UpdateImage();
-		}
-
-		void Window_WindowDpiChanged(object sender, EventArgs e) => UpdateImage();
-
-		void UpdateImage() {
-			var options = new ImageOptions {
-				BackgroundColor = ((SolidColorBrush)themeService.Theme.GetColor(ColorType.EnvironmentBackground).Background).Color,
-				LogicalSize = new Size(64, 64),
-				Dpi = window.WindowDpi,
-			};
-			this.dsLoaderControl.Image.Source = imageService.GetImage(DsImages.Assembly, options);
 		}
 
 		void Window_ContentRendered(object sender, EventArgs e) {
@@ -159,7 +134,6 @@ namespace dnSpy.MainApp {
 		}
 
 		void LoadAllCodeFinished() {
-			window.WindowDpiChanged -= Window_WindowDpiChanged;
 			content.RemoveLoadingContent();
 			window.IsEnabled = true;
 			// This is needed if there's nothing shown at startup (no tabs, no TV, etc), otherwise

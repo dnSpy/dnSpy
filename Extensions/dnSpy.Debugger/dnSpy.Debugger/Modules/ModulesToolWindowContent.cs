@@ -82,6 +82,5 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		public void Focus() => modulesContent.Value.Focus();
-		public void OnZoomChanged(double value) => modulesContent.Value.OnZoomChanged(value);
 	}
 }

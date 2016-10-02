@@ -27,22 +27,17 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Modules {
 	interface IModuleContext {
-		IImageService ImageService { get; }
-		ImageOptions ImageOptions { get; }
 		ITheDebugger TheDebugger { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 	}
 
 	sealed class ModuleContext : IModuleContext {
-		public IImageService ImageService { get; }
 		public ITheDebugger TheDebugger { get; }
-		public ImageOptions ImageOptions { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 
-		public ModuleContext(IImageService imageService, ITheDebugger theDebugger) {
-			this.ImageService = imageService;
+		public ModuleContext(ITheDebugger theDebugger) {
 			this.TheDebugger = theDebugger;
 		}
 	}
@@ -73,7 +68,7 @@ namespace dnSpy.Debugger.Modules {
 		Version version;
 
 		public bool IsOptimized => Module.CachedJITCompilerFlags == CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT;
-		public object ImageObject => this;
+		public ImageReference ImageReference => IsExe ? DsImages.AssemblyExe : DsImages.ModulePublic;
 		public object NameObject => this;
 		public object PathObject => this;
 		public object OptimizedObject => this;
@@ -94,7 +89,6 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		internal void RefreshThemeFields() {
-			OnPropertyChanged(nameof(ImageObject));
 			OnPropertyChanged(nameof(NameObject));
 			OnPropertyChanged(nameof(PathObject));
 			OnPropertyChanged(nameof(OptimizedObject));

@@ -24,8 +24,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -154,6 +156,13 @@ namespace dnSpy.Text.Editor {
 			this.editorFormatMapService = editorFormatMapService;
 			this.lazyGlyphMouseProcessorProviders = glyphMouseProcessorProviders;
 			this.lazyGlyphFactoryProviders = glyphFactoryProviders;
+
+			var binding = new Binding {
+				Path = new PropertyPath(BackgroundProperty),
+				Source = this,
+			};
+			SetBinding(DsImage.BackgroundBrushProperty, binding);
+
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			wpfTextViewHost.TextView.ZoomLevelChanged += TextView_ZoomLevelChanged;
 			IsVisibleChanged += GlyphMargin_IsVisibleChanged;
@@ -164,7 +173,10 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
-		void TextView_ZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e) => LayoutTransform = e.ZoomTransform;
+		void TextView_ZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e) {
+			LayoutTransform = e.ZoomTransform;
+			DsImage.SetZoom(this, e.NewZoomLevel / 100);
+		}
 
 		public ITextViewMargin GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedMarginNames.Glyph) ? this : null;

@@ -27,7 +27,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
@@ -37,20 +36,16 @@ namespace dnSpy.MainApp {
 	[ExportToolBarObject(OwnerGuid = ToolBarConstants.APP_TB_GUID, Group = ToolBarConstants.GROUP_APP_TB_MAIN_MENU, Order = 0)]
 	sealed class MainMenuToolbarCommand : ToolBarObjectBase {
 		readonly IMenuService menuService;
-		readonly IAppWindow appWindow;
 		Menu menu;
 
 		[ImportingConstructor]
-		MainMenuToolbarCommand(IMenuService menuService, IAppWindow appWindow) {
+		MainMenuToolbarCommand(IMenuService menuService) {
 			this.menuService = menuService;
-			this.appWindow = appWindow;
 		}
 
 		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) {
-			if (menu == null) {
-				var options = new ImageOptions { DpiObject = appWindow.MainWindow };
-				menu = menuService.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), options, commandTarget);
-			}
+			if (menu == null)
+				menu = menuService.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), commandTarget);
 			return menu;
 		}
 	}

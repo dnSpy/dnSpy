@@ -26,7 +26,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Exceptions {
@@ -52,8 +51,6 @@ namespace dnSpy.Debugger.Exceptions {
 		bool Exists(ExceptionType type, string name);
 		void AddException(ExceptionType type, string name);
 		void BreakWhenThrown(ExceptionType type, string name);
-
-		ImageOptions ImageOptions { get; set; }
 	}
 
 	[Export(typeof(IExceptionsVM))]
@@ -62,10 +59,6 @@ namespace dnSpy.Debugger.Exceptions {
 		readonly ObservableCollection<ExceptionVM> exceptionsList;
 
 		public ICollectionView CollectionView { get; }
-		public object ShowOnlyEnabledExceptionsImageObject => this;
-		public object AddExceptionImageObject => this;
-		public object RemoveExceptionImageObject => this;
-		public object RestoreDefaultsImageObject => this;
 		public ICommand AddExceptionCommand => new RelayCommand(a => AddException(), a => CanAddException);
 		public ICommand RemoveExceptionsCommand => new RelayCommand(a => RemoveExceptions(), a => CanRemoveExceptions);
 		public ICommand RestoreDefaultsCommand => new RelayCommand(a => RestoreDefaults(), a => CanRestoreDefaults);
@@ -109,18 +102,6 @@ namespace dnSpy.Debugger.Exceptions {
 			return string.IsNullOrEmpty(filterText) || vm.Name.ToUpperInvariant().Contains(filterText);
 		}
 
-		internal IImageService ImageService { get; }
-		public ImageOptions ImageOptions {
-			get { return imageOptions; }
-			set {
-				if (imageOptions != value) {
-					imageOptions = value;
-					RefreshImages();
-				}
-			}
-		}
-		ImageOptions imageOptions;
-
 		readonly IDebuggerSettings debuggerSettings;
 		readonly IExceptionService exceptionService;
 		readonly IExceptionListSettings exceptionListSettings;
@@ -129,8 +110,7 @@ namespace dnSpy.Debugger.Exceptions {
 		readonly ExceptionContext exceptionContext;
 
 		[ImportingConstructor]
-		ExceptionsVM(IDebuggerSettings debuggerSettings, IExceptionService exceptionService, IImageService imageService, IExceptionListSettings exceptionListSettings, IGetNewExceptionName getNewExceptionName) {
-			ImageService = imageService;
+		ExceptionsVM(IDebuggerSettings debuggerSettings, IExceptionService exceptionService, IExceptionListSettings exceptionListSettings, IGetNewExceptionName getNewExceptionName) {
 			this.debuggerSettings = debuggerSettings;
 			this.exceptionService = exceptionService;
 			this.exceptionListSettings = exceptionListSettings;
@@ -200,16 +180,8 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public void RefreshThemeFields() {
-			RefreshImages();
 			foreach (var vm in Collection)
 				vm.RefreshThemeFields();
-		}
-
-		void RefreshImages() {
-			OnPropertyChanged(nameof(ShowOnlyEnabledExceptionsImageObject));
-			OnPropertyChanged(nameof(AddExceptionImageObject));
-			OnPropertyChanged(nameof(RemoveExceptionImageObject));
-			OnPropertyChanged(nameof(RestoreDefaultsImageObject));
 		}
 
 		public bool CanAddException => true;

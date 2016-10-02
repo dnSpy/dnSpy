@@ -344,8 +344,6 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			documentViewerControl.ShowCancelButton(onCancel, message);
 		}
 
-		void IUIObjectProvider.OnZoomChanged(double value) { }
-
 		bool isDisposed;
 		public void Dispose() {
 			if (isDisposed)

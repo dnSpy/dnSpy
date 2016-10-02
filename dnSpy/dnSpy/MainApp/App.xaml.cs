@@ -37,10 +37,13 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings;
+using dnSpy.Controls;
 using dnSpy.Culture;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Extension;
+using dnSpy.Images;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
@@ -135,6 +138,9 @@ namespace dnSpy.MainApp {
 
 			// Make sure IDpiService gets created before any MetroWindows
 			compositionContainer.GetExportedValue<IDpiService>();
+
+			// It's needed very early, and an IAutoLoaded can't be used (it gets called too late for the first 64x64 image request)
+			DsImageConverter.imageService = compositionContainer.GetExportedValue<IImageService>();
 		}
 
 		CompositionContainer InitializeCompositionContainer() {

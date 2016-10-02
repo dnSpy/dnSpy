@@ -32,7 +32,6 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
@@ -108,21 +107,19 @@ namespace dnSpy.Search {
 		}
 
 		[ImportingConstructor]
-		SearchService(IImageService imageService, IDecompilerService decompilerService, IThemeService themeService, IDpiService dpiService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService) {
+		SearchService(IDecompilerService decompilerService, IThemeService themeService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService) {
 			this.documentTabService = documentTabService;
 			this.searchControl = new SearchControl();
-			this.vmSearch = new SearchControlVM(imageService, fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
+			this.vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
 				Decompiler = decompilerService.Decompiler,
 			};
 			this.searchControl.DataContext = this.vmSearch;
-			UpdateImageOptionsNoRefreshUI();
 
 			menuService.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
 			wpfCommandService.Add(ControlConstants.GUID_SEARCH_CONTROL, this.searchControl);
 			wpfCommandService.Add(ControlConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
 			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
-			dpiService.DpiChanged += DpiService_DpiChanged;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 
@@ -210,11 +207,6 @@ namespace dnSpy.Search {
 
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshUI();
 
-		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
-			if (e.Window == Window.GetWindow(searchControl))
-				RefreshUI();
-		}
-
 		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var searchSettings = (ISearchSettings)sender;
 			if (e.PropertyName == nameof(searchSettings.SyntaxHighlight))
@@ -228,7 +220,7 @@ namespace dnSpy.Search {
 
 		void RefreshComboBox() {
 			foreach (var vm in vmSearch.SearchTypeVMs)
-				vm.RefreshUI(vmSearch.ImageOptions);
+				vm.RefreshUI();
 		}
 
 		public void Focus() {
@@ -276,23 +268,6 @@ namespace dnSpy.Search {
 
 			documentViewer.MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start);
 			return true;
-		}
-
-		public void OnZoomChanged(double value) {
-			if (zoomLevel == value)
-				return;
-			zoomLevel = value;
-			UpdateImageOptionsNoRefreshUI();
-			RefreshUI();
-		}
-		double zoomLevel = 1;
-
-		void UpdateImageOptionsNoRefreshUI() {
-			vmSearch.ImageOptions = new ImageOptions {
-				BackgroundType = BackgroundType.Search,
-				Zoom = new Size(zoomLevel, zoomLevel),
-				DpiObject = searchControl,
-			};
 		}
 	}
 }

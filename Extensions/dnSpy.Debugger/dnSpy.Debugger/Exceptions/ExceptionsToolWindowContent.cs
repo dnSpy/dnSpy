@@ -82,6 +82,5 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public void Focus() => exceptionsContent.Value.Focus();
-		public void OnZoomChanged(double value) => exceptionsContent.Value.OnZoomChanged(value);
 	}
 }

@@ -30,6 +30,7 @@ using System.Windows.Media.Imaging;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
+using dnSpy.Controls;
 
 namespace dnSpy.Images {
 	[Export(typeof(IImageService))]
@@ -119,38 +120,6 @@ namespace dnSpy.Images {
 			isHighContrast = themeService.Theme.IsHighContrast;
 		}
 
-		Color? GetColor(BackgroundType? bgType) {
-			if (bgType == null)
-				return null;
-
-			switch (bgType.Value) {
-			case BackgroundType.None:				return null;
-			case BackgroundType.DialogWindow:		return GetColorBackground(ColorType.DialogWindow);
-			case BackgroundType.TreeNode:			return GetColorBackground(ColorType.TreeView);
-			case BackgroundType.Search:				return GetColorBackground(ColorType.ListBoxBackground);
-			case BackgroundType.ComboBox:			return GetColorBackground(ColorType.CommonControlsComboBoxBackground);
-			case BackgroundType.ToolBar:			return GetColorBackground(ColorType.ToolBarIconBackground);
-			case BackgroundType.AppMenuMenuItem:	return GetColorBackground(ColorType.ToolBarIconVerticalBackground);
-			case BackgroundType.ContextMenuItem:	return GetColorBackground(ColorType.ContextMenuRectangleFill);
-			case BackgroundType.GridViewItem:		return GetColorBackground(ColorType.GridViewBackground);
-			case BackgroundType.ListBoxItem:		return GetColorBackground(ColorType.ListBoxBackground);
-			case BackgroundType.QuickInfo:			return GetColorBackground(ColorType.QuickInfo);
-			case BackgroundType.TitleAreaActive:	return GetColorBackground(ColorType.EnvironmentMainWindowActiveCaption);
-			case BackgroundType.TitleAreaInactive:	return GetColorBackground(ColorType.EnvironmentMainWindowInactiveCaption);
-			case BackgroundType.CommandBar:			return GetColorBackground(ColorType.EnvironmentCommandBarIcon);
-			case BackgroundType.GlyphMargin:		return GetColorBackground(ColorType.GlyphMargin);
-			default:
-				Debug.Fail("Invalid bg type");
-				return null;
-			}
-		}
-
-		Color GetColorBackground(ColorType colorType) {
-			var c = themeService.Theme.GetColor(colorType).Background as SolidColorBrush;
-			Debug.WriteLineIf(c == null, string.Format("Background color is null: {0}", colorType));
-			return c.Color;
-		}
-
 		Color? GetColor(Brush brush) => (brush as SolidColorBrush)?.Color;
 
 		Size GetDpi(DependencyObject dpiObject, Size dpi) {
@@ -175,7 +144,7 @@ namespace dnSpy.Images {
 				return null;
 
 			var internalOptions = new InternalImageOptions();
-			internalOptions.BackgroundColor = options.BackgroundColor ?? GetColor(options.BackgroundBrush) ?? GetColor(options.BackgroundType);
+			internalOptions.BackgroundColor = options.BackgroundColor ?? GetColor(options.BackgroundBrush);
 			var logicalSize = options.LogicalSize;
 			if (logicalSize == new Size(0, 0))
 				logicalSize = new Size(16, 16);

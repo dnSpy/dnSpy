@@ -23,7 +23,6 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.Analyzer.TreeNodes;
@@ -104,7 +103,7 @@ namespace dnSpy.Analyzer {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		AnalyzerService(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, ITreeViewService treeViewService, IMenuService menuService, IThemeService themeService, IDpiService dpiService, IAnalyzerSettings analyzerSettings, IDotNetImageService dotNetImageService, IDecompilerService decompilerService) {
+		AnalyzerService(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, ITreeViewService treeViewService, IMenuService menuService, IThemeService themeService, IAnalyzerSettings analyzerSettings, IDotNetImageService dotNetImageService, IDecompilerService decompilerService) {
 			this.documentTabService = documentTabService;
 
 			this.context = new AnalyzerTreeNodeDataContext {
@@ -128,7 +127,6 @@ namespace dnSpy.Analyzer {
 			documentTabService.DocumentModified += DocumentTabService_FileModified;
 			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
-			dpiService.DpiChanged += DpiService_DpiChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
 			menuService.InitializeContextMenu(this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
@@ -137,11 +135,6 @@ namespace dnSpy.Analyzer {
 			var command = new RelayCommand(a => ActivateNode());
 			cmds.Add(command, ModifierKeys.Control, Key.Enter);
 			cmds.Add(command, ModifierKeys.Shift, Key.Enter);
-		}
-
-		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
-			if (e.Window == Window.GetWindow(TreeView.UIObject))
-				RefreshNodes();
 		}
 
 		void DocumentTabService_FileModified(object sender, DocumentModifiedEventArgs e) {

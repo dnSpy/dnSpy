@@ -340,21 +340,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Type,
 					Command = new RelayCommand(a => AddType(opvm)),
 				});
-				Add16x16Image(listBox, menuItem, DsImages.ClassPublic, true, true);
+				Add16x16Image(menuItem, DsImages.ClassPublic, true);
 			}
 			if ((flags & MenuCommandFlags.TypeSpec) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_TypeSpec,
 					Command = new RelayCommand(a => AddTypeSpec(opvm)),
 				});
-				Add16x16Image(listBox, menuItem, DsImages.Template, true, true);
+				Add16x16Image(menuItem, DsImages.Template, true);
 			}
 			if ((flags & MenuCommandFlags.MethodDef) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Method,
 					Command = new RelayCommand(a => AddMethodDef(opvm)),
 				});
-				Add16x16Image(listBox, menuItem, DsImages.MethodPublic, true, true);
+				Add16x16Image(menuItem, DsImages.MethodPublic, true);
 			}
 			if ((flags & MenuCommandFlags.MethodMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
@@ -373,7 +373,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Field,
 					Command = new RelayCommand(a => AddFieldDef(opvm)),
 				});
-				Add16x16Image(listBox, menuItem, DsImages.FieldPublic, true, true);
+				Add16x16Image(menuItem, DsImages.FieldPublic, true);
 			}
 			if ((flags & MenuCommandFlags.FieldMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {

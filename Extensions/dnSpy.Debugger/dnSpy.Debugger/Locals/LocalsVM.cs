@@ -29,7 +29,6 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.CallStack;
@@ -52,7 +51,6 @@ namespace dnSpy.Debugger.Locals {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
 		void RefreshThemeFields();
-		void SetImageOptions(ImageOptions imageOptions);
 	}
 
 	[Export(typeof(ILocalsVM)), Export(typeof(ILoadBeforeDebug))]
@@ -92,7 +90,7 @@ namespace dnSpy.Debugger.Locals {
 		readonly IStackFrameService stackFrameService;
 
 		[ImportingConstructor]
-		LocalsVM(IImageService imageService, IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameService stackFrameService, ITheDebugger theDebugger, IAskUser askUser) {
+		LocalsVM(IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameService stackFrameService, ITheDebugger theDebugger, IAskUser askUser) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.askUser = askUser;
 			this.methodLocalProvider = methodLocalProvider;
@@ -100,7 +98,7 @@ namespace dnSpy.Debugger.Locals {
 			this.stackFrameService = stackFrameService;
 			this.TheDebugger = theDebugger;
 
-			this.printerContext = new PrinterContext(imageService) {
+			this.printerContext = new PrinterContext() {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				TypePrinterFlags = TypePrinterFlags.ShowArrayValueSizes,
@@ -116,10 +114,6 @@ namespace dnSpy.Debugger.Locals {
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			localsSettings.PropertyChanged += LocalsSettings_PropertyChanged;
-		}
-		void ILocalsVM.SetImageOptions(ImageOptions imageOptions) {
-			printerContext.ImageOptions = imageOptions;
-			RefreshThemeFields();
 		}
 
 		static void Update(bool b, TypePrinterFlags f, ref TypePrinterFlags flags) {

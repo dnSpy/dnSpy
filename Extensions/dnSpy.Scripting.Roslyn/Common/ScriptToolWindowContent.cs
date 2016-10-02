@@ -70,7 +70,5 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				break;
 			}
 		}
-
-		public void OnZoomChanged(double value) => ScriptContent.OnZoomChanged(value);
 	}
 }

@@ -25,7 +25,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Controls;
@@ -54,16 +53,14 @@ namespace dnSpy.TreeView {
 		public ITreeNodeData[] TopLevelSelection => Convert(sharpTreeView.GetTopLevelSelection());
 
 		readonly ITreeViewService treeViewService;
-		readonly IImageService imageService;
 		readonly ITreeViewListener treeViewListener;
 
 		public event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
 		public event EventHandler<TreeViewNodeRemovedEventArgs> NodeRemoved;
 
-		public TreeViewImpl(ITreeViewService treeViewService, IThemeService themeService, IImageService imageService, Guid guid, TreeViewOptions options) {
+		public TreeViewImpl(ITreeViewService treeViewService, IThemeService themeService, Guid guid, TreeViewOptions options) {
 			this.Guid = guid;
 			this.treeViewService = treeViewService;
-			this.imageService = imageService;
 			this.treeViewListener = options.TreeViewListener;
 			this.sharpTreeView = new SharpTreeView();
 			this.sharpTreeView.SelectionChanged += SharpTreeView_SelectionChanged;
@@ -109,25 +106,6 @@ namespace dnSpy.TreeView {
 
 		static ITreeNodeData[] Convert(System.Collections.IEnumerable list) =>
 			list.Cast<DsSharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
-
-		internal object GetIcon(ImageReference imgRef) {
-			if (double.IsNaN(zoomValue))
-				return null;
-			var options = new ImageOptions {
-				BackgroundType = BackgroundType.TreeNode,
-				Zoom = new Size(zoomValue, zoomValue),
-				DpiObject = UIObject,
-			};
-			return imageService.GetImage(imgRef, options);
-		}
-
-		public void OnZoomChanged(double value) {
-			if (zoomValue == value)
-				return;
-			zoomValue = value;
-			RefreshAllNodes();
-		}
-		double zoomValue = 1;
 
 		ITreeNode ITreeView.Create(ITreeNodeData data) => Create(data);
 

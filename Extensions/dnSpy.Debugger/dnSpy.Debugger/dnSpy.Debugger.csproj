@@ -116,7 +116,6 @@
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionPrinter.cs" />
     <Compile Include="Exceptions\ExceptionsContent.cs" />
-    <Compile Include="Exceptions\ExceptionsConverter.cs" />
     <Compile Include="Exceptions\ExceptionService.cs" />
     <Compile Include="Exceptions\ExceptionState.cs" />
     <Compile Include="Exceptions\ExceptionsToolWindowContent.cs" />

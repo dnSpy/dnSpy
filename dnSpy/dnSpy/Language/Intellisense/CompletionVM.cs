@@ -19,26 +19,75 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Windows.Controls;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Language.Intellisense;
+using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
-	sealed class CompletionVM : INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public object ImageObject => this;
+	sealed class CompletionVM {
+		public object ImageUIObject { get; }
 		public object DisplayTextObject => this;
 		public object SuffixObject => this;
 		public Completion Completion { get; }
 
 		public IEnumerable<CompletionIconVM> AttributeIcons => attributeIcons ?? (attributeIcons = CreateAttributeIcons());
 		IEnumerable<CompletionIconVM> attributeIcons;
+		readonly IImageMonikerService imageMonikerService;
 
-		public CompletionVM(Completion completion) {
+		public CompletionVM(Completion completion, IImageMonikerService imageMonikerService) {
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
+			if (imageMonikerService == null)
+				throw new ArgumentNullException(nameof(imageMonikerService));
 			Completion = completion;
 			Completion.Properties.AddProperty(typeof(CompletionVM), this);
+			ImageUIObject = CreateImageUIObject(completion, imageMonikerService);
+			this.imageMonikerService = imageMonikerService;
+		}
+
+		static object CreateImageUIObject(Completion completion, IImageMonikerService imageMonikerService) {
+			var c3 = completion as Completion3;
+			if (c3 == null) {
+				var iconSource = completion.IconSource;
+				if (iconSource == null)
+					return null;
+				return new Image {
+					Width = 16,
+					Height = 16,
+					Source = iconSource,
+				};
+			}
+
+			var imageReference = imageMonikerService.ToImageReference(c3.IconMoniker);
+			if (imageReference.IsDefault)
+				return null;
+			return new DsImage { ImageReference = imageReference };
+		}
+
+		static object CreateImageUIObject(CompletionIcon icon, IImageMonikerService imageMonikerService) {
+			var icon2 = icon as CompletionIcon2;
+			if (icon2 == null) {
+				var iconSource = icon.IconSource;
+				if (iconSource == null)
+					return null;
+				return new Image {
+					Width = 16,
+					Height = 16,
+					Source = iconSource,
+				};
+			}
+
+			var imageReference = imageMonikerService.ToImageReference(icon2.IconMoniker);
+			if (imageReference.IsDefault)
+				return null;
+			var image = new DsImage { ImageReference = imageReference };
+			if (!((icon as IDsCompletionIcon)?.ThemeImage ?? false)) {
+				DsImage.SetBackgroundColor(image, null);
+				DsImage.SetBackgroundBrush(image, null);
+			}
+			return image;
 		}
 
 		public static CompletionVM TryGet(Completion completion) {
@@ -55,17 +104,12 @@ namespace dnSpy.Language.Intellisense {
 			if (icons == null)
 				return Array.Empty<CompletionIconVM>();
 			var list = new List<CompletionIconVM>();
-			foreach (var icon in icons)
-				list.Add(new CompletionIconVM(icon));
-			return list;
-		}
-
-		public void RefreshImages() {
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageObject)));
-			if (attributeIcons != null) {
-				foreach (var vm in attributeIcons)
-					vm.RefreshImages();
+			foreach (var icon in icons) {
+				var imageUIObject = CreateImageUIObject(icon, imageMonikerService);
+				if (imageUIObject != null)
+					list.Add(new CompletionIconVM(imageUIObject));
 			}
+			return list;
 		}
 	}
 }

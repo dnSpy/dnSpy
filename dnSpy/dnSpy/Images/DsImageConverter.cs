@@ -18,17 +18,42 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
+using dnSpy.Contracts.Images;
 
-namespace dnSpy.Language.Intellisense {
-	sealed class CompletionImageReferenceConverter : IMultiValueConverter {
+namespace dnSpy.Images {
+	sealed class DsImageConverter : IMultiValueConverter {
+		internal static IImageService imageService;
+
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-			var completion = (CompletionVM)values[0];
-			var presenter = (CompletionPresenter)values[1];
-			if (completion == null || presenter == null)
+			if (values == null)
+				throw new ArgumentNullException(nameof(values));
+			bool b = values.Length == 7;
+			Debug.Assert(b);
+			if (!b)
 				return null;
-			return presenter.GetImageSource(completion);
+
+			var width = (double)values[0];
+			var height = (double)values[1];
+			var imageReference = (ImageReference)values[2];
+			var backgroundColor = (Color?)values[3];
+			var backgroundBrush = (Brush)values[4];
+			var zoom = (double)values[5];
+			var dpi = (double)values[6];
+
+			var options = new ImageOptions {
+				BackgroundColor = backgroundColor,
+				BackgroundBrush = backgroundBrush,
+				LogicalSize = new Size(width, height),
+				Zoom = new Size(zoom, zoom),
+				Dpi = new Size(dpi, dpi),
+			};
+
+			return imageService.GetImage(imageReference, options);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {

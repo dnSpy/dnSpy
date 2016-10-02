@@ -101,7 +101,6 @@
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FontUtilities.cs" />
     <Compile Include="Controls\GlyphRunFormatter.cs" />
-    <Compile Include="Controls\IDpiService.cs" />
     <Compile Include="Controls\IFocusable.cs" />
     <Compile Include="Controls\IUIObjectProvider.cs" />
     <Compile Include="Controls\IWpfCommands.cs" />
@@ -300,7 +299,7 @@
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Hex\SelectVM.cs" />
-    <Compile Include="Images\BackgroundType.cs" />
+    <Compile Include="Images\DsImage.cs" />
     <Compile Include="Images\DsImages.cs" />
     <Compile Include="Images\DsImagesAttribute.cs" />
     <Compile Include="Images\DsImageStrings.cs" />

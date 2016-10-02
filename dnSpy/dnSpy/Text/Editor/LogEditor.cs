@@ -24,7 +24,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
@@ -229,8 +228,6 @@ namespace dnSpy.Text.Editor {
 				pendingOutput_dispatching = false;
 			}
 		}
-
-		void IUIObjectProvider.OnZoomChanged(double value) { }
 
 		public void Dispose() {
 			if (!wpfTextViewHost.IsClosed)

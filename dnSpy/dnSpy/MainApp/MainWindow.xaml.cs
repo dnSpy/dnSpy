@@ -19,34 +19,13 @@
 
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Themes;
 
 namespace dnSpy.MainApp {
 	sealed partial class MainWindow : MetroWindow {
-		readonly IImageService imageService;
-
-		public MainWindow(IThemeService themeService, IImageService imageService, object content) {
-			this.imageService = imageService;
+		public MainWindow(object content) {
 			InitializeComponent();
 			this.contentPresenter.Content = content;
-			UpdateSystemMenuImage();
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
-			this.Closed += (s, e) => themeService.ThemeChanged -= ThemeService_ThemeChanged;
-			this.WindowDpiChanged += (s, e) => UpdateSystemMenuImage();
-			this.Activated += (s, e) => UpdateSystemMenuImage();
-			this.Deactivated += (s, e) => UpdateSystemMenuImage();
 			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));
-		}
-
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateSystemMenuImage();
-
-		void UpdateSystemMenuImage() {
-			var options = new ImageOptions {
-				BackgroundType = IsActive ? BackgroundType.TitleAreaActive : BackgroundType.TitleAreaInactive,
-				Dpi = WindowDpi,
-			};
-			SystemMenuImage = imageService.GetImage(DsImages.Assembly, options);
 		}
 	}
 }

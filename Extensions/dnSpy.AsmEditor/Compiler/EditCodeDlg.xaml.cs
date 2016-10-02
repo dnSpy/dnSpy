@@ -36,7 +36,6 @@ namespace dnSpy.AsmEditor.Compiler {
 	partial class EditCodeDlg : WindowBase {
 		public EditCodeDlg() {
 			InitializeComponent();
-			WindowDpiChanged += EditCodeDlg_WindowDpiChanged;
 
 			decompilingControl.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
 
@@ -62,8 +61,6 @@ namespace dnSpy.AsmEditor.Compiler {
 				(s, e) => CopyToClipboard(diagnosticsListView.SelectedItems.OfType<CompilerDiagnosticVM>().ToArray()),
 				(s, e) => e.CanExecute = diagnosticsListView.SelectedItems.Count != 0));
 		}
-
-		void EditCodeDlg_WindowDpiChanged(object sender, EventArgs e) => (DataContext as EditCodeVM)?.RefreshThemeFields();
 
 		void EditCodeVM_CodeCompiled(object sender, EventArgs e) {
 			((EditCodeVM)sender).CodeCompiled -= EditCodeVM_CodeCompiled;

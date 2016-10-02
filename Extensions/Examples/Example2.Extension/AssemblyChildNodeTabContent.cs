@@ -110,7 +110,6 @@ namespace Example2.Extension {
 
 		public void OnHide() { }
 		public void OnShow() { }
-		public void OnZoomChanged(double value) { }
 
 		readonly ContentPresenter content;
 		readonly AssemblyChildNodeVM vm;

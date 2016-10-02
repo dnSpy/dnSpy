@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Roslyn.Shared.Intellisense.QuickInfo"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -37,15 +38,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid>
+        <Grid img:DsImage.BackgroundBrush="{DynamicResource QuickInfoBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Image Grid.Column="0" Width="16" Height="16" Source="{Binding SymbolImageSource}" Margin="1 1 3 1" VerticalAlignment="Top" Visibility="{Binding HasSymbolImageSource, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <img:DsImage Grid.Column="0" ImageReference="{Binding SymbolImageReference}" Margin="1 1 3 1" VerticalAlignment="Top" Visibility="{Binding HasSymbolImageReference, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <ContentPresenter Grid.Column="1" Content="{Binding MainDescriptionObject}" VerticalAlignment="Center" />
-            <Image Grid.Column="1" Width="16" Height="16" Source="{Binding WarningImageSource}" Margin="1 1 3 1" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasWarningImageSource, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <img:DsImage Grid.Column="1" ImageReference="{Binding WarningImageReference}" Margin="1 1 3 1" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="{Binding HasWarningImageReference, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
         <ContentPresenter Grid.Row="1" Content="{Binding DocumentationObject}" Visibility="{Binding HasDocumentationObject, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <ContentPresenter Grid.Row="2" Content="{Binding UsageObject}" Visibility="{Binding HasUsageObject, Converter={StaticResource BooleanToVisibilityConverter}}" />

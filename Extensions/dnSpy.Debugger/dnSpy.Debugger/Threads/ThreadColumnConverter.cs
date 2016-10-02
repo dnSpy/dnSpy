@@ -18,11 +18,9 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadColumnConverter : IValueConverter {
@@ -31,30 +29,6 @@ namespace dnSpy.Debugger.Threads {
 			var s = parameter as string;
 			if (vm == null || s == null)
 				return null;
-
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CurrentImage")) {
-				if (vm.IsCurrent)
-					return GetImage(vm, DsImages.CurrentInstructionPointer);
-				if (vm.Type == ThreadType.Main)
-					return GetImage(vm, DsImages.DraggedCurrentInstructionPointer);
-				return null;
-			}
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CategoryImage")) {
-				switch (vm.Type) {
-				case ThreadType.Unknown:
-				case ThreadType.Terminated:
-					return GetImage(vm, DsImages.QuestionMark);
-				case ThreadType.Main:
-					return GetImage(vm, DsImages.Thread);
-				case ThreadType.BGCOrFinalizer:
-				case ThreadType.ThreadPool:
-				case ThreadType.Worker:
-					return GetImage(vm, DsImages.Process);
-				default:
-					Debug.Fail(string.Format("Unknown thread type: {0}", vm.Type));
-					goto case ThreadType.Unknown;
-				}
-			}
 
 			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
 			var printer = new ThreadPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
@@ -84,18 +58,6 @@ namespace dnSpy.Debugger.Threads {
 				return null;
 
 			return gen.CreateResult(true);
-		}
-
-		object GetImage(ThreadVM vm, ImageReference imageReference) {
-			if (vm.Context.ImageOptions == null)
-				return null;
-			var options = new ImageOptions {
-				BackgroundType = BackgroundType.GridViewItem,
-				Zoom = vm.Context.ImageOptions.Zoom,
-				DpiObject = vm.Context.ImageOptions.DpiObject,
-				Dpi = vm.Context.ImageOptions.Dpi,
-			};
-			return vm.Context.ImageService.GetImage(imageReference, options);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

@@ -24,7 +24,6 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dndbg.Engine;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.CallStack;
 
@@ -33,7 +32,6 @@ namespace dnSpy.Debugger.Threads {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
 		void RefreshThemeFields();
-		void SetImageOptions(ImageOptions imageOptions);
 	}
 
 	[Export(typeof(IThreadsVM)), Export(typeof(ILoadBeforeDebug))]
@@ -82,10 +80,10 @@ namespace dnSpy.Debugger.Threads {
 		readonly ThreadContext threadContext;
 
 		[ImportingConstructor]
-		ThreadsVM(ITheDebugger theDebugger, IStackFrameService stackFrameService, IDebuggerSettings debuggerSettings, IImageService imageService) {
+		ThreadsVM(ITheDebugger theDebugger, IStackFrameService stackFrameService, IDebuggerSettings debuggerSettings) {
 			this.theDebugger = theDebugger;
 			this.stackFrameService = stackFrameService;
-			this.threadContext = new ThreadContext(imageService, theDebugger, debuggerSettings) {
+			this.threadContext = new ThreadContext(theDebugger, debuggerSettings) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightThreads,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 			};
@@ -95,11 +93,6 @@ namespace dnSpy.Debugger.Threads {
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
-		}
-
-		void IThreadsVM.SetImageOptions(ImageOptions imageOptions) {
-			threadContext.ImageOptions = imageOptions;
-			RefreshThemeFields();
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {

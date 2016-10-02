@@ -82,6 +82,5 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public void Focus() => localsContent.Value.Focus();
-		public void OnZoomChanged(double value) => localsContent.Value.OnZoomChanged(value);
 	}
 }

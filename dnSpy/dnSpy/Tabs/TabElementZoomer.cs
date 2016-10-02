@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Images;
 
 namespace dnSpy.Tabs {
 	sealed class TabElementZoomer : IDisposable {
@@ -148,14 +149,14 @@ namespace dnSpy.Tabs {
 
 			if (zoomElement != null)
 				AddScaleTransform();
-			if (uiObjectProvider != null)
-				uiObjectProvider.OnZoomChanged(currentZoomValue);
 		}
 
 		void AddScaleTransform() {
 			var mwin = GetWindow();
-			if (mwin != null)
+			if (mwin != null) {
 				mwin.SetScaleTransform(zoomElement, currentZoomValue);
+				DsImage.SetZoom(zoomElement, currentZoomValue);
+			}
 		}
 
 		MetroWindow GetWindow() {

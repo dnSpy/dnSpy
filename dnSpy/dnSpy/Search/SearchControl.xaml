@@ -25,6 +25,7 @@
              xmlns:p="clr-namespace:dnSpy.Properties"
              xmlns:local="clr-namespace:dnSpy.Search"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -34,7 +35,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Height="16" Margin="0 0 4 0" Width="16" Source="{Binding Image}" />
+                <img:DsImage Grid.Column="0" Margin="0 0 4 0" ImageReference="{Binding Image}" />
                 <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Stretch" />
             </Grid>
         </DataTemplate>
@@ -60,7 +61,7 @@
             <TextBox Grid.Row="0" Grid.Column="0" Name="searchTextBox" VerticalAlignment="Stretch" Margin="0 0 5 0" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Expander Grid.Row="0" Grid.Column="1" Name="expander" VerticalContentAlignment="Center" IsExpanded="False" Header="{x:Static p:dnSpy_Resources.SearchWindow_Options}" />
             <Label Grid.Row="0" Grid.Column="2" VerticalContentAlignment="Center" Content="{x:Static p:dnSpy_Resources.SearchWindow_SearchFor}"/>
-            <ComboBox Grid.Row="0" Grid.Column="3" Width="130" Margin="1 1 0 1" ItemsSource="{Binding SearchTypeVMs}" SelectedItem="{Binding SelectedSearchTypeVM}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="3" Width="130" Margin="1 1 0 1" ItemsSource="{Binding SearchTypeVMs}" SelectedItem="{Binding SelectedSearchTypeVM}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}" />
             <ComboBox Grid.Row="0" Grid.Column="4" Width="130" Margin="1" ItemsSource="{Binding SearchLocationVM.Items}" SelectedIndex="{Binding SearchLocationVM.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
             <WrapPanel Grid.Row="1" Grid.ColumnSpan="5" Margin="2 0 2 2" Orientation="Horizontal" Visibility="{Binding IsExpanded, ElementName=expander, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_MatchWholeWords}" IsChecked="{Binding SearchSettings.MatchWholeWords}" />
@@ -77,6 +78,7 @@
                  VirtualizingStackPanel.VirtualizationMode="Recycling"
                  BorderThickness="{Binding TooManyResults, Converter={StaticResource BooleanToThicknessConverter}, ConverterParameter=1|0}"
                  BorderBrush="{DynamicResource CommonControlsTextBoxBorderError}"
+                 img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
                  HorizontalContentAlignment="Stretch"
                  MouseDoubleClick="searchListBox_MouseDoubleClick"
                  ItemsSource="{Binding SearchResultsCollectionView}"

@@ -24,7 +24,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
@@ -55,10 +54,9 @@ namespace dnSpy.Debugger.Threads {
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly IModuleIdProvider moduleIdProvider;
-		double zoomLevel;
 
 		[ImportingConstructor]
-		ThreadsContent(IWpfCommandService wpfCommandService, IThreadsVM threadsVM, IThemeService themeService, IDpiService dpiService, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
+		ThreadsContent(IWpfCommandService wpfCommandService, IThreadsVM threadsVM, IThemeService themeService, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
 			this.stackFrameService = stackFrameService;
 			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
@@ -68,29 +66,14 @@ namespace dnSpy.Debugger.Threads {
 			this.threadsControl.DataContext = this.vmThreads;
 			this.threadsControl.ThreadsListViewDoubleClick += ThreadsControl_ThreadsListViewDoubleClick;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
-			dpiService.DpiChanged += DpiService_DpiChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_CONTROL, threadsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW, threadsControl.ListView);
-			UpdateImageOptions();
-		}
-
-		void UpdateImageOptions() {
-			var options = new ImageOptions {
-				Zoom = new Size(zoomLevel, zoomLevel),
-				DpiObject = threadsControl,
-			};
-			vmThreads.SetImageOptions(options);
 		}
 
 		void ThreadsControl_ThreadsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			SwitchToThreadThreadsCtxMenuCommand.GoTo(moduleIdProvider, documentTabService, moduleLoader.Value, stackFrameService.Value, threadsControl.ListView.SelectedItem as ThreadVM, newTab);
-		}
-
-		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
-			if (e.Window == Window.GetWindow(threadsControl))
-				vmThreads.RefreshThemeFields();
 		}
 
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmThreads.RefreshThemeFields();
@@ -99,12 +82,5 @@ namespace dnSpy.Debugger.Threads {
 		public void OnShow() => vmThreads.IsEnabled = true;
 		public void OnHidden() => vmThreads.IsVisible = false;
 		public void OnVisible() => vmThreads.IsVisible = true;
-
-		public void OnZoomChanged(double value) {
-			if (zoomLevel == value)
-				return;
-			zoomLevel = value;
-			UpdateImageOptions();
-		}
 	}
 }

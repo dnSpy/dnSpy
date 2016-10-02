@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Internal.QuickInfo;
-using dnSpy.Roslyn.Shared.Glyphs;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -40,34 +39,28 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 	sealed class QuickInfoContentCreatorProvider : IQuickInfoContentCreatorProvider {
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
-		readonly IRoslynGlyphService roslynGlyphService;
 
 		[ImportingConstructor]
-		QuickInfoContentCreatorProvider(IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, IRoslynGlyphService roslynGlyphService) {
+		QuickInfoContentCreatorProvider(IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService) {
 			this.classificationFormatMapService = classificationFormatMapService;
 			this.themeClassificationTypeService = themeClassificationTypeService;
-			this.roslynGlyphService = roslynGlyphService;
 		}
 
-		public IQuickInfoContentCreator Create(ITextView textView) => new QuickInfoContentCreator(roslynGlyphService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService, textView);
+		public IQuickInfoContentCreator Create(ITextView textView) => new QuickInfoContentCreator(classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService, textView);
 	}
 
 	sealed class QuickInfoContentCreator : IQuickInfoContentCreator {
-		readonly IRoslynGlyphService roslynGlyphService;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly ITextView textView;
 
-		public QuickInfoContentCreator(IRoslynGlyphService roslynGlyphService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, ITextView textView) {
-			if (roslynGlyphService == null)
-				throw new ArgumentNullException(nameof(roslynGlyphService));
+		public QuickInfoContentCreator(IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, ITextView textView) {
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			this.roslynGlyphService = roslynGlyphService;
 			this.classificationFormatMap = classificationFormatMap;
 			this.themeClassificationTypeService = themeClassificationTypeService;
 			this.textView = textView;
@@ -92,7 +85,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 
 		IEnumerable<object> Create(InformationQuickInfoContent content) {
 			yield return new InformationQuickInfoContentControl {
-				DataContext = new InformationQuickInfoContentVM(textView, content, roslynGlyphService, classificationFormatMap, themeClassificationTypeService),
+				DataContext = new InformationQuickInfoContentVM(textView, content, classificationFormatMap, themeClassificationTypeService),
 			};
 		}
 

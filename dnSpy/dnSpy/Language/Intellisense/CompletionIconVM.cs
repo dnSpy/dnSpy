@@ -17,23 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel;
-using Microsoft.VisualStudio.Language.Intellisense;
-
 namespace dnSpy.Language.Intellisense {
-	sealed class CompletionIconVM : INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
-		public object ImageObject => this;
-		public CompletionIcon CompletionIcon { get; }
+	sealed class CompletionIconVM {
+		public object ImageUIObject { get; }
 
-		public CompletionIconVM(CompletionIcon completionIcon) {
-			if (completionIcon == null)
-				throw new ArgumentNullException(nameof(completionIcon));
-			CompletionIcon = completionIcon;
+		public CompletionIconVM(object imageUIObject) {
+			ImageUIObject = imageUIObject;
 		}
-
-		public void RefreshImages() =>
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageObject)));
 	}
 }

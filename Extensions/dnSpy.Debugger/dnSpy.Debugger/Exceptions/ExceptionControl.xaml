@@ -25,6 +25,7 @@
              xmlns:local="clr-namespace:dnSpy.Debugger.Exceptions"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:exvc="clr-namespace:dnSpy.Debugger.Exceptions"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
@@ -34,17 +35,14 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
-            <Grid.Resources>
-                <local:ExceptionsConverter x:Key="exceptionsConverter" />
-            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
                 <StackPanel.Resources>
-                    <Style TargetType="{x:Type Image}">
+                    <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
                                 <Setter Property="Opacity" Value="0.30" />
@@ -53,17 +51,17 @@
                     </Style>
                 </StackPanel.Resources>
                 <CheckBox Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowOnlyEnabledExceptions}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_ShowOnlyEnabledExceptions_ToolTip}">
-                    <Image Source="{Binding ShowOnlyEnabledExceptionsImageObject, Mode=OneWay, Converter={StaticResource exceptionsConverter}, ConverterParameter=ShowOnlyEnabledExceptionsImage}" Width="16" Height="16"/>
+                    <img:DsImage ImageReference="{x:Static img:DsImages.Filter}"/>
                 </CheckBox>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding AddExceptionCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Add_ToolTip}">
-                    <Image Source="{Binding AddExceptionImageObject, Mode=OneWay, Converter={StaticResource exceptionsConverter}, ConverterParameter=AddExceptionImage}" Width="16" Height="16"/>
+                    <img:DsImage ImageReference="{x:Static img:DsImages.Add}"/>
                 </Button>
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding RemoveExceptionsCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Remove_ToolTip}">
-                    <Image Source="{Binding RemoveExceptionImageObject, Mode=OneWay, Converter={StaticResource exceptionsConverter}, ConverterParameter=RemoveExceptionImage}" Width="16" Height="16"/>
+                    <img:DsImage ImageReference="{x:Static img:DsImages.RemoveCommand}"/>
                 </Button>
                 <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding RestoreDefaultsCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_RestoreSettings_ToolTip}">
-                    <Image Source="{Binding RestoreDefaultsImageObject, Mode=OneWay, Converter={StaticResource exceptionsConverter}, ConverterParameter=RestoreDefaultsImage}" Width="16" Height="16"/>
+                    <img:DsImage ImageReference="{x:Static img:DsImages.UndoCheckBoxList}"/>
                 </Button>
             </StackPanel>
             <Label Grid.Column="1" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search_ToolTip}" exvc:ClickFocusAP.Target="{Binding ElementName=searchTextBox}" />

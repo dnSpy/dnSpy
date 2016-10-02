@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,15 +26,11 @@ using System.Windows.Input;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class MemberPickerDlg : WindowBase {
-		readonly IImageService imageService;
-
-		public MemberPickerDlg(IDocumentTreeView globalDocumentTreeView, IDocumentTreeView newDocumentTreeView, IImageService imageService) {
-			this.imageService = imageService;
+		public MemberPickerDlg(IDocumentTreeView globalDocumentTreeView, IDocumentTreeView newDocumentTreeView) {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MemberPickerVM;
@@ -44,8 +39,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					data.PropertyChanged += MemberPickerVM_PropertyChanged;
 				}
 			};
-			WindowDpiChanged += MemberPickerDlg_WindowDpiChanged;
-			UpdateImages();
 
 			var treeView = newDocumentTreeView.TreeView.UIObject;
 			cpTreeView.Content = treeView;
@@ -68,16 +61,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			});
 			InputBindings.Add(new KeyBinding(cmd, Key.E, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
-		}
-
-		void MemberPickerDlg_WindowDpiChanged(object sender, EventArgs e) => UpdateImages();
-
-		void UpdateImages() {
-			var options = new ImageOptions {
-				BackgroundType = BackgroundType.DialogWindow,
-				Dpi = WindowDpi,
-			};
-			openImage.Source = imageService.GetImage(DsImages.OpenFolder, options);
 		}
 
 		void MemberPickerVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {

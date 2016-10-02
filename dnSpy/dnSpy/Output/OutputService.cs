@@ -29,7 +29,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Output;
@@ -54,11 +53,8 @@ namespace dnSpy.Output {
 		bool WordWrap { get; set; }
 		bool ShowLineNumbers { get; set; }
 		bool ShowTimestamps { get; set; }
-		void RefreshThemeFields();
 		OutputBufferVM SelectedOutputBufferVM { get; }
 		double ZoomLevel { get; }
-		ImageOptions ImageOptions { get; set; }
-		IImageService ImageService { get; }
 	}
 
 	[Export(typeof(IOutputServiceInternal)), Export(typeof(IOutputService))]
@@ -125,10 +121,6 @@ namespace dnSpy.Output {
 		}
 		OutputBufferVM selectedOutputBufferVM;
 
-		public object ClearAllImageObject => this;
-		public object SaveImageObject => this;
-		public object ToggleWordWrapImageObject => this;
-
 		public ObservableCollection<OutputBufferVM> OutputBuffers => outputBuffers;
 		readonly ObservableCollection<OutputBufferVM> outputBuffers;
 		readonly ILogEditorProvider logEditorProvider;
@@ -139,8 +131,7 @@ namespace dnSpy.Output {
 		readonly IMenuService menuService;
 
 		[ImportingConstructor]
-		OutputService(IImageService imageService, IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorProvider logEditorProvider, OutputServiceSettingsImpl outputServiceSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuService menuService, [ImportMany] IEnumerable<Lazy<IOutputServiceListener, IOutputServiceListenerMetadata>> outputServiceListeners) {
-			ImageService = imageService;
+		OutputService(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorProvider logEditorProvider, OutputServiceSettingsImpl outputServiceSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuService menuService, [ImportMany] IEnumerable<Lazy<IOutputServiceListener, IOutputServiceListenerMetadata>> outputServiceListeners) {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.logEditorProvider = logEditorProvider;
 			this.outputServiceSettingsImpl = outputServiceSettingsImpl;
@@ -157,19 +148,6 @@ namespace dnSpy.Output {
 				}
 			}));
 		}
-
-		public IImageService ImageService { get; }
-
-		public ImageOptions ImageOptions {
-			get { return imageOptions; }
-			set {
-				if (imageOptions != value) {
-					imageOptions = value;
-					RefreshThemeFields();
-				}
-			}
-		}
-		ImageOptions imageOptions;
 
 		void OutputBuffers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (SelectedOutputBufferVM == null)
@@ -249,12 +227,6 @@ namespace dnSpy.Output {
 			Debug.Assert(vm != null);
 			if (vm != null)
 				this.SelectedOutputBufferVM = vm;
-		}
-
-		public void RefreshThemeFields() {
-			OnPropertyChanged(nameof(ClearAllImageObject));
-			OnPropertyChanged(nameof(SaveImageObject));
-			OnPropertyChanged(nameof(ToggleWordWrapImageObject));
 		}
 
 		public bool CanCopy => SelectedOutputBufferVM?.CanCopy == true;

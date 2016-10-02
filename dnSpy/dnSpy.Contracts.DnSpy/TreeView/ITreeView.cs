@@ -50,12 +50,6 @@ namespace dnSpy.Contracts.TreeView {
 		Control UIObject { get; }
 
 		/// <summary>
-		/// Should be called if its UI object has been zoomed (indirectly or directly)
-		/// </summary>
-		/// <param name="value">New zoom value, where 1.0 == 100%</param>
-		void OnZoomChanged(double value);
-
-		/// <summary>
 		/// Select items
 		/// </summary>
 		/// <param name="items">Items to select</param>

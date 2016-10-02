@@ -22,12 +22,12 @@ using Microsoft.VisualStudio.Language.Intellisense;
 namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// <see cref="CompletionIcon2"/>s can implement this to override whether the image
-	/// should be fixed to match the background. Default is to not modify the image.
+	/// should be fixed to match the background color. Default is to not modify the image.
 	/// </summary>
 	public interface IDsCompletionIcon {
 		/// <summary>
-		/// true to fix the image. Default value is false.
+		/// true to theme the image by changing it so it matches the background color. Default value is false.
 		/// </summary>
-		bool FixImage { get; }
+		bool ThemeImage { get; }
 	}
 }

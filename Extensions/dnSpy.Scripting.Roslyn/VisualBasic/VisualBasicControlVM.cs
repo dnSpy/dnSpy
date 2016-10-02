@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
@@ -55,8 +54,8 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		protected override string CodeFileExtension => "vbx";
 		protected override string CodeFilterText => CODEFILTERTEXT;
 
-		public VisualBasicControlVM(IImageService imageService, IReplEditor replEditor, ReplSettings settings, IServiceLocator serviceLocator)
-			: base(imageService, replEditor, settings, serviceLocator) {
+		public VisualBasicControlVM(IReplEditor replEditor, ReplSettings settings, IServiceLocator serviceLocator)
+			: base(replEditor, settings, serviceLocator) {
 		}
 
 		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) =>

@@ -79,11 +79,8 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 					res.Children.Add(output.Create());
 			}
 			if (Image != null) {
-				var options = new ImageOptions(wpfTextView) { BackgroundType = BackgroundType.QuickInfo };
-				var img = new Image {
-					Width = 16,
-					Height = 16,
-					Source = imageService.GetImage(Image.Value, options),
+				var img = new DsImage {
+					ImageReference = Image.Value,
 					Margin = new Thickness(0, 0, 4, 0),
 					VerticalAlignment = VerticalAlignment.Top,
 					HorizontalAlignment = HorizontalAlignment.Left,

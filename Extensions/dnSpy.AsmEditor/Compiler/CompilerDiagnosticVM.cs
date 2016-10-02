@@ -22,23 +22,14 @@ using System.IO;
 using System.Text;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class CompilerDiagnosticVM : ViewModelBase {
 		public CompilerDiagnostic Diagnostic { get; }
 
-		public object ImageObj {
-			get { return imageObj; }
-			set {
-				if (imageObj != value) {
-					imageObj = value;
-					OnPropertyChanged(nameof(ImageObj));
-				}
-			}
-		}
-		object imageObj;
-
+		public ImageReference ImageReference { get; }
 		public string Code => Diagnostic.Id;
 		public string Description => Diagnostic.Description;
 		public string File => GetFilename(Diagnostic.Filename);
@@ -46,9 +37,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		public string Line => Diagnostic.LineLocationSpan == null ? string.Empty : (Diagnostic.LineLocationSpan.Value.StartLinePosition.Line + 1).ToString();
 		public LineLocationSpan? LineLocationSpan => Diagnostic.LineLocationSpan;
 
-		public CompilerDiagnosticVM(CompilerDiagnostic diag, object image) {
+		public CompilerDiagnosticVM(CompilerDiagnostic diag, ImageReference imageReference) {
 			this.Diagnostic = diag;
-			ImageObj = image;
+			ImageReference = imageReference;
 		}
 
 		public void WriteTo(StringBuilder sb) {

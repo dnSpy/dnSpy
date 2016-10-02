@@ -23,17 +23,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
@@ -211,8 +208,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 		IDecompiler decompiler;
-		readonly DependencyObject dpiObject;
-		readonly IDpiService dpiService;
 		readonly IDecompilerService decompilerService;
 		readonly IDocumentTreeView documentTreeView;
 		readonly IDocumentTreeNodeFilter filter;
@@ -224,10 +219,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool MatchWholeWords { get; }
 		bool MatchAnySearchTerm { get; }
 
-		public MemberPickerVM(DependencyObject dpiObject, IDpiService dpiService, IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, IDocumentTreeNodeFilter filter, string title, IEnumerable<IDsDocument> assemblies) {
+		public MemberPickerVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, IDocumentTreeNodeFilter filter, string title, IEnumerable<IDsDocument> assemblies) {
 			this.Title = title;
-			this.dpiObject = dpiObject;
-			this.dpiService = dpiService;
 			this.fileSearcherProvider = fileSearcherProvider;
 			this.decompilerService = decompilerService;
 			this.documentTreeView = documentTreeView;
@@ -237,7 +230,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.SearchResults = new ObservableCollection<ISearchResult>();
 			this.searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(SearchResults);
 			this.searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
-			dpiService.DpiChanged += DpiService_DpiChanged;
 
 			foreach (var file in assemblies)
 				documentTreeView.DocumentService.ForceAdd(file, false, null);
@@ -248,11 +240,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.MatchWholeWords = false;
 			this.MatchAnySearchTerm = false;
 			RefreshTreeView();
-		}
-
-		void DpiService_DpiChanged(object sender, WindowDpiChangedEventArgs e) {
-			foreach (var vm in SearchResults)
-				vm.RefreshUI();
 		}
 
 		public bool SelectItem(object item) {
@@ -297,11 +284,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				fileSearcher = fileSearcherProvider.Create(options, documentTreeView);
 				fileSearcher.SyntaxHighlight = SyntaxHighlight;
 				fileSearcher.Decompiler = Language;
-				fileSearcher.ImageOptions = new ImageOptions {
-					BackgroundType = BackgroundType.Search,
-					DpiObject = dpiObject,
-				};
-				fileSearcher.ImageOptions.BackgroundType = BackgroundType.Search;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
 				fileSearcher.Start(documentTreeView.TreeView.Root.DataChildren.OfType<IDsDocumentNode>());
@@ -378,8 +360,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				return false;
 			}
 		}
-
-		public void Dispose() => dpiService.DpiChanged -= DpiService_DpiChanged;
 	}
 
 	sealed class SearchResult_Comparer : System.Collections.IComparer {

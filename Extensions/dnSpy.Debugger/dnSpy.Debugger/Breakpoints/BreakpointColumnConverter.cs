@@ -21,7 +21,6 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointColumnConverter : IValueConverter {
@@ -32,19 +31,6 @@ namespace dnSpy.Debugger.Breakpoints {
 			var s = parameter as string;
 			if (s == null)
 				return null;
-
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
-				if (vm.Context.ImageOptions == null)
-					return null;
-				var img = vm.IsEnabled ? DsImages.BreakpointEnabled : DsImages.BreakpointDisabled;
-				var options = new ImageOptions {
-					BackgroundType = BackgroundType.GridViewItem,
-					Zoom = vm.Context.ImageOptions.Zoom,
-					DpiObject = vm.Context.ImageOptions.DpiObject,
-					Dpi = vm.Context.ImageOptions.Dpi,
-				};
-				return vm.Context.ImageService.GetImage(img, options);
-			}
 
 			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
 			var printer = new BreakpointPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.Decompiler);

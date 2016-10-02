@@ -124,24 +124,10 @@ namespace dnSpy.Search {
 		}
 		IDecompiler decompiler;
 
-		public ImageOptions ImageOptions {
-			get { return imageOptions; }
-			set {
-				if (imageOptions != value) {
-					imageOptions = value;
-					if (fileSearcher != null)
-						fileSearcher.ImageOptions = value;
-				}
-			}
-		}
-		ImageOptions imageOptions;
-
-		readonly IImageService imageService;
 		readonly IDocumentSearcherProvider fileSearcherProvider;
 		readonly IDocumentTreeView documentTreeView;
 
-		public SearchControlVM(IImageService imageService, IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, ISearchSettings searchSettings) {
-			this.imageService = imageService;
+		public SearchControlVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, ISearchSettings searchSettings) {
 			this.fileSearcherProvider = fileSearcherProvider;
 			this.documentTreeView = documentTreeView;
 			this.SearchSettings = searchSettings;
@@ -153,7 +139,6 @@ namespace dnSpy.Search {
 			this.searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
 			this.SearchLocationVM = new EnumListVM(searchLocationList, (a, b) => Restart());
 			this.SearchLocationVM.SelectedItem = SearchLocation.AllFiles;
-			this.ImageOptions = new ImageOptions();
 
 			Add(SearchType.AssemblyDef, dnSpy_Resources.SearchWindow_Assembly, DsImages.Assembly, null, VisibleMembersFlags.AssemblyDef);
 			Add(SearchType.ModuleDef, dnSpy_Resources.SearchWindow_Module, DsImages.ModulePublic, null, VisibleMembersFlags.ModuleDef);
@@ -184,7 +169,7 @@ namespace dnSpy.Search {
 		}
 
 		void Add(SearchType searchType, string name, ImageReference icon, string toolTip, VisibleMembersFlags flags) =>
-			SearchTypeVMs.Add(new SearchTypeVM(imageService, ImageOptions, searchType, name, toolTip, icon, flags));
+			SearchTypeVMs.Add(new SearchTypeVM(searchType, name, toolTip, icon, flags));
 		void DelayStartSearch() => Restart();
 
 		void StartSearch() {
@@ -205,7 +190,6 @@ namespace dnSpy.Search {
 				fileSearcher = fileSearcherProvider.Create(options, documentTreeView);
 				fileSearcher.SyntaxHighlight = SearchSettings.SyntaxHighlight;
 				fileSearcher.Decompiler = Decompiler;
-				fileSearcher.ImageOptions = ImageOptions;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
 

@@ -25,7 +25,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using ICSharpCode.TreeView;
@@ -39,20 +38,13 @@ namespace dnSpy.TreeView {
 			this.treeNodeImpl = treeNodeImpl;
 		}
 
-		public override object ExpandedIcon => GetIcon(treeNodeImpl.Data.ExpandedIcon ?? treeNodeImpl.Data.Icon);
-		public override object Icon => GetIcon(treeNodeImpl.Data.Icon);
+		public override object ExpandedIcon => treeNodeImpl.Data.ExpandedIcon ?? treeNodeImpl.Data.Icon;
+		public override object Icon => treeNodeImpl.Data.Icon;
 		public override bool SingleClickExpandsChildren => treeNodeImpl.Data.SingleClickExpandsChildren;
 		public override object Text => treeNodeImpl.Data.Text;
 		public override object ToolTip => treeNodeImpl.Data.ToolTip;
 		protected override void LoadChildren() => treeNodeImpl.TreeView.AddChildren(treeNodeImpl);
 		public override bool ShowExpander => treeNodeImpl.Data.ShowExpander(base.ShowExpander);
-
-		object GetIcon(ImageReference imgRef) {
-			Debug.Assert(!imgRef.IsDefault);
-			if (imgRef.IsDefault)
-				return null;
-			return treeNodeImpl.TreeView.GetIcon(imgRef);
-		}
 
 		[ExportAutoLoaded]
 		sealed class ThemeServiceLoader : IAutoLoaded {

@@ -19,14 +19,14 @@
 
 using System;
 using System.ComponentModel;
-using Microsoft.VisualStudio.Imaging.Interop;
+using dnSpy.Contracts.Images;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class FilterVM : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public object ImageObject => this;
+		public ImageReference ImageReference { get; }
 
 		public bool IsChecked {
 			get { return filter.IsChecked; }
@@ -49,24 +49,21 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		public ImageMoniker Moniker => filter.Moniker;
 		public string ToolTip => filter.ToolTip;
 		public string AccessKey => filter.AccessKey;
 
 		readonly CompletionPresenter owner;
 		readonly IIntellisenseFilter filter;
 
-		public FilterVM(IIntellisenseFilter filter, CompletionPresenter owner) {
+		public FilterVM(IIntellisenseFilter filter, CompletionPresenter owner, ImageReference imageReference) {
 			if (filter == null)
 				throw new ArgumentNullException(nameof(filter));
 			if (owner == null)
 				throw new ArgumentNullException(nameof(owner));
 			this.filter = filter;
 			this.owner = owner;
+			ImageReference = imageReference;
 		}
-
-		public void RefreshImages() =>
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageObject)));
 
 		public void Dispose() { }
 	}

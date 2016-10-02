@@ -76,6 +76,5 @@ namespace dnSpy.Search {
 		}
 
 		public void Focus() => searchService.Value.Focus();
-		public void OnZoomChanged(double value) => searchService.Value.OnZoomChanged(value);
 	}
 }

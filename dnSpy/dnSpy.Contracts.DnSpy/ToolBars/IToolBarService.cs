@@ -20,7 +20,6 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.ToolBars {
 	/// <summary>
@@ -33,8 +32,7 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <param name="toolBar">The toolbar to initialize or null to create a new one and initialize it</param>
 		/// <param name="toolBarGuid">Guid of toolbar, eg. <see cref="ToolBarConstants.APP_TB_GUID"/></param>
 		/// <param name="commandTarget">Command target for toolbar items, eg. the owner window, or null</param>
-		/// <param name="imageOptions">Image options</param>
 		/// <returns></returns>
-		ToolBar InitializeToolBar(ToolBar toolBar, Guid toolBarGuid, IInputElement commandTarget, ImageOptions imageOptions);
+		ToolBar InitializeToolBar(ToolBar toolBar, Guid toolBarGuid, IInputElement commandTarget);
 	}
 }

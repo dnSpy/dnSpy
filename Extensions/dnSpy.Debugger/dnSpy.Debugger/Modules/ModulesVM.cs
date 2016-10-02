@@ -24,7 +24,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Modules {
@@ -33,7 +32,6 @@ namespace dnSpy.Debugger.Modules {
 		bool IsVisible { get; set; }
 
 		void RefreshThemeFields();
-		void SetImageOptions(ImageOptions imageOptions);
 	}
 
 	[Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug))]
@@ -76,9 +74,9 @@ namespace dnSpy.Debugger.Modules {
 		readonly ModuleContext moduleContext;
 
 		[ImportingConstructor]
-		ModulesVM(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings, IImageService imageService) {
+		ModulesVM(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings) {
 			this.theDebugger = theDebugger;
-			this.moduleContext = new ModuleContext(imageService, theDebugger) {
+			this.moduleContext = new ModuleContext(theDebugger) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightModules,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 			};
@@ -87,11 +85,6 @@ namespace dnSpy.Debugger.Modules {
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			if (theDebugger.ProcessState != DebuggerProcessState.Terminated)
 				InstallDebuggerHooks(theDebugger.Debugger);
-		}
-
-		void IModulesVM.SetImageOptions(ImageOptions imageOptions) {
-			moduleContext.ImageOptions = imageOptions;
-			RefreshThemeFields();
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {

@@ -34,10 +34,10 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 	sealed class InformationQuickInfoContentVM {
-		public object SymbolImageSource { get; }
-		public bool HasSymbolImageSource => SymbolImageSource != null;
-		public object WarningImageSource { get; }
-		public bool HasWarningImageSource => WarningImageSource != null;
+		public ImageReference SymbolImageReference { get; }
+		public bool HasSymbolImageReference => !SymbolImageReference.IsDefault;
+		public ImageReference WarningImageReference { get; }
+		public bool HasWarningImageReference => !WarningImageReference.IsDefault;
 		public object MainDescriptionObject { get; }
 		public object DocumentationObject { get; }
 		public bool HasDocumentationObject => DocumentationObject != null;
@@ -50,23 +50,20 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		public object ExceptionObject { get; }
 		public bool HasExceptionObject => ExceptionObject != null;
 
-		public InformationQuickInfoContentVM(ITextView textView, InformationQuickInfoContent content, IRoslynGlyphService roslynGlyphService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
+		public InformationQuickInfoContentVM(ITextView textView, InformationQuickInfoContent content, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
-			if (roslynGlyphService == null)
-				throw new ArgumentNullException(nameof(roslynGlyphService));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			var sb = new StringBuilder();
-			var options = new ImageOptions(textView) { BackgroundType = BackgroundType.QuickInfo };
 			if (content.SymbolGlyph != null)
-				SymbolImageSource = roslynGlyphService.GetImage(content.SymbolGlyph.Value, options);
+				SymbolImageReference = content.SymbolGlyph.Value.GetImageReference() ?? default(ImageReference);
 			if (content.WarningGlyph != null)
-				WarningImageSource = roslynGlyphService.GetImage(content.WarningGlyph.Value, options);
+				WarningImageReference = content.WarningGlyph.Value.GetImageReference() ?? default(ImageReference);
 			MainDescriptionObject = TryCreateObject(sb, content.MainDescription, classificationFormatMap, themeClassificationTypeService);
 			DocumentationObject = TryCreateObject(sb, content.Documentation, classificationFormatMap, themeClassificationTypeService);
 			UsageObject = TryCreateObject(sb, content.UsageText, classificationFormatMap, themeClassificationTypeService);

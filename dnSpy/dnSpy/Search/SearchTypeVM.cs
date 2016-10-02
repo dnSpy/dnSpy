@@ -17,49 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Media;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 
 namespace dnSpy.Search {
 	sealed class SearchTypeVM : ViewModelBase {
-		public ImageSource Image {
-			get {
-				var options = new ImageOptions {
-					BackgroundType = BackgroundType.ComboBox,
-					Zoom = imageOptions.Zoom,
-					DpiObject = imageOptions.DpiObject,
-					Dpi = imageOptions.Dpi,
-				};
-				return imageService.GetImage(imageReference, options);
-			}
-		}
-
-		readonly ImageReference imageReference;
-
+		public ImageReference Image { get; }
 		public string Name { get; }
 		public string ToolTip { get; }
 		public SearchType SearchType { get; }
 		public VisibleMembersFlags Flags { get; }
 
-		readonly IImageService imageService;
-		ImageOptions imageOptions;
-
-		public SearchTypeVM(IImageService imageService, ImageOptions imageOptions, SearchType searchType, string name, string toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
-			this.imageService = imageService;
-			this.imageOptions = imageOptions;
+		public SearchTypeVM(SearchType searchType, string name, string toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
 			this.SearchType = searchType;
 			this.Name = name;
 			this.ToolTip = toolTip;
-			this.imageReference = imageReference;
+			this.Image = imageReference;
 			this.Flags = flags;
 		}
 
-		public void RefreshUI(ImageOptions imageOptions) {
-			this.imageOptions = imageOptions;
-			OnPropertyChanged(nameof(Image));
-			OnPropertyChanged(nameof(Name));
-		}
+		public void RefreshUI() => OnPropertyChanged(nameof(Name));
 	}
 }

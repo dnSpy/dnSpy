@@ -93,6 +93,7 @@
 		<color name="dialogwindowbuttoninactiveglyph" bg="#FFFFFFFF" />
 		<color name="dialogwindowinactiveborder" bg="#FFFFFFFF" />
 		<color name="dialogwindowinactivecaption" fg="#FFFFFFFF" bg="#FF008000" />
+		<color name="environmentbackgroundbrush" bg="#FF808080" />
 		<color name="environmentbackground" fg="#FF808080" bg="#FF808080" color3="#FF808080" color4="#FF808080" />
 		<color name="environmentforeground" fg="#FFFFFFFF" />
 		<color name="environmentmainwindowactivecaption" fg="#FFFFFFFF" bg="#FF800080" />

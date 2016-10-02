@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 
@@ -30,13 +29,11 @@ namespace dnSpy.TreeView {
 	[Export(typeof(ITreeViewService))]
 	sealed class TreeViewService : ITreeViewService {
 		readonly IThemeService themeService;
-		readonly IImageService imageService;
 		readonly Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>> guidToProvider;
 
 		[ImportingConstructor]
-		TreeViewService(IThemeService themeService, IImageService imageService, [ImportMany] IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
+		TreeViewService(IThemeService themeService, [ImportMany] IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
 			this.themeService = themeService;
-			this.imageService = imageService;
 			this.guidToProvider = new Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>>();
 			InitializeGuidToProvider(treeNodeDataProviders);
 		}
@@ -56,7 +53,7 @@ namespace dnSpy.TreeView {
 			}
 		}
 
-		public ITreeView Create(Guid guid, TreeViewOptions options) => new TreeViewImpl(this, themeService, imageService, guid, options);
+		public ITreeView Create(Guid guid, TreeViewOptions options) => new TreeViewImpl(this, themeService, guid, options);
 
 		public IEnumerable<ITreeNodeDataProvider> GetProviders(Guid guid) {
 			List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> list;

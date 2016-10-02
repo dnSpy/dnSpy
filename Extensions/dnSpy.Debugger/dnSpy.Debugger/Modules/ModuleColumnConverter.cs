@@ -21,7 +21,6 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModuleColumnConverter : IValueConverter {
@@ -30,18 +29,6 @@ namespace dnSpy.Debugger.Modules {
 			var s = parameter as string;
 			if (vm == null || s == null)
 				return null;
-
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
-				if (vm.Context.ImageOptions == null)
-					return null;
-				var options = new ImageOptions {
-					BackgroundType = BackgroundType.GridViewItem,
-					Zoom = vm.Context.ImageOptions.Zoom,
-					DpiObject = vm.Context.ImageOptions.DpiObject,
-					Dpi = vm.Context.ImageOptions.Dpi,
-				};
-				return vm.Context.ImageService.GetImage(vm.IsExe ? DsImages.AssemblyExe : DsImages.ModulePublic, options);
-			}
 
 			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
 			var printer = new ModulePrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);

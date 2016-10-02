@@ -25,6 +25,7 @@
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
              xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Height="500" Width="600"
              Title="{Binding Title}"
@@ -64,8 +65,8 @@
 
             <Label Grid.Column="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.PickMember_Search}" Target="{Binding ElementName=searchTextBox}"/>
 			<TextBox Grid.Column="1" Margin="5 0 0 0" Name="searchTextBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding OpenCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.PickMember_OpenAsmToolTip}" Visibility="{Binding CanOpenAssembly, Converter={StaticResource BooleanToVisibilityConverter}}">
-				<Image Name="openImage" Width="16" Height="16"/>
+            <Button Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding OpenCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.PickMember_OpenAsmToolTip}" Visibility="{Binding CanOpenAssembly, Converter={StaticResource BooleanToVisibilityConverter}}" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
+                <img:DsImage ImageReference="{x:Static img:DsImages.OpenFolder}"/>
 			</Button>
             <ComboBox Grid.Column="3" Margin="5 0 0 0" DisplayMemberPath="UniqueNameUI" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
 		</Grid>
@@ -78,6 +79,7 @@
 				 VirtualizingStackPanel.IsVirtualizing="True"
 				 VirtualizingStackPanel.VirtualizationMode="Recycling"
 				 BorderThickness="1"
+				 img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
 				 Validation.ErrorTemplate="{StaticResource noRedBorderOnValidationError}"
 				 ItemsSource="{Binding SearchResultsCollectionView}"
 				 SelectedItem="{Binding SearchResult, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>

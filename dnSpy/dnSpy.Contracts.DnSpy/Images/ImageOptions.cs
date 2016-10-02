@@ -39,11 +39,6 @@ namespace dnSpy.Contracts.Images {
 		public Brush BackgroundBrush { get; set; }
 
 		/// <summary>
-		/// Background type
-		/// </summary>
-		public BackgroundType? BackgroundType { get; set; }
-
-		/// <summary>
 		/// Image size in logical pixels. 16x16 is used if this is 0x0
 		/// </summary>
 		public Size LogicalSize { get; set; }

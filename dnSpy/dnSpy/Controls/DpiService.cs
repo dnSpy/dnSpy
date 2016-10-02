@@ -24,6 +24,21 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Controls {
+	/// <summary>
+	/// Raises events whenever the DPI of a window is changed
+	/// </summary>
+	interface IDpiService {
+		/// <summary>
+		/// Gets the DPI of the screen that contains the main window
+		/// </summary>
+		Size MainWindowDpi { get; }
+
+		/// <summary>
+		/// Raised when the DPI has changed
+		/// </summary>
+		event EventHandler<WindowDpiChangedEventArgs> DpiChanged;
+	}
+
 	[Export(typeof(IDpiService))]
 	sealed class DpiService : IDpiService {
 		public Size MainWindowDpi { get; private set; }

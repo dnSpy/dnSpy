@@ -59,11 +59,6 @@ namespace dnSpy.Search {
 			}
 		}
 
-		public ImageOptions ImageOptions {
-			get { return filterSearcherOptions.Context.ImageOptions; }
-			set { filterSearcherOptions.Context.ImageOptions = value; }
-		}
-
 		public bool TooManyResults { get; set; }
 
 		public DocumentSearcher(DocumentSearcherOptions options, IDocumentTreeView documentTreeView, IDotNetImageService dotNetImageService, SearchResultContext searchResultContext) {

@@ -140,7 +140,5 @@ namespace dnSpy.Debugger.Memory {
 				break;
 			}
 		}
-
-		public void OnZoomChanged(double value) => memoryContent.Value.OnZoomChanged(value);
 	}
 }

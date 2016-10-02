@@ -235,6 +235,7 @@
 		<color name="dialogwindowbuttoninactiveglyph" bg="#FF000000" />
 		<color name="dialogwindowinactiveborder" bg="#FF525252" />
 		<color name="dialogwindowinactivecaption" fg="#99000000" bg="#FFC9CEDB" />
+		<color name="environmentbackgroundbrush" bg="#FF35496A" />
 		<color name="environmentbackground" fg="#FF293955" bg="#FF35496A" color3="#FF35496A" color4="#FF293955" />
 		<color name="environmentforeground" fg="White" />
 		<color name="environmentmainwindowactivecaption" fg="#FF000000" bg="#FFD6DBE9" />

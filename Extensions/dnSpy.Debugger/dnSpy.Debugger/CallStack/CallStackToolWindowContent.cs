@@ -82,6 +82,5 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public void Focus() => callStackContent.Value.Focus();
-		public void OnZoomChanged(double value) => callStackContent.Value.OnZoomChanged(value);
 	}
 }

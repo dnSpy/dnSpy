@@ -120,10 +120,6 @@ namespace Example2.Extension {
 				break;
 			}
 		}
-
-		// Called when the zoom value has changed
-		public void OnZoomChanged(double value) {
-		}
 	}
 
 	sealed class ToolWindowVM : ViewModelBase {

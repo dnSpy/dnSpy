@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using dnSpy.Contracts.Images;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Controls {
@@ -36,7 +37,7 @@ namespace dnSpy.Controls {
 		}
 
 		ToggleButton expander;
-		Image icon;
+		DsImage icon;
 		ContentPresenter content;
 
 		static readonly object toolTipDummy = new object();
@@ -50,7 +51,7 @@ namespace dnSpy.Controls {
 			expander = new ToggleButton {
 				Style = (Style)FindResource("ExpandCollapseToggleStyle")
 			};
-			icon = new Image {
+			icon = new DsImage {
 				Width = 16,
 				Height = 16,
 				Margin = new Thickness(0, 0, 5, 1),
@@ -173,9 +174,9 @@ namespace dnSpy.Controls {
 			if (content.Content != node.Text)
 				content.Content = node.Text;
 
-			var newSrc = node.IsExpanded ? (ImageSource)node.ExpandedIcon : (ImageSource)node.Icon;
-			if (icon.Source != newSrc)
-				icon.Source = newSrc;
+			var newSrc = node.IsExpanded ? (ImageReference)node.ExpandedIcon : (ImageReference)node.Icon;
+			if (!ImageReference_Equals(icon.ImageReference, newSrc))
+				icon.ImageReference = newSrc;
 
 			var newVis = node.ShowIcon ? Visibility.Visible : Visibility.Collapsed;
 			if (icon.Visibility != newVis)
@@ -188,6 +189,8 @@ namespace dnSpy.Controls {
 			if (expander.Visibility != newVis)
 				expander.Visibility = newVis;
 		}
+
+		static bool ImageReference_Equals(ImageReference a, ImageReference b) => a.Assembly == b.Assembly && a.Name == b.Name;
 
 		protected override void Node_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			base.Node_PropertyChanged(sender, e);

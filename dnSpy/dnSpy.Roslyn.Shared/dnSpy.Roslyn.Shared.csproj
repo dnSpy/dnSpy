@@ -49,7 +49,6 @@
     <Compile Include="Documentation\RoslynDocumentationProvider.cs" />
     <Compile Include="Documentation\RoslynDocumentationProviderFactory.cs" />
     <Compile Include="Glyphs\GlyphHelper.cs" />
-    <Compile Include="Glyphs\RoslynGlyphService.cs" />
     <Compile Include="Intellisense\Completions\Classification\CompletionClassifier.cs" />
     <Compile Include="Intellisense\Completions\Classification\CompletionKindTextColorHelper.cs" />
     <Compile Include="Intellisense\Completions\CommandTargetFilter.cs" />

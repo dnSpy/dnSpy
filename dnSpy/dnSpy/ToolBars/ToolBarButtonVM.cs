@@ -19,6 +19,7 @@
 
 using System.Windows;
 using System.Windows.Input;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.ToolBars {
@@ -28,14 +29,14 @@ namespace dnSpy.ToolBars {
 		public string Header { get; }
 		public bool HasHeader => !string.IsNullOrEmpty(Header);
 		public string ToolTip { get; }
-		public object Image { get; }
+		public ImageReference ImageReference { get; }
 
-		public ToolBarButtonVM(ICommand command, IInputElement commandTarget, string header, string toolTip, object image) {
+		public ToolBarButtonVM(ICommand command, IInputElement commandTarget, string header, string toolTip, ImageReference? imageReference) {
 			this.Command = command;
 			this.CommandTarget = commandTarget;
 			this.Header = string.IsNullOrEmpty(header) ? null : header;
 			this.ToolTip = string.IsNullOrEmpty(toolTip) ? null : toolTip;
-			this.Image = image;
+			this.ImageReference = imageReference ?? default(ImageReference);
 		}
 	}
 }

@@ -34,7 +34,6 @@ using dnSpy.Contracts.Images;
 namespace dnSpy.AsmEditor.Compiler {
 	[Export(typeof(EditCodeVMCreator))]
 	sealed class EditCodeVMCreator {
-		readonly IImageService imageService;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
 		readonly IDecompilerService decompilerService;
@@ -43,8 +42,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public bool CanCreate => TryGetUsedLanguage() != null;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(IImageService imageService, IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
-			this.imageService = imageService;
+		EditCodeVMCreator(IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = new OpenAssembly(documentTreeView.DocumentService);
 			this.decompilerService = decompilerService;
@@ -100,7 +98,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (serviceCreator == null)
 				throw new InvalidOperationException();
 
-			return new EditCodeVM(imageService, openFromGAC, openAssembly, serviceCreator.Create(), language, method, statements);
+			return new EditCodeVM(openFromGAC, openAssembly, serviceCreator.Create(), language, method, statements);
 		}
 	}
 }

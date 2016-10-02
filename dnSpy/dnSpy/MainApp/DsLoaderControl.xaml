@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.MainApp"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -37,7 +38,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Image Name="loadingImage" Grid.Row="1" Width="64" Height="64" />
+        <img:DsImage Grid.Row="1" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentBackgroundBrush}" Width="64" Height="64" ImageReference="{x:Static img:DsImages.Assembly}" />
         <TextBlock Grid.Row="2"
                    FontSize="20"
                    HorizontalAlignment="Center"

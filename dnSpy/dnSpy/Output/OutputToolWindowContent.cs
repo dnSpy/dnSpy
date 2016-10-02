@@ -84,8 +84,6 @@ namespace dnSpy.Output {
 				break;
 			}
 		}
-
-		void IUIObjectProvider.OnZoomChanged(double value) { }
 	}
 
 	[ExportAutoLoaded]

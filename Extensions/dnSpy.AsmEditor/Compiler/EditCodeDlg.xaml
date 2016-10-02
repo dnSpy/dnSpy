@@ -25,6 +25,7 @@
              xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
              xmlns:local="clr-namespace:dnSpy.AsmEditor.Compiler"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Height="730" Width="1300"
              Title="{x:Static p:dnSpy_AsmEditor_Resources.EditCodeTitle}"
@@ -64,6 +65,8 @@
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling"
                       BorderThickness="0"
+                      img:DsImage.BackgroundColor="{x:Null}"
+                      img:DsImage.BackgroundBrush="{x:Null}"
                       IsEnabled="{Binding CanCompile}"
                       Name="diagnosticsListView"
                       SelectionMode="Extended"
@@ -77,7 +80,7 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <!-- Fix hard coded 6,0,6,0 margin -->
-                                    <Image Margin="-6 0" Source="{Binding ImageObj}" Width="16" Height="16"/>
+                                    <img:DsImage Margin="-6 0" ImageReference="{Binding ImageReference}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -114,7 +117,7 @@
             </ListView>
         </Grid>
 
-        <Grid Grid.Row="1" Margin="5 0 5 5">
+        <Grid Grid.Row="1" Margin="5 0 5 5" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -125,10 +128,10 @@
             </Grid.ColumnDefinitions>
             <ComboBox Grid.Row="0" Margin="0 0 5 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Documents}" SelectedItem="{Binding SelectedDocument}" VerticalContentAlignment="Center" Width="100" IsEnabled="{Binding CanCompile}" />
             <Button Grid.Column="1" Margin="0 0 5 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding AddAssemblyReferenceCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.AddAssemblyReferenceToolTip}">
-                <Image Width="16" Height="16" Source="{Binding AddAssemblyReferenceImageObject}"/>
+                <img:DsImage ImageReference="{x:Static img:DsImages.OpenFolder}"/>
             </Button>
             <Button Grid.Column="2" Margin="0 0 5 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding AddGacReferenceCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.AddGacReferenceToolTip}">
-                <Image Width="16" Height="16" Source="{Binding AddGacReferenceImageObject}"/>
+                <img:DsImage ImageReference="{x:Static img:DsImages.Library}"/>
             </Button>
 
             <Button Grid.Column="4" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Compile}" IsDefault="True" Command="{Binding CompileCommand}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" />

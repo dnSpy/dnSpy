@@ -24,6 +24,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.Threads"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
@@ -35,6 +36,7 @@
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
             BorderThickness="0"
+            img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
             ItemsSource="{Binding Collection}"
             SelectedItem="{Binding SelectedItem}">
@@ -47,13 +49,13 @@
                     <GridViewColumn Header="" Width="16">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <!-- Using just an Image doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
+                                <!-- Using just an DsImage doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
                                          so use this weird way of showing an image. -->
                                 <!-- Fix hard coded 6,0,6,0 margin -->
-                                <ContentPresenter Margin="-6 0" Content="{Binding CurrentImageObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}, ConverterParameter=CurrentImage}">
+                                <ContentPresenter Margin="-6 0" Content="{Binding CurrentImageReference, Mode=OneWay}">
                                     <ContentPresenter.ContentTemplate>
                                         <DataTemplate>
-                                            <Image Source="{Binding}" Width="16" Height="16" />
+                                            <img:DsImage ImageReference="{Binding}" />
                                         </DataTemplate>
                                     </ContentPresenter.ContentTemplate>
                                 </ContentPresenter>
@@ -82,12 +84,12 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <!-- Using just an Image doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
+                                    <!-- Using just an DsImage doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
                                              so use this weird way of showing an image. -->
-                                    <ContentPresenter Grid.Column="0" Margin="0 0 0 0" Content="{Binding CategoryImageObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}, ConverterParameter=CategoryImage}">
+                                    <ContentPresenter Grid.Column="0" Margin="0 0 0 0" Content="{Binding CategoryImageReference, Mode=OneWay}">
                                         <ContentPresenter.ContentTemplate>
                                             <DataTemplate>
-                                                <Image Source="{Binding}" Width="16" Height="16" />
+                                                <img:DsImage ImageReference="{Binding}" />
                                             </DataTemplate>
                                         </ContentPresenter.ContentTemplate>
                                     </ContentPresenter>
