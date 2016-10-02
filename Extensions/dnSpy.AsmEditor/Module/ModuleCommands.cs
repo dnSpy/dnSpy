@@ -53,51 +53,51 @@ namespace dnSpy.AsmEditor.Module {
 		[ExportMenuItem(Header = "res:CreateNetModuleCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 30)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateNetModuleCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateNetModuleCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateNetModuleCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateNetModuleCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 30)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateNetModuleCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateNetModuleCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateNetModuleCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes != null &&
 	(nodes.Length == 0 || nodes.Any(a => a is IDsDocumentNode));
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var win = new NetModuleOptionsDlg();
 			var data = new NetModuleOptionsVM();
 			win.DataContext = data;
-			win.Owner = appWindow.MainWindow;
+			win.Owner = appService.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 
-			var cmd = new CreateNetModuleCommand(undoCommandService, appWindow.DocumentTreeView, data.CreateNetModuleOptions());
+			var cmd = new CreateNetModuleCommand(undoCommandService, appService.DocumentTreeView, data.CreateNetModuleOptions());
 			undoCommandService.Value.Add(cmd);
-			appWindow.DocumentTabService.FollowReference(cmd.fileNodeCreator.DocumentNode);
+			appService.DocumentTabService.FollowReference(cmd.fileNodeCreator.DocumentNode);
 		}
 
 		readonly RootDocumentNodeCreator fileNodeCreator;
@@ -455,35 +455,35 @@ namespace dnSpy.AsmEditor.Module {
 		[ExportMenuItem(Header = "res:AddNewNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 10)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => AddNewNetModuleToAssemblyCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => AddNewNetModuleToAssemblyCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => AddNewNetModuleToAssemblyCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:AddNewNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => AddNewNetModuleToAssemblyCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => AddNewNetModuleToAssemblyCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => AddNewNetModuleToAssemblyCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
 				return;
 
@@ -494,17 +494,17 @@ namespace dnSpy.AsmEditor.Module {
 			var win = new NetModuleOptionsDlg();
 			var data = new NetModuleOptionsVM(asmNode.Document.ModuleDef);
 			win.DataContext = data;
-			win.Owner = appWindow.MainWindow;
+			win.Owner = appService.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 
 			var options = data.CreateNetModuleOptions();
 			var newModule = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
-			var newFile = DsDotNetDocument.CreateModule(DsDocumentInfo.CreateDocument(string.Empty), newModule, appWindow.DocumentTreeView.DocumentService.Settings.LoadPDBFiles);
+			var newFile = DsDotNetDocument.CreateModule(DsDocumentInfo.CreateDocument(string.Empty), newModule, appService.DocumentTreeView.DocumentService.Settings.LoadPDBFiles);
 			var newModNode = asmNode.Context.DocumentTreeView.CreateModule(newFile);
 			var cmd = new AddNewNetModuleToAssemblyCommand(undoCommandService.Value, (IDsDocumentNode)nodes[0], newModNode);
 			undoCommandService.Value.Add(cmd);
-			appWindow.DocumentTabService.FollowReference(cmd.modNode);
+			appService.DocumentTabService.FollowReference(cmd.modNode);
 		}
 
 		AddNewNetModuleToAssemblyCommand(IUndoCommandService undoCommandService, IDsDocumentNode asmNode, IModuleDocumentNode modNode)
@@ -518,35 +518,35 @@ namespace dnSpy.AsmEditor.Module {
 		[ExportMenuItem(Header = "res:AddExistingNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 20)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => AddExistingNetModuleToAssemblyCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => AddExistingNetModuleToAssemblyCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => AddExistingNetModuleToAssemblyCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:AddExistingNetModuleToAssemblyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 20)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => AddExistingNetModuleToAssemblyCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => AddExistingNetModuleToAssemblyCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => AddExistingNetModuleToAssemblyCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
 				return;
 
@@ -559,7 +559,7 @@ namespace dnSpy.AsmEditor.Module {
 			if (string.IsNullOrEmpty(dialog.FileName))
 				return;
 
-			var fm = appWindow.DocumentTreeView.DocumentService;
+			var fm = appService.DocumentTreeView.DocumentService;
 			var file = DsDocument.CreateDocumentFromFile(DsDocumentInfo.CreateDocument(dialog.FileName), dialog.FileName, fm.Settings.UseMemoryMappedIO, fm.Settings.LoadPDBFiles, fm.AssemblyResolver, true);
 			if (file.ModuleDef == null || file.AssemblyDef != null || !(file is IDsDotNetDocument)) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_NotNetModule, file.Filename), MsgBoxButton.OK);
@@ -573,7 +573,7 @@ namespace dnSpy.AsmEditor.Module {
 			var newModNode = node.Context.DocumentTreeView.CreateModule((IDsDotNetDocument)file);
 			var cmd = new AddExistingNetModuleToAssemblyCommand(undoCommandService.Value, node, newModNode);
 			undoCommandService.Value.Add(cmd);
-			appWindow.DocumentTabService.FollowReference(cmd.modNode);
+			appService.DocumentTabService.FollowReference(cmd.modNode);
 		}
 
 		AddExistingNetModuleToAssemblyCommand(IUndoCommandService undoCommandService, IDsDocumentNode asmNode, IModuleDocumentNode modNode)
@@ -588,37 +588,37 @@ namespace dnSpy.AsmEditor.Module {
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IDocumentSaver> documentSaver;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppService appService) {
 				this.undoCommandService = undoCommandService;
 				this.documentSaver = documentSaver;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.IsVisible(context.Nodes);
 			public override bool IsEnabled(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.Execute(undoCommandService, documentSaver, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.Execute(undoCommandService, documentSaver, appService, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveNetModuleCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 10)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IDocumentSaver> documentSaver;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
 				this.documentSaver = documentSaver;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.IsVisible(context.Nodes);
 			public override bool IsEnabled(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.Execute(undoCommandService, documentSaver, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => RemoveNetModuleFromAssemblyCommand.Execute(undoCommandService, documentSaver, appService, context.Nodes);
 		}
 
 		static bool IsVisible(IDocumentTreeNodeData[] nodes) {
@@ -637,7 +637,7 @@ namespace dnSpy.AsmEditor.Module {
 				nodes[0].TreeNode.Parent.DataChildren.ToList().IndexOf(nodes[0]) > 0;
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -711,32 +711,32 @@ namespace dnSpy.AsmEditor.Module {
 		[ExportMenuItem(Header = "res:EditModuleCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 10)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => ModuleSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => ModuleSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => ModuleSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditModuleCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 10)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => ModuleSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => ModuleSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => ModuleSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
@@ -745,17 +745,17 @@ namespace dnSpy.AsmEditor.Module {
 				nodes[0] is IModuleDocumentNode;
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var asmNode = (IModuleDocumentNode)nodes[0];
 
 			var module = asmNode.Document.ModuleDef;
-			var data = new ModuleOptionsVM(module, new ModuleOptions(module), appWindow.DecompilerManager);
+			var data = new ModuleOptionsVM(module, new ModuleOptions(module), appService.DecompilerManager);
 			var win = new ModuleOptionsDlg();
 			win.DataContext = data;
-			win.Owner = appWindow.MainWindow;
+			win.Owner = appService.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 

@@ -26,7 +26,6 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
@@ -198,32 +197,32 @@ namespace dnSpy.AsmEditor.Types {
 		[ExportMenuItem(Header = "res:CreateTypeCommand", Icon = DsImagesAttribute.NewClass, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 40)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateTypeDefCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateTypeDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateTypeDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateTypeCommand", Icon = DsImagesAttribute.NewClass, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 40)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateTypeDefCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateTypeDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateTypeDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
@@ -233,7 +232,7 @@ namespace dnSpy.AsmEditor.Types {
 				nodes[0] is IModuleDocumentNode);
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -246,17 +245,17 @@ namespace dnSpy.AsmEditor.Types {
 				throw new InvalidOperationException();
 			var options = TypeDefOptions.Create(ns, TypeConstants.DEFAULT_TYPE_NAME, module.CorLibTypes.Object.TypeDefOrRef, false);
 
-			var data = new TypeOptionsVM(options, module, appWindow.DecompilerManager, null);
+			var data = new TypeOptionsVM(options, module, appService.DecompilerManager, null);
 			var win = new TypeOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateTypeCommand2;
 			win.DataContext = data;
-			win.Owner = appWindow.MainWindow;
+			win.Owner = appService.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 
 			var cmd = new CreateTypeDefCommand(module.Types, nodes[0], data.CreateTypeDefOptions());
 			undoCommandService.Value.Add(cmd);
-			appWindow.DocumentTabService.FollowReference(cmd.typeNode);
+			appService.DocumentTabService.FollowReference(cmd.typeNode);
 		}
 
 		readonly IList<TypeDef> ownerList;
@@ -299,44 +298,44 @@ namespace dnSpy.AsmEditor.Types {
 		[ExportMenuItem(Header = "res:CreateNestedTypeCommand", Icon = DsImagesAttribute.NewClass, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_NEW, Order = 50)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateNestedTypeDefCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateNestedTypeDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateNestedTypeDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateNestedTypeCommand", Icon = DsImagesAttribute.NewClass, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 50)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => CreateNestedTypeDefCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => CreateNestedTypeDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => CreateNestedTypeDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[ExportMenuItem(Header = "res:CreateNestedTypeCommand", Icon = DsImagesAttribute.NewClass, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_NEW, Order = 50)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsEnabled(CodeContext context) {
@@ -345,14 +344,14 @@ namespace dnSpy.AsmEditor.Types {
 					context.Nodes[0] is ITypeNode;
 			}
 
-			public override void Execute(CodeContext context) => CreateNestedTypeDefCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => CreateNestedTypeDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
 			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -370,17 +369,17 @@ namespace dnSpy.AsmEditor.Types {
 				throw new InvalidOperationException();
 			var options = TypeDefOptions.Create(UTF8String.Empty, TypeConstants.DEFAULT_TYPE_NAME, module.CorLibTypes.Object.TypeDefOrRef, true);
 
-			var data = new TypeOptionsVM(options, module, appWindow.DecompilerManager, null);
+			var data = new TypeOptionsVM(options, module, appService.DecompilerManager, null);
 			var win = new TypeOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateNestedTypeCommand2;
 			win.DataContext = data;
-			win.Owner = appWindow.MainWindow;
+			win.Owner = appService.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 
 			var cmd = new CreateNestedTypeDefCommand(typeNode, data.CreateTypeDefOptions());
 			undoCommandService.Value.Add(cmd);
-			appWindow.DocumentTabService.FollowReference(cmd.nestedType);
+			appService.DocumentTabService.FollowReference(cmd.nestedType);
 		}
 
 		readonly ITypeNode ownerType;
@@ -422,53 +421,53 @@ namespace dnSpy.AsmEditor.Types {
 		[ExportMenuItem(Header = "res:EditTypeCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_SETTINGS, Order = 20)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => TypeDefSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => TypeDefSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => TypeDefSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditTypeCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 20)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => TypeDefSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => TypeDefSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => TypeDefSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:EditTypeCommand", Icon = DsImagesAttribute.Settings, InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_SETTINGS, Order = 20)]
 		internal sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsEnabled(CodeContext context) => TypeDefSettingsCommand.CanExecute(context.Nodes);
-			public override void Execute(CodeContext context) => TypeDefSettingsCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(CodeContext context) => TypeDefSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is ITypeNode;
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -479,10 +478,10 @@ namespace dnSpy.AsmEditor.Types {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new TypeOptionsVM(new TypeDefOptions(typeNode.TypeDef), module, appWindow.DecompilerManager, typeNode.TypeDef);
+			var data = new TypeOptionsVM(new TypeDefOptions(typeNode.TypeDef), module, appService.DecompilerManager, typeNode.TypeDef);
 			var win = new TypeOptionsDlg();
 			win.DataContext = data;
-			win.Owner = appWindow.MainWindow;
+			win.Owner = appService.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 

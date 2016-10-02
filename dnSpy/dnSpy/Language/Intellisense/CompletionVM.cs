@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
-using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {

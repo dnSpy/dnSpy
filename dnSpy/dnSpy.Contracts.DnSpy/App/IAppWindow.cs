@@ -63,26 +63,6 @@ namespace dnSpy.Contracts.App {
 		IAppStatusBar StatusBar { get; }
 
 		/// <summary>
-		/// Gets the <see cref="IDocumentTabService"/> instance
-		/// </summary>
-		IDocumentTabService DocumentTabService { get; }
-
-		/// <summary>
-		/// Gets the <see cref="IDocumentTreeView"/> instance
-		/// </summary>
-		IDocumentTreeView DocumentTreeView { get; }
-
-		/// <summary>
-		/// Gets the <see cref="IDsToolWindowService"/> instance
-		/// </summary>
-		IDsToolWindowService ToolWindowService { get; }
-
-		/// <summary>
-		/// Gets the <see cref="IDecompilerService"/> instance
-		/// </summary>
-		IDecompilerService DecompilerManager { get; }
-
-		/// <summary>
 		/// true if the app has been loaded
 		/// </summary>
 		bool AppLoaded { get; }

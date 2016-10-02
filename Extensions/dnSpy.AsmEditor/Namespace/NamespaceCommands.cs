@@ -26,7 +26,6 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
@@ -346,32 +345,32 @@ namespace dnSpy.AsmEditor.Namespace {
 		[ExportMenuItem(Header = "res:RenameNamespaceCommand", Icon = DsImagesAttribute.Namespace, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_MISC, Order = 10)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow) {
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => RenameNamespaceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RenameNamespaceCommand", Icon = DsImagesAttribute.Namespace, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
-			readonly IAppWindow appWindow;
+			readonly IAppService appService;
 
 			[ImportingConstructor]
-			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow)
-				: base(appWindow.DocumentTreeView) {
+			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IAppService appService)
+				: base(appService.DocumentTreeView) {
 				this.undoCommandService = undoCommandService;
-				this.appWindow = appWindow;
+				this.appService = appService;
 			}
 
 			public override bool IsVisible(AsmEditorContext context) => RenameNamespaceCommand.CanExecute(context.Nodes);
-			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appWindow, context.Nodes);
+			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
 		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
@@ -380,7 +379,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				nodes[0] is INamespaceNode;
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -389,7 +388,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			var data = new NamespaceVM(nsNode.Name);
 			var win = new NamespaceDlg();
 			win.DataContext = data;
-			win.Owner = appWindow.MainWindow;
+			win.Owner = appService.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 

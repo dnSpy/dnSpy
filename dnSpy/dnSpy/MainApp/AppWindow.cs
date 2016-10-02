@@ -27,25 +27,15 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
-using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Settings;
-using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Controls;
 using dnSpy.Events;
 
 namespace dnSpy.MainApp {
 	[Export, Export(typeof(IAppWindow))]
 	sealed class AppWindow : IAppWindow, IDsLoaderContentProvider {
-		public IDocumentTabService DocumentTabService => documentTabService;
 		readonly IDocumentTabService documentTabService;
-
-		public IDocumentTreeView DocumentTreeView => documentTabService.DocumentTreeView;
-
-		public IDsToolWindowService ToolWindowService => mainWindowControl;
-
-		public IDecompilerService DecompilerManager => decompilerService;
 
 		public IAppStatusBar StatusBar => statusBar;
 		readonly AppStatusBar statusBar;
@@ -99,10 +89,9 @@ namespace dnSpy.MainApp {
 		readonly StackedContent<IStackedContentChild> stackedContent;
 		readonly AppToolBar appToolBar;
 		readonly MainWindowControl mainWindowControl;
-		readonly IDecompilerService decompilerService;
 
 		[ImportingConstructor]
-		AppWindow(IAppSettings appSettings, ISettingsService settingsService, IDocumentTabService documentTabService, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandService wpfCommandService, IDecompilerService decompilerService) {
+		AppWindow(IAppSettings appSettings, ISettingsService settingsService, IDocumentTabService documentTabService, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandService wpfCommandService) {
 			this.assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
 			this.uiSettings = new UISettings(settingsService);
 			this.uiSettings.Read();
@@ -113,7 +102,6 @@ namespace dnSpy.MainApp {
 			this.appToolBar = appToolBar;
 			this.mainWindowControl = mainWindowControl;
 			this.wpfCommandService = wpfCommandService;
-			this.decompilerService = decompilerService;
 			this.mainWindowCommands = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();
