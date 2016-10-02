@@ -574,16 +574,10 @@
     <Compile Include="Themes\ThemeChangedEventArgs.cs" />
     <Compile Include="Themes\ThemeConstants.cs" />
     <Compile Include="Themes\ThemeTextColor.cs" />
-    <Compile Include="ToolBars\ExportToolBarButtonAttribute.cs" />
-    <Compile Include="ToolBars\ExportToolBarItemAttribute.cs" />
-    <Compile Include="ToolBars\ExportToolBarObjectAttribute.cs" />
     <Compile Include="ToolBars\IToolBarButton.cs" />
-    <Compile Include="ToolBars\IToolBarButtonMetadata.cs" />
     <Compile Include="ToolBars\IToolBarItem.cs" />
     <Compile Include="ToolBars\IToolBarItemContext.cs" />
-    <Compile Include="ToolBars\IToolBarItemMetadata.cs" />
     <Compile Include="ToolBars\IToolBarObject.cs" />
-    <Compile Include="ToolBars\IToolBarObjectMetadata.cs" />
     <Compile Include="ToolBars\IToolBarService.cs" />
     <Compile Include="ToolBars\IToolBarToggleButton.cs" />
     <Compile Include="ToolBars\ToolBarButtonBase.cs" />

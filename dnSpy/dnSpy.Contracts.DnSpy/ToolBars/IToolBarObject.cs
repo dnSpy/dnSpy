@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -32,5 +34,20 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <param name="commandTarget">Command target for toolbar items, eg. the owner window, or null</param>
 		/// <returns></returns>
 		object GetUIObject(IToolBarItemContext context, IInputElement commandTarget);
+	}
+
+	/// <summary>Metadata</summary>
+	public interface IToolBarObjectMetadata : IToolBarItemMetadata {
+	}
+
+	/// <summary>
+	/// Exports a toolbar object (<see cref="IToolBarObject"/>)
+	/// </summary>
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class ExportToolBarObjectAttribute : ExportToolBarItemAttribute, IToolBarObjectMetadata {
+		/// <summary>Constructor</summary>
+		public ExportToolBarObjectAttribute()
+			: base(typeof(IToolBarObject)) {
+		}
 	}
 }

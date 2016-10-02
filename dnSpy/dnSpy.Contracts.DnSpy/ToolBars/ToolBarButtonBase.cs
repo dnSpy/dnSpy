@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Images;
+
 namespace dnSpy.Contracts.ToolBars {
 	/// <summary>
-	/// Toolbar button base class (implements <see cref="IToolBarButton"/> and <see cref="IToolBarButton2"/>)
+	/// Toolbar button base class (implements <see cref="IToolBarButton"/>
 	/// </summary>
-	public abstract class ToolBarButtonBase : IToolBarButton, IToolBarButton2 {
+	public abstract class ToolBarButtonBase : IToolBarButton {
 		/// <inheritdoc/>
 		public abstract void Execute(IToolBarItemContext context);
 		/// <inheritdoc/>
@@ -31,7 +33,7 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <inheritdoc/>
 		public virtual string GetHeader(IToolBarItemContext context) => null;
 		/// <inheritdoc/>
-		public virtual string GetIcon(IToolBarItemContext context) => null;
+		public virtual ImageReference? GetIcon(IToolBarItemContext context) => null;
 		/// <inheritdoc/>
 		public virtual string GetToolTip(IToolBarItemContext context) => null;
 	}
