@@ -148,6 +148,7 @@
     <Compile Include="DnlibDialogs\ConstantTypeVM.cs" />
     <Compile Include="DnlibDialogs\ConstantVM.cs" />
     <Compile Include="DnlibDialogs\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="DnlibDialogs\Converters\BooleanToThicknessConverter.cs" />
     <Compile Include="DnlibDialogs\Converters\RadioButtonConverter.cs" />
     <Compile Include="DnlibDialogs\CreateTypeSigArrayControl.xaml.cs">
       <DependentUpon>CreateTypeSigArrayControl.xaml</DependentUpon>

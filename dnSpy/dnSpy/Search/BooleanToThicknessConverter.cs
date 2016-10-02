@@ -23,7 +23,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace dnSpy.Contracts.MVVM.Converters {
+namespace dnSpy.Search {
 	/// <summary>
 	/// Boolean to thickness converter
 	/// </summary>

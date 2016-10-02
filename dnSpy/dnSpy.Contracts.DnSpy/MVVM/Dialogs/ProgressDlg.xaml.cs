@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 	/// <summary>
 	/// Progress dialog box
 	/// </summary>
-	public partial class ProgressDlg : WindowBase {
+	sealed partial class ProgressDlg : WindowBase {
 		/// <summary>
 		/// Constructor
 		/// </summary>

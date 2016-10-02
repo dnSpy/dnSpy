@@ -397,6 +397,7 @@
     </Compile>
     <Compile Include="Scripting\ServiceLocator.cs" />
     <Compile Include="Search\AppCommandLineArgsHandler.cs" />
+    <Compile Include="Search\BooleanToThicknessConverter.cs" />
     <Compile Include="Search\Commands.cs" />
     <Compile Include="Search\DocumentSearcher.cs" />
     <Compile Include="Search\DocumentSearcherProvider.cs" />

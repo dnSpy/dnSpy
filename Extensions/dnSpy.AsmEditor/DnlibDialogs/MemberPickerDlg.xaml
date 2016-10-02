@@ -33,7 +33,7 @@
              MinHeight="200" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-		<mvvmvc:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter" />
+		<vc:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter" />
 		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<ControlTemplate x:Key="noRedBorderOnValidationError">

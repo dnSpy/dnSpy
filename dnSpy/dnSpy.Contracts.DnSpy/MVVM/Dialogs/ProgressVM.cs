@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 	/// <summary>
 	/// Progress
 	/// </summary>
-	public interface IProgress {
+	interface IProgress {
 		/// <summary>
 		/// Sets total progress
 		/// </summary>
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 	/// <summary>
 	/// Progress task
 	/// </summary>
-	public interface IProgressTask {
+	interface IProgressTask {
 		/// <summary>
 		/// true if an indeterminate progress bar should be used
 		/// </summary>
@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 	/// <summary>
 	/// Progress VM
 	/// </summary>
-	public sealed class ProgressVM : ViewModelBase, IProgress {
+	sealed class ProgressVM : ViewModelBase, IProgress {
 		/// <summary>
 		/// Cancel command
 		/// </summary>
