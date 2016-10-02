@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// Search a type
 	/// </summary>
-	public sealed class SearchTypeInfo {
+	sealed class SearchTypeInfo {
 		/// <summary>
 		/// Owner file
 		/// </summary>

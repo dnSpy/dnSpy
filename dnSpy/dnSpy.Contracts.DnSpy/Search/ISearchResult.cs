@@ -24,9 +24,19 @@ using dnSpy.Contracts.Documents.TreeView.Resources;
 
 namespace dnSpy.Contracts.Search {
 	/// <summary>
+	/// Provides a reference
+	/// </summary>
+	public interface ISearchResultReferenceProvider {
+		/// <summary>
+		/// Gets the reference
+		/// </summary>
+		object Reference { get; }
+	}
+
+	/// <summary>
 	/// Search result
 	/// </summary>
-	public interface ISearchResult : IComparable<ISearchResult> {
+	interface ISearchResult : ISearchResultReferenceProvider, IComparable<ISearchResult> {
 		/// <summary>
 		/// <see cref="IDsDocument"/> if it's a non-.NET file. <see cref="AssemblyDef"/>,
 		/// <see cref="ModuleDef"/>, <see cref="dnlib.DotNet.AssemblyRef"/>, <see cref="ModuleRef"/>,
@@ -47,11 +57,6 @@ namespace dnSpy.Contracts.Search {
 		/// changes.
 		/// </summary>
 		void RefreshUI();
-
-		/// <summary>
-		/// Gets the reference
-		/// </summary>
-		object Reference { get; }
 
 		/// <summary>
 		/// Gets any extra info related to <see cref="Object"/>. <see cref="BodyResult"/> if the

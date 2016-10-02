@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// Searches for things in <see cref="IDsDocument"/>s and <see cref="IDocumentTreeView"/>
 	/// </summary>
-	public interface IDocumentSearcher {
+	interface IDocumentSearcher {
 		/// <summary>
 		/// true if too many results were found and the search was canceled
 		/// </summary>

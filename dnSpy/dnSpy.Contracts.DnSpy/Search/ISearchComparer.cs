@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// Search comparer
 	/// </summary>
-	public interface ISearchComparer {
+	interface ISearchComparer {
 		/// <summary>
 		/// Checks whether some value matches something
 		/// </summary>

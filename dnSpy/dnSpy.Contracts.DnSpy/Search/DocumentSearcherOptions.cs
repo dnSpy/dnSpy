@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// <see cref="IDocumentSearcher"/> options
 	/// </summary>
-	public sealed class DocumentSearcherOptions {
+	sealed class DocumentSearcherOptions {
 		/// <summary>
 		/// Default number of results to return
 		/// </summary>

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// Creates <see cref="IDocumentSearcher"/> instances
 	/// </summary>
-	public interface IDocumentSearcherProvider {
+	interface IDocumentSearcherProvider {
 		/// <summary>
 		/// Creates a new <see cref="IDocumentSearcher"/> instance
 		/// </summary>

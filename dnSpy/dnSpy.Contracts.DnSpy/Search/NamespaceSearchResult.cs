@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// Namespace search result
 	/// </summary>
-	public sealed class NamespaceSearchResult {
+	sealed class NamespaceSearchResult {
 		/// <summary>
 		/// Namespace
 		/// </summary>

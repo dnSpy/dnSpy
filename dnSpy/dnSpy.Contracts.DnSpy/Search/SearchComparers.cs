@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// <see cref="ISearchComparer"/> factory
 	/// </summary>
-	public static class SearchComparerFactory {
+	static class SearchComparerFactory {
 		/// <summary>
 		/// Creates a <see cref="ISearchComparer"/>
 		/// </summary>

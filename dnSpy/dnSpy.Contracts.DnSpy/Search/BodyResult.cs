@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// Stored in <see cref="ISearchResult.Object"/> if the method body was searched
 	/// </summary>
-	public sealed class BodyResult {
+	sealed class BodyResult {
 		/// <summary>
 		/// IL offset of instruction referencing the constant
 		/// </summary>

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// Namespace reference
 	/// </summary>
-	public sealed class NamespaceRef {
+	sealed class NamespaceRef {
 		/// <summary>
 		/// Module
 		/// </summary>

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Search {
 	/// <summary>
 	/// <see cref="ISearchResult"/> event args
 	/// </summary>
-	public sealed class SearchResultEventArgs : EventArgs {
+	sealed class SearchResultEventArgs : EventArgs {
 		/// <summary>
 		/// New search results
 		/// </summary>

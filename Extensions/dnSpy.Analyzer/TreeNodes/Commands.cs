@@ -105,7 +105,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		void SearchListBox_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, SearchListBox_GetMemberRef(e.Source as ListBox));
 		IMemberRef SearchListBox_GetMemberRef(ListBox listBox) =>
-			(listBox?.SelectedItem as ISearchResult)?.Reference as IMemberRef;
+			(listBox?.SelectedItem as ISearchResultReferenceProvider)?.Reference as IMemberRef;
 	}
 
 	static class AnalyzeCommand {
