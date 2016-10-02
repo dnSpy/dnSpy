@@ -33,8 +33,8 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class DocumentTreeViewWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class DocumentTreeViewWindowContentProvider : IToolWindowContentProvider {
 		readonly IDocumentTreeView documentTreeView;
 
 		DocumentTreeViewWindowContent DocumentTreeViewWindowContent => documentTreeViewWindowContent ?? (documentTreeViewWindowContent = new DocumentTreeViewWindowContent(documentTreeView.TreeView));

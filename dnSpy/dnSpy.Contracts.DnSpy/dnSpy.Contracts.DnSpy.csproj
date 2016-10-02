@@ -584,7 +584,7 @@
     <Compile Include="ToolWindows\App\AppToolWindowConstants.cs" />
     <Compile Include="ToolWindows\App\AppToolWindowLocation.cs" />
     <Compile Include="ToolWindows\App\IDsToolWindowService.cs" />
-    <Compile Include="ToolWindows\App\IMainToolWindowContentProvider.cs" />
+    <Compile Include="ToolWindows\App\IToolWindowContentProvider.cs" />
     <Compile Include="ToolWindows\App\ToolWindowContentInfo.cs" />
     <Compile Include="ToolWindows\IToolWindowContent.cs" />
     <Compile Include="ToolWindows\IToolWindowGroup.cs" />

@@ -31,8 +31,8 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Properties;
 
 namespace dnSpy.Output {
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class OutputToolWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class OutputToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IOutputContent> outputContent;
 
 		public OutputToolWindowContent OutputToolWindowContent => outputToolWindowContent ?? (outputToolWindowContent = new OutputToolWindowContent(outputContent));

@@ -27,8 +27,8 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Locals {
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class LocalsToolWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class LocalsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<ILocalsContent> localsContent;
 
 		public LocalsToolWindowContent LocalsToolWindowContent => localsToolWindowContent ?? (localsToolWindowContent = new LocalsToolWindowContent(localsContent));

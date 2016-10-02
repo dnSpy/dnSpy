@@ -277,13 +277,13 @@ namespace dnSpy.MainApp {
 		readonly StackedContent<IStackedContentChild> horizontalContent;
 		readonly StackedContent<IStackedContentChild> verticalContent;
 		readonly Dictionary<AppToolWindowLocation, ToolWindowUI> toolWindowUIs;
-		readonly Lazy<IMainToolWindowContentProvider>[] mainToolWindowContentProviders;
+		readonly Lazy<IToolWindowContentProvider>[] mainToolWindowContentProviders;
 		readonly Dictionary<Guid, AppToolWindowLocation> savedLocations;
 
 		public object UIObject => horizontalContent.UIObject;
 
 		[ImportingConstructor]
-		MainWindowControl(IToolWindowServiceProvider toolWindowServiceProvider, [ImportMany] Lazy<IMainToolWindowContentProvider>[] mainToolWindowContentProviders) {
+		MainWindowControl(IToolWindowServiceProvider toolWindowServiceProvider, [ImportMany] Lazy<IToolWindowContentProvider>[] mainToolWindowContentProviders) {
 			this.horizontalContent = new StackedContent<IStackedContentChild>(true);
 			this.verticalContent = new StackedContent<IStackedContentChild>(false);
 			this.toolWindowUIs = new Dictionary<AppToolWindowLocation, ToolWindowUI>();

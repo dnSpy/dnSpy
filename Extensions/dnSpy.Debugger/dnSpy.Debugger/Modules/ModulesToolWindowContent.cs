@@ -27,8 +27,8 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Modules {
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class ModulesToolWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class ModulesToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IModulesContent> modulesContent;
 
 		public ModulesToolWindowContent ModulesToolWindowContent => modulesToolWindowContent ?? (modulesToolWindowContent = new ModulesToolWindowContent(modulesContent));

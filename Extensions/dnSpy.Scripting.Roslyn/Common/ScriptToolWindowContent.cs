@@ -25,7 +25,7 @@ using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Scripting.Roslyn.Common {
-	abstract class ScriptToolWindowContentProvider : IMainToolWindowContentProvider {
+	abstract class ScriptToolWindowContentProvider : IToolWindowContentProvider {
 		public ScriptToolWindowContent ScriptToolWindowContent => scriptToolWindowContent ?? (scriptToolWindowContent = CreateContent());
 		ScriptToolWindowContent scriptToolWindowContent;
 

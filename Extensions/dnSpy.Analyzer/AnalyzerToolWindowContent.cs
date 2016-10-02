@@ -27,8 +27,8 @@ using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Analyzer {
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class AnalyzerToolWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class AnalyzerToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IAnalyzerService> analyzerService;
 
 		public AnalyzerToolWindowContent DocumentTreeViewWindowContent => analyzerToolWindowContent ?? (analyzerToolWindowContent = new AnalyzerToolWindowContent(analyzerService));

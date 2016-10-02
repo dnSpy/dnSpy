@@ -27,8 +27,8 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Properties;
 
 namespace dnSpy.Search {
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class SearchToolWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class SearchToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<ISearchService> searchService;
 
 		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchService));

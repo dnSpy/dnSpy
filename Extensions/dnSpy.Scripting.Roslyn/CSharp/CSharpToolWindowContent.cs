@@ -30,7 +30,7 @@ using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
 
 namespace dnSpy.Scripting.Roslyn.CSharp {
-	[Export(typeof(IMainToolWindowContentProvider))]
+	[Export(typeof(IToolWindowContentProvider))]
 	sealed class CSharpToolWindowContentProvider : ScriptToolWindowContentProvider {
 		readonly Lazy<ICSharpContent> csharpContent;
 

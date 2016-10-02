@@ -27,8 +27,8 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Threads {
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class ThreadsToolWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class ThreadsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IThreadsContent> threadsContent;
 
 		public ThreadsToolWindowContent ThreadsToolWindowContent => threadsToolWindowContent ?? (threadsToolWindowContent = new ThreadsToolWindowContent(threadsContent));

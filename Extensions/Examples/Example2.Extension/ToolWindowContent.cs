@@ -43,8 +43,8 @@ namespace Example2.Extension {
 	}
 
 	// Called by dnSpy to create the tool window
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class MainToolWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class MainToolWindowContentProvider : IToolWindowContentProvider {
 		// Caches the created tool window
 		ToolWindowContent ToolWindowContent => myToolWindowContent ?? (myToolWindowContent = new ToolWindowContent());
 		ToolWindowContent myToolWindowContent;

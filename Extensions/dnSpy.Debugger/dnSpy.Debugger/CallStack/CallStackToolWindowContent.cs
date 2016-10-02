@@ -27,8 +27,8 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.CallStack {
-	[Export(typeof(IMainToolWindowContentProvider))]
-	sealed class CallStackToolWindowContentProvider : IMainToolWindowContentProvider {
+	[Export(typeof(IToolWindowContentProvider))]
+	sealed class CallStackToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<ICallStackContent> callStackContent;
 
 		public CallStackToolWindowContent CallStackToolWindowContent => callStackToolWindowContent ?? (callStackToolWindowContent = new CallStackToolWindowContent(callStackContent));
