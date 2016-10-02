@@ -18,12 +18,16 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Documents {
+	interface IDsDocumentServiceSettings : INotifyPropertyChanged {
+		bool UseMemoryMappedIO { get; }
+	}
+
 	class DsDocumentServiceSettings : ViewModelBase, IDsDocumentServiceSettings {
 		protected virtual void OnModified() { }
 
@@ -38,30 +42,6 @@ namespace dnSpy.Documents {
 			}
 		}
 		bool useMemoryMappedIO = true;
-
-		public bool LoadPDBFiles {
-			get { return loadPDBFiles; }
-			set {
-				if (loadPDBFiles != value) {
-					loadPDBFiles = value;
-					OnPropertyChanged(nameof(LoadPDBFiles));
-					OnModified();
-				}
-			}
-		}
-		bool loadPDBFiles = true;
-
-		public bool UseGAC {
-			get { return useGAC; }
-			set {
-				if (useGAC != value) {
-					useGAC = value;
-					OnPropertyChanged(nameof(UseGAC));
-					OnModified();
-				}
-			}
-		}
-		bool useGAC = true;
 	}
 
 	[Export, Export(typeof(IDsDocumentServiceSettings))]
@@ -77,8 +57,6 @@ namespace dnSpy.Documents {
 			this.disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.UseMemoryMappedIO = sect.Attribute<bool?>(nameof(UseMemoryMappedIO)) ?? this.UseMemoryMappedIO;
-			this.LoadPDBFiles = sect.Attribute<bool?>(nameof(LoadPDBFiles)) ?? this.LoadPDBFiles;
-			this.UseGAC = sect.Attribute<bool?>(nameof(UseGAC)) ?? this.UseGAC;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -88,8 +66,6 @@ namespace dnSpy.Documents {
 				return;
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseMemoryMappedIO), UseMemoryMappedIO);
-			sect.Attribute(nameof(LoadPDBFiles), LoadPDBFiles);
-			sect.Attribute(nameof(UseGAC), UseGAC);
 		}
 	}
 }

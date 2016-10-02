@@ -416,7 +416,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			this.undoCommandService = undoCommandService;
 			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll, newModule);
 			options.CreateAssemblyDef(module).Modules.Add(module);
-			var file = DsDotNetDocument.CreateAssembly(DsDocumentInfo.CreateDocument(string.Empty), module, documentTreeView.DocumentService.Settings.LoadPDBFiles);
+			var file = DsDotNetDocument.CreateAssembly(DsDocumentInfo.CreateDocument(string.Empty), module, true);
 			this.fileNodeCreator = RootDocumentNodeCreator.CreateAssembly(documentTreeView, file);
 		}
 

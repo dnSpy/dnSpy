@@ -128,9 +128,13 @@ namespace dnSpy.Contracts.Documents {
 		void SetDispatcher(Action<Action> action);
 
 		/// <summary>
-		/// Gets the settings
+		/// Creates a <see cref="IDsDocument"/>
 		/// </summary>
-		IDsDocumentServiceSettings Settings { get; }
+		/// <param name="documentInfo">Document info</param>
+		/// <param name="filename">Filename</param>
+		/// <param name="isModule">true if it's a module, false if it's an assembly</param>
+		/// <returns></returns>
+		IDsDocument CreateDocument(DsDocumentInfo documentInfo, string filename, bool isModule = false);
 
 		/// <summary>
 		/// The assembly resolver it uses

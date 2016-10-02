@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.IMModules {
 	sealed class InMemoryModuleService : IInMemoryModuleService, ILoadBeforeDebug {
 		ClassLoader classLoader;
 
-		bool UseDebugSymbols => documentService.Settings.LoadPDBFiles;
+		bool UseDebugSymbols => true;
 
 		public IEnumerable<IDsDocument> AllDocuments {
 			get {

@@ -21,9 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
+using dnlib.PE;
 using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Documents {
@@ -270,8 +272,40 @@ namespace dnSpy.Documents {
 		}
 
 		public IDsDocument TryCreateOnly(DsDocumentInfo info) => TryCreateDocument(info);
-		internal static IDsDocument CreateDocumentFromFile(DsDocumentInfo documentInfo, string filename, bool useMemoryMappedIO, bool loadPDBFiles, IAssemblyResolver asmResolver) =>
-			DsDocument.CreateDocumentFromFile(documentInfo, filename, useMemoryMappedIO, loadPDBFiles, asmResolver, false);
+
+		public IDsDocument CreateDocument(DsDocumentInfo documentInfo, string filename, bool isModule) {
+			try {
+				// Quick check to prevent exceptions from being thrown
+				if (!File.Exists(filename))
+					return new DsUnknownDocument(filename);
+
+				IPEImage peImage;
+
+				if (Settings.UseMemoryMappedIO)
+					peImage = new PEImage(filename);
+				else
+					peImage = new PEImage(File.ReadAllBytes(filename), filename);
+
+				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
+				bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
+				if (isDotNet) {
+					try {
+						var options = new ModuleCreationOptions(DsDotNetDocumentBase.CreateModuleContext(AssemblyResolver));
+						if (isModule)
+							return DsDotNetDocument.CreateModule(documentInfo, ModuleDefMD.Load(peImage, options), true);
+						return DsDotNetDocument.CreateAssembly(documentInfo, ModuleDefMD.Load(peImage, options), true);
+					}
+					catch {
+					}
+				}
+
+				return new DsPEDocument(peImage);
+			}
+			catch {
+			}
+
+			return new DsUnknownDocument(filename);
+		}
 
 		public void Remove(IDsDocumentNameKey key) {
 			Debug.Assert(key != null);

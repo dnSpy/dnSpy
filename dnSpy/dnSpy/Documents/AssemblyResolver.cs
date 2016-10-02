@@ -137,15 +137,13 @@ namespace dnSpy.Documents {
 			if (document != null)
 				return documentService.GetOrAddCanDispose(document);
 
-			if (documentService.Settings.UseGAC) {
-				var gacFile = GacInfo.FindInGac(assembly);
-				if (gacFile != null)
-					return documentService.TryGetOrCreateInternal(DsDocumentInfo.CreateDocument(gacFile), true, true);
-				foreach (var path in GacInfo.OtherGacPaths) {
-					document = TryLoadFromDir(assembly, true, path);
-					if (document != null)
-						return documentService.GetOrAddCanDispose(document);
-				}
+			var gacFile = GacInfo.FindInGac(assembly);
+			if (gacFile != null)
+				return documentService.TryGetOrCreateInternal(DsDocumentInfo.CreateDocument(gacFile), true, true);
+			foreach (var path in GacInfo.OtherGacPaths) {
+				document = TryLoadFromDir(assembly, true, path);
+				if (document != null)
+					return documentService.GetOrAddCanDispose(document);
 			}
 
 			document = LookupFromSearchPaths(assembly, sourceModule, false);

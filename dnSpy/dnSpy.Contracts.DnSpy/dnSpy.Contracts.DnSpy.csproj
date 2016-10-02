@@ -128,7 +128,6 @@
     <Compile Include="Documents\IDsDocumentProvider.cs" />
     <Compile Include="Documents\IDsDocumentService.cs" />
     <Compile Include="Documents\IDsDocumentServiceProvider.cs" />
-    <Compile Include="Documents\IDsDocumentServiceSettings.cs" />
     <Compile Include="Documents\IDsDotNetDocument.cs" />
     <Compile Include="Documents\IDsPEDocument.cs" />
     <Compile Include="Documents\IMethodAnnotations.cs" />

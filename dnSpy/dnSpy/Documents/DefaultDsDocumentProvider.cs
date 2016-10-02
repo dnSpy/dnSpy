@@ -31,7 +31,7 @@ namespace dnSpy.Documents {
 		public IDsDocument Create(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
 			var filename = GetFilename(documentInfo);
 			if (filename != null)
-				return DsDocumentService.CreateDocumentFromFile(documentInfo, filename, documentService.Settings.UseMemoryMappedIO, documentService.Settings.LoadPDBFiles, documentService.AssemblyResolver);
+				return documentService.CreateDocument(documentInfo, filename);
 			return null;
 		}
 

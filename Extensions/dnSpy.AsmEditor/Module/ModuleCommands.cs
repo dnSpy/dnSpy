@@ -106,7 +106,7 @@ namespace dnSpy.AsmEditor.Module {
 		CreateNetModuleCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView, NetModuleOptions options) {
 			this.undoCommandService = undoCommandService;
 			var module = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
-			var file = DsDotNetDocument.CreateModule(DsDocumentInfo.CreateDocument(string.Empty), module, documentTreeView.DocumentService.Settings.LoadPDBFiles);
+			var file = DsDotNetDocument.CreateModule(DsDocumentInfo.CreateDocument(string.Empty), module, true);
 			this.fileNodeCreator = RootDocumentNodeCreator.CreateModule(documentTreeView, file);
 		}
 
@@ -500,7 +500,7 @@ namespace dnSpy.AsmEditor.Module {
 
 			var options = data.CreateNetModuleOptions();
 			var newModule = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
-			var newFile = DsDotNetDocument.CreateModule(DsDocumentInfo.CreateDocument(string.Empty), newModule, appService.DocumentTreeView.DocumentService.Settings.LoadPDBFiles);
+			var newFile = DsDotNetDocument.CreateModule(DsDocumentInfo.CreateDocument(string.Empty), newModule, true);
 			var newModNode = asmNode.Context.DocumentTreeView.CreateModule(newFile);
 			var cmd = new AddNewNetModuleToAssemblyCommand(undoCommandService.Value, (IDsDocumentNode)nodes[0], newModNode);
 			undoCommandService.Value.Add(cmd);
@@ -560,7 +560,7 @@ namespace dnSpy.AsmEditor.Module {
 				return;
 
 			var fm = appService.DocumentTreeView.DocumentService;
-			var file = DsDocument.CreateDocumentFromFile(DsDocumentInfo.CreateDocument(dialog.FileName), dialog.FileName, fm.Settings.UseMemoryMappedIO, fm.Settings.LoadPDBFiles, fm.AssemblyResolver, true);
+			var file = fm.CreateDocument(DsDocumentInfo.CreateDocument(dialog.FileName), dialog.FileName, true);
 			if (file.ModuleDef == null || file.AssemblyDef != null || !(file is IDsDotNetDocument)) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_NotNetModule, file.Filename), MsgBoxButton.OK);
 				var id = file as IDisposable;

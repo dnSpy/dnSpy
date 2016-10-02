@@ -101,50 +101,6 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public void RemoveAnnotations<T>() where T : class => annotations.RemoveAnnotations<T>();
 		readonly AnnotationsImpl annotations = new AnnotationsImpl();
-
-		/// <summary>
-		/// Creates a <see cref="IDsDocument"/>
-		/// </summary>
-		/// <param name="documentInfo">Document info</param>
-		/// <param name="filename">Filename</param>
-		/// <param name="useMemoryMappedIO">true to use memory mapped I/O</param>
-		/// <param name="loadPDBFile">true to load the PDB file if available</param>
-		/// <param name="asmResolver">Assembly resolver</param>
-		/// <param name="isModule">true if it's a module, false if it's an assembly</param>
-		/// <returns></returns>
-		public static IDsDocument CreateDocumentFromFile(DsDocumentInfo documentInfo, string filename, bool useMemoryMappedIO, bool loadPDBFile, IAssemblyResolver asmResolver, bool isModule) {
-			try {
-				// Quick check to prevent exceptions from being thrown
-				if (!File.Exists(filename))
-					return new DsUnknownDocument(filename);
-
-				IPEImage peImage;
-
-				if (useMemoryMappedIO)
-					peImage = new PEImage(filename);
-				else
-					peImage = new PEImage(File.ReadAllBytes(filename), filename);
-
-				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-				bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
-				if (isDotNet) {
-					try {
-						var options = new ModuleCreationOptions(DsDotNetDocumentBase.CreateModuleContext(asmResolver));
-						if (isModule)
-							return DsDotNetDocument.CreateModule(documentInfo, ModuleDefMD.Load(peImage, options), loadPDBFile);
-						return DsDotNetDocument.CreateAssembly(documentInfo, ModuleDefMD.Load(peImage, options), loadPDBFile);
-					}
-					catch {
-					}
-				}
-
-				return new DsPEDocument(peImage);
-			}
-			catch {
-			}
-
-			return new DsUnknownDocument(filename);
-		}
 	}
 
 	/// <summary>
@@ -351,7 +307,7 @@ namespace dnSpy.Contracts.Documents {
 	/// <summary>
 	/// mmap'd I/O helper methods
 	/// </summary>
-	public static class MemoryMappedIOHelper {
+	static class MemoryMappedIOHelper {
 		/// <summary>
 		/// Disable memory mapped I/O
 		/// </summary>

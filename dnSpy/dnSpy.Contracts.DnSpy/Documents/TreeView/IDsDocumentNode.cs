@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// A document node, created by a <see cref="IDsDocument"/> instance
+	/// A document node
 	/// </summary>
 	public interface IDsDocumentNode : IDocumentTreeNodeData {
 		/// <summary>
