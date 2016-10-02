@@ -266,6 +266,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();
+			ctxMenu.SetResourceReference(DsImage.BackgroundBrushProperty, "ContextMenuRectangleFill");
 
 			bool addSep = false;
 			foreach (var handler in handlers) {
@@ -275,7 +276,6 @@ namespace dnSpy.AsmEditor.Commands {
 				}
 
 				var menuItem = new MenuItem();
-				menuItem.SetResourceReference(DsImage.BackgroundBrushProperty, "ContextMenuRectangleFill");
 				menuItem.IsEnabled = handler.Command.CanExecute(parameter);
 				menuItem.Header = ResourceHelper.GetString(handler, listBox.SelectedItems.Count > 1 ? handler.HeaderPlural ?? handler.Header : handler.Header);
 				var tmpHandler = handler;

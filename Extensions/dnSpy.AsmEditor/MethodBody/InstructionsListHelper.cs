@@ -333,6 +333,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void ShowMenu(object parameter, InstructionOperandVM opvm, MenuCommandFlags flags) {
 			var ctxMenu = new ContextMenu();
+			ctxMenu.SetResourceReference(DsImage.BackgroundBrushProperty, "ContextMenuRectangleFill");
 
 			MenuItem menuItem;
 			if ((flags & (MenuCommandFlags.TypeDef | MenuCommandFlags.TypeRef)) != 0) {
