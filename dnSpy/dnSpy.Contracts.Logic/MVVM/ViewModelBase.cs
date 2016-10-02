@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <summary>
 		/// true if someone has added a <see cref="PropertyChanged"/> handler
 		/// </summary>
-		protected bool HasPropertyChangedHandlers => PropertyChanged != null;
+		protected internal bool HasPropertyChangedHandlers => PropertyChanged != null;
 
 		/// <summary>
 		/// Raises <see cref="PropertyChanged"/>

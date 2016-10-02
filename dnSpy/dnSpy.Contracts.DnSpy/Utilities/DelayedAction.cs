@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Utilities {
 	/// <summary>
 	/// Executes code after a slight delay
 	/// </summary>
-	public sealed class DelayedAction {
+	sealed class DelayedAction {
 		readonly int milliseconds;
 		readonly Action action;
 		readonly DispatcherTimer dispatcherTimer;
