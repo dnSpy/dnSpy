@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Settings used by all text editors
 	/// </summary>
-	public interface ITextEditorSettings : INotifyPropertyChanged {
+	interface ITextEditorSettings : INotifyPropertyChanged {
 		/// <summary>
 		/// Font family
 		/// </summary>
