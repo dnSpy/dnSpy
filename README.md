@@ -224,6 +224,6 @@ See the [Wiki](https://github.com/0xd4d/dnSpy/wiki) for build instructions and o
 
 # License
 
-dnSpy is licensed under [GPLv3](LicenseInfo/GPLv3.txt).
+dnSpy is licensed under [GPLv3](dnSpy/dnSpy/LicenseInfo/GPLv3.txt).
 
-# [Credits](LicenseInfo/CREDITS.txt)
+# [Credits](dnSpy/dnSpy/LicenseInfo/CREDITS.txt)

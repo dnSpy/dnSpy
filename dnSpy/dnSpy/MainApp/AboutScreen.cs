@@ -207,7 +207,7 @@ namespace dnSpy.MainApp {
 				WriteShortInfo(output, info.ShortDescription);
 			}
 			output.WriteLine();
-			WriteResourceFile(output, "dnSpy.CREDITS.txt");
+			WriteResourceFile(output, "dnSpy.LicenseInfo.CREDITS.txt");
 		}
 
 		void WriteResourceFile(IDecompilerOutput output, string name, bool addNewLine = true) {

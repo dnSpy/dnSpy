@@ -798,8 +798,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\LicenseInfo\CREDITS.txt">
-      <Link>CREDITS.txt</Link>
+    <EmbeddedResource Include="LicenseInfo\CREDITS.txt">
+      <Visible>false</Visible>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -882,17 +882,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\EmbedInteropTypes.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>mkdir "$(TargetDir)FileLists" 2&gt; NUL
-copy "$(ProjectDir)FileLists\*.FileList.xml" "$(TargetDir)FileLists"
-mkdir "$(TargetDir)LicenseInfo" 2&gt; NUL
-copy "$(SolutionDir)LicenseInfo\*" "$(TargetDir)LicenseInfo"</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <None Include="FileLists\*.FileList.xml;LicenseInfo\*">
+      <Visible>false</Visible>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
