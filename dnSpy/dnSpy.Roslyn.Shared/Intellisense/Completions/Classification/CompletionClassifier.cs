@@ -76,28 +76,31 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			var color = completion.CompletionItem.Tags.ToCompletionKind().ToTextColor();
 			var text = context.Text;
 
-			// The common case is just an identifier, and in that case, the tag is correct
-			int punctIndex = text.IndexOfAny(punctuationChars, 0);
-			if (punctIndex < 0) {
-				yield return new CompletionClassificationTag(new Span(0, text.Length), themeClassificationTypeService.GetClassificationType(color));
-				yield break;
-			}
+			// Check if the namespace or enclosing class name is part of the text
+			if (text.IndexOf('.') < 0) {
+				// The common case is just an identifier, and in that case, the tag is correct
+				int punctIndex = text.IndexOfAny(punctuationChars, 0);
+				if (punctIndex < 0) {
+					yield return new CompletionClassificationTag(new Span(0, text.Length), themeClassificationTypeService.GetClassificationType(color));
+					yield break;
+				}
 
-			// Check for CLASS<> or METHOD()
-			if (punctIndex + 2 == text.Length && text.IndexOfAny(punctuationChars, punctIndex + 1) == punctIndex + 1) {
-				yield return new CompletionClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
-				yield return new CompletionClassificationTag(new Span(punctIndex, 2), punctuationClassificationType);
-				yield break;
-			}
+				// Check for CLASS<> or METHOD()
+				if (punctIndex + 2 == text.Length && text.IndexOfAny(punctuationChars, punctIndex + 1) == punctIndex + 1) {
+					yield return new CompletionClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
+					yield return new CompletionClassificationTag(new Span(punctIndex, 2), punctuationClassificationType);
+					yield break;
+				}
 
-			// Check for Visual Basic generics special case
-			const string VBOf = "(Of …)";
-			if (text.Length - VBOf.Length == punctIndex && text.EndsWith(VBOf)) {
-				yield return new CompletionClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
-				yield return new CompletionClassificationTag(new Span(punctIndex, 1), punctuationClassificationType);
-				yield return new CompletionClassificationTag(new Span(punctIndex + 1, 2), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
-				yield return new CompletionClassificationTag(new Span(punctIndex + VBOf.Length - 1, 1), punctuationClassificationType);
-				yield break;
+				// Check for Visual Basic generics special case
+				const string VBOf = "(Of …)";
+				if (text.Length - VBOf.Length == punctIndex && text.EndsWith(VBOf)) {
+					yield return new CompletionClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
+					yield return new CompletionClassificationTag(new Span(punctIndex, 1), punctuationClassificationType);
+					yield return new CompletionClassificationTag(new Span(punctIndex + 1, 2), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
+					yield return new CompletionClassificationTag(new Span(punctIndex + VBOf.Length - 1, 1), punctuationClassificationType);
+					yield break;
+				}
 			}
 
 			// The text is usually identical to the description and it's classified
@@ -111,9 +114,13 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 					var part = parts[i];
 					if (part.Tag == TextTags.LineBreak)
 						break;
-					color = TextTagsHelper.ToTextColor(part.Tag);
-					yield return new CompletionClassificationTag(new Span(pos, part.Text.Length), themeClassificationTypeService.GetClassificationType(color));
+					var color2 = TextTagsHelper.ToTextColor(part.Tag);
+					yield return new CompletionClassificationTag(new Span(pos, part.Text.Length), themeClassificationTypeService.GetClassificationType(color2));
 					pos += part.Text.Length;
+				}
+				if (pos < text.Length) {
+					// The remaining text is unknown, just use the tag color
+					yield return new CompletionClassificationTag(Span.FromBounds(pos, text.Length), themeClassificationTypeService.GetClassificationType(color));
 				}
 				yield break;
 			}
@@ -145,6 +152,13 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 						continue;
 					matchIndex = index;
 				}
+				else {
+					if (!StartsWith(displayText, stringBuilder.Length, part.Text)) {
+						// Partial match, could happen if the type is System.Collections.Generic.List<int> but
+						// the documentation is using System.Collections.Generic.List<T>.
+						return new KeyValuePair<int, int>(matchIndex, index - 1);
+					}
+				}
 				stringBuilder.Append(part.Text);
 				if (stringBuilder.Length == displayText.Length) {
 					if (stringBuilder.ToString() == completion.DisplayText)
@@ -155,6 +169,16 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 					break;
 			}
 			return null;
+		}
+
+		bool StartsWith(string displayText, int index, string text) {
+			if (index + text.Length > displayText.Length)
+				return false;
+			for (int i = 0; i < text.Length; i++) {
+				if (displayText[index + i] != text[i])
+					return false;
+			}
+			return true;
 		}
 	}
 }
