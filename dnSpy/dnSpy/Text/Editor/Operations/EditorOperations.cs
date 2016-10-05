@@ -628,11 +628,14 @@ namespace dnSpy.Text.Editor.Operations {
 			if (!info.IsSignificant)
 				return TextStructureNavigator.GetExtentOfWord(info.Span.End).Span.Start;
 
-			info = TextStructureNavigator.GetExtentOfWord(info.Span.End);
-			if (info.IsSignificant)
-				return info.Span.Start;
-			line = info.Span.Start.GetContainingLine();
-			return info.Span.End;
+			var info2 = TextStructureNavigator.GetExtentOfWord(info.Span.End);
+			if (info2.IsSignificant) {
+				if (info2.Span.Start < info.Span.End)
+					return info.Span.End;
+				return info2.Span.Start;
+			}
+			line = info2.Span.Start.GetContainingLine();
+			return info2.Span.End;
 		}
 
 		public bool DeleteWordToRight() {
