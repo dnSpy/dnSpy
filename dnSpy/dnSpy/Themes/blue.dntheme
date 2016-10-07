@@ -21,7 +21,7 @@
 		<color name="methodgenericparameter" fg="#2B91AF" />
 		<color name="instancemethod" fg="#880000" />
 		<color name="staticmethod" fg="#880000" />
-		<color name="extensionmethod" fg="#91571D" italics="true" />
+		<color name="extensionmethod" fg="#960000" italics="true" />
 		<color name="instancefield" fg="#CC3399" />
 		<color name="enumfield" fg="#6F008A" />
 		<color name="literalfield" fg="#9900FF" />
