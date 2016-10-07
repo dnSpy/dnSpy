@@ -21,24 +21,30 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Decompiler;
+using System.Windows;
+using System.Windows.Controls;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Decompiler.ILSpy.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	sealed class CSharpDecompilerSettingsTab : IDecompilerSettingsTab, INotifyPropertyChanged {
+	sealed class CSharpDecompilerSettingsTab : IAppSettingsTab, INotifyPropertyChanged {
 		readonly DecompilerSettings _global_decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-		public double Order => DecompilerConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
+		public double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
 		public string Name => dnSpy_Decompiler_ILSpy_Resources.CSharpDecompilerSettingsTabName;
 		public DecompilerSettings Settings => decompilerSettings;
-		public object UIObject => this;
+		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
+		public Guid Guid => new Guid("8929CE8E-7E2C-4701-A8BA-42F70363872C");
+		public string Title => "C# / Visual Basic (ILSpy)";
+		public ImageReference Icon => ImageReference.None;
+		public FrameworkElement UIObject => new ContentPresenter { Content = this };
 
 		public DecompilationObjectVM[] DecompilationObjectsArray => decompilationObjectVMs2;
 		readonly DecompilationObjectVM[] decompilationObjectVMs;

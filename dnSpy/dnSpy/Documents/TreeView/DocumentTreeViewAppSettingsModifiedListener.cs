@@ -21,7 +21,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Documents.TreeView {
-	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_SETTINGS_LISTENER_DOCUMENTTREEVIEW)]
+	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_LISTENER_DOCUMENTTREEVIEW)]
 	sealed class DocumentTreeViewAppSettingsModifiedListener : IAppSettingsModifiedListener {
 		readonly DocumentTreeView documentTreeView;
 

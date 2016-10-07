@@ -22,7 +22,7 @@ using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Documents {
-	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_SETTINGS_LISTENER_DOCUMENTMANAGER)]
+	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_LISTENER_DOCUMENTMANAGER)]
 	sealed class DsDocumentServiceAppSettingsModifiedListener : IAppSettingsModifiedListener {
 		readonly IDsDocumentService documentService;
 

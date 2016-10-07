@@ -24,9 +24,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Windows;
+using System.Windows.Controls;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Settings.Dialog;
@@ -80,9 +83,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 	}
 
-	// This is disabled for now since it only contains one option that can be modified in the text
-	// editor by using the context menu. Enable again when more options are added.
-	// [Export(typeof(IAppSettingsTabProvider))]
+	[Export(typeof(IAppSettingsTabProvider))]
 	sealed class BamlSettingsTabProvider : IAppSettingsTabProvider {
 		readonly BamlSettingsImpl bamlSettings;
 
@@ -97,9 +98,12 @@ namespace dnSpy.BamlDecompiler {
 	}
 
 	sealed class BamlAppSettingsTab : IAppSettingsTab {
-		public double Order => AppSettingsConstants.ORDER_BAML_TAB_DISPLAY;
+		public Guid ParentGuid => Guid.Empty;
+		public Guid Guid => new Guid("DF5D8216-35D9-4E25-8BDF-817D4CA90C17");
+		public double Order => AppSettingsConstants.ORDER_TAB_BAML;
 		public string Title => dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab;
-		public object UIObject => bamlSettings;
+		public ImageReference Icon => ImageReference.None;
+		public FrameworkElement UIObject => new ContentPresenter { Content = bamlSettings };
 
 		readonly BamlSettingsImpl _global_settings;
 		readonly BamlSettings bamlSettings;

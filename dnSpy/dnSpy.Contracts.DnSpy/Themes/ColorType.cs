@@ -589,6 +589,8 @@ namespace dnSpy.Contracts.Themes {
 		TreeViewGlyph,
 		TreeViewGlyphMouseOver,
 		TVItemAlternationBackground,
+		AppSettingsTreeView,
+		AppSettingsTreeViewBorder,
 		EnvironmentFileTabBackground,
 		EnvironmentFileTabBorder,
 		EnvironmentFileTabButtonDownInactiveBorder,

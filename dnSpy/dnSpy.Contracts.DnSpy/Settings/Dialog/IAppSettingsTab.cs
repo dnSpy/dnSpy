@@ -17,25 +17,44 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Windows;
+using dnSpy.Contracts.Images;
+
 namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
-	/// A tab shown in the main settings dialog box
+	/// Content shown in the application settings
 	/// </summary>
 	public interface IAppSettingsTab {
 		/// <summary>
-		/// Gets the order, eg. <see cref="AppSettingsConstants.ORDER_SETTINGS_TAB_DECOMPILER"/>
+		/// Parent <see cref="System.Guid"/> or <see cref="System.Guid.Empty"/> if the root element is the parent
+		/// </summary>
+		Guid ParentGuid { get; }
+
+		/// <summary>
+		/// Gets the <see cref="System.Guid"/>
+		/// </summary>
+		Guid Guid { get; }
+
+		/// <summary>
+		/// Gets the order, eg. <see cref="AppSettingsConstants.ORDER_TAB_DECOMPILER"/>
 		/// </summary>
 		double Order { get; }
 
 		/// <summary>
-		/// Gets the title
+		/// Gets the title shown in the UI
 		/// </summary>
 		string Title { get; }
 
 		/// <summary>
+		/// Gets the icon shown in the UI (eg. <see cref="DsImages.Assembly"/>) or <see cref="ImageReference.None"/>
+		/// </summary>
+		ImageReference Icon { get; }
+
+		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		object UIObject { get; }
+		FrameworkElement UIObject { get; }
 
 		/// <summary>
 		/// Called when the dialog box has been closed

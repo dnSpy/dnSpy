@@ -176,10 +176,6 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 
 ![bgimg2](images/bgimg2.png)
 
-### Background image settings tab
-
-![bgimg-settings](images/bgimg-settings.png)
-
 ### Export to project decompiles all selected assemblies and creates a Visual Studio solution
 
 ![export-to-project](images/export-to-project.png)

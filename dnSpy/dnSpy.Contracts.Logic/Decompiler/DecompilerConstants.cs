@@ -68,15 +68,5 @@ namespace dnSpy.Contracts.Decompiler {
 
 		/// <summary>Name of Visual Basic language returned by <see cref="IDecompiler.GenericNameUI"/></summary>
 		public static readonly string GENERIC_NAMEUI_VISUALBASIC = "Visual Basic";
-
-		/// <summary>
-		/// Order of ILSpy C#/VB decompiler settings
-		/// </summary>
-		public const double ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP = 10000;
-
-		/// <summary>
-		/// Order of ILSpy IL disassembler settings
-		/// </summary>
-		public const double ORDER_DECOMPILER_SETTINGS_ILSPY_IL = 20000;
 	}
 }

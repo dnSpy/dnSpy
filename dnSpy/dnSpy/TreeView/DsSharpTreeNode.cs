@@ -19,13 +19,10 @@
 
 using System;
 using System.Collections.Specialized;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using ICSharpCode.TreeView;
 
@@ -38,6 +35,9 @@ namespace dnSpy.TreeView {
 			this.treeNodeImpl = treeNodeImpl;
 		}
 
+		// Needed by XAML
+		public ITreeNodeData Data => treeNodeImpl.Data;
+
 		public override object ExpandedIcon => treeNodeImpl.Data.ExpandedIcon ?? treeNodeImpl.Data.Icon;
 		public override object Icon => treeNodeImpl.Data.Icon;
 		public override bool SingleClickExpandsChildren => treeNodeImpl.Data.SingleClickExpandsChildren;
@@ -45,17 +45,7 @@ namespace dnSpy.TreeView {
 		public override object ToolTip => treeNodeImpl.Data.ToolTip;
 		protected override void LoadChildren() => treeNodeImpl.TreeView.AddChildren(treeNodeImpl);
 		public override bool ShowExpander => treeNodeImpl.Data.ShowExpander(base.ShowExpander);
-
-		[ExportAutoLoaded]
-		sealed class ThemeServiceLoader : IAutoLoaded {
-			[ImportingConstructor]
-			ThemeServiceLoader(IThemeService themeService) {
-				DsSharpTreeNode.themeService = themeService;
-			}
-		}
-		static IThemeService themeService;
-
-		public override Brush Foreground => themeService.Theme.GetColor(ColorType.TreeViewNode).Foreground;
+		public override Brush Foreground => treeNodeImpl.TreeView.GetNodeForegroundBrush();
 
 		public void RefreshUI() {
 			RaisePropertyChanged(nameof(Icon));

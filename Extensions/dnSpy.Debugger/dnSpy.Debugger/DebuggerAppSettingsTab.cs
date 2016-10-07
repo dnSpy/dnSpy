@@ -17,10 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Debugger.Dialogs;
@@ -45,10 +49,13 @@ namespace dnSpy.Debugger {
 		readonly DebuggerSettingsImpl _global_settings;
 		readonly IPickFilename pickFilename;
 
+		public Guid ParentGuid => Guid.Empty;
+		public Guid Guid => new Guid("8D2BC2FB-5CA4-4907-84C7-F4F705327AC8");
 		public DebuggerSettings Settings { get; }
-		public double Order => AppSettingsConstants.ORDER_DEBUGGER_TAB_DISPLAY;
+		public double Order => AppSettingsConstants.ORDER_TAB_DEBUGGER;
 		public string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
-		public object UIObject => this;
+		public ImageReference Icon => ImageReference.None;
+		public FrameworkElement UIObject => new ContentPresenter { Content = this };
 
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(DebugProcessVM.breakProcessKindList);

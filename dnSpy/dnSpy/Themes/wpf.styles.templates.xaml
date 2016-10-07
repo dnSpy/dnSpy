@@ -5980,17 +5980,6 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type decompiler:DecompilerAppSettingsTab}">
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <ComboBox Grid.Row="0" HorizontalAlignment="Stretch" ItemsSource="{Binding LanguageSettings}" SelectedItem="{Binding SelectedLanguageSetting}" DisplayMemberPath="Name" Visibility="{Binding HasMoreThanOneSetting, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <ContentPresenter Grid.Row="1" Margin="0 5 0 0" Content="{Binding CurrentUIObject}"/>
-        </Grid>
-    </DataTemplate>
-
     <DataTemplate DataType="{x:Type bgImg:AppSettingsTab}">
         <Grid Margin="5">
             <Grid.RowDefinitions>

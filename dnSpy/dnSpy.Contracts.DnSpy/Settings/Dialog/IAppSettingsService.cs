@@ -17,17 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using System;
+using System.Windows;
 
-namespace dnSpy.Contracts.Decompiler {
+namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
-	/// Creates <see cref="IDecompilerSettingsTab"/> instances
+	/// Shows the application settings dialog box
 	/// </summary>
-	public interface IDecompilerSettingsTabProvider {
+	public interface IAppSettingsService {
 		/// <summary>
-		/// Creates new <see cref="IDecompilerSettingsTab"/> instances
+		/// Shows the dialog box
 		/// </summary>
-		/// <returns></returns>
-		IEnumerable<IDecompilerSettingsTab> Create();
+		/// <param name="owner">Owner window or null to use the main window</param>
+		void Show(Window owner = null);
+
+		/// <summary>
+		/// Shows the dialog box and selects the settings tab whose <see cref="IAppSettingsTab.Guid"/> equals <paramref name="guid"/>
+		/// </summary>
+		/// <param name="guid">Guid of settings and must match some instance's <see cref="IAppSettingsTab.Guid"/> property</param>
+		/// <param name="owner">Owner window or null to use the main window</param>
+		void Show(Guid guid, Window owner = null);
 	}
 }

@@ -407,6 +407,8 @@
 		<color name="treeviewglyph" bg="#FFFFFFFF" />
 		<color name="treeviewglyphmouseover" bg="#FF800080" />
 		<color name="tvitemalternationbackground" bg="#FF808080" />
+		<color name="appsettingstreeview" fg="#FFFFFFFF" bg="#FF000000" />
+		<color name="appsettingstreeviewborder" bg="#FFFFFFFF" />
 		<color name="environmentfiletabbackground" bg="#FF000000" />
 		<color name="environmentfiletabborder" bg="#FF000000" />
 		<color name="environmentfiletabbuttondowninactiveborder" bg="#FFFFFFFF" />

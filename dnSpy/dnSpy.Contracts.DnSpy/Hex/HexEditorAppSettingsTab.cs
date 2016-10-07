@@ -17,13 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Properties;
 using dnSpy.Contracts.Settings.Dialog;
@@ -44,9 +48,12 @@ namespace dnSpy.Contracts.Hex {
 	}
 
 	sealed class HexEditorAppSettingsTab : IAppSettingsTab {
-		public double Order => AppSettingsConstants.ORDER_SETTINGS_TAB_HEXEDITOR;
+		public Guid ParentGuid => Guid.Empty;
+		public Guid Guid => new Guid("4BEAD407-839F-489B-A874-2B3325776366");
+		public double Order => AppSettingsConstants.ORDER_TAB_HEXEDITOR;
 		public string Title => dnSpy_Contracts_DnSpy_Resources.HexEditorAppDlgTitle;
-		public object UIObject => displayAppSettingsVM;
+		public ImageReference Icon => ImageReference.None;
+		public FrameworkElement UIObject => new ContentPresenter { Content = displayAppSettingsVM };
 
 		readonly HexEditorSettingsImpl hexEditorSettingsImpl;
 		readonly HexEditorAppSettingsVM displayAppSettingsVM;

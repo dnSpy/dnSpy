@@ -26,7 +26,7 @@ using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_SETTINGS_LISTENER_DECOMPILER)]
+	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_LISTENER_DECOMPILER)]
 	sealed class DecompilerAppSettingsModifiedListener : IAppSettingsModifiedListener {
 		readonly IDocumentTabService documentTabService;
 

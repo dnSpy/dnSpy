@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Windows;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 
 // Adds an options dialog box tab showing settings saved in MySettings
@@ -23,14 +26,27 @@ namespace Example1.Extension {
 	}
 
 	sealed class MyAppSettingsTab : IAppSettingsTab {
+		//TODO: Use your own GUID
+		static readonly Guid THE_GUID = new Guid("AE905210-A789-4AE2-B83B-537515D9F435");
+
+		// Guid of parent or Guid.Empty if it has none
+		public Guid ParentGuid => Guid.Empty;
+
+		// Unique guid of this settings tab
+		public Guid Guid => THE_GUID;
+
 		// The order of the tab, let's place it after the debugger tab
-		public double Order => AppSettingsConstants.ORDER_DEBUGGER_TAB_DISPLAY + 0.1;
+		public double Order => AppSettingsConstants.ORDER_TAB_DEBUGGER + 0.1;
 
 		public string Title => "MySettings";
 
+		// An image that can be shown. You can return ImageReference.None if you don't want an image.
+		// Let's return an image since no other settings tab is currently using images.
+		public ImageReference Icon => DsImages.Assembly;
+
 		// This is the content shown in the tab. It should be a WPF object (eg. a UserControl) or a
 		// ViewModel with a DataTemplate defined in a resource dictionary.
-		public object UIObject {
+		public FrameworkElement UIObject {
 			get {
 				if (uiObject == null) {
 					uiObject = new MySettingsControl();

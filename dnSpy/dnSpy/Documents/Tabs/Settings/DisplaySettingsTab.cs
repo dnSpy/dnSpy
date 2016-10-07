@@ -25,12 +25,14 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text.Editor;
@@ -63,9 +65,12 @@ namespace dnSpy.Documents.Tabs.Settings {
 	}
 
 	sealed class DisplayAppSettingsTab : IAppSettingsTab {
-		public double Order => AppSettingsConstants.ORDER_SETTINGS_TAB_DISPLAY;
+		public Guid ParentGuid => Guid.Empty;
+		public Guid Guid => new Guid("C16AED63-6B9E-4BE3-8A04-DD78B6350A36");
+		public double Order => AppSettingsConstants.ORDER_TAB_DISPLAY;
 		public string Title => dnSpy_Resources.DisplayDlgTabTitle;
-		public object UIObject => displayAppSettingsVM;
+		public ImageReference Icon => ImageReference.None;
+		public FrameworkElement UIObject => new ContentPresenter { Content = displayAppSettingsVM };
 
 		readonly TextEditorSettingsImpl textEditorSettingsImpl;
 		readonly IEditorOptions editorOptions;

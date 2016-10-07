@@ -26,6 +26,11 @@ namespace dnSpy.Contracts.Images {
 	/// </summary>
 	public struct ImageReference {
 		/// <summary>
+		/// Gets an <see cref="ImageReference"/> which isn't referencing any image
+		/// </summary>
+		public static readonly ImageReference None = default(ImageReference);
+
+		/// <summary>
 		/// true if it's the default instance
 		/// </summary>
 		public bool IsDefault => Assembly == null && Name == null;

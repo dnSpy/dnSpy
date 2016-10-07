@@ -17,26 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
-using ICSharpCode.Decompiler;
 
-namespace dnSpy.Decompiler.ILSpy.Settings {
-	[Export(typeof(IAppSettingsTabProvider))]
-	sealed class DecompilerSettingsTabProvider : IAppSettingsTabProvider {
-		readonly DecompilerSettings decompilerSettings;
-		readonly ILSettingsImpl ilSettings;
-
-		[ImportingConstructor]
-		DecompilerSettingsTabProvider(DecompilerSettingsImpl decompilerSettings, ILSettingsImpl ilSettings) {
-			this.decompilerSettings = decompilerSettings;
-			this.ilSettings = ilSettings;
-		}
-
-		public IEnumerable<IAppSettingsTab> Create() {
-			yield return new CSharpDecompilerSettingsTab(decompilerSettings);
-			yield return new ILDecompilerSettingsTab(ilSettings);
-		}
-	}
+namespace dnSpy.Decompiler {
+	[ExportAppSettingsTabContainer("res:DecompilerDlgTabTitle", AppSettingsConstants.GUID_DECOMPILER, AppSettingsConstants.ORDER_TAB_DECOMPILER)]
+	sealed class DecompilerAppSettingsTabContainer : IAppSettingsTabContainer { }
 }

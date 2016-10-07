@@ -109,9 +109,11 @@ namespace dnSpy.Controls {
 			expander.Arrange(new Rect(x, (h - size.Height) / 2, size.Width, size.Height));
 			x += size.Width;
 
-			size = icon.DesiredSize;
-			icon.Arrange(new Rect(x, (h - size.Height) / 2, size.Width, size.Height));
-			x += size.Width;
+			if (!icon.ImageReference.IsDefault) {
+				size = icon.DesiredSize;
+				icon.Arrange(new Rect(x, (h - size.Height) / 2, size.Width, size.Height));
+				x += size.Width;
+			}
 
 			size = content.DesiredSize;
 			content.Arrange(new Rect(x, (h - size.Height) / 2, size.Width, size.Height));
@@ -129,25 +131,32 @@ namespace dnSpy.Controls {
 			width -= expander.DesiredSize.Width;
 			height = Math.Max(height, expander.DesiredSize.Height);
 
-			icon.Measure(new Size(width, constraint.Height));
-			width -= icon.DesiredSize.Width;
-			height = Math.Max(height, icon.DesiredSize.Height);
+			if (!icon.ImageReference.IsDefault) {
+				icon.Measure(new Size(width, constraint.Height));
+				width -= icon.DesiredSize.Width;
+				height = Math.Max(height, icon.DesiredSize.Height);
+			}
 
 			content.Measure(new Size(width, constraint.Height));
 			width -= content.DesiredSize.Width;
 			height = Math.Max(height, content.DesiredSize.Height);
 
-			return new Size(indent + expander.DesiredSize.Width + icon.DesiredSize.Width + content.DesiredSize.Width, height);
+			var iconWidth = icon.ImageReference.IsDefault ? 0 : icon.DesiredSize.Width;
+			return new Size(indent + expander.DesiredSize.Width + iconWidth + content.DesiredSize.Width, height);
 		}
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			var x = indent + expander.DesiredSize.Width;
-			var w = icon.DesiredSize.Width + content.DesiredSize.Width;
+			var w = content.DesiredSize.Width;
+			if (!icon.ImageReference.IsDefault)
+				w += icon.DesiredSize.Width;
 			var h = RenderSize.Height;
 			drawingContext.DrawRectangle(Brushes.Transparent, null, new Rect(x, 0, w, h));
 
-			x += icon.DesiredSize.Width;
-			w -= icon.DesiredSize.Width;
+			if (!icon.ImageReference.IsDefault) {
+				x += icon.DesiredSize.Width;
+				w -= icon.DesiredSize.Width;
+			}
 			drawingContext.DrawRectangle(TextBackground, null, new Rect(x, 0, w, h));
 		}
 
@@ -178,7 +187,7 @@ namespace dnSpy.Controls {
 			if (!ImageReference_Equals(icon.ImageReference, newSrc))
 				icon.ImageReference = newSrc;
 
-			var newVis = node.ShowIcon ? Visibility.Visible : Visibility.Collapsed;
+			var newVis = !icon.ImageReference.IsDefault && node.ShowIcon ? Visibility.Visible : Visibility.Collapsed;
 			if (icon.Visibility != newVis)
 				icon.Visibility = newVis;
 

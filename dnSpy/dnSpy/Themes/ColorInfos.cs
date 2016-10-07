@@ -1481,7 +1481,7 @@ namespace dnSpy.Themes {
 			},
 			new BrushColorInfo(ColorType.TreeView, "TreeView") {
 				DefaultForeground = "#FF1E1E1E",
-				ForegroundResourceKey = "TreeViewBackground",
+				ForegroundResourceKey = "TreeViewForeground",
 				DefaultBackground = "#FFF5F5F5",
 				BackgroundResourceKey = "TreeViewBackground",
 			},
@@ -1500,6 +1500,16 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.TVItemAlternationBackground, "TreeViewItem alternation background") {
 				DefaultBackground = "WhiteSmoke",
 				BackgroundResourceKey = "TVItemAlternationBackground",
+			},
+			new BrushColorInfo(ColorType.AppSettingsTreeView, "App Settings TreeView") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "AppSettingsTreeViewForeground",
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "AppSettingsTreeViewBackground",
+			},
+			new BrushColorInfo(ColorType.AppSettingsTreeViewBorder, "App Settings TreeView border") {
+				DefaultBackground = "#828790",
+				BackgroundResourceKey = "AppSettingsTreeViewBorder",
 			},
 			new BrushColorInfo(ColorType.EnvironmentFileTabBackground, "FileTab background") {
 				DefaultBackground = "#FFEEEEF2",

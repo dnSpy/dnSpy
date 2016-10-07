@@ -17,33 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Settings.Dialog {
 	sealed partial class AppSettingsDlg : WindowBase {
-		public AppSettingsDlg(IAppSettingsTab[] tabs) {
+		public AppSettingsDlg() {
 			InitializeComponent();
-			foreach (var tab in tabs) {
-				var ti = new TabItem();
-				ti.Header = tab.Title;
-				ti.Content = CreateUIObject(tab.UIObject);
-				tabControl.Items.Add(ti);
-			}
-		}
-
-		object CreateUIObject(object uiObj) {
-			if (uiObj is UIElement)
-				return uiObj;
-			return new ScrollViewer {
-				// Disable the horizontal scrollbar since some tabs have textboxes and they
-				// will grow if the text doesn't fit and there's a horizontal scrollbar.
-				HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-				VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-				Content = uiObj,
-			};
 		}
 	}
 }

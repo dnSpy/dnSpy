@@ -18,10 +18,7 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings.Dialog;
@@ -29,29 +26,13 @@ using dnSpy.Contracts.Settings.Dialog;
 namespace dnSpy.Settings.Dialog {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:OptionsCommand", Icon = DsImagesAttribute.Settings, Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTSDLG, Order = 1000000)]
 	sealed class ShowOptionsCommand : MenuItemBase {
-		readonly IAppWindow appWindow;
-		readonly Lazy<IAppSettingsTabProvider>[] appSettingsTabProviders;
-		readonly Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>[] listeners;
+		readonly Lazy<IAppSettingsService> appSettingsService;
 
 		[ImportingConstructor]
-		ShowOptionsCommand(IAppWindow appWindow, [ImportMany] IEnumerable<Lazy<IAppSettingsTabProvider>> appSettingsTabProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> mefListeners) {
-			this.appWindow = appWindow;
-			this.appSettingsTabProviders = appSettingsTabProviders.ToArray();
-			this.listeners = mefListeners.OrderBy(a => a.Metadata.Order).ToArray();
+		ShowOptionsCommand(Lazy<IAppSettingsService> appSettingsService) {
+			this.appSettingsService = appSettingsService;
 		}
 
-		public override void Execute(IMenuItemContext context) {
-			var tabs = appSettingsTabProviders.SelectMany(a => a.Value.Create()).OrderBy(a => a.Order).ToArray();
-			var dlg = new AppSettingsDlg(tabs);
-			dlg.Owner = appWindow.MainWindow;
-			bool saveSettings = dlg.ShowDialog() == true;
-			var appRefreshSettings = new AppRefreshSettings();
-			foreach (var tab in tabs)
-				tab.OnClosed(saveSettings, appRefreshSettings);
-			if (saveSettings) {
-				foreach (var listener in listeners)
-					listener.Value.OnSettingsModified(appRefreshSettings);
-			}
-		}
+		public override void Execute(IMenuItemContext context) => appSettingsService.Value.Show();
 	}
 }

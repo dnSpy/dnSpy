@@ -24,10 +24,12 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.Contracts.BackgroundImage;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
@@ -54,9 +56,12 @@ namespace dnSpy.BackgroundImage.Dialog {
 	}
 
 	sealed class AppSettingsTab : ViewModelBase, IAppSettingsTab {
-		public double Order => AppSettingsConstants.ORDER_SETTINGS_TAB_BACKGROUNDIMAGE;
+		public Guid ParentGuid => Guid.Empty;
+		public Guid Guid => new Guid("A36F0A79-E8D0-44C5-8F22-A50B28F6117E");
+		public double Order => AppSettingsConstants.ORDER_TAB_BACKGROUNDIMAGE;
 		public string Title => dnSpy_Resources.BackgroundImageOptDlgTab;
-		public object UIObject => this;
+		public ImageReference Icon => ImageReference.None;
+		public FrameworkElement UIObject => new ContentPresenter { Content = this };
 
 		public ICommand ResetCommand => new RelayCommand(a => ResetSettings(), a => CanResetSettings);
 		public ICommand PickFilenamesCommand => new RelayCommand(a => PickFilenames(), a => CanPickFilenames);

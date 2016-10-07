@@ -22,10 +22,6 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Documents.Tabs;
-using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Contracts.App {
 	/// <summary>

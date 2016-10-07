@@ -27,18 +27,23 @@
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         mc:Ignorable="d"
         xmlns:p="clr-namespace:dnSpy.Properties"
-        MinHeight="300" MinWidth="450"
-        Title="{x:Static p:dnSpy_Resources.OptionsTitle}" Height="500" Width="550">
+        MinHeight="300" MinWidth="650"
+        Title="{x:Static p:dnSpy_Resources.OptionsTitle}" Height="500" Width="850">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TabControl
-            Name="tabControl"
-            Grid.Row="0"
-            Margin="5 5 5 0"/>
+        <Grid Grid.Row="0" Margin="5 5 5 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ContentPresenter Grid.Column="0" Name="treeViewContentPresenter" />
+            <ContentPresenter Grid.Column="1" Margin="5 0 5 0" Content="{Binding ElementName=treeViewContentPresenter, Path=Content.SelectedItem.Data.UIObject}" />
+        </Grid>
 
         <Grid Grid.Row="1" Margin="5">
             <Grid.ColumnDefinitions>

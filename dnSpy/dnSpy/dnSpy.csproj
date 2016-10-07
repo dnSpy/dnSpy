@@ -98,9 +98,9 @@
     <Compile Include="Culture\CultureService.cs" />
     <Compile Include="Culture\CultureSettings.cs" />
     <Compile Include="Culture\LanguageInfo.cs" />
+    <Compile Include="Decompiler\DecompilerAppSettingsTabContainer.cs" />
     <Compile Include="Decompiler\DecompilerService.cs" />
     <Compile Include="Decompiler\DecompilerServiceSettings.cs" />
-    <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
     <Compile Include="Decompiler\DummyDecompiler.cs" />
     <Compile Include="Decompiler\MethodDebugService.cs" />
     <Compile Include="Documents\AssemblyResolver.cs" />
@@ -418,6 +418,8 @@
     <Compile Include="Settings\Dialog\AppSettingsDlg.xaml.cs">
       <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\Dialog\AppSettingsService.cs" />
+    <Compile Include="Settings\Dialog\AppSettingsTabVM.cs" />
     <Compile Include="Settings\Dialog\DynamicAppSettingsTabProvider.cs" />
     <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />

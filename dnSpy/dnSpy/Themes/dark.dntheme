@@ -549,6 +549,8 @@
 		<color name="treeviewglyph" bg="#FFF1F1F1" />
 		<color name="treeviewglyphmouseover" bg="#FF007ACC" />
 		<color name="tvitemalternationbackground" bg="#3E81AD" />
+		<color name="appsettingstreeview" fg="#FFF1F1F1" bg="#FF1E1E1E" />
+		<color name="appsettingstreeviewborder" bg="#3F3F46" />
 		<color name="environmentfiletabbackground" bg="#FF2D2D30" />
 		<color name="environmentfiletabborder" bg="#FF2D2D30" />
 		<color name="environmentfiletabbuttondowninactiveborder" bg="#FF0E6198" />

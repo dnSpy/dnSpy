@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Themes;
@@ -54,6 +55,7 @@ namespace dnSpy.TreeView {
 
 		readonly ITreeViewServiceImpl treeViewService;
 		readonly ITreeViewListener treeViewListener;
+		readonly object foregroundBrushResourceKey;
 
 		public event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
 		public event EventHandler<TreeViewNodeRemovedEventArgs> NodeRemoved;
@@ -62,6 +64,7 @@ namespace dnSpy.TreeView {
 			this.Guid = guid;
 			this.treeViewService = treeViewService;
 			this.treeViewListener = options.TreeViewListener;
+			this.foregroundBrushResourceKey = options.ForegroundBrushResourceKey ?? "TreeViewForeground";
 			this.sharpTreeView = new SharpTreeView();
 			this.sharpTreeView.SelectionChanged += SharpTreeView_SelectionChanged;
 			this.sharpTreeView.CanDragAndDrop = options.CanDragAndDrop;
@@ -75,13 +78,13 @@ namespace dnSpy.TreeView {
 			this.sharpTreeView.ShowLines = false;
 
 			if (options.IsGridView) {
-				this.sharpTreeView.ItemContainerStyle = (Style)Application.Current.FindResource(SharpGridView.ItemContainerStyleKey);
-				this.sharpTreeView.Style = (Style)Application.Current.FindResource("SharpTreeViewGridViewStyle");
+				this.sharpTreeView.SetResourceReference(ItemsControl.ItemContainerStyleProperty, SharpGridView.ItemContainerStyleKey);
+				this.sharpTreeView.SetResourceReference(FrameworkElement.StyleProperty, "SharpTreeViewGridViewStyle");
 			}
 			else {
 				// Clear the value set by the constructor. This is required or our style won't be used.
 				this.sharpTreeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
-				this.sharpTreeView.Style = (Style)Application.Current.FindResource(typeof(SharpTreeView));
+				this.sharpTreeView.SetResourceReference(FrameworkElement.StyleProperty, typeof(SharpTreeView));
 			}
 
 			this.sharpTreeView.GetPreviewInsideTextBackground = () => themeService.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
@@ -197,7 +200,10 @@ namespace dnSpy.TreeView {
 		}
 
 		public void SelectItems(IEnumerable<ITreeNodeData> items) {
-			sharpTreeView.SelectedItems.Clear();
+			if (sharpTreeView.SelectionMode == SelectionMode.Single)
+				sharpTreeView.SelectedItem = null;
+			else
+				sharpTreeView.SelectedItems.Clear();
 			var nodes = items.Where(a => a != null).Select(a => (TreeNodeImpl)a.TreeNode).ToArray();
 			if (nodes.Length > 0) {
 				sharpTreeView.FocusNode(nodes[0].Node);
@@ -212,8 +218,14 @@ namespace dnSpy.TreeView {
 						sharpTreeView.ScrollIntoView(item);
 				}));
 			}
-			foreach (var node in nodes)
-				sharpTreeView.SelectedItems.Add(node.Node);
+			foreach (var node in nodes) {
+				if (sharpTreeView.SelectionMode == SelectionMode.Single) {
+					sharpTreeView.SelectedItem = node.Node;
+					break;
+				}
+				else
+					sharpTreeView.SelectedItems.Add(node.Node);
+			}
 		}
 
 		public void Focus() {
@@ -272,6 +284,12 @@ namespace dnSpy.TreeView {
 					tn.IsExpanded = false;
 			}
 			return isExpanded;
+		}
+
+		internal Brush GetNodeForegroundBrush() {
+			var brush = sharpTreeView.TryFindResource(foregroundBrushResourceKey) as Brush;
+			Debug.Assert(brush != null);
+			return brush;
 		}
 	}
 }

@@ -24,11 +24,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Resources;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Settings.Dialog {
-	[ExportDynamicAppSettingsTab(Guid = AppSettingsConstants.GUID_DYNTAB_MISC, Order = AppSettingsConstants.ORDER_SETTINGS_TAB_MISC, Title = "res:MiscDlgTabTitle")]
+	[ExportDynamicAppSettingsTab(Guid = AppSettingsConstants.GUID_DYNTAB_MISC, Order = AppSettingsConstants.ORDER_TAB_MISC, Title = "res:MiscDlgTabTitle")]
 	sealed class OtherDynamicAppSettingsTab : IDynamicAppSettingsTab {
 	}
 
@@ -84,29 +85,33 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		public IEnumerable<IAppSettingsTab> Create() {
-			foreach (var dt in guidToDynTab.Values) {
-				var tab = Create(dt);
+			foreach (var kv in guidToDynTab) {
+				var tab = Create(kv.Key, kv.Value);
 				if (tab != null)
 					yield return tab;
 			}
 		}
 
-		IAppSettingsTab Create(DynTab dt) {
-			var tab = new DynAppSettingsTab(dt);
+		IAppSettingsTab Create(Guid guid, DynTab dt) {
+			var tab = new DynAppSettingsTab(dt, guid);
 			return tab.Count == 0 ? null : tab;
 		}
 
 		sealed class DynAppSettingsTab : IAppSettingsTab {
 			readonly List<ISimpleAppOption> options;
 
+			public Guid ParentGuid => Guid.Empty;
+			public Guid Guid { get; }
 			public int Count => options.Count;
 			public double Order { get; }
 			public string Title { get; }
-			public object UIObject { get; }
+			public ImageReference Icon => ImageReference.None;
+			public FrameworkElement UIObject { get; }
 
-			public DynAppSettingsTab(DynTab dt) {
-				this.Order = dt.Order;
-				this.Title = dt.Title;
+			public DynAppSettingsTab(DynTab dt, Guid guid) {
+				Guid = guid;
+				Order = dt.Order;
+				Title = dt.Title;
 				this.options = new List<ISimpleAppOption>();
 
 				var grid = new Grid();

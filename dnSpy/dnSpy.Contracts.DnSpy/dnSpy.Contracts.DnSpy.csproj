@@ -114,8 +114,6 @@
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Controls\WindowDpiChangedEventArgs.cs" />
     <Compile Include="Decompiler\IDecompilerService.cs" />
-    <Compile Include="Decompiler\IDecompilerSettingsTab.cs" />
-    <Compile Include="Decompiler\IDecompilerSettingsTabProvider.cs" />
     <Compile Include="Decompiler\IMethodDebugService.cs" />
     <Compile Include="Documents\AnnotationsImpl.cs" />
     <Compile Include="Documents\DocumentConstants.cs" />
@@ -461,7 +459,9 @@
     <Compile Include="Settings\Dialog\AppSettingsConstants.cs" />
     <Compile Include="Settings\Dialog\IAppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsModifiedListener.cs" />
+    <Compile Include="Settings\Dialog\IAppSettingsService.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsTab.cs" />
+    <Compile Include="Settings\Dialog\IAppSettingsTabContainer.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsTabProvider.cs" />
     <Compile Include="Settings\Dialog\IDynamicAppSettingsTab.cs" />
     <Compile Include="Settings\Dialog\ISimpleAppOption.cs" />
