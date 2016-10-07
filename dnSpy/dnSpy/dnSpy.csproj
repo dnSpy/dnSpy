@@ -431,7 +431,6 @@
     <Compile Include="Settings\XmlSettingsReader.cs" />
     <Compile Include="Settings\XmlSettingsWriter.cs" />
     <Compile Include="Settings\XmlUtils.cs" />
-    <Compile Include="Tabs\FileTabBackgroundConverter.cs" />
     <Compile Include="Tabs\TabElementZoomer.cs" />
     <Compile Include="Tabs\TabGroup.cs" />
     <Compile Include="Tabs\TabGroupService.cs" />

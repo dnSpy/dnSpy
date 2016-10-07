@@ -5446,7 +5446,6 @@
         <Setter Property="Cursor" Value="Arrow" />
     </Style>
 
-    <tabs:FileTabBackgroundConverter x:Key="FileTabBackgroundConverter"/>
     <Style x:Key="FileTabGroupTabControlStyle"
            BasedOn="{StaticResource {x:Type TabControl}}"
            TargetType="{x:Type TabControl}">
@@ -5457,7 +5456,7 @@
         <Setter Property="BorderThickness"
                 Value="0 0 0 0"/>
         <Setter Property="Background"
-                Value="{Binding TabGroupState, Converter={StaticResource FileTabBackgroundConverter}}"/>
+                Value="{DynamicResource TransparentBrush}"/>
         <Setter Property="Visibility"
                 Value="{Binding HasOpenedDoc, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Setter Property="HorizontalContentAlignment"
@@ -5504,6 +5503,14 @@
                                               ContentSource="SelectedContent"/>
                         </Border>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Value="Active" Binding="{Binding Path=TabGroupState, RelativeSource={RelativeSource Self}}">
+                            <Setter Property="Background" Value="{DynamicResource EnvironmentFileTabSelectedGradient}" />
+                        </DataTrigger>
+                        <DataTrigger Value="Inactive" Binding="{Binding Path=TabGroupState, RelativeSource={RelativeSource Self}}">
+                            <Setter Property="Background" Value="{DynamicResource EnvironmentFileTabInactiveGradient}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
