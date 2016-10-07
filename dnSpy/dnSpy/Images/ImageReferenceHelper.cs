@@ -18,8 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
-using System.Reflection;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Images {
@@ -32,18 +30,10 @@ namespace dnSpy.Images {
 				var type = iconName.Substring(0, colonIndex).Trim();
 				iconName = iconName.Substring(colonIndex + 1).Trim();
 				if (type.Equals("img", StringComparison.OrdinalIgnoreCase)) {
-					int comma = iconName.IndexOf(',');
-					Debug.Assert(comma >= 0);
-					if (comma < 0)
-						return null;
-					var asmName = iconName.Substring(0, comma).Trim();
-					iconName = iconName.Substring(comma + 1).Trim();
-					if (string.IsNullOrEmpty(asmName) || string.IsNullOrEmpty(asmName))
-						return null;
-					var asm = Assembly.Load(asmName);
-					if (asm == null)
-						return null;
-					return new ImageReference(asm, iconName);
+					ImageReference imageReference;
+					if (ImageReference.TryParse(iconName, out imageReference))
+						return imageReference;
+					return null;
 				}
 				return null;
 			}

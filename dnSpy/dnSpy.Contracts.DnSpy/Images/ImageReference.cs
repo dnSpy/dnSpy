@@ -18,12 +18,14 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace dnSpy.Contracts.Images {
 	/// <summary>
 	/// Image reference
 	/// </summary>
+	[TypeConverter(typeof(ImageReferenceConverter))]
 	public struct ImageReference {
 		/// <summary>
 		/// Gets an <see cref="ImageReference"/> which isn't referencing any image
@@ -58,15 +60,53 @@ namespace dnSpy.Contracts.Images {
 		}
 
 		/// <summary>
-		/// ToString()
+		/// Parses a string and tries to create an <see cref="ImageReference"/>
+		/// </summary>
+		/// <param name="value">String to parse</param>
+		/// <param name="result">Result</param>
+		/// <returns></returns>
+		public static bool TryParse(string value, out ImageReference result) {
+			result = default(ImageReference);
+			if (value == null)
+				return false;
+			if (value == string.Empty)
+				return true;
+
+			if (value.StartsWith("/", StringComparison.OrdinalIgnoreCase) ||
+				value.StartsWith("pack:", StringComparison.OrdinalIgnoreCase) ||
+				value.StartsWith("file:", StringComparison.OrdinalIgnoreCase)) {
+				result = new ImageReference(null, value);
+				return true;
+			}
+
+			int index = value.IndexOf(',');
+			if (index < 0) {
+				result = new ImageReference(null, value);
+				return true;
+			}
+			var asmName = value.Substring(0, index).Trim();
+			var name = value.Substring(index + 1).Trim();
+			Assembly asm;
+			try {
+				asm = Assembly.Load(asmName);
+			}
+			catch {
+				return false;
+			}
+			result = new ImageReference(asm, name);
+			return true;
+		}
+
+		/// <summary>
+		/// Converts this instance to a string that can be passed to <see cref="TryParse(string, out ImageReference)"/>
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
 			if (IsDefault)
-				return "<uninit>";
+				return string.Empty;
 			if (Assembly == null)
 				return Name;
-			return $"{Assembly.GetName().Name}: {Name}";
+			return Assembly.GetName().Name + "," + Name;
 		}
 	}
 }

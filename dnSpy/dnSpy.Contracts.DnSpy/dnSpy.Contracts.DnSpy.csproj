@@ -304,6 +304,7 @@
     <Compile Include="Images\IImageSourceInfoProvider.cs" />
     <Compile Include="Images\ImageOptions.cs" />
     <Compile Include="Images\ImageReference.cs" />
+    <Compile Include="Images\ImageReferenceConverter.cs" />
     <Compile Include="Images\ImageSourceInfo.cs" />
     <Compile Include="Language\Intellisense\AcronymSearchHelpers.cs" />
     <Compile Include="Language\Intellisense\BestMatchSelector.cs" />
