@@ -421,6 +421,7 @@
     <Compile Include="Settings\Dialog\AppSettingsService.cs" />
     <Compile Include="Settings\Dialog\AppSettingsTabVM.cs" />
     <Compile Include="Settings\Dialog\DynamicAppSettingsTabProvider.cs" />
+    <Compile Include="Settings\Dialog\SettingsAppCommandLineArgsHandler.cs" />
     <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
     <Compile Include="Settings\SettingsSection.cs" />
