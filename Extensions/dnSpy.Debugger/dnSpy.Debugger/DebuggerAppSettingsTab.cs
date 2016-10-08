@@ -20,8 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
@@ -55,7 +53,7 @@ namespace dnSpy.Debugger {
 		public double Order => AppSettingsConstants.ORDER_TAB_DEBUGGER;
 		public string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = this };
+		public object UIObject => this;
 
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(DebugProcessVM.breakProcessKindList);

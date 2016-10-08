@@ -22,8 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.HexEditor;
@@ -53,7 +51,7 @@ namespace dnSpy.Contracts.Hex {
 		public double Order => AppSettingsConstants.ORDER_TAB_HEXEDITOR;
 		public string Title => dnSpy_Contracts_DnSpy_Resources.HexEditorAppDlgTitle;
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = displayAppSettingsVM };
+		public object UIObject => displayAppSettingsVM;
 
 		readonly HexEditorSettingsImpl hexEditorSettingsImpl;
 		readonly HexEditorAppSettingsVM displayAppSettingsVM;

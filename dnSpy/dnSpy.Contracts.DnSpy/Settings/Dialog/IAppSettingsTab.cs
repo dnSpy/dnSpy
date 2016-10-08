@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Windows;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Settings.Dialog {
@@ -54,7 +53,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		FrameworkElement UIObject { get; }
+		object UIObject { get; }
 
 		/// <summary>
 		/// Called when the dialog box has been closed

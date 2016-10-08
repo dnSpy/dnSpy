@@ -24,8 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Windows;
-using System.Windows.Controls;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Extension;
@@ -103,7 +101,7 @@ namespace dnSpy.BamlDecompiler {
 		public double Order => AppSettingsConstants.ORDER_TAB_BAML;
 		public string Title => dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab;
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = bamlSettings };
+		public object UIObject => bamlSettings;
 
 		readonly BamlSettingsImpl _global_settings;
 		readonly BamlSettings bamlSettings;

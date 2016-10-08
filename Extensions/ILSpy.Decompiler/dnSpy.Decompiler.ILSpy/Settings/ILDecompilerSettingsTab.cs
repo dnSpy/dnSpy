@@ -19,8 +19,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Decompiler.ILSpy.Core.Settings;
@@ -40,7 +38,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		public Guid Guid => new Guid("0F8FBD3F-01DA-4AF0-9316-B7B5C8901A74");
 		public string Title => "IL (ILSpy)";
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = this };
+		public object UIObject => this;
 
 		public ILDecompilerSettingsTab(ILSettings ilSettings) {
 			this._global_ilSettings = ilSettings;

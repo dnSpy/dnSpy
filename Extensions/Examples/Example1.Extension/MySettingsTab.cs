@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Windows;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 
@@ -46,7 +45,7 @@ namespace Example1.Extension {
 
 		// This is the content shown in the tab. It should be a WPF object (eg. a UserControl) or a
 		// ViewModel with a DataTemplate defined in a resource dictionary.
-		public FrameworkElement UIObject {
+		public object UIObject {
 			get {
 				if (uiObject == null) {
 					uiObject = new MySettingsControl();

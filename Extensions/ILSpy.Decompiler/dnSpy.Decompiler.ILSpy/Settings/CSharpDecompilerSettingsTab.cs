@@ -21,8 +21,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
@@ -44,7 +42,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		public Guid Guid => new Guid("8929CE8E-7E2C-4701-A8BA-42F70363872C");
 		public string Title => "C# / Visual Basic (ILSpy)";
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = this };
+		public object UIObject => this;
 
 		public DecompilationObjectVM[] DecompilationObjectsArray => decompilationObjectVMs2;
 		readonly DecompilationObjectVM[] decompilationObjectVMs;

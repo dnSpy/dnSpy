@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
@@ -35,8 +34,8 @@ namespace dnSpy.Settings.Dialog {
 		public double Order => AppSettingsTab.Order;
 		public List<AppSettingsTabVM> Children { get; }
 		internal IAppSettingsTab AppSettingsTab { get; }
-		public FrameworkElement UIObject => uiObject ?? (uiObject = CreateUIObject());
-		FrameworkElement uiObject;
+		public object UIObject => uiObject ?? (uiObject = CreateUIObject());
+		object uiObject;
 
 		public AppSettingsTabVM(IAppSettingsTab tab) {
 			if (tab == null)
@@ -45,14 +44,14 @@ namespace dnSpy.Settings.Dialog {
 			Children = new List<AppSettingsTabVM>();
 		}
 
-		FrameworkElement CreateUIObject() {
+		object CreateUIObject() {
 			var uiObj = AppSettingsTab.UIObject;
 			if (uiObj == null && Children.Count != 0)
 				return Children[0].UIObject;
 			return CreateUIObject(uiObj);
 		}
 
-		static FrameworkElement CreateUIObject(FrameworkElement uiObj) {
+		static object CreateUIObject(object uiObj) {
 			if (uiObj is ScrollViewer)
 				return uiObj;
 			return new ScrollViewer {

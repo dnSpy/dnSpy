@@ -24,7 +24,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -61,7 +60,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		public double Order => AppSettingsConstants.ORDER_TAB_BACKGROUNDIMAGE;
 		public string Title => dnSpy_Resources.BackgroundImageOptDlgTab;
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = this };
+		public object UIObject => this;
 
 		public ICommand ResetCommand => new RelayCommand(a => ResetSettings(), a => CanResetSettings);
 		public ICommand PickFilenamesCommand => new RelayCommand(a => PickFilenames(), a => CanPickFilenames);

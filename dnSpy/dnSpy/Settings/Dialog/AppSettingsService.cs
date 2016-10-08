@@ -203,7 +203,7 @@ namespace dnSpy.Settings.Dialog {
 			public double Order { get; }
 			public string Title { get; }
 			public ImageReference Icon { get; }
-			public FrameworkElement UIObject { get; }
+			public object UIObject { get; }
 
 			public AppSettingsTabContainer(string title, double order, Guid guid, Guid parentGuid, ImageReference icon) {
 				Title = title;

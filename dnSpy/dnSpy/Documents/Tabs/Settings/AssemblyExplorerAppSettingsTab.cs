@@ -22,8 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
@@ -52,7 +50,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		public double Order => AppSettingsConstants.ORDER_TAB_ASSEMBLY_EXPLORER;
 		public string Title => dnSpy_Resources.AssemblyExplorerTitle;
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = this };
+		public object UIObject => this;
 
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 

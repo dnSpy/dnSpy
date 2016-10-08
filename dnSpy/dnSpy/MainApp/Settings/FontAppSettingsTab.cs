@@ -24,7 +24,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -57,7 +56,7 @@ namespace dnSpy.MainApp.Settings {
 		public double Order => AppSettingsConstants.ORDER_ENVIRONMENT_FONT;
 		public string Title => dnSpy_Resources.FontSettings;
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = this };
+		public object UIObject => this;
 
 		public FontFamilyVM[] FontFamilies {
 			get { return fontFamilies; }

@@ -23,8 +23,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
@@ -69,7 +67,7 @@ namespace dnSpy.MainApp.Settings {
 		public double Order => AppSettingsConstants.ORDER_ENVIRONMENT_GENERAL;
 		public string Title => dnSpy_Resources.GeneralSettings;
 		public ImageReference Icon => ImageReference.None;
-		public FrameworkElement UIObject => new ContentPresenter { Content = this };
+		public object UIObject => this;
 
 		readonly IThemeServiceImpl themeService;
 		readonly IWindowsExplorerIntegrationService windowsExplorerIntegrationService;
