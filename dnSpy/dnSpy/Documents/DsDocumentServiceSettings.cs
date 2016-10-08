@@ -25,7 +25,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Documents {
 	interface IDsDocumentServiceSettings : INotifyPropertyChanged {
-		bool UseMemoryMappedIO { get; }
+		bool UseMemoryMappedIO { get; set; }
 	}
 
 	class DsDocumentServiceSettings : ViewModelBase, IDsDocumentServiceSettings {

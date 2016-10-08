@@ -464,10 +464,6 @@
     <Compile Include="Settings\Dialog\IAppSettingsTab.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsTabContainer.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsTabProvider.cs" />
-    <Compile Include="Settings\Dialog\IDynamicAppSettingsTab.cs" />
-    <Compile Include="Settings\Dialog\ISimpleAppOption.cs" />
-    <Compile Include="Settings\Dialog\ISimpleAppOptionProvider.cs" />
-    <Compile Include="Settings\Dialog\SimpleAppOption.cs" />
     <Compile Include="Settings\ISettingsSection.cs" />
     <Compile Include="Settings\ISettingsSectionProvider.cs" />
     <Compile Include="Settings\ISettingsService.cs" />

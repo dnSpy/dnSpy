@@ -378,15 +378,6 @@ namespace dnSpy.Contracts.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Font.
-        /// </summary>
-        public static string Font {
-            get {
-                return ResourceManager.GetString("Font", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Go to Address....
         /// </summary>
         public static string GoToAddressCommand {
@@ -734,15 +725,6 @@ namespace dnSpy.Contracts.Properties {
         public static string HexEditorSelectKey {
             get {
                 return ResourceManager.GetString("HexEditorSelectKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Other Options.
-        /// </summary>
-        public static string HexEditorSettings_OtherOptions {
-            get {
-                return ResourceManager.GetString("HexEditorSettings_OtherOptions", resourceCulture);
             }
         }
         

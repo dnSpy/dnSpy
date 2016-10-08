@@ -21,18 +21,18 @@
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.UseSourceCodeOrder}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_UseSourceCodeOrder}"/>
             <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_DecompilationOrder}">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject0}" DisplayMemberPath="Text" />
-                    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject1}" DisplayMemberPath="Text" />
-                    <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject2}" DisplayMemberPath="Text" />
-                    <ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject3}" DisplayMemberPath="Text" />
-                    <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject4}" DisplayMemberPath="Text" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ComboBox Grid.Row="0" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject0}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Row="1" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject1}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Row="2" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject2}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Row="3" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject3}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Row="4" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject4}" DisplayMemberPath="Text" />
                 </Grid>
             </GroupBox>
         </StackPanel>

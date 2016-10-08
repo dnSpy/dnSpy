@@ -124,13 +124,10 @@
     <value>BAML File</value>
   </data>
   <data name="BamlOptionDlgTab" xml:space="preserve">
-    <value>BAML</value>
+    <value>BAML Decompiler</value>
   </data>
   <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
     <value>Disassemble BAML</value>
-  </data>
-  <data name="BamlSettings_DisassembleBAML_ToolTip" xml:space="preserve">
-    <value>Disassembles BAML records instead of decompiling it to XAML.</value>
   </data>
   <data name="DisassembleBAMLCommand" xml:space="preserve">
     <value>Disassemble BAML</value>

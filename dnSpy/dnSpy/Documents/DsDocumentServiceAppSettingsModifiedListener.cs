@@ -32,7 +32,7 @@ namespace dnSpy.Documents {
 		}
 
 		public void OnSettingsModified(IAppRefreshSettings appRefreshSettings) {
-			if (appRefreshSettings.Has(AppSettingsConstants.DISABLE_MMAP))
+			if (appRefreshSettings.Has(AppSettingsConstants.DISABLE_MEMORY_MAPPED_IO))
 				DisableMemoryMappedIO();
 		}
 

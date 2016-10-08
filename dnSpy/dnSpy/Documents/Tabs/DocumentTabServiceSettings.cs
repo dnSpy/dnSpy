@@ -25,8 +25,8 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Documents.Tabs {
 	interface IDocumentTabServiceSettings : INotifyPropertyChanged {
-		bool RestoreTabs { get; }
-		bool DecompileFullType { get; }
+		bool RestoreTabs { get; set; }
+		bool DecompileFullType { get; set; }
 	}
 
 	class DocumentTabServiceSettings : ViewModelBase, IDocumentTabServiceSettings {

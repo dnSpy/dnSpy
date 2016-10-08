@@ -42,7 +42,12 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Disable memory mapped I/O
 		/// </summary>
-		public static readonly Guid DISABLE_MMAP = new Guid("D34E66D2-524C-4B6C-87CE-ED8ECCC32C59");
+		public static readonly Guid DISABLE_MEMORY_MAPPED_IO = new Guid("D34E66D2-524C-4B6C-87CE-ED8ECCC32C59");
+
+		/// <summary>
+		/// Order of Environment settings tab
+		/// </summary>
+		public const double ORDER_TAB_ENVIRONMENT = 0;
 
 		/// <summary>
 		/// Order of decompiler settings tab
@@ -55,9 +60,9 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_TAB_DEBUGGER = 2000;
 
 		/// <summary>
-		/// Order of display settings tab
+		/// Order of Assembly Explorer settings tab
 		/// </summary>
-		public const double ORDER_TAB_DISPLAY = 3000;
+		public const double ORDER_TAB_ASSEMBLY_EXPLORER = 3000;
 
 		/// <summary>
 		/// Order of hex editor settings tab
@@ -75,11 +80,6 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_TAB_BAML = 6000;
 
 		/// <summary>
-		/// Order of misc settings tab
-		/// </summary>
-		public const double ORDER_TAB_MISC = 100000;
-
-		/// <summary>
 		/// Order of <see cref="IDsDocumentService"/>'s <see cref="IAppSettingsModifiedListener"/> instance
 		/// </summary>
 		public const double ORDER_LISTENER_DOCUMENTMANAGER = double.MinValue;	// It must be first since it disables mmap'd I/O
@@ -95,37 +95,32 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_LISTENER_DOCUMENTTREEVIEW = 2000;
 
 		/// <summary>
+		/// Guid of Environment tab settings
+		/// </summary>
+		public const string GUID_ENVIRONMENT = "66B8E553-3961-4B0D-8948-F399FA78A809";
+
+		/// <summary>
 		/// Guid of Decompiler tab settings
 		/// </summary>
 		public const string GUID_DECOMPILER = "E380FC93-BACB-4125-8AF1-ADFAEA4D1307";
 
 		/// <summary>
-		/// Guid of "Misc" settings tab
+		/// Order of Environment / General
 		/// </summary>
-		public const string GUID_DYNTAB_MISC = "D32B4501-DDB3-4886-9D51-8DA1255A30DC";
-
-		/// <summary>Misc tab: order of: use mmap'd I/O checkbox</summary>
-		public const double ORDER_MISC_USEMMAPDIO = 1000;
-
-		/// <summary>Misc tab: order of: windows explorer integration checkbox</summary>
-		public const double ORDER_MISC_EXPLORERINTEGRATION = 2000;
-
-		/// <summary>Misc tab: order of: deserialize resources checkbox</summary>
-		public const double ORDER_MISC_DESERIALIZERSRCS = 3000;
-
-		/// <summary>Misc tab: order of: enable all warnings button</summary>
-		public const double ORDER_MISC_ENABLEALLWARNINGS = 4000;
-
-		/// <summary>Misc tab: order of: use new renderer group box</summary>
-		public const double ORDER_MISC_USENEWRENDERER = 5000;
+		public const double ORDER_ENVIRONMENT_GENERAL = 0;
 
 		/// <summary>
-		/// Order of ILSpy C#/VB decompiler settings
+		/// Order of Environment / Font
+		/// </summary>
+		public const double ORDER_ENVIRONMENT_FONT = 1000;
+
+		/// <summary>
+		/// Order of Decompiler / ILSpy C#/VB
 		/// </summary>
 		public const double ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP = 10000;
 
 		/// <summary>
-		/// Order of ILSpy IL disassembler settings
+		/// Order of Decompiler / ILSpy IL
 		/// </summary>
 		public const double ORDER_DECOMPILER_SETTINGS_ILSPY_IL = 11000;
 	}

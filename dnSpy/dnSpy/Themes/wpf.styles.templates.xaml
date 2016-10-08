@@ -8,6 +8,7 @@
                     xmlns:tabssettings="clr-namespace:dnSpy.Documents.Tabs.Settings"
                     xmlns:decompiler="clr-namespace:dnSpy.Decompiler"
                     xmlns:mainapp="clr-namespace:dnSpy.MainApp"
+                    xmlns:mainappsettings="clr-namespace:dnSpy.MainApp.Settings"
                     xmlns:tw="clr-namespace:dnSpy.ToolWindows"
                     xmlns:p="clr-namespace:dnSpy.Properties"
                     xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
@@ -3695,6 +3696,15 @@
 							<Setter Property="Foreground"
 									Value="{DynamicResource CommonControlsComboBoxTextFocused}" />
 						</Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsKeyboardFocusWithin" Value="true"/>
+                                <Condition Property="IsEditable" Value="true"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxBackground}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorder}" />
+                            <Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxText}" />
+                        </MultiTrigger>
                         <Trigger SourceName="PART_Popup"
                                  Property="Popup.HasDropShadow"
                                  Value="true">
@@ -4821,7 +4831,7 @@
                 <ControlTemplate TargetType="{x:Type shtv:SharpTreeViewItem}">
                     <Border Background="Transparent">
                         <Border Background="{TemplateBinding Background}">
-                            <ctrls:FastTreeNodeView Name="nodeView"
+                            <ctrls:FastTreeNodeView x:Name="nodeView"
                                                        Foreground="{Binding Foreground}"
                                                        HorizontalAlignment="Left" />
                         </Border>
@@ -5858,113 +5868,38 @@
                 Value="3,3,3,3"/>
     </Style>
 
-    <DataTemplate DataType="{x:Type tabssettings:DisplayAppSettingsVM}">
-        <Grid>
-            <Grid.Resources>
-                <mvvmvc:FontSizeConverter x:Key="fontSizeConverter" />
-                <tabssettings:FontFamilyVMConverter x:Key="fontFamilyVMConverter" />
-            </Grid.Resources>
+    <DataTemplate DataType="{x:Type tabssettings:AssemblyExplorerAppSettingsTab}">
+        <Grid Margin="5">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <GroupBox Header="{x:Static p:dnSpy_Resources.Font}">
+            <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowTokens}" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowAssemblyVersion}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyVersion}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowAssemblyPublicKeyToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyPublicKeyToken}" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SingleClickExpandsTreeViewChildren}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_SingleClickExpandNodes}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_SyntaxHighlight}" />
+            <GroupBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_Order}">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="50" />
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <ComboBox Grid.Column="0" Margin="3,0" x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding FontFamilyVM}" ItemsSource="{Binding FontFamilies}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <ContentPresenter Content="{Binding Converter={StaticResource fontFamilyVMConverter}, Mode=OneWay}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <ComboBox Grid.Column="1" Text="{Binding TextEditorSettings.FontSize, Converter={StaticResource fontSizeConverter}}" IsEditable="True" Margin="3,0">
-                        <ComboBoxItem>6</ComboBoxItem>
-                        <ComboBoxItem>7</ComboBoxItem>
-                        <ComboBoxItem>8</ComboBoxItem>
-                        <ComboBoxItem>9</ComboBoxItem>
-                        <ComboBoxItem>10</ComboBoxItem>
-                        <ComboBoxItem>11</ComboBoxItem>
-                        <ComboBoxItem>12</ComboBoxItem>
-                        <ComboBoxItem>13</ComboBoxItem>
-                        <ComboBoxItem>14</ComboBoxItem>
-                        <ComboBoxItem>15</ComboBoxItem>
-                        <ComboBoxItem>16</ComboBoxItem>
-                        <ComboBoxItem>17</ComboBoxItem>
-                        <ComboBoxItem>18</ComboBoxItem>
-                        <ComboBoxItem>19</ComboBoxItem>
-                        <ComboBoxItem>20</ComboBoxItem>
-                        <ComboBoxItem>21</ComboBoxItem>
-                        <ComboBoxItem>22</ComboBoxItem>
-                        <ComboBoxItem>23</ComboBoxItem>
-                        <ComboBoxItem>24</ComboBoxItem>
-                    </ComboBox>
-                    <Border Grid.Row="1" Grid.ColumnSpan="4" BorderBrush="{DynamicResource SystemColorsControlDarkDark}" BorderThickness="1" Background="{DynamicResource SystemColorsWindow}" Margin="3,5">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="AaBbCcIiOoXxYyZz" FontFamily="{Binding TextEditorSettings.FontFamily}" FontSize="{Binding TextEditorSettings.FontSize}" />
-                    </Border>
+                    <ComboBox Grid.Row="0" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind0}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Row="1" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind1}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Row="2" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind2}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Row="3" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind3}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Row="4" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind4}" DisplayMemberPath="Text" />
                 </Grid>
             </GroupBox>
-            <GroupBox Header="{x:Static p:dnSpy_Resources.DisplaySettings_OtherOptions}" Grid.Row="1">
-                <StackPanel Margin="3">
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowLineNumbers}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.HighlightReferences}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_HighlightReferences}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTabServiceSettings.DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTabServiceSettings.RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.ShowToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowTokens}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.ShowAssemblyVersion}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyVersion}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.ShowAssemblyPublicKeyToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyPublicKeyToken}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.SingleClickExpandsTreeViewChildren}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SingleClickExpandNodes}"/>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding DocumentTreeViewSettings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SyntaxHighlightTreeView}"/>
-                    <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.DisplaySettings_MemberOrder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind0}" DisplayMemberPath="Text" />
-                            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind1}" DisplayMemberPath="Text" />
-                            <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind2}" DisplayMemberPath="Text" />
-                            <ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind3}" DisplayMemberPath="Text" />
-                            <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind4}" DisplayMemberPath="Text" />
-                        </Grid>
-                    </GroupBox>
-                </StackPanel>
-            </GroupBox>
         </Grid>
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type mainapp:UseNewRendererVM}">
-        <GroupBox>
-            <GroupBox.Header>
-                <CheckBox IsChecked="{Binding UseNewRenderer}" Content="{x:Static p:dnSpy_Resources.UseNewRendererHeader}" />
-            </GroupBox.Header>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap"
-                           Text="{x:Static p:dnSpy_Resources.UseNewRendererInfo}" />
-                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRenderer_TextEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_TextEditor}" />
-                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_HexEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_HexEditor}" />
-                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_DocumentTreeView}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_FileTreeView}" />
-            </Grid>
-        </GroupBox>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type search:SearchResult}">
@@ -6078,6 +6013,99 @@
             <TextBox Grid.Row="10" Grid.Column="3" Margin="0 0 0 0" Name="maxHeightTextBox" Text="{Binding MaxHeightVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 
             <Button Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Reset}" Command="{Binding ResetCommand}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type mainappsettings:GeneralAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Margin="-5 0 5 0" Content="{x:Static p:dnSpy_Resources.GeneralSettings_Theme}" Target="{Binding ElementName=themeComboBox}" />
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="themeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ThemesVM}" SelectedItem="{Binding SelectedThemeVM}" VerticalContentAlignment="Center" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding WindowsExplorerIntegration}" Content="{x:Static p:dnSpy_Resources.IntegrateWithWindowsExplorer}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding DeserializeResources}" Content="{x:Static p:dnSpy_Resources.Options_Misc_Deserialize}" ToolTip="{x:Static p:dnSpy_Resources.Options_Misc_Deserialize_ToolTip}" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseMemoryMappedIO}" Content="{x:Static p:dnSpy_Resources.Options_Misc_UseMmapdIO}" />
+            <GroupBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0">
+                <GroupBox.Header>
+                    <CheckBox IsChecked="{Binding UseNewRendererVM.UseNewRenderer}" Content="{x:Static p:dnSpy_Resources.UseNewRendererHeader}" />
+                </GroupBox.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap"
+                               Text="{x:Static p:dnSpy_Resources.UseNewRendererInfo}" />
+                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_TextEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_TextEditor}" />
+                    <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_HexEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_HexEditor}" />
+                    <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_DocumentTreeView}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerTitle}" />
+                </Grid>
+            </GroupBox>
+            <Button Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Resources.Options_Misc_Button_EnableAllWarnings}" Command="{Binding ClearAllWarningsCommand}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type mainappsettings:FontAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.Resources>
+                <mvvmvc:FontSizeConverter x:Key="fontSizeConverter" />
+                <mainappsettings:FontFamilyVMConverter x:Key="fontFamilyVMConverter" />
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" Margin="0 0 0 0" x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding FontFamilyVM}" ItemsSource="{Binding FontFamilies}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding Converter={StaticResource fontFamilyVMConverter}, Mode=OneWay}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ComboBox Grid.Column="1" Text="{Binding FontSize, Converter={StaticResource fontSizeConverter}}" IsEditable="True" Margin="5 0 0 0" HorizontalAlignment="Stretch">
+                <ComboBoxItem>6</ComboBoxItem>
+                <ComboBoxItem>7</ComboBoxItem>
+                <ComboBoxItem>8</ComboBoxItem>
+                <ComboBoxItem>9</ComboBoxItem>
+                <ComboBoxItem>10</ComboBoxItem>
+                <ComboBoxItem>11</ComboBoxItem>
+                <ComboBoxItem>12</ComboBoxItem>
+                <ComboBoxItem>13</ComboBoxItem>
+                <ComboBoxItem>14</ComboBoxItem>
+                <ComboBoxItem>15</ComboBoxItem>
+                <ComboBoxItem>16</ComboBoxItem>
+                <ComboBoxItem>17</ComboBoxItem>
+                <ComboBoxItem>18</ComboBoxItem>
+                <ComboBoxItem>19</ComboBoxItem>
+                <ComboBoxItem>20</ComboBoxItem>
+                <ComboBoxItem>21</ComboBoxItem>
+                <ComboBoxItem>22</ComboBoxItem>
+                <ComboBoxItem>23</ComboBoxItem>
+                <ComboBoxItem>24</ComboBoxItem>
+            </ComboBox>
         </Grid>
     </DataTemplate>
 

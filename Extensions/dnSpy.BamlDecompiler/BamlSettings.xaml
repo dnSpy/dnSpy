@@ -5,7 +5,7 @@
 	<DataTemplate DataType="{x:Type baml:BamlSettings}">
 		<Grid Margin="5">
 			<StackPanel>
-                <CheckBox Margin="0 5 0 0" IsChecked="{Binding DisassembleBaml}" Content="{x:Static p:dnSpy_BamlDecompiler_Resources.BamlSettings_DisassembleBAML}" ToolTip="{x:Static p:dnSpy_BamlDecompiler_Resources.BamlSettings_DisassembleBAML_ToolTip}" />
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding DisassembleBaml}" Content="{x:Static p:dnSpy_BamlDecompiler_Resources.BamlSettings_DisassembleBAML}" />
 			</StackPanel>
 		</Grid>
 	</DataTemplate>

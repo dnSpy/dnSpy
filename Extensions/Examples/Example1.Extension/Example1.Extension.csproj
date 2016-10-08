@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="CodeCtxMenus.cs" />
     <Compile Include="MainMenuCommands.cs" />
-    <Compile Include="MiscOptions.cs" />
     <Compile Include="MySettings.cs" />
     <Compile Include="MySettingsControl.xaml.cs">
       <DependentUpon>MySettingsControl.xaml</DependentUpon>

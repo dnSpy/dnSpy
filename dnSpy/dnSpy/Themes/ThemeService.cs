@@ -32,13 +32,19 @@ using dnSpy.Events;
 using Microsoft.Win32;
 
 namespace dnSpy.Themes {
-	[Export, Export(typeof(IThemeService))]
-	sealed class ThemeService : IThemeService {
+	interface IThemeServiceImpl : IThemeService {
+		IEnumerable<ITheme> AllThemes { get; }
+		IEnumerable<ITheme> VisibleThemes { get; }
+		new ITheme Theme { get; set; }
+	}
+
+	[Export(typeof(IThemeService)), Export(typeof(IThemeServiceImpl))]
+	sealed class ThemeService : IThemeServiceImpl {
 		readonly Dictionary<Guid, Theme> themes;
 
 		public ITheme Theme {
 			get { return theme; }
-			internal set {
+			set {
 				if (theme != value) {
 					theme = value;
 					themeSettings.ThemeGuid = value.Guid;
@@ -51,7 +57,17 @@ namespace dnSpy.Themes {
 		}
 		ITheme theme;
 
-		public IEnumerable<ITheme> AllThemesSorted => themes.Values.OrderBy(x => x.Order);
+		public IEnumerable<ITheme> AllThemes => themes.Values.OrderBy(x => x.Order);
+
+		public IEnumerable<ITheme> VisibleThemes {
+			get {
+				foreach (var theme in AllThemes) {
+					if (!Settings.ShowAllThemes && !IsHighContrast && theme.IsHighContrast)
+						continue;
+					yield return theme;
+				}
+			}
+		}
 
 		public bool IsHighContrast {
 			get { return isHighContrast; }
@@ -116,7 +132,7 @@ namespace dnSpy.Themes {
 				return theme;
 			if (themes.TryGetValue(DefaultThemeGuid, out theme))
 				return theme;
-			return AllThemesSorted.FirstOrDefault();
+			return AllThemes.FirstOrDefault();
 		}
 
 		void SwitchThemeIfNecessary() {

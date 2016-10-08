@@ -22,8 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Themes;
-using dnSpy.Properties;
 
 namespace dnSpy.Themes {
 	static class ThemesConstants {
@@ -37,10 +35,10 @@ namespace dnSpy.Themes {
 
 	[ExportMenuItem(OwnerGuid = ThemesConstants.THEMES_GUID, Group = MenuConstants.GROUP_APP_MENU_THEMES_THEMES, Order = 0)]
 	sealed class ThemesMenu : MenuItemBase, IMenuItemProvider {
-		readonly ThemeService themeService;
+		readonly IThemeServiceImpl themeService;
 
 		[ImportingConstructor]
-		ThemesMenu(ThemeService themeService) {
+		ThemesMenu(IThemeServiceImpl themeService) {
 			this.themeService = themeService;
 		}
 
@@ -63,26 +61,12 @@ namespace dnSpy.Themes {
 		}
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
-			foreach (var theme in themeService.AllThemesSorted) {
-				if (!themeService.Settings.ShowAllThemes && !themeService.IsHighContrast && theme.IsHighContrast)
-					continue;
-				var attr = new ExportMenuItemAttribute { Header = GetThemeHeaderName(theme) };
+			foreach (var theme in themeService.VisibleThemes) {
+				var attr = new ExportMenuItemAttribute { Header = theme.GetMenuName() };
 				var tmp = theme;
 				var item = new MyMenuItem(ctx => themeService.Theme = tmp, theme == themeService.Theme);
 				yield return new CreatedMenuItem(attr, item);
 			}
-		}
-
-		static string GetThemeHeaderName(ITheme theme) {
-			if (theme.Guid == ThemeConstants.THEME_HIGHCONTRAST_GUID)
-				return dnSpy_Resources.Theme_HighContrast;
-			if (theme.Guid == ThemeConstants.THEME_BLUE_GUID)
-				return dnSpy_Resources.Theme_Blue;
-			if (theme.Guid == ThemeConstants.THEME_DARK_GUID)
-				return dnSpy_Resources.Theme_Dark;
-			if (theme.Guid == ThemeConstants.THEME_LIGHT_GUID)
-				return dnSpy_Resources.Theme_Light;
-			return theme.MenuName;
 		}
 	}
 }

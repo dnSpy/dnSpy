@@ -109,7 +109,6 @@
     <Compile Include="Documents\DsDocumentLoader.cs" />
     <Compile Include="Documents\DsDocumentService.cs" />
     <Compile Include="Documents\DsDocumentServiceAppSettingsModifiedListener.cs" />
-    <Compile Include="Documents\DsDocumentServiceOptionProvider.cs" />
     <Compile Include="Documents\DsDocumentServiceProvider.cs" />
     <Compile Include="Documents\DsDocumentServiceSettings.cs" />
     <Compile Include="Documents\IDsDocumentLoader.cs" />
@@ -221,11 +220,10 @@
     <Compile Include="Documents\Tabs\SaveService.cs" />
     <Compile Include="Documents\Tabs\SearchMsdnCommand.cs" />
     <Compile Include="Documents\Tabs\SerializedTabs.cs" />
-    <Compile Include="Documents\Tabs\Settings\DisplaySettingsTab.cs" />
+    <Compile Include="Documents\Tabs\Settings\AssemblyExplorerAppSettingsTab.cs" />
     <Compile Include="Documents\Tabs\TabCommands.cs" />
     <Compile Include="Documents\Tabs\TabContentImpl.cs" />
     <Compile Include="Documents\Tabs\TabHistory.cs" />
-    <Compile Include="Documents\Tabs\TabMiscOptionProvider.cs" />
     <Compile Include="Documents\Tabs\TreeNodeReferenceDocumentTabContentProvider.cs" />
     <Compile Include="Documents\TreeView\AssemblyDocumentNode.cs" />
     <Compile Include="Documents\TreeView\AssemblyReferenceNode.cs" />
@@ -355,12 +353,15 @@
     </Compile>
     <Compile Include="MainApp\MainWindowControl.cs" />
     <Compile Include="MainApp\MessageBoxService.cs" />
-    <Compile Include="MainApp\MiscOptions.cs" />
     <Compile Include="MainApp\MsgBoxDlg.xaml.cs">
       <DependentUpon>MsgBoxDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\MsgBoxVM.cs" />
     <Compile Include="MainApp\SavedWindowState.cs" />
+    <Compile Include="MainApp\Settings\EnvironmentAppSettingsTabContainer.cs" />
+    <Compile Include="MainApp\Settings\FontAppSettingsTab.cs" />
+    <Compile Include="MainApp\Settings\GeneralAppSettingsTab.cs" />
+    <Compile Include="MainApp\Settings\WindowsExplorerIntegration.cs" />
     <Compile Include="MainApp\StartUpClass.cs" />
     <Compile Include="MainApp\ToolBarCommands.cs" />
     <Compile Include="MainApp\ViewCommands.cs" />
@@ -420,7 +421,6 @@
     </Compile>
     <Compile Include="Settings\Dialog\AppSettingsService.cs" />
     <Compile Include="Settings\Dialog\AppSettingsTabVM.cs" />
-    <Compile Include="Settings\Dialog\DynamicAppSettingsTabProvider.cs" />
     <Compile Include="Settings\Dialog\SettingsAppCommandLineArgsHandler.cs" />
     <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
@@ -707,6 +707,7 @@
     <Compile Include="Themes\ColorInfos.cs" />
     <Compile Include="Themes\Theme.cs" />
     <Compile Include="Themes\ThemeColor.cs" />
+    <Compile Include="Themes\ThemeHelpers.cs" />
     <Compile Include="Themes\ThemeService.cs" />
     <Compile Include="Themes\ThemeSettings.cs" />
     <Compile Include="Themes\ThemesMenu.cs" />

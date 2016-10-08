@@ -25,10 +25,10 @@ using dnSpy.Contracts.App;
 namespace dnSpy.Themes {
 	[Export(typeof(IAppCommandLineArgsHandler))]
 	sealed class AppCommandLineArgsHandler : IAppCommandLineArgsHandler {
-		readonly ThemeService themeService;
+		readonly IThemeServiceImpl themeService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(ThemeService themeService) {
+		AppCommandLineArgsHandler(IThemeServiceImpl themeService) {
 			this.themeService = themeService;
 		}
 
@@ -40,7 +40,7 @@ namespace dnSpy.Themes {
 
 			Guid guid;
 			bool isGuid = Guid.TryParse(args.Theme, out guid);
-			var theme = themeService.AllThemesSorted.FirstOrDefault(a => isGuid ? a.Guid == guid : !string.IsNullOrEmpty(a.Name) && StringComparer.InvariantCulture.Equals(a.Name, args.Theme));
+			var theme = themeService.AllThemes.FirstOrDefault(a => isGuid ? a.Guid == guid : !string.IsNullOrEmpty(a.Name) && StringComparer.InvariantCulture.Equals(a.Name, args.Theme));
 			if (theme != null)
 				themeService.Theme = theme;
 		}

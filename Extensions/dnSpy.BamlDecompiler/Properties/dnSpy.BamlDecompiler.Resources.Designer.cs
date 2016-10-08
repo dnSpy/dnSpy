@@ -79,7 +79,7 @@ namespace dnSpy.BamlDecompiler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to BAML.
+        ///   Looks up a localized string similar to BAML Decompiler.
         /// </summary>
         public static string BamlOptionDlgTab {
             get {
@@ -93,15 +93,6 @@ namespace dnSpy.BamlDecompiler.Properties {
         public static string BamlSettings_DisassembleBAML {
             get {
                 return ResourceManager.GetString("BamlSettings_DisassembleBAML", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Disassembles BAML records instead of decompiling it to XAML..
-        /// </summary>
-        public static string BamlSettings_DisassembleBAML_ToolTip {
-            get {
-                return ResourceManager.GetString("BamlSettings_DisassembleBAML_ToolTip", resourceCulture);
             }
         }
         

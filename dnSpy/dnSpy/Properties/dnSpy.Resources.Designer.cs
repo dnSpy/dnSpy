@@ -178,6 +178,33 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order (restart needed).
+        /// </summary>
+        public static string AssemblyExplorerSettings_Order {
+            get {
+                return ResourceManager.GetString("AssemblyExplorerSettings_Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Single-click expands nodes.
+        /// </summary>
+        public static string AssemblyExplorerSettings_SingleClickExpandNodes {
+            get {
+                return ResourceManager.GetString("AssemblyExplorerSettings_SingleClickExpandNodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syntax highlight.
+        /// </summary>
+        public static string AssemblyExplorerSettings_SyntaxHighlight {
+            get {
+                return ResourceManager.GetString("AssemblyExplorerSettings_SyntaxHighlight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assembly Explorer.
         /// </summary>
         public static string AssemblyExplorerTitle {
@@ -655,15 +682,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display.
-        /// </summary>
-        public static string DisplayDlgTabTitle {
-            get {
-                return ResourceManager.GetString("DisplayDlgTabTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Decompile the full type instead of a single member.
         /// </summary>
         public static string DisplaySettings_DecompileType {
@@ -678,24 +696,6 @@ namespace dnSpy.Properties {
         public static string DisplaySettings_HighlightReferences {
             get {
                 return ResourceManager.GetString("DisplaySettings_HighlightReferences", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to TreeView member order (restart needed).
-        /// </summary>
-        public static string DisplaySettings_MemberOrder {
-            get {
-                return ResourceManager.GetString("DisplaySettings_MemberOrder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Other Options.
-        /// </summary>
-        public static string DisplaySettings_OtherOptions {
-            get {
-                return ResourceManager.GetString("DisplaySettings_OtherOptions", resourceCulture);
             }
         }
         
@@ -745,24 +745,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-click expands TreeView nodes.
-        /// </summary>
-        public static string DisplaySettings_SingleClickExpandNodes {
-            get {
-                return ResourceManager.GetString("DisplaySettings_SingleClickExpandNodes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Syntax highlight TreeView.
-        /// </summary>
-        public static string DisplaySettings_SyntaxHighlightTreeView {
-            get {
-                return ResourceManager.GetString("DisplaySettings_SyntaxHighlightTreeView", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to .NET Executables.
         /// </summary>
         public static string DotNetExes {
@@ -777,6 +759,15 @@ namespace dnSpy.Properties {
         public static string EmptyTabTitle {
             get {
                 return ResourceManager.GetString("EmptyTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Environment.
+        /// </summary>
+        public static string EnvironmentSettings {
+            get {
+                return ResourceManager.GetString("EnvironmentSettings", resourceCulture);
             }
         }
         
@@ -1037,9 +1028,9 @@ namespace dnSpy.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Font.
         /// </summary>
-        public static string Font {
+        public static string FontSettings {
             get {
-                return ResourceManager.GetString("Font", resourceCulture);
+                return ResourceManager.GetString("FontSettings", resourceCulture);
             }
         }
         
@@ -1067,6 +1058,24 @@ namespace dnSpy.Properties {
         public static string FullScreenToolBarCommand {
             get {
                 return ResourceManager.GetString("FullScreenToolBarCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        public static string GeneralSettings {
+            get {
+                return ResourceManager.GetString("GeneralSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme.
+        /// </summary>
+        public static string GeneralSettings_Theme {
+            get {
+                return ResourceManager.GetString("GeneralSettings_Theme", resourceCulture);
             }
         }
         
@@ -1323,6 +1332,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Integrate with Windows Explorer.
+        /// </summary>
+        public static string IntegrateWithWindowsExplorer {
+            get {
+                return ResourceManager.GetString("IntegrateWithWindowsExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The text is invalid.
         /// </summary>
         public static string InvalidInputTextMessageBox {
@@ -1481,15 +1499,6 @@ namespace dnSpy.Properties {
         public static string MessageBoxDontShowAgain {
             get {
                 return ResourceManager.GetString("MessageBoxDontShowAgain", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Misc.
-        /// </summary>
-        public static string MiscDlgTabTitle {
-            get {
-                return ResourceManager.GetString("MiscDlgTabTitle", resourceCulture);
             }
         }
         
@@ -1980,38 +1989,11 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows Explorer Integration.
-        /// </summary>
-        public static string Options_Misc_ExplorerIntegration {
-            get {
-                return ResourceManager.GetString("Options_Misc_ExplorerIntegration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Adds a context menu entry to Windows Explorer to open assemblies in dnSpy.
-        /// </summary>
-        public static string Options_Misc_ExplorerIntegration_ToolTip {
-            get {
-                return ResourceManager.GetString("Options_Misc_ExplorerIntegration_ToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Use memory mapped I/O.
         /// </summary>
         public static string Options_Misc_UseMmapdIO {
             get {
                 return ResourceManager.GetString("Options_Misc_UseMmapdIO", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Can be disabled per module if you right-click it..
-        /// </summary>
-        public static string Options_Misc_UseMmapdIO_ToolTip {
-            get {
-                return ResourceManager.GetString("Options_Misc_UseMmapdIO_ToolTip", resourceCulture);
             }
         }
         
@@ -3011,15 +2993,6 @@ namespace dnSpy.Properties {
         public static string UseHorizontalTabGroupsCommand {
             get {
                 return ResourceManager.GetString("UseHorizontalTabGroupsCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to File TreeView.
-        /// </summary>
-        public static string UseNewRenderer_FileTreeView {
-            get {
-                return ResourceManager.GetString("UseNewRenderer_FileTreeView", resourceCulture);
             }
         }
         
