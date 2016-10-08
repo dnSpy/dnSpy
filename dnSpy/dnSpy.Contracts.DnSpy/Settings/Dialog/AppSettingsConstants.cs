@@ -47,37 +47,42 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Order of Environment settings tab
 		/// </summary>
-		public const double ORDER_TAB_ENVIRONMENT = 0;
+		public const double ORDER_ENVIRONMENT = 0;
 
 		/// <summary>
 		/// Order of decompiler settings tab
 		/// </summary>
-		public const double ORDER_TAB_DECOMPILER = 1000;
+		public const double ORDER_DECOMPILER = 1000;
 
 		/// <summary>
 		/// Order of debugger settings tab
 		/// </summary>
-		public const double ORDER_TAB_DEBUGGER = 2000;
+		public const double ORDER_DEBUGGER = 2000;
+
+		/// <summary>
+		/// Order of Code Editor settings tab
+		/// </summary>
+		public const double ORDER_CODE_EDITOR = 4000;
 
 		/// <summary>
 		/// Order of Assembly Explorer settings tab
 		/// </summary>
-		public const double ORDER_TAB_ASSEMBLY_EXPLORER = 3000;
+		public const double ORDER_ASSEMBLY_EXPLORER = 5000;
 
 		/// <summary>
 		/// Order of hex editor settings tab
 		/// </summary>
-		public const double ORDER_TAB_HEXEDITOR = 4000;
+		public const double ORDER_HEXEDITOR = 6000;
 
 		/// <summary>
 		/// Order of background image settings tab
 		/// </summary>
-		public const double ORDER_TAB_BACKGROUNDIMAGE = 5000;
+		public const double ORDER_BACKGROUNDIMAGE = 7000;
 
 		/// <summary>
 		/// Order of baml settings tab
 		/// </summary>
-		public const double ORDER_TAB_BAML = 6000;
+		public const double ORDER_BAML = 8000;
 
 		/// <summary>
 		/// Order of <see cref="IDsDocumentService"/>'s <see cref="IAppSettingsModifiedListener"/> instance
@@ -105,6 +110,21 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_DECOMPILER = "E380FC93-BACB-4125-8AF1-ADFAEA4D1307";
 
 		/// <summary>
+		/// Guid of Code Editor tab settings
+		/// </summary>
+		public const string GUID_CODE_EDITOR = "E1BA254B-C5EA-4305-801A-9336BDFA33FB";
+
+		/// <summary>
+		/// Guid of C# (Roslyn) code editor settings
+		/// </summary>
+		public const string GUID_CODE_EDITOR_CSHARP_ROSLYN = "A5170115-EC2C-495E-BBAC-0A67E311CAF6";
+
+		/// <summary>
+		/// Guid of Visual Basic (Roslyn) code editor settings
+		/// </summary>
+		public const string GUID_CODE_EDITOR_VISUAL_BASIC_ROSLYN = "A863FFDA-2AD2-4DB4-B5D4-B2363F3D450F";
+
+		/// <summary>
 		/// Order of Environment / General
 		/// </summary>
 		public const double ORDER_ENVIRONMENT_GENERAL = 0;
@@ -123,5 +143,20 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Order of Decompiler / ILSpy IL
 		/// </summary>
 		public const double ORDER_DECOMPILER_SETTINGS_ILSPY_IL = 11000;
+
+		/// <summary>
+		/// Start of language options
+		/// </summary>
+		public const double ORDER_CODE_EDITOR_LANGUAGES = 10000;
+
+		/// <summary>
+		/// Order of General language settings
+		/// </summary>
+		public const double ORDER_CODE_EDITOR_LANGUAGES_GENERAL = 1000;
+
+		/// <summary>
+		/// Order of Tabs language settings
+		/// </summary>
+		public const double ORDER_CODE_EDITOR_LANGUAGES_TABS = 3000;
 	}
 }

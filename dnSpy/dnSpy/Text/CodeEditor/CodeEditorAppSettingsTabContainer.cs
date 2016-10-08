@@ -19,7 +19,7 @@
 
 using dnSpy.Contracts.Settings.Dialog;
 
-namespace dnSpy.Decompiler {
-	[ExportAppSettingsTabContainer("res:DecompilerDlgTabTitle", AppSettingsConstants.GUID_DECOMPILER, AppSettingsConstants.ORDER_DECOMPILER)]
-	sealed class DecompilerAppSettingsTabContainer : IAppSettingsTabContainer { }
+namespace dnSpy.Text.CodeEditor {
+	[ExportAppSettingsTabContainer("res:CodeEditorSettings", AppSettingsConstants.GUID_CODE_EDITOR, AppSettingsConstants.ORDER_CODE_EDITOR)]
+	sealed class CodeEditorAppSettingsTabContainer : IAppSettingsTabContainer { }
 }

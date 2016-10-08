@@ -17,6 +17,7 @@
                     xmlns:bgImg="clr-namespace:dnSpy.BackgroundImage.Dialog"
                     xmlns:img2="clr-namespace:dnSpy.Images"
                     xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
+                    xmlns:codesettings="clr-namespace:dnSpy.Text.CodeEditor"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -6106,6 +6107,38 @@
                 <ComboBoxItem>23</ComboBoxItem>
                 <ComboBoxItem>24</ComboBoxItem>
             </ComboBox>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type codesettings:GeneralAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding UseVirtualSpace}" IsEnabled="{Binding UseVirtualSpaceEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorVirtualSpace}" />
+            <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding WordWrap}" IsEnabled="{Binding WordWrapEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorWordWrap}" />
+            <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.TextEditorLineNumbers}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type codesettings:TabsAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=tabSizeTextBox}" Content="{x:Static p:dnSpy_Resources.TextEditorTabSize}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="tabSizeTextBox" Text="{Binding TabSizeVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="1" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=indentSizeTextBox}" Content="{x:Static p:dnSpy_Resources.TextEditorIndentSize}" />
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="indentSizeTextBox" Text="{Binding IndentSizeVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ConvertTabsToSpaces}" Content="{x:Static p:dnSpy_Resources.TextEditorConvertTabsToSpaces}" />
         </Grid>
     </DataTemplate>
 

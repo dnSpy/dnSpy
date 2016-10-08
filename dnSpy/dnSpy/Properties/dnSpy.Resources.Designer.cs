@@ -583,6 +583,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code Editor.
+        /// </summary>
+        public static string CodeEditorSettings {
+            get {
+                return ResourceManager.GetString("CodeEditorSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Collapse Tree_View Nodes.
         /// </summary>
         public static string CollapseTreeViewNodesCommand {
@@ -682,7 +691,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Decompile the full type instead of a single member.
+        ///   Looks up a localized string similar to Decompile a member&apos;s enclosing class instead of the class member.
         /// </summary>
         public static string DisplaySettings_DecompileType {
             get {
@@ -2907,11 +2916,74 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tabs.
+        /// </summary>
+        public static string TabsSettings {
+            get {
+                return ResourceManager.GetString("TabsSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convert tabs to s_paces.
+        /// </summary>
+        public static string TextEditorConvertTabsToSpaces {
+            get {
+                return ResourceManager.GetString("TextEditorConvertTabsToSpaces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Indent size.
+        /// </summary>
+        public static string TextEditorIndentSize {
+            get {
+                return ResourceManager.GetString("TextEditorIndentSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Line numbers.
+        /// </summary>
+        public static string TextEditorLineNumbers {
+            get {
+                return ResourceManager.GetString("TextEditorLineNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The text editor is using the new faster text formatter. It doesn&apos;t support word wrap or all unicode characters. Enable/disable it in the options..
         /// </summary>
         public static string TextEditorNewFormatterWarningMsg {
             get {
                 return ResourceManager.GetString("TextEditorNewFormatterWarningMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Tab size.
+        /// </summary>
+        public static string TextEditorTabSize {
+            get {
+                return ResourceManager.GetString("TextEditorTabSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Virtual space.
+        /// </summary>
+        public static string TextEditorVirtualSpace {
+            get {
+                return ResourceManager.GetString("TextEditorVirtualSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Word wrap.
+        /// </summary>
+        public static string TextEditorWordWrap {
+            get {
+                return ResourceManager.GetString("TextEditorWordWrap", resourceCulture);
             }
         }
         

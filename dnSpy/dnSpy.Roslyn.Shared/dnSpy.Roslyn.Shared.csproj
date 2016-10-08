@@ -39,6 +39,7 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Compiler\CodeEditorOptionsDefinitions.cs" />
     <Compile Include="Compiler\CSharpLanguageCompiler.cs" />
     <Compile Include="Compiler\DiagnosticExtensions.cs" />
     <Compile Include="Compiler\Extensions.cs" />

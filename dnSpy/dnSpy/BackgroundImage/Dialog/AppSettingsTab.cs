@@ -57,7 +57,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 	sealed class AppSettingsTab : ViewModelBase, IAppSettingsTab {
 		public Guid ParentGuid => Guid.Empty;
 		public Guid Guid => new Guid("A36F0A79-E8D0-44C5-8F22-A50B28F6117E");
-		public double Order => AppSettingsConstants.ORDER_TAB_BACKGROUNDIMAGE;
+		public double Order => AppSettingsConstants.ORDER_BACKGROUNDIMAGE;
 		public string Title => dnSpy_Resources.BackgroundImageOptDlgTab;
 		public ImageReference Icon => ImageReference.None;
 		public object UIObject => this;

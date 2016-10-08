@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Hex {
 	sealed class HexEditorAppSettingsTab : IAppSettingsTab {
 		public Guid ParentGuid => Guid.Empty;
 		public Guid Guid => new Guid("4BEAD407-839F-489B-A874-2B3325776366");
-		public double Order => AppSettingsConstants.ORDER_TAB_HEXEDITOR;
+		public double Order => AppSettingsConstants.ORDER_HEXEDITOR;
 		public string Title => dnSpy_Contracts_DnSpy_Resources.HexEditorAppDlgTitle;
 		public ImageReference Icon => ImageReference.None;
 		public object UIObject => displayAppSettingsVM;

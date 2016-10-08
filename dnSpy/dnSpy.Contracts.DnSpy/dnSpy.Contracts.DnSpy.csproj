@@ -458,6 +458,8 @@
     <Compile Include="Search\ShowNothingDocumentTreeNodeFilterBase.cs" />
     <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="Settings\Dialog\AppSettingsConstants.cs" />
+    <Compile Include="Settings\Dialog\CodeEditorOptionsDefinition.cs" />
+    <Compile Include="Settings\Dialog\DefaultCodeEditorOptions.cs" />
     <Compile Include="Settings\Dialog\IAppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsModifiedListener.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsService.cs" />

@@ -17,9 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Decompiler {
-	[ExportAppSettingsTabContainer("res:DecompilerDlgTabTitle", AppSettingsConstants.GUID_DECOMPILER, AppSettingsConstants.ORDER_DECOMPILER)]
-	sealed class DecompilerAppSettingsTabContainer : IAppSettingsTabContainer { }
+namespace dnSpy.Contracts.Settings.Dialog {
+	/// <summary>
+	/// Default code editor options
+	/// </summary>
+	public static class DefaultCodeEditorOptions {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public const bool UseVirtualSpace = false;
+		public const WordWrapStyles WordWrapStyle = WordWrapStylesConstants.DefaultValue;
+		public const bool ShowLineNumbers = true;
+		public const int TabSize = 4;
+		public const int IndentSize = 4;
+		public const bool ConvertTabsToSpaces = false;
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+	}
 }

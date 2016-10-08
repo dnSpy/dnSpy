@@ -98,7 +98,7 @@ namespace dnSpy.BamlDecompiler {
 	sealed class BamlAppSettingsTab : IAppSettingsTab {
 		public Guid ParentGuid => Guid.Empty;
 		public Guid Guid => new Guid("DF5D8216-35D9-4E25-8BDF-817D4CA90C17");
-		public double Order => AppSettingsConstants.ORDER_TAB_BAML;
+		public double Order => AppSettingsConstants.ORDER_BAML;
 		public string Title => dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab;
 		public ImageReference Icon => ImageReference.None;
 		public object UIObject => bamlSettings;

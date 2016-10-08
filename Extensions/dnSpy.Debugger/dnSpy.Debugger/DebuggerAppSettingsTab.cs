@@ -50,7 +50,7 @@ namespace dnSpy.Debugger {
 		public Guid ParentGuid => Guid.Empty;
 		public Guid Guid => new Guid("8D2BC2FB-5CA4-4907-84C7-F4F705327AC8");
 		public DebuggerSettings Settings { get; }
-		public double Order => AppSettingsConstants.ORDER_TAB_DEBUGGER;
+		public double Order => AppSettingsConstants.ORDER_DEBUGGER;
 		public string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
 		public ImageReference Icon => ImageReference.None;
 		public object UIObject => this;

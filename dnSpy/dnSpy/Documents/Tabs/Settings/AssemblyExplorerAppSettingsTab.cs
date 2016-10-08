@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 	sealed class AssemblyExplorerAppSettingsTab : ViewModelBase, IAppSettingsTab {
 		public Guid ParentGuid => Guid.Empty;
 		public Guid Guid => new Guid("F8B8DA74-9318-4BEE-B50A-1139147D3C82");
-		public double Order => AppSettingsConstants.ORDER_TAB_ASSEMBLY_EXPLORER;
+		public double Order => AppSettingsConstants.ORDER_ASSEMBLY_EXPLORER;
 		public string Title => dnSpy_Resources.AssemblyExplorerTitle;
 		public ImageReference Icon => ImageReference.None;
 		public object UIObject => this;

@@ -17,9 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 
-namespace dnSpy.Decompiler {
-	[ExportAppSettingsTabContainer("res:DecompilerDlgTabTitle", AppSettingsConstants.GUID_DECOMPILER, AppSettingsConstants.ORDER_DECOMPILER)]
-	sealed class DecompilerAppSettingsTabContainer : IAppSettingsTabContainer { }
+namespace dnSpy.Text.CodeEditor {
+	sealed class LanguageAppSettingsTab : IAppSettingsTab {
+		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_CODE_EDITOR);
+		public Guid Guid { get; set; }
+		public double Order { get; set; }
+		public string Title { get; set; }
+		public ImageReference Icon => ImageReference.None;
+		public object UIObject => null;
+		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) { }
+	}
 }

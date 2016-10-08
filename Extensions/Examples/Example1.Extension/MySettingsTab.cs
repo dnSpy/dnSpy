@@ -35,7 +35,7 @@ namespace Example1.Extension {
 		public Guid Guid => THE_GUID;
 
 		// The order of the tab, let's place it after the debugger tab
-		public double Order => AppSettingsConstants.ORDER_TAB_DEBUGGER + 0.1;
+		public double Order => AppSettingsConstants.ORDER_DEBUGGER + 0.1;
 
 		public string Title => "MySettings";
 

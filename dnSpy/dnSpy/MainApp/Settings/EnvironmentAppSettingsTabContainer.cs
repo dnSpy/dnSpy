@@ -20,6 +20,6 @@
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.MainApp.Settings {
-	[ExportAppSettingsTabContainer("res:EnvironmentSettings", AppSettingsConstants.GUID_ENVIRONMENT, AppSettingsConstants.ORDER_TAB_ENVIRONMENT)]
+	[ExportAppSettingsTabContainer("res:EnvironmentSettings", AppSettingsConstants.GUID_ENVIRONMENT, AppSettingsConstants.ORDER_ENVIRONMENT)]
 	sealed class EnvironmentAppSettingsTabContainer : IAppSettingsTabContainer { }
 }

@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// </summary>
 		/// <param name="title">Title shown in the UI</param>
 		/// <param name="guid">Unique <see cref="System.Guid"/> of this app settings instance</param>
-		/// <param name="order">Order of this instance relative to other instances with the same parent, eg. <see cref="AppSettingsConstants.ORDER_TAB_DECOMPILER"/></param>
+		/// <param name="order">Order of this instance relative to other instances with the same parent, eg. <see cref="AppSettingsConstants.ORDER_DECOMPILER"/></param>
 		/// <param name="parentGuid"><see cref="System.Guid"/> of the parent or null if the root element is the parent, eg. <see cref="AppSettingsConstants.GUID_DECOMPILER"/></param>
 		/// <param name="icon">Icon shown in the UI or null</param>
 		public ExportAppSettingsTabContainerAttribute(string title, string guid, double order = double.MaxValue, string parentGuid = null, string icon = null)
@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public string Guid { get; }
 
 		/// <summary>
-		/// Gets the order, eg. <see cref="AppSettingsConstants.ORDER_TAB_DECOMPILER"/>
+		/// Gets the order, eg. <see cref="AppSettingsConstants.ORDER_DECOMPILER"/>
 		/// </summary>
 		public double Order { get; }
 

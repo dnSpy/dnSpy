@@ -17,9 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Settings.Dialog;
+using System;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Decompiler {
-	[ExportAppSettingsTabContainer("res:DecompilerDlgTabTitle", AppSettingsConstants.GUID_DECOMPILER, AppSettingsConstants.ORDER_DECOMPILER)]
-	sealed class DecompilerAppSettingsTabContainer : IAppSettingsTabContainer { }
+namespace dnSpy.Text.CodeEditor {
+	interface ICodeEditorOptions {
+		IContentType ContentType { get; }
+		Guid Guid { get; }
+		string LanguageName { get; }
+		bool UseVirtualSpace { get; set; }
+		WordWrapStyles WordWrapStyle { get; set; }
+		bool ShowLineNumbers { get; set; }
+		int TabSize { get; set; }
+		int IndentSize { get; set; }
+		bool ConvertTabsToSpaces { get; set; }
+	}
 }

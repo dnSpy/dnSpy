@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		Guid Guid { get; }
 
 		/// <summary>
-		/// Gets the order, eg. <see cref="AppSettingsConstants.ORDER_TAB_DECOMPILER"/>
+		/// Gets the order, eg. <see cref="AppSettingsConstants.ORDER_DECOMPILER"/>
 		/// </summary>
 		double Order { get; }
 

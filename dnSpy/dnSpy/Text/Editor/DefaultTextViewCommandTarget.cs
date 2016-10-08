@@ -690,9 +690,10 @@ namespace dnSpy.Text.Editor {
 					return CommandTargetStatus.Handled;
 
 				case TextEditorIds.TOGGLEWORDWRAP:
-					if (textView.Options.GlobalOptions.IsCanChangeWordWrapStyleEnabled()) {
-						var newWordwrapStyle = textView.Options.GlobalOptions.WordWrapStyle() ^ WordWrapStyles.WordWrap;
-						textView.Options.GlobalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, newWordwrapStyle);
+					var options = UseGlobalWordWrapStyleOption(textView) ? textView.Options.GlobalOptions : textView.Options;
+					if (options.IsCanChangeWordWrapStyleEnabled()) {
+						var newWordwrapStyle = options.WordWrapStyle() ^ WordWrapStyles.WordWrap;
+						options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, newWordwrapStyle);
 						if ((newWordwrapStyle & WordWrapStyles.WordWrap) != 0 && textView.Options.IsVirtualSpaceEnabled())
 							textView.Options.SetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId, false);
 					}
@@ -784,6 +785,8 @@ namespace dnSpy.Text.Editor {
 			}
 			return CommandTargetStatus.NotHandled;
 		}
+
+		static bool UseGlobalWordWrapStyleOption(ITextView textView) => !textView.Options.IsOptionDefined(DefaultTextViewOptions.WordWrapStyleId, true);
 
 		public void SetNextCommandTarget(ICommandTarget commandTarget) { }
 		public void Dispose() { }
