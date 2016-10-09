@@ -29,15 +29,9 @@ namespace dnSpy.Contracts.Settings.Dialog {
 	/// </summary>
 	public static class AppSettingsConstants {
 		/// <summary>
-		/// Code using <see cref="IDecompiler.ShowMember(IMemberRef)"/> must be
-		/// refreshed.
+		/// Code using <see cref="IDecompiler.ShowMember(IMemberRef)"/> must be refreshed.
 		/// </summary>
 		public static readonly Guid REFRESH_LANGUAGE_SHOWMEMBER = new Guid("64819A35-1DA1-4485-BFF0-C9C702147550");
-
-		/// <summary>
-		/// Treeview member order setting got updated
-		/// </summary>
-		public static readonly Guid REFRESH_TREEVIEW_MEMBER_ORDER = new Guid("CA54455B-6D5D-4E82-86D4-7CE4CA5AC478");
 
 		/// <summary>
 		/// Disable memory mapped I/O

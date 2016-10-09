@@ -32,7 +32,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public void OnSettingsModified(IAppRefreshSettings appRefreshSettings) {
 			bool showMember = appRefreshSettings.Has(AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER);
-			bool memberOrder = appRefreshSettings.Has(AppSettingsConstants.REFRESH_TREEVIEW_MEMBER_ORDER);
+			bool memberOrder = appRefreshSettings.Has(DocumentTreeViewAppSettingsConstants.REFRESH_ASSEMBLY_EXPLORER_MEMBER_ORDER);
 			if (showMember || memberOrder)
 				documentTreeView.RefreshNodes(showMember, memberOrder);
 		}

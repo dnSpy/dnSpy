@@ -236,6 +236,7 @@
     <Compile Include="Documents\TreeView\DocumentTreeNodeDataContext.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeNodeGroups.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeView.cs" />
+    <Compile Include="Documents\TreeView\DocumentTreeViewAppSettingsConstants.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeViewAppSettingsModifiedListener.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeViewProvider.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeViewSettings.cs" />

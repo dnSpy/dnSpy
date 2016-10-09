@@ -210,7 +210,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 				documentTreeViewSettings.MemberKind3 != MemberKind3.Object ||
 				documentTreeViewSettings.MemberKind4 != MemberKind4.Object;
 			if (update) {
-				appRefreshSettings.Add(AppSettingsConstants.REFRESH_TREEVIEW_MEMBER_ORDER);
+				appRefreshSettings.Add(DocumentTreeViewAppSettingsConstants.REFRESH_ASSEMBLY_EXPLORER_MEMBER_ORDER);
 				documentTreeViewSettings.MemberKind0 = MemberKind0.Object;
 				documentTreeViewSettings.MemberKind1 = MemberKind1.Object;
 				documentTreeViewSettings.MemberKind2 = MemberKind2.Object;
