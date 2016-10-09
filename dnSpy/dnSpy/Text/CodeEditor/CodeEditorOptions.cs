@@ -18,7 +18,8 @@
 */
 
 using System;
-using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Settings.CodeEditor;
+using dnSpy.Contracts.Settings.Groups;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
@@ -32,106 +33,61 @@ namespace dnSpy.Text.CodeEditor {
 		public string LanguageName { get; }
 
 		public bool UseVirtualSpace {
-			get { return useVirtualSpace; }
-			set {
-				if (useVirtualSpace != value) {
-					useVirtualSpace = value;
-					owner.OptionChanged(this, nameof(UseVirtualSpace));
-				}
-			}
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewOptions.UseVirtualSpaceId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewOptions.UseVirtualSpaceId, value); }
 		}
-		bool useVirtualSpace;
 
 		public WordWrapStyles WordWrapStyle {
-			get { return wordWrapStyle; }
-			set {
-				if (wordWrapStyle != value) {
-					wordWrapStyle = value;
-					owner.OptionChanged(this, nameof(WordWrapStyle));
-				}
-			}
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewOptions.WordWrapStyleId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewOptions.WordWrapStyleId, value); }
 		}
-		WordWrapStyles wordWrapStyle;
 
 		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
-			set {
-				if (showLineNumbers != value) {
-					showLineNumbers = value;
-					owner.OptionChanged(this, nameof(ShowLineNumbers));
-				}
-			}
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.LineNumberMarginId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.LineNumberMarginId, value); }
 		}
-		bool showLineNumbers;
 
 		public int TabSize {
-			get { return tabSize; }
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultOptions.TabSizeOptionId); }
 			set {
 				var newValue = value;
 				if (newValue < MIN_TAB_SIZE)
 					newValue = MIN_TAB_SIZE;
 				else if (newValue > MAX_TAB_SIZE)
 					newValue = MAX_TAB_SIZE;
-				if (tabSize != newValue) {
-					tabSize = newValue;
-					owner.OptionChanged(this, nameof(TabSize));
-				}
+				group.SetOptionValue(ContentType.TypeName, DefaultOptions.TabSizeOptionId, newValue);
 			}
 		}
-		int tabSize;
 
 		public int IndentSize {
-			get { return indentSize; }
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultOptions.IndentSizeOptionId); }
 			set {
 				var newValue = value;
 				if (newValue < MIN_TAB_SIZE)
 					newValue = MIN_TAB_SIZE;
 				else if (newValue > MAX_TAB_SIZE)
 					newValue = MAX_TAB_SIZE;
-				if (indentSize != newValue) {
-					indentSize = newValue;
-					owner.OptionChanged(this, nameof(IndentSize));
-				}
+				group.SetOptionValue(ContentType.TypeName, DefaultOptions.IndentSizeOptionId, newValue);
 			}
 		}
-		int indentSize;
 
 		public bool ConvertTabsToSpaces {
-			get { return convertTabsToSpaces; }
-			set {
-				if (convertTabsToSpaces != value) {
-					convertTabsToSpaces = value;
-					owner.OptionChanged(this, nameof(ConvertTabsToSpaces));
-				}
-			}
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultOptions.ConvertTabsToSpacesOptionId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultOptions.ConvertTabsToSpacesOptionId, value); }
 		}
-		bool convertTabsToSpaces;
 
-		readonly CodeEditorOptionsService owner;
-		readonly ICodeEditorOptionsDefinitionMetadata md;
+		readonly ITextViewOptionsGroup group;
 
-		CodeEditorOptions(CodeEditorOptionsService owner, IContentType contentType, Guid guid, string languageName, ICodeEditorOptionsDefinitionMetadata md) {
-			this.owner = owner;
+		CodeEditorOptions(ITextViewOptionsGroup group, IContentType contentType, Guid guid, string languageName) {
+			this.group = group;
 			ContentType = contentType;
 			Guid = guid;
 			LanguageName = languageName;
-			this.md = md;
-
-			Reset();
 		}
 
-		void Reset() {
-			UseVirtualSpace = md.UseVirtualSpace;
-			WordWrapStyle = md.WordWrapStyle;
-			ShowLineNumbers = md.ShowLineNumbers;
-			TabSize = md.TabSize;
-			IndentSize = md.IndentSize;
-			ConvertTabsToSpaces = md.ConvertTabsToSpaces;
-		}
-
-		public static CodeEditorOptions TryCreate(CodeEditorOptionsService owner, IContentTypeRegistryService contentTypeRegistryService, ICodeEditorOptionsDefinitionMetadata md) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
+		public static CodeEditorOptions TryCreate(ITextViewOptionsGroup group, IContentTypeRegistryService contentTypeRegistryService, ICodeEditorOptionsDefinitionMetadata md) {
+			if (group == null)
+				throw new ArgumentNullException(nameof(group));
 			if (contentTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			if (md == null)
@@ -152,7 +108,7 @@ namespace dnSpy.Text.CodeEditor {
 			if (md.LanguageName == null)
 				return null;
 
-			return new CodeEditorOptions(owner, contentType, guid, md.LanguageName, md);
+			return new CodeEditorOptions(group, contentType, guid, md.LanguageName);
 		}
 	}
 }

@@ -17,25 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Text.CodeEditor {
-	[Export(typeof(IWpfTextViewCreationListener))]
-	[TextViewRole(PredefinedDsTextViewRoles.CodeEditor)]
-	[ContentType(ContentTypes.Any)]
-	sealed class CodeEditorWpfTextViewCreationListener : IWpfTextViewCreationListener {
-		readonly Lazy<ICodeEditorOptionsService> codeEditorOptionsService;
-
-		[ImportingConstructor]
-		CodeEditorWpfTextViewCreationListener(Lazy<ICodeEditorOptionsService> codeEditorOptionsService) {
-			this.codeEditorOptionsService = codeEditorOptionsService;
-		}
-
-		public void TextViewCreated(IWpfTextView textView) => codeEditorOptionsService.Value.TextViewCreated(textView);
+namespace dnSpy.Contracts.Settings.CodeEditor {
+	/// <summary>
+	/// Default code editor options
+	/// </summary>
+	public static class DefaultCodeEditorOptions {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public const bool UseVirtualSpace = false;
+		public const WordWrapStyles WordWrapStyle = WordWrapStylesConstants.DefaultValue;
+		public const bool ShowLineNumbers = true;
+		public const int TabSize = 4;
+		public const int IndentSize = 4;
+		public const bool ConvertTabsToSpaces = false;
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Text.CodeEditor {

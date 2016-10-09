@@ -489,12 +489,10 @@
     <Compile Include="Text\Classification\ViewEditorFormatMap.cs" />
     <Compile Include="Text\CodeEditor\CodeEditorAppSettingsTabContainer.cs" />
     <Compile Include="Text\CodeEditor\CodeEditorAppSettingsTabProvider.cs" />
+    <Compile Include="Text\CodeEditor\CodeEditorContentTypeOptionDefinitionProvider.cs" />
     <Compile Include="Text\CodeEditor\CodeEditorOptions.cs" />
-    <Compile Include="Text\CodeEditor\CodeEditorOptionsCollection.cs" />
     <Compile Include="Text\CodeEditor\CodeEditorOptionsService.cs" />
-    <Compile Include="Text\CodeEditor\CodeEditorOptionsStorage.cs" />
-    <Compile Include="Text\CodeEditor\CodeEditorWpfTextViewCreationListener.cs" />
-    <Compile Include="Text\CodeEditor\DefaultCodeEditorOptionsImpl.cs" />
+    <Compile Include="Text\CodeEditor\CodeEditorTextViewOptionsGroupNameProvider.cs" />
     <Compile Include="Text\CodeEditor\GeneralAppSettingsTab.cs" />
     <Compile Include="Text\CodeEditor\ICodeEditorOptions.cs" />
     <Compile Include="Text\CodeEditor\LanguageAppSettingsTab.cs" />
@@ -679,6 +677,11 @@
     <Compile Include="Text\Formatting\TextParagraphPropertiesFactoryServiceSelector.cs" />
     <Compile Include="Text\Formatting\TextSequenceElement.cs" />
     <Compile Include="Text\Formatting\WpfTextViewLine.cs" />
+    <Compile Include="Text\Groups\OptionsStorage.cs" />
+    <Compile Include="Text\Groups\TextViewGroupOption.cs" />
+    <Compile Include="Text\Groups\TextViewGroupOptionCollection.cs" />
+    <Compile Include="Text\Groups\TextViewOptionsGroup.cs" />
+    <Compile Include="Text\Groups\TextViewOptionsGroupService.cs" />
     <Compile Include="Text\MappingPoint.cs" />
     <Compile Include="Text\MappingSpan.cs" />
     <Compile Include="Text\MEF\Metadata.cs" />

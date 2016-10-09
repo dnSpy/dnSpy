@@ -17,21 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
-
-namespace dnSpy.Contracts.Settings.Dialog {
+namespace dnSpy.Contracts.Settings.Groups {
 	/// <summary>
-	/// Default code editor options
+	/// <see cref="ITextViewOptionsGroup"/> service
 	/// </summary>
-	public static class DefaultCodeEditorOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public const bool UseVirtualSpace = false;
-		public const WordWrapStyles WordWrapStyle = WordWrapStylesConstants.DefaultValue;
-		public const bool ShowLineNumbers = true;
-		public const int TabSize = 4;
-		public const int IndentSize = 4;
-		public const bool ConvertTabsToSpaces = false;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+	public interface ITextViewOptionsGroupService {
+		/// <summary>
+		/// Gets a group
+		/// </summary>
+		/// <param name="name">Group name, eg. <see cref="PredefinedTextViewGroupNames.CodeEditor"/></param>
+		/// <returns></returns>
+		ITextViewOptionsGroup GetGroup(string name);
 	}
 }

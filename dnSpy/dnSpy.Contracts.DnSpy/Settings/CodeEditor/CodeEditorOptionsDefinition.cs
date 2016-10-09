@@ -19,11 +19,11 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Contracts.Settings.Dialog {
+namespace dnSpy.Contracts.Settings.CodeEditor {
 	/// <summary>
 	/// Defines code editor options that will be shown in the UI. Use <see cref="ExportCodeEditorOptionsDefinitionAttribute"/>
 	/// to export an instance.

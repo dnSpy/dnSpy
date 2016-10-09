@@ -17,18 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Settings.CodeEditor;
-using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Contracts.Text;
-
-namespace dnSpy.Roslyn.Shared.Compiler {
-	static class CodeEditorOptionsDefinitions {
-#pragma warning disable 0169
-		[ExportCodeEditorOptionsDefinition("C#", ContentTypes.CSharpRoslyn, AppSettingsConstants.GUID_CODE_EDITOR_CSHARP_ROSLYN)]
-		static readonly CodeEditorOptionsDefinition csharpCodeEditorOptionsDefinition;
-
-		[ExportCodeEditorOptionsDefinition("Visual Basic", ContentTypes.VisualBasicRoslyn, AppSettingsConstants.GUID_CODE_EDITOR_VISUAL_BASIC_ROSLYN)]
-		static readonly CodeEditorOptionsDefinition visualBasicCodeEditorOptionsDefinition;
-#pragma warning restore 0169
+namespace dnSpy.Contracts.Settings.Groups {
+	/// <summary>
+	/// Text view group names
+	/// </summary>
+	public static class PredefinedTextViewGroupNames {
+		/// <summary>
+		/// Code editor group
+		/// </summary>
+		public const string CodeEditor = nameof(CodeEditor);
 	}
 }
