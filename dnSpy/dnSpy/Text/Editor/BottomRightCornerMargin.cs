@@ -62,7 +62,7 @@ namespace dnSpy.Text.Editor {
 			StringComparer.OrdinalIgnoreCase.Equals(NAME, marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name)
+			if (e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarName)
 				UpdateVisibility();
 		}
 

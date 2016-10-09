@@ -194,11 +194,11 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		bool hasInitialized;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
+			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName) {
 				OnPropertyChanged(nameof(WordWrap));
 				replSettings.WordWrapStyle = WordWrapStyle;
 			}
-			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
+			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginName)
 				replSettings.ShowLineNumbers = ShowLineNumbers;
 		}
 

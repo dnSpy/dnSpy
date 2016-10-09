@@ -90,7 +90,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name)
+			if (e.OptionId == DefaultWpfViewOptions.EnableHighlightCurrentLineName)
 				UpdateEnableState();
 		}
 

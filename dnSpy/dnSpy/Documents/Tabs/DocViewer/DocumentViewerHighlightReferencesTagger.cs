@@ -100,7 +100,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultDsTextViewOptions.ReferenceHighlightingId.Name)
+			if (e.OptionId == DefaultDsTextViewOptions.ReferenceHighlightingName)
 				UpdateReferenceHighlighting();
 		}
 

@@ -133,7 +133,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultReplEditorOptions.RefreshScreenOnChangeId.Name)
+			if (e.OptionId == DefaultReplEditorOptions.RefreshScreenOnChangeName)
 				UpdateRefreshScreenOnChange();
 		}
 

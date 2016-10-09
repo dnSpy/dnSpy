@@ -25,8 +25,10 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public static class DefaultReplEditorOptions {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public static readonly EditorOptionKey<bool> RefreshScreenOnChangeId = new EditorOptionKey<bool>("IReplEditor/RefreshScreenOnChange");
-		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecondsId = new EditorOptionKey<int>("IReplEditor/RefreshScreenOnChangeWaitMilliSeconds");
+		public const string RefreshScreenOnChangeName = "IReplEditor/RefreshScreenOnChange";
+		public static readonly EditorOptionKey<bool> RefreshScreenOnChangeId = new EditorOptionKey<bool>(RefreshScreenOnChangeName);
+		public const string RefreshScreenOnChangeWaitMilliSecondsName = "IReplEditor/RefreshScreenOnChangeWaitMilliSeconds";
+		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecondsId = new EditorOptionKey<int>(RefreshScreenOnChangeWaitMilliSecondsName);
 		public const int DefaultRefreshScreenOnChangeWaitMilliSeconds = DefaultDsTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSeconds;
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

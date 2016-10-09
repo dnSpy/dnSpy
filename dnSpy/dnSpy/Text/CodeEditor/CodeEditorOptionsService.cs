@@ -126,22 +126,22 @@ namespace dnSpy.Text.CodeEditor {
 		public void OptionChanged(CodeEditorOptions options, string name) {
 			switch (name) {
 			case nameof(options.UseVirtualSpace):
-				WriteOption(options, options.UseVirtualSpace, DefaultTextViewOptions.UseVirtualSpaceId.Name);
+				WriteOption(options, options.UseVirtualSpace, DefaultTextViewOptions.UseVirtualSpaceName);
 				break;
 			case nameof(options.WordWrapStyle):
-				WriteOption(options, options.WordWrapStyle, DefaultTextViewOptions.WordWrapStyleId.Name);
+				WriteOption(options, options.WordWrapStyle, DefaultTextViewOptions.WordWrapStyleName);
 				break;
 			case nameof(options.ShowLineNumbers):
-				WriteOption(options, options.ShowLineNumbers, DefaultTextViewHostOptions.LineNumberMarginId.Name);
+				WriteOption(options, options.ShowLineNumbers, DefaultTextViewHostOptions.LineNumberMarginName);
 				break;
 			case nameof(options.TabSize):
-				WriteOption(options, options.TabSize, DefaultOptions.TabSizeOptionId.Name);
+				WriteOption(options, options.TabSize, DefaultOptions.TabSizeOptionName);
 				break;
 			case nameof(options.IndentSize):
-				WriteOption(options, options.IndentSize, DefaultOptions.IndentSizeOptionId.Name);
+				WriteOption(options, options.IndentSize, DefaultOptions.IndentSizeOptionName);
 				break;
 			case nameof(options.ConvertTabsToSpaces):
-				WriteOption(options, options.ConvertTabsToSpaces, DefaultOptions.ConvertTabsToSpacesOptionId.Name);
+				WriteOption(options, options.ConvertTabsToSpaces, DefaultOptions.ConvertTabsToSpacesOptionName);
 				break;
 			default:
 				Debug.Fail($"Unknown option: {name}");
@@ -150,32 +150,32 @@ namespace dnSpy.Text.CodeEditor {
 		}
 
 		void OptionChanged(IWpfTextView textView, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
+			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceName) {
 				var options = codeEditorOptionsCollection.Find(textView.TextDataModel.ContentType);
 				if (options != null)
 					options.UseVirtualSpace = textView.Options.IsVirtualSpaceEnabled();
 			}
-			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
+			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName) {
 				var options = codeEditorOptionsCollection.Find(textView.TextDataModel.ContentType);
 				if (options != null)
 					options.WordWrapStyle = textView.Options.WordWrapStyle();
 			}
-			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name) {
+			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginName) {
 				var options = codeEditorOptionsCollection.Find(textView.TextDataModel.ContentType);
 				if (options != null)
 					options.ShowLineNumbers = textView.Options.IsLineNumberMarginEnabled();
 			}
-			else if (e.OptionId == DefaultOptions.TabSizeOptionId.Name) {
+			else if (e.OptionId == DefaultOptions.TabSizeOptionName) {
 				var options = codeEditorOptionsCollection.Find(textView.TextDataModel.ContentType);
 				if (options != null)
 					options.TabSize = textView.Options.GetTabSize();
 			}
-			else if (e.OptionId == DefaultOptions.IndentSizeOptionId.Name) {
+			else if (e.OptionId == DefaultOptions.IndentSizeOptionName) {
 				var options = codeEditorOptionsCollection.Find(textView.TextDataModel.ContentType);
 				if (options != null)
 					options.IndentSize = textView.Options.GetIndentSize();
 			}
-			else if (e.OptionId == DefaultOptions.ConvertTabsToSpacesOptionId.Name) {
+			else if (e.OptionId == DefaultOptions.ConvertTabsToSpacesOptionName) {
 				var options = codeEditorOptionsCollection.Find(textView.TextDataModel.ContentType);
 				if (options != null)
 					options.ConvertTabsToSpaces = textView.Options.IsConvertTabsToSpacesEnabled();

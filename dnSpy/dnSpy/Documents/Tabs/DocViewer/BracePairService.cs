@@ -267,7 +267,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (textView.IsClosed)
 				return;
-			if (e.OptionId == DefaultDsTextViewOptions.BraceMatchingId.Name)
+			if (e.OptionId == DefaultDsTextViewOptions.BraceMatchingName)
 				UpdateBraceMatching();
 		}
 

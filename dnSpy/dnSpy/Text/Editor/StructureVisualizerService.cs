@@ -190,7 +190,7 @@ namespace dnSpy.Text.Editor {
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
-			if (e.OptionId == DefaultDsTextViewOptions.ShowStructureLinesId.Name)
+			if (e.OptionId == DefaultDsTextViewOptions.ShowStructureLinesName)
 				UpdateEnabled();
 		}
 

@@ -78,7 +78,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-				if (e.OptionId == DefaultDsOptions.IndentStyleOptionId.Name)
+				if (e.OptionId == DefaultDsOptions.IndentStyleOptionName)
 					CleanUp();
 			}
 

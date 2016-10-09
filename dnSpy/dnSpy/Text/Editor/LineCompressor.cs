@@ -71,7 +71,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId.Name || e.OptionId == DefaultDsTextViewOptions.CompressNonLetterLinesId.Name)
+			if (e.OptionId == DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesName || e.OptionId == DefaultDsTextViewOptions.CompressNonLetterLinesName)
 				InitializeOptions(true);
 		}
 

@@ -70,7 +70,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId.Name)
+			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName)
 				UpdateUseReducedOpacityForHighContrastOption();
 		}
 

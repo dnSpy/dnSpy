@@ -49,7 +49,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.AppearanceCategory.Name)
+			if (e.OptionId == DefaultWpfViewOptions.AppearanceCategoryName)
 				UpdateAppearanceMap();
 		}
 

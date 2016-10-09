@@ -83,12 +83,12 @@ namespace dnSpy.Text.Editor {
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.ZoomControl, marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewHostOptions.ZoomControlId.Name || e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name)
+			if (e.OptionId == DefaultTextViewHostOptions.ZoomControlName || e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarName)
 				UpdateVisibility();
 			else if (!Enabled) {
 				// Ignore all other options
 			}
-			else if (e.OptionId == DefaultWpfViewOptions.ZoomLevelId.Name)
+			else if (e.OptionId == DefaultWpfViewOptions.ZoomLevelName)
 				UpdateTextWithZoomLevel();
 		}
 

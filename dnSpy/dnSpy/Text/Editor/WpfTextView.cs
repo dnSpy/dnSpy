@@ -393,20 +393,20 @@ namespace dnSpy.Text.Editor {
 
 		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			UpdateOption(e.OptionId);
-			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
+			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName) {
 				if ((Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0)
 					ViewportLeft = 0;
 				InvalidateFormattedLineSource(true);
 			}
-			else if (e.OptionId == DefaultOptions.TabSizeOptionId.Name)
+			else if (e.OptionId == DefaultOptions.TabSizeOptionName)
 				InvalidateFormattedLineSource(true);
-			else if (e.OptionId == DefaultDsTextViewOptions.RefreshScreenOnChangeId.Name) {
+			else if (e.OptionId == DefaultDsTextViewOptions.RefreshScreenOnChangeName) {
 				if (!Options.IsRefreshScreenOnChangeEnabled())
 					StopRefreshTimer();
 			}
-			else if (e.OptionId == DefaultDsTextViewOptions.EnableColorizationId.Name)
+			else if (e.OptionId == DefaultDsTextViewOptions.EnableColorizationName)
 				InvalidateFormattedLineSource(true);
-			else if (e.OptionId == DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId.Name)
+			else if (e.OptionId == DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsName)
 				UpdateRemoveExtraTextLineVerticalPixels();
 		}
 
@@ -638,18 +638,18 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void InitializeOptions() {
-			UpdateOption(DefaultWpfViewOptions.ZoomLevelId.Name);
-			UpdateOption(DefaultDsWpfViewOptions.ForceClearTypeIfNeededId.Name);
+			UpdateOption(DefaultWpfViewOptions.ZoomLevelName);
+			UpdateOption(DefaultDsWpfViewOptions.ForceClearTypeIfNeededName);
 		}
 
 		void UpdateOption(string optionId) {
 			if (IsClosed)
 				return;
-			if (optionId == DefaultWpfViewOptions.ZoomLevelId.Name) {
+			if (optionId == DefaultWpfViewOptions.ZoomLevelName) {
 				if (Roles.Contains(PredefinedTextViewRoles.Zoomable))
 					ZoomLevel = Options.ZoomLevel();
 			}
-			else if (optionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededId.Name)
+			else if (optionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededName)
 				UpdateForceClearTypeIfNeeded();
 		}
 

@@ -182,7 +182,7 @@ namespace dnSpy.Text.Editor {
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedMarginNames.Glyph) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewHostOptions.GlyphMarginId.Name)
+			if (e.OptionId == DefaultTextViewHostOptions.GlyphMarginName)
 				UpdateVisibility();
 		}
 

@@ -80,12 +80,12 @@ namespace dnSpy.Text.Editor {
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, this.marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
+			if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginName)
 				UpdateVisibility();
 			else if (!Enabled) {
 				// Ignore all other options when it's disabled
 			}
-			else if (e.OptionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededId.Name) {
+			else if (e.OptionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededName) {
 				UpdateForceClearTypeIfNeeded();
 				OnTextPropertiesChanged();
 			}

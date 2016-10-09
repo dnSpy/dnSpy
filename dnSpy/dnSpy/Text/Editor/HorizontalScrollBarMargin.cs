@@ -71,12 +71,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarId.Name)
+			if (e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarName)
 				UpdateVisibility();
 			else if (!Enabled) {
 				// Ignore any other options
 			}
-			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name) {
+			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName) {
 				IsEnabled = !IsWordWrap;
 				UpdateMaximum();
 			}

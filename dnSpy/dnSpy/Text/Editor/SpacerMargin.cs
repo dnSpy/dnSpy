@@ -78,7 +78,7 @@ namespace dnSpy.Text.Editor {
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedMarginNames.Spacer) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewHostOptions.SelectionMarginId.Name)
+			if (e.OptionId == DefaultTextViewHostOptions.SelectionMarginName)
 				UpdateVisibility();
 		}
 

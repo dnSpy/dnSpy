@@ -647,7 +647,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId.Name) {
+			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName) {
 				useReducedOpacityForHighContrast = TextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
 				if (glyphTextMarkerServiceImpl.ThemeService.Theme.IsHighContrast)
 					RefreshExistingMarkers();

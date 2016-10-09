@@ -46,7 +46,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultDsTextViewOptions.HighlightRelatedKeywordsId.Name) {
+			if (e.OptionId == DefaultDsTextViewOptions.HighlightRelatedKeywordsName) {
 				IsEnabled = documentViewer.TextView.Options.IsHighlightRelatedKeywordsEnabled();
 				IsEnabledChanged?.Invoke(this, EventArgs.Empty);
 			}

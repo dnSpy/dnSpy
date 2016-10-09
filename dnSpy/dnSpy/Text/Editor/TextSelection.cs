@@ -143,7 +143,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
+			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceName) {
 				if (Mode == TextSelectionMode.Stream && !TextView.Options.IsVirtualSpaceEnabled())
 					Select(new VirtualSnapshotPoint(AnchorPoint.Position), new VirtualSnapshotPoint(ActivePoint.Position));
 			}

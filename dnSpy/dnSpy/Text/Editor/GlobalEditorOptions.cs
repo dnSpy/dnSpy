@@ -54,19 +54,19 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.EnableHighlightCurrentLineId.Name)
+			if (e.OptionId == DefaultWpfViewOptions.EnableHighlightCurrentLineName)
 				textEditorSettings.HighlightCurrentLine = globalOptions.IsHighlightCurrentLineEnabled();
-			else if (e.OptionId == DefaultWpfViewOptions.ZoomLevelId.Name)
+			else if (e.OptionId == DefaultWpfViewOptions.ZoomLevelName)
 				textEditorSettings.TextViewZoomLevel = globalOptions.ZoomLevel();
-			else if (e.OptionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededId.Name)
+			else if (e.OptionId == DefaultDsWpfViewOptions.ForceClearTypeIfNeededName)
 				textEditorSettings.ForceClearTypeIfNeeded = globalOptions.IsForceClearTypeIfNeededEnabled();
-			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginId.Name)
+			else if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginName)
 				textEditorSettings.ShowLineNumbers = globalOptions.IsLineNumberMarginEnabled();
-			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name)
+			else if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName)
 				textEditorSettings.WordWrapStyle = globalOptions.WordWrapStyle();
-			else if (e.OptionId == DefaultOptions.ConvertTabsToSpacesOptionId.Name)
+			else if (e.OptionId == DefaultOptions.ConvertTabsToSpacesOptionName)
 				textEditorSettings.ConvertTabsToSpaces = globalOptions.IsConvertTabsToSpacesEnabled();
-			else if (e.OptionId == DefaultDsTextViewOptions.ReferenceHighlightingId.Name)
+			else if (e.OptionId == DefaultDsTextViewOptions.ReferenceHighlightingName)
 				textEditorSettings.HighlightReferences = globalOptions.IsReferenceHighlightingEnabled();
 		}
 	}

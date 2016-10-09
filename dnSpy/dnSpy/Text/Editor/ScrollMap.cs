@@ -60,7 +60,7 @@ namespace dnSpy.Text.Editor {
 		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) => UpdateCachedState();
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleId.Name)
+			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName)
 				UpdateCachedState();
 		}
 

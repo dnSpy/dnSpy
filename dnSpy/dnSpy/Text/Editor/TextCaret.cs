@@ -287,13 +287,13 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceId.Name) {
+			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceName) {
 				if (Position.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.IsVirtualSpaceEnabled())
 					MoveTo(Position.BufferPosition);
 			}
-			else if (e.OptionId == DefaultTextViewOptions.OverwriteModeId.Name)
+			else if (e.OptionId == DefaultTextViewOptions.OverwriteModeName)
 				textCaretLayer.OverwriteMode = textView.Options.IsOverwriteModeEnabled();
-			else if (e.OptionId == DefaultTextViewOptions.ViewProhibitUserInputId.Name) {
+			else if (e.OptionId == DefaultTextViewOptions.ViewProhibitUserInputName) {
 				StopIME(false);
 				InitializeIME();
 			}

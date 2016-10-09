@@ -25,7 +25,8 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// </summary>
 	public static class DefaultDsOptions {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public static readonly EditorOptionKey<IndentStyle> IndentStyleOptionId = new EditorOptionKey<IndentStyle>("Default/IndentStyle");
+		public const string IndentStyleOptionName = "Default/IndentStyle";
+		public static readonly EditorOptionKey<IndentStyle> IndentStyleOptionId = new EditorOptionKey<IndentStyle>(IndentStyleOptionName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }
