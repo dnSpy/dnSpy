@@ -476,6 +476,8 @@
     <Compile Include="Settings\ISettingsSection.cs" />
     <Compile Include="Settings\ISettingsSectionProvider.cs" />
     <Compile Include="Settings\ISettingsService.cs" />
+    <Compile Include="Settings\Repl\DefaultReplOptions.cs" />
+    <Compile Include="Settings\Repl\ReplOptionsDefinition.cs" />
     <Compile Include="Tabs\ITabContent.cs" />
     <Compile Include="Tabs\ITabGroup.cs" />
     <Compile Include="Tabs\ITabGroupService.cs" />
@@ -566,7 +568,6 @@
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
     <Compile Include="Text\Editor\WordWrapStylesConstants.cs" />
-    <Compile Include="Text\Editor\WpfTextViewExtensions.cs" />
     <Compile Include="Text\SpanDataCollection.cs" />
     <Compile Include="Text\StringBuilderTextColorOutput.cs" />
     <Compile Include="Text\TextEditorPosition.cs" />

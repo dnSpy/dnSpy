@@ -17,29 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Settings.Groups {
-	/// <summary>
-	/// Text view group names
-	/// </summary>
-	public static class PredefinedTextViewGroupNames {
-		/// <summary>
-		/// Code editor group
-		/// </summary>
-		public const string CodeEditor = nameof(CodeEditor);
+using System;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Settings.Dialog;
 
-		/// <summary>
-		/// Text viewer group
-		/// </summary>
-		public const string DocumentViewer = nameof(DocumentViewer);
-
-		/// <summary>
-		/// Output window group
-		/// </summary>
-		public const string OutputWindow = nameof(OutputWindow);
-
-		/// <summary>
-		/// REPL group
-		/// </summary>
-		public const string REPL = nameof(REPL);
+namespace dnSpy.Text.Repl {
+	sealed class LanguageAppSettingsTab : IAppSettingsTab {
+		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_REPL);
+		public Guid Guid { get; set; }
+		public double Order { get; set; }
+		public string Title { get; set; }
+		public ImageReference Icon => ImageReference.None;
+		public object UIObject => null;
+		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) { }
 	}
 }

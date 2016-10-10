@@ -64,6 +64,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_CODE_EDITOR = 4000;
 
 		/// <summary>
+		/// Order of REPL settings tab
+		/// </summary>
+		public const double ORDER_REPL = 5000;
+
+		/// <summary>
 		/// Order of Output Window settings tab
 		/// </summary>
 		public const double ORDER_OUTPUT = 6000;
@@ -139,6 +144,21 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_OUTPUT = "26FAD694-0964-476C-AA73-7EE94FBAFFA3";
 
 		/// <summary>
+		/// Guid of REPL tab settings
+		/// </summary>
+		public const string GUID_REPL = "6AF674BC-0AB4-4A0C-9F41-6F83ED992DAB";
+
+		/// <summary>
+		/// Guid of C# (Roslyn) REPL settings
+		/// </summary>
+		public const string GUID_REPL_CSHARP_ROSLYN = "4A391B5A-8A9F-485E-9E48-76FEEAD0176B";
+
+		/// <summary>
+		/// Guid of Visual Basic (Roslyn) REPL settings
+		/// </summary>
+		public const string GUID_REPL_VISUAL_BASIC_ROSLYN = "7C275A4E-348E-4620-A292-60DAC69AFF7D";
+
+		/// <summary>
 		/// Order of Environment / General
 		/// </summary>
 		public const double ORDER_ENVIRONMENT_GENERAL = 0;
@@ -179,6 +199,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_CODE_EDITOR_LANGUAGES_TABS = 3000;
 
 		/// <summary>
+		/// Order of Advanced language settings
+		/// </summary>
+		public const double ORDER_CODE_EDITOR_LANGUAGES_ADVANCED = 4000;
+
+		/// <summary>
 		/// Order of Text Viewer / General tab
 		/// </summary>
 		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_GENERAL = 1000;
@@ -217,5 +242,30 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Order of Output Window / Advanced tab
 		/// </summary>
 		public const double ORDER_OUTPUT_DEFAULT_ADVANCED = 4000;
+
+		/// <summary>
+		/// Start of language options
+		/// </summary>
+		public const double ORDER_REPL_LANGUAGES = 10000;
+
+		/// <summary>
+		/// Order of General language settings
+		/// </summary>
+		public const double ORDER_REPL_LANGUAGES_GENERAL = 1000;
+
+		/// <summary>
+		/// Order of Scroll Bars language settings
+		/// </summary>
+		public const double ORDER_REPL_LANGUAGES_SCROLLBARS = 2000;
+
+		/// <summary>
+		/// Order of Tabs language settings
+		/// </summary>
+		public const double ORDER_REPL_LANGUAGES_TABS = 3000;
+
+		/// <summary>
+		/// Order of Advanced language settings
+		/// </summary>
+		public const double ORDER_REPL_LANGUAGES_ADVANCED = 4000;
 	}
 }

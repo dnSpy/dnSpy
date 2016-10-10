@@ -512,6 +512,7 @@
     <Compile Include="Text\Classification\ViewClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ViewClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\ViewEditorFormatMap.cs" />
+    <Compile Include="Text\CodeEditor\AdvancedAppSettingsTab.cs" />
     <Compile Include="Text\CodeEditor\AppSettingsTabContainer.cs" />
     <Compile Include="Text\CodeEditor\AppSettingsTabProvider.cs" />
     <Compile Include="Text\CodeEditor\CodeEditorOptions.cs" />
@@ -716,6 +717,18 @@
     <Compile Include="Text\Projection\BufferGraph.cs" />
     <Compile Include="Text\Projection\BufferGraphFactoryService.cs" />
     <Compile Include="Text\ProviderSelector.cs" />
+    <Compile Include="Text\Repl\AdvancedAppSettingsTab.cs" />
+    <Compile Include="Text\Repl\AppSettingsTabContainer.cs" />
+    <Compile Include="Text\Repl\AppSettingsTabProvider.cs" />
+    <Compile Include="Text\Repl\ContentTypeOptionDefinitionProvider.cs" />
+    <Compile Include="Text\Repl\GeneralAppSettingsTab.cs" />
+    <Compile Include="Text\Repl\IReplOptions.cs" />
+    <Compile Include="Text\Repl\LanguageAppSettingsTab.cs" />
+    <Compile Include="Text\Repl\ReplOptions.cs" />
+    <Compile Include="Text\Repl\ReplOptionsService.cs" />
+    <Compile Include="Text\Repl\ScrollBarsAppSettingsTab.cs" />
+    <Compile Include="Text\Repl\TabsAppSettingsTab.cs" />
+    <Compile Include="Text\Repl\TextViewOptionsGroupNameProvider.cs" />
     <Compile Include="Text\Tagging\BufferTagAggregatorFactoryService.cs" />
     <Compile Include="Text\Tagging\ITaggerFactory.cs" />
     <Compile Include="Text\Tagging\TagAggregatorBase.cs" />

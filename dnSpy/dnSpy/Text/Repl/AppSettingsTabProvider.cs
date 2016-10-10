@@ -25,10 +25,10 @@ using System.Globalization;
 using System.Linq;
 using dnSpy.Contracts.Settings.Dialog;
 
-namespace dnSpy.Text.CodeEditor {
+namespace dnSpy.Text.Repl {
 	[Export(typeof(IAppSettingsTabProvider))]
 	sealed class AppSettingsTabProvider : IAppSettingsTabProvider {
-		readonly ICodeEditorOptionsService codeEditorSettingsService;
+		readonly IReplOptionsService replOptionsService;
 
 		const int GENERAL_GUID_INC = 1;
 		const int SCROLLBARS_GUID_INC = 2;
@@ -36,16 +36,16 @@ namespace dnSpy.Text.CodeEditor {
 		const int ADVANCED_GUID_INC = 4;
 
 		[ImportingConstructor]
-		AppSettingsTabProvider(ICodeEditorOptionsService codeEditorSettingsService) {
-			this.codeEditorSettingsService = codeEditorSettingsService;
+		AppSettingsTabProvider(IReplOptionsService replOptionsService) {
+			this.replOptionsService = replOptionsService;
 		}
 
 		public IEnumerable<IAppSettingsTab> Create() {
-			var options = codeEditorSettingsService.Options.OrderBy(a => a.LanguageName, StringComparer.CurrentCultureIgnoreCase).ToArray();
+			var options = replOptionsService.Options.OrderBy(a => a.LanguageName, StringComparer.CurrentCultureIgnoreCase).ToArray();
 			if (options.Length == 0)
 				yield break;
 
-			double order = AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES;
+			double order = AppSettingsConstants.ORDER_REPL_LANGUAGES;
 			double orderIncrement = 1.0 / options.Length;
 			foreach (var option in options) {
 				yield return new LanguageAppSettingsTab {

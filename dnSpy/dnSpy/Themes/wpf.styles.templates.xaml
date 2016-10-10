@@ -18,6 +18,7 @@
                     xmlns:img2="clr-namespace:dnSpy.Images"
                     xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
                     xmlns:codesettings="clr-namespace:dnSpy.Text.CodeEditor"
+                    xmlns:replsettings="clr-namespace:dnSpy.Text.Repl"
                     xmlns:docvwrsettings="clr-namespace:dnSpy.Documents.Tabs.DocViewer.Settings"
                     xmlns:outputsettings="clr-namespace:dnSpy.Output.Settings"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -6154,6 +6155,175 @@
             <Label Grid.Row="1" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=indentSizeTextBox}" Content="{x:Static p:dnSpy_Resources.TextEditorIndentSize}" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="indentSizeTextBox" Text="{Binding IndentSizeVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ConvertTabsToSpaces}" Content="{x:Static p:dnSpy_Resources.TextEditorConvertTabsToSpaces}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type codesettings:AdvancedAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!--
+            <GroupBox Grid.Row="0" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.GeneralSettings}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding ReferenceHighlighting}" Content="{x:Static p:dnSpy_Resources.TextEditorReferenceHighlighting}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
+                    <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
+                    <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
+                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowStructureLines}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                </Grid>
+            </GroupBox>
+            -->
+            <GroupBox Grid.Row="1" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorLineHeight}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding CompressEmptyOrWhitespaceLines}" Content="{x:Static p:dnSpy_Resources.TextEditorCompressEmptyOrWhitespaceLines}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding CompressNonLetterLines}" Content="{x:Static p:dnSpy_Resources.TextEditorCompressNonLetterLines}" />
+                    <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding MinimumLineSpacing}" Content="{x:Static p:dnSpy_Resources.TextEditorMinimumLineSpacing}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="2" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorMargins}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding SelectionMargin}" Content="{x:Static p:dnSpy_Resources.TextEditorSelectionMargin}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding GlyphMargin}" Content="{x:Static p:dnSpy_Resources.TextEditorGlyphMargin}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="3" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorZoom}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding MouseWheelZoom}" Content="{x:Static p:dnSpy_Resources.TextEditorMouseWheelZoom}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding ZoomControl}" Content="{x:Static p:dnSpy_Resources.TextEditorZoomControl}" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type replsettings:GeneralAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!--TODO: ReplEditorOperations doesn't support virtual space
+            <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding UseVirtualSpace}" IsEnabled="{Binding UseVirtualSpaceEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorVirtualSpace}" />
+            -->
+            <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding WordWrap}" IsEnabled="{Binding WordWrapEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorWordWrap}" />
+            <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.TextEditorLineNumbers}" />
+            <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding HighlightCurrentLine}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightCurrentLine}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type replsettings:ScrollBarsAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding HorizontalScrollBar}" Content="{x:Static p:dnSpy_Resources.TextEditorHorizontalScrollBar}" />
+            <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding VerticalScrollBar}" Content="{x:Static p:dnSpy_Resources.TextEditorVerticalScrollBar}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type replsettings:TabsAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=tabSizeTextBox}" Content="{x:Static p:dnSpy_Resources.TextEditorTabSize}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="tabSizeTextBox" Text="{Binding TabSizeVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="1" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=indentSizeTextBox}" Content="{x:Static p:dnSpy_Resources.TextEditorIndentSize}" />
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="indentSizeTextBox" Text="{Binding IndentSizeVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ConvertTabsToSpaces}" Content="{x:Static p:dnSpy_Resources.TextEditorConvertTabsToSpaces}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type replsettings:AdvancedAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!--
+            <GroupBox Grid.Row="0" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.GeneralSettings}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding ReferenceHighlighting}" Content="{x:Static p:dnSpy_Resources.TextEditorReferenceHighlighting}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
+                    <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
+                    <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
+                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowStructureLines}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                </Grid>
+            </GroupBox>
+            -->
+            <GroupBox Grid.Row="1" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorLineHeight}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding CompressEmptyOrWhitespaceLines}" Content="{x:Static p:dnSpy_Resources.TextEditorCompressEmptyOrWhitespaceLines}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding CompressNonLetterLines}" Content="{x:Static p:dnSpy_Resources.TextEditorCompressNonLetterLines}" />
+                    <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding MinimumLineSpacing}" Content="{x:Static p:dnSpy_Resources.TextEditorMinimumLineSpacing}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="2" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorMargins}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding SelectionMargin}" Content="{x:Static p:dnSpy_Resources.TextEditorSelectionMargin}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding GlyphMargin}" Content="{x:Static p:dnSpy_Resources.TextEditorGlyphMargin}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="3" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorZoom}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding MouseWheelZoom}" Content="{x:Static p:dnSpy_Resources.TextEditorMouseWheelZoom}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding ZoomControl}" Content="{x:Static p:dnSpy_Resources.TextEditorZoomControl}" />
+                </Grid>
+            </GroupBox>
         </Grid>
     </DataTemplate>
 

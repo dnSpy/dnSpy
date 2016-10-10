@@ -1226,4 +1226,7 @@
   <data name="TextEditorShowTimestamps" xml:space="preserve">
     <value>Show timestamps</value>
   </data>
+  <data name="ReplSettings" xml:space="preserve">
+    <value>REPL</value>
+  </data>
 </root>

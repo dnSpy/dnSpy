@@ -17,29 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Settings.Groups {
-	/// <summary>
-	/// Text view group names
-	/// </summary>
-	public static class PredefinedTextViewGroupNames {
-		/// <summary>
-		/// Code editor group
-		/// </summary>
-		public const string CodeEditor = nameof(CodeEditor);
+using dnSpy.Contracts.Settings.Groups;
+using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
-		/// <summary>
-		/// Text viewer group
-		/// </summary>
-		public const string DocumentViewer = nameof(DocumentViewer);
-
-		/// <summary>
-		/// Output window group
-		/// </summary>
-		public const string OutputWindow = nameof(OutputWindow);
-
-		/// <summary>
-		/// REPL group
-		/// </summary>
-		public const string REPL = nameof(REPL);
+namespace dnSpy.Text.Repl {
+	[ExportTextViewOptionsGroupNameProvider]
+	sealed class TextViewOptionsGroupNameProvider : ITextViewOptionsGroupNameProvider {
+		public string TryGetGroupName(IWpfTextView textView) {
+			if (textView.Roles.Contains(PredefinedDsTextViewRoles.ReplEditor))
+				return PredefinedTextViewGroupNames.REPL;
+			return null;
+		}
 	}
 }

@@ -17,29 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Settings.Groups {
-	/// <summary>
-	/// Text view group names
-	/// </summary>
-	public static class PredefinedTextViewGroupNames {
-		/// <summary>
-		/// Code editor group
-		/// </summary>
-		public const string CodeEditor = nameof(CodeEditor);
+using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Settings.Repl;
+using dnSpy.Contracts.Text;
 
-		/// <summary>
-		/// Text viewer group
-		/// </summary>
-		public const string DocumentViewer = nameof(DocumentViewer);
-
-		/// <summary>
-		/// Output window group
-		/// </summary>
-		public const string OutputWindow = nameof(OutputWindow);
-
-		/// <summary>
-		/// REPL group
-		/// </summary>
-		public const string REPL = nameof(REPL);
+namespace dnSpy.Scripting.Roslyn.CSharp {
+	static class ReplOptionsDefinitions {
+#pragma warning disable 0169
+		[ExportReplOptionsDefinition("C#", ContentTypes.ReplCSharpRoslyn, AppSettingsConstants.GUID_REPL_CSHARP_ROSLYN)]
+		static readonly ReplOptionsDefinition csharpReplOptionsDefinition;
+#pragma warning restore 0169
 	}
 }

@@ -76,6 +76,7 @@
     <Compile Include="CSharp\CSharpControlVM.cs" />
     <Compile Include="CSharp\CSharpReplSettingsImpl.cs" />
     <Compile Include="CSharp\CSharpToolWindowContent.cs" />
+    <Compile Include="CSharp\ReplOptionsDefinitions.cs" />
     <Compile Include="CSharp\TextEditorFormatDefinition.cs" />
     <Compile Include="Properties\dnSpy.Scripting.Roslyn.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -88,6 +89,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="VisualBasicInteractive.rsp" />
+    <None Include="VisualBasic\ReplOptionsDefinitions.cs" />
     <None Include="VisualBasic\VisualBasicToolWindowContent.cs" />
     <None Include="VisualBasic\VisualBasicReplSettingsImpl.cs" />
     <None Include="VisualBasic\VisualBasicControlVM.cs" />

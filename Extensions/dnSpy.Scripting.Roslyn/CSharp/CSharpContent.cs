@@ -42,7 +42,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 		static ReplEditorOptions CreateReplEditorOptions() {
 			var options = new ReplEditorOptions {
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
-				ContentTypeString = ContentTypes.CSharpRoslyn,
+				ContentTypeString = ContentTypes.ReplCSharpRoslyn,
 			};
 			options.Roles.Add(PredefinedDsTextViewRoles.CSharpRepl);
 			return options;

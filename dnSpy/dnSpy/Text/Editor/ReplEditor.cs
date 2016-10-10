@@ -102,15 +102,11 @@ namespace dnSpy.Text.Editor {
 			this.wpfTextView = wpfTextViewHost.TextView;
 			ReplEditorUtils.AddInstance(this, wpfTextView);
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.REPL);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
 			//TODO: ReplEditorOperations doesn't support virtual space
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId, false);
 			//TODO: Support box selection
 			wpfTextView.Options.SetOptionValue(DefaultDsTextViewOptions.AllowBoxSelectionId, false);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultValue);
-			wpfTextView.InitializeLocalZoomLevel();
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			wpfTextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
 			wpfTextView.Closed += WpfTextView_Closed;

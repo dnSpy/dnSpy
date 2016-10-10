@@ -60,7 +60,6 @@ namespace dnSpy.Text.Editor {
 			TextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
 			TextViewHost.TextView.Options.SetOptionValue(DefaultDsTextViewOptions.RefreshScreenOnChangeId, true);
-			TextViewHost.TextView.InitializeLocalZoomLevel();
 		}
 
 		public void Dispose() {

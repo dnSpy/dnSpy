@@ -2097,6 +2097,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to REPL.
+        /// </summary>
+        public static string ReplSettings {
+            get {
+                return ResourceManager.GetString("ReplSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resources.
         /// </summary>
         public static string ResourcesFolder {
