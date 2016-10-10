@@ -564,9 +564,6 @@
   <data name="TabsDlg_Title" xml:space="preserve">
     <value>Windows</value>
   </data>
-  <data name="TextEditorNewFormatterWarningMsg" xml:space="preserve">
-    <value>The text editor is using the new faster text formatter. It doesn't support word wrap or all unicode characters. Enable/disable it in the options.</value>
-  </data>
   <data name="UnknownError" xml:space="preserve">
     <value>An unknown error occurred</value>
   </data>
@@ -1159,5 +1156,68 @@
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
     <value>_Tab size</value>
+  </data>
+  <data name="TextViewerSettings" xml:space="preserve">
+    <value>Text Viewer</value>
+  </data>
+  <data name="AdvancedSettings" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ScrollBarsSettings" xml:space="preserve">
+    <value>Scroll Bars</value>
+  </data>
+  <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
+    <value>Compress blank lines</value>
+  </data>
+  <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
+    <value>Compress lines that do not have any alphanumeric characters</value>
+  </data>
+  <data name="TextEditorGlyphMargin" xml:space="preserve">
+    <value>Indicator margin</value>
+  </data>
+  <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
+    <value>Highlight current line</value>
+  </data>
+  <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
+    <value>Highlight braces</value>
+  </data>
+  <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
+    <value>Highlight related keywords</value>
+  </data>
+  <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
+    <value>Show _horizontal scroll bar</value>
+  </data>
+  <data name="TextEditorLineHeight" xml:space="preserve">
+    <value>Line height</value>
+  </data>
+  <data name="TextEditorLineSeparators" xml:space="preserve">
+    <value>Show procedure line separators</value>
+  </data>
+  <data name="TextEditorMargins" xml:space="preserve">
+    <value>Margins</value>
+  </data>
+  <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
+    <value>Don't add extra line spacing</value>
+  </data>
+  <data name="TextEditorMouseWheelZoom" xml:space="preserve">
+    <value>Mouse wheel zoom</value>
+  </data>
+  <data name="TextEditorReferenceHighlighting" xml:space="preserve">
+    <value>Highlight references</value>
+  </data>
+  <data name="TextEditorSelectionMargin" xml:space="preserve">
+    <value>Selection margin</value>
+  </data>
+  <data name="TextEditorShowStructureLines" xml:space="preserve">
+    <value>Show indent guides</value>
+  </data>
+  <data name="TextEditorVerticalScrollBar" xml:space="preserve">
+    <value>Show _vertical scroll bar</value>
+  </data>
+  <data name="TextEditorZoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="TextEditorZoomControl" xml:space="preserve">
+    <value>Zoom control</value>
   </data>
 </root>

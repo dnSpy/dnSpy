@@ -63,8 +63,14 @@ namespace dnSpy.Text.Groups {
 		}
 
 		public void InitializeOptions(IWpfTextView textView) {
-			foreach (var option in Options)
-				textView.Options.SetOptionValue(option.OptionId, option.Value);
+			foreach (var option in Options) {
+				try {
+					textView.Options.SetOptionValue(option.OptionId, option.Value);
+				}
+				catch (ArgumentException) {
+					// Invalid option value
+				}
+			}
 		}
 	}
 }

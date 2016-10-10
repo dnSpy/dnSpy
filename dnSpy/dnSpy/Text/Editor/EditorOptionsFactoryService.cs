@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
@@ -34,14 +35,14 @@ namespace dnSpy.Text.Editor {
 		readonly Dictionary<string, EditorOptionDefinition> editorOptionDefinitions;
 
 		[ImportingConstructor]
-		EditorOptionsFactoryService(IGlobalEditorOptions globalEditorOptions, [ImportMany] IEnumerable<EditorOptionDefinition> editorOptionDefinitions) {
+		EditorOptionsFactoryService([ImportMany] IEnumerable<EditorOptionDefinition> editorOptionDefinitions) {
 			this.editorOptionDefinitions = new Dictionary<string, EditorOptionDefinition>();
 			foreach (var o in editorOptionDefinitions) {
 				Debug.Assert(!this.editorOptionDefinitions.ContainsKey(o.Name));
 				this.editorOptionDefinitions[o.Name] = o;
 			}
 			GlobalOptions = new EditorOptions(this, null, null);
-			globalEditorOptions.Initialize(GlobalOptions);
+			GlobalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultValue);
 		}
 
 		public IEditorOptions CreateOptions() => new EditorOptions(this, GlobalOptions, null);

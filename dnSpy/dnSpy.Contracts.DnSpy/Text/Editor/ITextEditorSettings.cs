@@ -34,10 +34,5 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Font size
 		/// </summary>
 		double FontSize { get; }
-
-		/// <summary>
-		/// true if references are highlighted
-		/// </summary>
-		bool HighlightReferences { get; }
 	}
 }

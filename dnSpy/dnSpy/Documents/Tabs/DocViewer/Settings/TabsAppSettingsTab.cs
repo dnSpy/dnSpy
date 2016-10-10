@@ -24,11 +24,11 @@ using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using dnSpy.Text.Editor;
 
-namespace dnSpy.Text.CodeEditor {
+namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 	sealed class TabsAppSettingsTab : ViewModelBase, IAppSettingsTab {
-		public Guid ParentGuid => options.Guid;
-		public Guid Guid { get; }
-		public double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_TABS;
+		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
+		public Guid Guid => new Guid("D8B1C942-4094-4132-878F-5FFAE59FF9FD");
+		public double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_TABS;
 		public string Title => dnSpy_Resources.TabsSettings;
 		public ImageReference Icon => ImageReference.None;
 		public object UIObject => this;
@@ -47,11 +47,12 @@ namespace dnSpy.Text.CodeEditor {
 		}
 		bool convertTabsToSpaces;
 
-		readonly ICodeEditorOptions options;
+		readonly IDocumentViewerOptions options;
 
-		public TabsAppSettingsTab(ICodeEditorOptions options, Guid guid) {
+		public TabsAppSettingsTab(IDocumentViewerOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
 			this.options = options;
-			Guid = guid;
 			TabSizeVM = new Int32VM(options.TabSize, a => { }, true) { Min = OptionsHelpers.MinimumTabSize, Max = OptionsHelpers.MaximumTabSize };
 			IndentSizeVM = new Int32VM(options.IndentSize, a => { }, true) { Min = OptionsHelpers.MinimumIndentSize, Max = OptionsHelpers.MaximumIndentSize };
 			ConvertTabsToSpaces = options.ConvertTabsToSpaces;

@@ -24,7 +24,6 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	class TextEditorSettings : ViewModelBase, ITextEditorSettings {
@@ -53,90 +52,6 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 		double fontSize = FontUtilities.DEFAULT_FONT_SIZE;
-
-		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
-			set {
-				if (showLineNumbers != value) {
-					showLineNumbers = value;
-					OnPropertyChanged(nameof(ShowLineNumbers));
-					OnModified();
-				}
-			}
-		}
-		bool showLineNumbers = true;
-
-		public bool HighlightReferences {
-			get { return highlightReferences; }
-			set {
-				if (highlightReferences != value) {
-					highlightReferences = value;
-					OnPropertyChanged(nameof(HighlightReferences));
-					OnModified();
-				}
-			}
-		}
-		bool highlightReferences = true;
-
-		public bool HighlightCurrentLine {
-			get { return highlightCurrentLine; }
-			set {
-				if (highlightCurrentLine != value) {
-					highlightCurrentLine = value;
-					OnPropertyChanged(nameof(HighlightCurrentLine));
-					OnModified();
-				}
-			}
-		}
-		bool highlightCurrentLine = true;
-
-		public bool ForceClearTypeIfNeeded {
-			get { return forceClearTypeIfNeeded; }
-			set {
-				if (forceClearTypeIfNeeded != value) {
-					forceClearTypeIfNeeded = value;
-					OnPropertyChanged(nameof(ForceClearTypeIfNeeded));
-					OnModified();
-				}
-			}
-		}
-		bool forceClearTypeIfNeeded = true;
-
-		public WordWrapStyles WordWrapStyle {
-			get { return wordWrapStyle; }
-			set {
-				if (wordWrapStyle != value) {
-					wordWrapStyle = value;
-					OnPropertyChanged(nameof(WordWrapStyle));
-					OnModified();
-				}
-			}
-		}
-		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultValue;
-
-		public bool ConvertTabsToSpaces {
-			get { return convertTabsToSpaces; }
-			set {
-				if (convertTabsToSpaces != value) {
-					convertTabsToSpaces = value;
-					OnPropertyChanged(nameof(ConvertTabsToSpaces));
-					OnModified();
-				}
-			}
-		}
-		bool convertTabsToSpaces = false;
-
-		public double TextViewZoomLevel {
-			get { return textViewZoomLevel; }
-			set {
-				if (textViewZoomLevel != value) {
-					textViewZoomLevel = value;
-					OnPropertyChanged(nameof(TextViewZoomLevel));
-					OnModified();
-				}
-			}
-		}
-		double textViewZoomLevel = ZoomConstants.DefaultZoom;
 	}
 
 	[Export, Export(typeof(ITextEditorSettings))]
@@ -153,13 +68,6 @@ namespace dnSpy.Text.Editor {
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultTextEditorFont());
 			this.FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? this.FontSize;
-			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
-			this.HighlightReferences = sect.Attribute<bool?>(nameof(HighlightReferences)) ?? this.HighlightReferences;
-			this.HighlightCurrentLine = sect.Attribute<bool?>(nameof(HighlightCurrentLine)) ?? this.HighlightCurrentLine;
-			this.ForceClearTypeIfNeeded = sect.Attribute<bool?>(nameof(ForceClearTypeIfNeeded)) ?? this.ForceClearTypeIfNeeded;
-			this.WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? this.WordWrapStyle;
-			this.ConvertTabsToSpaces = sect.Attribute<bool?>(nameof(ConvertTabsToSpaces)) ?? this.ConvertTabsToSpaces;
-			this.TextViewZoomLevel = sect.Attribute<double?>(nameof(TextViewZoomLevel)) ?? this.TextViewZoomLevel;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -170,13 +78,6 @@ namespace dnSpy.Text.Editor {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(FontFamily), FontFamily.Source);
 			sect.Attribute(nameof(FontSize), FontSize);
-			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);
-			sect.Attribute(nameof(HighlightReferences), HighlightReferences);
-			sect.Attribute(nameof(HighlightCurrentLine), HighlightCurrentLine);
-			sect.Attribute(nameof(ForceClearTypeIfNeeded), ForceClearTypeIfNeeded);
-			sect.Attribute(nameof(WordWrapStyle), WordWrapStyle);
-			sect.Attribute(nameof(ConvertTabsToSpaces), ConvertTabsToSpaces);
-			sect.Attribute(nameof(TextViewZoomLevel), TextViewZoomLevel);
 		}
 	}
 }

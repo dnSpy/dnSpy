@@ -27,22 +27,17 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
-using dnSpy.Properties;
+using dnSpy.Documents.Tabs.DocViewer.Settings;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
 	[ExportAutoLoaded]
 	sealed class WordWrapInit : IAutoLoaded {
-		readonly IEditorOptions editorOptions;
-		readonly IAppSettings appSettings;
-		readonly IMessageBoxService messageBoxService;
+		readonly Lazy<IDocumentViewerOptionsService> documentViewerOptionsService;
 
 		[ImportingConstructor]
-		WordWrapInit(IAppWindow appWindow, IEditorOptionsFactoryService editorOptionsFactoryService, IAppSettings appSettings, IMessageBoxService messageBoxService) {
-			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
-			this.appSettings = appSettings;
-			this.messageBoxService = messageBoxService;
+		WordWrapInit(IAppWindow appWindow, Lazy<IDocumentViewerOptionsService> documentViewerOptionsService) {
+			this.documentViewerOptionsService = documentViewerOptionsService;
 			appWindow.MainWindow.KeyDown += MainWindow_KeyDown;
 		}
 
@@ -55,45 +50,39 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (waitingForSecondKey && (e.KeyboardDevice.Modifiers == ModifierKeys.Control || e.KeyboardDevice.Modifiers == ModifierKeys.None) && e.Key == Key.W) {
 				waitingForSecondKey = false;
 				e.Handled = true;
-				ToggleWordWrap();
+				documentViewerOptionsService.Value.Default.WordWrapStyle ^= WordWrapStyles.WordWrap;
 				return;
 			}
 
 			waitingForSecondKey = false;
 		}
 		bool waitingForSecondKey;
-
-		void ToggleWordWrap() {
-			editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, editorOptions.WordWrapStyle() ^ WordWrapStyles.WordWrap);
-			if ((editorOptions.WordWrapStyle() & WordWrapStyles.WordWrap) != 0 && appSettings.UseNewRenderer_TextEditor)
-				messageBoxService.ShowIgnorableMessage(new Guid("AA6167DA-827C-49C6-8EF3-0797FE8FC5E6"), dnSpy_Resources.TextEditorNewFormatterWarningMsg);
-		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:WordWrapHeader", Icon = DsImagesAttribute.WordWrap, InputGestureText = "res:ShortCutKeyCtrlECtrlW", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
 	sealed class WordWrapCommand : MenuItemBase {
-		readonly IEditorOptions editorOptions;
+		readonly Lazy<IDocumentViewerOptionsService> documentViewerOptionsService;
 
 		[ImportingConstructor]
-		WordWrapCommand(IEditorOptionsFactoryService editorOptionsFactoryService) {
-			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
+		WordWrapCommand(Lazy<IDocumentViewerOptionsService> documentViewerOptionsService) {
+			this.documentViewerOptionsService = documentViewerOptionsService;
 		}
 
-		public override void Execute(IMenuItemContext context) => editorOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, editorOptions.WordWrapStyle() ^ WordWrapStyles.WordWrap);
-		public override bool IsChecked(IMenuItemContext context) => (editorOptions.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
+		public override void Execute(IMenuItemContext context) => documentViewerOptionsService.Value.Default.WordWrapStyle ^= WordWrapStyles.WordWrap;
+		public override bool IsChecked(IMenuItemContext context) => (documentViewerOptionsService.Value.Default.WordWrapStyle & WordWrapStyles.WordWrap) != 0;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:HighlightLine", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 10)]
 	sealed class HighlightCurrentLineCommand : MenuItemBase {
-		readonly IEditorOptions editorOptions;
+		readonly Lazy<IDocumentViewerOptionsService> documentViewerOptionsService;
 
 		[ImportingConstructor]
-		HighlightCurrentLineCommand(IEditorOptionsFactoryService editorOptionsFactoryService) {
-			this.editorOptions = editorOptionsFactoryService.GlobalOptions;
+		HighlightCurrentLineCommand(Lazy<IDocumentViewerOptionsService> documentViewerOptionsService) {
+			this.documentViewerOptionsService = documentViewerOptionsService;
 		}
 
-		public override bool IsChecked(IMenuItemContext context) => editorOptions.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId);
-		public override void Execute(IMenuItemContext context) => editorOptions.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, !editorOptions.GetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId));
+		public override void Execute(IMenuItemContext context) => documentViewerOptionsService.Value.Default.EnableHighlightCurrentLine = !documentViewerOptionsService.Value.Default.EnableHighlightCurrentLine;
+		public override bool IsChecked(IMenuItemContext context) => documentViewerOptionsService.Value.Default.EnableHighlightCurrentLine;
 	}
 
 	[ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_EDITOR, Order = 0)]

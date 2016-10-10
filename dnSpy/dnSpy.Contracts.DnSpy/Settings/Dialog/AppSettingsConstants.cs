@@ -54,6 +54,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_DEBUGGER = 2000;
 
 		/// <summary>
+		/// Order of Text Viewer settings tab
+		/// </summary>
+		public const double ORDER_DOCUMENT_VIEWER = 3000;
+
+		/// <summary>
 		/// Order of Code Editor settings tab
 		/// </summary>
 		public const double ORDER_CODE_EDITOR = 4000;
@@ -61,22 +66,22 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Order of Assembly Explorer settings tab
 		/// </summary>
-		public const double ORDER_ASSEMBLY_EXPLORER = 5000;
+		public const double ORDER_ASSEMBLY_EXPLORER = 7000;
 
 		/// <summary>
 		/// Order of hex editor settings tab
 		/// </summary>
-		public const double ORDER_HEXEDITOR = 6000;
+		public const double ORDER_HEXEDITOR = 8000;
 
 		/// <summary>
 		/// Order of background image settings tab
 		/// </summary>
-		public const double ORDER_BACKGROUNDIMAGE = 7000;
+		public const double ORDER_BACKGROUNDIMAGE = 9000;
 
 		/// <summary>
 		/// Order of baml settings tab
 		/// </summary>
-		public const double ORDER_BAML = 8000;
+		public const double ORDER_BAML = 10000;
 
 		/// <summary>
 		/// Order of <see cref="IDsDocumentService"/>'s <see cref="IAppSettingsModifiedListener"/> instance
@@ -119,6 +124,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_CODE_EDITOR_VISUAL_BASIC_ROSLYN = "A863FFDA-2AD2-4DB4-B5D4-B2363F3D450F";
 
 		/// <summary>
+		/// Guid of Text Viewer tab settings
+		/// </summary>
+		public const string GUID_DOCUMENT_VIEWER = "DEFBC59F-8FB1-4DC1-8067-B006BE07B6DA";
+
+		/// <summary>
 		/// Order of Environment / General
 		/// </summary>
 		public const double ORDER_ENVIRONMENT_GENERAL = 0;
@@ -152,5 +162,25 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Order of Tabs language settings
 		/// </summary>
 		public const double ORDER_CODE_EDITOR_LANGUAGES_TABS = 3000;
+
+		/// <summary>
+		/// Order of Text Viewer / General tab
+		/// </summary>
+		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_GENERAL = 1000;
+
+		/// <summary>
+		/// Order of Text Viewer / Scroll Bars tab
+		/// </summary>
+		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_SCROLLBARS = 2000;
+
+		/// <summary>
+		/// Order of Text Viewer / Tabs tab
+		/// </summary>
+		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_TABS = 3000;
+
+		/// <summary>
+		/// Order of Text Viewer / Advanced tab
+		/// </summary>
+		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_ADVANCED = 4000;
 	}
 }

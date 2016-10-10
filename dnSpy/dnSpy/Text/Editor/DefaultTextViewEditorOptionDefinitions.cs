@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class LineSeparatorEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.LineSeparatorId;
+		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.LineSeparatorsId;
 		public override bool Default => true;
 	}
 

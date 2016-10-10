@@ -188,8 +188,14 @@ namespace dnSpy.Text.Groups {
 			try {
 				writeOptionHash.Add(option);
 				optionsStorage.Write(groupName, option);
-				foreach (var textView in textViews.ToArray())
-					textView.Options.SetOptionValue(option.OptionId, option.Value);
+				foreach (var textView in textViews.ToArray()) {
+					try {
+						textView.Options.SetOptionValue(option.OptionId, option.Value);
+					}
+					catch (ArgumentException) {
+						// Invalid option value
+					}
+				}
 			}
 			finally {
 				writeOptionHash.Remove(option);

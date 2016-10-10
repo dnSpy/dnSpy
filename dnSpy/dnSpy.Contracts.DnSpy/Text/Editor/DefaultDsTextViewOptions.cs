@@ -44,8 +44,8 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> ReferenceHighlightingId = new EditorOptionKey<bool>(ReferenceHighlightingName);
 		public const string BraceMatchingName = "ITextView/BraceMatching";
 		public static readonly EditorOptionKey<bool> BraceMatchingId = new EditorOptionKey<bool>(BraceMatchingName);
-		public const string LineSeparatorName = "ITextView/LineSeparator";
-		public static readonly EditorOptionKey<bool> LineSeparatorId = new EditorOptionKey<bool>(LineSeparatorName);
+		public const string LineSeparatorsName = "ITextView/LineSeparators";
+		public static readonly EditorOptionKey<bool> LineSeparatorsId = new EditorOptionKey<bool>(LineSeparatorsName);
 		public const string HighlightRelatedKeywordsName = "ITextView/HighlightRelatedKeywords";
 		public static readonly EditorOptionKey<bool> HighlightRelatedKeywordsId = new EditorOptionKey<bool>(HighlightRelatedKeywordsName);
 		public const string CompressEmptyOrWhitespaceLinesName = "ITextView/CompressEmptyOrWhitespaceLines";

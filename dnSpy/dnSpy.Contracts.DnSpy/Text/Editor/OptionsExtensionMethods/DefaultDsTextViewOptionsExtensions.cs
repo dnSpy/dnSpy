@@ -132,7 +132,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		public static bool IsLineSeparatorEnabled(this IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			return options.GetOptionValue(DefaultDsTextViewOptions.LineSeparatorId);
+			return options.GetOptionValue(DefaultDsTextViewOptions.LineSeparatorsId);
 		}
 
 		/// <summary>

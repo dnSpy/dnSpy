@@ -113,7 +113,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultDsTextViewOptions.LineSeparatorName)
+			if (e.OptionId == DefaultDsTextViewOptions.LineSeparatorsName)
 				UpdateLineSeparator();
 		}
 

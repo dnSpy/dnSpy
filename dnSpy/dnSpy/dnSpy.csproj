@@ -187,6 +187,17 @@
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorViewTagger.cs" />
     <Compile Include="Documents\Tabs\DocViewer\MethodDebugInfoMethodOffsetSpanMap.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\AdvancedAppSettingsTab.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\AppSettingsTabContainer.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\AppSettingsTabProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\ContentTypeOptionDefinitionProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\DocumentViewerOptions.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\DocumentViewerOptionsService.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\GeneralAppSettingsTab.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\IDocumentViewerOptions.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\ScrollBarsAppSettingsTab.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\TabsAppSettingsTab.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\Settings\TextViewOptionsGroupNameProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\SpanDataCollectionUtilities.cs" />
     <Compile Include="Documents\Tabs\DocViewer\SpanDataReferenceInfoExtensions.cs" />
     <Compile Include="Documents\Tabs\DocViewer\SpanReferenceDocumentViewerCustomDataProvider.cs" />
@@ -529,7 +540,6 @@
     <Compile Include="Text\Editor\EditorOptions.cs" />
     <Compile Include="Text\Editor\EditorOptionsFactoryService.cs" />
     <Compile Include="Text\Editor\EditorPositionState.cs" />
-    <Compile Include="Text\Editor\GlobalEditorOptions.cs" />
     <Compile Include="Text\Editor\GlyphMargin.cs" />
     <Compile Include="Text\Editor\GlyphTextMarkerService.cs" />
     <Compile Include="Text\Editor\GlyphTextMarkerServiceMouseProcessor.cs" />

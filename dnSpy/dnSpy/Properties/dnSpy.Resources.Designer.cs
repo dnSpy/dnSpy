@@ -142,6 +142,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Advanced.
+        /// </summary>
+        public static string AdvancedSettings {
+            get {
+                return ResourceManager.GetString("AdvancedSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Files.
         /// </summary>
         public static string AllFiles {
@@ -2115,6 +2124,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scroll Bars.
+        /// </summary>
+        public static string ScrollBarsSettings {
+            get {
+                return ResourceManager.GetString("ScrollBarsSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close (Esc).
         /// </summary>
         public static string Search_CloseToolTip {
@@ -2925,11 +2943,74 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compress blank lines.
+        /// </summary>
+        public static string TextEditorCompressEmptyOrWhitespaceLines {
+            get {
+                return ResourceManager.GetString("TextEditorCompressEmptyOrWhitespaceLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compress lines that do not have any alphanumeric characters.
+        /// </summary>
+        public static string TextEditorCompressNonLetterLines {
+            get {
+                return ResourceManager.GetString("TextEditorCompressNonLetterLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Convert tabs to s_paces.
         /// </summary>
         public static string TextEditorConvertTabsToSpaces {
             get {
                 return ResourceManager.GetString("TextEditorConvertTabsToSpaces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indicator margin.
+        /// </summary>
+        public static string TextEditorGlyphMargin {
+            get {
+                return ResourceManager.GetString("TextEditorGlyphMargin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlight current line.
+        /// </summary>
+        public static string TextEditorHighlightCurrentLine {
+            get {
+                return ResourceManager.GetString("TextEditorHighlightCurrentLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlight braces.
+        /// </summary>
+        public static string TextEditorHighlightMatchingBrace {
+            get {
+                return ResourceManager.GetString("TextEditorHighlightMatchingBrace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlight related keywords.
+        /// </summary>
+        public static string TextEditorHighlightRelatedKeywords {
+            get {
+                return ResourceManager.GetString("TextEditorHighlightRelatedKeywords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show _horizontal scroll bar.
+        /// </summary>
+        public static string TextEditorHorizontalScrollBar {
+            get {
+                return ResourceManager.GetString("TextEditorHorizontalScrollBar", resourceCulture);
             }
         }
         
@@ -2943,6 +3024,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Line height.
+        /// </summary>
+        public static string TextEditorLineHeight {
+            get {
+                return ResourceManager.GetString("TextEditorLineHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Line numbers.
         /// </summary>
         public static string TextEditorLineNumbers {
@@ -2952,11 +3042,65 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The text editor is using the new faster text formatter. It doesn&apos;t support word wrap or all unicode characters. Enable/disable it in the options..
+        ///   Looks up a localized string similar to Show procedure line separators.
         /// </summary>
-        public static string TextEditorNewFormatterWarningMsg {
+        public static string TextEditorLineSeparators {
             get {
-                return ResourceManager.GetString("TextEditorNewFormatterWarningMsg", resourceCulture);
+                return ResourceManager.GetString("TextEditorLineSeparators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Margins.
+        /// </summary>
+        public static string TextEditorMargins {
+            get {
+                return ResourceManager.GetString("TextEditorMargins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Don&apos;t add extra line spacing.
+        /// </summary>
+        public static string TextEditorMinimumLineSpacing {
+            get {
+                return ResourceManager.GetString("TextEditorMinimumLineSpacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse wheel zoom.
+        /// </summary>
+        public static string TextEditorMouseWheelZoom {
+            get {
+                return ResourceManager.GetString("TextEditorMouseWheelZoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlight references.
+        /// </summary>
+        public static string TextEditorReferenceHighlighting {
+            get {
+                return ResourceManager.GetString("TextEditorReferenceHighlighting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selection margin.
+        /// </summary>
+        public static string TextEditorSelectionMargin {
+            get {
+                return ResourceManager.GetString("TextEditorSelectionMargin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show indent guides.
+        /// </summary>
+        public static string TextEditorShowStructureLines {
+            get {
+                return ResourceManager.GetString("TextEditorShowStructureLines", resourceCulture);
             }
         }
         
@@ -2966,6 +3110,15 @@ namespace dnSpy.Properties {
         public static string TextEditorTabSize {
             get {
                 return ResourceManager.GetString("TextEditorTabSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show _vertical scroll bar.
+        /// </summary>
+        public static string TextEditorVerticalScrollBar {
+            get {
+                return ResourceManager.GetString("TextEditorVerticalScrollBar", resourceCulture);
             }
         }
         
@@ -2988,11 +3141,38 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Zoom.
+        /// </summary>
+        public static string TextEditorZoom {
+            get {
+                return ResourceManager.GetString("TextEditorZoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom control.
+        /// </summary>
+        public static string TextEditorZoomControl {
+            get {
+                return ResourceManager.GetString("TextEditorZoomControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Text Files.
         /// </summary>
         public static string TextFiles {
             get {
                 return ResourceManager.GetString("TextFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text Viewer.
+        /// </summary>
+        public static string TextViewerSettings {
+            get {
+                return ResourceManager.GetString("TextViewerSettings", resourceCulture);
             }
         }
         
