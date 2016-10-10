@@ -213,9 +213,6 @@
   <data name="DerivedTypes" xml:space="preserve">
     <value>派生类型</value>
   </data>
-  <data name="DisplayDlgTabTitle" xml:space="preserve">
-    <value>显示</value>
-  </data>
   <data name="DotNetExes" xml:space="preserve">
     <value>.NET 可执行文件</value>
   </data>
@@ -492,17 +489,8 @@
   <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
     <value>可以从资源中的数据里加载任意程序集并运行.</value>
   </data>
-  <data name="Options_Misc_ExplorerIntegration" xml:space="preserve">
-    <value>Windows 资源管理器整合</value>
-  </data>
-  <data name="Options_Misc_ExplorerIntegration_ToolTip" xml:space="preserve">
-    <value>添加上下文菜单项目“用 dnSpy 打开程序集”到 Windows 资源管理器</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>使用内存映射 I/O</value>
-  </data>
-  <data name="Options_Misc_UseMmapdIO_ToolTip" xml:space="preserve">
-    <value>您可以右击各模块以禁用之。</value>
   </data>
   <data name="ReferencesFolder" xml:space="preserve">
     <value>引用</value>
@@ -576,9 +564,6 @@
   <data name="TabsDlg_Title" xml:space="preserve">
     <value>窗口</value>
   </data>
-  <data name="TextEditorNewFormatterWarningMsg" xml:space="preserve">
-    <value>文本编辑器当前正使用新的文本格式化程序，此时不支持自动换行及Unicode字符（如中文）。在设置中可以启用/禁用此选项。</value>
-  </data>
   <data name="UnknownError" xml:space="preserve">
     <value>发生未知错误</value>
   </data>
@@ -598,7 +583,7 @@
     <value>关闭</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>反编译整个类型而不是单个成员</value>
+    <value>Decompile a member's enclosing class instead of the class member</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
     <value>高亮引用</value>
@@ -617,18 +602,6 @@
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
     <value>显示元数据标记</value>
-  </data>
-  <data name="DisplaySettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>单击展开 TreeView 节点</value>
-  </data>
-  <data name="DisplaySettings_SyntaxHighlightTreeView" xml:space="preserve">
-    <value>TreeView 语法高亮</value>
-  </data>
-  <data name="Font" xml:space="preserve">
-    <value>字体</value>
-  </data>
-  <data name="MiscDlgTabTitle" xml:space="preserve">
-    <value>其它</value>
   </data>
   <data name="OptionsCommand" xml:space="preserve">
     <value>选项(_O)...</value>
@@ -765,17 +738,11 @@
   <data name="UseNewRendererInfo" xml:space="preserve">
     <value>新版文本格式化程序速度快，但不支持自动换行以及 unicode 字符（如中文字符）。</value>
   </data>
-  <data name="UseNewRenderer_FileTreeView" xml:space="preserve">
-    <value>文件TreeView</value>
-  </data>
   <data name="UseNewRenderer_HexEditor" xml:space="preserve">
     <value>HEX 编辑器</value>
   </data>
   <data name="UseNewRenderer_TextEditor" xml:space="preserve">
     <value>文本编辑器</value>
-  </data>
-  <data name="DisplaySettings_OtherOptions" xml:space="preserve">
-    <value>其它选项</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>蓝色(_B)</value>
@@ -871,9 +838,6 @@
   </data>
   <data name="DecompilerDlgTabTitle" xml:space="preserve">
     <value>反编译器</value>
-  </data>
-  <data name="DisplaySettings_MemberOrder" xml:space="preserve">
-    <value>TreeView成员顺序（重启程序生效）</value>
   </data>
   <data name="MemberKind_Events" xml:space="preserve">
     <value>事件</value>
@@ -1144,5 +1108,125 @@
   </data>
   <data name="UriFollowLinkMessage" xml:space="preserve">
     <value>CTRL + click to follow link</value>
+  </data>
+  <data name="EnvironmentSettings" xml:space="preserve">
+    <value>Environment</value>
+  </data>
+  <data name="GeneralSettings" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="GeneralSettings_Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
+    <value>Integrate with Windows Explorer</value>
+  </data>
+  <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
+    <value>Order (restart needed)</value>
+  </data>
+  <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
+    <value>Single-click expands nodes</value>
+  </data>
+  <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Syntax highlight</value>
+  </data>
+  <data name="FontSettings" xml:space="preserve">
+    <value>字体</value>
+  </data>
+  <data name="CodeEditorSettings" xml:space="preserve">
+    <value>Code Editor</value>
+  </data>
+  <data name="TabsSettings" xml:space="preserve">
+    <value>Tabs</value>
+  </data>
+  <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
+    <value>Convert tabs to s_paces</value>
+  </data>
+  <data name="TextEditorLineNumbers" xml:space="preserve">
+    <value>_Line numbers</value>
+  </data>
+  <data name="TextEditorVirtualSpace" xml:space="preserve">
+    <value>_Virtual space</value>
+  </data>
+  <data name="TextEditorWordWrap" xml:space="preserve">
+    <value>_Word wrap</value>
+  </data>
+  <data name="TextEditorIndentSize" xml:space="preserve">
+    <value>_Indent size</value>
+  </data>
+  <data name="TextEditorTabSize" xml:space="preserve">
+    <value>_Tab size</value>
+  </data>
+  <data name="TextViewerSettings" xml:space="preserve">
+    <value>Text Viewer</value>
+  </data>
+  <data name="AdvancedSettings" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ScrollBarsSettings" xml:space="preserve">
+    <value>Scroll Bars</value>
+  </data>
+  <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
+    <value>Compress blank lines</value>
+  </data>
+  <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
+    <value>Compress lines that do not have any alphanumeric characters</value>
+  </data>
+  <data name="TextEditorGlyphMargin" xml:space="preserve">
+    <value>Indicator margin</value>
+  </data>
+  <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
+    <value>Highlight current line</value>
+  </data>
+  <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
+    <value>Highlight braces</value>
+  </data>
+  <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
+    <value>Highlight related keywords</value>
+  </data>
+  <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
+    <value>Show _horizontal scroll bar</value>
+  </data>
+  <data name="TextEditorLineHeight" xml:space="preserve">
+    <value>Line height</value>
+  </data>
+  <data name="TextEditorLineSeparators" xml:space="preserve">
+    <value>Show procedure line separators</value>
+  </data>
+  <data name="TextEditorMargins" xml:space="preserve">
+    <value>Margins</value>
+  </data>
+  <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
+    <value>Don't add extra line spacing</value>
+  </data>
+  <data name="TextEditorMouseWheelZoom" xml:space="preserve">
+    <value>Mouse wheel zoom</value>
+  </data>
+  <data name="TextEditorReferenceHighlighting" xml:space="preserve">
+    <value>高亮引用</value>
+  </data>
+  <data name="TextEditorSelectionMargin" xml:space="preserve">
+    <value>Selection margin</value>
+  </data>
+  <data name="TextEditorShowStructureLines" xml:space="preserve">
+    <value>Show indent guides</value>
+  </data>
+  <data name="TextEditorVerticalScrollBar" xml:space="preserve">
+    <value>Show _vertical scroll bar</value>
+  </data>
+  <data name="TextEditorZoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="TextEditorZoomControl" xml:space="preserve">
+    <value>Zoom control</value>
+  </data>
+  <data name="OutputWindowSettings" xml:space="preserve">
+    <value>Output Window</value>
+  </data>
+  <data name="TextEditorShowTimestamps" xml:space="preserve">
+    <value>Show timestamps</value>
+  </data>
+  <data name="ReplSettings" xml:space="preserve">
+    <value>REPL</value>
   </data>
 </root>

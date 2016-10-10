@@ -225,9 +225,6 @@
   <data name="FillSelection_Title" xml:space="preserve">
     <value>Введите значение</value>
   </data>
-  <data name="Font" xml:space="preserve">
-    <value>Шрифт</value>
-  </data>
   <data name="GoToAddressCommand" xml:space="preserve">
     <value>Перейти к адресу...</value>
   </data>
@@ -281,9 +278,6 @@
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
     <value>Настройки...</value>
-  </data>
-  <data name="HexEditorSettings_OtherOptions" xml:space="preserve">
-    <value>Остальные настройки</value>
   </data>
   <data name="HexEditorShowAsciiCommand" xml:space="preserve">
     <value>Показать ASCII</value>

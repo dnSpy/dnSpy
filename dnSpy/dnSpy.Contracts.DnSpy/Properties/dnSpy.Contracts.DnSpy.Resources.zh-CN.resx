@@ -225,9 +225,6 @@
   <data name="FillSelection_Title" xml:space="preserve">
     <value>输入值</value>
   </data>
-  <data name="Font" xml:space="preserve">
-    <value>字体</value>
-  </data>
   <data name="GoToAddressCommand" xml:space="preserve">
     <value>转到地址...</value>
   </data>
@@ -281,9 +278,6 @@
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
     <value>设置...</value>
-  </data>
-  <data name="HexEditorSettings_OtherOptions" xml:space="preserve">
-    <value>其它选项</value>
   </data>
   <data name="HexEditorShowAsciiCommand" xml:space="preserve">
     <value>显示 ASCII</value>

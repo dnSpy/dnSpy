@@ -121,7 +121,7 @@
     <value>Добавить определения using</value>
   </data>
   <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
-    <value>Allow field initializers</value>
+    <value>Разрешить инициализаторы полей</value>
   </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
     <value>Всегда создавать переменные исключения в блоках catch, если тип не Object</value>

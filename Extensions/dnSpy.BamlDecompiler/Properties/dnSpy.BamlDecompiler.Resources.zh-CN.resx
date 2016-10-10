@@ -124,13 +124,10 @@
     <value>BAML 文件</value>
   </data>
   <data name="BamlOptionDlgTab" xml:space="preserve">
-    <value>BAML</value>
+    <value>BAML Decompiler</value>
   </data>
   <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
     <value>反汇编 BAML</value>
-  </data>
-  <data name="BamlSettings_DisassembleBAML_ToolTip" xml:space="preserve">
-    <value>反汇编为BAML记录（而不是XAML）。</value>
   </data>
   <data name="DisassembleBAMLCommand" xml:space="preserve">
     <value>反汇编 BAML</value>

@@ -213,9 +213,6 @@
   <data name="DerivedTypes" xml:space="preserve">
     <value>Vererbte Typen</value>
   </data>
-  <data name="DisplayDlgTabTitle" xml:space="preserve">
-    <value>Anzeige</value>
-  </data>
   <data name="DotNetExes" xml:space="preserve">
     <value>.NET Executables</value>
   </data>
@@ -492,17 +489,8 @@
   <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
     <value>Jede Assembly könnte mit den Daten aus den Ressourcen geladen und ausgeführt werden.</value>
   </data>
-  <data name="Options_Misc_ExplorerIntegration" xml:space="preserve">
-    <value>Windows Explorer Integration</value>
-  </data>
-  <data name="Options_Misc_ExplorerIntegration_ToolTip" xml:space="preserve">
-    <value>Fügt einen Kontextmenüeintrag im Windows Explorer zum Öffnen von Assemblies in dnSpy ein</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Nutze Memory-Mapped I/O</value>
-  </data>
-  <data name="Options_Misc_UseMmapdIO_ToolTip" xml:space="preserve">
-    <value>Kann für jedes Modul über Rechtsklick deaktiviert werden.</value>
   </data>
   <data name="ReferencesFolder" xml:space="preserve">
     <value>Verweise</value>
@@ -576,9 +564,6 @@
   <data name="TabsDlg_Title" xml:space="preserve">
     <value>Fenster</value>
   </data>
-  <data name="TextEditorNewFormatterWarningMsg" xml:space="preserve">
-    <value>Der Text Editor nutzt den neuen Textformatierer. Dieser unterstützt keinen Zeilenumbruch oder alle Unicode Zeichen. De-/Aktiviere ihn in den Optionen.</value>
-  </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Ein unbekannter Fehler trat auf</value>
   </data>
@@ -598,7 +583,7 @@
     <value>Schließen</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Kompletten Typ statt einzelne Member dekompilieren</value>
+    <value>Decompile a member's enclosing class instead of the class member</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
     <value>Übereinstimmungen hervorheben</value>
@@ -617,18 +602,6 @@
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
     <value>Metadaten Tokens anzeigen</value>
-  </data>
-  <data name="DisplaySettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Knoten im Baum mit Einfach-Klick erweitern</value>
-  </data>
-  <data name="DisplaySettings_SyntaxHighlightTreeView" xml:space="preserve">
-    <value>Syntax im Baum hervorheben</value>
-  </data>
-  <data name="Font" xml:space="preserve">
-    <value>Schrift</value>
-  </data>
-  <data name="MiscDlgTabTitle" xml:space="preserve">
-    <value>Sonstiges</value>
   </data>
   <data name="OptionsCommand" xml:space="preserve">
     <value>_Optionen...</value>
@@ -765,17 +738,11 @@
   <data name="UseNewRendererInfo" xml:space="preserve">
     <value>Der neue Textformatierer ist schneller, unterstützt aber keinen Zeilenumbruch oder alle Unicode Zeichen.</value>
   </data>
-  <data name="UseNewRenderer_FileTreeView" xml:space="preserve">
-    <value>Datei Baumansicht</value>
-  </data>
   <data name="UseNewRenderer_HexEditor" xml:space="preserve">
     <value>Hex Editor</value>
   </data>
   <data name="UseNewRenderer_TextEditor" xml:space="preserve">
     <value>Text Editor</value>
-  </data>
-  <data name="DisplaySettings_OtherOptions" xml:space="preserve">
-    <value>Andere Optionen</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Blau</value>
@@ -871,9 +838,6 @@
   </data>
   <data name="DecompilerDlgTabTitle" xml:space="preserve">
     <value>Dekompilierer</value>
-  </data>
-  <data name="DisplaySettings_MemberOrder" xml:space="preserve">
-    <value>Memberreihenfolge im Baum (Neustart nötig)</value>
   </data>
   <data name="MemberKind_Events" xml:space="preserve">
     <value>Ereignisse</value>
@@ -1144,5 +1108,125 @@
   </data>
   <data name="UriFollowLinkMessage" xml:space="preserve">
     <value>Strg+Klicken um Link zu folgen</value>
+  </data>
+  <data name="EnvironmentSettings" xml:space="preserve">
+    <value>Environment</value>
+  </data>
+  <data name="GeneralSettings" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="GeneralSettings_Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
+    <value>Integrate with Windows Explorer</value>
+  </data>
+  <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
+    <value>Order (restart needed)</value>
+  </data>
+  <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
+    <value>Single-click expands nodes</value>
+  </data>
+  <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Syntax highlight</value>
+  </data>
+  <data name="FontSettings" xml:space="preserve">
+    <value>Schrift</value>
+  </data>
+  <data name="CodeEditorSettings" xml:space="preserve">
+    <value>Code Editor</value>
+  </data>
+  <data name="TabsSettings" xml:space="preserve">
+    <value>Tabs</value>
+  </data>
+  <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
+    <value>Convert tabs to s_paces</value>
+  </data>
+  <data name="TextEditorLineNumbers" xml:space="preserve">
+    <value>_Line numbers</value>
+  </data>
+  <data name="TextEditorVirtualSpace" xml:space="preserve">
+    <value>_Virtual space</value>
+  </data>
+  <data name="TextEditorWordWrap" xml:space="preserve">
+    <value>_Word wrap</value>
+  </data>
+  <data name="TextEditorIndentSize" xml:space="preserve">
+    <value>_Indent size</value>
+  </data>
+  <data name="TextEditorTabSize" xml:space="preserve">
+    <value>_Tab size</value>
+  </data>
+  <data name="TextViewerSettings" xml:space="preserve">
+    <value>Text Viewer</value>
+  </data>
+  <data name="AdvancedSettings" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ScrollBarsSettings" xml:space="preserve">
+    <value>Scroll Bars</value>
+  </data>
+  <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
+    <value>Compress blank lines</value>
+  </data>
+  <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
+    <value>Compress lines that do not have any alphanumeric characters</value>
+  </data>
+  <data name="TextEditorGlyphMargin" xml:space="preserve">
+    <value>Indicator margin</value>
+  </data>
+  <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
+    <value>Highlight current line</value>
+  </data>
+  <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
+    <value>Highlight braces</value>
+  </data>
+  <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
+    <value>Highlight related keywords</value>
+  </data>
+  <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
+    <value>Show _horizontal scroll bar</value>
+  </data>
+  <data name="TextEditorLineHeight" xml:space="preserve">
+    <value>Line height</value>
+  </data>
+  <data name="TextEditorLineSeparators" xml:space="preserve">
+    <value>Show procedure line separators</value>
+  </data>
+  <data name="TextEditorMargins" xml:space="preserve">
+    <value>Margins</value>
+  </data>
+  <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
+    <value>Don't add extra line spacing</value>
+  </data>
+  <data name="TextEditorMouseWheelZoom" xml:space="preserve">
+    <value>Mouse wheel zoom</value>
+  </data>
+  <data name="TextEditorReferenceHighlighting" xml:space="preserve">
+    <value>Übereinstimmungen hervorheben</value>
+  </data>
+  <data name="TextEditorSelectionMargin" xml:space="preserve">
+    <value>Selection margin</value>
+  </data>
+  <data name="TextEditorShowStructureLines" xml:space="preserve">
+    <value>Show indent guides</value>
+  </data>
+  <data name="TextEditorVerticalScrollBar" xml:space="preserve">
+    <value>Show _vertical scroll bar</value>
+  </data>
+  <data name="TextEditorZoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="TextEditorZoomControl" xml:space="preserve">
+    <value>Zoom control</value>
+  </data>
+  <data name="OutputWindowSettings" xml:space="preserve">
+    <value>Output Window</value>
+  </data>
+  <data name="TextEditorShowTimestamps" xml:space="preserve">
+    <value>Show timestamps</value>
+  </data>
+  <data name="ReplSettings" xml:space="preserve">
+    <value>REPL</value>
   </data>
 </root>

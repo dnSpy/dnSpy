@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClassesToolTip" xml:space="preserve">
-    <value>Classes</value>
+    <value>Классы</value>
   </data>
   <data name="CompletionSet_All" xml:space="preserve">
-    <value>All</value>
+    <value>Все</value>
   </data>
   <data name="ConstantsToolTip" xml:space="preserve">
-    <value>Constants</value>
+    <value>Константы</value>
   </data>
   <data name="DelegatesToolTip" xml:space="preserve">
-    <value>Delegates</value>
+    <value>Делегаты</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
-    <value>Enums</value>
+    <value>Перечисления</value>
   </data>
   <data name="EventsToolTip" xml:space="preserve">
     <value>События</value>
   </data>
   <data name="ExtensionMethodsToolTip" xml:space="preserve">
-    <value>Extension methods</value>
+    <value>Методы расширения</value>
   </data>
   <data name="FieldsToolTip" xml:space="preserve">
     <value>Поля</value>
@@ -145,7 +145,7 @@
     <value>Интерфейсы</value>
   </data>
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
-    <value>Locals and parameters</value>
+    <value>Локальные переменные и параметры</value>
   </data>
   <data name="MethodsToolTip" xml:space="preserve">
     <value>Методы</value>
@@ -154,12 +154,12 @@
     <value>Модули</value>
   </data>
   <data name="NamespacesToolTip" xml:space="preserve">
-    <value>Namespaces</value>
+    <value>Пространства имён</value>
   </data>
   <data name="PropertiesToolTip" xml:space="preserve">
     <value>Свойства</value>
   </data>
   <data name="StructuresToolTip" xml:space="preserve">
-    <value>Structures</value>
+    <value>Структуры</value>
   </data>
 </root>
