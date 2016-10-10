@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Settings.Groups;
+using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
@@ -72,14 +73,41 @@ namespace dnSpy.Text.Groups {
 			this.optionsStorage = optionsStorage;
 		}
 
-		TextViewGroupOptionCollection TryGetCollection(string contentType) => TryGetCollection(contentTypeRegistryService.GetContentType(contentType));
-		TextViewGroupOptionCollection TryGetCollection(IContentType contentType) {
+		TextViewGroupOptionCollection GetCollection(string contentType) => GetCollection(contentTypeRegistryService.GetContentType(contentType));
+		TextViewGroupOptionCollection GetCollection(IContentType contentType) {
 			if (contentType == null)
-				return null;
+				contentType = contentTypeRegistryService.GetContentType(ContentTypes.Any);
+			Debug.Assert(contentType != null);
+			if (contentType == null)
+				return ErrorCollection;
+
 			TextViewGroupOptionCollection coll;
-			toOptions.TryGetValue(contentType, out coll);
+			if (toOptions.TryGetValue(contentType, out coll))
+				return coll;
+
+			// No perfect match, use inherited options
+			var contentTypes = new List<IContentType>();
+			GetContentTypes(contentType, contentTypes);
+			foreach (var ct in contentTypes) {
+				if (toOptions.TryGetValue(ct, out coll))
+					break;
+			}
+			if (coll == null)
+				coll = ErrorCollection;
+			toOptions.Add(contentType, coll);
 			return coll;
 		}
+
+		static void GetContentTypes(IContentType contentType, List<IContentType> list) {
+			if (contentType == null)
+				return;
+			list.AddRange(contentType.BaseTypes);
+			foreach (var bt in contentType.BaseTypes)
+				GetContentTypes(bt, list);
+		}
+
+		TextViewGroupOptionCollection ErrorCollection => errorCollection ?? (errorCollection = new TextViewGroupOptionCollection(contentTypeRegistryService.UnknownContentType));
+		TextViewGroupOptionCollection errorCollection;
 
 		public bool HasOption<T>(string contentType, EditorOptionKey<T> option) => HasOption(contentType, option.Name);
 		public bool HasOption(string contentType, string optionId) {
@@ -87,10 +115,7 @@ namespace dnSpy.Text.Groups {
 				throw new ArgumentNullException(nameof(contentType));
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
-			var coll = TryGetCollection(contentType);
-			if (coll == null)
-				return false;
-			return coll.HasOption(optionId);
+			return GetCollection(contentType).HasOption(optionId);
 		}
 
 		public T GetOptionValue<T>(string contentType, EditorOptionKey<T> option) => (T)GetOptionValue(contentType, option.Name);
@@ -99,10 +124,7 @@ namespace dnSpy.Text.Groups {
 				throw new ArgumentNullException(nameof(contentType));
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
-			var coll = TryGetCollection(contentType);
-			if (coll == null)
-				throw new ArgumentException($"Invalid content type: {contentType}", nameof(contentType));
-			return coll.GetOptionValue(optionId);
+			return GetCollection(contentType).GetOptionValue(optionId);
 		}
 
 		public void SetOptionValue<T>(string contentType, EditorOptionKey<T> option, T value) => SetOptionValue(contentType, option.Name, value);
@@ -111,10 +133,7 @@ namespace dnSpy.Text.Groups {
 				throw new ArgumentNullException(nameof(contentType));
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
-			var coll = TryGetCollection(contentType);
-			if (coll == null)
-				throw new ArgumentException($"Invalid content type: {contentType}", nameof(contentType));
-			coll.SetOptionValue(optionId, value);
+			GetCollection(contentType).SetOptionValue(optionId, value);
 		}
 
 		public void TextViewCreated(IWpfTextView textView) {
@@ -137,7 +156,7 @@ namespace dnSpy.Text.Groups {
 				textView.Closed += TextView_Closed;
 				textView.Options.OptionChanged += Options_OptionChanged;
 				textView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
-				owner.InitializeOptions(textView, null, textView.TextDataModel.ContentType);
+				owner.InitializeOptions(textView, null, textView.TextDataModel.ContentType, force: true);
 			}
 
 			void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -149,7 +168,7 @@ namespace dnSpy.Text.Groups {
 			void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) {
 				if (textView.IsClosed)
 					return;
-				owner.InitializeOptions(textView, e.BeforeContentType, e.AfterContentType);
+				owner.InitializeOptions(textView, e.BeforeContentType, e.AfterContentType, force: false);
 			}
 
 			void TextView_Closed(object sender, EventArgs e) {
@@ -178,20 +197,16 @@ namespace dnSpy.Text.Groups {
 		}
 
 		void OptionChanged(IWpfTextView textView, EditorOptionChangedEventArgs e) {
-			var coll = TryGetCollection(textView.TextDataModel.ContentType);
-			if (coll == null)
-				return;
+			var coll = GetCollection(textView.TextDataModel.ContentType);
 			if (!coll.HasOption(e.OptionId))
 				return;
 			coll.SetOptionValue(e.OptionId, textView.Options.GetOptionValue(e.OptionId));
 		}
 
-		void InitializeOptions(IWpfTextView textView, IContentType beforeContentType, IContentType afterContentType) {
-			var oldColl = TryGetCollection(beforeContentType);
-			var newColl = TryGetCollection(afterContentType);
-			if (oldColl == newColl)
-				return;
-			if (newColl == null)
+		void InitializeOptions(IWpfTextView textView, IContentType beforeContentType, IContentType afterContentType, bool force) {
+			var oldColl = GetCollection(beforeContentType);
+			var newColl = GetCollection(afterContentType);
+			if (!force && oldColl == newColl)
 				return;
 
 			newColl.InitializeOptions(textView);

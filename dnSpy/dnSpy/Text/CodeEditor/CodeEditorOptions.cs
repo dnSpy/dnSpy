@@ -20,14 +20,12 @@
 using System;
 using dnSpy.Contracts.Settings.CodeEditor;
 using dnSpy.Contracts.Settings.Groups;
+using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.CodeEditor {
 	sealed class CodeEditorOptions : ICodeEditorOptions {
-		const int MIN_TAB_SIZE = 1;
-		const int MAX_TAB_SIZE = 60;
-
 		public IContentType ContentType { get; }
 		public Guid Guid { get; }
 		public string LanguageName { get; }
@@ -49,26 +47,12 @@ namespace dnSpy.Text.CodeEditor {
 
 		public int TabSize {
 			get { return group.GetOptionValue(ContentType.TypeName, DefaultOptions.TabSizeOptionId); }
-			set {
-				var newValue = value;
-				if (newValue < MIN_TAB_SIZE)
-					newValue = MIN_TAB_SIZE;
-				else if (newValue > MAX_TAB_SIZE)
-					newValue = MAX_TAB_SIZE;
-				group.SetOptionValue(ContentType.TypeName, DefaultOptions.TabSizeOptionId, newValue);
-			}
+			set { group.SetOptionValue(ContentType.TypeName, DefaultOptions.TabSizeOptionId, OptionsHelpers.FilterTabSize(value)); }
 		}
 
 		public int IndentSize {
 			get { return group.GetOptionValue(ContentType.TypeName, DefaultOptions.IndentSizeOptionId); }
-			set {
-				var newValue = value;
-				if (newValue < MIN_TAB_SIZE)
-					newValue = MIN_TAB_SIZE;
-				else if (newValue > MAX_TAB_SIZE)
-					newValue = MAX_TAB_SIZE;
-				group.SetOptionValue(ContentType.TypeName, DefaultOptions.IndentSizeOptionId, newValue);
-			}
+			set { group.SetOptionValue(ContentType.TypeName, DefaultOptions.IndentSizeOptionId, OptionsHelpers.FilterIndentSize(value)); }
 		}
 
 		public bool ConvertTabsToSpaces {

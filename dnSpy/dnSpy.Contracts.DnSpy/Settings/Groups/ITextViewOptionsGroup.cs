@@ -57,14 +57,6 @@ namespace dnSpy.Contracts.Settings.Groups {
 		object GetOptionValue(string contentType, string optionId);
 
 		/// <summary>
-		/// Writes a new value
-		/// </summary>
-		/// <param name="contentType">Content type, eg. <see cref="ContentTypes.CSharpRoslyn"/></param>
-		/// <param name="optionId">Option name</param>
-		/// <param name="value">New value</param>
-		void SetOptionValue(string contentType, string optionId, object value);
-
-		/// <summary>
 		/// Gets the current value
 		/// </summary>
 		/// <typeparam name="T">Value type</typeparam>
@@ -72,6 +64,14 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <param name="option">Option</param>
 		/// <returns></returns>
 		T GetOptionValue<T>(string contentType, EditorOptionKey<T> option);
+
+		/// <summary>
+		/// Writes a new value
+		/// </summary>
+		/// <param name="contentType">Content type, eg. <see cref="ContentTypes.CSharpRoslyn"/></param>
+		/// <param name="optionId">Option name</param>
+		/// <param name="value">New value</param>
+		void SetOptionValue(string contentType, string optionId, object value);
 
 		/// <summary>
 		/// Writes a new value

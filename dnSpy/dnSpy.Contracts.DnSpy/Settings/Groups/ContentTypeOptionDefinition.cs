@@ -27,7 +27,8 @@ namespace dnSpy.Contracts.Settings.Groups {
 	/// </summary>
 	public class ContentTypeOptionDefinition {
 		/// <summary>
-		/// Content type, eg. <see cref="ContentTypes.CSharpRoslyn"/>
+		/// Content type, eg. <see cref="ContentTypes.CSharpRoslyn"/>. Use <see cref="ContentTypes.Any"/>
+		/// to add default options.
 		/// </summary>
 		public string ContentType { get; set; }
 
@@ -62,7 +63,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 	/// <summary>
 	/// Option definition
 	/// </summary>
-	public sealed class ContentTypeOptionDefinition<T> : ContentTypeOptionDefinition {
+	public class ContentTypeOptionDefinition<T> : ContentTypeOptionDefinition {
 		/// <summary>
 		/// Constructor
 		/// </summary>

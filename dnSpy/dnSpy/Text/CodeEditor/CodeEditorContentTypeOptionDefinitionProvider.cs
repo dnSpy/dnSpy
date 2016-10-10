@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Settings.CodeEditor;
 using dnSpy.Contracts.Settings.Groups;
+using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.CodeEditor {
@@ -35,31 +36,40 @@ namespace dnSpy.Text.CodeEditor {
 			this.codeEditorOptionsDefinitions = codeEditorOptionsDefinitions.ToArray();
 		}
 
+		IEnumerable<ICodeEditorOptionsDefinitionMetadata> GetOptionsDefinitions() {
+			foreach (var lz in codeEditorOptionsDefinitions)
+				yield return lz.Metadata;
+
+			const string DEFAULT_NAME = "";
+			const string GUID_CODE_EDITOR_DEFAULT = "509B12BA-9F20-4963-B357-23F182ADE8FD";
+			yield return new ExportCodeEditorOptionsDefinitionAttribute(DEFAULT_NAME, ContentTypes.Any, GUID_CODE_EDITOR_DEFAULT);
+		}
+
 		public IEnumerable<ContentTypeOptionDefinition> GetOptions() {
-			foreach (var lz in codeEditorOptionsDefinitions) {
+			foreach (var md in GetOptionsDefinitions()) {
 				yield return new ContentTypeOptionDefinition<bool>(DefaultTextViewOptions.UseVirtualSpaceId) {
-					ContentType = lz.Metadata.ContentType,
-					DefaultValue = lz.Metadata.UseVirtualSpace,
+					ContentType = md.ContentType,
+					DefaultValue = md.UseVirtualSpace,
 				};
 				yield return new ContentTypeOptionDefinition<WordWrapStyles>(DefaultTextViewOptions.WordWrapStyleId) {
-					ContentType = lz.Metadata.ContentType,
-					DefaultValue = lz.Metadata.WordWrapStyle,
+					ContentType = md.ContentType,
+					DefaultValue = md.WordWrapStyle,
 				};
 				yield return new ContentTypeOptionDefinition<bool>(DefaultTextViewHostOptions.LineNumberMarginId) {
-					ContentType = lz.Metadata.ContentType,
-					DefaultValue = lz.Metadata.ShowLineNumbers,
+					ContentType = md.ContentType,
+					DefaultValue = md.ShowLineNumbers,
 				};
 				yield return new ContentTypeOptionDefinition<int>(DefaultOptions.TabSizeOptionId) {
-					ContentType = lz.Metadata.ContentType,
-					DefaultValue = lz.Metadata.TabSize,
+					ContentType = md.ContentType,
+					DefaultValue = md.TabSize,
 				};
 				yield return new ContentTypeOptionDefinition<int>(DefaultOptions.IndentSizeOptionId) {
-					ContentType = lz.Metadata.ContentType,
-					DefaultValue = lz.Metadata.IndentSize,
+					ContentType = md.ContentType,
+					DefaultValue = md.IndentSize,
 				};
 				yield return new ContentTypeOptionDefinition<bool>(DefaultOptions.ConvertTabsToSpacesOptionId) {
-					ContentType = lz.Metadata.ContentType,
-					DefaultValue = lz.Metadata.ConvertTabsToSpaces,
+					ContentType = md.ContentType,
+					DefaultValue = md.ConvertTabsToSpaces,
 				};
 			}
 		}

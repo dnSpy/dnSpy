@@ -579,6 +579,7 @@
     <Compile Include="Text\Editor\Operations\TextStructureNavigator.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigatorSelectorService.cs" />
     <Compile Include="Text\Editor\Operations\WordParser.cs" />
+    <Compile Include="Text\Editor\OptionsHelpers.cs" />
     <Compile Include="Text\Editor\OutputTextPaneCommandInfoProvider.cs" />
     <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilter.cs" />
     <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilterProvider.cs" />
