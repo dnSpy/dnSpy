@@ -20,6 +20,7 @@
 using System;
 using dnSpy.Contracts.Settings.CodeEditor;
 using dnSpy.Contracts.Settings.Groups;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
@@ -40,9 +41,29 @@ namespace dnSpy.Text.CodeEditor {
 			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewOptions.WordWrapStyleId, value); }
 		}
 
-		public bool ShowLineNumbers {
+		public bool LineNumberMargin {
 			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.LineNumberMarginId); }
 			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.LineNumberMarginId, value); }
+		}
+
+		public bool EnableHighlightCurrentLine {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultWpfViewOptions.EnableHighlightCurrentLineId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultWpfViewOptions.EnableHighlightCurrentLineId, value); }
+		}
+
+		public bool CutOrCopyBlankLineIfNoSelection {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId, value); }
+		}
+
+		public bool DisplayUrlsAsHyperlinks {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewOptions.DisplayUrlsAsHyperlinksId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewOptions.DisplayUrlsAsHyperlinksId, value); }
+		}
+
+		public bool ForceClearTypeIfNeeded {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsWpfViewOptions.ForceClearTypeIfNeededId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsWpfViewOptions.ForceClearTypeIfNeededId, value); }
 		}
 
 		public bool HorizontalScrollBar {
@@ -68,6 +89,71 @@ namespace dnSpy.Text.CodeEditor {
 		public bool ConvertTabsToSpaces {
 			get { return group.GetOptionValue(ContentType.TypeName, DefaultOptions.ConvertTabsToSpacesOptionId); }
 			set { group.SetOptionValue(ContentType.TypeName, DefaultOptions.ConvertTabsToSpacesOptionId, value); }
+		}
+
+		public bool ReferenceHighlighting {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.ReferenceHighlightingId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.ReferenceHighlightingId, value); }
+		}
+
+		public bool HighlightRelatedKeywords {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.HighlightRelatedKeywordsId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.HighlightRelatedKeywordsId, value); }
+		}
+
+		public bool BraceMatching {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.BraceMatchingId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.BraceMatchingId, value); }
+		}
+
+		public bool LineSeparators {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.LineSeparatorsId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.LineSeparatorsId, value); }
+		}
+
+		public bool ShowStructureLines {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.ShowStructureLinesId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.ShowStructureLinesId, value); }
+		}
+
+		public bool CompressEmptyOrWhitespaceLines {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId, value); }
+		}
+
+		public bool CompressNonLetterLines {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.CompressNonLetterLinesId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.CompressNonLetterLinesId, value); }
+		}
+
+		public bool RemoveExtraTextLineVerticalPixels {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId, value); }
+		}
+
+		public bool SelectionMargin {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.SelectionMarginId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.SelectionMarginId, value); }
+		}
+
+		public bool GlyphMargin {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.GlyphMarginId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.GlyphMarginId, value); }
+		}
+
+		public bool EnableMouseWheelZoom {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultWpfViewOptions.EnableMouseWheelZoomId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultWpfViewOptions.EnableMouseWheelZoomId, value); }
+		}
+
+		public bool ZoomControl {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.ZoomControlId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.ZoomControlId, value); }
+		}
+
+		public double ZoomLevel {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultWpfViewOptions.ZoomLevelId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultWpfViewOptions.ZoomLevelId, value); }
 		}
 
 		readonly ITextViewOptionsGroup group;

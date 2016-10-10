@@ -28,17 +28,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 	sealed class DocumentViewerOptions : IDocumentViewerOptions {
 		public IContentType ContentType { get; }
 
-		readonly ITextViewOptionsGroup group;
-
-		public DocumentViewerOptions(ITextViewOptionsGroup group, IContentType contentType) {
-			if (group == null)
-				throw new ArgumentNullException(nameof(group));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			this.group = group;
-			ContentType = contentType;
-		}
-
 		public bool UseVirtualSpace {
 			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewOptions.UseVirtualSpaceId); }
 			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewOptions.UseVirtualSpaceId, value); }
@@ -162,6 +151,17 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 		public double ZoomLevel {
 			get { return group.GetOptionValue(ContentType.TypeName, DefaultWpfViewOptions.ZoomLevelId); }
 			set { group.SetOptionValue(ContentType.TypeName, DefaultWpfViewOptions.ZoomLevelId, value); }
+		}
+
+		readonly ITextViewOptionsGroup group;
+
+		public DocumentViewerOptions(ITextViewOptionsGroup group, IContentType contentType) {
+			if (group == null)
+				throw new ArgumentNullException(nameof(group));
+			if (contentType == null)
+				throw new ArgumentNullException(nameof(contentType));
+			this.group = group;
+			ContentType = contentType;
 		}
 	}
 }

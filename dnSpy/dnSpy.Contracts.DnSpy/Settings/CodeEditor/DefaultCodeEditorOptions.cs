@@ -29,11 +29,28 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		public const bool UseVirtualSpace = false;
 		public const WordWrapStyles WordWrapStyle = WordWrapStylesConstants.DefaultValue;
 		public const bool ShowLineNumbers = true;
+		public const bool HighlightCurrentLine = true;
+		public const bool CutOrCopyBlankLineIfNoSelection = true;
+		public const bool DisplayUrlsAsHyperlinks = true;
+		public const bool ForceClearTypeIfNeeded = true;
 		public const bool HorizontalScrollBar = true;
 		public const bool VerticalScrollBar = true;
 		public const int TabSize = 4;
 		public const int IndentSize = 4;
 		public const bool ConvertTabsToSpaces = false;
+		public const bool HighlightReferences = true;
+		public const bool HighlightRelatedKeywords = true;
+		public const bool HighlightMatchingBrace = true;
+		public const bool LineSeparators = true;
+		public const bool ShowStructureLines = true;
+		public const bool CompressEmptyOrWhitespaceLines = true;
+		public const bool CompressNonLetterLines = true;
+		public const bool RemoveExtraTextLineVerticalPixels = false;
+		public const bool SelectionMargin = true;
+		public const bool GlyphMargin = true;
+		public const bool MouseWheelZoom = true;
+		public const bool ZoomControl = true;
+		public const double ZoomLevel = 100;
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

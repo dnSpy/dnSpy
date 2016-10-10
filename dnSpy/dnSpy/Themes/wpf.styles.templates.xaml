@@ -6118,10 +6118,12 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding UseVirtualSpace}" IsEnabled="{Binding UseVirtualSpaceEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorVirtualSpace}" />
             <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding WordWrap}" IsEnabled="{Binding WordWrapEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorWordWrap}" />
             <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.TextEditorLineNumbers}" />
+            <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding HighlightCurrentLine}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightCurrentLine}" />
         </Grid>
     </DataTemplate>
 

@@ -84,6 +84,17 @@ namespace dnSpy.Text.CodeEditor {
 		}
 		bool showLineNumbers;
 
+		public bool HighlightCurrentLine {
+			get { return highlightCurrentLine; }
+			set {
+				if (highlightCurrentLine != value) {
+					highlightCurrentLine = value;
+					OnPropertyChanged(nameof(HighlightCurrentLine));
+				}
+			}
+		}
+		bool highlightCurrentLine;
+
 		readonly ICodeEditorOptions options;
 
 		public GeneralAppSettingsTab(ICodeEditorOptions options, Guid guid) {
@@ -92,9 +103,10 @@ namespace dnSpy.Text.CodeEditor {
 			this.options = options;
 			Guid = guid;
 			UseVirtualSpace = options.UseVirtualSpace;
-			ShowLineNumbers = options.ShowLineNumbers;
+			ShowLineNumbers = options.LineNumberMargin;
 			WordWrap = (options.WordWrapStyle & WordWrapStyles.WordWrap) != 0;
 			WordWrapVisualGlyphs = (options.WordWrapStyle & WordWrapStyles.VisibleGlyphs) != 0;
+			HighlightCurrentLine = options.EnableHighlightCurrentLine;
 		}
 
 		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
@@ -102,7 +114,8 @@ namespace dnSpy.Text.CodeEditor {
 				return;
 
 			options.UseVirtualSpace = UseVirtualSpace;
-			options.ShowLineNumbers = ShowLineNumbers;
+			options.LineNumberMargin = ShowLineNumbers;
+			options.EnableHighlightCurrentLine = HighlightCurrentLine;
 
 			var newStyle = options.WordWrapStyle;
 			if (WordWrap)

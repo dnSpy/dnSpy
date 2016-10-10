@@ -24,15 +24,16 @@ using System.Linq;
 using dnSpy.Contracts.Settings.CodeEditor;
 using dnSpy.Contracts.Settings.Groups;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.CodeEditor {
 	[ExportContentTypeOptionDefinitionProvider(PredefinedTextViewGroupNames.CodeEditor)]
-	sealed class CodeEditorContentTypeOptionDefinitionProvider : IContentTypeOptionDefinitionProvider {
+	sealed class ContentTypeOptionDefinitionProvider : IContentTypeOptionDefinitionProvider {
 		readonly Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>[] codeEditorOptionsDefinitions;
 
 		[ImportingConstructor]
-		CodeEditorContentTypeOptionDefinitionProvider([ImportMany] IEnumerable<Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>> codeEditorOptionsDefinitions) {
+		ContentTypeOptionDefinitionProvider([ImportMany] IEnumerable<Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>> codeEditorOptionsDefinitions) {
 			this.codeEditorOptionsDefinitions = codeEditorOptionsDefinitions.ToArray();
 		}
 
@@ -50,11 +51,29 @@ namespace dnSpy.Text.CodeEditor {
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewOptions.UseVirtualSpaceId, md.UseVirtualSpace);
 				yield return new OptionDefinition<WordWrapStyles>(md.ContentType, DefaultTextViewOptions.WordWrapStyleId, md.WordWrapStyle);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.LineNumberMarginId, md.ShowLineNumbers);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultWpfViewOptions.EnableHighlightCurrentLineId, md.HighlightCurrentLine);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId, md.CutOrCopyBlankLineIfNoSelection);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewOptions.DisplayUrlsAsHyperlinksId, md.DisplayUrlsAsHyperlinks);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsWpfViewOptions.ForceClearTypeIfNeededId, md.ForceClearTypeIfNeeded);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.HorizontalScrollBarId, md.HorizontalScrollBar);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.VerticalScrollBarId, md.VerticalScrollBar);
 				yield return new OptionDefinition<int>(md.ContentType, DefaultOptions.TabSizeOptionId, md.TabSize);
 				yield return new OptionDefinition<int>(md.ContentType, DefaultOptions.IndentSizeOptionId, md.IndentSize);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultOptions.ConvertTabsToSpacesOptionId, md.ConvertTabsToSpaces);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.ReferenceHighlightingId, md.HighlightReferences);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.HighlightRelatedKeywordsId, md.HighlightRelatedKeywords);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.BraceMatchingId, md.HighlightMatchingBrace);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.LineSeparatorsId, md.LineSeparators);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.ShowStructureLinesId, md.ShowStructureLines);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId, md.CompressEmptyOrWhitespaceLines);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.CompressNonLetterLinesId, md.CompressNonLetterLines);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId, md.RemoveExtraTextLineVerticalPixels);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.SelectionMarginId, md.SelectionMargin);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.GlyphMarginId, md.GlyphMargin);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultWpfViewOptions.EnableMouseWheelZoomId, md.MouseWheelZoom);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.ZoomControlId, md.ZoomControl);
+				yield return new OptionDefinition<double>(md.ContentType, DefaultWpfViewOptions.ZoomLevelId, md.ZoomLevel);
+
 			}
 		}
 

@@ -27,7 +27,7 @@ using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Text.CodeEditor {
 	[Export(typeof(IAppSettingsTabProvider))]
-	sealed class CodeEditorAppSettingsTabProvider : IAppSettingsTabProvider {
+	sealed class AppSettingsTabProvider : IAppSettingsTabProvider {
 		readonly ICodeEditorOptionsService codeEditorSettingsService;
 
 		const int GENERAL_GUID_INC = 1;
@@ -35,7 +35,7 @@ namespace dnSpy.Text.CodeEditor {
 		const int TABS_GUID_INC = 3;
 
 		[ImportingConstructor]
-		CodeEditorAppSettingsTabProvider(ICodeEditorOptionsService codeEditorSettingsService) {
+		AppSettingsTabProvider(ICodeEditorOptionsService codeEditorSettingsService) {
 			this.codeEditorSettingsService = codeEditorSettingsService;
 		}
 

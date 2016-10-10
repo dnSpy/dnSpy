@@ -17,9 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Settings.Groups;
+using dnSpy.Contracts.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.CodeEditor {
-	[ExportAppSettingsTabContainer("res:CodeEditorSettings", AppSettingsConstants.GUID_CODE_EDITOR, AppSettingsConstants.ORDER_CODE_EDITOR)]
-	sealed class CodeEditorAppSettingsTabContainer : IAppSettingsTabContainer { }
+	[ExportTextViewOptionsGroupNameProvider]
+	sealed class TextViewOptionsGroupNameProvider : ITextViewOptionsGroupNameProvider {
+		public string TryGetGroupName(IWpfTextView textView) {
+			if (textView.Roles.Contains(PredefinedDsTextViewRoles.CodeEditor))
+				return PredefinedTextViewGroupNames.CodeEditor;
+			return null;
+		}
+	}
 }
