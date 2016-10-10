@@ -28,7 +28,7 @@
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     </Style>
 
-    <DataTemplate DataType="{x:Type dbg:DebuggerAppSettingsTab}">
+    <DataTemplate DataType="{x:Type dbg:DebuggerAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

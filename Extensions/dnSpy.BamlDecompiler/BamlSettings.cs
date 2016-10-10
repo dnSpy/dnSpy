@@ -81,21 +81,21 @@ namespace dnSpy.BamlDecompiler {
 		}
 	}
 
-	[Export(typeof(IAppSettingsTabProvider))]
-	sealed class BamlSettingsTabProvider : IAppSettingsTabProvider {
+	[Export(typeof(IAppSettingsPageProvider))]
+	sealed class BamlSettingsPageProvider : IAppSettingsPageProvider {
 		readonly BamlSettingsImpl bamlSettings;
 
 		[ImportingConstructor]
-		BamlSettingsTabProvider(BamlSettingsImpl bamlSettings) {
+		BamlSettingsPageProvider(BamlSettingsImpl bamlSettings) {
 			this.bamlSettings = bamlSettings;
 		}
 
-		public IEnumerable<IAppSettingsTab> Create() {
-			yield return new BamlAppSettingsTab(bamlSettings);
+		public IEnumerable<IAppSettingsPage> Create() {
+			yield return new BamlAppSettingsPage(bamlSettings);
 		}
 	}
 
-	sealed class BamlAppSettingsTab : IAppSettingsTab {
+	sealed class BamlAppSettingsPage : IAppSettingsPage {
 		public Guid ParentGuid => Guid.Empty;
 		public Guid Guid => new Guid("DF5D8216-35D9-4E25-8BDF-817D4CA90C17");
 		public double Order => AppSettingsConstants.ORDER_BAML;
@@ -106,7 +106,7 @@ namespace dnSpy.BamlDecompiler {
 		readonly BamlSettingsImpl _global_settings;
 		readonly BamlSettings bamlSettings;
 
-		public BamlAppSettingsTab(BamlSettingsImpl _global_settings) {
+		public BamlAppSettingsPage(BamlSettingsImpl _global_settings) {
 			this._global_settings = _global_settings;
 			this.bamlSettings = _global_settings.Clone();
 		}

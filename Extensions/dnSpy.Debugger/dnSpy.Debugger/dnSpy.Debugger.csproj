@@ -77,7 +77,7 @@
     <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
     <Compile Include="DebugCommands.cs" />
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
-    <Compile Include="DebuggerAppSettingsTab.cs" />
+    <Compile Include="DebuggerAppSettingsPage.cs" />
     <Compile Include="DebuggerModuleIdFactoryProvider.cs" />
     <Compile Include="DebuggerSettings.cs" />
     <Compile Include="DebugOutputUtils.cs" />

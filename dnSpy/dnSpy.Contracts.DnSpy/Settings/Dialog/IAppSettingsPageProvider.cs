@@ -17,25 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Windows;
+using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
-	/// Shows the application settings dialog box
+	/// Creates <see cref="IAppSettingsPage"/> instances
 	/// </summary>
-	public interface IAppSettingsService {
+	public interface IAppSettingsPageProvider {
 		/// <summary>
-		/// Shows the dialog box
+		/// Creates new <see cref="IAppSettingsPage"/> instances
 		/// </summary>
-		/// <param name="owner">Owner window or null to use the main window</param>
-		void Show(Window owner = null);
-
-		/// <summary>
-		/// Shows the dialog box and selects the settings page whose <see cref="IAppSettingsPage.Guid"/> equals <paramref name="guid"/>
-		/// </summary>
-		/// <param name="guid">Guid of settings and must match some instance's <see cref="IAppSettingsPage.Guid"/> property</param>
-		/// <param name="owner">Owner window or null to use the main window</param>
-		void Show(Guid guid, Window owner = null);
+		/// <returns></returns>
+		IEnumerable<IAppSettingsPage> Create();
 	}
 }

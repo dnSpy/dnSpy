@@ -5872,7 +5872,7 @@
                 Value="3,3,3,3"/>
     </Style>
 
-    <DataTemplate DataType="{x:Type tabssettings:AssemblyExplorerAppSettingsTab}">
+    <DataTemplate DataType="{x:Type tabssettings:AssemblyExplorerAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -5926,7 +5926,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type bgImg:AppSettingsTab}">
+    <DataTemplate DataType="{x:Type bgImg:AppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6020,7 +6020,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type mainappsettings:GeneralAppSettingsTab}">
+    <DataTemplate DataType="{x:Type mainappsettings:GeneralAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6068,7 +6068,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type mainappsettings:FontAppSettingsTab}">
+    <DataTemplate DataType="{x:Type mainappsettings:FontAppSettingsPage}">
         <Grid Margin="5">
             <Grid.Resources>
                 <mvvmvc:FontSizeConverter x:Key="fontSizeConverter" />
@@ -6113,7 +6113,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type codesettings:GeneralAppSettingsTab}">
+    <DataTemplate DataType="{x:Type codesettings:GeneralAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6128,7 +6128,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type codesettings:ScrollBarsAppSettingsTab}">
+    <DataTemplate DataType="{x:Type codesettings:ScrollBarsAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6139,7 +6139,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type codesettings:TabsAppSettingsTab}">
+    <DataTemplate DataType="{x:Type codesettings:TabsAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6158,7 +6158,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type codesettings:AdvancedAppSettingsTab}">
+    <DataTemplate DataType="{x:Type codesettings:AdvancedAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6219,7 +6219,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type replsettings:GeneralAppSettingsTab}">
+    <DataTemplate DataType="{x:Type replsettings:GeneralAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6236,7 +6236,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type replsettings:ScrollBarsAppSettingsTab}">
+    <DataTemplate DataType="{x:Type replsettings:ScrollBarsAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6247,7 +6247,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type replsettings:TabsAppSettingsTab}">
+    <DataTemplate DataType="{x:Type replsettings:TabsAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6266,7 +6266,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type replsettings:AdvancedAppSettingsTab}">
+    <DataTemplate DataType="{x:Type replsettings:AdvancedAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6327,7 +6327,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type docvwrsettings:GeneralAppSettingsTab}">
+    <DataTemplate DataType="{x:Type docvwrsettings:GeneralAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6342,7 +6342,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type docvwrsettings:ScrollBarsAppSettingsTab}">
+    <DataTemplate DataType="{x:Type docvwrsettings:ScrollBarsAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6353,7 +6353,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type docvwrsettings:TabsAppSettingsTab}">
+    <DataTemplate DataType="{x:Type docvwrsettings:TabsAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6372,7 +6372,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type docvwrsettings:AdvancedAppSettingsTab}">
+    <DataTemplate DataType="{x:Type docvwrsettings:AdvancedAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6431,7 +6431,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type outputsettings:GeneralAppSettingsTab}">
+    <DataTemplate DataType="{x:Type outputsettings:GeneralAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6448,7 +6448,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type outputsettings:ScrollBarsAppSettingsTab}">
+    <DataTemplate DataType="{x:Type outputsettings:ScrollBarsAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6459,7 +6459,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type outputsettings:TabsAppSettingsTab}">
+    <DataTemplate DataType="{x:Type outputsettings:TabsAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -6478,7 +6478,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type outputsettings:AdvancedAppSettingsTab}">
+    <DataTemplate DataType="{x:Type outputsettings:AdvancedAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

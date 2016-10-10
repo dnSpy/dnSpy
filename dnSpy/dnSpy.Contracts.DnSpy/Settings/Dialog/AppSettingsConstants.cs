@@ -39,57 +39,57 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public static readonly Guid DISABLE_MEMORY_MAPPED_IO = new Guid("D34E66D2-524C-4B6C-87CE-ED8ECCC32C59");
 
 		/// <summary>
-		/// Order of Environment settings tab
+		/// Order of Environment settings page
 		/// </summary>
 		public const double ORDER_ENVIRONMENT = 0;
 
 		/// <summary>
-		/// Order of decompiler settings tab
+		/// Order of decompiler settings page
 		/// </summary>
 		public const double ORDER_DECOMPILER = 1000;
 
 		/// <summary>
-		/// Order of debugger settings tab
+		/// Order of debugger settings page
 		/// </summary>
 		public const double ORDER_DEBUGGER = 2000;
 
 		/// <summary>
-		/// Order of Text Viewer settings tab
+		/// Order of Text Viewer settings page
 		/// </summary>
 		public const double ORDER_DOCUMENT_VIEWER = 3000;
 
 		/// <summary>
-		/// Order of Code Editor settings tab
+		/// Order of Code Editor settings page
 		/// </summary>
 		public const double ORDER_CODE_EDITOR = 4000;
 
 		/// <summary>
-		/// Order of REPL settings tab
+		/// Order of REPL settings page
 		/// </summary>
 		public const double ORDER_REPL = 5000;
 
 		/// <summary>
-		/// Order of Output Window settings tab
+		/// Order of Output Window settings page
 		/// </summary>
 		public const double ORDER_OUTPUT = 6000;
 
 		/// <summary>
-		/// Order of Assembly Explorer settings tab
+		/// Order of Assembly Explorer settings page
 		/// </summary>
 		public const double ORDER_ASSEMBLY_EXPLORER = 7000;
 
 		/// <summary>
-		/// Order of hex editor settings tab
+		/// Order of hex editor settings page
 		/// </summary>
 		public const double ORDER_HEXEDITOR = 8000;
 
 		/// <summary>
-		/// Order of background image settings tab
+		/// Order of background image settings page
 		/// </summary>
 		public const double ORDER_BACKGROUNDIMAGE = 9000;
 
 		/// <summary>
-		/// Order of baml settings tab
+		/// Order of baml settings page
 		/// </summary>
 		public const double ORDER_BAML = 10000;
 
@@ -109,17 +109,17 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_LISTENER_DOCUMENTTREEVIEW = 2000;
 
 		/// <summary>
-		/// Guid of Environment tab settings
+		/// Guid of Environment settings page
 		/// </summary>
 		public const string GUID_ENVIRONMENT = "66B8E553-3961-4B0D-8948-F399FA78A809";
 
 		/// <summary>
-		/// Guid of Decompiler tab settings
+		/// Guid of Decompiler settings page
 		/// </summary>
 		public const string GUID_DECOMPILER = "E380FC93-BACB-4125-8AF1-ADFAEA4D1307";
 
 		/// <summary>
-		/// Guid of Code Editor tab settings
+		/// Guid of Code Editor settings page
 		/// </summary>
 		public const string GUID_CODE_EDITOR = "E1BA254B-C5EA-4305-801A-9336BDFA33FB";
 
@@ -134,17 +134,17 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_CODE_EDITOR_VISUAL_BASIC_ROSLYN = "A863FFDA-2AD2-4DB4-B5D4-B2363F3D450F";
 
 		/// <summary>
-		/// Guid of Text Viewer tab settings
+		/// Guid of Text Viewer settings page
 		/// </summary>
 		public const string GUID_DOCUMENT_VIEWER = "DEFBC59F-8FB1-4DC1-8067-B006BE07B6DA";
 
 		/// <summary>
-		/// Guid of Output Window tab settings
+		/// Guid of Output Window settings page
 		/// </summary>
 		public const string GUID_OUTPUT = "26FAD694-0964-476C-AA73-7EE94FBAFFA3";
 
 		/// <summary>
-		/// Guid of REPL tab settings
+		/// Guid of REPL settings page
 		/// </summary>
 		public const string GUID_REPL = "6AF674BC-0AB4-4A0C-9F41-6F83ED992DAB";
 
@@ -204,42 +204,42 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_CODE_EDITOR_LANGUAGES_ADVANCED = 4000;
 
 		/// <summary>
-		/// Order of Text Viewer / General tab
+		/// Order of Text Viewer / General page
 		/// </summary>
 		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_GENERAL = 1000;
 
 		/// <summary>
-		/// Order of Text Viewer / Scroll Bars tab
+		/// Order of Text Viewer / Scroll Bars page
 		/// </summary>
 		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_SCROLLBARS = 2000;
 
 		/// <summary>
-		/// Order of Text Viewer / Tabs tab
+		/// Order of Text Viewer / Tabs page
 		/// </summary>
 		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_TABS = 3000;
 
 		/// <summary>
-		/// Order of Text Viewer / Advanced tab
+		/// Order of Text Viewer / Advanced page
 		/// </summary>
 		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_ADVANCED = 4000;
 
 		/// <summary>
-		/// Order of Output Window / General tab
+		/// Order of Output Window / General page
 		/// </summary>
 		public const double ORDER_OUTPUT_DEFAULT_GENERAL = 1000;
 
 		/// <summary>
-		/// Order of Output Window / Scroll Bars tab
+		/// Order of Output Window / Scroll Bars page
 		/// </summary>
 		public const double ORDER_OUTPUT_DEFAULT_SCROLLBARS = 2000;
 
 		/// <summary>
-		/// Order of Output Window / Tabs tab
+		/// Order of Output Window / Tabs page
 		/// </summary>
 		public const double ORDER_OUTPUT_DEFAULT_TABS = 3000;
 
 		/// <summary>
-		/// Order of Output Window / Advanced tab
+		/// Order of Output Window / Advanced page
 		/// </summary>
 		public const double ORDER_OUTPUT_DEFAULT_ADVANCED = 4000;
 

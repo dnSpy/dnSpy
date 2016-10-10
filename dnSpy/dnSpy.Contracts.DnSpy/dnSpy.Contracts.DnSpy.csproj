@@ -283,7 +283,7 @@
     <Compile Include="Hex\GoToOffsetVM.cs" />
     <Compile Include="Hex\HexBoxCommands.cs" />
     <Compile Include="Hex\HexBoxThemeHelper.cs" />
-    <Compile Include="Hex\HexEditorAppSettingsTab.cs" />
+    <Compile Include="Hex\HexEditorAppSettingsPage.cs" />
     <Compile Include="Hex\HexEditorSettings.cs" />
     <Compile Include="Hex\LocalHexSettings.cs" />
     <Compile Include="Hex\LocalSettingsDlg.xaml.cs">
@@ -462,10 +462,10 @@
     <Compile Include="Settings\Dialog\AppSettingsConstants.cs" />
     <Compile Include="Settings\Dialog\IAppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsModifiedListener.cs" />
+    <Compile Include="Settings\Dialog\IAppSettingsPage.cs" />
+    <Compile Include="Settings\Dialog\IAppSettingsPageContainer.cs" />
+    <Compile Include="Settings\Dialog\IAppSettingsPageProvider.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsService.cs" />
-    <Compile Include="Settings\Dialog\IAppSettingsTab.cs" />
-    <Compile Include="Settings\Dialog\IAppSettingsTabContainer.cs" />
-    <Compile Include="Settings\Dialog\IAppSettingsTabProvider.cs" />
     <Compile Include="Settings\Groups\ContentTypeOptionDefinition.cs" />
     <Compile Include="Settings\Groups\IContentTypeOptionDefinitionProvider.cs" />
     <Compile Include="Settings\Groups\ITextViewOptionsGroup.cs" />

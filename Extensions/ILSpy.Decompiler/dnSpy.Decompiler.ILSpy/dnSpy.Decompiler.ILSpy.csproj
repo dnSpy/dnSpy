@@ -55,12 +55,12 @@
       <DependentUpon>dnSpy.Decompiler.ILSpy.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\CSharpDecompilerSettingsTab.cs" />
+    <Compile Include="Settings\CSharpDecompilerSettingsPage.cs" />
     <Compile Include="Settings\DecompilerAppSettingsModifiedListener.cs" />
     <Compile Include="Settings\DecompilerSettingsImpl.cs" />
+    <Compile Include="Settings\DecompilerSettingsPageProvider.cs" />
     <Compile Include="Settings\DecompilerSettingsServiceImpl.cs" />
-    <Compile Include="Settings\DecompilerSettingsTabProvider.cs" />
-    <Compile Include="Settings\ILDecompilerSettingsTab.cs" />
+    <Compile Include="Settings\ILDecompilerSettingsPage.cs" />
     <Compile Include="Settings\ILSettingsImpl.cs" />
     <Compile Include="Settings\SettingsConstants.cs" />
     <Compile Include="TheExtension.cs" />

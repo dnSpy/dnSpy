@@ -37,18 +37,18 @@ namespace dnSpy.Settings.Dialog {
 		static readonly Guid rootGuid = Guid.Empty;
 		readonly IAppWindow appWindow;
 		readonly ITreeViewService treeViewService;
-		readonly Lazy<IAppSettingsTabContainer, IAppSettingsTabContainerMetadata>[] appSettingsTabContainers;
-		readonly Lazy<IAppSettingsTabProvider>[] appSettingsTabProviders;
+		readonly Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>[] appSettingsPageContainers;
+		readonly Lazy<IAppSettingsPageProvider>[] appSettingsPageProviders;
 		readonly Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>[] appSettingsModifiedListeners;
 		Guid? lastSelectedGuid;
 		bool showingDialog;
 
 		[ImportingConstructor]
-		AppSettingsService(IAppWindow appWindow, ITreeViewService treeViewService, [ImportMany] IEnumerable<Lazy<IAppSettingsTabContainer, IAppSettingsTabContainerMetadata>> appSettingsTabContainers, [ImportMany] IEnumerable<Lazy<IAppSettingsTabProvider>> appSettingsTabProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> appSettingsModifiedListeners) {
+		AppSettingsService(IAppWindow appWindow, ITreeViewService treeViewService, [ImportMany] IEnumerable<Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>> appSettingsPageContainers, [ImportMany] IEnumerable<Lazy<IAppSettingsPageProvider>> appSettingsPageProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> appSettingsModifiedListeners) {
 			this.appWindow = appWindow;
 			this.treeViewService = treeViewService;
-			this.appSettingsTabContainers = appSettingsTabContainers.OrderBy(a => a.Metadata.Order).ToArray();
-			this.appSettingsTabProviders = appSettingsTabProviders.ToArray();
+			this.appSettingsPageContainers = appSettingsPageContainers.OrderBy(a => a.Metadata.Order).ToArray();
+			this.appSettingsPageProviders = appSettingsPageProviders.ToArray();
 			this.appSettingsModifiedListeners = appSettingsModifiedListeners.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
@@ -69,8 +69,8 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void ShowCore(Guid? guid, Window owner) {
-			var allVMs = CreateSettingsTabs();
-			Debug.Assert(allVMs.Any(a => a.AppSettingsTab.Guid == rootGuid));
+			var allVMs = CreateSettingsPages();
+			Debug.Assert(allVMs.Any(a => a.Page.Guid == rootGuid));
 			var rootVM = CreateRootVM(allVMs);
 			if (rootVM.Children.Count == 0)
 				return;
@@ -79,7 +79,7 @@ namespace dnSpy.Settings.Dialog {
 
 			if (guid == null)
 				guid = lastSelectedGuid;
-			var selectedItem = (guid != null ? allVMs.FirstOrDefault(a => a.AppSettingsTab.Guid == guid.Value) : null) ?? rootVM.Children.FirstOrDefault();
+			var selectedItem = (guid != null ? allVMs.FirstOrDefault(a => a.Page.Guid == guid.Value) : null) ?? rootVM.Children.FirstOrDefault();
 			if (selectedItem != null)
 				treeView.SelectItems(new[] { selectedItem });
 
@@ -87,19 +87,19 @@ namespace dnSpy.Settings.Dialog {
 			dlg.treeViewContentPresenter.Content = treeView.UIObject;
 			dlg.Owner = owner ?? appWindow.MainWindow;
 			bool saveSettings = dlg.ShowDialog() == true;
-			lastSelectedGuid = (treeView.SelectedItem as AppSettingsTabVM)?.AppSettingsTab.Guid;
+			lastSelectedGuid = (treeView.SelectedItem as AppSettingsPageVM)?.Page.Guid;
 			Debug.Assert(lastSelectedGuid != null);
 
 			var appRefreshSettings = new AppRefreshSettings();
 			foreach (var vm in allVMs)
-				vm.AppSettingsTab.OnClosed(saveSettings, appRefreshSettings);
+				vm.Page.OnClosed(saveSettings, appRefreshSettings);
 			if (saveSettings) {
 				foreach (var listener in appSettingsModifiedListeners)
 					listener.Value.OnSettingsModified(appRefreshSettings);
 			}
 		}
 
-		ITreeView CreateTreeView(AppSettingsTabVM rootVM) {
+		ITreeView CreateTreeView(AppSettingsPageVM rootVM) {
 			var options = new TreeViewOptions {
 				CanDragAndDrop = false,
 				SelectionMode = SelectionMode.Single,
@@ -118,86 +118,86 @@ namespace dnSpy.Settings.Dialog {
 			return treeView;
 		}
 
-		AppSettingsTabVM CreateRootVM(AppSettingsTabVM[] allVMs) {
+		AppSettingsPageVM CreateRootVM(AppSettingsPageVM[] allVMs) {
 			var rootVM = InitializeChildren(allVMs);
 			RemoveEmptyNodes(rootVM);
 			SortChildren(rootVM);
 			return rootVM;
 		}
 
-		void RemoveEmptyNodes(AppSettingsTabVM vm) {
+		void RemoveEmptyNodes(AppSettingsPageVM vm) {
 			for (int i = vm.Children.Count - 1; i >= 0; i--) {
 				var child = vm.Children[i];
 				RemoveEmptyNodes(child);
-				if (child.Children.Count == 0 && child.AppSettingsTab is AppSettingsTabContainer)
+				if (child.Children.Count == 0 && child.Page is AppSettingsPageContainer)
 					vm.Children.RemoveAt(i);
 			}
 		}
 
-		void SortChildren(AppSettingsTabVM vm) {
-			vm.Children.Sort(AppSettingsTabVMSorter.Instance);
+		void SortChildren(AppSettingsPageVM vm) {
+			vm.Children.Sort(AppSettingsPageVMSorter.Instance);
 			foreach (var child in vm.Children)
 				SortChildren(child);
 		}
 
-		sealed class AppSettingsTabVMSorter : IComparer<AppSettingsTabVM> {
-			public static readonly AppSettingsTabVMSorter Instance = new AppSettingsTabVMSorter();
-			public int Compare(AppSettingsTabVM x, AppSettingsTabVM y) => x.Order.CompareTo(y.Order);
+		sealed class AppSettingsPageVMSorter : IComparer<AppSettingsPageVM> {
+			public static readonly AppSettingsPageVMSorter Instance = new AppSettingsPageVMSorter();
+			public int Compare(AppSettingsPageVM x, AppSettingsPageVM y) => x.Order.CompareTo(y.Order);
 		}
 
-		AppSettingsTabVM InitializeChildren(AppSettingsTabVM[] vms) {
-			var dict = new Dictionary<Guid, AppSettingsTabVM>(vms.Length);
+		AppSettingsPageVM InitializeChildren(AppSettingsPageVM[] vms) {
+			var dict = new Dictionary<Guid, AppSettingsPageVM>(vms.Length);
 			foreach (var vm in vms) {
-				Debug.Assert(!dict.ContainsKey(vm.AppSettingsTab.Guid));
-				dict.Add(vm.AppSettingsTab.Guid, vm);
+				Debug.Assert(!dict.ContainsKey(vm.Page.Guid));
+				dict.Add(vm.Page.Guid, vm);
 			}
 
 			foreach (var vm in vms) {
-				if (vm.AppSettingsTab.Guid == rootGuid)
+				if (vm.Page.Guid == rootGuid)
 					continue;
 
-				AppSettingsTabVM parentVM;
-				if (!dict.TryGetValue(vm.AppSettingsTab.ParentGuid, out parentVM)) {
-					Debug.Fail($"No parent with Guid {vm.AppSettingsTab.ParentGuid}");
+				AppSettingsPageVM parentVM;
+				if (!dict.TryGetValue(vm.Page.ParentGuid, out parentVM)) {
+					Debug.Fail($"No parent with Guid {vm.Page.ParentGuid}");
 					continue;
 				}
 
 				parentVM.Children.Add(vm);
 			}
 
-			return vms.First(a => a.AppSettingsTab.Guid == rootGuid);
+			return vms.First(a => a.Page.Guid == rootGuid);
 		}
 
-		AppSettingsTabVM[] CreateSettingsTabs() {
-			var dict = new Dictionary<Guid, AppSettingsTabVM>();
+		AppSettingsPageVM[] CreateSettingsPages() {
+			var dict = new Dictionary<Guid, AppSettingsPageVM>();
 
-			dict.Add(rootGuid, new AppSettingsTabVM(new AppSettingsTabContainer(string.Empty, 0, rootGuid, rootGuid, ImageReference.None)));
+			dict.Add(rootGuid, new AppSettingsPageVM(new AppSettingsPageContainer(string.Empty, 0, rootGuid, rootGuid, ImageReference.None)));
 
-			foreach (var lz in appSettingsTabContainers) {
+			foreach (var lz in appSettingsPageContainers) {
 				var vm = TryCreate(lz.Value, lz.Metadata);
 				if (vm == null)
 					continue;
-				Debug.Assert(!dict.ContainsKey(vm.AppSettingsTab.Guid));
-				if (!dict.ContainsKey(vm.AppSettingsTab.Guid))
-					dict.Add(vm.AppSettingsTab.Guid, vm);
+				Debug.Assert(!dict.ContainsKey(vm.Page.Guid));
+				if (!dict.ContainsKey(vm.Page.Guid))
+					dict.Add(vm.Page.Guid, vm);
 			}
 
-			foreach (var lz in appSettingsTabProviders) {
-				foreach (var tab in lz.Value.Create()) {
-					Debug.Assert(tab != null);
-					if (tab == null)
+			foreach (var lz in appSettingsPageProviders) {
+				foreach (var page in lz.Value.Create()) {
+					Debug.Assert(page != null);
+					if (page == null)
 						continue;
-					var vm = new AppSettingsTabVM(tab);
-					Debug.Assert(!dict.ContainsKey(vm.AppSettingsTab.Guid));
-					if (!dict.ContainsKey(vm.AppSettingsTab.Guid))
-						dict.Add(vm.AppSettingsTab.Guid, vm);
+					var vm = new AppSettingsPageVM(page);
+					Debug.Assert(!dict.ContainsKey(vm.Page.Guid));
+					if (!dict.ContainsKey(vm.Page.Guid))
+						dict.Add(vm.Page.Guid, vm);
 				}
 			}
 
 			return dict.Values.ToArray();
 		}
 
-		sealed class AppSettingsTabContainer : IAppSettingsTab {
+		sealed class AppSettingsPageContainer : IAppSettingsPage {
 			public Guid ParentGuid { get; }
 			public Guid Guid { get; }
 			public double Order { get; }
@@ -205,7 +205,7 @@ namespace dnSpy.Settings.Dialog {
 			public ImageReference Icon { get; }
 			public object UIObject { get; }
 
-			public AppSettingsTabContainer(string title, double order, Guid guid, Guid parentGuid, ImageReference icon) {
+			public AppSettingsPageContainer(string title, double order, Guid guid, Guid parentGuid, ImageReference icon) {
 				Title = title;
 				Order = order;
 				Guid = guid;
@@ -213,10 +213,10 @@ namespace dnSpy.Settings.Dialog {
 				Icon = icon;
 			}
 
-			void IAppSettingsTab.OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) { }
+			void IAppSettingsPage.OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) { }
 		}
 
-		static AppSettingsTabVM TryCreate(object obj, IAppSettingsTabContainerMetadata md) {
+		static AppSettingsPageVM TryCreate(object obj, IAppSettingsPageContainerMetadata md) {
 			Guid? guid = md.Guid == null ? null : TryParseGuid(md.Guid);
 			Debug.Assert(guid != null, "Invalid GUID");
 			if (guid == null)
@@ -232,7 +232,7 @@ namespace dnSpy.Settings.Dialog {
 
 			var title = ResourceHelper.GetString(obj, md.Title);
 			var icon = ImageReferenceHelper.GetImageReference(obj, md.Icon) ?? ImageReference.None;
-			return new AppSettingsTabVM(new AppSettingsTabContainer(title, md.Order, guid.Value, parentGuid.Value, icon));
+			return new AppSettingsPageVM(new AppSettingsPageContainer(title, md.Order, guid.Value, parentGuid.Value, icon));
 		}
 
 		static Guid? TryParseGuid(string guidString) {

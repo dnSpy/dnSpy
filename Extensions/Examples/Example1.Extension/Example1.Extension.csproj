@@ -48,7 +48,7 @@
     <Compile Include="MySettingsControl.xaml.cs">
       <DependentUpon>MySettingsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MySettingsTab.cs" />
+    <Compile Include="MySettingsPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="ToolBarCommands.cs" />

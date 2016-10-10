@@ -3,7 +3,7 @@
                     xmlns:p="clr-namespace:dnSpy.Decompiler.ILSpy.Core.Properties;assembly=dnSpy.Decompiler.ILSpy.Core"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <DataTemplate DataType="{x:Type settings:CSharpDecompilerSettingsTab}">
+    <DataTemplate DataType="{x:Type settings:CSharpDecompilerSettingsPage}">
         <StackPanel Margin="5">
             <CheckBox Margin="0 0 0 0" IsChecked="{Binding Settings.AnonymousMethods}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_DecompileAnonMethods}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.YieldReturn}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_DecompileEnumerators}"/>
@@ -38,7 +38,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type settings:ILDecompilerSettingsTab}">
+    <DataTemplate DataType="{x:Type settings:ILDecompilerSettingsPage}">
         <StackPanel Margin="5">
             <CheckBox Margin="0 0 0 0" IsChecked="{Binding Settings.ShowXmlDocumentation}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowXMLDocComments}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowTokenAndRvaComments}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowTokensRvasOffsets}"/>
