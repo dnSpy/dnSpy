@@ -6124,6 +6124,17 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type codesettings:ScrollBarsAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding HorizontalScrollBar}" Content="{x:Static p:dnSpy_Resources.TextEditorHorizontalScrollBar}" />
+            <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding VerticalScrollBar}" Content="{x:Static p:dnSpy_Resources.TextEditorVerticalScrollBar}" />
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type codesettings:TabsAppSettingsTab}">
         <Grid Margin="5">
             <Grid.RowDefinitions>

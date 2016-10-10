@@ -47,30 +47,22 @@ namespace dnSpy.Text.CodeEditor {
 
 		public IEnumerable<ContentTypeOptionDefinition> GetOptions() {
 			foreach (var md in GetOptionsDefinitions()) {
-				yield return new ContentTypeOptionDefinition<bool>(DefaultTextViewOptions.UseVirtualSpaceId) {
-					ContentType = md.ContentType,
-					DefaultValue = md.UseVirtualSpace,
-				};
-				yield return new ContentTypeOptionDefinition<WordWrapStyles>(DefaultTextViewOptions.WordWrapStyleId) {
-					ContentType = md.ContentType,
-					DefaultValue = md.WordWrapStyle,
-				};
-				yield return new ContentTypeOptionDefinition<bool>(DefaultTextViewHostOptions.LineNumberMarginId) {
-					ContentType = md.ContentType,
-					DefaultValue = md.ShowLineNumbers,
-				};
-				yield return new ContentTypeOptionDefinition<int>(DefaultOptions.TabSizeOptionId) {
-					ContentType = md.ContentType,
-					DefaultValue = md.TabSize,
-				};
-				yield return new ContentTypeOptionDefinition<int>(DefaultOptions.IndentSizeOptionId) {
-					ContentType = md.ContentType,
-					DefaultValue = md.IndentSize,
-				};
-				yield return new ContentTypeOptionDefinition<bool>(DefaultOptions.ConvertTabsToSpacesOptionId) {
-					ContentType = md.ContentType,
-					DefaultValue = md.ConvertTabsToSpaces,
-				};
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewOptions.UseVirtualSpaceId, md.UseVirtualSpace);
+				yield return new OptionDefinition<WordWrapStyles>(md.ContentType, DefaultTextViewOptions.WordWrapStyleId, md.WordWrapStyle);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.LineNumberMarginId, md.ShowLineNumbers);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.HorizontalScrollBarId, md.HorizontalScrollBar);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.VerticalScrollBarId, md.VerticalScrollBar);
+				yield return new OptionDefinition<int>(md.ContentType, DefaultOptions.TabSizeOptionId, md.TabSize);
+				yield return new OptionDefinition<int>(md.ContentType, DefaultOptions.IndentSizeOptionId, md.IndentSize);
+				yield return new OptionDefinition<bool>(md.ContentType, DefaultOptions.ConvertTabsToSpacesOptionId, md.ConvertTabsToSpaces);
+			}
+		}
+
+		sealed class OptionDefinition<T> : ContentTypeOptionDefinition<T> {
+			public OptionDefinition(string contentType, EditorOptionKey<T> option, T defaultValue)
+				: base(option) {
+				ContentType = contentType;
+				DefaultValue = defaultValue;
 			}
 		}
 	}

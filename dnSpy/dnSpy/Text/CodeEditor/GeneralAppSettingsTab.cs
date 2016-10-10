@@ -87,6 +87,8 @@ namespace dnSpy.Text.CodeEditor {
 		readonly ICodeEditorOptions options;
 
 		public GeneralAppSettingsTab(ICodeEditorOptions options, Guid guid) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
 			this.options = options;
 			Guid = guid;
 			UseVirtualSpace = options.UseVirtualSpace;

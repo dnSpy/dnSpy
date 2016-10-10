@@ -45,6 +45,10 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		WordWrapStyles WordWrapStyle { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.ShowLineNumbers"/></summary>
 		bool ShowLineNumbers { get; }
+		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.HorizontalScrollBar"/></summary>
+		bool HorizontalScrollBar { get; }
+		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.VerticalScrollBar"/></summary>
+		bool VerticalScrollBar { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.TabSize"/></summary>
 		int TabSize { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.IndentSize"/></summary>
@@ -76,6 +80,8 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 			UseVirtualSpace = DefaultCodeEditorOptions.UseVirtualSpace;
 			WordWrapStyle = DefaultCodeEditorOptions.WordWrapStyle;
 			ShowLineNumbers = DefaultCodeEditorOptions.ShowLineNumbers;
+			HorizontalScrollBar = DefaultCodeEditorOptions.HorizontalScrollBar;
+			VerticalScrollBar = DefaultCodeEditorOptions.VerticalScrollBar;
 			TabSize = DefaultCodeEditorOptions.TabSize;
 			IndentSize = DefaultCodeEditorOptions.IndentSize;
 			ConvertTabsToSpaces = DefaultCodeEditorOptions.ConvertTabsToSpaces;
@@ -110,6 +116,16 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		/// Show line numbers, default value is <see cref="DefaultCodeEditorOptions.ShowLineNumbers"/>
 		/// </summary>
 		public bool ShowLineNumbers { get; set; }
+
+		/// <summary>
+		/// Show horizontal scroll bar, default value is <see cref="DefaultCodeEditorOptions.HorizontalScrollBar"/>
+		/// </summary>
+		public bool HorizontalScrollBar { get; set; }
+
+		/// <summary>
+		/// Show vertical scroll bar, default value is <see cref="DefaultCodeEditorOptions.VerticalScrollBar"/>
+		/// </summary>
+		public bool VerticalScrollBar { get; set; }
 
 		/// <summary>
 		/// Tab size, default value is <see cref="DefaultCodeEditorOptions.TabSize"/>

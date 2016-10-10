@@ -29,6 +29,8 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		public const bool UseVirtualSpace = false;
 		public const WordWrapStyles WordWrapStyle = WordWrapStylesConstants.DefaultValue;
 		public const bool ShowLineNumbers = true;
+		public const bool HorizontalScrollBar = true;
+		public const bool VerticalScrollBar = true;
 		public const int TabSize = 4;
 		public const int IndentSize = 4;
 		public const bool ConvertTabsToSpaces = false;

@@ -32,5 +32,7 @@ namespace dnSpy.Text.CodeEditor {
 		int TabSize { get; set; }
 		int IndentSize { get; set; }
 		bool ConvertTabsToSpaces { get; set; }
+		bool HorizontalScrollBar { get; set; }
+		bool VerticalScrollBar { get; set; }
 	}
 }

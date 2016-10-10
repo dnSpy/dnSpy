@@ -45,6 +45,16 @@ namespace dnSpy.Text.CodeEditor {
 			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.LineNumberMarginId, value); }
 		}
 
+		public bool HorizontalScrollBar {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.HorizontalScrollBarId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.HorizontalScrollBarId, value); }
+		}
+
+		public bool VerticalScrollBar {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.VerticalScrollBarId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewHostOptions.VerticalScrollBarId, value); }
+		}
+
 		public int TabSize {
 			get { return group.GetOptionValue(ContentType.TypeName, DefaultOptions.TabSizeOptionId); }
 			set { group.SetOptionValue(ContentType.TypeName, DefaultOptions.TabSizeOptionId, OptionsHelpers.FilterTabSize(value)); }

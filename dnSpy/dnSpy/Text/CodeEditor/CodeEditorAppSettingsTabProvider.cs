@@ -31,6 +31,7 @@ namespace dnSpy.Text.CodeEditor {
 		readonly ICodeEditorOptionsService codeEditorSettingsService;
 
 		const int GENERAL_GUID_INC = 1;
+		const int SCROLLBARS_GUID_INC = 2;
 		const int TABS_GUID_INC = 3;
 
 		[ImportingConstructor]
@@ -54,6 +55,7 @@ namespace dnSpy.Text.CodeEditor {
 				order += orderIncrement;
 
 				yield return new GeneralAppSettingsTab(option, IncrementGuid(option.Guid, GENERAL_GUID_INC));
+				yield return new ScrollBarsAppSettingsTab(option, IncrementGuid(option.Guid, SCROLLBARS_GUID_INC));
 				yield return new TabsAppSettingsTab(option, IncrementGuid(option.Guid, TABS_GUID_INC));
 			}
 		}

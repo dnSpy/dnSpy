@@ -507,6 +507,7 @@
     <Compile Include="Text\CodeEditor\GeneralAppSettingsTab.cs" />
     <Compile Include="Text\CodeEditor\ICodeEditorOptions.cs" />
     <Compile Include="Text\CodeEditor\LanguageAppSettingsTab.cs" />
+    <Compile Include="Text\CodeEditor\ScrollBarsAppSettingsTab.cs" />
     <Compile Include="Text\CodeEditor\TabsAppSettingsTab.cs" />
     <Compile Include="Text\ContentType.cs" />
     <Compile Include="Text\ContentTypeDefinitions.cs" />

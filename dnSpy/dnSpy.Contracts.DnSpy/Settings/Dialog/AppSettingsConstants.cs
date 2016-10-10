@@ -159,6 +159,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_CODE_EDITOR_LANGUAGES_GENERAL = 1000;
 
 		/// <summary>
+		/// Order of Scroll Bars language settings
+		/// </summary>
+		public const double ORDER_CODE_EDITOR_LANGUAGES_SCROLLBARS = 2000;
+
+		/// <summary>
 		/// Order of Tabs language settings
 		/// </summary>
 		public const double ORDER_CODE_EDITOR_LANGUAGES_TABS = 3000;

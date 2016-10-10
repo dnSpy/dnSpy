@@ -22,52 +22,55 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
-using dnSpy.Text.Editor;
 
 namespace dnSpy.Text.CodeEditor {
-	sealed class TabsAppSettingsTab : ViewModelBase, IAppSettingsTab {
+	sealed class ScrollBarsAppSettingsTab : ViewModelBase, IAppSettingsTab {
 		public Guid ParentGuid => options.Guid;
 		public Guid Guid { get; }
-		public double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_TABS;
-		public string Title => dnSpy_Resources.TabsSettings;
+		public double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_SCROLLBARS;
+		public string Title => dnSpy_Resources.ScrollBarsSettings;
 		public ImageReference Icon => ImageReference.None;
 		public object UIObject => this;
 
-		public Int32VM TabSizeVM { get; }
-		public Int32VM IndentSizeVM { get; }
-
-		public bool ConvertTabsToSpaces {
-			get { return convertTabsToSpaces; }
+		public bool HorizontalScrollBar {
+			get { return horizontalScrollBar; }
 			set {
-				if (convertTabsToSpaces != value) {
-					convertTabsToSpaces = value;
-					OnPropertyChanged(nameof(ConvertTabsToSpaces));
+				if (horizontalScrollBar != value) {
+					horizontalScrollBar = value;
+					OnPropertyChanged(nameof(HorizontalScrollBar));
 				}
 			}
 		}
-		bool convertTabsToSpaces;
+		bool horizontalScrollBar;
+
+		public bool VerticalScrollBar {
+			get { return verticalScrollBar; }
+			set {
+				if (verticalScrollBar != value) {
+					verticalScrollBar = value;
+					OnPropertyChanged(nameof(VerticalScrollBar));
+				}
+			}
+		}
+		bool verticalScrollBar;
 
 		readonly ICodeEditorOptions options;
 
-		public TabsAppSettingsTab(ICodeEditorOptions options, Guid guid) {
+		public ScrollBarsAppSettingsTab(ICodeEditorOptions options, Guid guid) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			this.options = options;
 			Guid = guid;
-			TabSizeVM = new Int32VM(options.TabSize, a => { }, true) { Min = OptionsHelpers.MinimumTabSize, Max = OptionsHelpers.MaximumTabSize };
-			IndentSizeVM = new Int32VM(options.IndentSize, a => { }, true) { Min = OptionsHelpers.MinimumIndentSize, Max = OptionsHelpers.MaximumIndentSize };
-			ConvertTabsToSpaces = options.ConvertTabsToSpaces;
+			HorizontalScrollBar = options.HorizontalScrollBar;
+			VerticalScrollBar = options.VerticalScrollBar;
 		}
 
 		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
 			if (!saveSettings)
 				return;
 
-			if (!TabSizeVM.HasError)
-				options.TabSize = TabSizeVM.Value;
-			if (!IndentSizeVM.HasError)
-				options.IndentSize = IndentSizeVM.Value;
-			options.ConvertTabsToSpaces = ConvertTabsToSpaces;
+			options.HorizontalScrollBar = HorizontalScrollBar;
+			options.VerticalScrollBar = VerticalScrollBar;
 		}
 	}
 }
