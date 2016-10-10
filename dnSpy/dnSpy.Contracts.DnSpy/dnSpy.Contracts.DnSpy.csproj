@@ -472,6 +472,7 @@
     <Compile Include="Settings\Groups\ITextViewOptionsGroupNameProvider.cs" />
     <Compile Include="Settings\Groups\ITextViewOptionsGroupService.cs" />
     <Compile Include="Settings\Groups\PredefinedTextViewGroupNames.cs" />
+    <Compile Include="Settings\Groups\TextViewOptionChangedEventArgs.cs" />
     <Compile Include="Settings\ISettingsSection.cs" />
     <Compile Include="Settings\ISettingsSectionProvider.cs" />
     <Compile Include="Settings\ISettingsService.cs" />

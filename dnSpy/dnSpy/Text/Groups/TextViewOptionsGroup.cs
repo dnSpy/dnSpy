@@ -32,6 +32,8 @@ namespace dnSpy.Text.Groups {
 			get { return textViews.ToArray(); }
 		}
 
+		public event EventHandler<TextViewOptionChangedEventArgs> TextViewOptionChanged;
+
 		readonly List<IWpfTextView> textViews;
 		readonly Dictionary<IContentType, TextViewGroupOptionCollection> toOptions;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
@@ -196,6 +198,7 @@ namespace dnSpy.Text.Groups {
 						// Invalid option value
 					}
 				}
+				TextViewOptionChanged?.Invoke(this, new TextViewOptionChangedEventArgs(option.Definition.ContentType, option.Definition.Name));
 			}
 			finally {
 				writeOptionHash.Remove(option);

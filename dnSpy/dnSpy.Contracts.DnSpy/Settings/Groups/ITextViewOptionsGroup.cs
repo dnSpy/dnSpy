@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -30,6 +31,11 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// Gets all text views in this group
 		/// </summary>
 		IEnumerable<IWpfTextView> TextViews { get; }
+
+		/// <summary>
+		/// Raised when an option has changed
+		/// </summary>
+		event EventHandler<TextViewOptionChangedEventArgs> TextViewOptionChanged;
 
 		/// <summary>
 		/// Returns true if the option is shared by all text views in this group
