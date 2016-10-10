@@ -64,6 +64,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_CODE_EDITOR = 4000;
 
 		/// <summary>
+		/// Order of Output Window settings tab
+		/// </summary>
+		public const double ORDER_OUTPUT = 6000;
+
+		/// <summary>
 		/// Order of Assembly Explorer settings tab
 		/// </summary>
 		public const double ORDER_ASSEMBLY_EXPLORER = 7000;
@@ -129,6 +134,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_DOCUMENT_VIEWER = "DEFBC59F-8FB1-4DC1-8067-B006BE07B6DA";
 
 		/// <summary>
+		/// Guid of Output Window tab settings
+		/// </summary>
+		public const string GUID_OUTPUT = "26FAD694-0964-476C-AA73-7EE94FBAFFA3";
+
+		/// <summary>
 		/// Order of Environment / General
 		/// </summary>
 		public const double ORDER_ENVIRONMENT_GENERAL = 0;
@@ -187,5 +197,25 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Order of Text Viewer / Advanced tab
 		/// </summary>
 		public const double ORDER_DOCUMENT_VIEWER_DEFAULT_ADVANCED = 4000;
+
+		/// <summary>
+		/// Order of Output Window / General tab
+		/// </summary>
+		public const double ORDER_OUTPUT_DEFAULT_GENERAL = 1000;
+
+		/// <summary>
+		/// Order of Output Window / Scroll Bars tab
+		/// </summary>
+		public const double ORDER_OUTPUT_DEFAULT_SCROLLBARS = 2000;
+
+		/// <summary>
+		/// Order of Output Window / Tabs tab
+		/// </summary>
+		public const double ORDER_OUTPUT_DEFAULT_TABS = 3000;
+
+		/// <summary>
+		/// Order of Output Window / Advanced tab
+		/// </summary>
+		public const double ORDER_OUTPUT_DEFAULT_ADVANCED = 4000;
 	}
 }

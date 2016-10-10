@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// <see cref="IWpfTextView"/> extensions
 	/// </summary>
-	public static class WpfTextViewExtensions {
+	static class WpfTextViewExtensions {
 		/// <summary>
 		/// Initializes <see cref="IWpfTextView.ZoomLevel"/> to the default value (<see cref="ZoomConstants.DefaultZoom"/>)
 		/// to make sure that this <see cref="IWpfTextView"/> instance doesn't use the global zoom level.

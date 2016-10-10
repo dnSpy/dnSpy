@@ -69,7 +69,7 @@ namespace dnSpy.Output {
 			set { logEditor.ShowLineNumbers = value; }
 		}
 
-		public bool ShowTimestamps { get; set; }
+		bool ShowTimestamps => logEditor.TextView.Options.GetOptionValue(DefaultOutputOptions.ShowTimestampsId);
 
 		readonly ILogEditor logEditor;
 		readonly IEditorOperations editorOperations;

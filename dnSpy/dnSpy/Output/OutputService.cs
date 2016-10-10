@@ -33,6 +33,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Output.Settings;
 using dnSpy.Properties;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
@@ -63,42 +64,25 @@ namespace dnSpy.Output {
 		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);
 
 		public bool WordWrap {
-			get { return (outputServiceSettingsImpl.WordWrapStyle & WordWrapStyles.WordWrap) != 0; }
+			get { return (outputWindowOptionsService.Default.WordWrapStyle & WordWrapStyles.WordWrap) != 0; }
 			set {
 				if (WordWrap != value) {
 					if (value)
-						outputServiceSettingsImpl.WordWrapStyle |= WordWrapStyles.WordWrap;
+						outputWindowOptionsService.Default.WordWrapStyle |= WordWrapStyles.WordWrap;
 					else
-						outputServiceSettingsImpl.WordWrapStyle &= ~WordWrapStyles.WordWrap;
-					OnPropertyChanged(nameof(WordWrap));
-					foreach (var vm in OutputBuffers)
-						vm.WordWrapStyle = outputServiceSettingsImpl.WordWrapStyle;
+						outputWindowOptionsService.Default.WordWrapStyle &= ~WordWrapStyles.WordWrap;
 				}
 			}
 		}
 
 		public bool ShowLineNumbers {
-			get { return outputServiceSettingsImpl.ShowLineNumbers; }
-			set {
-				if (outputServiceSettingsImpl.ShowLineNumbers != value) {
-					outputServiceSettingsImpl.ShowLineNumbers = value;
-					OnPropertyChanged(nameof(ShowLineNumbers));
-					foreach (var vm in OutputBuffers)
-						vm.ShowLineNumbers = outputServiceSettingsImpl.ShowLineNumbers;
-				}
-			}
+			get { return outputWindowOptionsService.Default.LineNumberMargin; }
+			set { outputWindowOptionsService.Default.LineNumberMargin = value; }
 		}
 
 		public bool ShowTimestamps {
-			get { return outputServiceSettingsImpl.ShowTimestamps; }
-			set {
-				if (outputServiceSettingsImpl.ShowTimestamps != value) {
-					outputServiceSettingsImpl.ShowTimestamps = value;
-					OnPropertyChanged(nameof(ShowTimestamps));
-					foreach (var vm in OutputBuffers)
-						vm.ShowTimestamps = outputServiceSettingsImpl.ShowTimestamps;
-				}
-			}
+			get { return outputWindowOptionsService.Default.ShowTimestamps; }
+			set { outputWindowOptionsService.Default.ShowTimestamps = value; }
 		}
 
 		public object TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
@@ -129,9 +113,12 @@ namespace dnSpy.Output {
 		Guid prevSelectedGuid;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly IMenuService menuService;
+		readonly IOutputWindowOptionsService outputWindowOptionsService;
 
 		[ImportingConstructor]
-		OutputService(IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorProvider logEditorProvider, OutputServiceSettingsImpl outputServiceSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuService menuService, [ImportMany] IEnumerable<Lazy<IOutputServiceListener, IOutputServiceListenerMetadata>> outputServiceListeners) {
+		OutputService(IOutputWindowOptionsService outputWindowOptionsService, IEditorOperationsFactoryService editorOperationsFactoryService, ILogEditorProvider logEditorProvider, OutputServiceSettingsImpl outputServiceSettingsImpl, IPickSaveFilename pickSaveFilename, IMenuService menuService, [ImportMany] IEnumerable<Lazy<IOutputServiceListener, IOutputServiceListenerMetadata>> outputServiceListeners) {
+			this.outputWindowOptionsService = outputWindowOptionsService;
+			outputWindowOptionsService.OptionChanged += OutputWindowOptionsService_OptionChanged;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.logEditorProvider = logEditorProvider;
 			this.outputServiceSettingsImpl = outputServiceSettingsImpl;
@@ -149,18 +136,21 @@ namespace dnSpy.Output {
 			}));
 		}
 
+		void OutputWindowOptionsService_OptionChanged(object sender, OptionChangedEventArgs e) {
+			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName)
+				OnPropertyChanged(nameof(WordWrap));
+		}
+
 		void OutputBuffers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (SelectedOutputBufferVM == null)
 				SelectedOutputBufferVM = OutputBuffers.FirstOrDefault();
 
 			if (e.NewItems != null) {
 				foreach (OutputBufferVM vm in e.NewItems) {
-					vm.WordWrapStyle = outputServiceSettingsImpl.WordWrapStyle;
-					vm.ShowLineNumbers = outputServiceSettingsImpl.ShowLineNumbers;
-					vm.ShowTimestamps = outputServiceSettingsImpl.ShowTimestamps;
 					if (vm.Guid == prevSelectedGuid && prevSelectedGuid != Guid.Empty) {
 						SelectedOutputBufferVM = vm;
 						prevSelectedGuid = Guid.Empty;
+						break;
 					}
 				}
 			}

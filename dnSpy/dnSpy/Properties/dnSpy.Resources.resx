@@ -1220,4 +1220,10 @@
   <data name="TextEditorZoomControl" xml:space="preserve">
     <value>Zoom control</value>
   </data>
+  <data name="OutputWindowSettings" xml:space="preserve">
+    <value>Output Window</value>
+  </data>
+  <data name="TextEditorShowTimestamps" xml:space="preserve">
+    <value>Show timestamps</value>
+  </data>
 </root>

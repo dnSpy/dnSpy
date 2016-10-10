@@ -17,24 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Settings.Groups {
-	/// <summary>
-	/// Text view group names
-	/// </summary>
-	public static class PredefinedTextViewGroupNames {
+using System;
+
+namespace dnSpy.Output.Settings {
+	sealed class OptionChangedEventArgs : EventArgs {
 		/// <summary>
-		/// Code editor group
+		/// Content type
 		/// </summary>
-		public const string CodeEditor = nameof(CodeEditor);
+		public string ContentType { get; }
 
 		/// <summary>
-		/// Text viewer group
+		/// Option id, eg. <see cref="Microsoft.VisualStudio.Text.Editor.DefaultTextViewOptions.WordWrapStyleName"/>
 		/// </summary>
-		public const string DocumentViewer = nameof(DocumentViewer);
+		public string OptionId { get; }
 
-		/// <summary>
-		/// Output window group
-		/// </summary>
-		public const string OutputWindow = nameof(OutputWindow);
+		public OptionChangedEventArgs(string contentType, string optionId) {
+			if (contentType == null)
+				throw new ArgumentNullException(nameof(contentType));
+			if (optionId == null)
+				throw new ArgumentNullException(nameof(optionId));
+			ContentType = contentType;
+			OptionId = optionId;
+		}
 	}
 }

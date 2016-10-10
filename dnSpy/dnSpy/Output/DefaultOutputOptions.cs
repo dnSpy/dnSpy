@@ -17,24 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Settings.Groups {
-	/// <summary>
-	/// Text view group names
-	/// </summary>
-	public static class PredefinedTextViewGroupNames {
-		/// <summary>
-		/// Code editor group
-		/// </summary>
-		public const string CodeEditor = nameof(CodeEditor);
+using Microsoft.VisualStudio.Text.Editor;
 
-		/// <summary>
-		/// Text viewer group
-		/// </summary>
-		public const string DocumentViewer = nameof(DocumentViewer);
-
-		/// <summary>
-		/// Output window group
-		/// </summary>
-		public const string OutputWindow = nameof(OutputWindow);
+namespace dnSpy.Output {
+	static class DefaultOutputOptions {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+		public const string ShowTimestampsName = "Output/ShowTimestamps";
+		public static readonly EditorOptionKey<bool> ShowTimestampsId = new EditorOptionKey<bool>(ShowTimestampsName);
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

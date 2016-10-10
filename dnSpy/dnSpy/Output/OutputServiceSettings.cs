@@ -22,55 +22,14 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Contracts.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Output {
 	interface IOutputServiceSettings : INotifyPropertyChanged {
-		WordWrapStyles WordWrapStyle { get; }
-		bool ShowLineNumbers { get; }
-		bool ShowTimestamps { get; }
 		Guid SelectedGuid { get; }
 	}
 
 	class OutputServiceSettings : ViewModelBase, IOutputServiceSettings {
 		protected virtual void OnModified() { }
-
-		public WordWrapStyles WordWrapStyle {
-			get { return wordWrapStyle; }
-			set {
-				if (wordWrapStyle != value) {
-					wordWrapStyle = value;
-					OnPropertyChanged(nameof(WordWrapStyle));
-					OnModified();
-				}
-			}
-		}
-		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultValue;
-
-		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
-			set {
-				if (showLineNumbers != value) {
-					showLineNumbers = value;
-					OnPropertyChanged(nameof(ShowLineNumbers));
-					OnModified();
-				}
-			}
-		}
-		bool showLineNumbers = true;
-
-		public bool ShowTimestamps {
-			get { return showTimestamps; }
-			set {
-				if (showTimestamps != value) {
-					showTimestamps = value;
-					OnPropertyChanged(nameof(ShowTimestamps));
-					OnModified();
-				}
-			}
-		}
-		bool showTimestamps = true;
 
 		public Guid SelectedGuid {
 			get { return selectedGuid; }
@@ -97,9 +56,6 @@ namespace dnSpy.Output {
 
 			this.disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? this.WordWrapStyle;
-			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
-			this.ShowTimestamps = sect.Attribute<bool?>(nameof(ShowTimestamps)) ?? this.ShowTimestamps;
 			this.SelectedGuid= sect.Attribute<Guid?>(nameof(SelectedGuid)) ?? this.SelectedGuid;
 			this.disableSave = false;
 		}
@@ -109,9 +65,6 @@ namespace dnSpy.Output {
 			if (disableSave)
 				return;
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
-			sect.Attribute(nameof(WordWrapStyle), WordWrapStyle);
-			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);
-			sect.Attribute(nameof(ShowTimestamps), ShowTimestamps);
 			sect.Attribute(nameof(SelectedGuid), SelectedGuid);
 		}
 	}

@@ -94,13 +94,9 @@ namespace dnSpy.Text.Editor {
 			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.wpfTextView = wpfTextViewHost.TextView;
-			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, false);
-			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultValue);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);
-			wpfTextView.InitializeLocalZoomLevel();
 			SetNewDocument();
 		}
 

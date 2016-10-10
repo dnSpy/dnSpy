@@ -17,24 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Settings.Groups {
-	/// <summary>
-	/// Text view group names
-	/// </summary>
-	public static class PredefinedTextViewGroupNames {
-		/// <summary>
-		/// Code editor group
-		/// </summary>
-		public const string CodeEditor = nameof(CodeEditor);
+using System.ComponentModel.Composition;
+using Microsoft.VisualStudio.Text.Editor;
 
-		/// <summary>
-		/// Text viewer group
-		/// </summary>
-		public const string DocumentViewer = nameof(DocumentViewer);
-
-		/// <summary>
-		/// Output window group
-		/// </summary>
-		public const string OutputWindow = nameof(OutputWindow);
+namespace dnSpy.Output {
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class ShowTimestampsEditorOptionDefinition : ViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultOutputOptions.ShowTimestampsId;
+		public override bool Default => true;
 	}
 }

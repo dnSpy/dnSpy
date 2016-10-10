@@ -2070,6 +2070,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Output Window.
+        /// </summary>
+        public static string OutputWindowSettings {
+            get {
+                return ResourceManager.GetString("OutputWindowSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to References.
         /// </summary>
         public static string ReferencesFolder {
@@ -3101,6 +3110,15 @@ namespace dnSpy.Properties {
         public static string TextEditorShowStructureLines {
             get {
                 return ResourceManager.GetString("TextEditorShowStructureLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show timestamps.
+        /// </summary>
+        public static string TextEditorShowTimestamps {
+            get {
+                return ResourceManager.GetString("TextEditorShowTimestamps", resourceCulture);
             }
         }
         

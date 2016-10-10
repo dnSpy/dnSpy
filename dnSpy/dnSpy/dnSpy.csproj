@@ -386,6 +386,8 @@
     <Compile Include="Output\CachedWriter.cs" />
     <Compile Include="Output\Commands.cs" />
     <Compile Include="Output\Constants.cs" />
+    <Compile Include="Output\DefaultOutputOptions.cs" />
+    <Compile Include="Output\EditorOptionDefinitions.cs" />
     <Compile Include="Output\NotPresentOutputWriter.cs" />
     <Compile Include="Output\NullOutputTextPane.cs" />
     <Compile Include="Output\OutputBufferVM.cs" />
@@ -398,6 +400,18 @@
     <Compile Include="Output\OutputServiceSettings.cs" />
     <Compile Include="Output\OutputTextEditorFormatDefinition.cs" />
     <Compile Include="Output\OutputToolWindowContent.cs" />
+    <Compile Include="Output\Settings\AdvancedAppSettingsTab.cs" />
+    <Compile Include="Output\Settings\AppSettingsTabContainer.cs" />
+    <Compile Include="Output\Settings\AppSettingsTabProvider.cs" />
+    <Compile Include="Output\Settings\ContentTypeOptionDefinitionProvider.cs" />
+    <Compile Include="Output\Settings\GeneralAppSettingsTab.cs" />
+    <Compile Include="Output\Settings\IOutputWindowOptions.cs" />
+    <Compile Include="Output\Settings\OptionChangedEventArgs.cs" />
+    <Compile Include="Output\Settings\OutputWindowOptions.cs" />
+    <Compile Include="Output\Settings\OutputWindowOptionsService.cs" />
+    <Compile Include="Output\Settings\ScrollBarsAppSettingsTab.cs" />
+    <Compile Include="Output\Settings\TabsAppSettingsTab.cs" />
+    <Compile Include="Output\Settings\TextViewOptionsGroupNameProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.Shared.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
