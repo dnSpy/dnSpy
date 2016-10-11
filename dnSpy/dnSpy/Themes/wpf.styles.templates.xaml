@@ -5518,10 +5518,10 @@
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Value="Active" Binding="{Binding Path=TabGroupState, RelativeSource={RelativeSource Self}}">
+                        <DataTrigger Value="Active" Binding="{Binding Path=DataContext.TabGroupState, RelativeSource={RelativeSource Self}}">
                             <Setter Property="Background" Value="{DynamicResource EnvironmentFileTabSelectedGradient}" />
                         </DataTrigger>
-                        <DataTrigger Value="Inactive" Binding="{Binding Path=TabGroupState, RelativeSource={RelativeSource Self}}">
+                        <DataTrigger Value="Inactive" Binding="{Binding Path=DataContext.TabGroupState, RelativeSource={RelativeSource Self}}">
                             <Setter Property="Background" Value="{DynamicResource EnvironmentFileTabInactiveGradient}" />
                         </DataTrigger>
                     </ControlTemplate.Triggers>
