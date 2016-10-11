@@ -298,7 +298,7 @@
     <value>_Ausblenden</value>
   </data>
   <data name="HighlightLine" xml:space="preserve">
-    <value>_Aktuelle Zeile hervorheben</value>
+    <value>Aktuelle _Zeile markieren</value>
   </data>
   <data name="InvalidInputTextMessageBox" xml:space="preserve">
     <value>Der Text ist ungültig</value>
@@ -583,7 +583,7 @@
     <value>Schließen</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Decompile a member's enclosing class instead of the class member</value>
+    <value>Kompletten Typ statt einzelne Member dekompilieren</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
     <value>Übereinstimmungen hervorheben</value>
@@ -960,7 +960,7 @@
     <value>Hintergrundbild</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
-    <value>Code Editor</value>
+    <value>Text-Editor</value>
   </data>
   <data name="BgImgDisplayName_Default" xml:space="preserve">
     <value>Andere Textfenster</value>
@@ -1110,121 +1110,121 @@
     <value>Strg+Klicken um Link zu folgen</value>
   </data>
   <data name="EnvironmentSettings" xml:space="preserve">
-    <value>Environment</value>
+    <value>Umgebung</value>
   </data>
   <data name="GeneralSettings" xml:space="preserve">
-    <value>General</value>
+    <value>Allgemein</value>
   </data>
   <data name="GeneralSettings_Theme" xml:space="preserve">
     <value>Theme</value>
   </data>
   <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
-    <value>Integrate with Windows Explorer</value>
+    <value>In Windows Explorer integrieren</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Order (restart needed)</value>
+    <value>Reihenfolge (Neustart erforderlich)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Single-click expands nodes</value>
+    <value>Knoten durch einfachen Klick öffnen</value>
   </data>
   <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
-    <value>Syntax highlight</value>
+    <value>Syntax hervorheben</value>
   </data>
   <data name="FontSettings" xml:space="preserve">
     <value>Schrift</value>
   </data>
   <data name="CodeEditorSettings" xml:space="preserve">
-    <value>Code Editor</value>
+    <value>Text-Editor</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
-    <value>Tabs</value>
+    <value>Tabstopps</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
-    <value>Convert tabs to s_paces</value>
+    <value>Tabstopps in Leerzeichen umwandeln</value>
   </data>
   <data name="TextEditorLineNumbers" xml:space="preserve">
-    <value>_Line numbers</value>
+    <value>Zeilen_nummern</value>
   </data>
   <data name="TextEditorVirtualSpace" xml:space="preserve">
-    <value>_Virtual space</value>
+    <value>_Virtuellen Bereich aktivieren</value>
   </data>
   <data name="TextEditorWordWrap" xml:space="preserve">
-    <value>_Word wrap</value>
+    <value>_Zeilenumbruch</value>
   </data>
   <data name="TextEditorIndentSize" xml:space="preserve">
-    <value>_Indent size</value>
+    <value>_Einzugsgröße</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
-    <value>_Tab size</value>
+    <value>_Tabstoppgröße</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
-    <value>Text Viewer</value>
+    <value>Nur Text</value>
   </data>
   <data name="AdvancedSettings" xml:space="preserve">
-    <value>Advanced</value>
+    <value>Erweitert</value>
   </data>
   <data name="ScrollBarsSettings" xml:space="preserve">
-    <value>Scroll Bars</value>
+    <value>Scrollleisten</value>
   </data>
   <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
-    <value>Compress blank lines</value>
+    <value>Leere Zeilen verdichten</value>
   </data>
   <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
-    <value>Compress lines that do not have any alphanumeric characters</value>
+    <value>Zeilen verdichten die keine alphanumerischen Zeichen enthalten</value>
   </data>
   <data name="TextEditorGlyphMargin" xml:space="preserve">
-    <value>Indicator margin</value>
+    <value>Indikatorrand</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
-    <value>Highlight current line</value>
+    <value>Aktuelle _Zeile markieren</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
-    <value>Highlight braces</value>
+    <value>Zusammengehörige Klammern hervorheben</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
-    <value>Highlight related keywords</value>
+    <value>Verwandte _Schlüsselbegriffe unter Cursor anzeigen</value>
   </data>
   <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
-    <value>Show _horizontal scroll bar</value>
+    <value>Horizontale _Scrollleiste anzeigen</value>
   </data>
   <data name="TextEditorLineHeight" xml:space="preserve">
-    <value>Line height</value>
+    <value>Zeilenhöhe</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
-    <value>Show procedure line separators</value>
+    <value>_Zeilentrennzeichen in Prozeduren anzeigen</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
-    <value>Margins</value>
+    <value>Rahmen</value>
   </data>
   <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
-    <value>Don't add extra line spacing</value>
+    <value>Keinen zusätzlichen Zeilenabstand hinzufügen</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
-    <value>Mouse wheel zoom</value>
+    <value>Mausrad Zoom</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
     <value>Übereinstimmungen hervorheben</value>
   </data>
   <data name="TextEditorSelectionMargin" xml:space="preserve">
-    <value>Selection margin</value>
+    <value>Auswahlrahmen</value>
   </data>
   <data name="TextEditorShowStructureLines" xml:space="preserve">
-    <value>Show indent guides</value>
+    <value>Einrückungen anzeigen</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
-    <value>Show _vertical scroll bar</value>
+    <value>_Vertikale Scrollleiste anzeigen</value>
   </data>
   <data name="TextEditorZoom" xml:space="preserve">
     <value>Zoom</value>
   </data>
   <data name="TextEditorZoomControl" xml:space="preserve">
-    <value>Zoom control</value>
+    <value>Zoom-Steuerelement</value>
   </data>
   <data name="OutputWindowSettings" xml:space="preserve">
-    <value>Output Window</value>
+    <value>Ausgabefenster</value>
   </data>
   <data name="TextEditorShowTimestamps" xml:space="preserve">
-    <value>Show timestamps</value>
+    <value>Zeitstempel anzeigen</value>
   </data>
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>
