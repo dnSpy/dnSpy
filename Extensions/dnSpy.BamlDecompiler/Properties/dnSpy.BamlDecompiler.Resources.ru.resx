@@ -124,7 +124,7 @@
     <value>Файл BAML</value>
   </data>
   <data name="BamlOptionDlgTab" xml:space="preserve">
-    <value>BAML Decompiler</value>
+    <value>Декомпилятор BAML</value>
   </data>
   <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
     <value>Дизассемблировать BAML</value>

@@ -1110,121 +1110,121 @@
     <value>CTRL + клик для перехода</value>
   </data>
   <data name="EnvironmentSettings" xml:space="preserve">
-    <value>Environment</value>
+    <value>Окружение</value>
   </data>
   <data name="GeneralSettings" xml:space="preserve">
-    <value>General</value>
+    <value>Общие</value>
   </data>
   <data name="GeneralSettings_Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Тема</value>
   </data>
   <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
-    <value>Integrate with Windows Explorer</value>
+    <value>Интегрировать в Windows проводник</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Order (restart needed)</value>
+    <value>Сортировка (требуется перезагрузка)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Single-click expands nodes</value>
+    <value>Одиночным щелчком мыши разворачивать узлы</value>
   </data>
   <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
-    <value>Syntax highlight</value>
+    <value>Подсветка синтаксиса</value>
   </data>
   <data name="FontSettings" xml:space="preserve">
     <value>Шрифт</value>
   </data>
   <data name="CodeEditorSettings" xml:space="preserve">
-    <value>Code Editor</value>
+    <value>Редактор кода</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
-    <value>Tabs</value>
+    <value>Табуляция</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
-    <value>Convert tabs to s_paces</value>
+    <value>Преобразовать табуляцию в пробелы</value>
   </data>
   <data name="TextEditorLineNumbers" xml:space="preserve">
-    <value>_Line numbers</value>
+    <value>Номера строк</value>
   </data>
   <data name="TextEditorVirtualSpace" xml:space="preserve">
-    <value>_Virtual space</value>
+    <value>Виртуальное пространство</value>
   </data>
   <data name="TextEditorWordWrap" xml:space="preserve">
-    <value>_Word wrap</value>
+    <value>Перенос слов</value>
   </data>
   <data name="TextEditorIndentSize" xml:space="preserve">
-    <value>_Indent size</value>
+    <value>Размер отступа</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
-    <value>_Tab size</value>
+    <value>Размер интервала табудяции</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
-    <value>Text Viewer</value>
+    <value>Просмотр текста</value>
   </data>
   <data name="AdvancedSettings" xml:space="preserve">
-    <value>Advanced</value>
+    <value>Дополнительные настройки</value>
   </data>
   <data name="ScrollBarsSettings" xml:space="preserve">
-    <value>Scroll Bars</value>
+    <value>Полосы прокрутки</value>
   </data>
   <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
-    <value>Compress blank lines</value>
+    <value>Сжатие пустые строки</value>
   </data>
   <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
-    <value>Compress lines that do not have any alphanumeric characters</value>
+    <value>Сжимать строки, которые не имеют каких-либо буквенно-цифровых символов</value>
   </data>
   <data name="TextEditorGlyphMargin" xml:space="preserve">
-    <value>Indicator margin</value>
+    <value>Индикатор полей</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
-    <value>Highlight current line</value>
+    <value>Выделить текущую строку</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
-    <value>Highlight braces</value>
+    <value>Выделение скобок</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
-    <value>Highlight related keywords</value>
+    <value>Подсветка связанных ключевых слов</value>
   </data>
   <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
-    <value>Show _horizontal scroll bar</value>
+    <value>Показать горизонтальную полосу прокрутки</value>
   </data>
   <data name="TextEditorLineHeight" xml:space="preserve">
-    <value>Line height</value>
+    <value>Высота строки</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
-    <value>Show procedure line separators</value>
+    <value>Показывать разделительные линии процедур</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
-    <value>Margins</value>
+    <value>Поля</value>
   </data>
   <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
-    <value>Don't add extra line spacing</value>
+    <value>Не добавлять дополнительный междустрочный интервал</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
-    <value>Mouse wheel zoom</value>
+    <value>Масштаб с помощью колеса мыши</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
     <value>Выделять ссылки</value>
   </data>
   <data name="TextEditorSelectionMargin" xml:space="preserve">
-    <value>Selection margin</value>
+    <value>Показывать вертикальную полосу прокрутки</value>
   </data>
   <data name="TextEditorShowStructureLines" xml:space="preserve">
-    <value>Show indent guides</value>
+    <value>Показать границы отступа</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
-    <value>Show _vertical scroll bar</value>
+    <value>Показать вертикальную полосу прокрутки</value>
   </data>
   <data name="TextEditorZoom" xml:space="preserve">
-    <value>Zoom</value>
+    <value>Масштаб</value>
   </data>
   <data name="TextEditorZoomControl" xml:space="preserve">
-    <value>Zoom control</value>
+    <value>Элемент управления масштабом</value>
   </data>
   <data name="OutputWindowSettings" xml:space="preserve">
-    <value>Output Window</value>
+    <value>Окно вывода</value>
   </data>
   <data name="TextEditorShowTimestamps" xml:space="preserve">
-    <value>Show timestamps</value>
+    <value>Показать временные метки</value>
   </data>
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>
