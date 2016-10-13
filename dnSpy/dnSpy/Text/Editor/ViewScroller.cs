@@ -101,7 +101,7 @@ namespace dnSpy.Text.Editor {
 							pixels += line.Height;
 						else {
 							pixels += line.Bottom - textView.ViewportTop;
-							line = textView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
+							line = textView.GetTextViewLineContainingBufferPosition(line.GetPointAfterLineBreak());
 							pixels += line.Height;
 						}
 					}
@@ -120,7 +120,7 @@ namespace dnSpy.Text.Editor {
 					}
 					if (line.IsLastDocumentLine())
 						break;
-					line = textView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
+					line = textView.GetTextViewLineContainingBufferPosition(line.GetPointAfterLineBreak());
 				}
 				if (pixels != 0)
 					ScrollViewportVerticallyByPixels(-pixels);

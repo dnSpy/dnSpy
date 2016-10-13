@@ -111,6 +111,8 @@ namespace dnSpy.Text.Formatting {
 			TextLineBreak previousLineBreak = null;
 			double autoIndent = BaseIndentation;
 			int column = 0;
+			int linePartsIndex = 0;
+			var lineParts = linePartsCollection.LineParts;
 			for (int lineSegment = 0; ; lineSegment++) {
 				var paragraphProperties = textParagraphPropertiesFactoryService?.Create(this,
 					classificationFormatMap.DefaultTextProperties,
@@ -127,13 +129,25 @@ namespace dnSpy.Text.Formatting {
 				int length = textLine.GetLength(textSource.EndOfLine);
 				column += length;
 
+				int linePartsEnd = linePartsIndex;
+				Debug.Assert(lineParts.Count == 0 || linePartsEnd < lineParts.Count);
+				while (linePartsEnd < lineParts.Count) {
+					var part = lineParts[linePartsEnd];
+					linePartsEnd++;
+					if (column <= part.Column + part.ColumnLength)
+						break;
+				}
+				linePartsEnd--;
+
 				var startPos = textSource.ConvertColumnToBufferPosition(startColumn);
 				var endPos = textSource.ConvertColumnToBufferPosition(column);
-				if (column >= textSource.Length)
+				if (column >= textSource.Length) {
 					endPos = bufferLine.ExtentIncludingLineBreak.End;
+					linePartsEnd = lineParts.Count - 1;
+				}
 
 				var lineSpan = new SnapshotSpan(startPos, endPos);
-				var wpfLine = new WpfTextViewLine(TextAndAdornmentSequencer.BufferGraph, linePartsCollection, startColumn, column, bufferLine, lineSpan, visualLine.Snapshot, textLine, autoIndent, ColumnWidth);
+				var wpfLine = new WpfTextViewLine(TextAndAdornmentSequencer.BufferGraph, linePartsCollection, linePartsIndex, linePartsEnd - linePartsIndex + 1, startColumn, column, bufferLine, lineSpan, visualLine.Snapshot, textLine, autoIndent, ColumnWidth);
 				lines.Add(wpfLine);
 
 				if (column >= textSource.Length) {
@@ -142,6 +156,14 @@ namespace dnSpy.Text.Formatting {
 				}
 				if (startColumn == column)
 					throw new InvalidOperationException();
+
+				linePartsIndex = linePartsEnd;
+				while (linePartsIndex < lineParts.Count) {
+					var part = lineParts[linePartsIndex];
+					if (column < part.Column + part.ColumnLength)
+						break;
+					linePartsIndex++;
+				}
 
 				if (lineSegment == 0) {
 					autoIndent = 0;
@@ -180,7 +202,7 @@ namespace dnSpy.Text.Formatting {
 							int otherSize = cspan.Span.Start.Position - lastOffs;
 							if (otherSize != 0) {
 								Debug.Assert(otherSize > 0);
-								list.Add(new LinePart(column, new Span(lastOffs - startOffs, otherSize), DefaultTextProperties));
+								list.Add(new LinePart(list.Count, column, new Span(lastOffs - startOffs, otherSize), DefaultTextProperties));
 								column += otherSize;
 							}
 							Add(list, column, cspan, lineExtent);
@@ -189,7 +211,7 @@ namespace dnSpy.Text.Formatting {
 						}
 						int lastSize = span.End.Position - lastOffs;
 						if (lastSize != 0) {
-							list.Add(new LinePart(column, new Span(lastOffs - startOffs, lastSize), DefaultTextProperties));
+							list.Add(new LinePart(list.Count, column, new Span(lastOffs - startOffs, lastSize), DefaultTextProperties));
 							column += lastSize;
 						}
 					}
@@ -198,12 +220,12 @@ namespace dnSpy.Text.Formatting {
 					var adornmentElement = seqElem as IAdornmentElement;
 					if (adornmentElement != null && seqSpans.Count == 1) {
 						var span = seqSpans[0].Span;
-						list.Add(new LinePart(column, new Span(span.Start - startOffs, span.Length), adornmentElement));
-						column += span.Length;
+						list.Add(new LinePart(list.Count, column, new Span(span.Start - startOffs, span.Length), adornmentElement, DefaultTextProperties));
+						column += list[list.Count - 1].ColumnLength;
 					}
 				}
 			}
-			Debug.Assert(list.Sum(a => a.Span.Length) == column);
+			Debug.Assert(list.Sum(a => a.ColumnLength) == column);
 
 			return new LinePartsCollection(list, lineExtent);
 		}
@@ -216,12 +238,12 @@ namespace dnSpy.Text.Formatting {
 			var props = classificationFormatMap.GetTextProperties(cspan.ClassificationType);
 			if (list.Count > 0) {
 				var last = list[list.Count - 1];
-				if (last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
-					list[list.Count - 1] = new LinePart(last.Column, Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
+				if (last.AdornmentElement == null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
+					list[list.Count - 1] = new LinePart(list.Count - 1, last.Column, Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
 					return;
 				}
 			}
-			list.Add(new LinePart(column, new Span(cspan.Span.Span.Start - startOffs, cspan.Span.Span.Length), props));
+			list.Add(new LinePart(list.Count, column, new Span(cspan.Span.Span.Start - startOffs, cspan.Span.Span.Length), props));
 		}
 	}
 }

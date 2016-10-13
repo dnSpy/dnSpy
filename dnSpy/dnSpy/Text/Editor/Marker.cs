@@ -228,7 +228,7 @@ namespace dnSpy.Text.Editor {
 
 				if (line.IsLastDocumentLine())
 					break;
-				pos = new VirtualSnapshotPoint(line.EndIncludingLineBreak);
+				pos = new VirtualSnapshotPoint(line.GetPointAfterLineBreak());
 				lines++;
 			}
 			return infos;

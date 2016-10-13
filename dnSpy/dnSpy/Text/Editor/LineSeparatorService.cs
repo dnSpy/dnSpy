@@ -276,7 +276,7 @@ namespace dnSpy.Text.Editor {
 				return null;
 			if (tag.IsPhysicalLine) {
 				while (!line.IsLastTextViewLineForSnapshotLine) {
-					line = wpfTextView.TextViewLines.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
+					line = wpfTextView.TextViewLines.GetTextViewLineContainingBufferPosition(line.GetPointAfterLineBreak());
 					if (line == null)
 						return null;
 				}

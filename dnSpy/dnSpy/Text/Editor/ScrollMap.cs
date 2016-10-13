@@ -86,7 +86,7 @@ namespace dnSpy.Text.Editor {
 			int logicalLines = GetNumberOfLogicalLines(viewLine, out logicalLineNumber);
 			logicalLineNumber = (int)Math.Round(fraction * logicalLines, MidpointRounding.AwayFromZero);
 			while (!viewLine.IsLastTextViewLineForSnapshotLine && logicalLineNumber-- > 0)
-				viewLine = TextView.GetTextViewLineContainingBufferPosition(viewLine.EndIncludingLineBreak);
+				viewLine = TextView.GetTextViewLineContainingBufferPosition(viewLine.GetPointAfterLineBreak());
 			return viewLine.Start;
 		}
 
@@ -121,7 +121,7 @@ namespace dnSpy.Text.Editor {
 
 			l = line;
 			while (!l.IsLastTextViewLineForSnapshotLine) {
-				l = TextView.GetTextViewLineContainingBufferPosition(l.EndIncludingLineBreak);
+				l = TextView.GetTextViewLineContainingBufferPosition(l.GetPointAfterLineBreak());
 				count++;
 			}
 

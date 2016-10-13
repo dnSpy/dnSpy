@@ -18,9 +18,13 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class LinePartsTextSource : TextSource {
@@ -46,10 +50,11 @@ namespace dnSpy.Text.Formatting {
 				return endOfLine;
 			var part = linePart.Value;
 			if (part.AdornmentElement != null)
-				throw new NotImplementedException();//TODO:
+				return new AdornmentTextRun(part);
 			else {
 				int offs = textSourceCharacterIndex - part.Column;
-				int length = part.Span.Length - offs;
+				int length = part.ColumnLength - offs;
+				Debug.Assert(length >= 0);
 				if (length > maxLengthLeft)
 					length = maxLengthLeft;
 				if (length == 0)
@@ -60,6 +65,40 @@ namespace dnSpy.Text.Formatting {
 		}
 		static readonly TextEndOfLine endOfLine = new TextEndOfLine(1);
 		public TextEndOfLine EndOfLine => endOfLine;
+
+		sealed class AdornmentTextRun : TextEmbeddedObject {
+			public override CharacterBufferReference CharacterBufferReference => new CharacterBufferReference(" ", 1);
+			public override LineBreakCondition BreakBefore { get; }
+			public override LineBreakCondition BreakAfter { get; }
+			public override bool HasFixedSize { get; }
+			public override int Length { get; }
+			public override TextRunProperties Properties { get; }
+			readonly IAdornmentElement adornmentElement;
+
+			public AdornmentTextRun(LinePart linePart) {
+				adornmentElement = linePart.AdornmentElement;
+				if (adornmentElement.Affinity == PositionAffinity.Successor) {
+					BreakBefore = LineBreakCondition.BreakPossible;
+					BreakAfter = LineBreakCondition.BreakRestrained;
+				}
+				else {
+					BreakBefore = LineBreakCondition.BreakRestrained;
+					BreakAfter = LineBreakCondition.BreakPossible;
+				}
+				HasFixedSize = true;
+				Length = linePart.ColumnLength;
+				Properties = linePart.TextRunProperties;
+			}
+
+			public override void Draw(DrawingContext drawingContext, Point origin, bool rightToLeft, bool sideways) {
+				// IntraTextAdornment service does this in its own adornment layer
+			}
+
+			public override Rect ComputeBoundingBox(bool rightToLeft, bool sideways) =>
+				new Rect(0, 0, adornmentElement.Width, adornmentElement.TextHeight);
+			public override TextEmbeddedObjectMetrics Format(double remainingParagraphWidth) =>
+				new TextEmbeddedObjectMetrics(adornmentElement.Width, adornmentElement.TextHeight, adornmentElement.Baseline);
+		}
 
 		public SnapshotPoint ConvertColumnToBufferPosition(int column) => linePartsCollection.ConvertColumnToBufferPosition(column);
 
@@ -72,9 +111,9 @@ namespace dnSpy.Text.Formatting {
 				int start = part.Span.Start;
 				for (int i = 0; i < len; i++, start++) {
 					if (!char.IsWhiteSpace(text[start]))
-						return column;
-					column++;
+						return column + i;
 				}
+				column += part.ColumnLength;
 			}
 			return column;
 		}

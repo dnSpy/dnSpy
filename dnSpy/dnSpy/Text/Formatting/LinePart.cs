@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Windows.Media.TextFormatting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
@@ -25,9 +26,15 @@ namespace dnSpy.Text.Formatting {
 	struct LinePart {
 		/// <summary>
 		/// Column (visible character index). This is usually equal to <see cref="Span"/>'s <see cref="Contracts.Text.Span.Start"/>
-		/// property unless there's one or more hidden characters before this <see cref="LinePart"/>.
+		/// property unless there's one or more hidden characters before this <see cref="LinePart"/> or if there's a <see cref="LinePart"/>
+		/// with a non-null <see cref="AdornmentElement"/>.
 		/// </summary>
 		public readonly int Column;
+
+		/// <summary>
+		/// Length in column characters. This is never zero.
+		/// </summary>
+		public int ColumnLength => AdornmentElement != null ? 1 : Span.Length;
 
 		/// <summary>
 		/// Span relative to the start of the physical line (<see cref="LinePartsCollection.Span"/>)
@@ -44,14 +51,25 @@ namespace dnSpy.Text.Formatting {
 		/// </summary>
 		public readonly TextRunProperties TextRunProperties;
 
-		public LinePart(int column, Span span, IAdornmentElement adornmentElement) {
+		/// <summary>
+		/// Index of this instance in the collection
+		/// </summary>
+		public readonly int Index;
+
+		public LinePart(int index, int column, Span span, IAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
+			Debug.Assert(adornmentElement != null);
+			Debug.Assert(textRunProperties != null);
+			this.Index = index;
 			this.Column = column;
 			this.Span = span;
 			this.AdornmentElement = adornmentElement;
-			this.TextRunProperties = null;
+			this.TextRunProperties = textRunProperties;
 		}
 
-		public LinePart(int column, Span span, TextRunProperties textRunProperties) {
+		public LinePart(int index, int column, Span span, TextRunProperties textRunProperties) {
+			Debug.Assert(!span.IsEmpty);
+			Debug.Assert(textRunProperties != null);
+			this.Index = index;
 			this.Column = column;
 			this.Span = span;
 			this.AdornmentElement = null;

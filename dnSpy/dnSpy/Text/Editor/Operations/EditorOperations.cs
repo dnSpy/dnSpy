@@ -1081,7 +1081,7 @@ namespace dnSpy.Text.Editor.Operations {
 			if (line.IsLastDocumentLine())
 				Caret.MoveTo(line);
 			else {
-				var nextLine = TextView.GetTextViewLineContainingBufferPosition(line.EndIncludingLineBreak);
+				var nextLine = TextView.GetTextViewLineContainingBufferPosition(line.GetPointAfterLineBreak());
 				Caret.MoveTo(nextLine);
 			}
 
@@ -1368,7 +1368,7 @@ namespace dnSpy.Text.Editor.Operations {
 		public void MoveToStartOfLineAfterWhiteSpace(bool extendSelection) =>
 			MoveToStartOfLineAfterWhiteSpace(Caret.ContainingTextViewLine, extendSelection);
 		public void MoveToStartOfNextLineAfterWhiteSpace(bool extendSelection) =>
-			MoveToStartOfLineAfterWhiteSpace(TextView.GetTextViewLineContainingBufferPosition(Caret.ContainingTextViewLine.EndIncludingLineBreak), extendSelection);
+			MoveToStartOfLineAfterWhiteSpace(TextView.GetTextViewLineContainingBufferPosition(Caret.ContainingTextViewLine.GetPointAfterLineBreak()), extendSelection);
 		public void MoveToStartOfPreviousLineAfterWhiteSpace(bool extendSelection) =>
 			MoveToStartOfLineAfterWhiteSpace(TextView.GetTextViewLineContainingBufferPosition(Caret.ContainingTextViewLine.Start.Position == 0 ? Caret.ContainingTextViewLine.Start : Caret.ContainingTextViewLine.Start - 1), extendSelection);
 		void MoveToStartOfLineAfterWhiteSpace(ITextViewLine line, bool extendSelection) {
@@ -1519,7 +1519,7 @@ namespace dnSpy.Text.Editor.Operations {
 				else {
 					var newLine = firstVisLine;
 					if (newLine.Start.Position == origCaretContainingTextViewLinePosition)
-						newLine = TextView.TextViewLines.GetTextViewLineContainingBufferPosition(newLine.EndIncludingLineBreak) ?? newLine;
+						newLine = TextView.TextViewLines.GetTextViewLineContainingBufferPosition(newLine.GetPointAfterLineBreak()) ?? newLine;
 					Caret.MoveTo(newLine);
 				}
 			}

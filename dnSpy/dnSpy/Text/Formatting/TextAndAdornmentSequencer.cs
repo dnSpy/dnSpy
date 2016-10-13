@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
@@ -80,13 +79,101 @@ namespace dnSpy.Text.Formatting {
 			if (SourceBuffer != TopBuffer)
 				throw new NotSupportedException();
 
-			var list = new List<ISequenceElement>();
-			var spaceTags = tagAggregator.GetTags(topSpan).ToArray();
-			if (spaceTags.Length != 0)
-				throw new NotImplementedException();//TODO: Use SpaceNegotiatingAdornmentTag, IAdornmentElement
-			list.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(topSpan, SpanTrackingMode.EdgeExclusive)));
-			Debug.Assert(list.Count == 1);// If it fails, make sure list is normalized
-			return new TextAndAdornmentCollection(this, list);
+			var sequenceList = new List<ISequenceElement>();
+
+			List<AdornmentElementAndSpan> adornmentList = null;
+			foreach (var tagSpan in tagAggregator.GetTags(topSpan)) {
+				if (adornmentList == null)
+					adornmentList = new List<AdornmentElementAndSpan>();
+				var spans = tagSpan.Span.GetSpans(sourceTextSnapshot);
+				Debug.Assert(spans.Count == 1);
+				if (spans.Count != 1)
+					continue;
+				adornmentList.Add(new AdornmentElementAndSpan(new AdornmentElement(tagSpan), spans[0]));
+			}
+
+			// Common case
+			if (adornmentList == null) {
+				sequenceList.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(topSpan, SpanTrackingMode.EdgeExclusive)));
+				return new TextAndAdornmentCollection(this, sequenceList);
+			}
+
+			adornmentList.Sort(AdornmentElementAndSpanComparer.Instance);
+			int start = topSpan.Start;
+			int end = topSpan.End;
+			int curr = start;
+			AdornmentElementAndSpan? lastAddedAdornment = null;
+			for (int i = 0; i < adornmentList.Count; i++) {
+				var info = adornmentList[i];
+				int spanStart = info.AdornmentElement.Affinity == PositionAffinity.Predecessor ? info.Span.Start - 1 : info.Span.Start;
+				if (spanStart < start)
+					continue;
+				if (info.Span.Start > end)
+					break;
+				var textSpan = new SnapshotSpan(topSpan.Snapshot, Span.FromBounds(curr, info.Span.Start));
+				if (!textSpan.IsEmpty)
+					sequenceList.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(textSpan, SpanTrackingMode.EdgeExclusive)));
+				if (info.Span.Start != end || info.AdornmentElement.Affinity == PositionAffinity.Predecessor) {
+					bool canAppend = true;
+					if (lastAddedAdornment != null && lastAddedAdornment.Value.Span.End > info.Span.Start)
+						canAppend = false;
+					if (canAppend) {
+						sequenceList.Add(info.AdornmentElement);
+						lastAddedAdornment = info;
+					}
+				}
+				curr = info.Span.End;
+			}
+			if (curr < end) {
+				var textSpan = new SnapshotSpan(topSpan.Snapshot, Span.FromBounds(curr, end));
+				Debug.Assert(!textSpan.IsEmpty);
+				sequenceList.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(textSpan, SpanTrackingMode.EdgeExclusive)));
+			}
+
+			return new TextAndAdornmentCollection(this, sequenceList);
+		}
+
+		sealed class AdornmentElementAndSpanComparer : IComparer<AdornmentElementAndSpan> {
+			public static readonly AdornmentElementAndSpanComparer Instance = new AdornmentElementAndSpanComparer();
+			public int Compare(AdornmentElementAndSpan x, AdornmentElementAndSpan y) {
+				int c = x.Span.Start - y.Span.Start;
+				if (c != 0)
+					return c;
+				c = x.Span.Length - y.Span.Length;
+				if (c != 0)
+					return c;
+				return (x.AdornmentElement.Affinity == PositionAffinity.Predecessor ? 0 : 1) - (y.AdornmentElement.Affinity == PositionAffinity.Predecessor ? 0 : 1);
+			}
+		}
+
+		struct AdornmentElementAndSpan {
+			public Span Span { get; }
+			public AdornmentElement AdornmentElement { get; }
+			public AdornmentElementAndSpan(AdornmentElement adornmentElement, Span span) {
+				AdornmentElement = adornmentElement;
+				Span = span;
+			}
+		}
+
+		sealed class AdornmentElement : IAdornmentElement {
+			public IMappingSpan Span => tagSpan.Span;
+			public bool ShouldRenderText => false;
+			public double Width => tagSpan.Tag.Width;
+			public double TopSpace => tagSpan.Tag.TopSpace;
+			public double Baseline => tagSpan.Tag.Baseline;
+			public double TextHeight => tagSpan.Tag.TextHeight;
+			public double BottomSpace => tagSpan.Tag.BottomSpace;
+			public object IdentityTag => tagSpan.Tag.IdentityTag;
+			public object ProviderTag => tagSpan.Tag.ProviderTag;
+			public PositionAffinity Affinity => tagSpan.Tag.Affinity;
+
+			readonly IMappingTagSpan<SpaceNegotiatingAdornmentTag> tagSpan;
+
+			public AdornmentElement(IMappingTagSpan<SpaceNegotiatingAdornmentTag> tagSpan) {
+				if (tagSpan == null)
+					throw new ArgumentNullException(nameof(tagSpan));
+				this.tagSpan = tagSpan;
+			}
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {

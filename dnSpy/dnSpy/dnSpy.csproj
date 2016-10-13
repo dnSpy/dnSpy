@@ -573,6 +573,7 @@
     <Compile Include="Text\Editor\IncrementalSearch\IncrementalSearch.cs" />
     <Compile Include="Text\Editor\IncrementalSearch\IncrementalSearchFactoryService.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
+    <Compile Include="Text\Editor\IntraTextAdornmentService.cs" />
     <Compile Include="Text\Editor\IReplEditor2.cs" />
     <Compile Include="Text\Editor\ISpaceReservationStack.cs" />
     <Compile Include="Text\Editor\ISpaceReservationStackProvider.cs" />

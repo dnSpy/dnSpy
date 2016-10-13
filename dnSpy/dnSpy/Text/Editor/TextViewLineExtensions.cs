@@ -18,6 +18,7 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
@@ -38,6 +39,23 @@ namespace dnSpy.Text.Editor {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 			return line.IsLastTextViewLineForSnapshotLine && line.LineBreakLength == 0;
+		}
+
+		/// <summary>
+		/// Returns next position. This method handles the rare case where total length is 0
+		/// even if it's not the last line.
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns></returns>
+		public static SnapshotPoint GetPointAfterLineBreak(this ITextViewLine line) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			var span = line.ExtentIncludingLineBreak;
+			if (span.Length != 0)
+				return span.End;
+			if (span.End == span.Snapshot.Length)
+				return span.End;
+			return span.End + 1;
 		}
 	}
 }

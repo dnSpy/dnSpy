@@ -40,7 +40,7 @@ namespace dnSpy.Text.Formatting {
 				this.Length = 0;
 			else {
 				var last = lineParts[lineParts.Count - 1];
-				this.Length = last.Column + last.Span.Length;
+				this.Length = last.Column + last.ColumnLength;
 			}
 		}
 
@@ -49,7 +49,7 @@ namespace dnSpy.Text.Formatting {
 				return null;
 			for (int i = 0; i < LineParts.Count; i++) {
 				var part = LineParts[linePartsIndex];
-				if (part.Column <= column && column < part.Column + part.Span.Length)
+				if (part.Column <= column && column < part.Column + part.ColumnLength)
 					return part;
 				linePartsIndex++;
 				if (linePartsIndex >= LineParts.Count)
@@ -66,8 +66,14 @@ namespace dnSpy.Text.Formatting {
 			int lineIndex = bufferPosition - Span.Start;
 			for (int i = 0; i < LineParts.Count; i++) {
 				var part = LineParts[linePartsIndex];
-				if (part.Span.Start <= lineIndex && lineIndex < part.Span.End)
-					return part;
+				if (part.Span.Start <= lineIndex) {
+					if (part.Span.Length == 0) {
+						if (lineIndex <= part.Span.End)
+							return part;
+					}
+					else if (lineIndex < part.Span.End)
+						return part;
+				}
 				linePartsIndex++;
 				if (linePartsIndex >= LineParts.Count)
 					linePartsIndex = 0;
@@ -91,6 +97,20 @@ namespace dnSpy.Text.Formatting {
 			if (linePart == null && column == Length && LineParts.Count != 0)
 				linePart = LineParts[LineParts.Count - 1];
 			return Span.Start + (linePart == null ? 0 : linePart.Value.Span.Start + (column - linePart.Value.Column));
+		}
+
+		public SnapshotPoint? ConvertColumnToBufferPosition(int column, bool includeHiddenPositions) {
+			if (includeHiddenPositions)
+				return ConvertColumnToBufferPosition(column);
+
+			var linePart = GetLinePartFromColumn(column);
+			if (linePart == null && column == Length && LineParts.Count != 0)
+				linePart = LineParts[LineParts.Count - 1];
+			if (linePart == null)
+				return null;
+			if (linePart.Value.AdornmentElement != null)
+				return null;
+			return Span.Start + linePart.Value.Span.Start + (column - linePart.Value.Column);
 		}
 
 		public void SetSnapshot(ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {

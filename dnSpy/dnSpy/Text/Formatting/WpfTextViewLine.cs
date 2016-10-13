@@ -32,7 +32,8 @@ using TF = Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Text.Formatting {
 	sealed class WpfTextViewLine : IFormattedLine {
 		readonly IBufferGraph bufferGraph;
-		readonly int endColumn;
+		readonly int endColumn, startColumn;
+		readonly int linePartsIndex, linePartsLength;
 		double top;
 		readonly double width;
 		readonly double textLeft;
@@ -54,7 +55,7 @@ namespace dnSpy.Text.Formatting {
 		double realTopSpace, scaledTopSpace;
 		double realBottomSpace;
 		double realTextHeight, scaledTextHeight;
-		double realHeight, scaledHeight;
+		double scaledHeight;
 		double realBaseline;
 
 		public double Bottom {
@@ -329,11 +330,17 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		public WpfTextViewLine(IBufferGraph bufferGraph, LinePartsCollection linePartsCollection, int startColumn, int endColumn, ITextSnapshotLine bufferLine, SnapshotSpan span, ITextSnapshot visualSnapshot, TextLine textLine, double indentation, double virtualSpaceWidth) {
+		public WpfTextViewLine(IBufferGraph bufferGraph, LinePartsCollection linePartsCollection, int linePartsIndex, int linePartsLength, int startColumn, int endColumn, ITextSnapshotLine bufferLine, SnapshotSpan span, ITextSnapshot visualSnapshot, TextLine textLine, double indentation, double virtualSpaceWidth) {
 			if (bufferGraph == null)
 				throw new ArgumentNullException(nameof(bufferGraph));
 			if (linePartsCollection == null)
 				throw new ArgumentNullException(nameof(linePartsCollection));
+			if (linePartsIndex < 0)
+				throw new ArgumentOutOfRangeException(nameof(linePartsIndex));
+			if (linePartsLength < 0)
+				throw new ArgumentOutOfRangeException(nameof(linePartsLength));
+			if (linePartsIndex + linePartsLength > linePartsCollection.LineParts.Count)
+				throw new ArgumentOutOfRangeException(nameof(linePartsLength));
 			if (bufferLine == null)
 				throw new ArgumentNullException(nameof(bufferLine));
 			if (span.Snapshot != bufferLine.Snapshot)
@@ -344,25 +351,45 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentNullException(nameof(textLine));
 
 			this.IsValid = true;
+			this.linePartsIndex = linePartsIndex;
+			this.linePartsLength = linePartsLength;
 			this.bufferGraph = bufferGraph;
 			this.linePartsCollection = linePartsCollection;
+			this.startColumn = startColumn;
 			this.endColumn = endColumn;
 			this.visualSnapshot = visualSnapshot;
 			this.textLines = new ReadOnlyCollection<TextLine>(new[] { textLine });
 			Debug.Assert(textLines.Count == 1);// Assumed by all code accessing TextLine prop
+
 			this.realTopSpace = 0;
 			this.realBottomSpace = 0;
 			this.realBaseline = TextLine.Baseline;
+			double baseLineHeight = TextLine.TextHeight - TextLine.Baseline;
+			var lineParts = linePartsCollection.LineParts;
+			for (int i = 0; i < linePartsLength; i++) {
+				var adornmentElement = lineParts[linePartsIndex + i].AdornmentElement;
+				if (adornmentElement == null)
+					continue;
+				double adornmentBaseLineHeight = adornmentElement.TextHeight - adornmentElement.Baseline;
+				if (adornmentBaseLineHeight > baseLineHeight)
+					baseLineHeight = adornmentBaseLineHeight;
+				if (adornmentElement.Baseline > realBaseline)
+					realBaseline = adornmentElement.Baseline;
+				if (adornmentElement.TopSpace > realTopSpace)
+					realTopSpace = adornmentElement.TopSpace;
+				if (adornmentElement.BottomSpace > realBottomSpace)
+					realBottomSpace = adornmentElement.BottomSpace;
+			}
+			this.realTextHeight = Math.Ceiling(baseLineHeight + realBaseline);
+
 			this.isFirstTextViewLineForSnapshotLine = span.Start == bufferLine.Start;
 			this.isLastTextViewLineForSnapshotLine = span.End == bufferLine.EndIncludingLineBreak;
 			IsLastVisualLine = bufferLine.LineNumber + 1 == bufferLine.Snapshot.LineCount && IsLastTextViewLineForSnapshotLine;
 			this.lineBreakLength = isLastTextViewLineForSnapshotLine ? bufferLine.LineBreakLength : 0;
 			this.virtualSpaceWidth = virtualSpaceWidth;
 			this.textLeft = indentation;
-			this.textWidth = textLine.WidthIncludingTrailingWhitespace;
+			this.textWidth = TextLine.WidthIncludingTrailingWhitespace;
 			this.extentIncludingLineBreak = span;
-			this.realHeight = textLine.Height + DEFAULT_TOP_SPACE + DEFAULT_BOTTOM_SPACE;
-			this.realTextHeight = textLine.TextHeight;
 			this.endOfLineWidth = Math.Floor(this.realTextHeight * 0.58333333333333337);// Same as VS
 			this.width = this.textWidth + (this.lineBreakLength == 0 ? 0 : this.endOfLineWidth);
 			this.change = TextViewLineChange.NewOrReformatted;
@@ -392,7 +419,9 @@ namespace dnSpy.Text.Formatting {
 				return false;
 			if (IsLastVisualLine)
 				return bufferPosition <= ExtentIncludingLineBreak.End;
-			return bufferPosition < ExtentIncludingLineBreak.End;
+			return bufferPosition < ExtentIncludingLineBreak.End ||
+				// This could be a line with just an adornment which could have an empty span
+				(ExtentIncludingLineBreak.Length == 0 && ExtentIncludingLineBreak.Start == bufferPosition);
 		}
 
 		public bool IntersectsBufferSpan(SnapshotSpan bufferSpan) {
@@ -410,7 +439,23 @@ namespace dnSpy.Text.Formatting {
 		public TF.TextBounds? GetAdornmentBounds(object identityTag) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			throw new NotImplementedException();//TODO:
+			if (identityTag == null)
+				throw new ArgumentNullException(nameof(identityTag));
+
+			var lineParts = linePartsCollection.LineParts;
+			int linePartsIndexLocal = linePartsIndex;
+			int linePartsLengthLocal = linePartsLength;
+			for (int i = 0; i < linePartsLengthLocal; i++) {
+				var part = lineParts[linePartsIndexLocal + i];
+				var adornment = part.AdornmentElement;
+				if (adornment == null)
+					continue;
+				if (!identityTag.Equals(adornment.IdentityTag))
+					continue;
+				return GetTextBounds(part.Column);
+			}
+
+			return null;
 		}
 
 		public ReadOnlyCollection<object> GetAdornmentTags(object providerTag) {
@@ -418,8 +463,27 @@ namespace dnSpy.Text.Formatting {
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (providerTag == null)
 				throw new ArgumentNullException(nameof(providerTag));
-			throw new NotImplementedException();//TODO:
+
+			var lineParts = linePartsCollection.LineParts;
+			int linePartsIndexLocal = linePartsIndex;
+			int linePartsLengthLocal = linePartsLength;
+			List<object> list = null;
+			for (int i = 0; i < linePartsLengthLocal; i++) {
+				var part = lineParts[linePartsIndexLocal + i];
+				var adornment = part.AdornmentElement;
+				if (adornment == null)
+					continue;
+				if (!providerTag.Equals(adornment.ProviderTag))
+					continue;
+				if (list == null)
+					list = new List<object>();
+				list.Add(adornment.IdentityTag);
+			}
+			if (list == null)
+				return emptyReadOnlyCollection;
+			return new ReadOnlyCollection<object>(list);
 		}
+		static readonly ReadOnlyCollection<object> emptyReadOnlyCollection = new ReadOnlyCollection<object>(Array.Empty<object>());
 
 		public SnapshotPoint? GetBufferPositionFromXCoordinate(double xCoordinate) =>
 			GetBufferPositionFromXCoordinate(xCoordinate, false);
@@ -433,12 +497,10 @@ namespace dnSpy.Text.Formatting {
 			if (xCoordinate >= TextRight)
 				return End;
 
-			//TODO: Use textOnly
-
 			Debug.Assert(TextLines.Count == 1);
 			double extra = TextLeft;
-			var charHit = TextLine.GetCharacterHitFromDistance(xCoordinate - extra);
-			return linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex);
+			var column = TextLine.GetCharacterHitFromDistance(xCoordinate - extra).FirstCharacterIndex;
+			return linePartsCollection.ConvertColumnToBufferPosition(column, includeHiddenPositions: !textOnly);
 		}
 
 		public VirtualSnapshotPoint GetVirtualBufferPositionFromXCoordinate(double xCoordinate) {
@@ -497,7 +559,7 @@ namespace dnSpy.Text.Formatting {
 			var elem = part.Value.AdornmentElement;
 			if (elem == null)
 				return GetCharacterBounds(bufferPosition);
-			throw new NotImplementedException();
+			return GetTextBounds(part.Value.Column);
 		}
 
 		public TF.TextBounds GetCharacterBounds(SnapshotPoint bufferPosition) =>
@@ -514,17 +576,47 @@ namespace dnSpy.Text.Formatting {
 			}
 			if (bufferPosition.Position >= End)
 				return new TF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
-			return GetTextBounds(GetTextElementSpan(bufferPosition.Position).Start);
+			return GetFirstTextBounds(GetTextElementSpan(bufferPosition.Position).Start);
 		}
 
-		TF.TextBounds GetTextBounds(SnapshotPoint point) {
+		int GetFirstColumn(SnapshotPoint point) {
 			if (point.Snapshot != Snapshot)
 				throw new ArgumentException();
-			int col = linePartsCollection.ConvertBufferPositionToColumn(point);
-			if (col == endColumn)
-				return new TF.TextBounds(TextRight, Top, 0, Height, TextTop, TextHeight);
-			double start = TextLine.GetDistanceFromCharacterHit(new CharacterHit(col, 0));
-			double end = TextLine.GetDistanceFromCharacterHit(new CharacterHit(col, 1));
+			return FilterColumn(linePartsCollection.ConvertBufferPositionToColumn(point));
+		}
+
+		int GetLastColumn(SnapshotPoint point) {
+			if (point.Snapshot != Snapshot)
+				throw new ArgumentException();
+			int column = FilterColumn(linePartsCollection.ConvertBufferPositionToColumn(point));
+			var part = linePartsCollection.GetLinePartFromColumn(column);
+			if (part != null) {
+				var lineParts = linePartsCollection.LineParts;
+				int lineIndex = point - linePartsCollection.Span.Start;
+				for (int i = part.Value.Index + 1; i < lineParts.Count; i++, column++) {
+					var part2 = lineParts[i];
+					if (lineIndex < part2.Span.Start)
+						break;
+				}
+			}
+			return FilterColumn(column);
+		}
+
+		int FilterColumn(int column) {
+			if (column < startColumn)
+				return startColumn;
+			if (column > endColumn)
+				return endColumn;
+			return column;
+		}
+
+		TF.TextBounds GetFirstTextBounds(SnapshotPoint point) => GetTextBounds(GetFirstColumn(point));
+		TF.TextBounds GetLastTextBounds(SnapshotPoint point) => GetTextBounds(GetLastColumn(point));
+
+		TF.TextBounds GetTextBounds(int column) {
+			column = FilterColumn(column);
+			double start = TextLine.GetDistanceFromCharacterHit(new CharacterHit(column, 0));
+			double end = TextLine.GetDistanceFromCharacterHit(new CharacterHit(column, 1));
 			double extra = TextLeft;
 			Debug.Assert(textLines.Count == 1);
 			return new TF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
@@ -538,7 +630,7 @@ namespace dnSpy.Text.Formatting {
 			if (!ContainsBufferPosition(bufferPosition))
 				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
 
-			int column = linePartsCollection.ConvertBufferPositionToColumn(bufferPosition);
+			int column = GetFirstColumn(bufferPosition);
 			TextSpan<TextRun> lastTextSpan = null;
 			foreach (var textSpan in TextLine.GetTextRunSpans()) {
 				lastTextSpan = textSpan;
@@ -562,8 +654,8 @@ namespace dnSpy.Text.Formatting {
 
 			//TODO: Handle RTL text and adornments
 
-			var startBounds = GetTextBounds(span.Value.Start);
-			var endBounds = GetTextBounds(span.Value.End);
+			var startBounds = GetFirstTextBounds(span.Value.Start);
+			var endBounds = GetLastTextBounds(span.Value.End);
 			if (span.Value.End > End) {
 				endBounds = new TF.TextBounds(
 					endBounds.Trailing + EndOfLineWidth,
@@ -589,7 +681,7 @@ namespace dnSpy.Text.Formatting {
 			if (bufferPosition >= ExtentIncludingLineBreak.End - LineBreakLength)
 				return new SnapshotSpan(ExtentIncludingLineBreak.End - LineBreakLength, LineBreakLength);
 
-			int column = linePartsCollection.ConvertBufferPositionToColumn(bufferPosition);
+			int column = GetFirstColumn(bufferPosition);
 			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(column, 0));
 			return new SnapshotSpan(linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex), charHit.TrailingLength);
 		}

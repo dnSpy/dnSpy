@@ -75,7 +75,7 @@ namespace dnSpy.Text.Editor {
 					list.Add(helper.GetSpan(line));
 					if (line.IsLastDocumentLine())
 						break;
-					start = new VirtualSnapshotPoint(line.EndIncludingLineBreak);
+					start = new VirtualSnapshotPoint(line.GetPointAfterLineBreak());
 				}
 			}
 

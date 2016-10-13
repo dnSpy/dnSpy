@@ -385,7 +385,7 @@ namespace dnSpy.Text.Editor {
 				}
 				if (line.IsLastDocumentLine())
 					break;
-				point = line.EndIncludingLineBreak;
+				point = line.GetPointAfterLineBreak();
 			}
 		}
 
