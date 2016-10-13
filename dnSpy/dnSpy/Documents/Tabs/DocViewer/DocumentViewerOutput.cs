@@ -42,7 +42,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		bool hasCreatedResult;
 
 		int IDecompilerOutput.Length => stringBuilder.Length;
-		int IDecompilerOutput.NextPosition => stringBuilder.Length + GetIndentSize();
+		public int NextPosition => stringBuilder.Length + GetIndentSize();
 
 		public string GetCachedText() => cachedText ?? (cachedText = stringBuilder.ToString());
 		string cachedText;
@@ -164,7 +164,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (createElement == null)
 				throw new ArgumentNullException(nameof(createElement));
 			canBeCached = false;
-			//TODO:
+			AddCustomData(DocumentViewerUIElementConstants.CustomDataId, new DocumentViewerUIElement(NextPosition, createElement));
 		}
 
 		public void AddButton(string buttonText, RoutedEventHandler clickHandler) {

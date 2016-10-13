@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
@@ -44,5 +45,8 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 
 		/// <summary>Line separator service</summary>
 		public const double ORDER_LINESEPARATORSERVICE = 6000;
+
+		/// <summary><see cref="UIElement"/> service</summary>
+		public const double ORDER_UIELEMENTSERVICE = 7000;
 	}
 }

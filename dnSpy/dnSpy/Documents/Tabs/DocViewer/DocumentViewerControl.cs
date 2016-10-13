@@ -168,9 +168,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				TextView.TextBuffer.Replace(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length), content.Text);
 				TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextSnapshot, 0));
 				TextView.Caret.EnsureVisible();
+				TextView.Selection.Clear();
 			}
 
-			TextView.Selection.Clear();
 			return true;
 		}
 
