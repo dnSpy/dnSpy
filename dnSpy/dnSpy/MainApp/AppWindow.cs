@@ -47,9 +47,6 @@ namespace dnSpy.MainApp {
 		public IWpfCommands MainWindowCommands => mainWindowCommands;
 		readonly IWpfCommands mainWindowCommands;
 
-		public IAppSettings AppSettings => appSettings;
-		readonly IAppSettings appSettings;
-
 		public bool AppLoaded { get; internal set; }
 
 		public string AssemblyInformationalVersion => assemblyInformationalVersion;
@@ -91,11 +88,10 @@ namespace dnSpy.MainApp {
 		readonly MainWindowControl mainWindowControl;
 
 		[ImportingConstructor]
-		AppWindow(IAppSettings appSettings, ISettingsService settingsService, IDocumentTabService documentTabService, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandService wpfCommandService) {
+		AppWindow(ISettingsService settingsService, IDocumentTabService documentTabService, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandService wpfCommandService) {
 			this.assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
 			this.uiSettings = new UISettings(settingsService);
 			this.uiSettings.Read();
-			this.appSettings = appSettings;
 			this.stackedContent = new StackedContent<IStackedContentChild>(margin: new Thickness(6));
 			this.documentTabService = documentTabService;
 			this.statusBar = new AppStatusBar();

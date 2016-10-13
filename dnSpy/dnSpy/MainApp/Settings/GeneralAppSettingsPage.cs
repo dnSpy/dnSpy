@@ -219,9 +219,8 @@ namespace dnSpy.MainApp.Settings {
 	sealed class UseNewRendererVM : ViewModelBase {
 		public bool? UseNewRenderer {
 			get {
-				const int MAX = 3;
-				int count = (UseNewRenderer_TextEditor ? 1 : 0) +
-							(UseNewRenderer_HexEditor ? 1 : 0) +
+				const int MAX = 2;
+				int count = (UseNewRenderer_HexEditor ? 1 : 0) +
 							(UseNewRenderer_DocumentTreeView ? 1 : 0);
 				return count == 0 ? false : count == MAX ? (bool?)true : null;
 			}

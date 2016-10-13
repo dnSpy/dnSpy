@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.App {
 	/// <summary>
 	/// Application settings
 	/// </summary>
-	public interface IAppSettings : INotifyPropertyChanged {
+	interface IAppSettings : INotifyPropertyChanged {
 		/// <summary>
 		/// Text Editor: true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
 		/// </summary>

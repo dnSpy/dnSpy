@@ -49,11 +49,6 @@ namespace dnSpy.Contracts.App {
 		IWpfCommands MainWindowCommands { get; }
 
 		/// <summary>
-		/// Gets the settings
-		/// </summary>
-		IAppSettings AppSettings { get; }
-
-		/// <summary>
 		/// Gets the <see cref="IAppStatusBar"/> instance
 		/// </summary>
 		IAppStatusBar StatusBar { get; }
