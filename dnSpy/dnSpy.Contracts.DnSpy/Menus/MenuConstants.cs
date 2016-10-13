@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Menus {
 		public static readonly string GUIDOBJ_LOG_EDITOR_GUID = "7ED3CA27-F8F2-4EB8-B9CA-690B27243403";
 
 		/// <summary><see cref="IOutputService"/></summary>
-		public static readonly string GUIDOBJ_OUTPUT_MANAGER_GUID = "FB4F524A-7096-46CD-BCE2-EC2550EFCC92";
+		public static readonly string GUIDOBJ_OUTPUT_SERVICE_GUID = "FB4F524A-7096-46CD-BCE2-EC2550EFCC92";
 
 		/// <summary>Active <see cref="IOutputTextPane"/></summary>
 		public static readonly string GUIDOBJ_ACTIVE_OUTPUT_TEXTPANE_GUID = "5787A5D8-80DE-437F-A44A-6FD0138DBB57";

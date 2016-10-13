@@ -34,10 +34,10 @@ namespace dnSpy.Documents.Tabs {
 		RedecompileTabs(IDocumentTabService documentTabService, IDecompilerService decompilerService, IAppWindow appWindow) {
 			this.documentTabService = documentTabService;
 			this.appWindow = appWindow;
-			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
+			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 		}
 
-		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
+		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
 			if (!appWindow.AppLoaded)
 				return;
 			var tab = documentTabService.ActiveTab;

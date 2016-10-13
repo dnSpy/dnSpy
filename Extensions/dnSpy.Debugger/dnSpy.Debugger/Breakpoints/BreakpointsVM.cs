@@ -79,13 +79,13 @@ namespace dnSpy.Debugger.Breakpoints {
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
-			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
+			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			inMemoryModuleService.DynamicModulesLoaded += InMemoryModuleService_DynamicModulesLoaded;
 			foreach (var bp in breakpointService.GetBreakpoints())
 				AddBreakpoint(bp);
 		}
 
-		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
+		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
 			var decompilerService = (IDecompilerService)sender;
 			breakpointContext.Decompiler = decompilerService.Decompiler;
 			RefreshLanguageFields();

@@ -125,7 +125,7 @@ namespace dnSpy.Analyzer {
 
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 			documentTabService.DocumentModified += DocumentTabService_FileModified;
-			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
+			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
@@ -168,7 +168,7 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
+		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
 			this.context.Decompiler = ((IDecompilerService)sender).Decompiler;
 			RefreshNodes();
 		}

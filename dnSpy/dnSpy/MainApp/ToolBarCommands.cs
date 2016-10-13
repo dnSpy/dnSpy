@@ -89,11 +89,11 @@ namespace dnSpy.MainApp {
 			this.comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(SelectedItem)) {
 				Source = this,
 			});
-			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
+			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 		}
 
 		void UpdateSelectedItem() => SelectedItem = infos.First(a => a.Decompiler == decompilerService.Decompiler);
-		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) => UpdateSelectedItem();
+		void DecompilerService_DecompilerChanged(object sender, EventArgs e) => UpdateSelectedItem();
 		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) => comboBox;
 	}
 

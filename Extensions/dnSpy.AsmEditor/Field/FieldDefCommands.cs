@@ -277,7 +277,7 @@ namespace dnSpy.AsmEditor.Field {
 			else
 				options = FieldDefOptions.Create("MyField", new FieldSig(module.CorLibTypes.Int32));
 
-			var data = new FieldOptionsVM(options, module, appService.DecompilerManager, type);
+			var data = new FieldOptionsVM(options, module, appService.DecompilerService, type);
 			var win = new FieldOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateFieldCommand2;
 			win.DataContext = data;
@@ -391,7 +391,7 @@ namespace dnSpy.AsmEditor.Field {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new FieldOptionsVM(new FieldDefOptions(fieldNode.FieldDef), module, appService.DecompilerManager, fieldNode.FieldDef.DeclaringType);
+			var data = new FieldOptionsVM(new FieldDefOptions(fieldNode.FieldDef), module, appService.DecompilerService, fieldNode.FieldDef.DeclaringType);
 			var win = new FieldOptionsDlg();
 			win.DataContext = data;
 			win.Owner = appService.MainWindow;

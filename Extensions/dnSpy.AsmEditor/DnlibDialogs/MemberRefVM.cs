@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.IsField = isField;
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone();
 			this.origOptions = options;
-			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerManager);
+			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerService);
 
 			this.typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			this.typeSigCreatorOptions.CanAddGenericTypeVar = true;

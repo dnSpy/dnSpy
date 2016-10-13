@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.Commands {
 		Window MainWindow { get; }
 		IDocumentTabService DocumentTabService { get; }
 		IDocumentTreeView DocumentTreeView { get; }
-		IDecompilerService DecompilerManager { get; }
+		IDecompilerService DecompilerService { get; }
 	}
 
 	[Export(typeof(IAppService))]
@@ -38,14 +38,14 @@ namespace dnSpy.AsmEditor.Commands {
 		public Window MainWindow => AppWindow.MainWindow;
 		public IDocumentTabService DocumentTabService { get; }
 		public IDocumentTreeView DocumentTreeView { get; }
-		public IDecompilerService DecompilerManager { get; }
+		public IDecompilerService DecompilerService { get; }
 
 		[ImportingConstructor]
-		AppService(IAppWindow appWindow, IDocumentTabService documentTabService, IDocumentTreeView documentTreeView, IDecompilerService decompilerManager) {
+		AppService(IAppWindow appWindow, IDocumentTabService documentTabService, IDocumentTreeView documentTreeView, IDecompilerService decompilerService) {
 			AppWindow = appWindow;
 			DocumentTabService = documentTabService;
 			DocumentTreeView = documentTreeView;
-			DecompilerManager = decompilerManager;
+			DecompilerService = decompilerService;
 		}
 	}
 }

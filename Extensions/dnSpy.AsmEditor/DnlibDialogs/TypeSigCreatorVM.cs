@@ -142,7 +142,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand AddCModReqdSigCommand => new RelayCommand(a => AddCModReqdSig(), a => AddCModReqdSigCanExecute());
 		public ICommand AddCModOptSigCommand => new RelayCommand(a => AddCModOptSig(), a => AddCModOptSigCanExecute());
 		public ICommand AddPinnedSigCommand => new RelayCommand(a => AddPinnedSig(), a => AddPinnedSigCanExecute());
-		public IEnumerable<IDecompiler> AllLanguages => options.DecompilerManager.AllDecompilers;
+		public IEnumerable<IDecompiler> AllLanguages => options.DecompilerService.AllDecompilers;
 
 		public IDecompiler Language {
 			get { return options.Decompiler; }

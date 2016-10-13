@@ -118,7 +118,7 @@ namespace dnSpy.Search {
 			menuService.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
 			wpfCommandService.Add(ControlConstants.GUID_SEARCH_CONTROL, this.searchControl);
 			wpfCommandService.Add(ControlConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
-			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
+			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
@@ -194,7 +194,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) {
+		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
 			var decompilerService = (IDecompilerService)sender;
 			vmSearch.Decompiler = decompilerService.Decompiler;
 			RefreshSearchResults();

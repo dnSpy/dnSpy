@@ -283,7 +283,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			var asmNode = (IAssemblyDocumentNode)nodes[0];
 			var module = asmNode.Document.ModuleDef;
 
-			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.Document.AssemblyDef), module, appService.DecompilerManager);
+			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.Document.AssemblyDef), module, appService.DecompilerService);
 			var win = new AssemblyOptionsDlg();
 			win.DataContext = data;
 			win.Owner = appService.MainWindow;
@@ -395,7 +395,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 			var newModule = new ModuleDefUser();
 
-			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"), newModule, appService.DecompilerManager);
+			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"), newModule, appService.DecompilerService);
 			data.CanShowClrVersion = true;
 			var win = new AssemblyOptionsDlg();
 			win.Title = dnSpy_AsmEditor_Resources.CreateAssemblyCommand2;

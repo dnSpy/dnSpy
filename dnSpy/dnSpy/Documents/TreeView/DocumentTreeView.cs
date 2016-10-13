@@ -138,7 +138,7 @@ namespace dnSpy.Documents.TreeView {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.DocumentService.SetDispatcher(AddAction);
 			documentService.CollectionChanged += DocumentService_CollectionChanged;
-			decompilerService.DecompilerChanged += DecompilerManager_DecompilerChanged;
+			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			themeService.ThemeChanged += ThemeService_ThemeChanged;
 			documentTreeViewSettings.PropertyChanged += DocumentTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
@@ -175,7 +175,7 @@ namespace dnSpy.Documents.TreeView {
 		// closing down.
 		void IDocumentTreeView.Dispose() {
 			DocumentService.CollectionChanged -= DocumentService_CollectionChanged;
-			decompilerService.DecompilerChanged -= DecompilerManager_DecompilerChanged;
+			decompilerService.DecompilerChanged -= DecompilerService_DecompilerChanged;
 			themeService.ThemeChanged -= ThemeService_ThemeChanged;
 			documentTreeViewSettings.PropertyChanged -= DocumentTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged -= AppSettings_PropertyChanged;
@@ -263,7 +263,7 @@ namespace dnSpy.Documents.TreeView {
 		public event EventHandler<EventArgs> NodesTextChanged;
 		void NotifyNodesTextRefreshed() => NodesTextChanged?.Invoke(this, EventArgs.Empty);
 		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshNodes();
-		void DecompilerManager_DecompilerChanged(object sender, EventArgs e) => UpdateDecompiler(((IDecompilerService)sender).Decompiler);
+		void DecompilerService_DecompilerChanged(object sender, EventArgs e) => UpdateDecompiler(((IDecompilerService)sender).Decompiler);
 
 		void UpdateDecompiler(IDecompiler newDecompiler) {
 			this.context.Decompiler = newDecompiler;

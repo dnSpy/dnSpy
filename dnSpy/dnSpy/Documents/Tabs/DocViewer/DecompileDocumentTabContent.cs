@@ -40,7 +40,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class DecompileDocumentTabContentFactory : IDocumentTabContentFactory {
 		public IDsDocumentService DocumentService { get; }
 		public IDocumentTreeNodeDecompiler DocumentTreeNodeDecompiler { get; }
-		public IDecompilerService DecompilerManager { get; }
+		public IDecompilerService DecompilerService { get; }
 		public IDecompilationCache DecompilationCache { get; }
 		public IMethodAnnotations MethodAnnotations { get; }
 		public IContentTypeRegistryService ContentTypeRegistryService { get; }
@@ -50,7 +50,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		DecompileDocumentTabContentFactory(IDsDocumentService documentService, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompilerService decompilerService, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>> documentViewerCustomDataProviders) {
 			this.DocumentService = documentService;
 			this.DocumentTreeNodeDecompiler = documentTreeNodeDecompiler;
-			this.DecompilerManager = decompilerService;
+			this.DecompilerService = decompilerService;
 			this.DecompilationCache = decompilationCache;
 			this.MethodAnnotations = methodAnnotations;
 			this.ContentTypeRegistryService = contentTypeRegistryService;
@@ -58,10 +58,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
-			new DecompileDocumentTabContent(this, context.Nodes, DecompilerManager.Decompiler);
+			new DecompileDocumentTabContent(this, context.Nodes, DecompilerService.Decompiler);
 
 		public IDocumentTabContent Create(IDocumentTreeNodeData[] nodes) =>
-			new DecompileDocumentTabContent(this, nodes, DecompilerManager.Decompiler);
+			new DecompileDocumentTabContent(this, nodes, DecompilerService.Decompiler);
 
 		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
 
@@ -79,7 +79,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return null;
 
 			var langGuid = section.Attribute<Guid?>("Language") ?? DecompilerConstants.LANGUAGE_CSHARP;
-			var language = DecompilerManager.FindOrDefault(langGuid);
+			var language = DecompilerService.FindOrDefault(langGuid);
 			return new DecompileDocumentTabContent(this, context.Nodes, language);
 		}
 	}
@@ -175,7 +175,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		void UpdateLanguage() {
 			if (DocumentTab.IsActiveTab)
-				decompileDocumentTabContentFactory.DecompilerManager.Decompiler = Decompiler;
+				decompileDocumentTabContentFactory.DecompilerService.Decompiler = Decompiler;
 		}
 
 		public void OnSelected() => UpdateLanguage();
@@ -239,11 +239,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		sealed class DocumentViewerCustomDataContext : IDocumentViewerCustomDataContext, IDisposable {
+			public string Text { get; private set; }
 			public IDocumentViewer DocumentViewer { get; private set; }
 			Dictionary<string, object> customDataDict;
 			Dictionary<string, object> resultDict;
-
-			public string Text { get; }
 
 			public DocumentViewerCustomDataContext(IDocumentViewer documentViewer, string text, Dictionary<string, object> customDataDict) {
 				DocumentViewer = documentViewer;
@@ -278,8 +277,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			public void Dispose() {
-				customDataDict = null;
+				Text = null;
 				DocumentViewer = null;
+				customDataDict = null;
 				resultDict = null;
 			}
 		}
