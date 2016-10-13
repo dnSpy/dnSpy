@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
@@ -99,6 +100,10 @@ namespace dnSpy.Text.Editor {
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		LineKind GetLineType(ITextViewLine line) {
+			var dsLine = line as IDsTextViewLine;
+			Debug.Assert(dsLine != null);
+			if (dsLine != null && dsLine.HasAdornments)
+				return LineKind.Normal;
 			if (line.Length == 0)
 				return LineKind.EmptyOrWhitespace;
 			var snapshot = line.Start.Snapshot;

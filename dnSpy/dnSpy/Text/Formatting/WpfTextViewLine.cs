@@ -24,13 +24,14 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Projection;
 using TF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
-	sealed class WpfTextViewLine : IFormattedLine {
+	sealed class WpfTextViewLine : IFormattedLine, IDsTextViewLine {
 		readonly IBufferGraph bufferGraph;
 		readonly int endColumn, startColumn;
 		readonly int linePartsIndex, linePartsLength;
@@ -318,6 +319,18 @@ namespace dnSpy.Text.Formatting {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
 				return visibleArea;
+			}
+		}
+
+		public bool HasAdornments {
+			get {
+				if (!IsValid)
+					throw new ObjectDisposedException(nameof(WpfTextViewLine));
+				foreach (var part in linePartsCollection.LineParts) {
+					if (part.AdornmentElement != null)
+						return true;
+				}
+				return false;
 			}
 		}
 

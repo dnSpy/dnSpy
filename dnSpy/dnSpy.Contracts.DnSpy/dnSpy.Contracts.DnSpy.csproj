@@ -521,6 +521,7 @@
     <Compile Include="Text\Editor\ICustomLineNumberMargin.cs" />
     <Compile Include="Text\Editor\IDsTextEditorFactoryService.cs" />
     <Compile Include="Text\Editor\IDsTextView.cs" />
+    <Compile Include="Text\Editor\IDsTextViewLine.cs" />
     <Compile Include="Text\Editor\IDsWpfTextView.cs" />
     <Compile Include="Text\Editor\IDsWpfTextViewHost.cs" />
     <Compile Include="Text\Editor\IGlyphTextMarkerHandler.cs" />
