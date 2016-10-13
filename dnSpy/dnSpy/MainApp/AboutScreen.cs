@@ -42,12 +42,14 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.MainApp {
 	[ExportDocumentTabContentFactory(Order = double.MaxValue)]
 	sealed class AboutScreenDocumentTabContentFactory : IDocumentTabContentFactory {
+		readonly IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider;
 		readonly IAppWindow appWindow;
 		readonly IExtensionService extensionService;
 		readonly IContentType aboutContentType;
 
 		[ImportingConstructor]
-		AboutScreenDocumentTabContentFactory(IAppWindow appWindow, IExtensionService extensionService, IContentTypeRegistryService contentTypeRegistryService) {
+		AboutScreenDocumentTabContentFactory(IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider, IAppWindow appWindow, IExtensionService extensionService, IContentTypeRegistryService contentTypeRegistryService) {
+			this.documentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 			this.appWindow = appWindow;
 			this.extensionService = extensionService;
 			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
@@ -59,7 +61,7 @@ namespace dnSpy.MainApp {
 
 		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
-				return new AboutScreenDocumentTabContent(appWindow, extensionService, aboutContentType);
+				return new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
 			return null;
 		}
 
@@ -72,13 +74,15 @@ namespace dnSpy.MainApp {
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_Menu", Group = MenuConstants.GROUP_APP_MENU_HELP_ABOUT, Order = 1000000)]
 	sealed class AboutScreenMenuItem : MenuItemBase {
+		readonly IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider;
 		readonly IDocumentTabService documentTabService;
 		readonly IAppWindow appWindow;
 		readonly IExtensionService extensionService;
 		readonly IContentType aboutContentType;
 
 		[ImportingConstructor]
-		AboutScreenMenuItem(IDocumentTabService documentTabService, IAppWindow appWindow, IExtensionService extensionService, IContentTypeRegistryService contentTypeRegistryService) {
+		AboutScreenMenuItem(IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider, IDocumentTabService documentTabService, IAppWindow appWindow, IExtensionService extensionService, IContentTypeRegistryService contentTypeRegistryService) {
+			this.documentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 			this.documentTabService = documentTabService;
 			this.appWindow = appWindow;
 			this.extensionService = extensionService;
@@ -87,7 +91,7 @@ namespace dnSpy.MainApp {
 
 		public override void Execute(IMenuItemContext context) {
 			var tab = documentTabService.GetOrCreateActiveTab();
-			tab.Show(new AboutScreenDocumentTabContent(appWindow, extensionService, aboutContentType), null, null);
+			tab.Show(new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType), null, null);
 			documentTabService.SetFocus(tab);
 		}
 	}
@@ -105,24 +109,26 @@ namespace dnSpy.MainApp {
 		readonly IAppWindow appWindow;
 		readonly IExtensionService extensionService;
 		readonly IContentType aboutContentType;
+		readonly IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider;
 
-		public AboutScreenDocumentTabContent(IAppWindow appWindow, IExtensionService extensionService, IContentType aboutContentType) {
+		public AboutScreenDocumentTabContent(IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider, IAppWindow appWindow, IExtensionService extensionService, IContentType aboutContentType) {
+			this.documentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 			this.appWindow = appWindow;
 			this.extensionService = extensionService;
 			this.aboutContentType = aboutContentType;
 		}
 
-		public IDocumentTabContent Clone() => new AboutScreenDocumentTabContent(appWindow, extensionService, aboutContentType);
+		public IDocumentTabContent Clone() => new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
 		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
 		public void OnHide() { }
 		public void OnSelected() { }
 		public void OnUnselected() { }
 
 		public void OnShow(IShowContext ctx) {
-			var uiCtx = (IDocumentViewer)ctx.UIContext;
-			var output = new DocumentViewerOutput();
-			Write(output);
-			uiCtx.SetContent(output.CreateResult(new Dictionary<string, object>()), aboutContentType);
+			var documentViewer = (IDocumentViewer)ctx.UIContext;
+			var contentFactory = documentViewerContentFactoryProvider.Create();
+			Write(contentFactory.Output);
+			documentViewer.SetContent(contentFactory.CreateContent(documentViewer), aboutContentType);
 		}
 
 		sealed class Info {

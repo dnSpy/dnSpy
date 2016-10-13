@@ -27,6 +27,11 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	/// </summary>
 	public interface IDocumentViewerOutput : IDecompilerOutput {
 		/// <summary>
+		/// true if the output can be cached
+		/// </summary>
+		bool CanBeCached { get; }
+
+		/// <summary>
 		/// Called to disable caching of the result
 		/// </summary>
 		void DisableCaching();

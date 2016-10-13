@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
@@ -44,17 +43,17 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public IDecompilationCache DecompilationCache { get; }
 		public IMethodAnnotations MethodAnnotations { get; }
 		public IContentTypeRegistryService ContentTypeRegistryService { get; }
-		public Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] DocumentViewerCustomDataProviders { get; }
+		public IDocumentViewerContentFactoryProvider DocumentViewerContentFactoryProvider { get; }
 
 		[ImportingConstructor]
-		DecompileDocumentTabContentFactory(IDsDocumentService documentService, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompilerService decompilerService, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>> documentViewerCustomDataProviders) {
-			this.DocumentService = documentService;
-			this.DocumentTreeNodeDecompiler = documentTreeNodeDecompiler;
-			this.DecompilerService = decompilerService;
-			this.DecompilationCache = decompilationCache;
-			this.MethodAnnotations = methodAnnotations;
-			this.ContentTypeRegistryService = contentTypeRegistryService;
-			this.DocumentViewerCustomDataProviders = documentViewerCustomDataProviders.OrderBy(a => a.Metadata.Order).ToArray();
+		DecompileDocumentTabContentFactory(IDsDocumentService documentService, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompilerService decompilerService, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider) {
+			DocumentService = documentService;
+			DocumentTreeNodeDecompiler = documentTreeNodeDecompiler;
+			DecompilerService = decompilerService;
+			DecompilationCache = decompilationCache;
+			MethodAnnotations = methodAnnotations;
+			ContentTypeRegistryService = contentTypeRegistryService;
+			DocumentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 		}
 
 		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
@@ -141,6 +140,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public IEnumerable<IDocumentTreeNodeData> Nodes => nodes;
 
 		sealed class DecompileContext {
+			public IDocumentViewerContentFactory DocumentViewerContentFactory;
 			public DecompileNodeContext DecompileNodeContext;
 			public DocumentViewerContent CachedContent;
 			public CancellationTokenSource CancellationTokenSource;
@@ -153,9 +153,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			decompilationContext.CalculateBinSpans = true;
 			decompilationContext.GetDisableAssemblyLoad = () => decompileDocumentTabContentFactory.DocumentService.DisableAssemblyLoad();
 			decompilationContext.IsBodyModified = m => decompileDocumentTabContentFactory.MethodAnnotations.IsBodyModified(m);
-			var output = new DocumentViewerOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;
-			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Decompiler, output, dispatcher);
+			decompileContext.DocumentViewerContentFactory = decompileDocumentTabContentFactory.DocumentViewerContentFactoryProvider.Create();
+			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Decompiler, decompileContext.DocumentViewerContentFactory.Output, dispatcher);
 			if (ctx.IsRefresh) {
 				decompileContext.SavedRefPos = ((IDocumentViewer)ctx.UIContext).SaveReferencePosition();
 				if (decompileContext.SavedRefPos != null) {
@@ -213,83 +213,29 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			DocumentViewerContent content;
 			if (result.IsCanceled) {
-				var docViewerOutput = new DocumentViewerOutput();
-				docViewerOutput.Write(dnSpy_Resources.DecompilationCanceled, BoxedTextColor.Error);
-				content = CreateContent(documentViewer, docViewerOutput);
+				var docViewContentFactory = decompileDocumentTabContentFactory.DocumentViewerContentFactoryProvider.Create();
+				docViewContentFactory.Output.Write(dnSpy_Resources.DecompilationCanceled, BoxedTextColor.Error);
+				content = docViewContentFactory.CreateContent(documentViewer);
 			}
 			else if (result.Exception != null) {
-				var docViewerOutput = new DocumentViewerOutput();
-				docViewerOutput.Write(dnSpy_Resources.DecompilationException, BoxedTextColor.Error);
-				docViewerOutput.WriteLine();
-				docViewerOutput.Write(result.Exception.ToString(), BoxedTextColor.Text);
-				content = CreateContent(documentViewer, docViewerOutput);
+				var docViewContentFactory = decompileDocumentTabContentFactory.DocumentViewerContentFactoryProvider.Create();
+				docViewContentFactory.Output.Write(dnSpy_Resources.DecompilationException, BoxedTextColor.Error);
+				docViewContentFactory.Output.WriteLine();
+				docViewContentFactory.Output.Write(result.Exception.ToString(), BoxedTextColor.Text);
+				content = docViewContentFactory.CreateContent(documentViewer);
 			}
 			else {
 				content = decompileContext.CachedContent;
 				if (content == null) {
-					var docViewerOutput = (DocumentViewerOutput)decompileContext.DecompileNodeContext.Output;
-					content = CreateContent(documentViewer, docViewerOutput);
-					if (docViewerOutput.CanBeCached)
+					bool canBeCached = decompileContext.DocumentViewerContentFactory.Output.CanBeCached;
+					content = decompileContext.DocumentViewerContentFactory.CreateContent(documentViewer);
+					if (canBeCached)
 						decompileDocumentTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Decompiler, nodes, content, contentType);
 				}
 			}
 
 			if (result.CanShowOutput)
 				documentViewer.SetContent(content, contentType);
-		}
-
-		sealed class DocumentViewerCustomDataContext : IDocumentViewerCustomDataContext, IDisposable {
-			public string Text { get; private set; }
-			public IDocumentViewer DocumentViewer { get; private set; }
-			Dictionary<string, object> customDataDict;
-			Dictionary<string, object> resultDict;
-
-			public DocumentViewerCustomDataContext(IDocumentViewer documentViewer, string text, Dictionary<string, object> customDataDict) {
-				DocumentViewer = documentViewer;
-				Text = text;
-				this.customDataDict = customDataDict;
-				this.resultDict = new Dictionary<string, object>(StringComparer.Ordinal);
-			}
-
-			internal Dictionary<string, object> GetResultDictionary() => resultDict;
-
-			public void AddCustomData(string id, object data) {
-				if (customDataDict == null)
-					throw new ObjectDisposedException(nameof(IDocumentViewerCustomDataContext));
-				if (id == null)
-					throw new ArgumentNullException(nameof(id));
-				if (resultDict.ContainsKey(id))
-					throw new InvalidOperationException(nameof(AddCustomData) + "() can only be called once with the same " + nameof(id));
-				resultDict.Add(id, data);
-			}
-
-			public TData[] GetData<TData>(string id) {
-				if (customDataDict == null)
-					throw new ObjectDisposedException(nameof(IDocumentViewerCustomDataContext));
-				if (id == null)
-					throw new ArgumentNullException(nameof(id));
-
-				object listObj;
-				if (!customDataDict.TryGetValue(id, out listObj))
-					return Array.Empty<TData>();
-				var list = (List<TData>)listObj;
-				return list.ToArray();
-			}
-
-			public void Dispose() {
-				Text = null;
-				DocumentViewer = null;
-				customDataDict = null;
-				resultDict = null;
-			}
-		}
-
-		DocumentViewerContent CreateContent(IDocumentViewer documentViewer, DocumentViewerOutput docViewerOutput) {
-			using (var context = new DocumentViewerCustomDataContext(documentViewer, docViewerOutput.GetCachedText(), docViewerOutput.GetCustomDataDictionary())) {
-				foreach (var lazy in decompileDocumentTabContentFactory.DocumentViewerCustomDataProviders)
-					lazy.Value.OnCustomData(context);
-				return docViewerOutput.CreateResult(context.GetResultDictionary());
-			}
 		}
 
 		public bool CanStartAsyncWorker(IShowContext ctx) {

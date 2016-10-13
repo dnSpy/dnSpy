@@ -47,7 +47,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public string GetCachedText() => cachedText ?? (cachedText = stringBuilder.ToString());
 		string cachedText;
 
-		public DocumentViewerOutput() {
+		public static DocumentViewerOutput Create() => new DocumentViewerOutput();
+
+		DocumentViewerOutput() {
 			this.cachedTextColorsCollection = new CachedTextColorsCollection();
 			this.stringBuilder = new StringBuilder();
 			this.referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
@@ -57,9 +59,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		internal Dictionary<string, object> GetCustomDataDictionary() => customDataDict;
 
-		public DocumentViewerContent CreateResult(Dictionary<string, object> dataDict) {
+		public DocumentViewerContent CreateContent(Dictionary<string, object> dataDict) {
 			if (hasCreatedResult)
-				throw new InvalidOperationException(nameof(CreateResult) + " can only be called once");
+				throw new InvalidOperationException(nameof(CreateContent) + " can only be called once");
 			hasCreatedResult = true;
 			Debug.Assert(GetCachedText() == stringBuilder.ToString());
 			return new DocumentViewerContent(GetCachedText(), cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
