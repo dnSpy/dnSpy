@@ -47,6 +47,6 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="buttonText">Button text</param>
 		/// <param name="clickHandler">Button click handler</param>
-		void AddButton(string buttonText, RoutedEventHandler clickHandler);
+		void AddButton(string buttonText, Action clickHandler);
 	}
 }

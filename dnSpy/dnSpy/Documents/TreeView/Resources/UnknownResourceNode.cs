@@ -40,7 +40,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			base.WriteShort(output, decompiler, showOffset);
 			var documentViewerOutput = output as IDocumentViewerOutput;
 			if (documentViewerOutput != null) {
-				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
+				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, () => Save());
 				documentViewerOutput.WriteLine();
 				documentViewerOutput.WriteLine();
 			}

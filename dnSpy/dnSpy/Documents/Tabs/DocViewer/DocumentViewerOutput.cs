@@ -167,7 +167,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			AddCustomData(DocumentViewerUIElementConstants.CustomDataId, new DocumentViewerUIElement(NextPosition, createElement));
 		}
 
-		public void AddButton(string buttonText, RoutedEventHandler clickHandler) {
+		public void AddButton(string buttonText, Action clickHandler) {
 			if (buttonText == null)
 				throw new ArgumentNullException(nameof(buttonText));
 			if (clickHandler == null)
@@ -175,7 +175,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			AddUIElement(() => {
 				var button = new Button { Content = buttonText };
 				button.SetResourceReference(FrameworkElement.StyleProperty, "TextEditorButton");
-				button.Click += clickHandler;
+				button.Click += (s, e) => {
+					e.Handled = true;
+					clickHandler();
+				};
 				return button;
 			});
 		}
