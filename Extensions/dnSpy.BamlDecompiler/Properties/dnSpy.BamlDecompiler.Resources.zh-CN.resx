@@ -124,7 +124,7 @@
     <value>BAML 文件</value>
   </data>
   <data name="BamlOptionDlgTab" xml:space="preserve">
-    <value>BAML Decompiler</value>
+    <value>BAML反编译器</value>
   </data>
   <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
     <value>反汇编 BAML</value>

@@ -199,7 +199,7 @@
     <value>Strg+C</value>
   </data>
   <data name="ShortCutKeyCtrlR" xml:space="preserve">
-    <value>Strg + R</value>
+    <value>Strg+R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
     <value>Löschen</value>

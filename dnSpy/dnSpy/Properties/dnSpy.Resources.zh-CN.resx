@@ -1107,88 +1107,88 @@
     <value>{0} of {1}</value>
   </data>
   <data name="UriFollowLinkMessage" xml:space="preserve">
-    <value>CTRL + click to follow link</value>
+    <value>CTRL + 单击以跟踪链接</value>
   </data>
   <data name="EnvironmentSettings" xml:space="preserve">
-    <value>Environment</value>
+    <value>环境</value>
   </data>
   <data name="GeneralSettings" xml:space="preserve">
-    <value>General</value>
+    <value>通用设置</value>
   </data>
   <data name="GeneralSettings_Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>主题</value>
   </data>
   <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
-    <value>Integrate with Windows Explorer</value>
+    <value>与 Windows 资源管理器整合</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Order (restart needed)</value>
+    <value>顺序（重启程序生效）</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Single-click expands nodes</value>
+    <value>单击展开节点</value>
   </data>
   <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
-    <value>Syntax highlight</value>
+    <value>语法高亮</value>
   </data>
   <data name="FontSettings" xml:space="preserve">
     <value>字体</value>
   </data>
   <data name="CodeEditorSettings" xml:space="preserve">
-    <value>Code Editor</value>
+    <value>代码编辑器</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
     <value>Tabs</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
-    <value>Convert tabs to s_paces</value>
+    <value>将Tab转换为空格(_P)</value>
   </data>
   <data name="TextEditorLineNumbers" xml:space="preserve">
-    <value>_Line numbers</value>
+    <value>行号(_L)</value>
   </data>
   <data name="TextEditorVirtualSpace" xml:space="preserve">
     <value>_Virtual space</value>
   </data>
   <data name="TextEditorWordWrap" xml:space="preserve">
-    <value>_Word wrap</value>
+    <value>自动换行(_W)</value>
   </data>
   <data name="TextEditorIndentSize" xml:space="preserve">
     <value>_Indent size</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
-    <value>_Tab size</value>
+    <value>_Tab宽度</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
-    <value>Text Viewer</value>
+    <value>文本查看器</value>
   </data>
   <data name="AdvancedSettings" xml:space="preserve">
-    <value>Advanced</value>
+    <value>高级</value>
   </data>
   <data name="ScrollBarsSettings" xml:space="preserve">
-    <value>Scroll Bars</value>
+    <value>滚动条</value>
   </data>
   <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
-    <value>Compress blank lines</value>
+    <value>压缩空行</value>
   </data>
   <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
-    <value>Compress lines that do not have any alphanumeric characters</value>
+    <value>压缩不包含数字和字母的行</value>
   </data>
   <data name="TextEditorGlyphMargin" xml:space="preserve">
     <value>Indicator margin</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
-    <value>Highlight current line</value>
+    <value>高亮当前行</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
-    <value>Highlight braces</value>
+    <value>高亮括号</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
-    <value>Highlight related keywords</value>
+    <value>高亮相关的关键字</value>
   </data>
   <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
-    <value>Show _horizontal scroll bar</value>
+    <value>显示水平滚动条(_H)</value>
   </data>
   <data name="TextEditorLineHeight" xml:space="preserve">
-    <value>Line height</value>
+    <value>行高</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
     <value>Show procedure line separators</value>
@@ -1200,7 +1200,7 @@
     <value>Don't add extra line spacing</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
-    <value>Mouse wheel zoom</value>
+    <value>鼠标滚轮缩放</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
     <value>高亮引用</value>
@@ -1212,19 +1212,19 @@
     <value>Show indent guides</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
-    <value>Show _vertical scroll bar</value>
+    <value>显示垂直滚动条(_V)</value>
   </data>
   <data name="TextEditorZoom" xml:space="preserve">
-    <value>Zoom</value>
+    <value>缩放</value>
   </data>
   <data name="TextEditorZoomControl" xml:space="preserve">
     <value>Zoom control</value>
   </data>
   <data name="OutputWindowSettings" xml:space="preserve">
-    <value>Output Window</value>
+    <value>输出窗口</value>
   </data>
   <data name="TextEditorShowTimestamps" xml:space="preserve">
-    <value>Show timestamps</value>
+    <value>显示时间戳</value>
   </data>
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>

@@ -583,7 +583,7 @@
     <value>Fechar</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Decompile a member's enclosing class instead of the class member</value>
+    <value>Descompilar classe delimitadora de um membro, em vez do membro da classe</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
     <value>Referências de destaque</value>
@@ -1108,121 +1108,121 @@
     <value>CTRL + clique para seguir link</value>
   </data>
   <data name="EnvironmentSettings" xml:space="preserve">
-    <value>Environment</value>
+    <value>Ambiente</value>
   </data>
   <data name="GeneralSettings" xml:space="preserve">
     <value>General</value>
   </data>
   <data name="GeneralSettings_Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
   </data>
   <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
-    <value>Integrate with Windows Explorer</value>
+    <value>Integrar com Windows Explorer</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Order (restart needed)</value>
+    <value>Ordem (reinicialização necessária)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Single-click expands nodes</value>
+    <value>Clique único expande nós</value>
   </data>
   <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
-    <value>Syntax highlight</value>
+    <value>Realce de sintaxe</value>
   </data>
   <data name="FontSettings" xml:space="preserve">
     <value>Fonte</value>
   </data>
   <data name="CodeEditorSettings" xml:space="preserve">
-    <value>Code Editor</value>
+    <value>Editor de Código</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
-    <value>Tabs</value>
+    <value>Guias</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
-    <value>Convert tabs to s_paces</value>
+    <value>Converter guias para espaços</value>
   </data>
   <data name="TextEditorLineNumbers" xml:space="preserve">
-    <value>_Line numbers</value>
+    <value>Números de Linhas</value>
   </data>
   <data name="TextEditorVirtualSpace" xml:space="preserve">
-    <value>_Virtual space</value>
+    <value>Espaço virtual</value>
   </data>
   <data name="TextEditorWordWrap" xml:space="preserve">
-    <value>_Word wrap</value>
+    <value>Quebra de linha</value>
   </data>
   <data name="TextEditorIndentSize" xml:space="preserve">
-    <value>_Indent size</value>
+    <value>Tamanho de indentação</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
-    <value>_Tab size</value>
+    <value>Tamanho de guia</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
-    <value>Text Viewer</value>
+    <value>Visualizador de Texto</value>
   </data>
   <data name="AdvancedSettings" xml:space="preserve">
-    <value>Advanced</value>
+    <value>Avançado</value>
   </data>
   <data name="ScrollBarsSettings" xml:space="preserve">
-    <value>Scroll Bars</value>
+    <value>Barras de Deslocamento</value>
   </data>
   <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
-    <value>Compress blank lines</value>
+    <value>Comprimir linhas em branco</value>
   </data>
   <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
-    <value>Compress lines that do not have any alphanumeric characters</value>
+    <value>Comprimir linhas que não têm quaisquer caracteres alfanuméricos</value>
   </data>
   <data name="TextEditorGlyphMargin" xml:space="preserve">
-    <value>Indicator margin</value>
+    <value>Margem Indicadora</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
-    <value>Highlight current line</value>
+    <value>Realçar linha atual</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
-    <value>Highlight braces</value>
+    <value>Realçar chavetas</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
-    <value>Highlight related keywords</value>
+    <value>Realçar palavras-chaves relacionadas</value>
   </data>
   <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
-    <value>Show _horizontal scroll bar</value>
+    <value>Mostrar barra de deslocamento horizontal</value>
   </data>
   <data name="TextEditorLineHeight" xml:space="preserve">
-    <value>Line height</value>
+    <value>Altura da linha</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
-    <value>Show procedure line separators</value>
+    <value>Mostrar separador de linha</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
-    <value>Margins</value>
+    <value>Margens</value>
   </data>
   <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
-    <value>Don't add extra line spacing</value>
+    <value>Não adicionar espaçamento extra</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
-    <value>Mouse wheel zoom</value>
+    <value>Zoom da roda do mouse</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
     <value>Referências de destaque</value>
   </data>
   <data name="TextEditorSelectionMargin" xml:space="preserve">
-    <value>Selection margin</value>
+    <value>Margem de seleção</value>
   </data>
   <data name="TextEditorShowStructureLines" xml:space="preserve">
-    <value>Show indent guides</value>
+    <value>Mostrar guias de indentação</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
-    <value>Show _vertical scroll bar</value>
+    <value>Mostrar barra de deslocamento vertical</value>
   </data>
   <data name="TextEditorZoom" xml:space="preserve">
     <value>Zoom</value>
   </data>
   <data name="TextEditorZoomControl" xml:space="preserve">
-    <value>Zoom control</value>
+    <value>Controle de zoom</value>
   </data>
   <data name="OutputWindowSettings" xml:space="preserve">
-    <value>Output Window</value>
+    <value>Janela de Output</value>
   </data>
   <data name="TextEditorShowTimestamps" xml:space="preserve">
-    <value>Show timestamps</value>
+    <value>Mostrar timestamps</value>
   </data>
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>
