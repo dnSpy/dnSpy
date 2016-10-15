@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Text editor format definition
 	/// </summary>
-	public abstract class TextEditorFormatDefinition : EditorFormatDefinition, IThemeFormatDefinition {
+	abstract class TextEditorFormatDefinition : EditorFormatDefinition, IThemeFormatDefinition {
 		/// <summary>
 		/// This method isn't implemented, call <see cref="CreateResourceDictionary(ITheme)"/> instead
 		/// </summary>

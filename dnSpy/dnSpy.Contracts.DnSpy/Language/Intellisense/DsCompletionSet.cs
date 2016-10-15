@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="displayText">Text shown in the UI</param>
 		/// <returns></returns>
 		public override IReadOnlyList<Span> GetHighlightedSpansInDisplayText(string displayText) =>
-			new ReadOnlyCollection<Span>(CreateCompletionFilter(SearchText).GetMatchSpans(displayText));
+			CreateCompletionFilter(SearchText).GetMatchSpans(displayText);
 
 		/// <summary>
 		/// Creates a <see cref="ICompletionFilter"/>

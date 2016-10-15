@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Tabs {
 	/// <summary>
 	/// Creates <see cref="ITabService"/>s
 	/// </summary>
-	public interface ITabServiceProvider {
+	interface ITabServiceProvider {
 		/// <summary>
 		/// Creates a new <see cref="ITabService"/> instance
 		/// </summary>

@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Theme marker definition
 	/// </summary>
-	public abstract class ThemeMarkerFormatDefinition : MarkerFormatDefinition, IThemeFormatDefinition {
+	abstract class ThemeMarkerFormatDefinition : MarkerFormatDefinition, IThemeFormatDefinition {
 		readonly TextColor textColor;
 
 		/// <summary>

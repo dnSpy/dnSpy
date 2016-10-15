@@ -29,101 +29,101 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// <see cref="IDocumentViewer"/> text view role
 		/// </summary>
-		public const string DocumentViewer = "dnSpy-IDocumentViewer";
+		public const string DocumentViewer = "dnSpy-" + nameof(DocumentViewer);
 
 		/// <summary>
 		/// <see cref="ILogEditor"/> text view role
 		/// </summary>
-		public const string LogEditor = "dnSpy-ILogEditor";
+		public const string LogEditor = "dnSpy-" + nameof(LogEditor);
 
 		/// <summary>
 		/// <see cref="IOutputTextPane"/> text view role
 		/// </summary>
-		public const string OutputTextPane = "dnSpy-IOutputTextPane";
+		public const string OutputTextPane = "dnSpy-" + nameof(OutputTextPane);
 
 		/// <summary>
 		/// <see cref="IReplEditor"/> text view role
 		/// </summary>
-		public const string ReplEditor = "dnSpy-IReplEditor";
+		public const string ReplEditor = "dnSpy-" + nameof(ReplEditor);
 
 		/// <summary>
 		/// Roslyn REPL (any supported language, eg. C# and Visual Basic)
 		/// </summary>
-		public const string RoslynRepl = "dnSpy-RoslynRepl";
+		public const string RoslynRepl = "dnSpy-" + nameof(RoslynRepl);
 
 		/// <summary>
 		/// C# REPL
 		/// </summary>
-		public const string CSharpRepl = "dnSpy-CSharpRepl";
+		public const string CSharpRepl = "dnSpy-" + nameof(CSharpRepl);
 
 		/// <summary>
 		/// Visual Basic REPL
 		/// </summary>
-		public const string VisualBasicRepl = "dnSpy-VisualBasicRepl";
+		public const string VisualBasicRepl = "dnSpy-" + nameof(VisualBasicRepl);
 
 		/// <summary>
 		/// <see cref="ICodeEditor"/> text view role
 		/// </summary>
-		public const string CodeEditor = "dnSpy-ICodeEditor";
+		public const string CodeEditor = "dnSpy-" + nameof(CodeEditor);
 
 		/// <summary>
 		/// Roslyn code editor (any supported language, eg. C# and Visual Basic)
 		/// </summary>
-		public const string RoslynCodeEditor = "dnSpy-RoslynCodeEditor";
+		public const string RoslynCodeEditor = "dnSpy-" + nameof(RoslynCodeEditor);
 
 		/// <summary>
 		/// Roslyn code editor (C#)
 		/// </summary>
-		public const string RoslynCSharpCodeEditor = "dnSpy-RoslynCSharpCodeEditor";
+		public const string RoslynCSharpCodeEditor = "dnSpy-" + nameof(RoslynCSharpCodeEditor);
 
 		/// <summary>
 		/// Roslyn code editor (Visual Basic)
 		/// </summary>
-		public const string RoslynVisualBasicCodeEditor = "dnSpy-RoslynVisualBasicCodeEditor";
+		public const string RoslynVisualBasicCodeEditor = "dnSpy-" + nameof(RoslynVisualBasicCodeEditor);
 
 		/// <summary>
 		/// Enables the custom line number margin, see <see cref="Editor.CustomLineNumberMargin"/>
 		/// documentation for more info.
 		/// </summary>
-		public const string CustomLineNumberMargin = "dnSpy-CustomLineNumberMargin";
+		public const string CustomLineNumberMargin = "dnSpy-" + nameof(CustomLineNumberMargin);
 
 		/// <summary>
 		/// <see cref="IGlyphTextMarkerService"/> services can be used. Not needed if
 		/// <see cref="PredefinedTextViewRoles.Interactive"/> is already used.
 		/// </summary>
-		public const string CanHaveGlyphTextMarkerService = "dnSpy-CanHaveGlyphTextMarkerService";
+		public const string CanHaveGlyphTextMarkerService = "dnSpy-" + nameof(CanHaveGlyphTextMarkerService);
 
 		/// <summary>
 		/// Allows the current line highlighter to be used. Not needed if
 		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
 		/// </summary>
-		public const string CanHaveCurrentLineHighlighter = "dnSpy-CanHaveCurrentLineHighlighter";
+		public const string CanHaveCurrentLineHighlighter = "dnSpy-" + nameof(CanHaveCurrentLineHighlighter);
 
 		/// <summary>
 		/// Allows the line number margin to be used. Not needed if
 		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
 		/// </summary>
-		public const string CanHaveLineNumberMargin = "dnSpy-CanHaveLineNumberMargin";
+		public const string CanHaveLineNumberMargin = "dnSpy-" + nameof(CanHaveLineNumberMargin);
 
 		/// <summary>
 		/// Allows line separators to be used. Not needed if
 		/// <see cref="PredefinedTextViewRoles.Document"/> is already used.
 		/// </summary>
-		public const string CanHaveLineSeparator = "dnSpy-CanHaveLineSeparator";
+		public const string CanHaveLineSeparator = "dnSpy-" + nameof(CanHaveLineSeparator);
 
 		/// <summary>
 		/// Allows background images to be used
 		/// </summary>
-		public const string CanHaveBackgroundImage = "dnSpy-CanHaveBackgroundImage";
+		public const string CanHaveBackgroundImage = "dnSpy-" + nameof(CanHaveBackgroundImage);
 
 		/// <summary>
 		/// Allows line compressor
 		/// </summary>
-		public const string CanHaveLineCompressor = "dnSpy-CanHaveLineCompressor";
+		public const string CanHaveLineCompressor = "dnSpy-" + nameof(CanHaveLineCompressor);
 
 		/// <summary>
 		/// Allows intellisense controllers
 		/// </summary>
-		public const string CanHaveIntellisenseControllers = "dnSpy-CanHaveIntellisenseControllers";
+		public const string CanHaveIntellisenseControllers = "dnSpy-" + nameof(CanHaveIntellisenseControllers);
 	}
 }

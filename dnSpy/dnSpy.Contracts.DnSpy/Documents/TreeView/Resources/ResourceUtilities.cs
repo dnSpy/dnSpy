@@ -155,7 +155,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 					ext = ".txt";
 				}
 			}
-			context.ContentTypeString = ContentTypes.TryGetContentTypeStringByExtension(ext) ?? ContentTypes.PlainText;
+			context.ContentTypeString = ContentTypesHelper.TryGetContentTypeStringByExtension(ext) ?? ContentTypes.PlainText;
 			return true;
 		}
 	}

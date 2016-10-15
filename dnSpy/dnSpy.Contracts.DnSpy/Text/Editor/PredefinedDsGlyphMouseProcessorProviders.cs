@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// <see cref="IGlyphTextMarkerService"/> <see cref="IGlyphMouseProcessorProvider"/>
 		/// </summary>
-		public const string GlyphTextMarkerService = "GlyphTextMarkerService";
+		public const string GlyphTextMarkerService = nameof(GlyphTextMarkerService);
 	}
 }

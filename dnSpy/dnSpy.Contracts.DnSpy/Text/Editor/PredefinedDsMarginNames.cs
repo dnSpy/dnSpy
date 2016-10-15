@@ -25,6 +25,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Custom line number margin
 		/// </summary>
-		public const string CustomLineNumber = "dnSpy-CustomLineNumber";
+		public const string CustomLineNumber = "dnSpy-" + nameof(CustomLineNumber);
 	}
 }

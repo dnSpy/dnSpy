@@ -31,6 +31,8 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {
 	partial class EditCodeDlg : WindowBase {
@@ -109,13 +111,22 @@ namespace dnSpy.AsmEditor.Compiler {
 					// The caret isn't always moved unless we wait a little
 					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 						if (doc == vm.SelectedDocument) {
-							doc.TextView.MoveCaretTo(diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
+							MoveCaretTo(doc.TextView, diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
 							doc.TextView.Caret.EnsureVisible();
 							doc.TextView.Selection.Clear();
 						}
 					}));
 				});
 			}
+		}
+
+		static CaretPosition MoveCaretTo(ITextView textView, int line, int column) {
+			if (line >= textView.TextSnapshot.LineCount)
+				line = textView.TextSnapshot.LineCount - 1;
+			var snapshotLine = textView.TextSnapshot.GetLineFromLineNumber(line);
+			if (column >= snapshotLine.Length)
+				column = snapshotLine.Length;
+			return textView.Caret.MoveTo(snapshotLine.Start + column);
 		}
 
 		void EditCodeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {

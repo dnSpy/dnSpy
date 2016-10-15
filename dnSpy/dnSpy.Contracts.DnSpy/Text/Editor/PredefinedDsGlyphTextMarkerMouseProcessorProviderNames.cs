@@ -25,6 +25,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Debugger breakpoints mouse processor
 		/// </summary>
-		public const string DebuggerBreakpoints = "DebuggerBreakpoints";
+		public const string DebuggerBreakpoints = nameof(DebuggerBreakpoints);
 	}
 }

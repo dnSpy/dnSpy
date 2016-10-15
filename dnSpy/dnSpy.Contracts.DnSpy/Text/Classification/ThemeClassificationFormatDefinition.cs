@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Theme classification definition
 	/// </summary>
-	public abstract class ThemeClassificationFormatDefinition : ClassificationFormatDefinition, IThemeFormatDefinition {
+	abstract class ThemeClassificationFormatDefinition : ClassificationFormatDefinition, IThemeFormatDefinition {
 		readonly TextColor textColor;
 
 		/// <summary>

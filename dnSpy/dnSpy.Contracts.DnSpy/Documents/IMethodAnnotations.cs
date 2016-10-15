@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Documents {
 	/// <summary>
 	/// Adds data to methods
 	/// </summary>
-	public interface IMethodAnnotations {
+	interface IMethodAnnotations {
 		/// <summary>
 		/// Returns true if <paramref name="method"/> has been modified
 		/// </summary>

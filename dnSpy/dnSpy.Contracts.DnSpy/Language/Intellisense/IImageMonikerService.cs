@@ -26,14 +26,14 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	public interface IImageMonikerService {
 		/// <summary>
-		/// Converts <paramref name="imageReference"/> to a <see cref="ImageMoniker"/>
+		/// Converts <paramref name="imageReference"/> to an <see cref="ImageMoniker"/>
 		/// </summary>
 		/// <param name="imageReference">Image reference</param>
 		/// <returns></returns>
 		ImageMoniker ToImageMoniker(ImageReference imageReference);
 
 		/// <summary>
-		/// Converts <paramref name="imageMoniker"/> to a <see cref="ImageReference"/>
+		/// Converts <paramref name="imageMoniker"/> to an <see cref="ImageReference"/>
 		/// </summary>
 		/// <param name="imageMoniker">Image moniker</param>
 		/// <returns></returns>

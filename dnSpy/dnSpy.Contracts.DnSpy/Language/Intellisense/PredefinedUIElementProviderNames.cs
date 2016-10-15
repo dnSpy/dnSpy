@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Roslyn <see cref="Completion"/> tooltip provider
 		/// </summary>
-		public const string RoslynCompletionToolTipProvider = "RoslynCompletionToolTipProvider";
+		public const string RoslynCompletionToolTipProvider = nameof(RoslynCompletionToolTipProvider);
 	}
 }

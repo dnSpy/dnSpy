@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.ToolBars {
 	/// <summary>
 	/// ToolBar manager
 	/// </summary>
-	public interface IToolBarService {
+	interface IToolBarService {
 		/// <summary>
 		/// Creates a <see cref="ToolBar"/>
 		/// </summary>

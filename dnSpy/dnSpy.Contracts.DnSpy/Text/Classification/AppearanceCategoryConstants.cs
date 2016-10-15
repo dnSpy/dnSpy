@@ -21,45 +21,45 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Appearance category constants
 	/// </summary>
-	public static class AppearanceCategoryConstants {
+	static class AppearanceCategoryConstants {
 		/// <summary>
 		/// Default text editor
 		/// </summary>
-		public const string TextEditor = "dnSpy-TextEditor";
+		public const string TextEditor = "dnSpy-" + nameof(TextEditor);
 
 		/// <summary>
 		/// Decompiled code and other content shown in the main tabs
 		/// </summary>
-		public const string Viewer = "dnSpy-Viewer";
+		public const string Viewer = "dnSpy-" + nameof(Viewer);
 
 		/// <summary>
 		/// REPL
 		/// </summary>
-		public const string REPL = "dnSpy-REPL";
+		public const string REPL = "dnSpy-" + nameof(REPL);
 
 		/// <summary>
 		/// Code editor
 		/// </summary>
-		public const string CodeEditor = "dnSpy-CodeEditor";
+		public const string CodeEditor = "dnSpy-" + nameof(CodeEditor);
 
 		/// <summary>
 		/// Quick info tooltip
 		/// </summary>
-		public const string QuickInfoToolTip = "dnSpy-QuickInfoToolTip";
+		public const string QuickInfoToolTip = "dnSpy-" + nameof(QuickInfoToolTip);
 
 		/// <summary>
 		/// Code completion
 		/// </summary>
-		public const string CodeCompletion = "dnSpy-CodeCompletion";
+		public const string CodeCompletion = "dnSpy-" + nameof(CodeCompletion);
 
 		/// <summary>
 		/// Code completion tooltip
 		/// </summary>
-		public const string CodeCompletionToolTip = "dnSpy-CodeCompletionToolTip";
+		public const string CodeCompletionToolTip = "dnSpy-" + nameof(CodeCompletionToolTip);
 
 		/// <summary>
 		/// Signature help tooltip
 		/// </summary>
-		public const string SignatureHelpToolTip = "dnSpy-SignatureHelpToolTip";
+		public const string SignatureHelpToolTip = "dnSpy-" + nameof(SignatureHelpToolTip);
 	}
 }

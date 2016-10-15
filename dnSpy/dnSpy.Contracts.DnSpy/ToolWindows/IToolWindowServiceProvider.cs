@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.ToolWindows {
 	/// <summary>
 	/// Creates <see cref="IToolWindowService"/> instances
 	/// </summary>
-	public interface IToolWindowServiceProvider {
+	interface IToolWindowServiceProvider {
 		/// <summary>
 		/// Creates a new <see cref="IToolWindowService"/> instance
 		/// </summary>

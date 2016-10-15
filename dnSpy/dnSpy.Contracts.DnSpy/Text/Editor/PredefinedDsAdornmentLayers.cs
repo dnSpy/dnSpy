@@ -25,37 +25,37 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Bottom layer. All layers should normally be after this layer.
 		/// </summary>
-		public const string BottomLayer = "dnSpy-BottomLayer";
+		public const string BottomLayer = "dnSpy-" + nameof(BottomLayer);
 
 		/// <summary>
 		/// Top layer. All layers should normally be before this layer.
 		/// </summary>
-		public const string TopLayer = "dnSpy-TopLayer";
+		public const string TopLayer = "dnSpy-" + nameof(TopLayer);
 
 		/// <summary>
 		/// <see cref="IGlyphTextMarkerService"/>'s adornment layer
 		/// </summary>
-		public const string GlyphTextMarker = "dnSpy-GlyphTextMarker";
+		public const string GlyphTextMarker = "dnSpy-" + nameof(GlyphTextMarker);
 
 		/// <summary>
 		/// Line separator adornment layer
 		/// </summary>
-		public const string LineSeparator = "dnSpy-LineSeparator";
+		public const string LineSeparator = "dnSpy-" + nameof(LineSeparator);
 
 		/// <summary>
 		/// Background image adornment layer
 		/// </summary>
-		public const string BackgroundImage = "dnSpy-BackgroundImage";
+		public const string BackgroundImage = "dnSpy-" + nameof(BackgroundImage);
 
 		/// <summary>
 		/// Search adornment layer
 		/// </summary>
-		public const string Search = "dnSpy-Search";
+		public const string Search = "dnSpy-" + nameof(Search);
 
 		/// <summary>
 		/// Structure visualizer adornment layer
 		/// </summary>
-		public const string StructureVisualizer = "dnSpy-StructureVisualizer";
+		public const string StructureVisualizer = "dnSpy-" + nameof(StructureVisualizer);
 
 		/// <summary>
 		/// Intra text adornment layer

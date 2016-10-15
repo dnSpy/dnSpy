@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Text {
 	/// <summary>
 	/// Content types
@@ -169,32 +167,5 @@ namespace dnSpy.Contracts.Text {
 		/// Completion item's tooltip
 		/// </summary>
 		public const string CompletionToolTip = "CompletionToolTip";
-
-		/// <summary>
-		/// Returns a content type or null if it's unknown
-		/// </summary>
-		/// <param name="extension">File extension, with or without the period</param>
-		/// <returns></returns>
-		internal static string TryGetContentTypeStringByExtension(string extension) {
-			var comparer = StringComparer.InvariantCultureIgnoreCase;
-			if (comparer.Equals(extension, ".txt") || comparer.Equals(extension, "txt"))
-				return PlainText;
-			if (comparer.Equals(extension, ".xml") || comparer.Equals(extension, "xml"))
-				return Xml;
-			if (comparer.Equals(extension, ".xaml") || comparer.Equals(extension, "xaml"))
-				return Xaml;
-			if (comparer.Equals(extension, ".cs") || comparer.Equals(extension, "cs"))
-				return CSharp;
-			if (comparer.Equals(extension, ".csx") || comparer.Equals(extension, "csx"))
-				return CSharp;
-			if (comparer.Equals(extension, ".vb") || comparer.Equals(extension, "vb"))
-				return VisualBasic;
-			if (comparer.Equals(extension, ".vbx") || comparer.Equals(extension, "vbx"))
-				return VisualBasic;
-			if (comparer.Equals(extension, ".il") || comparer.Equals(extension, "il"))
-				return IL;
-
-			return null;
-		}
 	}
 }

@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Creates a <see cref="TextBlock"/>
 	/// </summary>
-	internal static class TextBlockFactory {
+	static class TextBlockFactory {
 		/// <summary>
 		/// Flags
 		/// </summary>

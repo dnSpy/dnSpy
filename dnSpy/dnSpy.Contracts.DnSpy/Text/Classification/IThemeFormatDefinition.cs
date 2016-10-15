@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Theme <see cref="EditorFormatDefinition"/>
 	/// </summary>
-	public interface IThemeFormatDefinition {
+	interface IThemeFormatDefinition {
 		/// <summary>
 		/// Creates a new <see cref="ResourceDictionary"/>
 		/// </summary>

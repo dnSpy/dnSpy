@@ -33,11 +33,11 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Roslyn languages (C# or Visual Basic)
 		/// </summary>
-		public const string Roslyn = "dnSpy-Roslyn";
+		public const string Roslyn = "dnSpy-" + nameof(Roslyn);
 
 		/// <summary>
 		/// URI
 		/// </summary>
-		public const string Uri = "dnSpy-Uri";
+		public const string Uri = "dnSpy-" + nameof(Uri);
 	}
 }
