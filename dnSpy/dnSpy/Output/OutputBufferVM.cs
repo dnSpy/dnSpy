@@ -131,7 +131,7 @@ namespace dnSpy.Output {
 					}
 				}
 
-				int nlOffs = text.IndexOfAny(newLineChars, so);
+				int nlOffs = text.IndexOfAny(LineConstants.newLineChars, so);
 				if (nlOffs >= 0) {
 					int nlLen = text[nlOffs] == '\r' && nlOffs + 1 < text.Length && text[nlOffs + 1] == '\n' ? 2 : 1;
 					int soNext = nlOffs + nlLen;
@@ -145,6 +145,5 @@ namespace dnSpy.Output {
 				}
 			}
 		}
-		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 	}
 }

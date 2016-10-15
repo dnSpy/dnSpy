@@ -568,6 +568,7 @@
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />
     <Compile Include="Text\Editor\WordWrapStylesConstants.cs" />
+    <Compile Include="Text\LineConstants.cs" />
     <Compile Include="Text\SpanDataCollection.cs" />
     <Compile Include="Text\StringBuilderTextColorOutput.cs" />
     <Compile Include="Text\TextEditorPosition.cs" />

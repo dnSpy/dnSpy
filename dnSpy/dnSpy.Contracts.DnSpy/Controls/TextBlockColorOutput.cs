@@ -227,7 +227,7 @@ namespace dnSpy.Contracts.Controls {
 				int startIndex = info.Span.Start;
 				int endIndex = info.Span.End;
 
-				int nlIndex = text.IndexOfAny(newLineChars, index, endIndex - startIndex);
+				int nlIndex = text.IndexOfAny(LineConstants.newLineChars, index, endIndex - startIndex);
 				if (nlIndex > 0)
 					endIndex = nlIndex;
 
@@ -249,7 +249,6 @@ namespace dnSpy.Contracts.Controls {
 
 				return new TextCharacters(tokenText.Length == 0 ? " " : tokenText, textProps);
 			}
-			static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 		}
 	}
 }

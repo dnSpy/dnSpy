@@ -31,6 +31,7 @@ using dnSpy.Contracts.BackgroundImage;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Text;
 using dnSpy.Properties;
 
 namespace dnSpy.BackgroundImage.Dialog {
@@ -344,9 +345,8 @@ namespace dnSpy.BackgroundImage.Dialog {
 		}
 
 		public RawSettings GetUpdatedRawSettings() {
-			RawSettings.Images = Images.Split(newLineChars).Select(a => a.Trim()).Where(a => !string.IsNullOrEmpty(a)).ToArray();
+			RawSettings.Images = Images.Split(LineConstants.newLineChars).Select(a => a.Trim()).Where(a => !string.IsNullOrEmpty(a)).ToArray();
 			return RawSettings;
 		}
-		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 	}
 }

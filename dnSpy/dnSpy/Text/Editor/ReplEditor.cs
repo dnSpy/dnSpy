@@ -306,7 +306,7 @@ namespace dnSpy.Text.Editor {
 			var sb = new StringBuilder(text.Length);
 			int so = 0;
 			while (so < text.Length) {
-				int nlOffs = text.IndexOfAny(newLineChars, so);
+				int nlOffs = text.IndexOfAny(LineConstants.newLineChars, so);
 				if (nlOffs >= 0) {
 					int soNext = nlOffs;
 					int nlLen = text[soNext] == '\r' && soNext + 1 < text.Length && text[soNext + 1] == '\n' ? 2 : 1;
@@ -338,7 +338,6 @@ namespace dnSpy.Text.Editor {
 			}
 			return sb.ToString();
 		}
-		internal static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		public bool CanClearScreen => true;
 		public void ClearScreen() {
@@ -845,7 +844,7 @@ namespace dnSpy.Text.Editor {
 				return false;
 			if (span.Span.Start < OffsetOfPrompt.Value)
 				return false;
-			if (newText.IndexOfAny(newLineChars) >= 0)
+			if (newText.IndexOfAny(LineConstants.newLineChars) >= 0)
 				return false;
 			var line = span.Start.GetContainingLine();
 			// Don't allow removing the newline
@@ -893,7 +892,7 @@ namespace dnSpy.Text.Editor {
 			int so = offset;
 			int end = offset + length;
 			while (so < end) {
-				int nlOffs = s.IndexOfAny(ReplEditor.newLineChars, so, end - so);
+				int nlOffs = s.IndexOfAny(LineConstants.newLineChars, so, end - so);
 				if (nlOffs >= 0) {
 					int nlLen = s[nlOffs] == '\r' && nlOffs + 1 < end && s[nlOffs + 1] == '\n' ? 2 : 1;
 					cachedTextColorsCollection.Append(color, s, so, nlOffs - so + nlLen);

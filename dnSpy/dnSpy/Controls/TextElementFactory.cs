@@ -29,6 +29,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -37,17 +38,16 @@ namespace dnSpy.Controls {
 		static string ToString(string s, bool filterOutNewLines) {
 			if (!filterOutNewLines)
 				return s;
-			if (s.IndexOfAny(newLineChars) < 0)
+			if (s.IndexOfAny(LineConstants.newLineChars) < 0)
 				return s;
 			var sb = new StringBuilder(s.Length);
 			foreach (var c in s) {
-				if (Array.IndexOf(newLineChars, c) >= 0)
+				if (Array.IndexOf(LineConstants.newLineChars, c) >= 0)
 					continue;
 				sb.Append(c);
 			}
 			return sb.ToString();
 		}
-		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		public static FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, List<TextClassificationTag> tagsList, bool useNewFormatter, bool useEllipsis = false, bool filterOutNewLines = true, TextWrapping textWrapping = TextWrapping.NoWrap) {
 			if (tagsList != null && tagsList.Count != 0) {
@@ -205,7 +205,7 @@ namespace dnSpy.Controls {
 				int startIndex = info.Span.Start;
 				int endIndex = info.Span.End;
 
-				int nlIndex = text.IndexOfAny(newLineChars, index, endIndex - startIndex);
+				int nlIndex = text.IndexOfAny(LineConstants.newLineChars, index, endIndex - startIndex);
 				if (nlIndex > 0)
 					endIndex = nlIndex;
 

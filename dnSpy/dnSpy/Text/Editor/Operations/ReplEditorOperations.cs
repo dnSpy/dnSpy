@@ -24,6 +24,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using Microsoft.VisualStudio.Text;
@@ -111,7 +112,7 @@ namespace dnSpy.Text.Editor.Operations {
 			var sb = new StringBuilder(s.Length);
 			int so = 0;
 			while (so < s.Length) {
-				int nlOffs = s.IndexOfAny(newLineChars, so);
+				int nlOffs = s.IndexOfAny(LineConstants.newLineChars, so);
 				if (nlOffs >= 0) {
 					sb.Append(s, so, nlOffs - so);
 					sb.Append(lineBreak);
@@ -127,7 +128,6 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 			return sb.ToString();
 		}
-		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		public void AddUserInput(string text, bool clearSearchText = true) {
 			if (text == null)

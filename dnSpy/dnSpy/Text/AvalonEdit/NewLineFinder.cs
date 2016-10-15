@@ -17,10 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+using dnSpy.Contracts.Text;
+
 namespace dnSpy.Text.AvalonEdit {
 	static class NewLineFinder {
-		static readonly char[] newline = { '\r', '\n', '\u0085', '\u2028', '\u2029' };
-
 		internal static readonly string[] NewlineStrings = { "\r\n", "\r", "\n", "\u0085", "\u2028", "\u2029" };
 
 		/// <summary>
@@ -29,7 +29,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// </summary>
 		internal static SimpleSegment NextNewLine(ITextSource text, int offset) {
 			int textLength = text.TextLength;
-			int pos = text.IndexOfAny(newline, offset, textLength - offset);
+			int pos = text.IndexOfAny(LineConstants.newLineChars, offset, textLength - offset);
 			if (pos >= 0) {
 				if (text.GetCharAt(pos) == '\r') {
 					if (pos + 1 < textLength && text.GetCharAt(pos + 1) == '\n')

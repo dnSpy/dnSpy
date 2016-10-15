@@ -30,6 +30,7 @@ using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
 using Microsoft.VisualStudio.Text;
@@ -264,7 +265,7 @@ namespace dnSpy.Text.Editor.Search {
 
 					case TextEditorIds.TYPECHAR:
 						var s = args as string;
-						if (s != null && s.IndexOfAny(newLineChars) < 0)
+						if (s != null && s.IndexOfAny(LineConstants.newLineChars) < 0)
 							SetIncrementalSearchString(SearchString + s);
 						else
 							CancelIncrementalSearch();
@@ -627,11 +628,10 @@ namespace dnSpy.Text.Editor.Search {
 				s = TryGetSearchStringFromSelection();
 			else
 				s = TryGetSearchStringAtPoint(wpfTextView.Caret.Position.VirtualBufferPosition);
-			if (string.IsNullOrEmpty(s) || s.IndexOfAny(newLineChars) >= 0)
+			if (string.IsNullOrEmpty(s) || s.IndexOfAny(LineConstants.newLineChars) >= 0)
 				return null;
 			return s;
 		}
-		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		void UpdateSearchStringFromCaretPosition(bool canSearch) {
 			var newSearchString = TryGetSearchStringAtCaret();
