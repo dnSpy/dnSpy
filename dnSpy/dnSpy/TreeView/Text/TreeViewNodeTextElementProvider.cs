@@ -35,6 +35,7 @@ namespace dnSpy.TreeView.Text {
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly List<TextClassificationTag> tagsList;
+		readonly Dictionary<IContentType, ITextClassifierAggregator> toAggregator;
 
 		[ImportingConstructor]
 		TreeViewNodeTextElementProvider(IContentTypeRegistryService contentTypeRegistryService, ITextClassifierAggregatorService textClassifierAggregatorService, IClassificationFormatMapService classificationFormatMapService) {
@@ -43,6 +44,7 @@ namespace dnSpy.TreeView.Text {
 			this.classificationFormatMapService = classificationFormatMapService;
 			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewAppearanceCategory);
 			this.tagsList = new List<TextClassificationTag>();
+			this.toAggregator = new Dictionary<IContentType, ITextClassifierAggregator>();
 		}
 
 		const string TreeViewAppearanceCategory = "dnSpy-TreeView";
@@ -61,15 +63,15 @@ namespace dnSpy.TreeView.Text {
 			if (ct == null)
 				throw new ArgumentException($"Invalid content type: {contentType}");
 
-			ITextClassifierAggregator aggregator = null;
+			ITextClassifierAggregator aggregator;
+			if (!toAggregator.TryGetValue(ct, out aggregator))
+				toAggregator.Add(ct, aggregator = textClassifierAggregatorService.Create(ct));
 			try {
-				aggregator = textClassifierAggregatorService.Create(ct);
 				tagsList.AddRange(aggregator.GetTags(context));
 				return TextElementFactory.Create(classificationFormatMap, context.Text, context.Colorize ? tagsList : null, useNewFormatter: useNewFormatter, filterOutNewLines: filterOutNewLines);
 			}
 			finally {
 				tagsList.Clear();
-				aggregator?.Dispose();
 			}
 		}
 	}
