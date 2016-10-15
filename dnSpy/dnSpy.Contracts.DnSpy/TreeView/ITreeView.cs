@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.TreeView {
 	/// <summary>
 	/// A treeview
 	/// </summary>
-	public interface ITreeView {
+	public interface ITreeView : IDisposable {
 		/// <summary>
 		/// Guid of this treeview
 		/// </summary>

@@ -30,6 +30,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Controls;
 using ICSharpCode.TreeView;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.TreeView {
 	sealed class TreeViewImpl : ITreeView, IStackedContentChild {
@@ -55,15 +56,18 @@ namespace dnSpy.TreeView {
 
 		readonly ITreeViewServiceImpl treeViewService;
 		readonly ITreeViewListener treeViewListener;
+		readonly IClassificationFormatMap classificationFormatMap;
 		readonly object foregroundBrushResourceKey;
 
 		public event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
 		public event EventHandler<TreeViewNodeRemovedEventArgs> NodeRemoved;
 
-		public TreeViewImpl(ITreeViewServiceImpl treeViewService, IThemeService themeService, Guid guid, TreeViewOptions options) {
+		public TreeViewImpl(ITreeViewServiceImpl treeViewService, IThemeService themeService, IClassificationFormatMapService classificationFormatMapService, Guid guid, TreeViewOptions options) {
 			this.Guid = guid;
 			this.treeViewService = treeViewService;
 			this.treeViewListener = options.TreeViewListener;
+			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewTextEditorFormatDefinition.TreeViewAppearanceCategory);
+			this.classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			this.foregroundBrushResourceKey = options.ForegroundBrushResourceKey ?? "TreeViewForeground";
 			this.sharpTreeView = new SharpTreeView();
 			this.sharpTreeView.SelectionChanged += SharpTreeView_SelectionChanged;
@@ -93,6 +97,13 @@ namespace dnSpy.TreeView {
 			// Add the root at the end since Create() requires some stuff to have been initialized
 			this.root = Create(options.RootNode ?? new TreeNodeDataImpl(new Guid(DocumentTreeViewConstants.ROOT_NODE_GUID)));
 			this.sharpTreeView.Root = this.root.Node;
+		}
+
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshAllNodes();
+
+		void IDisposable.Dispose() {
+			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
+			sharpTreeView.SelectionChanged -= SharpTreeView_SelectionChanged;
 		}
 
 		void SharpTreeView_SelectionChanged(object sender, SelectionChangedEventArgs e) =>

@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.TreeView {
 	interface ITreeViewServiceImpl : ITreeViewService {
@@ -33,11 +34,13 @@ namespace dnSpy.TreeView {
 	[Export(typeof(ITreeViewService))]
 	sealed class TreeViewService : ITreeViewServiceImpl {
 		readonly IThemeService themeService;
+		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>> guidToProvider;
 
 		[ImportingConstructor]
-		TreeViewService(IThemeService themeService, [ImportMany] IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
+		TreeViewService(IThemeService themeService, IClassificationFormatMapService classificationFormatMapService, [ImportMany] IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
 			this.themeService = themeService;
+			this.classificationFormatMapService = classificationFormatMapService;
 			this.guidToProvider = new Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>>();
 			InitializeGuidToProvider(treeNodeDataProviders);
 		}
@@ -57,7 +60,7 @@ namespace dnSpy.TreeView {
 			}
 		}
 
-		public ITreeView Create(Guid guid, TreeViewOptions options) => new TreeViewImpl(this, themeService, guid, options);
+		public ITreeView Create(Guid guid, TreeViewOptions options) => new TreeViewImpl(this, themeService, classificationFormatMapService, guid, options);
 
 		public IEnumerable<ITreeNodeDataProvider> GetProviders(Guid guid) {
 			List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> list;

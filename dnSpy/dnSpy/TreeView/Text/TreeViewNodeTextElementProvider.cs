@@ -42,16 +42,9 @@ namespace dnSpy.TreeView.Text {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textClassifierAggregatorService = textClassifierAggregatorService;
 			this.classificationFormatMapService = classificationFormatMapService;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewAppearanceCategory);
+			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewTextEditorFormatDefinition.TreeViewAppearanceCategory);
 			this.tagsList = new List<TextClassificationTag>();
 			this.toAggregator = new Dictionary<IContentType, ITextClassifierAggregator>();
-		}
-
-		const string TreeViewAppearanceCategory = "dnSpy-TreeView";
-		[Export(typeof(TextEditorFormatDefinition))]
-		[Name(TreeViewAppearanceCategory)]
-		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-		sealed class TreeViewTextEditorFormatDefinition : TextEditorFormatDefinition {
 		}
 
 		public FrameworkElement CreateTextElement(TreeViewNodeClassifierContext context, string contentType, bool filterOutNewLines, bool useNewFormatter) {

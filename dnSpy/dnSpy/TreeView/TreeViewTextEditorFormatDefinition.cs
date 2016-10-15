@@ -17,20 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Contracts.TreeView {
-	/// <summary>
-	/// Treeview manager
-	/// </summary>
-	public interface ITreeViewService {
-		/// <summary>
-		/// Creates a <see cref="ITreeView"/> instance. Its <see cref="IDisposable.Dispose"/> method
-		/// must be called to destroy it.
-		/// </summary>
-		/// <param name="guid">Guid of treeview</param>
-		/// <param name="options">Treeview options</param>
-		/// <returns></returns>
-		ITreeView Create(Guid guid, TreeViewOptions options);
+namespace dnSpy.TreeView {
+	[Export(typeof(TextEditorFormatDefinition))]
+	[Name(TreeViewAppearanceCategory)]
+	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
+	sealed class TreeViewTextEditorFormatDefinition : TextEditorFormatDefinition {
+		public const string TreeViewAppearanceCategory = "dnSpy-TreeView";
 	}
 }

@@ -790,6 +790,7 @@
     <Compile Include="TreeView\TreeNodeImpl.cs" />
     <Compile Include="TreeView\TreeViewImpl.cs" />
     <Compile Include="TreeView\TreeViewService.cs" />
+    <Compile Include="TreeView\TreeViewTextEditorFormatDefinition.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Resources.resx">

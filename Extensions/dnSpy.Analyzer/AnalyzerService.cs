@@ -35,7 +35,6 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
 using Microsoft.VisualStudio.Text;
@@ -104,7 +103,7 @@ namespace dnSpy.Analyzer {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		AnalyzerService(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, ITreeViewService treeViewService, IMenuService menuService, IThemeService themeService, IAnalyzerSettings analyzerSettings, IDotNetImageService dotNetImageService, IDecompilerService decompilerService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
+		AnalyzerService(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, ITreeViewService treeViewService, IMenuService menuService, IAnalyzerSettings analyzerSettings, IDotNetImageService dotNetImageService, IDecompilerService decompilerService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
 			this.documentTabService = documentTabService;
 
 			this.context = new AnalyzerTreeNodeDataContext {
@@ -129,7 +128,6 @@ namespace dnSpy.Analyzer {
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 			documentTabService.DocumentModified += DocumentTabService_FileModified;
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
 			menuService.InitializeContextMenu(this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
@@ -196,7 +194,6 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshNodes();
 		void RefreshNodes() => this.TreeView.RefreshAllNodes();
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {

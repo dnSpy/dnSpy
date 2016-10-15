@@ -68,6 +68,7 @@ namespace dnSpy.Settings.Dialog {
 				ShowCore(guid, owner);
 			}
 			finally {
+				currentContextVM?.TreeView?.Dispose();
 				currentContextVM = null;
 				showingDialog = false;
 			}
@@ -84,21 +85,19 @@ namespace dnSpy.Settings.Dialog {
 			if (rootVM.Children.Count == 0)
 				return;
 
-			var treeView = CreateTreeView(rootVM);
-
-			currentContextVM.TreeView = treeView;
+			currentContextVM.TreeView = CreateTreeView(rootVM);
 
 			if (guid == null)
 				guid = lastSelectedGuid;
 			var selectedItem = (guid != null ? allVMs.FirstOrDefault(a => a.Page.Guid == guid.Value) : null) ?? rootVM.Children.FirstOrDefault();
 			if (selectedItem != null)
-				treeView.SelectItems(new[] { selectedItem });
+				currentContextVM.TreeView.SelectItems(new[] { selectedItem });
 
 			var dlg = new AppSettingsDlg();
-			dlg.treeViewContentPresenter.Content = treeView.UIObject;
+			dlg.treeViewContentPresenter.Content = currentContextVM.TreeView.UIObject;
 			dlg.Owner = owner ?? appWindow.MainWindow;
 			bool saveSettings = dlg.ShowDialog() == true;
-			lastSelectedGuid = (treeView.SelectedItem as AppSettingsPageVM)?.Page.Guid;
+			lastSelectedGuid = (currentContextVM.TreeView.SelectedItem as AppSettingsPageVM)?.Page.Guid;
 			Debug.Assert(lastSelectedGuid != null);
 
 			var appRefreshSettings = new AppRefreshSettings();
