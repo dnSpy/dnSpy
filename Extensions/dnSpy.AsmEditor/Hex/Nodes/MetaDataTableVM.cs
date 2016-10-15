@@ -135,6 +135,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case Table.GenericParam:			return TableInfo.Columns.Count == 5 ? (MetaDataTableRecordVM)new GenericParamMetaDataTableRecordV11VM(this, new MDToken(TableInfo.Table, index + 1)) : new GenericParamMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
 			case Table.MethodSpec:				return new MethodSpecMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
 			case Table.GenericParamConstraint:	return new GenericParamConstraintMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
+			case Table.Document:				return new DocumentMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
+			case Table.MethodDebugInformation:	return new MethodDebugInformationMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
+			case Table.LocalScope:				return new LocalScopeMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
+			case Table.LocalVariable:			return new LocalVariableMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
+			case Table.LocalConstant:			return new LocalConstantMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
+			case Table.ImportScope:				return new ImportScopeMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
+			case Table.StateMachineMethod:		return new StateMachineMethodMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
+			case Table.CustomDebugInformation:	return new CustomDebugInformationMetaDataTableRecordVM(this, new MDToken(TableInfo.Table, index + 1));
 			default:							throw new InvalidOperationException();
 			}
 		}
@@ -186,6 +194,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case Table.GenericParam:			return mdTable.Columns.Count == 5 ? (MetaDataTableVM)new GenericParamMetaDataTableV11VM(owner, doc, startOffset, mdTable) : new GenericParamMetaDataTableVM(owner, doc, startOffset, mdTable);
 			case Table.MethodSpec:				return new MethodSpecMetaDataTableVM(owner, doc, startOffset, mdTable);
 			case Table.GenericParamConstraint:	return new GenericParamConstraintMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.Document:				return new DocumentMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.MethodDebugInformation:	return new MethodDebugInformationMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.LocalScope:				return new LocalScopeMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.LocalVariable:			return new LocalVariableMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.LocalConstant:			return new LocalConstantMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ImportScope:				return new ImportScopeMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.StateMachineMethod:		return new StateMachineMethodMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.CustomDebugInformation:	return new CustomDebugInformationMetaDataTableVM(owner, doc, startOffset, mdTable);
 			default:							throw new InvalidOperationException();
 			}
 		}
@@ -626,6 +642,54 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 	sealed class GenericParamConstraintMetaDataTableVM : MetaDataTable2VM {
 		public GenericParamConstraintMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class DocumentMetaDataTableVM : MetaDataTable4VM {
+		public DocumentMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class MethodDebugInformationMetaDataTableVM : MetaDataTable2VM {
+		public MethodDebugInformationMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class LocalScopeMetaDataTableVM : MetaDataTable6VM {
+		public LocalScopeMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class LocalVariableMetaDataTableVM : MetaDataTable3VM {
+		public LocalVariableMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class LocalConstantMetaDataTableVM : MetaDataTable2VM {
+		public LocalConstantMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class ImportScopeMetaDataTableVM : MetaDataTable2VM {
+		public ImportScopeMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class StateMachineMethodMetaDataTableVM : MetaDataTable2VM {
+		public StateMachineMethodMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class CustomDebugInformationMetaDataTableVM : MetaDataTable3VM {
+		public CustomDebugInformationMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner, doc, startOffset, mdTable) {
 		}
 	}

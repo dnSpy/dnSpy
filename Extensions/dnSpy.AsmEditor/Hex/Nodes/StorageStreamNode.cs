@@ -36,6 +36,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		Blob,
 		Guid,
 		Tables,
+		Pdb,
 		HotHeap,
 	}
 
@@ -73,21 +74,23 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		static StorageStreamType GetStorageStreamType(DotNetStream stream) {
 			if (stream == null)
-				return Nodes.StorageStreamType.None;
+				return StorageStreamType.None;
 			if (stream is StringsStream)
-				return Nodes.StorageStreamType.Strings;
+				return StorageStreamType.Strings;
 			if (stream is USStream)
-				return Nodes.StorageStreamType.US;
+				return StorageStreamType.US;
 			if (stream is BlobStream)
-				return Nodes.StorageStreamType.Blob;
+				return StorageStreamType.Blob;
 			if (stream is GuidStream)
-				return Nodes.StorageStreamType.Guid;
+				return StorageStreamType.Guid;
 			if (stream is TablesStream)
-				return Nodes.StorageStreamType.Tables;
+				return StorageStreamType.Tables;
+			if (stream.Name == "#Pdb")
+				return StorageStreamType.Pdb;
 			if (stream.Name == "#!")
-				return Nodes.StorageStreamType.HotHeap;
+				return StorageStreamType.HotHeap;
 			Debug.Fail(string.Format("Shouldn't be here when stream is a known stream type: {0}", stream.GetType()));
-			return Nodes.StorageStreamType.None;
+			return StorageStreamType.None;
 		}
 
 		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {

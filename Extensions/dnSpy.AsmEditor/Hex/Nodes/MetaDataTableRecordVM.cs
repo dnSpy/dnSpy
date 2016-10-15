@@ -123,6 +123,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case ColumnSize.GenericParam:
 			case ColumnSize.MethodSpec:
 			case ColumnSize.GenericParamConstraint:
+			case ColumnSize.Document:
+			case ColumnSize.MethodDebugInformation:
+			case ColumnSize.LocalScope:
+			case ColumnSize.LocalVariable:
+			case ColumnSize.LocalConstant:
+			case ColumnSize.ImportScope:
+			case ColumnSize.StateMachineMethod:
+			case ColumnSize.CustomDebugInformation:
 				return GetDescription(Table.Module + (col.ColumnSize - ColumnSize.Module), field);
 
 			case ColumnSize.Byte: return "Byte";
@@ -148,6 +156,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case ColumnSize.CustomAttributeType: return GetCodedTokenDescription(CodedToken.CustomAttributeType, "CustomAttributeType", col, field);
 			case ColumnSize.ResolutionScope: return GetCodedTokenDescription(CodedToken.ResolutionScope, "ResolutionScope", col, field);
 			case ColumnSize.TypeOrMethodDef: return GetCodedTokenDescription(CodedToken.TypeOrMethodDef, "TypeOrMethodDef", col, field);
+			case ColumnSize.HasCustomDebugInformation: return GetCodedTokenDescription(CodedToken.HasCustomDebugInformation, "HasCustomDebugInformation", col, field);
 			default:
 				Debug.Fail(string.Format("Unknown ColumnSize: {0}", col.ColumnSize));
 				return string.Empty;
@@ -278,6 +287,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case ColumnSize.CustomAttributeType:
 			case ColumnSize.ResolutionScope:
 			case ColumnSize.TypeOrMethodDef:
+			case ColumnSize.HasCustomDebugInformation:
 				return true;
 
 			case ColumnSize.Byte:
@@ -1092,6 +1102,54 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 	sealed class GenericParamConstraintMetaDataTableRecordVM : MetaDataTableRecordVM {
 		public GenericParamConstraintMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
+		}
+	}
+
+	sealed class DocumentMetaDataTableRecordVM : MetaDataTableRecordVM {
+		public DocumentMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
+		}
+	}
+
+	sealed class MethodDebugInformationMetaDataTableRecordVM : MetaDataTableRecordVM {
+		public MethodDebugInformationMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
+		}
+	}
+
+	sealed class LocalScopeMetaDataTableRecordVM : MetaDataTableRecordVM {
+		public LocalScopeMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
+		}
+	}
+
+	sealed class LocalVariableMetaDataTableRecordVM : MetaDataTableRecordVM {
+		public LocalVariableMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
+		}
+	}
+
+	sealed class LocalConstantMetaDataTableRecordVM : MetaDataTableRecordVM {
+		public LocalConstantMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
+		}
+	}
+
+	sealed class ImportScopeMetaDataTableRecordVM : MetaDataTableRecordVM {
+		public ImportScopeMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
+		}
+	}
+
+	sealed class StateMachineMethodMetaDataTableRecordVM : MetaDataTableRecordVM {
+		public StateMachineMethodMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
+		}
+	}
+
+	sealed class CustomDebugInformationMetaDataTableRecordVM : MetaDataTableRecordVM {
+		public CustomDebugInformationMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}

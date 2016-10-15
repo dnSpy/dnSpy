@@ -72,6 +72,14 @@ namespace dnSpy.AsmEditor.Hex {
 			case Table.ExportedType:
 			case Table.ManifestResource:
 			case Table.MethodSpec:
+			case Table.Document:
+			case Table.MethodDebugInformation:
+			case Table.LocalScope:
+			case Table.LocalVariable:
+			case Table.LocalConstant:
+			case Table.ImportScope:
+			case Table.StateMachineMethod:
+			case Table.CustomDebugInformation:
 			default:
 				return false;
 			}

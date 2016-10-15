@@ -122,6 +122,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case Table.GenericParam:			return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 3 }, WriteGenericParamInfo);
 			case Table.MethodSpec:				return null;
 			case Table.GenericParamConstraint:	return null;
+			case Table.Document:				return null;
+			case Table.MethodDebugInformation:	return null;
+			case Table.LocalScope:				return null;
+			case Table.LocalVariable:			return null;
+			case Table.LocalConstant:			return null;
+			case Table.ImportScope:				return null;
+			case Table.StateMachineMethod:		return null;
+			case Table.CustomDebugInformation:	return null;
 			default:							throw new InvalidOperationException();
 			}
 		}
