@@ -300,6 +300,7 @@
     <Compile Include="Language\Intellisense\CompletionPresenterProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionSession.cs" />
     <Compile Include="Language\Intellisense\CompletionSessionCommandTargetFilter.cs" />
+    <Compile Include="Language\Intellisense\CompletionSuffixTextClassifier.cs" />
     <Compile Include="Language\Intellisense\CompletionTextConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProviderService.cs" />

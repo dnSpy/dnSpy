@@ -200,6 +200,7 @@
 		<color name="structurevisualizerlocalfunction" fg="#FF133856" />
 		<color name="structurevisualizerother" fg="#FF4C4C4C" />
 		<color name="completionmatchhighlight" bg="#FF773800" />
+		<color name="completionsuffix" fg="#DCDCDC" />
 		<color name="signaturehelpdocumentation" bold="true" />
 		<color name="signaturehelpcurrentparameter" bold="true" bg="#FF773800" />
 		<color name="signaturehelpparameter" bold="true" italic="true" />

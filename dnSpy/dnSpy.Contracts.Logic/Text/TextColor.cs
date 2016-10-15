@@ -227,6 +227,7 @@ namespace dnSpy.Contracts.Text {
 		StructureVisualizerLocalFunction,
 		StructureVisualizerOther,
 		CompletionMatchHighlight,
+		CompletionSuffix,
 		SignatureHelpDocumentation,
 		SignatureHelpCurrentParameter,
 		SignatureHelpParameter,
@@ -445,6 +446,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object StructureVisualizerLocalFunction = TextColor.StructureVisualizerLocalFunction;
 		public static readonly object StructureVisualizerOther = TextColor.StructureVisualizerOther;
 		public static readonly object CompletionMatchHighlight = TextColor.CompletionMatchHighlight;
+		public static readonly object CompletionSuffix = TextColor.CompletionSuffix;
 		public static readonly object SignatureHelpDocumentation = TextColor.SignatureHelpDocumentation;
 		public static readonly object SignatureHelpCurrentParameter = TextColor.SignatureHelpCurrentParameter;
 		public static readonly object SignatureHelpParameter = TextColor.SignatureHelpParameter;
@@ -665,6 +667,7 @@ namespace dnSpy.Contracts.Text {
 			StructureVisualizerLocalFunction,
 			StructureVisualizerOther,
 			CompletionMatchHighlight,
+			CompletionSuffix,
 			SignatureHelpDocumentation,
 			SignatureHelpCurrentParameter,
 			SignatureHelpParameter,

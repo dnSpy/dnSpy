@@ -1056,6 +1056,11 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition CompletionMatchHighlightClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.CompletionSuffix)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition CompletionSuffixClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SignatureHelpDocumentation)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition SignatureHelpDocumentationClassificationTypeDefinition;
@@ -2889,6 +2894,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High)]
 		sealed class CompletionMatchHighlight : ThemeClassificationFormatDefinition {
 			CompletionMatchHighlight() : base(TextColor.CompletionMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.CompletionSuffix)]
+		[Name(ThemeClassificationTypeNameKeys.CompletionSuffix)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class CompletionSuffix : ThemeClassificationFormatDefinition {
+			CompletionSuffix() : base(TextColor.CompletionSuffix) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

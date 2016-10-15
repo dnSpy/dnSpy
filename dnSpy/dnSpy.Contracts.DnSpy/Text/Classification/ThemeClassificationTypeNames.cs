@@ -1033,6 +1033,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string CompletionMatchHighlight = "Theme-" + nameof(CompletionMatchHighlight);
 
 		/// <summary>
+		/// <see cref="TextColor.CompletionSuffix"/>
+		/// </summary>
+		public const string CompletionSuffix = "Theme-" + nameof(CompletionSuffix);
+
+		/// <summary>
 		/// <see cref="TextColor.SignatureHelpDocumentation"/>
 		/// </summary>
 		public const string SignatureHelpDocumentation = "sighelp-documentation";

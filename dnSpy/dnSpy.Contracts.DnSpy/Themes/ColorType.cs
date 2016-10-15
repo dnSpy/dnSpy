@@ -225,6 +225,7 @@ namespace dnSpy.Contracts.Themes {
 		StructureVisualizerLocalFunction,
 		StructureVisualizerOther,
 		CompletionMatchHighlight,
+		CompletionSuffix,
 		SignatureHelpDocumentation,
 		SignatureHelpCurrentParameter,
 		SignatureHelpParameter,

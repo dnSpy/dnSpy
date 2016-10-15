@@ -232,6 +232,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerLocalFunction),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.StructureVisualizerOther),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CompletionMatchHighlight),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CompletionSuffix),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpDocumentation),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpCurrentParameter),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameter),

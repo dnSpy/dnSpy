@@ -1888,6 +1888,7 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.StructureVisualizerLocalFunction, "Structure Visualizer Local Function"),
 			new BrushColorInfo(ColorType.StructureVisualizerOther, "Structure Visualizer Other"),
 			new BrushColorInfo(ColorType.CompletionMatchHighlight, "Completion Match Highlight"),
+			new BrushColorInfo(ColorType.CompletionSuffix, "Completion Suffix"),
 			new BrushColorInfo(ColorType.SignatureHelpDocumentation, "Signature Help Documentation"),
 			new BrushColorInfo(ColorType.SignatureHelpCurrentParameter, "Signature Help Current Parameter"),
 			new BrushColorInfo(ColorType.SignatureHelpParameter, "Signature Help Parameter"),
