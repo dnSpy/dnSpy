@@ -50,7 +50,7 @@ namespace dnSpy.Controls {
 		}
 
 		public static FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, List<TextClassificationTag> tagsList, bool useNewFormatter, bool useEllipsis = false, bool filterOutNewLines = true, TextWrapping textWrapping = TextWrapping.NoWrap) {
-			if (tagsList != null && tagsList.Count != 0) {
+			if (tagsList.Count != 0) {
 				if (!useEllipsis && filterOutNewLines) {
 					return new FastTextBlock(useNewFormatter, new TextSrc {
 						text = ToString(text, filterOutNewLines),

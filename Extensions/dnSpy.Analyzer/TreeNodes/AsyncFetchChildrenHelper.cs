@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.ObjectModel;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
@@ -66,12 +65,20 @@ namespace dnSpy.Analyzer.TreeNodes {
 				this.context = context;
 			}
 
+			static class Cache {
+				static readonly TreeViewTextColorWriter writer = new TreeViewTextColorWriter();
+				public static TreeViewTextColorWriter GetWriter() => writer;
+				public static void FreeWriter(TreeViewTextColorWriter writer) { writer.Clear(); }
+			}
+
 			public override object Text {
 				get {
-					var writer = new TreeViewTextColorWriter();
+					var writer = Cache.GetWriter();
 					writer.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.Searching);
-					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colors: new ReadOnlyCollection<SpanData<object>>(writer.Colors), colorize: context.SyntaxHighlight);
-					return context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, filterOutNewLines: true, useNewFormatter: context.UseNewRenderer);
+					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colors: writer.ReadOnlyColors, colorize: context.SyntaxHighlight);
+					var elem = context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, filterOutNewLines: true, useNewFormatter: context.UseNewRenderer);
+					Cache.FreeWriter(writer);
+					return elem;
 				}
 			}
 		}

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -38,16 +37,23 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public sealed override ImageReference Icon => GetIcon(this.Context.DotNetImageService);
 		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.DotNetImageService);
 
+		static class Cache {
+			static readonly TreeViewTextColorWriter writer = new TreeViewTextColorWriter();
+			public static TreeViewTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TreeViewTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public sealed override object Text {
 			get {
 				var cached = cachedText?.Target;
 				if (cached != null)
 					return cached;
 
-				var writer = new TreeViewTextColorWriter();
+				var writer = Cache.GetWriter();
 				Write(writer, Context.Decompiler);
-				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.TreeView, this, isToolTip: false, colors: new ReadOnlyCollection<SpanData<object>>(writer.Colors), colorize: Context.SyntaxHighlight);
+				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.TreeView, this, isToolTip: false, colors: writer.ReadOnlyColors, colorize: Context.SyntaxHighlight);
 				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, filterOutNewLines: true, useNewFormatter: Context.UseNewRenderer);
+				Cache.FreeWriter(writer);
 				cachedText = new WeakReference(elem);
 				return elem;
 			}

@@ -68,7 +68,7 @@ namespace dnSpy.TreeView.Text {
 				toAggregator.Add(ct, aggregator = textClassifierAggregatorService.Create(ct));
 			try {
 				tagsList.AddRange(aggregator.GetTags(context));
-				return TextElementFactory.Create(classificationFormatMap, context.Text, context.Colorize ? tagsList : null, useNewFormatter: useNewFormatter, filterOutNewLines: filterOutNewLines);
+				return TextElementFactory.Create(classificationFormatMap, context.Text, tagsList, useNewFormatter: useNewFormatter, filterOutNewLines: filterOutNewLines);
 			}
 			finally {
 				tagsList.Clear();
