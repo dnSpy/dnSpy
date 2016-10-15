@@ -163,6 +163,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void AddUIElement(Func<UIElement> createElement) {
 			if (createElement == null)
 				throw new ArgumentNullException(nameof(createElement));
+			if (addIndent)
+				AddIndent();
 			canBeCached = false;
 			AddCustomData(DocumentViewerUIElementConstants.CustomDataId, new DocumentViewerUIElement(NextPosition, createElement));
 		}

@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Text;
@@ -61,27 +60,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public DocumentViewerUIElementCollection(DocumentViewerUIElement[] elements) {
 			if (elements == null)
 				throw new ArgumentNullException(nameof(elements));
-			// Most of the time it's already sorted, and if it isn't, use OrderBy and not Array.Sort
-			// because we want a stable sort.
-			this.elements = IsSorted(elements) ? elements : elements.OrderBy(a => a, DocumentViewerUIElementComparer.Instance).ToArray();
-		}
-
-		sealed class DocumentViewerUIElementComparer : IComparer<DocumentViewerUIElement> {
-			public static readonly DocumentViewerUIElementComparer Instance = new DocumentViewerUIElementComparer();
-			public int Compare(DocumentViewerUIElement x, DocumentViewerUIElement y) => x.Position - y.Position;
-		}
-
-		static bool IsSorted(DocumentViewerUIElement[] elements) {
-			if (elements.Length <= 1)
-				return true;
-			int prevPosition = elements[0].Position;
-			for (int i = 1; i < elements.Length; i++) {
-				int position = elements[i].Position;
-				if (prevPosition > position)
-					return false;
-				prevPosition = position;
-			}
-			return true;
+			this.elements = elements;
 		}
 
 		public int GetStartIndex(int position) {
