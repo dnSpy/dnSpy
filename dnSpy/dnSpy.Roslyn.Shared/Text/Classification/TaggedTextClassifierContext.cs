@@ -32,11 +32,6 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// </summary>
 		public ImmutableArray<TaggedText> TaggedParts { get; }
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="text">Text to classify</param>
-		/// <param name="taggedParts">Tagged parts</param>
 		TaggedTextClassifierContext(string text, ImmutableArray<TaggedText> taggedParts)
 			: base(text) {
 			TaggedParts = taggedParts.IsDefault ? ImmutableArray<TaggedText>.Empty : taggedParts;

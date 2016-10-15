@@ -18,13 +18,15 @@
 */
 
 using System;
+using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
-	/// <see cref="ICompletionClassifier"/> context
+	/// Completion classifier context
 	/// </summary>
-	public abstract class CompletionClassifierContext {
+	public abstract class CompletionClassifierContext : TextClassifierContext {
 		/// <summary>
 		/// Context kind
 		/// </summary>
@@ -41,26 +43,19 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		public Completion Completion { get; }
 
 		/// <summary>
-		/// Gets all text to classify
-		/// </summary>
-		public string Text { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="completionSet">Completion set</param>
 		/// <param name="completion">Completion to classify</param>
 		/// <param name="text">Text to classify</param>
-		protected CompletionClassifierContext(CompletionSet completionSet, Completion completion, string text) {
+		protected CompletionClassifierContext(CompletionSet completionSet, Completion completion, string text)
+			: base(text) {
 			if (completionSet == null)
 				throw new ArgumentNullException(nameof(completionSet));
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
 			CompletionSet = completionSet;
 			Completion = completion;
-			Text = text;
 		}
 	}
 }

@@ -27,6 +27,7 @@ using System.Windows.Controls;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -37,14 +38,14 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 	[Name(PredefinedUIElementProviderNames.RoslynCompletionToolTipProvider)]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class CompletionToolTipProvider : IUIElementProvider<Completion, ICompletionSession> {
+		readonly IContentType contentType;
 		readonly ITaggedTextElementProviderService taggedTextElementProviderService;
-		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		WeakReference lastAsyncToolTipContentWeakReference;
 
 		[ImportingConstructor]
-		CompletionToolTipProvider(ITaggedTextElementProviderService taggedTextElementProviderService, IThemeClassificationTypeService themeClassificationTypeService) {
+		CompletionToolTipProvider(IContentTypeRegistryService contentTypeRegistryService, ITaggedTextElementProviderService taggedTextElementProviderService) {
+			this.contentType = contentTypeRegistryService.GetContentType(RoslynContentTypes.CompletionToolTipRoslyn);
 			this.taggedTextElementProviderService = taggedTextElementProviderService;
-			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
 		public UIElement GetUIElement(Completion itemToRender, ICompletionSession context, UIElementType elementType) {
@@ -65,7 +66,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (roslynCollection == null)
 				return null;
 
-			var result = new AsyncToolTipContent(this, roslynCollection, roslynCompletion, context, taggedTextElementProviderService, themeClassificationTypeService);
+			var result = new AsyncToolTipContent(this, roslynCollection, roslynCompletion, context, taggedTextElementProviderService);
 			lastAsyncToolTipContentWeakReference = result.IsDisposed ? null : new WeakReference(result);
 			return result;
 		}
@@ -76,14 +77,12 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			readonly CompletionToolTipProvider owner;
 			readonly CancellationTokenSource cancellationTokenSource;
 			readonly ITaggedTextElementProviderService taggedTextElementProviderService;
-			readonly IThemeClassificationTypeService themeClassificationTypeService;
 
-			public AsyncToolTipContent(CompletionToolTipProvider owner, RoslynCompletionSet completionSet, RoslynCompletion completion, ICompletionSession session, ITaggedTextElementProviderService taggedTextElementProviderService, IThemeClassificationTypeService themeClassificationTypeService) {
+			public AsyncToolTipContent(CompletionToolTipProvider owner, RoslynCompletionSet completionSet, RoslynCompletion completion, ICompletionSession session, ITaggedTextElementProviderService taggedTextElementProviderService) {
 				this.owner = owner;
 				this.Session = session;
 				this.cancellationTokenSource = new CancellationTokenSource();
 				this.taggedTextElementProviderService = taggedTextElementProviderService;
-				this.themeClassificationTypeService = themeClassificationTypeService;
 				this.Session.Dismissed += Session_Dismissed;
 				Unloaded += AsyncToolTipContent_Unloaded;
 				GetDescriptionAsync(completionSet, completion, cancellationTokenSource.Token)
@@ -101,14 +100,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 					Content = CreateContent(description);
 			}
 
-			ITextClassifier[] GetClassifiers() =>
-				new ITextClassifier[] {
-					new TaggedTextClassifier(themeClassificationTypeService),
-					new HackTaggedTextClassifier(themeClassificationTypeService),
-				};
-
 			object CreateContent(CompletionDescription description) {
-				using (var elemProvider = taggedTextElementProviderService.Create(GetClassifiers(), AppearanceCategoryConstants.CodeCompletionToolTip))
+				using (var elemProvider = taggedTextElementProviderService.Create(owner.contentType, AppearanceCategoryConstants.CodeCompletionToolTip))
 					return elemProvider.Create(description.TaggedParts);
 			}
 

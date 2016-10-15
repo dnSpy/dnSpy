@@ -23,14 +23,13 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Language.Intellisense.Classification {
-	[Export(typeof(ICompletionClassifierProvider))]
-	[ContentType(ContentTypes.Any)]
-	sealed class FilterMatchCompletionClassifierProvider : ICompletionClassifierProvider {
+namespace dnSpy.Language.Intellisense {
+	[Export(typeof(ITextClassifierProvider))]
+	[ContentType(ContentTypes.CompletionDisplayText)]
+	sealed class FilterMatchCompletionClassifierProvider : ITextClassifierProvider {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
@@ -38,30 +37,27 @@ namespace dnSpy.Language.Intellisense.Classification {
 			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public ICompletionClassifier Create(CompletionSet completionSet) => new FilterMatchCompletionClassifier(themeClassificationTypeService, completionSet);
+		public ITextClassifier Create(IContentType contentType) => new FilterMatchCompletionClassifier(themeClassificationTypeService);
 	}
 
-	sealed class FilterMatchCompletionClassifier : ICompletionClassifier {
-		readonly CompletionSet completionSet;
+	sealed class FilterMatchCompletionClassifier : ITextClassifier {
 		readonly IClassificationType completionMatchHighlightClassificationType;
 
-		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService, CompletionSet completionSet) {
+		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			if (completionSet == null)
-				throw new ArgumentNullException(nameof(completionSet));
 			this.completionMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.CompletionMatchHighlight);
-			this.completionSet = completionSet;
 		}
 
-		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
-			if (context.Kind != CompletionClassifierKind.DisplayText)
+		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
+			var completionContext = context as CompletionDisplayTextClassifierContext;
+			if (completionContext == null)
 				yield break;
-			var spans = completionSet.GetHighlightedSpansInDisplayText(context.Text);
+			var spans = completionContext.CompletionSet.GetHighlightedSpansInDisplayText(context.Text);
 			if (spans == null)
 				yield break;
 			foreach (var span in spans)
-				yield return new CompletionClassificationTag(span, completionMatchHighlightClassificationType);
+				yield return new TextClassificationTag(span, completionMatchHighlightClassificationType);
 		}
 	}
 }

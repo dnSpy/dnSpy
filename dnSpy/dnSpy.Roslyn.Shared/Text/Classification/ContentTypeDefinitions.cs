@@ -17,17 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text.Classification;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
-	interface ITaggedTextElementProviderService {
-		/// <summary>
-		/// Creates a <see cref="ITaggedTextElementProvider"/>
-		/// </summary>
-		/// <param name="contentType">Content type</param>
-		/// <param name="category">Category, eg. <see cref="AppearanceCategoryConstants.CodeCompletionToolTip"/></param>
-		/// <returns></returns>
-		ITaggedTextElementProvider Create(IContentType contentType, string category);
+	static class ContentTypeDefinitions {
+#pragma warning disable 0169
+		[Export]
+		[Name(RoslynContentTypes.RoslynTaggedText)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition RoslynTaggedText;
+#pragma warning restore 0169
 	}
 }

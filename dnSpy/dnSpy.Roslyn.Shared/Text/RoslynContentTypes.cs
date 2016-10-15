@@ -17,21 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.Language.Intellisense;
-
-namespace dnSpy.Contracts.Language.Intellisense.Classification {
-	/// <summary>
-	/// Classifies <see cref="Completion"/>s. Implement <see cref="IDisposable"/> if
-	/// your instance must be disposed.
-	/// </summary>
-	public interface ICompletionClassifier {
-		/// <summary>
-		/// Classifies a <see cref="Completion"/>
-		/// </summary>
-		/// <param name="context">Context</param>
-		/// <returns></returns>
-		IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context);
+namespace dnSpy.Roslyn.Shared.Text {
+	static class RoslynContentTypes {
+		public const string RoslynTaggedText = "RoslynTaggedText";
+		public const string CompletionItemTextRoslyn = "CompletionItemTextRoslyn";
+		public const string CompletionDisplayTextRoslyn = "CompletionDisplayTextRoslyn";
+		public const string CompletionSuffixRoslyn = "CompletionSuffixRoslyn";
+		public const string CompletionToolTipRoslyn = "CompletionToolTipRoslyn";
 	}
 }

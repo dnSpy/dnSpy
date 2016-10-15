@@ -18,6 +18,7 @@
 */
 
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>

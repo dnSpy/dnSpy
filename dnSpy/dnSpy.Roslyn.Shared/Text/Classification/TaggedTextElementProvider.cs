@@ -24,29 +24,30 @@ using System.Windows.Controls;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
 	sealed class TaggedTextElementProvider : ITaggedTextElementProvider {
-		readonly ITextClassifier classifier;
+		readonly ITextClassifierAggregator classifierAggregator;
 		readonly IClassificationFormatMap classificationFormatMap;
 
-		public TaggedTextElementProvider(ITextClassifierAggregatorService textClassifierAggregatorService, IClassificationFormatMap classificationFormatMap, ITextClassifier[] classifiers) {
+		public TaggedTextElementProvider(IContentType contentType, ITextClassifierAggregatorService textClassifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
+			if (contentType == null)
+				throw new ArgumentNullException(nameof(contentType));
 			if (textClassifierAggregatorService == null)
 				throw new ArgumentNullException(nameof(textClassifierAggregatorService));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (classifiers == null)
-				throw new ArgumentNullException(nameof(classifiers));
-			this.classifier = textClassifierAggregatorService.Create(classifiers);
+			this.classifierAggregator = textClassifierAggregatorService.Create(contentType);
 			this.classificationFormatMap = classificationFormatMap;
 		}
 
 		public TextBlock Create(ImmutableArray<TaggedText> taggedParts) {
 			var context = TaggedTextClassifierContext.Create(taggedParts);
 			return TextBlockFactory.Create(context.Text, classificationFormatMap.DefaultTextProperties,
-				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
+				classifierAggregator.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 
-		public void Dispose() => (classifier as IDisposable)?.Dispose();
+		public void Dispose() => classifierAggregator?.Dispose();
 	}
 }

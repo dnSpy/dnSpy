@@ -19,11 +19,27 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
+	[Export(typeof(ITextClassifierProvider))]
+	[ContentType(RoslynContentTypes.RoslynTaggedText)]
+	sealed class TaggedTextClassifierProvider : ITextClassifierProvider {
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
+
+		[ImportingConstructor]
+		TaggedTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
+			this.themeClassificationTypeService = themeClassificationTypeService;
+		}
+
+		public ITextClassifier Create(IContentType contentType) =>
+			new TaggedTextClassifier(themeClassificationTypeService);
+	}
+
 	sealed class TaggedTextClassifier : ITextClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
@@ -35,7 +51,6 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var tagContext = context as TaggedTextClassifierContext;
-			Debug.Assert(tagContext != null);
 			if (tagContext == null)
 				yield break;
 			int pos = 0;

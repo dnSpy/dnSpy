@@ -22,31 +22,38 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.Language.Intellisense.Classification;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionTextElementProvider : ICompletionTextElementProvider {
-		readonly ICompletionClassifierAggregatorService completionClassifierAggregatorService;
+		readonly ITextClassifierAggregatorService textClassifierAggregatorService;
 		readonly IClassificationFormatMap classificationFormatMap;
-		readonly Dictionary<CompletionSet, ICompletionClassifier> toClassifier;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly Dictionary<IContentType, ITextClassifier> toClassifier;
 
-		public CompletionTextElementProvider(ICompletionClassifierAggregatorService completionClassifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
-			if (completionClassifierAggregatorService == null)
-				throw new ArgumentNullException(nameof(completionClassifierAggregatorService));
+		public CompletionTextElementProvider(ITextClassifierAggregatorService textClassifierAggregatorService, IClassificationFormatMap classificationFormatMap, IContentTypeRegistryService contentTypeRegistryService) {
+			if (textClassifierAggregatorService == null)
+				throw new ArgumentNullException(nameof(textClassifierAggregatorService));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			this.completionClassifierAggregatorService = completionClassifierAggregatorService;
+			if (contentTypeRegistryService == null)
+				throw new ArgumentNullException(nameof(contentTypeRegistryService));
+			this.textClassifierAggregatorService = textClassifierAggregatorService;
 			this.classificationFormatMap = classificationFormatMap;
-			this.toClassifier = new Dictionary<CompletionSet, ICompletionClassifier>();
+			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.toClassifier = new Dictionary<IContentType, ITextClassifier>();
 		}
 
-		ICompletionClassifier GetCompletionClassifier(CompletionSet completionSet) {
-			ICompletionClassifier completionClassifier;
-			if (!toClassifier.TryGetValue(completionSet, out completionClassifier))
-				toClassifier.Add(completionSet, completionClassifier = completionClassifierAggregatorService.Create(completionSet));
+		ITextClassifier GetTextClassifier(IContentType contentType) {
+			ITextClassifier completionClassifier;
+			if (!toClassifier.TryGetValue(contentType, out completionClassifier))
+				toClassifier.Add(contentType, completionClassifier = textClassifierAggregatorService.Create(contentType));
 			return completionClassifier;
 		}
 
@@ -57,24 +64,29 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(completion));
 			Debug.Assert(completionSet.Completions.Contains(completion));
 
-			var classifier = GetCompletionClassifier(completionSet);
-
 			CompletionClassifierContext context;
+			string defaultContentType;
 			switch (kind) {
 			case CompletionClassifierKind.DisplayText:
 				var inputText = completionSet.ApplicableTo.GetText(completionSet.ApplicableTo.TextBuffer.CurrentSnapshot);
 				context = new CompletionDisplayTextClassifierContext(completionSet, completion, completion.DisplayText, inputText);
+				defaultContentType = ContentTypes.CompletionDisplayText;
 				break;
 
 			case CompletionClassifierKind.Suffix:
 				var suffix = (completion as Completion4)?.Suffix ?? string.Empty;
 				context = new CompletionSuffixClassifierContext(completionSet, completion, suffix);
+				defaultContentType = ContentTypes.CompletionSuffix;
 				break;
 
 			default:
 				throw new ArgumentOutOfRangeException(nameof(kind));
 			}
 
+			var contentType = (completionSet as ICompletionSetContentTypeProvider)?.GetContentType(contentTypeRegistryService, kind);
+			if (contentType == null)
+				contentType = contentTypeRegistryService.GetContentType(defaultContentType);
+			var classifier = GetTextClassifier(contentType);
 			return TextBlockFactory.Create(context.Text, classificationFormatMap.DefaultTextProperties,
 				classifier.GetTags(context).Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType))), TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}

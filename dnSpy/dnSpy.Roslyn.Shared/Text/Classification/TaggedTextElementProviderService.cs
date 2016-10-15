@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
 	[Export(typeof(ITaggedTextElementProviderService))]
@@ -34,12 +35,12 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 			this.classificationFormatMapService = classificationFormatMapService;
 		}
 
-		public ITaggedTextElementProvider Create(ITextClassifier[] classifiers, string category) {
-			if (classifiers == null)
-				throw new ArgumentNullException(nameof(classifiers));
+		public ITaggedTextElementProvider Create(IContentType contentType, string category) {
+			if (contentType == null)
+				throw new ArgumentNullException(nameof(contentType));
 			if (category == null)
 				throw new ArgumentNullException(nameof(category));
-			return new TaggedTextElementProvider(textClassifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(category), classifiers);
+			return new TaggedTextElementProvider(contentType, textClassifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(category));
 		}
 	}
 }

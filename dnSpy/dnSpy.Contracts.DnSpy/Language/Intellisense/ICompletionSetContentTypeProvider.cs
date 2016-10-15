@@ -17,21 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using dnSpy.Contracts.Language.Intellisense.Classification;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Contracts.Language.Intellisense.Classification {
+namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
-	/// Creates a <see cref="ICompletionClassifier"/> that aggregates and normalizes
-	/// all <see cref="ICompletionClassifier"/> contributions.
+	/// Can be implemented by a <see cref="CompletionSet"/> to return a content type that
+	/// should be used when classifying completion items
 	/// </summary>
-	public interface ICompletionClassifierAggregatorService {
+	public interface ICompletionSetContentTypeProvider {
 		/// <summary>
-		/// Creates a new <see cref="ICompletionClassifier"/>. The returned <see cref="ICompletionClassifier"/>
-		/// implements <see cref="IDisposable"/> and must be <see cref="IDisposable.Dispose"/>'d.
+		/// Returns the content type or null
 		/// </summary>
-		/// <param name="completionSet">Completion set</param>
+		/// <param name="contentTypeRegistryService">Content type registry service</param>
+		/// <param name="kind">Kind</param>
 		/// <returns></returns>
-		ICompletionClassifier Create(CompletionSet completionSet);
+		IContentType GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind);
 	}
 }

@@ -26,14 +26,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
-	sealed class RoslynCompletionSet : DsCompletionSet {
+	sealed class RoslynCompletionSet : DsCompletionSet, ICompletionSetContentTypeProvider {
 		readonly IMruCompletionService mruCompletionService;
 		readonly CompletionService completionService;
 		readonly ITextView textView;
@@ -185,6 +187,18 @@ matched:
 				return Task.FromResult<CompletionDescription>(null);
 
 			return completionService.GetDescriptionAsync(info.Value.Document, completion.CompletionItem, cancellationToken);
+		}
+
+		IContentType ICompletionSetContentTypeProvider.GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind) {
+			switch (kind) {
+			case CompletionClassifierKind.DisplayText:
+				return contentTypeRegistryService.GetContentType(RoslynContentTypes.CompletionDisplayTextRoslyn);
+			case CompletionClassifierKind.Suffix:
+				return contentTypeRegistryService.GetContentType(RoslynContentTypes.CompletionSuffixRoslyn);
+			default:
+				Debug.Fail($"Unknown kind: {kind}");
+				return null;
+			}
 		}
 	}
 }

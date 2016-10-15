@@ -20,23 +20,36 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Classification {
 	[Export(typeof(ITextClassifierAggregatorService))]
 	sealed class TextClassifierAggregatorService : ITextClassifierAggregatorService {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
+		readonly Lazy<ITextClassifierProvider, IContentTypeMetadata>[] textClassifierProviders;
 
 		[ImportingConstructor]
-		TextClassifierAggregatorService(IClassificationTypeRegistryService classificationTypeRegistryService) {
+		TextClassifierAggregatorService(IClassificationTypeRegistryService classificationTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextClassifierProvider, IContentTypeMetadata>> textClassifierProviders) {
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
+			this.textClassifierProviders = textClassifierProviders.ToArray();
 		}
 
-		public ITextClassifier Create(IEnumerable<ITextClassifier> textClassifiers) {
-			if (textClassifiers == null)
-				throw new ArgumentNullException(nameof(textClassifiers));
-			return new TextClassifierAggregator(classificationTypeRegistryService, textClassifiers);
+		public ITextClassifierAggregator Create(IContentType contentType) {
+			if (contentType == null)
+				throw new ArgumentNullException(nameof(contentType));
+			var list = new List<ITextClassifier>();
+			foreach (var lz in textClassifierProviders) {
+				if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
+					continue;
+				var classifier = lz.Value.Create(contentType);
+				if (classifier != null)
+					list.Add(classifier);
+			}
+			return new TextClassifierAggregator(classificationTypeRegistryService, list);
 		}
 	}
 }

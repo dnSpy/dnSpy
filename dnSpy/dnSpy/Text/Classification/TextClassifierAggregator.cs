@@ -29,7 +29,7 @@ namespace dnSpy.Text.Classification {
 	// The class is very similar to ClassifierAggregatorBase. In theory the code could be
 	// re-used but that would probably slow down ClassifierAggregatorBase which is used by
 	// the text editor code.
-	sealed class TextClassifierAggregator : ITextClassifier, IDisposable {
+	sealed class TextClassifierAggregator : ITextClassifierAggregator {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly ITextClassifier[] textClassifiers;
 

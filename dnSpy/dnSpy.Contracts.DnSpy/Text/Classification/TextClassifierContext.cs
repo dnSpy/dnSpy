@@ -18,12 +18,26 @@
 */
 
 using System;
+using System.Threading;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// <see cref="ITextClassifier"/> context
 	/// </summary>
-	public class TextClassifierContext {
+	public class TextClassifierContext : IPropertyOwner {
+		/// <summary>
+		/// Gets the properties
+		/// </summary>
+		public PropertyCollection Properties {
+			get {
+				if (properties == null)
+					Interlocked.CompareExchange(ref properties, new PropertyCollection(), null);
+				return properties;
+			}
+		}
+		PropertyCollection properties;
+
 		/// <summary>
 		/// Gets the text to classify
 		/// </summary>

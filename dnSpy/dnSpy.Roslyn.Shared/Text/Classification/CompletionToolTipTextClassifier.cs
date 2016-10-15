@@ -19,17 +19,32 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
-	sealed class HackTaggedTextClassifier : ITextClassifier {
+	[Export(typeof(ITextClassifierProvider))]
+	[ContentType(RoslynContentTypes.CompletionToolTipRoslyn)]
+	sealed class CompletionToolTipTextClassifierProvider : ITextClassifierProvider {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
-		public HackTaggedTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
+		[ImportingConstructor]
+		CompletionToolTipTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
+			this.themeClassificationTypeService = themeClassificationTypeService;
+		}
+
+		public ITextClassifier Create(IContentType contentType) =>
+			new CompletionToolTipTextClassifier(themeClassificationTypeService);
+	}
+
+	sealed class CompletionToolTipTextClassifier : ITextClassifier {
+		readonly IThemeClassificationTypeService themeClassificationTypeService;
+
+		public CompletionToolTipTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.themeClassificationTypeService = themeClassificationTypeService;
@@ -48,7 +63,6 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var tagContext = context as TaggedTextClassifierContext;
-			Debug.Assert(tagContext != null);
 			if (tagContext == null)
 				yield break;
 			if (tagContext.TaggedParts.Length == 0)

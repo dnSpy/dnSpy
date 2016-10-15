@@ -287,9 +287,6 @@
     <Compile Include="Images\ImageReferenceHelper.cs" />
     <Compile Include="Images\ImageService.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
-    <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregator.cs" />
-    <Compile Include="Language\Intellisense\Classification\CompletionClassifierAggregatorService.cs" />
-    <Compile Include="Language\Intellisense\Classification\FilterMatchCompletionClassifier.cs" />
     <Compile Include="Language\Intellisense\CollectionBooleanToVisibilityConverter.cs" />
     <Compile Include="Language\Intellisense\CompletionBroker.cs" />
     <Compile Include="Language\Intellisense\CompletionCollectionVM.cs" />
@@ -305,7 +302,9 @@
     <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionTextElementProviderService.cs" />
     <Compile Include="Language\Intellisense\CompletionVM.cs" />
+    <Compile Include="Language\Intellisense\ContentTypeDefinitions.cs" />
     <Compile Include="Language\Intellisense\CurrentLineSpaceReservationService.cs" />
+    <Compile Include="Language\Intellisense\FilterMatchCompletionClassifierProvider.cs" />
     <Compile Include="Language\Intellisense\FilterToolTipConverter.cs" />
     <Compile Include="Language\Intellisense\FilterVM.cs" />
     <Compile Include="Language\Intellisense\ICompletionTextElementProvider.cs" />

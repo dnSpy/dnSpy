@@ -308,14 +308,10 @@
     <Compile Include="Images\ImageSourceInfo.cs" />
     <Compile Include="Language\Intellisense\AcronymSearchHelpers.cs" />
     <Compile Include="Language\Intellisense\BestMatchSelector.cs" />
-    <Compile Include="Language\Intellisense\Classification\CompletionClassificationTag.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierContext.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionClassifierKind.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionDisplayTextClassifierContext.cs" />
     <Compile Include="Language\Intellisense\Classification\CompletionSuffixClassifierContext.cs" />
-    <Compile Include="Language\Intellisense\Classification\ICompletionClassifier.cs" />
-    <Compile Include="Language\Intellisense\Classification\ICompletionClassifierAggregatorService.cs" />
-    <Compile Include="Language\Intellisense\Classification\ICompletionClassifierProvider.cs" />
     <Compile Include="Language\Intellisense\CompletionConstants.cs" />
     <Compile Include="Language\Intellisense\CompletionExtensions.cs" />
     <Compile Include="Language\Intellisense\CompletionFilter.cs" />
@@ -323,6 +319,7 @@
     <Compile Include="Language\Intellisense\DsCompletionSet.cs" />
     <Compile Include="Language\Intellisense\FilteredCompletionCollection.cs" />
     <Compile Include="Language\Intellisense\ICompletionFilter.cs" />
+    <Compile Include="Language\Intellisense\ICompletionSetContentTypeProvider.cs" />
     <Compile Include="Language\Intellisense\IDsCompletion.cs" />
     <Compile Include="Language\Intellisense\IDsCompletionIcon.cs" />
     <Compile Include="Language\Intellisense\IImageMonikerService.cs" />
@@ -493,7 +490,9 @@
     <Compile Include="Text\Classification\AppearanceCategoryConstants.cs" />
     <Compile Include="Text\Classification\EditorFormatMapConstants.cs" />
     <Compile Include="Text\Classification\ITextClassifier.cs" />
+    <Compile Include="Text\Classification\ITextClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ITextClassifierAggregatorService.cs" />
+    <Compile Include="Text\Classification\ITextClassifierProvider.cs" />
     <Compile Include="Text\Classification\IThemeClassificationTypeService.cs" />
     <Compile Include="Text\Classification\IThemeFormatDefinition.cs" />
     <Compile Include="Text\Classification\LanguagePriority.cs" />

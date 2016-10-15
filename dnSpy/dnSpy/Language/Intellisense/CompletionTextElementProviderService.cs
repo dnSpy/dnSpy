@@ -19,22 +19,24 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	[Export(typeof(ICompletionTextElementProviderService))]
 	sealed class CompletionTextElementProviderService : ICompletionTextElementProviderService {
-		readonly Lazy<ICompletionClassifierAggregatorService> completionClassifierAggregatorService;
+		readonly Lazy<ITextClassifierAggregatorService> textClassifierAggregatorService;
 		readonly IClassificationFormatMapService classificationFormatMapService;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
 
 		[ImportingConstructor]
-		CompletionTextElementProviderService(Lazy<ICompletionClassifierAggregatorService> completionClassifierAggregatorService, IClassificationFormatMapService classificationFormatMapService) {
-			this.completionClassifierAggregatorService = completionClassifierAggregatorService;
+		CompletionTextElementProviderService(Lazy<ITextClassifierAggregatorService> textClassifierAggregatorService, IClassificationFormatMapService classificationFormatMapService, IContentTypeRegistryService contentTypeRegistryService) {
+			this.textClassifierAggregatorService = textClassifierAggregatorService;
 			this.classificationFormatMapService = classificationFormatMapService;
+			this.contentTypeRegistryService = contentTypeRegistryService;
 		}
 
-		public ICompletionTextElementProvider Create() => new CompletionTextElementProvider(completionClassifierAggregatorService.Value, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.CodeCompletion));
+		public ICompletionTextElementProvider Create() => new CompletionTextElementProvider(textClassifierAggregatorService.Value, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.CodeCompletion), contentTypeRegistryService);
 	}
 }

@@ -24,18 +24,18 @@ using System.Text;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
-using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
-	[Export(typeof(ICompletionClassifierProvider))]
-	[ContentType(ContentTypes.RoslynCode)]
-	sealed class CompletionClassifierProvider : ICompletionClassifierProvider {
+	[Export(typeof(ITextClassifierProvider))]
+	[ContentType(RoslynContentTypes.CompletionDisplayTextRoslyn)]
+	sealed class CompletionClassifierProvider : ITextClassifierProvider {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
@@ -43,10 +43,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public ICompletionClassifier Create(CompletionSet completionSet) => new CompletionClassifier(themeClassificationTypeService);
+		public ITextClassifier Create(IContentType contentType) => new CompletionClassifier(themeClassificationTypeService);
 	}
 
-	sealed class CompletionClassifier : ICompletionClassifier {
+	sealed class CompletionClassifier : ITextClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly IClassificationType punctuationClassificationType;
 		StringBuilder stringBuilder;
@@ -58,15 +58,14 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			this.punctuationClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Punctuation);
 		}
 
-		public IEnumerable<CompletionClassificationTag> GetTags(CompletionClassifierContext context) {
-			if (context.Kind != CompletionClassifierKind.DisplayText)
+		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
+			var completionContext = context as CompletionDisplayTextClassifierContext;
+			if (completionContext == null)
 				yield break;
-
-			var completion = context.Completion as RoslynCompletion;
+			var completion = completionContext.Completion as RoslynCompletion;
 			if (completion == null)
 				yield break;
-
-			var completionSet = context.CompletionSet as RoslynCompletionSet;
+			var completionSet = completionContext.CompletionSet as RoslynCompletionSet;
 			if (completionSet == null)
 				yield break;
 
@@ -81,24 +80,24 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 				// The common case is just an identifier, and in that case, the tag is correct
 				int punctIndex = text.IndexOfAny(punctuationChars, 0);
 				if (punctIndex < 0) {
-					yield return new CompletionClassificationTag(new Span(0, text.Length), themeClassificationTypeService.GetClassificationType(color));
+					yield return new TextClassificationTag(new Span(0, text.Length), themeClassificationTypeService.GetClassificationType(color));
 					yield break;
 				}
 
 				// Check for CLASS<> or METHOD()
 				if (punctIndex + 2 == text.Length && text.IndexOfAny(punctuationChars, punctIndex + 1) == punctIndex + 1) {
-					yield return new CompletionClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
-					yield return new CompletionClassificationTag(new Span(punctIndex, 2), punctuationClassificationType);
+					yield return new TextClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
+					yield return new TextClassificationTag(new Span(punctIndex, 2), punctuationClassificationType);
 					yield break;
 				}
 
 				// Check for Visual Basic generics special case
 				const string VBOf = "(Of …)";
 				if (text.Length - VBOf.Length == punctIndex && text.EndsWith(VBOf)) {
-					yield return new CompletionClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
-					yield return new CompletionClassificationTag(new Span(punctIndex, 1), punctuationClassificationType);
-					yield return new CompletionClassificationTag(new Span(punctIndex + 1, 2), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
-					yield return new CompletionClassificationTag(new Span(punctIndex + VBOf.Length - 1, 1), punctuationClassificationType);
+					yield return new TextClassificationTag(new Span(0, punctIndex), themeClassificationTypeService.GetClassificationType(color));
+					yield return new TextClassificationTag(new Span(punctIndex, 1), punctuationClassificationType);
+					yield return new TextClassificationTag(new Span(punctIndex + 1, 2), themeClassificationTypeService.GetClassificationType(TextColor.Keyword));
+					yield return new TextClassificationTag(new Span(punctIndex + VBOf.Length - 1, 1), punctuationClassificationType);
 					yield break;
 				}
 			}
@@ -115,18 +114,18 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 					if (part.Tag == TextTags.LineBreak)
 						break;
 					var color2 = TextTagsHelper.ToTextColor(part.Tag);
-					yield return new CompletionClassificationTag(new Span(pos, part.Text.Length), themeClassificationTypeService.GetClassificationType(color2));
+					yield return new TextClassificationTag(new Span(pos, part.Text.Length), themeClassificationTypeService.GetClassificationType(color2));
 					pos += part.Text.Length;
 				}
 				if (pos < text.Length) {
 					// The remaining text is unknown, just use the tag color
-					yield return new CompletionClassificationTag(Span.FromBounds(pos, text.Length), themeClassificationTypeService.GetClassificationType(color));
+					yield return new TextClassificationTag(Span.FromBounds(pos, text.Length), themeClassificationTypeService.GetClassificationType(color));
 				}
 				yield break;
 			}
 
 			// Give up, use the same color for all the text
-			yield return new CompletionClassificationTag(new Span(0, text.Length), themeClassificationTypeService.GetClassificationType(color));
+			yield return new TextClassificationTag(new Span(0, text.Length), themeClassificationTypeService.GetClassificationType(color));
 		}
 		static readonly char[] punctuationChars = new char[] {
 			'<', '>',

@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
@@ -26,11 +26,10 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// </summary>
 	public interface ITextClassifierAggregatorService {
 		/// <summary>
-		/// Creates a <see cref="ITextClassifier"/> aggregator. The returned <see cref="ITextClassifier"/>
-		/// implements <see cref="System.IDisposable"/> and must be <see cref="System.IDisposable.Dispose"/>'d.
+		/// Creates a <see cref="ITextClassifierAggregator"/>
 		/// </summary>
-		/// <param name="textClassifiers">Classifiers to use</param>
+		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		ITextClassifier Create(IEnumerable<ITextClassifier> textClassifiers);
+		ITextClassifierAggregator Create(IContentType contentType);
 	}
 }

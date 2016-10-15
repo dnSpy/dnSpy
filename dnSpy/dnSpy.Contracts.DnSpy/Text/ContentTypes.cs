@@ -150,11 +150,32 @@ namespace dnSpy.Contracts.Text {
 		public const string AboutDnSpy = "About dnSpy";
 
 		/// <summary>
+		/// Completion item text, base type of <see cref="CompletionDisplayText"/> and <see cref="CompletionSuffix"/>
+		/// but not <see cref="CompletionToolTip"/>
+		/// </summary>
+		public const string CompletionItemText = "CompletionItemText";
+
+		/// <summary>
+		/// Completion item's display text
+		/// </summary>
+		public const string CompletionDisplayText = "CompletionDisplayText";
+
+		/// <summary>
+		/// Completion item's suffix
+		/// </summary>
+		public const string CompletionSuffix = "CompletionSuffix";
+
+		/// <summary>
+		/// Completion item's tooltip
+		/// </summary>
+		public const string CompletionToolTip = "CompletionToolTip";
+
+		/// <summary>
 		/// Returns a content type or null if it's unknown
 		/// </summary>
 		/// <param name="extension">File extension, with or without the period</param>
 		/// <returns></returns>
-		public static string TryGetContentTypeStringByExtension(string extension) {
+		internal static string TryGetContentTypeStringByExtension(string extension) {
 			var comparer = StringComparer.InvariantCultureIgnoreCase;
 			if (comparer.Equals(extension, ".txt") || comparer.Equals(extension, "txt"))
 				return PlainText;

@@ -17,33 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Contracts.Language.Intellisense.Classification {
+namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// <see cref="Completion"/> classification tag
+	/// Creates <see cref="ITextClassifier"/>s. Export the instance with
+	/// at least one <see cref="ContentTypeAttribute"/>.
 	/// </summary>
-	public sealed class CompletionClassificationTag {
+	public interface ITextClassifierProvider {
 		/// <summary>
-		/// Gets the span
+		/// Creates a <see cref="ITextClassifier"/> or returns null
 		/// </summary>
-		public Span Span { get; }
-
-		/// <summary>
-		/// Gets the classification type
-		/// </summary>
-		public IClassificationType ClassificationType { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="span">Span</param>
-		/// <param name="classificationType">Classification type</param>
-		public CompletionClassificationTag(Span span, IClassificationType classificationType) {
-			Span = span;
-			ClassificationType = classificationType;
-		}
+		/// <param name="contentType">Content type</param>
+		/// <returns></returns>
+		ITextClassifier Create(IContentType contentType);
 	}
 }
