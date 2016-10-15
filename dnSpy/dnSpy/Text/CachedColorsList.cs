@@ -29,7 +29,7 @@ namespace dnSpy.Text {
 		public OffsetAndCachedColors Find(int docOffset) {
 			for (int i = 0; i < cachedColorsList.Count; i++) {
 				var info = cachedColorsList[(previousReturnedIndex + i) % cachedColorsList.Count];
-				if ((info.CachedColors.Length == 0 && info.Offset == docOffset) || (info.Offset <= docOffset && docOffset < info.Offset + info.CachedColors.Length)) {
+				if ((info.CachedColors.TextLength == 0 && info.Offset == docOffset) || (info.Offset <= docOffset && docOffset < info.Offset + info.CachedColors.TextLength)) {
 					previousReturnedIndex = i;
 					return info;
 				}
@@ -40,7 +40,7 @@ namespace dnSpy.Text {
 		int previousReturnedIndex;
 
 		public void Add(int offset, CachedTextColorsCollection cachedTextColorsCollection) {
-			Debug.Assert((cachedColorsList.Count == 0 && offset == 0) || (cachedColorsList.Count > 0 && cachedColorsList.Last().Offset + cachedColorsList.Last().CachedColors.Length <= offset));
+			Debug.Assert((cachedColorsList.Count == 0 && offset == 0) || (cachedColorsList.Count > 0 && cachedColorsList.Last().Offset + cachedColorsList.Last().CachedColors.TextLength <= offset));
 			cachedColorsList.Add(new OffsetAndCachedColors(offset, cachedTextColorsCollection));
 		}
 

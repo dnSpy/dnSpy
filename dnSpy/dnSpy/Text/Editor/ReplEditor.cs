@@ -201,7 +201,6 @@ namespace dnSpy.Text.Editor {
 				}
 				else {
 					Debug.Assert(scriptOutputCachedTextColorsCollection != null);
-					scriptOutputCachedTextColorsCollection?.Flush();
 					scriptOutputCachedTextColorsCollection = null;
 				}
 			}
@@ -424,7 +423,7 @@ namespace dnSpy.Text.Editor {
 				if (changedState.CancellationToken.IsCancellationRequested)
 					return;
 				var cachedColors = new CachedTextColorsCollectionBuilder(this, totalLength).Create(buf.Input, buf.ColorInfos);
-				Debug.Assert(cachedColors.Length == totalLength);
+				Debug.Assert(cachedColors.TextLength == totalLength);
 				if (currentDocVersion == docVersion)
 					cachedColorsList.AddOrUpdate(baseOffset, cachedColors);
 			}
@@ -541,7 +540,6 @@ namespace dnSpy.Text.Editor {
 					sb.Append(info.Text);
 					scriptOutputCachedTextColorsCollection?.Append(info.Color, info.Text);
 				}
-				scriptOutputCachedTextColorsCollection?.Flush();
 			}
 			RawAppend(sb.ToString());
 			MoveToEnd();
@@ -885,7 +883,6 @@ namespace dnSpy.Text.Editor {
 			if (cmdOffs < command.Length)
 				Append(owner.TextClassificationType, command, cmdOffs, command.Length - cmdOffs);
 
-			cachedTextColorsCollection.Finish();
 			return cachedTextColorsCollection;
 		}
 
@@ -901,7 +898,7 @@ namespace dnSpy.Text.Editor {
 					int nlLen = s[nlOffs] == '\r' && nlOffs + 1 < end && s[nlOffs + 1] == '\n' ? 2 : 1;
 					cachedTextColorsCollection.Append(color, s, so, nlOffs - so + nlLen);
 					so = nlOffs + nlLen;
-					if (cachedTextColorsCollection.Length < totalLength)
+					if (cachedTextColorsCollection.TextLength < totalLength)
 						cachedTextColorsCollection.Append(owner.ReplPrompt2ClassificationType, owner.SecondaryPrompt);
 				}
 				else {

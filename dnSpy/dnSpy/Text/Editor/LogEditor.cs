@@ -192,7 +192,6 @@ namespace dnSpy.Text.Editor {
 			if (sb.Length == 0)
 				return;
 
-			cachedTextColorsCollection.Flush();
 			RawAppend(sb.ToString());
 		}
 

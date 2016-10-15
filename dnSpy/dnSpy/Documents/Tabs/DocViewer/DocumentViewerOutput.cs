@@ -91,9 +91,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public void WriteLine() {
 			addIndent = true;
-			cachedTextColorsCollection.AppendLine();
-			stringBuilder.AppendLine();
-			Debug.Assert(stringBuilder.Length == cachedTextColorsCollection.Length);
+			cachedTextColorsCollection.Append(BoxedTextColor.Text, Environment.NewLine);
+			stringBuilder.Append(Environment.NewLine);
+			Debug.Assert(stringBuilder.Length == cachedTextColorsCollection.TextLength);
 		}
 
 		int GetIndentSize() => addIndent ? indentation : 0;// Tabs are used

@@ -24,13 +24,7 @@ namespace dnSpy.Text {
 	struct OffsetAndCachedColors {
 		public int Offset { get; }
 		public CachedTextColorsCollection CachedColors { get; }
-
-		static OffsetAndCachedColors() {
-			var coll = new CachedTextColorsCollection();
-			coll.Freeze();
-			Default = new OffsetAndCachedColors(0, coll);
-		}
-		public static readonly OffsetAndCachedColors Default;
+		public static readonly OffsetAndCachedColors Default = new OffsetAndCachedColors(0, CachedTextColorsCollection.Empty);
 
 		public OffsetAndCachedColors(int offset, CachedTextColorsCollection cachedColors) {
 			Offset = offset;
@@ -41,8 +35,5 @@ namespace dnSpy.Text {
 			Debug.Assert(CachedColors == Default.CachedColors || Offset <= docOffset);
 			return docOffset - Offset;
 		}
-
-		public bool FindByDocOffset(int docOffset, out int defaultTextLength, out object color, out int tokenLength) =>
-			CachedColors.Find(DocOffsetToRelativeOffset(docOffset), out defaultTextLength, out color, out tokenLength);
 	}
 }

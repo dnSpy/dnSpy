@@ -82,24 +82,26 @@ namespace dnSpy.Text {
 
 			var snapshot = spans[0].Snapshot;
 			foreach (var span in spans) {
-				int offs = span.Span.Start;
-				int end = span.Span.End;
+				var infoPart = cachedColorsList.Find(span.Span.Start);
+				int offs = infoPart.DocOffsetToRelativeOffset(span.Span.Start);
+				int end = infoPart.DocOffsetToRelativeOffset(span.Span.End);
 
-				var infoPart = cachedColorsList.Find(offs);
-				while (offs < end) {
-					int defaultTextLength, tokenLength;
-					object color;
-					if (!infoPart.FindByDocOffset(offs, out defaultTextLength, out color, out tokenLength))
-						yield break;
+				int index = infoPart.CachedColors.GetStartIndex(offs);
+				if (index < 0)
+					continue;
+				int count = infoPart.CachedColors.Count;
+				while (index < count) {
+					var info = infoPart.CachedColors[index];
+					if (info.Span.Start > end)
+						break;
 
-					if (tokenLength != 0) {
-						if (offs + defaultTextLength + tokenLength <= snapshot.Length) {
-							var ct = color as IClassificationType ?? ThemeClassificationTypeService.GetClassificationType(color as TextColor? ?? TextColor.Text);
-							yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, new Span(offs + defaultTextLength, tokenLength)), new ClassificationTag(ct));
-						}
-					}
+					var realSpan = new Span(span.Span.Start - offs + info.Span.Start, info.Span.Length);
+					if (realSpan.End > snapshot.Length)
+						break;
 
-					offs += defaultTextLength + tokenLength;
+					var ct = info.Data as IClassificationType ?? ThemeClassificationTypeService.GetClassificationType(info.Data as TextColor? ?? TextColor.Text);
+					yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, realSpan), new ClassificationTag(ct));
+					index++;
 				}
 			}
 		}

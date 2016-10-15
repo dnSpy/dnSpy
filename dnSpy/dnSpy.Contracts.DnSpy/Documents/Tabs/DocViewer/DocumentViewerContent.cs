@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>
 		/// Gets the colors
 		/// </summary>
-		public CachedTextColorsCollection ColorCollection { get; }
+		internal CachedTextColorsCollection ColorCollection { get; }
 
 		/// <summary>
 		/// Gets the references
@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="colorCollection">Colors</param>
 		/// <param name="referenceCollection">References</param>
 		/// <param name="customDataDict">Custom data dictionary</param>
-		public DocumentViewerContent(string text, CachedTextColorsCollection colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, Dictionary<string, object> customDataDict) {
+		internal DocumentViewerContent(string text, CachedTextColorsCollection colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, Dictionary<string, object> customDataDict) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (colorCollection == null)

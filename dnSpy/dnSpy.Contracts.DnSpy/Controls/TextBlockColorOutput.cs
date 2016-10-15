@@ -31,6 +31,7 @@ using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Themes;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Controls {
 	sealed class TextBlockColorOutput : ITextColorWriter {
@@ -49,10 +50,10 @@ namespace dnSpy.Contracts.Controls {
 		public void Write(object color, string text) {
 			cachedTextColorsCollection.Append(color, text);
 			sb.Append(text);
-			Debug.Assert(sb.Length == cachedTextColorsCollection.Length);
+			Debug.Assert(sb.Length == cachedTextColorsCollection.TextLength);
 		}
 
-		IEnumerable<Tuple<string, int>> GetLines(string s) {
+		IEnumerable<KeyValuePair<string, int>> GetLines(string s) {
 			var sb = new StringBuilder();
 			for (int offs = 0; offs < s.Length;) {
 				sb.Clear();
@@ -66,14 +67,13 @@ namespace dnSpy.Contracts.Controls {
 					nlLen = 2;
 				else
 					nlLen = 1;
-				yield return Tuple.Create(sb.ToString(), nlLen);
+				yield return new KeyValuePair<string, int>(sb.ToString(), nlLen);
 				offs += nlLen;
 			}
 		}
 
 		public FrameworkElement Create(bool useNewFormatter, bool useEllipsis, bool filterOutNewLines, TextWrapping textWrapping) {
 			var textBlockText = sb.ToString();
-			cachedTextColorsCollection.Finish();
 
 			if (!useEllipsis && filterOutNewLines) {
 				return new FastTextBlock(useNewFormatter, new TextSrc {
@@ -88,41 +88,27 @@ namespace dnSpy.Contracts.Controls {
 			foreach (var line in GetLines(textBlockText)) {
 				if (offs != 0 && !filterOutNewLines)
 					textBlock.Inlines.Add(new LineBreak());
-				int endOffs = offs + line.Item1.Length;
+				int endOffs = offs + line.Key.Length;
 				Debug.Assert(offs <= textBlockText.Length);
 
-				while (offs < endOffs) {
-					int defaultTextLength, tokenLength;
-					object color;
-					if (!cachedTextColorsCollection.Find(offs, out defaultTextLength, out color, out tokenLength)) {
-						Debug.Fail("Could not find token info");
-						break;
-					}
-
-					if (defaultTextLength != 0) {
-						var text = textBlockText.Substring(offs, defaultTextLength);
-						textBlock.Inlines.Add(text);
-					}
-					offs += defaultTextLength;
-
-					if (tokenLength != 0) {
-						var hlColor = GetTextColor(themeService.Theme, color);
-						var text = textBlockText.Substring(offs, tokenLength);
-						var elem = new Run(text);
-						if (hlColor.FontStyle != null)
-							elem.FontStyle = hlColor.FontStyle.Value;
-						if (hlColor.FontWeight != null)
-							elem.FontWeight = hlColor.FontWeight.Value;
-						if (hlColor.Foreground != null)
-							elem.Foreground = hlColor.Foreground;
-						if (hlColor.Background != null)
-							elem.Background = hlColor.Background;
-						textBlock.Inlines.Add(elem);
-					}
-					offs += tokenLength;
+				foreach (var spanData in GetColors(offs, endOffs)) {
+					var color = spanData.Data;
+					var hlColor = GetTextColor(themeService.Theme, color);
+					var text = textBlockText.Substring(offs, spanData.Span.Length);
+					var elem = new Run(text);
+					if (hlColor.FontStyle != null)
+						elem.FontStyle = hlColor.FontStyle.Value;
+					if (hlColor.FontWeight != null)
+						elem.FontWeight = hlColor.FontWeight.Value;
+					if (hlColor.Foreground != null)
+						elem.Foreground = hlColor.Foreground;
+					if (hlColor.Background != null)
+						elem.Background = hlColor.Background;
+					textBlock.Inlines.Add(elem);
+					offs += spanData.Span.Length;
 				}
 				Debug.Assert(offs == endOffs);
-				offs += line.Item2;
+				offs += line.Value;
 				Debug.Assert(offs <= textBlockText.Length);
 			}
 
@@ -130,6 +116,26 @@ namespace dnSpy.Contracts.Controls {
 				textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
 			textBlock.TextWrapping = textWrapping;
 			return textBlock;
+		}
+
+		IEnumerable<SpanData<object>> GetColors(int offs, int endOffs) {
+			var coll = cachedTextColorsCollection;
+			int index = coll.GetStartIndex(offs);
+			if (index < 0)
+				yield break;
+
+			int count = coll.Count;
+			while (index < count) {
+				var info = coll[index];
+				if (info.Span.Start > endOffs)
+					break;
+
+				int start = Math.Max(offs, info.Span.Start);
+				int end = Math.Min(endOffs, info.Span.End);
+				if (start < end)
+					yield return new SpanData<object>(VST.Span.FromBounds(start, end), info.Data);
+				index++;
+			}
 		}
 
 		static IThemeColor GetTextColor(ITheme theme, object data) =>
@@ -193,67 +199,57 @@ namespace dnSpy.Contracts.Controls {
 				};
 			}
 
-			Dictionary<int, TextRun> runs = new Dictionary<int, TextRun>();
 			public override TextRun GetTextRun(int textSourceCharacterIndex) {
 				var index = textSourceCharacterIndex;
 
-				if (runs.ContainsKey(index)) {
-					var run = runs[index];
-					runs.Remove(index);
-					return run;
-				}
-
 				if (index >= text.Length)
 					return new TextEndOfParagraph(1);
+
 				char c = text[index];
 				if (c == '\r' || c == '\n' || c == '\u0085' || c == '\u2028' || c == '\u2029') {
 					int nlLen = c == '\r' && index + 1 < text.Length && text[index + 1] == '\n' ? 2 : 1;
 					return new TextEndOfParagraph(nlLen);
 				}
 
-				int defaultTextLength, tokenLength;
-				object color;
-				if (!cachedTextColorsCollection.Find(index, out defaultTextLength, out color, out tokenLength)) {
-					Debug.Fail("Could not find token info");
-					return new TextCharacters(" ", GetDefaultTextRunProperties());
+				int collIndex = cachedTextColorsCollection.GetStartIndex(index);
+				Debug.Assert(collIndex >= 0);
+				if (collIndex < 0)
+					return new TextCharacters(text.Substring(index), GetDefaultTextRunProperties());
+
+				var info = cachedTextColorsCollection[collIndex];
+				if (info.Span.End == index) {
+					Debug.Assert(collIndex + 1 < cachedTextColorsCollection.Count);
+					if (collIndex + 1 >= cachedTextColorsCollection.Count)
+						return new TextCharacters(text.Substring(index), GetDefaultTextRunProperties());
+					info = cachedTextColorsCollection[collIndex + 1];
 				}
 
-				TextCharacters defaultRun = null, tokenRun = null;
-				if (defaultTextLength != 0) {
-					var defaultText = text.Substring(index, defaultTextLength);
+				int startIndex = info.Span.Start;
+				int endIndex = info.Span.End;
 
-					defaultRun = new TextCharacters(defaultText, GetDefaultTextRunProperties());
-				}
-				index += defaultTextLength;
+				int nlIndex = text.IndexOfAny(newLineChars, index, endIndex - startIndex);
+				if (nlIndex > 0)
+					endIndex = nlIndex;
 
-				if (tokenLength != 0) {
-					var tc = GetTextColor(themeService.Theme, color);
-					var tokenText = text.Substring(index, tokenLength);
+				var tc = GetTextColor(themeService.Theme, info.Data);
+				var tokenText = text.Substring(index, endIndex - startIndex);
 
-					var textProps = new TextProps();
-					textProps.fontSize = TextElement.GetFontSize(parent);
+				var textProps = new TextProps();
+				textProps.fontSize = TextElement.GetFontSize(parent);
 
-					textProps.foreground = tc.Foreground ?? TextElement.GetForeground(parent);
-					textProps.background = tc.Background ?? (Brush)parent.GetValue(TextElement.BackgroundProperty);
+				textProps.foreground = tc.Foreground ?? TextElement.GetForeground(parent);
+				textProps.background = tc.Background ?? (Brush)parent.GetValue(TextElement.BackgroundProperty);
 
-					textProps.typeface = new Typeface(
-						TextElement.GetFontFamily(parent),
-						tc.FontStyle ?? TextElement.GetFontStyle(parent),
-						tc.FontWeight ?? TextElement.GetFontWeight(parent),
-						TextElement.GetFontStretch(parent)
-					);
+				textProps.typeface = new Typeface(
+					TextElement.GetFontFamily(parent),
+					tc.FontStyle ?? TextElement.GetFontStyle(parent),
+					tc.FontWeight ?? TextElement.GetFontWeight(parent),
+					TextElement.GetFontStretch(parent)
+				);
 
-					tokenRun = new TextCharacters(tokenText.Length == 0 ? " " : tokenText, textProps);
-				}
-
-				Debug.Assert(defaultRun != null || tokenRun != null);
-				if ((defaultRun != null) ^ (tokenRun != null))
-					return defaultRun ?? tokenRun;
-				else {
-					runs[index] = tokenRun;
-					return defaultRun;
-				}
+				return new TextCharacters(tokenText.Length == 0 ? " " : tokenText, textProps);
 			}
+			static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 		}
 	}
 }
