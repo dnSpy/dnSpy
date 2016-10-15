@@ -90,6 +90,7 @@
     <Compile Include="Controls\StackedContentState.cs" />
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
+    <Compile Include="Controls\TextElementFactory.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
     <Compile Include="Controls\WpfCommandService.cs" />
@@ -242,6 +243,7 @@
     <Compile Include="Documents\TreeView\AssemblyReferenceNode.cs" />
     <Compile Include="Documents\TreeView\BaseTypeFolderNode.cs" />
     <Compile Include="Documents\TreeView\BaseTypeNode.cs" />
+    <Compile Include="Documents\TreeView\ContentTypeDefinitions.cs" />
     <Compile Include="Documents\TreeView\DefaultDsDocumentNodeProvider.cs" />
     <Compile Include="Documents\TreeView\DerivedTypeNode.cs" />
     <Compile Include="Documents\TreeView\DerivedTypesFinder.cs" />
@@ -448,6 +450,8 @@
     </Compile>
     <Compile Include="Settings\Dialog\AppSettingsPageVM.cs" />
     <Compile Include="Settings\Dialog\AppSettingsService.cs" />
+    <Compile Include="Settings\Dialog\ContentTypeDefinitions.cs" />
+    <Compile Include="Settings\Dialog\ContextVM.cs" />
     <Compile Include="Settings\Dialog\SettingsAppCommandLineArgsHandler.cs" />
     <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
@@ -778,6 +782,9 @@
     <Compile Include="ToolWindows\ToolWindowServiceProvider.cs" />
     <Compile Include="TreeView\DsSharpTreeNode.cs" />
     <Compile Include="TreeView\SharpTreeNodeChildrenList.cs" />
+    <Compile Include="TreeView\Text\ContentTypeDefinitions.cs" />
+    <Compile Include="TreeView\Text\DefaultTextClassifier.cs" />
+    <Compile Include="TreeView\Text\TreeViewNodeTextElementProvider.cs" />
     <Compile Include="TreeView\TreeNodeDataImpl.cs" />
     <Compile Include="TreeView\TreeNodeImpl.cs" />
     <Compile Include="TreeView\TreeViewImpl.cs" />

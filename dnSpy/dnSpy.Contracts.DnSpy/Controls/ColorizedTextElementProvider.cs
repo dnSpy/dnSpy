@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,14 +67,17 @@ namespace dnSpy.Contracts.Controls {
 		static string ToString(string s, bool filterOutNewLines) {
 			if (!filterOutNewLines)
 				return s;
+			if (s.IndexOfAny(newLineChars) < 0)
+				return s;
 			var sb = new StringBuilder(s.Length);
 			foreach (var c in s) {
-				if (c == '\r' || c == '\n' || c == '\u0085' || c == '\u2028' || c == '\u2029')
+				if (Array.IndexOf(newLineChars, c) >= 0)
 					continue;
 				sb.Append(c);
 			}
 			return sb.ToString();
 		}
+		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
 		/// <summary>
 		/// Creates a <see cref="FrameworkElement"/> containing the resulting text

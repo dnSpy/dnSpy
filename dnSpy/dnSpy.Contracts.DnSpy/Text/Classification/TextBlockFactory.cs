@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Creates a <see cref="TextBlock"/>
 	/// </summary>
-	public static class TextBlockFactory {
+	internal static class TextBlockFactory {
 		/// <summary>
 		/// Flags
 		/// </summary>
@@ -155,7 +155,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Text properties and span
 	/// </summary>
-	public struct TextRunPropertiesAndSpan {
+	internal struct TextRunPropertiesAndSpan {
 		/// <summary>
 		/// Span
 		/// </summary>

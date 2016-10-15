@@ -18,14 +18,15 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	abstract class AnalyzerTreeNodeData : TreeNodeData, IAnalyzerTreeNodeData {
@@ -39,17 +40,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public sealed override object Text {
 			get {
-				var gen = ColorizedTextElementProvider.Create(Context.SyntaxHighlight);
-
 				var cached = cachedText?.Target;
 				if (cached != null)
 					return cached;
 
-				Write(gen.Output, Context.Decompiler);
-
-				var text = gen.CreateResultNewFormatter(Context.UseNewRenderer, filterOutNewLines: true);
-				cachedText = new WeakReference(text);
-				return text;
+				var writer = new TreeViewTextColorWriter();
+				Write(writer, Context.Decompiler);
+				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.TreeView, this, isToolTip: false, colors: new ReadOnlyCollection<SpanData<object>>(writer.Colors), colorize: Context.SyntaxHighlight);
+				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, filterOutNewLines: true, useNewFormatter: Context.UseNewRenderer);
+				cachedText = new WeakReference(elem);
+				return elem;
 			}
 		}
 		WeakReference cachedText;

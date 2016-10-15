@@ -37,6 +37,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.TreeView.Text;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Analyzer {
@@ -103,12 +104,13 @@ namespace dnSpy.Analyzer {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		AnalyzerService(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, ITreeViewService treeViewService, IMenuService menuService, IThemeService themeService, IAnalyzerSettings analyzerSettings, IDotNetImageService dotNetImageService, IDecompilerService decompilerService) {
+		AnalyzerService(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, ITreeViewService treeViewService, IMenuService menuService, IThemeService themeService, IAnalyzerSettings analyzerSettings, IDotNetImageService dotNetImageService, IDecompilerService decompilerService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
 			this.documentTabService = documentTabService;
 
 			this.context = new AnalyzerTreeNodeDataContext {
 				DotNetImageService = dotNetImageService,
 				Decompiler = decompilerService.Decompiler,
+				TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider,
 				DocumentService = documentTabService.DocumentTreeView.DocumentService,
 				ShowToken = analyzerSettings.ShowToken,
 				SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren,
@@ -122,6 +124,7 @@ namespace dnSpy.Analyzer {
 				TreeViewListener = this,
 			};
 			this.TreeView = treeViewService.Create(ANALYZER_TREEVIEW_GUID, options);
+			this.context.TreeView = this.TreeView;
 
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 			documentTabService.DocumentModified += DocumentTabService_FileModified;

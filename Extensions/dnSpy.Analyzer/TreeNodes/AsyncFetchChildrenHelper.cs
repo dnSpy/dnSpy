@@ -18,10 +18,13 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AsyncFetchChildrenHelper : AsyncNodeProvider {
@@ -52,15 +55,29 @@ namespace dnSpy.Analyzer.TreeNodes {
 		sealed class MessageNode : TreeNodeData {
 			public override Guid Guid => Guid.Empty;
 			public override ImageReference Icon => DsImages.Search;
-			public override object Text => dnSpy_Analyzer_Resources.Searching;
 			public override object ToolTip => null;
 			public override void OnRefreshUI() { }
 			public override ITreeNodeGroup TreeNodeGroup => treeNodeGroup;
 			readonly ITreeNodeGroup treeNodeGroup = new MessageNodeTreeNodeGroup();
+
+			readonly IAnalyzerTreeNodeDataContext context;
+
+			public MessageNode(IAnalyzerTreeNodeDataContext context) {
+				this.context = context;
+			}
+
+			public override object Text {
+				get {
+					var writer = new TreeViewTextColorWriter();
+					writer.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.Searching);
+					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colors: new ReadOnlyCollection<SpanData<object>>(writer.Colors), colorize: context.SyntaxHighlight);
+					return context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, filterOutNewLines: true, useNewFormatter: context.UseNewRenderer);
+				}
+			}
 		}
 
 		protected override void ThreadMethod() {
-			AddMessageNode(() => new MessageNode());
+			AddMessageNode(() => new MessageNode(node.Context));
 			foreach (var child in node.FetchChildrenInternal(cancellationToken))
 				AddNode(child);
 		}

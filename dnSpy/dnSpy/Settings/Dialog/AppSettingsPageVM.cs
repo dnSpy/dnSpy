@@ -19,15 +19,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Settings.Dialog {
 	sealed class AppSettingsPageVM : TreeNodeData {
 		public override Guid Guid => Guid.Empty;
-		public override object Text => Page.Title;
 		public override object ToolTip => null;
 		public override ImageReference Icon => Page.Icon;
 
@@ -37,11 +39,25 @@ namespace dnSpy.Settings.Dialog {
 		public object UIObject => uiObject ?? (uiObject = CreateUIObject());
 		object uiObject;
 
-		public AppSettingsPageVM(IAppSettingsPage page) {
+		public override object Text {
+			get {
+				var writer = new TreeViewTextColorWriter();
+				writer.Write(BoxedTextColor.Text, Page.Title);
+				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colors: new ReadOnlyCollection<SpanData<object>>(writer.Colors), colorize: true);
+				return context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAppSettings, filterOutNewLines: true, useNewFormatter: false);
+			}
+		}
+
+		readonly ContextVM context;
+
+		public AppSettingsPageVM(IAppSettingsPage page, ContextVM context) {
 			if (page == null)
 				throw new ArgumentNullException(nameof(page));
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
 			Page = page;
 			Children = new List<AppSettingsPageVM>();
+			this.context = context;
 		}
 
 		object CreateUIObject() {

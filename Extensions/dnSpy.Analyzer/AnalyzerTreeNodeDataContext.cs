@@ -21,11 +21,15 @@ using dnSpy.Analyzer.TreeNodes;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Analyzer {
 	sealed class AnalyzerTreeNodeDataContext : IAnalyzerTreeNodeDataContext {
 		public IDotNetImageService DotNetImageService { get; set; }
+		public ITreeView TreeView { get; set; }
 		public IDecompiler Decompiler { get; set; }
+		public ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; set; }
 		public IDsDocumentService DocumentService { get; set; }
 		public IAnalyzerService AnalyzerService { get; set; }
 		public bool ShowToken { get; set; }

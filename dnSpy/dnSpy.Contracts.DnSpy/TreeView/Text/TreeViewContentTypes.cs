@@ -17,26 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Language.Intellisense;
-
-namespace dnSpy.Contracts.Language.Intellisense.Classification {
+namespace dnSpy.Contracts.TreeView.Text {
 	/// <summary>
-	/// Context needed to classify <see cref="Completion.DisplayText"/>
+	/// Treeview content types
 	/// </summary>
-	public sealed class CompletionSuffixClassifierContext : CompletionClassifierContext {
+	public static class TreeViewContentTypes {
 		/// <summary>
-		/// Returns <see cref="CompletionClassifierKind.Suffix"/>
+		/// Treeview node
 		/// </summary>
-		public override CompletionClassifierKind Kind => CompletionClassifierKind.Suffix;
+		public const string TreeViewNode = nameof(TreeViewNode);
 
 		/// <summary>
-		/// Constructor
+		/// Application settings treeview node
 		/// </summary>
-		/// <param name="completionSet">Completion set</param>
-		/// <param name="completion">Completion to classify</param>
-		/// <param name="suffix">Text to classify</param>
-		public CompletionSuffixClassifierContext(CompletionSet completionSet, Completion completion, string suffix)
-			: base(completionSet, completion, suffix) {
-		}
+		public const string TreeViewNodeAppSettings = nameof(TreeViewNodeAppSettings);
+
+		/// <summary>
+		/// Assembly Explorer treeview node
+		/// </summary>
+		public const string TreeViewNodeAssemblyExplorer = nameof(TreeViewNodeAssemblyExplorer);
+
+		/// <summary>
+		/// Analyzer treeview node
+		/// </summary>
+		public const string TreeViewNodeAnalyzer = nameof(TreeViewNodeAnalyzer);
 	}
 }

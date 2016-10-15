@@ -232,7 +232,7 @@ namespace dnSpy.Documents.TreeView {
 			var b = y as IMessageNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
-			return StringComparer.OrdinalIgnoreCase.Compare(a.Text, b.Text);
+			return 0;
 		}
 	}
 

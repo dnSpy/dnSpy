@@ -19,6 +19,7 @@
 
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView.Resources;
+using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
@@ -44,6 +45,11 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Gets the filter
 		/// </summary>
 		IDocumentTreeNodeFilter Filter { get; }
+
+		/// <summary>
+		/// Gets the treeview node text element provider
+		/// </summary>
+		ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; }
 
 		/// <summary>
 		/// Filter version, gets incremented each time <see cref="Filter"/> gets updated

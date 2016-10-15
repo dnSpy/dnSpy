@@ -29,6 +29,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Resources;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Contracts.TreeView.Text;
 using dnSpy.Images;
 
 namespace dnSpy.Settings.Dialog {
@@ -37,16 +38,19 @@ namespace dnSpy.Settings.Dialog {
 		static readonly Guid rootGuid = Guid.Empty;
 		readonly IAppWindow appWindow;
 		readonly ITreeViewService treeViewService;
+		readonly ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider;
 		readonly Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>[] appSettingsPageContainers;
 		readonly Lazy<IAppSettingsPageProvider>[] appSettingsPageProviders;
 		readonly Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>[] appSettingsModifiedListeners;
 		Guid? lastSelectedGuid;
 		bool showingDialog;
+		ContextVM currentContextVM;
 
 		[ImportingConstructor]
-		AppSettingsService(IAppWindow appWindow, ITreeViewService treeViewService, [ImportMany] IEnumerable<Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>> appSettingsPageContainers, [ImportMany] IEnumerable<Lazy<IAppSettingsPageProvider>> appSettingsPageProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> appSettingsModifiedListeners) {
+		AppSettingsService(IAppWindow appWindow, ITreeViewService treeViewService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider, [ImportMany] IEnumerable<Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>> appSettingsPageContainers, [ImportMany] IEnumerable<Lazy<IAppSettingsPageProvider>> appSettingsPageProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> appSettingsModifiedListeners) {
 			this.appWindow = appWindow;
 			this.treeViewService = treeViewService;
+			this.treeViewNodeTextElementProvider = treeViewNodeTextElementProvider;
 			this.appSettingsPageContainers = appSettingsPageContainers.OrderBy(a => a.Metadata.Order).ToArray();
 			this.appSettingsPageProviders = appSettingsPageProviders.ToArray();
 			this.appSettingsModifiedListeners = appSettingsModifiedListeners.OrderBy(a => a.Metadata.Order).ToArray();
@@ -64,11 +68,16 @@ namespace dnSpy.Settings.Dialog {
 				ShowCore(guid, owner);
 			}
 			finally {
+				currentContextVM = null;
 				showingDialog = false;
 			}
 		}
 
 		void ShowCore(Guid? guid, Window owner) {
+			currentContextVM = new ContextVM {
+				TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider,
+			};
+
 			var allVMs = CreateSettingsPages();
 			Debug.Assert(allVMs.Any(a => a.Page.Guid == rootGuid));
 			var rootVM = CreateRootVM(allVMs);
@@ -76,6 +85,8 @@ namespace dnSpy.Settings.Dialog {
 				return;
 
 			var treeView = CreateTreeView(rootVM);
+
+			currentContextVM.TreeView = treeView;
 
 			if (guid == null)
 				guid = lastSelectedGuid;
@@ -171,10 +182,10 @@ namespace dnSpy.Settings.Dialog {
 		AppSettingsPageVM[] CreateSettingsPages() {
 			var dict = new Dictionary<Guid, AppSettingsPageVM>();
 
-			dict.Add(rootGuid, new AppSettingsPageVM(new AppSettingsPageContainer(string.Empty, 0, rootGuid, rootGuid, ImageReference.None)));
+			dict.Add(rootGuid, new AppSettingsPageVM(new AppSettingsPageContainer(string.Empty, 0, rootGuid, rootGuid, ImageReference.None), currentContextVM));
 
 			foreach (var lz in appSettingsPageContainers) {
-				var vm = TryCreate(lz.Value, lz.Metadata);
+				var vm = TryCreate(lz.Value, lz.Metadata, currentContextVM);
 				if (vm == null)
 					continue;
 				Debug.Assert(!dict.ContainsKey(vm.Page.Guid));
@@ -187,7 +198,7 @@ namespace dnSpy.Settings.Dialog {
 					Debug.Assert(page != null);
 					if (page == null)
 						continue;
-					var vm = new AppSettingsPageVM(page);
+					var vm = new AppSettingsPageVM(page, currentContextVM);
 					Debug.Assert(!dict.ContainsKey(vm.Page.Guid));
 					if (!dict.ContainsKey(vm.Page.Guid))
 						dict.Add(vm.Page.Guid, vm);
@@ -216,7 +227,7 @@ namespace dnSpy.Settings.Dialog {
 			void IAppSettingsPage.OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) { }
 		}
 
-		static AppSettingsPageVM TryCreate(object obj, IAppSettingsPageContainerMetadata md) {
+		static AppSettingsPageVM TryCreate(object obj, IAppSettingsPageContainerMetadata md, ContextVM context) {
 			Guid? guid = md.Guid == null ? null : TryParseGuid(md.Guid);
 			Debug.Assert(guid != null, "Invalid GUID");
 			if (guid == null)
@@ -232,7 +243,7 @@ namespace dnSpy.Settings.Dialog {
 
 			var title = ResourceHelper.GetString(obj, md.Title);
 			var icon = ImageReferenceHelper.GetImageReference(obj, md.Icon) ?? ImageReference.None;
-			return new AppSettingsPageVM(new AppSettingsPageContainer(title, md.Order, guid.Value, parentGuid.Value, icon));
+			return new AppSettingsPageVM(new AppSettingsPageContainer(title, md.Order, guid.Value, parentGuid.Value, icon), context);
 		}
 
 		static Guid? TryParseGuid(string guidString) {

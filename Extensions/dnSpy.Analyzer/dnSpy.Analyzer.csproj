@@ -49,6 +49,7 @@
     <Compile Include="AnalyzerToolWindowContent.cs" />
     <Compile Include="AnalyzerTreeNodeDataContext.cs" />
     <Compile Include="Commands.cs" />
+    <Compile Include="ContentTypeDefinitions.cs" />
     <Compile Include="Properties\dnSpy.Analyzer.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

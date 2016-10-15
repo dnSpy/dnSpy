@@ -20,6 +20,7 @@
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
+using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Documents.TreeView {
 	sealed class DocumentTreeNodeDataContext : IDocumentTreeNodeDataContext {
@@ -27,6 +28,7 @@ namespace dnSpy.Documents.TreeView {
 		public IDecompiler Decompiler { get; internal set; }
 		public IResourceNodeFactory ResourceNodeFactory { get; private set; }
 		public IDocumentTreeNodeFilter Filter { get; private set; }
+		public ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; private set; }
 		public int FilterVersion { get; set; }
 		public bool SyntaxHighlight { get; internal set; }
 		public bool SingleClickExpandsChildren { get; internal set; }
@@ -37,10 +39,11 @@ namespace dnSpy.Documents.TreeView {
 		public bool DeserializeResources { get; internal set; }
 		public bool CanDragAndDrop { get; set; }
 
-		public DocumentTreeNodeDataContext(IDocumentTreeView documentTreeView, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeFilter filter) {
+		public DocumentTreeNodeDataContext(IDocumentTreeView documentTreeView, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeFilter filter, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
 			this.DocumentTreeView = documentTreeView;
 			this.ResourceNodeFactory = resourceNodeFactory;
 			this.Filter = filter;
+			this.TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider;
 			this.FilterVersion = 1;
 			this.CanDragAndDrop = true;
 		}
@@ -50,6 +53,7 @@ namespace dnSpy.Documents.TreeView {
 			this.Decompiler = null;
 			this.ResourceNodeFactory = null;
 			this.Filter = null;
+			this.TreeViewNodeTextElementProvider = null;
 		}
 	}
 }

@@ -612,6 +612,10 @@
     <Compile Include="TreeView\ITreeView.cs" />
     <Compile Include="TreeView\ITreeViewListener.cs" />
     <Compile Include="TreeView\ITreeViewService.cs" />
+    <Compile Include="TreeView\Text\ITreeViewNodeTextElementProvider.cs" />
+    <Compile Include="TreeView\Text\TreeViewContentTypes.cs" />
+    <Compile Include="TreeView\Text\TreeViewNodeClassifierContext.cs" />
+    <Compile Include="TreeView\Text\TreeViewTextColorWriter.cs" />
     <Compile Include="TreeView\TreeNodeData.cs" />
     <Compile Include="TreeView\TreeNodeDataProviderContext.cs" />
     <Compile Include="TreeView\TreeViewConstants.cs" />

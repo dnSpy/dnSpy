@@ -17,23 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Images;
-using dnSpy.Contracts.TreeView;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.TreeView.Text;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Analyzer.TreeNodes {
-	interface IAnalyzerTreeNodeDataContext {
-		bool UseNewRenderer { get; }
-		bool SingleClickExpandsChildren { get; }
-		bool SyntaxHighlight { get; }
-		bool ShowToken { get; }
-		ITreeView TreeView { get; }
-		IDecompiler Decompiler { get; }
-		ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; }
-		IDotNetImageService DotNetImageService { get; }
-		IDsDocumentService DocumentService { get; }
-		IAnalyzerService AnalyzerService { get; }
+namespace dnSpy.Settings.Dialog {
+	static class ContentTypeDefinitions {
+#pragma warning disable 0169
+		[Export]
+		[Name(TreeViewContentTypes.TreeViewNodeAppSettings)]
+		[BaseDefinition(TreeViewContentTypes.TreeViewNode)]
+		static readonly ContentTypeDefinition TreeViewNodeAppSettings;
+#pragma warning restore 0169
 	}
 }
