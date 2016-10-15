@@ -44,6 +44,6 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ITextColorWriter output) =>
-			output.Write(BoxedTextColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_DOSHeader);
+			output.Write(BoxedTextColor.HexPeDosHeader, dnSpy_AsmEditor_Resources.HexNode_DOSHeader);
 	}
 }

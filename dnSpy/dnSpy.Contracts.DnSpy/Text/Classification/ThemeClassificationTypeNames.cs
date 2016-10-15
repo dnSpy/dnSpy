@@ -1061,5 +1061,75 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.Url"/>
 		/// </summary>
 		public const string Url = "url";
+
+		/// <summary>
+		/// <see cref="TextColor.HexPeDosHeader"/>
+		/// </summary>
+		public const string HexPeDosHeader = "Theme-" + nameof(HexPeDosHeader);
+
+		/// <summary>
+		/// <see cref="TextColor.HexPeFileHeader"/>
+		/// </summary>
+		public const string HexPeFileHeader = "Theme-" + nameof(HexPeFileHeader);
+
+		/// <summary>
+		/// <see cref="TextColor.HexPeOptionalHeader32"/>
+		/// </summary>
+		public const string HexPeOptionalHeader32 = "Theme-" + nameof(HexPeOptionalHeader32);
+
+		/// <summary>
+		/// <see cref="TextColor.HexPeOptionalHeader64"/>
+		/// </summary>
+		public const string HexPeOptionalHeader64 = "Theme-" + nameof(HexPeOptionalHeader64);
+
+		/// <summary>
+		/// <see cref="TextColor.HexPeSection"/>
+		/// </summary>
+		public const string HexPeSection = "Theme-" + nameof(HexPeSection);
+
+		/// <summary>
+		/// <see cref="TextColor.HexPeSectionName"/>
+		/// </summary>
+		public const string HexPeSectionName = "Theme-" + nameof(HexPeSectionName);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCor20Header"/>
+		/// </summary>
+		public const string HexCor20Header = "Theme-" + nameof(HexCor20Header);
+
+		/// <summary>
+		/// <see cref="TextColor.HexStorageSignature"/>
+		/// </summary>
+		public const string HexStorageSignature = "Theme-" + nameof(HexStorageSignature);
+
+		/// <summary>
+		/// <see cref="TextColor.HexStorageHeader"/>
+		/// </summary>
+		public const string HexStorageHeader = "Theme-" + nameof(HexStorageHeader);
+
+		/// <summary>
+		/// <see cref="TextColor.HexStorageStream"/>
+		/// </summary>
+		public const string HexStorageStream = "Theme-" + nameof(HexStorageStream);
+
+		/// <summary>
+		/// <see cref="TextColor.HexStorageStreamName"/>
+		/// </summary>
+		public const string HexStorageStreamName = "Theme-" + nameof(HexStorageStreamName);
+
+		/// <summary>
+		/// <see cref="TextColor.HexStorageStreamNameInvalid"/>
+		/// </summary>
+		public const string HexStorageStreamNameInvalid = "Theme-" + nameof(HexStorageStreamNameInvalid);
+
+		/// <summary>
+		/// <see cref="TextColor.HexTablesStream"/>
+		/// </summary>
+		public const string HexTablesStream = "Theme-" + nameof(HexTablesStream);
+
+		/// <summary>
+		/// <see cref="TextColor.HexTableName"/>
+		/// </summary>
+		public const string HexTableName = "Theme-" + nameof(HexTableName);
 	}
 }

@@ -54,13 +54,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ITextColorWriter output) {
-			output.Write(BoxedTextColor.Keyword, dnSpy_AsmEditor_Resources.HexNode_PE_Section);
+			output.Write(BoxedTextColor.HexPeSection, dnSpy_AsmEditor_Resources.HexNode_PE_Section);
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "#");
 			output.Write(BoxedTextColor.Number, SectionNumber.ToString());
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Type, string.Format("{0}", imageSectionHeaderVM.NameVM.String));
+			output.Write(BoxedTextColor.HexPeSectionName, string.Format("{0}", imageSectionHeaderVM.NameVM.String));
 		}
 	}
 }

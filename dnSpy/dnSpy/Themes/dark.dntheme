@@ -206,6 +206,20 @@
 		<color name="signaturehelpparameter" bold="true" italic="true" />
 		<color name="signaturehelpparameterdocumentation" italic="true" />
 		<color name="url" fg="#FF569CD6" />
+		<color name="hexpedosheader" fg="#7FC9FF" />
+		<color name="hexpefileheader" fg="#7FC9FF" />
+		<color name="hexpeoptionalheader32" fg="#7FC9FF" />
+		<color name="hexpeoptionalheader64" fg="#7FC9FF" />
+		<color name="hexpesection" fg="#7FC9FF" />
+		<color name="hexpesectionname" fg="#D69D85" />
+		<color name="hexcor20header" fg="#7F92FF" />
+		<color name="hexstoragesignature" fg="#7F92FF" />
+		<color name="hexstorageheader" fg="#7F92FF" />
+		<color name="hexstoragestream" fg="#7F92FF" />
+		<color name="hexstoragestreamname" fg="#D69D85" />
+		<color name="hexstoragestreamnameinvalid" fg="#FF0000" />
+		<color name="hextablesstream" fg="#7F92FF" />
+		<color name="hextablename" fg="#D69D85" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

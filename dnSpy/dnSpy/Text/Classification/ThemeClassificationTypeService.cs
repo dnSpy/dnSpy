@@ -238,6 +238,20 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameter),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Url),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexPeDosHeader),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexPeFileHeader),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexPeOptionalHeader32),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexPeOptionalHeader64),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexPeSection),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexPeSectionName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexCor20Header),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexStorageSignature),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexStorageHeader),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexStorageStream),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexStorageStreamName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexStorageStreamNameInvalid),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexTablesStream),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexTableName),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

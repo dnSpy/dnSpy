@@ -233,6 +233,20 @@ namespace dnSpy.Contracts.Text {
 		SignatureHelpParameter,
 		SignatureHelpParameterDocumentation,
 		Url,
+		HexPeDosHeader,
+		HexPeFileHeader,
+		HexPeOptionalHeader32,
+		HexPeOptionalHeader64,
+		HexPeSection,
+		HexPeSectionName,
+		HexCor20Header,
+		HexStorageSignature,
+		HexStorageHeader,
+		HexStorageStream,
+		HexStorageStreamName,
+		HexStorageStreamNameInvalid,
+		HexTablesStream,
+		HexTableName,
 
 		/// <summary>
 		/// Must be last
@@ -452,6 +466,20 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object SignatureHelpParameter = TextColor.SignatureHelpParameter;
 		public static readonly object SignatureHelpParameterDocumentation = TextColor.SignatureHelpParameterDocumentation;
 		public static readonly object Url = TextColor.Url;
+		public static readonly object HexPeDosHeader = TextColor.HexPeDosHeader;
+		public static readonly object HexPeFileHeader = TextColor.HexPeFileHeader;
+		public static readonly object HexPeOptionalHeader32 = TextColor.HexPeOptionalHeader32;
+		public static readonly object HexPeOptionalHeader64 = TextColor.HexPeOptionalHeader64;
+		public static readonly object HexPeSection = TextColor.HexPeSection;
+		public static readonly object HexPeSectionName = TextColor.HexPeSectionName;
+		public static readonly object HexCor20Header = TextColor.HexCor20Header;
+		public static readonly object HexStorageSignature = TextColor.HexStorageSignature;
+		public static readonly object HexStorageHeader = TextColor.HexStorageHeader;
+		public static readonly object HexStorageStream = TextColor.HexStorageStream;
+		public static readonly object HexStorageStreamName = TextColor.HexStorageStreamName;
+		public static readonly object HexStorageStreamNameInvalid = TextColor.HexStorageStreamNameInvalid;
+		public static readonly object HexTablesStream = TextColor.HexTablesStream;
+		public static readonly object HexTableName = TextColor.HexTableName;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -673,6 +701,20 @@ namespace dnSpy.Contracts.Text {
 			SignatureHelpParameter,
 			SignatureHelpParameterDocumentation,
 			Url,
+			HexPeDosHeader,
+			HexPeFileHeader,
+			HexPeOptionalHeader32,
+			HexPeOptionalHeader64,
+			HexPeSection,
+			HexPeSectionName,
+			HexCor20Header,
+			HexStorageSignature,
+			HexStorageHeader,
+			HexStorageStream,
+			HexStorageStreamName,
+			HexStorageStreamNameInvalid,
+			HexTablesStream,
+			HexTableName,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

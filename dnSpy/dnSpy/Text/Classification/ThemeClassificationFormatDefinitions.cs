@@ -1084,6 +1084,76 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.Url)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition UrlClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexPeDosHeader)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexPeDosHeaderClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexPeFileHeader)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexPeFileHeaderClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexPeOptionalHeader32)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexPeOptionalHeader32ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexPeOptionalHeader64)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexPeOptionalHeader64ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexPeSection)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexPeSectionClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexPeSectionName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexPeSectionNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCor20Header)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCor20HeaderClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexStorageSignature)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexStorageSignatureClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexStorageHeader)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexStorageHeaderClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexStorageStream)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexStorageStreamClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexStorageStreamName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexStorageStreamNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexStorageStreamNameInvalid)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexStorageStreamNameInvalidClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexTablesStream)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexTablesStreamClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexTableName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexTableNameClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2950,6 +3020,132 @@ namespace dnSpy.Text.Classification {
 			Url() : base(TextColor.Url) {
 				TextDecorations = System.Windows.TextDecorations.Underline;
 			}
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexPeDosHeader)]
+		[Name(ThemeClassificationTypeNameKeys.HexPeDosHeader)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexPeDosHeader : ThemeClassificationFormatDefinition {
+			HexPeDosHeader() : base(TextColor.HexPeDosHeader) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexPeFileHeader)]
+		[Name(ThemeClassificationTypeNameKeys.HexPeFileHeader)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexPeFileHeader : ThemeClassificationFormatDefinition {
+			HexPeFileHeader() : base(TextColor.HexPeFileHeader) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexPeOptionalHeader32)]
+		[Name(ThemeClassificationTypeNameKeys.HexPeOptionalHeader32)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexPeOptionalHeader32 : ThemeClassificationFormatDefinition {
+			HexPeOptionalHeader32() : base(TextColor.HexPeOptionalHeader32) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexPeOptionalHeader64)]
+		[Name(ThemeClassificationTypeNameKeys.HexPeOptionalHeader64)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexPeOptionalHeader64 : ThemeClassificationFormatDefinition {
+			HexPeOptionalHeader64() : base(TextColor.HexPeOptionalHeader64) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexPeSection)]
+		[Name(ThemeClassificationTypeNameKeys.HexPeSection)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexPeSection : ThemeClassificationFormatDefinition {
+			HexPeSection() : base(TextColor.HexPeSection) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexPeSectionName)]
+		[Name(ThemeClassificationTypeNameKeys.HexPeSectionName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexPeSectionName : ThemeClassificationFormatDefinition {
+			HexPeSectionName() : base(TextColor.HexPeSectionName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCor20Header)]
+		[Name(ThemeClassificationTypeNameKeys.HexCor20Header)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexCor20Header : ThemeClassificationFormatDefinition {
+			HexCor20Header() : base(TextColor.HexCor20Header) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexStorageSignature)]
+		[Name(ThemeClassificationTypeNameKeys.HexStorageSignature)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexStorageSignature : ThemeClassificationFormatDefinition {
+			HexStorageSignature() : base(TextColor.HexStorageSignature) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexStorageHeader)]
+		[Name(ThemeClassificationTypeNameKeys.HexStorageHeader)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexStorageHeader : ThemeClassificationFormatDefinition {
+			HexStorageHeader() : base(TextColor.HexStorageHeader) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexStorageStream)]
+		[Name(ThemeClassificationTypeNameKeys.HexStorageStream)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexStorageStream : ThemeClassificationFormatDefinition {
+			HexStorageStream() : base(TextColor.HexStorageStream) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexStorageStreamName)]
+		[Name(ThemeClassificationTypeNameKeys.HexStorageStreamName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexStorageStreamName : ThemeClassificationFormatDefinition {
+			HexStorageStreamName() : base(TextColor.HexStorageStreamName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexStorageStreamNameInvalid)]
+		[Name(ThemeClassificationTypeNameKeys.HexStorageStreamNameInvalid)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexStorageStreamNameInvalid : ThemeClassificationFormatDefinition {
+			HexStorageStreamNameInvalid() : base(TextColor.HexStorageStreamNameInvalid) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexTablesStream)]
+		[Name(ThemeClassificationTypeNameKeys.HexTablesStream)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexTablesStream : ThemeClassificationFormatDefinition {
+			HexTablesStream() : base(TextColor.HexTablesStream) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexTableName)]
+		[Name(ThemeClassificationTypeNameKeys.HexTableName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexTableName : ThemeClassificationFormatDefinition {
+			HexTableName() : base(TextColor.HexTableName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

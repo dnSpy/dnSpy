@@ -100,13 +100,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ITextColorWriter output) {
-			output.Write(BoxedTextColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageStream);
+			output.Write(BoxedTextColor.HexStorageStream, dnSpy_AsmEditor_Resources.HexNode_StorageStream);
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "#");
 			output.Write(BoxedTextColor.Number, StreamNumber.ToString());
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(StorageStreamType == StorageStreamType.None ? BoxedTextColor.Error : BoxedTextColor.Type, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
+			output.Write(StorageStreamType == StorageStreamType.None ? BoxedTextColor.HexStorageStreamNameInvalid : BoxedTextColor.HexStorageStreamName, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

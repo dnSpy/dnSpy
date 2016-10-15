@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		protected override void Write(ITextColorWriter output) {
 			output.Write(BoxedTextColor.Number, string.Format("{0:X2}", (byte)MetaDataTableVM.Table));
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Type, string.Format("{0}", MetaDataTableVM.Table));
+			output.Write(BoxedTextColor.HexTableName, string.Format("{0}", MetaDataTableVM.Table));
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, "(");
 			output.Write(BoxedTextColor.Number, string.Format("{0}", MetaDataTableVM.Rows));

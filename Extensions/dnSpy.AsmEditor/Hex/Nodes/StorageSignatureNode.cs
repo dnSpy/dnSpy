@@ -45,6 +45,6 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ITextColorWriter output) =>
-			output.Write(BoxedTextColor.InstanceField, dnSpy_AsmEditor_Resources.HexNode_StorageSignature);
+			output.Write(BoxedTextColor.HexStorageSignature, dnSpy_AsmEditor_Resources.HexNode_StorageSignature);
 	}
 }
