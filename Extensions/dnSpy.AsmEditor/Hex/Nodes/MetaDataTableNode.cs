@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.TableInfo = mdTable.TableInfo;
 			this.MetaDataTableVM = MetaDataTableVM.Create(this, doc, StartOffset, mdTable);
 			this.MetaDataTableVM.FindMetaDataTable = FindMetaDataTable;
-			this.MetaDataTableVM.InitializeHeapOffsets((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset - 1);
+			this.MetaDataTableVM.InitializeHeapOffsets((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset - 1, (ulong)md.GuidStream.StartOffset, (ulong)md.GuidStream.EndOffset - 1);
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;

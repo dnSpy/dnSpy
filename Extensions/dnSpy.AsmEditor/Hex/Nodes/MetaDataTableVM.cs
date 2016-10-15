@@ -76,6 +76,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		readonly HexDocument doc;
 		ulong stringsStartOffset;
 		ulong stringsEndOffset;
+		ulong guidStartOffset;
+		ulong guidEndOffset;
 
 		protected MetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(owner) {
@@ -245,9 +247,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public MetaDataTableRecordVM Get(int index) => Collection[index];
 		public MetaDataTableRecordVM TryGet(int index) => Collection.TryGet(index);
 
-		internal void InitializeHeapOffsets(ulong stringsStartOffset, ulong stringsEndOffset) {
+		internal void InitializeHeapOffsets(ulong stringsStartOffset, ulong stringsEndOffset, ulong guidStartOffset, ulong guidEndOffset) {
 			this.stringsStartOffset = stringsStartOffset;
 			this.stringsEndOffset = stringsEndOffset;
+			this.guidStartOffset = guidStartOffset;
+			this.guidEndOffset = guidEndOffset;
 		}
 
 		public string ReadStringsHeap(uint offset, uint maxLen = 0x200) {
@@ -269,6 +273,24 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 			var s = Encoding.UTF8.GetString(bytes.ToArray());
 			return tooLongString ? s + "..." : s;
+		}
+
+		public Guid? ReadGuidHeap(uint index) {
+			if (index == 0)
+				return null;
+			ulong offs = guidStartOffset + (index - 1) * 16;
+			var bytes = new byte[16];
+			int i = 0;
+			while (offs <= guidEndOffset) {
+				int b = doc.ReadByte(offs);
+				if (b < 0)
+					break;
+				bytes[i++] = (byte)b;
+				offs++;
+				if (i == 16)
+					return new Guid(bytes);
+			}
+			return null;
 		}
 	}
 

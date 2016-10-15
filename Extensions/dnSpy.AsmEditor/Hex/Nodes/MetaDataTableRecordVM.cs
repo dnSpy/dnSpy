@@ -140,7 +140,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case ColumnSize.UInt32: return "UInt32";
 
 			case ColumnSize.Strings: return GetStringsDescription(field);
-			case ColumnSize.GUID: return "#GUID Heap Index";
+			case ColumnSize.GUID: return GetGuidDescription(field);
 			case ColumnSize.Blob: return "#Blob Heap Offset";
 
 			case ColumnSize.TypeDefOrRef: return GetCodedTokenDescription(CodedToken.TypeDefOrRef, "TypeDefOrRef", col, field);
@@ -171,6 +171,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return s.Substring(1, s.Length - 2);
 		}
 
+		Guid? ReadGuidHeap(HexField field) => mdVM.ReadGuidHeap(ReadFieldValue(field));
+
 		MetaDataTableRecordVM GetMetaDataTableRecordVM(Table table, uint rid) {
 			if (rid == 0)
 				return null;
@@ -187,6 +189,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (!string.IsNullOrEmpty(s))
 				return string.Format("{0} (#Strings Heap Offset)", s);
 			return "#Strings Heap Offset";
+		}
+
+		string GetGuidDescription(HexField field) {
+			var g = ReadGuidHeap(field);
+			if (g != null)
+				return string.Format("{0} (#GUID Heap Index)", g.Value.ToString());
+			return "#GUID Heap Index";
 		}
 
 		string GetInfo(Table table, uint rid) {
