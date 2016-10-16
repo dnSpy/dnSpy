@@ -635,7 +635,8 @@ namespace dnSpy.Language.Intellisense {
 			if (completionSet == null)
 				return null;
 			Debug.Assert(completionSet.Completions.Contains(completion));
-			return completionTextElementProvider.Create(completionSet, completion, kind);
+			const bool colorize = true;
+			return completionTextElementProvider.Create(completionSet, completion, kind, colorize);
 		}
 
 		public string GetToolTip(FilterVM filterVM) {

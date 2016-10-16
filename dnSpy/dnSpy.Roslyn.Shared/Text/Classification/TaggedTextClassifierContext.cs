@@ -32,8 +32,8 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// </summary>
 		public ImmutableArray<TaggedText> TaggedParts { get; }
 
-		TaggedTextClassifierContext(string text, ImmutableArray<TaggedText> taggedParts)
-			: base(text) {
+		TaggedTextClassifierContext(string text, string tag, ImmutableArray<TaggedText> taggedParts, bool colorize)
+			: base(text, tag, colorize) {
 			TaggedParts = taggedParts.IsDefault ? ImmutableArray<TaggedText>.Empty : taggedParts;
 		}
 
@@ -56,9 +56,11 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// <summary>
 		/// Creates an instance
 		/// </summary>
+		/// <param name="tag">Tag, can be null</param>
 		/// <param name="taggedParts">Tagged parts</param>
+		/// <param name="colorize">true if it should be colorized</param>
 		/// <returns></returns>
-		public static TaggedTextClassifierContext Create(ImmutableArray<TaggedText> taggedParts) =>
-			new TaggedTextClassifierContext(ToString(taggedParts), taggedParts);
+		public static TaggedTextClassifierContext Create(string tag, ImmutableArray<TaggedText> taggedParts, bool colorize) =>
+			new TaggedTextClassifierContext(tag, ToString(taggedParts), taggedParts, colorize);
 	}
 }

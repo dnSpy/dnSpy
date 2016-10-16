@@ -35,8 +35,9 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		/// <param name="completionSet">Completion set</param>
 		/// <param name="completion">Completion to classify</param>
 		/// <param name="suffix">Text to classify</param>
-		public CompletionSuffixClassifierContext(CompletionSet completionSet, Completion completion, string suffix)
-			: base(completionSet, completion, suffix) {
+		/// <param name="colorize">true if it should be colorized</param>
+		public CompletionSuffixClassifierContext(CompletionSet completionSet, Completion completion, string suffix, bool colorize)
+			: base(completionSet, completion, suffix, colorize) {
 		}
 	}
 }

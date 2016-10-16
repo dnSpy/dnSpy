@@ -59,6 +59,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
+			if (!context.Colorize)
+				yield break;
 			var completionContext = context as CompletionDisplayTextClassifierContext;
 			if (completionContext == null)
 				yield break;

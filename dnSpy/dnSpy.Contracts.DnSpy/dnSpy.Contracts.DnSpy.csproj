@@ -501,6 +501,7 @@
     <Compile Include="Text\Classification\TextBlockFactory.cs" />
     <Compile Include="Text\Classification\TextClassificationTag.cs" />
     <Compile Include="Text\Classification\TextClassifierContext.cs" />
+    <Compile Include="Text\Classification\TextClassifierTextColorWriter.cs" />
     <Compile Include="Text\Classification\TextEditorFormatDefinition.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinition.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeNameKeys.cs" />
@@ -616,7 +617,6 @@
     <Compile Include="TreeView\Text\ITreeViewNodeTextElementProvider.cs" />
     <Compile Include="TreeView\Text\TreeViewContentTypes.cs" />
     <Compile Include="TreeView\Text\TreeViewNodeClassifierContext.cs" />
-    <Compile Include="TreeView\Text\TreeViewTextColorWriter.cs" />
     <Compile Include="TreeView\TreeNodeData.cs" />
     <Compile Include="TreeView\TreeNodeDataProviderContext.cs" />
     <Compile Include="TreeView\TreeViewConstants.cs" />

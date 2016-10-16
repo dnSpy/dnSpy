@@ -18,7 +18,7 @@
 */
 
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
@@ -39,21 +39,9 @@ namespace dnSpy.Contracts.TreeView.Text {
 		public ITreeNodeData Node { get; }
 
 		/// <summary>
-		/// Default colors, can be empty and there could be non-classified parts
-		/// </summary>
-		public ReadOnlyCollection<SpanData<object>> Colors { get; }
-
-		/// <summary>
 		/// true if the content will be shown in a tooltip
 		/// </summary>
 		public bool IsToolTip { get; }
-
-		/// <summary>
-		/// true if all <see cref="ITextClassifier"/>s can classify the text, false if only special
-		/// colors (eg. search highlighting) will be shown. <see cref="Colors"/> won't be used if
-		/// this property is false.
-		/// </summary>
-		public bool Colorize { get; }
 
 		/// <summary>
 		/// Constructor
@@ -62,11 +50,11 @@ namespace dnSpy.Contracts.TreeView.Text {
 		/// <param name="treeView">Treeview</param>
 		/// <param name="node">Node to classify</param>
 		/// <param name="isToolTip">true if the content will be shown in a tooltip</param>
+		/// <param name="colorize">true if it should be colorized</param>
 		/// <param name="colors">Default colors or null. It doesn't have to be sorted and elements can overlap. The colors
 		/// must be <see cref="IClassificationType"/>s or <see cref="TextColor"/>s</param>
-		/// <param name="colorize">true to colorize everything, false to remove most colors except special colors (depends on the text classifiers)</param>
-		public TreeViewNodeClassifierContext(string text, ITreeView treeView, ITreeNodeData node, bool isToolTip, ReadOnlyCollection<SpanData<object>> colors = null, bool colorize = true)
-			: base(text) {
+		public TreeViewNodeClassifierContext(string text, ITreeView treeView, ITreeNodeData node, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+			: base(text, string.Empty, colorize, colors) {
 			if (treeView == null)
 				throw new ArgumentNullException(nameof(treeView));
 			if (node == null)
@@ -74,9 +62,6 @@ namespace dnSpy.Contracts.TreeView.Text {
 			TreeView = treeView;
 			Node = node;
 			IsToolTip = isToolTip;
-			Colors = colors ?? emptyColors;
-			Colorize = colorize;
 		}
-		static readonly ReadOnlyCollection<SpanData<object>> emptyColors = new ReadOnlyCollection<SpanData<object>>(Array.Empty<SpanData<object>>());
 	}
 }

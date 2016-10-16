@@ -22,6 +22,7 @@ using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
 
@@ -66,16 +67,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			static class Cache {
-				static readonly TreeViewTextColorWriter writer = new TreeViewTextColorWriter();
-				public static TreeViewTextColorWriter GetWriter() => writer;
-				public static void FreeWriter(TreeViewTextColorWriter writer) { writer.Clear(); }
+				static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+				public static TextClassifierTextColorWriter GetWriter() => writer;
+				public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
 			}
 
 			public override object Text {
 				get {
 					var writer = Cache.GetWriter();
 					writer.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.Searching);
-					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colors: writer.ReadOnlyColors, colorize: context.SyntaxHighlight);
+					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colorize: context.SyntaxHighlight, colors: writer.Colors);
 					var elem = context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, filterOutNewLines: true, useNewFormatter: context.UseNewRenderer);
 					Cache.FreeWriter(writer);
 					return elem;

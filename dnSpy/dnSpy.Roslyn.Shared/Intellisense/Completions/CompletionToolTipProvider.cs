@@ -66,7 +66,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (roslynCollection == null)
 				return null;
 
-			var result = new AsyncToolTipContent(this, roslynCollection, roslynCompletion, context, taggedTextElementProviderService);
+			const bool colorize = true;
+			var result = new AsyncToolTipContent(this, roslynCollection, roslynCompletion, context, taggedTextElementProviderService, colorize);
 			lastAsyncToolTipContentWeakReference = result.IsDisposed ? null : new WeakReference(result);
 			return result;
 		}
@@ -77,12 +78,14 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			readonly CompletionToolTipProvider owner;
 			readonly CancellationTokenSource cancellationTokenSource;
 			readonly ITaggedTextElementProviderService taggedTextElementProviderService;
+			readonly bool colorize;
 
-			public AsyncToolTipContent(CompletionToolTipProvider owner, RoslynCompletionSet completionSet, RoslynCompletion completion, ICompletionSession session, ITaggedTextElementProviderService taggedTextElementProviderService) {
+			public AsyncToolTipContent(CompletionToolTipProvider owner, RoslynCompletionSet completionSet, RoslynCompletion completion, ICompletionSession session, ITaggedTextElementProviderService taggedTextElementProviderService, bool colorize) {
 				this.owner = owner;
 				this.Session = session;
 				this.cancellationTokenSource = new CancellationTokenSource();
 				this.taggedTextElementProviderService = taggedTextElementProviderService;
+				this.colorize = colorize;
 				this.Session.Dismissed += Session_Dismissed;
 				Unloaded += AsyncToolTipContent_Unloaded;
 				GetDescriptionAsync(completionSet, completion, cancellationTokenSource.Token)
@@ -102,7 +105,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 
 			object CreateContent(CompletionDescription description) {
 				using (var elemProvider = taggedTextElementProviderService.Create(owner.contentType, AppearanceCategoryConstants.CodeCompletionToolTip))
-					return elemProvider.Create(description.TaggedParts);
+					return elemProvider.Create(string.Empty, description.TaggedParts, colorize);
 			}
 
 			void InitializeDefaultDocumentation() => Visibility = Visibility.Collapsed;

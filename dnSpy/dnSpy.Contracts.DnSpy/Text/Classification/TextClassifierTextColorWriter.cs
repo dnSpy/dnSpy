@@ -20,14 +20,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
-using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Contracts.TreeView.Text {
+namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
-	/// Used when writing treeview nodes
+	/// Implements <see cref="ITextColorWriter"/> and stores all colors and text.
+	/// The result can be passed to <see cref="TextClassifierContext.TextClassifierContext(string, string, bool, IReadOnlyCollection{SpanData{object}})"/>
 	/// </summary>
-	public sealed class TreeViewTextColorWriter : ITextColorWriter {
+	public sealed class TextClassifierTextColorWriter : ITextColorWriter {
 		/// <summary>
 		/// Gets the text
 		/// </summary>
@@ -36,12 +36,7 @@ namespace dnSpy.Contracts.TreeView.Text {
 		/// <summary>
 		/// Gets the colors
 		/// </summary>
-		public List<SpanData<object>> Colors => colors;
-
-		/// <summary>
-		/// Gets the colors
-		/// </summary>
-		public ReadOnlyCollection<SpanData<object>> ReadOnlyColors => readOnlyColors;
+		public ReadOnlyCollection<SpanData<object>> Colors => readOnlyColors;
 
 		readonly List<SpanData<object>> colors;
 		readonly ReadOnlyCollection<SpanData<object>> readOnlyColors;
@@ -50,7 +45,7 @@ namespace dnSpy.Contracts.TreeView.Text {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public TreeViewTextColorWriter() {
+		public TextClassifierTextColorWriter() {
 			this.colors = new List<SpanData<object>>();
 			this.readOnlyColors = new ReadOnlyCollection<SpanData<object>>(colors);
 			this.sb = new StringBuilder();

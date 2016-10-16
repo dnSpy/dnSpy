@@ -499,6 +499,7 @@
     <Compile Include="Text\Classification\ClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\ClassifierTagger.cs" />
     <Compile Include="Text\Classification\ClassifierTaggerProvider.cs" />
+    <Compile Include="Text\Classification\DefaultTextClassifierProvider.cs" />
     <Compile Include="Text\Classification\DefaultTextEditorFormatDefinition.cs" />
     <Compile Include="Text\Classification\EditorFormatDefinitionExtensions.cs" />
     <Compile Include="Text\Classification\EditorFormatDefinitionService.cs" />
@@ -784,7 +785,6 @@
     <Compile Include="TreeView\DsSharpTreeNode.cs" />
     <Compile Include="TreeView\SharpTreeNodeChildrenList.cs" />
     <Compile Include="TreeView\Text\ContentTypeDefinitions.cs" />
-    <Compile Include="TreeView\Text\DefaultTextClassifier.cs" />
     <Compile Include="TreeView\Text\TreeViewNodeTextElementProvider.cs" />
     <Compile Include="TreeView\TreeNodeDataImpl.cs" />
     <Compile Include="TreeView\TreeNodeImpl.cs" />

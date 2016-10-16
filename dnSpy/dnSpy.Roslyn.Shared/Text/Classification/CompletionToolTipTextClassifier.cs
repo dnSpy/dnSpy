@@ -62,6 +62,8 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		};
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
+			if (!context.Colorize)
+				yield break;
 			var tagContext = context as TaggedTextClassifierContext;
 			if (tagContext == null)
 				yield break;

@@ -51,6 +51,8 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
+			if (!context.Colorize)
+				yield break;
 			if (!(context is CompletionSuffixClassifierContext))
 				yield break;
 			yield return new TextClassificationTag(new Span(0, context.Text.Length), completionSuffixClassificationType);

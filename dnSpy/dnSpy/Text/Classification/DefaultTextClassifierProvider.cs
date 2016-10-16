@@ -22,13 +22,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.TreeView.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.TreeView.Text {
+namespace dnSpy.Text.Classification {
 	[Export(typeof(ITextClassifierProvider))]
-	[ContentType(TreeViewContentTypes.TreeViewNode)]
+	[ContentType(ContentTypes.Any)]
 	sealed class DefaultTextClassifierProvider : ITextClassifierProvider {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
@@ -50,12 +49,9 @@ namespace dnSpy.TreeView.Text {
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
-			var tvContext = context as TreeViewNodeClassifierContext;
-			if (tvContext == null)
+			if (!context.Colorize)
 				yield break;
-			if (!tvContext.Colorize)
-				yield break;
-			foreach (var spanData in tvContext.Colors) {
+			foreach (var spanData in context.Colors) {
 				var ct = spanData.Data as IClassificationType ?? themeClassificationTypeService.GetClassificationType(spanData.Data as TextColor? ?? TextColor.Text);
 				yield return new TextClassificationTag(spanData.Span, ct);
 			}

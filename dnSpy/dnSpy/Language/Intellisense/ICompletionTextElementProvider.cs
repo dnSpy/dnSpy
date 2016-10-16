@@ -34,7 +34,8 @@ namespace dnSpy.Language.Intellisense {
 		/// <param name="completionSet">Owner collection</param>
 		/// <param name="completion">Completion</param>
 		/// <param name="kind">Which part of <paramref name="completion"/> that should be used to create the <see cref="FrameworkElement"/></param>
+		/// <param name="colorize">true if it should be colorized</param>
 		/// <returns></returns>
-		FrameworkElement Create(CompletionSet completionSet, Completion completion, CompletionClassifierKind kind);
+		FrameworkElement Create(CompletionSet completionSet, Completion completion, CompletionClassifierKind kind, bool colorize);
 	}
 }

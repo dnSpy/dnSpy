@@ -25,6 +25,7 @@ using System.Windows;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
 
@@ -49,9 +50,9 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.DocumentTreeView.DotNetImageService);
 
 		static class Cache {
-			static readonly TreeViewTextColorWriter writer = new TreeViewTextColorWriter();
-			public static TreeViewTextColorWriter GetWriter() => writer;
-			public static void FreeWriter(TreeViewTextColorWriter writer) { writer.Clear(); }
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
 		}
 
 		/// <inheritdoc/>
@@ -63,7 +64,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 
 				var writer = Cache.GetWriter();
 				Write(writer, Context.Decompiler);
-				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: false, colors: writer.ReadOnlyColors, colorize: Context.SyntaxHighlight);
+				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: false, colorize: Context.SyntaxHighlight, colors: writer.Colors);
 				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, filterOutNewLines: true, useNewFormatter: Context.UseNewRenderer);
 				Cache.FreeWriter(writer);
 				cachedText = new WeakReference(elem);
@@ -91,7 +92,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			get {
 				var writer = Cache.GetWriter();
 				WriteToolTip(writer, Context.Decompiler);
-				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: true, colors: writer.ReadOnlyColors, colorize: Context.SyntaxHighlight);
+				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: true, colorize: Context.SyntaxHighlight, colors: writer.Colors);
 				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, filterOutNewLines: false, useNewFormatter: Context.UseNewRenderer);
 				Cache.FreeWriter(writer);
 				return elem;

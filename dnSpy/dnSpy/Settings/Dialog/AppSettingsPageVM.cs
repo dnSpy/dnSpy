@@ -23,6 +23,7 @@ using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
 
@@ -40,9 +41,9 @@ namespace dnSpy.Settings.Dialog {
 
 		public override object Text {
 			get {
-				var writer = new TreeViewTextColorWriter();
+				var writer = new TextClassifierTextColorWriter();
 				writer.Write(BoxedTextColor.Text, Page.Title);
-				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colors: writer.ReadOnlyColors, colorize: true);
+				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colorize: true, colors: writer.Colors);
 				return context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAppSettings, filterOutNewLines: true, useNewFormatter: false);
 			}
 		}

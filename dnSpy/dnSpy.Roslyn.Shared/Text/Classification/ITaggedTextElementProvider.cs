@@ -31,8 +31,10 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// <summary>
 		/// Creates a <see cref="TextBlock"/>
 		/// </summary>
+		/// <param name="tag">Tag, can be null</param>
 		/// <param name="taggedParts">Tagged parts to classify</param>
+		/// <param name="colorize">true if it should be colorized</param>
 		/// <returns></returns>
-		TextBlock Create(ImmutableArray<TaggedText> taggedParts);
+		TextBlock Create(string tag, ImmutableArray<TaggedText> taggedParts, bool colorize);
 	}
 }

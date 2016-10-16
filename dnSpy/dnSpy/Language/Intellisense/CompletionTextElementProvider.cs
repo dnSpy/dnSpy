@@ -57,7 +57,7 @@ namespace dnSpy.Language.Intellisense {
 			return completionClassifier;
 		}
 
-		public FrameworkElement Create(CompletionSet completionSet, Completion completion, CompletionClassifierKind kind) {
+		public FrameworkElement Create(CompletionSet completionSet, Completion completion, CompletionClassifierKind kind, bool colorize) {
 			if (completionSet == null)
 				throw new ArgumentNullException(nameof(completionSet));
 			if (completion == null)
@@ -69,13 +69,13 @@ namespace dnSpy.Language.Intellisense {
 			switch (kind) {
 			case CompletionClassifierKind.DisplayText:
 				var inputText = completionSet.ApplicableTo.GetText(completionSet.ApplicableTo.TextBuffer.CurrentSnapshot);
-				context = new CompletionDisplayTextClassifierContext(completionSet, completion, completion.DisplayText, inputText);
+				context = new CompletionDisplayTextClassifierContext(completionSet, completion, completion.DisplayText, inputText, colorize);
 				defaultContentType = ContentTypes.CompletionDisplayText;
 				break;
 
 			case CompletionClassifierKind.Suffix:
 				var suffix = (completion as Completion4)?.Suffix ?? string.Empty;
-				context = new CompletionSuffixClassifierContext(completionSet, completion, suffix);
+				context = new CompletionSuffixClassifierContext(completionSet, completion, suffix, colorize);
 				defaultContentType = ContentTypes.CompletionSuffix;
 				break;
 
