@@ -101,11 +101,6 @@ namespace dnSpy.Tabs {
 			this._activeIndex = -1;
 		}
 
-		internal void OnThemeChanged() {
-			foreach (var g in stackedContent.Children)
-				g.OnThemeChanged();
-		}
-
 		ITabGroup ITabGroupService.Create() => Create(stackedContent.Count, null);
 
 		TabGroup Create(int index, Action<ITabGroup> onCreated) {

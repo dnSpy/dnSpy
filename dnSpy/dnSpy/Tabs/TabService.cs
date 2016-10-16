@@ -38,17 +38,11 @@ namespace dnSpy.Tabs {
 		readonly IMenuService menuService;
 		readonly IWpfFocusService wpfFocusService;
 
-		public TabService(IThemeService themeService, IMenuService menuService, IWpfFocusService wpfFocusService) {
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
+		public TabService(IMenuService menuService, IWpfFocusService wpfFocusService) {
 			this.menuService = menuService;
 			this.wpfFocusService = wpfFocusService;
 			this.tabGroupServices = new List<TabGroupService>();
 			this.selectedIndex = -1;
-		}
-
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			foreach (var mgr in tabGroupServices)
-				mgr.OnThemeChanged();
 		}
 
 		public ITabGroupService Create(TabGroupServiceOptions options = null) {

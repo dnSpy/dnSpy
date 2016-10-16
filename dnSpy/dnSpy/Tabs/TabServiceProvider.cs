@@ -26,17 +26,15 @@ using dnSpy.Contracts.Themes;
 namespace dnSpy.Tabs {
 	[Export(typeof(ITabServiceProvider))]
 	sealed class TabServiceProvider : ITabServiceProvider {
-		readonly IThemeService themeService;
 		readonly IMenuService menuService;
 		readonly IWpfFocusService wpfFocusService;
 
 		[ImportingConstructor]
-		TabServiceProvider(IThemeService themeService, IMenuService menuService, IWpfFocusService wpfFocusService) {
-			this.themeService = themeService;
+		TabServiceProvider(IMenuService menuService, IWpfFocusService wpfFocusService) {
 			this.menuService = menuService;
 			this.wpfFocusService = wpfFocusService;
 		}
 
-		public ITabService Create() => new TabService(themeService, menuService, wpfFocusService);
+		public ITabService Create() => new TabService(menuService, wpfFocusService);
 	}
 }

@@ -41,6 +41,8 @@ namespace dnSpy.Text.Classification {
 
 		void ThemeService_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) {
 			foreach (var settings in toTextEditorFontSettings.Values)
+				settings.ClearCache();
+			foreach (var settings in toTextEditorFontSettings.Values)
 				settings.OnThemeChanged();
 		}
 

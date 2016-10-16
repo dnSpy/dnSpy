@@ -267,7 +267,6 @@ namespace dnSpy.Tabs {
 		}
 
 		internal bool Contains(TabItemImpl impl) => tabControl.Items.Contains(impl);
-		internal void OnThemeChanged() => OnStylePropChange();
 
 		void OnStylePropChange() {
 			OnPropertyChanged(nameof(TabGroupState));
