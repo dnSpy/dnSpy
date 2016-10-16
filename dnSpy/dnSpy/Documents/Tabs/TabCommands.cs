@@ -29,10 +29,13 @@ using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Properties;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Documents.Tabs {
 	[ExportAutoLoaded]
@@ -559,13 +562,23 @@ namespace dnSpy.Documents.Tabs {
 		readonly ISaveService saveService;
 		readonly ITabsVMSettings tabsVMSettings;
 		readonly IAppWindow appWindow;
+		readonly IClassificationFormatMap classificationFormatMap;
+		readonly ITextElementProvider textElementProvider;
+
+		[Export(typeof(TextEditorFormatDefinition))]
+		[Name(AppearanceCategoryConstants.TabsDialog)]
+		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
+		sealed class TabsDialogTextEditorFormatDefinition : TextEditorFormatDefinition {
+		}
 
 		[ImportingConstructor]
-		AllTabsMenuItemCommand(IDocumentTabService documentTabService, ISaveService saveService, ITabsVMSettings tabsVMSettings, IAppWindow appWindow)
+		AllTabsMenuItemCommand(IDocumentTabService documentTabService, ISaveService saveService, ITabsVMSettings tabsVMSettings, IAppWindow appWindow, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider)
 			: base(documentTabService) {
 			this.saveService = saveService;
 			this.tabsVMSettings = tabsVMSettings;
 			this.appWindow = appWindow;
+			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.TabsDialog);
+			this.textElementProvider = textElementProvider;
 		}
 
 		public override void Execute(MenuTabGroupContext context) { }
@@ -626,7 +639,7 @@ namespace dnSpy.Documents.Tabs {
 
 		void ShowTabsDlg() {
 			var win = new TabsDlg();
-			var vm = new TabsVM(documentTabService, saveService, tabsVMSettings);
+			var vm = new TabsVM(documentTabService, saveService, tabsVMSettings, classificationFormatMap, textElementProvider);
 			win.DataContext = vm;
 			win.Owner = appWindow.MainWindow;
 			win.ShowDialog();

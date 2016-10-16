@@ -28,14 +28,18 @@ using System.Windows.Data;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Properties;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class OpenFromGACVM : ViewModelBase, IGACFileReceiver, IDisposable {
 		public ObservableCollection<GACFileVM> Collection => gacFileList;
 		public ICollectionView CollectionView => collectionView;
 		public bool SyntaxHighlight { get; }
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
 
 		readonly ObservableCollection<GACFileVM> gacFileList;
 		readonly ListCollectionView collectionView;
@@ -93,8 +97,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly CancellationToken cancellationToken;
 		readonly HashSet<GACFileVM> uniqueFiles;
 
-		public OpenFromGACVM(bool syntaxHighlight) {
+		public OpenFromGACVM(bool syntaxHighlight, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			this.SyntaxHighlight = syntaxHighlight;
+			this.ClassificationFormatMap = classificationFormatMap;
+			this.TextElementProvider = textElementProvider;
 			this.gacFileList = new ObservableCollection<GACFileVM>();
 			this.collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(gacFileList);
 			this.collectionView.CustomSort = new GACFileVM_Comparer();

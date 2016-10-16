@@ -20,16 +20,26 @@
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackFrameContext {
+		IClassificationFormatMap ClassificationFormatMap { get; }
+		ITextElementProvider TextElementProvider { get; }
 		TypePrinterFlags TypePrinterFlags { get; }
 		bool SyntaxHighlight { get; }
 	}
 
 	sealed class CallStackFrameContext : ICallStackFrameContext {
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
 		public TypePrinterFlags TypePrinterFlags { get; set; }
 		public bool SyntaxHighlight { get; set; }
+		public CallStackFrameContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
+		}
 	}
 
 	interface ICallStackFrameVM {

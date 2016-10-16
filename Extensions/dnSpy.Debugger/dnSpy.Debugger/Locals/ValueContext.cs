@@ -20,18 +20,28 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.Engine;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Locals {
 	interface IPrinterContext {
+		IClassificationFormatMap ClassificationFormatMap { get; }
+		ITextElementProvider TextElementProvider { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 		TypePrinterFlags TypePrinterFlags { get; }
 	}
 
 	sealed class PrinterContext : IPrinterContext {
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public TypePrinterFlags TypePrinterFlags { get; set; }
+		public PrinterContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
+		}
 	}
 
 	interface ILocalsOwner {

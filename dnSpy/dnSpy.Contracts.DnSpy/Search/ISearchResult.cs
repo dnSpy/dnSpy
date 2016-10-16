@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Search {
 		IDsDocument Document { get; }
 
 		/// <summary>
-		/// Refreshes UI fields. Should be called if the theme,
+		/// Refreshes UI fields. Should be called if the classification format map,
 		/// <see cref="IDocumentSearcher.SyntaxHighlight"/> or <see cref="IDocumentSearcher.Decompiler"/>
 		/// changes.
 		/// </summary>

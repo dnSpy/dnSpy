@@ -20,28 +20,41 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class LocalColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as ValueVM;
-			var s = parameter as string;
-			if (vm == null || s == null)
+			var tag = parameter as string;
+			if (vm == null || tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.PrinterContext.SyntaxHighlight);
-			var printer = new ValuePrinter(gen.Output, vm.PrinterContext.UseHexadecimal);
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
-				printer.WriteName(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Value"))
-				printer.WriteValue(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Type"))
-				printer.WriteType(vm);
-			else
-				return null;
+			var writer = Cache.GetWriter();
+			try {
+				var printer = new ValuePrinter(writer, vm.PrinterContext.UseHexadecimal);
+				if (tag == PredefinedTextClassifierTags.LocalsWindowName)
+					printer.WriteName(vm);
+				else if (tag == PredefinedTextClassifierTags.LocalsWindowValue)
+					printer.WriteValue(vm);
+				else if (tag == PredefinedTextClassifierTags.LocalsWindowType)
+					printer.WriteType(vm);
+				else
+					return null;
 
-			return gen.CreateResult(true);
+				var context = new TextClassifierContext(writer.Text, tag, vm.PrinterContext.SyntaxHighlight, writer.Colors);
+				return vm.PrinterContext.TextElementProvider.CreateTextElement(vm.PrinterContext.ClassificationFormatMap, context, ContentTypes.LocalsWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

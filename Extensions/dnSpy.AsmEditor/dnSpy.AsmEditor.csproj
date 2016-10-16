@@ -362,6 +362,7 @@
     <Compile Include="MethodBody\CilBodyOptions.cs" />
     <Compile Include="MethodBody\CilBodyVM.cs" />
     <Compile Include="MethodBody\ComboBoxAttachedProps.cs" />
+    <Compile Include="MethodBody\ContentTypeDefinitions.cs" />
     <Compile Include="MethodBody\ExceptionHandlerOptions.cs" />
     <Compile Include="MethodBody\ExceptionHandlersListHelper.cs" />
     <Compile Include="MethodBody\ExceptionHandlerVM.cs" />

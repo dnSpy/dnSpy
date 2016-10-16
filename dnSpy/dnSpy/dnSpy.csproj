@@ -122,6 +122,7 @@
     <Compile Include="Documents\Tabs\DefaultDecompileNode.cs" />
     <Compile Include="Documents\Tabs\DefaultDocumentList.cs" />
     <Compile Include="Documents\Tabs\DefaultDocumentTabContentProvider.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\ContentTypeDefinitions.cs" />
     <Compile Include="Documents\Tabs\Dialogs\DocumentListColumnConverter.cs" />
     <Compile Include="Documents\Tabs\Dialogs\DocumentListPrinter.cs" />
     <Compile Include="Documents\Tabs\Dialogs\DocumentListVM.cs" />
@@ -430,6 +431,7 @@
     <Compile Include="Search\AppCommandLineArgsHandler.cs" />
     <Compile Include="Search\BooleanToThicknessConverter.cs" />
     <Compile Include="Search\Commands.cs" />
+    <Compile Include="Search\ContentTypeDefinitions.cs" />
     <Compile Include="Search\DocumentSearcher.cs" />
     <Compile Include="Search\DocumentSearcherProvider.cs" />
     <Compile Include="Search\FilterSearcher.cs" />
@@ -445,6 +447,7 @@
     <Compile Include="Search\SearchToolWindowContent.cs" />
     <Compile Include="Search\SearchType.cs" />
     <Compile Include="Search\SearchTypeVM.cs" />
+    <Compile Include="Search\TextEditorFormatDefinitions.cs" />
     <Compile Include="Settings\Dialog\AppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\AppSettingsDlg.xaml.cs">
       <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
@@ -513,6 +516,7 @@
     <Compile Include="Text\Classification\TextEditorFontSettingsDictionaryProvider.cs" />
     <Compile Include="Text\Classification\TextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\TextEditorFormatDefinitions.cs" />
+    <Compile Include="Text\Classification\TextElementProvider.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeService.cs" />
     <Compile Include="Text\Classification\ViewClassificationFormatMap.cs" />

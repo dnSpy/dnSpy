@@ -35,7 +35,8 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
-using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Search {
 	interface ISearchService : IUIObjectProvider {
@@ -107,7 +108,8 @@ namespace dnSpy.Search {
 		}
 
 		[ImportingConstructor]
-		SearchService(IDecompilerService decompilerService, IThemeService themeService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService) {
+		SearchService(IDecompilerService decompilerService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, IClassificationFormatMapService classificationFormatMapService) {
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.Search);
 			this.documentTabService = documentTabService;
 			this.searchControl = new SearchControl();
 			this.vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
@@ -119,7 +121,7 @@ namespace dnSpy.Search {
 			wpfCommandService.Add(ControlConstants.GUID_SEARCH_CONTROL, this.searchControl);
 			wpfCommandService.Add(ControlConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 
@@ -205,7 +207,7 @@ namespace dnSpy.Search {
 			RefreshComboBox();
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshUI();
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshUI();
 
 		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var searchSettings = (ISearchSettings)sender;
@@ -229,8 +231,6 @@ namespace dnSpy.Search {
 		}
 
 		public void OnShow() {
-			// Make sure the images have been refreshed (the DPI could've changed while the control was closed)
-			RefreshUI();
 			this.vmSearch.CanSearch = true;
 		}
 

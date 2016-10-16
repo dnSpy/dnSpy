@@ -29,9 +29,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
-using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {

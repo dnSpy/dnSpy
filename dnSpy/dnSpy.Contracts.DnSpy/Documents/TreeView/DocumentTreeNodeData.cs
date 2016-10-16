@@ -63,12 +63,16 @@ namespace dnSpy.Contracts.Documents.TreeView {
 					return cached;
 
 				var writer = Cache.GetWriter();
-				Write(writer, Context.Decompiler);
-				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: false, colorize: Context.SyntaxHighlight, colors: writer.Colors);
-				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, filterOutNewLines: true, useNewFormatter: Context.UseNewRenderer);
-				Cache.FreeWriter(writer);
-				cachedText = new WeakReference(elem);
-				return elem;
+				try {
+					Write(writer, Context.Decompiler);
+					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: false, colorize: Context.SyntaxHighlight, colors: writer.Colors);
+					var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, TextElementFlags.FilterOutNewLines | (Context.UseNewRenderer ? TextElementFlags.NewFormatter : 0));
+					cachedText = new WeakReference(elem);
+					return elem;
+				}
+				finally {
+					Cache.FreeWriter(writer);
+				}
 			}
 		}
 		WeakReference cachedText;
@@ -93,7 +97,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				var writer = Cache.GetWriter();
 				WriteToolTip(writer, Context.Decompiler);
 				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: true, colorize: Context.SyntaxHighlight, colors: writer.Colors);
-				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, filterOutNewLines: false, useNewFormatter: Context.UseNewRenderer);
+				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, Context.UseNewRenderer ? TextElementFlags.NewFormatter : 0);
 				Cache.FreeWriter(writer);
 				return elem;
 			}

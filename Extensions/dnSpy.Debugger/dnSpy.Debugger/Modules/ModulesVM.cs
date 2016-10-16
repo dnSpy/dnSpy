@@ -25,13 +25,13 @@ using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Modules {
 	interface IModulesVM {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
-
-		void RefreshThemeFields();
 	}
 
 	[Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug))]
@@ -50,42 +50,29 @@ namespace dnSpy.Debugger.Modules {
 		}
 		object selectedItem;
 
-		public bool IsEnabled {//TODO: Use it
-			get { return isEnabled; }
-			set {
-				if (isEnabled == value)
-					return;
-				isEnabled = value;
-				if (isEnabled) {
-					// Make sure the images have been refreshed (the DPI could've changed while the control was closed)
-					RefreshThemeFields();
-				}
-			}
-		}
-		bool isEnabled;
-
-		public bool IsVisible {//TODO: Use it
-			get { return isVisible; }
-			set { isVisible = value; }
-		}
-		bool isVisible;
+		public bool IsEnabled { get; set; }//TODO: Use it
+		public bool IsVisible { get; set; }//TODO: Use it
 
 		readonly ITheDebugger theDebugger;
 		readonly ModuleContext moduleContext;
 
 		[ImportingConstructor]
-		ModulesVM(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings) {
+		ModulesVM(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.ModulesWindow);
 			this.theDebugger = theDebugger;
-			this.moduleContext = new ModuleContext(theDebugger) {
+			this.moduleContext = new ModuleContext(theDebugger, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightModules,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 			};
 			this.modulesList = new ObservableCollection<ModuleVM>();
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			if (theDebugger.ProcessState != DebuggerProcessState.Terminated)
 				InstallDebuggerHooks(theDebugger.Debugger);
 		}
+
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields();
 
 		void DebuggerSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			var debuggerSettings = (IDebuggerSettings)sender;

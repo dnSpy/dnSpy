@@ -27,6 +27,8 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Exceptions {
 	interface IExceptionsVM {
@@ -46,7 +48,6 @@ namespace dnSpy.Debugger.Exceptions {
 		void DisableAllFilteredExceptions();
 
 		void Initialize(ISelectedItemsProvider<ExceptionVM> selectedItemsProvider);
-		void RefreshThemeFields();
 
 		bool Exists(ExceptionType type, string name);
 		void AddException(ExceptionType type, string name);
@@ -110,20 +111,24 @@ namespace dnSpy.Debugger.Exceptions {
 		readonly ExceptionContext exceptionContext;
 
 		[ImportingConstructor]
-		ExceptionsVM(IDebuggerSettings debuggerSettings, IExceptionService exceptionService, IExceptionListSettings exceptionListSettings, IGetNewExceptionName getNewExceptionName) {
+		ExceptionsVM(IDebuggerSettings debuggerSettings, IExceptionService exceptionService, IExceptionListSettings exceptionListSettings, IGetNewExceptionName getNewExceptionName, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.ExceptionSettingsWindow);
 			this.debuggerSettings = debuggerSettings;
 			this.exceptionService = exceptionService;
 			this.exceptionListSettings = exceptionListSettings;
 			this.getNewExceptionName = getNewExceptionName;
-			this.exceptionContext = new ExceptionContext(exceptionService) {
+			this.exceptionContext = new ExceptionContext(exceptionService, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightExceptions,
 			};
 			this.exceptionsList = new ObservableCollection<ExceptionVM>();
 			this.CollectionView = CollectionViewSource.GetDefaultView(exceptionsList);
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			exceptionService.Changed += ExceptionService_Changed;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			InitializeDefaultExceptions();
 		}
+
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields();
 
 		public void Initialize(ISelectedItemsProvider<ExceptionVM> selectedItemsProvider) =>
 			this.selectedItemsProvider = selectedItemsProvider;

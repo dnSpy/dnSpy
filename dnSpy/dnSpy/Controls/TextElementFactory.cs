@@ -43,16 +43,37 @@ namespace dnSpy.Controls {
 			var sb = new StringBuilder(s.Length);
 			foreach (var c in s) {
 				if (Array.IndexOf(LineConstants.newLineChars, c) >= 0)
-					continue;
-				sb.Append(c);
+					sb.Append(' ');
+				else
+					sb.Append(c);
 			}
 			return sb.ToString();
 		}
 
-		public static FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, List<TextClassificationTag> tagsList, bool useNewFormatter, bool useEllipsis = false, bool filterOutNewLines = true, TextWrapping textWrapping = TextWrapping.NoWrap) {
+		static TextTrimming GetTextTrimming(TextElementFlags flags) {
+			switch (flags & TextElementFlags.TrimmingMask) {
+			case TextElementFlags.NoTrimming: return TextTrimming.None;
+			case TextElementFlags.CharacterEllipsis: return TextTrimming.CharacterEllipsis;
+			case TextElementFlags.WordEllipsis: return TextTrimming.WordEllipsis;
+			default: throw new ArgumentOutOfRangeException(nameof(flags));
+			}
+		}
+
+		static TextWrapping GetTextWrapping(TextElementFlags flags) {
+			switch (flags & TextElementFlags.WrapMask) {
+			case TextElementFlags.WrapWithOverflow: return TextWrapping.WrapWithOverflow;
+			case TextElementFlags.NoWrap: return TextWrapping.NoWrap;
+			case TextElementFlags.Wrap: return TextWrapping.Wrap;
+			default: throw new ArgumentOutOfRangeException(nameof(flags));
+			}
+		}
+
+		public static FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, List<TextClassificationTag> tagsList, TextElementFlags flags) {
+			bool useFastTextBlock = (flags & (TextElementFlags.TrimmingMask | TextElementFlags.WrapMask | TextElementFlags.FilterOutNewLines)) == (TextElementFlags.NoTrimming | TextElementFlags.NoWrap | TextElementFlags.FilterOutNewLines);
+			bool filterOutNewLines = (flags & TextElementFlags.FilterOutNewLines) != 0;
 			if (tagsList.Count != 0) {
-				if (!useEllipsis && filterOutNewLines) {
-					return new FastTextBlock(useNewFormatter, new TextSrc {
+				if (useFastTextBlock) {
+					return new FastTextBlock((flags & TextElementFlags.NewFormatter) != 0, new TextSrc {
 						text = ToString(text, filterOutNewLines),
 						classificationFormatMap = classificationFormatMap,
 						tagsList = tagsList.ToArray(),
@@ -60,20 +81,23 @@ namespace dnSpy.Controls {
 				}
 
 				var propsSpans = tagsList.Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
-				return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
+				var textBlock = TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize | (filterOutNewLines ? TextBlockFactory.Flags.FilterOutNewlines : 0));
+				textBlock.TextTrimming = GetTextTrimming(flags);
+				textBlock.TextWrapping = GetTextWrapping(flags);
+				return textBlock;
 			}
 
 			FrameworkElement fwElem;
-			if (!useEllipsis && filterOutNewLines) {
-				fwElem = new FastTextBlock(useNewFormatter) {
+			if (useFastTextBlock) {
+				fwElem = new FastTextBlock((flags & TextElementFlags.NewFormatter) != 0) {
 					Text = ToString(text, filterOutNewLines)
 				};
 			}
 			else {
 				fwElem = new TextBlock {
 					Text = ToString(text, filterOutNewLines),
-					TextTrimming = TextTrimming.CharacterEllipsis,
-					TextWrapping = textWrapping,
+					TextTrimming = GetTextTrimming(flags),
+					TextWrapping = GetTextWrapping(flags),
 				};
 			}
 			return InitializeDefault(classificationFormatMap, fwElem);

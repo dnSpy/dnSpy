@@ -20,44 +20,57 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as ThreadVM;
-			var s = parameter as string;
-			if (vm == null || s == null)
+			var tag = parameter as string;
+			if (vm == null || tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
-			var printer = new ThreadPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Id"))
-				printer.WriteId(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "ManagedId"))
-				printer.WriteManagedId(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "CategoryText"))
-				printer.WriteCategory(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
-				printer.WriteName(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Location"))
-				printer.WriteLocation(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Priority"))
-				printer.WritePriority(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "AffinityMask"))
-				printer.WriteAffinityMask(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Suspended"))
-				printer.WriteSuspended(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Process"))
-				printer.WriteProcess(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "AppDomain"))
-				printer.WriteAppDomain(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "UserState"))
-				printer.WriteUserState(vm);
-			else
-				return null;
+			var writer = Cache.GetWriter();
+			try {
+				var printer = new ThreadPrinter(writer, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
+				if (tag == PredefinedTextClassifierTags.ThreadsWindowId)
+					printer.WriteId(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowManagedId)
+					printer.WriteManagedId(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowCategoryText)
+					printer.WriteCategory(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowName)
+					printer.WriteName(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowLocation)
+					printer.WriteLocation(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowPriority)
+					printer.WritePriority(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowAffinityMask)
+					printer.WriteAffinityMask(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowSuspended)
+					printer.WriteSuspended(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowProcess)
+					printer.WriteProcess(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowAppDomain)
+					printer.WriteAppDomain(vm);
+				else if (tag == PredefinedTextClassifierTags.ThreadsWindowUserState)
+					printer.WriteUserState(vm);
+				else
+					return null;
 
-			return gen.CreateResult(true);
+				var context = new TextClassifierContext(writer.Text, tag, vm.Context.SyntaxHighlight, writer.Colors);
+				return vm.Context.TextElementProvider.CreateTextElement(vm.Context.ClassificationFormatMap, context, ContentTypes.ThreadsWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

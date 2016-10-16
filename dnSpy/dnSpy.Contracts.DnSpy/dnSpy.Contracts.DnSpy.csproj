@@ -96,7 +96,6 @@
     <Compile Include="Command\TextEditorIdsExtensions.cs" />
     <Compile Include="Command\TextReferenceIds.cs" />
     <Compile Include="Command\TextReferenceIdsExtensions.cs" />
-    <Compile Include="Controls\ColorizedTextElementProvider.cs" />
     <Compile Include="Controls\ControlConstants.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FontUtilities.cs" />
@@ -110,7 +109,6 @@
     <Compile Include="Controls\IZoomable.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\MetroWindowCreatedEventArgs.cs" />
-    <Compile Include="Controls\TextBlockColorOutput.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Controls\WindowDpiChangedEventArgs.cs" />
     <Compile Include="Decompiler\IDecompilerService.cs" />
@@ -493,16 +491,19 @@
     <Compile Include="Text\Classification\ITextClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ITextClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\ITextClassifierProvider.cs" />
+    <Compile Include="Text\Classification\ITextElementProvider.cs" />
     <Compile Include="Text\Classification\IThemeClassificationTypeService.cs" />
     <Compile Include="Text\Classification\IThemeFormatDefinition.cs" />
     <Compile Include="Text\Classification\LanguagePriority.cs" />
     <Compile Include="Text\Classification\PredefinedClassificationTypeNames.cs" />
+    <Compile Include="Text\Classification\PredefinedTextClassifierTags.cs" />
     <Compile Include="Text\Classification\RoslynClassificationTypeNames.cs" />
     <Compile Include="Text\Classification\TextBlockFactory.cs" />
     <Compile Include="Text\Classification\TextClassificationTag.cs" />
     <Compile Include="Text\Classification\TextClassifierContext.cs" />
     <Compile Include="Text\Classification\TextClassifierTextColorWriter.cs" />
     <Compile Include="Text\Classification\TextEditorFormatDefinition.cs" />
+    <Compile Include="Text\Classification\TextElementFlags.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinition.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeNameKeys.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeNames.cs" />

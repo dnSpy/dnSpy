@@ -28,7 +28,9 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Properties;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class OpenDocumentListVM : ViewModelBase, IDisposable {
@@ -103,8 +105,13 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly CancellationTokenSource cancellationTokenSource;
 		readonly CancellationToken cancellationToken;
 
-		public OpenDocumentListVM(bool syntaxHighlight, DocumentListService documentListService, Func<string, string> askUser) {
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
+
+		public OpenDocumentListVM(bool syntaxHighlight, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, DocumentListService documentListService, Func<string, string> askUser) {
 			this.SyntaxHighlight = syntaxHighlight;
+			this.ClassificationFormatMap = classificationFormatMap;
+			this.TextElementProvider = textElementProvider;
 			this.documentListService = documentListService;
 			this.askUser = askUser;
 			this.documentListColl = new ObservableCollection<DocumentListVM>();

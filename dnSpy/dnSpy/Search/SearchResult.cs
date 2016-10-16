@@ -20,7 +20,6 @@
 using System;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
@@ -29,6 +28,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Search {
@@ -90,11 +90,22 @@ namespace dnSpy.Search {
 			return output.ToString();
 		}
 
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		object CreateUI(object o, bool includeNamespace) {
-			var gen = ColorizedTextElementProvider.Create(Context.SyntaxHighlight);
-			var output = gen.Output;
-			CreateUI(gen.Output, o, includeNamespace);
-			return gen.CreateResult();
+			var writer = Cache.GetWriter();
+			try {
+				CreateUI(writer, o, includeNamespace);
+				var context = new TextClassifierContext(writer.Text, string.Empty, Context.SyntaxHighlight, writer.Colors);
+				return Context.TextElementProvider.CreateTextElement(Context.ClassificationFormatMap, context, ContentTypes.Search, TextElementFlags.FilterOutNewLines);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		void CreateUI(ITextColorWriter output, object o, bool includeNamespace) {

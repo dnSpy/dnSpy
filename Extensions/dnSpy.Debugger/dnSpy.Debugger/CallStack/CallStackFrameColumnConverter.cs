@@ -20,26 +20,38 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackFrameColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as ICallStackFrameVM;
 			if (vm == null)
 				return null;
-			var s = parameter as string;
-			if (s == null)
+			var tag = parameter as string;
+			if (tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
-				CreateContent(gen.Output, vm.CachedOutput, vm.Context.SyntaxHighlight);
-			else
-				return null;
+			var writer = Cache.GetWriter();
+			try {
+				if (tag == PredefinedTextClassifierTags.CallStackWindowName)
+					CreateContent(writer, vm.CachedOutput, vm.Context.SyntaxHighlight);
+				else
+					return null;
 
-			return gen.CreateResult(true);
+				var context = new TextClassifierContext(writer.Text, tag, vm.Context.SyntaxHighlight, writer.Colors);
+				return vm.Context.TextElementProvider.CreateTextElement(vm.Context.ClassificationFormatMap, context, ContentTypes.CallStackWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		void CreateContent(ITextColorWriter output, CachedOutput cachedOutput, bool highlight) {

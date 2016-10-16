@@ -17,15 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Search {
 	sealed class SearchResultContext {
 		public bool SyntaxHighlight { get; set; }
 		public IDecompiler Decompiler { get; set; }
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
 
-		public SearchResultContext() {
-			this.SyntaxHighlight = true;
+		public SearchResultContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+			if (classificationFormatMap == null)
+				throw new ArgumentNullException(nameof(classificationFormatMap));
+			if (textElementProvider == null)
+				throw new ArgumentNullException(nameof(textElementProvider));
+			SyntaxHighlight = true;
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
 		}
 	}
 }

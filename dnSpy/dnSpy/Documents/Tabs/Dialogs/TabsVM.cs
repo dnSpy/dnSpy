@@ -23,6 +23,8 @@ using System.Linq;
 using System.Windows.Input;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class TabsVM : ViewModelBase {
@@ -67,9 +69,14 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 		string saveText;
 
-		public TabsVM(IDocumentTabService documentTabService, ISaveService saveService, ITabsVMSettings tabsVMSettings) {
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
+
+		public TabsVM(IDocumentTabService documentTabService, ISaveService saveService, ITabsVMSettings tabsVMSettings, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			this.documentTabService = documentTabService;
 			this.saveService = saveService;
+			this.ClassificationFormatMap = classificationFormatMap;
+			this.TextElementProvider = textElementProvider;
 			this.Settings = tabsVMSettings;
 			this.tabsList = new ObservableCollection<TabVM>(documentTabService.SortedTabs.Select(a => new TabVM(this, a)));
 			this.SelectedItem = tabsList.Count == 0 ? null : tabsList[0];

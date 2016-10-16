@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
@@ -55,6 +56,26 @@ namespace dnSpy.Contracts.Text.Classification {
 			/// If set, don't set font size
 			/// </summary>
 			DisableFontSize							= 4,
+
+			/// <summary>
+			/// Filter out newlines by replacing them with spaces
+			/// </summary>
+			FilterOutNewlines						= 8,
+		}
+
+		static string ToString(string s, bool filterOutNewLines) {
+			if (!filterOutNewLines)
+				return s;
+			if (s.IndexOfAny(LineConstants.newLineChars) < 0)
+				return s;
+			var sb = new StringBuilder(s.Length);
+			foreach (var c in s) {
+				if (Array.IndexOf(LineConstants.newLineChars, c) >= 0)
+					sb.Append(' ');
+				else
+					sb.Append(c);
+			}
+			return sb.ToString();
 		}
 
 		/// <summary>
@@ -75,14 +96,15 @@ namespace dnSpy.Contracts.Text.Classification {
 
 			var textBlock = new TextBlock();
 			int textOffset = 0;
+			bool filterOutNewlines = (flags & Flags.FilterOutNewlines) != 0;
 			foreach (var tag in orderedPropsAndSpans) {
 				if (textOffset < tag.Span.Start)
-					textBlock.Inlines.Add(CreateRun(text.Substring(textOffset, tag.Span.Start - textOffset), defaultProperties, null, flags));
-				textBlock.Inlines.Add(CreateRun(text.Substring(tag.Span.Start, tag.Span.Length), defaultProperties, tag.Properties, flags));
+					textBlock.Inlines.Add(CreateRun(ToString(text.Substring(textOffset, tag.Span.Start - textOffset), filterOutNewlines), defaultProperties, null, flags));
+				textBlock.Inlines.Add(CreateRun(ToString(text.Substring(tag.Span.Start, tag.Span.Length), filterOutNewlines), defaultProperties, tag.Properties, flags));
 				textOffset = tag.Span.End;
 			}
 			if (textOffset < text.Length)
-				textBlock.Inlines.Add(CreateRun(text.Substring(textOffset), defaultProperties, null, flags));
+				textBlock.Inlines.Add(CreateRun(ToString(text.Substring(textOffset), filterOutNewlines), defaultProperties, null, flags));
 
 			if (!defaultProperties.BackgroundBrushEmpty)
 				textBlock.Background = defaultProperties.BackgroundBrush;

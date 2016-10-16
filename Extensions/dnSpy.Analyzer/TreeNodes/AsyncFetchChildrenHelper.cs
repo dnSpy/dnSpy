@@ -75,11 +75,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 			public override object Text {
 				get {
 					var writer = Cache.GetWriter();
-					writer.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.Searching);
-					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colorize: context.SyntaxHighlight, colors: writer.Colors);
-					var elem = context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, filterOutNewLines: true, useNewFormatter: context.UseNewRenderer);
-					Cache.FreeWriter(writer);
-					return elem;
+					try {
+						writer.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.Searching);
+						var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colorize: context.SyntaxHighlight, colors: writer.Colors);
+						var elem = context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, TextElementFlags.FilterOutNewLines | (context.UseNewRenderer ? TextElementFlags.NewFormatter : 0));
+						return elem;
+					}
+					finally {
+						Cache.FreeWriter(writer);
+					}
 				}
 			}
 		}

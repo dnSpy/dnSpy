@@ -61,5 +61,60 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Signature help tooltip
 		/// </summary>
 		public const string SignatureHelpToolTip = "dnSpy-" + nameof(SignatureHelpToolTip);
+
+		/// <summary>
+		/// Search
+		/// </summary>
+		public const string Search = "dnSpy-" + nameof(Search);
+
+		/// <summary>
+		/// Tabs dialog box
+		/// </summary>
+		public const string TabsDialog = "dnSpy-" + nameof(TabsDialog);
+
+		/// <summary>
+		/// GAC dialog box
+		/// </summary>
+		public const string GacDialog = "dnSpy-" + nameof(GacDialog);
+
+		/// <summary>
+		/// Document list dialog box
+		/// </summary>
+		public const string DocListDialog = "dnSpy-" + nameof(DocListDialog);
+
+		/// <summary>
+		/// Breakpoints window
+		/// </summary>
+		public const string BreakpointsWindow = "dnSpy-" + nameof(BreakpointsWindow);
+
+		/// <summary>
+		/// Call Stack window
+		/// </summary>
+		public const string CallStackWindow = "dnSpy-" + nameof(CallStackWindow);
+
+		/// <summary>
+		/// Attach to Process window
+		/// </summary>
+		public const string AttachToProcessWindow = "dnSpy-" + nameof(AttachToProcessWindow);
+
+		/// <summary>
+		/// Exception Settings window
+		/// </summary>
+		public const string ExceptionSettingsWindow = "dnSpy-" + nameof(ExceptionSettingsWindow);
+
+		/// <summary>
+		/// Locals window
+		/// </summary>
+		public const string LocalsWindow = "dnSpy-" + nameof(LocalsWindow);
+
+		/// <summary>
+		/// Modules window
+		/// </summary>
+		public const string ModulesWindow = "dnSpy-" + nameof(ModulesWindow);
+
+		/// <summary>
+		/// Threads window
+		/// </summary>
+		public const string ThreadsWindow = "dnSpy-" + nameof(ThreadsWindow);
 	}
 }

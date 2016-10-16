@@ -25,7 +25,6 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Debugger.Memory {
 	interface IMemoryContent : IUIObjectProvider {
@@ -45,7 +44,7 @@ namespace dnSpy.Debugger.Memory {
 		readonly MemoryControl memoryControl;
 		readonly IMemoryVM vmMemory;
 
-		public MemoryContent(IWpfCommandService wpfCommandService, IThemeService themeService, IMenuService menuService, IHexEditorSettings hexEditorSettings, IMemoryVM memoryVM, IAppSettings appSettings) {
+		public MemoryContent(IWpfCommandService wpfCommandService, IMenuService menuService, IHexEditorSettings hexEditorSettings, IMemoryVM memoryVM, IAppSettings appSettings) {
 			this.memoryControl = new MemoryControl();
 			this.vmMemory = memoryVM;
 			this.vmMemory.SetRefreshLines(() => this.memoryControl.DnHexBox.RedrawModifiedLines());

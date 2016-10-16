@@ -17,23 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text.Classification;
+using System.Windows;
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace dnSpy.Debugger.Dialogs {
-	interface IProcessContext {
-		IClassificationFormatMap ClassificationFormatMap { get; }
-		ITextElementProvider TextElementProvider { get; }
-		bool SyntaxHighlight { get; }
-	}
-
-	sealed class ProcessContext : IProcessContext {
-		public IClassificationFormatMap ClassificationFormatMap { get; }
-		public ITextElementProvider TextElementProvider { get; }
-		public bool SyntaxHighlight { get; set; }
-		public ProcessContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
-			ClassificationFormatMap = classificationFormatMap;
-			TextElementProvider = textElementProvider;
-		}
+namespace dnSpy.Contracts.Text.Classification {
+	/// <summary>
+	/// Creates WPF text elements
+	/// </summary>
+	public interface ITextElementProvider {
+		/// <summary>
+		/// Creates a WPF text element
+		/// </summary>
+		/// <param name="classificationFormatMap">Classification format map</param>
+		/// <param name="context">Text classifier context</param>
+		/// <param name="contentType">Content type</param>
+		/// <param name="flags">Flags</param>
+		/// <returns></returns>
+		FrameworkElement CreateTextElement(IClassificationFormatMap classificationFormatMap, TextClassifierContext context, string contentType, TextElementFlags flags);
 	}
 }

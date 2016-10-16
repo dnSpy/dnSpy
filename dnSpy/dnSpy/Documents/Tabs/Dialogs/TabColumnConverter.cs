@@ -20,28 +20,41 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class TabColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as TabVM;
-			var s = parameter as string;
-			if (vm == null || s == null)
+			var tag = parameter as string;
+			if (vm == null || tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.Owner.Settings.SyntaxHighlight);
-			var printer = new TabPrinter(gen.Output);
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
-				printer.WriteName(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Module"))
-				printer.WriteModule(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Path"))
-				printer.WritePath(vm);
-			else
-				return null;
+			var writer = Cache.GetWriter();
+			try {
+				var printer = new TabPrinter(writer);
+				if (tag == PredefinedTextClassifierTags.TabsDialogName)
+					printer.WriteName(vm);
+				else if (tag == PredefinedTextClassifierTags.TabsDialogModule)
+					printer.WriteModule(vm);
+				else if (tag == PredefinedTextClassifierTags.TabsDialogPath)
+					printer.WritePath(vm);
+				else
+					return null;
 
-			return gen.CreateResult(true);
+				var context = new TextClassifierContext(writer.Text, tag, vm.Owner.Settings.SyntaxHighlight, writer.Colors);
+				return vm.Owner.TextElementProvider.CreateTextElement(vm.Owner.ClassificationFormatMap, context, ContentTypes.TabsDialog, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

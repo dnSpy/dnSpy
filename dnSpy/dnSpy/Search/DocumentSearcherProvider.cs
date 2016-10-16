@@ -23,17 +23,23 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Search {
 	[Export(typeof(IDocumentSearcherProvider))]
 	sealed class DocumentSearcherProvider : IDocumentSearcherProvider {
 		readonly IDotNetImageService dotNetImageService;
 		readonly IDecompilerService decompilerService;
+		readonly ITextElementProvider textElementProvider;
+		readonly IClassificationFormatMap classificationFormatMap;
 
 		[ImportingConstructor]
-		DocumentSearcherProvider(IDotNetImageService dotNetImageService, IDecompilerService decompilerService) {
+		DocumentSearcherProvider(IDotNetImageService dotNetImageService, IDecompilerService decompilerService, ITextElementProvider textElementProvider, IClassificationFormatMapService classificationFormatMapService) {
 			this.dotNetImageService = dotNetImageService;
 			this.decompilerService = decompilerService;
+			this.textElementProvider = textElementProvider;
+			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.Search);
 		}
 
 		public IDocumentSearcher Create(DocumentSearcherOptions options, IDocumentTreeView documentTreeView) {
@@ -41,7 +47,7 @@ namespace dnSpy.Search {
 				throw new ArgumentNullException(nameof(options));
 			if (documentTreeView == null)
 				throw new ArgumentNullException(nameof(documentTreeView));
-			var searchResultContext = new SearchResultContext {
+			var searchResultContext = new SearchResultContext(classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = true,
 				Decompiler = decompilerService.Decompiler,
 			};

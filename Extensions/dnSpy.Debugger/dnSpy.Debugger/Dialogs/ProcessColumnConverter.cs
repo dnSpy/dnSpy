@@ -21,42 +21,55 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as ProcessVM;
-			var s = parameter as string;
-			if (vm == null || s == null)
+			var tag = parameter as string;
+			if (vm == null || tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
-			var printer = new ProcessPrinter(gen.Output, false);
-			HorizontalAlignment? horizAlign = null;
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "FullPath"))
-				printer.WriteFullPath(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Filename"))
-				printer.WriteFilename(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "PID")) {
-				printer.WritePID(vm);
-				horizAlign = HorizontalAlignment.Right;
+			var writer = Cache.GetWriter();
+			try {
+				var printer = new ProcessPrinter(writer, false);
+				HorizontalAlignment? horizAlign = null;
+				if (tag == PredefinedTextClassifierTags.AttachToProcessWindowFullPath)
+					printer.WriteFullPath(vm);
+				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowFilename)
+					printer.WriteFilename(vm);
+				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowPid) {
+					printer.WritePID(vm);
+					horizAlign = HorizontalAlignment.Right;
+				}
+				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowClrVersion)
+					printer.WriteCLRVersion(vm);
+				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowType)
+					printer.WriteType(vm);
+				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowMachine)
+					printer.WriteMachine(vm);
+				else if (tag == PredefinedTextClassifierTags.AttachToProcessWindowTitle)
+					printer.WriteTitle(vm);
+				else
+					return null;
+
+				var context = new TextClassifierContext(writer.Text, tag, vm.Context.SyntaxHighlight, writer.Colors);
+				var elem = vm.Context.TextElementProvider.CreateTextElement(vm.Context.ClassificationFormatMap, context, ContentTypes.AttachToProcessWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+				if (horizAlign != null)
+					elem.HorizontalAlignment = horizAlign.Value;
+				return elem;
 			}
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "CLRVersion"))
-				printer.WriteCLRVersion(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Type"))
-				printer.WriteType(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Machine"))
-				printer.WriteMachine(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Title"))
-				printer.WriteTitle(vm);
-			else
-				return null;
-
-			var tb = gen.CreateResult(true);
-			if (horizAlign != null)
-				tb.HorizontalAlignment = horizAlign.Value;
-			return tb;
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

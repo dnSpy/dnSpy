@@ -31,8 +31,10 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.CallStack;
 using ICSharpCode.TreeView;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Locals {
 	enum LocalInitType {
@@ -50,7 +52,6 @@ namespace dnSpy.Debugger.Locals {
 	interface ILocalsVM {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
-		void RefreshThemeFields();
 	}
 
 	[Export(typeof(ILocalsVM)), Export(typeof(ILoadBeforeDebug))]
@@ -90,7 +91,7 @@ namespace dnSpy.Debugger.Locals {
 		readonly IStackFrameService stackFrameService;
 
 		[ImportingConstructor]
-		LocalsVM(IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameService stackFrameService, ITheDebugger theDebugger, IAskUser askUser) {
+		LocalsVM(IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameService stackFrameService, ITheDebugger theDebugger, IAskUser askUser, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.askUser = askUser;
 			this.methodLocalProvider = methodLocalProvider;
@@ -98,7 +99,8 @@ namespace dnSpy.Debugger.Locals {
 			this.stackFrameService = stackFrameService;
 			this.TheDebugger = theDebugger;
 
-			this.printerContext = new PrinterContext() {
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.LocalsWindow);
+			this.printerContext = new PrinterContext(classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				TypePrinterFlags = TypePrinterFlags.ShowArrayValueSizes,
@@ -114,7 +116,10 @@ namespace dnSpy.Debugger.Locals {
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			localsSettings.PropertyChanged += LocalsSettings_PropertyChanged;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 		}
+
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields();
 
 		static void Update(bool b, TypePrinterFlags f, ref TypePrinterFlags flags) {
 			if (b)

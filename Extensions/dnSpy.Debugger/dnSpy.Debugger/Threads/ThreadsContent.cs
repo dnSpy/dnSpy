@@ -25,7 +25,6 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.CallStack;
 
@@ -56,7 +55,7 @@ namespace dnSpy.Debugger.Threads {
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		ThreadsContent(IWpfCommandService wpfCommandService, IThreadsVM threadsVM, IThemeService themeService, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
+		ThreadsContent(IWpfCommandService wpfCommandService, IThreadsVM threadsVM, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
 			this.stackFrameService = stackFrameService;
 			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
@@ -65,7 +64,6 @@ namespace dnSpy.Debugger.Threads {
 			this.moduleIdProvider = moduleIdProvider;
 			this.threadsControl.DataContext = this.vmThreads;
 			this.threadsControl.ThreadsListViewDoubleClick += ThreadsControl_ThreadsListViewDoubleClick;
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_CONTROL, threadsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW, threadsControl.ListView);
@@ -76,7 +74,6 @@ namespace dnSpy.Debugger.Threads {
 			SwitchToThreadThreadsCtxMenuCommand.GoTo(moduleIdProvider, documentTabService, moduleLoader.Value, stackFrameService.Value, threadsControl.ListView.SelectedItem as ThreadVM, newTab);
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmThreads.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(threadsControl.ListView);
 		public void OnClose() => vmThreads.IsEnabled = false;
 		public void OnShow() => vmThreads.IsEnabled = true;

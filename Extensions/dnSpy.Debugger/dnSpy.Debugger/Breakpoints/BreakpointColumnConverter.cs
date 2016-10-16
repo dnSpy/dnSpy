@@ -20,32 +20,45 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as BreakpointVM;
 			if (vm == null)
 				return null;
-			var s = parameter as string;
-			if (s == null)
+			var tag = parameter as string;
+			if (tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
-			var printer = new BreakpointPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.Decompiler);
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
-				printer.WriteName(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Assembly"))
-				printer.WriteAssembly(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Module"))
-				printer.WriteModule(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "File"))
-				printer.WriteFile(vm);
-			else
-				return null;
+			var writer = Cache.GetWriter();
+			try {
+				var printer = new BreakpointPrinter(writer, vm.Context.UseHexadecimal, vm.Context.Decompiler);
+				if (tag == PredefinedTextClassifierTags.BreakpointsWindowName)
+					printer.WriteName(vm);
+				else if (tag == PredefinedTextClassifierTags.BreakpointsWindowAssembly)
+					printer.WriteAssembly(vm);
+				else if (tag == PredefinedTextClassifierTags.BreakpointsWindowModule)
+					printer.WriteModule(vm);
+				else if (tag == PredefinedTextClassifierTags.BreakpointsWindowFile)
+					printer.WriteFile(vm);
+				else
+					return null;
 
-			return gen.CreateResult(true);
+				var context = new TextClassifierContext(writer.Text, tag, vm.Context.SyntaxHighlight, writer.Colors);
+				return vm.Context.TextElementProvider.CreateTextElement(vm.Context.ClassificationFormatMap, context, ContentTypes.BreakpointsWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

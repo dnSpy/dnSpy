@@ -25,7 +25,6 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.CallStack {
@@ -55,7 +54,7 @@ namespace dnSpy.Debugger.CallStack {
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		CallStackContent(IWpfCommandService wpfCommandService, IThemeService themeService, ICallStackVM callStackVM, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
+		CallStackContent(IWpfCommandService wpfCommandService, ICallStackVM callStackVM, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
 			this.callStackControl = new CallStackControl();
 			this.vmCallStack = callStackVM;
 			this.stackFrameService = stackFrameService;
@@ -64,7 +63,6 @@ namespace dnSpy.Debugger.CallStack {
 			this.moduleIdProvider = moduleIdProvider;
 			this.callStackControl.DataContext = this.vmCallStack;
 			this.callStackControl.CallStackListViewDoubleClick += CallStackControl_CallStackListViewDoubleClick;
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_CONTROL, callStackControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW, callStackControl.ListView);
@@ -75,7 +73,6 @@ namespace dnSpy.Debugger.CallStack {
 			SwitchToFrameCallStackCtxMenuCommand.Execute(moduleIdProvider, stackFrameService.Value, documentTabService, moduleLoader.Value, callStackControl.ListView.SelectedItem as CallStackFrameVM, newTab);
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmCallStack.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(callStackControl.ListView);
 		public void OnClose() => vmCallStack.IsEnabled = false;
 		public void OnShow() => vmCallStack.IsEnabled = true;

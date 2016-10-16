@@ -20,24 +20,37 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as ExceptionVM;
-			var s = parameter as string;
-			if (vm == null || s == null)
+			var tag = parameter as string;
+			if (vm == null || tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
-			var printer = new ExceptionPrinter(gen.Output);
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
-				printer.WriteName(vm);
-			else
-				return null;
+			var writer = Cache.GetWriter();
+			try {
+				var printer = new ExceptionPrinter(writer);
+				if (tag == PredefinedTextClassifierTags.ExceptionSettingsWindowName)
+					printer.WriteName(vm);
+				else
+					return null;
 
-			return gen.CreateResult(true);
+				var context = new TextClassifierContext(writer.Text, tag, vm.Context.SyntaxHighlight, writer.Colors);
+				return vm.Context.TextElementProvider.CreateTextElement(vm.Context.ClassificationFormatMap, context, ContentTypes.ExceptionSettingsWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

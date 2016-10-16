@@ -20,44 +20,57 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModuleColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as ModuleVM;
-			var s = parameter as string;
-			if (vm == null || s == null)
+			var tag = parameter as string;
+			if (vm == null || tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.Context.SyntaxHighlight);
-			var printer = new ModulePrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
-				printer.WriteName(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Path"))
-				printer.WritePath(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Optimized"))
-				printer.WriteOptimized(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Dynamic"))
-				printer.WriteDynamic(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "InMemory"))
-				printer.WriteInMemory(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Order"))
-				printer.WriteOrder(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Version"))
-				printer.WriteVersion(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Timestamp"))
-				printer.WriteTimestamp(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Address"))
-				printer.WriteAddress(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Process"))
-				printer.WriteProcess(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "AppDomain"))
-				printer.WriteAppDomain(vm);
-			else
-				return null;
+			var writer = Cache.GetWriter();
+			try {
+				var printer = new ModulePrinter(writer, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
+				if (tag == PredefinedTextClassifierTags.ModulesWindowName)
+					printer.WriteName(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowPath)
+					printer.WritePath(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowOptimized)
+					printer.WriteOptimized(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowDynamic)
+					printer.WriteDynamic(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowInMemory)
+					printer.WriteInMemory(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowOrder)
+					printer.WriteOrder(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowVersion)
+					printer.WriteVersion(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowTimestamp)
+					printer.WriteTimestamp(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowAddress)
+					printer.WriteAddress(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowProcess)
+					printer.WriteProcess(vm);
+				else if (tag == PredefinedTextClassifierTags.ModulesWindowAppDomain)
+					printer.WriteAppDomain(vm);
+				else
+					return null;
 
-			return gen.CreateResult(true);
+				var context = new TextClassifierContext(writer.Text, tag, vm.Context.SyntaxHighlight, writer.Colors);
+				return vm.Context.TextElementProvider.CreateTextElement(vm.Context.ClassificationFormatMap, context, ContentTypes.ModulesWindow, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

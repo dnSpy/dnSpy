@@ -32,10 +32,13 @@ using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Properties;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 using Microsoft.Win32;
 
 namespace dnSpy.Documents.Tabs {
@@ -110,14 +113,24 @@ namespace dnSpy.Documents.Tabs {
 		readonly DocumentListService documentListService;
 		readonly IMessageBoxService messageBoxService;
 		readonly IDsDocumentService documentService;
+		readonly IClassificationFormatMap classificationFormatMap;
+		readonly ITextElementProvider textElementProvider;
+
+		[Export(typeof(TextEditorFormatDefinition))]
+		[Name(AppearanceCategoryConstants.DocListDialog)]
+		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
+		sealed class TabsDialogTextEditorFormatDefinition : TextEditorFormatDefinition {
+		}
 
 		[ImportingConstructor]
-		OpenListCommand(IAppWindow appWindow, IDocumentListLoader documentListLoader, DocumentListService documentListService, IMessageBoxService messageBoxService, IDsDocumentService documentService) {
+		OpenListCommand(IAppWindow appWindow, IDocumentListLoader documentListLoader, DocumentListService documentListService, IMessageBoxService messageBoxService, IDsDocumentService documentService, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.appWindow = appWindow;
 			this.documentListLoader = documentListLoader;
 			this.documentListService = documentListService;
 			this.messageBoxService = messageBoxService;
 			this.documentService = documentService;
+			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.DocListDialog);
+			this.textElementProvider = textElementProvider;
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) => documentListLoader.CanLoad;
@@ -130,7 +143,7 @@ namespace dnSpy.Documents.Tabs {
 
 			var win = new OpenDocumentListDlg();
 			const bool syntaxHighlight = true;
-			var vm = new OpenDocumentListVM(syntaxHighlight, documentListService, labelMsg => messageBoxService.Ask<string>(labelMsg, ownerWindow: win, verifier: s => string.IsNullOrEmpty(s) ? dnSpy_Resources.OpenList_MissingName : string.Empty));
+			var vm = new OpenDocumentListVM(syntaxHighlight, classificationFormatMap, textElementProvider, documentListService, labelMsg => messageBoxService.Ask<string>(labelMsg, ownerWindow: win, verifier: s => string.IsNullOrEmpty(s) ? dnSpy_Resources.OpenList_MissingName : string.Empty));
 			win.DataContext = vm;
 			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)

@@ -24,7 +24,9 @@ using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Properties;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class AttachProcessVM : ViewModelBase, IDisposable {
@@ -62,9 +64,9 @@ namespace dnSpy.Debugger.Dialogs {
 		readonly Dispatcher dispatcher;
 		readonly ProcessContext processContext;
 
-		public AttachProcessVM(Dispatcher dispatcher, bool syntaxHighlight) {
+		public AttachProcessVM(Dispatcher dispatcher, bool syntaxHighlight, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			this.dispatcher = dispatcher;
-			this.processContext = new ProcessContext {
+			this.processContext = new ProcessContext(classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = syntaxHighlight,
 			};
 			this.processList = new ObservableCollection<ProcessVM>();

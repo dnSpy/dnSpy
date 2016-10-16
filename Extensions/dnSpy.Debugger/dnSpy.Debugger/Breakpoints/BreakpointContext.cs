@@ -19,11 +19,15 @@
 
 using System;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointContext {
 		IDecompiler Decompiler { get; }
 		IModuleLoader ModuleLoader { get; }
+		IClassificationFormatMap ClassificationFormatMap { get; }
+		ITextElementProvider TextElementProvider { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 		bool ShowTokens { get; }
@@ -38,6 +42,8 @@ namespace dnSpy.Debugger.Breakpoints {
 
 	sealed class BreakpointContext : IBreakpointContext {
 		public IDecompiler Decompiler { get; set; }
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public bool ShowTokens { get; set; }
@@ -52,8 +58,10 @@ namespace dnSpy.Debugger.Breakpoints {
 		public IModuleLoader ModuleLoader => moduleLoader.Value;
 		readonly Lazy<IModuleLoader> moduleLoader;
 
-		public BreakpointContext(Lazy<IModuleLoader> moduleLoader) {
+		public BreakpointContext(Lazy<IModuleLoader> moduleLoader, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			this.moduleLoader = moduleLoader;
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
 		}
 	}
 }

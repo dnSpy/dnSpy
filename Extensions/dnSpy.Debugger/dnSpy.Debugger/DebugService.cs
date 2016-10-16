@@ -41,11 +41,13 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Properties;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger {
 	interface IDebugService {
@@ -110,8 +112,11 @@ namespace dnSpy.Debugger {
 		public IStackFrameService StackFrameService { get; }
 		public IDebuggerSettings DebuggerSettings { get; }
 
+		readonly IClassificationFormatMapService classificationFormatMapService;
+		readonly ITextElementProvider textElementProvider;
+
 		[ImportingConstructor]
-		DebugService(IAppWindow appWindow, IDocumentTabService documentTabService, IMessageBoxService messageBoxService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameService stackFrameService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService, IModuleIdProvider moduleIdProvider) {
+		DebugService(IAppWindow appWindow, IDocumentTabService documentTabService, IMessageBoxService messageBoxService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameService stackFrameService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService, IModuleIdProvider moduleIdProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.appWindow = appWindow;
 			this.documentTabService = documentTabService;
 			this.messageBoxService = messageBoxService;
@@ -121,6 +126,8 @@ namespace dnSpy.Debugger {
 			this.moduleLoader = moduleLoader;
 			this.inMemoryModuleService = inMemoryModuleService;
 			this.moduleIdProvider = moduleIdProvider;
+			this.classificationFormatMapService = classificationFormatMapService;
+			this.textElementProvider = textElementProvider;
 			stackFrameService.PropertyChanged += StackFrameService_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
@@ -768,7 +775,8 @@ namespace dnSpy.Debugger {
 			if (!CanAttach)
 				return false;
 
-			var data = new AttachProcessVM(Dispatcher.CurrentDispatcher, DebuggerSettings.SyntaxHighlightAttach);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.AttachToProcessWindow);
+			var data = new AttachProcessVM(Dispatcher.CurrentDispatcher, DebuggerSettings.SyntaxHighlightAttach, classificationFormatMap, textElementProvider);
 			var win = new AttachProcessDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;

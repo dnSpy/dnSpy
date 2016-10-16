@@ -51,12 +51,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return cached;
 
 				var writer = Cache.GetWriter();
-				Write(writer, Context.Decompiler);
-				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.TreeView, this, isToolTip: false, colorize: Context.SyntaxHighlight, colors: writer.Colors);
-				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, filterOutNewLines: true, useNewFormatter: Context.UseNewRenderer);
-				Cache.FreeWriter(writer);
-				cachedText = new WeakReference(elem);
-				return elem;
+				try {
+					Write(writer, Context.Decompiler);
+					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.TreeView, this, isToolTip: false, colorize: Context.SyntaxHighlight, colors: writer.Colors);
+					var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, TextElementFlags.FilterOutNewLines | (Context.UseNewRenderer ? TextElementFlags.NewFormatter : 0));
+					cachedText = new WeakReference(elem);
+					return elem;
+				}
+				finally {
+					Cache.FreeWriter(writer);
+				}
 			}
 		}
 		WeakReference cachedText;

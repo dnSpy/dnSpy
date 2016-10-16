@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		public string Text { get; }
 
 		/// <summary>
-		/// Tag
+		/// Tag, see <see cref="PredefinedTextClassifierTags"/>
 		/// </summary>
 		public string Tag { get; }
 
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Constructor
 		/// </summary>
 		/// <param name="text">Text to classify</param>
-		/// <param name="tag">Tag, can be null</param>
+		/// <param name="tag">Tag (<see cref="PredefinedTextClassifierTags"/>), can be null</param>
 		/// <param name="colorize">true if it should be colorized. Only special classifiers can ignore this, eg. highlighters</param>
 		/// <param name="colors">Default colors or null (see <see cref="TextClassifierTextColorWriter"/>)</param>
 		public TextClassifierContext(string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null) {

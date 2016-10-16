@@ -18,19 +18,27 @@
 */
 
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Exceptions {
 	interface IExceptionContext {
 		IExceptionService ExceptionService { get; }
+		IClassificationFormatMap ClassificationFormatMap { get; }
+		ITextElementProvider TextElementProvider { get; }
 		bool SyntaxHighlight { get; }
 	}
 
 	sealed class ExceptionContext : IExceptionContext {
 		public IExceptionService ExceptionService { get; }
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
 		public bool SyntaxHighlight { get; set; }
 
-		public ExceptionContext(IExceptionService exceptionService) {
+		public ExceptionContext(IExceptionService exceptionService, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			ExceptionService = exceptionService;
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
 		}
 	}
 

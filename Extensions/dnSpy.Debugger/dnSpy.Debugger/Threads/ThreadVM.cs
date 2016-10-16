@@ -23,6 +23,8 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Threads {
 	enum ThreadType {
@@ -45,6 +47,8 @@ namespace dnSpy.Debugger.Threads {
 	interface IThreadContext {
 		ITheDebugger TheDebugger { get; }
 		IDebuggerSettings DebuggerSettings { get; }
+		IClassificationFormatMap ClassificationFormatMap { get; }
+		ITextElementProvider TextElementProvider { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 	}
@@ -52,12 +56,16 @@ namespace dnSpy.Debugger.Threads {
 	sealed class ThreadContext : IThreadContext {
 		public ITheDebugger TheDebugger { get; }
 		public IDebuggerSettings DebuggerSettings { get; }
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 
-		public ThreadContext(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings) {
-			this.TheDebugger = theDebugger;
-			this.DebuggerSettings = debuggerSettings;
+		public ThreadContext(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+			TheDebugger = theDebugger;
+			DebuggerSettings = debuggerSettings;
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
 		}
 	}
 

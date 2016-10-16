@@ -167,5 +167,65 @@ namespace dnSpy.Contracts.Text {
 		/// Completion item's tooltip
 		/// </summary>
 		public const string CompletionToolTip = "CompletionToolTip";
+
+		/// <summary>
+		/// Search
+		/// </summary>
+		public const string Search = nameof(Search);
+
+		/// <summary>
+		/// Tabs dialog box
+		/// </summary>
+		public const string TabsDialog = nameof(TabsDialog);
+
+		/// <summary>
+		/// GAC dialog box
+		/// </summary>
+		public const string GacDialog = nameof(GacDialog);
+
+		/// <summary>
+		/// Documents list dialog box
+		/// </summary>
+		public const string DocListDialog = nameof(DocListDialog);
+
+		/// <summary>
+		/// Breakpoints window
+		/// </summary>
+		public const string BreakpointsWindow = nameof(BreakpointsWindow);
+
+		/// <summary>
+		/// Call Stack window
+		/// </summary>
+		public const string CallStackWindow = nameof(CallStackWindow);
+
+		/// <summary>
+		/// Attach to Process window
+		/// </summary>
+		public const string AttachToProcessWindow = nameof(AttachToProcessWindow);
+
+		/// <summary>
+		/// Exception Settings window
+		/// </summary>
+		public const string ExceptionSettingsWindow = nameof(ExceptionSettingsWindow);
+
+		/// <summary>
+		/// Locals window
+		/// </summary>
+		public const string LocalsWindow = nameof(LocalsWindow);
+
+		/// <summary>
+		/// Modules window
+		/// </summary>
+		public const string ModulesWindow = nameof(ModulesWindow);
+
+		/// <summary>
+		/// Threads window
+		/// </summary>
+		public const string ThreadsWindow = nameof(ThreadsWindow);
+
+		/// <summary>
+		/// Method body editor
+		/// </summary>
+		public const string MethodBodyEditor = nameof(MethodBodyEditor);
 	}
 }

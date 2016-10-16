@@ -27,8 +27,9 @@ using dndbg.Engine;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.IMModules;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointsVM {
@@ -56,8 +57,9 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly ITheDebugger theDebugger;
 
 		[ImportingConstructor]
-		BreakpointsVM(IDecompilerService decompilerService, IThemeService themeService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointService breakpointService, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleService inMemoryModuleService) {
-			this.breakpointContext = new BreakpointContext(moduleLoader) {
+		BreakpointsVM(IDecompilerService decompilerService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointService breakpointService, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleService inMemoryModuleService, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.BreakpointsWindow);
+			this.breakpointContext = new BreakpointContext(moduleLoader, classificationFormatMap, textElementProvider) {
 				Decompiler = decompilerService.Decompiler,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
@@ -78,7 +80,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			breakpointService.BreakpointsRemoved += BreakpointService_BreakpointsRemoved;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			inMemoryModuleService.DynamicModulesLoaded += InMemoryModuleService_DynamicModulesLoaded;
 			foreach (var bp in breakpointService.GetBreakpoints())
@@ -91,7 +93,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			RefreshLanguageFields();
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => RefreshThemeFields();
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields();
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;

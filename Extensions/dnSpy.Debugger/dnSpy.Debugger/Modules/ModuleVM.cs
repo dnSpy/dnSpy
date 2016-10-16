@@ -24,21 +24,29 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Modules {
 	interface IModuleContext {
 		ITheDebugger TheDebugger { get; }
+		IClassificationFormatMap ClassificationFormatMap { get; }
+		ITextElementProvider TextElementProvider { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 	}
 
 	sealed class ModuleContext : IModuleContext {
 		public ITheDebugger TheDebugger { get; }
+		public IClassificationFormatMap ClassificationFormatMap { get; }
+		public ITextElementProvider TextElementProvider { get; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 
-		public ModuleContext(ITheDebugger theDebugger) {
-			this.TheDebugger = theDebugger;
+		public ModuleContext(ITheDebugger theDebugger, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+			TheDebugger = theDebugger;
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
 		}
 	}
 

@@ -24,7 +24,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
-using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.IMModules;
 
@@ -54,7 +53,7 @@ namespace dnSpy.Debugger.Modules {
 		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 
 		[ImportingConstructor]
-		ModulesContent(IWpfCommandService wpfCommandService, IThemeService themeService, IModulesVM modulesVM, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService) {
+		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService) {
 			this.modulesControl = new ModulesControl();
 			this.vmModules = modulesVM;
 			this.documentTabService = documentTabService;
@@ -62,7 +61,6 @@ namespace dnSpy.Debugger.Modules {
 			this.inMemoryModuleService = inMemoryModuleService;
 			this.modulesControl.DataContext = this.vmModules;
 			this.modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);
@@ -73,7 +71,6 @@ namespace dnSpy.Debugger.Modules {
 			GoToModuleModulesCtxMenuCommand.ExecuteInternal(documentTabService, inMemoryModuleService, moduleLoader, modulesControl.ListView.SelectedItem as ModuleVM, newTab);
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmModules.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(modulesControl.ListView);
 		public void OnClose() => vmModules.IsEnabled = false;
 		public void OnShow() => vmModules.IsEnabled = true;

@@ -17,21 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using dnSpy.Contracts.Text.Classification;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text;
+using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Contracts.TreeView.Text {
-	/// <summary>
-	/// Creates WPF text elements for treeview nodes
-	/// </summary>
-	public interface ITreeViewNodeTextElementProvider {
-		/// <summary>
-		/// Creates a WPF text element
-		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="contentType">Treeview node content type, eg. <see cref="TreeViewContentTypes.TreeViewNodeAssemblyExplorer"/></param>
-		/// <param name="flags">Flags</param>
-		/// <returns></returns>
-		FrameworkElement CreateTextElement(TreeViewNodeClassifierContext context, string contentType, TextElementFlags flags);
+namespace dnSpy.AsmEditor.MethodBody {
+	static class ContentTypeDefinitions {
+#pragma warning disable 0169
+		[Export]
+		[Name(ContentTypes.MethodBodyEditor)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition MethodBodyEditor;
+#pragma warning restore 0169
 	}
 }

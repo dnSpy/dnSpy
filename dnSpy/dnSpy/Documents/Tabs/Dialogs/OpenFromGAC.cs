@@ -24,23 +24,36 @@ using System.Windows;
 using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	[Export(typeof(IOpenFromGAC))]
 	sealed class OpenFromGAC : IOpenFromGAC {
 		readonly IAppWindow appWindow;
 		readonly IDocumentTreeView documentTreeView;
+		readonly IClassificationFormatMap classificationFormatMap;
+		readonly ITextElementProvider textElementProvider;
+
+		[Export(typeof(TextEditorFormatDefinition))]
+		[Name(AppearanceCategoryConstants.GacDialog)]
+		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
+		sealed class GacDialogTextEditorFormatDefinition : TextEditorFormatDefinition {
+		}
 
 		[ImportingConstructor]
-		OpenFromGAC(IAppWindow appWindow, IDocumentTreeView documentTreeView) {
+		OpenFromGAC(IAppWindow appWindow, IDocumentTreeView documentTreeView, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.appWindow = appWindow;
 			this.documentTreeView = documentTreeView;
+			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.GacDialog);
+			this.textElementProvider = textElementProvider;
 		}
 
 		public string[] GetPaths(Window ownerWindow) {
 			var win = new OpenFromGACDlg();
 			const bool syntaxHighlight = true;
-			var vm = new OpenFromGACVM(syntaxHighlight);
+			var vm = new OpenFromGACVM(syntaxHighlight, classificationFormatMap, textElementProvider);
 			win.DataContext = vm;
 			win.Owner = ownerWindow ?? appWindow.MainWindow;
 			if (win.ShowDialog() != true)

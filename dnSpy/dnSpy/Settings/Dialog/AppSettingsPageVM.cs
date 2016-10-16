@@ -44,7 +44,7 @@ namespace dnSpy.Settings.Dialog {
 				var writer = new TextClassifierTextColorWriter();
 				writer.Write(BoxedTextColor.Text, Page.Title);
 				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colorize: true, colors: writer.Colors);
-				return context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAppSettings, filterOutNewLines: true, useNewFormatter: false);
+				return context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAppSettings, TextElementFlags.FilterOutNewLines);
 			}
 		}
 

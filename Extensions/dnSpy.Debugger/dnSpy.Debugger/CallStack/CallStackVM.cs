@@ -25,13 +25,14 @@ using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Properties;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackVM {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
-		void RefreshThemeFields();
 	}
 
 	[Export(typeof(ICallStackVM))]
@@ -93,13 +94,14 @@ namespace dnSpy.Debugger.CallStack {
 		readonly CallStackFrameContext callStackFrameContext;
 
 		[ImportingConstructor]
-		CallStackVM(IDebuggerSettings debuggerSettings, ICallStackSettings callStackSettings, IStackFrameService stackFrameService, ITheDebugger theDebugger) {
+		CallStackVM(IDebuggerSettings debuggerSettings, ICallStackSettings callStackSettings, IStackFrameService stackFrameService, ITheDebugger theDebugger, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.CallStackWindow);
 			this.debuggerSettings = debuggerSettings;
 			this.callStackSettings = callStackSettings;
 			this.theDebugger = theDebugger;
 			this.stackFrameService = stackFrameService;
 			this.framesList = new ObservableCollection<ICallStackFrameVM>();
-			this.callStackFrameContext = new CallStackFrameContext() {
+			this.callStackFrameContext = new CallStackFrameContext(classificationFormatMap, textElementProvider) {
 				TypePrinterFlags = TypePrinterFlags,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightCallStack,
 			};
@@ -109,8 +111,10 @@ namespace dnSpy.Debugger.CallStack {
 			callStackSettings.PropertyChanged += CallStackSettings_PropertyChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 		}
 
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields();
 		void TheDebugger_ProcessRunning(object sender, EventArgs e) => InitializeStackFrames();
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -257,7 +261,7 @@ namespace dnSpy.Debugger.CallStack {
 				vm.IsCurrentFrame = value;
 		}
 
-		public void RefreshThemeFields() {
+		void RefreshThemeFields() {
 			foreach (var vm in framesList) {
 				var vm2 = vm as CallStackFrameVM;
 				if (vm2 != null)

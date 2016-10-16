@@ -21,7 +21,6 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.Locals {
@@ -47,17 +46,15 @@ namespace dnSpy.Debugger.Locals {
 		readonly ILocalsVM vmLocals;
 
 		[ImportingConstructor]
-		LocalsContent(IWpfCommandService wpfCommandService, IThemeService themeService, ILocalsVM localsVM) {
+		LocalsContent(IWpfCommandService wpfCommandService, ILocalsVM localsVM) {
 			this.localsControl = new LocalsControl();
 			this.vmLocals = localsVM;
 			this.localsControl.DataContext = this.vmLocals;
-			themeService.ThemeChanged += ThemeService_ThemeChanged;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => vmLocals.RefreshThemeFields();
 		public void Focus() => UIUtilities.FocusSelector(localsControl.ListView);
 		public void OnClose() => vmLocals.IsEnabled = false;
 		public void OnShow() => vmLocals.IsEnabled = true;

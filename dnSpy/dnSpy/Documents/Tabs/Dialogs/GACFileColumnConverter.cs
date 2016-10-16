@@ -20,26 +20,39 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class GACFileColumnConverter : IValueConverter {
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as GACFileVM;
-			var s = parameter as string;
-			if (vm == null || s == null)
+			var tag = parameter as string;
+			if (vm == null || tag == null)
 				return null;
 
-			var gen = ColorizedTextElementProvider.Create(vm.Owner.SyntaxHighlight);
-			var printer = new GACFilePrinter(gen.Output);
-			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
-				printer.WriteName(vm);
-			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Version"))
-				printer.WriteVersion(vm);
-			else
-				return null;
+			var writer = Cache.GetWriter();
+			try {
+				var printer = new GACFilePrinter(writer);
+				if (tag == PredefinedTextClassifierTags.GacDialogName)
+					printer.WriteName(vm);
+				else if (tag == PredefinedTextClassifierTags.GacDialogVersion)
+					printer.WriteVersion(vm);
+				else
+					return null;
 
-			return gen.CreateResult(true);
+				var context = new TextClassifierContext(writer.Text, tag, vm.Owner.SyntaxHighlight, writer.Colors);
+				return vm.Owner.TextElementProvider.CreateTextElement(vm.Owner.ClassificationFormatMap, context, ContentTypes.GacDialog, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
+			}
+			finally {
+				Cache.FreeWriter(writer);
+			}
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

@@ -75,6 +75,7 @@
     <Compile Include="CallStack\FrameUtils.cs" />
     <Compile Include="CallStack\StackFrameService.cs" />
     <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
+    <Compile Include="ContentTypeDefinitions.cs" />
     <Compile Include="DebugCommands.cs" />
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
     <Compile Include="DebuggerAppSettingsPage.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Scripting\StackFrame.cs" />
     <Compile Include="Scripting\TypeComparer.cs" />
     <Compile Include="Scripting\Utils.cs" />
+    <Compile Include="TextEditorFormatDefinitions.cs" />
     <Compile Include="TheDebugger.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="Threads\Commands.cs" />

@@ -18,15 +18,37 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.AsmEditor.MethodBody;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.AsmEditor.Converters {
 	sealed class CilObjectConverter : IValueConverter {
 		public static readonly CilObjectConverter Instance = new CilObjectConverter();
+
+		static IClassificationFormatMap classificationFormatMap;
+		static ITextElementProvider textElementProvider;
+
+		[ExportAutoLoaded]
+		sealed class Loader : IAutoLoaded {
+			[ImportingConstructor]
+			Loader(IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+				classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.TextEditor);
+				CilObjectConverter.textElementProvider = textElementProvider;
+			}
+		}
+
+		static class Cache {
+			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
+			public static TextClassifierTextColorWriter GetWriter() => writer;
+			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+		}
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			try {
@@ -38,9 +60,18 @@ namespace dnSpy.AsmEditor.Converters {
 					}
 				}
 
-				var gen = ColorizedTextElementProvider.Create(true);
-				BodyUtils.WriteObject(gen.Output, value, flags);
-				return gen.CreateResult(true, true);
+				var writer = Cache.GetWriter();
+				try {
+					BodyUtils.WriteObject(writer, value, flags);
+					const bool colorize = true;
+					var context = new TextClassifierContext(writer.Text, PredefinedTextClassifierTags.MethodBodyEditor, colorize, writer.Colors);
+					var elem = textElementProvider.CreateTextElement(classificationFormatMap, context, ContentTypes.MethodBodyEditor, TextElementFlags.CharacterEllipsis | TextElementFlags.FilterOutNewLines);
+					Cache.FreeWriter(writer);
+					return elem;
+				}
+				finally {
+					Cache.FreeWriter(writer);
+				}
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.ToString());

@@ -26,7 +26,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
@@ -61,16 +60,14 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		readonly IWpfCommandService wpfCommandService;
-		readonly IThemeService themeService;
 		readonly IMenuService menuService;
 		readonly IHexEditorSettings hexEditorSettings;
 		readonly Lazy<ITheDebugger> theDebugger;
 		readonly IAppSettings appSettings;
 
 		[ImportingConstructor]
-		MemoryToolWindowContentProvider(IWpfCommandService wpfCommandService, IThemeService themeService, IMenuService menuService, IHexEditorSettings hexEditorSettings, Lazy<ITheDebugger> theDebugger, IAppSettings appSettings) {
+		MemoryToolWindowContentProvider(IWpfCommandService wpfCommandService, IMenuService menuService, IHexEditorSettings hexEditorSettings, Lazy<ITheDebugger> theDebugger, IAppSettings appSettings) {
 			this.wpfCommandService = wpfCommandService;
-			this.themeService = themeService;
 			this.menuService = menuService;
 			this.hexEditorSettings = hexEditorSettings;
 			this.theDebugger = theDebugger;
@@ -103,7 +100,7 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		IMemoryContent CreateMemoryContent(TWContent info) =>
-			new MemoryContent(wpfCommandService, themeService, menuService, hexEditorSettings, new MemoryVM(theDebugger.Value), appSettings);
+			new MemoryContent(wpfCommandService, menuService, hexEditorSettings, new MemoryVM(theDebugger.Value), appSettings);
 	}
 
 	sealed class MemoryToolWindowContent : IToolWindowContent {

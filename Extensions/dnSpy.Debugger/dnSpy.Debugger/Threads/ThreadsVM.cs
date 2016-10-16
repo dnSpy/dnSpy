@@ -25,13 +25,14 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.CallStack;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Threads {
 	interface IThreadsVM {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
-		void RefreshThemeFields();
 	}
 
 	[Export(typeof(IThreadsVM)), Export(typeof(ILoadBeforeDebug))]
@@ -80,10 +81,11 @@ namespace dnSpy.Debugger.Threads {
 		readonly ThreadContext threadContext;
 
 		[ImportingConstructor]
-		ThreadsVM(ITheDebugger theDebugger, IStackFrameService stackFrameService, IDebuggerSettings debuggerSettings) {
+		ThreadsVM(ITheDebugger theDebugger, IStackFrameService stackFrameService, IDebuggerSettings debuggerSettings, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.theDebugger = theDebugger;
 			this.stackFrameService = stackFrameService;
-			this.threadContext = new ThreadContext(theDebugger, debuggerSettings) {
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.ThreadsWindow);
+			this.threadContext = new ThreadContext(theDebugger, debuggerSettings, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightThreads,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 			};
@@ -93,7 +95,10 @@ namespace dnSpy.Debugger.Threads {
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 		}
+
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshThemeFields();
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var debuggerSettings = (IDebuggerSettings)sender;
