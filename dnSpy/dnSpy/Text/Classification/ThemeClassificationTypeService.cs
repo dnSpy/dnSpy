@@ -252,6 +252,8 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexStorageStreamNameInvalid),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexTablesStream),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexTableName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DocumentListMatchHighlight),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.GacMatchHighlight),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

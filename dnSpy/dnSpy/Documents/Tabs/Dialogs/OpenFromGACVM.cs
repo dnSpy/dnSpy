@@ -154,7 +154,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			if (string.IsNullOrEmpty(filterText))
 				return true;
 			var name = vm.Name.ToUpperInvariant();
-			foreach (var s in filterText.ToUpperInvariant().Split(sep)) {
+			foreach (var s in filterText.ToUpperInvariant().Split(sep, StringSplitOptions.RemoveEmptyEntries)) {
 				if (!name.Contains(s))
 					return false;
 			}

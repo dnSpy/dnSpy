@@ -1154,6 +1154,16 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexTableName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexTableNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DocumentListMatchHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DocumentListMatchHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.GacMatchHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition GacMatchHighlightClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2707,7 +2717,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.FindMatchHighlightMarker)]
 		[Name(ThemeClassificationTypeNameKeys.FindMatchHighlightMarker)]
 		[UserVisible(true)]
-		[Order(After = Priority.Default)]
+		[Order(After = Priority.High)]
 		sealed class FindMatchHighlightMarker : ThemeMarkerFormatDefinition {
 			FindMatchHighlightMarker() : base(TextColor.FindMatchHighlightMarker) {
 				ZOrder = TextMarkerServiceZIndexes.FindMatch;
@@ -3146,6 +3156,24 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class HexTableName : ThemeClassificationFormatDefinition {
 			HexTableName() : base(TextColor.HexTableName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DocumentListMatchHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.DocumentListMatchHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class DocumentListMatchHighlight : ThemeMarkerFormatDefinition {
+			DocumentListMatchHighlight() : base(TextColor.DocumentListMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.GacMatchHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.GacMatchHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class GacMatchHighlight : ThemeMarkerFormatDefinition {
+			GacMatchHighlight() : base(TextColor.GacMatchHighlight) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

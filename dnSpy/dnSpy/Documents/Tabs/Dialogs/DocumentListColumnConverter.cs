@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				else
 					return null;
 
-				var context = new TextClassifierContext(writer.Text, tag, vm.Owner.SyntaxHighlight, writer.Colors);
+				var context = new OpenDocumentListTextClassifierContext(vm.Owner.SearchText, writer.Text, tag, vm.Owner.SyntaxHighlight, writer.Colors);
 				return vm.Owner.TextElementProvider.CreateTextElement(vm.Owner.ClassificationFormatMap, context, ContentTypes.DocListDialog, TextElementFlags.FilterOutNewLines | TextElementFlags.CharacterEllipsis);
 			}
 			finally {

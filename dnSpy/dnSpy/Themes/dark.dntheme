@@ -220,6 +220,8 @@
 		<color name="hexstoragestreamnameinvalid" fg="#FF0000" />
 		<color name="hextablesstream" fg="#7F92FF" />
 		<color name="hextablename" fg="#D69D85" />
+		<color name="documentlistmatchhighlight" bg="#FF773800" />
+		<color name="gacmatchhighlight" bg="#FF773800" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

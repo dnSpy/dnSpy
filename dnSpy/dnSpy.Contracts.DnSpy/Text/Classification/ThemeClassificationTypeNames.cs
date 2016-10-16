@@ -1131,5 +1131,15 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.HexTableName"/>
 		/// </summary>
 		public const string HexTableName = "Theme-" + nameof(HexTableName);
+
+		/// <summary>
+		/// <see cref="TextColor.DocumentListMatchHighlight"/>
+		/// </summary>
+		public const string DocumentListMatchHighlight = "Theme-" + nameof(DocumentListMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.GacMatchHighlight"/>
+		/// </summary>
+		public const string GacMatchHighlight = "Theme-" + nameof(GacMatchHighlight);
 	}
 }

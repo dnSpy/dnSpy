@@ -245,6 +245,8 @@ namespace dnSpy.Contracts.Themes {
 		HexStorageStreamNameInvalid,
 		HexTablesStream,
 		HexTableName,
+		DocumentListMatchHighlight,
+		GacMatchHighlight,
 
 		// Must be last in this group
 		LastNR,

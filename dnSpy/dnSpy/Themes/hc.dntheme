@@ -64,6 +64,8 @@
 		<color name="signaturehelpparameter" bold="true" italic="true" />
 		<color name="signaturehelpparameterdocumentation" italic="true" />
 		<color name="url" fg="blue" />
+		<color name="documentlistmatchhighlight" bg="#FF008000" />
+		<color name="gacmatchhighlight" bg="#FF008000" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

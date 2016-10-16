@@ -247,6 +247,8 @@ namespace dnSpy.Contracts.Text {
 		HexStorageStreamNameInvalid,
 		HexTablesStream,
 		HexTableName,
+		DocumentListMatchHighlight,
+		GacMatchHighlight,
 
 		/// <summary>
 		/// Must be last
@@ -480,6 +482,8 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexStorageStreamNameInvalid = TextColor.HexStorageStreamNameInvalid;
 		public static readonly object HexTablesStream = TextColor.HexTablesStream;
 		public static readonly object HexTableName = TextColor.HexTableName;
+		public static readonly object DocumentListMatchHighlight = TextColor.DocumentListMatchHighlight;
+		public static readonly object GacMatchHighlight = TextColor.GacMatchHighlight;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -715,6 +719,8 @@ namespace dnSpy.Contracts.Text {
 			HexStorageStreamNameInvalid,
 			HexTablesStream,
 			HexTableName,
+			DocumentListMatchHighlight,
+			GacMatchHighlight,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

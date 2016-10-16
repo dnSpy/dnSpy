@@ -138,12 +138,16 @@
     <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListDlg.xaml.cs">
       <DependentUpon>OpenDocumentListDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListTextClassifier.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListTextClassifierContext.cs" />
     <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListVM.cs" />
     <Compile Include="Documents\Tabs\Dialogs\OpenDocumentsHelper.cs" />
     <Compile Include="Documents\Tabs\Dialogs\OpenFromGAC.cs" />
     <Compile Include="Documents\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
       <DependentUpon>OpenFromGACDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Documents\Tabs\Dialogs\OpenFromGACTextClassifier.cs" />
+    <Compile Include="Documents\Tabs\Dialogs\OpenFromGACTextClassifierContext.cs" />
     <Compile Include="Documents\Tabs\Dialogs\OpenFromGACVM.cs" />
     <Compile Include="Documents\Tabs\Dialogs\TabColumnConverter.cs" />
     <Compile Include="Documents\Tabs\Dialogs\TabPrinter.cs" />

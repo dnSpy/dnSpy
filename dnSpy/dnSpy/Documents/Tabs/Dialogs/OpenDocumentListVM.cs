@@ -162,7 +162,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			if (ShowSavedLists && !vm.IsUserList)
 				return false;
 			var name = vm.Name.ToUpperInvariant();
-			foreach (var s in filterText.ToUpperInvariant().Split(sep)) {
+			foreach (var s in filterText.ToUpperInvariant().Split(sep, StringSplitOptions.RemoveEmptyEntries)) {
 				if (!name.Contains(s))
 					return false;
 			}
