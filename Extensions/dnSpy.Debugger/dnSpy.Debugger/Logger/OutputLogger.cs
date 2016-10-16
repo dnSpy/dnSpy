@@ -76,11 +76,11 @@ namespace dnSpy.Debugger.Logger {
 
 				if (outputLoggerSettings.ShowProcessExitMessages) {
 					int processExitCode;
-					if (!NativeMethods.GetExitCodeProcess(debugState.hProcess_debuggee, out processExitCode))
+					if (debugState == null || !NativeMethods.GetExitCodeProcess(debugState.hProcess_debuggee, out processExitCode))
 						processExitCode = -1;
 					textPane.WriteLine(BoxedTextColor.DebugLogExitProcess,
 						string.Format(dnSpy_Debugger_Resources.DebugLogExitProcess,
-								GetProcessNameWithPID(debugState.debuggedProcess),
+								GetProcessNameWithPID(debugState?.debuggedProcess),
 								processExitCode));
 				}
 
@@ -100,16 +100,20 @@ namespace dnSpy.Debugger.Logger {
 				this.dbg = dbg;
 
 				Debug.Assert(dbg.Processes.Length == 1);
-				this.debuggedProcess = dbg.Processes[0];
+				this.debuggedProcess = dbg.Processes.FirstOrDefault();
 
-				const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
-				this.hProcess_debuggee = NativeMethods.OpenProcess2(PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)this.debuggedProcess.ProcessId);
-				Debug.Assert(this.hProcess_debuggee != IntPtr.Zero, string.Format("OpenProcess() failed: 0x{0:X8}", Marshal.GetLastWin32Error()));
+				if (this.debuggedProcess != null) {
+					const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
+					this.hProcess_debuggee = NativeMethods.OpenProcess2(PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)this.debuggedProcess.ProcessId);
+					Debug.Assert(this.hProcess_debuggee != IntPtr.Zero, string.Format("OpenProcess() failed: 0x{0:X8}", Marshal.GetLastWin32Error()));
+				}
 			}
 
 			public void Dispose() {
-				bool b = NativeMethods.CloseHandle(hProcess_debuggee);
-				Debug.Assert(b, string.Format("CloseHandle() failed: 0x{0:X8}", Marshal.GetLastWin32Error()));
+				if (hProcess_debuggee != IntPtr.Zero) {
+					bool b = NativeMethods.CloseHandle(hProcess_debuggee);
+					Debug.Assert(b, string.Format("CloseHandle() failed: 0x{0:X8}", Marshal.GetLastWin32Error()));
+				}
 			}
 		}
 
@@ -131,7 +135,7 @@ namespace dnSpy.Debugger.Logger {
 			return name;
 		}
 
-		string GetProcessNameWithPID(DnProcess process) => string.Format("[0x{0:X}] {1}", process?.ProcessId, GetProcessName(process));
+		string GetProcessNameWithPID(DnProcess process) => string.Format("[0x{0:X}] {1}", process?.ProcessId ?? -1, GetProcessName(process));
 
 		string GetModuleName(DnModule module) {
 			if (module == null)

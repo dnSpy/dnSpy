@@ -32,7 +32,14 @@ namespace dndbg.Engine {
 		static T I<T>(IntPtr ptr) where T : class {
 			if (ptr == IntPtr.Zero)
 				return null;
-			return (T)Marshal.GetObjectForIUnknown(ptr);
+			try {
+				return (T)Marshal.GetObjectForIUnknown(ptr);
+			}
+			catch (COMException) {
+				// Can happen if the debugged process crashed when we attached to it. We'll get
+				// an ExitProcess event but the cast will fail (the ptr is invalid, but not null)
+				return null;
+			}
 		}
 
 		void ICorDebugManagedCallback.Breakpoint(IntPtr pAppDomain, IntPtr pThread, IntPtr pBreakpoint) =>

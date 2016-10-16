@@ -823,6 +823,10 @@ namespace dnSpy.Debugger {
 				errMsg = string.Format(dnSpy_Debugger_Resources.Error_CouldNotStartDebugger2, ex.Message);
 				return false;
 			}
+			if (newDebugger.Processes.Length == 0) {
+				errMsg = string.Format(dnSpy_Debugger_Resources.Error_CouldNotStartDebugger2, "Could not attach to the process");
+				return false;
+			}
 			TheDebugger.Initialize(newDebugger);
 
 			return true;
