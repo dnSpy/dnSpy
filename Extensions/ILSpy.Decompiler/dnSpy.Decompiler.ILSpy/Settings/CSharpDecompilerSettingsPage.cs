@@ -28,7 +28,7 @@ using dnSpy.Decompiler.ILSpy.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	sealed class CSharpDecompilerSettingsPage : IAppSettingsPage, INotifyPropertyChanged {
+	sealed class CSharpDecompilerSettingsPage : IAppSettingsPage2, INotifyPropertyChanged {
 		readonly DecompilerSettings _global_decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
 
@@ -130,10 +130,9 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			DecompileAll		= ILAst | CSharp | VB,
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
+		void IAppSettingsPage.OnApply() { throw new InvalidOperationException(); }
 
+		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			RefreshFlags flags = 0;
 			var g = _global_decompilerSettings;
 			var d = decompilerSettings;
@@ -190,6 +189,8 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 
 			decompilerSettings.CopyTo(_global_decompilerSettings);
 		}
+
+		public void OnClosed() { }
 	}
 
 	sealed class DecompilationObjectVM : ViewModelBase {

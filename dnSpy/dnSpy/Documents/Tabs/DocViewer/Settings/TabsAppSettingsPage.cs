@@ -58,15 +58,14 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			ConvertTabsToSpaces = options.ConvertTabsToSpaces;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
-
+		public void OnApply() {
 			if (!TabSizeVM.HasError)
 				options.TabSize = TabSizeVM.Value;
 			if (!IndentSizeVM.HasError)
 				options.IndentSize = IndentSizeVM.Value;
 			options.ConvertTabsToSpaces = ConvertTabsToSpaces;
 		}
+
+		public void OnClosed() { }
 	}
 }

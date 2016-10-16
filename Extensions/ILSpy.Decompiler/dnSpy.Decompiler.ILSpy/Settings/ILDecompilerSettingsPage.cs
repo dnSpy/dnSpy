@@ -25,7 +25,7 @@ using dnSpy.Decompiler.ILSpy.Core.Settings;
 using dnSpy.Decompiler.ILSpy.Properties;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	sealed class ILDecompilerSettingsPage : IAppSettingsPage, INotifyPropertyChanged {
+	sealed class ILDecompilerSettingsPage : IAppSettingsPage2, INotifyPropertyChanged {
 		readonly ILSettings _global_ilSettings;
 		readonly ILSettings ilSettings;
 
@@ -45,14 +45,15 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			this.ilSettings = ilSettings.Clone();
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
+		void IAppSettingsPage.OnApply() { throw new InvalidOperationException(); }
 
+		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			if (!_global_ilSettings.Equals(ilSettings))
 				appRefreshSettings.Add(SettingsConstants.REDISASSEMBLE_IL_ILSPY_CODE);
 
 			ilSettings.CopyTo(_global_ilSettings);
 		}
+
+		public void OnClosed() { }
 	}
 }

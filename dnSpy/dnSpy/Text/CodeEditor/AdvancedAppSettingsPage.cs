@@ -185,10 +185,7 @@ namespace dnSpy.Text.CodeEditor {
 			ZoomControl = options.ZoomControl;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
-
+		public void OnApply() {
 			options.ReferenceHighlighting = ReferenceHighlighting;
 			options.HighlightRelatedKeywords = HighlightRelatedKeywords;
 			options.BraceMatching = HighlightMatchingBrace;
@@ -202,5 +199,7 @@ namespace dnSpy.Text.CodeEditor {
 			options.EnableMouseWheelZoom = MouseWheelZoom;
 			options.ZoomControl = ZoomControl;
 		}
+
+		public void OnClosed() { }
 	}
 }

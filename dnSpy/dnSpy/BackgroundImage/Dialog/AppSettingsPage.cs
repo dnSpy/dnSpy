@@ -320,12 +320,11 @@ namespace dnSpy.BackgroundImage.Dialog {
 			Images = images;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			backgroundImageSettingsService.LastSelectedId = currentItem.Id;
-			if (!saveSettings)
-				return;
+		public void OnApply() =>
 			backgroundImageSettingsService.SetRawSettings(Settings.Select(a => a.GetUpdatedRawSettings()).ToArray());
-		}
+
+		public void OnClosed() =>
+			backgroundImageSettingsService.LastSelectedId = currentItem.Id;
 	}
 
 	sealed class Settings {

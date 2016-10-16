@@ -61,7 +61,7 @@ namespace dnSpy.MainApp.Settings {
 		}
 	}
 
-	sealed class GeneralAppSettingsPage : ViewModelBase, IAppSettingsPage {
+	sealed class GeneralAppSettingsPage : ViewModelBase, IAppSettingsPage2 {
 		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_ENVIRONMENT);
 		public Guid Guid => new Guid("776184ED-10F6-466C-8B66-716936C29A5A");
 		public double Order => AppSettingsConstants.ORDER_ENVIRONMENT_GENERAL;
@@ -184,10 +184,9 @@ namespace dnSpy.MainApp.Settings {
 			UseNewRendererVM = new UseNewRendererVM(appSettings);
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
+		void IAppSettingsPage.OnApply() { throw new InvalidOperationException(); }
 
+		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			if (SelectedThemeVM != null)
 				themeService.Theme = SelectedThemeVM.Theme;
 			windowsExplorerIntegrationService.WindowsExplorerIntegration = WindowsExplorerIntegration;
@@ -203,6 +202,8 @@ namespace dnSpy.MainApp.Settings {
 
 			UseNewRendererVM.Save();
 		}
+
+		public void OnClosed() { }
 	}
 
 	sealed class ThemeVM {

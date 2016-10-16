@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 	}
 
-	sealed class AssemblyExplorerAppSettingsPage : ViewModelBase, IAppSettingsPage {
+	sealed class AssemblyExplorerAppSettingsPage : ViewModelBase, IAppSettingsPage2 {
 		public Guid ParentGuid => Guid.Empty;
 		public Guid Guid => new Guid("F8B8DA74-9318-4BEE-B50A-1139147D3C82");
 		public double Order => AppSettingsConstants.ORDER_ASSEMBLY_EXPLORER;
@@ -193,10 +193,9 @@ namespace dnSpy.Documents.Tabs.Settings {
 			}
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
+		void IAppSettingsPage.OnApply() { throw new InvalidOperationException(); }
 
+		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			documentTreeViewSettings.ShowToken = ShowToken;
 			documentTreeViewSettings.ShowAssemblyVersion = ShowAssemblyVersion;
 			documentTreeViewSettings.ShowAssemblyPublicKeyToken = ShowAssemblyPublicKeyToken;
@@ -218,6 +217,8 @@ namespace dnSpy.Documents.Tabs.Settings {
 				documentTreeViewSettings.MemberKind4 = MemberKind4.Object;
 			}
 		}
+
+		public void OnClosed() { }
 	}
 
 	sealed class MemberKindVM : ViewModelBase {

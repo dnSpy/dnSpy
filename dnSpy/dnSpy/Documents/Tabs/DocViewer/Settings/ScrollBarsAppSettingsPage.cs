@@ -64,12 +64,11 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			VerticalScrollBar = options.VerticalScrollBar;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
-
+		public void OnApply() {
 			options.HorizontalScrollBar = HorizontalScrollBar;
 			options.VerticalScrollBar = VerticalScrollBar;
 		}
+
+		public void OnClosed() { }
 	}
 }

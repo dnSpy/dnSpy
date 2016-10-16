@@ -108,10 +108,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			HighlightCurrentLine = options.EnableHighlightCurrentLine;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
-
+		public void OnApply() {
 			options.UseVirtualSpace = UseVirtualSpace;
 			options.LineNumberMargin = ShowLineNumbers;
 			options.EnableHighlightCurrentLine = HighlightCurrentLine;
@@ -127,5 +124,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 				newStyle &= ~WordWrapStyles.VisibleGlyphs;
 			options.WordWrapStyle = newStyle;
 		}
+
+		public void OnClosed() { }
 	}
 }

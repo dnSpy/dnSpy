@@ -120,10 +120,7 @@ namespace dnSpy.Output.Settings {
 			ShowTimestamps = options.ShowTimestamps;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
-
+		public void OnApply() {
 			options.UseVirtualSpace = UseVirtualSpace;
 			options.LineNumberMargin = ShowLineNumbers;
 			options.EnableHighlightCurrentLine = HighlightCurrentLine;
@@ -140,5 +137,7 @@ namespace dnSpy.Output.Settings {
 				newStyle &= ~WordWrapStyles.VisibleGlyphs;
 			options.WordWrapStyle = newStyle;
 		}
+
+		public void OnClosed() { }
 	}
 }

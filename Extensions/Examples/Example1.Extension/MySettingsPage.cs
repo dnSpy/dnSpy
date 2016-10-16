@@ -64,13 +64,13 @@ namespace Example1.Extension {
 			this.newSettings = mySettings.Clone();
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			// Check if user canceled
-			if (!saveSettings)
-				return;
-
-			// OK was pressed, save the settings
+		public void OnApply() {
+			// OK/Apply was pressed, save the settings
 			newSettings.CopyTo(globalSettings);
+		}
+
+		public void OnClosed() {
+			// The dialog box was closed
 		}
 	}
 }

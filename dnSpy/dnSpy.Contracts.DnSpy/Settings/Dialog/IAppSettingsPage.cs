@@ -22,7 +22,7 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
-	/// Content shown in the application settings
+	/// Content shown in the options dialog box
 	/// </summary>
 	public interface IAppSettingsPage {
 		/// <summary>
@@ -56,11 +56,25 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		object UIObject { get; }
 
 		/// <summary>
+		/// Called when all settings should be saved
+		/// </summary>
+		void OnApply();
+
+		/// <summary>
 		/// Called when the dialog box has been closed
 		/// </summary>
-		/// <param name="saveSettings">true to save the settings, false to cancel any changes</param>
-		/// <param name="appRefreshSettings">Used if <paramref name="saveSettings"/> is true. Add
-		/// anything that needs to be refreshed, eg. re-decompile code</param>
-		void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings);
+		void OnClosed();
+	}
+
+	/// <summary>
+	/// Content shown in the options dialog box
+	/// </summary>
+	public interface IAppSettingsPage2 : IAppSettingsPage {
+		/// <summary>
+		/// Called when all settings should be saved. <see cref="IAppSettingsPage.OnApply"/> is
+		/// never called.
+		/// </summary>
+		/// <param name="appRefreshSettings">Add anything that needs to be refreshed, eg. re-decompile code</param>
+		void OnApply(IAppRefreshSettings appRefreshSettings);
 	}
 }

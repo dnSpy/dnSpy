@@ -81,11 +81,11 @@ namespace dnSpy.Debugger {
 			Settings.CoreCLRDbgShimFilename = newFilename;
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
+		public void OnApply() {
 			Settings.CopyTo(_global_settings);
 			_global_settings.BreakProcessKind = this.BreakProcessKind;
 		}
+
+		public void OnClosed() { }
 	}
 }

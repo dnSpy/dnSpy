@@ -125,13 +125,12 @@ namespace dnSpy.MainApp.Settings {
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
-
+		public void OnApply() {
 			textEditorSettings.FontFamily = FontFamily;
 			textEditorSettings.FontSize = FontSize;
 		}
+
+		public void OnClosed() { }
 	}
 
 	sealed class FontFamilyVM : ViewModelBase {

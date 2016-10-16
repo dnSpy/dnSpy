@@ -111,11 +111,8 @@ namespace dnSpy.BamlDecompiler {
 			this.bamlSettings = _global_settings.Clone();
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
-			bamlSettings.CopyTo(_global_settings);
-		}
+		public void OnApply() => bamlSettings.CopyTo(_global_settings);
+		public void OnClosed() { }
 	}
 
 	[ExportAutoLoaded]

@@ -61,12 +61,8 @@ namespace dnSpy.Contracts.Hex {
 			this.displayAppSettingsVM = new HexEditorAppSettingsVM(hexEditorSettingsImpl.Clone());
 		}
 
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) {
-			if (!saveSettings)
-				return;
-
-			displayAppSettingsVM.Settings.CopyTo(hexEditorSettingsImpl);
-		}
+		public void OnApply() => displayAppSettingsVM.Settings.CopyTo(hexEditorSettingsImpl);
+		public void OnClosed() { }
 	}
 
 	sealed class HexEditorAppSettingsVM : ViewModelBase {

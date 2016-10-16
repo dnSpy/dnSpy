@@ -101,8 +101,19 @@ namespace dnSpy.Settings.Dialog {
 			Debug.Assert(lastSelectedGuid != null);
 
 			var appRefreshSettings = new AppRefreshSettings();
+			if (saveSettings) {
+				foreach (var vm in allVMs) {
+					var page2 = vm.Page as IAppSettingsPage2;
+					if (page2 != null)
+						page2.OnApply(appRefreshSettings);
+					else
+						vm.Page.OnApply();
+				}
+			}
+
 			foreach (var vm in allVMs)
-				vm.Page.OnClosed(saveSettings, appRefreshSettings);
+				vm.Page.OnClosed();
+
 			if (saveSettings) {
 				foreach (var listener in appSettingsModifiedListeners)
 					listener.Value.OnSettingsModified(appRefreshSettings);
@@ -223,7 +234,8 @@ namespace dnSpy.Settings.Dialog {
 				Icon = icon;
 			}
 
-			void IAppSettingsPage.OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) { }
+			void IAppSettingsPage.OnApply() { }
+			void IAppSettingsPage.OnClosed() { }
 		}
 
 		static AppSettingsPageVM TryCreate(object obj, IAppSettingsPageContainerMetadata md, ContextVM context) {

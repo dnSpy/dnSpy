@@ -29,6 +29,7 @@ namespace dnSpy.Text.Repl {
 		public string Title { get; set; }
 		public ImageReference Icon => ImageReference.None;
 		public object UIObject => null;
-		public void OnClosed(bool saveSettings, IAppRefreshSettings appRefreshSettings) { }
+		public void OnApply() { }
+		public void OnClosed() { }
 	}
 }
