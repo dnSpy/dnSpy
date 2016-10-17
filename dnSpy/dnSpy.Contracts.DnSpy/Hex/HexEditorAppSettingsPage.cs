@@ -40,18 +40,18 @@ namespace dnSpy.Contracts.Hex {
 			this.hexEditorSettingsImpl = hexEditorSettingsImpl;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new HexEditorAppSettingsPage(hexEditorSettingsImpl);
 		}
 	}
 
-	sealed class HexEditorAppSettingsPage : IAppSettingsPage {
-		public Guid ParentGuid => Guid.Empty;
-		public Guid Guid => new Guid("4BEAD407-839F-489B-A874-2B3325776366");
-		public double Order => AppSettingsConstants.ORDER_HEXEDITOR;
-		public string Title => dnSpy_Contracts_DnSpy_Resources.HexEditorAppDlgTitle;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => displayAppSettingsVM;
+	sealed class HexEditorAppSettingsPage : AppSettingsPage {
+		public override Guid ParentGuid => Guid.Empty;
+		public override Guid Guid => new Guid("4BEAD407-839F-489B-A874-2B3325776366");
+		public override double Order => AppSettingsConstants.ORDER_HEXEDITOR;
+		public override string Title => dnSpy_Contracts_DnSpy_Resources.HexEditorAppDlgTitle;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => displayAppSettingsVM;
 
 		readonly HexEditorSettingsImpl hexEditorSettingsImpl;
 		readonly HexEditorAppSettingsVM displayAppSettingsVM;
@@ -61,8 +61,7 @@ namespace dnSpy.Contracts.Hex {
 			this.displayAppSettingsVM = new HexEditorAppSettingsVM(hexEditorSettingsImpl.Clone());
 		}
 
-		public void OnApply() => displayAppSettingsVM.Settings.CopyTo(hexEditorSettingsImpl);
-		public void OnClosed() { }
+		public override void OnApply() => displayAppSettingsVM.Settings.CopyTo(hexEditorSettingsImpl);
 	}
 
 	sealed class HexEditorAppSettingsVM : ViewModelBase {

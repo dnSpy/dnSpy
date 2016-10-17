@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
@@ -25,13 +26,16 @@ using dnSpy.Properties;
 using dnSpy.Text.Editor;
 
 namespace dnSpy.Documents.Tabs.DocViewer.Settings {
-	sealed class TabsAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
-		public Guid Guid => new Guid("D8B1C942-4094-4132-878F-5FFAE59FF9FD");
-		public double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_TABS;
-		public string Title => dnSpy_Resources.TabsSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class TabsAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
+		public override Guid Guid => new Guid("D8B1C942-4094-4132-878F-5FFAE59FF9FD");
+		public override double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_TABS;
+		public override string Title => dnSpy_Resources.TabsSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public Int32VM TabSizeVM { get; }
 		public Int32VM IndentSizeVM { get; }
@@ -58,14 +62,12 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			ConvertTabsToSpaces = options.ConvertTabsToSpaces;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			if (!TabSizeVM.HasError)
 				options.TabSize = TabSizeVM.Value;
 			if (!IndentSizeVM.HasError)
 				options.IndentSize = IndentSizeVM.Value;
 			options.ConvertTabsToSpaces = ConvertTabsToSpaces;
 		}
-
-		public void OnClosed() { }
 	}
 }

@@ -18,20 +18,23 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Output.Settings {
-	sealed class GeneralAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_OUTPUT);
-		public Guid Guid => new Guid("FB352B1B-A310-480E-B0D6-C3F78CAA2B32");
-		public double Order => AppSettingsConstants.ORDER_OUTPUT_DEFAULT_GENERAL;
-		public string Title => dnSpy_Resources.GeneralSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class GeneralAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_OUTPUT);
+		public override Guid Guid => new Guid("FB352B1B-A310-480E-B0D6-C3F78CAA2B32");
+		public override double Order => AppSettingsConstants.ORDER_OUTPUT_DEFAULT_GENERAL;
+		public override string Title => dnSpy_Resources.GeneralSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool UseVirtualSpaceEnabled => UseVirtualSpace || !WordWrap;
 		public bool WordWrapEnabled => WordWrap || !UseVirtualSpace;
@@ -120,7 +123,7 @@ namespace dnSpy.Output.Settings {
 			ShowTimestamps = options.ShowTimestamps;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.UseVirtualSpace = UseVirtualSpace;
 			options.LineNumberMargin = ShowLineNumbers;
 			options.EnableHighlightCurrentLine = HighlightCurrentLine;
@@ -137,7 +140,5 @@ namespace dnSpy.Output.Settings {
 				newStyle &= ~WordWrapStyles.VisibleGlyphs;
 			options.WordWrapStyle = newStyle;
 		}
-
-		public void OnClosed() { }
 	}
 }

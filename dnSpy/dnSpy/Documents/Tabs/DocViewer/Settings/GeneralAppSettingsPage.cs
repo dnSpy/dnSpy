@@ -18,20 +18,23 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Documents.Tabs.DocViewer.Settings {
-	sealed class GeneralAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
-		public Guid Guid => new Guid("F00E1FAC-5E93-4AD4-B25E-54E2B94868B8");
-		public double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_GENERAL;
-		public string Title => dnSpy_Resources.GeneralSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class GeneralAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
+		public override Guid Guid => new Guid("F00E1FAC-5E93-4AD4-B25E-54E2B94868B8");
+		public override double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_GENERAL;
+		public override string Title => dnSpy_Resources.GeneralSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool UseVirtualSpaceEnabled => UseVirtualSpace || !WordWrap;
 		public bool WordWrapEnabled => WordWrap || !UseVirtualSpace;
@@ -108,7 +111,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			HighlightCurrentLine = options.EnableHighlightCurrentLine;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.UseVirtualSpace = UseVirtualSpace;
 			options.LineNumberMargin = ShowLineNumbers;
 			options.EnableHighlightCurrentLine = HighlightCurrentLine;
@@ -124,7 +127,5 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 				newStyle &= ~WordWrapStyles.VisibleGlyphs;
 			options.WordWrapStyle = newStyle;
 		}
-
-		public void OnClosed() { }
 	}
 }

@@ -18,19 +18,22 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Documents.Tabs.DocViewer.Settings {
-	sealed class ScrollBarsAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
-		public Guid Guid => new Guid("B9BA3033-D082-472F-A65D-3525554B2759");
-		public double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_SCROLLBARS;
-		public string Title => dnSpy_Resources.ScrollBarsSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class ScrollBarsAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
+		public override Guid Guid => new Guid("B9BA3033-D082-472F-A65D-3525554B2759");
+		public override double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_SCROLLBARS;
+		public override string Title => dnSpy_Resources.ScrollBarsSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool HorizontalScrollBar {
 			get { return horizontalScrollBar; }
@@ -64,11 +67,9 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			VerticalScrollBar = options.VerticalScrollBar;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.HorizontalScrollBar = HorizontalScrollBar;
 			options.VerticalScrollBar = VerticalScrollBar;
 		}
-
-		public void OnClosed() { }
 	}
 }

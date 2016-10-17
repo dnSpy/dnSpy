@@ -18,19 +18,22 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Output.Settings {
-	sealed class ScrollBarsAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_OUTPUT);
-		public Guid Guid => new Guid("3B1B04B9-E284-4A3B-8946-F8CADA302C08");
-		public double Order => AppSettingsConstants.ORDER_OUTPUT_DEFAULT_SCROLLBARS;
-		public string Title => dnSpy_Resources.ScrollBarsSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class ScrollBarsAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_OUTPUT);
+		public override Guid Guid => new Guid("3B1B04B9-E284-4A3B-8946-F8CADA302C08");
+		public override double Order => AppSettingsConstants.ORDER_OUTPUT_DEFAULT_SCROLLBARS;
+		public override string Title => dnSpy_Resources.ScrollBarsSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool HorizontalScrollBar {
 			get { return horizontalScrollBar; }
@@ -64,11 +67,9 @@ namespace dnSpy.Output.Settings {
 			VerticalScrollBar = options.VerticalScrollBar;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.HorizontalScrollBar = HorizontalScrollBar;
 			options.VerticalScrollBar = VerticalScrollBar;
 		}
-
-		public void OnClosed() { }
 	}
 }

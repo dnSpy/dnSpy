@@ -28,21 +28,21 @@ using dnSpy.Decompiler.ILSpy.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	sealed class CSharpDecompilerSettingsPage : IAppSettingsPage2, INotifyPropertyChanged {
+	sealed class CSharpDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
 		readonly DecompilerSettings _global_decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-		public double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
+		public override double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
 		public string Name => dnSpy_Decompiler_ILSpy_Resources.CSharpDecompilerSettingsTabName;
 		public DecompilerSettings Settings => decompilerSettings;
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
-		public Guid Guid => new Guid("8929CE8E-7E2C-4701-A8BA-42F70363872C");
-		public string Title => "C# / Visual Basic (ILSpy)";
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
+		public override Guid Guid => new Guid("8929CE8E-7E2C-4701-A8BA-42F70363872C");
+		public override string Title => "C# / Visual Basic (ILSpy)";
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
 
 		public DecompilationObjectVM[] DecompilationObjectsArray => decompilationObjectVMs2;
 		readonly DecompilationObjectVM[] decompilationObjectVMs;
@@ -130,7 +130,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			DecompileAll		= ILAst | CSharp | VB,
 		}
 
-		void IAppSettingsPage.OnApply() { throw new InvalidOperationException(); }
+		public override void OnApply() { throw new InvalidOperationException(); }
 
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			RefreshFlags flags = 0;
@@ -189,8 +189,6 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 
 			decompilerSettings.CopyTo(_global_decompilerSettings);
 		}
-
-		public void OnClosed() { }
 	}
 
 	sealed class DecompilationObjectVM : ViewModelBase {

@@ -31,7 +31,7 @@ namespace dnSpy.Output.Settings {
 			this.outputWindowOptionsService = outputWindowOptionsService;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new GeneralAppSettingsPage(outputWindowOptionsService.Default);
 			yield return new ScrollBarsAppSettingsPage(outputWindowOptionsService.Default);
 			yield return new TabsAppSettingsPage(outputWindowOptionsService.Default);

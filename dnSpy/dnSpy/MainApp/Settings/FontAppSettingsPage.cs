@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
@@ -45,18 +46,21 @@ namespace dnSpy.MainApp.Settings {
 			this.textEditorSettings = textEditorSettings;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new FontAppSettingsPage(textEditorSettings);
 		}
 	}
 
-	sealed class FontAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_ENVIRONMENT);
-		public Guid Guid => new Guid("915F7258-1441-4F80-9DB2-6DF6948C2E09");
-		public double Order => AppSettingsConstants.ORDER_ENVIRONMENT_FONT;
-		public string Title => dnSpy_Resources.FontSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class FontAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_ENVIRONMENT);
+		public override Guid Guid => new Guid("915F7258-1441-4F80-9DB2-6DF6948C2E09");
+		public override double Order => AppSettingsConstants.ORDER_ENVIRONMENT_FONT;
+		public override string Title => dnSpy_Resources.FontSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public FontFamilyVM[] FontFamilies {
 			get { return fontFamilies; }
@@ -125,12 +129,10 @@ namespace dnSpy.MainApp.Settings {
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			textEditorSettings.FontFamily = FontFamily;
 			textEditorSettings.FontSize = FontSize;
 		}
-
-		public void OnClosed() { }
 	}
 
 	sealed class FontFamilyVM : ViewModelBase {

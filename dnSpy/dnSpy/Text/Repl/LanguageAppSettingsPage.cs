@@ -22,14 +22,21 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Text.Repl {
-	sealed class LanguageAppSettingsPage : IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_REPL);
-		public Guid Guid { get; set; }
-		public double Order { get; set; }
-		public string Title { get; set; }
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => null;
-		public void OnApply() { }
-		public void OnClosed() { }
+	sealed class LanguageAppSettingsPage : AppSettingsPage {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_REPL);
+		public override Guid Guid => guid;
+		public override double Order => order;
+		public override string Title => title;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => null;
+		public override void OnApply() { }
+		readonly Guid guid;
+		readonly double order;
+		readonly string title;
+		public LanguageAppSettingsPage(Guid guid, double order, string title) {
+			this.guid = guid;
+			this.order = order;
+			this.title = title;
+		}
 	}
 }

@@ -40,7 +40,7 @@ namespace dnSpy.Text.CodeEditor {
 			this.codeEditorSettingsService = codeEditorSettingsService;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			var options = codeEditorSettingsService.Options.OrderBy(a => a.LanguageName, StringComparer.CurrentCultureIgnoreCase).ToArray();
 			if (options.Length == 0)
 				yield break;
@@ -48,11 +48,7 @@ namespace dnSpy.Text.CodeEditor {
 			double order = AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES;
 			double orderIncrement = 1.0 / options.Length;
 			foreach (var option in options) {
-				yield return new LanguageAppSettingsPage {
-					Guid = option.Guid,
-					Order = order,
-					Title = option.LanguageName,
-				};
+				yield return new LanguageAppSettingsPage(option.Guid, order, option.LanguageName);
 				order += orderIncrement;
 
 				yield return new GeneralAppSettingsPage(option, IncrementGuid(option.Guid, GENERAL_GUID_INC));

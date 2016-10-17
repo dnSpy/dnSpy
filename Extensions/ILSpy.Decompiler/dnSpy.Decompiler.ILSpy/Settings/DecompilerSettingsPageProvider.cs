@@ -34,7 +34,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			this.ilSettings = ilSettings;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new CSharpDecompilerSettingsPage(decompilerSettings);
 			yield return new ILDecompilerSettingsPage(ilSettings);
 		}

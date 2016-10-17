@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -48,20 +49,23 @@ namespace dnSpy.BackgroundImage.Dialog {
 			this.pickDirectory = pickDirectory;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<Contracts.Settings.Dialog.AppSettingsPage> Create() {
 			var rawSettings = backgroundImageSettingsService.GetRawSettings();
 			if (rawSettings.Length != 0)
-				yield return new AppSettingsPage(backgroundImageSettingsService, pickFilename, pickDirectory, rawSettings);
+				yield return new AppSettingsPageImpl(backgroundImageSettingsService, pickFilename, pickDirectory, rawSettings);
 		}
 	}
 
-	sealed class AppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => Guid.Empty;
-		public Guid Guid => new Guid("A36F0A79-E8D0-44C5-8F22-A50B28F6117E");
-		public double Order => AppSettingsConstants.ORDER_BACKGROUNDIMAGE;
-		public string Title => dnSpy_Resources.BackgroundImageOptDlgTab;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class AppSettingsPageImpl : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => Guid.Empty;
+		public override Guid Guid => new Guid("A36F0A79-E8D0-44C5-8F22-A50B28F6117E");
+		public override double Order => AppSettingsConstants.ORDER_BACKGROUNDIMAGE;
+		public override string Title => dnSpy_Resources.BackgroundImageOptDlgTab;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public ICommand ResetCommand => new RelayCommand(a => ResetSettings(), a => CanResetSettings);
 		public ICommand PickFilenamesCommand => new RelayCommand(a => PickFilenames(), a => CanPickFilenames);
@@ -189,7 +193,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
-		public AppSettingsPage(IBackgroundImageSettingsService backgroundImageSettingsService, IPickFilename pickFilename, IPickDirectory pickDirectory, ImageSettingsInfo[] settings) {
+		public AppSettingsPageImpl(IBackgroundImageSettingsService backgroundImageSettingsService, IPickFilename pickFilename, IPickDirectory pickDirectory, ImageSettingsInfo[] settings) {
 			if (backgroundImageSettingsService == null)
 				throw new ArgumentNullException(nameof(backgroundImageSettingsService));
 			if (pickFilename == null)
@@ -320,10 +324,10 @@ namespace dnSpy.BackgroundImage.Dialog {
 			Images = images;
 		}
 
-		public void OnApply() =>
+		public override void OnApply() =>
 			backgroundImageSettingsService.SetRawSettings(Settings.Select(a => a.GetUpdatedRawSettings()).ToArray());
 
-		public void OnClosed() =>
+		public override void OnClosed() =>
 			backgroundImageSettingsService.LastSelectedId = currentItem.Id;
 	}
 

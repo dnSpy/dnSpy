@@ -18,19 +18,22 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Documents.Tabs.DocViewer.Settings {
-	sealed class AdvancedAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
-		public Guid Guid => new Guid("6F00676C-2AB2-434E-9A44-D1D329D5CA4B");
-		public double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_ADVANCED;
-		public string Title => dnSpy_Resources.AdvancedSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class AdvancedAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
+		public override Guid Guid => new Guid("6F00676C-2AB2-434E-9A44-D1D329D5CA4B");
+		public override double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_ADVANCED;
+		public override string Title => dnSpy_Resources.AdvancedSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool ReferenceHighlighting {
 			get { return referenceHighlighting; }
@@ -184,7 +187,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			ZoomControl = options.ZoomControl;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.ReferenceHighlighting = ReferenceHighlighting;
 			options.HighlightRelatedKeywords = HighlightRelatedKeywords;
 			options.BraceMatching = HighlightMatchingBrace;
@@ -198,7 +201,5 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			options.EnableMouseWheelZoom = MouseWheelZoom;
 			options.ZoomControl = ZoomControl;
 		}
-
-		public void OnClosed() { }
 	}
 }

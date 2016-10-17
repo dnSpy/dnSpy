@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -39,18 +40,21 @@ namespace dnSpy.Documents.Tabs.Settings {
 			this.documentTreeViewSettings = documentTreeViewSettings;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new AssemblyExplorerAppSettingsPage(documentTreeViewSettings);
 		}
 	}
 
-	sealed class AssemblyExplorerAppSettingsPage : ViewModelBase, IAppSettingsPage2 {
-		public Guid ParentGuid => Guid.Empty;
-		public Guid Guid => new Guid("F8B8DA74-9318-4BEE-B50A-1139147D3C82");
-		public double Order => AppSettingsConstants.ORDER_ASSEMBLY_EXPLORER;
-		public string Title => dnSpy_Resources.AssemblyExplorerTitle;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class AssemblyExplorerAppSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
+		public override Guid ParentGuid => Guid.Empty;
+		public override Guid Guid => new Guid("F8B8DA74-9318-4BEE-B50A-1139147D3C82");
+		public override double Order => AppSettingsConstants.ORDER_ASSEMBLY_EXPLORER;
+		public override string Title => dnSpy_Resources.AssemblyExplorerTitle;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 
@@ -193,7 +197,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 			}
 		}
 
-		void IAppSettingsPage.OnApply() { throw new InvalidOperationException(); }
+		public override void OnApply() { throw new InvalidOperationException(); }
 
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			documentTreeViewSettings.ShowToken = ShowToken;
@@ -217,8 +221,6 @@ namespace dnSpy.Documents.Tabs.Settings {
 				documentTreeViewSettings.MemberKind4 = MemberKind4.Object;
 			}
 		}
-
-		public void OnClosed() { }
 	}
 
 	sealed class MemberKindVM : ViewModelBase {

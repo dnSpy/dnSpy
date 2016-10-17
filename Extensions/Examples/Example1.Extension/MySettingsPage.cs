@@ -18,34 +18,34 @@ namespace Example1.Extension {
 			this.mySettings = mySettings;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			// We only create one page
 			yield return new MyAppSettingsPage(mySettings);
 		}
 	}
 
-	sealed class MyAppSettingsPage : IAppSettingsPage {
+	sealed class MyAppSettingsPage : AppSettingsPage {
 		//TODO: Use your own GUID
 		static readonly Guid THE_GUID = new Guid("AE905210-A789-4AE2-B83B-537515D9F435");
 
 		// Guid of parent or Guid.Empty if it has none
-		public Guid ParentGuid => Guid.Empty;
+		public override Guid ParentGuid => Guid.Empty;
 
 		// Unique guid of this settings page
-		public Guid Guid => THE_GUID;
+		public override Guid Guid => THE_GUID;
 
 		// The order of the page, let's place it after the debugger page
-		public double Order => AppSettingsConstants.ORDER_DEBUGGER + 0.1;
+		public override double Order => AppSettingsConstants.ORDER_DEBUGGER + 0.1;
 
-		public string Title => "MySettings";
+		public override string Title => "MySettings";
 
 		// An image that can be shown. You can return ImageReference.None if you don't want an image.
 		// Let's return an image since no other settings page is currently using images.
-		public ImageReference Icon => DsImages.Assembly;
+		public override ImageReference Icon => DsImages.Assembly;
 
 		// This is the content shown in the page. It should be a WPF object (eg. a UserControl) or a
 		// ViewModel with a DataTemplate defined in a resource dictionary.
-		public object UIObject {
+		public override object UIObject {
 			get {
 				if (uiObject == null) {
 					uiObject = new MySettingsControl();
@@ -64,12 +64,12 @@ namespace Example1.Extension {
 			this.newSettings = mySettings.Clone();
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			// OK/Apply was pressed, save the settings
 			newSettings.CopyTo(globalSettings);
 		}
 
-		public void OnClosed() {
+		public override void OnClosed() {
 			// The dialog box was closed
 		}
 	}

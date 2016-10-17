@@ -218,24 +218,28 @@ namespace dnSpy.Settings.Dialog {
 			return dict.Values.ToArray();
 		}
 
-		sealed class AppSettingsPageContainer : IAppSettingsPage {
-			public Guid ParentGuid { get; }
-			public Guid Guid { get; }
-			public double Order { get; }
-			public string Title { get; }
-			public ImageReference Icon { get; }
-			public object UIObject { get; }
+		sealed class AppSettingsPageContainer : AppSettingsPage {
+			public override Guid ParentGuid => parentGuid;
+			public override Guid Guid => guid;
+			public override double Order => order;
+			public override string Title => title;
+			public override ImageReference Icon => icon;
+			public override object UIObject { get; }
+			readonly string title;
+			readonly double order;
+			readonly Guid guid;
+			readonly Guid parentGuid;
+			readonly ImageReference icon;
 
 			public AppSettingsPageContainer(string title, double order, Guid guid, Guid parentGuid, ImageReference icon) {
-				Title = title;
-				Order = order;
-				Guid = guid;
-				ParentGuid = parentGuid;
-				Icon = icon;
+				this.title = title;
+				this.order = order;
+				this.guid = guid;
+				this.parentGuid = parentGuid;
+				this.icon = icon;
 			}
 
-			void IAppSettingsPage.OnApply() { }
-			void IAppSettingsPage.OnClosed() { }
+			public override void OnApply() { }
 		}
 
 		static AppSettingsPageVM TryCreate(object obj, IAppSettingsPageContainerMetadata md, ContextVM context) {

@@ -25,27 +25,27 @@ using dnSpy.Decompiler.ILSpy.Core.Settings;
 using dnSpy.Decompiler.ILSpy.Properties;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	sealed class ILDecompilerSettingsPage : IAppSettingsPage2, INotifyPropertyChanged {
+	sealed class ILDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
 		readonly ILSettings _global_ilSettings;
 		readonly ILSettings ilSettings;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-		public double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_IL;
+		public override double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_IL;
 		public string Name => dnSpy_Decompiler_ILSpy_Resources.ILDecompilerSettingsTabName;
 		public ILSettings Settings => ilSettings;
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
-		public Guid Guid => new Guid("0F8FBD3F-01DA-4AF0-9316-B7B5C8901A74");
-		public string Title => "IL (ILSpy)";
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
+		public override Guid Guid => new Guid("0F8FBD3F-01DA-4AF0-9316-B7B5C8901A74");
+		public override string Title => "IL (ILSpy)";
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
 
 		public ILDecompilerSettingsPage(ILSettings ilSettings) {
 			this._global_ilSettings = ilSettings;
 			this.ilSettings = ilSettings.Clone();
 		}
 
-		void IAppSettingsPage.OnApply() { throw new InvalidOperationException(); }
+		public override void OnApply() { throw new InvalidOperationException(); }
 
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			if (!_global_ilSettings.Equals(ilSettings))
@@ -53,7 +53,5 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 
 			ilSettings.CopyTo(_global_ilSettings);
 		}
-
-		public void OnClosed() { }
 	}
 }

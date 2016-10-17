@@ -24,54 +24,55 @@ namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
 	/// Content shown in the options dialog box
 	/// </summary>
-	public interface IAppSettingsPage {
+	public abstract class AppSettingsPage {
 		/// <summary>
 		/// Parent <see cref="System.Guid"/> or <see cref="System.Guid.Empty"/> if the root element is the parent
 		/// </summary>
-		Guid ParentGuid { get; }
+		public abstract Guid ParentGuid { get; }
 
 		/// <summary>
 		/// Gets the <see cref="System.Guid"/>
 		/// </summary>
-		Guid Guid { get; }
+		public abstract Guid Guid { get; }
 
 		/// <summary>
 		/// Gets the order, eg. <see cref="AppSettingsConstants.ORDER_DECOMPILER"/>
 		/// </summary>
-		double Order { get; }
+		public abstract double Order { get; }
 
 		/// <summary>
 		/// Gets the title shown in the UI
 		/// </summary>
-		string Title { get; }
+		public abstract string Title { get; }
 
 		/// <summary>
 		/// Gets the icon shown in the UI (eg. <see cref="DsImages.Assembly"/>) or <see cref="ImageReference.None"/>
 		/// </summary>
-		ImageReference Icon { get; }
+		public abstract ImageReference Icon { get; }
 
 		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		object UIObject { get; }
+		public abstract object UIObject { get; }
 
 		/// <summary>
 		/// Called when all settings should be saved
 		/// </summary>
-		void OnApply();
+		public abstract void OnApply();
 
 		/// <summary>
 		/// Called when the dialog box has been closed
 		/// </summary>
-		void OnClosed();
+		public virtual void OnClosed() {
+		}
 	}
 
 	/// <summary>
 	/// Content shown in the options dialog box
 	/// </summary>
-	public interface IAppSettingsPage2 : IAppSettingsPage {
+	public interface IAppSettingsPage2 {
 		/// <summary>
-		/// Called when all settings should be saved. <see cref="IAppSettingsPage.OnApply"/> is
+		/// Called when all settings should be saved. <see cref="AppSettingsPage.OnApply"/> is
 		/// never called.
 		/// </summary>
 		/// <param name="appRefreshSettings">Add anything that needs to be refreshed, eg. re-decompile code</param>

@@ -18,20 +18,24 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.CodeEditor {
-	sealed class GeneralAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => options.Guid;
-		public Guid Guid { get; }
-		public double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_GENERAL;
-		public string Title => dnSpy_Resources.GeneralSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class GeneralAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => options.Guid;
+		public override Guid Guid => guid;
+		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_GENERAL;
+		public override string Title => dnSpy_Resources.GeneralSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+		readonly Guid guid;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool UseVirtualSpaceEnabled => UseVirtualSpace || !WordWrap;
 		public bool WordWrapEnabled => WordWrap || !UseVirtualSpace;
@@ -101,7 +105,7 @@ namespace dnSpy.Text.CodeEditor {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			this.options = options;
-			Guid = guid;
+			this.guid = guid;
 			UseVirtualSpace = options.UseVirtualSpace;
 			ShowLineNumbers = options.LineNumberMargin;
 			WordWrap = (options.WordWrapStyle & WordWrapStyles.WordWrap) != 0;
@@ -109,7 +113,7 @@ namespace dnSpy.Text.CodeEditor {
 			HighlightCurrentLine = options.EnableHighlightCurrentLine;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.UseVirtualSpace = UseVirtualSpace;
 			options.LineNumberMargin = ShowLineNumbers;
 			options.EnableHighlightCurrentLine = HighlightCurrentLine;
@@ -125,7 +129,5 @@ namespace dnSpy.Text.CodeEditor {
 				newStyle &= ~WordWrapStyles.VisibleGlyphs;
 			options.WordWrapStyle = newStyle;
 		}
-
-		public void OnClosed() { }
 	}
 }

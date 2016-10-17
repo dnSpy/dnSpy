@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -56,18 +57,21 @@ namespace dnSpy.MainApp.Settings {
 			this.messageBoxService = messageBoxService;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new GeneralAppSettingsPage(themeService, windowsExplorerIntegrationService, documentTabServiceSettings, documentTreeViewSettings, documentServiceSettings, appSettings, messageBoxService);
 		}
 	}
 
-	sealed class GeneralAppSettingsPage : ViewModelBase, IAppSettingsPage2 {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_ENVIRONMENT);
-		public Guid Guid => new Guid("776184ED-10F6-466C-8B66-716936C29A5A");
-		public double Order => AppSettingsConstants.ORDER_ENVIRONMENT_GENERAL;
-		public string Title => dnSpy_Resources.GeneralSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class GeneralAppSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_ENVIRONMENT);
+		public override Guid Guid => new Guid("776184ED-10F6-466C-8B66-716936C29A5A");
+		public override double Order => AppSettingsConstants.ORDER_ENVIRONMENT_GENERAL;
+		public override string Title => dnSpy_Resources.GeneralSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		readonly IThemeServiceImpl themeService;
 		readonly IWindowsExplorerIntegrationService windowsExplorerIntegrationService;
@@ -184,7 +188,7 @@ namespace dnSpy.MainApp.Settings {
 			UseNewRendererVM = new UseNewRendererVM(appSettings);
 		}
 
-		void IAppSettingsPage.OnApply() { throw new InvalidOperationException(); }
+		public override void OnApply() { throw new InvalidOperationException(); }
 
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			if (SelectedThemeVM != null)
@@ -202,8 +206,6 @@ namespace dnSpy.MainApp.Settings {
 
 			UseNewRendererVM.Save();
 		}
-
-		public void OnClosed() { }
 	}
 
 	sealed class ThemeVM {

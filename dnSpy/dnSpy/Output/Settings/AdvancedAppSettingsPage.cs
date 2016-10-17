@@ -18,19 +18,22 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Output.Settings {
-	sealed class AdvancedAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => new Guid(AppSettingsConstants.GUID_OUTPUT);
-		public Guid Guid => new Guid("E1F8E0A8-5F5A-42E4-B845-4E3885E09D69");
-		public double Order => AppSettingsConstants.ORDER_OUTPUT_DEFAULT_ADVANCED;
-		public string Title => dnSpy_Resources.AdvancedSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class AdvancedAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_OUTPUT);
+		public override Guid Guid => new Guid("E1F8E0A8-5F5A-42E4-B845-4E3885E09D69");
+		public override double Order => AppSettingsConstants.ORDER_OUTPUT_DEFAULT_ADVANCED;
+		public override string Title => dnSpy_Resources.AdvancedSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool ReferenceHighlighting {
 			get { return referenceHighlighting; }
@@ -184,7 +187,7 @@ namespace dnSpy.Output.Settings {
 			ZoomControl = options.ZoomControl;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.ReferenceHighlighting = ReferenceHighlighting;
 			options.HighlightRelatedKeywords = HighlightRelatedKeywords;
 			options.BraceMatching = HighlightMatchingBrace;
@@ -198,7 +201,5 @@ namespace dnSpy.Output.Settings {
 			options.EnableMouseWheelZoom = MouseWheelZoom;
 			options.ZoomControl = ZoomControl;
 		}
-
-		public void OnClosed() { }
 	}
 }

@@ -5926,7 +5926,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type bgImg:AppSettingsPage}">
+    <DataTemplate DataType="{x:Type bgImg:AppSettingsPageImpl}">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

@@ -72,7 +72,7 @@
     <Compile Include="BackgroundImage\BackgroundImageSettings.cs" />
     <Compile Include="BackgroundImage\BackgroundImageSettingsService.cs" />
     <Compile Include="BackgroundImage\DefaultRawSettings.cs" />
-    <Compile Include="BackgroundImage\Dialog\AppSettingsPage.cs" />
+    <Compile Include="BackgroundImage\Dialog\AppSettingsPageImpl.cs" />
     <Compile Include="BackgroundImage\ImageSourceService.cs" />
     <Compile Include="BackgroundImage\ImageSourceServiceProvider.cs" />
     <Compile Include="BackgroundImage\RawSettings.cs" />

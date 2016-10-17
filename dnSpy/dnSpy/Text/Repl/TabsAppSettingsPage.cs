@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
@@ -25,13 +26,17 @@ using dnSpy.Properties;
 using dnSpy.Text.Editor;
 
 namespace dnSpy.Text.Repl {
-	sealed class TabsAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => options.Guid;
-		public Guid Guid { get; }
-		public double Order => AppSettingsConstants.ORDER_REPL_LANGUAGES_TABS;
-		public string Title => dnSpy_Resources.TabsSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class TabsAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => options.Guid;
+		public override Guid Guid => guid;
+		public override double Order => AppSettingsConstants.ORDER_REPL_LANGUAGES_TABS;
+		public override string Title => dnSpy_Resources.TabsSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+		readonly Guid guid;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public Int32VM TabSizeVM { get; }
 		public Int32VM IndentSizeVM { get; }
@@ -53,20 +58,18 @@ namespace dnSpy.Text.Repl {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			this.options = options;
-			Guid = guid;
+			this.guid = guid;
 			TabSizeVM = new Int32VM(options.TabSize, a => { }, true) { Min = OptionsHelpers.MinimumTabSize, Max = OptionsHelpers.MaximumTabSize };
 			IndentSizeVM = new Int32VM(options.IndentSize, a => { }, true) { Min = OptionsHelpers.MinimumIndentSize, Max = OptionsHelpers.MaximumIndentSize };
 			ConvertTabsToSpaces = options.ConvertTabsToSpaces;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			if (!TabSizeVM.HasError)
 				options.TabSize = TabSizeVM.Value;
 			if (!IndentSizeVM.HasError)
 				options.IndentSize = IndentSizeVM.Value;
 			options.ConvertTabsToSpaces = ConvertTabsToSpaces;
 		}
-
-		public void OnClosed() { }
 	}
 }

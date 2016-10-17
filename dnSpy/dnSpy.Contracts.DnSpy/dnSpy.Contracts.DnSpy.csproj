@@ -455,9 +455,9 @@
     <Compile Include="Settings\CodeEditor\CodeEditorOptionsDefinition.cs" />
     <Compile Include="Settings\CodeEditor\DefaultCodeEditorOptions.cs" />
     <Compile Include="Settings\Dialog\AppSettingsConstants.cs" />
+    <Compile Include="Settings\Dialog\AppSettingsPage.cs" />
     <Compile Include="Settings\Dialog\IAppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsModifiedListener.cs" />
-    <Compile Include="Settings\Dialog\IAppSettingsPage.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsPageContainer.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsPageProvider.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsService.cs" />

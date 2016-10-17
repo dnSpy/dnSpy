@@ -35,7 +35,7 @@ namespace dnSpy.Settings.Dialog {
 
 		public double Order => Page.Order;
 		public List<AppSettingsPageVM> Children { get; }
-		internal IAppSettingsPage Page { get; }
+		internal AppSettingsPage Page { get; }
 		public object UIObject => uiObject ?? (uiObject = CreateUIObject());
 		object uiObject;
 
@@ -50,7 +50,7 @@ namespace dnSpy.Settings.Dialog {
 
 		readonly ContextVM context;
 
-		public AppSettingsPageVM(IAppSettingsPage page, ContextVM context) {
+		public AppSettingsPageVM(AppSettingsPage page, ContextVM context) {
 			if (page == null)
 				throw new ArgumentNullException(nameof(page));
 			if (context == null)

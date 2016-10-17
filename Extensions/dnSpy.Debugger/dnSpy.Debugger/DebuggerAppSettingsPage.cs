@@ -38,22 +38,22 @@ namespace dnSpy.Debugger {
 			this.debuggerSettingsImpl = debuggerSettingsImpl;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new DebuggerAppSettingsPage(debuggerSettingsImpl, new PickFilename());
 		}
 	}
 
-	sealed class DebuggerAppSettingsPage : ViewModelBase, IAppSettingsPage {
+	sealed class DebuggerAppSettingsPage : AppSettingsPage {
 		readonly DebuggerSettingsImpl _global_settings;
 		readonly IPickFilename pickFilename;
 
-		public Guid ParentGuid => Guid.Empty;
-		public Guid Guid => new Guid("8D2BC2FB-5CA4-4907-84C7-F4F705327AC8");
+		public override Guid ParentGuid => Guid.Empty;
+		public override Guid Guid => new Guid("8D2BC2FB-5CA4-4907-84C7-F4F705327AC8");
 		public DebuggerSettings Settings { get; }
-		public double Order => AppSettingsConstants.ORDER_DEBUGGER;
-		public string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+		public override double Order => AppSettingsConstants.ORDER_DEBUGGER;
+		public override string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
 
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(DebugProcessVM.breakProcessKindList);
@@ -81,11 +81,9 @@ namespace dnSpy.Debugger {
 			Settings.CoreCLRDbgShimFilename = newFilename;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			Settings.CopyTo(_global_settings);
 			_global_settings.BreakProcessKind = this.BreakProcessKind;
 		}
-
-		public void OnClosed() { }
 	}
 }

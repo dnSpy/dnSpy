@@ -90,18 +90,18 @@ namespace dnSpy.BamlDecompiler {
 			this.bamlSettings = bamlSettings;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new BamlAppSettingsPage(bamlSettings);
 		}
 	}
 
-	sealed class BamlAppSettingsPage : IAppSettingsPage {
-		public Guid ParentGuid => Guid.Empty;
-		public Guid Guid => new Guid("DF5D8216-35D9-4E25-8BDF-817D4CA90C17");
-		public double Order => AppSettingsConstants.ORDER_BAML;
-		public string Title => dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => bamlSettings;
+	sealed class BamlAppSettingsPage : AppSettingsPage {
+		public override Guid ParentGuid => Guid.Empty;
+		public override Guid Guid => new Guid("DF5D8216-35D9-4E25-8BDF-817D4CA90C17");
+		public override double Order => AppSettingsConstants.ORDER_BAML;
+		public override string Title => dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => bamlSettings;
 
 		readonly BamlSettingsImpl _global_settings;
 		readonly BamlSettings bamlSettings;
@@ -111,8 +111,7 @@ namespace dnSpy.BamlDecompiler {
 			this.bamlSettings = _global_settings.Clone();
 		}
 
-		public void OnApply() => bamlSettings.CopyTo(_global_settings);
-		public void OnClosed() { }
+		public override void OnApply() => bamlSettings.CopyTo(_global_settings);
 	}
 
 	[ExportAutoLoaded]

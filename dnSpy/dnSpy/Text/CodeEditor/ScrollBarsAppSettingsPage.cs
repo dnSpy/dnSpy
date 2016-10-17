@@ -18,19 +18,23 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Text.CodeEditor {
-	sealed class ScrollBarsAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => options.Guid;
-		public Guid Guid { get; }
-		public double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_SCROLLBARS;
-		public string Title => dnSpy_Resources.ScrollBarsSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class ScrollBarsAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => options.Guid;
+		public override Guid Guid => guid;
+		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_SCROLLBARS;
+		public override string Title => dnSpy_Resources.ScrollBarsSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+		readonly Guid guid;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool HorizontalScrollBar {
 			get { return horizontalScrollBar; }
@@ -60,16 +64,14 @@ namespace dnSpy.Text.CodeEditor {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			this.options = options;
-			Guid = guid;
+			this.guid = guid;
 			HorizontalScrollBar = options.HorizontalScrollBar;
 			VerticalScrollBar = options.VerticalScrollBar;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.HorizontalScrollBar = HorizontalScrollBar;
 			options.VerticalScrollBar = VerticalScrollBar;
 		}
-
-		public void OnClosed() { }
 	}
 }

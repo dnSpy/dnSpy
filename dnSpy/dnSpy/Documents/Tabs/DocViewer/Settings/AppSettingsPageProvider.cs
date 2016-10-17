@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			this.documentViewerOptionsService = documentViewerOptionsService;
 		}
 
-		public IEnumerable<IAppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			yield return new GeneralAppSettingsPage(documentViewerOptionsService.Default);
 			yield return new ScrollBarsAppSettingsPage(documentViewerOptionsService.Default);
 			yield return new TabsAppSettingsPage(documentViewerOptionsService.Default);

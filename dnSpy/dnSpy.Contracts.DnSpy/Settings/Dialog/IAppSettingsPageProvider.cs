@@ -21,13 +21,13 @@ using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
-	/// Creates <see cref="IAppSettingsPage"/> instances
+	/// Creates <see cref="AppSettingsPage"/> instances
 	/// </summary>
 	public interface IAppSettingsPageProvider {
 		/// <summary>
-		/// Creates new <see cref="IAppSettingsPage"/> instances
+		/// Creates new <see cref="AppSettingsPage"/> instances
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<IAppSettingsPage> Create();
+		IEnumerable<AppSettingsPage> Create();
 	}
 }

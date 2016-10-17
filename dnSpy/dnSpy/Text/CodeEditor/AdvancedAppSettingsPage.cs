@@ -18,19 +18,23 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Text.CodeEditor {
-	sealed class AdvancedAppSettingsPage : ViewModelBase, IAppSettingsPage {
-		public Guid ParentGuid => options.Guid;
-		public Guid Guid { get; }
-		public double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_TABS;
-		public string Title => dnSpy_Resources.AdvancedSettings;
-		public ImageReference Icon => ImageReference.None;
-		public object UIObject => this;
+	sealed class AdvancedAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+		public override Guid ParentGuid => options.Guid;
+		public override Guid Guid => guid;
+		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_TABS;
+		public override string Title => dnSpy_Resources.AdvancedSettings;
+		public override ImageReference Icon => ImageReference.None;
+		public override object UIObject => this;
+		readonly Guid guid;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool ReferenceHighlighting {
 			get { return referenceHighlighting; }
@@ -170,7 +174,7 @@ namespace dnSpy.Text.CodeEditor {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			this.options = options;
-			Guid = guid;
+			this.guid = guid;
 			ReferenceHighlighting = options.ReferenceHighlighting;
 			HighlightRelatedKeywords = options.HighlightRelatedKeywords;
 			HighlightMatchingBrace = options.BraceMatching;
@@ -185,7 +189,7 @@ namespace dnSpy.Text.CodeEditor {
 			ZoomControl = options.ZoomControl;
 		}
 
-		public void OnApply() {
+		public override void OnApply() {
 			options.ReferenceHighlighting = ReferenceHighlighting;
 			options.HighlightRelatedKeywords = HighlightRelatedKeywords;
 			options.BraceMatching = HighlightMatchingBrace;
@@ -199,7 +203,5 @@ namespace dnSpy.Text.CodeEditor {
 			options.EnableMouseWheelZoom = MouseWheelZoom;
 			options.ZoomControl = ZoomControl;
 		}
-
-		public void OnClosed() { }
 	}
 }
