@@ -61,6 +61,6 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// <param name="colorize">true if it should be colorized</param>
 		/// <returns></returns>
 		public static TaggedTextClassifierContext Create(string tag, ImmutableArray<TaggedText> taggedParts, bool colorize) =>
-			new TaggedTextClassifierContext(tag, ToString(taggedParts), taggedParts, colorize);
+			new TaggedTextClassifierContext(ToString(taggedParts), tag, taggedParts, colorize);
 	}
 }

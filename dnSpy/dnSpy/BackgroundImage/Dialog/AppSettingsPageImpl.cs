@@ -49,7 +49,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 			this.pickDirectory = pickDirectory;
 		}
 
-		public IEnumerable<Contracts.Settings.Dialog.AppSettingsPage> Create() {
+		public IEnumerable<AppSettingsPage> Create() {
 			var rawSettings = backgroundImageSettingsService.GetRawSettings();
 			if (rawSettings.Length != 0)
 				yield return new AppSettingsPageImpl(backgroundImageSettingsService, pickFilename, pickDirectory, rawSettings);
