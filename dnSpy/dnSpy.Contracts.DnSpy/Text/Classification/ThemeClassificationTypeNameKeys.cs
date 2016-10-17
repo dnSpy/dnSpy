@@ -1141,5 +1141,15 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.GacMatchHighlight"/>
 		/// </summary>
 		public const string GacMatchHighlight = nameof(GacMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.AppSettingsTreeViewNodeMatchHighlight"/>
+		/// </summary>
+		public const string AppSettingsTreeViewNodeMatchHighlight = nameof(AppSettingsTreeViewNodeMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.AppSettingsTextMatchHighlight"/>
+		/// </summary>
+		public const string AppSettingsTextMatchHighlight = nameof(AppSettingsTextMatchHighlight);
 	}
 }

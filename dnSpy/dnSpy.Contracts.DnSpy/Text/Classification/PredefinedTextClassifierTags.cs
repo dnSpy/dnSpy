@@ -251,5 +251,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Threads window column: UserState
 		/// </summary>
 		public static readonly string ThreadsWindowUserState = "UserState";
+
+		/// <summary>
+		/// Options dialog text
+		/// </summary>
+		public static readonly string OptionsDialogText = "Text";
 	}
 }

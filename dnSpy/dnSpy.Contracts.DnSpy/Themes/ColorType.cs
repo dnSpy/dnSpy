@@ -247,6 +247,8 @@ namespace dnSpy.Contracts.Themes {
 		HexTableName,
 		DocumentListMatchHighlight,
 		GacMatchHighlight,
+		AppSettingsTreeViewNodeMatchHighlight,
+		AppSettingsTextMatchHighlight,
 
 		// Must be last in this group
 		LastNR,

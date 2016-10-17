@@ -17,13 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Settings.Dialog {
-	sealed class ContextVM {
-		public ITreeView TreeView { get; set; }
-		public ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; set; }
-		public SearchMatcher SearchMatcher { get; set; }
+	sealed class AppSettingsTreeViewNodeClassifierContext : TreeViewNodeClassifierContext {
+		public SearchMatcher SearchMatcher { get; }
+		public AppSettingsTreeViewNodeClassifierContext(SearchMatcher searchMatcher, string text, ITreeView treeView, ITreeNodeData node, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+			: base(text, treeView, node, isToolTip, colorize, colors) {
+			if (searchMatcher == null)
+				throw new ArgumentNullException(nameof(searchMatcher));
+			SearchMatcher = searchMatcher;
+		}
 	}
 }

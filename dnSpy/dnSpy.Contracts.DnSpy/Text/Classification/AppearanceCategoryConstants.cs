@@ -116,5 +116,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Threads window
 		/// </summary>
 		public const string ThreadsWindow = "dnSpy-" + nameof(ThreadsWindow);
+
+		/// <summary>
+		/// Options dialog
+		/// </summary>
+		public const string OptionsDialog = "dnSpy-" + nameof(OptionsDialog);
 	}
 }

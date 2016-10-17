@@ -112,6 +112,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public override void OnApply() => bamlSettings.CopyTo(_global_settings);
+		public override object GetDataTemplateObject() => UIObject;
 	}
 
 	[ExportAutoLoaded]

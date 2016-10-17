@@ -18,7 +18,6 @@
 */
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
 using Microsoft.VisualStudio.Text;
 
@@ -36,10 +35,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <summary>
 		/// Gets the colors
 		/// </summary>
-		public ReadOnlyCollection<SpanData<object>> Colors => readOnlyColors;
+		public List<SpanData<object>> Colors => colors;
 
 		readonly List<SpanData<object>> colors;
-		readonly ReadOnlyCollection<SpanData<object>> readOnlyColors;
 		readonly StringBuilder sb;
 
 		/// <summary>
@@ -47,7 +45,6 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// </summary>
 		public TextClassifierTextColorWriter() {
 			this.colors = new List<SpanData<object>>();
-			this.readOnlyColors = new ReadOnlyCollection<SpanData<object>>(colors);
 			this.sb = new StringBuilder();
 		}
 

@@ -189,6 +189,8 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 
 			decompilerSettings.CopyTo(_global_decompilerSettings);
 		}
+
+		public override object GetDataTemplateObject() => UIObject;
 	}
 
 	sealed class DecompilationObjectVM : ViewModelBase {

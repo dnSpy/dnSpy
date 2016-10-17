@@ -85,5 +85,7 @@ namespace dnSpy.Debugger {
 			Settings.CopyTo(_global_settings);
 			_global_settings.BreakProcessKind = this.BreakProcessKind;
 		}
+
+		public override object GetDataTemplateObject() => UIObject;
 	}
 }

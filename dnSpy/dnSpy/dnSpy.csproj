@@ -457,11 +457,21 @@
       <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\Dialog\AppSettingsPageVM.cs" />
+    <Compile Include="Settings\Dialog\AppSettingsSearchTextClassifier.cs" />
     <Compile Include="Settings\Dialog\AppSettingsService.cs" />
+    <Compile Include="Settings\Dialog\AppSettingsTextClassifierContext.cs" />
+    <Compile Include="Settings\Dialog\AppSettingsTreeViewNodeClassifierContext.cs" />
+    <Compile Include="Settings\Dialog\AppSettingsTreeViewNodeSearchTextClassifier.cs" />
+    <Compile Include="Settings\Dialog\ContentConverterPresenter.cs" />
+    <Compile Include="Settings\Dialog\ContentConverterProperties.cs" />
     <Compile Include="Settings\Dialog\ContentTypeDefinitions.cs" />
     <Compile Include="Settings\Dialog\ContextVM.cs" />
+    <Compile Include="Settings\Dialog\IContentConverter.cs" />
+    <Compile Include="Settings\Dialog\SearchMatcher.cs" />
     <Compile Include="Settings\Dialog\SettingsAppCommandLineArgsHandler.cs" />
-    <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
+    <Compile Include="Settings\Dialog\ShowAppSettingsDialog.cs" />
+    <Compile Include="Settings\Dialog\ShowOptionsCommand.cs" />
+    <Compile Include="Settings\Dialog\UIHelpers.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
     <Compile Include="Settings\SettingsSection.cs" />
     <Compile Include="Settings\SettingsSectionProvider.cs" />

@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
@@ -28,7 +30,9 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Settings.Dialog {
-	sealed class AppSettingsPageVM : TreeNodeData {
+	sealed class AppSettingsPageVM : TreeNodeData, INotifyPropertyChanged {
+		public event PropertyChangedEventHandler PropertyChanged;
+		public AppSettingsPageVM Parent { get; set; }
 		public override Guid Guid => Guid.Empty;
 		public override object ToolTip => null;
 		public override ImageReference Icon => Page.Icon;
@@ -36,14 +40,16 @@ namespace dnSpy.Settings.Dialog {
 		public double Order => Page.Order;
 		public List<AppSettingsPageVM> Children { get; }
 		internal AppSettingsPage Page { get; }
-		public object UIObject => uiObject ?? (uiObject = CreateUIObject());
+		public object UIObject => uiObject ?? (uiObject = GetOrCreateUIObject());
 		object uiObject;
+
+		public bool SavedIsExpanded { get; set; }
 
 		public override object Text {
 			get {
 				var writer = new TextClassifierTextColorWriter();
 				writer.Write(BoxedTextColor.Text, Page.Title);
-				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colorize: true, colors: writer.Colors);
+				var classifierContext = new AppSettingsTreeViewNodeClassifierContext(context.SearchMatcher, writer.Text, context.TreeView, this, isToolTip: false, colorize: true, colors: writer.Colors);
 				return context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAppSettings, TextElementFlags.FilterOutNewLines);
 			}
 		}
@@ -60,12 +66,22 @@ namespace dnSpy.Settings.Dialog {
 			this.context = context;
 		}
 
-		object CreateUIObject() {
+		object GetOrCreateUIObject() {
 			var uiObj = Page.UIObject;
-			if (uiObj == null && Children.Count != 0)
-				return Children[0].UIObject;
-			return CreateUIObject(uiObj);
+			if (uiObj != null)
+				return createdUIObject ?? (createdUIObject = CreateUIObject(uiObj));
+
+			// Try to pick a visible child
+			foreach (var child in Children) {
+				if (!child.TreeNode.IsHidden)
+					return child.UIObject;
+			}
+
+			if (Children.Count == 0)
+				return null;
+			return Children[0].UIObject;
 		}
+		object createdUIObject;
 
 		static object CreateUIObject(object uiObj) {
 			if (uiObj is ScrollViewer)
@@ -75,6 +91,72 @@ namespace dnSpy.Settings.Dialog {
 				VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
 				Content = uiObj,
 			};
+		}
+
+		public void RefreshUI() {
+			// Make sure we don't show hidden pages
+			uiObject = null;
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UIObject)));
+			TreeNode.RefreshUI();
+		}
+
+		public IEnumerable<string> GetSearchableStrings(FrameworkElement fwElem) {
+			if (searchableStrings == null) {
+				var list = new List<string>();
+				foreach (var s in GetDataTemplateStrings(fwElem))
+					list.Add(UIHelpers.RemoveAccessKeys(s));
+				foreach (var s in Page.GetSearchableStrings() ?? Array.Empty<string>())
+					list.Add(UIHelpers.RemoveAccessKeys(s));
+				searchableStrings = list.ToArray();
+			}
+			return searchableStrings;
+		}
+		string[] searchableStrings;
+
+		IEnumerable<string> GetDataTemplateStrings(FrameworkElement fwElem) {
+			var obj = Page.GetDataTemplateObject();
+			if (obj == null)
+				return Array.Empty<string>();
+			var key = new DataTemplateKey(obj as Type ?? obj.GetType());
+			var dt = fwElem.TryFindResource(key) as DataTemplate;
+			if (dt == null)
+				return Array.Empty<string>();
+
+			return GetStrings(dt.LoadContent());
+		}
+
+		static IEnumerable<string> GetStrings(DependencyObject obj) {
+			if (obj == null)
+				yield break;
+			var objString = TryGetString(obj);
+			if (objString != null)
+				yield return objString;
+			foreach (var childObj in LogicalTreeHelper.GetChildren(obj)) {
+				var child = childObj as DependencyObject;
+				if (child == null)
+					continue;
+				foreach (var s in GetStrings(child))
+					yield return s;
+			}
+		}
+
+		static string TryGetString(DependencyObject obj) {
+			string s;
+
+			s = (obj as GroupBox)?.Header as string;
+			if (s != null)
+				return s;
+
+			// Label, CheckBox
+			s = (obj as ContentControl)?.Content as string;
+			if (s != null)
+				return s;
+
+			s = (obj as TextBlock)?.Text;
+			if (s != null)
+				return s;
+
+			return null;
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() => Children;

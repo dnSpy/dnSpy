@@ -1164,6 +1164,16 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.GacMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition GacMatchHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AppSettingsTreeViewNodeMatchHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AppSettingsTreeViewNodeMatchHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AppSettingsTextMatchHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AppSettingsTextMatchHighlightClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3174,6 +3184,24 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High)]
 		sealed class GacMatchHighlight : ThemeMarkerFormatDefinition {
 			GacMatchHighlight() : base(TextColor.GacMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AppSettingsTreeViewNodeMatchHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.AppSettingsTreeViewNodeMatchHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class AppSettingsTreeViewNodeMatchHighlight : ThemeMarkerFormatDefinition {
+			AppSettingsTreeViewNodeMatchHighlight() : base(TextColor.AppSettingsTreeViewNodeMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AppSettingsTextMatchHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.AppSettingsTextMatchHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class AppSettingsTextMatchHighlight : ThemeMarkerFormatDefinition {
+			AppSettingsTextMatchHighlight() : base(TextColor.AppSettingsTextMatchHighlight) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

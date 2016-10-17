@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.TreeView;
-using dnSpy.Contracts.TreeView.Text;
-
 namespace dnSpy.Settings.Dialog {
-	sealed class ContextVM {
-		public ITreeView TreeView { get; set; }
-		public ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; set; }
-		public SearchMatcher SearchMatcher { get; set; }
+	static class UIHelpers {
+		public static string RemoveAccessKeys(string s) {
+			if (s.IndexOf('_') < 0)
+				return s;
+			const string UNDERSCORE_TMP = "<<<<<<>>>>>>";
+			return s.Replace("__", UNDERSCORE_TMP).Replace("_", "").Replace(UNDERSCORE_TMP, "_");
+		}
 	}
 }

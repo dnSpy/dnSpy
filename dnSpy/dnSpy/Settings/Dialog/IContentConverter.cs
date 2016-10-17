@@ -17,13 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.TreeView;
-using dnSpy.Contracts.TreeView.Text;
-
 namespace dnSpy.Settings.Dialog {
-	sealed class ContextVM {
-		public ITreeView TreeView { get; set; }
-		public ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; set; }
-		public SearchMatcher SearchMatcher { get; set; }
+	/// <summary>
+	/// Converts objects to other objects that get shown in the UI. Eg. it could highlight
+	/// the searched text by converting a label's text to highlighted text.
+	/// </summary>
+	interface IContentConverter {
+		/// <summary>
+		/// Converts <paramref name="content"/> to a new object or returns the input
+		/// </summary>
+		/// <param name="content">Current content, usually a string</param>
+		/// <returns></returns>
+		object Convert(object content);
 	}
 }

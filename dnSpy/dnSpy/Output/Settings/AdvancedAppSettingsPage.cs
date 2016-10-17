@@ -201,5 +201,7 @@ namespace dnSpy.Output.Settings {
 			options.EnableMouseWheelZoom = MouseWheelZoom;
 			options.ZoomControl = ZoomControl;
 		}
+
+		public override object GetDataTemplateObject() => UIObject;
 	}
 }

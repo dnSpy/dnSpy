@@ -24,11 +24,307 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:dnSpy.Settings.Dialog"
         xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
+        xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         mc:Ignorable="d"
         xmlns:p="clr-namespace:dnSpy.Properties"
         MinHeight="300" MinWidth="650"
         Title="{x:Static p:dnSpy_Resources.OptionsTitle}" Height="500" Width="850">
+    <ctrls:MetroWindow.Resources>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
+            <Setter Property="Foreground" Value="{DynamicResource CommonControlsCheckBoxText}" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid x:Name="templateRoot">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid
+                                SnapsToDevicePixels="True"
+                                Width="16"
+                                Height="16"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
+                                <Border
+                                    x:Name="checkBoxBorder"
+                                    BorderThickness="1"
+                                    Background="{DynamicResource CommonControlsCheckBoxBackground}"
+                                    BorderBrush="{DynamicResource CommonControlsCheckBoxBorder}" />
+                                <Grid x:Name="markGrid">
+                                    <Path
+                                        x:Name="optionMark"
+                                        Stretch="Uniform"
+                                        Margin="3,1,2,2"
+                                        Fill="{DynamicResource CommonControlsCheckBoxGlyph}"
+                                        Data="M6.22,11.02C6.22,11.02 2.5,7.24 2.5,7.24 2.5,7.24 4.05,5.71 4.05,5.71 4.05,5.71 5.97,7.65 5.97,7.65 5.97,7.65 10.52,1.38 10.52,1.38 10.52,1.38 13.19,1.38 13.19,1.38 13.19,1.38 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02z"
+                                        Visibility="Collapsed"
+                                        Width="9"
+                                        Height="8"
+                                        />
+                                    <Rectangle
+                                        x:Name="indeterminateMark"
+                                        Margin="3"
+                                        Fill="{DynamicResource CommonControlsCheckBoxGlyph}"
+                                        Visibility="Hidden" />
+                                </Grid>
+                            </Grid>
+                            <Border x:Name="paddingBorder" Grid.Column="1" Background="Transparent" Width="6" Visibility="Collapsed" />
+                            <local:ContentConverterPresenter
+                                RecognizesAccessKey="True"
+                                Grid.Column="2"
+                                Text="{TemplateBinding Content}"
+                                ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
+                                ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
+                                Margin="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Focusable="False" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasContent" Value="True">
+                                <Setter Property="Padding" Value="0,1,0,0" />
+                                <Setter TargetName="paddingBorder" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter TargetName="optionMark" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Value="{x:Null}" Property="IsChecked">
+                                <Setter TargetName="indeterminateMark" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="checkBoxBorder" Value="{DynamicResource CommonControlsCheckBoxBackgroundDisabled}" Property="Background" />
+                                <Setter TargetName="checkBoxBorder" Value="{DynamicResource CommonControlsCheckBoxBorderDisabled}" Property="BorderBrush" />
+                                <Setter TargetName="optionMark" Value="{DynamicResource CommonControlsCheckBoxGlyphDisabled}" Property="Fill" />
+                                <Setter Value="{DynamicResource CommonControlsCheckBoxTextDisabled}" Property="Foreground" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="checkBoxBorder" Value="{DynamicResource CommonControlsCheckBoxBackgroundFocused}" Property="Background" />
+                                <Setter TargetName="checkBoxBorder" Value="{DynamicResource CommonControlsCheckBoxBorderFocused}" Property="BorderBrush" />
+                                <Setter TargetName="optionMark" Value="{DynamicResource CommonControlsCheckBoxGlyphFocused}" Property="Fill" />
+                                <Setter Value="{DynamicResource CommonControlsCheckBoxTextFocused}" Property="Foreground" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="checkBoxBorder" Value="{DynamicResource CommonControlsCheckBoxBackgroundHover}" Property="Background" />
+                                <Setter TargetName="checkBoxBorder" Value="{DynamicResource CommonControlsCheckBoxBorderHover}" Property="BorderBrush" />
+                                <Setter TargetName="optionMark" Value="{DynamicResource CommonControlsCheckBoxGlyphHover}" Property="Fill" />
+                                <Setter Value="{DynamicResource CommonControlsCheckBoxTextHover}" Property="Foreground" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="checkBoxBorder" Value="{DynamicResource CommonControlsCheckBoxBackgroundPressed}" Property="Background" />
+                                <Setter TargetName="checkBoxBorder" Value="{DynamicResource CommonControlsCheckBoxBorderPressed}" Property="BorderBrush" />
+                                <Setter TargetName="optionMark" Value="{DynamicResource CommonControlsCheckBoxGlyphPressed}" Property="Fill" />
+                                <Setter Value="{DynamicResource CommonControlsCheckBoxTextPressed}" Property="Foreground" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="{x:Type Label}"
+               TargetType="{x:Type Label}">
+            <Setter Property="Foreground"
+                    Value="{DynamicResource SystemColorsControlText}"/>
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="Padding"
+                    Value="5"/>
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Left"/>
+            <Setter Property="VerticalContentAlignment"
+                    Value="Top"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Label}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="true">
+                            <local:ContentConverterPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Text="{TemplateBinding Content}"
+                                              ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
+                                              ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled"
+                                     Value="false">
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource SystemColorsGrayText}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="{x:Type GroupBox}"
+               TargetType="{x:Type GroupBox}">
+            <Setter Property="BorderBrush"
+                    Value="{DynamicResource GroupBoxBorderBrush}"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupBox}">
+                        <Grid SnapsToDevicePixels="true">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="6"/>
+                            </Grid.RowDefinitions>
+                            <Border CornerRadius="4"
+                                    Grid.Row="1"
+                                    Grid.RowSpan="3"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="Transparent"
+                                    Background="{TemplateBinding Background}"/>
+
+                            <Border CornerRadius="4"
+                                    Grid.Row="1"
+                                    Grid.RowSpan="3"
+                                    Grid.ColumnSpan="4"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{DynamicResource GroupBoxBorderBrushOuter}">
+                                <Border.OpacityMask>
+                                    <MultiBinding Converter="{StaticResource BorderGapMaskConverter}"
+                                                  ConverterParameter="7">
+                                        <Binding ElementName="Header"
+                                                 Path="ActualWidth"/>
+                                        <Binding RelativeSource="{RelativeSource Self}"
+                                                 Path="ActualWidth"/>
+                                        <Binding RelativeSource="{RelativeSource Self}"
+                                                 Path="ActualHeight"/>
+                                    </MultiBinding>
+                                </Border.OpacityMask>
+
+                                <Border BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        CornerRadius="3">
+                                    <Border BorderThickness="{TemplateBinding BorderThickness}"
+                                            BorderBrush="{DynamicResource GroupBoxBorderBrushInner}"
+                                            CornerRadius="2"/>
+                                </Border>
+                            </Border>
+
+                            <Border x:Name="Header"
+                                    Padding="3,1,3,1"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="1">
+                                <local:ContentConverterPresenter ContentSource="Header" 
+                                                  RecognizesAccessKey="True" 
+                                                  Text="{TemplateBinding Header}"
+                                                  ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
+                                                  ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                            <ContentPresenter Grid.Row="2"
+                                              Grid.Column="1"
+                                              Grid.ColumnSpan="2"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="BaseButtonStyle"
+               TargetType="{x:Type ButtonBase}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Background" Value="{DynamicResource CommonControlsButton}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorder}" />
+            <Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonText}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ButtonBase}">
+                        <Border
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            SnapsToDevicePixels="True">
+                            <local:ContentConverterPresenter
+                                RecognizesAccessKey="True"
+                                Text="{TemplateBinding Content}"
+                                ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
+                                ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
+                                Margin="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Focusable="False">
+                            </local:ContentConverterPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource CommonControlsButtonDefault}" />
+                    <Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonDefaultText}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderDefault}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource CommonControlsButtonFocused}" />
+                    <Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonFocusedText}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderFocused}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource CommonControlsButtonHover}" />
+                    <Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonHoverText}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderHover}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource CommonControlsButtonPressed}" />
+                    <Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonPressedText}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderPressed}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{DynamicResource CommonControlsButtonDisabled}" />
+                    <Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonDisabledText}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderDisabled}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="{x:Type ToggleButton}"
+               BasedOn="{StaticResource BaseButtonStyle}"
+               TargetType="{x:Type ToggleButton}"/>
+    
+        <Style x:Key="{x:Type RepeatButton}"
+               BasedOn="{StaticResource BaseButtonStyle}"
+               TargetType="{x:Type RepeatButton}">
+            <Setter Property="Stylus.IsPressAndHoldEnabled"
+                    Value="false"/>
+        </Style>
+    
+        <Style x:Key="{x:Type Button}"
+               BasedOn="{StaticResource BaseButtonStyle}"
+               TargetType="{x:Type Button}"/>
+        <Style x:Key="ButtonResource"
+               BasedOn="{StaticResource BaseButtonStyle}"
+               TargetType="{x:Type Button}"/>
+    </ctrls:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -41,8 +337,17 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <ContentPresenter Grid.Column="0" Name="treeViewContentPresenter" />
-            <ContentPresenter Grid.Column="1" Margin="5 0 5 0" Content="{Binding ElementName=treeViewContentPresenter, Path=Content.SelectedItem.Data.UIObject}" />
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Margin="0 0 0 0" Name="searchTextBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                <ContentPresenter Grid.Row="1" Margin="0 5 0 0" x:Name="treeViewContentPresenter" Content="{Binding TreeViewUIObject}" />
+            </Grid>
+            <ContentPresenter Grid.Column="1" Margin="5 0 5 0"
+                              Content="{Binding ElementName=treeViewContentPresenter, Path=Content.SelectedItem.Data.UIObject}"
+                              img:DsImage.BackgroundBrush="{DynamicResource AppSettingsTreeViewBackground}" />
         </Grid>
 
         <Grid Grid.Row="1" Margin="5">

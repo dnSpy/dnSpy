@@ -23,7 +23,6 @@ using System.Diagnostics;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
-using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Tabs {
 	sealed class TabService : ITabService {

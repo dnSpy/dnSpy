@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Windows;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Settings.Dialog {
@@ -65,6 +66,23 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// </summary>
 		public virtual void OnClosed() {
 		}
+
+		/// <summary>
+		/// Returns the object (or the <see cref="Type"/> of the object) with a <see cref="DataTemplate"/>
+		/// that is shown in the UI. This <see cref="DataTemplate"/> is scanned for strings the
+		/// user can search for.
+		/// If this method doesn't return null, the value should equal <see cref="UIObject"/>.
+		/// See also <see cref="GetSearchableStrings"/>.
+		/// </summary>
+		/// <returns></returns>
+		public virtual object GetDataTemplateObject() => null;
+
+		/// <summary>
+		/// Returns an array of strings shown in the UI that can be searched. This method
+		/// isn't needed if <see cref="GetDataTemplateObject"/> is overridden.
+		/// </summary>
+		/// <returns></returns>
+		public virtual string[] GetSearchableStrings() => null;
 	}
 
 	/// <summary>

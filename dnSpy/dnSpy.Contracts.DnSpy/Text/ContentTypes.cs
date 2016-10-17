@@ -227,5 +227,10 @@ namespace dnSpy.Contracts.Text {
 		/// Method body editor
 		/// </summary>
 		public const string MethodBodyEditor = nameof(MethodBodyEditor);
+
+		/// <summary>
+		/// Options dialog text
+		/// </summary>
+		public const string OptionsDialogText = nameof(OptionsDialogText);
 	}
 }

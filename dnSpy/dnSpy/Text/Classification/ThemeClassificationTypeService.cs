@@ -254,6 +254,8 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexTableName),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DocumentListMatchHighlight),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.GacMatchHighlight),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AppSettingsTreeViewNodeMatchHighlight),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AppSettingsTextMatchHighlight),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

@@ -53,5 +53,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 
 			ilSettings.CopyTo(_global_ilSettings);
 		}
+
+		public override object GetDataTemplateObject() => UIObject;
 	}
 }

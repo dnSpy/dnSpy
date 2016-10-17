@@ -73,5 +73,7 @@ namespace dnSpy.Text.CodeEditor {
 			options.HorizontalScrollBar = HorizontalScrollBar;
 			options.VerticalScrollBar = VerticalScrollBar;
 		}
+
+		public override object GetDataTemplateObject() => UIObject;
 	}
 }

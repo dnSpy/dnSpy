@@ -222,6 +222,8 @@
 		<color name="hextablename" fg="#A31515" />
 		<color name="documentlistmatchhighlight" bg="#FFF4A721" />
 		<color name="gacmatchhighlight" bg="#FFF4A721" />
+		<color name="appsettingstreeviewnodematchhighlight" bg="#FFF4A721" />
+		<color name="appsettingstextmatchhighlight" bg="#FFF4A721" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />

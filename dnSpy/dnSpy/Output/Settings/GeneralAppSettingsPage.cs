@@ -140,5 +140,7 @@ namespace dnSpy.Output.Settings {
 				newStyle &= ~WordWrapStyles.VisibleGlyphs;
 			options.WordWrapStyle = newStyle;
 		}
+
+		public override object GetDataTemplateObject() => UIObject;
 	}
 }

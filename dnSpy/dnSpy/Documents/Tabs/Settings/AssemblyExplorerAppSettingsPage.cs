@@ -221,6 +221,8 @@ namespace dnSpy.Documents.Tabs.Settings {
 				documentTreeViewSettings.MemberKind4 = MemberKind4.Object;
 			}
 		}
+
+		public override object GetDataTemplateObject() => UIObject;
 	}
 
 	sealed class MemberKindVM : ViewModelBase {

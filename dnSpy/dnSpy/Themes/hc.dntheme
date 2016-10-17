@@ -66,6 +66,8 @@
 		<color name="url" fg="blue" />
 		<color name="documentlistmatchhighlight" bg="#FF008000" />
 		<color name="gacmatchhighlight" bg="#FF008000" />
+		<color name="appsettingstreeviewnodematchhighlight" bg="#FF008000" />
+		<color name="appsettingstextmatchhighlight" bg="#FF008000" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

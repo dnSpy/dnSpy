@@ -1910,6 +1910,8 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.HexTableName, "HexTableName"),
 			new BrushColorInfo(ColorType.DocumentListMatchHighlight, "Document List Match Highlight"),
 			new BrushColorInfo(ColorType.GacMatchHighlight, "GAC Match Highlight"),
+			new BrushColorInfo(ColorType.AppSettingsTreeViewNodeMatchHighlight, "AppSettings TreeView Node Match Highlight"),
+			new BrushColorInfo(ColorType.AppSettingsTextMatchHighlight, "AppSettings Text Match Highlight"),
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
