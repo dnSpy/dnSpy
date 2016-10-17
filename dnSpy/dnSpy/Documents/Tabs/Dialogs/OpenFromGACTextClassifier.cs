@@ -53,7 +53,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			var gacContext = context as OpenFromGACTextClassifierContext;
 			if (gacContext == null)
 				yield break;
-			if (gacContext.Tag != PredefinedTextClassifierTags.GacDialogName)
+			if (gacContext.Tag != PredefinedTextClassifierTags.GacDialogName && gacContext.Tag != PredefinedTextClassifierTags.GacDialogVersion)
 				yield break;
 			foreach (var part in gacContext.SearchText.Split(seps, StringSplitOptions.RemoveEmptyEntries)) {
 				int index = gacContext.Text.IndexOf(part, StringComparison.CurrentCultureIgnoreCase);
