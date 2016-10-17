@@ -112,15 +112,22 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				return null;
 			try {
 				return new XmlDocumentationProvider(fileName);
-			} catch (UnauthorizedAccessException) {
-			} catch (SecurityException) {
-			} catch (IOException) {
-			} catch (XmlException) {
+			} catch {
 			}
 			return null;
 		}
-		
+
 		#region Constructor / Redirection support
+		Encoding GetEncoding(Encoding encoding) {
+			var clone = (Encoding)encoding.Clone();
+			Debug.Assert(!clone.IsReadOnly);
+			if (clone.IsReadOnly)
+				return encoding;
+			clone.EncoderFallback = new EncoderReplacementFallback("\uFFFD");
+			clone.DecoderFallback = new DecoderReplacementFallback("\uFFFD");
+			return clone;
+		}
+
 		/// <summary>
 		/// Creates a new XmlDocumentationProvider.
 		/// </summary>
@@ -138,7 +145,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					xmlReader.MoveToContent();
 					if (string.IsNullOrEmpty(xmlReader.GetAttribute("redirect"))) {
 						this.fileName = fileName;
-						this.encoding = xmlReader.Encoding;
+						this.encoding = GetEncoding(xmlReader.Encoding);
 						ReadXmlDoc(xmlReader);
 					} else {
 						string redirectionTarget = GetRedirectionTarget(fileName, xmlReader.GetAttribute("redirect"));
@@ -149,7 +156,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 									redirectedXmlReader.XmlResolver = null; // no DTD resolving
 									redirectedXmlReader.MoveToContent();
 									this.fileName = redirectionTarget;
-									this.encoding = redirectedXmlReader.Encoding;
+									this.encoding = GetEncoding(redirectedXmlReader.Encoding);
 									ReadXmlDoc(redirectedXmlReader);
 								}
 							}
@@ -252,8 +259,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			int currentLine = 1;
 			
 			// buffers for use with Decoder:
-			byte[] input = new byte[1];
-			char[] output = new char[1];
+			readonly byte[] input = new byte[1];
+			readonly char[] output = new char[2];
 			
 			public LinePositionMapper(FileStream fs, Encoding encoding)
 			{
@@ -264,17 +271,20 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			public int GetPositionForLine(int line)
 			{
 				Debug.Assert(line >= currentLine);
+				var inputLocal = input;
+				var outputLocal = output;
 				while (line > currentLine) {
 					int b = fs.ReadByte();
 					if (b < 0)
 						throw new EndOfStreamException();
 					int bytesUsed, charsUsed;
 					bool completed;
-					input[0] = (byte)b;
-					decoder.Convert(input, 0, 1, output, 0, 1, false, out bytesUsed, out charsUsed, out completed);
+					inputLocal[0] = (byte)b;
+					decoder.Convert(inputLocal, 0, 1, outputLocal, 0, outputLocal.Length, false, out bytesUsed, out charsUsed, out completed);
 					Debug.Assert(bytesUsed == 1);
-					if (charsUsed == 1 && output[0] == '\n') {
-						currentLine++;
+					for (int i = 0; i < charsUsed; i++) {
+						if (outputLocal[i] == '\n')
+							currentLine++;
 					}
 				}
 				return checked((int)fs.Position);
