@@ -8,7 +8,7 @@
 		<color name="keyword" fg="#569CD6" />
 		<color name="string" fg="#D69D85" />
 		<color name="verbatimstring" fg="#D69D85" />
-		<color name="char" fg="#9999FF" />
+		<color name="char" fg="#D69D85" />
 		<color name="namespace" fg="#FFD700" />
 		<color name="type" fg="#4EC9B0" />
 		<color name="sealedtype" fg="#4EC9B0" />
