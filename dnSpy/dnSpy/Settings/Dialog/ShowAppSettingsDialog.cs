@@ -81,6 +81,13 @@ namespace dnSpy.Settings.Dialog {
 			converterVersion = ContentConverterProperties.DefaultContentConverterVersion + 1;
 		}
 
+		public void Select(Guid value) {
+			var page = allPages.FirstOrDefault(a => a.Page.Guid == value);
+			if (page?.Parent == null)
+				return;
+			currentContextVM.TreeView.SelectItems(new[] { page });
+		}
+
 		public void Show(Guid? guid, Window ownerWindow) {
 			if (ownerWindow == null)
 				throw new ArgumentNullException(nameof(ownerWindow));
