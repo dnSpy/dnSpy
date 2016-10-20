@@ -1229,4 +1229,16 @@
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>
   </data>
+  <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
+    <value>Dragged items filter</value>
+  </data>
+  <data name="DocumentFilterType_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="DocumentFilterType_DotNetAndPE" xml:space="preserve">
+    <value>.Net and PE</value>
+  </data>
+  <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
+    <value>.Net only</value>
+  </data>
 </root>

@@ -100,6 +100,18 @@ namespace dnSpy.Documents.TreeView {
 		}
 		bool deserializeResources = true;
 
+		public DocumentFilterType FilterDraggedItems {
+			get { return filterDraggedItems; }
+			set {
+				if (filterDraggedItems != value) {
+					filterDraggedItems = value;
+					OnPropertyChanged(nameof(FilterDraggedItems));
+					OnModified();
+				}
+			}
+		}
+		DocumentFilterType filterDraggedItems = DocumentFilterType.DotNetAndPE;
+
 		MemberKind[] memberKinds = new MemberKind[5] {
 			MemberKind.Methods,
 			MemberKind.Properties,
@@ -159,6 +171,7 @@ namespace dnSpy.Documents.TreeView {
 			other.ShowAssemblyPublicKeyToken = this.ShowAssemblyPublicKeyToken;
 			other.ShowToken = this.ShowToken;
 			other.DeserializeResources = this.DeserializeResources;
+			other.FilterDraggedItems = this.FilterDraggedItems;
 			other.MemberKind0 = this.MemberKind0;
 			other.MemberKind1 = this.MemberKind1;
 			other.MemberKind2 = this.MemberKind2;
@@ -186,6 +199,7 @@ namespace dnSpy.Documents.TreeView {
 			this.ShowAssemblyPublicKeyToken = sect.Attribute<bool?>(nameof(ShowAssemblyPublicKeyToken)) ?? this.ShowAssemblyPublicKeyToken;
 			this.ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? this.ShowToken;
 			this.DeserializeResources = sect.Attribute<bool?>(nameof(DeserializeResources)) ?? this.DeserializeResources;
+			this.FilterDraggedItems = sect.Attribute<DocumentFilterType?>(nameof(FilterDraggedItems)) ?? this.FilterDraggedItems;
 			this.MemberKind0 = sect.Attribute<MemberKind?>(nameof(MemberKind0)) ?? this.MemberKind0;
 			this.MemberKind1 = sect.Attribute<MemberKind?>(nameof(MemberKind1)) ?? this.MemberKind1;
 			this.MemberKind2 = sect.Attribute<MemberKind?>(nameof(MemberKind2)) ?? this.MemberKind2;
@@ -205,6 +219,7 @@ namespace dnSpy.Documents.TreeView {
 			sect.Attribute(nameof(ShowAssemblyPublicKeyToken), ShowAssemblyPublicKeyToken);
 			sect.Attribute(nameof(ShowToken), ShowToken);
 			sect.Attribute(nameof(DeserializeResources), DeserializeResources);
+			sect.Attribute(nameof(FilterDraggedItems), FilterDraggedItems);
 			sect.Attribute(nameof(MemberKind0), MemberKind0);
 			sect.Attribute(nameof(MemberKind1), MemberKind1);
 			sect.Attribute(nameof(MemberKind2), MemberKind2);

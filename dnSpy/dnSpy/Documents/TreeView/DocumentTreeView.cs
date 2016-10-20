@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using dnlib.DotNet;
@@ -761,6 +762,22 @@ namespace dnSpy.Documents.TreeView {
 				var document = DocumentService.TryCreateOnly(DsDocumentInfo.CreateDocument(filenames[i]));
 				if (document == null)
 					continue;
+
+				if (filenames.Length > 1) {
+					switch (documentTreeViewSettings.FilterDraggedItems) {
+					case DocumentFilterType.All: break;
+					case DocumentFilterType.DotNetOnly:
+						if(!(document is DsDotNetDocumentBase)) continue;
+						break;
+					case DocumentFilterType.DotNetAndPE:
+						if (!(document is DsDotNetDocumentBase || document is DsPEDocument)) continue;
+						break;
+					default:
+						Debug.Fail("Shouldn't be here");
+						break;
+					}
+				}
+
 				var node = CreateNode(null, document);
 				DocumentService.ForceAdd(document, false, new AddDocumentInfo(node, index + j++));
 				if (newSelectedNode == null)

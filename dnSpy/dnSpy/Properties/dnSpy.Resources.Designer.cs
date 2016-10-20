@@ -187,6 +187,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dragged items filter.
+        /// </summary>
+        public static string AssemblyExplorerSettings_Filter {
+            get {
+                return ResourceManager.GetString("AssemblyExplorerSettings_Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Order (restart needed).
         /// </summary>
         public static string AssemblyExplorerSettings_Order {
@@ -759,6 +768,33 @@ namespace dnSpy.Properties {
         public static string DisplaySettings_ShowTokens {
             get {
                 return ResourceManager.GetString("DisplaySettings_ShowTokens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string DocumentFilterType_All {
+            get {
+                return ResourceManager.GetString("DocumentFilterType_All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .Net and PE.
+        /// </summary>
+        public static string DocumentFilterType_DotNetAndPE {
+            get {
+                return ResourceManager.GetString("DocumentFilterType_DotNetAndPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .Net only.
+        /// </summary>
+        public static string DocumentFilterType_DotNetOnly {
+            get {
+                return ResourceManager.GetString("DocumentFilterType_DotNetOnly", resourceCulture);
             }
         }
         
