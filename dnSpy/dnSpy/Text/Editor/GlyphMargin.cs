@@ -83,7 +83,7 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] lazyGlyphMouseProcessorProviders;
 		readonly Lazy<IGlyphFactoryProvider, IGlyphMetadata>[] lazyGlyphFactoryProviders;
 		MouseProcessorCollection mouseProcessorCollection;
-		Dictionary<Type, GlyphFactoryInfo> glyphFactories;
+		readonly Dictionary<Type, GlyphFactoryInfo> glyphFactories;
 		ITagAggregator<IGlyphTag> tagAggregator;
 		IEditorFormatMap editorFormatMap;
 		Dictionary<object, LineInfo> lineInfos;
@@ -93,12 +93,16 @@ namespace dnSpy.Text.Editor {
 		struct GlyphFactoryInfo {
 			public int Order { get; }
 			public IGlyphFactory Factory { get; }
+			public IGlyphFactoryProvider FactoryProvider { get; }
 			public Canvas Canvas { get; }
-			public GlyphFactoryInfo(int order, IGlyphFactory factory) {
+			public GlyphFactoryInfo(int order, IGlyphFactory factory, IGlyphFactoryProvider glyphFactoryProvider) {
 				if (factory == null)
 					throw new ArgumentNullException(nameof(factory));
+				if (glyphFactoryProvider == null)
+					throw new ArgumentNullException(nameof(glyphFactoryProvider));
 				Order = order;
 				Factory = factory;
+				FactoryProvider = glyphFactoryProvider;
 				Canvas = new Canvas { Background = Brushes.Transparent };
 			}
 		}
@@ -151,6 +155,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(glyphMouseProcessorProviders));
 			if (glyphFactoryProviders == null)
 				throw new ArgumentNullException(nameof(glyphFactoryProviders));
+			this.glyphFactories = new Dictionary<Type, GlyphFactoryInfo>();
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			this.editorFormatMapService = editorFormatMapService;
@@ -205,35 +210,55 @@ namespace dnSpy.Text.Editor {
 			return list.ToArray();
 		}
 
-		Dictionary<Type, GlyphFactoryInfo> CreateGlyphFactories() {
-			var dict = new Dictionary<Type, GlyphFactoryInfo>();
-			var contentType = wpfTextViewHost.TextView.TextDataModel.ContentType;
+		void InitializeGlyphFactories(IContentType beforeContentType, IContentType afterContentType) {
+			var oldFactories = new Dictionary<IGlyphFactoryProvider, IGlyphFactory>();
+			foreach (var info in glyphFactories.Values)
+				oldFactories[info.FactoryProvider] = info.Factory;
+			glyphFactories.Clear();
+
+			bool newFactory = false;
 			int order = 0;
 			foreach (var lazy in lazyGlyphFactoryProviders) {
-				if (!contentType.IsOfAnyType(lazy.Metadata.ContentTypes))
+				if (!afterContentType.IsOfAnyType(lazy.Metadata.ContentTypes))
 					continue;
 				IGlyphFactory glyphFactory = null;
 				foreach (var type in lazy.Metadata.TagTypes) {
 					Debug.Assert(type != null);
 					if (type == null)
 						break;
-					Debug.Assert(!dict.ContainsKey(type));
-					if (dict.ContainsKey(type))
+					Debug.Assert(!glyphFactories.ContainsKey(type));
+					if (glyphFactories.ContainsKey(type))
 						continue;
 					Debug.Assert(typeof(IGlyphTag).IsAssignableFrom(type));
 					if (!typeof(IGlyphTag).IsAssignableFrom(type))
 						continue;
 
 					if (glyphFactory == null) {
-						glyphFactory = lazy.Value.GetGlyphFactory(wpfTextViewHost.TextView, this);
-						if (glyphFactory == null)
-							break;
+						if (oldFactories.TryGetValue(lazy.Value, out glyphFactory))
+							oldFactories.Remove(lazy.Value);
+						else {
+							glyphFactory = lazy.Value.GetGlyphFactory(wpfTextViewHost.TextView, this);
+							if (glyphFactory == null)
+								break;
+							newFactory = true;
+						}
 					}
 
-					dict.Add(type, new GlyphFactoryInfo(order++, glyphFactory));
+					glyphFactories.Add(type, new GlyphFactoryInfo(order++, glyphFactory, lazy.Value));
 				}
 			}
-			return dict;
+
+			foreach (var factory in oldFactories.Values)
+				(factory as IDisposable)?.Dispose();
+			if (newFactory || oldFactories.Count != 0) {
+				childCanvases = glyphFactories.Values.OrderBy(a => a.Order).Select(a => a.Canvas).ToArray();
+				iconCanvas.Children.Clear();
+				foreach (var c in childCanvases)
+					iconCanvas.Children.Add(c);
+
+				if (beforeContentType != null)
+					RefreshEverything();
+			}
 		}
 
 		void Initialize() {
@@ -242,14 +267,15 @@ namespace dnSpy.Text.Editor {
 			iconCanvas = new Canvas { Background = Brushes.Transparent };
 			Children.Add(iconCanvas);
 			mouseProcessorCollection = new MouseProcessorCollection(VisualElement, null, new DefaultMouseProcessor(), CreateMouseProcessors(), null);
-			glyphFactories = CreateGlyphFactories();
-			childCanvases = glyphFactories.Values.OrderBy(a => a.Order).Select(a => a.Canvas).ToArray();
-			foreach (var c in childCanvases)
-				iconCanvas.Children.Add(c);
+			wpfTextViewHost.TextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
+			lineInfos = new Dictionary<object, LineInfo>();
+			InitializeGlyphFactories(null, wpfTextViewHost.TextView.TextDataModel.ContentType);
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IGlyphTag>(wpfTextViewHost.TextView);
 			editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextViewHost.TextView);
-			lineInfos = new Dictionary<object, LineInfo>();
 		}
+
+		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) =>
+			InitializeGlyphFactories(e.BeforeContentType, e.AfterContentType);
 
 		void GlyphMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			if (Visibility == Visibility.Visible && !wpfTextViewHost.IsClosed) {
@@ -442,6 +468,7 @@ namespace dnSpy.Text.Editor {
 		public void Dispose() {
 			wpfTextViewHost.TextView.Options.OptionChanged -= Options_OptionChanged;
 			wpfTextViewHost.TextView.ZoomLevelChanged -= TextView_ZoomLevelChanged;
+			wpfTextViewHost.TextView.TextDataModel.ContentTypeChanged -= TextDataModel_ContentTypeChanged;
 			IsVisibleChanged -= GlyphMargin_IsVisibleChanged;
 			UnregisterEvents();
 			lineInfos?.Clear();
