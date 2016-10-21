@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
@@ -30,7 +29,6 @@ namespace dnSpy.Text.CodeEditor {
 		public override Guid Guid => guid;
 		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_GENERAL;
 		public override string Title => dnSpy_Resources.GeneralSettings;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 		readonly Guid guid;
 

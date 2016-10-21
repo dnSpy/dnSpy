@@ -27,7 +27,6 @@ using System.ComponentModel.Composition;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Settings.Dialog;
@@ -96,11 +95,9 @@ namespace dnSpy.BamlDecompiler {
 	}
 
 	sealed class BamlAppSettingsPage : AppSettingsPage {
-		public override Guid ParentGuid => Guid.Empty;
 		public override Guid Guid => new Guid("DF5D8216-35D9-4E25-8BDF-817D4CA90C17");
 		public override double Order => AppSettingsConstants.ORDER_BAML;
 		public override string Title => dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => bamlSettings;
 
 		readonly BamlSettingsImpl _global_settings;

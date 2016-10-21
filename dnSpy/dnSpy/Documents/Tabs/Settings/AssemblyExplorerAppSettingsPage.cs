@@ -24,7 +24,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Documents.TreeView;
@@ -46,11 +45,9 @@ namespace dnSpy.Documents.Tabs.Settings {
 	}
 
 	sealed class AssemblyExplorerAppSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
-		public override Guid ParentGuid => Guid.Empty;
 		public override Guid Guid => new Guid("F8B8DA74-9318-4BEE-B50A-1139147D3C82");
 		public override double Order => AppSettingsConstants.ORDER_ASSEMBLY_EXPLORER;
 		public override string Title => dnSpy_Resources.AssemblyExplorerTitle;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 
 		public event PropertyChangedEventHandler PropertyChanged;

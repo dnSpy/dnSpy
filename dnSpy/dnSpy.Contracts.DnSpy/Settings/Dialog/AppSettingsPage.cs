@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Parent <see cref="System.Guid"/> or <see cref="System.Guid.Empty"/> if the root element is the parent
 		/// </summary>
-		public abstract Guid ParentGuid { get; }
+		public virtual Guid ParentGuid => Guid.Empty;
 
 		/// <summary>
 		/// Gets the <see cref="System.Guid"/>
@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Gets the icon shown in the UI (eg. <see cref="DsImages.Assembly"/>) or <see cref="ImageReference.None"/>
 		/// </summary>
-		public abstract ImageReference Icon { get; }
+		public virtual ImageReference Icon => ImageReference.None;
 
 		/// <summary>
 		/// Gets the UI object
@@ -83,6 +83,12 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// </summary>
 		/// <returns></returns>
 		public virtual string[] GetSearchableStrings() => null;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected AppSettingsPage() {
+		}
 	}
 
 	/// <summary>

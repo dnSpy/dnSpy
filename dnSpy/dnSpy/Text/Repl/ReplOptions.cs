@@ -18,8 +18,8 @@
 */
 
 using System;
-using dnSpy.Contracts.Settings.Repl;
 using dnSpy.Contracts.Settings.Groups;
+using dnSpy.Contracts.Settings.Repl;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;

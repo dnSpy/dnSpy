@@ -18,7 +18,6 @@
 */
 
 using System;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Text.Repl {
@@ -27,7 +26,6 @@ namespace dnSpy.Text.Repl {
 		public override Guid Guid => guid;
 		public override double Order => order;
 		public override string Title => title;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => null;
 		public override void OnApply() { }
 		readonly Guid guid;

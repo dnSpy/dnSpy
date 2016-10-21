@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
@@ -30,7 +29,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 		public override Guid Guid => new Guid("F00E1FAC-5E93-4AD4-B25E-54E2B94868B8");
 		public override double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_GENERAL;
 		public override string Title => dnSpy_Resources.GeneralSettings;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 
 		public event PropertyChangedEventHandler PropertyChanged;

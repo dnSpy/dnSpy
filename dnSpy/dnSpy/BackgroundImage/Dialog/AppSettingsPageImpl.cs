@@ -29,7 +29,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.Contracts.BackgroundImage;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text;
@@ -57,11 +56,9 @@ namespace dnSpy.BackgroundImage.Dialog {
 	}
 
 	sealed class AppSettingsPageImpl : AppSettingsPage, INotifyPropertyChanged {
-		public override Guid ParentGuid => Guid.Empty;
 		public override Guid Guid => new Guid("A36F0A79-E8D0-44C5-8F22-A50B28F6117E");
 		public override double Order => AppSettingsConstants.ORDER_BACKGROUNDIMAGE;
 		public override string Title => dnSpy_Resources.BackgroundImageOptDlgTab;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 
 		public event PropertyChangedEventHandler PropertyChanged;

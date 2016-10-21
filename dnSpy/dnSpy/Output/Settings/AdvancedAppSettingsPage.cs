@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
@@ -29,7 +28,6 @@ namespace dnSpy.Output.Settings {
 		public override Guid Guid => new Guid("E1F8E0A8-5F5A-42E4-B845-4E3885E09D69");
 		public override double Order => AppSettingsConstants.ORDER_OUTPUT_DEFAULT_ADVANCED;
 		public override string Title => dnSpy_Resources.AdvancedSettings;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 
 		public event PropertyChangedEventHandler PropertyChanged;

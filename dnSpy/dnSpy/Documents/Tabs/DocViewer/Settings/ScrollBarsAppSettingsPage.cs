@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
@@ -29,7 +28,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 		public override Guid Guid => new Guid("B9BA3033-D082-472F-A65D-3525554B2759");
 		public override double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_SCROLLBARS;
 		public override string Title => dnSpy_Resources.ScrollBarsSettings;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 
 		public event PropertyChangedEventHandler PropertyChanged;

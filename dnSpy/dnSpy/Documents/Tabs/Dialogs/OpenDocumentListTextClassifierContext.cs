@@ -17,9 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
-using System.Collections.Generic;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class OpenDocumentListTextClassifierContext : TextClassifierContext {

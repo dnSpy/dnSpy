@@ -25,7 +25,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Themes;
@@ -67,7 +66,6 @@ namespace dnSpy.MainApp.Settings {
 		public override Guid Guid => new Guid("776184ED-10F6-466C-8B66-716936C29A5A");
 		public override double Order => AppSettingsConstants.ORDER_ENVIRONMENT_GENERAL;
 		public override string Title => dnSpy_Resources.GeneralSettings;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 
 		public event PropertyChangedEventHandler PropertyChanged;

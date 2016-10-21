@@ -30,7 +30,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
@@ -56,7 +55,6 @@ namespace dnSpy.MainApp.Settings {
 		public override Guid Guid => new Guid("915F7258-1441-4F80-9DB2-6DF6948C2E09");
 		public override double Order => AppSettingsConstants.ORDER_ENVIRONMENT_FONT;
 		public override string Title => dnSpy_Resources.FontSettings;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 
 		public event PropertyChangedEventHandler PropertyChanged;

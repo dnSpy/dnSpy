@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dndbg.Engine;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Debugger.Dialogs;
@@ -47,12 +46,10 @@ namespace dnSpy.Debugger {
 		readonly DebuggerSettingsImpl _global_settings;
 		readonly IPickFilename pickFilename;
 
-		public override Guid ParentGuid => Guid.Empty;
 		public override Guid Guid => new Guid("8D2BC2FB-5CA4-4907-84C7-F4F705327AC8");
 		public DebuggerSettings Settings { get; }
 		public override double Order => AppSettingsConstants.ORDER_DEBUGGER;
 		public override string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => this;
 
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;

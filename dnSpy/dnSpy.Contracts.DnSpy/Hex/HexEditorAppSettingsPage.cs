@@ -25,7 +25,6 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.HexEditor;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Properties;
 using dnSpy.Contracts.Settings.Dialog;
@@ -46,11 +45,9 @@ namespace dnSpy.Contracts.Hex {
 	}
 
 	sealed class HexEditorAppSettingsPage : AppSettingsPage {
-		public override Guid ParentGuid => Guid.Empty;
 		public override Guid Guid => new Guid("4BEAD407-839F-489B-A874-2B3325776366");
 		public override double Order => AppSettingsConstants.ORDER_HEXEDITOR;
 		public override string Title => dnSpy_Contracts_DnSpy_Resources.HexEditorAppDlgTitle;
-		public override ImageReference Icon => ImageReference.None;
 		public override object UIObject => displayAppSettingsVM;
 
 		readonly HexEditorSettingsImpl hexEditorSettingsImpl;

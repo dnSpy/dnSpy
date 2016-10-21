@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.Settings.Repl;
 using dnSpy.Contracts.Settings.Groups;
+using dnSpy.Contracts.Settings.Repl;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Repl {
