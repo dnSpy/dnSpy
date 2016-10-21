@@ -18,18 +18,20 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Tagging;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Roslyn.Shared.Text.Tagging {
-	sealed class RoslynTagger : AsyncTagger<IClassificationTag, RoslynTaggerAsyncState> {
+	sealed class RoslynTagger : AsyncTagger<IClassificationTag, RoslynTaggerAsyncState>, ISynchronousTagger<IClassificationTag> {
 		readonly ITextBuffer textBuffer;
 		readonly IClassificationType defaultClassificationType;
 		readonly RoslynClassificationTypes roslynClassificationTypes;
@@ -53,6 +55,23 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			var snapshot = e.Snapshot;
 			if (textBuffer == snapshot.TextBuffer)
 				RefreshAllTags(snapshot);
+		}
+
+		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken) {
+			if (spans.Count == 0)
+				yield break;
+
+			var snapshot = spans[0].Snapshot;
+			var asyncState = new RoslynTaggerAsyncState();
+			Initialize(asyncState, snapshot, cancellationToken).Wait(cancellationToken);
+			if (!asyncState.IsValid)
+				yield break;
+
+			var classifier = new RoslynClassifier(asyncState.SyntaxRoot, asyncState.SemanticModel, asyncState.Workspace, roslynClassificationTypes, defaultClassificationType, cancellationToken);
+			foreach (var span in spans) {
+				foreach (var info in classifier.GetClassifications(span.Span.ToTextSpan()))
+					yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, info.Span), new ClassificationTag(info.Type));
+			}
 		}
 
 		protected override async Task GetTagsAsync(GetTagsState state, NormalizedSnapshotSpanCollection spans) {
