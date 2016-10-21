@@ -77,7 +77,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void RaiseTagsChanged(SnapshotSpan span) => TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(span));
 	}
 
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER - 100)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.DocumentViewer - 100)]
 	sealed class BracePairCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<IBracePairServiceProvider> bracePairServiceProvider;
 

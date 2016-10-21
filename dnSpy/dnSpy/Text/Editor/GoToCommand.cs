@@ -28,7 +28,7 @@ using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.TextEditor - 1)]
 	sealed class GoToCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly IMessageBoxService messageBoxService;
 

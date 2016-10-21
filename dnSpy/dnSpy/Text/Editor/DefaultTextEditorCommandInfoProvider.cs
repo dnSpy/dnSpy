@@ -23,7 +23,7 @@ using dnSpy.Contracts.Command;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	[ExportCommandInfoProvider(CommandConstants.CMDINFO_ORDER_TEXT_EDITOR)]
+	[ExportCommandInfoProvider(CommandInfoProviderOrder.TextEditor)]
 	sealed class DefaultTextEditorCommandInfoProvider : ICommandInfoProvider2 {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			if (!(target is ITextView))

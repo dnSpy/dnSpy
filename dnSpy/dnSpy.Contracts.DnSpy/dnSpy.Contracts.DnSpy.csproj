@@ -72,8 +72,10 @@
     <Compile Include="BackgroundImage\ImagePlacement.cs" />
     <Compile Include="Command\CommandConstants.cs" />
     <Compile Include="Command\CommandInfo.cs" />
+    <Compile Include="Command\CommandInfoProviderOrder.cs" />
     <Compile Include="Command\CommandShortcut.cs" />
     <Compile Include="Command\CommandTargetCommand.cs" />
+    <Compile Include="Command\CommandTargetFilterOrder.cs" />
     <Compile Include="Command\CommandTargetStatus.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Command\ICommandInfoProvider.cs" />

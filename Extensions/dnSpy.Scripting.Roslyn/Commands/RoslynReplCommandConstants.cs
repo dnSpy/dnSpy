@@ -30,11 +30,11 @@ namespace dnSpy.Scripting.Roslyn.Commands {
 		/// <summary>
 		/// Order of Roslyn REPL editor <see cref="ICommandInfoProvider"/>
 		/// </summary>
-		public const double CMDINFO_ORDER_ROSLYN_REPL = CommandConstants.CMDINFO_ORDER_REPL - 100;
+		public const double CommandInfoProvider_RoslynREPL = CommandInfoProviderOrder.REPL - 100;
 
 		/// <summary>
 		/// Order of Roslyn REPL editor <see cref="ICommandTargetFilter"/>
 		/// </summary>
-		public const double CMDTARGETFILTER_ORDER_ROSLYN_REPL = CommandConstants.CMDTARGETFILTER_ORDER_REPL - 100;
+		public const double CommandTargetFilter_RoslynREPL = CommandTargetFilterOrder.REPL - 100;
 	}
 }

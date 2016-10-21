@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Command {
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class ExportCommandTargetFilterProviderAttribute : ExportAttribute, ICommandTargetFilterProviderMetadata {
 		/// <summary>Constructor</summary>
-		/// <param name="order">Order of this instance, eg. <see cref="CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR"/></param>
+		/// <param name="order">Order of this instance, eg. <see cref="CommandTargetFilterOrder.TextEditor"/></param>
 		public ExportCommandTargetFilterProviderAttribute(double order)
 			: base(typeof(ICommandTargetFilterProvider)) {
 			Order = order;

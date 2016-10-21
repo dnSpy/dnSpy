@@ -39,7 +39,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_DOCUMENTVIEWER - 1)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.DocumentViewer - 1)]
 	sealed class DocumentViewerToolTipServiceCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider;
 

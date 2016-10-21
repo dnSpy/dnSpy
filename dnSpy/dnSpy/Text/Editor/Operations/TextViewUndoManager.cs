@@ -45,7 +45,7 @@ namespace dnSpy.Text.Editor.Operations {
 			this.textBufferUndoManagerProvider = textBufferUndoManagerProvider;
 			textBufferUndoManager = textBufferUndoManagerProvider.GetTextBufferUndoManager(TextView.TextBuffer);
 			undoRedoCommandTargetFilter = new UndoRedoCommandTargetFilter(this);
-			TextView.CommandTarget.AddFilter(undoRedoCommandTargetFilter, CommandConstants.CMDTARGETFILTER_ORDER_UNDO);
+			TextView.CommandTarget.AddFilter(undoRedoCommandTargetFilter, CommandTargetFilterOrder.UndoRedo);
 			TextView.Closed += TextView_Closed;
 		}
 

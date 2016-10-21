@@ -25,7 +25,7 @@ using dnSpy.Scripting.Roslyn.Commands;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Scripting.Roslyn.Common {
-	[ExportCommandInfoProvider(RoslynReplCommandConstants.CMDINFO_ORDER_ROSLYN_REPL)]
+	[ExportCommandInfoProvider(RoslynReplCommandConstants.CommandInfoProvider_RoslynREPL)]
 	sealed class RoslynReplCommandInfoProvider : ICommandInfoProvider {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;

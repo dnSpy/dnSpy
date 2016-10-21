@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Command {
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class ExportCommandInfoProviderAttribute : ExportAttribute, ICommandInfoProviderMetadata {
 		/// <summary>Constructor</summary>
-		/// <param name="order">Order of this instance, eg. <see cref="CommandConstants.CMDINFO_ORDER_DEFAULT"/></param>
+		/// <param name="order">Order of this instance, eg. <see cref="CommandInfoProviderOrder.Default"/></param>
 		public ExportCommandInfoProviderAttribute(double order)
 			: base(typeof(ICommandInfoProvider)) {
 			Order = order;

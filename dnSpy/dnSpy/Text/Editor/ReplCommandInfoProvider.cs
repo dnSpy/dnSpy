@@ -24,7 +24,7 @@ using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
-	[ExportCommandInfoProvider(CommandConstants.CMDINFO_ORDER_REPL)]
+	[ExportCommandInfoProvider(CommandInfoProviderOrder.REPL)]
 	sealed class ReplCommandInfoProvider : ICommandInfoProvider {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			var textView = target as ITextView;

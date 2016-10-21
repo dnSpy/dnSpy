@@ -19,20 +19,28 @@
 
 namespace dnSpy.Contracts.Command {
 	/// <summary>
-	/// Allows adding and removing <see cref="ICommandTargetFilter"/>s
+	/// <see cref="ICommandInfoProvider"/> order constants
 	/// </summary>
-	public interface ICommandTargetCollection : ICommandTarget {
-		/// <summary>
-		/// Adds a new filter
-		/// </summary>
-		/// <param name="filter">Filter to add</param>
-		/// <param name="order">Order, eg. <see cref="CommandTargetFilterOrder.TextEditor"/></param>
-		void AddFilter(ICommandTargetFilter filter, double order);
+	public static class CommandInfoProviderOrder {
+		/// <summary>Default</summary>
+		public const double Default = 100000;
 
-		/// <summary>
-		/// Removes an added filter
-		/// </summary>
-		/// <param name="filter">Filter to remove</param>
-		void RemoveFilter(ICommandTargetFilter filter);
+		/// <summary>Text editor</summary>
+		public const double TextEditor = 50000;
+
+		/// <summary>Text references</summary>
+		public const double TextReferences = TextEditor - 2000;
+
+		/// <summary>Document viewer</summary>
+		public const double DocumentViewer = TextEditor - 3000;
+
+		/// <summary>REPL editor</summary>
+		public const double REPL = TextEditor - 3000;
+
+		/// <summary>Output logger text pane</summary>
+		public const double OutputTextPane = TextEditor - 3000;
+
+		/// <summary>Edit Code</summary>
+		public const double EditCode = TextEditor - 3000;
 	}
 }

@@ -25,7 +25,7 @@ using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_ROSLYN_QUICKINFO)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.IntellisenseRoslynQuickInfo)]
 	sealed class DefaultTextViewCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<IQuickInfoTriggerServiceProvider> quickInfoTriggerServiceProvider;
 

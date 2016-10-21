@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_ROSLYN_STATEMENTCOMPLETION)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.IntellisenseRoslynStatmentCompletion)]
 	sealed class DefaultTextViewCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<ICompletionBroker> completionBroker;
 

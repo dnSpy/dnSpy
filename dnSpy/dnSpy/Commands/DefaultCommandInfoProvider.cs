@@ -22,7 +22,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Command;
 
 namespace dnSpy.Commands {
-	[ExportCommandInfoProvider(CommandConstants.CMDINFO_ORDER_DEFAULT)]
+	[ExportCommandInfoProvider(CommandInfoProviderOrder.Default)]
 	sealed class DefaultCommandInfoProvider : ICommandInfoProvider {
 		public IEnumerable<CommandShortcut> GetCommandShortcuts(object target) {
 			yield return CommandShortcut.Control(Key.Z, StandardIds.Undo.ToCommandInfo());

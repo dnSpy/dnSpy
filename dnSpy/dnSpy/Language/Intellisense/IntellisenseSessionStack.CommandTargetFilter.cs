@@ -42,7 +42,7 @@ namespace dnSpy.Language.Intellisense {
 					return;
 				if (wpfTextView == null)
 					return;
-				wpfTextView.CommandTarget.AddFilter(this, CommandConstants.CMDTARGETFILTER_ORDER_SESSIONSTACK);
+				wpfTextView.CommandTarget.AddFilter(this, CommandTargetFilterOrder.IntellisenseSessionStack);
 				hasHookedKeyboard = true;
 			}
 

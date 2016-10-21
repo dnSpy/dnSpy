@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor {
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_TEXT_EDITOR)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.TextEditor)]
 	sealed class DefaultTextViewCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService;
 

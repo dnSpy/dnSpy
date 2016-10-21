@@ -28,7 +28,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_ROSLYN_SIGNATUREHELP)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.IntellisenseRoslynSignatureHelp)]
 	sealed class DefaultTextViewCommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<ISignatureHelpBroker> signatureHelpBroker;
 

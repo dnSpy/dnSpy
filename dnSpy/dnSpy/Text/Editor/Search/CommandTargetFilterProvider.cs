@@ -23,7 +23,7 @@ using dnSpy.Contracts.Command;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor.Search {
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_SEARCH)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.SearchService)]
 	sealed class CommandTargetFilterProvider : ICommandTargetFilterProvider {
 		readonly Lazy<ISearchServiceProvider> searchServiceProvider;
 
@@ -41,7 +41,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 	}
 
-	[ExportCommandTargetFilterProvider(CommandConstants.CMDTARGETFILTER_ORDER_SEARCH_FOCUS)]
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.SearchServiceFocused)]
 	sealed class CommandTargetFilterProviderFocus : ICommandTargetFilterProvider {
 		readonly Lazy<ISearchServiceProvider> searchServiceProvider;
 

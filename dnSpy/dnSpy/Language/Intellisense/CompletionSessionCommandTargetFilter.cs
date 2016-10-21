@@ -37,7 +37,7 @@ namespace dnSpy.Language.Intellisense {
 			this.dsWpfTextView = completionSession.TextView as IDsWpfTextView;
 			Debug.Assert(dsWpfTextView != null);
 
-			dsWpfTextView?.CommandTarget.AddFilter(this, CommandConstants.CMDTARGETFILTER_ORDER_DEFAULT_STATEMENTCOMPLETION);
+			dsWpfTextView?.CommandTarget.AddFilter(this, CommandTargetFilterOrder.IntellisenseDefaultStatmentCompletion);
 			completionSession.TextView.Caret.PositionChanged += Caret_PositionChanged;
 
 			// Make sure that pressing backspace at start pos dismisses the session
