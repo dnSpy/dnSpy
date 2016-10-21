@@ -109,6 +109,7 @@
     <Compile Include="Controls\IZoomable.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\MetroWindowCreatedEventArgs.cs" />
+    <Compile Include="Controls\TextControl.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Controls\WindowDpiChangedEventArgs.cs" />
     <Compile Include="Decompiler\IDecompilerService.cs" />

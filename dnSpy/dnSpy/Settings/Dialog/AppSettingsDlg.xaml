@@ -324,6 +324,25 @@
         <Style x:Key="ButtonResource"
                BasedOn="{StaticResource BaseButtonStyle}"
                TargetType="{x:Type Button}"/>
+        <Style TargetType="{x:Type ctrls:TextControl}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ctrls:TextControl}">
+                        <local:ContentConverterPresenter
+                            RecognizesAccessKey="True"
+                            Margin="{TemplateBinding Padding}"
+                            Text="{TemplateBinding Content}"
+                            ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
+                            ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Focusable="False">
+                        </local:ContentConverterPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </ctrls:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>

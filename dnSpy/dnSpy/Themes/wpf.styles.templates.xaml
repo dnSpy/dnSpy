@@ -152,6 +152,16 @@
 		</Style.Triggers>
 	</Style>
 
+	<Style TargetType="{x:Type ctrls2:TextControl}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ctrls2:TextControl}">
+					<TextBlock Text="{TemplateBinding Content}" TextWrapping="{TemplateBinding TextWrapping}" TextTrimming="{TemplateBinding TextTrimming}" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
     <Style x:Key="{x:Type ToggleButton}"
            BasedOn="{StaticResource BaseButtonStyle}"
            TargetType="{x:Type ToggleButton}"/>
@@ -5950,7 +5960,7 @@
             </Grid.ColumnDefinitions>
             <ComboBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 0 0 0" HorizontalAlignment="Stretch" Name="settingsComboBox" DisplayMemberPath="Name" ItemsSource="{Binding Settings}" SelectedItem="{Binding CurrentItem}" VerticalContentAlignment="Center" />
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 5 5 5" TextWrapping="Wrap" Text="{x:Static p:dnSpy_Resources.BgImgSettings_Images}" />
+            <ctrls2:TextControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 5 5 5" TextWrapping="Wrap" Content="{x:Static p:dnSpy_Resources.BgImgSettings_Images}" />
             <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -6057,8 +6067,8 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap"
-                               Text="{x:Static p:dnSpy_Resources.UseNewRendererInfo}" />
+                    <ctrls2:TextControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap"
+                               Content="{x:Static p:dnSpy_Resources.UseNewRendererInfo}" />
                     <!-- TODO: It doesn't support the new text editor code
                     <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_TextEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_TextEditor}" />
                     -->

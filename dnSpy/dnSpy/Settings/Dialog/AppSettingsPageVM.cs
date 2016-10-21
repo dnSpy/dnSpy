@@ -20,8 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text;
@@ -150,11 +152,12 @@ namespace dnSpy.Settings.Dialog {
 			if (s != null)
 				return s;
 
-			// Label, CheckBox
+			// Label, CheckBox, Button, TextControl and others
 			s = (obj as ContentControl)?.Content as string;
 			if (s != null)
 				return s;
 
+			Debug.Assert(!(obj is TextBlock), $"Use {nameof(TextControl)} instead so the text can be highlighted");
 			s = (obj as TextBlock)?.Text;
 			if (s != null)
 				return s;
