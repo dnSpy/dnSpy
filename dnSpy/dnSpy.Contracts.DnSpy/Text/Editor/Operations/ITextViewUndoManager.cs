@@ -17,36 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using Microsoft.VisualStudio.Text.Operations;
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Text.Editor.Operations {
 	/// <summary>
-	/// <see cref="ILogEditor"/> options
+	/// Text view undo manager
 	/// </summary>
-	public sealed class LogEditorOptions : CommonTextEditorOptions {
+	public interface ITextViewUndoManager {
 		/// <summary>
-		/// Extra text view roles
+		/// Gets the text view
 		/// </summary>
-		public List<string> ExtraRoles { get; } = new List<string>();
+		IDsWpfTextView TextView { get; }
 
 		/// <summary>
-		/// Constructor
+		/// Gets the undo history
 		/// </summary>
-		public LogEditorOptions() {
-			EnableUndoHistory = false;
-		}
+		ITextUndoHistory TextViewUndoHistory { get; }
 
 		/// <summary>
-		/// Clones this
+		/// Clears the undo/redo history. <see cref="TextViewUndoHistory"/> also gets
+		/// updated with a new instance.
 		/// </summary>
-		/// <returns></returns>
-		public new LogEditorOptions Clone() => CopyTo(new LogEditorOptions());
-
-		LogEditorOptions CopyTo(LogEditorOptions other) {
-			base.CopyTo(other);
-			other.ExtraRoles.Clear();
-			other.ExtraRoles.AddRange(ExtraRoles);
-			return other;
-		}
+		void ClearUndoHistory();
 	}
 }

@@ -26,6 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Roslyn.Shared.Documentation;
 using dnSpy.Roslyn.Shared.Text;
 using Microsoft.CodeAnalysis;
@@ -48,18 +49,22 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		readonly List<RoslynCodeDocument> documents;
 		readonly IRoslynDocumentationProviderFactory docFactory;
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
+		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 		AdhocWorkspace workspace;
 
-		protected RoslynLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService) {
+		protected RoslynLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
 			if (codeEditorProvider == null)
 				throw new ArgumentNullException(nameof(codeEditorProvider));
 			if (docFactory == null)
 				throw new ArgumentNullException(nameof(docFactory));
 			if (roslynDocumentChangedService == null)
 				throw new ArgumentNullException(nameof(roslynDocumentChangedService));
+			if (textViewUndoManagerProvider == null)
+				throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
 			this.codeEditorProvider = codeEditorProvider;
 			this.docFactory = docFactory;
 			this.roslynDocumentChangedService = roslynDocumentChangedService;
+			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
 			this.documents = new List<RoslynCodeDocument>();
 		}
 
@@ -86,6 +91,12 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			workspace.AddProject(projectInfo);
 			foreach (var doc in documents)
 				workspace.OpenDocument(doc.Info.Id);
+
+			foreach (var doc in documents) {
+				ITextViewUndoManager manager;
+				if (textViewUndoManagerProvider.TryGetTextViewUndoManager(doc.TextView, out manager))
+					manager.ClearUndoHistory();
+			}
 
 			return documents.ToArray();
 		}

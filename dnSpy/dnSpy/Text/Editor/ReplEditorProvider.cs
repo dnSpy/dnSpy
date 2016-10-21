@@ -21,6 +21,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.Operations;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
@@ -38,9 +39,10 @@ namespace dnSpy.Text.Editor {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly IPickSaveFilename pickSaveFilename;
+		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 
 		[ImportingConstructor]
-		ReplEditorProvider(IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename) {
+		ReplEditorProvider(IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
 			this.dsTextEditorFactoryService = dsTextEditorFactoryService;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textBufferFactoryService = textBufferFactoryService;
@@ -49,8 +51,9 @@ namespace dnSpy.Text.Editor {
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 			this.themeClassificationTypeService = themeClassificationTypeService;
 			this.pickSaveFilename = pickSaveFilename;
+			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypeService, pickSaveFilename);
+		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypeService, pickSaveFilename, textViewUndoManagerProvider);
 	}
 }

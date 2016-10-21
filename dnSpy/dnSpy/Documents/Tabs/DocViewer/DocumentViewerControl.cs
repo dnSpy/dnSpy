@@ -77,7 +77,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
 			var roles = dsTextEditorFactoryService.CreateTextViewRoleSet(defaultRoles);
-			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, (TextViewCreatorOptions)null);
+			var options = new TextViewCreatorOptions { EnableUndoHistory = false };
+			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, options);
 			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);

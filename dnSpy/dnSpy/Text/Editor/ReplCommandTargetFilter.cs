@@ -56,11 +56,6 @@ namespace dnSpy.Text.Editor {
 						return CommandTargetStatus.Handled;
 					return CommandTargetStatus.LetWpfHandleCommand;
 
-				case StandardIds.Redo:
-				case StandardIds.Undo:
-					Debug.Assert(nextCommandTarget != null);
-					return nextCommandTarget?.CanExecute(group, cmdId) ?? CommandTargetStatus.LetWpfHandleCommand;
-
 				default:
 					return CommandTargetStatus.NotHandled;
 				}
@@ -231,8 +226,7 @@ namespace dnSpy.Text.Editor {
 				case StandardIds.Redo:
 				case StandardIds.Undo:
 					replEditor.SearchText = null;
-					Debug.Assert(nextCommandTarget != null);
-					return nextCommandTarget?.Execute(group, cmdId, args, ref result) ?? CommandTargetStatus.LetWpfHandleCommand;
+					return CommandTargetStatus.NotHandled;
 
 				default:
 					return CommandTargetStatus.NotHandled;
@@ -696,9 +690,7 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public void SetNextCommandTarget(ICommandTarget commandTarget) => nextCommandTarget = commandTarget;
-		ICommandTarget nextCommandTarget;
-
+		public void SetNextCommandTarget(ICommandTarget commandTarget) { }
 		public void Dispose() { }
 	}
 }

@@ -169,7 +169,7 @@ namespace dnSpy.Text {
 				foreach (var change in changes)
 					Document.Replace(change.OldPosition, change.OldLength, change.NewText);
 				Document.EndUpdate();
-				CreateNewCurrentSnapshot(changes, afterTextSource: Document.CreateSnapshot());
+				CreateNewCurrentSnapshot(changes, reiteratedVersionNumber, Document.CreateSnapshot());
 				var afterSnapshot = CurrentSnapshot;
 
 				TextContentChangedEventArgs args = null;
@@ -179,7 +179,6 @@ namespace dnSpy.Text {
 				Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
 				ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
 			}
-			//TODO: Use reiteratedVersionNumber
 			PostChanged?.Invoke(this, EventArgs.Empty);
 		}
 

@@ -65,6 +65,11 @@ namespace dnSpy.Contracts.Command {
 		public const double CMDTARGETFILTER_ORDER_TEXT_EDITOR = 50000;
 
 		/// <summary>
+		/// Order of undo/redo <see cref="ICommandTargetFilter"/>
+		/// </summary>
+		public const double CMDTARGETFILTER_ORDER_UNDO = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1;
+
+		/// <summary>
 		/// Order of text editor search service's <see cref="ICommandTargetFilter"/> when search UI is visible
 		/// </summary>
 		public const double CMDTARGETFILTER_ORDER_SEARCH_FOCUS = CMDTARGETFILTER_ORDER_TEXT_EDITOR - 1000000;

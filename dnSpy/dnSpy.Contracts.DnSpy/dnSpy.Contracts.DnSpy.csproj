@@ -554,6 +554,8 @@
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
     <Compile Include="Text\Editor\MarginNameAttribute.cs" />
     <Compile Include="Text\Editor\Operations\IReplEditorOperations.cs" />
+    <Compile Include="Text\Editor\Operations\ITextViewUndoManager.cs" />
+    <Compile Include="Text\Editor\Operations\ITextViewUndoManagerProvider.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDsOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDsTextViewOptionsExtensions.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDsWpfViewOptionsExtensions.cs" />

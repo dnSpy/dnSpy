@@ -65,6 +65,7 @@ namespace dnSpy.Text.Editor {
 		readonly CachedColorsList cachedColorsList;
 		readonly IDsWpfTextViewHost wpfTextViewHost;
 		readonly IDsWpfTextView wpfTextView;
+		readonly ITextViewUndoManager textViewUndoManager;
 		readonly IPickSaveFilename pickSaveFilename;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
@@ -79,7 +80,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename) {
+		public ReplEditor(ReplEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.pickSaveFilename = pickSaveFilename;
 			options = options?.Clone() ?? new ReplEditorOptions();
@@ -100,6 +101,7 @@ namespace dnSpy.Text.Editor {
 			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.wpfTextView = wpfTextViewHost.TextView;
+			this.textViewUndoManager = textViewUndoManagerProvider.GetTextViewUndoManager(wpfTextView);
 			ReplEditorUtils.AddInstance(this, wpfTextView);
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.REPL);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
@@ -649,9 +651,7 @@ namespace dnSpy.Text.Editor {
 		}
 		IReplCommandHandler replCommandHandler;
 
-		void ClearUndoRedoHistory() {
-			//TODO:
-		}
+		void ClearUndoRedoHistory() => textViewUndoManager.ClearUndoHistory();
 
 		ITextSnapshotLine LastLine {
 			get {

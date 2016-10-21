@@ -25,6 +25,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Roslyn.Shared.Documentation;
 using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Editor;
@@ -37,17 +38,19 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		public double Order => 0;
 		public ImageReference? Icon => DsImages.CSFileNode;
 		public Guid Language => DecompilerConstants.LANGUAGE_CSHARP;
-		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider, docFactory, roslynDocumentChangedService);
+		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
 
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly IRoslynDocumentationProviderFactory docFactory;
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
+		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 
 		[ImportingConstructor]
-		CSharpLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService) {
+		CSharpLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
 			this.codeEditorProvider = codeEditorProvider;
 			this.docFactory = docFactory;
 			this.roslynDocumentChangedService = roslynDocumentChangedService;
+			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
 		}
 	}
 
@@ -61,8 +64,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override string AppearanceCategory => RoslynAppearanceCategoryConstants.CodeEditor_CSharp;
 		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
 
-		public CSharpLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService)
-			: base(codeEditorProvider, docFactory, roslynDocumentChangedService) {
+		public CSharpLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
+			: base(codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
 		}
 	}
 }

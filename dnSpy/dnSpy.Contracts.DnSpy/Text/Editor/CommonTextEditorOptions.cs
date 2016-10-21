@@ -35,6 +35,12 @@ namespace dnSpy.Contracts.Text.Editor {
 		public string ContentTypeString { get; set; }
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		public CommonTextEditorOptions() {
+		}
+
+		/// <summary>
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>

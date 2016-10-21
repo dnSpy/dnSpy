@@ -38,10 +38,22 @@ namespace dnSpy.Contracts.Text.Editor {
 		public Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; set; }
 
 		/// <summary>
+		/// true to enable undo/redo history. Default value is true
+		/// </summary>
+		public bool EnableUndoHistory { get; set; }
+
+		/// <summary>
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
 		public TextViewCreatorOptions Clone() => CopyTo(new TextViewCreatorOptions());
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public TextViewCreatorOptions() {
+			EnableUndoHistory = true;
+		}
 
 		/// <summary>
 		/// Copy this to <paramref name="other"/>
@@ -53,6 +65,7 @@ namespace dnSpy.Contracts.Text.Editor {
 				throw new ArgumentNullException(nameof(other));
 			other.MenuGuid = MenuGuid;
 			other.CreateGuidObjects = CreateGuidObjects;
+			other.EnableUndoHistory = EnableUndoHistory;
 			return other;
 		}
 	}

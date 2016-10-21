@@ -213,8 +213,6 @@ namespace dnSpy.Text.Editor {
 				case StandardIds.Copy:
 				case StandardIds.Cut:
 				case StandardIds.Paste:
-				case StandardIds.Redo:
-				case StandardIds.Undo:
 				case StandardIds.Replace:
 					return CommandTargetStatus.Handled;
 				default:
@@ -361,12 +359,6 @@ namespace dnSpy.Text.Editor {
 				case StandardIds.Paste:
 					EditorOperations.Paste();
 					return CommandTargetStatus.Handled;
-
-				case StandardIds.Redo:
-					return CommandTargetStatus.Handled;//TODO:
-
-				case StandardIds.Undo:
-					return CommandTargetStatus.Handled;//TODO:
 
 				default:
 					return CommandTargetStatus.NotHandled;

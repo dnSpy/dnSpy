@@ -630,6 +630,9 @@
     <Compile Include="Text\Editor\Operations\TextSearchService.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigator.cs" />
     <Compile Include="Text\Editor\Operations\TextStructureNavigatorSelectorService.cs" />
+    <Compile Include="Text\Editor\Operations\TextViewUndoManager.cs" />
+    <Compile Include="Text\Editor\Operations\TextViewUndoManagerProvider.cs" />
+    <Compile Include="Text\Editor\Operations\UndoRedoCommandTargetFilter.cs" />
     <Compile Include="Text\Editor\Operations\WordParser.cs" />
     <Compile Include="Text\Editor\OptionsHelpers.cs" />
     <Compile Include="Text\Editor\OutputTextPaneCommandInfoProvider.cs" />
@@ -742,6 +745,13 @@
     <Compile Include="Text\MEF\Metadata.cs" />
     <Compile Include="Text\NormalizedTextChangeCollection.cs" />
     <Compile Include="Text\OffsetAndCachedColors.cs" />
+    <Compile Include="Text\Operations\ChangeInfo.cs" />
+    <Compile Include="Text\Operations\TextBufferUndoManager.cs" />
+    <Compile Include="Text\Operations\TextBufferUndoManagerProvider.cs" />
+    <Compile Include="Text\Operations\TextUndoHistory.cs" />
+    <Compile Include="Text\Operations\TextUndoHistoryRegistry.cs" />
+    <Compile Include="Text\Operations\TextUndoPrimitive.cs" />
+    <Compile Include="Text\Operations\TextUndoTransaction.cs" />
     <Compile Include="Text\Projection\BufferGraph.cs" />
     <Compile Include="Text\Projection\BufferGraphFactoryService.cs" />
     <Compile Include="Text\ProviderSelector.cs" />
