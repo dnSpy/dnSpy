@@ -21,7 +21,8 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Settings.Dialog {
-	sealed class ContextVM {
+	sealed class PageContext {
+		public IPageUIObjectLoader PageUIObjectLoader { get; set; }
 		public ITreeView TreeView { get; set; }
 		public ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; set; }
 		public SearchMatcher SearchMatcher { get; set; }

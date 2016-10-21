@@ -465,8 +465,8 @@
     <Compile Include="Settings\Dialog\ContentConverterPresenter.cs" />
     <Compile Include="Settings\Dialog\ContentConverterProperties.cs" />
     <Compile Include="Settings\Dialog\ContentTypeDefinitions.cs" />
-    <Compile Include="Settings\Dialog\ContextVM.cs" />
     <Compile Include="Settings\Dialog\IContentConverter.cs" />
+    <Compile Include="Settings\Dialog\PageContext.cs" />
     <Compile Include="Settings\Dialog\SearchMatcher.cs" />
     <Compile Include="Settings\Dialog\SettingsAppCommandLineArgsHandler.cs" />
     <Compile Include="Settings\Dialog\ShowAppSettingsDialog.cs" />

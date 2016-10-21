@@ -56,9 +56,9 @@ namespace dnSpy.Settings.Dialog {
 			}
 		}
 
-		readonly ContextVM context;
+		readonly PageContext context;
 
-		public AppSettingsPageVM(AppSettingsPage page, ContextVM context) {
+		public AppSettingsPageVM(AppSettingsPage page, PageContext context) {
 			if (page == null)
 				throw new ArgumentNullException(nameof(page));
 			if (context == null)
@@ -69,7 +69,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		object GetOrCreateUIObject() {
-			var uiObj = Page.UIObject;
+			var uiObj = context.PageUIObjectLoader.GetUIObject(Page);
 			if (uiObj != null)
 				return createdUIObject ?? (createdUIObject = CreateUIObject(uiObj));
 

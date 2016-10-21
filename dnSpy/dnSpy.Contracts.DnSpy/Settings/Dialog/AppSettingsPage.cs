@@ -52,7 +52,8 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public virtual ImageReference Icon => ImageReference.None;
 
 		/// <summary>
-		/// Gets the UI object
+		/// Gets the UI object. This property is only loaded if the user clicks on the page
+		/// title in the dialog box.
 		/// </summary>
 		public abstract object UIObject { get; }
 
@@ -71,7 +72,8 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Returns the object (or the <see cref="Type"/> of the object) with a <see cref="DataTemplate"/>
 		/// that is shown in the UI. This <see cref="DataTemplate"/> is scanned for strings the
 		/// user can search for.
-		/// If this method doesn't return null, the value should equal <see cref="UIObject"/>.
+		/// If this method doesn't return null, the value should equal <see cref="UIObject"/> or
+		/// the <see cref="Type"/> of the <see cref="UIObject"/> instance.
 		/// See also <see cref="GetSearchableStrings"/>.
 		/// </summary>
 		/// <returns></returns>

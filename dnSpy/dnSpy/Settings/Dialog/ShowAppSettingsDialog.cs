@@ -38,7 +38,11 @@ using dnSpy.Images;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Settings.Dialog {
-	sealed class ShowAppSettingsDialog : ViewModelBase, IDisposable, IContentConverter {
+	interface IPageUIObjectLoader {
+		object GetUIObject(AppSettingsPage page);
+	}
+
+	sealed class ShowAppSettingsDialog : ViewModelBase, IDisposable, IContentConverter, IPageUIObjectLoader {
 		static readonly Guid rootGuid = Guid.Empty;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly ITextElementProvider textElementProvider;
@@ -46,13 +50,13 @@ namespace dnSpy.Settings.Dialog {
 		readonly Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>[] appSettingsPageContainers;
 		readonly Lazy<IAppSettingsPageProvider>[] appSettingsPageProviders;
 		readonly Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>[] appSettingsModifiedListeners;
-		readonly ContextVM currentContextVM;
+		readonly PageContext pageContext;
 		AppSettingsPageVM[] allPages;
 		AppSettingsPageVM rootVM;
 		AppSettingsDlg appSettingsDlg;
 		int converterVersion;
 
-		public object TreeViewUIObject => currentContextVM.TreeView.UIObject;
+		public object TreeViewUIObject => pageContext.TreeView.UIObject;
 		public Guid? LastSelectedGuid { get; private set; }
 
 		public string SearchText {
@@ -74,19 +78,31 @@ namespace dnSpy.Settings.Dialog {
 			this.appSettingsPageContainers = appSettingsPageContainers;
 			this.appSettingsPageProviders = appSettingsPageProviders;
 			this.appSettingsModifiedListeners = appSettingsModifiedListeners;
-			currentContextVM = new ContextVM {
+			pageContext = new PageContext {
+				PageUIObjectLoader = this,
 				TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider,
 				SearchMatcher = new SearchMatcher(),
 			};
-			currentContextVM.SearchMatcher.SetSearchText(SearchText);
+			pageContext.SearchMatcher.SetSearchText(SearchText);
 			converterVersion = ContentConverterProperties.DefaultContentConverterVersion + 1;
+		}
+
+		object IPageUIObjectLoader.GetUIObject(AppSettingsPage page) {
+			var oldCursor = appSettingsDlg.Cursor;
+			try {
+				appSettingsDlg.Cursor = Cursors.Wait;
+				return page.UIObject;
+			}
+			finally {
+				appSettingsDlg.Cursor = oldCursor;
+			}
 		}
 
 		public void Select(Guid value) {
 			var page = allPages.FirstOrDefault(a => a.Page.Guid == value);
 			if (page?.Parent == null)
 				return;
-			currentContextVM.TreeView.SelectItems(new[] { page });
+			pageContext.TreeView.SelectItems(new[] { page });
 		}
 
 		public void Show(Guid? guid, Window ownerWindow) {
@@ -100,11 +116,11 @@ namespace dnSpy.Settings.Dialog {
 			if (rootVM.Children.Count == 0)
 				return;
 
-			currentContextVM.TreeView = CreateTreeView(rootVM);
+			pageContext.TreeView = CreateTreeView(rootVM);
 
 			var selectedItem = (guid != null ? allPages.FirstOrDefault(a => a.Page.Guid == guid.Value) : null) ?? rootVM.Children.FirstOrDefault();
 			if (selectedItem != null)
-				currentContextVM.TreeView.SelectItems(new[] { selectedItem });
+				pageContext.TreeView.SelectItems(new[] { selectedItem });
 
 			appSettingsDlg = new AppSettingsDlg();
 			appSettingsDlg.DataContext = this;
@@ -114,7 +130,7 @@ namespace dnSpy.Settings.Dialog {
 			ContentConverterProperties.SetContentConverterVersion(appSettingsDlg, converterVersion);
 			appSettingsDlg.Owner = ownerWindow;
 			bool saveSettings = appSettingsDlg.ShowDialog() == true;
-			LastSelectedGuid = (currentContextVM.TreeView.SelectedItem as AppSettingsPageVM)?.Page.Guid;
+			LastSelectedGuid = (pageContext.TreeView.SelectedItem as AppSettingsPageVM)?.Page.Guid;
 
 			var appRefreshSettings = new AppRefreshSettings();
 			if (saveSettings) {
@@ -151,7 +167,7 @@ namespace dnSpy.Settings.Dialog {
 			if (searchText == string.Empty) {
 				if (!isFiltering)
 					return;
-				currentContextVM.SearchMatcher.SetSearchText(string.Empty);
+				pageContext.SearchMatcher.SetSearchText(string.Empty);
 				foreach (var page in allPages) {
 					page.TreeNode.IsHidden = false;
 					page.TreeNode.IsExpanded = page.SavedIsExpanded;
@@ -159,22 +175,22 @@ namespace dnSpy.Settings.Dialog {
 				isFiltering = false;
 			}
 			else {
-				currentContextVM.SearchMatcher.SetSearchText(searchText);
+				pageContext.SearchMatcher.SetSearchText(searchText);
 				if (!isFiltering) {
 					foreach (var page in allPages)
 						page.SavedIsExpanded = page.TreeNode.IsExpanded;
 				}
-				FilterChildren(rootVM, currentContextVM.SearchMatcher);
+				FilterChildren(rootVM, pageContext.SearchMatcher);
 				isFiltering = true;
 			}
 			RefreshAllNodes();
-			if (currentContextVM.TreeView.SelectedItem == null) {
+			if (pageContext.TreeView.SelectedItem == null) {
 				var first = rootVM.Children.FirstOrDefault(a => !a.TreeNode.IsHidden);
 				if (first != null) {
-					currentContextVM.TreeView.SelectItems(new[] { first });
+					pageContext.TreeView.SelectItems(new[] { first });
 					// The treeview steals the focus. It uses prio Loaded.
 					appSettingsDlg.searchTextBox.Focus();
-					currentContextVM.TreeView.UIObject.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => {
+					pageContext.TreeView.UIObject.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => {
 						appSettingsDlg.searchTextBox.Focus();
 					}));
 				}
@@ -248,11 +264,11 @@ namespace dnSpy.Settings.Dialog {
 			textContent = UIHelpers.RemoveAccessKeys(textContent);
 
 			// Quick check here because access keys aren't shown if we return a TextBlock
-			if (!currentContextVM.SearchMatcher.IsMatchAny(textContent))
+			if (!this.pageContext.SearchMatcher.IsMatchAny(textContent))
 				return null;
 
 			const bool colorize = true;
-			var context = new AppSettingsTextClassifierContext(currentContextVM.SearchMatcher, textContent, PredefinedTextClassifierTags.OptionsDialogText, colorize);
+			var context = new AppSettingsTextClassifierContext(this.pageContext.SearchMatcher, textContent, PredefinedTextClassifierTags.OptionsDialogText, colorize);
 			return textElementProvider.CreateTextElement(classificationFormatMap, context, ContentTypes.OptionsDialogText, GetTextFlags(ownerControl));
 		}
 
@@ -354,10 +370,10 @@ namespace dnSpy.Settings.Dialog {
 		AppSettingsPageVM[] CreateSettingsPages() {
 			var dict = new Dictionary<Guid, AppSettingsPageVM>();
 
-			dict.Add(rootGuid, new AppSettingsPageVM(new AppSettingsPageContainer(string.Empty, 0, rootGuid, rootGuid, ImageReference.None), currentContextVM));
+			dict.Add(rootGuid, new AppSettingsPageVM(new AppSettingsPageContainer(string.Empty, 0, rootGuid, rootGuid, ImageReference.None), pageContext));
 
 			foreach (var lz in appSettingsPageContainers) {
-				var page = TryCreate(lz.Value, lz.Metadata, currentContextVM);
+				var page = TryCreate(lz.Value, lz.Metadata, pageContext);
 				if (page == null)
 					continue;
 				Debug.Assert(!dict.ContainsKey(page.Page.Guid));
@@ -370,7 +386,7 @@ namespace dnSpy.Settings.Dialog {
 					Debug.Assert(page != null);
 					if (page == null)
 						continue;
-					var vm = new AppSettingsPageVM(page, currentContextVM);
+					var vm = new AppSettingsPageVM(page, pageContext);
 					Debug.Assert(!dict.ContainsKey(vm.Page.Guid));
 					if (!dict.ContainsKey(vm.Page.Guid))
 						dict.Add(vm.Page.Guid, vm);
@@ -404,7 +420,7 @@ namespace dnSpy.Settings.Dialog {
 			public override void OnApply() { }
 		}
 
-		static AppSettingsPageVM TryCreate(object obj, IAppSettingsPageContainerMetadata md, ContextVM context) {
+		static AppSettingsPageVM TryCreate(object obj, IAppSettingsPageContainerMetadata md, PageContext context) {
 			Guid? guid = md.Guid == null ? null : TryParseGuid(md.Guid);
 			Debug.Assert(guid != null, "Invalid GUID");
 			if (guid == null)
@@ -431,7 +447,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		public void Dispose() {
-			currentContextVM?.TreeView?.Dispose();
+			pageContext?.TreeView?.Dispose();
 		}
 	}
 }
