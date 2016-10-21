@@ -157,7 +157,6 @@ namespace dnSpy.Settings.Dialog {
 					page.TreeNode.IsExpanded = page.SavedIsExpanded;
 				}
 				isFiltering = false;
-				RefreshAllNodes();
 			}
 			else {
 				currentContextVM.SearchMatcher.SetSearchText(searchText);
@@ -167,17 +166,17 @@ namespace dnSpy.Settings.Dialog {
 				}
 				FilterChildren(rootVM, currentContextVM.SearchMatcher);
 				isFiltering = true;
-				RefreshAllNodes();
-				if (currentContextVM.TreeView.SelectedItem == null) {
-					var first = rootVM.Children.FirstOrDefault(a => !a.TreeNode.IsHidden);
-					if (first != null) {
-						currentContextVM.TreeView.SelectItems(new[] { first });
-						// The treeview steals the focus. It uses prio Loaded.
+			}
+			RefreshAllNodes();
+			if (currentContextVM.TreeView.SelectedItem == null) {
+				var first = rootVM.Children.FirstOrDefault(a => !a.TreeNode.IsHidden);
+				if (first != null) {
+					currentContextVM.TreeView.SelectItems(new[] { first });
+					// The treeview steals the focus. It uses prio Loaded.
+					appSettingsDlg.searchTextBox.Focus();
+					currentContextVM.TreeView.UIObject.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => {
 						appSettingsDlg.searchTextBox.Focus();
-						currentContextVM.TreeView.UIObject.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => {
-							appSettingsDlg.searchTextBox.Focus();
-						}));
-					}
+					}));
 				}
 			}
 		}
