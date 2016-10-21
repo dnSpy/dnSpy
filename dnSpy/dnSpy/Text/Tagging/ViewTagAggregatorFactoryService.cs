@@ -19,12 +19,14 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Tagging;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging {
+	[Export(typeof(ISynchronousViewTagAggregatorFactoryService))]
 	[Export(typeof(IViewTagAggregatorFactoryService))]
-	sealed class ViewTagAggregatorFactoryService : IViewTagAggregatorFactoryService {
+	sealed class ViewTagAggregatorFactoryService : ISynchronousViewTagAggregatorFactoryService {
 		readonly ITaggerFactory taggerFactory;
 
 		[ImportingConstructor]
@@ -34,6 +36,13 @@ namespace dnSpy.Text.Tagging {
 
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextView textView) where T : ITag => CreateTagAggregator<T>(textView, TagAggregatorOptions.None);
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextView textView, TagAggregatorOptions options) where T : ITag {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			return new TextViewTagAggregator<T>(taggerFactory, textView, options);
+		}
+
+		public ISynchronousTagAggregator<T> CreateSynchronousTagAggregator<T>(ITextView textView) where T : ITag => CreateSynchronousTagAggregator<T>(textView, TagAggregatorOptions.None);
+		public ISynchronousTagAggregator<T> CreateSynchronousTagAggregator<T>(ITextView textView, TagAggregatorOptions options) where T : ITag {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			return new TextViewTagAggregator<T>(taggerFactory, textView, options);

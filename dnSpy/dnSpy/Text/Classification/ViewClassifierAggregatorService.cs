@@ -19,26 +19,34 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Tagging;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
+	[Export(typeof(ISynchronousViewClassifierAggregatorService))]
 	[Export(typeof(IViewClassifierAggregatorService))]
-	sealed class ViewClassifierAggregatorService : IViewClassifierAggregatorService {
-		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
+	sealed class ViewClassifierAggregatorService : ISynchronousViewClassifierAggregatorService {
+		readonly ISynchronousViewTagAggregatorFactoryService synchronousViewTagAggregatorFactoryService;
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		ViewClassifierAggregatorService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
+		ViewClassifierAggregatorService(ISynchronousViewTagAggregatorFactoryService synchronousViewTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+			this.synchronousViewTagAggregatorFactoryService = synchronousViewTagAggregatorFactoryService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}
 
 		public IClassifier GetClassifier(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			return new ViewClassifierAggregator(viewTagAggregatorFactoryService, classificationTypeRegistryService, textView);
+			return new ViewClassifierAggregator(synchronousViewTagAggregatorFactoryService, classificationTypeRegistryService, textView);
+		}
+
+		public ISynchronousClassifier GetSynchronousClassifier(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			return new ViewClassifierAggregator(synchronousViewTagAggregatorFactoryService, classificationTypeRegistryService, textView);
 		}
 	}
 }

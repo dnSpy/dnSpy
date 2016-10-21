@@ -19,26 +19,34 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Tagging;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
+	[Export(typeof(ISynchronousClassifierAggregatorService))]
 	[Export(typeof(IClassifierAggregatorService))]
-	sealed class ClassifierAggregatorService : IClassifierAggregatorService {
-		readonly IBufferTagAggregatorFactoryService bufferTagAggregatorFactoryService;
+	sealed class ClassifierAggregatorService : ISynchronousClassifierAggregatorService {
+		readonly ISynchronousBufferTagAggregatorFactoryService synchronousBufferTagAggregatorFactoryService;
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		ClassifierAggregatorService(IBufferTagAggregatorFactoryService bufferTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
-			this.bufferTagAggregatorFactoryService = bufferTagAggregatorFactoryService;
+		ClassifierAggregatorService(ISynchronousBufferTagAggregatorFactoryService synchronousBufferTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+			this.synchronousBufferTagAggregatorFactoryService = synchronousBufferTagAggregatorFactoryService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}
 
 		public IClassifier GetClassifier(ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			return new ClassifierAggregator(bufferTagAggregatorFactoryService, classificationTypeRegistryService, textBuffer);
+			return new ClassifierAggregator(synchronousBufferTagAggregatorFactoryService, classificationTypeRegistryService, textBuffer);
+		}
+
+		public ISynchronousClassifier GetSynchronousClassifier(ITextBuffer textBuffer) {
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
+			return new ClassifierAggregator(synchronousBufferTagAggregatorFactoryService, classificationTypeRegistryService, textBuffer);
 		}
 	}
 }

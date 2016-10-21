@@ -17,14 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Text.Tagging;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
 	sealed class ViewClassifierAggregator : ClassifierAggregatorBase {
-		public ViewClassifierAggregator(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, ITextView textView)
-			: base(viewTagAggregatorFactoryService.CreateTagAggregator<IClassificationTag>(textView, TagAggregatorOptions.MapByContentType), classificationTypeRegistryService, textView.TextBuffer) {
+		public ViewClassifierAggregator(ISynchronousViewTagAggregatorFactoryService synchronousViewTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, ITextView textView)
+			: base(synchronousViewTagAggregatorFactoryService.CreateSynchronousTagAggregator<IClassificationTag>(textView, TagAggregatorOptions.MapByContentType), classificationTypeRegistryService, textView.TextBuffer) {
 		}
 	}
 }

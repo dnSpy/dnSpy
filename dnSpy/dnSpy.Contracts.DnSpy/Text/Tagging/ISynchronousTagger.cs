@@ -17,15 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text.Tagging;
+using System.Collections.Generic;
+using System.Threading;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace dnSpy.Text.Classification {
-	sealed class ClassifierAggregator : ClassifierAggregatorBase {
-		public ClassifierAggregator(ISynchronousBufferTagAggregatorFactoryService synchronousBufferTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, ITextBuffer textBuffer)
-			: base(synchronousBufferTagAggregatorFactoryService.CreateSynchronousTagAggregator<IClassificationTag>(textBuffer, TagAggregatorOptions.MapByContentType), classificationTypeRegistryService, textBuffer) {
-		}
+namespace dnSpy.Contracts.Text.Tagging {
+	/// <summary>
+	/// Synchronous <see cref="ITagger{T}"/>
+	/// </summary>
+	/// <typeparam name="T">Tag type</typeparam>
+	interface ISynchronousTagger<out T> : ITagger<T> where T : ITag {
+		/// <summary>
+		/// Gets the tags
+		/// </summary>
+		/// <param name="spans">Spans to tag</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		IEnumerable<ITagSpan<T>> GetTags(NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken);
 	}
 }

@@ -19,13 +19,15 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Tagging;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging {
+	[Export(typeof(ISynchronousBufferTagAggregatorFactoryService))]
 	[Export(typeof(IBufferTagAggregatorFactoryService))]
-	sealed class BufferTagAggregatorFactoryService : IBufferTagAggregatorFactoryService {
+	sealed class BufferTagAggregatorFactoryService : ISynchronousBufferTagAggregatorFactoryService {
 		readonly ITaggerFactory taggerFactory;
 		readonly IBufferGraphFactoryService bufferGraphFactoryService;
 
@@ -37,6 +39,13 @@ namespace dnSpy.Text.Tagging {
 
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextBuffer textBuffer) where T : ITag => CreateTagAggregator<T>(textBuffer, TagAggregatorOptions.None);
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextBuffer textBuffer, TagAggregatorOptions options) where T : ITag {
+			if (textBuffer == null)
+				throw new ArgumentNullException(nameof(textBuffer));
+			return new TextBufferTagAggregator<T>(taggerFactory, bufferGraphFactoryService.CreateBufferGraph(textBuffer), textBuffer, options);
+		}
+
+		public ISynchronousTagAggregator<T> CreateSynchronousTagAggregator<T>(ITextBuffer textBuffer) where T : ITag => CreateSynchronousTagAggregator<T>(textBuffer, TagAggregatorOptions.None);
+		public ISynchronousTagAggregator<T> CreateSynchronousTagAggregator<T>(ITextBuffer textBuffer, TagAggregatorOptions options) where T : ITag {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return new TextBufferTagAggregator<T>(taggerFactory, bufferGraphFactoryService.CreateBufferGraph(textBuffer), textBuffer, options);

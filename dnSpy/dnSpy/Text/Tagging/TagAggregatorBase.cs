@@ -20,13 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Threading;
+using dnSpy.Contracts.Text.Tagging;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging {
-	abstract class TagAggregatorBase<T> : ITagAggregator<T> where T : ITag {
+	abstract class TagAggregatorBase<T> : ISynchronousTagAggregator<T> where T : ITag {
 		readonly Dispatcher dispatcher;
 		readonly List<IMappingSpan> batchedTagsChangedList;
 		readonly object lockObj;
@@ -79,6 +81,36 @@ namespace dnSpy.Text.Tagging {
 			if (span.Snapshot == null)
 				throw new ArgumentException();
 			return GetTags(new NormalizedSnapshotSpanCollection(span));
+		}
+
+		public IEnumerable<IMappingTagSpan<T>> GetTags(NormalizedSnapshotSpanCollection snapshotSpans, CancellationToken cancellationToken) {
+			if (snapshotSpans == null)
+				throw new ArgumentNullException(nameof(snapshotSpans));
+			if (snapshotSpans.Count == 0)
+				yield break;
+			var snapshotSpansSnapshot = snapshotSpans[0].Snapshot;
+			foreach (var tagger in taggers) {
+				var syncTagger = tagger as ISynchronousTagger<T>;
+				var tags = syncTagger != null ? syncTagger.GetTags(snapshotSpans, cancellationToken) : tagger.GetTags(snapshotSpans);
+				cancellationToken.ThrowIfCancellationRequested();
+				foreach (var tagSpan in tags) {
+					var newSpan = tagSpan.Span.TranslateTo(snapshotSpansSnapshot, SpanTrackingMode.EdgeExclusive);
+					if (snapshotSpans.IntersectsWith(newSpan))
+						yield return new MappingTagSpan<T>(BufferGraph.CreateMappingSpan(tagSpan.Span, SpanTrackingMode.EdgeExclusive), tagSpan.Tag);
+				}
+			}
+		}
+
+		public IEnumerable<IMappingTagSpan<T>> GetTags(IMappingSpan span, CancellationToken cancellationToken) {
+			if (span == null)
+				throw new ArgumentNullException(nameof(span));
+			return GetTags(span.GetSpans(TextBuffer), cancellationToken);
+		}
+
+		public IEnumerable<IMappingTagSpan<T>> GetTags(SnapshotSpan span, CancellationToken cancellationToken) {
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			return GetTags(new NormalizedSnapshotSpanCollection(span), cancellationToken);
 		}
 
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {

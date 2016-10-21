@@ -488,6 +488,9 @@
     <Compile Include="Text\CachedTextColorsCollection.cs" />
     <Compile Include="Text\Classification\AppearanceCategoryConstants.cs" />
     <Compile Include="Text\Classification\EditorFormatMapConstants.cs" />
+    <Compile Include="Text\Classification\ISynchronousClassifier.cs" />
+    <Compile Include="Text\Classification\ISynchronousClassifierAggregatorService.cs" />
+    <Compile Include="Text\Classification\ISynchronousViewClassifierAggregatorService.cs" />
     <Compile Include="Text\Classification\ITextClassifier.cs" />
     <Compile Include="Text\Classification\ITextClassifierAggregator.cs" />
     <Compile Include="Text\Classification\ITextClassifierAggregatorService.cs" />
@@ -574,6 +577,10 @@
     <Compile Include="Text\LineConstants.cs" />
     <Compile Include="Text\SpanDataCollection.cs" />
     <Compile Include="Text\StringBuilderTextColorOutput.cs" />
+    <Compile Include="Text\Tagging\ISynchronousBufferTagAggregatorFactoryService.cs" />
+    <Compile Include="Text\Tagging\ISynchronousTagAggregator.cs" />
+    <Compile Include="Text\Tagging\ISynchronousTagger.cs" />
+    <Compile Include="Text\Tagging\ISynchronousViewTagAggregatorFactoryService.cs" />
     <Compile Include="Text\TextEditorPosition.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ExtensionMethods.cs" />

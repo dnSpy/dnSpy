@@ -20,19 +20,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
+using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Tagging;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Classification {
-	abstract class ClassifierAggregatorBase : IClassifier, IDisposable {
+	abstract class ClassifierAggregatorBase : ISynchronousClassifier, IDisposable {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
-		readonly ITagAggregator<IClassificationTag> tagAggregator;
+		readonly ISynchronousTagAggregator<IClassificationTag> tagAggregator;
 		readonly ITextBuffer textBuffer;
 
 		public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
 
-		protected ClassifierAggregatorBase(ITagAggregator<IClassificationTag> tagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService, ITextBuffer textBuffer) {
+		protected ClassifierAggregatorBase(ISynchronousTagAggregator<IClassificationTag> tagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService, ITextBuffer textBuffer) {
 			if (tagAggregator == null)
 				throw new ArgumentNullException(nameof(tagAggregator));
 			if (classificationTypeRegistryService == null)
@@ -57,7 +60,13 @@ namespace dnSpy.Text.Classification {
 			public int Compare(ClassificationSpan x, ClassificationSpan y) => x.Span.Start.Position - y.Span.Start.Position;
 		}
 
-		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span) {
+		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span) =>
+			GetClassificationSpansCore(span, null);
+
+		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span, CancellationToken cancellationToken) =>
+			GetClassificationSpansCore(span, cancellationToken);
+
+		IList<ClassificationSpan> GetClassificationSpansCore(SnapshotSpan span, CancellationToken? cancellationToken) {
 			if (span.Snapshot == null)
 				throw new ArgumentException();
 			if (span.Length == 0)
@@ -65,7 +74,8 @@ namespace dnSpy.Text.Classification {
 
 			var list = new List<ClassificationSpan>();
 			var targetSnapshot = span.Snapshot;
-			foreach (var mspan in tagAggregator.GetTags(span)) {
+			var tags = cancellationToken != null ? tagAggregator.GetTags(span, cancellationToken.Value) : tagAggregator.GetTags(span);
+			foreach (var mspan in tags) {
 				foreach (var s in mspan.Span.GetSpans(textBuffer)) {
 					var overlap = span.Overlap(s.TranslateTo(targetSnapshot, SpanTrackingMode.EdgeExclusive));
 					if (overlap != null)
