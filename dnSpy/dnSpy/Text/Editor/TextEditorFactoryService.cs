@@ -33,6 +33,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Text.Projection;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(ITextEditorFactoryService))]
@@ -57,6 +58,9 @@ namespace dnSpy.Text.Editor {
 		readonly ISpaceReservationStackProvider spaceReservationStackProvider;
 		readonly IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider;
 		readonly IBufferGraphFactoryService bufferGraphFactoryService;
+		readonly Lazy<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata>[] textViewModelProviders;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+		ProviderSelector<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata> providerSelector;
 
 		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
 		public ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
@@ -112,7 +116,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IMenuService menuService, IEditorOperationsFactoryService editorOperationsFactoryService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IMenuService menuService, IEditorOperationsFactoryService editorOperationsFactoryService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, [ImportMany] IEnumerable<Lazy<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata>> textViewModelProviders, IContentTypeRegistryService contentTypeRegistryService) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 			this.commandService = commandService;
@@ -131,6 +135,8 @@ namespace dnSpy.Text.Editor {
 			this.spaceReservationStackProvider = spaceReservationStackProvider;
 			this.wpfTextViewConnectionListenerServiceProvider = wpfTextViewConnectionListenerServiceProvider;
 			this.bufferGraphFactoryService = bufferGraphFactoryService;
+			this.textViewModelProviders = textViewModelProviders.ToArray();
+			this.contentTypeRegistryService = contentTypeRegistryService;
 		}
 
 		public IWpfTextView CreateTextView() => CreateTextView((TextViewCreatorOptions)null);
@@ -175,7 +181,19 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(roles));
 			if (parentOptions == null)
 				throw new ArgumentNullException(nameof(parentOptions));
-			return CreateTextView(new TextViewModel(dataModel), roles, parentOptions, options);
+			return CreateTextView(CreateTextViewModel(dataModel, roles), roles, parentOptions, options);
+		}
+
+		ITextViewModel CreateTextViewModel(ITextDataModel dataModel, ITextViewRoleSet roles) {
+			if (providerSelector == null)
+				providerSelector = new ProviderSelector<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata>(contentTypeRegistryService, textViewModelProviders);
+			var contentType = dataModel.ContentType;
+			foreach (var p in providerSelector.GetProviders(contentType)) {
+				var model = p.Value.CreateTextViewModel(dataModel, roles);
+				if (model != null)
+					return model;
+			}
+			return new TextViewModel(dataModel);
 		}
 
 		public IWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions) =>
