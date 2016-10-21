@@ -93,9 +93,12 @@ namespace dnSpy.Settings.Dialog {
 			};
 		}
 
-		public void RefreshUI() {
+		public void ClearUICache() {
 			// Make sure we don't show hidden pages
 			uiObject = null;
+		}
+
+		public void RefreshUI() {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UIObject)));
 			TreeNode.RefreshUI();
 		}

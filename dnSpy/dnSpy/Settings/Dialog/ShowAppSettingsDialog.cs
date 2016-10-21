@@ -184,6 +184,8 @@ namespace dnSpy.Settings.Dialog {
 
 		void RefreshAllNodes() {
 			foreach (var page in allPages)
+				page.ClearUICache();
+			foreach (var page in allPages)
 				page.RefreshUI();
 			ContentConverterProperties.SetContentConverterVersion(appSettingsDlg, ++converterVersion);
 		}
