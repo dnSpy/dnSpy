@@ -22,6 +22,18 @@ using System.Windows.Controls;
 
 namespace dnSpy.Settings.Dialog {
 	sealed class ContentConverterPresenter : ContentPresenter {
+		public static readonly DependencyProperty OwnerControlProperty =
+			DependencyProperty.Register(nameof(OwnerControl), typeof(object), typeof(ContentConverterPresenter),
+			new UIPropertyMetadata(null, OwnerControlPropertyChangedCallback));
+
+		public object OwnerControl {
+			get { return (object)GetValue(OwnerControlProperty); }
+			set { SetValue(OwnerControlProperty, value); }
+		}
+
+		static void OwnerControlPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+			((ContentConverterPresenter)d).UpdateContent();
+
 		public static readonly DependencyProperty ContentConverterProperty =
 			DependencyProperty.Register(nameof(ContentConverter), typeof(IContentConverter), typeof(ContentConverterPresenter),
 			new UIPropertyMetadata(null, ContentConverterPropertyChangedCallback));
@@ -63,10 +75,13 @@ namespace dnSpy.Settings.Dialog {
 			Content = CreateContent(value);
 
 		object CreateContent(object value) {
+			var ownerControl = OwnerControl;
+			if (ownerControl == null)
+				return value;
 			var converter = ContentConverter;
 			if (converter == null)
 				return value;
-			return converter.Convert(value);
+			return converter.Convert(value, ownerControl);
 		}
 	}
 }

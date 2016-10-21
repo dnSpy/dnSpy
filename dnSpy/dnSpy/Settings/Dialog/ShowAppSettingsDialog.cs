@@ -25,6 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Resources;
@@ -218,22 +219,65 @@ namespace dnSpy.Settings.Dialog {
 		}
 		readonly List<string> matchList = new List<string>();
 
-		object IContentConverter.Convert(object content) {
+		object IContentConverter.Convert(object content, object ownerControl) {
+			var result = TryConvert(content, ownerControl);
+			if (result != null)
+				return result;
+
+			var textControl = ownerControl as TextControl;
+			if (textControl != null) {
+				return new TextBlock {
+					Text = textControl.Content as string,
+					TextTrimming = textControl.TextTrimming,
+					TextWrapping = textControl.TextWrapping,
+				};
+			}
+
+			return content;
+		}
+
+		object TryConvert(object content, object ownerControl) {
 			if (!isFiltering)
-				return content;
+				return null;
 			var textContent = content as string;
 			if (textContent == null)
-				return content;
+				return null;
 
 			textContent = UIHelpers.RemoveAccessKeys(textContent);
 
 			// Quick check here because access keys aren't shown if we return a TextBlock
 			if (!currentContextVM.SearchMatcher.IsMatchAny(textContent))
-				return content;
+				return null;
 
 			const bool colorize = true;
 			var context = new AppSettingsTextClassifierContext(currentContextVM.SearchMatcher, textContent, PredefinedTextClassifierTags.OptionsDialogText, colorize);
-			return textElementProvider.CreateTextElement(classificationFormatMap, context, ContentTypes.OptionsDialogText, TextElementFlags.Wrap);
+			return textElementProvider.CreateTextElement(classificationFormatMap, context, ContentTypes.OptionsDialogText, GetTextFlags(ownerControl));
+		}
+
+		static TextElementFlags GetTextFlags(object ownerControl) {
+			TextTrimming textTrimming = TextTrimming.None;
+			TextWrapping textWrapping = TextWrapping.NoWrap;
+
+			var textControl = ownerControl as TextControl;
+			if (textControl != null) {
+				textTrimming = textControl.TextTrimming;
+				textWrapping = textControl.TextWrapping;
+			}
+
+			TextElementFlags flags = 0;
+			switch (textTrimming) {
+			case TextTrimming.None: flags |= TextElementFlags.NoTrimming; break;
+			case TextTrimming.CharacterEllipsis: flags |= TextElementFlags.CharacterEllipsis; break;
+			case TextTrimming.WordEllipsis: flags |= TextElementFlags.WordEllipsis; break;
+			default: Debug.Fail($"Unknown trimming: {textTrimming}"); break;
+			}
+			switch (textWrapping) {
+			case TextWrapping.WrapWithOverflow: flags |= TextElementFlags.WrapWithOverflow; break;
+			case TextWrapping.NoWrap: flags |= TextElementFlags.NoWrap; break;
+			case TextWrapping.Wrap: flags |= TextElementFlags.Wrap; break;
+			default: Debug.Fail($"Unknown wrapping: {textWrapping}"); break;
+			}
+			return flags;
 		}
 
 		ITreeView CreateTreeView(AppSettingsPageVM rootVM) {

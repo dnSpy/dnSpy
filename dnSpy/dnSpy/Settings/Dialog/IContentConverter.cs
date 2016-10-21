@@ -27,7 +27,8 @@ namespace dnSpy.Settings.Dialog {
 		/// Converts <paramref name="content"/> to a new object or returns the input
 		/// </summary>
 		/// <param name="content">Current content, usually a string</param>
+		/// <param name="ownerControl">Owner control</param>
 		/// <returns></returns>
-		object Convert(object content);
+		object Convert(object content, object ownerControl);
 	}
 }

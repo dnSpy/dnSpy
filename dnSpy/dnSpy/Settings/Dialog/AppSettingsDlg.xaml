@@ -79,6 +79,7 @@
                                 RecognizesAccessKey="True"
                                 Grid.Column="2"
                                 Text="{TemplateBinding Content}"
+                                OwnerControl="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneTime}"
                                 ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
                                 ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
                                 Margin="{TemplateBinding Padding}"
@@ -150,6 +151,7 @@
                             <local:ContentConverterPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               Text="{TemplateBinding Content}"
+                                              OwnerControl="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneTime}"
                                               ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
                                               ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
                                               RecognizesAccessKey="True"
@@ -232,6 +234,7 @@
                                 <local:ContentConverterPresenter ContentSource="Header" 
                                                   RecognizesAccessKey="True" 
                                                   Text="{TemplateBinding Header}"
+                                                  OwnerControl="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneTime}"
                                                   ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
                                                   ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
                                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -267,14 +270,14 @@
                             <local:ContentConverterPresenter
                                 RecognizesAccessKey="True"
                                 Text="{TemplateBinding Content}"
+                                OwnerControl="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneTime}"
                                 ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
                                 ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
                                 Margin="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Focusable="False">
-                            </local:ContentConverterPresenter>
+                                Focusable="False" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -332,13 +335,13 @@
                             RecognizesAccessKey="True"
                             Margin="{TemplateBinding Padding}"
                             Text="{TemplateBinding Content}"
+                            OwnerControl="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneTime}"
                             ContentConverter="{Binding Path=(local:ContentConverterProperties.ContentConverter), RelativeSource={RelativeSource Self}}"
                             ContentConverterVersion="{Binding Path=(local:ContentConverterProperties.ContentConverterVersion), RelativeSource={RelativeSource Self}}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Focusable="False">
-                        </local:ContentConverterPresenter>
+                            Focusable="False" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
