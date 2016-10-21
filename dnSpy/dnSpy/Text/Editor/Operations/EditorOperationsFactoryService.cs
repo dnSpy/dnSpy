@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Text.Formatting;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 
@@ -27,18 +28,20 @@ namespace dnSpy.Text.Editor.Operations {
 	sealed class EditorOperationsFactoryService : IEditorOperationsFactoryService {
 		readonly ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService;
 		readonly ISmartIndentationService smartIndentationService;
+		readonly IHtmlBuilderService htmlBuilderService;
 
 		[ImportingConstructor]
-		EditorOperationsFactoryService(ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISmartIndentationService smartIndentationService) {
+		EditorOperationsFactoryService(ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISmartIndentationService smartIndentationService, IHtmlBuilderService htmlBuilderService) {
 			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
 			this.smartIndentationService = smartIndentationService;
+			this.htmlBuilderService = htmlBuilderService;
 		}
 
 		public IEditorOperations GetEditorOperations(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(IEditorOperations),
-				() => new EditorOperations(textView, textStructureNavigatorSelectorService, smartIndentationService));
+				() => new EditorOperations(textView, textStructureNavigatorSelectorService, smartIndentationService, htmlBuilderService));
 		}
 
 		public static void RemoveFromProperties(EditorOperations editorOperations) =>

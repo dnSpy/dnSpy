@@ -21,44 +21,48 @@ using System;
 using System.Net;
 using System.Text;
 
-namespace dnSpy.Contracts.HexEditor {
+namespace dnSpy.Contracts.Text.Formatting {
 	sealed class HtmlClipboardFormatWriter {
-		const int TAB_SIZE = 4;
-
 		readonly StringBuilder sb;
+
+		public int TabSize { get; set; }
 
 		public HtmlClipboardFormatWriter() {
 			this.sb = new StringBuilder();
+			TabSize = 4;
 		}
 
-		public void WriteBr() => sb.Append("<br />");
+		public void WriteRaw(string s) => sb.Append(s);
+		public void WriteBr() => sb.Append("<br/>");
 
-		public void WriteSpan(string cssText, string spanText) {
+		public void WriteSpan(string cssText, string spanText) =>
+			WriteSpan(cssText, spanText, 0, spanText.Length);
+		public void WriteSpan(string cssText, string spanText, int index, int length) {
 			sb.Append("<span");
 			if (cssText.Length > 0)
 				sb.Append($" style=\"{WebUtility.HtmlEncode(cssText)}\"");
 			sb.Append('>');
-			WriteString(spanText);
+			WriteString(spanText, index, length);
 			sb.Append("</span>");
 		}
 
 		static readonly char[] whitespace = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029', '\t', ' ' };
-		void WriteString(string s) {
-			for (int i = 0; i < s.Length;) {
-				int wsi = s.IndexOfAny(whitespace, i);
+		void WriteString(string text, int index, int length) {
+			for (int i = 0; i < length;) {
+				int wsi = text.IndexOfAny(whitespace, index + i, length - i);
 				if (wsi < 0) {
-					sb.Append(WebUtility.HtmlEncode(s.Substring(i)));
+					sb.Append(WebUtility.HtmlEncode(text.Substring(index + i, length - i)));
 					break;
 				}
-				if (wsi != i)
-					sb.Append(WebUtility.HtmlEncode(s.Substring(i, wsi - i)));
+				if (wsi != index + i)
+					sb.Append(WebUtility.HtmlEncode(text.Substring(index + i, wsi - (index + i))));
 
-				switch (s[wsi]) {
+				switch (text[wsi]) {
 				case ' ':
 					sb.Append("&nbsp;");
 					break;
 				case '\t':
-					for (int j = 0; j < TAB_SIZE; j++)
+					for (int j = 0; j < TabSize; j++)
 						sb.Append("&nbsp;");
 					break;
 				case '\r':
@@ -72,7 +76,7 @@ namespace dnSpy.Contracts.HexEditor {
 				default:
 					throw new InvalidOperationException();
 				}
-				i = wsi + 1;
+				i = wsi + 1 - index;
 			}
 		}
 

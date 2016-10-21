@@ -24,7 +24,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
+using dnSpy.Contracts.Text.Formatting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
@@ -71,6 +73,7 @@ namespace dnSpy.Text.Editor.Operations {
 		static CultureInfo Culture => CultureInfo.CurrentCulture;
 		readonly ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService;
 		readonly ISmartIndentationService smartIndentationService;
+		readonly IHtmlBuilderService htmlBuilderService;
 
 		ITextStructureNavigator TextStructureNavigator {
 			get {
@@ -90,16 +93,19 @@ namespace dnSpy.Text.Editor.Operations {
 			textStructureNavigator = null;
 		}
 
-		public EditorOperations(ITextView textView, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISmartIndentationService smartIndentationService) {
+		public EditorOperations(ITextView textView, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISmartIndentationService smartIndentationService, IHtmlBuilderService htmlBuilderService) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (textStructureNavigatorSelectorService == null)
 				throw new ArgumentNullException(nameof(textStructureNavigatorSelectorService));
+			if (htmlBuilderService == null)
+				throw new ArgumentNullException(nameof(htmlBuilderService));
 			TextView = textView;
 			TextView.Closed += TextView_Closed;
 			TextView.TextViewModel.DataModel.ContentTypeChanged += OnContentTypeChanged;
 			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
 			this.smartIndentationService = smartIndentationService;
+			this.htmlBuilderService = htmlBuilderService;
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {
@@ -266,7 +272,7 @@ namespace dnSpy.Text.Editor.Operations {
 
 		const string VS_COPY_FULL_LINE_DATA_FORMAT = "VisualStudioEditorOperationsLineCutCopyClipboardTag";
 		const string VS_COPY_BOX_DATA_FORMAT = "MSDEVColumnSelect";
-		bool CopyToClipboard(string text, bool isFullLineData, bool isBoxData) {
+		bool CopyToClipboard(string text, string htmlText, bool isFullLineData, bool isBoxData) {
 			try {
 				var dataObj = new DataObject();
 				dataObj.SetText(text);
@@ -274,6 +280,8 @@ namespace dnSpy.Text.Editor.Operations {
 					dataObj.SetData(VS_COPY_FULL_LINE_DATA_FORMAT, true);
 				if (isBoxData)
 					dataObj.SetData(VS_COPY_BOX_DATA_FORMAT, true);
+				if (htmlText != null)
+					dataObj.SetData(DataFormats.Html, htmlText);
 				Clipboard.SetDataObject(dataObj);
 				return true;
 			}
@@ -282,23 +290,42 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 		}
 
+		string TryCreateHtmlText(SnapshotSpan span) => TryCreateHtmlText(new NormalizedSnapshotSpanCollection(span));
+		string TryCreateHtmlText(NormalizedSnapshotSpanCollection spans) {
+			if (spans.Count == 0)
+				return null;
+
+			// There's no way for us to cancel it so don't classify too much text
+			int totalChars = spans.Sum(a => a.Length);
+			const int maxTotalCharsToCopy = 1 * 1024 * 1024;
+			if (totalChars > maxTotalCharsToCopy)
+				return null;
+			var cancellationToken = CancellationToken.None;
+
+			return htmlBuilderService.GenerateHtmlFragment(spans, TextView, cancellationToken);
+		}
+
 		public bool CopySelection() => CutOrCopySelection(false);
 		public bool CutSelection() => CutOrCopySelection(true);
 		bool CutOrCopySelection(bool cut) {
+			string htmlText;
 			if (Selection.IsEmpty) {
 				var line = Caret.ContainingTextViewLine;
 				bool cutEmptyLines = Options.GetOptionValue(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId);
-				string lineText = line.ExtentIncludingLineBreak.GetText();
+				var lineExtentSpan = line.ExtentIncludingLineBreak;
+				string lineText = lineExtentSpan.GetText();
 				if (!cutEmptyLines && string.IsNullOrWhiteSpace(lineText))
 					return true;
+				htmlText = TryCreateHtmlText(lineExtentSpan);
 				if (cut)
-					TextBuffer.Delete(line.ExtentIncludingLineBreak);
-				return CopyToClipboard(lineText, true, false);
+					TextBuffer.Delete(lineExtentSpan);
+				return CopyToClipboard(lineText, htmlText, isFullLineData: true, isBoxData: false);
 			}
 			var text = Selection.GetText();
 			bool isBox = Selection.Mode == TextSelectionMode.Box;
+			var spans = Selection.SelectedSpans;
+			htmlText = TryCreateHtmlText(spans);
 			if (cut) {
-				var spans = Selection.SelectedSpans;
 				Selection.Clear();
 				using (var ed = TextBuffer.CreateEdit()) {
 					foreach (var span in spans)
@@ -306,7 +333,7 @@ namespace dnSpy.Text.Editor.Operations {
 					ed.Apply();
 				}
 			}
-			return CopyToClipboard(text, false, isBox);
+			return CopyToClipboard(text, htmlText, isFullLineData: false, isBoxData: isBox);
 		}
 
 		VirtualSnapshotPoint GetAnchorPositionOrCaretIfNoSelection() {
@@ -341,13 +368,14 @@ namespace dnSpy.Text.Editor.Operations {
 			var endLine = span.End.Position.GetContainingLine();
 			var cutSpan = new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak);
 			var text = Snapshot.GetText(cutSpan);
+			string htmlText = cut ? TryCreateHtmlText(cutSpan) : null;
 			Selection.Clear();
 			TextBuffer.Delete(cutSpan);
 			var newPos = caretPos.BufferPosition.TranslateTo(Snapshot, PointTrackingMode.Negative);
 			Caret.MoveTo(newPos);
 			Caret.EnsureVisible();
 			if (cut)
-				return CopyToClipboard(text, true, false);
+				return CopyToClipboard(text, htmlText, isFullLineData: true, isBoxData: false);
 			return true;
 		}
 

@@ -269,7 +269,6 @@
     <Compile Include="HexEditor\HexTextParagraphProperties.cs" />
     <Compile Include="HexEditor\HexTextRunProperties.cs" />
     <Compile Include="HexEditor\HexWriteType.cs" />
-    <Compile Include="HexEditor\HtmlClipboardFormatWriter.cs" />
     <Compile Include="HexEditor\IHexLayer.cs" />
     <Compile Include="HexEditor\IHexStream.cs" />
     <Compile Include="HexEditor\ISimpleHexStream.cs" />
@@ -574,6 +573,8 @@
     <Compile Include="Text\Editor\TextMarkerServiceZIndexes.cs" />
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
     <Compile Include="Text\Editor\WordWrapStylesConstants.cs" />
+    <Compile Include="Text\Formatting\HtmlClipboardFormatWriter.cs" />
+    <Compile Include="Text\Formatting\IHtmlBuilderService.cs" />
     <Compile Include="Text\LineConstants.cs" />
     <Compile Include="Text\SpanDataCollection.cs" />
     <Compile Include="Text\StringBuilderTextColorOutput.cs" />

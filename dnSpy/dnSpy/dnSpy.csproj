@@ -713,6 +713,8 @@
     <Compile Include="Text\Formatting\FormattedLineSource.cs" />
     <Compile Include="Text\Formatting\FormattedTextCache.cs" />
     <Compile Include="Text\Formatting\FormattedTextSourceFactoryService.cs" />
+    <Compile Include="Text\Formatting\HtmlBuilder.cs" />
+    <Compile Include="Text\Formatting\HtmlBuilderService.cs" />
     <Compile Include="Text\Formatting\ITextFormatterProvider.cs" />
     <Compile Include="Text\Formatting\ITextParagraphPropertiesFactoryServiceSelector.cs" />
     <Compile Include="Text\Formatting\LinePart.cs" />
