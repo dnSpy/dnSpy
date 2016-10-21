@@ -86,7 +86,10 @@ namespace dnSpy.Text.Editor {
 		public override void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
-			switch (e.ClickCount) {
+			int clickCount = e.ClickCount;
+			if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == ModifierKeys.Control)
+				clickCount = 2;
+			switch (clickCount) {
 			default:
 			case 1:
 				bool isShift = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
@@ -97,6 +100,7 @@ namespace dnSpy.Text.Editor {
 				break;
 
 			case 2:
+				editorOperations.MoveCaret(mouseLoc.TextViewLine, mouseLoc.Point.X, false);
 				editorOperations.SelectCurrentWord();
 				break;
 
@@ -111,7 +115,7 @@ namespace dnSpy.Text.Editor {
 				break;
 			}
 			wpfTextView.Caret.EnsureVisible();
-			mouseLeftDownInfo = new MouseLeftDownInfo(GetSelectionOrCaretIfNoSelection(), mouseLoc.Point, e.ClickCount, wpfTextView.TextSnapshot.Version);
+			mouseLeftDownInfo = new MouseLeftDownInfo(GetSelectionOrCaretIfNoSelection(), mouseLoc.Point, clickCount, wpfTextView.TextSnapshot.Version);
 		}
 		MouseLeftDownInfo? mouseLeftDownInfo;
 
