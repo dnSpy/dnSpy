@@ -24,9 +24,9 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	public enum DocumentFilterType {
 		/// <summary>All</summary>
 		All,
-		/// <summary>.net and PE files</summary>
-		DotNetAndPE,
-		/// <summary>.net only files</summary>
+		/// <summary>Imports only supported files</summary>
+		AllSupported,
+		/// <summary>.NET only files</summary>
 		DotNetOnly
 	}
 }

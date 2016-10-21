@@ -1235,10 +1235,10 @@
   <data name="DocumentFilterType_All" xml:space="preserve">
     <value>All</value>
   </data>
-  <data name="DocumentFilterType_DotNetAndPE" xml:space="preserve">
-    <value>.Net and PE</value>
+  <data name="DocumentFilterType_AllSupported" xml:space="preserve">
+    <value>All Supported</value>
   </data>
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
-    <value>.Net only</value>
+    <value>.NET only</value>
   </data>
 </root>

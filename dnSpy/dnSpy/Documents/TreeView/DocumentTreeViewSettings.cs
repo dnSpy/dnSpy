@@ -110,7 +110,7 @@ namespace dnSpy.Documents.TreeView {
 				}
 			}
 		}
-		DocumentFilterType filterDraggedItems = DocumentFilterType.DotNetAndPE;
+		DocumentFilterType filterDraggedItems = DocumentFilterType.AllSupported;
 
 		MemberKind[] memberKinds = new MemberKind[5] {
 			MemberKind.Methods,

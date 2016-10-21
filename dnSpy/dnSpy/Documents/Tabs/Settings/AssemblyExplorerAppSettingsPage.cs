@@ -190,7 +190,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 				this.DocumentFilterTypes[i] = new DocumentFilterTypeVM(filterObjs[i], ToString(filterObjs[i]));
 
 			this.FilterDraggedItems =
-				this.DocumentFilterTypes.First(a => a.Object == documentTreeViewSettings.FilterDraggedItems);
+				this.DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
 
 			var defObjs = typeof(MemberKind).GetEnumValues().Cast<MemberKind>().ToArray();
 			this.memberKindVMs = new MemberKindVM[defObjs.Length];
@@ -221,8 +221,8 @@ namespace dnSpy.Documents.Tabs.Settings {
 		static string ToString(DocumentFilterType o) {
 			switch (o) {
 			case DocumentFilterType.All:			return dnSpy_Resources.DocumentFilterType_All;
-			case DocumentFilterType.DotNetAndPE:	return dnSpy_Resources.DocumentFilterType_DotNetAndPE;
-			case DocumentFilterType.DotNetOnly:     return dnSpy_Resources.DocumentFilterType_DotNetOnly;
+			case DocumentFilterType.AllSupported:	return dnSpy_Resources.DocumentFilterType_AllSupported;
+			case DocumentFilterType.DotNetOnly:		return dnSpy_Resources.DocumentFilterType_DotNetOnly;
 			default:
 				Debug.Fail("Shouldn't be here");
 				return "???";
@@ -237,7 +237,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 			documentTreeViewSettings.ShowAssemblyPublicKeyToken = ShowAssemblyPublicKeyToken;
 			documentTreeViewSettings.SingleClickExpandsTreeViewChildren = SingleClickExpandsTreeViewChildren;
 			documentTreeViewSettings.SyntaxHighlight = SyntaxHighlight;
-			documentTreeViewSettings.FilterDraggedItems = FilterDraggedItems.Object;
+			documentTreeViewSettings.FilterDraggedItems = FilterDraggedItems.FilterType;
 
 			bool update =
 				documentTreeViewSettings.MemberKind0 != MemberKind0.Object ||
@@ -268,12 +268,12 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 	}
 
-	sealed class DocumentFilterTypeVM : ViewModelBase {
-		public DocumentFilterType Object { get; }
+	sealed class DocumentFilterTypeVM {
+		public DocumentFilterType FilterType { get; }
 		public string Text { get; }
 
 		public DocumentFilterTypeVM(DocumentFilterType documentFilterType, string text) {
-			this.Object = documentFilterType;
+			this.FilterType = documentFilterType;
 			this.Text = text;
 		}
 	}

@@ -781,16 +781,16 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .Net and PE.
+        ///   Looks up a localized string similar to All Supported.
         /// </summary>
-        public static string DocumentFilterType_DotNetAndPE {
+        public static string DocumentFilterType_AllSupported {
             get {
-                return ResourceManager.GetString("DocumentFilterType_DotNetAndPE", resourceCulture);
+                return ResourceManager.GetString("DocumentFilterType_AllSupported", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .Net only.
+        ///   Looks up a localized string similar to .NET only.
         /// </summary>
         public static string DocumentFilterType_DotNetOnly {
             get {

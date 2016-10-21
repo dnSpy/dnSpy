@@ -767,10 +767,10 @@ namespace dnSpy.Documents.TreeView {
 					switch (documentTreeViewSettings.FilterDraggedItems) {
 					case DocumentFilterType.All: break;
 					case DocumentFilterType.DotNetOnly:
-						if(!(document is DsDotNetDocumentBase)) continue;
+						if (!(document is IDsDotNetDocument)) continue;
 						break;
-					case DocumentFilterType.DotNetAndPE:
-						if (!(document is DsDotNetDocumentBase || document is DsPEDocument)) continue;
+					case DocumentFilterType.AllSupported:
+						if (document is DsUnknownDocument) continue;
 						break;
 					default:
 						Debug.Fail("Shouldn't be here");
