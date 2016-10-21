@@ -204,20 +204,23 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		bool IsVisible(AppSettingsPageVM page, SearchMatcher matcher) {
-			matchList.Clear();
+			pageStringsList.Clear();
+			pageTitlesList.Clear();
 			var p = page;
 			// Don't include the root
 			while (p.Parent != null) {
-				matchList.Add(p.Page.Title);
+				pageTitlesList.Add(p.Page.Title);
 				p = p.Parent;
 			}
 			foreach (var s in page.GetSearchableStrings(appSettingsDlg))
-				matchList.Add(s);
-			bool res = matcher.IsMatchAll(matchList);
-			matchList.Clear();
+				pageStringsList.Add(s);
+			bool res = matcher.IsMatchAll(pageTitlesList, pageStringsList);
+			pageStringsList.Clear();
+			pageTitlesList.Clear();
 			return res;
 		}
-		readonly List<string> matchList = new List<string>();
+		readonly List<string> pageTitlesList = new List<string>();
+		readonly List<string> pageStringsList = new List<string>();
 
 		object IContentConverter.Convert(object content, object ownerControl) {
 			var result = TryConvert(content, ownerControl);

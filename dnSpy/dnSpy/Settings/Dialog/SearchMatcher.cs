@@ -25,10 +25,12 @@ namespace dnSpy.Settings.Dialog {
 	sealed class SearchMatcher {
 		string[] searchParts;
 		readonly List<Span> spans;
+		readonly List<string> remaining;
 
 		public SearchMatcher() {
 			this.searchParts = Array.Empty<string>();
 			this.spans = new List<Span>();
+			this.remaining = new List<string>();
 		}
 		static readonly char[] searchSeparators = new char[] { ' ', '\t', '\r', '\n' };
 
@@ -36,21 +38,41 @@ namespace dnSpy.Settings.Dialog {
 			searchParts = (searchText ?? string.Empty).Split(searchSeparators, StringSplitOptions.RemoveEmptyEntries);
 		}
 
-		public bool IsMatchAll(List<string> list) {
+		public bool IsMatchAll(List<string> pageTitles, List<string> pageStrings) {
 			if (searchParts.Length == 0)
 				return false;
-			foreach (var part in searchParts) {
-				bool match = false;
-				foreach (var listString in list) {
-					if (listString.IndexOf(part, StringComparison.CurrentCultureIgnoreCase) >= 0) {
-						match = true;
+
+			// For each page title that matches a searched string, remove it from the
+			// list we should check. Whatever is remaining must all be present in at
+			// least one string for this method to return true.
+
+			remaining.Clear();
+			remaining.AddRange(searchParts);
+			for (int i = remaining.Count - 1; i >= 0; i--) {
+				var part = remaining[i];
+				foreach (var title in pageTitles) {
+					if (title.IndexOf(part, StringComparison.CurrentCultureIgnoreCase) >= 0) {
+						remaining.RemoveAt(i);
 						break;
 					}
 				}
-				if (!match)
-					return false;
 			}
-			return true;
+			if (remaining.Count == 0)
+				return true;
+
+			foreach (var s in pageStrings) {
+				bool match = true;
+				foreach (var part in remaining) {
+					if (s.IndexOf(part, StringComparison.CurrentCultureIgnoreCase) < 0) {
+						match = false;
+						break;
+					}
+				}
+				if (match)
+					return true;
+			}
+
+			return false;
 		}
 
 		public bool IsMatchAny(string text) {
