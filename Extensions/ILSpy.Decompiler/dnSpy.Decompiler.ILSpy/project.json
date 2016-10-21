@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.25604-Preview4"
+		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.25726-Preview5"
 	},
 	"frameworks": {
 		"net46": { }
