@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using System.Windows.Media.TextFormatting;
 using Microsoft.VisualStudio.Text;
@@ -74,6 +75,23 @@ namespace dnSpy.Text.Formatting {
 			this.Span = span;
 			this.AdornmentElement = null;
 			this.TextRunProperties = textRunProperties;
+		}
+
+		public bool BelongsTo(int lineIndex) {
+			if (AdornmentElement == null || Span.Length != 0)
+				return Span.Start <= lineIndex && lineIndex < Span.End;
+
+			switch (AdornmentElement.Affinity) {
+			case PositionAffinity.Predecessor:
+				if (Span.Start == 0 && lineIndex == 0)
+					return true;
+				return Span.Start == lineIndex + 1;
+
+			case PositionAffinity.Successor:
+				return Span.Start == lineIndex;
+
+			default: throw new InvalidOperationException($"Invalid {nameof(PositionAffinity)}: {AdornmentElement.Affinity}");
+			}
 		}
 
 		public override string ToString() {

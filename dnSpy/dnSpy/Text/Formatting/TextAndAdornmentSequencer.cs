@@ -105,7 +105,7 @@ namespace dnSpy.Text.Formatting {
 			AdornmentElementAndSpan? lastAddedAdornment = null;
 			for (int i = 0; i < adornmentList.Count; i++) {
 				var info = adornmentList[i];
-				int spanStart = info.AdornmentElement.Affinity == PositionAffinity.Predecessor ? info.Span.Start - 1 : info.Span.Start;
+				int spanStart = info.Span.Length == 0 && info.AdornmentElement.Affinity == PositionAffinity.Predecessor ? info.Span.Start - 1 : info.Span.Start;
 				if (spanStart < start)
 					continue;
 				if (info.Span.Start > end)
@@ -113,7 +113,7 @@ namespace dnSpy.Text.Formatting {
 				var textSpan = new SnapshotSpan(topSpan.Snapshot, Span.FromBounds(curr, info.Span.Start));
 				if (!textSpan.IsEmpty)
 					sequenceList.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(textSpan, SpanTrackingMode.EdgeExclusive)));
-				if (info.Span.Start != end || info.AdornmentElement.Affinity == PositionAffinity.Predecessor) {
+				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == PositionAffinity.Predecessor)) {
 					bool canAppend = true;
 					if (lastAddedAdornment != null && lastAddedAdornment.Value.Span.End > info.Span.Start)
 						canAppend = false;

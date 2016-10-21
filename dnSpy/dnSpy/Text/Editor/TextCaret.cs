@@ -40,9 +40,10 @@ namespace dnSpy.Text.Editor {
 		public double Bottom => textCaretLayer.Bottom;
 		public double Width => textCaretLayer.Width;
 		public double Height => textCaretLayer.Height;
-		public bool InVirtualSpace => Position.VirtualSpaces > 0;
+		public bool InVirtualSpace => currentPosition.VirtualSpaces > 0;
 		public bool OverwriteMode => textCaretLayer.OverwriteMode;
-		public ITextViewLine ContainingTextViewLine => GetLine(Position.BufferPosition, Affinity);
+		public ITextViewLine ContainingTextViewLine => GetLine(currentPosition.Position, Affinity);
+		internal VirtualSnapshotPoint CurrentPosition => currentPosition;
 		PositionAffinity Affinity { get; set; }
 
 		public bool IsHidden {
@@ -255,7 +256,7 @@ namespace dnSpy.Text.Editor {
 			var line = ContainingTextViewLine;
 			if (line.VisibilityState == VisibilityState.Unattached)
 				return;
-			var charBounds = line.GetExtendedCharacterBounds(Position.VirtualBufferPosition);
+			var charBounds = line.GetExtendedCharacterBounds(currentPosition);
 
 			const int CFS_DEFAULT = 0x0000;
 			const int CFS_FORCE_POSITION = 0x0020;
@@ -288,8 +289,8 @@ namespace dnSpy.Text.Editor {
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceName) {
-				if (Position.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.IsVirtualSpaceEnabled())
-					MoveTo(Position.BufferPosition);
+				if (currentPosition.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.IsVirtualSpaceEnabled())
+					MoveTo(currentPosition.Position);
 			}
 			else if (e.OptionId == DefaultTextViewOptions.OverwriteModeName)
 				textCaretLayer.OverwriteMode = textView.Options.IsOverwriteModeEnabled();
@@ -456,36 +457,36 @@ namespace dnSpy.Text.Editor {
 		public CaretPosition MoveToNextCaretPosition() {
 			if (textView.Options.IsVirtualSpaceEnabled() || textView.Selection.Mode == TextSelectionMode.Box) {
 				bool useVirtSpaces;
-				if (Position.VirtualSpaces > 0)
+				if (currentPosition.VirtualSpaces > 0)
 					useVirtSpaces = true;
 				else {
-					var snapshotLine = Position.BufferPosition.GetContainingLine();
-					useVirtSpaces = Position.BufferPosition >= snapshotLine.End;
+					var snapshotLine = currentPosition.Position.GetContainingLine();
+					useVirtSpaces = currentPosition.Position >= snapshotLine.End;
 				}
 				if (useVirtSpaces) {
-					if (Position.VirtualSpaces != int.MaxValue)
-						return MoveTo(new VirtualSnapshotPoint(Position.BufferPosition, Position.VirtualSpaces + 1));
+					if (currentPosition.VirtualSpaces != int.MaxValue)
+						return MoveTo(new VirtualSnapshotPoint(currentPosition.Position, currentPosition.VirtualSpaces + 1));
 					return Position;
 				}
 			}
-			if (Position.BufferPosition.Position == Position.BufferPosition.Snapshot.Length)
+			if (currentPosition.Position.Position == currentPosition.Position.Snapshot.Length)
 				return Position;
 
-			var line = textView.GetTextViewLineContainingBufferPosition(Position.BufferPosition);
-			var span = line.GetTextElementSpan(Position.BufferPosition);
-			return MoveTo(new SnapshotPoint(textView.TextSnapshot, span.End));
+			var line = textView.GetTextViewLineContainingBufferPosition(currentPosition.Position);
+			var span = line.GetTextElementSpan(currentPosition.Position);
+			return MoveTo(span.End);
 		}
 
 		public CaretPosition MoveToPreviousCaretPosition() {
-			if (Position.VirtualSpaces > 0 && (textView.Options.IsVirtualSpaceEnabled() || textView.Selection.Mode == TextSelectionMode.Box))
-				return MoveTo(new VirtualSnapshotPoint(Position.BufferPosition, Position.VirtualSpaces - 1));
-			if (Position.BufferPosition.Position == 0)
+			if (currentPosition.VirtualSpaces > 0 && (textView.Options.IsVirtualSpaceEnabled() || textView.Selection.Mode == TextSelectionMode.Box))
+				return MoveTo(new VirtualSnapshotPoint(currentPosition.Position, currentPosition.VirtualSpaces - 1));
+			if (currentPosition.Position.Position == 0)
 				return Position;
 
-			var currentLine = textView.GetTextViewLineContainingBufferPosition(Position.BufferPosition);
-			var span = currentLine.GetTextElementSpan(Position.BufferPosition);
+			var currentLine = textView.GetTextViewLineContainingBufferPosition(currentPosition.Position);
+			var span = currentLine.GetTextElementSpan(currentPosition.Position);
 			var newPos = span.Start;
-			if (Position.VirtualSpaces == 0 && newPos.Position != 0) {
+			if (currentPosition.VirtualSpaces == 0 && newPos.Position != 0) {
 				newPos -= 1;
 				var line = textView.GetTextViewLineContainingBufferPosition(newPos);
 				if (line.IsLastTextViewLineForSnapshotLine && newPos > line.End)

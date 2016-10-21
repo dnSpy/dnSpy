@@ -186,9 +186,9 @@ namespace dnSpy.Text.Editor {
 			oldSelectionState = new SelectionState(layer.TextView.Selection);
 			bool oldDrawCaretShape = drawCaretShape;
 			drawCaretShape = line.VisibilityState != VisibilityState.Unattached;
-			bool drawOverwriteMode = OverwriteMode && textCaret.Position.BufferPosition < line.End && layer.TextView.Selection.IsEmpty;
+			bool drawOverwriteMode = OverwriteMode && textCaret.CurrentPosition.Position < line.End && layer.TextView.Selection.IsEmpty;
 
-			var vpos = textCaret.Position.VirtualBufferPosition;
+			var vpos = textCaret.CurrentPosition;
 			if (drawOverwriteMode) {
 				var textBounds = line.GetExtendedCharacterBounds(vpos);
 				left = textBounds.Left;

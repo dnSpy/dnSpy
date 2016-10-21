@@ -32,6 +32,7 @@ namespace dnSpy.Text.Formatting {
 		public int Length => linePartsCollection.Length;
 		readonly string text;
 		int maxLengthLeft;
+		int linePartIndex;
 
 		public LinePartsTextSource(LinePartsCollection linePartsCollection) {
 			if (linePartsCollection == null)
@@ -45,7 +46,7 @@ namespace dnSpy.Text.Formatting {
 		public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) => textSourceCharacterIndex;
 
 		public override TextRun GetTextRun(int textSourceCharacterIndex) {
-			var linePart = linePartsCollection.GetLinePartFromColumn(textSourceCharacterIndex);
+			var linePart = linePartsCollection.GetLinePartFromColumn(textSourceCharacterIndex, ref linePartIndex);
 			if (linePart == null)
 				return endOfLine;
 			var part = linePart.Value;
@@ -77,7 +78,7 @@ namespace dnSpy.Text.Formatting {
 
 			public AdornmentTextRun(LinePart linePart) {
 				adornmentElement = linePart.AdornmentElement;
-				if (adornmentElement.Affinity == PositionAffinity.Successor) {
+				if (linePart.Span.Length != 0 || adornmentElement.Affinity == PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;
 					BreakAfter = LineBreakCondition.BreakRestrained;
 				}

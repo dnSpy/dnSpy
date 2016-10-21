@@ -608,7 +608,7 @@ namespace dnSpy.Text.Formatting {
 				int lineIndex = point - linePartsCollection.Span.Start;
 				for (int i = part.Value.Index + 1; i < lineParts.Count; i++, column++) {
 					var part2 = lineParts[i];
-					if (lineIndex < part2.Span.Start)
+					if (!part2.BelongsTo(lineIndex))
 						break;
 				}
 			}
@@ -695,8 +695,14 @@ namespace dnSpy.Text.Formatting {
 				return new SnapshotSpan(ExtentIncludingLineBreak.End - LineBreakLength, LineBreakLength);
 
 			int column = GetFirstColumn(bufferPosition);
-			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(column, 0));
-			return new SnapshotSpan(linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex), charHit.TrailingLength);
+			int lastColumn = GetLastColumn(bufferPosition);
+			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(lastColumn, 0));
+			var start = linePartsCollection.ConvertColumnToBufferPosition(column);
+			var end = linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex + charHit.TrailingLength);
+			Debug.Assert(start <= end);
+			if (start <= end)
+				return new SnapshotSpan(start, end);
+			return new SnapshotSpan(end, end);
 		}
 
 		public Visual GetOrCreateVisual() {

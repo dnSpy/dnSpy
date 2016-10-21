@@ -27,7 +27,6 @@ namespace dnSpy.Text.Formatting {
 		public List<LinePart> LineParts { get; }
 		public int Length { get; }
 		public SnapshotSpan Span { get; private set; }
-		int linePartsIndex;
 
 		public LinePartsCollection(List<LinePart> lineParts, SnapshotSpan span) {
 			if (lineParts == null)
@@ -45,6 +44,11 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public LinePart? GetLinePartFromColumn(int column) {
+			int index = 0;
+			return GetLinePartFromColumn(column, ref index);
+		}
+
+		public LinePart? GetLinePartFromColumn(int column, ref int linePartsIndex) {
 			if (LineParts.Count == 0)
 				return null;
 			for (int i = 0; i < LineParts.Count; i++) {
@@ -65,18 +69,9 @@ namespace dnSpy.Text.Formatting {
 				return null;
 			int lineIndex = bufferPosition - Span.Start;
 			for (int i = 0; i < LineParts.Count; i++) {
-				var part = LineParts[linePartsIndex];
-				if (part.Span.Start <= lineIndex) {
-					if (part.Span.Length == 0) {
-						if (lineIndex <= part.Span.End)
-							return part;
-					}
-					else if (lineIndex < part.Span.End)
-						return part;
-				}
-				linePartsIndex++;
-				if (linePartsIndex >= LineParts.Count)
-					linePartsIndex = 0;
+				var part = LineParts[i];
+				if (part.BelongsTo(lineIndex))
+					return part;
 			}
 			return null;
 		}
@@ -89,6 +84,8 @@ namespace dnSpy.Text.Formatting {
 				linePart = LineParts[LineParts.Count - 1];
 			if (linePart == null)
 				return 0;
+			if (linePart.Value.AdornmentElement != null)
+				return linePart.Value.Column;
 			return linePart.Value.Column + ((bufferPosition.Position - Span.Span.Start) - linePart.Value.Span.Start);
 		}
 
