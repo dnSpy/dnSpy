@@ -113,7 +113,6 @@
     <Compile Include="Controls\MetroWindowCreatedEventArgs.cs" />
     <Compile Include="Controls\TextControl.cs" />
     <Compile Include="Controls\WindowBase.cs" />
-    <Compile Include="Controls\WindowDpiChangedEventArgs.cs" />
     <Compile Include="Decompiler\IDecompilerService.cs" />
     <Compile Include="Decompiler\IMethodDebugService.cs" />
     <Compile Include="Documents\AnnotationsImpl.cs" />

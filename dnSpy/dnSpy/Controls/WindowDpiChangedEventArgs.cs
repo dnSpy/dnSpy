@@ -20,11 +20,11 @@
 using System;
 using System.Windows;
 
-namespace dnSpy.Contracts.Controls {
+namespace dnSpy.Controls {
 	/// <summary>
 	/// DPI changed event args
 	/// </summary>
-	public sealed class WindowDpiChangedEventArgs : EventArgs {
+	sealed class WindowDpiChangedEventArgs : EventArgs {
 		/// <summary>
 		/// Gets the window
 		/// </summary>

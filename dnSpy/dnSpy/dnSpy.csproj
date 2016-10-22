@@ -91,6 +91,7 @@
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\TextElementFactory.cs" />
+    <Compile Include="Controls\WindowDpiChangedEventArgs.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
     <Compile Include="Controls\WpfCommandService.cs" />
