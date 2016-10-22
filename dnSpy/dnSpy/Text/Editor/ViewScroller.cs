@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
@@ -39,8 +40,147 @@ namespace dnSpy.Text.Editor {
 		public void EnsureSpanVisible(VirtualSnapshotSpan span, EnsureSpanVisibleOptions options) {
 			if (span.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
-			throw new NotImplementedException();//TODO:
+
+			if ((textView.TextViewLines?.Count ?? 0) == 0)
+				return;
+
+			EnsureSpanVisibleY(span, options);
+			EnsureSpanVisibleX(span, options);
 		}
+
+		void EnsureSpanVisibleX(VirtualSnapshotSpan span, EnsureSpanVisibleOptions options) {
+			if ((textView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0)
+				return;
+			if (textView.ViewportWidth == 0)
+				return;
+
+			var lines = textView.TextViewLines.GetTextViewLinesIntersectingSpan(span.SnapshotSpan);
+			if (lines.Count == 0)
+				return;
+
+			var ispan = span.Intersection(new VirtualSnapshotSpan(textView.TextViewLines.FormattedSpan));
+			if (ispan == null)
+				return;
+			span = ispan.Value;
+
+			double left = double.PositiveInfinity, right = double.NegativeInfinity;
+			for (int i = 0; i < lines.Count; i++) {
+				var line = lines[i];
+				var lineSpan = line.ExtentIncludingLineBreak.Intersection(span.SnapshotSpan);
+				if (lineSpan == null)
+					continue;
+
+				var startSpan = new VirtualSnapshotPoint(lineSpan.Value.Start);
+				var endSpan = new VirtualSnapshotPoint(lineSpan.Value.End);
+				if (startSpan.Position == span.Start.Position)
+					startSpan = span.Start;
+				if (endSpan.Position == span.End.Position)
+					endSpan = span.End;
+
+				var startBounds = line.GetExtendedCharacterBounds(startSpan);
+				var endBounds = line.GetExtendedCharacterBounds(endSpan);
+
+				if (left > startBounds.Left)
+					left = startBounds.Left;
+				if (right < startBounds.Right)
+					right = startBounds.Right;
+				if (left > endBounds.Left)
+					left = endBounds.Left;
+				if (right < endBounds.Right)
+					right = endBounds.Right;
+
+			}
+			if (double.IsInfinity(left) || double.IsInfinity(right))
+				return;
+			Debug.Assert(left <= right);
+			if (left > right)
+				right = left;
+			double width = right - left;
+
+			double availWidth = Math.Max(0, textView.ViewportWidth - width);
+			double extraScroll;
+			const double EXTRA_WIDTH = 4;
+			if (availWidth >= EXTRA_WIDTH)
+				extraScroll = EXTRA_WIDTH;
+			else
+				extraScroll = availWidth / 2;
+
+			if (textView.ViewportLeft <= right && right <= textView.ViewportRight) {
+			}
+			else if (right > textView.ViewportRight)
+				textView.ViewportLeft = right + extraScroll - textView.ViewportWidth;
+			else {
+				var newLeft = left - extraScroll;
+				if (newLeft + textView.ViewportWidth < right)
+					newLeft = right - textView.ViewportWidth;
+				textView.ViewportLeft = newLeft;
+			}
+		}
+
+		void EnsureSpanVisibleY(VirtualSnapshotSpan span, EnsureSpanVisibleOptions options) {
+			bool showStart = (options & EnsureSpanVisibleOptions.ShowStart) != 0;
+			bool minimumScroll = (options & EnsureSpanVisibleOptions.MinimumScroll) != 0;
+			bool alwaysCenter = (options & EnsureSpanVisibleOptions.AlwaysCenter) != 0;
+
+			var bufferSpan = span.SnapshotSpan;
+			var visibleSpan = VisibleSpan;
+			bool spanIsInView = bufferSpan.Start >= visibleSpan.Start && bufferSpan.End <= visibleSpan.End;
+			if (!spanIsInView) {
+				ShowSpan(bufferSpan, options);
+				alwaysCenter = true;
+				visibleSpan = VisibleSpan;
+				spanIsInView = bufferSpan.Start >= visibleSpan.Start && bufferSpan.End <= visibleSpan.End;
+			}
+
+			if (spanIsInView) {
+				var lines = textView.TextViewLines.GetTextViewLinesIntersectingSpan(bufferSpan);
+				Debug.Assert(lines.Count > 0);
+				if (lines.Count == 0)
+					return;
+				var first = lines[0];
+				var last = lines[lines.Count - 1];
+				var firstSpan = first.ExtentIncludingLineBreak;
+				var lastSpan = last.ExtentIncludingLineBreak;
+
+				bool allLinesFullyVisible = first.VisibilityState == VisibilityState.FullyVisible && last.VisibilityState == VisibilityState.FullyVisible;
+
+				if (alwaysCenter || (!allLinesFullyVisible && !minimumScroll)) {
+					double height = last.Bottom - first.Top;
+					double verticalDistance = (textView.ViewportHeight - height) / 2;
+					textView.DisplayTextLineContainingBufferPosition(first.Start, verticalDistance, ViewRelativePosition.Top);
+					return;
+				}
+
+				if (first.VisibilityState != VisibilityState.FullyVisible)
+					textView.DisplayTextLineContainingBufferPosition(first.Start, 0, ViewRelativePosition.Top);
+				else if (last.VisibilityState != VisibilityState.FullyVisible)
+					textView.DisplayTextLineContainingBufferPosition(last.Start, 0, ViewRelativePosition.Bottom);
+
+				if (showStart) {
+					var line = textView.TextViewLines.GetTextViewLineContainingBufferPosition(firstSpan.Start);
+					if (line == null || line.VisibilityState != VisibilityState.FullyVisible)
+						ShowSpan(bufferSpan, options);
+				}
+				else {
+					var line = textView.TextViewLines.GetTextViewLineContainingBufferPosition(lastSpan.Start);
+					if (line == null || line.VisibilityState != VisibilityState.FullyVisible)
+						ShowSpan(bufferSpan, options);
+				}
+			}
+		}
+
+		void ShowSpan(SnapshotSpan bufferSpan, EnsureSpanVisibleOptions options) {
+			if ((options & EnsureSpanVisibleOptions.ShowStart) != 0)
+				textView.DisplayTextLineContainingBufferPosition(bufferSpan.Start, 0, ViewRelativePosition.Top);
+			else {
+				var end = bufferSpan.End;
+				if (end.Position != 0)
+					end = end - 1;
+				textView.DisplayTextLineContainingBufferPosition(end, 0, ViewRelativePosition.Bottom);
+			}
+		}
+
+		SnapshotSpan VisibleSpan => new SnapshotSpan(textView.TextViewLines.FirstVisibleLine.Start, textView.TextViewLines.LastVisibleLine.EndIncludingLineBreak);
 
 		public void ScrollViewportHorizontallyByPixels(double distanceToScroll) =>
 			textView.ViewportLeft += distanceToScroll;

@@ -29,6 +29,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -110,7 +111,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 						if (doc == vm.SelectedDocument) {
 							MoveCaretTo(doc.TextView, diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
-							doc.TextView.Caret.EnsureVisible();
+							doc.TextView.EnsureCaretVisible();
 							doc.TextView.Selection.Clear();
 						}
 					}));

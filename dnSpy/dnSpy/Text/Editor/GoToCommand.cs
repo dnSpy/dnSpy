@@ -24,6 +24,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -93,7 +94,7 @@ namespace dnSpy.Text.Editor {
 					col = line.Length;
 				textView.Selection.Clear();
 				textView.Caret.MoveTo(line.Start + col);
-				textView.Caret.EnsureVisible();
+				textView.EnsureCaretVisible();
 				return CommandTargetStatus.Handled;
 			}
 			return CommandTargetStatus.NotHandled;

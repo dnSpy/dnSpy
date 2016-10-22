@@ -885,10 +885,7 @@ namespace dnSpy.Text.Editor.Operations {
 					anchorPoint = selStart;
 					activePoint = Selection.End;
 				}
-				//TODO: Call SelectAndMoveCaret() when ViewScrolloer.EnsureSpanVisible() has been implemented
-				//SelectAndMoveCaret(anchorPoint, activePoint);
-				Selection.Select(anchorPoint, activePoint);
-				Caret.EnsureVisible();
+				SelectAndMoveCaret(anchorPoint, activePoint);
 			}
 			else
 				Caret.EnsureVisible();

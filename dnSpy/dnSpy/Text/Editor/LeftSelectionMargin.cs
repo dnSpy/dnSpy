@@ -22,7 +22,6 @@ using System.ComponentModel.Composition;
 using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.Contracts.Text;
-using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
@@ -98,22 +97,6 @@ namespace dnSpy.Text.Editor {
 			}
 
 			base.OnMouseMove(e);
-		}
-
-		void Select(SnapshotPoint a, SnapshotPoint b) {
-			// In case there were any edits, eg. user pressed DEL
-			a = a.TranslateTo(wpfTextViewHost.TextView.TextSnapshot, PointTrackingMode.Negative);
-			b = b.TranslateTo(wpfTextViewHost.TextView.TextSnapshot, PointTrackingMode.Negative);
-			wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
-			var line1 = wpfTextViewHost.TextView.GetTextViewLineContainingBufferPosition(a);
-			var line2 = wpfTextViewHost.TextView.GetTextViewLineContainingBufferPosition(b);
-			wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
-			if (line1.Start <= line2.Start)
-				wpfTextViewHost.TextView.Selection.Select(new VirtualSnapshotPoint(line1.Start), new VirtualSnapshotPoint(line2.EndIncludingLineBreak));
-			else
-				wpfTextViewHost.TextView.Selection.Select(new VirtualSnapshotPoint(line1.EndIncludingLineBreak), new VirtualSnapshotPoint(line2.Start));
-			wpfTextViewHost.TextView.Caret.MoveTo(wpfTextViewHost.TextView.Selection.ActivePoint);
-			wpfTextViewHost.TextView.Caret.EnsureVisible();
 		}
 
 		protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e) {

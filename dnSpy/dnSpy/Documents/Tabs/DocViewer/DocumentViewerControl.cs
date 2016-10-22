@@ -168,7 +168,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (!sameText) {
 				TextView.TextBuffer.Replace(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length), content.Text);
 				TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextSnapshot, 0));
-				TextView.Caret.EnsureVisible();
+				TextView.EnsureCaretVisible();
 				TextView.Selection.Clear();
 			}
 
@@ -328,7 +328,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 						textEditorHelper.SetFocus();
 						wpfTextViewHost.TextView.Selection.Clear();
 						wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(wpfTextViewHost.TextView.TextSnapshot, pos));
-						wpfTextViewHost.TextView.Caret.EnsureVisible();//TODO: Use wpfTextViewHost.TextView.ViewScroller.EnsureSpanVisible()
+						wpfTextViewHost.TextView.EnsureCaretVisible();
 					}
 					return true;
 				}
@@ -381,7 +381,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var snapshot = wpfTextViewHost.TextView.TextSnapshot;
 			if ((uint)position < (uint)snapshot.Length) {
 				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, position));
-				wpfTextViewHost.TextView.Caret.EnsureVisible();//TODO: Use wpfTextViewHost.TextView.ViewScroller.EnsureSpanVisible()
+				wpfTextViewHost.TextView.EnsureCaretVisible();
 			}
 			wpfTextViewHost.TextView.Selection.Clear();
 			if (focus)

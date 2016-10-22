@@ -165,6 +165,7 @@ namespace dnSpy.Text.Editor.Search {
 		bool useRegularExpressions;
 
 		readonly IWpfTextView wpfTextView;
+		readonly IEditorOperations editorOperations;
 		readonly ITextSearchService2 textSearchService2;
 		readonly ISearchSettings searchSettings;
 		readonly IMessageBoxService messageBoxService;
@@ -177,7 +178,7 @@ namespace dnSpy.Text.Editor.Search {
 		NormalizedSnapshotSpanCollection findResultCollection;
 		IReplaceListener[] replaceListeners;
 
-		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxService messageBoxService, ITextStructureNavigator textStructureNavigator, Lazy<IReplaceListenerProvider>[] replaceListenerProviders) {
+		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxService messageBoxService, ITextStructureNavigator textStructureNavigator, Lazy<IReplaceListenerProvider>[] replaceListenerProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (textSearchService2 == null)
@@ -191,6 +192,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (replaceListenerProviders == null)
 				throw new ArgumentNullException(nameof(replaceListenerProviders));
 			this.wpfTextView = wpfTextView;
+			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 			this.textSearchService2 = textSearchService2;
 			this.searchSettings = searchSettings;
 			this.messageBoxService = messageBoxService;
@@ -978,11 +980,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		void ShowSearchResult(SnapshotSpan span) {
-			//TODO: Use editorOperations.SelectAndMoveCaret(new VirtualSnapshotPoint(res.Value.Start), new VirtualSnapshotPoint(res.Value.End));
-			wpfTextView.Selection.Mode = TextSelectionMode.Stream;
-			wpfTextView.Selection.Select(new VirtualSnapshotPoint(span.Start), new VirtualSnapshotPoint(span.End));
-			wpfTextView.Caret.MoveTo(span.End);
-			wpfTextView.Caret.EnsureVisible();
+			editorOperations.SelectAndMoveCaret(new VirtualSnapshotPoint(span.Start), new VirtualSnapshotPoint(span.End));
 			if (IsSearchControlVisible)
 				PositionWithoutCoveringSpan(span);
 		}

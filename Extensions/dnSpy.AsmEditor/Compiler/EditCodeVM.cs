@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				if (initialPosition.Snapshot == null)
 					return;
 				codeDocument.TextView.Caret.MoveTo(initialPosition.TranslateTo(codeDocument.TextView.TextSnapshot, PointTrackingMode.Negative));
-				codeDocument.TextView.Caret.EnsureVisible();
+				codeDocument.TextView.EnsureCaretVisible(true);
 			}
 
 			public void Initialize(SnapshotPoint initialPosition) {
