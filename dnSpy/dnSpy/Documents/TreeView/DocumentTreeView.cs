@@ -24,7 +24,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using dnlib.DotNet;
@@ -766,19 +765,25 @@ namespace dnSpy.Documents.TreeView {
 
 				if (filenames.Length > 1) {
 					switch (documentTreeViewSettings.FilterDraggedItems) {
-					case DocumentFilterType.All: break;
+					case DocumentFilterType.All:
+						break;
+
 					case DocumentFilterType.DotNetOnly:
-						if (!(document is IDsDotNetDocument)) continue;
+						if (!(document is IDsDotNetDocument))
+							continue;
 						break;
+
 					case DocumentFilterType.AllSupported:
-						if (document is DsUnknownDocument) continue;
+						if (document is DsUnknownDocument)
+							continue;
 						break;
+
 					default:
 						Debug.Fail("Shouldn't be here");
 						break;
 					}
 				}
-				
+
 				var node = CreateNode(null, document);
 				DocumentService.ForceAdd(document, false, new AddDocumentInfo(node, index + j++));
 				if (newSelectedNode == null)
@@ -787,9 +792,8 @@ namespace dnSpy.Documents.TreeView {
 				existingFiles.Add(document.Filename);
 			}
 
-			if (filenames.Any() && !filenames.Any(f => existingFiles.Contains(f))) {
+			if (filenames.Any() && !filenames.Any(f => existingFiles.Contains(f)))
 				MsgBox.Instance.Show(dnSpy_Resources.AssemblyExplorer_AllFilesFilteredOut);
-			}
 
 			if (newSelectedNode == null) {
 				var filename = origFilenames.FirstOrDefault(a => File.Exists(a));

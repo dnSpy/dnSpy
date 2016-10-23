@@ -169,7 +169,8 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All files have been filtered out.\nFilter can be changed in Assembly Explorer options..
+        ///   Looks up a localized string similar to All files have been filtered out.
+        ///Filter can be changed in Assembly Explorer options..
         /// </summary>
         public static string AssemblyExplorer_AllFilesFilteredOut {
             get {
@@ -790,7 +791,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All Supported.
+        ///   Looks up a localized string similar to All supported.
         /// </summary>
         public static string DocumentFilterType_AllSupported {
             get {

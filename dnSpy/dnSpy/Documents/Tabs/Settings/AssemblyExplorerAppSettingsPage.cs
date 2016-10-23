@@ -180,14 +180,13 @@ namespace dnSpy.Documents.Tabs.Settings {
 			ShowAssemblyPublicKeyToken = documentTreeViewSettings.ShowAssemblyPublicKeyToken;
 			SingleClickExpandsTreeViewChildren = documentTreeViewSettings.SingleClickExpandsTreeViewChildren;
 			SyntaxHighlight = documentTreeViewSettings.SyntaxHighlight;
-			
+
 			var filterObjs = typeof(DocumentFilterType).GetEnumValues().Cast<DocumentFilterType>().ToArray();
 			DocumentFilterTypes = new DocumentFilterTypeVM[filterObjs.Length];
 			for (int i = 0; i < filterObjs.Length; i++)
 				this.DocumentFilterTypes[i] = new DocumentFilterTypeVM(filterObjs[i], ToString(filterObjs[i]));
 
-			this.FilterDraggedItems =
-				this.DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
+			this.FilterDraggedItems = this.DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
 
 			var defObjs = typeof(MemberKind).GetEnumValues().Cast<MemberKind>().ToArray();
 			this.memberKindVMs = new MemberKindVM[defObjs.Length];
@@ -255,7 +254,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		public override object GetDataTemplateObject() => UIObject;
 	}
 
-	sealed class MemberKindVM : ViewModelBase {
+	sealed class MemberKindVM {
 		public MemberKind Object { get; }
 		public string Text { get; }
 
