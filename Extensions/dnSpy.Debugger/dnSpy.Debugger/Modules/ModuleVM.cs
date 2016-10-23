@@ -51,6 +51,8 @@ namespace dnSpy.Debugger.Modules {
 	}
 
 	sealed class ModuleVM : ViewModelBase {
+		bool IsNetModule => Array.IndexOf(Module.Assembly.Modules, Module) > 0;
+
 		public bool IsExe {
 			get {
 				InitializeExeFields();
@@ -76,7 +78,7 @@ namespace dnSpy.Debugger.Modules {
 		Version version;
 
 		public bool IsOptimized => Module.CachedJITCompilerFlags == CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT;
-		public ImageReference ImageReference => IsExe ? DsImages.AssemblyExe : DsImages.ModulePublic;
+		public ImageReference ImageReference => IsExe ? DsImages.AssemblyExe : IsNetModule ? DsImages.ModulePublic : DsImages.Assembly;
 		public object NameObject => this;
 		public object PathObject => this;
 		public object OptimizedObject => this;
