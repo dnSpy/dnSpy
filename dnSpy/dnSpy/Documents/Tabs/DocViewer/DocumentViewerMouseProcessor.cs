@@ -19,11 +19,13 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Windows.Input;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text.Editor;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
@@ -57,45 +59,89 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 		DocumentViewer __documentViewer;
 
-		public override void PostprocessMouseLeftButtonDown(MouseButtonEventArgs e) {
-			var spanData = GetReferenceAndUpdateCursor(e);
-			if (spanData == null)
-				return;
-			var documentViewer = TryGetDocumentViewer();
-			if (documentViewer == null)
-				return;
+		struct MouseReferenceInfo {
+			public SpanData<ReferenceInfo>? SpanData { get; }
+			public SpanData<ReferenceInfo>? RealSpanData { get; }
+			readonly int virtualSpaces;
+			readonly int position;
+			readonly int versionNumber;
 
-			bool newTab = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
-			e.Handled = documentViewer.GoTo(spanData, newTab, false, true, true, MoveCaretOptions.None);
+			public bool IsClickable => SpanData != null || (RealSpanData != null && Keyboard.Modifiers == ModifierKeys.Control);
+
+			public MouseReferenceInfo(SpanData<ReferenceInfo>? spanData, SpanData<ReferenceInfo>? realSpanData, VirtualSnapshotPoint point) {
+				SpanData = spanData;
+				RealSpanData = realSpanData;
+				virtualSpaces = point.VirtualSpaces;
+				position = point.Position.Position;
+				versionNumber = point.Position.Snapshot.Version.VersionNumber;
+			}
+
+			public bool IsSamePoint(MouseReferenceInfo other) =>
+				other.virtualSpaces == virtualSpaces &&
+				other.position == position &&
+				other.versionNumber == versionNumber;
 		}
 
-		public override void PostprocessMouseMove(MouseEventArgs e) => GetReferenceAndUpdateCursor(e);
+		public override void PostprocessMouseLeftButtonDown(MouseButtonEventArgs e) {
+			RestoreState();
+			clickedRef = GetReferenceCore(e);
+			if (clickedRef != null)
+				UpdateCursor(clickedRef.Value.IsClickable);
+		}
 
-		SpanData<ReferenceInfo>? GetReferenceAndUpdateCursor(MouseEventArgs e) {
-			var newRef = GetReferenceCore(e);
-			if (SameSpan(newRef, prevRef)) {
-			}
-			else if (newRef != null) {
-				prevRef = newRef;
-				if (oldCursor == null)
-					oldCursor = wpfTextView.VisualElement.Cursor;
-				wpfTextView.VisualElement.Cursor = Cursors.Hand;
-			}
-			else
-				RestoreState();
+		void UpdateCursor(bool canClick) {
+			if (oldCursor == null)
+				oldCursor = wpfTextView.VisualElement.Cursor;
+			wpfTextView.VisualElement.Cursor = canClick ? Cursors.Hand : oldCursor;
 			oldModifierKeys = Keyboard.Modifiers;
-			return newRef;
 		}
 
 		void RestoreState() {
 			if (oldCursor != null)
 				wpfTextView.VisualElement.Cursor = oldCursor;
-			prevRef = null;
+			clickedRef = null;
 			oldCursor = null;
 			oldModifierKeys = Keyboard.Modifiers;
 		}
 
-		SpanData<ReferenceInfo>? GetReferenceCore(MouseEventArgs e) {
+		bool CanClick(MouseEventArgs e, MouseReferenceInfo? newRef) {
+			if (newRef == null || !newRef.Value.IsClickable)
+				return false;
+			if (clickedRef == null)
+				return true;
+			if (!clickedRef.Value.IsClickable)
+				return false;
+			return clickedRef.Value.IsSamePoint(newRef.Value);
+		}
+
+		public override void PostprocessMouseLeftButtonUp(MouseButtonEventArgs e) {
+			try {
+				var newRef = GetReferenceCore(e);
+				if (!CanClick(e, newRef))
+					return;
+				Debug.Assert(newRef != null);
+				var documentViewer = TryGetDocumentViewer();
+				if (documentViewer == null)
+					return;
+				if (newRef?.RealSpanData == null)
+					return;
+
+				bool newTab = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
+				e.Handled = documentViewer.GoTo(newRef.Value.RealSpanData, newTab, false, true, true, MoveCaretOptions.None);
+			}
+			finally {
+				RestoreState();
+				if (CanClick(e, GetReferenceCore(e)))
+					UpdateCursor(true);
+			}
+		}
+
+		void UpdateMouseCursor(MouseEventArgs e) =>
+			UpdateCursor(CanClick(e, GetReferenceCore(e)));
+
+		public override void PostprocessMouseMove(MouseEventArgs e) => UpdateMouseCursor(e);
+
+		MouseReferenceInfo? GetReferenceCore(MouseEventArgs e) {
 			if (Keyboard.Modifiers != ModifierKeys.None && Keyboard.Modifiers != ModifierKeys.Control)
 				return null;
 
@@ -103,44 +149,37 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (documentViewer == null)
 				return null;
 
-			var loc = MouseLocation.TryCreateTextOnly(documentViewer.TextView, e);
-			if (loc == null || loc.Position.IsInVirtualSpace)
+			var loc = MouseLocation.Create(documentViewer.TextView, e);
+			if (loc == null)
 				return null;
+			if (loc.Position.IsInVirtualSpace)
+				return new MouseReferenceInfo(null, null, loc.Position);
 			int pos = loc.Position.Position.Position;
 			var spanData = documentViewer.Content.ReferenceCollection.Find(pos, false);
 			if (spanData == null)
-				return null;
+				return new MouseReferenceInfo(null, spanData, loc.Position);
 			if (spanData.Value.Data.Reference == null)
-				return null;
+				return new MouseReferenceInfo(null, spanData, loc.Position);
 			if (Keyboard.Modifiers != ModifierKeys.Control) {
 				if (spanData.Value.Data.IsDefinition)
-					return null;
+					return new MouseReferenceInfo(null, spanData, loc.Position);
 				if (spanData.Value.Data.IsLocal)
-					return null;
+					return new MouseReferenceInfo(null, spanData, loc.Position);
 			}
 
-			return spanData;
+			return new MouseReferenceInfo(spanData, spanData, loc.Position);
 		}
-		SpanData<ReferenceInfo>? prevRef;
+		MouseReferenceInfo? clickedRef;
 		Cursor oldCursor;
 
 		public override void PostprocessMouseLeave(MouseEventArgs e) => RestoreState();
-
-		static bool SameSpan(SpanData<ReferenceInfo>? a, SpanData<ReferenceInfo>? b) {
-			if (a == null && b == null)
-				return true;
-			if (a == null || b == null)
-				return false;
-			return a.Value.Span == b.Value.Span;
-		}
-
 		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => RestoreState();
 
 		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) => UpdateModifiers();
 		void VisualElement_PreviewKeyUp(object sender, KeyEventArgs e) => UpdateModifiers();
 		void UpdateModifiers() {
 			if (oldModifierKeys != Keyboard.Modifiers)
-				GetReferenceAndUpdateCursor(new MouseEventArgs(Mouse.PrimaryDevice, 0));
+				UpdateMouseCursor(new MouseEventArgs(Mouse.PrimaryDevice, 0));
 		}
 		ModifierKeys oldModifierKeys;
 
