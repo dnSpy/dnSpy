@@ -109,6 +109,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			AstNode node = nodeStack.Peek();
 			if (node.Annotation<ILVariable>() != null)
 				return null;
+			if (node.Role == AstNode.Roles.Type && node.Parent is ObjectCreationExpression)
+				node = node.Parent;
 			var memberRef = node.Annotation<IMemberRef>();
 			if (memberRef == null && node is Identifier) {
 				node = node.Parent ?? node;
