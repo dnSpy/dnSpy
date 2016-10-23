@@ -27,6 +27,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using dnSpy.Contracts.Text.Formatting;
+using dnSpy.Controls;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
@@ -1731,14 +1732,14 @@ namespace dnSpy.Text.Editor.Operations {
 			var wpfTextView = GetZoomableView();
 			if (wpfTextView == null)
 				return;
-			SetZoom(wpfTextView, wpfTextView.ZoomLevel * ZoomConstants.ScalingFactor);
+			SetZoom(wpfTextView, ZoomSelector.ZoomIn(wpfTextView.ZoomLevel));
 		}
 
 		public void ZoomOut() {
 			var wpfTextView = GetZoomableView();
 			if (wpfTextView == null)
 				return;
-			SetZoom(wpfTextView, wpfTextView.ZoomLevel / ZoomConstants.ScalingFactor);
+			SetZoom(wpfTextView, ZoomSelector.ZoomOut(wpfTextView.ZoomLevel));
 		}
 
 		public void ZoomTo(double zoomLevel) {

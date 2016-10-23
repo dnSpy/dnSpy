@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
+using dnSpy.Controls;
 
 namespace dnSpy.Tabs {
 	sealed class TabElementZoomer : IDisposable {
@@ -108,21 +109,8 @@ namespace dnSpy.Tabs {
 				ZoomDecrease();
 		}
 
-		const double MIN_ZOOM = 0.2;
-		const double MAX_ZOOM = 4.0;
-
-		void ZoomIncrease() {
-			var scale = ZoomValue;
-			scale *= 1.1;
-			ZoomValue = scale;
-		}
-
-		void ZoomDecrease() {
-			var scale = ZoomValue;
-			scale /= 1.1;
-			ZoomValue = scale;
-		}
-
+		void ZoomIncrease() => ZoomValue = ZoomSelector.ZoomIn(ZoomValue * 100) / 100;
+		void ZoomDecrease() => ZoomValue = ZoomSelector.ZoomOut(ZoomValue * 100) / 100;
 		void ZoomReset() => ZoomValue = 1;
 
 		public double ZoomValue {
@@ -137,10 +125,10 @@ namespace dnSpy.Tabs {
 			if (double.IsNaN(newZoomValue) || Math.Abs(newZoomValue - 1.0) < 0.05)
 				newZoomValue = 1.0;
 
-			if (newZoomValue < MIN_ZOOM)
-				newZoomValue = MIN_ZOOM;
-			else if (newZoomValue > MAX_ZOOM)
-				newZoomValue = MAX_ZOOM;
+			if (newZoomValue < ZoomSelector.MinZoomLevel / 100)
+				newZoomValue = ZoomSelector.MinZoomLevel / 100;
+			else if (newZoomValue > ZoomSelector.MaxZoomLevel / 100)
+				newZoomValue = ZoomSelector.MaxZoomLevel / 100;
 
 			if (!force && currentZoomValue == newZoomValue)
 				return;
