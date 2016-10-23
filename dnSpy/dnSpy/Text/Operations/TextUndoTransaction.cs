@@ -49,6 +49,8 @@ namespace dnSpy.Text.Operations {
 		public TextUndoTransaction(TextUndoHistory history, ITextUndoTransaction parent, string description) {
 			if (history == null)
 				throw new ArgumentNullException(nameof(history));
+			if (description == null)
+				throw new ArgumentNullException(nameof(description));
 			this.history = history;
 			Parent = parent;
 			undoPrimitives = new List<ITextUndoPrimitive>();

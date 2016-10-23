@@ -168,7 +168,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (!sameText) {
 				TextView.TextBuffer.Replace(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length), content.Text);
 				TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextSnapshot, 0));
-				TextView.EnsureCaretVisible();
+				TextView.Caret.EnsureVisible();
 				TextView.Selection.Clear();
 			}
 
@@ -197,34 +197,34 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return true;
 		}
 
-		public bool GoToLocation(object reference) {
+		public bool GoToLocation(object reference, MoveCaretOptions options) {
 			if (reference == null)
 				return false;
 
 			var member = reference as IMemberDef;
 			if (member != null) {
 				var spanData = currentContent.Content.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && a.Data.Reference == member);
-				return GoToTarget(spanData, false, false);
+				return GoToTarget(spanData, false, false, options);
 			}
 
 			var pd = reference as ParamDef;
 			if (pd != null) {
 				var spanData = currentContent.Content.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && (a.Data.Reference as Parameter)?.ParamDef == pd);
-				return GoToTarget(spanData, false, false);
+				return GoToTarget(spanData, false, false, options);
 			}
 
 			var textRef = reference as TextReference;
 			if (textRef != null) {
 				var spanData = currentContent.Content.ReferenceCollection.FirstOrNull(a => a.Data.IsLocal == textRef.IsLocal && a.Data.IsDefinition == textRef.IsDefinition && a.Data.Reference == textRef.Reference);
-				return GoToTarget(spanData, false, false);
+				return GoToTarget(spanData, false, false, options);
 			}
 
 			Debug.Fail(string.Format("Unknown type: {0} = {1}", reference.GetType(), reference));
 			return false;
 		}
 
-		bool GoToTarget(SpanData<ReferenceInfo>? spanData, bool canJumpToReference, bool canRecordHistory) =>
-			GoTo(spanData, false, true, canRecordHistory, canJumpToReference);
+		bool GoToTarget(SpanData<ReferenceInfo>? spanData, bool canFollowReference, bool canRecordHistory, MoveCaretOptions options) =>
+			GoTo(spanData, false, true, canRecordHistory, canFollowReference, options);
 
 		sealed class GoToHelper {
 			readonly DocumentViewerControl owner;
@@ -232,47 +232,49 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			readonly bool newTab;
 			readonly bool followLocalRefs;
 			readonly bool canRecordHistory;
-			readonly bool canJumpToReference;
+			readonly bool canFollowReference;
+			readonly MoveCaretOptions options;
 
-			public GoToHelper(DocumentViewerControl owner, SpanData<ReferenceInfo> spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
+			public GoToHelper(DocumentViewerControl owner, SpanData<ReferenceInfo> spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canFollowReference, MoveCaretOptions options) {
 				this.owner = owner;
 				this.spanData = spanData;
 				this.newTab = newTab;
 				this.followLocalRefs = followLocalRefs;
 				this.canRecordHistory = canRecordHistory;
-				this.canJumpToReference = canJumpToReference;
+				this.canFollowReference = canFollowReference;
+				this.options = options;
 				owner.TextView.ViewportHeightChanged += TextView_ViewportHeightChanged;
 			}
 
 			void TextView_ViewportHeightChanged(object sender, EventArgs e) {
 				Debug.Assert(owner.TextView.ViewportHeight != 0);
 				owner.TextView.ViewportHeightChanged -= TextView_ViewportHeightChanged;
-				owner.GoToCore(spanData, newTab, followLocalRefs, canRecordHistory, canJumpToReference);
+				owner.GoToCore(spanData, newTab, followLocalRefs, canRecordHistory, canFollowReference, options);
 			}
 		}
 
-		internal bool GoTo(SpanData<ReferenceInfo>? spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
+		internal bool GoTo(SpanData<ReferenceInfo>? spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canFollowReference, MoveCaretOptions options) {
 			if (spanData == null)
 				return false;
 
 			// When opening a new tab, the textview isn't visible and has a 0 height, so wait until it's visible
 			// before moving the caret.
 			if (wpfTextViewHost.TextView.ViewportHeight == 0 && !wpfTextViewHost.TextView.VisualElement.IsVisible) {
-				new GoToHelper(this, spanData.Value, newTab, followLocalRefs, canRecordHistory, canJumpToReference);
+				new GoToHelper(this, spanData.Value, newTab, followLocalRefs, canRecordHistory, canFollowReference, options);
 				return true;
 			}
 
-			return GoToCore(spanData.Value, newTab, followLocalRefs, canRecordHistory, canJumpToReference);
+			return GoToCore(spanData.Value, newTab, followLocalRefs, canRecordHistory, canFollowReference, options);
 		}
 
-		bool GoToCore(SpanData<ReferenceInfo> spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
+		bool GoToCore(SpanData<ReferenceInfo> spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canFollowReference, MoveCaretOptions options) {
 			Debug.Assert(spanData.Span.End <= wpfTextViewHost.TextView.TextSnapshot.Length);
 			if (spanData.Span.End > wpfTextViewHost.TextView.TextSnapshot.Length)
 				return false;
 
 			if (newTab) {
-				Debug.Assert(canJumpToReference);
-				if (!canJumpToReference)
+				Debug.Assert(canFollowReference);
+				if (!canFollowReference)
 					return false;
 				textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 				return true;
@@ -280,7 +282,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			if (followLocalRefs) {
 				if (!IsOwnerOf(spanData)) {
-					if (!canJumpToReference)
+					if (!canFollowReference)
 						return false;
 					textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 					return true;
@@ -292,18 +294,18 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 				if (spanData.Data.IsDefinition) {
 					if (canRecordHistory) {
-						if (!canJumpToReference)
+						if (!canFollowReference)
 							return false;
 						textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 					}
 					else
-						MoveCaretToSpan(spanData.Span);
+						MoveCaretToSpan(spanData.Span, options);
 					return true;
 				}
 
 				if (spanData.Data.IsLocal)
 					return false;
-				if (!canJumpToReference)
+				if (!canFollowReference)
 					return false;
 				textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 				return true;
@@ -320,15 +322,16 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				}
 				if (pos >= 0) {
 					if (canRecordHistory) {
-						if (!canJumpToReference)
+						if (!canFollowReference)
 							return false;
 						textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 					}
 					else {
-						textEditorHelper.SetFocus();
+						if ((options & MoveCaretOptions.Focus) != 0)
+							textEditorHelper.SetFocus();
 						wpfTextViewHost.TextView.Selection.Clear();
 						wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(wpfTextViewHost.TextView.TextSnapshot, pos));
-						wpfTextViewHost.TextView.EnsureCaretVisible();
+						wpfTextViewHost.TextView.EnsureCaretVisible((options & MoveCaretOptions.Center) != 0);
 					}
 					return true;
 				}
@@ -336,8 +339,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				if (spanData.Data.IsLocal)
 					return false;	// Allow another handler to set a new caret position
 
-				textEditorHelper.SetFocus();
-				if (!canJumpToReference)
+				if ((options & MoveCaretOptions.Focus) != 0)
+					textEditorHelper.SetFocus();
+				if (!canFollowReference)
 					return false;
 				textEditorHelper.FollowReference(spanData.ToTextReference(), newTab);
 				return true;
@@ -377,14 +381,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public void MoveCaretToPosition(int position, bool focus = true) {
+		public void MoveCaretToPosition(int position, MoveCaretOptions options) {
 			var snapshot = wpfTextViewHost.TextView.TextSnapshot;
 			if ((uint)position < (uint)snapshot.Length) {
 				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, position));
-				wpfTextViewHost.TextView.EnsureCaretVisible();
+				wpfTextViewHost.TextView.EnsureCaretVisible((options & MoveCaretOptions.Center) != 0);
 			}
 			wpfTextViewHost.TextView.Selection.Clear();
-			if (focus)
+			if ((options & MoveCaretOptions.Focus) != 0)
 				textEditorHelper.SetFocus();
 		}
 
@@ -394,7 +398,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var referencePosition = obj as ReferencePosition;
 			if (referencePosition == null)
 				return false;
-			return GoTo(methodDebugService, referencePosition);
+			return GoTo(methodDebugService, referencePosition, MoveCaretOptions.None);
 		}
 
 		sealed class ReferencePosition {
@@ -435,7 +439,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		static int Sort(MethodSourceStatement a, MethodSourceStatement b) => a.Statement.TextSpan.Start - b.Statement.TextSpan.Start;
 		static readonly Comparison<MethodSourceStatement> sortDelegate = Sort;
 
-		bool GoTo(IMethodDebugService methodDebugService, ReferencePosition referencePosition) {
+		bool GoTo(IMethodDebugService methodDebugService, ReferencePosition referencePosition, MoveCaretOptions options) {
 			if (referencePosition == null)
 				return false;
 
@@ -443,7 +447,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var methodSourceStatement = referencePosition.MethodSourceStatement.Value;
 				var methodStatement = methodDebugService.FindByCodeOffset(methodSourceStatement.Method, methodSourceStatement.Statement.BinSpan.Start);
 				if (methodStatement != null) {
-					MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start);
+					MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start, options);
 					return true;
 				}
 			}
@@ -451,7 +455,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (referencePosition.SpanData != null) {
 				var spanData = FindReferenceInfo(referencePosition.SpanData.Value);
 				if (spanData != null)
-					return GoToTarget(spanData, false, false);
+					return GoToTarget(spanData, false, false, options);
 			}
 
 			return false;
@@ -472,7 +476,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (spanRefData?.Data.Reference != null) {
 				foreach (var newSpanData in GetReferenceInfosFrom(spanReferenceCollection, spanRefData.Value.Span.Start, forward)) {
 					if (object.Equals(newSpanData.Data.Reference, spanRefData.Value.Data.Reference)) {
-						MoveCaretToSpan(newSpanData.Span);
+						MoveCaretToSpan(newSpanData.Span, MoveCaretOptions.Focus | MoveCaretOptions.Select);
 						break;
 					}
 				}
@@ -483,7 +487,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (spanData != null && !spanData.Value.Data.IsHidden) {
 				foreach (var newSpanData in GetReferenceInfosFrom(spanData.Value.Span.Start, forward)) {
 					if (!newSpanData.Data.IsHidden && SpanDataReferenceInfoExtensions.CompareReferences(newSpanData.Data, spanData.Value.Data)) {
-						MoveCaretToSpan(newSpanData.Span);
+						MoveCaretToSpan(newSpanData.Span, MoveCaretOptions.Focus | MoveCaretOptions.Select);
 						break;
 					}
 				}
@@ -495,18 +499,18 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			int offset = wpfTextViewHost.TextView.Caret.Position.BufferPosition.Position;
 			foreach (var newSpanData in GetReferenceInfosFrom(offset, forward)) {
 				if (newSpanData.Data.IsDefinition && newSpanData.Data.Reference is IMemberDef) {
-					MoveCaretToSpan(newSpanData.Span);
+					MoveCaretToSpan(newSpanData.Span, MoveCaretOptions.Focus | MoveCaretOptions.Select);
 					break;
 				}
 			}
 		}
 
-		public void MoveCaretToSpan(Span span, bool select = true, bool focus = true) {
+		public void MoveCaretToSpan(Span span, MoveCaretOptions options) {
 			var snapshot = wpfTextViewHost.TextView.TextSnapshot;
 			Debug.Assert(span.End <= snapshot.Length);
 			if (span.End > snapshot.Length)
 				return;
-			MoveCaretToPosition(span.End, focus);
+			MoveCaretToPosition(span.End, options);
 
 			bool isReversed = false;
 			// If there's another reference at the caret, move caret to Start instead of End
@@ -516,7 +520,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				isReversed = true;
 			}
 
-			if (!select)
+			if ((options & MoveCaretOptions.Select) == 0)
 				wpfTextViewHost.TextView.Selection.Clear();
 			else {
 				wpfTextViewHost.TextView.Selection.Mode = TextSelectionMode.Stream;
@@ -555,12 +559,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public void FollowReference() => GoToTarget(GetCurrentReferenceInfo(), true, true);
+		public void FollowReference() => GoToTarget(GetCurrentReferenceInfo(), true, true, MoveCaretOptions.Focus | MoveCaretOptions.Select);
 
 		public void FollowReferenceNewTab() {
 			if (textEditorHelper == null)
 				return;
-			GoTo(GetCurrentReferenceInfo(), true, true, true, true);
+			GoTo(GetCurrentReferenceInfo(), true, true, true, true, MoveCaretOptions.Focus | MoveCaretOptions.Select);
 		}
 
 		public void Clear() {

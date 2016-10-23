@@ -330,10 +330,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			documentViewerControl.HideCancelButton();
 		}
 
-		public void MoveCaretToReference(object @ref) {
+		public void MoveCaretToReference(object @ref, MoveCaretOptions options) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			documentViewerControl.GoToLocation(@ref);
+			documentViewerControl.GoToLocation(@ref, options);
 		}
 
 		public void ShowCancelButton(string message, Action onCancel) {
@@ -357,28 +357,28 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			isDisposed = true;
 		}
 
-		public void MoveCaretToPosition(int position) {
+		public void MoveCaretToPosition(int position, MoveCaretOptions options) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			documentViewerControl.MoveCaretToPosition(position);
+			documentViewerControl.MoveCaretToPosition(position, options);
 		}
 
-		public void MoveCaretToSpan(int position, int length, bool select, bool focus) {
+		public void MoveCaretToSpan(int position, int length, MoveCaretOptions options) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			documentViewerControl.MoveCaretToSpan(new Span(position, length), select, focus);
+			documentViewerControl.MoveCaretToSpan(new Span(position, length), options);
 		}
 
-		public void MoveCaretToSpan(Span span, bool select, bool focus) {
+		public void MoveCaretToSpan(Span span, MoveCaretOptions options) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			documentViewerControl.MoveCaretToSpan(span, select, focus);
+			documentViewerControl.MoveCaretToSpan(span, options);
 		}
 
-		public void MoveCaretToSpan(SpanData<ReferenceInfo> refInfo, bool select, bool focus) {
+		public void MoveCaretToSpan(SpanData<ReferenceInfo> refInfo, MoveCaretOptions options) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			documentViewerControl.MoveCaretToSpan(refInfo.Span, select, focus);
+			documentViewerControl.MoveCaretToSpan(refInfo.Span, options);
 		}
 
 		public SpanData<ReferenceInfo>? SelectedReference {
@@ -431,10 +431,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			documentViewerControl.FollowReferenceNewTab();
 		}
 
-		internal bool GoTo(SpanData<ReferenceInfo>? spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
+		internal bool GoTo(SpanData<ReferenceInfo>? spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canFollowReference, MoveCaretOptions options) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			return documentViewerControl.GoTo(spanData, newTab, followLocalRefs, canRecordHistory, canJumpToReference);
+			return documentViewerControl.GoTo(spanData, newTab, followLocalRefs, canRecordHistory, canFollowReference, options);
 		}
 	}
 }

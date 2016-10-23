@@ -66,7 +66,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return;
 
 			bool newTab = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
-			e.Handled = documentViewer.GoTo(spanData, newTab, false, true, true);
+			e.Handled = documentViewer.GoTo(spanData, newTab, false, true, true, MoveCaretOptions.None);
 		}
 
 		public override void PostprocessMouseMove(MouseEventArgs e) => GetReferenceAndUpdateCursor(e);

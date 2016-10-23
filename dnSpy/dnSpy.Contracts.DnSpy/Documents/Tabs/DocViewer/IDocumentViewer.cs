@@ -119,38 +119,37 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// or a <see cref="IMemberDef"/>. Anything else isn't currently supported.
 		/// </summary>
 		/// <param name="ref">Reference</param>
-		void MoveCaretToReference(object @ref);
+		/// <param name="options">Options</param>
+		void MoveCaretToReference(object @ref, MoveCaretOptions options = MoveCaretOptions.Select | MoveCaretOptions.Focus);
 
 		/// <summary>
 		/// Moves the caret to a position in the document
 		/// </summary>
 		/// <param name="position">Position</param>
-		void MoveCaretToPosition(int position);
+		/// <param name="options">Options</param>
+		void MoveCaretToPosition(int position, MoveCaretOptions options = MoveCaretOptions.Focus);
 
 		/// <summary>
 		/// Moves the caret to a span in the document and selects it
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="length">Length of span</param>
-		/// <param name="select">true to select the span</param>
-		/// <param name="focus">true to set focus</param>
-		void MoveCaretToSpan(int position, int length, bool select = true, bool focus = true);
+		/// <param name="options">Options</param>
+		void MoveCaretToSpan(int position, int length, MoveCaretOptions options = MoveCaretOptions.Select | MoveCaretOptions.Focus);
 
 		/// <summary>
 		/// Moves the caret to a span in the document and selects it
 		/// </summary>
 		/// <param name="span">Span</param>
-		/// <param name="select">true to select the span</param>
-		/// <param name="focus">true to set focus</param>
-		void MoveCaretToSpan(Span span, bool select = true, bool focus = true);
+		/// <param name="options">Options</param>
+		void MoveCaretToSpan(Span span, MoveCaretOptions options = MoveCaretOptions.Select | MoveCaretOptions.Focus);
 
 		/// <summary>
 		/// Moves the caret to a span in the document and selects it
 		/// </summary>
 		/// <param name="refInfo">Reference and span</param>
-		/// <param name="select">true to select the span</param>
-		/// <param name="focus">true to set focus</param>
-		void MoveCaretToSpan(SpanData<ReferenceInfo> refInfo, bool select = true, bool focus = true);
+		/// <param name="options">Options</param>
+		void MoveCaretToSpan(SpanData<ReferenceInfo> refInfo, MoveCaretOptions options = MoveCaretOptions.Select | MoveCaretOptions.Focus);
 
 		/// <summary>
 		/// Saves current location relative to some reference in the code. Return value can be
