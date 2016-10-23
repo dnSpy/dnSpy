@@ -103,6 +103,8 @@ namespace dnSpy.Documents.Tabs {
 			Debug.Assert(IsSupportedReference(textRef));
 			if (sourceContent == null)
 				return null;
+			if (!sourceContent.CanClone)
+				return null;
 			var content = sourceContent.Clone();
 			return new DocumentTabReferenceResult(content, null, a => {
 				if (a.Success && !a.HasMovedCaret) {

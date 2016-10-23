@@ -96,6 +96,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.Decompiler = decompiler;
 		}
 
+		public bool CanClone => true;
 		public IDocumentTabContent Clone() =>
 			new DecompileDocumentTabContent(decompileDocumentTabContentFactory, nodes, Decompiler);
 		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>

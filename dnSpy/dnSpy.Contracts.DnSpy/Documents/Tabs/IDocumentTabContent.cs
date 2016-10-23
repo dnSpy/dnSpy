@@ -64,7 +64,12 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		object ToolTip { get; }
 
 		/// <summary>
-		/// Clones this instance
+		/// true if <see cref="Clone"/> can be called
+		/// </summary>
+		bool CanClone { get; }
+
+		/// <summary>
+		/// Clones this instance. Can only be called if <see cref="CanClone"/> is true
 		/// </summary>
 		/// <returns></returns>
 		IDocumentTabContent Clone();

@@ -52,11 +52,13 @@ namespace dnSpy.Documents.Tabs {
 			cmds.Add(new RoutedCommand("SelectPrevTab", typeof(InstallTabCommands)), (s, e) => SelectPrevTab(), (s, e) => e.CanExecute = CanSelectPrevTab, ModifierKeys.Control | ModifierKeys.Shift, Key.Tab);
 		}
 
-		internal static bool CanOpenNewTabInternal(IDocumentTabService documentTabService) => documentTabService.ActiveTab != null;
+		internal static bool CanOpenNewTabInternal(IDocumentTabService documentTabService) => documentTabService.ActiveTab?.Content.CanClone == true;
 
 		internal static void OpenNewTabInternal(IDocumentTabService documentTabService, bool clone = true) {
 			var activeTab = documentTabService.ActiveTab;
 			if (activeTab == null)
+				return;
+			if (clone && !activeTab.Content.CanClone)
 				return;
 			var newTab = documentTabService.OpenEmptyTab();
 			if (clone) {

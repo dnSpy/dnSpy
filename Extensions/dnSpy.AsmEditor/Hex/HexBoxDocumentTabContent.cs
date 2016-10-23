@@ -132,6 +132,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.hexBoxUndoService = hexBoxUndoService;
 		}
 
+		public bool CanClone => true;
 		public IDocumentTabContent Clone() =>
 			new HexBoxDocumentTabContent(hexDocument, menuService, hexEditorSettings, appSettings, hexBoxUndoService);
 		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>

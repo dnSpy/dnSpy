@@ -75,6 +75,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.hexNode = hexNode;
 		}
 
+		public bool CanClone => true;
 		public IDocumentTabContent Clone() => new HexDocumentTabContent(hexNode);
 		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get(hexNode, () => new HexDocumentTabUIContext(hexNode.VMObject, hexNode.IsVirtualizingCollectionVM));

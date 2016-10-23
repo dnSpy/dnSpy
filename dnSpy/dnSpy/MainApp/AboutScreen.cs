@@ -118,6 +118,7 @@ namespace dnSpy.MainApp {
 			this.aboutContentType = aboutContentType;
 		}
 
+		public bool CanClone => true;
 		public IDocumentTabContent Clone() => new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
 		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
 		public void OnHide() { }

@@ -65,6 +65,9 @@ namespace Example2.Extension {
 		// Called when the user opens a new tab
 		public IDocumentTabContent Clone() => new AssemblyChildNodeTabContent(node);
 
+		// returns true if Clone() is supported
+		public bool CanClone => true;
+
 		// Gets called to create the UI context. It can be shared by any IFileTabContent in this tab.
 		// Eg. there's only one text editor per tab, shared by all IFileTabContents that need a text
 		// editor.

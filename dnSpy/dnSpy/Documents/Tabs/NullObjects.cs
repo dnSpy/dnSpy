@@ -40,6 +40,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 		IDocumentTab documentTab;
 
+		public bool CanClone => true;
 		public IDocumentTabContent Clone() => new NullDocumentTabContent();
 		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get(typeof(NullDocumentTabUIContext), () => new NullDocumentTabUIContext());
