@@ -268,7 +268,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			section.Attribute("TopLineVerticalDistance", state.TopLineVerticalDistance);
 		}
 
-		public void SetContent(DocumentViewerContent content, IContentType contentType) {
+		public bool SetContent(DocumentViewerContent content, IContentType contentType) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (content == null)
@@ -278,7 +278,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var newContentType = documentViewerControl.TextView.TextBuffer.ContentType;
 				GotNewContent?.Invoke(this, new DocumentViewerGotNewContentEventArgs(this, content, newContentType));
 				documentViewerServiceImpl.RaiseNewContentEvent(this, content, newContentType);
+				return true;
 			}
+			else
+				return false;
 		}
 
 		public void AddContentData(object key, object data) {

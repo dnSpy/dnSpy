@@ -60,7 +60,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
 			new DecompileDocumentTabContent(this, context.Nodes, DecompilerService.Decompiler);
 
-		public IDocumentTabContent Create(IDocumentTreeNodeData[] nodes) =>
+		public DecompileDocumentTabContent Create(IDocumentTreeNodeData[] nodes) =>
 			new DecompileDocumentTabContent(this, nodes, DecompilerService.Decompiler);
 
 		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
@@ -139,6 +139,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		IDocumentTab documentTab;
 
 		public IEnumerable<IDocumentTreeNodeData> Nodes => nodes;
+
+		internal bool WasNewContent { get; private set; }
 
 		sealed class DecompileContext {
 			public IDocumentViewerContentFactory DocumentViewerContentFactory;
@@ -237,7 +239,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			if (result.CanShowOutput)
-				documentViewer.SetContent(content, contentType);
+				WasNewContent = documentViewer.SetContent(content, contentType);
+			else
+				WasNewContent = false;
 		}
 
 		public bool NeedAsyncWork(IShowContext ctx) {

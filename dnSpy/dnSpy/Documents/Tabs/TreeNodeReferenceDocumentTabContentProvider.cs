@@ -106,7 +106,7 @@ namespace dnSpy.Documents.Tabs {
 			var content = sourceContent.Clone();
 			return new DocumentTabReferenceResult(content, null, a => {
 				if (a.Success && !a.HasMovedCaret) {
-					GoToReference(content, textRef);
+					GoToReference(content, textRef, false);
 					a.HasMovedCaret = true;
 				}
 			});
@@ -144,7 +144,7 @@ namespace dnSpy.Documents.Tabs {
 			var content = decompileDocumentTabContentFactory.Create(new IDocumentTreeNodeData[] { node });
 			return new DocumentTabReferenceResult(content, null, a => {
 				if (a.Success && !a.HasMovedCaret) {
-					GoToReference(content, resolvedRef);
+					GoToReference(content, resolvedRef, content.WasNewContent);
 					a.HasMovedCaret = true;
 				}
 			});
@@ -152,13 +152,16 @@ namespace dnSpy.Documents.Tabs {
 
 		static bool IsSupportedReference(object @ref) => @ref is TextReference || @ref is IMemberDef || @ref is ParamDef;
 
-		void GoToReference(IDocumentTabContent content, object @ref) {
+		void GoToReference(IDocumentTabContent content, object @ref, bool center) {
 			Debug.Assert(IsSupportedReference(@ref));
 			var uiCtx = content.DocumentTab.UIContext as IDocumentViewer;
 			if (uiCtx == null)
 				return;
 
-			uiCtx.MoveCaretToReference(@ref);
+			var options = MoveCaretOptions.Select | MoveCaretOptions.Focus;
+			if (center)
+				options |= MoveCaretOptions.Center;
+			uiCtx.MoveCaretToReference(@ref, options);
 		}
 	}
 }

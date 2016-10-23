@@ -38,11 +38,13 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		new FrameworkElement UIObject { get; }
 
 		/// <summary>
-		/// Sets new content
+		/// Sets new content. Returns true if the content got updated, false if the input was identical
+		/// to the current content.
 		/// </summary>
 		/// <param name="content">New content</param>
 		/// <param name="contentType">Content type or null</param>
-		void SetContent(DocumentViewerContent content, IContentType contentType);
+		/// <returns></returns>
+		bool SetContent(DocumentViewerContent content, IContentType contentType);
 
 		/// <summary>
 		/// Adds data that is removed each time <see cref="SetContent(DocumentViewerContent, IContentType)"/>
