@@ -39,6 +39,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
+using dnSpy.Properties;
 
 namespace dnSpy.Documents.TreeView {
 	[Export, Export(typeof(IDocumentTreeView))]
@@ -777,12 +778,19 @@ namespace dnSpy.Documents.TreeView {
 						break;
 					}
 				}
-
+				
 				var node = CreateNode(null, document);
 				DocumentService.ForceAdd(document, false, new AddDocumentInfo(node, index + j++));
 				if (newSelectedNode == null)
 					newSelectedNode = node;
+
+				existingFiles.Add(document.Filename);
 			}
+
+			if (filenames.Any() && !filenames.Any(f => existingFiles.Contains(f))) {
+				MsgBox.Instance.Show(dnSpy_Resources.AssemblyExplorer_AllFilesFilteredOut);
+			}
+
 			if (newSelectedNode == null) {
 				var filename = origFilenames.FirstOrDefault(a => File.Exists(a));
 				if (filename != null) {

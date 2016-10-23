@@ -169,6 +169,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All files have been filtered out.\nFilter can be changed in Assembly Explorer options..
+        /// </summary>
+        public static string AssemblyExplorer_AllFilesFilteredOut {
+            get {
+                return ResourceManager.GetString("AssemblyExplorer_AllFilesFilteredOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assembly Ex_plorer.
         /// </summary>
         public static string AssemblyExplorerCommand {

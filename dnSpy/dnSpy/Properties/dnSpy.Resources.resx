@@ -1241,4 +1241,7 @@
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
     <value>.NET only</value>
   </data>
+  <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
+    <value>All files have been filtered out.\nFilter can be changed in Assembly Explorer options.</value>
+  </data>
 </root>
