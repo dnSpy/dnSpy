@@ -18,6 +18,7 @@
 */
 
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
@@ -25,25 +26,25 @@ namespace dnSpy.Contracts.Documents.Tabs {
 	/// </summary>
 	public interface IAsyncDocumentTabContent : IDocumentTabContent {
 		/// <summary>
-		/// Returns true if <see cref="AsyncWorker(IShowContext, CancellationTokenSource)"/>
+		/// Returns true if <see cref="CreateContentAsync(IShowContext, CancellationTokenSource)"/>
 		/// should be called
 		/// </summary>
 		/// <param name="ctx">Context</param>
 		/// <returns></returns>
-		bool CanStartAsyncWorker(IShowContext ctx);
+		bool NeedAsyncWork(IShowContext ctx);
 
 		/// <summary>
 		/// Called in the worker thread
 		/// </summary>
 		/// <param name="ctx">Context</param>
 		/// <param name="source">Cancellation token source</param>
-		void AsyncWorker(IShowContext ctx, CancellationTokenSource source);
+		Task CreateContentAsync(IShowContext ctx, CancellationTokenSource source);
 
 		/// <summary>
 		/// Called in the main UI thread after the worker thread has exited or was interrupted
 		/// </summary>
 		/// <param name="ctx">Context</param>
 		/// <param name="result">Result</param>
-		void EndAsyncShow(IShowContext ctx, IAsyncShowResult result);
+		void OnShowAsync(IShowContext ctx, IAsyncShowResult result);
 	}
 }

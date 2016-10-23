@@ -251,7 +251,6 @@ namespace dnSpy.Documents.Tabs {
 
 		void ShowInternal(IDocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, bool isRefresh) {
 			Debug.Assert(asyncWorkerContext == null);
-			var oldUIContext = UIContext;
 			UIContext = tabContent.CreateUIContext(documentTabUIContextLocator);
 			var cachedUIContext = UIContext;
 			Debug.Assert(cachedUIContext.DocumentTab == null || cachedUIContext.DocumentTab == this);
@@ -267,11 +266,11 @@ namespace dnSpy.Documents.Tabs {
 			bool asyncShow = false;
 			var asyncTabContent = tabContent as IAsyncDocumentTabContent;
 			if (asyncTabContent != null) {
-				if (asyncTabContent.CanStartAsyncWorker(showCtx)) {
+				if (asyncTabContent.NeedAsyncWork(showCtx)) {
 					asyncShow = true;
 					var ctx = new AsyncWorkerContext();
 					asyncWorkerContext = ctx;
-					Task.Factory.StartNew(() => asyncTabContent.AsyncWorker(showCtx, ctx.CancellationTokenSource), ctx.CancellationToken)
+					Task.Run(() => asyncTabContent.CreateContentAsync(showCtx, ctx.CancellationTokenSource), ctx.CancellationToken)
 					.ContinueWith(t => {
 						bool canShowAsyncOutput = ctx == asyncWorkerContext &&
 												cachedUIContext.DocumentTab == this &&
@@ -279,13 +278,13 @@ namespace dnSpy.Documents.Tabs {
 						if (asyncWorkerContext == ctx)
 							asyncWorkerContext = null;
 						ctx.Dispose();
-						asyncTabContent.EndAsyncShow(showCtx, new AsyncShowResult(t, canShowAsyncOutput));
+						asyncTabContent.OnShowAsync(showCtx, new AsyncShowResult(t, canShowAsyncOutput));
 						bool success = !t.IsFaulted && !t.IsCanceled;
 						OnShown(serializedUI, onShownHandler, showCtx, success);
 					}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 				}
 				else
-					asyncTabContent.EndAsyncShow(showCtx, new AsyncShowResult());
+					asyncTabContent.OnShowAsync(showCtx, new AsyncShowResult());
 			}
 			if (!asyncShow)
 				OnShown(serializedUI, onShownHandler, showCtx, true);

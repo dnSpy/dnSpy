@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
@@ -191,14 +192,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			ctx.UserData = decompileContext;
 		}
 
-		public void AsyncWorker(IShowContext ctx, CancellationTokenSource source) {
+		public Task CreateContentAsync(IShowContext ctx, CancellationTokenSource source) {
 			var decompileContext = (DecompileContext)ctx.UserData;
 			decompileContext.CancellationTokenSource = source;
 			decompileContext.DecompileNodeContext.DecompilationContext.CancellationToken = source.Token;
 			decompileDocumentTabContentFactory.DocumentTreeNodeDecompiler.Decompile(decompileContext.DecompileNodeContext, nodes);
+			return Task.CompletedTask;
 		}
 
-		public void EndAsyncShow(IShowContext ctx, IAsyncShowResult result) {
+		public void OnShowAsync(IShowContext ctx, IAsyncShowResult result) {
 			var decompileContext = (DecompileContext)ctx.UserData;
 			var documentViewer = (IDocumentViewer)ctx.UIContext;
 
@@ -238,7 +240,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				documentViewer.SetContent(content, contentType);
 		}
 
-		public bool CanStartAsyncWorker(IShowContext ctx) {
+		public bool NeedAsyncWork(IShowContext ctx) {
 			var decompileContext = (DecompileContext)ctx.UserData;
 			if (decompileContext.CachedContent != null)
 				return false;
