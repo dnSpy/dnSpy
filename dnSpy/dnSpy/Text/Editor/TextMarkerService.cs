@@ -87,14 +87,13 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class TextMarkerService {
-		const string NEGATIVE_TEXT_MARK_LAYER_NAME = "negativetextmarkerlayer";
-
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(NEGATIVE_TEXT_MARK_LAYER_NAME)]
+		[Name(PredefinedDsAdornmentLayers.NegativeTextMarkerLayer)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedDsAdornmentLayers.GlyphTextMarker, After = PredefinedAdornmentLayers.Outlining)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
+		[Order(Before = PredefinedAdornmentLayers.CurrentLineHighlighter)]
 		static AdornmentLayerDefinition negativeTextMarkerAdornmentLayerDefinition;
 
 		[Export(typeof(AdornmentLayerDefinition))]
@@ -127,7 +126,7 @@ namespace dnSpy.Text.Editor {
 			this.editorFormatMap = editorFormatMap;
 			this.themeService = themeService;
 			this.textMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.TextMarker);
-			this.negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(NEGATIVE_TEXT_MARK_LAYER_NAME);
+			this.negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.NegativeTextMarkerLayer);
 			this.markerElements = new List<MarkerElement>();
 			this.useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
 			this.onRemovedDelegate = OnRemoved;
