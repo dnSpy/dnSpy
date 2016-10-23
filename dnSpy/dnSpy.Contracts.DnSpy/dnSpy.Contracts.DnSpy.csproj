@@ -176,6 +176,7 @@
     <Compile Include="Documents\Tabs\ITabSaverProvider.cs" />
     <Compile Include="Documents\Tabs\ShowTabContentEventArgs.cs" />
     <Compile Include="Documents\Tabs\TabConstants.cs" />
+    <Compile Include="Documents\TreeView\DocumentFilterType.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeNodeActivatedEventArgs.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeNodeData.cs" />
     <Compile Include="Documents\TreeView\DocumentTreeNodeFilterResult.cs" />

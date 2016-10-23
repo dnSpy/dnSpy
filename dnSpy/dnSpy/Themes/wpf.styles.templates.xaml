@@ -5891,13 +5891,22 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowTokens}" />
-            <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowAssemblyVersion}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyVersion}" />
-            <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowAssemblyPublicKeyToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyPublicKeyToken}" />
-            <CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SingleClickExpandsTreeViewChildren}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_SingleClickExpandNodes}" />
-            <CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_SyntaxHighlight}" />
-            <GroupBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_Order}">
+            <Grid Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_Filter}"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 5 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding DocumentFilterTypes}" SelectedItem="{Binding FilterDraggedItems}" DisplayMemberPath="Text" VerticalContentAlignment="Stretch"/>
+            </Grid>
+            <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowTokens}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowAssemblyVersion}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyVersion}" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShowAssemblyPublicKeyToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyPublicKeyToken}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SingleClickExpandsTreeViewChildren}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_SingleClickExpandNodes}" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_SyntaxHighlight}" />
+            <GroupBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.AssemblyExplorerSettings_Order}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

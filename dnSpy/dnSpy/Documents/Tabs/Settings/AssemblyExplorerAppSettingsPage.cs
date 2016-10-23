@@ -110,6 +110,19 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 		bool syntaxHighlight;
 
+		public DocumentFilterTypeVM[] DocumentFilterTypes { get; }
+
+		public DocumentFilterTypeVM FilterDraggedItems {
+			get { return filterDraggedItems; }
+			set {
+				if (filterDraggedItems != value) {
+					filterDraggedItems = value;
+					OnPropertyChanged(nameof(FilterDraggedItems));
+				}
+			}
+		}
+		DocumentFilterTypeVM filterDraggedItems;
+
 		public MemberKindVM[] MemberKindsArray => memberKindVMs2;
 		readonly MemberKindVM[] memberKindVMs;
 		readonly MemberKindVM[] memberKindVMs2;
@@ -167,6 +180,14 @@ namespace dnSpy.Documents.Tabs.Settings {
 			ShowAssemblyPublicKeyToken = documentTreeViewSettings.ShowAssemblyPublicKeyToken;
 			SingleClickExpandsTreeViewChildren = documentTreeViewSettings.SingleClickExpandsTreeViewChildren;
 			SyntaxHighlight = documentTreeViewSettings.SyntaxHighlight;
+			
+			var filterObjs = typeof(DocumentFilterType).GetEnumValues().Cast<DocumentFilterType>().ToArray();
+			DocumentFilterTypes = new DocumentFilterTypeVM[filterObjs.Length];
+			for (int i = 0; i < filterObjs.Length; i++)
+				this.DocumentFilterTypes[i] = new DocumentFilterTypeVM(filterObjs[i], ToString(filterObjs[i]));
+
+			this.FilterDraggedItems =
+				this.DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
 
 			var defObjs = typeof(MemberKind).GetEnumValues().Cast<MemberKind>().ToArray();
 			this.memberKindVMs = new MemberKindVM[defObjs.Length];
@@ -194,6 +215,17 @@ namespace dnSpy.Documents.Tabs.Settings {
 			}
 		}
 
+		static string ToString(DocumentFilterType o) {
+			switch (o) {
+			case DocumentFilterType.All:			return dnSpy_Resources.DocumentFilterType_All;
+			case DocumentFilterType.AllSupported:	return dnSpy_Resources.DocumentFilterType_AllSupported;
+			case DocumentFilterType.DotNetOnly:		return dnSpy_Resources.DocumentFilterType_DotNetOnly;
+			default:
+				Debug.Fail("Shouldn't be here");
+				return "???";
+			}
+		}
+
 		public override void OnApply() { throw new InvalidOperationException(); }
 
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
@@ -202,6 +234,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 			documentTreeViewSettings.ShowAssemblyPublicKeyToken = ShowAssemblyPublicKeyToken;
 			documentTreeViewSettings.SingleClickExpandsTreeViewChildren = SingleClickExpandsTreeViewChildren;
 			documentTreeViewSettings.SyntaxHighlight = SyntaxHighlight;
+			documentTreeViewSettings.FilterDraggedItems = FilterDraggedItems.FilterType;
 
 			bool update =
 				documentTreeViewSettings.MemberKind0 != MemberKind0.Object ||
@@ -228,6 +261,16 @@ namespace dnSpy.Documents.Tabs.Settings {
 
 		public MemberKindVM(MemberKind memberKind, string text) {
 			this.Object = memberKind;
+			this.Text = text;
+		}
+	}
+
+	sealed class DocumentFilterTypeVM {
+		public DocumentFilterType FilterType { get; }
+		public string Text { get; }
+
+		public DocumentFilterTypeVM(DocumentFilterType documentFilterType, string text) {
+			this.FilterType = documentFilterType;
 			this.Text = text;
 		}
 	}

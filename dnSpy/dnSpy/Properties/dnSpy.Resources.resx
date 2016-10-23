@@ -1229,4 +1229,19 @@
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>
   </data>
+  <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
+    <value>Dragged items filter</value>
+  </data>
+  <data name="DocumentFilterType_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="DocumentFilterType_AllSupported" xml:space="preserve">
+    <value>All Supported</value>
+  </data>
+  <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
+    <value>.NET only</value>
+  </data>
+  <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
+    <value>All files have been filtered out.\nFilter can be changed in Assembly Explorer options.</value>
+  </data>
 </root>

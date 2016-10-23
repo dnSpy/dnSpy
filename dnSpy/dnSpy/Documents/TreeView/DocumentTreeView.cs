@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using dnlib.DotNet;
@@ -38,6 +39,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
+using dnSpy.Properties;
 
 namespace dnSpy.Documents.TreeView {
 	[Export, Export(typeof(IDocumentTreeView))]
@@ -761,11 +763,34 @@ namespace dnSpy.Documents.TreeView {
 				var document = DocumentService.TryCreateOnly(DsDocumentInfo.CreateDocument(filenames[i]));
 				if (document == null)
 					continue;
+
+				if (filenames.Length > 1) {
+					switch (documentTreeViewSettings.FilterDraggedItems) {
+					case DocumentFilterType.All: break;
+					case DocumentFilterType.DotNetOnly:
+						if (!(document is IDsDotNetDocument)) continue;
+						break;
+					case DocumentFilterType.AllSupported:
+						if (document is DsUnknownDocument) continue;
+						break;
+					default:
+						Debug.Fail("Shouldn't be here");
+						break;
+					}
+				}
+				
 				var node = CreateNode(null, document);
 				DocumentService.ForceAdd(document, false, new AddDocumentInfo(node, index + j++));
 				if (newSelectedNode == null)
 					newSelectedNode = node;
+
+				existingFiles.Add(document.Filename);
 			}
+
+			if (filenames.Any() && !filenames.Any(f => existingFiles.Contains(f))) {
+				MsgBox.Instance.Show(dnSpy_Resources.AssemblyExplorer_AllFilesFilteredOut);
+			}
+
 			if (newSelectedNode == null) {
 				var filename = origFilenames.FirstOrDefault(a => File.Exists(a));
 				if (filename != null) {

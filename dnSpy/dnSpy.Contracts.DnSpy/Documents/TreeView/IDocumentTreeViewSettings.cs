@@ -68,5 +68,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 
 		/// <summary>Gets 4th member</summary>
 		MemberKind MemberKind4 { get; }
+
+        /// <summary>How to filter dragged items </summary>
+        DocumentFilterType FilterDraggedItems { get; }
 	}
 }
