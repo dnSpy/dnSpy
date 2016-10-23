@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>
 		/// Gets the method debug info collection
 		/// </summary>
-		public ReadOnlyCollection<MethodDebugInfo> MethodDebugInfos { get; }
+		public IReadOnlyList<MethodDebugInfo> MethodDebugInfos { get; }
 
 		readonly Dictionary<string, object> customDataDict;
 
@@ -71,9 +71,8 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 			ColorCollection = colorCollection;
 			ReferenceCollection = referenceCollection;
 			this.customDataDict = customDataDict;
-			MethodDebugInfos = GetCustomData<ReadOnlyCollection<MethodDebugInfo>>(DocumentViewerContentDataIds.DebugInfo) ?? emptyMethodDebugInfos;
+			MethodDebugInfos = (IReadOnlyList<MethodDebugInfo>)GetCustomData<ReadOnlyCollection<MethodDebugInfo>>(DocumentViewerContentDataIds.DebugInfo) ?? Array.Empty<MethodDebugInfo>();
 		}
-		static readonly ReadOnlyCollection<MethodDebugInfo> emptyMethodDebugInfos = new ReadOnlyCollection<MethodDebugInfo>(Array.Empty<MethodDebugInfo>());
 
 		/// <summary>
 		/// Gets custom data. Returns false if it doesn't exist.

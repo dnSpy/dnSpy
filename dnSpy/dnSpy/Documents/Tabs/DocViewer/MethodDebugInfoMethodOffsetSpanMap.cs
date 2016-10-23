@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
@@ -30,7 +29,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IModuleIdProvider moduleIdProvider;
 		readonly Dictionary<ModuleTokenId, MethodDebugInfo> toMethodDebugInfo;
 
-		public MethodDebugInfoMethodOffsetSpanMap(IModuleIdProvider moduleIdProvider, ReadOnlyCollection<MethodDebugInfo> methodDebugInfos) {
+		public MethodDebugInfoMethodOffsetSpanMap(IModuleIdProvider moduleIdProvider, IReadOnlyList<MethodDebugInfo> methodDebugInfos) {
 			if (methodDebugInfos == null)
 				throw new ArgumentNullException(nameof(methodDebugInfos));
 			this.moduleIdProvider = moduleIdProvider;

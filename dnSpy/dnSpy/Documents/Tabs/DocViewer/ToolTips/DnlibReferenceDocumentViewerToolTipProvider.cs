@@ -154,7 +154,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			return Create(context, local, name);
 		}
 
-		string GetDecompilerLocalName(IList<MethodDebugInfo> infos, Local local) {
+		string GetDecompilerLocalName(IReadOnlyList<MethodDebugInfo> infos, Local local) {
 			foreach (var info in infos) {
 				foreach (var sourceLocal in info.Locals) {
 					if (sourceLocal.Local == local)

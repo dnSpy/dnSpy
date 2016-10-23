@@ -59,7 +59,7 @@ namespace dnSpy.Decompiler {
 
 		public int Count => dict.Count;
 
-		public MethodDebugService(IList<MethodDebugInfo> methodDebugInfos, ITextSnapshot snapshot, IModuleIdProvider moduleIdProvider) {
+		public MethodDebugService(IReadOnlyList<MethodDebugInfo> methodDebugInfos, ITextSnapshot snapshot, IModuleIdProvider moduleIdProvider) {
 			if (methodDebugInfos == null)
 				throw new ArgumentNullException(nameof(methodDebugInfos));
 			if (snapshot == null)
