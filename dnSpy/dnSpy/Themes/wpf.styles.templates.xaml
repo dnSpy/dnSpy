@@ -1609,7 +1609,7 @@
         <Setter Property="BorderBrush"
                 Value="{DynamicResource GroupBoxBorderBrush}"/>
         <Setter Property="BorderThickness"
-                Value="1"/>
+                Value="2"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GroupBox}">
@@ -1640,7 +1640,7 @@
                                 Grid.RowSpan="3"
                                 Grid.ColumnSpan="4"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                BorderBrush="{DynamicResource GroupBoxBorderBrushOuter}">
+                                BorderBrush="{TemplateBinding BorderBrush}">
                             <Border.OpacityMask>
                                 <MultiBinding Converter="{StaticResource BorderGapMaskConverter}"
                                               ConverterParameter="7">
@@ -1652,14 +1652,6 @@
                                              Path="ActualHeight"/>
                                 </MultiBinding>
                             </Border.OpacityMask>
-
-                            <Border BorderThickness="{TemplateBinding BorderThickness}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    CornerRadius="3">
-                                <Border BorderThickness="{TemplateBinding BorderThickness}"
-                                        BorderBrush="{DynamicResource GroupBoxBorderBrushInner}"
-                                        CornerRadius="2"/>
-                            </Border>
                         </Border>
                         
                         <Border x:Name="Header"

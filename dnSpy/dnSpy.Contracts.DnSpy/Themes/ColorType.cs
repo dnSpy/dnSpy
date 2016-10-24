@@ -318,8 +318,6 @@ namespace dnSpy.Contracts.Themes {
 		ControlShadow,
 		GridSplitterPreviewFill,
 		GroupBoxBorderBrush,
-		GroupBoxBorderBrushOuter,
-		GroupBoxBorderBrushInner,
 		TopLevelMenuHeaderHoverBorder,
 		TopLevelMenuHeaderHover,
 		MenuItemSeparatorFillTop,

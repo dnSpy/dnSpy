@@ -277,9 +277,7 @@
 		<color name="environmentmainwindowinactivecaption" fg="#99000000" bg="#FFD6DBE9" />
 		<color name="controlshadow" bg="#71000000" />
 		<color name="gridsplitterpreviewfill" bg="#80000000" />
-		<color name="groupboxborderbrush" bg="#D5DFE5" />
-		<color name="groupboxborderbrushouter" bg="White" />
-		<color name="groupboxborderbrushinner" bg="White" />
+		<color name="groupboxborderbrush" bg="#FFB1B4BC" />
 		<color name="toplevelmenuheaderhoverborder" bg="#FFE5C365" />
 		<color name="toplevelmenuheaderhover" bg="#FFFDF4BF" />
 		<color name="menuitemseparatorfilltop" bg="#BEC3CB" />

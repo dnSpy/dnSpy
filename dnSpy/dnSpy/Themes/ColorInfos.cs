@@ -266,16 +266,8 @@ namespace dnSpy.Themes {
 				BackgroundResourceKey = "GridSplitterPreviewFill",
 			},
 			new BrushColorInfo(ColorType.GroupBoxBorderBrush, "GroupBox border brush") {
-				DefaultBackground = "#D5DFE5",
+				DefaultBackground = "#FFCCCEDB",
 				BackgroundResourceKey = "GroupBoxBorderBrush",
-			},
-			new BrushColorInfo(ColorType.GroupBoxBorderBrushOuter, "GroupBox outer border brush") {
-				DefaultBackground = "White",
-				BackgroundResourceKey = "GroupBoxBorderBrushOuter",
-			},
-			new BrushColorInfo(ColorType.GroupBoxBorderBrushInner, "GroupBox inner border brush") {
-				DefaultBackground = "White",
-				BackgroundResourceKey = "GroupBoxBorderBrushInner",
 			},
 			new BrushColorInfo(ColorType.TopLevelMenuHeaderHoverBorder, "Top Level Menu Header Hover Border") {
 				DefaultBackground = "Transparent",

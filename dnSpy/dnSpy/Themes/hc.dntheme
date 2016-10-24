@@ -122,8 +122,6 @@
 		<color name="controlshadow" bg="#71FFFFFF" />
 		<color name="gridsplitterpreviewfill" bg="#80000000" />
 		<color name="groupboxborderbrush" bg="#FFFFFFFF" />
-		<color name="groupboxborderbrushouter" bg="#FFFFFFFF" />
-		<color name="groupboxborderbrushinner" bg="#FFFFFFFF" />
 		<color name="toplevelmenuheaderhoverborder" bg="#FFFFFFFF" />
 		<color name="toplevelmenuheaderhover" bg="#FF800080" />
 		<color name="menuitemseparatorfilltop" bg="#FF808080" />
