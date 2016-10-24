@@ -15,6 +15,7 @@
 /Imports:System.Xml.Linq
 
 # Add extra stuff
+/R:System.ValueTuple.dll
 /R:dnSpy.Contracts.Logic.dll
 /R:dnSpy.Contracts.DnSpy.dll
 /R:dnlib.dll
