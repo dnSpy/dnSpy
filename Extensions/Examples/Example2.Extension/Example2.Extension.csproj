@@ -53,6 +53,7 @@
       <DependentUpon>ToolWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="TreeNodeDataProvider.cs" />
+    <Compile Include="TreeViewNodeColorizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
