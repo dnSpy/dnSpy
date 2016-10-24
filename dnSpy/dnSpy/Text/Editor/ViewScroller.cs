@@ -290,7 +290,7 @@ namespace dnSpy.Text.Editor {
 				var prevLine = line;
 				// Cache this since prevLine could've been disposed when we need to access this property
 				var prevLineStart = prevLine.Start;
-				while (lineTop + textView.ViewportHeight > top) {
+				while (lineTop + textView.ViewportHeight >= top) {
 					prevLine = line;
 					prevLineStart = prevLine.Start;
 					if (line.IsFirstDocumentLine())
