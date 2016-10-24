@@ -28,9 +28,9 @@ namespace dnSpy.Contracts.Documents.Tabs {
 	/// </summary>
 	public interface IDocumentTab {
 		/// <summary>
-		/// Current <see cref="IDocumentTabContent"/> instance
+		/// Current <see cref="DocumentTabContent"/> instance
 		/// </summary>
-		IDocumentTabContent Content { get; }
+		DocumentTabContent Content { get; }
 
 		/// <summary>
 		/// Current <see cref="IDocumentTabUIContext"/>
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="ref">Reference</param>
 		/// <param name="sourceContent">Source content or null</param>
 		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
-		void FollowReference(object @ref, IDocumentTabContent sourceContent = null, Action<ShowTabContentEventArgs> onShown = null);
+		void FollowReference(object @ref, DocumentTabContent sourceContent = null, Action<ShowTabContentEventArgs> onShown = null);
 
 		/// <summary>
 		/// Follows a reference in a new tab
@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="tabContent">Tab content</param>
 		/// <param name="serializedUI">Serialized UI data or null</param>
 		/// <param name="onShown">Called after the output has been shown on the screen</param>
-		void Show(IDocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown);
+		void Show(DocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown);
 
 		/// <summary>
 		/// Sets focus to the focused element if this is the active tab

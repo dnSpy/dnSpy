@@ -342,15 +342,15 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		public IDocumentTabContent TryCreateContent(IDocumentTreeNodeData[] nodes) => documentTabContentFactoryService.CreateTabContent(nodes);
+		public DocumentTabContent TryCreateContent(IDocumentTreeNodeData[] nodes) => documentTabContentFactoryService.CreateTabContent(nodes);
 
-		IDocumentTabContent CreateTabContent(IDocumentTreeNodeData[] nodes) {
+		DocumentTabContent CreateTabContent(IDocumentTreeNodeData[] nodes) {
 			var content = TryCreateContent(nodes);
 			Debug.Assert(content != null);
 			return content ?? new NullDocumentTabContent();
 		}
 
-		internal void Add(ITabGroup group, IDocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
+		internal void Add(ITabGroup group, DocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
 			Debug.Assert(TabGroupService.TabGroups.Contains(group));
 			var tab = OpenEmptyTab(group);
 			tab.Show(tabContent, serializedUI, onShown);

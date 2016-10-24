@@ -28,9 +28,9 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Documents.Tabs {
 	interface IDocumentTabContentFactoryService {
-		IDocumentTabContent CreateTabContent(IDocumentTreeNodeData[] nodes);
-		Guid? Serialize(IDocumentTabContent content, ISettingsSection section);
-		IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTreeNodeData[] nodes);
+		DocumentTabContent CreateTabContent(IDocumentTreeNodeData[] nodes);
+		Guid? Serialize(DocumentTabContent content, ISettingsSection section);
+		DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTreeNodeData[] nodes);
 	}
 
 	[Export(typeof(IDocumentTabContentFactoryService))]
@@ -43,7 +43,7 @@ namespace dnSpy.Documents.Tabs {
 			Debug.Assert(tabContentFactories.Length > 0);
 		}
 
-		public IDocumentTabContent CreateTabContent(IDocumentTreeNodeData[] nodes) {
+		public DocumentTabContent CreateTabContent(IDocumentTreeNodeData[] nodes) {
 			var context = new DocumentTabContentFactoryContext(nodes);
 			foreach (var factory in tabContentFactories) {
 				var tabContent = factory.Value.Create(context);
@@ -53,7 +53,7 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		public Guid? Serialize(IDocumentTabContent content, ISettingsSection section) {
+		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			var nodes = content.Nodes.ToArray();
 			var context = new DocumentTabContentFactoryContext(nodes);
 			foreach (var factory in tabContentFactories) {
@@ -64,7 +64,7 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTreeNodeData[] nodes) {
+		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTreeNodeData[] nodes) {
 			var context = new DocumentTabContentFactoryContext(nodes);
 			foreach (var factory in tabContentFactories) {
 				var content = factory.Value.Deserialize(guid, section, context);

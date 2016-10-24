@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentTreeView = documentTreeView;
 		}
 
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, IDocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
 			var textRef = @ref as TextReference;
 			if (textRef != null)
 				@ref = textRef.Reference;

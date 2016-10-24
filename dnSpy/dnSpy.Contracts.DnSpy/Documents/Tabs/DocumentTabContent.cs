@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Documents.TreeView;
 
@@ -24,55 +25,55 @@ namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
 	/// Contains the data used to generate the content shown in a tab
 	/// </summary>
-	public interface IDocumentTabContent {
+	public abstract class DocumentTabContent {
 		/// <summary>
 		/// Gets all nodes used to generate the content
 		/// </summary>
-		IEnumerable<IDocumentTreeNodeData> Nodes { get; }
+		public virtual IEnumerable<IDocumentTreeNodeData> Nodes => Array.Empty<IDocumentTreeNodeData>();
 
 		/// <summary>
-		/// Called to show its content in the UI. Implement <see cref="IAsyncDocumentTabContent"/> to
+		/// Called to show its content in the UI. Derive from <see cref="AsyncDocumentTabContent"/> to
 		/// create the content in a worker thread.
 		/// </summary>
 		/// <param name="ctx">UI Context created by <see cref="CreateUIContext(IDocumentTabUIContextLocator)"/></param>
 		/// <returns></returns>
-		void OnShow(IShowContext ctx);
+		public virtual void OnShow(IShowContext ctx) { }
 
 		/// <summary>
 		/// Called when the content is hidden
 		/// </summary>
-		void OnHide();
+		public virtual void OnHide() { }
 
 		/// <summary>
 		/// Called when its tab has been selected. Only called if this is the tab's active content.
 		/// </summary>
-		void OnSelected();
+		public virtual void OnSelected() { }
 
 		/// <summary>
 		/// Called when its tab has been unselected. Only called if this is the tab's active content.
 		/// </summary>
-		void OnUnselected();
+		public virtual void OnUnselected() { }
 
 		/// <summary>
 		/// Gets the title
 		/// </summary>
-		string Title { get; }
+		public abstract string Title { get; }
 
 		/// <summary>
-		/// Gets the tooltip
+		/// Gets the tooltip or null if none
 		/// </summary>
-		object ToolTip { get; }
+		public virtual object ToolTip => null;
 
 		/// <summary>
 		/// true if <see cref="Clone"/> can be called
 		/// </summary>
-		bool CanClone { get; }
+		public virtual bool CanClone => true;
 
 		/// <summary>
 		/// Clones this instance. Can only be called if <see cref="CanClone"/> is true
 		/// </summary>
 		/// <returns></returns>
-		IDocumentTabContent Clone();
+		public abstract DocumentTabContent Clone();
 
 		/// <summary>
 		/// Creates the <see cref="IDocumentTabUIContext"/> instance needed by this instance. This
@@ -80,11 +81,22 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="locator">Can be used to get a per-tab shared instance</param>
 		/// <returns></returns>
-		IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator);
+		public abstract IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator);
 
 		/// <summary>
 		/// Written by the owner <see cref="IDocumentTab"/> instance
 		/// </summary>
-		IDocumentTab DocumentTab { get; set; }
+		public IDocumentTab DocumentTab {
+			get { return documentTab; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException(nameof(value));
+				if (documentTab == null)
+					documentTab = value;
+				else if (documentTab != value)
+					throw new InvalidOperationException();
+			}
+		}
+		IDocumentTab documentTab;
 	}
 }

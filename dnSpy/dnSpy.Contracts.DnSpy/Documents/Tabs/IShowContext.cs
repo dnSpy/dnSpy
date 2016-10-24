@@ -21,11 +21,11 @@ using System;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// Passed to <see cref="IDocumentTabContent.OnShow(IShowContext)"/>
+	/// Passed to <see cref="DocumentTabContent.OnShow(IShowContext)"/>
 	/// </summary>
 	public interface IShowContext {
 		/// <summary>
-		/// UI Context created by <see cref="IDocumentTabContent.CreateUIContext(IDocumentTabUIContextLocator)"/>
+		/// UI Context created by <see cref="DocumentTabContent.CreateUIContext(IDocumentTabUIContextLocator)"/>
 		/// </summary>
 		IDocumentTabUIContext UIContext { get; }
 
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		Action<ShowTabContentEventArgs> OnShown { get; set; }
 
 		/// <summary>
-		/// Can be initialized by the <see cref="IDocumentTabContent"/> instance
+		/// Can be initialized by the <see cref="DocumentTabContent"/> instance
 		/// </summary>
 		object Tag { get; set; }
 	}

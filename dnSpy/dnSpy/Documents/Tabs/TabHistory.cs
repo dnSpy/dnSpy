@@ -24,10 +24,10 @@ using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.Documents.Tabs {
 	struct TabContentState {
-		public IDocumentTabContent DocumentTabContent { get; }
+		public DocumentTabContent DocumentTabContent { get; }
 		public object SerializedData { get; }
 
-		public TabContentState(IDocumentTabContent documentTabContent, object serializedData) {
+		public TabContentState(DocumentTabContent documentTabContent, object serializedData) {
 			this.DocumentTabContent = documentTabContent;
 			this.SerializedData = serializedData;
 		}
@@ -37,15 +37,15 @@ namespace dnSpy.Documents.Tabs {
 		readonly List<TabContentState> oldList;
 		readonly List<TabContentState> newList;
 
-		public IDocumentTabContent Current => current;
-		IDocumentTabContent current;
+		public DocumentTabContent Current => current;
+		DocumentTabContent current;
 
 		public TabHistory() {
 			this.oldList = new List<TabContentState>();
 			this.newList = new List<TabContentState>();
 		}
 
-		public void SetCurrent(IDocumentTabContent content, bool saveCurrent) {
+		public void SetCurrent(DocumentTabContent content, bool saveCurrent) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			if (saveCurrent && current != null)
@@ -54,7 +54,7 @@ namespace dnSpy.Documents.Tabs {
 			newList.Clear();
 		}
 
-		public void OverwriteCurrent(IDocumentTabContent content) {
+		public void OverwriteCurrent(DocumentTabContent content) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			this.current = content;
@@ -85,10 +85,10 @@ namespace dnSpy.Documents.Tabs {
 			return old.SerializedData;
 		}
 
-		public void RemoveFromBackwardList(Func<IDocumentTabContent, bool> handler) => Remove(oldList, handler);
-		public void RemoveFromForwardList(Func<IDocumentTabContent, bool> handler) => Remove(newList, handler);
+		public void RemoveFromBackwardList(Func<DocumentTabContent, bool> handler) => Remove(oldList, handler);
+		public void RemoveFromForwardList(Func<DocumentTabContent, bool> handler) => Remove(newList, handler);
 
-		void Remove(List<TabContentState> list, Func<IDocumentTabContent, bool> handler) {
+		void Remove(List<TabContentState> list, Func<DocumentTabContent, bool> handler) {
 			for (int i = list.Count - 1; i >= 0; i--) {
 				var c = list[i];
 				if (handler(c.DocumentTabContent))

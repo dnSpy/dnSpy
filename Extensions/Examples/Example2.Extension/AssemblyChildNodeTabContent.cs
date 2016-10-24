@@ -14,7 +14,7 @@ namespace Example2.Extension {
 	[ExportDocumentTabContentFactory]
 	sealed class AssemblyChildNodeTabContentFactory : IDocumentTabContentFactory {
 		// Called to create a new IFileTabContent. If it's our new tree node, create a new IFileTabContent for it
-		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) {
 			if (context.Nodes.Length == 1 && context.Nodes[0] is AssemblyChildNode)
 				return new AssemblyChildNodeTabContent((AssemblyChildNode)context.Nodes[0]);
 			return null;
@@ -23,7 +23,7 @@ namespace Example2.Extension {
 		//TODO: Use your own guid
 		static readonly Guid GUID_SerializedContent = new Guid("FC6D2EC8-6FF8-4071-928E-EB07735A6402");
 
-		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent) {
 				// Serialize() doesn't add anything extra to 'section', but if it did, you'd have to
 				// get that info here and return null if the serialized data wasn't found.
@@ -34,7 +34,7 @@ namespace Example2.Extension {
 			return null;
 		}
 
-		public Guid? Serialize(IDocumentTabContent content, ISettingsSection section) {
+		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			if (content is AssemblyChildNodeTabContent) {
 				// There's nothing else we need to serialize it, but if there were, use 'section'
 				// to write the info needed by Deserialize() above.
@@ -44,17 +44,14 @@ namespace Example2.Extension {
 		}
 	}
 
-	sealed class AssemblyChildNodeTabContent : IDocumentTabContent {
-		// Initialized by the owner
-		public IDocumentTab DocumentTab { get; set; }
-
+	sealed class AssemblyChildNodeTabContent : DocumentTabContent {
 		// Returns all nodes used to generate the content
-		public IEnumerable<IDocumentTreeNodeData> Nodes {
+		public override IEnumerable<IDocumentTreeNodeData> Nodes {
 			get { yield return node; }
 		}
 
-		public string Title => node.ToString();
-		public object ToolTip => node.ToString();
+		public override string Title => node.ToString();
+		public override object ToolTip => node.ToString();
 
 		readonly AssemblyChildNode node;
 
@@ -62,16 +59,14 @@ namespace Example2.Extension {
 			this.node = node;
 		}
 
-		// Called when the user opens a new tab
-		public IDocumentTabContent Clone() => new AssemblyChildNodeTabContent(node);
-
-		// returns true if Clone() is supported
-		public bool CanClone => true;
+		// Called when the user opens a new tab. Override CanClone and return false if
+		// Clone() isn't supported
+		public override DocumentTabContent Clone() => new AssemblyChildNodeTabContent(node);
 
 		// Gets called to create the UI context. It can be shared by any IFileTabContent in this tab.
 		// Eg. there's only one text editor per tab, shared by all IFileTabContents that need a text
 		// editor.
-		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) {
+		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) {
 			// This custom view object is shared by all nodes of the same type. If we didn't want it
 			// to be shared, we could use 'node' or 'this' as the key.
 			var key = node.GetType();
@@ -82,17 +77,13 @@ namespace Example2.Extension {
 			return locator.Get(key, () => new AssemblyChildNodeUIContext());
 		}
 
-		public void OnShow(IShowContext ctx) {
+		public override void OnShow(IShowContext ctx) {
 			// Get the real type, created by CreateUIContext() above.
 			var uiCtx = (AssemblyChildNodeUIContext)ctx.UIContext;
 
 			// You could initialize some stuff, eg. update its DataContext or whatever
 			uiCtx.Initialize("some input"); // pretend we need to initialize something
 		}
-
-		public void OnHide() { }
-		public void OnSelected() { }
-		public void OnUnselected() { }
 	}
 
 	sealed class AssemblyChildNodeUIContext : IDocumentTabUIContext {

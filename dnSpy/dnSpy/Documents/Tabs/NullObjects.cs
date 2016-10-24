@@ -18,43 +18,17 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using dnSpy.Contracts.Documents.Tabs;
-using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Settings;
 using dnSpy.Properties;
 
 namespace dnSpy.Documents.Tabs {
-	sealed class NullDocumentTabContent : IDocumentTabContent {
-		public IDocumentTab DocumentTab {
-			get { return documentTab; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				if (documentTab == null)
-					documentTab = value;
-				else if (documentTab != value)
-					throw new InvalidOperationException();
-			}
-		}
-		IDocumentTab documentTab;
-
-		public bool CanClone => true;
-		public IDocumentTabContent Clone() => new NullDocumentTabContent();
-		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
+	sealed class NullDocumentTabContent : DocumentTabContent {
+		public override DocumentTabContent Clone() => new NullDocumentTabContent();
+		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get(typeof(NullDocumentTabUIContext), () => new NullDocumentTabUIContext());
-		public string Title => dnSpy_Resources.EmptyTabTitle;
-		public object ToolTip => null;
-
-		public IEnumerable<IDocumentTreeNodeData> Nodes {
-			get { yield break; }
-		}
-
-		public void OnHide() { }
-		public void OnShow(IShowContext ctx) { }
-		public void OnSelected() { }
-		public void OnUnselected() { }
+		public override string Title => dnSpy_Resources.EmptyTabTitle;
 	}
 
 	sealed class NullDocumentTabUIContext : IDocumentTabUIContext {

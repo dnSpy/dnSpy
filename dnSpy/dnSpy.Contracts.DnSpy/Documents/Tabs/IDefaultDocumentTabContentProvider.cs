@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="documentTabService">Owner</param>
 		/// <returns></returns>
-		IDocumentTabContent Create(IDocumentTabService documentTabService);
+		DocumentTabContent Create(IDocumentTabService documentTabService);
 	}
 
 	/// <summary>Metadata</summary>

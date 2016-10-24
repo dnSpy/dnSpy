@@ -29,7 +29,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
-using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
@@ -55,17 +54,17 @@ namespace dnSpy.MainApp {
 			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
-		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
+		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
 
 		static readonly Guid GUID_SerializedContent = new Guid("1C931C0F-D968-4664-B22D-87287A226EEC");
 
-		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
 				return new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
 			return null;
 		}
 
-		public Guid? Serialize(IDocumentTabContent content, ISettingsSection section) {
+		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			if (content is AboutScreenDocumentTabContent)
 				return GUID_SerializedContent;
 			return null;
@@ -96,15 +95,8 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	sealed class AboutScreenDocumentTabContent : IDocumentTabContent {
-		public IDocumentTab DocumentTab { get; set; }
-
-		public IEnumerable<IDocumentTreeNodeData> Nodes {
-			get { yield break; }
-		}
-
-		public string Title => dnSpy_Resources.About_TabTitle;
-		public object ToolTip => null;
+	sealed class AboutScreenDocumentTabContent : DocumentTabContent {
+		public override string Title => dnSpy_Resources.About_TabTitle;
 
 		readonly IAppWindow appWindow;
 		readonly IExtensionService extensionService;
@@ -118,14 +110,10 @@ namespace dnSpy.MainApp {
 			this.aboutContentType = aboutContentType;
 		}
 
-		public bool CanClone => true;
-		public IDocumentTabContent Clone() => new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
-		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
-		public void OnHide() { }
-		public void OnSelected() { }
-		public void OnUnselected() { }
+		public override DocumentTabContent Clone() => new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
+		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
 
-		public void OnShow(IShowContext ctx) {
+		public override void OnShow(IShowContext ctx) {
 			var documentViewer = (IDocumentViewer)ctx.UIContext;
 			var contentFactory = documentViewerContentFactoryProvider.Create();
 			Write(contentFactory.Output);

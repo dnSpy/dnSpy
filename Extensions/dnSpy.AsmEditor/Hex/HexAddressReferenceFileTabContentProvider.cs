@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.hexBoxDocumentTabContentCreator = hexBoxDocumentTabContentCreator;
 		}
 
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, IDocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
 			var addrRef = @ref as AddressReference;
 			if (addrRef == null)
 				addrRef = (@ref as TextReference)?.Reference as AddressReference;

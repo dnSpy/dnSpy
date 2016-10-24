@@ -25,7 +25,7 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportReferenceDocumentTabContentProvider(Order = TabConstants.ORDER_CONTENTPROVIDER_HEXTOKENREF)]
 	sealed class TokenReferenceDocumentTabContentProvider : IReferenceDocumentTabContentProvider {
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, IDocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
 			var tokRef = @ref as TokenReference;
 			if (tokRef == null)
 				tokRef = (@ref as TextReference)?.Reference as TokenReference;

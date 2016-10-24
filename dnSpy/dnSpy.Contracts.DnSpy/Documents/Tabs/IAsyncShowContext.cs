@@ -21,7 +21,7 @@ using System.Threading;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// Passed to <see cref="IAsyncDocumentTabContent.OnShowAsync(IShowContext, IAsyncShowResult)"/>
+	/// Passed to <see cref="AsyncDocumentTabContent.OnShowAsync(IShowContext, IAsyncShowResult)"/>
 	/// </summary>
 	public interface IAsyncShowContext : IShowContext {
 		/// <summary>

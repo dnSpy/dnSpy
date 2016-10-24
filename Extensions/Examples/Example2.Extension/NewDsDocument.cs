@@ -100,7 +100,7 @@ namespace Example2.Extension {
 
 	// Our MyDsDocument tree node class. It implements IDecompileSelf to "decompile" itself. You could
 	// also export a IDecompileNode instance to do it, see TreeNodeDataProvider.cs for an example.
-	// Or you could create a completely new IDocumentTabContent for these nodes, see AssemblyChildNodeTabContent.cs
+	// Or you could create a completely new DocumentTabContent for these nodes, see AssemblyChildNodeTabContent.cs
 	sealed class MyDsDocumentNode : DocumentTreeNodeData, IDsDocumentNode, IDecompileSelf {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("4174A21D-D746-4658-9A44-DB8235EE5186");

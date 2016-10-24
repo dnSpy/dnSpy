@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// Creates <see cref="IDocumentTabContent"/> instances. Use <see cref="ExportReferenceDocumentTabContentProviderAttribute"/>
+	/// Creates <see cref="DocumentTabContent"/> instances. Use <see cref="ExportReferenceDocumentTabContentProviderAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public interface IReferenceDocumentTabContentProvider {
@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// in a new tab. This would then be the older tab's content.</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		DocumentTabReferenceResult Create(IDocumentTabService documentTabService, IDocumentTabContent sourceContent, object @ref);
+		DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref);
 	}
 
 	/// <summary>Metadata</summary>

@@ -21,9 +21,9 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// A <see cref="IDocumentTabContent"/> that uses a <see cref="IDecompiler"/> to generate its content
+	/// A <see cref="DocumentTabContent"/> that uses a <see cref="IDecompiler"/> to generate its content
 	/// </summary>
-	public interface IDecompilerTabContent : IDocumentTabContent {
+	public interface IDecompilerTabContent {
 		/// <summary>
 		/// Gets/sets the language used to generate the content
 		/// </summary>

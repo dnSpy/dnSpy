@@ -23,35 +23,35 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// <see cref="IDocumentTabContent"/> factory. Use <see cref="ExportDocumentTabContentFactoryAttribute"/>
+	/// <see cref="DocumentTabContent"/> factory. Use <see cref="ExportDocumentTabContentFactoryAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public interface IDocumentTabContentFactory {
 		/// <summary>
-		/// Creates a <see cref="IDocumentTabContent"/> instance or returns null
+		/// Creates a <see cref="DocumentTabContent"/> instance or returns null
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		IDocumentTabContent Create(IDocumentTabContentFactoryContext context);
+		DocumentTabContent Create(IDocumentTabContentFactoryContext context);
 
 		/// <summary>
-		/// Serializes a <see cref="IDocumentTabContent"/> instance. Returns a unique guid if it was
+		/// Serializes a <see cref="DocumentTabContent"/> instance. Returns a unique guid if it was
 		/// serialized, else null
 		/// </summary>
 		/// <param name="content">Content</param>
 		/// <param name="section">Section to use</param>
 		/// <returns></returns>
-		Guid? Serialize(IDocumentTabContent content, ISettingsSection section);
+		Guid? Serialize(DocumentTabContent content, ISettingsSection section);
 
 		/// <summary>
-		/// Deserializes a <see cref="IDocumentTabContent"/> instance. Returns null if <paramref name="guid"/>
+		/// Deserializes a <see cref="DocumentTabContent"/> instance. Returns null if <paramref name="guid"/>
 		/// isn't supported.
 		/// </summary>
-		/// <param name="guid">Guid, this is the return value of <see cref="Serialize(IDocumentTabContent, ISettingsSection)"/></param>
+		/// <param name="guid">Guid, this is the return value of <see cref="Serialize(DocumentTabContent, ISettingsSection)"/></param>
 		/// <param name="section">Section with serialized content</param>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context);
+		DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context);
 	}
 
 	/// <summary>Metadata</summary>

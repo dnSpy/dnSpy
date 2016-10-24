@@ -28,7 +28,7 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportDocumentTabContentFactory(Order = TabConstants.ORDER_HEXDOCUMENTTABCONTENTFACTORY)]
 	sealed class HexDocumentTabContentFactory : IDocumentTabContentFactory {
-		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) {
 			if (context.Nodes.Length == 1) {
 				var hexNode = context.Nodes[0] as HexNode;
 				if (hexNode != null)
@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		static readonly Guid GUID_SerializedContent = new Guid("02B2234B-761B-47EC-95A1-F30783CF5990");
 
-		public Guid? Serialize(IDocumentTabContent content, ISettingsSection section) {
+		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			var dc = content as HexDocumentTabContent;
 			if (dc == null)
 				return null;
@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return GUID_SerializedContent;
 		}
 
-		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid != GUID_SerializedContent)
 				return null;
 			var hexNode = context.Nodes.Length != 1 ? null : context.Nodes[0] as HexNode;
@@ -59,15 +59,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 	}
 
-	sealed class HexDocumentTabContent : IDocumentTabContent {
-		public IDocumentTab DocumentTab { get; set; }
-
-		public IEnumerable<IDocumentTreeNodeData> Nodes {
+	sealed class HexDocumentTabContent : DocumentTabContent {
+		public override IEnumerable<IDocumentTreeNodeData> Nodes {
 			get { yield return hexNode; }
 		}
 
-		public string Title => hexNode.ToString();
-		public object ToolTip => hexNode.ToString();
+		public override string Title => hexNode.ToString();
+		public override object ToolTip => hexNode.ToString();
 
 		readonly HexNode hexNode;
 
@@ -75,14 +73,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.hexNode = hexNode;
 		}
 
-		public bool CanClone => true;
-		public IDocumentTabContent Clone() => new HexDocumentTabContent(hexNode);
-		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
+		public override DocumentTabContent Clone() => new HexDocumentTabContent(hexNode);
+		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get(hexNode, () => new HexDocumentTabUIContext(hexNode.VMObject, hexNode.IsVirtualizingCollectionVM));
-		public void OnHide() { }
-		public void OnSelected() { }
-		public void OnShow(IShowContext ctx) { }
-		public void OnUnselected() { }
 	}
 
 	sealed class HexDocumentTabUIContext : IDocumentTabUIContext {

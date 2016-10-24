@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -26,7 +25,6 @@ using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents.Tabs;
-using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Menus;
@@ -42,11 +40,11 @@ namespace dnSpy.AsmEditor.Hex {
 			this.hexBoxDocumentTabContentCreator = hexBoxDocumentTabContentCreator;
 		}
 
-		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
+		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
 
 		static readonly Guid GUID_SerializedContent = new Guid("3125CEDA-98DE-447E-9363-8583A45BDE8C");
 
-		public Guid? Serialize(IDocumentTabContent content, ISettingsSection section) {
+		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			var hb = content as HexBoxDocumentTabContent;
 			if (hb == null)
 				return null;
@@ -55,7 +53,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return GUID_SerializedContent;
 		}
 
-		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid != GUID_SerializedContent)
 				return null;
 
@@ -94,14 +92,8 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	sealed class HexBoxDocumentTabContent : IDocumentTabContent {
-		public IDocumentTab DocumentTab { get; set; }
-
-		public IEnumerable<IDocumentTreeNodeData> Nodes {
-			get { yield break; }
-		}
-
-		public string Title {
+	sealed class HexBoxDocumentTabContent : DocumentTabContent {
+		public override string Title {
 			get {
 				var filename = Filename;
 				try {
@@ -113,7 +105,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		public object ToolTip => Filename;
+		public override object ToolTip => Filename;
 		public string Filename => hexDocument.Name;
 
 		readonly HexDocument hexDocument;
@@ -132,15 +124,10 @@ namespace dnSpy.AsmEditor.Hex {
 			this.hexBoxUndoService = hexBoxUndoService;
 		}
 
-		public bool CanClone => true;
-		public IDocumentTabContent Clone() =>
+		public override DocumentTabContent Clone() =>
 			new HexBoxDocumentTabContent(hexDocument, menuService, hexEditorSettings, appSettings, hexBoxUndoService);
-		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
+		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get(hexDocument, () => new HexBoxDocumentTabUIContext(hexDocument, menuService, hexEditorSettings, appSettings, hexBoxUndoService.Value));
-		public void OnHide() { }
-		public void OnSelected() { }
-		public void OnShow(IShowContext ctx) { }
-		public void OnUnselected() { }
 	}
 
 	sealed class HexBoxDocumentTabUIContext : IDocumentTabUIContext, IDisposable {

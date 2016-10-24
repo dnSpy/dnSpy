@@ -84,7 +84,7 @@ namespace dnSpy.Documents.Tabs {
 			return def;
 		}
 
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, IDocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
 			var textRef = @ref as TextReference;
 			if (textRef != null) {
 				if (textRef.Reference is IAssembly || textRef.Reference is ModuleDef || textRef.Reference is ModuleRef || textRef.Reference is NamespaceReference)
@@ -99,7 +99,7 @@ namespace dnSpy.Documents.Tabs {
 			return CreateMemberRefResult(documentTabService, @ref);
 		}
 
-		DocumentTabReferenceResult CreateLocalRefResult(IDocumentTabContent sourceContent, TextReference textRef) {
+		DocumentTabReferenceResult CreateLocalRefResult(DocumentTabContent sourceContent, TextReference textRef) {
 			Debug.Assert(IsSupportedReference(textRef));
 			if (sourceContent == null)
 				return null;
@@ -154,7 +154,7 @@ namespace dnSpy.Documents.Tabs {
 
 		static bool IsSupportedReference(object @ref) => @ref is TextReference || @ref is IMemberDef || @ref is ParamDef;
 
-		void GoToReference(IDocumentTabContent content, object @ref, bool center) {
+		void GoToReference(DocumentTabContent content, object @ref, bool center) {
 			Debug.Assert(IsSupportedReference(@ref));
 			var uiCtx = content.DocumentTab.UIContext as IDocumentViewer;
 			if (uiCtx == null)

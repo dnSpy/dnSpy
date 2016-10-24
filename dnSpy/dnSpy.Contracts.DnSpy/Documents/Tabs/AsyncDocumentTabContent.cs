@@ -21,28 +21,28 @@ using System.Threading.Tasks;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// <see cref="IDocumentTabContent"/> that creates its output asynchronously in another thread
+	/// <see cref="DocumentTabContent"/> that creates its output asynchronously in another thread
 	/// </summary>
-	public interface IAsyncDocumentTabContent : IDocumentTabContent {
+	public abstract class AsyncDocumentTabContent : DocumentTabContent {
 		/// <summary>
 		/// Returns true if <see cref="CreateContentAsync(IAsyncShowContext)"/>
 		/// should be called
 		/// </summary>
 		/// <param name="ctx">Context</param>
 		/// <returns></returns>
-		bool NeedAsyncWork(IShowContext ctx);
+		public abstract bool NeedAsyncWork(IShowContext ctx);
 
 		/// <summary>
 		/// Called in the worker thread
 		/// </summary>
 		/// <param name="ctx">Context</param>
-		Task CreateContentAsync(IAsyncShowContext ctx);
+		public abstract Task CreateContentAsync(IAsyncShowContext ctx);
 
 		/// <summary>
 		/// Called in the main UI thread after the worker thread has exited or was interrupted
 		/// </summary>
 		/// <param name="ctx">Context</param>
 		/// <param name="result">Result</param>
-		void OnShowAsync(IShowContext ctx, IAsyncShowResult result);
+		public abstract void OnShowAsync(IShowContext ctx, IAsyncShowResult result);
 	}
 }

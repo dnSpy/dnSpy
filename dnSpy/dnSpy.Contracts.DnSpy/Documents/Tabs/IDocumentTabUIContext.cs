@@ -23,7 +23,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// UI content shared by some <see cref="IDocumentTabContent"/> instances, eg. it could contain
+	/// UI content shared by some <see cref="DocumentTabContent"/> instances, eg. it could contain
 	/// the text editor. Only one instance per tab is allocated and stored in a <see cref="WeakReference"/>.
 	/// Implement <see cref="IDisposable"/> to get called when the tab is removed (only called if
 	/// this instance hasn't been GC'd)

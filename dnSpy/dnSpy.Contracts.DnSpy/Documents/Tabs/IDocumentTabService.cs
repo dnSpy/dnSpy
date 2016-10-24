@@ -139,10 +139,10 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		void FollowReference(object @ref, bool newTab = false, bool setFocus = true, Action<ShowTabContentEventArgs> onShown = null);
 
 		/// <summary>
-		/// Creates a new <see cref="IDocumentTabContent"/> instance. Returns null if it couldn't be created
+		/// Creates a new <see cref="DocumentTabContent"/> instance. Returns null if it couldn't be created
 		/// </summary>
 		/// <param name="nodes">Nodes</param>
 		/// <returns></returns>
-		IDocumentTabContent TryCreateContent(IDocumentTreeNodeData[] nodes);
+		DocumentTabContent TryCreateContent(IDocumentTreeNodeData[] nodes);
 	}
 }

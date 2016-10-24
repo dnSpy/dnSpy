@@ -41,7 +41,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public bool IsActiveTab => DocumentTabService.ActiveTab == this;
 
-		public IDocumentTabContent Content {
+		public DocumentTabContent Content {
 			get { return tabHistory.Current; }
 			private set {
 				bool saveCurrent = !(tabHistory.Current is NullDocumentTabContent);
@@ -170,7 +170,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		public void FollowReference(object @ref, IDocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
+		public void FollowReference(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
 			var result = TryCreateContentFromReference(@ref, sourceContent);
 			if (result != null) {
 				Show(result.DocumentTabContent, result.SerializedUI, e => {
@@ -206,7 +206,7 @@ namespace dnSpy.Documents.Tabs {
 				FollowReference(@ref, Content, onShown);
 		}
 
-		DocumentTabReferenceResult TryCreateContentFromReference(object @ref, IDocumentTabContent sourceContent) {
+		DocumentTabReferenceResult TryCreateContentFromReference(object @ref, DocumentTabContent sourceContent) {
 			foreach (var f in referenceDocumentTabContentProviders) {
 				var c = f.Value.Create(DocumentTabService, sourceContent, @ref);
 				if (c != null)
@@ -215,7 +215,7 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		IDocumentTabContent TryCreateDefaultContent() {
+		DocumentTabContent TryCreateDefaultContent() {
 			foreach (var f in defaultDocumentTabContentProviders) {
 				var c = f.Value.Create(DocumentTabService);
 				if (c != null)
@@ -224,7 +224,7 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		public void Show(IDocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
+		public void Show(DocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
 			if (tabContent == null)
 				throw new ArgumentNullException(nameof(tabContent));
 			Debug.Assert(tabContent.DocumentTab == null || tabContent.DocumentTab == this);
@@ -267,7 +267,7 @@ namespace dnSpy.Documents.Tabs {
 			public void Cancel() => asyncWorkerContext.Cancel();
 		}
 
-		void ShowInternal(IDocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, bool isRefresh) {
+		void ShowInternal(DocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, bool isRefresh) {
 			Debug.Assert(asyncWorkerContext == null);
 			UIContext = tabContent.CreateUIContext(documentTabUIContextLocator);
 			var cachedUIContext = UIContext;
@@ -282,7 +282,7 @@ namespace dnSpy.Documents.Tabs {
 			var showCtx = new ShowContext(cachedUIContext, isRefresh);
 			tabContent.OnShow(showCtx);
 			bool asyncShow = false;
-			var asyncTabContent = tabContent as IAsyncDocumentTabContent;
+			var asyncTabContent = tabContent as AsyncDocumentTabContent;
 			if (asyncTabContent != null) {
 				if (asyncTabContent.NeedAsyncWork(showCtx)) {
 					asyncShow = true;
@@ -450,7 +450,7 @@ namespace dnSpy.Documents.Tabs {
 		public void SerializeUI(ISettingsSection tabContentUI) =>
 			tabContentUI.Attribute(ZOOM_ATTR, elementZoomer.ZoomValue);
 
-		public void OnNodesRemoved(HashSet<IDsDocumentNode> removedDocuments, Func<IDocumentTabContent> createEmptyContent) {
+		public void OnNodesRemoved(HashSet<IDsDocumentNode> removedDocuments, Func<DocumentTabContent> createEmptyContent) {
 			tabHistory.RemoveFromBackwardList(a => CheckRemove(a, removedDocuments));
 			tabHistory.RemoveFromForwardList(a => CheckRemove(a, removedDocuments));
 			if (CheckRemove(tabHistory.Current, removedDocuments)) {
@@ -459,7 +459,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		bool CheckRemove(IDocumentTabContent content, HashSet<IDsDocumentNode> removedDocuments) =>
+		bool CheckRemove(DocumentTabContent content, HashSet<IDsDocumentNode> removedDocuments) =>
 			content.Nodes.Any(a => removedDocuments.Contains(a.GetDocumentNode()));
 	}
 }

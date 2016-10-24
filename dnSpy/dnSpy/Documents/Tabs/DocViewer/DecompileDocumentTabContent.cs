@@ -57,7 +57,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			DocumentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 		}
 
-		public IDocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
+		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
 			new DecompileDocumentTabContent(this, context.Nodes, DecompilerService.Decompiler);
 
 		public DecompileDocumentTabContent Create(IDocumentTreeNodeData[] nodes) =>
@@ -65,7 +65,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
 
-		public Guid? Serialize(IDocumentTabContent content, ISettingsSection section) {
+		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			var dc = content as DecompileDocumentTabContent;
 			if (dc == null)
 				return null;
@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return GUID_SerializedContent;
 		}
 
-		public IDocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid != GUID_SerializedContent)
 				return null;
 
@@ -84,7 +84,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 	}
 
-	sealed class DecompileDocumentTabContent : IAsyncDocumentTabContent, IDecompilerTabContent {
+	sealed class DecompileDocumentTabContent : AsyncDocumentTabContent, IDecompilerTabContent {
 		readonly DecompileDocumentTabContentFactory decompileDocumentTabContentFactory;
 		readonly IDocumentTreeNodeData[] nodes;
 
@@ -96,13 +96,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.Decompiler = decompiler;
 		}
 
-		public bool CanClone => true;
-		public IDocumentTabContent Clone() =>
+		public override DocumentTabContent Clone() =>
 			new DecompileDocumentTabContent(decompileDocumentTabContentFactory, nodes, Decompiler);
-		public IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
+		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get<IDocumentViewer>();
 
-		public string Title {
+		public override string Title {
 			get {
 				if (nodes.Length == 0)
 					return dnSpy_Resources.EmptyTabTitle;
@@ -118,7 +117,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public object ToolTip {
+		public override object ToolTip {
 			get {
 				if (nodes.Length == 0)
 					return null;
@@ -126,20 +125,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public IDocumentTab DocumentTab {
-			get { return documentTab; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				if (documentTab == null)
-					documentTab = value;
-				else if (documentTab != value)
-					throw new InvalidOperationException();
-			}
-		}
-		IDocumentTab documentTab;
-
-		public IEnumerable<IDocumentTreeNodeData> Nodes => nodes;
+		public override IEnumerable<IDocumentTreeNodeData> Nodes => nodes;
 
 		internal bool WasNewContent { get; private set; }
 
@@ -182,11 +168,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				decompileDocumentTabContentFactory.DecompilerService.Decompiler = Decompiler;
 		}
 
-		public void OnSelected() => UpdateLanguage();
-		public void OnUnselected() { }
-		public void OnHide() { }
+		public override void OnSelected() => UpdateLanguage();
 
-		public void OnShow(IShowContext ctx) {
+		public override void OnShow(IShowContext ctx) {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext(ctx);
 			IContentType contentType;
@@ -195,7 +179,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			ctx.Tag = decompileContext;
 		}
 
-		public Task CreateContentAsync(IAsyncShowContext ctx) {
+		public override Task CreateContentAsync(IAsyncShowContext ctx) {
 			var decompileContext = (DecompileContext)ctx.Tag;
 			decompileContext.AsyncShowContext = ctx;
 			decompileContext.DecompileNodeContext.DecompilationContext.CancellationToken = ctx.CancellationToken;
@@ -203,7 +187,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return Task.CompletedTask;
 		}
 
-		public void OnShowAsync(IShowContext ctx, IAsyncShowResult result) {
+		public override void OnShowAsync(IShowContext ctx, IAsyncShowResult result) {
 			var decompileContext = (DecompileContext)ctx.Tag;
 			var documentViewer = (IDocumentViewer)ctx.UIContext;
 
@@ -245,7 +229,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				WasNewContent = false;
 		}
 
-		public bool NeedAsyncWork(IShowContext ctx) {
+		public override bool NeedAsyncWork(IShowContext ctx) {
 			var decompileContext = (DecompileContext)ctx.Tag;
 			if (decompileContext.CachedContent != null)
 				return false;
