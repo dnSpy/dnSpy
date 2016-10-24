@@ -71,10 +71,10 @@ namespace dnSpy.Documents.TreeView {
 			output.WriteModule(Document.ModuleDef.Name);
 
 			output.WriteLine();
-			output.Write(BoxedTextColor.EnumField, TargetFrameworkInfo.Create(Document.ModuleDef).ToString());
+			output.Write(BoxedTextColor.Text, TargetFrameworkInfo.Create(Document.ModuleDef).ToString());
 
 			output.WriteLine();
-			output.Write(BoxedTextColor.EnumField, TargetFrameworkUtils.GetArchString(Document.ModuleDef));
+			output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.ModuleDef));
 
 			output.WriteLine();
 			output.WriteFilename(Document.Filename);

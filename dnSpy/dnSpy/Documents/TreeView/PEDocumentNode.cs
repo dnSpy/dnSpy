@@ -50,7 +50,7 @@ namespace dnSpy.Documents.TreeView {
 			new NodePrinter().Write(output, decompiler, Document);
 
 		protected override void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) {
-			output.Write(BoxedTextColor.EnumField, TargetFrameworkUtils.GetArchString(Document.PEImage.ImageNTHeaders.FileHeader.Machine));
+			output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.PEImage.ImageNTHeaders.FileHeader.Machine));
 
 			output.WriteLine();
 			output.WriteFilename(Document.Filename);
