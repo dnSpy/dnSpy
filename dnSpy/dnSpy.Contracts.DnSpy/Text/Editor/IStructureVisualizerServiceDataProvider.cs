@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Provides data to a <see cref="IStructureVisualizerService"/>
 	/// </summary>
-	public interface IStructureVisualizerServiceDataProvider {
+	interface IStructureVisualizerServiceDataProvider {
 		/// <summary>
 		/// Gets data for a line
 		/// </summary>

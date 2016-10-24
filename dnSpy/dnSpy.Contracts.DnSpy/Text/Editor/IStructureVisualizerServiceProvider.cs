@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Creates <see cref="IStructureVisualizerService"/>s
 	/// </summary>
-	public interface IStructureVisualizerServiceProvider {
+	interface IStructureVisualizerServiceProvider {
 		/// <summary>
 		/// Returns the cached <see cref="IStructureVisualizerService"/> instance
 		/// </summary>

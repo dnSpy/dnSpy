@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Structure visualizer service
 	/// </summary>
-	public interface IStructureVisualizerService {
+	interface IStructureVisualizerService {
 		/// <summary>
 		/// Sets the new data provider
 		/// </summary>

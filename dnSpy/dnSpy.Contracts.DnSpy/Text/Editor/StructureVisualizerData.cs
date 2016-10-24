@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Data consumed by <see cref="IStructureVisualizerService"/>
 	/// </summary>
-	public struct StructureVisualizerData {
+	struct StructureVisualizerData {
 		/// <summary>
 		/// Span of start block
 		/// </summary>
