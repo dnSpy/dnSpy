@@ -29,8 +29,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed partial class OpenFromGACDlg : WindowBase {
 		public OpenFromGACDlg() {
 			InitializeComponent();
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => searchBox.Focus()), Key.E, ModifierKeys.Control));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => searchBox.Focus()), Key.F, ModifierKeys.Control));
+			var cmd = new RelayCommand(a => {
+				searchBox.Focus();
+				searchBox.SelectAll();
+			});
+			InputBindings.Add(new KeyBinding(cmd, Key.E, ModifierKeys.Control));
+			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
 		}
 
 		public IEnumerable<GACFileVM> SelectedItems {

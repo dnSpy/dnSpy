@@ -32,8 +32,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			InitializeComponent();
 			this.listView.SelectionChanged += ListView_SelectionChanged;
 			this.listView.KeyDown += ListView_KeyDown;
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => searchBox.Focus()), Key.E, ModifierKeys.Control));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => searchBox.Focus()), Key.F, ModifierKeys.Control));
+			var cmd = new RelayCommand(a => {
+				searchBox.Focus();
+				searchBox.SelectAll();
+			});
+			InputBindings.Add(new KeyBinding(cmd, Key.E, ModifierKeys.Control));
+			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
 		}
 
 		void ListView_KeyDown(object sender, KeyEventArgs e) {
