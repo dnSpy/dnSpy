@@ -506,6 +506,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			decompileCodeState?.CancelAndDispose();
 			compileCodeState?.CancelAndDispose();
 			languageCompiler.Dispose();
+
+			// Needed unless we want the memory usage to be 1GB+ after some number of edits.
+			// The GC doesn't kick in until it's too late.
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 	}
 }
