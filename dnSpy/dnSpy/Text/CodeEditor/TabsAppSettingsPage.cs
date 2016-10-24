@@ -69,7 +69,5 @@ namespace dnSpy.Text.CodeEditor {
 				options.IndentSize = IndentSizeVM.Value;
 			options.ConvertTabsToSpaces = ConvertTabsToSpaces;
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 }

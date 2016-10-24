@@ -125,7 +125,5 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 				newStyle &= ~WordWrapStyles.VisibleGlyphs;
 			options.WordWrapStyle = newStyle;
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 }

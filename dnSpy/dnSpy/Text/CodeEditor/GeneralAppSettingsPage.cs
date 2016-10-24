@@ -127,7 +127,5 @@ namespace dnSpy.Text.CodeEditor {
 				newStyle &= ~WordWrapStyles.VisibleGlyphs;
 			options.WordWrapStyle = newStyle;
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 }

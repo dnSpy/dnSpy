@@ -69,22 +69,25 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		}
 
 		/// <summary>
-		/// Returns the object (or the <see cref="Type"/> of the object) with a <see cref="DataTemplate"/>
-		/// that is shown in the UI. This <see cref="DataTemplate"/> is scanned for strings the
-		/// user can search for.
-		/// If this method doesn't return null, the value should equal <see cref="UIObject"/> or
-		/// the <see cref="Type"/> of the <see cref="UIObject"/> instance.
-		/// See also <see cref="GetSearchableStrings"/>.
+		/// Returns the UI object that contains strings. This can be a <see cref="UIElement"/>,
+		/// an object with a <see cref="DataTemplate"/> or the <see cref="Type"/> of an object
+		/// with a <see cref="DataTemplate"/>. The caller will find all strings in it.
+		/// 
+		/// By default, it returns <see cref="UIObject"/>. Return null if <see cref="UIObject"/>
+		/// takes too long to create and override <see cref="GetSearchStrings"/> instead.
+		/// 
+		/// See also <see cref="GetSearchStrings"/>.
 		/// </summary>
 		/// <returns></returns>
-		public virtual object GetDataTemplateObject() => null;
+		public virtual object GetStringsObject() => UIObject;
 
 		/// <summary>
 		/// Returns an array of strings shown in the UI that can be searched. This method
-		/// isn't needed if <see cref="GetDataTemplateObject"/> is overridden.
+		/// isn't needed if <see cref="GetStringsObject"/> returns a non-null value (default
+		/// behavior).
 		/// </summary>
 		/// <returns></returns>
-		public virtual string[] GetSearchableStrings() => null;
+		public virtual string[] GetSearchStrings() => null;
 
 		/// <summary>
 		/// Constructor

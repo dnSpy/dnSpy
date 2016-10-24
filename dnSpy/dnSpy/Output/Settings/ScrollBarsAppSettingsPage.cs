@@ -69,7 +69,5 @@ namespace dnSpy.Output.Settings {
 			options.HorizontalScrollBar = HorizontalScrollBar;
 			options.VerticalScrollBar = VerticalScrollBar;
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 }

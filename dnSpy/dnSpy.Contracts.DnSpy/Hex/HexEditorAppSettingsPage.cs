@@ -59,7 +59,6 @@ namespace dnSpy.Contracts.Hex {
 		}
 
 		public override void OnApply() => displayAppSettingsVM.Settings.CopyTo(hexEditorSettingsImpl);
-		public override object GetDataTemplateObject() => UIObject;
 	}
 
 	sealed class HexEditorAppSettingsVM : ViewModelBase {

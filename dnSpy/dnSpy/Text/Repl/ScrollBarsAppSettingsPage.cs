@@ -71,7 +71,5 @@ namespace dnSpy.Text.Repl {
 			options.HorizontalScrollBar = HorizontalScrollBar;
 			options.VerticalScrollBar = VerticalScrollBar;
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 }

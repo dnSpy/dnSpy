@@ -326,8 +326,6 @@ namespace dnSpy.BackgroundImage.Dialog {
 
 		public override void OnClosed() =>
 			backgroundImageSettingsService.LastSelectedId = currentItem.Id;
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 
 	sealed class Settings {

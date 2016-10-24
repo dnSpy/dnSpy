@@ -131,8 +131,6 @@ namespace dnSpy.MainApp.Settings {
 			textEditorSettings.FontFamily = FontFamily;
 			textEditorSettings.FontSize = FontSize;
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 
 	sealed class FontFamilyVM : ViewModelBase {

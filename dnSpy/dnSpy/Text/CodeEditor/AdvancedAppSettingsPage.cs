@@ -201,7 +201,5 @@ namespace dnSpy.Text.CodeEditor {
 			options.EnableMouseWheelZoom = MouseWheelZoom;
 			options.ZoomControl = ZoomControl;
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 }

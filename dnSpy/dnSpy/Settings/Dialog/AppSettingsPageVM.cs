@@ -110,7 +110,7 @@ namespace dnSpy.Settings.Dialog {
 				var list = new List<string>();
 				foreach (var s in GetDataTemplateStrings(fwElem))
 					list.Add(UIHelpers.RemoveAccessKeys(s));
-				foreach (var s in Page.GetSearchableStrings() ?? Array.Empty<string>())
+				foreach (var s in Page.GetSearchStrings() ?? Array.Empty<string>())
 					list.Add(UIHelpers.RemoveAccessKeys(s));
 				searchableStrings = list.ToArray();
 			}
@@ -119,9 +119,14 @@ namespace dnSpy.Settings.Dialog {
 		string[] searchableStrings;
 
 		IEnumerable<string> GetDataTemplateStrings(FrameworkElement fwElem) {
-			var obj = Page.GetDataTemplateObject();
+			var obj = Page.GetStringsObject();
 			if (obj == null)
 				return Array.Empty<string>();
+
+			var uiElem = obj as UIElement;
+			if (uiElem != null)
+				return GetStrings(uiElem);
+
 			var key = new DataTemplateKey(obj as Type ?? obj.GetType());
 			var dt = fwElem.TryFindResource(key) as DataTemplate;
 			if (dt == null)

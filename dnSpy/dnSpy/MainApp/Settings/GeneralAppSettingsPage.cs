@@ -204,8 +204,6 @@ namespace dnSpy.MainApp.Settings {
 
 			UseNewRendererVM.Save();
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 
 	sealed class ThemeVM {

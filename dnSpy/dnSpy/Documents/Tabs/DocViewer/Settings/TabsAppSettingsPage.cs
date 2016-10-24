@@ -67,7 +67,5 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 				options.IndentSize = IndentSizeVM.Value;
 			options.ConvertTabsToSpaces = ConvertTabsToSpaces;
 		}
-
-		public override object GetDataTemplateObject() => UIObject;
 	}
 }
