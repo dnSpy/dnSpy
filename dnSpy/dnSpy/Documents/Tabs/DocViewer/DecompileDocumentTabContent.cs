@@ -147,7 +147,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public IDocumentViewerContentFactory DocumentViewerContentFactory;
 			public DecompileNodeContext DecompileNodeContext;
 			public DocumentViewerContent CachedContent;
-			public CancellationTokenSource CancellationTokenSource;
+			public IAsyncShowContext AsyncShowContext;
 			public object SavedRefPos;
 		}
 
@@ -192,19 +192,19 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			IContentType contentType;
 			decompileContext.CachedContent = decompileDocumentTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Decompiler, nodes, out contentType);
 			decompileContext.DecompileNodeContext.ContentType = contentType;
-			ctx.UserData = decompileContext;
+			ctx.Tag = decompileContext;
 		}
 
-		public Task CreateContentAsync(IShowContext ctx, CancellationTokenSource source) {
-			var decompileContext = (DecompileContext)ctx.UserData;
-			decompileContext.CancellationTokenSource = source;
-			decompileContext.DecompileNodeContext.DecompilationContext.CancellationToken = source.Token;
+		public Task CreateContentAsync(IAsyncShowContext ctx) {
+			var decompileContext = (DecompileContext)ctx.Tag;
+			decompileContext.AsyncShowContext = ctx;
+			decompileContext.DecompileNodeContext.DecompilationContext.CancellationToken = ctx.CancellationToken;
 			decompileDocumentTabContentFactory.DocumentTreeNodeDecompiler.Decompile(decompileContext.DecompileNodeContext, nodes);
 			return Task.CompletedTask;
 		}
 
 		public void OnShowAsync(IShowContext ctx, IAsyncShowResult result) {
-			var decompileContext = (DecompileContext)ctx.UserData;
+			var decompileContext = (DecompileContext)ctx.Tag;
 			var documentViewer = (IDocumentViewer)ctx.UIContext;
 
 			var contentType = decompileContext.DecompileNodeContext.ContentType;
@@ -246,12 +246,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public bool NeedAsyncWork(IShowContext ctx) {
-			var decompileContext = (DecompileContext)ctx.UserData;
+			var decompileContext = (DecompileContext)ctx.Tag;
 			if (decompileContext.CachedContent != null)
 				return false;
 
 			var uiCtx = (IDocumentViewer)ctx.UIContext;
-			uiCtx.ShowCancelButton(dnSpy_Resources.Decompiling, () => decompileContext.CancellationTokenSource.Cancel());
+			uiCtx.ShowCancelButton(dnSpy_Resources.Decompiling, () => decompileContext.AsyncShowContext.Cancel());
 			return true;
 		}
 	}

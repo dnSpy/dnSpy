@@ -241,12 +241,30 @@ namespace dnSpy.Documents.Tabs {
 		sealed class ShowContext : IShowContext {
 			public IDocumentTabUIContext UIContext { get; }
 			public bool IsRefresh { get; }
-			public object UserData { get; set; }
+			public object Tag { get; set; }
 			public Action<ShowTabContentEventArgs> OnShown { get; set; }
 			public ShowContext(IDocumentTabUIContext uiCtx, bool isRefresh) {
 				this.UIContext = uiCtx;
 				this.IsRefresh = isRefresh;
 			}
+		}
+
+		sealed class AsyncShowContext : IAsyncShowContext {
+			public IDocumentTabUIContext UIContext => showContext.UIContext;
+			public bool IsRefresh => showContext.IsRefresh;
+			public object Tag { get { return showContext.Tag; } set { showContext.Tag = value; } }
+			public Action<ShowTabContentEventArgs> OnShown { get { return showContext.OnShown; } set { showContext.OnShown = value; } }
+			public CancellationToken CancellationToken => asyncWorkerContext.CancellationToken;
+
+			readonly IShowContext showContext;
+			readonly AsyncWorkerContext asyncWorkerContext;
+
+			public AsyncShowContext(IShowContext showContext, AsyncWorkerContext asyncWorkerContext) {
+				this.showContext = showContext;
+				this.asyncWorkerContext = asyncWorkerContext;
+			}
+
+			public void Cancel() => asyncWorkerContext.Cancel();
 		}
 
 		void ShowInternal(IDocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, bool isRefresh) {
@@ -270,7 +288,8 @@ namespace dnSpy.Documents.Tabs {
 					asyncShow = true;
 					var ctx = new AsyncWorkerContext();
 					asyncWorkerContext = ctx;
-					Task.Run(() => asyncTabContent.CreateContentAsync(showCtx, ctx.CancellationTokenSource), ctx.CancellationToken)
+					var asyncShowCtx = new AsyncShowContext(showCtx, ctx);
+					Task.Run(() => asyncTabContent.CreateContentAsync(asyncShowCtx), ctx.CancellationToken)
 					.ContinueWith(t => {
 						bool canShowAsyncOutput = ctx == asyncWorkerContext &&
 												cachedUIContext.DocumentTab == this &&
@@ -294,13 +313,22 @@ namespace dnSpy.Documents.Tabs {
 		sealed class AsyncWorkerContext : IDisposable {
 			public readonly CancellationTokenSource CancellationTokenSource;
 			public readonly CancellationToken CancellationToken;
+			bool disposed;
 
 			public AsyncWorkerContext() {
 				this.CancellationTokenSource = new CancellationTokenSource();
 				this.CancellationToken = CancellationTokenSource.Token;
 			}
 
-			public void Dispose() => this.CancellationTokenSource.Dispose();
+			public void Cancel() {
+				if (!disposed)
+					CancellationTokenSource.Cancel();
+			}
+
+			public void Dispose() {
+				disposed = true;
+				CancellationTokenSource.Dispose();
+			}
 		}
 		AsyncWorkerContext asyncWorkerContext;
 
@@ -324,7 +352,7 @@ namespace dnSpy.Documents.Tabs {
 		void CancelAsyncWorker() {
 			if (asyncWorkerContext == null)
 				return;
-			asyncWorkerContext.CancellationTokenSource.Cancel();
+			asyncWorkerContext.Cancel();
 			asyncWorkerContext = null;
 		}
 

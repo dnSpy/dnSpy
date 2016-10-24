@@ -42,6 +42,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Can be initialized by the <see cref="IDocumentTabContent"/> instance
 		/// </summary>
-		object UserData { get; set; }
+		object Tag { get; set; }
 	}
 }

@@ -17,32 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// <see cref="IDocumentTabContent"/> that creates its output asynchronously in another thread
+	/// Passed to <see cref="IAsyncDocumentTabContent.OnShowAsync(IShowContext, IAsyncShowResult)"/>
 	/// </summary>
-	public interface IAsyncDocumentTabContent : IDocumentTabContent {
+	public interface IAsyncShowContext : IShowContext {
 		/// <summary>
-		/// Returns true if <see cref="CreateContentAsync(IAsyncShowContext)"/>
-		/// should be called
+		/// Gets the cancellation token
 		/// </summary>
-		/// <param name="ctx">Context</param>
-		/// <returns></returns>
-		bool NeedAsyncWork(IShowContext ctx);
+		CancellationToken CancellationToken { get; }
 
 		/// <summary>
-		/// Called in the worker thread
+		/// Cancels the operation
 		/// </summary>
-		/// <param name="ctx">Context</param>
-		Task CreateContentAsync(IAsyncShowContext ctx);
-
-		/// <summary>
-		/// Called in the main UI thread after the worker thread has exited or was interrupted
-		/// </summary>
-		/// <param name="ctx">Context</param>
-		/// <param name="result">Result</param>
-		void OnShowAsync(IShowContext ctx, IAsyncShowResult result);
+		void Cancel();
 	}
 }

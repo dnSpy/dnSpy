@@ -157,6 +157,7 @@
     <Compile Include="Documents\Tabs\DocViewer\ToolTips\IDocumentViewerToolTipProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\ToolTips\IDocumentViewerToolTipProviderContext.cs" />
     <Compile Include="Documents\Tabs\IAsyncDocumentTabContent.cs" />
+    <Compile Include="Documents\Tabs\IAsyncShowContext.cs" />
     <Compile Include="Documents\Tabs\IAsyncShowResult.cs" />
     <Compile Include="Documents\Tabs\IDecompilerTabContent.cs" />
     <Compile Include="Documents\Tabs\IDefaultDocumentTabContentProvider.cs" />
