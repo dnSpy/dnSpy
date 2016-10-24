@@ -78,7 +78,6 @@ namespace dnSpy.Tabs {
 		}
 
 		void UninstallScale() {
-			currentZoomValue = 1;
 			zoomable = null;
 			uiObjectProvider = null;
 			if (zoomElement == null)
