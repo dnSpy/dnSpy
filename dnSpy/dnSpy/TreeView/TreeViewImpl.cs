@@ -277,6 +277,8 @@ namespace dnSpy.TreeView {
 		public void CollapseUnusedNodes() {
 			var usedNodes = new HashSet<ITreeNodeData>(TopLevelSelection);
 			CollapseUnusedNodes(Root.DataChildren, usedNodes);
+			// Make sure the selected node is visible
+			Focus();
 		}
 
 		bool CollapseUnusedNodes(IEnumerable<ITreeNodeData> nodes, HashSet<ITreeNodeData> usedNodes) {
