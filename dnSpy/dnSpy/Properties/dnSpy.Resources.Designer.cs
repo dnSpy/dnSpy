@@ -1522,7 +1522,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Themes.
+        ///   Looks up a localized string similar to _Theme.
         /// </summary>
         public static string Menu_Themes {
             get {
