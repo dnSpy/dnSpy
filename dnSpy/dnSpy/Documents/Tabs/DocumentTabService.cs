@@ -350,10 +350,10 @@ namespace dnSpy.Documents.Tabs {
 			return content ?? new NullDocumentTabContent();
 		}
 
-		internal void Add(ITabGroup group, DocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
+		internal void Add(ITabGroup group, DocumentTabContent tabContent, object uiState, Action<ShowTabContentEventArgs> onShown) {
 			Debug.Assert(TabGroupService.TabGroups.Contains(group));
 			var tab = OpenEmptyTab(group);
-			tab.Show(tabContent, serializedUI, onShown);
+			tab.Show(tabContent, uiState, onShown);
 		}
 
 		public IDocumentTab OpenEmptyTab() => OpenEmptyTab(SafeActiveTabGroup);

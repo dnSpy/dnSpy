@@ -52,7 +52,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public void SetFocus() => RealInstance?.SetFocus();
 		}
 
-		public IDocumentTabUIContext Create<T>() where T : class, IDocumentTabUIContext {
+		public DocumentTabUIContext Create<T>() where T : class {
 			if (typeof(T) == typeof(IDocumentViewer)) {
 				var helper = new DocumentViewerHelper();
 				var uiCtxCtrl = new DocumentViewerControl(textBufferFactoryService, dsTextEditorFactoryService, helper);

@@ -33,9 +33,9 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		DocumentTabContent Content { get; }
 
 		/// <summary>
-		/// Current <see cref="IDocumentTabUIContext"/>
+		/// Current <see cref="DocumentTabUIContext"/>
 		/// </summary>
-		IDocumentTabUIContext UIContext { get; }
+		DocumentTabUIContext UIContext { get; }
 
 		/// <summary>
 		/// Gets the <see cref="IDocumentTabService"/> owner
@@ -106,9 +106,9 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// Shows the tab content
 		/// </summary>
 		/// <param name="tabContent">Tab content</param>
-		/// <param name="serializedUI">Serialized UI data or null</param>
+		/// <param name="uiState">UI state (passed to <see cref="DocumentTabUIContext.RestoreUIState(object)"/>) or null</param>
 		/// <param name="onShown">Called after the output has been shown on the screen</param>
-		void Show(DocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown);
+		void Show(DocumentTabContent tabContent, object uiState, Action<ShowTabContentEventArgs> onShown);
 
 		/// <summary>
 		/// Sets focus to the focused element if this is the active tab

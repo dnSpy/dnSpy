@@ -30,9 +30,9 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		public DocumentTabContent DocumentTabContent { get; }
 
 		/// <summary>
-		/// Serialized UI data for <see cref="DocumentTabContent"/> or null if none
+		/// UI state (passed to <see cref="DocumentTabUIContext.RestoreUIState(object)"/>) or null if none
 		/// </summary>
-		public object SerializedUI { get; }
+		public object UIState { get; }
 
 		/// <summary>
 		/// Called when the output has been shown, can be null
@@ -43,13 +43,13 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// Constructor
 		/// </summary>
 		/// <param name="documentTabContent">New content</param>
-		/// <param name="serializedUI">Serialized UI data or null</param>
+		/// <param name="uiState">UI state (passed to <see cref="DocumentTabUIContext.RestoreUIState(object)"/>) or null</param>
 		/// <param name="onShownHandler">Handler or null</param>
-		public DocumentTabReferenceResult(DocumentTabContent documentTabContent, object serializedUI = null, Action<ShowTabContentEventArgs> onShownHandler = null) {
+		public DocumentTabReferenceResult(DocumentTabContent documentTabContent, object uiState = null, Action<ShowTabContentEventArgs> onShownHandler = null) {
 			if (documentTabContent == null)
 				throw new ArgumentNullException(nameof(documentTabContent));
 			this.DocumentTabContent = documentTabContent;
-			this.SerializedUI = serializedUI;
+			this.UIState = uiState;
 			this.OnShownHandler = onShownHandler;
 		}
 	}

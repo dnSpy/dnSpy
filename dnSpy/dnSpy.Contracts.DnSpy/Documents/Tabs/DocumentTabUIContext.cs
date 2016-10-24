@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Settings;
 
@@ -28,49 +29,75 @@ namespace dnSpy.Contracts.Documents.Tabs {
 	/// Implement <see cref="IDisposable"/> to get called when the tab is removed (only called if
 	/// this instance hasn't been GC'd)
 	/// </summary>
-	public interface IDocumentTabUIContext : IUIObjectProvider {
+	public abstract class DocumentTabUIContext : IUIObjectProvider {
+		/// <summary>
+		/// Gets the UI object
+		/// </summary>
+		public abstract object UIObject { get; }
+
+		/// <summary>
+		/// Gets the element that gets focused or null
+		/// </summary>
+		public abstract IInputElement FocusedElement { get; }
+
+		/// <summary>
+		/// Gets the element that gets zoomed or null
+		/// </summary>
+		public abstract FrameworkElement ZoomElement { get; }
+
 		/// <summary>
 		/// Saves UI state, eg. line number, caret position, etc
 		/// </summary>
 		/// <returns></returns>
-		object Serialize();
+		public virtual object CreateUIState() => null;
 
 		/// <summary>
-		/// Restores UI state. <paramref name="obj"/> was created by <see cref="Serialize()"/> but
+		/// Restores UI state. <paramref name="obj"/> was created by <see cref="CreateUIState()"/> but
 		/// could also be null or an invalid value. The callee is responsible for verifying
 		/// <paramref name="obj"/>.
 		/// </summary>
 		/// <param name="obj">Serialized UI state</param>
-		void Deserialize(object obj);
+		public virtual void RestoreUIState(object obj) { }
 
 		/// <summary>
-		/// Creates a serialized UI object, same type as returned by <see cref="Serialize()"/>.
+		/// Creates UI state from serialized data
 		/// </summary>
 		/// <param name="section">Serialized data</param>
 		/// <returns></returns>
-		object CreateSerialized(ISettingsSection section);
+		public virtual object DeserializeUIState(ISettingsSection section) => null;
 
 		/// <summary>
-		/// Saves serialized data to <paramref name="section"/>. <paramref name="obj"/> was created
-		/// by <see cref="Serialize()"/> but should be verified by the callee.
+		/// Saves UI state to <paramref name="section"/>. <paramref name="obj"/> was created
+		/// by <see cref="CreateUIState()"/> but should be verified by the callee.
 		/// </summary>
 		/// <param name="section">Destination</param>
-		/// <param name="obj">Serialized data, created by <see cref="Serialize()"/></param>
-		void SaveSerialized(ISettingsSection section, object obj);
+		/// <param name="obj">UI state, created by <see cref="CreateUIState()"/></param>
+		public virtual void SerializeUIState(ISettingsSection section, object obj) { }
 
 		/// <summary>
 		/// Called when this instance will be shown in a tab
 		/// </summary>
-		void OnShow();
+		public virtual void OnShow() { }
 
 		/// <summary>
-		/// Called when another <see cref="IDocumentTabUIContext"/> instance will be shown
+		/// Called when another <see cref="DocumentTabUIContext"/> instance will be shown
 		/// </summary>
-		void OnHide();
+		public virtual void OnHide() { }
 
 		/// <summary>
-		/// Initialized by the <see cref="IDocumentTabService"/> owner
+		/// Gets the owner tab
 		/// </summary>
-		IDocumentTab DocumentTab { get; set; }
+		public IDocumentTab DocumentTab {
+			get { return documentTab; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException(nameof(value));
+				if (documentTab == null)
+					documentTab = value;
+				else if (documentTab != value)
+					throw new InvalidOperationException();
+			}
+		}
+		IDocumentTab documentTab;
 	}
 }

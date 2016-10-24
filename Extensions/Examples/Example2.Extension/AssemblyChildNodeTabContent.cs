@@ -66,7 +66,7 @@ namespace Example2.Extension {
 		// Gets called to create the UI context. It can be shared by any IFileTabContent in this tab.
 		// Eg. there's only one text editor per tab, shared by all IFileTabContents that need a text
 		// editor.
-		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) {
+		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) {
 			// This custom view object is shared by all nodes of the same type. If we didn't want it
 			// to be shared, we could use 'node' or 'this' as the key.
 			var key = node.GetType();
@@ -86,24 +86,18 @@ namespace Example2.Extension {
 		}
 	}
 
-	sealed class AssemblyChildNodeUIContext : IDocumentTabUIContext {
-		// Initialized by the owner
-		public IDocumentTab DocumentTab { get; set; }
-
+	sealed class AssemblyChildNodeUIContext : DocumentTabUIContext {
 		// The element inside UIObject that gets the focus when the tool window should be focused.
 		// If it's not as easy as calling FocusedElement.Focus() to focus it, you must implement
 		// dnSpy.Contracts.Controls.IFocusable.
-		public IInputElement FocusedElement => content;
+		public override IInputElement FocusedElement => content;
 
 		// The element in UIObject that gets the scale transform. null can be returned to disable scaling.
-		public FrameworkElement ZoomElement => content;
+		public override FrameworkElement ZoomElement => content;
 
 		// The UI object shown in the tab. Should be a WPF control (eg. UserControl) or a .NET object
 		// with a DataTemplate.
-		public object UIObject => content;
-
-		public void OnHide() { }
-		public void OnShow() { }
+		public override object UIObject => content;
 
 		readonly ContentPresenter content;
 		readonly AssemblyChildNodeVM vm;
@@ -118,29 +112,31 @@ namespace Example2.Extension {
 			};
 		}
 
-		sealed class MySerializedData {
+		sealed class MyUIState {
 			public string Value1;
 			public bool Value2;
 
-			public MySerializedData(string value1, bool value2) {
+			public MyUIState(string value1, bool value2) {
 				this.Value1 = value1;
 				this.Value2 = value2;
 			}
 		}
 
-		// Called to create a value that can be used by Deserialize(). It's read from the settings file.
-		public object CreateSerialized(ISettingsSection section) {
-			var value1 = section.Attribute<string>(nameof(MySerializedData.Value1));
-			var value2 = section.Attribute<bool?>(nameof(MySerializedData.Value2));
+		// Optional:
+		// Called to create an object that can be passed to RestoreUIState()
+		public override object DeserializeUIState(ISettingsSection section) {
+			var value1 = section.Attribute<string>(nameof(MyUIState.Value1));
+			var value2 = section.Attribute<bool?>(nameof(MyUIState.Value2));
 			if (value1 == null || value2 == null)
 				return null;
 
-			return new MySerializedData(value1, value2.Value);
+			return new MyUIState(value1, value2.Value);
 		}
 
-		// Saves the value returned by Serialize(). It's saved in the settings file.
-		public void SaveSerialized(ISettingsSection section, object obj) {
-			var d = obj as MySerializedData;
+		// Optional:
+		// Saves the object returned by CreateUIState()
+		public override void SerializeUIState(ISettingsSection section, object obj) {
+			var d = obj as MyUIState;
 			if (d == null)
 				return;
 
@@ -148,13 +144,14 @@ namespace Example2.Extension {
 			section.Attribute(nameof(d.Value2), d.Value2);
 		}
 
-		// Serializes the UI state
-		// This is where you'd normally serialize the UI state, eg. position etc, but we'll just save random data
-		public object Serialize() => new MySerializedData("Some string", true);
+		// Optional:
+		// Creates the UI state or returns null. This is an example, so return some random data
+		public override object CreateUIState() => new MyUIState("Some string", true);
 
-		// Deserializes the UI state created by Serialize()
-		public void Deserialize(object obj) {
-			var d = obj as MySerializedData;
+		// Optional:
+		// Restores the UI state
+		public override void RestoreUIState(object obj) {
+			var d = obj as MyUIState;
 			if (d == null)
 				return;
 

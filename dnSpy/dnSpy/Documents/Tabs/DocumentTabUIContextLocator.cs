@@ -33,7 +33,7 @@ namespace dnSpy.Documents.Tabs {
 			this.strongCachedInstances = new Dictionary<object, object>();
 		}
 
-		struct ReferenceResult<T> where T : class, IDocumentTabUIContext {
+		struct ReferenceResult<T> where T : class {
 			public T Reference { get; }
 			public bool UseStrongReference { get; }
 			public ReferenceResult(T reference, bool useStrongReference) {
@@ -42,7 +42,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		T GetOrCreate<T>(object key, Func<ReferenceResult<T>> creator) where T : class, IDocumentTabUIContext {
+		T GetOrCreate<T>(object key, Func<ReferenceResult<T>> creator) where T : class {
 			object obj;
 			if (strongCachedInstances.TryGetValue(key, out obj))
 				return (T)obj;
@@ -63,7 +63,7 @@ namespace dnSpy.Documents.Tabs {
 			return res.Reference;
 		}
 
-		ReferenceResult<T> Create<T>() where T : class, IDocumentTabUIContext {
+		ReferenceResult<T> Create<T>() where T : class {
 			foreach (var c in documentTabUIContextProviders) {
 				var t = c.Value.Create<T>() as T;
 				if (t != null)
@@ -72,9 +72,9 @@ namespace dnSpy.Documents.Tabs {
 			throw new InvalidOperationException();
 		}
 
-		public T Get<T>() where T : class, IDocumentTabUIContext => GetOrCreate(typeof(T), () => Create<T>());
-		public T Get<T>(object key, Func<T> creator) where T : class, IDocumentTabUIContext => Get(key, false, creator);
-		public T Get<T>(object key, bool useStrongReference, Func<T> creator) where T : class, IDocumentTabUIContext {
+		public T Get<T>() where T : class => GetOrCreate(typeof(T), () => Create<T>());
+		public T Get<T>(object key, Func<T> creator) where T : class => Get(key, false, creator);
+		public T Get<T>(object key, bool useStrongReference, Func<T> creator) where T : class {
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			if (creator == null)

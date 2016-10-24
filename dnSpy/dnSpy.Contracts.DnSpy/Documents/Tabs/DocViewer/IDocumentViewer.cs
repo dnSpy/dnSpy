@@ -29,13 +29,18 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	/// <summary>
-	/// Document viewer
+	/// Document viewer, it also derives from <see cref="DocumentTabUIContext"/>
 	/// </summary>
-	public interface IDocumentViewer : IDocumentTabUIContext {
+	public interface IDocumentViewer {
+		/// <summary>
+		/// Gets the owner tab
+		/// </summary>
+		IDocumentTab DocumentTab { get; }
+
 		/// <summary>
 		/// Gets the document viewer control
 		/// </summary>
-		new FrameworkElement UIObject { get; }
+		FrameworkElement UIObject { get; }
 
 		/// <summary>
 		/// Sets new content. Returns true if the content got updated, false if the input was identical

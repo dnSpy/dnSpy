@@ -233,7 +233,7 @@ namespace dnSpy.Documents.Tabs {
 			contentSect.Attribute(CONTENT_GUID_ATTR, guid.Value);
 
 			var uiSect = new SettingsSection(UI_SECTION);
-			tab.UIContext.SaveSerialized(uiSect, tab.UIContext.Serialize());
+			tab.UIContext.SerializeUIState(uiSect, tab.UIContext.CreateUIState());
 
 			var tabUISect = new SettingsSection(TAB_UI_SECTION);
 			tab.SerializeUI(tabUISect);
@@ -285,8 +285,8 @@ namespace dnSpy.Documents.Tabs {
 				if (a.Success) {
 					var uiContext = tabContent.DocumentTab.UIContext;
 					tabContent.DocumentTab.DeserializeUI((ISettingsSection)this.TabUI);
-					var obj = uiContext.CreateSerialized(UI);
-					uiContext.Deserialize(obj);
+					var obj = uiContext.DeserializeUIState(UI);
+					uiContext.RestoreUIState(obj);
 				}
 			}));
 			yield return null;

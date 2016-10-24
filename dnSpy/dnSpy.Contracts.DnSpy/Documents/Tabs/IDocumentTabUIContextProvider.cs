@@ -22,17 +22,17 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// Creates <see cref="IDocumentTabUIContext"/> instances. Use <see cref="ExportDocumentTabUIContextProviderAttribute"/>
+	/// Creates <see cref="DocumentTabUIContext"/> instances. Use <see cref="ExportDocumentTabUIContextProviderAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public interface IDocumentTabUIContextProvider {
 		/// <summary>
-		/// Creates a new <see cref="IDocumentTabUIContext"/> instance or returns null if someone else
+		/// Creates a new <see cref="DocumentTabUIContext"/> instance or returns null if someone else
 		/// should create it.
 		/// </summary>
 		/// <typeparam name="T">Type</typeparam>
 		/// <returns></returns>
-		IDocumentTabUIContext Create<T>() where T : class, IDocumentTabUIContext;
+		DocumentTabUIContext Create<T>() where T : class;
 	}
 
 	/// <summary>Metadata</summary>

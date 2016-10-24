@@ -62,7 +62,7 @@ namespace dnSpy.Documents.Tabs {
 				return;
 			var newTab = documentTabService.OpenEmptyTab();
 			if (clone) {
-				newTab.Show(activeTab.Content.Clone(), activeTab.UIContext.Serialize(), null);
+				newTab.Show(activeTab.Content.Clone(), activeTab.UIContext.CreateUIState(), null);
 				documentTabService.SetFocus(newTab);
 			}
 		}

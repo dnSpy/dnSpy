@@ -26,33 +26,14 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.Tabs {
 	sealed class NullDocumentTabContent : DocumentTabContent {
 		public override DocumentTabContent Clone() => new NullDocumentTabContent();
-		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
+		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get(typeof(NullDocumentTabUIContext), () => new NullDocumentTabUIContext());
 		public override string Title => dnSpy_Resources.EmptyTabTitle;
 	}
 
-	sealed class NullDocumentTabUIContext : IDocumentTabUIContext {
-		public IDocumentTab DocumentTab {
-			get { return documentTab; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				if (documentTab == null)
-					documentTab = value;
-				else if (documentTab != value)
-					throw new InvalidOperationException();
-			}
-		}
-		IDocumentTab documentTab;
-
-		public IInputElement FocusedElement => null;
-		public object UIObject => string.Empty;
-		public FrameworkElement ZoomElement => null;
-		public void OnShow() { }
-		public void OnHide() { }
-		public void Deserialize(object obj) { }
-		public object Serialize() => null;
-		public object CreateSerialized(ISettingsSection section) => null;
-		public void SaveSerialized(ISettingsSection section, object obj) { }
+	sealed class NullDocumentTabUIContext : DocumentTabUIContext {
+		public override IInputElement FocusedElement => null;
+		public override object UIObject => string.Empty;
+		public override FrameworkElement ZoomElement => null;
 	}
 }

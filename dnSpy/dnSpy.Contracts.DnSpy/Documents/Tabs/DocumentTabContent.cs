@@ -76,12 +76,12 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		public abstract DocumentTabContent Clone();
 
 		/// <summary>
-		/// Creates the <see cref="IDocumentTabUIContext"/> instance needed by this instance. This
+		/// Creates the <see cref="DocumentTabUIContext"/> instance needed by this instance. This
 		/// instance will only be used in this tab.
 		/// </summary>
 		/// <param name="locator">Can be used to get a per-tab shared instance</param>
 		/// <returns></returns>
-		public abstract IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator);
+		public abstract DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator);
 
 		/// <summary>
 		/// Written by the owner <see cref="IDocumentTab"/> instance

@@ -41,7 +41,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		void SetActive();
 	}
 
-	sealed class DocumentViewer : IDocumentViewer, IDocumentViewerHelper, IZoomable, IDisposable {
+	sealed class DocumentViewer : DocumentTabUIContext, IDocumentViewer, IDocumentViewerHelper, IZoomable, IDisposable {
 		readonly IWpfCommandService wpfCommandService;
 		readonly IDocumentViewerServiceImpl documentViewerServiceImpl;
 		readonly DocumentViewerControl documentViewerControl;
@@ -106,26 +106,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return documentViewer;
 		}
 
-		public IDocumentTab DocumentTab {
-			get {
-				if (isDisposed)
-					throw new ObjectDisposedException(nameof(IDocumentViewer));
-				return documentTab;
-			}
-			set {
-				if (isDisposed)
-					throw new ObjectDisposedException(nameof(IDocumentViewer));
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				if (documentTab == null)
-					documentTab = value;
-				else if (documentTab != value)
-					throw new InvalidOperationException();
-			}
-		}
-		IDocumentTab documentTab;
-
-		public IInputElement FocusedElement {
+		public override IInputElement FocusedElement {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -136,7 +117,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public object UIObject {
+		public override object UIObject {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -144,7 +125,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public FrameworkElement ZoomElement {
+		public override FrameworkElement ZoomElement {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -152,19 +133,19 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public void OnShow() {
+		public override void OnShow() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 		}
 
-		public void OnHide() {
+		public override void OnHide() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			documentViewerControl.Clear();
 			outputData.Clear();
 		}
 
-		public object Serialize() {
+		public override object CreateUIState() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (cachedEditorPositionState != null)
@@ -172,7 +153,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return new EditorPositionState(documentViewerControl.TextView);
 		}
 
-		public void Deserialize(object obj) {
+		public override void RestoreUIState(object obj) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			var state = obj as EditorPositionState;
@@ -231,7 +212,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			cachedEditorPositionState = null;
 		}
 
-		public object CreateSerialized(ISettingsSection section) {
+		public override object DeserializeUIState(ISettingsSection section) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (section == null)
@@ -250,7 +231,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return new EditorPositionState(caretAffinity.Value, caretVirtualSpaces.Value, caretPosition.Value, viewportLeft.Value, topLinePosition.Value, topLineVerticalDistance.Value);
 		}
 
-		public void SaveSerialized(ISettingsSection section, object obj) {
+		public override void SerializeUIState(ISettingsSection section, object obj) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (section == null)

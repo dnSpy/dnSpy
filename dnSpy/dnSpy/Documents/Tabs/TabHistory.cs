@@ -25,11 +25,11 @@ using dnSpy.Contracts.Documents.Tabs;
 namespace dnSpy.Documents.Tabs {
 	struct TabContentState {
 		public DocumentTabContent DocumentTabContent { get; }
-		public object SerializedData { get; }
+		public object UIState { get; }
 
-		public TabContentState(DocumentTabContent documentTabContent, object serializedData) {
+		public TabContentState(DocumentTabContent documentTabContent, object uiState) {
 			this.DocumentTabContent = documentTabContent;
-			this.SerializedData = serializedData;
+			this.UIState = uiState;
 		}
 	}
 
@@ -49,7 +49,7 @@ namespace dnSpy.Documents.Tabs {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			if (saveCurrent && current != null)
-				oldList.Add(new TabContentState(current, current.DocumentTab.UIContext.Serialize()));
+				oldList.Add(new TabContentState(current, current.DocumentTab.UIContext.CreateUIState()));
 			this.current = content;
 			newList.Clear();
 		}
@@ -69,9 +69,9 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 			var old = oldList[oldList.Count - 1];
 			oldList.RemoveAt(oldList.Count - 1);
-			newList.Add(new TabContentState(current, current.DocumentTab.UIContext.Serialize()));
+			newList.Add(new TabContentState(current, current.DocumentTab.UIContext.CreateUIState()));
 			current = old.DocumentTabContent;
-			return old.SerializedData;
+			return old.UIState;
 		}
 
 		public object NavigateForward() {
@@ -80,9 +80,9 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 			var old = newList[newList.Count - 1];
 			newList.RemoveAt(newList.Count - 1);
-			oldList.Add(new TabContentState(current, current.DocumentTab.UIContext.Serialize()));
+			oldList.Add(new TabContentState(current, current.DocumentTab.UIContext.CreateUIState()));
 			current = old.DocumentTabContent;
-			return old.SerializedData;
+			return old.UIState;
 		}
 
 		public void RemoveFromBackwardList(Func<DocumentTabContent, bool> handler) => Remove(oldList, handler);

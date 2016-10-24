@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// UI Context created by <see cref="DocumentTabContent.CreateUIContext(IDocumentTabUIContextLocator)"/>
 		/// </summary>
-		IDocumentTabUIContext UIContext { get; }
+		DocumentTabUIContext UIContext { get; }
 
 		/// <summary>
 		/// true if the view is being refreshed

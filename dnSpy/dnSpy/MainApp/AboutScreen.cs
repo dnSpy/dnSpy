@@ -111,7 +111,7 @@ namespace dnSpy.MainApp {
 		}
 
 		public override DocumentTabContent Clone() => new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
-		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) => locator.Get<IDocumentViewer>();
+		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) => (DocumentTabUIContext)locator.Get<IDocumentViewer>();
 
 		public override void OnShow(IShowContext ctx) {
 			var documentViewer = (IDocumentViewer)ctx.UIContext;

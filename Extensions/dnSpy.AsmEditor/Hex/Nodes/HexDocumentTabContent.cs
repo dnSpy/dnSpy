@@ -74,15 +74,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public override DocumentTabContent Clone() => new HexDocumentTabContent(hexNode);
-		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
+		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get(hexNode, () => new HexDocumentTabUIContext(hexNode.VMObject, hexNode.IsVirtualizingCollectionVM));
 	}
 
-	sealed class HexDocumentTabUIContext : IDocumentTabUIContext {
-		public IDocumentTab DocumentTab { get; set; }
-		public IInputElement FocusedElement => uiObj is ScrollViewer ? (IInputElement)((ScrollViewer)uiObj).Content : uiObj;
-		public FrameworkElement ZoomElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
-		public object UIObject => uiObj;
+	sealed class HexDocumentTabUIContext : DocumentTabUIContext {
+		public override IInputElement FocusedElement => uiObj is ScrollViewer ? (IInputElement)((ScrollViewer)uiObj).Content : uiObj;
+		public override FrameworkElement ZoomElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
+		public override object UIObject => uiObj;
 
 		readonly FrameworkElement uiObj;
 
@@ -106,12 +105,5 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				};
 			}
 		}
-
-		public object CreateSerialized(ISettingsSection section) => null;
-		public void Deserialize(object obj) { }
-		public void OnHide() { }
-		public void OnShow() { }
-		public void SaveSerialized(ISettingsSection section, object obj) { }
-		public object Serialize() => null;
 	}
 }

@@ -126,15 +126,14 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public override DocumentTabContent Clone() =>
 			new HexBoxDocumentTabContent(hexDocument, menuService, hexEditorSettings, appSettings, hexBoxUndoService);
-		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
+		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			locator.Get(hexDocument, () => new HexBoxDocumentTabUIContext(hexDocument, menuService, hexEditorSettings, appSettings, hexBoxUndoService.Value));
 	}
 
-	sealed class HexBoxDocumentTabUIContext : IDocumentTabUIContext, IDisposable {
-		public IDocumentTab DocumentTab { get; set; }
-		public IInputElement FocusedElement => dnHexBox;
-		public FrameworkElement ZoomElement => dnHexBox;
-		public object UIObject => scrollViewer;
+	sealed class HexBoxDocumentTabUIContext : DocumentTabUIContext, IDisposable {
+		public override IInputElement FocusedElement => dnHexBox;
+		public override FrameworkElement ZoomElement => dnHexBox;
+		public override object UIObject => scrollViewer;
 		public DnHexBox DnHexBox => dnHexBox;
 
 		readonly HexDocument hexDocument;
@@ -169,16 +168,16 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		void UpdateHexBoxRenderer(bool useNewRenderer) => this.DnHexBox.UseNewFormatter = useNewRenderer;
-		public object CreateSerialized(ISettingsSection section) => HexBoxUIStateSerializer.Read(section, new HexBoxUIState());
+		public override object DeserializeUIState(ISettingsSection section) => HexBoxUIStateSerializer.Read(section, new HexBoxUIState());
 
-		public void SaveSerialized(ISettingsSection section, object obj) {
+		public override void SerializeUIState(ISettingsSection section, object obj) {
 			var s = obj as HexBoxUIState;
 			if (s == null)
 				return;
 			HexBoxUIStateSerializer.Write(section, s);
 		}
 
-		public void Deserialize(object obj) {
+		public override void RestoreUIState(object obj) {
 			var s = obj as HexBoxUIState;
 			if (s == null || s.HexBoxState == null)
 				return;
@@ -216,7 +215,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		public object Serialize() {
+		public override object CreateUIState() {
 			var s = new HexBoxUIState();
 			s.BytesGroupCount = DnHexBox.BytesGroupCount;
 			s.BytesPerLine = DnHexBox.BytesPerLine;
@@ -231,9 +230,6 @@ namespace dnSpy.AsmEditor.Hex {
 			s.HexBoxState = DnHexBox.State;
 			return s;
 		}
-
-		public void OnHide() { }
-		public void OnShow() { }
 
 		public void Dispose() {
 			appSettings.PropertyChanged -= AppSettings_PropertyChanged;

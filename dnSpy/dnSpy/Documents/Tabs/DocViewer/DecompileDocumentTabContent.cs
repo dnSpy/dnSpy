@@ -98,8 +98,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public override DocumentTabContent Clone() =>
 			new DecompileDocumentTabContent(decompileDocumentTabContentFactory, nodes, Decompiler);
-		public override IDocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
-			locator.Get<IDocumentViewer>();
+		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
+			(DocumentTabUIContext)locator.Get<IDocumentViewer>();
 
 		public override string Title {
 			get {

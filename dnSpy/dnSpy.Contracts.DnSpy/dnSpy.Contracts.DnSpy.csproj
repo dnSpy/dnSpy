@@ -136,6 +136,7 @@
     <Compile Include="Documents\Tabs\DocumentModifiedEventArgs.cs" />
     <Compile Include="Documents\Tabs\DocumentTabContent.cs" />
     <Compile Include="Documents\Tabs\DocumentTabReferenceResult.cs" />
+    <Compile Include="Documents\Tabs\DocumentTabUIContext.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerContent.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerContentDataIds.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerExtensions.cs" />
@@ -167,7 +168,6 @@
     <Compile Include="Documents\Tabs\IDocumentTabContentFactory.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabContentFactoryContext.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabService.cs" />
-    <Compile Include="Documents\Tabs\IDocumentTabUIContext.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabUIContextLocator.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabUIContextProvider.cs" />
     <Compile Include="Documents\Tabs\IReferenceDocumentTabContentProvider.cs" />

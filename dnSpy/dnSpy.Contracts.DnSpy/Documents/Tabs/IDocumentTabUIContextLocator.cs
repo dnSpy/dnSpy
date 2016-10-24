@@ -22,7 +22,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// Creates and caches <see cref="IDocumentTabUIContext"/> instances. These are only used in a
+	/// Creates and caches <see cref="DocumentTabUIContext"/> instances. These are only used in a
 	/// single tab.
 	/// </summary>
 	public interface IDocumentTabUIContextLocator {
@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <typeparam name="T">Type, eg. <see cref="IDocumentViewer"/>. There must be an exported
 		/// <see cref="IDocumentTabUIContextProvider"/> that can create the type.</typeparam>
 		/// <returns></returns>
-		T Get<T>() where T : class, IDocumentTabUIContext;
+		T Get<T>() where T : class;
 
 		/// <summary>
 		/// Creates or returns an existing cached instance of a certain type. This instance is
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="key">Key</param>
 		/// <param name="creator">Called if the value hasn't been cached or if it has been GC'd</param>
 		/// <returns></returns>
-		T Get<T>(object key, Func<T> creator) where T : class, IDocumentTabUIContext;
+		T Get<T>(object key, Func<T> creator) where T : class;
 
 		/// <summary>
 		/// Creates or returns an existing cached instance of a certain type. This instance is
@@ -56,6 +56,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="useStrongReference">true to store the result in a strong reference instead of a weak reference</param>
 		/// <param name="creator">Called if the value hasn't been cached or if it has been GC'd</param>
 		/// <returns></returns>
-		T Get<T>(object key, bool useStrongReference, Func<T> creator) where T : class, IDocumentTabUIContext;
+		T Get<T>(object key, bool useStrongReference, Func<T> creator) where T : class;
 	}
 }

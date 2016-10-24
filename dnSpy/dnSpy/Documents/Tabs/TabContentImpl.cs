@@ -49,7 +49,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		public IDocumentTabUIContext UIContext {
+		public DocumentTabUIContext UIContext {
 			get { return uiContext; }
 			private set {
 				uiContextVersion++;
@@ -66,7 +66,7 @@ namespace dnSpy.Documents.Tabs {
 				}
 			}
 		}
-		IDocumentTabUIContext uiContext;
+		DocumentTabUIContext uiContext;
 		int uiContextVersion;
 
 		public string Title {
@@ -173,7 +173,7 @@ namespace dnSpy.Documents.Tabs {
 		public void FollowReference(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
 			var result = TryCreateContentFromReference(@ref, sourceContent);
 			if (result != null) {
-				Show(result.DocumentTabContent, result.SerializedUI, e => {
+				Show(result.DocumentTabContent, result.UIState, e => {
 					// Call the original caller (onShown()) first and result last since both could
 					// move the caret. The result should only move the caret if the original caller
 					// hasn't moved the caret.
@@ -224,13 +224,13 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		public void Show(DocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
+		public void Show(DocumentTabContent tabContent, object uiState, Action<ShowTabContentEventArgs> onShown) {
 			if (tabContent == null)
 				throw new ArgumentNullException(nameof(tabContent));
 			Debug.Assert(tabContent.DocumentTab == null || tabContent.DocumentTab == this);
 			HideCurrentContent();
 			Content = tabContent;
-			ShowInternal(tabContent, serializedUI, onShown, false);
+			ShowInternal(tabContent, uiState, onShown, false);
 		}
 
 		void HideCurrentContent() {
@@ -239,18 +239,18 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		sealed class ShowContext : IShowContext {
-			public IDocumentTabUIContext UIContext { get; }
+			public DocumentTabUIContext UIContext { get; }
 			public bool IsRefresh { get; }
 			public object Tag { get; set; }
 			public Action<ShowTabContentEventArgs> OnShown { get; set; }
-			public ShowContext(IDocumentTabUIContext uiCtx, bool isRefresh) {
+			public ShowContext(DocumentTabUIContext uiCtx, bool isRefresh) {
 				this.UIContext = uiCtx;
 				this.IsRefresh = isRefresh;
 			}
 		}
 
 		sealed class AsyncShowContext : IAsyncShowContext {
-			public IDocumentTabUIContext UIContext => showContext.UIContext;
+			public DocumentTabUIContext UIContext => showContext.UIContext;
 			public bool IsRefresh => showContext.IsRefresh;
 			public object Tag { get { return showContext.Tag; } set { showContext.Tag = value; } }
 			public Action<ShowTabContentEventArgs> OnShown { get { return showContext.OnShown; } set { showContext.OnShown = value; } }
@@ -267,7 +267,7 @@ namespace dnSpy.Documents.Tabs {
 			public void Cancel() => asyncWorkerContext.Cancel();
 		}
 
-		void ShowInternal(DocumentTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, bool isRefresh) {
+		void ShowInternal(DocumentTabContent tabContent, object uiState, Action<ShowTabContentEventArgs> onShownHandler, bool isRefresh) {
 			Debug.Assert(asyncWorkerContext == null);
 			UIContext = tabContent.CreateUIContext(documentTabUIContextLocator);
 			var cachedUIContext = UIContext;
@@ -299,14 +299,14 @@ namespace dnSpy.Documents.Tabs {
 						ctx.Dispose();
 						asyncTabContent.OnShowAsync(showCtx, new AsyncShowResult(t, canShowAsyncOutput));
 						bool success = !t.IsFaulted && !t.IsCanceled;
-						OnShown(serializedUI, onShownHandler, showCtx, success);
+						OnShown(uiState, onShownHandler, showCtx, success);
 					}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 				}
 				else
 					asyncTabContent.OnShowAsync(showCtx, new AsyncShowResult());
 			}
 			if (!asyncShow)
-				OnShown(serializedUI, onShownHandler, showCtx, true);
+				OnShown(uiState, onShownHandler, showCtx, true);
 			documentTabService.OnNewTabContentShown(this);
 		}
 
@@ -356,9 +356,9 @@ namespace dnSpy.Documents.Tabs {
 			asyncWorkerContext = null;
 		}
 
-		void OnShown(object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, IShowContext showCtx, bool success) {
-			if (serializedUI != null)
-				Deserialize(serializedUI);
+		void OnShown(object uiState, Action<ShowTabContentEventArgs> onShownHandler, IShowContext showCtx, bool success) {
+			if (uiState != null)
+				RestoreUIState(uiState);
 			if (onShownHandler != null || showCtx.OnShown != null) {
 				var e = new ShowTabContentEventArgs(success, this);
 				onShownHandler?.Invoke(e);
@@ -366,17 +366,17 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		void Deserialize(object serializedUI) {
-			if (serializedUI == null)
+		void RestoreUIState(object uiState) {
+			if (uiState == null)
 				return;
-			UIContext.Deserialize(serializedUI);
+			UIContext.RestoreUIState(uiState);
 			var uiel = UIContext.FocusedElement as UIElement ?? UIContext.UIObject as UIElement;
 			if (uiel == null || uiel.IsVisible)
 				return;
 			int uiContextVersionTmp = uiContextVersion;
 			new OnVisibleHelper(uiel, () => {
 				if (uiContextVersionTmp == uiContextVersion)
-					UIContext.Deserialize(serializedUI);
+					UIContext.RestoreUIState(uiState);
 			});
 		}
 
@@ -408,22 +408,22 @@ namespace dnSpy.Documents.Tabs {
 			if (!CanNavigateBackward)
 				return;
 			HideCurrentContent();
-			var serialized = tabHistory.NavigateBackward();
-			ShowInternal(tabHistory.Current, serialized, null, false);
+			var uiState = tabHistory.NavigateBackward();
+			ShowInternal(tabHistory.Current, uiState, null, false);
 		}
 
 		public void NavigateForward() {
 			if (!CanNavigateForward)
 				return;
 			HideCurrentContent();
-			var serialized = tabHistory.NavigateForward();
-			ShowInternal(tabHistory.Current, serialized, null, false);
+			var uiState = tabHistory.NavigateForward();
+			ShowInternal(tabHistory.Current, uiState, null, false);
 		}
 
 		public void Refresh() {
 			// Pretend it gets hidden and then shown again. Will also cancel any async output threads
 			HideCurrentContent();
-			ShowInternal(Content, UIContext.Serialize(), null, true);
+			ShowInternal(Content, UIContext.CreateUIState(), null, true);
 		}
 
 		public void TrySetFocus() {
