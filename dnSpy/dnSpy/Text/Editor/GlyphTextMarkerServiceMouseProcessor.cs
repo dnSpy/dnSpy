@@ -169,6 +169,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public override void PostprocessMouseDown(MouseButtonEventArgs e) {
+			CloseToolTip();
 			var line = GetLine(e);
 			if (line == null)
 				return;
@@ -197,6 +198,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public override void PostprocessMouseUp(MouseButtonEventArgs e) {
+			CloseToolTip();
 			var line = GetLine(e);
 			if (line == null)
 				return;
@@ -225,6 +227,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public override void PostprocessMouseLeftButtonDown(MouseButtonEventArgs e) {
+			CloseToolTip();
 			var line = GetLine(e);
 			if (line == null)
 				return;
@@ -253,6 +256,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public override void PostprocessMouseLeftButtonUp(MouseButtonEventArgs e) {
+			CloseToolTip();
 			var line = GetLine(e);
 			if (line == null)
 				return;
@@ -281,6 +285,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public override void PostprocessMouseRightButtonDown(MouseButtonEventArgs e) {
+			CloseToolTip();
 			var line = GetLine(e);
 			if (line == null)
 				return;
@@ -309,6 +314,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public override void PostprocessMouseRightButtonUp(MouseButtonEventArgs e) {
+			CloseToolTip();
 			var line = GetLine(e);
 			if (line == null)
 				return;
@@ -337,6 +343,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public override void PostprocessMouseMove(MouseEventArgs e) {
+			UpdateLine(e);
 			var line = GetLine(e);
 			if (line == null)
 				return;
@@ -381,6 +388,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public override void PostprocessMouseLeave(MouseEventArgs e) {
+			CloseToolTip();
 			if (glyphTextMarkerMouseProcessors.Length != 0) {
 				var line = GetLine(e);
 				if (line == null)
@@ -395,15 +403,6 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-
-		public override void PreprocessMouseDown(MouseButtonEventArgs e) => CloseToolTip();
-		public override void PreprocessMouseUp(MouseButtonEventArgs e) => CloseToolTip();
-		public override void PreprocessMouseLeftButtonDown(MouseButtonEventArgs e) => CloseToolTip();
-		public override void PreprocessMouseLeftButtonUp(MouseButtonEventArgs e) => CloseToolTip();
-		public override void PreprocessMouseRightButtonDown(MouseButtonEventArgs e) => CloseToolTip();
-		public override void PreprocessMouseRightButtonUp(MouseButtonEventArgs e) => CloseToolTip();
-		public override void PreprocessMouseLeave(MouseEventArgs e) => CloseToolTip();
-		public override void PreprocessMouseMove(MouseEventArgs e) => UpdateLine(e);
 
 		void UpdateToolTipLine() => UpdateLine(new MouseEventArgs(Mouse.PrimaryDevice, 0));
 		void UpdateLine(MouseEventArgs e) {
