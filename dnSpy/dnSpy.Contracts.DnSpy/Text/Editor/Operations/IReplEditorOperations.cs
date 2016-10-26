@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Text.Editor.Operations {
 	/// <summary>
 	/// <see cref="IReplEditor"/> operations
 	/// </summary>
-	interface IReplEditorOperations : IEditorOperations2 {
+	interface IReplEditorOperations : IEditorOperations3 {
 		/// <summary>
 		/// Gets the REPL editor
 		/// </summary>

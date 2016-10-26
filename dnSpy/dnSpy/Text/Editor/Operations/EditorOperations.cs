@@ -35,7 +35,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Editor.Operations {
-	sealed class EditorOperations : IEditorOperations2 {
+	sealed class EditorOperations : IEditorOperations3 {
 		public bool CanCut {
 			get {
 				if (!Selection.IsEmpty)
@@ -996,6 +996,10 @@ namespace dnSpy.Text.Editor.Operations {
 			return InsertText(text, isProvisional, overwriteMode);
 		}
 
+		public bool InsertFinalNewLine() {
+			return false;//TODO:
+		}
+
 		public bool Paste() {
 			string text;
 			try {
@@ -1704,6 +1708,10 @@ namespace dnSpy.Text.Editor.Operations {
 
 		public bool TransposeWord() {
 			return true;//TODO:
+		}
+
+		public bool TrimTrailingWhiteSpace() {
+			return false;//TODO:
 		}
 
 		public bool Untabify() {

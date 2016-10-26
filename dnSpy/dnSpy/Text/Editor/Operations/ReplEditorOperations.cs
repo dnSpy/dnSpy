@@ -465,6 +465,14 @@ namespace dnSpy.Text.Editor.Operations {
 			return false;//TODO:
 		}
 
+		public bool InsertFinalNewLine() {
+			return false;//TODO:
+		}
+
+		public bool TrimTrailingWhiteSpace() {
+			return false;//TODO:
+		}
+
 		public void MoveToHome(bool extendSelection) {
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToHome(extendSelection);
