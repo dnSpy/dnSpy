@@ -142,16 +142,16 @@
     <value>Вы хотите удалить все точки останова?</value>
   </data>
   <data name="AttachToProcessCommand" xml:space="preserve">
-    <value>Присоединиться к _Процессу...</value>
+    <value>Присоединиться к _процессу...</value>
   </data>
   <data name="Attach_AttachToProcess" xml:space="preserve">
     <value>Присоединиться к процессу</value>
   </data>
   <data name="Attach_AttachToProcess32" xml:space="preserve">
-    <value>Присоединиться к Процессу (только 32-bit)</value>
+    <value>Присоединиться к процессу (только 32-bit)</value>
   </data>
   <data name="Attach_AttachToProcess64" xml:space="preserve">
-    <value>Присоединиться к процессу (только 64-бит)</value>
+    <value>Присоединиться к процессу (только 64-bit)</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
     <value>Используйте dnSpy.exe для присоединения к 64-битным процессам</value>
@@ -829,7 +829,7 @@ HResult: 0x{3:X8}</value>
     <value>Сохранить модули</value>
   </data>
   <data name="ModuleSaveModuleTitle" xml:space="preserve">
-    <value>Сохранить модуль</value>
+    <value>Сохранение модуля</value>
   </data>
   <data name="ModulesCommand" xml:space="preserve">
     <value>Мод_ули</value>

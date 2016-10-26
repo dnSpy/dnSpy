@@ -583,7 +583,7 @@
     <value>Закрыть</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Decompile a member's enclosing class instead of the class member</value>
+    <value>Декомпилировать весь класс вместо члена класса</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
     <value>Выделять ссылки</value>
@@ -984,7 +984,7 @@
     <value>Добавить пути к изображениям и папкам изображений, один путь в строке:</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
-    <value>интервал</value>
+    <value>Интервал</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
     <value>Максимальная высота</value>
@@ -1197,7 +1197,7 @@
     <value>Поля</value>
   </data>
   <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
-    <value>Не добавлять дополнительный междустрочный интервал</value>
+    <value>Не добавлять дополнительный межстрочный интервал</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
     <value>Масштаб с помощью колеса мыши</value>

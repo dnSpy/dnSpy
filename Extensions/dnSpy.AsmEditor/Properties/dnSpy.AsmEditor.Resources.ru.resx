@@ -1616,7 +1616,7 @@
     <value>Закрепленный</value>
   </data>
   <data name="MDWriterOptionsTab" xml:space="preserve">
-    <value>Параметры записи MD</value>
+    <value>Параметры записи метаданных</value>
   </data>
   <data name="MetadataTab" xml:space="preserve">
     <value>Метаданные</value>
@@ -1883,7 +1883,7 @@
     <value>Доб_авить контрольную сумму PE</value>
   </data>
   <data name="SaveModule_CreateHeapEvenIfEmpty" xml:space="preserve">
-    <value>Create Heap Even If Empty</value>
+    <value>Создавать кучу, даже если она пустая</value>
   </data>
   <data name="SaveModule_Filename" xml:space="preserve">
     <value>_Имя файла</value>
@@ -1904,23 +1904,22 @@
     <value>_Тип модуля</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData" xml:space="preserve">
-    <value>Preserve E_xtra Signature Data</value>
+    <value>Сохранить до_полнительные данные подписи</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData_ToolTip" xml:space="preserve">
-    <value>Preserve any extra data after the signatures.
-Some obfuscators put data there</value>
+    <value>Сохранить дополнительные данные после подписи. Некоторые обфускаторы размещают здесь данные</value>
   </data>
   <data name="SaveModule_PreserveHeapOffsets" xml:space="preserve">
-    <value>Preserve Heap Offsets</value>
+    <value>Сохранить смещения в куче</value>
   </data>
   <data name="SaveModule_PreserveTokens" xml:space="preserve">
-    <value>P_reserve All MD Tokens</value>
+    <value>Сохранить все токены метаданных</value>
   </data>
   <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
     <value>Если файл все еще обфусцирован, может потребоваться сохранить RID</value>
   </data>
   <data name="SaveModule_ShareMethodBodies" xml:space="preserve">
-    <value>Shared Method _Bodies</value>
+    <value>Общие тела методов</value>
   </data>
   <data name="SaveModule_ShareMethodBodies_ToolTip" xml:space="preserve">
     <value>Методы .NET, которые имеют идентичный код, будут его разделять между собой. Выходной файл будет немного меньше</value>
@@ -1929,11 +1928,11 @@ Some obfuscators put data there</value>
     <value>Сохранение модуля</value>
   </data>
   <data name="SaveModule_UseMixedMode" xml:space="preserve">
-    <value>_Mixed-Mode Module</value>
+    <value>Смешанный модуль</value>
   </data>
   <data name="SaveModule_UseMixedMode_ToolTip" xml:space="preserve">
-    <value>В случае модуля смешанного типа (например, C++/.NET) должно быть проверено.
-Поле установки флажка большинство опции будет переинициалировано</value>
+    <value>Установите флаг в случае модуля смешанного типа (например, C++/.NET).
+Поле установки флага большинство опций будет переинициалировано</value>
   </data>
   <data name="SaveModule_WritePdb" xml:space="preserve">
     <value>Сохранить _PDB-файл</value>
@@ -2341,7 +2340,7 @@ Some obfuscators put data there</value>
     <value>Reserv_ed1</value>
   </data>
   <data name="SaveModule_TablesHeap_Reserved1" xml:space="preserve">
-    <value>Reserv_ed1</value>
+    <value>Зарезервирован_о1</value>
   </data>
   <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
     <value>_Использовать #- Table</value>
