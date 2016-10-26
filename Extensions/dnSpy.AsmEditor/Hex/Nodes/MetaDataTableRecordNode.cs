@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.infoTuple = GetInfoTuple(tableInfo);
 		}
 
-		protected override void Write(ITextColorWriter output) {
+		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.Number, string.Format("{0}", index + 1));
 			if (infoTuple != null) {
 				output.WriteSpace();

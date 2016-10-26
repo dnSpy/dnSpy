@@ -39,8 +39,8 @@ namespace dnSpy.Documents.TreeView {
 			this.ModuleRef = moduleRef;
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
-			new NodePrinter().Write(output, decompiler, ModuleRef, Context.ShowToken);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
+			new NodePrinter().Write(output, decompiler, ModuleRef, GetShowToken(options));
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>
 			filter.GetResult(ModuleRef).FilterType;
 	}

@@ -116,7 +116,7 @@ namespace Example2.Extension {
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.TextFile;
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.WriteFilename(Path.GetFileName(document.Filename));
 
 		public bool Decompile(IDecompileNodeContext context) {

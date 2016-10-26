@@ -42,7 +42,7 @@ namespace dnSpy.Documents.TreeView {
 				yield return Context.DocumentTreeView.CreateNode(this, document);
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			new NodePrinter().Write(output, decompiler, Document);
 	}
 }

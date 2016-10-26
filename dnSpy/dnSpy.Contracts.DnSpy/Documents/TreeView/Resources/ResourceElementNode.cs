@@ -44,11 +44,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public string Name => resourceElement.Name;
 
 		/// <inheritdoc/>
-		protected sealed override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected sealed override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.WriteFilename(resourceElement.Name);
-		/// <inheritdoc/>
-		protected sealed override void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) =>
-			base.WriteToolTip(output, decompiler);
 		/// <inheritdoc/>
 		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => null;
 

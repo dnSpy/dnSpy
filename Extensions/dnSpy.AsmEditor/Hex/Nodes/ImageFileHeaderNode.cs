@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.imageFileHeaderVM = new ImageFileHeaderVM(this, doc, StartOffset);
 		}
 
-		protected override void Write(ITextColorWriter output) =>
+		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.HexPeFileHeader, dnSpy_AsmEditor_Resources.HexNode_FileHeader);
 	}
 }

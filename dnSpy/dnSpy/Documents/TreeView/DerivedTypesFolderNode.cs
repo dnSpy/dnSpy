@@ -55,7 +55,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 		DerivedTypesFinder derivedTypesFinder;
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Resources.DerivedTypes);
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;

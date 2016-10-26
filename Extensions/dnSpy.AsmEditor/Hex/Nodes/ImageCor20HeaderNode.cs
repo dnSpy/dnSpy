@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.imageCor20HeaderVM = new ImageCor20HeaderVM(this, doc, StartOffset);
 		}
 
-		protected override void Write(ITextColorWriter output) =>
+		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.HexCor20Header, dnSpy_AsmEditor_Resources.HexNode_Cor20_Header);
 	}
 }

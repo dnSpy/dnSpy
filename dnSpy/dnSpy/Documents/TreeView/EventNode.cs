@@ -40,8 +40,8 @@ namespace dnSpy.Documents.TreeView {
 			this.EventDef = @event;
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
-			new NodePrinter().Write(output, decompiler, EventDef, Context.ShowToken);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
+			new NodePrinter().Write(output, decompiler, EventDef, GetShowToken(options));
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			if (EventDef.AddMethod != null)

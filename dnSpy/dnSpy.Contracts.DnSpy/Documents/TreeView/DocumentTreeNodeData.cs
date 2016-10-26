@@ -58,13 +58,13 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <inheritdoc/>
 		public sealed override object Text {
 			get {
-				var cached = cachedText != null ? cachedText.Target : null;
+				var cached = cachedText?.Target;
 				if (cached != null)
 					return cached;
 
 				var writer = Cache.GetWriter();
 				try {
-					Write(writer, Context.Decompiler);
+					WriteCore(writer, Context.Decompiler, DocumentNodeWriteOptions.None);
 					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: false, colorize: Context.SyntaxHighlight, colors: writer.Colors);
 					var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, TextElementFlags.FilterOutNewLines | (Context.UseNewRenderer ? TextElementFlags.NewFormatter : 0));
 					cachedText = new WeakReference(elem);
@@ -82,20 +82,21 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="decompiler">Decompiler</param>
-		protected abstract void Write(ITextColorWriter output, IDecompiler decompiler);
+		/// <param name="options">Options</param>
+		protected abstract void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options);
 
 		/// <summary>
-		/// Writes the tooltip
+		/// Returns true if <see cref="WriteCore(ITextColorWriter, IDecompiler, DocumentNodeWriteOptions)"/> should show tokens
 		/// </summary>
-		/// <param name="output">Output</param>
-		/// <param name="decompiler">Decompiler</param>
-		protected virtual void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) => Write(output, decompiler);
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		protected bool GetShowToken(DocumentNodeWriteOptions options) => (options & DocumentNodeWriteOptions.Title) != 0 ? false : Context.ShowToken;
 
 		/// <inheritdoc/>
 		public sealed override object ToolTip {
 			get {
 				var writer = Cache.GetWriter();
-				WriteToolTip(writer, Context.Decompiler);
+				WriteCore(writer, Context.Decompiler, DocumentNodeWriteOptions.ToolTip);
 				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: true, colorize: Context.SyntaxHighlight, colors: writer.Colors);
 				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, Context.UseNewRenderer ? TextElementFlags.NewFormatter : 0);
 				Cache.FreeWriter(writer);
@@ -110,10 +111,11 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// ToString()
 		/// </summary>
 		/// <param name="decompiler">Decompiler</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public string ToString(IDecompiler decompiler) {
+		public string ToString(IDecompiler decompiler, DocumentNodeWriteOptions options = DocumentNodeWriteOptions.None) {
 			var output = new StringBuilderTextColorOutput();
-			Write(output, decompiler);
+			WriteCore(output, decompiler, options);
 			return output.ToString();
 		}
 

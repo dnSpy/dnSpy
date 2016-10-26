@@ -51,7 +51,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 		List<TypeDef> typesToCreate;
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			new NodePrinter().WriteNamespace(output, decompiler, Name);
 		public ITypeNode Create(TypeDef type) => Context.DocumentTreeView.Create(type);
 

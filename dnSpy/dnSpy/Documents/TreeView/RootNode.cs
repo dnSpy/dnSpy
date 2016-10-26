@@ -43,7 +43,7 @@ namespace dnSpy.Documents.TreeView {
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
 			new ImageReference();
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) { }
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) { }
 
 		public override bool CanDrop(DragEventArgs e, int index) {
 			if (!Context.CanDragAndDrop) {

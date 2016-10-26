@@ -40,8 +40,8 @@ namespace dnSpy.Documents.TreeView {
 			this.PropertyDef = property;
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
-			new NodePrinter().Write(output, decompiler, PropertyDef, Context.ShowToken, null);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
+			new NodePrinter().Write(output, decompiler, PropertyDef, GetShowToken(options), null);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var m in PropertyDef.GetMethods)

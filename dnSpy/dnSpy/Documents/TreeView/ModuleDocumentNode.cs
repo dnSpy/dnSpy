@@ -64,20 +64,21 @@ namespace dnSpy.Documents.TreeView {
 				yield return new NamespaceNode(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.NamespaceTreeNodeGroupModule), kv.Key, kv.Value);
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
-			new NodePrinter().Write(output, decompiler, Document.ModuleDef, false);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
+				new NodePrinter().Write(output, decompiler, Document.ModuleDef, false);
+			else {
+				output.WriteModule(Document.ModuleDef.Name);
 
-		protected override void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) {
-			output.WriteModule(Document.ModuleDef.Name);
+				output.WriteLine();
+				output.Write(BoxedTextColor.Text, TargetFrameworkInfo.Create(Document.ModuleDef).ToString());
 
-			output.WriteLine();
-			output.Write(BoxedTextColor.Text, TargetFrameworkInfo.Create(Document.ModuleDef).ToString());
+				output.WriteLine();
+				output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.ModuleDef));
 
-			output.WriteLine();
-			output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.ModuleDef));
-
-			output.WriteLine();
-			output.WriteFilename(Document.Filename);
+				output.WriteLine();
+				output.WriteFilename(Document.Filename);
+			}
 		}
 
 		public INamespaceNode Create(string name) => Context.DocumentTreeView.Create(name);

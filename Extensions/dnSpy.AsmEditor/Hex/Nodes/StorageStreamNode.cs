@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				node.OnDocumentModified(modifiedStart, modifiedEnd);
 		}
 
-		protected override void Write(ITextColorWriter output) {
+		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.HexStorageStream, dnSpy_AsmEditor_Resources.HexNode_StorageStream);
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "#");

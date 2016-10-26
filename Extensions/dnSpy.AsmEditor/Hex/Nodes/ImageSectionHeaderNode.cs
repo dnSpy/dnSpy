@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				TreeNode.RefreshUI();
 		}
 
-		protected override void Write(ITextColorWriter output) {
+		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.HexPeSection, dnSpy_AsmEditor_Resources.HexNode_PE_Section);
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "#");

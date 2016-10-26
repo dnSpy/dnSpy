@@ -43,7 +43,7 @@ namespace dnSpy.Documents.TreeView {
 			this.module = module;
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Resources.ResourcesFolder);
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

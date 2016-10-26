@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
-		protected override void Write(ITextColorWriter output) {
+		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.Number, string.Format("{0:X2}", (byte)MetaDataTableVM.Table));
 			output.WriteSpace();
 			output.Write(BoxedTextColor.HexTableName, string.Format("{0}", MetaDataTableVM.Table));

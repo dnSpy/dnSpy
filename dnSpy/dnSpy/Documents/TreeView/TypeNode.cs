@@ -62,8 +62,8 @@ namespace dnSpy.Documents.TreeView {
 				yield return new TypeNode(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.TypeTreeNodeGroupType), t);
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
-			new NodePrinter().Write(output, decompiler, TypeDef, Context.ShowToken);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
+			new NodePrinter().Write(output, decompiler, TypeDef, GetShowToken(options));
 		public IMethodNode Create(MethodDef method) => Context.DocumentTreeView.Create(method);
 		public IPropertyNode Create(PropertyDef property) => Context.DocumentTreeView.Create(property);
 		public IEventNode Create(EventDef @event) => Context.DocumentTreeView.Create(@event);

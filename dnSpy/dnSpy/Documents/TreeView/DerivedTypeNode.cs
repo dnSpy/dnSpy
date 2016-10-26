@@ -65,12 +65,12 @@ namespace dnSpy.Documents.TreeView {
 		}
 		DerivedTypesFinder derivedTypesFinder;
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var td = TryGetTypeDef();
 			if (td == null)
 				output.Write(BoxedTextColor.Error, "???");
 			else
-				new NodePrinter().Write(output, decompiler, td, Context.ShowToken);
+				new NodePrinter().Write(output, decompiler, td, GetShowToken(options));
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {

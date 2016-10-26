@@ -49,20 +49,21 @@ namespace dnSpy.Documents.TreeView {
 				yield return Context.DocumentTreeView.CreateNode(this, document);
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
-			new NodePrinter().Write(output, decompiler, Document.AssemblyDef, false, Context.ShowAssemblyVersion, Context.ShowAssemblyPublicKeyToken);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
+				new NodePrinter().Write(output, decompiler, Document.AssemblyDef, false, Context.ShowAssemblyVersion, Context.ShowAssemblyPublicKeyToken);
+			else {
+				output.Write(Document.AssemblyDef);
 
-		protected override void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) {
-			output.Write(Document.AssemblyDef);
+				output.WriteLine();
+				output.Write(BoxedTextColor.Text, TargetFrameworkInfo.Create(Document.AssemblyDef.ManifestModule).ToString());
 
-			output.WriteLine();
-			output.Write(BoxedTextColor.Text, TargetFrameworkInfo.Create(Document.AssemblyDef.ManifestModule).ToString());
+				output.WriteLine();
+				output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.AssemblyDef.ManifestModule));
 
-			output.WriteLine();
-			output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.AssemblyDef.ManifestModule));
-
-			output.WriteLine();
-			output.WriteFilename(Document.Filename);
+				output.WriteLine();
+				output.WriteFilename(Document.Filename);
+			}
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(Document.AssemblyDef).FilterType;

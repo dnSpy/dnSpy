@@ -37,7 +37,7 @@ namespace Example2.Extension {
 		// The image must be in an Images folder (in the resources) and have a .png extension
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.EntryPoint;
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Text, "Assembly Child");
 
 		// If you don't want the node to be appended to the children, override this
@@ -93,7 +93,7 @@ namespace Example2.Extension {
 		// The image must be in an Images folder (in the resources) and have a .png extension
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.String;
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.Text, "Module Child");
 		}
 
@@ -166,7 +166,7 @@ namespace Example2.Extension {
 		public override NodePathName NodePathName => new NodePathName(THE_GUID, Message);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.String;
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Comment, Message);
 
 		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;

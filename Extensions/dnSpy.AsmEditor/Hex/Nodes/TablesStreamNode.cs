@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				node.OnDocumentModified(modifiedStart, modifiedEnd);
 		}
 
-		protected override void Write(ITextColorWriter output) =>
+		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.HexTablesStream, dnSpy_AsmEditor_Resources.HexNode_TablesStream);
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

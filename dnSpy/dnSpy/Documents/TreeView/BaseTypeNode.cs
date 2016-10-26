@@ -67,12 +67,12 @@ namespace dnSpy.Documents.TreeView {
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var tdr = TryGetTypeDefOrRef();
 			if (tdr == null)
 				output.Write(BoxedTextColor.Error, "???");
 			else
-				new NodePrinter().Write(output, decompiler, tdr, Context.ShowToken);
+				new NodePrinter().Write(output, decompiler, tdr, GetShowToken(options));
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

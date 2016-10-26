@@ -40,8 +40,9 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// ToString()
 		/// </summary>
 		/// <param name="decompiler">Decompiler</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		string ToString(IDecompiler decompiler);
+		string ToString(IDecompiler decompiler, DocumentNodeWriteOptions options = DocumentNodeWriteOptions.None);
 
 		/// <summary>
 		/// Called when <see cref="IDocumentTreeNodeDataContext.Filter"/> has changed

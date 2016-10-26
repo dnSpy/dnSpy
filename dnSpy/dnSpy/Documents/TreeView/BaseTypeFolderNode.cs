@@ -51,7 +51,7 @@ namespace dnSpy.Documents.TreeView {
 				yield return new BaseTypeNode(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Resources.BaseTypeFolder);
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;

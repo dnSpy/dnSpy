@@ -147,7 +147,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return stgStreamNode?.FindTokenNode(token);
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Text, dnSpy_AsmEditor_Resources.HexNode_PE);
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);

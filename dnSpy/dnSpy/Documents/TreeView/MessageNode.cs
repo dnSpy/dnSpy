@@ -41,7 +41,7 @@ namespace dnSpy.Documents.TreeView {
 			this.Message = msg;
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Text, Message);
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;

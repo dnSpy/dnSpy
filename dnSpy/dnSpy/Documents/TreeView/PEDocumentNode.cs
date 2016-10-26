@@ -46,14 +46,15 @@ namespace dnSpy.Documents.TreeView {
 				yield return Context.DocumentTreeView.CreateNode(this, document);
 		}
 
-		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
-			new NodePrinter().Write(output, decompiler, Document);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
+				new NodePrinter().Write(output, decompiler, Document);
+			else {
+				output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.PEImage.ImageNTHeaders.FileHeader.Machine));
 
-		protected override void WriteToolTip(ITextColorWriter output, IDecompiler decompiler) {
-			output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.PEImage.ImageNTHeaders.FileHeader.Machine));
-
-			output.WriteLine();
-			output.WriteFilename(Document.Filename);
+				output.WriteLine();
+				output.WriteFilename(Document.Filename);
+			}
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>

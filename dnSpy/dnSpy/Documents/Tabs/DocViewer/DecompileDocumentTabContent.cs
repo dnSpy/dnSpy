@@ -105,13 +105,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			get {
 				if (nodes.Length == 0)
 					return dnSpy_Resources.EmptyTabTitle;
+				var options = DocumentNodeWriteOptions.Title;
 				if (nodes.Length == 1)
-					return nodes[0].ToString(Decompiler);
+					return nodes[0].ToString(Decompiler, options);
 				var sb = new StringBuilder();
 				foreach (var node in nodes) {
 					if (sb.Length > 0)
 						sb.Append(", ");
-					sb.Append(node.ToString(Decompiler));
+					sb.Append(node.ToString(Decompiler, options));
 				}
 				return sb.ToString();
 			}
