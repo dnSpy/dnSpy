@@ -89,7 +89,7 @@ namespace dnSpy.ToolWindows {
 		}
 
 		internal IToolWindowGroup GetToolWindowGroup(ITabGroup tabGroup) => ToolWindowGroup.GetToolWindowGroup(tabGroup);
-		static IToolWindowContent GetToolWindowContent(ITabContent selected) => ((TabContentImpl)selected)?.Content;
+		static ToolWindowContent GetToolWindowContent(ITabContent selected) => ((TabContentImpl)selected)?.Content;
 
 		void TabGroupService_TabSelectionChanged(object sender, TabSelectedEventArgs e) {
 			if (e.Selected != null) {

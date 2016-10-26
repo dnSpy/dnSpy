@@ -37,24 +37,22 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		public abstract IEnumerable<ToolWindowContentInfo> ContentInfos { get; }
 		protected abstract ScriptToolWindowContent CreateContent();
-		public IToolWindowContent GetOrCreate(Guid guid) => guid == contentGuid ? ScriptToolWindowContent : null;
+		public ToolWindowContent GetOrCreate(Guid guid) => guid == contentGuid ? ScriptToolWindowContent : null;
 	}
 
-	abstract class ScriptToolWindowContent : IToolWindowContent, IZoomable {
+	abstract class ScriptToolWindowContent : ToolWindowContent, IZoomable {
 		protected abstract IScriptContent ScriptContent { get; }
-		public IInputElement FocusedElement => ScriptContent.FocusedElement;
-		public FrameworkElement ZoomElement => ScriptContent.ZoomElement;
-		public Guid Guid { get; }
-		public abstract string Title { get; }
-		public object ToolTip => null;
-		public object UIObject => ScriptContent.UIObject;
+		public override IInputElement FocusedElement => ScriptContent.FocusedElement;
+		public override FrameworkElement ZoomElement => ScriptContent.ZoomElement;
+		public override Guid Guid { get; }
+		public override object UIObject => ScriptContent.UIObject;
 		double IZoomable.ZoomValue => ScriptContent.ZoomLevel / 100.0;
 
 		public ScriptToolWindowContent(Guid contentGuid) {
 			this.Guid = contentGuid;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				ScriptContent.OnShow();

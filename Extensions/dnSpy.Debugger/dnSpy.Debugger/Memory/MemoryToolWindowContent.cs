@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.Memory {
 			}
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
+		public ToolWindowContent GetOrCreate(Guid guid) {
 			foreach (var info in contents) {
 				if (info.Guid == guid)
 					return info.Content;
@@ -103,13 +103,12 @@ namespace dnSpy.Debugger.Memory {
 			new MemoryContent(wpfCommandService, menuService, hexEditorSettings, new MemoryVM(theDebugger.Value), appSettings);
 	}
 
-	sealed class MemoryToolWindowContent : IToolWindowContent {
-		public IInputElement FocusedElement => memoryContent.Value.FocusedElement;
-		public FrameworkElement ZoomElement => memoryContent.Value.ZoomElement;
-		public Guid Guid { get; }
-		public string Title => string.Format(dnSpy_Debugger_Resources.Window_Memory_N, windowIndex + 1);
-		public object ToolTip => null;
-		public object UIObject => memoryContent.Value.UIObject;
+	sealed class MemoryToolWindowContent : ToolWindowContent {
+		public override IInputElement FocusedElement => memoryContent.Value.FocusedElement;
+		public override FrameworkElement ZoomElement => memoryContent.Value.ZoomElement;
+		public override Guid Guid { get; }
+		public override string Title => string.Format(dnSpy_Debugger_Resources.Window_Memory_N, windowIndex + 1);
+		public override object UIObject => memoryContent.Value.UIObject;
 		public DnHexBox DnHexBox => memoryContent.Value.DnHexBox;
 
 		readonly Lazy<IMemoryContent> memoryContent;
@@ -121,7 +120,7 @@ namespace dnSpy.Debugger.Memory {
 			this.windowIndex = windowIndex;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				memoryContent.Value.OnShow();

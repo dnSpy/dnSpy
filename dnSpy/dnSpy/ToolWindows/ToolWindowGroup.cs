@@ -29,9 +29,9 @@ namespace dnSpy.ToolWindows {
 		public ITabGroup TabGroup { get; }
 		public IToolWindowGroupService ToolWindowGroupService { get; }
 		IEnumerable<TabContentImpl> TabContentImpls => TabGroup.TabContents.Cast<TabContentImpl>();
-		public IEnumerable<IToolWindowContent> TabContents => TabContentImpls.Select(a => a.Content);
+		public IEnumerable<ToolWindowContent> TabContents => TabContentImpls.Select(a => a.Content);
 
-		public IToolWindowContent ActiveTabContent {
+		public ToolWindowContent ActiveTabContent {
 			get { return ((TabContentImpl)TabGroup.ActiveTabContent)?.Content; }
 			set {
 				if (value == null)
@@ -62,10 +62,10 @@ namespace dnSpy.ToolWindows {
 		}
 
 		public static ToolWindowGroup GetToolWindowGroup(ITabGroup tabGroup) => (ToolWindowGroup)tabGroup?.Tag;
-		TabContentImpl GetTabContentImpl(IToolWindowContent content) => TabContentImpls.FirstOrDefault(a => a.Content == content);
-		public void Add(IToolWindowContent content) => TabGroup.Add(new TabContentImpl(this, content));
+		TabContentImpl GetTabContentImpl(ToolWindowContent content) => TabContentImpls.FirstOrDefault(a => a.Content == content);
+		public void Add(ToolWindowContent content) => TabGroup.Add(new TabContentImpl(this, content));
 
-		public void Close(IToolWindowContent content) {
+		public void Close(ToolWindowContent content) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabContentImpl(content);
@@ -77,7 +77,7 @@ namespace dnSpy.ToolWindows {
 
 		public void Close(TabContentImpl impl) => TabGroup.Close(impl);
 
-		public void MoveTo(IToolWindowGroup destGroup, IToolWindowContent content) {
+		public void MoveTo(IToolWindowGroup destGroup, ToolWindowContent content) {
 			if (destGroup == null)
 				throw new ArgumentNullException(nameof(destGroup));
 			if (content == null)
@@ -102,7 +102,7 @@ namespace dnSpy.ToolWindows {
 
 		public void SetFocus(TabContentImpl impl) => TabGroup.SetFocus(impl);
 
-		public void SetFocus(IToolWindowContent content) {
+		public void SetFocus(ToolWindowContent content) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabContentImpl(content);

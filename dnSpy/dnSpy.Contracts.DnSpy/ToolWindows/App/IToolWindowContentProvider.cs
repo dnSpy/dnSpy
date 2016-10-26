@@ -22,16 +22,16 @@ using System.Collections.Generic;
 
 namespace dnSpy.Contracts.ToolWindows.App {
 	/// <summary>
-	/// Creates <see cref="IToolWindowContent"/> instances.
+	/// Creates <see cref="ToolWindowContent"/> instances.
 	/// </summary>
 	public interface IToolWindowContentProvider {
 		/// <summary>
-		/// Creates a <see cref="IToolWindowContent"/> instance or returns a cached instance if it's
+		/// Creates a <see cref="ToolWindowContent"/> instance or returns a cached instance if it's
 		/// already been created. Returns null if someone else should create it.
 		/// </summary>
-		/// <param name="guid">Guid, see <see cref="IToolWindowContent.Guid"/></param>
+		/// <param name="guid">Guid, see <see cref="ToolWindowContent.Guid"/></param>
 		/// <returns></returns>
-		IToolWindowContent GetOrCreate(Guid guid);
+		ToolWindowContent GetOrCreate(Guid guid);
 
 		/// <summary>
 		/// Gets the tool windows it can create

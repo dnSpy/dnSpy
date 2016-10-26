@@ -43,23 +43,22 @@ namespace dnSpy.Search {
 			get { yield return new ToolWindowContentInfo(SearchToolWindowContent.THE_GUID, SearchToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_TOP_SEARCH, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
+		public ToolWindowContent GetOrCreate(Guid guid) {
 			if (guid == SearchToolWindowContent.THE_GUID)
 				return SearchToolWindowContent;
 			return null;
 		}
 	}
 
-	sealed class SearchToolWindowContent : IToolWindowContent, IFocusable {
+	sealed class SearchToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("8E359BE0-C8CD-4CA7-B228-8C836219AF85");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement => searchService.Value.FocusedElement;
-		public FrameworkElement ZoomElement => searchService.Value.ZoomElement;
-		public Guid Guid => THE_GUID;
-		public string Title => dnSpy_Resources.SearchWindow_Title;
-		public object ToolTip => null;
-		public object UIObject => searchService.Value.UIObject;
+		public override IInputElement FocusedElement => searchService.Value.FocusedElement;
+		public override FrameworkElement ZoomElement => searchService.Value.ZoomElement;
+		public override Guid Guid => THE_GUID;
+		public override string Title => dnSpy_Resources.SearchWindow_Title;
+		public override object UIObject => searchService.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<ISearchService> searchService;
@@ -68,7 +67,7 @@ namespace dnSpy.Search {
 			this.searchService = searchService;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			if (visEvent == ToolWindowContentVisibilityEvent.Removed)
 				searchService.Value.OnClose();
 			else if (visEvent == ToolWindowContentVisibilityEvent.Added)

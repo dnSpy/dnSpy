@@ -43,19 +43,18 @@ namespace dnSpy.Debugger.Exceptions {
 			get { yield return new ToolWindowContentInfo(ExceptionsToolWindowContent.THE_GUID, ExceptionsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_EXCEPTIONS, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) => guid == ExceptionsToolWindowContent.THE_GUID ? ExceptionsToolWindowContent : null;
+		public ToolWindowContent GetOrCreate(Guid guid) => guid == ExceptionsToolWindowContent.THE_GUID ? ExceptionsToolWindowContent : null;
 	}
 
-	sealed class ExceptionsToolWindowContent : IToolWindowContent, IFocusable {
+	sealed class ExceptionsToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("82575354-AB18-408B-846B-AA585B7B2B4A");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement => exceptionsContent.Value.FocusedElement;
-		public FrameworkElement ZoomElement => exceptionsContent.Value.ZoomElement;
-		public Guid Guid => THE_GUID;
-		public string Title => dnSpy_Debugger_Resources.Window_ExceptionSettings;
-		public object ToolTip => null;
-		public object UIObject => exceptionsContent.Value.UIObject;
+		public override IInputElement FocusedElement => exceptionsContent.Value.FocusedElement;
+		public override FrameworkElement ZoomElement => exceptionsContent.Value.ZoomElement;
+		public override Guid Guid => THE_GUID;
+		public override string Title => dnSpy_Debugger_Resources.Window_ExceptionSettings;
+		public override object UIObject => exceptionsContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IExceptionsContent> exceptionsContent;
@@ -64,7 +63,7 @@ namespace dnSpy.Debugger.Exceptions {
 			this.exceptionsContent = exceptionsContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				exceptionsContent.Value.OnShow();

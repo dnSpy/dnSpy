@@ -21,11 +21,11 @@ using System;
 
 namespace dnSpy.Contracts.ToolWindows.App {
 	/// <summary>
-	/// <see cref="IToolWindowContent"/> info
+	/// <see cref="ToolWindowContent"/> info
 	/// </summary>
 	public struct ToolWindowContentInfo {
 		/// <summary>
-		/// Guid of <see cref="IToolWindowContent"/>
+		/// Guid of <see cref="ToolWindowContent"/>
 		/// </summary>
 		public Guid Guid { get; set; }
 

@@ -609,11 +609,11 @@
     <Compile Include="ToolWindows\App\IDsToolWindowService.cs" />
     <Compile Include="ToolWindows\App\IToolWindowContentProvider.cs" />
     <Compile Include="ToolWindows\App\ToolWindowContentInfo.cs" />
-    <Compile Include="ToolWindows\IToolWindowContent.cs" />
     <Compile Include="ToolWindows\IToolWindowGroup.cs" />
     <Compile Include="ToolWindows\IToolWindowGroupService.cs" />
     <Compile Include="ToolWindows\IToolWindowService.cs" />
     <Compile Include="ToolWindows\IToolWindowServiceProvider.cs" />
+    <Compile Include="ToolWindows\ToolWindowContent.cs" />
     <Compile Include="ToolWindows\ToolWindowContentVisibilityEvent.cs" />
     <Compile Include="ToolWindows\ToolWindowGroupCollectionChangedEventArgs.cs" />
     <Compile Include="ToolWindows\ToolWindowGroupSelectedEventArgs.cs" />

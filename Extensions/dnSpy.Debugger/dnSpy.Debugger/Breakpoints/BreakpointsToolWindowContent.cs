@@ -43,19 +43,18 @@ namespace dnSpy.Debugger.Breakpoints {
 			get { yield return new ToolWindowContentInfo(BreakpointsToolWindowContent.THE_GUID, BreakpointsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_BREAKPOINTS, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) => guid == BreakpointsToolWindowContent.THE_GUID ? BreakpointsToolWindowContent : null;
+		public ToolWindowContent GetOrCreate(Guid guid) => guid == BreakpointsToolWindowContent.THE_GUID ? BreakpointsToolWindowContent : null;
 	}
 
-	sealed class BreakpointsToolWindowContent : IToolWindowContent, IFocusable {
+	sealed class BreakpointsToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("E5745D58-4DCB-4D92-B786-4E1635C86EED");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement => breakpointsContent.Value.FocusedElement;
-		public FrameworkElement ZoomElement => breakpointsContent.Value.ZoomElement;
-		public Guid Guid => THE_GUID;
-		public string Title => dnSpy_Debugger_Resources.Window_Breakpoints;
-		public object ToolTip => null;
-		public object UIObject => breakpointsContent.Value.UIObject;
+		public override IInputElement FocusedElement => breakpointsContent.Value.FocusedElement;
+		public override FrameworkElement ZoomElement => breakpointsContent.Value.ZoomElement;
+		public override Guid Guid => THE_GUID;
+		public override string Title => dnSpy_Debugger_Resources.Window_Breakpoints;
+		public override object UIObject => breakpointsContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IBreakpointsContent> breakpointsContent;
@@ -64,7 +63,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointsContent = breakpointsContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				breakpointsContent.Value.OnShow();

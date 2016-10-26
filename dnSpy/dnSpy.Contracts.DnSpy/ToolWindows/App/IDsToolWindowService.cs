@@ -32,24 +32,24 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// <param name="location">Location or null to use the default location
 		/// (<see cref="ToolWindowContentInfo.Location"/>). It's ignored if the content is already
 		/// present in the UI.</param>
-		void Show(IToolWindowContent content, AppToolWindowLocation? location = null);
+		void Show(ToolWindowContent content, AppToolWindowLocation? location = null);
 
 		/// <summary>
 		/// Adds content to a tool window and gives it keyboard focus. If it's already been added,
 		/// it becomes active and gets keyboard focus.
 		/// </summary>
-		/// <param name="guid">Guid of content, see <see cref="IToolWindowContent.Guid"/></param>
+		/// <param name="guid">Guid of content, see <see cref="ToolWindowContent.Guid"/></param>
 		/// <param name="location">Location or null to use the default location
 		/// (<see cref="ToolWindowContentInfo.Location"/>). It's ignored if the content is already
 		/// present in the UI.</param>
 		/// <returns></returns>
-		IToolWindowContent Show(Guid guid, AppToolWindowLocation? location = null);
+		ToolWindowContent Show(Guid guid, AppToolWindowLocation? location = null);
 
 		/// <summary>
 		/// Removes <paramref name="content"/> from the UI
 		/// </summary>
 		/// <param name="content">Content</param>
-		void Close(IToolWindowContent content);
+		void Close(ToolWindowContent content);
 
 		/// <summary>
 		/// Removes the tool window from the UI
@@ -62,12 +62,12 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// </summary>
 		/// <param name="content">Content</param>
 		/// <returns></returns>
-		bool IsShown(IToolWindowContent content);
+		bool IsShown(ToolWindowContent content);
 
 		/// <summary>
 		/// Returns true if the content is shown in the UI
 		/// </summary>
-		/// <param name="guid">Guid of content, see <see cref="IToolWindowContent.Guid"/></param>
+		/// <param name="guid">Guid of content, see <see cref="ToolWindowContent.Guid"/></param>
 		/// <returns></returns>
 		bool IsShown(Guid guid);
 
@@ -79,19 +79,19 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		bool Owns(IToolWindowGroup toolWindowGroup);
 
 		/// <summary>
-		/// Returns true if <see cref="Move(IToolWindowContent, AppToolWindowLocation)"/> can execute
+		/// Returns true if <see cref="Move(ToolWindowContent, AppToolWindowLocation)"/> can execute
 		/// </summary>
 		/// <param name="content">Content</param>
 		/// <param name="location">Location</param>
 		/// <returns></returns>
-		bool CanMove(IToolWindowContent content, AppToolWindowLocation location);
+		bool CanMove(ToolWindowContent content, AppToolWindowLocation location);
 
 		/// <summary>
 		/// Moves <paramref name="content"/> to a new location
 		/// </summary>
 		/// <param name="content">Content</param>
 		/// <param name="location">Location</param>
-		void Move(IToolWindowContent content, AppToolWindowLocation location);
+		void Move(ToolWindowContent content, AppToolWindowLocation location);
 
 		/// <summary>
 		/// Returns true if <see cref="Move(IToolWindowGroup, AppToolWindowLocation)"/> can execute

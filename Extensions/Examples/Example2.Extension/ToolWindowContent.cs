@@ -22,7 +22,7 @@ namespace Example2.Extension {
 		[ImportingConstructor]
 		ToolWindowLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
-			cmds.Add(OpenToolWindow, new RelayCommand(a => toolWindowService.Show(ToolWindowContent.THE_GUID)));
+			cmds.Add(OpenToolWindow, new RelayCommand(a => toolWindowService.Show(ToolWindowContentImpl.THE_GUID)));
 			cmds.Add(OpenToolWindow, ModifierKeys.Control | ModifierKeys.Alt, Key.Z);
 		}
 	}
@@ -46,8 +46,8 @@ namespace Example2.Extension {
 	[Export(typeof(IToolWindowContentProvider))]
 	sealed class MainToolWindowContentProvider : IToolWindowContentProvider {
 		// Caches the created tool window
-		ToolWindowContent ToolWindowContent => myToolWindowContent ?? (myToolWindowContent = new ToolWindowContent());
-		ToolWindowContent myToolWindowContent;
+		ToolWindowContentImpl ToolWindowContent => myToolWindowContent ?? (myToolWindowContent = new ToolWindowContentImpl());
+		ToolWindowContentImpl myToolWindowContent;
 
 		// Add any deps to the constructor if needed, else remove the constructor
 		[ImportingConstructor]
@@ -57,43 +57,42 @@ namespace Example2.Extension {
 
 		// Lets dnSpy know which tool windows it can create and their default locations
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
-			get { yield return new ToolWindowContentInfo(ToolWindowContent.THE_GUID, ToolWindowContent.DEFAULT_LOCATION, 0, false); }
+			get { yield return new ToolWindowContentInfo(ToolWindowContentImpl.THE_GUID, ToolWindowContentImpl.DEFAULT_LOCATION, 0, false); }
 		}
 
 		// Called by dnSpy. If it's your tool window guid, return the instance. Make sure it's
 		// cached since it can be called multiple times.
-		public IToolWindowContent GetOrCreate(Guid guid) {
-			if (guid == ToolWindowContent.THE_GUID)
+		public ToolWindowContent GetOrCreate(Guid guid) {
+			if (guid == ToolWindowContentImpl.THE_GUID)
 				return ToolWindowContent;
 			return null;
 		}
 	}
 
-	sealed class ToolWindowContent : IToolWindowContent {
+	sealed class ToolWindowContentImpl : ToolWindowContent {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("18785447-21A8-41DB-B8AD-0F166AEC0D08");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public Guid Guid => THE_GUID;
-		public string Title => "Extension Example";
-		public object ToolTip => null;
+		public override Guid Guid => THE_GUID;
+		public override string Title => "Extension Example";
 
 		// This is the object shown in the UI. Return a WPF object or a .NET object with a DataTemplate
-		public object UIObject => toolWindowControl;
+		public override object UIObject => toolWindowControl;
 
 		// The element inside UIObject that gets the focus when the tool window should be focused.
 		// If it's not as easy as calling FocusedElement.Focus() to focus it, you must implement
 		// dnSpy.Contracts.Controls.IFocusable.
-		public IInputElement FocusedElement => toolWindowControl.option1TextBox;
+		public override IInputElement FocusedElement => toolWindowControl.option1TextBox;
 
 		// The element that gets scaled when the user zooms in or out. Return null if zooming isn't
 		// possible
-		public FrameworkElement ZoomElement => toolWindowControl;
+		public override FrameworkElement ZoomElement => toolWindowControl;
 
 		readonly ToolWindowControl toolWindowControl;
 		readonly ToolWindowVM toolWindowVM;
 
-		public ToolWindowContent() {
+		public ToolWindowContentImpl() {
 			this.toolWindowControl = new ToolWindowControl();
 			this.toolWindowVM = new ToolWindowVM();
 			this.toolWindowControl.DataContext = this.toolWindowVM;
@@ -101,7 +100,7 @@ namespace Example2.Extension {
 
 		// Gets notified when the content gets hidden, visible, etc. Can be used to tell the view
 		// model to stop doing stuff when it gets hidden in case it does a lot of work.
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				toolWindowVM.IsEnabled = true;

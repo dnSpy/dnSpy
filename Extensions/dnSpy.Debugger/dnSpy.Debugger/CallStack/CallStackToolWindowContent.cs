@@ -43,19 +43,18 @@ namespace dnSpy.Debugger.CallStack {
 			get { yield return new ToolWindowContentInfo(CallStackToolWindowContent.THE_GUID, CallStackToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CALLSTACK, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) => guid == CallStackToolWindowContent.THE_GUID ? CallStackToolWindowContent : null;
+		public ToolWindowContent GetOrCreate(Guid guid) => guid == CallStackToolWindowContent.THE_GUID ? CallStackToolWindowContent : null;
 	}
 
-	sealed class CallStackToolWindowContent : IToolWindowContent, IFocusable {
+	sealed class CallStackToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("0E53B79D-EC30-44B6-86A3-DFFCE364EB4A");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement => callStackContent.Value.FocusedElement;
-		public FrameworkElement ZoomElement => callStackContent.Value.ZoomElement;
-		public Guid Guid => THE_GUID;
-		public string Title => dnSpy_Debugger_Resources.Window_CallStack;
-		public object ToolTip => null;
-		public object UIObject => callStackContent.Value.UIObject;
+		public override IInputElement FocusedElement => callStackContent.Value.FocusedElement;
+		public override FrameworkElement ZoomElement => callStackContent.Value.ZoomElement;
+		public override Guid Guid => THE_GUID;
+		public override string Title => dnSpy_Debugger_Resources.Window_CallStack;
+		public override object UIObject => callStackContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<ICallStackContent> callStackContent;
@@ -64,7 +63,7 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackContent = callStackContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				callStackContent.Value.OnShow();

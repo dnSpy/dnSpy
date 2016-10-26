@@ -47,19 +47,18 @@ namespace dnSpy.Output {
 			get { yield return new ToolWindowContentInfo(OutputToolWindowContent.THE_GUID, OutputToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_OUTPUT, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) => guid == OutputToolWindowContent.THE_GUID ? OutputToolWindowContent : null;
+		public ToolWindowContent GetOrCreate(Guid guid) => guid == OutputToolWindowContent.THE_GUID ? OutputToolWindowContent : null;
 	}
 
-	sealed class OutputToolWindowContent : IToolWindowContent, IZoomable {
+	sealed class OutputToolWindowContent : ToolWindowContent, IZoomable {
 		public static readonly Guid THE_GUID = new Guid("90A45E97-727E-4F31-8692-06E19218D99A");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement => outputContent.Value.FocusedElement;
-		public FrameworkElement ZoomElement => outputContent.Value.ZoomElement;
-		public Guid Guid => THE_GUID;
-		public string Title => dnSpy_Resources.Window_Output;
-		public object ToolTip => null;
-		public object UIObject => outputContent.Value.UIObject;
+		public override IInputElement FocusedElement => outputContent.Value.FocusedElement;
+		public override FrameworkElement ZoomElement => outputContent.Value.ZoomElement;
+		public override Guid Guid => THE_GUID;
+		public override string Title => dnSpy_Resources.Window_Output;
+		public override object UIObject => outputContent.Value.UIObject;
 		double IZoomable.ZoomValue => outputContent.Value.ZoomLevel / 100.0;
 
 		readonly Lazy<IOutputContent> outputContent;
@@ -68,7 +67,7 @@ namespace dnSpy.Output {
 			this.outputContent = outputContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				outputContent.Value.OnShow();

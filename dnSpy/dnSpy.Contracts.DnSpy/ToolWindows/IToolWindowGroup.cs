@@ -30,39 +30,39 @@ namespace dnSpy.Contracts.ToolWindows {
 		IToolWindowGroupService ToolWindowGroupService { get; }
 
 		/// <summary>
-		/// Gets all <see cref="IToolWindowContent"/> instances
+		/// Gets all <see cref="ToolWindowContent"/> instances
 		/// </summary>
-		IEnumerable<IToolWindowContent> TabContents { get; }
+		IEnumerable<ToolWindowContent> TabContents { get; }
 
 		/// <summary>
-		/// Gets the active <see cref="IToolWindowContent"/> or null if <see cref="TabContents"/> is empty
+		/// Gets the active <see cref="ToolWindowContent"/> or null if <see cref="TabContents"/> is empty
 		/// </summary>
-		IToolWindowContent ActiveTabContent { get; set; }
+		ToolWindowContent ActiveTabContent { get; set; }
 
 		/// <summary>
 		/// Adds the content
 		/// </summary>
 		/// <param name="content">Content</param>
-		void Add(IToolWindowContent content);
+		void Add(ToolWindowContent content);
 
 		/// <summary>
 		/// Closes the content
 		/// </summary>
 		/// <param name="content">Content</param>
-		void Close(IToolWindowContent content);
+		void Close(ToolWindowContent content);
 
 		/// <summary>
 		/// Moves <paramref name="content"/> from this group to <paramref name="destGroup"/>
 		/// </summary>
 		/// <param name="destGroup">Destination group</param>
 		/// <param name="content">Content in this group</param>
-		void MoveTo(IToolWindowGroup destGroup, IToolWindowContent content);
+		void MoveTo(IToolWindowGroup destGroup, ToolWindowContent content);
 
 		/// <summary>
 		/// Sets keyboard focus
 		/// </summary>
 		/// <param name="content">Content</param>
-		void SetFocus(IToolWindowContent content);
+		void SetFocus(ToolWindowContent content);
 
 		/// <summary>
 		/// true if <see cref="CloseActiveTab()"/> can execute

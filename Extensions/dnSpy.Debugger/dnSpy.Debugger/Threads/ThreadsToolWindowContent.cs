@@ -43,19 +43,18 @@ namespace dnSpy.Debugger.Threads {
 			get { yield return new ToolWindowContentInfo(ThreadsToolWindowContent.THE_GUID, ThreadsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_THREADS, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) => guid == ThreadsToolWindowContent.THE_GUID ? ThreadsToolWindowContent : null;
+		public ToolWindowContent GetOrCreate(Guid guid) => guid == ThreadsToolWindowContent.THE_GUID ? ThreadsToolWindowContent : null;
 	}
 
-	sealed class ThreadsToolWindowContent : IToolWindowContent, IFocusable {
+	sealed class ThreadsToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("3C01719C-B6B5-4261-9CD4-3EDCE1032E5C");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement => threadsContent.Value.FocusedElement;
-		public FrameworkElement ZoomElement => threadsContent.Value.ZoomElement;
-		public Guid Guid => THE_GUID;
-		public string Title => dnSpy_Debugger_Resources.Window_Threads;
-		public object ToolTip => null;
-		public object UIObject => threadsContent.Value.UIObject;
+		public override IInputElement FocusedElement => threadsContent.Value.FocusedElement;
+		public override FrameworkElement ZoomElement => threadsContent.Value.ZoomElement;
+		public override Guid Guid => THE_GUID;
+		public override string Title => dnSpy_Debugger_Resources.Window_Threads;
+		public override object UIObject => threadsContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IThreadsContent> threadsContent;
@@ -64,7 +63,7 @@ namespace dnSpy.Debugger.Threads {
 			this.threadsContent = threadsContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				threadsContent.Value.OnShow();

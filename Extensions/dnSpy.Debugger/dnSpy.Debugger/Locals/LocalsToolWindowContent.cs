@@ -43,19 +43,18 @@ namespace dnSpy.Debugger.Locals {
 			get { yield return new ToolWindowContentInfo(LocalsToolWindowContent.THE_GUID, LocalsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_LOCALS, false); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) => guid == LocalsToolWindowContent.THE_GUID ? LocalsToolWindowContent : null;
+		public ToolWindowContent GetOrCreate(Guid guid) => guid == LocalsToolWindowContent.THE_GUID ? LocalsToolWindowContent : null;
 	}
 
-	sealed class LocalsToolWindowContent : IToolWindowContent, IFocusable {
+	sealed class LocalsToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("D799829F-CAE3-4F8F-AD81-1732ABC50636");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public IInputElement FocusedElement => localsContent.Value.FocusedElement;
-		public FrameworkElement ZoomElement => localsContent.Value.ZoomElement;
-		public Guid Guid => THE_GUID;
-		public string Title => dnSpy_Debugger_Resources.Window_Locals;
-		public object ToolTip => null;
-		public object UIObject => localsContent.Value.UIObject;
+		public override IInputElement FocusedElement => localsContent.Value.FocusedElement;
+		public override FrameworkElement ZoomElement => localsContent.Value.ZoomElement;
+		public override Guid Guid => THE_GUID;
+		public override string Title => dnSpy_Debugger_Resources.Window_Locals;
+		public override object UIObject => localsContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<ILocalsContent> localsContent;
@@ -64,7 +63,7 @@ namespace dnSpy.Debugger.Locals {
 			this.localsContent = localsContent;
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {
 			case ToolWindowContentVisibilityEvent.Added:
 				localsContent.Value.OnShow();

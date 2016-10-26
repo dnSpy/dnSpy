@@ -49,23 +49,22 @@ namespace dnSpy.MainApp {
 			get { yield return new ToolWindowContentInfo(DocumentTreeViewWindowContent.THE_GUID, DocumentTreeViewWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_LEFT_FILES, true); }
 		}
 
-		public IToolWindowContent GetOrCreate(Guid guid) {
+		public ToolWindowContent GetOrCreate(Guid guid) {
 			if (guid == DocumentTreeViewWindowContent.THE_GUID)
 				return DocumentTreeViewWindowContent;
 			return null;
 		}
 	}
 
-	sealed class DocumentTreeViewWindowContent : IToolWindowContent, IFocusable {
+	sealed class DocumentTreeViewWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("5495EE9F-1EF2-45F3-A320-22A89BFDF731");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultVertical;
 
-		public IInputElement FocusedElement => null;
-		public FrameworkElement ZoomElement => treeView.UIObject;
-		public Guid Guid => THE_GUID;
-		public string Title => dnSpy_Resources.AssemblyExplorerTitle;
-		public object ToolTip => null;
-		public object UIObject => treeView.UIObject;
+		public override IInputElement FocusedElement => null;
+		public override FrameworkElement ZoomElement => treeView.UIObject;
+		public override Guid Guid => THE_GUID;
+		public override string Title => dnSpy_Resources.AssemblyExplorerTitle;
+		public override object UIObject => treeView.UIObject;
 		public bool CanFocus => true;
 
 		readonly ITreeView treeView;
@@ -75,7 +74,6 @@ namespace dnSpy.MainApp {
 			treeView.UIObject.Padding = new Thickness(0, 2, 0, 0);
 		}
 
-		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) { }
 		public void Focus() => treeView.Focus();
 	}
 

@@ -124,7 +124,7 @@ namespace dnSpy.ToolWindows {
 		bool contentUIObject_initd;
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		public IToolWindowContent Content { get; }
+		public ToolWindowContent Content { get; }
 
 		public ToolWindowGroup Owner {
 			get {
@@ -137,7 +137,7 @@ namespace dnSpy.ToolWindows {
 
 		readonly TabElementZoomer elementZoomer;
 
-		public TabContentImpl(ToolWindowGroup owner, IToolWindowContent content) {
+		public TabContentImpl(ToolWindowGroup owner, ToolWindowContent content) {
 			this.elementZoomer = new TabElementZoomer();
 			this.owner = owner;
 			this.Content = content;
@@ -235,13 +235,13 @@ namespace dnSpy.ToolWindows {
 		}
 
 		void ToolWindowContent_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(IToolWindowContent.Title))
+			if (e.PropertyName == nameof(ToolWindowContent.Title))
 				OnPropertyChanged(nameof(Title));
-			else if (e.PropertyName == nameof(IToolWindowContent.ToolTip))
+			else if (e.PropertyName == nameof(ToolWindowContent.ToolTip))
 				OnPropertyChanged(nameof(ToolTip));
-			else if (e.PropertyName == nameof(IToolWindowContent.UIObject) && contentUIObject_initd)
+			else if (e.PropertyName == nameof(ToolWindowContent.UIObject) && contentUIObject_initd)
 				ContentUIObject = Content.UIObject;
-			else if (e.PropertyName == nameof(IToolWindowContent.ZoomElement) && contentUIObject_initd)
+			else if (e.PropertyName == nameof(ToolWindowContent.ZoomElement) && contentUIObject_initd)
 				UpdateZoomElement();
 		}
 

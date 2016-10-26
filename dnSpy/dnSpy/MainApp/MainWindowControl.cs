@@ -266,7 +266,7 @@ namespace dnSpy.MainApp {
 
 		public static void Serialize(ISettingsSection section, ToolWindowContentState state) => section.Attribute(GUID_ATTR, state.Guid);
 
-		public ToolWindowContentState Save(IToolWindowContent c) {
+		public ToolWindowContentState Save(ToolWindowContent c) {
 			this.Guid = c.Guid;
 			return this;
 		}
@@ -420,13 +420,13 @@ namespace dnSpy.MainApp {
 			return AppToolWindowLocation.DefaultHorizontal;
 		}
 
-		public void Show(IToolWindowContent content, AppToolWindowLocation? location) {
+		public void Show(ToolWindowContent content, AppToolWindowLocation? location) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			Show(content, GetLocation(content.Guid, location), true, true);
 		}
 
-		void Show(IToolWindowContent content, AppToolWindowLocation location, bool active, bool focus) {
+		void Show(ToolWindowContent content, AppToolWindowLocation location, bool active, bool focus) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
@@ -454,7 +454,7 @@ namespace dnSpy.MainApp {
 			return g;
 		}
 
-		void SaveLocationAndActivate(IToolWindowGroup g, IToolWindowContent content, AppToolWindowLocation location, bool active, bool focus) {
+		void SaveLocationAndActivate(IToolWindowGroup g, ToolWindowContent content, AppToolWindowLocation location, bool active, bool focus) {
 			if (active)
 				g.ActiveTabContent = content;
 			if (focus)
@@ -484,7 +484,7 @@ namespace dnSpy.MainApp {
 			ui.IsAdded = true;
 		}
 
-		public bool IsShown(IToolWindowContent content) => GetToolWindowGroup(content) != null;
+		public bool IsShown(ToolWindowContent content) => GetToolWindowGroup(content) != null;
 		public bool IsShown(Guid guid) => GetToolWindowGroup(guid) != null;
 
 		void Hide(ToolWindowUI ui) {
@@ -509,9 +509,9 @@ namespace dnSpy.MainApp {
 			ui.Length = length.Value;
 		}
 
-		public IToolWindowContent Show(Guid guid, AppToolWindowLocation? location) => Show(guid, GetLocation(guid, location), true, true);
+		public ToolWindowContent Show(Guid guid, AppToolWindowLocation? location) => Show(guid, GetLocation(guid, location), true, true);
 
-		IToolWindowContent Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
+		ToolWindowContent Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
 			var content = Create(guid);
 			Debug.Assert(content != null);
 			if (content == null)
@@ -520,7 +520,7 @@ namespace dnSpy.MainApp {
 			return content;
 		}
 
-		IToolWindowContent Create(Guid guid) {
+		ToolWindowContent Create(Guid guid) {
 			foreach (var provider in mainToolWindowContentProviders) {
 				var content = provider.Value.GetOrCreate(guid);
 				if (content != null)
@@ -546,7 +546,7 @@ namespace dnSpy.MainApp {
 			return null;
 		}
 
-		Tuple<ToolWindowUI, IToolWindowGroup> GetToolWindowGroup(IToolWindowContent content) {
+		Tuple<ToolWindowUI, IToolWindowGroup> GetToolWindowGroup(ToolWindowContent content) {
 			foreach (var ui in this.toolWindowUIs.Values) {
 				foreach (var g in ui.ToolWindowGroupService.TabGroups) {
 					if (g.TabContents.Contains(content))
@@ -564,7 +564,7 @@ namespace dnSpy.MainApp {
 			return null;
 		}
 
-		public void Close(IToolWindowContent content) {
+		public void Close(ToolWindowContent content) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
@@ -590,7 +590,7 @@ namespace dnSpy.MainApp {
 			return false;
 		}
 
-		public bool CanMove(IToolWindowContent content, AppToolWindowLocation location) {
+		public bool CanMove(ToolWindowContent content, AppToolWindowLocation location) {
 			var t = GetToolWindowGroup(content);
 			location = Convert(location);
 			if (t == null || t.Item1.Location == location)
@@ -599,7 +599,7 @@ namespace dnSpy.MainApp {
 			return true;
 		}
 
-		public void Move(IToolWindowContent content, AppToolWindowLocation location) {
+		public void Move(ToolWindowContent content, AppToolWindowLocation location) {
 			var t = GetToolWindowGroup(content);
 			location = Convert(location);
 			if (t == null || t.Item1.Location == location)
