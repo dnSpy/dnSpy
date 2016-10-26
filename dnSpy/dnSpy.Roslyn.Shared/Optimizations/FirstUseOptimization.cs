@@ -40,6 +40,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Text.Tagging;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Roslyn.Internal.SignatureHelp;
 using dnSpy.Roslyn.Shared.Documentation;
@@ -101,19 +102,17 @@ End Module
 		static MetadataReference CreateMetadataReference(Assembly assembly, IRoslynDocumentationProviderFactory docFactory) =>
 			MetadataReference.CreateFromFile(assembly.Location, documentation: docFactory.TryCreate(assembly.Location));
 
-		async Task InitializeAsync(ITextBuffer buffer, ITagger<IClassificationTag> tagger, IRoslynDocumentationProviderFactory docFactory) {
+		async Task InitializeAsync(ITextBuffer buffer, ISynchronousTagger<IClassificationTag> tagger, IRoslynDocumentationProviderFactory docFactory) {
 			ProfileOptimizationHelper.StartProfile("startup-roslyn");
 			var refs = new MetadataReference[] {
 				CreateMetadataReference(typeof(int).Assembly, docFactory),
 			};
 			await InitializeAsync(buffer, csharpCode, refs, LanguageNames.CSharp, tagger, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true), new CSharpParseOptions());
 			await InitializeAsync(buffer, visualBasicCode, refs, LanguageNames.VisualBasic, tagger, new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary), new VisualBasicParseOptions());
-			// The tagger is async, give it a few secs before disposing it
-			await Task.Delay(2000);
 			(tagger as IDisposable)?.Dispose();
 		}
 
-		async Task InitializeAsync(ITextBuffer buffer, string code, MetadataReference[] refs, string languageName, ITagger<IClassificationTag> tagger, CompilationOptions compilationOptions, ParseOptions parseOptions) {
+		async Task InitializeAsync(ITextBuffer buffer, string code, MetadataReference[] refs, string languageName, ISynchronousTagger<IClassificationTag> tagger, CompilationOptions compilationOptions, ParseOptions parseOptions) {
 			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
 				var documents = new List<DocumentInfo>();
 				var projectId = ProjectId.CreateNewId();
@@ -137,7 +136,7 @@ End Module
 				{
 					// Initialize classification code paths
 					var spans = new NormalizedSnapshotSpanCollection(new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length));
-					foreach (var tagSpan in tagger.GetTags(spans)) { }
+					foreach (var tagSpan in tagger.GetTags(spans, CancellationToken.None)) { }
 				}
 
 				{
