@@ -39,7 +39,6 @@ namespace dnSpy.Text.Editor {
 			yield return CommandShortcut.CtrlShift(Key.PageDown, TextEditorIds.BOTTOMLINE_EXT.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.Escape, TextEditorIds.CANCEL.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.L, TextEditorIds.CUTLINE.ToCommandInfo());
-			yield return CommandShortcut.Shift(Key.Delete, TextEditorIds.CUTLINE.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.Delete, TextEditorIds.DELETE.ToCommandInfo());
 			//TODO: yield return CommandShortcut.Control(Key.XXXXX, TextEditorIds.DELETEBLANKLINES.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.L, TextEditorIds.DELETELINE.ToCommandInfo());
