@@ -41,7 +41,7 @@ namespace dnSpy.Search {
 				var ns = Object as string;
 				if (ns != null)
 					return new NamespaceRef(Document, ns);
-				var node = Object as IDocumentTreeNodeData;
+				var node = Object as DocumentTreeNodeData;
 				if (node != null)
 					return node;
 				return Reference2;
@@ -183,13 +183,13 @@ namespace dnSpy.Search {
 				return;
 			}
 
-			var resNode = o as IResourceNode;
+			var resNode = o as ResourceNode;
 			if (resNode != null) {
 				output.WriteFilename(resNode.Name);
 				return;
 			}
 
-			var resElNode = o as IResourceElementNode;
+			var resElNode = o as ResourceElementNode;
 			if (resElNode != null) {
 				output.WriteFilename(resElNode.Name);
 				return;

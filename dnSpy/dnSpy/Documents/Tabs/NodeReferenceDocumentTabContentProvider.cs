@@ -43,7 +43,7 @@ namespace dnSpy.Documents.Tabs {
 			var textRef = @ref as TextReference;
 			if (textRef != null)
 				@ref = textRef.Reference;
-			var node = @ref as IDocumentTreeNodeData;
+			var node = @ref as DocumentTreeNodeData;
 			if (node != null)
 				return Create(node);
 			var nsRef = @ref as NamespaceRef;
@@ -70,8 +70,8 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		DocumentTabReferenceResult Create(IDocumentTreeNodeData node) {
-			var content = documentTabContentFactoryService.CreateTabContent(new IDocumentTreeNodeData[] { node });
+		DocumentTabReferenceResult Create(DocumentTreeNodeData node) {
+			var content = documentTabContentFactoryService.CreateTabContent(new[] { node });
 			if (content == null)
 				return null;
 			return new DocumentTabReferenceResult(content);

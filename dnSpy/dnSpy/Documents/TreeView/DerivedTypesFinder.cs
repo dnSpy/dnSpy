@@ -56,7 +56,7 @@ namespace dnSpy.Documents.TreeView {
 
 			//TODO: If it's not a public type, only check modules in this assembly and any friend assemblies
 
-			AddMessageNode(() => new MessageNode(msgNodeGroup, new Guid(DocumentTreeViewConstants.MESSAGE_NODE_GUID), DsImages.Search, dnSpy_Resources.Searching));
+			AddMessageNode(() => new MessageNodeImpl(msgNodeGroup, new Guid(DocumentTreeViewConstants.MESSAGE_NODE_GUID), DsImages.Search, dnSpy_Resources.Searching));
 			foreach (var weakMod in weakModules) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var mod = (ModuleDef)weakMod.Target;
@@ -64,7 +64,7 @@ namespace dnSpy.Documents.TreeView {
 					continue;
 
 				foreach (var td in FindDerivedTypes(mod))
-					AddNode(new DerivedTypeNode(derivedTypesGroup, td));
+					AddNode(new DerivedTypeNodeImpl(derivedTypesGroup, td));
 			}
 		}
 

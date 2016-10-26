@@ -239,10 +239,10 @@ namespace dnSpy.Documents.Tabs {
 		static string GetFilename(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
-			var nodes = context.Find<ITreeNodeData[]>();
+			var nodes = context.Find<TreeNodeData[]>();
 			if (nodes?.Length != 1)
 				return null;
-			var documentNode = nodes[0] as IDsDocumentNode;
+			var documentNode = nodes[0] as DsDocumentNode;
 			var filename = documentNode?.Document?.Filename;
 			if (!File.Exists(filename))
 				return null;

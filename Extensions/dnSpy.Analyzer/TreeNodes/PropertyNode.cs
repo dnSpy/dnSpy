@@ -55,7 +55,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			new NodePrinter().Write(output, decompiler, analyzedProperty, Context.ShowToken, null);
 		}
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (analyzedProperty.GetMethod != null)
 				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, dnSpy_Analyzer_Resources.PropertyGetterTreeNode);
 			if (analyzedProperty.SetMethod != null)
@@ -69,7 +69,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfacePropertyImplementedByNode(analyzedProperty);
 		}
 
-		public static IAnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
+		public static AnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
 			if (CanShow(member, decompiler))
 				return new PropertyNode(member as PropertyDef);
 			else

@@ -47,9 +47,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.ModulePublic;
-		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(this).FilterType;
+		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResultOther(this).FilterType;
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			Debug.Assert(TreeNode.Children.Count == 0 && weakDocListener == null);
 			if (weakDocListener != null)
 				yield break;
@@ -163,7 +163,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public double Order { get; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as PENode;
 			var b = y as PENode;

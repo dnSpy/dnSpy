@@ -30,9 +30,9 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class TypeNodeCreator {
 		readonly NamespaceNodeCreator nsNodeCreator;
 		readonly IList<TypeDef> ownerList;
-		readonly ITypeNode typeNode;
+		readonly TypeNode typeNode;
 
-		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
+		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get {
 				foreach (var n in nsNodeCreator.OriginalNodes)
 					yield return n;
@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		public TypeNodeCreator(IModuleDocumentNode modNode, TypeDef type) {
+		public TypeNodeCreator(ModuleDocumentNode modNode, TypeDef type) {
 			if (modNode == null)
 				throw new ArgumentNullException(nameof(modNode));
 			if (type == null)

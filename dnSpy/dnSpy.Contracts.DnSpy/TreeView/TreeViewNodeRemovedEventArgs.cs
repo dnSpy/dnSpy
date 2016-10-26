@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// The node
 		/// </summary>
-		public ITreeNodeData Node { get; }
+		public TreeNodeData Node { get; }
 
 		/// <summary>
 		/// true if <see cref="Node"/> was removed
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="node">Node</param>
 		/// <param name="removed">true if it was removed</param>
-		public TreeViewNodeRemovedEventArgs(ITreeNodeData node, bool removed) {
+		public TreeViewNodeRemovedEventArgs(TreeNodeData node, bool removed) {
 			this.Node = node;
 			this.Removed = removed;
 		}

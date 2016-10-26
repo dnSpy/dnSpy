@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// <see cref="IDsDocument"/> if it's a non-.NET file. <see cref="AssemblyDef"/>,
 		/// <see cref="ModuleDef"/>, <see cref="dnlib.DotNet.AssemblyRef"/>, <see cref="ModuleRef"/>,
-		/// <see cref="IResourceNode"/>, <see cref="IResourceElementNode"/>, <see cref="string"/>
+		/// <see cref="ResourceNode"/>, <see cref="ResourceElementNode"/>, <see cref="string"/>
 		/// (namespace), <see cref="TypeDef"/>, <see cref="MethodDef"/>, <see cref="FieldDef"/>,
 		/// <see cref="PropertyDef"/>, <see cref="EventDef"/>.
 		/// </summary>

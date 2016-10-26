@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// <summary>
 	/// Serialized resource element node base class
 	/// </summary>
-	public abstract class SerializedResourceElementNode : ResourceElementNode, ISerializedResourceElementNode {
+	public abstract class SerializedResourceElementNode : ResourceElementNode {
 		object deserializedData;
 
 		string DeserializedStringValue => deserializedData == null ? null : deserializedData.ToString();
@@ -51,8 +51,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="treeNodeGroup"></param>
-		/// <param name="resourceElement"></param>
+		/// <param name="treeNodeGroup">Treenode group</param>
+		/// <param name="resourceElement">Resource element</param>
 		protected SerializedResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
 			: base(treeNodeGroup, resourceElement) {
 			Debug.Assert(resourceElement.ResourceData is BinaryResourceData);
@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		protected virtual void OnDeserialized() { }
 
 		/// <summary>
-		/// true if it can be deserialized
+		/// true if <see cref="Deserialize()"/> can execute
 		/// </summary>
 		public bool CanDeserialize => IsSerialized;
 

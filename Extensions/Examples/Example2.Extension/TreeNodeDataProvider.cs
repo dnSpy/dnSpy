@@ -14,7 +14,7 @@ namespace Example2.Extension {
 	// This class adds a new child node to all assembly nodes
 	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.ASSEMBLY_NODE_GUID)]
 	sealed class AssemblyTreeNodeDataProvider : ITreeNodeDataProvider {
-		public IEnumerable<ITreeNodeData> Create(TreeNodeDataProviderContext context) {
+		public IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context) {
 			yield return new AssemblyChildNode();
 		}
 	}
@@ -22,12 +22,12 @@ namespace Example2.Extension {
 	// This class adds a new child node to all module nodes
 	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.MODULE_NODE_GUID)]
 	sealed class ModuleTreeNodeDataProvider : ITreeNodeDataProvider {
-		public IEnumerable<ITreeNodeData> Create(TreeNodeDataProviderContext context) {
+		public IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context) {
 			yield return new ModuleChildNode();
 		}
 	}
 
-	sealed class AssemblyChildNode : DocumentTreeNodeData { // All file tree nodes should implement IDocumentTreeNodeData or derive from DocumentTreeNodeData
+	sealed class AssemblyChildNode : DocumentTreeNodeData { // All file tree nodes should implement DocumentTreeNodeData or derive from DocumentTreeNodeData
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("6CF91674-16CE-44EA-B9E8-80B68C327D30");
 
@@ -52,7 +52,7 @@ namespace Example2.Extension {
 
 			public double Order { get; }
 
-			public int Compare(ITreeNodeData x, ITreeNodeData y) {
+			public int Compare(TreeNodeData x, TreeNodeData y) {
 				if (x == y)
 					return 0;
 				var a = x as AssemblyChildNode;
@@ -66,7 +66,7 @@ namespace Example2.Extension {
 	}
 
 	// This class can decompile its own output and implements IDecompileSelf
-	sealed class ModuleChildNode : DocumentTreeNodeData, IDecompileSelf { // All file tree nodes should implement IDocumentTreeNodeData or derive from DocumentTreeNodeData
+	sealed class ModuleChildNode : DocumentTreeNodeData, IDecompileSelf { // All file tree nodes should implement DocumentTreeNodeData or derive from DocumentTreeNodeData
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("C8892F6C-6A49-4537-AAA0-D0DEF1E87277");
 
@@ -82,7 +82,7 @@ namespace Example2.Extension {
 
 		// If TreeNode.LazyLoading is false, CreateChildren() is called after Initialize(), else it's
 		// called when this node gets expanded.
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			// Add some children in random order. They will be sorted because SomeMessageNode
 			// overrides the TreeNodeGroup prop.
 			yield return new SomeMessageNode("ZZZZZZZZZZZZZ");
@@ -139,7 +139,7 @@ namespace Example2.Extension {
 
 			public double Order { get; }
 
-			public int Compare(ITreeNodeData x, ITreeNodeData y) {
+			public int Compare(TreeNodeData x, TreeNodeData y) {
 				if (x == y)
 					return 0;
 				var a = x as ModuleChildNode;
@@ -180,7 +180,7 @@ namespace Example2.Extension {
 
 			public double Order { get; }
 
-			public int Compare(ITreeNodeData x, ITreeNodeData y) {
+			public int Compare(TreeNodeData x, TreeNodeData y) {
 				if (x == y)
 					return 0;
 				var a = x as SomeMessageNode;
@@ -196,7 +196,7 @@ namespace Example2.Extension {
 	// those nodes.
 	[ExportDecompileNode]
 	sealed class SomeMessageNodeDecompiler : IDecompileNode {
-		public bool Decompile(IDecompileNodeContext context, IDocumentTreeNodeData node) {
+		public bool Decompile(IDecompileNodeContext context, DocumentTreeNodeData node) {
 			var msgNode = node as SomeMessageNode;
 			if (msgNode == null)
 				return false;

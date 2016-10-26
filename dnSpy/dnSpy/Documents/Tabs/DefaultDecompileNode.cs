@@ -24,7 +24,7 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.Documents.Tabs {
 	[ExportDecompileNode(Order = TabConstants.ORDER_DEFAULTDECOMPILENODE)]
 	sealed class DefaultDecompileNode : IDecompileNode {
-		public bool Decompile(IDecompileNodeContext context, IDocumentTreeNodeData node) {
+		public bool Decompile(IDecompileNodeContext context, DocumentTreeNodeData node) {
 			new NodeDecompiler(a => context.UIThread(() => a()), context.Output, context.Decompiler, context.DecompilationContext, context).Decompile(node);
 			return true;
 		}

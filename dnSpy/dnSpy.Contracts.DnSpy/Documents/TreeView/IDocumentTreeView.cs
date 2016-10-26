@@ -75,93 +75,93 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="node">The activated node (should be the caller)</param>
 		/// <returns></returns>
-		bool RaiseNodeActivated(IDocumentTreeNodeData node);
+		bool RaiseNodeActivated(DocumentTreeNodeData node);
 
 		/// <summary>
-		/// Creates a new <see cref="IDsDocumentNode"/> instance. This will internally call all
+		/// Creates a new <see cref="DsDocumentNode"/> instance. This will internally call all
 		/// <see cref="IDsDocumentNodeProvider"/>s it can find.
 		/// </summary>
 		/// <param name="owner">Owner node or null if owner is the root node</param>
 		/// <param name="document">New document</param>
 		/// <returns></returns>
-		IDsDocumentNode CreateNode(IDsDocumentNode owner, IDsDocument document);
+		DsDocumentNode CreateNode(DsDocumentNode owner, IDsDocument document);
 
 		/// <summary>
-		/// Removes <paramref name="nodes"/>. They must be top nodes (eg. <see cref="IAssemblyDocumentNode"/>s)
+		/// Removes <paramref name="nodes"/>. They must be top nodes (eg. <see cref="AssemblyDocumentNode"/>s)
 		/// </summary>
 		/// <param name="nodes">Nodes</param>
-		void Remove(IEnumerable<IDsDocumentNode> nodes);
+		void Remove(IEnumerable<DsDocumentNode> nodes);
 
 		/// <summary>
 		/// Returns a node or null if none could be found
 		/// </summary>
 		/// <param name="ref">Reference, eg. a <see cref="IMemberRef"/></param>
 		/// <returns></returns>
-		IDocumentTreeNodeData FindNode(object @ref);
+		DocumentTreeNodeData FindNode(object @ref);
 
 		/// <summary>
-		/// Returns a <see cref="IDsDocumentNode"/> node or null if none could be found
+		/// Returns a <see cref="DsDocumentNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="document">Document</param>
 		/// <returns></returns>
-		IDsDocumentNode FindNode(IDsDocument document);
+		DsDocumentNode FindNode(IDsDocument document);
 
 		/// <summary>
-		/// Returns a <see cref="IAssemblyDocumentNode"/> node or null if none could be found
+		/// Returns a <see cref="AssemblyDocumentNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="assembly">Assembly</param>
 		/// <returns></returns>
-		IAssemblyDocumentNode FindNode(AssemblyDef assembly);
+		AssemblyDocumentNode FindNode(AssemblyDef assembly);
 
 		/// <summary>
-		/// Returns a <see cref="IModuleDocumentNode"/> node or null if none could be found
+		/// Returns a <see cref="ModuleDocumentNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		IModuleDocumentNode FindNode(ModuleDef module);
+		ModuleDocumentNode FindNode(ModuleDef module);
 
 		/// <summary>
-		/// Returns a <see cref="ITypeNode"/> node or null if none could be found
+		/// Returns a <see cref="TypeNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		ITypeNode FindNode(TypeDef type);
+		TypeNode FindNode(TypeDef type);
 
 		/// <summary>
-		/// Returns a <see cref="IMethodNode"/> node or null if none could be found
+		/// Returns a <see cref="MethodNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		IMethodNode FindNode(MethodDef method);
+		MethodNode FindNode(MethodDef method);
 
 		/// <summary>
-		/// Returns a <see cref="IFieldNode"/> node or null if none could be found
+		/// Returns a <see cref="FieldNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		IFieldNode FindNode(FieldDef field);
+		FieldNode FindNode(FieldDef field);
 
 		/// <summary>
-		/// Returns a <see cref="IPropertyNode"/> node or null if none could be found
+		/// Returns a <see cref="PropertyNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="property">Property</param>
 		/// <returns></returns>
-		IPropertyNode FindNode(PropertyDef property);
+		PropertyNode FindNode(PropertyDef property);
 
 		/// <summary>
-		/// Returns a <see cref="IEventNode"/> node or null if none could be found
+		/// Returns a <see cref="EventNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="event">Event</param>
 		/// <returns></returns>
-		IEventNode FindNode(EventDef @event);
+		EventNode FindNode(EventDef @event);
 
 		/// <summary>
-		/// Returns a <see cref="INamespaceNode"/> node or null if none could be found
+		/// Returns a <see cref="NamespaceNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="module">Owner module</param>
 		/// <param name="namespace">Namespace</param>
 		/// <returns></returns>
-		INamespaceNode FindNamespaceNode(IDsDocument module, string @namespace);
+		NamespaceNode FindNamespaceNode(IDsDocument module, string @namespace);
 
 		/// <summary>
 		/// Gets the <see cref="IDocumentTreeNodeGroups"/> instance
@@ -169,23 +169,23 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		IDocumentTreeNodeGroups DocumentTreeNodeGroups { get; }
 
 		/// <summary>
-		/// Gets all <see cref="IModuleDocumentNode"/>s
+		/// Gets all <see cref="ModuleDocumentNode"/>s
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<IModuleDocumentNode> GetAllModuleNodes();
+		IEnumerable<ModuleDocumentNode> GetAllModuleNodes();
 
 		/// <summary>
-		/// Gets all created <see cref="IDsDocumentNode"/>s
+		/// Gets all created <see cref="DsDocumentNode"/>s
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<IDsDocumentNode> GetAllCreatedDocumentNodes();
+		IEnumerable<DsDocumentNode> GetAllCreatedDocumentNodes();
 
 		/// <summary>
 		/// Adds <paramref name="documentNode"/> to the list
 		/// </summary>
 		/// <param name="documentNode">Node</param>
 		/// <param name="index">Index or -1</param>
-		void AddNode(IDsDocumentNode documentNode, int index);
+		void AddNode(DsDocumentNode documentNode, int index);
 
 		/// <summary>
 		/// Sets decompiler

@@ -21,7 +21,7 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	/// <summary>
-	/// Decompiles itself. Can be implemented by <see cref="IDocumentTreeNodeData"/> nodes.
+	/// Decompiles itself. Can be implemented by <see cref="DocumentTreeNodeData"/> nodes.
 	/// </summary>
 	public interface IDecompileSelf {
 		/// <summary>

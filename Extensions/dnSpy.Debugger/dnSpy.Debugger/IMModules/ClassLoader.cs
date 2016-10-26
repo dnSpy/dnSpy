@@ -65,11 +65,11 @@ namespace dnSpy.Debugger.IMModules {
 
 		struct ModuleState {
 			public CorModuleDefFile CorModuleDefFile;
-			public IModuleDocumentNode ModuleNode;
+			public ModuleDocumentNode ModuleNode;
 			public HashSet<uint> ModifiedTypes;
 			public HashSet<uint> LoadClassHash;
 
-			public ModuleState(CorModuleDefFile corModuleDefFile, IModuleDocumentNode moduleNode, HashSet<uint> modifiedTypes, HashSet<uint> loadClassHash) {
+			public ModuleState(CorModuleDefFile corModuleDefFile, ModuleDocumentNode moduleNode, HashSet<uint> modifiedTypes, HashSet<uint> loadClassHash) {
 				this.CorModuleDefFile = corModuleDefFile;
 				this.ModuleNode = moduleNode;
 				this.ModifiedTypes = modifiedTypes;
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		public void LoadNewClasses(Dictionary<CorModuleDefFile, IModuleDocumentNode> visibleModules) {
+		public void LoadNewClasses(Dictionary<CorModuleDefFile, ModuleDocumentNode> visibleModules) {
 			var oldLoadedClasses = new Dictionary<DnModule, HashSet<uint>>(loadedClasses);
 			loadedClasses.Clear();
 			if (visibleModules.Count == 0)

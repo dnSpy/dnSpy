@@ -52,7 +52,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
+		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foreach (var f in GetUsedFields().Distinct()) {
 				yield return new FieldNode(f.Def) { Context = Context, SourceRef = f.SourceRef };
 			}

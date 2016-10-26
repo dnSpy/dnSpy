@@ -44,7 +44,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			new NodePrinter().Write(output, decompiler, analyzedField, Context.ShowToken);
 		}
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			yield return new FieldAccessNode(analyzedField, false);
 			if (!analyzedField.IsLiteral)
 				yield return new FieldAccessNode(analyzedField, true);

@@ -30,6 +30,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Debugger.IMModules {
 	interface IInMemoryModuleService {
@@ -117,8 +118,8 @@ namespace dnSpy.Debugger.IMModules {
 				OnModuleAdded(e.Module);
 		}
 
-		static IAssemblyDocumentNode GetParentAssembly(IModuleDocumentNode modNode) =>
-			modNode?.TreeNode?.Parent?.Data as IAssemblyDocumentNode;
+		static AssemblyDocumentNode GetParentAssembly(ModuleDocumentNode modNode) =>
+			modNode?.TreeNode?.Parent?.Data as AssemblyDocumentNode;
 
 		void OnModuleAdded(DnModule module) {
 			// If an assembly is visible in the treeview, and a new netmodule gets added, add a
@@ -134,13 +135,13 @@ namespace dnSpy.Debugger.IMModules {
 			{
 				var manifestKey = CorModuleDefFile.CreateKey(manifestModule);
 				var asmFile = FindAssemblyByKey(manifestKey);
-				var asmNode = documentTreeView.FindNode(asmFile) as IAssemblyDocumentNode;
+				var asmNode = documentTreeView.FindNode(asmFile) as AssemblyDocumentNode;
 				if (asmNode != null) {
 					var cmdf = (CorModuleDefFile)asmNode.Document;
 					var moduleKey = CorModuleDefFile.CreateKey(module);
 					asmNode.TreeNode.EnsureChildrenLoaded();
 					Debug.Assert(asmNode.TreeNode.Children.Count >= 1);
-					var moduleNode = asmNode.TreeNode.DataChildren.OfType<IModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
+					var moduleNode = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
 					Debug.Assert(moduleNode == null);
 					if (moduleNode == null) {
 						var newFile = new CorModuleDefFile(module, UseDebugSymbols);
@@ -156,13 +157,13 @@ namespace dnSpy.Debugger.IMModules {
 			if (manifestModule.Address != 0 && module.Address != 0) {
 				var manifestKey = MemoryModuleDefFile.CreateKey(manifestModule.Process, manifestModule.Address);
 				var asmFile = FindAssemblyByKey(manifestKey);
-				var asmNode = documentTreeView.FindNode(asmFile) as IAssemblyDocumentNode;
+				var asmNode = documentTreeView.FindNode(asmFile) as AssemblyDocumentNode;
 				if (asmNode != null) {
 					var mmdf = (MemoryModuleDefFile)asmNode.Document;
 					var moduleKey = MemoryModuleDefFile.CreateKey(module.Process, module.Address);
 					asmNode.TreeNode.EnsureChildrenLoaded();
 					Debug.Assert(asmNode.TreeNode.Children.Count >= 1);
-					var moduleNode = asmNode.TreeNode.DataChildren.OfType<IModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
+					var moduleNode = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
 					Debug.Assert(moduleNode == null);
 					if (moduleNode == null) {
 						MemoryModuleDefFile newFile = null;
@@ -228,8 +229,8 @@ namespace dnSpy.Debugger.IMModules {
 			classLoader.UnloadClass(dnModule, cls.Token);
 		}
 
-		Dictionary<CorModuleDefFile, IModuleDocumentNode> GetVisibleAliveDynamicModuleNodes() {
-			var dict = new Dictionary<CorModuleDefFile, IModuleDocumentNode>();
+		Dictionary<CorModuleDefFile, ModuleDocumentNode> GetVisibleAliveDynamicModuleNodes() {
+			var dict = new Dictionary<CorModuleDefFile, ModuleDocumentNode>();
 			foreach (var node in documentTreeView.GetAllModuleNodes()) {
 				var cmdf = node.Document as CorModuleDefFile;
 				if (cmdf == null)

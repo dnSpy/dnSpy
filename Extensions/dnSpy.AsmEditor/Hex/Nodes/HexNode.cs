@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.EndOffset = end;
 		}
 
-		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(this).FilterType;
+		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResultOther(this).FilterType;
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeString = context.Decompiler.ContentTypeString;

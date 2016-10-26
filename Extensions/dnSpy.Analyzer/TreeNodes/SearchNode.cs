@@ -34,15 +34,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override void Initialize() => TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Search;
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			Debug.Assert(asyncFetchChildrenHelper == null);
 			asyncFetchChildrenHelper = new AsyncFetchChildrenHelper(this, () => asyncFetchChildrenHelper = null);
 			yield break;
 		}
 		AsyncFetchChildrenHelper asyncFetchChildrenHelper;
 
-		protected abstract IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct);
-		internal IEnumerable<IAnalyzerTreeNodeData> FetchChildrenInternal(CancellationToken token) => FetchChildren(token);
+		protected abstract IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct);
+		internal IEnumerable<AnalyzerTreeNodeData> FetchChildrenInternal(CancellationToken token) => FetchChildren(token);
 
 		public override void OnIsVisibleChanged() {
 			if (!TreeNode.IsVisible && asyncFetchChildrenHelper != null && !asyncFetchChildrenHelper.CompletedSuccessfully) {

@@ -41,14 +41,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ImplementedByTreeNode);
 
-		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
+		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			if (analyzedMethod == null)
-				return new List<IAnalyzerTreeNodeData>();
-			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
+				return new List<AnalyzerTreeNodeData>();
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
-		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
+		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			if (analyzedMethod == null)
 				yield break;
 			if (!type.HasInterfaces)

@@ -86,7 +86,7 @@ namespace Example2.Extension {
 				yield break;
 
 			// Add the underline
-			if (tvContext.Node is IAssemblyDocumentNode || tvContext.Node is IMethodNode) {
+			if (tvContext.Node is AssemblyDocumentNode || tvContext.Node is MethodNode) {
 				yield return new TextClassificationTag(new Span(0, context.Text.Length),
 					classificationTypeRegistryService.GetClassificationType(TreeViewNodeColorizerClassifications.UnderlineClassificationType));
 			}

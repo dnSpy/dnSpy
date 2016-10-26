@@ -78,17 +78,17 @@ namespace dnSpy.AsmEditor.Namespace {
 				string.Format(dnSpy_AsmEditor_Resources.DeleteNamespacesCommand, count);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
+		static bool CanExecute(DocumentTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
-				nodes.All(a => a is INamespaceNode);
+				nodes.All(a => a is NamespaceNode);
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var nsNodes = nodes.Cast<INamespaceNode>().ToArray();
+			var nsNodes = nodes.Cast<NamespaceNode>().ToArray();
 			undoCommandService.Value.Add(new DeleteNamespaceCommand(nsNodes));
 		}
 
@@ -107,7 +107,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 			}
 
-			public void Delete(INamespaceNode[] nodes, IDocumentTreeNodeData[] parents) {
+			public void Delete(NamespaceNode[] nodes, DocumentTreeNodeData[] parents) {
 				Debug.Assert(parents != null && nodes.Length == parents.Length);
 				Debug.Assert(infos == null);
 				if (infos != null)
@@ -126,7 +126,7 @@ namespace dnSpy.AsmEditor.Namespace {
 					infos[i] = info;
 
 					for (int j = 0; j < node.TreeNode.Children.Count; j++) {
-						var typeNode = (ITypeNode)node.TreeNode.Children[j].Data;
+						var typeNode = (TypeNode)node.TreeNode.Children[j].Data;
 						int index = module.Types.IndexOf(typeNode.TypeDef);
 						Debug.Assert(index >= 0);
 						if (index < 0)
@@ -138,7 +138,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 			}
 
-			public void Restore(INamespaceNode[] nodes, IDocumentTreeNodeData[] parents) {
+			public void Restore(NamespaceNode[] nodes, DocumentTreeNodeData[] parents) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -157,13 +157,13 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 		}
 
-		IDocumentTreeNodeData[] parents;
-		DeletableNodes<INamespaceNode> nodes;
+		DocumentTreeNodeData[] parents;
+		DeletableNodes<NamespaceNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteNamespaceCommand(INamespaceNode[] nodes) {
-			this.parents = nodes.Select(a => (IDocumentTreeNodeData)a.TreeNode.Parent.Data).ToArray();
-			this.nodes = new DeletableNodes<INamespaceNode>(nodes);
+		DeleteNamespaceCommand(NamespaceNode[] nodes) {
+			this.parents = nodes.Select(a => (DocumentTreeNodeData)a.TreeNode.Parent.Data).ToArray();
+			this.nodes = new DeletableNodes<NamespaceNode>(nodes);
 			this.modelNodes = new DeleteModelNodes();
 		}
 
@@ -221,17 +221,17 @@ namespace dnSpy.AsmEditor.Namespace {
 			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
+		static bool CanExecute(DocumentTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
-				nodes.All(a => a is INamespaceNode) &&
-				nodes.Any(a => ((INamespaceNode)a).Name != string.Empty) &&
+				nodes.All(a => a is NamespaceNode) &&
+				nodes.Any(a => ((NamespaceNode)a).Name != string.Empty) &&
 				IsInSameModule(nodes) &&
 				nodes[0].TreeNode.Parent != null &&
-				nodes[0].TreeNode.Parent.DataChildren.Any(a => a is INamespaceNode && ((INamespaceNode)a).Name == string.Empty);
+				nodes[0].TreeNode.Parent.DataChildren.Any(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 		}
 
-		static bool IsInSameModule(IDocumentTreeNodeData[] nodes) {
+		static bool IsInSameModule(DocumentTreeNodeData[] nodes) {
 			if (nodes == null || nodes.Length == 0)
 				return false;
 			var module = nodes[0].GetModule();
@@ -244,34 +244,34 @@ namespace dnSpy.AsmEditor.Namespace {
 			return true;
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			undoCommandService.Value.Add(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
 		}
 
-		MoveNamespaceTypesToEmptypNamespaceCommand(IDocumentTreeNodeData[] nodes) {
-			var nsNodes = nodes.Cast<INamespaceNode>().Where(a => a.Name != string.Empty).ToArray();
+		MoveNamespaceTypesToEmptypNamespaceCommand(DocumentTreeNodeData[] nodes) {
+			var nsNodes = nodes.Cast<NamespaceNode>().Where(a => a.Name != string.Empty).ToArray();
 			Debug.Assert(nsNodes.Length > 0);
-			this.nodes = new DeletableNodes<INamespaceNode>(nsNodes);
+			this.nodes = new DeletableNodes<NamespaceNode>(nsNodes);
 			this.nsTarget = GetTarget();
 			this.typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(nodes[0].GetModule(), nsNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.MoveTypesToEmptyNamespaceCommand;
 
-		readonly INamespaceNode nsTarget;
-		DeletableNodes<INamespaceNode> nodes;
+		readonly NamespaceNode nsTarget;
+		DeletableNodes<NamespaceNode> nodes;
 		ModelInfo[] infos;
 		readonly TypeRefInfo[] typeRefInfos;
 
 		sealed class ModelInfo {
 			public UTF8String[] Namespaces;
-			public DeletableNodes<ITypeNode> TypeNodes;
+			public DeletableNodes<TypeNode> TypeNodes;
 		}
 
-		INamespaceNode GetTarget() => nodes.Nodes.Length == 0 ? null : (INamespaceNode)nodes.Nodes[0].TreeNode.Parent.DataChildren.First(a => a is INamespaceNode && ((INamespaceNode)a).Name == string.Empty);
+		NamespaceNode GetTarget() => nodes.Nodes.Length == 0 ? null : (NamespaceNode)nodes.Nodes[0].TreeNode.Parent.DataChildren.First(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 
 		public void Execute() {
 			Debug.Assert(infos == null);
@@ -287,7 +287,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				var info = new ModelInfo();
 				infos[i] = info;
 				info.Namespaces = new UTF8String[nsNode.TreeNode.Children.Count];
-				info.TypeNodes = new DeletableNodes<ITypeNode>(nsNode.TreeNode.DataChildren.Cast<ITypeNode>());
+				info.TypeNodes = new DeletableNodes<TypeNode>(nsNode.TreeNode.DataChildren.Cast<TypeNode>());
 				info.TypeNodes.Delete();
 
 				for (int j = 0; j < info.Namespaces.Length; j++) {
@@ -311,7 +311,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				var info = infos[i];
 
 				for (int j = info.Namespaces.Length - 1; j >= 0; j--) {
-					var typeNode = (ITypeNode)nsTarget.TreeNode.Children[nsTarget.TreeNode.Children.Count - 1].Data;
+					var typeNode = (TypeNode)nsTarget.TreeNode.Children[nsTarget.TreeNode.Children.Count - 1].Data;
 					nsTarget.TreeNode.Children.RemoveAt(nsTarget.TreeNode.Children.Count - 1);
 					bool b = info.TypeNodes.Nodes[j] == typeNode;
 					Debug.Assert(b);
@@ -373,17 +373,17 @@ namespace dnSpy.AsmEditor.Namespace {
 			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) {
+		static bool CanExecute(DocumentTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
-				nodes[0] is INamespaceNode;
+				nodes[0] is NamespaceNode;
 		}
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var nsNode = (INamespaceNode)nodes[0];
+			var nsNode = (NamespaceNode)nodes[0];
 
 			var data = new NamespaceVM(nsNode.Name);
 			var win = new NamespaceDlg();
@@ -400,36 +400,36 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		readonly string newName;
 		readonly string origName;
-		readonly INamespaceNode nsNode;
-		readonly INamespaceNode existingNsNode;
-		readonly IDocumentTreeNodeData origParentNode;
+		readonly NamespaceNode nsNode;
+		readonly NamespaceNode existingNsNode;
+		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly UTF8String[] typeNamespaces;
-		readonly ITypeNode[] origChildren;
+		readonly TypeNode[] origChildren;
 		readonly TypeRefInfo[] typeRefInfos;
 
-		internal static TypeRefInfo[] GetTypeRefInfos(ModuleDef module, IEnumerable<INamespaceNode> nsNodes) {
+		internal static TypeRefInfo[] GetTypeRefInfos(ModuleDef module, IEnumerable<NamespaceNode> nsNodes) {
 			var types = new HashSet<ITypeDefOrRef>(RefFinder.TypeEqualityComparerInstance);
 			foreach (var nsNode in nsNodes) {
-				foreach (ITypeNode typeNode in nsNode.TreeNode.DataChildren)
+				foreach (TypeNode typeNode in nsNode.TreeNode.DataChildren)
 					types.Add(typeNode.TypeDef);
 			}
 			var typeRefs = RefFinder.FindTypeRefsToThisModule(module);
 			return typeRefs.Where(a => types.Contains(a)).Select(a => new TypeRefInfo(a)).ToArray();
 		}
 
-		RenameNamespaceCommand(string newName, INamespaceNode nsNode) {
+		RenameNamespaceCommand(string newName, NamespaceNode nsNode) {
 			this.newName = newName;
 			this.origName = nsNode.Name;
 			this.nsNode = nsNode;
-			this.existingNsNode = (INamespaceNode)nsNode.TreeNode.Parent.DataChildren.FirstOrDefault(a => a is INamespaceNode && newName == ((INamespaceNode)a).Name);
+			this.existingNsNode = (NamespaceNode)nsNode.TreeNode.Parent.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
 
 			var module = nsNode.GetModule();
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
 
-			this.origParentNode = (IDocumentTreeNodeData)nsNode.TreeNode.Parent.Data;
+			this.origParentNode = (DocumentTreeNodeData)nsNode.TreeNode.Parent.Data;
 			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(nsNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)
@@ -438,7 +438,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			// Make sure the exact same namespace names are restored if we undo. The names are UTF8
 			// strings, but not necessarily canonicalized if it's an obfuscated assembly.
 			nsNode.TreeNode.EnsureChildrenLoaded();
-			this.origChildren = nsNode.TreeNode.DataChildren.Cast<ITypeNode>().ToArray();
+			this.origChildren = nsNode.TreeNode.DataChildren.Cast<TypeNode>().ToArray();
 			this.typeNamespaces = new UTF8String[nsNode.TreeNode.Children.Count];
 			for (int i = 0; i < this.typeNamespaces.Length; i++)
 				this.typeNamespaces[i] = origChildren[i].TypeDef.Namespace;

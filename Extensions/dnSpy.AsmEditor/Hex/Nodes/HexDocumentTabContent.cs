@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	sealed class HexDocumentTabContent : DocumentTabContent {
-		public override IEnumerable<IDocumentTreeNodeData> Nodes {
+		public override IEnumerable<DocumentTreeNodeData> Nodes {
 			get { yield return hexNode; }
 		}
 

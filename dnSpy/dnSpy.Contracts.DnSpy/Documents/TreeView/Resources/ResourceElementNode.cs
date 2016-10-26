@@ -35,12 +35,16 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// <summary>
 	/// Resource element node base class
 	/// </summary>
-	public abstract class ResourceElementNode : DocumentTreeNodeData, IResourceElementNode {
-		/// <inheritdoc/>
+	public abstract class ResourceElementNode : DocumentTreeNodeData, IResourceDataProvider {
+		/// <summary>
+		/// Gets the resource element
+		/// </summary>
 		public ResourceElement ResourceElement => resourceElement;
-		ResourceElement resourceElement;	// updated by the asm editor, see UpdateData()
+		ResourceElement resourceElement;    // updated by the asm editor, see UpdateData()
 
-		/// <inheritdoc/>
+		/// <summary>
+		/// Gets the name
+		/// </summary>
 		public string Name => resourceElement.Name;
 
 		/// <inheritdoc/>
@@ -115,8 +119,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="treeNodeGroup"></param>
-		/// <param name="resourceElement"></param>
+		/// <param name="treeNodeGroup">Treenode group</param>
+		/// <param name="resourceElement">Resource element</param>
 		protected ResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement) {
 			if (treeNodeGroup == null)
 				throw new ArgumentNullException(nameof(treeNodeGroup));
@@ -324,9 +328,11 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		}
 
 		/// <summary>
-		/// Checks whether the data can be updated. Returns an error string if or null / empty string.
+		/// Checks whether <see cref="UpdateData"/> can execute. Used by the
+		/// assembly editor. Returns null or an empty string if the data can be updated, else an
+		/// error string that can be shown to the user.
 		/// </summary>
-		/// <param name="newResElem"></param>
+		/// <param name="newResElem">New data</param>
 		/// <returns></returns>
 		public virtual string CheckCanUpdateData(ResourceElement newResElem) {
 			if (resourceElement.ResourceData.Code.FixUserType() != newResElem.ResourceData.Code.FixUserType())
@@ -336,8 +342,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		}
 
 		/// <summary>
-		/// Updates the old data with the new data. Only gets called if <see cref="CheckCanUpdateData(ResourceElement)"/>
-		/// didn't return an error
+		/// Updates the internal resource data. Must only be called if
+		/// <see cref="CheckCanUpdateData"/> returned true. Used by the assembly
+		/// editor.
 		/// </summary>
 		/// <param name="newResElem">New data</param>
 		public virtual void UpdateData(ResourceElement newResElem) => resourceElement = newResElem;

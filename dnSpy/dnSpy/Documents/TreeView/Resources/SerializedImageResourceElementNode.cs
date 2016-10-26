@@ -34,22 +34,22 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE)]
 	sealed class SerializedImageResourceElementNodeProvider : IResourceNodeProvider {
-		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
+		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
-		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			var serializedData = resourceElement.ResourceData as BinaryResourceData;
 			if (serializedData == null)
 				return null;
 
 			byte[] imageData;
 			if (SerializedImageUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
-				return new SerializedImageResourceElementNode(treeNodeGroup, resourceElement, imageData);
+				return new SerializedImageResourceElementNodeImpl(treeNodeGroup, resourceElement, imageData);
 
 			return null;
 		}
 	}
 
-	sealed class SerializedImageResourceElementNode : ResourceElementNode, ISerializedImageResourceElementNode {
+	sealed class SerializedImageResourceElementNodeImpl : SerializedImageResourceElementNode {
 		public ImageSource ImageSource => imageSource;
 		ImageSource imageSource;
 		byte[] imageData;
@@ -57,7 +57,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE);
 		protected override ImageReference GetIcon() => DsImages.Image;
 
-		public SerializedImageResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
+		public SerializedImageResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
 			: base(treeNodeGroup, resourceElement) {
 			InitializeImageData(imageData);
 		}
@@ -85,7 +85,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 
-		public ResourceElement GetAsRawImage() => new ResourceElement {
+		public override ResourceElement GetAsRawImage() => new ResourceElement {
 			Name = ResourceElement.Name,
 			ResourceData = new BuiltInResourceData(ResourceTypeCode.ByteArray, imageData),
 		};

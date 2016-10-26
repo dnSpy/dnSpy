@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 						if (!string.IsNullOrWhiteSpace(filename) && document.ModuleDef != null) {
 							document.ModuleDef.Location = filename;
 							document.Filename = filename;
-							var modNode = documentTabService.DocumentTreeView.FindNode(document.ModuleDef) as IModuleDocumentNode;
+							var modNode = documentTabService.DocumentTreeView.FindNode(document.ModuleDef) as ModuleDocumentNode;
 							Debug.Assert(modNode != null);
 							if (modNode != null) {
 								modNode.TreeNode.RefreshUI();

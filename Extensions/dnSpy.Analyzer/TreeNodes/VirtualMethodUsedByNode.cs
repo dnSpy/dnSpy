@@ -44,10 +44,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
 
-		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
+		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			InitializeAnalyzer();
 
-			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}
@@ -79,7 +79,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			baseMethod = null;
 		}
 
-		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
+		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
 				if (!method.HasBody)

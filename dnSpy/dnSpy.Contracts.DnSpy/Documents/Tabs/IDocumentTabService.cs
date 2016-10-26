@@ -80,13 +80,13 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// Refreshes all tabs that contain nodes of type <typeparamref name="T"/>
 		/// </summary>
 		/// <typeparam name="T">Node type</typeparam>
-		void Refresh<T>() where T : IDocumentTreeNodeData;
+		void Refresh<T>() where T : DocumentTreeNodeData;
 
 		/// <summary>
 		/// Refreshes all tabs that contain certain nodes
 		/// </summary>
 		/// <param name="pred">Returns true if the node should be included</param>
-		void Refresh(Predicate<IDocumentTreeNodeData> pred);
+		void Refresh(Predicate<DocumentTreeNodeData> pred);
 
 		/// <summary>
 		/// Refreshes all tabs that use <paramref name="document"/>
@@ -143,6 +143,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="nodes">Nodes</param>
 		/// <returns></returns>
-		DocumentTabContent TryCreateContent(IDocumentTreeNodeData[] nodes);
+		DocumentTabContent TryCreateContent(DocumentTreeNodeData[] nodes);
 	}
 }

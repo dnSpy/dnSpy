@@ -92,12 +92,12 @@ namespace dnSpy.Documents.Tabs {
 
 		struct Key : IEquatable<Key> {
 			public readonly IDecompiler Decompiler;
-			public readonly IDocumentTreeNodeData[] Nodes;
+			public readonly DocumentTreeNodeData[] Nodes;
 			public readonly DecompilerSettingsBase Settings;
 
-			public Key(IDecompiler decompiler, IDocumentTreeNodeData[] nodes, DecompilerSettingsBase settings) {
+			public Key(IDecompiler decompiler, DocumentTreeNodeData[] nodes, DecompilerSettingsBase settings) {
 				this.Decompiler = decompiler;
-				this.Nodes = new List<IDocumentTreeNodeData>(nodes).ToArray();
+				this.Nodes = new List<DocumentTreeNodeData>(nodes).ToArray();
 				this.Settings = settings.Clone();
 			}
 
@@ -155,7 +155,7 @@ namespace dnSpy.Documents.Tabs {
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public DocumentViewerContent Lookup(IDecompiler decompiler, IDocumentTreeNodeData[] nodes, out IContentType contentType) {
+		public DocumentViewerContent Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType contentType) {
 			var settings = decompiler.Settings;
 			lock (lockObj) {
 				var key = new Key(decompiler, nodes, settings);
@@ -174,7 +174,7 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		public void Cache(IDecompiler decompiler, IDocumentTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType) {
+		public void Cache(IDecompiler decompiler, DocumentTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType) {
 			var settings = decompiler.Settings;
 			lock (lockObj) {
 				var key = new Key(decompiler, nodes, settings);
@@ -223,9 +223,9 @@ namespace dnSpy.Documents.Tabs {
 	}
 
 	static class InModifiedModuleHelper {
-		public static bool IsInModifiedModule(HashSet<IDsDocument> modules, IEnumerable<IDocumentTreeNodeData> nodes) {
+		public static bool IsInModifiedModule(HashSet<IDsDocument> modules, IEnumerable<DocumentTreeNodeData> nodes) {
 			foreach (var node in nodes) {
-				var modNode = (IDsDocumentNode)node.GetModuleNode() ?? node.GetAssemblyNode();
+				var modNode = (DsDocumentNode)node.GetModuleNode() ?? node.GetAssemblyNode();
 				if (modNode == null || modules.Contains(modNode.Document))
 					return true;
 			}

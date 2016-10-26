@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.Contracts.Documents.TreeView;
@@ -27,20 +26,12 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_UNKNOWNSERIALIZEDRSRCELEM)]
 	sealed class UnknownSerializedResourceElementNodeProvider : IResourceNodeProvider {
-		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
+		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
-		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			if (resourceElement.ResourceData is BinaryResourceData)
 				return new UnknownSerializedResourceElementNode(treeNodeGroup, resourceElement);
 			return null;
-		}
-	}
-
-	sealed class UnknownSerializedResourceElementNode : SerializedResourceElementNode, IUnknownSerializedResourceElementNode {
-		public override Guid Guid => new Guid(DocumentTreeViewConstants.UNKNOWN_SERIALIZED_RESOURCE_ELEMENT_NODE_GUID);
-
-		public UnknownSerializedResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
-			: base(treeNodeGroup, resourceElement) {
 		}
 	}
 }

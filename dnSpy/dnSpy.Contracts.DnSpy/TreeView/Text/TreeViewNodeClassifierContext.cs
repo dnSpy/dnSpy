@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.TreeView.Text {
 		/// <summary>
 		/// Gets the node to classify
 		/// </summary>
-		public ITreeNodeData Node { get; }
+		public TreeNodeData Node { get; }
 
 		/// <summary>
 		/// true if the content will be shown in a tooltip
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.TreeView.Text {
 		/// <param name="colorize">true if it should be colorized</param>
 		/// <param name="colors">Default colors or null. It doesn't have to be sorted and elements can overlap. The colors
 		/// must be <see cref="IClassificationType"/>s or <see cref="TextColor"/>s</param>
-		public TreeViewNodeClassifierContext(string text, ITreeView treeView, ITreeNodeData node, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+		public TreeViewNodeClassifierContext(string text, ITreeView treeView, TreeNodeData node, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
 			: base(text, string.Empty, colorize, colors) {
 			if (treeView == null)
 				throw new ArgumentNullException(nameof(treeView));

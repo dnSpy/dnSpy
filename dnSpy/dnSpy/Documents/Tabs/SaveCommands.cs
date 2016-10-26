@@ -301,7 +301,7 @@ namespace dnSpy.Documents.Tabs {
 				var asmNode = n.GetAssemblyNode();
 				if (asmNode != null) {
 					asmNode.TreeNode.EnsureChildrenLoaded();
-					foreach (var c in asmNode.TreeNode.DataChildren.OfType<IModuleDocumentNode>())
+					foreach (var c in asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>())
 						hashSet.Add(c.Document.ModuleDef);
 					continue;
 				}

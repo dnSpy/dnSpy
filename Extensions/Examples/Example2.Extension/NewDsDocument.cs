@@ -8,7 +8,7 @@ using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
-// Adds a new IDsDocument that can be loaded into the document treeview. It gets its own IDsDocumentNode.
+// Adds a new IDsDocument that can be loaded into the document treeview. It gets its own DsDocumentNode.
 // Open a .txt/.xml/.cs/.vb (see supportedExtensions) file to trigger this code.
 
 namespace Example2.Extension {
@@ -87,10 +87,10 @@ namespace Example2.Extension {
 		};
 	}
 
-	// Gets called by dnSpy to create a IDsDocumentNode
+	// Gets called by dnSpy to create a DsDocumentNode
 	[ExportDsDocumentNodeProvider]
 	sealed class MyDsDocumentNodeProvider : IDsDocumentNodeProvider {
-		public IDsDocumentNode Create(IDocumentTreeView documentTreeView, IDsDocumentNode owner, IDsDocument document) {
+		public DsDocumentNode Create(IDocumentTreeView documentTreeView, DsDocumentNode owner, IDsDocument document) {
 			var myDocument = document as MyDsDocument;
 			if (myDocument != null)
 				return new MyDsDocumentNode(myDocument);
@@ -101,17 +101,16 @@ namespace Example2.Extension {
 	// Our MyDsDocument tree node class. It implements IDecompileSelf to "decompile" itself. You could
 	// also export a IDecompileNode instance to do it, see TreeNodeDataProvider.cs for an example.
 	// Or you could create a completely new DocumentTabContent for these nodes, see AssemblyChildNodeTabContent.cs
-	sealed class MyDsDocumentNode : DocumentTreeNodeData, IDsDocumentNode, IDecompileSelf {
+	sealed class MyDsDocumentNode : DsDocumentNode, IDecompileSelf {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("4174A21D-D746-4658-9A44-DB8235EE5186");
 
-		public IDsDocument Document => document;
 		readonly MyDsDocument document;
 
 		public override Guid Guid => THE_GUID;
-		public override NodePathName NodePathName => new NodePathName(Guid, document.Filename.ToUpperInvariant());
 
-		public MyDsDocumentNode(MyDsDocument document) {
+		public MyDsDocumentNode(MyDsDocument document)
+			: base(document) {
 			this.document = document;
 		}
 

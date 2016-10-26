@@ -51,11 +51,11 @@ namespace dnSpy.Analyzer {
 
 		public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
 
-		ITreeNodeData GetReference(IMenuItemContext context) {
+		TreeNodeData GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
 				return null;
 
-			var nodes = context.Find<ITreeNodeData[]>();
+			var nodes = context.Find<TreeNodeData[]>();
 			if (nodes == null || nodes.Length != 1)
 				return null;
 
@@ -158,8 +158,8 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		static IEnumerable<Tuple<int, ITreeNodeData>> GetNodes(ITreeView treeView, IEnumerable<ITreeNodeData> nodes) {
-			var hash = new HashSet<ITreeNodeData>(nodes);
+		static IEnumerable<Tuple<int, TreeNodeData>> GetNodes(ITreeView treeView, IEnumerable<TreeNodeData> nodes) {
+			var hash = new HashSet<TreeNodeData>(nodes);
 			var stack = new Stack<State>();
 			stack.Push(new State(treeView.Root, 0));
 			while (stack.Count > 0) {

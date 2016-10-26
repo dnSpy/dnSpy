@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (fo == 0)
 				return;
 
-			var mod = (node as IDocumentTreeNodeData).GetModule();
+			var mod = (node as DocumentTreeNodeData).GetModule();
 			var filename = mod == null ? null : mod.Location;
 			output.Write($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), DecompilerReferenceFlags.None, BoxedTextColor.Comment);
 			output.Write(": ", BoxedTextColor.Comment);

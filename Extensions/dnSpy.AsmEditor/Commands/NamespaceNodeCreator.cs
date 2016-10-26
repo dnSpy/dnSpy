@@ -22,17 +22,17 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	/// <summary>
-	/// Creates a <see cref="INamespaceNode"/> if it doesn't exist. Caches the node to make sure
-	/// the same <see cref="INamespaceNode"/> is used all the time.
+	/// Creates a <see cref="NamespaceNode"/> if it doesn't exist. Caches the node to make sure
+	/// the same <see cref="NamespaceNode"/> is used all the time.
 	/// </summary>
 	sealed class NamespaceNodeCreator {
-		readonly IModuleDocumentNode modNode;
-		readonly INamespaceNode nsNode;
+		readonly ModuleDocumentNode modNode;
+		readonly NamespaceNode nsNode;
 		readonly bool nsNodeCreated;
 
-		public INamespaceNode NamespaceNode => nsNode;
+		public NamespaceNode NamespaceNode => nsNode;
 
-		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
+		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get {
 				yield return modNode;
 				if (!nsNodeCreated)
@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		public NamespaceNodeCreator(string ns, IModuleDocumentNode modNode) {
+		public NamespaceNodeCreator(string ns, ModuleDocumentNode modNode) {
 			this.modNode = modNode;
 			this.nsNode = modNode.FindNode(ns);
 			if (this.nsNode == null) {
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		/// <summary>
-		/// Add the <see cref="INamespaceNode"/> if it doesn't exist
+		/// Add the <see cref="NamespaceNode"/> if it doesn't exist
 		/// </summary>
 		public void Add() {
 			if (nsNodeCreated)

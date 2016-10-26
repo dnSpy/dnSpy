@@ -92,22 +92,22 @@ namespace dnSpy.AsmEditor.Method {
 			public override string GetHeader(CodeContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
 		}
 
-		static string GetHeader(IDocumentTreeNodeData[] nodes) {
+		static string GetHeader(DocumentTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
 				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteMethodsCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IMethodNode);
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is MethodNode);
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			if (!AskDeleteDef(dnSpy_AsmEditor_Resources.AskDeleteMethod))
 				return;
 
-			var methodNodes = nodes.Cast<IMethodNode>().ToArray();
+			var methodNodes = nodes.Cast<MethodNode>().ToArray();
 			undoCommandService.Value.Add(new DeleteMethodDefCommand(methodNodes));
 		}
 
@@ -165,7 +165,7 @@ namespace dnSpy.AsmEditor.Method {
 				}
 			}
 
-			public void Delete(IMethodNode[] nodes) {
+			public void Delete(MethodNode[] nodes) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -204,7 +204,7 @@ namespace dnSpy.AsmEditor.Method {
 				}
 			}
 
-			public void Restore(IMethodNode[] nodes) {
+			public void Restore(MethodNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -272,11 +272,11 @@ namespace dnSpy.AsmEditor.Method {
 			}
 		}
 
-		DeletableNodes<IMethodNode> nodes;
+		DeletableNodes<MethodNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteMethodDefCommand(IMethodNode[] methodNodes) {
-			this.nodes = new DeletableNodes<IMethodNode>(methodNodes);
+		DeleteMethodDefCommand(MethodNode[] methodNodes) {
+			this.nodes = new DeletableNodes<MethodNode>(methodNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteMethodCommand;
@@ -342,23 +342,23 @@ namespace dnSpy.AsmEditor.Method {
 			public override bool IsEnabled(CodeContext context) =>
 				context.IsDefinition &&
 				context.Nodes.Length == 1 &&
-				context.Nodes[0] is ITypeNode;
+				context.Nodes[0] is TypeNode;
 
 			public override void Execute(CodeContext context) => CreateMethodDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
+			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is TypeNode));
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var ownerNode = nodes[0];
-			if (!(ownerNode is ITypeNode))
-				ownerNode = (IDocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
-			var typeNode = ownerNode as ITypeNode;
+			if (!(ownerNode is TypeNode))
+				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
+			var typeNode = ownerNode as TypeNode;
 			Debug.Assert(typeNode != null);
 			if (typeNode == null)
 				throw new InvalidOperationException();
@@ -387,10 +387,10 @@ namespace dnSpy.AsmEditor.Method {
 			appService.DocumentTabService.FollowReference(cmd.methodNode);
 		}
 
-		readonly ITypeNode ownerNode;
-		readonly IMethodNode methodNode;
+		readonly TypeNode ownerNode;
+		readonly MethodNode methodNode;
 
-		CreateMethodDefCommand(ITypeNode ownerNode, MethodDefOptions options) {
+		CreateMethodDefCommand(TypeNode ownerNode, MethodDefOptions options) {
 			this.ownerNode = ownerNode;
 			this.methodNode = ownerNode.Create(options.CreateMethodDef(ownerNode.TypeDef.Module));
 		}
@@ -465,13 +465,13 @@ namespace dnSpy.AsmEditor.Method {
 			public override void Execute(CodeContext context) => MethodDefSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IMethodNode;
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is MethodNode;
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var methodNode = (IMethodNode)nodes[0];
+			var methodNode = (MethodNode)nodes[0];
 
 			var module = nodes[0].GetModule();
 			Debug.Assert(module != null);
@@ -488,20 +488,20 @@ namespace dnSpy.AsmEditor.Method {
 			undoCommandService.Value.Add(new MethodDefSettingsCommand(methodNode, data.CreateMethodDefOptions()));
 		}
 
-		readonly IMethodNode methodNode;
+		readonly MethodNode methodNode;
 		readonly MethodDefOptions newOptions;
 		readonly MethodDefOptions origOptions;
-		readonly IDocumentTreeNodeData origParentNode;
+		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 		readonly Field.MemberRefInfo[] memberRefInfos;
 
-		MethodDefSettingsCommand(IMethodNode methodNode, MethodDefOptions options) {
+		MethodDefSettingsCommand(MethodNode methodNode, MethodDefOptions options) {
 			this.methodNode = methodNode;
 			this.newOptions = options;
 			this.origOptions = new MethodDefOptions(methodNode.MethodDef);
 
-			this.origParentNode = (IDocumentTreeNodeData)methodNode.TreeNode.Parent.Data;
+			this.origParentNode = (DocumentTreeNodeData)methodNode.TreeNode.Parent.Data;
 			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(methodNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)

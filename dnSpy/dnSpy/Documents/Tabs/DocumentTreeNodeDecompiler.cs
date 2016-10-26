@@ -27,7 +27,7 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.Documents.Tabs {
 	interface IDocumentTreeNodeDecompiler {
-		void Decompile(IDecompileNodeContext decompileNodeContext, IDocumentTreeNodeData[] nodes);
+		void Decompile(IDecompileNodeContext decompileNodeContext, DocumentTreeNodeData[] nodes);
 	}
 
 	[Export(typeof(IDocumentTreeNodeDecompiler))]
@@ -42,7 +42,7 @@ namespace dnSpy.Documents.Tabs {
 			Debug.Assert(this.decompileNodes.Length > 0);
 		}
 
-		public void Decompile(IDecompileNodeContext decompileNodeContext, IDocumentTreeNodeData[] nodes) {
+		public void Decompile(IDecompileNodeContext decompileNodeContext, DocumentTreeNodeData[] nodes) {
 			foreach (var dc in decompileNodeCollections) {
 				if (dc.Decompile(decompileNodeContext, nodes))
 					return;
@@ -62,7 +62,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		void DecompileNode(IDecompileNodeContext context, IDocumentTreeNodeData node) {
+		void DecompileNode(IDecompileNodeContext context, DocumentTreeNodeData node) {
 			foreach (var d in decompileNodes) {
 				if (d.Decompile(context, node))
 					return;

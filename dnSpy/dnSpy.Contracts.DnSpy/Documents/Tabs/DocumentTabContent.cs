@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets all nodes used to generate the content
 		/// </summary>
-		public virtual IEnumerable<IDocumentTreeNodeData> Nodes => Array.Empty<IDocumentTreeNodeData>();
+		public virtual IEnumerable<DocumentTreeNodeData> Nodes => Array.Empty<DocumentTreeNodeData>();
 
 		/// <summary>
 		/// Called to show its content in the UI. Derive from <see cref="AsyncDocumentTabContent"/> to

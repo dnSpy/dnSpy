@@ -80,7 +80,7 @@ namespace dnSpy.Documents.Tabs {
 		public void SaveCurrentDocumentsToList() {
 			if (disable_SaveCurrentDocumentsToList)
 				return;
-			documentListService.SelectedDocumentList.Update(documentTabService.DocumentTreeView.TreeView.Root.DataChildren.OfType<IDsDocumentNode>().Select(a => a.Document));
+			documentListService.SelectedDocumentList.Update(documentTabService.DocumentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>().Select(a => a.Document));
 		}
 		bool disable_SaveCurrentDocumentsToList;
 

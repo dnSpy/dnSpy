@@ -92,22 +92,22 @@ namespace dnSpy.AsmEditor.Field {
 			public override string GetHeader(CodeContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
-		static string GetHeader(IDocumentTreeNodeData[] nodes) {
+		static string GetHeader(DocumentTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
 				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteFieldsCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IFieldNode);
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is FieldNode);
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			if (!Method.DeleteMethodDefCommand.AskDeleteDef(dnSpy_AsmEditor_Resources.AskDeleteField))
 				return;
 
-			var fieldNodes = nodes.Cast<IFieldNode>().ToArray();
+			var fieldNodes = nodes.Cast<FieldNode>().ToArray();
 			undoCommandService.Value.Add(new DeleteFieldDefCommand(fieldNodes));
 		}
 
@@ -125,7 +125,7 @@ namespace dnSpy.AsmEditor.Field {
 				}
 			}
 
-			public void Delete(IFieldNode[] nodes) {
+			public void Delete(FieldNode[] nodes) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -141,7 +141,7 @@ namespace dnSpy.AsmEditor.Field {
 				}
 			}
 
-			public void Restore(IFieldNode[] nodes) {
+			public void Restore(FieldNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -159,11 +159,11 @@ namespace dnSpy.AsmEditor.Field {
 			}
 		}
 
-		DeletableNodes<IFieldNode> nodes;
+		DeletableNodes<FieldNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteFieldDefCommand(IFieldNode[] fieldNodes) {
-			this.nodes = new DeletableNodes<IFieldNode>(fieldNodes);
+		DeleteFieldDefCommand(FieldNode[] fieldNodes) {
+			this.nodes = new DeletableNodes<FieldNode>(fieldNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteFieldCommand;
@@ -229,24 +229,24 @@ namespace dnSpy.AsmEditor.Field {
 			public override bool IsEnabled(CodeContext context) {
 				return context.IsDefinition &&
 					context.Nodes.Length == 1 &&
-					context.Nodes[0] is ITypeNode;
+					context.Nodes[0] is TypeNode;
 			}
 
 			public override void Execute(CodeContext context) => CreateFieldDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
+			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is TypeNode));
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var ownerNode = nodes[0];
-			if (!(ownerNode is ITypeNode))
-				ownerNode = (IDocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
-			var typeNode = ownerNode as ITypeNode;
+			if (!(ownerNode is TypeNode))
+				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
+			var typeNode = ownerNode as TypeNode;
 			Debug.Assert(typeNode != null);
 			if (typeNode == null)
 				throw new InvalidOperationException();
@@ -290,10 +290,10 @@ namespace dnSpy.AsmEditor.Field {
 			appService.DocumentTabService.FollowReference(cmd.fieldNode);
 		}
 
-		readonly ITypeNode ownerNode;
-		readonly IFieldNode fieldNode;
+		readonly TypeNode ownerNode;
+		readonly FieldNode fieldNode;
 
-		CreateFieldDefCommand(ITypeNode ownerNode, FieldDefOptions options) {
+		CreateFieldDefCommand(TypeNode ownerNode, FieldDefOptions options) {
 			this.ownerNode = ownerNode;
 			this.fieldNode = ownerNode.Create(options.CreateFieldDef(ownerNode.TypeDef.Module));
 		}
@@ -378,13 +378,13 @@ namespace dnSpy.AsmEditor.Field {
 			public override void Execute(CodeContext context) => FieldDefSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IFieldNode;
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is FieldNode;
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var fieldNode = (IFieldNode)nodes[0];
+			var fieldNode = (FieldNode)nodes[0];
 
 			var module = nodes[0].GetModule();
 			Debug.Assert(module != null);
@@ -401,20 +401,20 @@ namespace dnSpy.AsmEditor.Field {
 			undoCommandService.Value.Add(new FieldDefSettingsCommand(fieldNode, data.CreateFieldDefOptions()));
 		}
 
-		readonly IFieldNode fieldNode;
+		readonly FieldNode fieldNode;
 		readonly FieldDefOptions newOptions;
 		readonly FieldDefOptions origOptions;
-		readonly IDocumentTreeNodeData origParentNode;
+		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 		readonly MemberRefInfo[] memberRefInfos;
 
-		FieldDefSettingsCommand(IFieldNode fieldNode, FieldDefOptions options) {
+		FieldDefSettingsCommand(FieldNode fieldNode, FieldDefOptions options) {
 			this.fieldNode = fieldNode;
 			this.newOptions = options;
 			this.origOptions = new FieldDefOptions(fieldNode.FieldDef);
 
-			this.origParentNode = (IDocumentTreeNodeData)fieldNode.TreeNode.Parent.Data;
+			this.origParentNode = (DocumentTreeNodeData)fieldNode.TreeNode.Parent.Data;
 			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(fieldNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)

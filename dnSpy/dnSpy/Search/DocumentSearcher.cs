@@ -90,7 +90,7 @@ namespace dnSpy.Search {
 				cancellationTokenSource.Cancel();
 		}
 
-		public void Start(IEnumerable<IDsDocumentNode> files) => StartInternal(files.ToArray());
+		public void Start(IEnumerable<DsDocumentNode> files) => StartInternal(files.ToArray());
 		public void Start(IEnumerable<SearchTypeInfo> typeInfos) => StartInternal(typeInfos.ToArray());
 
 		void StartInternal(object o) {
@@ -118,12 +118,12 @@ namespace dnSpy.Search {
 					MaxDegreeOfParallelism = Environment.ProcessorCount,
 				};
 
-				if (o is IDsDocumentNode[]) {
-					Parallel.ForEach((IDsDocumentNode[])o, opts, node => {
+				if (o is DsDocumentNode[]) {
+					Parallel.ForEach((DsDocumentNode[])o, opts, node => {
 						try {
 							cancellationToken.ThrowIfCancellationRequested();
 							var searcher = new FilterSearcher(filterSearcherOptions);
-							searcher.SearchAssemblies(new IDsDocumentNode[] { node });
+							searcher.SearchAssemblies(new DsDocumentNode[] { node });
 						}
 						catch {
 							Cancel();

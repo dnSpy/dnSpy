@@ -23,16 +23,16 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
-	/// Creates <see cref="ITreeNodeData"/>. Use <see cref="ExportTreeNodeDataProviderAttribute"/> to
+	/// Creates <see cref="TreeNodeData"/>. Use <see cref="ExportTreeNodeDataProviderAttribute"/> to
 	/// export an instance.
 	/// </summary>
 	public interface ITreeNodeDataProvider {
 		/// <summary>
-		/// Creates new <see cref="ITreeNodeData"/>
+		/// Creates new <see cref="TreeNodeData"/>
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		IEnumerable<ITreeNodeData> Create(TreeNodeDataProviderContext context);
+		IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context);
 	}
 
 	/// <summary>Metadata</summary>
@@ -60,8 +60,8 @@ namespace dnSpy.Contracts.TreeView {
 		public double Order { get; set; }
 
 		/// <summary>
-		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new
-		/// <see cref="ITreeNodeData"/> nodes
+		/// Guid of owner <see cref="TreeNodeData"/> that will receive the new
+		/// <see cref="TreeNodeData"/> nodes
 		/// </summary>
 		public string Guid { get; set; }
 	}

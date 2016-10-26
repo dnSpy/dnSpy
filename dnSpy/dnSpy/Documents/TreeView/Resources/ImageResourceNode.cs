@@ -36,7 +36,7 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_IMAGE_RESOURCE_NODE)]
 	sealed class ImageResourceNodeProvider : IResourceNodeProvider {
-		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
+		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			var er = resource as EmbeddedResource;
 			if (er == null)
 				return null;
@@ -45,10 +45,10 @@ namespace dnSpy.Documents.TreeView.Resources {
 			if (!CouldBeImage(er.Name, er.Data))
 				return null;
 
-			return new ImageResourceNode(treeNodeGroup, er);
+			return new ImageResourceNodeImpl(treeNodeGroup, er);
 		}
 
-		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			if (resourceElement.ResourceData.Code != ResourceTypeCode.ByteArray && resourceElement.ResourceData.Code != ResourceTypeCode.Stream)
 				return null;
 
@@ -57,7 +57,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			if (!CouldBeImage(resourceElement.Name, stream))
 				return null;
 
-			return new ImageResourceElementNode(treeNodeGroup, resourceElement);
+			return new ImageResourceElementNodeImpl(treeNodeGroup, resourceElement);
 		}
 
 		static bool CouldBeImage(string name, IBinaryReader reader) => CouldBeImage(name) || CouldBeImage(reader);
@@ -119,14 +119,14 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 	}
 
-	sealed class ImageResourceNode : ResourceNode, IImageResourceNode {
+	sealed class ImageResourceNodeImpl : ImageResourceNode {
 		readonly ImageSource imageSource;
 		readonly byte[] imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMAGE_RESOURCE_NODE_GUID);
 		protected override ImageReference GetIcon() => DsImages.Image;
 
-		public ImageResourceNode(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
+		public ImageResourceNodeImpl(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
 			this.imageData = resource.GetResourceData();
 			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
@@ -156,14 +156,14 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 	}
 
-	sealed class ImageResourceElementNode : ResourceElementNode, IImageResourceElementNode {
+	sealed class ImageResourceElementNodeImpl : ImageResourceElementNode {
 		ImageSource imageSource;
 		byte[] imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMAGE_RESOURCE_ELEMENT_NODE_GUID);
 		protected override ImageReference GetIcon() => DsImages.Image;
 
-		public ImageResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
+		public ImageResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
 			: base(treeNodeGroup, resourceElement) {
 			InitializeImageData();
 		}

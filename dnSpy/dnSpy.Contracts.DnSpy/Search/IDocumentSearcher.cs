@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Search {
 		/// Starts the search
 		/// </summary>
 		/// <param name="files">Files to search</param>
-		void Start(IEnumerable<IDsDocumentNode> files);
+		void Start(IEnumerable<DsDocumentNode> files);
 
 		/// <summary>
 		/// Starts the search

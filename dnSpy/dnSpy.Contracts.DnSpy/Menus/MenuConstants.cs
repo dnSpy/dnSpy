@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Search ListBox</summary>
 		public static readonly string GUIDOBJ_SEARCH_GUID = "7B460F9C-424D-48B3-8FD3-72CEE8DD58E5";
 
-		/// <summary>Treeview nodes array (<see cref="ITreeNodeData"/>[])</summary>
+		/// <summary>Treeview nodes array (<see cref="TreeNodeData"/>[])</summary>
 		public static readonly string GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID = "B116BABD-BD8B-4870-968A-D1871CC21638";
 
 		/// <summary><see cref="ISearchResult"/></summary>

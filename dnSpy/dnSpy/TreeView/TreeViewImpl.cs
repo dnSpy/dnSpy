@@ -44,15 +44,15 @@ namespace dnSpy.TreeView {
 
 		object IStackedContentChild.UIObject => sharpTreeView;
 
-		public ITreeNodeData SelectedItem {
+		public TreeNodeData SelectedItem {
 			get {
 				var node = sharpTreeView.SelectedItem as DsSharpTreeNode;
 				return node == null ? null : node.TreeNodeImpl.Data;
 			}
 		}
 
-		public ITreeNodeData[] SelectedItems => Convert(sharpTreeView.SelectedItems);
-		public ITreeNodeData[] TopLevelSelection => Convert(sharpTreeView.GetTopLevelSelection());
+		public TreeNodeData[] SelectedItems => Convert(sharpTreeView.SelectedItems);
+		public TreeNodeData[] TopLevelSelection => Convert(sharpTreeView.GetTopLevelSelection());
 
 		readonly ITreeViewServiceImpl treeViewService;
 		readonly ITreeViewListener treeViewListener;
@@ -110,7 +110,7 @@ namespace dnSpy.TreeView {
 			SelectionChanged?.Invoke(this, Convert(e));
 
 		static TreeViewSelectionChangedEventArgs Convert(SelectionChangedEventArgs e) {
-			ITreeNodeData[] added = null, removed = null;
+			TreeNodeData[] added = null, removed = null;
 			if (e.AddedItems != null)
 				added = Convert(e.AddedItems);
 			if (e.RemovedItems != null)
@@ -118,12 +118,12 @@ namespace dnSpy.TreeView {
 			return new TreeViewSelectionChangedEventArgs(added, removed);
 		}
 
-		static ITreeNodeData[] Convert(System.Collections.IEnumerable list) =>
+		static TreeNodeData[] Convert(System.Collections.IEnumerable list) =>
 			list.Cast<DsSharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
 
-		ITreeNode ITreeView.Create(ITreeNodeData data) => Create(data);
+		ITreeNode ITreeView.Create(TreeNodeData data) => Create(data);
 
-		TreeNodeImpl Create(ITreeNodeData data) {
+		TreeNodeImpl Create(TreeNodeData data) {
 			Debug.Assert(data.TreeNode == null);
 			var impl = new TreeNodeImpl(this, data);
 			if (treeViewListener != null)
@@ -198,7 +198,7 @@ namespace dnSpy.TreeView {
 			return hi + 1;
 		}
 
-		int Compare(ITreeNodeData a, ITreeNodeData b, ITreeNodeGroup ga, ITreeNodeGroup gb) {
+		int Compare(TreeNodeData a, TreeNodeData b, ITreeNodeGroup ga, ITreeNodeGroup gb) {
 			if (ga.Order < gb.Order)
 				return -1;
 			if (ga.Order > gb.Order)
@@ -210,7 +210,7 @@ namespace dnSpy.TreeView {
 			return ga.Compare(a, b);
 		}
 
-		public void SelectItems(IEnumerable<ITreeNodeData> items) {
+		public void SelectItems(IEnumerable<TreeNodeData> items) {
 			if (sharpTreeView.SelectionMode == SelectionMode.Single)
 				sharpTreeView.SelectedItem = null;
 			else
@@ -259,12 +259,12 @@ namespace dnSpy.TreeView {
 				node.RefreshUI();
 		}
 
-		public ITreeNodeData FromImplNode(object selectedItem) {
+		public TreeNodeData FromImplNode(object selectedItem) {
 			var node = selectedItem as DsSharpTreeNode;
 			return node == null ? null : node.TreeNodeImpl.Data;
 		}
 
-		public object ToImplNode(ITreeNodeData node) {
+		public object ToImplNode(TreeNodeData node) {
 			if (node == null)
 				return null;
 			var impl = node.TreeNode as TreeNodeImpl;
@@ -272,16 +272,16 @@ namespace dnSpy.TreeView {
 			return impl?.Node;
 		}
 
-		public void OnRemoved(ITreeNodeData node) => NodeRemoved?.Invoke(this, new TreeViewNodeRemovedEventArgs(node, true));
+		public void OnRemoved(TreeNodeData node) => NodeRemoved?.Invoke(this, new TreeViewNodeRemovedEventArgs(node, true));
 
 		public void CollapseUnusedNodes() {
-			var usedNodes = new HashSet<ITreeNodeData>(TopLevelSelection);
+			var usedNodes = new HashSet<TreeNodeData>(TopLevelSelection);
 			CollapseUnusedNodes(Root.DataChildren, usedNodes);
 			// Make sure the selected node is visible
 			Focus();
 		}
 
-		bool CollapseUnusedNodes(IEnumerable<ITreeNodeData> nodes, HashSet<ITreeNodeData> usedNodes) {
+		bool CollapseUnusedNodes(IEnumerable<TreeNodeData> nodes, HashSet<TreeNodeData> usedNodes) {
 			bool isExpanded = false;
 			foreach (var node in nodes) {
 				var tn = node.TreeNode;

@@ -280,7 +280,7 @@ namespace dnSpy.Debugger.Exceptions {
 			protected TypeDef GetTypeDefFromTreeNodes(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
-				var nodes = context.Find<ITreeNodeData[]>();
+				var nodes = context.Find<TreeNodeData[]>();
 				if (nodes == null || nodes.Length != 1)
 					return null;
 				var node = nodes[0] as IMDTokenNode;

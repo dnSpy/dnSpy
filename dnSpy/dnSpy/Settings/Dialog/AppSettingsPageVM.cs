@@ -170,7 +170,7 @@ namespace dnSpy.Settings.Dialog {
 			return null;
 		}
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() => Children;
+		public override IEnumerable<TreeNodeData> CreateChildren() => Children;
 		public override void OnRefreshUI() { }
 	}
 }

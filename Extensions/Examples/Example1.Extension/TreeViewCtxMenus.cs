@@ -16,9 +16,9 @@ using dnSpy.Contracts.TreeView;
 namespace Example1.Extension {
 	sealed class TVContext {
 		public bool SomeValue { get; }
-		public IDocumentTreeNodeData[] Nodes { get; }
+		public DocumentTreeNodeData[] Nodes { get; }
 
-		public TVContext(bool someValue, IEnumerable<IDocumentTreeNodeData> nodes) {
+		public TVContext(bool someValue, IEnumerable<DocumentTreeNodeData> nodes) {
 			this.SomeValue = someValue;
 			this.Nodes = nodes.ToArray();
 		}
@@ -34,10 +34,10 @@ namespace Example1.Extension {
 				return null;
 
 			// Extract the data needed by the context
-			var nodes = context.Find<ITreeNodeData[]>();
+			var nodes = context.Find<TreeNodeData[]>();
 			if (nodes == null)
 				return null;
-			var newNodes = nodes.OfType<IDocumentTreeNodeData>();
+			var newNodes = nodes.OfType<DocumentTreeNodeData>();
 
 			bool someValue = true;
 			return new TVContext(someValue, newNodes);
@@ -78,7 +78,7 @@ namespace Example1.Extension {
 	[ExportMenuItem(Header = "Command #4", Group = Constants.GROUP_TREEVIEW, Order = 30)]
 	sealed class TVCommand4 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) => MsgBox.Instance.Show("Command #4");
-		public override bool IsEnabled(TVContext context) => context.Nodes.Length == 1 && context.Nodes[0] is IModuleDocumentNode;
+		public override bool IsEnabled(TVContext context) => context.Nodes.Length == 1 && context.Nodes[0] is ModuleDocumentNode;
 	}
 
 	[ExportMenuItem(Group = Constants.GROUP_TREEVIEW, Order = 40)]
@@ -124,7 +124,7 @@ namespace Example1.Extension {
 		Instruction GetSecondInstruction(TVContext context) {
 			if (context.Nodes.Length == 0)
 				return null;
-			var methNode = context.Nodes[0] as IMethodNode;
+			var methNode = context.Nodes[0] as MethodNode;
 			if (methNode == null)
 				return null;
 			var body = methNode.MethodDef.Body;

@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="data">User data</param>
 		/// <returns></returns>
-		ITreeNode Create(ITreeNodeData data);
+		ITreeNode Create(TreeNodeData data);
 
 		/// <summary>
 		/// Gets the treeview UI object
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// Select items
 		/// </summary>
 		/// <param name="items">Items to select</param>
-		void SelectItems(IEnumerable<ITreeNodeData> items);
+		void SelectItems(IEnumerable<TreeNodeData> items);
 
 		/// <summary>
 		/// Raised when selection has changed
@@ -68,17 +68,17 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Gets the selected node or null
 		/// </summary>
-		ITreeNodeData SelectedItem { get; }
+		TreeNodeData SelectedItem { get; }
 
 		/// <summary>
 		/// Gets all selected items
 		/// </summary>
-		ITreeNodeData[] SelectedItems { get; }
+		TreeNodeData[] SelectedItems { get; }
 
 		/// <summary>
 		/// Gets the selected items which don't have any of their ancestors selected
 		/// </summary>
-		ITreeNodeData[] TopLevelSelection { get; }
+		TreeNodeData[] TopLevelSelection { get; }
 
 		/// <summary>
 		/// Focuses the treeview, possibly getting keyboard focus
@@ -91,18 +91,18 @@ namespace dnSpy.Contracts.TreeView {
 		void RefreshAllNodes();
 
 		/// <summary>
-		/// Converts the selected item to a <see cref="ITreeNodeData"/>. Should rarely be called.
+		/// Converts the selected item to a <see cref="TreeNodeData"/>. Should rarely be called.
 		/// </summary>
 		/// <param name="selectedItem">Selected item</param>
 		/// <returns></returns>
-		ITreeNodeData FromImplNode(object selectedItem);
+		TreeNodeData FromImplNode(object selectedItem);
 
 		/// <summary>
 		/// Converts <paramref name="node"/> to the real tree node
 		/// </summary>
 		/// <param name="node">Node</param>
 		/// <returns></returns>
-		object ToImplNode(ITreeNodeData node);
+		object ToImplNode(TreeNodeData node);
 
 		/// <summary>
 		/// Collapses all unselected nodes

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.TreeView {
 	/// <summary>
 	/// Tree node group
 	/// </summary>
-	public interface ITreeNodeGroup : IComparer<ITreeNodeData> {
+	public interface ITreeNodeGroup : IComparer<TreeNodeData> {
 		/// <summary>
 		/// Order of group relative to other groups
 		/// </summary>

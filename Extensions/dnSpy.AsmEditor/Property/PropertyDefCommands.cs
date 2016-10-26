@@ -91,19 +91,19 @@ namespace dnSpy.AsmEditor.Property {
 			public override string GetHeader(CodeContext context) => DeletePropertyDefCommand.GetHeader(context.Nodes);
 		}
 
-		static string GetHeader(IDocumentTreeNodeData[] nodes) {
+		static string GetHeader(DocumentTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
 				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeletePropertiesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IPropertyNode);
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is PropertyNode);
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var propNodes = nodes.Cast<IPropertyNode>().ToArray();
+			var propNodes = nodes.Cast<PropertyNode>().ToArray();
 			undoCommandService.Value.Add(new DeletePropertyDefCommand(propNodes));
 		}
 
@@ -131,7 +131,7 @@ namespace dnSpy.AsmEditor.Property {
 				}
 			}
 
-			public void Delete(IPropertyNode[] nodes) {
+			public void Delete(PropertyNode[] nodes) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.Property {
 				}
 			}
 
-			public void Restore(IPropertyNode[] nodes) {
+			public void Restore(PropertyNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -177,11 +177,11 @@ namespace dnSpy.AsmEditor.Property {
 			}
 		}
 
-		DeletableNodes<IPropertyNode> nodes;
+		DeletableNodes<PropertyNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeletePropertyDefCommand(IPropertyNode[] propNodes) {
-			this.nodes = new DeletableNodes<IPropertyNode>(propNodes);
+		DeletePropertyDefCommand(PropertyNode[] propNodes) {
+			this.nodes = new DeletableNodes<PropertyNode>(propNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeletePropertyCommand;
@@ -247,23 +247,23 @@ namespace dnSpy.AsmEditor.Property {
 			public override bool IsEnabled(CodeContext context) =>
 				context.IsDefinition &&
 				context.Nodes.Length == 1 &&
-				context.Nodes[0] is ITypeNode;
+				context.Nodes[0] is TypeNode;
 
 			public override void Execute(CodeContext context) => CreatePropertyDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
+			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is TypeNode));
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var ownerNode = nodes[0];
-			if (!(ownerNode is ITypeNode))
-				ownerNode = (IDocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
-			var typeNode = ownerNode as ITypeNode;
+			if (!(ownerNode is TypeNode))
+				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
+			var typeNode = ownerNode as TypeNode;
 			Debug.Assert(typeNode != null);
 			if (typeNode == null)
 				throw new InvalidOperationException();
@@ -289,10 +289,10 @@ namespace dnSpy.AsmEditor.Property {
 			appService.DocumentTabService.FollowReference(cmd.propNode);
 		}
 
-		readonly ITypeNode ownerNode;
-		readonly IPropertyNode propNode;
+		readonly TypeNode ownerNode;
+		readonly PropertyNode propNode;
 
-		CreatePropertyDefCommand(ITypeNode ownerNode, PropertyDefOptions options) {
+		CreatePropertyDefCommand(TypeNode ownerNode, PropertyDefOptions options) {
 			this.ownerNode = ownerNode;
 			this.propNode = ownerNode.Create(options.CreatePropertyDef(ownerNode.TypeDef.Module));
 		}
@@ -367,13 +367,13 @@ namespace dnSpy.AsmEditor.Property {
 			public override void Execute(CodeContext context) => PropertyDefSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IPropertyNode;
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is PropertyNode;
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var propNode = (IPropertyNode)nodes[0];
+			var propNode = (PropertyNode)nodes[0];
 
 			var module = nodes[0].GetModule();
 			Debug.Assert(module != null);
@@ -390,19 +390,19 @@ namespace dnSpy.AsmEditor.Property {
 			undoCommandService.Value.Add(new PropertyDefSettingsCommand(propNode, data.CreatePropertyDefOptions()));
 		}
 
-		readonly IPropertyNode propNode;
+		readonly PropertyNode propNode;
 		readonly PropertyDefOptions newOptions;
 		readonly PropertyDefOptions origOptions;
-		readonly IDocumentTreeNodeData origParentNode;
+		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
-		PropertyDefSettingsCommand(IPropertyNode propNode, PropertyDefOptions options) {
+		PropertyDefSettingsCommand(PropertyNode propNode, PropertyDefOptions options) {
 			this.propNode = propNode;
 			this.newOptions = options;
 			this.origOptions = new PropertyDefOptions(propNode.PropertyDef);
 
-			this.origParentNode = (IDocumentTreeNodeData)propNode.TreeNode.Parent.Data;
+			this.origParentNode = (DocumentTreeNodeData)propNode.TreeNode.Parent.Data;
 			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(propNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)

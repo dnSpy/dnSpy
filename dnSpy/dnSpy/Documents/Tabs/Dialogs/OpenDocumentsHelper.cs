@@ -35,7 +35,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var node = documentTreeView.FindNode(document);
 					if (node != null)
-						documentTreeView.TreeView.SelectItems(new IDocumentTreeNodeData[] { node });
+						documentTreeView.TreeView.SelectItems(new[] { node });
 				}));
 			}
 			return loadedDocuments;

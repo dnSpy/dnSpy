@@ -35,14 +35,14 @@ namespace dnSpy.Contracts.TreeView {
 		readonly object lockObj;
 		readonly List<Action> uiThreadActions;
 		readonly Dispatcher dispatcher;
-		readonly ITreeNodeData targetNode;
+		readonly TreeNodeData targetNode;
 		ITreeNode msgNode;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="targetNode">Target node that will be the parent of the new nodes</param>
-		protected AsyncNodeProvider(ITreeNodeData targetNode) {
+		protected AsyncNodeProvider(TreeNodeData targetNode) {
 			this.lockObj = new object();
 			this.targetNode = targetNode;
 			this.dispatcher = Dispatcher.CurrentDispatcher;
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// Adds a new node
 		/// </summary>
 		/// <param name="node">New node</param>
-		protected void AddNode(ITreeNodeData node) {
+		protected void AddNode(TreeNodeData node) {
 			if (node == null)
 				throw new ArgumentNullException(nameof(node));
 			lock (lockObj) {
@@ -76,12 +76,12 @@ namespace dnSpy.Contracts.TreeView {
 					ExecInUIThread(AddNodes_UI);
 			}
 		}
-		readonly List<ITreeNodeData> nodesToAdd = new List<ITreeNodeData>();
+		readonly List<TreeNodeData> nodesToAdd = new List<TreeNodeData>();
 
 		void AddNodes_UI() {
-			List<ITreeNodeData> nodes;
+			List<TreeNodeData> nodes;
 			lock (lockObj) {
-				nodes = new List<ITreeNodeData>(nodesToAdd);
+				nodes = new List<TreeNodeData>(nodesToAdd);
 				nodesToAdd.Clear();
 			}
 			// If it's been canceled, don't add any new nodes since the search might've restarted.
@@ -96,7 +96,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// Adds a node with a message
 		/// </summary>
 		/// <param name="create">Creates the message node</param>
-		protected void AddMessageNode(Func<ITreeNodeData> create) {
+		protected void AddMessageNode(Func<TreeNodeData> create) {
 			ExecInUIThread(() => {
 				Debug.Assert(msgNode == null);
 				msgNode = targetNode.TreeNode.TreeView.Create(create());

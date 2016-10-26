@@ -53,7 +53,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			new NodePrinter().Write(output, decompiler, analyzedMethod, Context.ShowToken);
 		}
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (analyzedMethod.HasBody)
 				yield return new MethodUsesNode(analyzedMethod);
 

@@ -129,7 +129,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid, bool checkRoot, IDecompilerService decompilerService) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					yield break;
-				var nodes = context.Find<ITreeNodeData[]>();
+				var nodes = context.Find<TreeNodeData[]>();
 				if (nodes == null)
 					yield break;
 
@@ -296,9 +296,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		bool CanDeleteNodes => GetNodes() != null;
 		void DeleteNodes() => DeleteNodes(GetNodes());
-		ITreeNodeData[] GetNodes() => GetNodes(analyzerService.Value.TreeView.TopLevelSelection);
+		TreeNodeData[] GetNodes() => GetNodes(analyzerService.Value.TreeView.TopLevelSelection);
 
-		internal static ITreeNodeData[] GetNodes(ITreeNodeData[] nodes) {
+		internal static TreeNodeData[] GetNodes(TreeNodeData[] nodes) {
 			if (nodes == null)
 				return null;
 			if (nodes.Length == 0 || !nodes.All(a => a.TreeNode.Parent != null && a.TreeNode.Parent.Parent == null))
@@ -306,7 +306,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return nodes;
 		}
 
-		internal static void DeleteNodes(ITreeNodeData[] nodes) {
+		internal static void DeleteNodes(TreeNodeData[] nodes) {
 			if (nodes != null) {
 				foreach (var node in nodes) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(node);
@@ -320,10 +320,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class RemoveAnalyzeCtxMenuCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) => GetNodes(context) != null;
 
-		static ITreeNodeData[] GetNodes(IMenuItemContext context) {
+		static TreeNodeData[] GetNodes(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
 				return null;
-			return RemoveAnalyzeCommand.GetNodes(context.Find<ITreeNodeData[]>());
+			return RemoveAnalyzeCommand.GetNodes(context.Find<TreeNodeData[]>());
 		}
 
 		public override void Execute(IMenuItemContext context) => RemoveAnalyzeCommand.DeleteNodes(GetNodes(context));

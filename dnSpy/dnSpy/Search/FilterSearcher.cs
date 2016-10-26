@@ -44,12 +44,12 @@ namespace dnSpy.Search {
 
 		bool IsMatch(string text, object obj) => options.SearchComparer.IsMatch(text, obj);
 
-		public void SearchAssemblies(IEnumerable<IDsDocumentNode> fileNodes) {
+		public void SearchAssemblies(IEnumerable<DsDocumentNode> fileNodes) {
 			foreach (var fileNode in fileNodes) {
 				options.CancellationToken.ThrowIfCancellationRequested();
-				if (fileNode is IAssemblyDocumentNode)
-					SearchAssemblyInternal((IAssemblyDocumentNode)fileNode);
-				else if (fileNode is IModuleDocumentNode)
+				if (fileNode is AssemblyDocumentNode)
+					SearchAssemblyInternal((AssemblyDocumentNode)fileNode);
+				else if (fileNode is ModuleDocumentNode)
 					SearchModule(fileNode.Document);
 			}
 		}
@@ -127,7 +127,7 @@ namespace dnSpy.Search {
 			return new ImageReference();
 		}
 
-		void SearchAssemblyInternal(IAssemblyDocumentNode asmNode) {
+		void SearchAssemblyInternal(AssemblyDocumentNode asmNode) {
 			if (asmNode == null)
 				return;
 			var asm = asmNode.Document.AssemblyDef;
@@ -156,11 +156,11 @@ namespace dnSpy.Search {
 					asmNode.TreeNode.EnsureChildrenLoaded();
 				}));
 			}
-			var modChildren = asmNode.TreeNode.DataChildren.OfType<IModuleDocumentNode>().ToArray();
+			var modChildren = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().ToArray();
 
 			foreach (var node in asmNode.TreeNode.DataChildren) {
 				options.CancellationToken.ThrowIfCancellationRequested();
-				var modNode = node as IModuleDocumentNode;
+				var modNode = node as ModuleDocumentNode;
 				if (modNode != null)
 					SearchModule(modNode.Document);
 			}
@@ -202,7 +202,7 @@ namespace dnSpy.Search {
 		}
 
 		void SearchModAsmReferences(IDsDocument module) {
-			var res = options.Filter.GetResult((IReferencesFolderNode)null);
+			var res = options.Filter.GetResult((ReferencesFolderNode)null);
 			if (res.FilterType == FilterType.Hide)
 				return;
 
@@ -246,24 +246,24 @@ namespace dnSpy.Search {
 		}
 
 		void SearchResources(IDsDocument module) {
-			var res = options.Filter.GetResult((IResourcesFolderNode)null);
+			var res = options.Filter.GetResult((ResourcesFolderNode)null);
 			if (res.FilterType == FilterType.Hide)
 				return;
 
-			res = options.Filter.GetResult((IResourceNode)null);
+			res = options.Filter.GetResult((ResourceNode)null);
 			if (res.FilterType == FilterType.Hide)
 				return;
 
-			var resNodes = new List<IResourceNode>();
+			var resNodes = new List<ResourceNode>();
 			options.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => {
 				var modNode = options.DocumentTreeView.FindNode(module.ModuleDef);
 				if (modNode == null)
 					return;
 				modNode.TreeNode.EnsureChildrenLoaded();
-				var resFolder = modNode.TreeNode.Children.FirstOrDefault(a => a.Data is IResourcesFolderNode);
+				var resFolder = modNode.TreeNode.Children.FirstOrDefault(a => a.Data is ResourcesFolderNode);
 				if (resFolder != null) {
 					resFolder.EnsureChildrenLoaded();
-					resNodes.AddRange(resFolder.DataChildren.OfType<IResourceNode>());
+					resNodes.AddRange(resFolder.DataChildren.OfType<ResourceNode>());
 				}
 			}));
 
@@ -285,7 +285,7 @@ namespace dnSpy.Search {
 			return string.Empty;
 		}
 
-		void SearchResourceTreeNodes(IDsDocument module, IResourceNode resTreeNode) {
+		void SearchResourceTreeNodes(IDsDocument module, ResourceNode resTreeNode) {
 			var res = options.Filter.GetResult(resTreeNode);
 			if (res.FilterType == FilterType.Hide)
 				return;
@@ -302,14 +302,14 @@ namespace dnSpy.Search {
 				});
 			}
 
-			res = options.Filter.GetResult((IResourceElementNode)null);
+			res = options.Filter.GetResult((ResourceElementNode)null);
 			if (res.FilterType == FilterType.Hide)
 				return;
 
-			var resNodes = new List<IResourceElementNode>();
+			var resNodes = new List<ResourceElementNode>();
 			options.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => {
 				resTreeNode.TreeNode.EnsureChildrenLoaded();
-				resNodes.AddRange(resTreeNode.TreeNode.DataChildren.OfType<IResourceElementNode>());
+				resNodes.AddRange(resTreeNode.TreeNode.DataChildren.OfType<ResourceElementNode>());
 			}));
 
 			foreach (var resElNode in resNodes) {
@@ -318,7 +318,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void SearchResourceElementTreeNode(IDsDocument module, IResourceNode resTreeNode, IResourceElementNode resElNode) {
+		void SearchResourceElementTreeNode(IDsDocument module, ResourceNode resTreeNode, ResourceElementNode resElNode) {
 			var res = options.Filter.GetResult(resElNode);
 			if (res.FilterType == FilterType.Hide)
 				return;

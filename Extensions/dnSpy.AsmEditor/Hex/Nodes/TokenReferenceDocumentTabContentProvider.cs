@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			var node = HexDocumentTreeNodeDataFinder.FindNode(documentTabService.DocumentTreeView, tokRef);
 			if (node == null)
 				return null;
-			var content = documentTabService.TryCreateContent(new IDocumentTreeNodeData[] { node });
+			var content = documentTabService.TryCreateContent(new DocumentTreeNodeData[] { node });
 			if (content == null)
 				return null;
 			return new DocumentTabReferenceResult(content);

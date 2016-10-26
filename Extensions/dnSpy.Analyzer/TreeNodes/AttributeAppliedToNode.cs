@@ -94,7 +94,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.AppliedToTreeNode);
 
-		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
+		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
 			//get the assemblies to search
@@ -109,7 +109,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foundMethods = null;
 		}
 
-		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInModule(IEnumerable<ModuleDef> modules, ITypeDefOrRef tr, CancellationToken ct) {
+		IEnumerable<AnalyzerTreeNodeData> FindReferencesInModule(IEnumerable<ModuleDef> modules, ITypeDefOrRef tr, CancellationToken ct) {
 			var checkedAsms = new HashSet<AssemblyDef>();
 			foreach (var module in modules) {
 				if ((usage & AttributeTargets.Assembly) != 0) {
@@ -150,7 +150,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		IEnumerable<IAnalyzerTreeNodeData> FindReferencesWithinInType(TypeDef type, ITypeDefOrRef attrTypeRef) {
+		IEnumerable<AnalyzerTreeNodeData> FindReferencesWithinInType(TypeDef type, ITypeDefOrRef attrTypeRef) {
 
 			bool searchRequired = (type.IsClass && usage.HasFlag(AttributeTargets.Class))
 				|| (type.IsEnum && usage.HasFlag(AttributeTargets.Enum))

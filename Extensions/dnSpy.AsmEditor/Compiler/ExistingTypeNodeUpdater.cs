@@ -27,7 +27,7 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class ExistingTypeNodeUpdater {
-		readonly ITypeNode typeNode;
+		readonly TypeNode typeNode;
 		readonly ExistingTypeNodeUpdater[] nestedTypes1;
 		readonly NestedTypeNodeCreator[] nestedTypes2;
 		readonly FieldNodeCreator[] fields;
@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly PropertyNodeCreator[] properties;
 		readonly EditedMethodBodyUpdater[] editedMethods;
 
-		public ExistingTypeNodeUpdater(Lazy<IMethodAnnotations> methodAnnotations, IModuleDocumentNode modNode, MergedImportedType type) {
+		public ExistingTypeNodeUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MergedImportedType type) {
 			this.typeNode = modNode.Context.DocumentTreeView.FindNode(type.TargetType);
 			if (this.typeNode == null)
 				throw new InvalidOperationException();

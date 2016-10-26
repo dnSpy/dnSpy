@@ -91,19 +91,19 @@ namespace dnSpy.AsmEditor.Event {
 			public override string GetHeader(CodeContext context) => DeleteEventDefCommand.GetHeader(context.Nodes);
 		}
 
-		static string GetHeader(IDocumentTreeNodeData[] nodes) {
+		static string GetHeader(DocumentTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
 				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteEvents, nodes.Length);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is IEventNode);
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => n is EventNode);
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var eventNodes = nodes.Cast<IEventNode>().ToArray();
+			var eventNodes = nodes.Cast<EventNode>().ToArray();
 			undoCommandService.Value.Add(new DeleteEventDefCommand(eventNodes));
 		}
 
@@ -136,7 +136,7 @@ namespace dnSpy.AsmEditor.Event {
 				}
 			}
 
-			public void Delete(IEventNode[] nodes) {
+			public void Delete(EventNode[] nodes) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -161,7 +161,7 @@ namespace dnSpy.AsmEditor.Event {
 				}
 			}
 
-			public void Restore(IEventNode[] nodes) {
+			public void Restore(EventNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -182,11 +182,11 @@ namespace dnSpy.AsmEditor.Event {
 			}
 		}
 
-		DeletableNodes<IEventNode> nodes;
+		DeletableNodes<EventNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteEventDefCommand(IEventNode[] eventNodes) {
-			this.nodes = new DeletableNodes<IEventNode>(eventNodes);
+		DeleteEventDefCommand(EventNode[] eventNodes) {
+			this.nodes = new DeletableNodes<EventNode>(eventNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteEventCommand;
@@ -252,24 +252,24 @@ namespace dnSpy.AsmEditor.Event {
 			public override bool IsEnabled(CodeContext context) {
 				return context.IsDefinition &&
 					context.Nodes.Length == 1 &&
-					context.Nodes[0] is ITypeNode;
+					context.Nodes[0] is TypeNode;
 			}
 
 			public override void Execute(CodeContext context) => CreateEventDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is ITypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is ITypeNode));
+			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is TypeNode));
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var ownerNode = nodes[0];
-			if (!(ownerNode is ITypeNode))
-				ownerNode = (IDocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
-			var typeNode = ownerNode as ITypeNode;
+			if (!(ownerNode is TypeNode))
+				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
+			var typeNode = ownerNode as TypeNode;
 			Debug.Assert(typeNode != null);
 			if (typeNode == null)
 				throw new InvalidOperationException();
@@ -293,10 +293,10 @@ namespace dnSpy.AsmEditor.Event {
 			appService.DocumentTabService.FollowReference(cmd.eventNode);
 		}
 
-		readonly ITypeNode ownerNode;
-		readonly IEventNode eventNode;
+		readonly TypeNode ownerNode;
+		readonly EventNode eventNode;
 
-		CreateEventDefCommand(ITypeNode ownerNode, EventDefOptions options) {
+		CreateEventDefCommand(TypeNode ownerNode, EventDefOptions options) {
 			this.ownerNode = ownerNode;
 			this.eventNode = ownerNode.Create(options.CreateEventDef(ownerNode.TypeDef.Module));
 		}
@@ -371,13 +371,13 @@ namespace dnSpy.AsmEditor.Event {
 			public override void Execute(CodeContext context) => EventDefSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IEventNode;
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is EventNode;
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var eventNode = (IEventNode)nodes[0];
+			var eventNode = (EventNode)nodes[0];
 
 			var module = nodes[0].GetModule();
 			Debug.Assert(module != null);
@@ -394,19 +394,19 @@ namespace dnSpy.AsmEditor.Event {
 			undoCommandService.Value.Add(new EventDefSettingsCommand(eventNode, data.CreateEventDefOptions()));
 		}
 
-		readonly IEventNode eventNode;
+		readonly EventNode eventNode;
 		readonly EventDefOptions newOptions;
 		readonly EventDefOptions origOptions;
-		readonly IDocumentTreeNodeData origParentNode;
+		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
-		EventDefSettingsCommand(IEventNode eventNode, EventDefOptions options) {
+		EventDefSettingsCommand(EventNode eventNode, EventDefOptions options) {
 			this.eventNode = eventNode;
 			this.newOptions = options;
 			this.origOptions = new EventDefOptions(eventNode.EventDef);
 
-			this.origParentNode = (IDocumentTreeNodeData)eventNode.TreeNode.Parent.Data;
+			this.origParentNode = (DocumentTreeNodeData)eventNode.TreeNode.Parent.Data;
 			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(eventNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)

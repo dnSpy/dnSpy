@@ -34,8 +34,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.hexDocumentService = hexDocumentService;
 		}
 
-		public IEnumerable<ITreeNodeData> Create(TreeNodeDataProviderContext context) {
-			var fileNode = context.Owner.Data as IDsDocumentNode;
+		public IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context) {
+			var fileNode = context.Owner.Data as DsDocumentNode;
 			Debug.Assert(fileNode != null);
 			if (fileNode == null)
 				yield break;
@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				yield return new PENode(hexDocumentService.Value, peImage, fileNode.Document.ModuleDef as ModuleDefMD);
 		}
 
-		public static bool HasPENode(IDsDocumentNode node) {
+		public static bool HasPENode(DsDocumentNode node) {
 			if (node == null)
 				return false;
 

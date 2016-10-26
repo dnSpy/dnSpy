@@ -22,17 +22,17 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// Finds <see cref="IDocumentTreeNodeData"/> nodes. Use <see cref="ExportDocumentTreeNodeDataFinderAttribute"/>
+	/// Finds <see cref="DocumentTreeNodeData"/> nodes. Use <see cref="ExportDocumentTreeNodeDataFinderAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public interface IDocumentTreeNodeDataFinder {
 		/// <summary>
-		/// Returns an existing <see cref="IDocumentTreeNodeData"/> node or null
+		/// Returns an existing <see cref="DocumentTreeNodeData"/> node or null
 		/// </summary>
 		/// <param name="documentTreeView">Owner</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		IDocumentTreeNodeData FindNode(IDocumentTreeView documentTreeView, object @ref);
+		DocumentTreeNodeData FindNode(IDocumentTreeView documentTreeView, object @ref);
 	}
 
 	/// <summary>Metadata</summary>

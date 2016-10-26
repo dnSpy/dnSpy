@@ -52,7 +52,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTab tab;
 		readonly IDocumentTreeNodeDecompiler documentTreeNodeDecompiler;
 		readonly IDecompiler decompiler;
-		readonly IDocumentTreeNodeData[] nodes;
+		readonly DocumentTreeNodeData[] nodes;
 		readonly IDocumentViewer documentViewer;
 
 		public static NodeTabSaver TryCreate(IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDocumentTab tab, IMessageBoxService messageBoxService) {
@@ -70,7 +70,7 @@ namespace dnSpy.Documents.Tabs {
 			return new NodeTabSaver(messageBoxService, tab, documentTreeNodeDecompiler, decompiler, uiContext, nodes);
 		}
 
-		NodeTabSaver(IMessageBoxService messageBoxService, IDocumentTab tab, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompiler decompiler, IDocumentViewer documentViewer, IDocumentTreeNodeData[] nodes) {
+		NodeTabSaver(IMessageBoxService messageBoxService, IDocumentTab tab, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompiler decompiler, IDocumentViewer documentViewer, DocumentTreeNodeData[] nodes) {
 			this.messageBoxService = messageBoxService;
 			this.tab = tab;
 			this.documentTreeNodeDecompiler = documentTreeNodeDecompiler;

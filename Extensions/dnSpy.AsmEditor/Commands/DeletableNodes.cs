@@ -24,13 +24,13 @@ using System.Linq;
 using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
-	struct DeletableNodes<T> where T : IDocumentTreeNodeData {
+	struct DeletableNodes<T> where T : DocumentTreeNodeData {
 		readonly T[] nodes;
-		IDocumentTreeNodeData[] parents;
+		DocumentTreeNodeData[] parents;
 
 		public int Count => nodes.Length;
 		public T[] Nodes => nodes;
-		public IDocumentTreeNodeData[] Parents => parents;
+		public DocumentTreeNodeData[] Parents => parents;
 
 		public DeletableNodes(T node)
 			: this(new[] { node }) {
@@ -50,10 +50,10 @@ namespace dnSpy.AsmEditor.Commands {
 			if (parents != null)
 				throw new ArgumentException("Nodes have already been deleted");
 
-			parents = new IDocumentTreeNodeData[nodes.Length];
+			parents = new DocumentTreeNodeData[nodes.Length];
 			for (int i = 0; i < nodes.Length; i++) {
 				var node = nodes[i];
-				var parent = (IDocumentTreeNodeData)node.TreeNode.Parent.Data;
+				var parent = (DocumentTreeNodeData)node.TreeNode.Parent.Data;
 				parents[i] = parent;
 
 				parent.TreeNode.Children.Remove(node.TreeNode);

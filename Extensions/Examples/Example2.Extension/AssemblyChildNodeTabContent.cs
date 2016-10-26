@@ -46,7 +46,7 @@ namespace Example2.Extension {
 
 	sealed class AssemblyChildNodeTabContent : DocumentTabContent {
 		// Returns all nodes used to generate the content
-		public override IEnumerable<IDocumentTreeNodeData> Nodes {
+		public override IEnumerable<DocumentTreeNodeData> Nodes {
 			get { yield return node; }
 		}
 

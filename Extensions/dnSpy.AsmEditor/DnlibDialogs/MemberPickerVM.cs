@@ -106,28 +106,28 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 				var item = documentTreeView.TreeView.FromImplNode(SelectedItem);
 				if (item != null) {
-					if (item is IAssemblyDocumentNode && filter.GetResult((item as IAssemblyDocumentNode).Document.AssemblyDef).IsMatch)
-						return ((IAssemblyDocumentNode)item).Document;
-					else if (item is IModuleDocumentNode && filter.GetResult((item as IModuleDocumentNode).Document.ModuleDef).IsMatch)
-						return ((IModuleDocumentNode)item).Document;
-					else if (item is IDsDocumentNode && filter.GetResult((item as IDsDocumentNode).Document).IsMatch)
-						return ((IDsDocumentNode)item).Document;
-					if (item is INamespaceNode && filter.GetResult((item as INamespaceNode).Name, ((item as INamespaceNode).TreeNode.Parent.Data as IModuleDocumentNode).Document).IsMatch)
-						return ((INamespaceNode)item).Name;
-					if (item is ITypeNode && filter.GetResult((item as ITypeNode).TypeDef).IsMatch)
-						return ((ITypeNode)item).TypeDef;
-					if (item is IFieldNode && filter.GetResult((item as IFieldNode).FieldDef).IsMatch)
-						return ((IFieldNode)item).FieldDef;
-					if (item is IMethodNode && filter.GetResult((item as IMethodNode).MethodDef).IsMatch)
-						return ((IMethodNode)item).MethodDef;
-					if (item is IPropertyNode && filter.GetResult((item as IPropertyNode).PropertyDef).IsMatch)
-						return ((IPropertyNode)item).PropertyDef;
-					if (item is IEventNode && filter.GetResult((item as IEventNode).EventDef).IsMatch)
-						return ((IEventNode)item).EventDef;
-					if (item is IAssemblyReferenceNode && filter.GetResult((item as IAssemblyReferenceNode).AssemblyRef).IsMatch)
-						return ((IAssemblyReferenceNode)item).AssemblyRef;
-					if (item is IModuleReferenceNode && filter.GetResult((item as IModuleReferenceNode).ModuleRef).IsMatch)
-						return ((IModuleReferenceNode)item).ModuleRef;
+					if (item is AssemblyDocumentNode && filter.GetResult((item as AssemblyDocumentNode).Document.AssemblyDef).IsMatch)
+						return ((AssemblyDocumentNode)item).Document;
+					else if (item is ModuleDocumentNode && filter.GetResult((item as ModuleDocumentNode).Document.ModuleDef).IsMatch)
+						return ((ModuleDocumentNode)item).Document;
+					else if (item is DsDocumentNode && filter.GetResult((item as DsDocumentNode).Document).IsMatch)
+						return ((DsDocumentNode)item).Document;
+					if (item is NamespaceNode && filter.GetResult((item as NamespaceNode).Name, ((item as NamespaceNode).TreeNode.Parent.Data as ModuleDocumentNode).Document).IsMatch)
+						return ((NamespaceNode)item).Name;
+					if (item is TypeNode && filter.GetResult((item as TypeNode).TypeDef).IsMatch)
+						return ((TypeNode)item).TypeDef;
+					if (item is FieldNode && filter.GetResult((item as FieldNode).FieldDef).IsMatch)
+						return ((FieldNode)item).FieldDef;
+					if (item is MethodNode && filter.GetResult((item as MethodNode).MethodDef).IsMatch)
+						return ((MethodNode)item).MethodDef;
+					if (item is PropertyNode && filter.GetResult((item as PropertyNode).PropertyDef).IsMatch)
+						return ((PropertyNode)item).PropertyDef;
+					if (item is EventNode && filter.GetResult((item as EventNode).EventDef).IsMatch)
+						return ((EventNode)item).EventDef;
+					if (item is AssemblyReferenceNode && filter.GetResult((item as AssemblyReferenceNode).AssemblyRef).IsMatch)
+						return ((AssemblyReferenceNode)item).AssemblyRef;
+					if (item is ModuleReferenceNode && filter.GetResult((item as ModuleReferenceNode).ModuleRef).IsMatch)
+						return ((ModuleReferenceNode)item).ModuleRef;
 				}
 
 				return null;
@@ -247,7 +247,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (node == null)
 				return false;
 
-			documentTreeView.TreeView.SelectItems(new ITreeNodeData[] { node });
+			documentTreeView.TreeView.SelectItems(new TreeNodeData[] { node });
 			SelectedItem = documentTreeView.TreeView.ToImplNode(node);
 
 			return true;
@@ -286,7 +286,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				fileSearcher.Decompiler = Language;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
-				fileSearcher.Start(documentTreeView.TreeView.Root.DataChildren.OfType<IDsDocumentNode>());
+				fileSearcher.Start(documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>());
 			}
 		}
 		IDocumentSearcher fileSearcher;

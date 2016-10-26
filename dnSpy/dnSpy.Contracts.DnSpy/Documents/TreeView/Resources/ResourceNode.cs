@@ -34,10 +34,15 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// <summary>
 	/// Resource node base class
 	/// </summary>
-	public abstract class ResourceNode : DocumentTreeNodeData, IResourceNode {
-		/// <inheritdoc/>
+	public abstract class ResourceNode : DocumentTreeNodeData, IResourceDataProvider {
+		/// <summary>
+		/// Gets the resource
+		/// </summary>
 		public Resource Resource { get; set; }
-		/// <inheritdoc/>
+
+		/// <summary>
+		/// Gets the name
+		/// </summary>
 		public string Name => Resource.Name;
 
 		/// <inheritdoc/>
@@ -121,8 +126,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="treeNodeGroup"></param>
-		/// <param name="resource"></param>
+		/// <param name="treeNodeGroup">Treenode group</param>
+		/// <param name="resource">Resource</param>
 		protected ResourceNode(ITreeNodeGroup treeNodeGroup, Resource resource) {
 			if (treeNodeGroup == null)
 				throw new ArgumentNullException(nameof(treeNodeGroup));

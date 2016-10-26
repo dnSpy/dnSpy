@@ -25,14 +25,14 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class MethodNodeCreator {
-		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
+		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get { yield return ownerNode; }
 		}
 
-		readonly ITypeNode ownerNode;
-		readonly IMethodNode methodNode;
+		readonly TypeNode ownerNode;
+		readonly MethodNode methodNode;
 
-		public MethodNodeCreator(IModuleDocumentNode modNode, ITypeNode ownerNode, MethodDef method) {
+		public MethodNodeCreator(ModuleDocumentNode modNode, TypeNode ownerNode, MethodDef method) {
 			this.ownerNode = ownerNode;
 			this.methodNode = modNode.Context.DocumentTreeView.Create(method);
 		}

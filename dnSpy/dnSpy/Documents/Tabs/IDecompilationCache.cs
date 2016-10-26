@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs {
 		/// <param name="nodes">Nodes</param>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		DocumentViewerContent Lookup(IDecompiler decompiler, IDocumentTreeNodeData[] nodes, out IContentType contentType);
+		DocumentViewerContent Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType contentType);
 
 		/// <summary>
 		/// Cache decompiled output
@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs {
 		/// <param name="nodes">Nodes</param>
 		/// <param name="content">Content</param>
 		/// <param name="contentType">Content type</param>
-		void Cache(IDecompiler decompiler, IDocumentTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType);
+		void Cache(IDecompiler decompiler, DocumentTreeNodeData[] nodes, DocumentViewerContent content, IContentType contentType);
 
 		/// <summary>
 		/// Clear the cache

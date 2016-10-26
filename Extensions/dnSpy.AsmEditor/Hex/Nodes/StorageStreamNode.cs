@@ -64,9 +64,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (tblStream != null)
 				this.newChild = new TablesStreamNode(doc, tblStream, md);
 		}
-		ITreeNodeData newChild;
+		TreeNodeData newChild;
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (newChild != null)
 				yield return newChild;
 			newChild = null;

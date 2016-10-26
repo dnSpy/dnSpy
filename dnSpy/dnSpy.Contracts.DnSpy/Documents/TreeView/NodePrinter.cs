@@ -126,7 +126,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		}
 
 		/// <summary>
-		/// Writes a namespace
+		/// Writes a token
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="tok">Token provider</param>

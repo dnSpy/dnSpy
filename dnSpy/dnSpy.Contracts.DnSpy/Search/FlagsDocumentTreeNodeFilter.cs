@@ -98,14 +98,14 @@ namespace dnSpy.Contracts.Search {
 			return FilterFile(thisFlag, visibleFlags);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(IBaseTypeFolderNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode node) {
 			bool isMatch = (flags & VisibleMembersFlags.BaseTypes) != 0;
 			if (!isMatch)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, isMatch);
 			return new DocumentTreeNodeFilterResult(FilterType.Visible, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(IDerivedTypesFolderNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode node) {
 			bool isMatch = (flags & VisibleMembersFlags.DerivedTypes) != 0;
 			if (!isMatch)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -188,7 +188,7 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(IReferencesFolderNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode node) {
 			var visibleFlags = VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.ModuleRef;
 			const bool isMatch = false;
 			if ((flags & visibleFlags) == 0)
@@ -196,7 +196,7 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.Default, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(IResourcesFolderNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode node) {
 			var visibleFlags = VisibleMembersFlags.ResourceList | VisibleMembersFlags.Resource |
 								VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.ResourceList) != 0;
@@ -207,7 +207,7 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(IResourceNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(ResourceNode node) {
 			var visibleFlags = VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement |
 								VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.Resource) != 0;
@@ -218,14 +218,14 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(IResourceElementNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(ResourceElementNode node) {
 			bool isMatch = (flags & VisibleMembersFlags.ResourceElement) != 0;
 			if (!isMatch)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, isMatch);
 			return new DocumentTreeNodeFilterResult(FilterType.Visible, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(IDocumentTreeNodeData node) {
+		public override DocumentTreeNodeFilterResult GetResultOther(DocumentTreeNodeData node) {
 			bool isMatch = (flags & VisibleMembersFlags.Other) != 0;
 			if (!isMatch)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, isMatch);

@@ -70,7 +70,6 @@
     <Compile Include="TreeNodes\FieldAccessNode.cs" />
     <Compile Include="TreeNodes\FieldNode.cs" />
     <Compile Include="TreeNodes\Helpers.cs" />
-    <Compile Include="TreeNodes\IAnalyzerTreeNodeData.cs" />
     <Compile Include="TreeNodes\IAnalyzerTreeNodeDataContext.cs" />
     <Compile Include="TreeNodes\IAsyncCancellable.cs" />
     <Compile Include="TreeNodes\InterfaceEventImplementedByNode.cs" />

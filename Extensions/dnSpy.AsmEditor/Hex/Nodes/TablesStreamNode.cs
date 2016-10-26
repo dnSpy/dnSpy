@@ -46,15 +46,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			: base((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset - 1) {
 			this.tablesStreamVM = new TablesStreamVM(this, doc, tblStream);
 
-			this.newChildren = new List<ITreeNodeData>();
+			this.newChildren = new List<TreeNodeData>();
 			foreach (var mdTable in tblStream.MDTables) {
 				if (mdTable.Rows != 0)
 					this.newChildren.Add(new MetaDataTableNode(doc, mdTable, md));
 			}
 		}
-		List<ITreeNodeData> newChildren;
+		List<TreeNodeData> newChildren;
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			foreach (var c in newChildren)
 				yield return c;
 			newChildren = null;

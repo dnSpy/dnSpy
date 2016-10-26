@@ -218,21 +218,21 @@ namespace dnSpy.Search {
 		IDocumentSearcher fileSearcher;
 		bool searchCompleted;
 
-		bool CanSearchFile(IDsDocumentNode node) =>
+		bool CanSearchFile(DsDocumentNode node) =>
 			SearchSettings.SearchGacAssemblies || !GacInfo.IsGacPath(node.Document.Filename);
-		IEnumerable<IDsDocumentNode> GetAllFilesToSearch() =>
-			documentTreeView.TreeView.Root.DataChildren.OfType<IDsDocumentNode>().Where(a => CanSearchFile(a));
-		IEnumerable<IDsDocumentNode> GetSelectedFilesToSearch() =>
+		IEnumerable<DsDocumentNode> GetAllFilesToSearch() =>
+			documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>().Where(a => CanSearchFile(a));
+		IEnumerable<DsDocumentNode> GetSelectedFilesToSearch() =>
 			documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => a != null && CanSearchFile(a)).Distinct();
 
-		IEnumerable<IDsDocumentNode> GetAllFilesInSameDirToSearch() {
+		IEnumerable<DsDocumentNode> GetAllFilesInSameDirToSearch() {
 			var dirsEnum = GetSelectedFilesToSearch().Where(a => File.Exists(a.Document.Filename)).Select(a => Path.GetDirectoryName(a.Document.Filename));
 			var dirs = new HashSet<string>(dirsEnum, StringComparer.OrdinalIgnoreCase);
 			return GetAllFilesToSearch().Where(a => File.Exists(a.Document.Filename) && dirs.Contains(Path.GetDirectoryName(a.Document.Filename)));
 		}
 
 		IEnumerable<SearchTypeInfo> GetSelectedTypeToSearch() {
-			foreach (var node in documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetAncestorOrSelf<ITypeNode>()).Where(a => a != null).Distinct()) {
+			foreach (var node in documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetAncestorOrSelf<TypeNode>()).Where(a => a != null).Distinct()) {
 				var fileNode = node.GetDocumentNode();
 				Debug.Assert(fileNode != null);
 				if (fileNode == null)

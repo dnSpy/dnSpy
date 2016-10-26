@@ -121,7 +121,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.WriteLine();
 		}
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			Debug.Assert(TreeNode.Children.Count == 0);
 
 			ulong offs = StartOffset;

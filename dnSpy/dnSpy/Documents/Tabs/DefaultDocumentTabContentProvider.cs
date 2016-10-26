@@ -33,6 +33,6 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public DocumentTabContent Create(IDocumentTabService documentTabService) =>
-			documentTabContentFactoryService.CreateTabContent(Array.Empty<IDocumentTreeNodeData>());
+			documentTabContentFactoryService.CreateTabContent(Array.Empty<DocumentTreeNodeData>());
 	}
 }

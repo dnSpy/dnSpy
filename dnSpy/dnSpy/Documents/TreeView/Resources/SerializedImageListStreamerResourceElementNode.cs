@@ -33,30 +33,30 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE)]
 	sealed class SerializedImageListStreamerResourceElementNodeProvider : IResourceNodeProvider {
-		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
+		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
-		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			var serializedData = resourceElement.ResourceData as BinaryResourceData;
 			if (serializedData == null)
 				return null;
 
 			byte[] imageData;
 			if (SerializedImageListStreamerUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
-				return new SerializedImageListStreamerResourceElementNode(treeNodeGroup, resourceElement, imageData);
+				return new SerializedImageListStreamerResourceElementNodeImpl(treeNodeGroup, resourceElement, imageData);
 
 			return null;
 		}
 	}
 
-	sealed class SerializedImageListStreamerResourceElementNode : ResourceElementNode, ISerializedImageListStreamerResourceElementNode {
+	sealed class SerializedImageListStreamerResourceElementNodeImpl : SerializedImageListStreamerResourceElementNode {
 		ImageListOptions imageListOptions;
 		byte[] imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE_GUID);
-		public ImageListOptions ImageListOptions => new ImageListOptions(imageListOptions) { Name = Name };
+		public override ImageListOptions ImageListOptions => new ImageListOptions(imageListOptions) { Name = Name };
 		protected override ImageReference GetIcon() => DsImages.Image;
 
-		public SerializedImageListStreamerResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
+		public SerializedImageListStreamerResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
 			: base(treeNodeGroup, resourceElement) {
 			InitializeImageData(imageData);
 		}

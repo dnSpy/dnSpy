@@ -182,25 +182,25 @@ namespace dnSpy.Documents.Tabs {
 			if (!e.Removed)
 				return;
 
-			var documentNode = e.Node as IDsDocumentNode;
+			var documentNode = e.Node as DsDocumentNode;
 			if (documentNode == null)
 				return;
 			OnNodeRemoved(documentNode);
 		}
 
-		void OnNodeRemoved(IDsDocumentNode node) {
+		void OnNodeRemoved(DsDocumentNode node) {
 			var hash = GetSelfAndDsDocumentNodeChildren(node);
 			foreach (TabContentImpl tab in VisibleFirstTabs)
-				tab.OnNodesRemoved(hash, () => this.CreateTabContent(Array.Empty<IDocumentTreeNodeData>()));
+				tab.OnNodesRemoved(hash, () => this.CreateTabContent(Array.Empty<DocumentTreeNodeData>()));
 			decompilationCache.Clear(new HashSet<IDsDocument>(hash.Select(a => a.Document)));
 		}
 
-		static HashSet<IDsDocumentNode> GetSelfAndDsDocumentNodeChildren(IDsDocumentNode node, HashSet<IDsDocumentNode> hash = null) {
+		static HashSet<DsDocumentNode> GetSelfAndDsDocumentNodeChildren(DsDocumentNode node, HashSet<DsDocumentNode> hash = null) {
 			if (hash == null)
-				hash = new HashSet<IDsDocumentNode>();
+				hash = new HashSet<DsDocumentNode>();
 			hash.Add(node);
 			foreach (var c in node.TreeNode.DataChildren) {
-				var documentNode = c as IDsDocumentNode;
+				var documentNode = c as DsDocumentNode;
 				if (documentNode != null)
 					GetSelfAndDsDocumentNodeChildren(documentNode, hash);
 			}
@@ -248,30 +248,30 @@ namespace dnSpy.Documents.Tabs {
 		void DocumentTreeView_NodeActivated(object sender, DocumentTreeNodeActivatedEventArgs e) {
 			e.Handled = true;
 
-			var asmRefNode = e.Node as IAssemblyReferenceNode;
+			var asmRefNode = e.Node as AssemblyReferenceNode;
 			if (asmRefNode != null) {
 				var asm = DocumentTreeView.DocumentService.Resolve(asmRefNode.AssemblyRef, asmRefNode.GetModule());
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var asmNode = DocumentTreeView.FindNode(asm);
 					if (asmNode != null)
-						DocumentTreeView.TreeView.SelectItems(new ITreeNodeData[] { asmNode });
+						DocumentTreeView.TreeView.SelectItems(new[] { asmNode });
 				}));
 				return;
 			}
 
-			var derivedTypeNode = e.Node as IDerivedTypeNode;
+			var derivedTypeNode = e.Node as DerivedTypeNode;
 			if (derivedTypeNode != null) {
 				var td = derivedTypeNode.TypeDef;
 				Debug.Assert(td != null);
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var typeNode = DocumentTreeView.FindNode(td);
 					if (typeNode != null)
-						DocumentTreeView.TreeView.SelectItems(new ITreeNodeData[] { typeNode });
+						DocumentTreeView.TreeView.SelectItems(new[] { typeNode });
 				}));
 				return;
 			}
 
-			var baseTypeNode = e.Node as IBaseTypeNode;
+			var baseTypeNode = e.Node as BaseTypeNode;
 			if (baseTypeNode != null) {
 				var tdr = baseTypeNode.TypeDefOrRef;
 				Debug.Assert(tdr != null);
@@ -279,7 +279,7 @@ namespace dnSpy.Documents.Tabs {
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var typeNode = DocumentTreeView.FindNode(td);
 					if (typeNode != null)
-						DocumentTreeView.TreeView.SelectItems(new ITreeNodeData[] { typeNode });
+						DocumentTreeView.TreeView.SelectItems(new[] { typeNode });
 				}));
 				return;
 			}
@@ -298,7 +298,7 @@ namespace dnSpy.Documents.Tabs {
 		void DocumentTreeView_SelectionChanged(object sender, TreeViewSelectionChangedEventArgs e) {
 			if (disableSelectionChangedEventCounter > 0)
 				return;
-			var nodes = ((IDocumentTreeView)sender).TreeView.TopLevelSelection.OfType<IDocumentTreeNodeData>().ToArray();
+			var nodes = ((IDocumentTreeView)sender).TreeView.TopLevelSelection.OfType<DocumentTreeNodeData>().ToArray();
 
 			// Prevent a new empty tab from opening when closing the last tab
 			if (nodes.Length == 0 && ActiveTabContentImpl == null)
@@ -331,7 +331,7 @@ namespace dnSpy.Documents.Tabs {
 		bool inEmptySelectionHack;
 		bool ignoreEmptySelection;
 
-		void ShowNodes(IDocumentTreeNodeData[] nodes) {
+		void ShowNodes(DocumentTreeNodeData[] nodes) {
 			var tabContent = CreateTabContent(nodes);
 			disableSelectTreeNodes++;
 			try {
@@ -342,9 +342,9 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		public DocumentTabContent TryCreateContent(IDocumentTreeNodeData[] nodes) => documentTabContentFactoryService.CreateTabContent(nodes);
+		public DocumentTabContent TryCreateContent(DocumentTreeNodeData[] nodes) => documentTabContentFactoryService.CreateTabContent(nodes);
 
-		DocumentTabContent CreateTabContent(IDocumentTreeNodeData[] nodes) {
+		DocumentTabContent CreateTabContent(DocumentTreeNodeData[] nodes) {
 			var content = TryCreateContent(nodes);
 			Debug.Assert(content != null);
 			return content ?? new NullDocumentTabContent();
@@ -424,7 +424,7 @@ namespace dnSpy.Documents.Tabs {
 				isTreeViewVisible = false;
 		}
 
-		static bool Equals(ITreeNodeData[] a, ITreeNodeData[] b) {
+		static bool Equals(TreeNodeData[] a, TreeNodeData[] b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -496,21 +496,21 @@ namespace dnSpy.Documents.Tabs {
 		public void CloseAll() {
 			foreach (var impl in AllTabContentImpls.ToArray())
 				Close(impl);
-			DocumentTreeView.TreeView.SelectItems(Array.Empty<ITreeNodeData>());
+			DocumentTreeView.TreeView.SelectItems(Array.Empty<TreeNodeData>());
 		}
 
 		internal void OnRemoved(TabContentImpl impl) {
 			if (ActiveTabContentImpl == null)
-				DocumentTreeView.TreeView.SelectItems(Array.Empty<ITreeNodeData>());
+				DocumentTreeView.TreeView.SelectItems(Array.Empty<TreeNodeData>());
 		}
 
-		public void Refresh<T>() where T : IDocumentTreeNodeData => Refresh(a => a is T);
+		public void Refresh<T>() where T : DocumentTreeNodeData => Refresh(a => a is T);
 
-		public void Refresh(Predicate<IDocumentTreeNodeData> pred) {
-			var nodes = new List<IDocumentTreeNodeData>(DocumentTreeView.TreeView.Root.Data.Descendants().OfType<IDocumentTreeNodeData>().Where(a => pred(a)));
-			var hash = new HashSet<IDsDocumentNode>();
+		public void Refresh(Predicate<DocumentTreeNodeData> pred) {
+			var nodes = new List<DocumentTreeNodeData>(DocumentTreeView.TreeView.Root.Data.Descendants().OfType<DocumentTreeNodeData>().Where(a => pred(a)));
+			var hash = new HashSet<DsDocumentNode>();
 			foreach (var node in nodes) {
-				var n = node.GetAncestorOrSelf<IDsDocumentNode>();
+				var n = node.GetAncestorOrSelf<DsDocumentNode>();
 				if (n == null)
 					continue;
 				hash.Add(n);
@@ -521,7 +521,7 @@ namespace dnSpy.Documents.Tabs {
 
 			var tabs = new List<IDocumentTab>();
 			foreach (var tab in VisibleFirstTabs) {
-				bool refresh = tab.Content.Nodes.Any(a => hash.Contains(a.GetAncestorOrSelf<IDsDocumentNode>()));
+				bool refresh = tab.Content.Nodes.Any(a => hash.Contains(a.GetAncestorOrSelf<DsDocumentNode>()));
 				if (refresh)
 					tabs.Add(tab);
 			}
@@ -532,7 +532,7 @@ namespace dnSpy.Documents.Tabs {
 			var documentsHash = new HashSet<IDsDocument>();
 			documentsHash.Add(document);
 			var node = DocumentTreeView.FindNode(document);
-			if (node is IModuleDocumentNode) {
+			if (node is ModuleDocumentNode) {
 				if (node.Document.AssemblyDef != null && node.Document.AssemblyDef.ManifestModule == node.Document.ModuleDef) {
 					var asmNode = node.GetAssemblyNode();
 					Debug.Assert(asmNode != null);
@@ -540,9 +540,9 @@ namespace dnSpy.Documents.Tabs {
 						documentsHash.Add(asmNode.Document);
 				}
 			}
-			else if (node is IAssemblyDocumentNode) {
+			else if (node is AssemblyDocumentNode) {
 				node.TreeNode.EnsureChildrenLoaded();
-				var manifestModNode = node.TreeNode.DataChildren.FirstOrDefault() as IModuleDocumentNode;
+				var manifestModNode = node.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
 				Debug.Assert(manifestModNode != null);
 				if (manifestModNode != null)
 					documentsHash.Add(manifestModNode.Document);

@@ -21,99 +21,99 @@ using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// Creates <see cref="IDocumentTreeNodeData"/>
+	/// Creates <see cref="DocumentTreeNodeData"/>
 	/// </summary>
 	public interface IDocumentTreeNodeProvider {
 		/// <summary>
-		/// Creates a <see cref="IAssemblyDocumentNode"/>
+		/// Creates a <see cref="AssemblyDocumentNode"/>
 		/// </summary>
 		/// <param name="asmDocument">Assembly</param>
 		/// <returns></returns>
-		IAssemblyDocumentNode CreateAssembly(IDsDotNetDocument asmDocument);
+		AssemblyDocumentNode CreateAssembly(IDsDotNetDocument asmDocument);
 
 		/// <summary>
-		/// Creates a <see cref="IModuleDocumentNode"/>
+		/// Creates a <see cref="ModuleDocumentNode"/>
 		/// </summary>
 		/// <param name="modDocument">Module</param>
 		/// <returns></returns>
-		IModuleDocumentNode CreateModule(IDsDotNetDocument modDocument);
+		ModuleDocumentNode CreateModule(IDsDotNetDocument modDocument);
 
 		/// <summary>
-		/// Creates a <see cref="IAssemblyReferenceNode"/>
+		/// Creates a <see cref="AssemblyReferenceNode"/>
 		/// </summary>
 		/// <param name="asmRef">Assembly reference</param>
 		/// <param name="ownerModule">Owner module</param>
 		/// <returns></returns>
-		IAssemblyReferenceNode Create(AssemblyRef asmRef, ModuleDef ownerModule);
+		AssemblyReferenceNode Create(AssemblyRef asmRef, ModuleDef ownerModule);
 
 		/// <summary>
-		/// Creates a <see cref="IModuleReferenceNode"/>
+		/// Creates a <see cref="ModuleReferenceNode"/>
 		/// </summary>
 		/// <param name="modRef">Module reference</param>
 		/// <returns></returns>
-		IModuleReferenceNode Create(ModuleRef modRef);
+		ModuleReferenceNode Create(ModuleRef modRef);
 
 		/// <summary>
-		/// Creates an event <see cref="IMethodNode"/>
+		/// Creates an event <see cref="MethodNode"/>
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		IMethodNode CreateEvent(MethodDef method);
+		MethodNode CreateEvent(MethodDef method);
 
 		/// <summary>
-		/// Creates a property <see cref="IMethodNode"/>
+		/// Creates a property <see cref="MethodNode"/>
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		IMethodNode CreateProperty(MethodDef method);
+		MethodNode CreateProperty(MethodDef method);
 
 		/// <summary>
-		/// Creates a <see cref="INamespaceNode"/>
+		/// Creates a <see cref="NamespaceNode"/>
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		INamespaceNode Create(string name);
+		NamespaceNode Create(string name);
 
 		/// <summary>
-		/// Creates a non-nested <see cref="ITypeNode"/>
+		/// Creates a non-nested <see cref="TypeNode"/>
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		ITypeNode Create(TypeDef type);
+		TypeNode Create(TypeDef type);
 
 		/// <summary>
-		/// Creates a nested <see cref="ITypeNode"/>
+		/// Creates a nested <see cref="TypeNode"/>
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		ITypeNode CreateNested(TypeDef type);
+		TypeNode CreateNested(TypeDef type);
 
 		/// <summary>
-		/// Creates a <see cref="IMethodNode"/>
+		/// Creates a <see cref="MethodNode"/>
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		IMethodNode Create(MethodDef method);
+		MethodNode Create(MethodDef method);
 
 		/// <summary>
-		/// Creates a <see cref="IPropertyNode"/>
+		/// Creates a <see cref="PropertyNode"/>
 		/// </summary>
 		/// <param name="property">Property</param>
 		/// <returns></returns>
-		IPropertyNode Create(PropertyDef property);
+		PropertyNode Create(PropertyDef property);
 
 		/// <summary>
-		/// Creates a <see cref="IEventNode"/>
+		/// Creates a <see cref="EventNode"/>
 		/// </summary>
 		/// <param name="event">Event</param>
 		/// <returns></returns>
-		IEventNode Create(EventDef @event);
+		EventNode Create(EventDef @event);
 
 		/// <summary>
-		/// Creates a <see cref="IFieldNode"/>
+		/// Creates a <see cref="FieldNode"/>
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		IFieldNode Create(FieldDef field);
+		FieldNode Create(FieldDef field);
 	}
 }

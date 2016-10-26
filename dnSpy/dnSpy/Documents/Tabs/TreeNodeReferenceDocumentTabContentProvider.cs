@@ -143,7 +143,7 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 			}
 
-			var content = decompileDocumentTabContentFactory.Create(new IDocumentTreeNodeData[] { node });
+			var content = decompileDocumentTabContentFactory.Create(new DocumentTreeNodeData[] { node });
 			return new DocumentTabReferenceResult(content, null, a => {
 				if (a.Success && !a.HasMovedCaret) {
 					GoToReference(content, resolvedRef, content.WasNewContent);

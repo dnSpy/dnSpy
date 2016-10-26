@@ -32,9 +32,9 @@ namespace dnSpy.AsmEditor.Commands {
 		protected sealed override AsmEditorContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
-			var ary = context.Find<ITreeNodeData[]>();
+			var ary = context.Find<TreeNodeData[]>();
 			Debug.Assert(ary != null);
-			return new AsmEditorContext(ary == null ? Array.Empty<IDocumentTreeNodeData>() : ary.OfType<IDocumentTreeNodeData>().ToArray());
+			return new AsmEditorContext(ary == null ? Array.Empty<DocumentTreeNodeData>() : ary.OfType<DocumentTreeNodeData>().ToArray());
 		}
 	}
 }

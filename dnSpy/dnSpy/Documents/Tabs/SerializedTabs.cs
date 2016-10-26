@@ -249,8 +249,8 @@ namespace dnSpy.Documents.Tabs {
 			return new SerializedTab(contentSect, tabUISect, uiSect, paths, autoLoadedDocuments);
 		}
 
-		static IEnumerable<DsDocumentInfo> GetAutoLoadedDocuments(IEnumerable<IDocumentTreeNodeData> nodes) {
-			var hash = new HashSet<ITreeNodeData>();
+		static IEnumerable<DsDocumentInfo> GetAutoLoadedDocuments(IEnumerable<DocumentTreeNodeData> nodes) {
+			var hash = new HashSet<TreeNodeData>();
 			foreach (var node in nodes) {
 				var document = node.GetTopNode();
 				if (document == null || hash.Contains(document))
@@ -265,7 +265,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		sealed class GetNodesContext {
-			public IDocumentTreeNodeData[] Nodes;
+			public DocumentTreeNodeData[] Nodes;
 		}
 
 		public IEnumerable<object> TryRestore(DocumentTabService documentTabService, IDocumentTabContentFactoryService documentTabContentFactoryService, ITabGroup g) {
@@ -293,7 +293,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		IEnumerable<object> GetNodes(GetNodesContext ctx, IDocumentTreeView documentTreeView) {
-			var list = new List<IDocumentTreeNodeData>();
+			var list = new List<DocumentTreeNodeData>();
 			var root = documentTreeView.TreeView.Root;
 			var findCtx = new FindNodeContext();
 			foreach (var path in Paths) {
@@ -308,7 +308,7 @@ namespace dnSpy.Documents.Tabs {
 	}
 
 	sealed class FindNodeContext {
-		public IDocumentTreeNodeData Node;
+		public DocumentTreeNodeData Node;
 	}
 
 	sealed class SerializedPath {
@@ -334,13 +334,13 @@ namespace dnSpy.Documents.Tabs {
 				NodePathNameSerializer.Save(section.CreateSection(NAME_SECTION), name);
 		}
 
-		public static SerializedPath Create(IDocumentTreeNodeData node) {
+		public static SerializedPath Create(DocumentTreeNodeData node) {
 			var path = new SerializedPath();
 
 			while (node != null && node.TreeNode.Parent != null) {
 				path.Names.Add(node.NodePathName);
 				var parent = node.TreeNode.Parent;
-				node = parent.Data as IDocumentTreeNodeData;
+				node = parent.Data as DocumentTreeNodeData;
 			}
 			path.Names.Reverse();
 
@@ -352,12 +352,12 @@ namespace dnSpy.Documents.Tabs {
 			foreach (var name in Names) {
 				node.EnsureChildrenLoaded();
 				yield return null;
-				var tmp = node.DataChildren.OfType<IDocumentTreeNodeData>().FirstOrDefault(a => a.NodePathName.Equals(name));
+				var tmp = node.DataChildren.OfType<DocumentTreeNodeData>().FirstOrDefault(a => a.NodePathName.Equals(name));
 				if (tmp == null)
 					yield break;
 				node = tmp.TreeNode;
 			}
-			ctx.Node = node == root ? null : node.Data as IDocumentTreeNodeData;
+			ctx.Node = node == root ? null : node.Data as DocumentTreeNodeData;
 		}
 	}
 

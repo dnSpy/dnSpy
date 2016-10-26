@@ -50,7 +50,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.RaisedByTreeNode);
 
-		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
+		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
 			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType)) {
@@ -60,7 +60,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foundMethods = null;
 		}
 
-		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
+		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			// HACK: in lieu of proper flow analysis, I'm going to use a simple heuristic
 			// If the method accesses the event's backing field, and calls invoke on a delegate 
 			// with the same signature, then it is (most likely) raise the given event.

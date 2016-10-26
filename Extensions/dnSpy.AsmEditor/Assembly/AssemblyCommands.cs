@@ -51,10 +51,10 @@ namespace dnSpy.AsmEditor.Assembly {
 	sealed class DisableMemoryMappedIOCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) =>
 			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) &&
-			(context.Find<ITreeNodeData[]>() ?? Array.Empty<ITreeNodeData>()).Any(a => GetDocument(a) != null);
+			(context.Find<TreeNodeData[]>() ?? Array.Empty<TreeNodeData>()).Any(a => GetDocument(a) != null);
 
-		static IDsDocument GetDocument(ITreeNodeData node) {
-			var fileNode = node as IDsDocumentNode;
+		static IDsDocument GetDocument(TreeNodeData node) {
+			var fileNode = node as DsDocumentNode;
 			if (fileNode == null)
 				return null;
 
@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return;
 			var asms = new List<IDsDocument>();
-			foreach (var node in (context.Find<ITreeNodeData[]>() ?? Array.Empty<ITreeNodeData>())) {
+			foreach (var node in (context.Find<TreeNodeData[]>() ?? Array.Empty<TreeNodeData>())) {
 				var file = GetDocument(node);
 				if (file != null)
 					asms.Add(file);
@@ -121,28 +121,28 @@ namespace dnSpy.AsmEditor.Assembly {
 			public override string GetHeader(AsmEditorContext context) => RemoveAssemblyCommand.GetHeader(context.Nodes);
 		}
 
-		static string GetHeader(ITreeNodeData[] nodes) {
+		static string GetHeader(TreeNodeData[] nodes) {
 			if (nodes.Length == 1)
 				return string.Format(dnSpy_AsmEditor_Resources.RemoveCommand, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
 			return string.Format(dnSpy_AsmEditor_Resources.RemoveAssembliesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length > 0 &&
-			nodes.All(n => n is IDsDocumentNode && n.TreeNode.Parent == n.Context.DocumentTreeView.TreeView.Root);
+			nodes.All(n => n is DsDocumentNode && n.TreeNode.Parent == n.Context.DocumentTreeView.TreeView.Root);
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var asmNodes = nodes.Cast<IDsDocumentNode>().ToArray();
+			var asmNodes = nodes.Cast<DsDocumentNode>().ToArray();
 			var files = asmNodes.SelectMany(a => a.Document.GetAllChildrenAndSelf());
 			if (!documentSaver.Value.AskUserToSaveIfModified(files))
 				return;
 
-			var keepNodes = new List<IDsDocumentNode>();
-			var freeNodes = new List<IDsDocumentNode>();
-			var onlyInRedoHistory = new List<IDsDocumentNode>();
+			var keepNodes = new List<DsDocumentNode>();
+			var freeNodes = new List<DsDocumentNode>();
+			var onlyInRedoHistory = new List<DsDocumentNode>();
 			foreach (var info in GetUndoRedoInfo(undoCommandService.Value, asmNodes)) {
 				if (!info.IsInUndo && !info.IsInRedo) {
 					// This asm is safe to remove
@@ -179,7 +179,7 @@ namespace dnSpy.AsmEditor.Assembly {
 				undoCommandService.Value.CallGc();
 		}
 
-		static void FreeAssemblies(IList<IDsDocumentNode> nodes) {
+		static void FreeAssemblies(IList<DsDocumentNode> nodes) {
 			if (nodes.Count == 0)
 				return;
 			nodes[0].Context.DocumentTreeView.Remove(nodes);
@@ -188,16 +188,16 @@ namespace dnSpy.AsmEditor.Assembly {
 		struct UndoRedoInfo {
 			public bool IsInUndo;
 			public bool IsInRedo;
-			public IDsDocumentNode Node;
+			public DsDocumentNode Node;
 
-			public UndoRedoInfo(IDsDocumentNode node, bool isInUndo, bool isInRedo) {
+			public UndoRedoInfo(DsDocumentNode node, bool isInUndo, bool isInRedo) {
 				this.IsInUndo = isInUndo;
 				this.IsInRedo = isInRedo;
 				this.Node = node;
 			}
 		}
 
-		static IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IUndoCommandService undoCommandService, IEnumerable<IDsDocumentNode> nodes) {
+		static IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IUndoCommandService undoCommandService, IEnumerable<DsDocumentNode> nodes) {
 			var modifiedUndoAsms = new HashSet<IUndoObject>(undoCommandService.UndoObjects);
 			var modifiedRedoAsms = new HashSet<IUndoObject>(undoCommandService.RedoObjects);
 			foreach (var node in nodes) {
@@ -210,7 +210,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		RootDocumentNodeCreator[] savedStates;
 
-		RemoveAssemblyCommand(IDocumentTreeView documentTreeView, IDsDocumentNode[] asmNodes) {
+		RemoveAssemblyCommand(IDocumentTreeView documentTreeView, DsDocumentNode[] asmNodes) {
 			this.savedStates = new RootDocumentNodeCreator[asmNodes.Length];
 			for (int i = 0; i < this.savedStates.Length; i++)
 				this.savedStates[i] = new RootDocumentNodeCreator(documentTreeView, asmNodes[i]);
@@ -271,16 +271,16 @@ namespace dnSpy.AsmEditor.Assembly {
 			public override void Execute(AsmEditorContext context) => AssemblySettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes != null &&
 			nodes.Length == 1 &&
-			nodes[0] is IAssemblyDocumentNode;
+			nodes[0] is AssemblyDocumentNode;
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var asmNode = (IAssemblyDocumentNode)nodes[0];
+			var asmNode = (AssemblyDocumentNode)nodes[0];
 			var module = asmNode.Document.ModuleDef;
 
 			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.Document.AssemblyDef), module, appService.DecompilerService);
@@ -293,7 +293,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			undoCommandService.Value.Add(new AssemblySettingsCommand(asmNode, data.CreateAssemblyOptions()));
 		}
 
-		readonly IAssemblyDocumentNode asmNode;
+		readonly AssemblyDocumentNode asmNode;
 		readonly AssemblyOptions newOptions;
 		readonly AssemblyOptions origOptions;
 		readonly AssemblyRefInfo[] assemblyRefInfos;
@@ -310,7 +310,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			}
 		}
 
-		AssemblySettingsCommand(IAssemblyDocumentNode asmNode, AssemblyOptions newOptions) {
+		AssemblySettingsCommand(AssemblyDocumentNode asmNode, AssemblyOptions newOptions) {
 			this.asmNode = asmNode;
 			this.newOptions = newOptions;
 			this.origOptions = new AssemblyOptions(asmNode.Document.AssemblyDef);
@@ -385,11 +385,11 @@ namespace dnSpy.AsmEditor.Assembly {
 			public override void Execute(AsmEditorContext context) => CreateAssemblyCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) =>
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes != null &&
-			(nodes.Length == 0 || nodes[0] is IDsDocumentNode);
+			(nodes.Length == 0 || nodes[0] is DsDocumentNode);
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes) {
+		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 

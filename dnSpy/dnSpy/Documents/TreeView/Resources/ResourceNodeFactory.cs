@@ -36,7 +36,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			this.resourceNodeProviders = resourceNodeProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
+		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (resource == null)
@@ -52,10 +52,10 @@ namespace dnSpy.Documents.TreeView.Resources {
 				catch {
 				}
 			}
-			return new UnknownResourceNode(treeNodeGroup, resource);
+			return new UnknownResourceNodeImpl(treeNodeGroup, resource);
 		}
 
-		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (resourceElement == null)
@@ -71,7 +71,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 				catch {
 				}
 			}
-			return new BuiltInResourceElementNode(treeNodeGroup, resourceElement);
+			return new BuiltInResourceElementNodeImpl(treeNodeGroup, resourceElement);
 		}
 	}
 }

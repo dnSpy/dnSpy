@@ -39,6 +39,6 @@ namespace dnSpy.AsmEditor.Commands {
 			return CreateContext();
 		}
 
-		public AsmEditorContext CreateContext() => new AsmEditorContext(documentTreeView.TreeView.TopLevelSelection.OfType<IDocumentTreeNodeData>().ToArray());
+		public AsmEditorContext CreateContext() => new AsmEditorContext(documentTreeView.TreeView.TopLevelSelection.OfType<DocumentTreeNodeData>().ToArray());
 	}
 }

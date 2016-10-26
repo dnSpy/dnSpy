@@ -75,7 +75,7 @@ namespace dnSpy.Documents.Tabs {
 			static MethodDef GetEntryPoint(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
-				var nodes = context.Find<ITreeNodeData[]>();
+				var nodes = context.Find<TreeNodeData[]>();
 				var node = nodes == null || nodes.Length == 0 ? null : nodes[0];
 				var module = node.GetModule();
 				return module == null ? null : module.EntryPoint as MethodDef;
@@ -132,7 +132,7 @@ namespace dnSpy.Documents.Tabs {
 			static MethodDef GetModuleCctor(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
-				var nodes = context.Find<ITreeNodeData[]>();
+				var nodes = context.Find<TreeNodeData[]>();
 				var node = nodes == null || nodes.Length == 0 ? null : nodes[0];
 				var module = node.GetModule();
 				if (module == null)

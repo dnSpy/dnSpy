@@ -26,7 +26,7 @@ using Emit = dnlib.DotNet.Emit;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class EditedMethodBodyUpdater {
-		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
+		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get { yield return ownerNode; }
 		}
 
@@ -55,12 +55,12 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
-		readonly IMethodNode ownerNode;
+		readonly MethodNode ownerNode;
 		readonly MethodDef method;
 		readonly BodyState originalBodyState;
 		readonly BodyState newBodyState;
 
-		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, IModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes) {
+		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes) {
 			this.methodAnnotations = methodAnnotations;
 			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
 			if (ownerNode == null)

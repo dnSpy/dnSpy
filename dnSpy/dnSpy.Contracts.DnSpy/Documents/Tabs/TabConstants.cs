@@ -89,7 +89,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 
 		/// <summary>
 		/// Order of <see cref="IReferenceDocumentTabContentProvider"/> instance that creates content
-		/// from <see cref="IDocumentTreeNodeData"/> nodes.
+		/// from <see cref="DocumentTreeNodeData"/> nodes.
 		/// </summary>
 		public const double ORDER_CONTENTPROVIDER_NODE = 20000;
 	}

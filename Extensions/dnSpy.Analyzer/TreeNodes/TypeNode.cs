@@ -40,7 +40,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			new NodePrinter().Write(output, decompiler, analyzedType, Context.ShowToken);
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (AttributeAppliedToNode.CanShow(analyzedType))
 				yield return new AttributeAppliedToNode(analyzedType);
 

@@ -27,21 +27,21 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Added nodes
 		/// </summary>
-		public ITreeNodeData[] Added { get; }
+		public TreeNodeData[] Added { get; }
 
 		/// <summary>
 		/// Removed nodes
 		/// </summary>
-		public ITreeNodeData[] Removed { get; }
+		public TreeNodeData[] Removed { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="added">Added nodes or null</param>
 		/// <param name="removed">Removed nodes or null</param>
-		public TreeViewSelectionChangedEventArgs(ITreeNodeData[] added, ITreeNodeData[] removed) {
-			this.Added = added ?? Array.Empty<ITreeNodeData>();
-			this.Removed = removed ?? Array.Empty<ITreeNodeData>();
+		public TreeViewSelectionChangedEventArgs(TreeNodeData[] added, TreeNodeData[] removed) {
+			this.Added = added ?? Array.Empty<TreeNodeData>();
+			this.Removed = removed ?? Array.Empty<TreeNodeData>();
 		}
 	}
 }

@@ -29,7 +29,7 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
-	abstract class AnalyzerTreeNodeData : TreeNodeData, IAnalyzerTreeNodeData {
+	abstract class AnalyzerTreeNodeData : TreeNodeData {
 		public override Guid Guid => Guid.Empty;
 		public sealed override bool SingleClickExpandsChildren => Context.SingleClickExpandsChildren;
 		public IAnalyzerTreeNodeDataContext Context { get; set; }
@@ -79,7 +79,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public abstract bool HandleAssemblyListChanged(IDsDocument[] removedAssemblies, IDsDocument[] addedAssemblies);
 		public abstract bool HandleModelUpdated(IDsDocument[] documents);
 
-		public static void CancelSelfAndChildren(ITreeNodeData node) {
+		public static void CancelSelfAndChildren(TreeNodeData node) {
 			foreach (var c in node.DescendantsAndSelf()) {
 				var id = c as IAsyncCancellable;
 				if (id != null)
@@ -91,7 +91,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var children = node.DataChildren.ToArray();
 			for (int i = children.Length - 1; i >= 0; i--) {
 				var c = children[i];
-				var n = c as IAnalyzerTreeNodeData;
+				var n = c as AnalyzerTreeNodeData;
 				if (n == null || !n.HandleAssemblyListChanged(removedAssemblies, addedAssemblies)) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(c);
 					node.Children.RemoveAt(i);
@@ -103,7 +103,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var children = node.DataChildren.ToArray();
 			for (int i = children.Length - 1; i >= 0; i--) {
 				var c = children[i];
-				var n = c as IAnalyzerTreeNodeData;
+				var n = c as AnalyzerTreeNodeData;
 				if (n == null || !n.HandleModelUpdated(documents)) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(c);
 					node.Children.RemoveAt(i);
@@ -128,11 +128,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			public double Order => 100;
 
-			public int Compare(ITreeNodeData x, ITreeNodeData y) {
+			public int Compare(TreeNodeData x, TreeNodeData y) {
 				if (x == y)
 					return 0;
-				var a = x as IAnalyzerTreeNodeData;
-				var b = y as IAnalyzerTreeNodeData;
+				var a = x as AnalyzerTreeNodeData;
+				var b = y as AnalyzerTreeNodeData;
 				if (a == null) return -1;
 				if (b == null) return 1;
 				return StringComparer.OrdinalIgnoreCase.Compare(a.ToString(), b.ToString());

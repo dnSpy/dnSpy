@@ -36,7 +36,7 @@ namespace dnSpy.TreeView {
 		}
 
 		// Needed by XAML
-		public ITreeNodeData Data => treeNodeImpl.Data;
+		public TreeNodeData Data => treeNodeImpl.Data;
 
 		public override object ExpandedIcon => treeNodeImpl.Data.ExpandedIcon ?? treeNodeImpl.Data.Icon;
 		public override object Icon => treeNodeImpl.Data.Icon;
@@ -62,8 +62,8 @@ namespace dnSpy.TreeView {
 
 		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e) {
 			base.OnChildrenChanged(e);
-			var added = e.NewItems == null || e.NewItems.Count == 0 ? Array.Empty<ITreeNodeData>() : e.NewItems.OfType<DsSharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
-			var removed = e.OldItems == null || e.OldItems.Count == 0 ? Array.Empty<ITreeNodeData>() : e.OldItems.OfType<DsSharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
+			var added = e.NewItems == null || e.NewItems.Count == 0 ? Array.Empty<TreeNodeData>() : e.NewItems.OfType<DsSharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
+			var removed = e.OldItems == null || e.OldItems.Count == 0 ? Array.Empty<TreeNodeData>() : e.OldItems.OfType<DsSharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
 			treeNodeImpl.Data.OnChildrenChanged(added, removed);
 		}
 

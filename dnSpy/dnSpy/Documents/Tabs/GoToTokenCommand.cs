@@ -146,11 +146,11 @@ namespace dnSpy.Documents.Tabs {
 					return false;
 				if (!CanExecuteInternal(documentTabService))
 					return false;
-				var nodes = context.Find<ITreeNodeData[]>();
+				var nodes = context.Find<TreeNodeData[]>();
 				if (nodes == null || nodes.Length == 0)
 					return false;
 				var elem = nodes[0];
-				return elem is IDocumentTreeNodeData;
+				return elem is DocumentTreeNodeData;
 			}
 
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(documentTabService);

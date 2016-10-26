@@ -23,9 +23,9 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.Documents.Tabs {
 	sealed class DocumentTabContentFactoryContext : IDocumentTabContentFactoryContext {
-		public IDocumentTreeNodeData[] Nodes { get; }
+		public DocumentTreeNodeData[] Nodes { get; }
 
-		public DocumentTabContentFactoryContext(IDocumentTreeNodeData[] nodes) {
+		public DocumentTabContentFactoryContext(DocumentTreeNodeData[] nodes) {
 			if (nodes == null)
 				throw new InvalidOperationException();
 			this.Nodes = nodes;

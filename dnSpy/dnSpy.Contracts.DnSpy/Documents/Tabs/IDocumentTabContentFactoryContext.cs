@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets all nodes
 		/// </summary>
-		IDocumentTreeNodeData[] Nodes { get; }
+		DocumentTreeNodeData[] Nodes { get; }
 	}
 }

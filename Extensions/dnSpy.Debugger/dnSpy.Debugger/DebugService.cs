@@ -578,7 +578,7 @@ namespace dnSpy.Debugger {
 			if (IsDebugging)
 				return null;
 
-			IDocumentTreeNodeData node;
+			DocumentTreeNodeData node;
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID)) {
 				var uiContext = context.Find<IDocumentViewer>();
 				if (uiContext == null)
@@ -589,7 +589,7 @@ namespace dnSpy.Debugger {
 				node = nodes[0];
 			}
 			else if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID)) {
-				var nodes = context.Find<IDocumentTreeNodeData[]>();
+				var nodes = context.Find<DocumentTreeNodeData[]>();
 				if (nodes == null || nodes.Length == 0)
 					return null;
 				node = nodes[0];
@@ -600,8 +600,8 @@ namespace dnSpy.Debugger {
 			return GetCurrentExecutableAssembly(node, true);
 		}
 
-		static IDsDocument GetCurrentExecutableAssembly(ITreeNodeData node, bool mustBeNetExe) {
-			var fileNode = (node as IDocumentTreeNodeData).GetDocumentNode();
+		static IDsDocument GetCurrentExecutableAssembly(TreeNodeData node, bool mustBeNetExe) {
+			var fileNode = (node as DocumentTreeNodeData).GetDocumentNode();
 			if (fileNode == null)
 				return null;
 

@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.IMModules {
 				return mfile;
 			}
 
-			protected abstract IDocumentTreeNodeData GetTreeNode(IMenuItemContext context);
+			protected abstract DocumentTreeNodeData GetTreeNode(IMenuItemContext context);
 			protected void ExecuteInternal(Context context) =>
 				inMemoryModuleService.Value.UpdateModuleMemory(context.MemoryModuleDefFile);
 		}
@@ -73,12 +73,12 @@ namespace dnSpy.Debugger.IMModules {
 
 			public override void Execute(Context context) => ExecuteInternal(context);
 
-			protected override IDocumentTreeNodeData GetTreeNode(IMenuItemContext context) {
+			protected override DocumentTreeNodeData GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
-				var nodes = context.Find<ITreeNodeData[]>();
+				var nodes = context.Find<TreeNodeData[]>();
 				if (nodes != null && nodes.Length != 0)
-					return nodes[0] as IDocumentTreeNodeData;
+					return nodes[0] as DocumentTreeNodeData;
 				return null;
 			}
 		}
@@ -98,9 +98,9 @@ namespace dnSpy.Debugger.IMModules {
 
 			public override void Execute(Context context) => ExecuteInternal(context);
 
-			protected override IDocumentTreeNodeData GetTreeNode(IMenuItemContext context) {
+			protected override DocumentTreeNodeData GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
-					return documentTreeView.TreeView.SelectedItem as IDocumentTreeNodeData;
+					return documentTreeView.TreeView.SelectedItem as DocumentTreeNodeData;
 				return null;
 			}
 		}

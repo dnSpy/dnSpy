@@ -41,11 +41,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 		sealed class MessageNodeTreeNodeGroup : ITreeNodeGroup {
 			public double Order { get; }
 
-			public int Compare(ITreeNodeData x, ITreeNodeData y) {
+			public int Compare(TreeNodeData x, TreeNodeData y) {
 				if (x == y)
 					return 0;
-				var a = x as IMessageNode;
-				var b = y as IMessageNode;
+				var a = x as MessageNode;
+				var b = y as MessageNode;
 				if (a == null) return -1;
 				if (b == null) return 1;
 				return 0;

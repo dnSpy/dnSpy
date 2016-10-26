@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Commands {
 				return null;
 
 			var node = documentTabService.DocumentTreeView.FindNode(refInfo.Value.Data.Reference);
-			var nodes = node == null ? Array.Empty<IDocumentTreeNodeData>() : new IDocumentTreeNodeData[] { node };
+			var nodes = node == null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
 			return new CodeContext(nodes, refInfo.Value.Data.IsDefinition, null);
 		}
 

@@ -26,8 +26,8 @@ namespace dnSpy.TreeView {
 	sealed class TreeNodeImpl : ITreeNode {
 		public TreeViewImpl TreeView { get; }
 		public DsSharpTreeNode Node => nodeList.Node;
-		public ITreeNodeData Data { get; }
-		public IEnumerable<ITreeNodeData> DataChildren => Children.Select(a => a.Data);
+		public TreeNodeData Data { get; }
+		public IEnumerable<TreeNodeData> DataChildren => Children.Select(a => a.Data);
 
 		public IList<ITreeNode> Children => nodeList;
 		readonly SharpTreeNodeChildrenList nodeList;
@@ -57,7 +57,7 @@ namespace dnSpy.TreeView {
 		public bool IsVisible => Node.IsVisible;
 		ITreeView ITreeNode.TreeView => TreeView;
 
-		public TreeNodeImpl(TreeViewImpl treeViewImpl, ITreeNodeData data) {
+		public TreeNodeImpl(TreeViewImpl treeViewImpl, TreeNodeData data) {
 			Debug.Assert(data.TreeNode == null);
 			this.TreeView = treeViewImpl;
 			this.nodeList = new SharpTreeNodeChildrenList(this);

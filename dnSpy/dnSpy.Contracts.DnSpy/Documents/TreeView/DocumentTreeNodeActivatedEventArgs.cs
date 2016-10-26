@@ -21,13 +21,13 @@ using System;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// <see cref="IDocumentTreeNodeData"/> activated event args
+	/// <see cref="DocumentTreeNodeData"/> activated event args
 	/// </summary>
 	public sealed class DocumentTreeNodeActivatedEventArgs : EventArgs {
 		/// <summary>
 		/// Activated node
 		/// </summary>
-		public IDocumentTreeNodeData Node { get; }
+		public DocumentTreeNodeData Node { get; }
 
 		/// <summary>
 		/// Set it to true if the event was handled
@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="node">Node</param>
-		public DocumentTreeNodeActivatedEventArgs(IDocumentTreeNodeData node) {
+		public DocumentTreeNodeActivatedEventArgs(DocumentTreeNodeData node) {
 			if (node == null)
 				throw new ArgumentNullException(nameof(node));
 			this.Node = node;

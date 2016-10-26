@@ -30,13 +30,13 @@ namespace dnSpy.Debugger.IMModules {
 	struct TreeViewUpdater {
 		readonly IDocumentTabService documentTabService;
 		readonly CorModuleDefFile CorModuleDefFile;
-		readonly IModuleDocumentNode ModuleNode;
+		readonly ModuleDocumentNode ModuleNode;
 		readonly HashSet<uint> modifiedTypes;
 		readonly HashSet<uint> loadedClassTokens;
 		readonly HashSet<TypeDef> checkedTypes;
-		IModuleDocumentNode modNode;
+		ModuleDocumentNode modNode;
 
-		public TreeViewUpdater(IDocumentTabService documentTabService, CorModuleDefFile cmdf, IModuleDocumentNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
+		public TreeViewUpdater(IDocumentTabService documentTabService, CorModuleDefFile cmdf, ModuleDocumentNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
 			Debug.Assert(node.Document == cmdf);
 			this.documentTabService = documentTabService;
 			this.CorModuleDefFile = cmdf;
@@ -94,11 +94,11 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		void CreateTypeNodes(List<TypeDef> types) {
-			ITypeNode parentNode = null;
+			TypeNode parentNode = null;
 			foreach (var type in types) {
 				bool wasLoaded = loadedClassTokens?.Contains(type.MDToken.Raw) ?? false;
 
-				ITypeNode typeNode;
+				TypeNode typeNode;
 				if (type.DeclaringType == null)
 					typeNode = GetOrCreateNonNestedTypeTreeNode(modNode, type);
 				else {
@@ -117,12 +117,12 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		static ITypeNode GetOrCreateNonNestedTypeTreeNode(IModuleDocumentNode modNode, TypeDef type) {
+		static TypeNode GetOrCreateNonNestedTypeTreeNode(ModuleDocumentNode modNode, TypeDef type) {
 			Debug.Assert(type != null && type.DeclaringType == null);
 			modNode.TreeNode.EnsureChildrenLoaded();
-			ITypeNode typeNode;
+			TypeNode typeNode;
 			var nsNode = GetOrCreateNamespaceNode(modNode, type.Namespace);
-			typeNode = nsNode.TreeNode.DataChildren.OfType<ITypeNode>().FirstOrDefault(a => a.TypeDef == type);
+			typeNode = nsNode.TreeNode.DataChildren.OfType<TypeNode>().FirstOrDefault(a => a.TypeDef == type);
 			if (typeNode != null)
 				return typeNode;
 			typeNode = nsNode.Create(type);
@@ -130,9 +130,9 @@ namespace dnSpy.Debugger.IMModules {
 			return typeNode;
 		}
 
-		static INamespaceNode GetOrCreateNamespaceNode(IModuleDocumentNode modNode, string ns) {
+		static NamespaceNode GetOrCreateNamespaceNode(ModuleDocumentNode modNode, string ns) {
 			modNode.TreeNode.EnsureChildrenLoaded();
-			var nsNode = modNode.TreeNode.DataChildren.OfType<INamespaceNode>().FirstOrDefault(a => a.Name == ns);
+			var nsNode = modNode.TreeNode.DataChildren.OfType<NamespaceNode>().FirstOrDefault(a => a.Name == ns);
 			if (nsNode != null)
 				return nsNode;
 			nsNode = modNode.Create(ns);
@@ -140,10 +140,10 @@ namespace dnSpy.Debugger.IMModules {
 			return nsNode;
 		}
 
-		static ITypeNode GetOrCreateNestedTypeTreeNode(ITypeNode typeNode, TypeDef nestedType) {
+		static TypeNode GetOrCreateNestedTypeTreeNode(TypeNode typeNode, TypeDef nestedType) {
 			Debug.Assert(nestedType != null && nestedType.DeclaringType == typeNode.TypeDef);
 			typeNode.TreeNode.EnsureChildrenLoaded();
-			var childTypeNode = typeNode.TreeNode.DataChildren.OfType<ITypeNode>().FirstOrDefault(a => a.TypeDef == nestedType);
+			var childTypeNode = typeNode.TreeNode.DataChildren.OfType<TypeNode>().FirstOrDefault(a => a.TypeDef == nestedType);
 			if (childTypeNode != null)
 				return childTypeNode;
 			childTypeNode = typeNode.Create(nestedType);
@@ -151,7 +151,7 @@ namespace dnSpy.Debugger.IMModules {
 			return childTypeNode;
 		}
 
-		void UpdateMemberNodes(ITypeNode typeNode) {
+		void UpdateMemberNodes(TypeNode typeNode) {
 			// If it's not been loaded, we've got nothing to do
 			if (typeNode.TreeNode.LazyLoading)
 				return;

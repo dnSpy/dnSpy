@@ -120,14 +120,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(CodeContext context) => EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, IDocumentTreeNodeData[] nodes) =>
-			editCodeVMCreator.CanCreate && nodes.Length == 1 && nodes[0] is IMethodNode;
+		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, DocumentTreeNodeData[] nodes) =>
+			editCodeVMCreator.CanCreate && nodes.Length == 1 && nodes[0] is MethodNode;
 
-		internal static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes, IList<MethodSourceStatement> statements = null) {
+		internal static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes, IList<MethodSourceStatement> statements = null) {
 			if (!CanExecute(editCodeVMCreator, nodes))
 				return;
 
-			var methodNode = (IMethodNode)nodes[0];
+			var methodNode = (MethodNode)nodes[0];
 			var modNode = methodNode.GetModuleNode();
 			Debug.Assert(modNode != null);
 			if (modNode == null)
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		readonly AddUpdatedNodesHelper addUpdatedNodesHelper;
 
-		EditMethodBodyCodeCommand(Lazy<IMethodAnnotations> methodAnnotations, IModuleDocumentNode modNode, ModuleImporter importer) {
+		EditMethodBodyCodeCommand(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, ModuleImporter importer) {
 			this.addUpdatedNodesHelper = new AddUpdatedNodesHelper(methodAnnotations, modNode, importer);
 		}
 
@@ -206,7 +206,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 			}
 
-			EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandService, appService, new IDocumentTreeNodeData[] { methodNode }, list);
+			EditMethodBodyCodeCommand.Execute(editCodeVMCreator, methodAnnotations, undoCommandService, appService, new DocumentTreeNodeData[] { methodNode }, list);
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {

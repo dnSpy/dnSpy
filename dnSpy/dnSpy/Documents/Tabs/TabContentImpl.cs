@@ -450,7 +450,7 @@ namespace dnSpy.Documents.Tabs {
 		public void SerializeUI(ISettingsSection tabContentUI) =>
 			tabContentUI.Attribute(ZOOM_ATTR, elementZoomer.ZoomValue);
 
-		public void OnNodesRemoved(HashSet<IDsDocumentNode> removedDocuments, Func<DocumentTabContent> createEmptyContent) {
+		public void OnNodesRemoved(HashSet<DsDocumentNode> removedDocuments, Func<DocumentTabContent> createEmptyContent) {
 			tabHistory.RemoveFromBackwardList(a => CheckRemove(a, removedDocuments));
 			tabHistory.RemoveFromForwardList(a => CheckRemove(a, removedDocuments));
 			if (CheckRemove(tabHistory.Current, removedDocuments)) {
@@ -459,7 +459,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		bool CheckRemove(DocumentTabContent content, HashSet<IDsDocumentNode> removedDocuments) =>
+		bool CheckRemove(DocumentTabContent content, HashSet<DsDocumentNode> removedDocuments) =>
 			content.Nodes.Any(a => removedDocuments.Contains(a.GetDocumentNode()));
 	}
 }

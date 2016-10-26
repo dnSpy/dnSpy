@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// The root node or null
 		/// </summary>
-		public ITreeNodeData RootNode { get; set; }
+		public TreeNodeData RootNode { get; set; }
 
 		/// <summary>
 		/// Foreground brush resource key or null to use the default color

@@ -45,19 +45,19 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		IEnumerable<IDsDocument> GetAllDocuments() => documentTabService.DocumentTreeView.GetAllCreatedDocumentNodes().Select(a => a.Document);
 
 		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
-			var node = obj as IDocumentTreeNodeData;
+			var node = obj as DocumentTreeNodeData;
 			if (node != null) {
 				var documentNode = node.GetDocumentNode();
 				Debug.Assert(documentNode != null);
 				if (documentNode != null) {
 					// Need this check here since some commands (eg. create netmodule) create nodes
 					// and they haven't yet been inserted into the treeview.
-					if (documentNode is IModuleDocumentNode)
+					if (documentNode is ModuleDocumentNode)
 						return GetUndoObjectNoChecks(documentNode.Document);
-					if (documentNode is IAssemblyDocumentNode) {
-						var asmNode = (IAssemblyDocumentNode)documentNode;
+					if (documentNode is AssemblyDocumentNode) {
+						var asmNode = (AssemblyDocumentNode)documentNode;
 						asmNode.TreeNode.EnsureChildrenLoaded();
-						var modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as IModuleDocumentNode;
+						var modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
 						Debug.Assert(modNode != null);
 						if (modNode != null)
 							return GetUndoObjectNoChecks(modNode.Document);

@@ -22,18 +22,18 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// Creates <see cref="IDsDocumentNode"/>s. Use <see cref="ExportDsDocumentNodeProviderAttribute"/>
+	/// Creates <see cref="DsDocumentNode"/>s. Use <see cref="ExportDsDocumentNodeProviderAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public interface IDsDocumentNodeProvider {
 		/// <summary>
-		/// Creates a new <see cref="IDsDocumentNode"/> instance or returns null
+		/// Creates a new <see cref="DsDocumentNode"/> instance or returns null
 		/// </summary>
 		/// <param name="documentTreeView">Document treeview</param>
 		/// <param name="owner">Owner node or null if owner is the root node</param>
 		/// <param name="document">New document</param>
 		/// <returns></returns>
-		IDsDocumentNode Create(IDocumentTreeView documentTreeView, IDsDocumentNode owner, IDsDocument document);
+		DsDocumentNode Create(IDocumentTreeView documentTreeView, DsDocumentNode owner, IDsDocument document);
 	}
 
 	/// <summary>Metadata</summary>

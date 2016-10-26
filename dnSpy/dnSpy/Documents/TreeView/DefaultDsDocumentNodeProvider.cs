@@ -24,17 +24,17 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.Documents.TreeView {
 	[ExportDsDocumentNodeProvider(Order = double.MaxValue)]
 	sealed class DefaultDsDocumentNodeProvider : IDsDocumentNodeProvider {
-		public IDsDocumentNode Create(IDocumentTreeView documentTreeView, IDsDocumentNode owner, IDsDocument document) {
+		public DsDocumentNode Create(IDocumentTreeView documentTreeView, DsDocumentNode owner, IDsDocument document) {
 			var dnDocument = document as IDsDotNetDocument;
 			if (dnDocument != null) {
 				Debug.Assert(document.ModuleDef != null);
 				if (document.AssemblyDef == null || owner != null)
-					return new ModuleDocumentNode(dnDocument);
-				return new AssemblyDocumentNode(dnDocument);
+					return new ModuleDocumentNodeImpl(dnDocument);
+				return new AssemblyDocumentNodeImpl(dnDocument);
 			}
 			Debug.Assert(document.AssemblyDef == null && document.ModuleDef == null);
 			if (document.PEImage != null)
-				return new PEDocumentNode(document);
+				return new PEDocumentNodeImpl(document);
 
 			return null;
 		}

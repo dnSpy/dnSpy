@@ -23,7 +23,7 @@ using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// <see cref="IDocumentTreeNodeData"/> context
+	/// <see cref="DocumentTreeNodeData"/> context
 	/// </summary>
 	public interface IDocumentTreeNodeDataContext {
 		/// <summary>

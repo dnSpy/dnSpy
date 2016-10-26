@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using dnSpy.Contracts.Decompiler;
@@ -60,7 +59,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
 			new DecompileDocumentTabContent(this, context.Nodes, DecompilerService.Decompiler);
 
-		public DecompileDocumentTabContent Create(IDocumentTreeNodeData[] nodes) =>
+		public DecompileDocumentTabContent Create(DocumentTreeNodeData[] nodes) =>
 			new DecompileDocumentTabContent(this, nodes, DecompilerService.Decompiler);
 
 		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
@@ -86,11 +85,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 	sealed class DecompileDocumentTabContent : AsyncDocumentTabContent, IDecompilerTabContent {
 		readonly DecompileDocumentTabContentFactory decompileDocumentTabContentFactory;
-		readonly IDocumentTreeNodeData[] nodes;
+		readonly DocumentTreeNodeData[] nodes;
 
 		public IDecompiler Decompiler { get; set; }
 
-		public DecompileDocumentTabContent(DecompileDocumentTabContentFactory decompileDocumentTabContentFactory, IDocumentTreeNodeData[] nodes, IDecompiler decompiler) {
+		public DecompileDocumentTabContent(DecompileDocumentTabContentFactory decompileDocumentTabContentFactory, DocumentTreeNodeData[] nodes, IDecompiler decompiler) {
 			this.decompileDocumentTabContentFactory = decompileDocumentTabContentFactory;
 			this.nodes = nodes;
 			this.Decompiler = decompiler;
@@ -126,7 +125,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public override IEnumerable<IDocumentTreeNodeData> Nodes => nodes;
+		public override IEnumerable<DocumentTreeNodeData> Nodes => nodes;
 
 		internal bool WasNewContent { get; private set; }
 

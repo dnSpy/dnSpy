@@ -55,14 +55,14 @@ namespace dnSpy.Analyzer {
 		/// Adds <paramref name="node"/> if it hasn't been added and gives it focus.
 		/// </summary>
 		/// <param name="node">Node</param>
-		void Add(IAnalyzerTreeNodeData node);
+		void Add(AnalyzerTreeNodeData node);
 
 		/// <summary>
-		/// Called by <paramref name="node"/> when its <see cref="ITreeNodeData.Activate()"/> method
+		/// Called by <paramref name="node"/> when its <see cref="TreeNodeData.Activate()"/> method
 		/// has been called.
 		/// </summary>
 		/// <param name="node">Activated node (it's the caller)</param>
-		void OnActivated(IAnalyzerTreeNodeData node);
+		void OnActivated(AnalyzerTreeNodeData node);
 
 		/// <summary>
 		/// Follows the reference
@@ -70,15 +70,15 @@ namespace dnSpy.Analyzer {
 		/// <param name="node">Node</param>
 		/// <param name="newTab">true to show it in a new tab</param>
 		/// <param name="useCodeRef">true to show the reference in a method body</param>
-		void FollowNode(ITreeNodeData node, bool newTab, bool? useCodeRef);
+		void FollowNode(TreeNodeData node, bool newTab, bool? useCodeRef);
 
 		/// <summary>
-		/// Returns true if <see cref="FollowNode(ITreeNodeData, bool, bool?)"/> can execute
+		/// Returns true if <see cref="FollowNode(TreeNodeData, bool, bool?)"/> can execute
 		/// </summary>
 		/// <param name="node">Node</param>
 		/// <param name="useCodeRef">true to show the reference in a method body</param>
 		/// <returns></returns>
-		bool CanFollowNode(ITreeNodeData node, bool useCodeRef);
+		bool CanFollowNode(TreeNodeData node, bool useCodeRef);
 	}
 
 	[Export(typeof(IAnalyzerService))]
@@ -145,7 +145,7 @@ namespace dnSpy.Analyzer {
 
 		void ActivateNode() {
 			var nodes = TreeView.TopLevelSelection;
-			var node = nodes.Length == 0 ? null : nodes[0] as ITreeNodeData;
+			var node = nodes.Length == 0 ? null : nodes[0] as TreeNodeData;
 			if (node != null)
 				node.Activate();
 		}
@@ -200,7 +200,7 @@ namespace dnSpy.Analyzer {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
 				Debug.Assert(context != null);
 				var node = (ITreeNode)e.Argument;
-				var d = node.Data as IAnalyzerTreeNodeData;
+				var d = node.Data as AnalyzerTreeNodeData;
 				if (d != null)
 					d.Context = context;
 				return;
@@ -215,31 +215,31 @@ namespace dnSpy.Analyzer {
 			this.TreeView.Root.Children.Clear();
 		}
 
-		public void Add(IAnalyzerTreeNodeData node) {
+		public void Add(AnalyzerTreeNodeData node) {
 			if (node is EntityNode) {
 				var an = node as EntityNode;
 				var found = this.TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
 				if (found != null) {
 					found.TreeNode.IsExpanded = true;
-					this.TreeView.SelectItems(new ITreeNodeData[] { found });
+					this.TreeView.SelectItems(new TreeNodeData[] { found });
 					this.TreeView.Focus();
 					return;
 				}
 			}
 			this.TreeView.Root.Children.Add(this.TreeView.Create(node));
 			node.TreeNode.IsExpanded = true;
-			this.TreeView.SelectItems(new ITreeNodeData[] { node });
+			this.TreeView.SelectItems(new TreeNodeData[] { node });
 			this.TreeView.Focus();
 		}
 
-		public void OnActivated(IAnalyzerTreeNodeData node) {
+		public void OnActivated(AnalyzerTreeNodeData node) {
 			if (node == null)
 				throw new ArgumentNullException(nameof(node));
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
 			FollowNode(node, newTab, null);
 		}
 
-		public void FollowNode(ITreeNodeData node, bool newTab, bool? useCodeRef) {
+		public void FollowNode(TreeNodeData node, bool newTab, bool? useCodeRef) {
 			var tokNode = node as IMDTokenNode;
 			var @ref = tokNode?.Reference;
 
@@ -262,7 +262,7 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		public bool CanFollowNode(ITreeNodeData node, bool useCodeRef) {
+		public bool CanFollowNode(TreeNodeData node, bool useCodeRef) {
 			var tokNode = node as IMDTokenNode;
 			var @ref = tokNode?.Reference;
 

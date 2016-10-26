@@ -85,7 +85,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			this.documentSaver = documentSaver;
 		}
 
-		HashSet<object> GetDocuments(IDocumentTreeNodeData[] nodes) {
+		HashSet<object> GetDocuments(DocumentTreeNodeData[] nodes) {
 			var hash = new HashSet<object>();
 
 			foreach (var node in nodes) {

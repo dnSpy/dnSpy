@@ -24,12 +24,12 @@ using dnSpy.Contracts.Menus;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {
-		public IDocumentTreeNodeData[] Nodes { get; }
+		public DocumentTreeNodeData[] Nodes { get; }
 		public bool IsDefinition { get; }
 		public IMenuItemContext MenuItemContextOrNull { get; }
 
-		public CodeContext(IDocumentTreeNodeData[] nodes, bool isDefinition, IMenuItemContext menuItemContext) {
-			this.Nodes = nodes ?? Array.Empty<IDocumentTreeNodeData>();
+		public CodeContext(DocumentTreeNodeData[] nodes, bool isDefinition, IMenuItemContext menuItemContext) {
+			this.Nodes = nodes ?? Array.Empty<DocumentTreeNodeData>();
 			this.IsDefinition = isDefinition;
 			this.MenuItemContextOrNull = menuItemContext;
 		}
@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.Commands {
 			if (textRef == null)
 				return null;
 			var node = documentTreeView.FindNode(textRef.Reference);
-			var nodes = node == null ? Array.Empty<IDocumentTreeNodeData>() : new IDocumentTreeNodeData[] { node };
+			var nodes = node == null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
 			return new CodeContext(nodes, textRef.IsDefinition, context);
 		}
 	}

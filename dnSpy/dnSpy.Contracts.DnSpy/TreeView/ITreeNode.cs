@@ -42,18 +42,18 @@ namespace dnSpy.Contracts.TreeView {
 		IList<ITreeNode> Children { get; }
 
 		/// <summary>
-		/// Gets all <see cref="ITreeNodeData"/> children in <see cref="Children"/>. See also
+		/// Gets all <see cref="TreeNodeData"/> children in <see cref="Children"/>. See also
 		/// <see cref="EnsureChildrenLoaded()"/>
 		/// </summary>
-		IEnumerable<ITreeNodeData> DataChildren { get; }
+		IEnumerable<TreeNodeData> DataChildren { get; }
 
 		/// <summary>
 		/// Tree node data
 		/// </summary>
-		ITreeNodeData Data { get; }
+		TreeNodeData Data { get; }
 
 		/// <summary>
-		/// Gets/sets lazy loading of children. When true, <see cref="ITreeNodeData.CreateChildren()"/>
+		/// Gets/sets lazy loading of children. When true, <see cref="TreeNodeData.CreateChildren()"/>
 		/// will get called to load the children. Should only be used by <see cref="Data"/>
 		/// </summary>
 		bool LazyLoading { get; set; }

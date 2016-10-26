@@ -51,9 +51,9 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		void DeserializeResources() {
-			var modifiedResourceNodes = new HashSet<IDocumentTreeNodeData>();
+			var modifiedResourceNodes = new HashSet<TreeNodeData>();
 			foreach (var node in documentTabService.DocumentTreeView.TreeView.Root.Data.Descendants()) {
-				var elemNode = node as ISerializedResourceElementNode;
+				var elemNode = node as SerializedResourceElementNode;
 				if (elemNode != null) {
 					if (elemNode.CanDeserialize) {
 						elemNode.Deserialize();
@@ -61,20 +61,20 @@ namespace dnSpy.Documents.Tabs {
 					}
 					continue;
 				}
-				else if (node is IResourcesFolderNode)
-					modifiedResourceNodes.Add((IResourcesFolderNode)node);
+				else if (node is ResourcesFolderNode)
+					modifiedResourceNodes.Add(node);
 			}
 
 			RefreshResources(modifiedResourceNodes);
 		}
 
-		void RefreshResources(HashSet<IDocumentTreeNodeData> modifiedResourceNodes) {
+		void RefreshResources(HashSet<TreeNodeData> modifiedResourceNodes) {
 			if (modifiedResourceNodes.Count == 0)
 				return;
 
-			var ownerNodes = new HashSet<IResourcesFolderNode>();
+			var ownerNodes = new HashSet<ResourcesFolderNode>();
 			foreach (var node in modifiedResourceNodes) {
-				var owner = node.GetAncestorOrSelf<IResourcesFolderNode>();
+				var owner = node.GetAncestorOrSelf<ResourcesFolderNode>();
 				if (owner != null)
 					ownerNodes.Add(owner);
 			}
@@ -89,7 +89,7 @@ namespace dnSpy.Documents.Tabs {
 
 			var tabs = new List<IDocumentTab>();
 			foreach (var tab in documentTabService.VisibleFirstTabs) {
-				bool refresh = tab.Content.Nodes.Any(a => ownerNodes.Contains(a.GetAncestorOrSelf<IResourcesFolderNode>()));
+				bool refresh = tab.Content.Nodes.Any(a => ownerNodes.Contains(a.GetAncestorOrSelf<ResourcesFolderNode>()));
 				if (refresh)
 					tabs.Add(tab);
 			}

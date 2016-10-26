@@ -23,7 +23,7 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	/// <summary>
-	/// Decompiles <see cref="IDocumentTreeNodeData"/> instances. Use <see cref="ExportDecompileNodeAttribute"/>
+	/// Decompiles <see cref="DocumentTreeNodeData"/> instances. Use <see cref="ExportDecompileNodeAttribute"/>
 	/// to export an instance.
 	/// </summary>
 	public interface IDecompileNode {
@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="context">Context</param>
 		/// <param name="node">Node to decompile</param>
 		/// <returns></returns>
-		bool Decompile(IDecompileNodeContext context, IDocumentTreeNodeData node);
+		bool Decompile(IDecompileNodeContext context, DocumentTreeNodeData node);
 	}
 
 	/// <summary>Metadata</summary>

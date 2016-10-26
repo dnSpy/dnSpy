@@ -106,13 +106,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 			public override void Execute(CodeContext context) => EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(IDocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is IMethodNode;
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is MethodNode;
 
-		internal static void Execute(Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandService> undoCommandService, IAppService appService, IDocumentTreeNodeData[] nodes, uint[] offsets = null) {
+		internal static void Execute(Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes, uint[] offsets = null) {
 			if (!CanExecute(nodes))
 				return;
 
-			var methodNode = (IMethodNode)nodes[0];
+			var methodNode = (MethodNode)nodes[0];
 
 			var module = nodes[0].GetModule();
 			Debug.Assert(module != null);
@@ -135,12 +135,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		readonly IMethodAnnotations methodAnnotations;
-		readonly IMethodNode methodNode;
+		readonly MethodNode methodNode;
 		readonly MethodBodyOptions newOptions;
 		readonly dnlib.DotNet.Emit.MethodBody origMethodBody;
 		bool isBodyModified;
 
-		EditMethodBodyILCommand(IMethodAnnotations methodAnnotations, IMethodNode methodNode, MethodBodyOptions options) {
+		EditMethodBodyILCommand(IMethodAnnotations methodAnnotations, MethodNode methodNode, MethodBodyOptions options) {
 			this.methodAnnotations = methodAnnotations;
 			this.methodNode = methodNode;
 			this.newOptions = options;
@@ -201,7 +201,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return;
 			}
 
-			EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandService, appService, new IDocumentTreeNodeData[] { methodNode }, BodyCommandUtils.GetInstructionOffsets(method, list));
+			EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandService, appService, new DocumentTreeNodeData[] { methodNode }, BodyCommandUtils.GetInstructionOffsets(method, list));
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {

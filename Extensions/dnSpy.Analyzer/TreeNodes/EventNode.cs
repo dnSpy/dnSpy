@@ -55,7 +55,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			new NodePrinter().Write(output, decompiler, analyzedEvent, Context.ShowToken);
 		}
 
-		public override IEnumerable<ITreeNodeData> CreateChildren() {
+		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (analyzedEvent.AddMethod != null)
 				yield return new EventAccessorNode(analyzedEvent.AddMethod, dnSpy_Analyzer_Resources.EventAdderTreeNodeName);
 
@@ -75,7 +75,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfaceEventImplementedByNode(analyzedEvent);
 		}
 
-		public static IAnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
+		public static AnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
 			if (CanShow(member, decompiler))
 				return new EventNode(member as EventDef);
 			else

@@ -28,10 +28,10 @@ namespace dnSpy.AsmEditor.Commands {
 	/// Creates nested type nodes, see also <see cref="TypeNodeCreator"/>
 	/// </summary>
 	sealed class NestedTypeNodeCreator {
-		readonly ITypeNode ownerTypeNode;
-		readonly ITypeNode nestedTypeNode;
+		readonly TypeNode ownerTypeNode;
+		readonly TypeNode nestedTypeNode;
 
-		public IEnumerable<IDocumentTreeNodeData> OriginalNodes {
+		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get {
 				yield return ownerTypeNode;
 				if (nestedTypeNode != null)
@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		public NestedTypeNodeCreator(IModuleDocumentNode modNode, ITypeNode ownerTypeNode, TypeDef nestedType) {
+		public NestedTypeNodeCreator(ModuleDocumentNode modNode, TypeNode ownerTypeNode, TypeDef nestedType) {
 			if (modNode == null)
 				throw new ArgumentNullException(nameof(modNode));
 			if (nestedType == null)

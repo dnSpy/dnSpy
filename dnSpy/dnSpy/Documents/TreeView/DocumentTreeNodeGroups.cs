@@ -124,10 +124,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IAssemblyReferenceNode;
-			var b = y as IAssemblyReferenceNode;
+			var a = x as AssemblyReferenceNode;
+			var b = y as AssemblyReferenceNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return StringComparer.OrdinalIgnoreCase.Compare(a.AssemblyRef.FullName, b.AssemblyRef.FullName);
@@ -141,10 +141,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IModuleReferenceNode;
-			var b = y as IModuleReferenceNode;
+			var a = x as ModuleReferenceNode;
+			var b = y as ModuleReferenceNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return StringComparer.OrdinalIgnoreCase.Compare(a.ModuleRef.FullName, b.ModuleRef.FullName);
@@ -158,10 +158,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IReferencesFolderNode;
-			var b = y as IReferencesFolderNode;
+			var a = x as ReferencesFolderNode;
+			var b = y as ReferencesFolderNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return -1;
@@ -175,10 +175,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IResourcesFolderNode;
-			var b = y as IResourcesFolderNode;
+			var a = x as ResourcesFolderNode;
+			var b = y as ResourcesFolderNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return -1;
@@ -192,10 +192,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IBaseTypeFolderNode;
-			var b = y as IBaseTypeFolderNode;
+			var a = x as BaseTypeFolderNode;
+			var b = y as BaseTypeFolderNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return -1;
@@ -209,10 +209,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IDerivedTypesFolderNode;
-			var b = y as IDerivedTypesFolderNode;
+			var a = x as DerivedTypesFolderNode;
+			var b = y as DerivedTypesFolderNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return -1;
@@ -226,10 +226,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IMessageNode;
-			var b = y as IMessageNode;
+			var a = x as MessageNode;
+			var b = y as MessageNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return 0;
@@ -243,10 +243,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IDerivedTypeNode;
-			var b = y as IDerivedTypeNode;
+			var a = x as DerivedTypeNode;
+			var b = y as DerivedTypeNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			string an = a.TypeDef.Name;
@@ -262,10 +262,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as INamespaceNode;
-			var b = y as INamespaceNode;
+			var a = x as NamespaceNode;
+			var b = y as NamespaceNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name);
@@ -279,10 +279,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IBaseTypeNode;
-			var b = y as IBaseTypeNode;
+			var a = x as BaseTypeNode;
+			var b = y as BaseTypeNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			string an = a.TypeDefOrRef.Name;
@@ -298,10 +298,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as ITypeNode;
-			var b = y as ITypeNode;
+			var a = x as TypeNode;
+			var b = y as TypeNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			var an = a.TypeDef.FullName;
@@ -317,10 +317,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IMethodNode;
-			var b = y as IMethodNode;
+			var a = x as MethodNode;
+			var b = y as MethodNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return MethodDefComparer.Instance.Compare(a.MethodDef, b.MethodDef);
@@ -334,10 +334,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IFieldNode;
-			var b = y as IFieldNode;
+			var a = x as FieldNode;
+			var b = y as FieldNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return FieldDefComparer.Instance.Compare(a.FieldDef, b.FieldDef);
@@ -351,10 +351,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IEventNode;
-			var b = y as IEventNode;
+			var a = x as EventNode;
+			var b = y as EventNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return EventDefComparer.Instance.Compare(a.EventDef, b.EventDef);
@@ -368,10 +368,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IPropertyNode;
-			var b = y as IPropertyNode;
+			var a = x as PropertyNode;
+			var b = y as PropertyNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return PropertyDefComparer.Instance.Compare(a.PropertyDef, b.PropertyDef);
@@ -385,10 +385,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IResourceNode;
-			var b = y as IResourceNode;
+			var a = x as ResourceNode;
+			var b = y as ResourceNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			int c = StringComparer.OrdinalIgnoreCase.Compare(a.Resource.Name, b.Resource.Name);
@@ -404,10 +404,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IResourceElementNode;
-			var b = y as IResourceElementNode;
+			var a = x as ResourceElementNode;
+			var b = y as ResourceElementNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			int c = StringComparer.OrdinalIgnoreCase.Compare(a.ResourceElement.Name, b.ResourceElement.Name);

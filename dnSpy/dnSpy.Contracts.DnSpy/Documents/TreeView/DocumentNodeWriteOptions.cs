@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// Options used when writing <see cref="IDocumentTreeNodeData"/> nodes
+	/// Options used when writing <see cref="DocumentTreeNodeData"/> nodes
 	/// </summary>
 	[Flags]
 	public enum DocumentNodeWriteOptions {

@@ -26,11 +26,11 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class AddUpdatedNodesHelper {
-		readonly IModuleDocumentNode modNode;
+		readonly ModuleDocumentNode modNode;
 		readonly TypeNodeCreator[] newTypeNodeCreators;
 		readonly ExistingTypeNodeUpdater[] existingTypeNodeUpdaters;
 
-		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, IModuleDocumentNode modNode, ModuleImporter importer) {
+		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, ModuleImporter importer) {
 			this.modNode = modNode;
 			this.newTypeNodeCreators = importer.NewNonNestedTypes.Select(a => new TypeNodeCreator(modNode, a.TargetType)).ToArray();
 			this.existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();

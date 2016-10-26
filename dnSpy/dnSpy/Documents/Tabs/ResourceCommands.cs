@@ -192,7 +192,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(documentTabService, TryCreate(context));
 
-			static ResourceRef TryCreate(ITreeNodeData[] nodes) {
+			static ResourceRef TryCreate(TreeNodeData[] nodes) {
 				if (nodes == null || nodes.Length != 1)
 					return null;
 				var tokNode = nodes[0] as IMDTokenNode;
@@ -204,7 +204,7 @@ namespace dnSpy.Documents.Tabs {
 			static ResourceRef TryCreate(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
-				return TryCreate(context.Find<ITreeNodeData[]>());
+				return TryCreate(context.Find<TreeNodeData[]>());
 			}
 
 			public override bool IsVisible(IMenuItemContext context) => GoToResourceCommand.IsVisible(TryCreate(context));
@@ -220,17 +220,17 @@ namespace dnSpy.Documents.Tabs {
 			if (modNode == null)
 				return;
 			modNode.TreeNode.EnsureChildrenLoaded();
-			var resDirNode = modNode.TreeNode.DataChildren.FirstOrDefault(a => a is IResourcesFolderNode);
+			var resDirNode = modNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourcesFolderNode);
 			Debug.Assert(resDirNode != null);
 			if (resDirNode == null)
 				return;
 			resDirNode.TreeNode.EnsureChildrenLoaded();
-			var resSetNode = resDirNode.TreeNode.DataChildren.FirstOrDefault(a => a is IResourceElementSetNode && ((IResourceElementSetNode)a).Name == resRef.Filename);
+			var resSetNode = resDirNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourceElementSetNode && ((ResourceElementSetNode)a).Name == resRef.Filename);
 			Debug.Assert(resSetNode != null);
 			if (resSetNode == null)
 				return;
 			resSetNode.TreeNode.EnsureChildrenLoaded();
-			var resNode = resSetNode.TreeNode.DataChildren.FirstOrDefault(a => a is IResourceElementNode && ((IResourceElementNode)a).Name == resRef.ResourceName);
+			var resNode = resSetNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourceElementNode && ((ResourceElementNode)a).Name == resRef.ResourceName);
 			Debug.Assert(resNode != null);
 			if (resNode == null)
 				return;

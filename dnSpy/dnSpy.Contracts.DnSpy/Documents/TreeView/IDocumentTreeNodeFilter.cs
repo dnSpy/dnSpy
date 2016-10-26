@@ -23,33 +23,33 @@ using dnSpy.Contracts.Documents.TreeView.Resources;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// Filters <see cref="IDocumentTreeNodeData"/> instances
+	/// Filters <see cref="DocumentTreeNodeData"/> instances
 	/// </summary>
 	public interface IDocumentTreeNodeFilter {
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IAssemblyDocumentNode"/>
+		/// Returns a filter result. Called if it's a <see cref="AssemblyDocumentNode"/>
 		/// </summary>
 		/// <param name="asm">Assembly</param>
 		/// <returns></returns>
 		DocumentTreeNodeFilterResult GetResult(AssemblyDef asm);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IModuleDocumentNode"/>
+		/// Returns a filter result. Called if it's a <see cref="ModuleDocumentNode"/>
 		/// </summary>
 		/// <param name="mod">Module</param>
 		/// <returns></returns>
 		DocumentTreeNodeFilterResult GetResult(ModuleDef mod);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IDsDocumentNode"/> but not a
-		/// <see cref="IAssemblyDocumentNode"/> or a <see cref="IModuleDocumentNode"/>.
+		/// Returns a filter result. Called if it's a <see cref="DsDocumentNode"/> but not a
+		/// <see cref="AssemblyDocumentNode"/> or a <see cref="ModuleDocumentNode"/>.
 		/// </summary>
 		/// <param name="document">Document</param>
 		/// <returns></returns>
 		DocumentTreeNodeFilterResult GetResult(IDsDocument document);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="INamespaceNode"/>
+		/// Returns a filter result. Called if it's a <see cref="NamespaceNode"/>
 		/// </summary>
 		/// <param name="ns">Namespace</param>
 		/// <param name="owner">Owner document</param>
@@ -57,35 +57,35 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		DocumentTreeNodeFilterResult GetResult(string ns, IDsDocument owner);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="ITypeNode"/>
+		/// Returns a filter result. Called if it's a <see cref="TypeNode"/>
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
 		DocumentTreeNodeFilterResult GetResult(TypeDef type);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IFieldNode"/>
+		/// Returns a filter result. Called if it's a <see cref="FieldNode"/>
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
 		DocumentTreeNodeFilterResult GetResult(FieldDef field);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IMethodNode"/>
+		/// Returns a filter result. Called if it's a <see cref="MethodNode"/>
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
 		DocumentTreeNodeFilterResult GetResult(MethodDef method);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IPropertyNode"/>
+		/// Returns a filter result. Called if it's a <see cref="PropertyNode"/>
 		/// </summary>
 		/// <param name="prop">Property</param>
 		/// <returns></returns>
 		DocumentTreeNodeFilterResult GetResult(PropertyDef prop);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IEventNode"/>
+		/// Returns a filter result. Called if it's a <see cref="EventNode"/>
 		/// </summary>
 		/// <param name="evt">Event</param>
 		/// <returns></returns>
@@ -129,14 +129,14 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		DocumentTreeNodeFilterResult GetResult(MethodDef method, Local local);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IAssemblyReferenceNode"/>
+		/// Returns a filter result. Called if it's a <see cref="AssemblyReferenceNode"/>
 		/// </summary>
 		/// <param name="asmRef">Assembly reference</param>
 		/// <returns></returns>
 		DocumentTreeNodeFilterResult GetResult(AssemblyRef asmRef);
 
 		/// <summary>
-		/// Returns a filter result. Called if it's a <see cref="IModuleReferenceNode"/>
+		/// Returns a filter result. Called if it's a <see cref="ModuleReferenceNode"/>
 		/// </summary>
 		/// <param name="modRef">Module reference</param>
 		/// <returns></returns>
@@ -147,63 +147,63 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IBaseTypeNode node);
+		DocumentTreeNodeFilterResult GetResult(BaseTypeNode node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IBaseTypeFolderNode node);
+		DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IDerivedTypeNode node);
+		DocumentTreeNodeFilterResult GetResult(DerivedTypeNode node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IDerivedTypesFolderNode node);
+		DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IReferencesFolderNode node);
+		DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IResourcesFolderNode node);
+		DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IResourceNode node);
+		DocumentTreeNodeFilterResult GetResult(ResourceNode node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IResourceElementNode node);
+		DocumentTreeNodeFilterResult GetResult(ResourceElementNode node);
 
 		/// <summary>
-		/// Returns a filter result if it's any other <see cref="IDocumentTreeNodeData"/> instance
+		/// Returns a filter result if it's any other <see cref="DocumentTreeNodeData"/> instance
 		/// </summary>
 		/// <param name="node">Node, can't be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(IDocumentTreeNodeData node);
+		DocumentTreeNodeFilterResult GetResultOther(DocumentTreeNodeData node);
 
 		/// <summary>
 		/// Returns a filter result

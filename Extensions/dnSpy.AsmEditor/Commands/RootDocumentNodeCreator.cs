@@ -26,21 +26,21 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.AsmEditor.Commands {
 	sealed class RootDocumentNodeCreator {
 		readonly IDocumentTreeView documentTreeView;
-		IDsDocumentNode documentNode;
+		DsDocumentNode documentNode;
 		bool restoreIndex;
 		int origIndex = -1;
 
-		public IDsDocumentNode DocumentNode => documentNode;
+		public DsDocumentNode DocumentNode => documentNode;
 		public static RootDocumentNodeCreator CreateAssembly(IDocumentTreeView documentTreeView, IDsDotNetDocument asm) =>
 			new RootDocumentNodeCreator(documentTreeView, documentTreeView.CreateAssembly(asm), false);
 		public static RootDocumentNodeCreator CreateModule(IDocumentTreeView documentTreeView, IDsDotNetDocument asm) =>
 			new RootDocumentNodeCreator(documentTreeView, documentTreeView.CreateModule(asm), false);
 
-		public RootDocumentNodeCreator(IDocumentTreeView documentTreeView, IDsDocumentNode asmNode)
+		public RootDocumentNodeCreator(IDocumentTreeView documentTreeView, DsDocumentNode asmNode)
 			: this(documentTreeView, asmNode, true) {
 		}
 
-		RootDocumentNodeCreator(IDocumentTreeView documentTreeView, IDsDocumentNode fileNode, bool restoreIndex) {
+		RootDocumentNodeCreator(IDocumentTreeView documentTreeView, DsDocumentNode fileNode, bool restoreIndex) {
 			this.documentTreeView = documentTreeView;
 			this.documentNode = fileNode;
 			this.restoreIndex = restoreIndex;

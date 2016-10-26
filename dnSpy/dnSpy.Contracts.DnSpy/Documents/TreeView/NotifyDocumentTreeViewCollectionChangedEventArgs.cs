@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// All document nodes
 		/// </summary>
-		public IDsDocumentNode[] Nodes { get; private set; }
+		public DsDocumentNode[] Nodes { get; private set; }
 
 		NotifyDocumentTreeViewCollectionChangedEventArgs() {
 		}
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="clearedDocuments">All cleared documents</param>
 		/// <returns></returns>
-		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateClear(IDsDocumentNode[] clearedDocuments) {
+		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateClear(DsDocumentNode[] clearedDocuments) {
 			Debug.Assert(clearedDocuments != null);
 			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
 			e.Type = NotifyDocumentTreeViewCollection.Clear;
@@ -56,11 +56,11 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="document">Added document</param>
 		/// <returns></returns>
-		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateAdd(IDsDocumentNode document) {
+		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateAdd(DsDocumentNode document) {
 			Debug.Assert(document != null);
 			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
 			e.Type = NotifyDocumentTreeViewCollection.Add;
-			e.Nodes = new IDsDocumentNode[] { document };
+			e.Nodes = new DsDocumentNode[] { document };
 			return e;
 		}
 
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="documents">Removed documents</param>
 		/// <returns></returns>
-		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateRemove(IDsDocumentNode[] documents) {
+		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateRemove(DsDocumentNode[] documents) {
 			Debug.Assert(documents != null);
 			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
 			e.Type = NotifyDocumentTreeViewCollection.Remove;

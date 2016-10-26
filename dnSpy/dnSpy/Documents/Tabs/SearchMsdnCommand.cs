@@ -56,14 +56,14 @@ namespace dnSpy.Documents.Tabs {
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 10)]
 		sealed class DocumentsCommand : MenuItemBase {
-			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) => GetNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
+			static IEnumerable<TreeNodeData> GetNodes(IMenuItemContext context) => GetNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 			public override bool IsVisible(IMenuItemContext context) => GetNodes(context).Any();
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetNodes(context));
 
-			internal static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context, string guid) {
+			internal static IEnumerable<TreeNodeData> GetNodes(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					yield break;
-				var nodes = context.Find<ITreeNodeData[]>();
+				var nodes = context.Find<TreeNodeData[]>();
 				if (nodes == null)
 					yield break;
 				foreach (var node in nodes) {
@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs {
 						continue;
 					}
 
-					var nsNode = node as INamespaceNode;
+					var nsNode = node as NamespaceNode;
 					if (nsNode != null) {
 						if (!string.IsNullOrEmpty(nsNode.Name))
 							yield return node;
@@ -86,7 +86,7 @@ namespace dnSpy.Documents.Tabs {
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 		sealed class AnalyzerCommand : MenuItemBase {
-			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) => DocumentsCommand.GetNodes(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
+			static IEnumerable<TreeNodeData> GetNodes(IMenuItemContext context) => DocumentsCommand.GetNodes(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 			public override bool IsVisible(IMenuItemContext context) => GetNodes(context).Any();
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetNodes(context));
 		}
@@ -238,9 +238,9 @@ namespace dnSpy.Documents.Tabs {
 			return string.Format(msdnAddress, memberName.Replace('/', '.'));
 		}
 
-		static void ExecuteInternal(IEnumerable<ITreeNodeData> nodes) {
+		static void ExecuteInternal(IEnumerable<TreeNodeData> nodes) {
 			foreach (var node in nodes) {
-				var nsNode = node as INamespaceNode;
+				var nsNode = node as NamespaceNode;
 				if (nsNode != null) {
 					SearchMsdn(string.Format(msdnAddress, nsNode.Name));
 					continue;

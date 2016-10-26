@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs {
 			internal static uint? GetReference(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
-				var nodes = context.Find<ITreeNodeData[]>();
+				var nodes = context.Find<TreeNodeData[]>();
 				if (nodes?.Length == 0)
 					return null;
 				var node = nodes[0] as IMDTokenNode;

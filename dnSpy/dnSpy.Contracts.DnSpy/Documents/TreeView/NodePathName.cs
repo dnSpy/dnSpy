@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="guid">Guid of node (<see cref="ITreeNodeData.Guid"/>)</param>
+		/// <param name="guid">Guid of node (<see cref="TreeNodeData.Guid"/>)</param>
 		/// <param name="name">Extra data if needed or null</param>
 		public NodePathName(Guid guid, string name = null) {
 			Debug.Assert(guid != System.Guid.Empty);

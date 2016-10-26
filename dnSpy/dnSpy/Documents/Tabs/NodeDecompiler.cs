@@ -73,7 +73,7 @@ namespace dnSpy.Documents.Tabs {
 		static readonly object lockObj = new object();
 		static readonly Dictionary<Type, NodeType> toNodeType = new Dictionary<Type, NodeType>();
 
-		public void Decompile(IDocumentTreeNodeData node) {
+		public void Decompile(DocumentTreeNodeData node) {
 			var nodeType = GetNodeType(node);
 			switch (nodeType) {
 			case NodeType.Unknown:
@@ -81,91 +81,91 @@ namespace dnSpy.Documents.Tabs {
 				break;
 
 			case NodeType.Assembly:
-				decompiler.Decompile(((IAssemblyDocumentNode)node).Document.AssemblyDef, output, decompilationContext);
+				decompiler.Decompile(((AssemblyDocumentNode)node).Document.AssemblyDef, output, decompilationContext);
 				break;
 
 			case NodeType.Module:
-				decompiler.Decompile(((IModuleDocumentNode)node).Document.ModuleDef, output, decompilationContext);
+				decompiler.Decompile(((ModuleDocumentNode)node).Document.ModuleDef, output, decompilationContext);
 				break;
 
 			case NodeType.Type:
-				decompiler.Decompile(((ITypeNode)node).TypeDef, output, decompilationContext);
+				decompiler.Decompile(((TypeNode)node).TypeDef, output, decompilationContext);
 				break;
 
 			case NodeType.Method:
-				decompiler.Decompile(((IMethodNode)node).MethodDef, output, decompilationContext);
+				decompiler.Decompile(((MethodNode)node).MethodDef, output, decompilationContext);
 				break;
 
 			case NodeType.Field:
-				decompiler.Decompile(((IFieldNode)node).FieldDef, output, decompilationContext);
+				decompiler.Decompile(((FieldNode)node).FieldDef, output, decompilationContext);
 				break;
 
 			case NodeType.Property:
-				decompiler.Decompile(((IPropertyNode)node).PropertyDef, output, decompilationContext);
+				decompiler.Decompile(((PropertyNode)node).PropertyDef, output, decompilationContext);
 				break;
 
 			case NodeType.Event:
-				decompiler.Decompile(((IEventNode)node).EventDef, output, decompilationContext);
+				decompiler.Decompile(((EventNode)node).EventDef, output, decompilationContext);
 				break;
 
 			case NodeType.AssemblyRef:
-				Decompile((IAssemblyReferenceNode)node);
+				Decompile((AssemblyReferenceNode)node);
 				break;
 
 			case NodeType.BaseTypeFolder:
-				Decompile((IBaseTypeFolderNode)node);
+				Decompile((BaseTypeFolderNode)node);
 				break;
 
 			case NodeType.BaseType:
-				Decompile((IBaseTypeNode)node);
+				Decompile((BaseTypeNode)node);
 				break;
 
 			case NodeType.DerivedType:
-				Decompile((IDerivedTypeNode)node);
+				Decompile((DerivedTypeNode)node);
 				break;
 
 			case NodeType.DerivedTypesFolder:
-				Decompile((IDerivedTypesFolderNode)node);
+				Decompile((DerivedTypesFolderNode)node);
 				break;
 
 			case NodeType.ModuleRef:
-				Decompile((IModuleReferenceNode)node);
+				Decompile((ModuleReferenceNode)node);
 				break;
 
 			case NodeType.Namespace:
-				Decompile((INamespaceNode)node);
+				Decompile((NamespaceNode)node);
 				break;
 
 			case NodeType.PEFile:
-				Decompile((IPEDocumentNode)node);
+				Decompile((PEDocumentNode)node);
 				break;
 
 			case NodeType.ReferencesFolder:
-				Decompile((IReferencesFolderNode)node);
+				Decompile((ReferencesFolderNode)node);
 				break;
 
 			case NodeType.ResourcesFolder:
-				Decompile((IResourcesFolderNode)node);
+				Decompile((ResourcesFolderNode)node);
 				break;
 
 			case NodeType.Resource:
-				Decompile((IResourceNode)node);
+				Decompile((ResourceNode)node);
 				break;
 
 			case NodeType.ResourceElement:
-				Decompile((IResourceElementNode)node);
+				Decompile((ResourceElementNode)node);
 				break;
 
 			case NodeType.ResourceElementSet:
-				Decompile((IResourceElementSetNode)node);
+				Decompile((ResourceElementSetNode)node);
 				break;
 
 			case NodeType.UnknownFile:
-				Decompile((IUnknownDocumentNode)node);
+				Decompile((UnknownDocumentNode)node);
 				break;
 
 			case NodeType.Message:
-				Decompile((IMessageNode)node);
+				Decompile((MessageNode)node);
 				break;
 
 			default:
@@ -174,15 +174,15 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		IDocumentTreeNodeData[] GetChildren(IDocumentTreeNodeData node) {
+		DocumentTreeNodeData[] GetChildren(DocumentTreeNodeData node) {
 			var n = node;
-			return (IDocumentTreeNodeData[])execInThread(() => {
+			return (DocumentTreeNodeData[])execInThread(() => {
 				n.TreeNode.EnsureChildrenLoaded();
-				return n.TreeNode.DataChildren.OfType<IDocumentTreeNodeData>().ToArray();
+				return n.TreeNode.DataChildren.OfType<DocumentTreeNodeData>().ToArray();
 			});
 		}
 
-		void DecompileUnknown(IDocumentTreeNodeData node) {
+		void DecompileUnknown(DocumentTreeNodeData node) {
 			var decompileSelf = node as IDecompileSelf;
 			if (decompileSelf != null && decompileNodeContext != null) {
 				if (decompileSelf.Decompile(decompileNodeContext))
@@ -191,75 +191,75 @@ namespace dnSpy.Documents.Tabs {
 			decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.ToString(decompiler)));
 		}
 
-		void Decompile(IAssemblyReferenceNode node) => decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.AssemblyRef.ToString()));
+		void Decompile(AssemblyReferenceNode node) => decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.AssemblyRef.ToString()));
 
-		void Decompile(IBaseTypeFolderNode node) {
-			foreach (var child in GetChildren(node).OfType<IBaseTypeNode>())
+		void Decompile(BaseTypeFolderNode node) {
+			foreach (var child in GetChildren(node).OfType<BaseTypeNode>())
 				Decompile(child);
 		}
 
-		void Decompile(IBaseTypeNode node) => decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.TypeDefOrRef.ReflectionFullName));
-		void Decompile(IDerivedTypeNode node) => decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.TypeDef.ReflectionFullName));
+		void Decompile(BaseTypeNode node) => decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.TypeDefOrRef.ReflectionFullName));
+		void Decompile(DerivedTypeNode node) => decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.TypeDef.ReflectionFullName));
 
-		void Decompile(IDerivedTypesFolderNode node) {
-			foreach (var child in GetChildren(node).OfType<IDerivedTypeNode>())
+		void Decompile(DerivedTypesFolderNode node) {
+			foreach (var child in GetChildren(node).OfType<DerivedTypeNode>())
 				Decompile(child);
 		}
 
-		void Decompile(IModuleReferenceNode node) => decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.ModuleRef.ToString()));
+		void Decompile(ModuleReferenceNode node) => decompiler.WriteCommentLine(output, NameUtilities.CleanName(node.ModuleRef.ToString()));
 
-		void Decompile(INamespaceNode node) {
-			var children = GetChildren(node).OfType<ITypeNode>().Select(a => a.TypeDef).ToArray();
+		void Decompile(NamespaceNode node) {
+			var children = GetChildren(node).OfType<TypeNode>().Select(a => a.TypeDef).ToArray();
 			decompiler.DecompileNamespace(node.Name, children, output, decompilationContext);
 		}
 
-		void Decompile(IPEDocumentNode node) => decompiler.WriteCommentLine(output, node.Document.Filename);
+		void Decompile(PEDocumentNode node) => decompiler.WriteCommentLine(output, node.Document.Filename);
 
-		void Decompile(IReferencesFolderNode node) {
+		void Decompile(ReferencesFolderNode node) {
 			foreach (var child in GetChildren(node)) {
-				if (child is IAssemblyReferenceNode)
-					Decompile((IAssemblyReferenceNode)child);
-				else if (child is IModuleReferenceNode)
-					Decompile((IModuleReferenceNode)child);
+				if (child is AssemblyReferenceNode)
+					Decompile((AssemblyReferenceNode)child);
+				else if (child is ModuleReferenceNode)
+					Decompile((ModuleReferenceNode)child);
 				else
 					DecompileUnknown(child);
 			}
 		}
 
-		void Decompile(IResourcesFolderNode node) {
+		void Decompile(ResourcesFolderNode node) {
 			foreach (var child in GetChildren(node)) {
-				if (child is IResourceNode)
-					Decompile((IResourceNode)child);
+				if (child is ResourceNode)
+					Decompile((ResourceNode)child);
 				else
 					DecompileUnknown(child);
 			}
 		}
 
-		void Decompile(IResourceNode node) {
-			if (node is IResourceElementSetNode)
-				Decompile((IResourceElementSetNode)node);
+		void Decompile(ResourceNode node) {
+			if (node is ResourceElementSetNode)
+				Decompile((ResourceElementSetNode)node);
 			else
 				node.WriteShort(output, decompiler, decompiler.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
 		}
 
-		void Decompile(IResourceElementNode node) =>
+		void Decompile(ResourceElementNode node) =>
 			node.WriteShort(output, decompiler, decompiler.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
 
-		void Decompile(IResourceElementSetNode node) {
+		void Decompile(ResourceElementSetNode node) {
 			node.WriteShort(output, decompiler, decompiler.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
 
 			foreach (var child in GetChildren(node)) {
-				if (child is IResourceElementNode)
-					Decompile((IResourceElementNode)child);
+				if (child is ResourceElementNode)
+					Decompile((ResourceElementNode)child);
 				else
 					DecompileUnknown(child);
 			}
 		}
 
-		void Decompile(IUnknownDocumentNode node) => decompiler.WriteCommentLine(output, node.Document.Filename);
-		void Decompile(IMessageNode node) => decompiler.WriteCommentLine(output, node.Message);
+		void Decompile(UnknownDocumentNode node) => decompiler.WriteCommentLine(output, node.Document.Filename);
+		void Decompile(MessageNode node) => decompiler.WriteCommentLine(output, node.Message);
 
-		static NodeType GetNodeType(IDocumentTreeNodeData node) {
+		static NodeType GetNodeType(DocumentTreeNodeData node) {
 			NodeType nodeType;
 			var type = node.GetType();
 			lock (lockObj) {
@@ -272,50 +272,50 @@ namespace dnSpy.Documents.Tabs {
 			return nodeType;
 		}
 
-		static NodeType GetNodeTypeSlow(IDocumentTreeNodeData node) {
-			if (node is IAssemblyDocumentNode)
+		static NodeType GetNodeTypeSlow(DocumentTreeNodeData node) {
+			if (node is AssemblyDocumentNode)
 				return NodeType.Assembly;
-			if (node is IModuleDocumentNode)
+			if (node is ModuleDocumentNode)
 				return NodeType.Module;
-			if (node is ITypeNode)
+			if (node is TypeNode)
 				return NodeType.Type;
-			if (node is IMethodNode)
+			if (node is MethodNode)
 				return NodeType.Method;
-			if (node is IFieldNode)
+			if (node is FieldNode)
 				return NodeType.Field;
-			if (node is IPropertyNode)
+			if (node is PropertyNode)
 				return NodeType.Property;
-			if (node is IEventNode)
+			if (node is EventNode)
 				return NodeType.Event;
-			if (node is IAssemblyReferenceNode)
+			if (node is AssemblyReferenceNode)
 				return NodeType.AssemblyRef;
-			if (node is IBaseTypeFolderNode)
+			if (node is BaseTypeFolderNode)
 				return NodeType.BaseTypeFolder;
-			if (node is IBaseTypeNode)
+			if (node is BaseTypeNode)
 				return NodeType.BaseType;
-			if (node is IDerivedTypeNode)
+			if (node is DerivedTypeNode)
 				return NodeType.DerivedType;
-			if (node is IDerivedTypesFolderNode)
+			if (node is DerivedTypesFolderNode)
 				return NodeType.DerivedTypesFolder;
-			if (node is IModuleReferenceNode)
+			if (node is ModuleReferenceNode)
 				return NodeType.ModuleRef;
-			if (node is INamespaceNode)
+			if (node is NamespaceNode)
 				return NodeType.Namespace;
-			if (node is IPEDocumentNode)
+			if (node is PEDocumentNode)
 				return NodeType.PEFile;
-			if (node is IReferencesFolderNode)
+			if (node is ReferencesFolderNode)
 				return NodeType.ReferencesFolder;
-			if (node is IResourcesFolderNode)
+			if (node is ResourcesFolderNode)
 				return NodeType.ResourcesFolder;
-			if (node is IResourceNode)
+			if (node is ResourceNode)
 				return NodeType.Resource;
-			if (node is IResourceElementNode)
+			if (node is ResourceElementNode)
 				return NodeType.ResourceElement;
-			if (node is IResourceElementSetNode)
+			if (node is ResourceElementSetNode)
 				return NodeType.ResourceElementSet;
-			if (node is IUnknownDocumentNode)
+			if (node is UnknownDocumentNode)
 				return NodeType.UnknownFile;
-			if (node is IMessageNode)
+			if (node is MessageNode)
 				return NodeType.Message;
 
 			return NodeType.Unknown;
