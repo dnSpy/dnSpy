@@ -18,56 +18,21 @@
 */
 
 using System;
-using System.ComponentModel;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Properties;
-using dnSpy.Text.Editor;
+using dnSpy.Text.Settings;
 
 namespace dnSpy.Text.CodeEditor {
-	sealed class TabsAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+	sealed class TabsAppSettingsPage : TabsAppSettingsPageBase {
 		public override Guid ParentGuid => options.Guid;
 		public override Guid Guid => guid;
 		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_TABS;
-		public override string Title => dnSpy_Resources.TabsSettings;
-		public override object UIObject => this;
 		readonly Guid guid;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-		public Int32VM TabSizeVM { get; }
-		public Int32VM IndentSizeVM { get; }
-
-		public bool ConvertTabsToSpaces {
-			get { return convertTabsToSpaces; }
-			set {
-				if (convertTabsToSpaces != value) {
-					convertTabsToSpaces = value;
-					OnPropertyChanged(nameof(ConvertTabsToSpaces));
-				}
-			}
-		}
-		bool convertTabsToSpaces;
-
 		readonly ICodeEditorOptions options;
 
-		public TabsAppSettingsPage(ICodeEditorOptions options, Guid guid) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
+		public TabsAppSettingsPage(ICodeEditorOptions options, Guid guid)
+			: base(options) {
 			this.options = options;
 			this.guid = guid;
-			TabSizeVM = new Int32VM(options.TabSize, a => { }, true) { Min = OptionsHelpers.MinimumTabSize, Max = OptionsHelpers.MaximumTabSize };
-			IndentSizeVM = new Int32VM(options.IndentSize, a => { }, true) { Min = OptionsHelpers.MinimumIndentSize, Max = OptionsHelpers.MaximumIndentSize };
-			ConvertTabsToSpaces = options.ConvertTabsToSpaces;
-		}
-
-		public override void OnApply() {
-			if (!TabSizeVM.HasError)
-				options.TabSize = TabSizeVM.Value;
-			if (!IndentSizeVM.HasError)
-				options.IndentSize = IndentSizeVM.Value;
-			options.ConvertTabsToSpaces = ConvertTabsToSpaces;
 		}
 	}
 }

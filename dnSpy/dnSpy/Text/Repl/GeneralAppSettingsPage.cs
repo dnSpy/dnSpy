@@ -18,114 +18,21 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Properties;
-using Microsoft.VisualStudio.Text.Editor;
+using dnSpy.Text.Settings;
 
 namespace dnSpy.Text.Repl {
-	sealed class GeneralAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+	sealed class GeneralAppSettingsPage : GeneralAppSettingsPageBase {
 		public override Guid ParentGuid => options.Guid;
 		public override Guid Guid => guid;
 		public override double Order => AppSettingsConstants.ORDER_REPL_LANGUAGES_GENERAL;
-		public override string Title => dnSpy_Resources.GeneralSettings;
-		public override object UIObject => this;
 		readonly Guid guid;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-		public bool UseVirtualSpaceEnabled => UseVirtualSpace || !WordWrap;
-		public bool WordWrapEnabled => WordWrap || !UseVirtualSpace;
-
-		public bool UseVirtualSpace {
-			get { return useVirtualSpace; }
-			set {
-				if (useVirtualSpace != value) {
-					useVirtualSpace = value;
-					OnPropertyChanged(nameof(UseVirtualSpace));
-					OnPropertyChanged(nameof(UseVirtualSpaceEnabled));
-					OnPropertyChanged(nameof(WordWrapEnabled));
-				}
-			}
-		}
-		bool useVirtualSpace;
-
-		public bool WordWrap {
-			get { return wordWrap; }
-			set {
-				if (wordWrap != value) {
-					wordWrap = value;
-					OnPropertyChanged(nameof(WordWrap));
-					OnPropertyChanged(nameof(UseVirtualSpaceEnabled));
-					OnPropertyChanged(nameof(WordWrapEnabled));
-				}
-			}
-		}
-		bool wordWrap;
-
-		public bool WordWrapVisualGlyphs {
-			get { return wordWrapVisualGlyphs; }
-			set {
-				if (wordWrapVisualGlyphs != value) {
-					wordWrapVisualGlyphs = value;
-					OnPropertyChanged(nameof(WordWrapVisualGlyphs));
-				}
-			}
-		}
-		bool wordWrapVisualGlyphs;
-
-		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
-			set {
-				if (showLineNumbers != value) {
-					showLineNumbers = value;
-					OnPropertyChanged(nameof(ShowLineNumbers));
-				}
-			}
-		}
-		bool showLineNumbers;
-
-		public bool HighlightCurrentLine {
-			get { return highlightCurrentLine; }
-			set {
-				if (highlightCurrentLine != value) {
-					highlightCurrentLine = value;
-					OnPropertyChanged(nameof(HighlightCurrentLine));
-				}
-			}
-		}
-		bool highlightCurrentLine;
-
 		readonly IReplOptions options;
 
-		public GeneralAppSettingsPage(IReplOptions options, Guid guid) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
+		public GeneralAppSettingsPage(IReplOptions options, Guid guid)
+			: base(options) {
 			this.options = options;
 			this.guid = guid;
-			UseVirtualSpace = options.UseVirtualSpace;
-			ShowLineNumbers = options.LineNumberMargin;
-			WordWrap = (options.WordWrapStyle & WordWrapStyles.WordWrap) != 0;
-			WordWrapVisualGlyphs = (options.WordWrapStyle & WordWrapStyles.VisibleGlyphs) != 0;
-			HighlightCurrentLine = options.EnableHighlightCurrentLine;
-		}
-
-		public override void OnApply() {
-			options.UseVirtualSpace = UseVirtualSpace;
-			options.LineNumberMargin = ShowLineNumbers;
-			options.EnableHighlightCurrentLine = HighlightCurrentLine;
-
-			var newStyle = options.WordWrapStyle;
-			if (WordWrap)
-				newStyle |= WordWrapStyles.WordWrap;
-			else
-				newStyle &= ~WordWrapStyles.WordWrap;
-			if (WordWrapVisualGlyphs)
-				newStyle |= WordWrapStyles.VisibleGlyphs;
-			else
-				newStyle &= ~WordWrapStyles.VisibleGlyphs;
-			options.WordWrapStyle = newStyle;
 		}
 	}
 }

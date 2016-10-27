@@ -18,58 +18,21 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Properties;
+using dnSpy.Text.Settings;
 
 namespace dnSpy.Text.CodeEditor {
-	sealed class ScrollBarsAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+	sealed class ScrollBarsAppSettingsPage : ScrollBarsAppSettingsPageBase {
 		public override Guid ParentGuid => options.Guid;
 		public override Guid Guid => guid;
 		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_SCROLLBARS;
-		public override string Title => dnSpy_Resources.ScrollBarsSettings;
-		public override object UIObject => this;
 		readonly Guid guid;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-		public bool HorizontalScrollBar {
-			get { return horizontalScrollBar; }
-			set {
-				if (horizontalScrollBar != value) {
-					horizontalScrollBar = value;
-					OnPropertyChanged(nameof(HorizontalScrollBar));
-				}
-			}
-		}
-		bool horizontalScrollBar;
-
-		public bool VerticalScrollBar {
-			get { return verticalScrollBar; }
-			set {
-				if (verticalScrollBar != value) {
-					verticalScrollBar = value;
-					OnPropertyChanged(nameof(VerticalScrollBar));
-				}
-			}
-		}
-		bool verticalScrollBar;
-
 		readonly ICodeEditorOptions options;
 
-		public ScrollBarsAppSettingsPage(ICodeEditorOptions options, Guid guid) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
+		public ScrollBarsAppSettingsPage(ICodeEditorOptions options, Guid guid)
+			: base(options) {
 			this.options = options;
 			this.guid = guid;
-			HorizontalScrollBar = options.HorizontalScrollBar;
-			VerticalScrollBar = options.VerticalScrollBar;
-		}
-
-		public override void OnApply() {
-			options.HorizontalScrollBar = HorizontalScrollBar;
-			options.VerticalScrollBar = VerticalScrollBar;
 		}
 	}
 }

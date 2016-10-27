@@ -768,6 +768,12 @@
     <Compile Include="Text\Repl\ScrollBarsAppSettingsPage.cs" />
     <Compile Include="Text\Repl\TabsAppSettingsPage.cs" />
     <Compile Include="Text\Repl\TextViewOptionsGroupNameProvider.cs" />
+    <Compile Include="Text\Settings\AdvancedAppSettingsPageBase.cs" />
+    <Compile Include="Text\Settings\CommonEditorOptions.cs" />
+    <Compile Include="Text\Settings\GeneralAppSettingsPageBase.cs" />
+    <Compile Include="Text\Settings\ICommonEditorOptions.cs" />
+    <Compile Include="Text\Settings\ScrollBarsAppSettingsPageBase.cs" />
+    <Compile Include="Text\Settings\TabsAppSettingsPageBase.cs" />
     <Compile Include="Text\Tagging\BufferTagAggregatorFactoryService.cs" />
     <Compile Include="Text\Tagging\ITaggerFactory.cs" />
     <Compile Include="Text\Tagging\TagAggregatorBase.cs" />

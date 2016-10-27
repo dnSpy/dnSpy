@@ -18,54 +18,17 @@
 */
 
 using System;
-using System.ComponentModel;
-using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Properties;
-using dnSpy.Text.Editor;
+using dnSpy.Text.Settings;
 
 namespace dnSpy.Documents.Tabs.DocViewer.Settings {
-	sealed class TabsAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+	sealed class TabsAppSettingsPage : TabsAppSettingsPageBase {
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DOCUMENT_VIEWER);
 		public override Guid Guid => new Guid("D8B1C942-4094-4132-878F-5FFAE59FF9FD");
 		public override double Order => AppSettingsConstants.ORDER_DOCUMENT_VIEWER_DEFAULT_TABS;
-		public override string Title => dnSpy_Resources.TabsSettings;
-		public override object UIObject => this;
 
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-		public Int32VM TabSizeVM { get; }
-		public Int32VM IndentSizeVM { get; }
-
-		public bool ConvertTabsToSpaces {
-			get { return convertTabsToSpaces; }
-			set {
-				if (convertTabsToSpaces != value) {
-					convertTabsToSpaces = value;
-					OnPropertyChanged(nameof(ConvertTabsToSpaces));
-				}
-			}
-		}
-		bool convertTabsToSpaces;
-
-		readonly IDocumentViewerOptions options;
-
-		public TabsAppSettingsPage(IDocumentViewerOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
-			TabSizeVM = new Int32VM(options.TabSize, a => { }, true) { Min = OptionsHelpers.MinimumTabSize, Max = OptionsHelpers.MaximumTabSize };
-			IndentSizeVM = new Int32VM(options.IndentSize, a => { }, true) { Min = OptionsHelpers.MinimumIndentSize, Max = OptionsHelpers.MaximumIndentSize };
-			ConvertTabsToSpaces = options.ConvertTabsToSpaces;
-		}
-
-		public override void OnApply() {
-			if (!TabSizeVM.HasError)
-				options.TabSize = TabSizeVM.Value;
-			if (!IndentSizeVM.HasError)
-				options.IndentSize = IndentSizeVM.Value;
-			options.ConvertTabsToSpaces = ConvertTabsToSpaces;
+		public TabsAppSettingsPage(IDocumentViewerOptions options)
+			: base(options) {
 		}
 	}
 }

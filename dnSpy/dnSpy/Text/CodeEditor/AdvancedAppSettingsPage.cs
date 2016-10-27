@@ -18,202 +18,21 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Properties;
+using dnSpy.Text.Settings;
 
 namespace dnSpy.Text.CodeEditor {
-	sealed class AdvancedAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+	sealed class AdvancedAppSettingsPage : AdvancedAppSettingsPageBase {
 		public override Guid ParentGuid => options.Guid;
 		public override Guid Guid => guid;
 		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_TABS;
-		public override string Title => dnSpy_Resources.AdvancedSettings;
-		public override object UIObject => this;
 		readonly Guid guid;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-		public bool ReferenceHighlighting {
-			get { return referenceHighlighting; }
-			set {
-				if (referenceHighlighting != value) {
-					referenceHighlighting = value;
-					OnPropertyChanged(nameof(ReferenceHighlighting));
-				}
-			}
-		}
-		bool referenceHighlighting;
-
-		public bool HighlightRelatedKeywords {
-			get { return highlightRelatedKeywords; }
-			set {
-				if (highlightRelatedKeywords != value) {
-					highlightRelatedKeywords = value;
-					OnPropertyChanged(nameof(HighlightRelatedKeywords));
-				}
-			}
-		}
-		bool highlightRelatedKeywords;
-
-		public bool HighlightMatchingBrace {
-			get { return highlightMatchingBrace; }
-			set {
-				if (highlightMatchingBrace != value) {
-					highlightMatchingBrace = value;
-					OnPropertyChanged(nameof(HighlightMatchingBrace));
-				}
-			}
-		}
-		bool highlightMatchingBrace;
-
-		public bool LineSeparators {
-			get { return lineSeparators; }
-			set {
-				if (lineSeparators != value) {
-					lineSeparators = value;
-					OnPropertyChanged(nameof(LineSeparators));
-				}
-			}
-		}
-		bool lineSeparators;
-
-		public bool ShowBlockStructure {
-			get { return showBlockStructure; }
-			set {
-				if (showBlockStructure != value) {
-					showBlockStructure = value;
-					OnPropertyChanged(nameof(ShowBlockStructure));
-				}
-			}
-		}
-		bool showBlockStructure;
-
-		public BlockStructureLineKind BlockStructureLineKind {
-			get { return blockStructureLineKind; }
-			set {
-				if (blockStructureLineKind != value) {
-					blockStructureLineKind = value;
-					OnPropertyChanged(nameof(BlockStructureLineKind));
-				}
-			}
-		}
-		BlockStructureLineKind blockStructureLineKind;
-
-		public bool CompressEmptyOrWhitespaceLines {
-			get { return compressEmptyOrWhitespaceLines; }
-			set {
-				if (compressEmptyOrWhitespaceLines != value) {
-					compressEmptyOrWhitespaceLines = value;
-					OnPropertyChanged(nameof(CompressEmptyOrWhitespaceLines));
-				}
-			}
-		}
-		bool compressEmptyOrWhitespaceLines;
-
-		public bool CompressNonLetterLines {
-			get { return compressNonLetterLines; }
-			set {
-				if (compressNonLetterLines != value) {
-					compressNonLetterLines = value;
-					OnPropertyChanged(nameof(CompressNonLetterLines));
-				}
-			}
-		}
-		bool compressNonLetterLines;
-
-		public bool MinimumLineSpacing {
-			get { return minimumLineSpacing; }
-			set {
-				if (minimumLineSpacing != value) {
-					minimumLineSpacing = value;
-					OnPropertyChanged(nameof(MinimumLineSpacing));
-				}
-			}
-		}
-		bool minimumLineSpacing;
-
-		public bool SelectionMargin {
-			get { return selectionMargin; }
-			set {
-				if (selectionMargin != value) {
-					selectionMargin = value;
-					OnPropertyChanged(nameof(SelectionMargin));
-				}
-			}
-		}
-		bool selectionMargin;
-
-		public bool GlyphMargin {
-			get { return glyphMargin; }
-			set {
-				if (glyphMargin != value) {
-					glyphMargin = value;
-					OnPropertyChanged(nameof(GlyphMargin));
-				}
-			}
-		}
-		bool glyphMargin;
-
-		public bool MouseWheelZoom {
-			get { return mouseWheelZoom; }
-			set {
-				if (mouseWheelZoom != value) {
-					mouseWheelZoom = value;
-					OnPropertyChanged(nameof(MouseWheelZoom));
-				}
-			}
-		}
-		bool mouseWheelZoom;
-
-		public bool ZoomControl {
-			get { return zoomControl; }
-			set {
-				if (zoomControl != value) {
-					zoomControl = value;
-					OnPropertyChanged(nameof(ZoomControl));
-				}
-			}
-		}
-		bool zoomControl;
-
 		readonly ICodeEditorOptions options;
 
-		public AdvancedAppSettingsPage(ICodeEditorOptions options, Guid guid) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
+		public AdvancedAppSettingsPage(ICodeEditorOptions options, Guid guid)
+			: base(options) {
 			this.options = options;
 			this.guid = guid;
-			ReferenceHighlighting = options.ReferenceHighlighting;
-			HighlightRelatedKeywords = options.HighlightRelatedKeywords;
-			HighlightMatchingBrace = options.BraceMatching;
-			LineSeparators = options.LineSeparators;
-			ShowBlockStructure = options.ShowBlockStructure;
-			BlockStructureLineKind = options.BlockStructureLineKind;
-			CompressEmptyOrWhitespaceLines = options.CompressEmptyOrWhitespaceLines;
-			CompressNonLetterLines = options.CompressNonLetterLines;
-			MinimumLineSpacing = options.RemoveExtraTextLineVerticalPixels;
-			SelectionMargin = options.SelectionMargin;
-			GlyphMargin = options.GlyphMargin;
-			MouseWheelZoom = options.EnableMouseWheelZoom;
-			ZoomControl = options.ZoomControl;
-		}
-
-		public override void OnApply() {
-			options.ReferenceHighlighting = ReferenceHighlighting;
-			options.HighlightRelatedKeywords = HighlightRelatedKeywords;
-			options.BraceMatching = HighlightMatchingBrace;
-			options.LineSeparators = LineSeparators;
-			options.ShowBlockStructure = ShowBlockStructure;
-			options.BlockStructureLineKind = BlockStructureLineKind;
-			options.CompressEmptyOrWhitespaceLines = CompressEmptyOrWhitespaceLines;
-			options.CompressNonLetterLines = CompressNonLetterLines;
-			options.RemoveExtraTextLineVerticalPixels = MinimumLineSpacing;
-			options.SelectionMargin = SelectionMargin;
-			options.GlyphMargin = GlyphMargin;
-			options.EnableMouseWheelZoom = MouseWheelZoom;
-			options.ZoomControl = ZoomControl;
 		}
 	}
 }
