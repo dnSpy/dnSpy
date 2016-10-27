@@ -58,11 +58,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const string Search = "dnSpy-" + nameof(Search);
 
 		/// <summary>
-		/// Structure visualizer adornment layer
-		/// </summary>
-		public const string StructureVisualizer = "dnSpy-" + nameof(StructureVisualizer);
-
-		/// <summary>
 		/// Intra text adornment layer
 		/// </summary>
 		public const string IntraTextAdornment = "Intra Text Adornment";

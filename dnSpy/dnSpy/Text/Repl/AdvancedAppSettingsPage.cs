@@ -78,16 +78,16 @@ namespace dnSpy.Text.Repl {
 		}
 		bool lineSeparators;
 
-		public bool ShowStructureLines {
-			get { return showStructureLines; }
+		public bool ShowBlockStructure {
+			get { return showBlockStructure; }
 			set {
-				if (showStructureLines != value) {
-					showStructureLines = value;
-					OnPropertyChanged(nameof(ShowStructureLines));
+				if (showBlockStructure != value) {
+					showBlockStructure = value;
+					OnPropertyChanged(nameof(ShowBlockStructure));
 				}
 			}
 		}
-		bool showStructureLines;
+		bool showBlockStructure;
 
 		public bool CompressEmptyOrWhitespaceLines {
 			get { return compressEmptyOrWhitespaceLines; }
@@ -177,7 +177,7 @@ namespace dnSpy.Text.Repl {
 			HighlightRelatedKeywords = options.HighlightRelatedKeywords;
 			HighlightMatchingBrace = options.BraceMatching;
 			LineSeparators = options.LineSeparators;
-			ShowStructureLines = options.ShowStructureLines;
+			ShowBlockStructure = options.ShowBlockStructure;
 			CompressEmptyOrWhitespaceLines = options.CompressEmptyOrWhitespaceLines;
 			CompressNonLetterLines = options.CompressNonLetterLines;
 			MinimumLineSpacing = options.RemoveExtraTextLineVerticalPixels;
@@ -192,7 +192,7 @@ namespace dnSpy.Text.Repl {
 			options.HighlightRelatedKeywords = HighlightRelatedKeywords;
 			options.BraceMatching = HighlightMatchingBrace;
 			options.LineSeparators = LineSeparators;
-			options.ShowStructureLines = ShowStructureLines;
+			options.ShowBlockStructure = ShowBlockStructure;
 			options.CompressEmptyOrWhitespaceLines = CompressEmptyOrWhitespaceLines;
 			options.CompressNonLetterLines = CompressNonLetterLines;
 			options.RemoveExtraTextLineVerticalPixels = MinimumLineSpacing;

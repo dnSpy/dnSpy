@@ -6193,7 +6193,7 @@
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
                     <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
                     <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
-                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowStructureLines}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowBlockStructure}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
                 </Grid>
             </GroupBox>
             -->
@@ -6301,7 +6301,7 @@
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
                     <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
                     <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
-                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowStructureLines}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowBlockStructure}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
                 </Grid>
             </GroupBox>
             -->
@@ -6406,7 +6406,7 @@
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
                     <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
                     <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
-                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowStructureLines}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowBlockStructure}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
                 </Grid>
             </GroupBox>
             <GroupBox Grid.Row="1" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorLineHeight}">
@@ -6513,7 +6513,7 @@
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
                     <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
                     <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
-                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowStructureLines}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                    <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowBlockStructure}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
                 </Grid>
             </GroupBox>
             -->

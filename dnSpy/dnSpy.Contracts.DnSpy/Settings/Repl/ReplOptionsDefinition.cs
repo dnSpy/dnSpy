@@ -71,8 +71,8 @@ namespace dnSpy.Contracts.Settings.Repl {
 		bool HighlightMatchingBrace { get; }
 		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.LineSeparators"/></summary>
 		bool LineSeparators { get; }
-		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.ShowStructureLines"/></summary>
-		bool ShowStructureLines { get; }
+		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.ShowBlockStructure"/></summary>
+		bool ShowBlockStructure { get; }
 		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.CompressEmptyOrWhitespaceLines"/></summary>
 		bool CompressEmptyOrWhitespaceLines { get; }
 		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.CompressNonLetterLines"/></summary>
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Settings.Repl {
 			HighlightRelatedKeywords = DefaultReplOptions.HighlightRelatedKeywords;
 			HighlightMatchingBrace = DefaultReplOptions.HighlightMatchingBrace;
 			LineSeparators = DefaultReplOptions.LineSeparators;
-			ShowStructureLines = DefaultReplOptions.ShowStructureLines;
+			ShowBlockStructure = DefaultReplOptions.ShowBlockStructure;
 			CompressEmptyOrWhitespaceLines = DefaultReplOptions.CompressEmptyOrWhitespaceLines;
 			CompressNonLetterLines = DefaultReplOptions.CompressNonLetterLines;
 			RemoveExtraTextLineVerticalPixels = DefaultReplOptions.RemoveExtraTextLineVerticalPixels;
@@ -234,9 +234,9 @@ namespace dnSpy.Contracts.Settings.Repl {
 		public bool LineSeparators { get; set; }
 
 		/// <summary>
-		/// Show indent guides, default value is <see cref="DefaultReplOptions.ShowStructureLines"/>
+		/// Show indent guides, default value is <see cref="DefaultReplOptions.ShowBlockStructure"/>
 		/// </summary>
-		public bool ShowStructureLines { get; set; }
+		public bool ShowBlockStructure { get; set; }
 
 		/// <summary>
 		/// Compress empty/whitespace lines, default value is <see cref="DefaultReplOptions.CompressEmptyOrWhitespaceLines"/>

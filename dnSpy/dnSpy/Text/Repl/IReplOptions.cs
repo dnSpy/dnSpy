@@ -42,7 +42,7 @@ namespace dnSpy.Text.Repl {
 		bool HighlightRelatedKeywords { get; set; }
 		bool BraceMatching { get; set; }
 		bool LineSeparators { get; set; }
-		bool ShowStructureLines { get; set; }
+		bool ShowBlockStructure { get; set; }
 		bool CompressEmptyOrWhitespaceLines { get; set; }
 		bool CompressNonLetterLines { get; set; }
 		bool RemoveExtraTextLineVerticalPixels { get; set; }

@@ -108,9 +108,9 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.LineSeparatorsId, value); }
 		}
 
-		public bool ShowStructureLines {
-			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.ShowStructureLinesId); }
-			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.ShowStructureLinesId, value); }
+		public bool ShowBlockStructure {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultTextViewOptions.ShowBlockStructureId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewOptions.ShowBlockStructureId, value); }
 		}
 
 		public bool CompressEmptyOrWhitespaceLines {

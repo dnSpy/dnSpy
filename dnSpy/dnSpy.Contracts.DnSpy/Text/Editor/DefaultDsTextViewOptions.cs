@@ -52,8 +52,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> CompressEmptyOrWhitespaceLinesId = new EditorOptionKey<bool>(CompressEmptyOrWhitespaceLinesName);
 		public const string CompressNonLetterLinesName = "ITextView/CompressNonLetterLines";
 		public static readonly EditorOptionKey<bool> CompressNonLetterLinesId = new EditorOptionKey<bool>(CompressNonLetterLinesName);
-		public const string ShowStructureLinesName = "ITextView/ShowStructureLines";
-		public static readonly EditorOptionKey<bool> ShowStructureLinesId = new EditorOptionKey<bool>(ShowStructureLinesName);
 		public const string RemoveExtraTextLineVerticalPixelsName = "ITextView/RemoveExtraTextLineVerticalPixels";
 		public static readonly EditorOptionKey<bool> RemoveExtraTextLineVerticalPixelsId = new EditorOptionKey<bool>(RemoveExtraTextLineVerticalPixelsName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member

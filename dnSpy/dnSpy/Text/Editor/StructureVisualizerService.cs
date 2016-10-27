@@ -26,7 +26,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
@@ -55,10 +54,11 @@ namespace dnSpy.Text.Editor {
 	sealed class StructureVisualizerService : IStructureVisualizerService {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(PredefinedDsAdornmentLayers.StructureVisualizer)]
+		[Name(PredefinedAdornmentLayers.BlockStructure)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
-		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.InterLine)]
-		static AdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
+		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Text)]
+		[Order(After = PredefinedAdornmentLayers.TextMarker)]
+		static AdornmentLayerDefinition adornmentLayerDefinition;
 #pragma warning restore 0169
 
 		readonly IWpfTextView wpfTextView;
@@ -190,18 +190,18 @@ namespace dnSpy.Text.Editor {
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
-			if (e.OptionId == DefaultDsTextViewOptions.ShowStructureLinesName)
+			if (e.OptionId == DefaultTextViewOptions.ShowBlockStructureName)
 				UpdateEnabled();
 		}
 
 		void UpdateEnabled() {
-			var newValue = wpfTextView.Options.IsShowStructureLinesEnabled();
+			var newValue = wpfTextView.Options.GetOptionValue(DefaultTextViewOptions.ShowBlockStructureId);
 			if (newValue == enabled)
 				return;
 			enabled = newValue;
 			if (enabled) {
 				if (layer == null)
-					layer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.StructureVisualizer);
+					layer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.BlockStructure);
 				if (editorFormatMap == null)
 					editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextView);
 				RegisterEvents();

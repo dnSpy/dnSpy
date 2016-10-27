@@ -169,17 +169,6 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		}
 
 		/// <summary>
-		/// Returns true if the vertical lines between start and end blocks are shown
-		/// </summary>
-		/// <param name="options">Options</param>
-		/// <returns></returns>
-		public static bool IsShowStructureLinesEnabled(this IEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			return options.GetOptionValue(DefaultDsTextViewOptions.ShowStructureLinesId);
-		}
-
-		/// <summary>
 		/// Returns true if extra vertical pixels should be removed from text lines
 		/// </summary>
 		/// <param name="options">Options</param>

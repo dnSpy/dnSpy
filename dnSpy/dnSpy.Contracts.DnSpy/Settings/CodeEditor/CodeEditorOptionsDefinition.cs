@@ -71,8 +71,8 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		bool HighlightMatchingBrace { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.LineSeparators"/></summary>
 		bool LineSeparators { get; }
-		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.ShowStructureLines"/></summary>
-		bool ShowStructureLines { get; }
+		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.ShowBlockStructure"/></summary>
+		bool ShowBlockStructure { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.CompressEmptyOrWhitespaceLines"/></summary>
 		bool CompressEmptyOrWhitespaceLines { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.CompressNonLetterLines"/></summary>
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 			HighlightRelatedKeywords = DefaultCodeEditorOptions.HighlightRelatedKeywords;
 			HighlightMatchingBrace = DefaultCodeEditorOptions.HighlightMatchingBrace;
 			LineSeparators = DefaultCodeEditorOptions.LineSeparators;
-			ShowStructureLines = DefaultCodeEditorOptions.ShowStructureLines;
+			ShowBlockStructure = DefaultCodeEditorOptions.ShowBlockStructure;
 			CompressEmptyOrWhitespaceLines = DefaultCodeEditorOptions.CompressEmptyOrWhitespaceLines;
 			CompressNonLetterLines = DefaultCodeEditorOptions.CompressNonLetterLines;
 			RemoveExtraTextLineVerticalPixels = DefaultCodeEditorOptions.RemoveExtraTextLineVerticalPixels;
@@ -234,9 +234,9 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		public bool LineSeparators { get; set; }
 
 		/// <summary>
-		/// Show indent guides, default value is <see cref="DefaultCodeEditorOptions.ShowStructureLines"/>
+		/// Show indent guides, default value is <see cref="DefaultCodeEditorOptions.ShowBlockStructure"/>
 		/// </summary>
-		public bool ShowStructureLines { get; set; }
+		public bool ShowBlockStructure { get; set; }
 
 		/// <summary>
 		/// Compress empty/whitespace lines, default value is <see cref="DefaultCodeEditorOptions.CompressEmptyOrWhitespaceLines"/>

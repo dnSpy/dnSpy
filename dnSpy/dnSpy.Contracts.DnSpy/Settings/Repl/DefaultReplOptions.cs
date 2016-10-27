@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Settings.Repl {
 		public const bool HighlightRelatedKeywords = true;
 		public const bool HighlightMatchingBrace = true;
 		public const bool LineSeparators = true;
-		public const bool ShowStructureLines = true;
+		public const bool ShowBlockStructure = true;
 		public const bool CompressEmptyOrWhitespaceLines = true;
 		public const bool CompressNonLetterLines = true;
 		public const bool RemoveExtraTextLineVerticalPixels = false;

@@ -102,12 +102,6 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
-	sealed class ShowStructureLinesEditorOptionDefinition : ViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.ShowStructureLinesId;
-		public override bool Default => true;
-	}
-
-	[Export(typeof(EditorOptionDefinition))]
 	sealed class RemoveExtraTextLineVerticalPixelsEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId;
 		public override bool Default => false;

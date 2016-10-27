@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.HighlightRelatedKeywordsId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.BraceMatchingId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.LineSeparatorsId, true);
-				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.ShowStructureLinesId, true);
+				yield return new OptionDefinition<bool>(contentType, DefaultTextViewOptions.ShowBlockStructureId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.CompressNonLetterLinesId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId, false);
