@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
@@ -86,16 +87,19 @@ namespace dnSpy.Text.Settings {
 		}
 		bool showBlockStructure;
 
+		public EnumListVM BlockStructureLineKindVM { get; }
 		public BlockStructureLineKind BlockStructureLineKind {
-			get { return blockStructureLineKind; }
-			set {
-				if (blockStructureLineKind != value) {
-					blockStructureLineKind = value;
-					OnPropertyChanged(nameof(BlockStructureLineKind));
-				}
-			}
+			get { return (BlockStructureLineKind)BlockStructureLineKindVM.SelectedItem; }
+			set { BlockStructureLineKindVM.SelectedItem = value; }
 		}
-		BlockStructureLineKind blockStructureLineKind;
+		static readonly EnumVM[] blockStructureLineKindList = new EnumVM[5] {
+			new EnumVM(BlockStructureLineKind.Solid, dnSpy_Resources.BlockStructureLineKind_SolidLines),
+			new EnumVM(BlockStructureLineKind.Dashed_1_1, GetDashedText(1)),
+			new EnumVM(BlockStructureLineKind.Dashed_2_2, GetDashedText(2)),
+			new EnumVM(BlockStructureLineKind.Dashed_3_3, GetDashedText(3)),
+			new EnumVM(BlockStructureLineKind.Dashed_4_4, GetDashedText(4)),
+		};
+		static string GetDashedText(int px) => dnSpy_Resources.BlockStructureLineKind_DashedLines + " (" + px.ToString() + "px)";
 
 		public bool CompressEmptyOrWhitespaceLines {
 			get { return compressEmptyOrWhitespaceLines; }
@@ -180,6 +184,7 @@ namespace dnSpy.Text.Settings {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			this.options = options;
+			BlockStructureLineKindVM = new EnumListVM(blockStructureLineKindList);
 			ReferenceHighlighting = options.ReferenceHighlighting;
 			HighlightRelatedKeywords = options.HighlightRelatedKeywords;
 			HighlightMatchingBrace = options.BraceMatching;

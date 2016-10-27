@@ -1245,4 +1245,10 @@
     <value>All files have been filtered out.
 Filter can be changed in Assembly Explorer options.</value>
   </data>
+  <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
+    <value>Dashed lines</value>
+  </data>
+  <data name="BlockStructureLineKind_SolidLines" xml:space="preserve">
+    <value>Solid lines</value>
+  </data>
 </root>

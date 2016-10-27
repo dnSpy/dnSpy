@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Settings.Repl {
 		public const bool HighlightMatchingBrace = true;
 		public const bool LineSeparators = true;
 		public const bool ShowBlockStructure = true;
-		public const BlockStructureLineKind BlockStructureLineKind = Text.Editor.BlockStructureLineKind.Dotted_2_2;
+		public const BlockStructureLineKind BlockStructureLineKind = Text.Editor.BlockStructureLineKind.Dashed_2_2;
 		public const bool CompressEmptyOrWhitespaceLines = true;
 		public const bool CompressNonLetterLines = true;
 		public const bool RemoveExtraTextLineVerticalPixels = false;

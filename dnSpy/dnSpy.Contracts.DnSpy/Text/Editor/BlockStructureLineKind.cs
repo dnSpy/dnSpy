@@ -28,8 +28,23 @@ namespace dnSpy.Contracts.Text.Editor {
 		Solid,
 
 		/// <summary>
-		/// Dotted lines (dash 2px, gap 2px)
+		/// Dashed lines (dash 1px, gap 1px)
 		/// </summary>
-		Dotted_2_2,
+		Dashed_1_1,
+
+		/// <summary>
+		/// Dashed lines (dash 2px, gap 2px)
+		/// </summary>
+		Dashed_2_2,
+
+		/// <summary>
+		/// Dashed lines (dash 3px, gap 3px)
+		/// </summary>
+		Dashed_3_3,
+
+		/// <summary>
+		/// Dashed lines (dash 4px, gap 4px)
+		/// </summary>
+		Dashed_4_4,
 	}
 }

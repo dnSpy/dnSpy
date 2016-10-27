@@ -198,8 +198,23 @@ namespace dnSpy.Text.Editor {
 			case BlockStructureLineKind.Solid:
 				break;
 
-			case BlockStructureLineKind.Dotted_2_2:
-				pen.DashStyle = new DashStyle(dotted_2_2_DashStyle, 1);
+			case BlockStructureLineKind.Dashed_1_1:
+				pen.DashStyle = new DashStyle(dashed_1_1_DashStyle, 1);
+				pen.DashCap = PenLineCap.Flat;
+				break;
+
+			case BlockStructureLineKind.Dashed_2_2:
+				pen.DashStyle = new DashStyle(dashed_2_2_DashStyle, 1);
+				pen.DashCap = PenLineCap.Flat;
+				break;
+
+			case BlockStructureLineKind.Dashed_3_3:
+				pen.DashStyle = new DashStyle(dashed_3_3_DashStyle, 1);
+				pen.DashCap = PenLineCap.Flat;
+				break;
+
+			case BlockStructureLineKind.Dashed_4_4:
+				pen.DashStyle = new DashStyle(dashed_4_4_DashStyle, 1);
 				pen.DashCap = PenLineCap.Flat;
 				break;
 
@@ -209,7 +224,10 @@ namespace dnSpy.Text.Editor {
 			}
 			return pen;
 		}
-		static readonly IEnumerable<double> dotted_2_2_DashStyle = new ReadOnlyCollection<double>(new double[] { 2, 2 });
+		static readonly IEnumerable<double> dashed_1_1_DashStyle = new ReadOnlyCollection<double>(new double[] { 1, 1 });
+		static readonly IEnumerable<double> dashed_2_2_DashStyle = new ReadOnlyCollection<double>(new double[] { 2, 2 });
+		static readonly IEnumerable<double> dashed_3_3_DashStyle = new ReadOnlyCollection<double>(new double[] { 3, 3 });
+		static readonly IEnumerable<double> dashed_4_4_DashStyle = new ReadOnlyCollection<double>(new double[] { 4, 4 });
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (wpfTextView.IsClosed)

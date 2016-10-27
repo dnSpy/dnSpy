@@ -6188,12 +6188,14 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding ReferenceHighlighting}" Content="{x:Static p:dnSpy_Resources.TextEditorReferenceHighlighting}" />
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
                     <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
                     <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
                     <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowBlockStructure}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                    <ComboBox Grid.Row="5" Margin="0 5 0 0" HorizontalAlignment="Stretch" Name="blockStructureLineKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BlockStructureLineKindVM.Items}" SelectedIndex="{Binding BlockStructureLineKindVM.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding ShowBlockStructure}" />
                 </Grid>
             </GroupBox>
             -->
@@ -6296,12 +6298,14 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding ReferenceHighlighting}" Content="{x:Static p:dnSpy_Resources.TextEditorReferenceHighlighting}" />
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
                     <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
                     <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
                     <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowBlockStructure}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                    <ComboBox Grid.Row="5" Margin="0 5 0 0" HorizontalAlignment="Stretch" Name="blockStructureLineKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BlockStructureLineKindVM.Items}" SelectedIndex="{Binding BlockStructureLineKindVM.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding ShowBlockStructure}" />
                 </Grid>
             </GroupBox>
             -->
@@ -6401,12 +6405,14 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding ReferenceHighlighting}" Content="{x:Static p:dnSpy_Resources.TextEditorReferenceHighlighting}" />
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
                     <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
                     <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
                     <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowBlockStructure}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                    <ComboBox Grid.Row="5" Margin="0 5 0 0" HorizontalAlignment="Stretch" Name="blockStructureLineKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BlockStructureLineKindVM.Items}" SelectedIndex="{Binding BlockStructureLineKindVM.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding ShowBlockStructure}" />
                 </Grid>
             </GroupBox>
             <GroupBox Grid.Row="1" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorLineHeight}">
@@ -6508,12 +6514,14 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding ReferenceHighlighting}" Content="{x:Static p:dnSpy_Resources.TextEditorReferenceHighlighting}" />
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding HighlightRelatedKeywords}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightRelatedKeywords}" />
                     <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding HighlightMatchingBrace}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightMatchingBrace}" />
                     <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding LineSeparators}" Content="{x:Static p:dnSpy_Resources.TextEditorLineSeparators}" />
                     <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowBlockStructure}" Content="{x:Static p:dnSpy_Resources.TextEditorShowStructureLines}" />
+                    <ComboBox Grid.Row="5" Margin="0 5 0 0" HorizontalAlignment="Stretch" Name="blockStructureLineKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BlockStructureLineKindVM.Items}" SelectedIndex="{Binding BlockStructureLineKindVM.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding ShowBlockStructure}" />
                 </Grid>
             </GroupBox>
             -->

@@ -467,6 +467,24 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dashed lines.
+        /// </summary>
+        public static string BlockStructureLineKind_DashedLines {
+            get {
+                return ResourceManager.GetString("BlockStructureLineKind_DashedLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Solid lines.
+        /// </summary>
+        public static string BlockStructureLineKind_SolidLines {
+            get {
+                return ResourceManager.GetString("BlockStructureLineKind_SolidLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Cancel.
         /// </summary>
         public static string Button_Cancel {

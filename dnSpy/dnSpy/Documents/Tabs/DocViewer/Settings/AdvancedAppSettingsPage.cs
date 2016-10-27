@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Text.Settings;
 
@@ -30,5 +31,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 		public AdvancedAppSettingsPage(IDocumentViewerOptions options)
 			: base(options) {
 		}
+
+		public override string[] GetSearchStrings() => BlockStructureLineKindVM.Items.Select(a => a.Name).ToArray();
 	}
 }
