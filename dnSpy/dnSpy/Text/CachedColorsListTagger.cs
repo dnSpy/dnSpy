@@ -60,6 +60,7 @@ namespace dnSpy.Text {
 
 	sealed class CachedColorsListTagger : ITagger<IClassificationTag> {
 		readonly CachedColorsList cachedColorsList;
+		IClassificationType textClassificationType;
 
 		public IThemeClassificationTypeService ThemeClassificationTypeService { get; internal set; }
 
@@ -79,6 +80,8 @@ namespace dnSpy.Text {
 			Debug.Assert(ThemeClassificationTypeService != null);
 			if (ThemeClassificationTypeService == null)
 				yield break;
+			if (textClassificationType == null)
+				textClassificationType = ThemeClassificationTypeService.GetClassificationType(TextColor.Text);
 
 			var snapshot = spans[0].Snapshot;
 			foreach (var span in spans) {
@@ -100,7 +103,8 @@ namespace dnSpy.Text {
 						break;
 
 					var ct = info.Data as IClassificationType ?? ThemeClassificationTypeService.GetClassificationType(info.Data as TextColor? ?? TextColor.Text);
-					yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, realSpan), new ClassificationTag(ct));
+					if (ct != textClassificationType)
+						yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, realSpan), new ClassificationTag(ct));
 					index++;
 				}
 			}
