@@ -187,6 +187,8 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 
 			decompilerSettings.CopyTo(_global_decompilerSettings);
 		}
+
+		public override string[] GetSearchStrings() => DecompilationObjectsArray.Select(a => a.Text).ToArray();
 	}
 
 	sealed class DecompilationObjectVM : ViewModelBase {

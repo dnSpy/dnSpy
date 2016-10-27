@@ -186,6 +186,8 @@ namespace dnSpy.MainApp.Settings {
 			UseNewRendererVM = new UseNewRendererVM(appSettings);
 		}
 
+		public override string[] GetSearchStrings() => ThemesVM.Select(a => a.Name).ToArray();
+
 		public override void OnApply() { throw new InvalidOperationException(); }
 
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {

@@ -249,6 +249,8 @@ namespace dnSpy.Documents.Tabs.Settings {
 				documentTreeViewSettings.MemberKind4 = MemberKind4.Object;
 			}
 		}
+
+		public override string[] GetSearchStrings() => MemberKindsArray.Select(a => a.Text).Concat(DocumentFilterTypes.Select(a => a.Text)).ToArray();
 	}
 
 	sealed class MemberKindVM {

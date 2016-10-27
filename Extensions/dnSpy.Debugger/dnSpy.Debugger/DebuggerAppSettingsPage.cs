@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
@@ -82,5 +83,7 @@ namespace dnSpy.Debugger {
 			Settings.CopyTo(_global_settings);
 			_global_settings.BreakProcessKind = this.BreakProcessKind;
 		}
+
+		public override string[] GetSearchStrings() => BreakProcessKindVM.Items.Select(a => a.Name).ToArray();
 	}
 }

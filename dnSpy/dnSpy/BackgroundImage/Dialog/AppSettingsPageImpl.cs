@@ -326,6 +326,12 @@ namespace dnSpy.BackgroundImage.Dialog {
 
 		public override void OnClosed() =>
 			backgroundImageSettingsService.LastSelectedId = currentItem.Id;
+
+		public override string[] GetSearchStrings() =>
+			StretchVM.Items.Select(a => a.Name).
+			Concat(StretchDirectionVM.Items.Select(a => a.Name)).
+			Concat(ImagePlacementVM.Items.Select(a => a.Name)).
+			Concat(Settings.Select(a => a.Name)).ToArray();
 	}
 
 	sealed class Settings {
