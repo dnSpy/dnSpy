@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Settings.CodeEditor {
@@ -73,6 +74,8 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		bool LineSeparators { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.ShowBlockStructure"/></summary>
 		bool ShowBlockStructure { get; }
+		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.BlockStructureLineKind"/></summary>
+		BlockStructureLineKind BlockStructureLineKind { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.CompressEmptyOrWhitespaceLines"/></summary>
 		bool CompressEmptyOrWhitespaceLines { get; }
 		/// <summary>See <see cref="ExportCodeEditorOptionsDefinitionAttribute.CompressNonLetterLines"/></summary>
@@ -128,6 +131,7 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 			HighlightMatchingBrace = DefaultCodeEditorOptions.HighlightMatchingBrace;
 			LineSeparators = DefaultCodeEditorOptions.LineSeparators;
 			ShowBlockStructure = DefaultCodeEditorOptions.ShowBlockStructure;
+			BlockStructureLineKind = DefaultCodeEditorOptions.BlockStructureLineKind;
 			CompressEmptyOrWhitespaceLines = DefaultCodeEditorOptions.CompressEmptyOrWhitespaceLines;
 			CompressNonLetterLines = DefaultCodeEditorOptions.CompressNonLetterLines;
 			RemoveExtraTextLineVerticalPixels = DefaultCodeEditorOptions.RemoveExtraTextLineVerticalPixels;
@@ -237,6 +241,11 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		/// Show indent guides, default value is <see cref="DefaultCodeEditorOptions.ShowBlockStructure"/>
 		/// </summary>
 		public bool ShowBlockStructure { get; set; }
+
+		/// <summary>
+		/// Block structure line kind, default value is <see cref="DefaultCodeEditorOptions.BlockStructureLineKind"/>
+		/// </summary>
+		public BlockStructureLineKind BlockStructureLineKind { get; set; }
 
 		/// <summary>
 		/// Compress empty/whitespace lines, default value is <see cref="DefaultCodeEditorOptions.CompressEmptyOrWhitespaceLines"/>

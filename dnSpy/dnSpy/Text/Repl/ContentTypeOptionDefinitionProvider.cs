@@ -65,6 +65,7 @@ namespace dnSpy.Text.Repl {
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.BraceMatchingId, md.HighlightMatchingBrace);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.LineSeparatorsId, md.LineSeparators);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewOptions.ShowBlockStructureId, md.ShowBlockStructure);
+				yield return new OptionDefinition<BlockStructureLineKind>(md.ContentType, DefaultDsTextViewOptions.BlockStructureLineKindId, md.BlockStructureLineKind);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId, md.CompressEmptyOrWhitespaceLines);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.CompressNonLetterLinesId, md.CompressNonLetterLines);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId, md.RemoveExtraTextLineVerticalPixels);

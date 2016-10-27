@@ -102,6 +102,12 @@ namespace dnSpy.Text.Editor {
 	}
 
 	[Export(typeof(EditorOptionDefinition))]
+	sealed class BlockStructureLineKindEditorOptionDefinition : ViewOptionDefinition<BlockStructureLineKind> {
+		public override EditorOptionKey<BlockStructureLineKind> Key => DefaultDsTextViewOptions.BlockStructureLineKindId;
+		public override BlockStructureLineKind Default => BlockStructureLineKind.Dotted_2_2;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
 	sealed class RemoveExtraTextLineVerticalPixelsEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId;
 		public override bool Default => false;

@@ -129,7 +129,6 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					if (data != null)
 						list.Add(data.Value);
 				}
-				return;
 			}
 		}
 

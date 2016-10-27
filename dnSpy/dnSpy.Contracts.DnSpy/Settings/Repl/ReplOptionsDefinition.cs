@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Settings.Repl {
@@ -73,6 +74,8 @@ namespace dnSpy.Contracts.Settings.Repl {
 		bool LineSeparators { get; }
 		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.ShowBlockStructure"/></summary>
 		bool ShowBlockStructure { get; }
+		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.BlockStructureLineKind"/></summary>
+		BlockStructureLineKind BlockStructureLineKind { get; }
 		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.CompressEmptyOrWhitespaceLines"/></summary>
 		bool CompressEmptyOrWhitespaceLines { get; }
 		/// <summary>See <see cref="ExportReplOptionsDefinitionAttribute.CompressNonLetterLines"/></summary>
@@ -128,6 +131,7 @@ namespace dnSpy.Contracts.Settings.Repl {
 			HighlightMatchingBrace = DefaultReplOptions.HighlightMatchingBrace;
 			LineSeparators = DefaultReplOptions.LineSeparators;
 			ShowBlockStructure = DefaultReplOptions.ShowBlockStructure;
+			BlockStructureLineKind = DefaultReplOptions.BlockStructureLineKind;
 			CompressEmptyOrWhitespaceLines = DefaultReplOptions.CompressEmptyOrWhitespaceLines;
 			CompressNonLetterLines = DefaultReplOptions.CompressNonLetterLines;
 			RemoveExtraTextLineVerticalPixels = DefaultReplOptions.RemoveExtraTextLineVerticalPixels;
@@ -237,6 +241,11 @@ namespace dnSpy.Contracts.Settings.Repl {
 		/// Show indent guides, default value is <see cref="DefaultReplOptions.ShowBlockStructure"/>
 		/// </summary>
 		public bool ShowBlockStructure { get; set; }
+
+		/// <summary>
+		/// Block structure line kind, default value is <see cref="DefaultReplOptions.BlockStructureLineKind"/>
+		/// </summary>
+		public BlockStructureLineKind BlockStructureLineKind { get; set; }
 
 		/// <summary>
 		/// Compress empty/whitespace lines, default value is <see cref="DefaultReplOptions.CompressEmptyOrWhitespaceLines"/>

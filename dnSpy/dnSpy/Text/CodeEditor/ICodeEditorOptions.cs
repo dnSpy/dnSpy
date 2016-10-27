@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
@@ -43,6 +44,7 @@ namespace dnSpy.Text.CodeEditor {
 		bool BraceMatching { get; set; }
 		bool LineSeparators { get; set; }
 		bool ShowBlockStructure { get; set; }
+		BlockStructureLineKind BlockStructureLineKind { get; set; }
 		bool CompressEmptyOrWhitespaceLines { get; set; }
 		bool CompressNonLetterLines { get; set; }
 		bool RemoveExtraTextLineVerticalPixels { get; set; }

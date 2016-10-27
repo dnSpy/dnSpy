@@ -113,6 +113,11 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			set { group.SetOptionValue(ContentType.TypeName, DefaultTextViewOptions.ShowBlockStructureId, value); }
 		}
 
+		public BlockStructureLineKind BlockStructureLineKind {
+			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.BlockStructureLineKindId); }
+			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.BlockStructureLineKindId, value); }
+		}
+
 		public bool CompressEmptyOrWhitespaceLines {
 			get { return group.GetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId); }
 			set { group.SetOptionValue(ContentType.TypeName, DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId, value); }

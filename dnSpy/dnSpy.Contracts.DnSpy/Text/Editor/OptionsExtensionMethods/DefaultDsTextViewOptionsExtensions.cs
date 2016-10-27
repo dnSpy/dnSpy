@@ -178,5 +178,16 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId);
 		}
+
+		/// <summary>
+		/// Gets the <see cref="BlockStructureLineKind"/> value
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static BlockStructureLineKind GetBlockStructureLineKind(this IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultDsTextViewOptions.BlockStructureLineKindId);
+		}
 	}
 }

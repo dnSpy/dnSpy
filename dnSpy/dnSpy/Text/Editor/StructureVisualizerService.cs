@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows;
@@ -26,6 +27,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
@@ -148,21 +150,25 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			if (refresh) {
-				UpdateColorInfos();
-				RepaintAllLines();
-			}
+			if (refresh)
+				RefreshLinesAndColorInfos();
+		}
+
+		void RefreshLinesAndColorInfos() {
+			UpdateColorInfos();
+			RepaintAllLines();
 		}
 
 		void UpdateColorInfos() {
+			var lineKind = wpfTextView.Options.GetBlockStructureLineKind();
 			foreach (var info in lineColorInfos) {
 				var props = editorFormatMap.GetProperties(info.Type);
-				info.Pen = GetPen(props);
+				info.Pen = GetPen(props, lineKind);
 			}
 		}
 
 		const double PEN_THICKNESS = 1.0;
-		Pen GetPen(ResourceDictionary props) {
+		Pen GetPen(ResourceDictionary props, BlockStructureLineKind lineKind) {
 			Color? color;
 			SolidColorBrush scBrush;
 
@@ -170,13 +176,13 @@ namespace dnSpy.Text.Editor {
 			if ((color = props[EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
 				var brush = new SolidColorBrush(color.Value);
 				brush.Freeze();
-				newPen = new Pen(brush, PEN_THICKNESS);
+				newPen = InitializePen(new Pen(brush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
 			else if ((scBrush = props[EditorFormatDefinition.ForegroundBrushId] as SolidColorBrush) != null) {
 				if (scBrush.CanFreeze)
 					scBrush.Freeze();
-				newPen = new Pen(scBrush, PEN_THICKNESS);
+				newPen = InitializePen(new Pen(scBrush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
 			else if ((newPen = props[MarkerFormatDefinition.BorderId] as Pen) != null) {
@@ -187,11 +193,31 @@ namespace dnSpy.Text.Editor {
 			return newPen;
 		}
 
+		Pen InitializePen(Pen pen, BlockStructureLineKind lineKind) {
+			switch (lineKind) {
+			case BlockStructureLineKind.Solid:
+				break;
+
+			case BlockStructureLineKind.Dotted_2_2:
+				pen.DashStyle = new DashStyle(dotted_2_2_DashStyle, 1);
+				pen.DashCap = PenLineCap.Flat;
+				break;
+
+			default:
+				Debug.Fail($"Unknown line kind: {lineKind}");
+				break;
+			}
+			return pen;
+		}
+		static readonly IEnumerable<double> dotted_2_2_DashStyle = new ReadOnlyCollection<double>(new double[] { 2, 2 });
+
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
 			if (e.OptionId == DefaultTextViewOptions.ShowBlockStructureName)
 				UpdateEnabled();
+			else if (enabled && e.OptionId == DefaultDsTextViewOptions.BlockStructureLineKindName)
+				RefreshLinesAndColorInfos();
 		}
 
 		void UpdateEnabled() {
@@ -205,8 +231,7 @@ namespace dnSpy.Text.Editor {
 				if (editorFormatMap == null)
 					editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextView);
 				RegisterEvents();
-				UpdateColorInfos();
-				RepaintAllLines();
+				RefreshLinesAndColorInfos();
 			}
 			else {
 				UnregisterEvents();
@@ -230,142 +255,112 @@ namespace dnSpy.Text.Editor {
 			UpdateRange(new NormalizedSnapshotSpanCollection(wpfTextView.TextViewLines.FormattedSpan));
 		}
 
-		void RemoveLineElements(NormalizedSnapshotSpanCollection spans) {
-			if (spans.Count == 0)
-				return;
-			for (int i = lineElements.Count - 1; i >= 0; i--) {
-				var lineElement = lineElements[i];
-				if (spans.IntersectsWith(lineElement.Span))
-					layer.RemoveAdornment(lineElement);
-			}
-		}
+		sealed class StructureVisualizerDataComparer : IEqualityComparer<StructureVisualizerData> {
+			public static readonly StructureVisualizerDataComparer Instance = new StructureVisualizerDataComparer();
 
-		struct LineElementData {
-			public ITextViewLine Line { get; }
-			public StructureVisualizerData[] Data { get; }
-			public LineElementData(ITextViewLine line, StructureVisualizerData[] data) {
-				Line = line;
-				Data = data;
-			}
-		}
+			public bool Equals(StructureVisualizerData x, StructureVisualizerData y) =>
+				x.BlockKind == y.BlockKind &&
+				x.Top == y.Top &&
+				x.Bottom == y.Bottom;
 
-		// Returns the intersection, including the previous line if span starts at the beginning of a line
-		IList<ITextViewLine> GetTextViewLinesIntersectingSpan(SnapshotSpan span, ref List<ITextViewLine> list) {
-			IList<ITextViewLine> lines = wpfTextView.TextViewLines.GetTextViewLinesIntersectingSpan(span);
-			if ((lines.Count == 0 || span.Start == lines[0].Start) && span.Start.Position != 0) {
-				var prevLine = wpfTextView.TextViewLines.GetTextViewLineContainingBufferPosition(span.Start - 1);
-				if (prevLine != null) {
-					if (list == null)
-						list = new List<ITextViewLine>();
-					list.Add(prevLine);
-					list.AddRange(lines);
-					return list;
-				}
-			}
-			return lines;
-		}
-
-		IEnumerable<LineElementData> GetLineElementData(NormalizedSnapshotSpanCollection spans) {
-			if (spans.Count == 0)
-				yield break;
-			var snapshot = spans[0].Snapshot;
-			ITextSnapshotLine snapshotLine = null;
-			SnapshotSpan lineExtent;
-			var prevLineExtent = default(SnapshotSpan);
-			var list = new List<StructureVisualizerData>();
-			StructureVisualizerData[] listArray = null;
-			List<ITextViewLine> linesList = null;
-			foreach (var span in spans) {
-				var lines = GetTextViewLinesIntersectingSpan(span, ref linesList);
-				foreach (var line in lines) {
-					if (snapshotLine != null) {
-						if (line.Start >= snapshotLine.Start && line.EndIncludingLineBreak <= snapshotLine.EndIncludingLineBreak) {
-							// Nothing
-						}
-						else if (line.Start == snapshotLine.EndIncludingLineBreak)
-							snapshotLine = snapshotLine.Snapshot.GetLineFromLineNumber(snapshotLine.LineNumber + 1);
-						else
-							snapshotLine = line.Start.GetContainingLine();
-						lineExtent = snapshotLine.Extent;
-					}
-					else if (line.IsFirstTextViewLineForSnapshotLine && line.IsLastTextViewLineForSnapshotLine)
-						lineExtent = line.Extent;
-					else {
-						snapshotLine = line.Start.GetContainingLine();
-						lineExtent = snapshotLine.Extent;
-					}
-
-					if (prevLineExtent != lineExtent) {
-						list.Clear();
-						structureVisualizerServiceDataProvider.GetData(lineExtent, list);
-						listArray = list.Count == 0 ? Array.Empty<StructureVisualizerData>() : list.ToArray();
-					}
-
-					if (listArray.Length != 0) {
-						var last = listArray[listArray.Length - 1];
-						// Don't add a vertical line to the line containing the start block
-						if (!(last.Top.Start >= lineExtent.Start && last.Top.End <= lineExtent.End)) {
-							var ary = listArray;
-							if (last.Bottom.Start >= lineExtent.Start && last.Bottom.End <= lineExtent.End) {
-								ary = new StructureVisualizerData[listArray.Length - 1];
-								for (int i = 0; i < ary.Length; i++)
-									ary[i] = listArray[i];
-							}
-							yield return new LineElementData(line, ary);
-						}
-					}
-
-					prevLineExtent = lineExtent;
-				}
-			}
+			public int GetHashCode(StructureVisualizerData obj) =>
+				obj.Top.GetHashCode() ^ obj.Bottom.GetHashCode() ^ (int)obj.BlockKind;
 		}
 
 		void AddLineElements(NormalizedSnapshotSpanCollection spans) {
-			foreach (var data in GetLineElementData(spans)) {
-				var lineElement = TryCreateLineElement(data);
-				if (lineElement == null)
-					continue;
-				bool added = layer.AddAdornment(AdornmentPositioningBehavior.TextRelative, lineElement.Span, null, lineElement, onRemovedDelegate);
-				if (added)
-					lineElements.Add(lineElement);
+			if (spans.Count == 0)
+				return;
+			var list = new List<StructureVisualizerData>();
+			var updated = new HashSet<StructureVisualizerData>(StructureVisualizerDataComparer.Instance);
+			foreach (var span in spans) {
+				list.Clear();
+				structureVisualizerServiceDataProvider.GetData(GetLineExtent(span), list);
+
+				foreach (var info in list) {
+					if (updated.Contains(info))
+						continue;
+					updated.Add(info);
+
+					var lineElement = FindLineElement(info);
+					if (lineElement != null) {
+						layer.RemoveAdornment(lineElement);
+						Debug.Assert(!lineElements.Contains(lineElement));
+					}
+					if (lineElement == null)
+						lineElement = new LineElement(info);
+
+					var lines = wpfTextView.TextViewLines.GetTextViewLinesIntersectingSpan(lineElement.Span);
+					if (lines.Count == 0)
+						continue;
+
+					int lineStartIndex = 0;
+					int lineEndIndex = lines.Count - 1;
+
+					// Don't add a vertical line to the line containing the start or end block
+					if (LineContainsSpan(info.Top, lines[lineStartIndex]))
+						lineStartIndex++;
+					if (LineContainsSpan(info.Bottom, lines[lineEndIndex]))
+						lineEndIndex--;
+
+					if (lineStartIndex > lineEndIndex)
+						continue;
+
+					double top = lines[lineStartIndex].Top;
+					double bottom = lines[lineEndIndex].Bottom;
+					if (bottom - top < 0.5)
+						continue;
+					double x = GetLineXPosition(info);
+					var pen = GetPen(info.BlockKind);
+					lineElement.Update(x, bottom, top, pen);
+
+					bool added = layer.AddAdornment(AdornmentPositioningBehavior.TextRelative, lineElement.Span, null, lineElement, onRemovedDelegate);
+					if (added)
+						lineElements.Add(lineElement);
+				}
+			}
+		}
+
+		static bool LineContainsSpan(SnapshotSpan point, ITextViewLine line) {
+			SnapshotSpan span;
+			if (line.IsFirstTextViewLineForSnapshotLine && line.IsLastTextViewLineForSnapshotLine)
+				span = line.ExtentIncludingLineBreak;
+			else
+				span = line.Start.GetContainingLine().ExtentIncludingLineBreak;
+			if (span.Start <= point.Start && (point.End < span.End || (point.End == span.End && line.IsLastDocumentLine())))
+				return true;
+			return false;
+		}
+
+		LineElement FindLineElement(StructureVisualizerData info) {
+			foreach (var lineElement in lineElements) {
+				if (StructureVisualizerDataComparer.Instance.Equals(lineElement.StructureVisualizerData, info))
+					return lineElement;
+			}
+			return null;
+		}
+
+		static SnapshotSpan GetLineExtent(SnapshotSpan span) {
+			if (span.Length == 0) {
+				var line = span.Start.GetContainingLine();
+				return line.ExtentIncludingLineBreak;
+			}
+			else {
+				var startLine = span.Start.GetContainingLine();
+				var endLine = span.End.GetContainingLine();
+				if (endLine.Start == span.End)
+					return new SnapshotSpan(startLine.Start, span.End);
+				return new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak);
 			}
 		}
 
 		readonly AdornmentRemovedCallback onRemovedDelegate;
 		void OnRemoved(object tag, UIElement element) => lineElements.Remove((LineElement)element);
 
-		void UpdateRange(NormalizedSnapshotSpanCollection spans) {
-			if (spans.Count == 1 && spans[0].Start.Position == 0 && spans[0].Length == spans[0].Snapshot.Length)
-				RemoveAllLineElements();
-			else
-				RemoveLineElements(spans);
-			AddLineElements(spans);
-		}
+		void UpdateRange(NormalizedSnapshotSpanCollection spans) => AddLineElements(spans);
 
 		void RemoveAllLineElements() {
 			lineElements.Clear();
 			layer?.RemoveAllAdornments();
-		}
-
-		LineElement TryCreateLineElement(LineElementData data) {
-			var lineElement = new LineElement(data.Line, GetLineElementDrawData(data.Data));
-			return lineElement;
-		}
-
-		LineElementDrawData[] GetLineElementDrawData(StructureVisualizerData[] data) {
-			var res = new LineElementDrawData[data.Length];
-
-			for (int i = 0; i < res.Length; i++)
-				res[i] = CreateLineElementDrawData(data[i]);
-
-			return res;
-		}
-
-		LineElementDrawData CreateLineElementDrawData(StructureVisualizerData data) {
-			var pen = GetPen(data.BlockKind);
-			Debug.Assert(pen != null);
-			double x = GetLineXPosition(data);
-			return new LineElementDrawData(pen, x);
 		}
 
 		Pen GetPen(StructureVisualizerDataBlockKind blockKind) => GetLineColorInfo(GetColorInfoType(blockKind)).Pen;
@@ -510,32 +505,29 @@ done:
 			UpdateRange(spans);
 		}
 
-		struct LineElementDrawData {
-			public Pen Pen { get; }
-			public double X { get; }
-			public LineElementDrawData(Pen pen, double x) {
-				Pen = pen;
-				X = x;
-			}
-		}
-
 		sealed class LineElement : UIElement {
-			public SnapshotSpan Span { get; }
+			public StructureVisualizerData StructureVisualizerData { get; }
+			public SnapshotSpan Span => new SnapshotSpan(StructureVisualizerData.Top.Start, StructureVisualizerData.Bottom.End);
+			double x;
+			double top;
+			double bottom;
+			Pen pen;
 
-			readonly LineElementDrawData[] drawData;
-			readonly double height;
-
-			public LineElement(ITextViewLine line, LineElementDrawData[] drawData) {
-				Span = line.ExtentIncludingLineBreak;
-				this.drawData = drawData;
-				this.height = line.Height;
-				Canvas.SetTop(this, line.Top);
+			public LineElement(StructureVisualizerData info) {
+				StructureVisualizerData = info;
 			}
 
 			protected override void OnRender(DrawingContext drawingContext) {
 				base.OnRender(drawingContext);
-				foreach (var data in drawData)
-					drawingContext.DrawLine(data.Pen, new Point(data.X, 0), new Point(data.X, height));
+				drawingContext.DrawLine(pen, new Point(x, 0), new Point(x, bottom - top));
+			}
+
+			public void Update(double x, double bottom, double top, Pen pen) {
+				Canvas.SetTop(this, top);
+				this.x = x;
+				this.bottom = bottom;
+				this.top = top;
+				this.pen = pen;
 			}
 		}
 

@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 
 namespace dnSpy.Text.Repl {
@@ -88,6 +89,17 @@ namespace dnSpy.Text.Repl {
 			}
 		}
 		bool showBlockStructure;
+
+		public BlockStructureLineKind BlockStructureLineKind {
+			get { return blockStructureLineKind; }
+			set {
+				if (blockStructureLineKind != value) {
+					blockStructureLineKind = value;
+					OnPropertyChanged(nameof(BlockStructureLineKind));
+				}
+			}
+		}
+		BlockStructureLineKind blockStructureLineKind;
 
 		public bool CompressEmptyOrWhitespaceLines {
 			get { return compressEmptyOrWhitespaceLines; }
@@ -178,6 +190,7 @@ namespace dnSpy.Text.Repl {
 			HighlightMatchingBrace = options.BraceMatching;
 			LineSeparators = options.LineSeparators;
 			ShowBlockStructure = options.ShowBlockStructure;
+			BlockStructureLineKind = options.BlockStructureLineKind;
 			CompressEmptyOrWhitespaceLines = options.CompressEmptyOrWhitespaceLines;
 			CompressNonLetterLines = options.CompressNonLetterLines;
 			MinimumLineSpacing = options.RemoveExtraTextLineVerticalPixels;
@@ -193,6 +206,7 @@ namespace dnSpy.Text.Repl {
 			options.BraceMatching = HighlightMatchingBrace;
 			options.LineSeparators = LineSeparators;
 			options.ShowBlockStructure = ShowBlockStructure;
+			options.BlockStructureLineKind = BlockStructureLineKind;
 			options.CompressEmptyOrWhitespaceLines = CompressEmptyOrWhitespaceLines;
 			options.CompressNonLetterLines = CompressNonLetterLines;
 			options.RemoveExtraTextLineVerticalPixels = MinimumLineSpacing;
