@@ -39,7 +39,7 @@ namespace dnSpy.Text.Editor {
 			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 		}
 
-		MouseLocation GetLocation(MouseEventArgs e) => MouseLocation.Create(wpfTextView, e);
+		MouseLocation GetLocation(MouseEventArgs e) => MouseLocation.Create(wpfTextView, e, insertionPosition: true);
 
 		bool IsInSelection(VirtualSnapshotPoint point) {
 			if (wpfTextView.Selection.IsEmpty)

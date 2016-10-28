@@ -149,7 +149,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (documentViewer == null)
 				return null;
 
-			var loc = MouseLocation.Create(documentViewer.TextView, e);
+			var loc = MouseLocation.Create(documentViewer.TextView, e, insertionPosition: false);
 			if (loc == null)
 				return null;
 			if (loc.Position.IsInVirtualSpace)

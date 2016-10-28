@@ -41,7 +41,7 @@ namespace dnSpy.Text.Editor {
 		static TextEditorPosition GetTextEditorPositionFromMouse(IWpfTextView textView) {
 			if (!textView.VisualElement.IsVisible)
 				return null;
-			var loc = MouseLocation.Create(textView, new MouseEventArgs(Mouse.PrimaryDevice, 0));
+			var loc = MouseLocation.Create(textView, new MouseEventArgs(Mouse.PrimaryDevice, 0), insertionPosition: true);
 			if (loc.Point.Y < textView.ViewportTop || loc.Point.Y >= textView.ViewportBottom)
 				return null;
 			if (loc.Point.X < textView.ViewportLeft || loc.Point.X >= textView.ViewportRight)

@@ -91,7 +91,7 @@ namespace dnSpy.Text.Editor {
 		SnapshotSpan? GetUriSpan(MouseEventArgs e) {
 			if (!IsControlDown)
 				return null;
-			var loc = MouseLocation.Create(wpfTextView, e);
+			var loc = MouseLocation.Create(wpfTextView, e, insertionPosition: false);
 			if (loc.Position.VirtualSpaces > 0)
 				return null;
 			return UriHelper.GetUri(viewTagAggregatorFactoryService, wpfTextView, loc.Position.Position);

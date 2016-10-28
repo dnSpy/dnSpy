@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 			return new Point(wpfTextView.ViewportLeft + pos.X, wpfTextView.ViewportTop + pos.Y);
 		}
 
-		public static MouseLocation Create(IWpfTextView wpfTextView, MouseEventArgs e) {
+		public static MouseLocation Create(IWpfTextView wpfTextView, MouseEventArgs e, bool insertionPosition) {
 			ITextViewLine textViewLine;
 			VirtualSnapshotPoint position;
 
@@ -59,7 +59,10 @@ namespace dnSpy.Text.Editor {
 				textViewLine = wpfTextView.TextViewLines.FirstVisibleLine;
 			else
 				textViewLine = wpfTextView.TextViewLines.LastVisibleLine;
-			position = textViewLine.GetInsertionBufferPositionFromXCoordinate(point.X);
+			if (insertionPosition)
+				position = textViewLine.GetInsertionBufferPositionFromXCoordinate(point.X);
+			else
+				position = textViewLine.GetVirtualBufferPositionFromXCoordinate(point.X);
 
 			return new MouseLocation(textViewLine, position, point);
 		}

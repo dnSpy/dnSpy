@@ -68,7 +68,7 @@ namespace dnSpy.Text.Editor {
 
 		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e) {
 			if (CaptureMouse()) {
-				var line = MouseLocation.Create(wpfTextViewHost.TextView, e).TextViewLine;
+				var line = MouseLocation.Create(wpfTextViewHost.TextView, e, insertionPosition: false).TextViewLine;
 				editorOperations.SelectLine(line, (Keyboard.Modifiers & ModifierKeys.Shift) != 0);
 				mouseCaptured = true;
 				e.Handled = true;
@@ -81,7 +81,7 @@ namespace dnSpy.Text.Editor {
 
 		protected override void OnMouseMove(MouseEventArgs e) {
 			if (mouseCaptured) {
-				var mouseLoc = MouseLocation.Create(wpfTextViewHost.TextView, e);
+				var mouseLoc = MouseLocation.Create(wpfTextViewHost.TextView, e, insertionPosition: false);
 				var line = mouseLoc.TextViewLine;
 				editorOperations.SelectLine(line, true);
 				// Needed or the scrolling will stop
