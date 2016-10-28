@@ -76,6 +76,8 @@
     <Compile Include="TheExtension.cs" />
     <Compile Include="XamlContext.cs" />
     <Compile Include="XamlDecompiler.cs" />
+    <Compile Include="XamlOutputCreator.cs" />
+    <Compile Include="XamlOutputOptionsProvider.cs" />
     <Compile Include="Xaml\NamespaceMap.cs" />
     <Compile Include="Xaml\XamlExtension.cs" />
     <Compile Include="Xaml\XamlPathDeserializer.cs" />

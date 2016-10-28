@@ -60,15 +60,17 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTreeViewSettings documentTreeViewSettings;
 		readonly IExportToProjectSettings exportToProjectSettings;
 		readonly Lazy<IBamlDecompiler> bamlDecompiler;
+		readonly Lazy<IXamlOutputOptionsProvider> xamlOutputOptionsProvider;
 
 		[ImportingConstructor]
-		ExportProjectCommand(IAppWindow appWindow, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, IDocumentTreeViewSettings documentTreeViewSettings, IExportToProjectSettings exportToProjectSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers) {
+		ExportProjectCommand(IAppWindow appWindow, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, IDocumentTreeViewSettings documentTreeViewSettings, IExportToProjectSettings exportToProjectSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers, [ImportMany] IEnumerable<Lazy<IXamlOutputOptionsProvider>> xamlOutputOptionsProviders) {
 			this.appWindow = appWindow;
 			this.documentTreeView = documentTreeView;
 			this.decompilerService = decompilerService;
 			this.documentTreeViewSettings = documentTreeViewSettings;
 			this.exportToProjectSettings = exportToProjectSettings;
 			this.bamlDecompiler = bamlDecompilers.FirstOrDefault();
+			this.xamlOutputOptionsProvider = xamlOutputOptionsProviders.FirstOrDefault();
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) =>
@@ -115,6 +117,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly CancellationToken cancellationToken;
 			readonly Dispatcher dispatcher;
 			readonly IBamlDecompiler bamlDecompiler;
+			readonly IXamlOutputOptionsProvider xamlOutputOptionsProvider;
 
 			internal ExportToProjectDlg dlg;
 			internal ExportToProjectVM vm;
@@ -125,8 +128,10 @@ namespace dnSpy.Documents.Tabs {
 				this.cancellationTokenSource = new CancellationTokenSource();
 				this.cancellationToken = cancellationTokenSource.Token;
 				this.dispatcher = Dispatcher.CurrentDispatcher;
-				if (owner.bamlDecompiler != null)
+				if (owner.bamlDecompiler != null) {
 					this.bamlDecompiler = owner.bamlDecompiler.Value;
+					this.xamlOutputOptionsProvider = owner.xamlOutputOptionsProvider?.Value;
+				}
 			}
 
 			public void Dispose() {
@@ -178,7 +183,8 @@ namespace dnSpy.Documents.Tabs {
 						};
 						if (bamlDecompiler != null) {
 							var o = BamlDecompilerOptions.Create(vm.Decompiler);
-							projOpts.DecompileBaml = (a, b, c, d) => bamlDecompiler.Decompile(a, b, c, o, d);
+							var outputOptions = xamlOutputOptionsProvider?.Default ?? new XamlOutputOptions();
+							projOpts.DecompileBaml = (a, b, c, d) => bamlDecompiler.Decompile(a, b, c, o, d, outputOptions);
 						}
 						options.ProjectModules.Add(projOpts);
 					}

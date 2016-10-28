@@ -25,6 +25,7 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
@@ -33,10 +34,12 @@ namespace dnSpy.BamlDecompiler {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_BAML_NODE)]
 	sealed class BamlResourceNodeProvider : IResourceNodeProvider {
 		readonly BamlSettingsImpl bamlSettings;
+		readonly IXamlOutputOptionsProvider xamlOutputOptionsProvider;
 
 		[ImportingConstructor]
-		BamlResourceNodeProvider(BamlSettingsImpl bamlSettings) {
+		BamlResourceNodeProvider(BamlSettingsImpl bamlSettings, IXamlOutputOptionsProvider xamlOutputOptionsProvider) {
 			this.bamlSettings = bamlSettings;
+			this.xamlOutputOptionsProvider = xamlOutputOptionsProvider;
 		}
 
 		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
@@ -50,7 +53,7 @@ namespace dnSpy.BamlDecompiler {
 			if (!BamlReader.IsBamlHeader(new MemoryStream(data)))
 				return null;
 
-			return new BamlResourceElementNode(module, resourceElement, data, treeNodeGroup, bamlSettings);
+			return new BamlResourceElementNode(module, resourceElement, data, treeNodeGroup, bamlSettings, xamlOutputOptionsProvider);
 		}
 	}
 }

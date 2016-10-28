@@ -17,25 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using System;
 using System.ComponentModel.Composition;
-using System.IO;
-using System.Text;
-using System.Threading;
-using dnlib.DotNet;
-using dnSpy.BamlDecompiler.Baml;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.BamlDecompiler {
-	[Export(typeof(IBamlDecompiler))]
-	sealed class BamlDecompiler : IBamlDecompiler {
-		public IList<string> Decompile(ModuleDef module, byte[] data, CancellationToken token, BamlDecompilerOptions bamlDecompilerOptions, Stream output, XamlOutputOptions outputOptions) {
-			var doc = BamlReader.ReadDocument(new MemoryStream(data), token);
-			var asmRefs = new List<string>();
-			var xaml = new XamlDecompiler().Decompile(module, doc, token, bamlDecompilerOptions, asmRefs);
-			var resData = Encoding.UTF8.GetBytes(new XamlOutputCreator(outputOptions).CreateText(xaml));
-			output.Write(resData, 0, resData.Length);
-			return asmRefs;
+	[Export(typeof(IXamlOutputOptionsProvider))]
+	sealed class XamlOutputOptionsProvider : IXamlOutputOptionsProvider {
+		public XamlOutputOptions Default {
+			get {
+				return new XamlOutputOptions {
+					IndentChars = bamlSettings.UseTabs ? "\t" : "    ",
+					NewLineChars = Environment.NewLine,
+					NewLineOnAttributes = bamlSettings.NewLineOnAttributes,
+				};
+			}
+		}
+
+		readonly BamlSettingsImpl bamlSettings;
+
+		[ImportingConstructor]
+		XamlOutputOptionsProvider(BamlSettingsImpl bamlSettings) {
+			this.bamlSettings = bamlSettings;
 		}
 	}
 }

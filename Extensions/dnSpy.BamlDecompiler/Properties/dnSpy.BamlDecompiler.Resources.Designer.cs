@@ -97,6 +97,24 @@ namespace dnSpy.BamlDecompiler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One attribute per line.
+        /// </summary>
+        public static string BamlSettings_NewLineOnAttributes {
+            get {
+                return ResourceManager.GetString("BamlSettings_NewLineOnAttributes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use tabs.
+        /// </summary>
+        public static string BamlSettings_UseTabs {
+            get {
+                return ResourceManager.GetString("BamlSettings_UseTabs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disassemble BAML.
         /// </summary>
         public static string DisassembleBAMLCommand {

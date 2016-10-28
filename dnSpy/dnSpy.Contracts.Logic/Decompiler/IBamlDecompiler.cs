@@ -35,7 +35,38 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="token">Cancellation token</param>
 		/// <param name="bamlDecompilerOptions">Options</param>
 		/// <param name="output">Output stream</param>
+		/// <param name="outputOptions">Output options</param>
 		/// <returns></returns>
-		IList<string> Decompile(ModuleDef module, byte[] data, CancellationToken token, BamlDecompilerOptions bamlDecompilerOptions, Stream output);
+		IList<string> Decompile(ModuleDef module, byte[] data, CancellationToken token, BamlDecompilerOptions bamlDecompilerOptions, Stream output, XamlOutputOptions outputOptions);
+	}
+
+	/// <summary>
+	/// Provides <see cref="XamlOutputOptions"/>
+	/// </summary>
+	public interface IXamlOutputOptionsProvider {
+		/// <summary>
+		/// Gets the default options that gets changed by the user
+		/// </summary>
+		XamlOutputOptions Default { get; }
+	}
+
+	/// <summary>
+	/// XAML output options
+	/// </summary>
+	public sealed class XamlOutputOptions {
+		/// <summary>
+		/// Indent characters
+		/// </summary>
+		public string IndentChars { get; set; }
+
+		/// <summary>
+		/// Newline characters
+		/// </summary>
+		public string NewLineChars { get; set; }
+
+		/// <summary>
+		/// Add a newline after each attribute
+		/// </summary>
+		public bool NewLineOnAttributes { get; set; }
 	}
 }

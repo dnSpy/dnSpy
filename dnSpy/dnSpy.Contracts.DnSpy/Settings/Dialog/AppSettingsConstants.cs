@@ -84,14 +84,14 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_HEXEDITOR = 8000;
 
 		/// <summary>
-		/// Order of background image settings page
-		/// </summary>
-		public const double ORDER_BACKGROUNDIMAGE = 9000;
-
-		/// <summary>
 		/// Order of baml settings page
 		/// </summary>
-		public const double ORDER_BAML = 10000;
+		public const double ORDER_BAML = 9000;
+
+		/// <summary>
+		/// Order of background image settings page
+		/// </summary>
+		public const double ORDER_BACKGROUNDIMAGE = 10000;
 
 		/// <summary>
 		/// Order of <see cref="IDsDocumentService"/>'s <see cref="IAppSettingsModifiedListener"/> instance

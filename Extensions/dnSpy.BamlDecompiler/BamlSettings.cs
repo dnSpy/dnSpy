@@ -45,12 +45,38 @@ namespace dnSpy.BamlDecompiler {
 				}
 			}
 		}
-		bool disassembleBaml;
+		bool disassembleBaml = false;
+
+		public bool UseTabs {
+			get { return useTabs; }
+			set {
+				if (useTabs != value) {
+					useTabs = value;
+					OnPropertyChanged(nameof(UseTabs));
+					OnModified();
+				}
+			}
+		}
+		bool useTabs = true;
+
+		public bool NewLineOnAttributes {
+			get { return newLineOnAttributes; }
+			set {
+				if (newLineOnAttributes != value) {
+					newLineOnAttributes = value;
+					OnPropertyChanged(nameof(NewLineOnAttributes));
+					OnModified();
+				}
+			}
+		}
+		bool newLineOnAttributes = true;
 
 		public BamlSettings Clone() => CopyTo(new BamlSettings());
 
 		public BamlSettings CopyTo(BamlSettings other) {
 			other.DisassembleBaml = this.DisassembleBaml;
+			other.UseTabs = this.UseTabs;
+			other.NewLineOnAttributes = this.NewLineOnAttributes;
 			return other;
 		}
 	}
@@ -68,6 +94,8 @@ namespace dnSpy.BamlDecompiler {
 			this.disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			this.DisassembleBaml = sect.Attribute<bool?>(nameof(DisassembleBaml)) ?? this.DisassembleBaml;
+			this.UseTabs = sect.Attribute<bool?>(nameof(UseTabs)) ?? this.UseTabs;
+			this.NewLineOnAttributes = sect.Attribute<bool?>(nameof(NewLineOnAttributes)) ?? this.NewLineOnAttributes;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -77,6 +105,8 @@ namespace dnSpy.BamlDecompiler {
 				return;
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(DisassembleBaml), DisassembleBaml);
+			sect.Attribute(nameof(UseTabs), UseTabs);
+			sect.Attribute(nameof(NewLineOnAttributes), NewLineOnAttributes);
 		}
 	}
 
@@ -122,8 +152,13 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void BamlSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(BamlSettings.DisassembleBaml))
+			switch (e.PropertyName) {
+			case nameof(BamlSettings.DisassembleBaml):
+			case nameof(BamlSettings.UseTabs):
+			case nameof(BamlSettings.NewLineOnAttributes):
 				documentTabService.Refresh<BamlResourceElementNode>();
+				break;
+			}
 		}
 	}
 }
