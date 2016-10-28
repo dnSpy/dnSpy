@@ -84,12 +84,10 @@ namespace dnSpy.BamlDecompiler {
 
 		#endregion
 
-		IDecompiler lang;
 		IDecompilerOutput output;
 		CancellationToken token;
 
-		public BamlDisassembler(IDecompiler lang, IDecompilerOutput output, CancellationToken token) {
-			this.lang = lang;
+		public BamlDisassembler(IDecompilerOutput output, CancellationToken token) {
 			this.output = output;
 			this.token = token;
 

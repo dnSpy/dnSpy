@@ -52,9 +52,9 @@ namespace dnSpy.BamlDecompiler {
 			this.bamlSettings = bamlSettings;
 		}
 
-		void Disassemble(ModuleDef module, BamlDocument document, IDecompiler lang,
+		void Disassemble(ModuleDef module, BamlDocument document,
 			IDecompilerOutput output, CancellationToken token) {
-			var disassembler = new BamlDisassembler(lang, output, token);
+			var disassembler = new BamlDisassembler(output, token);
 			disassembler.Disassemble(module, document);
 		}
 
@@ -104,7 +104,7 @@ namespace dnSpy.BamlDecompiler {
 			var lang = Context.Decompiler;
 			var document = BamlReader.ReadDocument(new MemoryStream(bamlData), token);
 			if (bamlSettings.DisassembleBaml) {
-				Disassemble(module, document, lang, output, token);
+				Disassemble(module, document, output, token);
 				return ContentTypes.BamlDnSpy;
 			}
 			else {
