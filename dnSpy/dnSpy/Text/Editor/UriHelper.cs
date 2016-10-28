@@ -29,11 +29,10 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 			if (point.Snapshot == null)
 				throw new ArgumentException();
-			var pointSpan = new SnapshotSpan(point.Snapshot, point.Position, 0);
 			using (var tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IUriTag>(textView)) {
 				foreach (var tagSpan in tagAggregator.GetTags(new SnapshotSpan(point.Snapshot, point.Position, 0))) {
 					foreach (var span in tagSpan.Span.GetSpans(point.Snapshot)) {
-						if (span.IntersectsWith(pointSpan))
+						if (span.Start <= point && point < span.End)
 							return span;
 					}
 				}
