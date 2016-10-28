@@ -21,6 +21,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Xml.Linq;
 using dnlib.DotNet;
@@ -175,6 +176,28 @@ namespace dnSpy.BamlDecompiler {
 			if (!xmlnsMap.TryGetValue(xmlns, out ns))
 				xmlnsMap[xmlns] = ns = XNamespace.Get(xmlns);
 			return ns;
+		}
+
+		public string TryGetXmlNamespace(IAssembly assembly, string typeNamespace) {
+			var asm = assembly as AssemblyDef;
+			if (asm == null)
+				return null;
+
+			foreach (var attr in asm.CustomAttributes.FindAll("System.Windows.Markup.XmlnsDefinitionAttribute")) {
+				Debug.Assert(attr.ConstructorArguments.Count == 2);
+				if (attr.ConstructorArguments.Count != 2)
+					continue;
+				var xmlNs = attr.ConstructorArguments[0].Value as UTF8String;
+				var typeNs = attr.ConstructorArguments[1].Value as UTF8String;
+				Debug.Assert((object)xmlNs != null && (object)typeNs != null);
+				if ((object)xmlNs == null || (object)typeNs == null)
+					continue;
+
+				if (typeNamespace == typeNs.String)
+					return xmlNs;
+			}
+
+			return null;
 		}
 
 		public XName GetXamlNsName(string name, XElement elem = null) {

@@ -57,6 +57,9 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				xmlNs = elem.Annotation<XmlnsScope>().LookupXmlns(Assembly, TypeNamespace);
 			if (xmlNs == null)
 				xmlNs = ctx.XmlNs.LookupXmlns(Assembly, TypeNamespace);
+			// Sometimes there's no reference to System.Xaml even if x:Type is used
+			if (xmlNs == null)
+				xmlNs = ctx.TryGetXmlNamespace(Assembly, TypeNamespace);
 
 			if (xmlNs == null) {
 				if (AssemblyNameComparer.CompareAll.Equals(Assembly, ctx.Module.Assembly))
