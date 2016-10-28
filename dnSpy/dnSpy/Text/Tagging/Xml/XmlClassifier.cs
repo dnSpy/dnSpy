@@ -334,8 +334,14 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		void ReadName() {
+			int c = PeekChar();
+			if (c < 0)
+				return;
+			if (!IsNameStartChar((char)c))
+				return;
+			SkipChar();
 			for (;;) {
-				int c = PeekChar();
+				c = PeekChar();
 				if (c < 0)
 					break;
 				if (!IsNameChar((char)c))
@@ -344,8 +350,32 @@ namespace dnSpy.Text.Tagging.Xml {
 			}
 		}
 
+		// https://www.w3.org/TR/REC-xml/#d0e804
+		bool IsNameStartChar(char c) =>
+			//c == ':' ||
+			('A' <= c && c <= 'Z') ||
+			c == '_' ||
+			('a' <= c && c <= 'z') ||
+			(0xC0 <= c && c <= 0xD6) ||
+			(0xD8 <= c && c <= 0xF6) ||
+			(0xF8 <= c && c <= 0x02FF) ||
+			(0x0370 <= c && c <= 0x037D) ||
+			(0x037F <= c && c <= 0x1FFF) ||
+			(0x200C <= c && c <= 0x200D) ||
+			(0x2070 <= c && c <= 0x218F) ||
+			(0x2C00 <= c && c <= 0x2FEF) ||
+			(0x3001 <= c && c <= 0xD7FF) ||
+			(0xF900 <= c && c <= 0xFDCF) ||
+			(0xFDF0 <= c && c <= 0xFFFD);//#x10000-#xEFFFF
+
 		bool IsNameChar(char c) =>
-			char.IsLetterOrDigit(c) || c == '-' || c == '_' || c == '.';
+			IsNameStartChar(c) ||
+			c == '-' ||
+			c == '.' ||
+			('0' <= c && c <= '9') ||
+			c == 0xB7 ||
+			(0x0300 <= c && c <= 0x036F) ||
+			(0x203F <= c && c <= 0x2040);
 
 		void ReadElementWhitespace() {
 			for (;;) {

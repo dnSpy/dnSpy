@@ -33,6 +33,7 @@ namespace dnSpy.Contracts.Decompiler {
 		BraceKind_AngleBrackets		= 0x00000004,
 		BraceKind_DoubleQuotes		= 0x00000005,
 		BraceKind_SingleQuotes		= 0x00000006,
+		BraceKind_OtherBraces		= 0x00000007,
 		// Update CodeBracesRangeFlagsHelper.ToBraceKind() if mask changes
 
 		BlockKind_None				= 0,
@@ -99,6 +100,7 @@ namespace dnSpy.Contracts.Decompiler {
 		AngleBrackets				= BraceKind_AngleBrackets | BlockKind_None,
 		SquareBrackets				= BraceKind_SquareBrackets | BlockKind_None,
 		CurlyBraces					= BraceKind_CurlyBraces | BlockKind_None,
+		OtherBraces					= BraceKind_OtherBraces | BlockKind_None,
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 
