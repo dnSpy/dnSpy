@@ -27,6 +27,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Text;
 using dnSpy.Decompiler;
 using dnSpy.Documents.Tabs.DocViewer;
 using dnSpy.Properties;
@@ -95,13 +96,19 @@ namespace dnSpy.Documents.Tabs {
 				decompileContext.Writer = new StreamWriter(filename);
 				var output = new TextWriterDecompilerOutput(decompileContext.Writer);
 				var dispatcher = Dispatcher.CurrentDispatcher;
-				decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, decompiler, output, dispatcher);
+				decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, decompiler, output, NullDocumentWriterService.Instance, dispatcher);
 				return decompileContext;
 			}
 			catch {
 				decompileContext.Dispose();
 				throw;
 			}
+		}
+
+		sealed class NullDocumentWriterService : IDocumentWriterService {
+			public static readonly NullDocumentWriterService Instance = new NullDocumentWriterService();
+			public void Write(IDecompilerOutput output, string text, string contentType) =>
+				output.Write(text, BoxedTextColor.Text);
 		}
 
 		DecompileContext CreateDecompileContext() {

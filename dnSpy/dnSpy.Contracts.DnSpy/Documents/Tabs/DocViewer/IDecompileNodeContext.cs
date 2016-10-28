@@ -33,6 +33,11 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		IDecompilerOutput Output { get; }
 
 		/// <summary>
+		/// Writes some known documents
+		/// </summary>
+		IDocumentWriterService DocumentWriterService { get; }
+
+		/// <summary>
 		/// Language to use
 		/// </summary>
 		IDecompiler Decompiler { get; }

@@ -142,8 +142,6 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (type == FileType.Binary)
 				return false;
 
-			stream.Position = 0;
-			context.Output.Write(new StreamReader(stream, true).ReadToEnd(), BoxedTextColor.Text);
 			string ext;
 			if (type == FileType.Xml)
 				ext = ".xml";
@@ -156,6 +154,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				}
 			}
 			context.ContentTypeString = ContentTypesHelper.TryGetContentTypeStringByExtension(ext) ?? ContentTypes.PlainText;
+			stream.Position = 0;
+			context.DocumentWriterService.Write(context.Output, new StreamReader(stream, true).ReadToEnd(), context.ContentTypeString);
 			return true;
 		}
 	}

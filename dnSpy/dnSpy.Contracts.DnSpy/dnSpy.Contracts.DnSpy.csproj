@@ -151,7 +151,11 @@
     <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerOutput.cs" />
     <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerReferenceEnablerProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerService.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\IDocumentWriter.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\IDocumentWriterProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\IDocumentWriterService.cs" />
     <Compile Include="Documents\Tabs\DocViewer\MoveCaretOptions.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\PredefinedDocumentWriterProviderNames.cs" />
     <Compile Include="Documents\Tabs\DocViewer\ReferenceAndId.cs" />
     <Compile Include="Documents\Tabs\DocViewer\ReferenceInfo.cs" />
     <Compile Include="Documents\Tabs\DocViewer\TextReference.cs" />

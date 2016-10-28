@@ -26,6 +26,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
@@ -35,11 +36,13 @@ namespace dnSpy.BamlDecompiler {
 	sealed class BamlResourceNodeProvider : IResourceNodeProvider {
 		readonly BamlSettingsImpl bamlSettings;
 		readonly IXamlOutputOptionsProvider xamlOutputOptionsProvider;
+		readonly IDocumentWriterService documentWriterService;
 
 		[ImportingConstructor]
-		BamlResourceNodeProvider(BamlSettingsImpl bamlSettings, IXamlOutputOptionsProvider xamlOutputOptionsProvider) {
+		BamlResourceNodeProvider(BamlSettingsImpl bamlSettings, IXamlOutputOptionsProvider xamlOutputOptionsProvider, IDocumentWriterService documentWriterService) {
 			this.bamlSettings = bamlSettings;
 			this.xamlOutputOptionsProvider = xamlOutputOptionsProvider;
+			this.documentWriterService = documentWriterService;
 		}
 
 		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
@@ -53,7 +56,7 @@ namespace dnSpy.BamlDecompiler {
 			if (!BamlReader.IsBamlHeader(new MemoryStream(data)))
 				return null;
 
-			return new BamlResourceElementNode(module, resourceElement, data, treeNodeGroup, bamlSettings, xamlOutputOptionsProvider);
+			return new BamlResourceElementNode(module, resourceElement, data, treeNodeGroup, bamlSettings, xamlOutputOptionsProvider, documentWriterService);
 		}
 	}
 }

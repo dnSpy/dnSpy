@@ -28,24 +28,28 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public DecompilationContext DecompilationContext { get; }
 		public IDecompiler Decompiler { get; }
 		public IDecompilerOutput Output { get; }
+		public IDocumentWriterService DocumentWriterService { get; }
 		public string FileExtension { get; set; }
 		public IContentType ContentType { get; set; }
 		public string ContentTypeString { get; set; }
 
 		readonly Dispatcher dispatcher;
 
-		public DecompileNodeContext(DecompilationContext decompilationContext, IDecompiler decompiler, IDecompilerOutput output, Dispatcher dispatcher) {
+		public DecompileNodeContext(DecompilationContext decompilationContext, IDecompiler decompiler, IDecompilerOutput output, IDocumentWriterService documentWriterService, Dispatcher dispatcher) {
 			if (decompilationContext == null)
 				throw new ArgumentNullException(nameof(decompilationContext));
 			if (decompiler == null)
 				throw new ArgumentNullException(nameof(decompiler));
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
+			if (documentWriterService == null)
+				throw new ArgumentNullException(nameof(documentWriterService));
 			if (dispatcher == null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			this.DecompilationContext = decompilationContext;
 			this.Decompiler = decompiler;
 			this.Output = output;
+			this.DocumentWriterService = documentWriterService;
 			this.dispatcher = dispatcher;
 		}
 

@@ -44,9 +44,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public IMethodAnnotations MethodAnnotations { get; }
 		public IContentTypeRegistryService ContentTypeRegistryService { get; }
 		public IDocumentViewerContentFactoryProvider DocumentViewerContentFactoryProvider { get; }
+		public IDocumentWriterService DocumentWriterService { get; }
 
 		[ImportingConstructor]
-		DecompileDocumentTabContentFactory(IDsDocumentService documentService, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompilerService decompilerService, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider) {
+		DecompileDocumentTabContentFactory(IDsDocumentService documentService, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompilerService decompilerService, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider, IDocumentWriterService documentWriterService) {
 			DocumentService = documentService;
 			DocumentTreeNodeDecompiler = documentTreeNodeDecompiler;
 			DecompilerService = decompilerService;
@@ -54,6 +55,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			MethodAnnotations = methodAnnotations;
 			ContentTypeRegistryService = contentTypeRegistryService;
 			DocumentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
+			DocumentWriterService = documentWriterService;
 		}
 
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
@@ -145,7 +147,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			decompilationContext.IsBodyModified = m => decompileDocumentTabContentFactory.MethodAnnotations.IsBodyModified(m);
 			var dispatcher = Dispatcher.CurrentDispatcher;
 			decompileContext.DocumentViewerContentFactory = decompileDocumentTabContentFactory.DocumentViewerContentFactoryProvider.Create();
-			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Decompiler, decompileContext.DocumentViewerContentFactory.Output, dispatcher);
+			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Decompiler, decompileContext.DocumentViewerContentFactory.Output, decompileDocumentTabContentFactory.DocumentWriterService, dispatcher);
 			if (ctx.IsRefresh) {
 				decompileContext.SavedRefPos = ((IDocumentViewer)ctx.UIContext).SaveReferencePosition();
 				if (decompileContext.SavedRefPos != null) {

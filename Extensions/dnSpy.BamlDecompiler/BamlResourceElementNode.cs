@@ -41,17 +41,19 @@ namespace dnSpy.BamlDecompiler {
 		readonly byte[] bamlData;
 		readonly BamlSettings bamlSettings;
 		readonly IXamlOutputOptionsProvider xamlOutputOptionsProvider;
+		readonly IDocumentWriterService documentWriterService;
 
 		public bool DisassembleBaml => bamlSettings.DisassembleBaml;
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.BAML_RESOURCE_ELEMENT_NODE_GUID);
 		protected override ImageReference GetIcon() => DsImages.WPFFile;
 
-		public BamlResourceElementNode(ModuleDef module, ResourceElement resourceElement, byte[] bamlData, ITreeNodeGroup treeNodeGroup, BamlSettings bamlSettings, IXamlOutputOptionsProvider xamlOutputOptionsProvider)
+		public BamlResourceElementNode(ModuleDef module, ResourceElement resourceElement, byte[] bamlData, ITreeNodeGroup treeNodeGroup, BamlSettings bamlSettings, IXamlOutputOptionsProvider xamlOutputOptionsProvider, IDocumentWriterService documentWriterService)
 			: base(treeNodeGroup, resourceElement) {
 			this.module = module;
 			this.bamlData = bamlData;
 			this.bamlSettings = bamlSettings;
 			this.xamlOutputOptionsProvider = xamlOutputOptionsProvider;
+			this.documentWriterService = documentWriterService;
 		}
 
 		void Disassemble(ModuleDef module, BamlDocument document,
@@ -64,7 +66,8 @@ namespace dnSpy.BamlDecompiler {
 			IDecompilerOutput output, CancellationToken token) {
 			var decompiler = new XamlDecompiler();
 			var xaml = decompiler.Decompile(module, document, token, BamlDecompilerOptions.Create(lang), null);
-			output.Write(new XamlOutputCreator(xamlOutputOptionsProvider.Default).CreateText(xaml), BoxedTextColor.Text);
+			var xamlText = new XamlOutputCreator(xamlOutputOptionsProvider.Default).CreateText(xaml);
+			documentWriterService.Write(output, xamlText, ContentTypes.Xaml);
 		}
 
 		protected override IEnumerable<ResourceData> GetDeserializedData() {

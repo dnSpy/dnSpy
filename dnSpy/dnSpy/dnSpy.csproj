@@ -190,6 +190,7 @@
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerService.cs" />
     <Compile Include="Documents\Tabs\DocViewer\DocumentViewerUIElementService.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\DocumentWriterService.cs" />
     <Compile Include="Documents\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
     <Compile Include="Documents\Tabs\DocViewer\HighlightRelatedKeywordsDocumentViewerReferenceEnabler.cs" />
     <Compile Include="Documents\Tabs\DocViewer\LazyStructureVisualizerCollection.cs" />
