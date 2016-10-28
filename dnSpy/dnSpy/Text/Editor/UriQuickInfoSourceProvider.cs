@@ -68,13 +68,18 @@ namespace dnSpy.Text.Editor {
 			var triggerPoint = session.GetTriggerPoint(textView.TextSnapshot);
 			if (triggerPoint == null)
 				return;
-			var uriSpan = UriHelper.GetUri(viewTagAggregatorFactoryService, textView, triggerPoint.Value);
-			if (uriSpan == null)
+			var tagSpan = UriHelper.GetUri(viewTagAggregatorFactoryService, textView, triggerPoint.Value);
+			if (tagSpan == null)
+				return;
+			if (!tagSpan.Tag.Url.IsAbsoluteUri)
 				return;
 
-			applicableToSpan = uriSpan.Value.Snapshot.CreateTrackingSpan(uriSpan.Value.Span, SpanTrackingMode.EdgeInclusive);
-			var uri = uriSpan.Value.GetText();
-			quickInfoContent.Add(uri + "\r\n" + dnSpy_Resources.UriFollowLinkMessage);
+			var spans = tagSpan.Span.GetSpans(textView.TextSnapshot);
+			if (spans.Count != 1)
+				return;
+			var span = spans[0];
+			applicableToSpan = span.Snapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeInclusive);
+			quickInfoContent.Add(tagSpan.Tag.Url.AbsoluteUri + "\r\n" + dnSpy_Resources.UriFollowLinkMessage);
 		}
 
 		public void Dispose() { }

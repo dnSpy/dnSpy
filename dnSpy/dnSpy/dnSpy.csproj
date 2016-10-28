@@ -695,7 +695,6 @@
     <Compile Include="Text\Editor\UriHelper.cs" />
     <Compile Include="Text\Editor\UriMouseProcessor.cs" />
     <Compile Include="Text\Editor\UriQuickInfoSourceProvider.cs" />
-    <Compile Include="Text\Editor\UriTag.cs" />
     <Compile Include="Text\Editor\UriTagger.cs" />
     <Compile Include="Text\Editor\UriWpfTextViewCreationListener.cs" />
     <Compile Include="Text\Editor\VerticalScrollBarContainerMargin.cs" />

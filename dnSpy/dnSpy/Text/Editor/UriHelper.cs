@@ -24,16 +24,16 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Editor {
 	static class UriHelper {
-		public static SnapshotSpan? GetUri(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, ITextView textView, SnapshotPoint point) {
+		public static IMappingTagSpan<IUrlTag> GetUri(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, ITextView textView, SnapshotPoint point) {
 			if (viewTagAggregatorFactoryService == null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 			if (point.Snapshot == null)
 				throw new ArgumentException();
-			using (var tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IUriTag>(textView)) {
+			using (var tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IUrlTag>(textView)) {
 				foreach (var tagSpan in tagAggregator.GetTags(new SnapshotSpan(point.Snapshot, point.Position, 0))) {
 					foreach (var span in tagSpan.Span.GetSpans(point.Snapshot)) {
 						if (span.Start <= point && point < span.End)
-							return span;
+							return tagSpan;
 					}
 				}
 			}

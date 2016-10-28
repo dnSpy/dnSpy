@@ -88,7 +88,7 @@ namespace dnSpy.Text.Editor {
 		void VisualElement_PreviewKeyUp(object sender, KeyEventArgs e) => UpdateIsControlDown(e);
 		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) => UpdateIsControlDown(e);
 
-		SnapshotSpan? GetUriSpan(MouseEventArgs e) {
+		IMappingTagSpan<IUrlTag> GetUriSpan(MouseEventArgs e) {
 			if (!IsControlDown)
 				return null;
 			var loc = MouseLocation.Create(wpfTextView, e, insertionPosition: false);
@@ -98,8 +98,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateCursor(MouseEventArgs e) {
-			var span = GetUriSpan(e);
-			if (span == null) {
+			var tagSpan = GetUriSpan(e);
+			if (tagSpan == null) {
 				if (hasWrittenCursor) {
 					wpfTextView.VisualElement.Cursor = origCursor;
 					hasWrittenCursor = false;
@@ -118,16 +118,17 @@ namespace dnSpy.Text.Editor {
 		public override void PreprocessMouseLeftButtonDown(MouseButtonEventArgs e) {
 			if (e.Handled)
 				return;
-			var span = GetUriSpan(e);
-			if (span == null)
+			var tagSpan = GetUriSpan(e);
+			if (tagSpan == null)
 				return;
 			e.Handled = true;
-			StartBrowser(span.Value.GetText());
+			StartBrowser(tagSpan.Tag.Url);
 		}
 
-		void StartBrowser(string url) {
+		void StartBrowser(Uri uri) {
 			try {
-				Process.Start(url);
+				if (uri.IsAbsoluteUri)
+					Process.Start(uri.AbsoluteUri);
 			}
 			catch {
 				messageBoxService.Show(dnSpy_Resources.CouldNotStartBrowser);

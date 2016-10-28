@@ -42,17 +42,17 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
-			new UriClassificationTagger(classificationTag, buffer, viewTagAggregatorFactoryService.CreateTagAggregator<IUriTag>(textView)) as ITagger<T>;
+			new UriClassificationTagger(classificationTag, buffer, viewTagAggregatorFactoryService.CreateTagAggregator<IUrlTag>(textView)) as ITagger<T>;
 	}
 
 	sealed class UriClassificationTagger : ITagger<IClassificationTag>, IDisposable {
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
 		readonly IClassificationTag classificationTag;
-		readonly ITagAggregator<IUriTag> tagAggregator;
+		readonly ITagAggregator<IUrlTag> tagAggregator;
 		readonly ITextBuffer textBuffer;
 
-		public UriClassificationTagger(IClassificationTag classificationTag, ITextBuffer textBuffer, ITagAggregator<IUriTag> tagAggregator) {
+		public UriClassificationTagger(IClassificationTag classificationTag, ITextBuffer textBuffer, ITagAggregator<IUrlTag> tagAggregator) {
 			if (classificationTag == null)
 				throw new ArgumentNullException(nameof(classificationTag));
 			if (tagAggregator == null)

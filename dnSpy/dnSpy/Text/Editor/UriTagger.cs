@@ -29,14 +29,14 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IViewTaggerProvider))]
-	[TagType(typeof(IUriTag))]
+	[TagType(typeof(IUrlTag))]
 	[ContentType(ContentTypes.Text)]
 	sealed class UriTaggerProvider : IViewTaggerProvider {
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
 			textView.Properties.GetOrCreateSingletonProperty(typeof(UriTagger), () => new UriTagger(textView)) as ITagger<T>;
 	}
 
-	sealed class UriTagger : ITagger<IUriTag> {
+	sealed class UriTagger : ITagger<IUrlTag> {
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
 		readonly ITextView textView;
@@ -63,7 +63,7 @@ namespace dnSpy.Text.Editor {
 			TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, 0, snapshot.Length)));
 		}
 
-		public IEnumerable<ITagSpan<IUriTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
+		public IEnumerable<ITagSpan<IUrlTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			if (!enableLinks)
 				yield break;
 
@@ -101,7 +101,11 @@ namespace dnSpy.Text.Editor {
 							Debug.Assert(end <= line.Snapshot.Length);
 							if (end > line.Snapshot.Length)
 								break;
-							yield return new TagSpan<IUriTag>(new SnapshotSpan(line.Snapshot, start, res.Value.Length), UriTag.Instance);
+							var uriSpan = new SnapshotSpan(line.Snapshot, start, res.Value.Length);
+							var uri = TryCreateUri(uriSpan.GetText());
+							if (uri == null)
+								continue;
+							yield return new TagSpan<IUrlTag>(uriSpan, new UrlTag(uri));
 						}
 					}
 
@@ -110,6 +114,15 @@ namespace dnSpy.Text.Editor {
 						break;
 				}
 			}
+		}
+
+		static Uri TryCreateUri(string text) {
+			try {
+				return new Uri(text, UriKind.RelativeOrAbsolute);
+			}
+			catch {
+			}
+			return null;
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {
