@@ -30,6 +30,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly List<ReferenceInfo> references;
 		readonly List<CodeBracesRange> bracesInfo;
 		readonly List<XmlNamespaceReference> xmlNamespaceReferences;
+		readonly Dictionary<SubString, string> subStringDict;
 		XmlNamespaces xmlNamespaces;
 		int textPosition;
 		int recursionCounter;
@@ -99,6 +100,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			references = new List<ReferenceInfo>();
 			bracesInfo = new List<CodeBracesRange>();
 			xmlNamespaceReferences = new List<XmlNamespaceReference>();
+			subStringDict = new Dictionary<SubString, string>(EqualityComparer<SubString>.Default);
 			xmlNamespaces = new XmlNamespaces();
 			xmlNamespaces.Initialize(null);
 		}
@@ -129,7 +131,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				if (name == null)
 					throw new ArgumentNullException(nameof(name));
 				this.nsRef = nsRef;
-				this.name = string.Intern(name);
+				this.name = name;
 			}
 
 			public override bool Equals(object obj) {
@@ -154,19 +156,68 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public override int GetHashCode() => nsRef.GetHashCode();
 		}
 
+		struct SubString : IEquatable<SubString> {
+			readonly string text;
+			readonly int start;
+			readonly int length;
+
+			public SubString(string text, int start, int length) {
+				this.text = text;
+				this.start = start;
+				this.length = length;
+			}
+
+			public bool Equals(SubString other) {
+				var lengthLocal = length;
+				if (lengthLocal != other.length)
+					return false;
+				var textLocal = text;
+				var otherTextLocal = other.text;
+				var startLocal = start;
+				var otherStartLocal = other.start;
+				for (int i = 0; i < lengthLocal; i++) {
+					if (textLocal[startLocal + i] != otherTextLocal[otherStartLocal + i])
+						return false;
+				}
+				return true;
+			}
+
+			public override bool Equals(object obj) => obj is SubString && Equals((SubString)obj);
+
+			public override int GetHashCode() {
+				int h = 17;
+				var textLocal = text;
+				var startLocal = start;
+				var lengthLocal = length;
+				for (int i = 0; i < lengthLocal; i++)
+					h = 23 * h + textLocal[startLocal + i];
+				return h;
+			}
+
+			public override string ToString() => text.Substring(start, length);
+		}
+
+		string GetSubstring(Span span) {
+			string s;
+			var key = new SubString(text, span.Start, span.Length);
+			if (subStringDict.TryGetValue(key, out s))
+				return s;
+			s = key.ToString();
+			subStringDict[key] = s;
+			return s;
+		}
+
 		void SaveDefinition(Span aliasSpan) {
 			var nsRef = GetAttributeNamespaceReference(aliasSpan);
 			var @ref = new XmlNamespaceTextViewerReference(nsRef);
 			references.Add(new ReferenceInfo(aliasSpan, @ref, true));
 		}
 
-		string GetSubstring(Span span) => text.Substring(span.Start, span.Length);
-
 		void SaveReference(NameToken name, bool findDefsOnly) {
 			var aliasSpan = name.HasNamespace ? name.Namespace.Span : new Span(0, 0);
 			XmlNamespaceReference nsRef;
 			if (findDefsOnly) {
-				var alias = string.Intern(GetSubstring(aliasSpan));
+				var alias = GetSubstring(aliasSpan);
 				var def = xmlNamespaces.GetOrCreate(alias);
 				nsRef = new XmlNamespaceReference(alias) { Definition = def };
 			}
@@ -408,7 +459,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public XmlNamespaceReference(string alias) {
 				if (alias == null)
 					throw new ArgumentNullException(nameof(alias));
-				Alias = string.Intern(alias);
+				Alias = alias;
 			}
 			public bool Equals(XmlNamespaceReference other) => Equals(Definition, other.Definition);
 			public override bool Equals(object obj) => obj is XmlNamespaceReference && Equals((XmlNamespaceReference)obj);
