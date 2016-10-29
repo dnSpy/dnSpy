@@ -160,11 +160,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			references.Add(new ReferenceInfo(aliasSpan, @ref, true));
 		}
 
+		string GetSubstring(Span span) => text.Substring(span.Start, span.Length);
+
 		void SaveReference(NameToken name, bool findDefsOnly) {
 			var aliasSpan = name.HasNamespace ? name.Namespace.Span : new Span(0, 0);
 			XmlNamespaceReference nsRef;
 			if (findDefsOnly) {
-				var alias = string.Intern(text.Substring(aliasSpan.Start, aliasSpan.Length));
+				var alias = string.Intern(GetSubstring(aliasSpan));
 				var def = xmlNamespaces.GetOrCreate(alias);
 				nsRef = new XmlNamespaceReference(alias) { Definition = def };
 			}
@@ -176,7 +178,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				references.Add(new ReferenceInfo(name.Namespace.Span, @ref, false));
 			}
 
-			var tagRef = new XmlTagTextViewerReference(nsRef, text.Substring(name.Name.Span.Start, name.Name.Span.Length));
+			var tagRef = new XmlTagTextViewerReference(nsRef, GetSubstring(name.Name.Span));
 			references.Add(new ReferenceInfo(name.Name.Span, tagRef, false));
 		}
 
@@ -192,13 +194,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		sealed class ReferenceInfoSorter : IComparer<ReferenceInfo> {
-			public static readonly ReferenceInfoSorter Instance = new ReferenceInfoSorter();
-			public int Compare(ReferenceInfo x, ReferenceInfo y) => x.Span.Start - y.Span.Start;
-		}
-
 		public void WriteTo(IDecompilerOutput output) {
-			references.Sort(ReferenceInfoSorter.Instance);
+#if DEBUG
+			for (int i = 1; i < references.Count; i++) {
+				if (references[i - 1].Span.End > references[i].Span.Start)
+					throw new InvalidOperationException();
+			}
+#endif
 
 			int outputStart = output.Length;
 			int pos = 0;
@@ -207,7 +209,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					continue;
 				if (pos < info.Span.Start)
 					output.Write(text, pos, info.Span.Start - pos, BoxedTextColor.Text);
-				var refText = text.Substring(info.Span.Start, info.Span.Length);
+				var refText = GetSubstring(info.Span);
 				var flags = DecompilerReferenceFlags.Local;
 				if (info.IsDefinition)
 					flags |= DecompilerReferenceFlags.Definition;
@@ -304,8 +306,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			try {
 				xmlNamespaces = GetCachedXmlNamespaces(xmlNamespaces);
 				Debug.Assert(xmlNamespaceReferences.Count == 0);
-				ReadAttributes();
 				SaveReference(tagName.Value, false);
+				ReadAttributes();
 				SaveXmlNamespaceReferences();
 
 				var token = GetNextToken();
@@ -374,9 +376,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return def;
 			}
 
-			public void Add(string text, Span aliasSpan, Span quotedSpan) {
+			public void Add(XmlParser xmlParser, Span aliasSpan, Span quotedSpan) {
 				var valueSpan = new Span(quotedSpan.Start + 1, quotedSpan.Length - 2);
-				var def = new XmlNamespaceDefinition(text.Substring(aliasSpan.Start, aliasSpan.Length), text.Substring(quotedSpan.Start + 1, quotedSpan.Length - 2));
+				var def = new XmlNamespaceDefinition(xmlParser.GetSubstring(aliasSpan), xmlParser.GetSubstring(new Span(quotedSpan.Start + 1, quotedSpan.Length - 2)));
 				if (!namespaces.ContainsKey(def.Alias))
 					namespaces.Add(def.Alias, def);
 			}
@@ -417,7 +419,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var nsRef = TryGetAttributeNamespaceReference(aliasSpan);
 			if (nsRef != null)
 				return nsRef;
-			var nsName = text.Substring(aliasSpan.Start, aliasSpan.Length);
+			var nsName = GetSubstring(aliasSpan);
 			nsRef = new XmlNamespaceReference(nsName);
 			xmlNamespaceReferences.Add(nsRef);
 			return nsRef;
@@ -475,11 +477,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 					if (Equals(name.FirstToken.Span, "xmlns")) {
 						if (name.HasNamespace) {
-							xmlNamespaces.Add(text, name.Name.Span, value.Span);
+							xmlNamespaces.Add(this, name.Name.Span, value.Span);
 							SaveDefinition(name.Name.Span);
 						}
 						else
-							xmlNamespaces.Add(text, new Span(0, 0), value.Span);
+							xmlNamespaces.Add(this, new Span(0, 0), value.Span);
 					}
 					else
 						SaveReference(name, false);
