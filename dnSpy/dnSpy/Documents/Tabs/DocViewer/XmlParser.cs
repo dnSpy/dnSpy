@@ -121,25 +121,27 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		void SaveProcessingInstruction(Token token) =>
 			SaveBraceInfo(token.Span, 2, 2, CodeBracesRangeFlags.OtherBlockBraces);
 
-		sealed class XmlTagTextViewerReference {
+		sealed class XmlNameTextViewerReference {
 			readonly XmlNamespaceReference nsRef;
 			readonly string name;
+			readonly bool isTag;
 
-			public XmlTagTextViewerReference(XmlNamespaceReference nsRef, string name) {
+			public XmlNameTextViewerReference(XmlNamespaceReference nsRef, string name, bool isTag) {
 				if (nsRef == null)
 					throw new ArgumentNullException(nameof(nsRef));
 				if (name == null)
 					throw new ArgumentNullException(nameof(name));
 				this.nsRef = nsRef;
 				this.name = name;
+				this.isTag = isTag;
 			}
 
 			public override bool Equals(object obj) {
-				var other = obj as XmlTagTextViewerReference;
-				return other != null && nsRef.Equals(other.nsRef) && name == other.name;
+				var other = obj as XmlNameTextViewerReference;
+				return other != null && nsRef.Equals(other.nsRef) && name == other.name && isTag == other.isTag;
 			}
 
-			public override int GetHashCode() => nsRef.GetHashCode() ^ name.GetHashCode();
+			public override int GetHashCode() => nsRef.GetHashCode() ^ name.GetHashCode() ^ (isTag ? int.MinValue : 0);
 		}
 
 		sealed class XmlNamespaceTextViewerReference {
@@ -213,7 +215,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			references.Add(new ReferenceInfo(aliasSpan, @ref, true));
 		}
 
-		void SaveReference(NameToken name, bool findDefsOnly) {
+		void SaveReference(NameToken name, bool isTag, bool findDefsOnly) {
 			var aliasSpan = name.HasNamespace ? name.Namespace.Span : new Span(0, 0);
 			XmlNamespaceReference nsRef;
 			if (findDefsOnly) {
@@ -229,8 +231,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				references.Add(new ReferenceInfo(name.Namespace.Span, @ref, false));
 			}
 
-			var tagRef = new XmlTagTextViewerReference(nsRef, GetSubstring(name.Name.Span));
-			references.Add(new ReferenceInfo(name.Name.Span, tagRef, false));
+			var nameRef = new XmlNameTextViewerReference(nsRef, GetSubstring(name.Name.Span), isTag);
+			references.Add(new ReferenceInfo(name.Name.Span, nameRef, false));
 		}
 
 		public void Parse() {
@@ -357,7 +359,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			try {
 				xmlNamespaces = GetCachedXmlNamespaces(xmlNamespaces);
 				Debug.Assert(xmlNamespaceReferences.Count == 0);
-				SaveReference(tagName.Value, false);
+				SaveReference(tagName.Value, isTag: true, findDefsOnly: false);
 				ReadAttributes();
 				SaveXmlNamespaceReferences();
 
@@ -384,7 +386,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					if (greaterThanToken.Kind != TokenKind.GreaterThan)
 						return;
 					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End == firstGreaterThan.Span.Start ? firstGreaterThan.Span.End : tagName.Value.Span.End), Span.FromBounds(token.Span.Start, greaterThanToken.Span.End), CodeBracesRangeFlags.OtherBlockBraces);
-					SaveReference(tagEndName.Value, true);
+					SaveReference(tagEndName.Value, isTag: true, findDefsOnly: true);
 					break;
 
 				default:
@@ -535,7 +537,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 							xmlNamespaces.Add(this, new Span(0, 0), value.Span);
 					}
 					else
-						SaveReference(name, false);
+						SaveReference(name, isTag: false, findDefsOnly: false);
 					SaveString(value);
 					break;
 
