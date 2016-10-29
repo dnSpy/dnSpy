@@ -190,15 +190,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var textView = documentViewerControl.TextView;
 			if (state.CaretAffinity != PositionAffinity.Successor && state.CaretAffinity != PositionAffinity.Predecessor)
 				return false;
-			if (state.CaretVirtualSpaces < 0)
+			if (state.CaretVirtualSpaces < 0 || state.CaretVirtualSpaces > 10000)
 				return false;
 			if (state.CaretPosition < 0 || state.CaretPosition > textView.TextSnapshot.Length)
 				return false;
-			if (double.IsNaN(state.ViewportLeft) || state.ViewportLeft < 0)
+			if (double.IsNaN(state.ViewportLeft) || state.ViewportLeft < 0 || state.ViewportLeft > 100000)
 				return false;
 			if (state.TopLinePosition < 0 || state.TopLinePosition > textView.TextSnapshot.Length)
 				return false;
-			if (double.IsNaN(state.TopLineVerticalDistance))
+			if (double.IsNaN(state.TopLineVerticalDistance) || Math.Abs(state.TopLineVerticalDistance) > 10000)
 				return false;
 
 			return true;
