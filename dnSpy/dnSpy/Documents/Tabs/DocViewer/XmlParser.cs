@@ -155,17 +155,17 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		sealed class XmlNamespaceTextViewerReference {
-			readonly XmlNamespaceReference nsRef;
+			public XmlNamespaceReference XmlNamespaceReference { get; }
 			public XmlNamespaceTextViewerReference(XmlNamespaceReference nsRef) {
 				if (nsRef == null)
 					throw new ArgumentNullException(nameof(nsRef));
-				this.nsRef = nsRef;
+				XmlNamespaceReference = nsRef;
 			}
 			public override bool Equals(object obj) {
 				var other = obj as XmlNamespaceTextViewerReference;
-				return other != null && nsRef.Equals(other.nsRef);
+				return other != null && XmlNamespaceReference.Equals(other.XmlNamespaceReference);
 			}
-			public override int GetHashCode() => nsRef.GetHashCode();
+			public override int GetHashCode() => XmlNamespaceReference.GetHashCode();
 		}
 
 		struct SubString : IEquatable<SubString> {
