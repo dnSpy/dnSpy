@@ -4921,7 +4921,7 @@
                                                   Focusable="False">
                             		<ContentPresenter.ContentTemplate>
                                 		<DataTemplate>
-                            				<img:DsImage Source="{Binding}"/>
+                            				<img:DsImage ImageReference="{Binding}"/>
                             			</DataTemplate>
                                 	</ContentPresenter.ContentTemplate>
                             	</ContentPresenter>
