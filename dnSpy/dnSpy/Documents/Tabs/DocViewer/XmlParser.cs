@@ -255,21 +255,21 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			int outputStart = output.Length;
 			int pos = 0;
+			var textLocal = text;
 			foreach (var info in references) {
 				if (info.Span.Length == 0)
 					continue;
 				if (pos < info.Span.Start)
-					output.Write(text, pos, info.Span.Start - pos, BoxedTextColor.Text);
-				var refText = GetSubstring(info.Span);
+					output.Write(textLocal, pos, info.Span.Start - pos, BoxedTextColor.Text);
 				var flags = DecompilerReferenceFlags.Local;
 				if (info.IsDefinition)
 					flags |= DecompilerReferenceFlags.Definition;
-				output.Write(refText, info.Reference, flags, BoxedTextColor.Text);
+				output.Write(textLocal, info.Span.Start, info.Span.Length, info.Reference, flags, BoxedTextColor.Text);
 				pos = info.Span.End;
 			}
-			if (pos < text.Length)
-				output.Write(text, pos, text.Length - pos, BoxedTextColor.Text);
-			Debug.Assert(output.Length - outputStart == text.Length);
+			if (pos < textLocal.Length)
+				output.Write(textLocal, pos, textLocal.Length - pos, BoxedTextColor.Text);
+			Debug.Assert(output.Length - outputStart == textLocal.Length);
 
 			foreach (var info in bracesInfo)
 				output.AddCodeBracesRange(info);

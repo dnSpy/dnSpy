@@ -63,9 +63,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="text">Text</param>
 		/// <param name="index">Index in <paramref name="text"/></param>
-		/// <param name="count">Number of characters to write</param>
+		/// <param name="length">Number of characters to write</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		void Write(string text, int index, int count, object color);
+		void Write(string text, int index, int length, object color);
 
 		/// <summary>
 		/// Writes text, color and a reference. The text will be indented if needed.
@@ -75,6 +75,17 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="flags">Flags</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
 		void Write(string text, object reference, DecompilerReferenceFlags flags, object color);
+
+		/// <summary>
+		/// Writes text, color and a reference. The text will be indented if needed.
+		/// </summary>
+		/// <param name="text">Text</param>
+		/// <param name="index">Index in <paramref name="text"/></param>
+		/// <param name="length">Number of characters to write</param>
+		/// <param name="reference">Reference</param>
+		/// <param name="flags">Flags</param>
+		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
+		void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color);
 
 		/// <summary>
 		/// Adds custom data to a list

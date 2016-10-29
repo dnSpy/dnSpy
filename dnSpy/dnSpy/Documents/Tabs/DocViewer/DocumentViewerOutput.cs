@@ -138,26 +138,29 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			cachedTextColorsCollection.Append(color, text);
 		}
 
-		void AddText(string text, int index, int count, object color) {
+		void AddText(string text, int index, int length, object color) {
 			if (addIndent)
 				AddIndent();
-			stringBuilder.Append(text, index, count);
-			cachedTextColorsCollection.Append(color, text, index, count);
+			stringBuilder.Append(text, index, length);
+			cachedTextColorsCollection.Append(color, text, index, length);
 		}
 
 		public void Write(string text, object color) => AddText(text, color);
-		public void Write(string text, int index, int count, object color) => AddText(text, index, count, color);
+		public void Write(string text, int index, int length, object color) => AddText(text, index, length, color);
 
-		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) {
+		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
+			Write(text, 0, text.Length, reference, flags, color);
+
+		public void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) {
 			if (addIndent)
 				AddIndent();
 			if (reference == null) {
-				AddText(text, color);
+				AddText(text, index, length, color);
 				return;
 			}
 			Debug.Assert(!(reference.GetType().FullName ?? string.Empty).Contains("ICSharpCode"), "Internal decompiler data shouldn't be passed to Write()-ref");
-			referenceBuilder.Add(new Span(stringBuilder.Length, text.Length), new ReferenceInfo(reference, flags));
-			AddText(text, color);
+			referenceBuilder.Add(new Span(stringBuilder.Length, length), new ReferenceInfo(reference, flags));
+			AddText(text, index, length, color);
 		}
 
 		public void AddUIElement(Func<UIElement> createElement) {

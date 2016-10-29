@@ -52,11 +52,11 @@ namespace dnSpy.Contracts.Decompiler {
 		void IDecompilerOutput.IncreaseIndent() => indent++;
 		void IDecompilerOutput.DecreaseIndent() => indent--;
 
-		void IDecompilerOutput.Write(string text, int index, int count, object color) {
-			if (index == 0 && text.Length == count)
+		void IDecompilerOutput.Write(string text, int index, int length, object color) {
+			if (index == 0 && text.Length == length)
 				((IDecompilerOutput)this).Write(text, color);
 			else
-				((IDecompilerOutput)this).Write(text.Substring(index, count), color);
+				((IDecompilerOutput)this).Write(text.Substring(index, length), color);
 		}
 
 		void IDecompilerOutput.Write(string text, object color) {
@@ -73,6 +73,8 @@ namespace dnSpy.Contracts.Decompiler {
 
 		void IDecompilerOutput.Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
 			((IDecompilerOutput)this).Write(text, color);
+		void IDecompilerOutput.Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) =>
+			((IDecompilerOutput)this).Write(text, index, length, color);
 		void IDecompilerOutput.WriteLine() =>
 			((IDecompilerOutput)this).Write(Environment.NewLine, BoxedTextColor.Text);
 	}

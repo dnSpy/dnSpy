@@ -177,14 +177,17 @@ namespace dnSpy.AsmEditor.Compiler {
 				this.methodSourceStatement = methodSourceStatement;
 			}
 
-			public override void Write(string text, object reference, DecompilerReferenceFlags flags, object color) {
+			public override void Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
+				Write(text, 0, text.Length, reference, flags, color);
+
+			public override void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) {
 				if (reference == this.reference && (flags & DecompilerReferenceFlags.Definition) != 0 && referenceSpan == null) {
 					int start = NextPosition;
-					base.Write(text, reference, flags, color);
+					base.Write(text, index, length, reference, flags, color);
 					referenceSpan = new Span(start, Length - start);
 				}
 				else
-					base.Write(text, reference, flags, color);
+					base.Write(text, index, length, reference, flags, color);
 			}
 
 			void IDecompilerOutput.AddCustomData<TData>(string id, TData data) {

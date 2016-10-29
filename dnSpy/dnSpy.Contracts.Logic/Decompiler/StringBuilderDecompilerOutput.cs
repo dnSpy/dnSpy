@@ -117,10 +117,10 @@ namespace dnSpy.Contracts.Decompiler {
 			sb.Append(text);
 		}
 
-		void AddText(string text, int index, int count, object color) {
+		void AddText(string text, int index, int length, object color) {
 			if (addIndent)
 				AddIndent();
-			sb.Append(text, index, count);
+			sb.Append(text, index, length);
 		}
 
 		/// <summary>
@@ -141,9 +141,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="text">Text</param>
 		/// <param name="index">Index in <paramref name="text"/></param>
-		/// <param name="count">Number of characters to write</param>
+		/// <param name="length">Number of characters to write</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		public virtual void Write(string text, int index, int count, object color) => AddText(text, index, count, color);
+		public virtual void Write(string text, int index, int length, object color) => AddText(text, index, length, color);
 
 		/// <summary>
 		/// Writes text, color and a reference. The text will be indented if needed.
@@ -156,6 +156,21 @@ namespace dnSpy.Contracts.Decompiler {
 			if (addIndent)
 				AddIndent();
 			AddText(text, color);
+		}
+
+		/// <summary>
+		/// Writes text, color and a reference. The text will be indented if needed.
+		/// </summary>
+		/// <param name="text">Text</param>
+		/// <param name="index">Index in <paramref name="text"/></param>
+		/// <param name="length">Number of characters to write</param>
+		/// <param name="reference">Reference</param>
+		/// <param name="flags">Flags</param>
+		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
+		public virtual void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) {
+			if (addIndent)
+				AddIndent();
+			AddText(text, index, length, color);
 		}
 
 		/// <summary>

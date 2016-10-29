@@ -161,16 +161,17 @@ namespace dnSpy_Console {
 			position += text.Length;
 		}
 
-		void AddText(string text, int index, int count, object color) {
-			if (index == 0 && count == text.Length)
+		void AddText(string text, int index, int length, object color) {
+			if (index == 0 && length == text.Length)
 				AddText(text, color);
 			else
-				AddText(text.Substring(index, count), color);
+				AddText(text.Substring(index, length), color);
 		}
 
 		public void Write(string text, object color) => AddText(text, color);
-		public void Write(string text, int index, int count, object color) => AddText(text, index, count, color);
+		public void Write(string text, int index, int length, object color) => AddText(text, index, length, color);
 		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
+		public void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, index, length, color);
 		public override string ToString() => writer.ToString();
 		public void Dispose() => writer.Dispose();
 	}
