@@ -128,6 +128,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Attribute,// or property
 			Resource,
 			RelativeSource,
+			Xmlns,
 		}
 
 		sealed class XmlNameTextViewerReference {
@@ -543,11 +544,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 					if (Equals(name.FirstToken.Span, "xmlns")) {
 						if (name.HasNamespace) {
+							SaveReference(false, new Span(0, 0), name.Namespace.Span, XmlNameReferenceKind.Xmlns, findDefsOnly: false);
 							xmlNamespaces.Add(this, name.Name.Span, value.Span);
 							SaveDefinition(name.Name.Span);
 						}
-						else
+						else {
+							SaveReference(name, XmlNameReferenceKind.Xmlns, findDefsOnly: false);
 							xmlNamespaces.Add(this, new Span(0, 0), value.Span);
+						}
 					}
 					else {
 						SaveReference(name, XmlNameReferenceKind.Attribute, findDefsOnly: false);
