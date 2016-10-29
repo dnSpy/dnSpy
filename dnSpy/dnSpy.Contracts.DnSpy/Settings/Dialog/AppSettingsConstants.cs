@@ -79,14 +79,14 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_ASSEMBLY_EXPLORER = 7000;
 
 		/// <summary>
-		/// Order of hex editor settings page
-		/// </summary>
-		public const double ORDER_HEXEDITOR = 8000;
-
-		/// <summary>
 		/// Order of baml settings page
 		/// </summary>
-		public const double ORDER_BAML = 9000;
+		public const double ORDER_BAML = 8000;
+
+		/// <summary>
+		/// Order of hex editor settings page
+		/// </summary>
+		public const double ORDER_HEXEDITOR = 9000;
 
 		/// <summary>
 		/// Order of background image settings page
