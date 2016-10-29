@@ -303,12 +303,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return null;
 		}
 
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => UpdateBracePairs();
+
+		void UpdateBracePairs(bool refresh = true) {
 			var newBracePair = GetCurrentBracePair();
 			if (!IsSamePair(currentBracePair, newBracePair)) {
 				var oldPair = currentBracePair;
 				currentBracePair = newBracePair;
-				RefreshTags(oldPair, currentBracePair);
+				if (refresh)
+					RefreshTags(oldPair, currentBracePair);
 			}
 		}
 
@@ -352,6 +355,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		void RefreshAllTags() {
 			if (tagger != null) {
+				UpdateBracePairs(false);
 				var snapshot = textView.TextSnapshot;
 				tagger?.RaiseTagsChanged(new SnapshotSpan(snapshot, 0, snapshot.Length));
 			}
