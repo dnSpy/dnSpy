@@ -50,6 +50,8 @@ namespace dnSpy.BamlDecompiler {
 			using (var writer = new StringWriter(CultureInfo.InvariantCulture)) {
 				using (var xmlWriter = XmlWriter.Create(writer, settings))
 					document.WriteTo(xmlWriter);
+				// WriteTo() doesn't add a final newline
+				writer.WriteLine();
 				return writer.ToString();
 			}
 		}
