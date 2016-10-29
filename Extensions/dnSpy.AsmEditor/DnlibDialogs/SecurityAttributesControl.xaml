@@ -25,5 +25,5 @@
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
-	<dnlibdlgs:ListVMControl DataContext="{Binding}" />
+    <dnlibdlgs:ListVMControl DataContext="{Binding}" />
 </UserControl>

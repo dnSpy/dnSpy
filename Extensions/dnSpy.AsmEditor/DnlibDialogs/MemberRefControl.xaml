@@ -26,77 +26,77 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="370" d:DesignWidth="500">
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-	</UserControl.Resources>
-	<TabControl>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <TabControl>
         <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}" FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
-			<ScrollViewer VerticalScrollBarVisibility="Auto">
-				<Grid Margin="5">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="*" />
-					</Grid.RowDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-					<Grid Grid.Row="0">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
                         <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_Name}" />
-						<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-					</Grid>
+                        <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
 
                     <Button Grid.Row="1" Content="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_InitFromField}" Command="{Binding InitializeFromFieldCommand}" Visibility="{Binding IsField, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button Grid.Row="2" Content="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_InitFromMethod}" Command="{Binding InitializeFromMethodCommand}" Visibility="{Binding IsMethod, Converter={StaticResource BooleanToVisibilityConverter}}" />
-				</Grid>
-			</ScrollViewer>
-		</TabItem>
+                </Grid>
+            </ScrollViewer>
+        </TabItem>
         <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_ClassTab}">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-				<Grid Grid.Row="0" Margin="0 5 0 0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0 5 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_Class}" />
-					<TextBox Grid.Column="1" IsReadOnly="True" Background="Transparent" TextWrapping="Wrap" Text="{Binding ClassFullName, Mode=OneWay}" />
-				</Grid>
-				<Grid Grid.Row="1" Margin="5 5 0 0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="1" IsReadOnly="True" Background="Transparent" TextWrapping="Wrap" Text="{Binding ClassFullName, Mode=OneWay}" />
+                </Grid>
+                <Grid Grid.Row="1" Margin="5 5 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" Margin="0 0 0 0" Style="{StaticResource DialogButton}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_Type}" Command="{Binding PickTypeCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_Type_ToolTip}" />
                     <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource DialogButton}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_TypeSpec}" Command="{Binding PickTypeSpecCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_TypeSpec_ToolTip}" />
                     <Button Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource DialogButton}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_MethodDef}" Command="{Binding PickMethodDefCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_MethodDef_ToolTip}" />
                     <Button Grid.Column="3" Margin="5 0 0 0" Style="{StaticResource DialogButton}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_ModuleRef}" Command="{Binding PickModuleRefCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_ModuleRef_ToolTip}" />
-				</Grid>
-			</Grid>
-		</TabItem>
+                </Grid>
+            </Grid>
+        </TabItem>
         <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_FieldSigTab}" Visibility="{Binding IsField, Converter={StaticResource BooleanToVisibilityConverter}}">
-			<ScrollViewer VerticalScrollBarVisibility="Auto">
-				<dnlibdlgs:TypeSigCreatorControl DataContext="{Binding TypeSigCreatorVM}" />
-			</ScrollViewer>
-		</TabItem>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <dnlibdlgs:TypeSigCreatorControl DataContext="{Binding TypeSigCreatorVM}" />
+            </ScrollViewer>
+        </TabItem>
         <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MemberRef_MethodSigTab}" Visibility="{Binding IsMethod, Converter={StaticResource BooleanToVisibilityConverter}}">
-			<ScrollViewer VerticalScrollBarVisibility="Auto">
-				<dnlibdlgs:MethodSigCreatorControl Margin="0 5 0 0" DataContext="{Binding MethodSigCreatorVM}" />
-			</ScrollViewer>
-		</TabItem>
-		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
-			<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
-		</TabItem>
-	</TabControl>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <dnlibdlgs:MethodSigCreatorControl Margin="0 5 0 0" DataContext="{Binding MethodSigCreatorVM}" />
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
+            <dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
+        </TabItem>
+    </TabControl>
 </UserControl>

@@ -29,88 +29,88 @@
              Title="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="200" MinWidth="400">
-	<local:SaveModuleWindow.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<mvvmvc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
-	</local:SaveModuleWindow.Resources>
+    <local:SaveModuleWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <mvvmvc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
+    </local:SaveModuleWindow.Resources>
     <Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="{Binding HasError, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=2.0}" />
-			<RowDefinition Height="{Binding HasNoError, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=1}" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="{Binding HasNoError, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=1}" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding HasError, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=2.0}" />
+            <RowDefinition Height="{Binding HasNoError, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=1}" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="{Binding HasNoError, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=1}" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<Grid Grid.Row="0" Margin="5 0 5 5"
-			  Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="5 0 5 5"
+              Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
             <Label Grid.Row="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_ErrorsInLog}" />
 
-			<TextBox Grid.Row="1"
-				 Background="{DynamicResource CommonControlsTextBoxErrorBackground}"
-				 Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}"
-				 TextWrapping="Wrap"
-				 IsReadOnly="True"
-				 HorizontalAlignment="Stretch"
-				 VerticalAlignment="Stretch"
-				 VerticalContentAlignment="Top"
-				 Text="{Binding LogMessage, Mode=OneWay}"
-				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				 ScrollViewer.VerticalScrollBarVisibility="Auto"
-				 />
-		</Grid>
+            <TextBox Grid.Row="1"
+                 Background="{DynamicResource CommonControlsTextBoxErrorBackground}"
+                 Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}"
+                 TextWrapping="Wrap"
+                 IsReadOnly="True"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch"
+                 VerticalContentAlignment="Top"
+                 Text="{Binding LogMessage, Mode=OneWay}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 />
+        </Grid>
 
-		<ProgressBar Grid.Row="2"
-						 Margin="20,0,20,5"
-						 Visibility="{Binding IsSaving, Converter={StaticResource BooleanToVisibilityConverter}}"
-						 Height="30"
-						 Minimum="{Binding ProgressMinimum}"
-						 Maximum="{Binding ProgressMaximum}"
-						 Value="{Binding TotalProgress, Mode=OneWay}"
-						 />
-		<TextBlock Grid.Row="2"
-					   Margin="5,0,5,5"
-					   Visibility="{Binding IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
-					   VerticalAlignment="Center"
-					   HorizontalAlignment="Center"
-					   Foreground="Red"
-					   Text="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_CancelingSave}"
-					   />
+        <ProgressBar Grid.Row="2"
+                         Margin="20,0,20,5"
+                         Visibility="{Binding IsSaving, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         Height="30"
+                         Minimum="{Binding ProgressMinimum}"
+                         Maximum="{Binding ProgressMaximum}"
+                         Value="{Binding TotalProgress, Mode=OneWay}"
+                         />
+        <TextBlock Grid.Row="2"
+                       Margin="5,0,5,5"
+                       Visibility="{Binding IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Foreground="Red"
+                       Text="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_CancelingSave}"
+                       />
 
-		<Grid Grid.Row="4" Margin="5 0 5 5">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+        <Grid Grid.Row="4" Margin="5 0 5 5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-			<Button Grid.Column="1"
-					Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}"
-					IsCancel="False"
-					Command="{Binding CancelSaveCommand}"
-					Style="{StaticResource DialogButton}"
-					Visibility="{Binding IsSavingOrCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
-					/>
-			<Button Grid.Column="1"
-					Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Close}"
-					IsCancel="True"
-					Style="{StaticResource DialogButton}"
-					Click="okButton_Click"
-					Visibility="{Binding IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}"
-					/>
-		</Grid>
-	</Grid>
+            <Button Grid.Column="1"
+                    Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}"
+                    IsCancel="False"
+                    Command="{Binding CancelSaveCommand}"
+                    Style="{StaticResource DialogButton}"
+                    Visibility="{Binding IsSavingOrCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    />
+            <Button Grid.Column="1"
+                    Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Close}"
+                    IsCancel="True"
+                    Style="{StaticResource DialogButton}"
+                    Click="okButton_Click"
+                    Visibility="{Binding IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    />
+        </Grid>
+    </Grid>
 </local:SaveModuleWindow>

@@ -26,21 +26,21 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-		<Grid Grid.Row="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Style="{StaticResource EllipsisButton}" Command="{Binding PickAttributeTypeCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.Pick_Type}" />
-			<TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding AttributeType.FullName, Mode=OneWay}" />
-		</Grid>
+            <TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding AttributeType.FullName, Mode=OneWay}" />
+        </Grid>
         <GroupBox Grid.Row="1" Margin="0 5 0 0" Header="{x:Static p:dnSpy_AsmEditor_Resources.NamedArguments}">
-			<dnlibdlgs:CANamedArgumentsControl DataContext="{Binding CANamedArgumentsVM}" />
-		</GroupBox>
-	</Grid>
+            <dnlibdlgs:CANamedArgumentsControl DataContext="{Binding CANamedArgumentsVM}" />
+        </GroupBox>
+    </Grid>
 </UserControl>

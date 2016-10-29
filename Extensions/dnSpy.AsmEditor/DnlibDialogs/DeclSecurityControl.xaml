@@ -26,40 +26,40 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-	</UserControl.Resources>
-	<TabControl>
-		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-				<Grid Grid.Row="0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
-					<ComboBox Grid.Column="0" Margin="0 0 0 0" DisplayMemberPath="Name" Width="120" ItemsSource="{Binding SecurityActionEnumList.Items}" SelectedIndex="{Binding SecurityActionEnumList.SelectedIndex}" VerticalContentAlignment="Center" />
-					<ComboBox Grid.Column="1" Margin="5 0 0 0" DisplayMemberPath="Name" Width="30" ItemsSource="{Binding DeclSecVerEnumList.Items}" SelectedIndex="{Binding DeclSecVerEnumList.SelectedIndex}" VerticalContentAlignment="Center" />
-				</Grid>
-				<Grid Grid.Row="1" Visibility="{Binding IsV1, Converter={StaticResource BooleanToVisibilityConverter}}">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="*" />
-					</Grid.RowDefinitions>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <TabControl>
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Grid.Column="0" Margin="0 0 0 0" DisplayMemberPath="Name" Width="120" ItemsSource="{Binding SecurityActionEnumList.Items}" SelectedIndex="{Binding SecurityActionEnumList.SelectedIndex}" VerticalContentAlignment="Center" />
+                    <ComboBox Grid.Column="1" Margin="5 0 0 0" DisplayMemberPath="Name" Width="30" ItemsSource="{Binding DeclSecVerEnumList.Items}" SelectedIndex="{Binding DeclSecVerEnumList.SelectedIndex}" VerticalContentAlignment="Center" />
+                </Grid>
+                <Grid Grid.Row="1" Visibility="{Binding IsV1, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
                     <Label Grid.Row="0" Target="{Binding ElementName=xmlTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.XML}" />
-					<TextBox Grid.Row="1" Name="xmlTextBox" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap" Text="{Binding V1XMLString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-				</Grid>
-				<Grid Grid.Row="1" Visibility="{Binding IsV2, Converter={StaticResource BooleanToVisibilityConverter}}">
-					<dnlibdlgs:SecurityAttributesControl DataContext="{Binding SecurityAttributesVM}" />
-				</Grid>
-			</Grid>
-		</TabItem>
-		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
-			<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
-		</TabItem>
-	</TabControl>
+                    <TextBox Grid.Row="1" Name="xmlTextBox" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap" Text="{Binding V1XMLString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+                <Grid Grid.Row="1" Visibility="{Binding IsV2, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <dnlibdlgs:SecurityAttributesControl DataContext="{Binding SecurityAttributesVM}" />
+                </Grid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
+            <dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
+        </TabItem>
+    </TabControl>
 </UserControl>

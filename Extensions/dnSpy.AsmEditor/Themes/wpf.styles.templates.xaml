@@ -21,355 +21,355 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody">
 
-	<Style x:Key="CilListBoxScrollViewerStyle"
-		   TargetType="{x:Type ScrollViewer}"
-		   BasedOn="{StaticResource {x:Type ScrollViewer}}">
-		<Setter Property="Focusable" Value="True"/>
-		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-	</Style>
-	<Style x:Key="CilGridViewScrollViewerStyle"
-		   BasedOn="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
-		   TargetType="{x:Type ScrollViewer}">
-		<Setter Property="Focusable" Value="True"/>
-		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-	</Style>
-	<Style x:Key="CilTextBoxBaseStyle"
-		   TargetType="{x:Type TextBoxBase}"
-		   BasedOn="{x:Null}">
-		<Setter Property="Foreground" Value="{DynamicResource TEInheritedTextForeground}" />
-		<Setter Property="Background" Value="{DynamicResource TETextInheritedTextBackground}" />
-		<Setter Property="FontStyle" Value="{DynamicResource TEInheritedTextFontStyle}" />
-		<Setter Property="FontWeight" Value="{DynamicResource TEInheritedTextFontWeight}" />
-		<Setter Property="FontFamily" Value="{DynamicResource TextEditorFontFamily}" />
-		<Setter Property="BorderBrush" Value="Transparent" />
-		<Setter Property="BorderThickness" Value="1" />
-		<Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
-		<Setter Property="HorizontalContentAlignment" Value="Left"/>
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="HorizontalAlignment" Value="Stretch" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-		<Setter Property="AllowDrop" Value="true" />
-		<Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
-		<Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
-		<Setter Property="TextBox.TextWrapping" Value="NoWrap" />
-		<Setter Property="CaretBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Foreground}" />
-		<Setter Property="SelectionBrush" Value="{DynamicResource CilTextBoxSelection}" />
-		<Setter Property="Margin" Value="0" />
-		<Setter Property="Validation.ErrorTemplate">
-			<Setter.Value>
-				<ControlTemplate>
-					<Border BorderBrush="{DynamicResource CilTextBoxErrorBorder}" BorderThickness="1">
-						<AdornedElementPlaceholder x:Name="Placeholder" />
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type TextBoxBase}">
-					<Border
-						Name="border"
-						Background="{TemplateBinding Background}"
-						BorderBrush="{TemplateBinding BorderBrush}"
-						BorderThickness="{TemplateBinding BorderThickness}"
-						SnapsToDevicePixels="True">
-						<ScrollViewer
-							Name="PART_ContentHost"
-							Focusable="false"
-							HorizontalScrollBarVisibility="Hidden"
-							VerticalScrollBarVisibility="Hidden" />
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsEnabled" Value="False">
-							<Setter Property="Background" Value="{DynamicResource CilTextBoxDisabledBackground}" />
-							<Setter Property="Foreground" Value="{DynamicResource CilTextBoxDisabledForeground}" />
-							<Setter Property="BorderBrush" Value="{DynamicResource CilTextBoxDisabledBorder}" />
-						</Trigger>
-						<Trigger Property="IsMouseOver" Value="True">
-							<Setter TargetName="border" Value="{DynamicResource CilTextBoxMouseOverBorder}" Property="BorderBrush" />
-						</Trigger>
-						<Trigger Property="IsKeyboardFocused" Value="True">
-							<Setter TargetName="border" Value="{DynamicResource CilTextBoxFocusedBorder}" Property="BorderBrush" />
-						</Trigger>
-						<Trigger Property="Validation.HasError" Value="true">
-							<Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-							<Setter Property="Background" Value="{DynamicResource CilTextBoxErrorBackground}"/>
-							<Setter Property="Foreground" Value="{DynamicResource CilTextBoxErrorForeground}"/>
-							<Setter Property="BorderBrush" Value="{DynamicResource CilTextBoxErrorBackground}" />
-							<Setter TargetName="border" Value="{DynamicResource CilTextBoxErrorBackground}" Property="BorderBrush" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style x:Key="CilTextBoxStyle"
-		   BasedOn="{StaticResource CilTextBoxBaseStyle}"
-		   TargetType="{x:Type TextBox}">
-	</Style>
-	<Style x:Key="CilIndexTextBlockStyle"
-		   BasedOn="{StaticResource {x:Type TextBlock}}"
-		   TargetType="{x:Type TextBlock}">
-		<Setter Property="Foreground" Value="{DynamicResource TEInheritedNumberForeground}" />
-		<Setter Property="Background" Value="{DynamicResource TETextInheritedNumberBackground}" />
-		<Setter Property="FontStyle" Value="{DynamicResource TEInheritedNumberFontStyle}" />
-		<Setter Property="FontWeight" Value="{DynamicResource TEInheritedNumberFontWeight}" />
-		<Setter Property="FontFamily" Value="{DynamicResource TextEditorFontFamily}" />
-		<Setter Property="TextTrimming" Value="CharacterEllipsis" />
-		<Setter Property="HorizontalAlignment" Value="Right" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-	</Style>
-	<Style x:Key="CilLabelTextBlockStyle"
-		   BasedOn="{StaticResource {x:Type TextBlock}}"
-		   TargetType="{x:Type TextBlock}">
-		<Setter Property="Foreground" Value="{DynamicResource TEInheritedLabelForeground}" />
-		<Setter Property="Background" Value="{DynamicResource TETextInheritedLabelBackground}" />
-		<Setter Property="FontStyle" Value="{DynamicResource TEInheritedLabelFontStyle}" />
-		<Setter Property="FontWeight" Value="{DynamicResource TEInheritedLabelFontWeight}" />
-		<Setter Property="FontFamily" Value="{DynamicResource TextEditorFontFamily}" />
-		<Setter Property="TextTrimming" Value="CharacterEllipsis" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-	</Style>
-	<Style x:Key="CilNumberTextBoxStyle"
-		   BasedOn="{StaticResource CilTextBoxStyle}"
-		   TargetType="{x:Type TextBox}">
-		<Setter Property="Foreground" Value="{DynamicResource TEInheritedNumberForeground}" />
-		<Setter Property="Background" Value="{DynamicResource TETextInheritedNumberBackground}" />
-		<Setter Property="FontStyle" Value="{DynamicResource TEInheritedNumberFontStyle}" />
-		<Setter Property="FontWeight" Value="{DynamicResource TEInheritedNumberFontWeight}" />
-	</Style>
-	<Style x:Key="CilStringTextBoxStyle"
-		   BasedOn="{StaticResource CilTextBoxStyle}"
-		   TargetType="{x:Type TextBox}">
-		<Setter Property="Foreground" Value="{DynamicResource TEInheritedStringForeground}" />
-		<Setter Property="Background" Value="{DynamicResource TETextInheritedStringBackground}" />
-		<Setter Property="FontStyle" Value="{DynamicResource TEInheritedStringFontStyle}" />
-		<Setter Property="FontWeight" Value="{DynamicResource TEInheritedStringFontWeight}" />
-	</Style>
-	<Style x:Key="CilLocalTextBoxStyle"
-		   BasedOn="{StaticResource CilTextBoxStyle}"
-		   TargetType="{x:Type TextBox}">
-		<Setter Property="Foreground" Value="{DynamicResource TEInheritedLocalForeground}" />
-		<Setter Property="Background" Value="{DynamicResource TETextInheritedLocalBackground}" />
-		<Setter Property="FontStyle" Value="{DynamicResource TEInheritedLocalFontStyle}" />
-		<Setter Property="FontWeight" Value="{DynamicResource TEInheritedLocalFontWeight}" />
-	</Style>
-	<Style x:Key="CilCheckBoxStyle"
-		   TargetType="{x:Type CheckBox}">
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
-		<Setter Property="Foreground" Value="{DynamicResource CilCheckBoxText}" />
-		<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type CheckBox}">
-					<Grid x:Name="templateRoot">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Grid
-							SnapsToDevicePixels="True"
-							Width="16"
-							Height="16"
-							HorizontalAlignment="Left"
-							VerticalAlignment="Center">
-							<Border
-								x:Name="checkBoxBorder"
-								BorderThickness="1"
-								Background="{DynamicResource CilCheckBoxBackground}"
-								BorderBrush="{DynamicResource CilCheckBoxBorder}" />
-							<Grid x:Name="markGrid">
-								<Path
-									x:Name="optionMark"
-									Stretch="Uniform"
-									Margin="3,1,2,2"
-									Fill="{DynamicResource CilCheckBoxGlyph}"
-									Data="M6.22,11.02C6.22,11.02 2.5,7.24 2.5,7.24 2.5,7.24 4.05,5.71 4.05,5.71 4.05,5.71 5.97,7.65 5.97,7.65 5.97,7.65 10.52,1.38 10.52,1.38 10.52,1.38 13.19,1.38 13.19,1.38 13.19,1.38 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02z"
-									Visibility="Collapsed"
-									Width="9"
-									Height="8"
-									/>
-								<Rectangle
-									x:Name="indeterminateMark"
-									Margin="3"
-									Fill="{DynamicResource CilCheckBoxGlyph}"
-									Visibility="Hidden" />
-							</Grid>
-						</Grid>
-						<Border x:Name="paddingBorder" Grid.Column="1" Background="Transparent" Width="6" Visibility="Collapsed" />
-						<ContentPresenter
-							x:Name="contentPresenter"
-							RecognizesAccessKey="True"
-							Grid.Column="2"
-							Margin="{TemplateBinding Padding}"
-							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-							HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-							Focusable="False" />
-					</Grid>
-					<ControlTemplate.Triggers>
-						<Trigger Property="HasContent" Value="True">
-							<Setter Property="Padding" Value="0,1,0,0" />
-							<Setter TargetName="paddingBorder" Property="Visibility" Value="Visible" />
-						</Trigger>
-						<Trigger Property="IsChecked" Value="true">
-							<Setter TargetName="optionMark" Property="Visibility" Value="Visible" />
-						</Trigger>
-						<Trigger Value="{x:Null}" Property="IsChecked">
-							<Setter TargetName="indeterminateMark" Property="Visibility" Value="Visible" />
-						</Trigger>
-						<Trigger Property="IsEnabled" Value="False">
-							<Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBackgroundDisabled}" Property="Background" />
-							<Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBorderDisabled}" Property="BorderBrush" />
-							<Setter TargetName="optionMark" Value="{DynamicResource CilCheckBoxGlyphDisabled}" Property="Fill" />
-							<Setter Value="{DynamicResource CilCheckBoxTextDisabled}" Property="Foreground" />
-						</Trigger>
-						<Trigger Property="IsFocused" Value="True">
-							<Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBackgroundFocused}" Property="Background" />
-							<Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBorderFocused}" Property="BorderBrush" />
-							<Setter TargetName="optionMark" Value="{DynamicResource CilCheckBoxGlyphFocused}" Property="Fill" />
-							<Setter Value="{DynamicResource CilCheckBoxTextFocused}" Property="Foreground" />
-						</Trigger>
-						<Trigger Property="IsMouseOver" Value="True">
-							<Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBackgroundHover}" Property="Background" />
-							<Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBorderHover}" Property="BorderBrush" />
-							<Setter TargetName="optionMark" Value="{DynamicResource CilCheckBoxGlyphHover}" Property="Fill" />
-							<Setter Value="{DynamicResource CilCheckBoxTextHover}" Property="Foreground" />
-						</Trigger>
-						<Trigger Property="IsPressed" Value="True">
-							<Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBackgroundPressed}" Property="Background" />
-							<Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBorderPressed}" Property="BorderBrush" />
-							<Setter TargetName="optionMark" Value="{DynamicResource CilCheckBoxGlyphPressed}" Property="Fill" />
-							<Setter Value="{DynamicResource CilCheckBoxTextPressed}" Property="Foreground" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style x:Key="CilButtonStyle"
+    <Style x:Key="CilListBoxScrollViewerStyle"
+           TargetType="{x:Type ScrollViewer}"
+           BasedOn="{StaticResource {x:Type ScrollViewer}}">
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    </Style>
+    <Style x:Key="CilGridViewScrollViewerStyle"
+           BasedOn="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+           TargetType="{x:Type ScrollViewer}">
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    </Style>
+    <Style x:Key="CilTextBoxBaseStyle"
+           TargetType="{x:Type TextBoxBase}"
+           BasedOn="{x:Null}">
+        <Setter Property="Foreground" Value="{DynamicResource TEInheritedTextForeground}" />
+        <Setter Property="Background" Value="{DynamicResource TETextInheritedTextBackground}" />
+        <Setter Property="FontStyle" Value="{DynamicResource TEInheritedTextFontStyle}" />
+        <Setter Property="FontWeight" Value="{DynamicResource TEInheritedTextFontWeight}" />
+        <Setter Property="FontFamily" Value="{DynamicResource TextEditorFontFamily}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="AllowDrop" Value="true" />
+        <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+        <Setter Property="TextBox.TextWrapping" Value="NoWrap" />
+        <Setter Property="CaretBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Foreground}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource CilTextBoxSelection}" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderBrush="{DynamicResource CilTextBoxErrorBorder}" BorderThickness="1">
+                        <AdornedElementPlaceholder x:Name="Placeholder" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                    <Border
+                        Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <ScrollViewer
+                            Name="PART_ContentHost"
+                            Focusable="false"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="Hidden" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="{DynamicResource CilTextBoxDisabledBackground}" />
+                            <Setter Property="Foreground" Value="{DynamicResource CilTextBoxDisabledForeground}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource CilTextBoxDisabledBorder}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Value="{DynamicResource CilTextBoxMouseOverBorder}" Property="BorderBrush" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="border" Value="{DynamicResource CilTextBoxFocusedBorder}" Property="BorderBrush" />
+                        </Trigger>
+                        <Trigger Property="Validation.HasError" Value="true">
+                            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                            <Setter Property="Background" Value="{DynamicResource CilTextBoxErrorBackground}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CilTextBoxErrorForeground}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource CilTextBoxErrorBackground}" />
+                            <Setter TargetName="border" Value="{DynamicResource CilTextBoxErrorBackground}" Property="BorderBrush" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="CilTextBoxStyle"
+           BasedOn="{StaticResource CilTextBoxBaseStyle}"
+           TargetType="{x:Type TextBox}">
+    </Style>
+    <Style x:Key="CilIndexTextBlockStyle"
+           BasedOn="{StaticResource {x:Type TextBlock}}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource TEInheritedNumberForeground}" />
+        <Setter Property="Background" Value="{DynamicResource TETextInheritedNumberBackground}" />
+        <Setter Property="FontStyle" Value="{DynamicResource TEInheritedNumberFontStyle}" />
+        <Setter Property="FontWeight" Value="{DynamicResource TEInheritedNumberFontWeight}" />
+        <Setter Property="FontFamily" Value="{DynamicResource TextEditorFontFamily}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="CilLabelTextBlockStyle"
+           BasedOn="{StaticResource {x:Type TextBlock}}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource TEInheritedLabelForeground}" />
+        <Setter Property="Background" Value="{DynamicResource TETextInheritedLabelBackground}" />
+        <Setter Property="FontStyle" Value="{DynamicResource TEInheritedLabelFontStyle}" />
+        <Setter Property="FontWeight" Value="{DynamicResource TEInheritedLabelFontWeight}" />
+        <Setter Property="FontFamily" Value="{DynamicResource TextEditorFontFamily}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="CilNumberTextBoxStyle"
+           BasedOn="{StaticResource CilTextBoxStyle}"
+           TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="{DynamicResource TEInheritedNumberForeground}" />
+        <Setter Property="Background" Value="{DynamicResource TETextInheritedNumberBackground}" />
+        <Setter Property="FontStyle" Value="{DynamicResource TEInheritedNumberFontStyle}" />
+        <Setter Property="FontWeight" Value="{DynamicResource TEInheritedNumberFontWeight}" />
+    </Style>
+    <Style x:Key="CilStringTextBoxStyle"
+           BasedOn="{StaticResource CilTextBoxStyle}"
+           TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="{DynamicResource TEInheritedStringForeground}" />
+        <Setter Property="Background" Value="{DynamicResource TETextInheritedStringBackground}" />
+        <Setter Property="FontStyle" Value="{DynamicResource TEInheritedStringFontStyle}" />
+        <Setter Property="FontWeight" Value="{DynamicResource TEInheritedStringFontWeight}" />
+    </Style>
+    <Style x:Key="CilLocalTextBoxStyle"
+           BasedOn="{StaticResource CilTextBoxStyle}"
+           TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="{DynamicResource TEInheritedLocalForeground}" />
+        <Setter Property="Background" Value="{DynamicResource TETextInheritedLocalBackground}" />
+        <Setter Property="FontStyle" Value="{DynamicResource TEInheritedLocalFontStyle}" />
+        <Setter Property="FontWeight" Value="{DynamicResource TEInheritedLocalFontWeight}" />
+    </Style>
+    <Style x:Key="CilCheckBoxStyle"
+           TargetType="{x:Type CheckBox}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
+        <Setter Property="Foreground" Value="{DynamicResource CilCheckBoxText}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <Grid x:Name="templateRoot">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            SnapsToDevicePixels="True"
+                            Width="16"
+                            Height="16"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center">
+                            <Border
+                                x:Name="checkBoxBorder"
+                                BorderThickness="1"
+                                Background="{DynamicResource CilCheckBoxBackground}"
+                                BorderBrush="{DynamicResource CilCheckBoxBorder}" />
+                            <Grid x:Name="markGrid">
+                                <Path
+                                    x:Name="optionMark"
+                                    Stretch="Uniform"
+                                    Margin="3,1,2,2"
+                                    Fill="{DynamicResource CilCheckBoxGlyph}"
+                                    Data="M6.22,11.02C6.22,11.02 2.5,7.24 2.5,7.24 2.5,7.24 4.05,5.71 4.05,5.71 4.05,5.71 5.97,7.65 5.97,7.65 5.97,7.65 10.52,1.38 10.52,1.38 10.52,1.38 13.19,1.38 13.19,1.38 13.19,1.38 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02z"
+                                    Visibility="Collapsed"
+                                    Width="9"
+                                    Height="8"
+                                    />
+                                <Rectangle
+                                    x:Name="indeterminateMark"
+                                    Margin="3"
+                                    Fill="{DynamicResource CilCheckBoxGlyph}"
+                                    Visibility="Hidden" />
+                            </Grid>
+                        </Grid>
+                        <Border x:Name="paddingBorder" Grid.Column="1" Background="Transparent" Width="6" Visibility="Collapsed" />
+                        <ContentPresenter
+                            x:Name="contentPresenter"
+                            RecognizesAccessKey="True"
+                            Grid.Column="2"
+                            Margin="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Focusable="False" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasContent" Value="True">
+                            <Setter Property="Padding" Value="0,1,0,0" />
+                            <Setter TargetName="paddingBorder" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter TargetName="optionMark" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Value="{x:Null}" Property="IsChecked">
+                            <Setter TargetName="indeterminateMark" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBackgroundDisabled}" Property="Background" />
+                            <Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBorderDisabled}" Property="BorderBrush" />
+                            <Setter TargetName="optionMark" Value="{DynamicResource CilCheckBoxGlyphDisabled}" Property="Fill" />
+                            <Setter Value="{DynamicResource CilCheckBoxTextDisabled}" Property="Foreground" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBackgroundFocused}" Property="Background" />
+                            <Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBorderFocused}" Property="BorderBrush" />
+                            <Setter TargetName="optionMark" Value="{DynamicResource CilCheckBoxGlyphFocused}" Property="Fill" />
+                            <Setter Value="{DynamicResource CilCheckBoxTextFocused}" Property="Foreground" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBackgroundHover}" Property="Background" />
+                            <Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBorderHover}" Property="BorderBrush" />
+                            <Setter TargetName="optionMark" Value="{DynamicResource CilCheckBoxGlyphHover}" Property="Fill" />
+                            <Setter Value="{DynamicResource CilCheckBoxTextHover}" Property="Foreground" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBackgroundPressed}" Property="Background" />
+                            <Setter TargetName="checkBoxBorder" Value="{DynamicResource CilCheckBoxBorderPressed}" Property="BorderBrush" />
+                            <Setter TargetName="optionMark" Value="{DynamicResource CilCheckBoxGlyphPressed}" Property="Fill" />
+                            <Setter Value="{DynamicResource CilCheckBoxTextPressed}" Property="Foreground" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="CilButtonStyle"
            TargetType="{x:Type Button}">
-		<Setter Property="FocusVisualStyle" Value="{x:Null}" />
-		<Setter Property="Background" Value="{DynamicResource CilButton}" />
-		<Setter Property="Foreground" Value="{DynamicResource CilButtonText}" />
-		<Setter Property="BorderBrush" Value="{DynamicResource CilButtonBorder}" />
-		<Setter Property="FontFamily" Value="{DynamicResource TextEditorFontFamily}" />
-		<Setter Property="BorderThickness" Value="1" />
-		<Setter Property="HorizontalContentAlignment" Value="Left" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="VerticalAlignment" Value="Stretch" />
-		<Setter Property="Padding" Value="0" />
-		<Setter Property="Validation.ErrorTemplate">
-			<Setter.Value>
-				<ControlTemplate>
-					<Border BorderBrush="{DynamicResource CilButtonErrorBorder}" BorderThickness="1">
-						<AdornedElementPlaceholder />
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type ButtonBase}">
-					<Border
-						BorderThickness="{TemplateBinding BorderThickness}"
-						Background="{TemplateBinding Background}"
-						BorderBrush="{TemplateBinding BorderBrush}"
-						SnapsToDevicePixels="True">
-						<ContentPresenter
-							RecognizesAccessKey="True"
-							Margin="{TemplateBinding Padding}"
-							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-							HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-							Focusable="False">
-						</ContentPresenter>
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-		<Style.Triggers>
-			<Trigger Property="IsKeyboardFocused" Value="True">
-				<Setter Property="Background" Value="{DynamicResource CilButtonFocused}" />
-				<Setter Property="Foreground" Value="{DynamicResource CilButtonFocusedText}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource CilButtonBorderFocused}" />
-			</Trigger>
-			<Trigger Property="IsMouseOver" Value="True">
-				<Setter Property="Background" Value="{DynamicResource CilButtonHover}" />
-				<Setter Property="Foreground" Value="{DynamicResource CilButtonHoverText}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource CilButtonBorderHover}" />
-			</Trigger>
-			<Trigger Property="IsPressed" Value="True">
-				<Setter Property="Background" Value="{DynamicResource CilButtonPressed}" />
-				<Setter Property="Foreground" Value="{DynamicResource CilButtonPressedText}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource CilButtonBorderPressed}" />
-			</Trigger>
-			<Trigger Property="Validation.HasError" Value="true">
-				<Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-				<Setter Property="Background" Value="{DynamicResource CilButtonErrorBackground}"/>
-				<Setter Property="BorderBrush" Value="{DynamicResource CilButtonErrorBackground}" />
-			</Trigger>
-		</Style.Triggers>
-	</Style>
-	<Style x:Key="CilListBoxItemStyle"
-		   TargetType="{x:Type ListBoxItem}">
-		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Setter Property="Padding" Value="4,1" />
-		<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-		<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-		<Setter Property="Background" Value="Transparent" />
-		<Setter Property="BorderBrush" Value="Transparent" />
-		<Setter Property="BorderThickness" Value="1" />
-		<Setter Property="FocusVisualStyle" Value="{x:Null}" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type ListBoxItem}">
-					<Border x:Name="Bd" 
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Background" Value="{DynamicResource CilButton}" />
+        <Setter Property="Foreground" Value="{DynamicResource CilButtonText}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CilButtonBorder}" />
+        <Setter Property="FontFamily" Value="{DynamicResource TextEditorFontFamily}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderBrush="{DynamicResource CilButtonErrorBorder}" BorderThickness="1">
+                        <AdornedElementPlaceholder />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                    <Border
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter
+                            RecognizesAccessKey="True"
+                            Margin="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Focusable="False">
+                        </ContentPresenter>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="Background" Value="{DynamicResource CilButtonFocused}" />
+                <Setter Property="Foreground" Value="{DynamicResource CilButtonFocusedText}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource CilButtonBorderFocused}" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource CilButtonHover}" />
+                <Setter Property="Foreground" Value="{DynamicResource CilButtonHoverText}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource CilButtonBorderHover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource CilButtonPressed}" />
+                <Setter Property="Foreground" Value="{DynamicResource CilButtonPressedText}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource CilButtonBorderPressed}" />
+            </Trigger>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                <Setter Property="Background" Value="{DynamicResource CilButtonErrorBackground}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource CilButtonErrorBackground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="CilListBoxItemStyle"
+           TargetType="{x:Type ListBoxItem}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Padding" Value="4,1" />
+        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border x:Name="Bd" 
                         BorderBrush="{TemplateBinding BorderBrush}" 
                         BorderThickness="{TemplateBinding BorderThickness}" 
                         Background="{TemplateBinding Background}" 
                         Padding="{TemplateBinding Padding}" 
                         SnapsToDevicePixels="true">
-						<ContentPresenter 
+                        <ContentPresenter 
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-					</Border>
-					<ControlTemplate.Triggers>
-						<MultiTrigger>
-							<MultiTrigger.Conditions>
-								<Condition Property="IsMouseOver" Value="True" />
-							</MultiTrigger.Conditions>
-							<Setter TargetName="Bd" Property="Background" Value="{DynamicResource CilListBoxItem.MouseOver.Background}" />
-							<Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CilListBoxItem.MouseOver.Border}" />
-						</MultiTrigger>
-						<MultiTrigger>
-							<MultiTrigger.Conditions>
-								<Condition Property="Selector.IsSelectionActive" Value="False" />
-								<Condition Property="IsSelected" Value="True" />
-							</MultiTrigger.Conditions>
-							<Setter TargetName="Bd" Property="Background" Value="{DynamicResource CilListBoxItem.SelectedInactive.Background}" />
-							<Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CilListBoxItem.SelectedInactive.Border}" />
-						</MultiTrigger>
-						<MultiTrigger>
-							<MultiTrigger.Conditions>
-								<Condition Property="Selector.IsSelectionActive" Value="True" />
-								<Condition Property="IsSelected" Value="True" />
-							</MultiTrigger.Conditions>
-							<Setter TargetName="Bd" Property="Background" Value="{DynamicResource CilListBoxItem.SelectedActive.Background}" />
-							<Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CilListBoxItem.SelectedActive.Border}" />
-						</MultiTrigger>
-						<Trigger Property="IsEnabled" Value="False">
-							<Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource SystemColorsGrayText}"/>
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CilListBoxItem.MouseOver.Background}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CilListBoxItem.MouseOver.Border}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Selector.IsSelectionActive" Value="False" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CilListBoxItem.SelectedInactive.Background}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CilListBoxItem.SelectedInactive.Border}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Selector.IsSelectionActive" Value="True" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CilListBoxItem.SelectedActive.Background}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CilListBoxItem.SelectedActive.Border}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource SystemColorsGrayText}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="CilListBoxStyle"
            TargetType="{x:Type ListBox}">
         <Setter Property="FocusVisualStyle"
@@ -422,13 +422,13 @@
             </Setter.Value>
         </Setter>
     </Style>
-	<Style x:Key="CilListViewStyle"
-		   TargetType="{x:Type ListView}"
-		   BasedOn="{StaticResource {x:Type ListView}}">
-		<Setter Property="Background" Value="{DynamicResource TEInheritedTextBackground}"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource CilGridViewBorder}"/>
-		<Setter Property="AlternationCount" Value="2"/>
-	</Style>
+    <Style x:Key="CilListViewStyle"
+           TargetType="{x:Type ListView}"
+           BasedOn="{StaticResource {x:Type ListView}}">
+        <Setter Property="Background" Value="{DynamicResource TEInheritedTextBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CilGridViewBorder}"/>
+        <Setter Property="AlternationCount" Value="2"/>
+    </Style>
     <Style x:Key="CilListViewItemFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -625,15 +625,15 @@
                 Value="Stretch"/>
         <Setter Property="MinHeight"
                 Value="18"/>
-		<Setter Property="Validation.ErrorTemplate">
-			<Setter.Value>
-				<ControlTemplate>
-					<Border BorderBrush="{DynamicResource CilComboBoxErrorBorder}" BorderThickness="1">
-						<AdornedElementPlaceholder />
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
+        <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderBrush="{DynamicResource CilComboBoxErrorBorder}" BorderThickness="1">
+                        <AdornedElementPlaceholder />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ComboBox}">
@@ -737,12 +737,12 @@
                                     Property="MinHeight"
                                     Value="95"/>
                         </Trigger>
-						<Trigger Property="Validation.HasError" Value="true">
-							<Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-							<Setter TargetName="Bg" Property="Background" Value="{DynamicResource CilComboBoxErrorBackground}"/>
-							<Setter Property="BorderBrush" Value="{DynamicResource CilComboBoxErrorBackground}" />
-						</Trigger>
-					</ControlTemplate.Triggers>
+                        <Trigger Property="Validation.HasError" Value="true">
+                            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource CilComboBoxErrorBackground}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource CilComboBoxErrorBackground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -29,33 +29,33 @@
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="550">
-	<winlocal:WindowBase.Resources>
-		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-	</winlocal:WindowBase.Resources>
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <winlocal:WindowBase.Resources>
+        <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+    </winlocal:WindowBase.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<Border Grid.Row="0" Margin="5" Style="{StaticResource DialogBorderStyle}">
-			<ScrollViewer VerticalScrollBarVisibility="Auto">
-				<dnlibdlgs:MethodSigCreatorControl Margin="5" />
-			</ScrollViewer>
-		</Border>
+        <Border Grid.Row="0" Margin="5" Style="{StaticResource DialogBorderStyle}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <dnlibdlgs:MethodSigCreatorControl Margin="5" />
+            </ScrollViewer>
+        </Border>
 
-		<Grid Grid.Row="1" Margin="5 0 5 5">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<TextBlock Grid.Column="0" Text="{Binding ErrorText}" Foreground="Red" VerticalAlignment="Center" />
-			<Button Grid.Column="1" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Grid.Column="2" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
-		</Grid>
-	</Grid>
+        <Grid Grid.Row="1" Margin="5 0 5 5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding ErrorText}" Foreground="Red" VerticalAlignment="Center" />
+            <Button Grid.Column="1" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
+        </Grid>
+    </Grid>
 </winlocal:WindowBase>

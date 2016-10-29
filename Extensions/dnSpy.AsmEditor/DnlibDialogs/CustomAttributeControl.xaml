@@ -26,49 +26,49 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="0" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-		<Grid Grid.Row="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="0" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Style="{StaticResource EllipsisButton}" Command="{Binding PickConstructorCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.Pick_Constructor}" />
-			<TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding Constructor.FullName, Mode=OneWay}" />
-		</Grid>
-		<Grid Grid.Row="1" Margin="0 5 0 0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
+            <TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding Constructor.FullName, Mode=OneWay}" />
+        </Grid>
+        <Grid Grid.Row="1" Margin="0 5 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <CheckBox Grid.Column="0" Margin="0 0 0 0" VerticalAlignment="Center" IsChecked="{Binding IsRawData}" Content="{x:Static p:dnSpy_AsmEditor_Resources.RawCustomAttributeBlob}" />
-			<TextBox Grid.Column="1" Margin="5 0 0 0" Text="{Binding RawData.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsRawData}" />
-		</Grid>
+            <TextBox Grid.Column="1" Margin="5 0 0 0" Text="{Binding RawData.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsRawData}" />
+        </Grid>
         <GroupBox Grid.Row="2" Margin="0 5 0 0" Header="{x:Static p:dnSpy_AsmEditor_Resources.ConstructorArguments}">
-			<ListBox Grid.Row="0"
-				  Margin="0 5 0 0"
-				  HorizontalContentAlignment="Stretch"
-				  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				  SelectionMode="Single"
-				  IsEnabled="{Binding IsNotRawData}"
-				  ItemsSource="{Binding ConstructorArguments}"
-				  SelectedIndex="{Binding ConstructorArguments.SelectedIndex}">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<dnlibdlgs:ConstantTypeControl Margin="0 2 0 2" DataContext="{Binding ConstantTypeVM}" />
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-		</GroupBox>
-		<GridSplitter Grid.Row="3" Grid.ZIndex="1" Margin="0 -2 0 -5" BorderThickness="0 2 0 5" BorderBrush="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Center" Focusable="False"/>
+            <ListBox Grid.Row="0"
+                  Margin="0 5 0 0"
+                  HorizontalContentAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectionMode="Single"
+                  IsEnabled="{Binding IsNotRawData}"
+                  ItemsSource="{Binding ConstructorArguments}"
+                  SelectedIndex="{Binding ConstructorArguments.SelectedIndex}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <dnlibdlgs:ConstantTypeControl Margin="0 2 0 2" DataContext="{Binding ConstantTypeVM}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+        <GridSplitter Grid.Row="3" Grid.ZIndex="1" Margin="0 -2 0 -5" BorderThickness="0 2 0 5" BorderBrush="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Center" Focusable="False"/>
         <GroupBox Grid.Row="4" Margin="0 5 0 0" Header="{x:Static p:dnSpy_AsmEditor_Resources.NamedArguments}">
-			<dnlibdlgs:CANamedArgumentsControl DataContext="{Binding CANamedArgumentsVM}" />
-		</GroupBox>
-	</Grid>
+            <dnlibdlgs:CANamedArgumentsControl DataContext="{Binding CANamedArgumentsVM}" />
+        </GroupBox>
+    </Grid>
 </UserControl>

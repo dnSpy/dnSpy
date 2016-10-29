@@ -32,257 +32,257 @@
              Title="{x:Static p:dnSpy_AsmEditor_Resources.EditModuleCommand2}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="400">
-	<winlocal:WindowBase.Resources>
-		<vc:RadioButtonConverter x:Key="RadioButtonConverter" />
-		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-	</winlocal:WindowBase.Resources>
-	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <winlocal:WindowBase.Resources>
+        <vc:RadioButtonConverter x:Key="RadioButtonConverter" />
+        <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+    </winlocal:WindowBase.Resources>
+    <Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<TabControl Margin="5">
-			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}">
-				<ScrollViewer VerticalScrollBarVisibility="Auto">
-					<StackPanel>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto" />
-							</Grid.RowDefinitions>
+        <TabControl Margin="5">
+            <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
                             <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Name}" />
-							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						</Grid>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
 
-						<Grid Margin="0 5 0 0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto" />
-							</Grid.RowDefinitions>
+                        <Grid Margin="0 5 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
                             <Label Grid.Column="0" Margin="0 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_ModuleType}" Target="{Binding ElementName=moduleKindComboBox}" />
-							<ComboBox Grid.Column="1" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="moduleKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" VerticalContentAlignment="Center" />
+                            <ComboBox Grid.Column="1" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="moduleKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" VerticalContentAlignment="Center" />
 
                             <Label Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_DotNetVersion}" Target="{Binding ElementName=clrVersionComboBox}" />
-							<ComboBox Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" />
-						</Grid>
+                            <ComboBox Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" />
+                        </Grid>
 
                         <GroupBox Header="{x:Static p:dnSpy_AsmEditor_Resources.Module_GUIDs}" Margin="0 5 0 0">
-							<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-								</Grid.RowDefinitions>
+                            <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
                                 <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=mvidTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Mvid}" />
-								<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_NewGuid1}" Command="{Binding GenerateNewMvidCommand}" />
 
                                 <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=encIdTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_EncId}" />
-								<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="encIdTextBox" Text="{Binding EncId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="encIdTextBox" Text="{Binding EncId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_NewGuid2}" Command="{Binding GenerateNewEncIdCommand}" />
 
                                 <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=encBaseIdTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_EncBaseId}" />
-								<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="encBaseIdTextBox" Text="{Binding EncBaseId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="encBaseIdTextBox" Text="{Binding EncBaseId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_NewGuid3}" Command="{Binding GenerateNewEncBaseIdCommand}" />
-							</Grid>
-						</GroupBox>
+                            </Grid>
+                        </GroupBox>
                         <GroupBox Header="{x:Static p:dnSpy_AsmEditor_Resources.Module_EntryPoint}" Margin="0 5 0 0">
-							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition />
-									<RowDefinition />
-									<RowDefinition />
-								</Grid.RowDefinitions>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="*" />
-								</Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
                                 <RadioButton Grid.Row="0" Grid.Column="0" Margin="5 5 0 0" GroupName="EntryPoint" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_EntryPoint_None}" IsChecked="{Binding EntryPointEnum, Converter={StaticResource RadioButtonConverter}, ConverterParameter={x:Static local:EntryPointType.None}}" />
                                 <RadioButton Grid.Row="1" Grid.Column="0" Margin="5 5 0 0" GroupName="EntryPoint" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_EntryPoint_Managed}" IsChecked="{Binding EntryPointEnum, Converter={StaticResource RadioButtonConverter}, ConverterParameter={x:Static local:EntryPointType.Managed}}" />
-								<Button Grid.Row="1" Grid.Column="1" Margin="5 0 0 0" Content="{Binding EntryPointName}" Command="{Binding PickManagedEntryPointCommand}" ToolTip="{Binding EntryPointNameToolTip}" />
+                                <Button Grid.Row="1" Grid.Column="1" Margin="5 0 0 0" Content="{Binding EntryPointName}" Command="{Binding PickManagedEntryPointCommand}" ToolTip="{Binding EntryPointNameToolTip}" />
                                 <RadioButton Grid.Row="2" Grid.Column="0" Margin="5 5 0 5" GroupName="EntryPoint" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_EntryPoint_Native}" IsChecked="{Binding EntryPointEnum, Converter={StaticResource RadioButtonConverter}, ConverterParameter={x:Static local:EntryPointType.Native}}"/>
-								<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 5" Text="{Binding NativeEntryPointRva.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
-							</Grid>
-						</GroupBox>
-					</StackPanel>
-				</ScrollViewer>
-			</TabItem>
+                                <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 5" Text="{Binding NativeEntryPointRva.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
             <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.Module_Metadata}">
-				<ScrollViewer VerticalScrollBarVisibility="Auto">
-					<StackPanel>
-						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition />
-								<RowDefinition />
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=versionStringTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Metadata_VersionString}" />
-							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="versionStringTextBox" Text="{Binding RuntimeVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="versionStringTextBox" Text="{Binding RuntimeVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                             <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=headerVersionTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Metadata_HeaderVersion}" />
-							<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="headerVersionTextBox" Text="{Binding TablesHeaderVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						</Grid>
-					</StackPanel>
-				</ScrollViewer>
-			</TabItem>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="headerVersionTextBox" Text="{Binding TablesHeaderVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
             <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.Module_Cor20}">
-				<ScrollViewer VerticalScrollBarVisibility="Auto">
-					<StackPanel>
-						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition />
-								<RowDefinition />
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=runtimeVersionTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Cor20_RuntimeVersion}" />
-							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="runtimeVersionTextBox" Text="{Binding Cor20HeaderRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						</Grid>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="runtimeVersionTextBox" Text="{Binding Cor20HeaderRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
                         <GroupBox Header="{x:Static p:dnSpy_AsmEditor_Resources.Flags}" Margin="0 5 0 0">
-							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition />
-									<RowDefinition />
-									<RowDefinition />
-									<RowDefinition />
-								</Grid.RowDefinitions>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition />
-									<ColumnDefinition />
-								</Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
                                 <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding ILOnly}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_ILOnly}" />
                                 <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ILLibrary}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_ILLibrary}" />
                                 <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Bit32Required}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_Bit32Required}" />
                                 <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Bit32Preferred}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_Bit32Preferred}" />
                                 <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding TrackDebugData}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_TrackDebugData}" />
                                 <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding StrongNameSigned}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_StrongNameSigned}" />
-							</Grid>
-						</GroupBox>
-					</StackPanel>
-				</ScrollViewer>
-			</TabItem>
+                            </Grid>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
             <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.Module_PE}">
-				<ScrollViewer VerticalScrollBarVisibility="Auto">
-					<StackPanel>
-						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto" />
-								<RowDefinition Height="Auto" />
-								<RowDefinition Height="Auto" />
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-							<StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <StackPanel Grid.Row="0" Orientation="Horizontal">
                                 <Label Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_PE_Machine}" Margin="0 0 0 0" Target="{Binding ElementName=machineComboBox}" />
-								<ComboBox Name="machineComboBox" Margin="5 0 0 0" DisplayMemberPath="Name" ItemsSource="{Binding Machine.Items}" SelectedIndex="{Binding Machine.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
-							</StackPanel>
+                                <ComboBox Name="machineComboBox" Margin="5 0 0 0" DisplayMemberPath="Name" ItemsSource="{Binding Machine.Items}" SelectedIndex="{Binding Machine.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
+                            </StackPanel>
 
                             <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_AsmEditor_Resources.PE_Header_Characteristics}" Margin="0 5 0 0">
-								<Grid>
-									<Grid.RowDefinitions>
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-									</Grid.RowDefinitions>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition />
-										<ColumnDefinition />
-									</Grid.ColumnDefinitions>
-									<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding RelocsStripped}" Content="Relocs Stripped" />
-									<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ExecutableImage}" Content="_Executable Image" />
-									<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding LineNumsStripped}" Content="Line Nums Stripped" />
-									<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding LocalSymsStripped}" Content="Local Syms Stripped" />
-									<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding AggressiveWsTrim}" Content="Aggressive WS Trim" />
-									<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding LargeAddressAware}" Content="_Large Address Aware" />
-									<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding CharacteristicsReserved1}" Content="Reserved 0040h" />
-									<CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BytesReversedLo}" Content="Bytes Reversed Lo" />
-									<CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Bit32Machine}" Content="_32-Bit Machine" />
-									<CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding DebugStripped}" Content="Debug Stripped" />
-									<CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding RemovableRunFromSwap}" Content="Removable Run From Swap" />
-									<CheckBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NetRunFromSwap}" Content="Net Run From Swap" />
-									<CheckBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding System}" Content="System" />
-									<CheckBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Dll}" Content="_Dll" />
-									<CheckBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UpSystemOnly}" Content="Up System Only" />
-									<CheckBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BytesReversedHi}" Content="Bytes Reversed Hi" />
-								</Grid>
-							</GroupBox>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding RelocsStripped}" Content="Relocs Stripped" />
+                                    <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ExecutableImage}" Content="_Executable Image" />
+                                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding LineNumsStripped}" Content="Line Nums Stripped" />
+                                    <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding LocalSymsStripped}" Content="Local Syms Stripped" />
+                                    <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding AggressiveWsTrim}" Content="Aggressive WS Trim" />
+                                    <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding LargeAddressAware}" Content="_Large Address Aware" />
+                                    <CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding CharacteristicsReserved1}" Content="Reserved 0040h" />
+                                    <CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BytesReversedLo}" Content="Bytes Reversed Lo" />
+                                    <CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Bit32Machine}" Content="_32-Bit Machine" />
+                                    <CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding DebugStripped}" Content="Debug Stripped" />
+                                    <CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding RemovableRunFromSwap}" Content="Removable Run From Swap" />
+                                    <CheckBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NetRunFromSwap}" Content="Net Run From Swap" />
+                                    <CheckBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding System}" Content="System" />
+                                    <CheckBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Dll}" Content="_Dll" />
+                                    <CheckBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UpSystemOnly}" Content="Up System Only" />
+                                    <CheckBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BytesReversedHi}" Content="Bytes Reversed Hi" />
+                                </Grid>
+                            </GroupBox>
 
                             <GroupBox Grid.Row="2" Header="{x:Static p:dnSpy_AsmEditor_Resources.PE_Header_DllCharacteristics}" Margin="0 5 0 0">
-								<Grid>
-									<Grid.RowDefinitions>
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-										<RowDefinition />
-									</Grid.RowDefinitions>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition />
-										<ColumnDefinition />
-									</Grid.ColumnDefinitions>
-									<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding DllCharacteristicsReserved1}" Content="Reserved1" />
-									<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding DllCharacteristicsReserved2}" Content="Reserved2" />
-									<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DllCharacteristicsReserved3}" Content="Reserved3" />
-									<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding DllCharacteristicsReserved4}" Content="Reserved4" />
-									<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DllCharacteristicsReserved5}" Content="Reserved5" />
-									<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding HighEntropyVA}" Content="High Entropy VA" />
-									<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DynamicBase}" Content="Dynamic Base" />
-									<CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding ForceIntegrity}" Content="Force Integrity" />
-									<CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NxCompat}" Content="NX Compat" />
-									<CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoIsolation}" Content="No Isolation" />
-									<CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NoSeh}" Content="No SEH" />
-									<CheckBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoBind}" Content="No Bind" />
-									<CheckBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding AppContainer}" Content="AppContainer" />
-									<CheckBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding WdmDriver}" Content="WDM Driver" />
-									<CheckBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding GuardCf}" Content="Guard CF" />
-									<CheckBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding TerminalServerAware}" Content="Terminal Server Aware" />
-								</Grid>
-							</GroupBox>
-						</Grid>
-					</StackPanel>
-				</ScrollViewer>
-			</TabItem>
-			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
-				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
-			</TabItem>
-		</TabControl>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding DllCharacteristicsReserved1}" Content="Reserved1" />
+                                    <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding DllCharacteristicsReserved2}" Content="Reserved2" />
+                                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DllCharacteristicsReserved3}" Content="Reserved3" />
+                                    <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding DllCharacteristicsReserved4}" Content="Reserved4" />
+                                    <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DllCharacteristicsReserved5}" Content="Reserved5" />
+                                    <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding HighEntropyVA}" Content="High Entropy VA" />
+                                    <CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DynamicBase}" Content="Dynamic Base" />
+                                    <CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding ForceIntegrity}" Content="Force Integrity" />
+                                    <CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NxCompat}" Content="NX Compat" />
+                                    <CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoIsolation}" Content="No Isolation" />
+                                    <CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NoSeh}" Content="No SEH" />
+                                    <CheckBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoBind}" Content="No Bind" />
+                                    <CheckBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding AppContainer}" Content="AppContainer" />
+                                    <CheckBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding WdmDriver}" Content="WDM Driver" />
+                                    <CheckBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding GuardCf}" Content="Guard CF" />
+                                    <CheckBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding TerminalServerAware}" Content="Terminal Server Aware" />
+                                </Grid>
+                            </GroupBox>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
+                <dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
+            </TabItem>
+        </TabControl>
 
-		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_RestoreSettings}" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" />
-		</StackPanel>
-	</Grid>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_RestoreSettings}" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" />
+        </StackPanel>
+    </Grid>
 </winlocal:WindowBase>

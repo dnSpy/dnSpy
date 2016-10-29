@@ -25,10 +25,10 @@
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
-	<UserControl.Resources>
-		<DataTemplate DataType="{x:Type dnlibdlgs:CANamedArgumentVM}">
-			<dnlibdlgs:CANamedArgumentControl />
-		</DataTemplate>
-	</UserControl.Resources>
-	<dnlibdlgs:ListVMControl DataContext="{Binding}" />
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type dnlibdlgs:CANamedArgumentVM}">
+            <dnlibdlgs:CANamedArgumentControl />
+        </DataTemplate>
+    </UserControl.Resources>
+    <dnlibdlgs:ListVMControl DataContext="{Binding}" />
 </UserControl>

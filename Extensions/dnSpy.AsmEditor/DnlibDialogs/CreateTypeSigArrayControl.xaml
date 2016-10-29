@@ -26,57 +26,57 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="500">
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-		<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" DataContext="{Binding TypeSigCreator}" />
+        <dnlibdlgs:TypeSigCreatorControl Grid.Row="0" DataContext="{Binding TypeSigCreator}" />
 
-		<Grid Grid.Row="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<ListBox Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
-					  Margin="0 5 0 0"
-					  IsEnabled="{Binding IsEnabled}"
-					  ItemsSource="{Binding TypeSigCollection}"
-					  DisplayMemberPath="FullName"
-					  SelectedIndex="{Binding TypeSigCollection.SelectedIndex}" />
-			<RepeatButton Grid.Row="0" Grid.Column="1"
-					Margin="5 5 0 0"
-					Command="{Binding TypeSigCollection.MoveSelectedUpCommand}"
-					ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveUp_ToolTip}">
-				<RepeatButton.Content>
-					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
-						<Path.LayoutTransform>
-							<RotateTransform Angle="0" />
-						</Path.LayoutTransform>
-					</Path>
-				</RepeatButton.Content>
-			</RepeatButton>
-			<RepeatButton Grid.Row="2" Grid.Column="1"
-					Margin="5 5 0 0"
-					Command="{Binding TypeSigCollection.MoveSelectedDownCommand}"
-					ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveDown_ToolTip}">
-				<RepeatButton.Content>
-					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
-						<Path.LayoutTransform>
-							<RotateTransform Angle="180" />
-						</Path.LayoutTransform>
-					</Path>
-				</RepeatButton.Content>
-			</RepeatButton>
-		</Grid>
-	</Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListBox Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                      Margin="0 5 0 0"
+                      IsEnabled="{Binding IsEnabled}"
+                      ItemsSource="{Binding TypeSigCollection}"
+                      DisplayMemberPath="FullName"
+                      SelectedIndex="{Binding TypeSigCollection.SelectedIndex}" />
+            <RepeatButton Grid.Row="0" Grid.Column="1"
+                    Margin="5 5 0 0"
+                    Command="{Binding TypeSigCollection.MoveSelectedUpCommand}"
+                    ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveUp_ToolTip}">
+                <RepeatButton.Content>
+                    <Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
+                        <Path.LayoutTransform>
+                            <RotateTransform Angle="0" />
+                        </Path.LayoutTransform>
+                    </Path>
+                </RepeatButton.Content>
+            </RepeatButton>
+            <RepeatButton Grid.Row="2" Grid.Column="1"
+                    Margin="5 5 0 0"
+                    Command="{Binding TypeSigCollection.MoveSelectedDownCommand}"
+                    ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveDown_ToolTip}">
+                <RepeatButton.Content>
+                    <Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
+                        <Path.LayoutTransform>
+                            <RotateTransform Angle="180" />
+                        </Path.LayoutTransform>
+                    </Path>
+                </RepeatButton.Content>
+            </RepeatButton>
+        </Grid>
+    </Grid>
 </UserControl>

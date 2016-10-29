@@ -27,50 +27,50 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
-	<UserControl.Resources>
-		<vc:CilObjectConverter x:Key="CilObjectConverter" />
-		<DataTemplate x:Key="InstructionTemplate">
-			<ContentPresenter Content="{Binding InstructionVM, Converter={StaticResource CilObjectConverter}}" TextBlock.FontFamily="{DynamicResource TextEditorFontFamily}" />
-		</DataTemplate>
-		<DataTemplate x:Key="EHDataTemplate">
-			<Border Padding="5 0 0 0">
-				<ContentPresenter Content="{Binding Converter={StaticResource CilObjectConverter}}" />
-			</Border>
-		</DataTemplate>
-	</UserControl.Resources>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-		<Grid Grid.Row="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<ComboBox
-				Grid.Column="0"
-				Background="{DynamicResource TEInheritedTextBackground}"
-				BorderBrush="{DynamicResource TEInheritedTextBackground}"
-				Style="{StaticResource CilEHComboBoxStyle}"
-				ItemTemplate="{StaticResource EHDataTemplate}"
-				mbody:ComboBoxAttachedProps.SelectionBoxItemTemplate="{StaticResource EHDataTemplate}"
-				ItemsSource="{Binding AllInstructionsVM.Items}"
-				SelectedIndex="{Binding AllInstructionsVM.SelectedIndex}"
-				VerticalContentAlignment="Center"/>
+    <UserControl.Resources>
+        <vc:CilObjectConverter x:Key="CilObjectConverter" />
+        <DataTemplate x:Key="InstructionTemplate">
+            <ContentPresenter Content="{Binding InstructionVM, Converter={StaticResource CilObjectConverter}}" TextBlock.FontFamily="{DynamicResource TextEditorFontFamily}" />
+        </DataTemplate>
+        <DataTemplate x:Key="EHDataTemplate">
+            <Border Padding="5 0 0 0">
+                <ContentPresenter Content="{Binding Converter={StaticResource CilObjectConverter}}" />
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ComboBox
+                Grid.Column="0"
+                Background="{DynamicResource TEInheritedTextBackground}"
+                BorderBrush="{DynamicResource TEInheritedTextBackground}"
+                Style="{StaticResource CilEHComboBoxStyle}"
+                ItemTemplate="{StaticResource EHDataTemplate}"
+                mbody:ComboBoxAttachedProps.SelectionBoxItemTemplate="{StaticResource EHDataTemplate}"
+                ItemsSource="{Binding AllInstructionsVM.Items}"
+                SelectedIndex="{Binding AllInstructionsVM.SelectedIndex}"
+                VerticalContentAlignment="Center"/>
             <Button Grid.Column="1" Style="{StaticResource DialogButton}" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Command="{Binding AddInstructionCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.AddAfterSelInstr_ToolTip}"  />
             <Button Grid.Column="2" Style="{StaticResource DialogButton}" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Append}" Command="{Binding AppendInstructionCommand}" />
-		</Grid>
-		<ListBox
-			Grid.Row="1"
-			Margin="0 5 0 0"
-			Name="listBox"
-			SelectionMode="Extended"
-			Style="{StaticResource CilListBoxStyle}"
-			ItemContainerStyle="{StaticResource CilListBoxItemStyle}"
-			ItemTemplate="{StaticResource InstructionTemplate}"
-			ItemsSource="{Binding InstructionsListVM}"
-			SelectedIndex="{Binding SelectedIndex}"/>
-	</Grid>
+        </Grid>
+        <ListBox
+            Grid.Row="1"
+            Margin="0 5 0 0"
+            Name="listBox"
+            SelectionMode="Extended"
+            Style="{StaticResource CilListBoxStyle}"
+            ItemContainerStyle="{StaticResource CilListBoxItemStyle}"
+            ItemTemplate="{StaticResource InstructionTemplate}"
+            ItemsSource="{Binding InstructionsListVM}"
+            SelectedIndex="{Binding SelectedIndex}"/>
+    </Grid>
 </UserControl>

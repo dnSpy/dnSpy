@@ -26,10 +26,10 @@
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
-	<UserControl.Resources>
-		<DataTemplate DataType="{x:Type local:ImageVM}">
-			<Image Source="{Binding ImageSource}" Stretch="None" HorizontalAlignment="Left" />
-		</DataTemplate>
-	</UserControl.Resources>
-	<dnlibdlgs:ListVMControl DataContext="{Binding}" />
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type local:ImageVM}">
+            <Image Source="{Binding ImageSource}" Stretch="None" HorizontalAlignment="Left" />
+        </DataTemplate>
+    </UserControl.Resources>
+    <dnlibdlgs:ListVMControl DataContext="{Binding}" />
 </UserControl>

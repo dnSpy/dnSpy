@@ -26,45 +26,45 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="370" d:DesignWidth="500">
-	<TabControl>
-		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}">
-			<Grid Margin="0 5 0 0">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-				<Grid Grid.Row="0" Margin="0 5 0 0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
+    <TabControl>
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}">
+            <Grid Margin="0 5 0 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0 5 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" Margin="5 0 0 0" Style="{StaticResource DialogButton}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodSpec_Method}" Command="{Binding PickMethodCommand}" />
-					<TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" TextWrapping="Wrap" Text="{Binding MethodFullName, Mode=OneWay}" />
-				</Grid>
-			</Grid>
-		</TabItem>
+                    <TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" TextWrapping="Wrap" Text="{Binding MethodFullName, Mode=OneWay}" />
+                </Grid>
+            </Grid>
+        </TabItem>
         <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MethodInstantiationTypesTab}">
-			<ScrollViewer VerticalScrollBarVisibility="Auto">
-				<Grid DataContext="{Binding CreateTypeSigArrayVM}">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="*" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-					<dnlibdlgs:CreateTypeSigArrayControl Grid.Row="0" Margin="0 5 0 0" />
-					<Grid Grid.Row="1" Margin="0 5 0 0">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<Button Grid.Column="1" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Style="{StaticResource DialogButton}" Command="{Binding AddCommand}" />
-						<Button Grid.Column="2" Margin="0 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Delete}" Style="{StaticResource DialogButton}" Command="{Binding TypeSigCollection.RemoveSelectedCommand}" />
-					</Grid>
-				</Grid>
-			</ScrollViewer>
-		</TabItem>
-		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
-			<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
-		</TabItem>
-	</TabControl>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid DataContext="{Binding CreateTypeSigArrayVM}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <dnlibdlgs:CreateTypeSigArrayControl Grid.Row="0" Margin="0 5 0 0" />
+                    <Grid Grid.Row="1" Margin="0 5 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Style="{StaticResource DialogButton}" Command="{Binding AddCommand}" />
+                        <Button Grid.Column="2" Margin="0 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Delete}" Style="{StaticResource DialogButton}" Command="{Binding TypeSigCollection.RemoveSelectedCommand}" />
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
+            <dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
+        </TabItem>
+    </TabControl>
 </UserControl>

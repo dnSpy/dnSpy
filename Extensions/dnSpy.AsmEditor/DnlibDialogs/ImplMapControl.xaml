@@ -25,41 +25,41 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
-	<GroupBox>
-		<GroupBox.Header>
+    <GroupBox>
+        <GroupBox.Header>
             <CheckBox IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_Enable}" />
-		</GroupBox.Header>
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+        </GroupBox.Header>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
             <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_Name}" IsEnabled="{Binding IsEnabled}" />
-			<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
             <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=moduleTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_Module}" IsEnabled="{Binding IsEnabled}" />
-			<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="moduleTextBox" Text="{Binding ModuleName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+            <TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="moduleTextBox" Text="{Binding ModuleName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 
             <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_NoMangle}" IsChecked="{Binding NoMangle}" IsEnabled="{Binding IsEnabled}" />
             <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_SupportsLastError}" IsChecked="{Binding SupportsLastError}" IsEnabled="{Binding IsEnabled}" />
 
             <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_CharacterSet}" Target="{Binding ElementName=charSetComboBox}" IsEnabled="{Binding IsEnabled}" />
-			<ComboBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="charSetComboBox" DisplayMemberPath="Name" ItemsSource="{Binding CharSet.Items}" SelectedIndex="{Binding CharSet.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
+            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="charSetComboBox" DisplayMemberPath="Name" ItemsSource="{Binding CharSet.Items}" SelectedIndex="{Binding CharSet.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
             <Label Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_BestFit}" Target="{Binding ElementName=bestFitComboBox}" IsEnabled="{Binding IsEnabled}" />
-			<ComboBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Name="bestFitComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BestFit.Items}" SelectedIndex="{Binding BestFit.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
+            <ComboBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Name="bestFitComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BestFit.Items}" SelectedIndex="{Binding BestFit.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
 
             <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_ThrowOn_SHORT}" Target="{Binding ElementName=throwOnComboBox}" IsEnabled="{Binding IsEnabled}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_ThrowOn_ToolTip}" />
             <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Name="throwOnComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ThrowOnUnmappableChar.Items}" SelectedIndex="{Binding ThrowOnUnmappableChar.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_ThrowOn_ToolTip}" IsEnabled="{Binding IsEnabled}" />
             <Label Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.ImplMap_CallingConvention}" Target="{Binding ElementName=callConvComboBox}" IsEnabled="{Binding IsEnabled}" />
-			<ComboBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Name="callConvComboBox" DisplayMemberPath="Name" ItemsSource="{Binding CallConv.Items}" SelectedIndex="{Binding CallConv.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
-		</Grid>
-	</GroupBox>
+            <ComboBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Name="callConvComboBox" DisplayMemberPath="Name" ItemsSource="{Binding CallConv.Items}" SelectedIndex="{Binding CallConv.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
+        </Grid>
+    </GroupBox>
 </UserControl>

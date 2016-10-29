@@ -31,64 +31,64 @@
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="200" MinWidth="400">
-	<winlocal:WindowBase.Resources>
-		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-		<vc:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter" />
-		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<ControlTemplate x:Key="noRedBorderOnValidationError">
-			<!-- Don't show the red border when the user hasn't selected a valid node -->
-			<AdornedElementPlaceholder/>
-		</ControlTemplate>
-	</winlocal:WindowBase.Resources>
-	<Grid FocusManager.FocusedElement="{Binding ElementName=searchTextBox}">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="{Binding HasSearchText, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=1}" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <winlocal:WindowBase.Resources>
+        <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+        <vc:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter" />
+        <vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ControlTemplate x:Key="noRedBorderOnValidationError">
+            <!-- Don't show the red border when the user hasn't selected a valid node -->
+            <AdornedElementPlaceholder/>
+        </ControlTemplate>
+    </winlocal:WindowBase.Resources>
+    <Grid FocusManager.FocusedElement="{Binding ElementName=searchTextBox}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="{Binding HasSearchText, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=1}" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<Grid Grid.Row="0" Margin="5">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
             <Label Grid.Column="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.PickMember_Search}" Target="{Binding ElementName=searchTextBox}"/>
-			<TextBox Grid.Column="1" Margin="5 0 0 0" Name="searchTextBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Grid.Column="1" Margin="5 0 0 0" Name="searchTextBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding OpenCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.PickMember_OpenAsmToolTip}" Visibility="{Binding CanOpenAssembly, Converter={StaticResource BooleanToVisibilityConverter}}" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
                 <img:DsImage ImageReference="{x:Static img:DsImages.OpenFolder}"/>
-			</Button>
+            </Button>
             <ComboBox Grid.Column="3" Margin="5 0 0 0" DisplayMemberPath="UniqueNameUI" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
-		</Grid>
+        </Grid>
 
-		<ListBox Grid.Row="1"
-				 Name="listBox"
-				 Margin="5 0 5 5"
-				 HorizontalContentAlignment="Stretch"
-				 SelectionMode="Single"
-				 VirtualizingStackPanel.IsVirtualizing="True"
-				 VirtualizingStackPanel.VirtualizationMode="Recycling"
-				 BorderThickness="1"
-				 img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
-				 Validation.ErrorTemplate="{StaticResource noRedBorderOnValidationError}"
-				 ItemsSource="{Binding SearchResultsCollectionView}"
-				 SelectedItem="{Binding SearchResult, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+        <ListBox Grid.Row="1"
+                 Name="listBox"
+                 Margin="5 0 5 5"
+                 HorizontalContentAlignment="Stretch"
+                 SelectionMode="Single"
+                 VirtualizingStackPanel.IsVirtualizing="True"
+                 VirtualizingStackPanel.VirtualizationMode="Recycling"
+                 BorderThickness="1"
+                 img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
+                 Validation.ErrorTemplate="{StaticResource noRedBorderOnValidationError}"
+                 ItemsSource="{Binding SearchResultsCollectionView}"
+                 SelectedItem="{Binding SearchResult, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
 
-		<ContentPresenter Grid.Row="2" Name="cpTreeView" Margin="5 0 5 5" />
+        <ContentPresenter Grid.Row="2" Name="cpTreeView" Margin="5 0 5 5" />
 
-		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
-		</StackPanel>
-	</Grid>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
+        </StackPanel>
+    </Grid>
 </winlocal:WindowBase>

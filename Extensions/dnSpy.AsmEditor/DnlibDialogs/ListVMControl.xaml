@@ -27,53 +27,53 @@
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
-	<UserControl.Resources>
+    <UserControl.Resources>
         <DataTemplate DataType="{x:Type mvvm:ViewModelBase}">
-			<TextBlock Text="{Binding FullName}" ToolTip="{Binding FullName}" />
-		</DataTemplate>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-	</UserControl.Resources>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+            <TextBlock Text="{Binding FullName}" ToolTip="{Binding FullName}" />
+        </DataTemplate>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<ListBox Grid.Row="0"
-				  Margin="0 5 0 0"
-				  Name="listBox"
-				  MouseDoubleClick="listBox_MouseDoubleClick"
-				  SelectionMode="Single"
-				  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				  ItemsSource="{Binding Collection}"
-				  HorizontalContentAlignment="Stretch"
-				  IsEnabled="{Binding IsEnabled}"
-				  SelectedIndex="{Binding Collection.SelectedIndex}" />
+        <ListBox Grid.Row="0"
+                  Margin="0 5 0 0"
+                  Name="listBox"
+                  MouseDoubleClick="listBox_MouseDoubleClick"
+                  SelectionMode="Single"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ItemsSource="{Binding Collection}"
+                  HorizontalContentAlignment="Stretch"
+                  IsEnabled="{Binding IsEnabled}"
+                  SelectedIndex="{Binding Collection.SelectedIndex}" />
 
-		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">
-			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedUpCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveUp_ToolTip}">
-				<RepeatButton.Content>
-					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
-						<Path.LayoutTransform>
-							<RotateTransform Angle="0" />
-						</Path.LayoutTransform>
-					</Path>
-				</RepeatButton.Content>
-			</RepeatButton>
-			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedDownCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveDown_ToolTip}">
-				<RepeatButton.Content>
-					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
-						<Path.LayoutTransform>
-							<RotateTransform Angle="180" />
-						</Path.LayoutTransform>
-					</Path>
-				</RepeatButton.Content>
-			</RepeatButton>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">
+            <RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedUpCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveUp_ToolTip}">
+                <RepeatButton.Content>
+                    <Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
+                        <Path.LayoutTransform>
+                            <RotateTransform Angle="0" />
+                        </Path.LayoutTransform>
+                    </Path>
+                </RepeatButton.Content>
+            </RepeatButton>
+            <RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedDownCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveDown_ToolTip}">
+                <RepeatButton.Content>
+                    <Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
+                        <Path.LayoutTransform>
+                            <RotateTransform Angle="180" />
+                        </Path.LayoutTransform>
+                    </Path>
+                </RepeatButton.Content>
+            </RepeatButton>
 
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Edit}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add2}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding InlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Remove}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding Collection.RemoveSelectedCommand}" />
-		</StackPanel>
-	</Grid>
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Edit}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add2}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding InlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Remove}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding Collection.RemoveSelectedCommand}" />
+        </StackPanel>
+    </Grid>
 </UserControl>

@@ -30,36 +30,36 @@
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="500">
-	<winlocal:WindowBase.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-	</winlocal:WindowBase.Resources>
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <winlocal:WindowBase.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+    </winlocal:WindowBase.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<Border Margin="5" Style="{StaticResource DialogBorderStyle}">
-			<dnlibdlgs:CreateTypeSigArrayControl Margin="5" />
-		</Border>
+        <Border Margin="5" Style="{StaticResource DialogBorderStyle}">
+            <dnlibdlgs:CreateTypeSigArrayControl Margin="5" />
+        </Border>
 
-		<Grid Grid.Row="1" Margin="5 0 5 5">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Label Grid.Column="0" Content="{Binding NumberOfTypesLeftString}" Visibility="{Binding IsFiniteCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Grid.Column="1" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding AddCommand}" />
-			<Button Grid.Column="2" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Delete}" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding TypeSigCollection.RemoveSelectedCommand}" />
-			<Button Grid.Column="3" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Grid.Column="4" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
-		</Grid>
-	</Grid>
+        <Grid Grid.Row="1" Margin="5 0 5 5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="{Binding NumberOfTypesLeftString}" Visibility="{Binding IsFiniteCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Grid.Column="1" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding AddCommand}" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Delete}" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding TypeSigCollection.RemoveSelectedCommand}" />
+            <Button Grid.Column="3" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Grid.Column="4" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
+        </Grid>
+    </Grid>
 </winlocal:WindowBase>

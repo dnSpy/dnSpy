@@ -34,7 +34,7 @@
     <ctrls:WindowBase.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-	</ctrls:WindowBase.Resources>
+    </ctrls:WindowBase.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
