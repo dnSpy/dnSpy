@@ -29,12 +29,18 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	[ContentType(ContentTypes.Xaml)]
 	[ContentType(ContentTypes.Xml)]
 	sealed class XmlDocumentWriterProvider : IDocumentWriterProvider {
-		public IDocumentWriter Create(IContentType contentType) => new XmlDocumentWriter();
+		public IDocumentWriter Create(IContentType contentType) => new XmlDocumentWriter(contentType.IsOfType(ContentTypes.Xaml));
 	}
 
 	sealed class XmlDocumentWriter : IDocumentWriter {
+		readonly bool isXaml;
+
+		public XmlDocumentWriter(bool isXaml) {
+			this.isXaml = isXaml;
+		}
+
 		public void Write(IDecompilerOutput output, string text) {
-			var parser = new XmlParser(text);
+			var parser = new XmlParser(text, isXaml);
 			parser.Parse();
 			parser.WriteTo(output);
 		}

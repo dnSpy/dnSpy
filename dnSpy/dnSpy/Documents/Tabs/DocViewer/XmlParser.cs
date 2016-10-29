@@ -25,8 +25,9 @@ using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
-	sealed class XmlParser {
+	sealed partial class XmlParser {
 		readonly string text;
+		readonly XamlAttributeParser xamlAttributeParser;
 		readonly List<ReferenceInfo> references;
 		readonly List<CodeBracesRange> bracesInfo;
 		readonly List<XmlNamespaceReference> xmlNamespaceReferences;
@@ -93,10 +94,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public XmlParser(string text) {
+		public XmlParser(string text, bool isXaml) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			this.text = text;
+			this.xamlAttributeParser = isXaml ? new XamlAttributeParser(this) : null;
 			references = new List<ReferenceInfo>();
 			bracesInfo = new List<CodeBracesRange>();
 			xmlNamespaceReferences = new List<XmlNamespaceReference>();
@@ -121,27 +123,34 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		void SaveProcessingInstruction(Token token) =>
 			SaveBraceInfo(token.Span, 2, 2, CodeBracesRangeFlags.OtherBlockBraces);
 
+		enum XmlNameReferenceKind {
+			Tag,// or markup extension
+			Attribute,// or property
+			Resource,
+			RelativeSource,
+		}
+
 		sealed class XmlNameTextViewerReference {
 			readonly XmlNamespaceReference nsRef;
 			readonly string name;
-			readonly bool isTag;
+			readonly XmlNameReferenceKind refKind;
 
-			public XmlNameTextViewerReference(XmlNamespaceReference nsRef, string name, bool isTag) {
+			public XmlNameTextViewerReference(XmlNamespaceReference nsRef, string name, XmlNameReferenceKind refKind) {
 				if (nsRef == null)
 					throw new ArgumentNullException(nameof(nsRef));
 				if (name == null)
 					throw new ArgumentNullException(nameof(name));
 				this.nsRef = nsRef;
 				this.name = name;
-				this.isTag = isTag;
+				this.refKind = refKind;
 			}
 
 			public override bool Equals(object obj) {
 				var other = obj as XmlNameTextViewerReference;
-				return other != null && nsRef.Equals(other.nsRef) && name == other.name && isTag == other.isTag;
+				return other != null && nsRef.Equals(other.nsRef) && name == other.name && refKind == other.refKind;
 			}
 
-			public override int GetHashCode() => nsRef.GetHashCode() ^ name.GetHashCode() ^ (isTag ? int.MinValue : 0);
+			public override int GetHashCode() => nsRef.GetHashCode() ^ name.GetHashCode() ^ (int)refKind;
 		}
 
 		sealed class XmlNamespaceTextViewerReference {
@@ -215,8 +224,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			references.Add(new ReferenceInfo(aliasSpan, @ref, true));
 		}
 
-		void SaveReference(NameToken name, bool isTag, bool findDefsOnly) {
-			var aliasSpan = name.HasNamespace ? name.Namespace.Span : new Span(0, 0);
+		void SaveReference(NameToken name, XmlNameReferenceKind refKind, bool findDefsOnly) =>
+			SaveReference(name.HasNamespace, name.Namespace.Span, name.Name.Span, refKind, findDefsOnly);
+
+		void SaveReference(bool hasNamespace, Span namespaceSpan, Span nameSpan, XmlNameReferenceKind refKind, bool findDefsOnly) {
+			var aliasSpan = hasNamespace ? namespaceSpan : new Span(0, 0);
 			XmlNamespaceReference nsRef;
 			if (findDefsOnly) {
 				var alias = GetSubstring(aliasSpan);
@@ -226,13 +238,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			else
 				nsRef = GetAttributeNamespaceReference(aliasSpan);
 
-			if (name.HasNamespace) {
+			if (hasNamespace) {
 				var @ref = new XmlNamespaceTextViewerReference(nsRef);
-				references.Add(new ReferenceInfo(name.Namespace.Span, @ref, false));
+				references.Add(new ReferenceInfo(namespaceSpan, @ref, false));
 			}
 
-			var nameRef = new XmlNameTextViewerReference(nsRef, GetSubstring(name.Name.Span), isTag);
-			references.Add(new ReferenceInfo(name.Name.Span, nameRef, false));
+			var nameRef = new XmlNameTextViewerReference(nsRef, GetSubstring(nameSpan), refKind);
+			references.Add(new ReferenceInfo(nameSpan, nameRef, false));
 		}
 
 		public void Parse() {
@@ -242,6 +254,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var peekToken2 = PeekToken();
 				if (peekToken2.Kind == TokenKind.EOF)
 					break;
+				Debug.Assert(peekToken.Span.Start != peekToken2.Span.Start);
 				if (peekToken.Span.Start == peekToken2.Span.Start)
 					GetNextToken();
 			}
@@ -359,7 +372,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			try {
 				xmlNamespaces = GetCachedXmlNamespaces(xmlNamespaces);
 				Debug.Assert(xmlNamespaceReferences.Count == 0);
-				SaveReference(tagName.Value, isTag: true, findDefsOnly: false);
+				SaveReference(tagName.Value, XmlNameReferenceKind.Tag, findDefsOnly: false);
 				ReadAttributes();
 				SaveXmlNamespaceReferences();
 
@@ -386,7 +399,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					if (greaterThanToken.Kind != TokenKind.GreaterThan)
 						return;
 					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End == firstGreaterThan.Span.Start ? firstGreaterThan.Span.End : tagName.Value.Span.End), Span.FromBounds(token.Span.Start, greaterThanToken.Span.End), CodeBracesRangeFlags.OtherBlockBraces);
-					SaveReference(tagEndName.Value, isTag: true, findDefsOnly: true);
+					SaveReference(tagEndName.Value, XmlNameReferenceKind.Tag, findDefsOnly: true);
 					break;
 
 				default:
@@ -536,8 +549,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 						else
 							xmlNamespaces.Add(this, new Span(0, 0), value.Span);
 					}
-					else
-						SaveReference(name, isTag: false, findDefsOnly: false);
+					else {
+						SaveReference(name, XmlNameReferenceKind.Attribute, findDefsOnly: false);
+						if (xamlAttributeParser != null)
+							ParseXamlString(new Span(value.Span.Start + 1, value.Span.Length - 2));
+					}
 					SaveString(value);
 					break;
 
@@ -556,6 +572,18 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					throw new InvalidOperationException();
 				}
 			}
+		}
+
+		void ParseXamlString(Span span) {
+			Debug.Assert(xamlAttributeParser != null);
+
+			// Absolute minimum is "{x}", but most likely it's longer
+			if (span.Length <= 3)
+				return;
+			if (text[span.Start] != '{' || text[span.Start + 1] == '}')
+				return;
+
+			xamlAttributeParser.Parse(text, span);
 		}
 
 		NameToken? ReadNameToken() {
@@ -650,7 +678,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return ReadString(startPos, (char)c);
 			if (IsNameStartChar((char)c))
 				return ReadName(startPos);
-			return new Token(new Span(startPos, 1), TokenKind.Unknown);
+			return new Token(new Span(startPos, textPosition - startPos), TokenKind.Unknown);
 		}
 
 		Token ReadName(int startPos) {

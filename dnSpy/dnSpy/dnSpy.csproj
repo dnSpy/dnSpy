@@ -227,6 +227,7 @@
     </Compile>
     <Compile Include="Documents\Tabs\DocViewer\XmlDocumentWriter.cs" />
     <Compile Include="Documents\Tabs\DocViewer\XmlParser.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\XmlParser.XamlAttributeParser.cs" />
     <Compile Include="Documents\Tabs\DsDocumentInfoSerializer.cs" />
     <Compile Include="Documents\Tabs\EntryPointCommands.cs" />
     <Compile Include="Documents\Tabs\GoToTokenCommand.cs" />
