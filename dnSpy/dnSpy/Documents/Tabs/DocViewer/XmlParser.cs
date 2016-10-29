@@ -112,11 +112,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			bracesInfo.Add(new CodeBracesRange(new TextSpan(left.Start, left.Length), new TextSpan(right.Start, right.Length), flags));
 
 		void SaveComment(Token token) =>
-			SaveBraceInfo(token.Span, 4, 3, CodeBracesRangeFlags.OtherBraces);
+			SaveBraceInfo(token.Span, 4, 3, CodeBracesRangeFlags.OtherBlockBraces);
 		void SaveString(Token token) =>
 			SaveBraceInfo(token.Span, 1, 1, token.Kind == TokenKind.SingleQuoteString ? CodeBracesRangeFlags.SingleQuotes : CodeBracesRangeFlags.DoubleQuotes);
 		void SaveProcessingInstruction(Token token) =>
-			SaveBraceInfo(token.Span, 2, 2, CodeBracesRangeFlags.OtherBraces);
+			SaveBraceInfo(token.Span, 2, 2, CodeBracesRangeFlags.OtherBlockBraces);
 
 		sealed class XmlTagTextViewerReference {
 			readonly XmlNamespaceReference nsRef;
@@ -295,7 +295,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					return;
 
 				case TokenKind.SlashGreaterThan:
-					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End), token.Span, CodeBracesRangeFlags.OtherBraces);
+					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End), token.Span, CodeBracesRangeFlags.OtherBlockBraces);
 					break;
 
 				case TokenKind.GreaterThan:
