@@ -99,7 +99,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			references = new List<ReferenceInfo>();
 			bracesInfo = new List<CodeBracesRange>();
 			xmlNamespaceReferences = new List<XmlNamespaceReference>();
-			xmlNamespaces = new XmlNamespaces(null);
+			xmlNamespaces = new XmlNamespaces();
+			xmlNamespaces.Initialize(null);
 		}
 
 		void SaveBraceInfo(Span span, int leftLength, int rightLength, CodeBracesRangeFlags flags) {
@@ -276,6 +277,24 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
+		readonly List<XmlNamespaces> cachedXmlNamespaces = new List<XmlNamespaces>();
+		XmlNamespaces GetCachedXmlNamespaces(XmlNamespaces previous) {
+			XmlNamespaces newInst;
+			if (cachedXmlNamespaces.Count == 0)
+				newInst = new XmlNamespaces();
+			else {
+				int index = cachedXmlNamespaces.Count - 1;
+				newInst = cachedXmlNamespaces[index];
+				cachedXmlNamespaces.RemoveAt(index);
+			}
+			newInst.Initialize(previous);
+			return newInst;
+		}
+		void FreeXmlNamespaces(XmlNamespaces xmlNamespaces) {
+			xmlNamespaces.Clear();
+			cachedXmlNamespaces.Add(xmlNamespaces);
+		}
+
 		void ReadTag(Token lessThanToken) {
 			var tagName = ReadNameToken();
 			if (tagName == null)
@@ -283,7 +302,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			var oldXmlNamespaces = xmlNamespaces;
 			try {
-				xmlNamespaces = new XmlNamespaces(xmlNamespaces);
+				xmlNamespaces = GetCachedXmlNamespaces(xmlNamespaces);
 				Debug.Assert(xmlNamespaceReferences.Count == 0);
 				ReadAttributes();
 				SaveReference(tagName.Value, false);
@@ -321,6 +340,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				}
 			}
 			finally {
+				FreeXmlNamespaces(xmlNamespaces);
 				xmlNamespaces = oldXmlNamespaces;
 			}
 		}
@@ -329,10 +349,17 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			XmlNamespaces previous;
 			readonly Dictionary<string, XmlNamespaceDefinition> namespaces;
 
-			public XmlNamespaces(XmlNamespaces previous) {
-				this.previous = previous;
+			public XmlNamespaces() {
 				namespaces = new Dictionary<string, XmlNamespaceDefinition>(StringComparer.Ordinal);
 			}
+
+			public void Clear() {
+				previous = null;
+				namespaces.Clear();
+			}
+
+			public void Initialize(XmlNamespaces previous) =>
+				this.previous = previous;
 
 			public XmlNamespaceDefinition GetOrCreate(string xmlNsAlias) {
 				var curr = this;
