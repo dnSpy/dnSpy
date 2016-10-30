@@ -1033,9 +1033,6 @@
   <data name="AskCancelSaveCloseWindow" xml:space="preserve">
     <value>保存已经被取消。确定要关闭窗口吗？</value>
   </data>
-  <data name="AskClearUndoHistory" xml:space="preserve">
-    <value>确定要清除撤消/重做历史记录吗？</value>
-  </data>
   <data name="AskDeleteField" xml:space="preserve">
     <value>程序集中的部分代码可能会引用此字段。确定要删除此字段吗？</value>
   </data>
@@ -1074,9 +1071,6 @@
   </data>
   <data name="Button_Assembly" xml:space="preserve">
     <value>Assembly</value>
-  </data>
-  <data name="ClearHistoryToolBarToolTip" xml:space="preserve">
-    <value>清除撤消/重做历史</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
     <value>转换程序集为模块</value>
@@ -2502,5 +2496,11 @@
   </data>
   <data name="Button_Cancel2" xml:space="preserve">
     <value>取消</value>
+  </data>
+  <data name="EditAssemblyCode" xml:space="preserve">
+    <value>Edit Assembly Attributes</value>
+  </data>
+  <data name="EditCodeAddClass" xml:space="preserve">
+    <value>Add Class</value>
   </data>
 </root>

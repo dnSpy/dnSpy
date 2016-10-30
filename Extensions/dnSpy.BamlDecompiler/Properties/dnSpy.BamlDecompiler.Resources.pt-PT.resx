@@ -129,6 +129,12 @@
   <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
     <value>Desmontar BAML</value>
   </data>
+  <data name="BamlSettings_NewLineOnAttributes" xml:space="preserve">
+    <value>One attribute per line</value>
+  </data>
+  <data name="BamlSettings_UseTabs" xml:space="preserve">
+    <value>Use tabs</value>
+  </data>
   <data name="DisassembleBAMLCommand" xml:space="preserve">
     <value>Desmontar BAML</value>
   </data>

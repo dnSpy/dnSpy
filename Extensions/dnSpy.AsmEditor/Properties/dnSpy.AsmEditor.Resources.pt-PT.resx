@@ -1034,9 +1034,6 @@
     <value>A operação está sendo cancelado.
 Tem certeza que deseja fechar a janela?</value>
   </data>
-  <data name="AskClearUndoHistory" xml:space="preserve">
-    <value>Você quer limpar o histórico de desfazer/refazer?</value>
-  </data>
   <data name="AskDeleteField" xml:space="preserve">
     <value>Pode haver código em um assembly que faz referência a esse campo. Tem certeza que deseja excluir o campo?</value>
   </data>
@@ -1075,9 +1072,6 @@ Tem certeza que deseja fechar a janela?</value>
   </data>
   <data name="Button_Assembly" xml:space="preserve">
     <value>Assembly</value>
-  </data>
-  <data name="ClearHistoryToolBarToolTip" xml:space="preserve">
-    <value>Limpar o histórico de desfazer/refazer</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
     <value>Converter Assembly para NetModule</value>
@@ -2505,5 +2499,11 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   </data>
   <data name="Button_Cancel2" xml:space="preserve">
     <value>Cancelar</value>
+  </data>
+  <data name="EditAssemblyCode" xml:space="preserve">
+    <value>Edit Assembly Attributes</value>
+  </data>
+  <data name="EditCodeAddClass" xml:space="preserve">
+    <value>Add Class</value>
   </data>
 </root>

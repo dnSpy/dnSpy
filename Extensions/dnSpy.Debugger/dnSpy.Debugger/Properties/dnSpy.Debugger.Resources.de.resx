@@ -1287,4 +1287,10 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="GlyphToolTip_Location" xml:space="preserve">
     <value>Position</value>
   </data>
+  <data name="AddClassBreakpointCommand" xml:space="preserve">
+    <value>Add Class Breakpoint</value>
+  </data>
+  <data name="AddMethodBreakpointCommand" xml:space="preserve">
+    <value>Add Method Breakpoint</value>
+  </data>
 </root>

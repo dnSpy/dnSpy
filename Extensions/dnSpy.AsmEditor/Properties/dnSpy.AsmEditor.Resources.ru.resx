@@ -1033,9 +1033,6 @@
   <data name="AskCancelSaveCloseWindow" xml:space="preserve">
     <value>Сохранение отменяется. Вы уверены, что вы хотите закрыть окно?</value>
   </data>
-  <data name="AskClearUndoHistory" xml:space="preserve">
-    <value>Вы действительно хотите очистить историю?</value>
-  </data>
   <data name="AskDeleteField" xml:space="preserve">
     <value>На это поле может ссылаться код из какой-нибудь сборки. Вы уверены, что хотите удалить поле?</value>
   </data>
@@ -1074,9 +1071,6 @@
   </data>
   <data name="Button_Assembly" xml:space="preserve">
     <value>Сборка</value>
-  </data>
-  <data name="ClearHistoryToolBarToolTip" xml:space="preserve">
-    <value>Очистить историю</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
     <value>Преобразовать сборку в NetModule</value>
@@ -2500,5 +2494,11 @@
   </data>
   <data name="Button_Cancel2" xml:space="preserve">
     <value>Отмена</value>
+  </data>
+  <data name="EditAssemblyCode" xml:space="preserve">
+    <value>Edit Assembly Attributes</value>
+  </data>
+  <data name="EditCodeAddClass" xml:space="preserve">
+    <value>Add Class</value>
   </data>
 </root>

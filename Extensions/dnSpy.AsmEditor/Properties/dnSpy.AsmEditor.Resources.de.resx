@@ -1034,9 +1034,6 @@
     <value>Der Speichervorgang wird abgebrochen.
 Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   </data>
-  <data name="AskClearUndoHistory" xml:space="preserve">
-    <value>Möchten Sie den Verlauf löschen?</value>
-  </data>
   <data name="AskDeleteField" xml:space="preserve">
     <value>Code in einer anderen Assembly könnte auf dieses Feld verweisen. Sind Sie sicher, dass Sie das Feld löschen möchten?</value>
   </data>
@@ -1075,9 +1072,6 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   </data>
   <data name="Button_Assembly" xml:space="preserve">
     <value>Assembly</value>
-  </data>
-  <data name="ClearHistoryToolBarToolTip" xml:space="preserve">
-    <value>Setzt den Verlauf zurück</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
     <value>Konvertiere Assembly zu NetModule</value>
@@ -2502,5 +2496,11 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   </data>
   <data name="Button_Cancel2" xml:space="preserve">
     <value>Abbrechen</value>
+  </data>
+  <data name="EditAssemblyCode" xml:space="preserve">
+    <value>Edit Assembly Attributes</value>
+  </data>
+  <data name="EditCodeAddClass" xml:space="preserve">
+    <value>Add Class</value>
   </data>
 </root>
