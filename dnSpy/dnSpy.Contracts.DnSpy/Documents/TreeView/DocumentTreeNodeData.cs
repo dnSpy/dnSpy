@@ -142,6 +142,14 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// ToString()
 		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public string ToString(DocumentNodeWriteOptions options = DocumentNodeWriteOptions.None) =>
+			ToString(Context.Decompiler, options);
+
+		/// <summary>
+		/// ToString()
+		/// </summary>
 		/// <param name="decompiler">Decompiler</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
