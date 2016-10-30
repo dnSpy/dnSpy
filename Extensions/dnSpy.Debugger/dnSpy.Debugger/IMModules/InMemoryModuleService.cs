@@ -30,7 +30,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Debugger.IMModules {
 	interface IInMemoryModuleService {

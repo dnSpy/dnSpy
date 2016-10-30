@@ -333,8 +333,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Search, Group: Tokens</summary>
 		public const string GROUP_CTX_SEARCH_TOKENS = "1000,8B57D21D-8109-424A-A337-DB61BE361ED4";
 
+		/// <summary>Group: Context Menu, Type: Search, Group: Debug</summary>
+		public const string GROUP_CTX_SEARCH_DEBUG = "2000,AC4A027D-7C4C-422A-A619-BF6DFF4DE7F9";
+
 		/// <summary>Group: Context Menu, Type: Search, Group: Other</summary>
-		public const string GROUP_CTX_SEARCH_OTHER = "2000,255AE50D-3638-4128-808D-FC8910BA9279";
+		public const string GROUP_CTX_SEARCH_OTHER = "5000,255AE50D-3638-4128-808D-FC8910BA9279";
 
 		/// <summary>Group: Context Menu, Type: Search, Group: Options</summary>
 		public const string GROUP_CTX_SEARCH_OPTIONS = "10000,2A261412-7DCD-4CD1-B936-783C67476E99";
@@ -345,8 +348,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Analyzer, Group: Tokens</summary>
 		public const string GROUP_CTX_ANALYZER_TOKENS = "1000,E3FB23EB-EFA8-4C80-ACCD-DCB714BBAFC7";
 
+		/// <summary>Group: Context Menu, Type: Analyzer, Group: Debug</summary>
+		public const string GROUP_CTX_ANALYZER_DEBUG = "2000,9DE7F11A-7F72-43E2-AB6E-E8E8587B956F";
+
 		/// <summary>Group: Context Menu, Type: Analyzer, Group: Other</summary>
-		public const string GROUP_CTX_ANALYZER_OTHER = "2000,A766D535-4069-4AF7-801E-F4B87A2D0F84";
+		public const string GROUP_CTX_ANALYZER_OTHER = "5000,A766D535-4069-4AF7-801E-F4B87A2D0F84";
 
 		/// <summary>Group: Context Menu, Type: Analyzer, Group: Options</summary>
 		public const string GROUP_CTX_ANALYZER_OPTIONS = "10000,FD6E5D84-A83C-4D0A-8A77-EE755DE76999";

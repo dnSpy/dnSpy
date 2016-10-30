@@ -70,11 +70,29 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Class Breakpoint.
+        /// </summary>
+        public static string AddClassBreakpointCommand {
+            get {
+                return ResourceManager.GetString("AddClassBreakpointCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add E_xception.
         /// </summary>
         public static string AddExceptionCommand {
             get {
                 return ResourceManager.GetString("AddExceptionCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Method Breakpoint.
+        /// </summary>
+        public static string AddMethodBreakpointCommand {
+            get {
+                return ResourceManager.GetString("AddMethodBreakpointCommand", resourceCulture);
             }
         }
         

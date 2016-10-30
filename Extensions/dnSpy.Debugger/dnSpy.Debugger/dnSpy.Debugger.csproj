@@ -54,6 +54,7 @@
     <Compile Include="Breakpoints\BreakpointsVM.cs" />
     <Compile Include="Breakpoints\BreakpointVM.cs" />
     <Compile Include="Breakpoints\Commands.cs" />
+    <Compile Include="Breakpoints\CtxMenuCommands.cs" />
     <Compile Include="Breakpoints\DebugEventBreakpoint.cs" />
     <Compile Include="Breakpoints\GlyphTextMarkerHelper.cs" />
     <Compile Include="Breakpoints\GlyphTextMarkerMouseProcessor.cs" />

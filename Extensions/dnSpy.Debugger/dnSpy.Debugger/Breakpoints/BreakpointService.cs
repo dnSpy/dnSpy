@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
+using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
@@ -73,6 +74,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Remove(Breakpoint bp);
 		void Clear();
 		void Toggle(IDocumentViewer documentViewer, int textPosition);
+		void Add(MethodDef method);
 		bool? GetAddRemoveBreakpointsInfo(out int count);
 		bool GetEnableDisableBreakpointsInfo(out int count);
 		Func<object, object> OnRemoveBreakpoints { get; set; }
@@ -421,6 +423,40 @@ namespace dnSpy.Debugger.Breakpoints {
 					Add(new ILCodeBreakpoint(key, methodStatement.Statement.BinSpan.Start));
 				}
 				documentViewer.MoveCaretToPosition(statements[0].Statement.TextSpan.Start);
+			}
+		}
+
+		ModuleTokenId CreateTokenId(MethodDef method) {
+			var moduleId = moduleIdProvider.Create(method.Module);
+			return new ModuleTokenId(moduleId, method.MDToken);
+		}
+
+		IEnumerable<ILCodeBreakpoint> GetILCodeBreakpoints(ModuleTokenId methodToken) {
+			foreach (var ilbp in GetILCodeBreakpoints()) {
+				if (ilbp.MethodToken.Equals(methodToken))
+					yield return ilbp;
+			}
+		}
+
+		IEnumerable<ILCodeBreakpoint> GetILCodeBreakpoints(ModuleTokenId methodToken, uint ilOffset) {
+			foreach (var ilbp in GetILCodeBreakpoints(methodToken)) {
+				if (ilbp.ILOffset == ilOffset)
+					yield return ilbp;
+			}
+		}
+
+		public void Add(MethodDef method) {
+			if (method.Body == null)
+				return;
+			var methodToken = CreateTokenId(method);
+			var existingBreakpoints = GetILCodeBreakpoints(methodToken, 0).ToArray();
+			if (existingBreakpoints.Length != 0) {
+				foreach (var ilbp in existingBreakpoints)
+					ilbp.IsEnabled = true;
+			}
+			else {
+				var ilbp = new ILCodeBreakpoint(methodToken, 0);
+				Add(ilbp);
 			}
 		}
 	}
