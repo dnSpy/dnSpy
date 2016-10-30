@@ -51,6 +51,7 @@
     <Compile Include="App\LoaderConstants.cs" />
     <Compile Include="App\MsgBox.cs" />
     <Compile Include="App\MsgBoxButton.cs" />
+    <Compile Include="AsmEditor\Compiler\CompilationKind.cs" />
     <Compile Include="AsmEditor\Compiler\CompilationResult.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerDiagnostic.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerDiagnosticSeverity.cs" />

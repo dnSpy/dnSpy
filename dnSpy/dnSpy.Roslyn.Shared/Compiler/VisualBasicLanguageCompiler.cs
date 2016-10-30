@@ -34,11 +34,10 @@ using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	[Export(typeof(ILanguageCompilerProvider))]
-	sealed class VisualBasicLanguageCompilerCreator : ILanguageCompilerProvider {
-		public double Order => 0;
-		public ImageReference? Icon => DsImages.VBFileNode;
-		public Guid Language => DecompilerConstants.LANGUAGE_VISUALBASIC;
-		public ILanguageCompiler Create() => new VisualBasicLanguageCompiler(codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
+	sealed class VisualBasicLanguageCompilerCreator : RoslynLanguageCompilerProvider {
+		public override ImageReference? Icon => DsImages.VBFileNode;
+		public override Guid Language => DecompilerConstants.LANGUAGE_VISUALBASIC;
+		public override ILanguageCompiler Create(CompilationKind kind) => new VisualBasicLanguageCompiler(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
 
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly IRoslynDocumentationProviderFactory docFactory;
@@ -67,8 +66,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			"Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
 		};
 
-		public VisualBasicLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
-			: base(codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
+		public VisualBasicLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
+			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
 		}
 	}
 }

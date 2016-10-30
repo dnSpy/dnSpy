@@ -25,6 +25,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Roslyn.Shared.Documentation;
@@ -35,6 +36,25 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
+	abstract class RoslynLanguageCompilerProvider : ILanguageCompilerProvider {
+		public double Order => 0;
+		public abstract ImageReference? Icon { get; }
+		public abstract Guid Language { get; }
+
+		public abstract ILanguageCompiler Create(CompilationKind kind);
+
+		public bool CanCompile(CompilationKind kind) {
+			switch (kind) {
+			case CompilationKind.Assembly:
+			case CompilationKind.Method:
+				return true;
+			default:
+				Debug.Fail($"Unknown kind: {kind}");
+				return false;
+			}
+		}
+	}
+
 	abstract class RoslynLanguageCompiler : ILanguageCompiler {
 		protected abstract string TextViewRole { get; }
 		protected abstract string ContentType { get; }
@@ -52,7 +72,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 		AdhocWorkspace workspace;
 
-		protected RoslynLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+		protected RoslynLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
 			if (codeEditorProvider == null)
 				throw new ArgumentNullException(nameof(codeEditorProvider));
 			if (docFactory == null)

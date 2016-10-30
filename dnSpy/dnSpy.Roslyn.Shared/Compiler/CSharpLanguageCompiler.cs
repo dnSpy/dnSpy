@@ -34,11 +34,10 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace dnSpy.Roslyn.Shared.Compiler {
 	[Export(typeof(ILanguageCompilerProvider))]
-	sealed class CSharpLanguageCompilerProvider : ILanguageCompilerProvider {
-		public double Order => 0;
-		public ImageReference? Icon => DsImages.CSFileNode;
-		public Guid Language => DecompilerConstants.LANGUAGE_CSHARP;
-		public ILanguageCompiler Create() => new CSharpLanguageCompiler(codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
+	sealed class CSharpLanguageCompilerProvider : RoslynLanguageCompilerProvider {
+		public override ImageReference? Icon => DsImages.CSFileNode;
+		public override Guid Language => DecompilerConstants.LANGUAGE_CSHARP;
+		public override ILanguageCompiler Create(CompilationKind kind) => new CSharpLanguageCompiler(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
 
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly IRoslynDocumentationProviderFactory docFactory;
@@ -64,8 +63,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override string AppearanceCategory => RoslynAppearanceCategoryConstants.CodeEditor_CSharp;
 		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
 
-		public CSharpLanguageCompiler(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
-			: base(codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
+		public CSharpLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
+			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
 		}
 	}
 }

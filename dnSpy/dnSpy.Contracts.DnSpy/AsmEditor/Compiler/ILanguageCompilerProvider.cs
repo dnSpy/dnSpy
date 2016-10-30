@@ -43,9 +43,17 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		Guid Language { get; }
 
 		/// <summary>
+		/// Returns true if it supports <paramref name="kind"/>
+		/// </summary>
+		/// <param name="kind">Compilation kind</param>
+		/// <returns></returns>
+		bool CanCompile(CompilationKind kind);
+
+		/// <summary>
 		/// Creates a new <see cref="ILanguageCompiler"/> instance
 		/// </summary>
+		/// <param name="kind">Compilation kind</param>
 		/// <returns></returns>
-		ILanguageCompiler Create();
+		ILanguageCompiler Create(CompilationKind kind);
 	}
 }

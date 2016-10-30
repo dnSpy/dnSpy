@@ -49,22 +49,30 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}
 
-		public ImageReference? GetIcon() {
-			var lang = TryGetUsedLanguage();
-			Debug.Assert(lang != null);
-			if (lang == null)
+		KeyValuePair<IDecompiler, ILanguageCompilerProvider>? GetLanguageCompilerProvider(CompilationKind kind) {
+			var language = TryGetUsedLanguage();
+			if (language == null)
 				return null;
 
-			return languageCompilerProviders.FirstOrDefault(a => a.Language == lang.GenericGuid)?.Icon;
+			var serviceCreator = languageCompilerProviders.FirstOrDefault(a => a.Language == language.GenericGuid);
+			if (serviceCreator == null)
+				return null;
+			if (!serviceCreator.CanCompile(kind))
+				return null;
+
+			return new KeyValuePair<IDecompiler, ILanguageCompilerProvider>(language, serviceCreator);
 		}
 
-		public string GetHeader() {
-			var lang = TryGetUsedLanguage();
-			Debug.Assert(lang != null);
-			if (lang == null)
-				return null;
+		public ImageReference? GetIcon(CompilationKind kind) {
+			var info = GetLanguageCompilerProvider(kind);
+			return info?.Value.Icon;
+		}
 
-			return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, lang.GenericNameUI);
+		public string GetHeader(CompilationKind kind) {
+			var info = GetLanguageCompilerProvider(kind);
+			if (info == null)
+				return null;
+			return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.Key.GenericNameUI);
 		}
 
 		bool IsSupportedLanguage(IDecompiler decompiler) {
@@ -84,21 +92,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public EditCodeVM Create(MethodDef method, IList<MethodSourceStatement> statements) {
-			Debug.Assert(CanCreate);
-			if (!CanCreate)
+			var info = GetLanguageCompilerProvider(CompilationKind.Method);
+			if (info == null)
 				throw new InvalidOperationException();
-
-			var language = TryGetUsedLanguage();
-			Debug.Assert(language != null);
-			if (language == null)
-				throw new InvalidOperationException();
-
-			var serviceCreator = languageCompilerProviders.FirstOrDefault(a => a.Language == language.GenericGuid);
-			Debug.Assert(serviceCreator != null);
-			if (serviceCreator == null)
-				throw new InvalidOperationException();
-
-			return new EditCodeVM(openFromGAC, openAssembly, serviceCreator.Create(), language, method, statements);
+			return new EditCodeVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Method), info.Value.Key, method, statements);
 		}
 	}
 }
