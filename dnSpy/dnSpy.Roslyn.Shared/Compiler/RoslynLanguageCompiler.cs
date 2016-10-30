@@ -47,6 +47,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			switch (kind) {
 			case CompilationKind.Assembly:
 			case CompilationKind.Method:
+			case CompilationKind.AddClass:
 				return true;
 			default:
 				Debug.Fail($"Unknown kind: {kind}");

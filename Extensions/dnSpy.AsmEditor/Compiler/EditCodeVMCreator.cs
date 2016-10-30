@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
@@ -75,6 +74,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			switch (kind) {
 			case CompilationKind.Assembly:		return $"{dnSpy_AsmEditor_Resources.EditAssemblyCode} ({info.Value.Key.GenericNameUI})";
 			case CompilationKind.Method:		return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.Key.GenericNameUI);
+			case CompilationKind.AddClass:		return $"{dnSpy_AsmEditor_Resources.EditCodeAddClass} ({info.Value.Key.GenericNameUI})";
 			default: throw new ArgumentOutOfRangeException(nameof(kind));
 			}
 		}
@@ -92,6 +92,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			case CompilationKind.Method:
 				if (!decompiler.CanDecompile(DecompilationType.TypeMethods))
 					return false;
+				break;
+
+			case CompilationKind.AddClass:
 				break;
 
 			default:
@@ -121,6 +124,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (info == null)
 				throw new InvalidOperationException();
 			return new EditAssemblyVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Assembly), info.Value.Key, module);
+		}
+
+		public EditCodeVM CreateAddClass(ModuleDef module) {
+			var info = GetLanguageCompilerProvider(CompilationKind.AddClass);
+			if (info == null)
+				throw new InvalidOperationException();
+			return new AddClassVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.AddClass), info.Value.Key, module);
 		}
 	}
 }

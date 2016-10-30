@@ -98,6 +98,8 @@
     <Compile Include="Commands\RefFinder.cs" />
     <Compile Include="Commands\RootDocumentNodeCreator.cs" />
     <Compile Include="Commands\TypeNodeCreator.cs" />
+    <Compile Include="Compiler\AddClassCommands.cs" />
+    <Compile Include="Compiler\AddClassVM.cs" />
     <Compile Include="Compiler\AddUpdatedNodesHelper.cs" />
     <Compile Include="Compiler\AssemblyReferenceResolver.cs" />
     <Compile Include="Compiler\CodeEditorCommands.cs" />

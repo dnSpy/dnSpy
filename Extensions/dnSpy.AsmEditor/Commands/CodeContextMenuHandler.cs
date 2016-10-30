@@ -22,7 +22,6 @@ using System.Linq;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {

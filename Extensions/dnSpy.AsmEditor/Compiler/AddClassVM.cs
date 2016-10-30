@@ -25,36 +25,25 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.Compiler {
-	sealed class EditAssemblyVM : EditCodeVM {
-		sealed class EditAssemblyDecompileCodeState : DecompileCodeState {
-			public StringBuilderDecompilerOutput MainOutput { get; } = new StringBuilderDecompilerOutput();
+	sealed class AddClassVM : EditCodeVM {
+		sealed class AddClassDecompileCodeState : DecompileCodeState {
 		}
 
-		public EditAssemblyVM(IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef module)
+		public AddClassVM(IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef module)
 			: base(openFromGAC, openAssembly, languageCompiler, decompiler, module) {
 			StartDecompile();
 		}
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
-			new EditAssemblyDecompileCodeState();
+			new AddClassDecompileCodeState();
 
 		protected override Task<DecompileAsyncResult> DecompileAsync(DecompileCodeState decompileCodeState) {
-			var state = (EditAssemblyDecompileCodeState)decompileCodeState;
-			state.CancellationToken.ThrowIfCancellationRequested();
-
-			state.DecompilationContext.CalculateBinSpans = true;
-			var options = new DecompileAssemblyInfo(state.MainOutput, state.DecompilationContext, sourceModule);
-			options.KeepAllAttributes = true;
-			decompiler.Decompile(DecompilationType.AssemblyInfo, options);
-
-			state.CancellationToken.ThrowIfCancellationRequested();
-
 			var result = new DecompileAsyncResult();
-			result.AddDocument(MAIN_CODE_NAME, state.MainOutput.ToString(), null);
+			result.AddDocument(MAIN_CODE_NAME, string.Empty, null);
 			return Task.FromResult(result);
 		}
 
 		protected override void Import(ModuleImporter importer, CompilationResult result) =>
-			importer.ImportAssembly(result.RawFile, result.DebugFile);
+			importer.ImportEverything(result.RawFile, result.DebugFile);
 	}
 }

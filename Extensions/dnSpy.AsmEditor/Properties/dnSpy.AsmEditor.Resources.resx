@@ -2504,4 +2504,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="EditAssemblyCode" xml:space="preserve">
     <value>Edit Assembly Attributes</value>
   </data>
+  <data name="EditCodeAddClass" xml:space="preserve">
+    <value>Add Class</value>
+  </data>
 </root>

@@ -157,6 +157,25 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		/// <summary>
+		/// Imports everything except the module/assembly attributes.
+		/// </summary>
+		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
+		/// <param name="debugFile">Debug file</param>
+		public void ImportEverything(byte[] rawGeneratedModule, DebugFileResult debugFile) {
+			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
+
+			AddGlobalTypeMembers(sourceModule.GlobalType);
+			foreach (var type in sourceModule.Types) {
+				if (type.IsGlobalModuleType)
+					continue;
+				newNonNestedImportedTypes.Add(CreateNewImportedType(type, targetModule.Types));
+			}
+			InitializeTypesAndMethods();
+
+			SetSourceModule(null);
+		}
+
+		/// <summary>
 		/// Imports everything into the target module. All module and assembly attributes replace the original
 		/// module and assembly attributes. All global members are merged and possibly renamed.
 		/// </summary>
