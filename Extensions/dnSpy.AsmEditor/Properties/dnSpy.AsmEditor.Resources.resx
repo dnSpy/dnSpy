@@ -2501,4 +2501,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="Button_Cancel2" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="EditAssemblyCode" xml:space="preserve">
+    <value>Edit Assembly Attributes</value>
+  </data>
 </root>

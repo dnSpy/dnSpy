@@ -1493,6 +1493,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Assembly Attributes.
+        /// </summary>
+        public static string EditAssemblyCode {
+            get {
+                return ResourceManager.GetString("EditAssemblyCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Assembly....
         /// </summary>
         public static string EditAssemblyCommand {

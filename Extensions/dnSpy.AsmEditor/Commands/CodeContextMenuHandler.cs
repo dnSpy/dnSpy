@@ -18,9 +18,11 @@
 */
 
 using System;
+using System.Linq;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {
@@ -56,6 +58,26 @@ namespace dnSpy.AsmEditor.Commands {
 			var node = documentTreeView.FindNode(textRef.Reference);
 			var nodes = node == null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
 			return new CodeContext(nodes, textRef.IsDefinition, context);
+		}
+	}
+
+	abstract class NodesCodeContextMenuHandler : MenuItemBase<CodeContext> {
+		protected sealed override object CachedContextKey => ContextKey;
+		static readonly object ContextKey = new object();
+
+		public sealed override bool IsVisible(CodeContext context) => IsEnabled(context);
+
+		readonly IDocumentTreeView documentTreeView;
+
+		protected NodesCodeContextMenuHandler(IDocumentTreeView documentTreeView) {
+			this.documentTreeView = documentTreeView;
+		}
+
+		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
+				return null;
+			var nodes = documentTreeView.TreeView.TopLevelSelection.OfType<DocumentTreeNodeData>().ToArray();
+			return new CodeContext(nodes, false, context);
 		}
 	}
 }

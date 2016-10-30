@@ -107,6 +107,9 @@
     <Compile Include="Compiler\CompilerMetadataReferenceCreator.cs" />
     <Compile Include="Compiler\DecompiledCodeResult.cs" />
     <Compile Include="Compiler\DecompiledDocument.cs" />
+    <Compile Include="Compiler\EditAssemblyCommands.cs" />
+    <Compile Include="Compiler\EditAssemblyVM.cs" />
+    <Compile Include="Compiler\EditCodeCommandBase.cs" />
     <Compile Include="Compiler\EditCodeCommandConstants.cs" />
     <Compile Include="Compiler\EditCodeCommandInfoProvider.cs" />
     <Compile Include="Compiler\EditCodeCommandTargetFilter.cs" />

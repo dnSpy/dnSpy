@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	}
 
 	[DebuggerDisplay("{Description}")]
-	sealed class EditMethodBodyCodeCommand : IUndoCommand {
+	sealed class EditMethodBodyCodeCommand : EditCodeCommandBase {
 		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 10)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
@@ -154,16 +154,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			vm.Dispose();
 		}
 
-		readonly AddUpdatedNodesHelper addUpdatedNodesHelper;
-
-		EditMethodBodyCodeCommand(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, ModuleImporter importer) {
-			this.addUpdatedNodesHelper = new AddUpdatedNodesHelper(methodAnnotations, modNode, importer);
+		EditMethodBodyCodeCommand(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, ModuleImporter importer)
+			: base(methodAnnotations, modNode, importer) {
 		}
 
-		public string Description => dnSpy_AsmEditor_Resources.EditMethodCode;
-		public void Execute() => addUpdatedNodesHelper.Execute();
-		public void Undo() => addUpdatedNodesHelper.Undo();
-		public IEnumerable<object> ModifiedObjects => addUpdatedNodesHelper.ModifiedObjects;
+		public override string Description => dnSpy_AsmEditor_Resources.EditMethodCode;
 	}
 
 	[Export, ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 0)]

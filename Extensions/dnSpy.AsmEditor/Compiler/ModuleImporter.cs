@@ -47,6 +47,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		public CompilerDiagnostic[] Diagnostics => diagnostics.ToArray();
 		public NewImportedType[] NewNonNestedTypes => newNonNestedImportedTypes.ToArray();
 		public MergedImportedType[] MergedNonNestedTypes => nonNestedMergedImportedTypes.Where(a => !a.IsEmpty).ToArray();
+		public CustomAttribute[] NewAssemblyCustomAttributes { get; private set; }
+		public CustomAttribute[] NewModuleCustomAttributes { get; private set; }
 
 		readonly ModuleDef targetModule;
 		readonly List<CompilerDiagnostic> diagnostics;
@@ -131,6 +133,61 @@ namespace dnSpy.AsmEditor.Compiler {
 			return ModuleDefMD.Load(rawGeneratedModule, opts);
 		}
 
+		void RemoveDuplicates(List<CustomAttribute> attributes, string fullName) {
+			bool found = false;
+			for (int i = 0; i < attributes.Count; i++) {
+				var ca = attributes[i];
+				if (ca.TypeFullName != fullName)
+					continue;
+				if (!found) {
+					found = true;
+					continue;
+				}
+				attributes.RemoveAt(i);
+				i--;
+			}
+		}
+
+		void InitializeTypesAndMethods() {
+			InitializeTypes(oldTypeToNewType.Values.OfType<NewImportedType>());
+			InitializeTypes(oldTypeToNewType.Values.OfType<MergedImportedType>());
+			InitializeTypesMethods(oldTypeToNewType.Values.OfType<NewImportedType>());
+			InitializeTypesMethods(oldTypeToNewType.Values.OfType<MergedImportedType>());
+			UpdateEditedMethods();
+		}
+
+		/// <summary>
+		/// Imports everything into the target module. All module and assembly attributes replace the original
+		/// module and assembly attributes. All global members are merged and possibly renamed.
+		/// </summary>
+		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
+		/// <param name="debugFile">Debug file</param>
+		public void ImportAssembly(byte[] rawGeneratedModule, DebugFileResult debugFile) {
+			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
+
+			AddGlobalTypeMembers(sourceModule.GlobalType);
+			foreach (var type in sourceModule.Types) {
+				if (type.IsGlobalModuleType)
+					continue;
+				newNonNestedImportedTypes.Add(CreateNewImportedType(type, targetModule.Types));
+			}
+			InitializeTypesAndMethods();
+
+			var attributes = new List<CustomAttribute>();
+			ImportCustomAttributes(attributes, sourceModule);
+			// The compiler adds [UnverifiableCode] causing a duplicate attribute
+			RemoveDuplicates(attributes, "System.Security.UnverifiableCodeAttribute");
+			NewModuleCustomAttributes = attributes.ToArray();
+			var asm = sourceModule.Assembly;
+			if (asm != null) {
+				attributes.Clear();
+				ImportCustomAttributes(attributes, asm);
+				NewAssemblyCustomAttributes = attributes.ToArray();
+			}
+
+			SetSourceModule(null);
+		}
+
 		/// <summary>
 		/// Imports all new types and methods (compiler generated or created by the user). All new types and members
 		/// in the global type are added to the target's global type. All duplicates are renamed.
@@ -140,6 +197,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// All the instructions in the edited method are imported, and its impl attributes. Nothing else is imported.
 		/// </summary>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
+		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetMethod">Original method that was edited</param>
 		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, MethodDef targetMethod) {
 			if (targetMethod.Module != targetModule)
@@ -161,11 +219,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					continue;
 				newNonNestedImportedTypes.Add(CreateNewImportedType(type, targetModule.Types));
 			}
-			InitializeTypes(oldTypeToNewType.Values.OfType<NewImportedType>());
-			InitializeTypes(oldTypeToNewType.Values.OfType<MergedImportedType>());
-			InitializeTypesMethods(oldTypeToNewType.Values.OfType<NewImportedType>());
-			InitializeTypesMethods(oldTypeToNewType.Values.OfType<MergedImportedType>());
-			UpdateEditedMethods();
+			InitializeTypesAndMethods();
 
 			SetSourceModule(null);
 		}
@@ -831,18 +885,35 @@ namespace dnSpy.AsmEditor.Compiler {
 			return new ClassSig(Import(type));
 		}
 
-		void ImportCustomAttributes(IHasCustomAttribute target, IHasCustomAttribute source) {
+		void ImportCustomAttributes(IHasCustomAttribute target, IHasCustomAttribute source) =>
+			ImportCustomAttributes(target.CustomAttributes, source);
+
+		void ImportCustomAttributes(IList<CustomAttribute> targetList, IHasCustomAttribute source) {
 			foreach (var ca in source.CustomAttributes)
-				target.CustomAttributes.Add(Import(ca));
+				targetList.Add(Import(ca));
+		}
+
+		ICustomAttributeType Import(ICustomAttributeType caType) {
+			var mr = caType as MemberRef;
+			if (mr != null) {
+				Debug.Assert(mr.IsMethodRef);
+				if (mr.IsMethodRef)
+					return (ICustomAttributeType)Import((IMethod)mr);
+				return (ICustomAttributeType)Import((IField)mr);
+			}
+			var md = caType as MethodDef;
+			if (md != null)
+				return Import(md);
+			return null;
 		}
 
 		CustomAttribute Import(CustomAttribute ca) {
 			if (ca == null)
 				return null;
 			if (ca.IsRawBlob)
-				return new CustomAttribute(ca.Constructor, ca.RawData);
+				return new CustomAttribute(Import(ca.Constructor), ca.RawData);
 
-			var importedCustomAttribute = new CustomAttribute(ca.Constructor);
+			var importedCustomAttribute = new CustomAttribute(Import(ca.Constructor));
 			foreach (var arg in ca.ConstructorArguments)
 				importedCustomAttribute.ConstructorArguments.Add(Import(arg));
 			foreach (var namedArg in ca.NamedArguments)

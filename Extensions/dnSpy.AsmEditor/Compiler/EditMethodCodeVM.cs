@@ -82,7 +82,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			var result = new DecompileAsyncResult();
 			result.AddDocument(MAIN_CODE_NAME, state.MainOutput.ToString(), state.MainOutput.Span);
 			result.AddDocument(MAIN_G_CODE_NAME, state.HiddenOutput.ToString(), null);
-
 			return Task.FromResult(result);
 		}
 

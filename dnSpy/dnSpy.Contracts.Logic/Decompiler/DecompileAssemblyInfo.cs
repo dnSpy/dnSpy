@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Runtime.Versioning;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
@@ -31,6 +32,12 @@ namespace dnSpy.Contracts.Decompiler {
 		public ModuleDef Module { get; }
 
 		/// <summary>
+		/// true to keep all attributes, false to remove attributes that are normally added by MSBuild tasks,
+		/// eg. <see cref="TargetFrameworkAttribute"/>
+		/// </summary>
+		public bool KeepAllAttributes { get; set; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="output">Output</param>
@@ -41,6 +48,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			Module = module;
+			KeepAllAttributes = false;
 		}
 	}
 }

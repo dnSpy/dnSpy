@@ -123,7 +123,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
-		readonly ModuleDef sourceModule;
+		protected readonly ModuleDef sourceModule;
 
 		protected EditCodeVM(IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule) {
 			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));

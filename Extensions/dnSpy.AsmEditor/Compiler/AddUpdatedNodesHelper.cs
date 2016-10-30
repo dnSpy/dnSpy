@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
@@ -29,6 +30,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly ModuleDocumentNode modNode;
 		readonly TypeNodeCreator[] newTypeNodeCreators;
 		readonly ExistingTypeNodeUpdater[] existingTypeNodeUpdaters;
+		readonly CustomAttribute[] newAssemblyCustomAttributes;
+		readonly CustomAttribute[] newModuleCustomAttributes;
+		readonly CustomAttribute[] origAssemblyCustomAttributes;
+		readonly CustomAttribute[] origModuleCustomAttributes;
 
 		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, ModuleImporter importer) {
 			this.modNode = modNode;
@@ -36,6 +41,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
 			if (!importer.MergedNonNestedTypes.All(a => a.TargetType.Module == modNode.Document.ModuleDef))
 				throw new InvalidOperationException();
+			this.newAssemblyCustomAttributes = importer.NewAssemblyCustomAttributes;
+			this.newModuleCustomAttributes = importer.NewModuleCustomAttributes;
+			if (newAssemblyCustomAttributes != null)
+				origAssemblyCustomAttributes = modNode.Document.AssemblyDef?.CustomAttributes.ToArray();
+			if (newModuleCustomAttributes != null)
+				origModuleCustomAttributes = modNode.Document.ModuleDef.CustomAttributes.ToArray();
 		}
 
 		public void Execute() {
@@ -43,6 +54,16 @@ namespace dnSpy.AsmEditor.Compiler {
 				newTypeNodeCreators[i].Add();
 			for (int i = 0; i < existingTypeNodeUpdaters.Length; i++)
 				existingTypeNodeUpdaters[i].Add();
+			if (origAssemblyCustomAttributes != null && newAssemblyCustomAttributes != null) {
+				modNode.Document.AssemblyDef.CustomAttributes.Clear();
+				foreach (var ca in newAssemblyCustomAttributes)
+					modNode.Document.AssemblyDef.CustomAttributes.Add(ca);
+			}
+			if (origModuleCustomAttributes != null && newModuleCustomAttributes != null) {
+				modNode.Document.ModuleDef.CustomAttributes.Clear();
+				foreach (var ca in newModuleCustomAttributes)
+					modNode.Document.ModuleDef.CustomAttributes.Add(ca);
+			}
 		}
 
 		public void Undo() {
@@ -50,6 +71,16 @@ namespace dnSpy.AsmEditor.Compiler {
 				existingTypeNodeUpdaters[i].Remove();
 			for (int i = newTypeNodeCreators.Length - 1; i >= 0; i--)
 				newTypeNodeCreators[i].Remove();
+			if (origAssemblyCustomAttributes != null && newAssemblyCustomAttributes != null) {
+				modNode.Document.AssemblyDef.CustomAttributes.Clear();
+				foreach (var ca in origAssemblyCustomAttributes)
+					modNode.Document.AssemblyDef.CustomAttributes.Add(ca);
+			}
+			if (origModuleCustomAttributes != null && newModuleCustomAttributes != null) {
+				modNode.Document.ModuleDef.CustomAttributes.Clear();
+				foreach (var ca in origModuleCustomAttributes)
+					modNode.Document.ModuleDef.CustomAttributes.Add(ca);
+			}
 		}
 
 		public IEnumerable<object> ModifiedObjects {

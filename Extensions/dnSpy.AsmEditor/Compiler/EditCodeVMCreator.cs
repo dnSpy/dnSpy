@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public bool CanCreate(CompilationKind kind) => GetLanguageCompilerProvider(kind) != null;
 
 		KeyValuePair<IDecompiler, ILanguageCompilerProvider>? GetLanguageCompilerProvider(CompilationKind kind) {
-			var language = TryGetUsedLanguage();
+			var language = TryGetUsedLanguage(kind);
 			if (language == null)
 				return null;
 
@@ -72,23 +72,41 @@ namespace dnSpy.AsmEditor.Compiler {
 			var info = GetLanguageCompilerProvider(kind);
 			if (info == null)
 				return null;
-			return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.Key.GenericNameUI);
+			switch (kind) {
+			case CompilationKind.Assembly:		return $"{dnSpy_AsmEditor_Resources.EditAssemblyCode} ({info.Value.Key.GenericNameUI})";
+			case CompilationKind.Method:		return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.Key.GenericNameUI);
+			default: throw new ArgumentOutOfRangeException(nameof(kind));
+			}
 		}
 
-		bool IsSupportedLanguage(IDecompiler decompiler) {
+		bool IsSupportedLanguage(IDecompiler decompiler, CompilationKind kind) {
 			if (decompiler == null)
 				return false;
-			if (!decompiler.CanDecompile(DecompilationType.TypeMethods))
-				return false;
+
+			switch (kind) {
+			case CompilationKind.Assembly:
+				if (!decompiler.CanDecompile(DecompilationType.AssemblyInfo))
+					return false;
+				break;
+
+			case CompilationKind.Method:
+				if (!decompiler.CanDecompile(DecompilationType.TypeMethods))
+					return false;
+				break;
+
+			default:
+				throw new ArgumentOutOfRangeException(nameof(kind));
+			}
+
 			return languageCompilerProviders.Any(a => a.Language == decompiler.GenericGuid);
 		}
 
-		IDecompiler TryGetUsedLanguage() {
+		IDecompiler TryGetUsedLanguage(CompilationKind kind) {
 			var defaultDecompiler = decompilerService.Decompiler;
-			if (IsSupportedLanguage(defaultDecompiler))
+			if (IsSupportedLanguage(defaultDecompiler, kind))
 				return defaultDecompiler;
-			return decompilerService.AllDecompilers.FirstOrDefault(a => a.GenericGuid == defaultDecompiler.GenericGuid && IsSupportedLanguage(a)) ??
-					decompilerService.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a));
+			return decompilerService.AllDecompilers.FirstOrDefault(a => a.GenericGuid == defaultDecompiler.GenericGuid && IsSupportedLanguage(a, kind)) ??
+					decompilerService.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a, kind));
 		}
 
 		public EditCodeVM CreateEditMethodCode(MethodDef method, IList<MethodSourceStatement> statements) {
@@ -96,6 +114,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (info == null)
 				throw new InvalidOperationException();
 			return new EditMethodCodeVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Method), info.Value.Key, method, statements);
+		}
+
+		public EditCodeVM CreateEditAssembly(ModuleDef module) {
+			var info = GetLanguageCompilerProvider(CompilationKind.Assembly);
+			if (info == null)
+				throw new InvalidOperationException();
+			return new EditAssemblyVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Assembly), info.Value.Key, module);
 		}
 	}
 }
