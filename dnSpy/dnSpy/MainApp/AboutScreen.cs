@@ -117,7 +117,7 @@ namespace dnSpy.MainApp {
 			var documentViewer = (IDocumentViewer)ctx.UIContext;
 			var contentFactory = documentViewerContentFactoryProvider.Create();
 			Write(contentFactory.Output);
-			documentViewer.SetContent(contentFactory.CreateContent(documentViewer), aboutContentType);
+			documentViewer.SetContent(contentFactory.CreateContent(documentViewer, aboutContentType), aboutContentType);
 		}
 
 		sealed class Info {

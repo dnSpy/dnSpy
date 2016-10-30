@@ -149,6 +149,8 @@
     <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerCustomDataContext.cs" />
     <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerOutput.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerPostProcessor.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerPostProcessorContext.cs" />
     <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerReferenceEnablerProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\IDocumentViewerService.cs" />
     <Compile Include="Documents\Tabs\DocViewer\IDocumentWriter.cs" />

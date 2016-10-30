@@ -198,28 +198,29 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var contentTypeString = decompileContext.DecompileNodeContext.ContentTypeString;
 				if (contentTypeString == null)
 					contentTypeString = ContentTypesHelper.TryGetContentTypeStringByExtension(decompileContext.DecompileNodeContext.Decompiler.FileExtension) ?? ContentTypes.PlainText;
-				contentType = decompileDocumentTabContentFactory.ContentTypeRegistryService.GetContentType(contentTypeString);
-				Debug.Assert(contentType != null);
+				contentType = decompileDocumentTabContentFactory.ContentTypeRegistryService.GetContentType(contentTypeString) ??
+					decompileDocumentTabContentFactory.ContentTypeRegistryService.GetContentType(ContentTypes.Text) ??
+					decompileDocumentTabContentFactory.ContentTypeRegistryService.UnknownContentType;
 			}
 
 			DocumentViewerContent content;
 			if (result.IsCanceled) {
 				var docViewContentFactory = decompileDocumentTabContentFactory.DocumentViewerContentFactoryProvider.Create();
 				docViewContentFactory.Output.Write(dnSpy_Resources.DecompilationCanceled, BoxedTextColor.Error);
-				content = docViewContentFactory.CreateContent(documentViewer);
+				content = docViewContentFactory.CreateContent(documentViewer, contentType);
 			}
 			else if (result.Exception != null) {
 				var docViewContentFactory = decompileDocumentTabContentFactory.DocumentViewerContentFactoryProvider.Create();
 				docViewContentFactory.Output.Write(dnSpy_Resources.DecompilationException, BoxedTextColor.Error);
 				docViewContentFactory.Output.WriteLine();
 				docViewContentFactory.Output.Write(result.Exception.ToString(), BoxedTextColor.Text);
-				content = docViewContentFactory.CreateContent(documentViewer);
+				content = docViewContentFactory.CreateContent(documentViewer, contentType);
 			}
 			else {
 				content = decompileContext.CachedContent;
 				if (content == null) {
 					bool canBeCached = decompileContext.DocumentViewerContentFactory.Output.CanBeCached;
-					content = decompileContext.DocumentViewerContentFactory.CreateContent(documentViewer);
+					content = decompileContext.DocumentViewerContentFactory.CreateContent(documentViewer, contentType);
 					if (canBeCached)
 						decompileDocumentTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Decompiler, nodes, content, contentType);
 				}

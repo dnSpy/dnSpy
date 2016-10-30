@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
 	interface IDocumentViewerContentFactoryProvider {
@@ -41,20 +42,23 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		/// Creates the content. This method can only be called once.
 		/// </summary>
 		/// <param name="documentViewer">Document viewer</param>
+		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		DocumentViewerContent CreateContent(IDocumentViewer documentViewer);
+		DocumentViewerContent CreateContent(IDocumentViewer documentViewer, IContentType contentType);
 	}
 
 	[Export(typeof(IDocumentViewerContentFactoryProvider))]
 	sealed class DocumentViewerContentFactoryProvider : IDocumentViewerContentFactoryProvider {
+		readonly Lazy<IDocumentViewerPostProcessor, IDocumentViewerPostProcessorMetadata>[] documentViewerPostProcessors;
 		readonly Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] documentViewerCustomDataProviders;
 
 		[ImportingConstructor]
-		DocumentViewerContentFactoryProvider([ImportMany] IEnumerable<Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>> documentViewerCustomDataProviders) {
+		DocumentViewerContentFactoryProvider([ImportMany] IEnumerable<Lazy<IDocumentViewerPostProcessor, IDocumentViewerPostProcessorMetadata>> documentViewerPostProcessors, [ImportMany] IEnumerable<Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>> documentViewerCustomDataProviders) {
+			this.documentViewerPostProcessors = documentViewerPostProcessors.OrderBy(a => a.Metadata.Order).ToArray();
 			this.documentViewerCustomDataProviders = documentViewerCustomDataProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public IDocumentViewerContentFactory Create() => new DocumentViewerContentFactory(documentViewerCustomDataProviders);
+		public IDocumentViewerContentFactory Create() => new DocumentViewerContentFactory(documentViewerPostProcessors, documentViewerCustomDataProviders);
 	}
 
 	sealed class DocumentViewerContentFactory : IDocumentViewerContentFactory {
@@ -66,12 +70,16 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
+		readonly Lazy<IDocumentViewerPostProcessor, IDocumentViewerPostProcessorMetadata>[] documentViewerPostProcessors;
 		readonly Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] documentViewerCustomDataProviders;
 		DocumentViewerOutput documentViewerOutput;
 
-		public DocumentViewerContentFactory(Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] documentViewerCustomDataProviders) {
+		public DocumentViewerContentFactory(Lazy<IDocumentViewerPostProcessor, IDocumentViewerPostProcessorMetadata>[] documentViewerPostProcessors, Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] documentViewerCustomDataProviders) {
+			if (documentViewerPostProcessors == null)
+				throw new ArgumentNullException(nameof(documentViewerPostProcessors));
 			if (documentViewerCustomDataProviders == null)
 				throw new ArgumentNullException(nameof(documentViewerCustomDataProviders));
+			this.documentViewerPostProcessors = documentViewerPostProcessors;
 			this.documentViewerCustomDataProviders = documentViewerCustomDataProviders;
 			this.documentViewerOutput = DocumentViewerOutput.Create();
 		}
@@ -79,12 +87,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		sealed class DocumentViewerCustomDataContext : IDocumentViewerCustomDataContext, IDisposable {
 			public string Text { get; private set; }
 			public IDocumentViewer DocumentViewer { get; private set; }
+			public IContentType ContentType { get; }
 			Dictionary<string, object> customDataDict;
 			Dictionary<string, object> resultDict;
 
-			public DocumentViewerCustomDataContext(IDocumentViewer documentViewer, string text, Dictionary<string, object> customDataDict) {
+			public DocumentViewerCustomDataContext(IDocumentViewer documentViewer, string text, IContentType contentType, Dictionary<string, object> customDataDict) {
 				DocumentViewer = documentViewer;
 				Text = text;
+				ContentType = contentType;
 				this.customDataDict = customDataDict;
 				this.resultDict = new Dictionary<string, object>(StringComparer.Ordinal);
 			}
@@ -122,15 +132,44 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public DocumentViewerContent CreateContent(IDocumentViewer documentViewer) {
+		sealed class DocumentViewerPostProcessorContext : IDocumentViewerPostProcessorContext, IDisposable {
+			public string Text { get; private set; }
+			public IDocumentViewerOutput DocumentViewerOutput { get; private set; }
+			public IDocumentViewer DocumentViewer { get; private set; }
+			public IContentType ContentType { get; }
+
+			public DocumentViewerPostProcessorContext(IDocumentViewerOutput documentViewerOutput, IDocumentViewer documentViewer, string text, IContentType contentType) {
+				DocumentViewerOutput = documentViewerOutput;
+				DocumentViewer = documentViewer;
+				Text = text;
+				ContentType = contentType;
+			}
+
+			public void Dispose() {
+				Text = null;
+				DocumentViewer = null;
+				DocumentViewerOutput = null;
+			}
+		}
+
+		public DocumentViewerContent CreateContent(IDocumentViewer documentViewer, IContentType contentType) {
 			if (documentViewerOutput == null)
 				throw new InvalidOperationException();
 			if (documentViewer == null)
 				throw new ArgumentNullException(nameof(documentViewer));
+			if (contentType == null)
+				throw new ArgumentNullException(nameof(contentType));
 
-			using (var context = new DocumentViewerCustomDataContext(documentViewer, documentViewerOutput.GetCachedText(), documentViewerOutput.GetCustomDataDictionary())) {
-				foreach (var lazy in documentViewerCustomDataProviders)
-					lazy.Value.OnCustomData(context);
+			documentViewerOutput.SetStatePostProcessing();
+			using (var context = new DocumentViewerPostProcessorContext(documentViewerOutput, documentViewer, documentViewerOutput.GetCachedText(), contentType)) {
+				foreach (var lz in documentViewerPostProcessors)
+					lz.Value.PostProcess(context);
+			}
+
+			documentViewerOutput.SetStateCustomDataProviders();
+			using (var context = new DocumentViewerCustomDataContext(documentViewer, documentViewerOutput.GetCachedText(), contentType, documentViewerOutput.GetCustomDataDictionary())) {
+				foreach (var lz in documentViewerCustomDataProviders)
+					lz.Value.OnCustomData(context);
 				var output = documentViewerOutput;
 				documentViewerOutput = null;
 				return output.CreateContent(context.GetResultDictionary());

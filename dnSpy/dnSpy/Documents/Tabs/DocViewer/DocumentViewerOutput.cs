@@ -30,26 +30,54 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class DocumentViewerOutput : IDocumentViewerOutput {
-		public bool CanBeCached => canBeCached;
-
 		readonly CachedTextColorsCollection cachedTextColorsCollection;
 		readonly StringBuilder stringBuilder;
 		readonly Dictionary<string, object> customDataDict;
+		State state;
 		SpanDataCollectionBuilder<ReferenceInfo> referenceBuilder;
 		int indentation;
 		bool canBeCached;
 		bool addIndent = true;
-		bool hasCreatedResult;
 
-		int IDecompilerOutput.Length => stringBuilder.Length;
-		public int NextPosition => stringBuilder.Length + GetIndentSize();
+		enum State {
+			GeneratingContent,
+			PostProcessing,
+			CustomDataProviders,
+			ContentCreated,
+		}
 
-		public string GetCachedText() => cachedText ?? (cachedText = stringBuilder.ToString());
+		public bool CanBeCached {
+			get {
+				VerifyNotCreated();
+				return canBeCached;
+			}
+		}
+
+		int IDecompilerOutput.Length {
+			get {
+				VerifyNotCreated();
+				return stringBuilder.Length;
+			}
+		}
+
+		public int NextPosition {
+			get {
+				VerifyNotCreated();
+				return stringBuilder.Length + GetIndentSize();
+			}
+		}
+
+		internal string GetCachedText() {
+			if (cachedText == null)
+				throw new InvalidOperationException();
+			return cachedText;
+		}
 		string cachedText;
 
-		public static DocumentViewerOutput Create() => new DocumentViewerOutput();
+		internal static DocumentViewerOutput Create() => new DocumentViewerOutput();
 
 		DocumentViewerOutput() {
+			this.state = State.GeneratingContent;
 			this.cachedTextColorsCollection = new CachedTextColorsCollection();
 			this.stringBuilder = new StringBuilder();
 			this.referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
@@ -57,21 +85,58 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.customDataDict = new Dictionary<string, object>(StringComparer.Ordinal);
 		}
 
-		internal Dictionary<string, object> GetCustomDataDictionary() => customDataDict;
-
-		public DocumentViewerContent CreateContent(Dictionary<string, object> dataDict) {
-			if (hasCreatedResult)
-				throw new InvalidOperationException(nameof(CreateContent) + " can only be called once");
-			hasCreatedResult = true;
-			Debug.Assert(GetCachedText() == stringBuilder.ToString());
-			return new DocumentViewerContent(GetCachedText(), cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
+		void VerifyGeneratingOrPostProcessing() {
+			if (state != State.GeneratingContent && state != State.PostProcessing)
+				throw new InvalidOperationException("You can't call this method now");
 		}
 
-		void IDocumentViewerOutput.DisableCaching() => canBeCached = false;
+		void VerifyNotCreated() {
+			if (state == State.ContentCreated)
+				throw new InvalidOperationException("You can't call this method, content has been created");
+		}
 
-		bool IDecompilerOutput.UsesCustomData => true;
+		void VerifyState(State expectedState) {
+			if (state != expectedState)
+				throw new InvalidOperationException("You can't call this method now");
+		}
+
+		internal void SetStatePostProcessing() {
+			VerifyState(State.GeneratingContent);
+			cachedText = stringBuilder.ToString();
+			state = State.PostProcessing;
+		}
+
+		internal void SetStateCustomDataProviders() {
+			VerifyState(State.PostProcessing);
+			state = State.CustomDataProviders;
+		}
+
+		internal Dictionary<string, object> GetCustomDataDictionary() {
+			VerifyState(State.CustomDataProviders);
+			return customDataDict;
+		}
+
+		internal DocumentViewerContent CreateContent(Dictionary<string, object> dataDict) {
+			VerifyState(State.CustomDataProviders);
+			state = State.ContentCreated;
+			Debug.Assert(cachedText == stringBuilder.ToString());
+			return new DocumentViewerContent(cachedText, cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
+		}
+
+		void IDocumentViewerOutput.DisableCaching() {
+			VerifyGeneratingOrPostProcessing();
+			canBeCached = false;
+		}
+
+		bool IDecompilerOutput.UsesCustomData {
+			get {
+				VerifyNotCreated();
+				return true;
+			}
+		}
 
 		public void AddCustomData<TData>(string id, TData data) {
+			VerifyGeneratingOrPostProcessing();
 			object listObj;
 			List<TData> list;
 			if (customDataDict.TryGetValue(id, out listObj))
@@ -81,15 +146,20 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			list.Add(data);
 		}
 
-		public void IncreaseIndent() => indentation++;
+		public void IncreaseIndent() {
+			VerifyState(State.GeneratingContent);
+			indentation++;
+		}
 
 		public void DecreaseIndent() {
+			VerifyState(State.GeneratingContent);
 			Debug.Assert(indentation > 0);
 			if (indentation > 0)
 				indentation--;
 		}
 
 		public void WriteLine() {
+			VerifyState(State.GeneratingContent);
 			addIndent = true;
 			cachedTextColorsCollection.Append(BoxedTextColor.Text, Environment.NewLine);
 			stringBuilder.Append(Environment.NewLine);
@@ -132,6 +202,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void AddText(string text, object color) {
+			VerifyState(State.GeneratingContent);
 			if (addIndent)
 				AddIndent();
 			stringBuilder.Append(text);
@@ -139,6 +210,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void AddText(string text, int index, int length, object color) {
+			VerifyState(State.GeneratingContent);
 			if (addIndent)
 				AddIndent();
 			stringBuilder.Append(text, index, length);
@@ -152,6 +224,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Write(text, 0, text.Length, reference, flags, color);
 
 		public void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) {
+			VerifyState(State.GeneratingContent);
 			if (addIndent)
 				AddIndent();
 			if (reference == null) {
@@ -164,6 +237,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void AddUIElement(Func<UIElement> createElement) {
+			VerifyState(State.GeneratingContent);
 			if (createElement == null)
 				throw new ArgumentNullException(nameof(createElement));
 			if (addIndent)
@@ -173,6 +247,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void AddButton(string buttonText, Action clickHandler) {
+			VerifyState(State.GeneratingContent);
 			if (buttonText == null)
 				throw new ArgumentNullException(nameof(buttonText));
 			if (clickHandler == null)

@@ -17,14 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Decompiler;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	/// <summary>
-	/// Context passed to <see cref="IDocumentViewerCustomDataProvider"/>
+	/// Context passed to <see cref="IDocumentViewerPostProcessor"/>
 	/// </summary>
-	public interface IDocumentViewerCustomDataContext {
+	public interface IDocumentViewerPostProcessorContext {
+		/// <summary>
+		/// Gets the output. It's not possible to write new text, but custom data can be added.
+		/// </summary>
+		IDocumentViewerOutput DocumentViewerOutput { get; }
+
 		/// <summary>
 		/// Gets the document viewer
 		/// </summary>
@@ -39,20 +43,5 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// Gets the content type
 		/// </summary>
 		IContentType ContentType { get; }
-
-		/// <summary>
-		/// Gets data added by <see cref="IDecompilerOutput.AddCustomData{TData}(string, TData)"/>
-		/// </summary>
-		/// <typeparam name="TData">Type of data</typeparam>
-		/// <param name="id">Key, eg. <see cref="PredefinedCustomDataIds.DebugInfo"/></param>
-		/// <returns></returns>
-		TData[] GetData<TData>(string id);
-
-		/// <summary>
-		/// Adds data that gets stored in <see cref="DocumentViewerContent"/>
-		/// </summary>
-		/// <param name="id">Key, eg. <see cref="DocumentViewerContentDataIds.DebugInfo"/></param>
-		/// <param name="data">Data</param>
-		void AddCustomData(string id, object data);
 	}
 }
