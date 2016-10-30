@@ -117,6 +117,7 @@
     <Compile Include="Compiler\EditCodeIdsExtensions.cs" />
     <Compile Include="Compiler\EditCodeVM.cs" />
     <Compile Include="Compiler\EditCodeVMCreator.cs" />
+    <Compile Include="Compiler\EditMethodCodeVM.cs" />
     <Compile Include="Compiler\ExistingTypeNodeUpdater.cs" />
     <Compile Include="Compiler\ImportedType.cs" />
     <Compile Include="Compiler\ImportSigComparer.cs" />

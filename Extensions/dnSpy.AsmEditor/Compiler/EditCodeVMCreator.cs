@@ -39,8 +39,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IDecompilerService decompilerService;
 		readonly ILanguageCompilerProvider[] languageCompilerProviders;
 
-		public bool CanCreate => TryGetUsedLanguage() != null;
-
 		[ImportingConstructor]
 		EditCodeVMCreator(IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
 			this.openFromGAC = openFromGAC;
@@ -48,6 +46,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.decompilerService = decompilerService;
 			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}
+
+		public bool CanCreate(CompilationKind kind) => GetLanguageCompilerProvider(kind) != null;
 
 		KeyValuePair<IDecompiler, ILanguageCompilerProvider>? GetLanguageCompilerProvider(CompilationKind kind) {
 			var language = TryGetUsedLanguage();
@@ -91,11 +91,11 @@ namespace dnSpy.AsmEditor.Compiler {
 					decompilerService.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a));
 		}
 
-		public EditCodeVM Create(MethodDef method, IList<MethodSourceStatement> statements) {
+		public EditCodeVM CreateEditMethodCode(MethodDef method, IList<MethodSourceStatement> statements) {
 			var info = GetLanguageCompilerProvider(CompilationKind.Method);
 			if (info == null)
 				throw new InvalidOperationException();
-			return new EditCodeVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Method), info.Value.Key, method, statements);
+			return new EditMethodCodeVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Method), info.Value.Key, method, statements);
 		}
 	}
 }

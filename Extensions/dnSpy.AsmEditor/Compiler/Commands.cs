@@ -122,7 +122,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, DocumentTreeNodeData[] nodes) =>
-			editCodeVMCreator.CanCreate && nodes.Length == 1 && nodes[0] is MethodNode;
+			editCodeVMCreator.CanCreate(CompilationKind.Method) && nodes.Length == 1 && nodes[0] is MethodNode;
 
 		internal static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes, IList<MethodSourceStatement> statements = null) {
 			if (!CanExecute(editCodeVMCreator, nodes))
@@ -138,7 +138,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var vm = editCodeVMCreator.Create(methodNode.MethodDef, statements ?? Array.Empty<MethodSourceStatement>());
+			var vm = editCodeVMCreator.CreateEditMethodCode(methodNode.MethodDef, statements ?? Array.Empty<MethodSourceStatement>());
 			var win = new EditCodeDlg();
 			win.DataContext = vm;
 			win.Owner = appService.MainWindow;
@@ -187,7 +187,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context));
 		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) {
-			return editCodeVMCreator.CanCreate &&
+			return editCodeVMCreator.CanCreate(CompilationKind.Method) &&
 				list != null &&
 				list.Count != 0 &&
 				list[0].Method.Body != null &&
