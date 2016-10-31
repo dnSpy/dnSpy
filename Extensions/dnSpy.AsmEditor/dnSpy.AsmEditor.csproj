@@ -131,6 +131,7 @@
     <Compile Include="Compiler\ModuleImporter.cs" />
     <Compile Include="Compiler\ModuleImporter.MemberLookup.cs" />
     <Compile Include="Compiler\PlatformHelper.cs" />
+    <Compile Include="Compiler\RawModuleBytesProvider.cs" />
     <Compile Include="Converters\CilObjectConverter.cs" />
     <Compile Include="Converters\InstructionOperandTextBoxStyleConverter.cs" />
     <Compile Include="DnlibDialogs\CAArgumentVM.cs" />

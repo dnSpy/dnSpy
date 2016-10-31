@@ -33,13 +33,15 @@ using dnSpy.Contracts.Images;
 namespace dnSpy.AsmEditor.Compiler {
 	[Export(typeof(EditCodeVMCreator))]
 	sealed class EditCodeVMCreator {
+		readonly IRawModuleBytesProvider rawModuleBytesProvider;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
 		readonly IDecompilerService decompilerService;
 		readonly ILanguageCompilerProvider[] languageCompilerProviders;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
+		EditCodeVMCreator(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
+			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = new OpenAssembly(documentTreeView.DocumentService);
 			this.decompilerService = decompilerService;
@@ -116,21 +118,21 @@ namespace dnSpy.AsmEditor.Compiler {
 			var info = GetLanguageCompilerProvider(CompilationKind.Method);
 			if (info == null)
 				throw new InvalidOperationException();
-			return new EditMethodCodeVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Method), info.Value.Key, method, statements);
+			return new EditMethodCodeVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Method), info.Value.Key, method, statements);
 		}
 
 		public EditCodeVM CreateEditAssembly(ModuleDef module) {
 			var info = GetLanguageCompilerProvider(CompilationKind.Assembly);
 			if (info == null)
 				throw new InvalidOperationException();
-			return new EditAssemblyVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Assembly), info.Value.Key, module);
+			return new EditAssemblyVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.Assembly), info.Value.Key, module);
 		}
 
 		public EditCodeVM CreateAddClass(ModuleDef module) {
 			var info = GetLanguageCompilerProvider(CompilationKind.AddClass);
 			if (info == null)
 				throw new InvalidOperationException();
-			return new AddClassVM(openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.AddClass), info.Value.Key, module);
+			return new AddClassVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.AddClass), info.Value.Key, module);
 		}
 	}
 }

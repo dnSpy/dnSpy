@@ -125,14 +125,14 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected readonly ModuleDef sourceModule;
 
-		protected EditCodeVM(IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule) {
+		protected EditCodeVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule) {
 			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = openAssembly;
 			this.languageCompiler = languageCompiler;
 			this.decompiler = decompiler;
 			this.sourceModule = sourceModule;
-			this.assemblyReferenceResolver = new AssemblyReferenceResolver(sourceModule.Context.AssemblyResolver, sourceModule, makeEverythingPublic);
+			this.assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, sourceModule, makeEverythingPublic);
 		}
 
 		protected abstract class AsyncStateBase : IDisposable {

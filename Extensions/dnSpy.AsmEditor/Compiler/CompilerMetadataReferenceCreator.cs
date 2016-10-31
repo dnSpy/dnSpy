@@ -17,15 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.IO;
 using dnlib.DotNet;
-using dnlib.IO;
 using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	static class CompilerMetadataReferenceCreator {
-		public static CompilerMetadataReference? Create(ModuleDef module, bool makeEverythingPublic) {
-			var moduleData = GetRawModuleBytes(module);
+		public static CompilerMetadataReference? Create(IRawModuleBytesProvider rawModuleBytesProvider, ModuleDef module, bool makeEverythingPublic) {
+			var moduleData = rawModuleBytesProvider.GetRawModuleBytes(module);
 			if (moduleData == null)
 				return null;
 			if (makeEverythingPublic) {
@@ -37,17 +35,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (module.IsManifestModule)
 				return CompilerMetadataReference.CreateAssemblyReference(moduleData, asmRef, module.Location);
 			return CompilerMetadataReference.CreateModuleReference(moduleData, asmRef, module.Location);
-		}
-
-		static byte[] GetRawModuleBytes(ModuleDef module) {
-			var m = module as ModuleDefMD;
-			if (m != null)
-				return m.MetaData.PEImage.CreateFullStream().ReadAllBytes();
-
-			if (File.Exists(module.Location))
-				return File.ReadAllBytes(module.Location);
-
-			return null;
 		}
 	}
 }

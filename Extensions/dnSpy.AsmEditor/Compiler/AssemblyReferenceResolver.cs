@@ -22,11 +22,13 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class AssemblyReferenceResolver : IAssemblyReferenceResolver {
+		readonly IRawModuleBytesProvider rawModuleBytesProvider;
 		readonly IAssemblyResolver assemblyResolver;
 		readonly ModuleDef defaultSourceModule;
 		readonly bool makeEverythingPublic;
 
-		public AssemblyReferenceResolver(IAssemblyResolver assemblyResolver, ModuleDef defaultSourceModule, bool makeEverythingPublic) {
+		public AssemblyReferenceResolver(IRawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, ModuleDef defaultSourceModule, bool makeEverythingPublic) {
+			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
 			this.defaultSourceModule = defaultSourceModule;
 			this.makeEverythingPublic = makeEverythingPublic;
@@ -38,13 +40,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (asm == null)
 				return null;
 
-			return CompilerMetadataReferenceCreator.Create(asm.ManifestModule, makeEverythingPublic);
+			return CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic);
 		}
 
 		public CompilerMetadataReference? Create(AssemblyDef asm) =>
-			CompilerMetadataReferenceCreator.Create(asm.ManifestModule, makeEverythingPublic);
+			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic);
 
 		public CompilerMetadataReference? Create(ModuleDef module) =>
-			CompilerMetadataReferenceCreator.Create(module, makeEverythingPublic);
+			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, module, makeEverythingPublic);
 	}
 }
