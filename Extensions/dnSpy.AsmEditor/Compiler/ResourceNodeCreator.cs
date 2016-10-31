@@ -1,0 +1,61 @@
+﻿/*
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Diagnostics;
+using dnlib.DotNet;
+using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Documents.TreeView.Resources;
+
+namespace dnSpy.AsmEditor.Compiler {
+	sealed class ResourceNodeCreator {
+		readonly ModuleDef module;
+		readonly ResourcesFolderNode rsrcListNode;
+		readonly ResourceNode[] nodes;
+
+		public ResourceNodeCreator(ResourcesFolderNode rsrcListNode, ResourceNode[] nodes) {
+			this.module = rsrcListNode.GetModule();
+			Debug.Assert(this.module != null);
+			this.rsrcListNode = rsrcListNode;
+			this.nodes = nodes;
+		}
+
+		public void Add() {
+			for (int i = 0; i < nodes.Length; i++) {
+				var node = nodes[i];
+				module.Resources.Add(node.Resource);
+				rsrcListNode.TreeNode.AddChild(node.TreeNode);
+			}
+		}
+
+		public void Remove() {
+			for (int i = nodes.Length - 1; i >= 0; i--) {
+				var node = nodes[i];
+				bool b = rsrcListNode.TreeNode.Children.Remove(node.TreeNode);
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				b = module.Resources.Remove(node.Resource);
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+			}
+		}
+	}
+}

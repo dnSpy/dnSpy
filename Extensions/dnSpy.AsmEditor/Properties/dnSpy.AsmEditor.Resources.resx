@@ -2507,4 +2507,10 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="EditCodeAddClass" xml:space="preserve">
     <value>Add Class</value>
   </data>
+  <data name="MergeWithAssemblyCommand" xml:space="preserve">
+    <value>Merge with Assembly...</value>
+  </data>
+  <data name="MergeWithAssemblyCommand2" xml:space="preserve">
+    <value>Merge with Assembly</value>
+  </data>
 </root>

@@ -59,6 +59,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public MergedImportedType[] MergedNonNestedTypes => nonNestedMergedImportedTypes.Where(a => !a.IsEmpty).ToArray();
 		public CustomAttribute[] NewAssemblyCustomAttributes { get; private set; }
 		public CustomAttribute[] NewModuleCustomAttributes { get; private set; }
+		public Resource[] NewResources { get; private set; }
 
 		readonly ModuleDef targetModule;
 		readonly List<CompilerDiagnostic> diagnostics;
@@ -174,9 +175,56 @@ namespace dnSpy.AsmEditor.Compiler {
 			UpdateEditedMethods();
 		}
 
+		void ImportResources() {
+			var newResources = new List<Resource>(sourceModule.Resources.Count);
+			foreach (var resource in sourceModule.Resources) {
+				var newResource = Import(resource);
+				if (newResource == null)
+					continue;
+				newResources.Add(newResource);
+			}
+
+			//TODO: Need to rename some resources if the owner type has been renamed, this also
+			//		requires fixing strings in method bodies.
+
+			NewResources = newResources.ToArray();
+		}
+
+		Resource Import(Resource resource) {
+			var er = resource as EmbeddedResource;
+			if (er != null)
+				return Import(er);
+
+			var alr = resource as AssemblyLinkedResource;
+			if (alr != null)
+				return Import(alr);
+
+			var lr = resource as LinkedResource;
+			if (lr != null)
+				return Import(lr);
+
+			Debug.Fail($"Unknown resource type: {resource?.GetType()}");
+			return null;
+		}
+
+		EmbeddedResource Import(EmbeddedResource resource) =>
+			new EmbeddedResource(resource.Name, resource.GetResourceData(), resource.Attributes);
+
+		AssemblyLinkedResource Import(AssemblyLinkedResource resource) =>
+			new AssemblyLinkedResource(resource.Name, resource.Assembly?.ToAssemblyRef(), resource.Attributes);
+
+		LinkedResource Import(LinkedResource resource) =>
+			new LinkedResource(resource.Name, Import(resource.File), resource.Attributes) { Hash = resource.Hash };
+
+		FileDef Import(FileDef file) {
+			var createdFile = targetModule.UpdateRowId(new FileDefUser(file.Name, file.Flags, file.HashValue));
+			ImportCustomAttributes(createdFile, file);
+			return createdFile;
+		}
+
 		/// <summary>
-		/// Imports everything into the target module. All module and assembly attributes replace the original
-		/// module and assembly attributes. All global members are merged and possibly renamed.
+		/// Imports everything into the target module. All global members are merged and possibly renamed.
+		/// All non-nested types are renamed if a type with the same name exists in the target module.
 		/// </summary>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
@@ -206,6 +254,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 
+			ImportResources();
 			SetSourceModule(null);
 		}
 
@@ -242,6 +291,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			InitializeTypesAndMethods();
 
+			ImportResources();
 			SetSourceModule(null);
 		}
 

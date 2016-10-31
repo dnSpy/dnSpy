@@ -20,15 +20,14 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.AsmEditor.UndoRedo;
-using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Compiler {
 	abstract class EditCodeCommandBase : IUndoCommand {
 		readonly AddUpdatedNodesHelper addUpdatedNodesHelper;
 
-		protected EditCodeCommandBase(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, ModuleImporter importer) {
-			this.addUpdatedNodesHelper = new AddUpdatedNodesHelper(methodAnnotations, modNode, importer);
+		protected EditCodeCommandBase(Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, ModuleDocumentNode modNode, ModuleImporter importer) {
+			this.addUpdatedNodesHelper = addUpdatedNodesHelperProvider.Value.Create(modNode, importer);
 		}
 
 		public abstract string Description { get; }

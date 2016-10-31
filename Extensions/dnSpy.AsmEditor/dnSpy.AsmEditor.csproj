@@ -126,12 +126,14 @@
     <Compile Include="Compiler\ExistingTypeNodeUpdater.cs" />
     <Compile Include="Compiler\ImportedType.cs" />
     <Compile Include="Compiler\ImportSigComparer.cs" />
+    <Compile Include="Compiler\MergeWithAssemblyCommand.cs" />
     <Compile Include="Compiler\MetadataFixer.cs" />
     <Compile Include="Compiler\MetadataReferenceFinder.cs" />
     <Compile Include="Compiler\ModuleImporter.cs" />
     <Compile Include="Compiler\ModuleImporter.MemberLookup.cs" />
     <Compile Include="Compiler\PlatformHelper.cs" />
     <Compile Include="Compiler\RawModuleBytesProvider.cs" />
+    <Compile Include="Compiler\ResourceNodeCreator.cs" />
     <Compile Include="Converters\CilObjectConverter.cs" />
     <Compile Include="Converters\InstructionOperandTextBoxStyleConverter.cs" />
     <Compile Include="DnlibDialogs\CAArgumentVM.cs" />

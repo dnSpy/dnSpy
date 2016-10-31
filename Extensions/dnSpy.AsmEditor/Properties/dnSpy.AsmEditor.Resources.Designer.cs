@@ -3977,6 +3977,24 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge with Assembly....
+        /// </summary>
+        public static string MergeWithAssemblyCommand {
+            get {
+                return ResourceManager.GetString("MergeWithAssemblyCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge with Assembly.
+        /// </summary>
+        public static string MergeWithAssemblyCommand2 {
+            get {
+                return ResourceManager.GetString("MergeWithAssemblyCommand2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorted.
         /// </summary>
         public static string Metadata_Sorted_Rows {

@@ -19,23 +19,48 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Documents.TreeView.Resources;
 
 namespace dnSpy.AsmEditor.Compiler {
+	interface IAddUpdatedNodesHelperProvider {
+		AddUpdatedNodesHelper Create(ModuleDocumentNode modNode, ModuleImporter importer);
+	}
+
+	[Export(typeof(IAddUpdatedNodesHelperProvider))]
+	sealed class AddUpdatedNodesHelperProvider : IAddUpdatedNodesHelperProvider {
+		readonly Lazy<IMethodAnnotations> methodAnnotations;
+		readonly Lazy<IResourceNodeFactory> resourceNodeFactory;
+		readonly IDocumentTreeView documentTreeView;
+
+		[ImportingConstructor]
+		AddUpdatedNodesHelperProvider(Lazy<IMethodAnnotations> methodAnnotations, Lazy<IResourceNodeFactory> resourceNodeFactory, IDocumentTreeView documentTreeView) {
+			this.methodAnnotations = methodAnnotations;
+			this.resourceNodeFactory = resourceNodeFactory;
+			this.documentTreeView = documentTreeView;
+		}
+
+		public AddUpdatedNodesHelper Create(ModuleDocumentNode modNode, ModuleImporter importer) =>
+			new AddUpdatedNodesHelper(methodAnnotations, resourceNodeFactory, documentTreeView, modNode, importer);
+	}
+
 	sealed class AddUpdatedNodesHelper {
 		readonly ModuleDocumentNode modNode;
 		readonly TypeNodeCreator[] newTypeNodeCreators;
+		readonly ResourceNodeCreator resourceNodeCreator;
 		readonly ExistingTypeNodeUpdater[] existingTypeNodeUpdaters;
 		readonly CustomAttribute[] newAssemblyCustomAttributes;
 		readonly CustomAttribute[] newModuleCustomAttributes;
 		readonly CustomAttribute[] origAssemblyCustomAttributes;
 		readonly CustomAttribute[] origModuleCustomAttributes;
 
-		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, ModuleImporter importer) {
+		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, Lazy<IResourceNodeFactory> resourceNodeFactory, IDocumentTreeView documentTreeView, ModuleDocumentNode modNode, ModuleImporter importer) {
 			this.modNode = modNode;
 			var dict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var t in importer.NewNonNestedTypes) {
@@ -55,6 +80,24 @@ namespace dnSpy.AsmEditor.Compiler {
 				origAssemblyCustomAttributes = modNode.Document.AssemblyDef?.CustomAttributes.ToArray();
 			if (newModuleCustomAttributes != null)
 				origModuleCustomAttributes = modNode.Document.ModuleDef.CustomAttributes.ToArray();
+
+			if (importer.NewResources.Length != 0) {
+				var module = modNode.Document.ModuleDef;
+				var rsrcListNode = GetResourceListTreeNode(modNode);
+				Debug.Assert(rsrcListNode != null);
+				if (rsrcListNode != null) {
+					var newNodes = new ResourceNode[importer.NewResources.Length];
+					var treeNodeGroup = documentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceTreeNodeGroup);
+					for (int i = 0; i < newNodes.Length; i++)
+						newNodes[i] = (ResourceNode)documentTreeView.TreeView.Create(resourceNodeFactory.Value.Create(module, importer.NewResources[i], treeNodeGroup)).Data;
+					resourceNodeCreator = new ResourceNodeCreator(rsrcListNode, newNodes);
+				}
+			}
+		}
+
+		static ResourcesFolderNode GetResourceListTreeNode(ModuleDocumentNode modNode) {
+			modNode.TreeNode.EnsureChildrenLoaded();
+			return modNode.TreeNode.DataChildren.OfType<ResourcesFolderNode>().FirstOrDefault();
 		}
 
 		public void Execute() {
@@ -72,23 +115,25 @@ namespace dnSpy.AsmEditor.Compiler {
 				foreach (var ca in newModuleCustomAttributes)
 					modNode.Document.ModuleDef.CustomAttributes.Add(ca);
 			}
+			resourceNodeCreator?.Add();
 		}
 
 		public void Undo() {
-			for (int i = existingTypeNodeUpdaters.Length - 1; i >= 0; i--)
-				existingTypeNodeUpdaters[i].Remove();
-			for (int i = newTypeNodeCreators.Length - 1; i >= 0; i--)
-				newTypeNodeCreators[i].Remove();
-			if (origAssemblyCustomAttributes != null && newAssemblyCustomAttributes != null) {
-				modNode.Document.AssemblyDef.CustomAttributes.Clear();
-				foreach (var ca in origAssemblyCustomAttributes)
-					modNode.Document.AssemblyDef.CustomAttributes.Add(ca);
-			}
+			resourceNodeCreator?.Remove();
 			if (origModuleCustomAttributes != null && newModuleCustomAttributes != null) {
 				modNode.Document.ModuleDef.CustomAttributes.Clear();
 				foreach (var ca in origModuleCustomAttributes)
 					modNode.Document.ModuleDef.CustomAttributes.Add(ca);
 			}
+			if (origAssemblyCustomAttributes != null && newAssemblyCustomAttributes != null) {
+				modNode.Document.AssemblyDef.CustomAttributes.Clear();
+				foreach (var ca in origAssemblyCustomAttributes)
+					modNode.Document.AssemblyDef.CustomAttributes.Add(ca);
+			}
+			for (int i = existingTypeNodeUpdaters.Length - 1; i >= 0; i--)
+				existingTypeNodeUpdaters[i].Remove();
+			for (int i = newTypeNodeCreators.Length - 1; i >= 0; i--)
+				newTypeNodeCreators[i].Remove();
 		}
 
 		public IEnumerable<object> ModifiedObjects {
