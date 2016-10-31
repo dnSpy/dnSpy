@@ -33,6 +33,16 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class ModuleImporterAbortedException : Exception {
 	}
 
+	[Flags]
+	enum ModuleImporterOptions {
+		None = 0,
+
+		/// <summary>
+		/// Module and assembly attributes replace target module and assembly attributes
+		/// </summary>
+		ReplaceModuleAssemblyAttributes			= 0x00000001,
+	}
+
 	sealed partial class ModuleImporter {
 		const string IM0001 = nameof(IM0001);
 		const string IM0002 = nameof(IM0002);
@@ -149,30 +159,19 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesAndMethods() {
-			InitializeTypes(oldTypeToNewType.Values.OfType<NewImportedType>());
-			InitializeTypes(oldTypeToNewType.Values.OfType<MergedImportedType>());
+			// Step 1: Initialize all definitions
+			InitializeTypesStep1(oldTypeToNewType.Values.OfType<NewImportedType>());
+			InitializeTypesStep1(oldTypeToNewType.Values.OfType<MergedImportedType>());
+
+			// Step 2: import the rest, which depend on defs having been initialized,
+			// eg. ca.Constructor could be a MethodDef
+			InitializeTypesStep2(oldTypeToNewType.Values.OfType<NewImportedType>());
+			InitializeTypesStep2(oldTypeToNewType.Values.OfType<MergedImportedType>());
+
 			InitializeTypesMethods(oldTypeToNewType.Values.OfType<NewImportedType>());
 			InitializeTypesMethods(oldTypeToNewType.Values.OfType<MergedImportedType>());
+
 			UpdateEditedMethods();
-		}
-
-		/// <summary>
-		/// Imports everything except the module/assembly attributes.
-		/// </summary>
-		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
-		/// <param name="debugFile">Debug file</param>
-		public void ImportEverything(byte[] rawGeneratedModule, DebugFileResult debugFile) {
-			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
-
-			AddGlobalTypeMembers(sourceModule.GlobalType);
-			foreach (var type in sourceModule.Types) {
-				if (type.IsGlobalModuleType)
-					continue;
-				newNonNestedImportedTypes.Add(CreateNewImportedType(type, targetModule.Types));
-			}
-			InitializeTypesAndMethods();
-
-			SetSourceModule(null);
 		}
 
 		/// <summary>
@@ -181,7 +180,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// </summary>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
-		public void ImportAssembly(byte[] rawGeneratedModule, DebugFileResult debugFile) {
+		/// <param name="options">Options</param>
+		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, ModuleImporterOptions options) {
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			AddGlobalTypeMembers(sourceModule.GlobalType);
@@ -192,16 +192,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			InitializeTypesAndMethods();
 
-			var attributes = new List<CustomAttribute>();
-			ImportCustomAttributes(attributes, sourceModule);
-			// The compiler adds [UnverifiableCode] causing a duplicate attribute
-			RemoveDuplicates(attributes, "System.Security.UnverifiableCodeAttribute");
-			NewModuleCustomAttributes = attributes.ToArray();
-			var asm = sourceModule.Assembly;
-			if (asm != null) {
-				attributes.Clear();
-				ImportCustomAttributes(attributes, asm);
-				NewAssemblyCustomAttributes = attributes.ToArray();
+			if ((options & ModuleImporterOptions.ReplaceModuleAssemblyAttributes) != 0) {
+				var attributes = new List<CustomAttribute>();
+				ImportCustomAttributes(attributes, sourceModule);
+				// The compiler adds [UnverifiableCode] causing a duplicate attribute
+				RemoveDuplicates(attributes, "System.Security.UnverifiableCodeAttribute");
+				NewModuleCustomAttributes = attributes.ToArray();
+				var asm = sourceModule.Assembly;
+				if (asm != null) {
+					attributes.Clear();
+					ImportCustomAttributes(attributes, asm);
+					NewAssemblyCustomAttributes = attributes.ToArray();
+				}
 			}
 
 			SetSourceModule(null);
@@ -514,7 +516,21 @@ namespace dnSpy.AsmEditor.Compiler {
 			return importedType;
 		}
 
-		void InitializeTypes(IEnumerable<NewImportedType> importedTypes) {
+		void InitializeTypesStep1(IEnumerable<NewImportedType> importedTypes) {
+			foreach (var importedType in importedTypes) {
+				var compiledType = toExtraData[importedType].CompiledType;
+				foreach (var field in compiledType.Fields)
+					Create(field);
+				foreach (var method in compiledType.Methods)
+					Create(method);
+				foreach (var prop in compiledType.Properties)
+					Create(prop);
+				foreach (var evt in compiledType.Events)
+					Create(evt);
+			}
+		}
+
+		void InitializeTypesStep2(IEnumerable<NewImportedType> importedTypes) {
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
 				importedType.TargetType.BaseType = Import(compiledType.BaseType);
@@ -529,15 +545,13 @@ namespace dnSpy.AsmEditor.Compiler {
 					importedType.TargetType.NestedTypes.Add(oldTypeToNewType[nestedType].TargetType);
 
 				foreach (var field in compiledType.Fields)
-					importedType.TargetType.Fields.Add(Import(field));
+					importedType.TargetType.Fields.Add(Initialize(field));
 				foreach (var method in compiledType.Methods)
-					importedType.TargetType.Methods.Add(Import(method));
-
-				// Import the properties and events after the methods have been created
+					importedType.TargetType.Methods.Add(Initialize(method));
 				foreach (var prop in compiledType.Properties)
-					importedType.TargetType.Properties.Add(Import(prop));
+					importedType.TargetType.Properties.Add(Initialize(prop));
 				foreach (var evt in compiledType.Events)
-					importedType.TargetType.Events.Add(Import(evt));
+					importedType.TargetType.Events.Add(Initialize(evt));
 			}
 		}
 
@@ -567,9 +581,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		void InitializeTypes(IEnumerable<MergedImportedType> importedTypes) {
+		void InitializeTypesStep1(IEnumerable<MergedImportedType> importedTypes) {
 			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
-
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
 
@@ -577,19 +590,14 @@ namespace dnSpy.AsmEditor.Compiler {
 					// All dupes are assumed to be new members and they're all renamed
 
 					foreach (var field in compiledType.Fields)
-						importedType.NewFields.Add(Import(field));
+						Create(field);
 					foreach (var method in compiledType.Methods)
-						importedType.NewMethods.Add(Import(method));
-
-					AddUsedMethods(importedType);
-
-					// Import the properties and events after the methods have been created
+						Create(method);
 					foreach (var prop in compiledType.Properties)
-						importedType.NewProperties.Add(Import(prop));
+						Create(prop);
 					foreach (var evt in compiledType.Events)
-						importedType.NewEvents.Add(Import(evt));
-
-					RenameMergedMembers(importedType);
+						Create(evt);
+					AddUsedMethods(importedType);
 				}
 				else {
 					// Duplicate members are assumed to be original members (stubs) and
@@ -606,7 +614,7 @@ namespace dnSpy.AsmEditor.Compiler {
 							oldFieldToNewField.Add(compiledField, targetField);
 						}
 						else
-							importedType.NewFields.Add(Import(compiledField));
+							Create(compiledField);
 					}
 					foreach (var compiledMethod in compiledType.Methods) {
 						MethodDef targetMethod;
@@ -617,12 +625,11 @@ namespace dnSpy.AsmEditor.Compiler {
 							oldMethodToNewMethod.Add(compiledMethod, targetMethod);
 						}
 						else
-							importedType.NewMethods.Add(Import(compiledMethod));
+							Create(compiledMethod);
 					}
 
 					AddUsedMethods(importedType);
 
-					// Import the properties and events after the methods have been created
 					foreach (var compiledProp in compiledType.Properties) {
 						PropertyDef targetProp;
 						if ((targetProp = memberDict.FindProperty(compiledProp)) != null) {
@@ -632,7 +639,7 @@ namespace dnSpy.AsmEditor.Compiler {
 							oldPropertyToNewProperty.Add(compiledProp, targetProp);
 						}
 						else
-							importedType.NewProperties.Add(Import(compiledProp));
+							Create(compiledProp);
 					}
 					foreach (var compiledEvent in compiledType.Events) {
 						EventDef targetEvent;
@@ -643,7 +650,65 @@ namespace dnSpy.AsmEditor.Compiler {
 							oldEventToNewEvent.Add(compiledEvent, targetEvent);
 						}
 						else
-							importedType.NewEvents.Add(Import(compiledEvent));
+							Create(compiledEvent);
+					}
+				}
+			}
+		}
+
+		void InitializeTypesStep2(IEnumerable<MergedImportedType> importedTypes) {
+			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
+
+			foreach (var importedType in importedTypes) {
+				var compiledType = toExtraData[importedType].CompiledType;
+
+				if (importedType.RenameDuplicates) {
+					// All dupes are assumed to be new members and they're all renamed
+
+					foreach (var field in compiledType.Fields)
+						importedType.NewFields.Add(Initialize(field));
+					foreach (var method in compiledType.Methods)
+						importedType.NewMethods.Add(Initialize(method));
+					foreach (var prop in compiledType.Properties)
+						importedType.NewProperties.Add(Initialize(prop));
+					foreach (var evt in compiledType.Events)
+						importedType.NewEvents.Add(Initialize(evt));
+
+					RenameMergedMembers(importedType);
+				}
+				else {
+					// Duplicate members are assumed to be original members (stubs) and
+					// we should just redirect refs to them to the original members.
+
+					memberDict.Initialize(importedType.TargetType);
+
+					foreach (var compiledField in compiledType.Fields) {
+						FieldDef targetField;
+						if ((targetField = memberDict.FindField(compiledField)) != null)
+							memberDict.Remove(targetField);
+						else
+							importedType.NewFields.Add(Initialize(compiledField));
+					}
+					foreach (var compiledMethod in compiledType.Methods) {
+						MethodDef targetMethod;
+						if ((targetMethod = memberDict.FindMethod(compiledMethod)) != null || editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod))
+							memberDict.Remove(targetMethod);
+						else
+							importedType.NewMethods.Add(Initialize(compiledMethod));
+					}
+					foreach (var compiledProp in compiledType.Properties) {
+						PropertyDef targetProp;
+						if ((targetProp = memberDict.FindProperty(compiledProp)) != null)
+							memberDict.Remove(targetProp);
+						else
+							importedType.NewProperties.Add(Initialize(compiledProp));
+					}
+					foreach (var compiledEvent in compiledType.Events) {
+						EventDef targetEvent;
+						if ((targetEvent = memberDict.FindEvent(compiledEvent)) != null)
+							memberDict.Remove(targetEvent);
+						else
+							importedType.NewEvents.Add(Initialize(compiledEvent));
 					}
 				}
 			}
@@ -922,7 +987,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			var md = caType as MethodDef;
 			if (md != null)
-				return Import(md);
+				return oldMethodToNewMethod[md];
 			return null;
 		}
 
@@ -1131,11 +1196,30 @@ namespace dnSpy.AsmEditor.Compiler {
 		static readonly bool keepImportedRva = false;
 		RVA GetRVA(RVA rva) => keepImportedRva ? rva : 0;
 
-		FieldDef Import(FieldDef field) {
-			if (field == null)
-				return null;
+		void Create(FieldDef field) {
 			var importedField = targetModule.UpdateRowId(new FieldDefUser(field.Name));
 			oldFieldToNewField.Add(field, importedField);
+		}
+
+		void Create(MethodDef method) {
+			var importedMethodDef = targetModule.UpdateRowId(new MethodDefUser(method.Name));
+			oldMethodToNewMethod.Add(method, importedMethodDef);
+		}
+
+		void Create(PropertyDef propDef) {
+			var importedPropertyDef = targetModule.UpdateRowId(new PropertyDefUser(propDef.Name));
+			oldPropertyToNewProperty.Add(propDef, importedPropertyDef);
+		}
+
+		void Create(EventDef eventDef) {
+			var importedEventDef = targetModule.UpdateRowId(new EventDefUser(eventDef.Name, Import(eventDef.EventType), eventDef.Attributes));
+			oldEventToNewEvent.Add(eventDef, importedEventDef);
+		}
+
+		FieldDef Initialize(FieldDef field) {
+			if (field == null)
+				return null;
+			var importedField = oldFieldToNewField[field];
 			ImportCustomAttributes(importedField, field);
 			importedField.Signature = Import(field.Signature);
 			importedField.Attributes = field.Attributes;
@@ -1148,11 +1232,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return importedField;
 		}
 
-		MethodDef Import(MethodDef method) {
+		MethodDef Initialize(MethodDef method) {
 			if (method == null)
 				return null;
-			var importedMethodDef = targetModule.UpdateRowId(new MethodDefUser(method.Name));
-			oldMethodToNewMethod.Add(method, importedMethodDef);
+			var importedMethodDef = oldMethodToNewMethod[method];
 			ImportCustomAttributes(importedMethodDef, method);
 			ImportDeclSecurities(importedMethodDef, method);
 			importedMethodDef.RVA = GetRVA(method.RVA);
@@ -1206,11 +1289,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return importedParamDef;
 		}
 
-		PropertyDef Import(PropertyDef propDef) {
+		PropertyDef Initialize(PropertyDef propDef) {
 			if (propDef == null)
 				return null;
-			var importedPropertyDef = targetModule.UpdateRowId(new PropertyDefUser(propDef.Name));
-			oldPropertyToNewProperty[propDef] = importedPropertyDef;
+			var importedPropertyDef = oldPropertyToNewProperty[propDef];
 			ImportCustomAttributes(importedPropertyDef, propDef);
 			importedPropertyDef.Attributes = propDef.Attributes;
 			importedPropertyDef.Type = Import(propDef.Type);
@@ -1243,11 +1325,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return m;
 		}
 
-		EventDef Import(EventDef eventDef) {
+		EventDef Initialize(EventDef eventDef) {
 			if (eventDef == null)
 				return null;
-			var importedEventDef = targetModule.UpdateRowId(new EventDefUser(eventDef.Name, Import(eventDef.EventType), eventDef.Attributes));
-			oldEventToNewEvent[eventDef] = importedEventDef;
+			var importedEventDef = oldEventToNewEvent[eventDef];
 			ImportCustomAttributes(importedEventDef, eventDef);
 			if (eventDef.AddMethod != null) {
 				var newMethod = TryGetMethod(eventDef.AddMethod);

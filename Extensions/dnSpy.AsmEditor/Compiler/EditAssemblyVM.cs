@@ -55,6 +55,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		protected override void Import(ModuleImporter importer, CompilationResult result) =>
-			importer.ImportAssembly(result.RawFile, result.DebugFile);
+			importer.Import(result.RawFile, result.DebugFile, ModuleImporterOptions.ReplaceModuleAssemblyAttributes);
 	}
 }
