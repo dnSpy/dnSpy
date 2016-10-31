@@ -32,6 +32,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly List<CodeBracesRange> bracesInfo;
 		readonly List<XmlNamespaceReference> xmlNamespaceReferences;
 		readonly Dictionary<SubString, string> subStringDict;
+		readonly List<int> lineSeparators;
 		XmlNamespaces xmlNamespaces;
 		int textPosition;
 		int recursionCounter;
@@ -103,6 +104,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			bracesInfo = new List<CodeBracesRange>();
 			xmlNamespaceReferences = new List<XmlNamespaceReference>();
 			subStringDict = new Dictionary<SubString, string>(EqualityComparer<SubString>.Default);
+			lineSeparators = new List<int>();
 			xmlNamespaces = new XmlNamespaces();
 			xmlNamespaces.Initialize(null);
 		}
@@ -287,6 +289,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				output.Write(textLocal, pos, textLocal.Length - pos, BoxedTextColor.Text);
 			Debug.Assert(output.Length - outputStart == textLocal.Length);
 
+			// Don't add a line separator after the last tag
+			int end = lineSeparators.Count - 1;
+			for (int i = 0; i < end; i++)
+				output.AddLineSeparator(lineSeparators[i]);
+
 			foreach (var info in bracesInfo)
 				output.AddCodeBracesRange(info);
 		}
@@ -378,12 +385,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				SaveXmlNamespaceReferences();
 
 				var token = GetNextToken();
+				int endTagPos = -1;
 				switch (token.Kind) {
 				case TokenKind.EOF:
 					return;
 
 				case TokenKind.SlashGreaterThan:
 					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End), token.Span, CodeBracesRangeFlags.OtherBlockBraces);
+					endTagPos = token.Span.Start;
 					break;
 
 				case TokenKind.GreaterThan:
@@ -401,12 +410,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 						return;
 					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End == firstGreaterThan.Span.Start ? firstGreaterThan.Span.End : tagName.Value.Span.End), Span.FromBounds(token.Span.Start, greaterThanToken.Span.End), CodeBracesRangeFlags.OtherBlockBraces);
 					SaveReference(tagEndName.Value, XmlNameReferenceKind.Tag, findDefsOnly: true);
+					endTagPos = greaterThanToken.Span.Start;
 					break;
 
 				default:
 					Debug.Assert(token.Kind == TokenKind.EOF);
 					return;
 				}
+				if (endTagPos >= 0 && recursionCounter == 2)
+					lineSeparators.Add(endTagPos);
 			}
 			finally {
 				FreeXmlNamespaces(xmlNamespaces);
