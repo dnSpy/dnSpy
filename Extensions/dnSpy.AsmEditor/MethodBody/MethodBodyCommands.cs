@@ -88,7 +88,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			public override void Execute(AsmEditorContext context) => EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = DsImagesAttribute.Editor, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 20)]
+		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = DsImagesAttribute.Editor, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 21)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -165,7 +165,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = DsImagesAttribute.Editor, InputGestureText = "res:ShortCutKeyCtrlShiftE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 10)]
+	[Export, ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = DsImagesAttribute.Editor, InputGestureText = "res:ShortCutKeyCtrlShiftE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 20)]
 	sealed class EditILInstructionsCommand : MenuItemBase, ICommand {
 		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
