@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Documents.TreeView;
 
@@ -30,43 +31,58 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class TypeNodeCreator {
 		readonly NamespaceNodeCreator nsNodeCreator;
 		readonly IList<TypeDef> ownerList;
-		readonly TypeNode typeNode;
+		readonly TypeNode[] typeNodes;
 
 		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get {
 				foreach (var n in nsNodeCreator.OriginalNodes)
 					yield return n;
-				if (typeNode != null)
-					yield return typeNode;
+				foreach (var t in typeNodes)
+					yield return t;
 			}
 		}
 
-		public TypeNodeCreator(ModuleDocumentNode modNode, TypeDef type) {
+		public TypeNodeCreator(ModuleDocumentNode modNode, List<TypeDef> types) {
 			if (modNode == null)
 				throw new ArgumentNullException(nameof(modNode));
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			// Can't be a nested type, and can't be part of a module yet
-			if (type.DeclaringType != null || type.Module != null)
+			if (types == null)
+				throw new ArgumentNullException(nameof(types));
+			if (types.Count == 0)
 				throw new ArgumentException();
+
+			var ns = (types[0].Namespace ?? UTF8String.Empty).String;
+			foreach (var t in types) {
+				var tns = (t.Namespace ?? UTF8String.Empty).String;
+				if (tns != ns)
+					throw new ArgumentException();
+				// Can't be a nested type, and can't be part of a module yet
+				if (t.DeclaringType != null || t.Module != null)
+					throw new ArgumentException();
+			}
 			this.ownerList = modNode.Document.ModuleDef.Types;
-			this.nsNodeCreator = new NamespaceNodeCreator(type.Namespace, modNode);
-			this.typeNode = modNode.Context.DocumentTreeView.Create(type);
+			this.nsNodeCreator = new NamespaceNodeCreator(ns, modNode);
+			this.typeNodes = types.Select(a => modNode.Context.DocumentTreeView.Create(a)).ToArray();
 		}
 
 		public void Add() {
 			nsNodeCreator.Add();
 			nsNodeCreator.NamespaceNode.TreeNode.EnsureChildrenLoaded();
-			ownerList.Add(typeNode.TypeDef);
-			nsNodeCreator.NamespaceNode.TreeNode.AddChild(typeNode.TreeNode);
+			for (int i = 0; i < typeNodes.Length; i++) {
+				var typeNode = typeNodes[i];
+				ownerList.Add(typeNode.TypeDef);
+				nsNodeCreator.NamespaceNode.TreeNode.AddChild(typeNode.TreeNode);
+			}
 		}
 
 		public void Remove() {
-			bool b = nsNodeCreator.NamespaceNode.TreeNode.Children.Remove(typeNode.TreeNode) &&
-					ownerList.Remove(typeNode.TypeDef);
-			Debug.Assert(b);
-			if (!b)
-				throw new InvalidOperationException();
+			for (int i = typeNodes.Length - 1; i >= 0; i--) {
+				var typeNode = typeNodes[i];
+				bool b = nsNodeCreator.NamespaceNode.TreeNode.Children.Remove(typeNode.TreeNode) &&
+						ownerList.Remove(typeNode.TypeDef);
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+			}
 			nsNodeCreator.Remove();
 		}
 	}

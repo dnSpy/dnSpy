@@ -37,7 +37,15 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, ModuleImporter importer) {
 			this.modNode = modNode;
-			this.newTypeNodeCreators = importer.NewNonNestedTypes.Select(a => new TypeNodeCreator(modNode, a.TargetType)).ToArray();
+			var dict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
+			foreach (var t in importer.NewNonNestedTypes) {
+				List<TypeDef> list;
+				var ns = (t.TargetType.Namespace ?? UTF8String.Empty).String;
+				if (!dict.TryGetValue(ns, out list))
+					dict[ns] = list = new List<TypeDef>();
+				list.Add(t.TargetType);
+			}
+			this.newTypeNodeCreators = dict.Values.Select(a => new TypeNodeCreator(modNode, a)).ToArray();
 			this.existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
 			if (!importer.MergedNonNestedTypes.All(a => a.TargetType.Module == modNode.Document.ModuleDef))
 				throw new InvalidOperationException();
