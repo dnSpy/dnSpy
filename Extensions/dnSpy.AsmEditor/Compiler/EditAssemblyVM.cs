@@ -42,7 +42,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			var state = (EditAssemblyDecompileCodeState)decompileCodeState;
 			state.CancellationToken.ThrowIfCancellationRequested();
 
-			state.DecompilationContext.CalculateBinSpans = true;
 			var options = new DecompileAssemblyInfo(state.MainOutput, state.DecompilationContext, sourceModule);
 			options.KeepAllAttributes = true;
 			decompiler.Decompile(DecompilationType.AssemblyInfo, options);
