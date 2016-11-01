@@ -21,7 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Settings;
@@ -126,6 +129,15 @@ namespace dnSpy.MainApp {
 			vm.HasCancelButton = (buttons & MsgBoxButton.Cancel) != 0;
 			win.DataContext = vm;
 			win.Owner = ownerWindow ?? appWindow.MainWindow;
+			var vmTmp = vm;
+			win.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (s, e) => CopyText(vmTmp)));
+		}
+
+		static void CopyText(MsgBoxVM vm) {
+			try {
+				Clipboard.SetText(vm.Message);
+			}
+			catch (ExternalException) { }
 		}
 
 		public T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) {
