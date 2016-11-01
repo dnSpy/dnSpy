@@ -152,14 +152,13 @@ matched:
 			var buffer = ApplicableTo.TextBuffer;
 			var currentSnapshot = buffer.CurrentSnapshot;
 			using (var ed = buffer.CreateEdit()) {
-				foreach (var c in change.TextChanges) {
-					Debug.Assert(c.Span.End <= originalSnapshot.Length);
-					if (c.Span.End > originalSnapshot.Length)
-						return;
-					var span = new SnapshotSpan(originalSnapshot, c.Span.ToSpan()).TranslateTo(currentSnapshot, SpanTrackingMode.EdgeInclusive);
-					if (!ed.Replace(span.Span, c.NewText))
-						return;
-				}
+				var textChange = change.TextChange;
+				Debug.Assert(textChange.Span.End <= originalSnapshot.Length);
+				if (textChange.Span.End > originalSnapshot.Length)
+					return;
+				var span = new SnapshotSpan(originalSnapshot, textChange.Span.ToSpan()).TranslateTo(currentSnapshot, SpanTrackingMode.EdgeInclusive);
+				if (!ed.Replace(span.Span, textChange.NewText))
+					return;
 				ed.Apply();
 			}
 			if (change.NewPosition != null) {

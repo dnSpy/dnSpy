@@ -122,7 +122,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
         }
 
         protected ImmutableArray<TaggedText> CreateClassifiableDeferredContent(
-            IList<TaggedText> content)
+            IEnumerable<TaggedText> content)
         {
             return content.AsImmutable();
         }

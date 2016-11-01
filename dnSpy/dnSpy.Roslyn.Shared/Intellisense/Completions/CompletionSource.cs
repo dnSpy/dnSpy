@@ -79,10 +79,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			var completionList = info.Value.CompletionService.GetCompletionsAsync(info.Value.Document, triggerPoint.Value.Position, completionTrigger).GetAwaiter().GetResult();
 			if (completionList == null)
 				return;
-			Debug.Assert(completionList.DefaultSpan.End <= snapshot.Length);
-			if (completionList.DefaultSpan.End > snapshot.Length)
+			Debug.Assert(completionList.Span.End <= snapshot.Length);
+			if (completionList.Span.End > snapshot.Length)
 				return;
-			var trackingSpan = snapshot.CreateTrackingSpan(completionList.DefaultSpan.Start, completionList.DefaultSpan.Length, SpanTrackingMode.EdgeInclusive, TrackingFidelityMode.Forward);
+			var trackingSpan = snapshot.CreateTrackingSpan(completionList.Span.Start, completionList.Span.Length, SpanTrackingMode.EdgeInclusive, TrackingFidelityMode.Forward);
 			var completionSet = RoslynCompletionSet.Create(imageMonikerService, mruCompletionService, completionList, info.Value.CompletionService, session.TextView, DefaultCompletionSetMoniker, dnSpy_Roslyn_Shared_Resources.CompletionSet_All, trackingSpan);
 			completionSets.Add(completionSet);
 		}

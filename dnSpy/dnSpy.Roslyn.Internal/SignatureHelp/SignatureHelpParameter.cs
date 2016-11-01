@@ -84,11 +84,11 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 		}
 
 		void Initialize() {
-			documentationFactory = signatureHelpParameter.DocumentationFactory.ToTaggedTextFunc();
-			prefixDisplayParts = signatureHelpParameter.PrefixDisplayParts.ToTaggedText();
-			suffixDisplayParts = signatureHelpParameter.SuffixDisplayParts.ToTaggedText();
-			displayParts = signatureHelpParameter.DisplayParts.ToTaggedText();
-			selectedDisplayParts = signatureHelpParameter.SelectedDisplayParts.ToTaggedText();
+			documentationFactory = signatureHelpParameter.DocumentationFactory;
+			prefixDisplayParts = signatureHelpParameter.PrefixDisplayParts;
+			suffixDisplayParts = signatureHelpParameter.SuffixDisplayParts;
+			displayParts = signatureHelpParameter.DisplayParts;
+			selectedDisplayParts = signatureHelpParameter.SelectedDisplayParts;
 		}
 
 		public IEnumerable<TaggedText> GetAllParts() =>

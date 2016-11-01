@@ -38,7 +38,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\TaggedTextExtensions.cs" />
     <Compile Include="GlyphExtensions.cs" />
     <Compile Include="Helpers\SymbolDisplayPartExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

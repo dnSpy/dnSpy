@@ -92,12 +92,12 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 		}
 
 		void Initialize() {
-			descriptionParts = signatureHelpItem.DescriptionParts.ToTaggedText();
-			documentationFactory = signatureHelpItem.DocumentationFactory.ToTaggedTextFunc();
+			descriptionParts = signatureHelpItem.DescriptionParts;
+			documentationFactory = signatureHelpItem.DocumentationFactory;
 			parameters = ToSignatureHelpParameter(signatureHelpItem.Parameters);
-			prefixDisplayParts = signatureHelpItem.PrefixDisplayParts.ToTaggedText();
-			separatorDisplayParts = signatureHelpItem.SeparatorDisplayParts.ToTaggedText();
-			suffixDisplayParts = signatureHelpItem.SuffixDisplayParts.ToTaggedText();
+			prefixDisplayParts = signatureHelpItem.PrefixDisplayParts;
+			separatorDisplayParts = signatureHelpItem.SeparatorDisplayParts;
+			suffixDisplayParts = signatureHelpItem.SuffixDisplayParts;
 		}
 
 		static ImmutableArray<SignatureHelpParameter> ToSignatureHelpParameter(ImmutableArray<SIGHLP.SignatureHelpParameter> parameters) {

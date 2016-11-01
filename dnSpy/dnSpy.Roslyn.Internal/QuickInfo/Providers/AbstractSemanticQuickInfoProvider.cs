@@ -139,7 +139,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             var mainDescriptionBuilder = new List<TaggedText>();
             if (sections.ContainsKey(SymbolDescriptionGroups.MainDescription))
             {
-                mainDescriptionBuilder.AddRange(sections[SymbolDescriptionGroups.MainDescription].ToTaggedText());
+                mainDescriptionBuilder.AddRange(sections[SymbolDescriptionGroups.MainDescription]);
             }
 
             var typeParameterMapBuilder = new List<TaggedText>();
@@ -149,7 +149,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
                 if (!parts.IsDefaultOrEmpty)
                 {
                     typeParameterMapBuilder.AddLineBreak();
-                    typeParameterMapBuilder.AddRange(parts.ToTaggedText());
+                    typeParameterMapBuilder.AddRange(parts);
                 }
             }
 
@@ -160,7 +160,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
                 if (!parts.IsDefaultOrEmpty)
                 {
                     anonymousTypesBuilder.AddLineBreak();
-                    anonymousTypesBuilder.AddRange(parts.ToTaggedText());
+                    anonymousTypesBuilder.AddRange(parts);
                 }
             }
 
@@ -170,7 +170,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
                 var parts = sections[SymbolDescriptionGroups.AwaitableUsageText];
                 if (!parts.IsDefaultOrEmpty)
                 {
-                    usageTextBuilder.AddRange(parts.ToTaggedText());
+                    usageTextBuilder.AddRange(parts);
                 }
             }
 
@@ -185,7 +185,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
                 var parts = sections[SymbolDescriptionGroups.Exceptions];
                 if (!parts.IsDefaultOrEmpty)
                 {
-                    exceptionsTextBuilder.AddRange(parts.ToTaggedText());
+                    exceptionsTextBuilder.AddRange(parts);
                 }
             }
 
@@ -216,7 +216,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
 
         private ImmutableArray<TaggedText> GetDocumentationContent(
             IEnumerable<ISymbol> symbols,
-            IDictionary<SymbolDescriptionGroups, ImmutableArray<SymbolDisplayPart>> sections,
+            IDictionary<SymbolDescriptionGroups, ImmutableArray<TaggedText>> sections,
             SemanticModel semanticModel,
             SyntaxToken token,
             IDocumentationCommentFormattingService formatter,
@@ -226,7 +226,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             if (sections.ContainsKey(SymbolDescriptionGroups.Documentation))
             {
                 var documentationBuilder = new List<TaggedText>();
-                documentationBuilder.AddRange(sections[SymbolDescriptionGroups.Documentation].ToTaggedText());
+                documentationBuilder.AddRange(sections[SymbolDescriptionGroups.Documentation]);
                 return CreateClassifiableDeferredContent(documentationBuilder);
             }
             else if (symbols.Any())
@@ -244,7 +244,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
 
                 if (documentation != null)
                 {
-                    return CreateClassifiableDeferredContent(documentation.ToTaggedText());
+                    return CreateClassifiableDeferredContent(documentation);
                 }
             }
 
