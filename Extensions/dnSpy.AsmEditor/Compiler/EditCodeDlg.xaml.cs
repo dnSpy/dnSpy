@@ -27,11 +27,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {
 	partial class EditCodeDlg : WindowBase {
@@ -56,11 +53,16 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					InputBindings.Add(new KeyBinding(vm.AddGacReferenceCommand, Key.O, ModifierKeys.Control | ModifierKeys.Shift));
 					InputBindings.Add(new KeyBinding(vm.AddAssemblyReferenceCommand, Key.O, ModifierKeys.Control));
+					InputBindings.Add(new KeyBinding(vm.GoToNextDiagnosticCommand, Key.F4, ModifierKeys.None));
+					InputBindings.Add(new KeyBinding(vm.GoToNextDiagnosticCommand, Key.F8, ModifierKeys.None));
+					InputBindings.Add(new KeyBinding(vm.GoToPreviousDiagnosticCommand, Key.F4, ModifierKeys.Shift));
+					InputBindings.Add(new KeyBinding(vm.GoToPreviousDiagnosticCommand, Key.F8, ModifierKeys.Shift));
 				}
 			};
 			diagnosticsListView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
 				(s, e) => CopyToClipboard(diagnosticsListView.SelectedItems.OfType<CompilerDiagnosticVM>().ToArray()),
 				(s, e) => e.CanExecute = diagnosticsListView.SelectedItems.Count != 0));
+			diagnosticsListView.SelectionChanged += DiagnosticsListView_SelectionChanged;
 		}
 
 		void EditCodeVM_CodeCompiled(object sender, EventArgs e) {
@@ -92,46 +94,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (vm == null || diag == null)
 				return;
 
-			HandleActivatedDiagnostic(vm, diag);
-		}
-
-		void HandleActivatedDiagnostic(EditCodeVM vm, CompilerDiagnosticVM diag) {
-			if (string.IsNullOrEmpty(diag.FullPath))
-				return;
-
-			var doc = vm.Documents.FirstOrDefault(a => a.Name == diag.FullPath);
-			Debug.Assert(doc != null);
-			if (doc == null)
-				return;
-			vm.SelectedDocument = doc;
-
-			if (diag.LineLocationSpan != null) {
-				UIUtilities.Focus(doc.TextView.VisualElement, () => {
-					// The caret isn't always moved unless we wait a little
-					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-						if (doc == vm.SelectedDocument) {
-							MoveCaretTo(doc.TextView, diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
-							doc.TextView.EnsureCaretVisible();
-							doc.TextView.Selection.Clear();
-						}
-					}));
-				});
-			}
-		}
-
-		static CaretPosition MoveCaretTo(ITextView textView, int line, int column) {
-			if (line >= textView.TextSnapshot.LineCount)
-				line = textView.TextSnapshot.LineCount - 1;
-			var snapshotLine = textView.TextSnapshot.GetLineFromLineNumber(line);
-			if (column >= snapshotLine.Length)
-				column = snapshotLine.Length;
-			return textView.Caret.MoveTo(snapshotLine.Start + column);
+			vm.MoveTo(diag);
 		}
 
 		void EditCodeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var vm = (EditCodeVM)sender;
 			if (e.PropertyName == nameof(vm.SelectedDocument))
 				UIUtilities.Focus(vm.SelectedDocument?.TextView.VisualElement);
+		}
+
+		void DiagnosticsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+			var item = diagnosticsListView.SelectedItem;
+			if (item == null)
+				return;
+			diagnosticsListView.ScrollIntoView(item);
 		}
 
 		void CopyToClipboard(CompilerDiagnosticVM[] diags) {

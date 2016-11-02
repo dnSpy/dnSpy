@@ -26,6 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
@@ -63,6 +64,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
+		public ICommand GoToNextDiagnosticCommand => new RelayCommand(a => GoToNextDiagnostic(), a => CanGoToNextDiagnostic);
+		public ICommand GoToPreviousDiagnosticCommand => new RelayCommand(a => GoToPreviousDiagnostic(), a => CanGoToPreviousDiagnostic);
 
 		public bool CanCompile {
 			get { return canCompile; }
@@ -122,6 +125,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		CodeDocument selectedDocument;
 
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
+
+		public CompilerDiagnosticVM SelectedCompilerDiagnosticVM {
+			get { return selectedCompilerDiagnosticVM; }
+			set {
+				if (selectedCompilerDiagnosticVM != value) {
+					selectedCompilerDiagnosticVM = value;
+					OnPropertyChanged(nameof(SelectedCompilerDiagnosticVM));
+				}
+			}
+		}
+		CompilerDiagnosticVM selectedCompilerDiagnosticVM;
 
 		protected readonly ModuleDef sourceModule;
 
@@ -441,6 +455,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			Diagnostics.AddRange(diags.OrderBy(a => a, CompilerDiagnosticComparer.Instance).
 				Where(a => a.Severity != CompilerDiagnosticSeverity.Hidden).
 				Select(a => new CompilerDiagnosticVM(a, GetImageReference(a.Severity) ?? default(ImageReference))));
+			SelectedCompilerDiagnosticVM = Diagnostics.FirstOrDefault();
 		}
 
 		static ImageReference? GetImageReference(CompilerDiagnosticSeverity severity) {
@@ -492,6 +507,70 @@ namespace dnSpy.AsmEditor.Compiler {
 			catch (Exception ex) {
 				MsgBox.Instance.Show(ex);
 			}
+		}
+
+		internal void MoveTo(CompilerDiagnosticVM diag) {
+			if (string.IsNullOrEmpty(diag.FullPath))
+				return;
+
+			var doc = Documents.FirstOrDefault(a => a.Name == diag.FullPath);
+			Debug.Assert(doc != null);
+			if (doc == null)
+				return;
+			SelectedDocument = doc;
+
+			if (diag.LineLocationSpan != null) {
+				UIUtilities.Focus(doc.TextView.VisualElement, () => {
+					// The caret isn't always moved unless we wait a little
+					doc.TextView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+						if (doc == SelectedDocument) {
+							MoveCaretTo(doc.TextView, diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
+							doc.TextView.EnsureCaretVisible();
+							doc.TextView.Selection.Clear();
+						}
+					}));
+				});
+			}
+		}
+
+		static CaretPosition MoveCaretTo(ITextView textView, int line, int column) {
+			if (line >= textView.TextSnapshot.LineCount)
+				line = textView.TextSnapshot.LineCount - 1;
+			var snapshotLine = textView.TextSnapshot.GetLineFromLineNumber(line);
+			if (column >= snapshotLine.Length)
+				column = snapshotLine.Length;
+			return textView.Caret.MoveTo(snapshotLine.Start + column);
+		}
+
+		bool CanGoToNextDiagnostic => Diagnostics.Count > 0;
+		bool CanGoToPreviousDiagnostic => Diagnostics.Count > 0;
+
+		void GoToNextDiagnostic() {
+			if (!CanGoToNextDiagnostic)
+				return;
+			GoToDiagnostic(1);
+		}
+
+		void GoToPreviousDiagnostic() {
+			if (!CanGoToPreviousDiagnostic)
+				return;
+			GoToDiagnostic(-1);
+		}
+
+		void GoToDiagnostic(int offset) {
+			var item = SelectedCompilerDiagnosticVM ?? Diagnostics.FirstOrDefault();
+			if (item == null)
+				return;
+			int index = Diagnostics.IndexOf(item);
+			Debug.Assert(index >= 0);
+			if (index < 0)
+				return;
+			index = (index + offset) % Diagnostics.Count;
+			if (index < 0)
+				index += Diagnostics.Count;
+			var diag = Diagnostics[index];
+			SelectedCompilerDiagnosticVM = diag;
+			MoveTo(diag);
 		}
 
 		public void Dispose() {

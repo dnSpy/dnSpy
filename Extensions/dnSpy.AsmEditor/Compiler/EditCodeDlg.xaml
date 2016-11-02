@@ -70,7 +70,8 @@
                       IsEnabled="{Binding CanCompile}"
                       Name="diagnosticsListView"
                       SelectionMode="Extended"
-                      ItemsSource="{Binding Diagnostics}">
+                      ItemsSource="{Binding Diagnostics}"
+                      SelectedItem="{Binding SelectedCompilerDiagnosticVM}">
                 <ListView.Resources>
                     <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource CilGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
                 </ListView.Resources>

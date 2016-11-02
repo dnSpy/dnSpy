@@ -33,7 +33,8 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			yield return CommandShortcut.Create(Key.F6, EditCodeIds.Compile.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.F7, EditCodeIds.Compile.ToCommandInfo());
-			yield return CommandShortcut.Shift(Key.F8, EditCodeIds.Compile.ToCommandInfo());
+			// Shift+F8 is used to move to the previous diagnostic
+			//yield return CommandShortcut.Shift(Key.F8, EditCodeIds.Compile.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.B, EditCodeIds.Compile.ToCommandInfo());
 			yield return CommandShortcut.CtrlAlt(Key.F7, EditCodeIds.Compile.ToCommandInfo());
 			yield return CommandShortcut.Alt(Key.F8, EditCodeIds.Compile.ToCommandInfo());
