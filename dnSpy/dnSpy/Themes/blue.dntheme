@@ -17,6 +17,7 @@
 		<color name="enum" fg="#336600" />
 		<color name="interface" fg="#1E667A" />
 		<color name="valuetype" fg="#009933" />
+		<color name="module" fg="#1B5D70" />
 		<color name="typegenericparameter" fg="#2B91AF" />
 		<color name="methodgenericparameter" fg="#2B91AF" />
 		<color name="instancemethod" fg="#880000" />
@@ -86,7 +87,7 @@
 		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="assembly" fg="#444444" />
 		<color name="assemblyexe" fg="#C9801A" />
-		<color name="module" fg="#682E95" />
+		<color name="assemblymodule" fg="#682E95" />
 		<color name="directorypart" fg="#216F85" />
 		<color name="filenamenoextension" fg="#990000" />
 		<color name="fileextension" fg="#3366CC" />

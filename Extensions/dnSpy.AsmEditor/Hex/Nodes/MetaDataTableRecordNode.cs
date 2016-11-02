@@ -153,7 +153,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			throw new InvalidOperationException();
 		}
 
-		void WriteModuleInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Module, ReadStringsHeap(1));
+		void WriteModuleInfo(ITextColorWriter output) => output.Write(BoxedTextColor.AssemblyModule, ReadStringsHeap(1));
 
 		void WriteNamespaceName(ITextColorWriter output, int nsIndex, int nameIndex) {
 			var ns = ReadStringsHeap(nsIndex);
@@ -183,7 +183,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		void WriteMemberRefInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceMethod, ReadStringsHeap(1));
 		void WriteEventInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceEvent, ReadStringsHeap(1));
 		void WritePropertyInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceProperty, ReadStringsHeap(1));
-		void WriteModuleRefInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Module, ReadStringsHeap(0));
+		void WriteModuleRefInfo(ITextColorWriter output) => output.Write(BoxedTextColor.AssemblyModule, ReadStringsHeap(0));
 		void WriteImplMapInfo(ITextColorWriter output) => output.Write(BoxedTextColor.InstanceMethod, ReadStringsHeap(2));
 		void WriteAssemblyInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Assembly, ReadStringsHeap(7));
 		void WriteAssemblyRefInfo(ITextColorWriter output) => output.Write(BoxedTextColor.Assembly, ReadStringsHeap(6));

@@ -43,7 +43,7 @@ namespace dnSpy.Debugger {
 			case TypeColor.UnknownFrame:		return BoxedTextColor.Text;
 			case TypeColor.Number:				return BoxedTextColor.Number;
 			case TypeColor.Error:				return BoxedTextColor.Error;
-			case TypeColor.Module:				return BoxedTextColor.Module;
+			case TypeColor.AssemblyModule:		return BoxedTextColor.AssemblyModule;
 			case TypeColor.Token:				return BoxedTextColor.Number;
 			case TypeColor.Namespace:			return BoxedTextColor.Namespace;
 			case TypeColor.InstanceProperty:	return BoxedTextColor.InstanceProperty;

@@ -1011,6 +1011,7 @@ namespace dnSpy_Console {
 			provider.Add(TextColor.Enum, ConsoleColor.Magenta, null);
 			provider.Add(TextColor.Interface, ConsoleColor.Magenta, null);
 			provider.Add(TextColor.ValueType, ConsoleColor.Green, null);
+			provider.Add(TextColor.Module, ConsoleColor.DarkMagenta, null);
 			provider.Add(TextColor.TypeGenericParameter, ConsoleColor.Magenta, null);
 			provider.Add(TextColor.MethodGenericParameter, ConsoleColor.Magenta, null);
 			provider.Add(TextColor.InstanceMethod, ConsoleColor.DarkYellow, null);
@@ -1043,7 +1044,6 @@ namespace dnSpy_Console {
 			provider.Add(TextColor.XmlDocCommentName, ConsoleColor.DarkGreen, null);
 			provider.Add(TextColor.XmlDocCommentProcessingInstruction, ConsoleColor.DarkGreen, null);
 			provider.Add(TextColor.XmlDocCommentText, ConsoleColor.DarkGreen, null);
-			provider.Add(TextColor.Module, ConsoleColor.DarkGreen, null);
 			provider.Add(TextColor.Error, ConsoleColor.Red, null);
 			return provider;
 		}

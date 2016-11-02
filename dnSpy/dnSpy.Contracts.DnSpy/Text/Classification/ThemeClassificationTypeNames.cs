@@ -118,6 +118,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string ValueType = RoslynClassificationTypeNames.StructName;
 
 		/// <summary>
+		/// <see cref="TextColor.Module"/>
+		/// </summary>
+		public const string Module = RoslynClassificationTypeNames.ModuleName;
+
+		/// <summary>
 		/// <see cref="TextColor.TypeGenericParameter"/>
 		/// </summary>
 		public const string TypeGenericParameter = RoslynClassificationTypeNames.TypeParameterName;
@@ -463,9 +468,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string AssemblyExe = "Theme-" + nameof(AssemblyExe);
 
 		/// <summary>
-		/// <see cref="TextColor.Module"/>
+		/// <see cref="TextColor.AssemblyModule"/>
 		/// </summary>
-		public const string Module = RoslynClassificationTypeNames.ModuleName;
+		public const string AssemblyModule = "Theme-" + nameof(AssemblyModule);
 
 		/// <summary>
 		/// <see cref="TextColor.DirectoryPart"/>

@@ -35,6 +35,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(module);
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
-			output.Write(BoxedTextColor.Module, NameUtilities.CleanIdentifier(module.Name));
+			output.Write(BoxedTextColor.AssemblyModule, NameUtilities.CleanIdentifier(module.Name));
 	}
 }

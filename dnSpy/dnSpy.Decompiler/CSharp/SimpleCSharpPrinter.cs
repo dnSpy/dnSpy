@@ -1034,7 +1034,7 @@ namespace dnSpy.Decompiler.CSharp {
 				}
 
 				var name = GetFileName(module.Location);
-				OutputWrite(FilterName(name), BoxedTextColor.Module);
+				OutputWrite(FilterName(name), BoxedTextColor.AssemblyModule);
 			}
 			finally {
 				recursionCounter--;

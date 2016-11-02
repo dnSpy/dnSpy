@@ -44,6 +44,7 @@ namespace dnSpy.Contracts.Text {
 		Enum,
 		Interface,
 		ValueType,
+		Module,
 		TypeGenericParameter,
 		MethodGenericParameter,
 		InstanceMethod,
@@ -113,7 +114,7 @@ namespace dnSpy.Contracts.Text {
 		XmlDocToolTipHeader,
 		Assembly,
 		AssemblyExe,
-		Module,
+		AssemblyModule,
 		DirectoryPart,
 		FileNameNoExtension,
 		FileExtension,
@@ -281,6 +282,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object Enum = TextColor.Enum;
 		public static readonly object Interface = TextColor.Interface;
 		public static readonly object ValueType = TextColor.ValueType;
+		public static readonly object Module = TextColor.Module;
 		public static readonly object TypeGenericParameter = TextColor.TypeGenericParameter;
 		public static readonly object MethodGenericParameter = TextColor.MethodGenericParameter;
 		public static readonly object InstanceMethod = TextColor.InstanceMethod;
@@ -350,7 +352,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object XmlDocToolTipHeader = TextColor.XmlDocToolTipHeader;
 		public static readonly object Assembly = TextColor.Assembly;
 		public static readonly object AssemblyExe = TextColor.AssemblyExe;
-		public static readonly object Module = TextColor.Module;
+		public static readonly object AssemblyModule = TextColor.AssemblyModule;
 		public static readonly object DirectoryPart = TextColor.DirectoryPart;
 		public static readonly object FileNameNoExtension = TextColor.FileNameNoExtension;
 		public static readonly object FileExtension = TextColor.FileExtension;
@@ -520,6 +522,7 @@ namespace dnSpy.Contracts.Text {
 			Enum,
 			Interface,
 			ValueType,
+			Module,
 			TypeGenericParameter,
 			MethodGenericParameter,
 			InstanceMethod,
@@ -589,7 +592,7 @@ namespace dnSpy.Contracts.Text {
 			XmlDocToolTipHeader,
 			Assembly,
 			AssemblyExe,
-			Module,
+			AssemblyModule,
 			DirectoryPart,
 			FileNameNoExtension,
 			FileExtension,

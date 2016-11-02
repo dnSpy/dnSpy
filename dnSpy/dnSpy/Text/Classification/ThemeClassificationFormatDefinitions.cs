@@ -141,6 +141,11 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition ValueTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Module)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ModuleClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TypeGenericParameter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition TypeGenericParameterClassificationTypeDefinition;
@@ -486,9 +491,9 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition AssemblyExeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.Module)]
+		[Name(ThemeClassificationTypeNames.AssemblyModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition AssemblyModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DirectoryPart)]
@@ -1330,6 +1335,15 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Module)]
+		[Name(ThemeClassificationTypeNameKeys.Module)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class Module : ThemeClassificationFormatDefinition {
+			Module() : base(TextColor.Module) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TypeGenericParameter)]
 		[Name(ThemeClassificationTypeNameKeys.TypeGenericParameter)]
 		[UserVisible(true)]
@@ -1951,12 +1965,12 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Module)]
-		[Name(ThemeClassificationTypeNameKeys.Module)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AssemblyModule)]
+		[Name(ThemeClassificationTypeNameKeys.AssemblyModule)]
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
-		sealed class Module : ThemeClassificationFormatDefinition {
-			Module() : base(TextColor.Module) { }
+		sealed class AssemblyModule : ThemeClassificationFormatDefinition {
+			AssemblyModule() : base(TextColor.AssemblyModule) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

@@ -39,7 +39,7 @@ namespace dndbg.Engine {
 		UnknownFrame,
 		Number,
 		Error,
-		Module,
+		AssemblyModule,
 		Token,
 		Namespace,
 		InstanceProperty,
@@ -239,7 +239,7 @@ namespace dndbg.Engine {
 				}
 
 				var name = GetFileName(module.UniquerName);
-				OutputWrite(FilterName(name), TypeColor.Module);
+				OutputWrite(FilterName(name), TypeColor.AssemblyModule);
 			}
 			finally {
 				recursionCounter--;
