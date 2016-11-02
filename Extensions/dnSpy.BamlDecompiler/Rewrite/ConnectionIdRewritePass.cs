@@ -27,6 +27,7 @@ using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 

@@ -19,19 +19,19 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text;
 
-namespace dnSpy.Contracts.Text {
+namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// <see cref="TextColor"/> utilities
+	/// Provides text colors
 	/// </summary>
-	public static class TextColorHelper {
+	public abstract class MetadataTextColorProvider {
 		/// <summary>
 		/// Gets a type color
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static object GetColor(TypeDef type) {
+		public virtual object GetColor(TypeDef type) {
 			if (type == null)
 				return BoxedTextColor.Text;
 
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static object GetColor(TypeRef type) {
+		public virtual object GetColor(TypeRef type) {
 			if (type == null)
 				return BoxedTextColor.Text;
 
@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="memberRef">Member</param>
 		/// <returns></returns>
-		public static object GetColor(IMemberRef memberRef) {
+		public virtual object GetColor(IMemberRef memberRef) {
 			if (memberRef == null)
 				return BoxedTextColor.Text;
 
@@ -163,7 +163,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="genericSig">Generic signature</param>
 		/// <returns></returns>
-		public static object GetColor(GenericSig genericSig) {
+		public virtual object GetColor(GenericSig genericSig) {
 			if (genericSig == null)
 				return BoxedTextColor.Text;
 
@@ -175,7 +175,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="genericParam">Generic parameter</param>
 		/// <returns></returns>
-		public static object GetColor(GenericParam genericParam) {
+		public virtual object GetColor(GenericParam genericParam) {
 			if (genericParam == null)
 				return BoxedTextColor.Text;
 
@@ -201,7 +201,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="exportedType">Exported type</param>
 		/// <returns></returns>
-		public static object GetColor(ExportedType exportedType) {
+		public virtual object GetColor(ExportedType exportedType) {
 			if (exportedType == null)
 				return BoxedTextColor.Text;
 
@@ -213,7 +213,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="typeSig">Type signature</param>
 		/// <returns></returns>
-		public static object GetColor(TypeSig typeSig) {
+		public virtual object GetColor(TypeSig typeSig) {
 			typeSig = typeSig.RemovePinnedAndModifiers();
 			if (typeSig == null)
 				return BoxedTextColor.Text;
@@ -234,7 +234,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="obj">Object, eg. an instruction operand</param>
 		/// <returns></returns>
-		public static object GetColor(object obj) {
+		public virtual object GetColor(object obj) {
 			if (obj == null)
 				return BoxedTextColor.Text;
 
@@ -278,29 +278,40 @@ namespace dnSpy.Contracts.Text {
 
 			return BoxedTextColor.Text;
 		}
+	}
+
+	/// <summary>
+	/// C# <see cref="TextColor"/> provider
+	/// </summary>
+	public sealed class CSharpMetadataTextColorProvider : MetadataTextColorProvider {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
+		public static readonly CSharpMetadataTextColorProvider Instance = new CSharpMetadataTextColorProvider();
+
+		CSharpMetadataTextColorProvider() { }
+	}
+
+	/// <summary>
+	/// Visual Basic <see cref="TextColor"/> provider
+	/// </summary>
+	public sealed class VisualBasicMetadataTextColorProvider : MetadataTextColorProvider {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
+		public static readonly VisualBasicMetadataTextColorProvider Instance = new VisualBasicMetadataTextColorProvider();
+
+		VisualBasicMetadataTextColorProvider() { }
 
 		/// <summary>
 		/// Gets a type color
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static object GetColor(Type type) {
-			if (type == null)
-				return BoxedTextColor.Text;
-
-			if (type.IsInterface)
-				return BoxedTextColor.Interface;
-			if (type.IsEnum)
-				return BoxedTextColor.Enum;
-			if (type.IsValueType)
-				return BoxedTextColor.ValueType;
-
-			if (type.BaseType == typeof(MulticastDelegate))
-				return BoxedTextColor.Delegate;
-
-			if (type.IsSealed)
-				return BoxedTextColor.SealedType;
-			return BoxedTextColor.Type;
+		public override object GetColor(TypeDef type) {
+			if (type != null && type.DeclaringType == null && type.IsSealed && type.IsAbstract)
+				return BoxedTextColor.Module;
+			return base.GetColor(type);
 		}
 	}
 }

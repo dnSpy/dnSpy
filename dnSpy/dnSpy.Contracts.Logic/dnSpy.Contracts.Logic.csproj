@@ -68,6 +68,7 @@
     <Compile Include="Decompiler\ISimpleILPrinter.cs" />
     <Compile Include="Decompiler\LineSeparator.cs" />
     <Compile Include="Decompiler\MemberComparer.cs" />
+    <Compile Include="Decompiler\MetadataTextColorProvider.cs" />
     <Compile Include="Decompiler\MethodDebugInfo.cs" />
     <Compile Include="Decompiler\MethodDebugInfoBuilder.cs" />
     <Compile Include="Decompiler\MethodSourceStatement.cs" />
@@ -105,7 +106,6 @@
     <Compile Include="Text\ITextColorWriterExtensions.cs" />
     <Compile Include="Text\NameUtilities.cs" />
     <Compile Include="Text\TextColor.cs" />
-    <Compile Include="Text\TextColorHelper.cs" />
     <Compile Include="Utilities\GacInfo.cs" />
     <Compile Include="Utilities\SimpleTypeConverter.cs" />
   </ItemGroup>

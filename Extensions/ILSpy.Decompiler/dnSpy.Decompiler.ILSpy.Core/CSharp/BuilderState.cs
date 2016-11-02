@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Text;
 using ICSharpCode.Decompiler.Ast;
 
 namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
@@ -32,10 +33,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public readonly AstBuilderState State;
 		readonly BuilderCache cache;
 
-		public BuilderState(DecompilationContext ctx, BuilderCache cache) {
+		public BuilderState(DecompilationContext ctx, BuilderCache cache, MetadataTextColorProvider metadataTextColorProvider) {
 			this.cache = cache;
 			this.State = cache.AllocateAstBuilderState();
 			this.State.AstBuilder.Context.CalculateBinSpans = ctx.CalculateBinSpans;
+			this.State.AstBuilder.Context.MetadataTextColorProvider = metadataTextColorProvider;
 		}
 
 		public void Dispose() => cache.Free(State);

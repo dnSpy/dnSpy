@@ -380,7 +380,7 @@ namespace dnSpy.Decompiler.CSharp {
 				}
 			}
 
-			WriteIdentifier(RemoveGenericTick(td.Name), TextColorHelper.GetColor(td));
+			WriteIdentifier(RemoveGenericTick(td.Name), CSharpMetadataTextColorProvider.Instance.GetColor(td));
 			WriteToken(type);
 			var genParams = td.GenericParameters.Skip(td.GenericParameters.Count - numGenParams).ToArray();
 			WriteGenerics(genParams, BoxedTextColor.TypeGenericParameter);
@@ -416,7 +416,7 @@ namespace dnSpy.Decompiler.CSharp {
 				WritePeriod();
 			}
 			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
-				WriteIdentifier(RemoveGenericTick(method.DeclaringType.Name), TextColorHelper.GetColor(method));
+				WriteIdentifier(RemoveGenericTick(method.DeclaringType.Name), CSharpMetadataTextColorProvider.Instance.GetColor(method));
 			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
@@ -442,7 +442,7 @@ namespace dnSpy.Decompiler.CSharp {
 				}
 			}
 			else
-				WriteIdentifier(name, TextColorHelper.GetColor(method));
+				WriteIdentifier(name, CSharpMetadataTextColorProvider.Instance.GetColor(method));
 		}
 
 		void WriteToolTip(IField field) => Write(field, true);
@@ -470,7 +470,7 @@ namespace dnSpy.Decompiler.CSharp {
 				Write(field.DeclaringType);
 				WritePeriod();
 			}
-			WriteIdentifier(field.Name, TextColorHelper.GetColor(field));
+			WriteIdentifier(field.Name, CSharpMetadataTextColorProvider.Instance.GetColor(field));
 			WriteToken(field);
 			if (ShowFieldLiteralValues && fd != null && fd.IsLiteral && fd.Constant != null) {
 				WriteSpace();
@@ -582,10 +582,10 @@ namespace dnSpy.Decompiler.CSharp {
 			else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
 				WritePeriod();
-				WriteIdentifier(GetPropName(ovrMeth), TextColorHelper.GetColor(prop));
+				WriteIdentifier(GetPropName(ovrMeth), CSharpMetadataTextColorProvider.Instance.GetColor(prop));
 			}
 			else
-				WriteIdentifier(prop.Name, TextColorHelper.GetColor(prop));
+				WriteIdentifier(prop.Name, CSharpMetadataTextColorProvider.Instance.GetColor(prop));
 			WriteToken(prop);
 
 			WriteSpace();
@@ -627,7 +627,7 @@ namespace dnSpy.Decompiler.CSharp {
 				Write(evt.DeclaringType);
 				WritePeriod();
 			}
-			WriteIdentifier(evt.Name, TextColorHelper.GetColor(evt));
+			WriteIdentifier(evt.Name, CSharpMetadataTextColorProvider.Instance.GetColor(evt));
 			WriteToken(evt);
 		}
 
@@ -655,7 +655,7 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 			}
 
-			WriteIdentifier(gp.Name, TextColorHelper.GetColor(gp));
+			WriteIdentifier(gp.Name, CSharpMetadataTextColorProvider.Instance.GetColor(gp));
 			WriteToken(gp);
 		}
 
@@ -726,7 +726,7 @@ namespace dnSpy.Decompiler.CSharp {
 					OutputWrite(keyword, BoxedTextColor.Keyword);
 				else {
 					WriteNamespace(type.Namespace);
-					WriteIdentifier(RemoveGenericTick(type.Name), TextColorHelper.GetColor(type));
+					WriteIdentifier(RemoveGenericTick(type.Name), CSharpMetadataTextColorProvider.Instance.GetColor(type));
 				}
 				WriteToken(type);
 			}

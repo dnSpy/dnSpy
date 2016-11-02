@@ -93,7 +93,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 			ILAstBuilder astBuilder = new ILAstBuilder();
 			ILBlock ilMethod = new ILBlock();
-			DecompilerContext context = new DecompilerContext(method.Module) { CurrentType = method.DeclaringType, CurrentMethod = method };
+			DecompilerContext context = new DecompilerContext(method.Module, MetadataTextColorProvider) { CurrentType = method.DeclaringType, CurrentMethod = method };
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 
 			if (abortBeforeStep != null) {
@@ -142,7 +142,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		void StartKeywordBlock(IDecompilerOutput output, string keyword, IMemberDef member) {
 			output.Write(keyword, BoxedTextColor.Keyword);
 			output.Write(" ", BoxedTextColor.Text);
-			output.Write(IdentifierEscaper.Escape(member.Name), member, DecompilerReferenceFlags.Definition, TextColorHelper.GetColor(member));
+			output.Write(IdentifierEscaper.Escape(member.Name), member, DecompilerReferenceFlags.Definition, MetadataTextColorProvider.GetColor(member));
 			output.Write(" ", BoxedTextColor.Text);
 			output.Write("{", BoxedTextColor.Punctuation);
 			output.WriteLine();
@@ -177,9 +177,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		}
 
 		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) {
-			output.Write(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), DecompilerReferenceFlags.None, TextColorHelper.GetColor(field.FieldType));
+			output.Write(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), DecompilerReferenceFlags.None, MetadataTextColorProvider.GetColor(field.FieldType));
 			output.Write(" ", BoxedTextColor.Text);
-			output.Write(IdentifierEscaper.Escape(field.Name), field, DecompilerReferenceFlags.Definition, TextColorHelper.GetColor(field));
+			output.Write(IdentifierEscaper.Escape(field.Name), field, DecompilerReferenceFlags.Definition, MetadataTextColorProvider.GetColor(field));
 			var c = field.Constant;
 			if (c != null) {
 				output.Write(" ", BoxedTextColor.Text);

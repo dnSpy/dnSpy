@@ -33,6 +33,11 @@ namespace dnSpy.Contracts.Decompiler {
 		DecompilerSettingsBase Settings { get; }
 
 		/// <summary>
+		/// Gets the <see cref="Decompiler.MetadataTextColorProvider"/> instance
+		/// </summary>
+		MetadataTextColorProvider MetadataTextColorProvider { get; }
+
+		/// <summary>
 		/// Gets the content type string
 		/// </summary>
 		string ContentTypeString { get; }

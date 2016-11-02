@@ -124,25 +124,25 @@ namespace dnSpy.Search {
 
 			var md = o as MethodDef;
 			if (md != null) {
-				output.Write(TextColorHelper.GetColor(md), IdentifierEscaper.Escape(md.Name));
+				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(md), IdentifierEscaper.Escape(md.Name));
 				return;
 			}
 
 			var fd = o as FieldDef;
 			if (fd != null) {
-				output.Write(TextColorHelper.GetColor(fd), IdentifierEscaper.Escape(fd.Name));
+				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(fd), IdentifierEscaper.Escape(fd.Name));
 				return;
 			}
 
 			var pd = o as PropertyDef;
 			if (pd != null) {
-				output.Write(TextColorHelper.GetColor(pd), IdentifierEscaper.Escape(pd.Name));
+				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(pd), IdentifierEscaper.Escape(pd.Name));
 				return;
 			}
 
 			var ed = o as EventDef;
 			if (ed != null) {
-				output.Write(TextColorHelper.GetColor(ed), IdentifierEscaper.Escape(ed.Name));
+				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(ed), IdentifierEscaper.Escape(ed.Name));
 				return;
 			}
 

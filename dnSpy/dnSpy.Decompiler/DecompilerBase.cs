@@ -42,6 +42,7 @@ namespace dnSpy.Decompiler {
 		public abstract DecompilerSettingsBase Settings { get; }
 		public abstract string FileExtension { get; }
 		public virtual string ProjectFileExtension => null;
+		public virtual MetadataTextColorProvider MetadataTextColorProvider => CSharpMetadataTextColorProvider.Instance;
 
 		public void WriteName(ITextColorWriter output, TypeDef type) =>
 			FormatTypeName(TextColorWriterToDecompilerOutput.Create(output), type);
@@ -213,9 +214,9 @@ namespace dnSpy.Decompiler {
 			if (type == null)
 				return;
 			if (includeNamespace)
-				output.Write(IdentifierEscaper.Escape(type.FullName), TextColorHelper.GetColor(type));
+				output.Write(IdentifierEscaper.Escape(type.FullName), MetadataTextColorProvider.GetColor(type));
 			else
-				output.Write(IdentifierEscaper.Escape(type.Name), TextColorHelper.GetColor(type));
+				output.Write(IdentifierEscaper.Escape(type.Name), MetadataTextColorProvider.GetColor(type));
 		}
 
 		public virtual void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
@@ -239,13 +240,13 @@ namespace dnSpy.Decompiler {
 		protected virtual void FormatPropertyName(IDecompilerOutput output, PropertyDef property, bool? isIndexer = null) {
 			if (property == null)
 				throw new ArgumentNullException(nameof(property));
-			output.Write(IdentifierEscaper.Escape(property.Name), TextColorHelper.GetColor(property));
+			output.Write(IdentifierEscaper.Escape(property.Name), MetadataTextColorProvider.GetColor(property));
 		}
 
 		protected virtual void FormatTypeName(IDecompilerOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
-			output.Write(IdentifierEscaper.Escape(type.Name), TextColorHelper.GetColor(type));
+			output.Write(IdentifierEscaper.Escape(type.Name), MetadataTextColorProvider.GetColor(type));
 		}
 
 		public virtual bool ShowMember(IMemberRef member) => true;

@@ -64,6 +64,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		readonly CSharpVBDecompilerSettings langSettings;
 
 		public override double OrderUI => DecompilerConstants.VISUALBASIC_ILSPY_ORDERUI;
+		public override MetadataTextColorProvider MetadataTextColorProvider => VisualBasicMetadataTextColorProvider.Instance;
 
 		public VBDecompiler(CSharpVBDecompilerSettings langSettings) {
 			this.langSettings = langSettings;
@@ -203,7 +204,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			settings.QueryExpressions = false;
 			settings.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject = true;
 			var cache = ctx.GetOrCreate<BuilderCache>();
-			var state = new BuilderState(ctx, cache);
+			var state = new BuilderState(ctx, cache, MetadataTextColorProvider);
 			state.AstBuilder.Context.CurrentModule = currentModule;
 			state.AstBuilder.Context.CancellationToken = ctx.CancellationToken;
 			state.AstBuilder.Context.CurrentType = currentType;

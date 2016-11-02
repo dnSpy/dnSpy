@@ -38,7 +38,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public readonly StringBuilder XmlDoc_StringBuilder;
 
 		public AstBuilderState() {
-			this.AstBuilder = new AstBuilder(new DecompilerContext(null, true));
+			this.AstBuilder = new AstBuilder(new DecompilerContext(null, null, true));
 			this.XmlDoc_StringBuilder = new StringBuilder();
 		}
 

@@ -77,7 +77,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 
 #if DEBUG
 		internal static IEnumerable<CSharpDecompiler> GetDebugDecompilers(CSharpVBDecompilerSettings langSettings) {
-			DecompilerContext context = new DecompilerContext(new ModuleDefUser("dummy"));
+			DecompilerContext context = new DecompilerContext(new ModuleDefUser("dummy"), CSharpMetadataTextColorProvider.Instance);
 			string lastTransformName = "no transforms";
 			double orderUI = DecompilerConstants.CSHARP_ILSPY_DEBUG_ORDERUI;
 			uint id = 0xBF67AF3F;
@@ -308,7 +308,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				settings.UsingDeclarations = false;
 			}
 			var cache = ctx.GetOrCreate<BuilderCache>();
-			var state = new BuilderState(ctx, cache);
+			var state = new BuilderState(ctx, cache, MetadataTextColorProvider);
 			state.AstBuilder.Context.CurrentModule = currentModule;
 			state.AstBuilder.Context.CancellationToken = ctx.CancellationToken;
 			state.AstBuilder.Context.CurrentType = currentType;
@@ -357,7 +357,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				if (module == null && sig.OwnerMethod != null && sig.OwnerMethod.DeclaringType != null)
 					module = sig.OwnerMethod.DeclaringType.Module;
 			}
-			var ctx = new DecompilerContext(type.Module);
+			var ctx = new DecompilerContext(type.Module, MetadataTextColorProvider);
 			astType.AcceptVisitor(new CSharpOutputVisitor(new TextTokenWriter(output, ctx), FormattingOptionsFactory.CreateAllman()));
 		}
 
@@ -391,7 +391,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				output.Write("]", BoxedTextColor.Punctuation);
 			}
 			else
-				WriteIdentifier(output, property.Name, TextColorHelper.GetColor(property));
+				WriteIdentifier(output, property.Name, MetadataTextColorProvider.GetColor(property));
 		}
 
 		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {

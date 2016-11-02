@@ -195,7 +195,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="event">Event</param>
 		/// <param name="showToken">true to write tokens</param>
 		public void Write(ITextColorWriter output, IDecompiler decompiler, EventDef @event, bool showToken) {
-			output.Write(TextColorHelper.GetColor(@event), NameUtilities.CleanIdentifier(@event.Name));
+			output.Write(decompiler.MetadataTextColorProvider.GetColor(@event), NameUtilities.CleanIdentifier(@event.Name));
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
@@ -228,7 +228,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="field">Field</param>
 		/// <param name="showToken">true to write tokens</param>
 		public void Write(ITextColorWriter output, IDecompiler decompiler, FieldDef field, bool showToken) {
-			output.Write(TextColorHelper.GetColor(field), NameUtilities.CleanIdentifier(field.Name));
+			output.Write(decompiler.MetadataTextColorProvider.GetColor(field), NameUtilities.CleanIdentifier(field.Name));
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
@@ -244,7 +244,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="method">Method</param>
 		/// <param name="showToken">true to write tokens</param>
 		public void Write(ITextColorWriter output, IDecompiler decompiler, MethodDef method, bool showToken) {
-			output.Write(TextColorHelper.GetColor(method), NameUtilities.CleanIdentifier(method.Name));
+			output.Write(decompiler.MetadataTextColorProvider.GetColor(method), NameUtilities.CleanIdentifier(method.Name));
 			output.Write(BoxedTextColor.Punctuation, "(");
 			foreach (var p in method.Parameters) {
 				if (p.IsHiddenThisParameter)
