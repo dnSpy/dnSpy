@@ -2412,7 +2412,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Ctrl+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edit {0} Code...</value>
+    <value>Edit Method ({0})...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>Edit Code</value>
@@ -2512,5 +2512,11 @@ Most options will be re-initialized when this checkbox is clicked</value>
   </data>
   <data name="MergeWithAssemblyCommand2" xml:space="preserve">
     <value>Merge with Assembly</value>
+  </data>
+  <data name="EditAssemblyCode2" xml:space="preserve">
+    <value>Edit Assembly Attributes ({0})...</value>
+  </data>
+  <data name="EditCodeAddClass2" xml:space="preserve">
+    <value>Add Class ({0})...</value>
   </data>
 </root>

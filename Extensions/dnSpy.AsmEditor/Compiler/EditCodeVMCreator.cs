@@ -74,9 +74,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (info == null)
 				return null;
 			switch (kind) {
-			case CompilationKind.Assembly:		return $"{dnSpy_AsmEditor_Resources.EditAssemblyCode} ({info.Value.Key.GenericNameUI})";
+			case CompilationKind.Assembly:		return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.Key.GenericNameUI);
 			case CompilationKind.Method:		return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.Key.GenericNameUI);
-			case CompilationKind.AddClass:		return $"{dnSpy_AsmEditor_Resources.EditCodeAddClass} ({info.Value.Key.GenericNameUI})";
+			case CompilationKind.AddClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeAddClass2, info.Value.Key.GenericNameUI);
 			default: throw new ArgumentOutOfRangeException(nameof(kind));
 			}
 		}

@@ -1502,6 +1502,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Assembly Attributes ({0})....
+        /// </summary>
+        public static string EditAssemblyCode2 {
+            get {
+                return ResourceManager.GetString("EditAssemblyCode2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Assembly....
         /// </summary>
         public static string EditAssemblyCommand {
@@ -1525,6 +1534,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string EditCodeAddClass {
             get {
                 return ResourceManager.GetString("EditCodeAddClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Class ({0})....
+        /// </summary>
+        public static string EditCodeAddClass2 {
+            get {
+                return ResourceManager.GetString("EditCodeAddClass2", resourceCulture);
             }
         }
         
@@ -1637,7 +1655,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit {0} Code....
+        ///   Looks up a localized string similar to Edit Method ({0})....
         /// </summary>
         public static string EditMethodBodyCode {
             get {
