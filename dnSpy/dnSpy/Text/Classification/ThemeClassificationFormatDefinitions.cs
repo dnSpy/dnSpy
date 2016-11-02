@@ -1056,6 +1056,16 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition BlockStructureOtherClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BlockStructureXml)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BlockStructureXmlClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BlockStructureXaml)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BlockStructureXamlClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CompletionMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition CompletionMatchHighlightClassificationTypeDefinition;
@@ -2989,6 +2999,24 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class BlockStructureOther : ThemeMarkerFormatDefinition {
 			BlockStructureOther() : base(TextColor.BlockStructureOther) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureXml)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureXml)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BlockStructureXml : ThemeMarkerFormatDefinition {
+			BlockStructureXml() : base(TextColor.BlockStructureXml) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureXaml)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureXaml)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BlockStructureXaml : ThemeMarkerFormatDefinition {
+			BlockStructureXaml() : base(TextColor.BlockStructureXaml) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

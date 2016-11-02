@@ -227,6 +227,8 @@ namespace dnSpy.Contracts.Text {
 		BlockStructureCase,
 		BlockStructureLocalFunction,
 		BlockStructureOther,
+		BlockStructureXml,
+		BlockStructureXaml,
 		CompletionMatchHighlight,
 		CompletionSuffix,
 		SignatureHelpDocumentation,
@@ -465,6 +467,8 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object BlockStructureCase = TextColor.BlockStructureCase;
 		public static readonly object BlockStructureLocalFunction = TextColor.BlockStructureLocalFunction;
 		public static readonly object BlockStructureOther = TextColor.BlockStructureOther;
+		public static readonly object BlockStructureXml = TextColor.BlockStructureXml;
+		public static readonly object BlockStructureXaml = TextColor.BlockStructureXaml;
 		public static readonly object CompletionMatchHighlight = TextColor.CompletionMatchHighlight;
 		public static readonly object CompletionSuffix = TextColor.CompletionSuffix;
 		public static readonly object SignatureHelpDocumentation = TextColor.SignatureHelpDocumentation;
@@ -705,6 +709,8 @@ namespace dnSpy.Contracts.Text {
 			BlockStructureCase,
 			BlockStructureLocalFunction,
 			BlockStructureOther,
+			BlockStructureXml,
+			BlockStructureXaml,
 			CompletionMatchHighlight,
 			CompletionSuffix,
 			SignatureHelpDocumentation,

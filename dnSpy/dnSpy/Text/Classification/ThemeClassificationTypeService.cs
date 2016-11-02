@@ -232,6 +232,8 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BlockStructureCase),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BlockStructureLocalFunction),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BlockStructureOther),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BlockStructureXml),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BlockStructureXaml),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CompletionMatchHighlight),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CompletionSuffix),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpDocumentation),

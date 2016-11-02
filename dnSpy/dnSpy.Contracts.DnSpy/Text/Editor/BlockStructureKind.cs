@@ -161,5 +161,15 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Other block kind
 		/// </summary>
 		Other,
+
+		/// <summary>
+		/// XML block
+		/// </summary>
+		Xml,
+
+		/// <summary>
+		/// XAML block
+		/// </summary>
+		Xaml,
 	}
 }

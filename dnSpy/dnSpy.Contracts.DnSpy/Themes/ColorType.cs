@@ -225,6 +225,8 @@ namespace dnSpy.Contracts.Themes {
 		BlockStructureCase,
 		BlockStructureLocalFunction,
 		BlockStructureOther,
+		BlockStructureXml,
+		BlockStructureXaml,
 		CompletionMatchHighlight,
 		CompletionSuffix,
 		SignatureHelpDocumentation,

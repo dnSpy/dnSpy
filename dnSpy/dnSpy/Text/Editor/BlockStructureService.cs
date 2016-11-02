@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
@@ -64,7 +65,7 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextView wpfTextView;
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly List<LineElement> lineElements;
-		readonly List<LineColorInfo> lineColorInfos;
+		readonly LineColorInfo[] lineColorInfos;
 		IAdornmentLayer layer;
 		IEditorFormatMap editorFormatMap;
 		IBlockStructureServiceDataProvider blockStructureServiceDataProvider;
@@ -86,7 +87,7 @@ namespace dnSpy.Text.Editor {
 			this.onRemovedDelegate = OnRemoved;
 			this.lineElements = new List<LineElement>();
 			this.xPosCache = new XPosCache(wpfTextView);
-			this.lineColorInfos = new List<LineColorInfo> {
+			this.lineColorInfos = new LineColorInfo[TextColor.BlockStructureXaml - TextColor.BlockStructureNamespace + 1] {
 				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureNamespace),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureType),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureModule),
@@ -114,6 +115,8 @@ namespace dnSpy.Text.Editor {
 				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureCase),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureLocalFunction),
 				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureOther),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureXml),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureXaml),
 			};
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
@@ -419,6 +422,8 @@ namespace dnSpy.Text.Editor {
 			case BlockStructureKind.Case:			return ThemeClassificationTypeNameKeys.BlockStructureCase;
 			case BlockStructureKind.LocalFunction:	return ThemeClassificationTypeNameKeys.BlockStructureLocalFunction;
 			case BlockStructureKind.Other:			return ThemeClassificationTypeNameKeys.BlockStructureOther;
+			case BlockStructureKind.Xml:			return ThemeClassificationTypeNameKeys.BlockStructureXml;
+			case BlockStructureKind.Xaml:			return ThemeClassificationTypeNameKeys.BlockStructureXaml;
 			default:
 				Debug.Fail($"Unknown block kind: {blockKind}");
 				return ThemeClassificationTypeNameKeys.BlockStructureOther;

@@ -64,6 +64,8 @@ namespace dnSpy.Contracts.Decompiler {
 		BlockKind_Case				= 0x00001900,
 		BlockKind_LocalFunction		= 0x00001A00,
 		BlockKind_Other				= 0x00001B00,
+		BlockKind_Xml				= 0x00001C00,
+		BlockKind_Xaml				= 0x00001D00,
 		// Update CodeBracesRangeFlagsHelper.ToBlockKind() if mask changes
 
 		NamespaceBraces				= BraceKind_CurlyBraces | BlockKind_Namespace,
@@ -93,6 +95,8 @@ namespace dnSpy.Contracts.Decompiler {
 		CaseBraces					= BraceKind_CurlyBraces | BlockKind_Case,
 		LocalFunctionBraces			= BraceKind_CurlyBraces | BlockKind_LocalFunction,
 		OtherBlockBraces			= BraceKind_CurlyBraces | BlockKind_Other,
+		XmlBlockBraces				= BraceKind_OtherBraces | BlockKind_Xml,
+		XamlBlockBraces				= BraceKind_OtherBraces | BlockKind_Xaml,
 
 		SingleQuotes				= BraceKind_SingleQuotes | BlockKind_None,
 		DoubleQuotes				= BraceKind_DoubleQuotes | BlockKind_None,

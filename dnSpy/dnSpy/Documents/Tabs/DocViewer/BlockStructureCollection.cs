@@ -175,6 +175,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			case CodeBracesRangeFlags.BlockKind_Case:			return BlockStructureKind.Case;
 			case CodeBracesRangeFlags.BlockKind_LocalFunction:	return BlockStructureKind.LocalFunction;
 			case CodeBracesRangeFlags.BlockKind_Other:			return BlockStructureKind.Other;
+			case CodeBracesRangeFlags.BlockKind_Xml:			return BlockStructureKind.Xml;
+			case CodeBracesRangeFlags.BlockKind_Xaml:			return BlockStructureKind.Xaml;
 			default:
 				Debug.Fail($"Unknown block kind: {flags.ToBlockKind()}");
 				return BlockStructureKind.None;

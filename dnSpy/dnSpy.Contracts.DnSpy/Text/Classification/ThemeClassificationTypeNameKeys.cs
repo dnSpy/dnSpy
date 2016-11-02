@@ -1033,6 +1033,16 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string BlockStructureOther = nameof(BlockStructureOther);
 
 		/// <summary>
+		/// <see cref="TextColor.BlockStructureXml"/>
+		/// </summary>
+		public const string BlockStructureXml = nameof(BlockStructureXml);
+
+		/// <summary>
+		/// <see cref="TextColor.BlockStructureXaml"/>
+		/// </summary>
+		public const string BlockStructureXaml = nameof(BlockStructureXaml);
+
+		/// <summary>
 		/// <see cref="TextColor.CompletionMatchHighlight"/>
 		/// </summary>
 		public const string CompletionMatchHighlight = nameof(CompletionMatchHighlight);

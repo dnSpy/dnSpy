@@ -1879,6 +1879,8 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.BlockStructureCase, "Block Structure Case"),
 			new BrushColorInfo(ColorType.BlockStructureLocalFunction, "Block Structure Local Function"),
 			new BrushColorInfo(ColorType.BlockStructureOther, "Block Structure Other"),
+			new BrushColorInfo(ColorType.BlockStructureXml, "Block Structure XML"),
+			new BrushColorInfo(ColorType.BlockStructureXaml, "Block Structure XAML"),
 			new BrushColorInfo(ColorType.CompletionMatchHighlight, "Completion Match Highlight"),
 			new BrushColorInfo(ColorType.CompletionSuffix, "Completion Suffix"),
 			new BrushColorInfo(ColorType.SignatureHelpDocumentation, "Signature Help Documentation"),

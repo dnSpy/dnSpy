@@ -28,6 +28,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed partial class XmlParser {
 		readonly string text;
 		readonly XamlAttributeParser xamlAttributeParser;
+		readonly CodeBracesRangeFlags blockFlags;
 		readonly List<ReferenceInfo> references;
 		readonly List<CodeBracesRange> bracesInfo;
 		readonly List<XmlNamespaceReference> xmlNamespaceReferences;
@@ -100,6 +101,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new ArgumentNullException(nameof(text));
 			this.text = text;
 			this.xamlAttributeParser = isXaml ? new XamlAttributeParser(this) : null;
+			blockFlags = isXaml ? CodeBracesRangeFlags.XamlBlockBraces : CodeBracesRangeFlags.XmlBlockBraces;
 			references = new List<ReferenceInfo>();
 			bracesInfo = new List<CodeBracesRange>();
 			xmlNamespaceReferences = new List<XmlNamespaceReference>();
@@ -119,11 +121,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			bracesInfo.Add(new CodeBracesRange(new TextSpan(left.Start, left.Length), new TextSpan(right.Start, right.Length), flags));
 
 		void SaveComment(Token token) =>
-			SaveBraceInfo(token.Span, 4, 3, CodeBracesRangeFlags.OtherBlockBraces);
+			SaveBraceInfo(token.Span, 4, 3, blockFlags);
 		void SaveString(Token token) =>
 			SaveBraceInfo(token.Span, 1, 1, token.Kind == TokenKind.SingleQuoteString ? CodeBracesRangeFlags.SingleQuotes : CodeBracesRangeFlags.DoubleQuotes);
 		void SaveProcessingInstruction(Token token) =>
-			SaveBraceInfo(token.Span, 2, 2, CodeBracesRangeFlags.OtherBlockBraces);
+			SaveBraceInfo(token.Span, 2, 2, blockFlags);
 
 		enum XmlNameReferenceKind {
 			Tag,// or markup extension
@@ -391,7 +393,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					return;
 
 				case TokenKind.SlashGreaterThan:
-					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End), token.Span, CodeBracesRangeFlags.OtherBlockBraces);
+					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End), token.Span, blockFlags);
 					endTagPos = token.Span.Start;
 					break;
 
@@ -408,7 +410,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					var greaterThanToken = GetNextToken();
 					if (greaterThanToken.Kind != TokenKind.GreaterThan)
 						return;
-					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End == firstGreaterThan.Span.Start ? firstGreaterThan.Span.End : tagName.Value.Span.End), Span.FromBounds(token.Span.Start, greaterThanToken.Span.End), CodeBracesRangeFlags.OtherBlockBraces);
+					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End == firstGreaterThan.Span.Start ? firstGreaterThan.Span.End : tagName.Value.Span.End), Span.FromBounds(token.Span.Start, greaterThanToken.Span.End), blockFlags);
 					SaveReference(tagEndName.Value, XmlNameReferenceKind.Tag, findDefsOnly: true);
 					endTagPos = greaterThanToken.Span.Start;
 					break;

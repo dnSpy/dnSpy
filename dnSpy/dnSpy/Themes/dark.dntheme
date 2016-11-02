@@ -200,6 +200,8 @@
 		<color name="blockstructurecase" fg="#FF163F1B" />
 		<color name="blockstructurelocalfunction" fg="#FF133856" />
 		<color name="blockstructureother" fg="#FF4C4C4C" />
+		<color name="blockstructurexml" fg="#FF4C4C4C" />
+		<color name="blockstructurexaml" fg="#FF4C4C4C" />
 		<color name="completionmatchhighlight" bg="#FF773800" />
 		<color name="completionsuffix" fg="#DCDCDC" />
 		<color name="signaturehelpdocumentation" bold="true" />
