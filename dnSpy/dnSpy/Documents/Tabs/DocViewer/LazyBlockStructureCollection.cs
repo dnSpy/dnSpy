@@ -21,26 +21,26 @@ using System;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
-	sealed class LazyStructureVisualizerCollection {
-		public static readonly LazyStructureVisualizerCollection Empty = new LazyStructureVisualizerCollection();
+	sealed class LazyBlockStructureCollection {
+		public static readonly LazyBlockStructureCollection Empty = new LazyBlockStructureCollection();
 
-		public StructureVisualizerCollection Collection {
+		public BlockStructureCollection Collection {
 			get {
 				if (coll == null) {
-					coll = new StructureVisualizerCollection(ranges);
+					coll = new BlockStructureCollection(ranges);
 					ranges = null;
 				}
 				return coll;
 			}
 		}
-		StructureVisualizerCollection coll;
+		BlockStructureCollection coll;
 		CodeBracesRange[] ranges;
 
-		LazyStructureVisualizerCollection() {
-			this.coll = StructureVisualizerCollection.Empty;
+		LazyBlockStructureCollection() {
+			this.coll = BlockStructureCollection.Empty;
 		}
 
-		public LazyStructureVisualizerCollection(CodeBracesRange[] ranges) {
+		public LazyBlockStructureCollection(CodeBracesRange[] ranges) {
 			if (ranges == null)
 				throw new ArgumentNullException(nameof(ranges));
 			this.ranges = ranges;

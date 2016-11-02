@@ -17,20 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using Microsoft.VisualStudio.Text;
+using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Documents.Tabs.DocViewer;
 
-namespace dnSpy.Contracts.Text.Editor {
-	/// <summary>
-	/// Provides data to a <see cref="IStructureVisualizerService"/>
-	/// </summary>
-	interface IStructureVisualizerServiceDataProvider {
-		/// <summary>
-		/// Gets data for a line
-		/// </summary>
-		/// <param name="lineExtent">Line extent</param>
-		/// <param name="list">Filled with the result</param>
-		/// <returns></returns>
-		void GetData(SnapshotSpan lineExtent, List<StructureVisualizerData> list);
+namespace dnSpy.Documents.Tabs.DocViewer {
+	[ExportDocumentViewerCustomDataProvider]
+	sealed class BlockStructureDocumentViewerCustomDataProvider : IDocumentViewerCustomDataProvider {
+		public void OnCustomData(IDocumentViewerCustomDataContext context) {
+			var data = context.GetData<CodeBracesRange>(PredefinedCustomDataIds.CodeBracesRange);
+			var coll = data.Length == 0 ? LazyBlockStructureCollection.Empty : new LazyBlockStructureCollection(data);
+			context.AddCustomData(DocumentViewerContentDataIds.BlockStructure, coll);
+		}
 	}
 }

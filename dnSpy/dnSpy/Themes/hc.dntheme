@@ -30,33 +30,33 @@
 		<color name="bracematching" bg="#FF0E4583" />
 		<color name="lineseparator" fg="#FFA5A5A5" />
 		<color name="findmatchhighlightmarker" bg="#FF008000" />
-		<color name="structurevisualizernamespace" fg="#FFFFFFFF" />
-		<color name="structurevisualizertype" fg="#FFFFFFFF" />
-		<color name="structurevisualizermodule" fg="#FFFFFFFF" />
-		<color name="structurevisualizervaluetype" fg="#FFFFFFFF" />
-		<color name="structurevisualizerinterface" fg="#FFFFFFFF" />
-		<color name="structurevisualizermethod" fg="#FFFFFFFF" />
-		<color name="structurevisualizeraccessor" fg="#FFFFFFFF" />
-		<color name="structurevisualizeranonymousmethod" fg="#FFFFFFFF" />
-		<color name="structurevisualizerconstructor" fg="#FFFFFFFF" />
-		<color name="structurevisualizerdestructor" fg="#FFFFFFFF" />
-		<color name="structurevisualizeroperator" fg="#FFFFFFFF" />
-		<color name="structurevisualizerconditional" fg="#FFFFFFFF" />
-		<color name="structurevisualizerloop" fg="#FFFFFFFF" />
-		<color name="structurevisualizerproperty" fg="#FFFFFFFF" />
-		<color name="structurevisualizerevent" fg="#FFFFFFFF" />
-		<color name="structurevisualizertry" fg="#FFFFFFFF" />
-		<color name="structurevisualizercatch" fg="#FFFFFFFF" />
-		<color name="structurevisualizerfilter" fg="#FFFFFFFF" />
-		<color name="structurevisualizerfinally" fg="#FFFFFFFF" />
-		<color name="structurevisualizerfault" fg="#FFFFFFFF" />
-		<color name="structurevisualizerlock" fg="#FFFFFFFF" />
-		<color name="structurevisualizerusing" fg="#FFFFFFFF" />
-		<color name="structurevisualizerfixed" fg="#FFFFFFFF" />
-		<color name="structurevisualizerswitch" fg="#FFFFFFFF" />
-		<color name="structurevisualizercase" fg="#FFFFFFFF" />
-		<color name="structurevisualizerlocalfunction" fg="#FFFFFFFF" />
-		<color name="structurevisualizerother" fg="#FFFFFFFF" />
+		<color name="blockstructurenamespace" fg="#FFFFFFFF" />
+		<color name="blockstructuretype" fg="#FFFFFFFF" />
+		<color name="blockstructuremodule" fg="#FFFFFFFF" />
+		<color name="blockstructurevaluetype" fg="#FFFFFFFF" />
+		<color name="blockstructureinterface" fg="#FFFFFFFF" />
+		<color name="blockstructuremethod" fg="#FFFFFFFF" />
+		<color name="blockstructureaccessor" fg="#FFFFFFFF" />
+		<color name="blockstructureanonymousmethod" fg="#FFFFFFFF" />
+		<color name="blockstructureconstructor" fg="#FFFFFFFF" />
+		<color name="blockstructuredestructor" fg="#FFFFFFFF" />
+		<color name="blockstructureoperator" fg="#FFFFFFFF" />
+		<color name="blockstructureconditional" fg="#FFFFFFFF" />
+		<color name="blockstructureloop" fg="#FFFFFFFF" />
+		<color name="blockstructureproperty" fg="#FFFFFFFF" />
+		<color name="blockstructureevent" fg="#FFFFFFFF" />
+		<color name="blockstructuretry" fg="#FFFFFFFF" />
+		<color name="blockstructurecatch" fg="#FFFFFFFF" />
+		<color name="blockstructurefilter" fg="#FFFFFFFF" />
+		<color name="blockstructurefinally" fg="#FFFFFFFF" />
+		<color name="blockstructurefault" fg="#FFFFFFFF" />
+		<color name="blockstructurelock" fg="#FFFFFFFF" />
+		<color name="blockstructureusing" fg="#FFFFFFFF" />
+		<color name="blockstructurefixed" fg="#FFFFFFFF" />
+		<color name="blockstructureswitch" fg="#FFFFFFFF" />
+		<color name="blockstructurecase" fg="#FFFFFFFF" />
+		<color name="blockstructurelocalfunction" fg="#FFFFFFFF" />
+		<color name="blockstructureother" fg="#FFFFFFFF" />
 		<color name="completionmatchhighlight" bold="true" />
 		<color name="completionsuffix" fg="#FFFFFFFF" />
 		<color name="signaturehelpdocumentation" bold="true" />

@@ -26,8 +26,8 @@ using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
-	sealed class StructureVisualizerCollection {
-		public static readonly StructureVisualizerCollection Empty = new StructureVisualizerCollection(Array.Empty<CodeBracesRange>());
+	sealed class BlockStructureCollection {
+		public static readonly BlockStructureCollection Empty = new BlockStructureCollection(Array.Empty<CodeBracesRange>());
 
 		readonly SpanDataCollection<CodeBracesRange[]> coll;
 
@@ -111,7 +111,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public StructureVisualizerCollection(CodeBracesRange[] ranges) {
+		public BlockStructureCollection(CodeBracesRange[] ranges) {
 			if (ranges.Length == 0)
 				coll = SpanDataCollection<CodeBracesRange[]>.Empty;
 			else {
@@ -120,21 +120,21 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public void GetData(SnapshotSpan lineExtent, List<StructureVisualizerData> list) {
+		public void GetData(SnapshotSpan lineExtent, List<BlockStructureData> list) {
 			foreach (var spanData in coll.Find(lineExtent.Span)) {
 				if (spanData.Span.End == lineExtent.Start.Position)
 					continue;
 				foreach (var info in spanData.Data) {
-					var data = CreateStructureVisualizerData(info, lineExtent.Snapshot);
+					var data = CreateBlockStructureData(info, lineExtent.Snapshot);
 					if (data != null)
 						list.Add(data.Value);
 				}
 			}
 		}
 
-		StructureVisualizerData? CreateStructureVisualizerData(CodeBracesRange info, ITextSnapshot snapshot) {
+		BlockStructureData? CreateBlockStructureData(CodeBracesRange info, ITextSnapshot snapshot) {
 			var blockKind = GetBlockKind(info.Flags);
-			if (blockKind == StructureVisualizerDataBlockKind.None)
+			if (blockKind == BlockStructureKind.None)
 				return null;
 
 			if (info.Right.End > snapshot.Length)
@@ -143,41 +143,41 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return null;
 			var top = new SnapshotSpan(snapshot, info.Left.Start, info.Left.Length);
 			var bottom = new SnapshotSpan(snapshot, info.Right.Start, info.Right.Length);
-			return new StructureVisualizerData(top, bottom, blockKind);
+			return new BlockStructureData(top, bottom, blockKind);
 		}
 
-		static StructureVisualizerDataBlockKind GetBlockKind(CodeBracesRangeFlags flags) {
+		static BlockStructureKind GetBlockKind(CodeBracesRangeFlags flags) {
 			switch (flags.ToBlockKind()) {
-			case CodeBracesRangeFlags.BlockKind_Namespace:		return StructureVisualizerDataBlockKind.Namespace;
-			case CodeBracesRangeFlags.BlockKind_Type:			return StructureVisualizerDataBlockKind.Type;
-			case CodeBracesRangeFlags.BlockKind_Module:			return StructureVisualizerDataBlockKind.Module;
-			case CodeBracesRangeFlags.BlockKind_ValueType:		return StructureVisualizerDataBlockKind.ValueType;
-			case CodeBracesRangeFlags.BlockKind_Interface:		return StructureVisualizerDataBlockKind.Interface;
-			case CodeBracesRangeFlags.BlockKind_Method:			return StructureVisualizerDataBlockKind.Method;
-			case CodeBracesRangeFlags.BlockKind_Accessor:		return StructureVisualizerDataBlockKind.Accessor;
-			case CodeBracesRangeFlags.BlockKind_AnonymousMethod:return StructureVisualizerDataBlockKind.AnonymousMethod;
-			case CodeBracesRangeFlags.BlockKind_Constructor:	return StructureVisualizerDataBlockKind.Constructor;
-			case CodeBracesRangeFlags.BlockKind_Destructor:		return StructureVisualizerDataBlockKind.Destructor;
-			case CodeBracesRangeFlags.BlockKind_Operator:		return StructureVisualizerDataBlockKind.Operator;
-			case CodeBracesRangeFlags.BlockKind_Conditional:	return StructureVisualizerDataBlockKind.Conditional;
-			case CodeBracesRangeFlags.BlockKind_Loop:			return StructureVisualizerDataBlockKind.Loop;
-			case CodeBracesRangeFlags.BlockKind_Property:		return StructureVisualizerDataBlockKind.Property;
-			case CodeBracesRangeFlags.BlockKind_Event:			return StructureVisualizerDataBlockKind.Event;
-			case CodeBracesRangeFlags.BlockKind_Try:			return StructureVisualizerDataBlockKind.Try;
-			case CodeBracesRangeFlags.BlockKind_Catch:			return StructureVisualizerDataBlockKind.Catch;
-			case CodeBracesRangeFlags.BlockKind_Filter:			return StructureVisualizerDataBlockKind.Filter;
-			case CodeBracesRangeFlags.BlockKind_Finally:		return StructureVisualizerDataBlockKind.Finally;
-			case CodeBracesRangeFlags.BlockKind_Fault:			return StructureVisualizerDataBlockKind.Fault;
-			case CodeBracesRangeFlags.BlockKind_Lock:			return StructureVisualizerDataBlockKind.Lock;
-			case CodeBracesRangeFlags.BlockKind_Using:			return StructureVisualizerDataBlockKind.Using;
-			case CodeBracesRangeFlags.BlockKind_Fixed:			return StructureVisualizerDataBlockKind.Fixed;
-			case CodeBracesRangeFlags.BlockKind_Switch:			return StructureVisualizerDataBlockKind.Switch;
-			case CodeBracesRangeFlags.BlockKind_Case:			return StructureVisualizerDataBlockKind.Case;
-			case CodeBracesRangeFlags.BlockKind_LocalFunction:	return StructureVisualizerDataBlockKind.LocalFunction;
-			case CodeBracesRangeFlags.BlockKind_Other:			return StructureVisualizerDataBlockKind.Other;
+			case CodeBracesRangeFlags.BlockKind_Namespace:		return BlockStructureKind.Namespace;
+			case CodeBracesRangeFlags.BlockKind_Type:			return BlockStructureKind.Type;
+			case CodeBracesRangeFlags.BlockKind_Module:			return BlockStructureKind.Module;
+			case CodeBracesRangeFlags.BlockKind_ValueType:		return BlockStructureKind.ValueType;
+			case CodeBracesRangeFlags.BlockKind_Interface:		return BlockStructureKind.Interface;
+			case CodeBracesRangeFlags.BlockKind_Method:			return BlockStructureKind.Method;
+			case CodeBracesRangeFlags.BlockKind_Accessor:		return BlockStructureKind.Accessor;
+			case CodeBracesRangeFlags.BlockKind_AnonymousMethod:return BlockStructureKind.AnonymousMethod;
+			case CodeBracesRangeFlags.BlockKind_Constructor:	return BlockStructureKind.Constructor;
+			case CodeBracesRangeFlags.BlockKind_Destructor:		return BlockStructureKind.Destructor;
+			case CodeBracesRangeFlags.BlockKind_Operator:		return BlockStructureKind.Operator;
+			case CodeBracesRangeFlags.BlockKind_Conditional:	return BlockStructureKind.Conditional;
+			case CodeBracesRangeFlags.BlockKind_Loop:			return BlockStructureKind.Loop;
+			case CodeBracesRangeFlags.BlockKind_Property:		return BlockStructureKind.Property;
+			case CodeBracesRangeFlags.BlockKind_Event:			return BlockStructureKind.Event;
+			case CodeBracesRangeFlags.BlockKind_Try:			return BlockStructureKind.Try;
+			case CodeBracesRangeFlags.BlockKind_Catch:			return BlockStructureKind.Catch;
+			case CodeBracesRangeFlags.BlockKind_Filter:			return BlockStructureKind.Filter;
+			case CodeBracesRangeFlags.BlockKind_Finally:		return BlockStructureKind.Finally;
+			case CodeBracesRangeFlags.BlockKind_Fault:			return BlockStructureKind.Fault;
+			case CodeBracesRangeFlags.BlockKind_Lock:			return BlockStructureKind.Lock;
+			case CodeBracesRangeFlags.BlockKind_Using:			return BlockStructureKind.Using;
+			case CodeBracesRangeFlags.BlockKind_Fixed:			return BlockStructureKind.Fixed;
+			case CodeBracesRangeFlags.BlockKind_Switch:			return BlockStructureKind.Switch;
+			case CodeBracesRangeFlags.BlockKind_Case:			return BlockStructureKind.Case;
+			case CodeBracesRangeFlags.BlockKind_LocalFunction:	return BlockStructureKind.LocalFunction;
+			case CodeBracesRangeFlags.BlockKind_Other:			return BlockStructureKind.Other;
 			default:
 				Debug.Fail($"Unknown block kind: {flags.ToBlockKind()}");
-				return StructureVisualizerDataBlockKind.None;
+				return BlockStructureKind.None;
 			}
 		}
 	}

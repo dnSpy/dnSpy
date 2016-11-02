@@ -921,139 +921,139 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition FindMatchHighlightMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerNamespace)]
+		[Name(ThemeClassificationTypeNames.BlockStructureNamespace)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerNamespaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureNamespaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerType)]
+		[Name(ThemeClassificationTypeNames.BlockStructureType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerModule)]
+		[Name(ThemeClassificationTypeNames.BlockStructureModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerValueType)]
+		[Name(ThemeClassificationTypeNames.BlockStructureValueType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerValueTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureValueTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerInterface)]
+		[Name(ThemeClassificationTypeNames.BlockStructureInterface)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerInterfaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureInterfaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerMethod)]
+		[Name(ThemeClassificationTypeNames.BlockStructureMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerAccessor)]
+		[Name(ThemeClassificationTypeNames.BlockStructureAccessor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerAccessorClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureAccessorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerAnonymousMethod)]
+		[Name(ThemeClassificationTypeNames.BlockStructureAnonymousMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerAnonymousMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureAnonymousMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerConstructor)]
+		[Name(ThemeClassificationTypeNames.BlockStructureConstructor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerConstructorClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureConstructorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerDestructor)]
+		[Name(ThemeClassificationTypeNames.BlockStructureDestructor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerDestructorClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureDestructorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerOperator)]
+		[Name(ThemeClassificationTypeNames.BlockStructureOperator)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerOperatorClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureOperatorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerConditional)]
+		[Name(ThemeClassificationTypeNames.BlockStructureConditional)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerConditionalClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureConditionalClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerLoop)]
+		[Name(ThemeClassificationTypeNames.BlockStructureLoop)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerLoopClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureLoopClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerProperty)]
+		[Name(ThemeClassificationTypeNames.BlockStructureProperty)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerPropertyClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructurePropertyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerEvent)]
+		[Name(ThemeClassificationTypeNames.BlockStructureEvent)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerEventClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureEventClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerTry)]
+		[Name(ThemeClassificationTypeNames.BlockStructureTry)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerTryClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureTryClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerCatch)]
+		[Name(ThemeClassificationTypeNames.BlockStructureCatch)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerCatchClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureCatchClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerFilter)]
+		[Name(ThemeClassificationTypeNames.BlockStructureFilter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerFilterClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureFilterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerFinally)]
+		[Name(ThemeClassificationTypeNames.BlockStructureFinally)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerFinallyClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureFinallyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerFault)]
+		[Name(ThemeClassificationTypeNames.BlockStructureFault)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerFaultClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureFaultClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerLock)]
+		[Name(ThemeClassificationTypeNames.BlockStructureLock)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerLockClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureLockClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerUsing)]
+		[Name(ThemeClassificationTypeNames.BlockStructureUsing)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerUsingClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureUsingClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerFixed)]
+		[Name(ThemeClassificationTypeNames.BlockStructureFixed)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerFixedClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureFixedClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerSwitch)]
+		[Name(ThemeClassificationTypeNames.BlockStructureSwitch)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerSwitchClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureSwitchClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerCase)]
+		[Name(ThemeClassificationTypeNames.BlockStructureCase)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerCaseClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureCaseClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerLocalFunction)]
+		[Name(ThemeClassificationTypeNames.BlockStructureLocalFunction)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerLocalFunctionClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureLocalFunctionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerOther)]
+		[Name(ThemeClassificationTypeNames.BlockStructureOther)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerOtherClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureOtherClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CompletionMatchHighlight)]
@@ -2749,246 +2749,246 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerNamespace)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerNamespace)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureNamespace)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureNamespace)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerNamespace : ThemeMarkerFormatDefinition {
-			StructureVisualizerNamespace() : base(TextColor.StructureVisualizerNamespace) { }
+		sealed class BlockStructureNamespace : ThemeMarkerFormatDefinition {
+			BlockStructureNamespace() : base(TextColor.BlockStructureNamespace) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerType)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerType)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureType)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureType)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerType : ThemeMarkerFormatDefinition {
-			StructureVisualizerType() : base(TextColor.StructureVisualizerType) { }
+		sealed class BlockStructureType : ThemeMarkerFormatDefinition {
+			BlockStructureType() : base(TextColor.BlockStructureType) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerModule)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerModule)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureModule)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureModule)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerModule : ThemeMarkerFormatDefinition {
-			StructureVisualizerModule() : base(TextColor.StructureVisualizerModule) { }
+		sealed class BlockStructureModule : ThemeMarkerFormatDefinition {
+			BlockStructureModule() : base(TextColor.BlockStructureModule) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerValueType)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerValueType)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureValueType)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureValueType)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerValueType : ThemeMarkerFormatDefinition {
-			StructureVisualizerValueType() : base(TextColor.StructureVisualizerValueType) { }
+		sealed class BlockStructureValueType : ThemeMarkerFormatDefinition {
+			BlockStructureValueType() : base(TextColor.BlockStructureValueType) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerInterface)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerInterface)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureInterface)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureInterface)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerInterface : ThemeMarkerFormatDefinition {
-			StructureVisualizerInterface() : base(TextColor.StructureVisualizerInterface) { }
+		sealed class BlockStructureInterface : ThemeMarkerFormatDefinition {
+			BlockStructureInterface() : base(TextColor.BlockStructureInterface) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerMethod)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerMethod)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureMethod)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureMethod)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerMethod : ThemeMarkerFormatDefinition {
-			StructureVisualizerMethod() : base(TextColor.StructureVisualizerMethod) { }
+		sealed class BlockStructureMethod : ThemeMarkerFormatDefinition {
+			BlockStructureMethod() : base(TextColor.BlockStructureMethod) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerAccessor)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerAccessor)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureAccessor)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureAccessor)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerAccessor : ThemeMarkerFormatDefinition {
-			StructureVisualizerAccessor() : base(TextColor.StructureVisualizerAccessor) { }
+		sealed class BlockStructureAccessor : ThemeMarkerFormatDefinition {
+			BlockStructureAccessor() : base(TextColor.BlockStructureAccessor) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerAnonymousMethod)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerAnonymousMethod)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureAnonymousMethod)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureAnonymousMethod)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerAnonymousMethod : ThemeMarkerFormatDefinition {
-			StructureVisualizerAnonymousMethod() : base(TextColor.StructureVisualizerAnonymousMethod) { }
+		sealed class BlockStructureAnonymousMethod : ThemeMarkerFormatDefinition {
+			BlockStructureAnonymousMethod() : base(TextColor.BlockStructureAnonymousMethod) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerConstructor)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerConstructor)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureConstructor)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureConstructor)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerConstructor : ThemeMarkerFormatDefinition {
-			StructureVisualizerConstructor() : base(TextColor.StructureVisualizerConstructor) { }
+		sealed class BlockStructureConstructor : ThemeMarkerFormatDefinition {
+			BlockStructureConstructor() : base(TextColor.BlockStructureConstructor) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerDestructor)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerDestructor)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureDestructor)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureDestructor)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerDestructor : ThemeMarkerFormatDefinition {
-			StructureVisualizerDestructor() : base(TextColor.StructureVisualizerDestructor) { }
+		sealed class BlockStructureDestructor : ThemeMarkerFormatDefinition {
+			BlockStructureDestructor() : base(TextColor.BlockStructureDestructor) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerOperator)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerOperator)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureOperator)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureOperator)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerOperator : ThemeMarkerFormatDefinition {
-			StructureVisualizerOperator() : base(TextColor.StructureVisualizerOperator) { }
+		sealed class BlockStructureOperator : ThemeMarkerFormatDefinition {
+			BlockStructureOperator() : base(TextColor.BlockStructureOperator) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerConditional)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerConditional)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureConditional)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureConditional)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerConditional : ThemeMarkerFormatDefinition {
-			StructureVisualizerConditional() : base(TextColor.StructureVisualizerConditional) { }
+		sealed class BlockStructureConditional : ThemeMarkerFormatDefinition {
+			BlockStructureConditional() : base(TextColor.BlockStructureConditional) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerLoop)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerLoop)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureLoop)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureLoop)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerLoop : ThemeMarkerFormatDefinition {
-			StructureVisualizerLoop() : base(TextColor.StructureVisualizerLoop) { }
+		sealed class BlockStructureLoop : ThemeMarkerFormatDefinition {
+			BlockStructureLoop() : base(TextColor.BlockStructureLoop) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerProperty)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerProperty)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureProperty)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureProperty)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerProperty : ThemeMarkerFormatDefinition {
-			StructureVisualizerProperty() : base(TextColor.StructureVisualizerProperty) { }
+		sealed class BlockStructureProperty : ThemeMarkerFormatDefinition {
+			BlockStructureProperty() : base(TextColor.BlockStructureProperty) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerEvent)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerEvent)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureEvent)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureEvent)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerEvent : ThemeMarkerFormatDefinition {
-			StructureVisualizerEvent() : base(TextColor.StructureVisualizerEvent) { }
+		sealed class BlockStructureEvent : ThemeMarkerFormatDefinition {
+			BlockStructureEvent() : base(TextColor.BlockStructureEvent) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerTry)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerTry)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureTry)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureTry)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerTry : ThemeMarkerFormatDefinition {
-			StructureVisualizerTry() : base(TextColor.StructureVisualizerTry) { }
+		sealed class BlockStructureTry : ThemeMarkerFormatDefinition {
+			BlockStructureTry() : base(TextColor.BlockStructureTry) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerCatch)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerCatch)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureCatch)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureCatch)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerCatch : ThemeMarkerFormatDefinition {
-			StructureVisualizerCatch() : base(TextColor.StructureVisualizerCatch) { }
+		sealed class BlockStructureCatch : ThemeMarkerFormatDefinition {
+			BlockStructureCatch() : base(TextColor.BlockStructureCatch) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFilter)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFilter)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureFilter)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureFilter)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerFilter : ThemeMarkerFormatDefinition {
-			StructureVisualizerFilter() : base(TextColor.StructureVisualizerFilter) { }
+		sealed class BlockStructureFilter : ThemeMarkerFormatDefinition {
+			BlockStructureFilter() : base(TextColor.BlockStructureFilter) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFinally)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFinally)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureFinally)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureFinally)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerFinally : ThemeMarkerFormatDefinition {
-			StructureVisualizerFinally() : base(TextColor.StructureVisualizerFinally) { }
+		sealed class BlockStructureFinally : ThemeMarkerFormatDefinition {
+			BlockStructureFinally() : base(TextColor.BlockStructureFinally) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFault)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFault)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureFault)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureFault)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerFault : ThemeMarkerFormatDefinition {
-			StructureVisualizerFault() : base(TextColor.StructureVisualizerFault) { }
+		sealed class BlockStructureFault : ThemeMarkerFormatDefinition {
+			BlockStructureFault() : base(TextColor.BlockStructureFault) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerLock)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerLock)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureLock)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureLock)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerLock : ThemeMarkerFormatDefinition {
-			StructureVisualizerLock() : base(TextColor.StructureVisualizerLock) { }
+		sealed class BlockStructureLock : ThemeMarkerFormatDefinition {
+			BlockStructureLock() : base(TextColor.BlockStructureLock) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerUsing)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerUsing)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureUsing)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureUsing)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerUsing : ThemeMarkerFormatDefinition {
-			StructureVisualizerUsing() : base(TextColor.StructureVisualizerUsing) { }
+		sealed class BlockStructureUsing : ThemeMarkerFormatDefinition {
+			BlockStructureUsing() : base(TextColor.BlockStructureUsing) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFixed)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFixed)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureFixed)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureFixed)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerFixed : ThemeMarkerFormatDefinition {
-			StructureVisualizerFixed() : base(TextColor.StructureVisualizerFixed) { }
+		sealed class BlockStructureFixed : ThemeMarkerFormatDefinition {
+			BlockStructureFixed() : base(TextColor.BlockStructureFixed) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerSwitch)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerSwitch)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureSwitch)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureSwitch)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerSwitch : ThemeMarkerFormatDefinition {
-			StructureVisualizerSwitch() : base(TextColor.StructureVisualizerSwitch) { }
+		sealed class BlockStructureSwitch : ThemeMarkerFormatDefinition {
+			BlockStructureSwitch() : base(TextColor.BlockStructureSwitch) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerCase)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerCase)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureCase)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureCase)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerCase : ThemeMarkerFormatDefinition {
-			StructureVisualizerCase() : base(TextColor.StructureVisualizerCase) { }
+		sealed class BlockStructureCase : ThemeMarkerFormatDefinition {
+			BlockStructureCase() : base(TextColor.BlockStructureCase) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerLocalFunction)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerLocalFunction)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureLocalFunction)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureLocalFunction)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerLocalFunction : ThemeMarkerFormatDefinition {
-			StructureVisualizerLocalFunction() : base(TextColor.StructureVisualizerLocalFunction) { }
+		sealed class BlockStructureLocalFunction : ThemeMarkerFormatDefinition {
+			BlockStructureLocalFunction() : base(TextColor.BlockStructureLocalFunction) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerOther)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerOther)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureOther)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureOther)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerOther : ThemeMarkerFormatDefinition {
-			StructureVisualizerOther() : base(TextColor.StructureVisualizerOther) { }
+		sealed class BlockStructureOther : ThemeMarkerFormatDefinition {
+			BlockStructureOther() : base(TextColor.BlockStructureOther) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

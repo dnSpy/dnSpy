@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Block kind
 	/// </summary>
-	public enum StructureVisualizerDataBlockKind {
+	public enum BlockStructureKind {
 		/// <summary>
 		/// Not a block
 		/// </summary>

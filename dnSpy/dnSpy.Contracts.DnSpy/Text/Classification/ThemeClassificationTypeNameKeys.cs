@@ -898,139 +898,139 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string FindMatchHighlightMarker = nameof(FindMatchHighlightMarker);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerNamespace"/>
+		/// <see cref="TextColor.BlockStructureNamespace"/>
 		/// </summary>
-		public const string StructureVisualizerNamespace = nameof(StructureVisualizerNamespace);
+		public const string BlockStructureNamespace = nameof(BlockStructureNamespace);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerType"/>
+		/// <see cref="TextColor.BlockStructureType"/>
 		/// </summary>
-		public const string StructureVisualizerType = nameof(StructureVisualizerType);
+		public const string BlockStructureType = nameof(BlockStructureType);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerModule"/>
+		/// <see cref="TextColor.BlockStructureModule"/>
 		/// </summary>
-		public const string StructureVisualizerModule = nameof(StructureVisualizerModule);
+		public const string BlockStructureModule = nameof(BlockStructureModule);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerValueType"/>
+		/// <see cref="TextColor.BlockStructureValueType"/>
 		/// </summary>
-		public const string StructureVisualizerValueType = nameof(StructureVisualizerValueType);
+		public const string BlockStructureValueType = nameof(BlockStructureValueType);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerInterface"/>
+		/// <see cref="TextColor.BlockStructureInterface"/>
 		/// </summary>
-		public const string StructureVisualizerInterface = nameof(StructureVisualizerInterface);
+		public const string BlockStructureInterface = nameof(BlockStructureInterface);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerMethod"/>
+		/// <see cref="TextColor.BlockStructureMethod"/>
 		/// </summary>
-		public const string StructureVisualizerMethod = nameof(StructureVisualizerMethod);
+		public const string BlockStructureMethod = nameof(BlockStructureMethod);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerAccessor"/>
+		/// <see cref="TextColor.BlockStructureAccessor"/>
 		/// </summary>
-		public const string StructureVisualizerAccessor = nameof(StructureVisualizerAccessor);
+		public const string BlockStructureAccessor = nameof(BlockStructureAccessor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerAnonymousMethod"/>
+		/// <see cref="TextColor.BlockStructureAnonymousMethod"/>
 		/// </summary>
-		public const string StructureVisualizerAnonymousMethod = nameof(StructureVisualizerAnonymousMethod);
+		public const string BlockStructureAnonymousMethod = nameof(BlockStructureAnonymousMethod);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerConstructor"/>
+		/// <see cref="TextColor.BlockStructureConstructor"/>
 		/// </summary>
-		public const string StructureVisualizerConstructor = nameof(StructureVisualizerConstructor);
+		public const string BlockStructureConstructor = nameof(BlockStructureConstructor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerDestructor"/>
+		/// <see cref="TextColor.BlockStructureDestructor"/>
 		/// </summary>
-		public const string StructureVisualizerDestructor = nameof(StructureVisualizerDestructor);
+		public const string BlockStructureDestructor = nameof(BlockStructureDestructor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerOperator"/>
+		/// <see cref="TextColor.BlockStructureOperator"/>
 		/// </summary>
-		public const string StructureVisualizerOperator = nameof(StructureVisualizerOperator);
+		public const string BlockStructureOperator = nameof(BlockStructureOperator);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerConditional"/>
+		/// <see cref="TextColor.BlockStructureConditional"/>
 		/// </summary>
-		public const string StructureVisualizerConditional = nameof(StructureVisualizerConditional);
+		public const string BlockStructureConditional = nameof(BlockStructureConditional);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLoop"/>
+		/// <see cref="TextColor.BlockStructureLoop"/>
 		/// </summary>
-		public const string StructureVisualizerLoop = nameof(StructureVisualizerLoop);
+		public const string BlockStructureLoop = nameof(BlockStructureLoop);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerProperty"/>
+		/// <see cref="TextColor.BlockStructureProperty"/>
 		/// </summary>
-		public const string StructureVisualizerProperty = nameof(StructureVisualizerProperty);
+		public const string BlockStructureProperty = nameof(BlockStructureProperty);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerEvent"/>
+		/// <see cref="TextColor.BlockStructureEvent"/>
 		/// </summary>
-		public const string StructureVisualizerEvent = nameof(StructureVisualizerEvent);
+		public const string BlockStructureEvent = nameof(BlockStructureEvent);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerTry"/>
+		/// <see cref="TextColor.BlockStructureTry"/>
 		/// </summary>
-		public const string StructureVisualizerTry = nameof(StructureVisualizerTry);
+		public const string BlockStructureTry = nameof(BlockStructureTry);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerCatch"/>
+		/// <see cref="TextColor.BlockStructureCatch"/>
 		/// </summary>
-		public const string StructureVisualizerCatch = nameof(StructureVisualizerCatch);
+		public const string BlockStructureCatch = nameof(BlockStructureCatch);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFilter"/>
+		/// <see cref="TextColor.BlockStructureFilter"/>
 		/// </summary>
-		public const string StructureVisualizerFilter = nameof(StructureVisualizerFilter);
+		public const string BlockStructureFilter = nameof(BlockStructureFilter);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFinally"/>
+		/// <see cref="TextColor.BlockStructureFinally"/>
 		/// </summary>
-		public const string StructureVisualizerFinally = nameof(StructureVisualizerFinally);
+		public const string BlockStructureFinally = nameof(BlockStructureFinally);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFault"/>
+		/// <see cref="TextColor.BlockStructureFault"/>
 		/// </summary>
-		public const string StructureVisualizerFault = nameof(StructureVisualizerFault);
+		public const string BlockStructureFault = nameof(BlockStructureFault);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLock"/>
+		/// <see cref="TextColor.BlockStructureLock"/>
 		/// </summary>
-		public const string StructureVisualizerLock = nameof(StructureVisualizerLock);
+		public const string BlockStructureLock = nameof(BlockStructureLock);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerUsing"/>
+		/// <see cref="TextColor.BlockStructureUsing"/>
 		/// </summary>
-		public const string StructureVisualizerUsing = nameof(StructureVisualizerUsing);
+		public const string BlockStructureUsing = nameof(BlockStructureUsing);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFixed"/>
+		/// <see cref="TextColor.BlockStructureFixed"/>
 		/// </summary>
-		public const string StructureVisualizerFixed = nameof(StructureVisualizerFixed);
+		public const string BlockStructureFixed = nameof(BlockStructureFixed);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerSwitch"/>
+		/// <see cref="TextColor.BlockStructureSwitch"/>
 		/// </summary>
-		public const string StructureVisualizerSwitch = nameof(StructureVisualizerSwitch);
+		public const string BlockStructureSwitch = nameof(BlockStructureSwitch);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerCase"/>
+		/// <see cref="TextColor.BlockStructureCase"/>
 		/// </summary>
-		public const string StructureVisualizerCase = nameof(StructureVisualizerCase);
+		public const string BlockStructureCase = nameof(BlockStructureCase);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLocalFunction"/>
+		/// <see cref="TextColor.BlockStructureLocalFunction"/>
 		/// </summary>
-		public const string StructureVisualizerLocalFunction = nameof(StructureVisualizerLocalFunction);
+		public const string BlockStructureLocalFunction = nameof(BlockStructureLocalFunction);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerOther"/>
+		/// <see cref="TextColor.BlockStructureOther"/>
 		/// </summary>
-		public const string StructureVisualizerOther = nameof(StructureVisualizerOther);
+		public const string BlockStructureOther = nameof(BlockStructureOther);
 
 		/// <summary>
 		/// <see cref="TextColor.CompletionMatchHighlight"/>

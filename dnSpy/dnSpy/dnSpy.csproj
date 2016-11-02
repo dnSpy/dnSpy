@@ -171,6 +171,10 @@
     <Compile Include="Documents\Tabs\DocumentTabUIContextLocator.cs" />
     <Compile Include="Documents\Tabs\DocumentTabUIContextLocatorProvider.cs" />
     <Compile Include="Documents\Tabs\DocumentTreeNodeDecompiler.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\BlockStructureCollection.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\BlockStructureDocumentViewerCustomDataProvider.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\BlockStructureDocumentViewerListener.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\BlockStructureServiceDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\BracePairCollection.cs" />
     <Compile Include="Documents\Tabs\DocViewer\BracePairDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\BracePairService.cs" />
@@ -193,7 +197,7 @@
     <Compile Include="Documents\Tabs\DocViewer\DocumentWriterService.cs" />
     <Compile Include="Documents\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
     <Compile Include="Documents\Tabs\DocViewer\HighlightRelatedKeywordsDocumentViewerReferenceEnabler.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\LazyStructureVisualizerCollection.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\LazyBlockStructureCollection.cs" />
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorCollection.cs" />
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorViewTagger.cs" />
@@ -212,10 +216,6 @@
     <Compile Include="Documents\Tabs\DocViewer\SpanDataCollectionUtilities.cs" />
     <Compile Include="Documents\Tabs\DocViewer\SpanDataReferenceInfoExtensions.cs" />
     <Compile Include="Documents\Tabs\DocViewer\SpanReferenceDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerCollection.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerDocumentViewerListener.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\StructureVisualizerServiceDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipSettings.cs" />
     <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipWriter.cs" />
@@ -564,6 +564,7 @@
     <Compile Include="Text\Editor\AdornmentLayerCollection.cs" />
     <Compile Include="Text\Editor\AdornmentLayerDefinitionService.cs" />
     <Compile Include="Text\Editor\AdornmentLayerElement.cs" />
+    <Compile Include="Text\Editor\BlockStructureService.cs" />
     <Compile Include="Text\Editor\BottomControlMargin.cs" />
     <Compile Include="Text\Editor\BottomRightCornerMargin.cs" />
     <Compile Include="Text\Editor\BoxSelectionHelper.cs" />
@@ -676,7 +677,6 @@
     <Compile Include="Text\Editor\SpaceReservationStack.cs" />
     <Compile Include="Text\Editor\SpaceReservationStackProvider.cs" />
     <Compile Include="Text\Editor\SpacerMargin.cs" />
-    <Compile Include="Text\Editor\StructureVisualizerService.cs" />
     <Compile Include="Text\Editor\SystemTextCaret.cs" />
     <Compile Include="Text\Editor\TextCaret.cs" />
     <Compile Include="Text\Editor\TextCaretLayer.cs" />

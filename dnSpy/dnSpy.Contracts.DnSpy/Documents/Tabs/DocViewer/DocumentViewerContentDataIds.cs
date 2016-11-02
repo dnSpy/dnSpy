@@ -42,9 +42,9 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		public const string BracePair = "BracePair-Content";
 
 		/// <summary>
-		/// Structure visualizer data
+		/// Block structure data
 		/// </summary>
-		public const string StructureVisualizer = "StructureVisualizer-Content";
+		public const string BlockStructure = "BlockStructure-Content";
 
 		/// <summary>
 		/// <see cref="Decompiler.LineSeparator"/> data

@@ -522,6 +522,8 @@
     <Compile Include="Text\ColorAndText.cs" />
     <Compile Include="Text\ContentTypes.cs" />
     <Compile Include="Text\ContentTypesHelper.cs" />
+    <Compile Include="Text\Editor\BlockStructureData.cs" />
+    <Compile Include="Text\Editor\BlockStructureKind.cs" />
     <Compile Include="Text\Editor\BlockStructureLineKind.cs" />
     <Compile Include="Text\Editor\CodeEditorOptions.cs" />
     <Compile Include="Text\Editor\CommonTextEditorOptions.cs" />
@@ -530,6 +532,9 @@
     <Compile Include="Text\Editor\DefaultDsWpfViewOptions.cs" />
     <Compile Include="Text\Editor\DefaultReplEditorOptions.cs" />
     <Compile Include="Text\Editor\GlyphTextMarkerServiceZIndexes.cs" />
+    <Compile Include="Text\Editor\IBlockStructureService.cs" />
+    <Compile Include="Text\Editor\IBlockStructureServiceDataProvider.cs" />
+    <Compile Include="Text\Editor\IBlockStructureServiceProvider.cs" />
     <Compile Include="Text\Editor\ICodeEditor.cs" />
     <Compile Include="Text\Editor\ICodeEditorProvider.cs" />
     <Compile Include="Text\Editor\ICustomLineNumberMargin.cs" />
@@ -554,9 +559,6 @@
     <Compile Include="Text\Editor\IReplEditor.cs" />
     <Compile Include="Text\Editor\IReplEditorProvider.cs" />
     <Compile Include="Text\Editor\IsOverlayLayerAttribute.cs" />
-    <Compile Include="Text\Editor\IStructureVisualizerService.cs" />
-    <Compile Include="Text\Editor\IStructureVisualizerServiceDataProvider.cs" />
-    <Compile Include="Text\Editor\IStructureVisualizerServiceProvider.cs" />
     <Compile Include="Text\Editor\ITextEditorSettings.cs" />
     <Compile Include="Text\Editor\LayerKind.cs" />
     <Compile Include="Text\Editor\LayerKindAttribute.cs" />
@@ -579,8 +581,6 @@
     <Compile Include="Text\Editor\PredefinedSpaceReservationManagerNames.cs" />
     <Compile Include="Text\Editor\ReplEditorOptions.cs" />
     <Compile Include="Text\Editor\ReplEditorUtils.cs" />
-    <Compile Include="Text\Editor\StructureVisualizerData.cs" />
-    <Compile Include="Text\Editor\StructureVisualizerDataBlockKind.cs" />
     <Compile Include="Text\Editor\TextMarkerServiceZIndexes.cs" />
     <Compile Include="Text\Editor\TextViewCreatorOptions.cs" />
     <Compile Include="Text\Editor\TextViewExtensions.cs" />

@@ -21,14 +21,14 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Creates <see cref="IStructureVisualizerService"/>s
+	/// Creates <see cref="IBlockStructureService"/>s
 	/// </summary>
-	interface IStructureVisualizerServiceProvider {
+	interface IBlockStructureServiceProvider {
 		/// <summary>
-		/// Returns the cached <see cref="IStructureVisualizerService"/> instance
+		/// Returns the cached <see cref="IBlockStructureService"/> instance
 		/// </summary>
 		/// <param name="wpfTextView">Text view</param>
 		/// <returns></returns>
-		IStructureVisualizerService GetService(IWpfTextView wpfTextView);
+		IBlockStructureService GetService(IWpfTextView wpfTextView);
 	}
 }

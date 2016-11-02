@@ -34,26 +34,24 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Utilities;
 
-// Adds colorized vertical lines between block start/end lines. Similar to Productivity Power Tools 2015's structure visualizer.
-
 namespace dnSpy.Text.Editor {
-	[Export(typeof(IStructureVisualizerServiceProvider))]
-	sealed class StructureVisualizerServiceProvider : IStructureVisualizerServiceProvider {
+	[Export(typeof(IBlockStructureServiceProvider))]
+	sealed class BlockStructureServiceProvider : IBlockStructureServiceProvider {
 		readonly IEditorFormatMapService editorFormatMapService;
 
 		[ImportingConstructor]
-		StructureVisualizerServiceProvider(IEditorFormatMapService editorFormatMapService) {
+		BlockStructureServiceProvider(IEditorFormatMapService editorFormatMapService) {
 			this.editorFormatMapService = editorFormatMapService;
 		}
 
-		public IStructureVisualizerService GetService(IWpfTextView wpfTextView) {
+		public IBlockStructureService GetService(IWpfTextView wpfTextView) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(StructureVisualizerService), () => new StructureVisualizerService(wpfTextView, editorFormatMapService));
+			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(BlockStructureService), () => new BlockStructureService(wpfTextView, editorFormatMapService));
 		}
 	}
 
-	sealed class StructureVisualizerService : IStructureVisualizerService {
+	sealed class BlockStructureService : IBlockStructureService {
 #pragma warning disable 0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.BlockStructure)]
@@ -69,53 +67,53 @@ namespace dnSpy.Text.Editor {
 		readonly List<LineColorInfo> lineColorInfos;
 		IAdornmentLayer layer;
 		IEditorFormatMap editorFormatMap;
-		IStructureVisualizerServiceDataProvider structureVisualizerServiceDataProvider;
+		IBlockStructureServiceDataProvider blockStructureServiceDataProvider;
 		bool enabled;
 
-		sealed class NullStructureVisualizerServiceDataProvider : IStructureVisualizerServiceDataProvider {
-			public static readonly NullStructureVisualizerServiceDataProvider Instance = new NullStructureVisualizerServiceDataProvider();
-			public void GetData(SnapshotSpan lineExtent, List<StructureVisualizerData> list) { }
+		sealed class NullBlockStructureServiceDataProvider : IBlockStructureServiceDataProvider {
+			public static readonly NullBlockStructureServiceDataProvider Instance = new NullBlockStructureServiceDataProvider();
+			public void GetData(SnapshotSpan lineExtent, List<BlockStructureData> list) { }
 		}
 
-		public StructureVisualizerService(IWpfTextView wpfTextView, IEditorFormatMapService editorFormatMapService) {
+		public BlockStructureService(IWpfTextView wpfTextView, IEditorFormatMapService editorFormatMapService) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (editorFormatMapService == null)
 				throw new ArgumentNullException(nameof(editorFormatMapService));
 			this.wpfTextView = wpfTextView;
 			this.editorFormatMapService = editorFormatMapService;
-			this.structureVisualizerServiceDataProvider = NullStructureVisualizerServiceDataProvider.Instance;
+			this.blockStructureServiceDataProvider = NullBlockStructureServiceDataProvider.Instance;
 			this.onRemovedDelegate = OnRemoved;
 			this.lineElements = new List<LineElement>();
 			this.xPosCache = new XPosCache(wpfTextView);
 			this.lineColorInfos = new List<LineColorInfo> {
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerNamespace),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerType),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerModule),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerValueType),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerInterface),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerMethod),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerAccessor),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerAnonymousMethod),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerConstructor),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerDestructor),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerOperator),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerConditional),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerLoop),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerProperty),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerEvent),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerTry),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerCatch),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerFilter),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerFinally),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerFault),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerLock),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerUsing),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerFixed),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerSwitch),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerCase),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerLocalFunction),
-				new LineColorInfo(ThemeClassificationTypeNameKeys.StructureVisualizerOther),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureNamespace),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureType),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureModule),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureValueType),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureInterface),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureMethod),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureAccessor),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureAnonymousMethod),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureConstructor),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureDestructor),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureOperator),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureConditional),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureLoop),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureProperty),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureEvent),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureTry),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureCatch),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureFilter),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureFinally),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureFault),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureLock),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureUsing),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureFixed),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureSwitch),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureCase),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureLocalFunction),
+				new LineColorInfo(ThemeClassificationTypeNameKeys.BlockStructureOther),
 			};
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
@@ -258,10 +256,10 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public void SetDataProvider(IStructureVisualizerServiceDataProvider dataProvider) {
+		public void SetDataProvider(IBlockStructureServiceDataProvider dataProvider) {
 			if (wpfTextView.IsClosed)
 				return;
-			this.structureVisualizerServiceDataProvider = dataProvider ?? NullStructureVisualizerServiceDataProvider.Instance;
+			this.blockStructureServiceDataProvider = dataProvider ?? NullBlockStructureServiceDataProvider.Instance;
 			if (enabled) {
 				ClearXPosCache();
 				RepaintAllLines();
@@ -273,26 +271,26 @@ namespace dnSpy.Text.Editor {
 			UpdateRange(new NormalizedSnapshotSpanCollection(wpfTextView.TextViewLines.FormattedSpan));
 		}
 
-		sealed class StructureVisualizerDataComparer : IEqualityComparer<StructureVisualizerData> {
-			public static readonly StructureVisualizerDataComparer Instance = new StructureVisualizerDataComparer();
+		sealed class BlockStructureDataComparer : IEqualityComparer<BlockStructureData> {
+			public static readonly BlockStructureDataComparer Instance = new BlockStructureDataComparer();
 
-			public bool Equals(StructureVisualizerData x, StructureVisualizerData y) =>
+			public bool Equals(BlockStructureData x, BlockStructureData y) =>
 				x.BlockKind == y.BlockKind &&
 				x.Top == y.Top &&
 				x.Bottom == y.Bottom;
 
-			public int GetHashCode(StructureVisualizerData obj) =>
+			public int GetHashCode(BlockStructureData obj) =>
 				obj.Top.GetHashCode() ^ obj.Bottom.GetHashCode() ^ (int)obj.BlockKind;
 		}
 
 		void AddLineElements(NormalizedSnapshotSpanCollection spans) {
 			if (spans.Count == 0)
 				return;
-			var list = new List<StructureVisualizerData>();
-			var updated = new HashSet<StructureVisualizerData>(StructureVisualizerDataComparer.Instance);
+			var list = new List<BlockStructureData>();
+			var updated = new HashSet<BlockStructureData>(BlockStructureDataComparer.Instance);
 			foreach (var span in spans) {
 				list.Clear();
-				structureVisualizerServiceDataProvider.GetData(GetLineExtent(span), list);
+				blockStructureServiceDataProvider.GetData(GetLineExtent(span), list);
 
 				foreach (var info in list) {
 					if (updated.Contains(info))
@@ -349,9 +347,9 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		LineElement FindLineElement(StructureVisualizerData info) {
+		LineElement FindLineElement(BlockStructureData info) {
 			foreach (var lineElement in lineElements) {
-				if (StructureVisualizerDataComparer.Instance.Equals(lineElement.StructureVisualizerData, info))
+				if (BlockStructureDataComparer.Instance.Equals(lineElement.BlockStructureData, info))
 					return lineElement;
 			}
 			return null;
@@ -381,7 +379,7 @@ namespace dnSpy.Text.Editor {
 			layer?.RemoveAllAdornments();
 		}
 
-		Pen GetPen(StructureVisualizerDataBlockKind blockKind) => GetLineColorInfo(GetColorInfoType(blockKind)).Pen;
+		Pen GetPen(BlockStructureKind blockKind) => GetLineColorInfo(GetColorInfoType(blockKind)).Pen;
 
 		LineColorInfo GetLineColorInfo(string type) {
 			foreach (var info in lineColorInfos) {
@@ -392,42 +390,42 @@ namespace dnSpy.Text.Editor {
 			return lineColorInfos[0];
 		}
 
-		string GetColorInfoType(StructureVisualizerDataBlockKind blockKind) {
+		string GetColorInfoType(BlockStructureKind blockKind) {
 			switch (blockKind) {
-			case StructureVisualizerDataBlockKind.Namespace:	return ThemeClassificationTypeNameKeys.StructureVisualizerNamespace;
-			case StructureVisualizerDataBlockKind.Type:			return ThemeClassificationTypeNameKeys.StructureVisualizerType;
-			case StructureVisualizerDataBlockKind.Module:		return ThemeClassificationTypeNameKeys.StructureVisualizerModule;
-			case StructureVisualizerDataBlockKind.ValueType:	return ThemeClassificationTypeNameKeys.StructureVisualizerValueType;
-			case StructureVisualizerDataBlockKind.Interface:	return ThemeClassificationTypeNameKeys.StructureVisualizerInterface;
-			case StructureVisualizerDataBlockKind.Method:		return ThemeClassificationTypeNameKeys.StructureVisualizerMethod;
-			case StructureVisualizerDataBlockKind.Accessor:		return ThemeClassificationTypeNameKeys.StructureVisualizerAccessor;
-			case StructureVisualizerDataBlockKind.AnonymousMethod:return ThemeClassificationTypeNameKeys.StructureVisualizerAnonymousMethod;
-			case StructureVisualizerDataBlockKind.Constructor:	return ThemeClassificationTypeNameKeys.StructureVisualizerConstructor;
-			case StructureVisualizerDataBlockKind.Destructor:	return ThemeClassificationTypeNameKeys.StructureVisualizerDestructor;
-			case StructureVisualizerDataBlockKind.Operator:		return ThemeClassificationTypeNameKeys.StructureVisualizerOperator;
-			case StructureVisualizerDataBlockKind.Conditional:	return ThemeClassificationTypeNameKeys.StructureVisualizerConditional;
-			case StructureVisualizerDataBlockKind.Loop:			return ThemeClassificationTypeNameKeys.StructureVisualizerLoop;
-			case StructureVisualizerDataBlockKind.Property:		return ThemeClassificationTypeNameKeys.StructureVisualizerProperty;
-			case StructureVisualizerDataBlockKind.Event:		return ThemeClassificationTypeNameKeys.StructureVisualizerEvent;
-			case StructureVisualizerDataBlockKind.Try:			return ThemeClassificationTypeNameKeys.StructureVisualizerTry;
-			case StructureVisualizerDataBlockKind.Catch:		return ThemeClassificationTypeNameKeys.StructureVisualizerCatch;
-			case StructureVisualizerDataBlockKind.Filter:		return ThemeClassificationTypeNameKeys.StructureVisualizerFilter;
-			case StructureVisualizerDataBlockKind.Finally:		return ThemeClassificationTypeNameKeys.StructureVisualizerFinally;
-			case StructureVisualizerDataBlockKind.Fault:		return ThemeClassificationTypeNameKeys.StructureVisualizerFault;
-			case StructureVisualizerDataBlockKind.Lock:			return ThemeClassificationTypeNameKeys.StructureVisualizerLock;
-			case StructureVisualizerDataBlockKind.Using:		return ThemeClassificationTypeNameKeys.StructureVisualizerUsing;
-			case StructureVisualizerDataBlockKind.Fixed:		return ThemeClassificationTypeNameKeys.StructureVisualizerFixed;
-			case StructureVisualizerDataBlockKind.Switch:		return ThemeClassificationTypeNameKeys.StructureVisualizerSwitch;
-			case StructureVisualizerDataBlockKind.Case:			return ThemeClassificationTypeNameKeys.StructureVisualizerCase;
-			case StructureVisualizerDataBlockKind.LocalFunction:return ThemeClassificationTypeNameKeys.StructureVisualizerLocalFunction;
-			case StructureVisualizerDataBlockKind.Other:		return ThemeClassificationTypeNameKeys.StructureVisualizerOther;
+			case BlockStructureKind.Namespace:		return ThemeClassificationTypeNameKeys.BlockStructureNamespace;
+			case BlockStructureKind.Type:			return ThemeClassificationTypeNameKeys.BlockStructureType;
+			case BlockStructureKind.Module:			return ThemeClassificationTypeNameKeys.BlockStructureModule;
+			case BlockStructureKind.ValueType:		return ThemeClassificationTypeNameKeys.BlockStructureValueType;
+			case BlockStructureKind.Interface:		return ThemeClassificationTypeNameKeys.BlockStructureInterface;
+			case BlockStructureKind.Method:			return ThemeClassificationTypeNameKeys.BlockStructureMethod;
+			case BlockStructureKind.Accessor:		return ThemeClassificationTypeNameKeys.BlockStructureAccessor;
+			case BlockStructureKind.AnonymousMethod:return ThemeClassificationTypeNameKeys.BlockStructureAnonymousMethod;
+			case BlockStructureKind.Constructor:	return ThemeClassificationTypeNameKeys.BlockStructureConstructor;
+			case BlockStructureKind.Destructor:		return ThemeClassificationTypeNameKeys.BlockStructureDestructor;
+			case BlockStructureKind.Operator:		return ThemeClassificationTypeNameKeys.BlockStructureOperator;
+			case BlockStructureKind.Conditional:	return ThemeClassificationTypeNameKeys.BlockStructureConditional;
+			case BlockStructureKind.Loop:			return ThemeClassificationTypeNameKeys.BlockStructureLoop;
+			case BlockStructureKind.Property:		return ThemeClassificationTypeNameKeys.BlockStructureProperty;
+			case BlockStructureKind.Event:			return ThemeClassificationTypeNameKeys.BlockStructureEvent;
+			case BlockStructureKind.Try:			return ThemeClassificationTypeNameKeys.BlockStructureTry;
+			case BlockStructureKind.Catch:			return ThemeClassificationTypeNameKeys.BlockStructureCatch;
+			case BlockStructureKind.Filter:			return ThemeClassificationTypeNameKeys.BlockStructureFilter;
+			case BlockStructureKind.Finally:		return ThemeClassificationTypeNameKeys.BlockStructureFinally;
+			case BlockStructureKind.Fault:			return ThemeClassificationTypeNameKeys.BlockStructureFault;
+			case BlockStructureKind.Lock:			return ThemeClassificationTypeNameKeys.BlockStructureLock;
+			case BlockStructureKind.Using:			return ThemeClassificationTypeNameKeys.BlockStructureUsing;
+			case BlockStructureKind.Fixed:			return ThemeClassificationTypeNameKeys.BlockStructureFixed;
+			case BlockStructureKind.Switch:			return ThemeClassificationTypeNameKeys.BlockStructureSwitch;
+			case BlockStructureKind.Case:			return ThemeClassificationTypeNameKeys.BlockStructureCase;
+			case BlockStructureKind.LocalFunction:	return ThemeClassificationTypeNameKeys.BlockStructureLocalFunction;
+			case BlockStructureKind.Other:			return ThemeClassificationTypeNameKeys.BlockStructureOther;
 			default:
 				Debug.Fail($"Unknown block kind: {blockKind}");
-				return ThemeClassificationTypeNameKeys.StructureVisualizerOther;
+				return ThemeClassificationTypeNameKeys.BlockStructureOther;
 			}
 		}
 
-		double GetLineXPosition(StructureVisualizerData data) => xPosCache.GetXPosition(data);
+		double GetLineXPosition(BlockStructureData data) => xPosCache.GetXPosition(data);
 		void ClearXPosCache() => xPosCache.Clear();
 		readonly XPosCache xPosCache;
 
@@ -442,7 +440,7 @@ namespace dnSpy.Text.Editor {
 				this.toXPosDict = new Dictionary<int, double>();
 			}
 
-			public double GetXPosition(StructureVisualizerData data) {
+			public double GetXPosition(BlockStructureData data) {
 				TryUpdateState();
 				var topPoint = data.Top.Start.TranslateTo(toXPosDictSnapshot, PointTrackingMode.Negative);
 				double x;
@@ -524,15 +522,15 @@ done:
 		}
 
 		sealed class LineElement : UIElement {
-			public StructureVisualizerData StructureVisualizerData { get; }
-			public SnapshotSpan Span => new SnapshotSpan(StructureVisualizerData.Top.Start, StructureVisualizerData.Bottom.End);
+			public BlockStructureData BlockStructureData { get; }
+			public SnapshotSpan Span => new SnapshotSpan(BlockStructureData.Top.Start, BlockStructureData.Bottom.End);
 			double x;
 			double top;
 			double bottom;
 			Pen pen;
 
-			public LineElement(StructureVisualizerData info) {
-				StructureVisualizerData = info;
+			public LineElement(BlockStructureData info) {
+				BlockStructureData = info;
 			}
 
 			protected override void OnRender(DrawingContext drawingContext) {
@@ -563,7 +561,7 @@ done:
 			UnregisterEvents();
 			RemoveAllLineElements();
 			ClearXPosCache();
-			structureVisualizerServiceDataProvider = NullStructureVisualizerServiceDataProvider.Instance;
+			blockStructureServiceDataProvider = NullBlockStructureServiceDataProvider.Instance;
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged -= Options_OptionChanged;
 		}

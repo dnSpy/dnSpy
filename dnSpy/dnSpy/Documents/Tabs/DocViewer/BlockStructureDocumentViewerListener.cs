@@ -17,16 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Decompiler;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
-	[ExportDocumentViewerCustomDataProvider]
-	sealed class StructureVisualizerDocumentViewerCustomDataProvider : IDocumentViewerCustomDataProvider {
-		public void OnCustomData(IDocumentViewerCustomDataContext context) {
-			var data = context.GetData<CodeBracesRange>(PredefinedCustomDataIds.CodeBracesRange);
-			var coll = data.Length == 0 ? LazyStructureVisualizerCollection.Empty : new LazyStructureVisualizerCollection(data);
-			context.AddCustomData(DocumentViewerContentDataIds.StructureVisualizer, coll);
+	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_BLOCKSTRUCTURESERVICE)]
+	sealed class BlockStructureDocumentViewerListener : IDocumentViewerListener {
+		readonly IBlockStructureServiceProvider blockStructureServiceProvider;
+
+		[ImportingConstructor]
+		BlockStructureDocumentViewerListener(IBlockStructureServiceProvider blockStructureServiceProvider) {
+			this.blockStructureServiceProvider = blockStructureServiceProvider;
+		}
+
+		public void OnEvent(DocumentViewerEventArgs e) {
+			if (e.EventType == DocumentViewerEvent.GotNewContent)
+				blockStructureServiceProvider.GetService(e.DocumentViewer.TextView).SetDataProvider(BlockStructureServiceDataProvider.TryCreate(e.DocumentViewer));
 		}
 	}
 }

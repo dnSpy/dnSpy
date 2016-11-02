@@ -200,33 +200,33 @@ namespace dnSpy.Contracts.Text {
 		BraceMatching,
 		LineSeparator,
 		FindMatchHighlightMarker,
-		StructureVisualizerNamespace,
-		StructureVisualizerType,
-		StructureVisualizerModule,
-		StructureVisualizerValueType,
-		StructureVisualizerInterface,
-		StructureVisualizerMethod,
-		StructureVisualizerAccessor,
-		StructureVisualizerAnonymousMethod,
-		StructureVisualizerConstructor,
-		StructureVisualizerDestructor,
-		StructureVisualizerOperator,
-		StructureVisualizerConditional,
-		StructureVisualizerLoop,
-		StructureVisualizerProperty,
-		StructureVisualizerEvent,
-		StructureVisualizerTry,
-		StructureVisualizerCatch,
-		StructureVisualizerFilter,
-		StructureVisualizerFinally,
-		StructureVisualizerFault,
-		StructureVisualizerLock,
-		StructureVisualizerUsing,
-		StructureVisualizerFixed,
-		StructureVisualizerSwitch,
-		StructureVisualizerCase,
-		StructureVisualizerLocalFunction,
-		StructureVisualizerOther,
+		BlockStructureNamespace,
+		BlockStructureType,
+		BlockStructureModule,
+		BlockStructureValueType,
+		BlockStructureInterface,
+		BlockStructureMethod,
+		BlockStructureAccessor,
+		BlockStructureAnonymousMethod,
+		BlockStructureConstructor,
+		BlockStructureDestructor,
+		BlockStructureOperator,
+		BlockStructureConditional,
+		BlockStructureLoop,
+		BlockStructureProperty,
+		BlockStructureEvent,
+		BlockStructureTry,
+		BlockStructureCatch,
+		BlockStructureFilter,
+		BlockStructureFinally,
+		BlockStructureFault,
+		BlockStructureLock,
+		BlockStructureUsing,
+		BlockStructureFixed,
+		BlockStructureSwitch,
+		BlockStructureCase,
+		BlockStructureLocalFunction,
+		BlockStructureOther,
 		CompletionMatchHighlight,
 		CompletionSuffix,
 		SignatureHelpDocumentation,
@@ -438,33 +438,33 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object BraceMatching = TextColor.BraceMatching;
 		public static readonly object LineSeparator = TextColor.LineSeparator;
 		public static readonly object FindMatchHighlightMarker = TextColor.FindMatchHighlightMarker;
-		public static readonly object StructureVisualizerNamespace = TextColor.StructureVisualizerNamespace;
-		public static readonly object StructureVisualizerType = TextColor.StructureVisualizerType;
-		public static readonly object StructureVisualizerModule = TextColor.StructureVisualizerModule;
-		public static readonly object StructureVisualizerValueType = TextColor.StructureVisualizerValueType;
-		public static readonly object StructureVisualizerInterface = TextColor.StructureVisualizerInterface;
-		public static readonly object StructureVisualizerMethod = TextColor.StructureVisualizerMethod;
-		public static readonly object StructureVisualizerAccessor = TextColor.StructureVisualizerAccessor;
-		public static readonly object StructureVisualizerAnonymousMethod = TextColor.StructureVisualizerAnonymousMethod;
-		public static readonly object StructureVisualizerConstructor = TextColor.StructureVisualizerConstructor;
-		public static readonly object StructureVisualizerDestructor = TextColor.StructureVisualizerDestructor;
-		public static readonly object StructureVisualizerOperator = TextColor.StructureVisualizerOperator;
-		public static readonly object StructureVisualizerConditional = TextColor.StructureVisualizerConditional;
-		public static readonly object StructureVisualizerLoop = TextColor.StructureVisualizerLoop;
-		public static readonly object StructureVisualizerProperty = TextColor.StructureVisualizerProperty;
-		public static readonly object StructureVisualizerEvent = TextColor.StructureVisualizerEvent;
-		public static readonly object StructureVisualizerTry = TextColor.StructureVisualizerTry;
-		public static readonly object StructureVisualizerCatch = TextColor.StructureVisualizerCatch;
-		public static readonly object StructureVisualizerFilter = TextColor.StructureVisualizerFilter;
-		public static readonly object StructureVisualizerFinally = TextColor.StructureVisualizerFinally;
-		public static readonly object StructureVisualizerFault = TextColor.StructureVisualizerFault;
-		public static readonly object StructureVisualizerLock = TextColor.StructureVisualizerLock;
-		public static readonly object StructureVisualizerUsing = TextColor.StructureVisualizerUsing;
-		public static readonly object StructureVisualizerFixed = TextColor.StructureVisualizerFixed;
-		public static readonly object StructureVisualizerSwitch = TextColor.StructureVisualizerSwitch;
-		public static readonly object StructureVisualizerCase = TextColor.StructureVisualizerCase;
-		public static readonly object StructureVisualizerLocalFunction = TextColor.StructureVisualizerLocalFunction;
-		public static readonly object StructureVisualizerOther = TextColor.StructureVisualizerOther;
+		public static readonly object BlockStructureNamespace = TextColor.BlockStructureNamespace;
+		public static readonly object BlockStructureType = TextColor.BlockStructureType;
+		public static readonly object BlockStructureModule = TextColor.BlockStructureModule;
+		public static readonly object BlockStructureValueType = TextColor.BlockStructureValueType;
+		public static readonly object BlockStructureInterface = TextColor.BlockStructureInterface;
+		public static readonly object BlockStructureMethod = TextColor.BlockStructureMethod;
+		public static readonly object BlockStructureAccessor = TextColor.BlockStructureAccessor;
+		public static readonly object BlockStructureAnonymousMethod = TextColor.BlockStructureAnonymousMethod;
+		public static readonly object BlockStructureConstructor = TextColor.BlockStructureConstructor;
+		public static readonly object BlockStructureDestructor = TextColor.BlockStructureDestructor;
+		public static readonly object BlockStructureOperator = TextColor.BlockStructureOperator;
+		public static readonly object BlockStructureConditional = TextColor.BlockStructureConditional;
+		public static readonly object BlockStructureLoop = TextColor.BlockStructureLoop;
+		public static readonly object BlockStructureProperty = TextColor.BlockStructureProperty;
+		public static readonly object BlockStructureEvent = TextColor.BlockStructureEvent;
+		public static readonly object BlockStructureTry = TextColor.BlockStructureTry;
+		public static readonly object BlockStructureCatch = TextColor.BlockStructureCatch;
+		public static readonly object BlockStructureFilter = TextColor.BlockStructureFilter;
+		public static readonly object BlockStructureFinally = TextColor.BlockStructureFinally;
+		public static readonly object BlockStructureFault = TextColor.BlockStructureFault;
+		public static readonly object BlockStructureLock = TextColor.BlockStructureLock;
+		public static readonly object BlockStructureUsing = TextColor.BlockStructureUsing;
+		public static readonly object BlockStructureFixed = TextColor.BlockStructureFixed;
+		public static readonly object BlockStructureSwitch = TextColor.BlockStructureSwitch;
+		public static readonly object BlockStructureCase = TextColor.BlockStructureCase;
+		public static readonly object BlockStructureLocalFunction = TextColor.BlockStructureLocalFunction;
+		public static readonly object BlockStructureOther = TextColor.BlockStructureOther;
 		public static readonly object CompletionMatchHighlight = TextColor.CompletionMatchHighlight;
 		public static readonly object CompletionSuffix = TextColor.CompletionSuffix;
 		public static readonly object SignatureHelpDocumentation = TextColor.SignatureHelpDocumentation;
@@ -678,33 +678,33 @@ namespace dnSpy.Contracts.Text {
 			BraceMatching,
 			LineSeparator,
 			FindMatchHighlightMarker,
-			StructureVisualizerNamespace,
-			StructureVisualizerType,
-			StructureVisualizerModule,
-			StructureVisualizerValueType,
-			StructureVisualizerInterface,
-			StructureVisualizerMethod,
-			StructureVisualizerAccessor,
-			StructureVisualizerAnonymousMethod,
-			StructureVisualizerConstructor,
-			StructureVisualizerDestructor,
-			StructureVisualizerOperator,
-			StructureVisualizerConditional,
-			StructureVisualizerLoop,
-			StructureVisualizerProperty,
-			StructureVisualizerEvent,
-			StructureVisualizerTry,
-			StructureVisualizerCatch,
-			StructureVisualizerFilter,
-			StructureVisualizerFinally,
-			StructureVisualizerFault,
-			StructureVisualizerLock,
-			StructureVisualizerUsing,
-			StructureVisualizerFixed,
-			StructureVisualizerSwitch,
-			StructureVisualizerCase,
-			StructureVisualizerLocalFunction,
-			StructureVisualizerOther,
+			BlockStructureNamespace,
+			BlockStructureType,
+			BlockStructureModule,
+			BlockStructureValueType,
+			BlockStructureInterface,
+			BlockStructureMethod,
+			BlockStructureAccessor,
+			BlockStructureAnonymousMethod,
+			BlockStructureConstructor,
+			BlockStructureDestructor,
+			BlockStructureOperator,
+			BlockStructureConditional,
+			BlockStructureLoop,
+			BlockStructureProperty,
+			BlockStructureEvent,
+			BlockStructureTry,
+			BlockStructureCatch,
+			BlockStructureFilter,
+			BlockStructureFinally,
+			BlockStructureFault,
+			BlockStructureLock,
+			BlockStructureUsing,
+			BlockStructureFixed,
+			BlockStructureSwitch,
+			BlockStructureCase,
+			BlockStructureLocalFunction,
+			BlockStructureOther,
 			CompletionMatchHighlight,
 			CompletionSuffix,
 			SignatureHelpDocumentation,

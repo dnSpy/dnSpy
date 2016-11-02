@@ -17,15 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
+using Microsoft.VisualStudio.Text;
+
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Structure visualizer service
+	/// Provides data to a <see cref="IBlockStructureService"/>
 	/// </summary>
-	interface IStructureVisualizerService {
+	interface IBlockStructureServiceDataProvider {
 		/// <summary>
-		/// Sets the new data provider
+		/// Gets data for a line
 		/// </summary>
-		/// <param name="dataProvider">New data provider or null</param>
-		void SetDataProvider(IStructureVisualizerServiceDataProvider dataProvider);
+		/// <param name="lineExtent">Line extent</param>
+		/// <param name="list">Filled with the result</param>
+		/// <returns></returns>
+		void GetData(SnapshotSpan lineExtent, List<BlockStructureData> list);
 	}
 }

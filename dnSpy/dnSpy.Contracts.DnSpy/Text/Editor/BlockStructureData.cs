@@ -21,9 +21,9 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Data consumed by <see cref="IStructureVisualizerService"/>
+	/// Data consumed by <see cref="IBlockStructureService"/>
 	/// </summary>
-	struct StructureVisualizerData {
+	struct BlockStructureData {
 		/// <summary>
 		/// Span of start block
 		/// </summary>
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Block kind
 		/// </summary>
-		public StructureVisualizerDataBlockKind BlockKind { get; }
+		public BlockStructureKind BlockKind { get; }
 
 		/// <summary>
 		/// Constructor
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="blockTop">Start block span</param>
 		/// <param name="blockBottom">End block span</param>
 		/// <param name="blockKind">Block kind</param>
-		public StructureVisualizerData(SnapshotSpan blockTop, SnapshotSpan blockBottom, StructureVisualizerDataBlockKind blockKind) {
+		public BlockStructureData(SnapshotSpan blockTop, SnapshotSpan blockBottom, BlockStructureKind blockKind) {
 			Top = blockTop;
 			Bottom = blockBottom;
 			BlockKind = blockKind;

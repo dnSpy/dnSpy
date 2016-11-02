@@ -24,20 +24,20 @@ using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
-	sealed class StructureVisualizerServiceDataProvider : IStructureVisualizerServiceDataProvider {
-		readonly LazyStructureVisualizerCollection lazyCollection;
+	sealed class BlockStructureServiceDataProvider : IBlockStructureServiceDataProvider {
+		readonly LazyBlockStructureCollection lazyCollection;
 
-		StructureVisualizerServiceDataProvider(LazyStructureVisualizerCollection lazyCollection) {
+		BlockStructureServiceDataProvider(LazyBlockStructureCollection lazyCollection) {
 			if (lazyCollection == null)
 				throw new ArgumentNullException(nameof(lazyCollection));
 			this.lazyCollection = lazyCollection;
 		}
 
-		public static IStructureVisualizerServiceDataProvider TryCreate(IDocumentViewer documentViewer) {
-			var lazyColl = documentViewer.Content.GetCustomData<LazyStructureVisualizerCollection>(DocumentViewerContentDataIds.StructureVisualizer);
-			return lazyColl == null ? null : new StructureVisualizerServiceDataProvider(lazyColl);
+		public static IBlockStructureServiceDataProvider TryCreate(IDocumentViewer documentViewer) {
+			var lazyColl = documentViewer.Content.GetCustomData<LazyBlockStructureCollection>(DocumentViewerContentDataIds.BlockStructure);
+			return lazyColl == null ? null : new BlockStructureServiceDataProvider(lazyColl);
 		}
 
-		public void GetData(SnapshotSpan lineExtent, List<StructureVisualizerData> list) => lazyCollection.Collection.GetData(lineExtent, list);
+		public void GetData(SnapshotSpan lineExtent, List<BlockStructureData> list) => lazyCollection.Collection.GetData(lineExtent, list);
 	}
 }

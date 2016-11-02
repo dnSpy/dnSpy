@@ -898,139 +898,139 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string FindMatchHighlightMarker = "Theme-" + nameof(FindMatchHighlightMarker);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerNamespace"/>
+		/// <see cref="TextColor.BlockStructureNamespace"/>
 		/// </summary>
-		public const string StructureVisualizerNamespace = "Theme-" + nameof(StructureVisualizerNamespace);
+		public const string BlockStructureNamespace = "Theme-" + nameof(BlockStructureNamespace);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerType"/>
+		/// <see cref="TextColor.BlockStructureType"/>
 		/// </summary>
-		public const string StructureVisualizerType = "Theme-" + nameof(StructureVisualizerType);
+		public const string BlockStructureType = "Theme-" + nameof(BlockStructureType);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerModule"/>
+		/// <see cref="TextColor.BlockStructureModule"/>
 		/// </summary>
-		public const string StructureVisualizerModule = "Theme-" + nameof(StructureVisualizerModule);
+		public const string BlockStructureModule = "Theme-" + nameof(BlockStructureModule);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerValueType"/>
+		/// <see cref="TextColor.BlockStructureValueType"/>
 		/// </summary>
-		public const string StructureVisualizerValueType = "Theme-" + nameof(StructureVisualizerValueType);
+		public const string BlockStructureValueType = "Theme-" + nameof(BlockStructureValueType);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerInterface"/>
+		/// <see cref="TextColor.BlockStructureInterface"/>
 		/// </summary>
-		public const string StructureVisualizerInterface = "Theme-" + nameof(StructureVisualizerInterface);
+		public const string BlockStructureInterface = "Theme-" + nameof(BlockStructureInterface);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerMethod"/>
+		/// <see cref="TextColor.BlockStructureMethod"/>
 		/// </summary>
-		public const string StructureVisualizerMethod = "Theme-" + nameof(StructureVisualizerMethod);
+		public const string BlockStructureMethod = "Theme-" + nameof(BlockStructureMethod);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerAccessor"/>
+		/// <see cref="TextColor.BlockStructureAccessor"/>
 		/// </summary>
-		public const string StructureVisualizerAccessor = "Theme-" + nameof(StructureVisualizerAccessor);
+		public const string BlockStructureAccessor = "Theme-" + nameof(BlockStructureAccessor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerAnonymousMethod"/>
+		/// <see cref="TextColor.BlockStructureAnonymousMethod"/>
 		/// </summary>
-		public const string StructureVisualizerAnonymousMethod = "Theme-" + nameof(StructureVisualizerAnonymousMethod);
+		public const string BlockStructureAnonymousMethod = "Theme-" + nameof(BlockStructureAnonymousMethod);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerConstructor"/>
+		/// <see cref="TextColor.BlockStructureConstructor"/>
 		/// </summary>
-		public const string StructureVisualizerConstructor = "Theme-" + nameof(StructureVisualizerConstructor);
+		public const string BlockStructureConstructor = "Theme-" + nameof(BlockStructureConstructor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerDestructor"/>
+		/// <see cref="TextColor.BlockStructureDestructor"/>
 		/// </summary>
-		public const string StructureVisualizerDestructor = "Theme-" + nameof(StructureVisualizerDestructor);
+		public const string BlockStructureDestructor = "Theme-" + nameof(BlockStructureDestructor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerOperator"/>
+		/// <see cref="TextColor.BlockStructureOperator"/>
 		/// </summary>
-		public const string StructureVisualizerOperator = "Theme-" + nameof(StructureVisualizerOperator);
+		public const string BlockStructureOperator = "Theme-" + nameof(BlockStructureOperator);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerConditional"/>
+		/// <see cref="TextColor.BlockStructureConditional"/>
 		/// </summary>
-		public const string StructureVisualizerConditional = "Theme-" + nameof(StructureVisualizerConditional);
+		public const string BlockStructureConditional = "Theme-" + nameof(BlockStructureConditional);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLoop"/>
+		/// <see cref="TextColor.BlockStructureLoop"/>
 		/// </summary>
-		public const string StructureVisualizerLoop = "Theme-" + nameof(StructureVisualizerLoop);
+		public const string BlockStructureLoop = "Theme-" + nameof(BlockStructureLoop);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerProperty"/>
+		/// <see cref="TextColor.BlockStructureProperty"/>
 		/// </summary>
-		public const string StructureVisualizerProperty = "Theme-" + nameof(StructureVisualizerProperty);
+		public const string BlockStructureProperty = "Theme-" + nameof(BlockStructureProperty);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerEvent"/>
+		/// <see cref="TextColor.BlockStructureEvent"/>
 		/// </summary>
-		public const string StructureVisualizerEvent = "Theme-" + nameof(StructureVisualizerEvent);
+		public const string BlockStructureEvent = "Theme-" + nameof(BlockStructureEvent);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerTry"/>
+		/// <see cref="TextColor.BlockStructureTry"/>
 		/// </summary>
-		public const string StructureVisualizerTry = "Theme-" + nameof(StructureVisualizerTry);
+		public const string BlockStructureTry = "Theme-" + nameof(BlockStructureTry);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerCatch"/>
+		/// <see cref="TextColor.BlockStructureCatch"/>
 		/// </summary>
-		public const string StructureVisualizerCatch = "Theme-" + nameof(StructureVisualizerCatch);
+		public const string BlockStructureCatch = "Theme-" + nameof(BlockStructureCatch);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFilter"/>
+		/// <see cref="TextColor.BlockStructureFilter"/>
 		/// </summary>
-		public const string StructureVisualizerFilter = "Theme-" + nameof(StructureVisualizerFilter);
+		public const string BlockStructureFilter = "Theme-" + nameof(BlockStructureFilter);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFinally"/>
+		/// <see cref="TextColor.BlockStructureFinally"/>
 		/// </summary>
-		public const string StructureVisualizerFinally = "Theme-" + nameof(StructureVisualizerFinally);
+		public const string BlockStructureFinally = "Theme-" + nameof(BlockStructureFinally);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFault"/>
+		/// <see cref="TextColor.BlockStructureFault"/>
 		/// </summary>
-		public const string StructureVisualizerFault = "Theme-" + nameof(StructureVisualizerFault);
+		public const string BlockStructureFault = "Theme-" + nameof(BlockStructureFault);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLock"/>
+		/// <see cref="TextColor.BlockStructureLock"/>
 		/// </summary>
-		public const string StructureVisualizerLock = "Theme-" + nameof(StructureVisualizerLock);
+		public const string BlockStructureLock = "Theme-" + nameof(BlockStructureLock);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerUsing"/>
+		/// <see cref="TextColor.BlockStructureUsing"/>
 		/// </summary>
-		public const string StructureVisualizerUsing = "Theme-" + nameof(StructureVisualizerUsing);
+		public const string BlockStructureUsing = "Theme-" + nameof(BlockStructureUsing);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFixed"/>
+		/// <see cref="TextColor.BlockStructureFixed"/>
 		/// </summary>
-		public const string StructureVisualizerFixed = "Theme-" + nameof(StructureVisualizerFixed);
+		public const string BlockStructureFixed = "Theme-" + nameof(BlockStructureFixed);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerSwitch"/>
+		/// <see cref="TextColor.BlockStructureSwitch"/>
 		/// </summary>
-		public const string StructureVisualizerSwitch = "Theme-" + nameof(StructureVisualizerSwitch);
+		public const string BlockStructureSwitch = "Theme-" + nameof(BlockStructureSwitch);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerCase"/>
+		/// <see cref="TextColor.BlockStructureCase"/>
 		/// </summary>
-		public const string StructureVisualizerCase = "Theme-" + nameof(StructureVisualizerCase);
+		public const string BlockStructureCase = "Theme-" + nameof(BlockStructureCase);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLocalFunction"/>
+		/// <see cref="TextColor.BlockStructureLocalFunction"/>
 		/// </summary>
-		public const string StructureVisualizerLocalFunction = "Theme-" + nameof(StructureVisualizerLocalFunction);
+		public const string BlockStructureLocalFunction = "Theme-" + nameof(BlockStructureLocalFunction);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerOther"/>
+		/// <see cref="TextColor.BlockStructureOther"/>
 		/// </summary>
-		public const string StructureVisualizerOther = "Theme-" + nameof(StructureVisualizerOther);
+		public const string BlockStructureOther = "Theme-" + nameof(BlockStructureOther);
 
 		/// <summary>
 		/// <see cref="TextColor.CompletionMatchHighlight"/>
