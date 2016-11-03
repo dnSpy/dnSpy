@@ -25,7 +25,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.MSBuild {
-	public sealed class ProjectModuleOptions {
+	sealed class ProjectModuleOptions {
 		/// <summary>
 		/// Module
 		/// </summary>

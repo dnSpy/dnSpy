@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Decompiler.MSBuild {
-	public interface IMSBuildProgressListener {
+	interface IMSBuildProgressListener {
 		/// <summary>
 		/// Called to initialize max progress
 		/// </summary>

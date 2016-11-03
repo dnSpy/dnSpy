@@ -24,7 +24,7 @@ using System.Threading;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.MSBuild {
-	public sealed class ProjectCreatorOptions {
+	sealed class ProjectCreatorOptions {
 		/// <summary>
 		/// The logger or null
 		/// </summary>

@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Decompiler.MSBuild {
-	public enum ProjectVersion {
+	enum ProjectVersion {
 		// VS2003 uses a different project format
 		VS2005,
 		VS2008,
