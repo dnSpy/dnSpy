@@ -39,10 +39,19 @@
     <Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
     <SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
     <img2:DsImageConverter x:Key="dsImageConverter" />
+    <img2:DsImageBitmapScalingModeConverter x:Key="dsImageBitmapScalingModeConverter" />
 
     <Style x:Key="{x:Type img:DsImage}" TargetType="{x:Type img:DsImage}">
         <Setter Property="Width" Value="16" />
         <Setter Property="Height" Value="16" />
+        <Setter Property="RenderOptions.BitmapScalingMode">
+            <Setter.Value>
+                <MultiBinding Mode="OneWay" Converter="{StaticResource dsImageBitmapScalingModeConverter}">
+                    <Binding Mode="OneWay" Path="(img:DsImage.Zoom)" RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay" Path="(img:DsImage.Dpi)" RelativeSource="{RelativeSource Self}" />
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Source">
             <Setter.Value>
                 <MultiBinding Mode="OneWay" Converter="{StaticResource dsImageConverter}">

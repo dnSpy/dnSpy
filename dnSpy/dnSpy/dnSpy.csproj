@@ -296,6 +296,7 @@
     <Compile Include="Extension\LoadedExtension.cs" />
     <Compile Include="Images\DefaultImageSourceInfoProvider.cs" />
     <Compile Include="Images\DotNetImageService.cs" />
+    <Compile Include="Images\DsImageBitmapScalingModeConverter.cs" />
     <Compile Include="Images\DsImageConverter.cs" />
     <Compile Include="Images\ImageReferenceHelper.cs" />
     <Compile Include="Images\ImageService.cs" />
