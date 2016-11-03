@@ -30,6 +30,7 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.AsmEditor.Utilities;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
@@ -42,8 +43,10 @@ using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Hex {
 	[ExportAutoLoaded]
@@ -159,6 +162,63 @@ namespace dnSpy.AsmEditor.Hex {
 		public override bool IsEnabled(HexContext context) => true;
 	}
 
+	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.TextEditor - 1)]
+	sealed class HexCommandTargetFilterProvider : ICommandTargetFilterProvider {
+		readonly IDocumentTabService documentTabService;
+		readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+		[ImportingConstructor]
+		HexCommandTargetFilterProvider(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations) {
+			this.documentTabService = documentTabService;
+			this.methodAnnotations = methodAnnotations;
+		}
+
+		public ICommandTargetFilter Create(object target) {
+			if ((target as ITextView)?.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer) == true)
+				return new HexCommandTargetFilter(documentTabService, methodAnnotations);
+			return null;
+		}
+	}
+
+	sealed class HexCommandTargetFilter : ICommandTargetFilter {
+		readonly IDocumentTabService documentTabService;
+		readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+		public HexCommandTargetFilter(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations) {
+			this.documentTabService = documentTabService;
+			this.methodAnnotations = methodAnnotations;
+		}
+
+		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
+			if (group == CommandConstants.StandardGroup) {
+				switch ((StandardIds)cmdId) {
+				case StandardIds.Cut:
+					return CommandTargetStatus.Handled;
+				}
+			}
+			return CommandTargetStatus.NotHandled;
+		}
+
+		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
+			object result = null;
+			return Execute(group, cmdId, args, ref result);
+		}
+
+		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			if (group == CommandConstants.StandardGroup) {
+				switch ((StandardIds)cmdId) {
+				case StandardIds.Cut:
+					OpenHexEditorCommand.ExecuteCommand(documentTabService, methodAnnotations);
+					return CommandTargetStatus.Handled;
+				}
+			}
+			return CommandTargetStatus.NotHandled;
+		}
+
+		public void SetNextCommandTarget(ICommandTarget commandTarget) { }
+		public void Dispose() { }
+	}
+
 	static class OpenHexEditorCommand {
 		static readonly RoutedCommand OpenHexEditor = new RoutedCommand("OpenHexEditor", typeof(OpenHexEditorCommand));
 		internal static void Initialize(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations) {
@@ -198,7 +258,7 @@ namespace dnSpy.AsmEditor.Hex {
 			public override bool IsVisible(HexContext context) => IsVisibleInternal(documentTabService, methodAnnotations, context);
 		}
 
-		static void ExecuteCommand(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations) {
+		internal static void ExecuteCommand(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations) {
 			var context = HexMenuCommand.CreateContext(documentTabService);
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				ShowAddressReferenceInHexEditorCommand.ExecuteInternal(documentTabService, context);
