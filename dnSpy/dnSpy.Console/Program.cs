@@ -95,36 +95,30 @@ namespace dnSpy_Console {
 	sealed class ConsoleColorizerOutput : IDecompilerOutput {
 		readonly ColorProvider colorProvider;
 		readonly TextWriter writer;
-		readonly string indentationString;
-		int indentation;
+		readonly Indenter indenter;
 		bool addIndent = true;
 		int position;
 
 		public int Length => position;
-		public int NextPosition => position + (addIndent ? indentation * indentationString.Length : 0);
+		public int NextPosition => position + (addIndent ? indenter.String.Length : 0);
 
 		bool IDecompilerOutput.UsesCustomData => false;
 
-		public ConsoleColorizerOutput(TextWriter writer, ColorProvider colorProvider, string indentationString = "\t") {
+		public ConsoleColorizerOutput(TextWriter writer, ColorProvider colorProvider, Indenter indenter) {
 			if (writer == null)
 				throw new ArgumentNullException(nameof(writer));
 			if (colorProvider == null)
 				throw new ArgumentNullException(nameof(colorProvider));
-			if (indentationString == null)
-				throw new ArgumentNullException(nameof(indentationString));
+			if (indenter == null)
+				throw new ArgumentNullException(nameof(indenter));
 			this.writer = writer;
 			this.colorProvider = colorProvider;
-			this.indentationString = indentationString;
+			this.indenter = indenter;
 		}
 
 		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
-		public void IncreaseIndent() => indentation++;
-
-		public void DecreaseIndent() {
-			Debug.Assert(indentation > 0);
-			if (indentation > 0)
-				indentation--;
-		}
+		public void IncreaseIndent() => indenter.IncreaseIndent();
+		public void DecreaseIndent() => indenter.DecreaseIndent();
 
 		public void WriteLine() {
 			var nlArray = newLineArray;
@@ -138,9 +132,9 @@ namespace dnSpy_Console {
 			if (!addIndent)
 				return;
 			addIndent = false;
-			for (int i = 0; i < indentation; i++)
-				writer.Write(indentationString);
-			position += indentationString.Length * indentation;
+			var s = indenter.String;
+			writer.Write(s);
+			position += s.Length;
 		}
 
 		void AddText(string text, object color) {
@@ -720,9 +714,9 @@ namespace dnSpy_Console {
 				var writer = Console.Out;
 				IDecompilerOutput output;
 				if (colorizeOutput)
-					output = new ConsoleColorizerOutput(writer, CreateColorProvider(), GetIndentationString());
+					output = new ConsoleColorizerOutput(writer, CreateColorProvider(), GetIndenter());
 				else
-					output = new TextWriterDecompilerOutput(writer, GetIndentationString());
+					output = new TextWriterDecompilerOutput(writer, GetIndenter());
 
 				var lang = GetLanguage();
 				if (member is MethodDef)
@@ -750,8 +744,7 @@ namespace dnSpy_Console {
 				options.NumberOfThreads = numThreads;
 				options.ProjectModules.AddRange(files);
 				options.UserGACPaths.AddRange(userGacPaths);
-				string indentationString = GetIndentationString();
-				options.CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter, indentationString);
+				options.CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter, GetIndenter());
 				if (createSlnFile && !string.IsNullOrEmpty(slnName))
 					options.SolutionFilename = slnName;
 				var creator = new MSBuildProjectCreator(options);
@@ -759,10 +752,10 @@ namespace dnSpy_Console {
 			}
 		}
 
-		string GetIndentationString() {
+		Indenter GetIndenter() {
 			if (spaces <= 0)
-				return "\t";
-			return new string(' ', spaces);
+				return new Indenter(4, 4, true);
+			return new Indenter(spaces, spaces, false);
 		}
 
 		static TypeDef FindType(ModuleDef module, string name) {

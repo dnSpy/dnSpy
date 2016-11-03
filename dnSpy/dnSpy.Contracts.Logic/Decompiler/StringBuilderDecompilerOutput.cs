@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Text;
 
@@ -28,8 +27,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public class StringBuilderDecompilerOutput : IDecompilerOutput {
 		readonly StringBuilder sb;
-		readonly string indentationString;
-		int indentation;
+		readonly Indenter indenter;
 		bool addIndent = true;
 
 		/// <summary>
@@ -41,7 +39,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// This equals <see cref="Length"/> plus any indentation that must be written
 		/// before the next text.
 		/// </summary>
-		public virtual int NextPosition => sb.Length + (addIndent ? indentation * indentationString.Length : 0);
+		public virtual int NextPosition => sb.Length + (addIndent ? indenter.String.Length : 0);
 
 		bool IDecompilerOutput.UsesCustomData => false;
 
@@ -50,33 +48,31 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public StringBuilderDecompilerOutput() {
 			this.sb = new StringBuilder();
-			this.indentationString = "\t";
+			this.indenter = new Indenter(4, 4, true);
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="indentationString">Indentation string</param>
-		public StringBuilderDecompilerOutput(string indentationString) {
-			if (indentationString == null)
-				throw new ArgumentNullException(nameof(indentationString));
+		/// <param name="indenter">Indenter</param>
+		public StringBuilderDecompilerOutput(Indenter indenter) {
+			if (indenter == null)
+				throw new ArgumentNullException(nameof(indenter));
 			this.sb = new StringBuilder();
-			this.indentationString = indentationString;
+			this.indenter = indenter;
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="stringBuilder">String builder to use. Its <see cref="StringBuilder.Clear"/> method gets called by the constructor</param>
-		/// <param name="indentationString">Indentation string</param>
-		public StringBuilderDecompilerOutput(StringBuilder stringBuilder, string indentationString = "\t") {
+		/// <param name="indenter">Indenter or null</param>
+		public StringBuilderDecompilerOutput(StringBuilder stringBuilder, Indenter indenter = null) {
 			if (stringBuilder == null)
 				throw new ArgumentNullException(nameof(stringBuilder));
-			if (indentationString == null)
-				throw new ArgumentNullException(nameof(indentationString));
 			stringBuilder.Clear();
 			this.sb = stringBuilder;
-			this.indentationString = indentationString;
+			this.indenter = indenter ?? new Indenter(4, 4, true);
 		}
 
 		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
@@ -84,16 +80,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Increments the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		public virtual void IncreaseIndent() => indentation++;
+		public virtual void IncreaseIndent() => indenter.IncreaseIndent();
 
 		/// <summary>
 		/// Decrements the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		public virtual void DecreaseIndent() {
-			Debug.Assert(indentation > 0);
-			if (indentation > 0)
-				indentation--;
-		}
+		public virtual void DecreaseIndent() => indenter.DecreaseIndent();
 
 		/// <summary>
 		/// Writes a new line without writing any indentation
@@ -107,8 +99,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (!addIndent)
 				return;
 			addIndent = false;
-			for (int i = 0; i < indentation; i++)
-				sb.Append(indentationString);
+			sb.Append(indenter.String);
 		}
 
 		void AddText(string text, object color) {

@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public sealed class TextColorWriterToDecompilerOutput : IDecompilerOutput {
 		readonly ITextColorWriter output;
-		int indent;
+		readonly Indenter indenter;
 		int offset;
 		bool addIndent = true;
 
@@ -40,17 +40,17 @@ namespace dnSpy.Contracts.Decompiler {
 
 		TextColorWriterToDecompilerOutput(ITextColorWriter output) {
 			this.output = output;
-			this.indent = 0;
+			this.indenter = new Indenter(4, 4, true);
 			this.offset = 0;
 		}
 
 		int IDecompilerOutput.Length => offset;
-		int IDecompilerOutput.NextPosition => offset + (addIndent ? indent : 0);
+		int IDecompilerOutput.NextPosition => offset + (addIndent ? indenter.String.Length : 0);
 
 		bool IDecompilerOutput.UsesCustomData => false;
 		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
-		void IDecompilerOutput.IncreaseIndent() => indent++;
-		void IDecompilerOutput.DecreaseIndent() => indent--;
+		void IDecompilerOutput.IncreaseIndent() => indenter.IncreaseIndent();
+		void IDecompilerOutput.DecreaseIndent() => indenter.DecreaseIndent();
 
 		void IDecompilerOutput.Write(string text, int index, int length, object color) {
 			if (index == 0 && text.Length == length)
@@ -61,9 +61,10 @@ namespace dnSpy.Contracts.Decompiler {
 
 		void IDecompilerOutput.Write(string text, object color) {
 			if (addIndent) {
-				if (indent != 0)
-					output.Write(BoxedTextColor.Text, new string('\t', indent));
-				offset += indent;
+				var s = indenter.String;
+				if (s.Length != 0)
+					output.Write(BoxedTextColor.Text, s);
+				offset += s.Length;
 			}
 			output.Write(color, text);
 			offset += text.Length;

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using dnSpy.Contracts.Text;
 
@@ -28,8 +27,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public class TextWriterDecompilerOutput : IDecompilerOutput, IDisposable {
 		readonly TextWriter writer;
-		readonly string indentationString;
-		int indentation;
+		readonly Indenter indenter;
 		bool addIndent = true;
 		int position;
 
@@ -42,7 +40,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// This equals <see cref="Length"/> plus any indentation that must be written
 		/// before the next text.
 		/// </summary>
-		public virtual int NextPosition => position + (addIndent ? indentation * indentationString.Length : 0);
+		public virtual int NextPosition => position + (addIndent ? indenter.String.Length : 0);
 
 		bool IDecompilerOutput.UsesCustomData => false;
 
@@ -50,14 +48,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="writer">Text writer to use</param>
-		/// <param name="indentationString">Indentation string</param>
-		public TextWriterDecompilerOutput(TextWriter writer, string indentationString = "\t") {
+		/// <param name="indenter">Indenter or null</param>
+		public TextWriterDecompilerOutput(TextWriter writer, Indenter indenter = null) {
 			if (writer == null)
 				throw new ArgumentNullException(nameof(writer));
-			if (indentationString == null)
-				throw new ArgumentNullException(nameof(indentationString));
 			this.writer = writer;
-			this.indentationString = indentationString;
+			this.indenter = indenter ?? new Indenter(4, 4, true);
 		}
 
 		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
@@ -65,16 +61,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Increments the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		public virtual void IncreaseIndent() => indentation++;
+		public virtual void IncreaseIndent() => indenter.IncreaseIndent();
 
 		/// <summary>
 		/// Decrements the indentation level. Nothing is added to the output stream.
 		/// </summary>
-		public virtual void DecreaseIndent() {
-			Debug.Assert(indentation > 0);
-			if (indentation > 0)
-				indentation--;
-		}
+		public virtual void DecreaseIndent() => indenter.DecreaseIndent();
 
 		/// <summary>
 		/// Writes a new line without writing any indentation
@@ -91,9 +83,9 @@ namespace dnSpy.Contracts.Decompiler {
 			if (!addIndent)
 				return;
 			addIndent = false;
-			for (int i = 0; i < indentation; i++)
-				writer.Write(indentationString);
-			position += indentationString.Length * indentation;
+			var s = indenter.String;
+			writer.Write(s);
+			position += s.Length;
 		}
 
 		void AddText(string text, object color) {
