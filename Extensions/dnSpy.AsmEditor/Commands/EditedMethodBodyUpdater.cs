@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
@@ -33,23 +34,28 @@ namespace dnSpy.AsmEditor.Commands {
 		struct BodyState {
 			readonly Emit.MethodBody body;
 			readonly MethodImplAttributes implAttributes;
+			readonly CustomAttribute[] customAttributes;
 			readonly bool isBodyModified;
 
 			public BodyState(MethodDef method, bool isBodyModified) {
 				this.body = method.MethodBody;
 				this.implAttributes = method.ImplAttributes;
+				this.customAttributes = method.CustomAttributes.ToArray();
 				this.isBodyModified = isBodyModified;
 			}
 
-			public BodyState(Emit.MethodBody body, MethodImplAttributes implAttributes, bool isBodyModified) {
+			public BodyState(Emit.MethodBody body, MethodImplAttributes implAttributes, CustomAttribute[] customAttributes, bool isBodyModified) {
 				this.body = body;
 				this.implAttributes = implAttributes;
+				this.customAttributes = customAttributes;
 				this.isBodyModified = isBodyModified;
 			}
 
 			public void CopyTo(MethodDef method, IMethodAnnotations methodAnnotations) {
 				method.MethodBody = body;
 				method.ImplAttributes = implAttributes;
+				method.CustomAttributes.Clear();
+				method.CustomAttributes.AddRange(customAttributes);
 				methodAnnotations.SetBodyModified(method, isBodyModified);
 			}
 		}
@@ -60,14 +66,14 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly BodyState originalBodyState;
 		readonly BodyState newBodyState;
 
-		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes) {
+		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes, CustomAttribute[] newCustomAttributes) {
 			this.methodAnnotations = methodAnnotations;
 			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
 			this.method = originalMethod;
 			this.originalBodyState = new BodyState(originalMethod, methodAnnotations.Value.IsBodyModified(method));
-			this.newBodyState = new BodyState(newBody, newImplAttributes, true);
+			this.newBodyState = new BodyState(newBody, newImplAttributes, newCustomAttributes, true);
 		}
 
 		public void Add() => newBodyState.CopyTo(method, methodAnnotations.Value);

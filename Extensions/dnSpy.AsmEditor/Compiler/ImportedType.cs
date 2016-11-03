@@ -57,10 +57,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// </summary>
 		public MethodImplAttributes ImplAttributes { get; }
 
-		public EditedMethodBody(MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes implAttributes) {
+		/// <summary>
+		/// New custom attributes
+		/// </summary>
+		public CustomAttribute[] CustomAttributes { get; }
+
+		public EditedMethodBody(MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes implAttributes, CustomAttribute[] customAttributes) {
 			OriginalMethod = originalMethod;
 			NewBody = newBody;
 			ImplAttributes = implAttributes;
+			CustomAttributes = customAttributes;
 		}
 	}
 

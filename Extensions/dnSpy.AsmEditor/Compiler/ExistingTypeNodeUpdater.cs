@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.methods = type.NewMethods.Where(a => !specialMethods.Contains(a)).Select(a => new MethodNodeCreator(modNode, typeNode, a)).ToArray();
 			this.events = type.NewEvents.Select(a => new EventNodeCreator(modNode, typeNode, a)).ToArray();
 			this.properties = type.NewProperties.Select(a => new PropertyNodeCreator(modNode, typeNode, a)).ToArray();
-			this.editedMethods = type.EditedMethodBodies.Select(a => new EditedMethodBodyUpdater(methodAnnotations, modNode, a.OriginalMethod, a.NewBody, a.ImplAttributes)).ToArray();
+			this.editedMethods = type.EditedMethodBodies.Select(a => new EditedMethodBodyUpdater(methodAnnotations, modNode, a.OriginalMethod, a.NewBody, a.ImplAttributes, a.CustomAttributes)).ToArray();
 		}
 
 		static HashSet<MethodDef> GetSpecialMethods(MergedImportedType type) {

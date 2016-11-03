@@ -65,6 +65,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly List<CompilerDiagnostic> diagnostics;
 		readonly List<NewImportedType> newNonNestedImportedTypes;
 		readonly List<MergedImportedType> nonNestedMergedImportedTypes;
+		readonly HashSet<TypeDef> newStateMachineTypes;
 
 		ModuleDef sourceModule;
 		readonly Dictionary<TypeDef, ImportedType> oldTypeToNewType;
@@ -97,6 +98,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.diagnostics = new List<CompilerDiagnostic>();
 			this.newNonNestedImportedTypes = new List<NewImportedType>();
 			this.nonNestedMergedImportedTypes = new List<MergedImportedType>();
+			this.newStateMachineTypes = new HashSet<TypeDef>();
 			this.oldTypeToNewType = new Dictionary<TypeDef, ImportedType>();
 			this.oldTypeRefToNewType = new Dictionary<ITypeDefOrRef, ImportedType>(TypeEqualityComparer.Instance);
 			this.oldMethodToNewMethod = new Dictionary<MethodDef, MethodDef>();
@@ -337,7 +339,9 @@ namespace dnSpy.AsmEditor.Compiler {
 				Debug.Assert(targetMethod.Module == targetModule);
 
 				var importedType = (MergedImportedType)oldTypeToNewType[newMethod.DeclaringType];
-				importedType.EditedMethodBodies.Add(new EditedMethodBody(targetMethod, newMethod.Body, newMethod.ImplAttributes));
+				var caList = new List<CustomAttribute>(newMethod.CustomAttributes.Count);
+				ImportCustomAttributes(caList, newMethod);
+				importedType.EditedMethodBodies.Add(new EditedMethodBody(targetMethod, newMethod.Body, newMethod.ImplAttributes, caList.ToArray()));
 
 				var body = newMethod.Body;
 				if (body != null) {
@@ -367,6 +371,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (targetBaseType == null || targetBaseType.DeclaringType != null)
 				throw new InvalidOperationException();
 
+			var newStateMachineType = StateMachineHelpers.GetStateMachineType(newMethod);
+			if (newStateMachineType != null)
+				newStateMachineTypes.Add(newStateMachineType);
 			nonNestedMergedImportedTypes.Add(AddUpdatedType(newBaseType, targetBaseType));
 			editedMethodsToFix.Add(newMethod, targetMethod);
 		}
@@ -391,9 +398,12 @@ namespace dnSpy.AsmEditor.Compiler {
 					targetTypes.Remove(nestedTargetType);
 					TypeDef nestedNewType;
 					if (newTypes.TryGetValue(nestedTargetType, out nestedNewType)) {
-						newTypes.Remove(nestedTargetType);
-						var nestedImportedType = AddUpdatedType(nestedNewType, nestedTargetType);
-						importedType.NewNestedTypes.Add(nestedImportedType);
+						// If it's a state machine type, it's a new type
+						if (!newStateMachineTypes.Contains(nestedNewType)) {
+							newTypes.Remove(nestedTargetType);
+							var nestedImportedType = AddUpdatedType(nestedNewType, nestedTargetType);
+							importedType.NewNestedTypes.Add(nestedImportedType);
+						}
 					}
 					else {
 						// The user removed the type, or it was a compiler generated type that
