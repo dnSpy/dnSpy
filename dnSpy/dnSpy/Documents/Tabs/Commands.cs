@@ -209,7 +209,7 @@ namespace dnSpy.Documents.Tabs {
 	}
 
 
-	[ExportMenuItem (Header = "res:SortAsmsCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 50)]
+	[ExportMenuItem(Header = "res:SortAsmsCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 50)]
 	sealed class SortAssembliesCtxMenuCommand : MenuItemBase {
 		readonly IDocumentTreeView documentTreeView;
 
@@ -219,7 +219,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) => documentTreeView.CanSortTopNodes;
-		public override void Execute(IMenuItemContext context) => documentTreeView.SortTopNodes ();
+		public override void Execute(IMenuItemContext context) => documentTreeView.SortTopNodes();
 	}
 
 	[ExportAutoLoaded]
