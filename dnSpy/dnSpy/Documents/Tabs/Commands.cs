@@ -208,6 +208,19 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(IMenuItemContext context) => documentTreeView.SortTopNodes();
 	}
 
+	[ExportMenuItem(Header = "res:SortAsmsCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 50)]
+	sealed class SortAssembliesCtxMenuCommand : MenuItemBase {
+		readonly IDocumentTreeView documentTreeView;
+
+		[ImportingConstructor]
+		SortAssembliesCtxMenuCommand(IDocumentTreeView documentTreeView) {
+			this.documentTreeView = documentTreeView;
+		}
+
+		public override bool IsEnabled(IMenuItemContext context) => documentTreeView.CanSortTopNodes;
+		public override void Execute(IMenuItemContext context) => documentTreeView.SortTopNodes();
+	}
+
 	[ExportAutoLoaded]
 	sealed class ShowCodeEditorCommandLoader : IAutoLoaded {
 		public static readonly RoutedCommand ShowCodeEditorRoutedCommand = new RoutedCommand("ShowCodeEditorRoutedCommand", typeof(ShowCodeEditorCommandLoader));
