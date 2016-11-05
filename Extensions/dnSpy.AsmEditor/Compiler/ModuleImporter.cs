@@ -41,6 +41,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// Module and assembly attributes replace target module and assembly attributes
 		/// </summary>
 		ReplaceModuleAssemblyAttributes			= 0x00000001,
+
+		/// <summary>
+		/// Assembly declared security attributes replace target assembly's declared security attributes
+		/// </summary>
+		ReplaceAssemblyDeclSecurities			= 0x00000002,
 	}
 
 	sealed partial class ModuleImporter {
@@ -58,6 +63,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public NewImportedType[] NewNonNestedTypes => newNonNestedImportedTypes.ToArray();
 		public MergedImportedType[] MergedNonNestedTypes => nonNestedMergedImportedTypes.Where(a => !a.IsEmpty).ToArray();
 		public CustomAttribute[] NewAssemblyCustomAttributes { get; private set; }
+		public DeclSecurity[] NewAssemblyDeclSecurities { get; private set; }
 		public CustomAttribute[] NewModuleCustomAttributes { get; private set; }
 		public Resource[] NewResources { get; private set; }
 
@@ -161,6 +167,26 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
+		static void RemoveDuplicateSecurityPermissionAttributes(List<DeclSecurity> secAttrs) {
+			foreach (var declSec in secAttrs) {
+				if (declSec.Action != SecurityAction.RequestMinimum)
+					continue;
+				bool found = false;
+				var list = declSec.SecurityAttributes;
+				for (int i = 0; i < list.Count; i++) {
+					var ca = list[i];
+					if (ca.TypeFullName != "System.Security.Permissions.SecurityPermissionAttribute")
+						continue;
+					if (!found) {
+						found = true;
+						continue;
+					}
+					list.RemoveAt(i);
+					i--;
+				}
+			}
+		}
+
 		void InitializeTypesAndMethods() {
 			// Step 1: Initialize all definitions
 			InitializeTypesStep1(oldTypeToNewType.Values.OfType<NewImportedType>());
@@ -256,6 +282,18 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 
+			if ((options & ModuleImporterOptions.ReplaceAssemblyDeclSecurities) != 0) {
+				var asm = sourceModule.Assembly;
+				if (asm != null) {
+					var declSecs = new List<DeclSecurity>();
+					ImportDeclSecurities(declSecs, asm);
+					// The C# compiler always adds this security attribute:
+					//	SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)
+					RemoveDuplicateSecurityPermissionAttributes(declSecs);
+					NewAssemblyDeclSecurities = declSecs.ToArray();
+				}
+			}
+
 			ImportResources();
 			SetSourceModule(null);
 		}
@@ -333,15 +371,19 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void UpdateEditedMethods() {
+			var caList = new List<CustomAttribute>();
+			var dsList = new List<DeclSecurity>();
 			foreach (var t in editedMethodsToFix) {
 				var newMethod = t.Key;
 				var targetMethod = t.Value;
 				Debug.Assert(targetMethod.Module == targetModule);
 
 				var importedType = (MergedImportedType)oldTypeToNewType[newMethod.DeclaringType];
-				var caList = new List<CustomAttribute>(newMethod.CustomAttributes.Count);
+				caList.Clear();
 				ImportCustomAttributes(caList, newMethod);
-				importedType.EditedMethodBodies.Add(new EditedMethodBody(targetMethod, newMethod.Body, newMethod.ImplAttributes, caList.ToArray()));
+				dsList.Clear();
+				ImportDeclSecurities(dsList, newMethod);
+				importedType.EditedMethodBodies.Add(new EditedMethodBody(targetMethod, newMethod.Body, newMethod.ImplAttributes, caList.ToArray(), dsList.ToArray()));
 
 				var body = newMethod.Body;
 				if (body != null) {
@@ -1086,9 +1128,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		CANamedArgument Import(CANamedArgument namedArg) =>
 			new CANamedArgument(namedArg.IsField, Import(namedArg.Type), namedArg.Name, Import(namedArg.Argument));
 
-		void ImportDeclSecurities(IHasDeclSecurity target, IHasDeclSecurity source) {
+		void ImportDeclSecurities(IHasDeclSecurity target, IHasDeclSecurity source) =>
+			ImportDeclSecurities(target.DeclSecurities, source);
+
+		void ImportDeclSecurities(IList<DeclSecurity> targetList, IHasDeclSecurity source) {
 			foreach (var ds in source.DeclSecurities)
-				target.DeclSecurities.Add(Import(ds));
+				targetList.Add(Import(ds));
 		}
 
 		DeclSecurity Import(DeclSecurity ds) {

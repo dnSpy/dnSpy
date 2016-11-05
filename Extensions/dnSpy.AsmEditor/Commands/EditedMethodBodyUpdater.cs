@@ -35,19 +35,22 @@ namespace dnSpy.AsmEditor.Commands {
 			readonly Emit.MethodBody body;
 			readonly MethodImplAttributes implAttributes;
 			readonly CustomAttribute[] customAttributes;
+			readonly DeclSecurity[] declSecurities;
 			readonly bool isBodyModified;
 
 			public BodyState(MethodDef method, bool isBodyModified) {
 				this.body = method.MethodBody;
 				this.implAttributes = method.ImplAttributes;
 				this.customAttributes = method.CustomAttributes.ToArray();
+				this.declSecurities = method.DeclSecurities.ToArray();
 				this.isBodyModified = isBodyModified;
 			}
 
-			public BodyState(Emit.MethodBody body, MethodImplAttributes implAttributes, CustomAttribute[] customAttributes, bool isBodyModified) {
+			public BodyState(Emit.MethodBody body, MethodImplAttributes implAttributes, CustomAttribute[] customAttributes, DeclSecurity[] declSecurities, bool isBodyModified) {
 				this.body = body;
 				this.implAttributes = implAttributes;
 				this.customAttributes = customAttributes;
+				this.declSecurities = declSecurities;
 				this.isBodyModified = isBodyModified;
 			}
 
@@ -56,6 +59,8 @@ namespace dnSpy.AsmEditor.Commands {
 				method.ImplAttributes = implAttributes;
 				method.CustomAttributes.Clear();
 				method.CustomAttributes.AddRange(customAttributes);
+				method.DeclSecurities.Clear();
+				method.DeclSecurities.AddRange(declSecurities);
 				methodAnnotations.SetBodyModified(method, isBodyModified);
 			}
 		}
@@ -66,14 +71,14 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly BodyState originalBodyState;
 		readonly BodyState newBodyState;
 
-		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes, CustomAttribute[] newCustomAttributes) {
+		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes, CustomAttribute[] newCustomAttributes, DeclSecurity[] newDeclSecurities) {
 			this.methodAnnotations = methodAnnotations;
 			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
 			this.method = originalMethod;
 			this.originalBodyState = new BodyState(originalMethod, methodAnnotations.Value.IsBodyModified(method));
-			this.newBodyState = new BodyState(newBody, newImplAttributes, newCustomAttributes, true);
+			this.newBodyState = new BodyState(newBody, newImplAttributes, newCustomAttributes, newDeclSecurities, true);
 		}
 
 		public void Add() => newBodyState.CopyTo(method, methodAnnotations.Value);

@@ -55,6 +55,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly TypeNodeCreator[] newTypeNodeCreators;
 		readonly ResourceNodeCreator resourceNodeCreator;
 		readonly ExistingTypeNodeUpdater[] existingTypeNodeUpdaters;
+		readonly DeclSecurity[] newAssemblyDeclSecurities;
+		readonly DeclSecurity[] origAssemblyDeclSecurities;
 		readonly CustomAttribute[] newAssemblyCustomAttributes;
 		readonly CustomAttribute[] newModuleCustomAttributes;
 		readonly CustomAttribute[] origAssemblyCustomAttributes;
@@ -74,8 +76,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
 			if (!importer.MergedNonNestedTypes.All(a => a.TargetType.Module == modNode.Document.ModuleDef))
 				throw new InvalidOperationException();
+			this.newAssemblyDeclSecurities = importer.NewAssemblyDeclSecurities;
 			this.newAssemblyCustomAttributes = importer.NewAssemblyCustomAttributes;
 			this.newModuleCustomAttributes = importer.NewModuleCustomAttributes;
+			if (newAssemblyDeclSecurities != null)
+				origAssemblyDeclSecurities = modNode.Document.AssemblyDef?.DeclSecurities.ToArray();
 			if (newAssemblyCustomAttributes != null)
 				origAssemblyCustomAttributes = modNode.Document.AssemblyDef?.CustomAttributes.ToArray();
 			if (newModuleCustomAttributes != null)
@@ -105,6 +110,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				newTypeNodeCreators[i].Add();
 			for (int i = 0; i < existingTypeNodeUpdaters.Length; i++)
 				existingTypeNodeUpdaters[i].Add();
+			if (origAssemblyDeclSecurities != null && newAssemblyDeclSecurities != null) {
+				modNode.Document.AssemblyDef.DeclSecurities.Clear();
+				foreach (var ds in newAssemblyDeclSecurities)
+					modNode.Document.AssemblyDef.DeclSecurities.Add(ds);
+			}
 			if (origAssemblyCustomAttributes != null && newAssemblyCustomAttributes != null) {
 				modNode.Document.AssemblyDef.CustomAttributes.Clear();
 				foreach (var ca in newAssemblyCustomAttributes)
@@ -129,6 +139,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				modNode.Document.AssemblyDef.CustomAttributes.Clear();
 				foreach (var ca in origAssemblyCustomAttributes)
 					modNode.Document.AssemblyDef.CustomAttributes.Add(ca);
+			}
+			if (origAssemblyDeclSecurities != null && newAssemblyDeclSecurities != null) {
+				modNode.Document.AssemblyDef.DeclSecurities.Clear();
+				foreach (var ds in origAssemblyDeclSecurities)
+					modNode.Document.AssemblyDef.DeclSecurities.Add(ds);
 			}
 			for (int i = existingTypeNodeUpdaters.Length - 1; i >= 0; i--)
 				existingTypeNodeUpdaters[i].Remove();
