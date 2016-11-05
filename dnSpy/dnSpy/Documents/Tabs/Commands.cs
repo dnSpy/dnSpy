@@ -217,6 +217,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentTreeView = documentTreeView;
 		}
 
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 		public override bool IsEnabled(IMenuItemContext context) => documentTreeView.CanSortTopNodes;
 		public override void Execute(IMenuItemContext context) => documentTreeView.SortTopNodes();
 	}
