@@ -192,6 +192,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference Settings { get; } = new ImageReference(assembly, DsImageStrings.Settings);
 		public static ImageReference Snippet { get; } = new ImageReference(assembly, DsImageStrings.Snippet);
 		public static ImageReference Solution { get; } = new ImageReference(assembly, DsImageStrings.Solution);
+		public static ImageReference SortAscending { get; } = new ImageReference(assembly, DsImageStrings.SortAscending);
 		public static ImageReference SourceFileGroup { get; } = new ImageReference(assembly, DsImageStrings.SourceFileGroup);
 		public static ImageReference SplitScreenHorizontally { get; } = new ImageReference(assembly, DsImageStrings.SplitScreenHorizontally);
 		public static ImageReference SplitScreenVertically { get; } = new ImageReference(assembly, DsImageStrings.SplitScreenVertically);

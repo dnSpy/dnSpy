@@ -188,6 +188,7 @@ namespace dnSpy.Contracts.Images {
 		public const string Settings = nameof(Settings);
 		public const string Snippet = nameof(Snippet);
 		public const string Solution = nameof(Solution);
+		public const string SortAscending = nameof(SortAscending);
 		public const string SourceFileGroup = nameof(SourceFileGroup);
 		public const string SplitScreenHorizontally = nameof(SplitScreenHorizontally);
 		public const string SplitScreenVertically = nameof(SplitScreenVertically);

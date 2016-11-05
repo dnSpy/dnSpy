@@ -189,6 +189,7 @@ namespace dnSpy.Contracts.Images {
 		public const string Settings = Prefix + DsImageStrings.Settings;
 		public const string Snippet = Prefix + DsImageStrings.Snippet;
 		public const string Solution = Prefix + DsImageStrings.Solution;
+		public const string SortAscending = Prefix + DsImageStrings.SortAscending;
 		public const string SourceFileGroup = Prefix + DsImageStrings.SourceFileGroup;
 		public const string SplitScreenHorizontally = Prefix + DsImageStrings.SplitScreenHorizontally;
 		public const string SplitScreenVertically = Prefix + DsImageStrings.SplitScreenVertically;
