@@ -198,8 +198,8 @@
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Strg+C</value>
   </data>
-  <data name="ShortCutKeyCtrlR" xml:space="preserve">
-    <value>Strg+R</value>
+  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
+    <value>Ctrl+Shift+R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
     <value>Löschen</value>

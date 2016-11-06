@@ -516,11 +516,8 @@
   <data name="SearchAssembliesCommand" xml:space="preserve">
     <value>Assemblies _suchen</value>
   </data>
-  <data name="SearchAssembliesKey" xml:space="preserve">
-    <value>Strg+K</value>
-  </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Assemblies suchen (Strg+K)</value>
+    <value>Search Assemblies ({0})</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Suche...</value>
@@ -890,8 +887,8 @@
   <data name="ExportToProject_ProjectGuid" xml:space="preserve">
     <value>_Projekt GUID</value>
   </data>
-  <data name="ShortCutKeyCtrlShiftW" xml:space="preserve">
-    <value>Strg+Umschalt+W</value>
+  <data name="ShortCutKeyCtrlShiftP" xml:space="preserve">
+    <value>Strg+Umschalt+P</value>
   </data>
   <data name="About_Wiki" xml:space="preserve">
     <value>_Wiki</value>
@@ -1250,5 +1247,8 @@ Filter can be changed in Assembly Explorer options.</value>
   </data>
   <data name="BlockStructureLineKind_SolidLines" xml:space="preserve">
     <value>Solid lines</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
+    <value>Ctrl+Shift+K</value>
   </data>
 </root>

@@ -1945,9 +1945,6 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="ShortCutKeyB" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="ShortCutKeyCtrlE" xml:space="preserve">
-    <value>Strg+E</value>
-  </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Strg+F</value>
   </data>

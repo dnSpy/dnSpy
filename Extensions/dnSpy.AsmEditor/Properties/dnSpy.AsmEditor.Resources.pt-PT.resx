@@ -1948,9 +1948,6 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   <data name="ShortCutKeyB" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="ShortCutKeyCtrlE" xml:space="preserve">
-    <value>CTRL + E</value>
-  </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>CTRL + F</value>
   </data>
