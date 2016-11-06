@@ -32,7 +32,7 @@ using dnSpy.Contracts.Menus;
 namespace dnSpy.AsmEditor.Compiler {
 	[DebuggerDisplay("{Description}")]
 	sealed class AddClassCommand : EditCodeCommandBase {
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 12)]
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 13)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(AsmEditorContext context) => AddClassCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 42)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 43)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -75,7 +75,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(AsmEditorContext context) => AddClassCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 12)]
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 13)]
 		sealed class CodeCommand : NodesCodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;

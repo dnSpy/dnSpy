@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		// Make all types, methods, fields public so we don't get a compilation error when trying
 		// to reference an internal type or a private method in the original assembly.
-		protected const bool makeEverythingPublic = true;
+		internal const bool makeEverythingPublic = true;
 
 		protected const string MAIN_CODE_NAME = "main";
 		protected const string MAIN_G_CODE_NAME = "main.g";
@@ -212,7 +212,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					return;
 				if (methodSourceStatement == null)
 					return;
-				if (methodSourceStatement.Value.Method != reference)
+				if (methodSourceStatement.Value.Method != info.Method)
 					return;
 				var stmt = info.GetSourceStatementByCodeOffset(methodSourceStatement.Value.Statement.BinSpan.Start);
 				if (stmt == null)
@@ -399,7 +399,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			else if (result?.Success == true) {
 				try {
-					importer = new ModuleImporter(sourceModule);
+					importer = new ModuleImporter(sourceModule, makeEverythingPublic);
 					Import(importer, result.Value);
 					compilerDiagnostics = importer.Diagnostics;
 					if (compilerDiagnostics.Any(a => a.Severity == CompilerDiagnosticSeverity.Error))

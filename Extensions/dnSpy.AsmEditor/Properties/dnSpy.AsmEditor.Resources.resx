@@ -2519,4 +2519,13 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="EditCodeAddClass2" xml:space="preserve">
     <value>Add Class ({0})...</value>
   </data>
+  <data name="EditCodeEditClass" xml:space="preserve">
+    <value>Edit Class</value>
+  </data>
+  <data name="EditCodeEditClass2" xml:space="preserve">
+    <value>Edit Class ({0})...</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
+    <value>Couldn't find the edited type: {0}</value>
+  </data>
 </root>

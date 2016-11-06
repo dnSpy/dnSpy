@@ -31,12 +31,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		readonly HashSet<TypeDef> partialTypes;
 		readonly bool showDefinitions;
 		readonly bool makeEverythingPublic;
+		readonly bool showAll;
 
-		public DecompileTypeMethodsTransform(HashSet<MethodDef> methods, bool showDefinitions, bool makeEverythingPublic) {
+		public DecompileTypeMethodsTransform(HashSet<MethodDef> methods, bool showDefinitions, bool makeEverythingPublic, bool showAll) {
 			this.defsToShow = new HashSet<IMemberDef>();
 			this.partialTypes = new HashSet<TypeDef>();
 			this.showDefinitions = showDefinitions;
 			this.makeEverythingPublic = makeEverythingPublic;
+			this.showAll = showAll;
 
 			foreach (var method in methods) {
 				// If it's part of a property or event, include the property or event since there are no partial props/events
@@ -154,11 +156,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 						en.Remove();
 
 					if (showDefinitions) {
-						if (!defsToShow.Contains(def))
+						if (!showAll && !defsToShow.Contains(def))
 							en.Remove();
 					}
 					else {
-						if (defsToShow.Contains(def))
+						if (showAll || defsToShow.Contains(def))
 							en.Remove();
 						else if (en is CustomEventDeclaration) {
 							// Convert this hidden event to an event without accessor bodies.

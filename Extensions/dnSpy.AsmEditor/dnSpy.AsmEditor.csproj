@@ -79,8 +79,16 @@
     <Compile Include="Commands\CommandUtils.cs" />
     <Compile Include="Commands\ContextMenuHandler.cs" />
     <Compile Include="Commands\DeletableNodes.cs" />
+    <Compile Include="Commands\DeletedEventUpdater.cs" />
+    <Compile Include="Commands\DeletedFieldUpdater.cs" />
+    <Compile Include="Commands\DeletedMethodUpdater.cs" />
+    <Compile Include="Commands\DeletedPropertyUpdater.cs" />
+    <Compile Include="Commands\DeletedTypeUpdater.cs" />
     <Compile Include="Commands\DocumentsContextMenuHandler.cs" />
-    <Compile Include="Commands\EditedMethodBodyUpdater.cs" />
+    <Compile Include="Commands\EditedEventUpdater.cs" />
+    <Compile Include="Commands\EditedFieldUpdater.cs" />
+    <Compile Include="Commands\EditedMethodUpdater.cs" />
+    <Compile Include="Commands\EditedPropertyUpdater.cs" />
     <Compile Include="Commands\EditMenuHandler.cs" />
     <Compile Include="Commands\EditMenuHandlerCommandProxy.cs" />
     <Compile Include="Commands\EventNodeCreator.cs" />
@@ -111,6 +119,8 @@
     <Compile Include="Compiler\DecompiledDocument.cs" />
     <Compile Include="Compiler\EditAssemblyCommands.cs" />
     <Compile Include="Compiler\EditAssemblyVM.cs" />
+    <Compile Include="Compiler\EditClassCommands.cs" />
+    <Compile Include="Compiler\EditClassVM.cs" />
     <Compile Include="Compiler\EditCodeCommandBase.cs" />
     <Compile Include="Compiler\EditCodeCommandConstants.cs" />
     <Compile Include="Compiler\EditCodeCommandInfoProvider.cs" />

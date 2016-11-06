@@ -77,6 +77,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			case CompilationKind.Assembly:		return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.Key.GenericNameUI);
 			case CompilationKind.Method:		return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.Key.GenericNameUI);
 			case CompilationKind.AddClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeAddClass2, info.Value.Key.GenericNameUI);
+			case CompilationKind.EditClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeEditClass2, info.Value.Key.GenericNameUI);
 			default: throw new ArgumentOutOfRangeException(nameof(kind));
 			}
 		}
@@ -92,6 +93,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				break;
 
 			case CompilationKind.Method:
+			case CompilationKind.EditClass:
 				if (!decompiler.CanDecompile(DecompilationType.TypeMethods))
 					return false;
 				break;
@@ -133,6 +135,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (info == null)
 				throw new InvalidOperationException();
 			return new AddClassVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.AddClass), info.Value.Key, module);
+		}
+
+		public EditCodeVM CreateEditClass(IMemberDef def, IList<MethodSourceStatement> statements) {
+			var info = GetLanguageCompilerProvider(CompilationKind.EditClass);
+			if (info == null)
+				throw new InvalidOperationException();
+			return new EditClassVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.Value.Create(CompilationKind.EditClass), info.Value.Key, def, statements);
 		}
 	}
 }

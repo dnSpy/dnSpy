@@ -19,48 +19,38 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Method;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
 using Emit = dnlib.DotNet.Emit;
 
 namespace dnSpy.AsmEditor.Commands {
-	sealed class EditedMethodBodyUpdater {
+	sealed class EditedMethodUpdater {
 		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get { yield return ownerNode; }
 		}
 
-		struct BodyState {
+		struct MethodState {
 			readonly Emit.MethodBody body;
-			readonly MethodImplAttributes implAttributes;
-			readonly CustomAttribute[] customAttributes;
-			readonly DeclSecurity[] declSecurities;
+			readonly MethodDefOptions methodDefOptions;
 			readonly bool isBodyModified;
 
-			public BodyState(MethodDef method, bool isBodyModified) {
+			public MethodState(MethodDef method, bool isBodyModified) {
 				this.body = method.MethodBody;
-				this.implAttributes = method.ImplAttributes;
-				this.customAttributes = method.CustomAttributes.ToArray();
-				this.declSecurities = method.DeclSecurities.ToArray();
+				this.methodDefOptions = new MethodDefOptions(method);
 				this.isBodyModified = isBodyModified;
 			}
 
-			public BodyState(Emit.MethodBody body, MethodImplAttributes implAttributes, CustomAttribute[] customAttributes, DeclSecurity[] declSecurities, bool isBodyModified) {
+			public MethodState(Emit.MethodBody body, MethodDefOptions methodDefOptions, bool isBodyModified) {
 				this.body = body;
-				this.implAttributes = implAttributes;
-				this.customAttributes = customAttributes;
-				this.declSecurities = declSecurities;
+				this.methodDefOptions = methodDefOptions;
 				this.isBodyModified = isBodyModified;
 			}
 
 			public void CopyTo(MethodDef method, IMethodAnnotations methodAnnotations) {
 				method.MethodBody = body;
-				method.ImplAttributes = implAttributes;
-				method.CustomAttributes.Clear();
-				method.CustomAttributes.AddRange(customAttributes);
-				method.DeclSecurities.Clear();
-				method.DeclSecurities.AddRange(declSecurities);
+				methodDefOptions.CopyTo(method);
 				methodAnnotations.SetBodyModified(method, isBodyModified);
 			}
 		}
@@ -68,20 +58,20 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
 		readonly MethodNode ownerNode;
 		readonly MethodDef method;
-		readonly BodyState originalBodyState;
-		readonly BodyState newBodyState;
+		readonly MethodState originalMethodState;
+		readonly MethodState newMethodState;
 
-		public EditedMethodBodyUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes newImplAttributes, CustomAttribute[] newCustomAttributes, DeclSecurity[] newDeclSecurities) {
+		public EditedMethodUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodDefOptions methodDefOptions) {
 			this.methodAnnotations = methodAnnotations;
 			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
 			this.method = originalMethod;
-			this.originalBodyState = new BodyState(originalMethod, methodAnnotations.Value.IsBodyModified(method));
-			this.newBodyState = new BodyState(newBody, newImplAttributes, newCustomAttributes, newDeclSecurities, true);
+			this.originalMethodState = new MethodState(originalMethod, methodAnnotations.Value.IsBodyModified(method));
+			this.newMethodState = new MethodState(newBody, methodDefOptions, true);
 		}
 
-		public void Add() => newBodyState.CopyTo(method, methodAnnotations.Value);
-		public void Remove() => originalBodyState.CopyTo(method, methodAnnotations.Value);
+		public void Add() => newMethodState.CopyTo(method, methodAnnotations.Value);
+		public void Remove() => originalMethodState.CopyTo(method, methodAnnotations.Value);
 	}
 }

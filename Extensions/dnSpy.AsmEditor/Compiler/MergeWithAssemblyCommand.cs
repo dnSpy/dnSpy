@@ -37,7 +37,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.AsmEditor.Compiler {
 	[DebuggerDisplay("{Description}")]
 	sealed class MergeWithAssemblyCommand : EditCodeCommandBase {
-		[ExportMenuItem(Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 13)]
+		[ExportMenuItem(Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 19.999)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(AsmEditorContext context) => MergeWithAssemblyCommand.Execute(pickFilename, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 43)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 49.999)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(AsmEditorContext context) => MergeWithAssemblyCommand.Execute(pickFilename, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 13)]
+		[ExportMenuItem(Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 19.999)]
 		sealed class CodeCommand : NodesCodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -133,7 +133,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 
-			var importer = new ModuleImporter(module);
+			var importer = new ModuleImporter(module, EditCodeVM.makeEverythingPublic);
 			try {
 				importer.Import(result.Value.RawBytes, result.Value.DebugFile, ModuleImporterOptions.None);
 			}

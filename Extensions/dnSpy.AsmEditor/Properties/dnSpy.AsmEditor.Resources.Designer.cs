@@ -1547,6 +1547,24 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Class.
+        /// </summary>
+        public static string EditCodeEditClass {
+            get {
+                return ResourceManager.GetString("EditCodeEditClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Class ({0})....
+        /// </summary>
+        public static string EditCodeEditClass2 {
+            get {
+                return ResourceManager.GetString("EditCodeEditClass2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Code.
         /// </summary>
         public static string EditCodeTitle {
@@ -2047,6 +2065,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ERR_IM_CouldNotFindEditedMethod {
             get {
                 return ResourceManager.GetString("ERR_IM_CouldNotFindEditedMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find the edited type: {0}.
+        /// </summary>
+        public static string ERR_IM_CouldNotFindEditedType {
+            get {
+                return ResourceManager.GetString("ERR_IM_CouldNotFindEditedType", resourceCulture);
             }
         }
         

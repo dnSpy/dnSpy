@@ -38,6 +38,11 @@ namespace dnSpy.Contracts.Decompiler {
 		public HashSet<MethodDef> Methods { get; }
 
 		/// <summary>
+		/// true to decompile everything
+		/// </summary>
+		public bool ShowAll { get; set; }
+
+		/// <summary>
 		/// true to only decompile methods and members not stored in <see cref="Methods"/>,
 		/// false to only decompile methods and members stored in <see cref="Methods"/>.
 		/// </summary>

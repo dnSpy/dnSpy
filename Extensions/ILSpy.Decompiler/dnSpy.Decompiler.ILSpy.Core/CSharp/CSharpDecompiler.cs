@@ -483,7 +483,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			try {
 				state.AstBuilder.GetDecompiledBodyKind = (builder, method) => GetDecompiledBodyKind(info, builder, method);
 				state.AstBuilder.AddType(info.Type);
-				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.MakeEverythingPublic));
+				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.MakeEverythingPublic, info.ShowAll));
 			}
 			finally {
 				state.Dispose();
@@ -509,7 +509,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		internal static DecompiledBodyKind GetDecompiledBodyKind(DecompileTypeMethods info, AstBuilder builder, MethodDef method) {
 			if (info.DecompileHidden)
 				return DecompiledBodyKind.Empty;
-			if (info.Methods.Contains(method))
+			if (info.ShowAll || info.Methods.Contains(method))
 				return DecompiledBodyKind.Full;
 			return DecompiledBodyKind.Empty;
 		}

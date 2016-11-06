@@ -20,11 +20,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
+using dnlib.PE;
 
 namespace dnSpy.AsmEditor.Method {
 	sealed class MethodDefOptions {
 		public MethodImplAttributes ImplAttributes;
 		public MethodAttributes Attributes;
+		public MethodSemanticsAttributes SemanticsAttributes;
+		public RVA RVA;
 		public UTF8String Name;
 		public MethodSig MethodSig;
 		public ImplMap ImplMap;
@@ -40,6 +43,8 @@ namespace dnSpy.AsmEditor.Method {
 		public MethodDefOptions(MethodDef method) {
 			this.ImplAttributes = method.ImplAttributes;
 			this.Attributes = method.Attributes;
+			this.SemanticsAttributes = method.SemanticsAttributes;
+			this.RVA = method.RVA;
 			this.Name = method.Name;
 			this.MethodSig = method.MethodSig;
 			this.ImplMap = method.ImplMap;
@@ -53,6 +58,8 @@ namespace dnSpy.AsmEditor.Method {
 		public MethodDef CopyTo(MethodDef method) {
 			method.ImplAttributes = this.ImplAttributes;
 			method.Attributes = this.Attributes;
+			method.SemanticsAttributes = this.SemanticsAttributes;
+			method.RVA = this.RVA;
 			method.Name = this.Name ?? UTF8String.Empty;
 			method.MethodSig = this.MethodSig;
 			method.ImplMap = this.ImplMap;

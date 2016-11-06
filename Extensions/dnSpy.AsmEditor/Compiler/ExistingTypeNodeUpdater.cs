@@ -34,7 +34,15 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly MethodNodeCreator[] methods;
 		readonly EventNodeCreator[] events;
 		readonly PropertyNodeCreator[] properties;
-		readonly EditedMethodBodyUpdater[] editedMethods;
+		readonly EditedFieldUpdater[] editedFields;
+		readonly EditedMethodUpdater[] editedMethods;
+		readonly EditedPropertyUpdater[] editedProperties;
+		readonly EditedEventUpdater[] editedEvents;
+		readonly DeletedTypeUpdater[] deletedTypes;
+		readonly DeletedFieldUpdater[] deletedFields;
+		readonly DeletedMethodUpdater[] deletedMethods;
+		readonly DeletedPropertyUpdater[] deletedProperties;
+		readonly DeletedEventUpdater[] deletedEvents;
 
 		public ExistingTypeNodeUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MergedImportedType type) {
 			this.typeNode = modNode.Context.DocumentTreeView.FindNode(type.TargetType);
@@ -49,7 +57,15 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.methods = type.NewMethods.Where(a => !specialMethods.Contains(a)).Select(a => new MethodNodeCreator(modNode, typeNode, a)).ToArray();
 			this.events = type.NewEvents.Select(a => new EventNodeCreator(modNode, typeNode, a)).ToArray();
 			this.properties = type.NewProperties.Select(a => new PropertyNodeCreator(modNode, typeNode, a)).ToArray();
-			this.editedMethods = type.EditedMethodBodies.Select(a => new EditedMethodBodyUpdater(methodAnnotations, modNode, a.OriginalMethod, a.NewBody, a.ImplAttributes, a.CustomAttributes, a.DeclSecurities)).ToArray();
+			this.editedFields = type.EditedFields.Select(a => new EditedFieldUpdater(modNode, a.OriginalField, a.FieldDefOptions)).ToArray();
+			this.editedMethods = type.EditedMethods.Select(a => new EditedMethodUpdater(methodAnnotations, modNode, a.OriginalMethod, a.NewBody, a.MethodDefOptions)).ToArray();
+			this.editedProperties = type.EditedProperties.Select(a => new EditedPropertyUpdater(modNode, a.OriginalProperty, a.PropertyDefOptions)).ToArray();
+			this.editedEvents = type.EditedEvents.Select(a => new EditedEventUpdater(modNode, a.OriginalEvent, a.EventDefOptions)).ToArray();
+			this.deletedTypes = type.DeletedNestedTypes.Select(a => new DeletedTypeUpdater(modNode, a)).ToArray();
+			this.deletedFields = type.DeletedFields.Select(a => new DeletedFieldUpdater(modNode, a)).ToArray();
+			this.deletedMethods = type.DeletedMethods.Select(a => new DeletedMethodUpdater(modNode, a)).ToArray();
+			this.deletedProperties = type.DeletedProperties.Select(a => new DeletedPropertyUpdater(modNode, a)).ToArray();
+			this.deletedEvents = type.DeletedEvents.Select(a => new DeletedEventUpdater(modNode, a)).ToArray();
 		}
 
 		static HashSet<MethodDef> GetSpecialMethods(MergedImportedType type) {
@@ -79,6 +95,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public void Add() {
+			for (int i = 0; i < deletedTypes.Length; i++)
+				deletedTypes[i].Add();
+			for (int i = 0; i < deletedFields.Length; i++)
+				deletedFields[i].Add();
+			for (int i = 0; i < deletedMethods.Length; i++)
+				deletedMethods[i].Add();
+			for (int i = 0; i < deletedProperties.Length; i++)
+				deletedProperties[i].Add();
+			for (int i = 0; i < deletedEvents.Length; i++)
+				deletedEvents[i].Add();
 			for (int i = 0; i < nestedTypes1.Length; i++)
 				nestedTypes1[i].Add();
 			for (int i = 0; i < nestedTypes2.Length; i++)
@@ -91,13 +117,25 @@ namespace dnSpy.AsmEditor.Compiler {
 				events[i].Add();
 			for (int i = 0; i < properties.Length; i++)
 				properties[i].Add();
+			for (int i = 0; i < editedFields.Length; i++)
+				editedFields[i].Add();
 			for (int i = 0; i < editedMethods.Length; i++)
 				editedMethods[i].Add();
+			for (int i = 0; i < editedProperties.Length; i++)
+				editedProperties[i].Add();
+			for (int i = 0; i < editedEvents.Length; i++)
+				editedEvents[i].Add();
 		}
 
 		public void Remove() {
+			for (int i = editedEvents.Length - 1; i >= 0; i--)
+				editedEvents[i].Remove();
+			for (int i = editedProperties.Length - 1; i >= 0; i--)
+				editedProperties[i].Remove();
 			for (int i = editedMethods.Length - 1; i >= 0; i--)
 				editedMethods[i].Remove();
+			for (int i = editedFields.Length - 1; i >= 0; i--)
+				editedFields[i].Remove();
 			for (int i = properties.Length - 1; i >= 0; i--)
 				properties[i].Remove();
 			for (int i = events.Length - 1; i >= 0; i--)
@@ -110,6 +148,16 @@ namespace dnSpy.AsmEditor.Compiler {
 				nestedTypes2[i].Remove();
 			for (int i = nestedTypes1.Length - 1; i >= 0; i--)
 				nestedTypes1[i].Remove();
+			for (int i = deletedEvents.Length - 1; i >= 0; i--)
+				deletedEvents[i].Remove();
+			for (int i = deletedProperties.Length - 1; i >= 0; i--)
+				deletedProperties[i].Remove();
+			for (int i = deletedMethods.Length - 1; i >= 0; i--)
+				deletedMethods[i].Remove();
+			for (int i = deletedFields.Length - 1; i >= 0; i--)
+				deletedFields[i].Remove();
+			for (int i = deletedTypes.Length - 1; i >= 0; i--)
+				deletedTypes[i].Remove();
 		}
 	}
 }
