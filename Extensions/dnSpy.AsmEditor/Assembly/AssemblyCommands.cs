@@ -131,7 +131,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			nodes.Length > 0 &&
 			nodes.All(n => n is DsDocumentNode && n.TreeNode.Parent == n.Context.DocumentTreeView.TreeView.Root);
 
-		static void Execute(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppService appService, DocumentTreeNodeData[] nodes) {
+		internal static void Execute(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 

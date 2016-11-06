@@ -129,6 +129,7 @@
     <Compile Include="Documents\IDsDocumentServiceProvider.cs" />
     <Compile Include="Documents\IDsDotNetDocument.cs" />
     <Compile Include="Documents\IDsPEDocument.cs" />
+    <Compile Include="Documents\IInMemoryDocument.cs" />
     <Compile Include="Documents\IMethodAnnotations.cs" />
     <Compile Include="Documents\NotifyDocumentCollectionChangedEventArgs.cs" />
     <Compile Include="Documents\NotifyDocumentCollectionType.cs" />

@@ -52,8 +52,8 @@ namespace dnSpy.Debugger.IMModules {
 		public ModuleId ModuleId {
 			get {
 				if (!isInMemory)
-					return Contracts.Metadata.ModuleId.CreateFromFile(ModuleDef);
-				return Contracts.Metadata.ModuleId.CreateInMemory(ModuleDef);
+					return ModuleId.CreateFromFile(ModuleDef);
+				return ModuleId.CreateInMemory(ModuleDef);
 			}
 		}
 
@@ -62,6 +62,7 @@ namespace dnSpy.Debugger.IMModules {
 		public bool AutoUpdateMemory { get; }
 		public DnProcess Process { get; }
 		public ulong Address { get; }
+		public override bool IsActive => !Process.HasExited;
 
 		readonly byte[] data;
 		readonly bool isInMemory;

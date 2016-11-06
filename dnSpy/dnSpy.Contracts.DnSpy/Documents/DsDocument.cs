@@ -149,9 +149,11 @@ namespace dnSpy.Contracts.Documents {
 	/// <summary>
 	/// .NET file base class
 	/// </summary>
-	public abstract class DsDotNetDocumentBase : DsDocument, IDsDotNetDocument {
+	public abstract class DsDotNetDocumentBase : DsDocument, IDsDotNetDocument, IInMemoryDocument {
 		/// <inheritdoc/>
 		public override ModuleDef ModuleDef { get; }
+		/// <inheritdoc/>
+		public virtual bool IsActive => true;
 
 		/// <summary>true if the symbols have been loaded</summary>
 		protected bool loadedSymbols;

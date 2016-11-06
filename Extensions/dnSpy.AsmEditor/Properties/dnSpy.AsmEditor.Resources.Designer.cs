@@ -548,6 +548,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close Old In-Memory Modules.
+        /// </summary>
+        public static string CloseOldInMemoryModules {
+            get {
+                return ResourceManager.GetString("CloseOldInMemoryModules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to RID.
         /// </summary>
         public static string Column_Metadata_RID {

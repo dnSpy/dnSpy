@@ -2528,4 +2528,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
     <value>Couldn't find the edited type: {0}</value>
   </data>
+  <data name="CloseOldInMemoryModules" xml:space="preserve">
+    <value>Close Old In-Memory Modules</value>
+  </data>
 </root>

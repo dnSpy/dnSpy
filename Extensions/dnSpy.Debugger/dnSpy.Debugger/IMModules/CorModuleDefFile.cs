@@ -46,10 +46,11 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		public override IDsDocumentNameKey Key => CreateKey(DnModule);
-		public ModuleId ModuleId => Contracts.Metadata.ModuleId.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory);
+		public ModuleId ModuleId => ModuleId.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory);
 		public override DsDocumentInfo? SerializedDocument => null;
 		public DnModule DnModule { get; }
 		public static IDsDocumentNameKey CreateKey(DnModule module) => new MyKey(module);
+		public override bool IsActive => !DnModule.Process.HasExited;
 
 		public LastValidRids LastValidRids => lastValidRids;
 		LastValidRids lastValidRids;

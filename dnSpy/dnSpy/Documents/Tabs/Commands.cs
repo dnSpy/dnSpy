@@ -195,7 +195,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(IMenuItemContext context) => documentListLoader.CloseAll();
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SortAsmsCommand", Icon = DsImagesAttribute.SortAscending, Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 50)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SortAsmsCommand", Icon = DsImagesAttribute.SortAscending, Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 100)]
 	sealed class SortAssembliesCommand : MenuItemBase {
 		readonly IDocumentTreeView documentTreeView;
 

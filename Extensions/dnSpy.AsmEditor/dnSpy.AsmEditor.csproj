@@ -74,6 +74,7 @@
     <Compile Include="Commands\AppService.cs" />
     <Compile Include="Commands\AsmEditorContext.cs" />
     <Compile Include="Commands\ClipboardDataHolder.cs" />
+    <Compile Include="Commands\CloseOldInMemoryModulesCommand.cs" />
     <Compile Include="Commands\CodeContextMenuHandler.cs" />
     <Compile Include="Commands\CodeContextMenuHandlerCommandProxy.cs" />
     <Compile Include="Commands\CommandUtils.cs" />
