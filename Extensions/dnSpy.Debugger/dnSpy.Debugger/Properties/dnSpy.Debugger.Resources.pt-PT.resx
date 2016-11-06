@@ -1284,9 +1284,9 @@ Tem certeza que deseja expandi-la?</value>
     <value>Localização</value>
   </data>
   <data name="AddClassBreakpointCommand" xml:space="preserve">
-    <value>Add Class Breakpoint</value>
+    <value>Adicionar Interrupção de Classe</value>
   </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
-    <value>Add Method Breakpoint</value>
+    <value>Adicionar interrupção de Método</value>
   </data>
 </root>

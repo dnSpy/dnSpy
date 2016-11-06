@@ -1288,9 +1288,9 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Position</value>
   </data>
   <data name="AddClassBreakpointCommand" xml:space="preserve">
-    <value>Add Class Breakpoint</value>
+    <value>Klassenhaltepunkt hinzufügen</value>
   </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
-    <value>Add Method Breakpoint</value>
+    <value>Methodenhaltepunkt hinzufügen</value>
   </data>
 </root>

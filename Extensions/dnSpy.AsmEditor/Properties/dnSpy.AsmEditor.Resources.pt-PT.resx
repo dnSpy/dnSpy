@@ -2411,7 +2411,7 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
     <value>CTRL + Shift + E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edite código {0}...</value>
+    <value>Editar Método ({0})...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>Editar código</value>
@@ -2501,9 +2501,33 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
     <value>Cancelar</value>
   </data>
   <data name="EditAssemblyCode" xml:space="preserve">
-    <value>Edit Assembly Attributes</value>
+    <value>Editar Atributos de Assembly</value>
   </data>
   <data name="EditCodeAddClass" xml:space="preserve">
-    <value>Add Class</value>
+    <value>Adicionar Classe</value>
+  </data>
+  <data name="MergeWithAssemblyCommand" xml:space="preserve">
+    <value>Juntar com Assembly...</value>
+  </data>
+  <data name="MergeWithAssemblyCommand2" xml:space="preserve">
+    <value>Juntar com Assembly</value>
+  </data>
+  <data name="EditAssemblyCode2" xml:space="preserve">
+    <value>Editar Atributos Assembly ({0})...</value>
+  </data>
+  <data name="EditCodeAddClass2" xml:space="preserve">
+    <value>Adicionar Classe ({0})...</value>
+  </data>
+  <data name="EditCodeEditClass" xml:space="preserve">
+    <value>Edit Class</value>
+  </data>
+  <data name="EditCodeEditClass2" xml:space="preserve">
+    <value>Edit Class ({0})...</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
+    <value>Couldn't find the edited type: {0}</value>
+  </data>
+  <data name="CloseOldInMemoryModules" xml:space="preserve">
+    <value>Close Old In-Memory Modules</value>
   </data>
 </root>

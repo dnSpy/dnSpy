@@ -130,10 +130,10 @@
     <value>Дизассемблировать BAML</value>
   </data>
   <data name="BamlSettings_NewLineOnAttributes" xml:space="preserve">
-    <value>One attribute per line</value>
+    <value>Один атрибут на строку</value>
   </data>
   <data name="BamlSettings_UseTabs" xml:space="preserve">
-    <value>Use tabs</value>
+    <value>Использовать вкладки</value>
   </data>
   <data name="DisassembleBAMLCommand" xml:space="preserve">
     <value>Дизассемблировать BAML</value>

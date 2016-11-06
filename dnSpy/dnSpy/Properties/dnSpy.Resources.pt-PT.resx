@@ -316,7 +316,7 @@
     <value>Ajuda</value>
   </data>
   <data name="Menu_Themes" xml:space="preserve">
-    <value>_Theme</value>
+    <value>Tema</value>
   </data>
   <data name="Menu_View" xml:space="preserve">
     <value>Vizualizar</value>
@@ -1228,25 +1228,25 @@
     <value>REPL</value>
   </data>
   <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
-    <value>Dragged items filter</value>
+    <value>Filtro de itens arrastados</value>
   </data>
   <data name="DocumentFilterType_All" xml:space="preserve">
     <value>Todas</value>
   </data>
   <data name="DocumentFilterType_AllSupported" xml:space="preserve">
-    <value>All supported</value>
+    <value>Todos suportados</value>
   </data>
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
-    <value>.NET only</value>
+    <value>.NET apenas</value>
   </data>
   <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
-    <value>All files have been filtered out.
-Filter can be changed in Assembly Explorer options.</value>
+    <value>Todos os ficheiros foram filtrados.
+Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   </data>
   <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
-    <value>Dashed lines</value>
+    <value>Linhas tracejadas</value>
   </data>
   <data name="BlockStructureLineKind_SolidLines" xml:space="preserve">
-    <value>Solid lines</value>
+    <value>Linhas sólidas</value>
   </data>
 </root>

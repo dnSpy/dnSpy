@@ -2406,7 +2406,7 @@
     <value>Ctrl+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Изменить код {0}...</value>
+    <value>Edit Method ({0})...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>Изменение кода</value>
@@ -2500,5 +2500,29 @@
   </data>
   <data name="EditCodeAddClass" xml:space="preserve">
     <value>Add Class</value>
+  </data>
+  <data name="MergeWithAssemblyCommand" xml:space="preserve">
+    <value>Merge with Assembly...</value>
+  </data>
+  <data name="MergeWithAssemblyCommand2" xml:space="preserve">
+    <value>Merge with Assembly</value>
+  </data>
+  <data name="EditAssemblyCode2" xml:space="preserve">
+    <value>Edit Assembly Attributes ({0})...</value>
+  </data>
+  <data name="EditCodeAddClass2" xml:space="preserve">
+    <value>Add Class ({0})...</value>
+  </data>
+  <data name="EditCodeEditClass" xml:space="preserve">
+    <value>Edit Class</value>
+  </data>
+  <data name="EditCodeEditClass2" xml:space="preserve">
+    <value>Edit Class ({0})...</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
+    <value>Couldn't find the edited type: {0}</value>
+  </data>
+  <data name="CloseOldInMemoryModules" xml:space="preserve">
+    <value>Close Old In-Memory Modules</value>
   </data>
 </root>
