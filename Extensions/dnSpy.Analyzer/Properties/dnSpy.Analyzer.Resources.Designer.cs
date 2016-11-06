@@ -304,11 +304,11 @@ namespace dnSpy.Analyzer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ctrl+R.
+        ///   Looks up a localized string similar to Ctrl+Shift+R.
         /// </summary>
-        public static string ShortCutKeyCtrlR {
+        public static string ShortCutKeyCtrlShiftR {
             get {
-                return ResourceManager.GetString("ShortCutKeyCtrlR", resourceCulture);
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftR", resourceCulture);
             }
         }
         

@@ -2314,16 +2314,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ctrl+K.
-        /// </summary>
-        public static string SearchAssembliesKey {
-            get {
-                return ResourceManager.GetString("SearchAssembliesKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search Assemblies (Ctrl+K).
+        ///   Looks up a localized string similar to Search Assemblies ({0}).
         /// </summary>
         public static string SearchAssembliesToolBarToolTip {
             get {
@@ -2845,6 +2836,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+K.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftK {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Shift+O.
         /// </summary>
         public static string ShortCutKeyCtrlShiftO {
@@ -2854,11 +2854,11 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ctrl+Shift+W.
+        ///   Looks up a localized string similar to Ctrl+Shift+P.
         /// </summary>
-        public static string ShortCutKeyCtrlShiftW {
+        public static string ShortCutKeyCtrlShiftP {
             get {
-                return ResourceManager.GetString("ShortCutKeyCtrlShiftW", resourceCulture);
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftP", resourceCulture);
             }
         }
         

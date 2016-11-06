@@ -6269,15 +6269,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ctrl+E.
-        /// </summary>
-        public static string ShortCutKeyCtrlE {
-            get {
-                return ResourceManager.GetString("ShortCutKeyCtrlE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Ctrl+F.
         /// </summary>
         public static string ShortCutKeyCtrlF {

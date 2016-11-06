@@ -86,6 +86,11 @@ namespace dnSpy.Contracts.TreeView {
 		void Focus();
 
 		/// <summary>
+		/// Scrolls the current node into view
+		/// </summary>
+		void ScrollIntoView();
+
+		/// <summary>
 		/// Calls all nodes' <see cref="ITreeNode.RefreshUI()"/> method
 		/// </summary>
 		void RefreshAllNodes();

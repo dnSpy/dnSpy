@@ -26,31 +26,14 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.AsmEditor.MethodBody {
-	[ExportAutoLoaded]
-	sealed class CommandLoader : IAutoLoaded {
-		static readonly RoutedCommand EditILInstructionsCommand = new RoutedCommand("EditILInstructionsCommand", typeof(CommandLoader));
-
-		[ImportingConstructor]
-		CommandLoader(IWpfCommandService wpfCommandService, EditILInstructionsCommand editILCmd) {
-			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
-			ICommand editILCmd2 = editILCmd;
-			cmds.Add(EditILInstructionsCommand,
-				(s, e) => editILCmd2.Execute(null),
-				(s, e) => e.CanExecute = editILCmd2.CanExecute(null),
-				ModifierKeys.Control | ModifierKeys.Shift, Key.E);
-		}
-	}
-
 	[DebuggerDisplay("{Description}")]
 	sealed class EditMethodBodyILCommand : IUndoCommand {
 		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = DsImagesAttribute.Editor, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 20)]
@@ -165,7 +148,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = DsImagesAttribute.Editor, InputGestureText = "res:ShortCutKeyCtrlShiftE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 20)]
+	[ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = DsImagesAttribute.Editor, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 20)]
 	sealed class EditILInstructionsCommand : MenuItemBase, ICommand {
 		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly Lazy<IMethodAnnotations> methodAnnotations;

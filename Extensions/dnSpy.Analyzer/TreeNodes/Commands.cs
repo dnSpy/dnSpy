@@ -52,20 +52,20 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.decompilerService = decompilerService;
 
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
-			cmds.Add(AnalyzeRoutedCommand, TextEditor_Executed, TextEditor_CanExecute, ModifierKeys.Control, Key.R);
-			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, TextEditor_Executed, TextEditor_CanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
 
 			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENT_TREEVIEW);
-			cmds.Add(AnalyzeRoutedCommand, DocumentTreeView_Executed, DocumentTreeView_CanExecute, ModifierKeys.Control, Key.R);
-			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, DocumentTreeView_Executed, DocumentTreeView_CanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
 
 			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
-			cmds.Add(AnalyzeRoutedCommand, AnalyzerTreeView_Executed, AnalyzerTreeView_CanExecute, ModifierKeys.Control, Key.R);
-			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, AnalyzerTreeView_Executed, AnalyzerTreeView_CanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
 
 			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_SEARCH_LISTBOX);
-			cmds.Add(AnalyzeRoutedCommand, SearchListBox_Executed, SearchListBox_CanExecute, ModifierKeys.Control, Key.R);
-			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, SearchListBox_Executed, SearchListBox_CanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
 		}
 
 		void ShowAnalyzerCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
@@ -109,7 +109,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	}
 
 	static class AnalyzeCommand {
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlShiftR", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 0)]
 		sealed class FilesCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			readonly IDecompilerService decompilerService;
@@ -147,7 +147,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, GetMemberRefs(context));
 		}
 
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlShiftR", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
 		sealed class AnalyzerCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			readonly IDecompilerService decompilerService;
@@ -167,7 +167,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, GetMemberRefs(context));
 		}
 
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlShiftR", Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 0)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			readonly IDecompilerService decompilerService;
@@ -200,7 +200,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, GetMemberRefs(context));
 		}
 
-		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlR", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlShiftR", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
 		sealed class SearchCommand : MenuItemBase {
 			readonly IDsToolWindowService toolWindowService;
 			readonly IDecompilerService decompilerService;

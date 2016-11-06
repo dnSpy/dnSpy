@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			cmds.Add(EditBodyCommand,
 				(s, e) => editBodyCmd2.Execute(null),
 				(s, e) => e.CanExecute = editBodyCmd2.CanExecute(null),
-				ModifierKeys.Control, Key.E);
+				ModifierKeys.Control | ModifierKeys.Shift, Key.E);
 		}
 	}
 
@@ -160,7 +160,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public override string Description => dnSpy_AsmEditor_Resources.EditMethodCode;
 	}
 
-	[Export, ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 0)]
+	[Export, ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlShiftE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 0)]
 	sealed class EditBodyCommand : MenuItemBase, ICommand {
 		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;

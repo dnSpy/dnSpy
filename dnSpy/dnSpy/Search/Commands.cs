@@ -27,6 +27,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Properties;
 
 namespace dnSpy.Search {
 	[ExportAutoLoaded]
@@ -35,7 +36,7 @@ namespace dnSpy.Search {
 
 		static SearchCommandLoader() {
 			SearchRoutedCommand = new RoutedCommand("SearchRoutedCommand", typeof(SearchCommandLoader));
-			SearchRoutedCommand.InputGestures.Add(new KeyGesture(Key.K, ModifierKeys.Control));
+			SearchRoutedCommand.InputGestures.Add(new KeyGesture(Key.K, ModifierKeys.Control | ModifierKeys.Shift));
 		}
 
 		readonly IDsToolWindowService toolWindowService;
@@ -54,14 +55,17 @@ namespace dnSpy.Search {
 		void Search(object sender, ExecutedRoutedEventArgs e) => toolWindowService.Show(SearchToolWindowContent.THE_GUID);
 	}
 
-	[ExportToolBarButton(Icon = DsImagesAttribute.Search, ToolTip = "res:SearchAssembliesToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
+	[ExportToolBarButton(Icon = DsImagesAttribute.Search, Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
 	sealed class SearchAssembliesToolBarButtonCommand : ToolBarButtonCommand {
 		public SearchAssembliesToolBarButtonCommand()
 			: base(SearchCommandLoader.SearchRoutedCommand) {
 		}
+
+		public override string GetToolTip(IToolBarItemContext context) =>
+			string.Format(dnSpy_Resources.SearchAssembliesToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlShiftK);
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SearchAssembliesCommand", InputGestureText = "res:SearchAssembliesKey", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SearchAssembliesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftK", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
 	sealed class SearchAssembliesMenuItemCommand : MenuItemCommand {
 		public SearchAssembliesMenuItemCommand()
 			: base(SearchCommandLoader.SearchRoutedCommand) {

@@ -35,7 +35,7 @@ namespace dnSpy.MainApp {
 		FullScreenInit(IAppWindow appWindow, IDocumentTreeView documentTreeView) {
 			var fullScreenCommand = new FullScreenCommand(appWindow);
 			appWindow.MainWindowCommands.Add(MetroWindow.FullScreenCommand, (s, e) => fullScreenCommand.FullScreen(), (s, e) => e.CanExecute = true, ModifierKeys.Shift | ModifierKeys.Alt, Key.Enter);
-			appWindow.MainWindowCommands.Add(CollapseUnusedNodesCommand, (s, e) => documentTreeView.TreeView.CollapseUnusedNodes(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Shift, Key.W);
+			appWindow.MainWindowCommands.Add(CollapseUnusedNodesCommand, (s, e) => documentTreeView.TreeView.CollapseUnusedNodes(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Shift, Key.P);
 		}
 	}
 
@@ -60,7 +60,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:CollapseTreeViewNodesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftW", Icon = DsImagesAttribute.OneLevelUp, Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:CollapseTreeViewNodesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftP", Icon = DsImagesAttribute.OneLevelUp, Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 30)]
 	sealed class CollapseTreeViewCommand : MenuItemBase {
 		readonly IDocumentTreeView documentTreeView;
 

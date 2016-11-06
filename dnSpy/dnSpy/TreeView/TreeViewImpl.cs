@@ -254,6 +254,12 @@ namespace dnSpy.TreeView {
 				sharpTreeView.Focus();
 		}
 
+		public void ScrollIntoView() {
+			var node = sharpTreeView.SelectedItem as SharpTreeNode;
+			if (node != null)
+				sharpTreeView.ScrollIntoView(node);
+		}
+
 		public void RefreshAllNodes() {
 			foreach (var node in this.Root.Descendants())
 				node.RefreshUI();
@@ -278,7 +284,7 @@ namespace dnSpy.TreeView {
 			var usedNodes = new HashSet<TreeNodeData>(TopLevelSelection);
 			CollapseUnusedNodes(Root.DataChildren, usedNodes);
 			// Make sure the selected node is visible
-			Focus();
+			ScrollIntoView();
 		}
 
 		bool CollapseUnusedNodes(IEnumerable<TreeNodeData> nodes, HashSet<TreeNodeData> usedNodes) {

@@ -1949,9 +1949,6 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="ShortCutKeyB" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="ShortCutKeyCtrlE" xml:space="preserve">
-    <value>Ctrl+E</value>
-  </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Ctrl+F</value>
   </data>
