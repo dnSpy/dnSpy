@@ -26,6 +26,8 @@ namespace dnSpy.Decompiler.IL {
 	sealed class OriginalInstructionBytesReader : IInstructionBytesReader {
 		readonly IImageStream stream;
 
+		public bool IsOriginalBytes => true;
+
 		public OriginalInstructionBytesReader(MethodDef method) {
 			//TODO: This fails and returns null if it's a CorMethodDef!
 			this.stream = GetImageStream(method.Module, (uint)method.RVA + method.Body.HeaderSize);

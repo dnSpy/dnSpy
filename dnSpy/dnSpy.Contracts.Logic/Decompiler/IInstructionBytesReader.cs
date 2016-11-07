@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public interface IInstructionBytesReader : IDisposable {
 		/// <summary>
+		/// true if it's reading the original bytes, false if the method has been modified
+		/// </summary>
+		bool IsOriginalBytes { get; }
+
+		/// <summary>
 		/// Reads the next byte or returns a value less than 0 if the byte is unknown
 		/// </summary>
 		/// <returns></returns>

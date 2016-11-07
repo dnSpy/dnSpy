@@ -31,6 +31,8 @@ namespace dnSpy.Decompiler.IL {
 		readonly List<short> instrBytes = new List<short>(10);
 		int byteIndex;
 
+		public bool IsOriginalBytes => false;
+
 		public ModifiedInstructionBytesReader(MethodDef method) {
 			this.resolver = method.Module;
 			this.instrs = method.Body.Instructions;
