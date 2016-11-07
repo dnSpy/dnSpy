@@ -202,6 +202,7 @@
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
     <Compile Include="Documents\Tabs\DocViewer\LineSeparatorViewTagger.cs" />
     <Compile Include="Documents\Tabs\DocViewer\MethodDebugInfoMethodOffsetSpanMap.cs" />
+    <Compile Include="Documents\Tabs\DocViewer\OpCodeReferenceHandler.cs" />
     <Compile Include="Documents\Tabs\DocViewer\Settings\AdvancedAppSettingsPage.cs" />
     <Compile Include="Documents\Tabs\DocViewer\Settings\AppSettingsPageContainer.cs" />
     <Compile Include="Documents\Tabs\DocViewer\Settings\AppSettingsPageProvider.cs" />
