@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.Commands {
 			return nodes.Count == 0 ? null : nodes.ToArray();
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => GetNodes() != null;
+		public override bool IsEnabled(IMenuItemContext context) => GetNodes() != null;
 		public override void Execute(IMenuItemContext context) {
 			var nodes = GetNodes();
 			if (nodes != null)
