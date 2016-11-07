@@ -1298,8 +1298,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var importedType in importedTypes) {
 				foreach (var compiledMethod in toExtraData[importedType].CompiledType.Methods) {
 					var targetMethod = oldMethodToNewMethod[compiledMethod].EditedMember;
-					foreach (var o in compiledMethod.Overrides)
-						targetMethod.Overrides.Add(Import(o));
 					targetMethod.Body = CreateBody(targetMethod, compiledMethod);
 				}
 			}
@@ -1317,11 +1315,8 @@ namespace dnSpy.AsmEditor.Compiler {
 							AddError(IM0009, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported, targetInfo.TargetMember));
 						targetInfo.EditedMember.Body = CreateBody(targetInfo.EditedMember, compiledMethod);
 					}
-					else if (!isStub.Contains(targetInfo.TargetMember)) {
-						foreach (var o in compiledMethod.Overrides)
-							targetInfo.EditedMember.Overrides.Add(Import(o));
+					else if (!isStub.Contains(targetInfo.TargetMember))
 						targetInfo.EditedMember.Body = CreateBody(targetInfo.EditedMember, compiledMethod);
-					}
 				}
 			}
 		}
