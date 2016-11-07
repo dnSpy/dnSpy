@@ -116,9 +116,10 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTabUIContextLocator documentTabUIContextLocator;
 		readonly Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders;
 		readonly Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders;
+		readonly Lazy<IReferenceHandler, IReferenceHandlerMetadata>[] referenceHandlers;
 		readonly TabElementZoomer elementZoomer;
 
-		public TabContentImpl(DocumentTabService documentTabService, IDocumentTabUIContextLocator documentTabUIContextLocator, Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders, Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders) {
+		public TabContentImpl(DocumentTabService documentTabService, IDocumentTabUIContextLocator documentTabUIContextLocator, Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders, Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders, Lazy<IReferenceHandler, IReferenceHandlerMetadata>[] referenceHandlers) {
 			this.elementZoomer = new TabElementZoomer();
 			this.tabHistory = new TabHistory();
 			this.tabHistory.SetCurrent(new NullDocumentTabContent(), false);
@@ -126,6 +127,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentTabUIContextLocator = documentTabUIContextLocator;
 			this.referenceDocumentTabContentProviders = referenceDocumentTabContentProviders;
 			this.defaultDocumentTabContentProviders = defaultDocumentTabContentProviders;
+			this.referenceHandlers = referenceHandlers;
 			this.uiContext = new NullDocumentTabUIContext();
 			this.uiObject = this.uiContext.UIObject;
 		}
@@ -170,7 +172,35 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
+		sealed class ReferenceHandlerContext : IReferenceHandlerContext {
+			public object Reference { get; }
+			public DocumentTabContent Content { get; }
+			public DocumentTabContent SourceContent { get; }
+			public ReferenceHandlerContext(object @ref, DocumentTabContent content, DocumentTabContent sourceContent) {
+				Reference = @ref;
+				Content = content;
+				SourceContent = sourceContent;
+			}
+		}
+
+		bool NotifyReferenceHandlers(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
+			var context = new ReferenceHandlerContext(@ref, Content, sourceContent);
+			foreach (var lz in referenceHandlers) {
+				if (lz.Value.OnFollowReference(context)) {
+					onShown?.Invoke(new ShowTabContentEventArgs(ShowTabContentResult.ReferenceHandler, this));
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public void FollowReference(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
+			if (NotifyReferenceHandlers(@ref, Content, onShown))
+				return;
+			FollowReferenceCore(@ref, sourceContent, onShown);
+		}
+
+		void FollowReferenceCore(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
 			var result = TryCreateContentFromReference(@ref, sourceContent);
 			if (result != null) {
 				Show(result.DocumentTabContent, result.UIState, e => {
@@ -185,17 +215,19 @@ namespace dnSpy.Documents.Tabs {
 				var defaultContent = TryCreateDefaultContent();
 				if (defaultContent != null) {
 					Show(defaultContent, null, e => {
-						onShown?.Invoke(new ShowTabContentEventArgs(false, this));
+						onShown?.Invoke(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
 					});
 				}
 				else
-					onShown?.Invoke(new ShowTabContentEventArgs(false, this));
+					onShown?.Invoke(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
 			}
 		}
 
 		public void FollowReferenceNewTab(object @ref, Action<ShowTabContentEventArgs> onShown) {
-			var tab = DocumentTabService.OpenEmptyTab();
-			tab.FollowReference(@ref, Content, onShown);
+			if (NotifyReferenceHandlers(@ref, Content, onShown))
+				return;
+			var tab = (TabContentImpl)DocumentTabService.OpenEmptyTab();
+			tab.FollowReferenceCore(@ref, Content, onShown);
 			DocumentTabService.SetFocus(tab);
 		}
 
@@ -299,14 +331,14 @@ namespace dnSpy.Documents.Tabs {
 						ctx.Dispose();
 						asyncTabContent.OnShowAsync(showCtx, new AsyncShowResult(t, canShowAsyncOutput));
 						bool success = !t.IsFaulted && !t.IsCanceled;
-						OnShown(uiState, onShownHandler, showCtx, success);
+						OnShown(uiState, onShownHandler, showCtx, success ? ShowTabContentResult.ShowedContent : ShowTabContentResult.Failed);
 					}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 				}
 				else
 					asyncTabContent.OnShowAsync(showCtx, new AsyncShowResult());
 			}
 			if (!asyncShow)
-				OnShown(uiState, onShownHandler, showCtx, true);
+				OnShown(uiState, onShownHandler, showCtx, ShowTabContentResult.ShowedContent);
 			documentTabService.OnNewTabContentShown(this);
 		}
 
@@ -356,11 +388,11 @@ namespace dnSpy.Documents.Tabs {
 			asyncWorkerContext = null;
 		}
 
-		void OnShown(object uiState, Action<ShowTabContentEventArgs> onShownHandler, IShowContext showCtx, bool success) {
+		void OnShown(object uiState, Action<ShowTabContentEventArgs> onShownHandler, IShowContext showCtx, ShowTabContentResult result) {
 			if (uiState != null)
 				RestoreUIState(uiState);
 			if (onShownHandler != null || showCtx.OnShown != null) {
-				var e = new ShowTabContentEventArgs(success, this);
+				var e = new ShowTabContentEventArgs(result, this);
 				onShownHandler?.Invoke(e);
 				showCtx.OnShown?.Invoke(e);
 			}

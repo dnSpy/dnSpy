@@ -179,6 +179,8 @@
     <Compile Include="Documents\Tabs\IDocumentTabUIContextLocator.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabUIContextProvider.cs" />
     <Compile Include="Documents\Tabs\IReferenceDocumentTabContentProvider.cs" />
+    <Compile Include="Documents\Tabs\IReferenceHandler.cs" />
+    <Compile Include="Documents\Tabs\IReferenceHandlerContext.cs" />
     <Compile Include="Documents\Tabs\ISaveService.cs" />
     <Compile Include="Documents\Tabs\IShowContext.cs" />
     <Compile Include="Documents\Tabs\ITabSaver.cs" />

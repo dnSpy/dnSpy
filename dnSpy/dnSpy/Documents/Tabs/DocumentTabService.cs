@@ -73,7 +73,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		TabContentImpl CreateNewTab(ITabGroup tabGroup) {
-			var impl = new TabContentImpl(this, documentTabUIContextLocatorProvider.Create(), referenceDocumentTabContentProviders, defaultDocumentTabContentProviders);
+			var impl = new TabContentImpl(this, documentTabUIContextLocatorProvider.Create(), referenceDocumentTabContentProviders, defaultDocumentTabContentProviders, referenceHandlers);
 			tabGroup.Add(impl);
 			return impl;
 		}
@@ -153,9 +153,10 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDecompilationCache decompilationCache;
 		readonly Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders;
 		readonly Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders;
+		readonly Lazy<IReferenceHandler, IReferenceHandlerMetadata>[] referenceHandlers;
 
 		[ImportingConstructor]
-		DocumentTabService(IDocumentTabUIContextLocatorProvider documentTabUIContextLocatorProvider, DocumentTreeView documentTreeView, ITabServiceProvider tabServiceProvider, IDocumentTabContentFactoryService documentTabContentFactoryService, IDocumentTabServiceSettings documentTabServiceSettings, IWpfFocusService wpfFocusService, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>> referenceDocumentTabContentProviders, [ImportMany] IEnumerable<Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>> defaultDocumentTabContentProviders) {
+		DocumentTabService(IDocumentTabUIContextLocatorProvider documentTabUIContextLocatorProvider, DocumentTreeView documentTreeView, ITabServiceProvider tabServiceProvider, IDocumentTabContentFactoryService documentTabContentFactoryService, IDocumentTabServiceSettings documentTabServiceSettings, IWpfFocusService wpfFocusService, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>> referenceDocumentTabContentProviders, [ImportMany] IEnumerable<Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>> defaultDocumentTabContentProviders, [ImportMany] IEnumerable<Lazy<IReferenceHandler, IReferenceHandlerMetadata>> referenceHandlers) {
 			this.Settings = documentTabServiceSettings;
 			this.documentTabUIContextLocatorProvider = documentTabUIContextLocatorProvider;
 			this.documentTabContentFactoryService = documentTabContentFactoryService;
@@ -163,6 +164,7 @@ namespace dnSpy.Documents.Tabs {
 			this.decompilationCache = decompilationCache;
 			this.referenceDocumentTabContentProviders = referenceDocumentTabContentProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.defaultDocumentTabContentProviders = defaultDocumentTabContentProviders.OrderBy(a => a.Metadata.Order).ToArray();
+			this.referenceHandlers = referenceHandlers.OrderBy(a => a.Metadata.Order).ToArray();
 			var tvElem = documentTreeView.TreeView.UIObject;
 			tvElem.IsVisibleChanged += TreeView_IsVisibleChanged;
 			isTreeViewVisible = tvElem.IsVisible;

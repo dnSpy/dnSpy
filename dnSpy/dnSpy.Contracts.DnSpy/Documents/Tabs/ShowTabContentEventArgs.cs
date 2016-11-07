@@ -21,13 +21,38 @@ using System;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
+	/// Result
+	/// </summary>
+	public enum ShowTabContentResult {
+		/// <summary>
+		/// The content failed to be shown, eg. an exception occurred
+		/// </summary>
+		Failed,
+
+		/// <summary>
+		/// Content was shown
+		/// </summary>
+		ShowedContent,
+
+		/// <summary>
+		/// A <see cref="IReferenceHandler"/> handled it and no new content was shown
+		/// </summary>
+		ReferenceHandler,
+	}
+
+	/// <summary>
 	/// Show tab content event args
 	/// </summary>
 	public sealed class ShowTabContentEventArgs : EventArgs {
 		/// <summary>
-		/// true if the content was shown successfully (eg. no exceptions when decompiling code)
+		/// Gets the result
 		/// </summary>
-		public bool Success { get; }
+		public ShowTabContentResult Result { get; }
+
+		/// <summary>
+		/// true if the content was shown
+		/// </summary>
+		public bool Success => Result == ShowTabContentResult.ShowedContent;
 
 		/// <summary>
 		/// Set to true if the caret has been moved by a previous handler
@@ -42,12 +67,12 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="success">See <see cref="Success"/></param>
+		/// <param name="result">Result></param>
 		/// <param name="tab">Tab</param>
-		public ShowTabContentEventArgs(bool success, IDocumentTab tab) {
-			this.Success = success;
-			this.HasMovedCaret = false;
-			this.Tab = tab;
+		public ShowTabContentEventArgs(ShowTabContentResult result, IDocumentTab tab) {
+			Result = result;
+			HasMovedCaret = false;
+			Tab = tab;
 		}
 	}
 }
