@@ -68,7 +68,10 @@ namespace dnSpy.BamlDecompiler.Xaml {
 						throw new InvalidDataException("Unknown double type.");
 				}
 			}
-			return reader.ReadInt32() * 0.000001;
+			// Dividing by 1000000.0 is important to get back the original numbers, we can't
+			// multiply by the inverse of it (0.000001).
+			// (11700684 * 0.000001) != (11700684 / 1000000.0) => 11.700683999999999 != 11.700684
+			return reader.ReadInt32() / 1000000.0;
 		}
 	}
 }
