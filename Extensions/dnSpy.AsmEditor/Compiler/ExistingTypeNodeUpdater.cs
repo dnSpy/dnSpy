@@ -22,12 +22,17 @@ using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Types;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class ExistingTypeNodeUpdater {
 		readonly TypeNode typeNode;
+		readonly ModuleDef ownerModule;
+		readonly TypeDef targetType;
+		readonly TypeDefOptions origTypeDefOptions;
+		readonly TypeDefOptions newTypeDefOptions;
 		readonly ExistingTypeNodeUpdater[] nestedTypes1;
 		readonly NestedTypeNodeCreator[] nestedTypes2;
 		readonly FieldNodeCreator[] fields;
@@ -45,12 +50,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly DeletedEventUpdater[] deletedEvents;
 
 		public ExistingTypeNodeUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MergedImportedType type) {
-			this.typeNode = modNode.Context.DocumentTreeView.FindNode(type.TargetType);
+			this.targetType = type.TargetType;
+			this.ownerModule = targetType.Module;
+			this.origTypeDefOptions = new TypeDefOptions(targetType);
+			this.newTypeDefOptions = type.NewTypeDefOptions;
+			this.typeNode = modNode.Context.DocumentTreeView.FindNode(targetType);
 			if (this.typeNode == null)
 				throw new InvalidOperationException();
-			this.nestedTypes1 = type.NewNestedTypes.OfType<MergedImportedType>().Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
-			this.nestedTypes2 = type.NewNestedTypes.OfType<NewImportedType>().Select(a => new NestedTypeNodeCreator(modNode, typeNode, a.TargetType)).ToArray();
-			if (nestedTypes1.Length + nestedTypes2.Length != type.NewNestedTypes.Count)
+			this.nestedTypes1 = type.NewOrExistingNestedTypes.OfType<MergedImportedType>().Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
+			this.nestedTypes2 = type.NewOrExistingNestedTypes.OfType<NewImportedType>().Select(a => new NestedTypeNodeCreator(modNode, typeNode, a.TargetType)).ToArray();
+			if (nestedTypes1.Length + nestedTypes2.Length != type.NewOrExistingNestedTypes.Count)
 				throw new InvalidOperationException();
 			this.fields = type.NewFields.Select(a => new FieldNodeCreator(modNode, typeNode, a)).ToArray();
 			var specialMethods = GetSpecialMethods(type);
@@ -95,6 +104,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public void Add() {
+			newTypeDefOptions.CopyTo(targetType, ownerModule);
 			for (int i = 0; i < deletedTypes.Length; i++)
 				deletedTypes[i].Add();
 			for (int i = 0; i < deletedFields.Length; i++)
@@ -158,6 +168,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				deletedFields[i].Remove();
 			for (int i = deletedTypes.Length - 1; i >= 0; i--)
 				deletedTypes[i].Remove();
+			origTypeDefOptions.CopyTo(targetType, ownerModule);
 		}
 	}
 }

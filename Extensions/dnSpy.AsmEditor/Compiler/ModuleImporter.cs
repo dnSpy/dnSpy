@@ -30,6 +30,7 @@ using dnSpy.AsmEditor.Field;
 using dnSpy.AsmEditor.Method;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.Property;
+using dnSpy.AsmEditor.Types;
 using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
@@ -529,13 +530,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			var usedTypeNames = new UsedTypeNames();
 			foreach (var existing in existingTypes) {
 				usedTypeNames.Add(existing.CompiledMember);
-				MergeEditedTypes(existing.CompiledMember, existing.TargetMember);
+				mergedImportedType.NewOrExistingNestedTypes.Add(MergeEditedTypes(existing.CompiledMember, existing.TargetMember));
 			}
 
 			foreach (var newNestedType in newNestedTypes)
-				mergedImportedType.NewNestedTypes.Add(CreateNewImportedType(newNestedType, usedTypeNames));
+				mergedImportedType.NewOrExistingNestedTypes.Add(CreateNewImportedType(newNestedType, usedTypeNames));
 			foreach (var smType in stateMachineTypes)
-				mergedImportedType.NewNestedTypes.Add(CreateNewImportedType(smType, usedTypeNames));
+				mergedImportedType.NewOrExistingNestedTypes.Add(CreateNewImportedType(smType, usedTypeNames));
 
 			return mergedImportedType;
 		}
@@ -736,7 +737,7 @@ namespace dnSpy.AsmEditor.Compiler {
 						if (!newStateMachineTypes.Contains(nestedNewType)) {
 							newTypes.Remove(nestedTargetType);
 							var nestedImportedType = AddMergedType(nestedNewType, nestedTargetType);
-							importedType.NewNestedTypes.Add(nestedImportedType);
+							importedType.NewOrExistingNestedTypes.Add(nestedImportedType);
 						}
 					}
 					else {
@@ -747,7 +748,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				// Whatever's left are types created by the user or the compiler
 				var usedTypeNames = new UsedTypeNames(targetTypes.Keys);
 				foreach (var newNestedType in newTypes.Values)
-					importedType.NewNestedTypes.Add(CreateNewImportedType(newNestedType, usedTypeNames));
+					importedType.NewOrExistingNestedTypes.Add(CreateNewImportedType(newNestedType, usedTypeNames));
 			}
 
 			return importedType;
@@ -762,7 +763,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var mergedImportedType = AddMergedImportedType(newType, targetType, MergeKind.Rename);
 			foreach (var nestedType in newType.NestedTypes) {
 				var nestedImportedType = CreateNewImportedType(nestedType, targetType.NestedTypes);
-				mergedImportedType.NewNestedTypes.Add(nestedImportedType);
+				mergedImportedType.NewOrExistingNestedTypes.Add(nestedImportedType);
 			}
 			return mergedImportedType;
 		}
@@ -1169,10 +1170,37 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
+		void Initialize(TypeDef compiledType, TypeDef targetType, TypeDefOptions options) {
+			options.Attributes = compiledType.Attributes;
+
+			// All types are made public, so do not copy the access bits
+			var publicValue = targetType.DeclaringType == null ? TypeAttributes.Public : TypeAttributes.NestedPublic;
+			if (makeEverythingPublic && (options.Attributes & TypeAttributes.VisibilityMask) == publicValue)
+				options.Attributes = (options.Attributes & ~TypeAttributes.VisibilityMask) | (targetType.Attributes & TypeAttributes.VisibilityMask);
+
+			options.Namespace = compiledType.Namespace;
+			options.Name = compiledType.Name;
+			options.PackingSize = compiledType.ClassLayout?.PackingSize;
+			options.ClassSize = compiledType.ClassLayout?.ClassSize;
+			options.BaseType = Import(compiledType.BaseType);
+			options.CustomAttributes.Clear();
+			ImportCustomAttributes(options.CustomAttributes, compiledType);
+			options.DeclSecurities.Clear();
+			ImportDeclSecurities(options.DeclSecurities, compiledType);
+			options.GenericParameters.Clear();
+			foreach (var genericParam in compiledType.GenericParameters)
+				options.GenericParameters.Add(Import(genericParam));
+			options.Interfaces.Clear();
+			foreach (var ifaceImpl in compiledType.Interfaces)
+				options.Interfaces.Add(Import(ifaceImpl));
+		}
+
 		void InitializeTypesStep2(IEnumerable<MergedImportedType> importedTypes) {
 			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
+
+				Initialize(compiledType, importedType.TargetType, importedType.NewTypeDefOptions);
 
 				if (importedType.MergeKind == MergeKind.Rename) {
 					// All dupes are assumed to be new members and they're all renamed

@@ -23,6 +23,7 @@ using dnSpy.AsmEditor.Event;
 using dnSpy.AsmEditor.Field;
 using dnSpy.AsmEditor.Method;
 using dnSpy.AsmEditor.Property;
+using dnSpy.AsmEditor.Types;
 using Emit = dnlib.DotNet.Emit;
 
 namespace dnSpy.AsmEditor.Compiler {
@@ -95,7 +96,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		internal MergeKind MergeKind { get; }
 
 		public bool IsEmpty =>
-			NewNestedTypes.Count == 0 &&
+			TargetType.IsGlobalModuleType &&
+			NewOrExistingNestedTypes.Count == 0 &&
 			NewProperties.Count == 0 &&
 			NewEvents.Count == 0 &&
 			NewMethods.Count == 0 &&
@@ -111,9 +113,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			DeletedFields.Count == 0;
 
 		/// <summary>
-		/// New nested types that must be added to <see cref="ImportedType.TargetType"/>
+		/// New type properties
 		/// </summary>
-		public List<ImportedType> NewNestedTypes { get; } = new List<ImportedType>();
+		public TypeDefOptions NewTypeDefOptions { get; }
+
+		/// <summary>
+		/// New or existing nested types that must be added to <see cref="ImportedType.TargetType"/>
+		/// </summary>
+		public List<ImportedType> NewOrExistingNestedTypes { get; } = new List<ImportedType>();
 
 		/// <summary>
 		/// New properties that must be added to <see cref="ImportedType.TargetType"/>
@@ -183,6 +190,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public MergedImportedType(TypeDef targetType, MergeKind mergeKind) {
 			TargetType = targetType;
 			MergeKind = mergeKind;
+			NewTypeDefOptions = new TypeDefOptions();
 		}
 	}
 }
