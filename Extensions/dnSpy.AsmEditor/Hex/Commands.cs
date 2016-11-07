@@ -1428,7 +1428,7 @@ namespace dnSpy.AsmEditor.Hex {
 				documentTabService.FollowReference(tokRef);
 		}
 
-		static uint? AskForDef(string title, ITokenResolver resolver) {
+		static uint? AskForDef(string title, ModuleDef module) {
 			return MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
 				string error;
 				uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
@@ -1438,10 +1438,17 @@ namespace dnSpy.AsmEditor.Hex {
 				uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 				if (!string.IsNullOrEmpty(error))
 					return error;
-				var memberRef = resolver.ResolveToken(token);
-				if (memberRef == null)
-					return string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_InvalidMetadataToken, token);
-				return string.Empty;
+				var memberRef = module.ResolveToken(token);
+				if (memberRef != null)
+					return string.Empty;
+				var md = module as ModuleDefMD;
+				if (md != null) {
+					var mdToken = new MDToken(token);
+					var table = md.MetaData.TablesStream.Get(mdToken.Table);
+					if (table?.IsValidRID(mdToken.Rid) == true)
+						return string.Empty;
+				}
+				return string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_InvalidMetadataToken, token);
 			});
 		}
 	}
