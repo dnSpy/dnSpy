@@ -1,0 +1,27 @@
+root = true
+
+[*]
+indent_style = tab
+indent_size = 4
+insert_final_newline = true
+
+[App.config]
+
+[*.yml]
+indent_style = space
+indent_size = 2
+
+[*.{proj,csproj,vbproj,props,targets,resx,vsixmanifest}]
+indent_style = space
+indent_size = 2
+
+[app.manifest]
+indent_style = space
+indent_size = 2
+
+[*.xaml]
+indent_style = space
+
+[*.cs]
+#TODO: https://github.com/dotnet/roslyn/pull/15020
+#TODO: https://github.com/dotnet/roslyn/pull/15029
