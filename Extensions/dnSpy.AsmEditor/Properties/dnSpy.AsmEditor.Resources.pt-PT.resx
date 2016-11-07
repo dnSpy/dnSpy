@@ -2516,15 +2516,15 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
     <value>Adicionar Classe ({0})...</value>
   </data>
   <data name="EditCodeEditClass" xml:space="preserve">
-    <value>Edit Class</value>
+    <value>Editar Classe</value>
   </data>
   <data name="EditCodeEditClass2" xml:space="preserve">
-    <value>Edit Class ({0})...</value>
+    <value>Editar Classe ({0})...</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
-    <value>Couldn't find the edited type: {0}</value>
+    <value>Não foi possível encontrar o tipo editado: {0}</value>
   </data>
   <data name="CloseOldInMemoryModules" xml:space="preserve">
-    <value>Close Old In-Memory Modules</value>
+    <value>Fechar módulos de memórias velhos</value>
   </data>
 </root>

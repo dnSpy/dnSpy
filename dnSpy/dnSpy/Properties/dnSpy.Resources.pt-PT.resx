@@ -517,7 +517,7 @@
     <value>_Procurar Assemblies</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Search Assemblies ({0})</value>
+    <value>Procurar Assemblies ({0})</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Pesquisando...</value>
@@ -1247,6 +1247,6 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Linhas sólidas</value>
   </data>
   <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
-    <value>Ctrl+Shift+K</value>
+    <value>CTRL+Shift+K</value>
   </data>
 </root>
