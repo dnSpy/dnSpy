@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	sealed class EditedProperty {
+	struct EditedProperty {
 		public PropertyDef OriginalProperty { get; }
 		public PropertyDefOptions PropertyDefOptions { get; }
 		public EditedProperty(PropertyDef originalProperty, PropertyDefOptions propertyDefOptions) {
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	sealed class EditedEvent {
+	struct EditedEvent {
 		public EventDef OriginalEvent { get; }
 		public EventDefOptions EventDefOptions { get; }
 		public EditedEvent(EventDef originalEvent, EventDefOptions eventDefOptions) {
@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	sealed class EditedMethod {
+	struct EditedMethod {
 		public MethodDef OriginalMethod { get; }
 		public Emit.MethodBody NewBody { get; }
 		public MethodDefOptions MethodDefOptions { get; }
@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	sealed class EditedField {
+	struct EditedField {
 		public FieldDef OriginalField { get; }
 		public FieldDefOptions FieldDefOptions { get; }
 		public EditedField(FieldDef originalField, FieldDefOptions fieldDefOptions) {
