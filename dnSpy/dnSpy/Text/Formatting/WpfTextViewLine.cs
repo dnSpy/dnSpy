@@ -696,9 +696,10 @@ namespace dnSpy.Text.Formatting {
 
 			int column = GetFirstColumn(bufferPosition);
 			int lastColumn = GetLastColumn(bufferPosition);
-			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(lastColumn, 0));
-			var start = linePartsCollection.ConvertColumnToBufferPosition(column);
-			var end = linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex + charHit.TrailingLength);
+			var charHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(column, 0));
+			var lastCharHit = TextLine.GetNextCaretCharacterHit(new CharacterHit(lastColumn, 0));
+			var start = linePartsCollection.ConvertColumnToBufferPosition(charHit.FirstCharacterIndex);
+			var end = linePartsCollection.ConvertColumnToBufferPosition(lastCharHit.FirstCharacterIndex + lastCharHit.TrailingLength);
 			Debug.Assert(start <= end);
 			if (start <= end)
 				return new SnapshotSpan(start, end);
