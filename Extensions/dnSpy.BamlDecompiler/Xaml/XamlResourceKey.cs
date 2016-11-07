@@ -43,6 +43,12 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				return;
 			}
 
+			if (keyRecord.Record.Type != BamlRecordType.ElementStart && node.Parent.Type == BamlRecordType.ElementStart) {
+				node.Parent.Annotation = this;
+				node.Annotation = this;
+				return;
+			}
+
 			if (keyRecord.Record.Type != BamlRecordType.ElementStart) {
 				Debug.WriteLine($"Key record @{keyRecord.Position} must be attached to ElementStart (actual {keyRecord.Record.Type})");
 			}
