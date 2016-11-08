@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -117,7 +118,7 @@ namespace dnSpy.BackgroundImage {
 
 		void ReadSettings(ISettingsSection section) {
 			Id = section.Attribute<string>(nameof(Id));
-			Images = DeserializeImages(section.Attribute<string>(nameof(Images))) ?? Array.Empty<string>();
+			Images = FilterOutImages(DeserializeImages(section.Attribute<string>(nameof(Images))) ?? Array.Empty<string>()).ToArray();
 			Stretch = section.Attribute<Stretch?>(nameof(Stretch)) ?? DefaultRawSettings.DefaultStretch;
 			StretchDirection = section.Attribute<StretchDirection?>(nameof(StretchDirection)) ?? DefaultRawSettings.DefaultStretchDirection;
 			Opacity = section.Attribute<double?>(nameof(Opacity)) ?? DefaultRawSettings.Opacity;
@@ -135,6 +136,13 @@ namespace dnSpy.BackgroundImage {
 			IsEnabled = section.Attribute<bool?>(nameof(IsEnabled)) ?? DefaultRawSettings.IsEnabled;
 			Interval = section.Attribute<TimeSpan?>(nameof(Interval)) ?? DefaultRawSettings.Interval;
 		}
+
+		static IEnumerable<string> FilterOutImages(string[] images) =>
+			images.Where(a => !IsBetaImage(a));
+
+		static bool IsBetaImage(string image) =>
+			image.EndsWith("pack://application:,,,/dnSpy;component/Images/DefaultWatermarkLight.png", StringComparison.CurrentCultureIgnoreCase) ||
+			image.EndsWith("pack://application:,,,/dnSpy;component/Images/DefaultWatermarkDark.png", StringComparison.CurrentCultureIgnoreCase);
 
 		const string SEP_STRING = "<{[]}>";
 		static string SerializeImages(string[] s) => string.Join(SEP_STRING, s);
