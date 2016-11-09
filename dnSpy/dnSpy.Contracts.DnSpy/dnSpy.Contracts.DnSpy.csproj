@@ -258,52 +258,60 @@
     <Compile Include="Extension\ExtensionInfo.cs" />
     <Compile Include="Extension\IAutoLoaded.cs" />
     <Compile Include="Extension\IExtension.cs" />
-    <Compile Include="HexEditor\AsciiEncoding.cs" />
-    <Compile Include="HexEditor\ByteArrayHexStream.cs" />
-    <Compile Include="HexEditor\CachedHexStream.cs" />
-    <Compile Include="HexEditor\ClipboardUtils.cs" />
-    <Compile Include="HexEditor\DataFormatter.cs" />
-    <Compile Include="HexEditor\HexBox.cs" />
-    <Compile Include="HexEditor\HexBoxPosition.cs" />
-    <Compile Include="HexEditor\HexBoxPositionKind.cs" />
-    <Compile Include="HexEditor\HexBoxState.cs" />
-    <Compile Include="HexEditor\HexBoxWriteEventArgs.cs" />
-    <Compile Include="HexEditor\HexCaret.cs" />
-    <Compile Include="HexEditor\HexDocument.cs" />
-    <Compile Include="HexEditor\HexDocumentModifiedEventArgs.cs" />
-    <Compile Include="HexEditor\HexLine.cs" />
-    <Compile Include="HexEditor\HexLineLayer.cs" />
-    <Compile Include="HexEditor\HexLinePart.cs" />
-    <Compile Include="HexEditor\HexLineTextSource.cs" />
-    <Compile Include="HexEditor\HexPositionUI.cs" />
-    <Compile Include="HexEditor\HexSelection.cs" />
-    <Compile Include="HexEditor\HexTextParagraphProperties.cs" />
-    <Compile Include="HexEditor\HexTextRunProperties.cs" />
-    <Compile Include="HexEditor\HexWriteType.cs" />
-    <Compile Include="HexEditor\IHexLayer.cs" />
-    <Compile Include="HexEditor\IHexStream.cs" />
-    <Compile Include="HexEditor\ISimpleHexStream.cs" />
-    <Compile Include="HexEditor\NumberUtils.cs" />
-    <Compile Include="HexEditor\SelectionLayer.cs" />
-    <Compile Include="Hex\DnHexBox.cs" />
-    <Compile Include="Hex\GoToOffsetDlg.xaml.cs">
+    <Compile Include="HexEditor.Old\AsciiEncoding.cs" />
+    <Compile Include="HexEditor.Old\ByteArrayHexStream.cs" />
+    <Compile Include="HexEditor.Old\CachedHexStream.cs" />
+    <Compile Include="HexEditor.Old\ClipboardUtils.cs" />
+    <Compile Include="HexEditor.Old\DataFormatter.cs" />
+    <Compile Include="HexEditor.Old\HexBox.cs" />
+    <Compile Include="HexEditor.Old\HexBoxPosition.cs" />
+    <Compile Include="HexEditor.Old\HexBoxPositionKind.cs" />
+    <Compile Include="HexEditor.Old\HexBoxState.cs" />
+    <Compile Include="HexEditor.Old\HexBoxWriteEventArgs.cs" />
+    <Compile Include="HexEditor.Old\HexCaret.cs" />
+    <Compile Include="HexEditor.Old\HexDocument.cs" />
+    <Compile Include="HexEditor.Old\HexDocumentModifiedEventArgs.cs" />
+    <Compile Include="HexEditor.Old\HexLine.cs" />
+    <Compile Include="HexEditor.Old\HexLineLayer.cs" />
+    <Compile Include="HexEditor.Old\HexLinePart.cs" />
+    <Compile Include="HexEditor.Old\HexLineTextSource.cs" />
+    <Compile Include="HexEditor.Old\HexPositionUI.cs" />
+    <Compile Include="HexEditor.Old\HexSelection.cs" />
+    <Compile Include="HexEditor.Old\HexTextParagraphProperties.cs" />
+    <Compile Include="HexEditor.Old\HexTextRunProperties.cs" />
+    <Compile Include="HexEditor.Old\HexWriteType.cs" />
+    <Compile Include="HexEditor.Old\IHexLayer.cs" />
+    <Compile Include="HexEditor.Old\IHexStream.cs" />
+    <Compile Include="HexEditor.Old\ISimpleHexStream.cs" />
+    <Compile Include="HexEditor.Old\NumberUtils.cs" />
+    <Compile Include="HexEditor.Old\SelectionLayer.cs" />
+    <Compile Include="HexEd\HexBuffer.cs" />
+    <Compile Include="HexEd\HexBufferPosition.cs" />
+    <Compile Include="HexEd\HexBufferSpan.cs" />
+    <Compile Include="HexEd\HexChange.cs" />
+    <Compile Include="HexEd\HexEdit.cs" />
+    <Compile Include="HexEd\HexSpan.cs" />
+    <Compile Include="HexEd\HexVersion.cs" />
+    <Compile Include="HexEd\NormalizedHexChangeCollection.cs" />
+    <Compile Include="Hex.Old\DnHexBox.cs" />
+    <Compile Include="Hex.Old\GoToOffsetDlg.xaml.cs">
       <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\GoToOffsetVM.cs" />
-    <Compile Include="Hex\HexBoxCommands.cs" />
-    <Compile Include="Hex\HexBoxThemeHelper.cs" />
-    <Compile Include="Hex\HexEditorAppSettingsPage.cs" />
-    <Compile Include="Hex\HexEditorSettings.cs" />
-    <Compile Include="Hex\LocalHexSettings.cs" />
-    <Compile Include="Hex\LocalSettingsDlg.xaml.cs">
+    <Compile Include="Hex.Old\GoToOffsetVM.cs" />
+    <Compile Include="Hex.Old\HexBoxCommands.cs" />
+    <Compile Include="Hex.Old\HexBoxThemeHelper.cs" />
+    <Compile Include="Hex.Old\HexEditorAppSettingsPage.cs" />
+    <Compile Include="Hex.Old\HexEditorSettings.cs" />
+    <Compile Include="Hex.Old\LocalHexSettings.cs" />
+    <Compile Include="Hex.Old\LocalSettingsDlg.xaml.cs">
       <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\LocalSettingsVM.cs" />
-    <Compile Include="Hex\MDUtils.cs" />
-    <Compile Include="Hex\SelectDlg.xaml.cs">
+    <Compile Include="Hex.Old\LocalSettingsVM.cs" />
+    <Compile Include="Hex.Old\MDUtils.cs" />
+    <Compile Include="Hex.Old\SelectDlg.xaml.cs">
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\SelectVM.cs" />
+    <Compile Include="Hex.Old\SelectVM.cs" />
     <Compile Include="Images\DsImage.cs" />
     <Compile Include="Images\DsImages.cs" />
     <Compile Include="Images\DsImagesAttribute.cs" />
@@ -693,15 +701,15 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Hex\GoToOffsetDlg.xaml">
+    <Page Include="Hex.Old\GoToOffsetDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Hex\LocalSettingsDlg.xaml">
+    <Page Include="Hex.Old\LocalSettingsDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Hex\SelectDlg.xaml">
+    <Page Include="Hex.Old\SelectDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
