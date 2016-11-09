@@ -285,14 +285,19 @@
     <Compile Include="HexEditor.Old\ISimpleHexStream.cs" />
     <Compile Include="HexEditor.Old\NumberUtils.cs" />
     <Compile Include="HexEditor.Old\SelectionLayer.cs" />
-    <Compile Include="HexEd\HexBuffer.cs" />
-    <Compile Include="HexEd\HexBufferPosition.cs" />
-    <Compile Include="HexEd\HexBufferSpan.cs" />
-    <Compile Include="HexEd\HexChange.cs" />
-    <Compile Include="HexEd\HexEdit.cs" />
-    <Compile Include="HexEd\HexSpan.cs" />
-    <Compile Include="HexEd\HexVersion.cs" />
-    <Compile Include="HexEd\NormalizedHexChangeCollection.cs" />
+    <Compile Include="Hex\HexBuffer.cs" />
+    <Compile Include="Hex\HexBufferPoint.cs" />
+    <Compile Include="Hex\HexBufferSpan.cs" />
+    <Compile Include="Hex\HexChange.cs" />
+    <Compile Include="Hex\HexChangeImpl.cs" />
+    <Compile Include="Hex\HexContentChangedEventArgs.cs" />
+    <Compile Include="Hex\HexContentChangingEventArgs.cs" />
+    <Compile Include="Hex\HexEdit.cs" />
+    <Compile Include="Hex\HexSpan.cs" />
+    <Compile Include="Hex\HexSpanInfo.cs" />
+    <Compile Include="Hex\HexVersion.cs" />
+    <Compile Include="Hex\HexVersionChangedEventArgs.cs" />
+    <Compile Include="Hex\NormalizedHexChangeCollection.cs" />
     <Compile Include="Hex.Old\DnHexBox.cs" />
     <Compile Include="Hex.Old\GoToOffsetDlg.xaml.cs">
       <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
@@ -312,6 +317,7 @@
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Hex.Old\SelectVM.cs" />
+    <Compile Include="Hex\UInt128.cs" />
     <Compile Include="Images\DsImage.cs" />
     <Compile Include="Images\DsImages.cs" />
     <Compile Include="Images\DsImagesAttribute.cs" />
