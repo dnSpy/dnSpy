@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Hex {
 	/// </summary>
 	public struct HexBufferPoint : IEquatable<HexBufferPoint>, IComparable<HexBufferPoint> {
 		/// <summary>
+		/// true if this is a default instance that hasn't been initialized
+		/// </summary>
+		public bool IsDefault => Buffer == null;
+
+		/// <summary>
 		/// Gets the buffer
 		/// </summary>
 		public HexBuffer Buffer { get; }

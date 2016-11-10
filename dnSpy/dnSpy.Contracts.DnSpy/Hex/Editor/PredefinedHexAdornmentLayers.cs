@@ -17,49 +17,59 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// dnSpy adornment layers
+	/// Predefined hex adornment layer names
 	/// </summary>
-	public static class PredefinedDsAdornmentLayers {
+	public static class PredefinedHexAdornmentLayers {
 		/// <summary>
 		/// Bottom layer. All layers should normally be after this layer.
 		/// </summary>
-		public const string BottomLayer = "dnSpy-" + nameof(BottomLayer);
+		public const string BottomLayer = nameof(BottomLayer);
 
 		/// <summary>
 		/// Top layer. All layers should normally be before this layer.
 		/// </summary>
-		public const string TopLayer = "dnSpy-" + nameof(TopLayer);
+		public const string TopLayer = nameof(TopLayer);
+
+		/// <summary>
+		/// Caret adornment layer
+		/// </summary>
+		public const string Caret = nameof(Caret);
+
+		/// <summary>
+		/// Current line highlighter adornment layer
+		/// </summary>
+		public const string CurrentLineHighlighter = nameof(CurrentLineHighlighter);
+
+		/// <summary>
+		/// Selection adornment layer
+		/// </summary>
+		public const string Selection = nameof(Selection);
+
+		/// <summary>
+		/// Text adornment layer
+		/// </summary>
+		public const string Text = nameof(Text);
 
 		/// <summary>
 		/// Text marker adornment layer for markers with a negative z-index
 		/// </summary>
-		public const string NegativeTextMarkerLayer = "negativetextmarkerlayer";
+		public const string NegativeTextMarker = nameof(NegativeTextMarker);
 
 		/// <summary>
-		/// <see cref="IGlyphTextMarkerService"/>'s adornment layer
+		/// Text marker adornment layer
 		/// </summary>
-		public const string GlyphTextMarker = "dnSpy-" + nameof(GlyphTextMarker);
-
-		/// <summary>
-		/// Line separator adornment layer
-		/// </summary>
-		public const string LineSeparator = "dnSpy-" + nameof(LineSeparator);
+		public const string TextMarker = nameof(TextMarker);
 
 		/// <summary>
 		/// Background image adornment layer
 		/// </summary>
-		public const string BackgroundImage = "dnSpy-" + nameof(BackgroundImage);
+		public const string BackgroundImage = nameof(BackgroundImage);
 
 		/// <summary>
 		/// Search adornment layer
 		/// </summary>
-		public const string Search = "dnSpy-" + nameof(Search);
-
-		/// <summary>
-		/// Intra text adornment layer
-		/// </summary>
-		public const string IntraTextAdornment = "Intra Text Adornment";
+		public const string Search = nameof(Search);
 	}
 }

@@ -19,6 +19,7 @@
 
 using System.Windows.Controls;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
@@ -140,6 +141,9 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary><see cref="IWpfTextViewMargin"/></summary>
 		public static readonly string GUIDOBJ_WPF_TEXTVIEW_MARGIN_GUID = "36C94DC4-05AA-4F2B-A6C4-02EFE187AAA3";
+
+		/// <summary><see cref="WpfHexView"/></summary>
+		public static readonly string GUIDOBJ_WPF_HEXVIEW_GUID = "2A57190E-B129-4083-8427-EC2DC6C53D55";
 
 		/// <summary>Point of mouse relative to <see cref="IWpfTextViewMargin"/></summary>
 		public static readonly string GUIDOBJ_MARGIN_POINT_GUID = "FEAC116C-FA91-42D9-A646-BD8F3A6A6EFD";

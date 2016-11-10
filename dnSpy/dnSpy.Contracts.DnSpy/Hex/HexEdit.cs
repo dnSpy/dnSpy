@@ -35,6 +35,11 @@ namespace dnSpy.Contracts.Hex {
 		public abstract bool Canceled { get; }
 
 		/// <summary>
+		/// Gets the buffer
+		/// </summary>
+		public abstract HexBuffer Buffer { get; }
+
+		/// <summary>
 		/// true if the edit has changes in non-read-only regions
 		/// </summary>
 		public abstract bool HasEffectiveChanges { get; }
@@ -49,77 +54,88 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, byte value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, byte value);
 
 		/// <summary>
 		/// Replaces the <see cref="sbyte"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, sbyte value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, sbyte value);
 
 		/// <summary>
 		/// Replaces the <see cref="short"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, short value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, short value);
 
 		/// <summary>
 		/// Replaces the <see cref="ushort"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, ushort value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, ushort value);
 
 		/// <summary>
 		/// Replaces the <see cref="int"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, int value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, int value);
 
 		/// <summary>
 		/// Replaces the <see cref="uint"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, uint value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, uint value);
 
 		/// <summary>
 		/// Replaces the <see cref="long"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, long value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, long value);
 
 		/// <summary>
 		/// Replaces the <see cref="ulong"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, ulong value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, ulong value);
 
 		/// <summary>
 		/// Replaces the <see cref="float"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, float value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, float value);
 
 		/// <summary>
 		/// Replaces the <see cref="double"/> at <paramref name="position"/> with <paramref name="value"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public abstract void Replace(ulong position, double value);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, double value);
 
 		/// <summary>
 		/// Replaces the data at <paramref name="position"/> with <paramref name="data"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="data">New data</param>
-		public abstract void Replace(ulong position, byte[] data);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, byte[] data);
 
 		/// <summary>
 		/// Replaces the data at <paramref name="position"/> with <paramref name="data"/>
@@ -128,7 +144,8 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="data">New data</param>
 		/// <param name="index">Index</param>
 		/// <param name="length">Length</param>
-		public abstract void Replace(ulong position, byte[] data, int index, int length);
+		/// <returns></returns>
+		public abstract bool Replace(ulong position, byte[] data, long index, long length);
 
 		/// <summary>
 		/// Commits all the modifications

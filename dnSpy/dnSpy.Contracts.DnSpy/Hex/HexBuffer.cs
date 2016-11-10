@@ -43,6 +43,21 @@ namespace dnSpy.Contracts.Hex {
 		public abstract bool IsVolatile { get; }
 
 		/// <summary>
+		/// true if the buffer is read-only
+		/// </summary>
+		public abstract bool IsReadOnly { get; }
+
+		/// <summary>
+		/// Gets the span
+		/// </summary>
+		public abstract HexSpan Span { get; }
+
+		/// <summary>
+		/// Gets the name. This could be the filename if the data was read from a file
+		/// </summary>
+		public abstract string Name { get; }
+
+		/// <summary>
 		/// Gets the version
 		/// </summary>
 		public abstract HexVersion Version { get; }
@@ -223,7 +238,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="data">New data</param>
 		/// <param name="index">Index</param>
 		/// <param name="length">Length</param>
-		public void Replace(ulong position, byte[] data, int index, int length) {
+		public void Replace(ulong position, byte[] data, long index, long length) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, data, index, length);
 				ed.Apply();

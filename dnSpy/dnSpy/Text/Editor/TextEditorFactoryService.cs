@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
@@ -87,31 +86,22 @@ namespace dnSpy.Text.Editor {
 		};
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
+			readonly IWpfTextView wpfTextView;
 			readonly Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects;
-			readonly IGuidObjectsProvider guidObjectsProvider;
-			internal IWpfTextView WpfTextView { get; set; }
 
-			public GuidObjectsProvider(Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects, IGuidObjectsProvider guidObjectsProvider) {
+			public GuidObjectsProvider(IWpfTextView wpfTextView, Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects) {
+				this.wpfTextView = wpfTextView;
 				this.createGuidObjects = createGuidObjects;
-				this.guidObjectsProvider = guidObjectsProvider;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
-				Debug.Assert(WpfTextView != null);
-				if (WpfTextView != null) {
-					yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_TEXTVIEW_GUID, WpfTextView);
-					var loc = WpfTextView.GetTextEditorPosition(args.OpenedFromKeyboard);
-					if (loc != null)
-						yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORPOSITION_GUID, loc);
-				}
+				yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_TEXTVIEW_GUID, wpfTextView);
+				var loc = wpfTextView.GetTextEditorPosition(args.OpenedFromKeyboard);
+				if (loc != null)
+					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORPOSITION_GUID, loc);
 
 				if (createGuidObjects != null) {
 					foreach (var guidObject in createGuidObjects(args))
-						yield return guidObject;
-				}
-
-				if (guidObjectsProvider != null) {
-					foreach (var guidObject in guidObjectsProvider.GetGuidObjects(args))
 						yield return guidObject;
 				}
 			}
@@ -211,13 +201,13 @@ namespace dnSpy.Text.Editor {
 			return CreateTextViewImpl(viewModel, roles, parentOptions, options);
 		}
 
-		IDsWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options, Func<IGuidObjectsProvider> createGuidObjectsProvider = null) {
-			var guidObjectsProvider = new GuidObjectsProvider(options?.CreateGuidObjects, createGuidObjectsProvider?.Invoke());
+		IDsWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
 			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandService, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, spaceReservationStackProvider, wpfTextViewConnectionListenerServiceProvider, bufferGraphFactoryService, wpfTextViewCreationListeners);
-			guidObjectsProvider.WpfTextView = wpfTextView;
 
-			if (options?.MenuGuid != null)
+			if (options?.MenuGuid != null) {
+				var guidObjectsProvider = new GuidObjectsProvider(wpfTextView, options?.CreateGuidObjects);
 				menuService.InitializeContextMenu(wpfTextView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, new ContextMenuInitializer(wpfTextView));
+			}
 
 			if (options?.EnableUndoHistory != false)
 				textViewUndoManagerProvider.Value.GetTextViewUndoManager(wpfTextView);

@@ -21,35 +21,35 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Hex.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Text.Editor {
-	[Export(typeof(IEditorOptionsFactoryService))]
-	sealed class EditorOptionsFactoryService : IEditorOptionsFactoryService {
-		IEditorOptions IEditorOptionsFactoryService.GlobalOptions => GlobalOptions;
-		internal EditorOptions GlobalOptions { get; }
+namespace dnSpy.Hex.Editor {
+	[Export(typeof(HexEditorOptionsFactoryService))]
+	sealed class HexEditorOptionsFactoryServiceImpl : HexEditorOptionsFactoryService {
+		public override IEditorOptions GlobalOptions => HexGlobalOptions;
+		internal HexEditorOptions HexGlobalOptions { get; }
 
 		internal IEnumerable<EditorOptionDefinition> EditorOptionDefinitions => editorOptionDefinitions.Values;
-		readonly Dictionary<string, EditorOptionDefinition> editorOptionDefinitions;
+		readonly Dictionary<string, HexEditorOptionDefinition> editorOptionDefinitions;
 
 		[ImportingConstructor]
-		EditorOptionsFactoryService([ImportMany] IEnumerable<EditorOptionDefinition> editorOptionDefinitions) {
-			this.editorOptionDefinitions = new Dictionary<string, EditorOptionDefinition>();
+		HexEditorOptionsFactoryServiceImpl([ImportMany] IEnumerable<HexEditorOptionDefinition> editorOptionDefinitions) {
+			this.editorOptionDefinitions = new Dictionary<string, HexEditorOptionDefinition>();
 			foreach (var o in editorOptionDefinitions) {
 				Debug.Assert(!this.editorOptionDefinitions.ContainsKey(o.Name));
 				this.editorOptionDefinitions[o.Name] = o;
 			}
-			GlobalOptions = new EditorOptions(this, null, null);
-			GlobalOptions.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, WordWrapStylesConstants.DefaultValue);
+			HexGlobalOptions = new HexEditorOptions(this, null, null);
 		}
 
-		public IEditorOptions CreateOptions() => new EditorOptions(this, GlobalOptions, null);
-		public IEditorOptions GetOptions(IPropertyOwner scope) {
+		public override IEditorOptions CreateOptions() => new HexEditorOptions(this, HexGlobalOptions, null);
+
+		public override IEditorOptions GetOptions(IPropertyOwner scope) {
 			if (scope == null)
 				throw new ArgumentNullException(nameof(scope));
-			return scope.Properties.GetOrCreateSingletonProperty(typeof(IEditorOptions), () => new EditorOptions(this, GlobalOptions, scope));
+			return scope.Properties.GetOrCreateSingletonProperty(typeof(IEditorOptions), () => new HexEditorOptions(this, HexGlobalOptions, scope));
 		}
 
 		internal EditorOptionDefinition GetOption(string optionId) => editorOptionDefinitions[optionId];

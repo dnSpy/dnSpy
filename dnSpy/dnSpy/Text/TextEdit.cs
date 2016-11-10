@@ -65,7 +65,13 @@ namespace dnSpy.Text {
 			return textBuffer.CurrentSnapshot;
 		}
 
-		public void Cancel() => textBuffer.Cancel(this);
+		public void Cancel() {
+			if (Canceled)
+				return;
+			Canceled = true;
+			textBuffer.Cancel(this);
+		}
+
 		public bool Delete(int startPosition, int charsToDelete) => Delete(new Span(startPosition, charsToDelete));
 		public bool Delete(Span deleteSpan) => Replace(deleteSpan, string.Empty);
 		public bool Insert(int position, char[] characterBuffer, int startIndex, int length) => Insert(position, new string(characterBuffer, startIndex, length));
