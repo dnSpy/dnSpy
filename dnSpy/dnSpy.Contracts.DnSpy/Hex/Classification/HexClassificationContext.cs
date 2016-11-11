@@ -21,41 +21,13 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex.Classification {
 	/// <summary>
-	/// Hex classification context type
-	/// </summary>
-	public enum HexClassificationContextType {
-		/// <summary>
-		/// Offset column (<see cref="HexOffsetClassificationContext"/>)
-		/// </summary>
-		Offset,
-
-		/// <summary>
-		/// Bytes column (<see cref="HexBytesClassificationContext"/>)
-		/// </summary>
-		Bytes,
-
-		/// <summary>
-		/// ASCII column (<see cref="HexAsciiClassificationContext"/>)
-		/// </summary>
-		Ascii,
-	}
-
-	/// <summary>
 	/// Hex classification context
 	/// </summary>
 	public abstract class HexClassificationContext {
 		/// <summary>
-		/// Gets the classification context type
-		/// </summary>
-		public HexClassificationContextType Type { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="type">Classification context type</param>
-		internal HexClassificationContext(HexClassificationContextType type) {
-			Type = type;
-		}
+		protected HexClassificationContext() { }
 
 		/// <summary>
 		/// Line span, some of the bytes could be hidden
@@ -68,76 +40,50 @@ namespace dnSpy.Contracts.Hex.Classification {
 		public abstract HexBufferSpan VisibleBytesSpan { get; }
 
 		/// <summary>
+		/// All raw visible bytes
+		/// </summary>
+		public abstract HexBytes VisibleHexBytes { get; }
+
+		/// <summary>
 		/// Text shown in the UI
 		/// </summary>
 		public abstract string Text { get; }
-	}
 
-	/// <summary>
-	/// Hex offset classification context
-	/// </summary>
-	public abstract class HexOffsetClassificationContext : HexClassificationContext {
 		/// <summary>
-		/// Constructor
+		/// Gets the span in <see cref="Text"/> of the offset. This can be an empty span if
+		/// the offset isn't shown.
 		/// </summary>
-		protected HexOffsetClassificationContext() : base(HexClassificationContextType.Offset) { }
-	}
-
-	/// <summary>
-	/// Hex bytes classification context
-	/// </summary>
-	public abstract class HexBytesClassificationContext : HexClassificationContext {
-		/// <summary>
-		/// All raw visible bytes
-		/// </summary>
-		public abstract HexBytes VisibleHexBytes { get; }
+		/// <returns></returns>
+		public abstract Span GetOffsetSpan();
 
 		/// <summary>
-		/// Constructor
-		/// </summary>
-		protected HexBytesClassificationContext() : base(HexClassificationContextType.Bytes) { }
-
-		/// <summary>
-		/// Gets the span of a hex byte in <see cref="HexClassificationContext.Text"/>
+		/// Gets the span of a value in <see cref="Text"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract Span GetSpan(ulong position);
+		public abstract TextAndHexSpan GetBytesSpan(HexPosition position);
 
 		/// <summary>
-		/// Gets the span of hex bytes in <see cref="HexClassificationContext.Text"/>
+		/// Gets the span of values in <see cref="Text"/>
 		/// </summary>
 		/// <param name="span">Span</param>
 		/// <returns></returns>
-		public abstract Span GetSpan(HexSpan span);
-	}
-
-	/// <summary>
-	/// Hex ASCII chars classification context
-	/// </summary>
-	public abstract class HexAsciiClassificationContext : HexClassificationContext {
-		/// <summary>
-		/// All raw visible bytes
-		/// </summary>
-		public abstract HexBytes VisibleHexBytes { get; }
+		public abstract TextAndHexSpan GetBytesSpan(HexSpan span);
 
 		/// <summary>
-		/// Constructor
-		/// </summary>
-		protected HexAsciiClassificationContext() : base(HexClassificationContextType.Ascii) { }
-
-		/// <summary>
-		/// Gets the span of an ASCII character in <see cref="HexClassificationContext.Text"/>
+		/// Gets the span of an ASCII character in <see cref="Text"/>. This can be an empty span
+		/// if the ASCII isn't shown.
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract Span GetSpan(ulong position);
+		public abstract Span GetAsciiSpan(HexPosition position);
 
 		/// <summary>
-		/// Gets the span of ASCII characters in <see cref="HexClassificationContext.Text"/>
+		/// Gets the span of ASCII characters in <see cref="Text"/>. This can be an empty span
+		/// if the ASCII isn't shown.
 		/// </summary>
 		/// <param name="span">Span</param>
 		/// <returns></returns>
-		public abstract Span GetSpan(HexSpan span);
+		public abstract Span GetAsciiSpan(HexSpan span);
 	}
 }

@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using Microsoft.VisualStudio.Text.Editor;
@@ -57,7 +58,7 @@ namespace dnSpy.Hex.Editor {
 		public override HexLineTransformSource LineTransformSource { get; }//TODO:
 		public override HexViewLineCollection HexViewLines => WpfHexViewLines;
 		public override WpfHexViewLineCollection WpfHexViewLines { get; }//TODO:
-		public override event EventHandler Closed;//TODO:
+		public override event EventHandler Closed;
 		public override event EventHandler GotAggregateFocus;//TODO:
 		public override event EventHandler LostAggregateFocus;//TODO:
 		public override event EventHandler<HexViewLayoutChangedEventArgs> LayoutChanged;//TODO:
@@ -67,8 +68,9 @@ namespace dnSpy.Hex.Editor {
 		public override event EventHandler<HexMouseHoverEventArgs> MouseHover;//TODO:
 
 		readonly FormattedHexSourceFactoryService formattedHexSourceFactoryService;
+		readonly HexClassifier aggregateClassifier;
 
-		public WpfHexViewImpl(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService) {
+		public WpfHexViewImpl(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService) {
 			if (hexBuffer == null)
 				throw new ArgumentNullException(nameof(hexBuffer));
 			if (roles == null)
@@ -81,11 +83,14 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(commandService));
 			if (formattedHexSourceFactoryService == null)
 				throw new ArgumentNullException(nameof(formattedHexSourceFactoryService));
+			if (hexViewClassifierAggregatorService == null)
+				throw new ArgumentNullException(nameof(hexViewClassifierAggregatorService));
 			this.formattedHexSourceFactoryService = formattedHexSourceFactoryService;
 			HexBuffer = hexBuffer;
 			Roles = roles;
 			Options = hexEditorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;
+			aggregateClassifier = hexViewClassifierAggregatorService.GetClassifier(this);
 
 			if (Roles.Contains(PredefinedHexViewRoles.Interactive))
 				RegisteredCommandElement = commandService.Register(VisualElement, this);
@@ -99,28 +104,30 @@ namespace dnSpy.Hex.Editor {
 				throw new InvalidOperationException();
 			isClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
+			aggregateClassifier.Dispose();
+			//TODO: Clean up more
 		}
 
 		public override HexAdornmentLayer GetAdornmentLayer(string name) {
-			throw new NotSupportedException();//TODO:
+			throw new NotImplementedException();//TODO:
 		}
 
 		public override HexSpaceReservationManager GetSpaceReservationManager(string name) {
-			throw new NotSupportedException();//TODO:
+			throw new NotImplementedException();//TODO:
 		}
 
 		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, HexViewRelativePosition relativeTo) =>
 			DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null);
 
 		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, HexViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) {
-			throw new NotSupportedException();//TODO:
+			throw new NotImplementedException();//TODO:
 		}
 
 		public override HexViewLine GetHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition) =>
 			GetWpfHexViewLineContainingBufferPosition(bufferPosition);
 
 		public override WpfHexViewLine GetWpfHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition) {
-			throw new NotSupportedException();//TODO:
+			throw new NotImplementedException();//TODO:
 		}
 
 		public override void QueueSpaceReservationStackRefresh() {

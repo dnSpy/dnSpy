@@ -19,6 +19,7 @@
 
 using System;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -86,5 +87,29 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="proposedValue">Proposed value</param>
 		/// <returns></returns>
 		public virtual bool IsValid(ref T proposedValue) => true;
+	}
+
+	/// <summary>
+	/// <see cref="HexView"/> option definition
+	/// </summary>
+	public abstract class HexViewOptionDefinition<T> : HexEditorOptionDefinition<T> {
+		/// <summary>
+		/// Returns true if <paramref name="scope"/> is a <see cref="HexView"/>
+		/// </summary>
+		/// <param name="scope">Scope</param>
+		/// <returns></returns>
+		public override bool IsApplicableToScope(IPropertyOwner scope) => scope is HexView;
+	}
+
+	/// <summary>
+	/// <see cref="WpfHexView"/> option definition
+	/// </summary>
+	public abstract class WpfHexViewOptionDefinition<T> : HexEditorOptionDefinition<T> {
+		/// <summary>
+		/// Returns true if <paramref name="scope"/> is a <see cref="WpfHexView"/>
+		/// </summary>
+		/// <param name="scope">Scope</param>
+		/// <returns></returns>
+		public override bool IsApplicableToScope(IPropertyOwner scope) => scope is WpfHexView;
 	}
 }

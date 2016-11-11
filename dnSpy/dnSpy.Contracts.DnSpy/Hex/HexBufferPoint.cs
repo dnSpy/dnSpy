@@ -37,14 +37,14 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the position
 		/// </summary>
-		public ulong Position { get; }
+		public HexPosition Position { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
-		public HexBufferPoint(HexBuffer buffer, ulong position) {
+		public HexBufferPoint(HexBuffer buffer, HexPosition position) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			Buffer = buffer;
@@ -52,10 +52,10 @@ namespace dnSpy.Contracts.Hex {
 		}
 
 		/// <summary>
-		/// Converts <paramref name="point"/> to a <see cref="ulong"/>
+		/// Converts <paramref name="point"/> to a <see cref="HexPosition"/>
 		/// </summary>
 		/// <param name="point">Point</param>
-		public static implicit operator ulong(HexBufferPoint point) => point.Position;
+		public static implicit operator HexPosition(HexBufferPoint point) => point.Position;
 
 		/// <summary>
 		/// Gets the byte
@@ -74,21 +74,21 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="value">Value to add</param>
 		/// <returns></returns>
-		public HexBufferPoint Add(ulong value) => new HexBufferPoint(Buffer, Position + value);
+		public HexBufferPoint Add(HexPosition value) => new HexBufferPoint(Buffer, Position + value);
 
 		/// <summary>
 		/// Subtract <paramref name="value"/>
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public HexBufferPoint Subtract(ulong value) => new HexBufferPoint(Buffer, Position - value);
+		public HexBufferPoint Subtract(HexPosition value) => new HexBufferPoint(Buffer, Position - value);
 
 		/// <summary>
 		/// Returns the difference of <paramref name="other"/> with this instance
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public ulong Difference(HexBufferPoint other) => other - this;
+		public HexPosition Difference(HexBufferPoint other) => other - this;
 
 		/// <summary>
 		/// operator -()
@@ -96,7 +96,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static ulong operator -(HexBufferPoint left, HexBufferPoint right) => left.Position - right.Position;
+		public static HexPosition operator -(HexBufferPoint left, HexBufferPoint right) => left.Position - right.Position;
 
 		/// <summary>
 		/// operator -()
@@ -104,15 +104,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="point"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static HexBufferPoint operator -(HexBufferPoint point, ulong value) => point.Subtract(value);
-
-		/// <summary>
-		/// operator -()
-		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static HexBufferPoint operator -(HexBufferPoint point, long value) => point.Subtract((ulong)value);
+		public static HexBufferPoint operator -(HexBufferPoint point, HexPosition value) => point.Subtract(value);
 
 		/// <summary>
 		/// operator +()
@@ -120,15 +112,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="point"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static HexBufferPoint operator +(HexBufferPoint point, ulong value) => point.Add(value);
-
-		/// <summary>
-		/// operator +()
-		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static HexBufferPoint operator +(HexBufferPoint point, long value) => point.Add((ulong)value);
+		public static HexBufferPoint operator +(HexBufferPoint point, HexPosition value) => point.Add(value);
 
 		/// <summary>
 		/// operator ==()
@@ -217,8 +201,8 @@ namespace dnSpy.Contracts.Hex {
 			if (Buffer == null)
 				return "uninit";
 			var b = TryGetByte();
-			var bs = b < 0 ? "??" : b.ToString("X8");
-			return "0x" + Position.ToString("X") + "_'" + bs + "'";
+			var bs = b < 0 ? "??" : b.ToString("X2");
+			return Position.ToString() + "_'" + bs + "'";
 		}
 	}
 }

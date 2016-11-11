@@ -69,26 +69,26 @@ namespace dnSpy.Hex {
 			hexBufferImpl.Cancel(this);
 		}
 
-		public override bool Replace(ulong position, byte value) => ReplaceSafe(position, new byte[1] { value });
-		public override bool Replace(ulong position, sbyte value) => ReplaceSafe(position, new byte[1] { (byte)value });
-		public override bool Replace(ulong position, short value) => ReplaceSafe(position, BitConverter.GetBytes(value));
-		public override bool Replace(ulong position, ushort value) => ReplaceSafe(position, BitConverter.GetBytes(value));
-		public override bool Replace(ulong position, int value) => ReplaceSafe(position, BitConverter.GetBytes(value));
-		public override bool Replace(ulong position, uint value) => ReplaceSafe(position, BitConverter.GetBytes(value));
-		public override bool Replace(ulong position, long value) => ReplaceSafe(position, BitConverter.GetBytes(value));
-		public override bool Replace(ulong position, ulong value) => ReplaceSafe(position, BitConverter.GetBytes(value));
-		public override bool Replace(ulong position, float value) => ReplaceSafe(position, BitConverter.GetBytes(value));
-		public override bool Replace(ulong position, double value) => ReplaceSafe(position, BitConverter.GetBytes(value));
+		public override bool Replace(HexPosition position, byte value) => ReplaceSafe(position, new byte[1] { value });
+		public override bool Replace(HexPosition position, sbyte value) => ReplaceSafe(position, new byte[1] { (byte)value });
+		public override bool Replace(HexPosition position, short value) => ReplaceSafe(position, BitConverter.GetBytes(value));
+		public override bool Replace(HexPosition position, ushort value) => ReplaceSafe(position, BitConverter.GetBytes(value));
+		public override bool Replace(HexPosition position, int value) => ReplaceSafe(position, BitConverter.GetBytes(value));
+		public override bool Replace(HexPosition position, uint value) => ReplaceSafe(position, BitConverter.GetBytes(value));
+		public override bool Replace(HexPosition position, long value) => ReplaceSafe(position, BitConverter.GetBytes(value));
+		public override bool Replace(HexPosition position, ulong value) => ReplaceSafe(position, BitConverter.GetBytes(value));
+		public override bool Replace(HexPosition position, float value) => ReplaceSafe(position, BitConverter.GetBytes(value));
+		public override bool Replace(HexPosition position, double value) => ReplaceSafe(position, BitConverter.GetBytes(value));
 
-		public override bool Replace(ulong position, byte[] data) => Replace(position, data, 0, data.LongLength);
-		public override bool Replace(ulong position, byte[] data, long index, long length) {
+		public override bool Replace(HexPosition position, byte[] data) => Replace(position, data, 0, data.LongLength);
+		public override bool Replace(HexPosition position, byte[] data, long index, long length) {
 			// Make a copy of it so the caller can't modify it
 			var newData = new byte[length];
 			Array.Copy(data, index, newData, 0, length);
 			return ReplaceSafe(position, newData);
 		}
 
-		bool ReplaceSafe(ulong position, byte[] replaceWith) {
+		bool ReplaceSafe(HexPosition position, byte[] replaceWith) {
 			var replaceSpan = new HexSpan(position, (ulong)replaceWith.LongLength);
 			return ReplaceSafe(replaceSpan, replaceWith);
 		}

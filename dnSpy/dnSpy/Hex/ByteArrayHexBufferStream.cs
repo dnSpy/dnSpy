@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Hex {
@@ -37,177 +38,197 @@ namespace dnSpy.Hex {
 			this.data = data;
 		}
 
-		public override int TryReadByte(ulong position) {
+		public override int TryReadByte(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position >= (ulong)d.LongLength)
+			if (pos >= (ulong)d.LongLength)
 				return -1;
-			return d[position];
+			return d[pos];
 		}
 
-		public override byte ReadByte(ulong position) {
+		public override byte ReadByte(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position >= (ulong)d.LongLength)
+			if (pos >= (ulong)d.LongLength)
 				return 0;
-			return d[position];
+			return d[pos];
 		}
 
-		public override sbyte ReadSByte(ulong position) {
+		public override sbyte ReadSByte(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position >= (ulong)d.LongLength)
+			if (pos >= (ulong)d.LongLength)
 				return 0;
-			return (sbyte)d[position];
+			return (sbyte)d[pos];
 		}
 
-		public override short ReadInt16(ulong position) {
+		public override short ReadInt16(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position + 1 < position || position + 1 >= (ulong)d.LongLength)
-				return position < (ulong)d.LongLength ? d[position] : (short)0;
+			if (pos + 1 < pos || pos + 1 >= (ulong)d.LongLength)
+				return pos < (ulong)d.LongLength ? d[pos] : (short)0;
 
-			return (short)(d[position] | (d[position + 1] << 8));
+			return (short)(d[pos] | (d[pos + 1] << 8));
 		}
 
-		public override ushort ReadUInt16(ulong position) {
+		public override ushort ReadUInt16(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position + 1 < position || position + 1 >= (ulong)d.LongLength)
-				return position < (ulong)d.LongLength ? d[position] : (ushort)0;
+			if (pos + 1 < pos || pos + 1 >= (ulong)d.LongLength)
+				return pos < (ulong)d.LongLength ? d[pos] : (ushort)0;
 
-			return (ushort)(d[position] | (d[position + 1] << 8));
+			return (ushort)(d[pos] | (d[pos + 1] << 8));
 		}
 
-		public override int ReadInt32(ulong position) {
+		public override int ReadInt32(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position + 3 < position)
+			if (pos + 3 < pos)
 				return 0;
-			if (position + 3 >= (ulong)d.LongLength) {
+			if (pos + 3 >= (ulong)d.LongLength) {
 				int res = 0;
-				if (position < (ulong)d.LongLength)
-					res = d[position];
-				if (position + 1 < (ulong)d.LongLength)
-					res |= d[position + 1] << 8;
-				if (position + 2 < (ulong)d.LongLength)
-					res |= d[position + 2] << 16;
+				if (pos < (ulong)d.LongLength)
+					res = d[pos];
+				if (pos + 1 < (ulong)d.LongLength)
+					res |= d[pos + 1] << 8;
+				if (pos + 2 < (ulong)d.LongLength)
+					res |= d[pos + 2] << 16;
 				return res;
 			}
 
-			return d[position] |
-					(d[position + 1] << 8) |
-					(d[position + 2] << 16) |
-					(d[position + 3] << 24);
+			return d[pos] |
+					(d[pos + 1] << 8) |
+					(d[pos + 2] << 16) |
+					(d[pos + 3] << 24);
 		}
 
-		public override uint ReadUInt32(ulong position) {
+		public override uint ReadUInt32(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position + 3 < position)
+			if (pos + 3 < pos)
 				return 0;
-			if (position + 3 >= (ulong)d.LongLength) {
+			if (pos + 3 >= (ulong)d.LongLength) {
 				int res = 0;
-				if (position < (ulong)d.LongLength)
-					res = d[position];
-				if (position + 1 < (ulong)d.LongLength)
-					res |= d[position + 1] << 8;
-				if (position + 2 < (ulong)d.LongLength)
-					res |= d[position + 2] << 16;
+				if (pos < (ulong)d.LongLength)
+					res = d[pos];
+				if (pos + 1 < (ulong)d.LongLength)
+					res |= d[pos + 1] << 8;
+				if (pos + 2 < (ulong)d.LongLength)
+					res |= d[pos + 2] << 16;
 				return (uint)res;
 			}
 
-			return (uint)(d[position] |
-					(d[position + 1] << 8) |
-					(d[position + 2] << 16) |
-					(d[position + 3] << 24));
+			return (uint)(d[pos] |
+					(d[pos + 1] << 8) |
+					(d[pos + 2] << 16) |
+					(d[pos + 3] << 24));
 		}
 
-		public override long ReadInt64(ulong position) {
+		public override long ReadInt64(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position + 7 < position)
+			if (pos + 7 < pos)
 				return 0;
-			if (position + 7 >= (ulong)d.LongLength) {
+			if (pos + 7 >= (ulong)d.LongLength) {
 				long res = 0;
-				if (position < (ulong)d.LongLength)
-					res = d[position];
-				if (position + 1 < (ulong)d.LongLength)
-					res |= (long)d[position + 1] << 8;
-				if (position + 2 < (ulong)d.LongLength)
-					res |= (long)d[position + 2] << 16;
-				if (position + 3 < (ulong)d.LongLength)
-					res |= (long)d[position + 3] << 24;
-				if (position + 4 < (ulong)d.LongLength)
-					res |= (long)d[position + 4] << 32;
-				if (position + 5 < (ulong)d.LongLength)
-					res |= (long)d[position + 5] << 40;
-				if (position + 6 < (ulong)d.LongLength)
-					res |= (long)d[position + 6] << 48;
+				if (pos < (ulong)d.LongLength)
+					res = d[pos];
+				if (pos + 1 < (ulong)d.LongLength)
+					res |= (long)d[pos + 1] << 8;
+				if (pos + 2 < (ulong)d.LongLength)
+					res |= (long)d[pos + 2] << 16;
+				if (pos + 3 < (ulong)d.LongLength)
+					res |= (long)d[pos + 3] << 24;
+				if (pos + 4 < (ulong)d.LongLength)
+					res |= (long)d[pos + 4] << 32;
+				if (pos + 5 < (ulong)d.LongLength)
+					res |= (long)d[pos + 5] << 40;
+				if (pos + 6 < (ulong)d.LongLength)
+					res |= (long)d[pos + 6] << 48;
 				return res;
 			}
 
-			return d[position] |
-					((long)d[position + 1] << 8) |
-					((long)d[position + 2] << 16) |
-					((long)d[position + 3] << 24) |
-					((long)d[position + 4] << 32) |
-					((long)d[position + 5] << 40) |
-					((long)d[position + 6] << 48) |
-					((long)d[position + 7] << 56);
+			return d[pos] |
+					((long)d[pos + 1] << 8) |
+					((long)d[pos + 2] << 16) |
+					((long)d[pos + 3] << 24) |
+					((long)d[pos + 4] << 32) |
+					((long)d[pos + 5] << 40) |
+					((long)d[pos + 6] << 48) |
+					((long)d[pos + 7] << 56);
 		}
 
-		public override ulong ReadUInt64(ulong position) {
+		public override ulong ReadUInt64(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position + 7 < position)
+			if (pos + 7 < pos)
 				return 0;
-			if (position + 7 >= (ulong)d.LongLength) {
+			if (pos + 7 >= (ulong)d.LongLength) {
 				ulong res = 0;
-				if (position < (ulong)d.LongLength)
-					res = d[position];
-				if (position + 1 < (ulong)d.LongLength)
-					res |= (ulong)d[position + 1] << 8;
-				if (position + 2 < (ulong)d.LongLength)
-					res |= (ulong)d[position + 2] << 16;
-				if (position + 3 < (ulong)d.LongLength)
-					res |= (ulong)d[position + 3] << 24;
-				if (position + 4 < (ulong)d.LongLength)
-					res |= (ulong)d[position + 4] << 32;
-				if (position + 5 < (ulong)d.LongLength)
-					res |= (ulong)d[position + 5] << 40;
-				if (position + 6 < (ulong)d.LongLength)
-					res |= (ulong)d[position + 6] << 48;
+				if (pos < (ulong)d.LongLength)
+					res = d[pos];
+				if (pos + 1 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 1] << 8;
+				if (pos + 2 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 2] << 16;
+				if (pos + 3 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 3] << 24;
+				if (pos + 4 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 4] << 32;
+				if (pos + 5 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 5] << 40;
+				if (pos + 6 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 6] << 48;
 				return res;
 			}
 
-			return d[position] |
-					((ulong)d[position + 1] << 8) |
-					((ulong)d[position + 2] << 16) |
-					((ulong)d[position + 3] << 24) |
-					((ulong)d[position + 4] << 32) |
-					((ulong)d[position + 5] << 40) |
-					((ulong)d[position + 6] << 48) |
-					((ulong)d[position + 7] << 56);
+			return d[pos] |
+					((ulong)d[pos + 1] << 8) |
+					((ulong)d[pos + 2] << 16) |
+					((ulong)d[pos + 3] << 24) |
+					((ulong)d[pos + 4] << 32) |
+					((ulong)d[pos + 5] << 40) |
+					((ulong)d[pos + 6] << 48) |
+					((ulong)d[pos + 7] << 56);
 		}
 
-		public unsafe override float ReadSingle(ulong position) {
+		public unsafe override float ReadSingle(HexPosition position) {
 			int v = ReadInt32(position);
 			return *(float*)&v;
 		}
 
-		public unsafe override double ReadDouble(ulong position) {
+		public unsafe override double ReadDouble(HexPosition position) {
 			long v = ReadInt64(position);
 			return *(double*)&v;
 		}
 
-		public override byte[] ReadBytes(ulong position, long length) {
+		public override byte[] ReadBytes(HexPosition position, long length) {
 			var res = new byte[length];
 			ReadBytes(position, res, 0, res.LongLength);
 			return res;
 		}
 
-		public override void ReadBytes(ulong position, byte[] destination, long destinationIndex, long length) {
+		public override void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position >= (ulong)d.LongLength) {
+			if (pos >= (ulong)d.LongLength) {
 				Clear(destination, destinationIndex, length);
 				return;
 			}
 
-			long bytesLeft = d.LongLength - (long)position;
+			long bytesLeft = d.LongLength - (long)pos;
 			long validBytes = length <= bytesLeft ? length : bytesLeft;
-			Array.Copy(d, (long)position, destination, destinationIndex, validBytes);
+			Array.Copy(d, (long)pos, destination, destinationIndex, validBytes);
 			length -= validBytes;
 			if (length > 0)
 				Clear(destination, destinationIndex + validBytes, length);
@@ -226,20 +247,24 @@ namespace dnSpy.Hex {
 				array[i++] = 0;
 		}
 
-		public override HexBytes ReadHexBytes(ulong position, long length) {
+		public override HexBytes ReadHexBytes(HexPosition position, long length) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			if (length == 0)
 				return HexBytes.Empty;
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override void Write(ulong position, byte[] source, long sourceIndex, long length) {
+		public override void Write(HexPosition position, byte[] source, long sourceIndex, long length) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
 			var d = data;
-			if (position >= (ulong)d.LongLength)
+			if (pos >= (ulong)d.LongLength)
 				return;
 
-			long bytesLeft = d.LongLength - (long)position;
+			long bytesLeft = d.LongLength - (long)pos;
 			long validBytes = length <= bytesLeft ? length : bytesLeft;
-			Array.Copy(source, sourceIndex, d, (long)position, validBytes);
+			Array.Copy(source, sourceIndex, d, (long)pos, validBytes);
 		}
 	}
 }

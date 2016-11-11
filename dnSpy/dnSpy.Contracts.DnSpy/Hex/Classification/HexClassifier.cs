@@ -19,13 +19,13 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.Contracts.Text.Classification;
+using System.Threading;
 
 namespace dnSpy.Contracts.Hex.Classification {
 	/// <summary>
 	/// Hex viewer classifier
 	/// </summary>
-	public abstract class HexClassifier {
+	public abstract class HexClassifier : IDisposable {
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -41,6 +41,25 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// </summary>
 		/// <param name="result">Updated with classifications</param>
 		/// <param name="context">Context</param>
-		public abstract void GetClassificationSpans(List<TextClassificationTag> result, HexClassificationContext context);
+		public abstract void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context);
+
+		/// <summary>
+		/// Classifies text synchronously
+		/// </summary>
+		/// <param name="result">Updated with classifications</param>
+		/// <param name="context">Context</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public virtual void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context, CancellationToken cancellationToken) =>
+			GetClassificationSpans(result, context);
+
+		/// <summary>
+		/// Disposes this instance
+		/// </summary>
+		public void Dispose() => DisposeCore();
+
+		/// <summary>
+		/// Disposes this instance
+		/// </summary>
+		protected virtual void DisposeCore() { }
 	}
 }

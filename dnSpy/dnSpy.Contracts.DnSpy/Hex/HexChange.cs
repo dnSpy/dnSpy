@@ -40,22 +40,17 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the new position after the hex change
 		/// </summary>
-		public abstract ulong NewPosition { get; }
+		public abstract HexPosition NewPosition { get; }
 
 		/// <summary>
 		/// Gets the new end position after the hex change
 		/// </summary>
-		public abstract ulong NewEnd { get; }
-
-		/// <summary>
-		/// Gets the new last position after the hex change
-		/// </summary>
-		public abstract ulong NewLastPosition { get; }
+		public abstract HexPosition NewEnd { get; }
 
 		/// <summary>
 		/// Gets the new length
 		/// </summary>
-		public abstract ulong NewLength { get; }
+		public abstract HexPosition NewLength { get; }
 
 		/// <summary>
 		/// Gets the span after the hex change
@@ -70,22 +65,17 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the old position before the hex change
 		/// </summary>
-		public abstract ulong OldPosition { get; }
+		public abstract HexPosition OldPosition { get; }
 
 		/// <summary>
 		/// Gets the old end position before the hex change
 		/// </summary>
-		public abstract ulong OldEnd { get; }
-
-		/// <summary>
-		/// Gets the old last position before the hex change
-		/// </summary>
-		public abstract ulong OldLastPosition { get; }
+		public abstract HexPosition OldEnd { get; }
 
 		/// <summary>
 		/// Gets the old length
 		/// </summary>
-		public abstract ulong OldLength { get; }
+		public abstract HexPosition OldLength { get; }
 
 		/// <summary>
 		/// Gets the span before the hex change

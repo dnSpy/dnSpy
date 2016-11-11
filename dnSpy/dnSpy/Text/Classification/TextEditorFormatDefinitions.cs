@@ -24,16 +24,19 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Classification {
 	[Export(typeof(TextEditorFormatDefinition))]
 	[Name(AppearanceCategoryConstants.Viewer)]
+	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
 	sealed class ViewerTextEditorFormatDefinition : TextEditorFormatDefinition {
 	}
 
 	[Export(typeof(TextEditorFormatDefinition))]
 	[Name(AppearanceCategoryConstants.REPL)]
+	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
 	sealed class REPLTextEditorFormatDefinition : TextEditorFormatDefinition {
 	}
 
 	[Export(typeof(TextEditorFormatDefinition))]
 	[Name(AppearanceCategoryConstants.CodeEditor)]
+	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
 	sealed class CodeEditorTextEditorFormatDefinition : TextEditorFormatDefinition {
 	}
 }

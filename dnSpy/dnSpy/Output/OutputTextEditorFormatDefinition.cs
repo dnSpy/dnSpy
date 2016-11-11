@@ -24,6 +24,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Output {
 	[Export(typeof(TextEditorFormatDefinition))]
 	[Name(Constants.Output)]
+	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
 	sealed class OutputTextEditorFormatDefinition : TextEditorFormatDefinition {
 	}
 }

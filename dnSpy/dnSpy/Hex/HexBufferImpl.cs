@@ -65,7 +65,7 @@ namespace dnSpy.Hex {
 			ownerThread = Thread.CurrentThread;
 		}
 
-		public override HexSpanInfo GetHexSpanInfo(ulong position) {
+		public override HexSpanInfo GetHexSpanInfo(HexPosition position) {
 			throw new NotImplementedException();//TODO:
 		}
 
@@ -122,7 +122,7 @@ namespace dnSpy.Hex {
 				var beforeVersion = Version;
 				// changes is sorted in reverse order by OldPosition
 				foreach (var change in changes)
-					stream.Write(change.OldPosition, change.NewData, 0, checked((long)change.OldLength));
+					stream.Write(change.OldPosition, change.NewData, 0, checked((long)change.OldLength.ToUInt64()));
 				CreateNewVersion(changes, reiteratedVersionNumber);
 				var afterVersion = Version;
 
@@ -141,21 +141,26 @@ namespace dnSpy.Hex {
 			public int Compare(HexChange x, HexChange y) => y.OldPosition.CompareTo(x.OldPosition);
 		}
 
-		public override int TryReadByte(ulong position) => stream.TryReadByte(position);
-		public override byte ReadByte(ulong position) => stream.ReadByte(position);
-		public override sbyte ReadSByte(ulong position) => stream.ReadSByte(position);
-		public override short ReadInt16(ulong position) => stream.ReadInt16(position);
-		public override ushort ReadUInt16(ulong position) => stream.ReadUInt16(position);
-		public override int ReadInt32(ulong position) => stream.ReadInt32(position);
-		public override uint ReadUInt32(ulong position) => stream.ReadUInt32(position);
-		public override long ReadInt64(ulong position) => stream.ReadInt64(position);
-		public override ulong ReadUInt64(ulong position) => stream.ReadUInt64(position);
-		public override float ReadSingle(ulong position) => stream.ReadSingle(position);
-		public override double ReadDouble(ulong position) => stream.ReadDouble(position);
-		public override byte[] ReadBytes(ulong position, long length) => stream.ReadBytes(position, length);
-		public override byte[] ReadBytes(ulong position, ulong length) => stream.ReadBytes(position, checked((long)length));
-		public override byte[] ReadBytes(HexSpan span) => ReadBytes(span.Start, span.Length);
-		public override void ReadBytes(ulong position, byte[] destination, long destinationIndex, long length) =>
+		public override int TryReadByte(HexPosition position) => stream.TryReadByte(position);
+		public override byte ReadByte(HexPosition position) => stream.ReadByte(position);
+		public override sbyte ReadSByte(HexPosition position) => stream.ReadSByte(position);
+		public override short ReadInt16(HexPosition position) => stream.ReadInt16(position);
+		public override ushort ReadUInt16(HexPosition position) => stream.ReadUInt16(position);
+		public override int ReadInt32(HexPosition position) => stream.ReadInt32(position);
+		public override uint ReadUInt32(HexPosition position) => stream.ReadUInt32(position);
+		public override long ReadInt64(HexPosition position) => stream.ReadInt64(position);
+		public override ulong ReadUInt64(HexPosition position) => stream.ReadUInt64(position);
+		public override float ReadSingle(HexPosition position) => stream.ReadSingle(position);
+		public override double ReadDouble(HexPosition position) => stream.ReadDouble(position);
+		public override byte[] ReadBytes(HexPosition position, long length) => stream.ReadBytes(position, length);
+		public override byte[] ReadBytes(HexPosition position, ulong length) => stream.ReadBytes(position, checked((long)length));
+		public override void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length) =>
 			stream.ReadBytes(position, destination, destinationIndex, length);
+
+		public override byte[] ReadBytes(HexSpan span) {
+			if (span.Length >= new HexPosition(1, 0))
+				throw new ArgumentOutOfRangeException(nameof(span));
+			return ReadBytes(span.Start, span.Length.ToUInt64());
+		}
 	}
 }

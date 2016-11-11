@@ -101,7 +101,7 @@ namespace dnSpy.Contracts.Hex {
 			for (int i = 0; i < list.Count; i++) {
 				var change = list[i];
 				if (deletedBytes != 0) {
-					var newChange = new HexChangeImpl(change.OldPosition, change.OldData, change.NewPosition - (ulong)deletedBytes, change.NewData);
+					var newChange = new HexChangeImpl(change.OldPosition, change.OldData, change.NewPosition - deletedBytes, change.NewData);
 					list[i] = newChange;
 				}
 				deletedBytes += -change.Delta;

@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, byte value);
+		public abstract bool Replace(HexPosition position, byte value);
 
 		/// <summary>
 		/// Replaces the <see cref="sbyte"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, sbyte value);
+		public abstract bool Replace(HexPosition position, sbyte value);
 
 		/// <summary>
 		/// Replaces the <see cref="short"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, short value);
+		public abstract bool Replace(HexPosition position, short value);
 
 		/// <summary>
 		/// Replaces the <see cref="ushort"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, ushort value);
+		public abstract bool Replace(HexPosition position, ushort value);
 
 		/// <summary>
 		/// Replaces the <see cref="int"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, int value);
+		public abstract bool Replace(HexPosition position, int value);
 
 		/// <summary>
 		/// Replaces the <see cref="uint"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -95,7 +95,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, uint value);
+		public abstract bool Replace(HexPosition position, uint value);
 
 		/// <summary>
 		/// Replaces the <see cref="long"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, long value);
+		public abstract bool Replace(HexPosition position, long value);
 
 		/// <summary>
 		/// Replaces the <see cref="ulong"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -111,7 +111,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, ulong value);
+		public abstract bool Replace(HexPosition position, ulong value);
 
 		/// <summary>
 		/// Replaces the <see cref="float"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, float value);
+		public abstract bool Replace(HexPosition position, float value);
 
 		/// <summary>
 		/// Replaces the <see cref="double"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, double value);
+		public abstract bool Replace(HexPosition position, double value);
 
 		/// <summary>
 		/// Replaces the data at <paramref name="position"/> with <paramref name="data"/>
@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="data">New data</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, byte[] data);
+		public abstract bool Replace(HexPosition position, byte[] data);
 
 		/// <summary>
 		/// Replaces the data at <paramref name="position"/> with <paramref name="data"/>
@@ -145,7 +145,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="index">Index</param>
 		/// <param name="length">Length</param>
 		/// <returns></returns>
-		public abstract bool Replace(ulong position, byte[] data, long index, long length);
+		public abstract bool Replace(HexPosition position, byte[] data, long index, long length);
 
 		/// <summary>
 		/// Commits all the modifications

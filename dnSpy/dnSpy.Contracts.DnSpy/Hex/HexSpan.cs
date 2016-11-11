@@ -28,10 +28,12 @@ namespace dnSpy.Contracts.Hex {
 		readonly ulong length;
 		readonly bool isFull;
 
+		static readonly HexPosition MaxPosition = new HexPosition(1, 0);
+
 		/// <summary>
 		/// Gets a <see cref="HexSpan"/> instance that covers everything from 0 to 2^64-1, inclusive
 		/// </summary>
-		public static readonly HexSpan FullSpan = new HexSpan(dummy: false);
+		public static readonly HexSpan FullSpan = new HexSpan(HexPosition.Zero, MaxPosition);
 
 		/// <summary>
 		/// true if this span covers everything from 0 to 2^64-1, inclusive
@@ -44,29 +46,35 @@ namespace dnSpy.Contracts.Hex {
 		public bool IsEmpty => length == 0;
 
 		/// <summary>
-		/// Gets the length. If <see cref="IsFull"/> is true, this is one byte less than the actual length
+		/// Gets the length
 		/// </summary>
-		public ulong Length => length;
+		public HexPosition Length => isFull ? MaxPosition : new HexPosition(length);
 
 		/// <summary>
 		/// Gets the start of the span
 		/// </summary>
-		public ulong Start => start;
+		public HexPosition Start => new HexPosition(start);
 
 		/// <summary>
-		/// Gets the end of the span. This can be 0 if the last byte is at position 2^64-1
+		/// Gets the end of the span
 		/// </summary>
-		public ulong End => isFull ? 0 : start + length;
+		public HexPosition End => isFull ? MaxPosition : new HexPosition(start + length);
 
-		/// <summary>
-		/// Gets the last position in this span. If this span is empty or 1 byte in length, this property equals <see cref="Start"/>
-		/// </summary>
-		public ulong Last => isFull ? ulong.MaxValue : length == 0 ? start : start + length - 1;
-
-		HexSpan(bool dummy) {
-			start = 0;
-			length = ulong.MaxValue;
-			isFull = true;
+		// It's not public because public ctors should only take start and length params
+		HexSpan(HexPosition start, HexPosition end) {
+			if (start < end)
+				throw new ArgumentOutOfRangeException(nameof(end));
+			if (end > MaxPosition)
+				throw new ArgumentOutOfRangeException(nameof(end));
+			this.start = start.ToUInt64();
+			if (start == HexPosition.Zero && end == MaxPosition) {
+				isFull = true;
+				length = ulong.MaxValue;
+			}
+			else {
+				isFull = false;
+				length = (end - start).ToUInt64();
+			}
 		}
 
 		/// <summary>
@@ -74,10 +82,12 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="start">Position</param>
 		/// <param name="length">Length</param>
-		public HexSpan(ulong start, ulong length) {
-			if (start + length < length && start + length != 0)
+		public HexSpan(HexPosition start, ulong length) {
+			if (start > MaxPosition)
+				throw new ArgumentOutOfRangeException(nameof(start));
+			if ((start + length) > MaxPosition)
 				throw new ArgumentOutOfRangeException(nameof(length));
-			this.start = start;
+			this.start = start.ToUInt64();
 			this.length = length;
 			this.isFull = false;
 		}
@@ -88,19 +98,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="start">Start position</param>
 		/// <param name="end">End position</param>
 		/// <returns></returns>
-		public static HexSpan FromBounds(ulong start, ulong end) {
-			if (end < start)
-				throw new ArgumentOutOfRangeException(nameof(end));
-			return new HexSpan(start, end - start);
-		}
-
-		UInt128 End128 {
-			get {
-				if (Length == 0 || End != 0)
-					return new UInt128(End);
-				return new UInt128(1, 0);
-			}
-		}
+		public static HexSpan FromBounds(HexPosition start, HexPosition end) => new HexSpan(start, end);
 
 		/// <summary>
 		/// Returns true if <paramref name="span"/> lies within this span
@@ -108,15 +106,15 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="span">Span</param>
 		/// <returns></returns>
 		public bool Contains(HexSpan span) =>
-			span.Start >= Start && span.End128 <= End128;
+			span.Start >= Start && span.End <= End;
 
 		/// <summary>
 		/// Returns true if <paramref name="position"/> lies within this span
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public bool Contains(ulong position) =>
-			position >= Start && new UInt128(position) < End128;
+		public bool Contains(HexPosition position) =>
+			position >= Start && position < End;
 
 		/// <summary>
 		/// Returns the intersection or null if there's none
@@ -128,10 +126,10 @@ namespace dnSpy.Contracts.Hex {
 				return span;
 			if (span.IsFull)
 				return this;
-			var newStart = new UInt128(Math.Max(Start, span.Start));
-			var newEnd = UInt128.Min(End128, span.End128);
+			var newStart = HexPosition.Max(Start, span.Start);
+			var newEnd = HexPosition.Min(End, span.End);
 			if (newStart <= newEnd)
-				return new HexSpan(newStart.Low, (newEnd - newStart).Low);
+				return FromBounds(newStart, newEnd);
 			return null;
 		}
 
@@ -145,7 +143,7 @@ namespace dnSpy.Contracts.Hex {
 				return true;
 			if (span.IsFull)
 				return true;
-			return new UInt128(Start) <= span.End128 && End128 >= new UInt128(span.Start);
+			return Start <= span.End && End >= span.Start;
 		}
 
 		/// <summary>
@@ -154,10 +152,10 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="span">Span</param>
 		/// <returns></returns>
 		public HexSpan? Overlap(HexSpan span) {
-			var newStart = new UInt128(Math.Max(Start, span.Start));
-			var newEnd = UInt128.Min(End128, span.End128);
+			var newStart = HexPosition.Max(Start, span.Start);
+			var newEnd = HexPosition.Min(End, span.End);
 			if (newStart < newEnd)
-				return new HexSpan(newStart.Low, (newEnd - newStart).Low);
+				return FromBounds(newStart, newEnd);
 			return null;
 		}
 
@@ -208,6 +206,6 @@ namespace dnSpy.Contracts.Hex {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => isFull ? "[full]" : "[0x" + Start.ToString("X") + ",0x" + End.ToString("X") + ")";
+		public override string ToString() => isFull ? "[full]" : "[" + Start.ToString() + "," + End.ToString() + ")";
 	}
 }

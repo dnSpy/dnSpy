@@ -52,77 +52,77 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract int TryReadByte(ulong position);
+		public abstract int TryReadByte(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="byte"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract byte ReadByte(ulong position);
+		public abstract byte ReadByte(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="sbyte"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract sbyte ReadSByte(ulong position);
+		public abstract sbyte ReadSByte(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="short"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract short ReadInt16(ulong position);
+		public abstract short ReadInt16(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="ushort"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract ushort ReadUInt16(ulong position);
+		public abstract ushort ReadUInt16(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="int"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract int ReadInt32(ulong position);
+		public abstract int ReadInt32(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="uint"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract uint ReadUInt32(ulong position);
+		public abstract uint ReadUInt32(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="long"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract long ReadInt64(ulong position);
+		public abstract long ReadInt64(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="ulong"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract ulong ReadUInt64(ulong position);
+		public abstract ulong ReadUInt64(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="float"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract float ReadSingle(ulong position);
+		public abstract float ReadSingle(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="double"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract double ReadDouble(ulong position);
+		public abstract double ReadDouble(HexPosition position);
 
 		/// <summary>
 		/// Reads bytes
@@ -130,7 +130,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="length">Number of bytes to read</param>
 		/// <returns></returns>
-		public abstract byte[] ReadBytes(ulong position, long length);
+		public abstract byte[] ReadBytes(HexPosition position, long length);
 
 		/// <summary>
 		/// Reads bytes
@@ -139,7 +139,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="destination">Destination array</param>
 		/// <param name="destinationIndex">Index</param>
 		/// <param name="length">Length</param>
-		public abstract void ReadBytes(ulong position, byte[] destination, long destinationIndex, long length);
+		public abstract void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length);
 
 		/// <summary>
 		/// Reads bytes
@@ -147,7 +147,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="length">Length</param>
 		/// <returns></returns>
-		public abstract HexBytes ReadHexBytes(ulong position, long length);
+		public abstract HexBytes ReadHexBytes(HexPosition position, long length);
 
 		/// <summary>
 		/// Writes bytes
@@ -156,6 +156,6 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="source">Data</param>
 		/// <param name="sourceIndex">Index</param>
 		/// <param name="length">Length</param>
-		public abstract void Write(ulong position, byte[] source, long sourceIndex, long length);
+		public abstract void Write(HexPosition position, byte[] source, long sourceIndex, long length);
 	}
 }

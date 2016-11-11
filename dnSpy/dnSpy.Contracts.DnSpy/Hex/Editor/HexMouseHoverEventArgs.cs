@@ -32,14 +32,14 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the position
 		/// </summary>
-		public ulong Position { get; }
+		public HexPosition Position { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="view">Hex view</param>
 		/// <param name="position">Position</param>
-		public HexMouseHoverEventArgs(HexView view, ulong position) {
+		public HexMouseHoverEventArgs(HexView view, HexPosition position) {
 			if (view == null)
 				throw new ArgumentNullException(nameof(view));
 			View = view;

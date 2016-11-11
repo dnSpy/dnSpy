@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex.Classification;
-using dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
@@ -38,7 +37,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 				remove { }
 			}
 
-			public override void GetClassificationSpans(List<TextClassificationTag> result, HexClassificationContext context) { }
+			public override void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context) { }
 		}
 	}
 }

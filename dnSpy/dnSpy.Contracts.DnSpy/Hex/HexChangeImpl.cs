@@ -22,28 +22,30 @@ using System.Text;
 
 namespace dnSpy.Contracts.Hex {
 	sealed class HexChangeImpl : HexChange {
-		readonly ulong oldPosition;
-		readonly ulong newPosition;
+		readonly HexPosition oldPosition;
+		readonly HexPosition newPosition;
 		readonly byte[] oldData;
 		readonly byte[] newData;
 
 		public override long Delta => newData.LongLength - oldData.LongLength;
 
 		public override byte[] NewData => newData;
-		public override ulong NewPosition => newPosition;
-		public override ulong NewEnd => newPosition + (ulong)newData.LongLength;
-		public override ulong NewLastPosition => newData.LongLength == 0 ? newPosition : newPosition + (ulong)newData.LongLength - 1UL;
-		public override ulong NewLength => (ulong)newData.LongLength;
+		public override HexPosition NewPosition => newPosition;
+		public override HexPosition NewEnd => newPosition + newData.LongLength;
+		public override HexPosition NewLength => newData.LongLength;
 		public override HexSpan NewSpan => new HexSpan(newPosition, (ulong)newData.LongLength);
 
 		public override byte[] OldData => oldData;
-		public override ulong OldPosition => oldPosition;
-		public override ulong OldEnd => oldPosition + (ulong)oldData.LongLength;
-		public override ulong OldLastPosition => oldData.LongLength == 0 ? oldPosition : oldPosition + (ulong)oldData.LongLength - 1UL;
-		public override ulong OldLength => (ulong)oldData.LongLength;
+		public override HexPosition OldPosition => oldPosition;
+		public override HexPosition OldEnd => oldPosition + oldData.LongLength;
+		public override HexPosition OldLength => oldData.LongLength;
 		public override HexSpan OldSpan => new HexSpan(oldPosition, (ulong)oldData.LongLength);
 
-		public HexChangeImpl(ulong position, byte[] oldData, byte[] newData) {
+		public HexChangeImpl(HexPosition position, byte[] oldData, byte[] newData) {
+			if (position > HexPosition.MaxEndPosition || position + oldData.LongLength > HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if (position + newData.LongLength > HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(position));
 			if (oldData == null)
 				throw new ArgumentNullException(nameof(oldData));
 			if (newData == null)
@@ -54,7 +56,11 @@ namespace dnSpy.Contracts.Hex {
 			this.newData = newData;
 		}
 
-		public HexChangeImpl(ulong oldPosition, byte[] oldData, ulong newPosition, byte[] newData) {
+		public HexChangeImpl(HexPosition oldPosition, byte[] oldData, HexPosition newPosition, byte[] newData) {
+			if (oldPosition > HexPosition.MaxEndPosition || oldPosition + oldData.LongLength > HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(oldPosition));
+			if (newPosition > HexPosition.MaxEndPosition || newPosition + newData.LongLength > HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(newPosition));
 			if (oldData == null)
 				throw new ArgumentNullException(nameof(oldData));
 			if (newData == null)
@@ -73,7 +79,7 @@ namespace dnSpy.Contracts.Hex {
 			bool tooMuchData = d.LongLength > maxBytes;
 			var sb = new StringBuilder((tooMuchData ? maxBytes + ellipsis.Length : d.Length) * 2);
 			for (int i = 0; i < d.Length && i < maxBytes; i++)
-				sb.Append(d[i].ToString("X8"));
+				sb.Append(d[i].ToString("X2"));
 			if (tooMuchData)
 				sb.Append(ellipsis);
 			return sb.ToString();

@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the length
 		/// </summary>
-		public ulong Length => Span.Length;
+		public HexPosition Length => Span.Length;
 
 		/// <summary>
 		/// true if this span covers everything from 0 to 2^64-1, inclusive
@@ -66,11 +66,6 @@ namespace dnSpy.Contracts.Hex {
 		public HexBufferPoint End => new HexBufferPoint(Buffer, Span.End);
 
 		/// <summary>
-		/// Gets the last position in this span. If this span is empty or 1 byte in length, this property equals <see cref="Start"/>
-		/// </summary>
-		public HexBufferPoint Last => new HexBufferPoint(Buffer, Span.Last);
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="buffer">Buffer</param>
@@ -88,25 +83,21 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="start">Start point</param>
 		/// <param name="length">Length</param>
-		public HexBufferSpan(HexBuffer buffer, ulong start, ulong length) {
+		public HexBufferSpan(HexBuffer buffer, HexPosition start, ulong length) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			Buffer = buffer;
 			Span = new HexSpan(start, length);
 		}
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="start">Start point</param>
-		/// <param name="end">End point</param>
-		public HexBufferSpan(HexBufferPoint start, HexBufferPoint end) {
+		// It's not public because public ctors should only take start and length params
+		HexBufferSpan(HexBufferPoint start, HexBufferPoint end) {
 			if (start.Buffer != end.Buffer || start.Buffer == null)
 				throw new ArgumentException();
 			if (end.Position < start.Position)
 				throw new ArgumentOutOfRangeException(nameof(end));
 			Buffer = start.Buffer;
-			Span = new HexSpan(start, end - start);
+			Span = HexSpan.FromBounds(start, end);
 		}
 
 		/// <summary>
@@ -120,6 +111,13 @@ namespace dnSpy.Contracts.Hex {
 			Buffer = start.Buffer;
 			Span = new HexSpan(start, length);
 		}
+
+		/// <summary>
+		/// Creates a new <see cref="HexBufferSpan"/> instance
+		/// </summary>
+		/// <param name="start">Start point</param>
+		/// <param name="end">End point</param>
+		public static HexBufferSpan FromBounds(HexBufferPoint start, HexBufferPoint end) => new HexBufferSpan(start, end);
 
 		/// <summary>
 		/// Converts this instance to a <see cref="HexSpan"/>
@@ -167,7 +165,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public bool Contains(ulong position) => Span.Contains(position);
+		public bool Contains(HexPosition position) => Span.Contains(position);
 
 		/// <summary>
 		/// Returns true if this instances overlaps with <paramref name="span"/>
@@ -306,10 +304,10 @@ namespace dnSpy.Contracts.Hex {
 			var sb = new StringBuilder();
 			sb.Append(Span.ToString());
 			sb.Append("_'");
-			ulong pos = Span.Start;
-			for (int i = 0; (ulong)i < Length && i < maxBytes; i++) {
+			var pos = Span.Start;
+			for (int i = 0; i < Length && i < maxBytes; i++) {
 				var c = Buffer.TryReadByte(pos++);
-				sb.Append(c < 0 ? "??" : c.ToString("X8"));
+				sb.Append(c < 0 ? "??" : c.ToString("X2"));
 			}
 			if (tooMuchData)
 				sb.Append(ellipsis);

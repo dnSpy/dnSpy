@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract HexSpanInfo GetHexSpanInfo(ulong position);
+		public abstract HexSpanInfo GetHexSpanInfo(HexPosition position);
 
 		/// <summary>
 		/// Creates a <see cref="HexEdit"/> object
@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, byte value) {
+		public void Replace(HexPosition position, byte value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -116,7 +116,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, sbyte value) {
+		public void Replace(HexPosition position, sbyte value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -128,7 +128,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, short value) {
+		public void Replace(HexPosition position, short value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -140,7 +140,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, ushort value) {
+		public void Replace(HexPosition position, ushort value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, int value) {
+		public void Replace(HexPosition position, int value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, uint value) {
+		public void Replace(HexPosition position, uint value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -176,7 +176,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, long value) {
+		public void Replace(HexPosition position, long value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -188,7 +188,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, ulong value) {
+		public void Replace(HexPosition position, ulong value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -200,7 +200,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, float value) {
+		public void Replace(HexPosition position, float value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -212,7 +212,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="value">New value</param>
-		public void Replace(ulong position, double value) {
+		public void Replace(HexPosition position, double value) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, value);
 				ed.Apply();
@@ -224,7 +224,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="data">New data</param>
-		public void Replace(ulong position, byte[] data) {
+		public void Replace(HexPosition position, byte[] data) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, data);
 				ed.Apply();
@@ -238,7 +238,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="data">New data</param>
 		/// <param name="index">Index</param>
 		/// <param name="length">Length</param>
-		public void Replace(ulong position, byte[] data, long index, long length) {
+		public void Replace(HexPosition position, byte[] data, long index, long length) {
 			using (var ed = CreateEdit()) {
 				ed.Replace(position, data, index, length);
 				ed.Apply();
@@ -250,77 +250,77 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract int TryReadByte(ulong position);
+		public abstract int TryReadByte(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="byte"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract byte ReadByte(ulong position);
+		public abstract byte ReadByte(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="sbyte"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract sbyte ReadSByte(ulong position);
+		public abstract sbyte ReadSByte(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="short"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract short ReadInt16(ulong position);
+		public abstract short ReadInt16(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="ushort"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract ushort ReadUInt16(ulong position);
+		public abstract ushort ReadUInt16(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="int"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract int ReadInt32(ulong position);
+		public abstract int ReadInt32(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="uint"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract uint ReadUInt32(ulong position);
+		public abstract uint ReadUInt32(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="long"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract long ReadInt64(ulong position);
+		public abstract long ReadInt64(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="ulong"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract ulong ReadUInt64(ulong position);
+		public abstract ulong ReadUInt64(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="float"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract float ReadSingle(ulong position);
+		public abstract float ReadSingle(HexPosition position);
 
 		/// <summary>
 		/// Reads a <see cref="double"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract double ReadDouble(ulong position);
+		public abstract double ReadDouble(HexPosition position);
 
 		/// <summary>
 		/// Reads bytes
@@ -328,7 +328,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="length">Number of bytes to read</param>
 		/// <returns></returns>
-		public abstract byte[] ReadBytes(ulong position, long length);
+		public abstract byte[] ReadBytes(HexPosition position, long length);
 
 		/// <summary>
 		/// Reads bytes
@@ -336,7 +336,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="length">Number of bytes to read</param>
 		/// <returns></returns>
-		public abstract byte[] ReadBytes(ulong position, ulong length);
+		public abstract byte[] ReadBytes(HexPosition position, ulong length);
 
 		/// <summary>
 		/// Reads bytes
@@ -352,7 +352,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="destination">Destination array</param>
 		/// <param name="destinationIndex">Index</param>
 		/// <param name="length">Length</param>
-		public abstract void ReadBytes(ulong position, byte[] destination, long destinationIndex, long length);
+		public abstract void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length);
 
 		/// <summary>
 		/// Raised before the text buffer gets changed

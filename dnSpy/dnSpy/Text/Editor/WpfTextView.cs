@@ -170,20 +170,20 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextViewConnectionListenerServiceProvider));
 			if (bufferGraphFactoryService == null)
 				throw new ArgumentNullException(nameof(bufferGraphFactoryService));
-			this.mouseHoverHelper = new MouseHoverHelper(this);
-			this.physicalLineCache = new PhysicalLineCache(32);
-			this.visiblePhysicalLines = new List<PhysicalLine>();
-			this.invalidatedRegions = new List<SnapshotSpan>();
+			mouseHoverHelper = new MouseHoverHelper(this);
+			physicalLineCache = new PhysicalLineCache(32);
+			visiblePhysicalLines = new List<PhysicalLine>();
+			invalidatedRegions = new List<SnapshotSpan>();
 			this.formattedTextSourceFactoryService = formattedTextSourceFactoryService;
-			this.zoomLevel = ZoomConstants.DefaultZoom;
+			zoomLevel = ZoomConstants.DefaultZoom;
 			DsImage.SetZoom(VisualElement, zoomLevel / 100);
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
 			this.lineTransformProviderService = lineTransformProviderService;
 			this.wpfTextViewCreationListeners = wpfTextViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
-			this.recreateLineTransformProvider = true;
-			this.normalAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Normal);
-			this.overlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Overlay);
-			this.underlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Underlay);
+			recreateLineTransformProvider = true;
+			normalAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Normal);
+			overlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Overlay);
+			underlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Underlay);
 			IsVisibleChanged += WpfTextView_IsVisibleChanged;
 			Properties = new PropertyCollection();
 			TextViewModel = textViewModel;
@@ -194,22 +194,22 @@ namespace dnSpy.Text.Editor {
 			ViewScroller = new ViewScroller(this);
 			hasKeyboardFocus = this.IsKeyboardFocusWithin;
 			oldViewState = new ViewState(this);
-			this.aggregateClassifier = viewClassifierAggregatorService.GetClassifier(this);
-			this.textAndAdornmentSequencer = textAndAdornmentSequencerFactoryService.Create(this);
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(this);
-			this.editorFormatMap = editorFormatMapService.GetEditorFormatMap(this);
-			this.spaceReservationStack = spaceReservationStackProvider.Create(this);
+			aggregateClassifier = viewClassifierAggregatorService.GetClassifier(this);
+			textAndAdornmentSequencer = textAndAdornmentSequencerFactoryService.Create(this);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(this);
+			editorFormatMap = editorFormatMapService.GetEditorFormatMap(this);
+			spaceReservationStack = spaceReservationStackProvider.Create(this);
 
-			this.textLayer = new TextLayer(GetAdornmentLayer(PredefinedAdornmentLayers.Text));
+			textLayer = new TextLayer(GetAdornmentLayer(PredefinedAdornmentLayers.Text));
 			Selection = new TextSelection(this, GetAdornmentLayer(PredefinedAdornmentLayers.Selection), editorFormatMap);
 			TextCaret = new TextCaret(this, GetAdornmentLayer(PredefinedAdornmentLayers.Caret), smartIndentationService, classificationFormatMap);
 
 			Children.Add(underlayAdornmentLayerCollection);
 			Children.Add(normalAdornmentLayerCollection);
 			Children.Add(overlayAdornmentLayerCollection);
-			this.Cursor = Cursors.IBeam;
-			this.Focusable = true;
-			this.FocusVisualStyle = null;
+			Cursor = Cursors.IBeam;
+			Focusable = true;
+			FocusVisualStyle = null;
 			InitializeOptions();
 
 			Options.OptionChanged += EditorOptions_OptionChanged;
@@ -526,7 +526,7 @@ namespace dnSpy.Text.Editor {
 				if (InLayout)
 					throw new InvalidOperationException();
 				// The adornment layer accesses this property in its LayoutChanged handler to check
-				// whether an adornment intersects the visible textview lines. Don't create new
+				// whether an adornment intersects with the visible textview lines. Don't create new
 				// lines if we're raising LayoutChanged.
 				if (delayLayoutLinesInProgress && !raisingLayoutChanged)
 					DoDelayDisplayLines();
