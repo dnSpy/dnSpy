@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 
@@ -249,10 +250,31 @@ namespace dnSpy.Hex {
 
 		public override HexBytes ReadHexBytes(HexPosition position, long length) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
-			var pos = position.ToUInt64();
 			if (length == 0)
 				return HexBytes.Empty;
-			throw new NotImplementedException();//TODO:
+
+			var pos = position.ToUInt64();
+			var d = data;
+			if (pos >= (ulong)d.LongLength)
+				return new HexBytes(new byte[length], allValid: false);
+
+			var ary = new byte[length];
+
+			if (pos + (ulong)length > (ulong)d.LongLength) {
+				var bitArray = new BitArray(length > int.MaxValue ? int.MaxValue : (int)length);
+
+				long len = d.LongLength - (long)pos;
+				Array.Copy(d, (long)pos, ary, 0, len);
+
+				long bits = len > int.MaxValue ? int.MaxValue : len;
+				for (long i = 0; i < bits; i++)
+					bitArray.Set((int)i, true);
+
+				return new HexBytes(ary, bitArray);
+			}
+
+			Array.Copy(d, (long)pos, ary, 0, length);
+			return new HexBytes(ary);
 		}
 
 		public override void Write(HexPosition position, byte[] source, long sourceIndex, long length) {

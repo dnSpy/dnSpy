@@ -69,8 +69,9 @@ namespace dnSpy.Hex.Editor {
 
 		readonly FormattedHexSourceFactoryService formattedHexSourceFactoryService;
 		readonly HexClassifier aggregateClassifier;
+		readonly HexAndAdornmentSequencer hexAndAdornmentSequencer;
 
-		public WpfHexViewImpl(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService) {
+		public WpfHexViewImpl(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService) {
 			if (hexBuffer == null)
 				throw new ArgumentNullException(nameof(hexBuffer));
 			if (roles == null)
@@ -85,12 +86,15 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(formattedHexSourceFactoryService));
 			if (hexViewClassifierAggregatorService == null)
 				throw new ArgumentNullException(nameof(hexViewClassifierAggregatorService));
+			if (hexAndAdornmentSequencerFactoryService == null)
+				throw new ArgumentNullException(nameof(hexAndAdornmentSequencerFactoryService));
 			this.formattedHexSourceFactoryService = formattedHexSourceFactoryService;
 			HexBuffer = hexBuffer;
 			Roles = roles;
 			Options = hexEditorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;
 			aggregateClassifier = hexViewClassifierAggregatorService.GetClassifier(this);
+			hexAndAdornmentSequencer = hexAndAdornmentSequencerFactoryService.Create(this);
 
 			if (Roles.Contains(PredefinedHexViewRoles.Interactive))
 				RegisteredCommandElement = commandService.Register(VisualElement, this);

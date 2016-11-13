@@ -52,6 +52,10 @@ namespace dnSpy.Hex.Tagging {
 				owner.GetTags(spans);
 			public override IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) =>
 				owner.GetTags(spans, cancellationToken);
+			public override IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context) =>
+				owner.GetTags(context);
+			public override IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context, CancellationToken cancellationToken) =>
+				owner.GetTags(context, cancellationToken);
 
 			public bool IsBatchedTagsChangedHooked => BatchedTagsChanged != null;
 			public void RaiseTagsChanged(object sender, HexTagsChangedEventArgs e) => TagsChanged?.Invoke(sender, e);
@@ -72,7 +76,7 @@ namespace dnSpy.Hex.Tagging {
 
 		protected void Initialize() => RecreateTaggers();
 
-		public IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans) {
+		IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
 			if (spans.Count == 0)
@@ -80,12 +84,12 @@ namespace dnSpy.Hex.Tagging {
 			foreach (var tagger in taggers) {
 				foreach (var tagSpan in tagger.GetTags(spans)) {
 					if (spans.IntersectsWith(tagSpan.Span))
-						yield return new HexTagSpan<T>(tagSpan.Span, tagSpan.Tag);
+						yield return tagSpan;
 				}
 			}
 		}
 
-		public IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
+		IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
 			if (spans.Count == 0)
@@ -94,8 +98,22 @@ namespace dnSpy.Hex.Tagging {
 				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var tagSpan in tagger.GetTags(spans, cancellationToken)) {
 					if (spans.IntersectsWith(tagSpan.Span))
-						yield return new HexTagSpan<T>(tagSpan.Span, tagSpan.Tag);
+						yield return tagSpan;
 				}
+			}
+		}
+
+		IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context) {
+			foreach (var tagger in taggers) {
+				foreach (var tagSpan in tagger.GetTags(context))
+					yield return tagSpan;
+			}
+		}
+
+		IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context, CancellationToken cancellationToken) {
+			foreach (var tagger in taggers) {
+				foreach (var tagSpan in tagger.GetTags(context, cancellationToken))
+					yield return tagSpan;
 			}
 		}
 

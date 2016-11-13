@@ -156,9 +156,10 @@ namespace dnSpy.Hex {
 		public override byte[] ReadBytes(HexPosition position, ulong length) => stream.ReadBytes(position, checked((long)length));
 		public override void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length) =>
 			stream.ReadBytes(position, destination, destinationIndex, length);
+		public override HexBytes ReadHexBytes(HexPosition position, long length) => stream.ReadHexBytes(position, length);
 
 		public override byte[] ReadBytes(HexSpan span) {
-			if (span.Length >= new HexPosition(1, 0))
+			if (span.Length >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(span));
 			return ReadBytes(span.Start, span.Length.ToUInt64());
 		}

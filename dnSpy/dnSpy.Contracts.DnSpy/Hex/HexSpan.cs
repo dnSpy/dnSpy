@@ -28,12 +28,10 @@ namespace dnSpy.Contracts.Hex {
 		readonly ulong length;
 		readonly bool isFull;
 
-		static readonly HexPosition MaxPosition = new HexPosition(1, 0);
-
 		/// <summary>
 		/// Gets a <see cref="HexSpan"/> instance that covers everything from 0 to 2^64-1, inclusive
 		/// </summary>
-		public static readonly HexSpan FullSpan = new HexSpan(HexPosition.Zero, MaxPosition);
+		public static readonly HexSpan FullSpan = new HexSpan(HexPosition.Zero, HexPosition.MaxEndPosition);
 
 		/// <summary>
 		/// true if this span covers everything from 0 to 2^64-1, inclusive
@@ -48,7 +46,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the length
 		/// </summary>
-		public HexPosition Length => isFull ? MaxPosition : new HexPosition(length);
+		public HexPosition Length => isFull ? HexPosition.MaxEndPosition : new HexPosition(length);
 
 		/// <summary>
 		/// Gets the start of the span
@@ -58,16 +56,16 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the end of the span
 		/// </summary>
-		public HexPosition End => isFull ? MaxPosition : new HexPosition(start + length);
+		public HexPosition End => isFull ? HexPosition.MaxEndPosition : new HexPosition(start + length);
 
 		// It's not public because public ctors should only take start and length params
 		HexSpan(HexPosition start, HexPosition end) {
 			if (start < end)
 				throw new ArgumentOutOfRangeException(nameof(end));
-			if (end > MaxPosition)
+			if (end > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(end));
 			this.start = start.ToUInt64();
-			if (start == HexPosition.Zero && end == MaxPosition) {
+			if (start == HexPosition.Zero && end == HexPosition.MaxEndPosition) {
 				isFull = true;
 				length = ulong.MaxValue;
 			}
@@ -83,9 +81,9 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="start">Position</param>
 		/// <param name="length">Length</param>
 		public HexSpan(HexPosition start, ulong length) {
-			if (start > MaxPosition)
+			if (start > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(start));
-			if ((start + length) > MaxPosition)
+			if ((start + length) > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(length));
 			this.start = start.ToUInt64();
 			this.length = length;
@@ -122,10 +120,6 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="span">Span</param>
 		/// <returns></returns>
 		public HexSpan? Intersection(HexSpan span) {
-			if (IsFull)
-				return span;
-			if (span.IsFull)
-				return this;
 			var newStart = HexPosition.Max(Start, span.Start);
 			var newEnd = HexPosition.Min(End, span.End);
 			if (newStart <= newEnd)
@@ -138,13 +132,8 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="span">Span</param>
 		/// <returns></returns>
-		public bool IntersectsWith(HexSpan span) {
-			if (IsFull)
-				return true;
-			if (span.IsFull)
-				return true;
-			return Start <= span.End && End >= span.Start;
-		}
+		public bool IntersectsWith(HexSpan span) =>
+			Start <= span.End && End >= span.Start;
 
 		/// <summary>
 		/// Gets the overlap with <paramref name="span"/> or null if there's none
@@ -200,7 +189,7 @@ namespace dnSpy.Contracts.Hex {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => start.GetHashCode() ^ length.GetHashCode() ^ (isFull ? int.MinValue : 0);
+		public override int GetHashCode() => (start ^ length).GetHashCode() ^ (isFull ? int.MinValue : 0);
 
 		/// <summary>
 		/// ToString()

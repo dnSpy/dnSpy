@@ -18,37 +18,34 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Contracts.Hex {
+namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
-	/// Hex bytes and span
+	/// Text span and tag
 	/// </summary>
-	public struct HexBytesSpan {
-		/// <summary>
-		/// true if this is a default instance that hasn't been initialized
-		/// </summary>
-		public bool IsDefault => Bytes.IsDefault;
-
+	/// <typeparam name="T">Tag type</typeparam>
+	public struct HexTextTagSpan<T> where T : HexTag {
 		/// <summary>
 		/// Gets the span
 		/// </summary>
-		public HexSpan Span { get; }
+		public Span Span { get; }
 
 		/// <summary>
-		/// Gets the bytes
+		/// Gets the tag
 		/// </summary>
-		public HexBytes Bytes { get; }
+		public T Tag { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="span">Span</param>
-		/// <param name="bytes">Bytes</param>
-		public HexBytesSpan(HexSpan span, HexBytes bytes) {
-			if (bytes.IsDefault)
-				throw new ArgumentException();
+		/// <param name="span"></param>
+		/// <param name="tag"></param>
+		public HexTextTagSpan(Span span, T tag) {
+			if (tag == null)
+				throw new ArgumentNullException(nameof(tag));
 			Span = span;
-			Bytes = bytes;
+			Tag = tag;
 		}
 	}
 }

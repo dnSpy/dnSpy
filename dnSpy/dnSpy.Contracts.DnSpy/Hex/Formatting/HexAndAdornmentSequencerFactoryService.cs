@@ -17,35 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+using dnSpy.Contracts.Hex.Editor;
 
-namespace dnSpy.Contracts.Hex.Classification {
+namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
-	/// Classification type and span
+	/// Creates <see cref="HexAndAdornmentSequencer"/> instances
 	/// </summary>
-	public struct HexClassificationSpan {
-		/// <summary>
-		/// Gets the span
-		/// </summary>
-		public Span Span { get; }
-
-		/// <summary>
-		/// Gets the classification type
-		/// </summary>
-		public IClassificationType ClassificationType { get; }
-
+	public abstract class HexAndAdornmentSequencerFactoryService {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="span">Span</param>
-		/// <param name="classification">Classification type</param>
-		public HexClassificationSpan(Span span, IClassificationType classification) {
-			if (classification == null)
-				throw new ArgumentNullException(nameof(classification));
-			Span = span;
-			ClassificationType = classification;
-		}
+		protected HexAndAdornmentSequencerFactoryService() { }
+
+		/// <summary>
+		/// Creates a <see cref="HexAndAdornmentSequencer"/> instance
+		/// </summary>
+		/// <param name="view">Hex view</param>
+		/// <returns></returns>
+		public abstract HexAndAdornmentSequencer Create(HexView view);
 	}
 }

@@ -29,15 +29,12 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		public static readonly HexPosition Zero = new HexPosition(0);
 
-		/// <summary>
-		/// Gets the value 1
-		/// </summary>
-		public static readonly HexPosition One = new HexPosition(1);
+		static readonly HexPosition One = new HexPosition(1);
 
 		/// <summary>
 		/// Gets the minimum value (0)
 		/// </summary>
-		public static readonly HexPosition MinValue = new HexPosition(ulong.MinValue);
+		public static readonly HexPosition MinValue = new HexPosition(0);
 
 		/// <summary>
 		/// Gets the maximum value (2^128-1)

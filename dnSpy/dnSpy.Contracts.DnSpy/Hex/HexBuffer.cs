@@ -355,6 +355,14 @@ namespace dnSpy.Contracts.Hex {
 		public abstract void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length);
 
 		/// <summary>
+		/// Reads bytes
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="length">Length</param>
+		/// <returns></returns>
+		public abstract HexBytes ReadHexBytes(HexPosition position, long length);
+
+		/// <summary>
 		/// Raised before the text buffer gets changed
 		/// </summary>
 		public abstract event EventHandler<HexContentChangingEventArgs> Changing;

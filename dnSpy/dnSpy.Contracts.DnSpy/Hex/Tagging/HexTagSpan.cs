@@ -21,6 +21,57 @@ using System;
 
 namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
+	/// Flags
+	/// </summary>
+	[Flags]
+	public enum HexTagSpanFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Offset column
+		/// </summary>
+		Offset					= 0x00000001,
+
+		/// <summary>
+		/// Values column
+		/// </summary>
+		Values					= 0x00000002,
+
+		/// <summary>
+		/// ASCII column
+		/// </summary>
+		Ascii					= 0x00000004,
+
+		/// <summary>
+		/// Select the full cell instead of only the text
+		/// </summary>
+		Cell					= 0x00000008,
+
+		/// <summary>
+		/// Include the cell separator, if any
+		/// </summary>
+		Separator				= 0x00000010,
+
+		/// <summary>
+		/// One value at a time
+		/// </summary>
+		OneValue				= 0x00000020,
+
+		/// <summary>
+		/// Select all cells in the values/ASCII column
+		/// </summary>
+		AllCells				= 0x00000040,
+
+		/// <summary>
+		/// Select all visible cells in the values/ASCII column
+		/// </summary>
+		AllVisibleCells			= 0x00000080,
+	}
+
+	/// <summary>
 	/// Hex tag and span
 	/// </summary>
 	/// <typeparam name="T">Tag type</typeparam>
@@ -36,6 +87,11 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		public HexBufferSpan Span { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public HexTagSpanFlags Flags { get; }
+
+		/// <summary>
 		/// Gets the tag
 		/// </summary>
 		public T Tag { get; }
@@ -44,13 +100,15 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Span</param>
+		/// <param name="flags">Flags</param>
 		/// <param name="tag">Tag</param>
-		public HexTagSpan(HexBufferSpan span, T tag) {
+		public HexTagSpan(HexBufferSpan span, HexTagSpanFlags flags, T tag) {
 			if (span.IsDefault)
 				throw new ArgumentException();
 			if (tag == null)
 				throw new ArgumentNullException(nameof(tag));
 			Span = span;
+			Flags = flags;
 			Tag = tag;
 		}
 	}

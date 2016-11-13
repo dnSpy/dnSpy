@@ -28,6 +28,11 @@ namespace dnSpy.Contracts.Hex.Tagging {
 	/// <typeparam name="T">Tag type</typeparam>
 	public abstract class HexTagAggregator<T> : IDisposable where T : HexTag {
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexTagAggregator() { }
+
+		/// <summary>
 		/// Gets the buffer
 		/// </summary>
 		public abstract HexBuffer Buffer { get; }
@@ -73,6 +78,21 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public abstract IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets all tags
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		public abstract IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context);
+
+		/// <summary>
+		/// Gets all tags. This method is synchronous.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public abstract IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Disposes this instance

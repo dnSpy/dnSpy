@@ -17,35 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
-
-namespace dnSpy.Contracts.Hex.Classification {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
-	/// Classification type and span
+	/// Position affinity
 	/// </summary>
-	public struct HexClassificationSpan {
+	public enum HexPositionAffinity {
 		/// <summary>
-		/// Gets the span
+		/// The position is coupled to the preceding character
 		/// </summary>
-		public Span Span { get; }
+		Predecessor,
 
 		/// <summary>
-		/// Gets the classification type
+		/// The position is coupled to the following character
 		/// </summary>
-		public IClassificationType ClassificationType { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="span">Span</param>
-		/// <param name="classification">Classification type</param>
-		public HexClassificationSpan(Span span, IClassificationType classification) {
-			if (classification == null)
-				throw new ArgumentNullException(nameof(classification));
-			Span = span;
-			ClassificationType = classification;
-		}
+		Successor,
 	}
 }

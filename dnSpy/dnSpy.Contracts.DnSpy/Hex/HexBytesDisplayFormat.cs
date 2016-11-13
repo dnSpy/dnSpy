@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Editor {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex bytes display format
 	/// </summary>
@@ -116,5 +116,75 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// 8 bits
 		/// </summary>
 		Bit8,
+
+		/// <summary>
+		/// Hex, <see cref="ushort"/>, Big Endian
+		/// </summary>
+		HexUInt16BigEndian,
+
+		/// <summary>
+		/// Hex, <see cref="uint"/>, Big Endian
+		/// </summary>
+		HexUInt32BigEndian,
+
+		/// <summary>
+		/// Hex, <see cref="ulong"/>, Big Endian
+		/// </summary>
+		HexUInt64BigEndian,
+
+		/// <summary>
+		/// Hex, <see cref="short"/>, Big Endian
+		/// </summary>
+		HexInt16BigEndian,
+
+		/// <summary>
+		/// Hex, <see cref="int"/>, Big Endian
+		/// </summary>
+		HexInt32BigEndian,
+
+		/// <summary>
+		/// Hex, <see cref="long"/>, Big Endian
+		/// </summary>
+		HexInt64BigEndian,
+
+		/// <summary>
+		/// Decimal, <see cref="ushort"/>, Big Endian
+		/// </summary>
+		DecimalUInt16BigEndian,
+
+		/// <summary>
+		/// Decimal, <see cref="uint"/>, Big Endian
+		/// </summary>
+		DecimalUInt32BigEndian,
+
+		/// <summary>
+		/// Decimal, <see cref="ulong"/>, Big Endian
+		/// </summary>
+		DecimalUInt64BigEndian,
+
+		/// <summary>
+		/// Decimal, <see cref="short"/>, Big Endian
+		/// </summary>
+		DecimalInt16BigEndian,
+
+		/// <summary>
+		/// Decimal, <see cref="int"/>, Big Endian
+		/// </summary>
+		DecimalInt32BigEndian,
+
+		/// <summary>
+		/// Decimal, <see cref="long"/>, Big Endian
+		/// </summary>
+		DecimalInt64BigEndian,
+
+		/// <summary>
+		/// <see cref="float"/>, Big Endian
+		/// </summary>
+		SingleBigEndian,
+
+		/// <summary>
+		/// <see cref="double"/>, Big Endian
+		/// </summary>
+		DoubleBigEndian,
 	}
 }

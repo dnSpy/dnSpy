@@ -18,34 +18,26 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+using dnSpy.Contracts.Hex.Editor;
 
-namespace dnSpy.Contracts.Hex.Classification {
+namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
-	/// Classification type and span
+	/// Hex tagger context
 	/// </summary>
-	public struct HexClassificationSpan {
+	public struct HexTaggerContext {
 		/// <summary>
-		/// Gets the span
+		/// Gets the line info
 		/// </summary>
-		public Span Span { get; }
-
-		/// <summary>
-		/// Gets the classification type
-		/// </summary>
-		public IClassificationType ClassificationType { get; }
+		public HexBufferLine Line { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="span">Span</param>
-		/// <param name="classification">Classification type</param>
-		public HexClassificationSpan(Span span, IClassificationType classification) {
-			if (classification == null)
-				throw new ArgumentNullException(nameof(classification));
-			Span = span;
-			ClassificationType = classification;
+		/// <param name="line">Line info</param>
+		public HexTaggerContext(HexBufferLine line) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			Line = line;
 		}
 	}
 }

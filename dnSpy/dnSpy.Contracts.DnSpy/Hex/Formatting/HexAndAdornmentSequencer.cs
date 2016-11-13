@@ -17,6 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using dnSpy.Contracts.Hex.Editor;
+
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
 	/// Creates a sequence of text and adornment elements
@@ -26,5 +29,49 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// Constructor
 		/// </summary>
 		protected HexAndAdornmentSequencer() { }
+
+		/// <summary>
+		/// Gets the buffer
+		/// </summary>
+		public abstract HexBuffer Buffer { get; }
+
+		/// <summary>
+		/// Raised after a sequence has changed
+		/// </summary>
+		public abstract event EventHandler<HexAndAdornmentSequenceChangedEventArgs> SequenceChanged;
+
+		/// <summary>
+		/// Creates a <see cref="HexAndAdornmentCollection"/>
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns></returns>
+		public abstract HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferLine line);
+
+		/// <summary>
+		/// Creates a <see cref="HexAndAdornmentCollection"/>
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		public abstract HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferSpan span);
+	}
+
+	/// <summary>
+	/// Event args
+	/// </summary>
+	public sealed class HexAndAdornmentSequenceChangedEventArgs : EventArgs {
+		/// <summary>
+		/// Gets the span
+		/// </summary>
+		public HexBufferSpan Span { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Span</param>
+		public HexAndAdornmentSequenceChangedEventArgs(HexBufferSpan span) {
+			if (span.IsDefault)
+				throw new ArgumentException();
+			Span = span;
+		}
 	}
 }

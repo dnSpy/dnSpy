@@ -17,31 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text;
+using System;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Hex;
 
-namespace dnSpy.Contracts.Hex {
-	/// <summary>
-	/// Text span and hex span
-	/// </summary>
-	public struct TextAndHexSpan {
-		/// <summary>
-		/// Gets the text span
-		/// </summary>
-		public Span TextSpan { get; }
-
-		/// <summary>
-		/// Gets the hex span
-		/// </summary>
-		public HexBufferSpan HexSpan { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="textSpan">Text span</param>
-		/// <param name="hexSpan">Hex span</param>
-		public TextAndHexSpan(Span textSpan, HexBufferSpan hexSpan) {
-			TextSpan = textSpan;
-			HexSpan = hexSpan;
+namespace dnSpy.Hex {
+	[Export(typeof(HexBufferLineProviderFactoryService))]
+	sealed class HexBufferLineProviderFactoryServiceImpl : HexBufferLineProviderFactoryService {
+		public override HexBufferLineProvider Create(HexBuffer hexBuffer, HexBufferLineProviderOptions options) {
+			if (hexBuffer == null)
+				throw new ArgumentNullException(nameof(hexBuffer));
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return new HexBufferLineProviderImpl(hexBuffer, options);
 		}
 	}
 }

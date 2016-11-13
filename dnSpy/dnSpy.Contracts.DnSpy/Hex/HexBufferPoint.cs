@@ -47,6 +47,8 @@ namespace dnSpy.Contracts.Hex {
 		public HexBufferPoint(HexBuffer buffer, HexPosition position) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
+			if (position > HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(position));
 			Buffer = buffer;
 			Position = position;
 		}
@@ -90,77 +92,17 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public HexPosition Difference(HexBufferPoint other) => other - this;
 
-		/// <summary>
-		/// operator -()
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <returns></returns>
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static HexPosition operator -(HexBufferPoint left, HexBufferPoint right) => left.Position - right.Position;
-
-		/// <summary>
-		/// operator -()
-		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		public static HexBufferPoint operator -(HexBufferPoint point, HexPosition value) => point.Subtract(value);
-
-		/// <summary>
-		/// operator +()
-		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		public static HexBufferPoint operator +(HexBufferPoint point, HexPosition value) => point.Add(value);
-
-		/// <summary>
-		/// operator ==()
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
 		public static bool operator ==(HexBufferPoint a, HexBufferPoint b) => a.Equals(b);
-
-		/// <summary>
-		/// operator !=()
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
 		public static bool operator !=(HexBufferPoint a, HexBufferPoint b) => !a.Equals(b);
-
-		/// <summary>
-		/// operator &lt;()
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
 		public static bool operator <(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) < 0;
-
-		/// <summary>
-		/// operator &lt;=()
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
 		public static bool operator <=(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) <= 0;
-
-		/// <summary>
-		/// operator &gt;()
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
 		public static bool operator >(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) > 0;
-
-		/// <summary>
-		/// operator &gt;=()
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
 		public static bool operator >=(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) >= 0;
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance with <paramref name="other"/>

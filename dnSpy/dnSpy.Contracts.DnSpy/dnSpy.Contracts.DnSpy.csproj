@@ -26,6 +26,7 @@
     <DocumentationFile>bin\Debug\dnSpy.Contracts.DnSpy.XML</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +38,7 @@
     <DocumentationFile>bin\Release\dnSpy.Contracts.DnSpy.XML</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App\AppDirectories.cs" />
@@ -299,13 +301,17 @@
     <Compile Include="Hex\Editor\DefaultWpfHexViewEditorOptionDefinitions.cs" />
     <Compile Include="Hex\Editor\DefaultWpfHexViewOptions.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayer.cs" />
-    <Compile Include="Hex\Editor\HexBytesDisplayFormat.cs" />
+    <Compile Include="Hex\Editor\HexBufferLine.cs" />
+    <Compile Include="Hex\Formatting\HexSequenceElement.cs" />
+    <Compile Include="Hex\HexBytesDisplayFormat.cs" />
     <Compile Include="Hex\Editor\HexCaret.cs" />
+    <Compile Include="Hex\Editor\HexCellInformation.cs" />
+    <Compile Include="Hex\Editor\HexCellInformationCollection.cs" />
     <Compile Include="Hex\Editor\HexEditorFactoryService.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionDefinition.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryService.cs" />
     <Compile Include="Hex\Editor\HexMouseHoverEventArgs.cs" />
-    <Compile Include="Hex\Editor\HexOffsetFormat.cs" />
+    <Compile Include="Hex\HexOffsetFormat.cs" />
     <Compile Include="Hex\Editor\HexSelection.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationManager.cs" />
     <Compile Include="Hex\Editor\HexView.cs" />
@@ -322,7 +328,9 @@
     <Compile Include="Hex\Editor\WpfHexViewLineCollection.cs" />
     <Compile Include="Hex\Formatting\FormattedHexLineSource.cs" />
     <Compile Include="Hex\Formatting\FormattedHexSourceFactoryService.cs" />
+    <Compile Include="Hex\Formatting\HexAndAdornmentCollection.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencer.cs" />
+    <Compile Include="Hex\Formatting\HexAndAdornmentSequencerFactoryService.cs" />
     <Compile Include="Hex\Formatting\HexFormattedLineSource.cs" />
     <Compile Include="Hex\Formatting\HexLineTransformSource.cs" />
     <Compile Include="Hex\Formatting\HexViewLine.cs" />
@@ -331,19 +339,21 @@
     <Compile Include="Hex\HexBuffer.cs" />
     <Compile Include="Hex\HexBufferCreatedEventArgs.cs" />
     <Compile Include="Hex\HexBufferFactoryService.cs" />
+    <Compile Include="Hex\HexBufferLineProvider.cs" />
+    <Compile Include="Hex\HexBufferLineProviderFactoryService.cs" />
     <Compile Include="Hex\HexBufferPoint.cs" />
     <Compile Include="Hex\HexBufferSpan.cs" />
     <Compile Include="Hex\HexBufferSpanEventArgs.cs" />
     <Compile Include="Hex\HexBufferStream.cs" />
     <Compile Include="Hex\HexBufferStreamFactoryService.cs" />
     <Compile Include="Hex\HexBytes.cs" />
-    <Compile Include="Hex\HexBytesSpan.cs" />
     <Compile Include="Hex\HexChange.cs" />
     <Compile Include="Hex\HexChangeImpl.cs" />
     <Compile Include="Hex\HexContentChangedEventArgs.cs" />
     <Compile Include="Hex\HexContentChangingEventArgs.cs" />
     <Compile Include="Hex\HexEdit.cs" />
     <Compile Include="Hex\HexPosition.cs" />
+    <Compile Include="Hex\HexPositionAffinity.cs" />
     <Compile Include="Hex\HexSpan.cs" />
     <Compile Include="Hex\HexSpanInfo.cs" />
     <Compile Include="Hex\HexVersion.cs" />
@@ -373,12 +383,15 @@
     <Compile Include="Hex\Tagging\HexBatchedTagsChangedEventArgs.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexClassificationTag.cs" />
+    <Compile Include="Hex\Tagging\HexSpaceNegotiatingAdornmentTag.cs" />
     <Compile Include="Hex\Tagging\HexTag.cs" />
     <Compile Include="Hex\Tagging\HexTagAggregator.cs" />
     <Compile Include="Hex\Tagging\HexTagger.cs" />
+    <Compile Include="Hex\Tagging\HexTaggerContext.cs" />
     <Compile Include="Hex\Tagging\HexTaggerProvider.cs" />
     <Compile Include="Hex\Tagging\HexTagsChangedEventArgs.cs" />
     <Compile Include="Hex\Tagging\HexTagSpan.cs" />
+    <Compile Include="Hex\Tagging\HexTextTagSpan.cs" />
     <Compile Include="Hex\Tagging\HexViewTagAggregatorFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexViewTaggerProvider.cs" />
     <Compile Include="Hex\TextAndHexSpan.cs" />

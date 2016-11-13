@@ -41,23 +41,38 @@ namespace dnSpy.Contracts.Hex {
 		public int Length => bytes.Length;
 
 		readonly byte[] bytes;
+		readonly bool allValid;// Only used if the bit array is null
 		readonly BitArray validBytes;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="bytes">Bytes, all bytes are assumed to be valid</param>
+		/// <param name="bytes">All bytes and all of them are valid</param>
 		public HexBytes(byte[] bytes) {
 			if (bytes == null)
 				throw new ArgumentNullException(nameof(bytes));
 			this.bytes = bytes;
 			this.validBytes = null;
+			this.allValid = true;
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="bytes">Bytes</param>
+		/// <param name="bytes">All bytes</param>
+		/// <param name="allValid">true if all bytes are valid, false if all bytes are invalid</param>
+		public HexBytes(byte[] bytes, bool allValid) {
+			if (bytes == null)
+				throw new ArgumentNullException(nameof(bytes));
+			this.bytes = bytes;
+			this.validBytes = null;
+			this.allValid = allValid;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="bytes">All bytes. All invalid bytes should be cleared</param>
 		/// <param name="validBytes">Valid bytes</param>
 		public HexBytes(byte[] bytes, BitArray validBytes) {
 			if (bytes == null)
@@ -67,6 +82,7 @@ namespace dnSpy.Contracts.Hex {
 			if (validBytes.Length != bytes.LongLength)
 				throw new ArgumentOutOfRangeException(nameof(bytes));
 			this.bytes = bytes;
+			this.allValid = false;// This field isn't used if the bit array is non-null
 			this.validBytes = validBytes;
 		}
 
@@ -75,14 +91,22 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="index">Index of byte</param>
 		/// <returns></returns>
-		public bool IsValid(int index) => validBytes == null || validBytes.Get(index);
+		public bool IsValid(int index) {
+			if (validBytes == null)
+				return allValid;
+			return validBytes.Get(index);
+		}
 
 		/// <summary>
 		/// Checks whether the byte at <paramref name="index"/> is valid
 		/// </summary>
 		/// <param name="index">Index of byte</param>
 		/// <returns></returns>
-		public bool IsValid(long index) => validBytes == null || validBytes.Get(checked((int)index));
+		public bool IsValid(long index) {
+			if (validBytes == null)
+				return allValid;
+			return index <= int.MaxValue ? validBytes.Get((int)index) : true;
+		}
 
 		/// <summary>
 		/// Returns the byte at <paramref name="index"/> or a value less than 0 if the byte is invalid
@@ -96,7 +120,7 @@ namespace dnSpy.Contracts.Hex {
 		}
 
 		/// <summary>
-		/// Returns the byte at <paramref name="index"/> or a value less than 0 if the byte is invalid
+		/// Returns the <see cref="byte"/> at <paramref name="index"/> or a value less than 0 if the byte is invalid
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
@@ -121,17 +145,238 @@ namespace dnSpy.Contracts.Hex {
 		public byte this[long index] => bytes[index];
 
 		/// <summary>
-		/// Reads the byte at <paramref name="index"/>
+		/// Returns the <see cref="sbyte"/> at <paramref name="index"/> or null if the byte is invalid
 		/// </summary>
-		/// <param name="index">Index of byte</param>
+		/// <param name="index"></param>
 		/// <returns></returns>
-		public byte ReadByte(int index) => bytes[index];
+		public sbyte? TryReadSByte(long index) {
+			if (!IsValid(index))
+				return null;
+			return (sbyte)bytes[index];
+		}
 
 		/// <summary>
-		/// Reads the byte at <paramref name="index"/>
+		/// Returns the <see cref="ushort"/> at <paramref name="index"/> or null if all bytes are invalid
 		/// </summary>
-		/// <param name="index">Index of byte</param>
+		/// <param name="index">Index of value</param>
 		/// <returns></returns>
-		public byte ReadByte(long index) => bytes[index];
+		public ushort? TryReadUInt16(long index) {
+			if (!IsValid(index) && !IsValid(index + 1))
+				return null;
+			var d = bytes;
+			return (ushort)(d[index] | (d[index + 1] << 8));
+		}
+
+		/// <summary>
+		/// Returns the <see cref="short"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public short? TryReadInt16(long index) {
+			if (!IsValid(index) && !IsValid(index + 1))
+				return null;
+			var d = bytes;
+			return (short)(d[index] | (d[index + 1] << 8));
+		}
+
+		/// <summary>
+		/// Returns the <see cref="uint"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public uint? TryReadUInt32(long index) {
+			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3))
+				return null;
+			var d = bytes;
+			return (uint)(d[index] | (d[index + 1] << 8) | (d[index + 2] << 16) | (d[index + 3] << 24));
+		}
+
+		/// <summary>
+		/// Returns the <see cref="int"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public int? TryReadInt32(long index) {
+			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3))
+				return null;
+			var d = bytes;
+			return d[index] | (d[index + 1] << 8) | (d[index + 2] << 16) | (d[index + 3] << 24);
+		}
+
+		/// <summary>
+		/// Returns the <see cref="ulong"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public ulong? TryReadUInt64(long index) {
+			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3) && !IsValid(index + 4) && !IsValid(index + 5) && !IsValid(index + 6) && !IsValid(index + 7))
+				return null;
+			var d = bytes;
+			return d[index] |
+					((ulong)d[index + 1] << 8) |
+					((ulong)d[index + 2] << 16) |
+					((ulong)d[index + 3] << 24) |
+					((ulong)d[index + 4] << 32) |
+					((ulong)d[index + 5] << 40) |
+					((ulong)d[index + 6] << 48) |
+					((ulong)d[index + 7] << 56);
+		}
+
+		/// <summary>
+		/// Returns the <see cref="long"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public long? TryReadInt64(long index) {
+			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3) && !IsValid(index + 4) && !IsValid(index + 5) && !IsValid(index + 6) && !IsValid(index + 7))
+				return null;
+			var d = bytes;
+			return d[index] |
+					((long)d[index + 1] << 8) |
+					((long)d[index + 2] << 16) |
+					((long)d[index + 3] << 24) |
+					((long)d[index + 4] << 32) |
+					((long)d[index + 5] << 40) |
+					((long)d[index + 6] << 48) |
+					((long)d[index + 7] << 56);
+		}
+
+		/// <summary>
+		/// Returns the <see cref="float"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public unsafe float? TryReadSingle(long index) {
+			var v = TryReadInt32(index);
+			if (v == null)
+				return null;
+			int v2 = v.Value;
+			return *(float*)&v2;
+		}
+
+		/// <summary>
+		/// Returns the <see cref="double"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public unsafe double? TryReadDouble(long index) {
+			var v = TryReadInt64(index);
+			if (v == null)
+				return null;
+			long v2 = v.Value;
+			return *(double*)&v2;
+		}
+
+		/// <summary>
+		/// Returns the <see cref="ushort"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public ushort? TryReadUInt16BigEndian(long index) {
+			if (!IsValid(index) && !IsValid(index + 1))
+				return null;
+			var d = bytes;
+			return (ushort)(d[index + 1] | (d[index] << 8));
+		}
+
+		/// <summary>
+		/// Returns the <see cref="short"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public short? TryReadInt16BigEndian(long index) {
+			if (!IsValid(index) && !IsValid(index + 1))
+				return null;
+			var d = bytes;
+			return (short)(d[index + 1] | (d[index] << 8));
+		}
+
+		/// <summary>
+		/// Returns the <see cref="uint"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public uint? TryReadUInt32BigEndian(long index) {
+			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3))
+				return null;
+			var d = bytes;
+			return (uint)(d[index + 3] | (d[index + 2] << 8) | (d[index + 1] << 16) | (d[index] << 24));
+		}
+
+		/// <summary>
+		/// Returns the <see cref="int"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public int? TryReadInt32BigEndian(long index) {
+			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3))
+				return null;
+			var d = bytes;
+			return d[index + 3] | (d[index + 2] << 8) | (d[index + 1] << 16) | (d[index] << 24);
+		}
+
+		/// <summary>
+		/// Returns the <see cref="ulong"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public ulong? TryReadUInt64BigEndian(long index) {
+			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3) && !IsValid(index + 4) && !IsValid(index + 5) && !IsValid(index + 6) && !IsValid(index + 7))
+				return null;
+			var d = bytes;
+			return d[index + 7] |
+					((ulong)d[index + 6] << 8) |
+					((ulong)d[index + 5] << 16) |
+					((ulong)d[index + 4] << 24) |
+					((ulong)d[index + 3] << 32) |
+					((ulong)d[index + 2] << 40) |
+					((ulong)d[index + 1] << 48) |
+					((ulong)d[index] << 56);
+		}
+
+		/// <summary>
+		/// Returns the <see cref="long"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public long? TryReadInt64BigEndian(long index) {
+			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3) && !IsValid(index + 4) && !IsValid(index + 5) && !IsValid(index + 6) && !IsValid(index + 7))
+				return null;
+			var d = bytes;
+			return d[index + 7] |
+					((long)d[index + 6] << 8) |
+					((long)d[index + 5] << 16) |
+					((long)d[index + 4] << 24) |
+					((long)d[index + 3] << 32) |
+					((long)d[index + 2] << 40) |
+					((long)d[index + 1] << 48) |
+					((long)d[index] << 56);
+		}
+
+		/// <summary>
+		/// Returns the <see cref="float"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public unsafe float? TryReadSingleBigEndian(long index) {
+			var v = TryReadInt32BigEndian(index);
+			if (v == null)
+				return null;
+			int v2 = v.Value;
+			return *(float*)&v2;
+		}
+
+		/// <summary>
+		/// Returns the <see cref="double"/> at <paramref name="index"/> or null if all bytes are invalid
+		/// </summary>
+		/// <param name="index">Index of value</param>
+		/// <returns></returns>
+		public unsafe double? TryReadDoubleBigEndian(long index) {
+			var v = TryReadInt64BigEndian(index);
+			if (v == null)
+				return null;
+			long v2 = v.Value;
+			return *(double*)&v2;
+		}
 	}
 }

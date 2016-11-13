@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class HexOffsetFormatEditorOptionDefinition : HexViewOptionDefinition<HexOffsetFormat> {
 		public override EditorOptionKey<HexOffsetFormat> Key => DefaultHexViewOptions.HexOffsetFormatId;
-		public override HexOffsetFormat Default => HexOffsetFormat.None;
+		public override HexOffsetFormat Default => HexOffsetFormat.Hex;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]

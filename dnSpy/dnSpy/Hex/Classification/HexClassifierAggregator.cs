@@ -23,7 +23,9 @@ using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Tagging;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
@@ -52,7 +54,16 @@ namespace dnSpy.Hex.Classification {
 
 		sealed class HexClassificationSpanComparer : IComparer<HexClassificationSpan> {
 			public static readonly HexClassificationSpanComparer Instance = new HexClassificationSpanComparer();
-			public int Compare(HexClassificationSpan x, HexClassificationSpan y) => x.Span.Start.Position.CompareTo(y.Span.Start.Position);
+			public int Compare(HexClassificationSpan x, HexClassificationSpan y) => x.Span.Start - y.Span.Start;
+		}
+
+		static HexCellSpanFlags GetCellSpanFlags(HexTagSpanFlags flags) {
+			var res = HexCellSpanFlags.None;
+			if ((flags & HexTagSpanFlags.Cell) != 0)
+				res |= HexCellSpanFlags.Cell;
+			if ((flags & HexTagSpanFlags.Separator) != 0)
+				res |= HexCellSpanFlags.Separator;
+			return res;
 		}
 
 		public override void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context) =>
@@ -62,21 +73,70 @@ namespace dnSpy.Hex.Classification {
 			GetClassificationSpansCore(result, context, cancellationToken);
 
 		void GetClassificationSpansCore(List<HexClassificationSpan> result, HexClassificationContext context, CancellationToken? cancellationToken) {
-			var span = context.LineSpan;
-			if (span.Length == 0)
-				return;
-
+			var span = context.Line.VisibleBytesSpan;
+			var textSpan = new Span(0, context.Line.Text.Length);
 			var list = new List<HexClassificationSpan>();
+
 			var tags = cancellationToken != null ? hexTagAggregator.GetTags(span, cancellationToken.Value) : hexTagAggregator.GetTags(span);
-			foreach (var mspan in tags) {
-				var overlap = span.Overlap(mspan.Span);
+			foreach (var tagSpan in tags) {
+				var overlap = span.Overlap(tagSpan.Span);
+				if (overlap == null)
+					continue;
+
+				var spanFlags = tagSpan.Flags;
+
+				if ((spanFlags & HexTagSpanFlags.Offset) != 0) {
+					var offsetSpan = context.Line.GetOffsetSpan();
+					if (offsetSpan.Length != 0)
+						list.Add(new HexClassificationSpan(offsetSpan, tagSpan.Tag.ClassificationType));
+				}
+
+				if ((spanFlags & HexTagSpanFlags.Values) != 0) {
+					if ((spanFlags & HexTagSpanFlags.OneValue) != 0) {
+						var flags = GetCellSpanFlags(spanFlags);
+						foreach (var cell in context.Line.ValueCells.GetCells(overlap.Value)) {
+							var cellSpan = cell.GetSpan(flags);
+							if (cellSpan.Length != 0)
+								list.Add(new HexClassificationSpan(cellSpan, tagSpan.Tag.ClassificationType));
+						}
+					}
+					else {
+						Span valuesSpan;
+						if ((spanFlags & HexTagSpanFlags.AllCells) != 0)
+							valuesSpan = context.Line.GetValuesSpan(onlyVisibleCells: false);
+						else if ((spanFlags & HexTagSpanFlags.AllVisibleCells) != 0)
+							valuesSpan = context.Line.GetValuesSpan(onlyVisibleCells: true);
+						else
+							valuesSpan = context.Line.GetValuesSpan(overlap.Value, GetCellSpanFlags(spanFlags)).TextSpan;
+						if (valuesSpan.Length != 0)
+							list.Add(new HexClassificationSpan(valuesSpan, tagSpan.Tag.ClassificationType));
+					}
+				}
+
+				if ((spanFlags & HexTagSpanFlags.Ascii) != 0) {
+					Span asciiSpan;
+					if ((spanFlags & HexTagSpanFlags.AllCells) != 0)
+						asciiSpan = context.Line.GetAsciiSpan(onlyVisibleCells: false);
+					else if ((spanFlags & HexTagSpanFlags.AllVisibleCells) != 0)
+						asciiSpan = context.Line.GetAsciiSpan(onlyVisibleCells: true);
+					else
+						asciiSpan = context.Line.GetAsciiSpan(overlap.Value, GetCellSpanFlags(spanFlags)).TextSpan;
+					if (asciiSpan.Length != 0)
+						list.Add(new HexClassificationSpan(asciiSpan, tagSpan.Tag.ClassificationType));
+				}
+			}
+
+			var taggerContext = new HexTaggerContext(context.Line);
+			var textTags = cancellationToken != null ? hexTagAggregator.GetTags(taggerContext, cancellationToken.Value) : hexTagAggregator.GetTags(taggerContext);
+			foreach (var tagSpan in textTags) {
+				var overlap = textSpan.Overlap(tagSpan.Span);
 				if (overlap != null)
-					list.Add(new HexClassificationSpan(overlap.Value, mspan.Tag.ClassificationType));
+					list.Add(new HexClassificationSpan(overlap.Value, tagSpan.Tag.ClassificationType));
 			}
 
 			if (list.Count <= 1) {
-				if (result.Count == 1)
-					result.Add(result[0]);
+				if (list.Count == 1)
+					result.Add(list[0]);
 				return;
 			}
 
@@ -89,7 +149,7 @@ namespace dnSpy.Hex.Classification {
 			}
 
 			int min = 0;
-			var minOffset = span.Start.Position;
+			int minOffset = textSpan.Start;
 			var newList = new List<HexClassificationSpan>();
 			var ctList = new List<IClassificationType>();
 			while (min < list.Count) {
@@ -98,19 +158,19 @@ namespace dnSpy.Hex.Classification {
 				if (min >= list.Count)
 					break;
 				var cspan = list[min];
-				minOffset = HexPosition.Max(minOffset, cspan.Span.Start.Position);
-				var end = cspan.Span.End.Position;
+				minOffset = Math.Max(minOffset, cspan.Span.Start);
+				int end = cspan.Span.End;
 				ctList.Clear();
 				ctList.Add(cspan.ClassificationType);
 				for (int i = min + 1; i < list.Count; i++) {
 					cspan = list[i];
-					var cspanStart = cspan.Span.Start.Position;
+					int cspanStart = cspan.Span.Start;
 					if (cspanStart > minOffset) {
 						if (cspanStart < end)
 							end = cspanStart;
 						break;
 					}
-					var cspanEnd = cspan.Span.End.Position;
+					int cspanEnd = cspan.Span.End;
 					if (minOffset >= cspanEnd)
 						continue;
 					if (cspanEnd < end)
@@ -119,9 +179,8 @@ namespace dnSpy.Hex.Classification {
 						ctList.Add(cspan.ClassificationType);
 				}
 				Debug.Assert(minOffset < end);
-				var newSnapshotSpan = new HexBufferSpan(span.Buffer, HexSpan.FromBounds(minOffset, end));
 				var ct = ctList.Count == 1 ? ctList[0] : classificationTypeRegistryService.CreateTransientClassificationType(ctList);
-				newList.Add(new HexClassificationSpan(newSnapshotSpan, ct));
+				newList.Add(new HexClassificationSpan(Span.FromBounds(minOffset, end), ct));
 				minOffset = end;
 			}
 
@@ -139,7 +198,7 @@ namespace dnSpy.Hex.Classification {
 			for (; read < list.Count; read++) {
 				var a = list[read];
 				if (prev.ClassificationType == a.ClassificationType && prev.Span.End == a.Span.Start)
-					list[write] = prev = new HexClassificationSpan(HexBufferSpan.FromBounds(prev.Span.Start, a.Span.End), prev.ClassificationType);
+					list[write] = prev = new HexClassificationSpan(Span.FromBounds(prev.Span.Start, a.Span.End), prev.ClassificationType);
 				else {
 					prev = a;
 					list[++write] = a;

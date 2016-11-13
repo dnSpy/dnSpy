@@ -38,6 +38,7 @@ namespace dnSpy.Hex.Editor {
 		readonly ICommandService commandService;
 		readonly FormattedHexSourceFactoryService formattedHexSourceFactoryService;
 		readonly HexViewClassifierAggregatorService hexViewClassifierAggregatorService;
+		readonly HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService;
 
 		public override ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
 		public override ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
@@ -83,12 +84,13 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		[ImportingConstructor]
-		HexEditorFactoryServiceImpl(HexEditorOptionsFactoryService hexEditorOptionsFactoryService, IMenuService menuService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService) {
+		HexEditorFactoryServiceImpl(HexEditorOptionsFactoryService hexEditorOptionsFactoryService, IMenuService menuService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService) {
 			this.hexEditorOptionsFactoryService = hexEditorOptionsFactoryService;
 			this.menuService = menuService;
 			this.commandService = commandService;
 			this.formattedHexSourceFactoryService = formattedHexSourceFactoryService;
 			this.hexViewClassifierAggregatorService = hexViewClassifierAggregatorService;
+			this.hexAndAdornmentSequencerFactoryService = hexAndAdornmentSequencerFactoryService;
 		}
 
 		public override WpfHexView Create(HexBuffer hexBuffer, HexViewCreatorOptions options) =>
@@ -105,7 +107,7 @@ namespace dnSpy.Hex.Editor {
 			if (parentOptions == null)
 				throw new ArgumentNullException(nameof(parentOptions));
 
-			var wpfHexView = new WpfHexViewImpl(hexBuffer, roles, parentOptions, hexEditorOptionsFactoryService, commandService, formattedHexSourceFactoryService, hexViewClassifierAggregatorService);
+			var wpfHexView = new WpfHexViewImpl(hexBuffer, roles, parentOptions, hexEditorOptionsFactoryService, commandService, formattedHexSourceFactoryService, hexViewClassifierAggregatorService, hexAndAdornmentSequencerFactoryService);
 
 			if (options?.MenuGuid != null) {
 				var guidObjectsProvider = new GuidObjectsProvider(wpfHexView, options?.CreateGuidObjects);

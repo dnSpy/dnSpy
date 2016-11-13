@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Editor {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex offset format
 	/// </summary>
@@ -25,11 +25,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Show just the hex digits
 		/// </summary>
-		None,
+		Hex,
 
 		/// <summary>
 		/// Use a 0x prefix
 		/// </summary>
-		CSharp,
+		HexCSharp,
 	}
 }

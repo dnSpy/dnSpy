@@ -50,5 +50,20 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public virtual IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) => GetTags(spans);
+
+		/// <summary>
+		/// Gets all tags
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		public abstract IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context);
+
+		/// <summary>
+		/// Gets all tags. This method is synchronous.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public virtual IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context, CancellationToken cancellationToken) => GetTags(context);
 	}
 }
