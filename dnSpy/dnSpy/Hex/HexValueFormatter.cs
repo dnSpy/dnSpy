@@ -39,17 +39,17 @@ namespace dnSpy.Hex {
 
 		public HexBytesDisplayFormat Format { get; }
 		public int ByteCount { get; }
-		public int MaxFormattedLength { get; }
+		public int FormattedLength { get; }
 
-		protected HexValueFormatter(int byteCount, int maxFormattedLength, HexBytesDisplayFormat format) {
+		protected HexValueFormatter(int byteCount, int formattedLength, HexBytesDisplayFormat format) {
 			Format = format;
 			ByteCount = byteCount;
-			MaxFormattedLength = maxFormattedLength;
+			FormattedLength = formattedLength;
 		}
 
 		/// <summary>
 		/// Formats the value and returns the number of spaces that were inserted before the number
-		/// so exactly <see cref="MaxFormattedLength"/> characters were written to <paramref name="dest"/>
+		/// so exactly <see cref="FormattedLength"/> characters were written to <paramref name="dest"/>
 		/// </summary>
 		/// <param name="dest">Destination string builder</param>
 		/// <param name="hexBytes">Bytes</param>
@@ -59,7 +59,7 @@ namespace dnSpy.Hex {
 		public abstract int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags);
 
 		protected int WriteInvalid(StringBuilder dest) {
-			dest.Append('?', MaxFormattedLength);
+			dest.Append('?', FormattedLength);
 			return 0;
 		}
 
@@ -113,12 +113,13 @@ namespace dnSpy.Hex {
 		}
 
 		protected int WriteFormattedValue(StringBuilder dest, string formattedValue) {
-			if (formattedValue.Length > MaxFormattedLength) {
-				dest.Append(formattedValue, 0, MaxFormattedLength - 1);
+			if (formattedValue.Length > FormattedLength) {
+				Debug.Fail($"Formatted value is too long, truncating it: {formattedValue}");
+				dest.Append(formattedValue, 0, FormattedLength - 1);
 				dest.Append('?');
 				return 0;
 			}
-			int spaces = MaxFormattedLength - formattedValue.Length;
+			int spaces = FormattedLength - formattedValue.Length;
 			if (spaces > 0)
 				dest.Append(' ', spaces);
 			dest.Append(formattedValue);
@@ -126,7 +127,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexUInt16(StringBuilder dest, HexValueFormatterFlags flags, ushort? v) {
-			Debug.Assert(MaxFormattedLength == 2);
+			Debug.Assert(FormattedLength == 2);
 			if (v == null)
 				return WriteInvalid(dest);
 			WriteHexUInt16(dest, flags, v.Value);
@@ -134,7 +135,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexUInt32(StringBuilder dest, HexValueFormatterFlags flags, uint? v) {
-			Debug.Assert(MaxFormattedLength == 4);
+			Debug.Assert(FormattedLength == 4);
 			if (v == null)
 				return WriteInvalid(dest);
 			WriteHexUInt32(dest, flags, v.Value);
@@ -142,7 +143,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexUInt64(StringBuilder dest, HexValueFormatterFlags flags, ulong? v) {
-			Debug.Assert(MaxFormattedLength == 8);
+			Debug.Assert(FormattedLength == 8);
 			if (v == null)
 				return WriteInvalid(dest);
 			WriteHexUInt64(dest, flags, v.Value);
@@ -150,7 +151,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexSByte(StringBuilder dest, HexValueFormatterFlags flags, sbyte? v) {
-			Debug.Assert(MaxFormattedLength == 2);
+			Debug.Assert(FormattedLength == 2);
 			if (v == null)
 				return WriteInvalid(dest);
 			var value = v.Value;
@@ -169,7 +170,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexInt16(StringBuilder dest, HexValueFormatterFlags flags, short? v) {
-			Debug.Assert(MaxFormattedLength == 5);
+			Debug.Assert(FormattedLength == 5);
 			if (v == null)
 				return WriteInvalid(dest);
 			var value = v.Value;
@@ -188,7 +189,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexInt32(StringBuilder dest, HexValueFormatterFlags flags, int? v) {
-			Debug.Assert(MaxFormattedLength == 9);
+			Debug.Assert(FormattedLength == 9);
 			if (v == null)
 				return WriteInvalid(dest);
 			var value = v.Value;
@@ -207,7 +208,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexInt64(StringBuilder dest, HexValueFormatterFlags flags, long? v) {
-			Debug.Assert(MaxFormattedLength == 17);
+			Debug.Assert(FormattedLength == 17);
 			if (v == null)
 				return WriteInvalid(dest);
 			var value = v.Value;

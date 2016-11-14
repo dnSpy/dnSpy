@@ -17,40 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using Microsoft.VisualStudio.Text;
-
-namespace dnSpy.Contracts.Hex.Tagging {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
-	/// Text span and tag
+	/// Hex column
 	/// </summary>
-	/// <typeparam name="T">Tag type</typeparam>
-	public struct HexTextTagSpan<T> where T : HexTag {
+	public enum HexColumnType {
 		/// <summary>
-		/// true if this is a default instance that hasn't been initialized
+		/// Offset column
 		/// </summary>
-		public bool IsDefault => Tag == null;
+		Offset,
 
 		/// <summary>
-		/// Gets the span
+		/// Values column
 		/// </summary>
-		public Span Span { get; }
+		Values,
 
 		/// <summary>
-		/// Gets the tag
+		/// ASCII column
 		/// </summary>
-		public T Tag { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="span"></param>
-		/// <param name="tag"></param>
-		public HexTextTagSpan(Span span, T tag) {
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
-			Span = span;
-			Tag = tag;
-		}
+		Ascii,
 	}
 }

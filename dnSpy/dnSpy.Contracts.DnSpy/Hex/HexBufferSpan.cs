@@ -90,8 +90,12 @@ namespace dnSpy.Contracts.Hex {
 			Span = new HexSpan(start, length);
 		}
 
-		// It's not public because public ctors should only take start and length params
-		HexBufferSpan(HexBufferPoint start, HexBufferPoint end) {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="start">Start position</param>
+		/// <param name="end">End position</param>
+		public HexBufferSpan(HexBufferPoint start, HexBufferPoint end) {
 			if (start.Buffer != end.Buffer || start.Buffer == null)
 				throw new ArgumentException();
 			if (end.Position < start.Position)

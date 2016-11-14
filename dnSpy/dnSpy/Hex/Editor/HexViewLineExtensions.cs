@@ -18,19 +18,27 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using dnSpy.Contracts.Hex.Formatting;
 using Microsoft.VisualStudio.Text.Formatting;
 
-namespace dnSpy.Text.Formatting {
-	sealed class TextAndAdornmentCollection : ReadOnlyCollection<ISequenceElement>, ITextAndAdornmentCollection {
-		public ITextAndAdornmentSequencer Sequencer { get; }
+namespace dnSpy.Hex.Editor {
+	static class HexViewLineExtensions {
+		public static bool IsVisible(this HexViewLine line) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			return line.VisibilityState == VisibilityState.FullyVisible || line.VisibilityState == VisibilityState.PartiallyVisible;
+		}
 
-		public TextAndAdornmentCollection(ITextAndAdornmentSequencer textAndAdornmentSequencer, IList<ISequenceElement> list)
-			: base(list) {
-			if (textAndAdornmentSequencer == null)
-				throw new ArgumentNullException(nameof(textAndAdornmentSequencer));
-			Sequencer = textAndAdornmentSequencer;
+		public static bool IsFirstDocumentLine(this HexViewLine line) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			return line.BufferLine.LineNumber == 0;
+		}
+
+		public static bool IsLastDocumentLine(this HexViewLine line) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			return line.BufferLine.LineNumber + 1 == line.BufferLine.LineProvider.LineCount;
 		}
 	}
 }

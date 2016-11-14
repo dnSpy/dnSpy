@@ -18,12 +18,15 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.Hex.Editor;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex {
 	sealed class HexBufferLineImpl : HexBufferLine {
+		public override HexBufferLineProvider LineProvider { get; }
+		public override HexPosition LineNumber { get; }
+		public override ReadOnlyCollection<HexColumnType> ColumnOrder { get; }
 		public override HexBufferSpan LineSpan { get; }
 		public override HexBufferSpan VisibleBytesSpan { get; }
 		public override HexBytes VisibleHexBytes { get; }
@@ -41,7 +44,11 @@ namespace dnSpy.Hex {
 		readonly Span fullAsciiSpan;
 		readonly Span visibleAsciiSpan;
 
-		public HexBufferLineImpl(HexBufferSpan lineSpan, HexBufferSpan visibleBytesSpan, HexBytes visibleHexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellInformationCollection valueCells, HexCellInformationCollection asciiCells, Span offsetSpan, Span fullValuesSpan, Span visibleValuesSpan, Span fullAsciiSpan, Span visibleAsciiSpan) {
+		public HexBufferLineImpl(HexBufferLineProvider hexBufferLineProvider, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan lineSpan, HexBufferSpan visibleBytesSpan, HexBytes visibleHexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellInformationCollection valueCells, HexCellInformationCollection asciiCells, Span offsetSpan, Span fullValuesSpan, Span visibleValuesSpan, Span fullAsciiSpan, Span visibleAsciiSpan) {
+			if (hexBufferLineProvider == null)
+				throw new ArgumentNullException(nameof(hexBufferLineProvider));
+			if (columnOrder == null)
+				throw new ArgumentNullException(nameof(columnOrder));
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
 			if (visibleBytesSpan.IsDefault)
@@ -50,6 +57,13 @@ namespace dnSpy.Hex {
 				throw new ArgumentException();
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
+			if (valueCells.IsDefault)
+				throw new ArgumentNullException(nameof(valueCells));
+			if (asciiCells.IsDefault)
+				throw new ArgumentNullException(nameof(asciiCells));
+			LineProvider = hexBufferLineProvider;
+			LineNumber = lineNumber;
+			ColumnOrder = columnOrder;
 			LineSpan = lineSpan;
 			VisibleBytesSpan = visibleBytesSpan;
 			VisibleHexBytes = visibleHexBytes;

@@ -67,11 +67,16 @@ namespace dnSpy.Hex.Editor {
 		public override event EventHandler ViewportLeftChanged;//TODO:
 		public override event EventHandler<HexMouseHoverEventArgs> MouseHover;//TODO:
 
+		public override event EventHandler<BufferLinesChangedEventArgs> BufferLinesChanged;//TODO:
+		public override HexBufferLineProvider BufferLines => hexBufferLineProvider;
+		HexBufferLineProvider hexBufferLineProvider;//TODO: Init
+
 		readonly FormattedHexSourceFactoryService formattedHexSourceFactoryService;
 		readonly HexClassifier aggregateClassifier;
 		readonly HexAndAdornmentSequencer hexAndAdornmentSequencer;
+		readonly HexBufferLineProviderFactoryService hexBufferLineProviderFactoryService;
 
-		public WpfHexViewImpl(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService) {
+		public WpfHexViewImpl(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineProviderFactoryService hexBufferLineProviderFactoryService) {
 			if (hexBuffer == null)
 				throw new ArgumentNullException(nameof(hexBuffer));
 			if (roles == null)
@@ -88,7 +93,10 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(hexViewClassifierAggregatorService));
 			if (hexAndAdornmentSequencerFactoryService == null)
 				throw new ArgumentNullException(nameof(hexAndAdornmentSequencerFactoryService));
+			if (hexBufferLineProviderFactoryService == null)
+				throw new ArgumentNullException(nameof(hexBufferLineProviderFactoryService));
 			this.formattedHexSourceFactoryService = formattedHexSourceFactoryService;
+			this.hexBufferLineProviderFactoryService = hexBufferLineProviderFactoryService;
 			HexBuffer = hexBuffer;
 			Roles = roles;
 			Options = hexEditorOptionsFactoryService.GetOptions(this);

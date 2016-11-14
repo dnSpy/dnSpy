@@ -79,8 +79,6 @@ namespace dnSpy.Text.Formatting {
 			if (SourceBuffer != TopBuffer)
 				throw new NotSupportedException();
 
-			var sequenceList = new List<ISequenceElement>();
-
 			List<AdornmentElementAndSpan> adornmentList = null;
 			foreach (var tagSpan in tagAggregator.GetTags(topSpan)) {
 				if (adornmentList == null)
@@ -94,10 +92,11 @@ namespace dnSpy.Text.Formatting {
 
 			// Common case
 			if (adornmentList == null) {
-				sequenceList.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(topSpan, SpanTrackingMode.EdgeExclusive)));
-				return new TextAndAdornmentCollection(this, sequenceList);
+				var elem = new TextSequenceElement(BufferGraph.CreateMappingSpan(topSpan, SpanTrackingMode.EdgeExclusive));
+				return new TextAndAdornmentCollection(this, new[] { elem });
 			}
 
+			var sequenceList = new List<ISequenceElement>();
 			adornmentList.Sort(AdornmentElementAndSpanComparer.Instance);
 			int start = topSpan.Start;
 			int end = topSpan.End;

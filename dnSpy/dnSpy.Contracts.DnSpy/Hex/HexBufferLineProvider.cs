@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Hex.Editor;
-
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Creates <see cref="HexBufferLine"/>s
@@ -30,16 +28,50 @@ namespace dnSpy.Contracts.Hex {
 		protected HexBufferLineProvider() { }
 
 		/// <summary>
-		/// Number of lines (0-2^64)
+		/// Gets the buffer
+		/// </summary>
+		public abstract HexBuffer Buffer { get; }
+
+		/// <summary>
+		/// Number of lines. There's always at least one line even if <see cref="Span"/> is empty.
 		/// </summary>
 		public abstract HexPosition LineCount { get; }
 
 		/// <summary>
+		/// Gets the span
+		/// </summary>
+		public abstract HexSpan Span { get; }
+
+		/// <summary>
+		/// Gets the number of characters per line
+		/// </summary>
+		public abstract int CharsPerLine { get; }
+
+		/// <summary>
+		/// Gets the number of bytes per line
+		/// </summary>
+		public abstract uint BytesPerLine { get; }
+
+		/// <summary>
+		/// Returns a line
+		/// </summary>
+		/// <param name="lineNumber">Line number</param>
+		/// <returns></returns>
+		public abstract HexBufferLine GetLineFromLineNumber(HexPosition lineNumber);
+
+		/// <summary>
 		/// Creates a line
 		/// </summary>
-		/// <param name="position">Position (0-2^64-1)</param>
+		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract HexBufferLine CreateLine(HexPosition position);
+		public abstract HexBufferLine GetLineFromPosition(HexBufferPoint position);
+
+		/// <summary>
+		/// Gets the line number
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract HexPosition GetLineNumberFromPosition(HexBufferPoint position);
 
 		/// <summary>
 		/// Converts a physical (stream) position to a logical position
@@ -54,5 +86,17 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="logicalPosition">Logical position</param>
 		/// <returns></returns>
 		public abstract HexPosition ToPhysicalPosition(HexPosition logicalPosition);
+
+		/// <summary>
+		/// Returns true if <paramref name="position"/> is a valid position that can be passed to
+		/// methods expecting a (physical) position.
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public virtual bool IsValidPosition(HexBufferPoint position) {
+			if (position.Buffer != Buffer)
+				return false;
+			return Span.Length == 0 ? Span.Start == position : Span.Contains(position);
+		}
 	}
 }

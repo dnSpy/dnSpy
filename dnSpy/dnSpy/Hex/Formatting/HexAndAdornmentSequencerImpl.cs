@@ -18,15 +18,17 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Tagging;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Formatting {
 	sealed class HexAndAdornmentSequencerImpl : HexAndAdornmentSequencer {
 		public override HexBuffer Buffer => hexView.HexBuffer;
-		public override event EventHandler<HexAndAdornmentSequenceChangedEventArgs> SequenceChanged;//TODO:
 
 		readonly HexTagAggregator<HexSpaceNegotiatingAdornmentTag> hexTagAggregator;
 		readonly HexView hexView;
@@ -38,14 +40,150 @@ namespace dnSpy.Hex.Formatting {
 				throw new ArgumentNullException(nameof(hexTagAggregator));
 			this.hexView = hexView;
 			this.hexTagAggregator = hexTagAggregator;
+			hexView.Closed += HexView_Closed;
+			hexTagAggregator.TagsChanged += HexTagAggregator_TagsChanged;
 		}
 
-		public override HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferSpan span) {
-			throw new NotImplementedException();//TODO:
+		public override event EventHandler<HexAndAdornmentSequenceChangedEventArgs> SequenceChanged;
+
+		void HexTagAggregator_TagsChanged(object sender, HexTagsChangedEventArgs e) =>
+			SequenceChanged?.Invoke(this, new HexAndAdornmentSequenceChangedEventArgs(e.Span));
+
+		public override HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferPoint position) {
+			var line = hexView.BufferLines.GetLineFromPosition(position);
+			return CreateHexAndAdornmentCollection(line);
 		}
 
 		public override HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferLine line) {
-			throw new NotImplementedException();//TODO:
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			if (line.LineSpan.Buffer != hexView.HexBuffer)
+				throw new ArgumentException();
+			var lineSpan = line.TextSpan;
+
+			List<AdornmentElementAndSpan> adornmentList = null;
+			foreach (var tagSpan in hexTagAggregator.GetAllTags(new HexTaggerContext(line, lineSpan))) {
+				if (adornmentList == null)
+					adornmentList = new List<AdornmentElementAndSpan>();
+				adornmentList.Add(new AdornmentElementAndSpan(new HexAdornmentElementImpl(tagSpan), tagSpan.Span));
+			}
+
+			// Common case
+			if (adornmentList == null) {
+				var elem = new HexSequenceElementImpl(lineSpan);
+				return new HexAndAdornmentCollectionImpl(this, new[] { elem });
+			}
+
+			var sequenceList = new List<HexSequenceElement>();
+			adornmentList.Sort(AdornmentElementAndSpanComparer.Instance);
+			int start = lineSpan.Start;
+			int end = lineSpan.End;
+			int curr = start;
+			AdornmentElementAndSpan? lastAddedAdornment = null;
+			for (int i = 0; i < adornmentList.Count; i++) {
+				var info = adornmentList[i];
+				int spanStart = info.Span.Length == 0 && info.AdornmentElement.Affinity == HexPositionAffinity.Predecessor ? info.Span.Start - 1 : info.Span.Start;
+				if (spanStart < start)
+					continue;
+				if (info.Span.Start > end)
+					break;
+				var textSpan = Span.FromBounds(curr, info.Span.Start);
+				if (!textSpan.IsEmpty)
+					sequenceList.Add(new HexSequenceElementImpl(textSpan));
+				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == HexPositionAffinity.Predecessor)) {
+					bool canAppend = true;
+					if (lastAddedAdornment != null && lastAddedAdornment.Value.Span.End > info.Span.Start)
+						canAppend = false;
+					if (canAppend) {
+						sequenceList.Add(info.AdornmentElement);
+						lastAddedAdornment = info;
+					}
+				}
+				curr = info.Span.End;
+			}
+			if (curr < end) {
+				var textSpan = Span.FromBounds(curr, end);
+				Debug.Assert(!textSpan.IsEmpty);
+				sequenceList.Add(new HexSequenceElementImpl(textSpan));
+			}
+
+			return new HexAndAdornmentCollectionImpl(this, sequenceList.ToArray());
+		}
+
+		sealed class AdornmentElementAndSpanComparer : IComparer<AdornmentElementAndSpan> {
+			public static readonly AdornmentElementAndSpanComparer Instance = new AdornmentElementAndSpanComparer();
+			public int Compare(AdornmentElementAndSpan x, AdornmentElementAndSpan y) {
+				int c = x.Span.Start - y.Span.Start;
+				if (c != 0)
+					return c;
+				c = x.Span.Length - y.Span.Length;
+				if (c != 0)
+					return c;
+				return (x.AdornmentElement.Affinity == HexPositionAffinity.Predecessor ? 0 : 1) - (y.AdornmentElement.Affinity == HexPositionAffinity.Predecessor ? 0 : 1);
+			}
+		}
+
+		struct AdornmentElementAndSpan {
+			public Span Span { get; }
+			public HexAdornmentElementImpl AdornmentElement { get; }
+			public AdornmentElementAndSpan(HexAdornmentElementImpl adornmentElement, Span span) {
+				AdornmentElement = adornmentElement;
+				Span = span;
+			}
+		}
+
+		sealed class HexAdornmentElementImpl : HexAdornmentElement {
+			public override Span Span => tagSpan.Span;
+			public override bool ShouldRenderText => false;
+			public override double Width => tagSpan.Tag.Width;
+			public override double TopSpace => tagSpan.Tag.TopSpace;
+			public override double Baseline => tagSpan.Tag.Baseline;
+			public override double TextHeight => tagSpan.Tag.TextHeight;
+			public override double BottomSpace => tagSpan.Tag.BottomSpace;
+			public override object IdentityTag => tagSpan.Tag.IdentityTag;
+			public override object ProviderTag => tagSpan.Tag.ProviderTag;
+			public override HexPositionAffinity Affinity => tagSpan.Tag.Affinity;
+
+			readonly HexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan;
+
+			public HexAdornmentElementImpl(HexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan) {
+				if (tagSpan.IsDefault)
+					throw new ArgumentNullException(nameof(tagSpan));
+				this.tagSpan = tagSpan;
+			}
+		}
+
+		sealed class HexSequenceElementImpl : HexSequenceElement {
+			public override bool ShouldRenderText => true;
+			public override Span Span { get; }
+
+			public HexSequenceElementImpl(Span span) {
+				Span = span;
+			}
+		}
+
+		sealed class HexAndAdornmentCollectionImpl : HexAndAdornmentCollection {
+			public override HexAndAdornmentSequencer Sequencer { get; }
+			public override int Count => elements.Length;
+			public override HexSequenceElement this[int index] => elements[index];
+			readonly HexSequenceElement[] elements;
+
+			public HexAndAdornmentCollectionImpl(HexAndAdornmentSequencer sequencer, HexSequenceElement[] elements) {
+				if (sequencer == null)
+					throw new ArgumentNullException(nameof(sequencer));
+				if (elements == null)
+					throw new ArgumentNullException(nameof(elements));
+				Sequencer = sequencer;
+				this.elements = elements;
+			}
+		}
+
+		void HexView_Closed(object sender, EventArgs e) {
+			Debug.Assert(hexView.Properties.ContainsProperty(typeof(HexAndAdornmentSequencer)));
+			hexView.Properties.RemoveProperty(typeof(HexAndAdornmentSequencer));
+			hexView.Closed -= HexView_Closed;
+			hexTagAggregator.TagsChanged -= HexTagAggregator_TagsChanged;
+			hexTagAggregator.Dispose();
 		}
 	}
 }

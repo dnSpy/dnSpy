@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Hex.Editor;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
@@ -26,18 +26,32 @@ namespace dnSpy.Contracts.Hex.Tagging {
 	/// </summary>
 	public struct HexTaggerContext {
 		/// <summary>
+		/// true if this is a default instance that hasn't been initialized
+		/// </summary>
+		public bool IsDefault => Line == null;
+
+		/// <summary>
 		/// Gets the line info
 		/// </summary>
 		public HexBufferLine Line { get; }
 
 		/// <summary>
+		/// Line span to tag
+		/// </summary>
+		public Span LineSpan { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="line">Line info</param>
-		public HexTaggerContext(HexBufferLine line) {
+		/// <param name="lineSpan">Line span to tag</param>
+		public HexTaggerContext(HexBufferLine line, Span lineSpan) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
+			if (!line.TextSpan.Contains(lineSpan))
+				throw new ArgumentOutOfRangeException(nameof(lineSpan));
 			Line = line;
+			LineSpan = lineSpan;
 		}
 	}
 }

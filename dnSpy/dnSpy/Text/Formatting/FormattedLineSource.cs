@@ -72,8 +72,8 @@ namespace dnSpy.Text.Formatting {
 			if (sourceTextSnapshot != visualBufferSnapshot)
 				throw new NotSupportedException("Text snapshot must be identical to visual snapshot");
 
-			this.textFormatter = textFormatterProvider.Create(useDisplayMode);
-			this.formattedTextCache = new FormattedTextCache(useDisplayMode);
+			textFormatter = textFormatterProvider.Create(useDisplayMode);
+			formattedTextCache = new FormattedTextCache(useDisplayMode);
 			this.textParagraphPropertiesFactoryService = textParagraphPropertiesFactoryService;
 			SourceTextSnapshot = sourceTextSnapshot;
 			TopTextSnapshot = visualBufferSnapshot;
@@ -83,14 +83,14 @@ namespace dnSpy.Text.Formatting {
 			WordWrapWidth = wordWrapWidth;
 			MaxAutoIndent = Math.Round(maxAutoIndent);
 			ColumnWidth = formattedTextCache.GetColumnWidth(classificationFormatMap.DefaultTextProperties);
-			this.wrapGlyphWidth = isViewWrapEnabled ? 1.5 * ColumnWidth : 0;
+			wrapGlyphWidth = isViewWrapEnabled ? 1.5 * ColumnWidth : 0;
 			LineHeight = WpfTextViewLine.DEFAULT_TOP_SPACE + WpfTextViewLine.DEFAULT_BOTTOM_SPACE + formattedTextCache.GetLineHeight(classificationFormatMap.DefaultTextProperties);
 			TextHeightAboveBaseline = formattedTextCache.GetTextHeightAboveBaseline(classificationFormatMap.DefaultTextProperties);
 			TextHeightBelowBaseline = formattedTextCache.GetTextHeightBelowBaseline(classificationFormatMap.DefaultTextProperties);
 			TextAndAdornmentSequencer = sequencer;
 			this.aggregateClassifier = aggregateClassifier;
 			this.classificationFormatMap = classificationFormatMap;
-			this.defaultTextParagraphProperties = new TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
+			defaultTextParagraphProperties = new TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
 		}
 
 		ITextSnapshotLine GetBufferLine(ITextAndAdornmentCollection coll) =>

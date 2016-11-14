@@ -18,39 +18,41 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Contracts.Hex.Tagging {
+namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
-	/// Text span and tag
+	/// Flags
 	/// </summary>
-	/// <typeparam name="T">Tag type</typeparam>
-	public struct HexTextTagSpan<T> where T : HexTag {
+	[Flags]
+	public enum TextBoundsFlags {
 		/// <summary>
-		/// true if this is a default instance that hasn't been initialized
+		/// No bit is set
 		/// </summary>
-		public bool IsDefault => Tag == null;
+		None					= 0,
 
 		/// <summary>
-		/// Gets the span
+		/// Offset column
 		/// </summary>
-		public Span Span { get; }
+		Offset					= 0x00000001,
 
 		/// <summary>
-		/// Gets the tag
+		/// Values column
 		/// </summary>
-		public T Tag { get; }
+		Values					= 0x00000002,
 
 		/// <summary>
-		/// Constructor
+		/// ASCII column
 		/// </summary>
-		/// <param name="span"></param>
-		/// <param name="tag"></param>
-		public HexTextTagSpan(Span span, T tag) {
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
-			Span = span;
-			Tag = tag;
-		}
+		Ascii					= 0x00000004,
+
+		/// <summary>
+		/// Select the full cell instead of only the text
+		/// </summary>
+		Cell					= 0x00000008,
+
+		/// <summary>
+		/// Include the cell separator, if any
+		/// </summary>
+		Separator				= 0x00000010,
 	}
 }

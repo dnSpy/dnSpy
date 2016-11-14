@@ -20,11 +20,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace dnSpy.Contracts.Hex.Editor {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex cell collection
 	/// </summary>
 	public struct HexCellInformationCollection {
+		/// <summary>
+		/// true if this is a default instance that hasn't been initialized
+		/// </summary>
+		public bool IsDefault => cells == null;
+
 		/// <summary>
 		/// Gets the empty collection
 		/// </summary>

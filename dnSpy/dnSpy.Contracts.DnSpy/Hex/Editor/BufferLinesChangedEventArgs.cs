@@ -18,39 +18,25 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Contracts.Hex.Tagging {
+namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Text span and tag
+	/// Buffer lines changed event args
 	/// </summary>
-	/// <typeparam name="T">Tag type</typeparam>
-	public struct HexTextTagSpan<T> where T : HexTag {
+	public sealed class BufferLinesChangedEventArgs : EventArgs {
 		/// <summary>
-		/// true if this is a default instance that hasn't been initialized
+		/// Gets the new instance
 		/// </summary>
-		public bool IsDefault => Tag == null;
-
-		/// <summary>
-		/// Gets the span
-		/// </summary>
-		public Span Span { get; }
-
-		/// <summary>
-		/// Gets the tag
-		/// </summary>
-		public T Tag { get; }
+		public HexBufferLineProvider NewBufferLines { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="span"></param>
-		/// <param name="tag"></param>
-		public HexTextTagSpan(Span span, T tag) {
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
-			Span = span;
-			Tag = tag;
+		/// <param name="newBufferLines">New instance</param>
+		public BufferLinesChangedEventArgs(HexBufferLineProvider newBufferLines) {
+			if (newBufferLines == null)
+				throw new ArgumentNullException(nameof(newBufferLines));
+			NewBufferLines = newBufferLines;
 		}
 	}
 }

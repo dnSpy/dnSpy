@@ -34,6 +34,16 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public PropertyCollection Properties { get; }
 
 		/// <summary>
+		/// Gets the hex buffer lines
+		/// </summary>
+		public abstract HexBufferLineProvider BufferLines { get; }
+
+		/// <summary>
+		/// Raised after <see cref="BufferLines"/> is changed
+		/// </summary>
+		public abstract event EventHandler<BufferLinesChangedEventArgs> BufferLinesChanged;
+
+		/// <summary>
 		/// Gets the command target
 		/// </summary>
 		public abstract ICommandTargetCollection CommandTarget { get; }

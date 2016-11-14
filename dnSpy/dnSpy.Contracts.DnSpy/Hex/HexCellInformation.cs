@@ -20,7 +20,7 @@
 using System;
 using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Contracts.Hex.Editor {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Cell information
 	/// </summary>

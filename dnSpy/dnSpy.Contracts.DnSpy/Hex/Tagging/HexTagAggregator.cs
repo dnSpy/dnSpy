@@ -80,19 +80,36 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		public abstract IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Gets all tags
+		/// Gets all tags intersecting with the line
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		public abstract IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context);
+		public abstract IEnumerable<HexTextTagSpan<T>> GetLineTags(HexTaggerContext context);
 
 		/// <summary>
-		/// Gets all tags. This method is synchronous.
+		/// Gets all tags intersecting with the line. This method is synchronous.
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context, CancellationToken cancellationToken);
+		public abstract IEnumerable<HexTextTagSpan<T>> GetLineTags(HexTaggerContext context, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets all tags intersecting with the line. It merges all <see cref="HexTagSpan{T}"/> tags with all
+		/// <see cref="HexTextTagSpan{T}"/> tags.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		public abstract IEnumerable<HexTextTagSpan<T>> GetAllTags(HexTaggerContext context);
+
+		/// <summary>
+		/// Gets all tags intersecting with the line. It merges all <see cref="HexTagSpan{T}"/> tags with all
+		/// <see cref="HexTextTagSpan{T}"/> tags. This method is synchronous.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public abstract IEnumerable<HexTextTagSpan<T>> GetAllTags(HexTaggerContext context, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Disposes this instance

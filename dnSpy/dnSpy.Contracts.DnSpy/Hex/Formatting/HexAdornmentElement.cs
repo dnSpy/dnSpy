@@ -17,35 +17,54 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Media.TextFormatting;
-
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
-	/// WPF hex view line
+	/// Adornment sequence element
 	/// </summary>
-	public abstract class WpfHexViewLine : HexViewLine {
+	public abstract class HexAdornmentElement : HexSequenceElement {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected WpfHexViewLine() { }
+		protected HexAdornmentElement() { }
 
 		/// <summary>
-		/// Gets all text lines
+		/// Gets the width
 		/// </summary>
-		public abstract ReadOnlyCollection<TextLine> TextLines { get; }
+		public abstract double Width { get; }
 
 		/// <summary>
-		/// Gets the visible area
+		/// Gets the top space
 		/// </summary>
-		public abstract Rect VisibleArea { get; }
+		public abstract double TopSpace { get; }
 
 		/// <summary>
-		/// Gets the character formatting
+		/// Gets the base line
 		/// </summary>
-		/// <param name="linePosition">Line position</param>
-		/// <returns></returns>
-		public abstract TextRunProperties GetCharacterFormatting(int linePosition);
+		public abstract double Baseline { get; }
+
+		/// <summary>
+		/// Gets the text height
+		/// </summary>
+		public abstract double TextHeight { get; }
+
+		/// <summary>
+		/// Gets the bottom space
+		/// </summary>
+		public abstract double BottomSpace { get; }
+
+		/// <summary>
+		/// Gets the affinity
+		/// </summary>
+		public abstract HexPositionAffinity Affinity { get; }
+
+		/// <summary>
+		/// Gets the identity tag
+		/// </summary>
+		public abstract object IdentityTag { get; }
+
+		/// <summary>
+		/// Gets the provider tag
+		/// </summary>
+		public abstract object ProviderTag { get; }
 	}
 }

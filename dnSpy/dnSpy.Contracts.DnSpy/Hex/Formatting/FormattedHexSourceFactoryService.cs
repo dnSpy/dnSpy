@@ -33,25 +33,25 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Creates a <see cref="FormattedHexLineSource"/> that doesn't classify anything
 		/// </summary>
-		/// <param name="sourceBuffer">Buffer</param>
+		/// <param name="bufferLines">Buffer lines</param>
 		/// <param name="baseIndent">Base indentation</param>
 		/// <param name="useDisplayMode">true to use display mode, false to use ideal mode</param>
 		/// <param name="sequencer">Sequencer</param>
 		/// <param name="classificationFormatMap">Classification format map</param>
 		/// <returns></returns>
-		public virtual FormattedHexLineSource Create(HexBuffer sourceBuffer, double baseIndent, bool useDisplayMode, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) =>
-			Create(sourceBuffer, baseIndent, useDisplayMode, NullHexClassifier.Instance, sequencer, classificationFormatMap);
+		public virtual FormattedHexLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) =>
+			Create(bufferLines, baseIndent, useDisplayMode, NullHexClassifier.Instance, sequencer, classificationFormatMap);
 
 		/// <summary>
 		/// Creates a <see cref="FormattedHexLineSource"/>
 		/// </summary>
-		/// <param name="sourceBuffer">Buffer</param>
+		/// <param name="bufferLines">Buffer lines</param>
 		/// <param name="baseIndent">Base indentation</param>
 		/// <param name="useDisplayMode">true to use display mode, false to use ideal mode</param>
 		/// <param name="aggregateClassifier">Classifier</param>
 		/// <param name="sequencer">Sequencer</param>
 		/// <param name="classificationFormatMap">Classification format map</param>
 		/// <returns></returns>
-		public abstract FormattedHexLineSource Create(HexBuffer sourceBuffer, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap);
+		public abstract FormattedHexLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap);
 	}
 }

@@ -18,7 +18,6 @@
 */
 
 using System;
-using dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
@@ -43,16 +42,16 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Creates a <see cref="HexAndAdornmentCollection"/>
 		/// </summary>
-		/// <param name="line">Line</param>
+		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferLine line);
+		public abstract HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferPoint position);
 
 		/// <summary>
 		/// Creates a <see cref="HexAndAdornmentCollection"/>
 		/// </summary>
-		/// <param name="span">Span</param>
+		/// <param name="line">Line</param>
 		/// <returns></returns>
-		public abstract HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferSpan span);
+		public abstract HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferLine line);
 	}
 
 	/// <summary>

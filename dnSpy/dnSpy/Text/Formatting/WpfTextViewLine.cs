@@ -32,7 +32,7 @@ using TF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
 	sealed class WpfTextViewLine : IFormattedLine, IDsTextViewLine {
-		readonly IBufferGraph bufferGraph;
+		IBufferGraph bufferGraph;
 		readonly int endColumn, startColumn;
 		readonly int linePartsIndex, linePartsLength;
 		double top;
@@ -52,7 +52,7 @@ namespace dnSpy.Text.Formatting {
 		readonly bool isLastTextViewLineForSnapshotLine;
 		LineTransform lineTransform;
 		ReadOnlyCollection<TextLine> textLines;
-		readonly LinePartsCollection linePartsCollection;
+		LinePartsCollection linePartsCollection;
 		double realTopSpace, scaledTopSpace;
 		double realBottomSpace;
 		double realTextHeight, scaledTextHeight;
@@ -665,8 +665,6 @@ namespace dnSpy.Text.Formatting {
 			if (span == null)
 				return new Collection<TF.TextBounds>(list);
 
-			//TODO: Handle RTL text and adornments
-
 			var startBounds = GetFirstTextBounds(span.Value.Start);
 			var endBounds = GetLastTextBounds(span.Value.End);
 			if (span.Value.End > End) {
@@ -801,6 +799,10 @@ namespace dnSpy.Text.Formatting {
 			IsValid = false;
 			foreach (var t in textLines)
 				t.Dispose();
+			bufferGraph = null;
+			extentIncludingLineBreak = default(SnapshotSpan);
+			visualSnapshot = null;
+			linePartsCollection = null;
 			textLines = null;
 			drawingVisual = null;
 		}

@@ -17,6 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows.Media;
+using System.Windows.Media.TextFormatting;
+
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
 	/// Formatted hex line source
@@ -26,5 +29,58 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// Constructor
 		/// </summary>
 		protected FormattedHexLineSource() { }
+
+		/// <summary>
+		/// Gets the buffer lines
+		/// </summary>
+		public abstract HexBufferLineProvider BufferLines { get; }
+
+		/// <summary>
+		/// Gets the default text properties
+		/// </summary>
+		public abstract TextRunProperties DefaultTextProperties { get; }
+
+		/// <summary>
+		/// Gets the sequencer
+		/// </summary>
+		public abstract HexAndAdornmentSequencer HexAndAdornmentSequencer { get; }
+
+		/// <summary>
+		/// Gets the base indentation
+		/// </summary>
+		public abstract double BaseIndentation { get; }
+
+		/// <summary>
+		/// Gets the width of a column
+		/// </summary>
+		public abstract double ColumnWidth { get; }
+
+		/// <summary>
+		/// Gets the nominal line height
+		/// </summary>
+		public abstract double LineHeight { get; }
+
+		/// <summary>
+		/// Gets the nominal height of the text above the baseline
+		/// </summary>
+		public abstract double TextHeightAboveBaseline { get; }
+
+		/// <summary>
+		/// Gets the nominal height of the text below the baseline
+		/// </summary>
+		public abstract double TextHeightBelowBaseline { get; }
+
+		/// <summary>
+		/// true to use <see cref="TextFormattingMode.Display"/> mode, false to use
+		/// <see cref="TextFormattingMode.Ideal"/> mode
+		/// </summary>
+		public abstract bool UseDisplayMode { get; }
+
+		/// <summary>
+		/// Formats a line
+		/// </summary>
+		/// <param name="bufferLine">Buffer line</param>
+		/// <returns></returns>
+		public abstract HexFormattedLine FormatLineInVisualBuffer(HexBufferLine bufferLine);
 	}
 }

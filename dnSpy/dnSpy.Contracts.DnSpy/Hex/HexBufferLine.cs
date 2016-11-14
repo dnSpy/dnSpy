@@ -18,13 +18,29 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Contracts.Hex.Editor {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Line information
 	/// </summary>
 	public abstract class HexBufferLine {
+		/// <summary>
+		/// Gets the <see cref="HexBufferLineProvider"/> instance that created this line
+		/// </summary>
+		public abstract HexBufferLineProvider LineProvider { get; }
+
+		/// <summary>
+		/// Gets the line number
+		/// </summary>
+		public abstract HexPosition LineNumber { get; }
+
+		/// <summary>
+		/// Gets the column order
+		/// </summary>
+		public abstract ReadOnlyCollection<HexColumnType> ColumnOrder { get; }
+
 		/// <summary>
 		/// Line span, some of the bytes could be hidden
 		/// </summary>
@@ -48,6 +64,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public abstract string Text { get; }
 
 		/// <summary>
+		/// Gets a span covering <see cref="Text"/>
+		/// </summary>
+		public Span TextSpan => new Span(0, Text.Length);
+
+		/// <summary>
 		/// true if the offset column is present
 		/// </summary>
 		public abstract bool IsOffsetColumnPresent { get; }
@@ -61,6 +82,20 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// true if the ASCII column is present
 		/// </summary>
 		public abstract bool IsAsciiColumnPresent { get; }
+
+		/// <summary>
+		/// Returns true if a column is present
+		/// </summary>
+		/// <param name="column">Column</param>
+		/// <returns></returns>
+		public bool IsColumnPresent(HexColumnType column) {
+			switch (column) {
+			case HexColumnType.Offset:	return IsOffsetColumnPresent;
+			case HexColumnType.Values:	return IsValuesColumnPresent;
+			case HexColumnType.Ascii:	return IsAsciiColumnPresent;
+			default: throw new ArgumentOutOfRangeException(nameof(column));
+			}
+		}
 
 		/// <summary>
 		/// Gets the value of the offset shown in <see cref="Text"/>. The real offset
@@ -89,7 +124,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="span">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public virtual TextAndHexSpan GetValuesSpan(HexBufferSpan span, HexCellSpanFlags flags) =>
+		public TextAndHexSpan GetValuesSpan(HexBufferSpan span, HexCellSpanFlags flags) =>
 			GetTextAndHexSpan(ValueCells, span, flags);
 
 		/// <summary>
@@ -107,7 +142,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="span">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public virtual TextAndHexSpan GetAsciiSpan(HexBufferSpan span, HexCellSpanFlags flags) =>
+		public TextAndHexSpan GetAsciiSpan(HexBufferSpan span, HexCellSpanFlags flags) =>
 			GetTextAndHexSpan(AsciiCells, span, flags);
 
 		/// <summary>

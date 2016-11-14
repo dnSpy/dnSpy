@@ -22,21 +22,29 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Formatting;
+using dnSpy.Text.Formatting;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Formatting {
 	[Export(typeof(FormattedHexSourceFactoryService))]
 	sealed class FormattedHexSourceFactoryServiceImpl : FormattedHexSourceFactoryService {
-		public override FormattedHexLineSource Create(HexBuffer sourceBuffer, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
-			if (sourceBuffer == null)
-				throw new ArgumentNullException(nameof(sourceBuffer));
+		readonly ITextFormatterProvider textFormatterProvider;
+
+		[ImportingConstructor]
+		FormattedHexSourceFactoryServiceImpl(ITextFormatterProvider textFormatterProvider) {
+			this.textFormatterProvider = textFormatterProvider;
+		}
+
+		public override FormattedHexLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
+			if (bufferLines == null)
+				throw new ArgumentNullException(nameof(bufferLines));
 			if (aggregateClassifier == null)
 				throw new ArgumentNullException(nameof(aggregateClassifier));
 			if (sequencer == null)
 				throw new ArgumentNullException(nameof(sequencer));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			throw new NotImplementedException();//TODO:
+			return new FormattedHexLineSourceImpl(textFormatterProvider, bufferLines, baseIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap);
 		}
 	}
 }

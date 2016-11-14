@@ -19,18 +19,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.Hex.Editor;
 using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex {
 	sealed class HexBufferLineProviderImpl : HexBufferLineProvider {
 		const HexBytesDisplayFormat HexBytesDisplayFormat_First = HexBytesDisplayFormat.HexByte;
 		const HexBytesDisplayFormat HexBytesDisplayFormat_Last = HexBytesDisplayFormat.DoubleBigEndian;
 		const HexOffsetFormat HexOffsetFormat_First = HexOffsetFormat.Hex;
-		const HexOffsetFormat HexOffsetFormat_Last = HexOffsetFormat.HexCSharp;
+		const HexOffsetFormat HexOffsetFormat_Last = HexOffsetFormat.HexAssembly;
 
 		static HexValueFormatter[] valueFormatters = new HexValueFormatter[HexBytesDisplayFormat_Last - HexBytesDisplayFormat_First + 1] {
 			new HexByteValueFormatter(),
@@ -82,7 +83,11 @@ namespace dnSpy.Hex {
 			}
 		}
 
+		public override HexBuffer Buffer => hexBuffer;
 		public override HexPosition LineCount { get; }
+		public override HexSpan Span => HexSpan.FromBounds(startPosition, endPosition);
+		public override int CharsPerLine { get; }
+		public override uint BytesPerLine => (uint)bytesPerLine;
 
 		readonly HexBuffer hexBuffer;
 		readonly StringBuilder stringBuilder;
@@ -99,12 +104,7 @@ namespace dnSpy.Hex {
 		readonly bool showAscii;
 		readonly bool valuesLowerCaseHex;
 
-		enum ColumnKind {
-			Offset,
-			Values,
-			Ascii,
-		}
-		readonly ColumnKind[] columns;
+		readonly ReadOnlyCollection<HexColumnType> columnOrder;
 
 		public HexBufferLineProviderImpl(HexBuffer hexBuffer, HexBufferLineProviderOptions options) {
 			if (hexBuffer == null)
@@ -131,8 +131,7 @@ namespace dnSpy.Hex {
 				throw new ArgumentOutOfRangeException(nameof(options));
 
 			this.hexBuffer = hexBuffer;
-			columns = CreateColumns(ColumnKind.Offset, ColumnKind.Values, ColumnKind.Ascii);
-			stringBuilder = new StringBuilder();
+			columnOrder = CreateColumns(HexColumnType.Offset, HexColumnType.Values, HexColumnType.Ascii);
 			cellList = new List<HexCellInformation>();
 			useRelativePositions = options.UseRelativePositions;
 			startPosition = options.StartPosition;
@@ -156,34 +155,61 @@ namespace dnSpy.Hex {
 				bytesPerLine = bytesPerLine - bytesPerLine % (ulong)valueFormatter.ByteCount + (ulong)valueFormatter.ByteCount;
 			if (bytesPerLine <= 0)
 				throw new InvalidOperationException();
+			CharsPerLine = CalculateCharsPerLine();
+			stringBuilder = new StringBuilder(CharsPerLine);
 
 			var totalBytes = options.EndPosition - options.StartPosition;
-			if (bytesPerLine == 1)
+			Debug.Assert(totalBytes <= new HexPosition(1, 0));
+			if (totalBytes == 0)
+				LineCount = 1;
+			else if (bytesPerLine == 1)
 				LineCount = totalBytes;
-			else {
-				if (totalBytes == new HexPosition(1, 0)) {
-					ulong v = ulong.MaxValue;
-					ulong c = v / bytesPerLine;
-					if ((c + 1) * bytesPerLine == 0)
-						c++;
-					LineCount = c;
-				}
-				else {
-					ulong v = totalBytes.ToUInt64();
-					LineCount = v / bytesPerLine + (v % bytesPerLine == 0 ? 0UL : 1UL);
-				}
+			else if (totalBytes == new HexPosition(1, 0)) {
+				// 2^64 / x => (2^64 - x + x) / x => (2^64 - x) / x + 1
+				Debug.Assert(bytesPerLine > 1);
+				ulong d = (0UL - bytesPerLine) / bytesPerLine + 1UL;
+				ulong r = 0UL - (d * bytesPerLine);
+				LineCount = d + (r == 0UL ? 0UL : 1UL);
 			}
+			else {
+				ulong v = totalBytes.ToUInt64();
+				LineCount = v / bytesPerLine + (v % bytesPerLine == 0 ? 0UL : 1UL);
+			}
+			if (LineCount == 0)
+				throw new InvalidOperationException();
 		}
 
-		static ColumnKind[] CreateColumns(ColumnKind column1, ColumnKind column2, ColumnKind column3) {
-			var columns = new ColumnKind[3] { column1, column2, column3 };
-			if (Array.IndexOf(columns, ColumnKind.Offset) < 0)
+		int CalculateCharsPerLine() {
+			int columnCount = (showOffset ? 1 : 0) + (showValues ? 1 : 0) + (showAscii ? 1 : 0);
+			if (columnCount == 0)
+				return 0;
+
+			// Add column separators
+			int length = columnCount - 1;
+
+			if (showOffset)
+				length += offsetFormatter.FormattedLength;
+			if (showValues) {
+				Debug.Assert(bytesPerLine % (ulong)valueFormatter.ByteCount == 0);
+				int vc = (int)(bytesPerLine / (ulong)valueFormatter.ByteCount);
+				Debug.Assert(vc > 0);
+				length += valueFormatter.FormattedLength * vc + vc - 1;
+			}
+			if (showAscii)
+				length += (int)bytesPerLine;
+
+			return length;
+		}
+
+		static ReadOnlyCollection<HexColumnType> CreateColumns(HexColumnType column1, HexColumnType column2, HexColumnType column3) {
+			var columns = new HexColumnType[3] { column1, column2, column3 };
+			if (Array.IndexOf(columns, HexColumnType.Offset) < 0)
 				throw new ArgumentException();
-			if (Array.IndexOf(columns, ColumnKind.Values) < 0)
+			if (Array.IndexOf(columns, HexColumnType.Values) < 0)
 				throw new ArgumentException();
-			if (Array.IndexOf(columns, ColumnKind.Ascii) < 0)
+			if (Array.IndexOf(columns, HexColumnType.Ascii) < 0)
 				throw new ArgumentException();
-			return columns;
+			return new ReadOnlyCollection<HexColumnType>(columns);
 		}
 
 		int CalculateBytesPerLine(int charsPerLine) {
@@ -207,7 +233,7 @@ namespace dnSpy.Hex {
 				// (VC * VL + (VC - 1)) + VC * VB <= remainingChars
 				// or
 				// VC <= (remainingChars + 1) / (VL + 1 + VB)
-				int vl = valueFormatter.MaxFormattedLength;
+				int vl = valueFormatter.FormattedLength;
 				int vb = valueFormatter.ByteCount;
 				int vc = (remainingChars + 1) / (vl + 1 + vb);
 				if (vc <= 0)
@@ -220,7 +246,7 @@ namespace dnSpy.Hex {
 				// VC * VL + (VC - 1) <= remainingChars
 				// or
 				// VC <= (remainingChars + 1) / (VL + 1)
-				int vl = valueFormatter.MaxFormattedLength;
+				int vl = valueFormatter.FormattedLength;
 				int vb = valueFormatter.ByteCount;
 				int vc = (remainingChars + 1) / (vl + 1);
 				if (vc <= 0)
@@ -245,21 +271,40 @@ namespace dnSpy.Hex {
 		static HexOffsetFormatter CreateOffsetFormatter(HexOffsetFormat format, int bitSize, bool lowerCaseHex) {
 			bitSize = (bitSize + 3) / 4 * 4;
 			switch (format) {
-			case HexOffsetFormat.Hex:			return new OnlyHexOffsetFormatter(bitSize, lowerCaseHex);
-			case HexOffsetFormat.HexCSharp:		return new HexCSharpOffsetFormatter(bitSize, lowerCaseHex);
+			case HexOffsetFormat.Hex:				return new OnlyHexOffsetFormatter(bitSize, lowerCaseHex);
+			case HexOffsetFormat.HexCSharp:			return new HexCSharpOffsetFormatter(bitSize, lowerCaseHex);
+			case HexOffsetFormat.HexVisualBasic:	return new HexVisualBasicOffsetFormatter(bitSize, lowerCaseHex);
+			case HexOffsetFormat.HexAssembly:		return new HexAssemblyOffsetFormatter(bitSize, lowerCaseHex);
 			default: throw new ArgumentOutOfRangeException(nameof(bitSize));
 			}
 		}
 
+		public override HexPosition GetLineNumberFromPosition(HexBufferPoint position) {
+			if (position.Buffer != Buffer)
+				throw new ArgumentException();
+			if (!IsValidPosition(position))
+				throw new ArgumentOutOfRangeException(nameof(position));
+			return (position.Position - startPosition).ToUInt64() / bytesPerLine;
+		}
+
 		int CurrentTextIndex => stringBuilder.Length;
 
-		public override HexBufferLine CreateLine(HexPosition position) {
-			if (position < startPosition || position >= endPosition)
+		public override HexBufferLine GetLineFromLineNumber(HexPosition lineNumber) {
+			if (lineNumber >= LineCount)
+				throw new ArgumentOutOfRangeException(nameof(lineNumber));
+			var position = startPosition + checked(lineNumber.ToUInt64() * bytesPerLine);
+			return GetLineFromPosition(new HexBufferPoint(Buffer, position));
+		}
+
+		public override HexBufferLine GetLineFromPosition(HexBufferPoint position) {
+			if (position.Buffer != Buffer)
+				throw new ArgumentException();
+			if (!IsValidPosition(position))
 				throw new ArgumentOutOfRangeException(nameof(position));
 
 			ResetBuilderFields();
 
-			var linePosition = startPosition + (position - startPosition).ToUInt64() / bytesPerLine * bytesPerLine;
+			var linePosition = startPosition + (position.Position - startPosition).ToUInt64() / bytesPerLine * bytesPerLine;
 			var lineEnd = HexPosition.Min(linePosition + bytesPerLine, endPosition);
 			var lineSpan = HexSpan.FromBounds(linePosition, lineEnd);
 			var logicalOffset = ToLogicalPosition(lineSpan.Start);
@@ -277,32 +322,32 @@ namespace dnSpy.Hex {
 			var asciiCells = Array.Empty<HexCellInformation>();
 
 			bool needSep = false;
-			foreach (var column in columns) {
+			foreach (var column in columnOrder) {
 				switch (column) {
-				case ColumnKind.Offset:
+				case HexColumnType.Offset:
 					if (showOffset) {
 						if (needSep)
 							stringBuilder.Append(' ');
 						needSep = true;
-						PrintOffset(logicalOffset, out offsetSpan);
+						WriteOffset(logicalOffset, out offsetSpan);
 					}
 					break;
 
-				case ColumnKind.Values:
+				case HexColumnType.Values:
 					if (showValues) {
 						if (needSep)
 							stringBuilder.Append(' ');
 						needSep = true;
-						valueCells = PrintValues(visibleHexBytes, lineSpan, visibleBytesSpan, out fullValuesSpan, out visibleValuesSpan);
+						valueCells = WriteValues(visibleHexBytes, lineSpan, visibleBytesSpan, out fullValuesSpan, out visibleValuesSpan);
 					}
 					break;
 
-				case ColumnKind.Ascii:
+				case HexColumnType.Ascii:
 					if (showAscii) {
 						if (needSep)
 							stringBuilder.Append(' ');
 						needSep = true;
-						asciiCells = PrintAscii(visibleHexBytes, lineSpan, visibleBytesSpan, out fullAsciiSpan, out visibleAsciiSpan);
+						asciiCells = WriteAscii(visibleHexBytes, lineSpan, visibleBytesSpan, out fullAsciiSpan, out visibleAsciiSpan);
 					}
 					break;
 
@@ -312,9 +357,12 @@ namespace dnSpy.Hex {
 			}
 
 			var text = stringBuilder.ToString();
+			if (text.Length != CharsPerLine)
+				throw new InvalidOperationException();
 			var valueCellColl = valueCells.Length == 0 ? HexCellInformationCollection.Empty : new HexCellInformationCollection(valueCells);
 			var asciiCellColl = asciiCells.Length == 0 ? HexCellInformationCollection.Empty : new HexCellInformationCollection(asciiCells);
-			var res = new HexBufferLineImpl(new HexBufferSpan(hexBuffer, lineSpan), new HexBufferSpan(hexBuffer, visibleBytesSpan), visibleHexBytes, text, showOffset, showValues, showAscii, logicalOffset, valueCellColl, asciiCellColl, offsetSpan, fullValuesSpan, visibleValuesSpan, fullAsciiSpan, visibleAsciiSpan);
+			var lineNumber = GetLineNumberFromPosition(new HexBufferPoint(Buffer, visibleBytesSpan.Start));
+			var res = new HexBufferLineImpl(this, lineNumber, columnOrder, new HexBufferSpan(hexBuffer, lineSpan), new HexBufferSpan(hexBuffer, visibleBytesSpan), visibleHexBytes, text, showOffset, showValues, showAscii, logicalOffset, valueCellColl, asciiCellColl, offsetSpan, fullValuesSpan, visibleValuesSpan, fullAsciiSpan, visibleAsciiSpan);
 			ResetBuilderFields();
 			return res;
 		}
@@ -324,14 +372,14 @@ namespace dnSpy.Hex {
 			cellList.Clear();
 		}
 
-		void PrintOffset(HexPosition logicalPosition, out Span offsetSpan) {
+		void WriteOffset(HexPosition logicalPosition, out Span offsetSpan) {
 			Debug.Assert(showOffset);
 			int start = CurrentTextIndex;
 			offsetFormatter.FormatOffset(stringBuilder, logicalPosition);
-			offsetSpan = Span.FromBounds(start, CurrentTextIndex);
+			offsetSpan = VST.Span.FromBounds(start, CurrentTextIndex);
 		}
 
-		HexCellInformation[] PrintValues(HexBytes visibleHexBytes, HexSpan lineSpan, HexSpan visibleBytesSpan, out Span fullSpan, out Span visibleSpan) {
+		HexCellInformation[] WriteValues(HexBytes visibleHexBytes, HexSpan lineSpan, HexSpan visibleBytesSpan, out Span fullSpan, out Span visibleSpan) {
 			Debug.Assert(showValues);
 			cellList.Clear();
 			int fullStart = CurrentTextIndex;
@@ -350,24 +398,24 @@ namespace dnSpy.Hex {
 					long valueIndex = (long)(pos - visibleBytesSpan.Start).ToUInt64();
 					int cellStart = CurrentTextIndex;
 					int spaces = valueFormatter.FormatValue(stringBuilder, visibleHexBytes, valueIndex, flags);
-					if (cellStart + valueFormatter.MaxFormattedLength != CurrentTextIndex)
+					if (cellStart + valueFormatter.FormattedLength != CurrentTextIndex)
 						throw new InvalidOperationException();
 					var hexSpan = new HexBufferSpan(hexBuffer, new HexSpan(pos, (ulong)valueFormatter.ByteCount));
-					var textSpan = Span.FromBounds(cellStart + spaces, CurrentTextIndex);
-					var cellSpan = Span.FromBounds(cellStart, CurrentTextIndex);
+					var textSpan = VST.Span.FromBounds(cellStart + spaces, CurrentTextIndex);
+					var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
 					Span separatorSpan;
 					if (i + 1 < cellCount)
 						separatorSpan = new Span(CurrentTextIndex, 1);
 					else
 						separatorSpan = new Span(CurrentTextIndex, 0);
-					var cellFullSpan = Span.FromBounds(cellStart, separatorSpan.End);
+					var cellFullSpan = VST.Span.FromBounds(cellStart, separatorSpan.End);
 					cellList.Add(new HexCellInformation((int)i, hexSpan, textSpan, cellSpan, separatorSpan, cellFullSpan));
 				}
 				else {
 					if (visStart != null && visEnd == null)
 						visEnd = CurrentTextIndex;
 					cellList.Add(new HexCellInformation((int)i));
-					stringBuilder.Append(' ', valueFormatter.MaxFormattedLength);
+					stringBuilder.Append(' ', valueFormatter.FormattedLength);
 				}
 				pos += (ulong)valueFormatter.ByteCount;
 			}
@@ -375,12 +423,12 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 			if (visStart != null && visEnd == null)
 				visEnd = CurrentTextIndex;
-			visibleSpan = visStart == null ? default(Span) : Span.FromBounds(visStart.Value, visEnd.Value);
-			fullSpan = Span.FromBounds(fullStart, CurrentTextIndex);
+			visibleSpan = visStart == null ? default(Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
+			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
 			return cellList.ToArray();
 		}
 
-		HexCellInformation[] PrintAscii(HexBytes visibleHexBytes, HexSpan lineSpan, HexSpan visibleBytesSpan, out Span fullSpan, out Span visibleSpan) {
+		HexCellInformation[] WriteAscii(HexBytes visibleHexBytes, HexSpan lineSpan, HexSpan visibleBytesSpan, out Span fullSpan, out Span visibleSpan) {
 			Debug.Assert(showAscii);
 			cellList.Clear();
 			int fullStart = CurrentTextIndex;
@@ -409,8 +457,8 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 			if (visStart != null && visEnd == null)
 				visEnd = CurrentTextIndex;
-			visibleSpan = visStart == null ? default(Span) : Span.FromBounds(visStart.Value, visEnd.Value);
-			fullSpan = Span.FromBounds(fullStart, CurrentTextIndex);
+			visibleSpan = visStart == null ? default(Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
+			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
 			return cellList.ToArray();
 		}
 
