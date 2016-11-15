@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.Text;
 
@@ -27,9 +28,19 @@ namespace dnSpy.Contracts.Hex {
 	/// </summary>
 	public abstract class HexBufferLine {
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexBufferLine() { }
+
+		/// <summary>
 		/// Gets the <see cref="HexBufferLineProvider"/> instance that created this line
 		/// </summary>
 		public abstract HexBufferLineProvider LineProvider { get; }
+
+		/// <summary>
+		/// Gets the buffer
+		/// </summary>
+		public HexBuffer Buffer => LineProvider.Buffer;
 
 		/// <summary>
 		/// Gets the line number
@@ -42,19 +53,14 @@ namespace dnSpy.Contracts.Hex {
 		public abstract ReadOnlyCollection<HexColumnType> ColumnOrder { get; }
 
 		/// <summary>
-		/// Line span, some of the bytes could be hidden
+		/// Line span
 		/// </summary>
-		public abstract HexBufferSpan LineSpan { get; }
+		public abstract HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
-		/// The visible bytes shown in the UI
+		/// All raw bytes
 		/// </summary>
-		public abstract HexBufferSpan VisibleBytesSpan { get; }
-
-		/// <summary>
-		/// All raw visible bytes
-		/// </summary>
-		public abstract HexBytes VisibleHexBytes { get; }
+		public abstract HexBytes HexBytes { get; }
 
 		/// <summary>
 		/// Text shown in the UI. The positions of the offset column, values column
@@ -99,7 +105,7 @@ namespace dnSpy.Contracts.Hex {
 
 		/// <summary>
 		/// Gets the value of the offset shown in <see cref="Text"/>. The real offset
-		/// is stored in <see cref="LineSpan"/>
+		/// is stored in <see cref="BufferSpan"/>
 		/// </summary>
 		public abstract HexPosition LogicalOffset { get; }
 
@@ -118,14 +124,13 @@ namespace dnSpy.Contracts.Hex {
 		public abstract Span GetValuesSpan(bool onlyVisibleCells);
 
 		/// <summary>
-		/// Gets the span of values in <see cref="Text"/>. This can be an empty span
-		/// if the values column isn't shown.
+		/// Gets values spans
 		/// </summary>
-		/// <param name="span">Span</param>
+		/// <param name="span">Buffer span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public TextAndHexSpan GetValuesSpan(HexBufferSpan span, HexCellSpanFlags flags) =>
-			GetTextAndHexSpan(ValueCells, span, flags);
+		public IEnumerable<TextAndHexSpan> GetValuesSpans(HexBufferSpan span, HexSpanSelectionFlags flags) =>
+			GetTextAndHexSpans(IsValuesColumnPresent, ValueCells, span, flags, GetValuesSpan(onlyVisibleCells: true), GetValuesSpan(onlyVisibleCells: false));
 
 		/// <summary>
 		/// Gets the span of the ASCII column. This can be an empty span
@@ -136,14 +141,54 @@ namespace dnSpy.Contracts.Hex {
 		public abstract Span GetAsciiSpan(bool onlyVisibleCells);
 
 		/// <summary>
-		/// Gets the span of ASCII characters in <see cref="Text"/>. This can be an empty span
-		/// if the ASCII column isn't shown.
+		/// Gets ASCII spans
 		/// </summary>
-		/// <param name="span">Span</param>
+		/// <param name="span">Buffer span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public TextAndHexSpan GetAsciiSpan(HexBufferSpan span, HexCellSpanFlags flags) =>
-			GetTextAndHexSpan(AsciiCells, span, flags);
+		public IEnumerable<TextAndHexSpan> GetAsciiSpans(HexBufferSpan span, HexSpanSelectionFlags flags) =>
+			GetTextAndHexSpans(IsAsciiColumnPresent, AsciiCells, span, flags, GetAsciiSpan(onlyVisibleCells: true), GetAsciiSpan(onlyVisibleCells: false));
+
+		/// <summary>
+		/// Gets column spans in column order
+		/// </summary>
+		/// <param name="span">Buffer span</param>
+		/// <param name="flags">Flags</param>
+		/// <returns></returns>
+		public IEnumerable<TextAndHexSpan> GetSpans(HexBufferSpan span, HexSpanSelectionFlags flags) {
+			if (span.IsDefault)
+				throw new ArgumentException();
+			if (span.Buffer != Buffer)
+				throw new ArgumentException();
+
+			foreach (var column in ColumnOrder) {
+				switch (column) {
+				case HexColumnType.Offset:
+					if ((flags & HexSpanSelectionFlags.Offset) != 0 && IsOffsetColumnPresent) {
+						if (BufferSpan.Contains(span))
+							yield return new TextAndHexSpan(GetOffsetSpan(), BufferSpan);
+					}
+					break;
+
+				case HexColumnType.Values:
+					if ((flags & HexSpanSelectionFlags.Values) != 0) {
+						foreach (var info in GetValuesSpans(span, flags))
+							yield return info;
+					}
+					break;
+
+				case HexColumnType.Ascii:
+					if ((flags & HexSpanSelectionFlags.Ascii) != 0) {
+						foreach (var info in GetAsciiSpans(span, flags))
+							yield return info;
+					}
+					break;
+
+				default:
+					throw new InvalidOperationException();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets the value cell collection
@@ -155,30 +200,52 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		public abstract HexCellInformationCollection AsciiCells { get; }
 
-		TextAndHexSpan GetTextAndHexSpan(HexCellInformationCollection collection, HexBufferSpan span, HexCellSpanFlags flags) {
+		IEnumerable<TextAndHexSpan> GetTextAndHexSpans(bool isColumnPresent, HexCellInformationCollection collection, HexBufferSpan span, HexSpanSelectionFlags flags, Span visibleSpan, Span fullSpan) {
 			if (span.IsDefault)
 				throw new ArgumentException();
+			if (span.Buffer != Buffer)
+				throw new ArgumentException();
 
-			int textStart = int.MaxValue;
-			int textEnd = int.MinValue;
-			var posStart = HexPosition.MaxValue;
-			var posEnd = HexPosition.MinValue;
-			foreach (var cell in collection.GetCells(span)) {
-				if (!cell.HasData)
-					continue;
-				var cellSpan = cell.GetSpan(flags);
-				textStart = Math.Min(textStart, cellSpan.Start);
-				textEnd = Math.Max(textEnd, cellSpan.End);
+			if (!isColumnPresent)
+				yield break;
 
-				posStart = HexPosition.Min(posStart, cell.HexSpan.Start);
-				posEnd = HexPosition.Max(posEnd, cell.HexSpan.End);
+			if ((flags & HexSpanSelectionFlags.AllVisibleCells) != 0) {
+				yield return new TextAndHexSpan(visibleSpan, BufferSpan);
+				yield break;
+			}
+			if ((flags & HexSpanSelectionFlags.AllCells) != 0) {
+				yield return new TextAndHexSpan(fullSpan, BufferSpan);
+				yield break;
 			}
 
-			if (textStart > textEnd)
-				textStart = textEnd = 0;
-			if (posStart > posEnd)
-				posStart = posEnd = HexPosition.Zero;
-			return new TextAndHexSpan(Span.FromBounds(textStart, textEnd), new HexBufferSpan(span.Buffer, HexSpan.FromBounds(posStart, posEnd)));
+			if ((flags & HexSpanSelectionFlags.OneValue) != 0) {
+				foreach (var cell in collection.GetCells(span)) {
+					if (!cell.HasData)
+						continue;
+					var cellSpan = cell.GetSpan(flags);
+					yield return new TextAndHexSpan(cellSpan, new HexBufferSpan(span.Buffer, cell.BufferSpan));
+				}
+			}
+			else {
+				int textStart = int.MaxValue;
+				int textEnd = int.MinValue;
+				var posStart = HexPosition.MaxValue;
+				var posEnd = HexPosition.MinValue;
+				foreach (var cell in collection.GetCells(span)) {
+					if (!cell.HasData)
+						continue;
+					var cellSpan = cell.GetSpan(flags);
+					textStart = Math.Min(textStart, cellSpan.Start);
+					textEnd = Math.Max(textEnd, cellSpan.End);
+
+					posStart = HexPosition.Min(posStart, cell.BufferSpan.Start);
+					posEnd = HexPosition.Max(posEnd, cell.BufferSpan.End);
+				}
+
+				if (textStart > textEnd || posStart > posEnd)
+					yield break;
+				yield return new TextAndHexSpan(Span.FromBounds(textStart, textEnd), new HexBufferSpan(span.Buffer, HexSpan.FromBounds(posStart, posEnd)));
+			}
 		}
 
 		/// <summary>
@@ -186,27 +253,5 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() => Text;
-	}
-
-	/// <summary>
-	/// Flags passed to <see cref="HexBufferLine.GetValuesSpan(HexBufferSpan, HexCellSpanFlags)"/>
-	/// and <see cref="HexBufferLine.GetAsciiSpan(HexBufferSpan, HexCellSpanFlags)"/>
-	/// </summary>
-	[Flags]
-	public enum HexCellSpanFlags {
-		/// <summary>
-		/// No bit is set
-		/// </summary>
-		None					= 0,
-
-		/// <summary>
-		/// Include cell whitespace, if any
-		/// </summary>
-		Cell					= 0x00000001,
-
-		/// <summary>
-		/// Include cell separator, if any
-		/// </summary>
-		Separator				= 0x00000002,
 	}
 }

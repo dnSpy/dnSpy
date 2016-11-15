@@ -339,11 +339,11 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (bufferPosition.Buffer != Buffer)
 				throw new ArgumentException();
-			if (!(BufferLine.LineSpan.Start <= bufferPosition))
+			if (!(BufferSpan.Start <= bufferPosition))
 				return false;
 			if (IsLastVisualLine)
-				return bufferPosition <= BufferLine.LineSpan.End;
-			return bufferPosition < BufferLine.LineSpan.End;
+				return bufferPosition <= BufferSpan.End;
+			return bufferPosition < BufferSpan.End;
 		}
 
 		public override bool IntersectsBufferSpan(HexBufferSpan bufferSpan) {
@@ -351,11 +351,11 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (bufferSpan.Buffer != Buffer)
 				throw new ArgumentException();
-			if (BufferLine.LineSpan.Start > bufferSpan.End)
+			if (BufferSpan.Start > bufferSpan.End)
 				return false;
-			if (bufferSpan.Start < BufferLine.LineSpan.End)
+			if (bufferSpan.Start < BufferSpan.End)
 				return true;
-			return IsLastVisualLine && bufferSpan.Start == BufferLine.LineSpan.End;
+			return IsLastVisualLine && bufferSpan.Start == BufferSpan.End;
 		}
 
 		public override TF.TextBounds? GetAdornmentBounds(object identityTag) {
@@ -579,56 +579,21 @@ namespace dnSpy.Hex.Formatting {
 			return new TF.TextBounds(startBounds.Left, startBounds.Top, endBounds.Left - startBounds.Left, startBounds.Height, startBounds.TextTop, startBounds.TextHeight);
 		}
 
-		public override Collection<TF.TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, TextBoundsFlags flags) {
+		public override Collection<TF.TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
-			var pos = BufferLine.LineSpan.Intersection(bufferPosition);
+			var pos = BufferSpan.Intersection(bufferPosition);
 			var list = new List<TF.TextBounds>();
 			if (pos == null)
 				return new Collection<TF.TextBounds>(list);
 
-			foreach (var column in bufferLine.ColumnOrder) {
-				switch (column) {
-				case HexColumnType.Offset:
-					if ((flags & TextBoundsFlags.Offset) != 0 && bufferLine.IsOffsetColumnPresent) {
-						var offsetSpan = TryGetNormalizedTextBounds(bufferLine.GetOffsetSpan());
-						if (offsetSpan != null)
-							list.Add(offsetSpan.Value);
-					}
-					break;
-
-				case HexColumnType.Values:
-					if ((flags & TextBoundsFlags.Values) != 0 && bufferLine.IsValuesColumnPresent) {
-						var valuesSpan = TryGetNormalizedTextBounds(bufferLine.GetValuesSpan(pos.Value, GetHexCellSpanFlags(flags)).TextSpan);
-						if (valuesSpan != null)
-							list.Add(valuesSpan.Value);
-					}
-					break;
-
-				case HexColumnType.Ascii:
-					if ((flags & TextBoundsFlags.Ascii) != 0 && bufferLine.IsAsciiColumnPresent) {
-						var valuesSpan = TryGetNormalizedTextBounds(bufferLine.GetAsciiSpan(pos.Value, GetHexCellSpanFlags(flags)).TextSpan);
-						if (valuesSpan != null)
-							list.Add(valuesSpan.Value);
-					}
-					break;
-
-				default:
-					Debug.Fail($"Unknown column: {column}");
-					break;
-				}
+			foreach (var info in bufferLine.GetSpans(pos.Value, flags)) {
+				var valuesSpan = TryGetNormalizedTextBounds(info.TextSpan);
+				if (valuesSpan != null)
+					list.Add(valuesSpan.Value);
 			}
 
 			return new Collection<TF.TextBounds>(list);
-		}
-
-		static HexCellSpanFlags GetHexCellSpanFlags(TextBoundsFlags flags) {
-			var res = HexCellSpanFlags.None;
-			if ((flags & TextBoundsFlags.Cell) != 0)
-				res |= HexCellSpanFlags.Cell;
-			if ((flags & TextBoundsFlags.Separator) != 0)
-				res |= HexCellSpanFlags.Separator;
-			return res;
 		}
 
 		public override Span GetTextElementSpan(int linePosition) {

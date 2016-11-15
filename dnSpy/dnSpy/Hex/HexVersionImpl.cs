@@ -23,7 +23,7 @@ using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Hex {
 	sealed class HexVersionImpl : HexVersion {
-		public override HexBuffer HexBuffer { get; }
+		public override HexBuffer Buffer { get; }
 		public override int VersionNumber { get; }
 		public override int ReiteratedVersionNumber { get; }
 
@@ -33,10 +33,10 @@ namespace dnSpy.Hex {
 		NormalizedHexChangeCollection changes;
 		HexVersion next;
 
-		public HexVersionImpl(HexBuffer hexBuffer, int versionNumber, int reiteratedVersionNumber) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
-			HexBuffer = hexBuffer;
+		public HexVersionImpl(HexBuffer buffer, int versionNumber, int reiteratedVersionNumber) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
+			Buffer = buffer;
 			VersionNumber = versionNumber;
 			ReiteratedVersionNumber = reiteratedVersionNumber;
 		}
@@ -45,7 +45,7 @@ namespace dnSpy.Hex {
 			var normalizedChanges = NormalizedHexChangeCollection.Create(changes);
 			if (reiteratedVersionNumber == null)
 				reiteratedVersionNumber = changes.Count == 0 ? ReiteratedVersionNumber : VersionNumber + 1;
-			var newVersion = new HexVersionImpl(HexBuffer, VersionNumber + 1, reiteratedVersionNumber.Value);
+			var newVersion = new HexVersionImpl(Buffer, VersionNumber + 1, reiteratedVersionNumber.Value);
 			this.changes = normalizedChanges;
 			this.next = newVersion;
 			return newVersion;

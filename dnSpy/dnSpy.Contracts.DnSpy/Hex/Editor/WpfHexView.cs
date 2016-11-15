@@ -29,6 +29,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// </summary>
 	public abstract class WpfHexView : HexView {
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected WpfHexView() { }
+
+		/// <summary>
 		/// Gets the UI element
 		/// </summary>
 		public abstract FrameworkElement VisualElement { get; }
@@ -67,11 +72,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Gets the WPF hex view lines
 		/// </summary>
 		public abstract WpfHexViewLineCollection WpfHexViewLines { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		protected WpfHexView() { }
 
 		/// <summary>
 		/// Gets an adornment layer

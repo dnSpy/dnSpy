@@ -18,47 +18,62 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Contracts.Hex.Tagging {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
-	/// Hex tag and span
+	/// Hex line span
 	/// </summary>
-	/// <typeparam name="T">Tag type</typeparam>
-	public struct HexTagSpan<T> where T : HexTag {
+	public struct HexLineSpan {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Tag == null;
+		public bool IsDefault => BufferSpan.IsDefault;
 
 		/// <summary>
-		/// Gets the span
+		/// Buffer span
 		/// </summary>
-		public HexBufferSpan Span { get; }
+		public HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
-		/// Gets the flags
+		/// Selection flags or null
 		/// </summary>
-		public HexSpanSelectionFlags Flags { get; }
+		public HexSpanSelectionFlags? SelectionFlags { get; }
 
 		/// <summary>
-		/// Gets the tag
+		/// Line span or null
 		/// </summary>
-		public T Tag { get; }
+		public Span? TextSpan { get; }
+
+		/// <summary>
+		/// true if it's a text span
+		/// </summary>
+		public bool IsTextSpan => TextSpan != null;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="span">Span</param>
+		/// <param name="bufferSpan">Buffer span</param>
 		/// <param name="flags">Flags</param>
-		/// <param name="tag">Tag</param>
-		public HexTagSpan(HexBufferSpan span, HexSpanSelectionFlags flags, T tag) {
-			if (span.IsDefault)
+		public HexLineSpan(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) {
+			if (bufferSpan.IsDefault)
 				throw new ArgumentException();
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
-			Span = span;
-			Flags = flags;
-			Tag = tag;
+			BufferSpan = bufferSpan;
+			SelectionFlags = flags;
+			TextSpan = null;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <param name="textSpan">Text span</param>
+		public HexLineSpan(HexBufferLine line, Span textSpan) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			BufferSpan = line.BufferSpan;
+			SelectionFlags = null;
+			TextSpan = textSpan;
 		}
 	}
 }

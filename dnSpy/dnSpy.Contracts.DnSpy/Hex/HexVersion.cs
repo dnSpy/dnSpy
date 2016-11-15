@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
-	/// <see cref="HexBuffer"/> version
+	/// <see cref="Buffer"/> version
 	/// </summary>
 	public abstract class HexVersion {
 		/// <summary>
@@ -28,9 +28,9 @@ namespace dnSpy.Contracts.Hex {
 		protected HexVersion() { }
 
 		/// <summary>
-		/// Gets the <see cref="HexBuffer"/>
+		/// Gets the <see cref="Buffer"/>
 		/// </summary>
-		public abstract HexBuffer HexBuffer { get; }
+		public abstract HexBuffer Buffer { get; }
 
 		/// <summary>
 		/// Gets all hex changes or null if this is the latest version

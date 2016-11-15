@@ -30,8 +30,8 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// <summary>
 		/// Creates a classifier aggregator
 		/// </summary>
-		/// <param name="hexBuffer">Hex buffer</param>
+		/// <param name="buffer">Buffer</param>
 		/// <returns></returns>
-		public abstract HexClassifier GetClassifier(HexBuffer hexBuffer);
+		public abstract HexClassifier GetClassifier(HexBuffer buffer);
 	}
 }

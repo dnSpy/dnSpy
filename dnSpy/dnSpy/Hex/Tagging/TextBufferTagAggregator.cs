@@ -25,12 +25,12 @@ namespace dnSpy.Hex.Tagging {
 	sealed class TextBufferTagAggregator<T> : TagAggregator<T> where T : HexTag {
 		readonly HexTaggerFactory hexTaggerFactory;
 
-		public TextBufferTagAggregator(HexTaggerFactory hexTaggerFactory, HexBuffer hexBuffer)
-			: base(hexBuffer) {
+		public TextBufferTagAggregator(HexTaggerFactory hexTaggerFactory, HexBuffer buffer)
+			: base(buffer) {
 			this.hexTaggerFactory = hexTaggerFactory;
 			Initialize();
 		}
 
-		protected override IEnumerable<HexTagger<T>> CreateTaggers() => hexTaggerFactory.Create<T>(HexBuffer);
+		protected override IEnumerable<HexTagger<T>> CreateTaggers() => hexTaggerFactory.Create<T>(Buffer);
 	}
 }

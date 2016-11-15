@@ -31,20 +31,20 @@ namespace dnSpy.Hex.Classification {
 	abstract class HexClassifierAggregator : HexClassifier {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly HexTagAggregator<HexClassificationTag> hexTagAggregator;
-		readonly HexBuffer hexBuffer;
+		readonly HexBuffer buffer;
 
 		public override event EventHandler<HexClassificationChangedEventArgs> ClassificationChanged;
 
-		protected HexClassifierAggregator(HexTagAggregator<HexClassificationTag> hexTagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService, HexBuffer hexBuffer) {
+		protected HexClassifierAggregator(HexTagAggregator<HexClassificationTag> hexTagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService, HexBuffer buffer) {
 			if (hexTagAggregator == null)
 				throw new ArgumentNullException(nameof(hexTagAggregator));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 			this.hexTagAggregator = hexTagAggregator;
-			this.hexBuffer = hexBuffer;
+			this.buffer = buffer;
 			hexTagAggregator.TagsChanged += HexTagAggregator_TagsChanged;
 		}
 

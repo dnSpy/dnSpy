@@ -95,21 +95,21 @@ namespace dnSpy.Hex.Editor {
 			this.hexBufferLineProviderFactoryService = hexBufferLineProviderFactoryService;
 		}
 
-		public override WpfHexView Create(HexBuffer hexBuffer, HexViewCreatorOptions options) =>
-			Create(hexBuffer, DefaultRoles, hexEditorOptionsFactoryService.GlobalOptions, options);
+		public override WpfHexView Create(HexBuffer buffer, HexViewCreatorOptions options) =>
+			Create(buffer, DefaultRoles, hexEditorOptionsFactoryService.GlobalOptions, options);
 
-		public override WpfHexView Create(HexBuffer hexBuffer, ITextViewRoleSet roles, HexViewCreatorOptions options) =>
-			Create(hexBuffer, roles, hexEditorOptionsFactoryService.GlobalOptions, options);
+		public override WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles, HexViewCreatorOptions options) =>
+			Create(buffer, roles, hexEditorOptionsFactoryService.GlobalOptions, options);
 
-		public override WpfHexView Create(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexViewCreatorOptions options) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
+		public override WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexViewCreatorOptions options) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
 			if (roles == null)
 				throw new ArgumentNullException(nameof(roles));
 			if (parentOptions == null)
 				throw new ArgumentNullException(nameof(parentOptions));
 
-			var wpfHexView = new WpfHexViewImpl(hexBuffer, roles, parentOptions, hexEditorOptionsFactoryService, commandService, formattedHexSourceFactoryService, hexViewClassifierAggregatorService, hexAndAdornmentSequencerFactoryService, hexBufferLineProviderFactoryService);
+			var wpfHexView = new WpfHexViewImpl(buffer, roles, parentOptions, hexEditorOptionsFactoryService, commandService, formattedHexSourceFactoryService, hexViewClassifierAggregatorService, hexAndAdornmentSequencerFactoryService, hexBufferLineProviderFactoryService);
 
 			if (options?.MenuGuid != null) {
 				var guidObjectsProvider = new GuidObjectsProvider(wpfHexView, options?.CreateGuidObjects);

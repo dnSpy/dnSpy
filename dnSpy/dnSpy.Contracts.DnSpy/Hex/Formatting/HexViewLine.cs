@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex.Tagging;
 using Microsoft.VisualStudio.Text;
@@ -145,7 +146,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Gets the buffer
 		/// </summary>
-		public HexBuffer Buffer => BufferLine.LineProvider.Buffer;
+		public HexBuffer Buffer => BufferLine.Buffer;
 
 		/// <summary>
 		/// Gets the buffer line
@@ -161,6 +162,11 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// Gets the text span
 		/// </summary>
 		public Span TextSpan => BufferLine.TextSpan;
+
+		/// <summary>
+		/// Gets the buffer span
+		/// </summary>
+		public HexBufferSpan BufferSpan => BufferLine.BufferSpan;
 
 		/// <summary>
 		/// Returns true if <paramref name="bufferPosition"/> lies within this line
@@ -231,6 +237,19 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// </summary>
 		/// <param name="lineSpan">Line span</param>
 		/// <returns></returns>
+		public Collection<TextBounds> GetNormalizedTextBounds(HexLineSpan lineSpan) {
+			if (lineSpan.IsDefault)
+				throw new ArgumentException();
+			if (lineSpan.IsTextSpan)
+				return GetNormalizedTextBounds(lineSpan.TextSpan.Value);
+			return GetNormalizedTextBounds(lineSpan.BufferSpan, lineSpan.SelectionFlags.Value);
+		}
+
+		/// <summary>
+		/// Gets normalized text bounds
+		/// </summary>
+		/// <param name="lineSpan">Line span</param>
+		/// <returns></returns>
 		public abstract Collection<TextBounds> GetNormalizedTextBounds(Span lineSpan);
 
 		/// <summary>
@@ -239,7 +258,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, TextBoundsFlags flags);
+		public abstract Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Gets the span whose text element index corresponds to the given line position

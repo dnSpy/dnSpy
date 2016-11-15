@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public HexCellInformation GetCell(HexBufferPoint point) {
 			foreach (var cell in cells) {
-				if (cell.HasData && cell.HexSpan.Contains(point))
+				if (cell.HasData && cell.BufferSpan.Contains(point))
 					return cell;
 			}
 			return null;
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public IEnumerable<HexCellInformation> GetCells(HexBufferSpan span) {
 			foreach (var cell in cells) {
-				if (cell.HasData && cell.HexSpan.Contains(span))
+				if (cell.HasData && cell.BufferSpan.Contains(span))
 					yield return cell;
 			}
 		}

@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Formatting {
 			this.textFormatterProvider = textFormatterProvider;
 		}
 
-		public override FormattedHexLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
+		public override HexFormattedLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
 			if (bufferLines == null)
 				throw new ArgumentNullException(nameof(bufferLines));
 			if (aggregateClassifier == null)
@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Formatting {
 				throw new ArgumentNullException(nameof(sequencer));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			return new FormattedHexLineSourceImpl(textFormatterProvider, bufferLines, baseIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap);
+			return new HexFormattedLineSourceImpl(textFormatterProvider, bufferLines, baseIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap);
 		}
 	}
 }

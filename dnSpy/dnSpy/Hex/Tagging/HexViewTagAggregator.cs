@@ -28,7 +28,7 @@ namespace dnSpy.Hex.Tagging {
 		readonly HexView hexView;
 
 		public HexViewTagAggregator(HexTaggerFactory hexTaggerFactory, HexView hexView)
-			: base(hexView.HexBuffer) {
+			: base(hexView.Buffer) {
 			this.hexTaggerFactory = hexTaggerFactory;
 			this.hexView = hexView;
 			hexView.Closed += TextView_Closed;
@@ -43,6 +43,6 @@ namespace dnSpy.Hex.Tagging {
 		}
 
 		protected override bool CanRaiseBatchedTagsChanged => !hexView.InLayout;
-		protected override IEnumerable<HexTagger<T>> CreateTaggers() => hexTaggerFactory.Create<T>(hexView, HexBuffer);
+		protected override IEnumerable<HexTagger<T>> CreateTaggers() => hexTaggerFactory.Create<T>(hexView, Buffer);
 	}
 }

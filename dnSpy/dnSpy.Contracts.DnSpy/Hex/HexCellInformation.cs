@@ -36,9 +36,9 @@ namespace dnSpy.Contracts.Hex {
 		public int Index { get; }
 
 		/// <summary>
-		/// Gets the hex span
+		/// Gets the buffer span
 		/// </summary>
-		public HexBufferSpan HexSpan { get; }
+		public HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
 		/// Span of the text
@@ -64,15 +64,15 @@ namespace dnSpy.Contracts.Hex {
 		/// Constructor
 		/// </summary>
 		/// <param name="index">Cell index</param>
-		/// <param name="hexSpan">Hex span</param>
+		/// <param name="bufferSpan">Buffer span</param>
 		/// <param name="textSpan">Span of the text. This span doesn't include any whitespace before and after the text.</param>
 		/// <param name="cellSpan">Span of the cell, some of the span could be whitespace</param>
 		/// <param name="separatorSpan">Span of the cell separator</param>
 		/// <param name="fullSpan">Includes the whole cell and separator span</param>
-		public HexCellInformation(int index, HexBufferSpan hexSpan, Span textSpan, Span cellSpan, Span separatorSpan, Span fullSpan) {
+		public HexCellInformation(int index, HexBufferSpan bufferSpan, Span textSpan, Span cellSpan, Span separatorSpan, Span fullSpan) {
 			HasData = true;
 			Index = index;
-			HexSpan = hexSpan;
+			BufferSpan = bufferSpan;
 			TextSpan = textSpan;
 			CellSpan = cellSpan;
 			SeparatorSpan = separatorSpan;
@@ -93,13 +93,13 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public Span GetSpan(HexCellSpanFlags flags) {
-			if ((flags & HexCellSpanFlags.Cell) == 0) {
-				if ((flags & HexCellSpanFlags.Separator) != 0)
+		public Span GetSpan(HexSpanSelectionFlags flags) {
+			if ((flags & HexSpanSelectionFlags.Cell) == 0) {
+				if ((flags & HexSpanSelectionFlags.Separator) != 0)
 					throw new ArgumentOutOfRangeException(nameof(flags));
 				return TextSpan;
 			}
-			if ((flags & HexCellSpanFlags.Separator) != 0)
+			if ((flags & HexSpanSelectionFlags.Separator) != 0)
 				return FullSpan;
 			return CellSpan;
 		}

@@ -74,6 +74,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public abstract double LineHeight { get; }
 
 		/// <summary>
+		/// Gets the x coordinate of the maximum right edge of the text
+		/// </summary>
+		public abstract double MaxTextRightCoordinate { get; }
+
+		/// <summary>
 		/// true if the view is in the process of being laid out
 		/// </summary>
 		public abstract bool InLayout { get; }
@@ -101,7 +106,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the hex buffer
 		/// </summary>
-		public abstract HexBuffer HexBuffer { get; }
+		public abstract HexBuffer Buffer { get; }
 
 		/// <summary>
 		/// Gets viewport top
@@ -200,18 +205,18 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="verticalDistance">Distance relative to the top or bottom of the view</param>
-		/// <param name="relativeTo">The <see cref="HexViewRelativePosition"/></param>
-		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, HexViewRelativePosition relativeTo);
+		/// <param name="relativeTo">The <see cref="ViewRelativePosition"/></param>
+		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo);
 
 		/// <summary>
 		/// Displays a line in the view
 		/// </summary>
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="verticalDistance">Distance relative to the top or bottom of the view</param>
-		/// <param name="relativeTo">The <see cref="HexViewRelativePosition"/></param>
+		/// <param name="relativeTo">The <see cref="ViewRelativePosition"/></param>
 		/// <param name="viewportWidthOverride">Overrides viewport width</param>
 		/// <param name="viewportHeightOverride">Overrides viewport height</param>
-		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, HexViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride);
+		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride);
 
 		/// <summary>
 		/// Gets a hex view line

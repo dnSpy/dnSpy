@@ -94,6 +94,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// </summary>
 	public abstract class HexViewOptionDefinition<T> : HexEditorOptionDefinition<T> {
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexViewOptionDefinition() { }
+
+		/// <summary>
 		/// Returns true if <paramref name="scope"/> is a <see cref="HexView"/>
 		/// </summary>
 		/// <param name="scope">Scope</param>
@@ -105,6 +110,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// <see cref="WpfHexView"/> option definition
 	/// </summary>
 	public abstract class WpfHexViewOptionDefinition<T> : HexEditorOptionDefinition<T> {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected WpfHexViewOptionDefinition() { }
+
 		/// <summary>
 		/// Returns true if <paramref name="scope"/> is a <see cref="WpfHexView"/>
 		/// </summary>

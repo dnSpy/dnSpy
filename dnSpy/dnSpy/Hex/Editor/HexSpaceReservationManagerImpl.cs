@@ -22,19 +22,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
-using Microsoft.VisualStudio.Text;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Editor;
 using Microsoft.VisualStudio.Text.Adornments;
-using Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Text.Editor {
-	sealed class SpaceReservationManager : ISpaceReservationManager {
-		public ReadOnlyCollection<ISpaceReservationAgent> Agents { get; }
-		public bool HasAggregateFocus { get; private set; }
-		public event EventHandler<SpaceReservationAgentChangedEventArgs> AgentChanged;
-		public event EventHandler GotAggregateFocus;
-		public event EventHandler LostAggregateFocus;
+namespace dnSpy.Hex.Editor {
+	sealed class HexSpaceReservationManagerImpl : HexSpaceReservationManager {
+		public override ReadOnlyCollection<HexSpaceReservationAgent> Agents { get; }
+		public override bool HasAggregateFocus => hasAggregateFocus;
+		bool hasAggregateFocus;
+		public override event EventHandler<HexSpaceReservationAgentChangedEventArgs> AgentChanged;
+		public override event EventHandler GotAggregateFocus;
+		public override event EventHandler LostAggregateFocus;
 
-		public bool IsMouseOver {
+		public override bool IsMouseOver {
 			get {
 				foreach (var agent in spaceReservationAgents) {
 					if (agent.IsMouseOver)
@@ -44,85 +45,85 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		readonly IWpfTextView wpfTextView;
-		readonly List<ISpaceReservationAgent> spaceReservationAgents;
+		readonly WpfHexView wpfHexView;
+		readonly List<HexSpaceReservationAgent> spaceReservationAgents;
 
-		public SpaceReservationManager(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
-			this.spaceReservationAgents = new List<ISpaceReservationAgent>();
-			Agents = new ReadOnlyCollection<ISpaceReservationAgent>(spaceReservationAgents);
-			wpfTextView.Closed += WpfTextView_Closed;
+		public HexSpaceReservationManagerImpl(WpfHexView wpfHexView) {
+			if (wpfHexView == null)
+				throw new ArgumentNullException(nameof(wpfHexView));
+			this.wpfHexView = wpfHexView;
+			this.spaceReservationAgents = new List<HexSpaceReservationAgent>();
+			Agents = new ReadOnlyCollection<HexSpaceReservationAgent>(spaceReservationAgents);
+			wpfHexView.Closed += WpfHexView_Closed;
 		}
 
-		public void AddAgent(ISpaceReservationAgent agent) {
-			if (wpfTextView.IsClosed)
+		public override void AddAgent(HexSpaceReservationAgent agent) {
+			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
 			if (agent == null)
 				throw new ArgumentNullException(nameof(agent));
 			if (spaceReservationAgents.Contains(agent))
 				throw new InvalidOperationException();
 			spaceReservationAgents.Add(agent);
-			agent.GotFocus += SpaceReservationAgent_GotFocus;
-			agent.LostFocus += SpaceReservationAgent_LostFocus;
-			AgentChanged?.Invoke(this, new SpaceReservationAgentChangedEventArgs(null, agent));
+			agent.GotFocus += HexSpaceReservationAgent_GotFocus;
+			agent.LostFocus += HexSpaceReservationAgent_LostFocus;
+			AgentChanged?.Invoke(this, new HexSpaceReservationAgentChangedEventArgs(null, agent));
 			UpdateAggregateFocus();
-			wpfTextView.QueueSpaceReservationStackRefresh();
+			wpfHexView.QueueSpaceReservationStackRefresh();
 		}
 
-		public bool RemoveAgent(ISpaceReservationAgent agent) {
+		public override bool RemoveAgent(HexSpaceReservationAgent agent) {
 			if (agent == null)
 				throw new ArgumentNullException(nameof(agent));
 			if (!spaceReservationAgents.Remove(agent))
 				return false;
-			agent.GotFocus -= SpaceReservationAgent_GotFocus;
-			agent.LostFocus -= SpaceReservationAgent_LostFocus;
+			agent.GotFocus -= HexSpaceReservationAgent_GotFocus;
+			agent.LostFocus -= HexSpaceReservationAgent_LostFocus;
 			agent.Hide();
-			AgentChanged?.Invoke(this, new SpaceReservationAgentChangedEventArgs(agent, null));
+			AgentChanged?.Invoke(this, new HexSpaceReservationAgentChangedEventArgs(agent, null));
 			UpdateAggregateFocus();
-			wpfTextView.QueueSpaceReservationStackRefresh();
+			wpfHexView.QueueSpaceReservationStackRefresh();
 			return true;
 		}
 
-		public ISpaceReservationAgent CreatePopupAgent(ITrackingSpan visualSpan, PopupStyles style, UIElement content) {
-			if (wpfTextView.IsClosed)
+		public override HexSpaceReservationAgent CreatePopupAgent(HexLineSpan lineSpan, PopupStyles style, UIElement content) {
+			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
-			if (visualSpan == null)
-				throw new ArgumentNullException(nameof(visualSpan));
+			if (lineSpan.IsDefault)
+				throw new ArgumentException();
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
-			return new PopupSpaceReservationAgent(this, wpfTextView, visualSpan, style, content);
+			return new HexPopupSpaceReservationAgent(this, wpfHexView, lineSpan, style, content);
 		}
 
-		public void UpdatePopupAgent(ISpaceReservationAgent agent, ITrackingSpan visualSpan, PopupStyles styles) {
-			if (wpfTextView.IsClosed)
+		public override void UpdatePopupAgent(HexSpaceReservationAgent agent, HexLineSpan lineSpan, PopupStyles styles) {
+			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
 			if (agent == null)
 				throw new ArgumentNullException(nameof(agent));
-			if (visualSpan == null)
-				throw new ArgumentNullException(nameof(visualSpan));
+			if (lineSpan.IsDefault)
+				throw new ArgumentException();
 			if ((styles & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(styles));
 			if (!spaceReservationAgents.Contains(agent))
 				throw new ArgumentOutOfRangeException(nameof(agent));
-			var popupAgent = agent as PopupSpaceReservationAgent;
+			var popupAgent = agent as HexPopupSpaceReservationAgent;
 			if (popupAgent == null)
 				throw new ArgumentException();
-			popupAgent.Update(visualSpan, styles);
+			popupAgent.Update(lineSpan, styles);
 			UpdateAggregateFocus();
-			wpfTextView.QueueSpaceReservationStackRefresh();
+			wpfHexView.QueueSpaceReservationStackRefresh();
 		}
 
-		void SpaceReservationAgent_GotFocus(object sender, EventArgs e) => UpdateAggregateFocus();
-		void SpaceReservationAgent_LostFocus(object sender, EventArgs e) => UpdateAggregateFocus();
+		void HexSpaceReservationAgent_GotFocus(object sender, EventArgs e) => UpdateAggregateFocus();
+		void HexSpaceReservationAgent_LostFocus(object sender, EventArgs e) => UpdateAggregateFocus();
 
 		void UpdateAggregateFocus() {
 			bool newValue = CalculateAggregateFocus();
 			if (newValue != HasAggregateFocus) {
-				HasAggregateFocus = newValue;
+				hasAggregateFocus = newValue;
 				if (newValue)
 					GotAggregateFocus?.Invoke(this, EventArgs.Empty);
 				else
@@ -142,7 +143,7 @@ namespace dnSpy.Text.Editor {
 			if (spaceReservationAgents.Count == 0)
 				return;
 
-			bool isVisible = wpfTextView.VisualElement.IsVisible;
+			bool isVisible = wpfHexView.VisualElement.IsVisible;
 			for (int i = spaceReservationAgents.Count - 1; i >= 0; i--) {
 				var agent = spaceReservationAgents[i];
 				var geometry = isVisible ? agent.PositionAndDisplay(reservedSpace) : null;
@@ -155,10 +156,10 @@ namespace dnSpy.Text.Editor {
 			UpdateAggregateFocus();
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object sender, EventArgs e) {
 			while (spaceReservationAgents.Count > 0)
 				RemoveAgent(spaceReservationAgents[spaceReservationAgents.Count - 1]);
-			wpfTextView.Closed -= WpfTextView_Closed;
+			wpfHexView.Closed -= WpfHexView_Closed;
 		}
 	}
 }

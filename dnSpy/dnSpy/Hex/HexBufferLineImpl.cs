@@ -27,9 +27,8 @@ namespace dnSpy.Hex {
 		public override HexBufferLineProvider LineProvider { get; }
 		public override HexPosition LineNumber { get; }
 		public override ReadOnlyCollection<HexColumnType> ColumnOrder { get; }
-		public override HexBufferSpan LineSpan { get; }
-		public override HexBufferSpan VisibleBytesSpan { get; }
-		public override HexBytes VisibleHexBytes { get; }
+		public override HexBufferSpan BufferSpan { get; }
+		public override HexBytes HexBytes { get; }
 		public override string Text { get; }
 		public override bool IsOffsetColumnPresent { get; }
 		public override bool IsValuesColumnPresent { get; }
@@ -44,16 +43,14 @@ namespace dnSpy.Hex {
 		readonly Span fullAsciiSpan;
 		readonly Span visibleAsciiSpan;
 
-		public HexBufferLineImpl(HexBufferLineProvider hexBufferLineProvider, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan lineSpan, HexBufferSpan visibleBytesSpan, HexBytes visibleHexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellInformationCollection valueCells, HexCellInformationCollection asciiCells, Span offsetSpan, Span fullValuesSpan, Span visibleValuesSpan, Span fullAsciiSpan, Span visibleAsciiSpan) {
+		public HexBufferLineImpl(HexBufferLineProvider hexBufferLineProvider, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellInformationCollection valueCells, HexCellInformationCollection asciiCells, Span offsetSpan, Span fullValuesSpan, Span visibleValuesSpan, Span fullAsciiSpan, Span visibleAsciiSpan) {
 			if (hexBufferLineProvider == null)
 				throw new ArgumentNullException(nameof(hexBufferLineProvider));
 			if (columnOrder == null)
 				throw new ArgumentNullException(nameof(columnOrder));
-			if (lineSpan.IsDefault)
+			if (bufferSpan.IsDefault)
 				throw new ArgumentException();
-			if (visibleBytesSpan.IsDefault)
-				throw new ArgumentException();
-			if (visibleHexBytes.IsDefault)
+			if (hexBytes.IsDefault)
 				throw new ArgumentException();
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
@@ -64,9 +61,8 @@ namespace dnSpy.Hex {
 			LineProvider = hexBufferLineProvider;
 			LineNumber = lineNumber;
 			ColumnOrder = columnOrder;
-			LineSpan = lineSpan;
-			VisibleBytesSpan = visibleBytesSpan;
-			VisibleHexBytes = visibleHexBytes;
+			BufferSpan = bufferSpan;
+			HexBytes = hexBytes;
 			Text = text;
 			IsOffsetColumnPresent = isOffsetColumnPresent;
 			IsValuesColumnPresent = isValuesColumnPresent;

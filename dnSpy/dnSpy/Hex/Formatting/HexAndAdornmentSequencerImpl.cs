@@ -28,7 +28,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Formatting {
 	sealed class HexAndAdornmentSequencerImpl : HexAndAdornmentSequencer {
-		public override HexBuffer Buffer => hexView.HexBuffer;
+		public override HexBuffer Buffer => hexView.Buffer;
 
 		readonly HexTagAggregator<HexSpaceNegotiatingAdornmentTag> hexTagAggregator;
 		readonly HexView hexView;
@@ -57,7 +57,7 @@ namespace dnSpy.Hex.Formatting {
 		public override HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferLine line) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
-			if (line.LineSpan.Buffer != hexView.HexBuffer)
+			if (line.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			var lineSpan = line.TextSpan;
 
@@ -82,7 +82,7 @@ namespace dnSpy.Hex.Formatting {
 			AdornmentElementAndSpan? lastAddedAdornment = null;
 			for (int i = 0; i < adornmentList.Count; i++) {
 				var info = adornmentList[i];
-				int spanStart = info.Span.Length == 0 && info.AdornmentElement.Affinity == HexPositionAffinity.Predecessor ? info.Span.Start - 1 : info.Span.Start;
+				int spanStart = info.Span.Length == 0 && info.AdornmentElement.Affinity == PositionAffinity.Predecessor ? info.Span.Start - 1 : info.Span.Start;
 				if (spanStart < start)
 					continue;
 				if (info.Span.Start > end)
@@ -90,7 +90,7 @@ namespace dnSpy.Hex.Formatting {
 				var textSpan = Span.FromBounds(curr, info.Span.Start);
 				if (!textSpan.IsEmpty)
 					sequenceList.Add(new HexSequenceElementImpl(textSpan));
-				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == HexPositionAffinity.Predecessor)) {
+				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == PositionAffinity.Predecessor)) {
 					bool canAppend = true;
 					if (lastAddedAdornment != null && lastAddedAdornment.Value.Span.End > info.Span.Start)
 						canAppend = false;
@@ -119,7 +119,7 @@ namespace dnSpy.Hex.Formatting {
 				c = x.Span.Length - y.Span.Length;
 				if (c != 0)
 					return c;
-				return (x.AdornmentElement.Affinity == HexPositionAffinity.Predecessor ? 0 : 1) - (y.AdornmentElement.Affinity == HexPositionAffinity.Predecessor ? 0 : 1);
+				return (x.AdornmentElement.Affinity == PositionAffinity.Predecessor ? 0 : 1) - (y.AdornmentElement.Affinity == PositionAffinity.Predecessor ? 0 : 1);
 			}
 		}
 
@@ -142,7 +142,7 @@ namespace dnSpy.Hex.Formatting {
 			public override double BottomSpace => tagSpan.Tag.BottomSpace;
 			public override object IdentityTag => tagSpan.Tag.IdentityTag;
 			public override object ProviderTag => tagSpan.Tag.ProviderTag;
-			public override HexPositionAffinity Affinity => tagSpan.Tag.Affinity;
+			public override PositionAffinity Affinity => tagSpan.Tag.Affinity;
 
 			readonly HexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan;
 

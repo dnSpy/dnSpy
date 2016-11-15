@@ -18,41 +18,48 @@
 */
 
 using System;
+using System.Windows.Media;
 
-namespace dnSpy.Contracts.Hex.Formatting {
+namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Flags
+	/// Space reservation agent
 	/// </summary>
-	[Flags]
-	public enum TextBoundsFlags {
+	public abstract class HexSpaceReservationAgent {
 		/// <summary>
-		/// No bit is set
+		/// Constructor
 		/// </summary>
-		None					= 0,
+		protected HexSpaceReservationAgent() { }
 
 		/// <summary>
-		/// Offset column
+		/// true if its adornment has keyboard focus
 		/// </summary>
-		Offset					= 0x00000001,
+		public abstract bool HasFocus { get; }
 
 		/// <summary>
-		/// Values column
+		/// true if the mouse is over its adornment
 		/// </summary>
-		Values					= 0x00000002,
+		public abstract bool IsMouseOver { get; }
 
 		/// <summary>
-		/// ASCII column
+		/// Raised after its adornment got keyboard focus
 		/// </summary>
-		Ascii					= 0x00000004,
+		public abstract event EventHandler GotFocus;
 
 		/// <summary>
-		/// Select the full cell instead of only the text
+		/// Raised after its adornment lost keyboard focus
 		/// </summary>
-		Cell					= 0x00000008,
+		public abstract event EventHandler LostFocus;
 
 		/// <summary>
-		/// Include the cell separator, if any
+		/// Called to hide the adornment
 		/// </summary>
-		Separator				= 0x00000010,
+		public abstract void Hide();
+
+		/// <summary>
+		/// Positions and displays the adornment. Returns null if it should be removed.
+		/// </summary>
+		/// <param name="reservedSpace">Reserved space</param>
+		/// <returns></returns>
+		public abstract Geometry PositionAndDisplay(Geometry reservedSpace);
 	}
 }

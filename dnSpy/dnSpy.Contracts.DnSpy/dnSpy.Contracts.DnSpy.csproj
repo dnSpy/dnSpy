@@ -302,8 +302,11 @@
     <Compile Include="Hex\Editor\DefaultWpfHexViewEditorOptionDefinitions.cs" />
     <Compile Include="Hex\Editor\DefaultWpfHexViewOptions.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayer.cs" />
-    <Compile Include="Hex\Editor\HexMarkerFlags.cs" />
-    <Compile Include="Hex\Formatting\TextBoundsFlags.cs" />
+    <Compile Include="Hex\Editor\HexAdornmentLayerElement.cs" />
+    <Compile Include="Hex\Editor\HexLayerKind.cs" />
+    <Compile Include="Hex\Editor\HexLayerKindAttribute.cs" />
+    <Compile Include="Hex\Editor\HexSpaceReservationAgent.cs" />
+    <Compile Include="Hex\Editor\HexViewState.cs" />
     <Compile Include="Hex\HexBufferLine.cs" />
     <Compile Include="Hex\Formatting\HexAdornmentElement.cs" />
     <Compile Include="Hex\Formatting\HexFormattedLine.cs" />
@@ -317,6 +320,7 @@
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryService.cs" />
     <Compile Include="Hex\Editor\HexMouseHoverEventArgs.cs" />
     <Compile Include="Hex\HexColumnType.cs" />
+    <Compile Include="Hex\HexLineSpan.cs" />
     <Compile Include="Hex\HexOffsetFormat.cs" />
     <Compile Include="Hex\Editor\HexSelection.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationManager.cs" />
@@ -325,14 +329,12 @@
     <Compile Include="Hex\Editor\HexViewCreatorOptions.cs" />
     <Compile Include="Hex\Editor\HexViewLayoutChangedEventArgs.cs" />
     <Compile Include="Hex\Editor\HexViewLineCollection.cs" />
-    <Compile Include="Hex\Editor\HexViewRelativePosition.cs" />
     <Compile Include="Hex\Editor\HexViewScroller.cs" />
     <Compile Include="Hex\Editor\PredefinedHexAdornmentLayers.cs" />
     <Compile Include="Hex\Editor\PredefinedHexViewRoles.cs" />
     <Compile Include="Hex\Editor\WpfHexView.cs" />
     <Compile Include="Hex\Editor\WpfHexViewHost.cs" />
     <Compile Include="Hex\Editor\WpfHexViewLineCollection.cs" />
-    <Compile Include="Hex\Formatting\FormattedHexLineSource.cs" />
     <Compile Include="Hex\Formatting\FormattedHexSourceFactoryService.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentCollection.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencer.cs" />
@@ -359,9 +361,9 @@
     <Compile Include="Hex\HexContentChangingEventArgs.cs" />
     <Compile Include="Hex\HexEdit.cs" />
     <Compile Include="Hex\HexPosition.cs" />
-    <Compile Include="Hex\HexPositionAffinity.cs" />
     <Compile Include="Hex\HexSpan.cs" />
     <Compile Include="Hex\HexSpanInfo.cs" />
+    <Compile Include="Hex\HexSpanSelectionFlags.cs" />
     <Compile Include="Hex\HexVersion.cs" />
     <Compile Include="Hex\HexVersionChangedEventArgs.cs" />
     <Compile Include="Hex\NormalizedHexBufferSpanCollection.cs" />

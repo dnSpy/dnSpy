@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Text;
+
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
 	/// Adornment sequence element
@@ -55,7 +57,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Gets the affinity
 		/// </summary>
-		public abstract HexPositionAffinity Affinity { get; }
+		public abstract PositionAffinity Affinity { get; }
 
 		/// <summary>
 		/// Gets the identity tag

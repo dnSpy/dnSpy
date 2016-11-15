@@ -30,10 +30,10 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Creates a new <see cref="HexBufferLineProvider"/> instance
 		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
+		/// <param name="buffer">Buffer</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract HexBufferLineProvider Create(HexBuffer hexBuffer, HexBufferLineProviderOptions options);
+		public abstract HexBufferLineProvider Create(HexBuffer buffer, HexBufferLineProviderOptions options);
 	}
 
 	/// <summary>
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Number of visible characters per line
 		/// </summary>
-		public int VisibleCharsPerLine { get; set; }
+		public int CharsPerLine { get; set; }
 
 		/// <summary>
 		/// Number of bytes per line or 0 to fit to width
@@ -113,6 +113,12 @@ namespace dnSpy.Contracts.Hex {
 		public bool ShowAscii { get; set; }
 
 		/// <summary>
+		/// Column order or null to use the default order. All columns must be present in this
+		/// array even if they're not shown.
+		/// </summary>
+		public HexColumnType[] ColumnOrders { get; set; }
+
+		/// <summary>
 		/// Minimum <see cref="OffsetBitSize"/> value
 		/// </summary>
 		public static readonly int MinOffsetBitSize = 0;
@@ -121,5 +127,10 @@ namespace dnSpy.Contracts.Hex {
 		/// Maximum <see cref="OffsetBitSize"/> value
 		/// </summary>
 		public static readonly int MaxOffsetBitSize = 64;
+
+		/// <summary>
+		/// Max bytes per line
+		/// </summary>
+		public static readonly int MaxBytesPerLine = 1024;
 	}
 }

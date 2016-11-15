@@ -36,10 +36,10 @@ namespace dnSpy.Hex.Classification {
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}
 
-		public override HexClassifier GetClassifier(HexBuffer hexBuffer) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
-			return new HexBufferClassifierAggregator(hexBufferTagAggregatorFactoryService, classificationTypeRegistryService, hexBuffer);
+		public override HexClassifier GetClassifier(HexBuffer buffer) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
+			return new HexBufferClassifierAggregator(hexBufferTagAggregatorFactoryService, classificationTypeRegistryService, buffer);
 		}
 	}
 }

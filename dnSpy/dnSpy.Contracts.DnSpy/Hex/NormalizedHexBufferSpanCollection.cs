@@ -32,54 +32,54 @@ namespace dnSpy.Contracts.Hex {
 		public static readonly NormalizedHexBufferSpanCollection Empty = new NormalizedHexBufferSpanCollection();
 
 		readonly NormalizedHexSpanCollection coll;
-		readonly HexBuffer hexBuffer;
+		readonly HexBuffer buffer;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		public NormalizedHexBufferSpanCollection() {
 			coll = NormalizedHexSpanCollection.Empty;
-			hexBuffer = null;
+			buffer = null;
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
+		/// <param name="buffer">Buffer</param>
 		/// <param name="spans">Spans</param>
-		public NormalizedHexBufferSpanCollection(HexBuffer hexBuffer, NormalizedHexSpanCollection spans) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
+		public NormalizedHexBufferSpanCollection(HexBuffer buffer, NormalizedHexSpanCollection spans) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
 			coll = spans;
-			this.hexBuffer = hexBuffer;
+			this.buffer = buffer;
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
+		/// <param name="buffer">Buffer</param>
 		/// <param name="spans">Spans</param>
-		public NormalizedHexBufferSpanCollection(HexBuffer hexBuffer, IEnumerable<HexSpan> spans) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
+		public NormalizedHexBufferSpanCollection(HexBuffer buffer, IEnumerable<HexSpan> spans) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
 			coll = new NormalizedHexSpanCollection(spans);
-			this.hexBuffer = hexBuffer;
+			this.buffer = buffer;
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
+		/// <param name="buffer">Buffer</param>
 		/// <param name="span">Span</param>
-		public NormalizedHexBufferSpanCollection(HexBuffer hexBuffer, HexSpan span) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
+		public NormalizedHexBufferSpanCollection(HexBuffer buffer, HexSpan span) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
 			coll = new NormalizedHexSpanCollection(span);
-			this.hexBuffer = hexBuffer;
+			this.buffer = buffer;
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Hex {
 			if (span.IsDefault)
 				throw new ArgumentException();
 			coll = new NormalizedHexSpanCollection(span.Span);
-			hexBuffer = span.Buffer;
+			buffer = span.Buffer;
 		}
 
 		/// <summary>
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Hex {
 				buffer = span.Buffer;
 				list.Add(span.Span);
 			}
-			hexBuffer = buffer;
+			this.buffer = buffer;
 			coll = new NormalizedHexSpanCollection(list);
 		}
 
@@ -132,10 +132,10 @@ namespace dnSpy.Contracts.Hex {
 		public bool OverlapsWith(HexBufferSpan span) {
 			if (span.IsDefault)
 				throw new ArgumentException();
-			// hexBuffer could be null if Count is 0
+			// buffer could be null if Count is 0
 			if (Count == 0)
 				return false;
-			if (span.Buffer != hexBuffer)
+			if (span.Buffer != buffer)
 				throw new ArgumentException();
 			return coll.OverlapsWith(span.Span);
 		}
@@ -148,10 +148,10 @@ namespace dnSpy.Contracts.Hex {
 		public bool IntersectsWith(HexBufferSpan span) {
 			if (span.IsDefault)
 				throw new ArgumentException();
-			// hexBuffer could be null if Count is 0
+			// buffer could be null if Count is 0
 			if (Count == 0)
 				return false;
-			if (span.Buffer != hexBuffer)
+			if (span.Buffer != buffer)
 				throw new ArgumentException();
 			return coll.IntersectsWith(span.Span);
 		}
@@ -162,7 +162,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="index">Index</param>
 		/// <returns></returns>
 		public HexBufferSpan this[int index] {
-			get { return new HexBufferSpan(hexBuffer, coll[index]); }
+			get { return new HexBufferSpan(buffer, coll[index]); }
 			set { throw new NotSupportedException(); }
 		}
 
@@ -190,7 +190,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public IEnumerator<HexBufferSpan> GetEnumerator() {
 			foreach (var span in coll)
-				yield return new HexBufferSpan(hexBuffer, span);
+				yield return new HexBufferSpan(buffer, span);
 		}
 
 		// These don't seem very useful
@@ -245,7 +245,7 @@ namespace dnSpy.Contracts.Hex {
 				return false;
 			if (Count != other.Count)
 				return false;
-			if (hexBuffer != other.hexBuffer)
+			if (buffer != other.buffer)
 				return false;
 			for (int i = 0; i < Count; i++) {
 				if (coll[i] != other.coll[i])
@@ -266,7 +266,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <returns></returns>
 		public override int GetHashCode() {
-			int hc = hexBuffer.GetHashCode();
+			int hc = buffer.GetHashCode();
 			for (int i = 0; i < Count; i++)
 				hc ^= this[i].GetHashCode();
 			return hc;

@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Formatting {
-	sealed class FormattedHexLineSourceImpl : FormattedHexLineSource {
+	sealed class HexFormattedLineSourceImpl : HexFormattedLineSource {
 		public override HexBufferLineProvider BufferLines { get; }
 		public override TextRunProperties DefaultTextProperties => classificationFormatMap.DefaultTextProperties;
 		public override HexAndAdornmentSequencer HexAndAdornmentSequencer { get; }
@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Formatting {
 		// Should be enough...
 		const int MAX_LINE_LENGTH = 5000;
 
-		public FormattedHexLineSourceImpl(ITextFormatterProvider textFormatterProvider, HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
+		public HexFormattedLineSourceImpl(ITextFormatterProvider textFormatterProvider, HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
 			if (textFormatterProvider == null)
 				throw new ArgumentNullException(nameof(textFormatterProvider));
 			if (bufferLines == null)
@@ -79,14 +79,14 @@ namespace dnSpy.Hex.Formatting {
 			defaultTextParagraphProperties = new TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
 		}
 
-		public override HexFormattedLine FormatLineInVisualBuffer(HexBufferLine bufferLine) {
-			if (bufferLine == null)
-				throw new ArgumentNullException(nameof(bufferLine));
-			if (bufferLine.LineSpan.Buffer != BufferLines.Buffer)
+		public override HexFormattedLine FormatLineInVisualBuffer(HexBufferLine line) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			if (line.Buffer != BufferLines.Buffer)
 				throw new ArgumentException();
 
-			var seqColl = HexAndAdornmentSequencer.CreateHexAndAdornmentCollection(bufferLine);
-			var linePartsCollection = CreateLinePartsCollection(seqColl, bufferLine);
+			var seqColl = HexAndAdornmentSequencer.CreateHexAndAdornmentCollection(line);
+			var linePartsCollection = CreateLinePartsCollection(seqColl, line);
 			var textSource = new HexLinePartsTextSource(linePartsCollection);
 
 			TextLineBreak previousLineBreak = null;
@@ -115,12 +115,12 @@ namespace dnSpy.Hex.Formatting {
 			var startPos = textSource.ConvertColumnToLinePosition(startColumn);
 			var endPos = textSource.ConvertColumnToLinePosition(column);
 			if (column >= textSource.Length) {
-				endPos = bufferLine.TextSpan.End;
+				endPos = line.TextSpan.End;
 				linePartsEnd = lineParts.Count - 1;
 			}
 
 			var lineSpan = Span.FromBounds(startPos, endPos);
-			var formattedLine = new HexFormattedLineImpl(linePartsCollection, linePartsIndex, linePartsEnd - linePartsIndex + 1, startColumn, column, bufferLine, lineSpan, textLine, autoIndent, ColumnWidth);
+			var formattedLine = new HexFormattedLineImpl(linePartsCollection, linePartsIndex, linePartsEnd - linePartsIndex + 1, startColumn, column, line, lineSpan, textLine, autoIndent, ColumnWidth);
 			Debug.Assert(column == textSource.Length);
 
 			return formattedLine;

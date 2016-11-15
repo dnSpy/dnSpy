@@ -38,8 +38,8 @@ namespace dnSpy.Hex.Tagging {
 			this.hexViewTaggerProviders = hexViewTaggerProviders.ToArray();
 		}
 
-		public IEnumerable<HexTagger<T>> Create<T>(HexView hexView, HexBuffer hexBuffer) where T : HexTag {
-			foreach (var t in Create<T>(hexBuffer))
+		public IEnumerable<HexTagger<T>> Create<T>(HexView hexView, HexBuffer buffer) where T : HexTag {
+			foreach (var t in Create<T>(buffer))
 				yield return t;
 
 			var type = typeof(T);
@@ -47,18 +47,18 @@ namespace dnSpy.Hex.Tagging {
 				if (info.Metadata.TextViewRoles != null && !hexView.Roles.ContainsAny(info.Metadata.TextViewRoles))
 					continue;
 				if (CanCreateTagger(type, info.Metadata.TagTypes)) {
-					var tagger = info.Value.CreateTagger<T>(hexView, hexBuffer);
+					var tagger = info.Value.CreateTagger<T>(hexView, buffer);
 					if (tagger != null)
 						yield return tagger;
 				}
 			}
 		}
 
-		public IEnumerable<HexTagger<T>> Create<T>(HexBuffer hexBuffer) where T : HexTag {
+		public IEnumerable<HexTagger<T>> Create<T>(HexBuffer buffer) where T : HexTag {
 			var type = typeof(T);
 			foreach (var info in hexBufferTaggerProviders) {
 				if (CanCreateTagger(type, info.Metadata.TagTypes)) {
-					var tagger = info.Value.CreateTagger<T>(hexBuffer);
+					var tagger = info.Value.CreateTagger<T>(buffer);
 					if (tagger != null)
 						yield return tagger;
 				}

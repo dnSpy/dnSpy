@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Text;
+
 namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
 	/// Space negotiating adornment tag
@@ -50,7 +52,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <summary>
 		/// Gets the affinity
 		/// </summary>
-		public HexPositionAffinity Affinity { get; }
+		public PositionAffinity Affinity { get; }
 
 		/// <summary>
 		/// Gets the identity tag
@@ -73,7 +75,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="affinity">Affinity</param>
 		/// <param name="identityTag">Identity tag</param>
 		/// <param name="providerTag">Provider tag</param>
-		public HexSpaceNegotiatingAdornmentTag(double width, double topSpace, double baseline, double textHeight, double bottomSpace, HexPositionAffinity affinity, object identityTag, object providerTag) {
+		public HexSpaceNegotiatingAdornmentTag(double width, double topSpace, double baseline, double textHeight, double bottomSpace, PositionAffinity affinity, object identityTag, object providerTag) {
 			Width = width;
 			TopSpace = topSpace;
 			Baseline = baseline;

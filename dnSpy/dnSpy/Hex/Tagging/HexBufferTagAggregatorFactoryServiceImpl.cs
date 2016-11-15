@@ -32,10 +32,10 @@ namespace dnSpy.Hex.Tagging {
 			this.hexTaggerFactory = hexTaggerFactory;
 		}
 
-		public override HexTagAggregator<T> CreateTagAggregator<T>(HexBuffer hexBuffer) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
-			return new TextBufferTagAggregator<T>(hexTaggerFactory, hexBuffer).HexTagAggregator;
+		public override HexTagAggregator<T> CreateTagAggregator<T>(HexBuffer buffer) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
+			return new TextBufferTagAggregator<T>(hexTaggerFactory, buffer).HexTagAggregator;
 		}
 	}
 }

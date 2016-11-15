@@ -17,19 +17,42 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows;
+using Microsoft.VisualStudio.Text.Editor;
+
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Position relative to the hex view
+	/// Adornment layer element
 	/// </summary>
-	public enum HexViewRelativePosition {
+	public abstract class HexAdornmentLayerElement {
 		/// <summary>
-		/// Relative to the top of the view
+		/// Constructor
 		/// </summary>
-		Top,
+		protected HexAdornmentLayerElement() { }
 
 		/// <summary>
-		/// Relative to the bottom of the view
+		/// Gets the adornment
 		/// </summary>
-		Bottom,
+		public abstract UIElement Adornment { get; }
+
+		/// <summary>
+		/// Gets the positioning behavior
+		/// </summary>
+		public abstract AdornmentPositioningBehavior Behavior { get; }
+
+		/// <summary>
+		/// Called when the adornment is removed
+		/// </summary>
+		public abstract AdornmentRemovedCallback RemovedCallback { get; }
+
+		/// <summary>
+		/// Gets the tag
+		/// </summary>
+		public abstract object Tag { get; }
+
+		/// <summary>
+		/// Buffer span
+		/// </summary>
+		public abstract HexBufferSpan? VisualSpan { get; }
 	}
 }

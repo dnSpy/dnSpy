@@ -17,14 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Hex.Editor {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
-	/// Flags
+	/// Span selection flags
 	/// </summary>
-	[Flags]
-	public enum HexMarkerFlags {
+	public enum HexSpanSelectionFlags {
 		/// <summary>
 		/// No bit is set
 		/// </summary>
@@ -56,8 +53,18 @@ namespace dnSpy.Contracts.Hex.Editor {
 		Separator				= 0x00000010,
 
 		/// <summary>
-		/// Clip to viewport
+		/// One value at a time
 		/// </summary>
-		ClipToViewport			= int.MinValue,
+		OneValue				= 0x00000020,
+
+		/// <summary>
+		/// Select all cells in the values/ASCII column
+		/// </summary>
+		AllCells				= 0x00000040,
+
+		/// <summary>
+		/// Select all visible cells in the values/ASCII column
+		/// </summary>
+		AllVisibleCells			= 0x00000080,
 	}
 }

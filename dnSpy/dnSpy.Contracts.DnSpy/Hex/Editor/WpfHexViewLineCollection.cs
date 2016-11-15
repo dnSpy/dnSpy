@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
@@ -78,16 +77,17 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags);
+		public abstract Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Gets line marker geometry
 		/// </summary>
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
+		/// <param name="clipToViewport">true to clip the geometry to the viewport</param>
 		/// <param name="padding">Padding to use</param>
 		/// <returns></returns>
-		public abstract Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags, Thickness padding);
+		public abstract Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
 
 		/// <summary>
 		/// Gets marker geometry
@@ -95,16 +95,17 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags);
+		public abstract Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Gets marker geometry
 		/// </summary>
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
+		/// <param name="clipToViewport">true to clip the geometry to the viewport</param>
 		/// <param name="padding">Padding to use</param>
 		/// <returns></returns>
-		public abstract Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags, Thickness padding);
+		public abstract Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
 
 		/// <summary>
 		/// Gets text marker geometry
@@ -112,16 +113,17 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags);
+		public abstract Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Gets text marker geometry
 		/// </summary>
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
+		/// <param name="clipToViewport">true to clip the geometry to the viewport</param>
 		/// <param name="padding">Padding to use</param>
 		/// <returns></returns>
-		public abstract Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags, Thickness padding);
+		public abstract Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
 
 		/// <summary>
 		/// Gets the line containing <paramref name="bufferPosition"/>

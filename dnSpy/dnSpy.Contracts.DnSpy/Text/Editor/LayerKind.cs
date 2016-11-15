@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
-	/// Kind of layer
+	/// Layer kind
 	/// </summary>
 	public enum LayerKind {
 		/// <summary>

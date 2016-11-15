@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Editor {
 			if (lines.Count == 0)
 				formattedSpan = new HexBufferSpan(buffer, new HexSpan(HexPosition.Zero, 0));
 			else
-				formattedSpan = new HexBufferSpan(lines[0].BufferLine.VisibleBytesSpan.Start, lines[lines.Count - 1].BufferLine.VisibleBytesSpan.End);
+				formattedSpan = new HexBufferSpan(lines[0].BufferSpan.Start, lines[lines.Count - 1].BufferSpan.End);
 			Debug.Assert(this.lines.Count > 0);
 		}
 
@@ -125,24 +125,23 @@ namespace dnSpy.Hex.Editor {
 			return false;
 		}
 
-		public override Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags) =>
-			GetMarkerGeometry(bufferSpan, flags, HexMarkerHelper.LineMarkerPadding, true);
-		public override Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags, Thickness padding) =>
-			GetMarkerGeometry(bufferSpan, flags, padding, true);
+		public override Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) =>
+			GetMarkerGeometry(bufferSpan, flags, false, HexMarkerHelper.LineMarkerPadding, true);
+		public override Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding) =>
+			GetMarkerGeometry(bufferSpan, flags, clipToViewport, padding, true);
 
-		public override Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags) =>
-			GetMarkerGeometry(bufferSpan, flags, HexMarkerHelper.TextMarkerPadding, false);
-		public override Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags, Thickness padding) =>
-			GetMarkerGeometry(bufferSpan, flags, padding, false);
+		public override Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) =>
+			GetMarkerGeometry(bufferSpan, flags, false, HexMarkerHelper.TextMarkerPadding, false);
+		public override Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding) =>
+			GetMarkerGeometry(bufferSpan, flags, clipToViewport, padding, false);
 
-		Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags, Thickness padding, bool isLineGeometry) {
+		Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding, bool isLineGeometry) {
 			if (bufferSpan.Buffer != buffer)
 				throw new ArgumentException();
 
 			bool createOutlinedPath = false;
 			PathGeometry geo = null;
-			var textBounds = GetNormalizedTextBounds(bufferSpan, GetTextBoundsFlags(flags));
-			bool clipToViewport = (flags & HexMarkerFlags.ClipToViewport) != 0;
+			var textBounds = GetNormalizedTextBounds(bufferSpan, flags);
 			HexMarkerHelper.AddGeometries(hexView, textBounds, isLineGeometry, clipToViewport, padding, 0, ref geo, ref createOutlinedPath);
 			if (createOutlinedPath)
 				geo = geo.GetOutlinedPathGeometry();
@@ -151,22 +150,7 @@ namespace dnSpy.Hex.Editor {
 			return geo;
 		}
 
-		static TextBoundsFlags GetTextBoundsFlags(HexMarkerFlags flags) {
-			var res = TextBoundsFlags.None;
-			if ((flags & HexMarkerFlags.Offset) != 0)
-				res |= TextBoundsFlags.Offset;
-			if ((flags & HexMarkerFlags.Values) != 0)
-				res |= TextBoundsFlags.Values;
-			if ((flags & HexMarkerFlags.Ascii) != 0)
-				res |= TextBoundsFlags.Ascii;
-			if ((flags & HexMarkerFlags.Cell) != 0)
-				res |= TextBoundsFlags.Cell;
-			if ((flags & HexMarkerFlags.Separator) != 0)
-				res |= TextBoundsFlags.Separator;
-			return res;
-		}
-
-		public override Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags) {
+		public override Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) {
 			if (bufferSpan.Buffer != buffer)
 				throw new ArgumentException();
 			if (HexMarkerHelper.IsMultiLineSpan(hexView, bufferSpan))
@@ -174,15 +158,15 @@ namespace dnSpy.Hex.Editor {
 			return GetTextMarkerGeometry(bufferSpan, flags);
 		}
 
-		public override Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexMarkerFlags flags, Thickness padding) {
+		public override Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding) {
 			if (bufferSpan.Buffer != buffer)
 				throw new ArgumentException();
 			if (HexMarkerHelper.IsMultiLineSpan(hexView, bufferSpan))
-				return GetLineMarkerGeometry(bufferSpan, flags, padding);
-			return GetTextMarkerGeometry(bufferSpan, flags, padding);
+				return GetLineMarkerGeometry(bufferSpan, flags, clipToViewport, padding);
+			return GetTextMarkerGeometry(bufferSpan, flags, clipToViewport, padding);
 		}
 
-		public override Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferSpan, TextBoundsFlags flags) {
+		public override Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfHexViewLineCollectionImpl));
 			if (bufferSpan.Buffer != buffer)

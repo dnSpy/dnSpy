@@ -30,18 +30,18 @@ namespace dnSpy.Contracts.Hex {
 		public Span TextSpan { get; }
 
 		/// <summary>
-		/// Gets the hex span
+		/// Gets the buffer span
 		/// </summary>
-		public HexBufferSpan HexSpan { get; }
+		public HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="textSpan">Text span</param>
-		/// <param name="hexSpan">Hex span</param>
-		public TextAndHexSpan(Span textSpan, HexBufferSpan hexSpan) {
+		/// <param name="bufferSpan">Buffer span</param>
+		public TextAndHexSpan(Span textSpan, HexBufferSpan bufferSpan) {
 			TextSpan = textSpan;
-			HexSpan = hexSpan;
+			BufferSpan = bufferSpan;
 		}
 	}
 }

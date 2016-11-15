@@ -24,12 +24,12 @@ using dnSpy.Contracts.Hex;
 namespace dnSpy.Hex {
 	[Export(typeof(HexBufferLineProviderFactoryService))]
 	sealed class HexBufferLineProviderFactoryServiceImpl : HexBufferLineProviderFactoryService {
-		public override HexBufferLineProvider Create(HexBuffer hexBuffer, HexBufferLineProviderOptions options) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
+		public override HexBufferLineProvider Create(HexBuffer buffer, HexBufferLineProviderOptions options) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			return new HexBufferLineProviderImpl(hexBuffer, options);
+			return new HexBufferLineProviderImpl(buffer, options);
 		}
 	}
 }

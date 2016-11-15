@@ -36,10 +36,10 @@ namespace dnSpy.Hex.Tagging {
 
 		internal HexTagAggregator<T> HexTagAggregator => hexTagAggregatorProxy;
 
-		protected HexBuffer HexBuffer { get; }
+		protected HexBuffer Buffer { get; }
 
 		sealed class HexTagAggregatorProxy : HexTagAggregator<T> {
-			public override HexBuffer Buffer => owner.HexBuffer;
+			public override HexBuffer Buffer => owner.Buffer;
 			public override event EventHandler<HexBatchedTagsChangedEventArgs> BatchedTagsChanged;
 			public override event EventHandler<HexTagsChangedEventArgs> TagsChanged;
 
@@ -68,13 +68,13 @@ namespace dnSpy.Hex.Tagging {
 			protected override void DisposeCore() => owner.Dispose();
 		}
 
-		protected TagAggregator(HexBuffer hexBuffer) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
+		protected TagAggregator(HexBuffer buffer) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
 			dispatcher = Dispatcher.CurrentDispatcher;
 			batchedTagsChangedList = new List<HexBufferSpan>();
 			lockObj = new object();
-			HexBuffer = hexBuffer;
+			Buffer = buffer;
 			taggers = Array.Empty<HexTagger<T>>();
 			hexTagAggregatorProxy = new HexTagAggregatorProxy(this);
 		}
@@ -122,19 +122,10 @@ namespace dnSpy.Hex.Tagging {
 			}
 		}
 
-		static HexCellSpanFlags GetCellSpanFlags(HexTagSpanFlags flags) {
-			var res = HexCellSpanFlags.None;
-			if ((flags & HexTagSpanFlags.Cell) != 0)
-				res |= HexCellSpanFlags.Cell;
-			if ((flags & HexTagSpanFlags.Separator) != 0)
-				res |= HexCellSpanFlags.Separator;
-			return res;
-		}
-
 		IEnumerable<HexTextTagSpan<T>> GetAllTags(HexTaggerContext context, CancellationToken? cancellationToken) {
 			if (context.IsDefault)
 				throw new ArgumentException();
-			var span = context.Line.VisibleBytesSpan;
+			var span = context.Line.BufferSpan;
 			var spans = new NormalizedHexBufferSpanCollection(span);
 			var textSpan = context.LineSpan;
 			foreach (var tagger in taggers) {
@@ -144,46 +135,8 @@ namespace dnSpy.Hex.Tagging {
 					if (intersection == null)
 						continue;
 
-					var spanFlags = tagSpan.Flags;
-
-					if (context.Line.IsOffsetColumnPresent && (spanFlags & HexTagSpanFlags.Offset) != 0) {
-						var offsetSpan = textSpan.Intersection(context.Line.GetOffsetSpan());
-						if (offsetSpan != null)
-							yield return new HexTextTagSpan<T>(offsetSpan.Value, tagSpan.Tag);
-					}
-
-					if (context.Line.IsValuesColumnPresent && (spanFlags & HexTagSpanFlags.Values) != 0) {
-						if ((spanFlags & HexTagSpanFlags.OneValue) != 0) {
-							var flags = GetCellSpanFlags(spanFlags);
-							foreach (var cell in context.Line.ValueCells.GetCells(intersection.Value)) {
-								var cellSpan = textSpan.Intersection(cell.GetSpan(flags));
-								if (cellSpan != null)
-									yield return new HexTextTagSpan<T>(cellSpan.Value, tagSpan.Tag);
-							}
-						}
-						else {
-							Span valuesSpan;
-							if ((spanFlags & HexTagSpanFlags.AllCells) != 0)
-								valuesSpan = context.Line.GetValuesSpan(onlyVisibleCells: false);
-							else if ((spanFlags & HexTagSpanFlags.AllVisibleCells) != 0)
-								valuesSpan = context.Line.GetValuesSpan(onlyVisibleCells: true);
-							else
-								valuesSpan = context.Line.GetValuesSpan(intersection.Value, GetCellSpanFlags(spanFlags)).TextSpan;
-							var vs = textSpan.Intersection(valuesSpan);
-							if (vs != null)
-								yield return new HexTextTagSpan<T>(vs.Value, tagSpan.Tag);
-						}
-					}
-
-					if (context.Line.IsAsciiColumnPresent && (spanFlags & HexTagSpanFlags.Ascii) != 0) {
-						Span asciiSpan;
-						if ((spanFlags & HexTagSpanFlags.AllCells) != 0)
-							asciiSpan = context.Line.GetAsciiSpan(onlyVisibleCells: false);
-						else if ((spanFlags & HexTagSpanFlags.AllVisibleCells) != 0)
-							asciiSpan = context.Line.GetAsciiSpan(onlyVisibleCells: true);
-						else
-							asciiSpan = context.Line.GetAsciiSpan(intersection.Value, GetCellSpanFlags(spanFlags)).TextSpan;
-						var vs = textSpan.Intersection(asciiSpan);
+					foreach (var info in context.Line.GetSpans(intersection.Value, tagSpan.Flags)) {
+						var vs = textSpan.Intersection(info.TextSpan);
 						if (vs != null)
 							yield return new HexTextTagSpan<T>(vs.Value, tagSpan.Tag);
 					}

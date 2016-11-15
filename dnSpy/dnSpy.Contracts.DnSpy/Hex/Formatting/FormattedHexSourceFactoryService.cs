@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		protected FormattedHexSourceFactoryService() { }
 
 		/// <summary>
-		/// Creates a <see cref="FormattedHexLineSource"/> that doesn't classify anything
+		/// Creates a <see cref="HexFormattedLineSource"/> that doesn't classify anything
 		/// </summary>
 		/// <param name="bufferLines">Buffer lines</param>
 		/// <param name="baseIndent">Base indentation</param>
@@ -39,11 +39,11 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="sequencer">Sequencer</param>
 		/// <param name="classificationFormatMap">Classification format map</param>
 		/// <returns></returns>
-		public virtual FormattedHexLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) =>
+		public virtual HexFormattedLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) =>
 			Create(bufferLines, baseIndent, useDisplayMode, NullHexClassifier.Instance, sequencer, classificationFormatMap);
 
 		/// <summary>
-		/// Creates a <see cref="FormattedHexLineSource"/>
+		/// Creates a <see cref="HexFormattedLineSource"/>
 		/// </summary>
 		/// <param name="bufferLines">Buffer lines</param>
 		/// <param name="baseIndent">Base indentation</param>
@@ -52,6 +52,6 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="sequencer">Sequencer</param>
 		/// <param name="classificationFormatMap">Classification format map</param>
 		/// <returns></returns>
-		public abstract FormattedHexLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap);
+		public abstract HexFormattedLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap);
 	}
 }

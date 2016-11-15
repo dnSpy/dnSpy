@@ -70,15 +70,15 @@ namespace dnSpy.Text.Editor {
 				if (lineSpan == null)
 					continue;
 
-				var startSpan = new VirtualSnapshotPoint(lineSpan.Value.Start);
-				var endSpan = new VirtualSnapshotPoint(lineSpan.Value.End);
-				if (startSpan.Position == span.Start.Position)
-					startSpan = span.Start;
-				if (endSpan.Position == span.End.Position)
-					endSpan = span.End;
+				var startPoint = new VirtualSnapshotPoint(lineSpan.Value.Start);
+				var endPoint = new VirtualSnapshotPoint(lineSpan.Value.End);
+				if (startPoint.Position == span.Start.Position)
+					startPoint = span.Start;
+				if (endPoint.Position == span.End.Position)
+					endPoint = span.End;
 
-				var startBounds = line.GetExtendedCharacterBounds(startSpan);
-				var endBounds = line.GetExtendedCharacterBounds(endSpan);
+				var startBounds = line.GetExtendedCharacterBounds(startPoint);
+				var endBounds = line.GetExtendedCharacterBounds(endPoint);
 
 				if (left > startBounds.Left)
 					left = startBounds.Left;

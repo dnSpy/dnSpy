@@ -42,11 +42,12 @@ namespace dnSpy.Hex.Editor {
 		public override bool HasAggregateFocus { get; }//TODO:
 		public override bool IsMouseOverViewOrAdornments { get; }//TODO:
 		public override double LineHeight { get; }//TODO:
+		public override double MaxTextRightCoordinate { get; }//TODO:
 		public override bool InLayout { get; }//TODO:
 		public override bool IsClosed => isClosed;
 		public override IEditorOptions Options { get; }
 		public override ITextViewRoleSet Roles { get; }
-		public override HexBuffer HexBuffer { get; }
+		public override HexBuffer Buffer { get; }
 		public override double ViewportTop { get; }//TODO:
 		public override double ViewportBottom { get; }//TODO:
 		public override double ViewportLeft { get; set; }//TODO:
@@ -76,9 +77,9 @@ namespace dnSpy.Hex.Editor {
 		readonly HexAndAdornmentSequencer hexAndAdornmentSequencer;
 		readonly HexBufferLineProviderFactoryService hexBufferLineProviderFactoryService;
 
-		public WpfHexViewImpl(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineProviderFactoryService hexBufferLineProviderFactoryService) {
-			if (hexBuffer == null)
-				throw new ArgumentNullException(nameof(hexBuffer));
+		public WpfHexViewImpl(HexBuffer buffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineProviderFactoryService hexBufferLineProviderFactoryService) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
 			if (roles == null)
 				throw new ArgumentNullException(nameof(roles));
 			if (parentOptions == null)
@@ -97,7 +98,7 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(hexBufferLineProviderFactoryService));
 			this.formattedHexSourceFactoryService = formattedHexSourceFactoryService;
 			this.hexBufferLineProviderFactoryService = hexBufferLineProviderFactoryService;
-			HexBuffer = hexBuffer;
+			Buffer = buffer;
 			Roles = roles;
 			Options = hexEditorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;
@@ -128,10 +129,10 @@ namespace dnSpy.Hex.Editor {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, HexViewRelativePosition relativeTo) =>
+		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo) =>
 			DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null);
 
-		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, HexViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) {
+		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) {
 			throw new NotImplementedException();//TODO:
 		}
 

@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Hex.Formatting {
 	/// </summary>
 	public abstract class HexSequenceElement {
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexSequenceElement() { }
+
+		/// <summary>
 		/// true to show the text
 		/// </summary>
 		public abstract bool ShouldRenderText { get; }

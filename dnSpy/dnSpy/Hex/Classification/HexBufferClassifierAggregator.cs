@@ -23,8 +23,8 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
 	sealed class HexBufferClassifierAggregator : HexClassifierAggregator {
-		public HexBufferClassifierAggregator(HexBufferTagAggregatorFactoryService hexBufferTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, HexBuffer hexBuffer)
-			: base(hexBufferTagAggregatorFactoryService.CreateTagAggregator<HexClassificationTag>(hexBuffer), classificationTypeRegistryService, hexBuffer) {
+		public HexBufferClassifierAggregator(HexBufferTagAggregatorFactoryService hexBufferTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, HexBuffer buffer)
+			: base(hexBufferTagAggregatorFactoryService.CreateTagAggregator<HexClassificationTag>(buffer), classificationTypeRegistryService, buffer) {
 		}
 	}
 }

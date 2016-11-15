@@ -24,63 +24,65 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Contracts.Text.Editor;
-using dnSpy.Text.MEF;
-using Microsoft.VisualStudio.Text;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Formatting;
+using dnSpy.Hex.MEF;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Formatting;
 
-namespace dnSpy.Text.Editor {
-	sealed class AdornmentLayer : Canvas, IAdornmentLayer {
-		public IWpfTextView TextView { get; }
+namespace dnSpy.Hex.Editor {
+	sealed class HexAdornmentLayerImpl : HexAdornmentLayer {
+		public override FrameworkElement VisualElement => canvas;
+		public override WpfHexView HexView { get; }
 		public MetadataAndOrder<IAdornmentLayersMetadata> Info { get; }
-		public bool IsEmpty => adornmentLayerElements.Count == 0;
-		public ReadOnlyCollection<IAdornmentLayerElement> Elements => new ReadOnlyCollection<IAdornmentLayerElement>(adornmentLayerElements.ToArray());
-		readonly List<AdornmentLayerElement> adornmentLayerElements;
-		readonly LayerKind layerKind;
+		public override bool IsEmpty => adornmentLayerElements.Count == 0;
+		public override ReadOnlyCollection<HexAdornmentLayerElement> Elements => new ReadOnlyCollection<HexAdornmentLayerElement>(adornmentLayerElements.ToArray());
+		readonly List<HexAdornmentLayerElementImpl> adornmentLayerElements;
+		readonly HexLayerKind layerKind;
+		readonly Canvas canvas;
 
-		public AdornmentLayer(IWpfTextView textView, LayerKind layerKind, MetadataAndOrder<IAdornmentLayersMetadata> info) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			TextView = textView;
+		public HexAdornmentLayerImpl(WpfHexView hexView, HexLayerKind layerKind, MetadataAndOrder<IAdornmentLayersMetadata> info) {
+			if (hexView == null)
+				throw new ArgumentNullException(nameof(hexView));
+			canvas = new Canvas();
+			HexView = hexView;
 			this.layerKind = layerKind;
 			Info = info;
-			this.adornmentLayerElements = new List<AdornmentLayerElement>();
+			this.adornmentLayerElements = new List<HexAdornmentLayerElementImpl>();
 		}
 
-		public bool AddAdornment(SnapshotSpan visualSpan, object tag, UIElement adornment) =>
-			AddAdornment(AdornmentPositioningBehavior.TextRelative, visualSpan, tag, adornment, null);
-		public bool AddAdornment(AdornmentPositioningBehavior behavior, SnapshotSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback) {
+		public override bool AddAdornment(AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback) {
 			if (adornment == null)
 				throw new ArgumentNullException(nameof(adornment));
+			if (visualSpan != null && visualSpan.Value.IsDefault)
+				throw new ArgumentException();
 			if (visualSpan == null && behavior == AdornmentPositioningBehavior.TextRelative)
 				throw new ArgumentNullException(nameof(visualSpan));
 			if ((uint)behavior > (uint)AdornmentPositioningBehavior.TextRelative)
 				throw new ArgumentOutOfRangeException(nameof(behavior));
-			if (layerKind != LayerKind.Normal) {
+			if (layerKind != HexLayerKind.Normal) {
 				if (behavior != AdornmentPositioningBehavior.OwnerControlled)
 					throw new ArgumentOutOfRangeException(nameof(behavior), "Special layers must use AdornmentPositioningBehavior.OwnerControlled");
 				if (visualSpan != null)
 					throw new ArgumentOutOfRangeException(nameof(visualSpan), "Special layers must use a null visual span");
 			}
-			bool canAdd = visualSpan == null || TextView.TextViewLines.IntersectsBufferSpan(visualSpan.Value);
+			bool canAdd = visualSpan == null || HexView.HexViewLines.IntersectsBufferSpan(visualSpan.Value);
 			if (canAdd) {
-				var layerElem = new AdornmentLayerElement(behavior, visualSpan, tag, adornment, removedCallback);
-				layerElem.OnLayoutChanged(TextView.TextSnapshot);
-				Children.Add(layerElem.Adornment);
+				var layerElem = new HexAdornmentLayerElementImpl(behavior, visualSpan, tag, adornment, removedCallback);
+				canvas.Children.Add(layerElem.Adornment);
 				adornmentLayerElements.Add(layerElem);
 			}
 			return canAdd;
 		}
 
-		public void RemoveAdornment(UIElement adornment) {
+		public override void RemoveAdornment(UIElement adornment) {
 			if (adornment == null)
 				throw new ArgumentNullException(nameof(adornment));
 			for (int i = 0; i < adornmentLayerElements.Count; i++) {
 				var elem = adornmentLayerElements[i];
 				if (elem.Adornment == adornment) {
 					adornmentLayerElements.RemoveAt(i);
-					Children.RemoveAt(i);
+					canvas.Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
 					break;
 				}
@@ -88,63 +90,41 @@ namespace dnSpy.Text.Editor {
 		}
 
 		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) {
-			foreach (UIElement elem in Children) {
+			foreach (UIElement elem in canvas.Children) {
 				if (elem.IsMouseOver)
 					return true;
 			}
 			return false;
 		}
 
-		public void RemoveAdornmentsByTag(object tag) {
+		public override void RemoveAdornmentsByTag(object tag) {
 			if (tag == null)
 				throw new ArgumentNullException(nameof(tag));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
 				if (tag.Equals(elem.Tag)) {
 					adornmentLayerElements.RemoveAt(i);
-					Children.RemoveAt(i);
+					canvas.Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
 				}
 			}
 		}
 
-		public void RemoveAdornmentsByVisualSpan(SnapshotSpan visualSpan) {
-			if (visualSpan.Snapshot == null)
-				throw new ArgumentException();
-			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
-				var elem = adornmentLayerElements[i];
-				if (elem.VisualSpan != null && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value))) {
-					adornmentLayerElements.RemoveAt(i);
-					Children.RemoveAt(i);
-					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
-				}
-			}
-		}
-
-		public void RemoveAllAdornments() {
-			foreach (var elem in adornmentLayerElements)
-				elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
-			if (adornmentLayerElements.Count != 0) {
-				adornmentLayerElements.Clear();
-				Children.Clear();
-			}
-		}
-
-		public void RemoveMatchingAdornments(Predicate<IAdornmentLayerElement> match) {
+		public override void RemoveMatchingAdornments(Predicate<HexAdornmentLayerElement> match) {
 			if (match == null)
 				throw new ArgumentNullException(nameof(match));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
 				if (match(elem)) {
 					adornmentLayerElements.RemoveAt(i);
-					Children.RemoveAt(i);
+					canvas.Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
 				}
 			}
 		}
 
-		public void RemoveMatchingAdornments(SnapshotSpan visualSpan, Predicate<IAdornmentLayerElement> match) {
-			if (visualSpan.Snapshot == null)
+		public override void RemoveMatchingAdornments(HexBufferSpan visualSpan, Predicate<HexAdornmentLayerElement> match) {
+			if (visualSpan.IsDefault)
 				throw new ArgumentException();
 			if (match == null)
 				throw new ArgumentNullException(nameof(match));
@@ -152,30 +132,38 @@ namespace dnSpy.Text.Editor {
 				var elem = adornmentLayerElements[i];
 				if (elem.VisualSpan != null && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value)) && match(elem)) {
 					adornmentLayerElements.RemoveAt(i);
-					Children.RemoveAt(i);
+					canvas.Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
 				}
 			}
 		}
 
-		static SnapshotSpan GetOverlapsWithSpan(SnapshotSpan span) {
+		static HexBufferSpan GetOverlapsWithSpan(HexBufferSpan span) {
 			if (span.Length != 0)
 				return span;
-			if (span.Start.Position == span.Snapshot.Length)
+			if (span.Start.Position == HexPosition.MaxEndPosition)
 				return span;
-			return new SnapshotSpan(span.Start, span.Start + 1);
+			return new HexBufferSpan(span.Start, 1);
 		}
 
-		internal void OnLayoutChanged(TextViewLayoutChangedEventArgs e) {
+		public override void RemoveAllAdornments() {
+			foreach (var elem in adornmentLayerElements)
+				elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
+			if (adornmentLayerElements.Count != 0) {
+				adornmentLayerElements.Clear();
+				canvas.Children.Clear();
+			}
+		}
+
+		internal void OnLayoutChanged(HexViewLayoutChangedEventArgs e) {
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
-				elem.OnLayoutChanged(e.NewSnapshot);
 
 				// All adornments that exist in spans that have been removed or in reformatted lines are always removed.
 				if (elem.VisualSpan != null &&
-					(!TextView.TextViewLines.IntersectsBufferSpan(elem.VisualSpan.Value) || GetLine(e.NewOrReformattedLines, GetOverlapsWithSpan(elem.VisualSpan.Value)) != null)) {
+					(!HexView.HexViewLines.IntersectsBufferSpan(elem.VisualSpan.Value) || GetLine(e.NewOrReformattedLines, GetOverlapsWithSpan(elem.VisualSpan.Value)) != null)) {
 					adornmentLayerElements.RemoveAt(i);
-					Children.RemoveAt(i);
+					canvas.Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
 					continue;
 				}
@@ -185,8 +173,8 @@ namespace dnSpy.Text.Editor {
 					break;
 
 				case AdornmentPositioningBehavior.ViewportRelative:
-					SetTop(elem.Adornment, ToDefault(GetTop(elem.Adornment), 0) + e.NewViewState.ViewportTop - e.OldViewState.ViewportTop);
-					SetLeft(elem.Adornment, ToDefault(GetLeft(elem.Adornment), 0) + e.NewViewState.ViewportLeft - e.OldViewState.ViewportLeft);
+					Canvas.SetTop(elem.Adornment, ToDefault(Canvas.GetTop(elem.Adornment), 0) + e.NewViewState.ViewportTop - e.OldViewState.ViewportTop);
+					Canvas.SetLeft(elem.Adornment, ToDefault(Canvas.GetLeft(elem.Adornment), 0) + e.NewViewState.ViewportLeft - e.OldViewState.ViewportLeft);
 					break;
 
 				case AdornmentPositioningBehavior.TextRelative:
@@ -194,7 +182,7 @@ namespace dnSpy.Text.Editor {
 					var translatedLine = GetLine(e.TranslatedLines, GetOverlapsWithSpan(elem.VisualSpan.Value));
 					if (translatedLine != null) {
 						// Only y is updated, x is owner controlled
-						SetTop(elem.Adornment, ToDefault(GetTop(elem.Adornment), 0) + translatedLine.DeltaY);
+						Canvas.SetTop(elem.Adornment, ToDefault(Canvas.GetTop(elem.Adornment), 0) + translatedLine.DeltaY);
 					}
 					break;
 
@@ -207,11 +195,11 @@ namespace dnSpy.Text.Editor {
 		// Canvas.Top/Left default to NaN, not 0
 		static double ToDefault(double value, double defaultValue) => double.IsNaN(value) ? defaultValue : value;
 
-		static ITextViewLine GetLine(IList<ITextViewLine> lines, SnapshotSpan span) {
+		static HexViewLine GetLine(IList<HexViewLine> lines, HexBufferSpan span) {
 			foreach (var line in lines) {
-				if (line.ExtentIncludingLineBreak.OverlapsWith(span))
+				if (line.BufferSpan.OverlapsWith(span))
 					return line;
-				if (span.End == line.End && line.IsLastDocumentLine())
+				if (span.End == line.BufferSpan.End && line.IsLastDocumentLine())
 					return line;
 			}
 			return null;

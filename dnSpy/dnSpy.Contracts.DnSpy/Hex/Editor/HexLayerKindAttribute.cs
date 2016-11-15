@@ -17,19 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex {
+using Microsoft.VisualStudio.Utilities;
+
+namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Position affinity
+	/// Adds a layer kind
 	/// </summary>
-	public enum HexPositionAffinity {
+	public sealed class HexLayerKindAttribute : SingletonBaseMetadataAttribute {
 		/// <summary>
-		/// The position is coupled to the preceding character
+		/// Constructor
 		/// </summary>
-		Predecessor,
+		/// <param name="kind">Kind of layer</param>
+		public HexLayerKindAttribute(HexLayerKind kind) {
+			LayerKind = kind;
+		}
 
 		/// <summary>
-		/// The position is coupled to the following character
+		/// Layer kind
 		/// </summary>
-		Successor,
+		public HexLayerKind LayerKind { get; }
 	}
 }

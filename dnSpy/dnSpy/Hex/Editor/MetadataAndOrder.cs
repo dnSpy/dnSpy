@@ -17,22 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Tagging {
-	/// <summary>
-	/// Hex buffer tag aggregator factory service
-	/// </summary>
-	public abstract class HexBufferTagAggregatorFactoryService {
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		protected HexBufferTagAggregatorFactoryService() { }
-
-		/// <summary>
-		/// Creates a <see cref="HexTagAggregator{T}"/>
-		/// </summary>
-		/// <typeparam name="T">Tag type</typeparam>
-		/// <param name="buffer">Buffer</param>
-		/// <returns></returns>
-		public abstract HexTagAggregator<T> CreateTagAggregator<T>(HexBuffer buffer) where T : HexTag;
+namespace dnSpy.Hex.Editor {
+	struct MetadataAndOrder<TMetadata> {
+		public TMetadata Metadata { get; }
+		public int Order { get; }
+		public MetadataAndOrder(TMetadata metadata, int order) {
+			Metadata = metadata;
+			Order = order;
+		}
 	}
 }

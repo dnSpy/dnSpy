@@ -54,53 +54,53 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Creates a new <see cref="WpfHexView"/>
 		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
+		/// <param name="buffer">Buffer</param>
 		/// <returns></returns>
-		public virtual WpfHexView Create(HexBuffer hexBuffer) => Create(hexBuffer, (HexViewCreatorOptions)null);
+		public virtual WpfHexView Create(HexBuffer buffer) => Create(buffer, (HexViewCreatorOptions)null);
 
 		/// <summary>
 		/// Creates a new <see cref="WpfHexView"/>
 		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
+		/// <param name="buffer">Buffer</param>
 		/// <param name="roles">Roles</param>
 		/// <returns></returns>
-		public virtual WpfHexView Create(HexBuffer hexBuffer, ITextViewRoleSet roles) => Create(hexBuffer, roles, (HexViewCreatorOptions)null);
+		public virtual WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles) => Create(buffer, roles, (HexViewCreatorOptions)null);
 
 		/// <summary>
 		/// Creates a new <see cref="WpfHexView"/>
 		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
-		/// <param name="roles">Roles</param>
-		/// <param name="parentOptions">Parent options</param>
-		/// <returns></returns>
-		public virtual WpfHexView Create(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions) => Create(hexBuffer, roles, parentOptions, (HexViewCreatorOptions)null);
-
-		/// <summary>
-		/// Creates a new <see cref="WpfHexView"/>
-		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
-		/// <param name="options">Options or null</param>
-		/// <returns></returns>
-		public abstract WpfHexView Create(HexBuffer hexBuffer, HexViewCreatorOptions options);
-
-		/// <summary>
-		/// Creates a new <see cref="WpfHexView"/>
-		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
-		/// <param name="roles">Roles</param>
-		/// <param name="options">Options or null</param>
-		/// <returns></returns>
-		public abstract WpfHexView Create(HexBuffer hexBuffer, ITextViewRoleSet roles, HexViewCreatorOptions options);
-
-		/// <summary>
-		/// Creates a new <see cref="WpfHexView"/>
-		/// </summary>
-		/// <param name="hexBuffer">Buffer</param>
+		/// <param name="buffer">Buffer</param>
 		/// <param name="roles">Roles</param>
 		/// <param name="parentOptions">Parent options</param>
+		/// <returns></returns>
+		public virtual WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles, IEditorOptions parentOptions) => Create(buffer, roles, parentOptions, (HexViewCreatorOptions)null);
+
+		/// <summary>
+		/// Creates a new <see cref="WpfHexView"/>
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		public abstract WpfHexView Create(HexBuffer hexBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexViewCreatorOptions options);
+		public abstract WpfHexView Create(HexBuffer buffer, HexViewCreatorOptions options);
+
+		/// <summary>
+		/// Creates a new <see cref="WpfHexView"/>
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="roles">Roles</param>
+		/// <param name="options">Options or null</param>
+		/// <returns></returns>
+		public abstract WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles, HexViewCreatorOptions options);
+
+		/// <summary>
+		/// Creates a new <see cref="WpfHexView"/>
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="roles">Roles</param>
+		/// <param name="parentOptions">Parent options</param>
+		/// <param name="options">Options or null</param>
+		/// <returns></returns>
+		public abstract WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexViewCreatorOptions options);
 
 		/// <summary>
 		/// Creates a new <see cref="WpfHexViewHost"/>

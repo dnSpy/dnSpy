@@ -23,8 +23,8 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
-using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Formatting;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Formatting {
 	sealed class HexLinePartsTextSource : TextSource {
@@ -78,7 +78,7 @@ namespace dnSpy.Hex.Formatting {
 
 			public AdornmentTextRun(HexLinePart linePart) {
 				adornmentElement = linePart.AdornmentElement;
-				if (linePart.Span.Length != 0 || adornmentElement.Affinity == HexPositionAffinity.Successor) {
+				if (linePart.Span.Length != 0 || adornmentElement.Affinity == PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;
 					BreakAfter = LineBreakCondition.BreakRestrained;
 				}

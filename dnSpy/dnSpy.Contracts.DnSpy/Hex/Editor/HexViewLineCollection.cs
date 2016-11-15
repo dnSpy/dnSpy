@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, TextBoundsFlags flags);
+		public abstract Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Returns true if this collection contains <paramref name="bufferPosition"/>

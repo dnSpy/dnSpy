@@ -20,6 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using dnSpy.Contracts.Hex.Editor;
+using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.MEF {
 
@@ -31,6 +33,14 @@ namespace dnSpy.Hex.MEF {
 
 		[DefaultValue(null)]
 		IEnumerable<string> Replaces { get; }
+	}
+
+	public interface IAdornmentLayersMetadata : IOrderable {
+		[DefaultValue(false)]
+		bool IsOverlayLayer { get; }
+
+		[DefaultValue(HexLayerKind.Normal)]
+		HexLayerKind LayerKind { get; }
 	}
 
 	public interface ITaggerMetadata {
