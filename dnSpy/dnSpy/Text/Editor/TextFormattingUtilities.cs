@@ -20,27 +20,22 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using dnSpy.Text.Formatting;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	static class TextFormattingUtilities {
-		public static void UpdateForceClearTypeIfNeeded(DependencyObject target, IEditorOptions options, IClassificationFormatMap classificationFormatMap) {
+		public static void UpdateForceClearTypeIfNeeded(DependencyObject target, bool forceClearTypeIfNeeded, IClassificationFormatMap classificationFormatMap) {
 			if (target == null)
 				throw new ArgumentNullException(nameof(target));
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 
 			// Remote Desktop seems to force disable-ClearType so to prevent Consolas from looking
 			// really ugly and to prevent the colors (eg. keyword color) to look like different
 			// colors, force ClearType if the font is Consolas. VS also does this.
-			bool forceIfNeeded = options.IsForceClearTypeIfNeededEnabled();
 			var fontName = classificationFormatMap.DefaultTextProperties.GetFontName();
-			bool forceClearType = forceIfNeeded && IsForceClearTypeFontName(fontName);
+			bool forceClearType = forceClearTypeIfNeeded && IsForceClearTypeFontName(fontName);
 			if (forceClearType)
 				target.SetValue(TextOptions.TextRenderingModeProperty, TextRenderingMode.ClearType);
 			else

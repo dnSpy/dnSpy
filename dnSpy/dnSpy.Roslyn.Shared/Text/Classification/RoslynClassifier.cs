@@ -186,6 +186,7 @@ the_switch:
 				case MethodKind.PropertySet:
 				case MethodKind.BuiltinOperator:
 				case MethodKind.DeclareMethod:
+				case MethodKind.LocalFunction:
 				default:
 					if (methSym.IsExtensionMethod)
 						return roslynClassificationTypes.ExtensionMethod;

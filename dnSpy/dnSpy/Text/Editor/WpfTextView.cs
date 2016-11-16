@@ -237,20 +237,20 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void NotifyTextViewCreated(IContentType newContentType, IContentType oldContentType) {
-			foreach (var lazy in wpfTextViewCreationListeners) {
-				if (oldContentType != null && oldContentType.IsOfAnyType(lazy.Metadata.ContentTypes))
+			foreach (var lz in wpfTextViewCreationListeners) {
+				if (oldContentType != null && oldContentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
-				if (!TextDataModel.ContentType.IsOfAnyType(lazy.Metadata.ContentTypes))
+				if (!TextDataModel.ContentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
-				lazy.Value.TextViewCreated(this);
+				lz.Value.TextViewCreated(this);
 			}
 		}
 
-		public void InvalidateClassifications(SnapshotSpan span) {
+		void IDsWpfTextView.InvalidateClassifications(SnapshotSpan span) {
 			Dispatcher.VerifyAccess();
 			if (span.Snapshot == null)
 				throw new ArgumentException();
-			InvalidateSpans(new[] { span });
+			InvalidateSpan(span);
 		}
 
 		void DelayScreenRefresh() {
@@ -521,7 +521,7 @@ namespace dnSpy.Text.Editor {
 		}
 		double zoomLevel;
 
-		public WpfTextViewLineCollection TextViewLines {
+		WpfTextViewLineCollection TextViewLines {
 			get {
 				if (InLayout)
 					throw new InvalidOperationException();
@@ -653,7 +653,7 @@ namespace dnSpy.Text.Editor {
 				UpdateForceClearTypeIfNeeded();
 		}
 
-		void UpdateForceClearTypeIfNeeded() => TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, Options, classificationFormatMap);
+		void UpdateForceClearTypeIfNeeded() => TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, Options.IsForceClearTypeIfNeededEnabled(), classificationFormatMap);
 
 		bool IsVisiblePhysicalLinesSnapshot(ITextSnapshot snapshot) =>
 			visiblePhysicalLines.Count != 0 && visiblePhysicalLines[0].BufferSpan.Snapshot == snapshot;

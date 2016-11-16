@@ -27,34 +27,36 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Classification {
-	sealed class ViewEditorFormatMap : IEditorFormatMap {
+	abstract class ViewEditorFormatMap : IEditorFormatMap {
 		public bool IsInBatchUpdate => categoryMap.IsInBatchUpdate;
 		public event EventHandler<FormatItemsEventArgs> FormatMappingChanged;
 
-		readonly ITextView textView;
 		readonly IEditorFormatMapService editorFormatMapService;
+		readonly string appearanceCategoryName;
 		IEditorFormatMap categoryMap;
 		readonly HashSet<string> viewProps;
 
-		public ViewEditorFormatMap(ITextView textView, IEditorFormatMapService editorFormatMapService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
+		protected ViewEditorFormatMap(IEditorFormatMapService editorFormatMapService, string appearanceCategoryName) {
 			if (editorFormatMapService == null)
 				throw new ArgumentNullException(nameof(editorFormatMapService));
-			this.textView = textView;
+			if (appearanceCategoryName == null)
+				throw new ArgumentNullException(nameof(appearanceCategoryName));
 			this.editorFormatMapService = editorFormatMapService;
+			this.appearanceCategoryName = appearanceCategoryName;
 			this.viewProps = new HashSet<string>();
-			textView.Options.OptionChanged += Options_OptionChanged;
-			UpdateAppearanceMap();
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.AppearanceCategoryName)
+		protected void Initialize() => UpdateAppearanceMap();
+
+		protected void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			if (e.OptionId == appearanceCategoryName)
 				UpdateAppearanceMap();
 		}
 
+		protected abstract string GetAppearanceCategory();
+
 		void UpdateAppearanceMap() {
-			var newMap = editorFormatMapService.GetEditorFormatMap(textView.Options.AppearanceCategory());
+			var newMap = editorFormatMapService.GetEditorFormatMap(GetAppearanceCategory());
 			if (categoryMap == newMap)
 				return;
 
@@ -89,7 +91,25 @@ namespace dnSpy.Text.Classification {
 		public void Dispose() {
 			if (categoryMap != null)
 				categoryMap.FormatMappingChanged -= CategoryMap_FormatMappingChanged;
-			textView.Options.OptionChanged -= Options_OptionChanged;
+			DisposeCore();
 		}
+
+		protected abstract void DisposeCore();
+	}
+
+	sealed class TextViewEditorFormatMap : ViewEditorFormatMap {
+		readonly ITextView textView;
+
+		public TextViewEditorFormatMap(ITextView textView, IEditorFormatMapService editorFormatMapService)
+			: base(editorFormatMapService, DefaultWpfViewOptions.AppearanceCategoryName) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			this.textView = textView;
+			textView.Options.OptionChanged += Options_OptionChanged;
+			Initialize();
+		}
+
+		protected override string GetAppearanceCategory() => textView.Options.AppearanceCategory();
+		protected override void DisposeCore() => textView.Options.OptionChanged -= Options_OptionChanged;
 	}
 }

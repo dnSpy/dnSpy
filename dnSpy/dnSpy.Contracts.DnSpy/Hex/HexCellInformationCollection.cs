@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -36,11 +38,17 @@ namespace dnSpy.Contracts.Hex {
 		public static readonly HexCellInformationCollection Empty = new HexCellInformationCollection(Array.Empty<HexCellInformation>());
 
 		readonly HexCellInformation[] cells;
+		readonly int validStart, validEnd;
 
 		/// <summary>
 		/// Gets the number of elements in this collection
 		/// </summary>
 		public int Count => cells.Length;
+
+		/// <summary>
+		/// Gets the span of cells in the collection that have data (<see cref="HexCellInformation.HasData"/> is true)
+		/// </summary>
+		public Span HasDataSpan => Span.FromBounds(validStart, validEnd);
 
 		/// <summary>
 		/// Gets a cell
@@ -56,9 +64,28 @@ namespace dnSpy.Contracts.Hex {
 		public HexCellInformationCollection(HexCellInformation[] cells) {
 			if (cells == null)
 				throw new ArgumentNullException(nameof(cells));
+			for (int i = 0; i < cells.Length; i++) {
+				if (cells[i].HasData) {
+					validStart = i;
+					int j = cells.Length - 1;
+					while (!cells[j].HasData)
+						j--;
+					validEnd = j + 1;
+					goto done;
+				}
+			}
+			validStart = 0;
+			validEnd = 0;
+done:;
 #if DEBUG
 			for (int i = 0; i < cells.Length; i++) {
 				if (cells[i].Index != i)
+					throw new ArgumentException();
+				if (cells[i].HasData != (validStart <= i && i < validEnd))
+					throw new ArgumentException();
+			}
+			for (int i = validStart + 1; i < validEnd; i++) {
+				if (cells[i - 1].BufferEnd != cells[i].BufferStart)
 					throw new ArgumentException();
 			}
 #endif
@@ -71,10 +98,9 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="point">Point</param>
 		/// <returns></returns>
 		public HexCellInformation GetCell(HexBufferPoint point) {
-			foreach (var cell in cells) {
-				if (cell.HasData && cell.BufferSpan.Contains(point))
-					return cell;
-			}
+			int index = GetStartIndex(point);
+			if (validStart <= index && index < validEnd)
+				return cells[index];
 			return null;
 		}
 
@@ -85,10 +111,34 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="span">Span</param>
 		/// <returns></returns>
 		public IEnumerable<HexCellInformation> GetCells(HexBufferSpan span) {
-			foreach (var cell in cells) {
-				if (cell.HasData && cell.BufferSpan.Contains(span))
+			int index = GetStartIndex(span.Start);
+			if (index >= validStart) {
+				while (index < validEnd) {
+					var cell = cells[index];
+					Debug.Assert(cell.HasData);
+					if (span.End <= cell.BufferStart)
+						break;
+					Debug.Assert(span.Contains(cell.BufferSpan));
 					yield return cell;
+				}
 			}
+		}
+
+		int GetStartIndex(HexBufferPoint position) {
+			var array = cells;
+			int lo = validStart, hi = validEnd - 1;
+			while (lo <= hi) {
+				int index = (lo + hi) / 2;
+
+				var cell = array[index];
+				if (position < cell.BufferStart)
+					hi = index - 1;
+				else if (position >= cell.BufferEnd)
+					lo = index + 1;
+				else
+					return index;
+			}
+			return validStart <= lo && lo < validEnd ? lo : -1;
 		}
 	}
 }

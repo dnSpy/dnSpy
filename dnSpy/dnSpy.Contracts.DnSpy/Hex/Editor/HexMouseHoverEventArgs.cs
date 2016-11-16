@@ -30,20 +30,31 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public HexView View { get; }
 
 		/// <summary>
-		/// Gets the position
+		/// Gets the line
 		/// </summary>
-		public HexPosition Position { get; }
+		public HexBufferLine Line { get; }
+
+		/// <summary>
+		/// Gets the text position
+		/// </summary>
+		public int TextPosition { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="view">Hex view</param>
-		/// <param name="position">Position</param>
-		public HexMouseHoverEventArgs(HexView view, HexPosition position) {
+		/// <param name="line">Line</param>
+		/// <param name="textPosition">Text position</param>
+		public HexMouseHoverEventArgs(HexView view, HexBufferLine line, int textPosition) {
 			if (view == null)
 				throw new ArgumentNullException(nameof(view));
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			if (textPosition < 0)
+				throw new ArgumentOutOfRangeException(nameof(textPosition));
 			View = view;
-			Position = position;
+			Line = line;
+			TextPosition = textPosition;
 		}
 	}
 }

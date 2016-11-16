@@ -22,9 +22,57 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	[Export(typeof(HexEditorOptionDefinition))]
-	sealed class HexBytesDisplayFormatEditorOptionDefinition : HexViewOptionDefinition<HexBytesDisplayFormat> {
-		public override EditorOptionKey<HexBytesDisplayFormat> Key => DefaultHexViewOptions.HexBytesDisplayFormatId;
-		public override HexBytesDisplayFormat Default => HexBytesDisplayFormat.HexByte;
+	sealed class ShowOffsetColumnEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.ShowOffsetColumnId;
+		public override bool Default => true;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class ShowValuesColumnEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.ShowValuesColumnId;
+		public override bool Default => true;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class ShowAsciiColumnEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.ShowAsciiColumnId;
+		public override bool Default => true;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class StartPositionEditorOptionDefinition : HexViewOptionDefinition<HexPosition> {
+		public override EditorOptionKey<HexPosition> Key => DefaultHexViewOptions.StartPositionId;
+		public override HexPosition Default => 0;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class EndPositionEditorOptionDefinition : HexViewOptionDefinition<HexPosition> {
+		public override EditorOptionKey<HexPosition> Key => DefaultHexViewOptions.EndPositionId;
+		public override HexPosition Default => HexPosition.MaxEndPosition;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class BasePositionEditorOptionDefinition : HexViewOptionDefinition<HexPosition> {
+		public override EditorOptionKey<HexPosition> Key => DefaultHexViewOptions.BasePositionId;
+		public override HexPosition Default => 0;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class UseRelativePositionsEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.UseRelativePositionsId;
+		public override bool Default => false;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class OffsetBitSizeEditorOptionDefinition : HexViewOptionDefinition<int> {
+		public override EditorOptionKey<int> Key => DefaultHexViewOptions.OffsetBitSizeId;
+		public override int Default => 0;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class HexValuesDisplayFormatEditorOptionDefinition : HexViewOptionDefinition<HexValuesDisplayFormat> {
+		public override EditorOptionKey<HexValuesDisplayFormat> Key => DefaultHexViewOptions.HexValuesDisplayFormatId;
+		public override HexValuesDisplayFormat Default => HexValuesDisplayFormat.HexByte;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
@@ -34,8 +82,14 @@ namespace dnSpy.Contracts.Hex.Editor {
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
-	sealed class LowerCaseHexEditorOptionDefinition : HexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.LowerCaseHexId;
+	sealed class ValuesLowerCaseHexEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.ValuesLowerCaseHexId;
+		public override bool Default => false;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class OffsetLowerCaseHexEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.OffsetLowerCaseHexId;
 		public override bool Default => false;
 	}
 
@@ -54,6 +108,25 @@ namespace dnSpy.Contracts.Hex.Editor {
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class ViewProhibitUserInputEditorOptionDefinition : HexViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.ViewProhibitUserInputId;
+		public override bool Default => false;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class RefreshScreenOnChangeEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.RefreshScreenOnChangeId;
+		public override bool Default => false;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class RefreshScreenOnChangeWaitMilliSecondsEditorOptionDefinition : HexViewOptionDefinition<int> {
+		public override EditorOptionKey<int> Key => DefaultHexViewOptions.RefreshScreenOnChangeWaitMilliSecondsId;
+		public override int Default => DefaultHexViewOptions.DefaultRefreshScreenOnChangeWaitMilliSeconds;
+		public override bool IsValid(ref int proposedValue) => proposedValue >= 0;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class RemoveExtraTextLineVerticalPixelsEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.RemoveExtraTextLineVerticalPixelsId;
 		public override bool Default => false;
 	}
 }

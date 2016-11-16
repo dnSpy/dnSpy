@@ -19,12 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Windows.Media;
 using dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Hex.Editor {
-	[Export(typeof(HexSpaceReservationStack))]
 	sealed class HexSpaceReservationStackImpl : HexSpaceReservationStack {
 		public override event EventHandler GotAggregateFocus;
 		public override event EventHandler LostAggregateFocus;

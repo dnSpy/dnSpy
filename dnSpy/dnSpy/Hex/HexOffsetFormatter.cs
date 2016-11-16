@@ -25,6 +25,8 @@ namespace dnSpy.Hex {
 	abstract class HexOffsetFormatter {
 		public HexOffsetFormat Format { get; }
 		public int FormattedLength { get; }
+		public int OffsetBitSize => bitSize;
+		public bool LowerCaseHex => lowerCaseHex;
 
 		readonly string prefix;
 		readonly string suffix;

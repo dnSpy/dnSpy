@@ -33,25 +33,23 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Creates a <see cref="HexFormattedLineSource"/> that doesn't classify anything
 		/// </summary>
-		/// <param name="bufferLines">Buffer lines</param>
 		/// <param name="baseIndent">Base indentation</param>
 		/// <param name="useDisplayMode">true to use display mode, false to use ideal mode</param>
 		/// <param name="sequencer">Sequencer</param>
 		/// <param name="classificationFormatMap">Classification format map</param>
 		/// <returns></returns>
-		public virtual HexFormattedLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) =>
-			Create(bufferLines, baseIndent, useDisplayMode, NullHexClassifier.Instance, sequencer, classificationFormatMap);
+		public virtual HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) =>
+			Create(baseIndent, useDisplayMode, NullHexClassifier.Instance, sequencer, classificationFormatMap);
 
 		/// <summary>
 		/// Creates a <see cref="HexFormattedLineSource"/>
 		/// </summary>
-		/// <param name="bufferLines">Buffer lines</param>
 		/// <param name="baseIndent">Base indentation</param>
 		/// <param name="useDisplayMode">true to use display mode, false to use ideal mode</param>
 		/// <param name="aggregateClassifier">Classifier</param>
 		/// <param name="sequencer">Sequencer</param>
 		/// <param name="classificationFormatMap">Classification format map</param>
 		/// <returns></returns>
-		public abstract HexFormattedLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap);
+		public abstract HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap);
 	}
 }

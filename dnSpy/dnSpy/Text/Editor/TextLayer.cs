@@ -41,7 +41,7 @@ namespace dnSpy.Text.Editor {
 		public TextLayer(IAdornmentLayer adornmentLayer) {
 			if (adornmentLayer == null)
 				throw new ArgumentNullException(nameof(adornmentLayer));
-			this.lines = new List<LineInfo>();
+			lines = new List<LineInfo>();
 			adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);
 		}
 

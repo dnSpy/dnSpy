@@ -27,6 +27,10 @@ namespace dnSpy.Hex.MEF {
 
 	// All interfaces must be public or MEF will complain
 
+	public interface ITextViewRoleMetadata {
+		IEnumerable<string> TextViewRoles { get; }
+	}
+
 	public interface INameAndReplacesMetadata {
 		[DefaultValue(null)]
 		string Name { get; }
@@ -53,5 +57,10 @@ namespace dnSpy.Hex.MEF {
 	public interface IViewTaggerMetadata : INamedTaggerMetadata {
 		[DefaultValue(null)]
 		IEnumerable<string> TextViewRoles { get; }
+	}
+
+	public interface IDeferrableTextViewRoleMetadata : ITextViewRoleMetadata {
+		[DefaultValue(null)]
+		string OptionName { get; }
 	}
 }

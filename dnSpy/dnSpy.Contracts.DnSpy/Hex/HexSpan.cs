@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Hex {
 
 		// It's not public because public ctors should only take start and length params
 		HexSpan(HexPosition start, HexPosition end) {
-			if (start < end)
+			if (start > end)
 				throw new ArgumentOutOfRangeException(nameof(end));
 			if (end > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(end));

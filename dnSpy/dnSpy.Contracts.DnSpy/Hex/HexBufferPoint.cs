@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Hex {
 		/// Gets the <see cref="byte"/> or a value less than 0 if there's no data at <see cref="Position"/>
 		/// </summary>
 		/// <returns></returns>
-		public int TryGetByte() => Buffer.TryReadByte(Position);
+		public int TryGetByte() => Position >= HexPosition.MaxEndPosition ? -1 : Buffer.TryReadByte(Position);
 
 		/// <summary>
 		/// Add <paramref name="value"/>

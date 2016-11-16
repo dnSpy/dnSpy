@@ -37,11 +37,17 @@ namespace dnSpy.Hex {
 		const string stringPositiveInfinity = "Inf";
 		const string stringNegativeInfinity = "-Inf";
 
-		public HexBytesDisplayFormat Format { get; }
+		// sign, precision, decimal separator, E+NN
+		protected const int MaxSingleFormattedLength = 1 + 7 + 1 + 4;
+		protected const int MaxDoubleFormattedLength = 1 + 15 + 1 + 5;
+		const string SingleFormatString = "G7";
+		const string DoubleFormatString = "G15";
+
+		public HexValuesDisplayFormat Format { get; }
 		public int ByteCount { get; }
 		public int FormattedLength { get; }
 
-		protected HexValueFormatter(int byteCount, int formattedLength, HexBytesDisplayFormat format) {
+		protected HexValueFormatter(int byteCount, int formattedLength, HexValuesDisplayFormat format) {
 			Format = format;
 			ByteCount = byteCount;
 			FormattedLength = formattedLength;
@@ -127,7 +133,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexUInt16(StringBuilder dest, HexValueFormatterFlags flags, ushort? v) {
-			Debug.Assert(FormattedLength == 2);
+			Debug.Assert(FormattedLength == 4);
 			if (v == null)
 				return WriteInvalid(dest);
 			WriteHexUInt16(dest, flags, v.Value);
@@ -135,7 +141,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexUInt32(StringBuilder dest, HexValueFormatterFlags flags, uint? v) {
-			Debug.Assert(FormattedLength == 4);
+			Debug.Assert(FormattedLength == 8);
 			if (v == null)
 				return WriteInvalid(dest);
 			WriteHexUInt32(dest, flags, v.Value);
@@ -143,7 +149,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexUInt64(StringBuilder dest, HexValueFormatterFlags flags, ulong? v) {
-			Debug.Assert(FormattedLength == 8);
+			Debug.Assert(FormattedLength == 16);
 			if (v == null)
 				return WriteInvalid(dest);
 			WriteHexUInt64(dest, flags, v.Value);
@@ -278,7 +284,7 @@ namespace dnSpy.Hex {
 				return WriteFormattedValue(dest, stringPositiveInfinity);
 			if (float.IsNegativeInfinity(value))
 				return WriteFormattedValue(dest, stringNegativeInfinity);
-			return WriteFormattedValue(dest, value.ToString("G7", culture));
+			return WriteFormattedValue(dest, value.ToString(SingleFormatString, culture));
 		}
 
 		protected int FormatDouble(StringBuilder dest, HexValueFormatterFlags flags, double? v) {
@@ -291,13 +297,13 @@ namespace dnSpy.Hex {
 				return WriteFormattedValue(dest, stringPositiveInfinity);
 			if (double.IsNegativeInfinity(value))
 				return WriteFormattedValue(dest, stringNegativeInfinity);
-			return WriteFormattedValue(dest, value.ToString("G15", culture));
+			return WriteFormattedValue(dest, value.ToString(DoubleFormatString, culture));
 		}
 	}
 
 	sealed class HexByteValueFormatter : HexValueFormatter {
 		public HexByteValueFormatter()
-			: base(1, "FF".Length, HexBytesDisplayFormat.HexByte) {
+			: base(1, "FF".Length, HexValuesDisplayFormat.HexByte) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
@@ -311,7 +317,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexUInt16ValueFormatter : HexValueFormatter {
 		public HexUInt16ValueFormatter()
-			: base(2, "FFFF".Length, HexBytesDisplayFormat.HexUInt16) {
+			: base(2, "FFFF".Length, HexValuesDisplayFormat.HexUInt16) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -320,7 +326,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexUInt32ValueFormatter : HexValueFormatter {
 		public HexUInt32ValueFormatter()
-			: base(4, "FFFFFFFF".Length, HexBytesDisplayFormat.HexUInt32) {
+			: base(4, "FFFFFFFF".Length, HexValuesDisplayFormat.HexUInt32) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -329,7 +335,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexUInt64ValueFormatter : HexValueFormatter {
 		public HexUInt64ValueFormatter()
-			: base(8, "FFFFFFFFFFFFFFFF".Length, HexBytesDisplayFormat.HexUInt64) {
+			: base(8, "FFFFFFFFFFFFFFFF".Length, HexValuesDisplayFormat.HexUInt64) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -338,7 +344,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexSByteValueFormatter : HexValueFormatter {
 		public HexSByteValueFormatter()
-			: base(1, "-80".Length, HexBytesDisplayFormat.HexSByte) {
+			: base(1, "-80".Length, HexValuesDisplayFormat.HexSByte) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -347,7 +353,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexInt16ValueFormatter : HexValueFormatter {
 		public HexInt16ValueFormatter()
-			: base(2, "-8000".Length, HexBytesDisplayFormat.HexInt16) {
+			: base(2, "-8000".Length, HexValuesDisplayFormat.HexInt16) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -356,7 +362,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexInt32ValueFormatter : HexValueFormatter {
 		public HexInt32ValueFormatter()
-			: base(4, "-80000000".Length, HexBytesDisplayFormat.HexInt32) {
+			: base(4, "-80000000".Length, HexValuesDisplayFormat.HexInt32) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -365,7 +371,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexInt64ValueFormatter : HexValueFormatter {
 		public HexInt64ValueFormatter()
-			: base(8, "-8000000000000000".Length, HexBytesDisplayFormat.HexInt64) {
+			: base(8, "-8000000000000000".Length, HexValuesDisplayFormat.HexInt64) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -375,7 +381,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalByteValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = byte.MaxValue.ToString(culture).Length;
 		public DecimalByteValueFormatter()
-			: base(1, MAX_LENGTH, HexBytesDisplayFormat.DecimalByte) {
+			: base(1, MAX_LENGTH, HexValuesDisplayFormat.DecimalByte) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
@@ -389,7 +395,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalUInt16ValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = ushort.MaxValue.ToString(culture).Length;
 		public DecimalUInt16ValueFormatter()
-			: base(2, MAX_LENGTH, HexBytesDisplayFormat.DecimalUInt16) {
+			: base(2, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt16) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -399,7 +405,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalUInt32ValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = uint.MaxValue.ToString(culture).Length;
 		public DecimalUInt32ValueFormatter()
-			: base(4, MAX_LENGTH, HexBytesDisplayFormat.DecimalUInt32) {
+			: base(4, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt32) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -409,7 +415,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalUInt64ValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = ulong.MaxValue.ToString(culture).Length;
 		public DecimalUInt64ValueFormatter()
-			: base(8, MAX_LENGTH, HexBytesDisplayFormat.DecimalUInt64) {
+			: base(8, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt64) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -419,7 +425,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalSByteValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = sbyte.MinValue.ToString(culture).Length;
 		public DecimalSByteValueFormatter()
-			: base(1, MAX_LENGTH, HexBytesDisplayFormat.DecimalSByte) {
+			: base(1, MAX_LENGTH, HexValuesDisplayFormat.DecimalSByte) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -429,7 +435,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalInt16ValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = short.MinValue.ToString(culture).Length;
 		public DecimalInt16ValueFormatter()
-			: base(2, MAX_LENGTH, HexBytesDisplayFormat.DecimalInt16) {
+			: base(2, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt16) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -439,7 +445,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalInt32ValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = int.MinValue.ToString(culture).Length;
 		public DecimalInt32ValueFormatter()
-			: base(4, MAX_LENGTH, HexBytesDisplayFormat.DecimalInt32) {
+			: base(4, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt32) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -449,7 +455,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalInt64ValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = long.MinValue.ToString(culture).Length;
 		public DecimalInt64ValueFormatter()
-			: base(8, MAX_LENGTH, HexBytesDisplayFormat.DecimalInt64) {
+			: base(8, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt64) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -458,7 +464,7 @@ namespace dnSpy.Hex {
 
 	sealed class SingleValueFormatter : HexValueFormatter {
 		public SingleValueFormatter()
-			: base(4, 7, HexBytesDisplayFormat.Single) {
+			: base(4, MaxSingleFormattedLength, HexValuesDisplayFormat.Single) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -467,7 +473,7 @@ namespace dnSpy.Hex {
 
 	sealed class DoubleValueFormatter : HexValueFormatter {
 		public DoubleValueFormatter()
-			: base(8, 15, HexBytesDisplayFormat.Double) {
+			: base(8, MaxDoubleFormattedLength, HexValuesDisplayFormat.Double) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -476,7 +482,7 @@ namespace dnSpy.Hex {
 
 	sealed class Bit8ValueFormatter : HexValueFormatter {
 		public Bit8ValueFormatter()
-			: base(1, "11111111".Length, HexBytesDisplayFormat.Bit8) {
+			: base(1, "11111111".Length, HexValuesDisplayFormat.Bit8) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
@@ -491,7 +497,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexUInt16BigEndianValueFormatter : HexValueFormatter {
 		public HexUInt16BigEndianValueFormatter()
-			: base(2, "FFFF".Length, HexBytesDisplayFormat.HexUInt16BigEndian) {
+			: base(2, "FFFF".Length, HexValuesDisplayFormat.HexUInt16BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -500,7 +506,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexUInt32BigEndianValueFormatter : HexValueFormatter {
 		public HexUInt32BigEndianValueFormatter()
-			: base(4, "FFFFFFFF".Length, HexBytesDisplayFormat.HexUInt32BigEndian) {
+			: base(4, "FFFFFFFF".Length, HexValuesDisplayFormat.HexUInt32BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -509,7 +515,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexUInt64BigEndianValueFormatter : HexValueFormatter {
 		public HexUInt64BigEndianValueFormatter()
-			: base(8, "FFFFFFFFFFFFFFFF".Length, HexBytesDisplayFormat.HexUInt64BigEndian) {
+			: base(8, "FFFFFFFFFFFFFFFF".Length, HexValuesDisplayFormat.HexUInt64BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -518,7 +524,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexInt16BigEndianValueFormatter : HexValueFormatter {
 		public HexInt16BigEndianValueFormatter()
-			: base(2, "-8000".Length, HexBytesDisplayFormat.HexInt16BigEndian) {
+			: base(2, "-8000".Length, HexValuesDisplayFormat.HexInt16BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -527,7 +533,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexInt32BigEndianValueFormatter : HexValueFormatter {
 		public HexInt32BigEndianValueFormatter()
-			: base(4, "-80000000".Length, HexBytesDisplayFormat.HexInt32BigEndian) {
+			: base(4, "-80000000".Length, HexValuesDisplayFormat.HexInt32BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -536,7 +542,7 @@ namespace dnSpy.Hex {
 
 	sealed class HexInt64BigEndianValueFormatter : HexValueFormatter {
 		public HexInt64BigEndianValueFormatter()
-			: base(8, "-8000000000000000".Length, HexBytesDisplayFormat.HexInt64BigEndian) {
+			: base(8, "-8000000000000000".Length, HexValuesDisplayFormat.HexInt64BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -546,7 +552,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalUInt16BigEndianValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = ushort.MaxValue.ToString(culture).Length;
 		public DecimalUInt16BigEndianValueFormatter()
-			: base(2, MAX_LENGTH, HexBytesDisplayFormat.DecimalUInt16BigEndian) {
+			: base(2, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt16BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -556,7 +562,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalUInt32BigEndianValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = uint.MaxValue.ToString(culture).Length;
 		public DecimalUInt32BigEndianValueFormatter()
-			: base(4, MAX_LENGTH, HexBytesDisplayFormat.DecimalUInt32BigEndian) {
+			: base(4, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt32BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -566,7 +572,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalUInt64BigEndianValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = ulong.MaxValue.ToString(culture).Length;
 		public DecimalUInt64BigEndianValueFormatter()
-			: base(8, MAX_LENGTH, HexBytesDisplayFormat.DecimalUInt64BigEndian) {
+			: base(8, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt64BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -576,7 +582,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalInt16BigEndianValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = short.MinValue.ToString(culture).Length;
 		public DecimalInt16BigEndianValueFormatter()
-			: base(2, MAX_LENGTH, HexBytesDisplayFormat.DecimalInt16BigEndian) {
+			: base(2, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt16BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -586,7 +592,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalInt32BigEndianValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = int.MinValue.ToString(culture).Length;
 		public DecimalInt32BigEndianValueFormatter()
-			: base(4, MAX_LENGTH, HexBytesDisplayFormat.DecimalInt32BigEndian) {
+			: base(4, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt32BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -596,7 +602,7 @@ namespace dnSpy.Hex {
 	sealed class DecimalInt64BigEndianValueFormatter : HexValueFormatter {
 		static readonly int MAX_LENGTH = long.MinValue.ToString(culture).Length;
 		public DecimalInt64BigEndianValueFormatter()
-			: base(8, MAX_LENGTH, HexBytesDisplayFormat.DecimalInt64BigEndian) {
+			: base(8, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt64BigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -605,7 +611,7 @@ namespace dnSpy.Hex {
 
 	sealed class SingleBigEndianValueFormatter : HexValueFormatter {
 		public SingleBigEndianValueFormatter()
-			: base(4, 7, HexBytesDisplayFormat.SingleBigEndian) {
+			: base(4, MaxSingleFormattedLength, HexValuesDisplayFormat.SingleBigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
@@ -614,7 +620,7 @@ namespace dnSpy.Hex {
 
 	sealed class DoubleBigEndianValueFormatter : HexValueFormatter {
 		public DoubleBigEndianValueFormatter()
-			: base(8, 15, HexBytesDisplayFormat.DoubleBigEndian) {
+			: base(8, MaxDoubleFormattedLength, HexValuesDisplayFormat.DoubleBigEndian) {
 		}
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>

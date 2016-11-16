@@ -22,54 +22,56 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Predefined hex adornment layer names
 	/// </summary>
 	public static class PredefinedHexAdornmentLayers {
+		const string prefix = "hex-";
+
 		/// <summary>
 		/// Bottom layer. All layers should normally be after this layer.
 		/// </summary>
-		public const string BottomLayer = nameof(BottomLayer);
+		public const string BottomLayer = prefix + nameof(BottomLayer);
 
 		/// <summary>
 		/// Top layer. All layers should normally be before this layer.
 		/// </summary>
-		public const string TopLayer = nameof(TopLayer);
+		public const string TopLayer = prefix + nameof(TopLayer);
 
 		/// <summary>
 		/// Caret adornment layer
 		/// </summary>
-		public const string Caret = nameof(Caret);
+		public const string Caret = prefix + nameof(Caret);
 
 		/// <summary>
 		/// Current line highlighter adornment layer
 		/// </summary>
-		public const string CurrentLineHighlighter = nameof(CurrentLineHighlighter);
+		public const string CurrentLineHighlighter = prefix + nameof(CurrentLineHighlighter);
 
 		/// <summary>
 		/// Selection adornment layer
 		/// </summary>
-		public const string Selection = nameof(Selection);
+		public const string Selection = prefix + nameof(Selection);
 
 		/// <summary>
 		/// Text adornment layer
 		/// </summary>
-		public const string Text = nameof(Text);
+		public const string Text = prefix + nameof(Text);
 
 		/// <summary>
 		/// Text marker adornment layer for markers with a negative z-index
 		/// </summary>
-		public const string NegativeTextMarker = nameof(NegativeTextMarker);
+		public const string NegativeTextMarker = prefix + nameof(NegativeTextMarker);
 
 		/// <summary>
 		/// Text marker adornment layer
 		/// </summary>
-		public const string TextMarker = nameof(TextMarker);
+		public const string TextMarker = prefix + nameof(TextMarker);
 
 		/// <summary>
 		/// Background image adornment layer
 		/// </summary>
-		public const string BackgroundImage = nameof(BackgroundImage);
+		public const string BackgroundImage = prefix + nameof(BackgroundImage);
 
 		/// <summary>
 		/// Search adornment layer
 		/// </summary>
-		public const string Search = nameof(Search);
+		public const string Search = prefix + nameof(Search);
 	}
 }

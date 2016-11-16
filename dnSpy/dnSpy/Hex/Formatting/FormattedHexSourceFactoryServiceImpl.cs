@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Text.Formatting;
@@ -35,16 +34,14 @@ namespace dnSpy.Hex.Formatting {
 			this.textFormatterProvider = textFormatterProvider;
 		}
 
-		public override HexFormattedLineSource Create(HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
-			if (bufferLines == null)
-				throw new ArgumentNullException(nameof(bufferLines));
+		public override HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
 			if (aggregateClassifier == null)
 				throw new ArgumentNullException(nameof(aggregateClassifier));
 			if (sequencer == null)
 				throw new ArgumentNullException(nameof(sequencer));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			return new HexFormattedLineSourceImpl(textFormatterProvider, bufferLines, baseIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap);
+			return new HexFormattedLineSourceImpl(textFormatterProvider, baseIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap);
 		}
 	}
 }

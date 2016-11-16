@@ -41,6 +41,16 @@ namespace dnSpy.Contracts.Hex {
 		public HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
+		/// Gets the start position
+		/// </summary>
+		public HexBufferPoint BufferStart => BufferSpan.Start;
+
+		/// <summary>
+		/// Gets the end position
+		/// </summary>
+		public HexBufferPoint BufferEnd => BufferSpan.End;
+
+		/// <summary>
 		/// Span of the text
 		/// </summary>
 		public Span TextSpan { get; }

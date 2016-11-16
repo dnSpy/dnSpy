@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
+
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Creates <see cref="HexBufferLine"/>s
@@ -33,24 +35,99 @@ namespace dnSpy.Contracts.Hex {
 		public abstract HexBuffer Buffer { get; }
 
 		/// <summary>
-		/// Number of lines. There's always at least one line even if <see cref="Span"/> is empty.
+		/// Gets the buffer span
+		/// </summary>
+		public abstract HexBufferSpan BufferSpan { get; }
+
+		/// <summary>
+		/// Gets the start position
+		/// </summary>
+		public HexBufferPoint BufferStart => BufferSpan.Start;
+
+		/// <summary>
+		/// Gets the end position
+		/// </summary>
+		public HexBufferPoint BufferEnd => BufferSpan.End;
+
+		/// <summary>
+		/// Number of lines. There's always at least one line.
 		/// </summary>
 		public abstract HexPosition LineCount { get; }
 
 		/// <summary>
-		/// Gets the span
-		/// </summary>
-		public abstract HexSpan Span { get; }
-
-		/// <summary>
-		/// Gets the number of characters per line
+		/// Number of characters per line
 		/// </summary>
 		public abstract int CharsPerLine { get; }
 
 		/// <summary>
-		/// Gets the number of bytes per line
+		/// Number of bytes per line or 0 to fit to width
 		/// </summary>
-		public abstract uint BytesPerLine { get; }
+		public abstract int BytesPerLine { get; }
+
+		/// <summary>
+		/// true to show the offset
+		/// </summary>
+		public abstract bool ShowOffset { get; }
+
+		/// <summary>
+		/// true to use lower case hex
+		/// </summary>
+		public abstract bool OffsetLowerCaseHex { get; }
+
+		/// <summary>
+		/// Offset format
+		/// </summary>
+		public abstract HexOffsetFormat OffsetFormat { get; }
+
+		/// <summary>
+		/// First position to show
+		/// </summary>
+		public abstract HexPosition StartPosition { get; }
+
+		/// <summary>
+		/// End position
+		/// </summary>
+		public abstract HexPosition EndPosition { get; }
+
+		/// <summary>
+		/// Base position
+		/// </summary>
+		public abstract HexPosition BasePosition { get; }
+
+		/// <summary>
+		/// true if all visible positions are relative to <see cref="StartPosition"/>
+		/// </summary>
+		public abstract bool UseRelativePositions { get; }
+
+		/// <summary>
+		/// true to show the values
+		/// </summary>
+		public abstract bool ShowValues { get; }
+
+		/// <summary>
+		/// true to use lower case hex
+		/// </summary>
+		public abstract bool ValuesLowerCaseHex { get; }
+
+		/// <summary>
+		/// Number of bits of the offset to show
+		/// </summary>
+		public abstract int OffsetBitSize { get; }
+
+		/// <summary>
+		/// Values format
+		/// </summary>
+		public abstract HexValuesDisplayFormat ValuesFormat { get; }
+
+		/// <summary>
+		/// true to show ASCII chars
+		/// </summary>
+		public abstract bool ShowAscii { get; }
+
+		/// <summary>
+		/// Column order
+		/// </summary>
+		public abstract ReadOnlyCollection<HexColumnType> ColumnOrder { get; }
 
 		/// <summary>
 		/// Returns a line
@@ -96,7 +173,7 @@ namespace dnSpy.Contracts.Hex {
 		public virtual bool IsValidPosition(HexBufferPoint position) {
 			if (position.Buffer != Buffer)
 				return false;
-			return Span.Length == 0 ? Span.Start == position : Span.Contains(position);
+			return StartPosition == EndPosition ? StartPosition == position : StartPosition <= position && position < EndPosition;
 		}
 	}
 }

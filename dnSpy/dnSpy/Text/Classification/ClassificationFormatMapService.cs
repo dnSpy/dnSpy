@@ -23,10 +23,16 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using HEX = dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Text.Classification {
+	interface IDsClassificationFormatMapService : IClassificationFormatMapService {
+		IClassificationFormatMap GetClassificationFormatMap(HEX.HexView textView);
+	}
+
+	[Export(typeof(IDsClassificationFormatMapService))]
 	[Export(typeof(IClassificationFormatMapService))]
-	sealed class ClassificationFormatMapService : IClassificationFormatMapService {
+	sealed class ClassificationFormatMapService : IDsClassificationFormatMapService {
 		readonly IThemeService themeService;
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
@@ -48,9 +54,20 @@ namespace dnSpy.Text.Classification {
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(textView));
 		}
 
+		public IClassificationFormatMap GetClassificationFormatMap(HEX.HexView hexView) {
+			if (hexView == null)
+				throw new ArgumentNullException(nameof(hexView));
+			return hexView.Properties.GetOrCreateSingletonProperty(typeof(ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(hexView));
+		}
+
 		ViewClassificationFormatMap CreateViewClassificationFormatMap(ITextView textView) {
 			textView.Closed += TextView_Closed;
-			return new ViewClassificationFormatMap(this, textView);
+			return new TextViewClassificationFormatMap(this, textView);
+		}
+
+		ViewClassificationFormatMap CreateViewClassificationFormatMap(HEX.HexView hexView) {
+			hexView.Closed += HexView_Closed;
+			return new HexViewClassificationFormatMap(this, hexView);
 		}
 
 		static void TextView_Closed(object sender, EventArgs e) {
@@ -58,6 +75,14 @@ namespace dnSpy.Text.Classification {
 			textView.Closed -= TextView_Closed;
 			var map = (ViewClassificationFormatMap)textView.Properties[typeof(ViewClassificationFormatMap)];
 			textView.Properties.RemoveProperty(typeof(ViewClassificationFormatMap));
+			map.Dispose();
+		}
+
+		static void HexView_Closed(object sender, EventArgs e) {
+			var hexView = (HEX.HexView)sender;
+			hexView.Closed -= HexView_Closed;
+			var map = (ViewClassificationFormatMap)hexView.Properties[typeof(ViewClassificationFormatMap)];
+			hexView.Properties.RemoveProperty(typeof(ViewClassificationFormatMap));
 			map.Dispose();
 		}
 

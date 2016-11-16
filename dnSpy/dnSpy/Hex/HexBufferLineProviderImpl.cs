@@ -24,17 +24,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using dnSpy.Contracts.Hex;
-using Microsoft.VisualStudio.Text;
 using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex {
 	sealed class HexBufferLineProviderImpl : HexBufferLineProvider {
-		const HexBytesDisplayFormat HexBytesDisplayFormat_First = HexBytesDisplayFormat.HexByte;
-		const HexBytesDisplayFormat HexBytesDisplayFormat_Last = HexBytesDisplayFormat.DoubleBigEndian;
+		const HexValuesDisplayFormat HexValuesDisplayFormat_First = HexValuesDisplayFormat.HexByte;
+		const HexValuesDisplayFormat HexValuesDisplayFormat_Last = HexValuesDisplayFormat.DoubleBigEndian;
 		const HexOffsetFormat HexOffsetFormat_First = HexOffsetFormat.Hex;
 		const HexOffsetFormat HexOffsetFormat_Last = HexOffsetFormat.HexAssembly;
 
-		static HexValueFormatter[] valueFormatters = new HexValueFormatter[HexBytesDisplayFormat_Last - HexBytesDisplayFormat_First + 1] {
+		static HexValueFormatter[] valueFormatters = new HexValueFormatter[HexValuesDisplayFormat_Last - HexValuesDisplayFormat_First + 1] {
 			new HexByteValueFormatter(),
 			new HexUInt16ValueFormatter(),
 			new HexUInt32ValueFormatter(),
@@ -72,23 +71,37 @@ namespace dnSpy.Hex {
 
 		static HexBufferLineProviderImpl() {
 			for (int i = 0; i < valueFormatters.Length; i++) {
-				if (valueFormatters[i].Format != (HexBytesDisplayFormat)i)
+				if (valueFormatters[i].Format != (HexValuesDisplayFormat)i)
 					throw new InvalidOperationException();
 			}
-			foreach (var fi in typeof(HexBytesDisplayFormat).GetFields()) {
+			foreach (var fi in typeof(HexValuesDisplayFormat).GetFields()) {
 				if (!fi.IsLiteral)
 					continue;
-				var value = (HexBytesDisplayFormat)fi.GetValue(null);
-				if (value < HexBytesDisplayFormat_First || value > HexBytesDisplayFormat_Last)
+				var value = (HexValuesDisplayFormat)fi.GetValue(null);
+				if (value < HexValuesDisplayFormat_First || value > HexValuesDisplayFormat_Last)
 					throw new InvalidOperationException();
 			}
 		}
 
 		public override HexBuffer Buffer => buffer;
+		public override HexBufferSpan BufferSpan => HexBufferSpan.FromBounds(new HexBufferPoint(buffer, startPosition), new HexBufferPoint(buffer, endPosition));
 		public override HexPosition LineCount { get; }
-		public override HexSpan Span => HexSpan.FromBounds(startPosition, endPosition);
+
 		public override int CharsPerLine { get; }
-		public override uint BytesPerLine => (uint)bytesPerLine;
+		public override int BytesPerLine => (int)bytesPerLine;
+		public override bool ShowOffset => showOffset;
+		public override bool OffsetLowerCaseHex => offsetFormatter.LowerCaseHex;
+		public override HexOffsetFormat OffsetFormat => offsetFormatter.Format;
+		public override HexPosition StartPosition => startPosition;
+		public override HexPosition EndPosition => endPosition;
+		public override HexPosition BasePosition => basePosition;
+		public override bool UseRelativePositions => useRelativePositions;
+		public override bool ShowValues => showValues;
+		public override bool ValuesLowerCaseHex => valuesLowerCaseHex;
+		public override int OffsetBitSize => offsetFormatter.OffsetBitSize;
+		public override HexValuesDisplayFormat ValuesFormat => valueFormatter.Format;
+		public override bool ShowAscii => showAscii;
+		public override ReadOnlyCollection<HexColumnType> ColumnOrder => columnOrder;
 
 		readonly HexBuffer buffer;
 		readonly StringBuilder stringBuilder;
@@ -127,17 +140,17 @@ namespace dnSpy.Hex {
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.EndPosition > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.StartPosition < options.EndPosition)
+			if (options.StartPosition > options.EndPosition)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.BasePosition >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.OffsetBitSize < HexBufferLineProviderOptions.MinOffsetBitSize || options.OffsetBitSize > HexBufferLineProviderOptions.MaxOffsetBitSize)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.ValuesFormat < HexBytesDisplayFormat_First || options.ValuesFormat > HexBytesDisplayFormat_Last)
+			if (options.ValuesFormat < HexValuesDisplayFormat_First || options.ValuesFormat > HexValuesDisplayFormat_Last)
 				throw new ArgumentOutOfRangeException(nameof(options));
 
 			this.buffer = buffer;
-			columnOrder = TryCreateColumns(options.ColumnOrders ?? defaultColumnOrders);
+			columnOrder = TryCreateColumns(options.ColumnOrder ?? defaultColumnOrders);
 			if (columnOrder == null)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			cellList = new List<HexCellInformation>();
@@ -322,11 +335,11 @@ namespace dnSpy.Hex {
 
 			var hexBytes = buffer.ReadHexBytes(lineSpan.Start, (long)lineSpan.Length.ToUInt64());
 
-			var offsetSpan = default(Span);
-			var fullValuesSpan = default(Span);
-			var visibleValuesSpan = default(Span);
-			var fullAsciiSpan = default(Span);
-			var visibleAsciiSpan = default(Span);
+			var offsetSpan = default(VST.Span);
+			var fullValuesSpan = default(VST.Span);
+			var visibleValuesSpan = default(VST.Span);
+			var fullAsciiSpan = default(VST.Span);
+			var visibleAsciiSpan = default(VST.Span);
 
 			var valueCells = Array.Empty<HexCellInformation>();
 			var asciiCells = Array.Empty<HexCellInformation>();
@@ -382,14 +395,14 @@ namespace dnSpy.Hex {
 			cellList.Clear();
 		}
 
-		void WriteOffset(HexPosition logicalPosition, out Span offsetSpan) {
+		void WriteOffset(HexPosition logicalPosition, out VST.Span offsetSpan) {
 			Debug.Assert(showOffset);
 			int start = CurrentTextIndex;
 			offsetFormatter.FormatOffset(stringBuilder, logicalPosition);
 			offsetSpan = VST.Span.FromBounds(start, CurrentTextIndex);
 		}
 
-		HexCellInformation[] WriteValues(HexBytes hexBytes, HexSpan visibleBytesSpan, out Span fullSpan, out Span visibleSpan) {
+		HexCellInformation[] WriteValues(HexBytes hexBytes, HexSpan visibleBytesSpan, out VST.Span fullSpan, out VST.Span visibleSpan) {
 			Debug.Assert(showValues);
 			cellList.Clear();
 			int fullStart = CurrentTextIndex;
@@ -414,11 +427,11 @@ namespace dnSpy.Hex {
 					var bufferSpan = new HexBufferSpan(buffer, new HexSpan(pos, (ulong)valueFormatter.ByteCount));
 					var textSpan = VST.Span.FromBounds(cellStart + spaces, CurrentTextIndex);
 					var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
-					Span separatorSpan;
+					VST.Span separatorSpan;
 					if (i + 1 < cellCount)
-						separatorSpan = new Span(CurrentTextIndex, 1);
+						separatorSpan = new VST.Span(CurrentTextIndex, 1);
 					else
-						separatorSpan = new Span(CurrentTextIndex, 0);
+						separatorSpan = new VST.Span(CurrentTextIndex, 0);
 					var cellFullSpan = VST.Span.FromBounds(cellStart, separatorSpan.End);
 					cellList.Add(new HexCellInformation((int)i, bufferSpan, textSpan, cellSpan, separatorSpan, cellFullSpan));
 				}
@@ -434,12 +447,12 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 			if (visStart != null && visEnd == null)
 				visEnd = CurrentTextIndex;
-			visibleSpan = visStart == null ? default(Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
+			visibleSpan = visStart == null ? default(VST.Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
 			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
 			return cellList.ToArray();
 		}
 
-		HexCellInformation[] WriteAscii(HexBytes hexBytes, HexSpan visibleBytesSpan, out Span fullSpan, out Span visibleSpan) {
+		HexCellInformation[] WriteAscii(HexBytes hexBytes, HexSpan visibleBytesSpan, out VST.Span fullSpan, out VST.Span visibleSpan) {
 			Debug.Assert(showAscii);
 			cellList.Clear();
 			int fullStart = CurrentTextIndex;
@@ -451,16 +464,22 @@ namespace dnSpy.Hex {
 				if (visibleBytesSpan.Contains(pos)) {
 					if (visStart == null)
 						visStart = CurrentTextIndex;
+					int cellStart = CurrentTextIndex;
 					long index = (long)(pos - visibleBytesSpan.Start).ToUInt64();
 					int b = hexBytes.TryReadByte(index);
 					if (b < 0x20 || b > 0x7E)
 						stringBuilder.Append('.');
 					else
 						stringBuilder.Append((char)b);
+					var bufferSpan = new HexBufferSpan(buffer, new HexSpan(pos, 1));
+					var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
+					var separatorSpan = new VST.Span(cellSpan.End, 0);
+					cellList.Add(new HexCellInformation((int)i, bufferSpan, cellSpan, cellSpan, separatorSpan, cellSpan));
 				}
 				else {
 					if (visStart != null && visEnd == null)
 						visEnd = CurrentTextIndex;
+					cellList.Add(new HexCellInformation((int)i));
 					stringBuilder.Append(' ');
 				}
 			}
@@ -468,7 +487,7 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 			if (visStart != null && visEnd == null)
 				visEnd = CurrentTextIndex;
-			visibleSpan = visStart == null ? default(Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
+			visibleSpan = visStart == null ? default(VST.Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
 			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
 			return cellList.ToArray();
 		}

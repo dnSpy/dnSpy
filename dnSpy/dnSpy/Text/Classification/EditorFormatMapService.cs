@@ -24,10 +24,16 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using HEX = dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Text.Classification {
+	interface IDsEditorFormatMapService : IEditorFormatMapService {
+		IEditorFormatMap GetEditorFormatMap(HEX.HexView view);
+	}
+
+	[Export(typeof(IDsEditorFormatMapService))]
 	[Export(typeof(IEditorFormatMapService))]
-	sealed class EditorFormatMapService : IEditorFormatMapService {
+	sealed class EditorFormatMapService : IDsEditorFormatMapService {
 		readonly IThemeService themeService;
 		readonly ITextEditorFontSettingsService textEditorFontSettingsService;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
@@ -51,9 +57,20 @@ namespace dnSpy.Text.Classification {
 			return view.Properties.GetOrCreateSingletonProperty(typeof(ViewEditorFormatMap), () => CreateViewEditorFormatMap(view));
 		}
 
+		public IEditorFormatMap GetEditorFormatMap(HEX.HexView view) {
+			if (view == null)
+				throw new ArgumentNullException(nameof(view));
+			return view.Properties.GetOrCreateSingletonProperty(typeof(ViewEditorFormatMap), () => CreateViewEditorFormatMap(view));
+		}
+
 		ViewEditorFormatMap CreateViewEditorFormatMap(ITextView textView) {
 			textView.Closed += TextView_Closed;
-			return new ViewEditorFormatMap(textView, this);
+			return new TextViewEditorFormatMap(textView, this);
+		}
+
+		ViewEditorFormatMap CreateViewEditorFormatMap(HEX.HexView hexView) {
+			hexView.Closed += HexView_Closed;
+			return new HexViewEditorFormatMap(hexView, this);
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {
@@ -61,6 +78,14 @@ namespace dnSpy.Text.Classification {
 			textView.Closed -= TextView_Closed;
 			var map = (ViewEditorFormatMap)textView.Properties[typeof(ViewEditorFormatMap)];
 			textView.Properties.RemoveProperty(typeof(ViewEditorFormatMap));
+			map.Dispose();
+		}
+
+		void HexView_Closed(object sender, EventArgs e) {
+			var hexView = (HEX.HexView)sender;
+			hexView.Closed -= HexView_Closed;
+			var map = (ViewEditorFormatMap)hexView.Properties[typeof(ViewEditorFormatMap)];
+			hexView.Properties.RemoveProperty(typeof(ViewEditorFormatMap));
 			map.Dispose();
 		}
 

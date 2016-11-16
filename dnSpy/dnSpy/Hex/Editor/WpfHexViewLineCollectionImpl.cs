@@ -32,21 +32,17 @@ namespace dnSpy.Hex.Editor {
 	sealed class WpfHexViewLineCollectionImpl : WpfHexViewLineCollection {
 		readonly WpfHexView hexView;
 		readonly ReadOnlyCollection<WpfHexViewLine> lines;
-		readonly HexBuffer buffer;
 
-		public WpfHexViewLineCollectionImpl(WpfHexView hexView, HexBuffer buffer, IList<WpfHexViewLine> lines) {
+		public WpfHexViewLineCollectionImpl(WpfHexView hexView, IList<WpfHexViewLine> lines) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
 			if (lines == null)
 				throw new ArgumentNullException(nameof(lines));
 			this.hexView = hexView;
-			this.buffer = buffer;
 			this.lines = new ReadOnlyCollection<WpfHexViewLine>(lines);
 			isValid = true;
 			if (lines.Count == 0)
-				formattedSpan = new HexBufferSpan(buffer, new HexSpan(HexPosition.Zero, 0));
+				formattedSpan = new HexBufferSpan(hexView.Buffer, new HexSpan(HexPosition.Zero, 0));
 			else
 				formattedSpan = new HexBufferSpan(lines[0].BufferSpan.Start, lines[lines.Count - 1].BufferSpan.End);
 			Debug.Assert(this.lines.Count > 0);
@@ -104,7 +100,7 @@ namespace dnSpy.Hex.Editor {
 		public override bool ContainsBufferPosition(HexBufferPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfHexViewLineCollectionImpl));
-			if (bufferPosition.Buffer != buffer)
+			if (bufferPosition.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			if (FormattedSpan.Contains(bufferPosition))
 				return true;
@@ -116,7 +112,7 @@ namespace dnSpy.Hex.Editor {
 		public override bool IntersectsBufferSpan(HexBufferSpan bufferSpan) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfHexViewLineCollectionImpl));
-			if (bufferSpan.Buffer != buffer)
+			if (bufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			if (FormattedSpan.IntersectsWith(bufferSpan))
 				return true;
@@ -136,7 +132,7 @@ namespace dnSpy.Hex.Editor {
 			GetMarkerGeometry(bufferSpan, flags, clipToViewport, padding, false);
 
 		Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding, bool isLineGeometry) {
-			if (bufferSpan.Buffer != buffer)
+			if (bufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 
 			bool createOutlinedPath = false;
@@ -151,7 +147,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) {
-			if (bufferSpan.Buffer != buffer)
+			if (bufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			if (HexMarkerHelper.IsMultiLineSpan(hexView, bufferSpan))
 				return GetLineMarkerGeometry(bufferSpan, flags);
@@ -159,7 +155,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding) {
-			if (bufferSpan.Buffer != buffer)
+			if (bufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			if (HexMarkerHelper.IsMultiLineSpan(hexView, bufferSpan))
 				return GetLineMarkerGeometry(bufferSpan, flags, clipToViewport, padding);
@@ -169,7 +165,7 @@ namespace dnSpy.Hex.Editor {
 		public override Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfHexViewLineCollectionImpl));
-			if (bufferSpan.Buffer != buffer)
+			if (bufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			var span = FormattedSpan.Overlap(bufferSpan);
 			var list = new List<TextBounds>();
@@ -195,7 +191,7 @@ namespace dnSpy.Hex.Editor {
 		public override WpfHexViewLine GetWpfHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfHexViewLineCollectionImpl));
-			if (bufferPosition.Buffer != buffer)
+			if (bufferPosition.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			foreach (var line in lines) {
 				if (line.ContainsBufferPosition(bufferPosition))
@@ -219,7 +215,7 @@ namespace dnSpy.Hex.Editor {
 		public override Collection<HexViewLine> GetHexViewLinesIntersectingSpan(HexBufferSpan bufferSpan) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfHexViewLineCollectionImpl));
-			if (bufferSpan.Buffer != buffer)
+			if (bufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			var coll = new Collection<HexViewLine>();
 			for (int i = 0; i < lines.Count; i++) {

@@ -24,7 +24,6 @@ using System.Threading;
 using System.Windows.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Tagging;
-using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Tagging {
 	abstract class TagAggregator<T> where T : HexTag {

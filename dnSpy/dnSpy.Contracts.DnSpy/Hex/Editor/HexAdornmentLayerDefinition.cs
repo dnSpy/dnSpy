@@ -17,26 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Buffer lines changed event args
+	/// Defines an adornment layer
 	/// </summary>
-	public sealed class BufferLinesChangedEventArgs : EventArgs {
-		/// <summary>
-		/// Gets the new instance
-		/// </summary>
-		public HexBufferLineProvider NewBufferLines { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="newBufferLines">New instance</param>
-		public BufferLinesChangedEventArgs(HexBufferLineProvider newBufferLines) {
-			if (newBufferLines == null)
-				throw new ArgumentNullException(nameof(newBufferLines));
-			NewBufferLines = newBufferLines;
-		}
+	public sealed class HexAdornmentLayerDefinition {
 	}
 }

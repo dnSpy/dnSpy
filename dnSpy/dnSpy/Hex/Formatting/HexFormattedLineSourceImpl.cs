@@ -32,7 +32,6 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Formatting {
 	sealed class HexFormattedLineSourceImpl : HexFormattedLineSource {
-		public override HexBufferLineProvider BufferLines { get; }
 		public override TextRunProperties DefaultTextProperties => classificationFormatMap.DefaultTextProperties;
 		public override HexAndAdornmentSequencer HexAndAdornmentSequencer { get; }
 		public override double BaseIndentation { get; }
@@ -52,11 +51,9 @@ namespace dnSpy.Hex.Formatting {
 		// Should be enough...
 		const int MAX_LINE_LENGTH = 5000;
 
-		public HexFormattedLineSourceImpl(ITextFormatterProvider textFormatterProvider, HexBufferLineProvider bufferLines, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
+		public HexFormattedLineSourceImpl(ITextFormatterProvider textFormatterProvider, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
 			if (textFormatterProvider == null)
 				throw new ArgumentNullException(nameof(textFormatterProvider));
-			if (bufferLines == null)
-				throw new ArgumentNullException(nameof(bufferLines));
 			if (aggregateClassifier == null)
 				throw new ArgumentNullException(nameof(aggregateClassifier));
 			if (sequencer == null)
@@ -66,7 +63,6 @@ namespace dnSpy.Hex.Formatting {
 
 			textFormatter = textFormatterProvider.Create(useDisplayMode);
 			formattedTextCache = new FormattedTextCache(useDisplayMode);
-			BufferLines = bufferLines;
 			UseDisplayMode = useDisplayMode;
 			BaseIndentation = baseIndent;
 			ColumnWidth = formattedTextCache.GetColumnWidth(classificationFormatMap.DefaultTextProperties);
@@ -82,8 +78,6 @@ namespace dnSpy.Hex.Formatting {
 		public override HexFormattedLine FormatLineInVisualBuffer(HexBufferLine line) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
-			if (line.Buffer != BufferLines.Buffer)
-				throw new ArgumentException();
 
 			var seqColl = HexAndAdornmentSequencer.CreateHexAndAdornmentCollection(line);
 			var linePartsCollection = CreateLinePartsCollection(seqColl, line);

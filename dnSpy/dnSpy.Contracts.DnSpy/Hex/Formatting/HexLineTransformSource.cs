@@ -17,6 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
+
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
 	/// Line transform source
@@ -26,5 +29,14 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// Constructor
 		/// </summary>
 		protected HexLineTransformSource() { }
+
+		/// <summary>
+		/// Calculates the line transform for a given line of formatted text
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <param name="yPosition">Y position</param>
+		/// <param name="placement">Placement</param>
+		/// <returns></returns>
+		public abstract LineTransform GetLineTransform(HexViewLine line, double yPosition, ViewRelativePosition placement);
 	}
 }

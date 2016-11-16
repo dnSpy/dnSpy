@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using dnSpy.Text.Formatting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -92,7 +93,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateForceClearTypeIfNeeded() =>
-			TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, wpfTextViewHost.TextView.Options, classificationFormatMap);
+			TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, wpfTextViewHost.TextView.Options.IsForceClearTypeIfNeededEnabled(), classificationFormatMap);
 
 		void LineNumberMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			if (Visibility == Visibility.Visible) {

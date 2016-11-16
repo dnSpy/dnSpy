@@ -58,6 +58,16 @@ namespace dnSpy.Contracts.Hex {
 		public abstract HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
+		/// Gets the start position
+		/// </summary>
+		public HexBufferPoint BufferStart => BufferSpan.Start;
+
+		/// <summary>
+		/// Gets the end position
+		/// </summary>
+		public HexBufferPoint BufferEnd => BufferSpan.End;
+
+		/// <summary>
 		/// All raw bytes
 		/// </summary>
 		public abstract HexBytes HexBytes { get; }
@@ -161,25 +171,29 @@ namespace dnSpy.Contracts.Hex {
 			if (span.Buffer != Buffer)
 				throw new ArgumentException();
 
+			var overlapSpan = BufferSpan.Overlap(span);
+			if (overlapSpan == null)
+				yield break;
+
 			foreach (var column in ColumnOrder) {
 				switch (column) {
 				case HexColumnType.Offset:
 					if ((flags & HexSpanSelectionFlags.Offset) != 0 && IsOffsetColumnPresent) {
-						if (BufferSpan.Contains(span))
+						if (BufferSpan.Contains(overlapSpan.Value))
 							yield return new TextAndHexSpan(GetOffsetSpan(), BufferSpan);
 					}
 					break;
 
 				case HexColumnType.Values:
 					if ((flags & HexSpanSelectionFlags.Values) != 0) {
-						foreach (var info in GetValuesSpans(span, flags))
+						foreach (var info in GetValuesSpans(overlapSpan.Value, flags))
 							yield return info;
 					}
 					break;
 
 				case HexColumnType.Ascii:
 					if ((flags & HexSpanSelectionFlags.Ascii) != 0) {
-						foreach (var info in GetAsciiSpans(span, flags))
+						foreach (var info in GetAsciiSpans(overlapSpan.Value, flags))
 							yield return info;
 					}
 					break;
@@ -209,6 +223,10 @@ namespace dnSpy.Contracts.Hex {
 			if (!isColumnPresent)
 				yield break;
 
+			var overlapSpan = BufferSpan.Overlap(span);
+			if (overlapSpan == null)
+				yield break;
+
 			if ((flags & HexSpanSelectionFlags.AllVisibleCells) != 0) {
 				yield return new TextAndHexSpan(visibleSpan, BufferSpan);
 				yield break;
@@ -219,11 +237,11 @@ namespace dnSpy.Contracts.Hex {
 			}
 
 			if ((flags & HexSpanSelectionFlags.OneValue) != 0) {
-				foreach (var cell in collection.GetCells(span)) {
+				foreach (var cell in collection.GetCells(overlapSpan.Value)) {
 					if (!cell.HasData)
 						continue;
 					var cellSpan = cell.GetSpan(flags);
-					yield return new TextAndHexSpan(cellSpan, new HexBufferSpan(span.Buffer, cell.BufferSpan));
+					yield return new TextAndHexSpan(cellSpan, new HexBufferSpan(Buffer, cell.BufferSpan));
 				}
 			}
 			else {
@@ -231,20 +249,20 @@ namespace dnSpy.Contracts.Hex {
 				int textEnd = int.MinValue;
 				var posStart = HexPosition.MaxValue;
 				var posEnd = HexPosition.MinValue;
-				foreach (var cell in collection.GetCells(span)) {
+				foreach (var cell in collection.GetCells(overlapSpan.Value)) {
 					if (!cell.HasData)
 						continue;
 					var cellSpan = cell.GetSpan(flags);
 					textStart = Math.Min(textStart, cellSpan.Start);
 					textEnd = Math.Max(textEnd, cellSpan.End);
 
-					posStart = HexPosition.Min(posStart, cell.BufferSpan.Start);
-					posEnd = HexPosition.Max(posEnd, cell.BufferSpan.End);
+					posStart = HexPosition.Min(posStart, cell.BufferStart);
+					posEnd = HexPosition.Max(posEnd, cell.BufferEnd);
 				}
 
 				if (textStart > textEnd || posStart > posEnd)
 					yield break;
-				yield return new TextAndHexSpan(Span.FromBounds(textStart, textEnd), new HexBufferSpan(span.Buffer, HexSpan.FromBounds(posStart, posEnd)));
+				yield return new TextAndHexSpan(Span.FromBounds(textStart, textEnd), new HexBufferSpan(Buffer, HexSpan.FromBounds(posStart, posEnd)));
 			}
 		}
 

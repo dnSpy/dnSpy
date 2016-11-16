@@ -31,11 +31,6 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		protected HexFormattedLineSource() { }
 
 		/// <summary>
-		/// Gets the buffer lines
-		/// </summary>
-		public abstract HexBufferLineProvider BufferLines { get; }
-
-		/// <summary>
 		/// Gets the default text properties
 		/// </summary>
 		public abstract TextRunProperties DefaultTextProperties { get; }

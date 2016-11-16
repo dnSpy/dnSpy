@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex bytes display format
 	/// </summary>
-	public enum HexBytesDisplayFormat {
+	public enum HexValuesDisplayFormat {
 		/// <summary>
 		/// Hex, <see cref="byte"/>
 		/// </summary>

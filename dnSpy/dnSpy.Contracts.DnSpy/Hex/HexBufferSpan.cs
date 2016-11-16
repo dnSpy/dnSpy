@@ -310,7 +310,7 @@ namespace dnSpy.Contracts.Hex {
 			sb.Append("_'");
 			var pos = Span.Start;
 			for (int i = 0; i < Length && i < maxBytes; i++) {
-				var c = Buffer.TryReadByte(pos++);
+				var c = pos < HexPosition.MaxEndPosition ? Buffer.TryReadByte(pos++) : -1;
 				sb.Append(c < 0 ? "??" : c.ToString("X2"));
 			}
 			if (tooMuchData)
