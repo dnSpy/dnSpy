@@ -20,13 +20,13 @@
 using System;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
-using Microsoft.VisualStudio.Text.Classification;
+using TC = dnSpy.Text.Classification;
 
-namespace dnSpy.Text.Classification {
-	sealed class HexViewEditorFormatMap : ViewEditorFormatMap {
+namespace dnSpy.Hex.Classification {
+	sealed class HexViewEditorFormatMap : TC.ViewEditorFormatMap {
 		readonly HexView hexView;
 
-		public HexViewEditorFormatMap(HexView hexView, IEditorFormatMapService editorFormatMapService)
+		public HexViewEditorFormatMap(HexView hexView, TC.EditorFormatMapService editorFormatMapService)
 			: base(editorFormatMapService, DefaultWpfHexViewOptions.AppearanceCategoryName) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));

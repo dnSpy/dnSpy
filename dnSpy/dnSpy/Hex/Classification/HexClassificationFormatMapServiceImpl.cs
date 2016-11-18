@@ -17,23 +17,52 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Themes;
 using DSTC = dnSpy.Text.Classification;
 using TC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
 	[Export(typeof(HexClassificationFormatMapService))]
 	sealed class HexClassificationFormatMapServiceImpl : HexClassificationFormatMapService {
-		readonly DSTC.IDsClassificationFormatMapService dsClassificationFormatMapService;
+		readonly TheClassificationFormatMapService theClassificationFormatMapService;
 
 		[ImportingConstructor]
-		HexClassificationFormatMapServiceImpl(DSTC.IDsClassificationFormatMapService dsClassificationFormatMapService) {
-			this.dsClassificationFormatMapService = dsClassificationFormatMapService;
+		HexClassificationFormatMapServiceImpl(TheClassificationFormatMapService theClassificationFormatMapService) {
+			this.theClassificationFormatMapService = theClassificationFormatMapService;
 		}
 
-		public override TC.IClassificationFormatMap GetClassificationFormatMap(string category) => dsClassificationFormatMapService.GetClassificationFormatMap(category);
-		public override TC.IClassificationFormatMap GetClassificationFormatMap(HexView hexView) => dsClassificationFormatMapService.GetClassificationFormatMap(hexView);
+		public override TC.IClassificationFormatMap GetClassificationFormatMap(string category) => theClassificationFormatMapService.GetClassificationFormatMap(category);
+		public override TC.IClassificationFormatMap GetClassificationFormatMap(HexView hexView) => theClassificationFormatMapService.GetClassificationFormatMap(hexView);
+
+		[Export(typeof(TheClassificationFormatMapService))]
+		sealed class TheClassificationFormatMapService : DSTC.ClassificationFormatMapService {
+			[ImportingConstructor]
+			TheClassificationFormatMapService(IThemeService themeService, TC.IEditorFormatMapService editorFormatMapService, DSTC.IEditorFormatDefinitionService editorFormatDefinitionService, TC.IClassificationTypeRegistryService classificationTypeRegistryService)
+			: base(themeService, editorFormatMapService, editorFormatDefinitionService, classificationTypeRegistryService) {
+			}
+
+			public TC.IClassificationFormatMap GetClassificationFormatMap(HexView hexView) {
+				if (hexView == null)
+					throw new ArgumentNullException(nameof(hexView));
+				return hexView.Properties.GetOrCreateSingletonProperty(typeof(DSTC.ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(hexView));
+			}
+
+			DSTC.ViewClassificationFormatMap CreateViewClassificationFormatMap(HexView hexView) {
+				hexView.Closed += HexView_Closed;
+				return new HexViewClassificationFormatMap(this, hexView);
+			}
+
+			static void HexView_Closed(object sender, EventArgs e) {
+				var hexView = (HexView)sender;
+				hexView.Closed -= HexView_Closed;
+				var map = (DSTC.ViewClassificationFormatMap)hexView.Properties[typeof(DSTC.ViewClassificationFormatMap)];
+				hexView.Properties.RemoveProperty(typeof(DSTC.ViewClassificationFormatMap));
+				map.Dispose();
+			}
+		}
 	}
 }

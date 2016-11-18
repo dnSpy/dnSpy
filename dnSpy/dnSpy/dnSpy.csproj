@@ -593,8 +593,8 @@
     <Compile Include="Text\Classification\EditorFormatDefinitionExtensions.cs" />
     <Compile Include="Text\Classification\EditorFormatDefinitionService.cs" />
     <Compile Include="Text\Classification\EditorFormatMapService.cs" />
-    <Compile Include="Text\Classification\HexViewClassificationFormatMap.cs" />
-    <Compile Include="Text\Classification\HexViewEditorFormatMap.cs" />
+    <Compile Include="Hex\Classification\HexViewClassificationFormatMap.cs" />
+    <Compile Include="Hex\Classification\HexViewEditorFormatMap.cs" />
     <Compile Include="Text\Classification\ITextEditorFontSettings.cs" />
     <Compile Include="Text\Classification\ITextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\NullClassifier.cs" />

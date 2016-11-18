@@ -31,12 +31,12 @@ namespace dnSpy.Text.Classification {
 		public bool IsInBatchUpdate => categoryMap.IsInBatchUpdate;
 		public event EventHandler<FormatItemsEventArgs> FormatMappingChanged;
 
-		readonly IEditorFormatMapService editorFormatMapService;
+		readonly EditorFormatMapService editorFormatMapService;
 		readonly string appearanceCategoryName;
 		IEditorFormatMap categoryMap;
 		readonly HashSet<string> viewProps;
 
-		protected ViewEditorFormatMap(IEditorFormatMapService editorFormatMapService, string appearanceCategoryName) {
+		protected ViewEditorFormatMap(EditorFormatMapService editorFormatMapService, string appearanceCategoryName) {
 			if (editorFormatMapService == null)
 				throw new ArgumentNullException(nameof(editorFormatMapService));
 			if (appearanceCategoryName == null)
@@ -100,7 +100,7 @@ namespace dnSpy.Text.Classification {
 	sealed class TextViewEditorFormatMap : ViewEditorFormatMap {
 		readonly ITextView textView;
 
-		public TextViewEditorFormatMap(ITextView textView, IEditorFormatMapService editorFormatMapService)
+		public TextViewEditorFormatMap(ITextView textView, EditorFormatMapService editorFormatMapService)
 			: base(editorFormatMapService, DefaultWpfViewOptions.AppearanceCategoryName) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));

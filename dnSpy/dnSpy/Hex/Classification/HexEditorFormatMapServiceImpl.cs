@@ -17,23 +17,52 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 using TC = dnSpy.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
 	[Export(typeof(HexEditorFormatMapService))]
 	sealed class HexEditorFormatMapServiceImpl : HexEditorFormatMapService {
-		readonly TC.IDsEditorFormatMapService dsEditorFormatMapService;
+		readonly TheEditorFormatMapService theEditorFormatMapService;
 
 		[ImportingConstructor]
-		HexEditorFormatMapServiceImpl(TC.IDsEditorFormatMapService dsEditorFormatMapService) {
-			this.dsEditorFormatMapService = dsEditorFormatMapService;
+		HexEditorFormatMapServiceImpl(TheEditorFormatMapService theEditorFormatMapService) {
+			this.theEditorFormatMapService = theEditorFormatMapService;
 		}
 
-		public override IEditorFormatMap GetEditorFormatMap(HexView view) => dsEditorFormatMapService.GetEditorFormatMap(view);
-		public override IEditorFormatMap GetEditorFormatMap(string category) => dsEditorFormatMapService.GetEditorFormatMap(category);
+		public override IEditorFormatMap GetEditorFormatMap(HexView view) => theEditorFormatMapService.GetEditorFormatMap(view);
+		public override IEditorFormatMap GetEditorFormatMap(string category) => theEditorFormatMapService.GetEditorFormatMap(category);
+
+		[Export(typeof(TheEditorFormatMapService))]
+		sealed class TheEditorFormatMapService : TC.EditorFormatMapService {
+			[ImportingConstructor]
+			public TheEditorFormatMapService(IThemeService themeService, TC.ITextEditorFontSettingsService textEditorFontSettingsService, TC.IEditorFormatDefinitionService editorFormatDefinitionService)
+				: base(themeService, textEditorFontSettingsService, editorFormatDefinitionService) {
+			}
+
+			public IEditorFormatMap GetEditorFormatMap(HexView view) {
+				if (view == null)
+					throw new ArgumentNullException(nameof(view));
+				return view.Properties.GetOrCreateSingletonProperty(typeof(TC.ViewEditorFormatMap), () => CreateViewEditorFormatMap(view));
+			}
+
+			TC.ViewEditorFormatMap CreateViewEditorFormatMap(HexView hexView) {
+				hexView.Closed += HexView_Closed;
+				return new HexViewEditorFormatMap(hexView, this);
+			}
+
+			void HexView_Closed(object sender, EventArgs e) {
+				var hexView = (HexView)sender;
+				hexView.Closed -= HexView_Closed;
+				var map = (TC.ViewEditorFormatMap)hexView.Properties[typeof(TC.ViewEditorFormatMap)];
+				hexView.Properties.RemoveProperty(typeof(TC.ViewEditorFormatMap));
+				map.Dispose();
+			}
+		}
 	}
 }

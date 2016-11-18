@@ -35,11 +35,11 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;
-		readonly IClassificationFormatMapService classificationFormatMapService;
+		readonly ClassificationFormatMapService classificationFormatMapService;
 		readonly string appearanceCategoryName;
 		IClassificationFormatMap categoryMap;
 
-		protected ViewClassificationFormatMap(IClassificationFormatMapService classificationFormatMapService, string appearanceCategoryName) {
+		protected ViewClassificationFormatMap(ClassificationFormatMapService classificationFormatMapService, string appearanceCategoryName) {
 			if (classificationFormatMapService == null)
 				throw new ArgumentNullException(nameof(classificationFormatMapService));
 			if (appearanceCategoryName == null)
@@ -111,7 +111,7 @@ namespace dnSpy.Text.Classification {
 	sealed class TextViewClassificationFormatMap : ViewClassificationFormatMap {
 		readonly ITextView textView;
 
-		public TextViewClassificationFormatMap(IClassificationFormatMapService classificationFormatMapService, ITextView textView)
+		public TextViewClassificationFormatMap(ClassificationFormatMapService classificationFormatMapService, ITextView textView)
 			: base(classificationFormatMapService, DefaultWpfViewOptions.AppearanceCategoryName) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));

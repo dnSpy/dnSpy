@@ -24,16 +24,9 @@ using System.Windows.Threading;
 using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
-using HEX = dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Text.Classification {
-	interface IDsEditorFormatMapService : IEditorFormatMapService {
-		IEditorFormatMap GetEditorFormatMap(HEX.HexView view);
-	}
-
-	[Export(typeof(IDsEditorFormatMapService))]
-	[Export(typeof(IEditorFormatMapService))]
-	sealed class EditorFormatMapService : IDsEditorFormatMapService {
+	abstract class EditorFormatMapService {
 		readonly IThemeService themeService;
 		readonly ITextEditorFontSettingsService textEditorFontSettingsService;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
@@ -41,52 +34,13 @@ namespace dnSpy.Text.Classification {
 		readonly List<CategoryEditorFormatMapUpdater> cachedUpdaters;
 		readonly Dispatcher dispatcher;
 
-		[ImportingConstructor]
-		public EditorFormatMapService(IThemeService themeService, ITextEditorFontSettingsService textEditorFontSettingsService, IEditorFormatDefinitionService editorFormatDefinitionService) {
+		protected EditorFormatMapService(IThemeService themeService, ITextEditorFontSettingsService textEditorFontSettingsService, IEditorFormatDefinitionService editorFormatDefinitionService) {
 			this.themeService = themeService;
 			this.textEditorFontSettingsService = textEditorFontSettingsService;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
 			this.toCategoryMap = new Dictionary<ITextEditorFontSettings, IEditorFormatMap>();
 			this.cachedUpdaters = new List<CategoryEditorFormatMapUpdater>();
 			this.dispatcher = Dispatcher.CurrentDispatcher;
-		}
-
-		public IEditorFormatMap GetEditorFormatMap(ITextView view) {
-			if (view == null)
-				throw new ArgumentNullException(nameof(view));
-			return view.Properties.GetOrCreateSingletonProperty(typeof(ViewEditorFormatMap), () => CreateViewEditorFormatMap(view));
-		}
-
-		public IEditorFormatMap GetEditorFormatMap(HEX.HexView view) {
-			if (view == null)
-				throw new ArgumentNullException(nameof(view));
-			return view.Properties.GetOrCreateSingletonProperty(typeof(ViewEditorFormatMap), () => CreateViewEditorFormatMap(view));
-		}
-
-		ViewEditorFormatMap CreateViewEditorFormatMap(ITextView textView) {
-			textView.Closed += TextView_Closed;
-			return new TextViewEditorFormatMap(textView, this);
-		}
-
-		ViewEditorFormatMap CreateViewEditorFormatMap(HEX.HexView hexView) {
-			hexView.Closed += HexView_Closed;
-			return new HexViewEditorFormatMap(hexView, this);
-		}
-
-		void TextView_Closed(object sender, EventArgs e) {
-			var textView = (ITextView)sender;
-			textView.Closed -= TextView_Closed;
-			var map = (ViewEditorFormatMap)textView.Properties[typeof(ViewEditorFormatMap)];
-			textView.Properties.RemoveProperty(typeof(ViewEditorFormatMap));
-			map.Dispose();
-		}
-
-		void HexView_Closed(object sender, EventArgs e) {
-			var hexView = (HEX.HexView)sender;
-			hexView.Closed -= HexView_Closed;
-			var map = (ViewEditorFormatMap)hexView.Properties[typeof(ViewEditorFormatMap)];
-			hexView.Properties.RemoveProperty(typeof(ViewEditorFormatMap));
-			map.Dispose();
 		}
 
 		public IEditorFormatMap GetEditorFormatMap(string category) {
@@ -101,6 +55,33 @@ namespace dnSpy.Text.Classification {
 			cachedUpdaters.Add(updater);
 			toCategoryMap.Add(textEditorFontSettings, map);
 			return map;
+		}
+	}
+
+	[Export(typeof(IEditorFormatMapService))]
+	sealed class EditorFormatMapServiceImpl : EditorFormatMapService, IEditorFormatMapService {
+		[ImportingConstructor]
+		public EditorFormatMapServiceImpl(IThemeService themeService, ITextEditorFontSettingsService textEditorFontSettingsService, IEditorFormatDefinitionService editorFormatDefinitionService)
+			: base(themeService, textEditorFontSettingsService, editorFormatDefinitionService) {
+		}
+
+		public IEditorFormatMap GetEditorFormatMap(ITextView view) {
+			if (view == null)
+				throw new ArgumentNullException(nameof(view));
+			return view.Properties.GetOrCreateSingletonProperty(typeof(ViewEditorFormatMap), () => CreateViewEditorFormatMap(view));
+		}
+
+		ViewEditorFormatMap CreateViewEditorFormatMap(ITextView textView) {
+			textView.Closed += TextView_Closed;
+			return new TextViewEditorFormatMap(textView, this);
+		}
+
+		void TextView_Closed(object sender, EventArgs e) {
+			var textView = (ITextView)sender;
+			textView.Closed -= TextView_Closed;
+			var map = (ViewEditorFormatMap)textView.Properties[typeof(ViewEditorFormatMap)];
+			textView.Properties.RemoveProperty(typeof(ViewEditorFormatMap));
+			map.Dispose();
 		}
 	}
 }

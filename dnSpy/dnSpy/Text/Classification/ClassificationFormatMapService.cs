@@ -23,67 +23,21 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
-using HEX = dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Text.Classification {
-	interface IDsClassificationFormatMapService : IClassificationFormatMapService {
-		IClassificationFormatMap GetClassificationFormatMap(HEX.HexView textView);
-	}
-
-	[Export(typeof(IDsClassificationFormatMapService))]
-	[Export(typeof(IClassificationFormatMapService))]
-	sealed class ClassificationFormatMapService : IDsClassificationFormatMapService {
+	abstract class ClassificationFormatMapService {
 		readonly IThemeService themeService;
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly Dictionary<IEditorFormatMap, IClassificationFormatMap> toCategoryMap;
 
-		[ImportingConstructor]
-		ClassificationFormatMapService(IThemeService themeService, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		protected ClassificationFormatMapService(IThemeService themeService, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.themeService = themeService;
 			this.editorFormatMapService = editorFormatMapService;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 			this.toCategoryMap = new Dictionary<IEditorFormatMap, IClassificationFormatMap>();
-		}
-
-		public IClassificationFormatMap GetClassificationFormatMap(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			return textView.Properties.GetOrCreateSingletonProperty(typeof(ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(textView));
-		}
-
-		public IClassificationFormatMap GetClassificationFormatMap(HEX.HexView hexView) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			return hexView.Properties.GetOrCreateSingletonProperty(typeof(ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(hexView));
-		}
-
-		ViewClassificationFormatMap CreateViewClassificationFormatMap(ITextView textView) {
-			textView.Closed += TextView_Closed;
-			return new TextViewClassificationFormatMap(this, textView);
-		}
-
-		ViewClassificationFormatMap CreateViewClassificationFormatMap(HEX.HexView hexView) {
-			hexView.Closed += HexView_Closed;
-			return new HexViewClassificationFormatMap(this, hexView);
-		}
-
-		static void TextView_Closed(object sender, EventArgs e) {
-			var textView = (ITextView)sender;
-			textView.Closed -= TextView_Closed;
-			var map = (ViewClassificationFormatMap)textView.Properties[typeof(ViewClassificationFormatMap)];
-			textView.Properties.RemoveProperty(typeof(ViewClassificationFormatMap));
-			map.Dispose();
-		}
-
-		static void HexView_Closed(object sender, EventArgs e) {
-			var hexView = (HEX.HexView)sender;
-			hexView.Closed -= HexView_Closed;
-			var map = (ViewClassificationFormatMap)hexView.Properties[typeof(ViewClassificationFormatMap)];
-			hexView.Properties.RemoveProperty(typeof(ViewClassificationFormatMap));
-			map.Dispose();
 		}
 
 		public IClassificationFormatMap GetClassificationFormatMap(string category) {
@@ -96,6 +50,33 @@ namespace dnSpy.Text.Classification {
 			map = new CategoryClassificationFormatMap(themeService, editorFormatMap, editorFormatDefinitionService, classificationTypeRegistryService);
 			toCategoryMap.Add(editorFormatMap, map);
 			return map;
+		}
+	}
+
+	[Export(typeof(IClassificationFormatMapService))]
+	sealed class ClassificationFormatMapServiceImpl : ClassificationFormatMapService, IClassificationFormatMapService {
+		[ImportingConstructor]
+		ClassificationFormatMapServiceImpl(IThemeService themeService, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService)
+			: base(themeService, editorFormatMapService, editorFormatDefinitionService, classificationTypeRegistryService) {
+		}
+
+		public IClassificationFormatMap GetClassificationFormatMap(ITextView textView) {
+			if (textView == null)
+				throw new ArgumentNullException(nameof(textView));
+			return textView.Properties.GetOrCreateSingletonProperty(typeof(ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(textView));
+		}
+
+		ViewClassificationFormatMap CreateViewClassificationFormatMap(ITextView textView) {
+			textView.Closed += TextView_Closed;
+			return new TextViewClassificationFormatMap(this, textView);
+		}
+
+		static void TextView_Closed(object sender, EventArgs e) {
+			var textView = (ITextView)sender;
+			textView.Closed -= TextView_Closed;
+			var map = (ViewClassificationFormatMap)textView.Properties[typeof(ViewClassificationFormatMap)];
+			textView.Properties.RemoveProperty(typeof(ViewClassificationFormatMap));
+			map.Dispose();
 		}
 	}
 }
