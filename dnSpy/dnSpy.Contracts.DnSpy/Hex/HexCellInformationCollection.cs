@@ -105,6 +105,24 @@ done:;
 		}
 
 		/// <summary>
+		/// Gets all cells, including unused cells
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<HexCellInformation> GetCells() {
+			foreach (var cell in cells)
+				yield return cell;
+		}
+
+		/// <summary>
+		/// Gets all visible cells
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<HexCellInformation> GetVisibleCells() {
+			for (int i = validStart; i < validEnd; i++)
+				yield return cells[i];
+		}
+
+		/// <summary>
 		/// Gets all cells that are contained in <paramref name="span"/>. The returned cells
 		/// are ordered by index.
 		/// </summary>
@@ -120,6 +138,7 @@ done:;
 						break;
 					Debug.Assert(span.Contains(cell.BufferSpan));
 					yield return cell;
+					index++;
 				}
 			}
 		}

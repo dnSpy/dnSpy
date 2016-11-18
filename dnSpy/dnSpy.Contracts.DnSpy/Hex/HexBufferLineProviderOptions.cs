@@ -33,6 +33,11 @@ namespace dnSpy.Contracts.Hex {
 		public int BytesPerLine { get; set; }
 
 		/// <summary>
+		/// Size of a group in bytes or 0 to use the default value
+		/// </summary>
+		public int GroupSizeInBytes { get; set; }
+
+		/// <summary>
 		/// true to show the offset
 		/// </summary>
 		public bool ShowOffset { get; set; }

@@ -169,6 +169,17 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		}
 
 		/// <summary>
+		/// Returns the number of bytes in a group
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static int GetGroupSizeInBytes(this IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.GroupSizeInBytesId);
+		}
+
+		/// <summary>
 		/// Returns true if text should be colorized
 		/// </summary>
 		/// <param name="options">Options</param>

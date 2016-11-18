@@ -100,6 +100,12 @@ namespace dnSpy.Contracts.Hex.Editor {
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class GroupSizeInBytesEditorOptionDefinition : HexViewOptionDefinition<int> {
+		public override EditorOptionKey<int> Key => DefaultHexViewOptions.GroupSizeInBytesId;
+		public override int Default => 0;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class EnableColorizationEditorOptionDefinition : HexViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultHexViewOptions.EnableColorizationId;
 		public override bool Default => true;

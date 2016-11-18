@@ -17,10 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Span selection flags
 	/// </summary>
+	[Flags]
 	public enum HexSpanSelectionFlags {
 		/// <summary>
 		/// No bit is set
@@ -43,28 +46,38 @@ namespace dnSpy.Contracts.Hex {
 		Ascii					= 0x00000004,
 
 		/// <summary>
+		/// Cells in group #0
+		/// </summary>
+		Group0					= 0x00000008,
+
+		/// <summary>
+		/// Cells in group #1
+		/// </summary>
+		Group1					= 0x00000010,
+
+		/// <summary>
 		/// Select the full cell instead of only the text
 		/// </summary>
-		Cell					= 0x00000008,
+		Cell					= 0x00000020,
 
 		/// <summary>
 		/// Include the cell separator, if any
 		/// </summary>
-		Separator				= 0x00000010,
+		Separator				= 0x00000040,
 
 		/// <summary>
 		/// One value at a time
 		/// </summary>
-		OneValue				= 0x00000020,
+		OneValue				= 0x00000080,
 
 		/// <summary>
 		/// Select all cells in the values/ASCII column
 		/// </summary>
-		AllCells				= 0x00000040,
+		AllCells				= 0x00000100,
 
 		/// <summary>
 		/// Select all visible cells in the values/ASCII column
 		/// </summary>
-		AllVisibleCells			= 0x00000080,
+		AllVisibleCells			= 0x00000200,
 	}
 }

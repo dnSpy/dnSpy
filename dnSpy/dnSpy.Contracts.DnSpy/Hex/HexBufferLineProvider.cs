@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.ObjectModel;
+using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -55,6 +57,45 @@ namespace dnSpy.Contracts.Hex {
 		public abstract HexPosition LineCount { get; }
 
 		/// <summary>
+		/// Gets the span of the offset column. This is empty if the column isn't present.
+		/// </summary>
+		public abstract Span OffsetSpan { get; }
+
+		/// <summary>
+		/// Gets the span of the values column. This is empty if the column isn't present.
+		/// </summary>
+		public abstract Span ValuesSpan { get; }
+
+		/// <summary>
+		/// Gets the span of the ASCII column. This is empty if the column isn't present.
+		/// </summary>
+		public abstract Span AsciiSpan { get; }
+
+		/// <summary>
+		/// Gets the span of a column. This is empty if the column isn't present.
+		/// </summary>
+		/// <param name="column">Column</param>
+		/// <returns></returns>
+		public Span GetColumnSpan(HexColumnType column) {
+			switch (column) {
+			case HexColumnType.Offset:	return OffsetSpan;
+			case HexColumnType.Values:	return ValuesSpan;
+			case HexColumnType.Ascii:	return AsciiSpan;
+			default: throw new ArgumentOutOfRangeException(nameof(column));
+			}
+		}
+
+		/// <summary>
+		/// Values group collection. It's empty if the values column isn't present.
+		/// </summary>
+		public abstract ReadOnlyCollection<HexGroupInformation> ValuesGroup { get; }
+
+		/// <summary>
+		/// ASCII group collection. It's empty if the ASCII column isn't present.
+		/// </summary>
+		public abstract ReadOnlyCollection<HexGroupInformation> AsciiGroup { get; }
+
+		/// <summary>
 		/// Number of characters per line
 		/// </summary>
 		public abstract int CharsPerLine { get; }
@@ -63,6 +104,11 @@ namespace dnSpy.Contracts.Hex {
 		/// Number of bytes per line or 0 to fit to width
 		/// </summary>
 		public abstract int BytesPerLine { get; }
+
+		/// <summary>
+		/// Number of bytes per group
+		/// </summary>
+		public abstract int GroupSizeInBytes { get; }
 
 		/// <summary>
 		/// true to show the offset

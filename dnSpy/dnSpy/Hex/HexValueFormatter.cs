@@ -32,7 +32,7 @@ namespace dnSpy.Hex {
 	abstract class HexValueFormatter {
 		protected static CultureInfo culture = CultureInfo.InvariantCulture;
 
-		// These strings must not be longer than 7 chars (max length of floats)
+		// These strings must not be longer than MaxSingleFormattedLength chars
 		const string stringNaN = "NaN";
 		const string stringPositiveInfinity = "Inf";
 		const string stringNegativeInfinity = "-Inf";

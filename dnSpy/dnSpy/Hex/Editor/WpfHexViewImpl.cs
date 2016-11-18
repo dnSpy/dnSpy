@@ -610,6 +610,7 @@ namespace dnSpy.Hex.Editor {
 
 			case DefaultHexViewOptions.BasePositionName:
 			case DefaultHexViewOptions.BytesPerLineName:
+			case DefaultHexViewOptions.GroupSizeInBytesName:
 			case DefaultHexViewOptions.EndPositionName:
 			case DefaultHexViewOptions.HexOffsetFormatName:
 			case DefaultHexViewOptions.HexValuesDisplayFormatName:
@@ -948,6 +949,7 @@ namespace dnSpy.Hex.Editor {
 			var options = new HexBufferLineProviderOptions();
 			options.CharsPerLine = (int)((lastFormattedLineSourceViewportWidth - FormattedLineSource.BaseIndentation) / FormattedLineSource.ColumnWidth);
 			options.BytesPerLine = Options.GetBytesPerLine();
+			options.GroupSizeInBytes = Options.GetGroupSizeInBytes();
 			options.ShowOffset = Options.ShowOffsetColumn();
 			options.OffsetLowerCaseHex = Options.IsOffsetLowerCaseHexEnabled();
 			options.OffsetFormat = Options.GetOffsetFormat();
@@ -967,6 +969,8 @@ namespace dnSpy.Hex.Editor {
 				options.CharsPerLine = DEFAULT_CHARS_PER_LINE;
 			if (options.BytesPerLine < 0)
 				options.BytesPerLine = 0;
+			if (options.GroupSizeInBytes < 0)
+				options.GroupSizeInBytes = 0;
 			if (options.StartPosition >= HexPosition.MaxEndPosition)
 				options.StartPosition = 0;
 			if (options.EndPosition > HexPosition.MaxEndPosition)

@@ -329,6 +329,7 @@
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryService.cs" />
     <Compile Include="Hex\Editor\HexMouseHoverEventArgs.cs" />
     <Compile Include="Hex\HexColumnType.cs" />
+    <Compile Include="Hex\HexGroupInformation.cs" />
     <Compile Include="Hex\HexLineSpan.cs" />
     <Compile Include="Hex\HexOffsetFormat.cs" />
     <Compile Include="Hex\Editor\HexSelection.cs" />

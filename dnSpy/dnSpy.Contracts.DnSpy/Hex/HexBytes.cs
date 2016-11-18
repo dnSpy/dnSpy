@@ -40,6 +40,12 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		public int Length => bytes.Length;
 
+		/// <summary>
+		/// Returns true if all bytes are valid, false if all bytes are invalid, or null
+		/// if it's not known (use <see cref="IsValid(int)"/>)
+		/// </summary>
+		public bool? AllValid => validBytes != null ? (bool?)null : allValid;
+
 		readonly byte[] bytes;
 		readonly bool allValid;// Only used if the bit array is null
 		readonly BitArray validBytes;

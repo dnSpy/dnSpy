@@ -51,6 +51,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly EditorOptionKey<bool> OffsetLowerCaseHexId = new EditorOptionKey<bool>(OffsetLowerCaseHexName);
 		public const string BytesPerLineName = "HexView/BytesPerLine";
 		public static readonly EditorOptionKey<int> BytesPerLineId = new EditorOptionKey<int>(BytesPerLineName);
+		public const string GroupSizeInBytesName = "HexView/GroupSizeInBytes";
+		public static readonly EditorOptionKey<int> GroupSizeInBytesId = new EditorOptionKey<int>(GroupSizeInBytesName);
 		public const string EnableColorizationName = "HexView/EnableColorization";
 		public static readonly EditorOptionKey<bool> EnableColorizationId = new EditorOptionKey<bool>(EnableColorizationName);
 		public const string ViewProhibitUserInputName = "HexView/ProhibitUserInput";

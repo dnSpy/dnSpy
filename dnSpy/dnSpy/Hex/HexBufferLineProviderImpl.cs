@@ -28,6 +28,7 @@ using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex {
 	sealed class HexBufferLineProviderImpl : HexBufferLineProvider {
+		const int DEFAULT_GROUP_SIZE_IN_BYTES = 8;
 		const HexValuesDisplayFormat HexValuesDisplayFormat_First = HexValuesDisplayFormat.HexByte;
 		const HexValuesDisplayFormat HexValuesDisplayFormat_Last = HexValuesDisplayFormat.DoubleBigEndian;
 		const HexOffsetFormat HexOffsetFormat_First = HexOffsetFormat.Hex;
@@ -89,6 +90,7 @@ namespace dnSpy.Hex {
 
 		public override int CharsPerLine { get; }
 		public override int BytesPerLine => (int)bytesPerLine;
+		public override int GroupSizeInBytes => groupSizeInBytes;
 		public override bool ShowOffset => showOffset;
 		public override bool OffsetLowerCaseHex => offsetFormatter.LowerCaseHex;
 		public override HexOffsetFormat OffsetFormat => offsetFormatter.Format;
@@ -102,6 +104,11 @@ namespace dnSpy.Hex {
 		public override HexValuesDisplayFormat ValuesFormat => valueFormatter.Format;
 		public override bool ShowAscii => showAscii;
 		public override ReadOnlyCollection<HexColumnType> ColumnOrder => columnOrder;
+		public override VST.Span OffsetSpan { get; }
+		public override VST.Span ValuesSpan { get; }
+		public override VST.Span AsciiSpan { get; }
+		public override ReadOnlyCollection<HexGroupInformation> ValuesGroup { get; }
+		public override ReadOnlyCollection<HexGroupInformation> AsciiGroup { get; }
 
 		readonly HexBuffer buffer;
 		readonly StringBuilder stringBuilder;
@@ -113,6 +120,7 @@ namespace dnSpy.Hex {
 		readonly HexOffsetFormatter offsetFormatter;
 		readonly HexValueFormatter valueFormatter;
 		readonly ulong bytesPerLine;
+		readonly int groupSizeInBytes;
 		readonly bool showOffset;
 		readonly bool showValues;
 		readonly bool showAscii;
@@ -133,6 +141,8 @@ namespace dnSpy.Hex {
 			if (options.CharsPerLine < 0)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.BytesPerLine < 0)
+				throw new ArgumentOutOfRangeException(nameof(options));
+			if (options.GroupSizeInBytes < 0)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.OffsetFormat < HexOffsetFormat_First || options.OffsetFormat > HexOffsetFormat_Last)
 				throw new ArgumentOutOfRangeException(nameof(options));
@@ -178,6 +188,14 @@ namespace dnSpy.Hex {
 				bytesPerLine = (ulong)(HexBufferLineProviderOptions.MaxBytesPerLine / valueFormatter.ByteCount * valueFormatter.ByteCount);
 			if (bytesPerLine <= 0)
 				throw new InvalidOperationException();
+			groupSizeInBytes = options.GroupSizeInBytes;
+			if (groupSizeInBytes == 0)
+				groupSizeInBytes = DEFAULT_GROUP_SIZE_IN_BYTES;
+			if ((ulong)groupSizeInBytes > bytesPerLine)
+				groupSizeInBytes = (int)bytesPerLine;
+			groupSizeInBytes = (groupSizeInBytes + valueFormatter.ByteCount - 1) / valueFormatter.ByteCount * valueFormatter.ByteCount;
+			if (groupSizeInBytes <= 0)
+				throw new InvalidOperationException();
 			CharsPerLine = CalculateCharsPerLine();
 			stringBuilder = new StringBuilder(CharsPerLine);
 
@@ -199,6 +217,122 @@ namespace dnSpy.Hex {
 				LineCount = v / bytesPerLine + (v % bytesPerLine == 0 ? 0UL : 1UL);
 			}
 			if (LineCount == 0)
+				throw new InvalidOperationException();
+
+			VST.Span offsetSpan, valuesSpan, asciiSpan;
+			CalculateColumnSpans(out offsetSpan, out valuesSpan, out asciiSpan);
+			OffsetSpan = offsetSpan;
+			ValuesSpan = valuesSpan;
+			AsciiSpan = asciiSpan;
+
+			var group = new List<HexGroupInformation>();
+			CalculateValuesGroupSpans(group);
+			ValuesGroup = new ReadOnlyCollection<HexGroupInformation>(group.ToArray());
+			CalculateAsciiGroupSpans(group);
+			AsciiGroup = new ReadOnlyCollection<HexGroupInformation>(group.ToArray());
+			if (ShowValues == ShowAscii && ValuesGroup.Count != AsciiGroup.Count)
+				throw new InvalidOperationException();
+		}
+
+		void CalculateValuesGroupSpans(List<HexGroupInformation> list) {
+			list.Clear();
+			if (!ShowValues)
+				return;
+
+			int bytePos = 0;
+			int pos = 0;
+			bool isGroup0 = true;
+			while (bytePos < BytesPerLine) {
+				int groupByteEnd = bytePos + groupSizeInBytes;
+				int groupStart = pos;
+				bool needSep = false;
+				while (bytePos < BytesPerLine && bytePos < groupByteEnd) {
+					if (needSep)
+						pos++;
+					needSep = true;
+					pos += valueFormatter.FormattedLength;
+					bytePos = bytePos + valueFormatter.ByteCount;
+				}
+				int groupIndex = isGroup0 ? 0 : 1;
+				var span = VST.Span.FromBounds(groupStart, pos);
+				VST.Span fullSpan;
+				if (bytePos < BytesPerLine) {
+					fullSpan = new VST.Span(span.Start, span.Length + 1);
+					pos++;
+				}
+				else
+					fullSpan = span;
+				list.Add(new HexGroupInformation(groupIndex, fullSpan, span));
+				isGroup0 = !isGroup0;
+			}
+			if (pos != ValuesSpan.Length)
+				throw new InvalidOperationException();
+		}
+
+		void CalculateAsciiGroupSpans(List<HexGroupInformation> list) {
+			list.Clear();
+			if (!ShowAscii)
+				return;
+
+			int pos = 0;
+			bool isGroup0 = true;
+			while (pos < BytesPerLine) {
+				int groupStart = pos;
+				pos += Math.Min(BytesPerLine - pos, groupSizeInBytes);
+				int groupIndex = isGroup0 ? 0 : 1;
+				var span = VST.Span.FromBounds(groupStart, pos);
+				list.Add(new HexGroupInformation(groupIndex, span, span));
+				isGroup0 = !isGroup0;
+			}
+			if (pos != AsciiSpan.Length)
+				throw new InvalidOperationException();
+		}
+
+		void CalculateColumnSpans(out VST.Span offsetSpan, out VST.Span valuesSpan, out VST.Span asciiSpan) {
+			offsetSpan = default(VST.Span);
+			valuesSpan = default(VST.Span);
+			asciiSpan = default(VST.Span);
+
+			bool needSep = false;
+			int position = 0;
+			foreach (var column in columnOrder) {
+				switch (column) {
+				case HexColumnType.Offset:
+					if (showOffset) {
+						if (needSep)
+							position++;
+						needSep = true;
+						offsetSpan = new VST.Span(position, offsetFormatter.FormattedLength);
+						position = offsetSpan.End;
+					}
+					break;
+
+				case HexColumnType.Values:
+					if (showValues) {
+						if (needSep)
+							position++;
+						needSep = true;
+						int cellCount = (int)(bytesPerLine / (ulong)valueFormatter.ByteCount);
+						valuesSpan = new VST.Span(position, valueFormatter.FormattedLength * cellCount + cellCount - 1);
+						position = valuesSpan.End;
+					}
+					break;
+
+				case HexColumnType.Ascii:
+					if (showAscii) {
+						if (needSep)
+							position++;
+						needSep = true;
+						asciiSpan = new VST.Span(position, (int)bytesPerLine);
+						position = asciiSpan.End;
+					}
+					break;
+
+				default:
+					throw new InvalidOperationException();
+				}
+			}
+			if (position != CharsPerLine)
 				throw new InvalidOperationException();
 		}
 
@@ -400,6 +534,8 @@ namespace dnSpy.Hex {
 			int start = CurrentTextIndex;
 			offsetFormatter.FormatOffset(stringBuilder, logicalPosition);
 			offsetSpan = VST.Span.FromBounds(start, CurrentTextIndex);
+			if (OffsetSpan != offsetSpan)
+				throw new InvalidOperationException();
 		}
 
 		HexCellInformation[] WriteValues(HexBytes hexBytes, HexSpan visibleBytesSpan, out VST.Span fullSpan, out VST.Span visibleSpan) {
@@ -413,9 +549,11 @@ namespace dnSpy.Hex {
 			var end = visibleBytesSpan.Start + bytesPerLine;
 			int? visStart = null;
 			int? visEnd = null;
+			int cellPos = 0;
 			for (ulong i = 0; i < cellCount; i++) {
 				if (i != 0)
 					stringBuilder.Append(' ');
+				int groupIndex = (cellPos / groupSizeInBytes) & 1;
 				if (visibleBytesSpan.Contains(pos)) {
 					if (visStart == null)
 						visStart = CurrentTextIndex;
@@ -433,15 +571,16 @@ namespace dnSpy.Hex {
 					else
 						separatorSpan = new VST.Span(CurrentTextIndex, 0);
 					var cellFullSpan = VST.Span.FromBounds(cellStart, separatorSpan.End);
-					cellList.Add(new HexCellInformation((int)i, bufferSpan, textSpan, cellSpan, separatorSpan, cellFullSpan));
+					cellList.Add(new HexCellInformation((int)i, groupIndex, bufferSpan, textSpan, cellSpan, separatorSpan, cellFullSpan));
 				}
 				else {
 					if (visStart != null && visEnd == null)
 						visEnd = CurrentTextIndex;
-					cellList.Add(new HexCellInformation((int)i));
+					cellList.Add(new HexCellInformation((int)i, groupIndex));
 					stringBuilder.Append(' ', valueFormatter.FormattedLength);
 				}
 				pos += (ulong)valueFormatter.ByteCount;
+				cellPos += valueFormatter.ByteCount;
 			}
 			if (pos != end)
 				throw new InvalidOperationException();
@@ -449,6 +588,8 @@ namespace dnSpy.Hex {
 				visEnd = CurrentTextIndex;
 			visibleSpan = visStart == null ? default(VST.Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
 			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
+			if (ValuesSpan != fullSpan)
+				throw new InvalidOperationException();
 			return cellList.ToArray();
 		}
 
@@ -460,7 +601,9 @@ namespace dnSpy.Hex {
 			int? visStart = null;
 			int? visEnd = null;
 			var pos = visibleBytesSpan.Start;
+			int cellPos = 0;
 			for (ulong i = 0; i < bytesPerLine; i++, pos++) {
+				int groupIndex = (cellPos / groupSizeInBytes) & 1;
 				if (visibleBytesSpan.Contains(pos)) {
 					if (visStart == null)
 						visStart = CurrentTextIndex;
@@ -474,14 +617,15 @@ namespace dnSpy.Hex {
 					var bufferSpan = new HexBufferSpan(buffer, new HexSpan(pos, 1));
 					var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
 					var separatorSpan = new VST.Span(cellSpan.End, 0);
-					cellList.Add(new HexCellInformation((int)i, bufferSpan, cellSpan, cellSpan, separatorSpan, cellSpan));
+					cellList.Add(new HexCellInformation((int)i, groupIndex, bufferSpan, cellSpan, cellSpan, separatorSpan, cellSpan));
 				}
 				else {
 					if (visStart != null && visEnd == null)
 						visEnd = CurrentTextIndex;
-					cellList.Add(new HexCellInformation((int)i));
+					cellList.Add(new HexCellInformation((int)i, groupIndex));
 					stringBuilder.Append(' ');
 				}
+				cellPos++;
 			}
 			if ((ulong)fullStart + bytesPerLine != (ulong)CurrentTextIndex)
 				throw new InvalidOperationException();
@@ -489,6 +633,8 @@ namespace dnSpy.Hex {
 				visEnd = CurrentTextIndex;
 			visibleSpan = visStart == null ? default(VST.Span) : VST.Span.FromBounds(visStart.Value, visEnd.Value);
 			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
+			if (AsciiSpan != fullSpan)
+				throw new InvalidOperationException();
 			return cellList.ToArray();
 		}
 

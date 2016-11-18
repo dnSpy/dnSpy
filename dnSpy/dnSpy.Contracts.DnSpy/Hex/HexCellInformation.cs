@@ -36,6 +36,11 @@ namespace dnSpy.Contracts.Hex {
 		public int Index { get; }
 
 		/// <summary>
+		/// Group index
+		/// </summary>
+		public int GroupIndex { get; }
+
+		/// <summary>
 		/// Gets the buffer span
 		/// </summary>
 		public HexBufferSpan BufferSpan { get; }
@@ -74,14 +79,20 @@ namespace dnSpy.Contracts.Hex {
 		/// Constructor
 		/// </summary>
 		/// <param name="index">Cell index</param>
+		/// <param name="groupIndex">Group index</param>
 		/// <param name="bufferSpan">Buffer span</param>
 		/// <param name="textSpan">Span of the text. This span doesn't include any whitespace before and after the text.</param>
 		/// <param name="cellSpan">Span of the cell, some of the span could be whitespace</param>
 		/// <param name="separatorSpan">Span of the cell separator</param>
 		/// <param name="fullSpan">Includes the whole cell and separator span</param>
-		public HexCellInformation(int index, HexBufferSpan bufferSpan, Span textSpan, Span cellSpan, Span separatorSpan, Span fullSpan) {
+		public HexCellInformation(int index, int groupIndex, HexBufferSpan bufferSpan, Span textSpan, Span cellSpan, Span separatorSpan, Span fullSpan) {
+			if (index < 0)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			if (groupIndex < 0 || groupIndex > 1)
+				throw new ArgumentOutOfRangeException(nameof(groupIndex));
 			HasData = true;
 			Index = index;
+			GroupIndex = groupIndex;
 			BufferSpan = bufferSpan;
 			TextSpan = textSpan;
 			CellSpan = cellSpan;
@@ -93,7 +104,12 @@ namespace dnSpy.Contracts.Hex {
 		/// Constructor
 		/// </summary>
 		/// <param name="index"></param>
-		public HexCellInformation(int index) {
+		/// <param name="groupIndex">Group index</param>
+		public HexCellInformation(int index, int groupIndex) {
+			if (index < 0)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			if (groupIndex < 0 || groupIndex > 1)
+				throw new ArgumentOutOfRangeException(nameof(groupIndex));
 			HasData = false;
 			Index = index;
 		}
@@ -101,7 +117,8 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets a text span
 		/// </summary>
-		/// <param name="flags">Flags</param>
+		/// <param name="flags">Flags, only <see cref="HexSpanSelectionFlags.Cell"/> and
+		/// <see cref="HexSpanSelectionFlags.Separator"/> are checked</param>
 		/// <returns></returns>
 		public Span GetSpan(HexSpanSelectionFlags flags) {
 			if ((flags & HexSpanSelectionFlags.Cell) == 0) {

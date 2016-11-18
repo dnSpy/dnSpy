@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
@@ -214,6 +215,24 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		public abstract HexCellInformationCollection AsciiCells { get; }
 
+		TextAndHexSpan Create(HexCellInformationCollection collection, HexCellInformation first, HexCellInformation last, HexBufferSpan bufferSpan) {
+			var firstCellSpan = first.FullSpan;
+			var lastCellSpan = last.FullSpan;
+			var startPos = HexPosition.MaxEndPosition;
+			var endPos = HexPosition.Zero;
+			for (int i = first.Index; i <= last.Index; i++) {
+				var cell = collection[i];
+				if (!cell.HasData)
+					continue;
+				startPos = HexPosition.Min(startPos, cell.BufferStart);
+				endPos = HexPosition.Max(endPos, cell.BufferEnd);
+			}
+			var resultBufferSpan = startPos <= endPos ?
+				new HexBufferSpan(new HexBufferPoint(Buffer, startPos), new HexBufferPoint(Buffer, endPos)) :
+				bufferSpan;
+			return new TextAndHexSpan(Span.FromBounds(firstCellSpan.Start, lastCellSpan.End), resultBufferSpan);
+		}
+
 		IEnumerable<TextAndHexSpan> GetTextAndHexSpans(bool isColumnPresent, HexCellInformationCollection collection, HexBufferSpan span, HexSpanSelectionFlags flags, Span visibleSpan, Span fullSpan) {
 			if (span.IsDefault)
 				throw new ArgumentException();
@@ -227,6 +246,41 @@ namespace dnSpy.Contracts.Hex {
 			if (overlapSpan == null)
 				yield break;
 
+			if ((flags & (HexSpanSelectionFlags.Group0 | HexSpanSelectionFlags.Group1)) != 0) {
+				bool group0 = (flags & HexSpanSelectionFlags.Group0) != 0;
+				bool group1 = (flags & HexSpanSelectionFlags.Group1) != 0;
+
+				IEnumerable<HexCellInformation> cells;
+				if ((flags & HexSpanSelectionFlags.AllCells) != 0) {
+					cells = collection.GetCells();
+					overlapSpan = BufferSpan;
+				}
+				else if ((flags & HexSpanSelectionFlags.AllVisibleCells) != 0) {
+					cells = collection.GetVisibleCells();
+					overlapSpan = BufferSpan;
+				}
+				else
+					cells = collection.GetCells(overlapSpan.Value);
+				HexCellInformation firstCell = null;
+				HexCellInformation lastCell = null;
+				foreach (var cell in cells) {
+					if (!((cell.GroupIndex == 0 && group0) || (cell.GroupIndex == 1 && group1)))
+						continue;
+					if (firstCell == null) {
+						firstCell = cell;
+						lastCell = cell;
+					}
+					else if (lastCell.Index + 1 == cell.Index && lastCell.GroupIndex == cell.GroupIndex)
+						lastCell = cell;
+					else {
+						yield return Create(collection, firstCell, lastCell, overlapSpan.Value);
+						firstCell = lastCell = cell;
+					}
+				}
+				if (firstCell != null)
+					yield return Create(collection, firstCell, lastCell, overlapSpan.Value);
+				yield break;
+			}
 			if ((flags & HexSpanSelectionFlags.AllVisibleCells) != 0) {
 				yield return new TextAndHexSpan(visibleSpan, BufferSpan);
 				yield break;
