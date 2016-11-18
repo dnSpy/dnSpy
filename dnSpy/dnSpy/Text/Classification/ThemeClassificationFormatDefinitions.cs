@@ -2679,7 +2679,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexByteError)]
 		[Name(ThemeClassificationTypeNameKeys.HexByteError)]
 		[UserVisible(true)]
-		[Order(After = Priority.Default)]
+		[Order(After = Priority.High)]
 		sealed class HexByteError : ThemeClassificationFormatDefinition {
 			HexByteError() : base(TextColor.HexByteError) { }
 		}

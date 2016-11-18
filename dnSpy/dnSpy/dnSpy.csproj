@@ -353,6 +353,7 @@
     <Compile Include="Hex\HexValueFormatter.cs" />
     <Compile Include="Hex\HexVersionImpl.cs" />
     <Compile Include="Hex\MEF\Metadata.cs" />
+    <Compile Include="Hex\Tagging\DefaultTagger.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryServiceImpl.cs" />
     <Compile Include="Hex\Tagging\HexTaggerFactory.cs" />
     <Compile Include="Hex\Tagging\HexViewTagAggregator.cs" />

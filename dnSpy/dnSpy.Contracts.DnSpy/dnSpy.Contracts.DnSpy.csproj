@@ -410,6 +410,7 @@
     <Compile Include="Hex\Tagging\HexTaggerProvider.cs" />
     <Compile Include="Hex\Tagging\HexTagsChangedEventArgs.cs" />
     <Compile Include="Hex\Tagging\HexTagSpan.cs" />
+    <Compile Include="Hex\Tagging\HexTagTypeAttribute.cs" />
     <Compile Include="Hex\Tagging\HexTextTagSpan.cs" />
     <Compile Include="Hex\Tagging\HexViewTagAggregatorFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexViewTaggerProvider.cs" />
