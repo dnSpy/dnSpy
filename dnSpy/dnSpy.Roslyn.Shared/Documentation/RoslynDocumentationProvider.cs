@@ -26,7 +26,7 @@ using Microsoft.CodeAnalysis;
 namespace dnSpy.Roslyn.Shared.Documentation {
 	sealed class RoslynDocumentationProvider : DocumentationProvider {
 		static readonly StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
-		XmlDocumentationProvider xmlDocumentationProvider;
+		Contracts.Decompiler.XmlDoc.XmlDocumentationProvider xmlDocumentationProvider;
 		bool hasLoaded;
 		readonly string filename;
 
