@@ -102,6 +102,7 @@ namespace dnSpy.Hex {
 		public override bool ValuesLowerCaseHex => valuesLowerCaseHex;
 		public override int OffsetBitSize => offsetFormatter.OffsetBitSize;
 		public override HexValuesDisplayFormat ValuesFormat => valueFormatter.Format;
+		public override int BytesPerValue => valueFormatter.ByteCount;
 		public override bool ShowAscii => showAscii;
 		public override ReadOnlyCollection<HexColumnType> ColumnOrder => columnOrder;
 		public override VST.Span OffsetSpan { get; }

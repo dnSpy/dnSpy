@@ -166,6 +166,11 @@ namespace dnSpy.Contracts.Hex {
 		public abstract HexValuesDisplayFormat ValuesFormat { get; }
 
 		/// <summary>
+		/// Number of bytes per value
+		/// </summary>
+		public abstract int BytesPerValue { get; }
+
+		/// <summary>
 		/// true to show ASCII chars
 		/// </summary>
 		public abstract bool ShowAscii { get; }
