@@ -121,6 +121,21 @@ namespace dnSpy.Contracts.Hex {
 		public abstract HexPosition LogicalOffset { get; }
 
 		/// <summary>
+		/// Gets the span of a column
+		/// </summary>
+		/// <param name="column">Colum</param>
+		/// <param name="onlyVisibleCells">true to only include visible values, false to include the full column</param>
+		/// <returns></returns>
+		public Span GetSpan(HexColumnType column, bool onlyVisibleCells) {
+			switch (column) {
+			case HexColumnType.Offset:	return GetOffsetSpan();
+			case HexColumnType.Values:	return GetValuesSpan(onlyVisibleCells);
+			case HexColumnType.Ascii:	return GetAsciiSpan(onlyVisibleCells);
+			default: throw new ArgumentOutOfRangeException(nameof(column));
+			}
+		}
+
+		/// <summary>
 		/// Gets the span of the offset in <see cref="Text"/>. This can be an empty span if
 		/// the offset column isn't shown.
 		/// </summary>
