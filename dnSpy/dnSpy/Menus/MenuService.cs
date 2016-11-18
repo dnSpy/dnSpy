@@ -231,6 +231,15 @@ namespace dnSpy.Menus {
 
 			var menu = new ContextMenu();
 			BindBackgroundBrush(menu, isCtxMenu: true);
+
+			// The owner control could be zoomed (eg. text editor) but the context menu isn't, so make
+			// sure we use 100% zoom here (same as the context menu).
+			double defaultZoom = 1.0;
+			DsImage.SetZoom(menu, defaultZoom);
+			// Also make sure we use Display mode. Let MetroWindow handle it since it has some extra checks
+			var window = Window.GetWindow(ctxMenuElem) as MetroWindow;
+			window?.SetScaleTransform(menu, defaultZoom);
+
 			var allItems = CreateMenuItems(ctx, groups, null, null, true);
 			if (allItems.Count == 0)
 				return false;

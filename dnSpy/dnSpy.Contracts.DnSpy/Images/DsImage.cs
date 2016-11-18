@@ -98,14 +98,14 @@ namespace dnSpy.Contracts.Images {
 			new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.Inherits));
 
 		/// <summary>
-		/// Gets the zoom
+		/// Gets the zoom (1.0 == 100%)
 		/// </summary>
 		/// <param name="depo">Object</param>
 		/// <returns></returns>
 		public static double GetZoom(DependencyObject depo) => (double)depo.GetValue(ZoomProperty);
 
 		/// <summary>
-		/// Sets the zoom
+		/// Sets the zoom (1.0 == 100%)
 		/// </summary>
 		/// <param name="depo">Object</param>
 		/// <param name="value">Value</param>
