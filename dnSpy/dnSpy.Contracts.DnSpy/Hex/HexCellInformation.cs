@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="index">Cell index</param>
 		/// <param name="groupIndex">Group index</param>
-		/// <param name="bufferSpan">Buffer span</param>
+		/// <param name="bufferSpan">Buffer span or the default value if there's no data</param>
 		/// <param name="textSpan">Span of the text. This span doesn't include any whitespace before and after the text.</param>
 		/// <param name="cellSpan">Span of the cell, some of the span could be whitespace</param>
 		/// <param name="separatorSpan">Span of the cell separator</param>
@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentOutOfRangeException(nameof(index));
 			if (groupIndex < 0 || groupIndex > 1)
 				throw new ArgumentOutOfRangeException(nameof(groupIndex));
-			HasData = true;
+			HasData = !bufferSpan.IsDefault;
 			Index = index;
 			GroupIndex = groupIndex;
 			BufferSpan = bufferSpan;
@@ -98,20 +98,6 @@ namespace dnSpy.Contracts.Hex {
 			CellSpan = cellSpan;
 			SeparatorSpan = separatorSpan;
 			FullSpan = fullSpan;
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="groupIndex">Group index</param>
-		public HexCellInformation(int index, int groupIndex) {
-			if (index < 0)
-				throw new ArgumentOutOfRangeException(nameof(index));
-			if (groupIndex < 0 || groupIndex > 1)
-				throw new ArgumentOutOfRangeException(nameof(groupIndex));
-			HasData = false;
-			Index = index;
 		}
 
 		/// <summary>

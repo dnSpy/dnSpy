@@ -85,12 +85,12 @@ namespace dnSpy.Hex.Tagging {
 		public override IEnumerable<HexTextTagSpan<HexClassificationTag>> GetTags(HexTaggerContext context) {
 			var allValid = context.Line.HexBytes.AllValid;
 			if (allValid == null) {
-				foreach (var cell in context.Line.ValueCells.GetCells()) {
-					if (cell.HasData && !IsValid(cell, context.Line))
+				foreach (var cell in context.Line.ValueCells.GetVisibleCells()) {
+					if (!IsValid(cell, context.Line))
 						yield return new HexTextTagSpan<HexClassificationTag>(cell.FullSpan, hexClassificationTags.HexErrorTag);
 				}
-				foreach (var cell in context.Line.AsciiCells.GetCells()) {
-					if (cell.HasData && !IsValid(cell, context.Line))
+				foreach (var cell in context.Line.AsciiCells.GetVisibleCells()) {
+					if (!IsValid(cell, context.Line))
 						yield return new HexTextTagSpan<HexClassificationTag>(cell.FullSpan, hexClassificationTags.HexErrorTag);
 				}
 			}

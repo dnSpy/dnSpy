@@ -555,31 +555,36 @@ namespace dnSpy.Hex {
 				if (i != 0)
 					stringBuilder.Append(' ');
 				int groupIndex = (cellPos / groupSizeInBytes) & 1;
+
+				HexBufferSpan bufferSpan;
+				int cellStart = CurrentTextIndex;
+				int spaces;
 				if (visibleBytesSpan.Contains(pos)) {
 					if (visStart == null)
 						visStart = CurrentTextIndex;
 					long valueIndex = (long)(pos - visibleBytesSpan.Start).ToUInt64();
-					int cellStart = CurrentTextIndex;
-					int spaces = valueFormatter.FormatValue(stringBuilder, hexBytes, valueIndex, flags);
-					if (cellStart + valueFormatter.FormattedLength != CurrentTextIndex)
-						throw new InvalidOperationException();
-					var bufferSpan = new HexBufferSpan(buffer, new HexSpan(pos, (ulong)valueFormatter.ByteCount));
-					var textSpan = VST.Span.FromBounds(cellStart + spaces, CurrentTextIndex);
-					var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
-					VST.Span separatorSpan;
-					if (i + 1 < cellCount)
-						separatorSpan = new VST.Span(CurrentTextIndex, 1);
-					else
-						separatorSpan = new VST.Span(CurrentTextIndex, 0);
-					var cellFullSpan = VST.Span.FromBounds(cellStart, separatorSpan.End);
-					cellList.Add(new HexCellInformation((int)i, groupIndex, bufferSpan, textSpan, cellSpan, separatorSpan, cellFullSpan));
+					spaces = valueFormatter.FormatValue(stringBuilder, hexBytes, valueIndex, flags);
+					bufferSpan = new HexBufferSpan(buffer, new HexSpan(pos, (ulong)valueFormatter.ByteCount));
 				}
 				else {
 					if (visStart != null && visEnd == null)
 						visEnd = CurrentTextIndex;
-					cellList.Add(new HexCellInformation((int)i, groupIndex));
 					stringBuilder.Append(' ', valueFormatter.FormattedLength);
+					spaces = valueFormatter.FormattedLength;
+					bufferSpan = default(HexBufferSpan);
 				}
+				if (cellStart + valueFormatter.FormattedLength != CurrentTextIndex)
+					throw new InvalidOperationException();
+				var textSpan = VST.Span.FromBounds(cellStart + spaces, CurrentTextIndex);
+				var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
+				VST.Span separatorSpan;
+				if (i + 1 < cellCount)
+					separatorSpan = new VST.Span(CurrentTextIndex, 1);
+				else
+					separatorSpan = new VST.Span(CurrentTextIndex, 0);
+				var cellFullSpan = VST.Span.FromBounds(cellStart, separatorSpan.End);
+				cellList.Add(new HexCellInformation((int)i, groupIndex, bufferSpan, textSpan, cellSpan, separatorSpan, cellFullSpan));
+
 				pos += (ulong)valueFormatter.ByteCount;
 				cellPos += valueFormatter.ByteCount;
 			}
@@ -605,27 +610,32 @@ namespace dnSpy.Hex {
 			int cellPos = 0;
 			for (ulong i = 0; i < bytesPerLine; i++, pos++) {
 				int groupIndex = (cellPos / groupSizeInBytes) & 1;
+
+				HexBufferSpan bufferSpan;
+				int cellStart = CurrentTextIndex;
 				if (visibleBytesSpan.Contains(pos)) {
 					if (visStart == null)
 						visStart = CurrentTextIndex;
-					int cellStart = CurrentTextIndex;
 					long index = (long)(pos - visibleBytesSpan.Start).ToUInt64();
 					int b = hexBytes.TryReadByte(index);
-					if (b < 0x20 || b > 0x7E)
+					if (b < 0)
+						stringBuilder.Append('?');
+					else if (b < 0x20 || b > 0x7E)
 						stringBuilder.Append('.');
 					else
 						stringBuilder.Append((char)b);
-					var bufferSpan = new HexBufferSpan(buffer, new HexSpan(pos, 1));
-					var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
-					var separatorSpan = new VST.Span(cellSpan.End, 0);
-					cellList.Add(new HexCellInformation((int)i, groupIndex, bufferSpan, cellSpan, cellSpan, separatorSpan, cellSpan));
+					bufferSpan = new HexBufferSpan(buffer, new HexSpan(pos, 1));
 				}
 				else {
 					if (visStart != null && visEnd == null)
 						visEnd = CurrentTextIndex;
-					cellList.Add(new HexCellInformation((int)i, groupIndex));
 					stringBuilder.Append(' ');
+					bufferSpan = default(HexBufferSpan);
 				}
+				var cellSpan = VST.Span.FromBounds(cellStart, CurrentTextIndex);
+				var separatorSpan = new VST.Span(cellSpan.End, 0);
+				cellList.Add(new HexCellInformation((int)i, groupIndex, bufferSpan, cellSpan, cellSpan, separatorSpan, cellSpan));
+
 				cellPos++;
 			}
 			if ((ulong)fullStart + bytesPerLine != (ulong)CurrentTextIndex)
