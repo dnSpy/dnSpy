@@ -654,5 +654,31 @@ namespace dnSpy.Hex {
 
 		public override HexPosition ToPhysicalPosition(HexPosition logicalPosition) =>
 			(logicalPosition - basePosition + (useRelativePositions ? startPosition : 0)).ToUInt64();
+
+		public override int GetCharsPerCell(HexColumnType column) {
+			switch (column) {
+			case HexColumnType.Offset:	return offsetFormatter.FormattedLength;
+			case HexColumnType.Values:	return valueFormatter.FormattedLength;
+			case HexColumnType.Ascii:	return 1;
+			default: throw new ArgumentOutOfRangeException(nameof(column));
+			}
+		}
+
+		public override int GetCharsPerCellIncludingSeparator(HexColumnType column) {
+			switch (column) {
+			case HexColumnType.Offset:	return offsetFormatter.FormattedLength;
+			case HexColumnType.Values:	return valueFormatter.FormattedLength + 1;
+			case HexColumnType.Ascii:	return 1;
+			default: throw new ArgumentOutOfRangeException(nameof(column));
+			}
+		}
+
+		public override HexBufferSpan GetValueBufferSpan(HexCell cell, int cellPosition) {
+			if (cell == null)
+				throw new ArgumentNullException(nameof(cell));
+			if (cellPosition < 0 || cellPosition >= cell.CellSpan.Length)
+				throw new ArgumentOutOfRangeException(nameof(cellPosition));
+			return valueFormatter.GetBufferSpan(cell.BufferSpan, cell.CellSpan.Start + cellPosition);
+		}
 	}
 }

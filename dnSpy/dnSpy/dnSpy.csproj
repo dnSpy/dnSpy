@@ -310,6 +310,7 @@
     <Compile Include="Hex\Editor\HexAdornmentLayerElementImpl.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayerImpl.cs" />
     <Compile Include="Hex\Editor\HexCaretImpl.cs" />
+    <Compile Include="Hex\Editor\HexCaretLayer.cs" />
     <Compile Include="Hex\Editor\HexEditorFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexEditorOptions.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryServiceImpl.cs" />
@@ -327,6 +328,7 @@
     <Compile Include="Hex\Editor\HexViewScrollerImpl.cs" />
     <Compile Include="Hex\Editor\MetadataAndOrder.cs" />
     <Compile Include="Hex\Editor\TextLayer.cs" />
+    <Compile Include="Hex\Editor\WpfHexViewConstants.cs" />
     <Compile Include="Hex\Editor\WpfHexViewImpl.cs" />
     <Compile Include="Hex\Editor\WpfHexViewImpl.LayoutHelper.cs" />
     <Compile Include="Hex\Editor\WpfHexViewImpl.MouseHoverHelper.cs" />

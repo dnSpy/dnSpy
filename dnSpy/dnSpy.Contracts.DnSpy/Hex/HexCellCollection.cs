@@ -87,6 +87,8 @@ done:;
 			for (int i = validStart + 1; i < validEnd; i++) {
 				if (cells[i - 1].BufferEnd != cells[i].BufferStart)
 					throw new ArgumentException();
+				if (cells[i - 1].BufferSpan.Length != cells[i].BufferSpan.Length)
+					throw new ArgumentException();
 			}
 #endif
 			this.cells = cells;
@@ -144,20 +146,15 @@ done:;
 		}
 
 		int GetStartIndex(HexBufferPoint position) {
-			var array = cells;
-			int lo = validStart, hi = validEnd - 1;
-			while (lo <= hi) {
-				int index = (lo + hi) / 2;
-
-				var cell = array[index];
-				if (position < cell.BufferStart)
-					hi = index - 1;
-				else if (position >= cell.BufferEnd)
-					lo = index + 1;
-				else
-					return index;
-			}
-			return validStart <= lo && lo < validEnd ? lo : -1;
+			var cellsLocal = cells;
+			int lo = validStart, hi = validEnd;
+			if (lo >= hi)
+				return -1;
+			var cellFirst = cellsLocal[lo];
+			var cellLast = cellsLocal[hi - 1];
+			if (position < cellFirst.BufferStart || position >= cellLast.BufferEnd)
+				return -1;
+			return lo + (int)((position - cellFirst.BufferStart).ToUInt64() / cellFirst.BufferSpan.Length.ToUInt64());
 		}
 	}
 }

@@ -305,6 +305,8 @@
     <Compile Include="Hex\Editor\HexAdornmentLayer.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayerDefinition.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayerElement.cs" />
+    <Compile Include="Hex\Editor\HexCaretPosition.cs" />
+    <Compile Include="Hex\Editor\HexColumnPosition.cs" />
     <Compile Include="Hex\Editor\HexLayerKind.cs" />
     <Compile Include="Hex\Editor\HexLayerKindAttribute.cs" />
     <Compile Include="Hex\Editor\HexMouseHoverAttribute.cs" />
@@ -328,8 +330,11 @@
     <Compile Include="Hex\Editor\HexEditorOptionDefinition.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryService.cs" />
     <Compile Include="Hex\Editor\HexMouseHoverEventArgs.cs" />
+    <Compile Include="Hex\HexCellPosition.cs" />
     <Compile Include="Hex\HexColumnType.cs" />
     <Compile Include="Hex\HexGroupInformation.cs" />
+    <Compile Include="Hex\HexLinePositionInfo.cs" />
+    <Compile Include="Hex\HexLinePositionInfoType.cs" />
     <Compile Include="Hex\HexLineSpan.cs" />
     <Compile Include="Hex\HexOffsetFormat.cs" />
     <Compile Include="Hex\Editor\HexSelection.cs" />

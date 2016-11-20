@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Hex {
 		public bool IsValid(int index) {
 			if (validBytes == null)
 				return allValid;
-			return validBytes.Get(index);
+			return index < validBytes.Length && validBytes.Get(index);
 		}
 
 		/// <summary>
@@ -111,7 +111,7 @@ namespace dnSpy.Contracts.Hex {
 		public bool IsValid(long index) {
 			if (validBytes == null)
 				return allValid;
-			return index <= int.MaxValue ? validBytes.Get((int)index) : true;
+			return index <= int.MaxValue && (int)index < validBytes.Length ? validBytes.Get((int)index) : true;
 		}
 
 		/// <summary>
@@ -170,6 +170,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 1 >= (ulong)d.LongLength)
+				return null;
 			return (ushort)(d[index] | (d[index + 1] << 8));
 		}
 
@@ -182,6 +184,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 1 >= (ulong)d.LongLength)
+				return null;
 			return (short)(d[index] | (d[index + 1] << 8));
 		}
 
@@ -194,6 +198,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 3 >= (ulong)d.LongLength)
+				return null;
 			return (uint)(d[index] | (d[index + 1] << 8) | (d[index + 2] << 16) | (d[index + 3] << 24));
 		}
 
@@ -206,6 +212,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 3 >= (ulong)d.LongLength)
+				return null;
 			return d[index] | (d[index + 1] << 8) | (d[index + 2] << 16) | (d[index + 3] << 24);
 		}
 
@@ -218,6 +226,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3) && !IsValid(index + 4) && !IsValid(index + 5) && !IsValid(index + 6) && !IsValid(index + 7))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 7 >= (ulong)d.LongLength)
+				return null;
 			return d[index] |
 					((ulong)d[index + 1] << 8) |
 					((ulong)d[index + 2] << 16) |
@@ -237,6 +247,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3) && !IsValid(index + 4) && !IsValid(index + 5) && !IsValid(index + 6) && !IsValid(index + 7))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 7 >= (ulong)d.LongLength)
+				return null;
 			return d[index] |
 					((long)d[index + 1] << 8) |
 					((long)d[index + 2] << 16) |
@@ -282,6 +294,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 1 >= (ulong)d.LongLength)
+				return null;
 			return (ushort)(d[index + 1] | (d[index] << 8));
 		}
 
@@ -294,6 +308,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 1 >= (ulong)d.LongLength)
+				return null;
 			return (short)(d[index + 1] | (d[index] << 8));
 		}
 
@@ -306,6 +322,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 3 >= (ulong)d.LongLength)
+				return null;
 			return (uint)(d[index + 3] | (d[index + 2] << 8) | (d[index + 1] << 16) | (d[index] << 24));
 		}
 
@@ -318,6 +336,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 3 >= (ulong)d.LongLength)
+				return null;
 			return d[index + 3] | (d[index + 2] << 8) | (d[index + 1] << 16) | (d[index] << 24);
 		}
 
@@ -330,6 +350,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3) && !IsValid(index + 4) && !IsValid(index + 5) && !IsValid(index + 6) && !IsValid(index + 7))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 7 >= (ulong)d.LongLength)
+				return null;
 			return d[index + 7] |
 					((ulong)d[index + 6] << 8) |
 					((ulong)d[index + 5] << 16) |
@@ -349,6 +371,8 @@ namespace dnSpy.Contracts.Hex {
 			if (!IsValid(index) && !IsValid(index + 1) && !IsValid(index + 2) && !IsValid(index + 3) && !IsValid(index + 4) && !IsValid(index + 5) && !IsValid(index + 6) && !IsValid(index + 7))
 				return null;
 			var d = bytes;
+			if ((ulong)index + 7 >= (ulong)d.LongLength)
+				return null;
 			return d[index + 7] |
 					((long)d[index + 6] << 8) |
 					((long)d[index + 5] << 16) |

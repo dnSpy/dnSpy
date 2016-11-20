@@ -17,26 +17,39 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Hex.Editor {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
-	/// Hex selection
+	/// <see cref="HexLinePositionInfo"/> type
 	/// </summary>
-	public abstract class HexSelection {
+	public enum HexLinePositionInfoType {
 		/// <summary>
-		/// Constructor
+		/// Offset column
 		/// </summary>
-		protected HexSelection() { }
+		Offset,
 
 		/// <summary>
-		/// true if the selection is empty
+		/// Value cell
 		/// </summary>
-		public abstract bool IsEmpty { get; }
+		ValueCell,
 
 		/// <summary>
-		/// Raised when the selection is changed
+		/// Value cell separator
 		/// </summary>
-		public abstract event EventHandler SelectionChanged;
+		ValueCellSeparator,
+
+		/// <summary>
+		/// ASCII cell
+		/// </summary>
+		AsciiCell,
+
+		/// <summary>
+		/// Column separator
+		/// </summary>
+		ColumnSeparator,
+
+		/// <summary>
+		/// Virtual space (a position greater than or equal to the line length)
+		/// </summary>
+		VirtualSpace,
 	}
 }

@@ -181,6 +181,18 @@ namespace dnSpy.Contracts.Hex {
 		public abstract ReadOnlyCollection<HexColumnType> ColumnOrder { get; }
 
 		/// <summary>
+		/// Gets the number of characters per cell value. This value doesn't include any cell separators
+		/// </summary>
+		/// <returns></returns>
+		public abstract int GetCharsPerCell(HexColumnType column);
+
+		/// <summary>
+		/// Gets the total number of characters per cell. This includes cell separators if any.
+		/// </summary>
+		/// <returns></returns>
+		public abstract int GetCharsPerCellIncludingSeparator(HexColumnType column);
+
+		/// <summary>
 		/// Returns a line
 		/// </summary>
 		/// <param name="lineNumber">Line number</param>
@@ -221,10 +233,18 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual bool IsValidPosition(HexBufferPoint position) {
+		public bool IsValidPosition(HexBufferPoint position) {
 			if (position.Buffer != Buffer)
 				return false;
 			return StartPosition == EndPosition ? StartPosition == position : StartPosition <= position && position < EndPosition;
 		}
+
+		/// <summary>
+		/// Gets a buffer span within a cell
+		/// </summary>
+		/// <param name="cell">Cell</param>
+		/// <param name="cellPosition">Position within the cell</param>
+		/// <returns></returns>
+		public abstract HexBufferSpan GetValueBufferSpan(HexCell cell, int cellPosition);
 	}
 }

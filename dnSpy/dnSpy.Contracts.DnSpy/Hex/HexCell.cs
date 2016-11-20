@@ -90,6 +90,10 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentOutOfRangeException(nameof(index));
 			if (groupIndex < 0 || groupIndex > 1)
 				throw new ArgumentOutOfRangeException(nameof(groupIndex));
+			if (cellSpan.Length == 0)
+				throw new ArgumentOutOfRangeException(nameof(cellSpan));
+			if (!fullSpan.Contains(cellSpan))
+				throw new ArgumentOutOfRangeException(nameof(cellSpan));
 			HasData = !bufferSpan.IsDefault;
 			Index = index;
 			GroupIndex = groupIndex;

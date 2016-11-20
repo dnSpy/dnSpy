@@ -39,6 +39,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public abstract HexBufferLineProvider BufferLines { get; }
 
 		/// <summary>
+		/// Raised after <see cref="BufferLines"/> is changed
+		/// </summary>
+		public abstract event EventHandler<BufferLinesChangedEventArgs> BufferLinesChanged;
+
+		/// <summary>
 		/// Gets the command target
 		/// </summary>
 		public abstract ICommandTargetCollection CommandTarget { get; }
@@ -224,5 +229,32 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Queues a space reservation stack refresh
 		/// </summary>
 		public abstract void QueueSpaceReservationStackRefresh();
+	}
+
+	/// <summary>
+	/// <see cref="HexView.BufferLines"/> changed event args
+	/// </summary>
+	public sealed class BufferLinesChangedEventArgs : EventArgs {
+		/// <summary>
+		/// Gets the old instance. This value can be null.
+		/// </summary>
+		public HexBufferLineProvider OldBufferLines { get; }
+
+		/// <summary>
+		/// Gets the new instance. This instance is never null.
+		/// </summary>
+		public HexBufferLineProvider NewBufferLines { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="oldBufferLines">Old instance</param>
+		/// <param name="newBufferLines">New instance</param>
+		public BufferLinesChangedEventArgs(HexBufferLineProvider oldBufferLines, HexBufferLineProvider newBufferLines) {
+			if (newBufferLines == null)
+				throw new ArgumentNullException(nameof(newBufferLines));
+			OldBufferLines = oldBufferLines;
+			NewBufferLines = newBufferLines;
+		}
 	}
 }

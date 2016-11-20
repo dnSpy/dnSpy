@@ -19,17 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
-using dnSpy.Contracts.Settings;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Editor {

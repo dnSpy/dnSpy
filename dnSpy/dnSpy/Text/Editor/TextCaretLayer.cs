@@ -93,11 +93,12 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(textCaret));
 			if (layer == null)
 				throw new ArgumentNullException(nameof(layer));
+			if (classificationFormatMap == null)
+				throw new ArgumentNullException(nameof(classificationFormatMap));
 			this.textCaret = textCaret;
 			this.layer = layer;
 			this.classificationFormatMap = classificationFormatMap;
-			this.caretGeometry = new CaretGeometry();
-			textCaret.PositionChanged += TextCaret_PositionChanged;
+			caretGeometry = new CaretGeometry();
 			layer.TextView.LayoutChanged += TextView_LayoutChanged;
 			layer.TextView.Selection.SelectionChanged += Selection_SelectionChanged;
 			layer.TextView.VisualElement.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_GotKeyboardFocus), true);
@@ -151,7 +152,7 @@ namespace dnSpy.Text.Editor {
 		}
 		SelectionState oldSelectionState;
 
-		void TextCaret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => UpdateCaretProperties();
+		internal void CaretPositionChanged() => UpdateCaretProperties();
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateCaretProperties();
 
 		public void SetImeStarted(bool started) {
@@ -296,7 +297,6 @@ namespace dnSpy.Text.Editor {
 
 		public void Dispose() {
 			StopTimer();
-			textCaret.PositionChanged -= TextCaret_PositionChanged;
 			layer.TextView.LayoutChanged -= TextView_LayoutChanged;
 			layer.TextView.Selection.SelectionChanged -= Selection_SelectionChanged;
 			layer.TextView.VisualElement.GotKeyboardFocus -= VisualElement_GotKeyboardFocus;

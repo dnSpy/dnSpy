@@ -17,26 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Hex.Editor {
-	/// <summary>
-	/// Hex selection
-	/// </summary>
-	public abstract class HexSelection {
+namespace dnSpy.Hex.Editor {
+	static class WpfHexViewConstants {
 		/// <summary>
-		/// Constructor
+		/// Extra visible horizontal space that should always be available. Used when calculating
+		/// max horizontal scrolling distance or when moving caret horizontally.
 		/// </summary>
-		protected HexSelection() { }
-
-		/// <summary>
-		/// true if the selection is empty
-		/// </summary>
-		public abstract bool IsEmpty { get; }
-
-		/// <summary>
-		/// Raised when the selection is changed
-		/// </summary>
-		public abstract event EventHandler SelectionChanged;
+		public const double EXTRA_HORIZONTAL_WIDTH = 200;
 	}
 }

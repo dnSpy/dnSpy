@@ -38,9 +38,10 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Hex.Formatting;
 using dnSpy.Hex.MEF;
-using TC = Microsoft.VisualStudio.Text.Classification;
-using TE = Microsoft.VisualStudio.Text.Editor;
-using TF = Microsoft.VisualStudio.Text.Formatting;
+using TE = dnSpy.Text.Editor;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Editor {
@@ -65,8 +66,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override FrameworkElement VisualElement => canvas;
-		public override TE.ITextViewRoleSet Roles { get; }
-		public override TE.IEditorOptions Options { get; }
+		public override VSTE.ITextViewRoleSet Roles { get; }
+		public override VSTE.IEditorOptions Options { get; }
 		public override ICommandTargetCollection CommandTarget => RegisteredCommandElement.CommandTarget;
 		IRegisteredCommandElement RegisteredCommandElement { get; }
 		public override HexCaret Caret => HexCaret;
@@ -82,12 +83,12 @@ namespace dnSpy.Hex.Editor {
 		public override event EventHandler GotAggregateFocus;
 		public override event EventHandler LostAggregateFocus;
 		public override event EventHandler Closed;
-		public override event EventHandler<TE.BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
+		public override event EventHandler<VSTE.BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
 		public override event EventHandler ViewportLeftChanged;
 		public override event EventHandler ViewportHeightChanged;
 		public override event EventHandler ViewportWidthChanged;
 		public override event EventHandler<HexViewLayoutChangedEventArgs> LayoutChanged;
-		public override event EventHandler<TE.ZoomLevelChangedEventArgs> ZoomLevelChanged;
+		public override event EventHandler<VSTE.ZoomLevelChangedEventArgs> ZoomLevelChanged;
 		public override HexFormattedLineSource FormattedLineSource => formattedLineSource;
 		HexFormattedLineSource formattedLineSource;
 		public override bool InLayout => inLayout;
@@ -111,8 +112,8 @@ namespace dnSpy.Hex.Editor {
 		readonly HexClassifier aggregateClassifier;
 		readonly HexAndAdornmentSequencer hexAndAdornmentSequencer;
 		readonly HexBufferLineProviderFactoryService bufferLineProviderFactoryService;
-		readonly TC.IClassificationFormatMap classificationFormatMap;
-		readonly TC.IEditorFormatMap editorFormatMap;
+		readonly VSTC.IClassificationFormatMap classificationFormatMap;
+		readonly VSTC.IEditorFormatMap editorFormatMap;
 		readonly HexSpaceReservationStack spaceReservationStack;
 		readonly HexAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly HexLineTransformProviderService lineTransformProviderService;
@@ -144,7 +145,7 @@ namespace dnSpy.Hex.Editor {
 		static readonly HexAdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfHexViewImpl(HexBuffer buffer, TE.ITextViewRoleSet roles, TE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineProviderFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners) {
+		public WpfHexViewImpl(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineProviderFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			if (roles == null)
@@ -175,6 +176,8 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(spaceReservationStackProvider));
 			if (wpfHexViewCreationListeners == null)
 				throw new ArgumentNullException(nameof(wpfHexViewCreationListeners));
+			if (classificationTypeRegistryService == null)
+				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			canvas = new HexViewCanvas(this);
 			Buffer = buffer;
 			thisHexLineTransformSource = new MyHexLineTransformSource(this);
@@ -184,7 +187,7 @@ namespace dnSpy.Hex.Editor {
 			visiblePhysicalLines = new List<PhysicalLine>();
 			invalidatedRegions = new List<HexBufferSpan>();
 			this.formattedHexSourceFactoryService = formattedHexSourceFactoryService;
-			zoomLevel = TE.ZoomConstants.DefaultZoom;
+			zoomLevel = VSTE.ZoomConstants.DefaultZoom;
 			DsImage.SetZoom(VisualElement, zoomLevel / 100);
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService;
 			this.lineTransformProviderService = lineTransformProviderService;
@@ -208,7 +211,7 @@ namespace dnSpy.Hex.Editor {
 
 			textLayer = new TextLayer(GetAdornmentLayer(PredefinedHexAdornmentLayers.Text));
 			HexSelection = new HexSelectionImpl(this, GetAdornmentLayer(PredefinedHexAdornmentLayers.Selection), editorFormatMap);
-			HexCaret = new HexCaretImpl(this, GetAdornmentLayer(PredefinedHexAdornmentLayers.Caret), classificationFormatMap);
+			HexCaret = new HexCaretImpl(this, GetAdornmentLayer(PredefinedHexAdornmentLayers.Caret), classificationFormatMap, classificationTypeRegistryService);
 
 			canvas.Children.Add(underlayAdornmentLayerCollection);
 			canvas.Children.Add(normalAdornmentLayerCollection);
@@ -229,13 +232,14 @@ namespace dnSpy.Hex.Editor {
 
 			UpdateBackground();
 			CreateFormattedLineSource(ViewportWidth);
+			HexCaret.Initialize();
 			InitializeZoom();
 			UpdateRemoveExtraTextLineVerticalPixels();
 
 			if (Roles.Contains(PredefinedHexViewRoles.Interactive))
 				RegisteredCommandElement = commandService.Register(VisualElement, this);
 			else
-				RegisteredCommandElement = Text.Editor.NullRegisteredCommandElement.Instance;
+				RegisteredCommandElement = TE.NullRegisteredCommandElement.Instance;
 
 			NotifyHexViewCreated();
 		}
@@ -293,14 +297,14 @@ namespace dnSpy.Hex.Editor {
 			}), DispatcherPriority.Normal);
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, TC.FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
 			if (e.ChangedItems.Contains(EditorFormatMapConstants.TextViewBackgroundId))
 				UpdateBackground();
 		}
 
 		void UpdateBackground() {
 			var bgProps = editorFormatMap.GetProperties(EditorFormatMapConstants.TextViewBackgroundId);
-			canvas.Background = Text.Editor.ResourceDictionaryUtilities.GetBackgroundBrush(bgProps, SystemColors.WindowBrush);
+			canvas.Background = TE.ResourceDictionaryUtilities.GetBackgroundBrush(bgProps, SystemColors.WindowBrush);
 		}
 
 		void HexAndAdornmentSequencer_SequenceChanged(object sender, HexAndAdornmentSequenceChangedEventArgs e) =>
@@ -358,7 +362,7 @@ namespace dnSpy.Hex.Editor {
 				bufferPosition = line.BufferSpan.Start;
 			}
 
-			DisplayLines(bufferPosition, verticalDistance, TE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop);
+			DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop);
 		}
 
 		void InvalidateFormattedLineSource(bool refreshAllLines) {
@@ -373,7 +377,7 @@ namespace dnSpy.Hex.Editor {
 				InvalidateFormattedLineSource(true);
 		}
 
-		void EditorOptions_OptionChanged(object sender, TE.EditorOptionChangedEventArgs e) {
+		void EditorOptions_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
 			UpdateOption(e.OptionId);
 			if (e.OptionId == DefaultHexViewOptions.RefreshScreenOnChangeName) {
 				if (!Options.IsRefreshScreenOnChangeEnabled())
@@ -449,7 +453,7 @@ namespace dnSpy.Hex.Editor {
 				if (canvas.Background != value) {
 					canvas.Background = value;
 					if (!IsClosed)
-						BackgroundBrushChanged?.Invoke(this, new TE.BackgroundBrushChangedEventArgs(value));
+						BackgroundBrushChanged?.Invoke(this, new VSTE.BackgroundBrushChangedEventArgs(value));
 				}
 			}
 		}
@@ -461,17 +465,17 @@ namespace dnSpy.Hex.Editor {
 					return;
 
 				double newValue = value;
-				newValue = Math.Min(TE.ZoomConstants.MaxZoom, newValue);
-				newValue = Math.Max(TE.ZoomConstants.MinZoom, newValue);
-				if (double.IsNaN(newValue) || Math.Abs(newValue - TE.ZoomConstants.DefaultZoom) < 0.01)
-					newValue = TE.ZoomConstants.DefaultZoom;
+				newValue = Math.Min(VSTE.ZoomConstants.MaxZoom, newValue);
+				newValue = Math.Max(VSTE.ZoomConstants.MinZoom, newValue);
+				if (double.IsNaN(newValue) || Math.Abs(newValue - VSTE.ZoomConstants.DefaultZoom) < 0.01)
+					newValue = VSTE.ZoomConstants.DefaultZoom;
 				if (newValue == zoomLevel)
 					return;
 
 				zoomLevel = newValue;
 
 				metroWindow?.SetScaleTransform(canvas, zoomLevel / 100);
-				ZoomLevelChanged?.Invoke(this, new TE.ZoomLevelChangedEventArgs(newValue, canvas.LayoutTransform));
+				ZoomLevelChanged?.Invoke(this, new VSTE.ZoomLevelChangedEventArgs(newValue, canvas.LayoutTransform));
 				DsImage.SetZoom(VisualElement, zoomLevel / 100);
 			}
 		}
@@ -529,7 +533,7 @@ namespace dnSpy.Hex.Editor {
 			oldViewState = newViewState;
 			foreach (var p in visiblePhysicalLines) {
 				foreach (var l in p.Lines) {
-					l.SetChange(TF.TextViewLineChange.None);
+					l.SetChange(VSTF.TextViewLineChange.None);
 					l.SetDeltaY(0);
 				}
 			}
@@ -627,7 +631,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void UpdateForceClearTypeIfNeeded() => Text.Editor.TextFormattingUtilities.UpdateForceClearTypeIfNeeded(canvas, Options.IsForceClearTypeIfNeededEnabled(), classificationFormatMap);
+		void UpdateForceClearTypeIfNeeded() => TE.TextFormattingUtilities.UpdateForceClearTypeIfNeeded(canvas, Options.IsForceClearTypeIfNeededEnabled(), classificationFormatMap);
 
 		public override HexViewLine GetHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition) => GetWpfHexViewLineContainingBufferPosition(bufferPosition);
 		public override WpfHexViewLine GetWpfHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition) {
@@ -661,8 +665,9 @@ namespace dnSpy.Hex.Editor {
 				CreateFormattedLineSource(viewportWidthOverride);
 			if (recreateHexBufferLineProvider) {
 				recreateHexBufferLineProvider = false;
+				var oldBufferLines = hexBufferLineProvider;
 				hexBufferLineProvider = null;
-				var dummy = BufferLines;
+				RaiseBufferLinesChanged(oldBufferLines);
 			}
 			return CreatePhysicalLineNoCache(BufferLines, FormattedLineSource, bufferPosition);
 		}
@@ -673,19 +678,22 @@ namespace dnSpy.Hex.Editor {
 			return new PhysicalLine(new[] { formattedLine });
 		}
 
-		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, TE.ViewRelativePosition relativeTo) =>
+		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo) =>
 			DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null);
-		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, TE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) =>
+		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) =>
 			DisplayLines(bufferPosition, verticalDistance, relativeTo, viewportWidthOverride ?? ViewportWidth, viewportHeightOverride ?? ViewportHeight, null);
 
 		double lastViewportWidth = double.NaN;
-		void DisplayLines(HexBufferPoint bufferPosition, double verticalDistance, TE.ViewRelativePosition relativeTo, double viewportWidthOverride, double viewportHeightOverride, double? newViewportTop) {
+		void DisplayLines(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double viewportWidthOverride, double viewportHeightOverride, double? newViewportTop) {
 			if (IsClosed)
 				throw new InvalidOperationException();
+			var oldBufferLines = hexBufferLineProvider;
+			bool raiseBufferLinesChangedEvent = false;
+
 			canvas.Dispatcher.VerifyAccess();
 			if (bufferPosition.Buffer != Buffer)
 				throw new ArgumentException();
-			if (relativeTo != TE.ViewRelativePosition.Top && relativeTo != TE.ViewRelativePosition.Bottom)
+			if (relativeTo != VSTE.ViewRelativePosition.Top && relativeTo != VSTE.ViewRelativePosition.Bottom)
 				throw new ArgumentOutOfRangeException(nameof(relativeTo));
 			if (viewportHeightOverride < 0 || double.IsNaN(viewportHeightOverride))
 				throw new ArgumentOutOfRangeException(nameof(viewportHeightOverride));
@@ -721,6 +729,7 @@ namespace dnSpy.Hex.Editor {
 			// This one depends on FormattedLineSource and must be created afterwards
 			if (recreateHexBufferLineProvider) {
 				recreateHexBufferLineProvider = false;
+				raiseBufferLinesChangedEvent = true;
 				hexBufferLineProvider = null;
 			}
 
@@ -750,6 +759,14 @@ namespace dnSpy.Hex.Editor {
 				Canvas.SetTop(normalAdornmentLayerCollection, -viewportTop);
 			}
 			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
+			if (raiseBufferLinesChangedEvent)
+				RaiseBufferLinesChanged(oldBufferLines);
+		}
+
+		void RaiseBufferLinesChanged(HexBufferLineProvider oldBufferLines) {
+			// Always access the property so it's recreated if the backing field is null
+			var newBufferLines = BufferLines;
+			BufferLinesChanged?.Invoke(this, new BufferLinesChangedEventArgs(oldBufferLines, newBufferLines));
 		}
 
 		List<PhysicalLine> GetValidCachedLines(NormalizedHexBufferSpanCollection regionsToInvalidate) {
@@ -845,7 +862,7 @@ namespace dnSpy.Hex.Editor {
 			if (metroWindow != null) {
 				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
 				MetroWindow_WindowDpiChanged(metroWindow, EventArgs.Empty);
-				ZoomLevelChanged?.Invoke(this, new TE.ZoomLevelChangedEventArgs(ZoomLevel, canvas.LayoutTransform));
+				ZoomLevelChanged?.Invoke(this, new VSTE.ZoomLevelChangedEventArgs(ZoomLevel, canvas.LayoutTransform));
 				return;
 			}
 
@@ -861,7 +878,7 @@ namespace dnSpy.Hex.Editor {
 			if (metroWindow != null) {
 				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
 				MetroWindow_WindowDpiChanged(metroWindow, EventArgs.Empty);
-				ZoomLevelChanged?.Invoke(this, new TE.ZoomLevelChangedEventArgs(ZoomLevel, canvas.LayoutTransform));
+				ZoomLevelChanged?.Invoke(this, new VSTE.ZoomLevelChangedEventArgs(ZoomLevel, canvas.LayoutTransform));
 				return;
 			}
 		}
@@ -892,7 +909,7 @@ namespace dnSpy.Hex.Editor {
 			public MyHexLineTransformSource(WpfHexViewImpl owner) {
 				this.owner = owner;
 			}
-			public override TF.LineTransform GetLineTransform(HexViewLine line, double yPosition, TE.ViewRelativePosition placement) =>
+			public override VSTF.LineTransform GetLineTransform(HexViewLine line, double yPosition, VSTE.ViewRelativePosition placement) =>
 				owner.LineTransformProvider.GetLineTransform(line, yPosition, placement);
 		}
 
@@ -928,8 +945,12 @@ namespace dnSpy.Hex.Editor {
 
 		bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
 
+		public override event EventHandler<BufferLinesChangedEventArgs> BufferLinesChanged;
 		public override HexBufferLineProvider BufferLines {
 			get {
+				// Don't raise BufferLinesChanged event here. It's the responsibility of the code
+				// clearing this field to raise the event. It's not safe to raise the event at any
+				// time (eg. in the middle of layout)
 				if (hexBufferLineProvider == null)
 					hexBufferLineProvider = bufferLineProviderFactoryService.Create(Buffer, GetHexBufferLineProviderOptions());
 				return hexBufferLineProvider;

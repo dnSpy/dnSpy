@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
@@ -331,6 +332,221 @@ namespace dnSpy.Contracts.Hex {
 				if (textStart > textEnd || posStart > posEnd)
 					yield break;
 				yield return new TextAndHexSpan(Span.FromBounds(textStart, textEnd), new HexBufferSpan(Buffer, HexSpan.FromBounds(posStart, posEnd)));
+			}
+		}
+
+		/// <summary>
+		/// Gets a text line position or null
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public int? GetLinePosition(HexCellPosition position) {
+			if (position.IsDefault)
+				throw new ArgumentException();
+
+			HexCellCollection collection;
+			switch (position.Column) {
+			case HexColumnType.Values:		collection = ValueCells; break;
+			case HexColumnType.Ascii:		collection = AsciiCells; break;
+			case HexColumnType.Offset:
+			default:
+				throw new ArgumentOutOfRangeException(nameof(position));
+			}
+
+			var cell = collection.GetCell(position.BufferPosition);
+			if (cell == null)
+				return null;
+			if (position.CellPosition >= cell.CellSpan.Length)
+				return null;
+			return cell.CellSpan.Start + position.CellPosition;
+		}
+
+		/// <summary>
+		/// Creates a <see cref="HexLinePositionInfo"/>
+		/// </summary>
+		/// <param name="linePosition">Line position</param>
+		/// <returns></returns>
+		public HexLinePositionInfo GetLinePositionInfo(int linePosition) {
+			if (linePosition >= Text.Length)
+				return HexLinePositionInfo.CreateVirtualSpace(linePosition, Text.Length);
+
+			if (IsOffsetColumnPresent) {
+				var span = GetOffsetSpan();
+				if (span.Contains(linePosition))
+					return HexLinePositionInfo.CreateOffset(linePosition, linePosition - span.Start);
+			}
+
+			if (IsValuesColumnPresent) {
+				var valuesSpan = GetValuesSpan(onlyVisibleCells: false);
+				if (valuesSpan.Contains(linePosition)) {
+					int cellIndex = (linePosition - valuesSpan.Start) / LineProvider.GetCharsPerCellIncludingSeparator(HexColumnType.Values);
+					var cell = AsciiCells[cellIndex];
+					if (cell.SeparatorSpan.Contains(linePosition))
+						return HexLinePositionInfo.CreateValueCellSeparator(linePosition, cell);
+					return HexLinePositionInfo.CreateValue(linePosition, cell);
+				}
+			}
+
+			if (IsAsciiColumnPresent) {
+				var asciiSpan = GetAsciiSpan(onlyVisibleCells: false);
+				if (asciiSpan.Contains(linePosition)) {
+					int cellIndex = linePosition - asciiSpan.Start;
+					var cell = AsciiCells[cellIndex];
+					return HexLinePositionInfo.CreateAscii(linePosition, cell);
+				}
+			}
+
+			foreach (var column in ColumnOrder) {
+				var span = GetSpan(column, onlyVisibleCells: false);
+				if (span.End == linePosition)
+					return HexLinePositionInfo.CreateColumnSeparator(linePosition);
+			}
+
+			throw new InvalidOperationException();
+		}
+
+		/// <summary>
+		/// Gets the closest cell position
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="onlyVisibleCells">true to only return cells with data</param>
+		/// <returns></returns>
+		public HexCellPosition? GetClosestCellPosition(HexLinePositionInfo position, bool onlyVisibleCells) {
+			switch (position.Type) {
+			case HexLinePositionInfoType.ValueCell:
+			case HexLinePositionInfoType.AsciiCell:
+				break;
+
+			case HexLinePositionInfoType.Offset:
+			case HexLinePositionInfoType.ValueCellSeparator:
+			case HexLinePositionInfoType.ColumnSeparator:
+			case HexLinePositionInfoType.VirtualSpace:
+				var closestPos = GetClosestCellPosition(position.Position);
+				if (closestPos == null)
+					return null;
+				Debug.Assert(closestPos.Value.IsAsciiCell || closestPos.Value.IsValueCell);
+				position = closestPos.Value;
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			var cell = position.Cell;
+			int cellPosition = position.CellPosition;
+			switch (position.Type) {
+			case HexLinePositionInfoType.AsciiCell:
+				if (!IsAsciiColumnPresent)
+					return null;
+				if (onlyVisibleCells && !cell.HasData) {
+					var visible = GetVisible(AsciiCells, cell);
+					if (visible == null)
+						return null;
+					cell = visible.Value.Key;
+					cellPosition = visible.Value.Value;
+				}
+				return new HexCellPosition(HexColumnType.Ascii, cell.BufferStart, cellPosition);
+
+			case HexLinePositionInfoType.ValueCell:
+				if (!IsValuesColumnPresent)
+					return null;
+				if (onlyVisibleCells && !cell.HasData) {
+					var visible = GetVisible(ValueCells, cell);
+					if (visible == null)
+						return null;
+					cell = visible.Value.Key;
+					cellPosition = visible.Value.Value;
+				}
+				return new HexCellPosition(HexColumnType.Values, LineProvider.GetValueBufferSpan(cell, cellPosition).Start, cellPosition);
+
+			case HexLinePositionInfoType.Offset:
+			case HexLinePositionInfoType.ValueCellSeparator:
+			case HexLinePositionInfoType.ColumnSeparator:
+			case HexLinePositionInfoType.VirtualSpace:
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		static KeyValuePair<HexCell, int>? GetVisible(HexCellCollection collection, HexCell cell) {
+			if (cell.HasData)
+				throw new ArgumentException();
+			for (int i = cell.Index + 1; i < collection.Count; i++) {
+				var c = collection[i];
+				if (!c.HasData)
+					continue;
+				return new KeyValuePair<HexCell, int>(c, 0);
+			}
+			for (int i = cell.Index - 1; i >= 0; i--) {
+				var c = collection[i];
+				if (!c.HasData)
+					continue;
+				return new KeyValuePair<HexCell, int>(c, c.CellSpan.Length - 1);
+			}
+			return null;
+		}
+
+		HexLinePositionInfo? GetClosestCellPosition(int linePosition) {
+			KeyValuePair<HexColumnType, HexCell>? closest = null;
+			int cellPosition = -1;
+			foreach (var info in GetCells()) {
+				var cell = info.Value;
+				if (closest == null || Compare(linePosition, cell, closest.Value.Value) < 0) {
+					closest = info;
+					cellPosition = linePosition - info.Value.CellSpan.Start;
+					if (cellPosition < 0)
+						cellPosition = 0;
+					else if (cellPosition >= info.Value.CellSpan.Length)
+						cellPosition = info.Value.CellSpan.Length - 1;
+				}
+			}
+			if (closest == null)
+				return null;
+			if (cellPosition < 0 || cellPosition >= closest.Value.Value.CellSpan.Length)
+				throw new InvalidOperationException();
+			int pos = closest.Value.Value.CellSpan.Start + cellPosition;
+			if (closest.Value.Key == HexColumnType.Values)
+				return HexLinePositionInfo.CreateValue(pos, closest.Value.Value);
+			if (closest.Value.Key == HexColumnType.Ascii)
+				return HexLinePositionInfo.CreateAscii(pos, closest.Value.Value);
+			throw new InvalidOperationException();
+		}
+
+		static int Compare(int linePosition, HexCell a, HexCell b) {
+			int da = GetLength(linePosition, a);
+			int db = GetLength(linePosition, a);
+			return da - db;
+		}
+
+		static int GetLength(int linePosition, HexCell a) {
+			int sl = Math.Abs(linePosition - a.FullSpan.Start);
+			int el = Math.Abs(linePosition - (a.FullSpan.End - 1));
+			return Math.Min(sl, el);
+		}
+
+		IEnumerable<KeyValuePair<HexColumnType, HexCell>> GetCells() {
+			foreach (var column in ColumnOrder) {
+				switch (column) {
+				case HexColumnType.Offset:
+					break;
+
+				case HexColumnType.Values:
+					if (IsValuesColumnPresent) {
+						foreach (var cell in ValueCells.GetCells())
+							yield return new KeyValuePair<HexColumnType, HexCell>(HexColumnType.Values, cell);
+					}
+					break;
+
+				case HexColumnType.Ascii:
+					if (IsAsciiColumnPresent) {
+						foreach (var cell in AsciiCells.GetCells())
+							yield return new KeyValuePair<HexColumnType, HexCell>(HexColumnType.Ascii, cell);
+					}
+					break;
+
+				default:
+					throw new InvalidOperationException();
+				}
 			}
 		}
 

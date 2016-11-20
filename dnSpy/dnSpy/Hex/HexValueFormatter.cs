@@ -299,6 +299,8 @@ namespace dnSpy.Hex {
 				return WriteFormattedValue(dest, stringNegativeInfinity);
 			return WriteFormattedValue(dest, value.ToString(DoubleFormatString, culture));
 		}
+
+		public virtual HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) => bufferSpan;
 	}
 
 	sealed class HexByteValueFormatter : HexValueFormatter {
@@ -322,6 +324,12 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt16(dest, flags, hexBytes.TryReadUInt16(valueIndex));
+
+		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
+			if ((uint)cellPosition >= 4)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(bufferSpan.Start + (ulong)((2 - cellPosition / 2 - 1) & 1), 1);
+		}
 	}
 
 	sealed class HexUInt32ValueFormatter : HexValueFormatter {
@@ -331,6 +339,12 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt32(dest, flags, hexBytes.TryReadUInt32(valueIndex));
+
+		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
+			if ((uint)cellPosition >= 8)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(bufferSpan.Start + (ulong)((4 - cellPosition / 2 - 1) & 3), 1);
+		}
 	}
 
 	sealed class HexUInt64ValueFormatter : HexValueFormatter {
@@ -340,6 +354,12 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt64(dest, flags, hexBytes.TryReadUInt64(valueIndex));
+
+		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
+			if ((uint)cellPosition >= 16)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(bufferSpan.Start + (ulong)((8 - cellPosition / 2 - 1) & 7), 1);
+		}
 	}
 
 	sealed class HexSByteValueFormatter : HexValueFormatter {
@@ -502,6 +522,12 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt16(dest, flags, hexBytes.TryReadUInt16BigEndian(valueIndex));
+
+		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
+			if ((uint)cellPosition >= 4)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
+		}
 	}
 
 	sealed class HexUInt32BigEndianValueFormatter : HexValueFormatter {
@@ -511,6 +537,12 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt32(dest, flags, hexBytes.TryReadUInt32BigEndian(valueIndex));
+
+		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
+			if ((uint)cellPosition >= 8)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
+		}
 	}
 
 	sealed class HexUInt64BigEndianValueFormatter : HexValueFormatter {
@@ -520,6 +552,12 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt64(dest, flags, hexBytes.TryReadUInt64BigEndian(valueIndex));
+
+		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
+			if ((uint)cellPosition >= 16)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
+		}
 	}
 
 	sealed class HexInt16BigEndianValueFormatter : HexValueFormatter {

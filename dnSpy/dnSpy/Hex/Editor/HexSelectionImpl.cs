@@ -17,11 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Hex.Editor;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexSelectionImpl : HexSelection {
+		public override bool IsEmpty { get; }//TODO:
+		public override event EventHandler SelectionChanged;//TODO:
+
 		public HexSelectionImpl(WpfHexView hexView, HexAdornmentLayer selectionLayer, IEditorFormatMap editorFormatMap) {
 			//TODO:
 		}
