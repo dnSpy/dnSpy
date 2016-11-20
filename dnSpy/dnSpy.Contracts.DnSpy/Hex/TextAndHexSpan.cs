@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the text span
 		/// </summary>
-		public Span TextSpan { get; }
+		public VST.Span TextSpan { get; }
 
 		/// <summary>
 		/// Gets the buffer span
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="textSpan">Text span</param>
 		/// <param name="bufferSpan">Buffer span</param>
-		public TextAndHexSpan(Span textSpan, HexBufferSpan bufferSpan) {
+		public TextAndHexSpan(VST.Span textSpan, HexBufferSpan bufferSpan) {
 			TextSpan = textSpan;
 			BufferSpan = bufferSpan;
 		}

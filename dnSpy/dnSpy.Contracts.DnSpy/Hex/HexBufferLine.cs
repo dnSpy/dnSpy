@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets a span covering <see cref="Text"/>
 		/// </summary>
-		public Span TextSpan => new Span(0, Text.Length);
+		public VST.Span TextSpan => new VST.Span(0, Text.Length);
 
 		/// <summary>
 		/// true if the offset column is present
@@ -126,7 +126,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="column">Colum</param>
 		/// <param name="onlyVisibleCells">true to only include visible values, false to include the full column</param>
 		/// <returns></returns>
-		public Span GetSpan(HexColumnType column, bool onlyVisibleCells) {
+		public VST.Span GetSpan(HexColumnType column, bool onlyVisibleCells) {
 			switch (column) {
 			case HexColumnType.Offset:	return GetOffsetSpan();
 			case HexColumnType.Values:	return GetValuesSpan(onlyVisibleCells);
@@ -140,14 +140,14 @@ namespace dnSpy.Contracts.Hex {
 		/// the offset column isn't shown.
 		/// </summary>
 		/// <returns></returns>
-		public abstract Span GetOffsetSpan();
+		public abstract VST.Span GetOffsetSpan();
 
 		/// <summary>
 		/// Gets the span of the values column
 		/// </summary>
 		/// <param name="onlyVisibleCells">true to only include visible values, false to include the full column</param>
 		/// <returns></returns>
-		public abstract Span GetValuesSpan(bool onlyVisibleCells);
+		public abstract VST.Span GetValuesSpan(bool onlyVisibleCells);
 
 		/// <summary>
 		/// Gets values spans
@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="onlyVisibleCells">true to only include visible characters, false to include the full column</param>
 		/// <returns></returns>
-		public abstract Span GetAsciiSpan(bool onlyVisibleCells);
+		public abstract VST.Span GetAsciiSpan(bool onlyVisibleCells);
 
 		/// <summary>
 		/// Gets ASCII spans
@@ -245,10 +245,10 @@ namespace dnSpy.Contracts.Hex {
 			var resultBufferSpan = startPos <= endPos ?
 				new HexBufferSpan(new HexBufferPoint(Buffer, startPos), new HexBufferPoint(Buffer, endPos)) :
 				bufferSpan;
-			return new TextAndHexSpan(Span.FromBounds(firstCellSpan.Start, lastCellSpan.End), resultBufferSpan);
+			return new TextAndHexSpan(VST.Span.FromBounds(firstCellSpan.Start, lastCellSpan.End), resultBufferSpan);
 		}
 
-		IEnumerable<TextAndHexSpan> GetTextAndHexSpans(bool isColumnPresent, HexCellCollection collection, HexBufferSpan span, HexSpanSelectionFlags flags, Span visibleSpan, Span fullSpan) {
+		IEnumerable<TextAndHexSpan> GetTextAndHexSpans(bool isColumnPresent, HexCellCollection collection, HexBufferSpan span, HexSpanSelectionFlags flags, VST.Span visibleSpan, VST.Span fullSpan) {
 			if (span.IsDefault)
 				throw new ArgumentException();
 			if (span.Buffer != Buffer)
@@ -331,7 +331,7 @@ namespace dnSpy.Contracts.Hex {
 
 				if (textStart > textEnd || posStart > posEnd)
 					yield break;
-				yield return new TextAndHexSpan(Span.FromBounds(textStart, textEnd), new HexBufferSpan(Buffer, HexSpan.FromBounds(posStart, posEnd)));
+				yield return new TextAndHexSpan(VST.Span.FromBounds(textStart, textEnd), new HexBufferSpan(Buffer, HexSpan.FromBounds(posStart, posEnd)));
 			}
 		}
 

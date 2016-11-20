@@ -20,7 +20,7 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
-using Microsoft.VisualStudio.Text.Formatting;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// Sets the change
 		/// </summary>
 		/// <param name="change">New value</param>
-		public abstract void SetChange(TextViewLineChange change);
+		public abstract void SetChange(VSTF.TextViewLineChange change);
 
 		/// <summary>
 		/// Sets a new delta Y
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// Sets a new line transform
 		/// </summary>
 		/// <param name="transform">New line transform</param>
-		public abstract void SetLineTransform(LineTransform transform);
+		public abstract void SetLineTransform(VSTF.LineTransform transform);
 
 		/// <summary>
 		/// Sets a new top

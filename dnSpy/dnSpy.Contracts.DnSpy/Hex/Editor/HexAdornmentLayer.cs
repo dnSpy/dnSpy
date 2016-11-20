@@ -20,7 +20,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="adornment">Adornment</param>
 		/// <returns></returns>
 		public bool AddAdornment(HexBufferLine line, object tag, UIElement adornment) =>
-			AddAdornment(AdornmentPositioningBehavior.TextRelative, line, tag, adornment, null);
+			AddAdornment(VSTE.AdornmentPositioningBehavior.TextRelative, line, tag, adornment, null);
 
 		/// <summary>
 		/// Adds an adornment. Returns true if the adornment was added.
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="adornment">Adornment</param>
 		/// <param name="removedCallback">Called when the adornment is removed</param>
 		/// <returns></returns>
-		public bool AddAdornment(AdornmentPositioningBehavior behavior, HexBufferLine line, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback) {
+		public bool AddAdornment(VSTE.AdornmentPositioningBehavior behavior, HexBufferLine line, object tag, UIElement adornment, VSTE.AdornmentRemovedCallback removedCallback) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 			return AddAdornment(behavior, line.BufferSpan, tag, adornment, removedCallback);
@@ -93,7 +93,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="adornment">Adornment</param>
 		/// <returns></returns>
 		public bool AddAdornment(HexBufferSpan visualSpan, object tag, UIElement adornment) =>
-			AddAdornment(AdornmentPositioningBehavior.TextRelative, visualSpan, tag, adornment, null);
+			AddAdornment(VSTE.AdornmentPositioningBehavior.TextRelative, visualSpan, tag, adornment, null);
 
 		/// <summary>
 		/// Adds an adornment. Returns true if the adornment was added.
@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="adornment">Adornment</param>
 		/// <param name="removedCallback">Called when the adornment is removed</param>
 		/// <returns></returns>
-		public abstract bool AddAdornment(AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback);
+		public abstract bool AddAdornment(VSTE.AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object tag, UIElement adornment, VSTE.AdornmentRemovedCallback removedCallback);
 
 		/// <summary>
 		/// Removes an adornment

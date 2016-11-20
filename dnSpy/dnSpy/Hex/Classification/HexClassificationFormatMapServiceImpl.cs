@@ -22,8 +22,8 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Themes;
-using DSTC = dnSpy.Text.Classification;
-using TC = Microsoft.VisualStudio.Text.Classification;
+using TC = dnSpy.Text.Classification;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
 	[Export(typeof(HexClassificationFormatMapService))]
@@ -35,23 +35,23 @@ namespace dnSpy.Hex.Classification {
 			this.theClassificationFormatMapService = theClassificationFormatMapService;
 		}
 
-		public override TC.IClassificationFormatMap GetClassificationFormatMap(string category) => theClassificationFormatMapService.GetClassificationFormatMap(category);
-		public override TC.IClassificationFormatMap GetClassificationFormatMap(HexView hexView) => theClassificationFormatMapService.GetClassificationFormatMap(hexView);
+		public override VSTC.IClassificationFormatMap GetClassificationFormatMap(string category) => theClassificationFormatMapService.GetClassificationFormatMap(category);
+		public override VSTC.IClassificationFormatMap GetClassificationFormatMap(HexView hexView) => theClassificationFormatMapService.GetClassificationFormatMap(hexView);
 
 		[Export(typeof(TheClassificationFormatMapService))]
-		sealed class TheClassificationFormatMapService : DSTC.ClassificationFormatMapService {
+		sealed class TheClassificationFormatMapService : TC.ClassificationFormatMapService {
 			[ImportingConstructor]
-			TheClassificationFormatMapService(IThemeService themeService, TC.IEditorFormatMapService editorFormatMapService, DSTC.IEditorFormatDefinitionService editorFormatDefinitionService, TC.IClassificationTypeRegistryService classificationTypeRegistryService)
+			TheClassificationFormatMapService(IThemeService themeService, VSTC.IEditorFormatMapService editorFormatMapService, TC.IEditorFormatDefinitionService editorFormatDefinitionService, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService)
 			: base(themeService, editorFormatMapService, editorFormatDefinitionService, classificationTypeRegistryService) {
 			}
 
-			public TC.IClassificationFormatMap GetClassificationFormatMap(HexView hexView) {
+			public VSTC.IClassificationFormatMap GetClassificationFormatMap(HexView hexView) {
 				if (hexView == null)
 					throw new ArgumentNullException(nameof(hexView));
-				return hexView.Properties.GetOrCreateSingletonProperty(typeof(DSTC.ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(hexView));
+				return hexView.Properties.GetOrCreateSingletonProperty(typeof(TC.ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(hexView));
 			}
 
-			DSTC.ViewClassificationFormatMap CreateViewClassificationFormatMap(HexView hexView) {
+			TC.ViewClassificationFormatMap CreateViewClassificationFormatMap(HexView hexView) {
 				hexView.Closed += HexView_Closed;
 				return new HexViewClassificationFormatMap(this, hexView);
 			}
@@ -59,8 +59,8 @@ namespace dnSpy.Hex.Classification {
 			static void HexView_Closed(object sender, EventArgs e) {
 				var hexView = (HexView)sender;
 				hexView.Closed -= HexView_Closed;
-				var map = (DSTC.ViewClassificationFormatMap)hexView.Properties[typeof(DSTC.ViewClassificationFormatMap)];
-				hexView.Properties.RemoveProperty(typeof(DSTC.ViewClassificationFormatMap));
+				var map = (TC.ViewClassificationFormatMap)hexView.Properties[typeof(TC.ViewClassificationFormatMap)];
+				hexView.Properties.RemoveProperty(typeof(TC.ViewClassificationFormatMap));
 				map.Dispose();
 			}
 		}

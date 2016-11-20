@@ -20,7 +20,7 @@
 using System;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex {
 	sealed class HexBufferLineImpl : HexBufferLine {
@@ -37,13 +37,13 @@ namespace dnSpy.Hex {
 		public override HexCellCollection ValueCells { get; }
 		public override HexCellCollection AsciiCells { get; }
 
-		readonly Span offsetSpan;
-		readonly Span fullValuesSpan;
-		readonly Span visibleValuesSpan;
-		readonly Span fullAsciiSpan;
-		readonly Span visibleAsciiSpan;
+		readonly VST.Span offsetSpan;
+		readonly VST.Span fullValuesSpan;
+		readonly VST.Span visibleValuesSpan;
+		readonly VST.Span fullAsciiSpan;
+		readonly VST.Span visibleAsciiSpan;
 
-		public HexBufferLineImpl(HexBufferLineProvider hexBufferLineProvider, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellCollection valueCells, HexCellCollection asciiCells, Span offsetSpan, Span fullValuesSpan, Span visibleValuesSpan, Span fullAsciiSpan, Span visibleAsciiSpan) {
+		public HexBufferLineImpl(HexBufferLineProvider hexBufferLineProvider, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellCollection valueCells, HexCellCollection asciiCells, VST.Span offsetSpan, VST.Span fullValuesSpan, VST.Span visibleValuesSpan, VST.Span fullAsciiSpan, VST.Span visibleAsciiSpan) {
 			if (hexBufferLineProvider == null)
 				throw new ArgumentNullException(nameof(hexBufferLineProvider));
 			if (columnOrder == null)
@@ -77,8 +77,8 @@ namespace dnSpy.Hex {
 			this.visibleAsciiSpan = visibleAsciiSpan;
 		}
 
-		public override Span GetOffsetSpan() => offsetSpan;
-		public override Span GetValuesSpan(bool onlyVisibleCells) => onlyVisibleCells ? visibleValuesSpan : fullValuesSpan;
-		public override Span GetAsciiSpan(bool onlyVisibleCells) => onlyVisibleCells ? visibleAsciiSpan : fullAsciiSpan;
+		public override VST.Span GetOffsetSpan() => offsetSpan;
+		public override VST.Span GetValuesSpan(bool onlyVisibleCells) => onlyVisibleCells ? visibleValuesSpan : fullValuesSpan;
+		public override VST.Span GetAsciiSpan(bool onlyVisibleCells) => onlyVisibleCells ? visibleAsciiSpan : fullAsciiSpan;
 	}
 }

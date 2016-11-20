@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -34,17 +34,17 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets all predefined hex view roles
 		/// </summary>
-		public abstract ITextViewRoleSet AllPredefinedRoles { get; }
+		public abstract VSTE.ITextViewRoleSet AllPredefinedRoles { get; }
 
 		/// <summary>
 		/// Gets the default hex view roles
 		/// </summary>
-		public abstract ITextViewRoleSet DefaultRoles { get; }
+		public abstract VSTE.ITextViewRoleSet DefaultRoles { get; }
 
 		/// <summary>
 		/// Gets an empty role set
 		/// </summary>
-		public abstract ITextViewRoleSet NoRoles { get; }
+		public abstract VSTE.ITextViewRoleSet NoRoles { get; }
 
 		/// <summary>
 		/// Raised when a new hex view is created
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="roles">Roles</param>
 		/// <returns></returns>
-		public virtual WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles) => Create(buffer, roles, (HexViewCreatorOptions)null);
+		public virtual WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles) => Create(buffer, roles, (HexViewCreatorOptions)null);
 
 		/// <summary>
 		/// Creates a new <see cref="WpfHexView"/>
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="roles">Roles</param>
 		/// <param name="parentOptions">Parent options</param>
 		/// <returns></returns>
-		public virtual WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles, IEditorOptions parentOptions) => Create(buffer, roles, parentOptions, (HexViewCreatorOptions)null);
+		public virtual WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions) => Create(buffer, roles, parentOptions, (HexViewCreatorOptions)null);
 
 		/// <summary>
 		/// Creates a new <see cref="WpfHexView"/>
@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="roles">Roles</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		public abstract WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles, HexViewCreatorOptions options);
+		public abstract WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, HexViewCreatorOptions options);
 
 		/// <summary>
 		/// Creates a new <see cref="WpfHexView"/>
@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="parentOptions">Parent options</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		public abstract WpfHexView Create(HexBuffer buffer, ITextViewRoleSet roles, IEditorOptions parentOptions, HexViewCreatorOptions options);
+		public abstract WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexViewCreatorOptions options);
 
 		/// <summary>
 		/// Creates a new <see cref="WpfHexViewHost"/>
@@ -115,13 +115,13 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="roles">Roles</param>
 		/// <returns></returns>
-		public abstract ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles);
+		public abstract VSTE.ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles);
 
 		/// <summary>
 		/// Creates a role set
 		/// </summary>
 		/// <param name="roles">Roles</param>
 		/// <returns></returns>
-		public abstract ITextViewRoleSet CreateTextViewRoleSet(params string[] roles);
+		public abstract VSTE.ITextViewRoleSet CreateTextViewRoleSet(params string[] roles);
 	}
 }

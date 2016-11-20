@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Tagging;
-using TC = dnSpy.Contracts.Text.Classification;
-using TEXT = dnSpy.Contracts.Text;
+using CT = dnSpy.Contracts.Text;
+using CTC = dnSpy.Contracts.Text.Classification;
 
 namespace dnSpy.Hex.Tagging {
 	[Export(typeof(HexClassificationTags))]
@@ -35,12 +35,12 @@ namespace dnSpy.Hex.Tagging {
 		public HexClassificationTag HexErrorTag { get; }
 
 		[ImportingConstructor]
-		HexClassificationTags(TC.IThemeClassificationTypeService themeClassificationTypeService) {
-			HexOffsetTag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(TEXT.TextColor.HexOffset));
-			HexValue0Tag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(TEXT.TextColor.HexByte0));
-			HexValue1Tag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(TEXT.TextColor.HexByte1));
-			HexAsciiTag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(TEXT.TextColor.HexAscii));
-			HexErrorTag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(TEXT.TextColor.HexByteError));
+		HexClassificationTags(CTC.IThemeClassificationTypeService themeClassificationTypeService) {
+			HexOffsetTag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(CT.TextColor.HexOffset));
+			HexValue0Tag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(CT.TextColor.HexByte0));
+			HexValue1Tag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(CT.TextColor.HexByte1));
+			HexAsciiTag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(CT.TextColor.HexAscii));
+			HexErrorTag = new HexClassificationTag(themeClassificationTypeService.GetClassificationType(CT.TextColor.HexByteError));
 		}
 	}
 

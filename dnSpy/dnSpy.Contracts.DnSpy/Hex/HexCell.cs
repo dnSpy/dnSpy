@@ -18,7 +18,7 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -58,22 +58,22 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Span of the text
 		/// </summary>
-		public Span TextSpan { get; }
+		public VST.Span TextSpan { get; }
 
 		/// <summary>
 		/// Span of the cell, some of the span could be whitespace
 		/// </summary>
-		public Span CellSpan { get; }
+		public VST.Span CellSpan { get; }
 
 		/// <summary>
 		/// Span of the cell separator
 		/// </summary>
-		public Span SeparatorSpan { get; }
+		public VST.Span SeparatorSpan { get; }
 
 		/// <summary>
 		/// Includes the whole cell and separator span
 		/// </summary>
-		public Span FullSpan { get; }
+		public VST.Span FullSpan { get; }
 
 		/// <summary>
 		/// Constructor
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="cellSpan">Span of the cell, some of the span could be whitespace</param>
 		/// <param name="separatorSpan">Span of the cell separator</param>
 		/// <param name="fullSpan">Includes the whole cell and separator span</param>
-		public HexCell(int index, int groupIndex, HexBufferSpan bufferSpan, Span textSpan, Span cellSpan, Span separatorSpan, Span fullSpan) {
+		public HexCell(int index, int groupIndex, HexBufferSpan bufferSpan, VST.Span textSpan, VST.Span cellSpan, VST.Span separatorSpan, VST.Span fullSpan) {
 			if (index < 0)
 				throw new ArgumentOutOfRangeException(nameof(index));
 			if (groupIndex < 0 || groupIndex > 1)
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="flags">Flags, only <see cref="HexSpanSelectionFlags.Cell"/> and
 		/// <see cref="HexSpanSelectionFlags.Separator"/> are checked</param>
 		/// <returns></returns>
-		public Span GetSpan(HexSpanSelectionFlags flags) {
+		public VST.Span GetSpan(HexSpanSelectionFlags flags) {
 			if ((flags & HexSpanSelectionFlags.Cell) == 0) {
 				if ((flags & HexSpanSelectionFlags.Separator) != 0)
 					throw new ArgumentOutOfRangeException(nameof(flags));

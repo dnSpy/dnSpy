@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
@@ -37,6 +37,6 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Line span
 		/// </summary>
-		public abstract Span Span { get; }
+		public abstract VST.Span Span { get; }
 	}
 }

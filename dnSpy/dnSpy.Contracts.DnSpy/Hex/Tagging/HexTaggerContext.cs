@@ -18,7 +18,7 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
@@ -38,14 +38,14 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <summary>
 		/// Line span to tag
 		/// </summary>
-		public Span LineSpan { get; }
+		public VST.Span LineSpan { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="line">Line info</param>
 		/// <param name="lineSpan">Line span to tag</param>
-		public HexTaggerContext(HexBufferLine line, Span lineSpan) {
+		public HexTaggerContext(HexBufferLine line, VST.Span lineSpan) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 			if (!line.TextSpan.Contains(lineSpan))

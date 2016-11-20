@@ -20,18 +20,18 @@
 using System;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
 	/// Hex view
 	/// </summary>
-	public abstract class HexView : IPropertyOwner {
+	public abstract class HexView : VSUTIL.IPropertyOwner {
 		/// <summary>
 		/// Gets all properties
 		/// </summary>
-		public PropertyCollection Properties { get; }
+		public VSUTIL.PropertyCollection Properties { get; }
 
 		/// <summary>
 		/// Gets the hex buffer lines
@@ -91,12 +91,12 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the editor options
 		/// </summary>
-		public abstract IEditorOptions Options { get; }
+		public abstract VSTE.IEditorOptions Options { get; }
 
 		/// <summary>
 		/// Gets the hex view roles
 		/// </summary>
-		public abstract ITextViewRoleSet Roles { get; }
+		public abstract VSTE.ITextViewRoleSet Roles { get; }
 
 		/// <summary>
 		/// Gets the provisional text highlight
@@ -192,7 +192,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Constructor
 		/// </summary>
 		protected HexView() {
-			Properties = new PropertyCollection();
+			Properties = new VSUTIL.PropertyCollection();
 		}
 
 		/// <summary>
@@ -205,18 +205,18 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="verticalDistance">Distance relative to the top or bottom of the view</param>
-		/// <param name="relativeTo">The <see cref="ViewRelativePosition"/></param>
-		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo);
+		/// <param name="relativeTo">The <see cref="VSTE.ViewRelativePosition"/></param>
+		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo);
 
 		/// <summary>
 		/// Displays a line in the view
 		/// </summary>
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="verticalDistance">Distance relative to the top or bottom of the view</param>
-		/// <param name="relativeTo">The <see cref="ViewRelativePosition"/></param>
+		/// <param name="relativeTo">The <see cref="VSTE.ViewRelativePosition"/></param>
 		/// <param name="viewportWidthOverride">Overrides viewport width</param>
 		/// <param name="viewportHeightOverride">Overrides viewport height</param>
-		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride);
+		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride);
 
 		/// <summary>
 		/// Gets a hex view line

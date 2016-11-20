@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Hex.Editor;
-using Microsoft.VisualStudio.Text.Classification;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Hex.Classification {
 	/// <summary>
@@ -31,17 +31,17 @@ namespace dnSpy.Contracts.Hex.Classification {
 		protected HexEditorFormatMapService() { }
 
 		/// <summary>
-		/// Gets an <see cref="IEditorFormatMap"/>
+		/// Gets an <see cref="VSTC.IEditorFormatMap"/>
 		/// </summary>
 		/// <param name="view">Hex view</param>
 		/// <returns></returns>
-		public abstract IEditorFormatMap GetEditorFormatMap(HexView view);
+		public abstract VSTC.IEditorFormatMap GetEditorFormatMap(HexView view);
 
 		/// <summary>
-		/// Gets an <see cref="IEditorFormatMap"/>
+		/// Gets an <see cref="VSTC.IEditorFormatMap"/>
 		/// </summary>
 		/// <param name="category">Appearance category</param>
 		/// <returns></returns>
-		public abstract IEditorFormatMap GetEditorFormatMap(string category);
+		public abstract VSTC.IEditorFormatMap GetEditorFormatMap(string category);
 	}
 }

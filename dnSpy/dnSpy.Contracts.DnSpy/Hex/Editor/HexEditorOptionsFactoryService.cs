@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -33,19 +33,19 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the global options
 		/// </summary>
-		public abstract IEditorOptions GlobalOptions { get; }
+		public abstract VSTE.IEditorOptions GlobalOptions { get; }
 
 		/// <summary>
 		/// Creates options
 		/// </summary>
 		/// <returns></returns>
-		public abstract IEditorOptions CreateOptions();
+		public abstract VSTE.IEditorOptions CreateOptions();
 
 		/// <summary>
 		/// Creates or returns existing options
 		/// </summary>
 		/// <param name="scope">Owner</param>
 		/// <returns></returns>
-		public abstract IEditorOptions GetOptions(IPropertyOwner scope);
+		public abstract VSTE.IEditorOptions GetOptions(VSUTIL.IPropertyOwner scope);
 	}
 }

@@ -28,7 +28,7 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Hex.MEF;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexAdornmentLayerImpl : HexAdornmentLayer {
@@ -51,17 +51,17 @@ namespace dnSpy.Hex.Editor {
 			this.adornmentLayerElements = new List<HexAdornmentLayerElementImpl>();
 		}
 
-		public override bool AddAdornment(AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback) {
+		public override bool AddAdornment(VSTE.AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object tag, UIElement adornment, VSTE.AdornmentRemovedCallback removedCallback) {
 			if (adornment == null)
 				throw new ArgumentNullException(nameof(adornment));
 			if (visualSpan != null && visualSpan.Value.IsDefault)
 				throw new ArgumentException();
-			if (visualSpan == null && behavior == AdornmentPositioningBehavior.TextRelative)
+			if (visualSpan == null && behavior == VSTE.AdornmentPositioningBehavior.TextRelative)
 				throw new ArgumentNullException(nameof(visualSpan));
-			if ((uint)behavior > (uint)AdornmentPositioningBehavior.TextRelative)
+			if ((uint)behavior > (uint)VSTE.AdornmentPositioningBehavior.TextRelative)
 				throw new ArgumentOutOfRangeException(nameof(behavior));
 			if (layerKind != HexLayerKind.Normal) {
-				if (behavior != AdornmentPositioningBehavior.OwnerControlled)
+				if (behavior != VSTE.AdornmentPositioningBehavior.OwnerControlled)
 					throw new ArgumentOutOfRangeException(nameof(behavior), "Special layers must use AdornmentPositioningBehavior.OwnerControlled");
 				if (visualSpan != null)
 					throw new ArgumentOutOfRangeException(nameof(visualSpan), "Special layers must use a null visual span");
@@ -169,15 +169,15 @@ namespace dnSpy.Hex.Editor {
 				}
 
 				switch (elem.Behavior) {
-				case AdornmentPositioningBehavior.OwnerControlled:
+				case VSTE.AdornmentPositioningBehavior.OwnerControlled:
 					break;
 
-				case AdornmentPositioningBehavior.ViewportRelative:
+				case VSTE.AdornmentPositioningBehavior.ViewportRelative:
 					Canvas.SetTop(elem.Adornment, ToDefault(Canvas.GetTop(elem.Adornment), 0) + e.NewViewState.ViewportTop - e.OldViewState.ViewportTop);
 					Canvas.SetLeft(elem.Adornment, ToDefault(Canvas.GetLeft(elem.Adornment), 0) + e.NewViewState.ViewportLeft - e.OldViewState.ViewportLeft);
 					break;
 
-				case AdornmentPositioningBehavior.TextRelative:
+				case VSTE.AdornmentPositioningBehavior.TextRelative:
 					Debug.Assert(elem.VisualSpan != null);
 					var translatedLine = GetLine(e.TranslatedLines, GetOverlapsWithSpan(elem.VisualSpan.Value));
 					if (translatedLine != null) {

@@ -22,9 +22,9 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Formatting;
+using VST = Microsoft.VisualStudio.Text;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexViewScrollerImpl : HexViewScroller {
@@ -36,7 +36,7 @@ namespace dnSpy.Hex.Editor {
 			this.hexView = hexView;
 		}
 
-		public override void EnsureSpanVisible(HexLineSpan lineSpan, EnsureSpanVisibleOptions options) {
+		public override void EnsureSpanVisible(HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options) {
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
 			if (lineSpan.BufferSpan.Buffer != hexView.Buffer)
@@ -44,13 +44,13 @@ namespace dnSpy.Hex.Editor {
 			EnsureSpanVisibleCore(lineSpan, options);
 		}
 
-		public override void EnsureSpanVisible(HexBufferSpan span, HexSpanSelectionFlags flags, EnsureSpanVisibleOptions options) {
+		public override void EnsureSpanVisible(HexBufferSpan span, HexSpanSelectionFlags flags, VSTE.EnsureSpanVisibleOptions options) {
 			if (span.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			EnsureSpanVisibleCore(new HexLineSpan(span, flags), options);
 		}
 
-		public override void EnsureSpanVisible(HexBufferLine line, Span span, EnsureSpanVisibleOptions options) {
+		public override void EnsureSpanVisible(HexBufferLine line, VST.Span span, VSTE.EnsureSpanVisibleOptions options) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 			if (line.Buffer != hexView.Buffer)
@@ -58,7 +58,7 @@ namespace dnSpy.Hex.Editor {
 			EnsureSpanVisibleCore(new HexLineSpan(line, span), options);
 		}
 
-		void EnsureSpanVisibleCore(HexLineSpan lineSpan, EnsureSpanVisibleOptions options) {
+		void EnsureSpanVisibleCore(HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options) {
 			if (lineSpan.BufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 
@@ -69,7 +69,7 @@ namespace dnSpy.Hex.Editor {
 			EnsureSpanVisibleX(lineSpan, options);
 		}
 
-		void EnsureSpanVisibleX(HexLineSpan lineSpan, EnsureSpanVisibleOptions options) {
+		void EnsureSpanVisibleX(HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options) {
 			var span = lineSpan.BufferSpan;
 			if (hexView.ViewportWidth == 0)
 				return;
@@ -127,10 +127,10 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void EnsureSpanVisibleY(HexBufferSpan span, EnsureSpanVisibleOptions options) {
-			bool showStart = (options & EnsureSpanVisibleOptions.ShowStart) != 0;
-			bool minimumScroll = (options & EnsureSpanVisibleOptions.MinimumScroll) != 0;
-			bool alwaysCenter = (options & EnsureSpanVisibleOptions.AlwaysCenter) != 0;
+		void EnsureSpanVisibleY(HexBufferSpan span, VSTE.EnsureSpanVisibleOptions options) {
+			bool showStart = (options & VSTE.EnsureSpanVisibleOptions.ShowStart) != 0;
+			bool minimumScroll = (options & VSTE.EnsureSpanVisibleOptions.MinimumScroll) != 0;
+			bool alwaysCenter = (options & VSTE.EnsureSpanVisibleOptions.AlwaysCenter) != 0;
 
 			var visibleSpan = VisibleSpan;
 			bool spanIsInView = span.Start >= visibleSpan.Start && span.End <= visibleSpan.End;
@@ -151,41 +151,41 @@ namespace dnSpy.Hex.Editor {
 				var firstSpan = first.BufferSpan;
 				var lastSpan = last.BufferSpan;
 
-				bool allLinesFullyVisible = first.VisibilityState == VisibilityState.FullyVisible && last.VisibilityState == VisibilityState.FullyVisible;
+				bool allLinesFullyVisible = first.VisibilityState == VSTF.VisibilityState.FullyVisible && last.VisibilityState == VSTF.VisibilityState.FullyVisible;
 
 				if (alwaysCenter || (!allLinesFullyVisible && !minimumScroll)) {
 					double height = last.Bottom - first.Top;
 					double verticalDistance = (hexView.ViewportHeight - height) / 2;
-					hexView.DisplayHexLineContainingBufferPosition(first.BufferSpan.Start, verticalDistance, ViewRelativePosition.Top);
+					hexView.DisplayHexLineContainingBufferPosition(first.BufferSpan.Start, verticalDistance, VSTE.ViewRelativePosition.Top);
 					return;
 				}
 
-				if (first.VisibilityState != VisibilityState.FullyVisible)
-					hexView.DisplayHexLineContainingBufferPosition(first.BufferSpan.Start, 0, ViewRelativePosition.Top);
-				else if (last.VisibilityState != VisibilityState.FullyVisible)
-					hexView.DisplayHexLineContainingBufferPosition(last.BufferSpan.Start, 0, ViewRelativePosition.Bottom);
+				if (first.VisibilityState != VSTF.VisibilityState.FullyVisible)
+					hexView.DisplayHexLineContainingBufferPosition(first.BufferSpan.Start, 0, VSTE.ViewRelativePosition.Top);
+				else if (last.VisibilityState != VSTF.VisibilityState.FullyVisible)
+					hexView.DisplayHexLineContainingBufferPosition(last.BufferSpan.Start, 0, VSTE.ViewRelativePosition.Bottom);
 
 				if (showStart) {
 					var line = hexView.HexViewLines.GetHexViewLineContainingBufferPosition(firstSpan.Start);
-					if (line == null || line.VisibilityState != VisibilityState.FullyVisible)
+					if (line == null || line.VisibilityState != VSTF.VisibilityState.FullyVisible)
 						ShowSpan(span, options);
 				}
 				else {
 					var line = hexView.HexViewLines.GetHexViewLineContainingBufferPosition(lastSpan.Start);
-					if (line == null || line.VisibilityState != VisibilityState.FullyVisible)
+					if (line == null || line.VisibilityState != VSTF.VisibilityState.FullyVisible)
 						ShowSpan(span, options);
 				}
 			}
 		}
 
-		void ShowSpan(HexBufferSpan bufferSpan, EnsureSpanVisibleOptions options) {
-			if ((options & EnsureSpanVisibleOptions.ShowStart) != 0)
-				hexView.DisplayHexLineContainingBufferPosition(bufferSpan.Start, 0, ViewRelativePosition.Top);
+		void ShowSpan(HexBufferSpan bufferSpan, VSTE.EnsureSpanVisibleOptions options) {
+			if ((options & VSTE.EnsureSpanVisibleOptions.ShowStart) != 0)
+				hexView.DisplayHexLineContainingBufferPosition(bufferSpan.Start, 0, VSTE.ViewRelativePosition.Top);
 			else {
 				var end = bufferSpan.End;
 				if (end.Position != 0)
 					end = end - 1;
-				hexView.DisplayHexLineContainingBufferPosition(end, 0, ViewRelativePosition.Bottom);
+				hexView.DisplayHexLineContainingBufferPosition(end, 0, VSTE.ViewRelativePosition.Bottom);
 			}
 		}
 
@@ -199,18 +199,18 @@ namespace dnSpy.Hex.Editor {
 			if (lines == null)
 				return;
 			var line = distanceToScroll >= 0 ? lines.FirstVisibleLine : lines.LastVisibleLine;
-			hexView.DisplayHexLineContainingBufferPosition(line.BufferSpan.Start, line.Top - hexView.ViewportTop + distanceToScroll, ViewRelativePosition.Top);
+			hexView.DisplayHexLineContainingBufferPosition(line.BufferSpan.Start, line.Top - hexView.ViewportTop + distanceToScroll, VSTE.ViewRelativePosition.Top);
 		}
 
-		public override void ScrollViewportVerticallyByLines(ScrollDirection direction, int count) {
+		public override void ScrollViewportVerticallyByLines(VSTE.ScrollDirection direction, int count) {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
-			if (direction == ScrollDirection.Up) {
+			if (direction == VSTE.ScrollDirection.Up) {
 				double pixels = 0;
 				var line = hexView.HexViewLines.FirstVisibleLine;
 				for (int i = 0; i < count; i++) {
 					if (i == 0) {
-						if (line.VisibilityState == VisibilityState.PartiallyVisible)
+						if (line.VisibilityState == VSTF.VisibilityState.PartiallyVisible)
 							pixels += hexView.ViewportTop - line.Top;
 						if (line.BufferSpan.Start.Position != 0) {
 							line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.Start - 1);
@@ -218,13 +218,13 @@ namespace dnSpy.Hex.Editor {
 						}
 					}
 					else {
-						if (line.VisibilityState == VisibilityState.Unattached) {
+						if (line.VisibilityState == VSTF.VisibilityState.Unattached) {
 							// Height is only fully initialized once it's been shown on the screen
 							// (its LineTransform property is used to calculate Height)
 							var lineStart = line.BufferSpan.Start;
-							hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, ViewRelativePosition.Top);
+							hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, VSTE.ViewRelativePosition.Top);
 							line = hexView.GetHexViewLineContainingBufferPosition(lineStart);
-							Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
+							Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
 							pixels = 0;
 						}
 						else
@@ -238,14 +238,14 @@ namespace dnSpy.Hex.Editor {
 					ScrollViewportVerticallyByPixels(pixels);
 			}
 			else {
-				Debug.Assert(direction == ScrollDirection.Down);
+				Debug.Assert(direction == VSTE.ScrollDirection.Down);
 				double pixels = 0;
 				var line = hexView.HexViewLines.FirstVisibleLine;
 				for (int i = 0; i < count; i++) {
 					if (line.IsLastDocumentLine())
 						break;
 					if (i == 0) {
-						if (line.VisibilityState == VisibilityState.FullyVisible)
+						if (line.VisibilityState == VSTF.VisibilityState.FullyVisible)
 							pixels += line.Height;
 						else {
 							pixels += line.Bottom - hexView.ViewportTop;
@@ -254,13 +254,13 @@ namespace dnSpy.Hex.Editor {
 						}
 					}
 					else {
-						if (line.VisibilityState == VisibilityState.Unattached) {
+						if (line.VisibilityState == VSTF.VisibilityState.Unattached) {
 							// Height is only fully initialized once it's been shown on the screen
 							// (its LineTransform property is used to calculate Height)
 							var lineStart = line.BufferSpan.Start;
-							hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, ViewRelativePosition.Top);
+							hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, VSTE.ViewRelativePosition.Top);
 							line = hexView.GetHexViewLineContainingBufferPosition(lineStart);
-							Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
+							Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
 							pixels = 0;
 						}
 						else
@@ -275,17 +275,17 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		public override bool ScrollViewportVerticallyByPage(ScrollDirection direction) {
-			bool hasFullyVisibleLines = hexView.HexViewLines.Any(a => a.VisibilityState == VisibilityState.FullyVisible);
+		public override bool ScrollViewportVerticallyByPage(VSTE.ScrollDirection direction) {
+			bool hasFullyVisibleLines = hexView.HexViewLines.Any(a => a.VisibilityState == VSTF.VisibilityState.FullyVisible);
 
-			if (direction == ScrollDirection.Up) {
+			if (direction == VSTE.ScrollDirection.Up) {
 				var firstVisibleLine = hexView.HexViewLines.FirstVisibleLine;
 				if (firstVisibleLine.Height > hexView.ViewportHeight) {
 					ScrollViewportVerticallyByPixels(hexView.ViewportHeight);
 					return hasFullyVisibleLines;
 				}
 				double top;
-				if (firstVisibleLine.VisibilityState == VisibilityState.FullyVisible) {
+				if (firstVisibleLine.VisibilityState == VSTF.VisibilityState.FullyVisible) {
 					if (firstVisibleLine.IsFirstDocumentLine())
 						return hasFullyVisibleLines;
 					top = firstVisibleLine.Top;
@@ -304,28 +304,28 @@ namespace dnSpy.Hex.Editor {
 					if (line.IsFirstDocumentLine())
 						break;
 					line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.Start - 1);
-					if (line.VisibilityState == VisibilityState.Unattached) {
+					if (line.VisibilityState == VSTF.VisibilityState.Unattached) {
 						// Height is only fully initialized once it's been shown on the screen
 						// (its LineTransform property is used to calculate Height)
 						var lineStart = line.BufferSpan.Start;
-						hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, ViewRelativePosition.Bottom);
+						hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, VSTE.ViewRelativePosition.Bottom);
 						line = hexView.GetHexViewLineContainingBufferPosition(lineStart);
-						Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
+						Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
 					}
 					lineTop -= line.Height;
 				}
-				hexView.DisplayHexLineContainingBufferPosition(prevLineStart, 0, ViewRelativePosition.Top);
+				hexView.DisplayHexLineContainingBufferPosition(prevLineStart, 0, VSTE.ViewRelativePosition.Top);
 			}
 			else {
-				Debug.Assert(direction == ScrollDirection.Down);
+				Debug.Assert(direction == VSTE.ScrollDirection.Down);
 				double pixels = hexView.ViewportHeight;
 				var lastVisibleLine = hexView.HexViewLines.LastVisibleLine;
 				if (lastVisibleLine.Height > hexView.ViewportHeight) {
 					// This line intentionally left blank
 				}
-				else if (lastVisibleLine.VisibilityState == VisibilityState.FullyVisible) {
+				else if (lastVisibleLine.VisibilityState == VSTF.VisibilityState.FullyVisible) {
 					if (lastVisibleLine.IsLastDocumentLine()) {
-						hexView.DisplayHexLineContainingBufferPosition(lastVisibleLine.BufferSpan.Start, 0, ViewRelativePosition.Top);
+						hexView.DisplayHexLineContainingBufferPosition(lastVisibleLine.BufferSpan.Start, 0, VSTE.ViewRelativePosition.Top);
 						return hasFullyVisibleLines;
 					}
 				}

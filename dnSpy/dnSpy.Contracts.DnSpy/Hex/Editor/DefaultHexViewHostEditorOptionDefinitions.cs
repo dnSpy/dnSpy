@@ -18,30 +18,30 @@
 */
 
 using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class HorizontalScrollBarEditorOptionDefinition : HexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultHexViewHostOptions.HorizontalScrollBarId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewHostOptions.HorizontalScrollBarId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class VerticalScrollBarEditorOptionDefinition : HexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultHexViewHostOptions.VerticalScrollBarId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewHostOptions.VerticalScrollBarId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class SelectionMarginEditorOptionDefinition : HexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultHexViewHostOptions.SelectionMarginId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewHostOptions.SelectionMarginId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class ZoomControlEditorOptionDefinition : HexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultHexViewHostOptions.ZoomControlId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewHostOptions.ZoomControlId;
 		public override bool Default => true;
 	}
 }

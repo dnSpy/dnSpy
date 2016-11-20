@@ -24,7 +24,7 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Tagging;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Formatting {
 	sealed class HexAndAdornmentSequencerImpl : HexAndAdornmentSequencer {
@@ -82,15 +82,15 @@ namespace dnSpy.Hex.Formatting {
 			AdornmentElementAndSpan? lastAddedAdornment = null;
 			for (int i = 0; i < adornmentList.Count; i++) {
 				var info = adornmentList[i];
-				int spanStart = info.Span.Length == 0 && info.AdornmentElement.Affinity == PositionAffinity.Predecessor ? info.Span.Start - 1 : info.Span.Start;
+				int spanStart = info.Span.Length == 0 && info.AdornmentElement.Affinity == VST.PositionAffinity.Predecessor ? info.Span.Start - 1 : info.Span.Start;
 				if (spanStart < start)
 					continue;
 				if (info.Span.Start > end)
 					break;
-				var textSpan = Span.FromBounds(curr, info.Span.Start);
+				var textSpan = VST.Span.FromBounds(curr, info.Span.Start);
 				if (!textSpan.IsEmpty)
 					sequenceList.Add(new HexSequenceElementImpl(textSpan));
-				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == PositionAffinity.Predecessor)) {
+				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == VST.PositionAffinity.Predecessor)) {
 					bool canAppend = true;
 					if (lastAddedAdornment != null && lastAddedAdornment.Value.Span.End > info.Span.Start)
 						canAppend = false;
@@ -102,7 +102,7 @@ namespace dnSpy.Hex.Formatting {
 				curr = info.Span.End;
 			}
 			if (curr < end) {
-				var textSpan = Span.FromBounds(curr, end);
+				var textSpan = VST.Span.FromBounds(curr, end);
 				Debug.Assert(!textSpan.IsEmpty);
 				sequenceList.Add(new HexSequenceElementImpl(textSpan));
 			}
@@ -119,21 +119,21 @@ namespace dnSpy.Hex.Formatting {
 				c = x.Span.Length - y.Span.Length;
 				if (c != 0)
 					return c;
-				return (x.AdornmentElement.Affinity == PositionAffinity.Predecessor ? 0 : 1) - (y.AdornmentElement.Affinity == PositionAffinity.Predecessor ? 0 : 1);
+				return (x.AdornmentElement.Affinity == VST.PositionAffinity.Predecessor ? 0 : 1) - (y.AdornmentElement.Affinity == VST.PositionAffinity.Predecessor ? 0 : 1);
 			}
 		}
 
 		struct AdornmentElementAndSpan {
-			public Span Span { get; }
+			public VST.Span Span { get; }
 			public HexAdornmentElementImpl AdornmentElement { get; }
-			public AdornmentElementAndSpan(HexAdornmentElementImpl adornmentElement, Span span) {
+			public AdornmentElementAndSpan(HexAdornmentElementImpl adornmentElement, VST.Span span) {
 				AdornmentElement = adornmentElement;
 				Span = span;
 			}
 		}
 
 		sealed class HexAdornmentElementImpl : HexAdornmentElement {
-			public override Span Span => tagSpan.Span;
+			public override VST.Span Span => tagSpan.Span;
 			public override bool ShouldRenderText => false;
 			public override double Width => tagSpan.Tag.Width;
 			public override double TopSpace => tagSpan.Tag.TopSpace;
@@ -142,7 +142,7 @@ namespace dnSpy.Hex.Formatting {
 			public override double BottomSpace => tagSpan.Tag.BottomSpace;
 			public override object IdentityTag => tagSpan.Tag.IdentityTag;
 			public override object ProviderTag => tagSpan.Tag.ProviderTag;
-			public override PositionAffinity Affinity => tagSpan.Tag.Affinity;
+			public override VST.PositionAffinity Affinity => tagSpan.Tag.Affinity;
 
 			readonly HexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan;
 
@@ -155,9 +155,9 @@ namespace dnSpy.Hex.Formatting {
 
 		sealed class HexSequenceElementImpl : HexSequenceElement {
 			public override bool ShouldRenderText => true;
-			public override Span Span { get; }
+			public override VST.Span Span { get; }
 
-			public HexSequenceElementImpl(Span span) {
+			public HexSequenceElementImpl(VST.Span span) {
 				Span = span;
 			}
 		}

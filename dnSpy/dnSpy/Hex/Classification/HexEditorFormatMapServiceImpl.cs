@@ -22,8 +22,8 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Themes;
-using Microsoft.VisualStudio.Text.Classification;
 using TC = dnSpy.Text.Classification;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
 	[Export(typeof(HexEditorFormatMapService))]
@@ -35,8 +35,8 @@ namespace dnSpy.Hex.Classification {
 			this.theEditorFormatMapService = theEditorFormatMapService;
 		}
 
-		public override IEditorFormatMap GetEditorFormatMap(HexView view) => theEditorFormatMapService.GetEditorFormatMap(view);
-		public override IEditorFormatMap GetEditorFormatMap(string category) => theEditorFormatMapService.GetEditorFormatMap(category);
+		public override VSTC.IEditorFormatMap GetEditorFormatMap(HexView view) => theEditorFormatMapService.GetEditorFormatMap(view);
+		public override VSTC.IEditorFormatMap GetEditorFormatMap(string category) => theEditorFormatMapService.GetEditorFormatMap(category);
 
 		[Export(typeof(TheEditorFormatMapService))]
 		sealed class TheEditorFormatMapService : TC.EditorFormatMapService {
@@ -45,7 +45,7 @@ namespace dnSpy.Hex.Classification {
 				: base(themeService, textEditorFontSettingsService, editorFormatDefinitionService) {
 			}
 
-			public IEditorFormatMap GetEditorFormatMap(HexView view) {
+			public VSTC.IEditorFormatMap GetEditorFormatMap(HexView view) {
 				if (view == null)
 					throw new ArgumentNullException(nameof(view));
 				return view.Properties.GetOrCreateSingletonProperty(typeof(TC.ViewEditorFormatMap), () => CreateViewEditorFormatMap(view));

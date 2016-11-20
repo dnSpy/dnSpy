@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the span of cells in the collection that have data (<see cref="HexCell.HasData"/> is true)
 		/// </summary>
-		public Span HasDataSpan => Span.FromBounds(validStart, validEnd);
+		public VST.Span HasDataSpan => VST.Span.FromBounds(validStart, validEnd);
 
 		/// <summary>
 		/// Gets a cell

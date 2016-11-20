@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Gets the affinity
 		/// </summary>
-		public abstract PositionAffinity Affinity { get; }
+		public abstract VST.PositionAffinity Affinity { get; }
 
 		/// <summary>
 		/// Gets the identity tag

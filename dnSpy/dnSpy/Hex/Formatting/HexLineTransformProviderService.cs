@@ -24,8 +24,8 @@ using System.Linq;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Hex.MEF;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Formatting;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Formatting {
 	abstract class HexLineTransformProvider : HexLineTransformSource {
@@ -67,12 +67,12 @@ namespace dnSpy.Hex.Formatting {
 				this.removeExtraTextLineVerticalPixels = removeExtraTextLineVerticalPixels;
 			}
 
-			public override LineTransform GetLineTransform(HexViewLine line, double yPosition, ViewRelativePosition placement) {
+			public override VSTF.LineTransform GetLineTransform(HexViewLine line, double yPosition, VSTE.ViewRelativePosition placement) {
 				var transform = removeExtraTextLineVerticalPixels ?
-					new LineTransform(0, 0, line.DefaultLineTransform.VerticalScale, line.DefaultLineTransform.Right) :
+					new VSTF.LineTransform(0, 0, line.DefaultLineTransform.VerticalScale, line.DefaultLineTransform.Right) :
 					line.DefaultLineTransform;
 				foreach (var source in lineTransformSources)
-					transform = LineTransform.Combine(transform, source.GetLineTransform(line, yPosition, placement));
+					transform = VSTF.LineTransform.Combine(transform, source.GetLineTransform(line, yPosition, placement));
 				return transform;
 			}
 		}

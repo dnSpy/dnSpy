@@ -26,7 +26,7 @@ using System.Windows.Media;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text.Formatting;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor {
 	sealed class WpfHexViewLineCollectionImpl : WpfHexViewLineCollection {
@@ -162,15 +162,15 @@ namespace dnSpy.Hex.Editor {
 			return GetTextMarkerGeometry(bufferSpan, flags, clipToViewport, padding);
 		}
 
-		public override Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) {
+		public override Collection<VSTF.TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfHexViewLineCollectionImpl));
 			if (bufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			var span = FormattedSpan.Overlap(bufferSpan);
-			var list = new List<TextBounds>();
+			var list = new List<VSTF.TextBounds>();
 			if (span == null)
-				return new Collection<TextBounds>(list);
+				return new Collection<VSTF.TextBounds>(list);
 
 			bool found = false;
 			for (int i = 0; i < lines.Count; i++) {
@@ -183,7 +183,7 @@ namespace dnSpy.Hex.Editor {
 					break;
 			}
 
-			return new Collection<TextBounds>(list);
+			return new Collection<VSTF.TextBounds>(list);
 		}
 
 		public override HexViewLine GetHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition) =>

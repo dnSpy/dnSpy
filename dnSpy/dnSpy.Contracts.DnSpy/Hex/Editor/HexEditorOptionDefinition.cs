@@ -18,14 +18,14 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
 	/// Hex editor option definition
 	/// </summary>
-	public abstract class HexEditorOptionDefinition : EditorOptionDefinition {
+	public abstract class HexEditorOptionDefinition : VSTE.EditorOptionDefinition {
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the option key
 		/// </summary>
-		public abstract EditorOptionKey<T> Key { get; }
+		public abstract VSTE.EditorOptionKey<T> Key { get; }
 
 		/// <summary>
 		/// Gets the default value
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="scope">Scope</param>
 		/// <returns></returns>
-		public override bool IsApplicableToScope(IPropertyOwner scope) => scope is HexView;
+		public override bool IsApplicableToScope(VSUTIL.IPropertyOwner scope) => scope is HexView;
 	}
 
 	/// <summary>
@@ -120,6 +120,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="scope">Scope</param>
 		/// <returns></returns>
-		public override bool IsApplicableToScope(IPropertyOwner scope) => scope is WpfHexView;
+		public override bool IsApplicableToScope(VSUTIL.IPropertyOwner scope) => scope is WpfHexView;
 	}
 }

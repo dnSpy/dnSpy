@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -26,13 +26,13 @@ namespace dnSpy.Contracts.Hex.Editor {
 	public static class DefaultHexViewHostOptions {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string HorizontalScrollBarName = "HexViewHost/HorizontalScrollBar";
-		public static readonly EditorOptionKey<bool> HorizontalScrollBarId = new EditorOptionKey<bool>(HorizontalScrollBarName);
+		public static readonly VSTE.EditorOptionKey<bool> HorizontalScrollBarId = new VSTE.EditorOptionKey<bool>(HorizontalScrollBarName);
 		public const string VerticalScrollBarName = "HexViewHost/VerticalScrollBar";
-		public static readonly EditorOptionKey<bool> VerticalScrollBarId = new EditorOptionKey<bool>(VerticalScrollBarName);
+		public static readonly VSTE.EditorOptionKey<bool> VerticalScrollBarId = new VSTE.EditorOptionKey<bool>(VerticalScrollBarName);
 		public const string SelectionMarginName = "HexViewHost/SelectionMargin";
-		public static readonly EditorOptionKey<bool> SelectionMarginId = new EditorOptionKey<bool>(SelectionMarginName);
+		public static readonly VSTE.EditorOptionKey<bool> SelectionMarginId = new VSTE.EditorOptionKey<bool>(SelectionMarginName);
 		public const string ZoomControlName = "HexViewHost/ZoomControl";
-		public static readonly EditorOptionKey<bool> ZoomControlId = new EditorOptionKey<bool>(ZoomControlName);
+		public static readonly VSTE.EditorOptionKey<bool> ZoomControlId = new VSTE.EditorOptionKey<bool>(ZoomControlName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

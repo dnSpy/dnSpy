@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -26,19 +26,19 @@ namespace dnSpy.Contracts.Hex.Editor {
 	public static class DefaultWpfHexViewOptions {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string ForceClearTypeIfNeededName = "WpfHexView/ForceClearTypeIfNeeded";
-		public static readonly EditorOptionKey<bool> ForceClearTypeIfNeededId = new EditorOptionKey<bool>(ForceClearTypeIfNeededName);
+		public static readonly VSTE.EditorOptionKey<bool> ForceClearTypeIfNeededId = new VSTE.EditorOptionKey<bool>(ForceClearTypeIfNeededName);
 		public const string AppearanceCategoryName = "WpfHexView/Appearance/Category";
-		public static readonly EditorOptionKey<string> AppearanceCategoryId = new EditorOptionKey<string>(AppearanceCategoryName);
+		public static readonly VSTE.EditorOptionKey<string> AppearanceCategoryId = new VSTE.EditorOptionKey<string>(AppearanceCategoryName);
 		public const string EnableHighlightCurrentLineName = "WpfHexView/Adornments/HighlightCurrentLine/Enable";
-		public static readonly EditorOptionKey<bool> EnableHighlightCurrentLineId = new EditorOptionKey<bool>(EnableHighlightCurrentLineName);
+		public static readonly VSTE.EditorOptionKey<bool> EnableHighlightCurrentLineId = new VSTE.EditorOptionKey<bool>(EnableHighlightCurrentLineName);
 		public const string EnableMouseWheelZoomName = "WpfHexView/MouseWheelZoom";
-		public static readonly EditorOptionKey<bool> EnableMouseWheelZoomId = new EditorOptionKey<bool>(EnableMouseWheelZoomName);
+		public static readonly VSTE.EditorOptionKey<bool> EnableMouseWheelZoomId = new VSTE.EditorOptionKey<bool>(EnableMouseWheelZoomName);
 		public const string EnableSimpleGraphicsName = "WpfHexView/Graphics/Simple/Enable";
-		public static readonly EditorOptionKey<bool> EnableSimpleGraphicsId = new EditorOptionKey<bool>(EnableSimpleGraphicsName);
+		public static readonly VSTE.EditorOptionKey<bool> EnableSimpleGraphicsId = new VSTE.EditorOptionKey<bool>(EnableSimpleGraphicsName);
 		public const string UseReducedOpacityForHighContrastOptionName = "WpfHexView/UseReducedOpacityForHighContrast";
-		public static readonly EditorOptionKey<bool> UseReducedOpacityForHighContrastOptionId = new EditorOptionKey<bool>(UseReducedOpacityForHighContrastOptionName);
+		public static readonly VSTE.EditorOptionKey<bool> UseReducedOpacityForHighContrastOptionId = new VSTE.EditorOptionKey<bool>(UseReducedOpacityForHighContrastOptionName);
 		public const string ZoomLevelName = "WpfHexView/ZoomLevel";
-		public static readonly EditorOptionKey<double> ZoomLevelId = new EditorOptionKey<double>(ZoomLevelName);
+		public static readonly VSTE.EditorOptionKey<double> ZoomLevelId = new VSTE.EditorOptionKey<double>(ZoomLevelName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

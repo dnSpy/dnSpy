@@ -24,7 +24,7 @@ using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
-using Microsoft.VisualStudio.Text.Adornments;
+using VSTA = Microsoft.VisualStudio.Text.Adornments;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexSpaceReservationManagerImpl : HexSpaceReservationManager {
@@ -86,26 +86,26 @@ namespace dnSpy.Hex.Editor {
 			return true;
 		}
 
-		public override HexSpaceReservationAgent CreatePopupAgent(HexLineSpan lineSpan, PopupStyles style, UIElement content) {
+		public override HexSpaceReservationAgent CreatePopupAgent(HexLineSpan lineSpan, VSTA.PopupStyles style, UIElement content) {
 			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
-			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
+			if ((style & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) == (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
 			return new HexPopupSpaceReservationAgent(this, wpfHexView, lineSpan, style, content);
 		}
 
-		public override void UpdatePopupAgent(HexSpaceReservationAgent agent, HexLineSpan lineSpan, PopupStyles styles) {
+		public override void UpdatePopupAgent(HexSpaceReservationAgent agent, HexLineSpan lineSpan, VSTA.PopupStyles styles) {
 			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
 			if (agent == null)
 				throw new ArgumentNullException(nameof(agent));
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
-			if ((styles & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
+			if ((styles & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) == (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(styles));
 			if (!spaceReservationAgents.Contains(agent))
 				throw new ArgumentOutOfRangeException(nameof(agent));

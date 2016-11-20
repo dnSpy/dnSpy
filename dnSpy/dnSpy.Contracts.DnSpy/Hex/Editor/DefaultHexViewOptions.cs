@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -26,44 +26,44 @@ namespace dnSpy.Contracts.Hex.Editor {
 	public static class DefaultHexViewOptions {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string ShowOffsetColumnName = "HexView/ShowOffsetColumn";
-		public static readonly EditorOptionKey<bool> ShowOffsetColumnId = new EditorOptionKey<bool>(ShowOffsetColumnName);
+		public static readonly VSTE.EditorOptionKey<bool> ShowOffsetColumnId = new VSTE.EditorOptionKey<bool>(ShowOffsetColumnName);
 		public const string ShowValuesColumnName = "HexView/ShowValuesColumn";
-		public static readonly EditorOptionKey<bool> ShowValuesColumnId = new EditorOptionKey<bool>(ShowValuesColumnName);
+		public static readonly VSTE.EditorOptionKey<bool> ShowValuesColumnId = new VSTE.EditorOptionKey<bool>(ShowValuesColumnName);
 		public const string ShowAsciiColumnName = "HexView/ShowAsciiColumn";
-		public static readonly EditorOptionKey<bool> ShowAsciiColumnId = new EditorOptionKey<bool>(ShowAsciiColumnName);
+		public static readonly VSTE.EditorOptionKey<bool> ShowAsciiColumnId = new VSTE.EditorOptionKey<bool>(ShowAsciiColumnName);
 		public const string StartPositionName = "HexView/StartPosition";
-		public static readonly EditorOptionKey<HexPosition> StartPositionId = new EditorOptionKey<HexPosition>(StartPositionName);
+		public static readonly VSTE.EditorOptionKey<HexPosition> StartPositionId = new VSTE.EditorOptionKey<HexPosition>(StartPositionName);
 		public const string EndPositionName = "HexView/EndPosition";
-		public static readonly EditorOptionKey<HexPosition> EndPositionId = new EditorOptionKey<HexPosition>(EndPositionName);
+		public static readonly VSTE.EditorOptionKey<HexPosition> EndPositionId = new VSTE.EditorOptionKey<HexPosition>(EndPositionName);
 		public const string BasePositionName = "HexView/BasePosition";
-		public static readonly EditorOptionKey<HexPosition> BasePositionId = new EditorOptionKey<HexPosition>(BasePositionName);
+		public static readonly VSTE.EditorOptionKey<HexPosition> BasePositionId = new VSTE.EditorOptionKey<HexPosition>(BasePositionName);
 		public const string UseRelativePositionsName = "HexView/UseRelativePositions";
-		public static readonly EditorOptionKey<bool> UseRelativePositionsId = new EditorOptionKey<bool>(UseRelativePositionsName);
+		public static readonly VSTE.EditorOptionKey<bool> UseRelativePositionsId = new VSTE.EditorOptionKey<bool>(UseRelativePositionsName);
 		public const string OffsetBitSizeName = "HexView/OffsetBitSize";
-		public static readonly EditorOptionKey<int> OffsetBitSizeId = new EditorOptionKey<int>(OffsetBitSizeName);
+		public static readonly VSTE.EditorOptionKey<int> OffsetBitSizeId = new VSTE.EditorOptionKey<int>(OffsetBitSizeName);
 		public const string HexValuesDisplayFormatName = "HexView/HexValuesDisplayFormat";
-		public static readonly EditorOptionKey<HexValuesDisplayFormat> HexValuesDisplayFormatId = new EditorOptionKey<HexValuesDisplayFormat>(HexValuesDisplayFormatName);
+		public static readonly VSTE.EditorOptionKey<HexValuesDisplayFormat> HexValuesDisplayFormatId = new VSTE.EditorOptionKey<HexValuesDisplayFormat>(HexValuesDisplayFormatName);
 		public const string HexOffsetFormatName = "HexView/HexOffsetFormat";
-		public static readonly EditorOptionKey<HexOffsetFormat> HexOffsetFormatId = new EditorOptionKey<HexOffsetFormat>(HexOffsetFormatName);
+		public static readonly VSTE.EditorOptionKey<HexOffsetFormat> HexOffsetFormatId = new VSTE.EditorOptionKey<HexOffsetFormat>(HexOffsetFormatName);
 		public const string ValuesLowerCaseHexName = "HexView/ValuesLowerCaseHex";
-		public static readonly EditorOptionKey<bool> ValuesLowerCaseHexId = new EditorOptionKey<bool>(ValuesLowerCaseHexName);
+		public static readonly VSTE.EditorOptionKey<bool> ValuesLowerCaseHexId = new VSTE.EditorOptionKey<bool>(ValuesLowerCaseHexName);
 		public const string OffsetLowerCaseHexName = "HexView/OffsetLowerCaseHex";
-		public static readonly EditorOptionKey<bool> OffsetLowerCaseHexId = new EditorOptionKey<bool>(OffsetLowerCaseHexName);
+		public static readonly VSTE.EditorOptionKey<bool> OffsetLowerCaseHexId = new VSTE.EditorOptionKey<bool>(OffsetLowerCaseHexName);
 		public const string BytesPerLineName = "HexView/BytesPerLine";
-		public static readonly EditorOptionKey<int> BytesPerLineId = new EditorOptionKey<int>(BytesPerLineName);
+		public static readonly VSTE.EditorOptionKey<int> BytesPerLineId = new VSTE.EditorOptionKey<int>(BytesPerLineName);
 		public const string GroupSizeInBytesName = "HexView/GroupSizeInBytes";
-		public static readonly EditorOptionKey<int> GroupSizeInBytesId = new EditorOptionKey<int>(GroupSizeInBytesName);
+		public static readonly VSTE.EditorOptionKey<int> GroupSizeInBytesId = new VSTE.EditorOptionKey<int>(GroupSizeInBytesName);
 		public const string EnableColorizationName = "HexView/EnableColorization";
-		public static readonly EditorOptionKey<bool> EnableColorizationId = new EditorOptionKey<bool>(EnableColorizationName);
+		public static readonly VSTE.EditorOptionKey<bool> EnableColorizationId = new VSTE.EditorOptionKey<bool>(EnableColorizationName);
 		public const string ViewProhibitUserInputName = "HexView/ProhibitUserInput";
-		public static readonly EditorOptionKey<bool> ViewProhibitUserInputId = new EditorOptionKey<bool>(ViewProhibitUserInputName);
+		public static readonly VSTE.EditorOptionKey<bool> ViewProhibitUserInputId = new VSTE.EditorOptionKey<bool>(ViewProhibitUserInputName);
 		public const string RefreshScreenOnChangeName = "HexView/RefreshScreenOnChange";
-		public static readonly EditorOptionKey<bool> RefreshScreenOnChangeId = new EditorOptionKey<bool>(RefreshScreenOnChangeName);
+		public static readonly VSTE.EditorOptionKey<bool> RefreshScreenOnChangeId = new VSTE.EditorOptionKey<bool>(RefreshScreenOnChangeName);
 		public const string RefreshScreenOnChangeWaitMilliSecondsName = "HexView/RefreshScreenOnChangeWaitMilliSeconds";
-		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecondsId = new EditorOptionKey<int>(RefreshScreenOnChangeWaitMilliSecondsName);
+		public static readonly VSTE.EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecondsId = new VSTE.EditorOptionKey<int>(RefreshScreenOnChangeWaitMilliSecondsName);
 		public const int DefaultRefreshScreenOnChangeWaitMilliSeconds = 150;
 		public const string RemoveExtraTextLineVerticalPixelsName = "HexView/RemoveExtraTextLineVerticalPixels";
-		public static readonly EditorOptionKey<bool> RemoveExtraTextLineVerticalPixelsId = new EditorOptionKey<bool>(RemoveExtraTextLineVerticalPixelsName);
+		public static readonly VSTE.EditorOptionKey<bool> RemoveExtraTextLineVerticalPixelsId = new VSTE.EditorOptionKey<bool>(RemoveExtraTextLineVerticalPixelsName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

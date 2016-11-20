@@ -21,7 +21,7 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised when the background property has changed
 		/// </summary>
-		public abstract event EventHandler<BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
+		public abstract event EventHandler<VSTE.BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
 
 		/// <summary>
 		/// Gets/sets the zoom level between 20% to 400%
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised when the zoom level has changed
 		/// </summary>
-		public abstract event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;
+		public abstract event EventHandler<VSTE.ZoomLevelChangedEventArgs> ZoomLevelChanged;
 
 		/// <summary>
 		/// Gets the formatted line source

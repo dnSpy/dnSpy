@@ -18,7 +18,7 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text.Classification;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
@@ -28,13 +28,13 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <summary>
 		/// Gets the classification type
 		/// </summary>
-		public IClassificationType ClassificationType { get; }
+		public VSTC.IClassificationType ClassificationType { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="classificationType">Classification type</param>
-		public HexClassificationTag(IClassificationType classificationType) {
+		public HexClassificationTag(VSTC.IClassificationType classificationType) {
 			if (classificationType == null)
 				throw new ArgumentNullException(nameof(classificationType));
 			ClassificationType = classificationType;

@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
+using VST = Microsoft.VisualStudio.Text;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -34,14 +34,14 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Scrolls a span into view
 		/// </summary>
 		/// <param name="lineSpan">Line span</param>
-		public void EnsureSpanVisible(HexLineSpan lineSpan) => EnsureSpanVisible(lineSpan, EnsureSpanVisibleOptions.None);
+		public void EnsureSpanVisible(HexLineSpan lineSpan) => EnsureSpanVisible(lineSpan, VSTE.EnsureSpanVisibleOptions.None);
 
 		/// <summary>
 		/// Scrolls a span into view
 		/// </summary>
 		/// <param name="lineSpan">Line span</param>
 		/// <param name="options">Options</param>
-		public abstract void EnsureSpanVisible(HexLineSpan lineSpan, EnsureSpanVisibleOptions options);
+		public abstract void EnsureSpanVisible(HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options);
 
 		/// <summary>
 		/// Scrolls a span into view
@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="span">Span</param>
 		/// <param name="flags">Flags</param>
 		public void EnsureSpanVisible(HexBufferSpan span, HexSpanSelectionFlags flags) =>
-			EnsureSpanVisible(span, flags, EnsureSpanVisibleOptions.None);
+			EnsureSpanVisible(span, flags, VSTE.EnsureSpanVisibleOptions.None);
 
 		/// <summary>
 		/// Scrolls a span into view
@@ -57,15 +57,15 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="span">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="options">Options</param>
-		public abstract void EnsureSpanVisible(HexBufferSpan span, HexSpanSelectionFlags flags, EnsureSpanVisibleOptions options);
+		public abstract void EnsureSpanVisible(HexBufferSpan span, HexSpanSelectionFlags flags, VSTE.EnsureSpanVisibleOptions options);
 
 		/// <summary>
 		/// Scrolls a line into view
 		/// </summary>
 		/// <param name="line">Line</param>
 		/// <param name="span">Line span</param>
-		public void EnsureSpanVisible(HexBufferLine line, Span span) =>
-			EnsureSpanVisible(line, span, EnsureSpanVisibleOptions.None);
+		public void EnsureSpanVisible(HexBufferLine line, VST.Span span) =>
+			EnsureSpanVisible(line, span, VSTE.EnsureSpanVisibleOptions.None);
 
 		/// <summary>
 		/// Scrolls a line into view
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="line">Line</param>
 		/// <param name="span">Line span</param>
 		/// <param name="options">Options</param>
-		public abstract void EnsureSpanVisible(HexBufferLine line, Span span, EnsureSpanVisibleOptions options);
+		public abstract void EnsureSpanVisible(HexBufferLine line, VST.Span span, VSTE.EnsureSpanVisibleOptions options);
 
 		/// <summary>
 		/// Scrolls the viewport horizontally
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Scrolls the viewport one line up or down
 		/// </summary>
 		/// <param name="direction">Direction</param>
-		public void ScrollViewportVerticallyByLine(ScrollDirection direction) =>
+		public void ScrollViewportVerticallyByLine(VSTE.ScrollDirection direction) =>
 			ScrollViewportVerticallyByLines(direction, 1);
 
 		/// <summary>
@@ -99,13 +99,13 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="direction">Direction</param>
 		/// <param name="count">Number of lines to scroll</param>
-		public abstract void ScrollViewportVerticallyByLines(ScrollDirection direction, int count);
+		public abstract void ScrollViewportVerticallyByLines(VSTE.ScrollDirection direction, int count);
 
 		/// <summary>
 		/// Scrolls the viewport one page up or down
 		/// </summary>
 		/// <param name="direction">Direction</param>
 		/// <returns></returns>
-		public abstract bool ScrollViewportVerticallyByPage(ScrollDirection direction);
+		public abstract bool ScrollViewportVerticallyByPage(VSTE.ScrollDirection direction);
 	}
 }

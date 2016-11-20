@@ -35,9 +35,9 @@ using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Text.Classification;
 using dnSpy.Hex.Formatting;
 using dnSpy.Hex.MEF;
+using CTC = dnSpy.Contracts.Text.Classification;
 using TE = dnSpy.Text.Editor;
 using VSTC = Microsoft.VisualStudio.Text.Classification;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
@@ -298,12 +298,12 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
-			if (e.ChangedItems.Contains(EditorFormatMapConstants.TextViewBackgroundId))
+			if (e.ChangedItems.Contains(CTC.EditorFormatMapConstants.TextViewBackgroundId))
 				UpdateBackground();
 		}
 
 		void UpdateBackground() {
-			var bgProps = editorFormatMap.GetProperties(EditorFormatMapConstants.TextViewBackgroundId);
+			var bgProps = editorFormatMap.GetProperties(CTC.EditorFormatMapConstants.TextViewBackgroundId);
 			canvas.Background = TE.ResourceDictionaryUtilities.GetBackgroundBrush(bgProps, SystemColors.WindowBrush);
 		}
 

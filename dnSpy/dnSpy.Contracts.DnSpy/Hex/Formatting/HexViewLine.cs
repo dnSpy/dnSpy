@@ -20,8 +20,8 @@
 using System;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex.Tagging;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Formatting;
+using VST = Microsoft.VisualStudio.Text;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
@@ -126,22 +126,22 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Gets the visibility
 		/// </summary>
-		public abstract VisibilityState VisibilityState { get; }
+		public abstract VSTF.VisibilityState VisibilityState { get; }
 
 		/// <summary>
 		/// Gets the change
 		/// </summary>
-		public abstract TextViewLineChange Change { get; }
+		public abstract VSTF.TextViewLineChange Change { get; }
 
 		/// <summary>
 		/// Gets the default line transform
 		/// </summary>
-		public abstract LineTransform DefaultLineTransform { get; }
+		public abstract VSTF.LineTransform DefaultLineTransform { get; }
 
 		/// <summary>
 		/// Gets the line transform
 		/// </summary>
-		public abstract LineTransform LineTransform { get; }
+		public abstract VSTF.LineTransform LineTransform { get; }
 
 		/// <summary>
 		/// Gets the buffer
@@ -161,7 +161,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Gets the text span
 		/// </summary>
-		public Span TextSpan => BufferLine.TextSpan;
+		public VST.Span TextSpan => BufferLine.TextSpan;
 
 		/// <summary>
 		/// Gets the buffer span
@@ -180,7 +180,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// </summary>
 		/// <param name="identityTag">Identity tag (<see cref="HexAdornmentElement.IdentityTag"/>)</param>
 		/// <returns></returns>
-		public abstract TextBounds? GetAdornmentBounds(object identityTag);
+		public abstract VSTF.TextBounds? GetAdornmentBounds(object identityTag);
 
 		/// <summary>
 		/// Gets all adornment tags
@@ -209,14 +209,14 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// </summary>
 		/// <param name="linePosition">Position</param>
 		/// <returns></returns>
-		public abstract TextBounds GetCharacterBounds(int linePosition);
+		public abstract VSTF.TextBounds GetCharacterBounds(int linePosition);
 
 		/// <summary>
 		/// Gets extended character bounds, including any adornments
 		/// </summary>
 		/// <param name="linePosition">Position</param>
 		/// <returns></returns>
-		public abstract TextBounds GetExtendedCharacterBounds(int linePosition);
+		public abstract VSTF.TextBounds GetExtendedCharacterBounds(int linePosition);
 
 		/// <summary>
 		/// Gets the line position
@@ -237,7 +237,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// </summary>
 		/// <param name="lineSpan">Line span</param>
 		/// <returns></returns>
-		public Collection<TextBounds> GetNormalizedTextBounds(HexLineSpan lineSpan) {
+		public Collection<VSTF.TextBounds> GetNormalizedTextBounds(HexLineSpan lineSpan) {
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
 			if (lineSpan.IsTextSpan)
@@ -250,7 +250,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// </summary>
 		/// <param name="lineSpan">Line span</param>
 		/// <returns></returns>
-		public abstract Collection<TextBounds> GetNormalizedTextBounds(Span lineSpan);
+		public abstract Collection<VSTF.TextBounds> GetNormalizedTextBounds(VST.Span lineSpan);
 
 		/// <summary>
 		/// Gets normalized text bounds
@@ -258,14 +258,14 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags);
+		public abstract Collection<VSTF.TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Gets the span whose text element index corresponds to the given line position
 		/// </summary>
 		/// <param name="linePosition">Position</param>
 		/// <returns></returns>
-		public abstract Span GetTextElementSpan(int linePosition);
+		public abstract VST.Span GetTextElementSpan(int linePosition);
 
 		/// <summary>
 		/// Returns true if the line intersects with <paramref name="bufferSpan"/>

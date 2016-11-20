@@ -21,7 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text.Formatting;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Collection<TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags);
+		public abstract Collection<VSTF.TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Returns true if this collection contains <paramref name="bufferPosition"/>

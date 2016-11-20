@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Utilities;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
 	/// Adds a layer kind
 	/// </summary>
-	public sealed class HexLayerKindAttribute : SingletonBaseMetadataAttribute {
+	public sealed class HexLayerKindAttribute : VSUTIL.SingletonBaseMetadataAttribute {
 		/// <summary>
 		/// Constructor
 		/// </summary>

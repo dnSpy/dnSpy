@@ -29,9 +29,9 @@ using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Menus;
 using dnSpy.Hex.Formatting;
 using dnSpy.Hex.MEF;
-using Microsoft.VisualStudio.Text.Classification;
-using DSTE = dnSpy.Text.Editor;
-using TE = Microsoft.VisualStudio.Text.Editor;
+using TE = dnSpy.Text.Editor;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Editor {
 	[Export(typeof(HexEditorFactoryService))]
@@ -50,11 +50,11 @@ namespace dnSpy.Hex.Editor {
 		readonly HexLineTransformProviderService lineTransformProviderService;
 		readonly HexSpaceReservationStackProvider spaceReservationStackProvider;
 		readonly Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners;
-		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
+		readonly VSTC.IClassificationTypeRegistryService classificationTypeRegistryService;
 
-		public override TE.ITextViewRoleSet AllPredefinedRoles => new DSTE.TextViewRoleSet(allPredefinedRolesList);
-		public override TE.ITextViewRoleSet DefaultRoles => new DSTE.TextViewRoleSet(defaultRolesList);
-		public override TE.ITextViewRoleSet NoRoles => new DSTE.TextViewRoleSet(Array.Empty<string>());
+		public override VSTE.ITextViewRoleSet AllPredefinedRoles => new TE.TextViewRoleSet(allPredefinedRolesList);
+		public override VSTE.ITextViewRoleSet DefaultRoles => new TE.TextViewRoleSet(defaultRolesList);
+		public override VSTE.ITextViewRoleSet NoRoles => new TE.TextViewRoleSet(Array.Empty<string>());
 		static readonly string[] allPredefinedRolesList = new string[] {
 			PredefinedHexViewRoles.Analyzable,
 			PredefinedHexViewRoles.Debuggable,
@@ -96,7 +96,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		[ImportingConstructor]
-		HexEditorFactoryServiceImpl(HexEditorOptionsFactoryService hexEditorOptionsFactoryService, IMenuService menuService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineProviderFactoryService hexBufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, [ImportMany] Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		HexEditorFactoryServiceImpl(HexEditorOptionsFactoryService hexEditorOptionsFactoryService, IMenuService menuService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineProviderFactoryService hexBufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, [ImportMany] Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.hexEditorOptionsFactoryService = hexEditorOptionsFactoryService;
 			this.menuService = menuService;
 			this.commandService = commandService;
@@ -116,10 +116,10 @@ namespace dnSpy.Hex.Editor {
 		public override WpfHexView Create(HexBuffer buffer, HexViewCreatorOptions options) =>
 			Create(buffer, DefaultRoles, hexEditorOptionsFactoryService.GlobalOptions, options);
 
-		public override WpfHexView Create(HexBuffer buffer, TE.ITextViewRoleSet roles, HexViewCreatorOptions options) =>
+		public override WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, HexViewCreatorOptions options) =>
 			Create(buffer, roles, hexEditorOptionsFactoryService.GlobalOptions, options);
 
-		public override WpfHexView Create(HexBuffer buffer, TE.ITextViewRoleSet roles, TE.IEditorOptions parentOptions, HexViewCreatorOptions options) {
+		public override WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexViewCreatorOptions options) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			if (roles == null)
@@ -143,7 +143,7 @@ namespace dnSpy.Hex.Editor {
 			throw new NotImplementedException();//TODO:
 		}
 
-		public override TE.ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles) => new DSTE.TextViewRoleSet(roles);
-		public override TE.ITextViewRoleSet CreateTextViewRoleSet(params string[] roles) => new DSTE.TextViewRoleSet(roles);
+		public override VSTE.ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles) => new TE.TextViewRoleSet(roles);
+		public override VSTE.ITextViewRoleSet CreateTextViewRoleSet(params string[] roles) => new TE.TextViewRoleSet(roles);
 	}
 }

@@ -24,18 +24,18 @@ using System.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Tagging;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+using VST = Microsoft.VisualStudio.Text;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
 	abstract class HexClassifierAggregator : HexClassifier {
-		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
+		readonly VSTC.IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly HexTagAggregator<HexClassificationTag> hexTagAggregator;
 		readonly HexBuffer buffer;
 
 		public override event EventHandler<HexClassificationChangedEventArgs> ClassificationChanged;
 
-		protected HexClassifierAggregator(HexTagAggregator<HexClassificationTag> hexTagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService, HexBuffer buffer) {
+		protected HexClassifierAggregator(HexTagAggregator<HexClassificationTag> hexTagAggregator, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, HexBuffer buffer) {
 			if (hexTagAggregator == null)
 				throw new ArgumentNullException(nameof(hexTagAggregator));
 			if (classificationTypeRegistryService == null)
@@ -93,7 +93,7 @@ namespace dnSpy.Hex.Classification {
 			int min = 0;
 			int minOffset = textSpan.Start;
 			var newList = new List<HexClassificationSpan>();
-			var ctList = new List<IClassificationType>();
+			var ctList = new List<VSTC.IClassificationType>();
 			while (min < list.Count) {
 				while (min < list.Count && minOffset >= list[min].Span.End)
 					min++;
@@ -122,7 +122,7 @@ namespace dnSpy.Hex.Classification {
 				}
 				Debug.Assert(minOffset < end);
 				var ct = ctList.Count == 1 ? ctList[0] : classificationTypeRegistryService.CreateTransientClassificationType(ctList);
-				newList.Add(new HexClassificationSpan(Span.FromBounds(minOffset, end), ct));
+				newList.Add(new HexClassificationSpan(VST.Span.FromBounds(minOffset, end), ct));
 				minOffset = end;
 			}
 
@@ -140,7 +140,7 @@ namespace dnSpy.Hex.Classification {
 			for (; read < list.Count; read++) {
 				var a = list[read];
 				if (prev.ClassificationType == a.ClassificationType && prev.Span.End == a.Span.Start)
-					list[write] = prev = new HexClassificationSpan(Span.FromBounds(prev.Span.Start, a.Span.End), prev.ClassificationType);
+					list[write] = prev = new HexClassificationSpan(VST.Span.FromBounds(prev.Span.Start, a.Span.End), prev.ClassificationType);
 				else {
 					prev = a;
 					list[++write] = a;

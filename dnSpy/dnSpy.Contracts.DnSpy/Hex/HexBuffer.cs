@@ -18,24 +18,24 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Utilities;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex buffer
 	/// </summary>
-	public abstract class HexBuffer : IPropertyOwner {
+	public abstract class HexBuffer : VSUTIL.IPropertyOwner {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		protected HexBuffer() {
-			Properties = new PropertyCollection();
+			Properties = new VSUTIL.PropertyCollection();
 		}
 
 		/// <summary>
 		/// Gets all properties
 		/// </summary>
-		public PropertyCollection Properties { get; }
+		public VSUTIL.PropertyCollection Properties { get; }
 
 		/// <summary>
 		/// true if the content can change at any time

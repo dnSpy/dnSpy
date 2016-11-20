@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Hex.Classification;
-using Microsoft.VisualStudio.Text.Classification;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="sequencer">Sequencer</param>
 		/// <param name="classificationFormatMap">Classification format map</param>
 		/// <returns></returns>
-		public virtual HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) =>
+		public virtual HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap) =>
 			Create(baseIndent, useDisplayMode, NullHexClassifier.Instance, sequencer, classificationFormatMap);
 
 		/// <summary>
@@ -50,6 +50,6 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="sequencer">Sequencer</param>
 		/// <param name="classificationFormatMap">Classification format map</param>
 		/// <returns></returns>
-		public abstract HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap);
+		public abstract HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap);
 	}
 }

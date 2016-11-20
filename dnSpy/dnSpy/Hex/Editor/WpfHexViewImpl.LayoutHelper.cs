@@ -25,8 +25,8 @@ using System.Windows;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Hex.Formatting;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Formatting;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor {
 	sealed partial class WpfHexViewImpl {
@@ -73,31 +73,31 @@ namespace dnSpy.Hex.Editor {
 			// Existing lines should have a delta == 0 if possible.
 			double GetNewViewportTop(List<LineInfo> infos, double tempViewportTop) {
 				foreach (var info in infos) {
-					if (info.Line.VisibilityState == VisibilityState.Unattached)
+					if (info.Line.VisibilityState == VSTF.VisibilityState.Unattached)
 						continue;
 					return tempViewportTop - info.Y + info.Line.Top;
 				}
 				return tempViewportTop;
 			}
 
-			public void LayoutLines(HexBufferPoint bufferPosition, ViewRelativePosition relativeTo, double verticalDistance, double viewportLeft, double viewportWidthOverride, double viewportHeightOverride) {
+			public void LayoutLines(HexBufferPoint bufferPosition, VSTE.ViewRelativePosition relativeTo, double verticalDistance, double viewportLeft, double viewportWidthOverride, double viewportHeightOverride) {
 				NewViewportTop = requestedViewportTop;
 				var infos = CreateLineInfos(bufferPosition, relativeTo, verticalDistance, viewportHeightOverride);
 
 				// The first line of the file must always be shown at the top of the view
 				if (infos[0].Y > NewViewportTop) {
-					infos = CreateLineInfos(bufferLines.BufferSpan.Start, ViewRelativePosition.Top, 0, viewportHeightOverride);
+					infos = CreateLineInfos(bufferLines.BufferSpan.Start, VSTE.ViewRelativePosition.Top, 0, viewportHeightOverride);
 					Debug.Assert(infos[0].Y == NewViewportTop);
 				}
 
 				// Include a hidden line before the first line and one after the last line,
 				// just like in VS' WpfHexViewLine collection.
 				var firstInfo = infos[0];
-				var prevLine = AddLineTransform(GetLineBefore(firstInfo.Line), firstInfo.Y, ViewRelativePosition.Bottom);
+				var prevLine = AddLineTransform(GetLineBefore(firstInfo.Line), firstInfo.Y, VSTE.ViewRelativePosition.Bottom);
 				if (prevLine != null)
 					infos.Insert(0, new LineInfo(prevLine, firstInfo.Y - prevLine.Height));
 				var lastInfo = infos[infos.Count - 1];
-				var nextLine = AddLineTransform(GetLineAfter(lastInfo.Line), lastInfo.Y + lastInfo.Line.Height, ViewRelativePosition.Top);
+				var nextLine = AddLineTransform(GetLineAfter(lastInfo.Line), lastInfo.Y + lastInfo.Line.Height, VSTE.ViewRelativePosition.Top);
 				if (nextLine != null)
 					infos.Add(new LineInfo(nextLine, lastInfo.Y + lastInfo.Line.Height));
 
@@ -123,7 +123,7 @@ namespace dnSpy.Hex.Editor {
 					AllVisibleLines.Add(line);
 					double newLineTop = delta + info.Y;
 					if (!oldVisibleLines.Contains(line)) {
-						line.SetChange(TextViewLineChange.NewOrReformatted);
+						line.SetChange(VSTF.TextViewLineChange.NewOrReformatted);
 						line.SetDeltaY(0);
 					}
 					else {
@@ -131,14 +131,14 @@ namespace dnSpy.Hex.Editor {
 						line.SetDeltaY(deltaY);
 						// If it got a new line transform, it will have Change == NewOrReformatted,
 						// and that change has priority over Translated.
-						if (deltaY != 0 && line.Change == TextViewLineChange.None)
-							line.SetChange(TextViewLineChange.Translated);
+						if (deltaY != 0 && line.Change == VSTF.TextViewLineChange.None)
+							line.SetChange(VSTF.TextViewLineChange.Translated);
 					}
 					line.SetTop(newLineTop);
 					line.SetVisibleArea(visibleArea);
-					if (line.Change == TextViewLineChange.Translated)
+					if (line.Change == VSTF.TextViewLineChange.Translated)
 						TranslatedLines.Add(line);
-					else if (line.Change == TextViewLineChange.NewOrReformatted)
+					else if (line.Change == VSTF.TextViewLineChange.NewOrReformatted)
 						NewOrReformattedLines.Add(line);
 				}
 				bool foundVisibleLine = false;
@@ -147,7 +147,7 @@ namespace dnSpy.Hex.Editor {
 						foundVisibleLine = true;
 						continue;
 					}
-					info.Line.SetChange(TextViewLineChange.None);
+					info.Line.SetChange(VSTF.TextViewLineChange.None);
 					info.Line.SetDeltaY(0);
 					info.Line.SetTop(foundVisibleLine ? double.PositiveInfinity : double.NegativeInfinity);
 					info.Line.SetVisibleArea(visibleArea);
@@ -159,20 +159,20 @@ namespace dnSpy.Hex.Editor {
 				AllVisiblePhysicalLines = new List<PhysicalLine>(keptLines);
 			}
 
-			List<LineInfo> CreateLineInfos(HexBufferPoint bufferPosition, ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
+			List<LineInfo> CreateLineInfos(HexBufferPoint bufferPosition, VSTE.ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
 				var lineInfos = new List<LineInfo>();
 				var startLine = GetLine(bufferPosition);
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;
-				if (relativeTo == ViewRelativePosition.Top) {
+				if (relativeTo == VSTE.ViewRelativePosition.Top) {
 					lineStartY = NewViewportTop + verticalDistance;
-					AddLineTransform(startLine, lineStartY, ViewRelativePosition.Top);
+					AddLineTransform(startLine, lineStartY, VSTE.ViewRelativePosition.Top);
 				}
 				else {
-					Debug.Assert(relativeTo == ViewRelativePosition.Bottom);
+					Debug.Assert(relativeTo == VSTE.ViewRelativePosition.Bottom);
 					lineStartY = NewViewportTop + viewportHeightOverride - verticalDistance;
-					AddLineTransform(startLine, lineStartY, ViewRelativePosition.Bottom);
+					AddLineTransform(startLine, lineStartY, VSTE.ViewRelativePosition.Bottom);
 					lineStartY -= startLine.Height;
 				}
 
@@ -183,7 +183,7 @@ namespace dnSpy.Hex.Editor {
 						lineInfos.Add(new LineInfo(currentLine, y));
 						if (y <= NewViewportTop)
 							break;
-						currentLine = AddLineTransform(GetLineBefore(currentLine), y, ViewRelativePosition.Bottom);
+						currentLine = AddLineTransform(GetLineBefore(currentLine), y, VSTE.ViewRelativePosition.Bottom);
 						if (currentLine == null)
 							break;
 						y -= currentLine.Height;
@@ -193,7 +193,7 @@ namespace dnSpy.Hex.Editor {
 
 				currentLine = startLine;
 				for (y = lineStartY + currentLine.Height; y < newViewportBottom;) {
-					currentLine = AddLineTransform(GetLineAfter(currentLine), y, ViewRelativePosition.Top);
+					currentLine = AddLineTransform(GetLineAfter(currentLine), y, VSTE.ViewRelativePosition.Top);
 					if (currentLine == null)
 						break;
 					lineInfos.Add(new LineInfo(currentLine, y));
@@ -216,12 +216,12 @@ namespace dnSpy.Hex.Editor {
 				return lineInfos;
 			}
 
-			HexFormattedLine AddLineTransform(HexFormattedLine line, double yPosition, ViewRelativePosition placement) {
+			HexFormattedLine AddLineTransform(HexFormattedLine line, double yPosition, VSTE.ViewRelativePosition placement) {
 				if (line != null) {
 					var lineTransform = lineTransformProvider.GetLineTransform(line, yPosition, placement);
 					if (lineTransform != line.LineTransform) {
 						line.SetLineTransform(lineTransform);
-						line.SetChange(TextViewLineChange.NewOrReformatted);
+						line.SetChange(VSTF.TextViewLineChange.NewOrReformatted);
 					}
 				}
 				return line;

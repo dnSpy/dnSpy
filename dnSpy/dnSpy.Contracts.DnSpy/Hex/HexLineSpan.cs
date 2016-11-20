@@ -18,7 +18,7 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Line span or null
 		/// </summary>
-		public Span? TextSpan { get; }
+		public VST.Span? TextSpan { get; }
 
 		/// <summary>
 		/// true if it's a text span
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="line">Line</param>
 		/// <param name="textSpan">Text span</param>
-		public HexLineSpan(HexBufferLine line, Span textSpan) {
+		public HexLineSpan(HexBufferLine line, VST.Span textSpan) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 			BufferSpan = line.BufferSpan;

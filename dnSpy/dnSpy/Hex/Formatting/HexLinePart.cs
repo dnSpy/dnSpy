@@ -21,12 +21,12 @@ using System;
 using System.Diagnostics;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Formatting {
 	struct HexLinePart {
 		/// <summary>
-		/// Column (visible character index). This is usually equal to <see cref="Span"/>'s <see cref="Contracts.Text.Span.Start"/>
+		/// Column (visible character index). This is usually equal to <see cref="Span"/>'s <see cref="VST.Span.Start"/>
 		/// property unless there's one or more hidden characters before this <see cref="HexLinePart"/> or if there's a <see cref="HexLinePart"/>
 		/// with a non-null <see cref="AdornmentElement"/>.
 		/// </summary>
@@ -38,9 +38,9 @@ namespace dnSpy.Hex.Formatting {
 		public int ColumnLength => AdornmentElement != null ? 1 : Span.Length;
 
 		/// <summary>
-		/// Span relative to the start of the physical line (<see cref="LinePartsCollection.Span"/>)
+		/// Span relative to the start of the physical line (<see cref="HexLinePartsCollection.Span"/>)
 		/// </summary>
-		public readonly Span Span;
+		public readonly VST.Span Span;
 
 		/// <summary>
 		/// Adornment element or null
@@ -57,7 +57,7 @@ namespace dnSpy.Hex.Formatting {
 		/// </summary>
 		public readonly int Index;
 
-		public HexLinePart(int index, int column, Span span, HexAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
+		public HexLinePart(int index, int column, VST.Span span, HexAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
 			Debug.Assert(adornmentElement != null);
 			Debug.Assert(textRunProperties != null);
 			this.Index = index;
@@ -67,7 +67,7 @@ namespace dnSpy.Hex.Formatting {
 			this.TextRunProperties = textRunProperties;
 		}
 
-		public HexLinePart(int index, int column, Span span, TextRunProperties textRunProperties) {
+		public HexLinePart(int index, int column, VST.Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
 			Debug.Assert(textRunProperties != null);
 			this.Index = index;
@@ -82,15 +82,15 @@ namespace dnSpy.Hex.Formatting {
 				return Span.Start <= lineIndex && lineIndex < Span.End;
 
 			switch (AdornmentElement.Affinity) {
-			case PositionAffinity.Predecessor:
+			case VST.PositionAffinity.Predecessor:
 				if (Span.Start == 0 && lineIndex == 0)
 					return true;
 				return Span.Start == lineIndex + 1;
 
-			case PositionAffinity.Successor:
+			case VST.PositionAffinity.Successor:
 				return Span.Start == lineIndex;
 
-			default: throw new InvalidOperationException($"Invalid {nameof(PositionAffinity)}: {AdornmentElement.Affinity}");
+			default: throw new InvalidOperationException($"Invalid {nameof(VST.PositionAffinity)}: {AdornmentElement.Affinity}");
 			}
 		}
 

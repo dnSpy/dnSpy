@@ -19,48 +19,48 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Classification;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class ForceClearTypeIfNeededEditorOptionDefinition : WpfHexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.ForceClearTypeIfNeededId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.ForceClearTypeIfNeededId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class AppearanceCategoryEditorOptionDefinition : WpfHexViewOptionDefinition<string> {
-		public override EditorOptionKey<string> Key => DefaultWpfHexViewOptions.AppearanceCategoryId;
+		public override VSTE.EditorOptionKey<string> Key => DefaultWpfHexViewOptions.AppearanceCategoryId;
 		public override string Default => HexAppearanceCategoryConstants.HexEditor;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class EnableHighlightCurrentLineEditorOptionDefinition : WpfHexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.EnableHighlightCurrentLineId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.EnableHighlightCurrentLineId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class EnableMouseWheelZoomEditorOptionDefinition : WpfHexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.EnableMouseWheelZoomId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.EnableMouseWheelZoomId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class EnableSimpleGraphicsEditorOptionDefinition : WpfHexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.EnableSimpleGraphicsId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.EnableSimpleGraphicsId;
 		public override bool Default => false;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class UseReducedOpacityForHighContrastOptionEditorOptionDefinition : WpfHexViewOptionDefinition<bool> {
-		public override EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionId;
+		public override VSTE.EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionId;
 		public override bool Default => true;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class ZoomLevelEditorOptionDefinition : WpfHexViewOptionDefinition<double> {
-		public override EditorOptionKey<double> Key => DefaultWpfHexViewOptions.ZoomLevelId;
+		public override VSTE.EditorOptionKey<double> Key => DefaultWpfHexViewOptions.ZoomLevelId;
 		public override double Default => 100;
 	}
 }

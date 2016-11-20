@@ -26,9 +26,8 @@ using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Formatting;
-using TF = Microsoft.VisualStudio.Text.Formatting;
+using VST = Microsoft.VisualStudio.Text;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Formatting {
 	sealed class HexFormattedLineImpl : HexFormattedLine {
@@ -41,11 +40,11 @@ namespace dnSpy.Hex.Formatting {
 		readonly double virtualSpaceWidth;
 		double deltaY;
 		readonly double endOfLineWidth;
-		TextViewLineChange change;
+		VSTF.TextViewLineChange change;
 		Rect visibleArea;
-		Span lineExtent;
-		VisibilityState visibilityState;
-		LineTransform lineTransform;
+		VST.Span lineExtent;
+		VSTF.VisibilityState visibilityState;
+		VSTF.LineTransform lineTransform;
 		ReadOnlyCollection<TextLine> textLines;
 		HexLinePartsCollection linePartsCollection;
 		double realTopSpace, scaledTopSpace;
@@ -191,7 +190,7 @@ namespace dnSpy.Hex.Formatting {
 			}
 		}
 
-		public override TextViewLineChange Change {
+		public override VSTF.TextViewLineChange Change {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
@@ -203,7 +202,7 @@ namespace dnSpy.Hex.Formatting {
 		public override bool IsValid => isValid;
 		bool isValid;
 
-		public override LineTransform LineTransform {
+		public override VSTF.LineTransform LineTransform {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
@@ -211,11 +210,11 @@ namespace dnSpy.Hex.Formatting {
 			}
 		}
 
-		public override LineTransform DefaultLineTransform {
+		public override VSTF.LineTransform DefaultLineTransform {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
-				return new LineTransform(DEFAULT_TOP_SPACE, DEFAULT_BOTTOM_SPACE, DEFAULT_VERTICAL_SCALE, Right);
+				return new VSTF.LineTransform(DEFAULT_TOP_SPACE, DEFAULT_BOTTOM_SPACE, DEFAULT_VERTICAL_SCALE, Right);
 			}
 		}
 
@@ -227,7 +226,7 @@ namespace dnSpy.Hex.Formatting {
 			}
 		}
 
-		public override VisibilityState VisibilityState {
+		public override VSTF.VisibilityState VisibilityState {
 			get {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
@@ -264,7 +263,7 @@ namespace dnSpy.Hex.Formatting {
 			}
 		}
 
-		public HexFormattedLineImpl(HexLinePartsCollection linePartsCollection, int linePartsIndex, int linePartsLength, int startColumn, int endColumn, HexBufferLine bufferLine, Span lineSpan, TextLine textLine, double indentation, double virtualSpaceWidth) {
+		public HexFormattedLineImpl(HexLinePartsCollection linePartsCollection, int linePartsIndex, int linePartsLength, int startColumn, int endColumn, HexBufferLine bufferLine, VST.Span lineSpan, TextLine textLine, double indentation, double virtualSpaceWidth) {
 			if (linePartsCollection == null)
 				throw new ArgumentNullException(nameof(linePartsCollection));
 			if (linePartsIndex < 0)
@@ -316,22 +315,22 @@ namespace dnSpy.Hex.Formatting {
 			lineExtent = lineSpan;
 			endOfLineWidth = Math.Floor(realTextHeight * 0.58333333333333337);// Same as VS
 			width = textWidth;
-			change = TextViewLineChange.NewOrReformatted;
+			change = VSTF.TextViewLineChange.NewOrReformatted;
 			SetLineTransform(DefaultLineTransform);
 		}
 		public const double DEFAULT_TOP_SPACE = 0.0;
 		public const double DEFAULT_BOTTOM_SPACE = 1.0;
 		public const double DEFAULT_VERTICAL_SCALE = 1.0;
 
-		VisibilityState CalculateVisibilityState() {
+		VSTF.VisibilityState CalculateVisibilityState() {
 			const double eps = 0.01;
 			if (Top + eps >= visibleArea.Bottom)
-				return VisibilityState.Hidden;
+				return VSTF.VisibilityState.Hidden;
 			if (Bottom - eps <= visibleArea.Top)
-				return VisibilityState.Hidden;
+				return VSTF.VisibilityState.Hidden;
 			if (visibleArea.Top <= Top + eps && Bottom - eps <= visibleArea.Bottom)
-				return VisibilityState.FullyVisible;
-			return VisibilityState.PartiallyVisible;
+				return VSTF.VisibilityState.FullyVisible;
+			return VSTF.VisibilityState.PartiallyVisible;
 		}
 
 		public override bool ContainsBufferPosition(HexBufferPoint bufferPosition) {
@@ -358,7 +357,7 @@ namespace dnSpy.Hex.Formatting {
 			return IsLastVisualLine && bufferSpan.Start == BufferSpan.End;
 		}
 
-		public override TF.TextBounds? GetAdornmentBounds(object identityTag) {
+		public override VSTF.TextBounds? GetAdornmentBounds(object identityTag) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (identityTag == null)
@@ -461,14 +460,14 @@ namespace dnSpy.Hex.Formatting {
 			return TextSpan.End;
 		}
 
-		public override TF.TextBounds GetExtendedCharacterBounds(int linePosition) {
+		public override VSTF.TextBounds GetExtendedCharacterBounds(int linePosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (linePosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePosition));
 			int virtualSpaces = linePosition - TextSpan.End;
 			if (virtualSpaces > 0)
-				return new TF.TextBounds(TextRight + virtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
+				return new VSTF.TextBounds(TextRight + virtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
 
 			var span = GetTextElementSpan(linePosition);
 			var part = linePartsCollection.GetLinePartFromLinePosition(span.Start);
@@ -480,16 +479,16 @@ namespace dnSpy.Hex.Formatting {
 			return GetTextBounds(part.Value.Column);
 		}
 
-		public override TF.TextBounds GetCharacterBounds(int linePosition) {
+		public override VSTF.TextBounds GetCharacterBounds(int linePosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (linePosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePosition));
 			int virtualSpaces = linePosition - TextSpan.End;
 			if (virtualSpaces > 0)
-				return new TF.TextBounds(TextRight + virtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
+				return new VSTF.TextBounds(TextRight + virtualSpaces * VirtualSpaceWidth, Top, VirtualSpaceWidth, Height, TextTop, TextHeight);
 			if (virtualSpaces == 0)
-				return new TF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
+				return new VSTF.TextBounds(TextRight, Top, EndOfLineWidth, Height, TextTop, TextHeight);
 			return GetFirstTextBounds(GetTextElementSpan(linePosition).Start);
 		}
 
@@ -519,16 +518,16 @@ namespace dnSpy.Hex.Formatting {
 			return column;
 		}
 
-		TF.TextBounds GetFirstTextBounds(int position) => GetTextBounds(GetFirstColumn(position));
-		TF.TextBounds GetLastTextBounds(int position) => GetTextBounds(GetLastColumn(position));
+		VSTF.TextBounds GetFirstTextBounds(int position) => GetTextBounds(GetFirstColumn(position));
+		VSTF.TextBounds GetLastTextBounds(int position) => GetTextBounds(GetLastColumn(position));
 
-		TF.TextBounds GetTextBounds(int column) {
+		VSTF.TextBounds GetTextBounds(int column) {
 			column = FilterColumn(column);
 			double start = TextLine.GetDistanceFromCharacterHit(new CharacterHit(column, 0));
 			double end = TextLine.GetDistanceFromCharacterHit(new CharacterHit(column, 1));
 			double extra = TextLeft;
 			Debug.Assert(textLines.Count == 1);
-			return new TF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
+			return new VSTF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
 		}
 
 		public override TextRunProperties GetCharacterFormatting(int linePosition) {
@@ -549,15 +548,15 @@ namespace dnSpy.Hex.Formatting {
 			return (column == 0 || IsLastVisualLine) && lastTextSpan != null ? lastTextSpan.Value.Properties : null;
 		}
 
-		public override Collection<TF.TextBounds> GetNormalizedTextBounds(Span lineSpan) {
-			var list = new List<TF.TextBounds>();
+		public override Collection<VSTF.TextBounds> GetNormalizedTextBounds(VST.Span lineSpan) {
+			var list = new List<VSTF.TextBounds>();
 			var bounds = TryGetNormalizedTextBounds(lineSpan);
 			if (bounds != null)
 				list.Add(bounds.Value);
-			return new Collection<TF.TextBounds>(list);
+			return new Collection<VSTF.TextBounds>(list);
 		}
 
-		TF.TextBounds? TryGetNormalizedTextBounds(Span lineSpan) {
+		VSTF.TextBounds? TryGetNormalizedTextBounds(VST.Span lineSpan) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			var span = lineExtent.Intersection(lineSpan);
@@ -567,7 +566,7 @@ namespace dnSpy.Hex.Formatting {
 			var startBounds = GetFirstTextBounds(span.Value.Start);
 			var endBounds = GetLastTextBounds(span.Value.End);
 			if (span.Value.End > TextSpan.End) {
-				endBounds = new TF.TextBounds(
+				endBounds = new VSTF.TextBounds(
 					endBounds.Trailing + EndOfLineWidth,
 					endBounds.Top,
 					0,
@@ -576,16 +575,16 @@ namespace dnSpy.Hex.Formatting {
 					endBounds.TextHeight);
 			}
 
-			return new TF.TextBounds(startBounds.Left, startBounds.Top, endBounds.Left - startBounds.Left, startBounds.Height, startBounds.TextTop, startBounds.TextHeight);
+			return new VSTF.TextBounds(startBounds.Left, startBounds.Top, endBounds.Left - startBounds.Left, startBounds.Height, startBounds.TextTop, startBounds.TextHeight);
 		}
 
-		public override Collection<TF.TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags) {
+		public override Collection<VSTF.TextBounds> GetNormalizedTextBounds(HexBufferSpan bufferPosition, HexSpanSelectionFlags flags) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			var pos = BufferSpan.Intersection(bufferPosition);
-			var list = new List<TF.TextBounds>();
+			var list = new List<VSTF.TextBounds>();
 			if (pos == null)
-				return new Collection<TF.TextBounds>(list);
+				return new Collection<VSTF.TextBounds>(list);
 
 			foreach (var info in bufferLine.GetSpans(pos.Value, flags)) {
 				var valuesSpan = TryGetNormalizedTextBounds(info.TextSpan);
@@ -593,10 +592,10 @@ namespace dnSpy.Hex.Formatting {
 					list.Add(valuesSpan.Value);
 			}
 
-			return new Collection<TF.TextBounds>(list);
+			return new Collection<VSTF.TextBounds>(list);
 		}
 
-		public override Span GetTextElementSpan(int linePosition) {
+		public override VST.Span GetTextElementSpan(int linePosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (linePosition < 0)
@@ -610,8 +609,8 @@ namespace dnSpy.Hex.Formatting {
 			var end = linePartsCollection.ConvertColumnToLinePosition(lastCharHit.FirstCharacterIndex + lastCharHit.TrailingLength);
 			Debug.Assert(start <= end);
 			if (start <= end)
-				return Span.FromBounds(start, end);
-			return Span.FromBounds(end, end);
+				return VST.Span.FromBounds(start, end);
+			return VST.Span.FromBounds(end, end);
 		}
 
 		public override Visual GetOrCreateVisual() {
@@ -638,7 +637,7 @@ namespace dnSpy.Hex.Formatting {
 			drawingVisual = null;
 		}
 
-		public override void SetChange(TextViewLineChange change) {
+		public override void SetChange(VSTF.TextViewLineChange change) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			this.change = change;
@@ -658,7 +657,7 @@ namespace dnSpy.Hex.Formatting {
 			this.deltaY = deltaY;
 		}
 
-		public override void SetLineTransform(LineTransform transform) {
+		public override void SetLineTransform(VSTF.LineTransform transform) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			var oldScaledTopSpace = scaledTopSpace;

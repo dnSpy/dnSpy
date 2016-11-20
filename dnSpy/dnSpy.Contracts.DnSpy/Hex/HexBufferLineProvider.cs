@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.ObjectModel;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -59,24 +59,24 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the span of the offset column. This is empty if the column isn't present.
 		/// </summary>
-		public abstract Span OffsetSpan { get; }
+		public abstract VST.Span OffsetSpan { get; }
 
 		/// <summary>
 		/// Gets the span of the values column. This is empty if the column isn't present.
 		/// </summary>
-		public abstract Span ValuesSpan { get; }
+		public abstract VST.Span ValuesSpan { get; }
 
 		/// <summary>
 		/// Gets the span of the ASCII column. This is empty if the column isn't present.
 		/// </summary>
-		public abstract Span AsciiSpan { get; }
+		public abstract VST.Span AsciiSpan { get; }
 
 		/// <summary>
 		/// Gets the span of a column. This is empty if the column isn't present.
 		/// </summary>
 		/// <param name="column">Column</param>
 		/// <returns></returns>
-		public Span GetColumnSpan(HexColumnType column) {
+		public VST.Span GetColumnSpan(HexColumnType column) {
 			switch (column) {
 			case HexColumnType.Offset:	return OffsetSpan;
 			case HexColumnType.Values:	return ValuesSpan;

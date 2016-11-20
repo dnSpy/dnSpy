@@ -19,14 +19,14 @@
 
 using System;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text.Formatting;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor {
 	static class HexViewLineExtensions {
 		public static bool IsVisible(this HexViewLine line) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
-			return line.VisibilityState == VisibilityState.FullyVisible || line.VisibilityState == VisibilityState.PartiallyVisible;
+			return line.VisibilityState == VSTF.VisibilityState.FullyVisible || line.VisibilityState == VSTF.VisibilityState.PartiallyVisible;
 		}
 
 		public static bool IsFirstDocumentLine(this HexViewLine line) {

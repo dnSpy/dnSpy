@@ -19,14 +19,14 @@
 
 using System;
 using dnSpy.Contracts.Hex.Editor;
-using Microsoft.VisualStudio.Text.Classification;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexSelectionImpl : HexSelection {
 		public override bool IsEmpty { get; }//TODO:
 		public override event EventHandler SelectionChanged;//TODO:
 
-		public HexSelectionImpl(WpfHexView hexView, HexAdornmentLayer selectionLayer, IEditorFormatMap editorFormatMap) {
+		public HexSelectionImpl(WpfHexView hexView, HexAdornmentLayer selectionLayer, VSTC.IEditorFormatMap editorFormatMap) {
 			//TODO:
 		}
 

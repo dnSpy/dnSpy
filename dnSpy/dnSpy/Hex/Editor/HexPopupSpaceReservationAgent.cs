@@ -28,8 +28,8 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Controls;
-using Microsoft.VisualStudio.Text.Adornments;
-using Microsoft.VisualStudio.Text.Formatting;
+using VSTA = Microsoft.VisualStudio.Text.Adornments;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexPopupSpaceReservationAgent : HexSpaceReservationAgent {
@@ -43,18 +43,18 @@ namespace dnSpy.Hex.Editor {
 		readonly WpfHexView wpfHexView;
 		readonly UIElement content;
 		readonly Popup popup;
-		PopupStyles style;
+		VSTA.PopupStyles style;
 		HexLineSpan lineSpan;
 		double popupZoomLevel = double.NaN;
 
-		public HexPopupSpaceReservationAgent(HexSpaceReservationManager spaceReservationManager, WpfHexView wpfHexView, HexLineSpan lineSpan, PopupStyles style, UIElement content) {
+		public HexPopupSpaceReservationAgent(HexSpaceReservationManager spaceReservationManager, WpfHexView wpfHexView, HexLineSpan lineSpan, VSTA.PopupStyles style, UIElement content) {
 			if (spaceReservationManager == null)
 				throw new ArgumentNullException(nameof(spaceReservationManager));
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
-			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
+			if ((style & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) == (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
 			this.spaceReservationManager = spaceReservationManager;
 			this.wpfHexView = wpfHexView;
@@ -75,10 +75,10 @@ namespace dnSpy.Hex.Editor {
 		void Content_GotFocus(object sender, RoutedEventArgs e) => GotFocus?.Invoke(this, EventArgs.Empty);
 		void Content_LostFocus(object sender, RoutedEventArgs e) => LostFocus?.Invoke(this, EventArgs.Empty);
 
-		internal void Update(HexLineSpan lineSpan, PopupStyles style) {
+		internal void Update(HexLineSpan lineSpan, VSTA.PopupStyles style) {
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
-			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
+			if ((style & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) == (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
 			this.lineSpan = lineSpan;
 			this.style = style;
@@ -112,16 +112,16 @@ namespace dnSpy.Hex.Editor {
 			return new Rect(left, top, right - left, bottom - top);
 		}
 
-		IList<TextBounds> GetTextBounds(HexViewLine line) {
+		IList<VSTF.TextBounds> GetTextBounds(HexViewLine line) {
 			if (lineSpan.IsTextSpan) {
 				if (lineSpan.TextSpan.Value.Length == 0) {
 					if (line.BufferSpan.Contains(lineSpan.BufferSpan)) {
 						var bounds = line.GetCharacterBounds(lineSpan.TextSpan.Value.Start);
 						// It's just a point, so use zero width
-						bounds = new TextBounds(bounds.Leading, bounds.Top, 0, bounds.Height, bounds.TextTop, bounds.TextHeight);
-						return new TextBounds[] { bounds };
+						bounds = new VSTF.TextBounds(bounds.Leading, bounds.Top, 0, bounds.Height, bounds.TextTop, bounds.TextHeight);
+						return new VSTF.TextBounds[] { bounds };
 					}
-					return Array.Empty<TextBounds>();
+					return Array.Empty<VSTF.TextBounds>();
 				}
 				else
 					return line.GetNormalizedTextBounds(lineSpan);
@@ -131,7 +131,7 @@ namespace dnSpy.Hex.Editor {
 				if (fullSpan.Length == 0) {
 					if (line.BufferSpan.Contains(fullSpan))
 						return line.GetNormalizedTextBounds(fullSpan, lineSpan.SelectionFlags.Value);
-					return Array.Empty<TextBounds>();
+					return Array.Empty<VSTF.TextBounds>();
 				}
 				else
 					return line.GetNormalizedTextBounds(lineSpan);
@@ -168,7 +168,7 @@ namespace dnSpy.Hex.Editor {
 			var screenRect = screen.IsValid ? screen.DisplayRect : SystemParameters.WorkArea;
 
 			Rect? popupRect = null;
-			if ((style & PopupStyles.PositionClosest) != 0) {
+			if ((style & VSTA.PopupStyles.PositionClosest) != 0) {
 				foreach (var pos in GetValidPositions(screenRect, reservedSpace, desiredSize, spanBounds, style))
 					popupRect = GetClosest(spanBounds, popupRect, pos, style);
 			}
@@ -204,11 +204,11 @@ namespace dnSpy.Hex.Editor {
 			return new RectangleGeometry(popupRect.Value);
 		}
 
-		Rect GetClosest(Rect spanBounds, Rect? rect, Rect candidate, PopupStyles style) {
+		Rect GetClosest(Rect spanBounds, Rect? rect, Rect candidate, VSTA.PopupStyles style) {
 			if (rect == null)
 				return candidate;
 			double rectDist, candidateDist;
-			if ((style & PopupStyles.PositionLeftOrRight) != 0) {
+			if ((style & VSTA.PopupStyles.PositionLeftOrRight) != 0) {
 				rectDist = GetHorizontalDistance(spanBounds, rect.Value);
 				candidateDist = GetHorizontalDistance(spanBounds, candidate);
 			}
@@ -236,11 +236,11 @@ namespace dnSpy.Hex.Editor {
 			return rs.Left < rect.Right && rs.Right > rect.Left && rs.Top < rect.Bottom && rs.Bottom > rect.Top;
 		}
 
-		IEnumerable<Rect> GetValidPositions(Rect screenRect, Geometry reservedSpace, Size desiredSize, Rect spanBounds, PopupStyles style) {
+		IEnumerable<Rect> GetValidPositions(Rect screenRect, Geometry reservedSpace, Size desiredSize, Rect spanBounds, VSTA.PopupStyles style) {
 			var possiblePositions = new List<Rect>();
 			possiblePositions.AddRange(GetPositions(screenRect, reservedSpace, desiredSize, spanBounds, style));
-			possiblePositions.AddRange(GetPositions(screenRect, reservedSpace, desiredSize, spanBounds, style ^ PopupStyles.PreferLeftOrTopPosition));
-			bool isLeftRight = (style & PopupStyles.PositionLeftOrRight) != 0;
+			possiblePositions.AddRange(GetPositions(screenRect, reservedSpace, desiredSize, spanBounds, style ^ VSTA.PopupStyles.PreferLeftOrTopPosition));
+			bool isLeftRight = (style & VSTA.PopupStyles.PositionLeftOrRight) != 0;
 			foreach (var pos in possiblePositions) {
 				if (isLeftRight) {
 					if (pos.Left >= screenRect.Left && pos.Right <= screenRect.Right)
@@ -253,14 +253,14 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		IEnumerable<Rect> GetPositions(Rect screenRect, Geometry reservedSpace, Size desiredSize, Rect spanBounds, PopupStyles style) {
+		IEnumerable<Rect> GetPositions(Rect screenRect, Geometry reservedSpace, Size desiredSize, Rect spanBounds, VSTA.PopupStyles style) {
 			var rect1 = GetPosition(screenRect, desiredSize, spanBounds, spanBounds, style);
 			if (!OverlapsReservedSpace(reservedSpace, rect1))
 				yield return rect1;
 
 			var unionBounds = Rect.Union(reservedSpace.Bounds, spanBounds);
-			if ((style & PopupStyles.PositionLeftOrRight) != 0) {
-				bool preferLeft = (style & PopupStyles.PreferLeftOrTopPosition) != 0;
+			if ((style & VSTA.PopupStyles.PositionLeftOrRight) != 0) {
+				bool preferLeft = (style & VSTA.PopupStyles.PreferLeftOrTopPosition) != 0;
 				var rect2 = preferLeft ?
 						new Rect(unionBounds.Left - desiredSize.Width, spanBounds.Y, desiredSize.Width, desiredSize.Height) :
 						new Rect(unionBounds.Right, spanBounds.Y, desiredSize.Width, desiredSize.Height);
@@ -268,7 +268,7 @@ namespace dnSpy.Hex.Editor {
 					yield return rect2;
 			}
 			else {
-				bool preferTop = (style & PopupStyles.PreferLeftOrTopPosition) != 0;
+				bool preferTop = (style & VSTA.PopupStyles.PreferLeftOrTopPosition) != 0;
 				var rect2 = preferTop ?
 						new Rect(spanBounds.X, unionBounds.Top - desiredSize.Height, desiredSize.Width, desiredSize.Height) :
 						new Rect(spanBounds.X, unionBounds.Bottom, desiredSize.Width, desiredSize.Height);
@@ -281,12 +281,12 @@ namespace dnSpy.Hex.Editor {
 				yield return rect3;
 		}
 
-		Rect GetPosition(Rect screenRect, Size desiredSize, Rect spanBounds, Rect reservedBounds, PopupStyles style) {
+		Rect GetPosition(Rect screenRect, Size desiredSize, Rect spanBounds, Rect reservedBounds, VSTA.PopupStyles style) {
 			Debug.Assert(Rect.Union(reservedBounds, spanBounds) == reservedBounds);
 			double left, top;
-			if ((style & PopupStyles.PositionLeftOrRight) != 0) {
-				bool preferLeft = (style & PopupStyles.PreferLeftOrTopPosition) != 0;
-				bool bottomJustify = (style & PopupStyles.RightOrBottomJustify) != 0;
+			if ((style & VSTA.PopupStyles.PositionLeftOrRight) != 0) {
+				bool preferLeft = (style & VSTA.PopupStyles.PreferLeftOrTopPosition) != 0;
+				bool bottomJustify = (style & VSTA.PopupStyles.RightOrBottomJustify) != 0;
 				top = bottomJustify ? spanBounds.Bottom - desiredSize.Height : reservedBounds.Top;
 				left = preferLeft ? reservedBounds.Left - desiredSize.Width : reservedBounds.Right;
 				if (top < screenRect.Top)
@@ -295,8 +295,8 @@ namespace dnSpy.Hex.Editor {
 					top = screenRect.Bottom - desiredSize.Height;
 			}
 			else {
-				bool preferTop = (style & PopupStyles.PreferLeftOrTopPosition) != 0;
-				bool rightJustify = (style & PopupStyles.RightOrBottomJustify) != 0;
+				bool preferTop = (style & VSTA.PopupStyles.PreferLeftOrTopPosition) != 0;
+				bool rightJustify = (style & VSTA.PopupStyles.RightOrBottomJustify) != 0;
 				top = preferTop ? reservedBounds.Top - desiredSize.Height : reservedBounds.Bottom;
 				left = rightJustify ? spanBounds.Right - desiredSize.Width : reservedBounds.Left;
 				if (left < screenRect.Left)
@@ -320,7 +320,7 @@ namespace dnSpy.Hex.Editor {
 		bool IsMouseOverValidLocation(MouseEventArgs e) {
 			if (IsMouseOverSpan(e))
 				return true;
-			if ((style & PopupStyles.DismissOnMouseLeaveTextOrContent) != 0)
+			if ((style & VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent) != 0)
 				return content.IsMouseOver;
 			return false;
 		}
@@ -353,9 +353,9 @@ namespace dnSpy.Hex.Editor {
 				window.LocationChanged += Window_LocationChanged;
 			content.GotFocus += Content_GotFocus;
 			content.LostFocus += Content_LostFocus;
-			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) != 0) {
+			if ((style & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) != 0) {
 				wpfHexView.VisualElement.AddHandler(UIElement.PreviewMouseMoveEvent, new MouseEventHandler(VisualElement_PreviewMouseMove), true);
-				if ((style & PopupStyles.DismissOnMouseLeaveTextOrContent) != 0)
+				if ((style & VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent) != 0)
 					content.AddHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Content_MouseLeave), true);
 			}
 		}

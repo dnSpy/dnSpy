@@ -18,7 +18,7 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 	/// <summary>
@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static bool IsVerticalScrollBarEnabled(this IEditorOptions options) {
+		public static bool IsVerticalScrollBarEnabled(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.VerticalScrollBarId);
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static bool IsHorizontalScrollBarEnabled(this IEditorOptions options) {
+		public static bool IsHorizontalScrollBarEnabled(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.HorizontalScrollBarId);
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static bool IsSelectionMarginEnabled(this IEditorOptions options) {
+		public static bool IsSelectionMarginEnabled(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.SelectionMarginId);
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static bool IsZoomControlEnabled(this IEditorOptions options) {
+		public static bool IsZoomControlEnabled(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.ZoomControlId);

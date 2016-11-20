@@ -18,7 +18,7 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 	/// <summary>
@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static bool IsHighlightCurrentLineEnabled(this IEditorOptions options) {
+		public static bool IsHighlightCurrentLineEnabled(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultWpfHexViewOptions.EnableHighlightCurrentLineId);
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static bool IsSimpleGraphicsEnabled(this IEditorOptions options) {
+		public static bool IsSimpleGraphicsEnabled(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultWpfHexViewOptions.EnableSimpleGraphicsId);
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static bool IsMouseWheelZoomEnabled(this IEditorOptions options) {
+		public static bool IsMouseWheelZoomEnabled(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultWpfHexViewOptions.EnableMouseWheelZoomId);
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static string AppearanceCategory(this IEditorOptions options) {
+		public static string AppearanceCategory(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultWpfHexViewOptions.AppearanceCategoryId);
@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static double ZoomLevel(this IEditorOptions options) {
+		public static double ZoomLevel(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultWpfHexViewOptions.ZoomLevelId);
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static bool IsForceClearTypeIfNeededEnabled(this IEditorOptions options) {
+		public static bool IsForceClearTypeIfNeededEnabled(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultWpfHexViewOptions.ForceClearTypeIfNeededId);

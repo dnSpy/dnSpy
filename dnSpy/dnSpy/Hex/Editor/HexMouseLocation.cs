@@ -22,13 +22,11 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexMouseLocation {
 		public HexViewLine HexViewLine { get; }
 		public int Position { get; }
-		public PositionAffinity Affinity { get; }
 		public Point Point { get; }
 
 		HexMouseLocation(HexViewLine hexViewLine, int position, Point point) {
@@ -36,7 +34,6 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(hexViewLine));
 			HexViewLine = hexViewLine;
 			Position = position;
-			Affinity = PositionAffinity.Successor;
 			Point = point;
 		}
 
@@ -84,9 +81,7 @@ namespace dnSpy.Hex.Editor {
 		public override string ToString() {
 			var line = HexViewLine.BufferLine;
 			int col = Position;
-			if (Affinity == PositionAffinity.Predecessor)
-				return $"|({line.LineNumber + 1},{col + 1}) {Position} {HexViewLine.BufferSpan}";
-			return $"({line.LineNumber + 1},{col + 1})| {Position} {HexViewLine.BufferSpan}";
+			return $"({line.LineNumber + 1},{col + 1}) {Position} {HexViewLine.BufferSpan}";
 		}
 	}
 }

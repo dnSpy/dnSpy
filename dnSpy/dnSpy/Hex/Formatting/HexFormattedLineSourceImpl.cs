@@ -25,10 +25,10 @@ using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Formatting;
-using dnSpy.Text.Formatting;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Formatting;
+using TF = dnSpy.Text.Formatting;
+using VST = Microsoft.VisualStudio.Text;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Formatting {
 	sealed class HexFormattedLineSourceImpl : HexFormattedLineSource {
@@ -43,15 +43,15 @@ namespace dnSpy.Hex.Formatting {
 		const int TabSize = 4;
 
 		readonly HexClassifier aggregateClassifier;
-		readonly IClassificationFormatMap classificationFormatMap;
-		readonly FormattedTextCache formattedTextCache;
+		readonly VSTC.IClassificationFormatMap classificationFormatMap;
+		readonly TF.FormattedTextCache formattedTextCache;
 		readonly TextFormatter textFormatter;
 		readonly TextParagraphProperties defaultTextParagraphProperties;
 
 		// Should be enough...
 		const int MAX_LINE_LENGTH = 5000;
 
-		public HexFormattedLineSourceImpl(ITextFormatterProvider textFormatterProvider, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
+		public HexFormattedLineSourceImpl(TF.ITextFormatterProvider textFormatterProvider, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap) {
 			if (textFormatterProvider == null)
 				throw new ArgumentNullException(nameof(textFormatterProvider));
 			if (aggregateClassifier == null)
@@ -62,7 +62,7 @@ namespace dnSpy.Hex.Formatting {
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 
 			textFormatter = textFormatterProvider.Create(useDisplayMode);
-			formattedTextCache = new FormattedTextCache(useDisplayMode);
+			formattedTextCache = new TF.FormattedTextCache(useDisplayMode);
 			UseDisplayMode = useDisplayMode;
 			BaseIndentation = baseIndent;
 			ColumnWidth = formattedTextCache.GetColumnWidth(classificationFormatMap.DefaultTextProperties);
@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Formatting {
 			HexAndAdornmentSequencer = sequencer;
 			this.aggregateClassifier = aggregateClassifier;
 			this.classificationFormatMap = classificationFormatMap;
-			defaultTextParagraphProperties = new TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
+			defaultTextParagraphProperties = new VSTF.TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
 		}
 
 		public override HexFormattedLine FormatLineInVisualBuffer(HexBufferLine line) {
@@ -93,7 +93,7 @@ namespace dnSpy.Hex.Formatting {
 			var textLine = textFormatter.FormatLine(textSource, column, 0, defaultTextParagraphProperties, previousLineBreak);
 
 			int startColumn = column;
-			int length = textLine.GetLength(textSource.EndOfLine);
+			int length = TF.TextLineExtensions.GetLength(textLine, textSource.EndOfLine);
 			column += length;
 
 			int linePartsEnd = linePartsIndex;
@@ -113,7 +113,7 @@ namespace dnSpy.Hex.Formatting {
 				linePartsEnd = lineParts.Count - 1;
 			}
 
-			var lineSpan = Span.FromBounds(startPos, endPos);
+			var lineSpan = VST.Span.FromBounds(startPos, endPos);
 			var formattedLine = new HexFormattedLineImpl(linePartsCollection, linePartsIndex, linePartsEnd - linePartsIndex + 1, startColumn, column, line, lineSpan, textLine, autoIndent, ColumnWidth);
 			Debug.Assert(column == textSource.Length);
 
@@ -132,7 +132,7 @@ namespace dnSpy.Hex.Formatting {
 			foreach (var seqElem in coll) {
 				if (seqElem.ShouldRenderText) {
 					var cspans = new List<HexClassificationSpan>();
-					var textSpan = bufferLine.TextSpan.Intersection(seqElem.Span) ?? new Span(bufferLine.TextSpan.End, 0);
+					var textSpan = bufferLine.TextSpan.Intersection(seqElem.Span) ?? new VST.Span(bufferLine.TextSpan.End, 0);
 					aggregateClassifier.GetClassificationSpans(cspans, new HexClassificationContext(bufferLine, textSpan));
 					int lastOffs = seqElem.Span.Start;
 					for (int i = 0; i < cspans.Count; i++) {
@@ -140,7 +140,7 @@ namespace dnSpy.Hex.Formatting {
 						int otherSize = cspan.Span.Start - lastOffs;
 						if (otherSize != 0) {
 							Debug.Assert(otherSize > 0);
-							list.Add(new HexLinePart(list.Count, column, new Span(lastOffs - startOffs, otherSize), DefaultTextProperties));
+							list.Add(new HexLinePart(list.Count, column, new VST.Span(lastOffs - startOffs, otherSize), DefaultTextProperties));
 							column += otherSize;
 						}
 						Add(list, column, cspan, lineExtent);
@@ -149,7 +149,7 @@ namespace dnSpy.Hex.Formatting {
 					}
 					int lastSize = seqElem.Span.End - lastOffs;
 					if (lastSize != 0) {
-						list.Add(new HexLinePart(list.Count, column, new Span(lastOffs - startOffs, lastSize), DefaultTextProperties));
+						list.Add(new HexLinePart(list.Count, column, new VST.Span(lastOffs - startOffs, lastSize), DefaultTextProperties));
 						column += lastSize;
 					}
 				}
@@ -157,7 +157,7 @@ namespace dnSpy.Hex.Formatting {
 					var adornmentElement = seqElem as HexAdornmentElement;
 					if (adornmentElement != null) {
 						var span = seqElem.Span;
-						list.Add(new HexLinePart(list.Count, column, new Span(span.Start - startOffs, span.Length), adornmentElement, DefaultTextProperties));
+						list.Add(new HexLinePart(list.Count, column, new VST.Span(span.Start - startOffs, span.Length), adornmentElement, DefaultTextProperties));
 						column += list[list.Count - 1].ColumnLength;
 					}
 				}
@@ -168,7 +168,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 		static readonly List<HexLinePart> emptyLineParts = new List<HexLinePart>();
 
-		void Add(List<HexLinePart> list, int column, HexClassificationSpan cspan, Span lineExtent) {
+		void Add(List<HexLinePart> list, int column, HexClassificationSpan cspan, VST.Span lineExtent) {
 			if (cspan.Span.Length == 0)
 				return;
 			int startOffs = lineExtent.Start;
@@ -176,11 +176,11 @@ namespace dnSpy.Hex.Formatting {
 			if (list.Count > 0) {
 				var last = list[list.Count - 1];
 				if (last.AdornmentElement == null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
-					list[list.Count - 1] = new HexLinePart(list.Count - 1, last.Column, Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
+					list[list.Count - 1] = new HexLinePart(list.Count - 1, last.Column, VST.Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
 					return;
 				}
 			}
-			list.Add(new HexLinePart(list.Count, column, new Span(cspan.Span.Start - startOffs, cspan.Span.Length), props));
+			list.Add(new HexLinePart(list.Count, column, new VST.Span(cspan.Span.Start - startOffs, cspan.Span.Length), props));
 		}
 	}
 }

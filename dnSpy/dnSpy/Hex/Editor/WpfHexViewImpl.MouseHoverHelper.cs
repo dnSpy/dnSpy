@@ -26,7 +26,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Editor {
 	sealed partial class WpfHexViewImpl {
@@ -90,12 +90,8 @@ namespace dnSpy.Hex.Editor {
 					newPosition = null;
 				else if (!(loc.HexViewLine.TextLeft <= loc.Point.X && loc.Point.X < loc.HexViewLine.TextRight))
 					newPosition = null;
-				else {
-					int pos = loc.Position;
-					if (loc.Affinity == PositionAffinity.Predecessor && pos != 0)
-						pos--;
-					newPosition = new LinePosition(loc.HexViewLine.BufferLine, pos);
-				}
+				else
+					newPosition = new LinePosition(loc.HexViewLine.BufferLine, loc.Position);
 
 				if (newPosition != position) {
 					position = newPosition;

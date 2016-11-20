@@ -20,8 +20,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Adornments;
+using VST = Microsoft.VisualStudio.Text;
+using VSTA = Microsoft.VisualStudio.Text.Adornments;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="style">Popup style</param>
 		/// <param name="content">Popup content</param>
 		/// <returns></returns>
-		public HexSpaceReservationAgent CreatePopupAgent(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, PopupStyles style, UIElement content) =>
+		public HexSpaceReservationAgent CreatePopupAgent(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, VSTA.PopupStyles style, UIElement content) =>
 			CreatePopupAgent(new HexLineSpan(bufferSpan, flags), style, content);
 
 		/// <summary>
@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="style">Popup style</param>
 		/// <param name="content">Popup content</param>
 		/// <returns></returns>
-		public HexSpaceReservationAgent CreatePopupAgent(HexBufferLine line, Span span, PopupStyles style, UIElement content) =>
+		public HexSpaceReservationAgent CreatePopupAgent(HexBufferLine line, VST.Span span, VSTA.PopupStyles style, UIElement content) =>
 			CreatePopupAgent(new HexLineSpan(line, span), style, content);
 
 		/// <summary>
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="style">Popup style</param>
 		/// <param name="content">Popup content</param>
 		/// <returns></returns>
-		public abstract HexSpaceReservationAgent CreatePopupAgent(HexLineSpan lineSpan, PopupStyles style, UIElement content);
+		public abstract HexSpaceReservationAgent CreatePopupAgent(HexLineSpan lineSpan, VSTA.PopupStyles style, UIElement content);
 
 		/// <summary>
 		/// Removes an agent
@@ -110,30 +110,30 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Updates a popup agent
 		/// </summary>
-		/// <param name="agent">Popup agent created by <see cref="CreatePopupAgent(HexLineSpan, PopupStyles, UIElement)"/></param>
+		/// <param name="agent">Popup agent created by <see cref="CreatePopupAgent(HexLineSpan, VSTA.PopupStyles, UIElement)"/></param>
 		/// <param name="bufferSpan">New buffer span</param>
 		/// <param name="flags">New selection flags</param>
 		/// <param name="styles">New popup style</param>
-		public void UpdatePopupAgent(HexSpaceReservationAgent agent, HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, PopupStyles styles) =>
+		public void UpdatePopupAgent(HexSpaceReservationAgent agent, HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, VSTA.PopupStyles styles) =>
 			UpdatePopupAgent(agent, new HexLineSpan(bufferSpan, flags), styles);
 
 		/// <summary>
 		/// Updates a popup agent
 		/// </summary>
-		/// <param name="agent">Popup agent created by <see cref="CreatePopupAgent(HexLineSpan, PopupStyles, UIElement)"/></param>
+		/// <param name="agent">Popup agent created by <see cref="CreatePopupAgent(HexLineSpan, VSTA.PopupStyles, UIElement)"/></param>
 		/// <param name="line">Line</param>
 		/// <param name="span">Line span</param>
 		/// <param name="styles">New popup style</param>
-		public void UpdatePopupAgent(HexSpaceReservationAgent agent, HexBufferLine line, Span span, PopupStyles styles) =>
+		public void UpdatePopupAgent(HexSpaceReservationAgent agent, HexBufferLine line, VST.Span span, VSTA.PopupStyles styles) =>
 			UpdatePopupAgent(agent, new HexLineSpan(line, span), styles);
 
 		/// <summary>
 		/// Updates a popup agent
 		/// </summary>
-		/// <param name="agent">Popup agent created by <see cref="CreatePopupAgent(HexLineSpan, PopupStyles, UIElement)"/></param>
+		/// <param name="agent">Popup agent created by <see cref="CreatePopupAgent(HexLineSpan, VSTA.PopupStyles, UIElement)"/></param>
 		/// <param name="lineSpan">New line span</param>
 		/// <param name="styles">New popup style</param>
-		public abstract void UpdatePopupAgent(HexSpaceReservationAgent agent, HexLineSpan lineSpan, PopupStyles styles);
+		public abstract void UpdatePopupAgent(HexSpaceReservationAgent agent, HexLineSpan lineSpan, VSTA.PopupStyles styles);
 	}
 
 	/// <summary>

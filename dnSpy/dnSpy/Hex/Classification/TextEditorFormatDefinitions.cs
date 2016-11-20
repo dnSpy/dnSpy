@@ -19,12 +19,12 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Classification;
-using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
+using CTC = dnSpy.Contracts.Text.Classification;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Classification {
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(HexAppearanceCategoryConstants.HexEditor)]
-	sealed class HexEditorFormatDefinition : TextEditorFormatDefinition {
+	[Export(typeof(CTC.TextEditorFormatDefinition))]
+	[VSUTIL.Name(HexAppearanceCategoryConstants.HexEditor)]
+	sealed class HexEditorFormatDefinition : CTC.TextEditorFormatDefinition {
 	}
 }

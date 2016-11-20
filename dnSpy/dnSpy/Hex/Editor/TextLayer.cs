@@ -25,7 +25,7 @@ using System.Windows.Media;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Editor {
 	sealed class TextLayer : UIElement {
@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Editor {
 			if (adornmentLayer == null)
 				throw new ArgumentNullException(nameof(adornmentLayer));
 			lines = new List<LineInfo>();
-			adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, this, null);
+			adornmentLayer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, this, null);
 		}
 
 		protected override int VisualChildrenCount => lines.Count;

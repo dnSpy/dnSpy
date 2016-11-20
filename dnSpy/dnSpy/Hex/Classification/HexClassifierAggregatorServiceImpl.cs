@@ -22,16 +22,16 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Tagging;
-using Microsoft.VisualStudio.Text.Classification;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
 	[Export(typeof(HexClassifierAggregatorService))]
 	sealed class HexClassifierAggregatorServiceImpl : HexClassifierAggregatorService {
 		readonly HexBufferTagAggregatorFactoryService hexBufferTagAggregatorFactoryService;
-		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
+		readonly VSTC.IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		HexClassifierAggregatorServiceImpl(HexBufferTagAggregatorFactoryService hexBufferTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		HexClassifierAggregatorServiceImpl(HexBufferTagAggregatorFactoryService hexBufferTagAggregatorFactoryService, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.hexBufferTagAggregatorFactoryService = hexBufferTagAggregatorFactoryService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}

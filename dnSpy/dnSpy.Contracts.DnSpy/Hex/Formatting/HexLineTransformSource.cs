@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Formatting;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
@@ -37,6 +37,6 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="yPosition">Y position</param>
 		/// <param name="placement">Placement</param>
 		/// <returns></returns>
-		public abstract LineTransform GetLineTransform(HexViewLine line, double yPosition, ViewRelativePosition placement);
+		public abstract VSTF.LineTransform GetLineTransform(HexViewLine line, double yPosition, VSTE.ViewRelativePosition placement);
 	}
 }

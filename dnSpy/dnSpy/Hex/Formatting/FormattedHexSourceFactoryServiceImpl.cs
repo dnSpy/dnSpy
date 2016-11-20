@@ -21,20 +21,20 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Formatting;
-using dnSpy.Text.Formatting;
-using Microsoft.VisualStudio.Text.Classification;
+using TF = dnSpy.Text.Formatting;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Formatting {
 	[Export(typeof(FormattedHexSourceFactoryService))]
 	sealed class FormattedHexSourceFactoryServiceImpl : FormattedHexSourceFactoryService {
-		readonly ITextFormatterProvider textFormatterProvider;
+		readonly TF.ITextFormatterProvider textFormatterProvider;
 
 		[ImportingConstructor]
-		FormattedHexSourceFactoryServiceImpl(ITextFormatterProvider textFormatterProvider) {
+		FormattedHexSourceFactoryServiceImpl(TF.ITextFormatterProvider textFormatterProvider) {
 			this.textFormatterProvider = textFormatterProvider;
 		}
 
-		public override HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap) {
+		public override HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap) {
 			if (aggregateClassifier == null)
 				throw new ArgumentNullException(nameof(aggregateClassifier));
 			if (sequencer == null)

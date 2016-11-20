@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using dnSpy.Contracts.Hex.Editor;
-using Microsoft.VisualStudio.Utilities;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.MEF {
 
@@ -39,7 +39,7 @@ namespace dnSpy.Hex.MEF {
 		IEnumerable<string> Replaces { get; }
 	}
 
-	public interface IAdornmentLayersMetadata : IOrderable {
+	public interface IAdornmentLayersMetadata : VSUTIL.IOrderable {
 		[DefaultValue(false)]
 		bool IsOverlayLayer { get; }
 

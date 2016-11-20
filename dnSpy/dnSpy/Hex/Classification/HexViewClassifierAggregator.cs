@@ -19,11 +19,11 @@
 
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Tagging;
-using Microsoft.VisualStudio.Text.Classification;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Classification {
 	sealed class HexViewClassifierAggregator : HexClassifierAggregator {
-		public HexViewClassifierAggregator(HexViewTagAggregatorFactoryService hexViewTagAggregatorFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, HexView hexView)
+		public HexViewClassifierAggregator(HexViewTagAggregatorFactoryService hexViewTagAggregatorFactoryService, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, HexView hexView)
 			: base(hexViewTagAggregatorFactoryService.CreateTagAggregator<HexClassificationTag>(hexView), classificationTypeRegistryService, hexView.Buffer) {
 		}
 	}

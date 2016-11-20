@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Hex.Editor;
-using Microsoft.VisualStudio.Utilities;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Editor {
 	[Export(typeof(HexSpaceReservationStackProvider))]
@@ -30,8 +30,8 @@ namespace dnSpy.Hex.Editor {
 		readonly string[] spaceReservationManagerNames;
 
 		[ImportingConstructor]
-		HexSpaceReservationStackProviderImpl([ImportMany] IEnumerable<Lazy<HexSpaceReservationManagerDefinition, IOrderable>> spaceReservationManagerDefinitions) {
-			spaceReservationManagerNames = Orderer.Order(spaceReservationManagerDefinitions).Select(a => a.Metadata.Name).ToArray();
+		HexSpaceReservationStackProviderImpl([ImportMany] IEnumerable<Lazy<HexSpaceReservationManagerDefinition, VSUTIL.IOrderable>> spaceReservationManagerDefinitions) {
+			spaceReservationManagerNames = VSUTIL.Orderer.Order(spaceReservationManagerDefinitions).Select(a => a.Metadata.Name).ToArray();
 		}
 
 		public override HexSpaceReservationStack Create(WpfHexView wpfHexView) {

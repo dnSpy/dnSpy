@@ -18,8 +18,8 @@
 */
 
 using System;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+using VST = Microsoft.VisualStudio.Text;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Contracts.Hex.Classification {
 	/// <summary>
@@ -29,19 +29,19 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// <summary>
 		/// Gets the span
 		/// </summary>
-		public Span Span { get; }
+		public VST.Span Span { get; }
 
 		/// <summary>
 		/// Gets the classification type
 		/// </summary>
-		public IClassificationType ClassificationType { get; }
+		public VSTC.IClassificationType ClassificationType { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Span</param>
 		/// <param name="classification">Classification type</param>
-		public HexClassificationSpan(Span span, IClassificationType classification) {
+		public HexClassificationSpan(VST.Span span, VSTC.IClassificationType classification) {
 			if (classification == null)
 				throw new ArgumentNullException(nameof(classification));
 			Span = span;

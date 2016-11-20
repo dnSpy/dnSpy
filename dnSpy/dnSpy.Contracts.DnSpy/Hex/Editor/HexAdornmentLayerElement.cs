@@ -18,7 +18,7 @@
 */
 
 using System.Windows;
-using Microsoft.VisualStudio.Text.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -38,12 +38,12 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the positioning behavior
 		/// </summary>
-		public abstract AdornmentPositioningBehavior Behavior { get; }
+		public abstract VSTE.AdornmentPositioningBehavior Behavior { get; }
 
 		/// <summary>
 		/// Called when the adornment is removed
 		/// </summary>
-		public abstract AdornmentRemovedCallback RemovedCallback { get; }
+		public abstract VSTE.AdornmentRemovedCallback RemovedCallback { get; }
 
 		/// <summary>
 		/// Gets the tag

@@ -19,16 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.Text;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Formatting {
 	sealed class HexLinePartsCollection {
 		public string Text { get; }
 		public List<HexLinePart> LineParts { get; }
 		public int Length { get; }
-		public Span Span { get; }
+		public VST.Span Span { get; }
 
-		public HexLinePartsCollection(List<HexLinePart> lineParts, Span lineSpan, string text) {
+		public HexLinePartsCollection(List<HexLinePart> lineParts, VST.Span lineSpan, string text) {
 			if (lineParts == null)
 				throw new ArgumentNullException(nameof(lineParts));
 			if (text == null)

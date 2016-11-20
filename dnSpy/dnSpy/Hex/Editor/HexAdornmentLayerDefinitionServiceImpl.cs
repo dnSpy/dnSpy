@@ -23,7 +23,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Hex.MEF;
-using Microsoft.VisualStudio.Utilities;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Editor {
 	[Export(typeof(HexAdornmentLayerDefinitionService))]
@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Editor {
 
 		[ImportingConstructor]
 		HexAdornmentLayerDefinitionServiceImpl([ImportMany] IEnumerable<Lazy<HexAdornmentLayerDefinition, IAdornmentLayersMetadata>> adornmentLayerDefinitions) {
-			this.adornmentLayerDefinitions = Orderer.Order(adornmentLayerDefinitions).ToArray();
+			this.adornmentLayerDefinitions = VSUTIL.Orderer.Order(adornmentLayerDefinitions).ToArray();
 		}
 
 		public override MetadataAndOrder<IAdornmentLayersMetadata>? GetLayerDefinition(string name) {
