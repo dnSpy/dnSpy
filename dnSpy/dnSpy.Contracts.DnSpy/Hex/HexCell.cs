@@ -24,14 +24,14 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Cell information
 	/// </summary>
-	public sealed class HexCellInformation {
+	public sealed class HexCell {
 		/// <summary>
 		/// true if there's data in the cell
 		/// </summary>
 		public bool HasData { get; }
 
 		/// <summary>
-		/// Index
+		/// Index in <see cref="HexCellCollection"/>
 		/// </summary>
 		public int Index { get; }
 
@@ -41,17 +41,17 @@ namespace dnSpy.Contracts.Hex {
 		public int GroupIndex { get; }
 
 		/// <summary>
-		/// Gets the buffer span
+		/// Gets the buffer span. It's valid if <see cref="HasData"/> is true
 		/// </summary>
 		public HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
-		/// Gets the start position
+		/// Gets the start position. It's valid if <see cref="HasData"/> is true
 		/// </summary>
 		public HexBufferPoint BufferStart => BufferSpan.Start;
 
 		/// <summary>
-		/// Gets the end position
+		/// Gets the end position. It's valid if <see cref="HasData"/> is true
 		/// </summary>
 		public HexBufferPoint BufferEnd => BufferSpan.End;
 
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="cellSpan">Span of the cell, some of the span could be whitespace</param>
 		/// <param name="separatorSpan">Span of the cell separator</param>
 		/// <param name="fullSpan">Includes the whole cell and separator span</param>
-		public HexCellInformation(int index, int groupIndex, HexBufferSpan bufferSpan, Span textSpan, Span cellSpan, Span separatorSpan, Span fullSpan) {
+		public HexCell(int index, int groupIndex, HexBufferSpan bufferSpan, Span textSpan, Span cellSpan, Span separatorSpan, Span fullSpan) {
 			if (index < 0)
 				throw new ArgumentOutOfRangeException(nameof(index));
 			if (groupIndex < 0 || groupIndex > 1)

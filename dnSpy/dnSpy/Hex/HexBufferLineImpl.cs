@@ -34,8 +34,8 @@ namespace dnSpy.Hex {
 		public override bool IsValuesColumnPresent { get; }
 		public override bool IsAsciiColumnPresent { get; }
 		public override HexPosition LogicalOffset { get; }
-		public override HexCellInformationCollection ValueCells { get; }
-		public override HexCellInformationCollection AsciiCells { get; }
+		public override HexCellCollection ValueCells { get; }
+		public override HexCellCollection AsciiCells { get; }
 
 		readonly Span offsetSpan;
 		readonly Span fullValuesSpan;
@@ -43,7 +43,7 @@ namespace dnSpy.Hex {
 		readonly Span fullAsciiSpan;
 		readonly Span visibleAsciiSpan;
 
-		public HexBufferLineImpl(HexBufferLineProvider hexBufferLineProvider, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellInformationCollection valueCells, HexCellInformationCollection asciiCells, Span offsetSpan, Span fullValuesSpan, Span visibleValuesSpan, Span fullAsciiSpan, Span visibleAsciiSpan) {
+		public HexBufferLineImpl(HexBufferLineProvider hexBufferLineProvider, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellCollection valueCells, HexCellCollection asciiCells, Span offsetSpan, Span fullValuesSpan, Span visibleValuesSpan, Span fullAsciiSpan, Span visibleAsciiSpan) {
 			if (hexBufferLineProvider == null)
 				throw new ArgumentNullException(nameof(hexBufferLineProvider));
 			if (columnOrder == null)

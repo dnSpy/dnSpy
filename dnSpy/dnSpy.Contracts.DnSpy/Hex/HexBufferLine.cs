@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Hex {
 		public abstract ReadOnlyCollection<HexColumnType> ColumnOrder { get; }
 
 		/// <summary>
-		/// Line span
+		/// Buffer span
 		/// </summary>
 		public abstract HexBufferSpan BufferSpan { get; }
 
@@ -222,14 +222,14 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the value cell collection
 		/// </summary>
-		public abstract HexCellInformationCollection ValueCells { get; }
+		public abstract HexCellCollection ValueCells { get; }
 
 		/// <summary>
 		/// Gets the ASCII cell collection
 		/// </summary>
-		public abstract HexCellInformationCollection AsciiCells { get; }
+		public abstract HexCellCollection AsciiCells { get; }
 
-		TextAndHexSpan Create(HexCellInformationCollection collection, HexCellInformation first, HexCellInformation last, HexBufferSpan bufferSpan) {
+		TextAndHexSpan Create(HexCellCollection collection, HexCell first, HexCell last, HexBufferSpan bufferSpan) {
 			var firstCellSpan = first.FullSpan;
 			var lastCellSpan = last.FullSpan;
 			var startPos = HexPosition.MaxEndPosition;
@@ -247,7 +247,7 @@ namespace dnSpy.Contracts.Hex {
 			return new TextAndHexSpan(Span.FromBounds(firstCellSpan.Start, lastCellSpan.End), resultBufferSpan);
 		}
 
-		IEnumerable<TextAndHexSpan> GetTextAndHexSpans(bool isColumnPresent, HexCellInformationCollection collection, HexBufferSpan span, HexSpanSelectionFlags flags, Span visibleSpan, Span fullSpan) {
+		IEnumerable<TextAndHexSpan> GetTextAndHexSpans(bool isColumnPresent, HexCellCollection collection, HexBufferSpan span, HexSpanSelectionFlags flags, Span visibleSpan, Span fullSpan) {
 			if (span.IsDefault)
 				throw new ArgumentException();
 			if (span.Buffer != Buffer)
@@ -264,7 +264,7 @@ namespace dnSpy.Contracts.Hex {
 				bool group0 = (flags & HexSpanSelectionFlags.Group0) != 0;
 				bool group1 = (flags & HexSpanSelectionFlags.Group1) != 0;
 
-				IEnumerable<HexCellInformation> cells;
+				IEnumerable<HexCell> cells;
 				if ((flags & HexSpanSelectionFlags.AllCells) != 0) {
 					cells = collection.GetCells();
 					overlapSpan = BufferSpan;
@@ -275,8 +275,8 @@ namespace dnSpy.Contracts.Hex {
 				}
 				else
 					cells = collection.GetCells(overlapSpan.Value);
-				HexCellInformation firstCell = null;
-				HexCellInformation lastCell = null;
+				HexCell firstCell = null;
+				HexCell lastCell = null;
 				foreach (var cell in cells) {
 					if (!((cell.GroupIndex == 0 && group0) || (cell.GroupIndex == 1 && group1)))
 						continue;

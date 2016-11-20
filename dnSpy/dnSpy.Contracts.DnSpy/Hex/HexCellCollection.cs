@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex cell collection
 	/// </summary>
-	public struct HexCellInformationCollection {
+	public struct HexCellCollection {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
@@ -35,9 +35,9 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the empty collection
 		/// </summary>
-		public static readonly HexCellInformationCollection Empty = new HexCellInformationCollection(Array.Empty<HexCellInformation>());
+		public static readonly HexCellCollection Empty = new HexCellCollection(Array.Empty<HexCell>());
 
-		readonly HexCellInformation[] cells;
+		readonly HexCell[] cells;
 		readonly int validStart, validEnd;
 
 		/// <summary>
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Hex {
 		public int Count => cells.Length;
 
 		/// <summary>
-		/// Gets the span of cells in the collection that have data (<see cref="HexCellInformation.HasData"/> is true)
+		/// Gets the span of cells in the collection that have data (<see cref="HexCell.HasData"/> is true)
 		/// </summary>
 		public Span HasDataSpan => Span.FromBounds(validStart, validEnd);
 
@@ -55,13 +55,13 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="index">Index</param>
 		/// <returns></returns>
-		public HexCellInformation this[int index] => cells[index];
+		public HexCell this[int index] => cells[index];
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="cells">All cells</param>
-		public HexCellInformationCollection(HexCellInformation[] cells) {
+		public HexCellCollection(HexCell[] cells) {
 			if (cells == null)
 				throw new ArgumentNullException(nameof(cells));
 			for (int i = 0; i < cells.Length; i++) {
@@ -97,7 +97,7 @@ done:;
 		/// </summary>
 		/// <param name="point">Point</param>
 		/// <returns></returns>
-		public HexCellInformation GetCell(HexBufferPoint point) {
+		public HexCell GetCell(HexBufferPoint point) {
 			int index = GetStartIndex(point);
 			if (validStart <= index && index < validEnd)
 				return cells[index];
@@ -108,7 +108,7 @@ done:;
 		/// Gets all cells, including unused cells
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<HexCellInformation> GetCells() {
+		public IEnumerable<HexCell> GetCells() {
 			foreach (var cell in cells)
 				yield return cell;
 		}
@@ -117,7 +117,7 @@ done:;
 		/// Gets all visible cells
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<HexCellInformation> GetVisibleCells() {
+		public IEnumerable<HexCell> GetVisibleCells() {
 			for (int i = validStart; i < validEnd; i++)
 				yield return cells[i];
 		}
@@ -128,7 +128,7 @@ done:;
 		/// </summary>
 		/// <param name="span">Span</param>
 		/// <returns></returns>
-		public IEnumerable<HexCellInformation> GetCells(HexBufferSpan span) {
+		public IEnumerable<HexCell> GetCells(HexBufferSpan span) {
 			int index = GetStartIndex(span.Start);
 			if (index >= validStart) {
 				while (index < validEnd) {

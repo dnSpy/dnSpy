@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Tagging {
 			this.hexClassificationTags = hexClassificationTags;
 		}
 
-		static bool IsValid(HexCellInformation cell, HexBufferLine line) {
+		static bool IsValid(HexCell cell, HexBufferLine line) {
 			long len = checked((long)cell.BufferSpan.Length.ToUInt64());
 			long b = checked((long)(cell.BufferStart - line.BufferStart).ToUInt64());
 			for (long i = 0; i < len; i++) {

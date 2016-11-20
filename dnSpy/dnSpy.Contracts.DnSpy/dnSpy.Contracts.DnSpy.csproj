@@ -322,8 +322,8 @@
     <Compile Include="Hex\Formatting\HexSequenceElement.cs" />
     <Compile Include="Hex\Editor\HexCaret.cs" />
     <Compile Include="Hex\HexBufferLineProviderOptions.cs" />
-    <Compile Include="Hex\HexCellInformation.cs" />
-    <Compile Include="Hex\HexCellInformationCollection.cs" />
+    <Compile Include="Hex\HexCell.cs" />
+    <Compile Include="Hex\HexCellCollection.cs" />
     <Compile Include="Hex\Editor\HexEditorFactoryService.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionDefinition.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryService.cs" />
