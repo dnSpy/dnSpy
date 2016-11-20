@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public static HexPosition Min(HexPosition val1, HexPosition val2) => val1 <= val2 ? val1 : val2;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static implicit operator HexPosition(ulong value) => new HexPosition(value);
 		public static implicit operator HexPosition(uint value) => new HexPosition((ulong)value);
 		public static implicit operator HexPosition(long value) => new HexPosition(value);
@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Hex {
 		public static HexPosition operator -(HexPosition a) => Subtract(Zero, a);
 		public static HexPosition operator ++(HexPosition a) => Add(a, One);
 		public static HexPosition operator --(HexPosition a) => Subtract(a, One);
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 
 		static HexPosition Add(HexPosition a, HexPosition b) {
 			ulong lo = a.lo + b.lo;

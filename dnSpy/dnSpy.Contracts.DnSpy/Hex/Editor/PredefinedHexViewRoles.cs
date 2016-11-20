@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Predefined hex view roles
 	/// </summary>
 	public static class PredefinedHexViewRoles {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		const string prefix = "hex-";
 		public const string Analyzable = prefix + nameof(Analyzable);
 		public const string Debuggable = prefix + nameof(Debuggable);
@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string Printable = prefix + nameof(Printable);
 		public const string Structured = prefix + nameof(Structured);
 		public const string Zoomable = prefix + nameof(Zoomable);
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }
