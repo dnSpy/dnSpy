@@ -380,7 +380,7 @@ namespace dnSpy.Contracts.Hex {
 				var valuesSpan = GetValuesSpan(onlyVisibleCells: false);
 				if (valuesSpan.Contains(linePosition)) {
 					int cellIndex = (linePosition - valuesSpan.Start) / LineProvider.GetCharsPerCellIncludingSeparator(HexColumnType.Values);
-					var cell = AsciiCells[cellIndex];
+					var cell = ValueCells[cellIndex];
 					if (cell.SeparatorSpan.Contains(linePosition))
 						return HexLinePositionInfo.CreateValueCellSeparator(linePosition, cell);
 					return HexLinePositionInfo.CreateValue(linePosition, cell);

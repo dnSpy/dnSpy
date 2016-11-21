@@ -17,31 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Linq;
+using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Formatting;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
-namespace dnSpy.Contracts.Hex.Editor {
-	/// <summary>
-	/// Hex selection
-	/// </summary>
-	public abstract class HexSelection {
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		protected HexSelection() { }
+namespace dnSpy.Hex.Editor {
+	static class HexViewExtensions {
+		public static HexViewLine GetFirstFullyVisibleLine(this HexView hexView) =>
+			hexView.HexViewLines.FirstOrDefault(a => a.VisibilityState == VSTF.VisibilityState.FullyVisible) ?? hexView.HexViewLines.FirstVisibleLine;
 
-		/// <summary>
-		/// true if the selection is empty
-		/// </summary>
-		public abstract bool IsEmpty { get; }
-
-		/// <summary>
-		/// Raised when the selection is changed
-		/// </summary>
-		public abstract event EventHandler SelectionChanged;
-
-		/// <summary>
-		/// Clears the selection
-		/// </summary>
-		public abstract void Clear();
+		public static HexViewLine GetLastFullyVisibleLine(this HexView hexView) =>
+			hexView.HexViewLines.LastOrDefault(a => a.VisibilityState == VSTF.VisibilityState.FullyVisible) ?? hexView.HexViewLines.LastVisibleLine;
 	}
 }

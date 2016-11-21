@@ -90,7 +90,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		internal void Initialize() {
-			currentPosition = new HexColumnPosition(HexColumnType.Values, new HexCellPosition(HexColumnType.Values, hexView.BufferLines.BufferSpan.Start, 0), new HexCellPosition(HexColumnType.Ascii, hexView.BufferLines.BufferSpan.Start, 0));
+			SetPositionCore(new HexColumnPosition(HexColumnType.Values, new HexCellPosition(HexColumnType.Values, hexView.BufferLines.BufferSpan.Start, 0), new HexCellPosition(HexColumnType.Ascii, hexView.BufferLines.BufferSpan.Start, 0)));
 			OnBufferLinesChanged();
 		}
 
@@ -101,7 +101,6 @@ namespace dnSpy.Hex.Editor {
 			hexCaretLayer.IsValuesCaretPresent = bufferLines.ShowValues;
 			hexCaretLayer.IsAsciiCaretPresent = bufferLines.ShowAscii;
 			SetPositionCore(GetUpdatedCaretPosition());
-			hexCaretLayer.ActiveColumn = currentPosition.ActiveColumn;
 		}
 
 		HexColumnPosition GetUpdatedCaretPosition() {
@@ -410,6 +409,7 @@ namespace dnSpy.Hex.Editor {
 		void SetPositionCore(HexColumnPosition position) {
 			if (currentPosition != position) {
 				currentPosition = position;
+				hexCaretLayer.ActiveColumn = currentPosition.ActiveColumn;
 				hexCaretLayer.CaretPositionChanged();
 				if (imeState.CompositionStarted)
 					MoveImeCompositionWindow();

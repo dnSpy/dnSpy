@@ -30,6 +30,10 @@ namespace dnSpy.Hex.Editor {
 			//TODO:
 		}
 
+		public override void Clear() {
+			//TODO:
+		}
+
 		internal void Dispose() {
 			//TODO:
 		}

@@ -337,6 +337,7 @@
     <Compile Include="Hex\Editor\HexSpaceReservationStackImpl.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationStackProvider.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationStackProviderImpl.cs" />
+    <Compile Include="Hex\Editor\HexViewExtensions.cs" />
     <Compile Include="Hex\Editor\HexViewLineExtensions.cs" />
     <Compile Include="Hex\Editor\HexViewMouseProcessorCollection.cs" />
     <Compile Include="Hex\Editor\HexViewScrollerImpl.cs" />

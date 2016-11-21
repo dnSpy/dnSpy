@@ -68,9 +68,9 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public HexColumnPosition(HexColumnType activeColumn, HexCellPosition valuePosition, HexCellPosition asciiPosition) {
 			if (activeColumn != HexColumnType.Values && activeColumn != HexColumnType.Ascii)
 				throw new ArgumentOutOfRangeException(nameof(activeColumn));
-			if (valuePosition.IsDefault)
+			if (valuePosition.IsDefault || valuePosition.Column != HexColumnType.Values)
 				throw new ArgumentException();
-			if (asciiPosition.IsDefault)
+			if (asciiPosition.IsDefault || asciiPosition.Column != HexColumnType.Ascii)
 				throw new ArgumentException();
 			ActiveColumn = activeColumn;
 			ValuePosition = valuePosition;

@@ -24,6 +24,8 @@ using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Operations;
 using dnSpy.Controls;
+using dnSpy.Hex.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Operations {
@@ -116,13 +118,11 @@ namespace dnSpy.Hex.Operations {
 			//TODO:
 		}
 
-		public override void MoveCurrentLineToTop() {
-			//TODO:
-		}
+		public override void MoveCurrentLineToTop() =>
+			HexView.DisplayHexLineContainingBufferPosition(Caret.Position.Position.ActivePosition.BufferPosition, 0, VSTE.ViewRelativePosition.Top);
 
-		public override void MoveCurrentLineToBottom() {
-			//TODO:
-		}
+		public override void MoveCurrentLineToBottom() =>
+			HexView.DisplayHexLineContainingBufferPosition(Caret.Position.Position.ActivePosition.BufferPosition, 0, VSTE.ViewRelativePosition.Bottom);
 
 		public override void MoveToTopOfView(bool extendSelection) {
 			//TODO:
@@ -180,40 +180,72 @@ namespace dnSpy.Hex.Operations {
 			return false;//TODO:
 		}
 
-		public override void ScrollUpAndMoveCaretIfNecessary() {
-			//TODO:
+		public override void ScrollUpAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(VSTE.ScrollDirection.Up);
+		public override void ScrollDownAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(VSTE.ScrollDirection.Down);
+		void ScrollAndMoveCaretIfNecessary(VSTE.ScrollDirection scrollDirection) {
+			var origCaretContainingTextViewLinePosition = Caret.ContainingHexViewLine.BufferSpan.Start;
+			bool firstDocLineWasVisible = HexView.HexViewLines.FirstVisibleLine.IsFirstDocumentLine();
+			ViewScroller.ScrollViewportVerticallyByLine(scrollDirection);
+
+			var pos = Caret.Position.Position.ActivePosition.BufferPosition;
+			var line = Caret.ContainingHexViewLine;
+			var firstVisLine = HexView.HexViewLines.FirstVisibleLine;
+			var lastVisLine = HexView.HexViewLines.LastVisibleLine;
+			if (scrollDirection == VSTE.ScrollDirection.Up && firstDocLineWasVisible)
+				lastVisLine = HexView.GetLastFullyVisibleLine();
+			if (line.VisibilityState == VisibilityState.Unattached)
+				Caret.MoveTo(line.BufferSpan.Start <= firstVisLine.BufferSpan.Start ? firstVisLine : lastVisLine);
+			else if (line.VisibilityState != VisibilityState.FullyVisible) {
+				if (scrollDirection == VSTE.ScrollDirection.Up) {
+					var newLine = lastVisLine;
+					if (newLine.BufferSpan.Start.Position == origCaretContainingTextViewLinePosition) {
+						if (newLine.BufferSpan.Start.Position > HexView.BufferLines.BufferStart)
+							newLine = HexView.HexViewLines.GetHexViewLineContainingBufferPosition(newLine.BufferSpan.Start - 1) ?? newLine;
+					}
+					Caret.MoveTo(newLine);
+				}
+				else {
+					var newLine = firstVisLine;
+					if (newLine.BufferSpan.Start.Position == origCaretContainingTextViewLinePosition && !newLine.IsLastDocumentLine())
+						newLine = HexView.HexViewLines.GetHexViewLineContainingBufferPosition(newLine.BufferSpan.End) ?? newLine;
+					Caret.MoveTo(newLine);
+				}
+			}
+			Caret.EnsureVisible();
+
+			var newPos = Caret.Position.Position.ActivePosition.BufferPosition;
+			if (newPos != pos)
+				Selection.Clear();
 		}
 
-		public override void ScrollDownAndMoveCaretIfNecessary() {
-			//TODO:
-		}
-
-		public override void ScrollPageUp() {
-			//TODO:
-		}
-
-		public override void ScrollPageDown() {
-			//TODO:
-		}
+		public override void ScrollPageUp() => HexView.ViewScroller.ScrollViewportVerticallyByPage(VSTE.ScrollDirection.Up);
+		public override void ScrollPageDown() => HexView.ViewScroller.ScrollViewportVerticallyByPage(VSTE.ScrollDirection.Down);
 
 		public override void ScrollColumnLeft() {
-			//TODO:
+			var wpfHexView = HexView as WpfHexView;
+			Debug.Assert(wpfHexView != null);
+			if (wpfHexView != null)
+				wpfHexView.ViewScroller.ScrollViewportHorizontallyByPixels(-wpfHexView.FormattedLineSource.ColumnWidth);
 		}
 
 		public override void ScrollColumnRight() {
-			//TODO:
+			var wpfHexView = HexView as WpfHexView;
+			Debug.Assert(wpfHexView != null);
+			if (wpfHexView != null)
+				wpfHexView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfHexView.FormattedLineSource.ColumnWidth);
 		}
 
-		public override void ScrollLineBottom() {
-			//TODO:
-		}
+		public override void ScrollLineBottom() =>
+			HexView.DisplayHexLineContainingBufferPosition(Caret.ContainingHexViewLine.BufferSpan.Start, 0, VSTE.ViewRelativePosition.Bottom);
 
-		public override void ScrollLineTop() {
-			//TODO:
-		}
+		public override void ScrollLineTop() =>
+			HexView.DisplayHexLineContainingBufferPosition(Caret.ContainingHexViewLine.BufferSpan.Start, 0, VSTE.ViewRelativePosition.Top);
 
 		public override void ScrollLineCenter() {
-			//TODO:
+			// line.Height depends on the line transform and it's set when the line is visible
+			Caret.EnsureVisible();
+			var line = Caret.ContainingHexViewLine;
+			HexView.DisplayHexLineContainingBufferPosition(line.BufferSpan.Start, Math.Max(0, (HexView.ViewportHeight - line.Height) / 2), VSTE.ViewRelativePosition.Top);
 		}
 
 		WpfHexView GetZoomableView() {
@@ -255,8 +287,6 @@ namespace dnSpy.Hex.Operations {
 			SetZoom(wpfHexView, zoomLevel);
 		}
 
-		public override void ToggleColumn() {
-			//TODO:
-		}
+		public override void ToggleColumn() => HexView.Caret.ToggleActiveColumn();
 	}
 }

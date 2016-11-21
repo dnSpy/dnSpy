@@ -40,6 +40,8 @@ namespace dnSpy.Hex.Editor {
 		public HexColumnType ActiveColumn {
 			get { return activeColumn; }
 			set {
+				if (value != HexColumnType.Values && value != HexColumnType.Ascii)
+					throw new ArgumentOutOfRangeException(nameof(value));
 				if (activeColumn != value) {
 					activeColumn = value;
 					UpdateCaretProperties();
