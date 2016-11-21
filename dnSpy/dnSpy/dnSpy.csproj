@@ -314,6 +314,7 @@
     <Compile Include="Hex\Editor\HexEditorFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexEditorOptions.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryServiceImpl.cs" />
+    <Compile Include="Hex\Editor\HexKeyProcessorCollection.cs" />
     <Compile Include="Hex\Editor\HexMarkerHelper.cs" />
     <Compile Include="Hex\Editor\HexMouseLocation.cs" />
     <Compile Include="Hex\Editor\HexPopupHelper.cs" />
@@ -326,6 +327,7 @@
     <Compile Include="Hex\Editor\HexSpaceReservationStackProviderImpl.cs" />
     <Compile Include="Hex\Editor\HexViewLineExtensions.cs" />
     <Compile Include="Hex\Editor\HexViewScrollerImpl.cs" />
+    <Compile Include="Hex\Editor\KeyboardWpfHexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\MetadataAndOrder.cs" />
     <Compile Include="Hex\Editor\TextLayer.cs" />
     <Compile Include="Hex\Editor\WpfHexViewConstants.cs" />

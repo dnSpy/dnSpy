@@ -19,13 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class KeyProcessorCollection {
@@ -35,7 +33,7 @@ namespace dnSpy.Text.Editor {
 
 		public KeyProcessorCollection(IWpfTextView wpfTextView, Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders) {
 			this.wpfTextView = wpfTextView;
-			this.keyProcessorProviders = Orderer.Order(keyProcessorProviders).ToArray();
+			this.keyProcessorProviders = keyProcessorProviders;
 			this.keyProcessors = Array.Empty<KeyProcessor>();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
@@ -53,10 +51,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void VisualElement_KeyDown(object sender, KeyEventArgs e) {
-			// Copy it to a local in case it gets updated when calling the KeyProcessor.
-			// The compiler will probably do it already, but just in case...
-			var array = keyProcessors;
-			foreach (var keyProcessor in array) {
+			foreach (var keyProcessor in keyProcessors) {
 				if (keyProcessor.IsInterestedInHandledEvents || !e.Handled)
 					keyProcessor.KeyDown(e);
 			}

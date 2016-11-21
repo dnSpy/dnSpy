@@ -47,6 +47,9 @@ namespace dnSpy.Hex.MEF {
 		HexLayerKind LayerKind { get; }
 	}
 
+	public interface IOrderableTextViewRoleMetadata : ITextViewRoleMetadata, VSUTIL.IOrderable {
+	}
+
 	public interface ITaggerMetadata {
 		IEnumerable<Type> TagTypes { get; }
 	}
