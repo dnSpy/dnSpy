@@ -53,6 +53,10 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void SelectAndMoveCaret(HexColumnType column, HexBufferPoint anchorPoint, HexBufferPoint activePoint, VSTE.EnsureSpanVisibleOptions? scrollOptions) {
+			if (anchorPoint.IsDefault)
+				throw new ArgumentException();
+			if (activePoint.IsDefault)
+				throw new ArgumentException();
 			//TODO:
 		}
 
@@ -61,6 +65,14 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void MoveToPreviousCharacter(bool extendSelection) {
+			//TODO:
+		}
+
+		public override void MoveToNextWord(bool extendSelection) {
+			//TODO:
+		}
+
+		public override void MoveToPreviousWord(bool extendSelection) {
 			//TODO:
 		}
 
@@ -124,7 +136,19 @@ namespace dnSpy.Hex.Operations {
 			//TODO:
 		}
 
+		public override bool InsertText(string text) {
+			if (text == null)
+				throw new ArgumentNullException(nameof(text));
+			return false;//TODO:
+		}
+
 		public override void SelectLine(HexViewLine viewLine, bool extendSelection) {
+			if (viewLine == null)
+				throw new ArgumentNullException(nameof(viewLine));
+			//TODO:
+		}
+
+		public override void SelectCurrentWord() {
 			//TODO:
 		}
 
@@ -133,10 +157,14 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void ExtendSelection(HexBufferPoint newEnd) {
+			if (newEnd.IsDefault)
+				throw new ArgumentException();
 			//TODO:
 		}
 
 		public override void MoveCaret(HexViewLine hexLine, double horizontalOffset, bool extendSelection) {
+			if (hexLine == null)
+				throw new ArgumentNullException(nameof(hexLine));
 			//TODO:
 		}
 
@@ -225,6 +253,10 @@ namespace dnSpy.Hex.Operations {
 			if (wpfHexView == null)
 				return;
 			SetZoom(wpfHexView, zoomLevel);
+		}
+
+		public override void ToggleColumn() {
+			//TODO:
 		}
 	}
 }

@@ -309,7 +309,9 @@
     <Compile Include="Hex\Classification\TextEditorFormatDefinitions.cs" />
     <Compile Include="Hex\Editor\BottomControlMargin.cs" />
     <Compile Include="Hex\Editor\BottomRightCornerMargin.cs" />
+    <Compile Include="Hex\Editor\DefaultHexEditorCommandInfoProvider.cs" />
     <Compile Include="Hex\Editor\DefaultHexMouseProcessor.cs" />
+    <Compile Include="Hex\Editor\DefaultHexViewCommandTarget.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewMouseProcessor.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayerCollection.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayerDefinitionService.cs" />

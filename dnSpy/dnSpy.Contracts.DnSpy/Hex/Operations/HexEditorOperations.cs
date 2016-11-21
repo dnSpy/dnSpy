@@ -92,6 +92,18 @@ namespace dnSpy.Contracts.Hex.Operations {
 		public abstract void MoveToPreviousCharacter(bool extendSelection);
 
 		/// <summary>
+		/// Moves the caret to the next word (cell)
+		/// </summary>
+		/// <param name="extendSelection">true to extend the selection</param>
+		public abstract void MoveToNextWord(bool extendSelection);
+
+		/// <summary>
+		/// Moves the caret to the previous word (cell)
+		/// </summary>
+		/// <param name="extendSelection">true to extend the selection</param>
+		public abstract void MoveToPreviousWord(bool extendSelection);
+
+		/// <summary>
 		/// Moves the caret to the next cell
 		/// </summary>
 		/// <param name="extendSelection">true to extend the selection</param>
@@ -179,11 +191,23 @@ namespace dnSpy.Contracts.Hex.Operations {
 		public abstract void SwapCaretAndAnchor();
 
 		/// <summary>
+		/// Inserts text
+		/// </summary>
+		/// <param name="text">Text</param>
+		/// <returns></returns>
+		public abstract bool InsertText(string text);
+
+		/// <summary>
 		/// Selects the line
 		/// </summary>
 		/// <param name="viewLine">Line</param>
 		/// <param name="extendSelection">true to extend the selection</param>
 		public abstract void SelectLine(HexViewLine viewLine, bool extendSelection);
+
+		/// <summary>
+		/// Selects the current word (cell)
+		/// </summary>
+		public abstract void SelectCurrentWord();
 
 		/// <summary>
 		/// Select all
@@ -281,5 +305,10 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// </summary>
 		/// <param name="zoomLevel">Zoom level, between 20% and 400% (20.0 and 400.0)</param>
 		public abstract void ZoomTo(double zoomLevel);
+
+		/// <summary>
+		/// Toggles active column
+		/// </summary>
+		public abstract void ToggleColumn();
 	}
 }

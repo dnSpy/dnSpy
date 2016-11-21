@@ -80,6 +80,8 @@
     <Compile Include="Command\CommandTargetCommand.cs" />
     <Compile Include="Command\CommandTargetFilterOrder.cs" />
     <Compile Include="Command\CommandTargetStatus.cs" />
+    <Compile Include="Command\HexEditorIds.cs" />
+    <Compile Include="Command\HexEditorIdsExtensions.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Command\ICommandInfoProvider.cs" />
     <Compile Include="Command\ICommandService.cs" />

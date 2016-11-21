@@ -42,5 +42,8 @@ namespace dnSpy.Contracts.Command {
 
 		/// <summary>Edit Code</summary>
 		public const double EditCode = TextEditor - 3000;
+
+		/// <summary>Hex editor</summary>
+		public const double HexEditor = TextEditor;
 	}
 }
