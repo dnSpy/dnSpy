@@ -287,6 +287,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hex Editor.
+        /// </summary>
+        public static string BgImgDisplayName_HexEditor {
+            get {
+                return ResourceManager.GetString("BgImgDisplayName_HexEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log window.
         /// </summary>
         public static string BgImgDisplayName_Logger {

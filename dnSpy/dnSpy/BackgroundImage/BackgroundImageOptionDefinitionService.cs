@@ -22,11 +22,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.BackgroundImage;
+using dnSpy.Contracts.Hex.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.BackgroundImage {
 	interface IBackgroundImageOptionDefinitionService {
 		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(IWpfTextView wpfTextView);
+		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfTextView);
 		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>[] AllSettings { get; }
 	}
 
@@ -42,9 +44,17 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(IWpfTextView wpfTextView) {
-			foreach (var lazy in backgroundImageOptionDefinitions) {
-				if (lazy.Value.IsSupported(wpfTextView))
-					return lazy;
+			foreach (var lz in backgroundImageOptionDefinitions) {
+				if (lz.Value.IsSupported(wpfTextView))
+					return lz;
+			}
+			throw new InvalidOperationException();
+		}
+
+		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfTextView) {
+			foreach (var lz in backgroundImageOptionDefinitions) {
+				if ((lz.Value as IBackgroundImageOptionDefinition2)?.IsSupported(wpfTextView) == true)
+					return lz;
 			}
 			throw new InvalidOperationException();
 		}

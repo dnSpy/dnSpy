@@ -73,9 +73,12 @@
     <Compile Include="BackgroundImage\BackgroundImageSettingsService.cs" />
     <Compile Include="BackgroundImage\DefaultRawSettings.cs" />
     <Compile Include="BackgroundImage\Dialog\AppSettingsPageImpl.cs" />
+    <Compile Include="BackgroundImage\HexViewBackgroundImageService.cs" />
     <Compile Include="BackgroundImage\ImageSourceService.cs" />
     <Compile Include="BackgroundImage\ImageSourceServiceProvider.cs" />
     <Compile Include="BackgroundImage\RawSettings.cs" />
+    <Compile Include="BackgroundImage\TextViewBackgroundImageService.cs" />
+    <Compile Include="BackgroundImage\WpfHexViewCreationListenerImpl.cs" />
     <Compile Include="BackgroundImage\WpfTextViewCreationListener.cs" />
     <Compile Include="Commands\CommandService.cs" />
     <Compile Include="Commands\DefaultCommandInfoProvider.cs" />

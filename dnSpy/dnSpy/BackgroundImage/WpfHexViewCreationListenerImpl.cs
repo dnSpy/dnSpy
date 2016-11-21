@@ -18,25 +18,21 @@
 */
 
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
+using dnSpy.Contracts.Hex.Editor;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.BackgroundImage {
-	[Export(typeof(IWpfTextViewCreationListener))]
-	[TextViewRole(PredefinedDsTextViewRoles.DocumentViewer)]
-	[TextViewRole(PredefinedDsTextViewRoles.CanHaveBackgroundImage)]
-	[ContentType(ContentTypes.Any)]
-	sealed class WpfTextViewCreationListener : IWpfTextViewCreationListener {
+	[Export(typeof(WpfHexViewCreationListener))]
+	[VSTE.TextViewRole(PredefinedHexViewRoles.CanHaveBackgroundImage)]
+	sealed class WpfHexViewCreationListenerImpl : WpfHexViewCreationListener {
 		readonly IImageSourceServiceProvider imageSourceServiceProvider;
 
 		[ImportingConstructor]
-		WpfTextViewCreationListener(IImageSourceServiceProvider imageSourceServiceProvider) {
+		WpfHexViewCreationListenerImpl(IImageSourceServiceProvider imageSourceServiceProvider) {
 			this.imageSourceServiceProvider = imageSourceServiceProvider;
 		}
 
-		public void TextViewCreated(IWpfTextView textView) =>
-			TextViewBackgroundImageService.InstallService(textView, imageSourceServiceProvider.Create(textView));
+		public override void HexViewCreated(WpfHexView hexView) =>
+			HexViewBackgroundImageService.InstallService(hexView, imageSourceServiceProvider.Create(hexView));
 	}
 }

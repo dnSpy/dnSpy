@@ -18,66 +18,33 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.BackgroundImage;
-using dnSpy.Contracts.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.BackgroundImage {
-	sealed class BackgroundImageService : IImageSourceServiceListener {
-		readonly IWpfTextView wpfTextView;
+	abstract class BackgroundImageService : IImageSourceServiceListener {
 		readonly IImageSourceService imageSourceService;
-		IAdornmentLayer adornmentLayer;
 		Image currentImage;
 
-#pragma warning disable 0169
-		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(PredefinedDsAdornmentLayers.BackgroundImage)]
-		[LayerKind(LayerKind.Underlay)]
-		static AdornmentLayerDefinition backgroundImageAdornmentLayerDefinition;
-#pragma warning restore 0169
-
-		BackgroundImageService(IWpfTextView wpfTextView, IImageSourceService imageSourceService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
+		protected BackgroundImageService(IImageSourceService imageSourceService) {
 			if (imageSourceService == null)
 				throw new ArgumentNullException(nameof(imageSourceService));
-			this.wpfTextView = wpfTextView;
 			this.imageSourceService = imageSourceService;
-			wpfTextView.Closed += WpfTextView_Closed;
 			imageSourceService.Register(this);
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
-			if (e.OldViewState.ViewportWidth != e.NewViewState.ViewportWidth)
-				UpdateImagePosition();
-			else if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
-				UpdateImagePosition();
-		}
+		protected abstract double ViewportWidth { get; }
+		protected abstract double ViewportHeight { get; }
+		protected abstract void OnEnabledCore();
+		protected abstract void OnDisabledCore();
 
-		public static void InstallService(IWpfTextView wpfTextView, IImageSourceService imageSourceService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (imageSourceService == null)
-				throw new ArgumentNullException(nameof(imageSourceService));
-			wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(BackgroundImageService), () => new BackgroundImageService(wpfTextView, imageSourceService));
-		}
-
-		public void OnEnabled() {
-			if (adornmentLayer == null)
-				adornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.BackgroundImage);
-			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
-		}
+		public void OnEnabled() => OnEnabledCore();
 
 		public void OnDisabled() {
-			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-			if (adornmentLayer != null)
-				adornmentLayer.RemoveAllAdornments();
+			OnDisabledCore();
 			currentImage = null;
 		}
 
@@ -159,7 +126,7 @@ namespace dnSpy.BackgroundImage {
 				InitializeImage(currentImage);
 		}
 
-		void UpdateImagePosition() {
+		protected void UpdateImagePosition() {
 			Debug.Assert(currentImage != null);
 			if (currentImage == null)
 				return;
@@ -180,10 +147,10 @@ namespace dnSpy.BackgroundImage {
 				topMargin = 0;
 				bottomMargin = 0;
 			}
-			double viewportWidth = (1 - leftMargin - rightMargin) * wpfTextView.ViewportWidth;
-			double viewportHeight = (1 - topMargin - bottomMargin) * wpfTextView.ViewportHeight;
-			double xOffs = leftMargin * wpfTextView.ViewportWidth;
-			double yOffs = topMargin * wpfTextView.ViewportHeight;
+			double viewportWidth = (1 - leftMargin - rightMargin) * ViewportWidth;
+			double viewportHeight = (1 - topMargin - bottomMargin) * ViewportHeight;
+			double xOffs = leftMargin * ViewportWidth;
+			double yOffs = topMargin * ViewportHeight;
 
 			Size size;
 			image.ClearValue(FrameworkElement.HeightProperty);
@@ -270,13 +237,13 @@ namespace dnSpy.BackgroundImage {
 
 		void AddImageToAdornmentLayer() {
 			Debug.Assert(currentImage != null);
-			adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, currentImage, null);
+			AddImageToAdornmentLayerCore(currentImage);
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		protected abstract void AddImageToAdornmentLayerCore(Image image);
+
+		protected void ViewClosed() {
 			OnDisabled();
-			wpfTextView.Closed -= WpfTextView_Closed;
-			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
 			imageSourceService.Unregister(this);
 		}
 	}

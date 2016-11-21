@@ -1251,4 +1251,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
     <value>Ctrl+Shift+K</value>
   </data>
+  <data name="BgImgDisplayName_HexEditor" xml:space="preserve">
+    <value>Hex Editor</value>
+  </data>
 </root>

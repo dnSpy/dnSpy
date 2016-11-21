@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.BackgroundImage;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
@@ -25,13 +26,14 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.BackgroundImage {
 	static class BackgroundImageOptionDefinitions {
 		[ExportBackgroundImageOptionDefinition(double.PositiveInfinity)]
-		sealed class Default : IBackgroundImageOptionDefinition {
+		sealed class Default : IBackgroundImageOptionDefinition2 {
 			public string Id => "Default";
 			public string DisplayName => dnSpy_Resources.BgImgDisplayName_Default;
 			public double UIOrder => double.PositiveInfinity;
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
 			public bool IsSupported(ITextView textView) => true;
+			public bool IsSupported(HexView hexView) => true;
 		}
 
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_DocumentViewer)]
@@ -72,6 +74,17 @@ namespace dnSpy.BackgroundImage {
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
 			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.LogEditor);
+		}
+
+		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_HexEditor)]
+		sealed class HexEditor : IBackgroundImageOptionDefinition2 {
+			public string Id => "Hex Editor";
+			public string DisplayName => dnSpy_Resources.BgImgDisplayName_HexEditor;
+			public double UIOrder => BackgroundImageOptionDefinitionConstants.UIOrder_HexEditor;
+			public bool UserVisible => true;
+			public DefaultImageSettings GetDefaultImageSettings() => null;
+			public bool IsSupported(ITextView textView) => false;
+			public bool IsSupported(HexView hexView) => true;
 		}
 	}
 }

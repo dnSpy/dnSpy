@@ -20,7 +20,6 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
