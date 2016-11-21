@@ -236,7 +236,7 @@ namespace dnSpy.Hex.Editor {
 					throw new InvalidOperationException();
 				if (index > 0)
 					return physLine.Lines[index - 1];
-				if (physLine.BufferSpan.Start.Position == 0)
+				if (physLine.BufferSpan.Start <= bufferLines.BufferSpan.Start)
 					return null;
 				physLine = GetPhysicalLine(physLine.BufferSpan.Start - 1);
 				return physLine.Lines[physLine.Lines.Length - 1];

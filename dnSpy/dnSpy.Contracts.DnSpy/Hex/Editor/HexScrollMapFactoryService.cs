@@ -17,17 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Text.Editor {
-	static class WpfTextViewConstants {
+namespace dnSpy.Contracts.Hex.Editor {
+	/// <summary>
+	/// Creates <see cref="HexScrollMap"/>s
+	/// </summary>
+	public abstract class HexScrollMapFactoryService {
 		/// <summary>
-		/// Extra visible horizontal space that should always be available. Used when calculating
-		/// max horizontal scrolling distance or when moving caret horizontally.
+		/// Constructor
 		/// </summary>
-		public const double EXTRA_HORIZONTAL_WIDTH = 200;
+		protected HexScrollMapFactoryService() { }
 
 		/// <summary>
-		/// Same as <see cref="EXTRA_HORIZONTAL_WIDTH"/> but used by the horizontal scroll bar
+		/// Creates a <see cref="HexScrollMap"/> instance
 		/// </summary>
-		public const double EXTRA_HORIZONTAL_SCROLLBAR_WIDTH = EXTRA_HORIZONTAL_WIDTH;
+		/// <param name="hexView">Hex view</param>
+		/// <returns></returns>
+		public abstract HexScrollMap Create(HexView hexView);
 	}
 }

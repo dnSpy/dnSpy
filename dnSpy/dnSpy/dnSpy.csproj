@@ -304,6 +304,8 @@
     <Compile Include="Hex\Classification\HexViewClassifierAggregator.cs" />
     <Compile Include="Hex\Classification\HexViewClassifierAggregatorServiceImpl.cs" />
     <Compile Include="Hex\Classification\TextEditorFormatDefinitions.cs" />
+    <Compile Include="Hex\Editor\BottomControlMargin.cs" />
+    <Compile Include="Hex\Editor\BottomRightCornerMargin.cs" />
     <Compile Include="Hex\Editor\DefaultHexMouseProcessor.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewMouseProcessor.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayerCollection.cs" />
@@ -322,6 +324,8 @@
     <Compile Include="Hex\Editor\HexMouseProcessorCollection.cs" />
     <Compile Include="Hex\Editor\HexPopupHelper.cs" />
     <Compile Include="Hex\Editor\HexPopupSpaceReservationAgent.cs" />
+    <Compile Include="Hex\Editor\HexScrollMapFactoryServiceImpl.cs" />
+    <Compile Include="Hex\Editor\HexScrollMapImpl.cs" />
     <Compile Include="Hex\Editor\HexSelectionImpl.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationManagerImpl.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationStack.cs" />
@@ -331,10 +335,17 @@
     <Compile Include="Hex\Editor\HexViewLineExtensions.cs" />
     <Compile Include="Hex\Editor\HexViewMouseProcessorCollection.cs" />
     <Compile Include="Hex\Editor\HexViewScrollerImpl.cs" />
+    <Compile Include="Hex\Editor\HorizontalScrollBarContainerMargin.cs" />
+    <Compile Include="Hex\Editor\HorizontalScrollBarMargin.cs" />
     <Compile Include="Hex\Editor\KeyboardWpfHexViewCreationListener.cs" />
+    <Compile Include="Hex\Editor\LeftSelectionMargin.cs" />
     <Compile Include="Hex\Editor\MetadataAndOrder.cs" />
     <Compile Include="Hex\Editor\MouseWpfHexViewCreationListener.cs" />
+    <Compile Include="Hex\Editor\RightControlMargin.cs" />
+    <Compile Include="Hex\Editor\SpacerMargin.cs" />
     <Compile Include="Hex\Editor\TextLayer.cs" />
+    <Compile Include="Hex\Editor\VerticalScrollBarContainerMargin.cs" />
+    <Compile Include="Hex\Editor\VerticalScrollBarMargin.cs" />
     <Compile Include="Hex\Editor\WpfHexViewConstants.cs" />
     <Compile Include="Hex\Editor\WpfHexViewContainerMargin.cs" />
     <Compile Include="Hex\Editor\WpfHexViewHostImpl.cs" />
@@ -344,6 +355,7 @@
     <Compile Include="Hex\Editor\WpfHexViewLineCollectionImpl.cs" />
     <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionImpl.cs" />
     <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionProviderImpl.cs" />
+    <Compile Include="Hex\Editor\ZoomControlMargin.cs" />
     <Compile Include="Hex\Formatting\FormattedHexSourceFactoryServiceImpl.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencerFactoryServiceImpl.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencerImpl.cs" />

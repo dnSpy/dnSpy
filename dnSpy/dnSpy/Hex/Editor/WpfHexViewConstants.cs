@@ -24,5 +24,10 @@ namespace dnSpy.Hex.Editor {
 		/// max horizontal scrolling distance or when moving caret horizontally.
 		/// </summary>
 		public const double EXTRA_HORIZONTAL_WIDTH = 200;
+
+		/// <summary>
+		/// Same as <see cref="EXTRA_HORIZONTAL_WIDTH"/> but used by the horizontal scroll bar
+		/// </summary>
+		public const double EXTRA_HORIZONTAL_SCROLLBAR_WIDTH = 0;
 	}
 }

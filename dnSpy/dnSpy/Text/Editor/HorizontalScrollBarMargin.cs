@@ -102,7 +102,7 @@ namespace dnSpy.Text.Editor {
 			Value = wpfTextViewHost.TextView.ViewportLeft;
 		}
 
-		void UpdateMaximum() => Maximum = IsWordWrap ? 0 : Math.Max(wpfTextViewHost.TextView.ViewportLeft, wpfTextViewHost.TextView.MaxTextRightCoordinate - wpfTextViewHost.TextView.ViewportWidth + WpfTextViewConstants.EXTRA_HORIZONTAL_WIDTH);
+		void UpdateMaximum() => Maximum = IsWordWrap ? 0 : Math.Max(wpfTextViewHost.TextView.ViewportLeft, wpfTextViewHost.TextView.MaxTextRightCoordinate - wpfTextViewHost.TextView.ViewportWidth + WpfTextViewConstants.EXTRA_HORIZONTAL_SCROLLBAR_WIDTH);
 
 		bool hasRegisteredEvents;
 		void RegisterEvents() {

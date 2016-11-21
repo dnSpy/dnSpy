@@ -314,8 +314,11 @@
     <Compile Include="Hex\Editor\HexMouseHoverAttribute.cs" />
     <Compile Include="Hex\Editor\HexMouseProcessor.cs" />
     <Compile Include="Hex\Editor\HexMouseProcessorProvider.cs" />
+    <Compile Include="Hex\Editor\HexScrollMap.cs" />
+    <Compile Include="Hex\Editor\HexScrollMapFactoryService.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationAgent.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationManagerDefinition.cs" />
+    <Compile Include="Hex\Editor\HexVerticalFractionMap.cs" />
     <Compile Include="Hex\Editor\HexViewMargin.cs" />
     <Compile Include="Hex\Editor\HexViewState.cs" />
     <Compile Include="Hex\Editor\OptionsExtensionMethods\DefaultHexViewHostOptionsExtensions.cs" />

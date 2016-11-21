@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the end of the span
 		/// </summary>
-		public HexPosition End => isFull ? HexPosition.MaxEndPosition : new HexPosition(start + length);
+		public HexPosition End => isFull ? HexPosition.MaxEndPosition : new HexPosition(start) + length;// It could overflow so only pass in start to the ctor
 
 		// It's not public because public ctors should only take start and length params
 		HexSpan(HexPosition start, HexPosition end) {

@@ -448,6 +448,12 @@ namespace dnSpy.Hex {
 
 		int CurrentTextIndex => stringBuilder.Length;
 
+		public override HexBufferPoint GetBufferPositionFromLineNumber(HexPosition lineNumber) {
+			if (lineNumber >= LineCount)
+				throw new ArgumentOutOfRangeException(nameof(lineNumber));
+			return new HexBufferPoint(Buffer, startPosition + checked(lineNumber.ToUInt64() * bytesPerLine));
+		}
+
 		public override HexBufferLine GetLineFromLineNumber(HexPosition lineNumber) {
 			if (lineNumber >= LineCount)
 				throw new ArgumentOutOfRangeException(nameof(lineNumber));

@@ -27,6 +27,7 @@ namespace dnSpy.Hex.Editor {
 		public override bool Enabled => true;
 		public override double MarginSize => isHorizontal ? grid.ActualHeight : grid.ActualWidth;
 		public override FrameworkElement VisualElement => grid;
+		protected Grid Grid => grid;
 
 		readonly Grid grid;
 		readonly WpfHexViewMarginProviderCollection wpfHexViewMarginProviderCollection;

@@ -55,12 +55,12 @@ namespace dnSpy.Text.Editor {
 			: base(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, PredefinedMarginNames.LeftSelection, false) {
 			if (editorOperations == null)
 				throw new ArgumentNullException(nameof(editorOperations));
-			this.Cursor = Cursors.Arrow;//TODO: Use an arrow pointing to the right
+			Cursor = Cursors.Arrow;//TODO: Use an arrow pointing to the right
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.editorOperations = editorOperations;
 			wpfTextViewHost.TextView.ZoomLevelChanged += TextView_ZoomLevelChanged;
 			// Make sure that the user can click anywhere in this margin so we'll get mouse events
-			this.Background = Brushes.Transparent;
+			Background = Brushes.Transparent;
 		}
 
 		void TextView_ZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e) => LayoutTransform = e.ZoomTransform;

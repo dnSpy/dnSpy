@@ -193,6 +193,13 @@ namespace dnSpy.Contracts.Hex {
 		public abstract int GetCharsPerCellIncludingSeparator(HexColumnType column);
 
 		/// <summary>
+		/// Gets the buffer position of a line
+		/// </summary>
+		/// <param name="lineNumber">Line number</param>
+		/// <returns></returns>
+		public abstract HexBufferPoint GetBufferPositionFromLineNumber(HexPosition lineNumber);
+
+		/// <summary>
 		/// Returns a line
 		/// </summary>
 		/// <param name="lineNumber">Line number</param>

@@ -304,7 +304,7 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateBackground() {
 			var bgProps = editorFormatMap.GetProperties(CTC.EditorFormatMapConstants.TextViewBackgroundId);
-			canvas.Background = TE.ResourceDictionaryUtilities.GetBackgroundBrush(bgProps, SystemColors.WindowBrush);
+			Background = TE.ResourceDictionaryUtilities.GetBackgroundBrush(bgProps, SystemColors.WindowBrush);
 		}
 
 		void HexAndAdornmentSequencer_SequenceChanged(object sender, HexAndAdornmentSequenceChangedEventArgs e) =>
@@ -354,7 +354,7 @@ namespace dnSpy.Hex.Editor {
 			double verticalDistance;
 			if (wpfHexViewLineCollection == null) {
 				verticalDistance = 0;
-				bufferPosition = new HexBufferPoint(Buffer, 0);
+				bufferPosition = BufferLines.BufferStart;
 			}
 			else {
 				var line = wpfHexViewLineCollection.FirstVisibleLine;

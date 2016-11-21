@@ -31,6 +31,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string LeftSelection = prefix + nameof(LeftSelection);
 		public const string Outlining = prefix + nameof(Outlining);
 		public const string LineNumber = prefix + nameof(LineNumber);
+		public const string CustomLineNumber = prefix + nameof(CustomLineNumber);
 		public const string HorizontalScrollBar = prefix + nameof(HorizontalScrollBar);
 		public const string HorizontalScrollBarContainer = prefix + nameof(HorizontalScrollBarContainer);
 		public const string VerticalScrollBar = prefix + nameof(VerticalScrollBar);

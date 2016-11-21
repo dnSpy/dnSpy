@@ -183,7 +183,7 @@ namespace dnSpy.Hex.Editor {
 				hexView.DisplayHexLineContainingBufferPosition(bufferSpan.Start, 0, VSTE.ViewRelativePosition.Top);
 			else {
 				var end = bufferSpan.End;
-				if (end.Position != 0)
+				if (end > hexView.BufferLines.BufferStart)
 					end = end - 1;
 				hexView.DisplayHexLineContainingBufferPosition(end, 0, VSTE.ViewRelativePosition.Bottom);
 			}
@@ -212,7 +212,7 @@ namespace dnSpy.Hex.Editor {
 					if (i == 0) {
 						if (line.VisibilityState == VSTF.VisibilityState.PartiallyVisible)
 							pixels += hexView.ViewportTop - line.Top;
-						if (line.BufferSpan.Start.Position != 0) {
+						if (line.BufferSpan.Start > hexView.BufferLines.BufferStart) {
 							line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.Start - 1);
 							pixels += line.Height;
 						}
@@ -230,7 +230,7 @@ namespace dnSpy.Hex.Editor {
 						else
 							pixels += line.Height;
 					}
-					if (line.BufferSpan.Start.Position == 0)
+					if (line.BufferSpan.Start <= hexView.BufferLines.BufferStart)
 						break;
 					line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.Start - 1);
 				}
