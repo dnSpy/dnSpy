@@ -17,49 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Windows.Controls;
-
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// WPF hex view host
+	/// Creates <see cref="WpfHexViewMargin"/>s
 	/// </summary>
-	public abstract class WpfHexViewHost {
+	public abstract class WpfHexViewMarginProvider {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected WpfHexViewHost() { }
+		protected WpfHexViewMarginProvider() { }
 
 		/// <summary>
-		/// Closes this host and its hex view
+		/// Creates a margin or returns null
 		/// </summary>
-		public abstract void Close();
-
-		/// <summary>
-		/// true if the host has been closed
-		/// </summary>
-		public abstract bool IsClosed { get; }
-
-		/// <summary>
-		/// Raised when it is closed
-		/// </summary>
-		public abstract event EventHandler Closed;
-
-		/// <summary>
-		/// Gets a margin or null if it doesn't exist
-		/// </summary>
-		/// <param name="marginName">Name of margin</param>
+		/// <param name="wpfHexViewHost">WPF hex view host</param>
+		/// <param name="marginContainer">Margin container</param>
 		/// <returns></returns>
-		public abstract WpfHexViewMargin GetHexViewMargin(string marginName);
-
-		/// <summary>
-		/// Gets the hex view
-		/// </summary>
-		public abstract WpfHexView HexView { get; }
-
-		/// <summary>
-		/// Gets the UI element
-		/// </summary>
-		public abstract Control HostControl { get; }
+		public abstract WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer);
 	}
 }

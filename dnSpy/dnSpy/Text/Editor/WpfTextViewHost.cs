@@ -50,15 +50,15 @@ namespace dnSpy.Text.Editor {
 			if (editorOperationsFactoryService == null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
-			this.grid = CreateGrid();
+			grid = CreateGrid();
 			TextView = wpfTextView;
 			Focusable = false;
-			Content = this.grid;
+			Content = grid;
 
 			UpdateBackground();
 			TextView.BackgroundBrushChanged += TextView_BackgroundBrushChanged;
 
-			this.containerMargins = new IWpfTextViewMargin[5];
+			containerMargins = new IWpfTextViewMargin[5];
 			containerMargins[0] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Top, true, 0, 0, 3);
 			containerMargins[1] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Bottom, true, 2, 0, 2);
 			containerMargins[2] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.BottomRightCorner, true, 2, 2, 1);

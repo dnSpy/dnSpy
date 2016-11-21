@@ -42,9 +42,9 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(name));
 			this.name = name;
 			this.isHorizontal = isHorizontal;
-			this.margins = Array.Empty<WpfTextViewMarginInfo>();
-			this.wpfTextViewMarginProviderCollection = wpfTextViewMarginProviderCollectionProvider.Create(wpfTextViewHost, this, name);
-			this.wpfTextViewMarginProviderCollection.MarginsChanged += WpfTextViewMarginProviderCollection_MarginsChanged;
+			margins = Array.Empty<WpfTextViewMarginInfo>();
+			wpfTextViewMarginProviderCollection = wpfTextViewMarginProviderCollectionProvider.Create(wpfTextViewHost, this, name);
+			wpfTextViewMarginProviderCollection.MarginsChanged += WpfTextViewMarginProviderCollection_MarginsChanged;
 			UpdateMarginChildren();
 		}
 

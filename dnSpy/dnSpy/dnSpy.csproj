@@ -336,10 +336,14 @@
     <Compile Include="Hex\Editor\MouseWpfHexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\TextLayer.cs" />
     <Compile Include="Hex\Editor\WpfHexViewConstants.cs" />
+    <Compile Include="Hex\Editor\WpfHexViewContainerMargin.cs" />
+    <Compile Include="Hex\Editor\WpfHexViewHostImpl.cs" />
     <Compile Include="Hex\Editor\WpfHexViewImpl.cs" />
     <Compile Include="Hex\Editor\WpfHexViewImpl.LayoutHelper.cs" />
     <Compile Include="Hex\Editor\WpfHexViewImpl.MouseHoverHelper.cs" />
     <Compile Include="Hex\Editor\WpfHexViewLineCollectionImpl.cs" />
+    <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionImpl.cs" />
+    <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionProviderImpl.cs" />
     <Compile Include="Hex\Formatting\FormattedHexSourceFactoryServiceImpl.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencerFactoryServiceImpl.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencerImpl.cs" />

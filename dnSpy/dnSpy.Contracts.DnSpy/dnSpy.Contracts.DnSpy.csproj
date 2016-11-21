@@ -316,11 +316,15 @@
     <Compile Include="Hex\Editor\HexMouseProcessorProvider.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationAgent.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationManagerDefinition.cs" />
+    <Compile Include="Hex\Editor\HexViewMargin.cs" />
     <Compile Include="Hex\Editor\HexViewState.cs" />
     <Compile Include="Hex\Editor\OptionsExtensionMethods\DefaultHexViewHostOptionsExtensions.cs" />
     <Compile Include="Hex\Editor\OptionsExtensionMethods\DefaultHexViewOptionsExtensions.cs" />
     <Compile Include="Hex\Editor\OptionsExtensionMethods\DefaultWpfHexViewOptionsExtensions.cs" />
+    <Compile Include="Hex\Editor\PredefinedHexMarginNames.cs" />
     <Compile Include="Hex\Editor\WpfHexViewCreationListener.cs" />
+    <Compile Include="Hex\Editor\WpfHexViewMargin.cs" />
+    <Compile Include="Hex\Editor\WpfHexViewMarginProvider.cs" />
     <Compile Include="Hex\Formatting\HexLineTransformSourceProvider.cs" />
     <Compile Include="Hex\HexBufferLine.cs" />
     <Compile Include="Hex\Formatting\HexAdornmentElement.cs" />

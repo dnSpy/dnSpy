@@ -18,48 +18,42 @@
 */
 
 using System;
-using System.Windows.Controls;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// WPF hex view host
+	/// Hex view margin
 	/// </summary>
-	public abstract class WpfHexViewHost {
+	public abstract class HexViewMargin : IDisposable {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected WpfHexViewHost() { }
+		protected HexViewMargin() { }
 
 		/// <summary>
-		/// Closes this host and its hex view
+		/// true if the margin is enabled
 		/// </summary>
-		public abstract void Close();
+		public abstract bool Enabled { get; }
 
 		/// <summary>
-		/// true if the host has been closed
+		/// Gets the size of the margin (width or height depending on whether it's a vertical or horizontal margin)
 		/// </summary>
-		public abstract bool IsClosed { get; }
+		public abstract double MarginSize { get; }
 
 		/// <summary>
-		/// Raised when it is closed
-		/// </summary>
-		public abstract event EventHandler Closed;
-
-		/// <summary>
-		/// Gets a margin or null if it doesn't exist
+		/// Gets a <see cref="HexViewMargin"/> or null if it's not this margin or a child of this margin
 		/// </summary>
 		/// <param name="marginName">Name of margin</param>
 		/// <returns></returns>
-		public abstract WpfHexViewMargin GetHexViewMargin(string marginName);
+		public abstract HexViewMargin GetHexViewMargin(string marginName);
 
 		/// <summary>
-		/// Gets the hex view
+		/// Disposes this instance
 		/// </summary>
-		public abstract WpfHexView HexView { get; }
+		public void Dispose() => DisposeCore();
 
 		/// <summary>
-		/// Gets the UI element
+		/// Disposes this instance
 		/// </summary>
-		public abstract Control HostControl { get; }
+		protected virtual void DisposeCore() { }
 	}
 }

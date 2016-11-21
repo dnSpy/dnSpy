@@ -222,7 +222,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextView));
 			var dsWpfTextView = wpfTextView as IDsWpfTextView;
 			if (dsWpfTextView == null)
-				throw new ArgumentException($"Only {nameof(IDsWpfTextView)}s are allowed. Create your own proxy object if needed.");
+				throw new ArgumentException($"Only {nameof(IDsWpfTextView)}s are allowed.");
 			return CreateTextViewHost(dsWpfTextView, setFocus);
 		}
 

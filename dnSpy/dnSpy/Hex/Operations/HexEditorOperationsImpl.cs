@@ -18,10 +18,12 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Operations;
+using dnSpy.Controls;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Operations {
@@ -31,6 +33,12 @@ namespace dnSpy.Hex.Operations {
 		public override string SelectedText { get; }//TODO:
 		public override bool CanCopy { get; }//TODO:
 		public override bool CanPaste { get; }//TODO:
+
+		HexSelection Selection => HexView.Selection;
+		HexCaret Caret => HexView.Caret;
+		HexBuffer Buffer => HexView.Buffer;
+		VSTE.ITextViewRoleSet Roles => HexView.Roles;
+		HexViewScroller ViewScroller => HexView.ViewScroller;
 
 		public HexEditorOperationsImpl(HexView hexView) {
 			if (hexView == null)
@@ -180,16 +188,43 @@ namespace dnSpy.Hex.Operations {
 			//TODO:
 		}
 
+		WpfHexView GetZoomableView() {
+			if (!Roles.Contains(PredefinedHexViewRoles.Zoomable))
+				return null;
+			var wpfHexView = HexView as WpfHexView;
+			Debug.Assert(wpfHexView != null);
+			return wpfHexView;
+		}
+
+		static bool UseGlobalZoomLevelOption(HexView hexView) => !hexView.Options.IsOptionDefined(DefaultWpfHexViewOptions.ZoomLevelId, true);
+
+		void SetZoom(WpfHexView wpfHexView, double newZoom) {
+			if (newZoom < VSTE.ZoomConstants.MinZoom || newZoom > VSTE.ZoomConstants.MaxZoom)
+				return;
+			// VS writes to the global options, instead of the text view's options
+			var options = UseGlobalZoomLevelOption(wpfHexView) ? wpfHexView.Options.GlobalOptions : wpfHexView.Options;
+			options.SetOptionValue(DefaultWpfHexViewOptions.ZoomLevelId, newZoom);
+		}
+
 		public override void ZoomIn() {
-			//TODO:
+			var wpfHexView = GetZoomableView();
+			if (wpfHexView == null)
+				return;
+			SetZoom(wpfHexView, ZoomSelector.ZoomIn(wpfHexView.ZoomLevel));
 		}
 
 		public override void ZoomOut() {
-			//TODO:
+			var wpfHexView = GetZoomableView();
+			if (wpfHexView == null)
+				return;
+			SetZoom(wpfHexView, ZoomSelector.ZoomOut(wpfHexView.ZoomLevel));
 		}
 
 		public override void ZoomTo(double zoomLevel) {
-			//TODO:
+			var wpfHexView = GetZoomableView();
+			if (wpfHexView == null)
+				return;
+			SetZoom(wpfHexView, zoomLevel);
 		}
 	}
 }

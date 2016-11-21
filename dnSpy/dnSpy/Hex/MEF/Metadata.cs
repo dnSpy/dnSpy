@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows;
 using dnSpy.Contracts.Hex.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
@@ -60,6 +61,22 @@ namespace dnSpy.Hex.MEF {
 	public interface IViewTaggerMetadata : INamedTaggerMetadata {
 		[DefaultValue(null)]
 		IEnumerable<string> TextViewRoles { get; }
+	}
+
+	public interface IWpfHexViewMarginMetadata : IOrderableTextViewRoleMetadata {
+		string MarginContainer { get; }
+
+		[DefaultValue(1.0)]
+		double GridCellLength { get; }
+
+		[DefaultValue(GridUnitType.Auto)]
+		GridUnitType GridUnitType { get; }
+
+		[DefaultValue(null)]
+		string OptionName { get; }
+
+		[DefaultValue(null)]
+		IEnumerable<string> Replaces { get; }
 	}
 
 	public interface IDeferrableTextViewRoleMetadata : ITextViewRoleMetadata {
