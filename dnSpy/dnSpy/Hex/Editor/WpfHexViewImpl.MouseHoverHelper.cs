@@ -26,7 +26,6 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
-using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Editor {
 	sealed partial class WpfHexViewImpl {

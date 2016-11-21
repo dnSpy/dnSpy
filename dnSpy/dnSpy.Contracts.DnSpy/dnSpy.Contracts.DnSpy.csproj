@@ -312,6 +312,8 @@
     <Compile Include="Hex\Editor\HexLayerKind.cs" />
     <Compile Include="Hex\Editor\HexLayerKindAttribute.cs" />
     <Compile Include="Hex\Editor\HexMouseHoverAttribute.cs" />
+    <Compile Include="Hex\Editor\HexMouseProcessor.cs" />
+    <Compile Include="Hex\Editor\HexMouseProcessorProvider.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationAgent.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationManagerDefinition.cs" />
     <Compile Include="Hex\Editor\HexViewState.cs" />

@@ -943,7 +943,7 @@ namespace dnSpy.Hex.Editor {
 		void WpfHexView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) =>
 			QueueSpaceReservationStackRefresh();
 
-		bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
+		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
 
 		public override event EventHandler<BufferLinesChangedEventArgs> BufferLinesChanged;
 		public override HexBufferLineProvider BufferLines {
