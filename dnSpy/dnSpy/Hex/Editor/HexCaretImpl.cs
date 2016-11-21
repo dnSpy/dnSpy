@@ -166,11 +166,13 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		static bool CanReUse(HexCellPosition oldPos, HexCellPosition newPos, HexCell cell) {
+			if (oldPos.IsDefault)
+				return false;
 			if (oldPos.IsDefault != newPos.IsDefault)
 				return false;
 			if (cell == null)
 				return newPos.IsDefault;
-			return cell.BufferSpan.Contains(newPos.BufferPosition);
+			return cell.BufferSpan.Contains(oldPos.BufferPosition);
 		}
 
 		static bool SpanContains(HexBufferSpan span, HexBufferPoint position) =>

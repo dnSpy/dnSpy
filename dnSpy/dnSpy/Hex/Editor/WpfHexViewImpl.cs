@@ -232,6 +232,7 @@ namespace dnSpy.Hex.Editor {
 
 			UpdateBackground();
 			CreateFormattedLineSource(ViewportWidth);
+			var dummy = BufferLines;
 			HexCaret.Initialize();
 			InitializeZoom();
 			UpdateRemoveExtraTextLineVerticalPixels();
@@ -663,12 +664,6 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentException();
 			if (formattedLineSourceIsInvalidated)
 				CreateFormattedLineSource(viewportWidthOverride);
-			if (recreateHexBufferLineProvider) {
-				recreateHexBufferLineProvider = false;
-				var oldBufferLines = hexBufferLineProvider;
-				hexBufferLineProvider = null;
-				RaiseBufferLinesChanged(oldBufferLines);
-			}
 			return CreatePhysicalLineNoCache(BufferLines, FormattedLineSource, bufferPosition);
 		}
 
@@ -688,6 +683,8 @@ namespace dnSpy.Hex.Editor {
 			if (IsClosed)
 				throw new InvalidOperationException();
 			var oldBufferLines = hexBufferLineProvider;
+			var oldHexBufferLineProviderOptions = hexBufferLineProviderOptions;
+			Debug.Assert(oldBufferLines != null);
 			bool raiseBufferLinesChangedEvent = false;
 
 			canvas.Dispatcher.VerifyAccess();
@@ -730,7 +727,9 @@ namespace dnSpy.Hex.Editor {
 			if (recreateHexBufferLineProvider) {
 				recreateHexBufferLineProvider = false;
 				raiseBufferLinesChangedEvent = true;
-				hexBufferLineProvider = null;
+				// Don't re-create it here. That can lead to exceptions if Start/End positions get
+				// updated and bufferPosition becomes invalid. New BufferLines' IsValidPosition() throws.
+				// It's recreated with a short delay after raising LayoutChanged.
 			}
 
 			var lineTransformProvider = LineTransformProvider;
@@ -759,8 +758,28 @@ namespace dnSpy.Hex.Editor {
 				Canvas.SetTop(normalAdornmentLayerCollection, -viewportTop);
 			}
 			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
-			if (raiseBufferLinesChangedEvent)
-				RaiseBufferLinesChanged(oldBufferLines);
+
+			if (raiseBufferLinesChangedEvent && oldBufferLines == hexBufferLineProvider) {
+				var newOptions = GetHexBufferLineProviderOptions();
+				if (!newOptions.Equals(oldHexBufferLineProviderOptions)) {
+					canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+						if (oldBufferLines == hexBufferLineProvider) {
+							hexBufferLineProvider = null;
+							var newBufferLines = BufferLines;
+							RaiseBufferLinesChanged(oldBufferLines);
+
+							var line = wpfHexViewLineCollection.FirstVisibleLine;
+							verticalDistance = line.Top - ViewportTop;
+							bufferPosition = line.BufferSpan.Start;
+							if (bufferPosition >= BufferLines.BufferEnd)
+								bufferPosition = BufferLines.BufferEnd.Position == HexPosition.Zero ? BufferLines.BufferEnd : BufferLines.BufferEnd - 1;
+							if (bufferPosition < BufferLines.BufferStart)
+								bufferPosition = BufferLines.BufferStart;
+							DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop);
+						}
+					}));
+				}
+			}
 		}
 
 		void RaiseBufferLinesChanged(HexBufferLineProvider oldBufferLines) {
@@ -788,9 +807,10 @@ namespace dnSpy.Hex.Editor {
 				return lines;
 			}
 
+			var bufferLines = BufferLines;
 			for (int i = lines.Count - 1; i >= 0; i--) {
 				var line = lines[i];
-				bool remove = line.OverlapsWith(regionsToInvalidate);
+				bool remove = line.BufferLines != bufferLines || line.OverlapsWith(regionsToInvalidate);
 				if (remove) {
 					line.Dispose();
 					lines.RemoveAt(i);
@@ -952,10 +972,11 @@ namespace dnSpy.Hex.Editor {
 				// clearing this field to raise the event. It's not safe to raise the event at any
 				// time (eg. in the middle of layout)
 				if (hexBufferLineProvider == null)
-					hexBufferLineProvider = bufferLineProviderFactoryService.Create(Buffer, GetHexBufferLineProviderOptions());
+					hexBufferLineProvider = bufferLineProviderFactoryService.Create(Buffer, hexBufferLineProviderOptions = GetHexBufferLineProviderOptions());
 				return hexBufferLineProvider;
 			}
 		}
+		HexBufferLineProviderOptions hexBufferLineProviderOptions;
 		HexBufferLineProvider hexBufferLineProvider;
 		bool recreateHexBufferLineProvider;
 

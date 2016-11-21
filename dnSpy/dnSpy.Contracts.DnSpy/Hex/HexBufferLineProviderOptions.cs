@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Options passed to <see cref="HexBufferLineProviderFactoryService.Create(HexBuffer, HexBufferLineProviderOptions)"/>
 	/// </summary>
-	public sealed class HexBufferLineProviderOptions {
+	public sealed class HexBufferLineProviderOptions : IEquatable<HexBufferLineProviderOptions> {
 		/// <summary>
 		/// Number of visible characters per line
 		/// </summary>
@@ -119,5 +121,80 @@ namespace dnSpy.Contracts.Hex {
 		/// Max bytes per line
 		/// </summary>
 		public static readonly int MaxBytesPerLine = 1024;
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="other">Other instance</param>
+		/// <returns></returns>
+		public bool Equals(HexBufferLineProviderOptions other) =>
+			CharsPerLine == other.CharsPerLine &&
+			BytesPerLine == other.BytesPerLine &&
+			GroupSizeInBytes == other.GroupSizeInBytes &&
+			ShowOffset == other.ShowOffset &&
+			OffsetLowerCaseHex == other.OffsetLowerCaseHex &&
+			OffsetFormat == other.OffsetFormat &&
+			StartPosition == other.StartPosition &&
+			EndPosition == other.EndPosition &&
+			BasePosition == other.BasePosition &&
+			UseRelativePositions == other.UseRelativePositions &&
+			ShowValues == other.ShowValues &&
+			ValuesLowerCaseHex == other.ValuesLowerCaseHex &&
+			OffsetBitSize == other.OffsetBitSize &&
+			ValuesFormat == other.ValuesFormat &&
+			ShowAscii == other.ShowAscii &&
+			HexColumnTypeArraysEquals(ColumnOrder, other.ColumnOrder);
+
+		static bool HexColumnTypeArraysEquals(HexColumnType[] a, HexColumnType[] b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Equals()
+		/// </summary>
+		/// <param name="obj">Other object</param>
+		/// <returns></returns>
+		public override bool Equals(object obj) => obj is HexBufferLineProviderOptions && Equals((HexBufferLineProviderOptions)obj);
+
+		/// <summary>
+		/// GetHashCode()
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode() =>
+			CharsPerLine.GetHashCode() ^
+			BytesPerLine.GetHashCode() ^
+			GroupSizeInBytes.GetHashCode() ^
+			ShowOffset.GetHashCode() ^
+			OffsetLowerCaseHex.GetHashCode() ^
+			(int)OffsetFormat ^
+			StartPosition.GetHashCode() ^
+			EndPosition.GetHashCode() ^
+			BasePosition.GetHashCode() ^
+			UseRelativePositions.GetHashCode() ^
+			ShowValues.GetHashCode() ^
+			ValuesLowerCaseHex.GetHashCode() ^
+			OffsetBitSize.GetHashCode() ^
+			(int)ValuesFormat ^
+			ShowAscii.GetHashCode() ^
+			GetHexColumnTypeArrayHashCode(ColumnOrder);
+
+		int GetHexColumnTypeArrayHashCode(HexColumnType[] a) {
+			if (a == null)
+				return 0;
+			int hc = 0;
+			foreach (var t in a)
+				hc ^= (int)t;
+			return hc;
+		}
 	}
 }
