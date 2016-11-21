@@ -18,16 +18,47 @@
 */
 
 using System;
+using System.Collections.Generic;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Formatting;
+using VST = Microsoft.VisualStudio.Text;
 using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexSelectionImpl : HexSelection {
-		public override bool IsEmpty { get; }//TODO:
+		public override HexView HexView { get; }//TODO:
+		public override NormalizedHexBufferSpanCollection SelectedSpans => NormalizedHexBufferSpanCollection.Empty;//TODO:
+		public override HexBufferSpan StreamSelectionSpan { get; }//TODO:
+		public override bool IsEmpty => true;//TODO:
+		public override bool IsActive { get; set; }//TODO:
+		public override bool ActivationTracksFocus { get; set; }//TODO:
 		public override event EventHandler SelectionChanged;//TODO:
+		public override HexBufferPoint ActivePoint { get; }//TODO:
+		public override HexBufferPoint AnchorPoint { get; }//TODO:
 
 		public HexSelectionImpl(WpfHexView hexView, HexAdornmentLayer selectionLayer, VSTC.IEditorFormatMap editorFormatMap) {
+			if (hexView == null)
+				throw new ArgumentNullException(nameof(hexView));
+			if (selectionLayer == null)
+				throw new ArgumentNullException(nameof(selectionLayer));
+			if (editorFormatMap == null)
+				throw new ArgumentNullException(nameof(editorFormatMap));
 			//TODO:
+			HexView = hexView;
+			ActivationTracksFocus = true;
+		}
+
+		public override void Select(HexBufferSpan selectionSpan, bool isReversed) {
+			//TODO:
+		}
+
+		public override void Select(HexBufferPoint anchorPoint, HexBufferPoint activePoint) {
+			//TODO:
+		}
+
+		public override IEnumerable<VST.Span> GetSelectionOnTextViewLine(HexViewLine line) {
+			throw new NotImplementedException();//TODO:
 		}
 
 		public override void Clear() {

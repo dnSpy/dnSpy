@@ -18,6 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
+using dnSpy.Contracts.Hex.Formatting;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
@@ -30,9 +33,65 @@ namespace dnSpy.Contracts.Hex.Editor {
 		protected HexSelection() { }
 
 		/// <summary>
+		/// Gets the hex view
+		/// </summary>
+		public abstract HexView HexView { get; }
+
+		/// <summary>
+		/// Selects a span
+		/// </summary>
+		/// <param name="selectionSpan">Span</param>
+		/// <param name="isReversed">true if the anchor point is the end point of <paramref name="selectionSpan"/></param>
+		public abstract void Select(HexBufferSpan selectionSpan, bool isReversed);
+
+		/// <summary>
+		/// Select a span
+		/// </summary>
+		/// <param name="anchorPoint">Anchor point</param>
+		/// <param name="activePoint">Active point</param>
+		public abstract void Select(HexBufferPoint anchorPoint, HexBufferPoint activePoint);
+
+		/// <summary>
+		/// Gets all selected spans
+		/// </summary>
+		public abstract NormalizedHexBufferSpanCollection SelectedSpans { get; }
+
+		/// <summary>
+		/// Gets the slection on a line
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns></returns>
+		public abstract IEnumerable<VST.Span> GetSelectionOnTextViewLine(HexViewLine line);
+
+		/// <summary>
+		/// Gets the selected span
+		/// </summary>
+		public abstract HexBufferSpan StreamSelectionSpan { get; }
+
+		/// <summary>
+		/// true if the selection is reversed
+		/// </summary>
+		public bool IsReversed => ActivePoint < AnchorPoint;
+
+		/// <summary>
+		/// Clears the selection
+		/// </summary>
+		public abstract void Clear();
+
+		/// <summary>
 		/// true if the selection is empty
 		/// </summary>
 		public abstract bool IsEmpty { get; }
+
+		/// <summary>
+		/// true if the selection is active, false if it's inactive
+		/// </summary>
+		public abstract bool IsActive { get; set; }
+
+		/// <summary>
+		/// true if <see cref="IsActive"/> gets updated when the hex view gets and loses focus
+		/// </summary>
+		public abstract bool ActivationTracksFocus { get; set; }
 
 		/// <summary>
 		/// Raised when the selection is changed
@@ -40,8 +99,23 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public abstract event EventHandler SelectionChanged;
 
 		/// <summary>
-		/// Clears the selection
+		/// Gets the active point
 		/// </summary>
-		public abstract void Clear();
+		public abstract HexBufferPoint ActivePoint { get; }
+
+		/// <summary>
+		/// Gets the anchor point
+		/// </summary>
+		public abstract HexBufferPoint AnchorPoint { get; }
+
+		/// <summary>
+		/// Gets the start position
+		/// </summary>
+		public HexBufferPoint Start => AnchorPoint < ActivePoint ? AnchorPoint : ActivePoint;
+
+		/// <summary>
+		/// Gets the end position
+		/// </summary>
+		public HexBufferPoint End => AnchorPoint < ActivePoint ? ActivePoint : AnchorPoint;
 	}
 }
