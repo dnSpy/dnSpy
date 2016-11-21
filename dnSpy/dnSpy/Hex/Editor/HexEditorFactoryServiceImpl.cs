@@ -140,6 +140,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override WpfHexViewHost CreateHost(WpfHexView wpfHexView, bool setFocus) {
+			if (wpfHexView == null)
+				throw new ArgumentNullException(nameof(wpfHexView));
 			throw new NotImplementedException();//TODO:
 		}
 

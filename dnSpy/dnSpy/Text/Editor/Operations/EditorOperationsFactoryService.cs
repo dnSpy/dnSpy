@@ -44,7 +44,7 @@ namespace dnSpy.Text.Editor.Operations {
 				() => new EditorOperations(textView, textStructureNavigatorSelectorService, smartIndentationService, htmlBuilderService));
 		}
 
-		public static void RemoveFromProperties(EditorOperations editorOperations) =>
+		internal static void RemoveFromProperties(EditorOperations editorOperations) =>
 			editorOperations.TextView.Properties.RemoveProperty(typeof(IEditorOperations));
 	}
 }

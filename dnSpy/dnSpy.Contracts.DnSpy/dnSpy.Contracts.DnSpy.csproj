@@ -408,6 +408,8 @@
     </Compile>
     <Compile Include="Hex.Old\SelectVM.cs" />
     <Compile Include="Hex\NormalizedHexSpanCollection.cs" />
+    <Compile Include="Hex\Operations\HexEditorOperations.cs" />
+    <Compile Include="Hex\Operations\HexEditorOperationsFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexBatchedTagsChangedEventArgs.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexClassificationTag.cs" />
