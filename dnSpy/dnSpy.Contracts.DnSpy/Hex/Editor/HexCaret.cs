@@ -139,6 +139,14 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Moves the caret to a new position
 		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public HexCaretPosition MoveTo(HexBufferPoint position) =>
+			MoveTo(Position.Position.ActiveColumn, position);
+
+		/// <summary>
+		/// Moves the caret to a new position
+		/// </summary>
 		/// <param name="column">Column</param>
 		/// <param name="position">Position</param>
 		/// <returns></returns>

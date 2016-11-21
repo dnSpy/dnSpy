@@ -348,6 +348,7 @@
     <Compile Include="Hex\Editor\MetadataAndOrder.cs" />
     <Compile Include="Hex\Editor\MouseWpfHexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\RightControlMargin.cs" />
+    <Compile Include="Hex\Editor\SelectionUtilities.cs" />
     <Compile Include="Hex\Editor\SpacerMargin.cs" />
     <Compile Include="Hex\Editor\TextLayer.cs" />
     <Compile Include="Hex\Editor\VerticalScrollBarContainerMargin.cs" />

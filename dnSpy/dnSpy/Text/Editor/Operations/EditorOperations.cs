@@ -350,7 +350,7 @@ namespace dnSpy.Text.Editor.Operations {
 			}
 			else {
 				anchorPoint = Caret.Position.VirtualBufferPosition;
-				activePoint = Caret.Position.VirtualBufferPosition;
+				activePoint = anchorPoint;
 			}
 		}
 

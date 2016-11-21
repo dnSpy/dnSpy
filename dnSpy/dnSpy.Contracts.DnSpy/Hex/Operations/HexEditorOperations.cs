@@ -104,18 +104,6 @@ namespace dnSpy.Contracts.Hex.Operations {
 		public abstract void MoveToPreviousWord(bool extendSelection);
 
 		/// <summary>
-		/// Moves the caret to the next cell
-		/// </summary>
-		/// <param name="extendSelection">true to extend the selection</param>
-		public abstract void MoveToNextCell(bool extendSelection);
-
-		/// <summary>
-		/// Moves the caret to the previous cell
-		/// </summary>
-		/// <param name="extendSelection">true to extend the selection</param>
-		public abstract void MoveToPreviousCell(bool extendSelection);
-
-		/// <summary>
 		/// Move up a line
 		/// </summary>
 		/// <param name="extendSelection">true to extend the selection</param>
