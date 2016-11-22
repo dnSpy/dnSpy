@@ -85,6 +85,7 @@ namespace dnSpy.Hex.Editor {
 			hexView.VisualElement.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_LostKeyboardFocus), true);
 			hexView.LayoutChanged += HexView_LayoutChanged;
 			hexView.BufferLinesChanged += HexView_BufferLinesChanged;
+			hexView.ZoomLevelChanged += HexView_ZoomLevelChanged;
 			hexCaretLayer = new HexCaretLayer(this, caretLayer, classificationFormatMap, classificationTypeRegistryService);
 			InputMethod.SetIsInputMethodSuspended(hexView.VisualElement, true);
 		}
@@ -94,7 +95,10 @@ namespace dnSpy.Hex.Editor {
 			OnBufferLinesChanged();
 		}
 
-		void HexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) => OnBufferLinesChanged();
+		void HexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) {
+			OnBufferLinesChanged();
+			savePreferredCoordinates = true;
+		}
 
 		void OnBufferLinesChanged() {
 			var bufferLines = hexView.BufferLines;
@@ -177,7 +181,17 @@ namespace dnSpy.Hex.Editor {
 		static bool SpanContains(HexBufferSpan span, HexBufferPoint position) =>
 			span.Length == 0 ? span.Start == position : span.Contains(position);
 
+		void HexView_ZoomLevelChanged(object sender, VSTE.ZoomLevelChangedEventArgs e) =>
+			savePreferredCoordinates = true;
+		bool savePreferredCoordinates;
+
 		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+			hexCaretLayer.OnLayoutChanged(e);
+			if (savePreferredCoordinates) {
+				savePreferredCoordinates = false;
+				SavePreferredXCoordinate();
+				SavePreferredYCoordinate();
+			}
 			if (imeState.CompositionStarted)
 				MoveImeCompositionWindow();
 		}
@@ -719,6 +733,7 @@ namespace dnSpy.Hex.Editor {
 			hexView.VisualElement.LostKeyboardFocus -= VisualElement_LostKeyboardFocus;
 			hexView.LayoutChanged -= HexView_LayoutChanged;
 			hexView.BufferLinesChanged -= HexView_BufferLinesChanged;
+			hexView.ZoomLevelChanged -= HexView_ZoomLevelChanged;
 			hexCaretLayer.Dispose();
 		}
 	}

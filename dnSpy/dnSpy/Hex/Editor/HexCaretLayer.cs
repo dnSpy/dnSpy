@@ -175,7 +175,6 @@ namespace dnSpy.Hex.Editor {
 			inactiveCaretClassificationType = classificationTypeRegistryService.GetClassificationType(CTC.ThemeClassificationTypeNames.HexInactiveCaret);
 			valuesCaretGeometry = new CaretGeometry();
 			asciiCaretGeometry = new CaretGeometry();
-			layer.HexView.LayoutChanged += HexView_LayoutChanged;
 			layer.HexView.Selection.SelectionChanged += Selection_SelectionChanged;
 			layer.HexView.VisualElement.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_GotKeyboardFocus), true);
 			layer.HexView.VisualElement.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_LostKeyboardFocus), true);
@@ -231,7 +230,7 @@ namespace dnSpy.Hex.Editor {
 		SelectionState oldSelectionState;
 
 		internal void CaretPositionChanged() => UpdateCaretProperties();
-		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) => UpdateCaretProperties();
+		internal void OnLayoutChanged(HexViewLayoutChangedEventArgs e) => UpdateCaretProperties();
 
 		public void SetImeStarted(bool started) {
 			if (imeStarted == started)
@@ -436,7 +435,6 @@ namespace dnSpy.Hex.Editor {
 
 		public void Dispose() {
 			StopTimer();
-			layer.HexView.LayoutChanged -= HexView_LayoutChanged;
 			layer.HexView.Selection.SelectionChanged -= Selection_SelectionChanged;
 			layer.HexView.VisualElement.GotKeyboardFocus -= VisualElement_GotKeyboardFocus;
 			layer.HexView.VisualElement.LostKeyboardFocus -= VisualElement_LostKeyboardFocus;
