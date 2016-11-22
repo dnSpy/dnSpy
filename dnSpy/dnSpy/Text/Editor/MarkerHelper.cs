@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
@@ -37,30 +38,24 @@ namespace dnSpy.Text.Editor {
 			return line1.ExtentIncludingLineBreak != line2.ExtentIncludingLineBreak;
 		}
 
-		public static Geometry CreateGeometry(IWpfTextView textView, VirtualSnapshotSpan span, bool isBoxMode, bool isMultiLine, bool extraPixelsHack, bool clipToViewport = false, int maxLines = 1) {
-			// Force multiline mode if it's box selection or there'll be 1px-sized non-selected lines
-			// between the lines if you zoom in (eg. 110% zoom level)
-			if (isBoxMode)
-				isMultiLine = true;
-
+		public static Geometry CreateGeometry(IWpfTextView textView, VirtualSnapshotSpan span, bool isMultiLine, bool clipToViewport = false) {
 			var padding = isMultiLine ? LineMarkerPadding : TextMarkerPadding;
 			var pos = span.Start;
 			PathGeometry geo = null;
 			bool createOutlinedPath = false;
 
-			int lines = 0;
-			while (pos <= span.End && lines < maxLines) {
+			while (pos <= span.End) {
 				var line = textView.GetTextViewLineContainingBufferPosition(pos.Position);
-				bool useVspaces = line.IsLastDocumentLine() || lines + 1 == maxLines;
+				bool useVspaces = line.IsLastDocumentLine();
 				var lineExtent = new VirtualSnapshotSpan(new VirtualSnapshotPoint(line.Start), new VirtualSnapshotPoint(line.EndIncludingLineBreak, useVspaces ? span.End.VirtualSpaces : 0));
 				var extentTmp = lineExtent.Intersection(new VirtualSnapshotSpan(pos, span.End));
 				Debug.Assert(extentTmp != null);
-				if (extentTmp != null) {
+				if (line.VisibilityState != VisibilityState.Unattached && extentTmp != null && extentTmp.Value.Length != 0) {
 					var extent = extentTmp.Value;
 					Collection<TextBounds> textBounds;
 					if (extent.Start.IsInVirtualSpace) {
 						var leading = line.TextRight + extent.Start.VirtualSpaces * textView.FormattedLineSource.ColumnWidth;
-						double width = isBoxMode ? 0 : line.EndOfLineWidth;
+						double width = line.EndOfLineWidth;
 						int vspaces = span.End.VirtualSpaces - span.Start.VirtualSpaces;
 						if (vspaces > 0)
 							width = vspaces * textView.FormattedLineSource.ColumnWidth;
@@ -74,13 +69,12 @@ namespace dnSpy.Text.Editor {
 					}
 					else
 						textBounds = line.GetNormalizedTextBounds(extent.SnapshotSpan);
-					AddGeometries(textView, textBounds, isMultiLine, clipToViewport, padding, SystemParameters.CaretWidth, ref geo, ref createOutlinedPath, extraPixelsHack);
+					AddGeometries(textView, textBounds, isMultiLine, clipToViewport, padding, SystemParameters.CaretWidth, ref geo, ref createOutlinedPath);
 				}
 
 				if (line.IsLastDocumentLine())
 					break;
 				pos = new VirtualSnapshotPoint(line.GetPointAfterLineBreak());
-				lines++;
 			}
 			if (createOutlinedPath)
 				geo = geo.GetOutlinedPathGeometry();
@@ -89,7 +83,47 @@ namespace dnSpy.Text.Editor {
 			return geo;
 		}
 
-		public static void AddGeometries(IWpfTextView textView, Collection<TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry geo, ref bool createOutlinedPath, bool extraPixelsHack) {
+		public static Geometry CreateBoxGeometry(IWpfTextView textView, IList<VirtualSnapshotSpan> spans, bool isMultiLine, bool clipToViewport = false) {
+			var padding = isMultiLine ? LineMarkerPadding : TextMarkerPadding;
+			PathGeometry geo = null;
+			bool createOutlinedPath = false;
+
+			foreach (var span in spans) {
+				var line = textView.GetTextViewLineContainingBufferPosition(span.SnapshotSpan.Start);
+				Debug.Assert(span.SnapshotSpan.End <= line.EndIncludingLineBreak);
+				var lineExtent = new VirtualSnapshotSpan(new VirtualSnapshotPoint(line.Start), new VirtualSnapshotPoint(line.EndIncludingLineBreak, span.End.VirtualSpaces));
+				var extentTmp = lineExtent.Intersection(span);
+				Debug.Assert(extentTmp != null);
+				if (line.VisibilityState != VisibilityState.Unattached && extentTmp != null) {
+					var extent = extentTmp.Value;
+					Collection<TextBounds> textBounds;
+					if (extent.Start.IsInVirtualSpace) {
+						var leading = line.TextRight + extent.Start.VirtualSpaces * textView.FormattedLineSource.ColumnWidth;
+						double width = line.EndOfLineWidth;
+						int vspaces = span.End.VirtualSpaces - span.Start.VirtualSpaces;
+						if (vspaces > 0)
+							width = vspaces * textView.FormattedLineSource.ColumnWidth;
+						textBounds = new Collection<TextBounds>();
+						textBounds.Add(new TextBounds(leading, line.Top, width, line.Height, line.TextTop, line.TextHeight));
+					}
+					else if (extent.End.IsInVirtualSpace) {
+						textBounds = line.GetNormalizedTextBounds(extent.SnapshotSpan);
+						double width = extent.End.VirtualSpaces * textView.FormattedLineSource.ColumnWidth;
+						textBounds.Add(new TextBounds(line.TextRight, line.Top, width, line.Height, line.TextTop, line.TextHeight));
+					}
+					else
+						textBounds = line.GetNormalizedTextBounds(extent.SnapshotSpan);
+					AddGeometries(textView, textBounds, isMultiLine, clipToViewport, padding, SystemParameters.CaretWidth, ref geo, ref createOutlinedPath);
+				}
+			}
+			if (createOutlinedPath)
+				geo = geo.GetOutlinedPathGeometry();
+			if (geo != null && geo.CanFreeze)
+				geo.Freeze();
+			return geo;
+		}
+
+		public static void AddGeometries(IWpfTextView textView, Collection<TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry geo, ref bool createOutlinedPath) {
 			foreach (var bounds in textBounds) {
 				double left = bounds.Left - padding.Left;
 				double right = bounds.Right + padding.Right;
@@ -97,17 +131,6 @@ namespace dnSpy.Text.Editor {
 				if (isLineGeometry) {
 					top = bounds.Top - padding.Top;
 					bottom = bounds.Bottom + padding.Bottom;
-					if (extraPixelsHack) {
-						// This is needed to prevent a 1px-sized non-selected line between the selected
-						// text lines when you've zoomed in to a certain zoom level (eg. 110%).
-						// It's only needed if GetOutlinedPathGeometry() isn't called, eg. it's used by
-						// the selection layer to only add new selected lines that have changed instead
-						// of updating the whole selection each time the selection changes (optimization
-						// for remote desktop and virtual machines).
-						// For most other normal layers (eg. text marker layer), this shouldn't be needed
-						// since the user can't change the size of the text marker.
-						bottom += 0.5;
-					}
 				}
 				else {
 					top = bounds.TextTop - padding.Top;

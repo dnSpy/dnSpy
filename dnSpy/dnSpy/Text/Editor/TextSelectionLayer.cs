@@ -18,10 +18,13 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Text.WPF;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -41,7 +44,6 @@ namespace dnSpy.Text.Editor {
 		readonly TextSelection textSelection;
 		readonly IAdornmentLayer layer;
 		readonly IEditorFormatMap editorFormatMap;
-		readonly Marker marker;
 
 		public TextSelectionLayer(TextSelection textSelection, IAdornmentLayer layer, IEditorFormatMap editorFormatMap) {
 			if (textSelection == null)
@@ -50,9 +52,9 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(layer));
 			if (editorFormatMap == null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
+			markerElementRemovedCallBack = (tag, element) => OnMarkerElementRemoved();
 			this.textSelection = textSelection;
 			this.layer = layer;
-			this.marker = new Marker(textSelection.TextView, layer);
 			this.editorFormatMap = editorFormatMap;
 			textSelection.TextView.Options.OptionChanged += Options_OptionChanged;
 			textSelection.SelectionChanged += TextSelection_SelectionChanged;
@@ -62,7 +64,16 @@ namespace dnSpy.Text.Editor {
 			UpdateBackgroundBrush();
 		}
 
-		void UpdateBackgroundBrush() => marker.BackgroundBrush = GetBackgroundBrush();
+		void UpdateBackgroundBrush() {
+			var newBackgroundBrush = GetBackgroundBrush();
+			if (BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
+				return;
+			backgroundBrush = newBackgroundBrush;
+			if (markerElement != null)
+				markerElement.BackgroundBrush = backgroundBrush;
+		}
+		Brush backgroundBrush;
+		MarkerElement markerElement;
 
 		Brush GetBackgroundBrush() {
 			var props = editorFormatMap.GetProperties(IsActive ? ThemeClassificationTypeNameKeys.SelectedText : ThemeClassificationTypeNameKeys.InactiveSelectedText);
@@ -89,28 +100,126 @@ namespace dnSpy.Text.Editor {
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
 			if (e.OldSnapshot != e.NewSnapshot)
 				SetNewSelection();
-			if (e.NewOrReformattedLines.Count > 0 || e.TranslatedLines.Count > 0 || e.VerticalTranslation)
-				marker.OnLayoutChanged(e.NewOrReformattedLines);
+			else if (e.NewOrReformattedLines.Count > 0 || e.TranslatedLines.Count > 0 || e.VerticalTranslation)
+				SetNewSelection();
 		}
 
 		void SetNewSelection() {
+			RemoveAllAdornments();
 			if (textSelection.IsEmpty)
-				marker.SetSpans(NullMarkerSpanCollection.Instance);
-			else if (textSelection.Mode == TextSelectionMode.Stream) {
+				return;
+			if (textSelection.Mode == TextSelectionMode.Stream) {
 				Debug.Assert(textSelection.StreamSelectionSpan.Length != 0);
-				marker.SetSpans(new StreamMarkerSpanCollection(textSelection.TextView, textSelection.StreamSelectionSpan));
+				var info = CreateStreamSelection();
+				if (info == null)
+					return;
+				CreateMarkerElement(info.Value.Key, info.Value.Value);
 			}
 			else {
 				Debug.Assert(textSelection.Mode == TextSelectionMode.Box);
-				marker.SetSpans(new BoxMarkerSpanCollection(textSelection));
+				var info = CreateBoxSelection();
+				if (info == null)
+					return;
+				CreateMarkerElement(info.Value.Key, info.Value.Value);
 			}
+		}
+
+		void CreateMarkerElement(SnapshotSpan fullSpan, Geometry geo) {
+			Debug.Assert(markerElement == null);
+			RemoveAllAdornments();
+			markerElement = new MarkerElement(geo);
+			markerElement.BackgroundBrush = backgroundBrush;
+			if (!layer.AddAdornment(AdornmentPositioningBehavior.TextRelative, fullSpan, null, markerElement, markerElementRemovedCallBack))
+				OnMarkerElementRemoved();
+		}
+		readonly AdornmentRemovedCallback markerElementRemovedCallBack;
+
+		void OnMarkerElementRemoved() => markerElement = null;
+
+		KeyValuePair<SnapshotSpan, Geometry>? CreateStreamSelection() {
+			Debug.Assert(!textSelection.IsEmpty && textSelection.Mode == TextSelectionMode.Stream);
+			bool isMultiLine = MarkerHelper.IsMultiLineSpan(textSelection.TextView, textSelection.StreamSelectionSpan.SnapshotSpan);
+			var span = textSelection.StreamSelectionSpan.Overlap(new VirtualSnapshotSpan(textSelection.TextView.TextViewLines.FormattedSpan));
+			if (span == null)
+				return null;
+			var geo = MarkerHelper.CreateGeometry(textSelection.TextView, span.Value, false, isMultiLine);
+			if (geo == null)
+				return null;
+			return new KeyValuePair<SnapshotSpan, Geometry>(span.Value.SnapshotSpan, geo);
+		}
+
+		KeyValuePair<SnapshotSpan, Geometry>? CreateBoxSelection() {
+			Debug.Assert(!textSelection.IsEmpty && textSelection.Mode == TextSelectionMode.Box);
+			var allSpans = textSelection.VirtualSelectedSpans;
+			var spans = GetVisibleBoxSpans(allSpans);
+			if (spans.Count == 0)
+				return null;
+			var geo = MarkerHelper.CreateBoxGeometry(textSelection.TextView, spans, allSpans.Count > 1);
+			if (geo == null)
+				return null;
+			var fullSpan = new SnapshotSpan(spans[0].SnapshotSpan.Start, spans[spans.Count - 1].SnapshotSpan.End);
+			return new KeyValuePair<SnapshotSpan, Geometry>(fullSpan, geo);
+		}
+
+		List<VirtualSnapshotSpan> GetVisibleBoxSpans(IList<VirtualSnapshotSpan> allSpans) {
+			var list = new List<VirtualSnapshotSpan>(allSpans.Count);
+			var visibleSpan = textSelection.TextView.TextViewLines.FormattedSpan;
+			foreach (var span in allSpans) {
+				if (visibleSpan.Contains(span.SnapshotSpan))
+					list.Add(span);
+			}
+			return list;
 		}
 
 		public void OnModeUpdated() => SetNewSelection();
 		void TextSelection_SelectionChanged(object sender, EventArgs e) => SetNewSelection();
 
+		sealed class MarkerElement : UIElement {
+			readonly Geometry geometry;
+
+			public Brush BackgroundBrush {
+				get { return backgroundBrush; }
+				set {
+					if (value == null)
+						throw new ArgumentNullException(nameof(value));
+					if (!BrushComparer.Equals(value, backgroundBrush)) {
+						backgroundBrush = value;
+						InvalidateVisual();
+					}
+				}
+			}
+			Brush backgroundBrush;
+
+			public Pen Pen {
+				get { return pen; }
+				set {
+					if (pen != value) {
+						pen = value;
+						InvalidateVisual();
+					}
+				}
+			}
+			Pen pen;
+
+			public MarkerElement(Geometry geometry) {
+				if (geometry == null)
+					throw new ArgumentNullException(nameof(geometry));
+				this.geometry = geometry;
+			}
+
+			protected override void OnRender(DrawingContext drawingContext) {
+				base.OnRender(drawingContext);
+				drawingContext.DrawGeometry(BackgroundBrush, Pen, geometry);
+			}
+		}
+
+		void RemoveAllAdornments() {
+			layer.RemoveAllAdornments();
+			markerElement = null;
+		}
+
 		public void Dispose() {
-			marker.Dispose();
+			RemoveAllAdornments();
 			textSelection.TextView.Options.OptionChanged -= Options_OptionChanged;
 			textSelection.SelectionChanged -= TextSelection_SelectionChanged;
 			textSelection.TextView.LayoutChanged -= TextView_LayoutChanged;

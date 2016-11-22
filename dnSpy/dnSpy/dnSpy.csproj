@@ -704,7 +704,6 @@
     <Compile Include="Text\Editor\HorizontalScrollBarMargin.cs" />
     <Compile Include="Text\Editor\IAdornmentLayerDefinitionService.cs" />
     <Compile Include="Text\Editor\IGlyphTextMarkerServiceImpl.cs" />
-    <Compile Include="Text\Editor\IMarkerSpanCollection.cs" />
     <Compile Include="Text\Editor\IncrementalSearch\IncrementalSearch.cs" />
     <Compile Include="Text\Editor\IncrementalSearch\IncrementalSearchFactoryService.cs" />
     <Compile Include="Text\Editor\IndentHelper.cs" />
@@ -723,7 +722,6 @@
     <Compile Include="Text\Editor\LogEditor.cs" />
     <Compile Include="Text\Editor\LogEditorProvider.cs" />
     <Compile Include="Text\Editor\MarginContextMenuService.cs" />
-    <Compile Include="Text\Editor\Marker.cs" />
     <Compile Include="Text\Editor\MarkerHelper.cs" />
     <Compile Include="Text\Editor\MetadataAndOrder.cs" />
     <Compile Include="Text\Editor\MouseLocation.cs" />

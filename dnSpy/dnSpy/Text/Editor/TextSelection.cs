@@ -132,7 +132,7 @@ namespace dnSpy.Text.Editor {
 			TextView.Options.OptionChanged += Options_OptionChanged;
 			TextView.GotAggregateFocus += TextView_GotAggregateFocus;
 			TextView.LostAggregateFocus += TextView_LostAggregateFocus;
-			this.textSelectionLayer = new TextSelectionLayer(this, selectionLayer, editorFormatMap);
+			textSelectionLayer = new TextSelectionLayer(this, selectionLayer, editorFormatMap);
 			ActivationTracksFocus = true;
 		}
 
