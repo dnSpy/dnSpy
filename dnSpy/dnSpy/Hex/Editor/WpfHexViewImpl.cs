@@ -233,6 +233,7 @@ namespace dnSpy.Hex.Editor {
 			UpdateBackground();
 			CreateFormattedLineSource(ViewportWidth);
 			var dummy = BufferLines;
+			HexSelection.Initialize();
 			HexCaret.Initialize();
 			InitializeZoom();
 			UpdateRemoveExtraTextLineVerticalPixels();

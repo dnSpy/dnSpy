@@ -1176,5 +1176,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.HexCurrentLineNoFocus"/>
 		/// </summary>
 		public const string HexCurrentLineNoFocus = "Theme-" + nameof(HexCurrentLineNoFocus);
+
+		/// <summary>
+		/// <see cref="TextColor.HexInactiveSelectedText"/>
+		/// </summary>
+		public const string HexInactiveSelectedText = "Theme-" + nameof(HexInactiveSelectedText);
 	}
 }

@@ -254,6 +254,7 @@ namespace dnSpy.Contracts.Themes {
 		AppSettingsTextMatchHighlight,
 		HexCurrentLine,
 		HexCurrentLineNoFocus,
+		HexInactiveSelectedText,
 
 		// Must be last in this group
 		LastNR,

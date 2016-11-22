@@ -122,7 +122,7 @@
 		<color name="hexascii" fg="#FF000000" />
 		<color name="hexcaret" bg="#66000000" />
 		<color name="hexinactivecaret" bg="#FFFF0000" />
-		<color name="hexselection" bg="#663399FF" />
+		<color name="hexselection" bg="#FF3399FF" />
 		<color name="replprompt1" fg="Black" />
 		<color name="replprompt2" fg="Black" />
 		<color name="reploutputtext" fg="Black" />
@@ -229,5 +229,6 @@
 		<color name="appsettingstextmatchhighlight" bg="#FFF4A721" />
 		<color name="hexcurrentline" fg="#EAEAF2" />
 		<color name="hexcurrentlinenofocus" fg="#EEEEEE" />
+		<color name="hexinactiveselectedtext" bg="#FFBFCDDB" />
 	</colors>
 </theme>

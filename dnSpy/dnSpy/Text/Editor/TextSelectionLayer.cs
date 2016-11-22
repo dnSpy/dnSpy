@@ -218,7 +218,7 @@ namespace dnSpy.Text.Editor {
 			markerElement = null;
 		}
 
-		public void Dispose() {
+		internal void Dispose() {
 			RemoveAllAdornments();
 			textSelection.TextView.Options.OptionChanged -= Options_OptionChanged;
 			textSelection.SelectionChanged -= TextSelection_SelectionChanged;

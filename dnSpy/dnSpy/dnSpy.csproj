@@ -333,6 +333,7 @@
     <Compile Include="Hex\Editor\HexScrollMapFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexScrollMapImpl.cs" />
     <Compile Include="Hex\Editor\HexSelectionImpl.cs" />
+    <Compile Include="Hex\Editor\HexSelectionLayer.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationManagerImpl.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationStack.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationStackImpl.cs" />

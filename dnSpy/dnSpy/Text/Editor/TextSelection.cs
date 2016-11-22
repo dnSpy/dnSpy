@@ -86,20 +86,6 @@ namespace dnSpy.Text.Editor {
 			return list;
 		}
 
-		internal IEnumerable<VirtualSnapshotSpan> VisibleSpans {
-			get {
-				if (IsEmpty)
-					yield break;
-				if (Mode == TextSelectionMode.Stream)
-					yield return StreamSelectionSpan;
-
-				var helper = new BoxSelectionHelper(this);
-				var lines = TextView.TextViewLines.GetTextViewLinesIntersectingSpan(StreamSelectionSpan.SnapshotSpan);
-				for (int i = 0; i < lines.Count; i++)
-					yield return helper.GetSpan(lines[i]);
-			}
-		}
-
 		public TextSelectionMode Mode {
 			get { return mode; }
 			set {
@@ -235,7 +221,7 @@ namespace dnSpy.Text.Editor {
 		static bool SamePoint(VirtualSnapshotPoint a, VirtualSnapshotPoint b) =>
 			a.VirtualSpaces == b.VirtualSpaces && a.Position.Position == b.Position.Position;
 
-		public void Dispose() {
+		internal void Dispose() {
 			TextView.TextBuffer.ChangedHighPriority -= TextBuffer_ChangedHighPriority;
 			TextView.Options.OptionChanged -= Options_OptionChanged;
 			TextView.GotAggregateFocus -= TextView_GotAggregateFocus;

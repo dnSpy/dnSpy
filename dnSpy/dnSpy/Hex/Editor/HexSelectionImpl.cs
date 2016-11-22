@@ -27,15 +27,34 @@ using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexSelectionImpl : HexSelection {
-		public override HexView HexView { get; }//TODO:
-		public override NormalizedHexBufferSpanCollection SelectedSpans => NormalizedHexBufferSpanCollection.Empty;//TODO:
-		public override HexBufferSpan StreamSelectionSpan { get; }//TODO:
-		public override bool IsEmpty => true;//TODO:
-		public override bool IsActive { get; set; }//TODO:
-		public override bool ActivationTracksFocus { get; set; }//TODO:
-		public override event EventHandler SelectionChanged;//TODO:
-		public override HexBufferPoint ActivePoint { get; }//TODO:
-		public override HexBufferPoint AnchorPoint { get; }//TODO:
+		internal static HexSpanSelectionFlags SelectionFlags = HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell;
+		public override HexView HexView { get; }
+		public override bool IsEmpty => AnchorPoint == ActivePoint;
+		public override HexBufferPoint AnchorPoint => anchorPoint;
+		public override HexBufferPoint ActivePoint => activePoint;
+		public override event EventHandler SelectionChanged;
+
+		public override bool IsActive {
+			get { return hexSelectionLayer.IsActive; }
+			set { hexSelectionLayer.IsActive = value; }
+		}
+
+		public override bool ActivationTracksFocus {
+			get { return activationTracksFocus; }
+			set {
+				if (activationTracksFocus == value)
+					return;
+				activationTracksFocus = value;
+				if (value)
+					IsActive = HexView.HasAggregateFocus;
+			}
+		}
+		bool activationTracksFocus;
+
+		public override NormalizedHexBufferSpanCollection SelectedSpans => new NormalizedHexBufferSpanCollection(StreamSelectionSpan);
+
+		readonly HexSelectionLayer hexSelectionLayer;
+		HexBufferPoint anchorPoint, activePoint;
 
 		public HexSelectionImpl(WpfHexView hexView, HexAdornmentLayer selectionLayer, VSTC.IEditorFormatMap editorFormatMap) {
 			if (hexView == null)
@@ -44,29 +63,94 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(selectionLayer));
 			if (editorFormatMap == null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
-			//TODO:
 			HexView = hexView;
+			HexView.GotAggregateFocus += HexView_GotAggregateFocus;
+			HexView.LostAggregateFocus += HexView_LostAggregateFocus;
+			hexSelectionLayer = new HexSelectionLayer(this, selectionLayer, editorFormatMap);
 			ActivationTracksFocus = true;
 		}
 
-		public override void Select(HexBufferSpan selectionSpan, bool isReversed) {
-			//TODO:
+		internal void Initialize() {
+			activePoint = anchorPoint = HexView.BufferLines.BufferStart;
+			HexView.BufferLinesChanged += HexView_BufferLinesChanged;
 		}
 
-		public override void Select(HexBufferPoint anchorPoint, HexBufferPoint activePoint) {
-			//TODO:
+		void HexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) {
+			var newActivePoint = Filter(activePoint);
+			var newAnchorPoint = Filter(anchorPoint);
+			if (newActivePoint != activePoint || newAnchorPoint != anchorPoint)
+				Select(newAnchorPoint, newActivePoint);
 		}
 
-		public override IEnumerable<VST.Span> GetSelectionOnTextViewLine(HexViewLine line) {
-			throw new NotImplementedException();//TODO:
+		HexBufferPoint Filter(HexBufferPoint position) {
+			if (position < HexView.BufferLines.BufferStart)
+				return HexView.BufferLines.BufferStart;
+			if (position > HexView.BufferLines.BufferEnd)
+				return HexView.BufferLines.BufferEnd;
+			return position;
+		}
+
+		void HexView_GotAggregateFocus(object sender, EventArgs e) {
+			if (ActivationTracksFocus)
+				IsActive = true;
+		}
+
+		void HexView_LostAggregateFocus(object sender, EventArgs e) {
+			if (ActivationTracksFocus)
+				IsActive = false;
 		}
 
 		public override void Clear() {
-			//TODO:
+			bool isEmpty = IsEmpty;
+			ActivationTracksFocus = true;
+			anchorPoint = activePoint;
+			if (!isEmpty)
+				SelectionChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		public override IEnumerable<VST.Span> GetSelectionOnHexViewLine(HexViewLine line) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			if (line.BufferLine.LineProvider != HexView.BufferLines)
+				throw new ArgumentException();
+
+			foreach (var info in line.BufferLine.GetSpans(StreamSelectionSpan, SelectionFlags)) {
+				if (info.TextSpan.Length != 0)
+					yield return info.TextSpan;
+			}
+		}
+
+		public override void Select(HexBufferSpan selectionSpan, bool isReversed) {
+			if (isReversed)
+				Select(selectionSpan.End, selectionSpan.Start);
+			else
+				Select(selectionSpan.Start, selectionSpan.End);
+		}
+
+		public override void Select(HexBufferPoint anchorPoint, HexBufferPoint activePoint) {
+			if (anchorPoint.Buffer != activePoint.Buffer)
+				throw new ArgumentException();
+			if (anchorPoint.Buffer != HexView.Buffer)
+				throw new ArgumentException();
+			if (anchorPoint == activePoint) {
+				Clear();
+				return;
+			}
+			ActivationTracksFocus = true;
+
+			bool sameSelection = this.anchorPoint == anchorPoint && this.activePoint == activePoint;
+			if (!sameSelection) {
+				this.anchorPoint = anchorPoint;
+				this.activePoint = activePoint;
+				SelectionChanged?.Invoke(this, EventArgs.Empty);
+			}
 		}
 
 		internal void Dispose() {
-			//TODO:
+			HexView.GotAggregateFocus -= HexView_GotAggregateFocus;
+			HexView.LostAggregateFocus -= HexView_LostAggregateFocus;
+			HexView.BufferLinesChanged -= HexView_BufferLinesChanged;
+			hexSelectionLayer.Dispose();
 		}
 	}
 }

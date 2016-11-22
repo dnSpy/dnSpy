@@ -256,6 +256,7 @@ namespace dnSpy.Contracts.Text {
 		AppSettingsTextMatchHighlight,
 		HexCurrentLine,
 		HexCurrentLineNoFocus,
+		HexInactiveSelectedText,
 
 		/// <summary>
 		/// Must be last
@@ -498,6 +499,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object AppSettingsTextMatchHighlight = TextColor.AppSettingsTextMatchHighlight;
 		public static readonly object HexCurrentLine = TextColor.HexCurrentLine;
 		public static readonly object HexCurrentLineNoFocus = TextColor.HexCurrentLineNoFocus;
+		public static readonly object HexInactiveSelectedText = TextColor.HexInactiveSelectedText;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -742,6 +744,7 @@ namespace dnSpy.Contracts.Text {
 			AppSettingsTextMatchHighlight,
 			HexCurrentLine,
 			HexCurrentLineNoFocus,
+			HexInactiveSelectedText,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

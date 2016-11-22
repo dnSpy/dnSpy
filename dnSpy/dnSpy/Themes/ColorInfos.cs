@@ -29,8 +29,8 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.InactiveSelectedText, "Inactive Selected text") {
 				DefaultBackground = "#FFBFCDDB",
 			},
-			new BrushColorInfo(ColorType.HexSelection, "Selected text in hex editor") {
-				DefaultBackground = "#663399FF",
+			new BrushColorInfo(ColorType.HexSelection, "Selected text (Hex Editor)") {
+				DefaultBackground = "#FF3399FF",
 			},
 			new BrushColorInfo(ColorType.GlyphMargin, "Indicator Margin") {
 				BackgroundResourceKey = "GlyphMarginBackground",
@@ -1911,6 +1911,9 @@ namespace dnSpy.Themes {
 			},
 			new BrushColorInfo(ColorType.HexCurrentLineNoFocus, "Current line (no keyboard focus) (Hex Editor)") {
 				DefaultForeground = "#EEEEEE",
+			},
+			new BrushColorInfo(ColorType.HexInactiveSelectedText, "Inactive Selected text (Hex Editor)") {
+				DefaultBackground = "#FFBFCDDB",
 			},
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {

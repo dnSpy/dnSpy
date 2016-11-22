@@ -61,12 +61,12 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="line">Line</param>
 		/// <returns></returns>
-		public abstract IEnumerable<VST.Span> GetSelectionOnTextViewLine(HexViewLine line);
+		public abstract IEnumerable<VST.Span> GetSelectionOnHexViewLine(HexViewLine line);
 
 		/// <summary>
 		/// Gets the selected span
 		/// </summary>
-		public abstract HexBufferSpan StreamSelectionSpan { get; }
+		public HexBufferSpan StreamSelectionSpan => new HexBufferSpan(Start, End);
 
 		/// <summary>
 		/// true if the selection is reversed

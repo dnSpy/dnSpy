@@ -1199,6 +1199,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexCurrentLineNoFocus)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexCurrentLineNoFocusClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexInactiveSelectedText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexInactiveSelectedTextClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3272,6 +3277,15 @@ namespace dnSpy.Text.Classification {
 		[Order(Before = Priority.Default)]
 		sealed class HexCurrentLineNoFocus : ThemeClassificationFormatDefinition {
 			HexCurrentLineNoFocus() : base(TextColor.HexCurrentLineNoFocus) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexInactiveSelectedText)]
+		[Name(ThemeClassificationTypeNameKeys.HexInactiveSelectedText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexInactiveSelectedText : ThemeClassificationFormatDefinition {
+			HexInactiveSelectedText() : base(TextColor.HexInactiveSelectedText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

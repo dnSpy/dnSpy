@@ -261,6 +261,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AppSettingsTextMatchHighlight),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexCurrentLine),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexCurrentLineNoFocus),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexInactiveSelectedText),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);
