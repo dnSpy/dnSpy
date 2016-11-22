@@ -111,8 +111,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public double ValuesLeft => valuesCaretGeometry.Rect.Left;
-		public double ValuesRight => valuesCaretGeometry.Rect.Right;
-		public double ValuesBottom => valuesCaretGeometry.Rect.Bottom;
+		public double ValuesRight => ValuesLeft + ValuesWidth;
+		public double ValuesBottom => ValuesTop + ValuesHeight;
 		public double ValuesWidth => valuesCaretGeometry.Rect.Width;
 
 		public double AsciiTop {
@@ -132,8 +132,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public double AsciiLeft => asciiCaretGeometry.Rect.Left;
-		public double AsciiRight => asciiCaretGeometry.Rect.Right;
-		public double AsciiBottom => asciiCaretGeometry.Rect.Bottom;
+		public double AsciiRight => AsciiLeft + AsciiWidth;
+		public double AsciiBottom => AsciiTop + AsciiHeight;
 		public double AsciiWidth => asciiCaretGeometry.Rect.Width;
 
 		public bool IsHidden {
@@ -267,8 +267,8 @@ namespace dnSpy.Hex.Editor {
 			drawCaretShape = line.VisibilityState != VSTF.VisibilityState.Unattached;
 			bool drawOverwriteMode = OverwriteMode;
 
-			var valuesCaretRect = GetCaretRect(line, drawOverwriteMode, drawCaretShape && IsValuesCaretPresent, HexColumnType.Values, line.BufferLine.ValueCells.GetCell(hexCaret.CurrentPosition.ValuePosition.BufferPosition), hexCaret.CurrentPosition.ValuePosition.CellPosition);
-			var asciiCaretRect = GetCaretRect(line, drawOverwriteMode, drawCaretShape && IsAsciiCaretPresent, HexColumnType.Ascii, line.BufferLine.AsciiCells.GetCell(hexCaret.CurrentPosition.AsciiPosition.BufferPosition), hexCaret.CurrentPosition.AsciiPosition.CellPosition);
+			var valuesCaretRect = GetCaretRect(line, drawOverwriteMode, HexColumnType.Values, line.BufferLine.ValueCells.GetCell(hexCaret.CurrentPosition.ValuePosition.BufferPosition), hexCaret.CurrentPosition.ValuePosition.CellPosition);
+			var asciiCaretRect = GetCaretRect(line, drawOverwriteMode, HexColumnType.Ascii, line.BufferLine.AsciiCells.GetCell(hexCaret.CurrentPosition.AsciiPosition.BufferPosition), hexCaret.CurrentPosition.AsciiPosition.CellPosition);
 
 			if (drawCaretShape) {
 				if (!imeStarted && layer.HexView.VisualElement.IsKeyboardFocused && layer.HexView.VisualElement.IsVisible)
@@ -277,8 +277,8 @@ namespace dnSpy.Hex.Editor {
 			else
 				layer.Opacity = 0;
 
-			var invalidateVisual = valuesCaretGeometry.SetProperties(valuesCaretRect, drawOverwriteMode);
-			invalidateVisual |= asciiCaretGeometry.SetProperties(asciiCaretRect, drawOverwriteMode);
+			var invalidateVisual = valuesCaretGeometry.SetProperties(valuesCaretRect, drawCaretShape, drawOverwriteMode);
+			invalidateVisual |= asciiCaretGeometry.SetProperties(asciiCaretRect, drawCaretShape, drawOverwriteMode);
 			invalidateVisual |= forceInvalidateVisual || oldDrawCaretShape != drawCaretShape;
 			if (invalidateVisual)
 				InvalidateVisual();
@@ -304,12 +304,9 @@ namespace dnSpy.Hex.Editor {
 			return new Rect(left, top, right - left, bottom - top);
 		}
 
-		Rect GetCaretRect(HexViewLine line, bool drawOverwriteMode, bool drawCaret, HexColumnType column, HexCell cell, int cellPosition) {
-			if (!drawCaret)
-				return Rect.Empty;
-			Debug.Assert(cell != null);
+		Rect GetCaretRect(HexViewLine line, bool drawOverwriteMode, HexColumnType column, HexCell cell, int cellPosition) {
 			if (cell == null)
-				return Rect.Empty;
+				return new Rect();
 
 			int linePosition = cell.CellSpan.Start + cellPosition;
 			if (hexCaret.CurrentPosition.ActiveColumn != column) {
@@ -402,7 +399,7 @@ namespace dnSpy.Hex.Editor {
 
 			public Geometry Geometry {
 				get {
-					if (rect.IsEmpty) {
+					if (!visible) {
 						Debug.Assert(geometry == null);
 						return null;
 					}
@@ -416,20 +413,22 @@ namespace dnSpy.Hex.Editor {
 			}
 			Geometry geometry;
 			Rect rect;
+			bool visible;
 
 			public CaretGeometry() {
 				rect = Rect.Empty;
 				IsOverwriteMode = false;
 			}
 
-			public bool SetProperties(Rect rect, bool overwriteMode) {
-				var samePos = this.rect == rect;
+			public bool SetProperties(Rect rect, bool visible, bool overwriteMode) {
+				var samePos = this.rect == rect && this.visible == visible;
 				if (samePos && IsOverwriteMode == overwriteMode)
 					return false;
 
 				if (!samePos)
 					geometry = null;
 				this.rect = rect;
+				this.visible = visible;
 				IsOverwriteMode = overwriteMode;
 				return true;
 			}

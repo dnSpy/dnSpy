@@ -504,7 +504,7 @@ namespace dnSpy.Hex.Editor {
 			}
 			SetExplicitPosition(CreateColumnPosition(closestPos.Value));
 			if (captureHorizontalPosition)
-				preferredXCoordinate = closestPos.Value.Column == HexColumnType.Values ? ValuesLeft : AsciiLeft;
+				SavePreferredXCoordinate();
 			if (captureVerticalPosition)
 				SavePreferredYCoordinate();
 			return Position;
@@ -566,7 +566,7 @@ namespace dnSpy.Hex.Editor {
 
 			SetExplicitPosition(position);
 			if (captureHorizontalPosition)
-				preferredXCoordinate = position.ActiveColumn == HexColumnType.Values ? ValuesLeft : AsciiLeft;
+				SavePreferredXCoordinate();
 			SavePreferredYCoordinate();
 			return Position;
 		}
@@ -679,6 +679,12 @@ namespace dnSpy.Hex.Editor {
 			if (line.BufferSpan.Start <= firstVisLine.BufferSpan.Start)
 				return hexView.HexViewLines.FirstOrDefault(a => a.IsVisible());
 			return hexView.HexViewLines.LastOrDefault(a => a.IsVisible());
+		}
+
+		void SavePreferredXCoordinate() {
+			preferredXCoordinate = currentPosition.ActiveColumn == HexColumnType.Values ? ValuesLeft : AsciiLeft;
+			if (double.IsNaN(preferredXCoordinate) || preferredXCoordinate < 0 || preferredXCoordinate > 100000000)
+				preferredXCoordinate = 0;
 		}
 
 		void SavePreferredYCoordinate() {
