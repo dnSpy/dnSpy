@@ -1189,6 +1189,16 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.AppSettingsTextMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition AppSettingsTextMatchHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCurrentLine)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCurrentLineClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCurrentLineNoFocus)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCurrentLineNoFocusClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3244,6 +3254,24 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High)]
 		sealed class AppSettingsTextMatchHighlight : ThemeMarkerFormatDefinition {
 			AppSettingsTextMatchHighlight() : base(TextColor.AppSettingsTextMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCurrentLine)]
+		[Name(ThemeClassificationTypeNameKeys.HexCurrentLine)]
+		[UserVisible(true)]
+		[Order(Before = Priority.Default)]
+		sealed class HexCurrentLine : ThemeClassificationFormatDefinition {
+			HexCurrentLine() : base(TextColor.HexCurrentLine) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCurrentLineNoFocus)]
+		[Name(ThemeClassificationTypeNameKeys.HexCurrentLineNoFocus)]
+		[UserVisible(true)]
+		[Order(Before = Priority.Default)]
+		sealed class HexCurrentLineNoFocus : ThemeClassificationFormatDefinition {
+			HexCurrentLineNoFocus() : base(TextColor.HexCurrentLineNoFocus) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

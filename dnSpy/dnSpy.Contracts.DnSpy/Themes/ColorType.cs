@@ -252,6 +252,8 @@ namespace dnSpy.Contracts.Themes {
 		GacMatchHighlight,
 		AppSettingsTreeViewNodeMatchHighlight,
 		AppSettingsTextMatchHighlight,
+		HexCurrentLine,
+		HexCurrentLineNoFocus,
 
 		// Must be last in this group
 		LastNR,

@@ -254,6 +254,8 @@ namespace dnSpy.Contracts.Text {
 		GacMatchHighlight,
 		AppSettingsTreeViewNodeMatchHighlight,
 		AppSettingsTextMatchHighlight,
+		HexCurrentLine,
+		HexCurrentLineNoFocus,
 
 		/// <summary>
 		/// Must be last
@@ -494,6 +496,8 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object GacMatchHighlight = TextColor.GacMatchHighlight;
 		public static readonly object AppSettingsTreeViewNodeMatchHighlight = TextColor.AppSettingsTreeViewNodeMatchHighlight;
 		public static readonly object AppSettingsTextMatchHighlight = TextColor.AppSettingsTextMatchHighlight;
+		public static readonly object HexCurrentLine = TextColor.HexCurrentLine;
+		public static readonly object HexCurrentLineNoFocus = TextColor.HexCurrentLineNoFocus;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -736,6 +740,8 @@ namespace dnSpy.Contracts.Text {
 			GacMatchHighlight,
 			AppSettingsTreeViewNodeMatchHighlight,
 			AppSettingsTextMatchHighlight,
+			HexCurrentLine,
+			HexCurrentLineNoFocus,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

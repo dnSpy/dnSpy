@@ -1166,5 +1166,15 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.AppSettingsTextMatchHighlight"/>
 		/// </summary>
 		public const string AppSettingsTextMatchHighlight = nameof(AppSettingsTextMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentLine"/>
+		/// </summary>
+		public const string HexCurrentLine = nameof(HexCurrentLine);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentLineNoFocus"/>
+		/// </summary>
+		public const string HexCurrentLineNoFocus = nameof(HexCurrentLineNoFocus);
 	}
 }

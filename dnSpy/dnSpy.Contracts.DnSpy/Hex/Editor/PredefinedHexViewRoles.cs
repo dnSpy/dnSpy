@@ -36,6 +36,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string Structured = prefix + nameof(Structured);
 		public const string Zoomable = prefix + nameof(Zoomable);
 		public const string CanHaveBackgroundImage = prefix + nameof(CanHaveBackgroundImage);
+		public const string CanHaveCurrentLineHighlighter = prefix + nameof(CanHaveCurrentLineHighlighter);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

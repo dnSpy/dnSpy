@@ -22,56 +22,21 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Predefined hex adornment layer names
 	/// </summary>
 	public static class PredefinedHexAdornmentLayers {
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		const string prefix = "hex-";
-
-		/// <summary>
-		/// Bottom layer. All layers should normally be after this layer.
-		/// </summary>
 		public const string BottomLayer = prefix + nameof(BottomLayer);
-
-		/// <summary>
-		/// Top layer. All layers should normally be before this layer.
-		/// </summary>
 		public const string TopLayer = prefix + nameof(TopLayer);
-
-		/// <summary>
-		/// Caret adornment layer
-		/// </summary>
+		public const string Outlining = prefix + nameof(Outlining);
 		public const string Caret = prefix + nameof(Caret);
-
-		/// <summary>
-		/// Current line highlighter adornment layer
-		/// </summary>
 		public const string CurrentLineHighlighter = prefix + nameof(CurrentLineHighlighter);
-
-		/// <summary>
-		/// Selection adornment layer
-		/// </summary>
 		public const string Selection = prefix + nameof(Selection);
-
-		/// <summary>
-		/// Text adornment layer
-		/// </summary>
 		public const string Text = prefix + nameof(Text);
-
-		/// <summary>
-		/// Text marker adornment layer for markers with a negative z-index
-		/// </summary>
-		public const string NegativeTextMarker = prefix + nameof(NegativeTextMarker);
-
-		/// <summary>
-		/// Text marker adornment layer
-		/// </summary>
 		public const string TextMarker = prefix + nameof(TextMarker);
-
-		/// <summary>
-		/// Background image adornment layer
-		/// </summary>
+		public const string NegativeTextMarker = prefix + nameof(NegativeTextMarker);
+		public const string GlyphTextMarker = prefix + nameof(GlyphTextMarker);
 		public const string BackgroundImage = prefix + nameof(BackgroundImage);
-
-		/// <summary>
-		/// Search adornment layer
-		/// </summary>
 		public const string Search = prefix + nameof(Search);
+		public const string IntraTextAdornment = prefix + nameof(IntraTextAdornment);
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

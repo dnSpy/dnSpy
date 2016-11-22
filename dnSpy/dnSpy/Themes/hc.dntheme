@@ -70,6 +70,8 @@
 		<color name="gacmatchhighlight" bg="#FF008000" />
 		<color name="appsettingstreeviewnodematchhighlight" bg="#FF008000" />
 		<color name="appsettingstextmatchhighlight" bg="#FF008000" />
+		<color name="hexcurrentline" fg="#FFEEEEEE" />
+		<color name="hexcurrentlinenofocus" fg="#FFEEEEEE" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

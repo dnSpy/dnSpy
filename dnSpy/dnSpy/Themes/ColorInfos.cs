@@ -1906,6 +1906,12 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.GacMatchHighlight, "GAC Match Highlight"),
 			new BrushColorInfo(ColorType.AppSettingsTreeViewNodeMatchHighlight, "AppSettings TreeView Node Match Highlight"),
 			new BrushColorInfo(ColorType.AppSettingsTextMatchHighlight, "AppSettings Text Match Highlight"),
+			new BrushColorInfo(ColorType.HexCurrentLine, "Current line (Hex Editor)") {
+				DefaultForeground = "#EAEAF2",
+			},
+			new BrushColorInfo(ColorType.HexCurrentLineNoFocus, "Current line (no keyboard focus) (Hex Editor)") {
+				DefaultForeground = "#EEEEEE",
+			},
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
