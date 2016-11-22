@@ -151,16 +151,16 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="position">Position</param>
 		/// <returns></returns>
 		public HexCaretPosition MoveTo(HexColumnType column, HexBufferPoint position) =>
-			MoveTo(column, position, true);
+			MoveTo(column, position, HexMoveToFlags.CaptureHorizontalPosition);
 
 		/// <summary>
 		/// Moves the caret to a new position
 		/// </summary>
 		/// <param name="column">Column</param>
 		/// <param name="position">Position</param>
-		/// <param name="captureHorizontalPosition">true to capture the horizontal position</param>
+		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract HexCaretPosition MoveTo(HexColumnType column, HexBufferPoint position, bool captureHorizontalPosition);
+		public abstract HexCaretPosition MoveTo(HexColumnType column, HexBufferPoint position, HexMoveToFlags flags);
 
 		/// <summary>
 		/// Moves the caret to a new position
@@ -168,15 +168,15 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="position">Position</param>
 		/// <returns></returns>
 		public HexCaretPosition MoveTo(HexCellPosition position) =>
-			MoveTo(position, true);
+			MoveTo(position, HexMoveToFlags.CaptureHorizontalPosition);
 
 		/// <summary>
 		/// Moves the caret to a new position
 		/// </summary>
 		/// <param name="position">Position</param>
-		/// <param name="captureHorizontalPosition">true to capture the horizontal position</param>
+		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract HexCaretPosition MoveTo(HexCellPosition position, bool captureHorizontalPosition);
+		public abstract HexCaretPosition MoveTo(HexCellPosition position, HexMoveToFlags flags);
 
 		/// <summary>
 		/// Moves the caret to a new position
@@ -184,15 +184,15 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="position">Position</param>
 		/// <returns></returns>
 		public HexCaretPosition MoveTo(HexColumnPosition position) =>
-			MoveTo(position, true);
+			MoveTo(position, HexMoveToFlags.CaptureHorizontalPosition);
 
 		/// <summary>
 		/// Moves the caret to a new position
 		/// </summary>
 		/// <param name="position">Position</param>
-		/// <param name="captureHorizontalPosition">true to capture the horizontal position</param>
+		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract HexCaretPosition MoveTo(HexColumnPosition position, bool captureHorizontalPosition);
+		public abstract HexCaretPosition MoveTo(HexColumnPosition position, HexMoveToFlags flags);
 
 		/// <summary>
 		/// Moves the caret to a new position
@@ -200,6 +200,14 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="hexLine">Line</param>
 		/// <returns></returns>
 		public abstract HexCaretPosition MoveTo(HexViewLine hexLine);
+
+		/// <summary>
+		/// Moves the caret to a new position
+		/// </summary>
+		/// <param name="hexLine">Line</param>
+		/// <param name="flags">Flags</param>
+		/// <returns></returns>
+		public abstract HexCaretPosition MoveTo(HexViewLine hexLine, HexMoveToFlags flags);
 
 		/// <summary>
 		/// Moves the caret to a new position
@@ -214,9 +222,9 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="hexLine">Line</param>
 		/// <param name="xCoordinate">X coordinate</param>
-		/// <param name="captureHorizontalPosition">true to capture the horizontal position</param>
+		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract HexCaretPosition MoveTo(HexViewLine hexLine, double xCoordinate, bool captureHorizontalPosition);
+		public abstract HexCaretPosition MoveTo(HexViewLine hexLine, double xCoordinate, HexMoveToFlags flags);
 
 		/// <summary>
 		/// Moves the caret to the previous position
@@ -235,6 +243,27 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <returns></returns>
 		public abstract HexCaretPosition MoveToPreferredCoordinates();
+	}
+
+	/// <summary>
+	/// Flags passed to eg. <see cref="HexCaret.MoveTo(HexColumnType, HexBufferPoint, HexMoveToFlags)"/>
+	/// </summary>
+	[Flags]
+	public enum HexMoveToFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None								= 0,
+
+		/// <summary>
+		/// Capture horizontal position
+		/// </summary>
+		CaptureHorizontalPosition			= 0x00000001,
+
+		/// <summary>
+		/// Get the character position by finding the character closest to the x coordinate
+		/// </summary>
+		InsertionPosition					= 0x00000002,
 	}
 
 	/// <summary>

@@ -472,18 +472,23 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			double left, right, width;
-			if (IsValuesCaretPresent) {
+			switch (currentPosition.ActiveColumn) {
+			case HexColumnType.Values:
 				left = hexCaretLayer.ValuesLeft;
 				right = hexCaretLayer.ValuesRight;
 				width = hexCaretLayer.ValuesWidth;
-			}
-			else if (IsAsciiCaretPresent) {
+				break;
+
+			case HexColumnType.Ascii:
 				left = hexCaretLayer.AsciiLeft;
 				right = hexCaretLayer.AsciiRight;
 				width = hexCaretLayer.AsciiWidth;
-			}
-			else
+				break;
+
+			case HexColumnType.Offset:
+			default:
 				throw new InvalidOperationException();
+			}
 
 			double availWidth = Math.Max(0, hexView.ViewportWidth - width);
 			double extraScroll;
@@ -502,18 +507,22 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override HexCaretPosition MoveTo(HexViewLine hexLine) =>
-			MoveTo(hexLine, preferredXCoordinate, false, true);
+			MoveTo(hexLine, preferredXCoordinate, HexMoveToFlags.None, true);
+		public override HexCaretPosition MoveTo(HexViewLine hexLine, HexMoveToFlags flags) =>
+			MoveTo(hexLine, preferredXCoordinate, flags, true);
 		public override HexCaretPosition MoveTo(HexViewLine hexLine, double xCoordinate) =>
-			MoveTo(hexLine, xCoordinate, true, true);
-		public override HexCaretPosition MoveTo(HexViewLine hexLine, double xCoordinate, bool captureHorizontalPosition) =>
-			MoveTo(hexLine, xCoordinate, captureHorizontalPosition, true);
-		HexCaretPosition MoveTo(HexViewLine hexLine, double xCoordinate, bool captureHorizontalPosition, bool captureVerticalPosition) {
+			MoveTo(hexLine, xCoordinate, HexMoveToFlags.CaptureHorizontalPosition, true);
+		public override HexCaretPosition MoveTo(HexViewLine hexLine, double xCoordinate, HexMoveToFlags flags) =>
+			MoveTo(hexLine, xCoordinate, flags, true);
+		HexCaretPosition MoveTo(HexViewLine hexLine, double xCoordinate, HexMoveToFlags flags, bool captureVerticalPosition) {
 			if (hexLine == null)
 				throw new ArgumentNullException(nameof(hexLine));
 			if (hexLine.BufferLine.LineProvider != hexView.BufferLines)
 				throw new ArgumentException();
 
-			var linePosition = hexLine.GetInsertionLinePositionFromXCoordinate(xCoordinate);
+			var linePosition = (flags & HexMoveToFlags.InsertionPosition) != 0 ?
+					hexLine.GetInsertionLinePositionFromXCoordinate(xCoordinate) :
+					hexLine.GetVirtualLinePositionFromXCoordinate(xCoordinate);
 			var posInfo = hexLine.BufferLine.GetLinePositionInfo(linePosition);
 			var closestPos = hexLine.BufferLine.GetClosestCellPosition(posInfo, onlyVisibleCells: true);
 			if (closestPos == null) {
@@ -521,7 +530,7 @@ namespace dnSpy.Hex.Editor {
 				closestPos = new HexCellPosition(currentPosition.ActiveColumn, hexLine.BufferStart, 0);
 			}
 			SetExplicitPosition(CreateColumnPosition(closestPos.Value));
-			if (captureHorizontalPosition)
+			if ((flags & HexMoveToFlags.CaptureHorizontalPosition) != 0)
 				SavePreferredXCoordinate();
 			if (captureVerticalPosition)
 				SavePreferredYCoordinate();
@@ -552,7 +561,7 @@ namespace dnSpy.Hex.Editor {
 			return new HexCellPosition(HexColumnType.Values, cell.BufferStart, 0);
 		}
 
-		public override HexCaretPosition MoveTo(HexColumnType column, HexBufferPoint position, bool captureHorizontalPosition) {
+		public override HexCaretPosition MoveTo(HexColumnType column, HexBufferPoint position, HexMoveToFlags flags) {
 			if (column != HexColumnType.Values && column != HexColumnType.Ascii)
 				throw new ArgumentOutOfRangeException(nameof(column));
 			if (position.IsDefault)
@@ -562,19 +571,19 @@ namespace dnSpy.Hex.Editor {
 
 			var cellPos = column == HexColumnType.Values ? CreateValuesCellPosition(position) : new HexCellPosition(column, position, 0);
 			var colPos = CreateColumnPosition(cellPos);
-			return MoveTo(colPos, captureHorizontalPosition);
+			return MoveTo(colPos, flags);
 		}
 
-		public override HexCaretPosition MoveTo(HexCellPosition position, bool captureHorizontalPosition) {
+		public override HexCaretPosition MoveTo(HexCellPosition position, HexMoveToFlags flags) {
 			if (position.IsDefault)
 				throw new ArgumentException();
 			if (!hexView.BufferLines.IsValidPosition(position.BufferPosition))
 				throw new ArgumentOutOfRangeException(nameof(position));
 			var colPos = CreateColumnPosition(position);
-			return MoveTo(colPos, captureHorizontalPosition);
+			return MoveTo(colPos, flags);
 		}
 
-		public override HexCaretPosition MoveTo(HexColumnPosition position, bool captureHorizontalPosition) {
+		public override HexCaretPosition MoveTo(HexColumnPosition position, HexMoveToFlags flags) {
 			if (position.IsDefault)
 				throw new ArgumentException();
 			if (!hexView.BufferLines.IsValidPosition(position.ValuePosition.BufferPosition))
@@ -583,7 +592,7 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentOutOfRangeException(nameof(position));
 
 			SetExplicitPosition(position);
-			if (captureHorizontalPosition)
+			if ((flags & HexMoveToFlags.CaptureHorizontalPosition) != 0)
 				SavePreferredXCoordinate();
 			SavePreferredYCoordinate();
 			return Position;
@@ -717,7 +726,7 @@ namespace dnSpy.Hex.Editor {
 			var textLine = hexView.HexViewLines.GetHexViewLineContainingYCoordinate(PreferredYCoordinate);
 			if (textLine == null || !textLine.IsVisible())
 				textLine = PreferredYCoordinate <= hexView.ViewportTop ? hexView.HexViewLines.FirstVisibleLine : hexView.HexViewLines.LastVisibleLine;
-			return MoveTo(textLine, preferredXCoordinate, false, false);
+			return MoveTo(textLine, preferredXCoordinate, HexMoveToFlags.None, false);
 		}
 
 		HexViewLine GetLine(HexColumnPosition position) =>

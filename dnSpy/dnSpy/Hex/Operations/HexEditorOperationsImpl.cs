@@ -391,12 +391,12 @@ namespace dnSpy.Hex.Operations {
 			ViewScroller.EnsureSpanVisible(Selection.StreamSelectionSpan, flags, options);
 		}
 
-		public override void MoveCaret(HexViewLine hexLine, double horizontalOffset, bool extendSelection) {
+		public override void MoveCaret(HexViewLine hexLine, double horizontalOffset, bool extendSelection, HexMoveToFlags flags) {
 			if (hexLine == null)
 				throw new ArgumentNullException(nameof(hexLine));
 
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
-			Caret.MoveTo(hexLine, horizontalOffset);
+			Caret.MoveTo(hexLine, horizontalOffset, flags);
 			if (extendSelection)
 				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
 			else

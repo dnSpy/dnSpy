@@ -34,6 +34,9 @@ namespace dnSpy.Hex.Editor {
 		readonly WpfHexView wpfHexView;
 		readonly HexEditorOperations editorOperations;
 
+		const bool insertionPosition = false;
+		const HexMoveToFlags hexMoveToFlags = HexMoveToFlags.None;
+
 		public DefaultHexViewMouseProcessor(WpfHexView wpfHexView, HexEditorOperationsFactoryService editorOperationsFactoryService) {
 			if (wpfHexView == null)
 				throw new ArgumentNullException(nameof(wpfHexView));
@@ -41,7 +44,7 @@ namespace dnSpy.Hex.Editor {
 			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfHexView);
 		}
 
-		HexMouseLocation GetLocation(MouseEventArgs e) => HexMouseLocation.Create(wpfHexView, e, insertionPosition: true);
+		HexMouseLocation GetLocation(MouseEventArgs e) => HexMouseLocation.Create(wpfHexView, e, insertionPosition: insertionPosition);
 
 		bool IsInSelection(HexMouseLocation mouseLoc) {
 			if (wpfHexView.Selection.IsEmpty)
@@ -61,7 +64,7 @@ namespace dnSpy.Hex.Editor {
 		public override void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
-			wpfHexView.Caret.MoveTo(mouseLoc.HexViewLine, mouseLoc.Point.X, true);
+			wpfHexView.Caret.MoveTo(mouseLoc.HexViewLine, mouseLoc.Point.X, HexMoveToFlags.CaptureHorizontalPosition);
 			if (!IsInSelection(mouseLoc))
 				wpfHexView.Selection.Clear();
 			wpfHexView.Caret.EnsureVisible();
@@ -69,9 +72,8 @@ namespace dnSpy.Hex.Editor {
 
 		void SelectToMousePosition(MouseEventArgs e, bool extendSelection) =>
 			SelectToMousePosition(GetLocation(e), extendSelection);
-		void SelectToMousePosition(HexMouseLocation mouseLoc, bool extendSelection) {
-			editorOperations.MoveCaret(mouseLoc.HexViewLine, mouseLoc.Point.X, extendSelection);
-		}
+		void SelectToMousePosition(HexMouseLocation mouseLoc, bool extendSelection) =>
+			editorOperations.MoveCaret(mouseLoc.HexViewLine, mouseLoc.Point.X, extendSelection, hexMoveToFlags);
 
 		public override void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
 			e.Handled = true;
@@ -87,7 +89,7 @@ namespace dnSpy.Hex.Editor {
 				break;
 
 			case 2:
-				editorOperations.MoveCaret(mouseLoc.HexViewLine, mouseLoc.Point.X, false);
+				editorOperations.MoveCaret(mouseLoc.HexViewLine, mouseLoc.Point.X, false, hexMoveToFlags);
 				editorOperations.SelectCurrentWord();
 				break;
 
@@ -187,7 +189,7 @@ namespace dnSpy.Hex.Editor {
 						// Same behavior as in VS: don't scroll if it's word or line selection
 						if (!mouseLoc.HexViewLine.IsVisible())
 							return;
-						wpfHexView.Caret.MoveTo(mouseLoc.HexViewLine, mouseLoc.Point.X);
+						wpfHexView.Caret.MoveTo(mouseLoc.HexViewLine, mouseLoc.Point.X, hexMoveToFlags);
 
 						if (mouseLeftDownInfo.Value.Clicks == 2)
 							editorOperations.SelectCurrentWord();
@@ -325,7 +327,7 @@ namespace dnSpy.Hex.Editor {
 					line = wpfHexView.GetHexViewLineContainingBufferPosition(lineStart);
 				if (line.IsFirstDocumentLine())
 					StopScrolling();
-				editorOperations.MoveCaret(line, xCoordinate, true);
+				editorOperations.MoveCaret(line, xCoordinate, true, hexMoveToFlags);
 				break;
 
 			case ScrollDirection.Down:
@@ -339,7 +341,7 @@ namespace dnSpy.Hex.Editor {
 					line = wpfHexView.GetHexViewLineContainingBufferPosition(lineStart);
 				if (line.IsLastDocumentLine())
 					StopScrolling();
-				editorOperations.MoveCaret(line, xCoordinate, true);
+				editorOperations.MoveCaret(line, xCoordinate, true, hexMoveToFlags);
 				break;
 
 			default:

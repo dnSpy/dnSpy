@@ -214,7 +214,17 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// <param name="hexLine">Line</param>
 		/// <param name="horizontalOffset">Horizontal offset</param>
 		/// <param name="extendSelection">true to extend the selection</param>
-		public abstract void MoveCaret(HexViewLine hexLine, double horizontalOffset, bool extendSelection);
+		public void MoveCaret(HexViewLine hexLine, double horizontalOffset, bool extendSelection) =>
+			MoveCaret(hexLine, horizontalOffset, extendSelection, HexMoveToFlags.None);
+
+		/// <summary>
+		/// Move caret to a line
+		/// </summary>
+		/// <param name="hexLine">Line</param>
+		/// <param name="horizontalOffset">Horizontal offset</param>
+		/// <param name="extendSelection">true to extend the selection</param>
+		/// <param name="flags">Flags</param>
+		public abstract void MoveCaret(HexViewLine hexLine, double horizontalOffset, bool extendSelection, HexMoveToFlags flags);
 
 		/// <summary>
 		/// Reset selection
