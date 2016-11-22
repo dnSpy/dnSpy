@@ -520,6 +520,9 @@ namespace dnSpy.Hex.Operations {
 			SetZoom(wpfHexView, zoomLevel);
 		}
 
-		public override void ToggleColumn() => HexView.Caret.ToggleActiveColumn();
+		public override void ToggleColumn() {
+			Caret.ToggleActiveColumn();
+			Caret.EnsureVisible();
+		}
 	}
 }
