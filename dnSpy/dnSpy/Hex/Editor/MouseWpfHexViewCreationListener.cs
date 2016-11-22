@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Operations;
 using dnSpy.Hex.MEF;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
@@ -30,10 +31,12 @@ namespace dnSpy.Hex.Editor {
 	[Export(typeof(WpfHexViewCreationListener))]
 	[VSTE.TextViewRole(PredefinedHexViewRoles.Interactive)]
 	sealed class MouseWpfHexViewCreationListener : WpfHexViewCreationListener {
+		readonly HexEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>[] mouseProcessorProviders;
 
 		[ImportingConstructor]
-		MouseWpfHexViewCreationListener([ImportMany] IEnumerable<Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>> mouseProcessorProviders) {
+		MouseWpfHexViewCreationListener(HexEditorOperationsFactoryService editorOperationsFactoryService, [ImportMany] IEnumerable<Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>> mouseProcessorProviders) {
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.mouseProcessorProviders = VSUTIL.Orderer.Order(mouseProcessorProviders).ToArray();
 		}
 
@@ -41,7 +44,7 @@ namespace dnSpy.Hex.Editor {
 			if (!hexView.Roles.Contains(PredefinedHexViewRoles.Interactive))
 				return;
 
-			new HexViewMouseProcessorCollection(hexView, mouseProcessorProviders);
+			new HexViewMouseProcessorCollection(hexView, editorOperationsFactoryService, mouseProcessorProviders);
 		}
 	}
 }

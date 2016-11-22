@@ -22,19 +22,22 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Operations;
 using dnSpy.Hex.MEF;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexViewMouseProcessorCollection {
 		readonly WpfHexView wpfHexView;
 		readonly WpfHexViewImpl wpfHexViewImpl;
+		readonly HexEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>[] mouseProcessorProviders;
 		readonly Func<MouseEventArgs, bool> allowEventDelegate;
 		HexMouseProcessorCollection mouseProcessorCollection;
 
-		public HexViewMouseProcessorCollection(WpfHexView wpfHexView, Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>[] mouseProcessorProviders) {
+		public HexViewMouseProcessorCollection(WpfHexView wpfHexView, HexEditorOperationsFactoryService editorOperationsFactoryService, Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>[] mouseProcessorProviders) {
 			this.wpfHexView = wpfHexView;
 			this.wpfHexViewImpl = wpfHexView as WpfHexViewImpl;
+			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.mouseProcessorProviders = mouseProcessorProviders;
 			this.allowEventDelegate = AllowMouseEvent;
 			wpfHexView.Closed += WpfHexView_Closed;
@@ -60,7 +63,7 @@ namespace dnSpy.Hex.Editor {
 					list.Add(mouseProcessor);
 			}
 			UIElement manipulationElem = null;//TODO:
-			mouseProcessorCollection = new HexMouseProcessorCollection(wpfHexView.VisualElement, manipulationElem, new DefaultHexViewMouseProcessor(wpfHexView), list.ToArray(), allowEventDelegate);
+			mouseProcessorCollection = new HexMouseProcessorCollection(wpfHexView.VisualElement, manipulationElem, new DefaultHexViewMouseProcessor(wpfHexView, editorOperationsFactoryService), list.ToArray(), allowEventDelegate);
 		}
 
 		void WpfHexView_Closed(object sender, EventArgs e) {

@@ -417,8 +417,12 @@ namespace dnSpy.Contracts.Hex {
 			case HexLinePositionInfoType.AsciiCell:
 				break;
 
-			case HexLinePositionInfoType.Offset:
 			case HexLinePositionInfoType.ValueCellSeparator:
+				Debug.Assert(position.Cell.CellSpan.End == position.Position);
+				position = HexLinePositionInfo.CreateValue(position.Cell.CellSpan.End - 1, position.Cell);
+				break;
+
+			case HexLinePositionInfoType.Offset:
 			case HexLinePositionInfoType.ColumnSeparator:
 			case HexLinePositionInfoType.VirtualSpace:
 				var closestPos = GetClosestCellPosition(position.Position);
@@ -514,7 +518,7 @@ namespace dnSpy.Contracts.Hex {
 
 		static int Compare(int linePosition, HexCell a, HexCell b) {
 			int da = GetLength(linePosition, a);
-			int db = GetLength(linePosition, a);
+			int db = GetLength(linePosition, b);
 			return da - db;
 		}
 
