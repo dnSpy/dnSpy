@@ -169,6 +169,16 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		public HexBufferSpan BufferSpan => BufferLine.BufferSpan;
 
 		/// <summary>
+		/// Gets the start position
+		/// </summary>
+		public HexBufferPoint BufferStart => BufferSpan.Start;
+
+		/// <summary>
+		/// Gets the end position
+		/// </summary>
+		public HexBufferPoint BufferEnd => BufferSpan.End;
+
+		/// <summary>
 		/// Returns true if <paramref name="bufferPosition"/> lies within this line
 		/// </summary>
 		/// <param name="bufferPosition">Position</param>

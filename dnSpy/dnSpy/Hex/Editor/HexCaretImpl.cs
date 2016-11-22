@@ -178,9 +178,6 @@ namespace dnSpy.Hex.Editor {
 			return cell.BufferSpan.Contains(oldPos.BufferPosition);
 		}
 
-		static bool SpanContains(HexBufferSpan span, HexBufferPoint position) =>
-			span.Length == 0 ? span.Start == position : span.Contains(position);
-
 		void HexView_ZoomLevelChanged(object sender, VSTE.ZoomLevelChangedEventArgs e) =>
 			savePreferredCoordinates = true;
 		bool savePreferredCoordinates;
@@ -467,11 +464,11 @@ namespace dnSpy.Hex.Editor {
 				var firstVisibleLine = hexView.HexViewLines?.FirstVisibleLine;
 				if (firstVisibleLine == null || !firstVisibleLine.IsVisible())
 					relativeTo = VSTE.ViewRelativePosition.Top;
-				else if (line.BufferSpan.Start.Position <= firstVisibleLine.BufferSpan.Start.Position)
+				else if (line.BufferStart <= firstVisibleLine.BufferStart)
 					relativeTo = VSTE.ViewRelativePosition.Top;
 				else
 					relativeTo = VSTE.ViewRelativePosition.Bottom;
-				hexView.DisplayHexLineContainingBufferPosition(line.BufferSpan.Start, 0, relativeTo);
+				hexView.DisplayHexLineContainingBufferPosition(line.BufferStart, 0, relativeTo);
 			}
 
 			double left, right, width;
@@ -521,7 +518,7 @@ namespace dnSpy.Hex.Editor {
 			var closestPos = hexLine.BufferLine.GetClosestCellPosition(posInfo, onlyVisibleCells: true);
 			if (closestPos == null) {
 				Debug.Assert(hexView.BufferLines.BufferSpan.Length == 0);
-				closestPos = new HexCellPosition(currentPosition.ActiveColumn, hexLine.BufferSpan.Start, 0);
+				closestPos = new HexCellPosition(currentPosition.ActiveColumn, hexLine.BufferStart, 0);
 			}
 			SetExplicitPosition(CreateColumnPosition(closestPos.Value));
 			if (captureHorizontalPosition)
@@ -697,7 +694,7 @@ namespace dnSpy.Hex.Editor {
 				return line;
 			var firstVisLine = hexView.HexViewLines.FirstVisibleLine;
 			// Don't return FirstVisibleLine/LastVisibleLine since they will return a hidden line if it fails to find a visible line
-			if (line.BufferSpan.Start <= firstVisLine.BufferSpan.Start)
+			if (line.BufferStart <= firstVisLine.BufferStart)
 				return hexView.HexViewLines.FirstOrDefault(a => a.IsVisible());
 			return hexView.HexViewLines.LastOrDefault(a => a.IsVisible());
 		}

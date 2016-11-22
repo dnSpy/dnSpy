@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Formatting {
 			if (!Contains(point))
 				return null;
 			foreach (var line in Lines) {
-				if (point <= line.BufferSpan.Start || line.ContainsBufferPosition(point))
+				if (point <= line.BufferStart || line.ContainsBufferPosition(point))
 					return line;
 			}
 			return Lines[Lines.Length - 1];

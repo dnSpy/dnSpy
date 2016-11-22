@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Editor {
 			if (lines.Count == 0)
 				formattedSpan = new HexBufferSpan(hexView.Buffer, new HexSpan(HexPosition.Zero, 0));
 			else
-				formattedSpan = new HexBufferSpan(lines[0].BufferSpan.Start, lines[lines.Count - 1].BufferSpan.End);
+				formattedSpan = new HexBufferSpan(lines[0].BufferStart, lines[lines.Count - 1].BufferEnd);
 			Debug.Assert(this.lines.Count > 0);
 		}
 

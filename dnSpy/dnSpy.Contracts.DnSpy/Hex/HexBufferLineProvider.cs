@@ -246,7 +246,7 @@ namespace dnSpy.Contracts.Hex {
 			// Allow the last position since it's so easy to accidentally pass in the end position.
 			// The text editor API also allows this so to make everything easier, also allow it here,
 			// but treat it as Max(StartPosition, EndPosition - 1) (treating them as signed integers)
-			return StartPosition <= position && position <= EndPosition;
+			return BufferStart <= position && position <= BufferEnd;
 		}
 
 		/// <summary>
@@ -258,9 +258,9 @@ namespace dnSpy.Contracts.Hex {
 		public HexBufferPoint FilterAndVerify(HexBufferPoint position) {
 			if (!IsValidPosition(position))
 				throw new ArgumentOutOfRangeException(nameof(position));
-			if (position != EndPosition)
+			if (position != BufferEnd)
 				return position;
-			return StartPosition == EndPosition ? position : position - 1;
+			return BufferStart == BufferEnd ? position : position - 1;
 		}
 
 		/// <summary>

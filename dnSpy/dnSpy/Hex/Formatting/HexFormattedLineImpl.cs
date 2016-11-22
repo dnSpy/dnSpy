@@ -338,11 +338,11 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (bufferPosition.Buffer != Buffer)
 				throw new ArgumentException();
-			if (!(BufferSpan.Start <= bufferPosition))
+			if (!(BufferStart <= bufferPosition))
 				return false;
 			if (IsLastVisualLine)
-				return bufferPosition <= BufferSpan.End;
-			return bufferPosition < BufferSpan.End;
+				return bufferPosition <= BufferEnd;
+			return bufferPosition < BufferEnd;
 		}
 
 		public override bool IntersectsBufferSpan(HexBufferSpan bufferSpan) {
@@ -350,11 +350,11 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (bufferSpan.Buffer != Buffer)
 				throw new ArgumentException();
-			if (BufferSpan.Start > bufferSpan.End)
+			if (BufferStart > bufferSpan.End)
 				return false;
-			if (bufferSpan.Start < BufferSpan.End)
+			if (bufferSpan.Start < BufferEnd)
 				return true;
-			return IsLastVisualLine && bufferSpan.Start == BufferSpan.End;
+			return IsLastVisualLine && bufferSpan.Start == BufferEnd;
 		}
 
 		public override VSTF.TextBounds? GetAdornmentBounds(object identityTag) {

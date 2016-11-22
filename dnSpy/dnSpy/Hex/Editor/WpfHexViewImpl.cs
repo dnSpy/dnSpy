@@ -360,7 +360,7 @@ namespace dnSpy.Hex.Editor {
 			else {
 				var line = wpfHexViewLineCollection.FirstVisibleLine;
 				verticalDistance = line.Top - ViewportTop;
-				bufferPosition = line.BufferSpan.Start;
+				bufferPosition = line.BufferStart;
 			}
 
 			DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop);
@@ -770,7 +770,7 @@ namespace dnSpy.Hex.Editor {
 
 							var line = wpfHexViewLineCollection.FirstVisibleLine;
 							verticalDistance = line.Top - ViewportTop;
-							bufferPosition = line.BufferSpan.Start;
+							bufferPosition = line.BufferStart;
 							if (bufferPosition < BufferLines.BufferStart)
 								bufferPosition = BufferLines.BufferStart;
 							else if (bufferPosition > BufferLines.BufferEnd)

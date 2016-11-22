@@ -156,14 +156,14 @@ namespace dnSpy.Hex.Editor {
 				if (alwaysCenter || (!allLinesFullyVisible && !minimumScroll)) {
 					double height = last.Bottom - first.Top;
 					double verticalDistance = (hexView.ViewportHeight - height) / 2;
-					hexView.DisplayHexLineContainingBufferPosition(first.BufferSpan.Start, verticalDistance, VSTE.ViewRelativePosition.Top);
+					hexView.DisplayHexLineContainingBufferPosition(first.BufferStart, verticalDistance, VSTE.ViewRelativePosition.Top);
 					return;
 				}
 
 				if (first.VisibilityState != VSTF.VisibilityState.FullyVisible)
-					hexView.DisplayHexLineContainingBufferPosition(first.BufferSpan.Start, 0, VSTE.ViewRelativePosition.Top);
+					hexView.DisplayHexLineContainingBufferPosition(first.BufferStart, 0, VSTE.ViewRelativePosition.Top);
 				else if (last.VisibilityState != VSTF.VisibilityState.FullyVisible)
-					hexView.DisplayHexLineContainingBufferPosition(last.BufferSpan.Start, 0, VSTE.ViewRelativePosition.Bottom);
+					hexView.DisplayHexLineContainingBufferPosition(last.BufferStart, 0, VSTE.ViewRelativePosition.Bottom);
 
 				if (showStart) {
 					var line = hexView.HexViewLines.GetHexViewLineContainingBufferPosition(firstSpan.Start);
@@ -189,7 +189,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		HexBufferSpan VisibleSpan => new HexBufferSpan(hexView.HexViewLines.FirstVisibleLine.BufferSpan.Start, hexView.HexViewLines.LastVisibleLine.BufferSpan.End);
+		HexBufferSpan VisibleSpan => new HexBufferSpan(hexView.HexViewLines.FirstVisibleLine.BufferStart, hexView.HexViewLines.LastVisibleLine.BufferEnd);
 
 		public override void ScrollViewportHorizontallyByPixels(double distanceToScroll) =>
 			hexView.ViewportLeft += distanceToScroll;
@@ -199,7 +199,7 @@ namespace dnSpy.Hex.Editor {
 			if (lines == null)
 				return;
 			var line = distanceToScroll >= 0 ? lines.FirstVisibleLine : lines.LastVisibleLine;
-			hexView.DisplayHexLineContainingBufferPosition(line.BufferSpan.Start, line.Top - hexView.ViewportTop + distanceToScroll, VSTE.ViewRelativePosition.Top);
+			hexView.DisplayHexLineContainingBufferPosition(line.BufferStart, line.Top - hexView.ViewportTop + distanceToScroll, VSTE.ViewRelativePosition.Top);
 		}
 
 		public override void ScrollViewportVerticallyByLines(VSTE.ScrollDirection direction, int count) {
@@ -212,8 +212,8 @@ namespace dnSpy.Hex.Editor {
 					if (i == 0) {
 						if (line.VisibilityState == VSTF.VisibilityState.PartiallyVisible)
 							pixels += hexView.ViewportTop - line.Top;
-						if (line.BufferSpan.Start > hexView.BufferLines.BufferStart) {
-							line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.Start - 1);
+						if (line.BufferStart > hexView.BufferLines.BufferStart) {
+							line = hexView.GetHexViewLineContainingBufferPosition(line.BufferStart - 1);
 							pixels += line.Height;
 						}
 					}
@@ -221,7 +221,7 @@ namespace dnSpy.Hex.Editor {
 						if (line.VisibilityState == VSTF.VisibilityState.Unattached) {
 							// Height is only fully initialized once it's been shown on the screen
 							// (its LineTransform property is used to calculate Height)
-							var lineStart = line.BufferSpan.Start;
+							var lineStart = line.BufferStart;
 							hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, VSTE.ViewRelativePosition.Top);
 							line = hexView.GetHexViewLineContainingBufferPosition(lineStart);
 							Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
@@ -230,9 +230,9 @@ namespace dnSpy.Hex.Editor {
 						else
 							pixels += line.Height;
 					}
-					if (line.BufferSpan.Start <= hexView.BufferLines.BufferStart)
+					if (line.BufferStart <= hexView.BufferLines.BufferStart)
 						break;
-					line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.Start - 1);
+					line = hexView.GetHexViewLineContainingBufferPosition(line.BufferStart - 1);
 				}
 				if (pixels != 0)
 					ScrollViewportVerticallyByPixels(pixels);
@@ -249,7 +249,7 @@ namespace dnSpy.Hex.Editor {
 							pixels += line.Height;
 						else {
 							pixels += line.Bottom - hexView.ViewportTop;
-							line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.End);
+							line = hexView.GetHexViewLineContainingBufferPosition(line.BufferEnd);
 							pixels += line.Height;
 						}
 					}
@@ -257,7 +257,7 @@ namespace dnSpy.Hex.Editor {
 						if (line.VisibilityState == VSTF.VisibilityState.Unattached) {
 							// Height is only fully initialized once it's been shown on the screen
 							// (its LineTransform property is used to calculate Height)
-							var lineStart = line.BufferSpan.Start;
+							var lineStart = line.BufferStart;
 							hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, VSTE.ViewRelativePosition.Top);
 							line = hexView.GetHexViewLineContainingBufferPosition(lineStart);
 							Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
@@ -268,7 +268,7 @@ namespace dnSpy.Hex.Editor {
 					}
 					if (line.IsLastDocumentLine())
 						break;
-					line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.End);
+					line = hexView.GetHexViewLineContainingBufferPosition(line.BufferEnd);
 				}
 				if (pixels != 0)
 					ScrollViewportVerticallyByPixels(-pixels);
@@ -297,17 +297,17 @@ namespace dnSpy.Hex.Editor {
 				double lineTop = line.Top;
 				var prevLine = line;
 				// Cache this since prevLine could've been disposed when we need to access this property
-				var prevLineStart = prevLine.BufferSpan.Start;
+				var prevLineStart = prevLine.BufferStart;
 				while (lineTop + hexView.ViewportHeight >= top) {
 					prevLine = line;
-					prevLineStart = prevLine.BufferSpan.Start;
+					prevLineStart = prevLine.BufferStart;
 					if (line.IsFirstDocumentLine())
 						break;
-					line = hexView.GetHexViewLineContainingBufferPosition(line.BufferSpan.Start - 1);
+					line = hexView.GetHexViewLineContainingBufferPosition(line.BufferStart - 1);
 					if (line.VisibilityState == VSTF.VisibilityState.Unattached) {
 						// Height is only fully initialized once it's been shown on the screen
 						// (its LineTransform property is used to calculate Height)
-						var lineStart = line.BufferSpan.Start;
+						var lineStart = line.BufferStart;
 						hexView.DisplayHexLineContainingBufferPosition(lineStart, 0, VSTE.ViewRelativePosition.Bottom);
 						line = hexView.GetHexViewLineContainingBufferPosition(lineStart);
 						Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
@@ -325,7 +325,7 @@ namespace dnSpy.Hex.Editor {
 				}
 				else if (lastVisibleLine.VisibilityState == VSTF.VisibilityState.FullyVisible) {
 					if (lastVisibleLine.IsLastDocumentLine()) {
-						hexView.DisplayHexLineContainingBufferPosition(lastVisibleLine.BufferSpan.Start, 0, VSTE.ViewRelativePosition.Top);
+						hexView.DisplayHexLineContainingBufferPosition(lastVisibleLine.BufferStart, 0, VSTE.ViewRelativePosition.Top);
 						return hasFullyVisibleLines;
 					}
 				}

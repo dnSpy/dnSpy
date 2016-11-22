@@ -199,7 +199,7 @@ namespace dnSpy.Hex.Editor {
 			foreach (var line in lines) {
 				if (line.BufferSpan.OverlapsWith(span))
 					return line;
-				if (span.End == line.BufferSpan.End && line.IsLastDocumentLine())
+				if (span.End == line.BufferEnd && line.IsLastDocumentLine())
 					return line;
 			}
 			return null;

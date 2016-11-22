@@ -51,7 +51,7 @@ namespace dnSpy.Hex.Editor {
 		public override double MarginSize => theScrollBar.ActualWidth;
 		public override FrameworkElement VisualElement => theScrollBar;
 		HexBufferPoint FirstVisibleLinePoint =>
-			wpfHexViewHost.HexView.HexViewLines?.FirstVisibleLine.BufferSpan.Start ??
+			wpfHexViewHost.HexView.HexViewLines?.FirstVisibleLine.BufferStart ??
 			wpfHexViewHost.HexView.BufferLines.GetBufferPositionFromLineNumber(0);
 
 		sealed class TheScrollBar : TE.DsScrollBar {
