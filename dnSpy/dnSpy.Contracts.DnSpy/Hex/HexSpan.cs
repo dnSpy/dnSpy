@@ -24,9 +24,11 @@ namespace dnSpy.Contracts.Hex {
 	/// A span in a <see cref="HexBuffer"/>
 	/// </summary>
 	public struct HexSpan : IEquatable<HexSpan> {
-		readonly ulong start;
-		readonly ulong length;
-		readonly bool isFull;
+#if DEBUG
+		// readonly will cause all accesses to the field to make a copy of it. Only enable it if it's DEBUG mode.
+		readonly
+#endif
+		HexPosition start, end;
 
 		/// <summary>
 		/// Gets a <see cref="HexSpan"/> instance that covers everything from 0 to 2^64-1, inclusive
@@ -36,27 +38,27 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// true if this span covers everything from 0 to 2^64-1, inclusive
 		/// </summary>
-		public bool IsFull => isFull;
+		public bool IsFull => start == HexPosition.Zero && end == HexPosition.MaxEndPosition;
 
 		/// <summary>
 		/// true if it's an empty span
 		/// </summary>
-		public bool IsEmpty => length == 0;
+		public bool IsEmpty => start == end;
 
 		/// <summary>
 		/// Gets the length
 		/// </summary>
-		public HexPosition Length => isFull ? HexPosition.MaxEndPosition : new HexPosition(length);
+		public HexPosition Length => end - start;
 
 		/// <summary>
 		/// Gets the start of the span
 		/// </summary>
-		public HexPosition Start => new HexPosition(start);
+		public HexPosition Start => start;
 
 		/// <summary>
 		/// Gets the end of the span
 		/// </summary>
-		public HexPosition End => isFull ? HexPosition.MaxEndPosition : new HexPosition(start) + length;// It could overflow so only pass in start to the ctor
+		public HexPosition End => end;
 
 		// It's not public because public ctors should only take start and length params
 		HexSpan(HexPosition start, HexPosition end) {
@@ -64,15 +66,8 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentOutOfRangeException(nameof(end));
 			if (end > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(end));
-			this.start = start.ToUInt64();
-			if (start == HexPosition.Zero && end == HexPosition.MaxEndPosition) {
-				isFull = true;
-				length = ulong.MaxValue;
-			}
-			else {
-				isFull = false;
-				length = (end - start).ToUInt64();
-			}
+			this.start = start;
+			this.end = end;
 		}
 
 		/// <summary>
@@ -85,9 +80,8 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentOutOfRangeException(nameof(start));
 			if ((start + length) > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(length));
-			this.start = start.ToUInt64();
-			this.length = length;
-			this.isFull = false;
+			this.start = start;
+			this.end = start + length;
 		}
 
 		/// <summary>
@@ -176,7 +170,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(HexSpan other) => start == other.start && length == other.length && isFull == other.isFull;
+		public bool Equals(HexSpan other) => start == other.start && end == other.end;
 
 		/// <summary>
 		/// Equals()
@@ -189,12 +183,12 @@ namespace dnSpy.Contracts.Hex {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => (start ^ length).GetHashCode() ^ (isFull ? int.MinValue : 0);
+		public override int GetHashCode() => start.GetHashCode() ^ end.GetHashCode();
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => isFull ? "[full]" : "[" + Start.ToString() + "," + End.ToString() + ")";
+		public override string ToString() => IsFull ? "[full]" : "[" + Start.ToString() + "," + End.ToString() + ")";
 	}
 }

@@ -243,7 +243,24 @@ namespace dnSpy.Contracts.Hex {
 		public bool IsValidPosition(HexBufferPoint position) {
 			if (position.Buffer != Buffer)
 				return false;
-			return StartPosition == EndPosition ? StartPosition == position : StartPosition <= position && position < EndPosition;
+			// Allow the last position since it's so easy to accidentally pass in the end position.
+			// The text editor API also allows this so to make everything easier, also allow it here,
+			// but treat it as Max(StartPosition, EndPosition - 1) (treating them as signed integers)
+			return StartPosition <= position && position <= EndPosition;
+		}
+
+		/// <summary>
+		/// Filters the position so it's less than <see cref="EndPosition"/> if it equals <see cref="EndPosition"/>.
+		/// It will throw if <see cref="IsValidPosition(HexBufferPoint)"/> returns false.
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public HexBufferPoint FilterAndVerify(HexBufferPoint position) {
+			if (!IsValidPosition(position))
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if (position != EndPosition)
+				return position;
+			return StartPosition == EndPosition ? position : position - 1;
 		}
 
 		/// <summary>

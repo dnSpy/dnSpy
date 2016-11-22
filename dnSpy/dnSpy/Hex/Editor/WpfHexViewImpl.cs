@@ -771,10 +771,10 @@ namespace dnSpy.Hex.Editor {
 							var line = wpfHexViewLineCollection.FirstVisibleLine;
 							verticalDistance = line.Top - ViewportTop;
 							bufferPosition = line.BufferSpan.Start;
-							if (bufferPosition >= BufferLines.BufferEnd)
-								bufferPosition = BufferLines.BufferEnd.Position == HexPosition.Zero ? BufferLines.BufferEnd : BufferLines.BufferEnd - 1;
 							if (bufferPosition < BufferLines.BufferStart)
 								bufferPosition = BufferLines.BufferStart;
+							else if (bufferPosition > BufferLines.BufferEnd)
+								bufferPosition = BufferLines.BufferEnd;
 							DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop);
 						}
 					}));

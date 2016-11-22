@@ -33,10 +33,6 @@ namespace dnSpy.Hex.Editor {
 		public static bool IsMultiLineSpan(HexView hexView, HexBufferSpan bufferSpan) {
 			if (bufferSpan.Length == 0)
 				return false;
-			if (bufferSpan.End == hexView.BufferLines.BufferEnd) {
-				var lineNum = hexView.BufferLines.GetLineNumberFromPosition(bufferSpan.Start);
-				return lineNum + 1 != hexView.BufferLines.LineCount;
-			}
 			var lineNum1 = hexView.BufferLines.GetLineNumberFromPosition(bufferSpan.Start);
 			var lineNum2 = hexView.BufferLines.GetLineNumberFromPosition(bufferSpan.End);
 			return lineNum1 != lineNum2;

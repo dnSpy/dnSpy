@@ -118,10 +118,10 @@ namespace dnSpy.Hex.Editor {
 				bufferPosition = valuePosition.BufferPosition;
 			if (bufferPosition.IsDefault)
 				bufferPosition = bufferLines.BufferStart;
-			if (bufferPosition >= bufferLines.BufferEnd)
-				bufferPosition = bufferLines.BufferEnd == HexPosition.Zero ? bufferLines.BufferEnd : bufferLines.BufferEnd - 1;
 			if (bufferPosition < bufferLines.BufferStart)
 				bufferPosition = bufferLines.BufferStart;
+			else if (bufferPosition > bufferLines.BufferEnd)
+				bufferPosition = bufferLines.BufferEnd;
 			if (bufferPosition >= HexPosition.MaxEndPosition)
 				bufferPosition = new HexBufferPoint(bufferLines.Buffer, HexPosition.MaxEndPosition - 1);
 
@@ -407,6 +407,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void SetPositionCore(HexColumnPosition position) {
+			position = Filter(position);
 			if (currentPosition != position) {
 				currentPosition = position;
 				hexCaretLayer.ActiveColumn = currentPosition.ActiveColumn;
@@ -415,6 +416,12 @@ namespace dnSpy.Hex.Editor {
 					MoveImeCompositionWindow();
 			}
 		}
+
+		HexColumnPosition Filter(HexColumnPosition position) =>
+			new HexColumnPosition(position.ActiveColumn, Filter(position.ValuePosition), Filter(position.AsciiPosition));
+
+		HexCellPosition Filter(HexCellPosition position) =>
+			new HexCellPosition(position.Column, hexView.BufferLines.FilterAndVerify(position.BufferPosition), position.CellPosition);
 
 		void SetExplicitPosition(HexColumnPosition position) {
 			var oldPos = Position;
@@ -590,7 +597,7 @@ namespace dnSpy.Hex.Editor {
 				if (cellPosition < cell.CellSpan.Length)
 					return MoveTo(new HexCellPosition(position.Column, position.BufferPosition, cellPosition));
 				nextBufferPosition = cell.BufferEnd;
-				if (!hexView.BufferLines.IsValidPosition(nextBufferPosition))
+				if (!hexView.BufferLines.IsValidPosition(nextBufferPosition) || nextBufferPosition == hexView.BufferLines.BufferEnd)
 					return Position;
 				return MoveTo(new HexCellPosition(position.Column, nextBufferPosition, 0));
 
@@ -602,7 +609,7 @@ namespace dnSpy.Hex.Editor {
 				if (cellPosition < cell.CellSpan.Length)
 					return MoveTo(new HexCellPosition(position.Column, position.BufferPosition, cellPosition));
 				nextBufferPosition = cell.BufferEnd;
-				if (!hexView.BufferLines.IsValidPosition(nextBufferPosition))
+				if (!hexView.BufferLines.IsValidPosition(nextBufferPosition) || nextBufferPosition == hexView.BufferLines.BufferEnd)
 					return Position;
 				return MoveTo(new HexCellPosition(position.Column, nextBufferPosition, 0));
 
@@ -641,7 +648,7 @@ namespace dnSpy.Hex.Editor {
 				if (cell.BufferStart.Position == 0)
 					return Position;
 				previousBufferPosition = cell.BufferStart - 1;
-				if (cell.BufferStart.Position == 0 || !hexView.BufferLines.IsValidPosition(previousBufferPosition))
+				if (!hexView.BufferLines.IsValidPosition(previousBufferPosition))
 					return Position;
 				return MoveTo(CreateValuePositionLastCellCharacter(previousBufferPosition));
 

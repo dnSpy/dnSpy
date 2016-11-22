@@ -55,17 +55,6 @@ namespace dnSpy.Hex.Operations {
 			HexEditorOperationsFactoryServiceImpl.RemoveFromProperties(this);
 		}
 
-		// Filters input only if it's equal to the last position. The text editor API allows it
-		// but not the hex editor API.
-		HexBufferPoint Filter(HexBufferPoint position) {
-			var span = HexView.BufferLines.BufferSpan;
-			if (span.Contains(position))
-				return position;
-			if (span.End == position)
-				return span.Length == 0 ? position : position - 1;
-			return position;
-		}
-
 		HexBufferPoint GetAnchorPositionOrCaretIfNoSelection() {
 			HexBufferPoint anchorPoint, activePoint;
 			GetSelectionOrCaretIfNoSelection(out anchorPoint, out activePoint);
@@ -107,7 +96,7 @@ namespace dnSpy.Hex.Operations {
 		public override void MoveToNextCharacter(bool extendSelection) {
 			if (!extendSelection && !Selection.IsEmpty) {
 				if (Caret.Position.Position.ActivePosition.BufferPosition != Selection.End)
-					Caret.MoveTo(Filter(Selection.End));
+					Caret.MoveTo(Selection.End);
 				Caret.EnsureVisible();
 				Selection.Clear();
 				return;
@@ -125,7 +114,7 @@ namespace dnSpy.Hex.Operations {
 		public override void MoveToPreviousCharacter(bool extendSelection) {
 			if (!extendSelection && !Selection.IsEmpty) {
 				if (Caret.Position.Position.ActivePosition.BufferPosition != Selection.Start)
-					Caret.MoveTo(Filter(Selection.Start));
+					Caret.MoveTo(Selection.Start);
 				Caret.EnsureVisible();
 				Selection.Clear();
 				return;
@@ -274,8 +263,7 @@ namespace dnSpy.Hex.Operations {
 		public override void MoveToEndOfDocument(bool extendSelection) {
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
 
-			var fullSpan = HexView.BufferLines.BufferSpan;
-			var newPoint = fullSpan.Length == 0 ? fullSpan.Start : fullSpan.End - 1;
+			var newPoint = HexView.BufferLines.BufferEnd;
 			var line = HexView.GetHexViewLineContainingBufferPosition(newPoint);
 			switch (line.VisibilityState) {
 			case VSTF.VisibilityState.FullyVisible:
@@ -373,7 +361,7 @@ namespace dnSpy.Hex.Operations {
 				}
 			}
 			Selection.Select(anchorPoint, activePoint);
-			Caret.MoveTo(Filter(activePoint));
+			Caret.MoveTo(activePoint);
 			Caret.EnsureVisible();
 		}
 
@@ -386,7 +374,7 @@ namespace dnSpy.Hex.Operations {
 
 		void SelectAndMove(HexBufferSpan span) {
 			Selection.Select(span, false);
-			Caret.MoveTo(Filter(span.End));
+			Caret.MoveTo(span.End);
 			Caret.EnsureVisible();
 		}
 
@@ -443,15 +431,15 @@ namespace dnSpy.Hex.Operations {
 			else if (line.VisibilityState != VSTF.VisibilityState.FullyVisible) {
 				if (scrollDirection == VSTE.ScrollDirection.Up) {
 					var newLine = lastVisLine;
-					if (newLine.BufferSpan.Start.Position == origCaretContainingTextViewLinePosition) {
-						if (newLine.BufferSpan.Start.Position > HexView.BufferLines.BufferStart)
+					if (newLine.BufferSpan.Start == origCaretContainingTextViewLinePosition) {
+						if (newLine.BufferSpan.Start > HexView.BufferLines.BufferStart)
 							newLine = HexView.HexViewLines.GetHexViewLineContainingBufferPosition(newLine.BufferSpan.Start - 1) ?? newLine;
 					}
 					Caret.MoveTo(newLine);
 				}
 				else {
 					var newLine = firstVisLine;
-					if (newLine.BufferSpan.Start.Position == origCaretContainingTextViewLinePosition && !newLine.IsLastDocumentLine())
+					if (newLine.BufferSpan.Start == origCaretContainingTextViewLinePosition && !newLine.IsLastDocumentLine())
 						newLine = HexView.HexViewLines.GetHexViewLineContainingBufferPosition(newLine.BufferSpan.End) ?? newLine;
 					Caret.MoveTo(newLine);
 				}

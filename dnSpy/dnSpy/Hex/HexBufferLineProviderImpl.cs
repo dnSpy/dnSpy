@@ -439,10 +439,7 @@ namespace dnSpy.Hex {
 		}
 
 		public override HexPosition GetLineNumberFromPosition(HexBufferPoint position) {
-			if (position.Buffer != Buffer)
-				throw new ArgumentException();
-			if (!IsValidPosition(position))
-				throw new ArgumentOutOfRangeException(nameof(position));
+			position = FilterAndVerify(position);
 			return (position.Position - startPosition).ToUInt64() / bytesPerLine;
 		}
 
@@ -462,11 +459,7 @@ namespace dnSpy.Hex {
 		}
 
 		public override HexBufferLine GetLineFromPosition(HexBufferPoint position) {
-			if (position.Buffer != Buffer)
-				throw new ArgumentException();
-			if (!IsValidPosition(position))
-				throw new ArgumentOutOfRangeException(nameof(position));
-
+			position = FilterAndVerify(position);
 			ResetBuilderFields();
 
 			var linePosition = startPosition + (position.Position - startPosition).ToUInt64() / bytesPerLine * bytesPerLine;
