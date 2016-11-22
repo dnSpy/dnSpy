@@ -166,7 +166,7 @@ namespace dnSpy.Text.Editor {
 		void UpdateCaretProperties() => UpdateCaretProperties(false);
 		void UpdateCaretProperties(bool forceInvalidateVisual) {
 			if (inUpdateCaretPropertiesCore)
-				Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => UpdateCaretProperties(forceInvalidateVisual)));
+				Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => UpdateCaretProperties(forceInvalidateVisual)));
 			else {
 				inUpdateCaretPropertiesCore = true;
 				try {
@@ -177,7 +177,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		bool inUpdateCaretPropertiesCore = false;
+		bool inUpdateCaretPropertiesCore;
 
 		void UpdateCaretPropertiesCore(bool forceInvalidateVisual) {
 			if (layer.TextView.IsClosed)

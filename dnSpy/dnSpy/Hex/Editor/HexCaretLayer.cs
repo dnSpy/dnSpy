@@ -243,19 +243,19 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateCaretProperties() => UpdateCaretProperties(false);
 		void UpdateCaretProperties(bool forceInvalidateVisual) {
-			if (updateCaretPropertiesCalled) {
-				newForceInvalidateVisual |= forceInvalidateVisual;
-				return;
+			if (inUpdateCaretPropertiesCore)
+				Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => UpdateCaretProperties(forceInvalidateVisual)));
+			else {
+				inUpdateCaretPropertiesCore = true;
+				try {
+					UpdateCaretPropertiesCore(forceInvalidateVisual);
+				}
+				finally {
+					inUpdateCaretPropertiesCore = false;
+				}
 			}
-			newForceInvalidateVisual = forceInvalidateVisual;
-			updateCaretPropertiesCalled = true;
-			Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
-				updateCaretPropertiesCalled = false;
-				UpdateCaretPropertiesCore(newForceInvalidateVisual);
-			}));
 		}
-		bool updateCaretPropertiesCalled = false;
-		bool newForceInvalidateVisual = false;
+		bool inUpdateCaretPropertiesCore;
 
 		void UpdateCaretPropertiesCore(bool forceInvalidateVisual) {
 			if (layer.HexView.IsClosed)
