@@ -223,6 +223,7 @@ namespace dnSpy.Hex.Editor {
 		}
 		bool mouseCaptured;
 		DispatcherTimer dispatcherTimer;
+		double dispatcherTimerXCoord;
 
 		void StopScrolling() {
 			dispatcherTimer?.Stop();
@@ -231,6 +232,7 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateScrolling(MouseEventArgs e) {
 			var mouseLoc = GetLocation(e);
+			dispatcherTimerXCoord = mouseLoc.Point.X;
 			TimeSpan interval;
 			var scrollDir = GetScrollDirection(mouseLoc, out interval);
 			if (scrollDir == null) {
@@ -245,8 +247,8 @@ namespace dnSpy.Hex.Editor {
 					dispatcherTimer.Interval = interval;
 			}
 			else {
-				dispatcherTimer = new DispatcherTimer(interval, DispatcherPriority.Normal, (s, e2) => OnScroll(scrollDir.Value, mouseLoc.Point.X), wpfHexView.VisualElement.Dispatcher);
-				OnScroll(scrollDir.Value, mouseLoc.Point.X);
+				dispatcherTimer = new DispatcherTimer(interval, DispatcherPriority.Normal, (s, e2) => OnScroll(scrollDir.Value, dispatcherTimerXCoord), wpfHexView.VisualElement.Dispatcher);
+				OnScroll(scrollDir.Value, dispatcherTimerXCoord);
 			}
 		}
 
