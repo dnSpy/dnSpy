@@ -138,7 +138,6 @@ done:;
 					Debug.Assert(cell.HasData);
 					if (span.End <= cell.BufferStart)
 						break;
-					Debug.Assert(span.Contains(cell.BufferSpan));
 					yield return cell;
 					index++;
 				}

@@ -170,11 +170,63 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void MoveToNextWord(bool extendSelection) {
-			//TODO:
+			switch (Caret.Position.Position.ActiveColumn) {
+			case HexColumnType.Values:
+				var line = Caret.ContainingHexViewLine.BufferLine;
+				var position = HexView.BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
+				var cell = line.ValueCells.GetCell(position);
+				if (cell == null)
+					return;
+
+				var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
+				if (cell.BufferEnd >= HexView.BufferLines.BufferEnd)
+					break;
+				Caret.MoveTo(cell.BufferEnd);
+				Caret.EnsureVisible();
+				if (extendSelection)
+					SelectToCaret(anchorPoint);
+				else
+					Selection.Clear();
+				break;
+
+			case HexColumnType.Ascii:
+				MoveToNextCharacter(extendSelection);
+				break;
+
+			case HexColumnType.Offset:
+			default:
+				throw new InvalidOperationException();
+			}
 		}
 
 		public override void MoveToPreviousWord(bool extendSelection) {
-			//TODO:
+			switch (Caret.Position.Position.ActiveColumn) {
+			case HexColumnType.Values:
+				var line = Caret.ContainingHexViewLine.BufferLine;
+				var position = HexView.BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
+				var cell = line.ValueCells.GetCell(position);
+				if (cell == null)
+					return;
+
+				var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
+				if (cell.BufferStart <= HexView.BufferLines.BufferStart)
+					break;
+				Caret.MoveTo(cell.BufferStart - 1);
+				Caret.EnsureVisible();
+				if (extendSelection)
+					SelectToCaret(anchorPoint);
+				else
+					Selection.Clear();
+				break;
+
+			case HexColumnType.Ascii:
+				MoveToPreviousCharacter(extendSelection);
+				break;
+
+			case HexColumnType.Offset:
+			default:
+				throw new InvalidOperationException();
+			}
 		}
 
 		public override void MoveLineUp(bool extendSelection) {
@@ -409,7 +461,27 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void SelectCurrentWord() {
-			//TODO:
+			if (HexView.BufferLines.BufferSpan.Length == 0)
+				return;
+
+			var position = HexView.BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
+			switch (Caret.Position.Position.ActiveColumn) {
+			case HexColumnType.Values:
+				var line = Caret.ContainingHexViewLine.BufferLine;
+				var cell = line.ValueCells.GetCell(position);
+				if (cell == null)
+					return;
+				SelectAndMove(cell.BufferSpan);
+				break;
+
+			case HexColumnType.Ascii:
+				SelectAndMove(new HexBufferSpan(position, 1));
+				break;
+
+			case HexColumnType.Offset:
+			default:
+				throw new InvalidOperationException();
+			}
 		}
 
 		public override void SelectAll() =>
