@@ -42,6 +42,7 @@ namespace dnSpy.Hex.Operations {
 		HexBuffer Buffer => HexView.Buffer;
 		VSTE.ITextViewRoleSet Roles => HexView.Roles;
 		HexViewScroller ViewScroller => HexView.ViewScroller;
+		HexBufferPoint ActiveCaretBufferPosition => Caret.Position.Position.ActivePosition.BufferPosition;
 
 		public HexEditorOperationsImpl(HexView hexView) {
 			if (hexView == null)
@@ -65,11 +66,49 @@ namespace dnSpy.Hex.Operations {
 			if (!Selection.IsEmpty) {
 				anchorPoint = Selection.AnchorPoint;
 				activePoint = Selection.ActivePoint;
+				if (anchorPoint > activePoint)
+					anchorPoint = anchorPoint - 1;
 			}
 			else {
-				anchorPoint = Caret.Position.Position.ActivePosition.BufferPosition;
+				anchorPoint = ActiveCaretBufferPosition;
 				activePoint = anchorPoint;
 			}
+		}
+
+		struct SelectionInfo {
+			public HexBufferPoint AnchorPoint { get; }
+			public HexBufferPoint ActivePoint { get; }
+			public HexBufferPoint CaretPosition { get; }
+
+			public SelectionInfo(HexBufferPoint anchorPoint, HexBufferPoint activePoint, HexBufferPoint caretPosition) {
+				AnchorPoint = anchorPoint;
+				ActivePoint = activePoint;
+				CaretPosition = caretPosition;
+			}
+		}
+
+		SelectionInfo GetSelectionInfoToCaret(HexBufferPoint anchorPoint, HexBufferPoint caretPosition) {
+			if (caretPosition < anchorPoint)
+				return new SelectionInfo(TryInc(anchorPoint), caretPosition, caretPosition);
+			return new SelectionInfo(anchorPoint, TryInc(caretPosition), caretPosition);
+		}
+
+		HexBufferPoint TryInc(HexBufferPoint anchorPoint) {
+			if (anchorPoint == HexView.BufferLines.BufferEnd)
+				return anchorPoint;
+			return anchorPoint + 1;
+		}
+
+		void SelectToCaret(HexBufferPoint anchorPoint) {
+			var info = GetSelectionInfoToCaret(anchorPoint, ActiveCaretBufferPosition);
+			Selection.Select(info.AnchorPoint, info.ActivePoint);
+		}
+
+		void MoveCaretToSelection(HexBufferPoint anchorPoint, HexBufferPoint activePoint) {
+			if (activePoint <= anchorPoint)
+				Caret.MoveTo(activePoint);
+			else
+				Caret.MoveTo(activePoint - 1);
 		}
 
 		public override void SelectAndMoveCaret(HexColumnType column, HexBufferPoint anchorPoint, HexBufferPoint activePoint, VSTE.EnsureSpanVisibleOptions? scrollOptions) {
@@ -81,7 +120,7 @@ namespace dnSpy.Hex.Operations {
 				Selection.Clear();
 			else
 				Selection.Select(anchorPoint, activePoint);
-			Caret.MoveTo(activePoint);
+			MoveCaretToSelection(anchorPoint, activePoint);
 			if (scrollOptions == null)
 				return;
 			var options = Selection.IsReversed ? VSTE.EnsureSpanVisibleOptions.ShowStart | VSTE.EnsureSpanVisibleOptions.MinimumScroll : VSTE.EnsureSpanVisibleOptions.ShowStart;
@@ -95,8 +134,9 @@ namespace dnSpy.Hex.Operations {
 
 		public override void MoveToNextCharacter(bool extendSelection) {
 			if (!extendSelection && !Selection.IsEmpty) {
-				if (Caret.Position.Position.ActivePosition.BufferPosition != Selection.End)
-					Caret.MoveTo(Selection.End);
+				var newEndPos = Selection.End - 1;
+				if (ActiveCaretBufferPosition != newEndPos)
+					Caret.MoveTo(newEndPos);
 				Caret.EnsureVisible();
 				Selection.Clear();
 				return;
@@ -106,14 +146,14 @@ namespace dnSpy.Hex.Operations {
 			Caret.MoveToNextCaretPosition();
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
 
 		public override void MoveToPreviousCharacter(bool extendSelection) {
 			if (!extendSelection && !Selection.IsEmpty) {
-				if (Caret.Position.Position.ActivePosition.BufferPosition != Selection.Start)
+				if (ActiveCaretBufferPosition != Selection.Start)
 					Caret.MoveTo(Selection.Start);
 				Caret.EnsureVisible();
 				Selection.Clear();
@@ -124,7 +164,7 @@ namespace dnSpy.Hex.Operations {
 			Caret.MoveToPreviousCaretPosition();
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -154,7 +194,7 @@ namespace dnSpy.Hex.Operations {
 
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -176,7 +216,7 @@ namespace dnSpy.Hex.Operations {
 
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -201,7 +241,7 @@ namespace dnSpy.Hex.Operations {
 
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -220,18 +260,19 @@ namespace dnSpy.Hex.Operations {
 
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
 
 		public override void MoveToEndOfLine(bool extendSelection) {
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
-			if (Caret.ContainingHexViewLine.BufferSpan.Length != 0)
-				Caret.MoveTo(Caret.ContainingHexViewLine.BufferSpan.End - 1);
+			var lineSpan = Caret.ContainingHexViewLine.BufferSpan;
+			if (lineSpan.Length != 0)
+				Caret.MoveTo(lineSpan.End - 1);
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -241,7 +282,7 @@ namespace dnSpy.Hex.Operations {
 			Caret.MoveTo(Caret.ContainingHexViewLine.BufferStart);
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -255,7 +296,7 @@ namespace dnSpy.Hex.Operations {
 			Caret.EnsureVisible();
 
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -285,16 +326,16 @@ namespace dnSpy.Hex.Operations {
 			Caret.MoveTo(newPoint);
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
 
 		public override void MoveCurrentLineToTop() =>
-			HexView.DisplayHexLineContainingBufferPosition(Caret.Position.Position.ActivePosition.BufferPosition, 0, VSTE.ViewRelativePosition.Top);
+			HexView.DisplayHexLineContainingBufferPosition(ActiveCaretBufferPosition, 0, VSTE.ViewRelativePosition.Top);
 
 		public override void MoveCurrentLineToBottom() =>
-			HexView.DisplayHexLineContainingBufferPosition(Caret.Position.Position.ActivePosition.BufferPosition, 0, VSTE.ViewRelativePosition.Bottom);
+			HexView.DisplayHexLineContainingBufferPosition(ActiveCaretBufferPosition, 0, VSTE.ViewRelativePosition.Bottom);
 
 		HexViewLine GetBottomFullyVisibleLine() =>
 			HexView.HexViewLines.LastOrDefault(a => a.VisibilityState == VSTF.VisibilityState.FullyVisible) ??
@@ -310,7 +351,7 @@ namespace dnSpy.Hex.Operations {
 			Caret.MoveTo(GetTopFullyVisibleLine());
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -320,14 +361,14 @@ namespace dnSpy.Hex.Operations {
 			Caret.MoveTo(GetBottomFullyVisibleLine());
 			Caret.EnsureVisible();
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
 
 		public override void SwapCaretAndAnchor() {
 			Selection.Select(anchorPoint: Selection.ActivePoint, activePoint: Selection.AnchorPoint);
-			Caret.MoveTo(Selection.ActivePoint);
+			MoveCaretToSelection(Selection.AnchorPoint, Selection.ActivePoint);
 			Caret.EnsureVisible();
 		}
 
@@ -361,6 +402,8 @@ namespace dnSpy.Hex.Operations {
 				}
 			}
 			Selection.Select(anchorPoint, activePoint);
+			// This moves the caret outside the selection but it matches the text editor when
+			// full lines are selected.
 			Caret.MoveTo(activePoint);
 			Caret.EnsureVisible();
 		}
@@ -374,7 +417,7 @@ namespace dnSpy.Hex.Operations {
 
 		void SelectAndMove(HexBufferSpan span) {
 			Selection.Select(span, false);
-			Caret.MoveTo(span.End);
+			MoveCaretToSelection(span.Start, span.End);
 			Caret.EnsureVisible();
 		}
 
@@ -384,7 +427,7 @@ namespace dnSpy.Hex.Operations {
 			if (!HexView.BufferLines.IsValidPosition(newEnd))
 				throw new ArgumentOutOfRangeException(nameof(newEnd));
 			Selection.Select(Selection.AnchorPoint, newEnd);
-			Caret.MoveTo(Selection.ActivePoint);
+			MoveCaretToSelection(Selection.AnchorPoint, Selection.ActivePoint);
 			var options = Selection.IsReversed ? VSTE.EnsureSpanVisibleOptions.ShowStart | VSTE.EnsureSpanVisibleOptions.MinimumScroll : VSTE.EnsureSpanVisibleOptions.ShowStart;
 			var flags = Caret.Position.Position.ActiveColumn == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii;
 			flags |= HexSpanSelectionFlags.Cell;
@@ -398,7 +441,7 @@ namespace dnSpy.Hex.Operations {
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
 			Caret.MoveTo(hexLine, horizontalOffset, flags);
 			if (extendSelection)
-				Selection.Select(anchorPoint, Caret.Position.Position.ActivePosition.BufferPosition);
+				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
 		}
@@ -420,7 +463,7 @@ namespace dnSpy.Hex.Operations {
 			bool firstDocLineWasVisible = HexView.HexViewLines.FirstVisibleLine.IsFirstDocumentLine();
 			ViewScroller.ScrollViewportVerticallyByLine(scrollDirection);
 
-			var pos = Caret.Position.Position.ActivePosition.BufferPosition;
+			var pos = ActiveCaretBufferPosition;
 			var line = Caret.ContainingHexViewLine;
 			var firstVisLine = HexView.HexViewLines.FirstVisibleLine;
 			var lastVisLine = HexView.HexViewLines.LastVisibleLine;
@@ -446,7 +489,7 @@ namespace dnSpy.Hex.Operations {
 			}
 			Caret.EnsureVisible();
 
-			var newPos = Caret.Position.Position.ActivePosition.BufferPosition;
+			var newPos = ActiveCaretBufferPosition;
 			if (newPos != pos)
 				Selection.Clear();
 		}

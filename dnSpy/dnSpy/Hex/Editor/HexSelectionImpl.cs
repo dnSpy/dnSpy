@@ -29,7 +29,6 @@ namespace dnSpy.Hex.Editor {
 	sealed class HexSelectionImpl : HexSelection {
 		internal static HexSpanSelectionFlags SelectionFlags = HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell;
 		public override HexView HexView { get; }
-		public override bool IsEmpty => AnchorPoint == ActivePoint;
 		public override HexBufferPoint AnchorPoint => anchorPoint;
 		public override HexBufferPoint ActivePoint => activePoint;
 		public override event EventHandler SelectionChanged;

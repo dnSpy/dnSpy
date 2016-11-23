@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// true if the selection is empty
 		/// </summary>
-		public abstract bool IsEmpty { get; }
+		public bool IsEmpty => AnchorPoint == ActivePoint;
 
 		/// <summary>
 		/// true if the selection is active, false if it's inactive
