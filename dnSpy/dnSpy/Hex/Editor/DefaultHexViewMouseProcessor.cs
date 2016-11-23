@@ -78,8 +78,11 @@ namespace dnSpy.Hex.Editor {
 		public override void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
+			bool isOffsetColumn = mouseLoc.HexViewLine.BufferLine.GetLinePositionInfo(mouseLoc.Position).IsOffset;
 			int clickCount = e.ClickCount;
-			if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == ModifierKeys.Control)
+			if (isOffsetColumn)
+				clickCount = 3;
+			else if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == ModifierKeys.Control)
 				clickCount = 2;
 			switch (clickCount) {
 			default:
