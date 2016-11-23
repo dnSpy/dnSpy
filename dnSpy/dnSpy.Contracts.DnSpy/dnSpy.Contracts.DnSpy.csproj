@@ -308,6 +308,7 @@
     <Compile Include="Hex\Editor\HexAdornmentLayerDefinition.cs" />
     <Compile Include="Hex\Editor\HexAdornmentLayerElement.cs" />
     <Compile Include="Hex\Editor\HexCaretPosition.cs" />
+    <Compile Include="Hex\Editor\HexColumnLineKind.cs" />
     <Compile Include="Hex\Editor\HexColumnPosition.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessor.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessorProvider.cs" />

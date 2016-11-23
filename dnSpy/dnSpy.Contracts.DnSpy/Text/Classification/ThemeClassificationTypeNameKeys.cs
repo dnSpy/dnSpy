@@ -1181,5 +1181,25 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.HexInactiveSelectedText"/>
 		/// </summary>
 		public const string HexInactiveSelectedText = nameof(HexInactiveSelectedText);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLine0"/>
+		/// </summary>
+		public const string HexColumnLine0 = nameof(HexColumnLine0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLine1"/>
+		/// </summary>
+		public const string HexColumnLine1 = nameof(HexColumnLine1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLineGroup0"/>
+		/// </summary>
+		public const string HexColumnLineGroup0 = nameof(HexColumnLineGroup0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLineGroup1"/>
+		/// </summary>
+		public const string HexColumnLineGroup1 = nameof(HexColumnLineGroup1);
 	}
 }

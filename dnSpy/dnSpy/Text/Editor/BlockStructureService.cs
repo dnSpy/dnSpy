@@ -169,7 +169,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		const double PEN_THICKNESS = 1.0;
-		Pen GetPen(ResourceDictionary props, BlockStructureLineKind lineKind) {
+		static Pen GetPen(ResourceDictionary props, BlockStructureLineKind lineKind) {
 			Color? color;
 			SolidColorBrush scBrush;
 
@@ -194,7 +194,7 @@ namespace dnSpy.Text.Editor {
 			return newPen;
 		}
 
-		Pen InitializePen(Pen pen, BlockStructureLineKind lineKind) {
+		static Pen InitializePen(Pen pen, BlockStructureLineKind lineKind) {
 			switch (lineKind) {
 			case BlockStructureLineKind.Solid:
 				break;

@@ -257,6 +257,10 @@ namespace dnSpy.Contracts.Text {
 		HexCurrentLine,
 		HexCurrentLineNoFocus,
 		HexInactiveSelectedText,
+		HexColumnLine0,
+		HexColumnLine1,
+		HexColumnLineGroup0,
+		HexColumnLineGroup1,
 
 		/// <summary>
 		/// Must be last
@@ -500,6 +504,10 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexCurrentLine = TextColor.HexCurrentLine;
 		public static readonly object HexCurrentLineNoFocus = TextColor.HexCurrentLineNoFocus;
 		public static readonly object HexInactiveSelectedText = TextColor.HexInactiveSelectedText;
+		public static readonly object HexColumnLine0 = TextColor.HexColumnLine0;
+		public static readonly object HexColumnLine1 = TextColor.HexColumnLine1;
+		public static readonly object HexColumnLineGroup0 = TextColor.HexColumnLineGroup0;
+		public static readonly object HexColumnLineGroup1 = TextColor.HexColumnLineGroup1;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -745,6 +753,10 @@ namespace dnSpy.Contracts.Text {
 			HexCurrentLine,
 			HexCurrentLineNoFocus,
 			HexInactiveSelectedText,
+			HexColumnLine0,
+			HexColumnLine1,
+			HexColumnLineGroup0,
+			HexColumnLineGroup1,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

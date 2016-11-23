@@ -1915,6 +1915,18 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.HexInactiveSelectedText, "Inactive Selected text (Hex Editor)") {
 				DefaultBackground = "#FFBFCDDB",
 			},
+			new BrushColorInfo(ColorType.HexColumnLine0, "Hex Column Line #0") {
+				DefaultForeground = "#FF000000",
+			},
+			new BrushColorInfo(ColorType.HexColumnLine1, "Hex Column Line #1") {
+				DefaultForeground = "#FF000000",
+			},
+			new BrushColorInfo(ColorType.HexColumnLineGroup0, "Hex Column Line Group #0") {
+				DefaultForeground = "#FF000000",
+			},
+			new BrushColorInfo(ColorType.HexColumnLineGroup1, "Hex Column Line Group #1") {
+				DefaultForeground = "#FF000000",
+			},
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",

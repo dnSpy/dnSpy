@@ -233,5 +233,60 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.RemoveExtraTextLineVerticalPixelsId);
 		}
+
+		/// <summary>
+		/// Returns true if column lines should be shown
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool ShowColumnLines(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.ShowColumnLinesId);
+		}
+
+		/// <summary>
+		/// Returns column #0 line kind
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static HexColumnLineKind GetColumnLine0Kind(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.ColumnLine0Id);
+		}
+
+		/// <summary>
+		/// Returns column #1 line kind
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static HexColumnLineKind GetColumnLine1Kind(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.ColumnLine1Id);
+		}
+
+		/// <summary>
+		/// Returns column group #0 line kind
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static HexColumnLineKind GetColumnGroupLine0Kind(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.ColumnGroupLine0Id);
+		}
+
+		/// <summary>
+		/// Returns column group #1 line kind
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static HexColumnLineKind GetColumnGroupLine1Kind(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.ColumnGroupLine1Id);
+		}
 	}
 }

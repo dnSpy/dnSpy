@@ -64,6 +64,16 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const int DefaultRefreshScreenOnChangeWaitMilliSeconds = 150;
 		public const string RemoveExtraTextLineVerticalPixelsName = "HexView/RemoveExtraTextLineVerticalPixels";
 		public static readonly VSTE.EditorOptionKey<bool> RemoveExtraTextLineVerticalPixelsId = new VSTE.EditorOptionKey<bool>(RemoveExtraTextLineVerticalPixelsName);
+		public const string ShowColumnLinesName = "HexView/ShowColumnLines";
+		public static readonly VSTE.EditorOptionKey<bool> ShowColumnLinesId = new VSTE.EditorOptionKey<bool>(ShowColumnLinesName);
+		public const string ColumnLine0Name = "HexView/ColumnLine0";
+		public static readonly VSTE.EditorOptionKey<HexColumnLineKind> ColumnLine0Id = new VSTE.EditorOptionKey<HexColumnLineKind>(ColumnLine0Name);
+		public const string ColumnLine1Name = "HexView/ColumnLine1";
+		public static readonly VSTE.EditorOptionKey<HexColumnLineKind> ColumnLine1Id = new VSTE.EditorOptionKey<HexColumnLineKind>(ColumnLine1Name);
+		public const string ColumnGroupLine0Name = "HexView/ColumnGroupLine0";
+		public static readonly VSTE.EditorOptionKey<HexColumnLineKind> ColumnGroupLine0Id = new VSTE.EditorOptionKey<HexColumnLineKind>(ColumnGroupLine0Name);
+		public const string ColumnGroupLine1Name = "HexView/ColumnGroupLine1";
+		public static readonly VSTE.EditorOptionKey<HexColumnLineKind> ColumnGroupLine1Id = new VSTE.EditorOptionKey<HexColumnLineKind>(ColumnGroupLine1Name);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

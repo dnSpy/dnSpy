@@ -230,6 +230,10 @@
 		<color name="hexcurrentline" fg="#EAEAF2" />
 		<color name="hexcurrentlinenofocus" fg="#EEEEEE" />
 		<color name="hexinactiveselectedtext" bg="#FFBFCDDB" />
+		<color name="hexcolumnline0" fg="#FF000000" />
+		<color name="hexcolumnline1" fg="#FF000000" />
+		<color name="hexcolumnlinegroup0" fg="#FF000000" />
+		<color name="hexcolumnlinegroup1" fg="#FF000000" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />

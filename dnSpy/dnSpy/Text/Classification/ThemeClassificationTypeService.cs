@@ -262,6 +262,10 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexCurrentLine),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexCurrentLineNoFocus),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexInactiveSelectedText),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexColumnLine0),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexColumnLine1),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexColumnLineGroup0),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexColumnLineGroup1),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

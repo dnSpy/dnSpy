@@ -135,4 +135,34 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewOptions.RemoveExtraTextLineVerticalPixelsId;
 		public override bool Default => false;
 	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class ShowColumnLinesEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewOptions.ShowColumnLinesId;
+		public override bool Default => true;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class ColumnLine0EditorOptionDefinition : HexViewOptionDefinition<HexColumnLineKind> {
+		public override VSTE.EditorOptionKey<HexColumnLineKind> Key => DefaultHexViewOptions.ColumnLine0Id;
+		public override HexColumnLineKind Default => HexColumnLineKind.Solid;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class ColumnLine1EditorOptionDefinition : HexViewOptionDefinition<HexColumnLineKind> {
+		public override VSTE.EditorOptionKey<HexColumnLineKind> Key => DefaultHexViewOptions.ColumnLine1Id;
+		public override HexColumnLineKind Default => HexColumnLineKind.Solid;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class ColumnGroupLine0EditorOptionDefinition : HexViewOptionDefinition<HexColumnLineKind> {
+		public override VSTE.EditorOptionKey<HexColumnLineKind> Key => DefaultHexViewOptions.ColumnGroupLine0Id;
+		public override HexColumnLineKind Default => HexColumnLineKind.Dashed_3_3;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class ColumnGroupLine1EditorOptionDefinition : HexViewOptionDefinition<HexColumnLineKind> {
+		public override VSTE.EditorOptionKey<HexColumnLineKind> Key => DefaultHexViewOptions.ColumnGroupLine1Id;
+		public override HexColumnLineKind Default => HexColumnLineKind.Dashed_3_3;
+	}
 }

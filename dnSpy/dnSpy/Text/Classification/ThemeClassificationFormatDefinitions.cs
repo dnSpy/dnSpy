@@ -1204,6 +1204,26 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexInactiveSelectedText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexInactiveSelectedTextClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexColumnLine0)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexColumnLine0ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexColumnLine1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexColumnLine1ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexColumnLineGroup0)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexColumnLineGroup0ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexColumnLineGroup1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexColumnLineGroup1ClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3286,6 +3306,42 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class HexInactiveSelectedText : ThemeClassificationFormatDefinition {
 			HexInactiveSelectedText() : base(TextColor.HexInactiveSelectedText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexColumnLine0)]
+		[Name(ThemeClassificationTypeNameKeys.HexColumnLine0)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexColumnLine0 : ThemeClassificationFormatDefinition {
+			HexColumnLine0() : base(TextColor.HexColumnLine0) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexColumnLine1)]
+		[Name(ThemeClassificationTypeNameKeys.HexColumnLine1)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexColumnLine1 : ThemeClassificationFormatDefinition {
+			HexColumnLine1() : base(TextColor.HexColumnLine1) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexColumnLineGroup0)]
+		[Name(ThemeClassificationTypeNameKeys.HexColumnLineGroup0)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexColumnLineGroup0 : ThemeClassificationFormatDefinition {
+			HexColumnLineGroup0() : base(TextColor.HexColumnLineGroup0) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexColumnLineGroup1)]
+		[Name(ThemeClassificationTypeNameKeys.HexColumnLineGroup1)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexColumnLineGroup1 : ThemeClassificationFormatDefinition {
+			HexColumnLineGroup1() : base(TextColor.HexColumnLineGroup1) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

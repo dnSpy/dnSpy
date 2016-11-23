@@ -255,6 +255,10 @@ namespace dnSpy.Contracts.Themes {
 		HexCurrentLine,
 		HexCurrentLineNoFocus,
 		HexInactiveSelectedText,
+		HexColumnLine0,
+		HexColumnLine1,
+		HexColumnLineGroup0,
+		HexColumnLineGroup1,
 
 		// Must be last in this group
 		LastNR,
