@@ -709,7 +709,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void SavePreferredXCoordinate() {
-			preferredXCoordinate = currentPosition.ActiveColumn == HexColumnType.Values ? ValuesLeft : AsciiLeft;
+			preferredXCoordinate = currentPosition.ActiveColumn == HexColumnType.Values ? (ValuesLeft + ValuesRight) / 2 : (AsciiLeft + AsciiRight) / 2;
 			if (double.IsNaN(preferredXCoordinate) || preferredXCoordinate < 0 || preferredXCoordinate > 100000000)
 				preferredXCoordinate = 0;
 		}

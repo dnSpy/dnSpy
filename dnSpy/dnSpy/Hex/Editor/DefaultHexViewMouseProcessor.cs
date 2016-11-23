@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexEditorOperations editorOperations;
 
 		const bool insertionPosition = false;
-		const HexMoveToFlags hexMoveToFlags = HexMoveToFlags.None;
+		const HexMoveToFlags hexMoveToFlags = HexMoveToFlags.CaptureHorizontalPosition;
 
 		public DefaultHexViewMouseProcessor(WpfHexView wpfHexView, HexEditorOperationsFactoryService editorOperationsFactoryService) {
 			if (wpfHexView == null)
