@@ -563,7 +563,8 @@ namespace dnSpy.Hex {
 						visStart = CurrentTextIndex;
 					long valueIndex = (long)(pos - visibleBytesSpan.Start).ToUInt64();
 					spaces = valueFormatter.FormatValue(stringBuilder, hexBytes, valueIndex, flags);
-					bufferSpan = new HexBufferSpan(buffer, new HexSpan(pos, (ulong)valueFormatter.ByteCount));
+					var endPos = HexPosition.Min(endPosition, pos + (ulong)valueFormatter.ByteCount);
+					bufferSpan = new HexBufferSpan(new HexBufferPoint(buffer, pos), new HexBufferPoint(buffer, endPos));
 				}
 				else {
 					if (visStart != null && visEnd == null)

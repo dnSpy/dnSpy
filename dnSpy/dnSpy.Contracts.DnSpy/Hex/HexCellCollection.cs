@@ -87,7 +87,7 @@ done:;
 			for (int i = validStart + 1; i < validEnd; i++) {
 				if (cells[i - 1].BufferEnd != cells[i].BufferStart)
 					throw new ArgumentException();
-				if (cells[i - 1].BufferSpan.Length != cells[i].BufferSpan.Length)
+				if (cells[i - 1].BufferSpan.Length != cells[i].BufferSpan.Length && i + 1 != validEnd)
 					throw new ArgumentException();
 			}
 #endif
