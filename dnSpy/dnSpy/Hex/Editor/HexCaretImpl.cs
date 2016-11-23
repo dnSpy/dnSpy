@@ -108,9 +108,9 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		HexColumnPosition GetUpdatedCaretPosition() {
-			if (!IsValuesCaretPresent && !IsAsciiCaretPresent)
-				return default(HexColumnPosition);
 			var bufferLines = hexView.BufferLines;
+			if ((!IsValuesCaretPresent && !IsAsciiCaretPresent) || bufferLines.BufferSpan.Length == 0)
+				return new HexColumnPosition(HexColumnType.Values, new HexCellPosition(HexColumnType.Values, hexView.BufferLines.BufferStart, 0), new HexCellPosition(HexColumnType.Ascii, hexView.BufferLines.BufferStart, 0));
 
 			var activeColumn = currentPosition.ActiveColumn;
 			var valuePosition = currentPosition.ValuePosition;
@@ -153,11 +153,11 @@ namespace dnSpy.Hex.Editor {
 
 			HexCellPosition newValuePosition, newAsciiPosition;
 			if (valueCell == null)
-				newValuePosition = default(HexCellPosition);
+				newValuePosition = new HexCellPosition(HexColumnType.Values, hexView.BufferLines.BufferStart, 0);
 			else
 				newValuePosition = new HexCellPosition(HexColumnType.Values, valueCell.BufferStart, 0);
 			if (asciiCell == null)
-				newAsciiPosition = default(HexCellPosition);
+				newAsciiPosition = new HexCellPosition(HexColumnType.Ascii, hexView.BufferLines.BufferStart, 0);
 			else
 				newAsciiPosition = new HexCellPosition(HexColumnType.Ascii, valueCell?.BufferStart ?? asciiCell.BufferStart, 0);
 
@@ -442,8 +442,11 @@ namespace dnSpy.Hex.Editor {
 				PositionChanged?.Invoke(this, new HexCaretPositionChangedEventArgs(hexView, oldPos, newPos));
 		}
 
-		public override HexCaretPosition ToggleActiveColumn() =>
-			MoveTo(new HexColumnPosition(Toggle(currentPosition.ActiveColumn), currentPosition.ValuePosition, currentPosition.AsciiPosition));
+		public override HexCaretPosition ToggleActiveColumn() {
+			if (!(IsValuesCaretPresent && IsAsciiCaretPresent))
+				return Position;
+			return MoveTo(new HexColumnPosition(Toggle(currentPosition.ActiveColumn), currentPosition.ValuePosition, currentPosition.AsciiPosition));
+		}
 
 		static HexColumnType Toggle(HexColumnType column) {
 			switch (column) {
@@ -531,7 +534,7 @@ namespace dnSpy.Hex.Editor {
 			}
 			var closestPos = hexLine.BufferLine.GetClosestCellPosition(posInfo, onlyVisibleCells: true);
 			if (closestPos == null) {
-				Debug.Assert(hexView.BufferLines.BufferSpan.Length == 0);
+				Debug.Assert(hexView.BufferLines.BufferSpan.Length == 0 || (!IsValuesCaretPresent && !IsAsciiCaretPresent));
 				closestPos = new HexCellPosition(currentPosition.ActiveColumn, hexLine.BufferStart, 0);
 			}
 			SetExplicitPosition(CreateColumnPosition(closestPos.Value));

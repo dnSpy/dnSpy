@@ -340,8 +340,8 @@ namespace dnSpy.Hex.Editor {
 		static readonly IEnumerable<double> dashed_4_4_DashStyle = new ReadOnlyCollection<double>(new double[] { 4, 4 });
 
 		IEnumerable<KeyValuePair<LineElementKind, int>> GetColumnPositions(HexBufferLine line) {
-			var columns = line.ColumnOrder;
-			for (int i = 1; i < columns.Count; i++) {
+			var columns = line.ColumnOrder.Where(a => line.IsColumnPresent(a)).ToArray();
+			for (int i = 1; i < columns.Length; i++) {
 				Debug.Assert(i < 3);
 				if (i >= 3)
 					break;
