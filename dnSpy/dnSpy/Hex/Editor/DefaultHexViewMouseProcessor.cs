@@ -49,8 +49,7 @@ namespace dnSpy.Hex.Editor {
 		bool IsInSelection(HexMouseLocation mouseLoc) {
 			if (wpfHexView.Selection.IsEmpty)
 				return false;
-			var info = mouseLoc.HexViewLine.BufferLine.GetLinePositionInfo(mouseLoc.Position);
-			var position = mouseLoc.HexViewLine.BufferLine.GetClosestCellPosition(info, true);
+			var position = mouseLoc.HexViewLine.BufferLine.GetClosestCellPosition(mouseLoc.Position, onlyVisibleCells: true);
 			if (position == null)
 				return false;
 			var point = position.Value.BufferPosition;

@@ -524,6 +524,11 @@ namespace dnSpy.Hex.Editor {
 					hexLine.GetInsertionLinePositionFromXCoordinate(xCoordinate) :
 					hexLine.GetVirtualLinePositionFromXCoordinate(xCoordinate);
 			var posInfo = hexLine.BufferLine.GetLinePositionInfo(linePosition);
+			if (posInfo.IsValueCellSeparator) {
+				var posInfo2 = hexLine.BufferLine.GetLinePositionInfo(hexLine.GetInsertionLinePositionFromXCoordinate(xCoordinate));
+				if (posInfo2.IsValueCell)
+					posInfo = posInfo2;
+			}
 			var closestPos = hexLine.BufferLine.GetClosestCellPosition(posInfo, onlyVisibleCells: true);
 			if (closestPos == null) {
 				Debug.Assert(hexView.BufferLines.BufferSpan.Length == 0);

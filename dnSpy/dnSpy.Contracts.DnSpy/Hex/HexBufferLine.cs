@@ -408,6 +408,17 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the closest cell position
 		/// </summary>
+		/// <param name="linePosition">Line position</param>
+		/// <param name="onlyVisibleCells">true to only return cells with data</param>
+		/// <returns></returns>
+		public HexCellPosition? GetClosestCellPosition(int linePosition, bool onlyVisibleCells) {
+			var posInfo = GetLinePositionInfo(linePosition);
+			return GetClosestCellPosition(posInfo, onlyVisibleCells);
+		}
+
+		/// <summary>
+		/// Gets the closest cell position
+		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="onlyVisibleCells">true to only return cells with data</param>
 		/// <returns></returns>
