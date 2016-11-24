@@ -329,6 +329,7 @@
     <Compile Include="Hex\Editor\HexEditorFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexEditorOptions.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryServiceImpl.cs" />
+    <Compile Include="Hex\Editor\HexIntraTextAdornmentService.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessorCollection.cs" />
     <Compile Include="Hex\Editor\HexMarkerHelper.cs" />
     <Compile Include="Hex\Editor\HexMouseLocation.cs" />

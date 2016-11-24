@@ -126,11 +126,11 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextView));
 			if (viewTagAggregatorFactoryService == null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			this.adornmentTagInfos = new List<AdornmentTagInfo>();
-			this.currentLineIdentityTags = new HashSet<object>();
+			adornmentTagInfos = new List<AdornmentTagInfo>();
+			currentLineIdentityTags = new HashSet<object>();
 			this.wpfTextView = wpfTextView;
-			this.tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IntraTextAdornmentTag>(wpfTextView);
-			this.tagAggregator.TagsChanged += TagAggregator_TagsChanged;
+			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IntraTextAdornmentTag>(wpfTextView);
+			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 		}
@@ -155,7 +155,7 @@ namespace dnSpy.Text.Editor {
 				line = wpfTextView.TextViewLines.GetTextViewLineContainingBufferPosition(adornmentInfo.Span.Start);
 			var selSpan = line == null ? null : wpfTextView.Selection.GetSelectionOnTextViewLine(line);
 			bool selected = selSpan != null && selSpan.Value.Contains(new VirtualSnapshotSpan(adornmentInfo.Span));
-			IntraTextAdornment.SetIsSelected(adornmentInfo.UserUIElement, false);
+			IntraTextAdornment.SetIsSelected(adornmentInfo.UserUIElement, selected);
 		}
 
 		sealed class AdornmentTagInfo {
@@ -237,7 +237,7 @@ namespace dnSpy.Text.Editor {
 
 					adornmentInfo.Initialize();
 					UpdateAdornmentUIState(line, adornmentInfo, bounds.Value);
-					bool added = AddAdornment(adornmentInfo);
+					bool added = AddAdornment(adornmentInfo, line);
 					if (!added)
 						continue;
 					adornmentInfo.LineIdentityTag = line.IdentityTag;
@@ -253,16 +253,15 @@ namespace dnSpy.Text.Editor {
 			Canvas.SetLeft(adornmentInfo.TopUIElement, bounds.Left);
 		}
 
-		bool AddAdornment(AdornmentTagInfo adornmentInfo) {
-			var oldSize = adornmentInfo.TopUIElement.DesiredSize;
+		bool AddAdornment(AdornmentTagInfo adornmentInfo, ITextViewLine line) {
 			SizeChangedEventHandler sizeChanged = (a, e) => {
-				if (e.NewSize == oldSize)
+				var bounds = line.GetAdornmentBounds(adornmentInfo);
+				if (bounds == null)
 					return;
 				// Sometimes the size just gets changed very little, eg. from 400 to 399.95.....
 				const double d = 0.5;
-				if (Math.Abs(e.NewSize.Height - oldSize.Height) < d && Math.Abs(e.NewSize.Width - oldSize.Width) < d)
+				if (e.NewSize.Height <= bounds.Value.Height + d && e.NewSize.Width <= bounds.Value.Width + d)
 					return;
-				oldSize = e.NewSize;
 				tagger?.RefreshSpans(new SnapshotSpanEventArgs(adornmentInfo.Span));
 			};
 			adornmentInfo.TopUIElement.SizeChanged += sizeChanged;
