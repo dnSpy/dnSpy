@@ -21,8 +21,6 @@ using System;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Intellisense;
-using VSLI = Microsoft.VisualStudio.Language.Intellisense;
-using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Intellisense {
 	sealed class HexQuickInfoController : HexIntellisenseController {
@@ -42,11 +40,11 @@ namespace dnSpy.Hex.Intellisense {
 		void HexView_MouseHover(object sender, HexMouseHoverEventArgs e) {
 			var posInfo = e.Line.GetLinePositionInfo(e.TextPosition);
 			HexCellPosition triggerPoint;
-			if (posInfo.IsAsciiCell)
+			if (posInfo.IsAsciiCell && posInfo.Cell.HasData)
 				triggerPoint = new HexCellPosition(HexColumnType.Ascii, posInfo.Cell.BufferStart, posInfo.CellPosition);
-			else if (posInfo.IsValueCell)
+			else if (posInfo.IsValueCell && posInfo.Cell.HasData)
 				triggerPoint = new HexCellPosition(HexColumnType.Values, hexView.BufferLines.GetValueBufferSpan(posInfo.Cell, posInfo.CellPosition).Start, posInfo.CellPosition);
-			else if (posInfo.IsValueCellSeparator)
+			else if (posInfo.IsValueCellSeparator && posInfo.Cell.HasData)
 				triggerPoint = new HexCellPosition(HexColumnType.Values, hexView.BufferLines.GetValueBufferSpan(posInfo.Cell, posInfo.Cell.TextSpan.Length - 1).Start, posInfo.Cell.TextSpan.Length - 1);
 			else
 				return;

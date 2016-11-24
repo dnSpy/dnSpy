@@ -18,53 +18,61 @@
 */
 
 using System.Threading;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
+using dnSpy.Contracts.Hex.Editor;
 
-namespace dnSpy.Contracts.Text.Formatting {
+namespace dnSpy.Contracts.Hex.Formatting {
 	/// <summary>
 	/// Creates HTML strings
 	/// </summary>
-	interface IHtmlBuilderService {
+	public abstract class HexHtmlBuilderService {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexHtmlBuilderService() { }
+
 		/// <summary>
 		/// Gets the default delimiter
 		/// </summary>
-		string DefaultDelimiter { get; }
+		public virtual string DefaultDelimiter => "<br/>";
 
 		/// <summary>
 		/// Creates an HTML fragment that can be copied to the clipboard
 		/// </summary>
 		/// <param name="spans">Spans</param>
+		/// <param name="bufferLines">Buffer lines provider</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken);
+		public string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineProvider bufferLines, CancellationToken cancellationToken) =>
+			GenerateHtmlFragment(spans, bufferLines, DefaultDelimiter, cancellationToken);
 
 		/// <summary>
 		/// Creates an HTML fragment that can be copied to the clipboard
 		/// </summary>
 		/// <param name="spans">Spans</param>
+		/// <param name="bufferLines">Buffer lines provider</param>
 		/// <param name="delimiter">Delimiter added between generated html strings</param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, string delimiter, CancellationToken cancellationToken);
+		public abstract string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineProvider bufferLines, string delimiter, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates an HTML fragment that can be copied to the clipboard
 		/// </summary>
 		/// <param name="spans">Spans</param>
-		/// <param name="textView">Text view</param>
+		/// <param name="hexView">Text view</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, ITextView textView, CancellationToken cancellationToken);
+		public string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexView hexView, CancellationToken cancellationToken) =>
+			GenerateHtmlFragment(spans, hexView, DefaultDelimiter, cancellationToken);
 
 		/// <summary>
 		/// Creates an HTML fragment that can be copied to the clipboard
 		/// </summary>
 		/// <param name="spans">Spans</param>
-		/// <param name="textView">Text view</param>
+		/// <param name="hexView">Text view</param>
 		/// <param name="delimiter">Delimiter added between generated html strings</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, ITextView textView, string delimiter, CancellationToken cancellationToken);
+		public abstract string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexView hexView, string delimiter, CancellationToken cancellationToken);
 	}
 }

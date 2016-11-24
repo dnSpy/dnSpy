@@ -252,7 +252,7 @@ namespace dnSpy.Hex.Editor {
 			if (group == CommandConstants.StandardGroup) {
 				switch ((StandardIds)cmdId) {
 				case StandardIds.Copy:
-					EditorOperations.CopySelection();
+					EditorOperations.CopySelectionBytes();
 					return CommandTargetStatus.Handled;
 
 				case StandardIds.Paste:

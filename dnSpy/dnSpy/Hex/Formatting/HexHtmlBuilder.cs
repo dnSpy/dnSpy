@@ -18,24 +18,25 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Windows.Media;
-using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Text.Formatting;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Formatting;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Classification;
+using CTF = dnSpy.Contracts.Text.Formatting;
+using VSTC = Microsoft.VisualStudio.Text.Classification;
+using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
-namespace dnSpy.Text.Formatting {
-	sealed class HtmlBuilder {
-		readonly IClassificationFormatMap classificationFormatMap;
+namespace dnSpy.Hex.Formatting {
+	sealed class HexHtmlBuilder {
+		readonly VSTC.IClassificationFormatMap classificationFormatMap;
 		readonly string delimiter;
-		readonly HtmlClipboardFormatWriter htmlWriter;
+		readonly CTF.HtmlClipboardFormatWriter htmlWriter;
 		readonly StringBuilder cssWriter;
 		int spansCount;
 
-		public HtmlBuilder(IClassificationFormatMap classificationFormatMap, string delimiter, int tabSize) {
+		public HexHtmlBuilder(VSTC.IClassificationFormatMap classificationFormatMap, string delimiter, int tabSize) {
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (delimiter == null)
@@ -44,39 +45,58 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentOutOfRangeException(nameof(tabSize));
 			this.classificationFormatMap = classificationFormatMap;
 			this.delimiter = delimiter;
-			htmlWriter = new HtmlClipboardFormatWriter() { TabSize = tabSize };
+			htmlWriter = new CTF.HtmlClipboardFormatWriter() { TabSize = tabSize };
 			cssWriter = new StringBuilder();
 		}
 
-		public void Add(ISynchronousClassifier classifier, NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken) {
+		public void Add(HexBufferLineProvider bufferLines, HexClassifier classifier, NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
+			if (bufferLines == null)
+				throw new ArgumentNullException(nameof(bufferLines));
 			if (classifier == null)
 				throw new ArgumentNullException(nameof(classifier));
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
+			if (spans.Count != 0 && spans[0].Buffer != bufferLines.Buffer)
+				throw new ArgumentException();
+
+			var classificationSpans = new List<HexClassificationSpan>();
 			foreach (var span in spans) {
 				if (spansCount > 0)
 					htmlWriter.WriteRaw(delimiter);
 				spansCount++;
-				var tagSpans = classifier.GetClassificationSpans(span, cancellationToken);
-				var text = span.GetText();
-				int pos = span.Start.Position;
-				foreach (var tagSpan in tagSpans) {
-					if (pos < tagSpan.Span.Start) {
-						WriteCss(classificationFormatMap.DefaultTextProperties);
-						htmlWriter.WriteSpan(cssWriter.ToString(), text, pos - span.Start.Position, tagSpan.Span.Start.Position - pos);
+
+				var pos = span.Start;
+				for (;;) {
+					classificationSpans.Clear();
+					var line = bufferLines.GetLineFromPosition(pos);
+					var text = line.GetText(span);
+					var context = new HexClassificationContext(line, line.TextSpan);
+					classifier.GetClassificationSpans(classificationSpans, context, cancellationToken);
+
+					int textPos = 0;
+					foreach (var tagSpan in classificationSpans) {
+						if (textPos < tagSpan.Span.Start) {
+							WriteCss(classificationFormatMap.DefaultTextProperties);
+							htmlWriter.WriteSpan(cssWriter.ToString(), text, textPos, tagSpan.Span.Start - textPos);
+						}
+						WriteCss(classificationFormatMap.GetTextProperties(tagSpan.ClassificationType));
+						htmlWriter.WriteSpan(cssWriter.ToString(), text, tagSpan.Span.Start, tagSpan.Span.Length);
+						textPos = tagSpan.Span.End;
 					}
-					WriteCss(classificationFormatMap.GetTextProperties(tagSpan.ClassificationType));
-					htmlWriter.WriteSpan(cssWriter.ToString(), text, tagSpan.Span.Start - span.Start.Position, tagSpan.Span.Length);
-					pos = tagSpan.Span.End;
-				}
-				if (pos < span.End) {
-					WriteCss(classificationFormatMap.DefaultTextProperties);
-					htmlWriter.WriteSpan(cssWriter.ToString(), text, pos - span.Start.Position, span.End.Position - pos);
+					if (textPos < text.Length) {
+						WriteCss(classificationFormatMap.DefaultTextProperties);
+						htmlWriter.WriteSpan(cssWriter.ToString(), text, textPos, text.Length - textPos);
+					}
+					htmlWriter.WriteRaw("<br/>");
+
+					pos = line.BufferEnd;
+					if (pos >= span.End)
+						break;
 				}
 			}
 		}
 
-		void WriteCss(TextFormattingRunProperties props) {
+		void WriteCss(VSTF.TextFormattingRunProperties props) {
 			cssWriter.Clear();
 
 			if (!props.ForegroundBrushEmpty)

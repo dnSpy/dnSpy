@@ -334,6 +334,7 @@
     <Compile Include="Hex\Editor\WpfHexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\WpfHexViewMargin.cs" />
     <Compile Include="Hex\Editor\WpfHexViewMarginProvider.cs" />
+    <Compile Include="Hex\Formatting\HexHtmlBuilderService.cs" />
     <Compile Include="Hex\Formatting\HexLineTransformSourceProvider.cs" />
     <Compile Include="Hex\HexBufferLine.cs" />
     <Compile Include="Hex\Formatting\HexAdornmentElement.cs" />

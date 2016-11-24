@@ -31,8 +31,9 @@ using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 namespace dnSpy.Text.Formatting {
 	[Export(typeof(IHtmlBuilderService))]
 	sealed class HtmlBuilderService : IHtmlBuilderService {
-		const string defaultDelimiter = "<br/>";
 		const int defaultTabSize = 4;
+
+		public string DefaultDelimiter => "<br/>";
 
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly ISynchronousClassifierAggregatorService synchronousClassifierAggregatorService;
@@ -46,7 +47,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken) =>
-			GenerateHtmlFragment(spans, defaultDelimiter, cancellationToken);
+			GenerateHtmlFragment(spans, DefaultDelimiter, cancellationToken);
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, string delimiter, CancellationToken cancellationToken) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
@@ -57,7 +58,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, ITextView textView, CancellationToken cancellationToken) =>
-			GenerateHtmlFragment(spans, textView, defaultDelimiter, cancellationToken);
+			GenerateHtmlFragment(spans, textView, DefaultDelimiter, cancellationToken);
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, ITextView textView, string delimiter, CancellationToken cancellationToken) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));

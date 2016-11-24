@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Hex.Classification {
 		public bool IsDefault => Line == null;
 
 		/// <summary>
-		/// Gets the line info
+		/// Gets the buffer line
 		/// </summary>
 		public HexBufferLine Line { get; }
 

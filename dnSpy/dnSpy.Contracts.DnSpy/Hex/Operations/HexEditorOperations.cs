@@ -232,10 +232,16 @@ namespace dnSpy.Contracts.Hex.Operations {
 		public abstract void ResetSelection();
 
 		/// <summary>
-		/// Copy selection
+		/// Copy selection, bytes (as text)
 		/// </summary>
 		/// <returns></returns>
-		public abstract bool CopySelection();
+		public abstract bool CopySelectionBytes();
+
+		/// <summary>
+		/// Copy selection, UI text
+		/// </summary>
+		/// <returns></returns>
+		public abstract bool CopySelectionText();
 
 		/// <summary>
 		/// Paste

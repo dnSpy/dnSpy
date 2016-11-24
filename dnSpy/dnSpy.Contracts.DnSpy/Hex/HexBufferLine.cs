@@ -590,6 +590,37 @@ namespace dnSpy.Contracts.Hex {
 		}
 
 		/// <summary>
+		/// Gets the text. All cells outside the input range are cleared.
+		/// </summary>
+		/// <param name="visibleBytes">Visible bytes</param>
+		/// <returns></returns>
+		public string GetText(HexBufferSpan visibleBytes) {
+			if (visibleBytes.Contains(BufferSpan))
+				return Text;
+
+			var chars = Text.ToCharArray();
+
+			ClearCells(chars, IsValuesColumnPresent, ValueCells, visibleBytes);
+			ClearCells(chars, IsAsciiColumnPresent, AsciiCells, visibleBytes);
+
+			return new string(chars);
+		}
+
+		void ClearCells(char[] chars, bool isColumnPresent, HexCellCollection cells, HexBufferSpan visibleBytes) {
+			if (!isColumnPresent)
+				return;
+			foreach (var cell in cells.GetVisibleCells()) {
+				// Don't clear it if the cell is in the visible bytes span, this includes the case
+				// where only some of its bytes are visible.
+				if (visibleBytes.Contains(cell.BufferSpan))
+					continue;
+
+				for (int i = cell.TextSpan.Start; i < cell.TextSpan.End; i++)
+					chars[i] = ' ';
+			}
+		}
+
+		/// <summary>
 		/// Returns <see cref="Text"/>
 		/// </summary>
 		/// <returns></returns>

@@ -20,15 +20,23 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Operations;
 
 namespace dnSpy.Hex.Operations {
 	[Export(typeof(HexEditorOperationsFactoryService))]
 	sealed class HexEditorOperationsFactoryServiceImpl : HexEditorOperationsFactoryService {
+		readonly HexHtmlBuilderService htmlBuilderService;
+
+		[ImportingConstructor]
+		HexEditorOperationsFactoryServiceImpl(HexHtmlBuilderService htmlBuilderService) {
+			this.htmlBuilderService = htmlBuilderService;
+		}
+
 		public override HexEditorOperations GetEditorOperations(HexView hexView) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
-			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexEditorOperations), () => new HexEditorOperationsImpl(hexView));
+			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexEditorOperations), () => new HexEditorOperationsImpl(hexView, htmlBuilderService));
 		}
 
 		internal static void RemoveFromProperties(HexEditorOperations editorOperations) =>

@@ -25,9 +25,6 @@ using System.Linq;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Intellisense;
-using VSLI = Microsoft.VisualStudio.Language.Intellisense;
-using VST = Microsoft.VisualStudio.Text;
-using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Intellisense {

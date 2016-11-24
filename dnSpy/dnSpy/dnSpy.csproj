@@ -336,6 +336,7 @@
     <Compile Include="Hex\Editor\HexPopupSpaceReservationAgent.cs" />
     <Compile Include="Hex\Editor\HexScrollMapFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexScrollMapImpl.cs" />
+    <Compile Include="Hex\Editor\HexSelectionExtensions.cs" />
     <Compile Include="Hex\Editor\HexSelectionImpl.cs" />
     <Compile Include="Hex\Editor\HexSelectionLayer.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationManagerImpl.cs" />
@@ -374,6 +375,8 @@
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencerImpl.cs" />
     <Compile Include="Hex\Formatting\HexFormattedLineImpl.cs" />
     <Compile Include="Hex\Formatting\HexFormattedLineSourceImpl.cs" />
+    <Compile Include="Hex\Formatting\HexHtmlBuilder.cs" />
+    <Compile Include="Hex\Formatting\HexHtmlBuilderServiceImpl.cs" />
     <Compile Include="Hex\Formatting\HexLinePart.cs" />
     <Compile Include="Hex\Formatting\HexLinePartsCollection.cs" />
     <Compile Include="Hex\Formatting\HexLinePartsTextSource.cs" />

@@ -20,6 +20,9 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
@@ -44,11 +47,16 @@ namespace dnSpy.Hex.Operations {
 		HexViewScroller ViewScroller => HexView.ViewScroller;
 		HexBufferPoint ActiveCaretBufferPosition => Caret.Position.Position.ActivePosition.BufferPosition;
 
-		public HexEditorOperationsImpl(HexView hexView) {
+		readonly HexHtmlBuilderService htmlBuilderService;
+
+		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
+			if (htmlBuilderService == null)
+				throw new ArgumentNullException(nameof(htmlBuilderService));
 			HexView = hexView;
 			HexView.Closed += HexView_Closed;
+			this.htmlBuilderService = htmlBuilderService;
 		}
 
 		void HexView_Closed(object sender, EventArgs e) {
@@ -520,8 +528,69 @@ namespace dnSpy.Hex.Operations {
 
 		public override void ResetSelection() => Selection.Clear();
 
-		public override bool CopySelection() {
+		const string VS_COPY_FULL_LINE_DATA_FORMAT = "VisualStudioEditorOperationsLineCutCopyClipboardTag";
+		const string VS_COPY_BOX_DATA_FORMAT = "MSDEVColumnSelect";
+		bool CopyToClipboard(string text, string htmlText, bool isFullLineData, bool isBoxData) {
+			try {
+				var dataObj = new DataObject();
+				dataObj.SetText(text);
+				if (isFullLineData)
+					dataObj.SetData(VS_COPY_FULL_LINE_DATA_FORMAT, true);
+				if (isBoxData)
+					dataObj.SetData(VS_COPY_BOX_DATA_FORMAT, true);
+				if (htmlText != null)
+					dataObj.SetData(DataFormats.Html, htmlText);
+				Clipboard.SetDataObject(dataObj);
+				return true;
+			}
+			catch (ExternalException) {
+				return false;
+			}
+		}
+
+		string TryCreateHtmlText(HexBufferSpan span) => TryCreateHtmlText(new NormalizedHexBufferSpanCollection(span));
+		string TryCreateHtmlText(NormalizedHexBufferSpanCollection spans) {
+			if (spans.Count == 0)
+				return null;
+
+			// There's no way for us to cancel it so don't classify too much text
+			var totalBytes = GetTotalBytes(spans);
+			const ulong maxTotalBytesToCopy = 1 * 1024 * 1024;
+			if (totalBytes > maxTotalBytesToCopy)
+				return null;
+			var cancellationToken = CancellationToken.None;
+
+			return htmlBuilderService.GenerateHtmlFragment(spans, HexView, cancellationToken);
+		}
+
+		static HexPosition GetTotalBytes(NormalizedHexBufferSpanCollection spans) {
+			var totalBytes = HexPosition.Zero;
+			foreach (var span in spans)
+				totalBytes += span.Length;
+			return totalBytes;
+		}
+
+		public override bool CopySelectionBytes() {
 			return false;//TODO:
+		}
+
+		public override bool CopySelectionText() {
+			string htmlText;
+			if (Selection.IsEmpty) {
+				var line = Caret.ContainingHexViewLine;
+				var lineExtentSpan = line.BufferSpan;
+				string lineText = line.Text;
+				htmlText = TryCreateHtmlText(lineExtentSpan);
+				return CopyToClipboard(lineText, htmlText, isFullLineData: true, isBoxData: false);
+			}
+			var spans = Selection.SelectedSpans;
+			var totalBytes = GetTotalBytes(spans);
+			const ulong maxTotalBytesToCopy = 10 * 1024 * 1024;
+			if (totalBytes > maxTotalBytesToCopy)
+				return CopyToClipboard("Too much data", null, isFullLineData: false, isBoxData: false);
+			var text = Selection.GetText();
+			htmlText = TryCreateHtmlText(spans);
+			return CopyToClipboard(text, htmlText, isFullLineData: false, isBoxData: false);
 		}
 
 		public override bool Paste() {
