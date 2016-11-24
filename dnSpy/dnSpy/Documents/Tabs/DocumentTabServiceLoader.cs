@@ -49,7 +49,7 @@ namespace dnSpy.Documents.Tabs {
 
 			if (args.LoadFiles) {
 				var tgws = new List<SerializedTabGroupWindow>();
-				var tgwsHash = new HashSet<string>();
+				var tgwsHash = new HashSet<string>(StringComparer.Ordinal);
 				foreach (var tgwSection in section.SectionsWithName(TABGROUPWINDOW_SECTION)) {
 					var tgw = SerializedTabGroupWindow.Load(tgwSection);
 					yield return null;

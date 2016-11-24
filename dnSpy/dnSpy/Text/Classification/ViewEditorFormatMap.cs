@@ -43,7 +43,7 @@ namespace dnSpy.Text.Classification {
 				throw new ArgumentNullException(nameof(appearanceCategoryName));
 			this.editorFormatMapService = editorFormatMapService;
 			this.appearanceCategoryName = appearanceCategoryName;
-			this.viewProps = new HashSet<string>();
+			this.viewProps = new HashSet<string>(StringComparer.Ordinal);
 		}
 
 		protected void Initialize() => UpdateAppearanceMap();

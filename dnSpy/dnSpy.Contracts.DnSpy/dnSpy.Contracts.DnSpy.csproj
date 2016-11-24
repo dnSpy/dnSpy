@@ -445,6 +445,7 @@
     <Compile Include="Hex\Tagging\HexBatchedTagsChangedEventArgs.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexClassificationTag.cs" />
+    <Compile Include="Hex\Tagging\HexMarkerTag.cs" />
     <Compile Include="Hex\Tagging\HexSpaceNegotiatingAdornmentTag.cs" />
     <Compile Include="Hex\Tagging\HexTag.cs" />
     <Compile Include="Hex\Tagging\HexTagAggregator.cs" />

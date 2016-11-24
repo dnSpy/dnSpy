@@ -26,6 +26,7 @@ using System.Windows.Media;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
+using VST = Microsoft.VisualStudio.Text;
 using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor {
@@ -119,6 +120,33 @@ namespace dnSpy.Hex.Editor {
 			if (lines.Count > 0 && lines[lines.Count - 1].IntersectsBufferSpan(bufferSpan))
 				return true;
 			return false;
+		}
+
+		public override Geometry GetLineMarkerGeometry(WpfHexViewLine line, VST.Span span) =>
+			GetMarkerGeometry(line, span, false, HexMarkerHelper.LineMarkerPadding, true);
+		public override Geometry GetLineMarkerGeometry(WpfHexViewLine line, VST.Span span, bool clipToViewport, Thickness padding) =>
+			GetMarkerGeometry(line, span, clipToViewport, padding, true);
+
+		public override Geometry GetTextMarkerGeometry(WpfHexViewLine line, VST.Span span) =>
+			GetMarkerGeometry(line, span, false, HexMarkerHelper.TextMarkerPadding, false);
+		public override Geometry GetTextMarkerGeometry(WpfHexViewLine line, VST.Span span, bool clipToViewport, Thickness padding) =>
+			GetMarkerGeometry(line, span, clipToViewport, padding, false);
+
+		Geometry GetMarkerGeometry(WpfHexViewLine line, VST.Span span, bool clipToViewport, Thickness padding, bool isLineGeometry) {
+			if (line == null)
+				throw new ArgumentNullException(nameof(line));
+			if (!lines.Contains(line))
+				throw new ArgumentException();
+
+			bool createOutlinedPath = false;
+			PathGeometry geo = null;
+			var textBounds = line.GetNormalizedTextBounds(span);
+			HexMarkerHelper.AddGeometries(hexView, textBounds, isLineGeometry, clipToViewport, padding, 0, ref geo, ref createOutlinedPath);
+			if (createOutlinedPath)
+				geo = geo.GetOutlinedPathGeometry();
+			if (geo != null && geo.CanFreeze)
+				geo.Freeze();
+			return geo;
 		}
 
 		public override Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags) =>

@@ -43,7 +43,7 @@ namespace dnSpy.Text.Classification {
 				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
 			this.dispatcher = dispatcher;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
-			this.batchChanges = new HashSet<string>();
+			this.batchChanges = new HashSet<string>(StringComparer.Ordinal);
 			this.resourceDicts = new Dictionary<string, ResourceDictionary>(StringComparer.Ordinal);
 		}
 

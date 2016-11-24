@@ -125,11 +125,11 @@ namespace dnSpy.Text.Editor {
 			this.tagAggregator = tagAggregator;
 			this.editorFormatMap = editorFormatMap;
 			this.themeService = themeService;
-			this.textMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.TextMarker);
-			this.negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.NegativeTextMarkerLayer);
-			this.markerElements = new List<MarkerElement>();
-			this.useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-			this.onRemovedDelegate = OnRemoved;
+			textMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.TextMarker);
+			negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.NegativeTextMarkerLayer);
+			markerElements = new List<MarkerElement>();
+			useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
+			onRemovedDelegate = OnRemoved;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
