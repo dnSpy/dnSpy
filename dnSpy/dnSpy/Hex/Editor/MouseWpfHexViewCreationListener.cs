@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Operations;
+using dnSpy.Contracts.Hex.Editor.Operations;
 using dnSpy.Hex.MEF;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;

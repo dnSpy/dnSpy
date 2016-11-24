@@ -19,7 +19,7 @@
 
 using System;
 
-namespace dnSpy.Contracts.Hex.Editor {
+namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// A position in a hex column
 	/// </summary>

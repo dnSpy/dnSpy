@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Operations;
+using dnSpy.Contracts.Hex.Editor.Operations;
 using dnSpy.Hex.MEF;
 
 namespace dnSpy.Hex.Editor {

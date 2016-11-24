@@ -20,10 +20,10 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.Operations;
 using dnSpy.Contracts.Hex.Formatting;
-using dnSpy.Contracts.Hex.Operations;
 
-namespace dnSpy.Hex.Operations {
+namespace dnSpy.Hex.Editor.Operations {
 	[Export(typeof(HexEditorOperationsFactoryService))]
 	sealed class HexEditorOperationsFactoryServiceImpl : HexEditorOperationsFactoryService {
 		readonly HexHtmlBuilderService htmlBuilderService;

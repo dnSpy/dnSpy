@@ -25,14 +25,13 @@ using System.Threading;
 using System.Windows;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.Operations;
 using dnSpy.Contracts.Hex.Formatting;
-using dnSpy.Contracts.Hex.Operations;
 using dnSpy.Controls;
-using dnSpy.Hex.Editor;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
-namespace dnSpy.Hex.Operations {
+namespace dnSpy.Hex.Editor.Operations {
 	sealed class HexEditorOperationsImpl : HexEditorOperations {
 		public override HexView HexView { get; }
 		public override HexBufferSpan? ProvisionalCompositionSpan { get; set; }

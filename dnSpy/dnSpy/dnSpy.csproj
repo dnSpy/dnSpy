@@ -354,6 +354,8 @@
     <Compile Include="Hex\Editor\LeftSelectionMargin.cs" />
     <Compile Include="Hex\Editor\MetadataAndOrder.cs" />
     <Compile Include="Hex\Editor\MouseWpfHexViewCreationListener.cs" />
+    <Compile Include="Hex\Editor\Operations\HexEditorOperationsFactoryServiceImpl.cs" />
+    <Compile Include="Hex\Editor\Operations\HexEditorOperationsImpl.cs" />
     <Compile Include="Hex\Editor\RightControlMargin.cs" />
     <Compile Include="Hex\Editor\SelectionUtilities.cs" />
     <Compile Include="Hex\Editor\SpacerMargin.cs" />
@@ -410,8 +412,6 @@
     <Compile Include="Hex\Intellisense\HexQuickInfoSessionImpl.cs" />
     <Compile Include="Hex\Intellisense\HexSpaceReservationQuickInfoPresenter.cs" />
     <Compile Include="Hex\MEF\Metadata.cs" />
-    <Compile Include="Hex\Operations\HexEditorOperationsFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Operations\HexEditorOperationsImpl.cs" />
     <Compile Include="Hex\Tagging\DefaultTagger.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryServiceImpl.cs" />
     <Compile Include="Hex\Tagging\HexTaggerFactory.cs" />

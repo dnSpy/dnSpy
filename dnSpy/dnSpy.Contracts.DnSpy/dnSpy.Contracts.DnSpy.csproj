@@ -311,7 +311,9 @@
     <Compile Include="Hex\Editor\HexAdornmentLayerElement.cs" />
     <Compile Include="Hex\Editor\HexCaretPosition.cs" />
     <Compile Include="Hex\Editor\HexColumnLineKind.cs" />
-    <Compile Include="Hex\Editor\HexColumnPosition.cs" />
+    <Compile Include="Hex\Editor\Operations\HexEditorOperations.cs" />
+    <Compile Include="Hex\Editor\Operations\HexEditorOperationsFactoryService.cs" />
+    <Compile Include="Hex\HexColumnPosition.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessor.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessorProvider.cs" />
     <Compile Include="Hex\Editor\HexLayerKind.cs" />
@@ -439,8 +441,6 @@
     </Compile>
     <Compile Include="Hex.Old\SelectVM.cs" />
     <Compile Include="Hex\NormalizedHexSpanCollection.cs" />
-    <Compile Include="Hex\Operations\HexEditorOperations.cs" />
-    <Compile Include="Hex\Operations\HexEditorOperationsFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexBatchedTagsChangedEventArgs.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexClassificationTag.cs" />
