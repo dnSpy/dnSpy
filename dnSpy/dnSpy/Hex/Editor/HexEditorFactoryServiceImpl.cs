@@ -70,6 +70,7 @@ namespace dnSpy.Hex.Editor {
 			PredefinedHexViewRoles.CanHaveBackgroundImage,
 			PredefinedHexViewRoles.CanHaveCurrentLineHighlighter,
 			PredefinedHexViewRoles.CanHaveColumnLineSeparator,
+			PredefinedHexViewRoles.CanHighlightActiveColumn,
 		};
 		static readonly string[] defaultRolesList = new string[] {
 			PredefinedHexViewRoles.Analyzable,
@@ -81,6 +82,7 @@ namespace dnSpy.Hex.Editor {
 			PredefinedHexViewRoles.CanHaveBackgroundImage,
 			PredefinedHexViewRoles.CanHaveCurrentLineHighlighter,
 			PredefinedHexViewRoles.CanHaveColumnLineSeparator,
+			PredefinedHexViewRoles.CanHighlightActiveColumn,
 		};
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {

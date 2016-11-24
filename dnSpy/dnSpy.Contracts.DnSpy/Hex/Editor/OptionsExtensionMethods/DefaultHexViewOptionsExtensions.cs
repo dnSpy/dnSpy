@@ -288,5 +288,16 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ColumnGroupLine1Id);
 		}
+
+		/// <summary>
+		/// Returns true if the active column (values or ASCII) should be highlighted
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool HighlightActiveColumn(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.HighlightActiveColumnId);
+		}
 	}
 }

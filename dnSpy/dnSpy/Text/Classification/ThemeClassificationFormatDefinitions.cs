@@ -1224,6 +1224,16 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexColumnLineGroup1)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexColumnLineGroup1ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexHighlightedValuesColumn)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexHighlightedValuesColumnClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexHighlightedAsciiColumn)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexHighlightedAsciiColumnClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3342,6 +3352,24 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class HexColumnLineGroup1 : ThemeClassificationFormatDefinition {
 			HexColumnLineGroup1() : base(TextColor.HexColumnLineGroup1) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexHighlightedValuesColumn)]
+		[Name(ThemeClassificationTypeNameKeys.HexHighlightedValuesColumn)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexHighlightedValuesColumn : ThemeClassificationFormatDefinition {
+			HexHighlightedValuesColumn() : base(TextColor.HexHighlightedValuesColumn) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexHighlightedAsciiColumn)]
+		[Name(ThemeClassificationTypeNameKeys.HexHighlightedAsciiColumn)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexHighlightedAsciiColumn : ThemeClassificationFormatDefinition {
+			HexHighlightedAsciiColumn() : base(TextColor.HexHighlightedAsciiColumn) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

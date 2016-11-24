@@ -1201,5 +1201,15 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.HexColumnLineGroup1"/>
 		/// </summary>
 		public const string HexColumnLineGroup1 = "Theme-" + nameof(HexColumnLineGroup1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexHighlightedValuesColumn"/>
+		/// </summary>
+		public const string HexHighlightedValuesColumn = "Theme-" + nameof(HexHighlightedValuesColumn);
+
+		/// <summary>
+		/// <see cref="TextColor.HexHighlightedAsciiColumn"/>
+		/// </summary>
+		public const string HexHighlightedAsciiColumn = "Theme-" + nameof(HexHighlightedAsciiColumn);
 	}
 }

@@ -38,6 +38,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string Search = prefix + nameof(Search);
 		public const string IntraTextAdornment = prefix + nameof(IntraTextAdornment);
 		public const string ColumnLineSeparator = prefix + nameof(ColumnLineSeparator);
+		public const string ActiveColumnHighlighter = prefix + nameof(ActiveColumnHighlighter);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

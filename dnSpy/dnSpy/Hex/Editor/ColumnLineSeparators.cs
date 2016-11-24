@@ -38,7 +38,6 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Editor {
 	[Export(typeof(WpfHexViewCreationListener))]
-	[VSTE.TextViewRole(PredefinedHexViewRoles.Document)]
 	[VSTE.TextViewRole(PredefinedHexViewRoles.CanHaveColumnLineSeparator)]
 	sealed class ColumnLineSeparatorWpfHexViewCreationListener : WpfHexViewCreationListener {
 		readonly ColumnLineSeparatorServiceProvider columnLineSeparatorServiceProvider;

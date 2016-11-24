@@ -39,6 +39,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string CanHaveCurrentLineHighlighter = prefix + nameof(CanHaveCurrentLineHighlighter);
 		public const string CanHaveColumnLineSeparator = prefix + nameof(CanHaveColumnLineSeparator);
 		public const string CanHaveIntellisenseControllers = prefix + nameof(CanHaveIntellisenseControllers);
+		public const string CanHighlightActiveColumn = prefix + nameof(CanHighlightActiveColumn);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

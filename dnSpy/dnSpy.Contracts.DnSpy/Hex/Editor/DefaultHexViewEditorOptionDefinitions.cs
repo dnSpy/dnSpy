@@ -165,4 +165,10 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public override VSTE.EditorOptionKey<HexColumnLineKind> Key => DefaultHexViewOptions.ColumnGroupLine1Id;
 		public override HexColumnLineKind Default => HexColumnLineKind.Dashed_3_3;
 	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class HighlightActiveColumnEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewOptions.HighlightActiveColumnId;
+		public override bool Default => false;
+	}
 }

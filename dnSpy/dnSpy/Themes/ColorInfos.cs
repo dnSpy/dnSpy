@@ -1927,6 +1927,12 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.HexColumnLineGroup1, "Hex Column Line Group #1") {
 				DefaultForeground = "#FF000000",
 			},
+			new BrushColorInfo(ColorType.HexHighlightedValuesColumn, "Hex Highlighted Values Column") {
+				DefaultForeground = "#FFFCFCFC",
+			},
+			new BrushColorInfo(ColorType.HexHighlightedAsciiColumn, "Hex Highlighted ASCII Column") {
+				DefaultForeground = "#FFFCFCFC",
+			},
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",

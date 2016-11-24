@@ -266,6 +266,8 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexColumnLine1),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexColumnLineGroup0),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexColumnLineGroup1),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexHighlightedValuesColumn),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexHighlightedAsciiColumn),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

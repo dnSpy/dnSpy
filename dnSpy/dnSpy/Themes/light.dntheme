@@ -234,5 +234,7 @@
 		<color name="hexcolumnline1" fg="#FF000000" />
 		<color name="hexcolumnlinegroup0" fg="#FF000000" />
 		<color name="hexcolumnlinegroup1" fg="#FF000000" />
+		<color name="hexhighlightedvaluescolumn" bg="#FFFCFCFC" />
+		<color name="hexhighlightedasciicolumn" bg="#FFFCFCFC" />
 	</colors>
 </theme>

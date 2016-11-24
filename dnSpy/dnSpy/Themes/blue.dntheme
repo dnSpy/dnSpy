@@ -234,6 +234,8 @@
 		<color name="hexcolumnline1" fg="#FF000000" />
 		<color name="hexcolumnlinegroup0" fg="#FF000000" />
 		<color name="hexcolumnlinegroup1" fg="#FF000000" />
+		<color name="hexhighlightedvaluescolumn" bg="#FFFCFCFC" />
+		<color name="hexhighlightedasciicolumn" bg="#FFFCFCFC" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />

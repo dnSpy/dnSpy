@@ -259,6 +259,8 @@ namespace dnSpy.Contracts.Themes {
 		HexColumnLine1,
 		HexColumnLineGroup0,
 		HexColumnLineGroup1,
+		HexHighlightedValuesColumn,
+		HexHighlightedAsciiColumn,
 
 		// Must be last in this group
 		LastNR,
