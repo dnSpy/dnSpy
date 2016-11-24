@@ -312,6 +312,7 @@
     <Compile Include="Hex\Editor\BottomControlMargin.cs" />
     <Compile Include="Hex\Editor\BottomRightCornerMargin.cs" />
     <Compile Include="Hex\Editor\ColumnLineSeparators.cs" />
+    <Compile Include="Hex\Editor\CopyWpfHexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\CurrentLineHighlighter.cs" />
     <Compile Include="Hex\Editor\DefaultHexEditorCommandInfoProvider.cs" />
     <Compile Include="Hex\Editor\DefaultHexMouseProcessor.cs" />
