@@ -19,18 +19,11 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.IO;
 using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Hex {
 	[Export(typeof(HexBufferStreamFactoryService))]
 	sealed class HexBufferStreamFactoryServiceImpl : HexBufferStreamFactoryService {
-		public override HexBufferStream Create(string filename) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			return Create(File.ReadAllBytes(filename), filename);
-		}
-
 		public override HexBufferStream Create(byte[] data, string name) {
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));

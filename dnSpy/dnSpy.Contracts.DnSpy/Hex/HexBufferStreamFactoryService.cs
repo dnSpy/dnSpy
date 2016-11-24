@@ -17,6 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.IO;
+
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Creates <see cref="HexBufferStream"/>s
@@ -32,7 +35,11 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		public abstract HexBufferStream Create(string filename);
+		public HexBufferStream Create(string filename) {
+			if (filename == null)
+				throw new ArgumentNullException(nameof(filename));
+			return Create(File.ReadAllBytes(filename), filename);
+		}
 
 		/// <summary>
 		/// Creates a <see cref="HexBufferStream"/>
