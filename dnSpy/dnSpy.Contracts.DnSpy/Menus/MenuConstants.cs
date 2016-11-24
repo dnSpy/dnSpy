@@ -121,6 +121,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="TextEditorPosition"/></summary>
 		public static readonly string GUIDOBJ_TEXTEDITORPOSITION_GUID = "F093458D-C95B-4745-8388-047DE348B500";
 
+		/// <summary><see cref="HexCaretPosition"/></summary>
+		public static readonly string GUIDOBJ_HEXEDITORPOSITION_GUID = "DF87FB1F-D902-4365-BA52-655A7B27C94A";
+
 		/// <summary><c>HexBox</c></summary>
 		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
 

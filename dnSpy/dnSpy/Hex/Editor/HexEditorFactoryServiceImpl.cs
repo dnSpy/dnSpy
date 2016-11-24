@@ -94,8 +94,7 @@ namespace dnSpy.Hex.Editor {
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_HEXVIEW_GUID, wpfHexView);
-
-				//TODO: Return hex position
+				yield return new GuidObject(MenuConstants.GUIDOBJ_HEXEDITORPOSITION_GUID, wpfHexView.Caret.Position);
 
 				if (createGuidObjects != null) {
 					foreach (var guidObject in createGuidObjects(args))
@@ -142,7 +141,7 @@ namespace dnSpy.Hex.Editor {
 
 			if (options?.MenuGuid != null) {
 				var guidObjectsProvider = new GuidObjectsProvider(wpfHexView, options?.CreateGuidObjects);
-				menuService.InitializeContextMenu(wpfHexView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, null/*TODO: pass in an instance*/);
+				menuService.InitializeContextMenu(wpfHexView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, new HexContextMenuInitializer(wpfHexView));
 			}
 
 			HexViewCreated?.Invoke(this, new HexViewCreatedEventArgs(wpfHexView));
