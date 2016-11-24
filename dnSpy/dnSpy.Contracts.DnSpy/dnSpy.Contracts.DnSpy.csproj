@@ -289,6 +289,8 @@
     <Compile Include="HexEditor.Old\ISimpleHexStream.cs" />
     <Compile Include="HexEditor.Old\NumberUtils.cs" />
     <Compile Include="HexEditor.Old\SelectionLayer.cs" />
+    <Compile Include="Hex\Adornments\HexToolTipProvider.cs" />
+    <Compile Include="Hex\Adornments\HexToolTipProviderFactory.cs" />
     <Compile Include="Hex\Classification\HexAppearanceCategoryConstants.cs" />
     <Compile Include="Hex\Classification\HexClassificationChangedEventArgs.cs" />
     <Compile Include="Hex\Classification\HexClassificationContext.cs" />
@@ -328,6 +330,7 @@
     <Compile Include="Hex\Editor\OptionsExtensionMethods\DefaultHexViewOptionsExtensions.cs" />
     <Compile Include="Hex\Editor\OptionsExtensionMethods\DefaultWpfHexViewOptionsExtensions.cs" />
     <Compile Include="Hex\Editor\PredefinedHexMarginNames.cs" />
+    <Compile Include="Hex\Editor\PredefinedHexSpaceReservationManagerNames.cs" />
     <Compile Include="Hex\Editor\WpfHexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\WpfHexViewMargin.cs" />
     <Compile Include="Hex\Editor\WpfHexViewMarginProvider.cs" />

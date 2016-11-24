@@ -298,6 +298,8 @@
     <Compile Include="Extension\ExtensionConfigReader.cs" />
     <Compile Include="Extension\ExtensionService.cs" />
     <Compile Include="Extension\LoadedExtension.cs" />
+    <Compile Include="Hex\Adornments\HexToolTipProviderFactoryImpl.cs" />
+    <Compile Include="Hex\Adornments\HexToolTipProviderImpl.cs" />
     <Compile Include="Hex\ByteArrayHexBufferStream.cs" />
     <Compile Include="Hex\Classification\HexBufferClassifierAggregator.cs" />
     <Compile Include="Hex\Classification\HexClassificationFormatMapServiceImpl.cs" />
