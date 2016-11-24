@@ -152,6 +152,14 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets values spans
 		/// </summary>
+		/// <param name="span">Span and selection flags</param>
+		/// <returns></returns>
+		public IEnumerable<TextAndHexSpan> GetValuesSpans(HexBufferSpanSelection span) =>
+			GetValuesSpans(span.BufferSpan, span.SelectionFlags);
+
+		/// <summary>
+		/// Gets values spans
+		/// </summary>
 		/// <param name="span">Buffer span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
@@ -169,11 +177,27 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets ASCII spans
 		/// </summary>
+		/// <param name="span">Span and selection flags</param>
+		/// <returns></returns>
+		public IEnumerable<TextAndHexSpan> GetAsciiSpans(HexBufferSpanSelection span) =>
+			GetAsciiSpans(span.BufferSpan, span.SelectionFlags);
+
+		/// <summary>
+		/// Gets ASCII spans
+		/// </summary>
 		/// <param name="span">Buffer span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
 		public IEnumerable<TextAndHexSpan> GetAsciiSpans(HexBufferSpan span, HexSpanSelectionFlags flags) =>
 			GetTextAndHexSpans(IsAsciiColumnPresent, AsciiCells, span, flags, GetAsciiSpan(onlyVisibleCells: true), GetAsciiSpan(onlyVisibleCells: false));
+
+		/// <summary>
+		/// Gets column spans in column order
+		/// </summary>
+		/// <param name="span">Span and selection flags</param>
+		/// <returns></returns>
+		public IEnumerable<TextAndHexSpan> GetSpans(HexBufferSpanSelection span) =>
+			GetSpans(span.BufferSpan, span.SelectionFlags);
 
 		/// <summary>
 		/// Gets column spans in column order

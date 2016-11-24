@@ -242,5 +242,13 @@ namespace dnSpy.Contracts.Command {
 		/// Quick Info; Display Quick Info based on the current language.
 		/// </summary>
 		QUICKINFO,
+		/// <summary>
+		/// Decrease filter
+		/// </summary>
+		DECREASEFILTER,
+		/// <summary>
+		/// Increase filter
+		/// </summary>
+		INCREASEFILTER,
 	}
 }

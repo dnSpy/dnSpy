@@ -38,7 +38,7 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler Recalculated;
 		public event EventHandler Dismissed;
 		public bool IsDismissed { get; private set; }
-		public bool HasInteractiveContent { get; set; }
+		public bool HasInteractiveContent { get; private set; }
 		bool IsStarted { get; set; }
 
 		public ITrackingSpan ApplicableToSpan {

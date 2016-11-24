@@ -387,6 +387,22 @@
     <Compile Include="Hex\HexOffsetFormatter.cs" />
     <Compile Include="Hex\HexValueFormatter.cs" />
     <Compile Include="Hex\HexVersionImpl.cs" />
+    <Compile Include="Hex\Intellisense\HexIntellisenseControllerService.cs" />
+    <Compile Include="Hex\Intellisense\HexIntellisensePresenterFactoryService.cs" />
+    <Compile Include="Hex\Intellisense\HexIntellisenseSessionStackImpl.CommandTargetFilter.cs" />
+    <Compile Include="Hex\Intellisense\HexIntellisenseSessionStackImpl.cs" />
+    <Compile Include="Hex\Intellisense\HexIntellisenseSessionStackMapServiceImpl.cs" />
+    <Compile Include="Hex\Intellisense\HexQuickInfoBrokerImpl.cs" />
+    <Compile Include="Hex\Intellisense\HexQuickInfoController.cs" />
+    <Compile Include="Hex\Intellisense\HexQuickInfoControllerProvider.cs" />
+    <Compile Include="Hex\Intellisense\HexQuickInfoPresenter.cs" />
+    <Compile Include="Hex\Intellisense\HexQuickInfoPresenterBase.cs" />
+    <Compile Include="Hex\Intellisense\HexQuickInfoPresenterControl.xaml.cs">
+      <DependentUpon>HexQuickInfoPresenterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\Intellisense\HexQuickInfoPresenterProvider.cs" />
+    <Compile Include="Hex\Intellisense\HexQuickInfoSessionImpl.cs" />
+    <Compile Include="Hex\Intellisense\HexSpaceReservationQuickInfoPresenter.cs" />
     <Compile Include="Hex\MEF\Metadata.cs" />
     <Compile Include="Hex\Operations\HexEditorOperationsFactoryServiceImpl.cs" />
     <Compile Include="Hex\Operations\HexEditorOperationsImpl.cs" />
@@ -1036,6 +1052,10 @@
     <Page Include="Documents\Tabs\DocViewer\WaitAdorner.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Hex\Intellisense\HexQuickInfoPresenterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Language\Intellisense\CompletionPresenterControl.xaml">
       <Generator>MSBuild:Compile</Generator>

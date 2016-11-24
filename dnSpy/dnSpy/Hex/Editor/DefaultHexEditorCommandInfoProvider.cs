@@ -94,6 +94,8 @@ namespace dnSpy.Hex.Editor {
 			yield return CommandShortcut.Control(Key.Subtract, HexEditorIds.ZoomOut.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.D0, HexEditorIds.ZoomReset.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.NumPad0, HexEditorIds.ZoomReset.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.OemComma, HexEditorIds.DECREASEFILTER.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.OemPeriod, HexEditorIds.INCREASEFILTER.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Create(Key.I), HexEditorIds.QUICKINFO.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.I), HexEditorIds.QUICKINFO.ToCommandInfo());
 		}

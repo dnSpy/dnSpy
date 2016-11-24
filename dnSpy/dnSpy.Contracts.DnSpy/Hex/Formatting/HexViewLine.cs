@@ -265,6 +265,14 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Gets normalized text bounds
 		/// </summary>
+		/// <param name="span">Span and selection flags</param>
+		/// <returns></returns>
+		public Collection<VSTF.TextBounds> GetNormalizedTextBounds(HexBufferSpanSelection span) =>
+			GetNormalizedTextBounds(span.BufferSpan, span.SelectionFlags);
+
+		/// <summary>
+		/// Gets normalized text bounds
+		/// </summary>
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>

@@ -100,6 +100,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.BOTTOMLINE:
 				case HexEditorIds.BOTTOMLINE_EXT:
 				case HexEditorIds.CANCEL:
+				case HexEditorIds.DECREASEFILTER:
 				case HexEditorIds.DOWN:
 				case HexEditorIds.DOWN_EXT:
 				case HexEditorIds.END:
@@ -108,6 +109,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.EOL_EXT:
 				case HexEditorIds.HOME:
 				case HexEditorIds.HOME_EXT:
+				case HexEditorIds.INCREASEFILTER:
 				case HexEditorIds.LEFT:
 				case HexEditorIds.LEFT_EXT:
 				case HexEditorIds.PAGEDN:
@@ -228,6 +230,8 @@ namespace dnSpy.Hex.Editor {
 					// Seems to match VS behavior. If we handle ESC when there's no selection, we can't press
 					// ESC in the log editor and move back to the document tab.
 					return hexView.Selection.IsEmpty ? CommandTargetStatus.NotHandled : CommandTargetStatus.Handled;
+				case HexEditorIds.DECREASEFILTER:
+				case HexEditorIds.INCREASEFILTER:
 				case HexEditorIds.QUICKINFO:
 				default:
 					return CommandTargetStatus.NotHandled;

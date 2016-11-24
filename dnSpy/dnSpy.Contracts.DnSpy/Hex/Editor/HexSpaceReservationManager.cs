@@ -72,6 +72,16 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Creates a popup agent
 		/// </summary>
+		/// <param name="span">Span and selection flags</param>
+		/// <param name="style">Popup style</param>
+		/// <param name="content">Popup content</param>
+		/// <returns></returns>
+		public HexSpaceReservationAgent CreatePopupAgent(HexBufferSpanSelection span, VSTA.PopupStyles style, UIElement content) =>
+			CreatePopupAgent(span.BufferSpan, span.SelectionFlags, style, content);
+
+		/// <summary>
+		/// Creates a popup agent
+		/// </summary>
 		/// <param name="bufferSpan">Buffer span</param>
 		/// <param name="flags">Selection flags</param>
 		/// <param name="style">Popup style</param>
@@ -106,6 +116,15 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="agent">Agent to remove</param>
 		/// <returns></returns>
 		public abstract bool RemoveAgent(HexSpaceReservationAgent agent);
+
+		/// <summary>
+		/// Updates a popup agent
+		/// </summary>
+		/// <param name="agent">Popup agent created by <see cref="CreatePopupAgent(HexLineSpan, VSTA.PopupStyles, UIElement)"/></param>
+		/// <param name="span">Span and selection flags</param>
+		/// <param name="styles">New popup style</param>
+		public void UpdatePopupAgent(HexSpaceReservationAgent agent, HexBufferSpanSelection span, VSTA.PopupStyles styles) =>
+			UpdatePopupAgent(agent, span.BufferSpan, span.SelectionFlags, styles);
 
 		/// <summary>
 		/// Updates a popup agent
