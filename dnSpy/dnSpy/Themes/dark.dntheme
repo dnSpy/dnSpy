@@ -227,8 +227,8 @@
 		<color name="gacmatchhighlight" bg="#FF773800" />
 		<color name="appsettingstreeviewnodematchhighlight" bg="#FF773800" />
 		<color name="appsettingstextmatchhighlight" bg="#FF773800" />
-		<color name="hexcurrentline" fg="#282828" bg="#0F0F0F" />
-		<color name="hexcurrentlinenofocus" fg="#282828" bg="#242424" />
+		<color name="hexcurrentline" fg="#606060" />
+		<color name="hexcurrentlinenofocus" fg="#606060" />
 		<color name="hexinactiveselectedtext" bg="#FF565656" />
 		<color name="hexcolumnline0" fg="#FF497F49" />
 		<color name="hexcolumnline1" fg="#FF497F49" />
