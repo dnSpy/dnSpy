@@ -210,15 +210,20 @@ namespace dnSpy.Hex.Editor.Operations {
 			switch (Caret.Position.Position.ActiveColumn) {
 			case HexColumnType.Values:
 				var line = Caret.ContainingHexViewLine.BufferLine;
-				var position = HexView.BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
-				var cell = line.ValueCells.GetCell(position);
-				if (cell == null)
-					return;
 
 				var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
-				if (cell.BufferStart <= HexView.BufferLines.BufferStart)
-					break;
-				Caret.MoveTo(cell.BufferStart - 1);
+				if (Caret.Position.Position.ActivePosition.CellPosition != 0)
+					Caret.MoveTo(ActiveCaretBufferPosition);
+				else {
+					var position = HexView.BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
+					var cell = line.ValueCells.GetCell(position);
+					if (cell == null)
+						return;
+
+					if (cell.BufferStart <= HexView.BufferLines.BufferStart)
+						break;
+					Caret.MoveTo(cell.BufferStart - 1);
+				}
 				Caret.EnsureVisible();
 				if (extendSelection)
 					SelectToCaret(anchorPoint);
