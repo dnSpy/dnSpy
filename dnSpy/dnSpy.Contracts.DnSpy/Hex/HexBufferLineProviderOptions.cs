@@ -102,8 +102,7 @@ namespace dnSpy.Contracts.Hex {
 		public bool ShowAscii { get; set; }
 
 		/// <summary>
-		/// Column order or null to use the default order. All columns must be present in this
-		/// array even if they're not shown.
+		/// Column order or null to use the default order
 		/// </summary>
 		public HexColumnType[] ColumnOrder { get; set; }
 

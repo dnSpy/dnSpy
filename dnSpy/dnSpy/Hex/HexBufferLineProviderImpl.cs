@@ -360,15 +360,16 @@ namespace dnSpy.Hex {
 		}
 
 		static ReadOnlyCollection<HexColumnType> TryCreateColumns(HexColumnType[] columnOrders) {
-			// Always make a copy to prevent the caller from modifying it
-			var columns = columnOrders.ToArray();
-			if (Array.IndexOf(columns, HexColumnType.Offset) < 0)
+			var columns = columnOrders.ToList();
+			if (!columns.Contains(HexColumnType.Offset))
+				columns.Add(HexColumnType.Offset);
+			if (!columns.Contains(HexColumnType.Values))
+				columns.Add(HexColumnType.Values);
+			if (!columns.Contains(HexColumnType.Ascii))
+				columns.Add(HexColumnType.Ascii);
+			if (columns.Count != 3)
 				return null;
-			if (Array.IndexOf(columns, HexColumnType.Values) < 0)
-				return null;
-			if (Array.IndexOf(columns, HexColumnType.Ascii) < 0)
-				return null;
-			return new ReadOnlyCollection<HexColumnType>(columns);
+			return new ReadOnlyCollection<HexColumnType>(columns.ToArray());
 		}
 
 		int CalculateBytesPerLine(int charsPerLine) {
