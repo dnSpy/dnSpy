@@ -18,10 +18,10 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 

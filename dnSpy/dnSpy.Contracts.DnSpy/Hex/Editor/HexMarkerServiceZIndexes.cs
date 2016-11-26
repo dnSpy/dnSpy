@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Text.Editor {
+namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
 	/// Hex marker service Z-indexes. Markers with a negative z-index are placed in a
 	/// marker layer below most other layers.

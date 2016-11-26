@@ -332,6 +332,7 @@
     <Compile Include="Hex\Editor\HexEditorOptions.cs" />
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexGlyphMargin.cs" />
+    <Compile Include="Hex\Editor\HexImageReferenceGlyphFactoryProvider.cs" />
     <Compile Include="Hex\Editor\HexIntraTextAdornmentService.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessorCollection.cs" />
     <Compile Include="Hex\Editor\HexMarginContextMenuServiceImpl.cs" />
@@ -732,7 +733,6 @@
     <Compile Include="Text\Editor\GlyphTextViewMarkerGlyphTextMarkerTagger.cs" />
     <Compile Include="Text\Editor\GlyphTextViewMarkerService.cs" />
     <Compile Include="Text\Editor\GoToCommand.cs" />
-    <Compile Include="Text\Editor\HexMarkerServiceZIndexes.cs" />
     <Compile Include="Text\Editor\HorizontalScrollBarContainerMargin.cs" />
     <Compile Include="Text\Editor\HorizontalScrollBarMargin.cs" />
     <Compile Include="Text\Editor\IAdornmentLayerDefinitionService.cs" />
