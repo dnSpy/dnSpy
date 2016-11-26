@@ -17,25 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Text.Editor;
 
-namespace dnSpy.Contracts.Hex.Tagging {
+namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Hex view tag aggregator
+	/// Creates a <see cref="IGuidObjectsProvider"/> that uses <see cref="IMarginContextMenuHandler"/>s
+	/// to create objects.
 	/// </summary>
-	public abstract class HexViewTaggerProvider {
+	public abstract class HexMarginContextMenuService {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected HexViewTaggerProvider() { }
+		protected HexMarginContextMenuService() { }
 
 		/// <summary>
-		/// Creates a tagger or returns null
+		/// Creates a <see cref="IGuidObjectsProvider"/>
 		/// </summary>
-		/// <typeparam name="T">Tag type</typeparam>
-		/// <param name="hexView">Hex view</param>
-		/// <param name="buffer">Buffer</param>
+		/// <param name="wpfHexViewHost">Text view host</param>
+		/// <param name="margin">Margin</param>
+		/// <param name="marginName">Margin name</param>
 		/// <returns></returns>
-		public abstract IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) where T : HexTag;
+		public abstract IGuidObjectsProvider Create(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin margin, string marginName);
 	}
 }

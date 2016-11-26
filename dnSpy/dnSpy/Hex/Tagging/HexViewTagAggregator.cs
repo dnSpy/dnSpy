@@ -43,6 +43,6 @@ namespace dnSpy.Hex.Tagging {
 		}
 
 		protected override bool CanRaiseBatchedTagsChanged => !hexView.InLayout;
-		protected override IEnumerable<HexTagger<T>> CreateTaggers() => hexTaggerFactory.Create<T>(hexView, Buffer);
+		protected override IEnumerable<IHexTagger<T>> CreateTaggers() => hexTaggerFactory.Create<T>(hexView, Buffer);
 	}
 }

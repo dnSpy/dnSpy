@@ -33,7 +33,6 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FF3399FF",
 			},
 			new BrushColorInfo(ColorType.GlyphMargin, "Indicator Margin") {
-				BackgroundResourceKey = "GlyphMarginBackground",
 				DefaultBackground = "#FFE6E7E8",
 			},
 			new BrushColorInfo(ColorType.CurrentLine, "Current line") {
@@ -1932,6 +1931,9 @@ namespace dnSpy.Themes {
 			},
 			new BrushColorInfo(ColorType.HexHighlightedAsciiColumn, "Hex Highlighted ASCII Column") {
 				DefaultForeground = "#FFFCFCFC",
+			},
+			new BrushColorInfo(ColorType.HexGlyphMargin, "Indicator Margin (Hex Editor)") {
+				DefaultBackground = "#FFE6E7E8",
 			},
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {

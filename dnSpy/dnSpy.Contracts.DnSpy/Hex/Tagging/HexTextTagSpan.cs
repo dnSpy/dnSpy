@@ -25,12 +25,23 @@ namespace dnSpy.Contracts.Hex.Tagging {
 	/// Text span and tag
 	/// </summary>
 	/// <typeparam name="T">Tag type</typeparam>
-	public struct HexTextTagSpan<T> where T : HexTag {
+	public interface IHexTextTagSpan<out T> where T : HexTag {
 		/// <summary>
-		/// true if this is a default instance that hasn't been initialized
+		/// Gets the span
 		/// </summary>
-		public bool IsDefault => Tag == null;
+		VST.Span Span { get; }
 
+		/// <summary>
+		/// Gets the tag
+		/// </summary>
+		T Tag { get; }
+	}
+
+	/// <summary>
+	/// Text span and tag
+	/// </summary>
+	/// <typeparam name="T">Tag type</typeparam>
+	public class HexTextTagSpan<T> : IHexTextTagSpan<T> where T : HexTag {
 		/// <summary>
 		/// Gets the span
 		/// </summary>

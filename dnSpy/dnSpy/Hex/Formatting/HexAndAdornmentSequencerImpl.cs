@@ -144,10 +144,10 @@ namespace dnSpy.Hex.Formatting {
 			public override object ProviderTag => tagSpan.Tag.ProviderTag;
 			public override VST.PositionAffinity Affinity => tagSpan.Tag.Affinity;
 
-			readonly HexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan;
+			readonly IHexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan;
 
-			public HexAdornmentElementImpl(HexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan) {
-				if (tagSpan.IsDefault)
+			public HexAdornmentElementImpl(IHexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan) {
+				if (tagSpan == null)
 					throw new ArgumentNullException(nameof(tagSpan));
 				this.tagSpan = tagSpan;
 			}

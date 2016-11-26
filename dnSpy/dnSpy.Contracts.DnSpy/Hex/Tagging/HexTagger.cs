@@ -25,7 +25,48 @@ namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
 	/// Tagger
 	/// </summary>
-	public abstract class HexTagger<T> where T : HexTag {
+	/// <typeparam name="T">Tag type</typeparam>
+	public interface IHexTagger<out T> where T : HexTag {
+		/// <summary>
+		/// Raised after tags have changed
+		/// </summary>
+		event EventHandler<HexBufferSpanEventArgs> TagsChanged;
+
+		/// <summary>
+		/// Gets all tags intersecting with <paramref name="spans"/>
+		/// </summary>
+		/// <param name="spans">Spans</param>
+		/// <returns></returns>
+		IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans);
+
+		/// <summary>
+		/// Gets all tags intersecting with <paramref name="spans"/>. This method is synchronous.
+		/// </summary>
+		/// <param name="spans">Spans</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets all tags
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		IEnumerable<IHexTextTagSpan<T>> GetTags(HexTaggerContext context);
+
+		/// <summary>
+		/// Gets all tags. This method is synchronous.
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		IEnumerable<IHexTextTagSpan<T>> GetTags(HexTaggerContext context, CancellationToken cancellationToken);
+	}
+
+	/// <summary>
+	/// Tagger
+	/// </summary>
+	public abstract class HexTagger<T> : IHexTagger<T> where T : HexTag {
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -41,7 +82,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// </summary>
 		/// <param name="spans">Spans</param>
 		/// <returns></returns>
-		public abstract IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans);
+		public abstract IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans);
 
 		/// <summary>
 		/// Gets all tags intersecting with <paramref name="spans"/>. This method is synchronous.
@@ -49,14 +90,14 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="spans">Spans</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public virtual IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) => GetTags(spans);
+		public virtual IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) => GetTags(spans);
 
 		/// <summary>
 		/// Gets all tags
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		public abstract IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context);
+		public abstract IEnumerable<IHexTextTagSpan<T>> GetTags(HexTaggerContext context);
 
 		/// <summary>
 		/// Gets all tags. This method is synchronous.
@@ -64,6 +105,6 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="context">Context</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public virtual IEnumerable<HexTextTagSpan<T>> GetTags(HexTaggerContext context, CancellationToken cancellationToken) => GetTags(context);
+		public virtual IEnumerable<IHexTextTagSpan<T>> GetTags(HexTaggerContext context, CancellationToken cancellationToken) => GetTags(context);
 	}
 }

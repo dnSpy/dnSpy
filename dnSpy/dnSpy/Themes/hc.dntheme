@@ -77,6 +77,7 @@
 		<color name="hexcolumnline1" fg="#FFFFFFFF" />
 		<color name="hexcolumnlinegroup0" fg="#FFFFFFFF" />
 		<color name="hexcolumnlinegroup1" fg="#FFFFFFFF" />
+		<color name="hexglyphmargin" bg="#FFE6E7E8" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

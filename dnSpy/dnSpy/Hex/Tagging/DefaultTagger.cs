@@ -54,8 +54,8 @@ namespace dnSpy.Hex.Tagging {
 			this.hexClassificationTags = hexClassificationTags;
 		}
 
-		public override HexTagger<T> CreateTagger<T>(HexBuffer buffer) =>
-			new DefaultTagger(hexClassificationTags) as HexTagger<T>;
+		public override IHexTagger<T> CreateTagger<T>(HexBuffer buffer) =>
+			new DefaultTagger(hexClassificationTags) as IHexTagger<T>;
 	}
 
 	sealed class DefaultTagger : HexTagger<HexClassificationTag> {
@@ -82,7 +82,7 @@ namespace dnSpy.Hex.Tagging {
 			return true;
 		}
 
-		public override IEnumerable<HexTextTagSpan<HexClassificationTag>> GetTags(HexTaggerContext context) {
+		public override IEnumerable<IHexTextTagSpan<HexClassificationTag>> GetTags(HexTaggerContext context) {
 			var allValid = context.Line.HexBytes.AllValid;
 			if (allValid == null) {
 				foreach (var cell in context.Line.ValueCells.GetVisibleCells()) {
@@ -100,7 +100,7 @@ namespace dnSpy.Hex.Tagging {
 			}
 		}
 
-		public override IEnumerable<HexTagSpan<HexClassificationTag>> GetTags(NormalizedHexBufferSpanCollection spans) {
+		public override IEnumerable<IHexTagSpan<HexClassificationTag>> GetTags(NormalizedHexBufferSpanCollection spans) {
 			foreach (var span in spans) {
 				yield return new HexTagSpan<HexClassificationTag>(span, HexSpanSelectionFlags.Offset, hexClassificationTags.HexOffsetTag);
 				yield return new HexTagSpan<HexClassificationTag>(span, HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.AllCells, hexClassificationTags.HexAsciiTag);

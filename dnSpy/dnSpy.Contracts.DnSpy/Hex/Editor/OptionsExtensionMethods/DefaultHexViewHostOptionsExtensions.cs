@@ -68,5 +68,16 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.ZoomControlId);
 		}
+
+		/// <summary>
+		/// Returns true if the the glyph margin is enabled
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool IsGlyphMarginEnabled(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewHostOptions.GlyphMarginId);
+		}
 	}
 }

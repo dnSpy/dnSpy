@@ -1211,5 +1211,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.HexHighlightedAsciiColumn"/>
 		/// </summary>
 		public const string HexHighlightedAsciiColumn = "Theme-" + nameof(HexHighlightedAsciiColumn);
+
+		/// <summary>
+		/// <see cref="TextColor.HexGlyphMargin"/>
+		/// </summary>
+		public const string HexGlyphMargin = "Theme-" + nameof(HexGlyphMargin);
 	}
 }

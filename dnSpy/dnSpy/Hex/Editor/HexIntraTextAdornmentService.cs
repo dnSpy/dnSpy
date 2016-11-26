@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Editor {
 			this.intraTextAdornmentServiceProvider = intraTextAdornmentServiceProvider;
 		}
 
-		public override HexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) {
+		public override IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) {
 			if (hexView.Buffer != buffer)
 				return null;
 			var wpfHexView = hexView as WpfHexView;
@@ -53,7 +53,7 @@ namespace dnSpy.Hex.Editor {
 				return null;
 			return wpfHexView.Properties.GetOrCreateSingletonProperty(
 				typeof(IntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger),
-				() => new IntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger(intraTextAdornmentServiceProvider.Get(wpfHexView))) as HexTagger<T>;
+				() => new IntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger(intraTextAdornmentServiceProvider.Get(wpfHexView))) as IHexTagger<T>;
 		}
 	}
 
@@ -73,10 +73,10 @@ namespace dnSpy.Hex.Editor {
 			intraTextAdornmentService.RegisterTagger(this);
 		}
 
-		public override IEnumerable<HexTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(NormalizedHexBufferSpanCollection spans) =>
+		public override IEnumerable<IHexTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(NormalizedHexBufferSpanCollection spans) =>
 			intraTextAdornmentService.GetTags(spans);
 
-		public override IEnumerable<HexTextTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(HexTaggerContext context) =>
+		public override IEnumerable<IHexTextTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(HexTaggerContext context) =>
 			intraTextAdornmentService.GetLineTags(context);
 
 		public void RefreshSpans(HexBufferSpanEventArgs e) => TagsChanged?.Invoke(this, e);
@@ -103,8 +103,8 @@ namespace dnSpy.Hex.Editor {
 	}
 
 	abstract class HexIntraTextAdornmentService {
-		public abstract IEnumerable<HexTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(NormalizedHexBufferSpanCollection spans);
-		public abstract IEnumerable<HexTextTagSpan<HexSpaceNegotiatingAdornmentTag>> GetLineTags(HexTaggerContext context);
+		public abstract IEnumerable<IHexTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(NormalizedHexBufferSpanCollection spans);
+		public abstract IEnumerable<IHexTextTagSpan<HexSpaceNegotiatingAdornmentTag>> GetLineTags(HexTaggerContext context);
 		public abstract void RegisterTagger(IIntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger tagger);
 	}
 
@@ -174,7 +174,7 @@ namespace dnSpy.Hex.Editor {
 			}
 			else {
 				foreach (var span in wpfHexView.Selection.GetSelectionOnHexViewLine(line)) {
-					if (span.Contains(adornmentInfo.HexTextTagSpan.Value.Span))
+					if (span.Contains(adornmentInfo.HexTextTagSpan.Span))
 						return true;
 				}
 			}
@@ -190,16 +190,16 @@ namespace dnSpy.Hex.Editor {
 			// The full buffer line span if HexTextTagSpan != null, else it's an accurate span
 			public readonly HexBufferSpan BufferSpan;
 			// Mutually exclusive with HexTextTagSpan
-			public readonly HexTagSpan<HexIntraTextAdornmentTag>? HexTagSpan;
-			public readonly HexTextTagSpan<HexIntraTextAdornmentTag>? HexTextTagSpan;
+			public readonly IHexTagSpan<HexIntraTextAdornmentTag> HexTagSpan;
+			public readonly IHexTextTagSpan<HexIntraTextAdornmentTag> HexTextTagSpan;
 
-			public AdornmentTagInfo(HexBufferSpan span, UIElement element, HexTagSpan<HexIntraTextAdornmentTag> tagSpan) {
+			public AdornmentTagInfo(HexBufferSpan span, UIElement element, IHexTagSpan<HexIntraTextAdornmentTag> tagSpan) {
 				BufferSpan = span;
 				UserUIElement = element;
 				HexTagSpan = tagSpan;
 			}
 
-			public AdornmentTagInfo(HexBufferSpan span, UIElement element, HexTextTagSpan<HexIntraTextAdornmentTag> textTagSpan) {
+			public AdornmentTagInfo(HexBufferSpan span, UIElement element, IHexTextTagSpan<HexIntraTextAdornmentTag> textTagSpan) {
 				BufferSpan = span;
 				UserUIElement = element;
 				HexTextTagSpan = textTagSpan;
@@ -304,9 +304,9 @@ namespace dnSpy.Hex.Editor {
 				adornmentInfo.TopUIElement.SizeChanged -= sizeChanged;
 				adornmentInfo.TopUIElement.OnRemoved();
 				if (adornmentInfo.HexTagSpan != null)
-					adornmentInfo.HexTagSpan.Value.Tag.RemovalCallback?.Invoke(adornmentInfo.HexTagSpan, b);
+					adornmentInfo.HexTagSpan.Tag.RemovalCallback?.Invoke(adornmentInfo.HexTagSpan, b);
 				else
-					adornmentInfo.HexTextTagSpan.Value.Tag.RemovalCallback?.Invoke(adornmentInfo.HexTextTagSpan, b);
+					adornmentInfo.HexTextTagSpan.Tag.RemovalCallback?.Invoke(adornmentInfo.HexTextTagSpan, b);
 			};
 
 			Debug.Assert(!adornmentTagInfos.Contains(adornmentInfo));
@@ -339,7 +339,7 @@ namespace dnSpy.Hex.Editor {
 			this.tagger = tagger;
 		}
 
-		public override IEnumerable<HexTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(NormalizedHexBufferSpanCollection spans) {
+		public override IEnumerable<IHexTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(NormalizedHexBufferSpanCollection spans) {
 			if (wpfHexView.IsClosed)
 				yield break;
 
@@ -359,7 +359,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		public override IEnumerable<HexTextTagSpan<HexSpaceNegotiatingAdornmentTag>> GetLineTags(HexTaggerContext context) {
+		public override IEnumerable<IHexTextTagSpan<HexSpaceNegotiatingAdornmentTag>> GetLineTags(HexTaggerContext context) {
 			if (wpfHexView.IsClosed)
 				yield break;
 

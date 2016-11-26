@@ -261,6 +261,7 @@ namespace dnSpy.Contracts.Themes {
 		HexColumnLineGroup1,
 		HexHighlightedValuesColumn,
 		HexHighlightedAsciiColumn,
+		HexGlyphMargin,
 
 		// Must be last in this group
 		LastNR,

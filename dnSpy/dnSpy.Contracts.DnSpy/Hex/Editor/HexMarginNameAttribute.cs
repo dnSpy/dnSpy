@@ -17,20 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.Hex.Tagging;
+using System;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Hex.Tagging {
-	sealed class TextBufferTagAggregator<T> : TagAggregator<T> where T : HexTag {
-		readonly HexTaggerFactory hexTaggerFactory;
-
-		public TextBufferTagAggregator(HexTaggerFactory hexTaggerFactory, HexBuffer buffer)
-			: base(buffer) {
-			this.hexTaggerFactory = hexTaggerFactory;
-			Initialize();
+namespace dnSpy.Contracts.Hex.Editor {
+	/// <summary>
+	/// Adds the name of a margin
+	/// </summary>
+	public sealed class HexMarginNameAttribute : VSUTIL.SingletonBaseMetadataAttribute {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="marginName">Name of margin, eg. <see cref="PredefinedHexMarginNames.Glyph"/></param>
+		public HexMarginNameAttribute(string marginName) {
+			if (marginName == null)
+				throw new ArgumentNullException(nameof(marginName));
+			MarginName = marginName;
 		}
 
-		protected override IEnumerable<IHexTagger<T>> CreateTaggers() => hexTaggerFactory.Create<T>(Buffer);
+		/// <summary>
+		/// Name of margin, eg. <see cref="PredefinedHexMarginNames.Glyph"/>
+		/// </summary>
+		public string MarginName { get; }
 	}
 }

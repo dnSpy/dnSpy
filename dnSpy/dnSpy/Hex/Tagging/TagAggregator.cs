@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Tagging {
 		readonly List<HexBufferSpan> batchedTagsChangedList;
 		readonly object lockObj;
 		readonly HexTagAggregatorProxy hexTagAggregatorProxy;
-		HexTagger<T>[] taggers;
+		IHexTagger<T>[] taggers;
 
 		internal HexTagAggregator<T> HexTagAggregator => hexTagAggregatorProxy;
 
@@ -48,17 +48,17 @@ namespace dnSpy.Hex.Tagging {
 				this.owner = owner;
 			}
 
-			public override IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans) =>
+			public override IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans) =>
 				owner.GetTags(spans);
-			public override IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) =>
+			public override IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) =>
 				owner.GetTags(spans, cancellationToken);
-			public override IEnumerable<HexTextTagSpan<T>> GetLineTags(HexTaggerContext context) =>
+			public override IEnumerable<IHexTextTagSpan<T>> GetLineTags(HexTaggerContext context) =>
 				owner.GetLineTags(context);
-			public override IEnumerable<HexTextTagSpan<T>> GetLineTags(HexTaggerContext context, CancellationToken cancellationToken) =>
+			public override IEnumerable<IHexTextTagSpan<T>> GetLineTags(HexTaggerContext context, CancellationToken cancellationToken) =>
 				owner.GetLineTags(context, cancellationToken);
-			public override IEnumerable<HexTextTagSpan<T>> GetAllTags(HexTaggerContext context) =>
+			public override IEnumerable<IHexTextTagSpan<T>> GetAllTags(HexTaggerContext context) =>
 				owner.GetAllTags(context, null);
-			public override IEnumerable<HexTextTagSpan<T>> GetAllTags(HexTaggerContext context, CancellationToken cancellationToken) =>
+			public override IEnumerable<IHexTextTagSpan<T>> GetAllTags(HexTaggerContext context, CancellationToken cancellationToken) =>
 				owner.GetAllTags(context, cancellationToken);
 
 			public bool IsBatchedTagsChangedHooked => BatchedTagsChanged != null;
@@ -74,13 +74,13 @@ namespace dnSpy.Hex.Tagging {
 			batchedTagsChangedList = new List<HexBufferSpan>();
 			lockObj = new object();
 			Buffer = buffer;
-			taggers = Array.Empty<HexTagger<T>>();
+			taggers = Array.Empty<IHexTagger<T>>();
 			hexTagAggregatorProxy = new HexTagAggregatorProxy(this);
 		}
 
 		protected void Initialize() => RecreateTaggers();
 
-		IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans) {
+		IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
 			if (spans.Count == 0)
@@ -93,7 +93,7 @@ namespace dnSpy.Hex.Tagging {
 			}
 		}
 
-		IEnumerable<HexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
+		IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
 			if (spans.Count == 0)
@@ -107,21 +107,21 @@ namespace dnSpy.Hex.Tagging {
 			}
 		}
 
-		IEnumerable<HexTextTagSpan<T>> GetLineTags(HexTaggerContext context) {
+		IEnumerable<IHexTextTagSpan<T>> GetLineTags(HexTaggerContext context) {
 			foreach (var tagger in taggers) {
 				foreach (var tagSpan in tagger.GetTags(context))
 					yield return tagSpan;
 			}
 		}
 
-		IEnumerable<HexTextTagSpan<T>> GetLineTags(HexTaggerContext context, CancellationToken cancellationToken) {
+		IEnumerable<IHexTextTagSpan<T>> GetLineTags(HexTaggerContext context, CancellationToken cancellationToken) {
 			foreach (var tagger in taggers) {
 				foreach (var tagSpan in tagger.GetTags(context, cancellationToken))
 					yield return tagSpan;
 			}
 		}
 
-		IEnumerable<HexTextTagSpan<T>> GetAllTags(HexTaggerContext context, CancellationToken? cancellationToken) {
+		IEnumerable<IHexTextTagSpan<T>> GetAllTags(HexTaggerContext context, CancellationToken? cancellationToken) {
 			if (context.IsDefault)
 				throw new ArgumentException();
 			var span = context.Line.BufferSpan;
@@ -158,14 +158,14 @@ namespace dnSpy.Hex.Tagging {
 				t.TagsChanged += Tagger_TagsChanged;
 		}
 
-		protected abstract IEnumerable<HexTagger<T>> CreateTaggers();
+		protected abstract IEnumerable<IHexTagger<T>> CreateTaggers();
 
 		void DisposeTaggers() {
 			foreach (var t in taggers) {
 				(t as IDisposable)?.Dispose();
 				t.TagsChanged -= Tagger_TagsChanged;
 			}
-			taggers = Array.Empty<HexTagger<T>>();
+			taggers = Array.Empty<IHexTagger<T>>();
 		}
 
 		void Tagger_TagsChanged(object sender, HexBufferSpanEventArgs e) {

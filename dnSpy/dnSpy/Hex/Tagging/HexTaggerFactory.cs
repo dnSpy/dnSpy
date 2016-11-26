@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Tagging {
 			this.hexViewTaggerProviders = hexViewTaggerProviders.ToArray();
 		}
 
-		public IEnumerable<HexTagger<T>> Create<T>(HexView hexView, HexBuffer buffer) where T : HexTag {
+		public IEnumerable<IHexTagger<T>> Create<T>(HexView hexView, HexBuffer buffer) where T : HexTag {
 			foreach (var t in Create<T>(buffer))
 				yield return t;
 
@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Tagging {
 			}
 		}
 
-		public IEnumerable<HexTagger<T>> Create<T>(HexBuffer buffer) where T : HexTag {
+		public IEnumerable<IHexTagger<T>> Create<T>(HexBuffer buffer) where T : HexTag {
 			var type = typeof(T);
 			foreach (var info in hexBufferTaggerProviders) {
 				if (CanCreateTagger(type, info.Metadata.TagTypes)) {

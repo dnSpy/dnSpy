@@ -83,4 +83,22 @@ namespace dnSpy.Hex.MEF {
 		[DefaultValue(null)]
 		string OptionName { get; }
 	}
+
+	public interface IGlyphMarginMetadata {
+		[DefaultValue(null)]
+		IEnumerable<string> GlyphMargins { get; }
+	}
+
+	public interface IGlyphMouseProcessorProviderMetadata : IGlyphMarginMetadata, VSUTIL.IOrderable {
+	}
+
+	public interface IGlyphMetadata : ITaggerMetadata, VSUTIL.IOrderable {
+	}
+
+	public interface IMarginContextMenuHandlerProviderMetadata {
+		[DefaultValue(null)]
+		IEnumerable<string> TextViewRoles { get; }
+
+		string MarginName { get; }
+	}
 }

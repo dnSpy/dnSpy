@@ -311,7 +311,14 @@
     <Compile Include="Hex\Editor\HexAdornmentLayerElement.cs" />
     <Compile Include="Hex\Editor\HexCaretPosition.cs" />
     <Compile Include="Hex\Editor\HexColumnLineKind.cs" />
+    <Compile Include="Hex\Editor\HexGlyphFactory.cs" />
+    <Compile Include="Hex\Editor\HexGlyphFactoryProvider.cs" />
+    <Compile Include="Hex\Editor\HexGlyphMouseProcessorProvider.cs" />
+    <Compile Include="Hex\Editor\HexGlyphTag.cs" />
     <Compile Include="Hex\Editor\HexIntraTextAdornmentTag.cs" />
+    <Compile Include="Hex\Editor\HexMarginContextMenuHandlerProvider.cs" />
+    <Compile Include="Hex\Editor\HexMarginContextMenuService.cs" />
+    <Compile Include="Hex\Editor\HexMarginNameAttribute.cs" />
     <Compile Include="Hex\Editor\Operations\HexEditorOperations.cs" />
     <Compile Include="Hex\Editor\Operations\HexEditorOperationsFactoryService.cs" />
     <Compile Include="Hex\HexColumnPosition.cs" />

@@ -44,4 +44,10 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewHostOptions.ZoomControlId;
 		public override bool Default => true;
 	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class GlyphMarginEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewHostOptions.GlyphMarginId;
+		public override bool Default => true;
+	}
 }

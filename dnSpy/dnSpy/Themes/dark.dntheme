@@ -236,6 +236,7 @@
 		<color name="hexcolumnlinegroup1" fg="#FF497F49" />
 		<color name="hexhighlightedvaluescolumn" bg="#FF262626" />
 		<color name="hexhighlightedasciicolumn" bg="#FF262626" />
+		<color name="hexglyphmargin" bg="#FF333333" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

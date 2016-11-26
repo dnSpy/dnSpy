@@ -17,20 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.Hex.Tagging;
+namespace dnSpy.Contracts.Hex.Editor {
+	/// <summary>
+	/// Creates <see cref="HexGlyphFactory"/> instances
+	/// </summary>
+	public abstract class HexGlyphFactoryProvider {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexGlyphFactoryProvider() { }
 
-namespace dnSpy.Hex.Tagging {
-	sealed class TextBufferTagAggregator<T> : TagAggregator<T> where T : HexTag {
-		readonly HexTaggerFactory hexTaggerFactory;
-
-		public TextBufferTagAggregator(HexTaggerFactory hexTaggerFactory, HexBuffer buffer)
-			: base(buffer) {
-			this.hexTaggerFactory = hexTaggerFactory;
-			Initialize();
-		}
-
-		protected override IEnumerable<IHexTagger<T>> CreateTaggers() => hexTaggerFactory.Create<T>(Buffer);
+		/// <summary>
+		/// Creates a <see cref="HexGlyphFactory"/> or returns null
+		/// </summary>
+		/// <param name="view">Hex view</param>
+		/// <param name="margin">Margin</param>
+		/// <returns></returns>
+		public abstract HexGlyphFactory GetGlyphFactory(WpfHexView view, WpfHexViewMargin margin);
 	}
 }

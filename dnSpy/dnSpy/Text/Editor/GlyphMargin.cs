@@ -155,12 +155,13 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(glyphMouseProcessorProviders));
 			if (glyphFactoryProviders == null)
 				throw new ArgumentNullException(nameof(glyphFactoryProviders));
-			this.glyphFactories = new Dictionary<Type, GlyphFactoryInfo>();
+			glyphFactories = new Dictionary<Type, GlyphFactoryInfo>();
+			childCanvases = Array.Empty<Canvas>();
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			this.editorFormatMapService = editorFormatMapService;
-			this.lazyGlyphMouseProcessorProviders = glyphMouseProcessorProviders;
-			this.lazyGlyphFactoryProviders = glyphFactoryProviders;
+			lazyGlyphMouseProcessorProviders = glyphMouseProcessorProviders;
+			lazyGlyphFactoryProviders = glyphFactoryProviders;
 
 			var binding = new Binding {
 				Path = new PropertyPath(BackgroundProperty),
@@ -269,9 +270,9 @@ namespace dnSpy.Text.Editor {
 			mouseProcessorCollection = new MouseProcessorCollection(VisualElement, null, new DefaultMouseProcessor(), CreateMouseProcessors(), null);
 			wpfTextViewHost.TextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			lineInfos = new Dictionary<object, LineInfo>();
-			InitializeGlyphFactories(null, wpfTextViewHost.TextView.TextDataModel.ContentType);
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IGlyphTag>(wpfTextViewHost.TextView);
 			editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextViewHost.TextView);
+			InitializeGlyphFactories(null, wpfTextViewHost.TextView.TextDataModel.ContentType);
 		}
 
 		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) =>
@@ -288,10 +289,8 @@ namespace dnSpy.Text.Editor {
 			else {
 				UnregisterEvents();
 				lineInfos?.Clear();
-				if (childCanvases != null) {
-					foreach (var c in childCanvases)
-						c.Children.Clear();
-				}
+				foreach (var c in childCanvases)
+					c.Children.Clear();
 			}
 		}
 

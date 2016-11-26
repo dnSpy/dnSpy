@@ -1234,6 +1234,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexHighlightedAsciiColumn)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexHighlightedAsciiColumnClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexGlyphMargin)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexGlyphMarginClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3370,6 +3375,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class HexHighlightedAsciiColumn : ThemeClassificationFormatDefinition {
 			HexHighlightedAsciiColumn() : base(TextColor.HexHighlightedAsciiColumn) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexGlyphMargin)]
+		[Name(ThemeClassificationTypeNameKeys.HexGlyphMargin)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexGlyphMargin : ThemeClassificationFormatDefinition {
+			HexGlyphMargin() : base(TextColor.HexGlyphMargin) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

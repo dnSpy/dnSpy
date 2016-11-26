@@ -236,5 +236,6 @@
 		<color name="hexcolumnlinegroup1" fg="#FF000000" />
 		<color name="hexhighlightedvaluescolumn" bg="#FFFCFCFC" />
 		<color name="hexhighlightedasciicolumn" bg="#FFFCFCFC" />
+		<color name="hexglyphmargin" bg="#FFE6E7E8" />
 	</colors>
 </theme>
