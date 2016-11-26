@@ -1216,5 +1216,15 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.HexGlyphMargin"/>
 		/// </summary>
 		public const string HexGlyphMargin = nameof(HexGlyphMargin);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentValueCell"/>
+		/// </summary>
+		public const string HexCurrentValueCell = nameof(HexCurrentValueCell);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentAsciiCell"/>
+		/// </summary>
+		public const string HexCurrentAsciiCell = nameof(HexCurrentAsciiCell);
 	}
 }

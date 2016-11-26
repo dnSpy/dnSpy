@@ -171,4 +171,10 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewOptions.HighlightActiveColumnId;
 		public override bool Default => false;
 	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class HighlightCurrentValueEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewOptions.HighlightCurrentValueId;
+		public override bool Default => true;
+	}
 }

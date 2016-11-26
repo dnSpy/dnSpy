@@ -21,6 +21,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
@@ -1239,6 +1240,16 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexGlyphMargin)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexGlyphMarginClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCurrentValueCell)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCurrentValueCellClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCurrentAsciiCell)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCurrentAsciiCellClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3384,6 +3395,28 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class HexGlyphMargin : ThemeClassificationFormatDefinition {
 			HexGlyphMargin() : base(TextColor.HexGlyphMargin) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCurrentValueCell)]
+		[Name(ThemeClassificationTypeNameKeys.HexCurrentValueCell)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexCurrentValueCell : ThemeMarkerFormatDefinition {
+			HexCurrentValueCell() : base(TextColor.HexCurrentValueCell) {
+				ZOrder = HexMarkerServiceZIndexes.CurrentValue;
+			}
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCurrentAsciiCell)]
+		[Name(ThemeClassificationTypeNameKeys.HexCurrentAsciiCell)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexCurrentAsciiCell : ThemeMarkerFormatDefinition {
+			HexCurrentAsciiCell() : base(TextColor.HexCurrentAsciiCell) {
+				ZOrder = HexMarkerServiceZIndexes.CurrentValue;
+			}
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

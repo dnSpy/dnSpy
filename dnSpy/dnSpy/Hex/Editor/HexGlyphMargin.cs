@@ -39,11 +39,9 @@ using dnSpy.Hex.MEF;
 using CTC = dnSpy.Contracts.Text.Classification;
 using TE = dnSpy.Text.Editor;
 using TWPF = dnSpy.Text.WPF;
-using VST = Microsoft.VisualStudio.Text;
 using VSTC = Microsoft.VisualStudio.Text.Classification;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSTF = Microsoft.VisualStudio.Text.Formatting;
-using VSTT = Microsoft.VisualStudio.Text.Tagging;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Editor {

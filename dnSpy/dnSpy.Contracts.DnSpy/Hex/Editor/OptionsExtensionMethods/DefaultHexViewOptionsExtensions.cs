@@ -299,5 +299,16 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.HighlightActiveColumnId);
 		}
+
+		/// <summary>
+		/// Returns true if the current value under the caret should be highlighted
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool HighlightCurrentValue(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.HighlightCurrentValueId);
+		}
 	}
 }

@@ -78,6 +78,8 @@
 		<color name="hexcolumnlinegroup0" fg="#FFFFFFFF" />
 		<color name="hexcolumnlinegroup1" fg="#FFFFFFFF" />
 		<color name="hexglyphmargin" bg="#FFE6E7E8" />
+		<color name="hexcurrentvaluecell" fg="#FFFFFFFF" bg="#FF800080" />
+		<color name="hexcurrentasciicell" fg="#FFFFFFFF" bg="#FF800080" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

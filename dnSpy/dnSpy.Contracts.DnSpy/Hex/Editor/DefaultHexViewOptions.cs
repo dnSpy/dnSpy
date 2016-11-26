@@ -76,6 +76,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<HexColumnLineKind> ColumnGroupLine1Id = new VSTE.EditorOptionKey<HexColumnLineKind>(ColumnGroupLine1Name);
 		public const string HighlightActiveColumnName = "HexView/HighlightActiveColumn";
 		public static readonly VSTE.EditorOptionKey<bool> HighlightActiveColumnId = new VSTE.EditorOptionKey<bool>(HighlightActiveColumnName);
+		public const string HighlightCurrentValueName = "HexView/HighlightCurrentValue";
+		public static readonly VSTE.EditorOptionKey<bool> HighlightCurrentValueId = new VSTE.EditorOptionKey<bool>(HighlightCurrentValueName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

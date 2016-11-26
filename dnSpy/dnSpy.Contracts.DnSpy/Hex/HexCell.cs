@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Hex {
 	/// </summary>
 	public sealed class HexCell {
 		/// <summary>
-		/// true if there's data in the cell
+		/// true if there's data in the cell even if there's no memory there; false if it's a blank cell
 		/// </summary>
 		public bool HasData { get; }
 

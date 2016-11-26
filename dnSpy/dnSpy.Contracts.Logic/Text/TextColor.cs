@@ -264,6 +264,8 @@ namespace dnSpy.Contracts.Text {
 		HexHighlightedValuesColumn,
 		HexHighlightedAsciiColumn,
 		HexGlyphMargin,
+		HexCurrentValueCell,
+		HexCurrentAsciiCell,
 
 		/// <summary>
 		/// Must be last
@@ -514,6 +516,8 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexHighlightedValuesColumn = TextColor.HexHighlightedValuesColumn;
 		public static readonly object HexHighlightedAsciiColumn = TextColor.HexHighlightedAsciiColumn;
 		public static readonly object HexGlyphMargin = TextColor.HexGlyphMargin;
+		public static readonly object HexCurrentValueCell = TextColor.HexCurrentValueCell;
+		public static readonly object HexCurrentAsciiCell = TextColor.HexCurrentAsciiCell;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -766,6 +770,8 @@ namespace dnSpy.Contracts.Text {
 			HexHighlightedValuesColumn,
 			HexHighlightedAsciiColumn,
 			HexGlyphMargin,
+			HexCurrentValueCell,
+			HexCurrentAsciiCell,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

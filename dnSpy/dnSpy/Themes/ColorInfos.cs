@@ -1935,6 +1935,8 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.HexGlyphMargin, "Indicator Margin (Hex Editor)") {
 				DefaultBackground = "#FFE6E7E8",
 			},
+			new BrushColorInfo(ColorType.HexCurrentValueCell, "Current Value Cell"),
+			new BrushColorInfo(ColorType.HexCurrentAsciiCell, "Current Ascii Cell"),
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",

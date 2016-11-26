@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<bool> ForceClearTypeIfNeededId = new VSTE.EditorOptionKey<bool>(ForceClearTypeIfNeededName);
 		public const string AppearanceCategoryName = "WpfHexView/Appearance/Category";
 		public static readonly VSTE.EditorOptionKey<string> AppearanceCategoryId = new VSTE.EditorOptionKey<string>(AppearanceCategoryName);
-		public const string EnableHighlightCurrentLineName = "WpfHexView/Adornments/HighlightCurrentLine/Enable";
+		public const string EnableHighlightCurrentLineName = "WpfHexView/EnableHighlightCurrentLine";
 		public static readonly VSTE.EditorOptionKey<bool> EnableHighlightCurrentLineId = new VSTE.EditorOptionKey<bool>(EnableHighlightCurrentLineName);
 		public const string EnableMouseWheelZoomName = "WpfHexView/MouseWheelZoom";
 		public static readonly VSTE.EditorOptionKey<bool> EnableMouseWheelZoomId = new VSTE.EditorOptionKey<bool>(EnableMouseWheelZoomName);

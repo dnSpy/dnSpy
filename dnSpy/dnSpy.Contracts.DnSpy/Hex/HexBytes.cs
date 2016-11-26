@@ -408,5 +408,23 @@ namespace dnSpy.Contracts.Hex {
 			long v2 = v.Value;
 			return *(double*)&v2;
 		}
+
+		/// <summary>
+		/// Reads bytes
+		/// </summary>
+		/// <param name="index">Index of data</param>
+		/// <param name="destination">Destination array</param>
+		/// <param name="destinationIndex">Index in <paramref name="destination"/></param>
+		/// <param name="length">Number of bytes to copy</param>
+		public void ReadBytes(long index, byte[] destination, long destinationIndex, long length) {
+			if (index >= bytes.LongLength)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			long bytesToRead = length;
+			if (index + bytesToRead > bytes.LongLength)
+				bytesToRead = bytes.LongLength - index;
+			Array.Copy(bytes, index, destination, destinationIndex, bytesToRead);
+			while (bytesToRead < length)
+				destination[bytesToRead++] = 0;
+		}
 	}
 }

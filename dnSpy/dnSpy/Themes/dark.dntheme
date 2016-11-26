@@ -237,6 +237,8 @@
 		<color name="hexhighlightedvaluescolumn" bg="#FF262626" />
 		<color name="hexhighlightedasciicolumn" bg="#FF262626" />
 		<color name="hexglyphmargin" bg="#FF333333" />
+		<color name="hexcurrentvaluecell" bg="#FF303030" fg="#FFADC0D3" />
+		<color name="hexcurrentasciicell" bg="#FF505050" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

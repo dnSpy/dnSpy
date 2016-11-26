@@ -315,6 +315,7 @@
     <Compile Include="Hex\Editor\ColumnLineSeparators.cs" />
     <Compile Include="Hex\Editor\CopyWpfHexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\CurrentLineHighlighter.cs" />
+    <Compile Include="Hex\Editor\CurrentValueHighlighter.cs" />
     <Compile Include="Hex\Editor\DefaultHexEditorCommandInfoProvider.cs" />
     <Compile Include="Hex\Editor\DefaultHexMouseProcessor.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewCommandTarget.cs" />
@@ -731,6 +732,7 @@
     <Compile Include="Text\Editor\GlyphTextViewMarkerGlyphTextMarkerTagger.cs" />
     <Compile Include="Text\Editor\GlyphTextViewMarkerService.cs" />
     <Compile Include="Text\Editor\GoToCommand.cs" />
+    <Compile Include="Text\Editor\HexMarkerServiceZIndexes.cs" />
     <Compile Include="Text\Editor\HorizontalScrollBarContainerMargin.cs" />
     <Compile Include="Text\Editor\HorizontalScrollBarMargin.cs" />
     <Compile Include="Text\Editor\IAdornmentLayerDefinitionService.cs" />
