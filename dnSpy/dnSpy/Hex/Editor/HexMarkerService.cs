@@ -34,7 +34,6 @@ using TWPF = dnSpy.Text.WPF;
 using VST = Microsoft.VisualStudio.Text;
 using VSTC = Microsoft.VisualStudio.Text.Classification;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
-using VSTF = Microsoft.VisualStudio.Text.Formatting;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Editor {
@@ -225,7 +224,7 @@ namespace dnSpy.Hex.Editor {
 				return;
 			for (int i = markerElements.Count - 1; i >= 0; i--) {
 				var markerElement = markerElements[i];
-				if (spans.IntersectsWith(markerElement.Span)) {
+				if (spans.IntersectsWithButDoesNotStartAtItsEnd(markerElement.Span)) {
 					var layer = markerElement.ZIndex < 0 ? negativeTextMarkerAdornmentLayer : textMarkerAdornmentLayer;
 					layer.RemoveAdornment(markerElement);
 				}
@@ -246,12 +245,16 @@ namespace dnSpy.Hex.Editor {
 				if (added)
 					markerElements.Add(markerElement);
 			}
+			var formattedEnd = wpfHexView.HexViewLines.FormattedSpan.End;
 			foreach (var span in spans) {
-				var pos = span.Start;
+				var overlap = wpfHexView.HexViewLines.FormattedSpan.Overlap(span);
+				if (overlap == null)
+					continue;
+				var pos = overlap.Value.Start;
 				for (;;) {
 					var line = wpfHexView.WpfHexViewLines.GetWpfHexViewLineContainingBufferPosition(pos);
-					Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
-					if (line.VisibilityState != VSTF.VisibilityState.Unattached) {
+					Debug.Assert(line != null);
+					if (line != null) {
 						var taggerContext = new HexTaggerContext(line.BufferLine, line.BufferLine.TextSpan);
 						foreach (var tag in tagAggregator.GetLineTags(taggerContext)) {
 							if (tag.Tag?.Type == null)
@@ -267,7 +270,7 @@ namespace dnSpy.Hex.Editor {
 					}
 
 					pos = line.BufferEnd;
-					if (pos >= span.End)
+					if (pos > overlap.Value.End || pos >= formattedEnd)
 						break;
 				}
 			}
