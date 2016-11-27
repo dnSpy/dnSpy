@@ -27,6 +27,7 @@ using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Tagging;
 using CTC = dnSpy.Contracts.Text.Classification;
+using VST = Microsoft.VisualStudio.Text;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Editor {
@@ -270,10 +271,25 @@ namespace dnSpy.Hex.Editor {
 				yield break;
 			var cells = (savedValue.Column == HexColumnType.Values ? context.Line.ValueCells : context.Line.AsciiCells).GetVisibleCells();
 			var markerTag = savedValue.Column == HexColumnType.Values ? valueCellMarkerTag : asciiCellMarkerTag;
+
+			// PERF: Select more than one cell if there are multiple consecutive cells with the same value.
+			// Improves perf when selecting a common value, eg. 00.
+			HexCell startCell = null;
+			HexCell lastCell = null;
 			foreach (var cell in cells) {
-				if (savedValue.HasSameValueAs(context.Line, cell))
-					yield return new HexTextTagSpan<HexMarkerTag>(cell.CellSpan, markerTag);
+				if (!savedValue.HasSameValueAs(context.Line, cell))
+					continue;
+				if (startCell == null)
+					startCell = lastCell = cell;
+				else if (lastCell.Index + 1 != cell.Index) {
+					yield return new HexTextTagSpan<HexMarkerTag>(VST.Span.FromBounds(startCell.CellSpan.Start, lastCell.CellSpan.End), markerTag);
+					startCell = lastCell = cell;
+				}
+				else
+					lastCell = cell;
 			}
+			if (startCell != null)
+				yield return new HexTextTagSpan<HexMarkerTag>(VST.Span.FromBounds(startCell.CellSpan.Start, lastCell.CellSpan.End), markerTag);
 		}
 		static readonly HexMarkerTag valueCellMarkerTag = new HexMarkerTag(CTC.ThemeClassificationTypeNameKeys.HexCurrentValueCell);
 		static readonly HexMarkerTag asciiCellMarkerTag = new HexMarkerTag(CTC.ThemeClassificationTypeNameKeys.HexCurrentAsciiCell);
