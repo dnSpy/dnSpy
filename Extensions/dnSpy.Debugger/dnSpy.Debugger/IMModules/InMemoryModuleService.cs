@@ -176,15 +176,19 @@ namespace dnSpy.Debugger.IMModules {
 						if (newFile != null) {
 							UpdateResolver(newFile.ModuleDef);
 							mmdf.Children.Add(newFile);
-							// It could be a netmodule that contains an AssemblyDef row, if so remove it from the assembly
-							if (newFile.ModuleDef.Assembly != null)
-								newFile.ModuleDef.Assembly.Modules.Remove(newFile.ModuleDef);
+							RemoveFromAssembly(newFile.ModuleDef);
 							asmNode.Document.ModuleDef.Assembly.Modules.Add(newFile.ModuleDef);
 							asmNode.TreeNode.Children.Add(documentTreeView.TreeView.Create(documentTreeView.CreateNode(asmNode, newFile)));
 						}
 					}
 				}
 			}
+		}
+
+		static void RemoveFromAssembly(ModuleDef module) {
+			// It could be a netmodule that contains an AssemblyDef row, if so remove it from the assembly
+			if (module.Assembly != null)
+				module.Assembly.Modules.Remove(module);
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
@@ -408,8 +412,10 @@ namespace dnSpy.Debugger.IMModules {
 				}
 			}
 			asm.Modules.Clear();
-			for (int i = 0; i < files.Count; i++)
+			for (int i = 0; i < files.Count; i++) {
+				RemoveFromAssembly(files[i].ModuleDef);
 				asm.Modules.Add(files[i].ModuleDef);
+			}
 
 			var addedFile = documentService.GetOrAdd(asmFile);
 			Debug.Assert(addedFile == asmFile);
