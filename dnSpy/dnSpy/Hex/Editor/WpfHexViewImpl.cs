@@ -364,7 +364,7 @@ namespace dnSpy.Hex.Editor {
 				bufferPosition = line.BufferStart;
 			}
 
-			DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop);
+			DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop, true);
 		}
 
 		void InvalidateFormattedLineSource(bool refreshAllLines) {
@@ -677,16 +677,17 @@ namespace dnSpy.Hex.Editor {
 		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo) =>
 			DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null);
 		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) =>
-			DisplayLines(bufferPosition, verticalDistance, relativeTo, viewportWidthOverride ?? ViewportWidth, viewportHeightOverride ?? ViewportHeight, null);
+			DisplayLines(bufferPosition, verticalDistance, relativeTo, viewportWidthOverride ?? ViewportWidth, viewportHeightOverride ?? ViewportHeight, null, false);
 
 		double lastViewportWidth = double.NaN;
-		void DisplayLines(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double viewportWidthOverride, double viewportHeightOverride, double? newViewportTop) {
+		void DisplayLines(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double viewportWidthOverride, double viewportHeightOverride, double? newViewportTop, bool canCreateCreateHexBufferLineProvider) {
 			if (IsClosed)
 				throw new InvalidOperationException();
 			var oldBufferLines = hexBufferLineProvider;
 			var oldHexBufferLineProviderOptions = hexBufferLineProviderOptions;
 			Debug.Assert(oldBufferLines != null);
 			bool raiseBufferLinesChangedEvent = false;
+			bool revalidateBufferPosition = false;
 
 			canvas.Dispatcher.VerifyAccess();
 			if (bufferPosition.Buffer != Buffer)
@@ -728,9 +729,19 @@ namespace dnSpy.Hex.Editor {
 			if (recreateHexBufferLineProvider) {
 				recreateHexBufferLineProvider = false;
 				raiseBufferLinesChangedEvent = true;
-				// Don't re-create it here. That can lead to exceptions if Start/End positions get
-				// updated and bufferPosition becomes invalid. New BufferLines' IsValidPosition() throws.
-				// It's recreated with a short delay after raising LayoutChanged.
+				if (canCreateCreateHexBufferLineProvider) {
+					// It's safe to invalidate it here since we were called by the dispatcher and
+					// not by user code.
+					hexBufferLineProvider = null;
+					// Once the new instance gets created, the input bufferPosition could be invalid
+					// because start and/or end got updated. Re-validate it before creating new lines.
+					revalidateBufferPosition = true;
+				}
+				else {
+					// Don't re-create it here. That can lead to exceptions if Start/End positions get
+					// updated and bufferPosition becomes invalid. New BufferLines' IsValidPosition() throws.
+					// It's recreated with a short delay after raising LayoutChanged.
+				}
 			}
 
 			var lineTransformProvider = LineTransformProvider;
@@ -741,6 +752,12 @@ namespace dnSpy.Hex.Editor {
 			wpfHexViewLineCollection?.Invalidate();
 
 			var layoutHelper = new LayoutHelper(BufferLines, lineTransformProvider, newViewportTop ?? 0, oldVisibleLines, GetValidCachedLines(regionsToInvalidate), FormattedLineSource);
+			if (revalidateBufferPosition) {
+				if (bufferPosition < BufferLines.BufferStart)
+					bufferPosition = BufferLines.BufferStart;
+				else if (bufferPosition > BufferLines.BufferEnd)
+					bufferPosition = BufferLines.BufferEnd;
+			}
 			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
 
 			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);
@@ -760,7 +777,11 @@ namespace dnSpy.Hex.Editor {
 			}
 			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
 
-			if (raiseBufferLinesChangedEvent && oldBufferLines == hexBufferLineProvider) {
+			if (canCreateCreateHexBufferLineProvider) {
+				if (raiseBufferLinesChangedEvent)
+					RaiseBufferLinesChanged(oldBufferLines);
+			}
+			else if (raiseBufferLinesChangedEvent && oldBufferLines == hexBufferLineProvider) {
 				var newOptions = GetHexBufferLineProviderOptions();
 				if (!newOptions.Equals(oldHexBufferLineProviderOptions)) {
 					canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
@@ -776,7 +797,7 @@ namespace dnSpy.Hex.Editor {
 								bufferPosition = BufferLines.BufferStart;
 							else if (bufferPosition > BufferLines.BufferEnd)
 								bufferPosition = BufferLines.BufferEnd;
-							DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop);
+							DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop, true);
 						}
 					}));
 				}
