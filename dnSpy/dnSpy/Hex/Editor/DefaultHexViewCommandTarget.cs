@@ -100,6 +100,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.BOTTOMLINE:
 				case HexEditorIds.BOTTOMLINE_EXT:
 				case HexEditorIds.CANCEL:
+				case HexEditorIds.CopyText:
 				case HexEditorIds.DECREASEFILTER:
 				case HexEditorIds.DOWN:
 				case HexEditorIds.DOWN_EXT:
@@ -178,6 +179,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.BOL_EXT:
 				case HexEditorIds.BOTTOMLINE:
 				case HexEditorIds.BOTTOMLINE_EXT:
+				case HexEditorIds.CopyText:
 				case HexEditorIds.DELETE:
 				case HexEditorIds.DELETELINE:
 				case HexEditorIds.DELETETOBOL:
@@ -283,6 +285,10 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.CANCEL:
 					EditorOperations.ResetSelection();
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyText:
+					EditorOperations.CopySelectionText();
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.DOWN:

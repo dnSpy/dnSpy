@@ -34,11 +34,12 @@ using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor.Operations {
 	sealed class HexEditorOperationsImpl : HexEditorOperations {
+		const ulong htmlMaxTotalBytesToCopy = 1 * 1024 * 1024;
+		const ulong textMaxTotalBytesToCopy = 10 * 1024 * 1024;
+		const ulong bytesMaxTotalBytesToCopy = 10 * 1024 * 1024;
+
 		public override HexView HexView { get; }
 		public override HexBufferSpan? ProvisionalCompositionSpan { get; set; }
-		public override string SelectedText { get; }//TODO:
-		public override bool CanCopy { get; }//TODO:
-		public override bool CanPaste { get; }//TODO:
 
 		HexSelection Selection => HexView.Selection;
 		HexCaret Caret => HexView.Caret;
@@ -467,6 +468,8 @@ namespace dnSpy.Hex.Editor.Operations {
 				return false;
 			var line = bufferLines.GetLineFromPosition(cellPosition.BufferPosition);
 			var cell = line.ValueCells.GetCell(cellPosition.BufferPosition);
+			if (cell == null)
+				return false;
 			if ((uint)cellPosition.CellPosition >= (uint)cell.CellSpan.Length)
 				return false;
 			var newValue = bufferLines.EditValueCell(cell, cellPosition.CellPosition, text[0]);
@@ -627,8 +630,7 @@ namespace dnSpy.Hex.Editor.Operations {
 
 			// There's no way for us to cancel it so don't classify too much text
 			var totalBytes = GetTotalBytes(spans);
-			const ulong maxTotalBytesToCopy = 1 * 1024 * 1024;
-			if (totalBytes > maxTotalBytesToCopy)
+			if (totalBytes > htmlMaxTotalBytesToCopy)
 				return null;
 			var cancellationToken = CancellationToken.None;
 
@@ -642,8 +644,15 @@ namespace dnSpy.Hex.Editor.Operations {
 			return totalBytes;
 		}
 
+		public override bool CanCopy => !Selection.IsEmpty;
 		public override bool CopySelectionBytes() {
-			return false;//TODO:
+			var span = Selection.StreamSelectionSpan;
+			var totalBytes = span.Length;
+			bool upper = !HexView.BufferLines.ValuesLowerCaseHex;
+			var text = totalBytes > bytesMaxTotalBytesToCopy ? null : ClipboardUtils.ToHexString(span, upper);
+			if (text == null)
+				return CopyToClipboard("Too much data selected", null, isFullLineData: false, isBoxData: false);
+			return CopyToClipboard(text, null, isFullLineData: false, isBoxData: false);
 		}
 
 		public override bool CopySelectionText() {
@@ -657,16 +666,74 @@ namespace dnSpy.Hex.Editor.Operations {
 			}
 			var spans = Selection.SelectedSpans;
 			var totalBytes = GetTotalBytes(spans);
-			const ulong maxTotalBytesToCopy = 10 * 1024 * 1024;
-			if (totalBytes > maxTotalBytesToCopy)
+			if (totalBytes > textMaxTotalBytesToCopy)
 				return CopyToClipboard("Too much data", null, isFullLineData: false, isBoxData: false);
 			var text = Selection.GetText();
 			htmlText = TryCreateHtmlText(spans);
 			return CopyToClipboard(text, htmlText, isFullLineData: false, isBoxData: false);
 		}
 
+		public override bool CanPaste {
+			get {
+				switch (Caret.Position.Position.ActiveColumn) {
+				case HexColumnType.Values:
+					return ClipboardUtils.GetData() != null;
+
+				case HexColumnType.Ascii:
+					return ClipboardUtils.GetText() != null;
+
+				case HexColumnType.Offset:
+				default:
+					throw new InvalidOperationException();
+				}
+			}
+		}
+
 		public override bool Paste() {
-			return false;//TODO:
+			switch (Caret.Position.Position.ActiveColumn) {
+			case HexColumnType.Values:
+				return PasteValues(Caret.Position.Position.ValuePosition);
+
+			case HexColumnType.Ascii:
+				return PasteAscii(Caret.Position.Position.AsciiPosition);
+
+			case HexColumnType.Offset:
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		bool PasteValues(HexCellPosition cellPosition) {
+			var data = ClipboardUtils.GetData();
+			if (data == null)
+				return false;
+
+			var line = HexView.BufferLines.GetLineFromPosition(cellPosition.BufferPosition);
+			var cell = line.ValueCells.GetCell(cellPosition.BufferPosition);
+			if (cell == null)
+				return false;
+
+			var pos = cell.BufferStart;
+			using (var ed = HexView.Buffer.CreateEdit()) {
+				if (!ed.Replace(pos, data))
+					return false;
+				ed.Apply();
+			}
+
+			var newPos = pos + data.LongLength;
+			if (newPos > HexView.BufferLines.BufferEnd)
+				newPos = HexView.BufferLines.BufferEnd;
+			Caret.MoveTo(newPos);
+			Caret.EnsureVisible();
+			Selection.Clear();
+			return true;
+		}
+
+		bool PasteAscii(HexCellPosition cellPosition) {
+			var text = ClipboardUtils.GetText();
+			if (text == null)
+				return false;
+			return InsertTextAscii(cellPosition, text);
 		}
 
 		public override void ScrollUpAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(VSTE.ScrollDirection.Up);

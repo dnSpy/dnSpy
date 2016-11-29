@@ -250,5 +250,9 @@ namespace dnSpy.Contracts.Command {
 		/// Increase filter
 		/// </summary>
 		INCREASEFILTER,
+		/// <summary>
+		/// Copies the text shown in the UI
+		/// </summary>
+		CopyText,
 	}
 }

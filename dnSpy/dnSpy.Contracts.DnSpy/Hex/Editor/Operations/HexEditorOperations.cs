@@ -46,11 +46,6 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		public abstract HexBufferSpan? ProvisionalCompositionSpan { get; set; }
 
 		/// <summary>
-		/// Gets the selected text
-		/// </summary>
-		public abstract string SelectedText { get; }
-
-		/// <summary>
 		/// true if it's possible to copy text to the clipboard
 		/// </summary>
 		public abstract bool CanCopy { get; }
