@@ -327,6 +327,10 @@ namespace dnSpy.Hex.Editor {
 					EditorOperations.CopySpecial(HexCopySpecialKind.Offset);
 					return CommandTargetStatus.Handled;
 
+				case HexEditorIds.DELETE:
+					EditorOperations.ClearData();
+					return CommandTargetStatus.Handled;
+
 				case HexEditorIds.DOWN:
 					EditorOperations.MoveLineDown(false);
 					return CommandTargetStatus.Handled;
@@ -506,7 +510,6 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.BACKSPACE:
 				case HexEditorIds.BACKTAB:
-				case HexEditorIds.DELETE:
 				case HexEditorIds.DELETELINE:
 				case HexEditorIds.DELETETOBOL:
 				case HexEditorIds.DELETETOEOL:

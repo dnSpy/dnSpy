@@ -322,6 +322,11 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		/// Toggles active column
 		/// </summary>
 		public abstract void ToggleColumn();
+
+		/// <summary>
+		/// Clears data
+		/// </summary>
+		public abstract bool ClearData();
 	}
 
 	/// <summary>

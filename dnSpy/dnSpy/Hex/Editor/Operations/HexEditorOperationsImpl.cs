@@ -971,5 +971,41 @@ namespace dnSpy.Hex.Editor.Operations {
 			Caret.ToggleActiveColumn();
 			Caret.EnsureVisible();
 		}
+
+		HexBufferSpan? GetSelectedSpanOrCell() {
+			if (!Selection.IsEmpty)
+				return Selection.StreamSelectionSpan;
+
+			var line = HexView.BufferLines.GetLineFromPosition(Caret.Position.Position.ActivePosition.BufferPosition);
+			var cells = Caret.Position.Position.ActivePosition.Column == HexColumnType.Values ? line.ValueCells : line.AsciiCells;
+			var cell = cells.GetCell(Caret.Position.Position.ActivePosition.BufferPosition);
+			return cell?.BufferSpan;
+		}
+
+		public override bool ClearData() {
+			var span = GetSelectedSpanOrCell();
+			if (span == null)
+				return false;
+			if (span.Value.Length > bytesMaxTotalBytesToCopy)
+				return false;
+			var newData = new byte[span.Value.Length.ToUInt64()];
+
+			var pos = span.Value.Start;
+			using (var ed = HexView.Buffer.CreateEdit()) {
+				if (!ed.Replace(pos, newData))
+					return false;
+				ed.Apply();
+			}
+
+			if (Selection.IsEmpty) {
+				var newPos = pos + newData.LongLength;
+				if (newPos > HexView.BufferLines.BufferEnd)
+					newPos = HexView.BufferLines.BufferEnd;
+				Caret.MoveTo(newPos);
+			}
+			Caret.EnsureVisible();
+			Selection.Clear();
+			return true;
+		}
 	}
 }
