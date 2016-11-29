@@ -35,6 +35,20 @@ namespace dnSpy.Hex {
 		public override event EventHandler<HexContentChangedEventArgs> ChangedLowPriority;
 		public override event EventHandler PostChanged;
 
+		public override event EventHandler<HexBufferSpanInvalidatedEventArgs> BufferSpanInvalidated {
+			add {
+				if (bufferSpanInvalidated == null)
+					stream.BufferStreamSpanInvalidated += HexBufferStream_BufferStreamSpanInvalidated;
+				bufferSpanInvalidated += value;
+			}
+			remove {
+				bufferSpanInvalidated -= value;
+				if (bufferSpanInvalidated == null)
+					stream.BufferStreamSpanInvalidated -= HexBufferStream_BufferStreamSpanInvalidated;
+			}
+		}
+		EventHandler<HexBufferSpanInvalidatedEventArgs> bufferSpanInvalidated;
+
 		readonly HexBufferStream stream;
 		HexVersionImpl currentHexVersion;
 
@@ -42,8 +56,11 @@ namespace dnSpy.Hex {
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream));
 			this.stream = stream;
-			this.currentHexVersion = new HexVersionImpl(this, 0, 0);
+			currentHexVersion = new HexVersionImpl(this, 0, 0);
 		}
+
+		void HexBufferStream_BufferStreamSpanInvalidated(object sender, HexBufferStreamSpanInvalidatedEventArgs e) =>
+			bufferSpanInvalidated?.Invoke(this, new HexBufferSpanInvalidatedEventArgs(e.Span));
 
 		void CreateNewVersion(IList<HexChange> changes, int? reiteratedVersionNumber = null) =>
 			currentHexVersion = currentHexVersion.SetChanges(changes, reiteratedVersionNumber);

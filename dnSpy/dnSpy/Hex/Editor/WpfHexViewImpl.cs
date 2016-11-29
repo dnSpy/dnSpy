@@ -223,6 +223,7 @@ namespace dnSpy.Hex.Editor {
 
 			Options.OptionChanged += EditorOptions_OptionChanged;
 			Buffer.ChangedLowPriority += HexBuffer_ChangedLowPriority;
+			Buffer.BufferSpanInvalidated += Buffer_BufferSpanInvalidated;
 			aggregateClassifier.ClassificationChanged += AggregateClassifier_ClassificationChanged;
 			hexAndAdornmentSequencer.SequenceChanged += HexAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
@@ -275,6 +276,12 @@ namespace dnSpy.Hex.Editor {
 			screenRefreshTimer = null;
 		}
 
+		void Buffer_BufferSpanInvalidated(object sender, HexBufferSpanInvalidatedEventArgs e) {
+			if (e.Span.Length > 0)
+				InvalidateSpan(new HexBufferSpan(Buffer, e.Span));
+			BufferChangedCommon();
+		}
+
 		void HexBuffer_ChangedLowPriority(object sender, HexContentChangedEventArgs e) {
 			foreach (var c in e.Changes) {
 				if (c.OldSpan.Length > 0)
@@ -282,6 +289,10 @@ namespace dnSpy.Hex.Editor {
 				if (c.NewSpan.Length > 0)
 					InvalidateSpan(new HexBufferSpan(Buffer, c.NewSpan));
 			}
+			BufferChangedCommon();
+		}
+
+		void BufferChangedCommon() {
 			InvalidateFormattedLineSource(false);
 			if (Options.IsRefreshScreenOnChangeEnabled())
 				DelayScreenRefresh();
@@ -586,6 +597,7 @@ namespace dnSpy.Hex.Editor {
 			canvas.Loaded -= WpfHexView_Loaded;
 			Options.OptionChanged -= EditorOptions_OptionChanged;
 			Buffer.ChangedLowPriority -= HexBuffer_ChangedLowPriority;
+			Buffer.BufferSpanInvalidated -= Buffer_BufferSpanInvalidated;
 			aggregateClassifier.ClassificationChanged -= AggregateClassifier_ClassificationChanged;
 			hexAndAdornmentSequencer.SequenceChanged -= HexAndAdornmentSequencer_SequenceChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;

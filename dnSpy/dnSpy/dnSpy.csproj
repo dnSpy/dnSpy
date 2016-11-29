@@ -401,8 +401,10 @@
     <Compile Include="Hex\HexBufferLineProviderFactoryServiceImpl.cs" />
     <Compile Include="Hex\HexBufferLineProviderImpl.cs" />
     <Compile Include="Hex\HexBufferStreamFactoryServiceImpl.cs" />
+    <Compile Include="Hex\HexCachedBufferStreamImpl.cs" />
     <Compile Include="Hex\HexEditImpl.cs" />
     <Compile Include="Hex\HexOffsetFormatter.cs" />
+    <Compile Include="Hex\HexProcessSimpleBufferStream.cs" />
     <Compile Include="Hex\HexValueFormatter.cs" />
     <Compile Include="Hex\HexVersionImpl.cs" />
     <Compile Include="Hex\Intellisense\HexIntellisenseControllerService.cs" />
@@ -422,6 +424,7 @@
     <Compile Include="Hex\Intellisense\HexQuickInfoSessionImpl.cs" />
     <Compile Include="Hex\Intellisense\HexSpaceReservationQuickInfoPresenter.cs" />
     <Compile Include="Hex\MEF\Metadata.cs" />
+    <Compile Include="Hex\NativeMethods.cs" />
     <Compile Include="Hex\NormalizedHexBufferSpanCollectionExtensions.cs" />
     <Compile Include="Hex\Tagging\DefaultTagger.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryServiceImpl.cs" />

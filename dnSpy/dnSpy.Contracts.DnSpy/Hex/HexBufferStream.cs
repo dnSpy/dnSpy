@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// A stream used by a <see cref="HexBuffer"/>
@@ -46,6 +48,11 @@ namespace dnSpy.Contracts.Hex {
 		/// Gets the name. This could be the filename if the data was read from a file
 		/// </summary>
 		public abstract string Name { get; }
+
+		/// <summary>
+		/// Raised when a span of data got modified by other code
+		/// </summary>
+		public abstract event EventHandler<HexBufferStreamSpanInvalidatedEventArgs> BufferStreamSpanInvalidated;
 
 		/// <summary>
 		/// Tries to read a <see cref="byte"/>. If there's no data, a value less than 0 is returned.
@@ -157,5 +164,23 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="sourceIndex">Index</param>
 		/// <param name="length">Length</param>
 		public abstract void Write(HexPosition position, byte[] source, long sourceIndex, long length);
+	}
+
+	/// <summary>
+	/// Invalidated span event args
+	/// </summary>
+	public sealed class HexBufferStreamSpanInvalidatedEventArgs : EventArgs {
+		/// <summary>
+		/// Gets the span
+		/// </summary>
+		public HexSpan Span { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Span</param>
+		public HexBufferStreamSpanInvalidatedEventArgs(HexSpan span) {
+			Span = span;
+		}
 	}
 }

@@ -31,5 +31,14 @@ namespace dnSpy.Hex {
 				throw new ArgumentNullException(nameof(name));
 			return new ByteArrayHexBufferStream(data, name);
 		}
+
+		public override HexCachedBufferStream CreateCached(HexSimpleBufferStream simpleStream) {
+			if (simpleStream == null)
+				throw new ArgumentNullException(nameof(simpleStream));
+			return new HexCachedBufferStreamImpl(simpleStream);
+		}
+
+		public override HexSimpleBufferStream CreateSimpleStream(IntPtr hProcess, string name, bool isReadOnly, bool isVolatile) =>
+			new HexProcessSimpleBufferStream(hProcess, name, isReadOnly, isVolatile);
 	}
 }

@@ -58,6 +58,11 @@ namespace dnSpy.Contracts.Hex {
 		public abstract string Name { get; }
 
 		/// <summary>
+		/// Raised when a span of data got modified by other code
+		/// </summary>
+		public abstract event EventHandler<HexBufferSpanInvalidatedEventArgs> BufferSpanInvalidated;
+
+		/// <summary>
 		/// Gets the version
 		/// </summary>
 		public abstract HexVersion Version { get; }
@@ -386,5 +391,23 @@ namespace dnSpy.Contracts.Hex {
 		/// Raised after an edit operation has completed or after it has been canceled
 		/// </summary>
 		public abstract event EventHandler PostChanged;
+	}
+
+	/// <summary>
+	/// Invalidated span event args
+	/// </summary>
+	public sealed class HexBufferSpanInvalidatedEventArgs : EventArgs {
+		/// <summary>
+		/// Gets the span
+		/// </summary>
+		public HexSpan Span { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Span</param>
+		public HexBufferSpanInvalidatedEventArgs(HexSpan span) {
+			Span = span;
+		}
 	}
 }

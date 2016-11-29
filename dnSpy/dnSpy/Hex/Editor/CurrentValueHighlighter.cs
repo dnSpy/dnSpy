@@ -124,12 +124,14 @@ namespace dnSpy.Hex.Editor {
 			wpfHexView.Caret.PositionChanged += Caret_PositionChanged;
 			wpfHexView.BufferLinesChanged += WpfHexView_BufferLinesChanged;
 			wpfHexView.Buffer.ChangedLowPriority += Buffer_ChangedLowPriority;
+			wpfHexView.Buffer.BufferSpanInvalidated += Buffer_BufferSpanInvalidated;
 		}
 
 		void UnhookEvents() {
 			wpfHexView.Caret.PositionChanged -= Caret_PositionChanged;
 			wpfHexView.BufferLinesChanged -= WpfHexView_BufferLinesChanged;
 			wpfHexView.Buffer.ChangedLowPriority -= Buffer_ChangedLowPriority;
+			wpfHexView.Buffer.BufferSpanInvalidated -= Buffer_BufferSpanInvalidated;
 		}
 
 		void WpfHexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) =>
@@ -249,6 +251,13 @@ namespace dnSpy.Hex.Editor {
 			else if (!savedValue.TryUpdate(pos.ActivePosition, line, cell))
 				return;
 			RefreshAll();
+		}
+
+		void Buffer_BufferSpanInvalidated(object sender, HexBufferSpanInvalidatedEventArgs e) {
+			if (savedValue.BufferSpan.Span.OverlapsWith(e.Span)) {
+				if (!savedValue.UpdateValue())
+					RefreshAll();
+			}
 		}
 
 		void Buffer_ChangedLowPriority(object sender, HexContentChangedEventArgs e) {
