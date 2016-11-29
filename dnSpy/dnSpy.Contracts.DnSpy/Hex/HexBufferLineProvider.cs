@@ -286,5 +286,12 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="c">Character</param>
 		/// <returns></returns>
 		public abstract PositionAndData? EditValueCell(HexCell cell, int cellPosition, char c);
+
+		/// <summary>
+		/// Returns the offset as a string
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract string GetFormattedOffset(HexPosition position);
 	}
 }

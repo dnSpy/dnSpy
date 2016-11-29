@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using dnSpy.Contracts.Hex;
@@ -644,14 +645,15 @@ namespace dnSpy.Hex.Editor.Operations {
 			return totalBytes;
 		}
 
+		bool CopyTooMuchDataError() => CopyToClipboard("Too much data selected", null, isFullLineData: false, isBoxData: false);
+
 		public override bool CanCopy => !Selection.IsEmpty;
 		public override bool CopySelectionBytes() {
-			var span = Selection.StreamSelectionSpan;
-			var totalBytes = span.Length;
 			bool upper = !HexView.BufferLines.ValuesLowerCaseHex;
-			var text = totalBytes > bytesMaxTotalBytesToCopy ? null : ClipboardUtils.ToHexString(span, upper);
+			var span = Selection.StreamSelectionSpan;
+			var text = span.Length > bytesMaxTotalBytesToCopy ? null : ClipboardUtils.ToHexString(span, upper);
 			if (text == null)
-				return CopyToClipboard("Too much data selected", null, isFullLineData: false, isBoxData: false);
+				return CopyTooMuchDataError();
 			return CopyToClipboard(text, null, isFullLineData: false, isBoxData: false);
 		}
 
@@ -667,20 +669,95 @@ namespace dnSpy.Hex.Editor.Operations {
 			var spans = Selection.SelectedSpans;
 			var totalBytes = GetTotalBytes(spans);
 			if (totalBytes > textMaxTotalBytesToCopy)
-				return CopyToClipboard("Too much data", null, isFullLineData: false, isBoxData: false);
+				return CopyTooMuchDataError();
 			var text = Selection.GetText();
 			htmlText = TryCreateHtmlText(spans);
 			return CopyToClipboard(text, htmlText, isFullLineData: false, isBoxData: false);
+		}
+
+		public override bool CopySpecial(HexCopySpecialKind copyKind) {
+			switch (copyKind) {
+			case HexCopySpecialKind.Utf8String:			return CopyString(Encoding.UTF8);
+			case HexCopySpecialKind.UnicodeString:		return CopyString(Encoding.Unicode);
+			case HexCopySpecialKind.CSharpArray:		return CopyCSharpArray();
+			case HexCopySpecialKind.VisualBasicArray:	return CopyVisualBasicArray();
+			case HexCopySpecialKind.Offset:				return CopyOffset();
+			default:
+				throw new ArgumentOutOfRangeException(nameof(copyKind));
+			}
+		}
+
+		bool CopyString(Encoding encoding) {
+			var span = Selection.StreamSelectionSpan;
+			if (span.Length > bytesMaxTotalBytesToCopy)
+				return CopyTooMuchDataError();
+			var data = span.GetData();
+			return CopyToClipboard(encoding.GetString(data), null, isFullLineData: false, isBoxData: false);
+		}
+
+		bool CopyCSharpArray() => CopyArray(Selection.StreamSelectionSpan, "0x", string.Empty, "new byte[] {", "};", string.Empty);
+		bool CopyVisualBasicArray() => CopyArray(Selection.StreamSelectionSpan, "&H", string.Empty, "New Byte() {", "}", " _");
+
+		bool CopyArray(HexBufferSpan span, string numberPrefix, string numberSuffix, string allocStringStart, string allocStringEnd, string eol) {
+			if (span.Length > bytesMaxTotalBytesToCopy)
+				return CopyTooMuchDataError();
+
+			bool upper = !HexView.BufferLines.ValuesLowerCaseHex;
+			const int BYTES_PER_LINE = 16;
+			var sb = new StringBuilder();
+
+			sb.Append(allocStringStart);
+			sb.Append(eol);
+			sb.AppendLine();
+			var pos = span.Start;
+			for (int i = 0; pos < span.End; i++) {
+				if (i >= BYTES_PER_LINE) {
+					i = 0;
+					sb.Append(eol);
+					sb.AppendLine();
+				}
+				if (i == 0)
+					sb.Append('\t');
+				else
+					sb.Append(' ');
+
+				sb.Append(numberPrefix);
+				int b = pos.TryGetByte();
+				if (b < 0)
+					sb.Append("??");
+				else {
+					sb.Append(ClipboardUtils.NibbleToHex(b >> 4, upper));
+					sb.Append(ClipboardUtils.NibbleToHex(b & 0x0F, upper));
+				}
+				sb.Append(numberSuffix);
+
+				pos = pos + 1;
+				if (pos >= span.End)
+					break;
+				sb.Append(',');
+			}
+			sb.Append(eol);
+			sb.AppendLine();
+			sb.Append(allocStringEnd);
+			sb.AppendLine();
+
+			return CopyToClipboard(sb.ToString(), null, isFullLineData: false, isBoxData: false);
+		}
+
+		bool CopyOffset() {
+			var pos = HexView.BufferLines.ToLogicalPosition(Caret.Position.Position.ActivePosition.BufferPosition);
+			var s = HexView.BufferLines.GetFormattedOffset(pos);
+			return CopyToClipboard(s, null, isFullLineData: false, isBoxData: false);
 		}
 
 		public override bool CanPaste {
 			get {
 				switch (Caret.Position.Position.ActiveColumn) {
 				case HexColumnType.Values:
-					return ClipboardUtils.GetData() != null;
+					return ClipboardUtils.GetData(canBeEmpty: false) != null;
 
 				case HexColumnType.Ascii:
-					return ClipboardUtils.GetText() != null;
+					return ClipboardUtils.GetText(canBeEmpty: false) != null;
 
 				case HexColumnType.Offset:
 				default:
@@ -704,12 +781,16 @@ namespace dnSpy.Hex.Editor.Operations {
 		}
 
 		bool PasteValues(HexCellPosition cellPosition) {
-			var data = ClipboardUtils.GetData();
+			var data = ClipboardUtils.GetData(canBeEmpty: false);
 			if (data == null)
 				return false;
+			return PasteData(cellPosition, data);
+		}
 
+		bool PasteData(HexCellPosition cellPosition, byte[] data) {
 			var line = HexView.BufferLines.GetLineFromPosition(cellPosition.BufferPosition);
-			var cell = line.ValueCells.GetCell(cellPosition.BufferPosition);
+			var cells = cellPosition.Column == HexColumnType.Values ? line.ValueCells : line.AsciiCells;
+			var cell = cells.GetCell(cellPosition.BufferPosition);
 			if (cell == null)
 				return false;
 
@@ -730,10 +811,53 @@ namespace dnSpy.Hex.Editor.Operations {
 		}
 
 		bool PasteAscii(HexCellPosition cellPosition) {
-			var text = ClipboardUtils.GetText();
+			var text = ClipboardUtils.GetText(canBeEmpty: false);
 			if (text == null)
 				return false;
 			return InsertTextAscii(cellPosition, text);
+		}
+
+		public override bool PasteSpecial(HexPasteSpecialKind pasteKind) {
+			switch (pasteKind) {
+			case HexPasteSpecialKind.Utf8String:	return PasteString(Encoding.UTF8);
+			case HexPasteSpecialKind.UnicodeString:	return PasteString(Encoding.Unicode);
+			case HexPasteSpecialKind.Blob:			return PasteBlob();
+			default:
+				throw new ArgumentOutOfRangeException(nameof(pasteKind));
+			}
+		}
+
+		bool PasteString(Encoding encoding) {
+			var text = ClipboardUtils.GetText(canBeEmpty: false);
+			if (text == null)
+				return false;
+			return PasteData(encoding.GetBytes(text));
+		}
+
+		bool PasteBlob() {
+			var data = ClipboardUtils.GetData(canBeEmpty: true);
+			if (data == null)
+				return false;
+			return PasteData(GetBlobData(data));
+		}
+
+		static byte[] GetBlobData(byte[] data) {
+			if (data == null)
+				return null;
+			uint len = (uint)data.Length;
+			int extraLen = MDUtils.GetCompressedUInt32Length(len);
+			if (extraLen < 0)
+				return null;
+			var d = new byte[data.Length + extraLen];
+			MDUtils.WriteCompressedUInt32(d, 0, len);
+			Array.Copy(data, 0, d, extraLen, data.Length);
+			return d;
+		}
+
+		bool PasteData(byte[] data) {
+			if (data.Length == 0)
+				return true;
+			return PasteData(Caret.Position.Position.ActivePosition, data);
 		}
 
 		public override void ScrollUpAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(VSTE.ScrollDirection.Up);

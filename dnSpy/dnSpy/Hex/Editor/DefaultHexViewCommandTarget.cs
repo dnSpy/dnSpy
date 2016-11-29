@@ -90,8 +90,9 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.DELETELINE:
 				case HexEditorIds.DELETETOBOL:
 				case HexEditorIds.DELETETOEOL:
-				case HexEditorIds.RETURN:
-				case HexEditorIds.TAB:
+				case HexEditorIds.PasteBlob:
+				case HexEditorIds.PasteUnicodeString:
+				case HexEditorIds.PasteUtf8String:
 				case HexEditorIds.TYPECHAR:
 					return true;
 
@@ -100,7 +101,12 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.BOTTOMLINE:
 				case HexEditorIds.BOTTOMLINE_EXT:
 				case HexEditorIds.CANCEL:
+				case HexEditorIds.CopyCSharpArray:
+				case HexEditorIds.CopyOffset:
 				case HexEditorIds.CopyText:
+				case HexEditorIds.CopyUnicodeString:
+				case HexEditorIds.CopyUtf8String:
+				case HexEditorIds.CopyVisualBasicArray:
 				case HexEditorIds.DECREASEFILTER:
 				case HexEditorIds.DOWN:
 				case HexEditorIds.DOWN_EXT:
@@ -118,6 +124,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.PAGEUP:
 				case HexEditorIds.PAGEUP_EXT:
 				case HexEditorIds.QUICKINFO:
+				case HexEditorIds.RETURN:
 				case HexEditorIds.RIGHT:
 				case HexEditorIds.RIGHT_EXT:
 				case HexEditorIds.SCROLLBOTTOM:
@@ -132,6 +139,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.SELECTALL:
 				case HexEditorIds.SELECTCURRENTWORD:
 				case HexEditorIds.SELSWAPANCHOR:
+				case HexEditorIds.TAB:
 				case HexEditorIds.TOGGLE_OVERTYPE_MODE:
 				case HexEditorIds.TOPLINE:
 				case HexEditorIds.TOPLINE_EXT:
@@ -179,7 +187,12 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.BOL_EXT:
 				case HexEditorIds.BOTTOMLINE:
 				case HexEditorIds.BOTTOMLINE_EXT:
+				case HexEditorIds.CopyCSharpArray:
+				case HexEditorIds.CopyOffset:
 				case HexEditorIds.CopyText:
+				case HexEditorIds.CopyUnicodeString:
+				case HexEditorIds.CopyUtf8String:
+				case HexEditorIds.CopyVisualBasicArray:
 				case HexEditorIds.DELETE:
 				case HexEditorIds.DELETELINE:
 				case HexEditorIds.DELETETOBOL:
@@ -198,6 +211,9 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.PAGEDN_EXT:
 				case HexEditorIds.PAGEUP:
 				case HexEditorIds.PAGEUP_EXT:
+				case HexEditorIds.PasteBlob:
+				case HexEditorIds.PasteUnicodeString:
+				case HexEditorIds.PasteUtf8String:
 				case HexEditorIds.RETURN:
 				case HexEditorIds.RIGHT:
 				case HexEditorIds.RIGHT_EXT:
@@ -291,6 +307,26 @@ namespace dnSpy.Hex.Editor {
 					EditorOperations.CopySelectionText();
 					return CommandTargetStatus.Handled;
 
+				case HexEditorIds.CopyUtf8String:
+					EditorOperations.CopySpecial(HexCopySpecialKind.Utf8String);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyUnicodeString:
+					EditorOperations.CopySpecial(HexCopySpecialKind.UnicodeString);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyCSharpArray:
+					EditorOperations.CopySpecial(HexCopySpecialKind.CSharpArray);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyVisualBasicArray:
+					EditorOperations.CopySpecial(HexCopySpecialKind.VisualBasicArray);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyOffset:
+					EditorOperations.CopySpecial(HexCopySpecialKind.Offset);
+					return CommandTargetStatus.Handled;
+
 				case HexEditorIds.DOWN:
 					EditorOperations.MoveLineDown(false);
 					return CommandTargetStatus.Handled;
@@ -345,6 +381,18 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.PAGEUP_EXT:
 					EditorOperations.PageUp(true);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.PasteBlob:
+					EditorOperations.PasteSpecial(HexPasteSpecialKind.Blob);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.PasteUnicodeString:
+					EditorOperations.PasteSpecial(HexPasteSpecialKind.UnicodeString);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.PasteUtf8String:
+					EditorOperations.PasteSpecial(HexPasteSpecialKind.Utf8String);
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.RIGHT:

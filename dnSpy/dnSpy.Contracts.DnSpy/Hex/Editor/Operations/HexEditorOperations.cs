@@ -238,10 +238,24 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		public abstract bool CopySelectionText();
 
 		/// <summary>
+		/// Copies text to the clipboard
+		/// </summary>
+		/// <param name="copyKind">What kind of data to copy</param>
+		/// <returns></returns>
+		public abstract bool CopySpecial(HexCopySpecialKind copyKind);
+
+		/// <summary>
 		/// Paste
 		/// </summary>
 		/// <returns></returns>
 		public abstract bool Paste();
+
+		/// <summary>
+		/// Pastes data from the clipboard
+		/// </summary>
+		/// <param name="pasteKind">What kind of data to paste</param>
+		/// <returns></returns>
+		public abstract bool PasteSpecial(HexPasteSpecialKind pasteKind);
 
 		/// <summary>
 		/// Scroll up and move caret so it's within the viewport
@@ -308,5 +322,55 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		/// Toggles active column
 		/// </summary>
 		public abstract void ToggleColumn();
+	}
+
+	/// <summary>
+	/// Passed to <see cref="HexEditorOperations.CopySpecial(HexCopySpecialKind)"/>
+	/// </summary>
+	public enum HexCopySpecialKind {
+		/// <summary>
+		/// UTF-8 string
+		/// </summary>
+		Utf8String,
+
+		/// <summary>
+		/// Unicode string
+		/// </summary>
+		UnicodeString,
+
+		/// <summary>
+		/// C# array
+		/// </summary>
+		CSharpArray,
+
+		/// <summary>
+		/// Visual Basic array
+		/// </summary>
+		VisualBasicArray,
+
+		/// <summary>
+		/// Offset
+		/// </summary>
+		Offset,
+	}
+
+	/// <summary>
+	/// Passed to <see cref="HexEditorOperations.PasteSpecial(HexPasteSpecialKind)"/>
+	/// </summary>
+	public enum HexPasteSpecialKind {
+		/// <summary>
+		/// UTF-8 string
+		/// </summary>
+		Utf8String,
+
+		/// <summary>
+		/// Unicode string
+		/// </summary>
+		UnicodeString,
+
+		/// <summary>
+		/// Metadata blob
+		/// </summary>
+		Blob,
 	}
 }

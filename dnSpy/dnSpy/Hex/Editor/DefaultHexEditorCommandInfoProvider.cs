@@ -99,6 +99,14 @@ namespace dnSpy.Hex.Editor {
 			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Create(Key.I), HexEditorIds.QUICKINFO.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.I), HexEditorIds.QUICKINFO.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.C, HexEditorIds.CopyText.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.D8, HexEditorIds.CopyUtf8String.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.U, HexEditorIds.CopyUnicodeString.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.H, HexEditorIds.CopyCSharpArray.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.B, HexEditorIds.CopyVisualBasicArray.ToCommandInfo());
+			yield return CommandShortcut.CtrlAlt(Key.O, HexEditorIds.CopyOffset.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.D8, HexEditorIds.PasteUtf8String.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.U, HexEditorIds.PasteUnicodeString.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.B, HexEditorIds.PasteBlob.ToCommandInfo());
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) {

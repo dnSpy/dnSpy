@@ -365,6 +365,7 @@
     <Compile Include="Hex\Editor\Operations\ClipboardUtils.cs" />
     <Compile Include="Hex\Editor\Operations\HexEditorOperationsFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\Operations\HexEditorOperationsImpl.cs" />
+    <Compile Include="Hex\Editor\Operations\MDUtils.cs" />
     <Compile Include="Hex\Editor\RightControlMargin.cs" />
     <Compile Include="Hex\Editor\SelectionUtilities.cs" />
     <Compile Include="Hex\Editor\SpacerMargin.cs" />

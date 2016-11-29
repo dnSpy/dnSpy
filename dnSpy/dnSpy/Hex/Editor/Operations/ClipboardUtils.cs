@@ -25,7 +25,7 @@ using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Hex.Editor.Operations {
 	static class ClipboardUtils {
-		public static byte[] GetData() {
+		public static byte[] GetData(bool canBeEmpty) {
 			string s;
 			try {
 				s = Clipboard.GetText();
@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Editor.Operations {
 			catch (ExternalException) { return null; }
 			if (s == null)
 				return null;
-			if (s.Length == 0)
+			if (!canBeEmpty && s.Length == 0)
 				return null;
 			return HexStringToByteArray(s);
 		}
@@ -89,17 +89,17 @@ namespace dnSpy.Hex.Editor.Operations {
 			return new string(charArray);
 		}
 
-		static char NibbleToHex(int v, bool upper) {
+		internal static char NibbleToHex(int v, bool upper) {
 			Debug.Assert(0 <= v && v <= 15);
 			if (v <= 9)
 				return (char)('0' + v);
 			return (char)((upper ? 'A' - 10 : 'a' - 10) + v);
 		}
 
-		public static string GetText() {
+		public static string GetText(bool canBeEmpty) {
 			try {
 				var s = Clipboard.GetText();
-				return s.Length == 0 ? null : s;
+				return !canBeEmpty && s.Length == 0 ? null : s;
 			}
 			catch (ExternalException) { return null; }
 		}

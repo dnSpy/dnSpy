@@ -695,5 +695,13 @@ namespace dnSpy.Hex {
 				return null;
 			return valueFormatter.Edit(cell.BufferStart, cellPosition, c);
 		}
+
+		public override string GetFormattedOffset(HexPosition position) {
+			ResetBuilderFields();
+			offsetFormatter.FormatOffset(stringBuilder, position);
+			var result = stringBuilder.ToString();
+			ResetBuilderFields();
+			return result;
+		}
 	}
 }

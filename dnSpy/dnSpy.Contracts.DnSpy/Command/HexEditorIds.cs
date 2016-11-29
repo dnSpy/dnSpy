@@ -254,5 +254,37 @@ namespace dnSpy.Contracts.Command {
 		/// Copies the text shown in the UI
 		/// </summary>
 		CopyText,
+		/// <summary>
+		/// Copies data (UTF-8)
+		/// </summary>
+		CopyUtf8String,
+		/// <summary>
+		/// Copies data (Unicode)
+		/// </summary>
+		CopyUnicodeString,
+		/// <summary>
+		/// Copies data (C# array)
+		/// </summary>
+		CopyCSharpArray,
+		/// <summary>
+		/// Copies data (Visual Basic array)
+		/// </summary>
+		CopyVisualBasicArray,
+		/// <summary>
+		/// Copies the offset
+		/// </summary>
+		CopyOffset,
+		/// <summary>
+		/// Pastes UTF-8 data
+		/// </summary>
+		PasteUtf8String,
+		/// <summary>
+		/// Pastes unicode data
+		/// </summary>
+		PasteUnicodeString,
+		/// <summary>
+		/// Pastes blob data
+		/// </summary>
+		PasteBlob,
 	}
 }
