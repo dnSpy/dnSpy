@@ -681,5 +681,19 @@ namespace dnSpy.Hex {
 				throw new ArgumentOutOfRangeException(nameof(cellPosition));
 			return valueFormatter.GetBufferSpan(cell.BufferSpan, cell.CellSpan.Start + cellPosition);
 		}
+
+		public override bool CanEditValueCell => valueFormatter.CanEdit;
+
+		public override PositionAndData? EditValueCell(HexCell cell, int cellPosition, char c) {
+			if (cell == null)
+				throw new ArgumentNullException(nameof(cell));
+			if (cell.BufferSpan.Buffer != Buffer)
+				throw new ArgumentException();
+			if ((uint)cellPosition >= (uint)cell.CellSpan.Length)
+				throw new ArgumentOutOfRangeException(nameof(cellPosition));
+			if (!cell.HasData)
+				return null;
+			return valueFormatter.Edit(cell.BufferStart, cellPosition, c);
+		}
 	}
 }

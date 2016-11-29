@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Text;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
@@ -309,6 +310,17 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.HighlightCurrentValueId);
+		}
+
+		/// <summary>
+		/// Returns the encoding
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static Encoding GetEncoding(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.EncodingId);
 		}
 	}
 }

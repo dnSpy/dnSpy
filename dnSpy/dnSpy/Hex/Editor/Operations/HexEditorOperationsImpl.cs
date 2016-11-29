@@ -26,6 +26,7 @@ using System.Windows;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.Operations;
+using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Controls;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
@@ -439,7 +440,74 @@ namespace dnSpy.Hex.Editor.Operations {
 		public override bool InsertText(string text) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
-			return false;//TODO:
+
+			switch (Caret.Position.Position.ActiveColumn) {
+			case HexColumnType.Values:
+				return InsertTextValues(Caret.Position.Position.ValuePosition, text);
+
+			case HexColumnType.Ascii:
+				return InsertTextAscii(Caret.Position.Position.AsciiPosition, text);
+
+			case HexColumnType.Offset:
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		bool InsertTextValues(HexCellPosition cellPosition, string text) {
+			if (text == null)
+				throw new ArgumentNullException(nameof(text));
+			if (text.Length == 0)
+				return true;
+			if (text.Length != 1)
+				return false;
+
+			var bufferLines = HexView.BufferLines;
+			if (!bufferLines.CanEditValueCell)
+				return false;
+			var line = bufferLines.GetLineFromPosition(cellPosition.BufferPosition);
+			var cell = line.ValueCells.GetCell(cellPosition.BufferPosition);
+			if ((uint)cellPosition.CellPosition >= (uint)cell.CellSpan.Length)
+				return false;
+			var newValue = bufferLines.EditValueCell(cell, cellPosition.CellPosition, text[0]);
+			if (newValue == null)
+				return false;
+
+			using (var ed = HexView.Buffer.CreateEdit()) {
+				if (!ed.Replace(newValue.Value.Position, newValue.Value.Data))
+					return false;
+				ed.Apply();
+			}
+
+			MoveToNextCharacter(false);
+			return true;
+		}
+
+		bool InsertTextAscii(HexCellPosition cellPosition, string text) {
+			if (text == null)
+				throw new ArgumentNullException(nameof(text));
+			if (text.Length == 0)
+				return true;
+
+			var encoding = Options.GetEncoding();
+			Debug.Assert(encoding != null);
+			if (encoding == null)
+				return false;
+
+			var bytes = encoding.GetBytes(text);
+			using (var ed = HexView.Buffer.CreateEdit()) {
+				if (!ed.Replace(cellPosition.BufferPosition, bytes))
+					return false;
+				ed.Apply();
+			}
+
+			var newPos = cellPosition.BufferPosition + bytes.LongLength;
+			if (newPos > HexView.BufferLines.BufferEnd)
+				newPos = HexView.BufferLines.BufferEnd;
+			Caret.MoveTo(newPos);
+			Caret.EnsureVisible();
+			Selection.Clear();
+			return true;
 		}
 
 		public override void SelectLine(HexViewLine viewLine, bool extendSelection) {

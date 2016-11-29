@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
@@ -78,6 +79,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<bool> HighlightActiveColumnId = new VSTE.EditorOptionKey<bool>(HighlightActiveColumnName);
 		public const string HighlightCurrentValueName = "HexView/HighlightCurrentValue";
 		public static readonly VSTE.EditorOptionKey<bool> HighlightCurrentValueId = new VSTE.EditorOptionKey<bool>(HighlightCurrentValueName);
+		public const string EncodingName = "HexView/Encoding";
+		public static readonly VSTE.EditorOptionKey<Encoding> EncodingId = new VSTE.EditorOptionKey<Encoding>(EncodingName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

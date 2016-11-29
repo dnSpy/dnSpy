@@ -270,5 +270,21 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="cellPosition">Position within the cell</param>
 		/// <returns></returns>
 		public abstract HexBufferSpan GetValueBufferSpan(HexCell cell, int cellPosition);
+
+		/// <summary>
+		/// true if <see cref="EditValueCell(HexCell, int, char)"/> can be called
+		/// </summary>
+		public abstract bool CanEditValueCell { get; }
+
+		/// <summary>
+		/// Edits a value cell. Returns null if editing isn't supported or if the character
+		/// isn't a valid input character (eg. it's not a hex digit character), else it
+		/// returns the position in the buffer and new value.
+		/// </summary>
+		/// <param name="cell">Cell</param>
+		/// <param name="cellPosition">Position within the cell</param>
+		/// <param name="c">Character</param>
+		/// <returns></returns>
+		public abstract PositionAndData? EditValueCell(HexCell cell, int cellPosition, char c);
 	}
 }

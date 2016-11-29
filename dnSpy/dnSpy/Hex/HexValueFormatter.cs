@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -47,10 +48,13 @@ namespace dnSpy.Hex {
 		public int ByteCount { get; }
 		public int FormattedLength { get; }
 
+		readonly StringBuilder stringBuilder;
+
 		protected HexValueFormatter(int byteCount, int formattedLength, HexValuesDisplayFormat format) {
 			Format = format;
 			ByteCount = byteCount;
 			FormattedLength = formattedLength;
+			stringBuilder = new StringBuilder(FormattedLength);
 		}
 
 		/// <summary>
@@ -157,7 +161,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatHexSByte(StringBuilder dest, HexValueFormatterFlags flags, sbyte? v) {
-			Debug.Assert(FormattedLength == 2);
+			Debug.Assert(FormattedLength == 3);
 			if (v == null)
 				return WriteInvalid(dest);
 			var value = v.Value;
@@ -301,6 +305,223 @@ namespace dnSpy.Hex {
 		}
 
 		public virtual HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) => bufferSpan;
+
+		public PositionAndData? Edit(HexBufferPoint position, int cellPosition, char c) {
+			if (position.IsDefault)
+				return null;
+			if ((uint)cellPosition >= (uint)FormattedLength)
+				return null;
+			return EditCore(position, cellPosition, c);
+		}
+
+		public virtual bool CanEdit => false;
+		protected virtual PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => null;
+
+		protected PositionAndData? EditUnsignedHexLittleEndian(HexBufferPoint position, int cellPosition, char c) {
+			int v = ConvertFromHexCharacter(c);
+			if (v < 0)
+				return null;
+
+			int bytePos = (ByteCount - cellPosition / 2 - 1) % ByteCount;
+			var dataPos = position + bytePos;
+			var newData = new byte[1];
+			newData[0] = dataPos.Buffer.ReadByte(dataPos);
+			if ((cellPosition & 1) == 0)
+				newData[0] = (byte)((newData[0] & 0x0F) | (v << 4));
+			else
+				newData[0] = (byte)((newData[0] & 0xF0) | v);
+
+			return new PositionAndData(dataPos, newData);
+		}
+
+		protected PositionAndData? EditUnsignedHexBigEndian(HexBufferPoint position, int cellPosition, char c) {
+			int v = ConvertFromHexCharacter(c);
+			if (v < 0)
+				return null;
+
+			var dataPos = position + cellPosition / 2;
+			var newData = new byte[1];
+			newData[0] = dataPos.Buffer.ReadByte(dataPos);
+			if ((cellPosition & 1) == 0)
+				newData[0] = (byte)((newData[0] & 0x0F) | (v << 4));
+			else
+				newData[0] = (byte)((newData[0] & 0xF0) | v);
+
+			return new PositionAndData(dataPos, newData);
+		}
+
+		// Assumes input is valid. First char is <space> <+> or <->
+		static long ToSignedHex(StringBuilder sb, long minValue, long maxValue) {
+			Debug.Assert((sb.Length & 1) == 1 && sb.Length <= 16 + 1);
+			int i = 0;
+			Debug.Assert(sb[i] == ' ' || sb[i] == '+' || sb[i] == '-');
+			bool isNegative = sb[i] == '-';
+			i++;
+			ulong v = 0;
+			while (i < sb.Length) {
+				var hi = ConvertFromHexCharacter(sb[i++]);
+				var lo = ConvertFromHexCharacter(sb[i++]);
+				Debug.Assert(hi >= 0 && lo >= 0);
+				v = (v << 8) | ((ulong)(uint)hi << 4) | (uint)lo;
+			}
+			if (isNegative) {
+				if (v > (ulong)maxValue + 1)
+					return minValue;
+				return -(long)v;
+			}
+			if (v > (ulong)maxValue)
+				return maxValue;
+			return (long)v;
+		}
+
+		protected PositionAndData? EditSignedHexLittleEndian(HexBufferPoint position, int cellPosition, char c) =>
+			EditSignedHex(position, cellPosition, c, isBigEndian: false);
+
+		protected PositionAndData? EditSignedHexBigEndian(HexBufferPoint position, int cellPosition, char c) =>
+			EditSignedHex(position, cellPosition, c, isBigEndian: true);
+
+		protected PositionAndData? EditSignedHex(HexBufferPoint position, int cellPosition, char c, bool isBigEndian) {
+			var hexBytes = position.Buffer.ReadHexBytes(position, ByteCount);
+			stringBuilder.Clear();
+			FormatValue(stringBuilder, hexBytes, 0, HexValueFormatterFlags.None);
+			Debug.Assert(stringBuilder.Length == FormattedLength);
+			Debug.Assert(cellPosition < stringBuilder.Length);
+			if (cellPosition >= stringBuilder.Length)
+				return null;
+
+			if (cellPosition == 0) {
+				if (ConvertToSign(c) == 0)
+					return null;
+			}
+			else {
+				if (ConvertFromHexCharacter(c) < 0)
+					return null;
+			}
+			stringBuilder[cellPosition] = c;
+
+			long minValue, maxValue;
+			switch (ByteCount) {
+			case 1:
+				minValue = sbyte.MinValue;
+				maxValue = sbyte.MaxValue;
+				break;
+			case 2:
+				minValue = short.MinValue;
+				maxValue = short.MaxValue;
+				break;
+			case 4:
+				minValue = int.MinValue;
+				maxValue = int.MaxValue;
+				break;
+			case 8:
+				minValue = long.MinValue;
+				maxValue = long.MaxValue;
+				break;
+			default:
+				throw new InvalidOperationException();
+			}
+
+			var v = ToSignedHex(stringBuilder, minValue, maxValue);
+
+			var bytes = new byte[ByteCount];
+			switch (ByteCount) {
+			case 1:
+				bytes[0] = (byte)v;
+				break;
+
+			case 2:
+				if (isBigEndian) {
+					bytes[0] = (byte)(v >> 8);
+					bytes[1] = (byte)v;
+				}
+				else {
+					bytes[1] = (byte)(v >> 8);
+					bytes[0] = (byte)v;
+				}
+				break;
+
+			case 4:
+				if (isBigEndian) {
+					bytes[0] = (byte)(v >> 24);
+					bytes[1] = (byte)(v >> 16);
+					bytes[2] = (byte)(v >> 8);
+					bytes[3] = (byte)v;
+				}
+				else {
+					bytes[3] = (byte)(v >> 24);
+					bytes[2] = (byte)(v >> 16);
+					bytes[1] = (byte)(v >> 8);
+					bytes[0] = (byte)v;
+				}
+				break;
+
+			case 8:
+				if (isBigEndian) {
+					bytes[0] = (byte)(v >> 56);
+					bytes[1] = (byte)(v >> 48);
+					bytes[2] = (byte)(v >> 40);
+					bytes[3] = (byte)(v >> 32);
+					bytes[4] = (byte)(v >> 24);
+					bytes[5] = (byte)(v >> 16);
+					bytes[6] = (byte)(v >> 8);
+					bytes[7] = (byte)v;
+				}
+				else {
+					bytes[7] = (byte)(v >> 56);
+					bytes[6] = (byte)(v >> 48);
+					bytes[5] = (byte)(v >> 40);
+					bytes[4] = (byte)(v >> 32);
+					bytes[3] = (byte)(v >> 24);
+					bytes[2] = (byte)(v >> 16);
+					bytes[1] = (byte)(v >> 8);
+					bytes[0] = (byte)v;
+				}
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			return new PositionAndData(position, bytes);
+		}
+
+		protected PositionAndData? EditBit(HexBufferPoint position, int cellPosition, char c) {
+			int newBit = ConvertFromBitCharacter(c);
+			if (newBit < 0)
+				return null;
+
+			var dataPos = position + cellPosition / 8;
+			int bitNo = (8 - (cellPosition & 7) - 1) & 7;
+			var newData = new byte[1];
+			newData[0] = dataPos.Buffer.ReadByte(dataPos);
+			newData[0] = (byte)((newData[0] & ~(1 << bitNo)) | (newBit << bitNo));
+
+			return new PositionAndData(dataPos, newData);
+		}
+
+		static int ConvertFromHexCharacter(char c) {
+			if ('0' <= c && c <= '9')
+				return c - '0';
+			if ('A' <= c && c <= 'F')
+				return c - 'A' + 10;
+			if ('a' <= c && c <= 'f')
+				return c - 'a' + 10;
+			return -1;
+		}
+
+		static int ConvertFromBitCharacter(char c) {
+			if ('0' <= c && c <= '1')
+				return c - '0';
+			return -1;
+		}
+
+		static int ConvertToSign(char c) {
+			if (c == '+' || c == ' ')
+				return 1;
+			if (c == '-')
+				return -1;
+			return 0;
+		}
 	}
 
 	sealed class HexByteValueFormatter : HexValueFormatter {
@@ -315,6 +536,9 @@ namespace dnSpy.Hex {
 			WriteHexByte(dest, flags, (byte)b);
 			return 0;
 		}
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditUnsignedHexLittleEndian(position, cellPosition, c);
 	}
 
 	sealed class HexUInt16ValueFormatter : HexValueFormatter {
@@ -330,6 +554,9 @@ namespace dnSpy.Hex {
 				return base.GetBufferSpan(bufferSpan, cellPosition);
 			return new HexBufferSpan(bufferSpan.Start + (ulong)((2 - cellPosition / 2 - 1) & 1), 1);
 		}
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditUnsignedHexLittleEndian(position, cellPosition, c);
 	}
 
 	sealed class HexUInt32ValueFormatter : HexValueFormatter {
@@ -345,6 +572,9 @@ namespace dnSpy.Hex {
 				return base.GetBufferSpan(bufferSpan, cellPosition);
 			return new HexBufferSpan(bufferSpan.Start + (ulong)((4 - cellPosition / 2 - 1) & 3), 1);
 		}
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditUnsignedHexLittleEndian(position, cellPosition, c);
 	}
 
 	sealed class HexUInt64ValueFormatter : HexValueFormatter {
@@ -360,6 +590,9 @@ namespace dnSpy.Hex {
 				return base.GetBufferSpan(bufferSpan, cellPosition);
 			return new HexBufferSpan(bufferSpan.Start + (ulong)((8 - cellPosition / 2 - 1) & 7), 1);
 		}
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditUnsignedHexLittleEndian(position, cellPosition, c);
 	}
 
 	sealed class HexSByteValueFormatter : HexValueFormatter {
@@ -369,6 +602,9 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexSByte(dest, flags, hexBytes.TryReadSByte(valueIndex));
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditSignedHexLittleEndian(position, cellPosition, c);
 	}
 
 	sealed class HexInt16ValueFormatter : HexValueFormatter {
@@ -378,6 +614,9 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt16(dest, flags, hexBytes.TryReadInt16(valueIndex));
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditSignedHexLittleEndian(position, cellPosition, c);
 	}
 
 	sealed class HexInt32ValueFormatter : HexValueFormatter {
@@ -387,6 +626,9 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt32(dest, flags, hexBytes.TryReadInt32(valueIndex));
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditSignedHexLittleEndian(position, cellPosition, c);
 	}
 
 	sealed class HexInt64ValueFormatter : HexValueFormatter {
@@ -396,6 +638,9 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt64(dest, flags, hexBytes.TryReadInt64(valueIndex));
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditSignedHexLittleEndian(position, cellPosition, c);
 	}
 
 	sealed class DecimalByteValueFormatter : HexValueFormatter {
@@ -513,6 +758,9 @@ namespace dnSpy.Hex {
 				dest.Append((b & 0x80) != 0 ? '1' : '0');
 			return 0;
 		}
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditBit(position, cellPosition, c);
 	}
 
 	sealed class HexUInt16BigEndianValueFormatter : HexValueFormatter {
@@ -528,6 +776,9 @@ namespace dnSpy.Hex {
 				return base.GetBufferSpan(bufferSpan, cellPosition);
 			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
 		}
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditUnsignedHexBigEndian(position, cellPosition, c);
 	}
 
 	sealed class HexUInt32BigEndianValueFormatter : HexValueFormatter {
@@ -543,6 +794,9 @@ namespace dnSpy.Hex {
 				return base.GetBufferSpan(bufferSpan, cellPosition);
 			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
 		}
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditUnsignedHexBigEndian(position, cellPosition, c);
 	}
 
 	sealed class HexUInt64BigEndianValueFormatter : HexValueFormatter {
@@ -558,6 +812,9 @@ namespace dnSpy.Hex {
 				return base.GetBufferSpan(bufferSpan, cellPosition);
 			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
 		}
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditUnsignedHexBigEndian(position, cellPosition, c);
 	}
 
 	sealed class HexInt16BigEndianValueFormatter : HexValueFormatter {
@@ -567,6 +824,9 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt16(dest, flags, hexBytes.TryReadInt16BigEndian(valueIndex));
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditSignedHexBigEndian(position, cellPosition, c);
 	}
 
 	sealed class HexInt32BigEndianValueFormatter : HexValueFormatter {
@@ -576,6 +836,9 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt32(dest, flags, hexBytes.TryReadInt32BigEndian(valueIndex));
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditSignedHexBigEndian(position, cellPosition, c);
 	}
 
 	sealed class HexInt64BigEndianValueFormatter : HexValueFormatter {
@@ -585,6 +848,9 @@ namespace dnSpy.Hex {
 
 		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt64(dest, flags, hexBytes.TryReadInt64BigEndian(valueIndex));
+
+		public override bool CanEdit => true;
+		protected override PositionAndData? EditCore(HexBufferPoint position, int cellPosition, char c) => EditSignedHexBigEndian(position, cellPosition, c);
 	}
 
 	sealed class DecimalUInt16BigEndianValueFormatter : HexValueFormatter {

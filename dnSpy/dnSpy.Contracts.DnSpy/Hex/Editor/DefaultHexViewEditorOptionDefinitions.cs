@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel.Composition;
+using System.Text;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
@@ -176,5 +177,12 @@ namespace dnSpy.Contracts.Hex.Editor {
 	sealed class HighlightCurrentValueEditorOptionDefinition : HexViewOptionDefinition<bool> {
 		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewOptions.HighlightCurrentValueId;
 		public override bool Default => true;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class EncodingEditorOptionDefinition : HexViewOptionDefinition<Encoding> {
+		public override VSTE.EditorOptionKey<Encoding> Key => DefaultHexViewOptions.EncodingId;
+		public override Encoding Default => Encoding.UTF8;
+		public override bool IsValid(ref Encoding proposedValue) => proposedValue != null;
 	}
 }

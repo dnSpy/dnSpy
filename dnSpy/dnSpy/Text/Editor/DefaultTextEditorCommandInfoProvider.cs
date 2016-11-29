@@ -160,6 +160,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) {
+			if (!(target is ITextView))
+				return null;
 			if (text.Length == 0 || (text.Length == 1 && (text[0] == '\u001B' || text[0] == '\b')))
 				return null;
 			return TextEditorIds.TYPECHAR.ToCommandInfo(text);

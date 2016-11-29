@@ -201,9 +201,11 @@ namespace dnSpy.Hex.Editor {
 				return true;
 			}
 
-			public void UpdateValue() {
+			public bool UpdateValue() {
 				Debug.Assert(!BufferSpan.IsDefault);
+				Array.Copy(Data, TempData, Data.Length);
 				BufferSpan.Buffer.ReadBytes(BufferSpan.Start, Data, 0, Data.Length);
+				return CompareArrays(Data, TempData);
 			}
 
 			public bool HasSameValueAs(HexBufferLine line, HexCell cell) {
@@ -253,8 +255,8 @@ namespace dnSpy.Hex.Editor {
 			if (savedValue != null) {
 				foreach (var change in e.Changes) {
 					if (savedValue.BufferSpan.Span.OverlapsWith(change.OldSpan)) {
-						savedValue.UpdateValue();
-						RefreshAll();
+						if (!savedValue.UpdateValue())
+							RefreshAll();
 						break;
 					}
 				}
