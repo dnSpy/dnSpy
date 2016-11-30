@@ -57,6 +57,30 @@ namespace dnSpy.Contracts.Hex {
 		public virtual ulong PageSize => 0;
 
 		/// <summary>
+		/// Gets information about a position in the stream
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract HexSpanInfo GetSpanInfo(HexPosition position);
+
+		/// <summary>
+		/// Gets information about a position in the stream
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="validSpan">Span of all valid data</param>
+		/// <returns></returns>
+		protected HexSpanInfo GetSpanInfo(HexPosition position, HexSpan validSpan) {
+			if (position >= HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if (position >= validSpan.End)
+				return new HexSpanInfo(HexSpan.FromBounds(validSpan.End, HexPosition.MaxEndPosition), HexSpanInfoFlags.None);
+			else if (position < validSpan.Start)
+				return new HexSpanInfo(HexSpan.FromBounds(HexPosition.Zero, validSpan.Start), HexSpanInfoFlags.None);
+			else
+				return new HexSpanInfo(validSpan, HexSpanInfoFlags.HasData);
+		}
+
+		/// <summary>
 		/// Reads bytes. Returns number of bytes read.
 		/// </summary>
 		/// <param name="position">Position</param>

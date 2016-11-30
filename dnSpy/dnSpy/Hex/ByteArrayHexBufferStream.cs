@@ -40,6 +40,9 @@ namespace dnSpy.Hex {
 			this.data = data;
 		}
 
+		public override HexSpanInfo GetSpanInfo(HexPosition position) =>
+			GetSpanInfo(position, new HexSpan(HexPosition.Zero, (ulong)data.LongLength));
+
 		public override int TryReadByte(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			var pos = position.ToUInt64();

@@ -32,6 +32,7 @@ namespace dnSpy.Hex {
 		readonly IntPtr hProcess;
 		readonly bool isReadOnly;
 		readonly bool isVolatile;
+		readonly HexPosition endAddress;
 
 		public HexProcessSimpleBufferStream(IntPtr hProcess, string name, bool isReadOnly, bool isVolatile) {
 			this.hProcess = hProcess;
@@ -40,6 +41,48 @@ namespace dnSpy.Hex {
 			PageSize = GetDefaultPageSize(hProcess);
 			this.isReadOnly = isReadOnly;
 			this.isVolatile = isVolatile;
+			endAddress = GetEndAddress(hProcess);
+		}
+
+		public unsafe override HexSpanInfo GetSpanInfo(HexPosition position) {
+			if (position >= HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if (position >= endAddress)
+				return new HexSpanInfo(HexSpan.FromBounds(endAddress, HexPosition.MaxEndPosition), HexSpanInfoFlags.None);
+
+			ulong baseAddress, regionSize;
+			uint state;
+			int res;
+			if (IntPtr.Size == 4) {
+				NativeMethods.MEMORY_BASIC_INFORMATION32 info;
+				res = NativeMethods.VirtualQueryEx32(hProcess, new IntPtr((void*)position.ToUInt64()), out info, NativeMethods.MEMORY_BASIC_INFORMATION32_SIZE);
+				baseAddress = info.BaseAddress;
+				regionSize = info.RegionSize;
+				state = info.State;
+				Debug.Assert(res == 0 || res == NativeMethods.MEMORY_BASIC_INFORMATION32_SIZE);
+			}
+			else {
+				NativeMethods.MEMORY_BASIC_INFORMATION64 info;
+				res = NativeMethods.VirtualQueryEx64(hProcess, new IntPtr((void*)position.ToUInt64()), out info, NativeMethods.MEMORY_BASIC_INFORMATION64_SIZE);
+				baseAddress = info.BaseAddress;
+				regionSize = info.RegionSize;
+				state = info.State;
+				Debug.Assert(res == 0 || res == NativeMethods.MEMORY_BASIC_INFORMATION64_SIZE);
+			}
+
+			// Could fail if eg. the process has exited
+			if (res == 0)
+				return new HexSpanInfo(HexSpan.FromBounds(position, HexPosition.MaxEndPosition), HexSpanInfoFlags.None);
+
+			var flags = state == NativeMethods.MEM_COMMIT ? HexSpanInfoFlags.HasData : HexSpanInfoFlags.None;
+			return new HexSpanInfo(new HexSpan(baseAddress, regionSize), flags);
+		}
+
+		static HexPosition GetEndAddress(IntPtr hProcess) {
+			NativeMethods.SYSTEM_INFO info;
+			NativeMethods.GetSystemInfo(out info);
+			ulong mask = IntPtr.Size == 4 ? uint.MaxValue : ulong.MaxValue;
+			return new HexPosition((ulong)info.lpMaximumApplicationAddress.ToInt64() & mask) + 1;
 		}
 
 		static string GetDefaultName(IntPtr hProcess) {
@@ -52,8 +95,10 @@ namespace dnSpy.Hex {
 			if (bitSize == 32)
 				return HexSpan.FromBounds(0, uint.MaxValue + 1UL);
 			if (bitSize == 64) {
+				// If we're a 32-bit process, we can't read anything >= 2^32 from the other process
+				// so return span [0,2^32)
 				if (IntPtr.Size != 8)
-					return HexSpan.FromBounds(0, new HexPosition(ulong.MaxValue) + 1);
+					return HexSpan.FromBounds(0, new HexPosition(uint.MaxValue + 1UL));
 				NativeMethods.SYSTEM_INFO info;
 				NativeMethods.GetSystemInfo(out info);
 				return HexSpan.FromBounds(0, new HexPosition((ulong)info.lpMaximumApplicationAddress.ToInt64()) + 1);

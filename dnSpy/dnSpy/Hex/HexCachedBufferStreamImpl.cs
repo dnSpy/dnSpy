@@ -129,6 +129,9 @@ namespace dnSpy.Hex {
 			}
 		}
 
+		public override HexSpanInfo GetSpanInfo(HexPosition position) =>
+			simpleStream.GetSpanInfo(position);
+
 		public override int TryReadByte(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);

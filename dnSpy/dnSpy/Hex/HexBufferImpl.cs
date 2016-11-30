@@ -82,8 +82,10 @@ namespace dnSpy.Hex {
 			ownerThread = Thread.CurrentThread;
 		}
 
-		public override HexSpanInfo GetHexSpanInfo(HexPosition position) {
-			throw new NotImplementedException();//TODO:
+		public override HexSpanInfo GetSpanInfo(HexPosition position) {
+			if (position >= HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			return stream.GetSpanInfo(position);
 		}
 
 		public override HexEdit CreateEdit() => CreateEdit(null, null);

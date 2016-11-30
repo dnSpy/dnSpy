@@ -30,10 +30,43 @@ namespace dnSpy.Hex {
 		public static extern bool VirtualProtectEx([In] IntPtr hProcess, [In] IntPtr lpAddress, [In] int dwSize, [In] uint flNewProtect, out uint lpflOldProtect);
 		public const uint PAGE_EXECUTE_READWRITE = 0x40;
 
+		[DllImport("kernel32", SetLastError = true, EntryPoint = "VirtualQueryEx")]
+		public static extern int VirtualQueryEx32(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION32 lpBuffer, uint dwLength);
+		[DllImport("kernel32", SetLastError = true, EntryPoint = "VirtualQueryEx")]
+		public static extern int VirtualQueryEx64(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION64 lpBuffer, uint dwLength);
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct MEMORY_BASIC_INFORMATION32 {
+			public uint BaseAddress;
+			public uint AllocationBase;
+			public uint AllocationProtect;
+			public uint RegionSize;
+			public uint State;
+			public uint Protect;
+			public uint Type;
+		}
+		[StructLayout(LayoutKind.Sequential)]
+		public struct MEMORY_BASIC_INFORMATION64 {
+			public ulong BaseAddress;
+			public ulong AllocationBase;
+			public uint AllocationProtect;
+			public uint __alignment1;
+			public ulong RegionSize;
+			public uint State;
+			public uint Protect;
+			public uint Type;
+			public uint __alignment2;
+		}
+		public const int MEMORY_BASIC_INFORMATION32_SIZE = 7 * 4;
+		public const int MEMORY_BASIC_INFORMATION64_SIZE = 3 * 8 + 6 * 4;
+		public const uint MEM_COMMIT = 0x1000;
+		public const uint MEM_FREE = 0x10000;
+		public const uint MEM_RESERVE = 0x2000;
+
 		[DllImport("kernel32", SetLastError = true)]
 		public static extern uint GetProcessId(IntPtr hThread);
 
-		[DllImport("kernel32")]
+		[DllImport("kernel32", SetLastError = true)]
 		public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 		const uint STANDARD_RIGHTS_REQUIRED = 0x000F0000;
 		const uint SYNCHRONIZE = 0x00100000;
@@ -43,10 +76,10 @@ namespace dnSpy.Hex {
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool IsWow64Process([In] IntPtr hProcess, [Out] out bool Wow64Process);
 
-		[DllImport("kernel32.dll", SetLastError = false)]
+		[DllImport("kernel32", SetLastError = false)]
 		public static extern void GetSystemInfo(out SYSTEM_INFO Info);
 
-		[DllImport("kernel32.dll", SetLastError = false)]
+		[DllImport("kernel32", SetLastError = false)]
 		public static extern void GetNativeSystemInfo(out SYSTEM_INFO Info);
 
 		[StructLayout(LayoutKind.Sequential)]

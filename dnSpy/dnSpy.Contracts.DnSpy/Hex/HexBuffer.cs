@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Hex {
@@ -84,11 +85,80 @@ namespace dnSpy.Contracts.Hex {
 		public abstract void TakeThreadOwnership();
 
 		/// <summary>
-		/// Gets information about a position in the buffer
+		/// Gets information about a position in the buffer. The returned info isn't
+		/// normalized, there may be consecutive spans with the same flags. It's the
+		/// responsibility of the caller to merge such spans.
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract HexSpanInfo GetHexSpanInfo(HexPosition position);
+		public abstract HexSpanInfo GetSpanInfo(HexPosition position);
+
+		/// <summary>
+		/// Gets the next valid span or null if there's none left. This includes the input
+		/// (<paramref name="position"/>) if it happens to lie within this valid span.
+		/// This method merges all consecutive valid spans.
+		/// </summary>
+		/// <param name="position">Start position to check</param>
+		/// <returns></returns>
+		public HexSpan? GetNextValidSpan(HexPosition position) => GetNextValidSpan(position, HexPosition.MaxEndPosition);
+
+		/// <summary>
+		/// Gets the next valid span or null if there's none left. This includes the input
+		/// (<paramref name="position"/>) if it happens to lie within this valid span.
+		/// This method merges all consecutive valid spans.
+		/// </summary>
+		/// <param name="position">Start position to check</param>
+		/// <param name="endPosition">End position</param>
+		/// <returns></returns>
+		public HexSpan? GetNextValidSpan(HexPosition position, HexPosition endPosition) {
+			if (position >= HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if (endPosition > HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(endPosition));
+			while (position < endPosition) {
+				var info = GetSpanInfo(position);
+				if (info.HasData) {
+					var start = info.Span.Start;
+					var end = info.Span.End;
+					// We use MaxEndPosition and not endPosition here since we must merge
+					// all consecutive spans even if some of them happen to be outside the
+					// requested range.
+					while (end < HexPosition.MaxEndPosition) {
+						info = GetSpanInfo(end);
+						if (!info.HasData)
+							break;
+						end = info.Span.End;
+					}
+					return HexSpan.FromBounds(start, end);
+				}
+				position = info.Span.End;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Gets all valid spans. This could be empty if it's a 0-byte buffer stream.
+		/// This method merges all consecutive valid spans.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<HexSpan> GetValidSpans() => GetValidSpans(HexSpan.FullSpan);
+
+		/// <summary>
+		/// Gets all valid spans overlapping <paramref name="span"/>. This method merges all
+		/// consecutive valid spans.
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <returns></returns>
+		public IEnumerable<HexSpan> GetValidSpans(HexSpan span) {
+			var pos = span.Start;
+			for (;;) {
+				var info = GetNextValidSpan(pos, span.End);
+				if (info == null)
+					break;
+				yield return info.Value;
+				pos = info.Value.End;
+			}
+		}
 
 		/// <summary>
 		/// Creates a <see cref="HexEdit"/> object

@@ -26,6 +26,11 @@ namespace dnSpy.Contracts.Hex {
 	[Flags]
 	public enum HexSpanInfoFlags {
 		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None							= 0,
+
+		/// <summary>
 		/// Set if the span contains data, clear if the span contains no data
 		/// </summary>
 		HasData							= 0x00000001,
