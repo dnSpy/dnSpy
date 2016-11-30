@@ -230,10 +230,10 @@
 		<color name="hexcurrentline" fg="#606060" />
 		<color name="hexcurrentlinenofocus" fg="#606060" />
 		<color name="hexinactiveselectedtext" bg="#FF565656" />
-		<color name="hexcolumnline0" fg="#FF497F49" />
-		<color name="hexcolumnline1" fg="#FF497F49" />
-		<color name="hexcolumnlinegroup0" fg="#FF497F49" />
-		<color name="hexcolumnlinegroup1" fg="#FF497F49" />
+		<color name="hexcolumnline0" fg="#FFA0A0A0" />
+		<color name="hexcolumnline1" fg="#FFA0A0A0" />
+		<color name="hexcolumnlinegroup0" fg="#FFA8C462" />
+		<color name="hexcolumnlinegroup1" fg="#FFA8C462" />
 		<color name="hexhighlightedvaluescolumn" bg="#FF262626" />
 		<color name="hexhighlightedasciicolumn" bg="#FF262626" />
 		<color name="hexglyphmargin" bg="#FF333333" />
