@@ -324,6 +324,7 @@
     <Compile Include="Hex\Editor\Operations\HexEditorOperations.cs" />
     <Compile Include="Hex\Editor\Operations\HexEditorOperationsFactoryService.cs" />
     <Compile Include="Hex\Editor\PredefinedHexGlyphFactoryProviderNames.cs" />
+    <Compile Include="Hex\HexCachedBufferStream.cs" />
     <Compile Include="Hex\HexColumnPosition.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessor.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessorProvider.cs" />
@@ -408,6 +409,7 @@
     <Compile Include="Hex\HexContentChangingEventArgs.cs" />
     <Compile Include="Hex\HexEdit.cs" />
     <Compile Include="Hex\HexPosition.cs" />
+    <Compile Include="Hex\HexSimpleBufferStream.cs" />
     <Compile Include="Hex\HexSpan.cs" />
     <Compile Include="Hex\HexSpanInfo.cs" />
     <Compile Include="Hex\HexSpanSelectionFlags.cs" />
