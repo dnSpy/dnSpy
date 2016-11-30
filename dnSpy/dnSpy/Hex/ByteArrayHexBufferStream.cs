@@ -28,7 +28,7 @@ namespace dnSpy.Hex {
 		public override string Name { get; }
 		public override event EventHandler<HexBufferStreamSpanInvalidatedEventArgs> BufferStreamSpanInvalidated { add { } remove { } }
 
-		readonly byte[] data;
+		byte[] data;
 
 		public ByteArrayHexBufferStream(byte[] data, string name) {
 			if (data == null)
@@ -292,5 +292,7 @@ namespace dnSpy.Hex {
 			long validBytes = length <= bytesLeft ? length : bytesLeft;
 			Array.Copy(source, sourceIndex, d, (long)pos, validBytes);
 		}
+
+		protected override void DisposeCore() => data = null;
 	}
 }

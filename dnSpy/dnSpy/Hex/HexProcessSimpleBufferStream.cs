@@ -29,7 +29,7 @@ namespace dnSpy.Hex {
 		public override string Name { get; }
 		public override ulong PageSize { get; }
 
-		readonly IntPtr hProcess;
+		IntPtr hProcess;
 		readonly bool isReadOnly;
 		readonly bool isVolatile;
 		readonly HexPosition endAddress;
@@ -151,5 +151,7 @@ namespace dnSpy.Hex {
 				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)position.ToUInt64()), bytesToWrite, oldProtect, out oldProtect);
 			return !b ? 0 : (int)sizeWritten.ToInt64();
 		}
+
+		protected override void DisposeCore() => hProcess = IntPtr.Zero;
 	}
 }

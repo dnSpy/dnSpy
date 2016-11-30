@@ -32,10 +32,10 @@ namespace dnSpy.Hex {
 			return new ByteArrayHexBufferStream(data, name);
 		}
 
-		public override HexCachedBufferStream CreateCached(HexSimpleBufferStream simpleStream) {
+		public override HexCachedBufferStream CreateCached(HexSimpleBufferStream simpleStream, bool disposeStream) {
 			if (simpleStream == null)
 				throw new ArgumentNullException(nameof(simpleStream));
-			return new HexCachedBufferStreamImpl(simpleStream);
+			return new HexCachedBufferStreamImpl(simpleStream, disposeStream);
 		}
 
 		public override HexSimpleBufferStream CreateSimpleStream(IntPtr hProcess, string name, bool isReadOnly, bool isVolatile) =>

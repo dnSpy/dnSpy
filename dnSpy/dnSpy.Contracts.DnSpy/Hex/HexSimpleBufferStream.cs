@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// A buffer stream with less methods
 	/// </summary>
-	public abstract class HexSimpleBufferStream {
+	public abstract class HexSimpleBufferStream : IDisposable {
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -99,5 +99,31 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="length">Length</param>
 		/// <returns></returns>
 		public abstract HexPosition Write(HexPosition position, byte[] source, long sourceIndex, long length);
+
+		/// <summary>
+		/// Raised after it is disposed
+		/// </summary>
+		public event EventHandler Disposed;
+
+		/// <summary>
+		/// true if the instance has been disposed
+		/// </summary>
+		public bool IsDisposed { get; private set; }
+
+		/// <summary>
+		/// Disposes this instance
+		/// </summary>
+		public void Dispose() {
+			if (IsDisposed)
+				return;
+			IsDisposed = true;
+			DisposeCore();
+			Disposed?.Invoke(this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Disposes this instance
+		/// </summary>
+		protected virtual void DisposeCore() { }
 	}
 }

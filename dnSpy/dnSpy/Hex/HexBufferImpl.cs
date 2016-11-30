@@ -49,13 +49,15 @@ namespace dnSpy.Hex {
 		}
 		EventHandler<HexBufferSpanInvalidatedEventArgs> bufferSpanInvalidated;
 
-		readonly HexBufferStream stream;
+		HexBufferStream stream;
 		HexVersionImpl currentHexVersion;
+		readonly bool disposeStream;
 
-		public HexBufferImpl(HexBufferStream stream) {
+		public HexBufferImpl(HexBufferStream stream, bool disposeStream) {
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream));
 			this.stream = stream;
+			this.disposeStream = disposeStream;
 			currentHexVersion = new HexVersionImpl(this, 0, 0);
 		}
 
@@ -181,6 +183,12 @@ namespace dnSpy.Hex {
 			if (span.Length >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(span));
 			return ReadBytes(span.Start, span.Length.ToUInt64());
+		}
+
+		protected override void DisposeCore() {
+			if (disposeStream)
+				stream?.Dispose();
+			stream = null;
 		}
 	}
 }

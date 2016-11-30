@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex buffer
 	/// </summary>
-	public abstract class HexBuffer : VSUTIL.IPropertyOwner {
+	public abstract class HexBuffer : VSUTIL.IPropertyOwner, IDisposable {
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -461,6 +461,32 @@ namespace dnSpy.Contracts.Hex {
 		/// Raised after an edit operation has completed or after it has been canceled
 		/// </summary>
 		public abstract event EventHandler PostChanged;
+
+		/// <summary>
+		/// Raised after it is disposed
+		/// </summary>
+		public event EventHandler Disposed;
+
+		/// <summary>
+		/// true if the instance has been disposed
+		/// </summary>
+		public bool IsDisposed { get; private set; }
+
+		/// <summary>
+		/// Disposes this instance
+		/// </summary>
+		public void Dispose() {
+			if (IsDisposed)
+				return;
+			IsDisposed = true;
+			DisposeCore();
+			Disposed?.Invoke(this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Disposes this instance
+		/// </summary>
+		protected virtual void DisposeCore() { }
 	}
 
 	/// <summary>

@@ -36,19 +36,19 @@ namespace dnSpy.Hex {
 		public override HexBuffer Create(string filename) {
 			if (filename == null)
 				throw new ArgumentNullException(nameof(filename));
-			return Create(hexBufferStreamFactoryService.Create(filename));
+			return Create(hexBufferStreamFactoryService.Create(filename), disposeStream: true);
 		}
 
 		public override HexBuffer Create(byte[] data, string name) {
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));
-			return Create(hexBufferStreamFactoryService.Create(data, name));
+			return Create(hexBufferStreamFactoryService.Create(data, name), disposeStream: true);
 		}
 
-		public override HexBuffer Create(HexBufferStream stream) {
+		public override HexBuffer Create(HexBufferStream stream, bool disposeStream) {
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream));
-			var buffer = new HexBufferImpl(stream);
+			var buffer = new HexBufferImpl(stream, disposeStream);
 			HexBufferCreated?.Invoke(this, new HexBufferCreatedEventArgs(buffer));
 			return buffer;
 		}

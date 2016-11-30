@@ -53,7 +53,9 @@ namespace dnSpy.Contracts.Hex {
 		/// Creates a new <see cref="HexBuffer"/>
 		/// </summary>
 		/// <param name="stream">Stream to use</param>
+		/// <param name="disposeStream">true if the returned buffer owns <paramref name="stream"/> and
+		/// disposes it when the buffer gets disposed</param>
 		/// <returns></returns>
-		public abstract HexBuffer Create(HexBufferStream stream);
+		public abstract HexBuffer Create(HexBufferStream stream, bool disposeStream);
 	}
 }

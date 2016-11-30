@@ -49,16 +49,18 @@ namespace dnSpy.Hex {
 			}
 		}
 
-		readonly HexSimpleBufferStream simpleStream;
+		HexSimpleBufferStream simpleStream;
 		readonly CachedPage[] cachedPages;
 		int lastHitIndex;
 		readonly ulong pageSize;
 		readonly ulong pageSizeMask;
+		readonly bool disposeStream;
 
-		public HexCachedBufferStreamImpl(HexSimpleBufferStream simpleStream) {
+		public HexCachedBufferStreamImpl(HexSimpleBufferStream simpleStream, bool disposeStream) {
 			if (simpleStream == null)
 				throw new ArgumentNullException(nameof(simpleStream));
 			this.simpleStream = simpleStream;
+			this.disposeStream = disposeStream;
 			pageSize = simpleStream.PageSize;
 			Debug.Assert(pageSize == 0 || IsPowerOfTwo(pageSize));
 			if (pageSize == 0 || !IsPowerOfTwo(pageSize))
@@ -351,6 +353,12 @@ namespace dnSpy.Hex {
 			else
 				InvalidateCore(span);
 			BufferStreamSpanInvalidated?.Invoke(this, new HexBufferStreamSpanInvalidatedEventArgs(span));
+		}
+
+		protected override void DisposeCore() {
+			if (disposeStream)
+				simpleStream?.Dispose();
+			simpleStream = null;
 		}
 	}
 }

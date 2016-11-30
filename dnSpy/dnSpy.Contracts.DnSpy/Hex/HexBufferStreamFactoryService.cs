@@ -53,8 +53,10 @@ namespace dnSpy.Contracts.Hex {
 		/// Creates a <see cref="HexBufferStream"/>
 		/// </summary>
 		/// <param name="simpleStream">Underlying stream</param>
+		/// <param name="disposeStream">true if the returned stream owns <paramref name="simpleStream"/> and
+		/// disposes it when the returned stream gets disposed</param>
 		/// <returns></returns>
-		public abstract HexCachedBufferStream CreateCached(HexSimpleBufferStream simpleStream);
+		public abstract HexCachedBufferStream CreateCached(HexSimpleBufferStream simpleStream, bool disposeStream);
 
 		/// <summary>
 		/// Creates a process stream
@@ -66,7 +68,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public HexCachedBufferStream CreateCached(IntPtr hProcess, string name = null, bool isReadOnly = false, bool isVolatile = true) {
 			var simpleStream = CreateSimpleStream(hProcess, name, isReadOnly, isVolatile);
-			return CreateCached(simpleStream);
+			return CreateCached(simpleStream, disposeStream: true);
 		}
 
 		/// <summary>
