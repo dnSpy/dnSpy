@@ -125,6 +125,8 @@ namespace dnSpy.Debugger.Threads {
 
 		public void WriteAffinityMask(ThreadVM vm) {
 			ulong affMask = (ulong)vm.AffinityMask.ToInt64();
+			if (IntPtr.Size == 4)
+				affMask &= uint.MaxValue;
 			bool started = false;
 			var sb = new StringBuilder();
 			for (ulong bitMask = 1UL << 63; bitMask != 0; bitMask >>= 1) {
