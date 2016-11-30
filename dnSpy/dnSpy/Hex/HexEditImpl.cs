@@ -80,7 +80,6 @@ namespace dnSpy.Hex {
 		public override bool Replace(HexPosition position, float value) => ReplaceSafe(position, BitConverter.GetBytes(value));
 		public override bool Replace(HexPosition position, double value) => ReplaceSafe(position, BitConverter.GetBytes(value));
 
-		public override bool Replace(HexPosition position, byte[] data) => Replace(position, data, 0, data.LongLength);
 		public override bool Replace(HexPosition position, byte[] data, long index, long length) {
 			// Make a copy of it so the caller can't modify it
 			var newData = new byte[length];

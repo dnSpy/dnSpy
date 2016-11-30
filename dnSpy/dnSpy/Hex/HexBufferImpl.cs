@@ -141,7 +141,7 @@ namespace dnSpy.Hex {
 				var beforeVersion = Version;
 				// changes is sorted in reverse order by OldPosition
 				foreach (var change in changes)
-					stream.Write(change.OldPosition, change.NewData, 0, checked((long)change.OldLength.ToUInt64()));
+					stream.Write(change.OldPosition, change.NewData);
 				CreateNewVersion(changes, reiteratedVersionNumber);
 				var afterVersion = Version;
 

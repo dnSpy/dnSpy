@@ -185,6 +185,17 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="source">Data</param>
+		public void Write(HexPosition position, byte[] source) {
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			Write(position, source, 0, source.LongLength);
+		}
+
+		/// <summary>
+		/// Writes bytes
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="source">Data</param>
 		/// <param name="sourceIndex">Index</param>
 		/// <param name="length">Length</param>
 		public abstract void Write(HexPosition position, byte[] source, long sourceIndex, long length);

@@ -113,11 +113,11 @@ namespace dnSpy.Hex {
 				Array.Clear(cp.Data, sizeRead, cp.Data.Length - sizeRead);
 		}
 
-		void Invalidate(HexPosition position, long size) {
-			if (size <= 0)
+		void InvalidateCore(HexSpan span) {
+			if (span.IsEmpty)
 				return;
-			ulong startPage = position.ToUInt64() & ~pageSizeMask;
-			ulong endPage = (position.ToUInt64() + (ulong)size - 1) & ~pageSizeMask;
+			ulong startPage = span.Start.ToUInt64() & ~pageSizeMask;
+			ulong endPage = (span.End.ToUInt64() - 1) & ~pageSizeMask;
 			for (int i = 0; i < cachedPages.Length; i++) {
 				var cp = cachedPages[i];
 				if (!cp.IsInitialized)
@@ -267,7 +267,7 @@ namespace dnSpy.Hex {
 			var destination = new byte[length];
 			long destinationIndex = 0;
 			long invalidBytes = 0, validBytes = 0;
-			long bytesread = 0;
+			long bytesRead = 0;
 			var pos = position;
 			while (length > 0) {
 				var cp = GetCachedPage(pos);
@@ -276,31 +276,31 @@ namespace dnSpy.Hex {
 				if (partSize > length)
 					partSize = (int)length;
 				if (srcIndex + partSize > cp.DataSize) {
-					if (srcIndex >= cp.DataSize && bytesread == invalidBytes) {
+					if (srcIndex >= cp.DataSize && bytesRead == invalidBytes) {
 						Debug.Assert(bitArray == null);
 						invalidBytes += partSize;
 					}
 					else {
 						if (bitArray == null)
-							bitArray = CreateBitArray(destination, invalidBytes, bytesread);
+							bitArray = CreateBitArray(destination, invalidBytes, bytesRead);
 						int validCount = cp.DataSize - (int)srcIndex;
 						for (int i = 0; i < validCount; i++) {
-							long j = bytesread + i;
+							long j = bytesRead + i;
 							if (j > int.MaxValue)
 								break;
 							bitArray.Set((int)j, true);
 						}
 					}
 				}
-				else if (bytesread == validBytes) {
+				else if (bytesRead == validBytes) {
 					Debug.Assert(bitArray == null);
 					validBytes += partSize;
 				}
 				else {
 					if (bitArray == null)
-						bitArray = CreateBitArray(destination, invalidBytes, bytesread);
+						bitArray = CreateBitArray(destination, invalidBytes, bytesRead);
 					for (int i = 0; i < partSize; i++) {
-						long j = bytesread + i;
+						long j = bytesRead + i;
 						if (j > int.MaxValue)
 							break;
 						bitArray.Set((int)j, true);
@@ -310,20 +310,20 @@ namespace dnSpy.Hex {
 				pos += (ulong)partSize;
 				length -= partSize;
 				destinationIndex += partSize;
-				bytesread += partSize;
+				bytesRead += partSize;
 			}
 
 			if (bitArray != null)
 				return new HexBytes(destination, bitArray);
-			if (invalidBytes == bytesread)
+			if (invalidBytes == bytesRead)
 				return new HexBytes(destination, false);
-			Debug.Assert(bytesread == validBytes);
+			Debug.Assert(bytesRead == validBytes);
 			return new HexBytes(destination);
 		}
 
-		static BitArray CreateBitArray(byte[] destination, long invalidBytes, long bytesread) {
+		static BitArray CreateBitArray(byte[] destination, long invalidBytes, long bytesRead) {
 			var bitArray = new BitArray((int)Math.Min(int.MaxValue, destination.LongLength), false);
-			long len = bytesread - invalidBytes;
+			long len = bytesRead - invalidBytes;
 			for (long i = 0; i < len; i++) {
 				long j = invalidBytes + i;
 				if (j > int.MaxValue)
@@ -336,13 +336,20 @@ namespace dnSpy.Hex {
 		public override void Write(HexPosition position, byte[] source, long sourceIndex, long length) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			simpleStream.Write(position, source, sourceIndex, length);
-			Invalidate(position, length);
+			InvalidateCore(new HexSpan(position, (ulong)length));
 		}
 
-		public override void Invalidate(HexSpan span) {
+		void ClearAll() {
 			foreach (var cp in cachedPages)
 				cp.IsInitialized = false;
 			lastHitIndex = 0;
+		}
+
+		public override void Invalidate(HexSpan span) {
+			if (span.Start <= Span.Start && span.End >= Span.End)
+				ClearAll();
+			else
+				InvalidateCore(span);
 			BufferStreamSpanInvalidated?.Invoke(this, new HexBufferStreamSpanInvalidatedEventArgs(span));
 		}
 	}

@@ -135,7 +135,11 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="data">New data</param>
 		/// <returns></returns>
-		public abstract bool Replace(HexPosition position, byte[] data);
+		public bool Replace(HexPosition position, byte[] data) {
+			if (data == null)
+				throw new ArgumentNullException(nameof(data));
+			return Replace(position, data, 0, data.LongLength);
+		}
 
 		/// <summary>
 		/// Replaces the data at <paramref name="position"/> with <paramref name="data"/>
