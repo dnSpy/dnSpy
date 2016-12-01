@@ -29,14 +29,22 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected HexBuffer() {
+		protected HexBuffer(HexTags tags) {
+			if (tags == null)
+				throw new ArgumentNullException(nameof(tags));
 			Properties = new VSUTIL.PropertyCollection();
+			Tags = tags;
 		}
 
 		/// <summary>
 		/// Gets all properties
 		/// </summary>
 		public VSUTIL.PropertyCollection Properties { get; }
+
+		/// <summary>
+		/// Gets the tags
+		/// </summary>
+		public HexTags Tags { get; }
 
 		/// <summary>
 		/// true if the content can change at any time

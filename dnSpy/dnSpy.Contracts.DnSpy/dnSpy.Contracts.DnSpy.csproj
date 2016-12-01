@@ -413,6 +413,7 @@
     <Compile Include="Hex\HexSpan.cs" />
     <Compile Include="Hex\HexSpanInfo.cs" />
     <Compile Include="Hex\HexSpanSelectionFlags.cs" />
+    <Compile Include="Hex\HexTags.cs" />
     <Compile Include="Hex\HexValuesDisplayFormat.cs" />
     <Compile Include="Hex\HexVersion.cs" />
     <Compile Include="Hex\HexVersionChangedEventArgs.cs" />
@@ -455,6 +456,7 @@
     <Compile Include="Hex.Old\SelectVM.cs" />
     <Compile Include="Hex\NormalizedHexSpanCollection.cs" />
     <Compile Include="Hex\PositionAndData.cs" />
+    <Compile Include="Hex\PredefinedHexBufferTags.cs" />
     <Compile Include="Hex\Tagging\HexBatchedTagsChangedEventArgs.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexClassificationTag.cs" />

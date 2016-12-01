@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
@@ -27,7 +28,41 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected HexBufferFactoryService() { }
+		protected HexBufferFactoryService() {
+			EmptyTags = new HexTags(Array.Empty<string>());
+			DefaultMemoryTags = new HexTags(defaultMemoryTags);
+			DefaultFileTags = new HexTags(defaultFileTags);
+		}
+
+		static readonly string[] defaultMemoryTags = new string[] {
+			PredefinedHexBufferTags.Memory,
+		};
+
+		static readonly string[] defaultFileTags = new string[] {
+			PredefinedHexBufferTags.File,
+		};
+
+		/// <summary>
+		/// Gets the empty tags collection
+		/// </summary>
+		public HexTags EmptyTags { get; }
+
+		/// <summary>
+		/// Default memory tags
+		/// </summary>
+		public HexTags DefaultMemoryTags { get; }
+
+		/// <summary>
+		/// Default file / byte array tags
+		/// </summary>
+		public HexTags DefaultFileTags { get; }
+
+		/// <summary>
+		/// Creates a new <see cref="HexTags"/> instance
+		/// </summary>
+		/// <param name="tags">Tags</param>
+		/// <returns></returns>
+		public HexTags CreateTags(IEnumerable<string> tags) => new HexTags(tags);
 
 		/// <summary>
 		/// Raised when a new <see cref="HexBuffer"/> has been created
@@ -38,24 +73,27 @@ namespace dnSpy.Contracts.Hex {
 		/// Creates a new <see cref="HexBuffer"/>
 		/// </summary>
 		/// <param name="filename">Filename</param>
+		/// <param name="tags">Tags or null to use the default file tags</param>
 		/// <returns></returns>
-		public abstract HexBuffer Create(string filename);
+		public abstract HexBuffer Create(string filename, HexTags tags = null);
 
 		/// <summary>
 		/// Creates a new <see cref="HexBuffer"/>
 		/// </summary>
 		/// <param name="data">Data</param>
 		/// <param name="name">Name, can be anything and is usually the filename</param>
+		/// <param name="tags">Tags or null to use the default file tags</param>
 		/// <returns></returns>
-		public abstract HexBuffer Create(byte[] data, string name);
+		public abstract HexBuffer Create(byte[] data, string name, HexTags tags = null);
 
 		/// <summary>
 		/// Creates a new <see cref="HexBuffer"/>
 		/// </summary>
 		/// <param name="stream">Stream to use</param>
+		/// <param name="tags">Tags</param>
 		/// <param name="disposeStream">true if the returned buffer owns <paramref name="stream"/> and
 		/// disposes it when the buffer gets disposed</param>
 		/// <returns></returns>
-		public abstract HexBuffer Create(HexBufferStream stream, bool disposeStream);
+		public abstract HexBuffer Create(HexBufferStream stream, HexTags tags, bool disposeStream);
 	}
 }

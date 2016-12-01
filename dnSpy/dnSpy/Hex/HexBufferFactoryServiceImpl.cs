@@ -33,22 +33,24 @@ namespace dnSpy.Hex {
 			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
 		}
 
-		public override HexBuffer Create(string filename) {
+		public override HexBuffer Create(string filename, HexTags tags) {
 			if (filename == null)
 				throw new ArgumentNullException(nameof(filename));
-			return Create(hexBufferStreamFactoryService.Create(filename), disposeStream: true);
+			return Create(hexBufferStreamFactoryService.Create(filename), tags ?? DefaultFileTags, disposeStream: true);
 		}
 
-		public override HexBuffer Create(byte[] data, string name) {
+		public override HexBuffer Create(byte[] data, string name, HexTags tags) {
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));
-			return Create(hexBufferStreamFactoryService.Create(data, name), disposeStream: true);
+			return Create(hexBufferStreamFactoryService.Create(data, name), tags ?? DefaultFileTags, disposeStream: true);
 		}
 
-		public override HexBuffer Create(HexBufferStream stream, bool disposeStream) {
+		public override HexBuffer Create(HexBufferStream stream, HexTags tags, bool disposeStream) {
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream));
-			var buffer = new HexBufferImpl(stream, disposeStream);
+			if (tags == null)
+				throw new ArgumentNullException(nameof(tags));
+			var buffer = new HexBufferImpl(stream, tags, disposeStream);
 			HexBufferCreated?.Invoke(this, new HexBufferCreatedEventArgs(buffer));
 			return buffer;
 		}

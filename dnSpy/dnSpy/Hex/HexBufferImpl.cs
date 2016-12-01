@@ -53,7 +53,8 @@ namespace dnSpy.Hex {
 		HexVersionImpl currentHexVersion;
 		readonly bool disposeStream;
 
-		public HexBufferImpl(HexBufferStream stream, bool disposeStream) {
+		public HexBufferImpl(HexBufferStream stream, HexTags tags, bool disposeStream)
+			: base(tags) {
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream));
 			this.stream = stream;
