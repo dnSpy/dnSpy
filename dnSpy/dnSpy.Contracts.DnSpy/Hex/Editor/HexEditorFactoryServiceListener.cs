@@ -19,16 +19,16 @@
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Gets notified when hex views get created, see also <see cref="HexEditorFactoryServiceListener"/>
+	/// Gets notified when hex views get created, see also <see cref="WpfHexViewCreationListener"/>
 	/// </summary>
-	public abstract class WpfHexViewCreationListener {
+	public abstract class HexEditorFactoryServiceListener {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected WpfHexViewCreationListener() { }
+		protected HexEditorFactoryServiceListener() { }
 
 		/// <summary>
-		/// Called after a hex view with the correct role is created
+		/// Called after a hex view is created
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		public abstract void HexViewCreated(WpfHexView hexView);
