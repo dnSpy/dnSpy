@@ -327,6 +327,16 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		/// Clears data
 		/// </summary>
 		public abstract bool ClearData();
+
+		/// <summary>
+		/// Moves the caret to the start of the next span that contains data
+		/// </summary>
+		public abstract void MoveToStartOfNextValidSpan();
+
+		/// <summary>
+		/// Moves the caret to the start of the previous span that contains data
+		/// </summary>
+		public abstract void MoveToStartOfPreviousValidSpan();
 	}
 
 	/// <summary>

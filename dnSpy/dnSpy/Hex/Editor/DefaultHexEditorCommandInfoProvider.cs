@@ -107,6 +107,8 @@ namespace dnSpy.Hex.Editor {
 			yield return CommandShortcut.Control(Key.D8, HexEditorIds.PasteUtf8String.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.U, HexEditorIds.PasteUnicodeString.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.B, HexEditorIds.PasteBlob.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.Up, HexEditorIds.MoveToStartOfPreviousValidSpan.ToCommandInfo());
+			yield return CommandShortcut.Alt(Key.Down, HexEditorIds.MoveToStartOfNextValidSpan.ToCommandInfo());
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) {

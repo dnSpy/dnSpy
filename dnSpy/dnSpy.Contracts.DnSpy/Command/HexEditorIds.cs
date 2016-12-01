@@ -286,5 +286,13 @@ namespace dnSpy.Contracts.Command {
 		/// Pastes blob data
 		/// </summary>
 		PasteBlob,
+		/// <summary>
+		/// Moves the caret to the start of the next span that contains data
+		/// </summary>
+		MoveToStartOfNextValidSpan,
+		/// <summary>
+		/// Moves the caret to the start of the previous span that contains data
+		/// </summary>
+		MoveToStartOfPreviousValidSpan,
 	}
 }

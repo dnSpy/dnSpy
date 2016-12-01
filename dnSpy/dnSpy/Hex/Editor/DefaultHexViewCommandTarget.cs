@@ -119,6 +119,8 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.INCREASEFILTER:
 				case HexEditorIds.LEFT:
 				case HexEditorIds.LEFT_EXT:
+				case HexEditorIds.MoveToStartOfNextValidSpan:
+				case HexEditorIds.MoveToStartOfPreviousValidSpan:
 				case HexEditorIds.PAGEDN:
 				case HexEditorIds.PAGEDN_EXT:
 				case HexEditorIds.PAGEUP:
@@ -207,6 +209,8 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.HOME_EXT:
 				case HexEditorIds.LEFT:
 				case HexEditorIds.LEFT_EXT:
+				case HexEditorIds.MoveToStartOfNextValidSpan:
+				case HexEditorIds.MoveToStartOfPreviousValidSpan:
 				case HexEditorIds.PAGEDN:
 				case HexEditorIds.PAGEDN_EXT:
 				case HexEditorIds.PAGEUP:
@@ -369,6 +373,14 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.LEFT_EXT:
 					EditorOperations.MoveToPreviousCharacter(true);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.MoveToStartOfNextValidSpan:
+					EditorOperations.MoveToStartOfNextValidSpan();
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.MoveToStartOfPreviousValidSpan:
+					EditorOperations.MoveToStartOfPreviousValidSpan();
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.PAGEDN:

@@ -116,20 +116,20 @@ namespace dnSpy.Contracts.Hex {
 		/// This method merges all consecutive valid spans.
 		/// </summary>
 		/// <param name="position">Start position to check</param>
-		/// <param name="endPosition">End position</param>
+		/// <param name="upperBounds">End position</param>
 		/// <returns></returns>
-		public HexSpan? GetNextValidSpan(HexPosition position, HexPosition endPosition) {
+		public HexSpan? GetNextValidSpan(HexPosition position, HexPosition upperBounds) {
 			if (position >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(position));
-			if (endPosition > HexPosition.MaxEndPosition)
-				throw new ArgumentOutOfRangeException(nameof(endPosition));
+			if (upperBounds > HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(upperBounds));
 			bool checkBackwards = true;
-			while (position < endPosition) {
+			while (position < upperBounds) {
 				var info = GetSpanInfo(position);
 				if (info.HasData) {
 					var start = info.Span.Start;
 					var end = info.Span.End;
-					// We use MaxEndPosition and not endPosition here since we must merge
+					// We use MaxEndPosition and not upperBounds here since we must merge
 					// all consecutive spans even if some of them happen to be outside the
 					// requested range.
 					while (end < HexPosition.MaxEndPosition) {
@@ -150,6 +150,61 @@ namespace dnSpy.Contracts.Hex {
 				}
 				checkBackwards = false;
 				position = info.Span.End;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the previous valid span or null if there's none left. This includes the input
+		/// (<paramref name="position"/>) if it happens to lie within this valid span.
+		/// This method merges all consecutive valid spans.
+		/// </summary>
+		/// <param name="position">Start position to check</param>
+		/// <returns></returns>
+		public HexSpan? GetPreviousValidSpan(HexPosition position) => GetPreviousValidSpan(position, HexPosition.Zero);
+
+		/// <summary>
+		/// Gets the previous valid span or null if there's none left. This includes the input
+		/// (<paramref name="position"/>) if it happens to lie within this valid span.
+		/// This method merges all consecutive valid spans.
+		/// </summary>
+		/// <param name="position">Start position to check</param>
+		/// <param name="lowerBounds">End position</param>
+		/// <returns></returns>
+		public HexSpan? GetPreviousValidSpan(HexPosition position, HexPosition lowerBounds) {
+			if (position >= HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if (lowerBounds > HexPosition.MaxEndPosition)
+				throw new ArgumentOutOfRangeException(nameof(lowerBounds));
+			bool checkForwards = true;
+			while (position >= lowerBounds) {
+				var info = GetSpanInfo(position);
+				if (info.HasData) {
+					var start = info.Span.Start;
+					var end = info.Span.End;
+					// We use HexPosition.Zero and not lowerBounds here since we must merge
+					// all consecutive spans even if some of them happen to be outside the
+					// requested range.
+					while (start > HexPosition.Zero) {
+						info = GetSpanInfo(start - 1);
+						if (!info.HasData)
+							break;
+						start = info.Span.Start;
+					}
+					if (checkForwards) {
+						while (end < HexPosition.MaxEndPosition) {
+							info = GetSpanInfo(end);
+							if (!info.HasData)
+								break;
+							end = info.Span.End;
+						}
+					}
+					return HexSpan.FromBounds(start, end);
+				}
+				if (info.Span.Start == HexPosition.Zero)
+					break;
+				checkForwards = false;
+				position = info.Span.Start - 1;
 			}
 			return null;
 		}

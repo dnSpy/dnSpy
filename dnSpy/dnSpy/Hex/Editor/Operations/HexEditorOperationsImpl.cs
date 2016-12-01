@@ -1008,5 +1008,36 @@ namespace dnSpy.Hex.Editor.Operations {
 			Selection.Clear();
 			return true;
 		}
+
+		public override void MoveToStartOfNextValidSpan() {
+			var startPos = ActiveCaretBufferPosition;
+			var span = Buffer.GetNextValidSpan(startPos, BufferLines.EndPosition);
+			if (span != null && span.Value.Contains(startPos) && span.Value.End < BufferLines.EndPosition)
+				span = Buffer.GetNextValidSpan(span.Value.End + 1, BufferLines.EndPosition);
+			if (span != null && !span.Value.Contains(startPos))
+				MoveToValidSpan(span);
+		}
+
+		public override void MoveToStartOfPreviousValidSpan() {
+			var startPos = ActiveCaretBufferPosition;
+			var span = Buffer.GetPreviousValidSpan(startPos, BufferLines.StartPosition);
+			if (span != null && span.Value.Contains(startPos) && span.Value.Start > BufferLines.StartPosition)
+				span = Buffer.GetPreviousValidSpan(span.Value.Start - 1, BufferLines.StartPosition);
+			if (span != null && !span.Value.Contains(startPos))
+				MoveToValidSpan(span);
+		}
+
+		void MoveToValidSpan(HexSpan? span) {
+			if (span == null)
+				return;
+			var start = span.Value.Start;
+			if (start < BufferLines.StartPosition)
+				start = BufferLines.StartPosition;
+			if (start > BufferLines.EndPosition)
+				start = BufferLines.EndPosition;
+			Caret.MoveTo(new HexBufferPoint(Buffer, start));
+			HexView.DisplayHexLineContainingBufferPosition(ActiveCaretBufferPosition, 0, VSTE.ViewRelativePosition.Top);
+			Selection.Clear();
+		}
 	}
 }
