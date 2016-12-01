@@ -123,6 +123,7 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentOutOfRangeException(nameof(position));
 			if (endPosition > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(endPosition));
+			bool checkBackwards = true;
 			while (position < endPosition) {
 				var info = GetSpanInfo(position);
 				if (info.HasData) {
@@ -137,8 +138,17 @@ namespace dnSpy.Contracts.Hex {
 							break;
 						end = info.Span.End;
 					}
+					if (checkBackwards) {
+						while (start > HexPosition.Zero) {
+							info = GetSpanInfo(start - 1);
+							if (!info.HasData)
+								break;
+							start = info.Span.Start;
+						}
+					}
 					return HexSpan.FromBounds(start, end);
 				}
+				checkBackwards = false;
 				position = info.Span.End;
 			}
 			return null;
