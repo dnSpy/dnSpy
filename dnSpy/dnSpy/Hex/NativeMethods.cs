@@ -23,17 +23,28 @@ using System.Runtime.InteropServices;
 namespace dnSpy.Hex {
 	static class NativeMethods {
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int nSize, out IntPtr lpNumberOfBytesRead);
+		public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesRead);
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int nSize, out IntPtr lpNumberOfBytesWritten);
+		public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesWritten);
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool VirtualProtectEx([In] IntPtr hProcess, [In] IntPtr lpAddress, [In] int dwSize, [In] uint flNewProtect, out uint lpflOldProtect);
+		public static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+		public const uint PAGE_NOACCESS = 0x01;
+		public const uint PAGE_READONLY = 0x02;
+		public const uint PAGE_READWRITE = 0x04;
+		public const uint PAGE_WRITECOPY = 0x08;
+		public const uint PAGE_EXECUTE = 0x10;
+		public const uint PAGE_EXECUTE_READ = 0x20;
 		public const uint PAGE_EXECUTE_READWRITE = 0x40;
+		public const uint PAGE_EXECUTE_WRITECOPY = 0x80;
+
+		public const uint PAGE_GUARD = 0x100;
+		public const uint PAGE_NOCACHE = 0x200;
+		public const uint PAGE_WRITECOMBINE = 0x400;
 
 		[DllImport("kernel32", SetLastError = true, EntryPoint = "VirtualQueryEx")]
 		public static extern int VirtualQueryEx32(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION32 lpBuffer, uint dwLength);
 		[DllImport("kernel32", SetLastError = true, EntryPoint = "VirtualQueryEx")]
-		public static extern int VirtualQueryEx64(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION64 lpBuffer, uint dwLength);
+		public static extern int VirtualQueryEx64(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION64 lpBuffer, ulong dwLength);
 
 		[StructLayout(LayoutKind.Sequential)]
 		public struct MEMORY_BASIC_INFORMATION32 {
@@ -74,7 +85,7 @@ namespace dnSpy.Hex {
 
 		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool IsWow64Process([In] IntPtr hProcess, [Out] out bool Wow64Process);
+		public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
 
 		[DllImport("kernel32", SetLastError = false)]
 		public static extern void GetSystemInfo(out SYSTEM_INFO Info);

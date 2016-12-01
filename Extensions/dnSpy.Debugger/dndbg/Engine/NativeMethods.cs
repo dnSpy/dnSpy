@@ -32,7 +32,7 @@ namespace dndbg.Engine {
 		public static extern bool CloseHandle([In] IntPtr hObject);
 
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool VirtualProtectEx([In] IntPtr hProcess, [In] IntPtr lpAddress, [In] int dwSize, [In] uint flNewProtect, out uint lpflOldProtect);
+		public static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
 		public const uint PAGE_EXECUTE_READWRITE = 0x40;
 
 		[DllImport("kernel32", CharSet = CharSet.Ansi, SetLastError = true)]

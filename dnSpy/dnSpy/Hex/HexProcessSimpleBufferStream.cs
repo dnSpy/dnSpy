@@ -131,7 +131,7 @@ namespace dnSpy.Hex {
 			IntPtr sizeRead;
 			bool b;
 			fixed (void* p = &destination[destinationIndex])
-				b = NativeMethods.ReadProcessMemory(hProcess, new IntPtr((void*)position.ToUInt64()), new IntPtr(p), bytesToRead, out sizeRead);
+				b = NativeMethods.ReadProcessMemory(hProcess, new IntPtr((void*)position.ToUInt64()), new IntPtr(p), new IntPtr(bytesToRead), out sizeRead);
 			return !b ? 0 : sizeRead.ToInt64();
 		}
 
@@ -142,13 +142,13 @@ namespace dnSpy.Hex {
 				return 0;
 			int bytesToWrite = (int)Math.Min(length, int.MaxValue);
 			uint oldProtect;
-			bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)position.ToUInt64()), bytesToWrite, NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
+			bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)position.ToUInt64()), new IntPtr(bytesToWrite), NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
 			IntPtr sizeWritten;
 			bool b;
 			fixed (void* p = &source[sourceIndex])
-				b = NativeMethods.WriteProcessMemory(hProcess, new IntPtr((void*)position.ToUInt64()), new IntPtr(p), bytesToWrite, out sizeWritten);
+				b = NativeMethods.WriteProcessMemory(hProcess, new IntPtr((void*)position.ToUInt64()), new IntPtr(p), new IntPtr(bytesToWrite), out sizeWritten);
 			if (restoreOldProtect)
-				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)position.ToUInt64()), bytesToWrite, oldProtect, out oldProtect);
+				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)position.ToUInt64()), new IntPtr(bytesToWrite), oldProtect, out oldProtect);
 			return !b ? 0 : (int)sizeWritten.ToInt64();
 		}
 

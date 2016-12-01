@@ -24,11 +24,11 @@ using Microsoft.Win32.SafeHandles;
 namespace dnSpy.Debugger {
 	static class NativeMethods {
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int nSize, out IntPtr lpNumberOfBytesRead);
+		public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesRead);
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int nSize, out IntPtr lpNumberOfBytesWritten);
+		public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesWritten);
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool VirtualProtectEx([In] IntPtr hProcess, [In] IntPtr lpAddress, [In] int dwSize, [In] uint flNewProtect, out uint lpflOldProtect);
+		public static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
 		public const uint PAGE_EXECUTE_READWRITE = 0x40;
 
 		[DllImport("mscoree", PreserveSig = false)]
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger {
 
 		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool IsWow64Process([In] IntPtr hProcess, [Out] out bool Wow64Process);
+		public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
 
 		[DllImport("kernel32", SetLastError = true)]
 		public static extern IntPtr SetThreadAffinityMask(IntPtr hThread, IntPtr dwThreadAffinityMask);

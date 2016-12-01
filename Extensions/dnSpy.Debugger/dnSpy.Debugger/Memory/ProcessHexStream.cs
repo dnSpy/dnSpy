@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Memory {
 			IntPtr sizeRead;
 			bool b;
 			fixed (void* p = &array[index])
-				b = NativeMethods.ReadProcessMemory(hProcess, new IntPtr((void*)offset), new IntPtr(p), count, out sizeRead);
+				b = NativeMethods.ReadProcessMemory(hProcess, new IntPtr((void*)offset), new IntPtr(p), new IntPtr(count), out sizeRead);
 			return !b ? 0 : (int)sizeRead.ToInt64();
 		}
 
@@ -47,13 +47,13 @@ namespace dnSpy.Debugger.Memory {
 			if (IntPtr.Size == 4 && offset > uint.MaxValue)
 				return 0;
 			uint oldProtect;
-			bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)offset), count, NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
+			bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)offset), new IntPtr(count), NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
 			IntPtr sizeWritten;
 			bool b;
 			fixed (void* p = &array[index])
-				b = NativeMethods.WriteProcessMemory(hProcess, new IntPtr((void*)offset), new IntPtr(p), count, out sizeWritten);
+				b = NativeMethods.WriteProcessMemory(hProcess, new IntPtr((void*)offset), new IntPtr(p), new IntPtr(count), out sizeWritten);
 			if (restoreOldProtect)
-				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)offset), count, oldProtect, out oldProtect);
+				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)offset), new IntPtr(count), oldProtect, out oldProtect);
 			return !b ? 0 : (int)sizeWritten.ToInt64();
 		}
 	}

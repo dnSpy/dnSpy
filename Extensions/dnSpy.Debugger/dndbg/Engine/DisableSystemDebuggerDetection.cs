@@ -90,14 +90,14 @@ namespace dndbg.Engine {
 
 			var hProcess = process.Handle;
 			uint oldProtect;
-			if (!NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)addr), data.Length, NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect))
+			if (!NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)addr), new IntPtr(data.Length), NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect))
 				return false;
 			int sizeWritten;
 			try {
 				process.WriteMemory(addr, data, 0, data.Length, out sizeWritten);
 			}
 			finally {
-				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)addr), data.Length, oldProtect, out oldProtect);
+				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)addr), new IntPtr(data.Length), oldProtect, out oldProtect);
 			}
 
 			return sizeWritten == data.Length;

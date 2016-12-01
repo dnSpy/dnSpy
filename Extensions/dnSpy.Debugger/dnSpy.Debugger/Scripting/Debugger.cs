@@ -739,7 +739,7 @@ namespace dnSpy.Debugger.Scripting {
 				IntPtr sizeRead;
 				bool b;
 				fixed (void* p = &array[index])
-					b = NativeMethods.ReadProcessMemory(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(p), len, out sizeRead);
+					b = NativeMethods.ReadProcessMemory(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(p), new IntPtr(len), out sizeRead);
 
 				int read = !b ? 0 : (int)sizeRead.ToInt64();
 				Debug.Assert(read <= len);
@@ -801,13 +801,13 @@ namespace dnSpy.Debugger.Scripting {
 					len = (int)pageSizeLeft;
 
 				uint oldProtect;
-				bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), len, NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
+				bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(len), NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
 				IntPtr sizeWritten;
 				bool b;
 				fixed (void* p = &array[index])
-					b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(p), len, out sizeWritten);
+					b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(p), new IntPtr(len), out sizeWritten);
 				if (restoreOldProtect)
-					NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), len, oldProtect, out oldProtect);
+					NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(len), oldProtect, out oldProtect);
 
 				address += (ulong)len;
 				count -= (uint)len;
@@ -839,7 +839,7 @@ namespace dnSpy.Debugger.Scripting {
 			if (hProcess_debuggee == IntPtr.Zero || address == 0)
 				return 0;
 			IntPtr sizeWritten;
-			bool b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), sourceData, sourceSize, out sizeWritten);
+			bool b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), sourceData, new IntPtr(sourceSize), out sizeWritten);
 			return !b ? 0 : (int)sizeWritten.ToInt64();
 		}
 
