@@ -40,11 +40,11 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		public abstract IEnumerable<TagOptionDefinition> GetOptions();
 
 		/// <summary>
-		/// Gets the tag to use or null
+		/// Gets the sub group (eg. <see cref="PredefinedHexViewRoles.HexEditorGroupDefault"/>) to use or null
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		/// <returns></returns>
-		public abstract string GetTag(WpfHexView hexView);
+		public abstract string GetSubGroup(WpfHexView hexView);
 	}
 
 	/// <summary>Metadata</summary>

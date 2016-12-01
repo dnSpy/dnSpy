@@ -485,6 +485,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string BlockStructureLineKind_None {
+            get {
+                return ResourceManager.GetString("BlockStructureLineKind_None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Solid lines.
         /// </summary>
         public static string BlockStructureLineKind_SolidLines {
@@ -1306,20 +1315,83 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Files.
+        ///   Looks up a localized string similar to Encoding.
         /// </summary>
-        public static string HexEditorGroup_Files {
+        public static string HexEditorEncoding {
             get {
-                return ResourceManager.GetString("HexEditorGroup_Files", resourceCulture);
+                return ResourceManager.GetString("HexEditorEncoding", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Memory.
+        ///   Looks up a localized string similar to Default.
         /// </summary>
-        public static string HexEditorGroup_Memory {
+        public static string HexEditorGroup_Default {
             get {
-                return ResourceManager.GetString("HexEditorGroup_Memory", resourceCulture);
+                return ResourceManager.GetString("HexEditorGroup_Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group size.
+        /// </summary>
+        public static string HexEditorGroupSizeInBytes {
+            get {
+                return ResourceManager.GetString("HexEditorGroupSizeInBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlight current value.
+        /// </summary>
+        public static string HexEditorHighlightCurrentValue {
+            get {
+                return ResourceManager.GetString("HexEditorHighlightCurrentValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Offset.
+        /// </summary>
+        public static string HexEditorOffsetFormat {
+            get {
+                return ResourceManager.GetString("HexEditorOffsetFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lower case hex (offset).
+        /// </summary>
+        public static string HexEditorOffsetLowerCaseHex {
+            get {
+                return ResourceManager.GetString("HexEditorOffsetLowerCaseHex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hex Editor.
+        /// </summary>
+        public static string HexEditorSettings {
+            get {
+                return ResourceManager.GetString("HexEditorSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show column line separators.
+        /// </summary>
+        public static string HexEditorShowColumnLineSeparators {
+            get {
+                return ResourceManager.GetString("HexEditorShowColumnLineSeparators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lower case hex (values).
+        /// </summary>
+        public static string HexEditorValuesLowerCaseHex {
+            get {
+                return ResourceManager.GetString("HexEditorValuesLowerCaseHex", resourceCulture);
             }
         }
         

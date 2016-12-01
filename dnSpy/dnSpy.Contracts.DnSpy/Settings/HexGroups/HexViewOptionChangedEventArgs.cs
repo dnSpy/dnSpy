@@ -26,9 +26,9 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 	/// </summary>
 	public sealed class HexViewOptionChangedEventArgs : EventArgs {
 		/// <summary>
-		/// Tag
+		/// Sub group, eg. <see cref="PredefinedHexViewRoles.HexEditorGroupDefault"/>
 		/// </summary>
-		public string Tag { get; }
+		public string SubGroup { get; }
 
 		/// <summary>
 		/// Option id, eg. <see cref="DefaultHexViewOptions.BytesPerLineName"/>
@@ -38,14 +38,14 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="tag">Tag</param>
+		/// <param name="subGroup">Sub group</param>
 		/// <param name="optionId">Option id, eg. <see cref="DefaultHexViewOptions.BytesPerLineName"/></param>
-		public HexViewOptionChangedEventArgs(string tag, string optionId) {
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
+		public HexViewOptionChangedEventArgs(string subGroup, string optionId) {
+			if (subGroup == null)
+				throw new ArgumentNullException(nameof(subGroup));
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
-			Tag = tag;
+			SubGroup = subGroup;
 			OptionId = optionId;
 		}
 	}

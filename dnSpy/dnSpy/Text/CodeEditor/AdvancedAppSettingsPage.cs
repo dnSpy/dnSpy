@@ -25,7 +25,7 @@ namespace dnSpy.Text.CodeEditor {
 	sealed class AdvancedAppSettingsPage : AdvancedAppSettingsPageBase {
 		public override Guid ParentGuid => options.Guid;
 		public override Guid Guid => guid;
-		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_TABS;
+		public override double Order => AppSettingsConstants.ORDER_CODE_EDITOR_LANGUAGES_ADVANCED;
 		readonly Guid guid;
 		readonly ICodeEditorOptions options;
 

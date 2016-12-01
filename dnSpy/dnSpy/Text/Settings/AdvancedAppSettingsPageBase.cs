@@ -178,6 +178,17 @@ namespace dnSpy.Text.Settings {
 		}
 		bool zoomControl;
 
+		public bool ForceClearTypeIfNeeded {
+			get { return forceClearTypeIfNeeded; }
+			set {
+				if (forceClearTypeIfNeeded != value) {
+					forceClearTypeIfNeeded = value;
+					OnPropertyChanged(nameof(ForceClearTypeIfNeeded));
+				}
+			}
+		}
+		bool forceClearTypeIfNeeded;
+
 		readonly ICommonEditorOptions options;
 
 		protected AdvancedAppSettingsPageBase(ICommonEditorOptions options) {
@@ -198,6 +209,7 @@ namespace dnSpy.Text.Settings {
 			GlyphMargin = options.GlyphMargin;
 			MouseWheelZoom = options.EnableMouseWheelZoom;
 			ZoomControl = options.ZoomControl;
+			ForceClearTypeIfNeeded = options.ForceClearTypeIfNeeded;
 		}
 
 		public override void OnApply() {
@@ -214,6 +226,7 @@ namespace dnSpy.Text.Settings {
 			options.GlyphMargin = GlyphMargin;
 			options.EnableMouseWheelZoom = MouseWheelZoom;
 			options.ZoomControl = ZoomControl;
+			options.ForceClearTypeIfNeeded = ForceClearTypeIfNeeded;
 		}
 	}
 }

@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Resources;
 using dnSpy.Contracts.Settings.HexEditor;
 using dnSpy.Contracts.Settings.HexGroups;
 using dnSpy.Hex.Settings;
@@ -27,8 +28,8 @@ namespace dnSpy.Hex.HexEditor {
 		public Guid Guid { get; }
 		public string Name { get; }
 
-		HexEditorOptions(HexViewOptionsGroup group, string tag, Guid guid, string name)
-			: base(group, tag) {
+		HexEditorOptions(HexViewOptionsGroup group, string subGroup, Guid guid, string name)
+			: base(group, subGroup) {
 			Guid = guid;
 			Name = name;
 		}
@@ -39,10 +40,10 @@ namespace dnSpy.Hex.HexEditor {
 			if (md == null)
 				throw new ArgumentNullException(nameof(md));
 
-			if (md.Tag == null)
+			if (md.SubGroup == null)
 				return null;
-			var tag = md.Tag;
-			if (tag == null)
+			var subGroup = md.SubGroup;
+			if (subGroup == null)
 				return null;
 
 			if (md.Guid == null)
@@ -54,7 +55,7 @@ namespace dnSpy.Hex.HexEditor {
 			if (md.Name == null)
 				return null;
 
-			return new HexEditorOptions(group, tag, guid, md.Name);
+			return new HexEditorOptions(group, subGroup, guid, ResourceHelper.GetString(md.Type.Assembly, md.Name));
 		}
 	}
 }

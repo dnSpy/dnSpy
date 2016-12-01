@@ -188,6 +188,9 @@ namespace dnSpy.Text.Groups {
 				writeOptionHash.Add(option);
 				optionsStorage.Write(groupName, option);
 				foreach (var textView in textViews.ToArray()) {
+					var coll = GetCollection(textView.TextDataModel.ContentType);
+					if (!StringComparer.OrdinalIgnoreCase.Equals(option.Definition.ContentType, coll.ContentType.TypeName))
+						continue;
 					try {
 						textView.Options.SetOptionValue(option.OptionId, option.Value);
 					}

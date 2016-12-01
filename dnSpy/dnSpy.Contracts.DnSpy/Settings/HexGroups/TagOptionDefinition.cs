@@ -18,7 +18,6 @@
 */
 
 using System;
-using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
@@ -28,10 +27,10 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 	/// </summary>
 	public class TagOptionDefinition {
 		/// <summary>
-		/// Hex buffer tag, eg. <see cref="PredefinedHexBufferTags.File"/>. Use <see cref="string.Empty"/>
-		/// to add default options.
+		/// Sub group, eg. <see cref="PredefinedHexViewRoles.HexEditorGroupDefault"/>.
+		/// Use <see cref="string.Empty"/> to add default options.
 		/// </summary>
-		public string Tag { get; set; }
+		public string SubGroup { get; set; }
 
 		/// <summary>
 		/// Hex view option name, eg. <see cref="DefaultHexViewOptions.BytesPerLineId"/>

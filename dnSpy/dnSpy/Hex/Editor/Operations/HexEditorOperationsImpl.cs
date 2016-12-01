@@ -493,7 +493,7 @@ namespace dnSpy.Hex.Editor.Operations {
 			if (text.Length == 0)
 				return true;
 
-			var encoding = Options.GetEncoding();
+			var encoding = Options.TryGetEncoding();
 			Debug.Assert(encoding != null);
 			if (encoding == null)
 				return false;

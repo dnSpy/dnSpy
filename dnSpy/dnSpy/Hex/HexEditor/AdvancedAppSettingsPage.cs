@@ -17,15 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Hex.Editor;
+using System;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Contracts.Settings.HexEditor;
+using dnSpy.Hex.Settings;
 
 namespace dnSpy.Hex.HexEditor {
-	static class HexEditorOptionsDefinitions {
-#pragma warning disable 0169
-		[ExportHexEditorOptionsDefinition("res:HexEditorGroup_Default", PredefinedHexViewRoles.HexEditorGroupDefault, AppSettingsConstants.GUID_HEX_EDITOR_DEFAULT, typeof(HexEditorOptionsDefinitions))]
-		static readonly HexEditorOptionsDefinition defaultHexEditorOptionsDefinition;
-#pragma warning restore 0169
+	sealed class AdvancedAppSettingsPage : AdvancedAppSettingsPageBase {
+		public override Guid ParentGuid => options.Guid;
+		public override Guid Guid => guid;
+		public override double Order => AppSettingsConstants.ORDER_HEX_EDITOR_NAMES_ADVANCED;
+		readonly Guid guid;
+		readonly HexEditorOptions options;
+
+		public AdvancedAppSettingsPage(HexEditorOptions options, Guid guid)
+			: base(options) {
+			this.options = options;
+			this.guid = guid;
+		}
 	}
 }

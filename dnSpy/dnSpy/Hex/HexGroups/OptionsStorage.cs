@@ -27,47 +27,47 @@ namespace dnSpy.Hex.HexGroups {
 		static readonly Guid SETTINGS_GUID = new Guid("8A9E5743-F634-45CE-A841-E2275338DC28");
 		const string GroupName = "Group";
 		const string GroupNameAttr = "name";
-		const string TagName = "Tag";
-		const string TagNameAttr = "name";
+		const string SubGroupName = "SubGroup";
+		const string SubGroupNameAttr = "name";
 		const string OptionName = "Option";
 		const string OptionNameAttr = "name";
 		const string OptionValueAttr = "value";
 
-		struct TagKey : IEquatable<TagKey> {
-			readonly string groupName, tag;
-			public TagKey(string groupName, string tag) {
+		struct SubGroupKey : IEquatable<SubGroupKey> {
+			readonly string groupName, subGroup;
+			public SubGroupKey(string groupName, string subGroup) {
 				this.groupName = groupName;
-				this.tag = tag;
+				this.subGroup = subGroup;
 			}
-			public bool Equals(TagKey other) => StringComparer.Ordinal.Equals(groupName, other.groupName) && StringComparer.OrdinalIgnoreCase.Equals(tag, other.tag);
-			public override bool Equals(object obj) => obj is TagKey && Equals((TagKey)obj);
-			public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(groupName) ^ StringComparer.OrdinalIgnoreCase.GetHashCode(tag);
-			public override string ToString() => $"({groupName},{tag})";
+			public bool Equals(SubGroupKey other) => StringComparer.Ordinal.Equals(groupName, other.groupName) && StringComparer.OrdinalIgnoreCase.Equals(subGroup, other.subGroup);
+			public override bool Equals(object obj) => obj is SubGroupKey && Equals((SubGroupKey)obj);
+			public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(groupName) ^ StringComparer.OrdinalIgnoreCase.GetHashCode(subGroup);
+			public override string ToString() => $"({groupName},{subGroup})";
 		}
 
 		struct OptionKey : IEquatable<OptionKey> {
-			/*readonly*/ TagKey tagKey;
+			/*readonly*/ SubGroupKey subGroupKey;
 			readonly string name;
-			public OptionKey(TagKey tagKey, string name) {
-				this.tagKey = tagKey;
+			public OptionKey(SubGroupKey subGroupKey, string name) {
+				this.subGroupKey = subGroupKey;
 				this.name = name;
 			}
-			public bool Equals(OptionKey other) => tagKey.Equals(other.tagKey) && StringComparer.Ordinal.Equals(name, other.name);
+			public bool Equals(OptionKey other) => subGroupKey.Equals(other.subGroupKey) && StringComparer.Ordinal.Equals(name, other.name);
 			public override bool Equals(object obj) => obj is OptionKey && Equals((OptionKey)obj);
-			public override int GetHashCode() => tagKey.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(name);
-			public override string ToString() => tagKey.ToString() + ": " + name;
+			public override int GetHashCode() => subGroupKey.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(name);
+			public override string ToString() => subGroupKey.ToString() + ": " + name;
 		}
 
 		readonly ISettingsSection settingsSection;
 		readonly Dictionary<string, ISettingsSection> toGroupSection;
-		readonly Dictionary<TagKey, ISettingsSection> toTagSection;
+		readonly Dictionary<SubGroupKey, ISettingsSection> toSubGroupSection;
 		readonly Dictionary<OptionKey, ISettingsSection> toOptionSection;
 
 		public OptionsStorage(ISettingsService settingsService) {
 			if (settingsService == null)
 				throw new ArgumentNullException(nameof(settingsService));
 			toGroupSection = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
-			toTagSection = new Dictionary<TagKey, ISettingsSection>();
+			toSubGroupSection = new Dictionary<SubGroupKey, ISettingsSection>();
 			toOptionSection = new Dictionary<OptionKey, ISettingsSection>();
 			settingsSection = settingsService.GetOrCreateSection(SETTINGS_GUID);
 
@@ -79,14 +79,14 @@ namespace dnSpy.Hex.HexGroups {
 					continue;
 				toGroupSection[groupName] = groupSect;
 
-				foreach (var ctSect in groupSect.SectionsWithName(TagName)) {
-					var tag = ctSect.Attribute<string>(TagNameAttr);
-					if (tag == null)
+				foreach (var ctSect in groupSect.SectionsWithName(SubGroupName)) {
+					var subGroup = ctSect.Attribute<string>(SubGroupNameAttr);
+					if (subGroup == null)
 						continue;
-					var key = new TagKey(groupName, tag);
-					if (toTagSection.ContainsKey(key))
+					var key = new SubGroupKey(groupName, subGroup);
+					if (toSubGroupSection.ContainsKey(key))
 						continue;
-					toTagSection[key] = ctSect;
+					toSubGroupSection[key] = ctSect;
 
 					foreach (var optSect in ctSect.SectionsWithName(OptionName)) {
 						var name = optSect.Attribute<string>(OptionNameAttr);
@@ -108,7 +108,7 @@ namespace dnSpy.Hex.HexGroups {
 				throw new ArgumentNullException(nameof(collection));
 
 			ISettingsSection ctSect;
-			if (!toTagSection.TryGetValue(new TagKey(groupName, collection.Tag), out ctSect))
+			if (!toSubGroupSection.TryGetValue(new SubGroupKey(groupName, collection.SubGroup), out ctSect))
 				return;
 
 			var toOption = new Dictionary<string, HexViewGroupOption>(StringComparer.Ordinal);
@@ -186,24 +186,24 @@ namespace dnSpy.Hex.HexGroups {
 			return sect;
 		}
 
-		ISettingsSection GetOrCreateTagSection(string groupName, string tag) {
-			var key = new TagKey(groupName, tag);
+		ISettingsSection GetOrCreateSubGroupSection(string groupName, string subGroup) {
+			var key = new SubGroupKey(groupName, subGroup);
 			ISettingsSection sect;
-			if (toTagSection.TryGetValue(key, out sect))
+			if (toSubGroupSection.TryGetValue(key, out sect))
 				return sect;
 			var groupSect = GetOrCreateGroupSection(groupName);
-			sect = groupSect.CreateSection(TagName);
-			toTagSection.Add(key, sect);
-			sect.Attribute(TagNameAttr, tag);
+			sect = groupSect.CreateSection(SubGroupName);
+			toSubGroupSection.Add(key, sect);
+			sect.Attribute(SubGroupNameAttr, subGroup);
 			return sect;
 		}
 
 		ISettingsSection GetOrCreateOptionSection(string groupName, HexViewGroupOption option) {
-			var key = new OptionKey(new TagKey(groupName, option.Definition.Tag), option.OptionId);
+			var key = new OptionKey(new SubGroupKey(groupName, option.Definition.SubGroup), option.OptionId);
 			ISettingsSection sect;
 			if (toOptionSection.TryGetValue(key, out sect))
 				return sect;
-			var ctSect = GetOrCreateTagSection(groupName, option.Definition.Tag);
+			var ctSect = GetOrCreateSubGroupSection(groupName, option.Definition.SubGroup);
 			sect = ctSect.CreateSection(OptionName);
 			toOptionSection.Add(key, sect);
 			sect.Attribute(OptionNameAttr, option.OptionId);

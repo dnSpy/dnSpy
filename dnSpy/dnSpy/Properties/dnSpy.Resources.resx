@@ -1254,10 +1254,34 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="BgImgDisplayName_HexEditor" xml:space="preserve">
     <value>Hex Editor</value>
   </data>
-  <data name="HexEditorGroup_Files" xml:space="preserve">
-    <value>Files</value>
+  <data name="HexEditorGroup_Default" xml:space="preserve">
+    <value>Default</value>
   </data>
-  <data name="HexEditorGroup_Memory" xml:space="preserve">
-    <value>Memory</value>
+  <data name="HexEditorSettings" xml:space="preserve">
+    <value>Hex Editor</value>
+  </data>
+  <data name="HexEditorEncoding" xml:space="preserve">
+    <value>Encoding</value>
+  </data>
+  <data name="HexEditorGroupSizeInBytes" xml:space="preserve">
+    <value>Group size</value>
+  </data>
+  <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
+    <value>Highlight current value</value>
+  </data>
+  <data name="HexEditorOffsetFormat" xml:space="preserve">
+    <value>Offset</value>
+  </data>
+  <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
+    <value>Lower case hex (offset)</value>
+  </data>
+  <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
+    <value>Lower case hex (values)</value>
+  </data>
+  <data name="BlockStructureLineKind_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
+    <value>Show column line separators</value>
   </data>
 </root>

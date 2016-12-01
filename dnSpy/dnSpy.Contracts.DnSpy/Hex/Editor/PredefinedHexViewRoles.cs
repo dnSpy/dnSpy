@@ -42,6 +42,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string CanHighlightActiveColumn = prefix + nameof(CanHighlightActiveColumn);
 		public const string CanHaveGlyphMargin = prefix + nameof(CanHaveGlyphMargin);
 		public const string HexEditorGroup = prefix + nameof(HexEditorGroup);
+		public const string HexEditorGroupDefault = prefix + nameof(HexEditorGroupDefault);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

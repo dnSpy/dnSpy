@@ -25,7 +25,7 @@ namespace dnSpy.Text.Repl {
 	sealed class AdvancedAppSettingsPage : AdvancedAppSettingsPageBase {
 		public override Guid ParentGuid => options.Guid;
 		public override Guid Guid => guid;
-		public override double Order => AppSettingsConstants.ORDER_REPL_LANGUAGES_TABS;
+		public override double Order => AppSettingsConstants.ORDER_REPL_LANGUAGES_ADVANCED;
 		readonly Guid guid;
 		readonly IReplOptions options;
 

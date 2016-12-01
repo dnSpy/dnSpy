@@ -24,13 +24,13 @@ using dnSpy.Contracts.Hex.Editor;
 namespace dnSpy.Hex.HexGroups {
 	sealed class HexViewGroupOptionCollection {
 		public List<HexViewGroupOption> Options { get; }
-		public string Tag { get; }
+		public string SubGroup { get; }
 
-		public HexViewGroupOptionCollection(string tag) {
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
+		public HexViewGroupOptionCollection(string subGroup) {
+			if (subGroup == null)
+				throw new ArgumentNullException(nameof(subGroup));
 			Options = new List<HexViewGroupOption>();
-			Tag = tag;
+			SubGroup = subGroup;
 		}
 
 		public void Add(HexViewGroupOption option) => Options.Add(option);

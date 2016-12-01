@@ -313,14 +313,31 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		}
 
 		/// <summary>
+		/// Returns the encoding code page
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static int GetEncodingCodePage(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.EncodingCodePageId);
+		}
+
+		/// <summary>
 		/// Returns the encoding
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static Encoding GetEncoding(this VSTE.IEditorOptions options) {
+		public static Encoding TryGetEncoding(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			return options.GetOptionValue(DefaultHexViewOptions.EncodingId);
+			var codePage = options.GetEncodingCodePage();
+			try {
+				return Encoding.GetEncoding(codePage);
+			}
+			catch {
+				return null;
+			}
 		}
 	}
 }

@@ -149,16 +149,6 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_REPL = "6AF674BC-0AB4-4A0C-9F41-6F83ED992DAB";
 
 		/// <summary>
-		/// GUID of hex editor files page
-		/// </summary>
-		public const string GUID_HEX_EDITOR_FILE = "1B88E778-3CF6-4E06-BCD1-12FC0E651089";
-
-		/// <summary>
-		/// Guid of hex editor memory page
-		/// </summary>
-		public const string GUID_HEX_EDITOR_MEMORY = "73B556F2-FB17-4243-83DE-6C0ECF7BDE71";
-
-		/// <summary>
 		/// Guid of C# (Roslyn) REPL settings
 		/// </summary>
 		public const string GUID_REPL_CSHARP_ROSLYN = "4A391B5A-8A9F-485E-9E48-76FEEAD0176B";
@@ -167,6 +157,16 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Guid of Visual Basic (Roslyn) REPL settings
 		/// </summary>
 		public const string GUID_REPL_VISUAL_BASIC_ROSLYN = "7C275A4E-348E-4620-A292-60DAC69AFF7D";
+
+		/// <summary>
+		/// Guid of Hex Editor settings page
+		/// </summary>
+		public const string GUID_HEX_EDITOR = "81B4DA71-3489-4A2D-BE18-9D0BA0D49E71";
+
+		/// <summary>
+		/// GUID of Hex Editor / Default page
+		/// </summary>
+		public const string GUID_HEX_EDITOR_DEFAULT = "1B88E778-3CF6-4E06-BCD1-12FC0E651089";
 
 		/// <summary>
 		/// Order of Environment / General
@@ -277,5 +277,25 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Order of Advanced language settings
 		/// </summary>
 		public const double ORDER_REPL_LANGUAGES_ADVANCED = 4000;
+
+		/// <summary>
+		/// Start of group options
+		/// </summary>
+		public const double ORDER_HEX_EDITOR_NAMES = 10000;
+
+		/// <summary>
+		/// Order of General settings
+		/// </summary>
+		public const double ORDER_HEX_EDITOR_NAMES_GENERAL = 1000;
+
+		/// <summary>
+		/// Order of Scroll Bars settings
+		/// </summary>
+		public const double ORDER_HEX_EDITOR_NAMES_SCROLLBARS = 2000;
+
+		/// <summary>
+		/// Order of Advanced settings
+		/// </summary>
+		public const double ORDER_HEX_EDITOR_NAMES_ADVANCED = 3000;
 	}
 }

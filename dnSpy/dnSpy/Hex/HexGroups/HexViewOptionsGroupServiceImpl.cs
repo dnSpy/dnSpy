@@ -55,11 +55,11 @@ namespace dnSpy.Hex.HexGroups {
 			optionsStorage = new OptionsStorage(settingsService);
 		}
 
-		internal string GetTag(WpfHexView hexView) {
+		internal string GetSubGroup(WpfHexView hexView) {
 			foreach (var lz in tagOptionDefinitionProviders) {
-				var tag = lz.Value.GetTag(hexView);
-				if (tag != null)
-					return tag;
+				var subGroup = lz.Value.GetSubGroup(hexView);
+				if (subGroup != null)
+					return subGroup;
 			}
 			return null;
 		}
@@ -83,7 +83,7 @@ namespace dnSpy.Hex.HexGroups {
 					continue;
 				options.AddRange(lz.Value.GetOptions());
 			}
-			return options.Where(a => a.Tag != null && a.Name != null && a.Type != null).ToArray();
+			return options.Where(a => a.SubGroup != null && a.Name != null && a.Type != null).ToArray();
 		}
 
 		internal void HexViewCreated(WpfHexView hexView) {

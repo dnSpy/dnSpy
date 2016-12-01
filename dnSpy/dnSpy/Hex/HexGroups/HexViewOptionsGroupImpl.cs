@@ -54,14 +54,14 @@ namespace dnSpy.Hex.HexGroups {
 				if (option.Name == null)
 					continue;
 
-				var tag = option.Tag;
-				Debug.Assert(tag != null);
-				if (tag == null)
+				var subGroup = option.SubGroup;
+				Debug.Assert(subGroup != null);
+				if (subGroup == null)
 					continue;
 
 				HexViewGroupOptionCollection coll;
-				if (!toOptions.TryGetValue(tag, out coll))
-					toOptions.Add(tag, coll = new HexViewGroupOptionCollection(tag));
+				if (!toOptions.TryGetValue(subGroup, out coll))
+					toOptions.Add(subGroup, coll = new HexViewGroupOptionCollection(subGroup));
 				coll.Add(new HexViewGroupOption(this, option));
 			}
 
@@ -158,6 +158,8 @@ namespace dnSpy.Hex.HexGroups {
 				writeOptionHash.Add(option);
 				optionsStorage.Write(groupName, option);
 				foreach (var hexView in hexViews.ToArray()) {
+					if (!StringComparer.OrdinalIgnoreCase.Equals(GetSubGroup(hexView), option.Definition.SubGroup))
+						continue;
 					try {
 						hexView.Options.SetOptionValue(option.OptionId, option.Value);
 					}
@@ -165,24 +167,24 @@ namespace dnSpy.Hex.HexGroups {
 						// Invalid option value
 					}
 				}
-				HexViewOptionChanged?.Invoke(this, new HexViewOptionChangedEventArgs(option.Definition.Tag, option.Definition.Name));
+				HexViewOptionChanged?.Invoke(this, new HexViewOptionChangedEventArgs(option.Definition.SubGroup, option.Definition.Name));
 			}
 			finally {
 				writeOptionHash.Remove(option);
 			}
 		}
 
-		string GetTag(WpfHexView hexView) => owner.GetTag(hexView);
+		string GetSubGroup(WpfHexView hexView) => owner.GetSubGroup(hexView) ?? string.Empty;
 
 		void OptionChanged(WpfHexView hexView, VSTE.EditorOptionChangedEventArgs e) {
-			var coll = GetCollection(GetTag(hexView));
+			var coll = GetCollection(GetSubGroup(hexView));
 			if (!coll.HasOption(e.OptionId))
 				return;
 			coll.SetOptionValue(e.OptionId, hexView.Options.GetOptionValue(e.OptionId));
 		}
 
 		void InitializeOptions(WpfHexView hexView) =>
-			GetCollection(GetTag(hexView)).InitializeOptions(hexView);
+			GetCollection(GetSubGroup(hexView)).InitializeOptions(hexView);
 
 		void Closed(WpfHexView hexView) {
 			Debug.Assert(hexView.IsClosed);

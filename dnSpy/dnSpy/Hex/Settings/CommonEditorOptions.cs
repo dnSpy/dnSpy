@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Text;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Settings.HexGroups;
@@ -26,130 +25,130 @@ using dnSpy.Contracts.Settings.HexGroups;
 namespace dnSpy.Hex.Settings {
 	abstract class CommonEditorOptions {
 		protected HexViewOptionsGroup Group { get; }
-		public string Tag { get; }
+		public string SubGroup { get; }
 
-		protected CommonEditorOptions(HexViewOptionsGroup group, string tag) {
+		protected CommonEditorOptions(HexViewOptionsGroup group, string subGroup) {
 			if (group == null)
 				throw new ArgumentNullException(nameof(group));
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
+			if (subGroup == null)
+				throw new ArgumentNullException(nameof(subGroup));
 			Group = group;
-			Tag = tag;
+			SubGroup = subGroup;
 		}
 
 		public HexOffsetFormat HexOffsetFormat {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.HexOffsetFormatId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.HexOffsetFormatId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.HexOffsetFormatId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.HexOffsetFormatId, value); }
 		}
 
 		public bool ValuesLowerCaseHex {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.ValuesLowerCaseHexId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.ValuesLowerCaseHexId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.ValuesLowerCaseHexId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.ValuesLowerCaseHexId, value); }
 		}
 
 		public bool OffsetLowerCaseHex {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.OffsetLowerCaseHexId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.OffsetLowerCaseHexId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.OffsetLowerCaseHexId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.OffsetLowerCaseHexId, value); }
 		}
 
 		public int GroupSizeInBytes {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.GroupSizeInBytesId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.GroupSizeInBytesId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.GroupSizeInBytesId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.GroupSizeInBytesId, value); }
 		}
 
 		public bool EnableColorization {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.EnableColorizationId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.EnableColorizationId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.EnableColorizationId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.EnableColorizationId, value); }
 		}
 
 		public bool RemoveExtraTextLineVerticalPixels {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.RemoveExtraTextLineVerticalPixelsId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.RemoveExtraTextLineVerticalPixelsId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.RemoveExtraTextLineVerticalPixelsId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.RemoveExtraTextLineVerticalPixelsId, value); }
 		}
 
 		public bool ShowColumnLines {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.ShowColumnLinesId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.ShowColumnLinesId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.ShowColumnLinesId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.ShowColumnLinesId, value); }
 		}
 
 		public HexColumnLineKind ColumnLine0 {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.ColumnLine0Id); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.ColumnLine0Id, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.ColumnLine0Id); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.ColumnLine0Id, value); }
 		}
 
 		public HexColumnLineKind ColumnLine1 {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.ColumnLine1Id); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.ColumnLine1Id, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.ColumnLine1Id); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.ColumnLine1Id, value); }
 		}
 
 		public HexColumnLineKind ColumnGroupLine0 {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.ColumnGroupLine0Id); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.ColumnGroupLine0Id, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.ColumnGroupLine0Id); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.ColumnGroupLine0Id, value); }
 		}
 
 		public HexColumnLineKind ColumnGroupLine1 {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.ColumnGroupLine1Id); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.ColumnGroupLine1Id, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.ColumnGroupLine1Id); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.ColumnGroupLine1Id, value); }
 		}
 
 		public bool HighlightActiveColumn {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.HighlightActiveColumnId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.HighlightActiveColumnId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.HighlightActiveColumnId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.HighlightActiveColumnId, value); }
 		}
 
 		public bool HighlightCurrentValue {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.HighlightCurrentValueId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.HighlightCurrentValueId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.HighlightCurrentValueId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.HighlightCurrentValueId, value); }
 		}
 
-		public Encoding Encoding {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewOptions.EncodingId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewOptions.EncodingId, value); }
+		public int EncodingCodePage {
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.EncodingCodePageId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.EncodingCodePageId, value); }
 		}
 
 		public bool EnableHighlightCurrentLine {
-			get { return Group.GetOptionValue(Tag, DefaultWpfHexViewOptions.EnableHighlightCurrentLineId); }
-			set { Group.SetOptionValue(Tag, DefaultWpfHexViewOptions.EnableHighlightCurrentLineId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultWpfHexViewOptions.EnableHighlightCurrentLineId); }
+			set { Group.SetOptionValue(SubGroup, DefaultWpfHexViewOptions.EnableHighlightCurrentLineId, value); }
 		}
 
 		public bool EnableMouseWheelZoom {
-			get { return Group.GetOptionValue(Tag, DefaultWpfHexViewOptions.EnableMouseWheelZoomId); }
-			set { Group.SetOptionValue(Tag, DefaultWpfHexViewOptions.EnableMouseWheelZoomId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultWpfHexViewOptions.EnableMouseWheelZoomId); }
+			set { Group.SetOptionValue(SubGroup, DefaultWpfHexViewOptions.EnableMouseWheelZoomId, value); }
 		}
 
 		public double ZoomLevel {
-			get { return Group.GetOptionValue(Tag, DefaultWpfHexViewOptions.ZoomLevelId); }
-			set { Group.SetOptionValue(Tag, DefaultWpfHexViewOptions.ZoomLevelId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultWpfHexViewOptions.ZoomLevelId); }
+			set { Group.SetOptionValue(SubGroup, DefaultWpfHexViewOptions.ZoomLevelId, value); }
 		}
 
 		public bool HorizontalScrollBar {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewHostOptions.HorizontalScrollBarId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewHostOptions.HorizontalScrollBarId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewHostOptions.HorizontalScrollBarId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewHostOptions.HorizontalScrollBarId, value); }
 		}
 
 		public bool VerticalScrollBar {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewHostOptions.VerticalScrollBarId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewHostOptions.VerticalScrollBarId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewHostOptions.VerticalScrollBarId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewHostOptions.VerticalScrollBarId, value); }
 		}
 
 		public bool SelectionMargin {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewHostOptions.SelectionMarginId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewHostOptions.SelectionMarginId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewHostOptions.SelectionMarginId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewHostOptions.SelectionMarginId, value); }
 		}
 
 		public bool ZoomControl {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewHostOptions.ZoomControlId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewHostOptions.ZoomControlId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewHostOptions.ZoomControlId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewHostOptions.ZoomControlId, value); }
 		}
 
 		public bool GlyphMargin {
-			get { return Group.GetOptionValue(Tag, DefaultHexViewHostOptions.GlyphMarginId); }
-			set { Group.SetOptionValue(Tag, DefaultHexViewHostOptions.GlyphMarginId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewHostOptions.GlyphMarginId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewHostOptions.GlyphMarginId, value); }
 		}
 
 		public bool ForceClearTypeIfNeeded {
-			get { return Group.GetOptionValue(Tag, DefaultWpfHexViewOptions.ForceClearTypeIfNeededId); }
-			set { Group.SetOptionValue(Tag, DefaultWpfHexViewOptions.ForceClearTypeIfNeededId, value); }
+			get { return Group.GetOptionValue(SubGroup, DefaultWpfHexViewOptions.ForceClearTypeIfNeededId); }
+			set { Group.SetOptionValue(SubGroup, DefaultWpfHexViewOptions.ForceClearTypeIfNeededId, value); }
 		}
 	}
 }

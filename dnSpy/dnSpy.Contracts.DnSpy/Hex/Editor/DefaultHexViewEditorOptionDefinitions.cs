@@ -180,9 +180,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
-	sealed class EncodingEditorOptionDefinition : HexViewOptionDefinition<Encoding> {
-		public override VSTE.EditorOptionKey<Encoding> Key => DefaultHexViewOptions.EncodingId;
-		public override Encoding Default => Encoding.UTF8;
-		public override bool IsValid(ref Encoding proposedValue) => proposedValue != null;
+	sealed class EncodingCodePageEditorOptionDefinition : HexViewOptionDefinition<int> {
+		public override VSTE.EditorOptionKey<int> Key => DefaultHexViewOptions.EncodingCodePageId;
+		public override int Default => Encoding.UTF8.CodePage;
 	}
 }

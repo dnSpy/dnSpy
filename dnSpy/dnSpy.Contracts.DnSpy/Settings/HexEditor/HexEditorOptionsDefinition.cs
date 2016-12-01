@@ -34,10 +34,12 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 	public interface IHexEditorOptionsDefinitionMetadata {
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.Name"/></summary>
 		string Name { get; }
-		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.Tag"/></summary>
-		string Tag { get; }
+		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.SubGroup"/></summary>
+		string SubGroup { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.Guid"/></summary>
 		string Guid { get; }
+		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.Type"/></summary>
+		Type Type { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.HexOffsetFormat"/></summary>
 		HexOffsetFormat HexOffsetFormat { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.ValuesLowerCaseHex"/></summary>
@@ -64,8 +66,8 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		bool HighlightActiveColumn { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.HighlightCurrentValue"/></summary>
 		bool HighlightCurrentValue { get; }
-		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.Encoding"/></summary>
-		string Encoding { get; }
+		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.EncodingCodePage"/></summary>
+		int EncodingCodePage { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.EnableHighlightCurrentLine"/></summary>
 		bool EnableHighlightCurrentLine { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.EnableMouseWheelZoom"/></summary>
@@ -95,19 +97,23 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		/// Constructor
 		/// </summary>
 		/// <param name="name">Name shown in the UI</param>
-		/// <param name="tag">Hex buffer tag, eg. <see cref="PredefinedHexBufferTags.File"/></param>
+		/// <param name="subGroup">Sub group, eg. <see cref="PredefinedHexViewRoles.HexEditorGroupDefault"/></param>
 		/// <param name="guid">Guid of settings</param>
-		public ExportHexEditorOptionsDefinitionAttribute(string name, string tag, string guid)
+		/// <param name="type">A type in your assembly so resource strings can be read from the resources</param>
+		public ExportHexEditorOptionsDefinitionAttribute(string name, string subGroup, string guid, Type type)
 			: base(typeof(HexEditorOptionsDefinition)) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
+			if (subGroup == null)
+				throw new ArgumentNullException(nameof(subGroup));
 			if (guid == null)
 				throw new ArgumentNullException(nameof(guid));
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
 			Name = name;
-			Tag = tag;
+			SubGroup = subGroup;
 			Guid = guid;
+			Type = type;
 			HexOffsetFormat = DefaultHexEditorOptions.HexOffsetFormat;
 			ValuesLowerCaseHex = DefaultHexEditorOptions.ValuesLowerCaseHex;
 			OffsetLowerCaseHex = DefaultHexEditorOptions.OffsetLowerCaseHex;
@@ -121,7 +127,7 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 			ColumnGroupLine1 = DefaultHexEditorOptions.ColumnGroupLine1;
 			HighlightActiveColumn = DefaultHexEditorOptions.HighlightActiveColumn;
 			HighlightCurrentValue = DefaultHexEditorOptions.HighlightCurrentValue;
-			Encoding = DefaultHexEditorOptions.Encoding;
+			EncodingCodePage = DefaultHexEditorOptions.EncodingCodePage;
 			EnableHighlightCurrentLine = DefaultHexEditorOptions.EnableHighlightCurrentLine;
 			EnableMouseWheelZoom = DefaultHexEditorOptions.EnableMouseWheelZoom;
 			ZoomLevel = DefaultHexEditorOptions.ZoomLevel;
@@ -139,14 +145,19 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		public string Name { get; }
 
 		/// <summary>
-		/// Hex buffer tag, eg. <see cref="PredefinedHexBufferTags.File"/>
+		/// Sub group, eg. <see cref="PredefinedHexViewRoles.HexEditorGroupDefault"/>
 		/// </summary>
-		public string Tag { get; }
+		public string SubGroup { get; }
 
 		/// <summary>
 		/// Guid of settings
 		/// </summary>
 		public string Guid { get; }
+
+		/// <summary>
+		/// Type
+		/// </summary>
+		public Type Type { get; }
 
 		/// <summary>
 		/// Offset format, default value is <see cref="DefaultHexEditorOptions.HexOffsetFormat"/>
@@ -214,9 +225,9 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		public bool HighlightCurrentValue { get; set; }
 
 		/// <summary>
-		/// Encoding, default value is <see cref="DefaultHexEditorOptions.Encoding"/>
+		/// Encoding code page, default value is <see cref="DefaultHexEditorOptions.EncodingCodePage"/>
 		/// </summary>
-		public string Encoding { get; set; }
+		public int EncodingCodePage { get; set; }
 
 		/// <summary>
 		/// Highlight current line, default value is <see cref="DefaultHexEditorOptions.EnableHighlightCurrentLine"/>
