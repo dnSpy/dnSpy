@@ -51,7 +51,7 @@ namespace dnSpy.Hex {
 				return new HexSpanInfo(HexSpan.FromBounds(endAddress, HexPosition.MaxEndPosition), HexSpanInfoFlags.None);
 
 			ulong baseAddress, regionSize;
-			uint state;
+			uint state, protect;
 			int res;
 			if (IntPtr.Size == 4) {
 				NativeMethods.MEMORY_BASIC_INFORMATION32 info;
@@ -59,6 +59,7 @@ namespace dnSpy.Hex {
 				baseAddress = info.BaseAddress;
 				regionSize = info.RegionSize;
 				state = info.State;
+				protect = info.Protect;
 				Debug.Assert(res == 0 || res == NativeMethods.MEMORY_BASIC_INFORMATION32_SIZE);
 			}
 			else {
@@ -67,6 +68,7 @@ namespace dnSpy.Hex {
 				baseAddress = info.BaseAddress;
 				regionSize = info.RegionSize;
 				state = info.State;
+				protect = info.Protect;
 				Debug.Assert(res == 0 || res == NativeMethods.MEMORY_BASIC_INFORMATION64_SIZE);
 			}
 
@@ -74,7 +76,12 @@ namespace dnSpy.Hex {
 			if (res == 0)
 				return new HexSpanInfo(HexSpan.FromBounds(position, HexPosition.MaxEndPosition), HexSpanInfoFlags.None);
 
-			var flags = state == NativeMethods.MEM_COMMIT ? HexSpanInfoFlags.HasData : HexSpanInfoFlags.None;
+			var flags = HexSpanInfoFlags.None;
+			if (state == NativeMethods.MEM_COMMIT) {
+				uint access = protect & 0xFF;
+				if (access != NativeMethods.PAGE_NOACCESS && (protect & NativeMethods.PAGE_GUARD) == 0)
+					flags |= HexSpanInfoFlags.HasData;
+			}
 			return new HexSpanInfo(new HexSpan(baseAddress, regionSize), flags);
 		}
 
