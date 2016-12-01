@@ -306,8 +306,10 @@
     <Compile Include="Hex\Classification\HexClassifierAggregator.cs" />
     <Compile Include="Hex\Classification\HexClassifierAggregatorServiceImpl.cs" />
     <Compile Include="Hex\Classification\HexEditorFormatMapServiceImpl.cs" />
+    <Compile Include="Hex\Classification\HexViewClassificationFormatMap.cs" />
     <Compile Include="Hex\Classification\HexViewClassifierAggregator.cs" />
     <Compile Include="Hex\Classification\HexViewClassifierAggregatorServiceImpl.cs" />
+    <Compile Include="Hex\Classification\HexViewEditorFormatMap.cs" />
     <Compile Include="Hex\Classification\TextEditorFormatDefinitions.cs" />
     <Compile Include="Hex\Editor\ActiveColumnHighlighter.cs" />
     <Compile Include="Hex\Editor\BottomControlMargin.cs" />
@@ -687,8 +689,6 @@
     <Compile Include="Text\Classification\EditorFormatDefinitionExtensions.cs" />
     <Compile Include="Text\Classification\EditorFormatDefinitionService.cs" />
     <Compile Include="Text\Classification\EditorFormatMapService.cs" />
-    <Compile Include="Hex\Classification\HexViewClassificationFormatMap.cs" />
-    <Compile Include="Hex\Classification\HexViewEditorFormatMap.cs" />
     <Compile Include="Text\Classification\ITextEditorFontSettings.cs" />
     <Compile Include="Text\Classification\ITextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\NullClassifier.cs" />
@@ -1094,8 +1094,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Hex\Intellisense\HexQuickInfoPresenterControl.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Language\Intellisense\CompletionPresenterControl.xaml">
       <Generator>MSBuild:Compile</Generator>
