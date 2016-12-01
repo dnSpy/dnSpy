@@ -149,6 +149,16 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_REPL = "6AF674BC-0AB4-4A0C-9F41-6F83ED992DAB";
 
 		/// <summary>
+		/// GUID of hex editor files page
+		/// </summary>
+		public const string GUID_HEX_EDITOR_FILE = "1B88E778-3CF6-4E06-BCD1-12FC0E651089";
+
+		/// <summary>
+		/// Guid of hex editor memory page
+		/// </summary>
+		public const string GUID_HEX_EDITOR_MEMORY = "73B556F2-FB17-4243-83DE-6C0ECF7BDE71";
+
+		/// <summary>
 		/// Guid of C# (Roslyn) REPL settings
 		/// </summary>
 		public const string GUID_REPL_CSHARP_ROSLYN = "4A391B5A-8A9F-485E-9E48-76FEEAD0176B";

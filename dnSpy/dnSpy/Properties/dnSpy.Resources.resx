@@ -1254,4 +1254,10 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="BgImgDisplayName_HexEditor" xml:space="preserve">
     <value>Hex Editor</value>
   </data>
+  <data name="HexEditorGroup_Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="HexEditorGroup_Memory" xml:space="preserve">
+    <value>Memory</value>
+  </data>
 </root>

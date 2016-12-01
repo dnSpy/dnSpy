@@ -111,9 +111,9 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 				throw new ArgumentNullException(nameof(contentType));
 			if (guid == null)
 				throw new ArgumentNullException(nameof(guid));
+			LanguageName = languageName;
 			ContentType = contentType;
 			Guid = guid;
-			LanguageName = languageName;
 			UseVirtualSpace = DefaultCodeEditorOptions.UseVirtualSpace;
 			WordWrapStyle = DefaultCodeEditorOptions.WordWrapStyle;
 			ShowLineNumbers = DefaultCodeEditorOptions.ShowLineNumbers;

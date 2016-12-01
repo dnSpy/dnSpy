@@ -650,6 +650,8 @@
     <Compile Include="Settings\Groups\ITextViewOptionsGroupService.cs" />
     <Compile Include="Settings\Groups\PredefinedTextViewGroupNames.cs" />
     <Compile Include="Settings\Groups\TextViewOptionChangedEventArgs.cs" />
+    <Compile Include="Settings\HexEditor\DefaultHexEditorOptions.cs" />
+    <Compile Include="Settings\HexEditor\HexEditorOptionsDefinition.cs" />
     <Compile Include="Settings\HexGroups\HexViewOptionChangedEventArgs.cs" />
     <Compile Include="Settings\HexGroups\HexViewOptionsGroup.cs" />
     <Compile Include="Settings\HexGroups\HexViewOptionsGroupNameProvider.cs" />

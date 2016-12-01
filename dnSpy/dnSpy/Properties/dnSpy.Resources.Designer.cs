@@ -1306,6 +1306,24 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Files.
+        /// </summary>
+        public static string HexEditorGroup_Files {
+            get {
+                return ResourceManager.GetString("HexEditorGroup_Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Memory.
+        /// </summary>
+        public static string HexEditorGroup_Memory {
+            get {
+                return ResourceManager.GetString("HexEditorGroup_Memory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to H_ide All Tabs.
         /// </summary>
         public static string HideAllToolWindowsCommand {

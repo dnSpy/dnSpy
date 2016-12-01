@@ -403,6 +403,11 @@
     <Compile Include="Hex\HexBufferStreamFactoryServiceImpl.cs" />
     <Compile Include="Hex\HexCachedBufferStreamImpl.cs" />
     <Compile Include="Hex\HexEditImpl.cs" />
+    <Compile Include="Hex\HexEditor\HexEditorOptions.cs" />
+    <Compile Include="Hex\HexEditor\HexEditorOptionsDefinitions.cs" />
+    <Compile Include="Hex\HexEditor\HexEditorOptionsService.cs" />
+    <Compile Include="Hex\HexEditor\HexViewOptionsGroupNameProviderImpl.cs" />
+    <Compile Include="Hex\HexEditor\TagOptionDefinitionProviderImpl.cs" />
     <Compile Include="Hex\HexGroups\HexViewGroupOption.cs" />
     <Compile Include="Hex\HexGroups\HexViewGroupOptionCollection.cs" />
     <Compile Include="Hex\HexGroups\HexViewOptionsGroupImpl.cs" />
@@ -431,6 +436,7 @@
     <Compile Include="Hex\MEF\Metadata.cs" />
     <Compile Include="Hex\NativeMethods.cs" />
     <Compile Include="Hex\NormalizedHexBufferSpanCollectionExtensions.cs" />
+    <Compile Include="Hex\Settings\CommonEditorOptions.cs" />
     <Compile Include="Hex\Tagging\DefaultTagger.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryServiceImpl.cs" />
     <Compile Include="Hex\Tagging\HexTaggerFactory.cs" />

@@ -74,7 +74,6 @@ namespace dnSpy.Text.Repl {
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultWpfViewOptions.EnableMouseWheelZoomId, md.MouseWheelZoom);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.ZoomControlId, md.ZoomControl);
 				yield return new OptionDefinition<double>(md.ContentType, DefaultWpfViewOptions.ZoomLevelId, md.ZoomLevel);
-
 			}
 		}
 
