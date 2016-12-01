@@ -403,6 +403,11 @@
     <Compile Include="Hex\HexBufferStreamFactoryServiceImpl.cs" />
     <Compile Include="Hex\HexCachedBufferStreamImpl.cs" />
     <Compile Include="Hex\HexEditImpl.cs" />
+    <Compile Include="Hex\HexGroups\HexViewGroupOption.cs" />
+    <Compile Include="Hex\HexGroups\HexViewGroupOptionCollection.cs" />
+    <Compile Include="Hex\HexGroups\HexViewOptionsGroupImpl.cs" />
+    <Compile Include="Hex\HexGroups\HexViewOptionsGroupServiceImpl.cs" />
+    <Compile Include="Hex\HexGroups\OptionsStorage.cs" />
     <Compile Include="Hex\HexOffsetFormatter.cs" />
     <Compile Include="Hex\HexProcessSimpleBufferStream.cs" />
     <Compile Include="Hex\HexValueFormatter.cs" />

@@ -28,10 +28,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Groups {
 	sealed class TextViewOptionsGroup : ITextViewOptionsGroup {
-		IEnumerable<IWpfTextView> ITextViewOptionsGroup.TextViews {
-			get { return textViews.ToArray(); }
-		}
-
+		IEnumerable<IWpfTextView> ITextViewOptionsGroup.TextViews => textViews.ToArray();
 		public event EventHandler<TextViewOptionChangedEventArgs> TextViewOptionChanged;
 
 		readonly List<IWpfTextView> textViews;
@@ -50,8 +47,8 @@ namespace dnSpy.Text.Groups {
 			if (optionsStorage == null)
 				throw new ArgumentNullException(nameof(optionsStorage));
 			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.textViews = new List<IWpfTextView>();
-			this.toOptions = new Dictionary<IContentType, TextViewGroupOptionCollection>();
+			textViews = new List<IWpfTextView>();
+			toOptions = new Dictionary<IContentType, TextViewGroupOptionCollection>();
 			this.groupName = groupName;
 
 			foreach (var option in defaultOptions) {
@@ -138,7 +135,7 @@ namespace dnSpy.Text.Groups {
 			GetCollection(contentType).SetOptionValue(optionId, value);
 		}
 
-		public void TextViewCreated(IWpfTextView textView) {
+		internal void TextViewCreated(IWpfTextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			Debug.Assert(!textView.IsClosed);

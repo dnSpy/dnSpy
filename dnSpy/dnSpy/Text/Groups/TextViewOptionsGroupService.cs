@@ -57,11 +57,11 @@ namespace dnSpy.Text.Groups {
 
 		[ImportingConstructor]
 		TextViewOptionsGroupService(ISettingsService settingsService, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextViewOptionsGroupNameProvider, ITextViewOptionsGroupNameProviderMetadata>> textViewOptionsGroupNameProviders, [ImportMany] IEnumerable<Lazy<IContentTypeOptionDefinitionProvider, IContentTypeOptionDefinitionProviderMetadata>> contentTypeOptionDefinitionProviders) {
-			this.nameToGroup = new Dictionary<string, TextViewOptionsGroup>(StringComparer.Ordinal);
+			nameToGroup = new Dictionary<string, TextViewOptionsGroup>(StringComparer.Ordinal);
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textViewOptionsGroupNameProviders = textViewOptionsGroupNameProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.contentTypeOptionDefinitionProviders = contentTypeOptionDefinitionProviders.OrderBy(a => a.Metadata.Order).ToArray();
-			this.optionsStorage = new OptionsStorage(settingsService);
+			optionsStorage = new OptionsStorage(settingsService);
 		}
 
 		ITextViewOptionsGroup ITextViewOptionsGroupService.GetGroup(string name) => GetGroup(name);
