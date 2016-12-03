@@ -31,7 +31,7 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
     <Grid>
-        <ScrollViewer Name="scrollViewer" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+        <ContentPresenter Name="hexViewContentPresenter" />
         <Border Background="{DynamicResource MemoryWindowDisabled}" Visibility="{Binding CanNotEditMemory, Converter={StaticResource BooleanToVisibilityConverter}}" mvvm:InitDataTemplateAP.Initialize="True" />
     </Grid>
 </UserControl>

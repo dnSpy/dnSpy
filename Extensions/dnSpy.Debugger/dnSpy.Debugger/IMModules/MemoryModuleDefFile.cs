@@ -26,6 +26,7 @@ using dnlib.PE;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Debugger.Memory;
 
 namespace dnSpy.Debugger.IMModules {
 	/// <summary>
@@ -64,16 +65,18 @@ namespace dnSpy.Debugger.IMModules {
 		public ulong Address { get; }
 		public override bool IsActive => !Process.HasExited;
 
+		readonly SimpleProcessReader simpleProcessReader;
 		readonly byte[] data;
 		readonly bool isInMemory;
 
-		MemoryModuleDefFile(DnProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
+		MemoryModuleDefFile(SimpleProcessReader simpleProcessReader, DnProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
 			: base(module, loadSyms) {
-			this.Process = process;
-			this.Address = address;
+			this.simpleProcessReader = simpleProcessReader;
+			Process = process;
+			Address = address;
 			this.data = data;
 			this.isInMemory = isInMemory;
-			this.AutoUpdateMemory = autoUpdateMemory;
+			AutoUpdateMemory = autoUpdateMemory;
 		}
 
 		public static IDsDocumentNameKey CreateKey(DnProcess process, ulong address) => new MyKey(process, address);
@@ -93,7 +96,7 @@ namespace dnSpy.Debugger.IMModules {
 				return false;
 			//TODO: Only compare the smallest possible region, eg. all MD and IL bodies. Don't include writable sects.
 			var newData = new byte[data.Length];
-			ProcessMemoryUtils.ReadMemory(Process, Address, newData, 0, data.Length);
+			simpleProcessReader.Read(Process.CorProcess.Handle, Address, newData, 0, data.Length);
 			if (Equals(data, newData))
 				return false;
 			Array.Copy(newData, data, data.Length);
@@ -114,14 +117,14 @@ namespace dnSpy.Debugger.IMModules {
 			return true;
 		}
 
-		public static MemoryModuleDefFile CreateAssembly(List<MemoryModuleDefFile> files) {
+		public static MemoryModuleDefFile CreateAssembly(SimpleProcessReader simpleProcessReader, List<MemoryModuleDefFile> files) {
 			var manifest = files[0];
-			var file = new MemoryModuleDefFile(manifest.Process, manifest.Address, manifest.data, manifest.isInMemory, manifest.ModuleDef, false, manifest.AutoUpdateMemory);
+			var file = new MemoryModuleDefFile(simpleProcessReader, manifest.Process, manifest.Address, manifest.data, manifest.isInMemory, manifest.ModuleDef, false, manifest.AutoUpdateMemory);
 			file.files = new List<MemoryModuleDefFile>(files);
 			return file;
 		}
 
-		public static MemoryModuleDefFile Create(DnModule dnModule, bool loadSyms) {
+		public static MemoryModuleDefFile Create(SimpleProcessReader simpleProcessReader, DnModule dnModule, bool loadSyms) {
 			Debug.Assert(!dnModule.IsDynamic);
 			Debug.Assert(dnModule.Address != 0);
 			ulong address = dnModule.Address;
@@ -129,7 +132,7 @@ namespace dnSpy.Debugger.IMModules {
 			var data = new byte[dnModule.Size];
 			string location = dnModule.IsInMemory ? string.Empty : dnModule.Name;
 
-			ProcessMemoryUtils.ReadMemory(process, address, data, 0, data.Length);
+			simpleProcessReader.Read(process.CorProcess.Handle, address, data, 0, data.Length);
 
 			var peImage = new PEImage(data, GetImageLayout(dnModule), true);
 			var module = ModuleDefMD.Load(peImage);
@@ -137,7 +140,7 @@ namespace dnSpy.Debugger.IMModules {
 			bool autoUpdateMemory = false;//TODO: Init to default value
 			if (GacInfo.IsGacPath(dnModule.Name))
 				autoUpdateMemory = false;	// GAC files are not likely to decrypt methods in memory
-			return new MemoryModuleDefFile(process, address, data, dnModule.IsInMemory, module, loadSyms, autoUpdateMemory);
+			return new MemoryModuleDefFile(simpleProcessReader, process, address, data, dnModule.IsInMemory, module, loadSyms, autoUpdateMemory);
 		}
 
 		static ImageLayout GetImageLayout(DnModule module) {

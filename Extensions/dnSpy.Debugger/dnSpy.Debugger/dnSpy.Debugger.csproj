@@ -161,7 +161,10 @@
     <Compile Include="Logger\ContentTypeDefinitions.cs" />
     <Compile Include="Logger\OutputLogger.cs" />
     <Compile Include="Logger\OutputLoggerSettings.cs" />
+    <Compile Include="Memory\BackgroundImageOptionDefinitions.cs" />
     <Compile Include="Memory\Commands.cs" />
+    <Compile Include="Memory\DebuggerHexBufferStream.cs" />
+    <Compile Include="Memory\HexEditorOptionsDefinitions.cs" />
     <Compile Include="Memory\MemoryContent.cs" />
     <Compile Include="Memory\MemoryControl.xaml.cs">
       <DependentUpon>MemoryControl.xaml</DependentUpon>
@@ -170,7 +173,7 @@
     <Compile Include="Memory\MemoryVM.cs" />
     <Compile Include="Memory\MemoryWindowService.cs" />
     <Compile Include="Memory\MemoryWindowsHelper.cs" />
-    <Compile Include="Memory\ProcessHexStream.cs" />
+    <Compile Include="Memory\SimpleProcessReader.cs" />
     <Compile Include="MenuItemCommandProxy.cs" />
     <Compile Include="ModuleIdExtensions.cs" />
     <Compile Include="ModuleLoader.cs" />
@@ -188,7 +191,6 @@
     <Compile Include="NativeMethods.cs" />
     <Compile Include="OutputConverter.cs" />
     <Compile Include="OutputWriterConverter.cs" />
-    <Compile Include="ProcessMemoryUtils.cs" />
     <Compile Include="Properties\dnSpy.Debugger.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

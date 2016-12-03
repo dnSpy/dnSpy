@@ -132,6 +132,9 @@ namespace dnSpy.Contracts.Menus {
 		[Obsolete("Use eg. " + nameof(GUIDOBJ_ASMEDITOR_HEXVIEW_GUID) + " instead of this guid", true)]
 		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
 
+		/// <summary>Debugger's memory hex view</summary>
+		public static readonly string GUIDOBJ_DEBUGGER_MEMORY_HEXVIEW_GUID = "8AD6778E-015E-4520-8B77-A6A2E23FFCFF";
+
 		/// <summary>Glyph margin</summary>
 		public static readonly string GUIDOBJ_GLYPHMARGIN_GUID = "60A3ECC3-3714-418E-8C26-D33F00EA31B4";
 

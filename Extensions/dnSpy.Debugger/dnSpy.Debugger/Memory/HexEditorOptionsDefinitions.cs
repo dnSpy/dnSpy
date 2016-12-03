@@ -17,19 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using dndbg.Engine;
-using dnSpy.Contracts.HexEditor;
-using dnSpy.Debugger.Memory;
+using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.Settings.HexEditor;
 
-namespace dnSpy.Debugger {
-	static class ProcessMemoryUtils {
-		public static void ReadMemory(DnProcess process, ulong address, byte[] data, long index, int count) =>
-			ReadMemory(process.CorProcess.Handle, address, data, index, count);
-
-		public static void ReadMemory(IntPtr hProcess, ulong address, byte[] data, long index, int count) {
-			var reader = new CachedHexStream(new ProcessHexStream(hProcess));
-			reader.Read(address, data, index, count);
-		}
+namespace dnSpy.Debugger.Memory {
+	static class HexEditorOptionsDefinitions {
+#pragma warning disable 0169
+		[ExportHexEditorOptionsDefinition("res:HexEditorGroup_DebuggerMemory", PredefinedHexViewRoles.HexEditorGroupDebuggerMemory, AppSettingsConstants.GUID_HEX_EDITOR_DEBUGGER_MEMORY, typeof(HexEditorOptionsDefinitions))]
+		static readonly HexEditorOptionsDefinition defaultHexEditorOptionsDefinition;
+#pragma warning restore 0169
 	}
 }

@@ -20,12 +20,16 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Windows;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.ToolWindows.App;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.Memory {
 	interface IMemoryWindowService {
-		void Show(ulong addr, ulong size);
-		void Show(ulong addr, ulong size, int windowIndex);
+		void Show(HexSpan span);
+		void Show(HexSpan span, int windowIndex);
 	}
 
 	[Export(typeof(IMemoryWindowService))]
@@ -39,47 +43,83 @@ namespace dnSpy.Debugger.Memory {
 			this.toolWindowService = toolWindowService;
 		}
 
-		public void Show(ulong addr, ulong size) {
-			var mc = GetMemoryToolWindowContent(addr, size);
+		public void Show(HexSpan span) {
+			var mc = GetMemoryToolWindowContent(span);
 			if (mc == null)
 				mc = memoryToolWindowContentProvider.Value.Contents[0].Content;
-			ShowInMemoryWindow(mc, addr, size);
+			ShowInMemoryWindow(mc, span);
 		}
 
-		public void Show(ulong addr, ulong size, int windowIndex) {
+		public void Show(HexSpan span, int windowIndex) {
 			var mc = GetMemoryToolWindowContent(windowIndex);
 			Debug.Assert(mc != null);
 			if (mc == null)
 				return;
-			ShowInMemoryWindow(mc, addr, size);
+			ShowInMemoryWindow(mc, span);
 		}
 
-		void ShowInMemoryWindow(MemoryToolWindowContent mc, ulong addr, ulong size) {
-			MakeSureAddressCanBeShown(mc, addr, size);
+		void ShowInMemoryWindow(MemoryToolWindowContent mc, HexSpan span) {
+			MakeSureAddressCanBeShown(mc, span);
 			toolWindowService.Show(mc);
-			mc.DnHexBox.SelectAndMoveCaret(addr, size);
+			SelectAndMoveCaret(mc.HexView, span);
 		}
 
-		void MakeSureAddressCanBeShown(MemoryToolWindowContent mc, ulong addr, ulong size) {
-			if (CanShowAll(mc, addr, size))
+		static void SelectAndMoveCaret(WpfHexView hexView, HexSpan span) {
+			if (!hexView.VisualElement.IsLoaded) {
+				RoutedEventHandler loaded = null;
+				loaded = (s, e) => {
+					hexView.VisualElement.Loaded -= loaded;
+					InitializeHexView(hexView, span);
+				};
+				hexView.VisualElement.Loaded += loaded;
+			}
+			else
+				InitializeHexView(hexView, span);
+		}
+
+		static void InitializeHexView(HexView hexView, HexSpan span) {
+			if (!IsVisible(hexView, span))
 				return;
-			mc.DnHexBox.InitializeStartEndOffsetToDocument();
+			var bufferSpan = new HexBufferSpan(hexView.Buffer, span);
+			hexView.Selection.Select(bufferSpan.Start, bufferSpan.End);
+			var column = hexView.Caret.IsValuesCaretPresent ? HexColumnType.Values : HexColumnType.Ascii;
+			hexView.Caret.MoveTo(column, bufferSpan.Start);
+			var flags = column == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii;
+			hexView.ViewScroller.EnsureSpanVisible(bufferSpan, flags, VSTE.EnsureSpanVisibleOptions.ShowStart);
 		}
 
-		bool CanShowAll(MemoryToolWindowContent mc, ulong addr, ulong size) {
-			if (size == 0)
-				size = 1;
-			var endAddr = addr + size - 1;
-			if (endAddr < addr)
-				endAddr = ulong.MaxValue;
-			var hb = mc.DnHexBox;
-			return addr >= hb.StartOffset && endAddr <= hb.EndOffset && hb.StartOffset <= hb.EndOffset;
+		static bool IsVisible(HexView hexView, HexSpan span) =>
+			span.Start >= hexView.BufferLines.StartPosition && span.End <= hexView.BufferLines.EndPosition;
+
+		void MakeSureAddressCanBeShown(MemoryToolWindowContent mc, HexSpan span) {
+			if (CanShowAll(mc, span))
+				return;
+			mc.HexView.Options.SetOptionValue(DefaultHexViewOptions.StartPositionId, mc.HexView.Buffer.Span.Start);
+			mc.HexView.Options.SetOptionValue(DefaultHexViewOptions.EndPositionId, mc.HexView.Buffer.Span.End);
+			RedisplayHexLines(mc.HexView);
 		}
 
-		MemoryToolWindowContent GetMemoryToolWindowContent(ulong addr, ulong size) {
+		static void RedisplayHexLines(HexView hexView) {
+			var line = hexView.HexViewLines.FirstVisibleLine;
+			var verticalDistance = line.Top - hexView.ViewportTop;
+			var bufferPosition = line.BufferStart;
+			hexView.DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, null, null, DisplayHexLineOptions.CanRecreateBufferLines);
+		}
+
+		bool CanShowAll(MemoryToolWindowContent mc, HexSpan span) {
+			if (span.Length == 0) {
+				if (span.Start >= HexPosition.MaxEndPosition)
+					return false;
+				span = new HexSpan(span.Start, 1);
+			}
+			var hb = mc.HexView;
+			return span.Start >= hb.BufferLines.StartPosition && span.End <= hb.BufferLines.EndPosition;
+		}
+
+		MemoryToolWindowContent GetMemoryToolWindowContent(HexSpan span) {
 			foreach (var info in memoryToolWindowContentProvider.Value.Contents) {
 				var mc = info.Content;
-				if (CanShowAll(mc, addr, size))
+				if (CanShowAll(mc, span))
 					return mc;
 			}
 			return null;

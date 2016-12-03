@@ -82,7 +82,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			if (!uiContext.HexView.VisualElement.IsLoaded) {
 				RoutedEventHandler loaded = null;
-				loaded = (s2, e2) => {
+				loaded = (s, e2) => {
 					uiContext.HexView.VisualElement.Loaded -= loaded;
 					InitializeHexView(uiContext.HexView, start, end);
 				};

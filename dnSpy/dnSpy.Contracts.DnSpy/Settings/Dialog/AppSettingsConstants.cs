@@ -169,6 +169,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_HEX_EDITOR_DEFAULT = "1B88E778-3CF6-4E06-BCD1-12FC0E651089";
 
 		/// <summary>
+		/// GUID of Hex Editor / Debugger page
+		/// </summary>
+		public const string GUID_HEX_EDITOR_DEBUGGER_MEMORY = "6C458D3B-4288-47F4-BD34-4F96AE98CEE6";
+
+		/// <summary>
 		/// Order of Environment / General
 		/// </summary>
 		public const double ORDER_ENVIRONMENT_GENERAL = 0;

@@ -35,6 +35,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
@@ -388,8 +389,13 @@ namespace dnSpy.Debugger.Modules {
 
 		public override void Execute(ModulesCtxMenuContext context) {
 			var vm = ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context);
-			if (vm != null)
-				memoryWindowService.Value.Show(vm.Module.Address, vm.Module.Size);
+			if (vm != null) {
+				var start = new HexPosition(vm.Module.Address);
+				var end = start + vm.Module.Size;
+				Debug.Assert(end <= HexPosition.MaxEndPosition);
+				if (end <= HexPosition.MaxEndPosition)
+					memoryWindowService.Value.Show(HexSpan.FromBounds(start, end));
+			}
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) => ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context) != null;
@@ -407,8 +413,13 @@ namespace dnSpy.Debugger.Modules {
 
 		public override void Execute(ModulesCtxMenuContext context) {
 			var vm = GetModule(context);
-			if (vm != null)
-				memoryWindowService.Value.Show(vm.Module.Address, vm.Module.Size, windowIndex);
+			if (vm != null) {
+				var start = new HexPosition(vm.Module.Address);
+				var end = start + vm.Module.Size;
+				Debug.Assert(end <= HexPosition.MaxEndPosition);
+				if (end <= HexPosition.MaxEndPosition)
+					memoryWindowService.Value.Show(HexSpan.FromBounds(start, end), windowIndex);
+			}
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) => GetModule(context) != null;
@@ -489,12 +500,14 @@ namespace dnSpy.Debugger.Modules {
 	sealed class SaveModuleToDiskModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IAppWindow appWindow;
 		readonly IMessageBoxService messageBoxService;
+		readonly SimpleProcessReader simpleProcessReader;
 
 		[ImportingConstructor]
-		SaveModuleToDiskModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IAppWindow appWindow, IMessageBoxService messageBoxService)
+		SaveModuleToDiskModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IAppWindow appWindow, IMessageBoxService messageBoxService, SimpleProcessReader simpleProcessReader)
 			: base(theDebugger, modulesContent) {
 			this.appWindow = appWindow;
 			this.messageBoxService = messageBoxService;
+			this.simpleProcessReader = simpleProcessReader;
 		}
 
 		public override void Execute(ModulesCtxMenuContext context) => Save(GetSavableFiles(context.SelectedItems));
@@ -536,7 +549,7 @@ namespace dnSpy.Debugger.Modules {
 				}
 			}
 
-			var data = new ProgressVM(Dispatcher.CurrentDispatcher, new PEFilesSaver(list));
+			var data = new ProgressVM(Dispatcher.CurrentDispatcher, new PEFilesSaver(simpleProcessReader, list));
 			var win = new ProgressDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;

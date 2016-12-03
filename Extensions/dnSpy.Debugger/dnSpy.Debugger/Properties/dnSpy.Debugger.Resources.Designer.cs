@@ -205,6 +205,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hex Editor (Process Memory).
+        /// </summary>
+        public static string BgImgDisplayName_DebuggerMemory {
+            get {
+                return ResourceManager.GetString("BgImgDisplayName_DebuggerMemory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Brea_k.
         /// </summary>
         public static string BreakCommand {
@@ -1886,6 +1895,15 @@ namespace dnSpy.Debugger.Properties {
         public static string HexDisplayCommand {
             get {
                 return ResourceManager.GetString("HexDisplayCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Process Memory.
+        /// </summary>
+        public static string HexEditorGroup_DebuggerMemory {
+            get {
+                return ResourceManager.GetString("HexEditorGroup_DebuggerMemory", resourceCulture);
             }
         }
         

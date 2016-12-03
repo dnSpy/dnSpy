@@ -22,10 +22,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Windows;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.HexGroups;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
@@ -60,22 +60,22 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		readonly IWpfCommandService wpfCommandService;
-		readonly IMenuService menuService;
-		readonly IHexEditorSettings hexEditorSettings;
 		readonly Lazy<ITheDebugger> theDebugger;
-		readonly IAppSettings appSettings;
+		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
+		readonly Lazy<HexBufferFactoryService> hexBufferFactoryService;
+		readonly Lazy<HexBufferStreamFactoryService> hexBufferStreamFactoryService;
 
 		[ImportingConstructor]
-		MemoryToolWindowContentProvider(IWpfCommandService wpfCommandService, IMenuService menuService, IHexEditorSettings hexEditorSettings, Lazy<ITheDebugger> theDebugger, IAppSettings appSettings) {
+		MemoryToolWindowContentProvider(IWpfCommandService wpfCommandService, Lazy<ITheDebugger> theDebugger, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexBufferFactoryService> hexBufferFactoryService, Lazy<HexBufferStreamFactoryService> hexBufferStreamFactoryService) {
 			this.wpfCommandService = wpfCommandService;
-			this.menuService = menuService;
-			this.hexEditorSettings = hexEditorSettings;
 			this.theDebugger = theDebugger;
-			this.appSettings = appSettings;
-			this.contents = new TWContent[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
+			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
+			this.hexBufferFactoryService = hexBufferFactoryService;
+			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
+			contents = new TWContent[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < this.contents.Length; i++) {
 				var tmpIndex = i;
-				this.contents[i] = new TWContent(i, () => CreateContent(tmpIndex));
+				contents[i] = new TWContent(i, () => CreateContent(tmpIndex));
 			}
 		}
 
@@ -100,16 +100,17 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		IMemoryContent CreateMemoryContent(TWContent info) =>
-			new MemoryContent(wpfCommandService, menuService, hexEditorSettings, new MemoryVM(theDebugger.Value), appSettings);
+			new MemoryContent(wpfCommandService, new MemoryVM(theDebugger.Value, hexBufferFactoryService.Value, hexBufferStreamFactoryService.Value), hexEditorGroupFactoryService.Value);
 	}
 
-	sealed class MemoryToolWindowContent : ToolWindowContent {
+	sealed class MemoryToolWindowContent : ToolWindowContent, IZoomable {
 		public override IInputElement FocusedElement => memoryContent.Value.FocusedElement;
 		public override FrameworkElement ZoomElement => memoryContent.Value.ZoomElement;
 		public override Guid Guid { get; }
 		public override string Title => string.Format(dnSpy_Debugger_Resources.Window_Memory_N, windowIndex + 1);
 		public override object UIObject => memoryContent.Value.UIObject;
-		public DnHexBox DnHexBox => memoryContent.Value.DnHexBox;
+		public WpfHexView HexView => memoryContent.Value.HexView;
+		double IZoomable.ZoomValue => memoryContent.Value.ZoomValue;
 
 		readonly Lazy<IMemoryContent> memoryContent;
 		readonly int windowIndex;

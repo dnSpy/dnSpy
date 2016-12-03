@@ -18,60 +18,51 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Windows;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.HexGroups;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Debugger.Memory {
-	interface IMemoryContent : IUIObjectProvider {
+	interface IMemoryContent : IUIObjectProvider, IZoomable {
 		void OnShow();
 		void OnClose();
 		void OnVisible();
 		void OnHidden();
-		DnHexBox DnHexBox { get; }
+		WpfHexView HexView { get; }
 	}
 
 	sealed class MemoryContent : IMemoryContent {
+		public IInputElement FocusedElement => hexViewHost.HexView.VisualElement;
+		public FrameworkElement ZoomElement => null;
 		public object UIObject => memoryControl;
-		public IInputElement FocusedElement => memoryControl.DnHexBox;
-		public FrameworkElement ZoomElement => memoryControl;
-		public DnHexBox DnHexBox => memoryControl.DnHexBox;
+		public WpfHexView HexView => hexViewHost.HexView;
+		double IZoomable.ZoomValue => hexViewHost.HexView.ZoomLevel / 100;
 
 		readonly MemoryControl memoryControl;
 		readonly IMemoryVM vmMemory;
+		readonly WpfHexViewHost hexViewHost;
 
-		public MemoryContent(IWpfCommandService wpfCommandService, IMenuService menuService, IHexEditorSettings hexEditorSettings, IMemoryVM memoryVM, IAppSettings appSettings) {
-			this.memoryControl = new MemoryControl();
-			this.vmMemory = memoryVM;
-			this.vmMemory.SetRefreshLines(() => this.memoryControl.DnHexBox.RedrawModifiedLines());
-			this.memoryControl.DataContext = this.vmMemory;
-			var dnHexBox = new DnHexBox(menuService, hexEditorSettings) {
-				CacheLineBytes = true,
-				IsMemory = true,
-			};
-			dnHexBox.SetBinding(HexBox.DocumentProperty, nameof(vmMemory.HexDocument));
-			this.memoryControl.DnHexBox = dnHexBox;
-			dnHexBox.StartOffset = 0;
-			dnHexBox.EndOffset = IntPtr.Size == 4 ? uint.MaxValue : ulong.MaxValue;
+		public MemoryContent(IWpfCommandService wpfCommandService, IMemoryVM memoryVM, HexEditorGroupFactoryService hexEditorGroupFactoryService) {
+			vmMemory = memoryVM;
+			memoryVM.UnderlyingStreamChanged += MemoryVM_UnderlyingStreamChanged;
 
-			appSettings.PropertyChanged += AppSettings_PropertyChanged;
-			UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
+			hexViewHost = hexEditorGroupFactoryService.Create(memoryVM.Buffer, PredefinedHexViewRoles.HexEditorGroup, PredefinedHexViewRoles.HexEditorGroupDebuggerMemory, new Guid(MenuConstants.GUIDOBJ_DEBUGGER_MEMORY_HEXVIEW_GUID));
+			memoryControl = new MemoryControl(hexViewHost.HostControl);
+			memoryControl.DataContext = vmMemory;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MEMORY_CONTROL, memoryControl);
-			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MEMORY_HEXBOX, memoryControl.DnHexBox);
+			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MEMORY_WPFHEXVIEWHOST, hexViewHost.HostControl);
 		}
 
-		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var appSettings = (IAppSettings)sender;
-			if (e.PropertyName == nameof(appSettings.UseNewRenderer_HexEditor))
-				UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
+		void MemoryVM_UnderlyingStreamChanged(object sender, EventArgs e) {
+			if (HexView.IsClosed)
+				return;
+			HexView.Options.SetOptionValue(DefaultHexViewOptions.StartPositionId, vmMemory.Buffer.Span.Start);
+			HexView.Options.SetOptionValue(DefaultHexViewOptions.EndPositionId, vmMemory.Buffer.Span.End);
 		}
 
-		void UpdateHexBoxRenderer(bool useNewRenderer) => this.memoryControl.DnHexBox.UseNewFormatter = useNewRenderer;
 		public void OnClose() => vmMemory.IsEnabled = false;
 		public void OnShow() => vmMemory.IsEnabled = true;
 		public void OnHidden() => vmMemory.IsVisible = false;

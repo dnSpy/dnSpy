@@ -22,33 +22,37 @@ using System.IO;
 using System.Linq;
 using dndbg.Engine;
 using dnlib.PE;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.MVVM.Dialogs;
+using dnSpy.Debugger.Memory;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class PEFilesSaver : IProgressTask {
 		sealed class ModuleInfo {
 			public IntPtr ProcessHandle { get; }
-			public ulong Address { get; }
+			public HexPosition Address { get; }
 			public uint Size { get; }
 			public string Filename { get; }
 			public bool MemoryLayout { get; }
 
-			public ModuleInfo(IntPtr handle, ulong addr, uint size, string filename, bool memoryLayout) {
-				this.ProcessHandle = handle;
-				this.Address = addr;
-				this.Size = size;
-				this.Filename = filename;
-				this.MemoryLayout = memoryLayout;
+			public ModuleInfo(IntPtr handle, HexPosition addr, uint size, string filename, bool memoryLayout) {
+				ProcessHandle = handle;
+				Address = addr;
+				Size = size;
+				Filename = filename;
+				MemoryLayout = memoryLayout;
 			}
 		}
 
+		readonly SimpleProcessReader simpleProcessReader;
 		readonly ModuleInfo[] infos;
 
-		public PEFilesSaver(Tuple<DnModule, string>[] files) {
-			this.infos = new ModuleInfo[files.Length];
+		public PEFilesSaver(SimpleProcessReader simpleProcessReader, Tuple<DnModule, string>[] files) {
+			this.simpleProcessReader = simpleProcessReader;
+			infos = new ModuleInfo[files.Length];
 			for (int i = 0; i < files.Length; i++) {
 				var module = files[i].Item1;
-				this.infos[i] = new ModuleInfo(module.Process.CorProcess.Handle, module.Address, module.Size, files[i].Item2, !module.IsInMemory);
+				infos[i] = new ModuleInfo(module.Process.CorProcess.Handle, module.Address, module.Size, files[i].Item2, !module.IsInMemory);
 				maxProgress += 2;
 			}
 		}
@@ -72,7 +76,7 @@ namespace dnSpy.Debugger.Modules {
 				progress.ThrowIfCancellationRequested();
 				progress.SetDescription(Path.GetFileName(info.Filename));
 
-				ProcessMemoryUtils.ReadMemory(info.ProcessHandle, info.Address, buf, 0, (int)info.Size);
+				simpleProcessReader.Read(info.ProcessHandle, info.Address, buf, 0, info.Size);
 				progress.ThrowIfCancellationRequested();
 				currentProgress++;
 				progress.SetTotalProgress(currentProgress);

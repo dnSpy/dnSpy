@@ -21,15 +21,15 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Memory {
 	interface IMemoryVM {
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
-		HexDocument HexDocument { get; }
-		void SetRefreshLines(Action refreshLines);
+		HexBuffer Buffer { get; }
+		event EventHandler UnderlyingStreamChanged;
 	}
 
 	sealed class MemoryVM : ViewModelBase, IMemoryVM {
@@ -73,51 +73,42 @@ namespace dnSpy.Debugger.Memory {
 		}
 		bool isStopped;
 
-		public HexDocument HexDocument {
-			get { return hexDocument; }
-			private set {
-				if (hexDocument != value) {
-					this.hexDocument = value;
-					OnPropertyChanged(nameof(HexDocument));
-				}
-			}
-		}
-		HexDocument hexDocument;
-		CachedHexStream cachedHexStream;
+		public HexBuffer Buffer { get; }
 
 		readonly ITheDebugger theDebugger;
+		readonly HexBufferStreamFactoryService hexBufferStreamFactoryService;
+		readonly DebuggerHexBufferStream debuggerStream;
 
-		public MemoryVM(ITheDebugger theDebugger) {
+		public MemoryVM(ITheDebugger theDebugger, HexBufferFactoryService hexBufferFactoryService, HexBufferStreamFactoryService hexBufferStreamFactoryService) {
 			this.theDebugger = theDebugger;
+			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
+			debuggerStream = new DebuggerHexBufferStream();
+			debuggerStream.UnderlyingStreamChanged += DebuggerStream_UnderlyingStreamChanged;
+			Buffer = hexBufferFactoryService.Create(debuggerStream, hexBufferFactoryService.DefaultMemoryTags, disposeStream: true);
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			CanNotEditMemory = theDebugger.ProcessState != DebuggerProcessState.Paused;
 			IsStopped = theDebugger.ProcessState == DebuggerProcessState.Paused;
-			InitializeHexDocument();
+			InitializeHexStream();
 		}
 
-		public void SetRefreshLines(Action refreshLines) {
-			if (refreshLines == null)
-				throw new ArgumentNullException(nameof(refreshLines));
-			if (this.refreshLines != null)
-				throw new InvalidOperationException();
-			this.refreshLines = refreshLines;
-		}
-		Action refreshLines;
-
+		public event EventHandler UnderlyingStreamChanged;
+		void DebuggerStream_UnderlyingStreamChanged(object sender, EventArgs e) => UnderlyingStreamChanged?.Invoke(this, EventArgs.Empty);
 		void TheDebugger_ProcessRunning(object sender, EventArgs e) => CanNotEditMemory = true;
 
-		void InitializeHexDocument() {
-			cachedHexStream = null;
+		void InitializeHexStream() {
 			if (theDebugger.ProcessState == DebuggerProcessState.Terminated)
-				this.HexDocument = null;
+				debuggerStream.SetUnderlyingStream(null);
 			else {
 				var process = theDebugger.Debugger.Processes.FirstOrDefault();
 				Debug.Assert(process != null);
 				if (process == null)
-					this.HexDocument = null;
-				else
-					this.HexDocument = new HexDocument(cachedHexStream = new CachedHexStream(new ProcessHexStream(process.CorProcess.Handle)), string.Format("<MEMORY: pid {0}>", process.ProcessId));
+					debuggerStream.SetUnderlyingStream(null);
+				else {
+					var processStream = hexBufferStreamFactoryService.CreateSimpleStream(process.CorProcess.Handle);
+					var cachedStream = hexBufferStreamFactoryService.CreateCached(processStream, disposeStream: true);
+					debuggerStream.SetUnderlyingStream(cachedStream);
+				}
 			}
 		}
 
@@ -125,7 +116,7 @@ namespace dnSpy.Debugger.Memory {
 			var state = theDebugger.ProcessState;
 			switch (state) {
 			case DebuggerProcessState.Starting:
-				InitializeHexDocument();
+				InitializeHexStream();
 				break;
 
 			case DebuggerProcessState.Continuing:
@@ -134,7 +125,7 @@ namespace dnSpy.Debugger.Memory {
 				break;
 
 			case DebuggerProcessState.Terminated:
-				InitializeHexDocument();
+				InitializeHexStream();
 				break;
 			}
 
@@ -145,13 +136,6 @@ namespace dnSpy.Debugger.Memory {
 			InitializeMemory();
 		}
 
-		void InitializeMemory() {
-			if (cachedHexStream != null)
-				cachedHexStream.ClearCache();
-			if (IsEnabled) {
-				Debug.Assert(refreshLines != null);
-				refreshLines?.Invoke();
-			}
-		}
+		void InitializeMemory() => debuggerStream.InvalidateAll();
 	}
 }

@@ -18,21 +18,12 @@
 */
 
 using System.Windows.Controls;
-using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Debugger.Memory {
 	sealed partial class MemoryControl : UserControl {
-		public DnHexBox DnHexBox {
-			get { return dnHexBox; }
-			set {
-				dnHexBox = value;
-				scrollViewer.Content = value;
-			}
-		}
-		DnHexBox dnHexBox;
-
-		public MemoryControl() {
+		public MemoryControl(object content) {
 			InitializeComponent();
+			hexViewContentPresenter.Content = content;
 		}
 	}
 }

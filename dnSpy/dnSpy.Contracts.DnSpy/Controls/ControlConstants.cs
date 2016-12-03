@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Controls;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Controls {
@@ -84,7 +85,11 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of debugger memory control</summary>
 		public static readonly Guid GUID_DEBUGGER_MEMORY_CONTROL = new Guid("D638F6E0-EA1E-4E2C-9969-A14751C800D1");
 
+		/// <summary>Guid of debugger memory <see cref="WpfHexViewHost"/></summary>
+		public static readonly Guid GUID_DEBUGGER_MEMORY_WPFHEXVIEWHOST = new Guid("9A82A54B-B5FC-4EA4-B825-45DD32C1695D");
+
 		/// <summary>Guid of debugger memory <c>HexBox</c></summary>
+		[Obsolete("Use " + nameof(GUID_DEBUGGER_MEMORY_WPFHEXVIEWHOST), true)]
 		public static readonly Guid GUID_DEBUGGER_MEMORY_HEXBOX = new Guid("34F1BAA4-36F1-4687-8552-7D71BDDBC1F3");
 
 		/// <summary>Guid of output control</summary>

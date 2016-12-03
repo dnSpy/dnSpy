@@ -30,6 +30,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Debugger.Memory;
 
 namespace dnSpy.Debugger.IMModules {
 	interface IInMemoryModuleService {
@@ -69,15 +70,17 @@ namespace dnSpy.Debugger.IMModules {
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
 		readonly IAppWindow appWindow;
 		readonly ITheDebugger theDebugger;
+		readonly SimpleProcessReader simpleProcessReader;
 
 		[ImportingConstructor]
-		InMemoryModuleService(ITheDebugger theDebugger, IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow) {
+		InMemoryModuleService(ITheDebugger theDebugger, IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow, SimpleProcessReader simpleProcessReader) {
 			this.documentTabService = documentTabService;
-			this.documentTreeView = documentTabService.DocumentTreeView;
-			this.documentService = this.documentTreeView.DocumentService;
+			documentTreeView = documentTabService.DocumentTreeView;
+			documentService = documentTreeView.DocumentService;
 			this.appWindow = appWindow;
 			this.methodAnnotations = methodAnnotations;
 			this.theDebugger = theDebugger;
+			this.simpleProcessReader = simpleProcessReader;
 			theDebugger.OnProcessStateChanged_First += TheDebugger_OnProcessStateChanged_First;
 		}
 
@@ -167,7 +170,7 @@ namespace dnSpy.Debugger.IMModules {
 					if (moduleNode == null) {
 						MemoryModuleDefFile newFile = null;
 						try {
-							newFile = MemoryModuleDefFile.Create(module, UseDebugSymbols);
+							newFile = MemoryModuleDefFile.Create(simpleProcessReader, module, UseDebugSymbols);
 						}
 						catch {
 						}
@@ -388,7 +391,7 @@ namespace dnSpy.Debugger.IMModules {
 			foreach (var module in modules) {
 				MemoryModuleDefFile mfile;
 				try {
-					mfile = MemoryModuleDefFile.Create(module, UseDebugSymbols);
+					mfile = MemoryModuleDefFile.Create(simpleProcessReader, module, UseDebugSymbols);
 					UpdateResolver(mfile.ModuleDef);
 					if (module == dnModule)
 						result = mfile;
@@ -403,7 +406,7 @@ namespace dnSpy.Debugger.IMModules {
 			Debug.Assert(result != null);
 			if (files.Count == 0)
 				return null;
-			var asmFile = MemoryModuleDefFile.CreateAssembly(files);
+			var asmFile = MemoryModuleDefFile.CreateAssembly(simpleProcessReader, files);
 			var asm = files[0].AssemblyDef;
 			if (asm == null) {
 				if (files.Count > 1) {

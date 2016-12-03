@@ -33,6 +33,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
@@ -447,7 +448,7 @@ namespace dnSpy.Debugger.Locals {
 		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context);
 			if (addrRange != null)
-				memoryWindowService.Show(addrRange.Value.Address, addrRange.Value.Size);
+				memoryWindowService.Show(addrRange.Value);
 		}
 
 		public override bool IsEnabled(LocalsCtxMenuContext context) => ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context) != null;
@@ -456,15 +457,6 @@ namespace dnSpy.Debugger.Locals {
 	sealed class ShowInMemoryWindowLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		readonly IMemoryWindowService memoryWindowService;
 		readonly int windowIndex;
-
-		internal struct AddrRange {
-			public ulong Address;
-			public ulong Size;
-			public AddrRange(ulong addr, ulong size) {
-				this.Address = addr;
-				this.Size = size;
-			}
-		}
 
 		public ShowInMemoryWindowLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowService memoryWindowService, int windowIndex)
 			: base(theDebugger, localsContent) {
@@ -475,12 +467,12 @@ namespace dnSpy.Debugger.Locals {
 		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = GetValue(context);
 			if (addrRange != null)
-				memoryWindowService.Show(addrRange.Value.Address, addrRange.Value.Size, windowIndex);
+				memoryWindowService.Show(addrRange.Value, windowIndex);
 		}
 
 		public override bool IsEnabled(LocalsCtxMenuContext context) => GetValue(context) != null;
 
-		internal static AddrRange? GetValue(LocalsCtxMenuContext context) {
+		internal static HexSpan? GetValue(LocalsCtxMenuContext context) {
 			var value = SaveDataLocalsCtxMenuCommand.GetValue(context);
 
 			if (value == null)
@@ -488,7 +480,7 @@ namespace dnSpy.Debugger.Locals {
 
 			if (value.IsArray) {
 				if (value.ArrayCount == 0)
-					return new AddrRange(value.Address, 0);
+					return new HexSpan(value.Address, 0);
 
 				var elemValue = value.GetElementAtPosition(0);
 				ulong elemSize = elemValue?.Size ?? 0;
@@ -499,10 +491,10 @@ namespace dnSpy.Debugger.Locals {
 					return null;
 
 				ulong dataIndex = elemAddr - addr;
-				return new AddrRange(value.Address + dataIndex, totalSize);
+				return new HexSpan(value.Address + dataIndex, totalSize);
 			}
 
-			return new AddrRange(value.Address, value.Size);
+			return new HexSpan(value.Address, value.Size);
 		}
 	}
 
