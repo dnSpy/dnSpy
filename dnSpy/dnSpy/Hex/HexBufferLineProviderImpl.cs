@@ -29,12 +29,8 @@ using VST = Microsoft.VisualStudio.Text;
 namespace dnSpy.Hex {
 	sealed class HexBufferLineProviderImpl : HexBufferLineProvider {
 		const int DEFAULT_GROUP_SIZE_IN_BYTES = 8;
-		const HexValuesDisplayFormat HexValuesDisplayFormat_First = HexValuesDisplayFormat.HexByte;
-		const HexValuesDisplayFormat HexValuesDisplayFormat_Last = HexValuesDisplayFormat.DoubleBigEndian;
-		const HexOffsetFormat HexOffsetFormat_First = HexOffsetFormat.Hex;
-		const HexOffsetFormat HexOffsetFormat_Last = HexOffsetFormat.HexAssembly;
 
-		static HexValueFormatter[] valueFormatters = new HexValueFormatter[HexValuesDisplayFormat_Last - HexValuesDisplayFormat_First + 1] {
+		static HexValueFormatter[] valueFormatters = new HexValueFormatter[HexBufferLineProviderOptions.HexValuesDisplayFormat_Last - HexBufferLineProviderOptions.HexValuesDisplayFormat_First + 1] {
 			new HexByteValueFormatter(),
 			new HexUInt16ValueFormatter(),
 			new HexUInt32ValueFormatter(),
@@ -79,7 +75,7 @@ namespace dnSpy.Hex {
 				if (!fi.IsLiteral)
 					continue;
 				var value = (HexValuesDisplayFormat)fi.GetValue(null);
-				if (value < HexValuesDisplayFormat_First || value > HexValuesDisplayFormat_Last)
+				if (value < HexBufferLineProviderOptions.HexValuesDisplayFormat_First || value > HexBufferLineProviderOptions.HexValuesDisplayFormat_Last)
 					throw new InvalidOperationException();
 			}
 		}
@@ -145,7 +141,7 @@ namespace dnSpy.Hex {
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.GroupSizeInBytes < 0)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.OffsetFormat < HexOffsetFormat_First || options.OffsetFormat > HexOffsetFormat_Last)
+			if (options.OffsetFormat < HexBufferLineProviderOptions.HexOffsetFormat_First || options.OffsetFormat > HexBufferLineProviderOptions.HexOffsetFormat_Last)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.StartPosition >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(options));
@@ -157,7 +153,7 @@ namespace dnSpy.Hex {
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.OffsetBitSize < HexBufferLineProviderOptions.MinOffsetBitSize || options.OffsetBitSize > HexBufferLineProviderOptions.MaxOffsetBitSize)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.ValuesFormat < HexValuesDisplayFormat_First || options.ValuesFormat > HexValuesDisplayFormat_Last)
+			if (options.ValuesFormat < HexBufferLineProviderOptions.HexValuesDisplayFormat_First || options.ValuesFormat > HexBufferLineProviderOptions.HexValuesDisplayFormat_Last)
 				throw new ArgumentOutOfRangeException(nameof(options));
 
 			this.buffer = buffer;

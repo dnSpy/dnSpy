@@ -1043,8 +1043,10 @@ namespace dnSpy.Hex.Editor {
 			const int DEFAULT_CHARS_PER_LINE = 80;
 			if (options.CharsPerLine <= 0)
 				options.CharsPerLine = DEFAULT_CHARS_PER_LINE;
-			if (options.BytesPerLine < 0)
+			if (options.BytesPerLine < HexBufferLineProviderOptions.MinBytesPerLine)
 				options.BytesPerLine = 0;
+			else if (options.BytesPerLine > HexBufferLineProviderOptions.MaxBytesPerLine)
+				options.BytesPerLine = HexBufferLineProviderOptions.MaxBytesPerLine;
 			if (options.GroupSizeInBytes < 0)
 				options.GroupSizeInBytes = 0;
 			if (options.StartPosition >= HexPosition.MaxEndPosition)
@@ -1059,6 +1061,10 @@ namespace dnSpy.Hex.Editor {
 				options.OffsetBitSize = HexBufferLineProviderOptions.MinOffsetBitSize;
 			else if (options.OffsetBitSize > HexBufferLineProviderOptions.MaxOffsetBitSize)
 				options.OffsetBitSize = HexBufferLineProviderOptions.MaxOffsetBitSize;
+			if (options.OffsetFormat < HexBufferLineProviderOptions.HexOffsetFormat_First || options.OffsetFormat > HexBufferLineProviderOptions.HexOffsetFormat_Last)
+				options.OffsetFormat = HexOffsetFormat.Hex;
+			if (options.ValuesFormat < HexBufferLineProviderOptions.HexValuesDisplayFormat_First || options.ValuesFormat > HexBufferLineProviderOptions.HexValuesDisplayFormat_Last)
+				options.ValuesFormat = HexValuesDisplayFormat.HexByte;
 
 			return options;
 		}

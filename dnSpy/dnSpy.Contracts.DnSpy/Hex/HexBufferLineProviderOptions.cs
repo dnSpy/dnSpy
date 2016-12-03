@@ -117,9 +117,34 @@ namespace dnSpy.Contracts.Hex {
 		public static readonly int MaxOffsetBitSize = 64;
 
 		/// <summary>
+		/// Min bytes per line
+		/// </summary>
+		public static readonly int MinBytesPerLine = 0;
+
+		/// <summary>
 		/// Max bytes per line
 		/// </summary>
 		public static readonly int MaxBytesPerLine = 1024;
+
+		/// <summary>
+		/// First valid <see cref="HexValuesDisplayFormat"/> value
+		/// </summary>
+		public const HexValuesDisplayFormat HexValuesDisplayFormat_First = HexValuesDisplayFormat.HexByte;
+
+		/// <summary>
+		/// Last valid <see cref="HexValuesDisplayFormat"/> value
+		/// </summary>
+		public const HexValuesDisplayFormat HexValuesDisplayFormat_Last = HexValuesDisplayFormat.DoubleBigEndian;
+
+		/// <summary>
+		/// First valid <see cref="HexOffsetFormat"/> value
+		/// </summary>
+		public const HexOffsetFormat HexOffsetFormat_First = HexOffsetFormat.Hex;
+
+		/// <summary>
+		/// Last valid <see cref="HexOffsetFormat"/> value
+		/// </summary>
+		public const HexOffsetFormat HexOffsetFormat_Last = HexOffsetFormat.HexAssembly;
 
 		/// <summary>
 		/// Equals()
