@@ -375,7 +375,7 @@ namespace dnSpy.Hex.Editor {
 				bufferPosition = line.BufferStart;
 			}
 
-			DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop, true);
+			DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, DisplayHexLineOptions.CanRecreateBufferLines, ViewportTop);
 		}
 
 		void InvalidateFormattedLineSource(bool refreshAllLines) {
@@ -686,13 +686,11 @@ namespace dnSpy.Hex.Editor {
 			return new PhysicalLine(new[] { formattedLine });
 		}
 
-		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo) =>
-			DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null);
-		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) =>
-			DisplayLines(bufferPosition, verticalDistance, relativeTo, viewportWidthOverride ?? ViewportWidth, viewportHeightOverride ?? ViewportHeight, null, false);
+		public override void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride, DisplayHexLineOptions options) =>
+			DisplayLines(bufferPosition, verticalDistance, relativeTo, viewportWidthOverride ?? ViewportWidth, viewportHeightOverride ?? ViewportHeight, options, null);
 
 		double lastViewportWidth = double.NaN;
-		void DisplayLines(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double viewportWidthOverride, double viewportHeightOverride, double? newViewportTop, bool canCreateCreateHexBufferLineProvider) {
+		void DisplayLines(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double viewportWidthOverride, double viewportHeightOverride, DisplayHexLineOptions options, double? newViewportTop) {
 			if (IsClosed)
 				throw new InvalidOperationException();
 			var oldBufferLines = hexBufferLineProvider;
@@ -741,7 +739,7 @@ namespace dnSpy.Hex.Editor {
 			if (recreateHexBufferLineProvider) {
 				recreateHexBufferLineProvider = false;
 				raiseBufferLinesChangedEvent = true;
-				if (canCreateCreateHexBufferLineProvider) {
+				if ((options & DisplayHexLineOptions.CanRecreateBufferLines) != 0) {
 					// It's safe to invalidate it here since we were called by the dispatcher and
 					// not by user code.
 					hexBufferLineProvider = null;
@@ -765,10 +763,16 @@ namespace dnSpy.Hex.Editor {
 
 			var layoutHelper = new LayoutHelper(BufferLines, lineTransformProvider, newViewportTop ?? 0, oldVisibleLines, GetValidCachedLines(regionsToInvalidate), FormattedLineSource);
 			if (revalidateBufferPosition) {
-				if (bufferPosition < BufferLines.BufferStart)
+				if (bufferPosition < BufferLines.BufferStart) {
 					bufferPosition = BufferLines.BufferStart;
-				else if (bufferPosition > BufferLines.BufferEnd)
+					relativeTo = VSTE.ViewRelativePosition.Top;
+					verticalDistance = 0;
+				}
+				else if (bufferPosition > BufferLines.BufferEnd) {
 					bufferPosition = BufferLines.BufferEnd;
+					relativeTo = VSTE.ViewRelativePosition.Bottom;
+					verticalDistance = 0;
+				}
 			}
 			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
 
@@ -789,7 +793,7 @@ namespace dnSpy.Hex.Editor {
 			}
 			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
 
-			if (canCreateCreateHexBufferLineProvider) {
+			if ((options & DisplayHexLineOptions.CanRecreateBufferLines) != 0) {
 				if (raiseBufferLinesChangedEvent)
 					RaiseBufferLinesChanged(oldBufferLines);
 			}
@@ -809,7 +813,7 @@ namespace dnSpy.Hex.Editor {
 								bufferPosition = BufferLines.BufferStart;
 							else if (bufferPosition > BufferLines.BufferEnd)
 								bufferPosition = BufferLines.BufferEnd;
-							DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, ViewportTop, true);
+							DisplayLines(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, ViewportWidth, ViewportHeight, DisplayHexLineOptions.CanRecreateBufferLines, ViewportTop);
 						}
 					}));
 				}

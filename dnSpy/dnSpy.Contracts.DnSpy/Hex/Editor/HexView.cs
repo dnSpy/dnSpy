@@ -206,7 +206,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferPosition">Position</param>
 		/// <param name="verticalDistance">Distance relative to the top or bottom of the view</param>
 		/// <param name="relativeTo">The <see cref="VSTE.ViewRelativePosition"/></param>
-		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo);
+		public void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo) =>
+			DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, null, null, DisplayHexLineOptions.None);
 
 		/// <summary>
 		/// Displays a line in the view
@@ -216,7 +217,19 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="relativeTo">The <see cref="VSTE.ViewRelativePosition"/></param>
 		/// <param name="viewportWidthOverride">Overrides viewport width</param>
 		/// <param name="viewportHeightOverride">Overrides viewport height</param>
-		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride);
+		public void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) =>
+			DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, relativeTo, viewportWidthOverride, viewportHeightOverride, DisplayHexLineOptions.None);
+
+		/// <summary>
+		/// Displays a line in the view
+		/// </summary>
+		/// <param name="bufferPosition">Position</param>
+		/// <param name="verticalDistance">Distance relative to the top or bottom of the view</param>
+		/// <param name="relativeTo">The <see cref="VSTE.ViewRelativePosition"/></param>
+		/// <param name="viewportWidthOverride">Overrides viewport width</param>
+		/// <param name="viewportHeightOverride">Overrides viewport height</param>
+		/// <param name="options">Options</param>
+		public abstract void DisplayHexLineContainingBufferPosition(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride, DisplayHexLineOptions options);
 
 		/// <summary>
 		/// Gets a hex view line
@@ -256,5 +269,21 @@ namespace dnSpy.Contracts.Hex.Editor {
 			OldBufferLines = oldBufferLines;
 			NewBufferLines = newBufferLines;
 		}
+	}
+
+	/// <summary>
+	/// Options passed to <see cref="HexView.DisplayHexLineContainingBufferPosition(HexBufferPoint, double, VSTE.ViewRelativePosition, double?, double?, DisplayHexLineOptions)"/>
+	/// </summary>
+	[Flags]
+	public enum DisplayHexLineOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None								= 0,
+
+		/// <summary>
+		/// <see cref="HexView.BufferLines"/> can be recreated immediately instead of delayed
+		/// </summary>
+		CanRecreateBufferLines				= 0x00000001,
 	}
 }
