@@ -418,9 +418,13 @@ namespace dnSpy.Hex {
 
 		int CalculateOffsetBitSize() {
 			var end = ToLogicalPosition(endPosition > 0 ? endPosition - 1 : 0).ToUInt64();
-			if (end <= byte.MaxValue) return 8;
-			if (end <= ushort.MaxValue) return 16;
-			if (end <= uint.MaxValue) return 32;
+			if (end <= 0x00000000000000FFUL) return 8;
+			if (end <= 0x000000000000FFFFUL) return 16;
+			if (end <= 0x0000000000FFFFFFUL) return 24;
+			if (end <= 0x00000000FFFFFFFFUL) return 32;
+			if (end <= 0x000000FFFFFFFFFFUL) return 40;
+			if (end <= 0x0000FFFFFFFFFFFFUL) return 48;
+			if (end <= 0x00FFFFFFFFFFFFFFUL) return 56;
 			return 64;
 		}
 
