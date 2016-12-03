@@ -24,6 +24,8 @@ using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Hex {
 	sealed class ByteArrayHexBufferStream : HexBufferStream {
+		public override bool IsVolatile => false;
+		public override bool IsReadOnly => false;
 		public override HexSpan Span { get; }
 		public override string Name { get; }
 		public override event EventHandler<HexBufferStreamSpanInvalidatedEventArgs> BufferStreamSpanInvalidated { add { } remove { } }

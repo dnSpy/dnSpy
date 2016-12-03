@@ -32,12 +32,12 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// true if the content can change at any time
 		/// </summary>
-		public virtual bool IsVolatile => false;
+		public abstract bool IsVolatile { get; }
 
 		/// <summary>
 		/// true if it's a read-only stream
 		/// </summary>
-		public virtual bool IsReadOnly => false;
+		public abstract bool IsReadOnly { get; }
 
 		/// <summary>
 		/// Gets the span
