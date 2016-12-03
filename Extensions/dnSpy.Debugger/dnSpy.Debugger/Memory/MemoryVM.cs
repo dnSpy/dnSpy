@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.Memory {
 				if (process == null)
 					debuggerStream.SetUnderlyingStream(null);
 				else {
-					var processStream = hexBufferStreamFactoryService.CreateSimpleStream(process.CorProcess.Handle);
+					var processStream = hexBufferStreamFactoryService.CreateSimpleProcessStream(process.CorProcess.Handle);
 					var cachedStream = hexBufferStreamFactoryService.CreateCached(processStream, disposeStream: true);
 					debuggerStream.SetUnderlyingStream(cachedStream);
 				}

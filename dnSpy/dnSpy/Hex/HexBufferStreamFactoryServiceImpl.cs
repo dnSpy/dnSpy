@@ -38,7 +38,7 @@ namespace dnSpy.Hex {
 			return new HexCachedBufferStreamImpl(simpleStream, disposeStream);
 		}
 
-		public override HexSimpleBufferStream CreateSimpleStream(IntPtr hProcess, string name, bool isReadOnly, bool isVolatile) =>
+		public override HexSimpleBufferStream CreateSimpleProcessStream(IntPtr hProcess, string name, bool isReadOnly, bool isVolatile) =>
 			new HexProcessSimpleBufferStream(hProcess, name, isReadOnly, isVolatile);
 	}
 }

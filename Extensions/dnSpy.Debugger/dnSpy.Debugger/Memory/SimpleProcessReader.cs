@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Memory {
 			HexSimpleBufferStream processStream = null;
 			HexBufferStream cachedStream = null;
 			try {
-				processStream = hexBufferStreamFactoryService.CreateSimpleStream(hProcess);
+				processStream = hexBufferStreamFactoryService.CreateSimpleProcessStream(hProcess);
 				cachedStream = hexBufferStreamFactoryService.CreateCached(processStream, disposeStream: false);
 				cachedStream.ReadBytes(position, destination, destinationIndex, length);
 			}

@@ -66,8 +66,8 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="isReadOnly">true if it's read only</param>
 		/// <param name="isVolatile">true if the memory can be changed by other code</param>
 		/// <returns></returns>
-		public HexCachedBufferStream CreateCached(IntPtr hProcess, string name = null, bool isReadOnly = false, bool isVolatile = true) {
-			var simpleStream = CreateSimpleStream(hProcess, name, isReadOnly, isVolatile);
+		public HexCachedBufferStream CreateCachedProcessStream(IntPtr hProcess, string name = null, bool isReadOnly = false, bool isVolatile = true) {
+			var simpleStream = CreateSimpleProcessStream(hProcess, name, isReadOnly, isVolatile);
 			return CreateCached(simpleStream, disposeStream: true);
 		}
 
@@ -79,6 +79,6 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="isReadOnly">true if it's read only</param>
 		/// <param name="isVolatile">true if the memory can be changed by other code</param>
 		/// <returns></returns>
-		public abstract HexSimpleBufferStream CreateSimpleStream(IntPtr hProcess, string name = null, bool isReadOnly = false, bool isVolatile = true);
+		public abstract HexSimpleBufferStream CreateSimpleProcessStream(IntPtr hProcess, string name = null, bool isReadOnly = false, bool isVolatile = true);
 	}
 }
