@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class TablesStreamVM : HexVM {
@@ -105,26 +105,26 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public TablesStreamVM(object owner, HexDocument doc, TablesStream tblStream)
+		public TablesStreamVM(object owner, HexBuffer buffer, TablesStream tblStream)
 			: base(owner) {
-			ulong startOffset = (ulong)tblStream.StartOffset;
-			this.M_ulReservedVM = new UInt32HexField(doc, Name, "m_ulReserved", startOffset + 0);
-			this.M_majorVM = new ByteHexField(doc, Name, "m_major", startOffset + 4, true);
-			this.M_minorVM = new ByteHexField(doc, Name, "m_minor", startOffset + 5, true);
-			this.M_heapsVM = new ByteFlagsHexField(doc, Name, "m_heaps", startOffset + 6);
-			this.M_heapsVM.Add(new BooleanHexBitField("BigStrings", 0));
-			this.M_heapsVM.Add(new BooleanHexBitField("BigGUID", 1));
-			this.M_heapsVM.Add(new BooleanHexBitField("BigBlob", 2));
-			this.M_heapsVM.Add(new BooleanHexBitField("Padding", 3));
-			this.M_heapsVM.Add(new BooleanHexBitField("Reserved", 4));
-			this.M_heapsVM.Add(new BooleanHexBitField("DeltaOnly", 5));
-			this.M_heapsVM.Add(new BooleanHexBitField("ExtraData", 6));
-			this.M_heapsVM.Add(new BooleanHexBitField("HasDelete", 7));
-			this.M_ridVM = new ByteHexField(doc, Name, "m_rid", startOffset + 7);
-			this.M_maskvalidVM = new UInt64FlagsHexField(doc, Name, "m_maskvalid", startOffset + 8);
-			AddTableFlags(this.M_maskvalidVM);
-			this.M_sortedVM = new UInt64FlagsHexField(doc, Name, "m_sorted", startOffset + 0x10);
-			AddTableFlags(this.M_sortedVM);
+			var startOffset = new HexPosition((ulong)tblStream.StartOffset);
+			M_ulReservedVM = new UInt32HexField(buffer, Name, "m_ulReserved", startOffset + 0);
+			M_majorVM = new ByteHexField(buffer, Name, "m_major", startOffset + 4, true);
+			M_minorVM = new ByteHexField(buffer, Name, "m_minor", startOffset + 5, true);
+			M_heapsVM = new ByteFlagsHexField(buffer, Name, "m_heaps", startOffset + 6);
+			M_heapsVM.Add(new BooleanHexBitField("BigStrings", 0));
+			M_heapsVM.Add(new BooleanHexBitField("BigGUID", 1));
+			M_heapsVM.Add(new BooleanHexBitField("BigBlob", 2));
+			M_heapsVM.Add(new BooleanHexBitField("Padding", 3));
+			M_heapsVM.Add(new BooleanHexBitField("Reserved", 4));
+			M_heapsVM.Add(new BooleanHexBitField("DeltaOnly", 5));
+			M_heapsVM.Add(new BooleanHexBitField("ExtraData", 6));
+			M_heapsVM.Add(new BooleanHexBitField("HasDelete", 7));
+			M_ridVM = new ByteHexField(buffer, Name, "m_rid", startOffset + 7);
+			M_maskvalidVM = new UInt64FlagsHexField(buffer, Name, "m_maskvalid", startOffset + 8);
+			AddTableFlags(M_maskvalidVM);
+			M_sortedVM = new UInt64FlagsHexField(buffer, Name, "m_sorted", startOffset + 0x10);
+			AddTableFlags(M_sortedVM);
 
 			var list = new List<HexField> {
 				M_ulReservedVM,
@@ -136,29 +136,29 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				M_sortedVM,
 			};
 
-			this.rowsVM = new UInt32HexField[64];
+			rowsVM = new UInt32HexField[64];
 			ulong valid = tblStream.ValidMask;
-			ulong offs = startOffset + 0x18;
-			for (int i = 0; i < this.rowsVM.Length; i++) {
-				this.rowsVM[i] = new UInt32HexField(doc, Name, string.Format("rows[{0:X2}]", i), offs);
+			var offs = startOffset + 0x18;
+			for (int i = 0; i < rowsVM.Length; i++) {
+				rowsVM[i] = new UInt32HexField(buffer, Name, string.Format("rows[{0:X2}]", i), offs);
 				if ((valid & 1) != 0) {
-					list.Add(this.rowsVM[i]);
+					list.Add(rowsVM[i]);
 					offs += 4;
 				}
 				else
-					this.rowsVM[i].IsVisible = false;
+					rowsVM[i].IsVisible = false;
 
 				valid >>= 1;
 			}
 
-			this.M_ulExtraVM = new UInt32HexField(doc, Name, "m_ulExtra", offs);
-			this.M_ulExtraVM.IsVisible = tblStream.HasExtraData;
+			M_ulExtraVM = new UInt32HexField(buffer, Name, "m_ulExtra", offs);
+			M_ulExtraVM.IsVisible = tblStream.HasExtraData;
 			if (tblStream.HasExtraData)
-				list.Add(this.M_ulExtraVM);
+				list.Add(M_ulExtraVM);
 
 			Debug.Assert(offs == (ulong)tblStream.MDTables[0].StartOffset);
 
-			this.hexFields = list.ToArray();
+			hexFields = list.ToArray();
 		}
 
 		static void AddTableFlags(UInt64FlagsHexField field) {

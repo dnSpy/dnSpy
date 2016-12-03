@@ -19,10 +19,10 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.SaveModule;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex {
 	[ExportTabSaverProvider(Order = TabConstants.ORDER_HEXTABSAVERPROVIDER)]
@@ -42,25 +42,21 @@ namespace dnSpy.AsmEditor.Hex {
 		public string MenuHeader => dnSpy_AsmEditor_Resources.Save;
 
 		public static ITabSaver TryCreate(Lazy<IDocumentSaver> documentSaver, IDocumentTab tab) {
-			var uiContext = tab.UIContext as HexBoxDocumentTabUIContext;
+			var uiContext = tab.UIContext as HexViewDocumentTabUIContext;
 			if (uiContext == null)
 				return null;
-			var doc = uiContext.DnHexBox.Document as AsmEdHexDocument;
-			Debug.Assert(doc != null);
-			if (doc == null)
-				return null;
-
-			return new HexTabSaver(documentSaver, doc);
+			var buffer = uiContext.HexView.Buffer;
+			return new HexTabSaver(documentSaver, buffer);
 		}
 
 		readonly Lazy<IDocumentSaver> documentSaver;
-		readonly AsmEdHexDocument doc;
+		readonly HexBuffer buffer;
 
-		HexTabSaver(Lazy<IDocumentSaver> documentSaver, AsmEdHexDocument doc) {
+		HexTabSaver(Lazy<IDocumentSaver> documentSaver, HexBuffer buffer) {
 			this.documentSaver = documentSaver;
-			this.doc = doc;
+			this.buffer = buffer;
 		}
 
-		public void Save() => documentSaver.Value.Save(new[] { doc });
+		public void Save() => documentSaver.Value.Save(new[] { buffer });
 	}
 }

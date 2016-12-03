@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageOptionalHeader32VM : ImageOptionalHeaderVM {
@@ -31,15 +31,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public UInt32HexField SizeOfHeapReserveVM { get; }
 		public UInt32HexField SizeOfHeapCommitVM { get; }
 
-		public ImageOptionalHeader32VM(object owner, HexDocument doc, ulong startOffset, ulong endOffset)
-			: base(owner, doc, startOffset, endOffset, 0x20, 0x58) {
-			this.BaseOfDataVM = new UInt32HexField(doc, Name, "BaseOfData", startOffset + 0x18);
-			this.ImageBaseVM = new UInt32HexField(doc, Name, "ImageBase", startOffset + 0x1C);
+		public ImageOptionalHeader32VM(object owner, HexBuffer buffer, HexPosition startOffset, HexPosition endOffset)
+			: base(owner, buffer, startOffset, endOffset, 0x20, 0x58) {
+			BaseOfDataVM = new UInt32HexField(buffer, Name, "BaseOfData", startOffset + 0x18);
+			ImageBaseVM = new UInt32HexField(buffer, Name, "ImageBase", startOffset + 0x1C);
 
-			this.SizeOfStackReserveVM = new UInt32HexField(doc, Name, "SizeOfStackReserve", startOffset + 0x48);
-			this.SizeOfStackCommitVM = new UInt32HexField(doc, Name, "SizeOfStackCommit", startOffset + 0x4C);
-			this.SizeOfHeapReserveVM = new UInt32HexField(doc, Name, "SizeOfHeapReserve", startOffset + 0x50);
-			this.SizeOfHeapCommitVM = new UInt32HexField(doc, Name, "SizeOfHeapCommit", startOffset + 0x54);
+			SizeOfStackReserveVM = new UInt32HexField(buffer, Name, "SizeOfStackReserve", startOffset + 0x48);
+			SizeOfStackCommitVM = new UInt32HexField(buffer, Name, "SizeOfStackCommit", startOffset + 0x4C);
+			SizeOfHeapReserveVM = new UInt32HexField(buffer, Name, "SizeOfHeapReserve", startOffset + 0x50);
+			SizeOfHeapCommitVM = new UInt32HexField(buffer, Name, "SizeOfHeapCommit", startOffset + 0x54);
 
 			var list = new List<HexField> {
 				MagicVM,

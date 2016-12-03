@@ -28,18 +28,18 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class PENode : DocumentTreeNodeData, IDecompileSelf {
-		readonly IHexDocumentService hexDocMgr;
+		readonly IHexBufferService hexDocMgr;
 		readonly IPEImage peImage;
 		readonly ModuleDefMD module;
 
-		public PENode(IHexDocumentService hexDocMgr, IPEImage peImage, ModuleDefMD module) {
+		public PENode(IHexBufferService hexDocMgr, IPEImage peImage, ModuleDefMD module) {
 			this.hexDocMgr = hexDocMgr;
 			this.peImage = peImage;
 			this.module = module;
@@ -54,27 +54,27 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (weakDocListener != null)
 				yield break;
 
-			var doc = hexDocMgr.GetOrCreate(peImage);
-			if (doc == null)
+			var buffer = hexDocMgr.GetOrCreate(peImage);
+			if (buffer == null)
 				yield break;
 
-			weakDocListener = new WeakDocumentListener(this, doc);
+			weakDocListener = new WeakDocumentListener(this, buffer);
 
-			yield return new ImageDosHeaderNode(doc, peImage.ImageDosHeader);
-			yield return new ImageFileHeaderNode(doc, peImage.ImageNTHeaders.FileHeader);
+			yield return new ImageDosHeaderNode(buffer, peImage.ImageDosHeader);
+			yield return new ImageFileHeaderNode(buffer, peImage.ImageNTHeaders.FileHeader);
 			if (peImage.ImageNTHeaders.OptionalHeader is ImageOptionalHeader32)
-				yield return new ImageOptionalHeader32Node(doc, (ImageOptionalHeader32)peImage.ImageNTHeaders.OptionalHeader);
+				yield return new ImageOptionalHeader32Node(buffer, (ImageOptionalHeader32)peImage.ImageNTHeaders.OptionalHeader);
 			else
-				yield return new ImageOptionalHeader64Node(doc, (ImageOptionalHeader64)peImage.ImageNTHeaders.OptionalHeader);
+				yield return new ImageOptionalHeader64Node(buffer, (ImageOptionalHeader64)peImage.ImageNTHeaders.OptionalHeader);
 			for (int i = 0; i < peImage.ImageSectionHeaders.Count; i++)
-				yield return new ImageSectionHeaderNode(doc, peImage.ImageSectionHeaders[i], i);
-			var cor20Hdr = ImageCor20HeaderNode.Create(doc, peImage);
+				yield return new ImageSectionHeaderNode(buffer, peImage.ImageSectionHeaders[i], i);
+			var cor20Hdr = ImageCor20HeaderNode.Create(buffer, peImage);
 			if (cor20Hdr != null)
 				yield return cor20Hdr;
 			if (module != null) {
 				var md = module.MetaData;
-				yield return new StorageSignatureNode(doc, md.MetaDataHeader);
-				yield return new StorageHeaderNode(doc, md.MetaDataHeader);
+				yield return new StorageSignatureNode(buffer, md.MetaDataHeader);
+				yield return new StorageHeaderNode(buffer, md.MetaDataHeader);
 				var knownStreams = new List<DotNetStream> {
 					md.StringsStream,
 					md.USStream,
@@ -91,7 +91,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				for (int i = 0; i < md.MetaDataHeader.StreamHeaders.Count; i++) {
 					var sh = md.MetaDataHeader.StreamHeaders[i];
 					var knownStream = knownStreams.FirstOrDefault(a => a.StreamHeader == sh);
-					yield return new StorageStreamNode(doc, sh, i, knownStream, md);
+					yield return new StorageStreamNode(buffer, sh, i, knownStream, md);
 				}
 			}
 		}
@@ -100,28 +100,28 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		sealed class WeakDocumentListener {
 			readonly WeakReference nodeWeakRef;
 
-			public WeakDocumentListener(PENode node, HexDocument doc) {
-				this.nodeWeakRef = new WeakReference(node);
-				doc.OnDocumentModified += HexDocument_OnDocumentModified;
+			public WeakDocumentListener(PENode node, HexBuffer buffer) {
+				nodeWeakRef = new WeakReference(node);
+				buffer.Changed += Buffer_Changed;
 			}
 
-			void HexDocument_OnDocumentModified(object sender, HexDocumentModifiedEventArgs e) {
+			void Buffer_Changed(object sender, HexContentChangedEventArgs e) {
 				var node = (PENode)nodeWeakRef.Target;
 				if (node != null)
-					node.HexDocument_OnDocumentModified(sender, e);
+					node.Buffer_Changed(sender, e);
 				else {
-					var doc = (HexDocument)sender;
-					doc.OnDocumentModified -= HexDocument_OnDocumentModified;
+					var buffer = (HexBuffer)sender;
+					buffer.Changed -= Buffer_Changed;
 				}
 			}
 		}
 
-		void HexDocument_OnDocumentModified(object sender, HexDocumentModifiedEventArgs e) {
+		void Buffer_Changed(object sender, HexContentChangedEventArgs e) {
 			// Descendants() shouldn't be used since some of the nodes could have thousands of
 			// children and it's better if the parent can quickly check whether any of its children
 			// need to get notified.
 			foreach (HexNode node in TreeNode.DataChildren)
-				node.OnDocumentModified(e.StartOffset, e.EndOffset);
+				node.OnBufferChanged(e.Changes);
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {

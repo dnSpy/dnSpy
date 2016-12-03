@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
@@ -45,10 +45,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		readonly int index;
 		readonly Tuple<int[], Action<ITextColorWriter>> infoTuple;
 
-		public MetaDataTableRecordNode(TableInfo tableInfo, int index, ulong startOffset, ulong endOffset)
-			: base(startOffset, endOffset) {
+		public MetaDataTableRecordNode(TableInfo tableInfo, int index, HexPosition startOffset, HexPosition endOffset)
+			: base(HexSpan.FromBounds(startOffset, endOffset)) {
 			this.index = index;
-			this.infoTuple = GetInfoTuple(tableInfo);
+			infoTuple = GetInfoTuple(tableInfo);
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
@@ -61,13 +61,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
 			if (infoTuple != null) {
 				var tableInfo = ((MetaDataTableNode)TreeNode.Parent.Data).TableInfo;
 				foreach (var index in infoTuple.Item1) {
 					var col = tableInfo.Columns[index];
-					ulong start = StartOffset + (ulong)col.Offset;
-					if (HexUtils.IsModified(start, start + (ulong)col.Size - 1, modifiedStart, modifiedEnd)) {
+					var span = new HexSpan(Span.Start + (ulong)col.Offset, (ulong)col.Size);
+					if (changes.OverlapsWith(span)) {
 						TreeNode.RefreshUI();
 						break;
 					}
@@ -137,19 +137,19 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		string ReadStringsHeap(int index) {
 			var mdt = (MetaDataTableNode)TreeNode.Parent.Data;
 			var tableInfo = mdt.TableInfo;
-			var s = SimpleTypeConverter.ToString(mdt.MetaDataTableVM.ReadStringsHeap(ReadFieldValue(mdt.Document, tableInfo.Columns[index])), false);
+			var s = SimpleTypeConverter.ToString(mdt.MetaDataTableVM.ReadStringsHeap(ReadFieldValue(mdt.Buffer, tableInfo.Columns[index])), false);
 			Debug.Assert(s.Length >= 2);
 			if (s.Length < 2)
 				return s;
 			return s.Substring(1, s.Length - 2);
 		}
 
-		uint ReadFieldValue(HexDocument doc, ColumnInfo col) {
-			ulong start = StartOffset + (ulong)col.Offset;
+		uint ReadFieldValue(HexBuffer buffer, ColumnInfo col) {
+			var start = Span.Start + (ulong)col.Offset;
 			if (col.Size == 2)
-				return doc.ReadUInt16(start);
+				return buffer.ReadUInt16(start);
 			else if (col.Size == 4)
-				return doc.ReadUInt32(start);
+				return buffer.ReadUInt32(start);
 			throw new InvalidOperationException();
 		}
 

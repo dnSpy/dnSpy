@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -29,21 +30,19 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		protected abstract IEnumerable<HexVM> HexVMs { get; }
 		public abstract object VMObject { get; }
 		public virtual bool IsVirtualizingCollectionVM => false;
-		public ulong StartOffset { get; }
-		public ulong EndOffset { get; }
+		public HexSpan Span { get; }
 		protected sealed override ImageReference GetIcon(IDotNetImageService dnImgMgr) => IconReference;
 		protected abstract ImageReference IconReference { get; }
 
-		protected HexNode(ulong start, ulong end) {
-			this.StartOffset = start;
-			this.EndOffset = end;
+		protected HexNode(HexSpan span) {
+			Span = span;
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResultOther(this).FilterType;
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeString = context.Decompiler.ContentTypeString;
-			context.Decompiler.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", StartOffset, EndOffset, this.ToString()));
+			context.Decompiler.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", Span.Start.ToUInt64(), Span.End.ToUInt64(), ToString()));
 			DecompileFields(context.Decompiler, context.Output);
 			(context.Output as IDocumentViewerOutput)?.DisableCaching();
 			return true;
@@ -54,19 +53,19 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				decompiler.WriteCommentLine(output, string.Empty);
 				decompiler.WriteCommentLine(output, string.Format("{0}:", vm.Name));
 				foreach (var field in vm.HexFields)
-					decompiler.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.StartOffset, field.EndOffset, field.FormattedValue, field.Name));
+					decompiler.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.Span.Start.ToUInt64(), field.Span.End.ToUInt64(), field.FormattedValue, field.Name));
 			}
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) => WriteCore(output, options);
 		protected abstract void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options);
 
-		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			if (!HexUtils.IsModified(StartOffset, EndOffset, modifiedStart, modifiedEnd))
+		public virtual void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			if (!changes.OverlapsWith(Span))
 				return;
 
 			foreach (var vm in HexVMs)
-				vm.OnDocumentModified(modifiedStart, modifiedEnd);
+				vm.OnBufferChanged(changes);
 		}
 	}
 }

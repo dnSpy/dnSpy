@@ -19,22 +19,21 @@
 
 using System;
 using System.IO;
-using dnSpy.AsmEditor.Hex;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveHexOptionsVM : SaveOptionsVM {
 		public override SaveOptionsType Type => SaveOptionsType.Hex;
-		public override object UndoDocument => doc;
-		public HexDocument Document => doc;
-		readonly AsmEdHexDocument doc;
+		public override object UndoDocument => buffer;
+		public HexBuffer Buffer => buffer;
+		readonly HexBuffer buffer;
 
-		public SaveHexOptionsVM(AsmEdHexDocument doc) {
-			this.doc = doc;
-			this.FileName = doc.Name ?? string.Empty;
+		public SaveHexOptionsVM(HexBuffer buffer) {
+			this.buffer = buffer;
+			FileName = buffer.Name ?? string.Empty;
 		}
 
-		public SaveHexOptionsVM Clone() => CopyTo(new SaveHexOptionsVM(doc));
+		public SaveHexOptionsVM Clone() => CopyTo(new SaveHexOptionsVM(buffer));
 
 		public SaveHexOptionsVM CopyTo(SaveHexOptionsVM other) {
 			other.FileName = this.FileName;

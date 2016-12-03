@@ -23,7 +23,7 @@ using System.Linq;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -42,14 +42,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly TablesStreamVM tablesStreamVM;
 
-		public TablesStreamNode(HexDocument doc, TablesStream tblStream, IMetaData md)
-			: base((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset - 1) {
-			this.tablesStreamVM = new TablesStreamVM(this, doc, tblStream);
+		public TablesStreamNode(HexBuffer buffer, TablesStream tblStream, IMetaData md)
+			: base(HexSpan.FromBounds((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset)) {
+			tablesStreamVM = new TablesStreamVM(this, buffer, tblStream);
 
-			this.newChildren = new List<TreeNodeData>();
+			newChildren = new List<TreeNodeData>();
 			foreach (var mdTable in tblStream.MDTables) {
 				if (mdTable.Rows != 0)
-					this.newChildren.Add(new MetaDataTableNode(doc, mdTable, md));
+					newChildren.Add(new MetaDataTableNode(buffer, mdTable, md));
 			}
 		}
 		List<TreeNodeData> newChildren;
@@ -60,11 +60,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			newChildren = null;
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			base.OnBufferChanged(changes);
 
 			foreach (HexNode node in TreeNode.DataChildren)
-				node.OnDocumentModified(modifiedStart, modifiedEnd);
+				node.OnBufferChanged(changes);
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>

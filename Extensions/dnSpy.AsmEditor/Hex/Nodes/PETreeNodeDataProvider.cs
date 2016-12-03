@@ -28,10 +28,10 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class PETreeNodeDataProviderBase : ITreeNodeDataProvider {
-		readonly Lazy<IHexDocumentService> hexDocumentService;
+		readonly Lazy<IHexBufferService> hexBufferService;
 
-		protected PETreeNodeDataProviderBase(Lazy<IHexDocumentService> hexDocumentService) {
-			this.hexDocumentService = hexDocumentService;
+		protected PETreeNodeDataProviderBase(Lazy<IHexBufferService> hexBufferService) {
+			this.hexBufferService = hexBufferService;
 		}
 
 		public IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context) {
@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			var peImage = fileNode.Document.PEImage;
 			Debug.Assert(!hasPENode || peImage != null);
 			if (hasPENode && peImage != null)
-				yield return new PENode(hexDocumentService.Value, peImage, fileNode.Document.ModuleDef as ModuleDefMD);
+				yield return new PENode(hexBufferService.Value, peImage, fileNode.Document.ModuleDef as ModuleDefMD);
 		}
 
 		public static bool HasPENode(DsDocumentNode node) {
@@ -65,16 +65,16 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.MODULE_NODE_GUID)]
 	sealed class ModulePETreeNodeDataProvider : PETreeNodeDataProviderBase {
 		[ImportingConstructor]
-		ModulePETreeNodeDataProvider(Lazy<IHexDocumentService> hexDocumentService)
-			: base(hexDocumentService) {
+		ModulePETreeNodeDataProvider(Lazy<IHexBufferService> hexBufferService)
+			: base(hexBufferService) {
 		}
 	}
 
 	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.PEDOCUMENT_NODE_GUID)]
 	sealed class PEFilePETreeNodeDataProvider : PETreeNodeDataProviderBase {
 		[ImportingConstructor]
-		PEFilePETreeNodeDataProvider(Lazy<IHexDocumentService> hexDocumentService)
-			: base(hexDocumentService) {
+		PEFilePETreeNodeDataProvider(Lazy<IHexBufferService> hexBufferService)
+			: base(hexBufferService) {
 		}
 	}
 }

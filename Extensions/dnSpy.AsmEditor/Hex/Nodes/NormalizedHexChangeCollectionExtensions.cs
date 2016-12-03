@@ -17,8 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Hex;
+
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	static class HexUtils {
-		public static bool IsModified(ulong start, ulong end, ulong modifiedStart, ulong modifiedEnd) => modifiedStart <= end && modifiedEnd >= start;
+	static class NormalizedHexChangeCollectionExtensions {
+		public static bool OverlapsWith(this NormalizedHexChangeCollection changes, HexSpan span) {
+			foreach (var change in changes) {
+				if (change.OldSpan.OverlapsWith(span))
+					return true;
+			}
+			return false;
+		}
 	}
 }

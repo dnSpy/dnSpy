@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Windows.Threading;
 using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
@@ -26,24 +27,31 @@ using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.AsmEditor.UndoRedo {
 	[ExportDocumentListListener]
-	sealed class UndoRedoIFileListListener : IDocumentListListener {
+	sealed class UndoRedoDocumentListListener : IDocumentListListener {
 		readonly Lazy<IUndoCommandService> undoCommandService;
-		readonly Lazy<IHexDocumentService> hexDocumentService;
+		readonly Lazy<IHexBufferService> hexBufferService;
 		readonly IMessageBoxService messageBoxService;
 
 		public bool CanLoad => true;
 		public bool CanReload => true;
 
 		[ImportingConstructor]
-		UndoRedoIFileListListener(Lazy<IUndoCommandService> undoCommandService, Lazy<IHexDocumentService> hexDocumentService, IMessageBoxService messageBoxService) {
+		UndoRedoDocumentListListener(Lazy<IUndoCommandService> undoCommandService, Lazy<IHexBufferService> hexBufferService, IMessageBoxService messageBoxService) {
 			this.undoCommandService = undoCommandService;
-			this.hexDocumentService = hexDocumentService;
+			this.hexBufferService = hexBufferService;
 			this.messageBoxService = messageBoxService;
 		}
 
 		public void BeforeLoad(bool isReload) {
 			undoCommandService.Value.Clear();
-			hexDocumentService.Value.Clear();
+			var buffersToDispose = hexBufferService.Value.Clear();
+			if (buffersToDispose.Length != 0) {
+				// Delay it since the hex views are still alive
+				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+					foreach (var buffer in buffersToDispose)
+						buffer.Dispose();
+				}));
+			}
 		}
 
 		public void AfterLoad(bool isReload) { }

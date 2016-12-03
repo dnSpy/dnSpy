@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -39,9 +39,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly StorageSignatureVM storageSignatureVM;
 
-		public StorageSignatureNode(HexDocument doc, MetaDataHeader mdHeader)
-			: base((ulong)mdHeader.StartOffset, (ulong)mdHeader.StorageHeaderOffset - 1) {
-			this.storageSignatureVM = new StorageSignatureVM(this, doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 0x10));
+		public StorageSignatureNode(HexBuffer buffer, MetaDataHeader mdHeader)
+			: base(HexSpan.FromBounds((ulong)mdHeader.StartOffset, (ulong)mdHeader.StorageHeaderOffset)) {
+			storageSignatureVM = new StorageSignatureVM(this, buffer, Span.Start, (int)(Span.Length - 0x10).ToUInt64());
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>

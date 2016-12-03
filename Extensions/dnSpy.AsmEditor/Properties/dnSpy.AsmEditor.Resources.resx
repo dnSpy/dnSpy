@@ -514,9 +514,6 @@
   <data name="HexField_Size" xml:space="preserve">
     <value>{0} Size</value>
   </data>
-  <data name="HexField_UndoMessage_Write_Parent_Field" xml:space="preserve">
-    <value>Write {0}.{1}</value>
-  </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
     <value>32-Bit Preferred</value>
   </data>
@@ -1511,26 +1508,8 @@ Are you sure you want to close the window?</value>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
     <value>Hex Write 'return true' Body</value>
   </data>
-  <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
-    <value>Fill {0} bytes @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_InsertASCII" xml:space="preserve">
-    <value>Insert ASCII</value>
-  </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
     <value>Insert Bytes</value>
-  </data>
-  <data name="Hex_Undo_Message_PasteBytesAtAddress" xml:space="preserve">
-    <value>Paste {0} bytes @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Record" xml:space="preserve">
-    <value>Paste {0} {1} record @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Records" xml:space="preserve">
-    <value>Paste {0} {1} records @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Write_Bytes" xml:space="preserve">
-    <value>Write {0} bytes to offset {1:X8}</value>
   </data>
   <data name="Images" xml:space="preserve">
     <value>Images</value>
@@ -2021,14 +2000,8 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="SortMetadataTableCommand" xml:space="preserve">
     <value>_Sort Table</value>
   </data>
-  <data name="SortMetadataTableCommand2" xml:space="preserve">
-    <value>Sort {0} table</value>
-  </data>
   <data name="SortSelectionCommand" xml:space="preserve">
     <value>So_rt Selection</value>
-  </data>
-  <data name="SortTable_RowIdentifier" xml:space="preserve">
-    <value>Sort {0} table, RID {1} - {2}</value>
   </data>
   <data name="TablesHeapOptionsTab" xml:space="preserve">
     <value>Tables Heap Options</value>

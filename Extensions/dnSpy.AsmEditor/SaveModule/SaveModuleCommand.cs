@@ -73,15 +73,15 @@ namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveModuleCommand : FileMenuHandler {
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IUndoCommandService> undoCommandService;
-		readonly Lazy<IHexDocumentService> hexDocumentService;
+		readonly Lazy<IHexBufferService> hexBufferService;
 		readonly Lazy<IDocumentSaver> documentSaver;
 
 		[ImportingConstructor]
-		SaveModuleCommand(IDocumentTabService documentTabService, Lazy<IUndoCommandService> undoCommandService, Lazy<IHexDocumentService> hexDocumentService, Lazy<IDocumentSaver> documentSaver)
+		SaveModuleCommand(IDocumentTabService documentTabService, Lazy<IUndoCommandService> undoCommandService, Lazy<IHexBufferService> hexBufferService, Lazy<IDocumentSaver> documentSaver)
 			: base(documentTabService.DocumentTreeView) {
 			this.documentTabService = documentTabService;
 			this.undoCommandService = undoCommandService;
-			this.hexDocumentService = hexDocumentService;
+			this.hexBufferService = hexBufferService;
 			this.documentSaver = documentSaver;
 		}
 
@@ -109,7 +109,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 					}
 				}
 
-				var doc = hexDocumentService.Value.TryGet(fileNode.Document.Filename);
+				var doc = hexBufferService.Value.TryGet(fileNode.Document.Filename);
 				if (doc != null) {
 					var uo = undoCommandService.Value.GetUndoObject(doc);
 					if (undoCommandService.Value.IsModified(uo)) {

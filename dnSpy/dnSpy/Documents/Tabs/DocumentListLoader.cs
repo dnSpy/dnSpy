@@ -181,7 +181,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 			NotifyAfterLoad(isReload);
 
-			// The documentss in the TV is loaded with a delay so make sure we delay before restoring
+			// The documents in the TV is loaded with a delay so make sure we delay before restoring
 			// or the code that tries to find the nodes might fail to find them.
 			disableLoadAndReload = true;
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {

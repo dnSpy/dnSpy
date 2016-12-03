@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -29,12 +30,12 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected HexVM(object owner) {
 			Debug.Assert(owner != null);
-			this.Owner = owner;
+			Owner = owner;
 		}
 
-		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
+		public virtual void OnBufferChanged(NormalizedHexChangeCollection changes) {
 			foreach (var field in HexFields)
-				field.OnDocumentModified(modifiedStart, modifiedEnd);
+				field.OnBufferChanged(changes);
 		}
 	}
 }

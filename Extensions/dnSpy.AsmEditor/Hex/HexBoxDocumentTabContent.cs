@@ -18,26 +18,27 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.HexGroups;
+using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Hex {
-	[ExportDocumentTabContentFactory(Order = TabConstants.ORDER_HEXBOXDOCUMENTTABCONTENTFACTORY)]
-	sealed class HexBoxDocumentTabContentFactory : IDocumentTabContentFactory {
-		readonly Lazy<IHexBoxDocumentTabContentCreator> hexBoxDocumentTabContentCreator;
+	[ExportDocumentTabContentFactory(Order = TabConstants.ORDER_ASMED_HEXVIEWDOCUMENTTABCONTENTFACTORY)]
+	sealed class HexViewDocumentTabContentFactory : IDocumentTabContentFactory {
+		readonly Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator;
 
 		[ImportingConstructor]
-		HexBoxDocumentTabContentFactory(Lazy<IHexBoxDocumentTabContentCreator> hexBoxDocumentTabContentCreator) {
-			this.hexBoxDocumentTabContentCreator = hexBoxDocumentTabContentCreator;
+		HexViewDocumentTabContentFactory(Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator) {
+			this.hexViewDocumentTabContentCreator = hexViewDocumentTabContentCreator;
 		}
 
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
@@ -45,7 +46,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static readonly Guid GUID_SerializedContent = new Guid("3125CEDA-98DE-447E-9363-8583A45BDE8C");
 
 		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
-			var hb = content as HexBoxDocumentTabContent;
+			var hb = content as HexViewDocumentTabContent;
 			if (hb == null)
 				return null;
 
@@ -58,41 +59,35 @@ namespace dnSpy.AsmEditor.Hex {
 				return null;
 
 			var filename = section.Attribute<string>("filename");
-			return hexBoxDocumentTabContentCreator.Value.TryCreate(filename);
+			return hexViewDocumentTabContentCreator.Value.TryCreate(filename);
 		}
 	}
 
-	interface IHexBoxDocumentTabContentCreator {
-		HexBoxDocumentTabContent TryCreate(string filename);
+	interface IHexViewDocumentTabContentCreator {
+		HexViewDocumentTabContent TryCreate(string filename);
 	}
 
-	[Export(typeof(IHexBoxDocumentTabContentCreator))]
-	sealed class HexBoxDocumentTabContentCreator : IHexBoxDocumentTabContentCreator {
-		readonly Lazy<IHexDocumentService> hexDocumentService;
-		readonly IMenuService menuService;
-		readonly IHexEditorSettings hexEditorSettings;
-		readonly IAppSettings appSettings;
-		readonly Lazy<IHexBoxUndoService> hexBoxUndoService;
+	[Export(typeof(IHexViewDocumentTabContentCreator))]
+	sealed class HexViewDocumentTabContentCreator : IHexViewDocumentTabContentCreator {
+		readonly Lazy<IHexBufferService> hexBufferService;
+		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
 
 		[ImportingConstructor]
-		HexBoxDocumentTabContentCreator(Lazy<IHexDocumentService> hexDocumentService, IMenuService menuService, IHexEditorSettings hexEditorSettings, IAppSettings appSettings, Lazy<IHexBoxUndoService> hexBoxUndoService) {
-			this.hexDocumentService = hexDocumentService;
-			this.menuService = menuService;
-			this.hexEditorSettings = hexEditorSettings;
-			this.appSettings = appSettings;
-			this.hexBoxUndoService = hexBoxUndoService;
+		HexViewDocumentTabContentCreator(Lazy<IHexBufferService> hexBufferService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService) {
+			this.hexBufferService = hexBufferService;
+			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
 		}
 
-		public HexBoxDocumentTabContent TryCreate(string filename) {
-			var doc = hexDocumentService.Value.GetOrCreate(filename);
-			if (doc == null)
+		public HexViewDocumentTabContent TryCreate(string filename) {
+			var buffer = hexBufferService.Value.GetOrCreate(filename);
+			if (buffer == null)
 				return null;
 
-			return new HexBoxDocumentTabContent(doc, menuService, hexEditorSettings, appSettings, hexBoxUndoService);
+			return new HexViewDocumentTabContent(hexEditorGroupFactoryService, buffer);
 		}
 	}
 
-	sealed class HexBoxDocumentTabContent : DocumentTabContent {
+	sealed class HexViewDocumentTabContent : DocumentTabContent {
 		public override string Title {
 			get {
 				var filename = Filename;
@@ -106,134 +101,153 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public override object ToolTip => Filename;
-		public string Filename => hexDocument.Name;
+		public string Filename => buffer.Name;
 
-		readonly HexDocument hexDocument;
-		readonly IMenuService menuService;
-		readonly IHexEditorSettings hexEditorSettings;
-		readonly IAppSettings appSettings;
-		readonly Lazy<IHexBoxUndoService> hexBoxUndoService;
+		readonly HexBuffer buffer;
+		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
 
-		public HexBoxDocumentTabContent(HexDocument hexDocument, IMenuService menuService, IHexEditorSettings hexEditorSettings, IAppSettings appSettings, Lazy<IHexBoxUndoService> hexBoxUndoService) {
-			if (hexDocument == null)
-				throw new ArgumentNullException(nameof(hexDocument));
-			this.hexDocument = hexDocument;
-			this.menuService = menuService;
-			this.hexEditorSettings = hexEditorSettings;
-			this.appSettings = appSettings;
-			this.hexBoxUndoService = hexBoxUndoService;
+		public HexViewDocumentTabContent(Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, HexBuffer buffer) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
+			this.buffer = buffer;
+			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
 		}
 
 		public override DocumentTabContent Clone() =>
-			new HexBoxDocumentTabContent(hexDocument, menuService, hexEditorSettings, appSettings, hexBoxUndoService);
+			new HexViewDocumentTabContent(hexEditorGroupFactoryService, buffer);
 		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
-			locator.Get(hexDocument, () => new HexBoxDocumentTabUIContext(hexDocument, menuService, hexEditorSettings, appSettings, hexBoxUndoService.Value));
+			locator.Get(buffer, useStrongReference: true, creator: () => new HexViewDocumentTabUIContext(hexEditorGroupFactoryService.Value, buffer));
 	}
 
-	sealed class HexBoxDocumentTabUIContext : DocumentTabUIContext, IDisposable {
-		public override IInputElement FocusedElement => dnHexBox;
-		public override FrameworkElement ZoomElement => dnHexBox;
-		public override object UIObject => scrollViewer;
-		public DnHexBox DnHexBox => dnHexBox;
+	sealed class HexViewDocumentTabUIContext : DocumentTabUIContext, IDisposable, IZoomable {
+		public override IInputElement FocusedElement => hexViewHost.HexView.VisualElement;
+		public override FrameworkElement ZoomElement => null;
+		public override object UIObject => hexViewHost.HostControl;
+		public WpfHexView HexView => hexViewHost.HexView;
+		double IZoomable.ZoomValue => hexViewHost.HexView.ZoomLevel / 100;
 
-		readonly HexDocument hexDocument;
-		readonly DnHexBox dnHexBox;
-		readonly ScrollViewer scrollViewer;
-		readonly IAppSettings appSettings;
-		readonly IHexBoxUndoService hexBoxUndoService;
+		readonly WpfHexViewHost hexViewHost;
 
-		public HexBoxDocumentTabUIContext(HexDocument hexDocument, IMenuService menuService, IHexEditorSettings hexEditorSettings, IAppSettings appSettings, IHexBoxUndoService hexBoxUndoService) {
-			this.hexDocument = hexDocument;
-			this.dnHexBox = new DnHexBox(menuService, hexEditorSettings);
-			this.dnHexBox.Document = this.hexDocument;
-			this.dnHexBox.InitializeStartEndOffsetToDocument();
-			this.scrollViewer = new ScrollViewer {
-				Content = this.dnHexBox,
-				CanContentScroll = true,
-				HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-				VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-				Focusable = false,
-			};
-			this.appSettings = appSettings;
-			this.hexBoxUndoService = hexBoxUndoService;
-			appSettings.PropertyChanged += AppSettings_PropertyChanged;
-			UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
-			hexBoxUndoService.Initialize(this.dnHexBox);
-		}
-
-		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var appSettings = (IAppSettings)sender;
-			if (e.PropertyName == nameof(appSettings.UseNewRenderer_HexEditor))
-				UpdateHexBoxRenderer(appSettings.UseNewRenderer_HexEditor);
-		}
-
-		void UpdateHexBoxRenderer(bool useNewRenderer) => this.DnHexBox.UseNewFormatter = useNewRenderer;
-		public override object DeserializeUIState(ISettingsSection section) => HexBoxUIStateSerializer.Read(section, new HexBoxUIState());
-
-		public override void SerializeUIState(ISettingsSection section, object obj) {
-			var s = obj as HexBoxUIState;
-			if (s == null)
-				return;
-			HexBoxUIStateSerializer.Write(section, s);
-		}
-
-		public override void RestoreUIState(object obj) {
-			var s = obj as HexBoxUIState;
-			if (s == null || s.HexBoxState == null)
-				return;
-
-			DnHexBox.BytesGroupCount = s.BytesGroupCount;
-			DnHexBox.BytesPerLine = s.BytesPerLine;
-			DnHexBox.UseHexPrefix = s.UseHexPrefix;
-			DnHexBox.ShowAscii = s.ShowAscii;
-			DnHexBox.LowerCaseHex = s.LowerCaseHex;
-			DnHexBox.AsciiEncoding = s.AsciiEncoding;
-
-			DnHexBox.HexOffsetSize = s.HexOffsetSize;
-			DnHexBox.UseRelativeOffsets = s.UseRelativeOffsets;
-			DnHexBox.BaseOffset = s.BaseOffset;
-			if (DnHexBox.IsLoaded)
-				DnHexBox.State = s.HexBoxState;
-			else
-				new StateRestorer(DnHexBox, s.HexBoxState);
-		}
-
-		sealed class StateRestorer {
-			readonly HexBox hexBox;
-			readonly HexBoxState state;
-
-			public StateRestorer(HexBox hexBox, HexBoxState state) {
-				this.hexBox = hexBox;
-				this.state = state;
-				this.hexBox.Loaded += HexBox_Loaded;
-			}
-
-			private void HexBox_Loaded(object sender, RoutedEventArgs e) {
-				this.hexBox.Loaded -= HexBox_Loaded;
-				hexBox.UpdateLayout();
-				hexBox.State = state;
-			}
+		public HexViewDocumentTabUIContext(HexEditorGroupFactoryService hexEditorGroupFactoryService, HexBuffer buffer) {
+			hexViewHost = hexEditorGroupFactoryService.Create(buffer, PredefinedHexViewRoles.HexEditorGroup, PredefinedHexViewRoles.HexEditorGroupDefault, new Guid(MenuConstants.GUIDOBJ_ASMEDITOR_HEXVIEW_GUID));
 		}
 
 		public override object CreateUIState() {
-			var s = new HexBoxUIState();
-			s.BytesGroupCount = DnHexBox.BytesGroupCount;
-			s.BytesPerLine = DnHexBox.BytesPerLine;
-			s.UseHexPrefix = DnHexBox.UseHexPrefix;
-			s.ShowAscii = DnHexBox.ShowAscii;
-			s.LowerCaseHex = DnHexBox.LowerCaseHex;
-			s.AsciiEncoding = DnHexBox.AsciiEncoding;
-
-			s.HexOffsetSize = DnHexBox.HexOffsetSize;
-			s.UseRelativeOffsets = DnHexBox.UseRelativeOffsets;
-			s.BaseOffset = DnHexBox.BaseOffset;
-			s.HexBoxState = DnHexBox.State;
-			return s;
+			if (cachedHexViewUIState != null)
+				return cachedHexViewUIState;
+			var state = new HexViewUIState(HexView);
+			state.ShowOffsetColumn = HexView.Options.ShowOffsetColumn();
+			state.ShowValuesColumn = HexView.Options.ShowValuesColumn();
+			state.ShowAsciiColumn = HexView.Options.ShowAsciiColumn();
+			state.StartPosition = HexView.Options.GetStartPosition();
+			state.EndPosition = HexView.Options.GetEndPosition();
+			state.BasePosition = HexView.Options.GetBasePosition();
+			state.UseRelativePositions = HexView.Options.UseRelativePositions();
+			state.OffsetBitSize = HexView.Options.GetOffsetBitSize();
+			state.HexValuesDisplayFormat = HexView.Options.GetValuesDisplayFormat();
+			state.BytesPerLine = HexView.Options.GetBytesPerLine();
+			return state;
 		}
 
-		public void Dispose() {
-			appSettings.PropertyChanged -= AppSettings_PropertyChanged;
-			hexBoxUndoService.Uninitialize(this.dnHexBox);
+		public override void RestoreUIState(object obj) {
+			var state = obj as HexViewUIState;
+			if (state == null)
+				return;
+
+			if (!HexView.VisualElement.IsLoaded) {
+				bool start = cachedHexViewUIState == null;
+				cachedHexViewUIState = state;
+				if (start)
+					HexView.VisualElement.Loaded += VisualElement_Loaded;
+			}
+			else
+				InitializeState(state);
 		}
+		HexViewUIState cachedHexViewUIState;
+
+		void InitializeState(HexViewUIState state) {
+			if (IsValid(state)) {
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.ShowOffsetColumnId, state.ShowOffsetColumn);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.ShowValuesColumnId, state.ShowValuesColumn);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.ShowAsciiColumnId, state.ShowAsciiColumn);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.StartPositionId, state.StartPosition);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.EndPositionId, state.EndPosition);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.BasePositionId, state.BasePosition);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.UseRelativePositionsId, state.UseRelativePositions);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.OffsetBitSizeId, state.OffsetBitSize);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.HexValuesDisplayFormatId, state.HexValuesDisplayFormat);
+				HexView.Options.SetOptionValue(DefaultHexViewOptions.BytesPerLineId, state.BytesPerLine);
+
+				HexView.ViewportLeft = state.ViewportLeft;
+				HexView.DisplayHexLineContainingBufferPosition(new HexBufferPoint(HexView.Buffer, state.TopLinePosition), state.TopLineVerticalDistance, VSTE.ViewRelativePosition.Top, null, null, DisplayHexLineOptions.CanRecreateBufferLines);
+
+				var valuesPos = new HexCellPosition(HexColumnType.Values, new HexBufferPoint(HexView.Buffer, state.ValuesPosition), state.ValuesCellPosition);
+				var asciiPos = new HexCellPosition(HexColumnType.Ascii, new HexBufferPoint(HexView.Buffer, state.AsciiPosition), 0);
+				var newPos = new HexColumnPosition(state.ActiveColumn, valuesPos, asciiPos);
+				// BufferLines could've been recreated, re-verify the new position
+				if (HexView.BufferLines.IsValidPosition(newPos.ValuePosition.BufferPosition) && HexView.BufferLines.IsValidPosition(newPos.AsciiPosition.BufferPosition))
+					HexView.Caret.MoveTo(newPos);
+			}
+			else
+				HexView.Caret.MoveTo(HexView.BufferLines.BufferStart);
+			HexView.Selection.Clear();
+		}
+
+		bool IsValid(HexViewUIState state) {
+			if (state.ActiveColumn != HexColumnType.Values && state.ActiveColumn != HexColumnType.Ascii)
+				return false;
+			if (state.StartPosition >= HexPosition.MaxEndPosition)
+				return false;
+			if (state.EndPosition > HexPosition.MaxEndPosition)
+				return false;
+			if (state.BasePosition >= HexPosition.MaxEndPosition)
+				return false;
+			if (state.EndPosition < state.StartPosition)
+				return false;
+			if (state.OffsetBitSize < HexBufferLineProviderOptions.MinOffsetBitSize || state.OffsetBitSize > HexBufferLineProviderOptions.MaxOffsetBitSize)
+				return false;
+			if (state.HexValuesDisplayFormat < HexBufferLineProviderOptions.HexValuesDisplayFormat_First || state.HexValuesDisplayFormat > HexBufferLineProviderOptions.HexValuesDisplayFormat_Last)
+				return false;
+			if (state.BytesPerLine < HexBufferLineProviderOptions.MinBytesPerLine || state.BytesPerLine > HexBufferLineProviderOptions.MaxBytesPerLine)
+				return false;
+			if (state.ValuesPosition >= HexPosition.MaxEndPosition)
+				return false;
+			if (state.AsciiPosition >= HexPosition.MaxEndPosition)
+				return false;
+			if (state.TopLinePosition >= HexPosition.MaxEndPosition)
+				return false;
+			if (state.ValuesPosition < state.StartPosition || state.ValuesPosition > state.EndPosition)
+				return false;
+			if (state.AsciiPosition < state.StartPosition || state.AsciiPosition > state.EndPosition)
+				return false;
+			if (state.ValuesCellPosition < 0 || state.ValuesCellPosition > 1000)
+				return false;
+			if (state.TopLinePosition < state.StartPosition || state.TopLinePosition > state.EndPosition)
+				return false;
+			if (double.IsNaN(state.ViewportLeft) || state.ViewportLeft < 0 || state.ViewportLeft > 100000)
+				return false;
+			if (double.IsNaN(state.TopLineVerticalDistance) || Math.Abs(state.TopLineVerticalDistance) > 10000)
+				return false;
+			return true;
+		}
+
+		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
+			HexView.VisualElement.Loaded -= VisualElement_Loaded;
+			if (cachedHexViewUIState == null)
+				return;
+			InitializeState(cachedHexViewUIState);
+			cachedHexViewUIState = null;
+		}
+
+		public override object DeserializeUIState(ISettingsSection section) => HexViewUIStateSerializer.Read(section, new HexViewUIState());
+
+		public override void SerializeUIState(ISettingsSection section, object obj) {
+			var state = obj as HexViewUIState;
+			if (state == null)
+				return;
+			HexViewUIStateSerializer.Write(section, state);
+		}
+
+		public void Dispose() => hexViewHost.Close();
 	}
 }

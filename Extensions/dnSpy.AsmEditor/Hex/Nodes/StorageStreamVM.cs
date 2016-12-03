@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using System.Text;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class StorageStreamVM : HexVM {
@@ -31,13 +31,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public StorageStreamVM(object owner, HexDocument doc, ulong startOffset, int stringLen)
+		public StorageStreamVM(object owner, HexBuffer buffer, HexPosition startOffset, int stringLen)
 			: base(owner) {
-			this.IOffsetVM = new UInt32HexField(doc, Name, "iOffset", startOffset + 0);
-			this.ISizeVM = new UInt32HexField(doc, Name, "iSize", startOffset + 4);
-			this.RCNameVM = new StringHexField(doc, Name, "rcName", startOffset + 8, Encoding.ASCII, stringLen);
+			IOffsetVM = new UInt32HexField(buffer, Name, "iOffset", startOffset + 0);
+			ISizeVM = new UInt32HexField(buffer, Name, "iSize", startOffset + 4);
+			RCNameVM = new StringHexField(buffer, Name, "rcName", startOffset + 8, Encoding.ASCII, stringLen);
 
-			this.hexFields = new HexField[] {
+			hexFields = new HexField[] {
 				IOffsetVM,
 				ISizeVM,
 				RCNameVM,

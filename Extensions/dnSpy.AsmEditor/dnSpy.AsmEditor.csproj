@@ -327,25 +327,23 @@
       <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Field\FieldOptionsVM.cs" />
-    <Compile Include="Hex\AsmEdHexDocument.cs" />
+    <Compile Include="Hex\ClipboardUtils.cs" />
     <Compile Include="Hex\Commands.cs" />
     <Compile Include="Hex\HexAddressReferenceFileTabContentProvider.cs" />
     <Compile Include="Hex\HexBoxDocumentTabContent.cs" />
-    <Compile Include="Hex\HexBoxUIState.cs" />
-    <Compile Include="Hex\HexBoxUIStateSerializer.cs" />
-    <Compile Include="Hex\HexBoxUndoCommand.cs" />
-    <Compile Include="Hex\HexBoxUndoService.cs" />
-    <Compile Include="Hex\HexDocumentService.cs" />
+    <Compile Include="Hex\HexBufferService.cs" />
+    <Compile Include="Hex\HexBufferUndoRedo.cs" />
+    <Compile Include="Hex\HexBufferWriterHelper.cs" />
     <Compile Include="Hex\HexTabSaver.cs" />
     <Compile Include="Hex\HexUndoableDocumentsProvider.cs" />
+    <Compile Include="Hex\HexViewUIState.cs" />
+    <Compile Include="Hex\HexViewUIStateSerializer.cs" />
     <Compile Include="Hex\InstructionUtils.cs" />
-    <Compile Include="Hex\IUndoHexDocument.cs" />
     <Compile Include="Hex\MDTableContextMenuCommands.cs" />
     <Compile Include="Hex\Nodes\HexDocumentTabContent.cs" />
     <Compile Include="Hex\Nodes\HexDocumentTreeNodeDataFinder.cs" />
     <Compile Include="Hex\Nodes\HexField.cs" />
     <Compile Include="Hex\Nodes\HexNode.cs" />
-    <Compile Include="Hex\Nodes\HexUtils.cs" />
     <Compile Include="Hex\Nodes\HexVM.cs" />
     <Compile Include="Hex\Nodes\ImageCor20HeaderNode.cs" />
     <Compile Include="Hex\Nodes\ImageCor20HeaderVM.cs" />
@@ -364,6 +362,7 @@
     <Compile Include="Hex\Nodes\MetaDataTableRecordNode.cs" />
     <Compile Include="Hex\Nodes\MetaDataTableRecordVM.cs" />
     <Compile Include="Hex\Nodes\MetaDataTableVM.cs" />
+    <Compile Include="Hex\Nodes\NormalizedHexChangeCollectionExtensions.cs" />
     <Compile Include="Hex\Nodes\PENode.cs" />
     <Compile Include="Hex\Nodes\PETreeNodeDataProvider.cs" />
     <Compile Include="Hex\Nodes\StorageHeaderNode.cs" />
@@ -377,7 +376,6 @@
     <Compile Include="Hex\Nodes\TokenReferenceDocumentTabContentProvider.cs" />
     <Compile Include="Hex\Nodes\VirtualizedList.cs" />
     <Compile Include="Hex\TableSorter.cs" />
-    <Compile Include="Hex\WriteHexUndoCommand.cs" />
     <Compile Include="MethodBody\BodyCommandUtils.cs" />
     <Compile Include="MethodBody\BodyUtils.cs" />
     <Compile Include="MethodBody\CilBodyOptions.cs" />
@@ -530,7 +528,7 @@
     <Compile Include="UndoRedo\UndoCommandService.cs" />
     <Compile Include="UndoRedo\UndoCommandServiceEventArgs.cs" />
     <Compile Include="UndoRedo\UndoObject.cs" />
-    <Compile Include="UndoRedo\UndoRedoIFileListListener.cs" />
+    <Compile Include="UndoRedo\UndoRedoDocumentListListener.cs" />
     <Compile Include="UndoRedo\UndoRedoMenuCommands.cs" />
     <Compile Include="UndoRedo\UndoRoutedCommands.cs" />
     <Compile Include="Utilities\UIUtils.cs" />

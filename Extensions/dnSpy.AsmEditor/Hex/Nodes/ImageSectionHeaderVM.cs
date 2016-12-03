@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using System.Text;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageSectionHeaderVM : HexVM {
@@ -57,59 +57,59 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			new IntegerHexBitFieldEnumInfo(15, "Reserved"),
 		};
 
-		public ImageSectionHeaderVM(object owner, HexDocument doc, ulong startOffset)
+		public ImageSectionHeaderVM(object owner, HexBuffer buffer, HexPosition startOffset)
 			: base(owner) {
-			this.NameVM = new StringHexField(doc, Name, "Name", startOffset + 0, Encoding.UTF8, 8);
-			this.VirtualSizeVM = new UInt32HexField(doc, Name, "VirtualSize", startOffset + 8);
-			this.VirtualAddressVM = new UInt32HexField(doc, Name, "VirtualAddress", startOffset + 0x0C);
-			this.SizeOfRawDataVM = new UInt32HexField(doc, Name, "SizeOfRawData", startOffset + 0x10);
-			this.PointerToRawDataVM = new UInt32HexField(doc, Name, "PointerToRawData", startOffset + 0x14);
-			this.PointerToRelocationsVM = new UInt32HexField(doc, Name, "PointerToRelocations", startOffset + 0x18);
-			this.PointerToLinenumbersVM = new UInt32HexField(doc, Name, "PointerToLinenumbers", startOffset + 0x1C);
-			this.NumberOfRelocationsVM = new UInt16HexField(doc, Name, "NumberOfRelocations", startOffset + 0x20);
-			this.NumberOfLinenumbersVM = new UInt16HexField(doc, Name, "NumberOfLinenumbers", startOffset + 0x22);
-			this.CharacteristicsVM = new UInt32FlagsHexField(doc, Name, "Characteristics", startOffset + 0x24);
-			this.CharacteristicsVM.Add(new BooleanHexBitField("TYPE_DSECT", 0));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("TYPE_NOLOAD", 1));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("TYPE_GROUP", 2));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("TYPE_NO_PAD", 3));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("TYPE_COPY", 4));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("CNT_CODE", 5));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("CNT_INITIALIZED_DATA", 6));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("CNT_UNINITIALIZED_DATA", 7));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("LNK_OTHER", 8));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("LNK_INFO", 9));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("TYPE_OVER", 10));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("LNK_REMOVE", 11));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("LNK_COMDAT", 12));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("RESERVED", 13));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("NO_DEFER_SPEC_EXC", 14));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("GPREL", 15));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_SYSHEAP", 16));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_PURGEABLE", 17));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_LOCKED", 18));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_PRELOAD", 19));
-			this.CharacteristicsVM.Add(new IntegerHexBitField("Alignment", 20, 4, AlignInfos));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("LNK_NRELOC_OVFL", 24));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_DISCARDABLE", 25));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_NOT_CACHED", 26));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_NOT_PAGED", 27));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_SHARED", 28));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_EXECUTE", 29));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_READ", 30));
-			this.CharacteristicsVM.Add(new BooleanHexBitField("MEM_WRITE", 31));
+			NameVM = new StringHexField(buffer, Name, "Name", startOffset + 0, Encoding.UTF8, 8);
+			VirtualSizeVM = new UInt32HexField(buffer, Name, "VirtualSize", startOffset + 8);
+			VirtualAddressVM = new UInt32HexField(buffer, Name, "VirtualAddress", startOffset + 0x0C);
+			SizeOfRawDataVM = new UInt32HexField(buffer, Name, "SizeOfRawData", startOffset + 0x10);
+			PointerToRawDataVM = new UInt32HexField(buffer, Name, "PointerToRawData", startOffset + 0x14);
+			PointerToRelocationsVM = new UInt32HexField(buffer, Name, "PointerToRelocations", startOffset + 0x18);
+			PointerToLinenumbersVM = new UInt32HexField(buffer, Name, "PointerToLinenumbers", startOffset + 0x1C);
+			NumberOfRelocationsVM = new UInt16HexField(buffer, Name, "NumberOfRelocations", startOffset + 0x20);
+			NumberOfLinenumbersVM = new UInt16HexField(buffer, Name, "NumberOfLinenumbers", startOffset + 0x22);
+			CharacteristicsVM = new UInt32FlagsHexField(buffer, Name, "Characteristics", startOffset + 0x24);
+			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_DSECT", 0));
+			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_NOLOAD", 1));
+			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_GROUP", 2));
+			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_NO_PAD", 3));
+			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_COPY", 4));
+			CharacteristicsVM.Add(new BooleanHexBitField("CNT_CODE", 5));
+			CharacteristicsVM.Add(new BooleanHexBitField("CNT_INITIALIZED_DATA", 6));
+			CharacteristicsVM.Add(new BooleanHexBitField("CNT_UNINITIALIZED_DATA", 7));
+			CharacteristicsVM.Add(new BooleanHexBitField("LNK_OTHER", 8));
+			CharacteristicsVM.Add(new BooleanHexBitField("LNK_INFO", 9));
+			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_OVER", 10));
+			CharacteristicsVM.Add(new BooleanHexBitField("LNK_REMOVE", 11));
+			CharacteristicsVM.Add(new BooleanHexBitField("LNK_COMDAT", 12));
+			CharacteristicsVM.Add(new BooleanHexBitField("RESERVED", 13));
+			CharacteristicsVM.Add(new BooleanHexBitField("NO_DEFER_SPEC_EXC", 14));
+			CharacteristicsVM.Add(new BooleanHexBitField("GPREL", 15));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_SYSHEAP", 16));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_PURGEABLE", 17));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_LOCKED", 18));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_PRELOAD", 19));
+			CharacteristicsVM.Add(new IntegerHexBitField("Alignment", 20, 4, AlignInfos));
+			CharacteristicsVM.Add(new BooleanHexBitField("LNK_NRELOC_OVFL", 24));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_DISCARDABLE", 25));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_NOT_CACHED", 26));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_NOT_PAGED", 27));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_SHARED", 28));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_EXECUTE", 29));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_READ", 30));
+			CharacteristicsVM.Add(new BooleanHexBitField("MEM_WRITE", 31));
 
-			this.hexFields = new HexField[] {
-				this.NameVM,
-				this.VirtualSizeVM,
-				this.VirtualAddressVM,
-				this.SizeOfRawDataVM,
-				this.PointerToRawDataVM,
-				this.PointerToRelocationsVM,
-				this.PointerToLinenumbersVM,
-				this.NumberOfRelocationsVM,
-				this.NumberOfLinenumbersVM,
-				this.CharacteristicsVM,
+			hexFields = new HexField[] {
+				NameVM,
+				VirtualSizeVM,
+				VirtualAddressVM,
+				SizeOfRawDataVM,
+				PointerToRawDataVM,
+				PointerToRelocationsVM,
+				PointerToLinenumbersVM,
+				NumberOfRelocationsVM,
+				NumberOfLinenumbersVM,
+				CharacteristicsVM,
 			};
 		}
 	}

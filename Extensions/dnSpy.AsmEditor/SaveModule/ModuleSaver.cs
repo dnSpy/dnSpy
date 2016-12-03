@@ -25,6 +25,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnlib.DotNet.Writer;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	enum ModuleSaverLogEvent {
@@ -182,7 +183,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				state.SizeRatio = GetSize(state.File) / totalSize;
 		}
 
-		static ulong GetSize(ulong start, ulong end) => start == 0 && end == ulong.MaxValue ? ulong.MaxValue : end - start + 1;
+		static ulong GetSize(HexPosition start, HexPosition end) => start == 0 && end == new HexPosition(ulong.MaxValue) + 1 ? ulong.MaxValue : (end - start).ToUInt64();
 
 		static double GetSize(SaveOptionsVM vm) {
 			switch (vm.Type) {
@@ -191,7 +192,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			case SaveOptionsType.Hex:
 				var hex = (SaveHexOptionsVM)vm;
-				ulong size = GetSize(hex.Document.StartOffset, hex.Document.EndOffset);
+				ulong size = GetSize(hex.Buffer.Span.Start, hex.Buffer.Span.End);
 				const double m = 1.0;
 				const double sizediv = 10 * 1024 * 1024;
 				return m * (size / sizediv);
@@ -236,7 +237,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		void Save(SaveHexOptionsVM hex, ref byte[] buffer) {
-			var progress = new HexFileProgress(GetSize(hex.Document.StartOffset, hex.Document.EndOffset));
+			var progress = new HexFileProgress(GetSize(hex.Buffer.Span.Start, hex.Buffer.Span.End));
 			fileProgress = progress;
 			if (buffer == null)
 				buffer = new byte[64 * 1024];
@@ -245,22 +246,19 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (File.Exists(hex.FileName))
 					File.Delete(hex.FileName);
 				using (var stream = File.OpenWrite(hex.FileName)) {
-					ulong offs = hex.Document.StartOffset;
-					ulong end = hex.Document.EndOffset;
-					while (offs <= end) {
+					var pos = hex.Buffer.Span.Start;
+					var end = hex.Buffer.Span.End;
+					while (pos < end) {
 						ThrowIfCanceled();
 
-						ulong bytesLeft = GetSize(offs, end);
+						ulong bytesLeft = GetSize(pos, end);
 						int bytesToWrite = bytesLeft > (ulong)buffer.Length ? buffer.Length : (int)bytesLeft;
-						hex.Document.Read(offs, buffer, 0, bytesToWrite);
+						hex.Buffer.ReadBytes(pos, buffer, 0, bytesToWrite);
 						stream.Write(buffer, 0, bytesToWrite);
 						progress.BytesWritten += (ulong)bytesToWrite;
 						NotifyProgressUpdated();
 
-						ulong nextOffs = offs + (ulong)bytesToWrite;
-						if (nextOffs < offs)
-							break;
-						offs = nextOffs;
+						pos = pos + (ulong)bytesToWrite;
 					}
 				}
 			}

@@ -22,17 +22,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class MetaDataTableRecordVM : HexVM, IVirtualizedListItem {
 		public int Index => (int)mdToken.Rid - 1;
 		public override string Name => string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid);
-		public string OffsetString => string.Format("0x{0:X8}", StartOffset);
+		public string OffsetString => string.Format("0x{0:X8}", Span.Start.ToUInt64());
 		public MDToken Token => mdToken;
-		public ulong StartOffset => mdVM.StartOffset + (mdToken.Rid - 1) * (ulong)mdVM.TableInfo.RowSize;
-		public ulong EndOffset => mdVM.StartOffset + mdToken.Rid * (ulong)mdVM.TableInfo.RowSize - 1;
+		public HexSpan Span => new HexSpan(mdVM.Span.Start + (mdToken.Rid - 1) * (ulong)mdVM.TableInfo.RowSize, (ulong)mdVM.TableInfo.RowSize);
 		public override IEnumerable<HexField> HexFields => hexFields;
 		public HexField Column0 => GetField(0);
 		public HexField Column1 => GetField(1);
@@ -223,9 +222,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		uint ReadFieldValue(HexField field) {
 			if (field.Size == 2)
-				return mdVM.Document.ReadUInt16(field.StartOffset);
+				return mdVM.Buffer.ReadUInt16(field.Span.Start);
 			else if (field.Size == 4)
-				return mdVM.Document.ReadUInt32(field.StartOffset);
+				return mdVM.Buffer.ReadUInt32(field.Span.Start);
 			return 0;
 		}
 
@@ -332,30 +331,30 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected virtual HexField CreateField(ColumnInfo colInfo) {
 			switch (colInfo.ColumnSize) {
-			case ColumnSize.Int16: return new Int16HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
-			case ColumnSize.Int32: return new Int32HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+			case ColumnSize.Int16: return new Int16HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
+			case ColumnSize.Int32: return new Int32HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 			}
 
 			switch (colInfo.Size) {
-			case 1: return new ByteHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
-			case 2: return new UInt16HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
-			case 4: return new UInt32HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+			case 1: return new ByteHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
+			case 2: return new UInt16HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
+			case 4: return new UInt32HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 			default: throw new InvalidOperationException();
 			}
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			base.OnBufferChanged(changes);
 			for (int i = 0; i < hexFields.Length; i++) {
 				var field = hexFields[i];
-				if (IsDynamicDescription(i) && HexUtils.IsModified(field.StartOffset, field.EndOffset, modifiedStart, modifiedEnd))
+				if (IsDynamicDescription(i) && changes.OverlapsWith(field.Span))
 					InvalidateDescription(i);
 			}
 			var infoCols = InfoColumnIndexes;
 			if (infoCols != null) {
 				foreach (var index in infoCols) {
 					var field = hexFields[index];
-					if (HexUtils.IsModified(field.StartOffset, field.EndOffset, modifiedStart, modifiedEnd)) {
+					if (changes.OverlapsWith(field.Span)) {
 						OnPropertyChanged(nameof(Info));
 						break;
 					}
@@ -428,12 +427,12 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0)
-				return CreateTypeAttributesField(colInfo, mdVM.Document, Name, StartOffset);
+				return CreateTypeAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
-		internal static UInt32FlagsHexField CreateTypeAttributesField(ColumnInfo colInfo, HexDocument doc, string name, ulong startOffset) {
-			var field = new UInt32FlagsHexField(doc, name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+		internal static UInt32FlagsHexField CreateTypeAttributesField(ColumnInfo colInfo, HexBuffer buffer, string name, HexPosition startOffset) {
+			var field = new UInt32FlagsHexField(buffer, name, colInfo.Name, startOffset + (uint)colInfo.Offset);
 			field.Add(new IntegerHexBitField("Visibility", 0, 3, VisibilityInfos));
 			field.Add(new IntegerHexBitField("Layout", 3, 2, LayoutInfos));
 			field.Add(new IntegerHexBitField("Semantics", 5, 1, SemanticsInfos));
@@ -480,7 +479,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Access", 0, 3, AccessInfos));
 				field.Add(new BooleanHexBitField("Static", 4));
 				field.Add(new BooleanHexBitField("InitOnly", 5));
@@ -542,7 +541,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1) {
-				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("CodeType", 0, 2, CodeTypeInfos));
 				field.Add(new IntegerHexBitField("ManagedType", 2, 1, ManagedInfos));
 				field.Add(new BooleanHexBitField("NoInlining", 3));
@@ -555,7 +554,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				return field;
 			}
 			else if (colInfo.Index == 2) {
-				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Access", 0, 3, AccessInfos));
 				field.Add(new BooleanHexBitField("UnmanagedExport", 3));
 				field.Add(new BooleanHexBitField("Static", 4));
@@ -593,7 +592,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("In", 0));
 				field.Add(new BooleanHexBitField("Out", 1));
 				field.Add(new BooleanHexBitField("Optional", 4));
@@ -669,7 +668,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new Int16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new Int16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Action", 0, 16, SecurityActionInfos));
 				return field;
 			}
@@ -714,7 +713,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("SpecialName", 9));
 				field.Add(new BooleanHexBitField("RTSpecialName", 10));
 				return field;
@@ -746,7 +745,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("SpecialName", 9));
 				field.Add(new BooleanHexBitField("RTSpecialName", 10));
 				field.Add(new BooleanHexBitField("HasDefault", 12));
@@ -767,7 +766,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("Setter", 0));
 				field.Add(new BooleanHexBitField("Getter", 1));
 				field.Add(new BooleanHexBitField("Other", 2));
@@ -836,7 +835,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("NoMangle", 0));
 				field.Add(new IntegerHexBitField("CharSet", 1, 2, CharSetInfos));
 				field.Add(new IntegerHexBitField("BestFit", 4, 2, BestFitInfos));
@@ -909,19 +908,19 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt32FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt32FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Hash Algorithm", 0, 32, HashAlgoInfos));
 				return field;
 			}
 			else if (1 <= colInfo.Index && colInfo.Index <= 4)
-				return new UInt16HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset, true);
+				return new UInt16HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset, true);
 			else if (colInfo.Index == 5)
-				return CreateAssemblyAttributesField(colInfo, mdVM.Document, Name, StartOffset);
+				return CreateAssemblyAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
-		internal static UInt32FlagsHexField CreateAssemblyAttributesField(ColumnInfo colInfo, HexDocument doc, string name, ulong startOffset) {
-			var field = new UInt32FlagsHexField(doc, name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+		internal static UInt32FlagsHexField CreateAssemblyAttributesField(ColumnInfo colInfo, HexBuffer buffer, string name, HexPosition startOffset) {
+			var field = new UInt32FlagsHexField(buffer, name, colInfo.Name, startOffset + (uint)colInfo.Offset);
 			field.Add(new BooleanHexBitField("PublicKey", 0));
 			field.Add(new IntegerHexBitField("Processor Arch", 4, 3, PAInfos));
 			field.Add(new BooleanHexBitField("Processor Arch Specified", 7));
@@ -950,7 +949,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (1 <= colInfo.Index && colInfo.Index <= 2)
-				return new UInt32HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset, true);
+				return new UInt32HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset, true);
 			return base.CreateField(colInfo);
 		}
 	}
@@ -962,9 +961,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (0 <= colInfo.Index && colInfo.Index <= 3)
-				return new UInt16HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset, true);
+				return new UInt16HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset, true);
 			else if (colInfo.Index == 4)
-				return AssemblyMetaDataTableRecordVM.CreateAssemblyAttributesField(colInfo, mdVM.Document, Name, StartOffset);
+				return AssemblyMetaDataTableRecordVM.CreateAssemblyAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
@@ -986,7 +985,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (1 <= colInfo.Index && colInfo.Index <= 2)
-				return new UInt32HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset, true);
+				return new UInt32HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset, true);
 			return base.CreateField(colInfo);
 		}
 	}
@@ -998,7 +997,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt32FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt32FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("ContainsNoMetaData", 0));
 				return field;
 			}
@@ -1017,7 +1016,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0)
-				return TypeDefMetaDataTableRecordVM.CreateTypeAttributesField(colInfo, mdVM.Document, Name, StartOffset);
+				return TypeDefMetaDataTableRecordVM.CreateTypeAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
@@ -1038,7 +1037,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1) {
-				var field = new UInt32FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+				var field = new UInt32FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Visibility", 0, 3, VisibilityInfos));
 				return field;
 			}
@@ -1063,7 +1062,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1)
-				return GenericParamMetaDataTableRecordVM.CreateGenericParamAttributesField(colInfo, mdVM.Document, Name, StartOffset);
+				return GenericParamMetaDataTableRecordVM.CreateGenericParamAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
@@ -1085,12 +1084,12 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1)
-				return CreateGenericParamAttributesField(colInfo, mdVM.Document, Name, StartOffset);
+				return CreateGenericParamAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
-		internal static UInt16FlagsHexField CreateGenericParamAttributesField(ColumnInfo colInfo, HexDocument doc, string name, ulong startOffset) {
-			var field = new UInt16FlagsHexField(doc, name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+		internal static UInt16FlagsHexField CreateGenericParamAttributesField(ColumnInfo colInfo, HexBuffer buffer, string name, HexPosition startOffset) {
+			var field = new UInt16FlagsHexField(buffer, name, colInfo.Name, startOffset + (uint)colInfo.Offset);
 			field.Add(new IntegerHexBitField("Variance", 0, 2, VarianceInfos));
 			field.Add(new BooleanHexBitField("Reference", 2));
 			field.Add(new BooleanHexBitField("Struct", 3));

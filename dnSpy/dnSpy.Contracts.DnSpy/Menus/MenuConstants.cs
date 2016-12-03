@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows.Controls;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Hex.Editor;
@@ -124,7 +125,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="HexCaretPosition"/></summary>
 		public static readonly string GUIDOBJ_HEXEDITORPOSITION_GUID = "DF87FB1F-D902-4365-BA52-655A7B27C94A";
 
-		/// <summary><c>HexBox</c></summary>
+		/// <summary>Asm editor's hex view</summary>
+		public static readonly string GUIDOBJ_ASMEDITOR_HEXVIEW_GUID = "95F0CEE5-44D0-468A-B214-69F91B76A84C";
+
+		/// <summary><c>HexBox</c>, it's now obsolete</summary>
+		[Obsolete("Use eg. " + nameof(GUIDOBJ_ASMEDITOR_HEXVIEW_GUID) + " instead of this guid", true)]
 		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
 
 		/// <summary>Glyph margin</summary>

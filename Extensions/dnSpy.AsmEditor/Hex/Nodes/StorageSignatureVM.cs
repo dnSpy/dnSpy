@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using System.Text;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class StorageSignatureVM : HexVM {
@@ -35,14 +35,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public StorageSignatureVM(object owner, HexDocument doc, ulong startOffset, int stringLen)
+		public StorageSignatureVM(object owner, HexBuffer buffer, HexPosition startOffset, int stringLen)
 			: base(owner) {
-			this.LSignatureVM = new UInt32HexField(doc, Name, "lSignature", startOffset + 0);
-			this.IMajorVerVM = new UInt16HexField(doc, Name, "iMajorVer", startOffset + 4, true);
-			this.IMinorVerVM = new UInt16HexField(doc, Name, "iMinorVer", startOffset + 6, true);
-			this.IExtraDataVM = new UInt32HexField(doc, Name, "iExtraData", startOffset + 8);
-			this.IVersionStringVM = new UInt32HexField(doc, Name, "iVersionString", startOffset + 0x0C);
-			this.VersionStringVM = new StringHexField(doc, Name, "VersionString", startOffset + 0x10, Encoding.UTF8, stringLen);
+			this.LSignatureVM = new UInt32HexField(buffer, Name, "lSignature", startOffset + 0);
+			this.IMajorVerVM = new UInt16HexField(buffer, Name, "iMajorVer", startOffset + 4, true);
+			this.IMinorVerVM = new UInt16HexField(buffer, Name, "iMinorVer", startOffset + 6, true);
+			this.IExtraDataVM = new UInt32HexField(buffer, Name, "iExtraData", startOffset + 8);
+			this.IVersionStringVM = new UInt32HexField(buffer, Name, "iVersionString", startOffset + 0x0C);
+			this.VersionStringVM = new StringHexField(buffer, Name, "VersionString", startOffset + 0x10, Encoding.UTF8, stringLen);
 
 			this.hexFields = new HexField[] {
 				LSignatureVM,

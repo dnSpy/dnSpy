@@ -17,8 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using dnSpy.Contracts.Hex;
+
 namespace dnSpy.AsmEditor.Hex {
-	interface IUndoHexDocument {
-		void WriteUndo(ulong startOffset, byte[] newData, string descr);
+	static class HexBufferWriterHelper {
+		public static void Write(IHexBufferService hexBufferService, string filename, HexPosition position, byte[] data) {
+			if (string.IsNullOrEmpty(filename))
+				throw new ArgumentException();
+			var buffer = hexBufferService.GetOrCreate(filename);
+			if (buffer == null)
+				return;
+			Write(buffer, position, data);
+		}
+
+		public static void Write(HexBuffer buffer, HexPosition position, byte[] data) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
+			if (data == null || data.Length == 0)
+				return;
+			buffer.Replace(position, data);
+		}
 	}
 }

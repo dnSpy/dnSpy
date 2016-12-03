@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageDosHeaderVM : HexVM {
@@ -58,41 +58,41 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public ImageDosHeaderVM(object owner, HexDocument doc, ulong startOffset)
+		public ImageDosHeaderVM(object owner, HexBuffer buffer, HexPosition startOffset)
 			: base(owner) {
-			this.MagicVM = new UInt16HexField(doc, Name, "e_magic", startOffset + 0);
-			this.CblpVM = new UInt16HexField(doc, Name, "e_cblp", startOffset + 2);
-			this.CpVM = new UInt16HexField(doc, Name, "e_cp", startOffset + 4);
-			this.CrlcVM = new UInt16HexField(doc, Name, "e_crlc", startOffset + 6);
-			this.CparhdrVM = new UInt16HexField(doc, Name, "e_cparhdr", startOffset + 8);
-			this.MinallocVM = new UInt16HexField(doc, Name, "e_minalloc", startOffset + 0x0A);
-			this.MaxallocVM = new UInt16HexField(doc, Name, "e_maxalloc", startOffset + 0x0C);
-			this.SsVM = new UInt16HexField(doc, Name, "e_ss", startOffset + 0x0E);
-			this.SpVM = new UInt16HexField(doc, Name, "e_sp", startOffset + 0x10);
-			this.CsumVM = new UInt16HexField(doc, Name, "e_csum", startOffset + 0x12);
-			this.IpVM = new UInt16HexField(doc, Name, "e_ip", startOffset + 0x14);
-			this.CsVM = new UInt16HexField(doc, Name, "e_cs", startOffset + 0x16);
-			this.LfarlcVM = new UInt16HexField(doc, Name, "e_lfarlc", startOffset + 0x18);
-			this.OvnoVM = new UInt16HexField(doc, Name, "e_ovno", startOffset + 0x1A);
-			this.Res_0VM = new UInt16HexField(doc, Name, "e_res[0]", startOffset + 0x1C);
-			this.Res_1VM = new UInt16HexField(doc, Name, "e_res[1]", startOffset + 0x1E);
-			this.Res_2VM = new UInt16HexField(doc, Name, "e_res[2]", startOffset + 0x20);
-			this.Res_3VM = new UInt16HexField(doc, Name, "e_res[3]", startOffset + 0x22);
-			this.OemidVM = new UInt16HexField(doc, Name, "e_oemid", startOffset + 0x24);
-			this.OeminfoVM = new UInt16HexField(doc, Name, "e_oeminfo", startOffset + 0x26);
-			this.Res2_0VM = new UInt16HexField(doc, Name, "e_res2[0]", startOffset + 0x28);
-			this.Res2_1VM = new UInt16HexField(doc, Name, "e_res2[1]", startOffset + 0x2A);
-			this.Res2_2VM = new UInt16HexField(doc, Name, "e_res2[2]", startOffset + 0x2C);
-			this.Res2_3VM = new UInt16HexField(doc, Name, "e_res2[3]", startOffset + 0x2E);
-			this.Res2_4VM = new UInt16HexField(doc, Name, "e_res2[4]", startOffset + 0x30);
-			this.Res2_5VM = new UInt16HexField(doc, Name, "e_res2[5]", startOffset + 0x32);
-			this.Res2_6VM = new UInt16HexField(doc, Name, "e_res2[6]", startOffset + 0x34);
-			this.Res2_7VM = new UInt16HexField(doc, Name, "e_res2[7]", startOffset + 0x36);
-			this.Res2_8VM = new UInt16HexField(doc, Name, "e_res2[8]", startOffset + 0x38);
-			this.Res2_9VM = new UInt16HexField(doc, Name, "e_res2[9]", startOffset + 0x3A);
-			this.LfanewVM = new Int32HexField(doc, Name, "e_lfanew", startOffset + 0x3C);
+			MagicVM = new UInt16HexField(buffer, Name, "e_magic", startOffset + 0);
+			CblpVM = new UInt16HexField(buffer, Name, "e_cblp", startOffset + 2);
+			CpVM = new UInt16HexField(buffer, Name, "e_cp", startOffset + 4);
+			CrlcVM = new UInt16HexField(buffer, Name, "e_crlc", startOffset + 6);
+			CparhdrVM = new UInt16HexField(buffer, Name, "e_cparhdr", startOffset + 8);
+			MinallocVM = new UInt16HexField(buffer, Name, "e_minalloc", startOffset + 0x0A);
+			MaxallocVM = new UInt16HexField(buffer, Name, "e_maxalloc", startOffset + 0x0C);
+			SsVM = new UInt16HexField(buffer, Name, "e_ss", startOffset + 0x0E);
+			SpVM = new UInt16HexField(buffer, Name, "e_sp", startOffset + 0x10);
+			CsumVM = new UInt16HexField(buffer, Name, "e_csum", startOffset + 0x12);
+			IpVM = new UInt16HexField(buffer, Name, "e_ip", startOffset + 0x14);
+			CsVM = new UInt16HexField(buffer, Name, "e_cs", startOffset + 0x16);
+			LfarlcVM = new UInt16HexField(buffer, Name, "e_lfarlc", startOffset + 0x18);
+			OvnoVM = new UInt16HexField(buffer, Name, "e_ovno", startOffset + 0x1A);
+			Res_0VM = new UInt16HexField(buffer, Name, "e_res[0]", startOffset + 0x1C);
+			Res_1VM = new UInt16HexField(buffer, Name, "e_res[1]", startOffset + 0x1E);
+			Res_2VM = new UInt16HexField(buffer, Name, "e_res[2]", startOffset + 0x20);
+			Res_3VM = new UInt16HexField(buffer, Name, "e_res[3]", startOffset + 0x22);
+			OemidVM = new UInt16HexField(buffer, Name, "e_oemid", startOffset + 0x24);
+			OeminfoVM = new UInt16HexField(buffer, Name, "e_oeminfo", startOffset + 0x26);
+			Res2_0VM = new UInt16HexField(buffer, Name, "e_res2[0]", startOffset + 0x28);
+			Res2_1VM = new UInt16HexField(buffer, Name, "e_res2[1]", startOffset + 0x2A);
+			Res2_2VM = new UInt16HexField(buffer, Name, "e_res2[2]", startOffset + 0x2C);
+			Res2_3VM = new UInt16HexField(buffer, Name, "e_res2[3]", startOffset + 0x2E);
+			Res2_4VM = new UInt16HexField(buffer, Name, "e_res2[4]", startOffset + 0x30);
+			Res2_5VM = new UInt16HexField(buffer, Name, "e_res2[5]", startOffset + 0x32);
+			Res2_6VM = new UInt16HexField(buffer, Name, "e_res2[6]", startOffset + 0x34);
+			Res2_7VM = new UInt16HexField(buffer, Name, "e_res2[7]", startOffset + 0x36);
+			Res2_8VM = new UInt16HexField(buffer, Name, "e_res2[8]", startOffset + 0x38);
+			Res2_9VM = new UInt16HexField(buffer, Name, "e_res2[9]", startOffset + 0x3A);
+			LfanewVM = new Int32HexField(buffer, Name, "e_lfanew", startOffset + 0x3C);
 
-			this.hexFields = new HexField[] {
+			hexFields = new HexField[] {
 				MagicVM,
 				CblpVM,
 				CpVM,

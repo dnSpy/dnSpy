@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class StorageHeaderVM : HexVM {
@@ -30,14 +30,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public StorageHeaderVM(object owner, HexDocument doc, ulong startOffset)
+		public StorageHeaderVM(object owner, HexBuffer buffer, HexPosition startOffset)
 			: base(owner) {
-			this.FFlagsVM = new ByteFlagsHexField(doc, Name, "fFlags", startOffset + 0);
-			this.FFlagsVM.Add(new BooleanHexBitField("ExtraData", 0));
-			this.PadVM = new ByteHexField(doc, Name, "pad", startOffset + 1);
-			this.IStreamsVM = new UInt16HexField(doc, Name, "iStreams", startOffset + 2);
+			FFlagsVM = new ByteFlagsHexField(buffer, Name, "fFlags", startOffset + 0);
+			FFlagsVM.Add(new BooleanHexBitField("ExtraData", 0));
+			PadVM = new ByteHexField(buffer, Name, "pad", startOffset + 1);
+			IStreamsVM = new UInt16HexField(buffer, Name, "iStreams", startOffset + 2);
 
-			this.hexFields = new HexField[] {
+			hexFields = new HexField[] {
 				FFlagsVM,
 				PadVM,
 				IStreamsVM,

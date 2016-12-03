@@ -23,13 +23,13 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Threading;
-using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	interface IDocumentSaver {
@@ -92,9 +92,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 					options = optsData;
 				}
 				else {
-					var doc = objsAry[0] as AsmEdHexDocument;
-					Debug.Assert(doc != null);
-					var optsData = new SaveHexOptionsVM(doc);
+					var buffer = objsAry[0] as HexBuffer;
+					Debug.Assert(buffer != null);
+					var optsData = new SaveHexOptionsVM(buffer);
 					var optsWin = new SaveHexOptionsDlg();
 					optsWin.Owner = appWindow.MainWindow;
 					optsWin.DataContext = optsData;

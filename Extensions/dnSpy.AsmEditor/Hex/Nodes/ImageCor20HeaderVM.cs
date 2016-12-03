@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageCor20HeaderVM : HexVM {
@@ -40,29 +40,29 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public ImageCor20HeaderVM(object owner, HexDocument doc, ulong startOffset)
+		public ImageCor20HeaderVM(object owner, HexBuffer buffer, HexPosition startOffset)
 			: base(owner) {
-			this.CbVM = new UInt32HexField(doc, Name, "cb", startOffset + 0);
-			this.MajorRuntimeVersionVM = new UInt16HexField(doc, Name, "MajorRuntimeVersion", startOffset + 4, true);
-			this.MinorRuntimeVersionVM = new UInt16HexField(doc, Name, "MinorRuntimeVersion", startOffset + 6, true);
-			this.MetaDataVM = new DataDirVM(doc, Name, "MetaData", startOffset + 8);
-			this.FlagsVM = new UInt32FlagsHexField(doc, Name, "Flags", startOffset + 0x10);
-			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_IL_Only, 0));
-			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitReqd, 1));
-			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_ILLibrary, 2));
-			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_StrongNameSigned, 3));
-			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_NativeEntryPoint, 4));
-			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_TrackDebugData, 16));
-			this.FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitPref, 17));
-			this.EntryPointTokenRVAVM = new UInt32HexField(doc, Name, "EntryPoint Token/RVA", startOffset + 0x14);
-			this.ResourcesVM = new DataDirVM(doc, Name, "Resources", startOffset + 0x18);
-			this.StrongNameSignatureVM = new DataDirVM(doc, Name, "StrongNameSignature", startOffset + 0x20);
-			this.CodeManagerTableVM = new DataDirVM(doc, Name, "CodeManagerTable", startOffset + 0x28);
-			this.VTableFixupsVM = new DataDirVM(doc, Name, "VTableFixups", startOffset + 0x30);
-			this.ExportAddressTableJumpsVM = new DataDirVM(doc, Name, "ExportAddressTableJumps", startOffset + 0x38);
-			this.ManagedNativeHeaderVM = new DataDirVM(doc, Name, "ManagedNativeHeader", startOffset + 0x40);
+			CbVM = new UInt32HexField(buffer, Name, "cb", startOffset + 0);
+			MajorRuntimeVersionVM = new UInt16HexField(buffer, Name, "MajorRuntimeVersion", startOffset + 4, true);
+			MinorRuntimeVersionVM = new UInt16HexField(buffer, Name, "MinorRuntimeVersion", startOffset + 6, true);
+			MetaDataVM = new DataDirVM(buffer, Name, "MetaData", startOffset + 8);
+			FlagsVM = new UInt32FlagsHexField(buffer, Name, "Flags", startOffset + 0x10);
+			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_IL_Only, 0));
+			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitReqd, 1));
+			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_ILLibrary, 2));
+			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_StrongNameSigned, 3));
+			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_NativeEntryPoint, 4));
+			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_TrackDebugData, 16));
+			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitPref, 17));
+			EntryPointTokenRVAVM = new UInt32HexField(buffer, Name, "EntryPoint Token/RVA", startOffset + 0x14);
+			ResourcesVM = new DataDirVM(buffer, Name, "Resources", startOffset + 0x18);
+			StrongNameSignatureVM = new DataDirVM(buffer, Name, "StrongNameSignature", startOffset + 0x20);
+			CodeManagerTableVM = new DataDirVM(buffer, Name, "CodeManagerTable", startOffset + 0x28);
+			VTableFixupsVM = new DataDirVM(buffer, Name, "VTableFixups", startOffset + 0x30);
+			ExportAddressTableJumpsVM = new DataDirVM(buffer, Name, "ExportAddressTableJumps", startOffset + 0x38);
+			ManagedNativeHeaderVM = new DataDirVM(buffer, Name, "ManagedNativeHeader", startOffset + 0x40);
 
-			this.hexFields = new HexField[] {
+			hexFields = new HexField[] {
 				CbVM,
 				MajorRuntimeVersionVM,
 				MinorRuntimeVersionVM,

@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Hex {
 			SetResourceReference(Control.FontStyleProperty, HexBoxThemeHelper.GetFontStyleResourceKey(ColorType.HexText));
 			SetResourceReference(Control.FontWeightProperty, HexBoxThemeHelper.GetFontWeightResourceKey(ColorType.HexText));
 
-			menuService.InitializeContextMenu(this, MenuConstants.GUIDOBJ_HEXBOX_GUID, null, new ContextMenuInitializer());
+			menuService.InitializeContextMenu(this, Guid.NewGuid(), null, new ContextMenuInitializer());
 
 			BytesGroupCount = null;
 			BytesPerLine = null;

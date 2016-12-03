@@ -58,7 +58,7 @@ namespace dnSpy.Documents.Tabs {
 					tgws.Add(tgw);
 				}
 
-				// The documents are added to the treeview with a slight delay. Make sure the documentss
+				// The documents are added to the treeview with a slight delay. Make sure the documents
 				// have been added to the TV or the node lookup code will fail to find the nodes it needs.
 				yield return LoaderConstants.Delay;
 

@@ -23,7 +23,7 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -54,15 +54,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly StorageStreamVM storageStreamVM;
 
-		public StorageStreamNode(HexDocument doc, StreamHeader sh, int streamNumber, DotNetStream knownStream, IMetaData md)
-			: base((ulong)sh.StartOffset, (ulong)sh.EndOffset - 1) {
-			this.StreamNumber = streamNumber;
-			this.StorageStreamType = GetStorageStreamType(knownStream);
-			this.storageStreamVM = new StorageStreamVM(this, doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 8));
+		public StorageStreamNode(HexBuffer buffer, StreamHeader sh, int streamNumber, DotNetStream knownStream, IMetaData md)
+			: base(HexSpan.FromBounds((ulong)sh.StartOffset, (ulong)sh.EndOffset)) {
+			StreamNumber = streamNumber;
+			StorageStreamType = GetStorageStreamType(knownStream);
+			storageStreamVM = new StorageStreamVM(this, buffer, Span.Start, (int)(Span.Length - 8).ToUInt64());
 
 			var tblStream = knownStream as TablesStream;
 			if (tblStream != null)
-				this.newChild = new TablesStreamNode(doc, tblStream, md);
+				newChild = new TablesStreamNode(buffer, tblStream, md);
 		}
 		TreeNodeData newChild;
 
@@ -93,13 +93,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return StorageStreamType.None;
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
-			if (HexUtils.IsModified(storageStreamVM.RCNameVM.StartOffset, storageStreamVM.RCNameVM.EndOffset, modifiedStart, modifiedEnd))
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			base.OnBufferChanged(changes);
+			if (changes.OverlapsWith(storageStreamVM.RCNameVM.Span))
 				TreeNode.RefreshUI();
 
 			foreach (HexNode node in TreeNode.DataChildren)
-				node.OnDocumentModified(modifiedStart, modifiedEnd);
+				node.OnBufferChanged(changes);
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {

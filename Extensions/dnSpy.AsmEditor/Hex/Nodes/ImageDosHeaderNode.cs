@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -38,9 +38,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 		readonly ImageDosHeaderVM imageDosHeaderVM;
 
-		public ImageDosHeaderNode(HexDocument doc, ImageDosHeader dosHeader)
-			: base((ulong)dosHeader.StartOffset, (ulong)dosHeader.EndOffset - 1) {
-			this.imageDosHeaderVM = new ImageDosHeaderVM(this, doc, StartOffset);
+		public ImageDosHeaderNode(HexBuffer buffer, ImageDosHeader dosHeader)
+			: base(HexSpan.FromBounds((ulong)dosHeader.StartOffset, (ulong)dosHeader.EndOffset)) {
+			imageDosHeaderVM = new ImageDosHeaderVM(this, buffer, Span.Start);
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>

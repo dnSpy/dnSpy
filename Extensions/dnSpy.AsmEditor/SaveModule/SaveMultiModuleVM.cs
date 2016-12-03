@@ -28,9 +28,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
@@ -201,9 +201,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 			if (document != null)
 				return new SaveModuleOptionsVM(document);
 
-			var hexDocument = obj as AsmEdHexDocument;
-			if (hexDocument != null)
-				return new SaveHexOptionsVM(hexDocument);
+			var buffer = obj as HexBuffer;
+			if (buffer != null)
+				return new SaveHexOptionsVM(buffer);
 
 			throw new InvalidOperationException();
 		}

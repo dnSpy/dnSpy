@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -41,15 +41,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly ImageSectionHeaderVM imageSectionHeaderVM;
 
-		public ImageSectionHeaderNode(HexDocument doc, ImageSectionHeader sectHdr, int sectionNumber)
-			: base((ulong)sectHdr.StartOffset, (ulong)sectHdr.EndOffset - 1) {
-			this.SectionNumber = sectionNumber;
-			this.imageSectionHeaderVM = new ImageSectionHeaderVM(this, doc, StartOffset);
+		public ImageSectionHeaderNode(HexBuffer buffer, ImageSectionHeader sectHdr, int sectionNumber)
+			: base(HexSpan.FromBounds((ulong)sectHdr.StartOffset, (ulong)sectHdr.EndOffset)) {
+			SectionNumber = sectionNumber;
+			imageSectionHeaderVM = new ImageSectionHeaderVM(this, buffer, Span.Start);
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
-			if (HexUtils.IsModified(imageSectionHeaderVM.NameVM.StartOffset, imageSectionHeaderVM.NameVM.EndOffset, modifiedStart, modifiedEnd))
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			base.OnBufferChanged(changes);
+			if (changes.OverlapsWith(imageSectionHeaderVM.NameVM.Span))
 				TreeNode.RefreshUI();
 		}
 
