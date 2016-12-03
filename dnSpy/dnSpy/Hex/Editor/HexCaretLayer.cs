@@ -307,7 +307,7 @@ namespace dnSpy.Hex.Editor {
 			if (cell == null)
 				return new Rect();
 
-			int linePosition = cell.CellSpan.Start + cellPosition;
+			int linePosition = cell.CellSpan.Start + Math.Max(0, Math.Min(cell.CellSpan.Length - 1, cellPosition));
 			if (hexCaret.CurrentPosition.ActiveColumn != column) {
 				var r = ToRect(line.GetNormalizedTextBounds(cell.CellSpan));
 				return new Rect(r.X, r.Bottom - INACTIVE_CARET_HEIGHT, r.Width, INACTIVE_CARET_HEIGHT);
