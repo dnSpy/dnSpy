@@ -1013,7 +1013,7 @@ namespace dnSpy.Hex.Editor.Operations {
 			var startPos = ActiveCaretBufferPosition;
 			var span = Buffer.GetNextValidSpan(startPos, BufferLines.EndPosition);
 			if (span != null && span.Value.Contains(startPos) && span.Value.End < BufferLines.EndPosition)
-				span = Buffer.GetNextValidSpan(span.Value.End + 1, BufferLines.EndPosition);
+				span = Buffer.GetNextValidSpan(span.Value.End, BufferLines.EndPosition);
 			if (span != null && !span.Value.Contains(startPos))
 				MoveToValidSpan(span);
 		}

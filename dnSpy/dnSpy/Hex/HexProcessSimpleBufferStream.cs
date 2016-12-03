@@ -108,7 +108,11 @@ namespace dnSpy.Hex {
 					return HexSpan.FromBounds(0, new HexPosition(uint.MaxValue + 1UL));
 				NativeMethods.SYSTEM_INFO info;
 				NativeMethods.GetSystemInfo(out info);
-				return HexSpan.FromBounds(0, new HexPosition((ulong)info.lpMaximumApplicationAddress.ToInt64()) + 1);
+				var lastAddr = (ulong)info.lpMaximumApplicationAddress.ToInt64();
+				// Include the last part so we get a nice even address
+				if ((lastAddr & 0xFFFFF) == 0xEFFFF)
+					lastAddr += 0x10000;
+				return HexSpan.FromBounds(0, new HexPosition(lastAddr) + 1);
 			}
 			Debug.Fail($"Unsupported bit size: {bitSize}");
 			return HexSpan.FromBounds(0, HexPosition.MaxEndPosition);
