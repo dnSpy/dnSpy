@@ -132,8 +132,6 @@ namespace dnSpy.Hex.Editor {
 			var caretLine = bufferLines.GetLineFromPosition(bufferPosition);
 			var valueCell = caretLine.ValueCells.GetCell(bufferPosition);
 			var asciiCell = caretLine.AsciiCells.GetCell(bufferPosition);
-			if (valueCell == null && asciiCell == null)
-				throw new InvalidOperationException();
 
 			switch (activeColumn) {
 			case HexColumnType.Values:

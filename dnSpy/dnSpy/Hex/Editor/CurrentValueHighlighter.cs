@@ -157,12 +157,10 @@ namespace dnSpy.Hex.Editor {
 			public HexBufferSpan BufferSpan { get; private set; }
 			public HexColumnType Column { get; }
 
-			public SavedValue(int size, HexCellPosition cellPosition, HexCell cell) {
-				if (!cell.HasData)
-					throw new InvalidOperationException();
+			public SavedValue(int size, HexCellPosition cellPosition, HexBufferSpan cellBufferSpan) {
 				Data = new byte[size];
 				TempData = new byte[size];
-				BufferSpan = cell.BufferSpan;
+				BufferSpan = cellBufferSpan;
 				Column = cellPosition.Column;
 
 				// Note that BufferSpan.Length could be less than Data.Length if cell
@@ -174,8 +172,8 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			public bool TryUpdate(HexCellPosition cellPosition, HexBufferLine line, HexCell cell) {
-				if (!cell.HasData)
-					throw new InvalidOperationException();
+				if (cell == null)
+					return false;
 				var oldBufferSpan = BufferSpan;
 				Debug.Assert(cell.BufferSpan.Length <= Data.Length);
 				BufferSpan = cell.BufferSpan;
@@ -247,7 +245,7 @@ namespace dnSpy.Hex.Editor {
 			var cell = isValues ? line.ValueCells.GetCell(bufferPos) : line.AsciiCells.GetCell(bufferPos);
 
 			if (savedValue == null || savedValue.Column != pos.ActiveColumn)
-				savedValue = new SavedValue(isValues ? bufferLines.BytesPerValue : 1, pos.ActivePosition, cell);
+				savedValue = new SavedValue(isValues ? bufferLines.BytesPerValue : 1, pos.ActivePosition, cell?.BufferSpan ?? new HexBufferSpan(bufferLines.BufferSpan.Start, bufferLines.BufferSpan.Start));
 			else if (!savedValue.TryUpdate(pos.ActivePosition, line, cell))
 				return;
 			RefreshAll();
