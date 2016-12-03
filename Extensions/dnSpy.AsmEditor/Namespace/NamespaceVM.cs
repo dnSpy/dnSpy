@@ -38,11 +38,11 @@ namespace dnSpy.AsmEditor.Namespace {
 		string name;
 
 		public NamespaceVM(string name) {
-			this.origName = name;
+			origName = name;
 
 			Reinitialize();
 		}
 
-		void Reinitialize() => this.Name = origName;
+		void Reinitialize() => Name = origName;
 	}
 }

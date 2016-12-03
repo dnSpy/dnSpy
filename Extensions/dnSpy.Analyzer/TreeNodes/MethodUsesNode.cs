@@ -47,8 +47,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			public readonly T Def;
 			public readonly SourceRef SourceRef;
 			public DefRef(T def, SourceRef sourceRef) {
-				this.Def = def;
-				this.SourceRef = sourceRef;
+				Def = def;
+				SourceRef = sourceRef;
 			}
 		}
 

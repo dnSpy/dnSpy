@@ -86,7 +86,7 @@ namespace dndbg.Engine {
 		public DebuggerPauseReason Reason { get; }
 
 		public DebuggerPauseState(DebuggerPauseReason reason) {
-			this.Reason = reason;
+			Reason = reason;
 		}
 	}
 
@@ -95,7 +95,7 @@ namespace dndbg.Engine {
 
 		public DebugEventBreakpointPauseState(DnDebugEventBreakpoint bp)
 			: base(DebuggerPauseReason.DebugEventBreakpoint) {
-			this.Breakpoint = bp;
+			Breakpoint = bp;
 		}
 	}
 
@@ -104,7 +104,7 @@ namespace dndbg.Engine {
 
 		public AnyDebugEventBreakpointPauseState(DnAnyDebugEventBreakpoint bp)
 			: base(DebuggerPauseReason.AnyDebugEventBreakpoint) {
-			this.Breakpoint = bp;
+			Breakpoint = bp;
 		}
 	}
 
@@ -113,7 +113,7 @@ namespace dndbg.Engine {
 
 		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp)
 			: base(DebuggerPauseReason.ILCodeBreakpoint) {
-			this.Breakpoint = bp;
+			Breakpoint = bp;
 		}
 	}
 
@@ -122,7 +122,7 @@ namespace dndbg.Engine {
 
 		public NativeCodeBreakpointPauseState(DnNativeCodeBreakpoint bp)
 			: base(DebuggerPauseReason.NativeCodeBreakpoint) {
-			this.Breakpoint = bp;
+			Breakpoint = bp;
 		}
 	}
 
@@ -131,7 +131,7 @@ namespace dndbg.Engine {
 
 		public StepPauseState(CorDebugStepReason stepReason)
 			: base(DebuggerPauseReason.Step) {
-			this.StepReason = stepReason;
+			StepReason = stepReason;
 		}
 	}
 }

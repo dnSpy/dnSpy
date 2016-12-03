@@ -144,14 +144,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public SaveModuleOptionsVM(IDsDocument document) {
 			this.document = document;
-			this.Module = document.ModuleDef;
-			this.PEHeadersOptions = new PEHeadersOptionsVM(Module.Machine, GetSubsystem(Module.Kind));
-			this.Cor20HeaderOptions = new Cor20HeaderOptionsVM();
-			this.MetaDataOptions = new MetaDataOptionsVM();
+			Module = document.ModuleDef;
+			PEHeadersOptions = new PEHeadersOptionsVM(Module.Machine, GetSubsystem(Module.Kind));
+			Cor20HeaderOptions = new Cor20HeaderOptionsVM();
+			MetaDataOptions = new MetaDataOptionsVM();
 
-			this.PEHeadersOptions.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.Cor20HeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.MetaDataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			PEHeadersOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			Cor20HeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			MetaDataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			ModuleKind = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged(nameof(Extension));
@@ -277,30 +277,30 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public PEHeadersOptionsVM(Machine defaultMachine, Subsystem defaultSubsystem) {
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
-			this.Machine = new EnumListVM(machineList, (a, b) => {
+			Machine = new EnumListVM(machineList, (a, b) => {
 				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
-			this.TimeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
-			this.PointerToSymbolTable = new NullableUInt32VM(a => HasErrorUpdated());
-			this.NumberOfSymbols = new NullableUInt32VM(a => HasErrorUpdated());
-			this.MajorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
-			this.MinorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
-			this.ImageBase = new NullableUInt64VM(a => HasErrorUpdated());
-			this.SectionAlignment = new NullableUInt32VM(a => HasErrorUpdated());
-			this.FileAlignment = new NullableUInt32VM(a => HasErrorUpdated());
-			this.MajorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.MinorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.MajorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.MinorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.MajorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.MinorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.Win32VersionValue = new NullableUInt32VM(a => HasErrorUpdated());
-			this.SizeOfStackReserve = new NullableUInt64VM(a => HasErrorUpdated());
-			this.SizeOfStackCommit = new NullableUInt64VM(a => HasErrorUpdated());
-			this.SizeOfHeapReserve = new NullableUInt64VM(a => HasErrorUpdated());
-			this.SizeOfHeapCommit = new NullableUInt64VM(a => HasErrorUpdated());
-			this.LoaderFlags = new NullableUInt32VM(a => HasErrorUpdated());
-			this.NumberOfRvaAndSizes = new NullableUInt32VM(a => HasErrorUpdated());
+			TimeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
+			PointerToSymbolTable = new NullableUInt32VM(a => HasErrorUpdated());
+			NumberOfSymbols = new NullableUInt32VM(a => HasErrorUpdated());
+			MajorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
+			MinorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
+			ImageBase = new NullableUInt64VM(a => HasErrorUpdated());
+			SectionAlignment = new NullableUInt32VM(a => HasErrorUpdated());
+			FileAlignment = new NullableUInt32VM(a => HasErrorUpdated());
+			MajorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			MinorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			MajorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			MinorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			MajorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			MinorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			Win32VersionValue = new NullableUInt32VM(a => HasErrorUpdated());
+			SizeOfStackReserve = new NullableUInt64VM(a => HasErrorUpdated());
+			SizeOfStackCommit = new NullableUInt64VM(a => HasErrorUpdated());
+			SizeOfHeapReserve = new NullableUInt64VM(a => HasErrorUpdated());
+			SizeOfHeapCommit = new NullableUInt64VM(a => HasErrorUpdated());
+			LoaderFlags = new NullableUInt32VM(a => HasErrorUpdated());
+			NumberOfRvaAndSizes = new NullableUInt32VM(a => HasErrorUpdated());
 		}
 
 		internal static readonly EnumVM[] machineList = EnumVM.Create(typeof(dnlib.PE.Machine), dnlib.PE.Machine.I386, dnlib.PE.Machine.AMD64, dnlib.PE.Machine.IA64, dnlib.PE.Machine.ARMNT, dnlib.PE.Machine.ARM64);
@@ -653,9 +653,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 	sealed class Cor20HeaderOptionsVM : ViewModelBase {
 		public Cor20HeaderOptionsVM() {
-			this.MajorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.MinorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.EntryPoint = new NullableUInt32VM(a => HasErrorUpdated());
+			MajorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			MinorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			EntryPoint = new NullableUInt32VM(a => HasErrorUpdated());
 		}
 
 		public NullableUInt16VM MajorRuntimeVersion { get; }
@@ -746,11 +746,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 	sealed class MetaDataOptionsVM : ViewModelBase {
 		public MetaDataOptionsVM() {
-			this.MetaDataHeaderOptions = new MetaDataHeaderOptionsVM();
-			this.TablesHeapOptions = new TablesHeapOptionsVM();
+			MetaDataHeaderOptions = new MetaDataHeaderOptionsVM();
+			TablesHeapOptions = new TablesHeapOptionsVM();
 
-			this.MetaDataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.TablesHeapOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			MetaDataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			TablesHeapOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 		}
 
 		public MetaDataHeaderOptionsVM MetaDataHeaderOptions { get; }
@@ -962,12 +962,12 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 	sealed class MetaDataHeaderOptionsVM : ViewModelBase {
 		public MetaDataHeaderOptionsVM() {
-			this.Signature = new NullableUInt32VM(a => HasErrorUpdated());
-			this.MajorVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.MinorVersion = new NullableUInt16VM(a => HasErrorUpdated());
-			this.Reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
-			this.StorageFlags = new NullableByteVM(a => HasErrorUpdated());
-			this.Reserved2 = new NullableByteVM(a => HasErrorUpdated());
+			Signature = new NullableUInt32VM(a => HasErrorUpdated());
+			MajorVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			MinorVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			Reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
+			StorageFlags = new NullableByteVM(a => HasErrorUpdated());
+			Reserved2 = new NullableByteVM(a => HasErrorUpdated());
 		}
 
 		public NullableUInt32VM Signature { get; }
@@ -1040,10 +1040,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 	sealed class TablesHeapOptionsVM : ViewModelBase {
 		public TablesHeapOptionsVM() {
-			this.Reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
-			this.MajorVersion = new NullableByteVM(a => HasErrorUpdated());
-			this.MinorVersion = new NullableByteVM(a => HasErrorUpdated());
-			this.ExtraData = new NullableUInt32VM(a => HasErrorUpdated());
+			Reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
+			MajorVersion = new NullableByteVM(a => HasErrorUpdated());
+			MinorVersion = new NullableByteVM(a => HasErrorUpdated());
+			ExtraData = new NullableUInt32VM(a => HasErrorUpdated());
 		}
 
 		public NullableUInt32VM Reserved1 { get; }

@@ -91,22 +91,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public MemberRefVM(MemberRefOptions options, TypeSigCreatorOptions typeSigCreatorOptions, bool isField) {
-			this.IsField = isField;
+			IsField = isField;
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone();
-			this.origOptions = options;
-			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerService);
+			origOptions = options;
+			CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerService);
 
 			this.typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			this.typeSigCreatorOptions.CanAddGenericTypeVar = true;
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
 
-			this.TypeSigCreatorVM = new TypeSigCreatorVM(this.typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateFieldTypeSig));
+			TypeSigCreatorVM = new TypeSigCreatorVM(this.typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateFieldTypeSig));
 			TypeSigCreatorVM.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			var mopts = new MethodSigCreatorOptions(this.typeSigCreatorOptions.Clone());
 			mopts.CanHaveSentinel = true;
-			this.MethodSigCreatorVM = new MethodSigCreatorVM(mopts);
+			MethodSigCreatorVM = new MethodSigCreatorVM(mopts);
 			MethodSigCreatorVM.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			Reinitialize();
@@ -177,8 +177,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MemberRefOptions CreateMemberRefOptions() => CopyTo(new MemberRefOptions());
 
 		void InitializeFrom(MemberRefOptions options) {
-			this.Class = options.Class;
-			this.Name = options.Name;
+			Class = options.Class;
+			Name = options.Name;
 			if (IsField) {
 				var fs = options.Signature as FieldSig;
 				TypeSigCreatorVM.TypeSig = fs?.Type;
@@ -189,8 +189,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		MemberRefOptions CopyTo(MemberRefOptions options) {
-			options.Class = this.Class;
-			options.Name = this.Name;
+			options.Class = Class;
+			options.Name = Name;
 			if (IsField)
 				options.Signature = new FieldSig(TypeSigCreatorVM.TypeSig);
 			else

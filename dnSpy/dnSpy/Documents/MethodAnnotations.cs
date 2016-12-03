@@ -37,7 +37,7 @@ namespace dnSpy.Documents {
 
 			public Key(MethodDef method) {
 				this.method = new WeakReference(method);
-				this.hc = method.GetHashCode();
+				hc = method.GetHashCode();
 			}
 
 			public bool Equals(Key other) {

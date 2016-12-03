@@ -50,31 +50,31 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly DeletedEventUpdater[] deletedEvents;
 
 		public ExistingTypeNodeUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MergedImportedType type) {
-			this.targetType = type.TargetType;
-			this.ownerModule = targetType.Module;
-			this.origTypeDefOptions = new TypeDefOptions(targetType);
-			this.newTypeDefOptions = type.NewTypeDefOptions;
-			this.typeNode = modNode.Context.DocumentTreeView.FindNode(targetType);
-			if (this.typeNode == null)
+			targetType = type.TargetType;
+			ownerModule = targetType.Module;
+			origTypeDefOptions = new TypeDefOptions(targetType);
+			newTypeDefOptions = type.NewTypeDefOptions;
+			typeNode = modNode.Context.DocumentTreeView.FindNode(targetType);
+			if (typeNode == null)
 				throw new InvalidOperationException();
-			this.nestedTypes1 = type.NewOrExistingNestedTypes.OfType<MergedImportedType>().Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
-			this.nestedTypes2 = type.NewOrExistingNestedTypes.OfType<NewImportedType>().Select(a => new NestedTypeNodeCreator(modNode, typeNode, a.TargetType)).ToArray();
+			nestedTypes1 = type.NewOrExistingNestedTypes.OfType<MergedImportedType>().Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
+			nestedTypes2 = type.NewOrExistingNestedTypes.OfType<NewImportedType>().Select(a => new NestedTypeNodeCreator(modNode, typeNode, a.TargetType)).ToArray();
 			if (nestedTypes1.Length + nestedTypes2.Length != type.NewOrExistingNestedTypes.Count)
 				throw new InvalidOperationException();
-			this.fields = type.NewFields.Select(a => new FieldNodeCreator(modNode, typeNode, a)).ToArray();
+			fields = type.NewFields.Select(a => new FieldNodeCreator(modNode, typeNode, a)).ToArray();
 			var specialMethods = GetSpecialMethods(type);
-			this.methods = type.NewMethods.Where(a => !specialMethods.Contains(a)).Select(a => new MethodNodeCreator(modNode, typeNode, a)).ToArray();
-			this.events = type.NewEvents.Select(a => new EventNodeCreator(modNode, typeNode, a)).ToArray();
-			this.properties = type.NewProperties.Select(a => new PropertyNodeCreator(modNode, typeNode, a)).ToArray();
-			this.editedFields = type.EditedFields.Select(a => new EditedFieldUpdater(modNode, a.OriginalField, a.FieldDefOptions)).ToArray();
-			this.editedMethods = type.EditedMethods.Select(a => new EditedMethodUpdater(methodAnnotations, modNode, a.OriginalMethod, a.NewBody, a.MethodDefOptions)).ToArray();
-			this.editedProperties = type.EditedProperties.Select(a => new EditedPropertyUpdater(modNode, a.OriginalProperty, a.PropertyDefOptions)).ToArray();
-			this.editedEvents = type.EditedEvents.Select(a => new EditedEventUpdater(modNode, a.OriginalEvent, a.EventDefOptions)).ToArray();
-			this.deletedTypes = type.DeletedNestedTypes.Select(a => new DeletedTypeUpdater(modNode, a)).ToArray();
-			this.deletedFields = type.DeletedFields.Select(a => new DeletedFieldUpdater(modNode, a)).ToArray();
-			this.deletedMethods = type.DeletedMethods.Select(a => new DeletedMethodUpdater(modNode, a)).ToArray();
-			this.deletedProperties = type.DeletedProperties.Select(a => new DeletedPropertyUpdater(modNode, a)).ToArray();
-			this.deletedEvents = type.DeletedEvents.Select(a => new DeletedEventUpdater(modNode, a)).ToArray();
+			methods = type.NewMethods.Where(a => !specialMethods.Contains(a)).Select(a => new MethodNodeCreator(modNode, typeNode, a)).ToArray();
+			events = type.NewEvents.Select(a => new EventNodeCreator(modNode, typeNode, a)).ToArray();
+			properties = type.NewProperties.Select(a => new PropertyNodeCreator(modNode, typeNode, a)).ToArray();
+			editedFields = type.EditedFields.Select(a => new EditedFieldUpdater(modNode, a.OriginalField, a.FieldDefOptions)).ToArray();
+			editedMethods = type.EditedMethods.Select(a => new EditedMethodUpdater(methodAnnotations, modNode, a.OriginalMethod, a.NewBody, a.MethodDefOptions)).ToArray();
+			editedProperties = type.EditedProperties.Select(a => new EditedPropertyUpdater(modNode, a.OriginalProperty, a.PropertyDefOptions)).ToArray();
+			editedEvents = type.EditedEvents.Select(a => new EditedEventUpdater(modNode, a.OriginalEvent, a.EventDefOptions)).ToArray();
+			deletedTypes = type.DeletedNestedTypes.Select(a => new DeletedTypeUpdater(modNode, a)).ToArray();
+			deletedFields = type.DeletedFields.Select(a => new DeletedFieldUpdater(modNode, a)).ToArray();
+			deletedMethods = type.DeletedMethods.Select(a => new DeletedMethodUpdater(modNode, a)).ToArray();
+			deletedProperties = type.DeletedProperties.Select(a => new DeletedPropertyUpdater(modNode, a)).ToArray();
+			deletedEvents = type.DeletedEvents.Select(a => new DeletedEventUpdater(modNode, a)).ToArray();
 		}
 
 		static HashSet<MethodDef> GetSpecialMethods(MergedImportedType type) {

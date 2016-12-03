@@ -47,7 +47,7 @@ namespace dnSpy.Language.Intellisense {
 			this.textClassifierAggregatorService = textClassifierAggregatorService;
 			this.classificationFormatMap = classificationFormatMap;
 			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.toClassifier = new Dictionary<IContentType, ITextClassifier>();
+			toClassifier = new Dictionary<IContentType, ITextClassifier>();
 		}
 
 		ITextClassifier GetTextClassifier(IContentType contentType) {

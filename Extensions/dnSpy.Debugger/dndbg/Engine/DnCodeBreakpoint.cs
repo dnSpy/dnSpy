@@ -26,8 +26,8 @@ namespace dndbg.Engine {
 		public CorFunctionBreakpoint FunctionBreakpoint { get; }
 
 		public ModuleCodeBreakpoint(DnModule module, CorFunctionBreakpoint funcBp) {
-			this.Module = module;
-			this.FunctionBreakpoint = funcBp;
+			Module = module;
+			FunctionBreakpoint = funcBp;
 		}
 	}
 
@@ -40,17 +40,17 @@ namespace dndbg.Engine {
 		readonly CorCode code;
 
 		internal DnCodeBreakpoint(DnModuleId module, uint token, uint offset) {
-			this.Module = module;
-			this.Token = token;
-			this.Offset = offset;
-			this.code = null;
+			Module = module;
+			Token = token;
+			Offset = offset;
+			code = null;
 		}
 
 		internal DnCodeBreakpoint(CorCode code, uint offset) {
-			this.Module = GetModule(code);
+			Module = GetModule(code);
 			var func = code.Function;
-			this.Token = func?.Token ?? 0;
-			this.Offset = offset;
+			Token = func?.Token ?? 0;
+			Offset = offset;
 			this.code = code;
 		}
 

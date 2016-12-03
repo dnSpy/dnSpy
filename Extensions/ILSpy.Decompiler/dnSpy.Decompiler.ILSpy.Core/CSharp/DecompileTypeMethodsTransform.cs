@@ -34,8 +34,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		readonly bool showAll;
 
 		public DecompileTypeMethodsTransform(HashSet<MethodDef> methods, bool showDefinitions, bool makeEverythingPublic, bool showAll) {
-			this.defsToShow = new HashSet<IMemberDef>();
-			this.partialTypes = new HashSet<TypeDef>();
+			defsToShow = new HashSet<IMemberDef>();
+			partialTypes = new HashSet<TypeDef>();
 			this.showDefinitions = showDefinitions;
 			this.makeEverythingPublic = makeEverythingPublic;
 			this.showAll = showAll;

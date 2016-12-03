@@ -37,9 +37,9 @@ namespace dnSpy.Documents.Tabs {
 		public string ResourceName { get; }
 
 		ResourceRef(ModuleDef module, string resourcesFilename, string resourceName) {
-			this.Module = module;
-			this.Filename = resourcesFilename;
-			this.ResourceName = resourceName;
+			Module = module;
+			Filename = resourcesFilename;
+			ResourceName = resourceName;
 		}
 
 		public static ResourceRef TryCreate(object o) {

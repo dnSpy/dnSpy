@@ -28,8 +28,8 @@ namespace dnSpy.Commands {
 		readonly Dictionary<KeyShortcut, List<ProviderAndCommand>> dict;
 
 		public KeyShortcutCollection() {
-			this.twoKeyCombos = new HashSet<KeyInput>();
-			this.dict = new Dictionary<KeyShortcut, List<ProviderAndCommand>>();
+			twoKeyCombos = new HashSet<KeyInput>();
+			dict = new Dictionary<KeyShortcut, List<ProviderAndCommand>>();
 		}
 
 		public void Add(ICommandInfoProvider provider, object target) {

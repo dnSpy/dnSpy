@@ -30,7 +30,7 @@ namespace dndbg.DotNet {
 		public CorManifestResource(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			Initialize_NoLock();
 		}
 
@@ -42,11 +42,11 @@ namespace dndbg.DotNet {
 			var mdai = readerModule.MetaDataAssemblyImport;
 			uint token = OriginalToken.Raw;
 
-			this.Name = MDAPI.GetManifestResourceName(mdai, token) ?? string.Empty;
+			Name = MDAPI.GetManifestResourceName(mdai, token) ?? string.Empty;
 			uint implementation;
 			ManifestResourceAttributes attrs;
-			MDAPI.GetManifestResourceProps(mdai, token, out this.offset, out implementation, out attrs);
-			this.attributes = (int)attrs;
+			MDAPI.GetManifestResourceProps(mdai, token, out offset, out implementation, out attrs);
+			attributes = (int)attrs;
 			this.implementation = readerModule.ResolveToken(implementation) as IImplementation;
 		}
 	}

@@ -276,15 +276,15 @@ namespace dnSpy.MainApp.Settings {
 
 		public UseNewRendererVM(AppSettingsImpl appSettings) {
 			this.appSettings = appSettings;
-			this.UseNewRenderer_TextEditor = appSettings.UseNewRenderer_TextEditor;
-			this.UseNewRenderer_HexEditor = appSettings.UseNewRenderer_HexEditor;
-			this.UseNewRenderer_DocumentTreeView = appSettings.UseNewRenderer_DocumentTreeView;
+			UseNewRenderer_TextEditor = appSettings.UseNewRenderer_TextEditor;
+			UseNewRenderer_HexEditor = appSettings.UseNewRenderer_HexEditor;
+			UseNewRenderer_DocumentTreeView = appSettings.UseNewRenderer_DocumentTreeView;
 		}
 
 		public void Save() {
-			appSettings.UseNewRenderer_TextEditor = this.UseNewRenderer_TextEditor;
-			appSettings.UseNewRenderer_HexEditor = this.UseNewRenderer_HexEditor;
-			appSettings.UseNewRenderer_DocumentTreeView = this.UseNewRenderer_DocumentTreeView;
+			appSettings.UseNewRenderer_TextEditor = UseNewRenderer_TextEditor;
+			appSettings.UseNewRenderer_HexEditor = UseNewRenderer_HexEditor;
+			appSettings.UseNewRenderer_DocumentTreeView = UseNewRenderer_DocumentTreeView;
 		}
 	}
 }

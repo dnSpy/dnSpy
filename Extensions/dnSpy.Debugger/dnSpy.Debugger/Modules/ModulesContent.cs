@@ -54,13 +54,13 @@ namespace dnSpy.Debugger.Modules {
 
 		[ImportingConstructor]
 		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService) {
-			this.modulesControl = new ModulesControl();
-			this.vmModules = modulesVM;
+			modulesControl = new ModulesControl();
+			vmModules = modulesVM;
 			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.inMemoryModuleService = inMemoryModuleService;
-			this.modulesControl.DataContext = this.vmModules;
-			this.modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
+			modulesControl.DataContext = vmModules;
+			modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);

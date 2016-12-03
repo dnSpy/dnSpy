@@ -36,8 +36,8 @@ namespace dnSpy.Metadata {
 		[ImportingConstructor]
 		ModuleIdProvider([ImportMany] IEnumerable<Lazy<IModuleIdFactoryProvider, IModuleIdFactoryProviderMetadata>> moduleIdFactoryProviders) {
 			this.moduleIdFactoryProviders = moduleIdFactoryProviders.OrderBy(a => a.Metadata.Order).ToArray();
-			this.moduleDictionary = new ConditionalWeakTable<ModuleDef, StrongBox<ModuleId>>();
-			this.callbackCreateCore = CreateCore;
+			moduleDictionary = new ConditionalWeakTable<ModuleDef, StrongBox<ModuleId>>();
+			callbackCreateCore = CreateCore;
 		}
 
 		public ModuleId Create(ModuleDef module) {

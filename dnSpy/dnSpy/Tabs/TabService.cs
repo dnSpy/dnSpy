@@ -40,8 +40,8 @@ namespace dnSpy.Tabs {
 		public TabService(IMenuService menuService, IWpfFocusService wpfFocusService) {
 			this.menuService = menuService;
 			this.wpfFocusService = wpfFocusService;
-			this.tabGroupServices = new List<TabGroupService>();
-			this.selectedIndex = -1;
+			tabGroupServices = new List<TabGroupService>();
+			selectedIndex = -1;
 		}
 
 		public ITabGroupService Create(TabGroupServiceOptions options = null) {

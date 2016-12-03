@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.HexEditor {
 		readonly string hexByteFormatString;
 
 		public HexStringFormatter(HexBox hexBox, ulong start, ulong end, bool lowerHex) : base(hexBox, start, end) {
-			this.hexByteFormatString = lowerHex ? "{0:x2}" : "{0:X2}";
+			hexByteFormatString = lowerHex ? "{0:x2}" : "{0:X2}";
 		}
 
 		protected override void InitializeDataObject(DataObject dataObj) {

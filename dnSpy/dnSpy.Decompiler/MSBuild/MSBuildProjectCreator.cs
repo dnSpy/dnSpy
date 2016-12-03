@@ -49,7 +49,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			public void Error(string message) {
 				Interlocked.Increment(ref owner.errors);
-				this.logger.Error(message);
+				logger.Error(message);
 			}
 		}
 
@@ -57,9 +57,9 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			this.options = options;
-			this.logger = new MyLogger(this, options.Logger);
-			this.progressListener = options.ProgressListener ?? NoMSBuildProgressListener.Instance;
-			this.projects = new List<Project>();
+			logger = new MyLogger(this, options.Logger);
+			progressListener = options.ProgressListener ?? NoMSBuildProgressListener.Instance;
+			projects = new List<Project>();
 		}
 
 		public void Create() {

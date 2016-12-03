@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Search {
 		public SearchResultEventArgs(ISearchResult[] results) {
 			if (results == null)
 				throw new ArgumentNullException(nameof(results));
-			this.Results = results;
+			Results = results;
 		}
 	}
 }

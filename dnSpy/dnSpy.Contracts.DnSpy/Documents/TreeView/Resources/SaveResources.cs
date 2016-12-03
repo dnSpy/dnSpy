@@ -158,7 +158,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		readonly Tuple<ResourceData, string>[] fileInfos;
 
 		public ResourceSaver(Tuple<ResourceData, string>[] files) {
-			this.fileInfos = files;
+			fileInfos = files;
 		}
 
 		public void Execute(IProgress progress) {

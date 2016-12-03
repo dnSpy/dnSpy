@@ -221,18 +221,18 @@ namespace dnSpy.Tabs {
 
 		public TabGroup(TabGroupService tabGroupService, IMenuService menuService, IWpfFocusService wpfFocusService, TabGroupServiceOptions options) {
 			this.options = options;
-			this.tabContentAttached = new WeakEventList<TabContentAttachedEventArgs>();
+			tabContentAttached = new WeakEventList<TabContentAttachedEventArgs>();
 			this.tabGroupService = tabGroupService;
 			this.wpfFocusService = wpfFocusService;
-			this.tabControl = new TabControl();
-			this.tabControl.DataContext = this;
-			this.tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
-			this.tabControl.SelectionChanged += TabControl_SelectionChanged;
-			this.tabControl.PreviewKeyDown += TabControl_PreviewKeyDown;
+			tabControl = new TabControl();
+			tabControl.DataContext = this;
+			tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
+			tabControl.SelectionChanged += TabControl_SelectionChanged;
+			tabControl.PreviewKeyDown += TabControl_PreviewKeyDown;
 			if (options.InitializeContextMenu != null)
-				this.contextMenuProvider = options.InitializeContextMenu(menuService, this, this.tabControl);
+				contextMenuProvider = options.InitializeContextMenu(menuService, this, tabControl);
 			else if (options.TabGroupGuid != Guid.Empty)
-				this.contextMenuProvider = menuService.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsProvider(this));
+				contextMenuProvider = menuService.InitializeContextMenu(tabControl, options.TabGroupGuid, new GuidObjectsProvider(this));
 		}
 
 		void TabControl_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -416,7 +416,7 @@ namespace dnSpy.Tabs {
 				return false;
 			if (tabGroupTarget.tabGroupService.TabService != tabGroupSource.tabGroupService.TabService)
 				return false;
-			if (tabGroupTarget.tabGroupService != this.tabGroupService)
+			if (tabGroupTarget.tabGroupService != tabGroupService)
 				return false;
 
 			return true;
@@ -517,7 +517,7 @@ namespace dnSpy.Tabs {
 
 			if (srcTabItem.IsKeyboardFocusWithin) {
 				tabGroupService.SetActiveTab(srcTabItem);
-				this.IsActive = false;
+				IsActive = false;
 				dstTabGroup.IsActive = true;
 			}
 
@@ -584,7 +584,7 @@ namespace dnSpy.Tabs {
 		internal bool SetActiveTab(TabItemImpl tabItem) {
 			if (tabItem == null || !Contains(tabItem))
 				return false;
-			this.tabControl.SelectedItem = tabItem;
+			tabControl.SelectedItem = tabItem;
 			return true;
 		}
 

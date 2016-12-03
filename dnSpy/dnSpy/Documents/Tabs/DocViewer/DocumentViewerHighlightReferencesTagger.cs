@@ -92,7 +92,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			this.textView = textView;
-			this.spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
+			spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;
 			textView.Caret.PositionChanged += Caret_PositionChanged;
@@ -147,7 +147,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new InvalidOperationException();
 			this.documentViewer = documentViewer;
 			this.documentViewerReferenceEnablerProviders = documentViewerReferenceEnablerProviders;
-			this.documentViewerReferenceEnablers = new Dictionary<string, IDocumentViewerReferenceEnabler>(documentViewerReferenceEnablerProviders.Count, StringComparer.Ordinal);
+			documentViewerReferenceEnablers = new Dictionary<string, IDocumentViewerReferenceEnabler>(documentViewerReferenceEnablerProviders.Count, StringComparer.Ordinal);
 			documentViewer.GotNewContent += DocumentViewer_GotNewContent;
 		}
 

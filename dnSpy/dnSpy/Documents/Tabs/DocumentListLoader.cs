@@ -65,7 +65,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public Disable_SaveCurrentDocumentsToList(DocumentListLoader documentListLoader) {
 				this.documentListLoader = documentListLoader;
-				this.oldValue = documentListLoader.disable_SaveCurrentDocumentsToList;
+				oldValue = documentListLoader.disable_SaveCurrentDocumentsToList;
 				documentListLoader.disable_SaveCurrentDocumentsToList = true;
 			}
 

@@ -67,7 +67,7 @@ namespace dnSpy.Text.AvalonEdit {
 				Debug.Assert(contents == null);
 				Debug.Assert(length == left.length + right.length);
 				Debug.Assert(height == 1 + Math.Max(left.height, right.height));
-				Debug.Assert(Math.Abs(this.Balance) <= 1);
+				Debug.Assert(Math.Abs(Balance) <= 1);
 
 				// this is an additional invariant that forces the tree to combine small leafs to prevent excessive memory usage:
 				Debug.Assert(length > NodeSize);
@@ -88,16 +88,16 @@ namespace dnSpy.Text.AvalonEdit {
 				T[] newContents = new T[NodeSize];
 				contents.CopyTo(newContents, 0);
 				return new RopeNode<T> {
-					length = this.length,
+					length = length,
 					contents = newContents
 				};
 			}
 			else {
 				return new RopeNode<T> {
-					left = this.left,
-					right = this.right,
-					length = this.length,
-					height = this.height
+					left = left,
+					right = right,
+					length = length,
+					height = height
 				};
 			}
 		}
@@ -167,36 +167,36 @@ namespace dnSpy.Text.AvalonEdit {
 				return;
 
 			// ensure we didn't miss a MergeIfPossible step
-			Debug.Assert(this.length > NodeSize);
+			Debug.Assert(length > NodeSize);
 
 			// We need to loop until it's balanced. Rotations might cause two small leaves to combine to a larger one,
 			// which changes the height and might mean we need additional balancing steps.
-			while (Math.Abs(this.Balance) > 1) {
+			while (Math.Abs(Balance) > 1) {
 				// AVL balancing
 				// note: because we don't care about the identity of concat nodes, this works a little different than usual
 				// tree rotations: in our implementation, the "this" node will stay at the top, only its children are rearranged
-				if (this.Balance > 1) {
+				if (Balance > 1) {
 					if (right.Balance < 0) {
 						right = right.CloneIfShared();
 						right.RotateRight();
 					}
-					this.RotateLeft();
+					RotateLeft();
 					// If 'this' was unbalanced by more than 2, we've shifted some of the inbalance to the left node; so rebalance that.
-					this.left.Rebalance();
+					left.Rebalance();
 				}
-				else if (this.Balance < -1) {
+				else if (Balance < -1) {
 					if (left.Balance > 0) {
 						left = left.CloneIfShared();
 						left.RotateLeft();
 					}
-					this.RotateRight();
+					RotateRight();
 					// If 'this' was unbalanced by more than 2, we've shifted some of the inbalance to the right node; so rebalance that.
-					this.right.Rebalance();
+					right.Rebalance();
 				}
 			}
 
-			Debug.Assert(Math.Abs(this.Balance) <= 1);
-			this.height = (byte)(1 + Math.Max(left.height, right.height));
+			Debug.Assert(Math.Abs(Balance) <= 1);
+			height = (byte)(1 + Math.Max(left.height, right.height));
 		}
 
 		void RotateLeft() {
@@ -214,14 +214,14 @@ namespace dnSpy.Text.AvalonEdit {
 			RopeNode<T> b = right.left;
 			RopeNode<T> c = right.right;
 			// reuse right concat node, if possible
-			this.left = right.isShared ? new RopeNode<T>() : right;
-			this.left.left = a;
-			this.left.right = b;
-			this.left.length = a.length + b.length;
-			this.left.height = (byte)(1 + Math.Max(a.height, b.height));
-			this.right = c;
+			left = right.isShared ? new RopeNode<T>() : right;
+			left.left = a;
+			left.right = b;
+			left.length = a.length + b.length;
+			left.height = (byte)(1 + Math.Max(a.height, b.height));
+			right = c;
 
-			this.left.MergeIfPossible();
+			left.MergeIfPossible();
 		}
 
 		void RotateRight() {
@@ -239,43 +239,43 @@ namespace dnSpy.Text.AvalonEdit {
 			RopeNode<T> b = left.right;
 			RopeNode<T> c = right;
 			// reuse left concat node, if possible
-			this.right = left.isShared ? new RopeNode<T>() : left;
-			this.right.left = b;
-			this.right.right = c;
-			this.right.length = b.length + c.length;
-			this.right.height = (byte)(1 + Math.Max(b.height, c.height));
-			this.left = a;
+			right = left.isShared ? new RopeNode<T>() : left;
+			right.left = b;
+			right.right = c;
+			right.length = b.length + c.length;
+			right.height = (byte)(1 + Math.Max(b.height, c.height));
+			left = a;
 
-			this.right.MergeIfPossible();
+			right.MergeIfPossible();
 		}
 
 		void MergeIfPossible() {
 			Debug.Assert(!isShared);
 
-			if (this.length <= NodeSize) {
+			if (length <= NodeSize) {
 				// Convert this concat node to leaf node.
 				// We know left and right cannot be concat nodes (they would have merged already),
 				// but they could be function nodes.
-				this.height = 0;
-				int lengthOnLeftSide = this.left.length;
-				if (this.left.isShared) {
-					this.contents = new T[NodeSize];
-					left.CopyTo(0, this.contents, 0, lengthOnLeftSide);
+				height = 0;
+				int lengthOnLeftSide = left.length;
+				if (left.isShared) {
+					contents = new T[NodeSize];
+					left.CopyTo(0, contents, 0, lengthOnLeftSide);
 				}
 				else {
 					// must be a leaf node: function nodes are always marked shared
-					Debug.Assert(this.left.contents != null);
+					Debug.Assert(left.contents != null);
 					// steal buffer from left side
-					this.contents = this.left.contents;
+					contents = left.contents;
 #if DEBUG
 					// In debug builds, explicitly mark left node as 'damaged' - but no one else should be using it
 					// because it's not shared.
-					this.left.contents = Array.Empty<T>();
+					left.contents = Array.Empty<T>();
 #endif
 				}
-				this.left = null;
-				right.CopyTo(0, this.contents, lengthOnLeftSide, this.right.length);
-				this.right = null;
+				left = null;
+				right.CopyTo(0, contents, lengthOnLeftSide, right.length);
+				right = null;
 			}
 		}
 
@@ -283,7 +283,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Copies from the array to this node.
 		/// </summary>
 		internal RopeNode<T> StoreElements(int index, T[] array, int arrayIndex, int count) {
-			RopeNode<T> result = this.CloneIfShared();
+			RopeNode<T> result = CloneIfShared();
 			// result cannot be function node after a call to Clone()
 			if (result.height == 0) {
 				// leaf node:
@@ -294,7 +294,7 @@ namespace dnSpy.Text.AvalonEdit {
 				if (index + count <= result.left.length) {
 					result.left = result.left.StoreElements(index, array, arrayIndex, count);
 				}
-				else if (index >= this.left.length) {
+				else if (index >= left.length) {
 					result.right = result.right.StoreElements(index - result.left.length, array, arrayIndex, count);
 				}
 				else {
@@ -312,27 +312,27 @@ namespace dnSpy.Text.AvalonEdit {
 		/// </summary>
 		internal void CopyTo(int index, T[] array, int arrayIndex, int count) {
 			if (height == 0) {
-				if (this.contents == null) {
+				if (contents == null) {
 					// function node
-					this.GetContentNode().CopyTo(index, array, arrayIndex, count);
+					GetContentNode().CopyTo(index, array, arrayIndex, count);
 				}
 				else {
 					// leaf node
-					Array.Copy(this.contents, index, array, arrayIndex, count);
+					Array.Copy(contents, index, array, arrayIndex, count);
 				}
 			}
 			else {
 				// concat node
-				if (index + count <= this.left.length) {
-					this.left.CopyTo(index, array, arrayIndex, count);
+				if (index + count <= left.length) {
+					left.CopyTo(index, array, arrayIndex, count);
 				}
-				else if (index >= this.left.length) {
-					this.right.CopyTo(index - this.left.length, array, arrayIndex, count);
+				else if (index >= left.length) {
+					right.CopyTo(index - left.length, array, arrayIndex, count);
 				}
 				else {
-					int amountInLeft = this.left.length - index;
-					this.left.CopyTo(index, array, arrayIndex, amountInLeft);
-					this.right.CopyTo(0, array, arrayIndex + amountInLeft, count - amountInLeft);
+					int amountInLeft = left.length - index;
+					left.CopyTo(index, array, arrayIndex, amountInLeft);
+					right.CopyTo(0, array, arrayIndex + amountInLeft, count - amountInLeft);
 				}
 			}
 		}
@@ -387,9 +387,9 @@ namespace dnSpy.Text.AvalonEdit {
 			Debug.Assert(!isShared && height == 0 && contents != null);
 			RopeNode<T> newPart = new RopeNode<T>();
 			newPart.contents = new T[NodeSize];
-			newPart.length = this.length - offset;
-			Array.Copy(this.contents, offset, newPart.contents, 0, newPart.length);
-			this.length = offset;
+			newPart.length = length - offset;
+			Array.Copy(contents, offset, newPart.contents, 0, newPart.length);
+			length = offset;
 			return newPart;
 		}
 
@@ -397,7 +397,7 @@ namespace dnSpy.Text.AvalonEdit {
 			if (offset == 0) {
 				return Concat(newElements, this);
 			}
-			else if (offset == this.length) {
+			else if (offset == length) {
 				return Concat(this, newElements);
 			}
 
@@ -426,7 +426,7 @@ namespace dnSpy.Text.AvalonEdit {
 		internal RopeNode<T> Insert(int offset, T[] array, int arrayIndex, int count) {
 			Debug.Assert(count > 0);
 
-			if (this.length + count < RopeNode<char>.NodeSize) {
+			if (length + count < RopeNode<char>.NodeSize) {
 				RopeNode<T> result = CloneIfShared();
 				// result must be leaf node (Clone never returns function nodes, too short for concat node)
 				int lengthAfterOffset = result.length - offset;
@@ -461,7 +461,7 @@ namespace dnSpy.Text.AvalonEdit {
 			Debug.Assert(count > 0);
 
 			// produce empty node when one node is deleted completely
-			if (index == 0 && count == this.length)
+			if (index == 0 && count == length)
 				return emptyRopeNode;
 
 			int endIndex = index + count;
@@ -527,7 +527,7 @@ namespace dnSpy.Text.AvalonEdit {
 					return "[Leaf length=" + length + ", isShared=" + isShared + "\"]";
 			}
 			else {
-				return "[Concat length=" + length + ", isShared=" + isShared + ", height=" + height + ", Balance=" + this.Balance + "]";
+				return "[Concat length=" + length + ", isShared=" + isShared + ", height=" + height + ", Balance=" + Balance + "]";
 			}
 		}
 
@@ -561,34 +561,34 @@ namespace dnSpy.Text.AvalonEdit {
 			this.initializer = initializer;
 			// Function nodes are immediately shared, but cannot be cloned.
 			// This ensures we evaluate every initializer only once.
-			this.isShared = true;
+			isShared = true;
 		}
 
 		internal override RopeNode<T> GetContentNode() {
 			lock (this) {
-				if (this.cachedResults == null) {
-					if (this.initializer == null)
+				if (cachedResults == null) {
+					if (initializer == null)
 						throw new InvalidOperationException("Trying to load this node recursively; or: a previous call to a rope initializer failed.");
-					Func<Rope<T>> initializerCopy = this.initializer;
-					this.initializer = null;
+					Func<Rope<T>> initializerCopy = initializer;
+					initializer = null;
 					Rope<T> resultRope = initializerCopy();
 					if (resultRope == null)
 						throw new InvalidOperationException("Rope initializer returned null.");
 					RopeNode<T> resultNode = resultRope.root;
 					resultNode.Publish(); // result is shared between returned rope and the rope containing this function node
-					if (resultNode.length != this.length)
+					if (resultNode.length != length)
 						throw new InvalidOperationException("Rope initializer returned rope with incorrect length.");
 					if (resultNode.height == 0 && resultNode.contents == null) {
 						// ResultNode is another function node.
 						// We want to guarantee that GetContentNode() never returns function nodes, so we have to
 						// go down further in the tree.
-						this.cachedResults = resultNode.GetContentNode();
+						cachedResults = resultNode.GetContentNode();
 					}
 					else {
-						this.cachedResults = resultNode;
+						cachedResults = resultNode;
 					}
 				}
-				return this.cachedResults;
+				return cachedResults;
 			}
 		}
 

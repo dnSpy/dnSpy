@@ -57,8 +57,8 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="highValue">High 64 bits of the value</param>
 		/// <param name="lowValue">Low 64 bits of the value</param>
 		public HexPosition(ulong highValue, ulong lowValue) {
-			this.hi = highValue;
-			this.lo = lowValue;
+			hi = highValue;
+			lo = lowValue;
 		}
 
 		/// <summary>

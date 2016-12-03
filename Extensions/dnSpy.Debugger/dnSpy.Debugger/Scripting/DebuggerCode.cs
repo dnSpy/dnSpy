@@ -45,11 +45,11 @@ namespace dnSpy.Debugger.Scripting {
 		public DebuggerCode(Debugger debugger, CorCode code) {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
-			this.CorCode = code;
-			this.hashCode = code.GetHashCode();
-			this.address = code.Address;
-			this.size = code.Size;
-			this.isIL = code.IsIL;
+			CorCode = code;
+			hashCode = code.GetHashCode();
+			address = code.Address;
+			size = code.Size;
+			isIL = code.IsIL;
 		}
 
 		public CodeChunkInfo[] GetCodeChunks() => debugger.Dispatcher.UI(() => {

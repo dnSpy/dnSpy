@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (resource == null)
 				throw new ArgumentNullException(nameof(resource));
 			this.treeNodeGroup = treeNodeGroup;
-			this.Resource = resource;
+			Resource = resource;
 		}
 
 		/// <summary>

@@ -143,10 +143,10 @@ namespace dnSpy.AsmEditor.Resources {
 				public readonly int Index;
 
 				public ModelInfo(ModuleDef module, Resource rsrc) {
-					this.OwnerModule = module;
-					this.Index = module.Resources.IndexOf(rsrc);
-					Debug.Assert(this.Index >= 0);
-					if (this.Index < 0)
+					OwnerModule = module;
+					Index = module.Resources.IndexOf(rsrc);
+					Debug.Assert(Index >= 0);
+					if (Index < 0)
 						throw new InvalidOperationException();
 				}
 			}
@@ -193,7 +193,7 @@ namespace dnSpy.AsmEditor.Resources {
 		DeleteModelNodes modelNodes;
 
 		DeleteResourceCommand(ResourceNode[] rsrcNodes) {
-			this.nodes = new DeletableNodes<ResourceNode>(rsrcNodes);
+			nodes = new DeletableNodes<ResourceNode>(rsrcNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteResourceCommand;
@@ -283,34 +283,34 @@ namespace dnSpy.AsmEditor.Resources {
 			public ModuleInfo(ResourceElementSetNode node) {
 				if (node == null)
 					throw new InvalidOperationException();
-				this.Node = node;
+				Node = node;
 				var module = node.GetModule();
 				Debug.Assert(module != null);
 				if (module == null)
 					throw new InvalidOperationException();
-				this.Module = module;
-				this.Index = module.Resources.IndexOf(node.Resource);
-				Debug.Assert(this.Index >= 0);
-				if (this.Index < 0)
+				Module = module;
+				Index = module.Resources.IndexOf(node.Resource);
+				Debug.Assert(Index >= 0);
+				if (Index < 0)
 					throw new InvalidOperationException();
-				this.Resource = node.Resource;
+				Resource = node.Resource;
 			}
 
 			public void Replace() {
-				Debug.Assert(this.Index < this.Module.Resources.Count && this.Module.Resources[this.Index] == this.Node.Resource);
+				Debug.Assert(Index < Module.Resources.Count && Module.Resources[Index] == Node.Resource);
 				if (NewResource == null) {
-					this.Node.RegenerateEmbeddedResource();
-					this.NewResource = this.Node.Resource;
+					Node.RegenerateEmbeddedResource();
+					NewResource = Node.Resource;
 				}
 				else
-					this.Node.Resource = this.NewResource;
-				this.Module.Resources[this.Index] = this.NewResource;
+					Node.Resource = NewResource;
+				Module.Resources[Index] = NewResource;
 			}
 
 			public void Restore() {
-				Debug.Assert(this.Index < this.Module.Resources.Count && this.Module.Resources[this.Index] == this.Node.Resource);
-				this.Node.Resource = this.Resource;
-				this.Module.Resources[this.Index] = this.Resource;
+				Debug.Assert(Index < Module.Resources.Count && Module.Resources[Index] == Node.Resource);
+				Node.Resource = Resource;
+				Module.Resources[Index] = Resource;
 			}
 		}
 
@@ -318,7 +318,7 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly List<ModuleInfo> savedResources = new List<ModuleInfo>();
 
 		DeleteResourceElementCommand(ResourceElementNode[] rsrcNodes) {
-			this.nodes = new DeletableNodes<ResourceElementNode>(rsrcNodes);
+			nodes = new DeletableNodes<ResourceElementNode>(rsrcNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteResourceCommand;
@@ -635,8 +635,8 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly ResourceNode[] nodes;
 
 		CreateFileResourceCommand(ResourcesFolderNode rsrcListNode, ResourceNode[] nodes) {
-			this.module = rsrcListNode.GetModule();
-			Debug.Assert(this.module != null);
+			module = rsrcListNode.GetModule();
+			Debug.Assert(module != null);
 			this.rsrcListNode = rsrcListNode;
 			this.nodes = nodes;
 		}
@@ -676,8 +676,8 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly ResourceNode resTreeNode;
 
 		protected CreateResourceTreeNodeCommand(ResourcesFolderNode rsrcListNode, ResourceNode resTreeNode) {
-			this.module = rsrcListNode.GetModule();
-			Debug.Assert(this.module != null);
+			module = rsrcListNode.GetModule();
+			Debug.Assert(module != null);
 			this.rsrcListNode = rsrcListNode;
 			this.resTreeNode = resTreeNode;
 		}
@@ -1075,16 +1075,16 @@ namespace dnSpy.AsmEditor.Resources {
 
 		ResourceSettingsCommand(ResourceNode rsrcNode, ResourceOptions options) {
 			this.rsrcNode = rsrcNode;
-			this.newOptions = options;
-			this.origOptions = new ResourceOptions(rsrcNode.Resource);
+			newOptions = options;
+			origOptions = new ResourceOptions(rsrcNode.Resource);
 
-			this.origParentNode = (DocumentTreeNodeData)rsrcNode.TreeNode.Parent.Data;
-			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(rsrcNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentNode = (DocumentTreeNodeData)rsrcNode.TreeNode.Parent.Data;
+			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(rsrcNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
-			this.nameChanged = origOptions.Name != newOptions.Name;
+			nameChanged = origOptions.Name != newOptions.Name;
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditResourceCommand2;
@@ -1135,14 +1135,14 @@ namespace dnSpy.AsmEditor.Resources {
 		Resource newResource;
 
 		protected CreateResourceElementCommandBase(ResourceElementSetNode rsrcSetNode, ResourceElementNode[] nodes) {
-			this.module = rsrcSetNode.GetModule();
-			Debug.Assert(this.module != null);
+			module = rsrcSetNode.GetModule();
+			Debug.Assert(module != null);
 			this.rsrcSetNode = rsrcSetNode;
 			this.nodes = nodes;
-			this.resource = rsrcSetNode.Resource;
-			this.resourceIndex = module.Resources.IndexOf(this.resource);
-			Debug.Assert(this.resourceIndex >= 0);
-			if (this.resourceIndex < 0)
+			resource = rsrcSetNode.Resource;
+			resourceIndex = module.Resources.IndexOf(resource);
+			Debug.Assert(resourceIndex >= 0);
+			if (resourceIndex < 0)
 				throw new InvalidOperationException();
 		}
 
@@ -1711,25 +1711,25 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly bool nameChanged;
 
 		protected ResourceElementSettingsBaseCommand(ResourceElementNode rsrcElNode, ResourceElementOptions options) {
-			this.rsrcSetNode = (ResourceElementSetNode)rsrcElNode.TreeNode.Parent.Data;
+			rsrcSetNode = (ResourceElementSetNode)rsrcElNode.TreeNode.Parent.Data;
 			this.rsrcElNode = rsrcElNode;
-			this.newOptions = options.Create();
-			this.origOptions = rsrcElNode.ResourceElement;
+			newOptions = options.Create();
+			origOptions = rsrcElNode.ResourceElement;
 
-			this.module = rsrcSetNode.GetModule();
-			Debug.Assert(this.module != null);
-			this.resource = rsrcSetNode.Resource;
-			this.resourceIndex = module.Resources.IndexOf(this.resource);
-			Debug.Assert(this.resourceIndex >= 0);
-			if (this.resourceIndex < 0)
+			module = rsrcSetNode.GetModule();
+			Debug.Assert(module != null);
+			resource = rsrcSetNode.Resource;
+			resourceIndex = module.Resources.IndexOf(resource);
+			Debug.Assert(resourceIndex >= 0);
+			if (resourceIndex < 0)
 				throw new InvalidOperationException();
 
-			this.origParentChildIndex = this.rsrcSetNode.TreeNode.Children.IndexOf(rsrcElNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentChildIndex = rsrcSetNode.TreeNode.Children.IndexOf(rsrcElNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
-			this.nameChanged = origOptions.Name != newOptions.Name;
+			nameChanged = origOptions.Name != newOptions.Name;
 		}
 
 		public abstract string Description { get; }

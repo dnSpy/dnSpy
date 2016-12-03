@@ -107,7 +107,7 @@ namespace dnSpy.AsmEditor.Module {
 			this.undoCommandService = undoCommandService;
 			var module = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
 			var file = DsDotNetDocument.CreateModule(DsDocumentInfo.CreateDocument(string.Empty), module, true);
-			this.fileNodeCreator = RootDocumentNodeCreator.CreateModule(documentTreeView, file);
+			fileNodeCreator = RootDocumentNodeCreator.CreateModule(documentTreeView, file);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateNetModuleCommand2;
@@ -178,9 +178,9 @@ namespace dnSpy.AsmEditor.Module {
 
 		ConvertNetModuleToAssemblyCommand(DocumentTreeNodeData[] nodes) {
 			this.nodes = nodes.Cast<ModuleDocumentNode>().ToArray();
-			this.savedStates = new SavedState[this.nodes.Length];
-			for (int i = 0; i < this.savedStates.Length; i++)
-				this.savedStates[i] = new SavedState();
+			savedStates = new SavedState[this.nodes.Length];
+			for (int i = 0; i < savedStates.Length; i++)
+				savedStates[i] = new SavedState();
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.ConvNetModuleToAssemblyCommand;
@@ -328,7 +328,7 @@ namespace dnSpy.AsmEditor.Module {
 			Debug.Assert(savedStates == null);
 			if (savedStates != null)
 				throw new InvalidOperationException();
-			this.savedStates = new SavedState[this.nodes.Length];
+			savedStates = new SavedState[nodes.Length];
 			for (int i = 0; i < nodes.Length; i++) {
 				var node = nodes[i];
 				savedStates[i] = new SavedState();
@@ -655,15 +655,15 @@ namespace dnSpy.AsmEditor.Module {
 
 		RemoveNetModuleFromAssemblyCommand(Lazy<IUndoCommandService> undoCommandService, ModuleDocumentNode modNode) {
 			this.undoCommandService = undoCommandService;
-			this.asmNode = (AssemblyDocumentNode)modNode.TreeNode.Parent.Data;
-			Debug.Assert(this.asmNode != null);
+			asmNode = (AssemblyDocumentNode)modNode.TreeNode.Parent.Data;
+			Debug.Assert(asmNode != null);
 			this.modNode = modNode;
-			this.removeIndex = asmNode.TreeNode.DataChildren.ToList().IndexOf(modNode);
-			Debug.Assert(this.removeIndex > 0);
+			removeIndex = asmNode.TreeNode.DataChildren.ToList().IndexOf(modNode);
+			Debug.Assert(removeIndex > 0);
 			Debug.Assert(asmNode.Document.AssemblyDef != null &&
-				asmNode.Document.AssemblyDef.Modules.IndexOf(modNode.Document.ModuleDef) == this.removeIndex);
-			this.removeIndexDocument = asmNode.Document.Children.IndexOf(modNode.Document);
-			Debug.Assert(this.removeIndexDocument >= 0);
+				asmNode.Document.AssemblyDef.Modules.IndexOf(modNode.Document.ModuleDef) == removeIndex);
+			removeIndexDocument = asmNode.Document.Children.IndexOf(modNode.Document);
+			Debug.Assert(removeIndexDocument >= 0);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.RemoveNetModuleCommand;
@@ -769,7 +769,7 @@ namespace dnSpy.AsmEditor.Module {
 		ModuleSettingsCommand(ModuleDocumentNode modNode, ModuleOptions newOptions) {
 			this.modNode = modNode;
 			this.newOptions = newOptions;
-			this.origOptions = new ModuleOptions(modNode.Document.ModuleDef);
+			origOptions = new ModuleOptions(modNode.Document.ModuleDef);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditModuleCommand2;

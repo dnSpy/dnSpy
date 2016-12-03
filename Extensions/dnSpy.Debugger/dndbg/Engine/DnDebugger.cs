@@ -48,7 +48,7 @@ namespace dndbg.Engine {
 			public readonly Action<DnDebugger, StepCompleteDebugCallbackEventArgs> OnCompleted;
 
 			public StepInfo(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action) {
-				this.OnCompleted = action;
+				OnCompleted = action;
 			}
 		}
 
@@ -158,15 +158,15 @@ namespace dndbg.Engine {
 		DnDebugger(ICorDebug corDebug, DebugOptions debugOptions, IDebugMessageDispatcher debugMessageDispatcher, string debuggeeVersion) {
 			if (debugMessageDispatcher == null)
 				throw new ArgumentNullException(nameof(debugMessageDispatcher));
-			this.debuggerManagedThreadId = Thread.CurrentThread.ManagedThreadId;
-			this.processes = new DebuggerCollection<ICorDebugProcess, DnProcess>(CreateDnProcess);
+			debuggerManagedThreadId = Thread.CurrentThread.ManagedThreadId;
+			processes = new DebuggerCollection<ICorDebugProcess, DnProcess>(CreateDnProcess);
 			this.debugMessageDispatcher = debugMessageDispatcher;
 			this.corDebug = corDebug;
 			this.debugOptions = debugOptions ?? new DebugOptions();
-			this.DebuggeeVersion = debuggeeVersion ?? string.Empty;
+			DebuggeeVersion = debuggeeVersion ?? string.Empty;
 
 			// I have not tested debugging with CLR 1.x. It's too old to support it so this is a won't fix
-			if (this.DebuggeeVersion.StartsWith("1."))
+			if (DebuggeeVersion.StartsWith("1."))
 				throw new NotImplementedException("Can't debug .NET 1.x assemblies. Add an App.config file to force using .NET 2.0 or later");
 
 			corDebug.Initialize();
@@ -179,7 +179,7 @@ namespace dndbg.Engine {
 
 		[Conditional("DEBUG")]
 		internal void DebugVerifyThread() {
-			Debug.Assert(Thread.CurrentThread.ManagedThreadId == this.debuggerManagedThreadId);
+			Debug.Assert(Thread.CurrentThread.ManagedThreadId == debuggerManagedThreadId);
 		}
 
 		static ICorDebug CreateCorDebug(string debuggeeVersion) {
@@ -673,9 +673,9 @@ namespace dndbg.Engine {
 		void RemoveModuleFromBreakpoints(DnModule module) {
 			if (module == null)
 				return;
-			foreach (var bp in this.ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
+			foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 				bp.RemoveModule(module);
-			foreach (var bp in this.nativeCodeBreakpointList.GetBreakpoints(module.DnModuleId))
+			foreach (var bp in nativeCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 				bp.RemoveModule(module);
 		}
 
@@ -1485,7 +1485,7 @@ namespace dndbg.Engine {
 		}
 
 		void ProcessStopped(DnProcess process, bool addStopState) {
-			this.managedCallbackCounter++;
+			managedCallbackCounter++;
 			if (!addStopState)
 				return;
 

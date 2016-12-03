@@ -30,12 +30,12 @@ namespace dndbg.DotNet {
 		public CorTypeRef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			Initialize_NoLock();
 		}
 
 		void Initialize_NoLock() {
-			this.module = readerModule;
+			module = readerModule;
 			InitNameAndScope_NoLock();
 		}
 
@@ -49,8 +49,8 @@ namespace dndbg.DotNet {
 		void InitializeName(UTF8String utf8Name, string fullName) {
 			UTF8String ns, name;
 			Utils.SplitNameAndNamespace(utf8Name, fullName, out ns, out name);
-			this.Namespace = ns;
-			this.Name = name;
+			Namespace = ns;
+			Name = name;
 		}
 
 		protected override void InitializeCustomAttributes() =>

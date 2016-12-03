@@ -31,7 +31,7 @@ namespace dndbg.DotNet {
 		public CorAssemblyDef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			Initialize_NoLock();
 		}
 

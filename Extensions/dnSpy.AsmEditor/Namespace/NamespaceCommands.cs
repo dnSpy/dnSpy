@@ -101,9 +101,9 @@ namespace dnSpy.AsmEditor.Namespace {
 				public readonly int[] Indexes;
 
 				public ModuleInfo(ModuleDef module, int count) {
-					this.Module = module;
-					this.Types = new TypeDef[count];
-					this.Indexes = new int[count];
+					Module = module;
+					Types = new TypeDef[count];
+					Indexes = new int[count];
 				}
 			}
 
@@ -162,9 +162,9 @@ namespace dnSpy.AsmEditor.Namespace {
 		DeleteModelNodes modelNodes;
 
 		DeleteNamespaceCommand(NamespaceNode[] nodes) {
-			this.parents = nodes.Select(a => (DocumentTreeNodeData)a.TreeNode.Parent.Data).ToArray();
+			parents = nodes.Select(a => (DocumentTreeNodeData)a.TreeNode.Parent.Data).ToArray();
 			this.nodes = new DeletableNodes<NamespaceNode>(nodes);
-			this.modelNodes = new DeleteModelNodes();
+			modelNodes = new DeleteModelNodes();
 		}
 
 		public string Description => GetCommandName(nodes.Count);
@@ -187,8 +187,8 @@ namespace dnSpy.AsmEditor.Namespace {
 		public readonly UTF8String OrigNamespace;
 
 		public TypeRefInfo(TypeRef tr) {
-			this.TypeRef = tr;
-			this.OrigNamespace = tr.Namespace;
+			TypeRef = tr;
+			OrigNamespace = tr.Namespace;
 		}
 	}
 
@@ -255,8 +255,8 @@ namespace dnSpy.AsmEditor.Namespace {
 			var nsNodes = nodes.Cast<NamespaceNode>().Where(a => a.Name != string.Empty).ToArray();
 			Debug.Assert(nsNodes.Length > 0);
 			this.nodes = new DeletableNodes<NamespaceNode>(nsNodes);
-			this.nsTarget = GetTarget();
-			this.typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(nodes[0].GetModule(), nsNodes);
+			nsTarget = GetTarget();
+			typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(nodes[0].GetModule(), nsNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.MoveTypesToEmptyNamespaceCommand;
@@ -420,30 +420,30 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		RenameNamespaceCommand(string newName, NamespaceNode nsNode) {
 			this.newName = newName;
-			this.origName = nsNode.Name;
+			origName = nsNode.Name;
 			this.nsNode = nsNode;
-			this.existingNsNode = (NamespaceNode)nsNode.TreeNode.Parent.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
+			existingNsNode = (NamespaceNode)nsNode.TreeNode.Parent.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
 
 			var module = nsNode.GetModule();
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
 
-			this.origParentNode = (DocumentTreeNodeData)nsNode.TreeNode.Parent.Data;
-			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(nsNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentNode = (DocumentTreeNodeData)nsNode.TreeNode.Parent.Data;
+			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(nsNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
 			// Make sure the exact same namespace names are restored if we undo. The names are UTF8
 			// strings, but not necessarily canonicalized if it's an obfuscated assembly.
 			nsNode.TreeNode.EnsureChildrenLoaded();
-			this.origChildren = nsNode.TreeNode.DataChildren.Cast<TypeNode>().ToArray();
-			this.typeNamespaces = new UTF8String[nsNode.TreeNode.Children.Count];
-			for (int i = 0; i < this.typeNamespaces.Length; i++)
-				this.typeNamespaces[i] = origChildren[i].TypeDef.Namespace;
+			origChildren = nsNode.TreeNode.DataChildren.Cast<TypeNode>().ToArray();
+			typeNamespaces = new UTF8String[nsNode.TreeNode.Children.Count];
+			for (int i = 0; i < typeNamespaces.Length; i++)
+				typeNamespaces[i] = origChildren[i].TypeDef.Namespace;
 
-			this.typeRefInfos = GetTypeRefInfos(module, new[] { nsNode });
+			typeRefInfos = GetTypeRefInfos(module, new[] { nsNode });
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.RenameNamespaceCommand;

@@ -98,16 +98,16 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly HashSet<GACFileVM> uniqueFiles;
 
 		public OpenFromGACVM(bool syntaxHighlight, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
-			this.SyntaxHighlight = syntaxHighlight;
-			this.ClassificationFormatMap = classificationFormatMap;
-			this.TextElementProvider = textElementProvider;
-			this.gacFileList = new ObservableCollection<GACFileVM>();
-			this.collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(gacFileList);
-			this.collectionView.CustomSort = new GACFileVM_Comparer();
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
-			this.searchingGAC = true;
-			this.uniqueFiles = new HashSet<GACFileVM>(new GACFileVM_EqualityComparer());
+			SyntaxHighlight = syntaxHighlight;
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
+			gacFileList = new ObservableCollection<GACFileVM>();
+			collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(gacFileList);
+			collectionView.CustomSort = new GACFileVM_Comparer();
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
+			searchingGAC = true;
+			uniqueFiles = new HashSet<GACFileVM>(new GACFileVM_EqualityComparer());
 
 			var dispatcher = Dispatcher.CurrentDispatcher;
 			Task.Factory.StartNew(() => new GACFileFinder(this, dispatcher, cancellationToken).Find(), cancellationToken)
@@ -133,7 +133,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				var vm = new GACFileVM(this, file);
 				vm.IsDuplicate = uniqueFiles.Contains(vm);
 				uniqueFiles.Add(vm);
-				this.Collection.Add(vm);
+				Collection.Add(vm);
 			}
 			RefreshCounters();
 		}

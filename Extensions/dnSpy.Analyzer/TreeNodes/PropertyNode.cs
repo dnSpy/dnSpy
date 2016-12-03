@@ -35,12 +35,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public PropertyNode(PropertyDef analyzedProperty, bool hidesParent = false) {
 			if (analyzedProperty == null)
 				throw new ArgumentNullException(nameof(analyzedProperty));
-			this.isIndexer = analyzedProperty.IsIndexer();
+			isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
 			this.hidesParent = hidesParent;
 		}
 
-		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedProperty);
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {

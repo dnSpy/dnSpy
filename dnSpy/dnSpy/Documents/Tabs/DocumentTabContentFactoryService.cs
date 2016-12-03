@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs {
 
 		[ImportingConstructor]
 		DocumentTabContentFactoryService([ImportMany] IEnumerable<Lazy<IDocumentTabContentFactory, IDocumentTabContentFactoryMetadata>> mefTabContentFactories) {
-			this.tabContentFactories = mefTabContentFactories.OrderBy(a => a.Metadata.Order).ToArray();
+			tabContentFactories = mefTabContentFactories.OrderBy(a => a.Metadata.Order).ToArray();
 			Debug.Assert(tabContentFactories.Length > 0);
 		}
 

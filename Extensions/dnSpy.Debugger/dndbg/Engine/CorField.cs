@@ -40,8 +40,8 @@ namespace dndbg.Engine {
 		public uint Token { get; }
 
 		public CorField(CorClass cls, uint token) {
-			this.Class = cls;
-			this.Token = token;
+			Class = cls;
+			Token = token;
 		}
 
 		public FieldAttributes GetAttributes() => MDAPI.GetFieldAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);

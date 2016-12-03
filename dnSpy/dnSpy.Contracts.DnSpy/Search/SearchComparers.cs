@@ -166,8 +166,8 @@ namespace dnSpy.Contracts.Search {
 		public StringLiteralSearchComparer(string s, bool caseSensitive = false, bool matchWholeString = false) {
 			if (s == null)
 				throw new ArgumentNullException(nameof(s));
-			this.str = s;
-			this.stringComparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
+			str = s;
+			stringComparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
 			this.matchWholeString = matchWholeString;
 		}
 
@@ -189,7 +189,7 @@ namespace dnSpy.Contracts.Search {
 		readonly long searchValue;
 
 		public IntegerLiteralSearchComparer(long value) {
-			this.searchValue = value;
+			searchValue = value;
 		}
 
 		public bool IsMatch(string text, object obj) {
@@ -223,7 +223,7 @@ namespace dnSpy.Contracts.Search {
 		readonly double searchValue;
 
 		public DoubleLiteralSearchComparer(double value) {
-			this.searchValue = value;
+			searchValue = value;
 		}
 
 		public bool IsMatch(string text, object obj) {

@@ -45,7 +45,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		SignatureHelpSession(SignatureHelpService signatureHelpService, Lazy<ISignatureHelpBroker> signatureHelpBroker, ITextView textView) {
 			this.signatureHelpBroker = signatureHelpBroker;
 			this.textView = textView;
-			this.signatures = new List<Signature>();
+			signatures = new List<Signature>();
 			this.signatureHelpService = signatureHelpService;
 		}
 

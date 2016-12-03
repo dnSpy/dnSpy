@@ -34,9 +34,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public DocumentListVM(OpenDocumentListVM owner, DocumentList documentList, bool isExistingList, bool isUserList) {
 			this.owner = owner;
-			this.DocumentList = documentList;
-			this.IsExistingList = isExistingList;
-			this.IsUserList = isUserList;
+			DocumentList = documentList;
+			IsExistingList = isExistingList;
+			IsUserList = isUserList;
 		}
 
 		static string Filter(string s) {

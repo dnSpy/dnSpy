@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public DocumentTreeNodeActivatedEventArgs(DocumentTreeNodeData node) {
 			if (node == null)
 				throw new ArgumentNullException(nameof(node));
-			this.Node = node;
+			Node = node;
 		}
 	}
 }

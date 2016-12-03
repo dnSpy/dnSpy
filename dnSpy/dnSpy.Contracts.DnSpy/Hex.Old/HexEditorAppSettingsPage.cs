@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex {
 
 		public HexEditorAppSettingsPage(HexEditorSettingsImpl hexEditorSettingsImpl) {
 			this.hexEditorSettingsImpl = hexEditorSettingsImpl;
-			this.displayAppSettingsVM = new HexEditorAppSettingsVM(hexEditorSettingsImpl.Clone());
+			displayAppSettingsVM = new HexEditorAppSettingsVM(hexEditorSettingsImpl.Clone());
 		}
 
 		public override void OnApply() => displayAppSettingsVM.Settings.CopyTo(hexEditorSettingsImpl);
@@ -101,10 +101,10 @@ namespace dnSpy.Contracts.Hex {
 		};
 
 		public HexEditorAppSettingsVM(HexEditorSettings hexEditorSettings) {
-			this.Settings = hexEditorSettings;
-			this.AsciiEncodingVM = new EnumListVM(asciiEncodingList, (a, b) => hexEditorSettings.AsciiEncoding = (AsciiEncoding)AsciiEncodingVM.SelectedItem);
-			this.BytesGroupCountVM = new Int32VM(a => { HasErrorUpdated(); hexEditorSettings.BytesGroupCount = BytesGroupCountVM.Value; });
-			this.BytesPerLineVM = new Int32VM(a => { HasErrorUpdated(); hexEditorSettings.BytesPerLine = BytesPerLineVM.Value; }) {
+			Settings = hexEditorSettings;
+			AsciiEncodingVM = new EnumListVM(asciiEncodingList, (a, b) => hexEditorSettings.AsciiEncoding = (AsciiEncoding)AsciiEncodingVM.SelectedItem);
+			BytesGroupCountVM = new Int32VM(a => { HasErrorUpdated(); hexEditorSettings.BytesGroupCount = BytesGroupCountVM.Value; });
+			BytesPerLineVM = new Int32VM(a => { HasErrorUpdated(); hexEditorSettings.BytesPerLine = BytesPerLineVM.Value; }) {
 				Min = 0,
 				Max = HexEditorSettings.MAX_BYTES_PER_LINE,
 			};

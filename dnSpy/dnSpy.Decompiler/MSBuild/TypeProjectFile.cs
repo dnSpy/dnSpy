@@ -38,7 +38,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		public TypeDef Type { get; }
 
 		public TypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, IDecompiler decompiler, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
-			this.Type = type;
+			Type = type;
 			this.filename = filename;
 			this.decompilationContext = decompilationContext;
 			this.decompiler = decompiler;

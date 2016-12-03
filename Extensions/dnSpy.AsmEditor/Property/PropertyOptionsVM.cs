@@ -101,7 +101,7 @@ namespace dnSpy.AsmEditor.Property {
 
 		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
-			this.origOptions = options;
+			origOptions = options;
 
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
@@ -113,16 +113,16 @@ namespace dnSpy.AsmEditor.Property {
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
 			methodSigCreatorOptions.IsPropertySig = true;
-			this.MethodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
-			this.MethodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.MethodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
-			this.GetMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
-			this.SetMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
-			this.OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
-			this.ConstantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Property_DefaultValue);
-			this.ConstantVM.PropertyChanged += constantVM_PropertyChanged;
+			MethodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
+			MethodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
+			MethodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
+			MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
+			GetMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
+			SetMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
+			OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			ConstantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Property_DefaultValue);
+			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;
 			Reinitialize();

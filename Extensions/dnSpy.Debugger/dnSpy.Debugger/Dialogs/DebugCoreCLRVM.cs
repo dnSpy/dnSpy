@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.Dialogs {
 			if (newFilename == null)
 				return;
 
-			this.DbgShimFilename = newFilename;
+			DbgShimFilename = newFilename;
 		}
 
 		void PickNewHostFilename() {
@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.Dialogs {
 			if (newFilename == null)
 				return;
 
-			this.HostFilename = newFilename;
+			HostFilename = newFilename;
 		}
 
 		void PickNewFilename() {
@@ -181,13 +181,13 @@ namespace dnSpy.Debugger.Dialogs {
 		public DebugCoreCLRVM Clone() => CopyTo(new DebugCoreCLRVM());
 
 		public DebugCoreCLRVM CopyTo(DebugCoreCLRVM other) {
-			other.DbgShimFilename = this.DbgShimFilename;
-			other.HostFilename = this.HostFilename;
-			other.HostCommandLine = this.HostCommandLine;
-			other.Filename = this.Filename;
-			other.CommandLine = this.CommandLine;
-			other.CurrentDirectory = this.CurrentDirectory;
-			other.BreakProcessKind = this.BreakProcessKind;
+			other.DbgShimFilename = DbgShimFilename;
+			other.HostFilename = HostFilename;
+			other.HostCommandLine = HostCommandLine;
+			other.Filename = Filename;
+			other.CommandLine = CommandLine;
+			other.CurrentDirectory = CurrentDirectory;
+			other.BreakProcessKind = BreakProcessKind;
 			return other;
 		}
 

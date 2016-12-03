@@ -178,20 +178,20 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			this.textView = textView;
-			this.cachedUIElements = new Dictionary<int, UIElement>();
-			this.collection = DocumentViewerUIElementCollection.Empty;
-			this.textVersionNumber = -1;
+			cachedUIElements = new Dictionary<int, UIElement>();
+			collection = DocumentViewerUIElementCollection.Empty;
+			textVersionNumber = -1;
 		}
 
 		public void SetData(DocumentViewerUIElementCollection collection) {
-			this.textVersionNumber = textView.TextSnapshot.Version.VersionNumber;
+			textVersionNumber = textView.TextSnapshot.Version.VersionNumber;
 			var newCollection = collection ?? DocumentViewerUIElementCollection.Empty;
 			if (newCollection.Count == 0)
 				newCollection = DocumentViewerUIElementCollection.Empty;
 			if (this.collection == newCollection)
 				return;
 			this.collection = newCollection;
-			this.cachedUIElements.Clear();
+			cachedUIElements.Clear();
 			tagger?.RefreshSpans(new SnapshotSpanEventArgs(new SnapshotSpan(textView.TextSnapshot, 0, textView.TextSnapshot.Length)));
 		}
 

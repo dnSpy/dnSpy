@@ -26,8 +26,8 @@ namespace dnSpy.Debugger.CallStack {
 
 		public VMPropertyChangedEventArgs(string propName, T oldValue, T newValue)
 			: base(propName) {
-			this.OldValue = oldValue;
-			this.NewValue = newValue;
+			OldValue = oldValue;
+			NewValue = newValue;
 		}
 	}
 }

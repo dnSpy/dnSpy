@@ -39,7 +39,7 @@ namespace dndbg.Engine {
 		public string DebuggeeVersion { get; }
 
 		public DesktopCLRTypeAttachInfo(string debuggeeVersion) {
-			this.DebuggeeVersion = debuggeeVersion;
+			DebuggeeVersion = debuggeeVersion;
 		}
 	}
 
@@ -80,8 +80,8 @@ namespace dndbg.Engine {
 		public DebugOptions DebugOptions { get; set; }
 
 		public AttachProcessOptions(CLRTypeAttachInfo info) {
-			this.DebugOptions = new DebugOptions();
-			this.CLRTypeAttachInfo = info;
+			DebugOptions = new DebugOptions();
+			CLRTypeAttachInfo = info;
 		}
 	}
 }

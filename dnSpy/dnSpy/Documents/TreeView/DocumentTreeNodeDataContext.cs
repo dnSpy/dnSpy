@@ -40,20 +40,20 @@ namespace dnSpy.Documents.TreeView {
 		public bool CanDragAndDrop { get; set; }
 
 		public DocumentTreeNodeDataContext(IDocumentTreeView documentTreeView, IResourceNodeFactory resourceNodeFactory, IDocumentTreeNodeFilter filter, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
-			this.DocumentTreeView = documentTreeView;
-			this.ResourceNodeFactory = resourceNodeFactory;
-			this.Filter = filter;
-			this.TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider;
-			this.FilterVersion = 1;
-			this.CanDragAndDrop = true;
+			DocumentTreeView = documentTreeView;
+			ResourceNodeFactory = resourceNodeFactory;
+			Filter = filter;
+			TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider;
+			FilterVersion = 1;
+			CanDragAndDrop = true;
 		}
 
 		public void Clear() {
-			this.DocumentTreeView = null;
-			this.Decompiler = null;
-			this.ResourceNodeFactory = null;
-			this.Filter = null;
-			this.TreeViewNodeTextElementProvider = null;
+			DocumentTreeView = null;
+			Decompiler = null;
+			ResourceNodeFactory = null;
+			Filter = null;
+			TreeViewNodeTextElementProvider = null;
 		}
 	}
 }

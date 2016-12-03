@@ -55,8 +55,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 			this.trackMouse = trackMouse;
 			this.quickInfoBroker = quickInfoBroker;
 			this.textView = textView;
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
 		}
 
 		public void Start() {

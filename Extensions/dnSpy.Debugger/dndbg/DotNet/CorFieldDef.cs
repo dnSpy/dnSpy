@@ -37,7 +37,7 @@ namespace dndbg.DotNet {
 		public CorFieldDef(CorModuleDef readerModule, uint rid, CorTypeDef ownerType) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.ownerType = ownerType;
 		}
 
@@ -111,7 +111,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			Name = Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, OriginalToken.Raw), MDAPI.GetFieldName(mdi, token) ?? string.Empty);
-			this.Attributes = origAttrs = MDAPI.GetFieldAttributes(mdi, token);
+			Attributes = origAttrs = MDAPI.GetFieldAttributes(mdi, token);
 		}
 
 		unsafe void InitSignature_NoLock() {
@@ -119,7 +119,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			var data = MDAPI.GetFieldSignatureBlob(mdi, token);
-			this.Signature = readerModule.ReadSignature(data, GenericParamContext.Create(ownerType));
+			Signature = readerModule.ReadSignature(data, GenericParamContext.Create(ownerType));
 		}
 
 		void InitCustomAttributes_NoLock() => customAttributes = null;

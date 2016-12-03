@@ -85,13 +85,13 @@ namespace dnSpy.Decompiler.MSBuild {
 				throw new ArgumentNullException(nameof(decompilationContext));
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
-			this.Module = module;
-			this.Decompiler = decompiler;
-			this.DecompilationContext = decompilationContext;
-			this.ProjectGuid = Guid.NewGuid();
-			this.UnpackResources = true;
-			this.CreateResX = true;
-			this.DecompileXaml = true;
+			Module = module;
+			Decompiler = decompiler;
+			DecompilationContext = decompilationContext;
+			ProjectGuid = Guid.NewGuid();
+			UnpackResources = true;
+			CreateResX = true;
+			DecompileXaml = true;
 		}
 	}
 }

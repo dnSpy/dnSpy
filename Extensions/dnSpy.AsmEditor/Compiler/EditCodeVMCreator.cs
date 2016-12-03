@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		EditCodeVMCreator(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.openFromGAC = openFromGAC;
-			this.openAssembly = new OpenAssembly(documentTreeView.DocumentService);
+			openAssembly = new OpenAssembly(documentTreeView.DocumentService);
 			this.decompilerService = decompilerService;
 			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}

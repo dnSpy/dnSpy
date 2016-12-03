@@ -58,11 +58,11 @@ namespace dnSpy.Contracts.HexEditor {
 		}
 
 		public HexLine(ulong offset, ulong end, string text, HexLinePart[] parts, short[] originalBytes = null) {
-			this.OriginalBytes = originalBytes;
-			this.StartOffset = offset;
-			this.EndOffset = end;
-			this.Text = text;
-			this.LineParts = parts;
+			OriginalBytes = originalBytes;
+			StartOffset = offset;
+			EndOffset = end;
+			Text = text;
+			LineParts = parts;
 		}
 
 		public DrawingVisual GetOrCreateDrawingVisual() {

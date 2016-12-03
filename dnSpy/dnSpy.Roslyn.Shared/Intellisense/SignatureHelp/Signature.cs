@@ -74,9 +74,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 			public Builder(Signature signature, SignatureHelpItem item, int? selectedParameter) {
 				this = default(Builder);
 				this.item = item;
-				this.content = new StringBuilder();
-				this.contentTagged = new List<TaggedText>();
-				this.Parameters = new List<IParameter>();
+				content = new StringBuilder();
+				contentTagged = new List<TaggedText>();
+				Parameters = new List<IParameter>();
 
 				Add(item.PrefixDisplayParts);
 				int pi = 0;

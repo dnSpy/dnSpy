@@ -60,21 +60,21 @@ namespace dnSpy.Text.Formatting {
 		public LinePart(int index, int column, Span span, IAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
 			Debug.Assert(adornmentElement != null);
 			Debug.Assert(textRunProperties != null);
-			this.Index = index;
-			this.Column = column;
-			this.Span = span;
-			this.AdornmentElement = adornmentElement;
-			this.TextRunProperties = textRunProperties;
+			Index = index;
+			Column = column;
+			Span = span;
+			AdornmentElement = adornmentElement;
+			TextRunProperties = textRunProperties;
 		}
 
 		public LinePart(int index, int column, Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
 			Debug.Assert(textRunProperties != null);
-			this.Index = index;
-			this.Column = column;
-			this.Span = span;
-			this.AdornmentElement = null;
-			this.TextRunProperties = textRunProperties;
+			Index = index;
+			Column = column;
+			Span = span;
+			AdornmentElement = null;
+			TextRunProperties = textRunProperties;
 		}
 
 		public bool BelongsTo(int lineIndex) {

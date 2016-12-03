@@ -192,17 +192,17 @@ namespace dnSpy.Text.Editor.Search {
 			if (replaceListenerProviders == null)
 				throw new ArgumentNullException(nameof(replaceListenerProviders));
 			this.wpfTextView = wpfTextView;
-			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
+			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 			this.textSearchService2 = textSearchService2;
 			this.searchSettings = searchSettings;
 			this.messageBoxService = messageBoxService;
 			this.textStructureNavigator = textStructureNavigator;
 			this.replaceListenerProviders = replaceListenerProviders;
-			this.listeners = new List<ITextMarkerListener>();
-			this.searchString = string.Empty;
-			this.replaceString = string.Empty;
-			this.searchKind = SearchKind.None;
-			this.searchControlPosition = SearchControlPosition.Default;
+			listeners = new List<ITextMarkerListener>();
+			searchString = string.Empty;
+			replaceString = string.Empty;
+			searchKind = SearchKind.None;
+			searchControlPosition = SearchControlPosition.Default;
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, (s, e) => ShowFind()));
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, (s, e) => ShowReplace()));
 			wpfTextView.Closed += WpfTextView_Closed;

@@ -47,7 +47,7 @@ namespace Example2.Extension {
 		}
 
 		MyDsDocument(string filename) {
-			this.Filename = filename;
+			Filename = filename;
 		}
 	}
 

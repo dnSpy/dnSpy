@@ -115,8 +115,8 @@ namespace dnSpy.MainApp.Settings {
 			FontFamily = textEditorSettings.FontFamily;
 			FontSize = textEditorSettings.FontSize;
 
-			this.fontFamilies = null;
-			this.fontFamilyVM = new FontFamilyVM(FontFamily);
+			fontFamilies = null;
+			fontFamilyVM = new FontFamilyVM(FontFamily);
 			Task.Factory.StartNew(() =>
 				Fonts.SystemFontFamilies.Where(a => !FontUtilities.IsSymbol(a)).OrderBy(a => a.Source.ToUpperInvariant()).Select(a => new FontFamilyVM(a)).ToArray()
 			)
@@ -138,8 +138,8 @@ namespace dnSpy.MainApp.Settings {
 		public bool IsMonospaced { get; }
 
 		public FontFamilyVM(FontFamily ff) {
-			this.FontFamily = ff;
-			this.IsMonospaced = FontUtilities.IsMonospacedFont(ff);
+			FontFamily = ff;
+			IsMonospaced = FontUtilities.IsMonospacedFont(ff);
 		}
 
 		public override bool Equals(object obj) {

@@ -51,8 +51,8 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		DsLoaderService(ISettingsService settingsService, [ImportMany] IEnumerable<Lazy<IDsLoader, IDsLoaderMetadata>> mefLoaders) {
 			this.settingsService = settingsService;
-			this.loaders = mefLoaders.OrderBy(a => a.Metadata.Order).ToArray();
-			this.windowLoader = new WindowLoader(this, settingsService, loaders);
+			loaders = mefLoaders.OrderBy(a => a.Metadata.Order).ToArray();
+			windowLoader = new WindowLoader(this, settingsService, loaders);
 		}
 
 		public void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs args) {
@@ -93,9 +93,9 @@ namespace dnSpy.MainApp {
 		public void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs appArgs) {
 			this.window = window;
 			this.appArgs = appArgs;
-			this.dsLoaderControl = new DsLoaderControl();
+			dsLoaderControl = new DsLoaderControl();
 			this.content = content;
-			this.content.SetLoadingContent(this.dsLoaderControl);
+			this.content.SetLoadingContent(dsLoaderControl);
 
 			this.window.ContentRendered += Window_ContentRendered;
 			this.window.IsEnabled = false;

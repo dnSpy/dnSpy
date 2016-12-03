@@ -78,14 +78,14 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public RawSettings(RawSettings other) {
-			this.Id = other.Id;
+			Id = other.Id;
 			CopyFrom(other);
 		}
 
 		public RawSettings(string id, DefaultImageSettings defaultSettings) {
 			if (id == null)
 				throw new ArgumentNullException(nameof(id));
-			this.Id = id;
+			Id = id;
 			Images = defaultSettings.Images ?? Array.Empty<string>();
 			Stretch = defaultSettings.Stretch ?? DefaultRawSettings.DefaultStretch;
 			StretchDirection = defaultSettings.StretchDirection ?? DefaultRawSettings.DefaultStretchDirection;
@@ -174,23 +174,23 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public void CopyFrom(RawSettings other) {
-			this.Images = other.Images;
-			this.Stretch = other.Stretch;
-			this.StretchDirection = other.StretchDirection;
-			this.Opacity = other.Opacity;
-			this.HorizontalOffset = other.HorizontalOffset;
-			this.VerticalOffset = other.VerticalOffset;
-			this.LeftMarginWidthPercent = other.LeftMarginWidthPercent;
-			this.RightMarginWidthPercent = other.RightMarginWidthPercent;
-			this.TopMarginHeightPercent = other.TopMarginHeightPercent;
-			this.BottomMarginHeightPercent = other.BottomMarginHeightPercent;
-			this.MaxHeight = other.MaxHeight;
-			this.MaxWidth = other.MaxWidth;
-			this.Zoom = other.Zoom;
-			this.ImagePlacement = other.ImagePlacement;
-			this.IsRandom = other.IsRandom;
-			this.IsEnabled = other.IsEnabled;
-			this.Interval = other.Interval;
+			Images = other.Images;
+			Stretch = other.Stretch;
+			StretchDirection = other.StretchDirection;
+			Opacity = other.Opacity;
+			HorizontalOffset = other.HorizontalOffset;
+			VerticalOffset = other.VerticalOffset;
+			LeftMarginWidthPercent = other.LeftMarginWidthPercent;
+			RightMarginWidthPercent = other.RightMarginWidthPercent;
+			TopMarginHeightPercent = other.TopMarginHeightPercent;
+			BottomMarginHeightPercent = other.BottomMarginHeightPercent;
+			MaxHeight = other.MaxHeight;
+			MaxWidth = other.MaxWidth;
+			Zoom = other.Zoom;
+			ImagePlacement = other.ImagePlacement;
+			IsRandom = other.IsRandom;
+			IsEnabled = other.IsEnabled;
+			Interval = other.Interval;
 		}
 
 		public RawSettings Clone() => new RawSettings(this);

@@ -77,8 +77,8 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
 			if (completionSourceProviders == null)
 				throw new ArgumentNullException(nameof(completionSourceProviders));
-			this.completionSets = new ObservableCollection<CompletionSet>();
-			CompletionSets = new ReadOnlyObservableCollection<CompletionSet>(this.completionSets);
+			completionSets = new ObservableCollection<CompletionSet>();
+			CompletionSets = new ReadOnlyObservableCollection<CompletionSet>(completionSets);
 			Properties = new PropertyCollection();
 			TextView = textView;
 			this.triggerPoint = triggerPoint;
@@ -112,7 +112,7 @@ namespace dnSpy.Language.Intellisense {
 			if (IsDismissed)
 				throw new InvalidOperationException();
 			IsStarted = true;
-			this.completionSources = CreateCompletionSources();
+			completionSources = CreateCompletionSources();
 
 			var list = new List<CompletionSet>();
 			foreach (var source in completionSources)

@@ -74,11 +74,11 @@ namespace dnSpy.Contracts.TreeView {
 		/// Constructor
 		/// </summary>
 		public TreeViewOptions() {
-			this.CanDragAndDrop = true;
-			this.AllowDrop = false;
-			this.IsVirtualizing = true;
-			this.VirtualizationMode = VirtualizationMode.Recycling;
-			this.SelectionMode = SelectionMode.Extended;
+			CanDragAndDrop = true;
+			AllowDrop = false;
+			IsVirtualizing = true;
+			VirtualizationMode = VirtualizationMode.Recycling;
+			SelectionMode = SelectionMode.Extended;
 		}
 	}
 }

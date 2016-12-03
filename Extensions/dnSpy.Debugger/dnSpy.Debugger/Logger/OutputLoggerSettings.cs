@@ -158,18 +158,18 @@ namespace dnSpy.Debugger.Logger {
 		OutputLoggerSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.ShowExceptionMessages = sect.Attribute<bool?>(nameof(ShowExceptionMessages)) ?? this.ShowExceptionMessages;
-			this.ShowStepFilteringMessages = sect.Attribute<bool?>(nameof(ShowStepFilteringMessages)) ?? this.ShowStepFilteringMessages;
-			this.ShowModuleLoadMessages = sect.Attribute<bool?>(nameof(ShowModuleLoadMessages)) ?? this.ShowModuleLoadMessages;
-			this.ShowModuleUnloadMessages = sect.Attribute<bool?>(nameof(ShowModuleUnloadMessages)) ?? this.ShowModuleUnloadMessages;
-			this.ShowProcessExitMessages = sect.Attribute<bool?>(nameof(ShowProcessExitMessages)) ?? this.ShowProcessExitMessages;
-			this.ShowThreadExitMessages = sect.Attribute<bool?>(nameof(ShowThreadExitMessages)) ?? this.ShowThreadExitMessages;
-			this.ShowProgramOutputMessages = sect.Attribute<bool?>(nameof(ShowProgramOutputMessages)) ?? this.ShowProgramOutputMessages;
-			this.ShowMDAMessages = sect.Attribute<bool?>(nameof(ShowMDAMessages)) ?? this.ShowMDAMessages;
-			this.ShowDebugOutputLog = sect.Attribute<bool?>(nameof(ShowDebugOutputLog)) ?? this.ShowDebugOutputLog;
-			this.disableSave = false;
+			ShowExceptionMessages = sect.Attribute<bool?>(nameof(ShowExceptionMessages)) ?? ShowExceptionMessages;
+			ShowStepFilteringMessages = sect.Attribute<bool?>(nameof(ShowStepFilteringMessages)) ?? ShowStepFilteringMessages;
+			ShowModuleLoadMessages = sect.Attribute<bool?>(nameof(ShowModuleLoadMessages)) ?? ShowModuleLoadMessages;
+			ShowModuleUnloadMessages = sect.Attribute<bool?>(nameof(ShowModuleUnloadMessages)) ?? ShowModuleUnloadMessages;
+			ShowProcessExitMessages = sect.Attribute<bool?>(nameof(ShowProcessExitMessages)) ?? ShowProcessExitMessages;
+			ShowThreadExitMessages = sect.Attribute<bool?>(nameof(ShowThreadExitMessages)) ?? ShowThreadExitMessages;
+			ShowProgramOutputMessages = sect.Attribute<bool?>(nameof(ShowProgramOutputMessages)) ?? ShowProgramOutputMessages;
+			ShowMDAMessages = sect.Attribute<bool?>(nameof(ShowMDAMessages)) ?? ShowMDAMessages;
+			ShowDebugOutputLog = sect.Attribute<bool?>(nameof(ShowDebugOutputLog)) ?? ShowDebugOutputLog;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

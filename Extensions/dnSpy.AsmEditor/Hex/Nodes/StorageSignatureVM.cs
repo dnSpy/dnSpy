@@ -37,14 +37,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public StorageSignatureVM(object owner, HexBuffer buffer, HexPosition startOffset, int stringLen)
 			: base(owner) {
-			this.LSignatureVM = new UInt32HexField(buffer, Name, "lSignature", startOffset + 0);
-			this.IMajorVerVM = new UInt16HexField(buffer, Name, "iMajorVer", startOffset + 4, true);
-			this.IMinorVerVM = new UInt16HexField(buffer, Name, "iMinorVer", startOffset + 6, true);
-			this.IExtraDataVM = new UInt32HexField(buffer, Name, "iExtraData", startOffset + 8);
-			this.IVersionStringVM = new UInt32HexField(buffer, Name, "iVersionString", startOffset + 0x0C);
-			this.VersionStringVM = new StringHexField(buffer, Name, "VersionString", startOffset + 0x10, Encoding.UTF8, stringLen);
+			LSignatureVM = new UInt32HexField(buffer, Name, "lSignature", startOffset + 0);
+			IMajorVerVM = new UInt16HexField(buffer, Name, "iMajorVer", startOffset + 4, true);
+			IMinorVerVM = new UInt16HexField(buffer, Name, "iMinorVer", startOffset + 6, true);
+			IExtraDataVM = new UInt32HexField(buffer, Name, "iExtraData", startOffset + 8);
+			IVersionStringVM = new UInt32HexField(buffer, Name, "iVersionString", startOffset + 0x0C);
+			VersionStringVM = new StringHexField(buffer, Name, "VersionString", startOffset + 0x10, Encoding.UTF8, stringLen);
 
-			this.hexFields = new HexField[] {
+			hexFields = new HexField[] {
 				LSignatureVM,
 				IMajorVerVM,
 				IMinorVerVM,

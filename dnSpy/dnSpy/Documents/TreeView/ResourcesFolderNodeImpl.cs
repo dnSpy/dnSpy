@@ -39,7 +39,7 @@ namespace dnSpy.Documents.TreeView {
 		readonly ModuleDef module;
 
 		public ResourcesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleDef module) {
-			this.TreeNodeGroup = treeNodeGroup;
+			TreeNodeGroup = treeNodeGroup;
 			this.module = module;
 		}
 

@@ -84,7 +84,7 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(editorFormatMap));
 			this.wpfHexView = wpfHexView;
 			this.editorFormatMap = editorFormatMap;
-			this.currentLineHighlighterElement = new CurrentLineHighlighterElement();
+			currentLineHighlighterElement = new CurrentLineHighlighterElement();
 			wpfHexView.Closed += WpfHexView_Closed;
 			wpfHexView.Options.OptionChanged += Options_OptionChanged;
 			UpdateEnableState();

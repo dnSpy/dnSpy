@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		RootDocumentNodeCreator(IDocumentTreeView documentTreeView, DsDocumentNode fileNode, bool restoreIndex) {
 			this.documentTreeView = documentTreeView;
-			this.documentNode = fileNode;
+			documentNode = fileNode;
 			this.restoreIndex = restoreIndex;
 		}
 

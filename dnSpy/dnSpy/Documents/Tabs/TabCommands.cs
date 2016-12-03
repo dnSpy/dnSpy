@@ -94,8 +94,8 @@ namespace dnSpy.Documents.Tabs {
 		public readonly ITabGroup TabGroup;
 
 		public TabGroupContext(ITabGroup tabGroup) {
-			this.TabGroup = tabGroup;
-			this.TabGroupService = tabGroup.TabGroupService;
+			TabGroup = tabGroup;
+			TabGroupService = tabGroup.TabGroupService;
 		}
 	}
 
@@ -359,8 +359,8 @@ namespace dnSpy.Documents.Tabs {
 		public readonly ITabGroup TabGroup;
 
 		public MenuTabGroupContext(ITabGroupService tabGroupService) {
-			this.TabGroup = tabGroupService.ActiveTabGroup;
-			this.TabGroupService = tabGroupService;
+			TabGroup = tabGroupService.ActiveTabGroup;
+			TabGroupService = tabGroupService;
 		}
 	}
 
@@ -579,7 +579,7 @@ namespace dnSpy.Documents.Tabs {
 			this.saveService = saveService;
 			this.tabsVMSettings = tabsVMSettings;
 			this.appWindow = appWindow;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.TabsDialog);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.TabsDialog);
 			this.textElementProvider = textElementProvider;
 		}
 

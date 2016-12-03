@@ -140,10 +140,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ImportSigComparer(ImportSigComparerOptions importOptions, SigComparerOptions options, ModuleDef sourceModule) {
 			if (importOptions == null)
 				throw new ArgumentNullException(nameof(importOptions));
-			this.recursionCounter = new RecursionCounter();
+			recursionCounter = new RecursionCounter();
 			this.options = options;
 			this.importOptions = importOptions;
-			this.genericArguments = null;
+			genericArguments = null;
 			this.sourceModule = sourceModule;
 		}
 

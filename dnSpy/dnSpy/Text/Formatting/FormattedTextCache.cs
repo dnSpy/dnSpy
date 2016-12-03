@@ -41,8 +41,8 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public FormattedTextCache(bool useDisplayMode) {
-			this.textFormattingMode = useDisplayMode ? TextFormattingMode.Display : TextFormattingMode.Ideal;
-			this.dict = new Dictionary<TextFormattingRunProperties, Info>();
+			textFormattingMode = useDisplayMode ? TextFormattingMode.Display : TextFormattingMode.Ideal;
+			dict = new Dictionary<TextFormattingRunProperties, Info>();
 		}
 
 		Info GetInfo(TextFormattingRunProperties props) {

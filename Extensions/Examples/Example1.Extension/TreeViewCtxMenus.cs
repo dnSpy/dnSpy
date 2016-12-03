@@ -19,8 +19,8 @@ namespace Example1.Extension {
 		public DocumentTreeNodeData[] Nodes { get; }
 
 		public TVContext(bool someValue, IEnumerable<DocumentTreeNodeData> nodes) {
-			this.SomeValue = someValue;
-			this.Nodes = nodes.ToArray();
+			SomeValue = someValue;
+			Nodes = nodes.ToArray();
 		}
 	}
 

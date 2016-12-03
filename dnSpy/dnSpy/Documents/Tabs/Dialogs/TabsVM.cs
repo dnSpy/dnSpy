@@ -75,11 +75,11 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public TabsVM(IDocumentTabService documentTabService, ISaveService saveService, ITabsVMSettings tabsVMSettings, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			this.documentTabService = documentTabService;
 			this.saveService = saveService;
-			this.ClassificationFormatMap = classificationFormatMap;
-			this.TextElementProvider = textElementProvider;
-			this.Settings = tabsVMSettings;
-			this.tabsList = new ObservableCollection<TabVM>(documentTabService.SortedTabs.Select(a => new TabVM(this, a)));
-			this.SelectedItem = tabsList.Count == 0 ? null : tabsList[0];
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
+			Settings = tabsVMSettings;
+			tabsList = new ObservableCollection<TabVM>(documentTabService.SortedTabs.Select(a => new TabVM(this, a)));
+			SelectedItem = tabsList.Count == 0 ? null : tabsList[0];
 			InitializeSaveText();
 		}
 

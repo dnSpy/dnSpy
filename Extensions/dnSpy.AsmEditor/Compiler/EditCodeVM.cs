@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.languageCompiler = languageCompiler;
 			this.decompiler = decompiler;
 			this.sourceModule = sourceModule;
-			this.assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, sourceModule, makeEverythingPublic);
+			assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, sourceModule, makeEverythingPublic);
 		}
 
 		protected abstract class AsyncStateBase : IDisposable {
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			bool disposed;
 
 			protected AsyncStateBase() {
-				this.cancellationTokenSource = new CancellationTokenSource();
+				cancellationTokenSource = new CancellationTokenSource();
 				CancellationToken = cancellationTokenSource.Token;
 			}
 

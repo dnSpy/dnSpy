@@ -247,14 +247,14 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			this.decompilerService = decompilerService;
 			this.exportTask = exportTask;
 			this.canDecompileBaml = canDecompileBaml;
-			this.unpackResources = true;
-			this.createResX = true;
-			this.decompileXaml = canDecompileBaml;
-			this.createSolution = true;
-			this.ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
-			this.decompiler = decompilerService.AllDecompilers.FirstOrDefault(a => a.ProjectFileExtension != null);
-			this.isIndeterminate = false;
-			this.ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
+			unpackResources = true;
+			createResX = true;
+			decompileXaml = canDecompileBaml;
+			createSolution = true;
+			ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
+			decompiler = decompilerService.AllDecompilers.FirstOrDefault(a => a.ProjectFileExtension != null);
+			isIndeterminate = false;
+			ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 		}
 
 		bool CanPickDestDir => true;

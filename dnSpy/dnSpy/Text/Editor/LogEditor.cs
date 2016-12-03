@@ -79,8 +79,8 @@ namespace dnSpy.Text.Editor {
 		};
 
 		public LogEditor(LogEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
-			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.cachedColorsList = new CachedColorsList();
+			dispatcher = Dispatcher.CurrentDispatcher;
+			cachedColorsList = new CachedColorsList();
 			options = options?.Clone() ?? new LogEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
 
@@ -93,7 +93,7 @@ namespace dnSpy.Text.Editor {
 			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
 			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.wpfTextView = wpfTextViewHost.TextView;
+			wpfTextView = wpfTextViewHost.TextView;
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);

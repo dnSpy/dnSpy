@@ -35,23 +35,23 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public ExceptionHandlerOptions(Dictionary<object, object> ops, ExceptionHandler eh) {
-			this.TryStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.TryStart);
-			this.TryEnd = (InstructionVM)BodyUtils.TryGetVM(ops, eh.TryEnd);
-			this.FilterStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.FilterStart);
-			this.HandlerStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.HandlerStart);
-			this.HandlerEnd = (InstructionVM)BodyUtils.TryGetVM(ops, eh.HandlerEnd);
-			this.CatchType = eh.CatchType;
-			this.HandlerType = eh.HandlerType;
+			TryStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.TryStart);
+			TryEnd = (InstructionVM)BodyUtils.TryGetVM(ops, eh.TryEnd);
+			FilterStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.FilterStart);
+			HandlerStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.HandlerStart);
+			HandlerEnd = (InstructionVM)BodyUtils.TryGetVM(ops, eh.HandlerEnd);
+			CatchType = eh.CatchType;
+			HandlerType = eh.HandlerType;
 		}
 
 		public ExceptionHandler CopyTo(Dictionary<object, object> ops, ExceptionHandler eh) {
-			eh.TryStart = BodyUtils.TryGetModel(ops, this.TryStart) as Instruction;
-			eh.TryEnd = BodyUtils.TryGetModel(ops, this.TryEnd) as Instruction;
-			eh.FilterStart = BodyUtils.TryGetModel(ops, this.FilterStart) as Instruction;
-			eh.HandlerStart = BodyUtils.TryGetModel(ops, this.HandlerStart) as Instruction;
-			eh.HandlerEnd = BodyUtils.TryGetModel(ops, this.HandlerEnd) as Instruction;
-			eh.CatchType = this.CatchType;
-			eh.HandlerType = this.HandlerType;
+			eh.TryStart = BodyUtils.TryGetModel(ops, TryStart) as Instruction;
+			eh.TryEnd = BodyUtils.TryGetModel(ops, TryEnd) as Instruction;
+			eh.FilterStart = BodyUtils.TryGetModel(ops, FilterStart) as Instruction;
+			eh.HandlerStart = BodyUtils.TryGetModel(ops, HandlerStart) as Instruction;
+			eh.HandlerEnd = BodyUtils.TryGetModel(ops, HandlerEnd) as Instruction;
+			eh.CatchType = CatchType;
+			eh.HandlerType = HandlerType;
 			return eh;
 		}
 

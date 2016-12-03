@@ -54,10 +54,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		TabsVMSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
-			this.disableSave = false;
+			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

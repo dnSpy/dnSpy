@@ -33,16 +33,16 @@ namespace dnSpy.MainApp {
 		}
 
 		public SavedWindowState(MetroWindow window) {
-			this.Bounds = window.RestoreBounds;
+			Bounds = window.RestoreBounds;
 			var source = PresentationSource.FromVisual(window);
 			Debug.Assert(source != null);
 			if (source != null) {
-				var t = this.Bounds;
+				var t = Bounds;
 				t = Rect.Transform(Bounds, source.CompositionTarget.TransformToDevice);
-				this.Bounds = new Rect(t.TopLeft, this.Bounds.Size);
+				Bounds = new Rect(t.TopLeft, Bounds.Size);
 			}
-			this.IsFullScreen = window.IsFullScreen;
-			this.WindowState = window.WindowState;
+			IsFullScreen = window.IsFullScreen;
+			WindowState = window.WindowState;
 		}
 
 		public SavedWindowState Write(ISettingsSection section) {

@@ -125,7 +125,7 @@ namespace dnSpy.Text.Editor.Operations {
 				this.editorOperations = editorOperations;
 				AnchorPoint = editorOperations.Selection.AnchorPoint;
 				ActivePoint = editorOperations.Selection.ActivePoint;
-				this.caretPosition = editorOperations.Caret.Position.VirtualBufferPosition;
+				caretPosition = editorOperations.Caret.Position.VirtualBufferPosition;
 			}
 
 			public void UpdatePositions() {

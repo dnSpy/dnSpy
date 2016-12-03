@@ -39,7 +39,7 @@ namespace dnSpy.Decompiler.Settings {
 				throw new ArgumentNullException(nameof(getter));
 			if (setter == null)
 				throw new ArgumentNullException(nameof(setter));
-			this.Guid = guid;
+			Guid = guid;
 			this.getter = getter;
 			this.setter = setter;
 		}

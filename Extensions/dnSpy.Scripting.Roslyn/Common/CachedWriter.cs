@@ -32,8 +32,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		public CachedWriter(ScriptGlobals owner) {
 			this.owner = owner;
-			this.PrintOptions = owner.PrintOptionsImpl.Clone();
-			this.cachedList = new List<ColorAndText>();
+			PrintOptions = owner.PrintOptionsImpl.Clone();
+			cachedList = new List<ColorAndText>();
 		}
 
 		public void Dispose() => Flush();

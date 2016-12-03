@@ -80,15 +80,15 @@ namespace dndbg.Engine {
 			: base(code) {
 			int i;
 			int hr = code.IsIL(out i);
-			this.IsIL = hr >= 0 && i != 0;
+			IsIL = hr >= 0 && i != 0;
 
-			hr = code.GetSize(out this.size);
+			hr = code.GetSize(out size);
 			if (hr < 0)
-				this.size = 0;
+				size = 0;
 
-			hr = code.GetAddress(out this.address);
+			hr = code.GetAddress(out address);
 			if (hr < 0)
-				this.address = 0;
+				address = 0;
 
 			//TODO: ICorDebugCode::GetCode
 			//TODO: ICorDebugCode::GetILToNativeMapping

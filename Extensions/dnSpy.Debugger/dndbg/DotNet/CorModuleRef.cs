@@ -30,12 +30,12 @@ namespace dndbg.DotNet {
 		public CorModuleRef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			Initialize_NoLock();
 		}
 
 		void Initialize_NoLock() {
-			this.module = readerModule;
+			module = readerModule;
 			InitName_NoLock();
 		}
 

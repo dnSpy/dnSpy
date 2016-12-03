@@ -91,11 +91,11 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.chain = chain;
-			this.hashCode = chain.GetHashCode();
-			this.isManaged = chain.IsManaged;
-			this.reason = (ChainReason)chain.Reason;
-			this.stackStart = chain.StackStart;
-			this.stackEnd = chain.StackEnd;
+			hashCode = chain.GetHashCode();
+			isManaged = chain.IsManaged;
+			reason = (ChainReason)chain.Reason;
+			stackStart = chain.StackStart;
+			stackEnd = chain.StackEnd;
 		}
 
 		public override bool Equals(object obj) => (obj as StackChain)?.chain == chain;

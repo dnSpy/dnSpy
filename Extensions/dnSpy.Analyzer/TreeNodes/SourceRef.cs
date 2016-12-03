@@ -25,9 +25,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public uint ILOffset { get; }
 		public IMDTokenProvider Reference { get; }
 		public SourceRef(MethodDef method, uint offset, IMDTokenProvider reference) {
-			this.Method = method;
-			this.ILOffset = offset;
-			this.Reference = reference;
+			Method = method;
+			ILOffset = offset;
+			Reference = reference;
 		}
 	}
 }

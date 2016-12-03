@@ -44,7 +44,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 
 		[ImportingConstructor]
 		CompletionToolTipProvider(IContentTypeRegistryService contentTypeRegistryService, ITaggedTextElementProviderService taggedTextElementProviderService) {
-			this.contentType = contentTypeRegistryService.GetContentType(RoslynContentTypes.CompletionToolTipRoslyn);
+			contentType = contentTypeRegistryService.GetContentType(RoslynContentTypes.CompletionToolTipRoslyn);
 			this.taggedTextElementProviderService = taggedTextElementProviderService;
 		}
 
@@ -82,11 +82,11 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 
 			public AsyncToolTipContent(CompletionToolTipProvider owner, RoslynCompletionSet completionSet, RoslynCompletion completion, ICompletionSession session, ITaggedTextElementProviderService taggedTextElementProviderService, bool colorize) {
 				this.owner = owner;
-				this.Session = session;
-				this.cancellationTokenSource = new CancellationTokenSource();
+				Session = session;
+				cancellationTokenSource = new CancellationTokenSource();
 				this.taggedTextElementProviderService = taggedTextElementProviderService;
 				this.colorize = colorize;
-				this.Session.Dismissed += Session_Dismissed;
+				Session.Dismissed += Session_Dismissed;
 				Unloaded += AsyncToolTipContent_Unloaded;
 				GetDescriptionAsync(completionSet, completion, cancellationTokenSource.Token)
 				.ContinueWith(t => {

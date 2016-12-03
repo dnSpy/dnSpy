@@ -47,11 +47,11 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		ImageMonikerService() {
-			this.lockObj = new object();
-			this.toImageReferenceDict = new Dictionary<ImageMoniker, ImageReference>(ImageMonikerEqualityComparer.Instance);
-			this.toImageMonikerDict = new Dictionary<ImageReference, ImageMoniker>(ImageReferenceEqualityComparer.Instance);
-			this.imageMonikerGuid = Guid.NewGuid();
-			this.imageMonikerId = 1;
+			lockObj = new object();
+			toImageReferenceDict = new Dictionary<ImageMoniker, ImageReference>(ImageMonikerEqualityComparer.Instance);
+			toImageMonikerDict = new Dictionary<ImageReference, ImageMoniker>(ImageReferenceEqualityComparer.Instance);
+			imageMonikerGuid = Guid.NewGuid();
+			imageMonikerId = 1;
 		}
 
 		public ImageMoniker ToImageMoniker(ImageReference imageReference) {

@@ -47,7 +47,7 @@ namespace Example2.Extension {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(1);
 
 			public TreeNodeGroupImpl(double order) {
-				this.Order = order;
+				Order = order;
 			}
 
 			public double Order { get; }
@@ -134,7 +134,7 @@ namespace Example2.Extension {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(1);
 
 			public TreeNodeGroupImpl(double order) {
-				this.Order = order;
+				Order = order;
 			}
 
 			public double Order { get; }
@@ -159,7 +159,7 @@ namespace Example2.Extension {
 		public string Message { get; }
 
 		public SomeMessageNode(string msg) {
-			this.Message = msg;
+			Message = msg;
 		}
 
 		public override Guid Guid => THE_GUID;
@@ -175,7 +175,7 @@ namespace Example2.Extension {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(0);
 
 			public TreeNodeGroupImpl(double order) {
-				this.Order = order;
+				Order = order;
 			}
 
 			public double Order { get; }

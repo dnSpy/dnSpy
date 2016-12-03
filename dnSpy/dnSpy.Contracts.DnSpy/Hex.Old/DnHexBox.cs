@@ -112,8 +112,8 @@ namespace dnSpy.Contracts.Hex {
 		}
 
 		void Add(ICommand command, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec, ModifierKeys modifiers, Key key) {
-			this.CommandBindings.Add(new CommandBinding(command, exec, canExec));
-			this.InputBindings.Add(new KeyBinding(command, key, modifiers));
+			CommandBindings.Add(new CommandBinding(command, exec, canExec));
+			InputBindings.Add(new KeyBinding(command, key, modifiers));
 		}
 
 		public ulong DocumentStartOffset => Document?.StartOffset ?? 0;

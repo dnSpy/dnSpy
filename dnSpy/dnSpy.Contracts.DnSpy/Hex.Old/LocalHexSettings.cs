@@ -39,31 +39,31 @@ namespace dnSpy.Contracts.Hex {
 		}
 
 		public LocalHexSettings(DnHexBox dnHexBox) {
-			this.BytesGroupCount = dnHexBox.BytesGroupCount;
-			this.BytesPerLine = dnHexBox.BytesPerLine;
-			this.UseHexPrefix = dnHexBox.UseHexPrefix;
-			this.ShowAscii = dnHexBox.ShowAscii;
-			this.LowerCaseHex = dnHexBox.LowerCaseHex;
-			this.AsciiEncoding = dnHexBox.AsciiEncoding;
-			this.HexOffsetSize = dnHexBox.HexOffsetSize;
-			this.UseRelativeOffsets = dnHexBox.UseRelativeOffsets;
-			this.BaseOffset = dnHexBox.BaseOffset;
-			this.StartOffset = dnHexBox.StartOffset == dnHexBox.DocumentStartOffset ? (ulong?)null : dnHexBox.StartOffset;
-			this.EndOffset = dnHexBox.EndOffset == dnHexBox.DocumentEndOffset ? (ulong?)null : dnHexBox.EndOffset;
+			BytesGroupCount = dnHexBox.BytesGroupCount;
+			BytesPerLine = dnHexBox.BytesPerLine;
+			UseHexPrefix = dnHexBox.UseHexPrefix;
+			ShowAscii = dnHexBox.ShowAscii;
+			LowerCaseHex = dnHexBox.LowerCaseHex;
+			AsciiEncoding = dnHexBox.AsciiEncoding;
+			HexOffsetSize = dnHexBox.HexOffsetSize;
+			UseRelativeOffsets = dnHexBox.UseRelativeOffsets;
+			BaseOffset = dnHexBox.BaseOffset;
+			StartOffset = dnHexBox.StartOffset == dnHexBox.DocumentStartOffset ? (ulong?)null : dnHexBox.StartOffset;
+			EndOffset = dnHexBox.EndOffset == dnHexBox.DocumentEndOffset ? (ulong?)null : dnHexBox.EndOffset;
 		}
 
 		public void CopyTo(DnHexBox dnHexBox) {
-			dnHexBox.BytesGroupCount = this.BytesGroupCount;
-			dnHexBox.BytesPerLine = this.BytesPerLine;
-			dnHexBox.UseHexPrefix = this.UseHexPrefix;
-			dnHexBox.ShowAscii = this.ShowAscii;
-			dnHexBox.LowerCaseHex = this.LowerCaseHex;
-			dnHexBox.AsciiEncoding = this.AsciiEncoding;
-			dnHexBox.HexOffsetSize = this.HexOffsetSize;
-			dnHexBox.UseRelativeOffsets = this.UseRelativeOffsets;
-			dnHexBox.BaseOffset = this.BaseOffset;
-			dnHexBox.StartOffset = this.StartOffset ?? dnHexBox.DocumentStartOffset;
-			dnHexBox.EndOffset = this.EndOffset ?? dnHexBox.DocumentEndOffset;
+			dnHexBox.BytesGroupCount = BytesGroupCount;
+			dnHexBox.BytesPerLine = BytesPerLine;
+			dnHexBox.UseHexPrefix = UseHexPrefix;
+			dnHexBox.ShowAscii = ShowAscii;
+			dnHexBox.LowerCaseHex = LowerCaseHex;
+			dnHexBox.AsciiEncoding = AsciiEncoding;
+			dnHexBox.HexOffsetSize = HexOffsetSize;
+			dnHexBox.UseRelativeOffsets = UseRelativeOffsets;
+			dnHexBox.BaseOffset = BaseOffset;
+			dnHexBox.StartOffset = StartOffset ?? dnHexBox.DocumentStartOffset;
+			dnHexBox.EndOffset = EndOffset ?? dnHexBox.DocumentEndOffset;
 		}
 	}
 }

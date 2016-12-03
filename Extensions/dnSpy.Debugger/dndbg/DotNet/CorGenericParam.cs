@@ -34,7 +34,7 @@ namespace dndbg.DotNet {
 		public CorGenericParam(CorModuleDef readerModule, uint rid, ICorTypeOrMethodDef owner) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.owner = owner;
 		}
 
@@ -61,7 +61,7 @@ namespace dndbg.DotNet {
 					return;
 				}
 
-				base.owner = this.owner;
+				base.owner = owner;
 				InitGenericParamProps_NoLock();
 				InitGenericParamConstraints_NoLock();
 				InitCustomAttributes_NoLock();
@@ -90,8 +90,8 @@ namespace dndbg.DotNet {
 			Name = MDAPI.GetGenericParamName(mdi2, token) ?? string.Empty;
 			Kind = null;
 			GenericParamAttributes attrs;
-			MDAPI.GetGenericParamNumAndAttrs(mdi2, token, out this.number, out attrs);
-			this.attributes = (int)attrs;
+			MDAPI.GetGenericParamNumAndAttrs(mdi2, token, out number, out attrs);
+			attributes = (int)attrs;
 		}
 
 		public void UpdateGenericParamConstraints() {

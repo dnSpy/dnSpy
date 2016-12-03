@@ -58,7 +58,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(spaceReservationManagerNames));
 			this.wpfTextView = wpfTextView;
 			this.spaceReservationManagerNames = spaceReservationManagerNames;
-			this.spaceReservationManagers = new SpaceReservationManager[spaceReservationManagerNames.Length];
+			spaceReservationManagers = new SpaceReservationManager[spaceReservationManagerNames.Length];
 			wpfTextView.Closed += WpfTextView_Closed;
 		}
 

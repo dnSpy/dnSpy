@@ -28,8 +28,8 @@ namespace dnSpy.Documents.Tabs {
 		public object UIState { get; }
 
 		public TabContentState(DocumentTabContent documentTabContent, object uiState) {
-			this.DocumentTabContent = documentTabContent;
-			this.UIState = uiState;
+			DocumentTabContent = documentTabContent;
+			UIState = uiState;
 		}
 	}
 
@@ -41,8 +41,8 @@ namespace dnSpy.Documents.Tabs {
 		DocumentTabContent current;
 
 		public TabHistory() {
-			this.oldList = new List<TabContentState>();
-			this.newList = new List<TabContentState>();
+			oldList = new List<TabContentState>();
+			newList = new List<TabContentState>();
 		}
 
 		public void SetCurrent(DocumentTabContent content, bool saveCurrent) {
@@ -50,14 +50,14 @@ namespace dnSpy.Documents.Tabs {
 				throw new ArgumentNullException(nameof(content));
 			if (saveCurrent && current != null)
 				oldList.Add(new TabContentState(current, current.DocumentTab.UIContext.CreateUIState()));
-			this.current = content;
+			current = content;
 			newList.Clear();
 		}
 
 		public void OverwriteCurrent(DocumentTabContent content) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
-			this.current = content;
+			current = content;
 		}
 
 		public bool CanNavigateBackward => oldList.Count > 0;

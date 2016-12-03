@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Formatting {
 			if (linePartsCollection == null)
 				throw new ArgumentNullException(nameof(linePartsCollection));
 			this.linePartsCollection = linePartsCollection;
-			this.text = linePartsCollection.Text;
+			text = linePartsCollection.Text;
 		}
 
 		public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) =>

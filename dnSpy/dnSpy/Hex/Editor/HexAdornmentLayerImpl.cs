@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Editor {
 			HexView = hexView;
 			this.layerKind = layerKind;
 			Info = info;
-			this.adornmentLayerElements = new List<HexAdornmentLayerElementImpl>();
+			adornmentLayerElements = new List<HexAdornmentLayerElementImpl>();
 		}
 
 		public override bool AddAdornment(VSTE.AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object tag, UIElement adornment, VSTE.AdornmentRemovedCallback removedCallback) {

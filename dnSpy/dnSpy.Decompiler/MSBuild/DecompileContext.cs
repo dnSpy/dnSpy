@@ -25,8 +25,8 @@ namespace dnSpy.Decompiler.MSBuild {
 		public IMSBuildProjectWriterLogger Logger { get; }
 
 		public DecompileContext(CancellationToken ct, IMSBuildProjectWriterLogger logger) {
-			this.CancellationToken = ct;
-			this.Logger = logger ?? NoMSBuildProjectWriterLogger.Instance;
+			CancellationToken = ct;
+			Logger = logger ?? NoMSBuildProjectWriterLogger.Instance;
 		}
 	}
 }

@@ -299,21 +299,21 @@ namespace dnSpy.AsmEditor.Method {
 
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
 			methodSigCreatorOptions.IsPropertySig = false;
-			this.MethodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
-			this.MethodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.MethodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
-			this.MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
+			MethodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
+			MethodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
+			MethodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
+			MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
+			MethodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService, ownerType, ownerMethod);
-			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, ownerType, ownerMethod);
-			this.ParamDefsVM = new ParamDefsVM(ownerModule, decompilerService, ownerType, ownerMethod);
-			this.GenericParamsVM = new GenericParamsVM(ownerModule, decompilerService, ownerType, ownerMethod);
-			this.MethodOverridesVM = new MethodOverridesVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			ParamDefsVM = new ParamDefsVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			GenericParamsVM = new GenericParamsVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			MethodOverridesVM = new MethodOverridesVM(ownerModule, decompilerService, ownerType, ownerMethod);
 
-			this.origOptions = options;
+			origOptions = options;
 
-			this.ImplMapVM = new ImplMapVM(ownerModule);
+			ImplMapVM = new ImplMapVM(ownerModule);
 			ImplMapVM.PropertyChanged += implMapVM_PropertyChanged;
 
 			ImplMapVM.IsEnabled = PinvokeImpl;

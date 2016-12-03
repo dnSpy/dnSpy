@@ -258,7 +258,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			this.textView = textView;
-			this.bracePairCollection = BracePairCollection.Empty;
+			bracePairCollection = BracePairCollection.Empty;
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;
 			UpdateBraceMatching();

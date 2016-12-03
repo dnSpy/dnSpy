@@ -60,11 +60,11 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.settingsService = settingsService;
 			this.guid = guid;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(guid);
-			this.WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? this.WordWrapStyle;
-			this.ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? this.ShowLineNumbers;
-			this.disableSave = false;
+			WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? WordWrapStyle;
+			ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? ShowLineNumbers;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

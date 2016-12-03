@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Utilities {
 				throw new ArgumentNullException(nameof(action));
 			this.milliseconds = milliseconds;
 			this.action = action;
-			this.dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(milliseconds), DispatcherPriority.Send, StartIt, Dispatcher.CurrentDispatcher);
+			dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(milliseconds), DispatcherPriority.Send, StartIt, Dispatcher.CurrentDispatcher);
 		}
 
 		void StartIt(object sender, EventArgs e) {

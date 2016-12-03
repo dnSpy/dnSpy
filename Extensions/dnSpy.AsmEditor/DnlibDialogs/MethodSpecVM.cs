@@ -65,16 +65,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public MethodSpecVM(MethodSpecOptions options, TypeSigCreatorOptions typeSigCreatorOptions) {
-			this.origOptions = options;
+			origOptions = options;
 			this.typeSigCreatorOptions = typeSigCreatorOptions;
-			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerService);
+			CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerService);
 
 			this.typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			this.typeSigCreatorOptions.CanAddGenericTypeVar = true;
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
 
-			this.CreateTypeSigArrayVM = new CreateTypeSigArrayVM(typeSigCreatorOptions, null);
+			CreateTypeSigArrayVM = new CreateTypeSigArrayVM(typeSigCreatorOptions, null);
 
 			Reinitialize();
 		}
@@ -91,16 +91,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MethodSpecOptions CreateMethodSpecOptions() => CopyTo(new MethodSpecOptions());
 
 		void InitializeFrom(MethodSpecOptions options) {
-			this.Method = options.Method;
+			Method = options.Method;
 			var gim = options.Instantiation as GenericInstMethodSig;
 			CreateTypeSigArrayVM.TypeSigCollection.Clear();
 			if (gim != null)
 				CreateTypeSigArrayVM.TypeSigCollection.AddRange(gim.GenericArguments);
-			this.CustomAttributesVM.InitializeFrom(options.CustomAttributes);
+			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
 		MethodSpecOptions CopyTo(MethodSpecOptions options) {
-			options.Method = this.Method;
+			options.Method = Method;
 			options.Instantiation = new GenericInstMethodSig(CreateTypeSigArrayVM.TypeSigCollection);
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));

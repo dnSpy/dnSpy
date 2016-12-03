@@ -117,11 +117,11 @@ namespace dnSpy.Debugger.Exceptions {
 			this.exceptionService = exceptionService;
 			this.exceptionListSettings = exceptionListSettings;
 			this.getNewExceptionName = getNewExceptionName;
-			this.exceptionContext = new ExceptionContext(exceptionService, classificationFormatMap, textElementProvider) {
+			exceptionContext = new ExceptionContext(exceptionService, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightExceptions,
 			};
-			this.exceptionsList = new ObservableCollection<ExceptionVM>();
-			this.CollectionView = CollectionViewSource.GetDefaultView(exceptionsList);
+			exceptionsList = new ObservableCollection<ExceptionVM>();
+			CollectionView = CollectionViewSource.GetDefaultView(exceptionsList);
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			exceptionService.Changed += ExceptionService_Changed;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;

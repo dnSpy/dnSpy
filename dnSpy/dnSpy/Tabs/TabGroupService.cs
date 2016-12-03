@@ -91,14 +91,14 @@ namespace dnSpy.Tabs {
 
 		public TabGroupService(TabService tabService, IMenuService menuService, IWpfFocusService wpfFocusService, TabGroupServiceOptions options) {
 			this.options = (options ?? new TabGroupServiceOptions()).Clone();
-			this.stackedContent = new StackedContent<TabGroup>();
-			this.tabSelectionChanged = new WeakEventList<TabSelectedEventArgs>();
-			this.tabGroupSelectionChanged = new WeakEventList<TabGroupSelectedEventArgs>();
-			this.tabGroupCollectionChanged = new WeakEventList<TabGroupCollectionChangedEventArgs>();
+			stackedContent = new StackedContent<TabGroup>();
+			tabSelectionChanged = new WeakEventList<TabSelectedEventArgs>();
+			tabGroupSelectionChanged = new WeakEventList<TabGroupSelectedEventArgs>();
+			tabGroupCollectionChanged = new WeakEventList<TabGroupCollectionChangedEventArgs>();
 			this.tabService = tabService;
 			this.menuService = menuService;
 			this.wpfFocusService = wpfFocusService;
-			this._activeIndex = -1;
+			_activeIndex = -1;
 		}
 
 		ITabGroup ITabGroupService.Create() => Create(stackedContent.Count, null);

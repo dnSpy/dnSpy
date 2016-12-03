@@ -32,7 +32,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public RawEmbeddedResourceProjectFile(string filename, EmbeddedResource er) {
 			this.filename = filename;
-			this.embeddedResource = er;
+			embeddedResource = er;
 		}
 
 		public override void Create(DecompileContext ctx) {

@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public LineLocationSpan? LineLocationSpan => Diagnostic.LineLocationSpan;
 
 		public CompilerDiagnosticVM(CompilerDiagnostic diag, ImageReference imageReference) {
-			this.Diagnostic = diag;
+			Diagnostic = diag;
 			ImageReference = imageReference;
 		}
 

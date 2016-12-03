@@ -39,8 +39,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="value">Value</param>
 		public ValueResult(object value) {
-			this.Value = value;
-			this.IsValid = true;
+			Value = value;
+			IsValid = true;
 		}
 
 		/// <summary>

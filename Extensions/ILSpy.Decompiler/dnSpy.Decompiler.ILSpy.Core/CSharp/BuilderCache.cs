@@ -38,8 +38,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public readonly StringBuilder XmlDoc_StringBuilder;
 
 		public AstBuilderState() {
-			this.AstBuilder = new AstBuilder(new DecompilerContext(null, null, true));
-			this.XmlDoc_StringBuilder = new StringBuilder();
+			AstBuilder = new AstBuilder(new DecompilerContext(null, null, true));
+			XmlDoc_StringBuilder = new StringBuilder();
 		}
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		readonly ThreadSafeObjectPool<AstBuilderState> astBuilderStatePool;
 
 		public BuilderCache() {
-			this.astBuilderStatePool = new ThreadSafeObjectPool<AstBuilderState>(Environment.ProcessorCount, createAstBuilderState, resetAstBuilderState);
+			astBuilderStatePool = new ThreadSafeObjectPool<AstBuilderState>(Environment.ProcessorCount, createAstBuilderState, resetAstBuilderState);
 		}
 
 		static readonly Func<AstBuilderState> createAstBuilderState = () => new AstBuilderState();

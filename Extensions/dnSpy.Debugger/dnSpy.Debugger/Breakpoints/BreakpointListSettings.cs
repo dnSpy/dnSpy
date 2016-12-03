@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			public DisableSaveHelper(BreakpointListSettings settings) {
 				this.settings = settings;
-				this.saveId = settings.saveId;
+				saveId = settings.saveId;
 				settings.disableSaveCounter++;
 			}
 

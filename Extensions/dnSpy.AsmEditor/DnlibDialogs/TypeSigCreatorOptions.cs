@@ -60,9 +60,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public IDecompilerService DecompilerService { get; }
 
 		public TypeSigCreatorOptions(ModuleDef ownerModule, IDecompilerService decompilerService) {
-			this.OwnerModule = ownerModule;
-			this.Decompiler = decompilerService.Decompiler;
-			this.DecompilerService = decompilerService;
+			OwnerModule = ownerModule;
+			Decompiler = decompilerService.Decompiler;
+			DecompilerService = decompilerService;
 		}
 
 		public TypeSigCreatorOptions Clone() => (TypeSigCreatorOptions)MemberwiseClone();

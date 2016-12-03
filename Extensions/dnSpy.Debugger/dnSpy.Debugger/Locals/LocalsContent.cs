@@ -47,9 +47,9 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		LocalsContent(IWpfCommandService wpfCommandService, ILocalsVM localsVM) {
-			this.localsControl = new LocalsControl();
-			this.vmLocals = localsVM;
-			this.localsControl.DataContext = this.vmLocals;
+			localsControl = new LocalsControl();
+			vmLocals = localsVM;
+			localsControl.DataContext = vmLocals;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_CONTROL, localsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_LOCALS_LISTVIEW, localsControl.ListView);

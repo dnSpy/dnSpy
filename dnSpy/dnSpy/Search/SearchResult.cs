@@ -248,8 +248,8 @@ namespace dnSpy.Search {
 
 		public MessageSearchResult(string msg, object color, bool first) {
 			this.msg = msg;
-			this.NameObject = new ErrorMessage(msg, color);
-			this.order = first ? int.MinValue : int.MaxValue;
+			NameObject = new ErrorMessage(msg, color);
+			order = first ? int.MinValue : int.MaxValue;
 		}
 
 		public override string ToString() => msg;

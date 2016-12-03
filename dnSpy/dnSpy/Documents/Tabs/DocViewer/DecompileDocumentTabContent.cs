@@ -93,7 +93,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public DecompileDocumentTabContent(DecompileDocumentTabContentFactory decompileDocumentTabContentFactory, DocumentTreeNodeData[] nodes, IDecompiler decompiler) {
 			this.decompileDocumentTabContentFactory = decompileDocumentTabContentFactory;
 			this.nodes = nodes;
-			this.Decompiler = decompiler;
+			Decompiler = decompiler;
 		}
 
 		public override DocumentTabContent Clone() =>

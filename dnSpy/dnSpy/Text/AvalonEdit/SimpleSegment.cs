@@ -29,8 +29,8 @@ namespace dnSpy.Text.AvalonEdit {
 		public readonly int Offset, Length;
 
 		public SimpleSegment(int offset, int length) {
-			this.Offset = offset;
-			this.Length = length;
+			Offset = offset;
+			Length = length;
 		}
 
 		public override int GetHashCode() {
@@ -44,7 +44,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		public bool Equals(SimpleSegment other) {
-			return this.Offset == other.Offset && this.Length == other.Length;
+			return Offset == other.Offset && Length == other.Length;
 		}
 
 		public static bool operator ==(SimpleSegment left, SimpleSegment right) {

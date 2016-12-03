@@ -45,7 +45,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public DummyDecompiler() {
-			this.Settings = new DummySettings();
+			Settings = new DummySettings();
 		}
 	}
 }

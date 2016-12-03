@@ -86,11 +86,11 @@ namespace dndbg.Engine {
 		}
 
 		public DebuggerState(DebugCallbackEventArgs e, DnProcess process, DnAppDomain appDomain, DnThread thread) {
-			this.EventArgs = e;
-			this.PauseStates = null;
-			this.Process = process;
-			this.AppDomain = appDomain;
-			this.Thread = thread;
+			EventArgs = e;
+			PauseStates = null;
+			Process = process;
+			AppDomain = appDomain;
+			Thread = thread;
 		}
 
 		public DebuggerPauseState GetPauseState(DebuggerPauseReason reason) {

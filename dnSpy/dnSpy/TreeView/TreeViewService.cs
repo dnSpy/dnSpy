@@ -41,7 +41,7 @@ namespace dnSpy.TreeView {
 		TreeViewService(IThemeService themeService, IClassificationFormatMapService classificationFormatMapService, [ImportMany] IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
 			this.themeService = themeService;
 			this.classificationFormatMapService = classificationFormatMapService;
-			this.guidToProvider = new Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>>();
+			guidToProvider = new Dictionary<Guid, List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>>();
 			InitializeGuidToProvider(treeNodeDataProviders);
 		}
 

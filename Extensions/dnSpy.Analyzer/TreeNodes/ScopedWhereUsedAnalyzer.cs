@@ -38,29 +38,29 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly Func<TypeDef, IEnumerable<T>> typeAnalysisFunction;
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef type, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction) {
-			this.typeScope = type;
-			this.moduleScope = type.Module;
+			typeScope = type;
+			moduleScope = type.Module;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 			this.documentService = documentService;
 		}
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
 			: this(documentService, method.DeclaringType, typeAnalysisFunction) {
-			this.memberAccessibility = GetMethodAccessibility(method);
+			memberAccessibility = GetMethodAccessibility(method);
 		}
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
 			: this(documentService, property.DeclaringType, typeAnalysisFunction) {
 			Accessibility getterAccessibility = (property.GetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
 			Accessibility setterAccessibility = (property.SetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
-			this.memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
+			memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
 		}
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, EventDef eventDef, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
 			: this(documentService, eventDef.DeclaringType, typeAnalysisFunction) {
 			// we only have to check the accessibility of the the get method
 			// [CLS Rule 30: The accessibility of an event and of its accessors shall be identical.]
-			this.memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
+			memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
 		}
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)

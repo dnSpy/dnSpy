@@ -35,27 +35,27 @@ namespace dnSpy.AsmEditor.Property {
 		}
 
 		public PropertyDefOptions(PropertyDef prop) {
-			this.Attributes = prop.Attributes;
-			this.Name = prop.Name;
-			this.PropertySig = prop.PropertySig;
-			this.Constant = prop.Constant;
-			this.GetMethods.AddRange(prop.GetMethods);
-			this.SetMethods.AddRange(prop.SetMethods);
-			this.OtherMethods.AddRange(prop.OtherMethods);
-			this.CustomAttributes.AddRange(prop.CustomAttributes);
+			Attributes = prop.Attributes;
+			Name = prop.Name;
+			PropertySig = prop.PropertySig;
+			Constant = prop.Constant;
+			GetMethods.AddRange(prop.GetMethods);
+			SetMethods.AddRange(prop.SetMethods);
+			OtherMethods.AddRange(prop.OtherMethods);
+			CustomAttributes.AddRange(prop.CustomAttributes);
 		}
 
 		public PropertyDef CopyTo(PropertyDef prop) {
-			prop.Attributes = this.Attributes;
-			prop.Name = this.Name ?? UTF8String.Empty;
-			prop.PropertySig = this.PropertySig;
-			prop.Constant = this.Constant;
+			prop.Attributes = Attributes;
+			prop.Name = Name ?? UTF8String.Empty;
+			prop.PropertySig = PropertySig;
+			prop.Constant = Constant;
 			prop.GetMethods.Clear();
-			prop.GetMethods.AddRange(this.GetMethods);
+			prop.GetMethods.AddRange(GetMethods);
 			prop.SetMethods.Clear();
-			prop.SetMethods.AddRange(this.SetMethods);
+			prop.SetMethods.AddRange(SetMethods);
 			prop.OtherMethods.Clear();
-			prop.OtherMethods.AddRange(this.OtherMethods);
+			prop.OtherMethods.AddRange(OtherMethods);
 			prop.CustomAttributes.Clear();
 			prop.CustomAttributes.AddRange(CustomAttributes);
 			return prop;

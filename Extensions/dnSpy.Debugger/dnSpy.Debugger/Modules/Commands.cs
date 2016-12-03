@@ -79,8 +79,8 @@ namespace dnSpy.Debugger.Modules {
 		public ModuleVM[] SelectedItems { get; }
 
 		public ModulesCtxMenuContext(IModulesVM vm, ModuleVM[] selItems) {
-			this.VM = vm;
-			this.SelectedItems = selItems;
+			VM = vm;
+			SelectedItems = selItems;
 		}
 	}
 

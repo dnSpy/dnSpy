@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			this.textView = textView;
-			this.maxLineLength = textView.Options.GetOptionValue(DefaultOptions.LongBufferLineThresholdId);
+			maxLineLength = textView.Options.GetOptionValue(DefaultOptions.LongBufferLineThresholdId);
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;
 			UpdateOptions();

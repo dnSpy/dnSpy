@@ -35,9 +35,9 @@ namespace dnSpy.Contracts.HexEditor {
 			// Valid data size. The remaining bytes are cleared.
 			public int DataSize;
 			public CachedPage(int index, int size) {
-				this.Index = index;
-				this.IsInitialized = false;
-				this.Data = new byte[size];
+				Index = index;
+				IsInitialized = false;
+				Data = new byte[size];
 			}
 		}
 
@@ -63,12 +63,12 @@ namespace dnSpy.Contracts.HexEditor {
 			if (pageSize < MIN_PAGE_SIZE)
 				pageSize = MIN_PAGE_SIZE;
 			Debug.Assert(IsPowerOfTwo(pageSize));
-			this.pageSizeMask = pageSize - 1;
+			pageSizeMask = pageSize - 1;
 
 			int numCachedPages = (int)((CACHE_SIZE + pageSizeMask) / pageSize);
-			this.cachedPages = new CachedPage[numCachedPages];
-			for (int i = 0; i < this.cachedPages.Length; i++)
-				this.cachedPages[i] = new CachedPage(i, (int)pageSize);
+			cachedPages = new CachedPage[numCachedPages];
+			for (int i = 0; i < cachedPages.Length; i++)
+				cachedPages[i] = new CachedPage(i, (int)pageSize);
 		}
 
 		static bool IsPowerOfTwo(ulong v) => v != 0 && (v & (v - 1)) == 0;

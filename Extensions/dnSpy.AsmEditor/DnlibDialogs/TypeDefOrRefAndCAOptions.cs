@@ -29,24 +29,24 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public TypeDefOrRefAndCAOptions(GenericParamConstraint gpc) {
-			this.TypeDefOrRef = gpc.Constraint;
-			this.CustomAttributes.AddRange(gpc.CustomAttributes);
+			TypeDefOrRef = gpc.Constraint;
+			CustomAttributes.AddRange(gpc.CustomAttributes);
 		}
 
 		public TypeDefOrRefAndCAOptions(InterfaceImpl iface) {
-			this.TypeDefOrRef = iface.Interface;
-			this.CustomAttributes.AddRange(iface.CustomAttributes);
+			TypeDefOrRef = iface.Interface;
+			CustomAttributes.AddRange(iface.CustomAttributes);
 		}
 
 		public GenericParamConstraint CopyTo(GenericParamConstraint gpc) {
-			gpc.Constraint = this.TypeDefOrRef;
+			gpc.Constraint = TypeDefOrRef;
 			gpc.CustomAttributes.Clear();
 			gpc.CustomAttributes.AddRange(CustomAttributes);
 			return gpc;
 		}
 
 		public InterfaceImpl CopyTo(InterfaceImpl iface) {
-			iface.Interface = this.TypeDefOrRef;
+			iface.Interface = TypeDefOrRef;
 			iface.CustomAttributes.Clear();
 			iface.CustomAttributes.AddRange(CustomAttributes);
 			return iface;

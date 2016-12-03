@@ -57,8 +57,8 @@ namespace dnSpy.Debugger.IMModules {
 
 		public CorModuleDefFile(DnModule dnModule, bool loadSyms)
 			: base(dnModule.GetOrCreateCorModuleDef(), loadSyms) {
-			this.DnModule = dnModule;
-			this.lastValidRids = new LastValidRids();
+			DnModule = dnModule;
+			lastValidRids = new LastValidRids();
 		}
 
 		public static CorModuleDefFile CreateAssembly(List<CorModuleDefFile> files) {

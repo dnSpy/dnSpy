@@ -60,21 +60,21 @@ namespace dnSpy.Hex.Formatting {
 		public HexLinePart(int index, int column, VST.Span span, HexAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
 			Debug.Assert(adornmentElement != null);
 			Debug.Assert(textRunProperties != null);
-			this.Index = index;
-			this.Column = column;
-			this.Span = span;
-			this.AdornmentElement = adornmentElement;
-			this.TextRunProperties = textRunProperties;
+			Index = index;
+			Column = column;
+			Span = span;
+			AdornmentElement = adornmentElement;
+			TextRunProperties = textRunProperties;
 		}
 
 		public HexLinePart(int index, int column, VST.Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
 			Debug.Assert(textRunProperties != null);
-			this.Index = index;
-			this.Column = column;
-			this.Span = span;
-			this.AdornmentElement = null;
-			this.TextRunProperties = textRunProperties;
+			Index = index;
+			Column = column;
+			Span = span;
+			AdornmentElement = null;
+			TextRunProperties = textRunProperties;
 		}
 
 		public bool BelongsTo(int lineIndex) {

@@ -117,15 +117,15 @@ namespace dnSpy.Language.Intellisense {
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			this.session = session;
-			this.control = new SignatureHelpPresenterControl { DataContext = this };
-			this.signatureTextBuffer = textBufferFactoryService.CreateTextBuffer();
-			this.otherTextBuffer = textBufferFactoryService.CreateTextBuffer();
+			control = new SignatureHelpPresenterControl { DataContext = this };
+			signatureTextBuffer = textBufferFactoryService.CreateTextBuffer();
+			otherTextBuffer = textBufferFactoryService.CreateTextBuffer();
 			signatureTextBuffer.Properties[SignatureHelpConstants.SessionBufferKey] = session;
 			otherTextBuffer.Properties[SignatureHelpConstants.SessionBufferKey] = session;
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.classifierAggregatorService = classifierAggregatorService;
 			this.classificationFormatMap = classificationFormatMap;
-			this.defaultExtendedContentType = contentTypeRegistryService.GetContentType(DefaultExtendedContentTypeName);
+			defaultExtendedContentType = contentTypeRegistryService.GetContentType(DefaultExtendedContentTypeName);
 			Debug.Assert(defaultExtendedContentType != null);
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			session.Dismissed += Session_Dismissed;

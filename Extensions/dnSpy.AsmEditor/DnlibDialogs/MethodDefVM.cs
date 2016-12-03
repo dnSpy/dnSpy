@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public MethodDefVM(MethodDef method) {
-			this.origMethod = method;
+			origMethod = method;
 
 			Reinitialize();
 		}

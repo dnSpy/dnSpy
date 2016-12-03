@@ -128,8 +128,8 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public ImageResourceNodeImpl(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
-			this.imageData = resource.GetResourceData();
-			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
+			imageData = resource.GetResourceData();
+			imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
@@ -169,8 +169,8 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 
 		void InitializeImageData() {
-			this.imageData = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
-			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
+			imageData = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
+			imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {

@@ -58,7 +58,7 @@ namespace dnSpy.Text.Editor.Search {
 				throw new ArgumentNullException(nameof(searchServiceProvider));
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			this.searchService = searchServiceProvider.Get(wpfTextView);
+			searchService = searchServiceProvider.Get(wpfTextView);
 			searchService.RegisterTextMarkerListener(this);
 		}
 

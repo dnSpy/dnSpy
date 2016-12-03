@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.CallStack {
 		public DnDebugger Debugger { get; }
 
 		public StackFramesUpdatedEventArgs(DnDebugger debugger) {
-			this.Debugger = debugger;
+			Debugger = debugger;
 		}
 	}
 

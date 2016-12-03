@@ -60,9 +60,9 @@ namespace dnSpy.Debugger.CallStack {
 		public ICallStackFrameContext Context { get; }
 
 		public MessageCallStackFrameVM(ICallStackFrameContext context, int index, string name) {
-			this.Context = context;
-			this.Index = index;
-			this.CachedOutput = CachedOutput.Create(name, TypeColor.Error);
+			Context = context;
+			Index = index;
+			CachedOutput = CachedOutput.Create(name, TypeColor.Error);
 		}
 	}
 
@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.CallStack {
 		public ICallStackFrameContext Context { get; }
 
 		public CallStackFrameVM(ICallStackFrameContext context, int index, CorFrame frame, DnProcess process) {
-			this.Context = context;
+			Context = context;
 			this.index = index;
 			this.frame = frame;
 			this.process = process;

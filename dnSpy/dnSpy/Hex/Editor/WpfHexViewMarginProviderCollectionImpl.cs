@@ -67,7 +67,7 @@ namespace dnSpy.Hex.Editor {
 			).ToArray();
 			this.wpfHexViewHost = wpfHexViewHost;
 			this.marginContainer = marginContainer;
-			this.currentMargins = Array.Empty<WpfHexViewMarginInfo>();
+			currentMargins = Array.Empty<WpfHexViewMarginInfo>();
 			wpfHexViewHost.Closed += WpfHexViewHost_Closed;
 			UpdateMargins();
 		}

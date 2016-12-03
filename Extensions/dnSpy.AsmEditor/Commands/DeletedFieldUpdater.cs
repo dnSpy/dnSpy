@@ -36,18 +36,18 @@ namespace dnSpy.AsmEditor.Commands {
 		int fieldIndex;
 
 		public DeletedFieldUpdater(ModuleDocumentNode modNode, FieldDef originalField) {
-			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalField);
+			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalField);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
-			this.parentNode = ownerNode.TreeNode.Parent.Data;
-			this.ownerType = originalField.DeclaringType;
-			this.field = originalField;
+			parentNode = ownerNode.TreeNode.Parent.Data;
+			ownerType = originalField.DeclaringType;
+			field = originalField;
 		}
 
 		public void Add() {
 			if (!parentNode.TreeNode.Children.Remove(ownerNode.TreeNode))
 				throw new InvalidOperationException();
-			this.fieldIndex = ownerType.Fields.IndexOf(field);
+			fieldIndex = ownerType.Fields.IndexOf(field);
 			ownerType.Fields.RemoveAt(fieldIndex);
 		}
 

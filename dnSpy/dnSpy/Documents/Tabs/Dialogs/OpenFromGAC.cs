@@ -46,7 +46,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		OpenFromGAC(IAppWindow appWindow, IDocumentTreeView documentTreeView, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.appWindow = appWindow;
 			this.documentTreeView = documentTreeView;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.GacDialog);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.GacDialog);
 			this.textElementProvider = textElementProvider;
 		}
 

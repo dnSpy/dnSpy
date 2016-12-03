@@ -36,18 +36,18 @@ namespace dnSpy.AsmEditor.Commands {
 		int methodIndex;
 
 		public DeletedMethodUpdater(ModuleDocumentNode modNode, MethodDef originalMethod) {
-			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
+			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
-			this.parentNode = ownerNode.TreeNode.Parent.Data;
-			this.ownerType = originalMethod.DeclaringType;
-			this.method = originalMethod;
+			parentNode = ownerNode.TreeNode.Parent.Data;
+			ownerType = originalMethod.DeclaringType;
+			method = originalMethod;
 		}
 
 		public void Add() {
 			if (!parentNode.TreeNode.Children.Remove(ownerNode.TreeNode))
 				throw new InvalidOperationException();
-			this.methodIndex = ownerType.Methods.IndexOf(method);
+			methodIndex = ownerType.Methods.IndexOf(method);
 			ownerType.Methods.RemoveAt(methodIndex);
 		}
 

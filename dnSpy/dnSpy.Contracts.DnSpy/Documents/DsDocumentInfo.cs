@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="type">Type, see <see cref="Type"/></param>
 		public DsDocumentInfo(string name, Guid type) {
 			this.name = name ?? string.Empty;
-			this.Type = type;
+			Type = type;
 		}
 
 		/// <summary>

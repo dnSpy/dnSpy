@@ -57,7 +57,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			this.classificationFormatMap = classificationFormatMap;
 			this.themeClassificationTypeService = themeClassificationTypeService;
 			this.syntaxHighlight = syntaxHighlight;
-			this.writers = new List<CodeToolTipWriter>();
+			writers = new List<CodeToolTipWriter>();
 			CreateNewOutput();
 		}
 

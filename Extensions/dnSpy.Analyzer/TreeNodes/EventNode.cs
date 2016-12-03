@@ -38,7 +38,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.hidesParent = hidesParent;
 		}
 
-		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 		public override IMemberRef Member => analyzedEvent;
 		public override IMDTokenProvider Reference => analyzedEvent;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedEvent);

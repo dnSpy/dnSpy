@@ -34,8 +34,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				throw new ArgumentNullException(nameof(module));
 			this.module = module;
 			this.cancellationToken = cancellationToken;
-			this.assemblies = new Dictionary<IAssembly, AssemblyDef>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
-			this.checkedContractsAssemblies = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
+			assemblies = new Dictionary<IAssembly, AssemblyDef>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
+			checkedContractsAssemblies = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 		}
 
 		public IEnumerable<ModuleDef> Find(IEnumerable<string> extraAssemblyReferences) {

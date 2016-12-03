@@ -35,10 +35,10 @@ namespace dndbg.DotNet {
 
 		public ProcessBinaryReader(IProcessReader reader, ulong address) {
 			this.reader = reader;
-			this.baseAddress = address;
-			this.cache = new byte[CACHE_SIZE];
-			this.cacheAddress = 0;
-			this.cacheValid = false;
+			baseAddress = address;
+			cache = new byte[CACHE_SIZE];
+			cacheAddress = 0;
+			cacheValid = false;
 			this.address = address;
 		}
 

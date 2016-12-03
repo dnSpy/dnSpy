@@ -49,8 +49,8 @@ namespace dnSpy.Contracts.MVVM {
 			if (checkError == null)
 				throw new ArgumentNullException(nameof(checkError));
 			this.checkError = checkError;
-			this.errorMsgValid = false;
-			this.errorMsg = null;
+			errorMsgValid = false;
+			errorMsg = null;
 		}
 
 		public void Invalidate() => errorMsgValid = false;
@@ -137,7 +137,7 @@ namespace dnSpy.Contracts.MVVM {
 			if (onUpdated == null)
 				throw new ArgumentNullException(nameof(onUpdated));
 			this.onUpdated = onUpdated;
-			this.cachedError = new CachedValidationError(() => Validate());
+			cachedError = new CachedValidationError(() => Validate());
 		}
 
 		/// <summary>

@@ -30,8 +30,8 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly Dictionary<string, ModuleDef> openedModules;
 
 		public SatelliteAssemblyFinder() {
-			this.cultures = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(a => a.Name), StringComparer.OrdinalIgnoreCase);
-			this.openedModules = new Dictionary<string, ModuleDef>(StringComparer.OrdinalIgnoreCase);
+			cultures = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(a => a.Name), StringComparer.OrdinalIgnoreCase);
+			openedModules = new Dictionary<string, ModuleDef>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		bool IsValidCulture(string name) => !string.IsNullOrEmpty(name) && cultures.Contains(name);

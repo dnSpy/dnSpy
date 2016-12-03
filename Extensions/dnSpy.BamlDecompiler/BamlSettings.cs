@@ -74,9 +74,9 @@ namespace dnSpy.BamlDecompiler {
 		public BamlSettings Clone() => CopyTo(new BamlSettings());
 
 		public BamlSettings CopyTo(BamlSettings other) {
-			other.DisassembleBaml = this.DisassembleBaml;
-			other.UseTabs = this.UseTabs;
-			other.NewLineOnAttributes = this.NewLineOnAttributes;
+			other.DisassembleBaml = DisassembleBaml;
+			other.UseTabs = UseTabs;
+			other.NewLineOnAttributes = NewLineOnAttributes;
 			return other;
 		}
 	}
@@ -91,12 +91,12 @@ namespace dnSpy.BamlDecompiler {
 		BamlSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.DisassembleBaml = sect.Attribute<bool?>(nameof(DisassembleBaml)) ?? this.DisassembleBaml;
-			this.UseTabs = sect.Attribute<bool?>(nameof(UseTabs)) ?? this.UseTabs;
-			this.NewLineOnAttributes = sect.Attribute<bool?>(nameof(NewLineOnAttributes)) ?? this.NewLineOnAttributes;
-			this.disableSave = false;
+			DisassembleBaml = sect.Attribute<bool?>(nameof(DisassembleBaml)) ?? DisassembleBaml;
+			UseTabs = sect.Attribute<bool?>(nameof(UseTabs)) ?? UseTabs;
+			NewLineOnAttributes = sect.Attribute<bool?>(nameof(NewLineOnAttributes)) ?? NewLineOnAttributes;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 
@@ -135,7 +135,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public BamlAppSettingsPage(BamlSettingsImpl _global_settings) {
 			this._global_settings = _global_settings;
-			this.bamlSettings = _global_settings.Clone();
+			bamlSettings = _global_settings.Clone();
 		}
 
 		public override void OnApply() => bamlSettings.CopyTo(_global_settings);

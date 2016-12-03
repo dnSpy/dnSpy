@@ -72,11 +72,11 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.mod = mod;
-			this.hashCode = mod.GetHashCode();
-			this.uniqueId = mod.UniqueId;
-			this.name = mod.Name;
-			this.address = mod.Address;
-			this.size = mod.Size;
+			hashCode = mod.GetHashCode();
+			uniqueId = mod.UniqueId;
+			name = mod.Name;
+			address = mod.Address;
+			size = mod.Size;
 			var moduleId = mod.DnModuleId;
 			this.moduleId = new ModuleId(moduleId.AssemblyFullName, moduleId.ModuleName, moduleId.IsDynamic, moduleId.IsInMemory, moduleId.ModuleNameOnly);
 		}
@@ -132,11 +132,11 @@ namespace dnSpy.Debugger.Scripting {
 			public readonly ImageSectionHeader[] Sections;
 
 			PEState() {
-				this.Sections = Array.Empty<ImageSectionHeader>();
+				Sections = Array.Empty<ImageSectionHeader>();
 			}
 
 			public PEState(ImageSectionHeader[] sections) {
-				this.Sections = sections;
+				Sections = sections;
 			}
 		}
 		PEState peState;

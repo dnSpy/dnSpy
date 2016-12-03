@@ -55,7 +55,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.themeClassificationTypeService = themeClassificationTypeService;
-			this.punctuationClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Punctuation);
+			punctuationClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Punctuation);
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

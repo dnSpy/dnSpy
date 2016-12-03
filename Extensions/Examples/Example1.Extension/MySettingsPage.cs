@@ -60,8 +60,8 @@ namespace Example1.Extension {
 		readonly MySettings newSettings;
 
 		public MyAppSettingsPage(MySettings mySettings) {
-			this.globalSettings = mySettings;
-			this.newSettings = mySettings.Clone();
+			globalSettings = mySettings;
+			newSettings = mySettings.Clone();
 		}
 
 		public override void OnApply() {

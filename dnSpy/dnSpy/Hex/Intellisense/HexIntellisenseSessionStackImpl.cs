@@ -63,10 +63,10 @@ namespace dnSpy.Hex.Intellisense {
 			if (wpfHexView == null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			this.wpfHexView = wpfHexView;
-			this.sessions = new ObservableCollection<HexIntellisenseSession>();
-			this.commandTargetFilter = new CommandTargetFilter(this);
-			this.sessionStates = new List<SessionState>();
-			this.clearOpacityTimer = new DispatcherTimer(DispatcherPriority.Background, wpfHexView.VisualElement.Dispatcher);
+			sessions = new ObservableCollection<HexIntellisenseSession>();
+			commandTargetFilter = new CommandTargetFilter(this);
+			sessionStates = new List<SessionState>();
+			clearOpacityTimer = new DispatcherTimer(DispatcherPriority.Background, wpfHexView.VisualElement.Dispatcher);
 			clearOpacityTimer.Interval = TimeSpan.FromMilliseconds(clearOpacityIntervalMilliSecs);
 			clearOpacityTimer.Tick += ClearOpacityTimer_Tick;
 			Sessions = new ReadOnlyObservableCollection<HexIntellisenseSession>(sessions);

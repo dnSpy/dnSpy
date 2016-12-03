@@ -83,7 +83,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(editorFormatMap));
 			this.wpfTextView = wpfTextView;
 			this.editorFormatMap = editorFormatMap;
-			this.currentLineHighlighterElement = new CurrentLineHighlighterElement();
+			currentLineHighlighterElement = new CurrentLineHighlighterElement();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			UpdateEnableState();

@@ -43,7 +43,7 @@ namespace dnSpy.BackgroundImage {
 			this.themeService = themeService;
 			this.backgroundImageOptionDefinitionService = backgroundImageOptionDefinitionService;
 			this.backgroundImageSettingsService = backgroundImageSettingsService;
-			this.imageSourceServices = new Dictionary<IBackgroundImageOptionDefinition, IImageSourceService>();
+			imageSourceServices = new Dictionary<IBackgroundImageOptionDefinition, IImageSourceService>();
 		}
 
 		public IImageSourceService Create(IWpfTextView wpfTextView) {

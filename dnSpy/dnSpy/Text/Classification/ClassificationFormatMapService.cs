@@ -37,7 +37,7 @@ namespace dnSpy.Text.Classification {
 			this.editorFormatMapService = editorFormatMapService;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
-			this.toCategoryMap = new Dictionary<IEditorFormatMap, IClassificationFormatMap>();
+			toCategoryMap = new Dictionary<IEditorFormatMap, IClassificationFormatMap>();
 		}
 
 		public IClassificationFormatMap GetClassificationFormatMap(string category) {

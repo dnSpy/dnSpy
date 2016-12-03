@@ -60,7 +60,7 @@ namespace dndbg.Engine {
 
 		public CorEval(ICorDebugEval eval)
 			: base(eval) {
-			this.eval2 = eval as ICorDebugEval2;
+			eval2 = eval as ICorDebugEval2;
 		}
 
 		/// <summary>

@@ -62,7 +62,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 
 		void InitializeImageData(byte[] imageData) {
-			this.imageListOptions = SerializedImageListStreamerUtilities.ReadImageData(imageData);
+			imageListOptions = SerializedImageListStreamerUtilities.ReadImageData(imageData);
 			this.imageData = imageData;
 		}
 

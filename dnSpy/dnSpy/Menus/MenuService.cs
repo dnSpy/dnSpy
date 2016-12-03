@@ -50,8 +50,8 @@ namespace dnSpy.Menus {
 		public readonly List<MenuItemMD> Items;
 
 		public MenuItemGroupMD(double order) {
-			this.Order = order;
-			this.Items = new List<MenuItemMD>();
+			Order = order;
+			Items = new List<MenuItemMD>();
 		}
 	}
 
@@ -82,7 +82,7 @@ namespace dnSpy.Menus {
 	sealed class MenuService : IMenuService {
 		[ImportingConstructor]
 		MenuService([ImportMany] IEnumerable<Lazy<IMenu, IMenuMetadata>> mefMenus, [ImportMany] IEnumerable<Lazy<IMenuItem, IMenuItemMetadata>> mefMenuItems) {
-			this.guidToGroups = null;
+			guidToGroups = null;
 			this.mefMenus = mefMenus;
 			this.mefMenuItems = mefMenuItems;
 		}

@@ -35,7 +35,7 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextViewConnectionListeners == null)
 				throw new ArgumentNullException(nameof(wpfTextViewConnectionListeners));
 			this.wpfTextView = wpfTextView;
-			this.listenerInfos = wpfTextViewConnectionListeners.Where(a => wpfTextView.Roles.ContainsAny(a.Metadata.TextViewRoles)).Select(a => new ListenerInfo(a)).ToArray();
+			listenerInfos = wpfTextViewConnectionListeners.Where(a => wpfTextView.Roles.ContainsAny(a.Metadata.TextViewRoles)).Select(a => new ListenerInfo(a)).ToArray();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			InitializeListeners();

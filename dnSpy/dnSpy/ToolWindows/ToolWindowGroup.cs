@@ -44,10 +44,10 @@ namespace dnSpy.ToolWindows {
 		}
 
 		public ToolWindowGroup(IToolWindowGroupService toolWindowGroupService, ITabGroup tabGroup) {
-			this.ToolWindowGroupService = toolWindowGroupService;
-			this.TabGroup = tabGroup;
-			this.TabGroup.Tag = this;
-			this.TabGroup.TabContentAttached += TabGroup_TabContentAttached;
+			ToolWindowGroupService = toolWindowGroupService;
+			TabGroup = tabGroup;
+			TabGroup.Tag = this;
+			TabGroup.TabContentAttached += TabGroup_TabContentAttached;
 		}
 
 		void TabGroup_TabContentAttached(object sender, TabContentAttachedEventArgs e) {

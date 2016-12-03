@@ -46,7 +46,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			this.mruCompletionService = mruCompletionService;
 			this.completionService = completionService;
 			this.textView = textView;
-			this.originalSnapshot = applicableTo.TextBuffer.CurrentSnapshot;
+			originalSnapshot = applicableTo.TextBuffer.CurrentSnapshot;
 			InitializeCompletions(completions);
 			InitializeCompletions(completionBuilders);
 		}

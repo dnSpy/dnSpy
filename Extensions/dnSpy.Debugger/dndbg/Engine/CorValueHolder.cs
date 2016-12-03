@@ -90,7 +90,7 @@ namespace dndbg.Engine {
 		public bool IsNeutered => false;
 
 		public DummyCorValueHolder(CorValue value) {
-			this.CorValue = value;
+			CorValue = value;
 		}
 
 		public void InvalidateCorValue() { }

@@ -35,7 +35,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			this.analyzedField = analyzedField;
 		}
 
-		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedField);
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {

@@ -259,13 +259,13 @@ namespace dndbg.Engine {
 
 		public CorFrame(ICorDebugFrame frame)
 			: base(frame) {
-			int hr = frame.GetFunctionToken(out this.token);
+			int hr = frame.GetFunctionToken(out token);
 			if (hr < 0)
-				this.token = 0;
+				token = 0;
 
-			hr = frame.GetStackRange(out this.rangeStart, out this.rangeEnd);
+			hr = frame.GetStackRange(out rangeStart, out rangeEnd);
 			if (hr < 0)
-				this.rangeStart = this.rangeEnd = 0;
+				rangeStart = rangeEnd = 0;
 
 			//TODO: ICorDebugILFrame2, ICorDebugILFrame3
 			//TODO: ICorDebugInternalFrame, ICorDebugInternalFrame2
@@ -524,7 +524,7 @@ namespace dndbg.Engine {
 				return null;
 
 			int numTypeGenArgs = MetaDataUtils.GetCountGenericParameters(mdi, funcClass.Token);
-			var genTypeArgs = this.TypeParameters.Take(numTypeGenArgs).ToArray();
+			var genTypeArgs = TypeParameters.Take(numTypeGenArgs).ToArray();
 
 			var td = DebugSignatureReader.CreateTypeDef(mdi, funcClass.Token);
 			// Assume it's a class for now. The code should ignore ClassSig and just use the TypeDef

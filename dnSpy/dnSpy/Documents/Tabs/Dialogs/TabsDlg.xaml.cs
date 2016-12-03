@@ -28,9 +28,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	partial class TabsDlg : WindowBase {
 		public TabsDlg() {
 			InitializeComponent();
-			this.listView.SelectionChanged += ListView_SelectionChanged;
+			listView.SelectionChanged += ListView_SelectionChanged;
 			UIUtilities.FocusSelector(listView);
-			this.InputBindings.Add(new KeyBinding(new RelayCommand(a => this.ClickCancel()), Key.Escape, ModifierKeys.None));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => ClickCancel()), Key.Escape, ModifierKeys.None));
 		}
 
 		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
@@ -52,7 +52,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			if (vm == null)
 				return;
 			vm.Activate(listView.SelectedItem as TabVM);
-			this.ClickOK();
+			ClickOK();
 		}
 	}
 }

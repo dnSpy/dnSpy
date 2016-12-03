@@ -43,8 +43,8 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public DerivedTypeNodeImpl(ITreeNodeGroup treeNodeGroup, TypeDef type) {
-			this.TreeNodeGroup = treeNodeGroup;
-			this.weakRefTypeDef = new WeakReference(type);
+			TreeNodeGroup = treeNodeGroup;
+			weakRefTypeDef = new WeakReference(type);
 		}
 
 		public override void Initialize() =>

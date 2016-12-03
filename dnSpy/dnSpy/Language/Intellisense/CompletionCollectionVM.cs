@@ -52,10 +52,10 @@ namespace dnSpy.Language.Intellisense {
 				throw new ArgumentNullException(nameof(imageMonikerService));
 			this.completionList = completionList;
 			this.imageMonikerService = imageMonikerService;
-			this.completionListNotifyCollectionChanged = completionList as INotifyCollectionChanged;
+			completionListNotifyCollectionChanged = completionList as INotifyCollectionChanged;
 			if (completionListNotifyCollectionChanged != null)
 				completionListNotifyCollectionChanged.CollectionChanged += CompletionList_CollectionChanged;
-			this.list = new List<CompletionVM>(completionList.Count);
+			list = new List<CompletionVM>(completionList.Count);
 			ReinitializeList();
 		}
 

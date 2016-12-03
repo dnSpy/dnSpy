@@ -68,11 +68,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (textEditorHelper == null)
 				throw new ArgumentNullException(nameof(textEditorHelper));
 			this.textEditorHelper = textEditorHelper;
-			this.defaultContentType = textBufferFactoryService.TextContentType;
-			this.cachedColorsList = new CachedColorsList();
-			this.emptyContent = new DocumentViewerContent(string.Empty, CachedTextColorsCollection.Empty, SpanDataCollection<ReferenceInfo>.Empty, new Dictionary<string, object>());
-			this.currentContent = new CurrentContent(emptyContent, defaultContentType);
-			this.spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
+			defaultContentType = textBufferFactoryService.TextContentType;
+			cachedColorsList = new CachedColorsList();
+			emptyContent = new DocumentViewerContent(string.Empty, CachedTextColorsCollection.Empty, SpanDataCollection<ReferenceInfo>.Empty, new Dictionary<string, object>());
+			currentContent = new CurrentContent(emptyContent, defaultContentType);
+			spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
 
 			var textBuffer = textBufferFactoryService.CreateTextBuffer(textBufferFactoryService.TextContentType);
 			CachedColorsListTaggerProvider.AddColorizer(textBuffer, cachedColorsList);
@@ -134,7 +134,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			readonly IContentType contentType;
 
 			public CurrentContent(DocumentViewerContent content, IContentType contentType) {
-				this.Content = content;
+				Content = content;
 				this.contentType = contentType;
 			}
 
@@ -406,11 +406,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public SpanData<ReferenceInfo>? SpanData { get; }
 
 			public ReferencePosition(SpanData<ReferenceInfo> spanData) {
-				this.SpanData = spanData;
+				SpanData = spanData;
 			}
 
 			public ReferencePosition(IList<MethodSourceStatement> methodSourceStatements) {
-				this.MethodSourceStatement = methodSourceStatements.Count > 0 ? methodSourceStatements[0] : (MethodSourceStatement?)null;
+				MethodSourceStatement = methodSourceStatements.Count > 0 ? methodSourceStatements[0] : (MethodSourceStatement?)null;
 			}
 		}
 

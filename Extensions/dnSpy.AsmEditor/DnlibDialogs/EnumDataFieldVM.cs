@@ -140,7 +140,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void InitializeEnumUnderlyingTypeField(EnumInfo enumInfo) {
 			this.enumInfo = enumInfo;
-			this.enumUnderlyingTypeField = null;
+			enumUnderlyingTypeField = null;
 
 			if (enumInfo.Value != null)
 				enumUnderlyingTypeField = CreateEnumUnderlyingTypeFieldFromValue(enumInfo.Value);

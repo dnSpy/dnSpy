@@ -34,15 +34,15 @@ namespace dndbg.Engine {
 		public CorModule Module { get; }
 
 		public CorOverride(CorModule module, uint bodyToken, uint declToken) {
-			this.Module = module;
-			this.BodyToken = bodyToken;
-			this.DeclToken = declToken;
+			Module = module;
+			BodyToken = bodyToken;
+			DeclToken = declToken;
 		}
 
 		internal CorOverride(CorModule module, MethodOverrideInfo info) {
-			this.Module = module;
-			this.BodyToken = info.BodyToken;
-			this.DeclToken = info.DeclToken;
+			Module = module;
+			BodyToken = info.BodyToken;
+			DeclToken = info.DeclToken;
 		}
 	}
 }

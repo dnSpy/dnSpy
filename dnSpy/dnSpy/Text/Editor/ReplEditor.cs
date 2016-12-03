@@ -81,14 +81,14 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public ReplEditor(ReplEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			dispatcher = Dispatcher.CurrentDispatcher;
 			this.pickSaveFilename = pickSaveFilename;
 			options = options?.Clone() ?? new ReplEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
-			this.PrimaryPrompt = options.PrimaryPrompt;
-			this.SecondaryPrompt = options.SecondaryPrompt;
-			this.subBuffers = new List<ReplSubBuffer>();
-			this.cachedColorsList = new CachedColorsList();
+			PrimaryPrompt = options.PrimaryPrompt;
+			SecondaryPrompt = options.SecondaryPrompt;
+			subBuffers = new List<ReplSubBuffer>();
+			cachedColorsList = new CachedColorsList();
 			TextClassificationType = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Text);
 			ReplPrompt1ClassificationType = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ReplPrompt1);
 			ReplPrompt2ClassificationType = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.ReplPrompt2);
@@ -100,8 +100,8 @@ namespace dnSpy.Text.Editor {
 			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
 			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.wpfTextView = wpfTextViewHost.TextView;
-			this.textViewUndoManager = textViewUndoManagerProvider.GetTextViewUndoManager(wpfTextView);
+			wpfTextView = wpfTextViewHost.TextView;
+			textViewUndoManager = textViewUndoManagerProvider.GetTextViewUndoManager(wpfTextView);
 			ReplEditorUtils.AddInstance(this, wpfTextView);
 			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.REPL);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
@@ -112,7 +112,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			wpfTextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
 			wpfTextView.Closed += WpfTextView_Closed;
-			this.wpfTextView.TextBuffer.Changed += TextBuffer_Changed;
+			wpfTextView.TextBuffer.Changed += TextBuffer_Changed;
 			AddNewDocument();
 			WriteOffsetOfPrompt(null, true);
 			ReplEditorOperations = new ReplEditorOperations(this, wpfTextView, editorOperationsFactoryService);
@@ -126,7 +126,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Options.OptionChanged -= Options_OptionChanged;
 			wpfTextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
 			wpfTextView.Closed -= WpfTextView_Closed;
-			this.wpfTextView.TextBuffer.Changed -= TextBuffer_Changed;
+			wpfTextView.TextBuffer.Changed -= TextBuffer_Changed;
 			wpfTextView.VisualElement.Loaded -= WpfTextView_Loaded;
 		}
 
@@ -273,7 +273,7 @@ namespace dnSpy.Text.Editor {
 
 		public bool TrySubmit(bool force) {
 			var input = CurrentInput;
-			bool isCmd = force || this.CommandHandler.IsCommand(input);
+			bool isCmd = force || CommandHandler.IsCommand(input);
 			if (!isCmd)
 				return false;
 
@@ -288,7 +288,7 @@ namespace dnSpy.Text.Editor {
 			ClearUndoRedoHistory();
 			wpfTextView.Caret.EnsureVisible();
 			commandVersion++;
-			this.CommandHandler.ExecuteCommand(input);
+			CommandHandler.ExecuteCommand(input);
 			return true;
 		}
 		int commandVersion = 0;
@@ -409,7 +409,7 @@ namespace dnSpy.Text.Editor {
 			if (buf == null)
 				return;
 
-			int baseOffset = this.OffsetOfPrompt.Value;
+			int baseOffset = OffsetOfPrompt.Value;
 			int totalLength = wpfTextView.TextSnapshot.Length - baseOffset;
 			int currentDocVersion = docVersion;
 
@@ -419,7 +419,7 @@ namespace dnSpy.Text.Editor {
 
 			try {
 				cachedColorsList.SetAsyncUpdatingAfterChanges(baseOffset);
-				await this.CommandHandler.OnCommandUpdatedAsync(buf, changedState.CancellationToken);
+				await CommandHandler.OnCommandUpdatedAsync(buf, changedState.CancellationToken);
 
 				if (changedState.CancellationToken.IsCancellationRequested)
 					return;
@@ -862,7 +862,7 @@ namespace dnSpy.Text.Editor {
 
 		public CachedTextColorsCollectionBuilder(ReplEditor owner, int totalLength) {
 			this.owner = owner;
-			this.cachedTextColorsCollection = new CachedTextColorsCollection();
+			cachedTextColorsCollection = new CachedTextColorsCollection();
 			this.totalLength = totalLength;
 		}
 
@@ -915,7 +915,7 @@ namespace dnSpy.Text.Editor {
 		bool hasDisposed;
 
 		public CommandTextChangedState(int version) {
-			this.cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource = new CancellationTokenSource();
 			CancellationToken = cancellationTokenSource.Token;
 			this.version = version;
 		}
@@ -989,9 +989,9 @@ namespace dnSpy.Text.Editor {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.replEditor = replEditor;
-			this.replLineNumberInput1ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput1);
-			this.replLineNumberInput2ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput2);
-			this.replLineNumberOutputClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberOutput);
+			replLineNumberInput1ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput1);
+			replLineNumberInput2ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput2);
+			replLineNumberOutputClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberOutput);
 		}
 
 		sealed class ReplState {

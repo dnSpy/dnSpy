@@ -63,40 +63,40 @@ namespace dnSpy.TreeView {
 		public event EventHandler<TreeViewNodeRemovedEventArgs> NodeRemoved;
 
 		public TreeViewImpl(ITreeViewServiceImpl treeViewService, IThemeService themeService, IClassificationFormatMapService classificationFormatMapService, Guid guid, TreeViewOptions options) {
-			this.Guid = guid;
+			Guid = guid;
 			this.treeViewService = treeViewService;
-			this.treeViewListener = options.TreeViewListener;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewTextEditorFormatDefinition.TreeViewAppearanceCategory);
-			this.classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
-			this.foregroundBrushResourceKey = options.ForegroundBrushResourceKey ?? "TreeViewForeground";
-			this.sharpTreeView = new SharpTreeView();
-			this.sharpTreeView.SelectionChanged += SharpTreeView_SelectionChanged;
-			this.sharpTreeView.CanDragAndDrop = options.CanDragAndDrop;
-			this.sharpTreeView.AllowDrop = options.AllowDrop;
-			this.sharpTreeView.AllowDropOrder = options.AllowDrop;
-			VirtualizingStackPanel.SetIsVirtualizing(this.sharpTreeView, options.IsVirtualizing);
-			VirtualizingStackPanel.SetVirtualizationMode(this.sharpTreeView, options.VirtualizationMode);
-			this.sharpTreeView.SelectionMode = options.SelectionMode;
-			this.sharpTreeView.BorderThickness = new Thickness(0);
-			this.sharpTreeView.ShowRoot = false;
-			this.sharpTreeView.ShowLines = false;
+			treeViewListener = options.TreeViewListener;
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewTextEditorFormatDefinition.TreeViewAppearanceCategory);
+			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
+			foregroundBrushResourceKey = options.ForegroundBrushResourceKey ?? "TreeViewForeground";
+			sharpTreeView = new SharpTreeView();
+			sharpTreeView.SelectionChanged += SharpTreeView_SelectionChanged;
+			sharpTreeView.CanDragAndDrop = options.CanDragAndDrop;
+			sharpTreeView.AllowDrop = options.AllowDrop;
+			sharpTreeView.AllowDropOrder = options.AllowDrop;
+			VirtualizingStackPanel.SetIsVirtualizing(sharpTreeView, options.IsVirtualizing);
+			VirtualizingStackPanel.SetVirtualizationMode(sharpTreeView, options.VirtualizationMode);
+			sharpTreeView.SelectionMode = options.SelectionMode;
+			sharpTreeView.BorderThickness = new Thickness(0);
+			sharpTreeView.ShowRoot = false;
+			sharpTreeView.ShowLines = false;
 
 			if (options.IsGridView) {
-				this.sharpTreeView.SetResourceReference(ItemsControl.ItemContainerStyleProperty, SharpGridView.ItemContainerStyleKey);
-				this.sharpTreeView.SetResourceReference(FrameworkElement.StyleProperty, "SharpTreeViewGridViewStyle");
+				sharpTreeView.SetResourceReference(ItemsControl.ItemContainerStyleProperty, SharpGridView.ItemContainerStyleKey);
+				sharpTreeView.SetResourceReference(FrameworkElement.StyleProperty, "SharpTreeViewGridViewStyle");
 			}
 			else {
 				// Clear the value set by the constructor. This is required or our style won't be used.
-				this.sharpTreeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
-				this.sharpTreeView.SetResourceReference(FrameworkElement.StyleProperty, typeof(SharpTreeView));
+				sharpTreeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
+				sharpTreeView.SetResourceReference(FrameworkElement.StyleProperty, typeof(SharpTreeView));
 			}
 
-			this.sharpTreeView.GetPreviewInsideTextBackground = () => themeService.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
-			this.sharpTreeView.GetPreviewInsideForeground = () => themeService.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
+			sharpTreeView.GetPreviewInsideTextBackground = () => themeService.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
+			sharpTreeView.GetPreviewInsideForeground = () => themeService.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
 
 			// Add the root at the end since Create() requires some stuff to have been initialized
-			this.root = Create(options.RootNode ?? new TreeNodeDataImpl(new Guid(DocumentTreeViewConstants.ROOT_NODE_GUID)));
-			this.sharpTreeView.Root = this.root.Node;
+			root = Create(options.RootNode ?? new TreeNodeDataImpl(new Guid(DocumentTreeViewConstants.ROOT_NODE_GUID)));
+			sharpTreeView.Root = root.Node;
 		}
 
 		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshAllNodes();
@@ -261,7 +261,7 @@ namespace dnSpy.TreeView {
 		}
 
 		public void RefreshAllNodes() {
-			foreach (var node in this.Root.Descendants())
+			foreach (var node in Root.Descendants())
 				node.RefreshUI();
 		}
 

@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public DeletableNodes(IEnumerable<T> nodes) {
 			this.nodes = nodes.ToArray();
-			this.parents = null;
+			parents = null;
 		}
 
 		/// <summary>
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Commands {
 				parents[i].TreeNode.AddChild(node.TreeNode);
 			}
 
-			this.parents = null;
+			parents = null;
 		}
 	}
 }

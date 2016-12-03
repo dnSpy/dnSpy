@@ -38,8 +38,8 @@ namespace dnSpy.Text.Classification {
 		TextElementProvider(IContentTypeRegistryService contentTypeRegistryService, ITextClassifierAggregatorService textClassifierAggregatorService) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textClassifierAggregatorService = textClassifierAggregatorService;
-			this.tagsList = new List<TextClassificationTag>();
-			this.toAggregator = new Dictionary<IContentType, ITextClassifierAggregator>();
+			tagsList = new List<TextClassificationTag>();
+			toAggregator = new Dictionary<IContentType, ITextClassifierAggregator>();
 		}
 
 		public FrameworkElement CreateTextElement(IClassificationFormatMap classificationFormatMap, TextClassifierContext context, string contentType, TextElementFlags flags) {

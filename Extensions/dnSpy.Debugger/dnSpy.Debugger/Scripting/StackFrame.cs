@@ -141,21 +141,21 @@ namespace dnSpy.Debugger.Scripting {
 			this.debugger = debugger;
 			this.frame = frame;
 			this.frameNo = frameNo;
-			this.hashCode = frame.GetHashCode();
-			this.ilFrameIP = new Contracts.Scripting.Debugger.ILFrameIP(frame.ILFrameIP.Offset, (MappingResult)frame.ILFrameIP.Mapping);
-			this.nativeFrameIP = frame.NativeFrameIP;
-			this.token = frame.Token;
-			this.stackStart = frame.StackStart;
-			this.stackEnd = frame.StackEnd;
-			this.sfFlags = 0;
+			hashCode = frame.GetHashCode();
+			ilFrameIP = new Contracts.Scripting.Debugger.ILFrameIP(frame.ILFrameIP.Offset, (MappingResult)frame.ILFrameIP.Mapping);
+			nativeFrameIP = frame.NativeFrameIP;
+			token = frame.Token;
+			stackStart = frame.StackStart;
+			stackEnd = frame.StackEnd;
+			sfFlags = 0;
 			if (frame.IsILFrame)
-				this.sfFlags |= SFFlags.ILFrame;
+				sfFlags |= SFFlags.ILFrame;
 			if (frame.IsInternalFrame)
-				this.sfFlags |= SFFlags.InternalFrame;
+				sfFlags |= SFFlags.InternalFrame;
 			if (frame.IsNativeFrame)
-				this.sfFlags |= SFFlags.NativeFrame;
+				sfFlags |= SFFlags.NativeFrame;
 			if (frame.IsRuntimeUnwindableFrame)
-				this.sfFlags |= SFFlags.RuntimeUnwindableFrame;
+				sfFlags |= SFFlags.RuntimeUnwindableFrame;
 		}
 
 		public IDebuggerValue GetLocal(uint index) => debugger.Dispatcher.UI(() => {

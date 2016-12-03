@@ -101,11 +101,11 @@ namespace Example2.Extension {
 
 		public TextTagger(IClassificationTypeRegistryService classificationTypeRegistryService) {
 			// Get the classification types we need
-			this.color1 = classificationTypeRegistryService.GetClassificationType(Constants.Color1_ClassificationTypeName);
-			this.color2 = classificationTypeRegistryService.GetClassificationType(Constants.Color2_ClassificationTypeName);
+			color1 = classificationTypeRegistryService.GetClassificationType(Constants.Color1_ClassificationTypeName);
+			color2 = classificationTypeRegistryService.GetClassificationType(Constants.Color2_ClassificationTypeName);
 			// Get some classification types created by some other code
-			this.color3 = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Yellow);
-			this.color4 = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Error);
+			color3 = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Yellow);
+			color4 = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Error);
 		}
 
 		// Gets called to colorize a range of the file. It's typically called once per visible line

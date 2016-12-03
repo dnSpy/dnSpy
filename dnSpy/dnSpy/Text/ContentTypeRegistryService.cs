@@ -63,7 +63,7 @@ namespace dnSpy.Text {
 
 			public ContentTypeCreator(ContentTypeRegistryService owner, IEnumerable<Lazy<ContentTypeDefinition, IContentTypeDefinitionMetadata>> contentTypeDefinitions) {
 				this.owner = owner;
-				this.rawContentTypes = new Dictionary<string, RawContentType>(StringComparer.OrdinalIgnoreCase);
+				rawContentTypes = new Dictionary<string, RawContentType>(StringComparer.OrdinalIgnoreCase);
 				foreach (var md in contentTypeDefinitions.Select(a => a.Metadata)) {
 					var typeName = md.Name;
 					Debug.Assert(typeName != null);
@@ -124,7 +124,7 @@ namespace dnSpy.Text {
 
 		[ImportingConstructor]
 		ContentTypeRegistryService([ImportMany] IEnumerable<Lazy<ContentTypeDefinition, IContentTypeDefinitionMetadata>> contentTypeDefinitions) {
-			this.contentTypes = new Dictionary<string, ContentType>(StringComparer.OrdinalIgnoreCase);
+			contentTypes = new Dictionary<string, ContentType>(StringComparer.OrdinalIgnoreCase);
 			AddContentTypeInternal_NoLock(UnknownContentTypeName, Array.Empty<string>());
 			new ContentTypeCreator(this, contentTypeDefinitions);
 		}

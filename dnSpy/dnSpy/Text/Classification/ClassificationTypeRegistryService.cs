@@ -51,7 +51,7 @@ namespace dnSpy.Text.Classification {
 
 			public ClassificationTypeCreator(ClassificationTypeRegistryService owner, IEnumerable<Lazy<ClassificationTypeDefinition, IClassificationTypeDefinitionMetadata>> classificationTypeDefinitions) {
 				this.owner = owner;
-				this.rawClassificationTypes = new Dictionary<string, RawClassificationType>();
+				rawClassificationTypes = new Dictionary<string, RawClassificationType>();
 				foreach (var md in classificationTypeDefinitions.Select(a => a.Metadata)) {
 					var type = md.Name;
 					Debug.Assert(type != null);
@@ -109,11 +109,11 @@ namespace dnSpy.Text.Classification {
 
 		[ImportingConstructor]
 		ClassificationTypeRegistryService([ImportMany] IEnumerable<Lazy<ClassificationTypeDefinition, IClassificationTypeDefinitionMetadata>> classificationTypeDefinitions) {
-			this.toClassificationType = new Dictionary<string, IClassificationType>();
-			this.transientNameToType = new Dictionary<string, IClassificationType>();
+			toClassificationType = new Dictionary<string, IClassificationType>();
+			transientNameToType = new Dictionary<string, IClassificationType>();
 			new ClassificationTypeCreator(this, classificationTypeDefinitions);
-			this.transientClassificationType = GetClassificationType(TRANSIENT_NAME);
-			if (this.transientClassificationType == null)
+			transientClassificationType = GetClassificationType(TRANSIENT_NAME);
+			if (transientClassificationType == null)
 				throw new InvalidOperationException();
 		}
 

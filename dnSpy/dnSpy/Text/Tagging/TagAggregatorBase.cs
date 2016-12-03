@@ -42,13 +42,13 @@ namespace dnSpy.Text.Tagging {
 				throw new ArgumentNullException(nameof(bufferGraph));
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.batchedTagsChangedList = new List<IMappingSpan>();
-			this.lockObj = new object();
+			dispatcher = Dispatcher.CurrentDispatcher;
+			batchedTagsChangedList = new List<IMappingSpan>();
+			lockObj = new object();
 			BufferGraph = bufferGraph;
 			TextBuffer = textBuffer;
 			TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
-			this.taggers = Array.Empty<ITagger<T>>();
+			taggers = Array.Empty<ITagger<T>>();
 		}
 
 		protected void Initialize() => RecreateTaggers();

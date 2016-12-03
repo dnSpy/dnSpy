@@ -34,8 +34,8 @@ namespace dnSpy.Decompiler.IL {
 		public bool IsOriginalBytes => false;
 
 		public ModifiedInstructionBytesReader(MethodDef method) {
-			this.resolver = method.Module;
-			this.instrs = method.Body.Instructions;
+			resolver = method.Module;
+			instrs = method.Body.Instructions;
 		}
 
 		public int ReadByte() {

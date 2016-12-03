@@ -64,9 +64,9 @@ namespace dnSpy.Debugger {
 		public ICommand PickCoreCLRDbgShimFilenameCommand => new RelayCommand(a => PickNewCoreCLRDbgShimFilename());
 
 		public DebuggerAppSettingsPage(DebuggerSettingsImpl debuggerSettingsImpl, IPickFilename pickFilename) {
-			this._global_settings = debuggerSettingsImpl;
-			this.Settings = debuggerSettingsImpl.Clone();
-			this.BreakProcessKind = debuggerSettingsImpl.BreakProcessKind;
+			_global_settings = debuggerSettingsImpl;
+			Settings = debuggerSettingsImpl.Clone();
+			BreakProcessKind = debuggerSettingsImpl.BreakProcessKind;
 			this.pickFilename = pickFilename;
 		}
 
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger {
 
 		public override void OnApply() {
 			Settings.CopyTo(_global_settings);
-			_global_settings.BreakProcessKind = this.BreakProcessKind;
+			_global_settings.BreakProcessKind = BreakProcessKind;
 		}
 
 		public override string[] GetSearchStrings() => BreakProcessKindVM.Items.Select(a => a.Name).ToArray();

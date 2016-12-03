@@ -39,12 +39,12 @@ namespace dnSpy.Documents.TreeView {
 		readonly WeakReference asmRefOwnerModule;
 
 		public AssemblyReferenceNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleDef asmRefOwnerModule, AssemblyRef assemblyRef) {
-			this.TreeNodeGroup = treeNodeGroup;
+			TreeNodeGroup = treeNodeGroup;
 			this.asmRefOwnerModule = new WeakReference(asmRefOwnerModule);
 			// Make sure we don't hold on to the original reference since it could prevent GC of the
 			// owner module.
-			this.AssemblyRef = assemblyRef.ToAssemblyRef();
-			this.AssemblyRef.Rid = assemblyRef.Rid;
+			AssemblyRef = assemblyRef.ToAssemblyRef();
+			AssemblyRef.Rid = assemblyRef.Rid;
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;

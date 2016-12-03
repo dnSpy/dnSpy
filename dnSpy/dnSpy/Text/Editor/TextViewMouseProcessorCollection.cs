@@ -37,10 +37,10 @@ namespace dnSpy.Text.Editor {
 
 		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.wpfTextView = wpfTextView;
-			this.dsWpfTextView = wpfTextView as IDsWpfTextViewImpl;
+			dsWpfTextView = wpfTextView as IDsWpfTextViewImpl;
 			this.mouseProcessorProviders = mouseProcessorProviders;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
-			this.allowEventDelegate = AllowMouseEvent;
+			allowEventDelegate = AllowMouseEvent;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			Reinitialize();

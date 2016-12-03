@@ -138,9 +138,9 @@ namespace dnSpy.ToolWindows {
 		readonly TabElementZoomer elementZoomer;
 
 		public TabContentImpl(ToolWindowGroup owner, ToolWindowContent content) {
-			this.elementZoomer = new TabElementZoomer();
+			elementZoomer = new TabElementZoomer();
 			this.owner = owner;
-			this.Content = content;
+			Content = content;
 			AddEvents();
 		}
 

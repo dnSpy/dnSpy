@@ -30,7 +30,7 @@ namespace dnSpy.Decompiler.IL {
 
 		public OriginalInstructionBytesReader(MethodDef method) {
 			//TODO: This fails and returns null if it's a CorMethodDef!
-			this.stream = GetImageStream(method.Module, (uint)method.RVA + method.Body.HeaderSize);
+			stream = GetImageStream(method.Module, (uint)method.RVA + method.Body.HeaderSize);
 		}
 
 		static IImageStream GetImageStream(ModuleDef module, uint rva) {

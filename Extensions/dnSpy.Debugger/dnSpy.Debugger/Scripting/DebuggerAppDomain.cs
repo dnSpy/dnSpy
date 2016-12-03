@@ -83,9 +83,9 @@ namespace dnSpy.Debugger.Scripting {
 		public DebuggerAppDomain(Debugger debugger, DnAppDomain appDomain) {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
-			this.DnAppDomain = appDomain;
-			this.hashCode = appDomain.GetHashCode();
-			this.Id = appDomain.Id;
+			DnAppDomain = appDomain;
+			hashCode = appDomain.GetHashCode();
+			Id = appDomain.Id;
 		}
 
 		public void SetAllThreadsDebugState(ThreadState state, IDebuggerThread thread) =>

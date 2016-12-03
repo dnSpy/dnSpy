@@ -61,7 +61,7 @@ namespace dnSpy.Hex.Editor {
 			this.lineSpan = lineSpan;
 			this.style = style;
 			this.content = content;
-			this.popup = new Popup {
+			popup = new Popup {
 				PlacementTarget = wpfHexView.VisualElement,
 				Placement = PlacementMode.Relative,
 				Visibility = Visibility.Collapsed,

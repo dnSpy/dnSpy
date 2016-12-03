@@ -48,8 +48,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		protected override string OnNewValue(T value) {
-			this.type = value;
-			return ToString(this.type);
+			type = value;
+			return ToString(type);
 		}
 
 		protected override string ConvertToValue(out T value) {
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		string CalculateStringValue() => string.Join(", ", types.Select(a => TypeSigVM.ToString(a)));
-		void InitializeStringValue() => this.StringValue = CalculateStringValue();
+		void InitializeStringValue() => StringValue = CalculateStringValue();
 
 		protected override string ConvertToValue(out IList<T> value) {
 			value = types.ToArray();

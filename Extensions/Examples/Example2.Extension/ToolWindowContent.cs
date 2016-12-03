@@ -93,9 +93,9 @@ namespace Example2.Extension {
 		readonly ToolWindowVM toolWindowVM;
 
 		public ToolWindowContentImpl() {
-			this.toolWindowControl = new ToolWindowControl();
-			this.toolWindowVM = new ToolWindowVM();
-			this.toolWindowControl.DataContext = this.toolWindowVM;
+			toolWindowControl = new ToolWindowControl();
+			toolWindowVM = new ToolWindowVM();
+			toolWindowControl.DataContext = toolWindowVM;
 		}
 
 		// Gets notified when the content gets hidden, visible, etc. Can be used to tell the view

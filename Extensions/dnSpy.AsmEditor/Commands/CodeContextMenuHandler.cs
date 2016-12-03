@@ -30,9 +30,9 @@ namespace dnSpy.AsmEditor.Commands {
 		public IMenuItemContext MenuItemContextOrNull { get; }
 
 		public CodeContext(DocumentTreeNodeData[] nodes, bool isDefinition, IMenuItemContext menuItemContext) {
-			this.Nodes = nodes ?? Array.Empty<DocumentTreeNodeData>();
-			this.IsDefinition = isDefinition;
-			this.MenuItemContextOrNull = menuItemContext;
+			Nodes = nodes ?? Array.Empty<DocumentTreeNodeData>();
+			IsDefinition = isDefinition;
+			MenuItemContextOrNull = menuItemContext;
 		}
 	}
 

@@ -27,8 +27,8 @@ namespace dnSpy.Contracts.HexEditor {
 		public ulong EndOffset => Math.Max(From, To);
 
 		public HexSelection(ulong from, ulong to) {
-			this.From = from;
-			this.To = to;
+			From = from;
+			To = to;
 		}
 
 		public static bool operator ==(HexSelection a, HexSelection b) => a.Equals(b);

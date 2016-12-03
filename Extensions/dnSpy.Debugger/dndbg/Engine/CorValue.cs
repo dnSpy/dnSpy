@@ -203,7 +203,7 @@ namespace dndbg.Engine {
 					return v;
 				//TODO: HACKFIX: CLR 2.x caches the value which gets neutered when Continue() gets
 				// called. This will clear the cached value. CLR 4.x doesn't cache the referenced value.
-				this.ReferenceAddress = this.ReferenceAddress;
+				ReferenceAddress = ReferenceAddress;
 				return DereferencedValue;
 			}
 		}
@@ -441,25 +441,25 @@ namespace dndbg.Engine {
 
 		public CorValue(ICorDebugValue value)
 			: base(value) {
-			int hr = value.GetType(out this.elemType);
+			int hr = value.GetType(out elemType);
 			if (hr < 0)
-				this.elemType = CorElementType.End;
+				elemType = CorElementType.End;
 
 			bool initdSize = false;
 			var v3 = value as ICorDebugValue3;
 			if (v3 != null)
-				initdSize = v3.GetSize64(out this.size) == 0;
+				initdSize = v3.GetSize64(out size) == 0;
 			if (!initdSize) {
 				uint size32;
 				hr = value.GetSize(out size32);
 				if (hr < 0)
 					size32 = 0;
-				this.size = size32;
+				size = size32;
 			}
 
-			hr = value.GetAddress(out this.address);
+			hr = value.GetAddress(out address);
 			if (hr < 0)
-				this.address = 0;
+				address = 0;
 		}
 
 		/// <summary>

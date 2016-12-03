@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		int index;
 
 		public SwitchInstructionVM(InstructionVM instr) {
-			this.InstructionVM = instr;
+			InstructionVM = instr;
 		}
 
 		public IIndexedItem Clone() => new SwitchInstructionVM(InstructionVM);

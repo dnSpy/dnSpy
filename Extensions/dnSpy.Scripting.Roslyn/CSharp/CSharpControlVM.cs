@@ -77,7 +77,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			var rspFile = GetResponseFile("CSharpInteractive.rsp");
 			if (rspFile == null)
 				return;
-			this.ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
+			ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
 
 			foreach (var t in ResponseFileReader.Read(rspFile)) {
 				switch (t.Item1.ToLowerInvariant()) {

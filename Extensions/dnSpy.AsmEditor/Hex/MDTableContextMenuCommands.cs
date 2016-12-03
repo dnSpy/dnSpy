@@ -75,11 +75,11 @@ namespace dnSpy.AsmEditor.Hex {
 		public bool IsContextMenu { get; }
 
 		public MDTableContext(ListView listView, MetaDataTableVM mdVM, MetaDataTableNode mdNode, bool isContextMenu) {
-			this.ListView = listView;
-			this.MetaDataTableVM = mdVM;
-			this.Node = mdNode;
-			this.Records = listView.SelectedItems.Cast<MetaDataTableRecordVM>().OrderBy(a => a.Span.Start).ToArray();
-			this.IsContextMenu = isContextMenu;
+			ListView = listView;
+			MetaDataTableVM = mdVM;
+			Node = mdNode;
+			Records = listView.SelectedItems.Cast<MetaDataTableRecordVM>().OrderBy(a => a.Span.Start).ToArray();
+			IsContextMenu = isContextMenu;
 		}
 
 		public bool ContiguousRecords() {

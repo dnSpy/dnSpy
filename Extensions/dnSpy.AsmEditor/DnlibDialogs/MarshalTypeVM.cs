@@ -271,22 +271,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void TypeStringUpdated() => OnPropertyChanged(nameof(TypeString));
 
 		public MarshalTypeVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
-			this.NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
-			FixNativeTypeEnum(this.NativeType, false);
-			this.RawMarshalType_Data = new HexStringVM(a => { HasErrorUpdated(); TypeStringUpdated(); });
-			this.FixedSysStringMarshalType_Size = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
-			this.SafeArrayMarshalType_VariantType = new EnumListVM(variantTypeList, (a, b) => { OnSafeArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, decompilerService, ownerType, ownerMethod, true, safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged);
-			this.FixedArrayMarshalType_Size = new NullableCompressedUInt32(a => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.FixedArrayMarshalType_NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
+			FixNativeTypeEnum(NativeType, false);
+			RawMarshalType_Data = new HexStringVM(a => { HasErrorUpdated(); TypeStringUpdated(); });
+			FixedSysStringMarshalType_Size = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
+			SafeArrayMarshalType_VariantType = new EnumListVM(variantTypeList, (a, b) => { OnSafeArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, decompilerService, ownerType, ownerMethod, true, safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged);
+			FixedArrayMarshalType_Size = new NullableCompressedUInt32(a => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			FixedArrayMarshalType_NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(FixedArrayMarshalType_NativeType, true);
-			this.ArrayMarshalType_NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			ArrayMarshalType_NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(ArrayMarshalType_NativeType, true);
-			this.ArrayMarshalType_ParamNum = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.ArrayMarshalType_NumElems = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.ArrayMarshalType_Flags = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.CustomMarshalType_CustMarshaler_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, decompilerService, ownerType, ownerMethod, true, customMarshalType_custMarshaler_typeSigCreator_PropertyChanged);
-			this.InterfaceMarshalType_IidParamIndex = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
+			ArrayMarshalType_ParamNum = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			ArrayMarshalType_NumElems = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			ArrayMarshalType_Flags = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
+			CustomMarshalType_CustMarshaler_TypeSigCreator = CreateTypeSigCreatorVM(ownerModule, decompilerService, ownerType, ownerMethod, true, customMarshalType_custMarshaler_typeSigCreator_PropertyChanged);
+			InterfaceMarshalType_IidParamIndex = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
 		}
 
 		void OnSafeArrayMarshalTypeIsEnabledChanged() {

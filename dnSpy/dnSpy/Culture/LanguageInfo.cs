@@ -43,13 +43,13 @@ namespace dnSpy.Culture {
 		}
 
 		LanguageInfo(LanguageType type) {
-			this.Type = type;
-			this.CultureInfo = null;
+			Type = type;
+			CultureInfo = null;
 		}
 
 		LanguageInfo(CultureInfo cultureInfo) {
-			this.Type = LanguageType.CultureInfo;
-			this.CultureInfo = cultureInfo;
+			Type = LanguageType.CultureInfo;
+			CultureInfo = cultureInfo;
 		}
 
 		public bool Equals(LanguageInfo other) {

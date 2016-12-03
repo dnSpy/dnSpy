@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public MetadataFixer(byte[] data) {
 			this.data = data;
-			this.md = null;
+			md = null;
 		}
 
 		public bool MakePublic() {

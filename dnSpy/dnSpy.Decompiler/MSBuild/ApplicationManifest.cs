@@ -32,7 +32,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly byte[] data;
 
 		ApplicationManifest(string filename, byte[] data) {
-			this.Filename = filename;
+			Filename = filename;
 			this.data = data;
 		}
 
@@ -63,7 +63,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		public override string Filename { get; }
 
 		public ApplicationManifestProjectFile(string filename) {
-			this.Filename = filename;
+			Filename = filename;
 		}
 
 		public override void Create(DecompileContext ctx) {

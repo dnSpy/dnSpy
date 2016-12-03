@@ -35,8 +35,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public IAnalyzerTreeNodeDataContext Context { get; set; }
 		protected abstract ImageReference GetIcon(IDotNetImageService dnImgMgr);
 		protected virtual ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => null;
-		public sealed override ImageReference Icon => GetIcon(this.Context.DotNetImageService);
-		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.DotNetImageService);
+		public sealed override ImageReference Icon => GetIcon(Context.DotNetImageService);
+		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(Context.DotNetImageService);
 
 		static class Cache {
 			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();

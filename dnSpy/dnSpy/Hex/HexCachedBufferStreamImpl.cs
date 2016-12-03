@@ -75,7 +75,7 @@ namespace dnSpy.Hex {
 
 			int numCachedPages = (int)((CACHE_SIZE + pageSizeMask) / pageSize);
 			cachedPages = new CachedPage[numCachedPages];
-			for (int i = 0; i < this.cachedPages.Length; i++)
+			for (int i = 0; i < cachedPages.Length; i++)
 				cachedPages[i] = new CachedPage(i, (int)pageSize);
 		}
 

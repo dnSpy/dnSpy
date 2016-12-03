@@ -32,7 +32,7 @@ namespace dnSpy.Debugger {
 		readonly Dispatcher dispatcher;
 
 		WpfDebugMessageDispatcher() {
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			dispatcher = Dispatcher.CurrentDispatcher;
 		}
 
 		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;

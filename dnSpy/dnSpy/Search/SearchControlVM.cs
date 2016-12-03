@@ -130,15 +130,15 @@ namespace dnSpy.Search {
 		public SearchControlVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, ISearchSettings searchSettings) {
 			this.fileSearcherProvider = fileSearcherProvider;
 			this.documentTreeView = documentTreeView;
-			this.SearchSettings = searchSettings;
+			SearchSettings = searchSettings;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
-			this.delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
-			this.SearchTypeVMs = new ObservableCollection<SearchTypeVM>();
-			this.SearchResults = new ObservableCollection<ISearchResult>();
-			this.searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(SearchResults);
-			this.searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
-			this.SearchLocationVM = new EnumListVM(searchLocationList, (a, b) => Restart());
-			this.SearchLocationVM.SelectedItem = SearchLocation.AllFiles;
+			delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
+			SearchTypeVMs = new ObservableCollection<SearchTypeVM>();
+			SearchResults = new ObservableCollection<ISearchResult>();
+			searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(SearchResults);
+			searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
+			SearchLocationVM = new EnumListVM(searchLocationList, (a, b) => Restart());
+			SearchLocationVM.SelectedItem = SearchLocation.AllFiles;
 
 			Add(SearchType.AssemblyDef, dnSpy_Resources.SearchWindow_Assembly, DsImages.Assembly, null, VisibleMembersFlags.AssemblyDef);
 			Add(SearchType.ModuleDef, dnSpy_Resources.SearchWindow_Module, DsImages.ModulePublic, null, VisibleMembersFlags.ModuleDef);
@@ -165,7 +165,7 @@ namespace dnSpy.Search {
 			Add(SearchType.Any, dnSpy_Resources.SearchWindow_AllAbove, DsImages.ClassPublic, dnSpy_Resources.SearchWindow_AllAbove_Key, VisibleMembersFlags.TreeViewAll | VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local);
 			Add(SearchType.Literal, dnSpy_Resources.SearchWindow_Literal, DsImages.ConstantPublic, dnSpy_Resources.SearchWindow_Literal_Key, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Attributes);
 
-			this.SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
+			SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
 		}
 
 		void Add(SearchType searchType, string name, ImageReference icon, string toolTip, VisibleMembersFlags flags) =>

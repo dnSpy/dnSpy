@@ -94,8 +94,8 @@ namespace dnSpy.Debugger.Modules {
 		public IModuleContext Context { get; }
 
 		public ModuleVM(DnModule module, IModuleContext context) {
-			this.Module = module;
-			this.Context = context;
+			Module = module;
+			Context = context;
 		}
 
 		internal void RefreshThemeFields() {

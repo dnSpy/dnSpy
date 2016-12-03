@@ -43,19 +43,19 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public CilBodyOptions(CilBody body, RVA headerRva, FileOffset headerFileOffset, RVA rva, FileOffset fileOffset) {
-			this.KeepOldMaxStack = body.KeepOldMaxStack;
-			this.InitLocals = body.InitLocals;
-			this.HeaderSize = body.HeaderSize;
-			this.MaxStack = body.MaxStack;
-			this.LocalVarSigTok = body.LocalVarSigTok;
-			this.HeaderRVA = headerRva;
-			this.HeaderFileOffset = headerFileOffset;
-			this.RVA = rva;
-			this.FileOffset = fileOffset;
-			this.Instructions.AddRange(body.Instructions);
-			this.ExceptionHandlers.AddRange(body.ExceptionHandlers);
-			this.Locals.AddRange(body.Variables);
-			this.Scope = body.Scope;
+			KeepOldMaxStack = body.KeepOldMaxStack;
+			InitLocals = body.InitLocals;
+			HeaderSize = body.HeaderSize;
+			MaxStack = body.MaxStack;
+			LocalVarSigTok = body.LocalVarSigTok;
+			HeaderRVA = headerRva;
+			HeaderFileOffset = headerFileOffset;
+			RVA = rva;
+			FileOffset = fileOffset;
+			Instructions.AddRange(body.Instructions);
+			ExceptionHandlers.AddRange(body.ExceptionHandlers);
+			Locals.AddRange(body.Variables);
+			Scope = body.Scope;
 		}
 
 		public CilBody CopyTo(CilBody body) {
@@ -69,8 +69,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			body.ExceptionHandlers.Clear();
 			body.ExceptionHandlers.AddRange(ExceptionHandlers);
 			body.Variables.Clear();
-			body.Variables.AddRange(this.Locals);
-			body.Scope = this.Scope;
+			body.Variables.AddRange(Locals);
+			body.Scope = Scope;
 			body.UpdateInstructionOffsets();
 			return body;
 		}

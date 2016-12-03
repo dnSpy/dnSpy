@@ -192,16 +192,16 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, IDecompilerService decompilerService) {
 			this.ownerModule = ownerModule;
-			this.origOptions = options;
-			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged(nameof(AssemblyFullName)));
-			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged(nameof(AssemblyFullName)));
-			this.VersionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
-			this.VersionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
-			this.VersionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
-			this.VersionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
-			this.PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
-			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, null, null);
+			origOptions = options;
+			hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged(nameof(AssemblyFullName)));
+			contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged(nameof(AssemblyFullName)));
+			VersionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
+			VersionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
+			VersionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
+			VersionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
+			PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, null, null);
 			Reinitialize();
 		}
 

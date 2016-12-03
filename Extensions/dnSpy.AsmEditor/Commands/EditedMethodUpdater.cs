@@ -37,8 +37,8 @@ namespace dnSpy.AsmEditor.Commands {
 			readonly bool isBodyModified;
 
 			public MethodState(MethodDef method, bool isBodyModified) {
-				this.body = method.MethodBody;
-				this.methodDefOptions = new MethodDefOptions(method);
+				body = method.MethodBody;
+				methodDefOptions = new MethodDefOptions(method);
 				this.isBodyModified = isBodyModified;
 			}
 
@@ -63,12 +63,12 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public EditedMethodUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodDefOptions methodDefOptions) {
 			this.methodAnnotations = methodAnnotations;
-			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
+			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
-			this.method = originalMethod;
-			this.originalMethodState = new MethodState(originalMethod, methodAnnotations.Value.IsBodyModified(method));
-			this.newMethodState = new MethodState(newBody, methodDefOptions, true);
+			method = originalMethod;
+			originalMethodState = new MethodState(originalMethod, methodAnnotations.Value.IsBodyModified(method));
+			newMethodState = new MethodState(newBody, methodDefOptions, true);
 		}
 
 		public void Add() => newMethodState.CopyTo(method, methodAnnotations.Value);

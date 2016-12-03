@@ -23,7 +23,7 @@ namespace dndbg.Engine {
 		public DnDebugger Debugger { get; }
 
 		protected BreakpointConditionContext(DnDebugger debugger) {
-			this.Debugger = debugger;
+			Debugger = debugger;
 		}
 	}
 

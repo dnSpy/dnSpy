@@ -32,21 +32,21 @@ namespace dnSpy.Text.Editor {
 		public BoxSelectionHelper(ITextSelection textSelection) {
 			Debug.Assert(textSelection.Mode == TextSelectionMode.Box);
 			this.textSelection = textSelection;
-			this.textSnapshot = textSelection.TextView.TextSnapshot;
+			textSnapshot = textSelection.TextView.TextSnapshot;
 
 			var anchorLine = textSelection.TextView.GetTextViewLineContainingBufferPosition(textSelection.AnchorPoint.Position);
 			var activeLine = textSelection.TextView.GetTextViewLineContainingBufferPosition(textSelection.ActivePoint.Position);
 			var anchorBounds = anchorLine.GetExtendedCharacterBounds(textSelection.AnchorPoint);
 			var activeBounds = activeLine.GetExtendedCharacterBounds(textSelection.ActivePoint);
 			if (anchorBounds.Left < activeBounds.Right) {
-				this.xLeft = anchorBounds.Left;
-				this.xRight = Math.Max(this.xLeft, activeBounds.Left);
+				xLeft = anchorBounds.Left;
+				xRight = Math.Max(xLeft, activeBounds.Left);
 			}
 			else {
-				this.xLeft = activeBounds.Left;
-				this.xRight = Math.Max(xLeft, anchorBounds.Left);
+				xLeft = activeBounds.Left;
+				xRight = Math.Max(xLeft, anchorBounds.Left);
 			}
-			Debug.Assert(this.xLeft <= this.xRight);
+			Debug.Assert(xLeft <= xRight);
 		}
 
 		public VirtualSnapshotSpan GetSpan(ITextViewLine line) {

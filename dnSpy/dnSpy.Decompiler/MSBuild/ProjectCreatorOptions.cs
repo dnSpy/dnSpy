@@ -85,11 +85,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		public ProjectCreatorOptions(string directory, CancellationToken cancellationToken) {
 			if (directory == null)
 				throw new ArgumentNullException(nameof(directory));
-			this.Directory = directory;
-			this.CancellationToken = cancellationToken;
-			this.ProjectModules = new List<ProjectModuleOptions>();
-			this.UserGACPaths = new List<string>();
-			this.CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter);
+			Directory = directory;
+			CancellationToken = cancellationToken;
+			ProjectModules = new List<ProjectModuleOptions>();
+			UserGACPaths = new List<string>();
+			CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter);
 		}
 	}
 }

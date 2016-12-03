@@ -27,8 +27,8 @@ namespace dnSpy.Contracts.HexEditor {
 		public ulong Y { get; }
 
 		public HexPositionUI(ulong x, ulong y) {
-			this.X = x;
-			this.Y = y;
+			X = x;
+			Y = y;
 		}
 
 		public static bool operator <(HexPositionUI a, HexPositionUI b) => a.CompareTo(b) < 0;

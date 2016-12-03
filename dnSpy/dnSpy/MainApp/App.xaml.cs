@@ -95,8 +95,8 @@ namespace dnSpy.MainApp {
 		readonly IAppCommandLineArgs args;
 
 		public App(bool readSettings) {
-			this.args = new AppCommandLineArgs();
-			AppDirectories.SetSettingsFilename(this.args.SettingsFilename);
+			args = new AppCommandLineArgs();
+			AppDirectories.SetSettingsFilename(args.SettingsFilename);
 			if (args.SingleInstance)
 				SwitchToOtherInstance();
 
@@ -107,10 +107,10 @@ namespace dnSpy.MainApp {
 
 			InitializeMEF(readSettings);
 			compositionContainer.ComposeParts(this);
-			this.extensionService.LoadedExtensions = this.loadedExtensions;
-			this.appWindow.CommandLineArgs = this.args;
+			extensionService.LoadedExtensions = loadedExtensions;
+			appWindow.CommandLineArgs = args;
 
-			this.Exit += App_Exit;
+			Exit += App_Exit;
 		}
 
 		// These can also be put in the App.config file (semicolon-separated) but I prefer code in
@@ -134,7 +134,7 @@ namespace dnSpy.MainApp {
 			}
 
 			var cultureService = compositionContainer.GetExportedValue<CultureService>();
-			cultureService.Initialize(this.args);
+			cultureService.Initialize(args);
 
 			// Make sure IDpiService gets created before any MetroWindows
 			compositionContainer.GetExportedValue<IDpiService>();
@@ -360,12 +360,12 @@ namespace dnSpy.MainApp {
 			if (type == null)
 				return;
 			const string styleKey = "EditorContextMenuStyle";
-			var style = this.Resources[styleKey];
+			var style = Resources[styleKey];
 			Debug.Assert(style != null);
 			if (style == null)
 				return;
-			this.Resources.Remove(styleKey);
-			this.Resources.Add(type, style);
+			Resources.Remove(styleKey);
+			Resources.Add(type, style);
 		}
 
 		protected override void OnStartup(StartupEventArgs e) {
@@ -375,7 +375,7 @@ namespace dnSpy.MainApp {
 			appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
 			dsLoaderService.OnAppLoaded += DsLoaderService_OnAppLoaded;
 			dsLoaderService.Initialize(appWindow, win, args);
-			extensionService.LoadExtensions(this.Resources.MergedDictionaries);
+			extensionService.LoadExtensions(Resources.MergedDictionaries);
 			win.Show();
 		}
 

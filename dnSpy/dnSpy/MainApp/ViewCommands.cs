@@ -46,7 +46,7 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		public FullScreenCommand(IAppWindow appWindow)
 			: base(MetroWindow.FullScreenCommand) {
-			this.window = (MetroWindow)appWindow.MainWindow;
+			window = (MetroWindow)appWindow.MainWindow;
 		}
 
 		public override bool IsChecked(IMenuItemContext context) => window.IsFullScreen;

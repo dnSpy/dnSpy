@@ -31,7 +31,7 @@ namespace dndbg.DotNet {
 		public CorStandAloneSig(CorModuleDef readerModule, uint rid, GenericParamContext gpContext) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.gpContext = gpContext;
 			Initialize_NoLock();
 		}

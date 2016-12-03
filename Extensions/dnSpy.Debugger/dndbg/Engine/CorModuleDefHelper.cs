@@ -38,7 +38,7 @@ namespace dndbg.Engine {
 
 		public IAssembly CorLib {
 			get {
-				var corAsm = this.module.AppDomain.Assemblies.FirstOrDefault();
+				var corAsm = module.AppDomain.Assemblies.FirstOrDefault();
 				Debug.Assert(corAsm != null);
 				if (corAsm == null)
 					return AssemblyRefUser.CreateMscorlibReferenceCLR20();
@@ -52,24 +52,24 @@ namespace dndbg.Engine {
 
 		public bool IsDynamic => module.IsDynamic;
 		public bool IsInMemory => module.IsInMemory;
-		public bool? IsCorLib => this.module.Assembly.UniqueIdAppDomain == 0 && this.module.UniqueIdAppDomain == 0;
+		public bool? IsCorLib => module.Assembly.UniqueIdAppDomain == 0 && module.UniqueIdAppDomain == 0;
 
 		public string Filename {
 			get {
-				if (this.module.IsInMemory)
+				if (module.IsInMemory)
 					return null;
-				return this.module.Name;
+				return module.Name;
 			}
 		}
 
-		public bool IsManifestModule => this.module.CorModule.IsManifestModule;
+		public bool IsManifestModule => module.CorModule.IsManifestModule;
 
 		public IBinaryReader CreateBodyReader(uint bodyRva, uint mdToken) {
 			// bodyRva can be 0 if it's a dynamic module. this.module.Address will also be 0.
-			if (!this.module.IsDynamic && bodyRva == 0)
+			if (!module.IsDynamic && bodyRva == 0)
 				return null;
 
-			var func = this.module.CorModule.GetFunctionFromToken(mdToken);
+			var func = module.CorModule.GetFunctionFromToken(mdToken);
 			var ilCode = func?.ILCode;
 			if (ilCode == null)
 				return null;
@@ -81,10 +81,10 @@ namespace dndbg.Engine {
 			if (addr < FAT_HEADER_SIZE)
 				return null;
 
-			if (this.module.IsDynamic) {
+			if (module.IsDynamic) {
 				// It's always a fat header, see COMDynamicWrite::SetMethodIL() (coreclr/src/vm/comdynamic.cpp)
 				addr -= FAT_HEADER_SIZE;
-				var reader = new ProcessBinaryReader(new CorProcessReader(this.module.Process), 0);
+				var reader = new ProcessBinaryReader(new CorProcessReader(module.Process), 0);
 				Debug.Assert((reader.Position = (long)addr) == (long)addr);
 				Debug.Assert((reader.ReadByte() & 7) == 3);
 				Debug.Assert((reader.Position = (long)addr + 4) == (long)addr + 4);
@@ -96,7 +96,7 @@ namespace dndbg.Engine {
 				uint codeSize = ilCode.Size;
 				// The address to the code is returned but we want the header. Figure out whether
 				// it's the 1-byte or fat header.
-				var reader = new ProcessBinaryReader(new CorProcessReader(this.module.Process), 0);
+				var reader = new ProcessBinaryReader(new CorProcessReader(module.Process), 0);
 				uint locVarSigTok = func.LocalVarSigToken;
 				bool isBig = codeSize >= 0x40 || (locVarSigTok & 0x00FFFFFF) != 0;
 				if (!isBig) {
@@ -127,7 +127,7 @@ namespace dndbg.Engine {
 		}
 
 		public byte[] ReadFieldInitialValue(uint fieldRva, uint fdToken, int size) {
-			if (this.module.IsDynamic) {
+			if (module.IsDynamic) {
 				//TODO: See COMModule::SetFieldRVAContent()
 				//TODO: Perhaps you could create a type using the CorDebug eval API and read the value?
 				return null;
@@ -183,7 +183,7 @@ namespace dndbg.Engine {
 					return sectionHeaders = Array.Empty<ImageSectionHeader>();
 				var data = new byte[0x1000];
 				int sizeRead;
-				this.module.Process.CorProcess.ReadMemory(this.module.Address, data, 0, data.Length, out sizeRead);
+				module.Process.CorProcess.ReadMemory(module.Address, data, 0, data.Length, out sizeRead);
 				using (var peImage = new PEImage(data, !module.IsDynamic && module.IsInMemory ? ImageLayout.File : ImageLayout.Memory, true))
 					return sectionHeaders = peImage.ImageSectionHeaders.ToArray();
 			}

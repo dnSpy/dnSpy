@@ -54,11 +54,11 @@ namespace dnSpy.Themes {
 		ThemeSettings(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.ThemeGuid = sect.Attribute<Guid?>(nameof(ThemeGuid));
-			this.ShowAllThemes = sect.Attribute<bool?>(nameof(ShowAllThemes)) ?? ShowAllThemes;
-			this.disableSave = false;
+			ThemeGuid = sect.Attribute<Guid?>(nameof(ThemeGuid));
+			ShowAllThemes = sect.Attribute<bool?>(nameof(ShowAllThemes)) ?? ShowAllThemes;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

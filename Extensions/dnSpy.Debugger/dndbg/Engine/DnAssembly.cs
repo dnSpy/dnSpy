@@ -92,12 +92,12 @@ namespace dndbg.Engine {
 		public DnAppDomain AppDomain { get; }
 
 		internal DnAssembly(DnAppDomain appDomain, ICorDebugAssembly assembly, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
-			this.AppDomain = appDomain;
-			this.modules = new DebuggerCollection<ICorDebugModule, DnModule>(CreateModule);
-			this.CorAssembly = new CorAssembly(assembly);
-			this.UniqueId = uniqueId;
-			this.UniqueIdProcess = uniqueIdProcess;
-			this.UniqueIdAppDomain = uniqueIdAppDomain;
+			AppDomain = appDomain;
+			modules = new DebuggerCollection<ICorDebugModule, DnModule>(CreateModule);
+			CorAssembly = new CorAssembly(assembly);
+			UniqueId = uniqueId;
+			UniqueIdProcess = uniqueIdProcess;
+			UniqueIdAppDomain = uniqueIdAppDomain;
 		}
 
 		DnModule CreateModule(ICorDebugModule comModule) =>

@@ -85,10 +85,10 @@ namespace dnSpy.Analyzer {
 		public AnalyzerSettings Clone() => CopyTo(new AnalyzerSettings());
 
 		public AnalyzerSettings CopyTo(AnalyzerSettings other) {
-			other.SyntaxHighlight = this.SyntaxHighlight;
-			other.ShowToken = this.ShowToken;
-			other.SingleClickExpandsChildren = this.SingleClickExpandsChildren;
-			other.UseNewRenderer = this.UseNewRenderer;
+			other.SyntaxHighlight = SyntaxHighlight;
+			other.ShowToken = ShowToken;
+			other.SingleClickExpandsChildren = SingleClickExpandsChildren;
+			other.UseNewRenderer = UseNewRenderer;
 			return other;
 		}
 	}
@@ -103,13 +103,13 @@ namespace dnSpy.Analyzer {
 		AnalyzerSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
-			this.ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? this.ShowToken;
-			this.SingleClickExpandsChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsChildren)) ?? this.SingleClickExpandsChildren;
-			this.UseNewRenderer = sect.Attribute<bool?>(nameof(UseNewRenderer)) ?? this.UseNewRenderer;
-			this.disableSave = false;
+			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
+			ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? ShowToken;
+			SingleClickExpandsChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsChildren)) ?? SingleClickExpandsChildren;
+			UseNewRenderer = sect.Attribute<bool?>(nameof(UseNewRenderer)) ?? UseNewRenderer;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

@@ -165,18 +165,18 @@ namespace dnSpy.Documents.TreeView {
 		public DocumentTreeViewSettings Clone() => CopyTo(new DocumentTreeViewSettings());
 
 		public DocumentTreeViewSettings CopyTo(DocumentTreeViewSettings other) {
-			other.SyntaxHighlight = this.SyntaxHighlight;
-			other.SingleClickExpandsTreeViewChildren = this.SingleClickExpandsTreeViewChildren;
-			other.ShowAssemblyVersion = this.ShowAssemblyVersion;
-			other.ShowAssemblyPublicKeyToken = this.ShowAssemblyPublicKeyToken;
-			other.ShowToken = this.ShowToken;
-			other.DeserializeResources = this.DeserializeResources;
-			other.FilterDraggedItems = this.FilterDraggedItems;
-			other.MemberKind0 = this.MemberKind0;
-			other.MemberKind1 = this.MemberKind1;
-			other.MemberKind2 = this.MemberKind2;
-			other.MemberKind3 = this.MemberKind3;
-			other.MemberKind4 = this.MemberKind4;
+			other.SyntaxHighlight = SyntaxHighlight;
+			other.SingleClickExpandsTreeViewChildren = SingleClickExpandsTreeViewChildren;
+			other.ShowAssemblyVersion = ShowAssemblyVersion;
+			other.ShowAssemblyPublicKeyToken = ShowAssemblyPublicKeyToken;
+			other.ShowToken = ShowToken;
+			other.DeserializeResources = DeserializeResources;
+			other.FilterDraggedItems = FilterDraggedItems;
+			other.MemberKind0 = MemberKind0;
+			other.MemberKind1 = MemberKind1;
+			other.MemberKind2 = MemberKind2;
+			other.MemberKind3 = MemberKind3;
+			other.MemberKind4 = MemberKind4;
 			return other;
 		}
 	}
@@ -191,21 +191,21 @@ namespace dnSpy.Documents.TreeView {
 		DocumentTreeViewSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
-			this.SingleClickExpandsTreeViewChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsTreeViewChildren)) ?? this.SingleClickExpandsTreeViewChildren;
-			this.ShowAssemblyVersion = sect.Attribute<bool?>(nameof(ShowAssemblyVersion)) ?? this.ShowAssemblyVersion;
-			this.ShowAssemblyPublicKeyToken = sect.Attribute<bool?>(nameof(ShowAssemblyPublicKeyToken)) ?? this.ShowAssemblyPublicKeyToken;
-			this.ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? this.ShowToken;
-			this.DeserializeResources = sect.Attribute<bool?>(nameof(DeserializeResources)) ?? this.DeserializeResources;
-			this.FilterDraggedItems = sect.Attribute<DocumentFilterType?>(nameof(FilterDraggedItems)) ?? this.FilterDraggedItems;
-			this.MemberKind0 = sect.Attribute<MemberKind?>(nameof(MemberKind0)) ?? this.MemberKind0;
-			this.MemberKind1 = sect.Attribute<MemberKind?>(nameof(MemberKind1)) ?? this.MemberKind1;
-			this.MemberKind2 = sect.Attribute<MemberKind?>(nameof(MemberKind2)) ?? this.MemberKind2;
-			this.MemberKind3 = sect.Attribute<MemberKind?>(nameof(MemberKind3)) ?? this.MemberKind3;
-			this.MemberKind4 = sect.Attribute<MemberKind?>(nameof(MemberKind4)) ?? this.MemberKind4;
-			this.disableSave = false;
+			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
+			SingleClickExpandsTreeViewChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsTreeViewChildren)) ?? SingleClickExpandsTreeViewChildren;
+			ShowAssemblyVersion = sect.Attribute<bool?>(nameof(ShowAssemblyVersion)) ?? ShowAssemblyVersion;
+			ShowAssemblyPublicKeyToken = sect.Attribute<bool?>(nameof(ShowAssemblyPublicKeyToken)) ?? ShowAssemblyPublicKeyToken;
+			ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? ShowToken;
+			DeserializeResources = sect.Attribute<bool?>(nameof(DeserializeResources)) ?? DeserializeResources;
+			FilterDraggedItems = sect.Attribute<DocumentFilterType?>(nameof(FilterDraggedItems)) ?? FilterDraggedItems;
+			MemberKind0 = sect.Attribute<MemberKind?>(nameof(MemberKind0)) ?? MemberKind0;
+			MemberKind1 = sect.Attribute<MemberKind?>(nameof(MemberKind1)) ?? MemberKind1;
+			MemberKind2 = sect.Attribute<MemberKind?>(nameof(MemberKind2)) ?? MemberKind2;
+			MemberKind3 = sect.Attribute<MemberKind?>(nameof(MemberKind3)) ?? MemberKind3;
+			MemberKind4 = sect.Attribute<MemberKind?>(nameof(MemberKind4)) ?? MemberKind4;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

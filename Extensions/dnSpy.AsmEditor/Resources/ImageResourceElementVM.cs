@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length);
 
 		public ImageResourceElementVM(ResourceElementOptions options) {
-			this.origOptions = options;
+			origOptions = options;
 
 			Reinitialize();
 		}
@@ -86,13 +86,13 @@ namespace dnSpy.AsmEditor.Resources {
 				throw new InvalidOperationException();
 			var builtin = (BuiltInResourceData)options.ResourceData;
 
-			this.resourceTypeCode = options.ResourceData.Code;
-			this.Name = options.Name;
-			this.Data = (byte[])builtin.Data;
+			resourceTypeCode = options.ResourceData.Code;
+			Name = options.Name;
+			Data = (byte[])builtin.Data;
 		}
 
 		ResourceElementOptions CopyTo(ResourceElementOptions options) {
-			options.Name = this.Name;
+			options.Name = Name;
 			options.ResourceData = new BuiltInResourceData(resourceTypeCode, Data);
 			return options;
 		}

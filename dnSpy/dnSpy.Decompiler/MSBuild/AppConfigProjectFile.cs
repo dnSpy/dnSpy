@@ -29,7 +29,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly string existingName;
 
 		public AppConfigProjectFile(string filename, string existingName) {
-			this.Filename = filename;
+			Filename = filename;
 			this.existingName = existingName;
 		}
 

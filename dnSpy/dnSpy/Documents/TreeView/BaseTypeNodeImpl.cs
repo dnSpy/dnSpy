@@ -57,11 +57,11 @@ namespace dnSpy.Documents.TreeView {
 		readonly WeakReference weakRefTypeDefOrRef;
 
 		public BaseTypeNodeImpl(ITreeNodeGroup treeNodeGroup, ITypeDefOrRef typeDefOrRef, bool isBaseType) {
-			this.TreeNodeGroup = treeNodeGroup;
+			TreeNodeGroup = treeNodeGroup;
 			this.isBaseType = isBaseType;
 			// Keep weak refs to them so we won't prevent removed modules from being GC'd.
-			this.weakRefTypeDefOrRef = new WeakReference(typeDefOrRef);
-			this.weakRefResolvedTypeDef = new WeakReference(null);
+			weakRefTypeDefOrRef = new WeakReference(typeDefOrRef);
+			weakRefResolvedTypeDef = new WeakReference(null);
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;

@@ -47,11 +47,11 @@ namespace dnSpy.Documents.Tabs {
 		public StackedContentState StackedContentState { get; }
 
 		SerializedTabGroupWindow(string name, int index, bool isHorizontal, StackedContentState stackedContentState) {
-			this.Name = name;
-			this.Index = index;
-			this.IsHorizontal = isHorizontal;
-			this.TabGroups = new List<SerializedTabGroup>();
-			this.StackedContentState = stackedContentState;
+			Name = name;
+			Index = index;
+			IsHorizontal = isHorizontal;
+			TabGroups = new List<SerializedTabGroup>();
+			StackedContentState = stackedContentState;
 		}
 
 		public static SerializedTabGroupWindow Load(ISettingsSection section) {
@@ -118,8 +118,8 @@ namespace dnSpy.Documents.Tabs {
 		public List<SerializedTab> Tabs { get; }
 
 		SerializedTabGroup(int index) {
-			this.Index = index;
-			this.Tabs = new List<SerializedTab>();
+			Index = index;
+			Tabs = new List<SerializedTab>();
 		}
 
 		public static SerializedTabGroup Load(ISettingsSection section) {
@@ -182,11 +182,11 @@ namespace dnSpy.Documents.Tabs {
 		public List<DsDocumentInfo> AutoLoadedDocuments { get; }
 
 		SerializedTab(ISettingsSection content, ISettingsSection tabContentUI, ISettingsSection ui, List<SerializedPath> paths, List<DsDocumentInfo> autoLoadedDocuments) {
-			this.Content = content;
-			this.TabUI = tabContentUI;
-			this.UI = ui;
-			this.Paths = paths;
-			this.AutoLoadedDocuments = autoLoadedDocuments;
+			Content = content;
+			TabUI = tabContentUI;
+			UI = ui;
+			Paths = paths;
+			AutoLoadedDocuments = autoLoadedDocuments;
 		}
 
 		public static SerializedTab TryLoad(ISettingsSection section) {
@@ -284,7 +284,7 @@ namespace dnSpy.Documents.Tabs {
 			documentTabService.Add(g, tabContent, null, (Action<ShowTabContentEventArgs>)(a => {
 				if (a.Success) {
 					var uiContext = tabContent.DocumentTab.UIContext;
-					tabContent.DocumentTab.DeserializeUI((ISettingsSection)this.TabUI);
+					tabContent.DocumentTab.DeserializeUI((ISettingsSection)TabUI);
 					var obj = uiContext.DeserializeUIState(UI);
 					uiContext.RestoreUIState(obj);
 				}
@@ -317,7 +317,7 @@ namespace dnSpy.Documents.Tabs {
 		public List<NodePathName> Names { get; }
 
 		SerializedPath() {
-			this.Names = new List<NodePathName>();
+			Names = new List<NodePathName>();
 		}
 
 		public static SerializedPath Load(ISettingsSection pathSection) {

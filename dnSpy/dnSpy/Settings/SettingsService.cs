@@ -32,7 +32,7 @@ namespace dnSpy.Settings {
 		public ISettingsSection[] Sections => sections.Values.ToArray();
 
 		SettingsService() {
-			this.sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
+			sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
 		}
 
 		public ISettingsSection GetOrCreateSection(Guid guid) {

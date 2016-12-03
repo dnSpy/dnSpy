@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Text {
 		/// Constructor
 		/// </summary>
 		public StringBuilderTextColorOutput() {
-			this.sb = new StringBuilder();
+			sb = new StringBuilder();
 		}
 
 		/// <summary>
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Text {
 		public StringBuilderTextColorOutput(StringBuilder stringBuilder) {
 			if (stringBuilder == null)
 				throw new ArgumentNullException(nameof(stringBuilder));
-			this.sb = stringBuilder;
+			sb = stringBuilder;
 		}
 
 		/// <summary>

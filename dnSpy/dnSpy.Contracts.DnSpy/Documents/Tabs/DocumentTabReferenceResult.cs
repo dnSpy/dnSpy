@@ -48,9 +48,9 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		public DocumentTabReferenceResult(DocumentTabContent documentTabContent, object uiState = null, Action<ShowTabContentEventArgs> onShownHandler = null) {
 			if (documentTabContent == null)
 				throw new ArgumentNullException(nameof(documentTabContent));
-			this.DocumentTabContent = documentTabContent;
-			this.UIState = uiState;
-			this.OnShownHandler = onShownHandler;
+			DocumentTabContent = documentTabContent;
+			UIState = uiState;
+			OnShownHandler = onShownHandler;
 		}
 	}
 }

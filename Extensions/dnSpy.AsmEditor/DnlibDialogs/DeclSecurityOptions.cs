@@ -31,22 +31,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public DeclSecurityOptions(DeclSecurity ds) {
-			this.Action = ds.Action;
-			this.CustomAttributes.AddRange(ds.CustomAttributes);
-			this.V1XMLString = ds.GetNet1xXmlString();
-			if (this.V1XMLString == null)
-				this.SecurityAttributes.AddRange(ds.SecurityAttributes);
+			Action = ds.Action;
+			CustomAttributes.AddRange(ds.CustomAttributes);
+			V1XMLString = ds.GetNet1xXmlString();
+			if (V1XMLString == null)
+				SecurityAttributes.AddRange(ds.SecurityAttributes);
 		}
 
 		public DeclSecurity CopyTo(ModuleDef module, DeclSecurity ds) {
-			ds.Action = this.Action;
+			ds.Action = Action;
 			ds.CustomAttributes.Clear();
 			ds.CustomAttributes.AddRange(CustomAttributes);
 			ds.SecurityAttributes.Clear();
-			if (this.V1XMLString == null)
+			if (V1XMLString == null)
 				ds.SecurityAttributes.AddRange(SecurityAttributes);
 			else
-				ds.SecurityAttributes.Add(SecurityAttribute.CreateFromXml(module, this.V1XMLString));
+				ds.SecurityAttributes.Add(SecurityAttribute.CreateFromXml(module, V1XMLString));
 			return ds;
 		}
 

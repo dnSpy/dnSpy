@@ -81,7 +81,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new ArgumentNullException(nameof(documentViewerCustomDataProviders));
 			this.documentViewerPostProcessors = documentViewerPostProcessors;
 			this.documentViewerCustomDataProviders = documentViewerCustomDataProviders;
-			this.documentViewerOutput = DocumentViewerOutput.Create();
+			documentViewerOutput = DocumentViewerOutput.Create();
 		}
 
 		sealed class DocumentViewerCustomDataContext : IDocumentViewerCustomDataContext, IDisposable {
@@ -96,7 +96,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				Text = text;
 				ContentType = contentType;
 				this.customDataDict = customDataDict;
-				this.resultDict = new Dictionary<string, object>(StringComparer.Ordinal);
+				resultDict = new Dictionary<string, object>(StringComparer.Ordinal);
 			}
 
 			internal Dictionary<string, object> GetResultDictionary() => resultDict;

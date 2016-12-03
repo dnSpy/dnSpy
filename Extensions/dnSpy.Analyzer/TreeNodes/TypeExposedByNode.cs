@@ -47,7 +47,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedType.IsEnum && type == analyzedType)
 				yield break;
 
-			if (!this.Context.Decompiler.ShowMember(type))
+			if (!Context.Decompiler.ShowMember(type))
 				yield break;
 
 			foreach (FieldDef field in type.Fields) {

@@ -54,10 +54,10 @@ namespace dnSpy.Documents {
 		DsDocumentServiceSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.UseMemoryMappedIO = sect.Attribute<bool?>(nameof(UseMemoryMappedIO)) ?? this.UseMemoryMappedIO;
-			this.disableSave = false;
+			UseMemoryMappedIO = sect.Attribute<bool?>(nameof(UseMemoryMappedIO)) ?? UseMemoryMappedIO;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

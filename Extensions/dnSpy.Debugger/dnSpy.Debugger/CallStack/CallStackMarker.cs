@@ -44,8 +44,8 @@ namespace dnSpy.Debugger.CallStack {
 		CallStackMarker(IStackFrameService stackFrameService, IGlyphTextMarkerService glyphTextMarkerService, IClassificationTypeRegistryService classificationTypeRegistryService, Lazy<ActiveStatementService> activeStatementService) {
 			this.stackFrameService = stackFrameService;
 			this.glyphTextMarkerService = glyphTextMarkerService;
-			this.classificationTypeCurrentStatement = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentStatement);
-			this.classificationTypeCallReturn = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CallReturn);
+			classificationTypeCurrentStatement = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CurrentStatement);
+			classificationTypeCallReturn = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.CallReturn);
 			this.activeStatementService = activeStatementService;
 			stackFrameService.NewFrames += StackFrameService_NewFrames;
 		}

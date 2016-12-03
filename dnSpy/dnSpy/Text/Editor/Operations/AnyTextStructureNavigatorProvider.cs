@@ -31,7 +31,7 @@ namespace dnSpy.Text.Editor.Operations {
 
 		[ImportingConstructor]
 		AnyTextStructureNavigatorProvider(IContentTypeRegistryService contentTypeRegistryService) {
-			this.contentType = contentTypeRegistryService.GetContentType(ContentTypes.Any);
+			contentType = contentTypeRegistryService.GetContentType(ContentTypes.Any);
 		}
 
 		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer) =>

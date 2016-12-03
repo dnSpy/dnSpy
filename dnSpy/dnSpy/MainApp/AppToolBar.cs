@@ -35,7 +35,7 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		public AppToolBar(IToolBarService toolBarService) {
 			this.toolBarService = toolBarService;
-			this.toolBar = new ToolBar();
+			toolBar = new ToolBar();
 		}
 
 		internal void Initialize(MetroWindow window) =>

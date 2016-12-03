@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.TreeView {
 		/// <param name="event">Event</param>
 		/// <param name="arg">Argument</param>
 		public TreeViewListenerEventArgs(TreeViewListenerEvent @event, object arg) {
-			this.Event = @event;
-			this.Argument = arg;
+			Event = @event;
+			Argument = arg;
 		}
 	}
 }

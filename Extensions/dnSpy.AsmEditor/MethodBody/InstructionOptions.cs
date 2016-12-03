@@ -31,15 +31,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public InstructionOptions(Dictionary<object, object> ops, Instruction instr) {
-			this.Code = instr.OpCode.Code;
-			this.Operand = BodyUtils.ToOperandVM(ops, instr.Operand);
-			this.SequencePoint = instr.SequencePoint;
+			Code = instr.OpCode.Code;
+			Operand = BodyUtils.ToOperandVM(ops, instr.Operand);
+			SequencePoint = instr.SequencePoint;
 		}
 
 		public Instruction CopyTo(Dictionary<object, object> ops, Instruction instr) {
-			instr.OpCode = this.Code.ToOpCode();
-			instr.Operand = BodyUtils.ToOperandModel(ops, this.Operand);
-			instr.SequencePoint = this.SequencePoint;
+			instr.OpCode = Code.ToOpCode();
+			instr.Operand = BodyUtils.ToOperandModel(ops, Operand);
+			instr.SequencePoint = SequencePoint;
 			return instr;
 		}
 

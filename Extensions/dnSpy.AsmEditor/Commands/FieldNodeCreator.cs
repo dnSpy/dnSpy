@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public FieldNodeCreator(ModuleDocumentNode modNode, TypeNode ownerNode, FieldDef field) {
 			this.ownerNode = ownerNode;
-			this.fieldNode = modNode.Context.DocumentTreeView.Create(field);
+			fieldNode = modNode.Context.DocumentTreeView.Create(field);
 		}
 
 		public void Add() {

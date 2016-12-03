@@ -53,8 +53,8 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		public DocumentSearcherOptions() {
-			this.MaxResults = DEFAULT_MAX_RESULTS;
-			this.SearchDecompiledData = true;
+			MaxResults = DEFAULT_MAX_RESULTS;
+			SearchDecompiledData = true;
 		}
 
 		/// <summary>

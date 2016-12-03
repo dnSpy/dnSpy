@@ -87,13 +87,13 @@ namespace dnSpy.Contracts.Metadata {
 			Debug.Assert(asmFullName == null || !asmFullName.Contains("\\:"));
 			this.asmFullName = asmFullName ?? string.Empty;
 			this.moduleName = moduleName ?? string.Empty;
-			this.flags = 0;
+			flags = 0;
 			if (isDynamic)
-				this.flags |= Flags.IsDynamic;
+				flags |= Flags.IsDynamic;
 			if (isInMemory)
-				this.flags |= Flags.IsInMemory;
+				flags |= Flags.IsInMemory;
 			if (nameOnly)
-				this.flags |= Flags.NameOnly;
+				flags |= Flags.NameOnly;
 		}
 
 		/// <summary>

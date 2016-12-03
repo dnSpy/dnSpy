@@ -40,7 +40,7 @@ namespace dnSpy.Text {
 				throw new ArgumentException();
 			BufferGraph = bufferGraph;
 			this.snapshotSpan = snapshotSpan;
-			this.spanTrackingMode = trackingMode;
+			spanTrackingMode = trackingMode;
 		}
 
 		public NormalizedSnapshotSpanCollection GetSpans(Predicate<ITextBuffer> match) {

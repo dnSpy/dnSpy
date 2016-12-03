@@ -27,7 +27,7 @@ namespace dnSpy.Controls {
 		public bool IsHorizontal { get; set; }
 
 		public StackedContentState() {
-			this.RowsCols = new List<GridLength>();
+			RowsCols = new List<GridLength>();
 		}
 	}
 

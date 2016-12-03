@@ -260,21 +260,21 @@ namespace dnSpy.AsmEditor.Types {
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
-			this.TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
+			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService, ownerType, null);
-			this.DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, ownerType, null);
-			this.GenericParamsVM = new GenericParamsVM(ownerModule, decompilerService, ownerType, null);
-			this.InterfaceImplsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>(dnSpy_AsmEditor_Resources.EditInterfaceImpl, dnSpy_AsmEditor_Resources.CreateInterfaceImpl, ownerModule, decompilerService, ownerType, null);
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService, ownerType, null);
+			DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, ownerType, null);
+			GenericParamsVM = new GenericParamsVM(ownerModule, decompilerService, ownerType, null);
+			InterfaceImplsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>(dnSpy_AsmEditor_Resources.EditInterfaceImpl, dnSpy_AsmEditor_Resources.CreateInterfaceImpl, ownerModule, decompilerService, ownerType, null);
 
-			this.origOptions = options;
-			this.IsNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;
-			this.TypeKind = new EnumListVM(typeKindList, (a, b) => OnTypeKindChanged());
-			this.TypeLayout = new EnumListVM(typeLayoutList, (a, b) => InitializeTypeKind());
-			this.TypeSemantics = new EnumListVM(typeSemanticsList, (a, b) => InitializeTypeKind());
-			this.PackingSize = new NullableUInt16VM(a => HasErrorUpdated());
-			this.ClassSize = new NullableUInt32VM(a => HasErrorUpdated());
+			origOptions = options;
+			IsNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;
+			TypeKind = new EnumListVM(typeKindList, (a, b) => OnTypeKindChanged());
+			TypeLayout = new EnumListVM(typeLayoutList, (a, b) => InitializeTypeKind());
+			TypeSemantics = new EnumListVM(typeSemanticsList, (a, b) => InitializeTypeKind());
+			PackingSize = new NullableUInt16VM(a => HasErrorUpdated());
+			ClassSize = new NullableUInt32VM(a => HasErrorUpdated());
 
 			Types.TypeVisibility start, end;
 			if (!IsNestedType) {
@@ -291,7 +291,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 
 			InitializeTypeKind();
-			this.TypeSigCreator.CanAddFnPtr = false;
+			TypeSigCreator.CanAddFnPtr = false;
 			Reinitialize();
 		}
 

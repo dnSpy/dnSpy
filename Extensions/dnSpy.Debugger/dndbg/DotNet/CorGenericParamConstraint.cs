@@ -31,7 +31,7 @@ namespace dndbg.DotNet {
 		public CorGenericParamConstraint(CorModuleDef readerModule, uint rid, GenericParamContext gpContext) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.gpContext = gpContext;
 			Initialize_NoLock();
 		}
@@ -39,7 +39,7 @@ namespace dndbg.DotNet {
 		void Initialize_NoLock() {
 			base.owner = readerModule.ResolveGenericParam(MDAPI.GetGenericParamConstraintOwnerRid(readerModule.MetaDataImport2, OriginalToken.Raw));
 			uint typeToken = MDAPI.GetGenericParamConstraintTypeToken(readerModule.MetaDataImport2, OriginalToken.Raw);
-			this.constraint = readerModule.ResolveTypeDefOrRefInternal(typeToken, gpContext);
+			constraint = readerModule.ResolveTypeDefOrRefInternal(typeToken, gpContext);
 		}
 
 		protected override void InitializeCustomAttributes() =>

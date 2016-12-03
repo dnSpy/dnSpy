@@ -280,12 +280,12 @@ namespace dnSpy.Debugger.Threads {
 		public IThreadContext Context { get; }
 
 		public ThreadVM(DnThread thread, IThreadContext context) {
-			this.Thread = thread;
-			this.Context = context;
+			Thread = thread;
+			Context = context;
 		}
 
 		internal void NameChanged(DnThread thread) {
-			if (thread == this.Thread)
+			if (thread == Thread)
 				reinitName = true;
 		}
 

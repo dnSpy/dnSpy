@@ -34,7 +34,7 @@ namespace dnSpy.Documents {
 
 		public AssemblyResolver(DsDocumentService documentService) {
 			this.documentService = documentService;
-			this.failedAssemblyResolveCache = new FailedAssemblyResolveCache();
+			failedAssemblyResolveCache = new FailedAssemblyResolveCache();
 		}
 
 		public void AddSearchPath(string s) {

@@ -67,12 +67,12 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// Icon
 		/// </summary>
-		public sealed override ImageReference Icon => GetIcon(this.Context.DocumentTreeView.DotNetImageService);
+		public sealed override ImageReference Icon => GetIcon(Context.DocumentTreeView.DotNetImageService);
 
 		/// <summary>
 		/// Expanded icon or null to use <see cref="Icon"/>
 		/// </summary>
-		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.DocumentTreeView.DotNetImageService);
+		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(Context.DocumentTreeView.DotNetImageService);
 
 		static class Cache {
 			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
@@ -190,7 +190,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public sealed override void OnEnsureChildrenLoaded() {
 			if (refilter) {
 				refilter = false;
-				foreach (var node in this.TreeNode.DataChildren.OfType<DocumentTreeNodeData>())
+				foreach (var node in TreeNode.DataChildren.OfType<DocumentTreeNodeData>())
 					Filter(node);
 			}
 		}
@@ -283,7 +283,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				return;
 			}
 
-			foreach (var node in this.TreeNode.DataChildren)
+			foreach (var node in TreeNode.DataChildren)
 				Filter(node as DocumentTreeNodeData);
 		}
 

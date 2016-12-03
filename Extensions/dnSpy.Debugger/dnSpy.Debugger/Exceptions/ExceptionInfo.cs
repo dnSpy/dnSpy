@@ -30,21 +30,21 @@ namespace dnSpy.Debugger.Exceptions {
 		readonly ExceptionInfoKey exceptionInfoKey;
 
 		public ExceptionInfo(ExceptionInfoKey key, bool breakOnFirstChance) {
-			this.exceptionInfoKey = key;
-			this.BreakOnFirstChance = breakOnFirstChance;
-			this.IsOtherExceptions = false;
+			exceptionInfoKey = key;
+			BreakOnFirstChance = breakOnFirstChance;
+			IsOtherExceptions = false;
 		}
 
 		public ExceptionInfo(ExceptionType exceptionType, string name) {
-			this.exceptionInfoKey = new ExceptionInfoKey(exceptionType, name);
-			this.BreakOnFirstChance = false;
-			this.IsOtherExceptions = true;
+			exceptionInfoKey = new ExceptionInfoKey(exceptionType, name);
+			BreakOnFirstChance = false;
+			IsOtherExceptions = true;
 		}
 
 		public ExceptionInfo(ExceptionType exceptionType, EXCEPTION_INFO info) {
-			this.exceptionInfoKey = new ExceptionInfoKey(exceptionType, info.Name);
-			this.BreakOnFirstChance = (info.State & ExceptionState.EXCEPTION_STOP_FIRST_CHANCE) != 0;
-			this.IsOtherExceptions = false;
+			exceptionInfoKey = new ExceptionInfoKey(exceptionType, info.Name);
+			BreakOnFirstChance = (info.State & ExceptionState.EXCEPTION_STOP_FIRST_CHANCE) != 0;
+			IsOtherExceptions = false;
 		}
 
 		public bool Equals(ExceptionInfo other) =>

@@ -70,8 +70,8 @@ namespace dnSpy.MainApp {
 
 			public void Read() {
 				var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-				this.SavedWindowState = new SavedWindowState().Read(sect.GetOrCreateSection(SAVEDWINDOWSTATE_SECTION));
-				this.MainWindowControlState = new MainWindowControlState().Read(sect.GetOrCreateSection(MAINWINDOWCONTROLSTATE_SECTION));
+				SavedWindowState = new SavedWindowState().Read(sect.GetOrCreateSection(SAVEDWINDOWSTATE_SECTION));
+				MainWindowControlState = new MainWindowControlState().Read(sect.GetOrCreateSection(MAINWINDOWCONTROLSTATE_SECTION));
 			}
 
 			public void Write() {
@@ -89,18 +89,18 @@ namespace dnSpy.MainApp {
 
 		[ImportingConstructor]
 		AppWindow(ISettingsService settingsService, IDocumentTabService documentTabService, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandService wpfCommandService) {
-			this.assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
-			this.uiSettings = new UISettings(settingsService);
-			this.uiSettings.Read();
-			this.stackedContent = new StackedContent<IStackedContentChild>(margin: new Thickness(6));
+			assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
+			uiSettings = new UISettings(settingsService);
+			uiSettings.Read();
+			stackedContent = new StackedContent<IStackedContentChild>(margin: new Thickness(6));
 			this.documentTabService = documentTabService;
-			this.statusBar = new AppStatusBar();
+			statusBar = new AppStatusBar();
 			this.appToolBar = appToolBar;
 			this.mainWindowControl = mainWindowControl;
 			this.wpfCommandService = wpfCommandService;
-			this.mainWindowCommands = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
-			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
-			this.mainWindowClosed = new WeakEventList<EventArgs>();
+			mainWindowCommands = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
+			mainWindowClosing = new WeakEventList<CancelEventArgs>();
+			mainWindowClosed = new WeakEventList<EventArgs>();
 		}
 
 		static string CalculateAssemblyInformationalVersion(Assembly asm) {
@@ -182,7 +182,7 @@ namespace dnSpy.MainApp {
 				appToolBar.Initialize(mainWindow);
 		}
 
-		void UpdateTitle() => this.mainWindow.Title = GetDefaultTitle();
+		void UpdateTitle() => mainWindow.Title = GetDefaultTitle();
 
 		string GetDefaultTitle() {
 			var t = string.Format("dnSpy {0} ({1})", AssemblyInformationalVersion, string.Join(", ", titleInfos.ToArray()));

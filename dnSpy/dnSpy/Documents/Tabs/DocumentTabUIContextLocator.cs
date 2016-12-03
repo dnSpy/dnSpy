@@ -29,8 +29,8 @@ namespace dnSpy.Documents.Tabs {
 
 		public DocumentTabUIContextLocator(Lazy<IDocumentTabUIContextProvider, IDocumentTabUIContextProviderMetadata>[] documentTabUIContextProviders) {
 			this.documentTabUIContextProviders = documentTabUIContextProviders;
-			this.weakCachedInstances = new Dictionary<object, WeakReference>();
-			this.strongCachedInstances = new Dictionary<object, object>();
+			weakCachedInstances = new Dictionary<object, WeakReference>();
+			strongCachedInstances = new Dictionary<object, object>();
 		}
 
 		struct ReferenceResult<T> where T : class {

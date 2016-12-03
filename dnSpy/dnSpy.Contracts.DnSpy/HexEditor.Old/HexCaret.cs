@@ -58,8 +58,8 @@ namespace dnSpy.Contracts.HexEditor {
 		DispatcherTimer timer;
 
 		public HexCaret() {
-			this.hexByteInfo = caretInfos[0];
-			this.asciiInfo = caretInfos[1];
+			hexByteInfo = caretInfos[0];
+			asciiInfo = caretInfos[1];
 			UpdateInstallTimer();
 			IsVisibleChanged += HexCaret_IsVisibleChanged;
 			Loaded += (s, e) => UpdateInstallTimer();
@@ -138,8 +138,8 @@ namespace dnSpy.Contracts.HexEditor {
 			public bool IsActive;
 
 			public void Initialize(Rect? rect, bool isActive) {
-				this.Rect = rect;
-				this.IsActive = isActive;
+				Rect = rect;
+				IsActive = isActive;
 			}
 		}
         readonly CaretInfo[] caretInfos = new CaretInfo[] {

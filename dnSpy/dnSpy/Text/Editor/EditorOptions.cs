@@ -60,8 +60,8 @@ namespace dnSpy.Text.Editor {
 		public EditorOptions(EditorOptionsFactoryService service, EditorOptions parent, IPropertyOwner scope) {
 			this.service = service;
 			this.parent = parent;
-			this.dict = new Dictionary<string, object>(StringComparer.Ordinal);
-			this.weakChildren = new List<WeakReference>();
+			dict = new Dictionary<string, object>(StringComparer.Ordinal);
+			weakChildren = new List<WeakReference>();
 			this.scope = scope;
 			UpdateOptions(null);
 		}

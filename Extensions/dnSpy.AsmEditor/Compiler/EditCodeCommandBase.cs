@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly AddUpdatedNodesHelper addUpdatedNodesHelper;
 
 		protected EditCodeCommandBase(Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, ModuleDocumentNode modNode, ModuleImporter importer) {
-			this.addUpdatedNodesHelper = addUpdatedNodesHelperProvider.Value.Create(modNode, importer);
+			addUpdatedNodesHelper = addUpdatedNodesHelperProvider.Value.Create(modNode, importer);
 		}
 
 		public abstract string Description { get; }

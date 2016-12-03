@@ -30,7 +30,7 @@ namespace dnSpy.Text.Editor {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 			this.line = line;
-			this.lineIndex = 0;
+			lineIndex = 0;
 		}
 
 		public Span? GetNext() {

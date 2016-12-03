@@ -140,18 +140,18 @@ namespace dnSpy.AsmEditor.Method {
 					public readonly int Index;
 
 					public PropEventInfo(ICodedToken propOrEvt, PropEventType propEventType, int index) {
-						this.PropOrEvent = propOrEvt;
-						this.PropEventType = propEventType;
-						this.Index = index;
+						PropOrEvent = propOrEvt;
+						PropEventType = propEventType;
+						Index = index;
 					}
 				}
 
 				public ModelInfo(MethodDef method) {
-					this.OwnerType = method.DeclaringType;
-					this.MethodIndex = this.OwnerType.Methods.IndexOf(method);
-					Debug.Assert(this.MethodIndex >= 0);
+					OwnerType = method.DeclaringType;
+					MethodIndex = OwnerType.Methods.IndexOf(method);
+					Debug.Assert(MethodIndex >= 0);
 
-					this.PropEventInfos = new List<PropEventInfo>();
+					PropEventInfos = new List<PropEventInfo>();
 				}
 
 				public void AddMethods(ICodedToken propOrEvent, PropEventType propEvtType, IList<MethodDef> propEvtMethods, MethodDef method) {
@@ -276,7 +276,7 @@ namespace dnSpy.AsmEditor.Method {
 		DeleteModelNodes modelNodes;
 
 		DeleteMethodDefCommand(MethodNode[] methodNodes) {
-			this.nodes = new DeletableNodes<MethodNode>(methodNodes);
+			nodes = new DeletableNodes<MethodNode>(methodNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteMethodCommand;
@@ -392,7 +392,7 @@ namespace dnSpy.AsmEditor.Method {
 
 		CreateMethodDefCommand(TypeNode ownerNode, MethodDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.methodNode = ownerNode.Create(options.CreateMethodDef(ownerNode.TypeDef.Module));
+			methodNode = ownerNode.Create(options.CreateMethodDef(ownerNode.TypeDef.Module));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateMethodCommand2;
@@ -498,18 +498,18 @@ namespace dnSpy.AsmEditor.Method {
 
 		MethodDefSettingsCommand(MethodNode methodNode, MethodDefOptions options) {
 			this.methodNode = methodNode;
-			this.newOptions = options;
-			this.origOptions = new MethodDefOptions(methodNode.MethodDef);
+			newOptions = options;
+			origOptions = new MethodDefOptions(methodNode.MethodDef);
 
-			this.origParentNode = (DocumentTreeNodeData)methodNode.TreeNode.Parent.Data;
-			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(methodNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentNode = (DocumentTreeNodeData)methodNode.TreeNode.Parent.Data;
+			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(methodNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
-			this.nameChanged = origOptions.Name != newOptions.Name;
-			if (this.nameChanged)
-				this.memberRefInfos = RefFinder.FindMemberRefsToThisModule(methodNode.GetModule()).Where(a => RefFinder.MethodEqualityComparerInstance.Equals(a, methodNode.MethodDef)).Select(a => new Field.MemberRefInfo(a)).ToArray();
+			nameChanged = origOptions.Name != newOptions.Name;
+			if (nameChanged)
+				memberRefInfos = RefFinder.FindMemberRefsToThisModule(methodNode.GetModule()).Where(a => RefFinder.MethodEqualityComparerInstance.Equals(a, methodNode.MethodDef)).Select(a => new Field.MemberRefInfo(a)).ToArray();
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditMethodCommand2;

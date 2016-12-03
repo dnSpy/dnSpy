@@ -93,8 +93,8 @@ namespace dnSpy.Debugger.Locals {
 		public readonly ValueVM[] SelectedItems;
 
 		public LocalsCtxMenuContext(ILocalsVM vm, ValueVM[] selItems) {
-			this.VM = vm;
-			this.SelectedItems = selItems;
+			VM = vm;
+			SelectedItems = selItems;
 		}
 	}
 

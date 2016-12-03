@@ -324,9 +324,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			: base(mdVM.Owner) {
 			this.mdVM = mdVM;
 			this.mdToken = mdToken;
-			this.hexFields = new HexField[mdVM.TableInfo.Columns.Count];
-			for (int i = 0; i < this.hexFields.Length; i++)
-				this.hexFields[i] = CreateField(mdVM.TableInfo.Columns[i]);
+			hexFields = new HexField[mdVM.TableInfo.Columns.Count];
+			for (int i = 0; i < hexFields.Length; i++)
+				hexFields[i] = CreateField(mdVM.TableInfo.Columns[i]);
 		}
 
 		protected virtual HexField CreateField(ColumnInfo colInfo) {

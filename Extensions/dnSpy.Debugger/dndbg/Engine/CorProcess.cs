@@ -142,9 +142,9 @@ namespace dndbg.Engine {
 
 		public CorProcess(ICorDebugProcess process)
 			: base(process) {
-			int hr = process.GetID(out this.pid);
+			int hr = process.GetID(out pid);
 			if (hr < 0)
-				this.pid = 0;
+				pid = 0;
 
 			//TODO: ICorDebugProcess2::GetReferenceValueFromGCHandle
 			//TODO: ICorDebugProcess5 (GC methods)
@@ -163,7 +163,7 @@ namespace dndbg.Engine {
 			IntPtr sizeRead2 = IntPtr.Zero;
 			int hr;
 			fixed (byte* p = &buffer[index])
-				hr = this.obj.ReadMemory(address, (uint)size, new IntPtr(p), out sizeRead2);
+				hr = obj.ReadMemory(address, (uint)size, new IntPtr(p), out sizeRead2);
 			const int ERROR_PARTIAL_COPY = unchecked((int)0x8007012B);
 			if (hr < 0 && hr != ERROR_PARTIAL_COPY) {
 				sizeRead = 0;
@@ -187,7 +187,7 @@ namespace dndbg.Engine {
 			IntPtr sizeWritten2 = IntPtr.Zero;
 			int hr;
 			fixed (byte* p = &buffer[index])
-				hr = this.obj.WriteMemory(address, (uint)size, new IntPtr(p), out sizeWritten2);
+				hr = obj.WriteMemory(address, (uint)size, new IntPtr(p), out sizeWritten2);
 			const int ERROR_PARTIAL_COPY = unchecked((int)0x8007012B);
 			if (hr < 0 && hr != ERROR_PARTIAL_COPY) {
 				sizeWritten = 0;

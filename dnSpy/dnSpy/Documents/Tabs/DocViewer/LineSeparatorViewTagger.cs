@@ -60,7 +60,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			this.textView = textView;
-			this.lineSeparatorCollection = LineSeparatorCollection.Empty;
+			lineSeparatorCollection = LineSeparatorCollection.Empty;
 			textView.Closed += TextView_Closed;
 		}
 

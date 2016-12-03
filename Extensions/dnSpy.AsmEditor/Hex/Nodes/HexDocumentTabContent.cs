@@ -87,13 +87,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public HexDocumentTabUIContext(object vmObj, bool isVirtualizingCollection) {
 			if (isVirtualizingCollection) {
-				this.uiObj = new ContentPresenter {
+				uiObj = new ContentPresenter {
 					Content = vmObj,
 					Focusable = true
 				};
 			}
 			else {
-				this.uiObj = new ScrollViewer {
+				uiObj = new ScrollViewer {
 					CanContentScroll = true,
 					HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
 					VerticalScrollBarVisibility = ScrollBarVisibility.Auto,

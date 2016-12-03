@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
 			this.layerKind = layerKind;
-			this.adornmentLayers = new List<AdornmentLayer>();
+			adornmentLayers = new List<AdornmentLayer>();
 			if (layerKind != LayerKind.Normal)
 				ClipToBounds = true;
 			wpfTextView.Closed += WpfTextView_Closed;

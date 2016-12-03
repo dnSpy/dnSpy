@@ -7,7 +7,7 @@ namespace Example2.Extension {
 		public string Message { get; }
 
 		public StringInfoReference(string msg) {
-			this.Message = msg;
+			Message = msg;
 		}
 	}
 

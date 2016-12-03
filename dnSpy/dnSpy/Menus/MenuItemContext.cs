@@ -32,13 +32,13 @@ namespace dnSpy.Menus {
 		readonly List<GuidObject> guidObjects;
 
 		public MenuItemContext(Guid menuGuid, bool openedFromKeyboard, GuidObject creatorObject, IEnumerable<GuidObject> guidObjects) {
-			this.MenuGuid = menuGuid;
-			this.OpenedFromKeyboard = openedFromKeyboard;
+			MenuGuid = menuGuid;
+			OpenedFromKeyboard = openedFromKeyboard;
 			this.guidObjects = new List<GuidObject>();
 			this.guidObjects.Add(creatorObject);
 			if (guidObjects != null)
 				this.guidObjects.AddRange(guidObjects);
-			this.state = new Dictionary<object, object>();
+			state = new Dictionary<object, object>();
 		}
 
 		public T GetOrCreateState<T>(object key, Func<T> createState) where T : class {

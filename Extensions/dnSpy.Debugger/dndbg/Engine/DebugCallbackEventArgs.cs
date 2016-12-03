@@ -81,7 +81,7 @@ namespace dndbg.Engine {
 		public ICorDebugController CorDebugController { get; }
 
 		protected DebugCallbackEventArgs(ICorDebugController ctrl) {
-			this.CorDebugController = ctrl;
+			CorDebugController = ctrl;
 		}
 
 		public void AddPauseReason(DebuggerPauseReason reason) => AddPauseState(new DebuggerPauseState(reason));
@@ -118,9 +118,9 @@ namespace dndbg.Engine {
 
 		public BreakpointDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugBreakpoint pBreakpoint)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Breakpoint = pBreakpoint;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Breakpoint = pBreakpoint;
 		}
 	}
 
@@ -136,10 +136,10 @@ namespace dndbg.Engine {
 
 		public StepCompleteDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugStepper pStepper, CorDebugStepReason reason)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Stepper = pStepper;
-			this.Reason = reason;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Stepper = pStepper;
+			Reason = reason;
 		}
 	}
 
@@ -152,8 +152,8 @@ namespace dndbg.Engine {
 
 		public BreakDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = thread;
+			AppDomain = pAppDomain;
+			Thread = thread;
 		}
 	}
 
@@ -167,9 +167,9 @@ namespace dndbg.Engine {
 
 		public ExceptionDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int unhandled)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Unhandled = unhandled != 0;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Unhandled = unhandled != 0;
 		}
 	}
 
@@ -185,9 +185,9 @@ namespace dndbg.Engine {
 
 		protected EvalDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Eval = pEval;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Eval = pEval;
 		}
 	}
 
@@ -213,7 +213,7 @@ namespace dndbg.Engine {
 
 		protected ProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
 			: base(pProcess) {
-			this.Process = pProcess;
+			Process = pProcess;
 		}
 	}
 
@@ -241,8 +241,8 @@ namespace dndbg.Engine {
 
 		protected ThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = thread;
+			AppDomain = pAppDomain;
+			Thread = thread;
 		}
 	}
 
@@ -270,8 +270,8 @@ namespace dndbg.Engine {
 
 		protected ModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Module = pModule;
+			AppDomain = pAppDomain;
+			Module = pModule;
 		}
 	}
 
@@ -299,8 +299,8 @@ namespace dndbg.Engine {
 
 		protected ClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Class = c;
+			AppDomain = pAppDomain;
+			Class = c;
 		}
 	}
 
@@ -330,9 +330,9 @@ namespace dndbg.Engine {
 
 		public DebuggerErrorDebugCallbackEventArgs(ICorDebugProcess pProcess, int errorHR, uint errorCode)
 			: base(pProcess) {
-			this.Process = pProcess;
-			this.HError = errorHR;
-			this.ErrorCode = errorCode;
+			Process = pProcess;
+			HError = errorHR;
+			ErrorCode = errorCode;
 		}
 	}
 
@@ -348,11 +348,11 @@ namespace dndbg.Engine {
 
 		public LogMessageDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, LoggingLevelEnum lLevel, string pLogSwitchName, string pMessage)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Level = lLevel;
-			this.LowSwitchName = pLogSwitchName;
-			this.Message = pMessage;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Level = lLevel;
+			LowSwitchName = pLogSwitchName;
+			Message = pMessage;
 		}
 	}
 
@@ -369,12 +369,12 @@ namespace dndbg.Engine {
 
 		public LogSwitchDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, LoggingLevelEnum lLevel, LogSwitchCallReason ulReason, string pLogSwitchName, string pParentName)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Level = lLevel;
-			this.Reason = ulReason;
-			this.LowSwitchName = pLogSwitchName;
-			this.ParentName = pParentName;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Level = lLevel;
+			Reason = ulReason;
+			LowSwitchName = pLogSwitchName;
+			ParentName = pParentName;
 		}
 	}
 
@@ -386,8 +386,8 @@ namespace dndbg.Engine {
 
 		protected AppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
 			: base(pProcess) {
-			this.Process = pProcess;
-			this.AppDomain = pAppDomain;
+			Process = pProcess;
+			AppDomain = pAppDomain;
 		}
 	}
 
@@ -415,8 +415,8 @@ namespace dndbg.Engine {
 
 		protected AssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Assembly = pAssembly;
+			AppDomain = pAppDomain;
+			Assembly = pAssembly;
 		}
 	}
 
@@ -443,7 +443,7 @@ namespace dndbg.Engine {
 
 		public ControlCTrapDebugCallbackEventArgs(ICorDebugProcess pProcess)
 			: base(pProcess) {
-			this.Process = pProcess;
+			Process = pProcess;
 		}
 	}
 
@@ -456,8 +456,8 @@ namespace dndbg.Engine {
 
 		public NameChangeDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread)
 			: base(GetAppDomain(pAppDomain, pThread)) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
+			AppDomain = pAppDomain;
+			Thread = pThread;
 		}
 
 		static ICorDebugAppDomain GetAppDomain(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread) {
@@ -478,9 +478,9 @@ namespace dndbg.Engine {
 
 		public UpdateModuleSymbolsDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule, IStream pSymbolStream)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Module = pModule;
-			this.SymbolStream = pSymbolStream;
+			AppDomain = pAppDomain;
+			Module = pModule;
+			SymbolStream = pSymbolStream;
 		}
 	}
 
@@ -496,10 +496,10 @@ namespace dndbg.Engine {
 
 		public EditAndContinueRemapDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFunction pFunction, int fAccurate)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Function = pFunction;
-			this.Accurate = fAccurate != 0;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Function = pFunction;
+			Accurate = fAccurate != 0;
 		}
 	}
 
@@ -521,10 +521,10 @@ namespace dndbg.Engine {
 
 		public BreakpointSetErrorDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugBreakpoint pBreakpoint, uint dwError)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Breakpoint = pBreakpoint;
-			this.Error = dwError;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Breakpoint = pBreakpoint;
+			Error = dwError;
 		}
 	}
 
@@ -542,11 +542,11 @@ namespace dndbg.Engine {
 
 		public FunctionRemapOpportunityDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFunction pOldFunction, ICorDebugFunction pNewFunction, uint oldILOffset)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.OldFunction = pOldFunction;
-			this.NewFunction = pNewFunction;
-			this.OldILOffset = oldILOffset;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			OldFunction = pOldFunction;
+			NewFunction = pNewFunction;
+			OldILOffset = oldILOffset;
 		}
 	}
 
@@ -557,8 +557,8 @@ namespace dndbg.Engine {
 
 		protected ConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
 			: base(pProcess) {
-			this.Process = pProcess;
-			this.Id = dwConnectionId;
+			Process = pProcess;
+			Id = dwConnectionId;
 		}
 	}
 
@@ -568,7 +568,7 @@ namespace dndbg.Engine {
 
 		public CreateConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId, string pConnName)
 			: base(pProcess, dwConnectionId) {
-			this.Name = pConnName;
+			Name = pConnName;
 		}
 	}
 
@@ -602,12 +602,12 @@ namespace dndbg.Engine {
 
 		public Exception2DebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFrame pFrame, uint nOffset, CorDebugExceptionCallbackType dwEventType, CorDebugExceptionFlags dwFlags)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Frame = pFrame;
-			this.Offset = nOffset;
-			this.EventType = dwEventType;
-			this.Flags = dwFlags;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Frame = pFrame;
+			Offset = nOffset;
+			EventType = dwEventType;
+			Flags = dwFlags;
 		}
 	}
 
@@ -622,10 +622,10 @@ namespace dndbg.Engine {
 
 		public ExceptionUnwindDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, CorDebugExceptionUnwindCallbackType dwEventType, CorDebugExceptionFlags dwFlags)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.EventType = dwEventType;
-			this.Flags = dwFlags;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			EventType = dwEventType;
+			Flags = dwFlags;
 		}
 	}
 
@@ -640,9 +640,9 @@ namespace dndbg.Engine {
 
 		public FunctionRemapCompleteDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFunction pFunction)
 			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Function = pFunction;
+			AppDomain = pAppDomain;
+			Thread = pThread;
+			Function = pFunction;
 		}
 	}
 
@@ -671,9 +671,9 @@ namespace dndbg.Engine {
 
 		public MDANotificationDebugCallbackEventArgs(ICorDebugController pController, ICorDebugThread pThread, ICorDebugMDA pMDA)
 			: base(pController) {
-			this.Controller = pController;
-			this.Thread = pThread;
-			this.MDA = pMDA;
+			Controller = pController;
+			Thread = pThread;
+			MDA = pMDA;
 		}
 	}
 
@@ -686,8 +686,8 @@ namespace dndbg.Engine {
 
 		public CustomNotificationDebugCallbackEventArgs(ICorDebugThread pThread, ICorDebugAppDomain pAppDomain)
 			: base(pAppDomain) {
-			this.Thread = pThread;
-			this.AppDomain = pAppDomain;
+			Thread = pThread;
+			AppDomain = pAppDomain;
 		}
 	}
 }

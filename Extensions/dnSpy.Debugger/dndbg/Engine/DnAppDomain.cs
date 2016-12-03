@@ -68,11 +68,11 @@ namespace dndbg.Engine {
 		public DnProcess Process { get; }
 
 		internal DnAppDomain(DnProcess ownerProcess, ICorDebugAppDomain appDomain, int uniqueId, int uniqueIdProcess) {
-			this.Process = ownerProcess;
-			this.assemblies = new DebuggerCollection<ICorDebugAssembly, DnAssembly>(CreateAssembly);
-			this.CorAppDomain = new CorAppDomain(appDomain);
-			this.UniqueId = uniqueId;
-			this.UniqueIdProcess = uniqueIdProcess;
+			Process = ownerProcess;
+			assemblies = new DebuggerCollection<ICorDebugAssembly, DnAssembly>(CreateAssembly);
+			CorAppDomain = new CorAppDomain(appDomain);
+			UniqueId = uniqueId;
+			UniqueIdProcess = uniqueIdProcess;
 			NameChanged();
 		}
 

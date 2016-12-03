@@ -77,7 +77,7 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			TextView = textView;
 			this.textSearchService = textSearchService;
-			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
+			editorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
 			SearchString = string.Empty;
 		}
 

@@ -43,7 +43,7 @@ namespace dnSpy.Hex.Adornments {
 			if (wpfHexView == null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			this.wpfHexView = wpfHexView;
-			this.spaceReservationManager = wpfHexView.GetSpaceReservationManager(PredefinedHexSpaceReservationManagerNames.ToolTip);
+			spaceReservationManager = wpfHexView.GetSpaceReservationManager(PredefinedHexSpaceReservationManagerNames.ToolTip);
 		}
 
 		public override void ClearToolTip() {

@@ -78,8 +78,8 @@ namespace dnSpy.Images {
 		ImageService(IThemeService themeService, IDpiService dpiService, [ImportMany] IEnumerable<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> imageSourceInfoProviders) {
 			this.themeService = themeService;
 			this.dpiService = dpiService;
-			this.imageCache = new Dictionary<ImageKey, WeakReference>();
-			this.imageSourceInfoProvidersDict = new Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>>();
+			imageCache = new Dictionary<ImageKey, WeakReference>();
+			imageSourceInfoProvidersDict = new Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>>();
 			this.themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
 			foreach (var lz in imageSourceInfoProviders.OrderBy(a => a.Metadata.Order)) {
 				List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> list;

@@ -42,8 +42,8 @@ namespace dnSpy.Contracts.Utilities {
 		public string Path { get; }
 
 		internal GacFileInfo(IAssembly asm, string path) {
-			this.Assembly = asm;
-			this.Path = path;
+			Assembly = asm;
+			Path = path;
 		}
 	}
 
@@ -73,10 +73,10 @@ namespace dnSpy.Contracts.Utilities {
 			public readonly IList<string> SubDirs;
 
 			public GacDirInfo(int version, string prefix, string path, IList<string> subDirs) {
-				this.Version = version;
-				this.Prefix = prefix;
-				this.Path = path;
-				this.SubDirs = subDirs;
+				Version = version;
+				Prefix = prefix;
+				Path = path;
+				SubDirs = subDirs;
 			}
 		}
 		static readonly GacDirInfo[] gacDirInfos;

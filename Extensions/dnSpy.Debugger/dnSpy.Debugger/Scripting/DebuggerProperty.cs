@@ -117,10 +117,10 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.prop = prop;
-			this.hashCode = prop.GetHashCode();
-			this.token = prop.Token;
-			this.name = prop.GetName() ?? string.Empty;
-			this.Attributes = prop.GetAttributes();
+			hashCode = prop.GetHashCode();
+			token = prop.Token;
+			name = prop.GetName() ?? string.Empty;
+			Attributes = prop.GetAttributes();
 		}
 
 		public override bool Equals(object obj) => (obj as DebuggerProperty)?.prop == prop;

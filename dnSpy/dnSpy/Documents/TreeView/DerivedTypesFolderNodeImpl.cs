@@ -38,7 +38,7 @@ namespace dnSpy.Documents.TreeView {
 		readonly TypeDef type;
 
 		public DerivedTypesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, TypeDef type) {
-			this.TreeNodeGroup = treeNodeGroup;
+			TreeNodeGroup = treeNodeGroup;
 			this.type = type;
 		}
 

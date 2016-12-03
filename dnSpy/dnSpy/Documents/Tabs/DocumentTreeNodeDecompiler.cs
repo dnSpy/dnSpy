@@ -37,9 +37,9 @@ namespace dnSpy.Documents.Tabs {
 
 		[ImportingConstructor]
 		DocumentTreeNodeDecompiler([ImportMany] IEnumerable<Lazy<IDecompileNode, IDecompileNodeMetadata>> mefDecompileNodes, [ImportMany] IEnumerable<Lazy<IDecompileNodeCollection, IDecompileNodeCollectionMetadata>> mefDecompileNodeCollections) {
-			this.decompileNodes = mefDecompileNodes.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
-			this.decompileNodeCollections = mefDecompileNodeCollections.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
-			Debug.Assert(this.decompileNodes.Length > 0);
+			decompileNodes = mefDecompileNodes.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
+			decompileNodeCollections = mefDecompileNodeCollections.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
+			Debug.Assert(decompileNodes.Length > 0);
 		}
 
 		public void Decompile(IDecompileNodeContext decompileNodeContext, DocumentTreeNodeData[] nodes) {

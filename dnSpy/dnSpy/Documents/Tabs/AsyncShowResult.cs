@@ -28,13 +28,13 @@ namespace dnSpy.Documents.Tabs {
 		public bool CanShowOutput { get; }
 
 		public AsyncShowResult() {
-			this.CanShowOutput = true;
+			CanShowOutput = true;
 		}
 
 		public AsyncShowResult(Task t, bool canShowOutput) {
-			this.Exception = t.Exception;
-			this.IsCanceled = t.IsCanceled;
-			this.CanShowOutput = canShowOutput;
+			Exception = t.Exception;
+			IsCanceled = t.IsCanceled;
+			CanShowOutput = canShowOutput;
 		}
 	}
 }

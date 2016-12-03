@@ -24,7 +24,7 @@ namespace dnSpy.Extension {
 		public Assembly Assembly { get; }
 
 		public LoadedExtension(Assembly asm) {
-			this.Assembly = asm;
+			Assembly = asm;
 		}
 	}
 }

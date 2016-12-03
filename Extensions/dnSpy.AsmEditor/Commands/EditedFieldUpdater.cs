@@ -35,12 +35,12 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly FieldDefOptions newFieldDefOptions;
 
 		public EditedFieldUpdater(ModuleDocumentNode modNode, FieldDef originalField, FieldDefOptions fieldDefOptions) {
-			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalField);
+			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalField);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
-			this.field = originalField;
-			this.originalFieldDefOptions = new FieldDefOptions(originalField);
-			this.newFieldDefOptions = fieldDefOptions;
+			field = originalField;
+			originalFieldDefOptions = new FieldDefOptions(originalField);
+			newFieldDefOptions = fieldDefOptions;
 		}
 
 		public void Add() => newFieldDefOptions.CopyTo(field);

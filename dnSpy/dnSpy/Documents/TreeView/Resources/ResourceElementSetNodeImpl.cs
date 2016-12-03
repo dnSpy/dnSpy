@@ -59,7 +59,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		public ResourceElementSetNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleDef module, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
 			this.module = module;
-			this.resourceElementSet = ResourceReader.Read(module, resource.Data);
+			resourceElementSet = ResourceReader.Read(module, resource.Data);
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
@@ -103,7 +103,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			foreach (ResourceElementNode child in TreeNode.DataChildren)
 				resources.Add(child.ResourceElement);
 			ResourceWriter.Write(module, outStream, resources);
-			this.Resource = new EmbeddedResource(Resource.Name, outStream.ToArray(), Resource.Attributes);
+			Resource = new EmbeddedResource(Resource.Name, outStream.ToArray(), Resource.Attributes);
 		}
 	}
 }

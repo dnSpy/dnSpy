@@ -34,7 +34,7 @@ namespace dnSpy.Text {
 			if (contentTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.dict = new Dictionary<IContentType, Lazy<TProvider, TProviderMetadata>[]>();
+			dict = new Dictionary<IContentType, Lazy<TProvider, TProviderMetadata>[]>();
 			this.providers = providers.ToArray();
 		}
 

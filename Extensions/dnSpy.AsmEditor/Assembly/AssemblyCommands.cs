@@ -191,9 +191,9 @@ namespace dnSpy.AsmEditor.Assembly {
 			public DsDocumentNode Node;
 
 			public UndoRedoInfo(DsDocumentNode node, bool isInUndo, bool isInRedo) {
-				this.IsInUndo = isInUndo;
-				this.IsInRedo = isInRedo;
-				this.Node = node;
+				IsInUndo = isInUndo;
+				IsInRedo = isInRedo;
+				Node = node;
 			}
 		}
 
@@ -211,9 +211,9 @@ namespace dnSpy.AsmEditor.Assembly {
 		RootDocumentNodeCreator[] savedStates;
 
 		RemoveAssemblyCommand(IDocumentTreeView documentTreeView, DsDocumentNode[] asmNodes) {
-			this.savedStates = new RootDocumentNodeCreator[asmNodes.Length];
-			for (int i = 0; i < this.savedStates.Length; i++)
-				this.savedStates[i] = new RootDocumentNodeCreator(documentTreeView, asmNodes[i]);
+			savedStates = new RootDocumentNodeCreator[asmNodes.Length];
+			for (int i = 0; i < savedStates.Length; i++)
+				savedStates[i] = new RootDocumentNodeCreator(documentTreeView, asmNodes[i]);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.RemoveAssemblyCommand;
@@ -304,19 +304,19 @@ namespace dnSpy.AsmEditor.Assembly {
 			public readonly PublicKeyBase OrigPublicKeyOrToken;
 
 			public AssemblyRefInfo(AssemblyRef asmRef) {
-				this.AssemblyRef = asmRef;
-				this.OrigName = asmRef.Name;
-				this.OrigPublicKeyOrToken = asmRef.PublicKeyOrToken;
+				AssemblyRef = asmRef;
+				OrigName = asmRef.Name;
+				OrigPublicKeyOrToken = asmRef.PublicKeyOrToken;
 			}
 		}
 
 		AssemblySettingsCommand(AssemblyDocumentNode asmNode, AssemblyOptions newOptions) {
 			this.asmNode = asmNode;
 			this.newOptions = newOptions;
-			this.origOptions = new AssemblyOptions(asmNode.Document.AssemblyDef);
+			origOptions = new AssemblyOptions(asmNode.Document.AssemblyDef);
 
 			if (newOptions.Name != origOptions.Name)
-				this.assemblyRefInfos = RefFinder.FindAssemblyRefsToThisModule(asmNode.Document.ModuleDef).Where(a => AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(a, asmNode.Document.AssemblyDef)).Select(a => new AssemblyRefInfo(a)).ToArray();
+				assemblyRefInfos = RefFinder.FindAssemblyRefsToThisModule(asmNode.Document.ModuleDef).Where(a => AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(a, asmNode.Document.AssemblyDef)).Select(a => new AssemblyRefInfo(a)).ToArray();
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditAssemblyCommand2;
@@ -417,7 +417,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll, newModule);
 			options.CreateAssemblyDef(module).Modules.Add(module);
 			var file = DsDotNetDocument.CreateAssembly(DsDocumentInfo.CreateDocument(string.Empty), module, true);
-			this.fileNodeCreator = RootDocumentNodeCreator.CreateAssembly(documentTreeView, file);
+			fileNodeCreator = RootDocumentNodeCreator.CreateAssembly(documentTreeView, file);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateAssemblyCommand2;

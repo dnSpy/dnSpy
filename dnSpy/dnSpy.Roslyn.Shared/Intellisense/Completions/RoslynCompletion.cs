@@ -39,7 +39,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 		public RoslynCompletion(IImageMonikerService imageMonikerService, CompletionItem completionItem)
 			: base(completionItem.DisplayText, completionItem.FilterText) {
 			this.imageMonikerService = imageMonikerService;
-			this.CompletionItem = completionItem;
+			CompletionItem = completionItem;
 		}
 
 		protected override ImageMoniker GetIconMoniker() => imageMonikerService.ToImageMoniker(CompletionImageHelper.GetImageReference(CompletionItem.Tags) ?? default(ImageReference));

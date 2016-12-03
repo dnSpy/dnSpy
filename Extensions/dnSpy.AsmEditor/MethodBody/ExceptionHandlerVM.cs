@@ -83,13 +83,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateAnExceptionCatchType);
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = true;
-			this.origOptions = options;
-			this.HandlerTypeVM = new EnumListVM(exceptionHandlerTypeList);
-			this.TryStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
-			this.TryEndVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
-			this.FilterStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
-			this.HandlerStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
-			this.HandlerEndVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			origOptions = options;
+			HandlerTypeVM = new EnumListVM(exceptionHandlerTypeList);
+			TryStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			TryEndVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			FilterStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			HandlerStartVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
+			HandlerEndVM = new ListVM<InstructionVM>((a, b) => OnSelectionChanged()) { DataErrorInfoDelegate = VerifyInstruction };
 
 			Reinitialize();
 		}
@@ -134,13 +134,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ExceptionHandlerOptions CreateExceptionHandlerOptions() => CopyTo(new ExceptionHandlerOptions());
 
 		public void InitializeFrom(ExceptionHandlerOptions options) {
-			this.TryStartVM.SelectedItem = options.TryStart ?? InstructionVM.Null;
-			this.TryEndVM.SelectedItem = options.TryEnd ?? InstructionVM.Null;
-			this.FilterStartVM.SelectedItem = options.FilterStart ?? InstructionVM.Null;
-			this.HandlerStartVM.SelectedItem = options.HandlerStart ?? InstructionVM.Null;
-			this.HandlerEndVM.SelectedItem = options.HandlerEnd ?? InstructionVM.Null;
-			this.CatchType = options.CatchType;
-			this.HandlerTypeVM.SelectedItem = options.HandlerType;
+			TryStartVM.SelectedItem = options.TryStart ?? InstructionVM.Null;
+			TryEndVM.SelectedItem = options.TryEnd ?? InstructionVM.Null;
+			FilterStartVM.SelectedItem = options.FilterStart ?? InstructionVM.Null;
+			HandlerStartVM.SelectedItem = options.HandlerStart ?? InstructionVM.Null;
+			HandlerEndVM.SelectedItem = options.HandlerEnd ?? InstructionVM.Null;
+			CatchType = options.CatchType;
+			HandlerTypeVM.SelectedItem = options.HandlerType;
 		}
 
 		static InstructionVM RemoveNullInstance(InstructionVM vm) {
@@ -151,13 +151,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public ExceptionHandlerOptions CopyTo(ExceptionHandlerOptions options) {
-			options.TryStart = RemoveNullInstance(this.TryStartVM.SelectedItem);
-			options.TryEnd = RemoveNullInstance(this.TryEndVM.SelectedItem);
-			options.FilterStart = RemoveNullInstance(this.FilterStartVM.SelectedItem);
-			options.HandlerStart = RemoveNullInstance(this.HandlerStartVM.SelectedItem);
-			options.HandlerEnd = RemoveNullInstance(this.HandlerEndVM.SelectedItem);
-			options.CatchType = this.CatchType;
-			options.HandlerType = (ExceptionHandlerType)this.HandlerTypeVM.SelectedItem;
+			options.TryStart = RemoveNullInstance(TryStartVM.SelectedItem);
+			options.TryEnd = RemoveNullInstance(TryEndVM.SelectedItem);
+			options.FilterStart = RemoveNullInstance(FilterStartVM.SelectedItem);
+			options.HandlerStart = RemoveNullInstance(HandlerStartVM.SelectedItem);
+			options.HandlerEnd = RemoveNullInstance(HandlerEndVM.SelectedItem);
+			options.CatchType = CatchType;
+			options.HandlerType = (ExceptionHandlerType)HandlerTypeVM.SelectedItem;
 			return options;
 		}
 

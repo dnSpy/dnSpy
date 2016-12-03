@@ -31,7 +31,7 @@ namespace dnSpy.Text.Classification {
 
 		[ImportingConstructor]
 		ThemeClassificationTypeService(IClassificationTypeRegistryService classificationTypeRegistryService) {
-			this.classificationTypes = new IClassificationType[(int)TextColor.Last] {
+			classificationTypes = new IClassificationType[(int)TextColor.Last] {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Text),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Operator),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.Punctuation),

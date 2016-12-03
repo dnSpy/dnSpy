@@ -29,7 +29,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		readonly StringBuilder stringBuilder;
 
 		public AddXmlDocTransform(StringBuilder sb) {
-			this.stringBuilder = sb;
+			stringBuilder = sb;
 		}
 
 		public void Run(AstNode node) {

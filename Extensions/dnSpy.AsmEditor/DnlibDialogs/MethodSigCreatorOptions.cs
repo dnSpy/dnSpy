@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public MethodSigCreatorOptions(TypeSigCreatorOptions typeSigCreatorOptions) {
-			this.TypeSigCreatorOptions = typeSigCreatorOptions;
+			TypeSigCreatorOptions = typeSigCreatorOptions;
 		}
 
 		public MethodSigCreatorOptions Clone() {

@@ -105,8 +105,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			public readonly int PrevCommandCounter;
 
 			public UndoState(int prevCommandCounter, int commandCounter) {
-				this.PrevCommandCounter = prevCommandCounter;
-				this.CommandCounter = commandCounter;
+				PrevCommandCounter = prevCommandCounter;
+				CommandCounter = commandCounter;
 			}
 		}
 

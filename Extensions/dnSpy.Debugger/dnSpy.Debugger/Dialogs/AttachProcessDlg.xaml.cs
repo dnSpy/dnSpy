@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.Dialogs {
 			var vm = DataContext as AttachProcessVM;
 			if (vm == null || vm.HasError)
 				return;
-			this.okButton_Click(this, e);
+			okButton_Click(this, e);
 		}
 	}
 }

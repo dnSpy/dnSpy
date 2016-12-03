@@ -98,10 +98,10 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		public ProgressVM(Dispatcher dispatcher, IProgressTask task) {
 			this.dispatcher = dispatcher;
 			this.task = task;
-			this.ProgressMinimum = task.ProgressMinimum;
-			this.ProgressMaximum = task.ProgressMaximum;
-			this.IsIndeterminate = task.IsIndeterminate;
-			this.cancellationTokenSource = new CancellationTokenSource();
+			ProgressMinimum = task.ProgressMinimum;
+			ProgressMaximum = task.ProgressMaximum;
+			IsIndeterminate = task.IsIndeterminate;
+			cancellationTokenSource = new CancellationTokenSource();
 			Token = cancellationTokenSource.Token;
 			Start();
 		}
@@ -212,7 +212,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 			public readonly Action Action;
 
 			public MyAction(Action action) {
-				this.Action = action;
+				Action = action;
 			}
 		}
 

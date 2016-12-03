@@ -99,7 +99,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-			return this.GetEnumerator();
+			return GetEnumerator();
 		}
 
 		/// <inheritdoc/>

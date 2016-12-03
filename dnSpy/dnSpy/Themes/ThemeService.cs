@@ -104,10 +104,10 @@ namespace dnSpy.Themes {
 		[ImportingConstructor]
 		ThemeService(ThemeSettings themeSettings) {
 			this.themeSettings = themeSettings;
-			this.themeChangedHighPriority = new WeakEventList<ThemeChangedEventArgs>();
-			this.themeChanged = new WeakEventList<ThemeChangedEventArgs>();
-			this.themeChangedLowPriority = new WeakEventList<ThemeChangedEventArgs>();
-			this.themes = new Dictionary<Guid, Theme>();
+			themeChangedHighPriority = new WeakEventList<ThemeChangedEventArgs>();
+			themeChanged = new WeakEventList<ThemeChangedEventArgs>();
+			themeChangedLowPriority = new WeakEventList<ThemeChangedEventArgs>();
+			themes = new Dictionary<Guid, Theme>();
 			Load();
 			Debug.Assert(themes.Count != 0);
 			SystemEvents.UserPreferenceChanged += (s, e) => IsHighContrast = SystemParameters.HighContrast;

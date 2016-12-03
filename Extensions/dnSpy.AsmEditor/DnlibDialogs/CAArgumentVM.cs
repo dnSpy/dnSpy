@@ -93,12 +93,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		TypeSig storageType;
 
 		public CAArgumentVM(ModuleDef ownerModule, CAArgument arg, TypeSigCreatorOptions options, TypeSig storageType) {
-			this.module = options.OwnerModule;
-			this.originalArg = arg.Clone();
-			this.ConstantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
+			module = options.OwnerModule;
+			originalArg = arg.Clone();
+			ConstantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
 			ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
 			InitializeFrom(arg, storageType);
-			this.modified = false;
+			modified = false;
 		}
 
 		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {

@@ -33,20 +33,20 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public ParamDefOptions(ParamDef pd) {
-			this.Name = pd.Name;
-			this.Sequence = pd.Sequence;
-			this.Attributes = pd.Attributes;
-			this.Constant = pd.Constant;
-			this.MarshalType = pd.MarshalType;
-			this.CustomAttributes.AddRange(pd.CustomAttributes);
+			Name = pd.Name;
+			Sequence = pd.Sequence;
+			Attributes = pd.Attributes;
+			Constant = pd.Constant;
+			MarshalType = pd.MarshalType;
+			CustomAttributes.AddRange(pd.CustomAttributes);
 		}
 
 		public ParamDef CopyTo(ParamDef pd) {
-			pd.Name = this.Name ?? UTF8String.Empty;
-			pd.Sequence = this.Sequence;
-			pd.Attributes = this.Attributes;
-			pd.Constant = this.Constant;
-			pd.MarshalType = this.MarshalType;
+			pd.Name = Name ?? UTF8String.Empty;
+			pd.Sequence = Sequence;
+			pd.Attributes = Attributes;
+			pd.Constant = Constant;
+			pd.MarshalType = MarshalType;
 			pd.CustomAttributes.Clear();
 			pd.CustomAttributes.AddRange(CustomAttributes);
 			return pd;

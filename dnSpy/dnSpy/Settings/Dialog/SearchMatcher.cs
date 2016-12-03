@@ -28,9 +28,9 @@ namespace dnSpy.Settings.Dialog {
 		readonly List<string> remaining;
 
 		public SearchMatcher() {
-			this.searchParts = Array.Empty<string>();
-			this.spans = new List<Span>();
-			this.remaining = new List<string>();
+			searchParts = Array.Empty<string>();
+			spans = new List<Span>();
+			remaining = new List<string>();
 		}
 		static readonly char[] searchSeparators = new char[] { ' ', '\t', '\r', '\n' };
 

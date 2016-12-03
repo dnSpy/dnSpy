@@ -150,11 +150,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public CANamedArgumentVM(ModuleDef ownerModule, CANamedArgument namedArg, TypeSigCreatorOptions options) {
 			this.ownerModule = ownerModule;
-			this.originalNamedArg = namedArg.Clone();
-			this.ConstantTypeEnumList = new EnumListVM(ConstantTypeVM.CreateEnumArray(validTypes), (a, b) => OnConstantTypeChanged());
-			this.NamedArgTypeEnumList = new EnumListVM(namedArgTypeEnumList, (a, b) => OnNamedArgTypeChanged());
+			originalNamedArg = namedArg.Clone();
+			ConstantTypeEnumList = new EnumListVM(ConstantTypeVM.CreateEnumArray(validTypes), (a, b) => OnConstantTypeChanged());
+			NamedArgTypeEnumList = new EnumListVM(namedArgTypeEnumList, (a, b) => OnNamedArgTypeChanged());
 			InitializeFrom(namedArg, options);
-			this.modified = false;
+			modified = false;
 		}
 
 		void OnConstantTypeChanged() {

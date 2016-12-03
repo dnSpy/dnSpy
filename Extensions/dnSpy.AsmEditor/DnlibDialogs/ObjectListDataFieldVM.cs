@@ -57,15 +57,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		protected override string OnNewValue(IList<object> value) {
-			this.objects.Clear();
+			objects.Clear();
 			if (value != null)
-				this.objects.AddRange(value);
+				objects.AddRange(value);
 			return CalculateStringValue();
 		}
 
 		string CalculateStringValue() => string.Join(", ", objects.Select(a => DlgUtils.ValueToString(a, true)));
 
-		void InitializeStringValue() => this.StringValue = CalculateStringValue();
+		void InitializeStringValue() => StringValue = CalculateStringValue();
 
 		protected override string ConvertToValue(out IList<object> value) {
 			value = objects.ToArray();

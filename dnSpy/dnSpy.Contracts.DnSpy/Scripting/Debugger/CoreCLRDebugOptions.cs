@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// Constructor
 		/// </summary>
 		public CoreCLRDebugOptions() {
-			this.Options = new DebugOptions();
+			Options = new DebugOptions();
 		}
 	}
 }

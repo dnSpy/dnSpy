@@ -29,7 +29,7 @@ namespace dnSpy.Controls {
 		readonly Dictionary<Guid, WpfCommands> toWpfCommands;
 
 		WpfCommandService() {
-			this.toWpfCommands = new Dictionary<Guid, WpfCommands>();
+			toWpfCommands = new Dictionary<Guid, WpfCommands>();
 		}
 
 		public void Add(Guid guid, UIElement elem) {

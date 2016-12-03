@@ -40,7 +40,7 @@ namespace dnSpy.Text.Editor {
 			readonly CodeEditor codeEditor;
 
 			public GuidObjectsProvider(CodeEditor codeEditorUI) {
-				this.codeEditor = codeEditorUI;
+				codeEditor = codeEditorUI;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {

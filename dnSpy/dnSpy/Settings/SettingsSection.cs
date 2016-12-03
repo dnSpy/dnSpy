@@ -30,9 +30,9 @@ namespace dnSpy.Settings {
 		public Tuple<string, string>[] Attributes => sectionAttributes.Attributes;
 
 		public SettingsSection(string name) {
-			this.Name = name;
-			this.sectionAttributes = new SectionAttributes();
-			this.settingsSectionProvider = new SettingsSectionProvider();
+			Name = name;
+			sectionAttributes = new SectionAttributes();
+			settingsSectionProvider = new SettingsSectionProvider();
 		}
 
 		public ISettingsSection[] Sections => settingsSectionProvider.Sections;
@@ -50,7 +50,7 @@ namespace dnSpy.Settings {
 			if (section == null)
 				throw new ArgumentNullException(nameof(section));
 			foreach (var attr in section.Attributes)
-				this.Attribute(attr.Item1, attr.Item2);
+				Attribute(attr.Item1, attr.Item2);
 			foreach (var child in section.Sections)
 				CreateSection(child.Name).CopyFrom(child);
 		}

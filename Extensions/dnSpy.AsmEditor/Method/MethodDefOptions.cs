@@ -41,28 +41,28 @@ namespace dnSpy.AsmEditor.Method {
 		}
 
 		public MethodDefOptions(MethodDef method) {
-			this.ImplAttributes = method.ImplAttributes;
-			this.Attributes = method.Attributes;
-			this.SemanticsAttributes = method.SemanticsAttributes;
-			this.RVA = method.RVA;
-			this.Name = method.Name;
-			this.MethodSig = method.MethodSig;
-			this.ImplMap = method.ImplMap;
-			this.CustomAttributes.AddRange(method.CustomAttributes);
-			this.DeclSecurities.AddRange(method.DeclSecurities);
-			this.ParamDefs.AddRange(method.ParamDefs);
-			this.GenericParameters.AddRange(method.GenericParameters);
-			this.Overrides.AddRange(method.Overrides);
+			ImplAttributes = method.ImplAttributes;
+			Attributes = method.Attributes;
+			SemanticsAttributes = method.SemanticsAttributes;
+			RVA = method.RVA;
+			Name = method.Name;
+			MethodSig = method.MethodSig;
+			ImplMap = method.ImplMap;
+			CustomAttributes.AddRange(method.CustomAttributes);
+			DeclSecurities.AddRange(method.DeclSecurities);
+			ParamDefs.AddRange(method.ParamDefs);
+			GenericParameters.AddRange(method.GenericParameters);
+			Overrides.AddRange(method.Overrides);
 		}
 
 		public MethodDef CopyTo(MethodDef method) {
-			method.ImplAttributes = this.ImplAttributes;
-			method.Attributes = this.Attributes;
-			method.SemanticsAttributes = this.SemanticsAttributes;
-			method.RVA = this.RVA;
-			method.Name = this.Name ?? UTF8String.Empty;
-			method.MethodSig = this.MethodSig;
-			method.ImplMap = this.ImplMap;
+			method.ImplAttributes = ImplAttributes;
+			method.Attributes = Attributes;
+			method.SemanticsAttributes = SemanticsAttributes;
+			method.RVA = RVA;
+			method.Name = Name ?? UTF8String.Empty;
+			method.MethodSig = MethodSig;
+			method.ImplMap = ImplMap;
 			method.CustomAttributes.Clear();
 			method.CustomAttributes.AddRange(CustomAttributes);
 			method.DeclSecurities.Clear();

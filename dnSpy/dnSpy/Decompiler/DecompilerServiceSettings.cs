@@ -55,10 +55,10 @@ namespace dnSpy.Decompiler {
 		DecompilerServiceSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.LanguageGuid = sect.Attribute<Guid?>(nameof(LanguageGuid)) ?? this.LanguageGuid;
-			this.disableSave = false;
+			LanguageGuid = sect.Attribute<Guid?>(nameof(LanguageGuid)) ?? LanguageGuid;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

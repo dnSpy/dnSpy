@@ -44,8 +44,8 @@ namespace dnSpy.Contracts.Decompiler {
 				throw new ArgumentNullException(nameof(output));
 			if (ctx == null)
 				throw new ArgumentNullException(nameof(ctx));
-			this.Output = output;
-			this.Context = ctx;
+			Output = output;
+			Context = ctx;
 		}
 	}
 }

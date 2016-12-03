@@ -427,11 +427,11 @@ namespace dnSpy.AsmEditor.Module {
 		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, IDecompilerService decompilerService) {
 			this.module = module;
 			this.options = new ModuleOptions();
-			this.origOptions = options;
+			origOptions = options;
 			ModuleKind = new EnumListVM(SaveModule.SaveModuleOptionsVM.moduleKindList, (a, b) => {
 				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
 			});
-			this.Machine = new EnumListVM(SaveModule.PEHeadersOptionsVM.machineList, (a, b) => {
+			Machine = new EnumListVM(SaveModule.PEHeadersOptionsVM.machineList, (a, b) => {
 				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
 			Mvid = new NullableGuidVM(a => HasErrorUpdated());

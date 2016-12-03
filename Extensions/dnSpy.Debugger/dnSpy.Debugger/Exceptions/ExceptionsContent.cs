@@ -58,8 +58,8 @@ namespace dnSpy.Debugger.Exceptions {
 
 		[ImportingConstructor]
 		ExceptionsContent(IWpfCommandService wpfCommandService, Lazy<IExceptionsVM> exceptionsVM) {
-			this.exceptionsControl = new ExceptionsControl();
-			this.vmExceptions = exceptionsVM;
+			exceptionsControl = new ExceptionsControl();
+			vmExceptions = exceptionsVM;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL, exceptionsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW, exceptionsControl.ListBox);

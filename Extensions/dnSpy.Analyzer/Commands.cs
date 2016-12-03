@@ -153,8 +153,8 @@ namespace dnSpy.Analyzer {
 			public int Index;
 			public readonly IList<ITreeNode> Nodes;
 			public State(ITreeNode node, int level) {
-				this.Level = level;
-				this.Nodes = node.Children;
+				Level = level;
+				Nodes = node.Children;
 			}
 		}
 

@@ -100,8 +100,8 @@ namespace dnSpy.Debugger.CallStack {
 			this.callStackSettings = callStackSettings;
 			this.theDebugger = theDebugger;
 			this.stackFrameService = stackFrameService;
-			this.framesList = new ObservableCollection<ICallStackFrameVM>();
-			this.callStackFrameContext = new CallStackFrameContext(classificationFormatMap, textElementProvider) {
+			framesList = new ObservableCollection<ICallStackFrameVM>();
+			callStackFrameContext = new CallStackFrameContext(classificationFormatMap, textElementProvider) {
 				TypePrinterFlags = TypePrinterFlags,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightCallStack,
 			};

@@ -43,13 +43,13 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="targetNode">Target node that will be the parent of the new nodes</param>
 		protected AsyncNodeProvider(TreeNodeData targetNode) {
-			this.lockObj = new object();
+			lockObj = new object();
 			this.targetNode = targetNode;
-			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.uiThreadActions = new List<Action>();
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
-			this.thread = new Thread(ThreadMethodImpl);
+			dispatcher = Dispatcher.CurrentDispatcher;
+			uiThreadActions = new List<Action>();
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
+			thread = new Thread(ThreadMethodImpl);
 			thread.IsBackground = true;
 		}
 

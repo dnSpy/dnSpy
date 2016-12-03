@@ -30,11 +30,11 @@ namespace dnSpy.Search {
 		public VisibleMembersFlags Flags { get; }
 
 		public SearchTypeVM(SearchType searchType, string name, string toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
-			this.SearchType = searchType;
-			this.Name = name;
-			this.ToolTip = toolTip;
-			this.Image = imageReference;
-			this.Flags = flags;
+			SearchType = searchType;
+			Name = name;
+			ToolTip = toolTip;
+			Image = imageReference;
+			Flags = flags;
 		}
 
 		public void RefreshUI() => OnPropertyChanged(nameof(Name));

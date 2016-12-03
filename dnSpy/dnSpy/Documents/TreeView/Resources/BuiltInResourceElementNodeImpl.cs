@@ -65,7 +65,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			else if (re.ResourceData.Code >= ResourceTypeCode.UserTypes)
 				yield return new ResourceData(re.Name, token => new MemoryStream(((BinaryResourceData)re.ResourceData).Data));
 			else {
-				var vs = this.ValueString;
+				var vs = ValueString;
 				yield return new ResourceData(re.Name, token => ResourceUtilities.StringToStream(vs));
 			}
 		}

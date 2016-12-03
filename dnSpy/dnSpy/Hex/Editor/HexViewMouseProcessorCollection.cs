@@ -36,10 +36,10 @@ namespace dnSpy.Hex.Editor {
 
 		public HexViewMouseProcessorCollection(WpfHexView wpfHexView, HexEditorOperationsFactoryService editorOperationsFactoryService, Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>[] mouseProcessorProviders) {
 			this.wpfHexView = wpfHexView;
-			this.wpfHexViewImpl = wpfHexView as WpfHexViewImpl;
+			wpfHexViewImpl = wpfHexView as WpfHexViewImpl;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.mouseProcessorProviders = mouseProcessorProviders;
-			this.allowEventDelegate = AllowMouseEvent;
+			allowEventDelegate = AllowMouseEvent;
 			wpfHexView.Closed += WpfHexView_Closed;
 			Reinitialize();
 		}

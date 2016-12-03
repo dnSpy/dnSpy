@@ -84,11 +84,11 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
 			if (margin == null)
 				throw new ArgumentNullException(nameof(margin));
-			this.glyphTextViewMarkerService = GlyphTextViewMarkerService.GetOrCreate(glyphTextMarkerServiceImpl, wpfTextViewHost.TextView);
+			glyphTextViewMarkerService = GlyphTextViewMarkerService.GetOrCreate(glyphTextMarkerServiceImpl, wpfTextViewHost.TextView);
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.margin = margin;
-			this.toolTipDispatcherTimer = new DispatcherTimer(DispatcherPriority.Normal, margin.VisualElement.Dispatcher);
-			this.popup = new Popup { AllowsTransparency = true };
+			toolTipDispatcherTimer = new DispatcherTimer(DispatcherPriority.Normal, margin.VisualElement.Dispatcher);
+			popup = new Popup { AllowsTransparency = true };
 
 			var list = new List<IGlyphTextMarkerMouseProcessor>();
 			foreach (var lazy in glyphTextMarkerServiceImpl.GlyphTextMarkerMouseProcessorProviders) {
@@ -98,7 +98,7 @@ namespace dnSpy.Text.Editor {
 				if (mouseProcessor != null)
 					list.Add(mouseProcessor);
 			}
-			this.glyphTextMarkerMouseProcessors = list.ToArray();
+			glyphTextMarkerMouseProcessors = list.ToArray();
 			wpfTextViewHost.TextView.Closed += TextView_Closed;
 			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
 			toolTipDispatcherTimer.Tick += ToolTipDispatcherTimer_Tick;

@@ -86,11 +86,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		public ILSettings Clone() => CopyTo(new ILSettings());
 
 		public ILSettings CopyTo(ILSettings other) {
-			other.ShowILComments = this.ShowILComments;
-			other.ShowXmlDocumentation = this.ShowXmlDocumentation;
-			other.ShowTokenAndRvaComments = this.ShowTokenAndRvaComments;
-			other.ShowILBytes = this.ShowILBytes;
-			other.SortMembers = this.SortMembers;
+			other.ShowILComments = ShowILComments;
+			other.ShowXmlDocumentation = ShowXmlDocumentation;
+			other.ShowTokenAndRvaComments = ShowTokenAndRvaComments;
+			other.ShowILBytes = ShowILBytes;
+			other.SortMembers = SortMembers;
 			return other;
 		}
 

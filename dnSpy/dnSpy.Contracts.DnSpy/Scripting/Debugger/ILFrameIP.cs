@@ -68,8 +68,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="offset">Offset</param>
 		/// <param name="mapping">Mapping flags</param>
 		public ILFrameIP(uint offset, MappingResult mapping) {
-			this.Offset = offset;
-			this.Mapping = mapping;
+			Offset = offset;
+			Mapping = mapping;
 		}
 
 		/// <summary>

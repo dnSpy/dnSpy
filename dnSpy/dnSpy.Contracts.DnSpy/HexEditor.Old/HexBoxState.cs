@@ -32,12 +32,12 @@ namespace dnSpy.Contracts.HexEditor {
 		}
 
 		public HexBoxState(HexBoxState other) {
-			this.TopOffset = other.TopOffset;
-			this.Column = other.Column;
-			this.StartOffset = other.StartOffset;
-			this.EndOffset = other.EndOffset;
-			this.CaretPosition = other.CaretPosition;
-			this.Selection = other.Selection;
+			TopOffset = other.TopOffset;
+			Column = other.Column;
+			StartOffset = other.StartOffset;
+			EndOffset = other.EndOffset;
+			CaretPosition = other.CaretPosition;
+			Selection = other.Selection;
 		}
 
 		public static bool operator ==(HexBoxState a, HexBoxState b) {

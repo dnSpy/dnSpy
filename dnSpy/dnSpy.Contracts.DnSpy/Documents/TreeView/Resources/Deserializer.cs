@@ -32,9 +32,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public object Value { get; }
 
 		public DeserializedDataInfo(Type objectType, string name, object value) {
-			this.ObjectType = objectType;
-			this.Name = name;
-			this.Value = value;
+			ObjectType = objectType;
+			Name = name;
+			Value = value;
 		}
 	}
 
@@ -48,8 +48,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			readonly ITypeDefOrRef type;
 
 			public MyBinder(string asmName, string typeName) {
-				this.module = new ModuleDefUser();
-				this.type = TypeNameParser.ParseReflection(module, $"{typeName}, {asmName}", null);
+				module = new ModuleDefUser();
+				type = TypeNameParser.ParseReflection(module, $"{typeName}, {asmName}", null);
 			}
 
 			public override Type BindToType(string assemblyName, string typeName) {

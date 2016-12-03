@@ -85,11 +85,11 @@ namespace dnSpy.Debugger.Threads {
 			this.theDebugger = theDebugger;
 			this.stackFrameService = stackFrameService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.ThreadsWindow);
-			this.threadContext = new ThreadContext(theDebugger, debuggerSettings, classificationFormatMap, textElementProvider) {
+			threadContext = new ThreadContext(theDebugger, debuggerSettings, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightThreads,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 			};
-			this.threadsList = new ObservableCollection<ThreadVM>();
+			threadsList = new ObservableCollection<ThreadVM>();
 			stackFrameService.StackFramesUpdated += StackFrameService_StackFramesUpdated;
 			stackFrameService.PropertyChanged += StackFrameService_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;

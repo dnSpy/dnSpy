@@ -68,7 +68,7 @@ namespace dnSpy.Text.Editor {
 			).ToArray();
 			this.wpfTextViewHost = wpfTextViewHost;
 			this.marginContainer = marginContainer;
-			this.currentMargins = Array.Empty<WpfTextViewMarginInfo>();
+			currentMargins = Array.Empty<WpfTextViewMarginInfo>();
 			wpfTextViewHost.Closed += WpfTextViewHost_Closed;
 			wpfTextViewHost.TextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			UpdateMargins();

@@ -264,11 +264,11 @@ namespace dnSpy.Settings.Dialog {
 			textContent = UIHelpers.RemoveAccessKeys(textContent);
 
 			// Quick check here because access keys aren't shown if we return a TextBlock
-			if (!this.pageContext.SearchMatcher.IsMatchAny(textContent))
+			if (!pageContext.SearchMatcher.IsMatchAny(textContent))
 				return null;
 
 			const bool colorize = true;
-			var context = new AppSettingsTextClassifierContext(this.pageContext.SearchMatcher, textContent, PredefinedTextClassifierTags.OptionsDialogText, colorize);
+			var context = new AppSettingsTextClassifierContext(pageContext.SearchMatcher, textContent, PredefinedTextClassifierTags.OptionsDialogText, colorize);
 			return textElementProvider.CreateTextElement(classificationFormatMap, context, ContentTypes.OptionsDialogText, GetTextFlags(ownerControl));
 		}
 

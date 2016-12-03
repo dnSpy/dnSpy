@@ -65,7 +65,7 @@ namespace dnSpy.Tabs {
 
 			public TheHeader(TabItemImpl impl) {
 				this.impl = impl;
-				this.isSelected = impl.IsSelected;
+				isSelected = impl.IsSelected;
 			}
 
 			internal void TabContentPropertyChanged(string propName) {
@@ -87,13 +87,13 @@ namespace dnSpy.Tabs {
 		public TabItemImpl(TabGroup tabGroup, ITabContent tabContent, object objStyle) {
 			this.tabGroup = tabGroup;
 			this.tabContent = tabContent;
-			this.Content = tabContent.UIObject;
-			this.theHeader = new TheHeader(this);
-			this.DataContext = theHeader;
-			this.Header = theHeader;
-			this.AllowDrop = true;
-			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(GotKeyboardFocus2), true);
-			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(LostKeyboardFocus2), true);
+			Content = tabContent.UIObject;
+			theHeader = new TheHeader(this);
+			DataContext = theHeader;
+			Header = theHeader;
+			AllowDrop = true;
+			AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(GotKeyboardFocus2), true);
+			AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(LostKeyboardFocus2), true);
 			this.SetStyle(objStyle ?? "FileTabGroupTabItemStyle");
 			AddEvents();
 		}
@@ -151,7 +151,7 @@ namespace dnSpy.Tabs {
 		void TabContent_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			theHeader.TabContentPropertyChanged(e.PropertyName);
 			if (e.PropertyName == nameof(tabContent.UIObject))
-				this.Content = tabContent.UIObject;
+				Content = tabContent.UIObject;
 		}
 	}
 }

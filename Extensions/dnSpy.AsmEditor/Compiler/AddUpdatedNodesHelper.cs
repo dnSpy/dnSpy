@@ -72,13 +72,13 @@ namespace dnSpy.AsmEditor.Compiler {
 					dict[ns] = list = new List<TypeDef>();
 				list.Add(t.TargetType);
 			}
-			this.newTypeNodeCreators = dict.Values.Select(a => new TypeNodeCreator(modNode, a)).ToArray();
-			this.existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
+			newTypeNodeCreators = dict.Values.Select(a => new TypeNodeCreator(modNode, a)).ToArray();
+			existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
 			if (!importer.MergedNonNestedTypes.All(a => a.TargetType.Module == modNode.Document.ModuleDef))
 				throw new InvalidOperationException();
-			this.newAssemblyDeclSecurities = importer.NewAssemblyDeclSecurities;
-			this.newAssemblyCustomAttributes = importer.NewAssemblyCustomAttributes;
-			this.newModuleCustomAttributes = importer.NewModuleCustomAttributes;
+			newAssemblyDeclSecurities = importer.NewAssemblyDeclSecurities;
+			newAssemblyCustomAttributes = importer.NewAssemblyCustomAttributes;
+			newModuleCustomAttributes = importer.NewModuleCustomAttributes;
 			if (newAssemblyDeclSecurities != null)
 				origAssemblyDeclSecurities = modNode.Document.AssemblyDef?.DeclSecurities.ToArray();
 			if (newAssemblyCustomAttributes != null)

@@ -33,23 +33,23 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public GenericParamOptions(GenericParam gp) {
-			this.Number = gp.Number;
-			this.Flags = gp.Flags;
-			this.Name = gp.Name;
-			this.Kind = gp.Kind;
-			this.GenericParamConstraints.AddRange(gp.GenericParamConstraints);
-			this.CustomAttributes.AddRange(gp.CustomAttributes);
+			Number = gp.Number;
+			Flags = gp.Flags;
+			Name = gp.Name;
+			Kind = gp.Kind;
+			GenericParamConstraints.AddRange(gp.GenericParamConstraints);
+			CustomAttributes.AddRange(gp.CustomAttributes);
 		}
 
 		public GenericParam CopyTo(GenericParam gp) {
-			gp.Number = this.Number;
-			gp.Flags = this.Flags;
-			gp.Name = this.Name ?? UTF8String.Empty;
-			gp.Kind = this.Kind;
+			gp.Number = Number;
+			gp.Flags = Flags;
+			gp.Name = Name ?? UTF8String.Empty;
+			gp.Kind = Kind;
 			gp.GenericParamConstraints.Clear();
-			gp.GenericParamConstraints.AddRange(this.GenericParamConstraints);
+			gp.GenericParamConstraints.AddRange(GenericParamConstraints);
 			gp.CustomAttributes.Clear();
-			gp.CustomAttributes.AddRange(this.CustomAttributes);
+			gp.CustomAttributes.AddRange(CustomAttributes);
 			return gp;
 		}
 

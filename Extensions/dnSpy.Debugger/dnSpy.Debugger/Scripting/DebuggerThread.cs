@@ -116,15 +116,15 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.thread = thread;
-			this.uniqueId = thread.UniqueId;
-			this.hashCode = thread.GetHashCode();
+			uniqueId = thread.UniqueId;
+			hashCode = thread.GetHashCode();
 		}
 
 		public bool InterceptCurrentException(IStackFrame frame) => debugger.Dispatcher.UI(() => thread.CorThread.InterceptCurrentException(((StackFrame)frame).CorFrame));
 
 		IAppDomain GetAppDomainUIThrow() {
 			debugger.Dispatcher.VerifyAccess();
-			var appDomain = this.AppDomain;
+			var appDomain = AppDomain;
 			if (appDomain == null)
 				throw new InvalidOperationException("The thread doesn't have an AppDomain");
 			return appDomain;

@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.Scripting {
 				return debugger.Dispatcher.UI(() => {
 					if (name != null)
 						return name;
-					name = this.CorFunction.GetName() ?? string.Empty;
+					name = CorFunction.GetName() ?? string.Empty;
 					return name;
 				});
 			}
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.Scripting {
 				return debugger.Dispatcher.UI(() => {
 					if (methodSig != null)
 						return methodSig;
-					methodSig = this.CorFunction.GetMethodSig();
+					methodSig = CorFunction.GetMethodSig();
 					if (methodSig == null)
 						methodSig = MethodSig.CreateStatic(new CorLibTypes(new ModuleDefUser()).Void);
 					return methodSig;
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Scripting {
 					return module;
 				debugger.Dispatcher.UI(() => {
 					if (module == null)
-						module = debugger.FindModuleUI(this.CorFunction.Module);
+						module = debugger.FindModuleUI(CorFunction.Module);
 				});
 				return module;
 			}
@@ -147,10 +147,10 @@ namespace dnSpy.Debugger.Scripting {
 		public DebuggerMethod(Debugger debugger, CorFunction func) {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
-			this.CorFunction = func;
-			this.hashCode = func.GetHashCode();
-			this.LocalVarSigToken = func.LocalVarSigToken;
-			this.Token = func.Token;
+			CorFunction = func;
+			hashCode = func.GetHashCode();
+			LocalVarSigToken = func.LocalVarSigToken;
+			Token = func.Token;
 			func.GetAttributes(out implAttributes, out attributes);
 		}
 

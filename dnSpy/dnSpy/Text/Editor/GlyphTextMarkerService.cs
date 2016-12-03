@@ -75,8 +75,8 @@ namespace dnSpy.Text.Editor {
 			ThemeService = themeService;
 			ViewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			EditorFormatMapService = editorFormatMapService;
-			this.glyphTextMarkers = new HashSet<IGlyphTextMarkerImpl>();
-			this.GlyphTextMarkerMouseProcessorProviders = Orderer.Order(glyphTextMarkerMouseProcessorProviders).ToArray();
+			glyphTextMarkers = new HashSet<IGlyphTextMarkerImpl>();
+			GlyphTextMarkerMouseProcessorProviders = Orderer.Order(glyphTextMarkerMouseProcessorProviders).ToArray();
 		}
 
 		public IGlyphTextMethodMarker AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {

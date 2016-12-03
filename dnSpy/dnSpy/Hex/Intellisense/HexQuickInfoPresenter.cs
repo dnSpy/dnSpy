@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Intellisense {
 			: base(session) {
 			wpfHexView = session.HexView as WpfHexView;
 			Debug.Assert(wpfHexView != null);
-			this.popup = new Popup {
+			popup = new Popup {
 				PlacementTarget = wpfHexView?.VisualElement,
 				Placement = PlacementMode.Relative,
 				Visibility = Visibility.Collapsed,

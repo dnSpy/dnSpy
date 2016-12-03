@@ -59,7 +59,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 				if (snapshot == null)
 					throw new ArgumentNullException(nameof(snapshot));
 				Snapshot = snapshot;
-				this.cancellationTokenSource = new CancellationTokenSource();
+				cancellationTokenSource = new CancellationTokenSource();
 				CancellationToken = cancellationTokenSource.Token;
 				GetTagsStateImpl = new GetTagsStateImpl(CancellationToken);
 			}
@@ -121,9 +121,9 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 
 			public GetTagsStateImpl(CancellationToken cancellationToken)
 				: base(cancellationToken) {
-				this.tagsResultList = new List<TagsResult>();
-				this.jobs = new List<NormalizedSnapshotSpanCollection>();
-				this.currentResult = new List<TagsResult>();
+				tagsResultList = new List<TagsResult>();
+				jobs = new List<NormalizedSnapshotSpanCollection>();
+				currentResult = new List<TagsResult>();
 			}
 
 			public override void AddResult(TagsResult result) {
@@ -190,8 +190,8 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 		}
 
 		protected AsyncTagger() {
-			this.cachedTags = new Dictionary<int, IEnumerable<ITagSpan<TTagType>>>();
-			this.lockObj = new object();
+			cachedTags = new Dictionary<int, IEnumerable<ITagSpan<TTagType>>>();
+			lockObj = new object();
 		}
 
 		protected void RefreshAllTags(ITextSnapshot snapshot) {

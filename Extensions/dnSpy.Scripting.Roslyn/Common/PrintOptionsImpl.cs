@@ -53,8 +53,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public bool AutoColorizeObjects { get; set; }
 
 		public PrintOptionsImpl() {
-			this.printOptions = new PrintOptions();
-			this.AutoColorizeObjects = true;
+			printOptions = new PrintOptions();
+			AutoColorizeObjects = true;
 		}
 
 		public PrintOptionsImpl Clone() {

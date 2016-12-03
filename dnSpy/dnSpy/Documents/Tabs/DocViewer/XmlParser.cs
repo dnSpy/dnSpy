@@ -100,7 +100,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			this.text = text;
-			this.xamlAttributeParser = isXaml ? new XamlAttributeParser(this) : null;
+			xamlAttributeParser = isXaml ? new XamlAttributeParser(this) : null;
 			blockFlags = isXaml ? CodeBracesRangeFlags.XamlBlockBraces : CodeBracesRangeFlags.XmlBlockBraces;
 			references = new List<ReferenceInfo>();
 			bracesInfo = new List<CodeBracesRange>();

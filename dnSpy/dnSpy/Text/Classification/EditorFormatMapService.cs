@@ -38,9 +38,9 @@ namespace dnSpy.Text.Classification {
 			this.themeService = themeService;
 			this.textEditorFontSettingsService = textEditorFontSettingsService;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
-			this.toCategoryMap = new Dictionary<ITextEditorFontSettings, IEditorFormatMap>();
-			this.cachedUpdaters = new List<CategoryEditorFormatMapUpdater>();
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			toCategoryMap = new Dictionary<ITextEditorFontSettings, IEditorFormatMap>();
+			cachedUpdaters = new List<CategoryEditorFormatMapUpdater>();
+			dispatcher = Dispatcher.CurrentDispatcher;
 		}
 
 		public IEditorFormatMap GetEditorFormatMap(string category) {

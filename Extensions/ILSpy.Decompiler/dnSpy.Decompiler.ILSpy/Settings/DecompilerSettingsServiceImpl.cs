@@ -25,8 +25,8 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 	sealed class DecompilerSettingsServiceImpl : DecompilerSettingsService {
 		[ImportingConstructor]
 		DecompilerSettingsServiceImpl(DecompilerSettingsImpl decompilerSettings, ILSettingsImpl ilSettings) {
-			this.CSharpVBDecompilerSettings = new CSharpVBDecompilerSettings(decompilerSettings);
-			this.ILDecompilerSettings = new ILDecompilerSettings(ilSettings);
+			CSharpVBDecompilerSettings = new CSharpVBDecompilerSettings(decompilerSettings);
+			ILDecompilerSettings = new ILDecompilerSettings(ilSettings);
 		}
 	}
 }

@@ -28,9 +28,9 @@ namespace dnSpy.Debugger.Exceptions {
 		public ExceptionState State { get; }
 
 		public EXCEPTION_INFO(string name, uint code, ExceptionState state) {
-			this.Name = name;
-			this.Code = code;
-			this.State = state;
+			Name = name;
+			Code = code;
+			State = state;
 		}
 
 		public override string ToString() {

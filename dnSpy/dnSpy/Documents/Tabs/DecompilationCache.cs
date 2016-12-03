@@ -70,9 +70,9 @@ namespace dnSpy.Documents.Tabs {
 			public TimeSpan Age => DateTime.UtcNow - LastHitUTC;
 
 			public Item(DocumentViewerContent content, IContentType contentType) {
-				this.Content = content;
-				this.ContentType = contentType;
-				this.LastHitUTC = DateTime.UtcNow;
+				Content = content;
+				ContentType = contentType;
+				LastHitUTC = DateTime.UtcNow;
 			}
 
 			public void Hit() {
@@ -84,9 +84,9 @@ namespace dnSpy.Documents.Tabs {
 			}
 
 			public void MakeWeakReference() {
-				var content = Interlocked.CompareExchange(ref this.Content, null, this.Content);
+				var content = Interlocked.CompareExchange(ref Content, null, Content);
 				if (content != null)
-					this.WeakContent = new WeakReference(content);
+					WeakContent = new WeakReference(content);
 			}
 		}
 
@@ -96,9 +96,9 @@ namespace dnSpy.Documents.Tabs {
 			public readonly DecompilerSettingsBase Settings;
 
 			public Key(IDecompiler decompiler, DocumentTreeNodeData[] nodes, DecompilerSettingsBase settings) {
-				this.Decompiler = decompiler;
-				this.Nodes = new List<DocumentTreeNodeData>(nodes).ToArray();
-				this.Settings = settings.Clone();
+				Decompiler = decompiler;
+				Nodes = new List<DocumentTreeNodeData>(nodes).ToArray();
+				Settings = settings.Clone();
 			}
 
 			public bool Equals(Key other) {

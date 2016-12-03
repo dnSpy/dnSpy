@@ -67,7 +67,7 @@ namespace dnSpy.Decompiler {
 			if (moduleIdProvider == null)
 				throw new ArgumentNullException(nameof(moduleIdProvider));
 
-			this.dict = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
+			dict = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
 			this.snapshot = snapshot;
 			this.moduleIdProvider = moduleIdProvider;
 
@@ -84,11 +84,11 @@ namespace dnSpy.Decompiler {
 				}
 				var key = new ModuleTokenId(moduleId, info.Method.MDToken);
 				MethodDebugInfo oldDebugInfo;
-				if (this.dict.TryGetValue(key, out oldDebugInfo)) {
+				if (dict.TryGetValue(key, out oldDebugInfo)) {
 					if (info.Statements.Length < oldDebugInfo.Statements.Length)
 						continue;
 				}
-				this.dict[key] = info;
+				dict[key] = info;
 			}
 		}
 

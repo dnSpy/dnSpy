@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Search {
 		/// </summary>
 		/// <param name="ilOffset">IL offset of instruction</param>
 		public BodyResult(uint ilOffset) {
-			this.ILOffset = ilOffset;
+			ILOffset = ilOffset;
 		}
 	}
 }

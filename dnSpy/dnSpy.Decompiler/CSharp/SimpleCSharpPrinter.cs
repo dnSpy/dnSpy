@@ -86,10 +86,10 @@ namespace dnSpy.Decompiler.CSharp {
 		public SimpleCSharpPrinter(ITextColorWriter output, SimplePrinterFlags flags) {
 			this.output = output;
 			this.flags = flags;
-			this.recursionCounter = 0;
-			this.lineLength = 0;
-			this.outputLengthExceeded = false;
-			this.forceWrite = false;
+			recursionCounter = 0;
+			lineLength = 0;
+			outputLengthExceeded = false;
+			forceWrite = false;
 		}
 
 		static string FilterName(string s) {
@@ -349,25 +349,25 @@ namespace dnSpy.Decompiler.CSharp {
 			if (td == null ||
 				td.GenericParameters.Count == 0 ||
 				(td.DeclaringType != null && td.DeclaringType.GenericParameters.Count >= td.GenericParameters.Count)) {
-				var oldFlags = this.flags;
-				this.flags &= ~(SimplePrinterFlags.ShowNamespaces | SimplePrinterFlags.ShowTypeKeywords);
+				var oldFlags = flags;
+				flags &= ~(SimplePrinterFlags.ShowNamespaces | SimplePrinterFlags.ShowTypeKeywords);
 				if (useNamespaces)
-					this.flags |= SimplePrinterFlags.ShowNamespaces;
+					flags |= SimplePrinterFlags.ShowNamespaces;
 				if (useTypeKeywords)
-					this.flags |= SimplePrinterFlags.ShowTypeKeywords;
+					flags |= SimplePrinterFlags.ShowTypeKeywords;
 				Write(type);
-				this.flags = oldFlags;
+				flags = oldFlags;
 				return;
 			}
 
 			int numGenParams = td.GenericParameters.Count;
 			if (type.DeclaringType != null) {
-				var oldFlags = this.flags;
-				this.flags &= ~(SimplePrinterFlags.ShowNamespaces | SimplePrinterFlags.ShowTypeKeywords);
+				var oldFlags = flags;
+				flags &= ~(SimplePrinterFlags.ShowNamespaces | SimplePrinterFlags.ShowTypeKeywords);
 				if (useNamespaces)
-					this.flags |= SimplePrinterFlags.ShowNamespaces;
+					flags |= SimplePrinterFlags.ShowNamespaces;
 				Write(type.DeclaringType);
-				this.flags = oldFlags;
+				flags = oldFlags;
 				WritePeriod();
 				numGenParams = numGenParams - td.DeclaringType.GenericParameters.Count;
 				if (numGenParams < 0)
@@ -988,13 +988,13 @@ namespace dnSpy.Decompiler.CSharp {
 			public readonly bool RetTypeIsLastArgType;
 
 			public MethodInfo(IMethod method, bool retTypeIsLastArgType = false) {
-				this.ModuleDef = method.Module;
-				this.TypeGenericParams = null;
-				this.MethodGenericParams = null;
-				this.MethodSig = method.MethodSig ?? new MethodSig(CallingConvention.Default);
-				this.RetTypeIsLastArgType = retTypeIsLastArgType;
+				ModuleDef = method.Module;
+				TypeGenericParams = null;
+				MethodGenericParams = null;
+				MethodSig = method.MethodSig ?? new MethodSig(CallingConvention.Default);
+				RetTypeIsLastArgType = retTypeIsLastArgType;
 
-				this.MethodDef = method as MethodDef;
+				MethodDef = method as MethodDef;
 				var ms = method as MethodSpec;
 				var mr = method as MemberRef;
 				if (ms != null) {
@@ -1002,24 +1002,24 @@ namespace dnSpy.Decompiler.CSharp {
 					if (ts != null) {
 						var gp = ts.TypeSig.RemovePinnedAndModifiers() as GenericInstSig;
 						if (gp != null)
-							this.TypeGenericParams = gp.GenericArguments;
+							TypeGenericParams = gp.GenericArguments;
 					}
 
 					var gsSig = ms.GenericInstMethodSig;
 					if (gsSig != null)
-						this.MethodGenericParams = gsSig.GenericArguments;
+						MethodGenericParams = gsSig.GenericArguments;
 
-					this.MethodDef = ms.Method.ResolveMethodDef();
+					MethodDef = ms.Method.ResolveMethodDef();
 				}
 				else if (mr != null) {
 					var ts = mr.DeclaringType as TypeSpec;
 					if (ts != null) {
 						var gp = ts.TypeSig.RemovePinnedAndModifiers() as GenericInstSig;
 						if (gp != null)
-							this.TypeGenericParams = gp.GenericArguments;
+							TypeGenericParams = gp.GenericArguments;
 					}
 
-					this.MethodDef = mr.ResolveMethod();
+					MethodDef = mr.ResolveMethod();
 				}
 			}
 		}

@@ -49,8 +49,8 @@ namespace dndbg.Engine {
 
 		public DebugEventBreakpointConditionContext(DnDebugger debugger, DnDebugEventBreakpoint bp, DebugCallbackEventArgs e)
 			: base(debugger) {
-			this.DebugEventBreakpoint = bp;
-			this.EventArgs = e;
+			DebugEventBreakpoint = bp;
+			EventArgs = e;
 		}
 	}
 
@@ -59,8 +59,8 @@ namespace dndbg.Engine {
 		public DebugEventBreakpointKind EventKind { get; }
 
 		internal DnDebugEventBreakpoint(DebugEventBreakpointKind eventKind, Func<DebugEventBreakpointConditionContext, bool> cond) {
-			this.EventKind = eventKind;
-			this.Condition = cond ?? defaultCond;
+			EventKind = eventKind;
+			Condition = cond ?? defaultCond;
 		}
 		static readonly Func<DebugEventBreakpointConditionContext, bool> defaultCond = a => true;
 

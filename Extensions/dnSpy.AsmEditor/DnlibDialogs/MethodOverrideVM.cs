@@ -52,8 +52,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		internal ModuleDef OwnerModule { get; }
 
 		public MethodOverrideVM(MethodOverrideOptions options, ModuleDef ownerModule) {
-			this.OwnerModule = ownerModule;
-			this.origOptions = options;
+			OwnerModule = ownerModule;
+			origOptions = options;
 
 			Reinitialize();
 		}

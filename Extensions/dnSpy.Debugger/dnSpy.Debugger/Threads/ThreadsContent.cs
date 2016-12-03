@@ -59,11 +59,11 @@ namespace dnSpy.Debugger.Threads {
 			this.stackFrameService = stackFrameService;
 			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
-			this.threadsControl = new ThreadsControl();
-			this.vmThreads = threadsVM;
+			threadsControl = new ThreadsControl();
+			vmThreads = threadsVM;
 			this.moduleIdProvider = moduleIdProvider;
-			this.threadsControl.DataContext = this.vmThreads;
-			this.threadsControl.ThreadsListViewDoubleClick += ThreadsControl_ThreadsListViewDoubleClick;
+			threadsControl.DataContext = vmThreads;
+			threadsControl.ThreadsListViewDoubleClick += ThreadsControl_ThreadsListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_CONTROL, threadsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW, threadsControl.ListView);

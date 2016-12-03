@@ -39,7 +39,7 @@ namespace dnSpy.Search {
 			this.dotNetImageService = dotNetImageService;
 			this.decompilerService = decompilerService;
 			this.textElementProvider = textElementProvider;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.Search);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.Search);
 		}
 
 		public IDocumentSearcher Create(DocumentSearcherOptions options, IDocumentTreeView documentTreeView) {

@@ -54,7 +54,7 @@ namespace dnSpy.MainApp {
 		MessageBoxService(IAppWindow appWindow, ISettingsService settingsService) {
 			this.appWindow = appWindow;
 			this.settingsService = settingsService;
-			this.ignoredMessages = new HashSet<Guid>();
+			ignoredMessages = new HashSet<Guid>();
 			ReadSettings();
 		}
 

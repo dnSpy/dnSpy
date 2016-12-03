@@ -35,10 +35,10 @@ namespace dnSpy.Documents.TreeView {
 		readonly ImageReference imgRef;
 
 		public MessageNodeImpl(ITreeNodeGroup treeNodeGroup, Guid guid, ImageReference imgRef, string msg) {
-			this.TreeNodeGroup = treeNodeGroup;
-			this.Guid = guid;
+			TreeNodeGroup = treeNodeGroup;
+			Guid = guid;
 			this.imgRef = imgRef;
-			this.Message = msg;
+			Message = msg;
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>

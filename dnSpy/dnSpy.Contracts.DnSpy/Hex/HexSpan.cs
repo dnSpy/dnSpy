@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Hex {
 			if ((start + length) > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(length));
 			this.start = start;
-			this.end = start + length;
+			end = start + length;
 		}
 
 		/// <summary>

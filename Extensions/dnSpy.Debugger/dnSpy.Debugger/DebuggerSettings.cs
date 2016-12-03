@@ -339,25 +339,25 @@ namespace dnSpy.Debugger {
 		public DebuggerSettings Clone() => CopyTo(new DebuggerSettings());
 
 		public DebuggerSettings CopyTo(DebuggerSettings other) {
-			other.UseHexadecimal = this.UseHexadecimal;
-			other.SyntaxHighlightCallStack = this.SyntaxHighlightCallStack;
-			other.SyntaxHighlightBreakpoints = this.SyntaxHighlightBreakpoints;
-			other.SyntaxHighlightThreads = this.SyntaxHighlightThreads;
-			other.SyntaxHighlightModules = this.SyntaxHighlightModules;
-			other.SyntaxHighlightLocals = this.SyntaxHighlightLocals;
-			other.SyntaxHighlightAttach = this.SyntaxHighlightAttach;
-			other.SyntaxHighlightExceptions = this.SyntaxHighlightExceptions;
-			other.BreakProcessKind = this.BreakProcessKind;
-			other.PropertyEvalAndFunctionCalls = this.PropertyEvalAndFunctionCalls;
-			other.UseStringConversionFunction = this.UseStringConversionFunction;
-			other.DebuggerBrowsableAttributesCanHidePropsFields = this.DebuggerBrowsableAttributesCanHidePropsFields;
-			other.CompilerGeneratedAttributesCanHideFields = this.CompilerGeneratedAttributesCanHideFields;
-			other.DisableManagedDebuggerDetection = this.DisableManagedDebuggerDetection;
-			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
-			other.AutoOpenLocalsWindow = this.AutoOpenLocalsWindow;
-			other.UseMemoryModules = this.UseMemoryModules;
-			other.CoreCLRDbgShimFilename32 = this.CoreCLRDbgShimFilename32;
-			other.CoreCLRDbgShimFilename64 = this.CoreCLRDbgShimFilename64;
+			other.UseHexadecimal = UseHexadecimal;
+			other.SyntaxHighlightCallStack = SyntaxHighlightCallStack;
+			other.SyntaxHighlightBreakpoints = SyntaxHighlightBreakpoints;
+			other.SyntaxHighlightThreads = SyntaxHighlightThreads;
+			other.SyntaxHighlightModules = SyntaxHighlightModules;
+			other.SyntaxHighlightLocals = SyntaxHighlightLocals;
+			other.SyntaxHighlightAttach = SyntaxHighlightAttach;
+			other.SyntaxHighlightExceptions = SyntaxHighlightExceptions;
+			other.BreakProcessKind = BreakProcessKind;
+			other.PropertyEvalAndFunctionCalls = PropertyEvalAndFunctionCalls;
+			other.UseStringConversionFunction = UseStringConversionFunction;
+			other.DebuggerBrowsableAttributesCanHidePropsFields = DebuggerBrowsableAttributesCanHidePropsFields;
+			other.CompilerGeneratedAttributesCanHideFields = CompilerGeneratedAttributesCanHideFields;
+			other.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
+			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
+			other.AutoOpenLocalsWindow = AutoOpenLocalsWindow;
+			other.UseMemoryModules = UseMemoryModules;
+			other.CoreCLRDbgShimFilename32 = CoreCLRDbgShimFilename32;
+			other.CoreCLRDbgShimFilename64 = CoreCLRDbgShimFilename64;
 			return other;
 		}
 	}
@@ -372,7 +372,7 @@ namespace dnSpy.Debugger {
 		DebuggerSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			UseHexadecimal = sect.Attribute<bool?>(nameof(UseHexadecimal)) ?? UseHexadecimal;
 			SyntaxHighlightCallStack = sect.Attribute<bool?>(nameof(SyntaxHighlightCallStack)) ?? SyntaxHighlightCallStack;
@@ -393,7 +393,7 @@ namespace dnSpy.Debugger {
 			UseMemoryModules = sect.Attribute<bool?>(nameof(UseMemoryModules)) ?? UseMemoryModules;
 			CoreCLRDbgShimFilename32 = sect.Attribute<string>(nameof(CoreCLRDbgShimFilename32)) ?? CoreCLRDbgShimFilename32;
 			CoreCLRDbgShimFilename64 = sect.Attribute<string>(nameof(CoreCLRDbgShimFilename64)) ?? CoreCLRDbgShimFilename64;
-			this.disableSave = false;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

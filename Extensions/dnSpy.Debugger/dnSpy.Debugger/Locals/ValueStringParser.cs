@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Locals {
 
 		public ValueStringParser(string text) {
 			this.text = text.Trim();
-			this.isTextNullString = this.text == "null";
+			isTextNullString = this.text == "null";
 		}
 
 		string GetEnumValue(CorType type, out byte[] bytes) {

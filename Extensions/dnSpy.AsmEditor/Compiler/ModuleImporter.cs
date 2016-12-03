@@ -121,24 +121,24 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ModuleImporter(ModuleDef targetModule, bool makeEverythingPublic) {
 			this.targetModule = targetModule;
 			this.makeEverythingPublic = makeEverythingPublic;
-			this.diagnostics = new List<CompilerDiagnostic>();
-			this.newNonNestedImportedTypes = new List<NewImportedType>();
-			this.nonNestedMergedImportedTypes = new List<MergedImportedType>();
-			this.newStateMachineTypes = new HashSet<TypeDef>();
-			this.oldTypeToNewType = new Dictionary<TypeDef, ImportedType>();
-			this.oldTypeRefToNewType = new Dictionary<ITypeDefOrRef, ImportedType>(TypeEqualityComparer.Instance);
-			this.oldMethodToNewMethod = new Dictionary<MethodDef, MemberInfo<MethodDef>>();
-			this.oldFieldToNewField = new Dictionary<FieldDef, MemberInfo<FieldDef>>();
-			this.oldPropertyToNewProperty = new Dictionary<PropertyDef, MemberInfo<PropertyDef>>();
-			this.oldEventToNewEvent = new Dictionary<EventDef, MemberInfo<EventDef>>();
-			this.bodyDict = new Dictionary<object, object>();
-			this.toExtraData = new Dictionary<ImportedType, ExtraImportedTypeData>();
-			this.editedMethodsToFix = new Dictionary<MethodDef, MethodDef>();
-			this.editedFieldsToFix = new Dictionary<FieldDef, FieldDef>();
-			this.editedPropertiesToFix = new Dictionary<PropertyDef, PropertyDef>();
-			this.editedEventsToFix = new Dictionary<EventDef, EventDef>();
-			this.usedMethods = new HashSet<MethodDef>();
-			this.isStub = new HashSet<object>();
+			diagnostics = new List<CompilerDiagnostic>();
+			newNonNestedImportedTypes = new List<NewImportedType>();
+			nonNestedMergedImportedTypes = new List<MergedImportedType>();
+			newStateMachineTypes = new HashSet<TypeDef>();
+			oldTypeToNewType = new Dictionary<TypeDef, ImportedType>();
+			oldTypeRefToNewType = new Dictionary<ITypeDefOrRef, ImportedType>(TypeEqualityComparer.Instance);
+			oldMethodToNewMethod = new Dictionary<MethodDef, MemberInfo<MethodDef>>();
+			oldFieldToNewField = new Dictionary<FieldDef, MemberInfo<FieldDef>>();
+			oldPropertyToNewProperty = new Dictionary<PropertyDef, MemberInfo<PropertyDef>>();
+			oldEventToNewEvent = new Dictionary<EventDef, MemberInfo<EventDef>>();
+			bodyDict = new Dictionary<object, object>();
+			toExtraData = new Dictionary<ImportedType, ExtraImportedTypeData>();
+			editedMethodsToFix = new Dictionary<MethodDef, MethodDef>();
+			editedFieldsToFix = new Dictionary<FieldDef, FieldDef>();
+			editedPropertiesToFix = new Dictionary<PropertyDef, PropertyDef>();
+			editedEventsToFix = new Dictionary<EventDef, EventDef>();
+			usedMethods = new HashSet<MethodDef>();
+			isStub = new HashSet<object>();
 		}
 
 		void AddError(string id, string msg) => diagnostics.Add(new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, msg, id, null, null));
@@ -619,8 +619,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void SetSourceModule(ModuleDef newSourceModule) {
-			this.sourceModule = newSourceModule;
-			this.importSigComparerOptions = newSourceModule == null ? null : new ImportSigComparerOptions(newSourceModule, targetModule);
+			sourceModule = newSourceModule;
+			importSigComparerOptions = newSourceModule == null ? null : new ImportSigComparerOptions(newSourceModule, targetModule);
 		}
 
 		FieldDefOptions CreateFieldDefOptions(FieldDef newField, FieldDef targetField) {

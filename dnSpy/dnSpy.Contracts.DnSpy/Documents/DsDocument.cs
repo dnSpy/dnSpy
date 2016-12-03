@@ -45,8 +45,8 @@ namespace dnSpy.Contracts.Documents {
 		public string Filename {
 			get { return filename; }
 			set {
-				if (this.filename != value) {
-					this.filename = value;
+				if (filename != value) {
+					filename = value;
 					OnPropertyChanged(nameof(Filename));
 				}
 			}
@@ -138,7 +138,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="peImage">PE image</param>
 		public DsPEDocument(IPEImage peImage) {
-			this.PEImage = peImage;
+			PEImage = peImage;
 			Filename = peImage.FileName ?? string.Empty;
 		}
 
@@ -164,8 +164,8 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="module">Module</param>
 		/// <param name="loadSyms">true if symbols should be loaded</param>
 		protected DsDotNetDocumentBase(ModuleDef module, bool loadSyms) {
-			this.ModuleDef = module;
-			this.loadedSymbols = loadSyms;
+			ModuleDef = module;
+			loadedSymbols = loadSyms;
 			Filename = module.Location ?? string.Empty;
 			module.EnableTypeDefFindCache = true;
 			if (loadSyms)
@@ -273,7 +273,7 @@ namespace dnSpy.Contracts.Documents {
 			if (isAsmNode && asm != null) {
 				bool foundThis = false;
 				foreach (var module in asm.Modules) {
-					if (this.ModuleDef == module) {
+					if (ModuleDef == module) {
 						Debug.Assert(!foundThis);
 						foundThis = true;
 					}
@@ -293,15 +293,15 @@ namespace dnSpy.Contracts.Documents {
 
 		public DsDotNetDocumentAsmWithMod(IDsDotNetDocument modmodule)
 			: base(modmodule.SerializedDocument ?? new DsDocumentInfo(), modmodule.ModuleDef, false, true) {
-			this.module = modmodule;
+			module = modmodule;
 		}
 
 		protected override List<IDsDocument> CreateChildren() {
-			Debug.Assert(this.module != null);
+			Debug.Assert(module != null);
 			var list = new List<IDsDocument>();
-			if (this.module != null)
-				list.Add(this.module);
-			this.module = null;
+			if (module != null)
+				list.Add(module);
+			module = null;
 			return list;
 		}
 	}

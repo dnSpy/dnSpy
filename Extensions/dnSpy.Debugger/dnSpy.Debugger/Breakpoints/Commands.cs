@@ -60,8 +60,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		public BreakpointVM[] SelectedItems { get; }
 
 		public BreakpointCtxMenuContext(IBreakpointsVM vm, BreakpointVM[] selItems) {
-			this.VM = vm;
-			this.SelectedItems = selItems;
+			VM = vm;
+			SelectedItems = selItems;
 		}
 	}
 

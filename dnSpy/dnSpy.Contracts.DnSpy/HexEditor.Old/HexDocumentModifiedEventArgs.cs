@@ -25,8 +25,8 @@ namespace dnSpy.Contracts.HexEditor {
 		public ulong EndOffset { get; }
 
 		public HexDocumentModifiedEventArgs(ulong start, ulong end) {
-			this.StartOffset = start;
-			this.EndOffset = end;
+			StartOffset = start;
+			EndOffset = end;
 		}
 	}
 }

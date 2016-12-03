@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.IMModules {
 		public ClassLoader(IDocumentTabService documentTabService, Window ownerWindow) {
 			this.documentTabService = documentTabService;
 			this.ownerWindow = ownerWindow;
-			this.loadedClasses = new Dictionary<DnModule, HashSet<uint>>();
+			loadedClasses = new Dictionary<DnModule, HashSet<uint>>();
 		}
 
 		public void LoadClass(DnModule dnModule, uint token) {
@@ -70,10 +70,10 @@ namespace dnSpy.Debugger.IMModules {
 			public HashSet<uint> LoadClassHash;
 
 			public ModuleState(CorModuleDefFile corModuleDefFile, ModuleDocumentNode moduleNode, HashSet<uint> modifiedTypes, HashSet<uint> loadClassHash) {
-				this.CorModuleDefFile = corModuleDefFile;
-				this.ModuleNode = moduleNode;
-				this.ModifiedTypes = modifiedTypes;
-				this.LoadClassHash = loadClassHash;
+				CorModuleDefFile = corModuleDefFile;
+				ModuleNode = moduleNode;
+				ModifiedTypes = modifiedTypes;
+				LoadClassHash = loadClassHash;
 			}
 		}
 

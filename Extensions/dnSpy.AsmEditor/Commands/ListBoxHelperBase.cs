@@ -40,8 +40,8 @@ namespace dnSpy.AsmEditor.Commands {
 			public readonly T[] Data;
 			public readonly int Id;
 			public ClipboardData(T[] data, int id) {
-				this.Data = data;
-				this.Id = id;
+				Data = data;
+				Id = id;
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.Commands {
 			this.listBox = listBox;
 			this.listBox.ContextMenu = new ContextMenu();
 			this.listBox.ContextMenuOpening += (s, e) => ShowContextMenu(e, listBox, contextMenuHandlers, GetSelectedItems());
-			this.copiedDataId = Interlocked.Increment(ref classCopiedDataId);
+			copiedDataId = Interlocked.Increment(ref classCopiedDataId);
 		}
 
 		protected void AddSeparator() => contextMenuHandlers.Add(null);

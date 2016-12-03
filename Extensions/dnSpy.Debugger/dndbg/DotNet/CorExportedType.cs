@@ -31,12 +31,12 @@ namespace dndbg.DotNet {
 		public CorExportedType(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			Initialize_NoLock();
 		}
 
 		void Initialize_NoLock() {
-			this.module = readerModule;
+			module = readerModule;
 			InitNameAndAttrs_NoLock();
 		}
 
@@ -49,12 +49,12 @@ namespace dndbg.DotNet {
 
 			UTF8String ns, name;
 			Utils.SplitNameAndNamespace(null, MDAPI.GetExportedTypeName(mdai, token), out ns, out name);
-			this.TypeName = name;
-			this.TypeNamespace = ns;
+			TypeName = name;
+			TypeNamespace = ns;
 
 			TypeAttributes attrs;
-			MDAPI.GetExportedTypeProps(mdai, token, out this.implementation, out this.typeDefId, out attrs);
-			this.attributes = (int)attrs;
+			MDAPI.GetExportedTypeProps(mdai, token, out implementation, out typeDefId, out attrs);
+			attributes = (int)attrs;
 		}
 
 		protected override IImplementation GetImplementation_NoLock() => readerModule.ResolveToken(implementation) as IImplementation;

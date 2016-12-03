@@ -61,8 +61,8 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		public BreakpointVM(BreakpointsVM owner, IBreakpointContext context, Breakpoint bp) {
 			this.owner = owner;
-			this.Context = context;
-			this.Breakpoint = bp;
+			Context = context;
+			Breakpoint = bp;
 			bp.PropertyChanged += Breakpoint_PropertyChanged;
 		}
 

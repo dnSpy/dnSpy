@@ -31,7 +31,7 @@ namespace dndbg.DotNet {
 		public CorFileDef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			Initialize_NoLock();
 		}
 
@@ -43,9 +43,9 @@ namespace dndbg.DotNet {
 			var mdai = readerModule.MetaDataAssemblyImport;
 			uint token = OriginalToken.Raw;
 
-			this.Flags = MDAPI.GetFileAttributes(mdai, token) ?? 0;
-			this.Name = MDAPI.GetFileName(mdai, token) ?? string.Empty;
-			this.HashValue = MDAPI.GetFileHash(mdai, token) ?? Array.Empty<byte>();
+			Flags = MDAPI.GetFileAttributes(mdai, token) ?? 0;
+			Name = MDAPI.GetFileName(mdai, token) ?? string.Empty;
+			HashValue = MDAPI.GetFileHash(mdai, token) ?? Array.Empty<byte>();
 		}
 	}
 }

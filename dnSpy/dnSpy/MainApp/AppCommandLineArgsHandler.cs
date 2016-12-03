@@ -41,7 +41,7 @@ namespace dnSpy.MainApp {
 			public AppToolWindowLocation? Location { get; set; }
 
 			public ToolWindowInfo(Guid guid) {
-				this.Guid = guid;
+				Guid = guid;
 			}
 		}
 

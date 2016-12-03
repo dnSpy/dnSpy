@@ -72,7 +72,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 
 		public CSharpDecompiler(CSharpVBDecompilerSettings langSettings, double orderUI) {
 			this.langSettings = langSettings;
-			this.OrderUI = orderUI;
+			OrderUI = orderUI;
 		}
 
 #if DEBUG

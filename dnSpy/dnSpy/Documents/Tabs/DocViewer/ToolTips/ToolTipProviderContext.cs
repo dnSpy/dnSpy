@@ -48,9 +48,9 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.DocumentViewer = documentViewer;
+			DocumentViewer = documentViewer;
 			this.dotNetImageService = dotNetImageService;
-			this.Decompiler = decompiler;
+			Decompiler = decompiler;
 			this.codeToolTipSettings = codeToolTipSettings;
 			this.classificationFormatMap = classificationFormatMap;
 			this.themeClassificationTypeService = themeClassificationTypeService;

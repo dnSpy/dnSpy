@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected ListVM(string editString, string createString, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
 			this.editString = editString;
 			this.createString = createString;
-			this.OwnerModule = ownerModule;
+			OwnerModule = ownerModule;
 			this.decompilerService = decompilerService;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;

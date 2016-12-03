@@ -31,7 +31,7 @@ namespace dndbg.DotNet {
 		public CorMethodSpec(CorModuleDef readerModule, uint rid, GenericParamContext gpContext) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.gpContext = gpContext;
 			Initialize_NoLock();
 		}
@@ -43,7 +43,7 @@ namespace dndbg.DotNet {
 			uint method;
 			var instData = MDAPI.GetMethodSpecProps(mdi2, token, out method);
 			this.method = readerModule.ResolveToken(method, gpContext) as IMethodDefOrRef;
-			this.instantiation = readerModule.ReadSignature(instData, gpContext);
+			instantiation = readerModule.ReadSignature(instData, gpContext);
 		}
 
 		protected override void InitializeCustomAttributes() =>

@@ -113,9 +113,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly MethodDef ownerMethod;
 
 		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
-			this.OwnerModule = ownerModule;
+			OwnerModule = ownerModule;
 			this.ownerMethod = ownerMethod;
-			this.origOptions = options;
+			origOptions = options;
 
 			TypeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				CanAddGenericTypeVar = ownerType.HasGenericParameters,
@@ -124,22 +124,22 @@ namespace dnSpy.AsmEditor.MethodBody {
 				OwnerMethod = ownerMethod,
 			};
 
-			this.LocalsListVM = new LocalsIndexObservableCollection(this, () => new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(ownerModule.CorLibTypes.Int32))));
-			this.InstructionsListVM = new IndexObservableCollection<InstructionVM>(() => CreateInstructionVM());
-			this.ExceptionHandlersListVM = new IndexObservableCollection<ExceptionHandlerVM>(() => new ExceptionHandlerVM(TypeSigCreatorOptions, new ExceptionHandlerOptions()));
-			this.LocalsListVM.UpdateIndexesDelegate = LocalsUpdateIndexes;
-			this.InstructionsListVM.UpdateIndexesDelegate = InstructionsUpdateIndexes;
-			this.ExceptionHandlersListVM.UpdateIndexesDelegate = ExceptionHandlersUpdateIndexes;
-			this.InstructionsListVM.CollectionChanged += InstructionsListVM_CollectionChanged;
-			this.LocalsListVM.CollectionChanged += LocalsListVM_CollectionChanged;
-			this.ExceptionHandlersListVM.CollectionChanged += ExceptionHandlersListVM_CollectionChanged;
-			this.MaxStack = new UInt16VM(a => CallHasErrorUpdated());
-			this.LocalVarSigTok = new UInt32VM(a => CallHasErrorUpdated());
-			this.HeaderSize = new ByteVM(a => CallHasErrorUpdated());
-			this.HeaderRVA = new UInt32VM(a => CallHasErrorUpdated());
-			this.HeaderFileOffset = new UInt64VM(a => CallHasErrorUpdated());
-			this.RVA = new UInt32VM(a => CallHasErrorUpdated());
-			this.FileOffset = new UInt64VM(a => CallHasErrorUpdated());
+			LocalsListVM = new LocalsIndexObservableCollection(this, () => new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(ownerModule.CorLibTypes.Int32))));
+			InstructionsListVM = new IndexObservableCollection<InstructionVM>(() => CreateInstructionVM());
+			ExceptionHandlersListVM = new IndexObservableCollection<ExceptionHandlerVM>(() => new ExceptionHandlerVM(TypeSigCreatorOptions, new ExceptionHandlerOptions()));
+			LocalsListVM.UpdateIndexesDelegate = LocalsUpdateIndexes;
+			InstructionsListVM.UpdateIndexesDelegate = InstructionsUpdateIndexes;
+			ExceptionHandlersListVM.UpdateIndexesDelegate = ExceptionHandlersUpdateIndexes;
+			InstructionsListVM.CollectionChanged += InstructionsListVM_CollectionChanged;
+			LocalsListVM.CollectionChanged += LocalsListVM_CollectionChanged;
+			ExceptionHandlersListVM.CollectionChanged += ExceptionHandlersListVM_CollectionChanged;
+			MaxStack = new UInt16VM(a => CallHasErrorUpdated());
+			LocalVarSigTok = new UInt32VM(a => CallHasErrorUpdated());
+			HeaderSize = new ByteVM(a => CallHasErrorUpdated());
+			HeaderRVA = new UInt32VM(a => CallHasErrorUpdated());
+			HeaderFileOffset = new UInt64VM(a => CallHasErrorUpdated());
+			RVA = new UInt32VM(a => CallHasErrorUpdated());
+			FileOffset = new UInt64VM(a => CallHasErrorUpdated());
 
 			if (initialize)
 				Reinitialize();
@@ -444,15 +444,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 			public readonly TypeSig PushType;
 
 			public InstructionPushPopInfo(int pops) {
-				this.PopCount = pops;
-				this.Pushes = false;
-				this.PushType = null;
+				PopCount = pops;
+				Pushes = false;
+				PushType = null;
 			}
 
 			public InstructionPushPopInfo(int pops, TypeSig pushType) {
-				this.PopCount = pops;
-				this.Pushes = true;
-				this.PushType = pushType;
+				PopCount = pops;
+				Pushes = true;
+				PushType = pushType;
 			}
 		}
 
@@ -534,7 +534,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case ElementType.Var:
 			case ElementType.MVar:
 				var local = new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(pushType)));
-				this.LocalsListVM.Add(local);
+				LocalsListVM.Add(local);
 
 				var newInstr = CreateInstructionVM(Code.Ldloca);
 				newInstr.InstructionOperandVM.OperandListItem = local;

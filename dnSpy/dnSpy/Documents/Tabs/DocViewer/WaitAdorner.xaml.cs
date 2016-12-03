@@ -28,7 +28,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public WaitAdorner(Action onCancel, string message) {
 			this.onCancel = onCancel;
 			InitializeComponent();
-			this.textBlock.Text = message;
+			textBlock.Text = message;
 		}
 
 		void button_Click(object sender, RoutedEventArgs e) {

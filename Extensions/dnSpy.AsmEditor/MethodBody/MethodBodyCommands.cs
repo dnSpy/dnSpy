@@ -126,8 +126,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		EditMethodBodyILCommand(IMethodAnnotations methodAnnotations, MethodNode methodNode, MethodBodyOptions options) {
 			this.methodAnnotations = methodAnnotations;
 			this.methodNode = methodNode;
-			this.newOptions = options;
-			this.origMethodBody = methodNode.MethodDef.MethodBody;
+			newOptions = options;
+			origMethodBody = methodNode.MethodDef.MethodBody;
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditMethodBodyCommand2;

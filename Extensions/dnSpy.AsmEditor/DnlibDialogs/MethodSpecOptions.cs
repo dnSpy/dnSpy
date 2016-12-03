@@ -30,16 +30,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public MethodSpecOptions(MethodSpec ms) {
-			this.Method = ms.Method;
-			this.Instantiation = ms.Instantiation;
-			this.CustomAttributes.AddRange(ms.CustomAttributes);
+			Method = ms.Method;
+			Instantiation = ms.Instantiation;
+			CustomAttributes.AddRange(ms.CustomAttributes);
 		}
 
 		public MethodSpec CopyTo(MethodSpec ms) {
-			ms.Method = this.Method;
-			ms.Instantiation = this.Instantiation;
+			ms.Method = Method;
+			ms.Instantiation = Instantiation;
 			ms.CustomAttributes.Clear();
-			ms.CustomAttributes.AddRange(this.CustomAttributes);
+			ms.CustomAttributes.AddRange(CustomAttributes);
 			return ms;
 		}
 

@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Text.Formatting {
 		public int TabSize { get; set; }
 
 		public HtmlClipboardFormatWriter() {
-			this.sb = new StringBuilder();
+			sb = new StringBuilder();
 			TabSize = 4;
 		}
 

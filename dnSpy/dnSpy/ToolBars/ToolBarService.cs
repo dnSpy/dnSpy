@@ -67,8 +67,8 @@ namespace dnSpy.ToolBars {
 		public readonly List<ToolBarItemMD> Items;
 
 		public ToolBarItemGroupMD(double order) {
-			this.Order = order;
-			this.Items = new List<ToolBarItemMD>();
+			Order = order;
+			Items = new List<ToolBarItemMD>();
 		}
 	}
 

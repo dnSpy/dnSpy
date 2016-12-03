@@ -35,7 +35,7 @@ namespace dnSpy.Language.Intellisense {
 			: base(session) {
 			wpfTextView = session.TextView as IWpfTextView;
 			Debug.Assert(wpfTextView != null);
-			this.popup = new Popup {
+			popup = new Popup {
 				PlacementTarget = wpfTextView?.VisualElement,
 				Placement = PlacementMode.Relative,
 				Visibility = Visibility.Collapsed,

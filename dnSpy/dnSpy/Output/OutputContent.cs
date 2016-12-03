@@ -55,8 +55,8 @@ namespace dnSpy.Output {
 
 		[ImportingConstructor]
 		OutputContent(IWpfCommandService wpfCommandService, Lazy<IOutputServiceInternal> outputVM) {
-			this.outputControl = new OutputControl();
-			this.vmOutput = outputVM;
+			outputControl = new OutputControl();
+			vmOutput = outputVM;
 
 			wpfCommandService.Add(ControlConstants.GUID_OUTPUT_CONTROL, outputControl);
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_OUTPUT_CONTROL);

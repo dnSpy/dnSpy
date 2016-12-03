@@ -170,11 +170,11 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.type = type;
-			this.hashCode = type.GetHashCode();
-			this.elementType = (CorElementType)type.ElementType;
-			this.Attributes = type.GetTypeAttributes();
+			hashCode = type.GetHashCode();
+			elementType = (CorElementType)type.ElementType;
+			Attributes = type.GetTypeAttributes();
 			this.token = token;
-			this.tokenInitd = token != 0;
+			tokenInitd = token != 0;
 		}
 
 		public bool HasAttribute(string attributeName) => debugger.Dispatcher.UI(() => type.HasAttribute(attributeName));

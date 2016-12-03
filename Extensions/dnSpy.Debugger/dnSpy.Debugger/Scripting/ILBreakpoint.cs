@@ -80,11 +80,11 @@ namespace dnSpy.Debugger.Scripting {
 
 		public ILBreakpoint(Debugger debugger, ModuleId module, uint token, uint offset, Func<IILBreakpoint, bool> cond) {
 			this.debugger = debugger;
-			this.Module = module;
-			this.Token = token;
-			this.Offset = offset;
+			Module = module;
+			Token = token;
+			Offset = offset;
 			this.cond = cond ?? condAlwaysTrue;
-			this.isEnabled = true;
+			isEnabled = true;
 		}
 		static readonly Func<IILBreakpoint, bool> condAlwaysTrue = bp => true;
 

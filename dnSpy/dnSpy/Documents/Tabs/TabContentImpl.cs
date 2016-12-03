@@ -120,16 +120,16 @@ namespace dnSpy.Documents.Tabs {
 		readonly TabElementZoomer elementZoomer;
 
 		public TabContentImpl(DocumentTabService documentTabService, IDocumentTabUIContextLocator documentTabUIContextLocator, Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders, Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders, Lazy<IReferenceHandler, IReferenceHandlerMetadata>[] referenceHandlers) {
-			this.elementZoomer = new TabElementZoomer();
-			this.tabHistory = new TabHistory();
-			this.tabHistory.SetCurrent(new NullDocumentTabContent(), false);
+			elementZoomer = new TabElementZoomer();
+			tabHistory = new TabHistory();
+			tabHistory.SetCurrent(new NullDocumentTabContent(), false);
 			this.documentTabService = documentTabService;
 			this.documentTabUIContextLocator = documentTabUIContextLocator;
 			this.referenceDocumentTabContentProviders = referenceDocumentTabContentProviders;
 			this.defaultDocumentTabContentProviders = defaultDocumentTabContentProviders;
 			this.referenceHandlers = referenceHandlers;
-			this.uiContext = new NullDocumentTabUIContext();
-			this.uiObject = this.uiContext.UIObject;
+			uiContext = new NullDocumentTabUIContext();
+			uiObject = uiContext.UIObject;
 		}
 
 #if DEBUG
@@ -276,8 +276,8 @@ namespace dnSpy.Documents.Tabs {
 			public object Tag { get; set; }
 			public Action<ShowTabContentEventArgs> OnShown { get; set; }
 			public ShowContext(DocumentTabUIContext uiCtx, bool isRefresh) {
-				this.UIContext = uiCtx;
-				this.IsRefresh = isRefresh;
+				UIContext = uiCtx;
+				IsRefresh = isRefresh;
 			}
 		}
 
@@ -348,8 +348,8 @@ namespace dnSpy.Documents.Tabs {
 			bool disposed;
 
 			public AsyncWorkerContext() {
-				this.CancellationTokenSource = new CancellationTokenSource();
-				this.CancellationToken = CancellationTokenSource.Token;
+				CancellationTokenSource = new CancellationTokenSource();
+				CancellationToken = CancellationTokenSource.Token;
 			}
 
 			public void Cancel() {
@@ -423,7 +423,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 
 			void UIElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-				this.uiel.IsVisibleChanged -= UIElement_IsVisibleChanged;
+				uiel.IsVisibleChanged -= UIElement_IsVisibleChanged;
 				exec();
 			}
 		}

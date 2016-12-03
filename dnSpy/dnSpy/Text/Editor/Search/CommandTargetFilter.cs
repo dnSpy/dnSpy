@@ -26,7 +26,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ISearchService searchService;
 
 		public CommandTargetFilter(ISearchServiceProvider searchServiceProvider, IWpfTextView wpfTextView) {
-			this.searchService = searchServiceProvider.Get(wpfTextView);
+			searchService = searchServiceProvider.Get(wpfTextView);
 		}
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
@@ -98,7 +98,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ISearchService searchService;
 
 		public CommandTargetFilterFocus(ISearchServiceProvider searchServiceProvider, IWpfTextView wpfTextView) {
-			this.searchService = searchServiceProvider.Get(wpfTextView);
+			searchService = searchServiceProvider.Get(wpfTextView);
 		}
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) => searchService.CanExecuteSearchControl(group, cmdId);

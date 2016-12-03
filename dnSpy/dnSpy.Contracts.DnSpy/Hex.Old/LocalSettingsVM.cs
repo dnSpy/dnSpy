@@ -97,20 +97,20 @@ namespace dnSpy.Contracts.Hex {
 		const AsciiEncoding AsciiEncoding_DEFAULT = (AsciiEncoding)(-1);
 
 		public LocalSettingsVM(LocalHexSettings options) {
-			this.origOptions = options;
-			this.BytesGroupCountVM = new NullableInt32VM(a => HasErrorUpdated());
-			this.BytesPerLineVM = new NullableInt32VM(a => HasErrorUpdated(), true) {
+			origOptions = options;
+			BytesGroupCountVM = new NullableInt32VM(a => HasErrorUpdated());
+			BytesPerLineVM = new NullableInt32VM(a => HasErrorUpdated(), true) {
 				Min = 0,
 				Max = HexEditorSettings.MAX_BYTES_PER_LINE,
 			};
-			this.HexOffsetSizeVM = new Int32VM(a => HasErrorUpdated(), true) {
+			HexOffsetSizeVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 0,
 				Max = 64,
 			};
-			this.BaseOffsetVM = new UInt64VM(a => HasErrorUpdated());
-			this.StartOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
-			this.EndOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
-			this.AsciiEncodingVM = new EnumListVM(asciiEncodingList);
+			BaseOffsetVM = new UInt64VM(a => HasErrorUpdated());
+			StartOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
+			EndOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
+			AsciiEncodingVM = new EnumListVM(asciiEncodingList);
 
 			Reinitialize();
 		}

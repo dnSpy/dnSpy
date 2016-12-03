@@ -48,10 +48,10 @@ namespace dnSpy.Hex.Editor {
 			public LayoutHelper(HexBufferLineProvider bufferLines, HexLineTransformProvider lineTransformProvider, double newViewportTop, HashSet<HexViewLine> oldVisibleLines, List<PhysicalLine> oldLines, HexFormattedLineSource formattedLineSource) {
 				this.bufferLines = bufferLines;
 				this.lineTransformProvider = lineTransformProvider;
-				this.requestedViewportTop = newViewportTop;
+				requestedViewportTop = newViewportTop;
 				this.oldLines = oldLines;
 				this.formattedLineSource = formattedLineSource;
-				this.toPhysicalLine = new Dictionary<HexFormattedLine, PhysicalLine>();
+				toPhysicalLine = new Dictionary<HexFormattedLine, PhysicalLine>();
 				this.oldVisibleLines = oldVisibleLines;
 
 				foreach (var physLine in oldLines) {

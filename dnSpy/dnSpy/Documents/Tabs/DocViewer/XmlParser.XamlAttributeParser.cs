@@ -93,9 +93,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			public void Parse(string text, Span span) {
 				this.text = text;
-				this.textPosition = span.Start;
-				this.textEnd = span.End;
-				this.recursionCounter = 0;
+				textPosition = span.Start;
+				textEnd = span.End;
+				recursionCounter = 0;
 
 				var token = GetNextToken();
 				if (token.Kind == TokenKind.OpenCurlyBrace)

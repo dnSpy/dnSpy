@@ -146,16 +146,16 @@ namespace dndbg.DotNet {
 		public CorModuleDef(IMetaDataImport mdi, ICorModuleDefHelper corModuleDefHelper) {
 			if (mdi == null)
 				throw new ArgumentNullException(nameof(mdi));
-			this.rid = 1;
-			this.origRid = 1;
+			rid = 1;
+			origRid = 1;
 			this.mdi = mdi;
-			this.mdi2 = mdi as IMetaDataImport2;
+			mdi2 = mdi as IMetaDataImport2;
 			this.corModuleDefHelper = corModuleDefHelper;
 			var fname = corModuleDefHelper.Filename;
 			Debug.Assert(fname == null || File.Exists(fname));
-			this.location = fname ?? string.Empty;
-			this.isManifestModule = corModuleDefHelper.IsManifestModule;
-			this.isExeFile = IsExeFile(isManifestModule, location);
+			location = fname ?? string.Empty;
+			isManifestModule = corModuleDefHelper.IsManifestModule;
+			isExeFile = IsExeFile(isManifestModule, location);
 			InitializeLastUsedRids();
 		}
 
@@ -181,7 +181,7 @@ namespace dndbg.DotNet {
 			var corLibAsmRef = corLibAsm as AssemblyRef;
 			if (corLibAsmRef == null)
 				corLibAsmRef = new AssemblyRefUser(corLibAsm);
-			this.corLibTypes = new CorLibTypes(this, UpdateRowId(corLibAsmRef));
+			corLibTypes = new CorLibTypes(this, UpdateRowId(corLibAsmRef));
 		}
 
 		IAssembly GetCorAssemblyRef() {
@@ -356,58 +356,58 @@ namespace dndbg.DotNet {
 		void InitModuleProperties_NoLock() {
 			CorPEKind peKind;
 			var mach = MDAPI.GetModuleMachineAndPEKind(mdi2, out peKind);
-			this.Machine = mach ?? Machine.I386;
-			this.RuntimeVersion = CalculateRuntimeVersion();
+			Machine = mach ?? Machine.I386;
+			RuntimeVersion = CalculateRuntimeVersion();
 
-			this.Kind = CalculateModuleKind();
+			Kind = CalculateModuleKind();
 
 			// This property checks RuntimeVersion which we've already initialized above
-			if (this.IsClr1x) {
+			if (IsClr1x) {
 				// .NET 1.x
-				this.Cor20HeaderRuntimeVersion = 0x00020000;
-				this.TablesHeaderVersion = 0x0100;
+				Cor20HeaderRuntimeVersion = 0x00020000;
+				TablesHeaderVersion = 0x0100;
 			}
 			else {
 				// .NET 2.0 or later
-				this.Cor20HeaderRuntimeVersion = 0x00020005;
-				this.TablesHeaderVersion = 0x0200;
+				Cor20HeaderRuntimeVersion = 0x00020005;
+				TablesHeaderVersion = 0x0200;
 			}
 
-			this.Characteristics = Characteristics.ExecutableImage;
-			this.DllCharacteristics = DefaultDllCharacteristics;
+			Characteristics = Characteristics.ExecutableImage;
+			DllCharacteristics = DefaultDllCharacteristics;
 			if (!isExeFile)
-				this.Characteristics |= Characteristics.Dll;
+				Characteristics |= Characteristics.Dll;
 			if (mach == null) {
-				this.Cor20HeaderFlags = ComImageFlags.ILOnly;
-				this.Characteristics |= Characteristics.LargeAddressAware;
+				Cor20HeaderFlags = ComImageFlags.ILOnly;
+				Characteristics |= Characteristics.LargeAddressAware;
 			}
 			else {
-				this.Cor20HeaderFlags = 0;
+				Cor20HeaderFlags = 0;
 				if ((peKind & CorPEKind.peILonly) != 0)
-					this.Cor20HeaderFlags |= ComImageFlags.ILOnly;
+					Cor20HeaderFlags |= ComImageFlags.ILOnly;
 
 				// Only one of these two bits can be set
 				if ((peKind & CorPEKind.pe32BitRequired) != 0)
-					this.Cor20HeaderFlags |= ComImageFlags._32BitRequired;
+					Cor20HeaderFlags |= ComImageFlags._32BitRequired;
 				else if ((peKind & CorPEKind.pe32BitPreferred) != 0)
-					this.Cor20HeaderFlags |= ComImageFlags._32BitRequired | ComImageFlags._32BitPreferred;
+					Cor20HeaderFlags |= ComImageFlags._32BitRequired | ComImageFlags._32BitPreferred;
 
 				if (mach == Machine.AMD64 || mach == Machine.ARM64 || mach == Machine.IA64 || (peKind & CorPEKind.pe32BitRequired) == 0)
-					this.Characteristics |= Characteristics.LargeAddressAware;
+					Characteristics |= Characteristics.LargeAddressAware;
 				else
-					this.Characteristics |= Characteristics._32BitMachine;
+					Characteristics |= Characteristics._32BitMachine;
 			}
 
 			if (Kind != ModuleKind.NetModule) {
 				var pk = MDAPI.GetAssemblyPublicKey(MetaDataAssemblyImport, new MDToken(Table.Assembly, 1).Raw);
 				if (!PublicKeyBase.IsNullOrEmpty2(pk))
-					this.Cor20HeaderFlags |= ComImageFlags.StrongNameSigned;
+					Cor20HeaderFlags |= ComImageFlags.StrongNameSigned;
 			}
 
-			this.Name = Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, OriginalToken.Raw), MDAPI.GetModuleName(mdi) ?? string.Empty);
-			this.Mvid = MDAPI.GetModuleMvid(mdi);
-			this.EncId = null;
-			this.EncBaseId = null;
+			Name = Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, OriginalToken.Raw), MDAPI.GetModuleName(mdi) ?? string.Empty);
+			Mvid = MDAPI.GetModuleMvid(mdi);
+			EncId = null;
+			EncBaseId = null;
 		}
 
 		string CalculateRuntimeVersion() {
@@ -429,7 +429,7 @@ namespace dndbg.DotNet {
 		}
 
 		internal byte[] ReadFieldInitialValue(CorFieldDef cfd, uint rva, int size) =>
-			this.corModuleDefHelper.ReadFieldInitialValue(rva, cfd.OriginalToken.Raw, size);
+			corModuleDefHelper.ReadFieldInitialValue(rva, cfd.OriginalToken.Raw, size);
 		public TypeSig ConvertRTInternalAddress(IntPtr address) => null;
 
 		internal MemberInfo<CorFieldDef> Register(CorFieldDef item, Action<CorFieldDef> initItem) {
@@ -507,7 +507,7 @@ namespace dndbg.DotNet {
 
 		CilBody ReadCilBody(IList<Parameter> parameters, uint rva, uint mdToken, GenericParamContext gpContext) {
 			// rva could be 0 if it's a dynamic module so we can't exit early
-			var reader = this.corModuleDefHelper.CreateBodyReader(rva, mdToken);
+			var reader = corModuleDefHelper.CreateBodyReader(rva, mdToken);
 			if (reader == null)
 				return new CilBody();
 			using (reader)

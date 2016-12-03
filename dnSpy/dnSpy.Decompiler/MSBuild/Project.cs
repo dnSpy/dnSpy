@@ -58,18 +58,18 @@ namespace dnSpy.Decompiler.MSBuild {
 		public Project(ProjectModuleOptions options, string projDir, SatelliteAssemblyFinder satelliteAssemblyFinder, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			this.Options = options;
-			this.Directory = projDir;
+			Options = options;
+			Directory = projDir;
 			this.satelliteAssemblyFinder = satelliteAssemblyFinder;
 			this.createDecompilerOutput = createDecompilerOutput;
-			this.Files = new List<ProjectFile>();
-			this.DefaultNamespace = new DefaultNamespaceFinder(options.Module).Find();
-			this.Filename = Path.Combine(projDir, Path.GetFileName(projDir) + options.Decompiler.ProjectFileExtension);
-			this.AssemblyName = options.Module.Assembly == null ? string.Empty : options.Module.Assembly.Name.String;
-			this.ProjectTypeGuids = new HashSet<Guid>();
-			this.PropertiesFolder = CalculatePropertiesFolder();
-			this.ExtraAssemblyReferences = new HashSet<string>();
-			this.LanguageGuid = CalculateLanguageGuid(options.Decompiler);
+			Files = new List<ProjectFile>();
+			DefaultNamespace = new DefaultNamespaceFinder(options.Module).Find();
+			Filename = Path.Combine(projDir, Path.GetFileName(projDir) + options.Decompiler.ProjectFileExtension);
+			AssemblyName = options.Module.Assembly == null ? string.Empty : options.Module.Assembly.Name.String;
+			ProjectTypeGuids = new HashSet<Guid>();
+			PropertiesFolder = CalculatePropertiesFolder();
+			ExtraAssemblyReferences = new HashSet<string>();
+			LanguageGuid = CalculateLanguageGuid(options.Decompiler);
 		}
 
 		static Guid CalculateLanguageGuid(IDecompiler decompiler) {

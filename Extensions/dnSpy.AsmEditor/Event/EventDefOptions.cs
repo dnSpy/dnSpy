@@ -35,25 +35,25 @@ namespace dnSpy.AsmEditor.Event {
 		}
 
 		public EventDefOptions(EventDef evt) {
-			this.Attributes = evt.Attributes;
-			this.Name = evt.Name;
-			this.EventType = evt.EventType;
-			this.AddMethod = evt.AddMethod;
-			this.InvokeMethod = evt.InvokeMethod;
-			this.RemoveMethod = evt.RemoveMethod;
-			this.OtherMethods.AddRange(evt.OtherMethods);
-			this.CustomAttributes.AddRange(evt.CustomAttributes);
+			Attributes = evt.Attributes;
+			Name = evt.Name;
+			EventType = evt.EventType;
+			AddMethod = evt.AddMethod;
+			InvokeMethod = evt.InvokeMethod;
+			RemoveMethod = evt.RemoveMethod;
+			OtherMethods.AddRange(evt.OtherMethods);
+			CustomAttributes.AddRange(evt.CustomAttributes);
 		}
 
 		public EventDef CopyTo(EventDef evt) {
-			evt.Attributes = this.Attributes;
-			evt.Name = this.Name ?? UTF8String.Empty;
-			evt.EventType = this.EventType;
-			evt.AddMethod = this.AddMethod;
-			evt.InvokeMethod = this.InvokeMethod;
-			evt.RemoveMethod = this.RemoveMethod;
+			evt.Attributes = Attributes;
+			evt.Name = Name ?? UTF8String.Empty;
+			evt.EventType = EventType;
+			evt.AddMethod = AddMethod;
+			evt.InvokeMethod = InvokeMethod;
+			evt.RemoveMethod = RemoveMethod;
 			evt.OtherMethods.Clear();
-			evt.OtherMethods.AddRange(this.OtherMethods);
+			evt.OtherMethods.AddRange(OtherMethods);
 			evt.CustomAttributes.Clear();
 			evt.CustomAttributes.AddRange(CustomAttributes);
 			return evt;

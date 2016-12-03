@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (start < 0)
 				throw new ArgumentOutOfRangeException(nameof(start));
 			this.start = start;
-			this.end = start + length;
+			end = start + length;
 			if (end < start)
 				throw new ArgumentOutOfRangeException(nameof(length));
 		}

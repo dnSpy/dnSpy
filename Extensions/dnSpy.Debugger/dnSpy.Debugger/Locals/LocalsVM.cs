@@ -92,24 +92,24 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		LocalsVM(IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameService stackFrameService, ITheDebugger theDebugger, IAskUser askUser, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			dispatcher = Dispatcher.CurrentDispatcher;
 			this.askUser = askUser;
 			this.methodLocalProvider = methodLocalProvider;
 			this.debuggerSettings = debuggerSettings;
 			this.stackFrameService = stackFrameService;
-			this.TheDebugger = theDebugger;
+			TheDebugger = theDebugger;
 
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.LocalsWindow);
-			this.printerContext = new PrinterContext(classificationFormatMap, textElementProvider) {
+			printerContext = new PrinterContext(classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				TypePrinterFlags = TypePrinterFlags.ShowArrayValueSizes,
 			};
-			this.printerContext.TypePrinterFlags = GetTypePrinterFlags(localsSettings, this.printerContext.TypePrinterFlags);
-			this.printerContext.TypePrinterFlags = GetTypePrinterFlags(debuggerSettings, this.printerContext.TypePrinterFlags);
+			printerContext.TypePrinterFlags = GetTypePrinterFlags(localsSettings, printerContext.TypePrinterFlags);
+			printerContext.TypePrinterFlags = GetTypePrinterFlags(debuggerSettings, printerContext.TypePrinterFlags);
 
 			methodLocalProvider.NewMethodInfoAvailable += MethodLocalProvider_NewMethodInfoAvailable;
-			this.Root = new SharpTreeNode();
+			Root = new SharpTreeNode();
 			stackFrameService.StackFramesUpdated += StackFrameService_StackFramesUpdated;
 			stackFrameService.PropertyChanged += StackFrameService_PropertyChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
@@ -214,7 +214,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			public FrameInfo(ILocalsOwner localsOwner, DnThread thread, DnProcess process, CorFrame frame, int frameNo) {
-				this.ValueContext = new ValueContext(localsOwner, frame, thread, process);
+				ValueContext = new ValueContext(localsOwner, frame, thread, process);
 			}
 
 			public bool Equals(FrameInfo other) => ValueContext.Function == other.ValueContext.Function;

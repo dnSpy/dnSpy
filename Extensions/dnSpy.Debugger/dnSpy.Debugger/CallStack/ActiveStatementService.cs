@@ -85,8 +85,8 @@ namespace dnSpy.Debugger.CallStack {
 		[ImportingConstructor]
 		ActiveStatementService(IModuleIdProvider moduleIdProvider) {
 			this.moduleIdProvider = moduleIdProvider;
-			this.taggers = new HashSet<ActiveStatementTagger>();
-			this.activeStatements = new Dictionary<ModuleTokenId, List<uint>>();
+			taggers = new HashSet<ActiveStatementTagger>();
+			activeStatements = new Dictionary<ModuleTokenId, List<uint>>();
 		}
 
 		public void OnCreated(ActiveStatementTagger tagger) => taggers.Add(tagger);

@@ -31,14 +31,14 @@ namespace dndbg.DotNet {
 		public CorInterfaceImpl(CorModuleDef readerModule, uint rid, GenericParamContext gpContext) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.gpContext = gpContext;
 			Initialize_NoLock();
 		}
 
 		void Initialize_NoLock() {
 			uint ifaceToken = MDAPI.GetInterfaceImplInterfaceToken(readerModule.MetaDataImport, OriginalToken.Raw);
-			this.@interface = readerModule.ResolveTypeDefOrRefInternal(ifaceToken, gpContext);
+			@interface = readerModule.ResolveTypeDefOrRefInternal(ifaceToken, gpContext);
 		}
 
 		protected override void InitializeCustomAttributes() =>

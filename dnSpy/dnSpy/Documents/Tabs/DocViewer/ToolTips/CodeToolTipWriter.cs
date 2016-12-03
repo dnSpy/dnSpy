@@ -49,8 +49,8 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			this.classificationFormatMap = classificationFormatMap;
 			this.themeClassificationTypeService = themeClassificationTypeService;
 			this.syntaxHighlight = syntaxHighlight;
-			this.result = new List<ColorAndText>();
-			this.sb = new StringBuilder();
+			result = new List<ColorAndText>();
+			sb = new StringBuilder();
 		}
 
 		public UIElement Create() {

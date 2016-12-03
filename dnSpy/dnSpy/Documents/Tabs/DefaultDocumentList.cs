@@ -35,14 +35,14 @@ namespace dnSpy.Documents.Tabs {
 		readonly List<DsDocumentInfo> files;
 
 		public DefaultDocumentList(string name) {
-			this.Name = name;
-			this.files = new List<DsDocumentInfo>();
+			Name = name;
+			files = new List<DsDocumentInfo>();
 		}
 
 		public DefaultDocumentList(string name, IEnumerable<DsDocumentInfo> asmNames) {
-			this.Name = name;
-			this.files = new List<DsDocumentInfo>(asmNames);
-			this.files.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name));
+			Name = name;
+			files = new List<DsDocumentInfo>(asmNames);
+			files.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name));
 		}
 
 		public void Add(DsDocumentInfo file) => files.Add(file);
@@ -54,7 +54,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public ReferenceFileFinder(CancellationToken cancellationToken) {
 			this.cancellationToken = cancellationToken;
-			this.allFiles = new List<RefFileList>();
+			allFiles = new List<RefFileList>();
 		}
 
 		public IEnumerable<DefaultDocumentList> AllFiles =>

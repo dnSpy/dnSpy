@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Tabs {
 		/// <param name="added">true if it was added</param>
 		/// <param name="tabGroup">Tab group</param>
 		public TabGroupCollectionChangedEventArgs(bool added, ITabGroup tabGroup) {
-			this.Added = added;
-			this.TabGroup = tabGroup;
+			Added = added;
+			TabGroup = tabGroup;
 		}
 	}
 }

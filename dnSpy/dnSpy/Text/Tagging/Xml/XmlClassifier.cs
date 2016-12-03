@@ -123,9 +123,9 @@ namespace dnSpy.Text.Tagging.Xml {
 			if (snapshot == null)
 				throw new ArgumentNullException(nameof(snapshot));
 			this.snapshot = snapshot;
-			this.snapshotLength = snapshot.Length;
-			this.buffer = new char[Math.Min(BUFFER_SIZE, snapshot.Length)];
-			this.state = State.Element;
+			snapshotLength = snapshot.Length;
+			buffer = new char[Math.Min(BUFFER_SIZE, snapshot.Length)];
+			state = State.Element;
 		}
 
 		public XmlSpanKind? GetNext() {

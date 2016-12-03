@@ -35,12 +35,12 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly EventDefOptions newEventDefOptions;
 
 		public EditedEventUpdater(ModuleDocumentNode modNode, EventDef originalEvent, EventDefOptions eventDefOptions) {
-			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalEvent);
+			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalEvent);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
-			this.@event = originalEvent;
-			this.originalEventDefOptions = new EventDefOptions(originalEvent);
-			this.newEventDefOptions = eventDefOptions;
+			@event = originalEvent;
+			originalEventDefOptions = new EventDefOptions(originalEvent);
+			newEventDefOptions = eventDefOptions;
 		}
 
 		public void Add() => newEventDefOptions.CopyTo(@event);

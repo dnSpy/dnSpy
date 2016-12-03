@@ -51,7 +51,7 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
-			this.spaceReservationAgents = new List<ISpaceReservationAgent>();
+			spaceReservationAgents = new List<ISpaceReservationAgent>();
 			Agents = new ReadOnlyCollection<ISpaceReservationAgent>(spaceReservationAgents);
 			wpfTextView.Closed += WpfTextView_Closed;
 		}

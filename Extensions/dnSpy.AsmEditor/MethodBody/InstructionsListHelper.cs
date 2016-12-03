@@ -57,11 +57,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 		protected override InstructionVM[] GetSelectedItems() => listBox.SelectedItems.Cast<InstructionVM>().ToArray();
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
-			this.cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
-			this.cilBodyVM.SelectItems = this;
-			this.coll = cilBodyVM.InstructionsListVM;
-			this.coll.CollectionChanged += coll_CollectionChanged;
-			InitializeInstructions(this.coll);
+			cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
+			cilBodyVM.SelectItems = this;
+			coll = cilBodyVM.InstructionsListVM;
+			coll.CollectionChanged += coll_CollectionChanged;
+			InitializeInstructions(coll);
 
 			Add(new ContextMenuHandler {
 				Header = "res:NopInstrCommand",
@@ -596,7 +596,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 						LocalVM newLocal;
 						if (!createdLocals.TryGetValue(oldLocal, out newLocal)) {
 							newLocal = oldLocal.Import(cilBodyVM.TypeSigCreatorOptions, cilBodyVM.OwnerModule);
-							this.cilBodyVM.LocalsListVM.Add(newLocal);
+							cilBodyVM.LocalsListVM.Add(newLocal);
 							createdLocals.Add(oldLocal, newLocal);
 						}
 						op.OperandListItem = newLocal;

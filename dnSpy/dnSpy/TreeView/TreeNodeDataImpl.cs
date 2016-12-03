@@ -24,7 +24,7 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.TreeView {
 	sealed class TreeNodeDataImpl : TreeNodeData {
 		public TreeNodeDataImpl(Guid guid) {
-			this.Guid = guid;
+			Guid = guid;
 		}
 
 		public override object Text => null;

@@ -69,8 +69,8 @@ namespace dnSpy.Documents.Tabs {
 			this.decompilerService = decompilerService;
 			this.documentTreeViewSettings = documentTreeViewSettings;
 			this.exportToProjectSettings = exportToProjectSettings;
-			this.bamlDecompiler = bamlDecompilers.FirstOrDefault();
-			this.xamlOutputOptionsProvider = xamlOutputOptionsProviders.FirstOrDefault();
+			bamlDecompiler = bamlDecompilers.FirstOrDefault();
+			xamlOutputOptionsProvider = xamlOutputOptionsProviders.FirstOrDefault();
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) =>
@@ -125,12 +125,12 @@ namespace dnSpy.Documents.Tabs {
 			public ExportTask(ExportProjectCommand owner, ModuleDef[] modules) {
 				this.owner = owner;
 				this.modules = modules;
-				this.cancellationTokenSource = new CancellationTokenSource();
-				this.cancellationToken = cancellationTokenSource.Token;
-				this.dispatcher = Dispatcher.CurrentDispatcher;
+				cancellationTokenSource = new CancellationTokenSource();
+				cancellationToken = cancellationTokenSource.Token;
+				dispatcher = Dispatcher.CurrentDispatcher;
 				if (owner.bamlDecompiler != null) {
-					this.bamlDecompiler = owner.bamlDecompiler.Value;
-					this.xamlOutputOptionsProvider = owner.xamlOutputOptionsProvider?.Value;
+					bamlDecompiler = owner.bamlDecompiler.Value;
+					xamlOutputOptionsProvider = owner.xamlOutputOptionsProvider?.Value;
 				}
 			}
 

@@ -163,21 +163,21 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public TypeSigCreatorVM(TypeSigCreatorOptions options, TypeSig defaultTypeSig = null) {
 			this.options = options.Clone();
 			this.defaultTypeSig = defaultTypeSig;
-			this.ArrayRank = new UInt32VM(2, a => { });
-			this.ArraySizes = new UInt32ListDataFieldVM(a => { }) {
+			ArrayRank = new UInt32VM(2, a => { });
+			ArraySizes = new UInt32ListDataFieldVM(a => { }) {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
 				Max = ModelUtils.COMPRESSED_UINT32_MAX,
 			};
-			this.ArrayLowerBounds = new Int32ListDataFieldVM(a => { }) {
+			ArrayLowerBounds = new Int32ListDataFieldVM(a => { }) {
 				Min = ModelUtils.COMPRESSED_INT32_MIN,
 				Max = ModelUtils.COMPRESSED_INT32_MAX,
 			};
-			this.GenericVariableNumber = new UInt32VM(0, a => { });
+			GenericVariableNumber = new UInt32VM(0, a => { });
 
 			Reinitialize();
 		}
 
-		void Reinitialize() => this.TypeSig = defaultTypeSig;
+		void Reinitialize() => TypeSig = defaultTypeSig;
 
 		void ShowWarning(Guid? guid, string msg) {
 			if (showWarningMessage == null)

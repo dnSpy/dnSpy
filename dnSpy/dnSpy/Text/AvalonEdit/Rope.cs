@@ -54,7 +54,7 @@ namespace dnSpy.Text.AvalonEdit {
 			if (inputRope != null) {
 				// clone ropes instead of copying them
 				inputRope.root.Publish();
-				this.root = inputRope.root;
+				root = inputRope.root;
 			}
 			else {
 				string text = input as string;
@@ -64,10 +64,10 @@ namespace dnSpy.Text.AvalonEdit {
 				}
 				else {
 					T[] arr = ToArray(input);
-					this.root = RopeNode<T>.CreateFromArray(arr, 0, arr.Length);
+					root = RopeNode<T>.CreateFromArray(arr, 0, arr.Length);
 				}
 			}
-			this.root.CheckInvariants();
+			root.CheckInvariants();
 		}
 
 		static T[] ToArray(IEnumerable<T> input) {
@@ -92,7 +92,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		object ICloneable.Clone() {
-			return this.Clone();
+			return Clone();
 		}
 
 		/// <summary>
@@ -133,8 +133,8 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <exception cref="ArgumentNullException">newElements is null.</exception>
 		/// <exception cref="ArgumentOutOfRangeException">index or length is outside the valid range.</exception>
 		public void InsertRange(int index, Rope<T> newElements) {
-			if (index < 0 || index > this.Length) {
-				throw new ArgumentOutOfRangeException("index", index, "0 <= index <= " + this.Length.ToString(CultureInfo.InvariantCulture));
+			if (index < 0 || index > Length) {
+				throw new ArgumentOutOfRangeException("index", index, "0 <= index <= " + Length.ToString(CultureInfo.InvariantCulture));
 			}
 			if (newElements == null)
 				throw new ArgumentNullException("newElements");
@@ -150,8 +150,8 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <exception cref="ArgumentNullException">newElements is null.</exception>
 		/// <exception cref="ArgumentOutOfRangeException">index or length is outside the valid range.</exception>
 		public void InsertRange(int index, T[] array, int arrayIndex, int count) {
-			if (index < 0 || index > this.Length) {
-				throw new ArgumentOutOfRangeException("index", index, "0 <= index <= " + this.Length.ToString(CultureInfo.InvariantCulture));
+			if (index < 0 || index > Length) {
+				throw new ArgumentOutOfRangeException("index", index, "0 <= index <= " + Length.ToString(CultureInfo.InvariantCulture));
 			}
 			VerifyArrayWithRange(array, arrayIndex, count);
 			if (count > 0) {
@@ -197,7 +197,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 			internal RopeCacheEntry(RopeNode<T> node, int nodeStartOffset) {
 				this.node = node;
-				this.nodeStartIndex = nodeStartOffset;
+				nodeStartIndex = nodeStartOffset;
 			}
 
 			internal bool IsInside(int offset) {
@@ -228,15 +228,15 @@ namespace dnSpy.Text.AvalonEdit {
 		public T this[int index] {
 			get {
 				// use unsigned integers - this way negative values for index overflow and can be tested for with the same check
-				if (unchecked((uint)index >= (uint)this.Length)) {
-					throw new ArgumentOutOfRangeException("index", index, "0 <= index < " + this.Length.ToString(CultureInfo.InvariantCulture));
+				if (unchecked((uint)index >= (uint)Length)) {
+					throw new ArgumentOutOfRangeException("index", index, "0 <= index < " + Length.ToString(CultureInfo.InvariantCulture));
 				}
 				RopeCacheEntry entry = FindNodeUsingCache(index).PeekOrDefault();
 				return entry.node.contents[index - entry.nodeStartIndex];
 			}
 			set {
-				if (index < 0 || index >= this.Length) {
-					throw new ArgumentOutOfRangeException("index", index, "0 <= index < " + this.Length.ToString(CultureInfo.InvariantCulture));
+				if (index < 0 || index >= Length) {
+					throw new ArgumentOutOfRangeException("index", index, "0 <= index < " + Length.ToString(CultureInfo.InvariantCulture));
 				}
 				root = root.SetElement(index, value);
 				OnChanged();
@@ -244,7 +244,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		internal ImmutableStack<RopeCacheEntry> FindNodeUsingCache(int index) {
-			Debug.Assert(index >= 0 && index < this.Length);
+			Debug.Assert(index >= 0 && index < Length);
 
 			// thread safety: fetch stack into local variable
 			ImmutableStack<RopeCacheEntry> stack = lastUsedNodeStack;
@@ -291,11 +291,11 @@ namespace dnSpy.Text.AvalonEdit {
 
 		#region ToString / WriteTo
 		internal void VerifyRange(int startIndex, int length) {
-			if (startIndex < 0 || startIndex > this.Length) {
-				throw new ArgumentOutOfRangeException("startIndex", startIndex, "0 <= startIndex <= " + this.Length.ToString(CultureInfo.InvariantCulture));
+			if (startIndex < 0 || startIndex > Length) {
+				throw new ArgumentOutOfRangeException("startIndex", startIndex, "0 <= startIndex <= " + Length.ToString(CultureInfo.InvariantCulture));
 			}
-			if (length < 0 || startIndex + length > this.Length) {
-				throw new ArgumentOutOfRangeException("length", length, "0 <= length, startIndex(" + startIndex + ")+length <= " + this.Length.ToString(CultureInfo.InvariantCulture));
+			if (length < 0 || startIndex + length > Length) {
+				throw new ArgumentOutOfRangeException("length", length, "0 <= length, startIndex(" + startIndex + ")+length <= " + Length.ToString(CultureInfo.InvariantCulture));
 			}
 		}
 
@@ -322,7 +322,7 @@ namespace dnSpy.Text.AvalonEdit {
 		public override string ToString() {
 			Rope<char> charRope = this as Rope<char>;
 			if (charRope != null) {
-				return charRope.ToString(0, this.Length);
+				return charRope.ToString(0, Length);
 			}
 			else {
 				StringBuilder b = new StringBuilder();
@@ -352,7 +352,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
 		public int IndexOf(T item) {
-			return IndexOf(item, 0, this.Length);
+			return IndexOf(item, 0, Length);
 		}
 
 		/// <summary>
@@ -386,7 +386,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Gets the index of the last occurrence of the specified item in this rope.
 		/// </summary>
 		public int LastIndexOf(T item) {
-			return LastIndexOf(item, 0, this.Length);
+			return LastIndexOf(item, 0, Length);
 		}
 
 		/// <summary>
@@ -430,7 +430,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Runs in O(lg N).
 		/// </summary>
 		public void Add(T item) {
-			InsertRange(this.Length, new[] { item }, 0, 1);
+			InsertRange(Length, new[] { item }, 0, 1);
 		}
 
 		/// <summary>
@@ -452,7 +452,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
 		public void CopyTo(T[] array, int arrayIndex) {
-			CopyTo(0, array, arrayIndex, this.Length);
+			CopyTo(0, array, arrayIndex, Length);
 		}
 
 		/// <summary>
@@ -465,7 +465,7 @@ namespace dnSpy.Text.AvalonEdit {
 		public void CopyTo(int index, T[] array, int arrayIndex, int count) {
 			VerifyRange(index, count);
 			VerifyArrayWithRange(array, arrayIndex, count);
-			this.root.CopyTo(index, array, arrayIndex, count);
+			root.CopyTo(index, array, arrayIndex, count);
 		}
 
 		/// <summary>
@@ -490,7 +490,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
 		public IEnumerator<T> GetEnumerator() {
-			this.root.Publish();
+			root.Publish();
 			return Enumerate(root);
 		}
 
@@ -502,8 +502,8 @@ namespace dnSpy.Text.AvalonEdit {
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
 		public T[] ToArray() {
-			T[] arr = new T[this.Length];
-			this.root.CopyTo(0, arr, 0, arr.Length);
+			T[] arr = new T[Length];
+			root.CopyTo(0, arr, 0, arr.Length);
 			return arr;
 		}
 
@@ -548,7 +548,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-			return this.GetEnumerator();
+			return GetEnumerator();
 		}
 	}
 }

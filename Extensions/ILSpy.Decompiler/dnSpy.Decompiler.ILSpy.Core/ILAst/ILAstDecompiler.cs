@@ -67,8 +67,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		public override DecompilerSettingsBase Settings { get; }
 
 		ILAstDecompiler(ILAstDecompilerSettings langSettings, double orderUI) {
-			this.Settings = langSettings;
-			this.OrderUI = orderUI;
+			Settings = langSettings;
+			OrderUI = orderUI;
 		}
 
 		public override double OrderUI { get; }

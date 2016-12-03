@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="length">Length</param>
 		public BinSpan(uint start, uint length) {
 			this.start = start;
-			this.end = start + length;
+			end = start + length;
 		}
 
 		/// <summary>

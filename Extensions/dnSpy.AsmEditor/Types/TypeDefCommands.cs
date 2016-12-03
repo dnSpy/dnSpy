@@ -130,9 +130,9 @@ namespace dnSpy.AsmEditor.Types {
 				public readonly int Index;
 
 				public ModelInfo(TypeDef type) {
-					this.OwnerList = type.DeclaringType == null ? type.Module.Types : type.DeclaringType.NestedTypes;
-					this.Index = this.OwnerList.IndexOf(type);
-					Debug.Assert(this.Index >= 0);
+					OwnerList = type.DeclaringType == null ? type.Module.Types : type.DeclaringType.NestedTypes;
+					Index = OwnerList.IndexOf(type);
+					Debug.Assert(Index >= 0);
 				}
 			}
 
@@ -268,8 +268,8 @@ namespace dnSpy.AsmEditor.Types {
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				throw new InvalidOperationException();
-			this.nsNodeCreator = new NamespaceNodeCreator(options.Namespace, modNode);
-			this.typeNode = modNode.Context.DocumentTreeView.Create(options.CreateTypeDef(modNode.Document.ModuleDef));
+			nsNodeCreator = new NamespaceNodeCreator(options.Namespace, modNode);
+			typeNode = modNode.Context.DocumentTreeView.Create(options.CreateTypeDef(modNode.Document.ModuleDef));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateTypeCommand2;
@@ -392,7 +392,7 @@ namespace dnSpy.AsmEditor.Types {
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				throw new InvalidOperationException();
-			this.nestedType = ownerType.Create(options.CreateTypeDef(modNode.Document.ModuleDef));
+			nestedType = ownerType.Create(options.CreateTypeDef(modNode.Document.ModuleDef));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateNestedTypeCommand2;
@@ -504,33 +504,33 @@ namespace dnSpy.AsmEditor.Types {
 			public readonly UTF8String OrigName;
 
 			public TypeRefInfo(TypeRef tr) {
-				this.TypeRef = tr;
-				this.OrigNamespace = tr.Namespace;
-				this.OrigName = tr.Name;
+				TypeRef = tr;
+				OrigNamespace = tr.Namespace;
+				OrigName = tr.Name;
 			}
 		}
 
 		TypeDefSettingsCommand(ModuleDef module, TypeNode typeNode, TypeDefOptions options) {
 			this.module = module;
 			this.typeNode = typeNode;
-			this.newOptions = options;
-			this.origOptions = new TypeDefOptions(typeNode.TypeDef);
+			newOptions = options;
+			origOptions = new TypeDefOptions(typeNode.TypeDef);
 
-			this.origParentNode = (DocumentTreeNodeData)typeNode.TreeNode.Parent.Data;
-			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(typeNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentNode = (DocumentTreeNodeData)typeNode.TreeNode.Parent.Data;
+			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(typeNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
-			this.nameChanged = origOptions.Name != newOptions.Name;
-			if (this.origParentNode is NamespaceNode) {
-				var modNode = (ModuleDocumentNode)this.origParentNode.TreeNode.Parent.Data;
+			nameChanged = origOptions.Name != newOptions.Name;
+			if (origParentNode is NamespaceNode) {
+				var modNode = (ModuleDocumentNode)origParentNode.TreeNode.Parent.Data;
 				if (newOptions.Namespace != origOptions.Namespace)
-					this.nsNodeCreator = new NamespaceNodeCreator(newOptions.Namespace, modNode);
+					nsNodeCreator = new NamespaceNodeCreator(newOptions.Namespace, modNode);
 			}
 
-			if (this.nameChanged || origOptions.Namespace != newOptions.Namespace)
-				this.typeRefInfos = RefFinder.FindTypeRefsToThisModule(module).Where(a => RefFinder.TypeEqualityComparerInstance.Equals(a, typeNode.TypeDef)).Select(a => new TypeRefInfo(a)).ToArray();
+			if (nameChanged || origOptions.Namespace != newOptions.Namespace)
+				typeRefInfos = RefFinder.FindTypeRefsToThisModule(module).Where(a => RefFinder.TypeEqualityComparerInstance.Equals(a, typeNode.TypeDef)).Select(a => new TypeRefInfo(a)).ToArray();
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditTypeCommand2;

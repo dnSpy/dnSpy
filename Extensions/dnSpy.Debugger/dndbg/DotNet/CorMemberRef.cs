@@ -31,13 +31,13 @@ namespace dndbg.DotNet {
 		public CorMemberRef(CorModuleDef readerModule, uint rid, GenericParamContext gpContext) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.gpContext = gpContext;
 			Initialize_NoLock();
 		}
 
 		void Initialize_NoLock() {
-			this.module = readerModule;
+			module = readerModule;
 			InitName_NoLock();
 			InitClass_NoLock();	// Must be called before InitSignature_NoLock()
 			InitSignature_NoLock();
@@ -58,7 +58,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			uint clsToken = MDAPI.GetMemberRefClassToken(mdi, token);
-			this.Class = readerModule.ResolveToken(clsToken, gpContext) as IMemberRefParent;
+			Class = readerModule.ResolveToken(clsToken, gpContext) as IMemberRefParent;
 		}
 
 		void InitSignature_NoLock() {
@@ -66,7 +66,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			var sig = MDAPI.GetMemberRefSignatureBlob(mdi, token);
-			Signature = readerModule.ReadSignature(sig, GetSignatureGenericParamContext(gpContext, this.@class));
+			Signature = readerModule.ReadSignature(sig, GetSignatureGenericParamContext(gpContext, @class));
 		}
 	}
 }

@@ -30,8 +30,8 @@ namespace dndbg.Engine {
 		public bool Added { get; }
 
 		public ModuleDebuggerEventArgs(DnModule module, bool added) {
-			this.Module = module;
-			this.Added = added;
+			Module = module;
+			Added = added;
 		}
 	}
 
@@ -40,8 +40,8 @@ namespace dndbg.Engine {
 		public DnThread Thread { get; }
 
 		public NameChangedDebuggerEventArgs(DnAppDomain appDomain, DnThread thread) {
-			this.AppDomain = appDomain;
-			this.Thread = thread;
+			AppDomain = appDomain;
+			Thread = thread;
 		}
 	}
 
@@ -50,8 +50,8 @@ namespace dndbg.Engine {
 		public CorModuleDef CorModuleDef { get; }
 
 		public CorModuleDefCreatedEventArgs(DnModule module, CorModuleDef corModuleDef) {
-			this.Module = module;
-			this.CorModuleDef = corModuleDef;
+			Module = module;
+			CorModuleDef = corModuleDef;
 		}
 	}
 }

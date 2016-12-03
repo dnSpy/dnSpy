@@ -81,23 +81,23 @@ namespace dnSpy.Debugger.Scripting {
 
 		public NativeBreakpoint(Debugger debugger, ModuleId module, uint token, uint offset, Func<INativeBreakpoint, bool> cond) {
 			this.debugger = debugger;
-			this.Module = module;
-			this.Token = token;
-			this.Offset = offset;
+			Module = module;
+			Token = token;
+			Offset = offset;
 			this.cond = cond ?? condAlwaysTrue;
-			this.isEnabled = true;
-			this.code = null;
+			isEnabled = true;
+			code = null;
 		}
 		static readonly Func<INativeBreakpoint, bool> condAlwaysTrue = bp => true;
 
 		public NativeBreakpoint(Debugger debugger, DebuggerCode code, uint offset, Func<INativeBreakpoint, bool> cond) {
 			Debug.Assert(!code.IsIL);
 			this.debugger = debugger;
-			this.Module = code.Method.Module.ModuleId;
-			this.Token = code.Method.Token;
-			this.Offset = offset;
+			Module = code.Method.Module.ModuleId;
+			Token = code.Method.Token;
+			Offset = offset;
 			this.cond = cond ?? condAlwaysTrue;
-			this.isEnabled = true;
+			isEnabled = true;
 			this.code = code;
 		}
 

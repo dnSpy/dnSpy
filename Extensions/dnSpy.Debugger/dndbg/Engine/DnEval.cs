@@ -52,8 +52,8 @@ namespace dndbg.Engine {
 		public CorValue ResultOrException { get; }
 
 		public EvalResult(bool wasException, CorValue resultOrException) {
-			this.WasException = wasException;
-			this.ResultOrException = resultOrException;
+			WasException = wasException;
+			ResultOrException = resultOrException;
 		}
 	}
 
@@ -79,8 +79,8 @@ namespace dndbg.Engine {
 		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher) {
 			this.debugger = debugger;
 			this.debugMessageDispatcher = debugMessageDispatcher;
-			this.SuspendOtherThreads = true;
-			this.useTotalTimeout = true;
+			SuspendOtherThreads = true;
+			useTotalTimeout = true;
 		}
 
 		public void SetNoTotalTimeout() => useTotalTimeout = false;
@@ -97,7 +97,7 @@ namespace dndbg.Engine {
 			if (hr < 0 || ce == null)
 				throw new EvalException(hr, string.Format("Could not create an evaluator, HR=0x{0:X8}", hr));
 			this.thread = thread;
-			this.eval = new CorEval(ce);
+			eval = new CorEval(ce);
 		}
 
 		public CorValue CreateNull() => eval.CreateValue(CorElementType.Class);
@@ -203,8 +203,8 @@ namespace dndbg.Engine {
 			public readonly CorDebugThreadState State;
 
 			public ThreadInfo(CorThread thread) {
-				this.Thread = thread;
-				this.State = thread.State;
+				Thread = thread;
+				State = thread.State;
 			}
 		}
 
@@ -215,7 +215,7 @@ namespace dndbg.Engine {
 
 			public ThreadInfos(CorThread thread, bool suspendOtherThreads) {
 				this.thread = thread;
-				this.list = GetThreadInfos(thread);
+				list = GetThreadInfos(thread);
 				this.suspendOtherThreads = suspendOtherThreads;
 			}
 

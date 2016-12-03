@@ -33,7 +33,7 @@ namespace dnSpy.Language.Intellisense {
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 			this.session = session;
-			this.control = new QuickInfoPresenterControl { DataContext = this };
+			control = new QuickInfoPresenterControl { DataContext = this };
 			session.Dismissed += Session_Dismissed;
 		}
 

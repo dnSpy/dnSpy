@@ -33,19 +33,19 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		public ResourceOptions(Resource resource) {
-			this.ResourceType = resource.ResourceType;
-			this.Name = resource.Name ?? UTF8String.Empty;
-			this.Attributes = resource.Attributes;
+			ResourceType = resource.ResourceType;
+			Name = resource.Name ?? UTF8String.Empty;
+			Attributes = resource.Attributes;
 			switch (resource.ResourceType) {
 			case ResourceType.Embedded:
 				break;
 
 			case ResourceType.AssemblyLinked:
-				this.Assembly = ((AssemblyLinkedResource)resource).Assembly;
+				Assembly = ((AssemblyLinkedResource)resource).Assembly;
 				break;
 
 			case ResourceType.Linked:
-				this.File = ((LinkedResource)resource).File;
+				File = ((LinkedResource)resource).File;
 				break;
 
 			default:
@@ -62,22 +62,22 @@ namespace dnSpy.AsmEditor.Resources {
 
 			case dnlib.DotNet.ResourceType.AssemblyLinked:
 				var al = (AssemblyLinkedResource)resource;
-				Debug.Assert(this.Assembly != null);
-				al.Assembly = this.Assembly;
+				Debug.Assert(Assembly != null);
+				al.Assembly = Assembly;
 				break;
 
 			case dnlib.DotNet.ResourceType.Linked:
 				var lr = (LinkedResource)resource;
-				Debug.Assert(this.File != null);
-				lr.File = this.File;
+				Debug.Assert(File != null);
+				lr.File = File;
 				break;
 
 			default:
 				throw new InvalidOperationException();
 			}
 
-			resource.Name = this.Name;
-			resource.Attributes = this.Attributes;
+			resource.Name = Name;
+			resource.Attributes = Attributes;
 		}
 	}
 }

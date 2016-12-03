@@ -132,10 +132,10 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly ModuleDef ownerModule;
 
 		public ResourceVM(ResourceOptions options, ModuleDef ownerModule) {
-			this.origOptions = options;
+			origOptions = options;
 			this.ownerModule = ownerModule;
 
-			this.FileHashValue = new HexStringVM(a => HasErrorUpdated());
+			FileHashValue = new HexStringVM(a => HasErrorUpdated());
 
 			Reinitialize();
 		}
@@ -152,31 +152,31 @@ namespace dnSpy.AsmEditor.Resources {
 		public ResourceOptions CreateResourceOptions() => CopyTo(new ResourceOptions());
 
 		void InitializeFrom(ResourceOptions options) {
-			this.Type = options.ResourceType;
-			this.ResourceVisibilityVM.SelectedItem = (ResourceVisibility)((int)(options.Attributes & ManifestResourceAttributes.VisibilityMask) >> 0);
-			this.Attributes = options.Attributes;
-			this.Name = options.Name;
-			this.Assembly = options.Assembly;
+			Type = options.ResourceType;
+			ResourceVisibilityVM.SelectedItem = (ResourceVisibility)((int)(options.Attributes & ManifestResourceAttributes.VisibilityMask) >> 0);
+			Attributes = options.Attributes;
+			Name = options.Name;
+			Assembly = options.Assembly;
 			if (options.File != null) {
-				this.FileHashValue.Value = options.File.HashValue;
-				this.FileName = options.File.Name ?? UTF8String.Empty;
-				this.FileContainsNoMetaData = options.File.ContainsNoMetaData;
+				FileHashValue.Value = options.File.HashValue;
+				FileName = options.File.Name ?? UTF8String.Empty;
+				FileContainsNoMetaData = options.File.ContainsNoMetaData;
 			}
 			else {
-				this.FileHashValue.Value = Array.Empty<byte>();
-				this.FileName = string.Empty;
-				this.FileContainsNoMetaData = false;
+				FileHashValue.Value = Array.Empty<byte>();
+				FileName = string.Empty;
+				FileContainsNoMetaData = false;
 			}
 		}
 
 		ResourceOptions CopyTo(ResourceOptions options) {
-			options.ResourceType = this.Type;
-			options.Attributes = this.Attributes;
-			options.Name = this.Name;
-			options.Assembly = this.Assembly;
-			options.File = new FileDefUser(this.FileName,
-					this.FileContainsNoMetaData ? FileAttributes.ContainsNoMetaData : FileAttributes.ContainsMetaData,
-					this.FileHashValue.Value.ToArray());
+			options.ResourceType = Type;
+			options.Attributes = Attributes;
+			options.Name = Name;
+			options.Assembly = Assembly;
+			options.File = new FileDefUser(FileName,
+					FileContainsNoMetaData ? FileAttributes.ContainsNoMetaData : FileAttributes.ContainsMetaData,
+					FileHashValue.Value.ToArray());
 			return options;
 		}
 

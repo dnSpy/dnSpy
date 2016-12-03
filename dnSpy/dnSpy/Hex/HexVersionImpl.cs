@@ -47,7 +47,7 @@ namespace dnSpy.Hex {
 				reiteratedVersionNumber = changes.Count == 0 ? ReiteratedVersionNumber : VersionNumber + 1;
 			var newVersion = new HexVersionImpl(Buffer, VersionNumber + 1, reiteratedVersionNumber.Value);
 			this.changes = normalizedChanges;
-			this.next = newVersion;
+			next = newVersion;
 			return newVersion;
 		}
 

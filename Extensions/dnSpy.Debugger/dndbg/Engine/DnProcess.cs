@@ -76,11 +76,11 @@ namespace dndbg.Engine {
 		public DnDebugger Debugger { get; }
 
 		internal DnProcess(DnDebugger ownerDebugger, ICorDebugProcess process, int uniqueId) {
-			this.Debugger = ownerDebugger;
-			this.appDomains = new DebuggerCollection<ICorDebugAppDomain, DnAppDomain>(CreateAppDomain);
-			this.threads = new DebuggerCollection<ICorDebugThread, DnThread>(CreateThread);
-			this.CorProcess = new CorProcess(process);
-			this.UniqueId = uniqueId;
+			Debugger = ownerDebugger;
+			appDomains = new DebuggerCollection<ICorDebugAppDomain, DnAppDomain>(CreateAppDomain);
+			threads = new DebuggerCollection<ICorDebugThread, DnThread>(CreateThread);
+			CorProcess = new CorProcess(process);
+			UniqueId = uniqueId;
 		}
 		int nextAppDomainId = -1, nextAssemblyId = -1, nextModuleId = -1, nextThreadId = -1;
 
@@ -103,7 +103,7 @@ namespace dndbg.Engine {
 			this.filename = filename ?? string.Empty;
 			this.cwd = cwd ?? string.Empty;
 			this.cmdLine = cmdLine ?? string.Empty;
-			this.HasInitialized = true;
+			HasInitialized = true;
 		}
 
 		internal void SetHasExited() => HasExited = true;

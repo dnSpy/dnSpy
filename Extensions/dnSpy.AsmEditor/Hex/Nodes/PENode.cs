@@ -158,7 +158,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public static readonly PETreeNodeGroup Instance = new PETreeNodeGroup(DocumentTreeViewConstants.ORDER_MODULE_PE);
 
 		public PETreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; }

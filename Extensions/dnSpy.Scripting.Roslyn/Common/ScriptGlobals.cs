@@ -43,7 +43,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.owner = owner;
 			this.token = token;
 			this.dispatcher = dispatcher;
-			this.printOptionsImpl = new PrintOptionsImpl();
+			printOptionsImpl = new PrintOptionsImpl();
 		}
 
 		public event EventHandler ScriptResetting;

@@ -111,21 +111,21 @@ namespace dnSpy.Search {
 		SearchService(IDecompilerService decompilerService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, IClassificationFormatMapService classificationFormatMapService) {
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.Search);
 			this.documentTabService = documentTabService;
-			this.searchControl = new SearchControl();
-			this.vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
+			searchControl = new SearchControl();
+			vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
 				Decompiler = decompilerService.Decompiler,
 			};
-			this.searchControl.DataContext = this.vmSearch;
+			searchControl.DataContext = vmSearch;
 
-			menuService.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
-			wpfCommandService.Add(ControlConstants.GUID_SEARCH_CONTROL, this.searchControl);
-			wpfCommandService.Add(ControlConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
+			menuService.InitializeContextMenu(searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
+			wpfCommandService.Add(ControlConstants.GUID_SEARCH_CONTROL, searchControl);
+			wpfCommandService.Add(ControlConstants.GUID_SEARCH_LISTBOX, searchControl.ListBox);
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 
-			this.searchControl.SearchListBoxDoubleClick += (s, e) => FollowSelectedReference();
+			searchControl.SearchListBoxDoubleClick += (s, e) => FollowSelectedReference();
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_SEARCH_LISTBOX);
 			var command = new RelayCommand(a => FollowSelectedReference());
 			cmds.Add(command, ModifierKeys.None, Key.Enter);
@@ -153,22 +153,22 @@ namespace dnSpy.Search {
 
 		void Add(SearchType searchType, Key key) {
 			var command = new RelayCommand(a => {
-				this.vmSearch.SelectedSearchTypeVM = this.vmSearch.SearchTypeVMs.First(b => b.SearchType == searchType);
-				if (!this.searchControl.SearchTextBox.IsKeyboardFocusWithin)
-					this.searchControl.SearchTextBox.SelectAll();
-				this.searchControl.SearchTextBox.Focus();
+				vmSearch.SelectedSearchTypeVM = vmSearch.SearchTypeVMs.First(b => b.SearchType == searchType);
+				if (!searchControl.SearchTextBox.IsKeyboardFocusWithin)
+					searchControl.SearchTextBox.SelectAll();
+				searchControl.SearchTextBox.Focus();
 			});
-			this.searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
+			searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
 		}
 
 		void Add(SearchLocation loc, Key key) {
 			var command = new RelayCommand(a => {
-				this.vmSearch.SearchLocationVM.SelectedItem = loc;
-				if (!this.searchControl.SearchTextBox.IsKeyboardFocusWithin)
-					this.searchControl.SearchTextBox.SelectAll();
-				this.searchControl.SearchTextBox.Focus();
+				vmSearch.SearchLocationVM.SelectedItem = loc;
+				if (!searchControl.SearchTextBox.IsKeyboardFocusWithin)
+					searchControl.SearchTextBox.SelectAll();
+				searchControl.SearchTextBox.Focus();
 			});
-			this.searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
+			searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
 		}
 
 		void DocumentService_CollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) {
@@ -226,22 +226,22 @@ namespace dnSpy.Search {
 		}
 
 		public void Focus() {
-			this.searchControl.SearchTextBox.SelectAll();
-			this.searchControl.SearchTextBox.Focus();
+			searchControl.SearchTextBox.SelectAll();
+			searchControl.SearchTextBox.Focus();
 		}
 
 		public void OnShow() {
-			this.vmSearch.CanSearch = true;
+			vmSearch.CanSearch = true;
 		}
 
 		public void OnClose() {
-			this.vmSearch.CanSearch = false;
-			this.vmSearch.Clear();
+			vmSearch.CanSearch = false;
+			vmSearch.Clear();
 		}
 
 		void FollowSelectedReference() {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
-			FollowResult(this.searchControl.ListBox.SelectedItem as ISearchResult, newTab);
+			FollowResult(searchControl.ListBox.SelectedItem as ISearchResult, newTab);
 		}
 
 		public void FollowResult(ISearchResult searchResult, bool newTab) {

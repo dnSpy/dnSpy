@@ -41,10 +41,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			this.analyzedEvent = analyzedEvent;
 
-			this.eventBackingField = GetBackingField(analyzedEvent);
+			eventBackingField = GetBackingField(analyzedEvent);
 			var eventType = analyzedEvent.EventType.ResolveTypeDef();
 			if (eventType != null)
-				this.eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
+				eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>

@@ -33,9 +33,9 @@ namespace dndbg.Engine {
 		public string CoreCLRFilename { get; }
 
 		public CoreCLRInfo(int pid, string filename, string version, string dbgShimFilename) {
-			this.ProcessId = pid;
-			this.CoreCLRTypeInfo = new CoreCLRTypeAttachInfo(version, dbgShimFilename);
-			this.CoreCLRFilename = filename;
+			ProcessId = pid;
+			CoreCLRTypeInfo = new CoreCLRTypeAttachInfo(version, dbgShimFilename);
+			CoreCLRFilename = filename;
 		}
 	}
 

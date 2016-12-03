@@ -220,25 +220,25 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool MatchAnySearchTerm { get; }
 
 		public MemberPickerVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, IDocumentTreeNodeFilter filter, string title, IEnumerable<IDsDocument> assemblies) {
-			this.Title = title;
+			Title = title;
 			this.fileSearcherProvider = fileSearcherProvider;
 			this.decompilerService = decompilerService;
 			this.documentTreeView = documentTreeView;
-			this.decompiler = decompilerService.Decompiler;
+			decompiler = decompilerService.Decompiler;
 			this.filter = filter;
-			this.delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
-			this.SearchResults = new ObservableCollection<ISearchResult>();
-			this.searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(SearchResults);
-			this.searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
+			delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
+			SearchResults = new ObservableCollection<ISearchResult>();
+			searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(SearchResults);
+			searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
 
 			foreach (var file in assemblies)
 				documentTreeView.DocumentService.ForceAdd(file, false, null);
 
 			documentTreeView.DocumentService.CollectionChanged += (s, e) => Restart();
 
-			this.CaseSensitive = false;
-			this.MatchWholeWords = false;
-			this.MatchAnySearchTerm = false;
+			CaseSensitive = false;
+			MatchWholeWords = false;
+			MatchAnySearchTerm = false;
 			RefreshTreeView();
 		}
 

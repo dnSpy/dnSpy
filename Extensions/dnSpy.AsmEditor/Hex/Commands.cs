@@ -69,15 +69,15 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public HexContext(GuidObject creatorObject, TreeNodeData[] nodes) {
-			this.Nodes = nodes;
-			this.CreatorObject = creatorObject;
+			Nodes = nodes;
+			CreatorObject = creatorObject;
 		}
 
 		public HexContext(IDocumentViewer documentViewer, int? textPosition, object @ref, bool isDefinition) {
-			this.Reference = @ref;
-			this.IsDefinition = isDefinition;
-			this.TextPosition = textPosition;
-			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, documentViewer);
+			Reference = @ref;
+			IsDefinition = isDefinition;
+			TextPosition = textPosition;
+			CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, documentViewer);
 		}
 	}
 
@@ -815,9 +815,9 @@ namespace dnSpy.AsmEditor.Hex {
 		public ulong Size;
 
 		public LengthAndOffset(string filename, ulong offs, ulong size) {
-			this.Filename = filename;
-			this.Offset = offs;
-			this.Size = size;
+			Filename = filename;
+			Offset = offs;
+			Size = size;
 		}
 	}
 

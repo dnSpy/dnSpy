@@ -58,8 +58,8 @@ namespace dnSpy.Documents.Tabs {
 
 		public DocumentTabServiceSettings Clone() => CopyTo(new DocumentTabServiceSettings());
 		public DocumentTabServiceSettings CopyTo(DocumentTabServiceSettings other) {
-			other.RestoreTabs = this.RestoreTabs;
-			other.DecompileFullType = this.DecompileFullType;
+			other.RestoreTabs = RestoreTabs;
+			other.DecompileFullType = DecompileFullType;
 			return other;
 		}
 	}
@@ -74,11 +74,11 @@ namespace dnSpy.Documents.Tabs {
 		DocumentTabServiceSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.RestoreTabs = sect.Attribute<bool?>(nameof(RestoreTabs)) ?? this.RestoreTabs;
-			this.DecompileFullType = sect.Attribute<bool?>(nameof(DecompileFullType)) ?? this.DecompileFullType;
-			this.disableSave = false;
+			RestoreTabs = sect.Attribute<bool?>(nameof(RestoreTabs)) ?? RestoreTabs;
+			DecompileFullType = sect.Attribute<bool?>(nameof(DecompileFullType)) ?? DecompileFullType;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

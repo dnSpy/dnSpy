@@ -49,7 +49,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 			realTextChangedEvent?.Invoke(this, e.ToTextChangeEventArgs());
 
 		public TextBufferSourceTextContainer(ITextBuffer textBuffer) {
-			this.TextBuffer = textBuffer;
+			TextBuffer = textBuffer;
 		}
 	}
 }

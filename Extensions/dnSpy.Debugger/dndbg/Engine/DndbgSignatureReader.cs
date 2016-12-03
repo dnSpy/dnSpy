@@ -74,7 +74,7 @@ namespace dndbg.Engine {
 
 		public TypeDefDndbg(IMetaDataImport mdi, uint rid)
 			: base(UTF8String.Empty) {
-			this.MetaDataImport = mdi;
+			MetaDataImport = mdi;
 			this.rid = rid;
 			InitializeName(MDAPI.GetTypeDefName(mdi, MDToken.Raw), out @namespace, out name);
 		}
@@ -98,7 +98,7 @@ namespace dndbg.Engine {
 
 		public TypeRefDndbg(IMetaDataImport mdi, uint rid)
 			: base(null, UTF8String.Empty) {
-			this.MetaDataImport = mdi;
+			MetaDataImport = mdi;
 			this.rid = rid;
 			TypeDefDndbg.InitializeName(MDAPI.GetTypeRefName(mdi, MDToken.Raw), out @namespace, out name);
 		}
@@ -111,7 +111,7 @@ namespace dndbg.Engine {
 
 		public TypeSpecDndbg(IMetaDataImport mdi, uint rid, ISignatureReaderHelper helper)
 			: base() {
-			this.MetaDataImport = mdi;
+			MetaDataImport = mdi;
 			this.rid = rid;
 			this.helper = helper;
 		}

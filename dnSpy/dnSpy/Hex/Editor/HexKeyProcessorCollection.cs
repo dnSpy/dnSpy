@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Editor {
 		public HexKeyProcessorCollection(WpfHexView wpfHexView, Lazy<HexKeyProcessorProvider, IOrderableTextViewRoleMetadata>[] keyProcessorProviders) {
 			this.wpfHexView = wpfHexView;
 			this.keyProcessorProviders = keyProcessorProviders;
-			this.keyProcessors = Array.Empty<HexKeyProcessor>();
+			keyProcessors = Array.Empty<HexKeyProcessor>();
 			wpfHexView.Closed += WpfHexView_Closed;
 			wpfHexView.VisualElement.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(VisualElement_KeyDown), true);
 			wpfHexView.VisualElement.AddHandler(UIElement.KeyUpEvent, new KeyEventHandler(VisualElement_KeyUp), true);

@@ -66,10 +66,10 @@ namespace dnSpy.Debugger.Dialogs {
 
 		public AttachProcessVM(Dispatcher dispatcher, bool syntaxHighlight, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
 			this.dispatcher = dispatcher;
-			this.processContext = new ProcessContext(classificationFormatMap, textElementProvider) {
+			processContext = new ProcessContext(classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = syntaxHighlight,
 			};
-			this.processList = new ObservableCollection<ProcessVM>();
+			processList = new ObservableCollection<ProcessVM>();
 			Refresh();
 		}
 

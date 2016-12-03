@@ -62,12 +62,12 @@ namespace dnSpy.Documents {
 
 		[ImportingConstructor]
 		public DsDocumentService(IDsDocumentServiceSettings documentServiceSettings, [ImportMany] IDsDocumentProvider[] documentProviders) {
-			this.lockObj = new object();
-			this.documents = new List<IDsDocument>();
-			this.tempCache = new List<IDsDocument>();
-			this.AssemblyResolver = new AssemblyResolver(this);
+			lockObj = new object();
+			documents = new List<IDsDocument>();
+			tempCache = new List<IDsDocument>();
+			AssemblyResolver = new AssemblyResolver(this);
 			this.documentProviders = documentProviders.OrderBy(a => a.Order).ToArray();
-			this.Settings = documentServiceSettings;
+			Settings = documentServiceSettings;
 		}
 
 		void CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs eventArgs, bool delayLoad = true) {
@@ -116,7 +116,7 @@ namespace dnSpy.Documents {
 			var document = FindAssembly(asm);
 			if (document != null)
 				return document;
-			var asmDef = this.AssemblyResolver.Resolve(asm, sourceModule);
+			var asmDef = AssemblyResolver.Resolve(asm, sourceModule);
 			if (asmDef != null)
 				return FindAssembly(asm);
 			return null;

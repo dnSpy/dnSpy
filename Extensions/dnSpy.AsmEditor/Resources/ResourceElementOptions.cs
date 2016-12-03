@@ -28,13 +28,13 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		public ResourceElementOptions(ResourceElement resEl) {
-			this.Name = resEl.Name;
-			this.ResourceData = resEl.ResourceData;
+			Name = resEl.Name;
+			ResourceData = resEl.ResourceData;
 		}
 
 		public ResourceElement CopyTo(ResourceElement other) {
-			other.Name = this.Name;
-			other.ResourceData = this.ResourceData;
+			other.Name = Name;
+			other.ResourceData = ResourceData;
 			return other;
 		}
 

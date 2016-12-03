@@ -55,8 +55,8 @@ namespace dnSpy.Contracts.Images {
 		public ImageReference(Assembly assembly, string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			this.Assembly = assembly;
-			this.Name = name;
+			Assembly = assembly;
+			Name = name;
 		}
 
 		/// <summary>

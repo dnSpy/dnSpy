@@ -80,10 +80,10 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		BreakpointsContent(IWpfCommandService wpfCommandService, Lazy<IBreakpointsVM> breakpointsVM, Lazy<IModuleLoader> moduleLoader, IDocumentTabService documentTabService, IModuleIdProvider moduleIdProvider) {
-			this.breakpointsControl = new BreakpointsControl();
+			breakpointsControl = new BreakpointsControl();
 			this.moduleLoader = moduleLoader;
 			this.documentTabService = documentTabService;
-			this.vmBreakpoints = breakpointsVM;
+			vmBreakpoints = breakpointsVM;
 			this.moduleIdProvider = moduleIdProvider;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_BREAKPOINTS_CONTROL, breakpointsControl);
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		void BreakpointsControl_BreakpointsListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdProvider, documentTabService, moduleLoader, this.BreakpointsControl.ListView.SelectedItem as BreakpointVM, newTab);
+			GoToSourceBreakpointCtxMenuCommand.GoTo(moduleIdProvider, documentTabService, moduleLoader, BreakpointsControl.ListView.SelectedItem as BreakpointVM, newTab);
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(BreakpointsControl.ListView);

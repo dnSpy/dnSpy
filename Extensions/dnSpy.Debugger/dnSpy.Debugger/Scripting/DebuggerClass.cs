@@ -125,10 +125,10 @@ namespace dnSpy.Debugger.Scripting {
 		public DebuggerClass(Debugger debugger, CorClass cls) {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
-			this.CorClass = cls;
-			this.hashCode = cls.GetHashCode();
-			this.Token = cls.Token;
-			this.Attributes = cls.GetTypeAttributes();
+			CorClass = cls;
+			hashCode = cls.GetHashCode();
+			Token = cls.Token;
+			Attributes = cls.GetTypeAttributes();
 		}
 
 		public IDebuggerType ToType(IDebuggerType[] typeArgs) => debugger.Dispatcher.UI(() => {

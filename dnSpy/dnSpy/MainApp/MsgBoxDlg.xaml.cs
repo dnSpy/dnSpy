@@ -30,9 +30,9 @@ namespace dnSpy.MainApp {
 		MsgBoxButton clickedButton;
 
 		public MsgBoxDlg() {
-			this.clickedButton = MsgBoxButton.None;
+			clickedButton = MsgBoxButton.None;
 			InitializeComponent();
-			this.IsVisibleChanged += MsgBoxDlg_IsVisibleChanged;
+			IsVisibleChanged += MsgBoxDlg_IsVisibleChanged;
 		}
 
 		void MsgBoxDlg_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {

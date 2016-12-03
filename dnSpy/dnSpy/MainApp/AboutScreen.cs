@@ -51,7 +51,7 @@ namespace dnSpy.MainApp {
 			this.documentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 			this.appWindow = appWindow;
 			this.extensionService = extensionService;
-			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
+			aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
@@ -85,7 +85,7 @@ namespace dnSpy.MainApp {
 			this.documentTabService = documentTabService;
 			this.appWindow = appWindow;
 			this.extensionService = extensionService;
-			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
+			aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
 		public override void Execute(IMenuItemContext context) {
@@ -184,8 +184,8 @@ namespace dnSpy.MainApp {
 			}
 
 			public Info(Assembly asm, ExtensionInfo info) {
-				this.Assembly = asm;
-				this.ExtensionInfo = info;
+				Assembly = asm;
+				ExtensionInfo = info;
 			}
 		}
 

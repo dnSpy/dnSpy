@@ -58,11 +58,11 @@ namespace dnSpy.AsmEditor.Module {
 		public readonly AssemblyRef CorLibRef;
 
 		public ClrVersionValues(ClrVersion clrVersion, uint cor20HeaderRuntimeVersion, ushort tablesHeaderVersion, string runtimeVersion, AssemblyRef corLibRef) {
-			this.ClrVersion = clrVersion;
-			this.Cor20HeaderRuntimeVersion = cor20HeaderRuntimeVersion;
-			this.TablesHeaderVersion = tablesHeaderVersion;
-			this.RuntimeVersion = runtimeVersion;
-			this.CorLibRef = corLibRef;
+			ClrVersion = clrVersion;
+			Cor20HeaderRuntimeVersion = cor20HeaderRuntimeVersion;
+			TablesHeaderVersion = tablesHeaderVersion;
+			RuntimeVersion = runtimeVersion;
+			CorLibRef = corLibRef;
 		}
 	}
 }

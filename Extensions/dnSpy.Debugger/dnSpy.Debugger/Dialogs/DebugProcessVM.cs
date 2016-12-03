@@ -133,10 +133,10 @@ namespace dnSpy.Debugger.Dialogs {
 		public DebugProcessVM Clone() => CopyTo(new DebugProcessVM());
 
 		public DebugProcessVM CopyTo(DebugProcessVM other) {
-			other.Filename = this.Filename;
-			other.CommandLine = this.CommandLine;
-			other.CurrentDirectory = this.CurrentDirectory;
-			other.BreakProcessKind = this.BreakProcessKind;
+			other.Filename = Filename;
+			other.CommandLine = CommandLine;
+			other.CurrentDirectory = CurrentDirectory;
+			other.BreakProcessKind = BreakProcessKind;
 			return other;
 		}
 

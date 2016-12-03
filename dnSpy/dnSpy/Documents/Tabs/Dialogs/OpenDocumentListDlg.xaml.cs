@@ -30,8 +30,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed partial class OpenDocumentListDlg : WindowBase {
 		public OpenDocumentListDlg() {
 			InitializeComponent();
-			this.listView.SelectionChanged += ListView_SelectionChanged;
-			this.listView.KeyDown += ListView_KeyDown;
+			listView.SelectionChanged += ListView_SelectionChanged;
+			listView.KeyDown += ListView_KeyDown;
 			var cmd = new RelayCommand(a => {
 				searchBox.Focus();
 				searchBox.SelectAll();
@@ -72,7 +72,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			this.ClickOK();
+			ClickOK();
 		}
 	}
 }

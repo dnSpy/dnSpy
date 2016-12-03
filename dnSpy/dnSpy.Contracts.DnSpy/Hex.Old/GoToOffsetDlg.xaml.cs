@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Hex {
 
 		void OnLoaded(object sender, RoutedEventArgs e) {
 			Loaded -= OnLoaded;
-			this.offsetTextBox.SelectAll();
+			offsetTextBox.SelectAll();
 		}
 	}
 }

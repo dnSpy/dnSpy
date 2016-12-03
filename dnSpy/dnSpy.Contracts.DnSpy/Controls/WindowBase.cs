@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Controls {
 		/// Clicks the OK button
 		/// </summary>
 		protected void ClickOK() {
-			this.DialogResult = true;
+			DialogResult = true;
 			Close();
 		}
 
@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Controls {
 		/// Clicks the Cancel button
 		/// </summary>
 		protected void ClickCancel() {
-			this.DialogResult = false;
+			DialogResult = false;
 			Close();
 		}
 

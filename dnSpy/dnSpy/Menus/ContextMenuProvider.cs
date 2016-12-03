@@ -35,7 +35,7 @@ namespace dnSpy.Menus {
 
 		public ContextMenuProvider(MenuService menuService, FrameworkElement elem, Guid guid, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
 			this.menuService = menuService;
-			this.element = elem;
+			element = elem;
 			this.guid = guid;
 			this.provider = provider;
 			this.initCtxMenu = initCtxMenu;

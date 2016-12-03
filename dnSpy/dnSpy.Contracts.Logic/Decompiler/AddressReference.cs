@@ -52,10 +52,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="address">Address</param>
 		/// <param name="length">Length</param>
 		public AddressReference(string filename, bool isRva, ulong address, ulong length) {
-			this.Filename = filename ?? string.Empty;
-			this.IsRVA = isRva;
-			this.Address = address;
-			this.Length = length;
+			Filename = filename ?? string.Empty;
+			IsRVA = isRva;
+			Address = address;
+			Length = length;
 		}
 
 		/// <summary>

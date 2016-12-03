@@ -25,8 +25,8 @@ namespace dnSpy.Debugger.Exceptions {
 		public string Name { get; }
 
 		public ExceptionInfoKey(ExceptionType exceptionType, string name) {
-			this.ExceptionType = exceptionType;
-			this.Name = name;
+			ExceptionType = exceptionType;
+			Name = name;
 		}
 
 		public bool Equals(ExceptionInfoKey other) => other != null && ExceptionType == other.ExceptionType && Name == other.Name;

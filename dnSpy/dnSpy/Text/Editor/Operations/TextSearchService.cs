@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor.Operations {
 			public CachedRegex(string pattern, FindOptions findOptions) {
 				this.pattern = pattern;
 				this.findOptions = findOptions & FindOptionsMask;
-				this.culture = CultureInfo.CurrentCulture;
+				culture = CultureInfo.CurrentCulture;
 				var options = RegexOptions.None;
 				if ((findOptions & FindOptions.MatchCase) == 0)
 					options |= RegexOptions.IgnoreCase;
@@ -57,17 +57,17 @@ namespace dnSpy.Text.Editor.Operations {
 					options |= RegexOptions.Multiline;
 				if ((findOptions & FindOptions.SingleLine) != 0)
 					options |= RegexOptions.Singleline;
-				this.Regex = new Regex(pattern, options);
+				Regex = new Regex(pattern, options);
 			}
 
-			public bool Equals(string pattern, FindOptions findOptions) => StringComparer.Ordinal.Equals(pattern, this.pattern) && (findOptions & FindOptionsMask) == this.findOptions && CultureInfo.CurrentCulture == this.culture;
+			public bool Equals(string pattern, FindOptions findOptions) => StringComparer.Ordinal.Equals(pattern, this.pattern) && (findOptions & FindOptionsMask) == this.findOptions && CultureInfo.CurrentCulture == culture;
 		}
 
 		[ImportingConstructor]
 		TextSearchService(ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService) {
 			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
-			this.cachedRegexes = new List<CachedRegex>(MAX_CACHED_REGEXES);
-			this.cachedRegexDictLock = new object();
+			cachedRegexes = new List<CachedRegex>(MAX_CACHED_REGEXES);
+			cachedRegexDictLock = new object();
 		}
 
 		struct FindResult {

@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			if (searchText == null)
 				throw new ArgumentNullException(nameof(searchText));
 			this.searchText = searchText;
-			this.acronymMatchIndexes = AcronymSearchHelpers.TryCreateMatchIndexes(searchText);
+			acronymMatchIndexes = AcronymSearchHelpers.TryCreateMatchIndexes(searchText);
 		}
 
 		bool TryUpdateAcronymIndexes(string completionText) =>

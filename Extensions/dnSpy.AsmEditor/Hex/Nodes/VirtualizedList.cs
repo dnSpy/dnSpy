@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		readonly Func<int, T> createItem;
 
 		public VirtualizedList(int count, Func<int, T> createItem) {
-			this.list = new WeakReference[count];
+			list = new WeakReference[count];
 			this.createItem = createItem;
 		}
 

@@ -45,8 +45,8 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			if (roslynDocumentChangedService == null)
 				throw new ArgumentNullException(nameof(roslynDocumentChangedService));
 			this.textBuffer = textBuffer;
-			this.defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
-			this.roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
+			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
+			roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
 			this.roslynDocumentChangedService = roslynDocumentChangedService;
 			roslynDocumentChangedService.DocumentChanged += RoslynDocumentChangedService_DocumentChanged;
 		}

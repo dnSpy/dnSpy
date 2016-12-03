@@ -215,7 +215,7 @@ namespace dnSpy.Hex.Editor {
 			byte state;
 
 			public SelectionState(HexSelection selection) {
-				this.state = (byte)(selection.IsEmpty ? 1 : 0);
+				state = (byte)(selection.IsEmpty ? 1 : 0);
 			}
 
 			public bool Equals(SelectionState other) => state == other.state;

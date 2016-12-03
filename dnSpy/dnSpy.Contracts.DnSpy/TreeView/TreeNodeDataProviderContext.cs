@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="owner">Owner</param>
 		public TreeNodeDataProviderContext(ITreeNode owner) {
-			this.Owner = owner;
+			Owner = owner;
 		}
 	}
 }

@@ -54,8 +54,8 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(oldText));
 			if (newText == null)
 				throw new ArgumentNullException(nameof(newText));
-			this.oldOffset = offset;
-			this.newOffset = offset;
+			oldOffset = offset;
+			newOffset = offset;
 			this.oldText = oldText;
 			this.newText = newText;
 		}
@@ -67,8 +67,8 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(oldText));
 			if (newText == null)
 				throw new ArgumentNullException(nameof(newText));
-			this.oldOffset = offset;
-			this.newOffset = offset;
+			oldOffset = offset;
+			newOffset = offset;
 			this.oldText = new StringTextSource(oldText);
 			this.newText = new StringTextSource(newText);
 		}

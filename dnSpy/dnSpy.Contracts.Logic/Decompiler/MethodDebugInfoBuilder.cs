@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
 			this.method = method;
-			this.statements = new List<SourceStatement>();
+			statements = new List<SourceStatement>();
 			this.locals = locals ?? Array.Empty<SourceLocal>();
 		}
 

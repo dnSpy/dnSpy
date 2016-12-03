@@ -59,9 +59,9 @@ namespace dnSpy.AsmEditor.Commands {
 				if (t.DeclaringType != null || t.Module != null)
 					throw new ArgumentException();
 			}
-			this.ownerList = modNode.Document.ModuleDef.Types;
-			this.nsNodeCreator = new NamespaceNodeCreator(ns, modNode);
-			this.typeNodes = types.Select(a => modNode.Context.DocumentTreeView.Create(a)).ToArray();
+			ownerList = modNode.Document.ModuleDef.Types;
+			nsNodeCreator = new NamespaceNodeCreator(ns, modNode);
+			typeNodes = types.Select(a => modNode.Context.DocumentTreeView.Create(a)).ToArray();
 		}
 
 		public void Add() {

@@ -119,9 +119,9 @@ namespace dnSpy.AsmEditor.Field {
 				public readonly int FieldIndex;
 
 				public ModelInfo(FieldDef field) {
-					this.OwnerType = field.DeclaringType;
-					this.FieldIndex = this.OwnerType.Fields.IndexOf(field);
-					Debug.Assert(this.FieldIndex >= 0);
+					OwnerType = field.DeclaringType;
+					FieldIndex = OwnerType.Fields.IndexOf(field);
+					Debug.Assert(FieldIndex >= 0);
 				}
 			}
 
@@ -163,7 +163,7 @@ namespace dnSpy.AsmEditor.Field {
 		DeleteModelNodes modelNodes;
 
 		DeleteFieldDefCommand(FieldNode[] fieldNodes) {
-			this.nodes = new DeletableNodes<FieldNode>(fieldNodes);
+			nodes = new DeletableNodes<FieldNode>(fieldNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteFieldCommand;
@@ -295,7 +295,7 @@ namespace dnSpy.AsmEditor.Field {
 
 		CreateFieldDefCommand(TypeNode ownerNode, FieldDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.fieldNode = ownerNode.Create(options.CreateFieldDef(ownerNode.TypeDef.Module));
+			fieldNode = ownerNode.Create(options.CreateFieldDef(ownerNode.TypeDef.Module));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateFieldCommand2;
@@ -324,8 +324,8 @@ namespace dnSpy.AsmEditor.Field {
 		public readonly UTF8String OrigName;
 
 		public MemberRefInfo(MemberRef mr) {
-			this.MemberRef = mr;
-			this.OrigName = mr.Name;
+			MemberRef = mr;
+			OrigName = mr.Name;
 		}
 	}
 
@@ -411,18 +411,18 @@ namespace dnSpy.AsmEditor.Field {
 
 		FieldDefSettingsCommand(FieldNode fieldNode, FieldDefOptions options) {
 			this.fieldNode = fieldNode;
-			this.newOptions = options;
-			this.origOptions = new FieldDefOptions(fieldNode.FieldDef);
+			newOptions = options;
+			origOptions = new FieldDefOptions(fieldNode.FieldDef);
 
-			this.origParentNode = (DocumentTreeNodeData)fieldNode.TreeNode.Parent.Data;
-			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(fieldNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentNode = (DocumentTreeNodeData)fieldNode.TreeNode.Parent.Data;
+			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(fieldNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
-			this.nameChanged = origOptions.Name != newOptions.Name;
-			if (this.nameChanged)
-				this.memberRefInfos = RefFinder.FindMemberRefsToThisModule(fieldNode.GetModule()).Where(a => RefFinder.FieldEqualityComparerInstance.Equals(a, fieldNode.FieldDef)).Select(a => new MemberRefInfo(a)).ToArray();
+			nameChanged = origOptions.Name != newOptions.Name;
+			if (nameChanged)
+				memberRefInfos = RefFinder.FindMemberRefsToThisModule(fieldNode.GetModule()).Where(a => RefFinder.FieldEqualityComparerInstance.Equals(a, fieldNode.FieldDef)).Select(a => new MemberRefInfo(a)).ToArray();
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditFieldCommand2;

@@ -683,7 +683,7 @@ namespace dnSpy.Hex.Formatting {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			this.visibleArea = visibleArea;
-			this.visibilityState = CalculateVisibilityState();
+			visibilityState = CalculateVisibilityState();
 		}
 
 		protected override void DisposeCore() {

@@ -45,13 +45,13 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly HashSet<IAssembly> asmRefs;
 
 		public BamlResourceProjectFile(string filename, byte[] bamlData, string typeFullName, Func<byte[], Stream, IList<string>> decompileBaml) {
-			this.Filename = filename;
+			Filename = filename;
 			this.bamlData = bamlData;
-			this.TypeFullName = typeFullName;
-			this.SubType = "Designer";
-			this.Generator = "MSBuild:Compile";
+			TypeFullName = typeFullName;
+			SubType = "Designer";
+			Generator = "MSBuild:Compile";
 			this.decompileBaml = decompileBaml;
-			this.asmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
+			asmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 		}
 
 		public override void Create(DecompileContext ctx) {
@@ -76,11 +76,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly IDecompiler decompiler;
 
 		public AppBamlResourceProjectFile(string filename, TypeDef type, IDecompiler decompiler) {
-			this.Filename = filename;
+			Filename = filename;
 			this.type = type;
-			this.SubType = "Designer";
-			this.Generator = "MSBuild:Compile";
-			this.BuildAction = DotNetUtils.IsStartUpClass(type) ? BuildAction.ApplicationDefinition : BuildAction.Page;
+			SubType = "Designer";
+			Generator = "MSBuild:Compile";
+			BuildAction = DotNetUtils.IsStartUpClass(type) ? BuildAction.ApplicationDefinition : BuildAction.Page;
 			this.decompiler = decompiler;
 		}
 

@@ -31,7 +31,7 @@ namespace dndbg.DotNet {
 		public CorAssemblyRef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			Initialize_NoLock();
 		}
 
@@ -49,7 +49,7 @@ namespace dndbg.DotNet {
 			Culture = locale ?? string.Empty;
 			Hash = MDAPI.GetAssemblyRefHash(mdai, token);
 			AssemblyAttributes attrs;
-			this.PublicKeyOrToken = MDAPI.GetAssemblyRefPublicKeyOrToken(mdai, token, out attrs) ?? new PublicKeyToken((byte[])null);
+			PublicKeyOrToken = MDAPI.GetAssemblyRefPublicKeyOrToken(mdai, token, out attrs) ?? new PublicKeyToken((byte[])null);
 			Attributes = attrs;
 		}
 	}

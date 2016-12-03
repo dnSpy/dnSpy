@@ -38,8 +38,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="addr">Address</param>
 		/// <param name="length">Length</param>
 		public CodeChunkInfo(ulong addr, uint length) {
-			this.StartAddr = addr;
-			this.Length = length;
+			StartAddr = addr;
+			Length = length;
 		}
 
 		/// <summary>

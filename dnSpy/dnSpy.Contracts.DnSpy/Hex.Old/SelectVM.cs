@@ -25,11 +25,11 @@ namespace dnSpy.Contracts.Hex {
 		public UInt64VM EndVM { get; }
 
 		public SelectVM(ulong start, ulong end, ulong min, ulong max) {
-			this.StartVM = new UInt64VM(start, a => HasErrorUpdated(), false) {
+			StartVM = new UInt64VM(start, a => HasErrorUpdated(), false) {
 				Min = min,
 				Max = max,
 			};
-			this.EndVM = new UInt64VM(end, a => HasErrorUpdated(), false) {
+			EndVM = new UInt64VM(end, a => HasErrorUpdated(), false) {
 				Min = min,
 				Max = max,
 			};

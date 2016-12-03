@@ -29,7 +29,7 @@ namespace dnSpy.Output {
 
 		public CachedWriter(IOutputWriter owner) {
 			this.owner = owner;
-			this.cachedList = new List<ColorAndText>();
+			cachedList = new List<ColorAndText>();
 		}
 
 		public void Dispose() => Flush();

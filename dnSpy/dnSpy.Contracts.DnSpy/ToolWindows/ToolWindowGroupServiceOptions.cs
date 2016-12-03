@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// </summary>
 		/// <param name="groupGuid">See <see cref="ToolWindowGroupGuid"/></param>
 		public ToolWindowGroupServiceOptions(Guid groupGuid) {
-			this.ToolWindowGroupGuid = groupGuid;
+			ToolWindowGroupGuid = groupGuid;
 		}
 
 		/// <summary>

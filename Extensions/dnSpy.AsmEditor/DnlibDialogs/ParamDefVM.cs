@@ -126,12 +126,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
-			this.origOptions = options;
-			this.Sequence = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
-			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
+			origOptions = options;
+			Sequence = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType != null ? ownerType : ownerMethod?.DeclaringType, ownerMethod);
+			MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType != null ? ownerType : ownerMethod?.DeclaringType, ownerMethod);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;

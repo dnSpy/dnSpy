@@ -153,9 +153,9 @@ namespace dndbg.Engine {
 
 		public CorAppDomain(ICorDebugAppDomain appDomain)
 			: base(appDomain) {
-			int hr = appDomain.GetID(out this.id);
+			int hr = appDomain.GetID(out id);
 			if (hr < 0)
-				this.id = -1;
+				id = -1;
 
 			//TODO: ICorDebugAppDomain3
 			//TODO: ICorDebugAppDomain4::GetObjectForCCW 

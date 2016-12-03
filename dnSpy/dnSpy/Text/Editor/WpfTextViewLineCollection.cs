@@ -44,11 +44,11 @@ namespace dnSpy.Text.Editor {
 			this.textView = textView;
 			this.snapshot = snapshot;
 			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(lines);
-			this.IsValid = true;
+			IsValid = true;
 			if (lines.Count == 0)
-				this.formattedSpan = new SnapshotSpan(snapshot, new Span(0, 0));
+				formattedSpan = new SnapshotSpan(snapshot, new Span(0, 0));
 			else
-				this.formattedSpan = new SnapshotSpan(lines[0].Start, lines[lines.Count - 1].EndIncludingLineBreak);
+				formattedSpan = new SnapshotSpan(lines[0].Start, lines[lines.Count - 1].EndIncludingLineBreak);
 			Debug.Assert(this.lines.Count > 0);
 		}
 

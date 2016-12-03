@@ -74,12 +74,12 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public ResXProjectFile(ModuleDef module, string filename, string typeFullName, EmbeddedResource er) {
 			this.filename = filename;
-			this.TypeFullName = typeFullName;
-			this.embeddedResource = er;
+			TypeFullName = typeFullName;
+			embeddedResource = er;
 
-			this.newToOldAsm = new Dictionary<IAssembly, IAssembly>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
+			newToOldAsm = new Dictionary<IAssembly, IAssembly>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
 			foreach (var asmRef in module.GetAssemblyRefs())
-				this.newToOldAsm[asmRef] = asmRef;
+				newToOldAsm[asmRef] = asmRef;
 		}
 
 		public override void Create(DecompileContext ctx) {

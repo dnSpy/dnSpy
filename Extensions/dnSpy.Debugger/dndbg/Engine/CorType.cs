@@ -329,13 +329,13 @@ namespace dndbg.Engine {
 
 		public CorType(ICorDebugType type)
 			: base(type) {
-			int hr = type.GetType(out this.elemType);
+			int hr = type.GetType(out elemType);
 			if (hr < 0)
-				this.elemType = 0;
+				elemType = 0;
 
-			hr = type.GetRank(out this.rank);
+			hr = type.GetRank(out rank);
 			if (hr < 0)
-				this.rank = 0;
+				rank = 0;
 		}
 
 		public TypeAttributes GetTypeAttributes() {

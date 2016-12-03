@@ -117,7 +117,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateLocalType);
 			this.typeSigCreatorOptions.IsLocal = true;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
-			this.origOptions = options;
+			origOptions = options;
 
 			Reinitialize();
 		}
@@ -138,15 +138,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public LocalOptions CreateLocalOptions() => CopyTo(new LocalOptions());
 
 		public void InitializeFrom(LocalOptions options) {
-			this.Type = options.Type;
-			this.Name = options.Name;
-			this.PdbAttributes = options.PdbAttributes;
+			Type = options.Type;
+			Name = options.Name;
+			PdbAttributes = options.PdbAttributes;
 		}
 
 		public LocalOptions CopyTo(LocalOptions options) {
-			options.Type = this.Type;
-			options.Name = this.Name;
-			options.PdbAttributes = this.PdbAttributes;
+			options.Type = Type;
+			options.Name = Name;
+			options.PdbAttributes = PdbAttributes;
 			return options;
 		}
 

@@ -83,9 +83,9 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(contentType));
 			Properties = new PropertyCollection();
 			this.contentType = contentType;
-			this.currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
-			this.Document = new TextDocument(text);
-			this.Document.SetOwnerThread(null);
+			currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
+			Document = new TextDocument(text);
+			Document.SetOwnerThread(null);
 		}
 
 		public bool EditInProgress => textEditInProgress != null;

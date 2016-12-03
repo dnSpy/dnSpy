@@ -30,7 +30,7 @@ namespace dnSpy.Scripting {
 		readonly Dispatcher dispatcher;
 
 		ServiceLocator() {
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			dispatcher = Dispatcher.CurrentDispatcher;
 		}
 
 		public T Resolve<T>() {

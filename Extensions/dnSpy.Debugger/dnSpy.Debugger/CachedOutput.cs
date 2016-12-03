@@ -30,7 +30,7 @@ namespace dnSpy.Debugger {
 		public static CachedOutput Create() => new CachedOutput(false);
 
 		public CachedOutput(bool dummy) {
-			this.data = new List<Tuple<string, TypeColor>>();
+			data = new List<Tuple<string, TypeColor>>();
 		}
 
 		public void Add(string s, TypeColor type) => data.Add(Tuple.Create(s, type));

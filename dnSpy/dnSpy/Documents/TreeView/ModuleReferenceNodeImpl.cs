@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public ModuleReferenceNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleRef moduleRef)
 			: base(moduleRef) {
-			this.TreeNodeGroup = treeNodeGroup;
+			TreeNodeGroup = treeNodeGroup;
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>

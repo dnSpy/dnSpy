@@ -53,9 +53,9 @@ namespace dnSpy.Debugger.Memory {
 			readonly Func<MemoryToolWindowContent> createContent;
 
 			public TWContent(int windowIndex, Func<MemoryToolWindowContent> createContent) {
-				this.Index = windowIndex;
+				Index = windowIndex;
 				this.createContent = createContent;
-				this.Guid = new Guid($"30AD8A10-5C72-47FF-A30D-9E2F{0xBE2852B4 + (uint)windowIndex:X8}");
+				Guid = new Guid($"30AD8A10-5C72-47FF-A30D-9E2F{0xBE2852B4 + (uint)windowIndex:X8}");
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Memory {
 			this.hexBufferFactoryService = hexBufferFactoryService;
 			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
 			contents = new TWContent[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
-			for (int i = 0; i < this.contents.Length; i++) {
+			for (int i = 0; i < contents.Length; i++) {
 				var tmpIndex = i;
 				contents[i] = new TWContent(i, () => CreateContent(tmpIndex));
 			}
@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.Memory {
 
 		public MemoryToolWindowContent(Lazy<IMemoryContent> memoryContent, Guid guid, int windowIndex) {
 			this.memoryContent = memoryContent;
-			this.Guid = guid;
+			Guid = guid;
 			this.windowIndex = windowIndex;
 		}
 

@@ -41,9 +41,9 @@ namespace dndbg.DotNet {
 		public TypeDef TypeDef { get; }
 
 		public TypeUpdatedEventArgs(TypeDef type, bool created, bool loaded) {
-			this.Created = created;
-			this.TypeDef = type;
-			this.Loaded = loaded;
+			Created = created;
+			TypeDef = type;
+			Loaded = loaded;
 		}
 	}
 }

@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.Logger {
 		public readonly IOutputTextPane TextPane;
 
 		public LogEditorCtxMenuContext(IOutputTextPane pane) {
-			this.TextPane = pane;
+			TextPane = pane;
 		}
 	}
 

@@ -64,11 +64,11 @@ namespace dnSpy.Text.Editor {
 		TextEditorSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultTextEditorFont());
-			this.FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? this.FontSize;
-			this.disableSave = false;
+			FontFamily = new FontFamily(sect.Attribute<string>(nameof(FontFamily)) ?? FontUtilities.GetDefaultTextEditorFont());
+			FontSize = sect.Attribute<double?>(nameof(FontSize)) ?? FontSize;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

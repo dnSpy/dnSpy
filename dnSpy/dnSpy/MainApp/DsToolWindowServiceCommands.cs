@@ -33,9 +33,9 @@ namespace dnSpy.MainApp {
 		public readonly IToolWindowGroup ToolWindowGroup;
 
 		public ToolWindowGroupContext(IDsToolWindowService toolWindowService, IToolWindowGroup toolWindowGroup) {
-			this.DsToolWindowService = toolWindowService;
-			this.ToolWindowGroupService = toolWindowGroup.ToolWindowGroupService;
-			this.ToolWindowGroup = toolWindowGroup;
+			DsToolWindowService = toolWindowService;
+			ToolWindowGroupService = toolWindowGroup.ToolWindowGroupService;
+			ToolWindowGroup = toolWindowGroup;
 		}
 	}
 

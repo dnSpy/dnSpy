@@ -83,8 +83,8 @@ namespace dnSpy.Commands {
 			readonly WeakReference ownerWeakRef;
 
 			public NextCommandTarget(RegisteredCommandElement owner, ICommandTargetFilter filter) {
-				this.ownerWeakRef = new WeakReference(owner);
-				this.filterWeakRef = new WeakReference(filter);
+				ownerWeakRef = new WeakReference(owner);
+				filterWeakRef = new WeakReference(filter);
 			}
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
@@ -119,10 +119,10 @@ namespace dnSpy.Commands {
 			if (target == null)
 				throw new ArgumentNullException(nameof(target));
 			this.commandService = commandService;
-			this.weakSourceElement = new WeakReference(sourceElement);
-			this.weakTarget = new WeakReference(target);
+			weakSourceElement = new WeakReference(sourceElement);
+			weakTarget = new WeakReference(target);
 			this.keyShortcutCollection = keyShortcutCollection;
-			this.commandTargetInfos = new List<CommandTargetFilterInfo>();
+			commandTargetInfos = new List<CommandTargetFilterInfo>();
 			CommandTarget = new CommandTargetCollection(this);
 			sourceElement.PreviewKeyDown += SourceElement_PreviewKeyDown;
 			sourceElement.PreviewTextInput += SourceElement_PreviewTextInput;

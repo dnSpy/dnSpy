@@ -45,15 +45,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public ExceptionHandlersListHelper(ListView listView, Window ownerWindow)
 			: base(listView) {
-			this.typeSigCreator = new TypeSigCreator(ownerWindow);
+			typeSigCreator = new TypeSigCreator(ownerWindow);
 		}
 
 		protected override ExceptionHandlerVM[] GetSelectedItems() => listBox.SelectedItems.Cast<ExceptionHandlerVM>().ToArray();
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
-			this.coll = ((MethodBodyVM)dataContext).CilBodyVM.ExceptionHandlersListVM;
-			this.coll.CollectionChanged += coll_CollectionChanged;
-			InitializeExceptionHandlers(this.coll);
+			coll = ((MethodBodyVM)dataContext).CilBodyVM.ExceptionHandlersListVM;
+			coll.CollectionChanged += coll_CollectionChanged;
+			InitializeExceptionHandlers(coll);
 
 			AddStandardMenuHandlers();
 			Add(new ContextMenuHandler {

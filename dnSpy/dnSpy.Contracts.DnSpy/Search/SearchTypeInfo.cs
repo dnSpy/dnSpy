@@ -46,8 +46,8 @@ namespace dnSpy.Contracts.Search {
 				throw new ArgumentNullException(nameof(document));
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
-			this.Document = document;
-			this.Type = type;
+			Document = document;
+			Type = type;
 		}
 	}
 }

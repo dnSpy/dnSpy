@@ -30,7 +30,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public ThreadSafeObjectPool(int size, Func<T> createObject, Action<T> resetObject) {
 			if (size <= 0)
 				throw new ArgumentException();
-			this.freeObjs = new List<T>(size);
+			freeObjs = new List<T>(size);
 			this.createObject = createObject;
 			this.resetObject = resetObject;
 		}

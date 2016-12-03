@@ -58,8 +58,8 @@ namespace dnSpy.Contracts.Hex {
 			if (bytes == null)
 				throw new ArgumentNullException(nameof(bytes));
 			this.bytes = bytes;
-			this.validBytes = null;
-			this.allValid = true;
+			validBytes = null;
+			allValid = true;
 		}
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Hex {
 			if (bytes == null)
 				throw new ArgumentNullException(nameof(bytes));
 			this.bytes = bytes;
-			this.validBytes = null;
+			validBytes = null;
 			this.allValid = allValid;
 		}
 
@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.Hex {
 			if (validBytes.Length != bytes.LongLength)
 				throw new ArgumentOutOfRangeException(nameof(bytes));
 			this.bytes = bytes;
-			this.allValid = false;// This field isn't used if the bit array is non-null
+			allValid = false;// This field isn't used if the bit array is non-null
 			this.validBytes = validBytes;
 		}
 

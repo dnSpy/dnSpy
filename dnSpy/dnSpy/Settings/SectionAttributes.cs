@@ -30,7 +30,7 @@ namespace dnSpy.Settings {
 		public Tuple<string, string>[] Attributes => attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
 
 		public SectionAttributes() {
-			this.attributes = new Dictionary<string, string>(StringComparer.Ordinal);
+			attributes = new Dictionary<string, string>(StringComparer.Ordinal);
 		}
 
 		public T Attribute<T>(string name) {

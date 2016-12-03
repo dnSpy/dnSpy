@@ -26,12 +26,12 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		public readonly int Length;
 
 		public SubString(string s, int index, int length) {
-			this.String = s;
-			this.Index = index;
-			this.Length = length;
+			String = s;
+			Index = index;
+			Length = length;
 		}
 
-		public override string ToString() => this.String.Substring(this.Index, this.Length);
-		public void WriteTo(StringBuilder sb) => sb.Append(this.String, this.Index, this.Length);
+		public override string ToString() => String.Substring(Index, Length);
+		public void WriteTo(StringBuilder sb) => sb.Append(String, Index, Length);
 	}
 }

@@ -31,7 +31,7 @@ namespace dndbg.DotNet {
 		public CorTypeSpec(CorModuleDef readerModule, uint rid, GenericParamContext gpContext) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.gpContext = gpContext;
 		}
 

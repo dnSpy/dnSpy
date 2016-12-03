@@ -42,16 +42,16 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public LocalsListHelper(ListView listView, Window ownerWindow)
 			: base(listView) {
-			this.typeSigCreator = new TypeSigCreator(ownerWindow);
+			typeSigCreator = new TypeSigCreator(ownerWindow);
 		}
 
 		protected override LocalVM[] GetSelectedItems() => listBox.SelectedItems.Cast<LocalVM>().ToArray();
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
-			this.cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
-			this.coll = ((MethodBodyVM)dataContext).CilBodyVM.LocalsListVM;
-			this.coll.CollectionChanged += coll_CollectionChanged;
-			InitializeLocals(this.coll);
+			cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
+			coll = ((MethodBodyVM)dataContext).CilBodyVM.LocalsListVM;
+			coll.CollectionChanged += coll_CollectionChanged;
+			InitializeLocals(coll);
 
 			AddStandardMenuHandlers();
 		}
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return data;
 			var newData = new LocalVM[data.Length];
 			for (int i = 0; i < data.Length; i++)
-				newData[i] = data[i].Import(this.cilBodyVM.TypeSigCreatorOptions, this.cilBodyVM.OwnerModule);
+				newData[i] = data[i].Import(cilBodyVM.TypeSigCreatorOptions, cilBodyVM.OwnerModule);
 			return newData;
 		}
 	}

@@ -75,13 +75,13 @@ namespace dnSpy.ToolWindows {
 			set { ((TabGroupService)tabGroupService).StackedContentState = value; }
 		}
 
-		ITabGroup GetTabGroup(IToolWindowGroup g) => this.tabGroupService.TabGroups.FirstOrDefault(a => a.Tag == g);
+		ITabGroup GetTabGroup(IToolWindowGroup g) => tabGroupService.TabGroups.FirstOrDefault(a => a.Tag == g);
 
 		public ToolWindowGroupService(ITabGroupService tabGroupService) {
 			this.tabGroupService = tabGroupService;
-			this.tabSelectionChanged = new WeakEventList<ToolWindowSelectedEventArgs>();
-			this.tabGroupSelectionChanged = new WeakEventList<ToolWindowGroupSelectedEventArgs>();
-			this.toolWindowGroupCollectionChanged = new WeakEventList<ToolWindowGroupCollectionChangedEventArgs>();
+			tabSelectionChanged = new WeakEventList<ToolWindowSelectedEventArgs>();
+			tabGroupSelectionChanged = new WeakEventList<ToolWindowGroupSelectedEventArgs>();
+			toolWindowGroupCollectionChanged = new WeakEventList<ToolWindowGroupCollectionChangedEventArgs>();
 
 			this.tabGroupService.TabSelectionChanged += TabGroupService_TabSelectionChanged;
 			this.tabGroupService.TabGroupSelectionChanged += TabGroupService_TabGroupSelectionChanged;

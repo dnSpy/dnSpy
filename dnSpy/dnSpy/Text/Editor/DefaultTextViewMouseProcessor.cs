@@ -36,7 +36,7 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
-			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
+			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
 		}
 
 		MouseLocation GetLocation(MouseEventArgs e) => MouseLocation.Create(wpfTextView, e, insertionPosition: true);

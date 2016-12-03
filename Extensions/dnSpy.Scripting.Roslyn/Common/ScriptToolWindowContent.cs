@@ -49,7 +49,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		double IZoomable.ZoomValue => ScriptContent.ZoomLevel / 100.0;
 
 		public ScriptToolWindowContent(Guid contentGuid) {
-			this.Guid = contentGuid;
+			Guid = contentGuid;
 		}
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {

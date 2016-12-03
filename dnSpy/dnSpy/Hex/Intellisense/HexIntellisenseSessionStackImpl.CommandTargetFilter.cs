@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Intellisense {
 
 			public CommandTargetFilter(HexIntellisenseSessionStackImpl owner) {
 				this.owner = owner;
-				this.wpfHexView = owner.wpfHexView;
+				wpfHexView = owner.wpfHexView;
 			}
 
 			public void HookKeyboard() {

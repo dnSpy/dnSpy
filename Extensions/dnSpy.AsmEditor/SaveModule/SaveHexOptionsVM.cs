@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public SaveHexOptionsVM Clone() => CopyTo(new SaveHexOptionsVM(buffer));
 
 		public SaveHexOptionsVM CopyTo(SaveHexOptionsVM other) {
-			other.FileName = this.FileName;
+			other.FileName = FileName;
 			return other;
 		}
 

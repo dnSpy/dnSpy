@@ -61,13 +61,13 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(classificationFormatMapService));
 			if (textFormatterProvider == null)
 				throw new ArgumentNullException(nameof(textFormatterProvider));
-			this.identityTagToLine = new Dictionary<object, Line>();
+			identityTagToLine = new Dictionary<object, Line>();
 			this.marginName = marginName;
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(wpfTextViewHost.TextView);
-			this.textLayer = new Layer();
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(wpfTextViewHost.TextView);
+			textLayer = new Layer();
 			this.textFormatterProvider = textFormatterProvider;
-			this.Children.Add(textLayer);
+			Children.Add(textLayer);
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			IsVisibleChanged += LineNumberMargin_IsVisibleChanged;
 			ClipToBounds = true;
@@ -344,7 +344,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			public LineCollection() {
-				this.lines = new List<LineInfo>();
+				lines = new List<LineInfo>();
 			}
 
 			protected override int VisualChildrenCount => lines.Count;
@@ -372,7 +372,7 @@ namespace dnSpy.Text.Editor {
 			readonly LineCollection lineCollection;
 
 			public Layer() {
-				this.lineCollection = new LineCollection();
+				lineCollection = new LineCollection();
 				Children.Add(lineCollection);
 			}
 

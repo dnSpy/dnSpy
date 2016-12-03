@@ -74,12 +74,12 @@ namespace dnSpy.MainApp {
 		AppSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.UseNewRenderer_TextEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_TextEditor)) ?? this.UseNewRenderer_TextEditor;
-			this.UseNewRenderer_HexEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_HexEditor)) ?? this.UseNewRenderer_HexEditor;
-			this.UseNewRenderer_DocumentTreeView = sect.Attribute<bool?>(nameof(UseNewRenderer_DocumentTreeView)) ?? this.UseNewRenderer_DocumentTreeView;
-			this.disableSave = false;
+			UseNewRenderer_TextEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_TextEditor)) ?? UseNewRenderer_TextEditor;
+			UseNewRenderer_HexEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_HexEditor)) ?? UseNewRenderer_HexEditor;
+			UseNewRenderer_DocumentTreeView = sect.Attribute<bool?>(nameof(UseNewRenderer_DocumentTreeView)) ?? UseNewRenderer_DocumentTreeView;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

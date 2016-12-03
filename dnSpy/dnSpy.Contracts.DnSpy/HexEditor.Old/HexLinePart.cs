@@ -26,9 +26,9 @@ namespace dnSpy.Contracts.HexEditor {
 		public TextRunProperties TextRunProperties { get; }
 
 		public HexLinePart(int offset, int length, TextRunProperties textRunProperties) {
-			this.Offset = offset;
-			this.Length = length;
-			this.TextRunProperties = textRunProperties;
+			Offset = offset;
+			Length = length;
+			TextRunProperties = textRunProperties;
 		}
 	}
 }

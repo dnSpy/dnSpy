@@ -79,14 +79,14 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		LanguageComboBoxToolbarCommand(IDecompilerService decompilerService) {
 			this.decompilerService = decompilerService;
-			this.infos = decompilerService.AllDecompilers.OrderBy(a => a.OrderUI).Select(a => new LanguageInfo { Decompiler = a }).ToList();
+			infos = decompilerService.AllDecompilers.OrderBy(a => a.OrderUI).Select(a => new LanguageInfo { Decompiler = a }).ToList();
 			UpdateSelectedItem();
-			this.comboBox = new ComboBox {
+			comboBox = new ComboBox {
 				DisplayMemberPath = "Name",
 				Width = 90,
 				ItemsSource = infos,
 			};
-			this.comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(SelectedItem)) {
+			comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(SelectedItem)) {
 				Source = this,
 			});
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;

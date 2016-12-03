@@ -37,7 +37,7 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(wpfHexView));
 			this.wpfHexView = wpfHexView;
 			this.layerKind = layerKind;
-			this.adornmentLayers = new List<HexAdornmentLayerImpl>();
+			adornmentLayers = new List<HexAdornmentLayerImpl>();
 			if (layerKind != HexLayerKind.Normal)
 				ClipToBounds = true;
 			wpfHexView.Closed += WpfHexView_Closed;

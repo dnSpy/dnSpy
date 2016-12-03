@@ -37,10 +37,10 @@ namespace dnSpy.Hex.Formatting {
 			Span = lineSpan;
 			LineParts = lineParts;
 			if (lineParts.Count == 0)
-				this.Length = 0;
+				Length = 0;
 			else {
 				var last = lineParts[lineParts.Count - 1];
-				this.Length = last.Column + last.ColumnLength;
+				Length = last.Column + last.ColumnLength;
 			}
 		}
 

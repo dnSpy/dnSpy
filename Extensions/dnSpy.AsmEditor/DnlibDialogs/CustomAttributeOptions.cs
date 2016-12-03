@@ -32,10 +32,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public CustomAttributeOptions(CustomAttribute ca) {
-			this.RawData = ca.RawData;
-			this.Constructor = ca.Constructor;
-			this.ConstructorArguments.AddRange(ca.ConstructorArguments.Select(a => a.Clone()));
-			this.NamedArguments.AddRange(ca.NamedArguments.Select(a => a.Clone()));
+			RawData = ca.RawData;
+			Constructor = ca.Constructor;
+			ConstructorArguments.AddRange(ca.ConstructorArguments.Select(a => a.Clone()));
+			NamedArguments.AddRange(ca.NamedArguments.Select(a => a.Clone()));
 		}
 
 		public CustomAttribute Create() {

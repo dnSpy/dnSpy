@@ -29,7 +29,7 @@ namespace dnSpy.Text.Editor {
 		public TextViewRoleSet(IEnumerable<string> textViewRoles) {
 			if (textViewRoles == null)
 				throw new ArgumentNullException(nameof(textViewRoles));
-			this.roles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			roles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var s in textViewRoles) {
 				if (s == null)
 					throw new ArgumentNullException(nameof(textViewRoles));

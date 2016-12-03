@@ -85,10 +85,10 @@ namespace dndbg.Engine {
 		public IEnumerable<CorFrame> AllFrames => CorThread.AllFrames;
 
 		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int uniqueId, int uniqueIdProcess) {
-			this.Process = ownerProcess;
-			this.CorThread = new CorThread(thread);
-			this.UniqueId = uniqueId;
-			this.UniqueIdProcess = uniqueIdProcess;
+			Process = ownerProcess;
+			CorThread = new CorThread(thread);
+			UniqueId = uniqueId;
+			UniqueIdProcess = uniqueIdProcess;
 		}
 
 		internal void SetHasExited() => HasExited = true;

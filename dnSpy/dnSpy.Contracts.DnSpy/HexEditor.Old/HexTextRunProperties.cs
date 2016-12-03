@@ -46,14 +46,14 @@ namespace dnSpy.Contracts.HexEditor {
 		}
 
 		public HexTextRunProperties(TextRunProperties other) {
-			this._BackgroundBrush = other.BackgroundBrush;
-			this._CultureInfo = other.CultureInfo;
-			this._FontHintingEmSize = other.FontHintingEmSize;
-			this._FontRenderingEmSize = other.FontRenderingEmSize;
-			this._ForegroundBrush = other.ForegroundBrush;
-			this._TextDecorations = other.TextDecorations;
-			this._TextEffects = other.TextEffects;
-			this._Typeface = other.Typeface;
+			_BackgroundBrush = other.BackgroundBrush;
+			_CultureInfo = other.CultureInfo;
+			_FontHintingEmSize = other.FontHintingEmSize;
+			_FontRenderingEmSize = other.FontRenderingEmSize;
+			_ForegroundBrush = other.ForegroundBrush;
+			_TextDecorations = other.TextDecorations;
+			_TextEffects = other.TextEffects;
+			_Typeface = other.Typeface;
 		}
 
 		public static bool Equals(TextRunProperties a, TextRunProperties b) {

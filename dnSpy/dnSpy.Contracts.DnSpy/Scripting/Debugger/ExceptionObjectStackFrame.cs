@@ -50,10 +50,10 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="token">Method token</param>
 		/// <param name="isLastForeignExceptionFrame">true if it's last foreign exception frame</param>
 		public ExceptionObjectStackFrame(IDebuggerModule module, ulong ip, uint token, bool isLastForeignExceptionFrame) {
-			this.Module = module;
-			this.IP = ip;
-			this.Token = token;
-			this.IsLastForeignExceptionFrame = isLastForeignExceptionFrame;
+			Module = module;
+			IP = ip;
+			Token = token;
+			IsLastForeignExceptionFrame = isLastForeignExceptionFrame;
 		}
 	}
 }

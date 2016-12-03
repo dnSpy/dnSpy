@@ -133,10 +133,10 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.evt = evt;
-			this.hashCode = evt.GetHashCode();
-			this.Token = evt.Token;
-			this.Name = evt.GetName() ?? string.Empty;
-			this.Attributes = evt.GetAttributes();
+			hashCode = evt.GetHashCode();
+			Token = evt.Token;
+			Name = evt.GetName() ?? string.Empty;
+			Attributes = evt.GetAttributes();
 		}
 
 		public override bool Equals(object obj) => (obj as DebuggerEvent)?.evt == evt;

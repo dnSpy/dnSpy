@@ -38,7 +38,7 @@ namespace dnSpy.Text.Formatting {
 			if (linePartsCollection == null)
 				throw new ArgumentNullException(nameof(linePartsCollection));
 			this.linePartsCollection = linePartsCollection;
-			this.text = linePartsCollection.Span.GetText();
+			text = linePartsCollection.Span.GetText();
 		}
 
 		public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) =>

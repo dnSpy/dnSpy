@@ -96,11 +96,11 @@ namespace dnSpy.Text.Classification {
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.themeService = themeService;
 			this.editorFormatMap = editorFormatMap;
-			this.toClassificationInfo = new Dictionary<IClassificationType, ClassificationInfo>();
-			this.toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>>(editorFormatDefinitionService.ClassificationFormatDefinitions.Length);
-			this.toClassificationTypeOrder = new Dictionary<IClassificationType, int>();
-			this.classificationToEditorFormatMapKey = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			this.defaultResourceDictionary = new ResourceDictionary();
+			toClassificationInfo = new Dictionary<IClassificationType, ClassificationInfo>();
+			toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>>(editorFormatDefinitionService.ClassificationFormatDefinitions.Length);
+			toClassificationTypeOrder = new Dictionary<IClassificationType, int>();
+			classificationToEditorFormatMapKey = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			defaultResourceDictionary = new ResourceDictionary();
 
 			for (int i = 0; i < editorFormatDefinitionService.ClassificationFormatDefinitions.Length; i++) {
 				var e = editorFormatDefinitionService.ClassificationFormatDefinitions[i];

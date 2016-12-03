@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
-			this.coll = ((SwitchOperandVM)dataContext).InstructionsListVM;
+			coll = ((SwitchOperandVM)dataContext).InstructionsListVM;
 			AddStandardMenuHandlers();
 		}
 	}

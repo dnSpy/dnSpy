@@ -119,7 +119,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class AssemblyRefTreeNodeGroup : ITreeNodeGroup2 {
 		public AssemblyRefTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -136,7 +136,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class ModuleRefTreeNodeGroup : ITreeNodeGroup2 {
 		public ModuleRefTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -153,7 +153,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class ReferencesFolderTreeNodeGroup : ITreeNodeGroup2 {
 		public ReferencesFolderTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -170,7 +170,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class ResourcesFolderTreeNodeGroup : ITreeNodeGroup2 {
 		public ResourcesFolderTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -187,7 +187,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class BaseTypeFolderTreeNodeGroup : ITreeNodeGroup2 {
 		public BaseTypeFolderTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -204,7 +204,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class DerivedTypesFolderTreeNodeGroup : ITreeNodeGroup2 {
 		public DerivedTypesFolderTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -221,7 +221,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class MessageTreeNodeGroup : ITreeNodeGroup2 {
 		public MessageTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -238,7 +238,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class DerivedTypeTreeNodeGroup : ITreeNodeGroup2 {
 		public DerivedTypeTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -257,7 +257,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class NamespaceTreeNodeGroup : ITreeNodeGroup2 {
 		public NamespaceTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -274,7 +274,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class BaseTypeTreeNodeGroup : ITreeNodeGroup2 {
 		public BaseTypeTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -293,7 +293,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class TypeTreeNodeGroup : ITreeNodeGroup2 {
 		public TypeTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -312,7 +312,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class MethodTreeNodeGroup : ITreeNodeGroup2 {
 		public MethodTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -329,7 +329,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class FieldTreeNodeGroup : ITreeNodeGroup2 {
 		public FieldTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -346,7 +346,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class EventTreeNodeGroup : ITreeNodeGroup2 {
 		public EventTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -363,7 +363,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class PropertyTreeNodeGroup : ITreeNodeGroup2 {
 		public PropertyTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -380,7 +380,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class ResourceTreeNodeGroup : ITreeNodeGroup2 {
 		public ResourceTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }
@@ -399,7 +399,7 @@ namespace dnSpy.Documents.TreeView {
 
 	sealed class ResourceElementTreeNodeGroup : ITreeNodeGroup2 {
 		public ResourceElementTreeNodeGroup(double order) {
-			this.Order = order;
+			Order = order;
 		}
 
 		public double Order { get; set; }

@@ -80,8 +80,8 @@ namespace dnSpy.Language.Intellisense {
 			this.trackCaret = trackCaret;
 			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
 			this.signatureHelpSourceProviders = signatureHelpSourceProviders;
-			this.signatures = new ObservableCollection<ISignature>();
-			Signatures = new ReadOnlyObservableCollection<ISignature>(this.signatures);
+			signatures = new ObservableCollection<ISignature>();
+			Signatures = new ReadOnlyObservableCollection<ISignature>(signatures);
 
 			TextView.Closed += TextView_Closed;
 		}

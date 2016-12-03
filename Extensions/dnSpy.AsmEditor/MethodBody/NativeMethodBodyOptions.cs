@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public NativeMethodBodyOptions(NativeMethodBody body) {
-			this.RVA = body.RVA;
+			RVA = body.RVA;
 		}
 
 		public NativeMethodBody CopyTo(NativeMethodBody body) {

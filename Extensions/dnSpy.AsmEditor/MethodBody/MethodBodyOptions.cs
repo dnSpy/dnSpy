@@ -36,32 +36,32 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public MethodBodyOptions(MethodDef method) {
-			this.CodeType = method.CodeType;
+			CodeType = method.CodeType;
 			if (method.MethodBody is CilBody) {
 				var headerRva = method.RVA;
 				var headerFileOffset = (FileOffset)(method.Module.ToFileOffset((uint)headerRva) ?? (uint)headerRva);
 				var rva = (RVA)((uint)headerRva + method.Body.HeaderSize);
 				var fileOffset = (FileOffset)((long)headerFileOffset + method.Body.HeaderSize);
-				this.CilBodyOptions = new CilBodyOptions((CilBody)method.MethodBody, headerRva, headerFileOffset, rva, fileOffset);
-				this.BodyType = MethodBodyType.Cil;
+				CilBodyOptions = new CilBodyOptions((CilBody)method.MethodBody, headerRva, headerFileOffset, rva, fileOffset);
+				BodyType = MethodBodyType.Cil;
 			}
 			else if (method.MethodBody is NativeMethodBody) {
-				this.NativeMethodBodyOptions = new NativeMethodBodyOptions((NativeMethodBody)method.MethodBody);
-				this.BodyType = MethodBodyType.Native;
+				NativeMethodBodyOptions = new NativeMethodBodyOptions((NativeMethodBody)method.MethodBody);
+				BodyType = MethodBodyType.Native;
 			}
 			else
-				this.BodyType = MethodBodyType.None;
+				BodyType = MethodBodyType.None;
 		}
 
 		public MethodDef CopyTo(MethodDef method) {
-			method.CodeType = this.CodeType;
-			if (this.BodyType == MethodBodyType.Cil)
+			method.CodeType = CodeType;
+			if (BodyType == MethodBodyType.Cil)
 				method.MethodBody = CilBodyOptions.Create();
-			else if (this.BodyType == MethodBodyType.Native)
+			else if (BodyType == MethodBodyType.Native)
 				method.MethodBody = NativeMethodBodyOptions.Create();
 			else {
-				Debug.Assert(this.BodyType == MethodBodyType.None);
-				if (this.BodyType != MethodBodyType.None)
+				Debug.Assert(BodyType == MethodBodyType.None);
+				if (BodyType != MethodBodyType.None)
 					throw new InvalidOperationException();
 				method.MethodBody = null;
 			}

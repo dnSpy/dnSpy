@@ -28,7 +28,7 @@ namespace dnSpy.Settings {
 		readonly List<ISettingsSection> sections;
 
 		public SettingsSectionProvider() {
-			this.sections = new List<ISettingsSection>();
+			sections = new List<ISettingsSection>();
 		}
 
 		public ISettingsSection[] Sections => sections.ToArray();

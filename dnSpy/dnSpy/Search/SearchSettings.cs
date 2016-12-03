@@ -111,12 +111,12 @@ namespace dnSpy.Search {
 		public SearchSettings Clone() => CopyTo(new SearchSettings());
 
 		public SearchSettings CopyTo(SearchSettings other) {
-			other.SyntaxHighlight = this.SyntaxHighlight;
-			other.MatchWholeWords = this.MatchWholeWords;
-			other.CaseSensitive = this.CaseSensitive;
-			other.MatchAnySearchTerm = this.MatchAnySearchTerm;
-			other.SearchDecompiledData = this.SearchDecompiledData;
-			other.SearchGacAssemblies = this.SearchGacAssemblies;
+			other.SyntaxHighlight = SyntaxHighlight;
+			other.MatchWholeWords = MatchWholeWords;
+			other.CaseSensitive = CaseSensitive;
+			other.MatchAnySearchTerm = MatchAnySearchTerm;
+			other.SearchDecompiledData = SearchDecompiledData;
+			other.SearchGacAssemblies = SearchGacAssemblies;
 			return other;
 		}
 	}
@@ -131,15 +131,15 @@ namespace dnSpy.Search {
 		SearchSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? this.SyntaxHighlight;
-			this.MatchWholeWords = sect.Attribute<bool?>(nameof(MatchWholeWords)) ?? this.MatchWholeWords;
-			this.CaseSensitive = sect.Attribute<bool?>(nameof(CaseSensitive)) ?? this.CaseSensitive;
-			this.MatchAnySearchTerm = sect.Attribute<bool?>(nameof(MatchAnySearchTerm)) ?? this.MatchAnySearchTerm;
-			this.SearchDecompiledData = sect.Attribute<bool?>(nameof(SearchDecompiledData)) ?? this.SearchDecompiledData;
-			this.SearchGacAssemblies = sect.Attribute<bool?>(nameof(SearchGacAssemblies)) ?? this.SearchGacAssemblies;
-			this.disableSave = false;
+			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
+			MatchWholeWords = sect.Attribute<bool?>(nameof(MatchWholeWords)) ?? MatchWholeWords;
+			CaseSensitive = sect.Attribute<bool?>(nameof(CaseSensitive)) ?? CaseSensitive;
+			MatchAnySearchTerm = sect.Attribute<bool?>(nameof(MatchAnySearchTerm)) ?? MatchAnySearchTerm;
+			SearchDecompiledData = sect.Attribute<bool?>(nameof(SearchDecompiledData)) ?? SearchDecompiledData;
+			SearchGacAssemblies = sect.Attribute<bool?>(nameof(SearchGacAssemblies)) ?? SearchGacAssemblies;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

@@ -51,8 +51,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		public DecompilationContext() {
-			this.CancellationToken = CancellationToken.None;
-			this.IsBodyModified = m => false;
+			CancellationToken = CancellationToken.None;
+			IsBodyModified = m => false;
 		}
 
 		/// <summary />

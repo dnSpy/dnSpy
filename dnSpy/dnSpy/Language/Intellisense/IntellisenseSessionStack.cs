@@ -62,10 +62,10 @@ namespace dnSpy.Language.Intellisense {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
-			this.sessions = new ObservableCollection<IIntellisenseSession>();
-			this.commandTargetFilter = new CommandTargetFilter(this);
-			this.sessionStates = new List<SessionState>();
-			this.clearOpacityTimer = new DispatcherTimer(DispatcherPriority.Background, wpfTextView.VisualElement.Dispatcher);
+			sessions = new ObservableCollection<IIntellisenseSession>();
+			commandTargetFilter = new CommandTargetFilter(this);
+			sessionStates = new List<SessionState>();
+			clearOpacityTimer = new DispatcherTimer(DispatcherPriority.Background, wpfTextView.VisualElement.Dispatcher);
 			clearOpacityTimer.Interval = TimeSpan.FromMilliseconds(clearOpacityIntervalMilliSecs);
 			clearOpacityTimer.Tick += ClearOpacityTimer_Tick;
 			Sessions = new ReadOnlyObservableCollection<IIntellisenseSession>(sessions);

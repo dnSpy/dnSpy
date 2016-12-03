@@ -317,25 +317,25 @@ namespace dnSpy.Contracts.HexEditor {
 		}
 
 		public HexBox() {
-			this.bgCanvas = new Canvas();
-			AddVisualChild(this.bgCanvas);
-			Add(this.selectionLayer = new SelectionLayer(this));
-			Add(this.hexLineLayer = new HexLineLayer());
-			Add(this.hexCaret = new HexCaret());
-			this.hexCaret.Visibility = Visibility.Collapsed;
+			bgCanvas = new Canvas();
+			AddVisualChild(bgCanvas);
+			Add(selectionLayer = new SelectionLayer(this));
+			Add(hexLineLayer = new HexLineLayer());
+			Add(hexCaret = new HexCaret());
+			hexCaret.Visibility = Visibility.Collapsed;
 
-			this.selectionLayer.SetBinding(BackgroundProperty, new Binding(nameof(SelectionBackground)) { Source = this });
-			this.hexCaret.SetBinding(ForegroundProperty, new Binding(nameof(CaretForeground)) { Source = this });
-			this.hexCaret.SetBinding(HexCaret.InactiveCaretForegroundProperty, new Binding(nameof(InactiveCaretForeground)) { Source = this });
+			selectionLayer.SetBinding(BackgroundProperty, new Binding(nameof(SelectionBackground)) { Source = this });
+			hexCaret.SetBinding(ForegroundProperty, new Binding(nameof(CaretForeground)) { Source = this });
+			hexCaret.SetBinding(HexCaret.InactiveCaretForegroundProperty, new Binding(nameof(InactiveCaretForeground)) { Source = this });
 
 			// Since we don't use a ControlTemplate, the Background property isn't used by WPF. Use
 			// a Canvas to show the background color.
-			this.bgCanvas.SetBinding(Panel.BackgroundProperty, new Binding(nameof(Background)) { Source = this });
-			this.FocusVisualStyle = null;
+			bgCanvas.SetBinding(Panel.BackgroundProperty, new Binding(nameof(Background)) { Source = this });
+			FocusVisualStyle = null;
 
 			InitializeHexOffsetSizeData();
-			this.Loaded += HexBox_Loaded;
-			this.Unloaded += HexBox_Unloaded;
+			Loaded += HexBox_Loaded;
+			Unloaded += HexBox_Unloaded;
 
 			Add(EditingCommands.MoveDownByLine, ModifierKeys.None, Key.Down, (s, e) => UnselectText(() => MoveCaretDown()));
 			Add(EditingCommands.MoveUpByLine, ModifierKeys.None, Key.Up, (s, e) => UnselectText(() => MoveCaretUp()));
@@ -374,20 +374,20 @@ namespace dnSpy.Contracts.HexEditor {
 			Add(SelectScrollMoveCaretUpCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.Up, (s, e) => SelectText(() => ScrollMoveCaretUp()));
 			Add(SelectScrollMoveCaretDownCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.Down, (s, e) => SelectText(() => ScrollMoveCaretDown()));
 
-			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (s, e) => Copy(), (s, e) => e.CanExecute = CanCopyToClipboard()));
-			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, (s, e) => SelectAll()));
-			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (s, e) => Paste(), (s, e) => e.CanExecute = CanPaste()));
-			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, (s, e) => ClearBytes()));
-			this.CommandBindings.Add(new CommandBinding(CopyHexStringCommand, (s, e) => CopyHexString(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+			CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (s, e) => Copy(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+			CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, (s, e) => SelectAll()));
+			CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (s, e) => Paste(), (s, e) => e.CanExecute = CanPaste()));
+			CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, (s, e) => ClearBytes()));
+			CommandBindings.Add(new CommandBinding(CopyHexStringCommand, (s, e) => CopyHexString(), (s, e) => e.CanExecute = CanCopyToClipboard()));
 			Add(CopyUTF8StringCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.D8, (s, e) => CopyUTF8String(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyUnicodeStringCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.U, (s, e) => CopyUnicodeString(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyCSharpArrayCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.P, (s, e) => CopyCSharpArray(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyVBArrayCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.B, (s, e) => CopyVBArray(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyUIContentsCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.C, (s, e) => CopyUIContents(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyOffsetCommand, ModifierKeys.Control | ModifierKeys.Alt, Key.O, (s, e) => CopyOffset());
-			this.CommandBindings.Add(new CommandBinding(ToggleLowerCaseHexCommand, (s, e) => LowerCaseHex = !LowerCaseHex));
-			this.CommandBindings.Add(new CommandBinding(LowerCaseHexCommand, (s, e) => LowerCaseHex = true));
-			this.CommandBindings.Add(new CommandBinding(UpperCaseHexCommand, (s, e) => LowerCaseHex = false));
+			CommandBindings.Add(new CommandBinding(ToggleLowerCaseHexCommand, (s, e) => LowerCaseHex = !LowerCaseHex));
+			CommandBindings.Add(new CommandBinding(LowerCaseHexCommand, (s, e) => LowerCaseHex = true));
+			CommandBindings.Add(new CommandBinding(UpperCaseHexCommand, (s, e) => LowerCaseHex = false));
 			Add(PasteUtf8Command, ModifierKeys.Control, Key.D8, (s, e) => PasteUtf8(), (s, e) => e.CanExecute = CanPasteUtf8());
 			Add(PasteUnicodeCommand, ModifierKeys.Control, Key.U, (s, e) => PasteUnicode(), (s, e) => e.CanExecute = CanPasteUnicode());
 		}
@@ -419,8 +419,8 @@ namespace dnSpy.Contracts.HexEditor {
 		public static readonly RoutedUICommand PasteUnicodeCommand = new RoutedUICommand("Paste Unicode", "Paste Unicode", typeof(HexBox));
 
 		void Add(ICommand command, ModifierKeys modifiers, Key key, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec = null) {
-			this.CommandBindings.Add(new CommandBinding(command, exec, canExec));
-			this.InputBindings.Add(new KeyBinding(command, key, modifiers));
+			CommandBindings.Add(new CommandBinding(command, exec, canExec));
+			InputBindings.Add(new KeyBinding(command, key, modifiers));
 		}
 
 		bool InitializeHexOffsetSizeData(bool force = false) {
@@ -678,7 +678,7 @@ namespace dnSpy.Contracts.HexEditor {
 			InitializeCaret(CaretPosition);
 
 			for (int i = 0; i < VisualChildrenCount; i++)
-				((UIElement)this.GetVisualChild(i)).Measure(constraint);
+				((UIElement)GetVisualChild(i)).Measure(constraint);
 
 			double maxWidth = hexLines.Count == 0 ? 0 : hexLines.Max(a => a.Width);
 			double maxHeight;
@@ -962,7 +962,7 @@ namespace dnSpy.Contracts.HexEditor {
 		protected override Size ArrangeOverride(Size arrangeBounds) {
 			var size = new Rect(new Point(0, 0), arrangeBounds);
 			for (int i = 0; i < VisualChildrenCount; i++)
-				((UIElement)this.GetVisualChild(i)).Arrange(size);
+				((UIElement)GetVisualChild(i)).Arrange(size);
 
 			bool refresh = SetTopOffsetInternal(topOffset) | SetHorizontalColumnInternal(horizCol);
 			if (refresh) {
@@ -992,7 +992,7 @@ namespace dnSpy.Contracts.HexEditor {
 
 		protected override Visual GetVisualChild(int index) {
 			if (index == 0)
-				return this.bgCanvas;
+				return bgCanvas;
 			return (Visual)layers[index - 1];
 		}
 
@@ -1504,7 +1504,7 @@ namespace dnSpy.Contracts.HexEditor {
 				SetTopOffset(position.Offset);
 			else {
 				ulong bpl = (ulong)(visibleBytesPerLine == 0 ? 1 : visibleBytesPerLine);
-				ulong bytesPerPage = NumberUtils.MulUInt64(bpl, (ulong)this.WholeLinesPerPage());
+				ulong bytesPerPage = NumberUtils.MulUInt64(bpl, (ulong)WholeLinesPerPage());
 				ulong end = NumberUtils.AddUInt64(topOffset, NumberUtils.SubUInt64(bytesPerPage, 1));
 				if (position.Offset > end)
 					SetBottomOffset(position.Offset);

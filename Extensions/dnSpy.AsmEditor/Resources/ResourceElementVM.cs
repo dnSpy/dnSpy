@@ -133,7 +133,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		public object ValueVM {
 			get {
-				switch ((ResourceElementType)this.ResourceElementTypeVM.SelectedItem) {
+				switch ((ResourceElementType)ResourceElementTypeVM.SelectedItem) {
 				case ResourceElementType.Null:		return null;
 				case ResourceElementType.String:	return null;
 				case ResourceElementType.Boolean:	return BooleanVM;
@@ -159,13 +159,13 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		public bool IsSerializedType => (ResourceElementType)this.ResourceElementTypeVM.SelectedItem == ResourceElementType.SerializedType;
-		public bool IsSingleLineValue => !IsMultiLineValue && !IsRawBytes && (ResourceElementType)this.ResourceElementTypeVM.SelectedItem != ResourceElementType.Null;
-		public bool IsMultiLineValue => (ResourceElementType)this.ResourceElementTypeVM.SelectedItem == ResourceElementType.String;
+		public bool IsSerializedType => (ResourceElementType)ResourceElementTypeVM.SelectedItem == ResourceElementType.SerializedType;
+		public bool IsSingleLineValue => !IsMultiLineValue && !IsRawBytes && (ResourceElementType)ResourceElementTypeVM.SelectedItem != ResourceElementType.Null;
+		public bool IsMultiLineValue => (ResourceElementType)ResourceElementTypeVM.SelectedItem == ResourceElementType.String;
 
 		public bool IsRawBytes {
 			get {
-				var code = (ResourceElementType)this.ResourceElementTypeVM.SelectedItem;
+				var code = (ResourceElementType)ResourceElementTypeVM.SelectedItem;
 				return code == ResourceElementType.ByteArray || code == ResourceElementType.Stream;
 			}
 		}
@@ -173,28 +173,28 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly bool canDeserialize;
 
 		public ResourceElementVM(ResourceElementOptions options, ModuleDef ownerModule, bool canDeserialize) {
-			this.origOptions = options;
+			origOptions = options;
 			this.canDeserialize = canDeserialize;
 
-			this.BooleanVM = new BooleanVM(a => HasErrorUpdated());
-			this.CharVM = new CharVM(a => HasErrorUpdated());
-			this.ByteVM = new ByteVM(a => HasErrorUpdated());
-			this.SByteVM = new SByteVM(a => HasErrorUpdated());
-			this.Int16VM = new Int16VM(a => HasErrorUpdated());
-			this.UInt16VM = new UInt16VM(a => HasErrorUpdated());
-			this.Int32VM = new Int32VM(a => HasErrorUpdated());
-			this.UInt32VM = new UInt32VM(a => HasErrorUpdated());
-			this.Int64VM = new Int64VM(a => HasErrorUpdated());
-			this.UInt64VM = new UInt64VM(a => HasErrorUpdated());
-			this.SingleVM = new SingleVM(a => HasErrorUpdated());
-			this.DoubleVM = new DoubleVM(a => HasErrorUpdated());
-			this.DecimalVM = new DecimalVM(a => HasErrorUpdated());
-			this.DateTimeVM = new DateTimeVM(a => HasErrorUpdated());
-			this.TimeSpanVM = new TimeSpanVM(a => HasErrorUpdated());
-			this.UserTypeVM = new UserTypeVM(ownerModule, canDeserialize);
-			this.ResourceElementTypeVM = new EnumListVM(resourceElementTypeList, (a, b) => OnResourceElementTypeChanged());
+			BooleanVM = new BooleanVM(a => HasErrorUpdated());
+			CharVM = new CharVM(a => HasErrorUpdated());
+			ByteVM = new ByteVM(a => HasErrorUpdated());
+			SByteVM = new SByteVM(a => HasErrorUpdated());
+			Int16VM = new Int16VM(a => HasErrorUpdated());
+			UInt16VM = new UInt16VM(a => HasErrorUpdated());
+			Int32VM = new Int32VM(a => HasErrorUpdated());
+			UInt32VM = new UInt32VM(a => HasErrorUpdated());
+			Int64VM = new Int64VM(a => HasErrorUpdated());
+			UInt64VM = new UInt64VM(a => HasErrorUpdated());
+			SingleVM = new SingleVM(a => HasErrorUpdated());
+			DoubleVM = new DoubleVM(a => HasErrorUpdated());
+			DecimalVM = new DecimalVM(a => HasErrorUpdated());
+			DateTimeVM = new DateTimeVM(a => HasErrorUpdated());
+			TimeSpanVM = new TimeSpanVM(a => HasErrorUpdated());
+			UserTypeVM = new UserTypeVM(ownerModule, canDeserialize);
+			ResourceElementTypeVM = new EnumListVM(resourceElementTypeList, (a, b) => OnResourceElementTypeChanged());
 
-			this.UserTypeVM.PropertyChanged += (s, e) => {
+			UserTypeVM.PropertyChanged += (s, e) => {
 				if (e.PropertyName == nameof(UserTypeVM.HasError))
 					HasErrorUpdated();
 			};
@@ -223,10 +223,10 @@ namespace dnSpy.AsmEditor.Resources {
 		public ResourceElementOptions CreateResourceElementOptions() => CopyTo(new ResourceElementOptions());
 
 		void InitializeFrom(ResourceElementOptions options) {
-			this.Name = options.Name;
+			Name = options.Name;
 			var code = Convert(options.ResourceData.Code);
 			var builtin = options.ResourceData as BuiltInResourceData;
-			this.ResourceElementTypeVM.SelectedItem = code;
+			ResourceElementTypeVM.SelectedItem = code;
 			switch (code) {
 			case ResourceElementType.Null:		break;
 			case ResourceElementType.String:	String = (string)builtin.Data; break;
@@ -265,13 +265,13 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		ResourceElementOptions CopyTo(ResourceElementOptions options) {
-			options.Name = this.Name;
+			options.Name = Name;
 			options.ResourceData = CreateResourceData();
 			return options;
 		}
 
 		IResourceData CreateResourceData() {
-			var code = (ResourceElementType)this.ResourceElementTypeVM.SelectedItem;
+			var code = (ResourceElementType)ResourceElementTypeVM.SelectedItem;
 			switch (code) {
 			case ResourceElementType.Null:		return new BuiltInResourceData((ResourceTypeCode)code, null);
 			case ResourceElementType.String:	return new BuiltInResourceData((ResourceTypeCode)code, String);
@@ -299,7 +299,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		public override bool HasError {
 			get {
-				switch ((ResourceElementType)this.ResourceElementTypeVM.SelectedItem) {
+				switch ((ResourceElementType)ResourceElementTypeVM.SelectedItem) {
 				case ResourceElementType.Null:		break;
 				case ResourceElementType.String:	break;
 				case ResourceElementType.Boolean:	if (BooleanVM.HasError) return true; break;

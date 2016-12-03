@@ -259,9 +259,9 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			public ImageIterator(bool isRandom) {
-				this.filenameIterators = Array.Empty<FilenameIterator>();
-				this.currentFilenameIteratorIndex = 0;
-				this.currentEnumeratorInfo = null;
+				filenameIterators = Array.Empty<FilenameIterator>();
+				currentFilenameIteratorIndex = 0;
+				currentEnumeratorInfo = null;
 				this.isRandom = isRandom;
 			}
 
@@ -432,7 +432,7 @@ namespace dnSpy.BackgroundImage {
 				throw new ArgumentNullException(nameof(backgroundImageSettings));
 			this.themeService = themeService;
 			this.backgroundImageSettings = backgroundImageSettings;
-			this.listeners = new List<IImageSourceServiceListener>();
+			listeners = new List<IImageSourceServiceListener>();
 		}
 
 		void ThemeService_ThemeChangedLowPriority(object sender, ThemeChangedEventArgs e) {

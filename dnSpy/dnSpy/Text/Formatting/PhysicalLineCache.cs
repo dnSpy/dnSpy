@@ -31,7 +31,7 @@ namespace dnSpy.Text.Formatting {
 		public PhysicalLineCache(int maxCacheSize) {
 			if (maxCacheSize < 1)
 				throw new ArgumentOutOfRangeException(nameof(maxCacheSize));
-			this.cache = new List<PhysicalLine>(maxCacheSize);
+			cache = new List<PhysicalLine>(maxCacheSize);
 			this.maxCacheSize = maxCacheSize;
 		}
 

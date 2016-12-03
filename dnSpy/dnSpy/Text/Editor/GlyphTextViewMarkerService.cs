@@ -92,8 +92,8 @@ namespace dnSpy.Text.Editor {
 			int selectedMarkersInDocumentCount;
 
 			public MarkerAndSpanCollection(GlyphTextViewMarkerService owner) {
-				this.allMarkers = new List<IGlyphTextMarkerImpl>();
-				this.inDocMarkers = new Dictionary<IGlyphTextMarkerImpl, Span>();
+				allMarkers = new List<IGlyphTextMarkerImpl>();
+				inDocMarkers = new Dictionary<IGlyphTextMarkerImpl, Span>();
 				this.owner = owner;
 			}
 
@@ -178,17 +178,17 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			this.onRemovedDelegate = OnRemoved;
+			onRemovedDelegate = OnRemoved;
 			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
-			this.TextView = wpfTextView;
-			this.markerLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.GlyphTextMarker);
-			this.markerAndSpanCollection = new MarkerAndSpanCollection(this);
-			this.markerElements = new List<MarkerElement>();
-			this.editorFormatMap = glyphTextMarkerServiceImpl.EditorFormatMapService.GetEditorFormatMap(wpfTextView);
-			this.glyphTextViewMarkerGlyphTagTagger = GlyphTextViewMarkerGlyphTagger.GetOrCreate(this);
-			this.glyphTextViewMarkerGlyphTextMarkerTagTagger = GlyphTextViewMarkerGlyphTextMarkerTagger.GetOrCreate(this);
-			this.glyphTextViewMarkerClassificationTagTagger = GlyphTextViewMarkerClassificationTagger.GetOrCreate(this);
-			this.useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
+			TextView = wpfTextView;
+			markerLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.GlyphTextMarker);
+			markerAndSpanCollection = new MarkerAndSpanCollection(this);
+			markerElements = new List<MarkerElement>();
+			editorFormatMap = glyphTextMarkerServiceImpl.EditorFormatMapService.GetEditorFormatMap(wpfTextView);
+			glyphTextViewMarkerGlyphTagTagger = GlyphTextViewMarkerGlyphTagger.GetOrCreate(this);
+			glyphTextViewMarkerGlyphTextMarkerTagTagger = GlyphTextViewMarkerGlyphTextMarkerTagger.GetOrCreate(this);
+			glyphTextViewMarkerClassificationTagTagger = GlyphTextViewMarkerClassificationTagger.GetOrCreate(this);
+			useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;

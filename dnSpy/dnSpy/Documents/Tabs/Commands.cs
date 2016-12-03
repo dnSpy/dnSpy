@@ -129,7 +129,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentListService = documentListService;
 			this.messageBoxService = messageBoxService;
 			this.documentService = documentService;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.DocListDialog);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.DocListDialog);
 			this.textElementProvider = textElementProvider;
 		}
 

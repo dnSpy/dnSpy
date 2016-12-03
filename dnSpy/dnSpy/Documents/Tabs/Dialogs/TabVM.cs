@@ -51,10 +51,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		public TabVM(TabsVM owner, IDocumentTab tab) {
-			this.Owner = owner;
-			this.Tab = tab;
+			Owner = owner;
+			Tab = tab;
 			var node = tab.Content.Nodes.FirstOrDefault().GetTopNode();
-			this.document = node?.Document;
+			document = node?.Document;
 		}
 	}
 }

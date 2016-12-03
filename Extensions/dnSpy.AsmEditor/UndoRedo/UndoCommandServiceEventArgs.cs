@@ -35,8 +35,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public readonly IUndoObject UndoObject;
 
 		public UndoCommandServiceEventArgs(UndoCommandServiceEventType type, IUndoObject obj) {
-			this.Type = type;
-			this.UndoObject = obj;
+			Type = type;
+			UndoObject = obj;
 		}
 	}
 }

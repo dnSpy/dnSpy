@@ -59,10 +59,10 @@ namespace dnSpy.Controls {
 
 		public WpfCommands(Guid guid) {
 			this.guid = guid;
-			this.uiElements = new List<WeakReference>();
-			this.commandBindings = new List<CommandBinding>();
-			this.inputBindings = new List<InputBinding>();
-			this.addedKeyModifiers = new HashSet<CMKKey>();
+			uiElements = new List<WeakReference>();
+			commandBindings = new List<CommandBinding>();
+			inputBindings = new List<InputBinding>();
+			addedKeyModifiers = new HashSet<CMKKey>();
 		}
 
 		IEnumerable<UIElement> UIElements {

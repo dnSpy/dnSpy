@@ -36,18 +36,18 @@ namespace dnSpy.AsmEditor.Commands {
 		int eventIndex;
 
 		public DeletedEventUpdater(ModuleDocumentNode modNode, EventDef originalEvent) {
-			this.ownerNode = modNode.Context.DocumentTreeView.FindNode(originalEvent);
+			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalEvent);
 			if (ownerNode == null)
 				throw new InvalidOperationException();
-			this.parentNode = ownerNode.TreeNode.Parent.Data;
-			this.ownerType = originalEvent.DeclaringType;
-			this.@event = originalEvent;
+			parentNode = ownerNode.TreeNode.Parent.Data;
+			ownerType = originalEvent.DeclaringType;
+			@event = originalEvent;
 		}
 
 		public void Add() {
 			if (!parentNode.TreeNode.Children.Remove(ownerNode.TreeNode))
 				throw new InvalidOperationException();
-			this.eventIndex = ownerType.Events.IndexOf(@event);
+			eventIndex = ownerType.Events.IndexOf(@event);
 			ownerType.Events.RemoveAt(eventIndex);
 		}
 

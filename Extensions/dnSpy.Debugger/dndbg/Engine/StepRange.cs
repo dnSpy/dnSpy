@@ -38,8 +38,8 @@ namespace dndbg.Engine {
 		/// <param name="start">Start offset relative to the beginning of the method</param>
 		/// <param name="end">End offset (exclusive)</param>
 		public StepRange(uint start, uint end) {
-			this.StartOffset = start;
-			this.EndOffset = end;
+			StartOffset = start;
+			EndOffset = end;
 		}
 	}
 }

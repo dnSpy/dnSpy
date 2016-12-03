@@ -25,8 +25,8 @@ namespace dnSpy.Documents {
 		public readonly DsDocumentInfo Info;
 		public readonly bool IsAutoLoaded;
 		public DocumentToLoad(DsDocumentInfo info, bool isAutoLoaded = false) {
-			this.Info = info;
-			this.IsAutoLoaded = isAutoLoaded;
+			Info = info;
+			IsAutoLoaded = isAutoLoaded;
 		}
 	}
 

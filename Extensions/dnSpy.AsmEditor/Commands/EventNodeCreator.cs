@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public EventNodeCreator(ModuleDocumentNode modNode, TypeNode ownerNode, EventDef @event) {
 			this.ownerNode = ownerNode;
-			this.eventNode = modNode.Context.DocumentTreeView.Create(@event);
+			eventNode = modNode.Context.DocumentTreeView.Create(@event);
 		}
 
 		IEnumerable<MethodDef> GetMethods() {

@@ -40,7 +40,7 @@ namespace dndbg.DotNet {
 		public CorPropertyDef(CorModuleDef readerModule, uint rid, CorTypeDef ownerType) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.ownerType = ownerType;
 		}
 

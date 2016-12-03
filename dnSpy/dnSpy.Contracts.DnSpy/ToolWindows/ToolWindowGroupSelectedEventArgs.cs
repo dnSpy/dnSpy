@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <param name="selected">Selected tab group or null</param>
 		/// <param name="unselected">Unselected tab group or null</param>
 		public ToolWindowGroupSelectedEventArgs(IToolWindowGroup selected, IToolWindowGroup unselected) {
-			this.Selected = selected;
-			this.Unselected = unselected;
+			Selected = selected;
+			Unselected = unselected;
 		}
 	}
 }

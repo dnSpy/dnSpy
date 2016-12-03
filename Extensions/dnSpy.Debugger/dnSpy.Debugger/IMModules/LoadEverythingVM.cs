@@ -46,8 +46,8 @@ namespace dnSpy.Debugger.IMModules {
 
 		public LoadEverythingVM(IEnumerable<ModuleDef> modules) {
 			this.modules = modules.ToArray();
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
 
 			// Make sure the name is shown. Should be removed when the user can cancel since then
 			// the UI will update automatically instead of being frozen.

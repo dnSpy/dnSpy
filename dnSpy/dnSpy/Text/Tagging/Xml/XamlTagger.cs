@@ -47,7 +47,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		public XamlTagger(XamlTaggerClassificationTypes xamlTaggerClassificationTypes)
 			: base(xamlTaggerClassificationTypes) {
 			this.xamlTaggerClassificationTypes = xamlTaggerClassificationTypes;
-			this.xamlAttributeValueClassifier = new XamlAttributeValueClassifier();
+			xamlAttributeValueClassifier = new XamlAttributeValueClassifier();
 		}
 
 		protected override IEnumerable<ITagSpan<IClassificationTag>> GetTags(SnapshotSpan span, ClassificationTag tag) {

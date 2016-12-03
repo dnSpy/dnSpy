@@ -46,8 +46,8 @@ namespace dnSpy.Contracts.Decompiler {
 				throw new ArgumentNullException(nameof(method));
 			if (instruction == null)
 				throw new ArgumentNullException(nameof(instruction));
-			this.Method = method;
-			this.Instruction = instruction;
+			Method = method;
+			Instruction = instruction;
 		}
 
 		/// <summary>

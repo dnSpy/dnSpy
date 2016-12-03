@@ -38,28 +38,28 @@ namespace dnSpy.AsmEditor.Field {
 		}
 
 		public FieldDefOptions(FieldDef field) {
-			this.Attributes = field.Attributes;
-			this.Name = field.Name;
-			this.FieldSig = field.FieldSig;
-			this.FieldOffset = field.FieldOffset;
-			this.MarshalType = field.MarshalType;
-			this.RVA = field.RVA;
-			this.InitialValue = field.InitialValue;
-			this.ImplMap = field.ImplMap;
-			this.Constant = field.Constant;
-			this.CustomAttributes.AddRange(field.CustomAttributes);
+			Attributes = field.Attributes;
+			Name = field.Name;
+			FieldSig = field.FieldSig;
+			FieldOffset = field.FieldOffset;
+			MarshalType = field.MarshalType;
+			RVA = field.RVA;
+			InitialValue = field.InitialValue;
+			ImplMap = field.ImplMap;
+			Constant = field.Constant;
+			CustomAttributes.AddRange(field.CustomAttributes);
 		}
 
 		public FieldDef CopyTo(FieldDef field) {
-			field.Attributes = this.Attributes;
-			field.Name = this.Name ?? UTF8String.Empty;
-			field.FieldSig = this.FieldSig;
-			field.FieldOffset = this.FieldOffset;
-			field.MarshalType = this.MarshalType;
-			field.RVA = this.RVA;
-			field.InitialValue = this.InitialValue;
-			field.ImplMap = this.ImplMap;
-			field.Constant = this.Constant;
+			field.Attributes = Attributes;
+			field.Name = Name ?? UTF8String.Empty;
+			field.FieldSig = FieldSig;
+			field.FieldOffset = FieldOffset;
+			field.MarshalType = MarshalType;
+			field.RVA = RVA;
+			field.InitialValue = InitialValue;
+			field.ImplMap = ImplMap;
+			field.Constant = Constant;
 			field.CustomAttributes.Clear();
 			field.CustomAttributes.AddRange(CustomAttributes);
 			return field;

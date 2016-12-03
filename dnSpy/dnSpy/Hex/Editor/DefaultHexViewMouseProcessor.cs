@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Editor {
 			if (wpfHexView == null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			this.wpfHexView = wpfHexView;
-			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfHexView);
+			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfHexView);
 		}
 
 		HexMouseLocation GetLocation(MouseEventArgs e) => HexMouseLocation.Create(wpfHexView, e, insertionPosition: insertionPosition);

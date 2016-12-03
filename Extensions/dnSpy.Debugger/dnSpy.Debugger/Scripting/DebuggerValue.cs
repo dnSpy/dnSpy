@@ -78,25 +78,25 @@ namespace dnSpy.Debugger.Scripting {
 
 		public DebugHandleType HandleType => debugger.Dispatcher.UI(() => (DebugHandleType)this.CorValue.HandleType);
 		public bool HasBaseIndicies => debugger.Dispatcher.UI(() => this.CorValue.HasBaseIndicies);
-		public bool IsArray => (this.vflags & VFlags.Array) != 0;
-		public bool IsBox => (this.vflags & VFlags.Box) != 0;
-		public bool IsComObject => (this.vflags & VFlags.ComObject) != 0;
-		public bool IsContext => (this.vflags & VFlags.Context) != 0;
-		public bool IsExceptionObject => (this.vflags & VFlags.ExObject) != 0;
-		public bool CanReadWrite => (this.vflags & VFlags.Generic) != 0;
-		public bool IsHandle => (this.vflags & VFlags.Handle) != 0;
-		public bool IsHeap => (this.vflags & VFlags.Heap) != 0;
+		public bool IsArray => (vflags & VFlags.Array) != 0;
+		public bool IsBox => (vflags & VFlags.Box) != 0;
+		public bool IsComObject => (vflags & VFlags.ComObject) != 0;
+		public bool IsContext => (vflags & VFlags.Context) != 0;
+		public bool IsExceptionObject => (vflags & VFlags.ExObject) != 0;
+		public bool CanReadWrite => (vflags & VFlags.Generic) != 0;
+		public bool IsHandle => (vflags & VFlags.Handle) != 0;
+		public bool IsHeap => (vflags & VFlags.Heap) != 0;
 		public bool IsNeutered => debugger.Dispatcher.UI(() => this.CorValue.IsNeutered);
-		public bool IsNull => (this.vflags & VFlags.Null) != 0;
-		public bool IsObject => (this.vflags & VFlags.Object) != 0;
-		public bool IsReference => (this.vflags & VFlags.Reference) != 0;
-		public bool IsString => (this.vflags & VFlags.String) != 0;
-		public bool IsValueClass => (this.vflags & VFlags.ValueClass) != 0;
+		public bool IsNull => (vflags & VFlags.Null) != 0;
+		public bool IsObject => (vflags & VFlags.Object) != 0;
+		public bool IsReference => (vflags & VFlags.Reference) != 0;
+		public bool IsString => (vflags & VFlags.String) != 0;
+		public bool IsValueClass => (vflags & VFlags.ValueClass) != 0;
 		public uint Rank => debugger.Dispatcher.UI(() => this.CorValue.Rank);
 
 		public ulong ReferenceAddress {
 			get { return debugger.Dispatcher.UI(() => CorValue.ReferenceAddress); }
-			set { debugger.Dispatcher.UI(() => this.CorValue.ReferenceAddress = value); }
+			set { debugger.Dispatcher.UI(() => CorValue.ReferenceAddress = value); }
 		}
 
 		public ulong Size => size;
@@ -125,40 +125,40 @@ namespace dnSpy.Debugger.Scripting {
 		public DebuggerValue(Debugger debugger, CorValue value) {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
-			this.CorValue = value;
-			this.hashCode = value.GetHashCode();
-			this.address = value.Address;
-			this.size = value.Size;
-			this.elementType = (CorElementType)value.ElementType;
-			this.vflags = 0;
+			CorValue = value;
+			hashCode = value.GetHashCode();
+			address = value.Address;
+			size = value.Size;
+			elementType = (CorElementType)value.ElementType;
+			vflags = 0;
 			if (value.IsGeneric)
-				this.vflags |= VFlags.Generic;
+				vflags |= VFlags.Generic;
 			if (value.IsReference) {
-				this.vflags |= VFlags.Reference;
+				vflags |= VFlags.Reference;
 				if (value.IsNull)
-					this.vflags |= VFlags.Null;
+					vflags |= VFlags.Null;
 			}
 			if (value.IsHandle)
-				this.vflags |= VFlags.Handle;
+				vflags |= VFlags.Handle;
 			if (value.IsArray)
-				this.vflags |= VFlags.Array;
+				vflags |= VFlags.Array;
 			if (value.IsBox)
-				this.vflags |= VFlags.Box;
+				vflags |= VFlags.Box;
 			if (value.IsString)
-				this.vflags |= VFlags.String;
+				vflags |= VFlags.String;
 			if (value.IsObject) {
-				this.vflags |= VFlags.Object;
+				vflags |= VFlags.Object;
 				if (value.IsValueClass)
-					this.vflags |= VFlags.ValueClass;
+					vflags |= VFlags.ValueClass;
 			}
 			if (value.IsContext)
-				this.vflags |= VFlags.Context;
+				vflags |= VFlags.Context;
 			if (value.IsComObject)
-				this.vflags |= VFlags.ComObject;
+				vflags |= VFlags.ComObject;
 			if (value.IsExceptionObject)
-				this.vflags |= VFlags.ExObject;
+				vflags |= VFlags.ExObject;
 			if (value.IsHeap)
-				this.vflags |= VFlags.Heap;
+				vflags |= VFlags.Heap;
 		}
 
 		public IDebuggerValue CreateHandle(DebugHandleType type) => debugger.Dispatcher.UI(() => {
@@ -214,7 +214,7 @@ namespace dnSpy.Debugger.Scripting {
 			IDebuggerValue valueTmp = null;
 			bool res = debugger.Dispatcher.UI(() => {
 				CorValue corValue;
-				bool res2 = this.CorValue.GetNullableValue(out corValue);
+				bool res2 = CorValue.GetNullableValue(out corValue);
 				valueTmp = corValue == null ? null : new DebuggerValue(debugger, corValue);
 				return res2;
 			});

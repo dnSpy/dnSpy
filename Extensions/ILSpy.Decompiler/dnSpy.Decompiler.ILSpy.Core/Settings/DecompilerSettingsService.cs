@@ -34,8 +34,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		static DecompilerSettingsService __instance_DONT_USE;
 
 		protected DecompilerSettingsService() {
-			this.CSharpVBDecompilerSettings = new CSharpVBDecompilerSettings();
-			this.ILDecompilerSettings = new ILDecompilerSettings();
+			CSharpVBDecompilerSettings = new CSharpVBDecompilerSettings();
+			ILDecompilerSettings = new ILDecompilerSettings();
 		}
 
 		public CSharpVBDecompilerSettings CSharpVBDecompilerSettings { get; protected set; }

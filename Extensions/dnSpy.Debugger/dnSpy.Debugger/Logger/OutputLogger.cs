@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Logger {
 		[ImportingConstructor]
 		OutputLogger(IOutputService outputService, ITheDebugger theDebugger, IOutputLoggerSettings outputLoggerSettings, IContentTypeRegistryService contentTypeRegistryService) {
 			this.outputService = outputService;
-			this.textPane = outputService.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, contentTypeRegistryService.GetContentType(ContentTypes.OutputDebug));
+			textPane = outputService.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, contentTypeRegistryService.GetContentType(ContentTypes.OutputDebug));
 			this.outputLoggerSettings = outputLoggerSettings;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}
@@ -100,12 +100,12 @@ namespace dnSpy.Debugger.Logger {
 				this.dbg = dbg;
 
 				Debug.Assert(dbg.Processes.Length == 1);
-				this.debuggedProcess = dbg.Processes.FirstOrDefault();
+				debuggedProcess = dbg.Processes.FirstOrDefault();
 
-				if (this.debuggedProcess != null) {
+				if (debuggedProcess != null) {
 					const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
-					this.hProcess_debuggee = NativeMethods.OpenProcess2(PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)this.debuggedProcess.ProcessId);
-					Debug.Assert(this.hProcess_debuggee != IntPtr.Zero, string.Format("OpenProcess() failed: 0x{0:X8}", Marshal.GetLastWin32Error()));
+					hProcess_debuggee = NativeMethods.OpenProcess2(PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)debuggedProcess.ProcessId);
+					Debug.Assert(hProcess_debuggee != IntPtr.Zero, string.Format("OpenProcess() failed: 0x{0:X8}", Marshal.GetLastWin32Error()));
 				}
 			}
 

@@ -60,8 +60,8 @@ namespace dnSpy.Debugger.Exceptions {
 		public IExceptionContext Context { get; }
 
 		public ExceptionVM(ExceptionInfo info, IExceptionContext context) {
-			this.ExceptionInfo = info;
-			this.Context = context;
+			ExceptionInfo = info;
+			Context = context;
 		}
 
 		internal void RefreshThemeFields() => OnPropertyChanged(nameof(NameObject));

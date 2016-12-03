@@ -39,32 +39,32 @@ namespace dnSpy.Contracts.Search {
 		}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public virtual DocumentTreeNodeFilterResult GetResult(FieldDef field) => this.filter.GetResult(field);
-		public virtual DocumentTreeNodeFilterResult GetResult(PropertyDef prop) => this.filter.GetResult(prop);
-		public virtual DocumentTreeNodeFilterResult GetResult(EventDef evt) => this.filter.GetResult(evt);
-		public virtual DocumentTreeNodeFilterResult GetResult(MethodDef method) => this.filter.GetResult(method);
-		public virtual DocumentTreeNodeFilterResult GetResult(TypeDef type) => this.filter.GetResult(type);
-		public virtual DocumentTreeNodeFilterResult GetResult(ModuleRef modRef) => this.filter.GetResult(modRef);
-		public virtual DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode node) => this.filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode node) => this.filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode node) => this.filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(ResourceElementNode node) => this.filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(ResourceNode node) => this.filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode node) => this.filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(DerivedTypeNode node) => this.filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(BaseTypeNode node) => this.filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(AssemblyRef asmRef) => this.filter.GetResult(asmRef);
-		public virtual DocumentTreeNodeFilterResult GetResult(ModuleDef mod) => this.filter.GetResult(mod);
-		public virtual DocumentTreeNodeFilterResult GetResult(AssemblyDef asm) => this.filter.GetResult(asm);
-		public virtual DocumentTreeNodeFilterResult GetResult(MethodDef method, ParamDef param) => this.filter.GetResult(method, param);
-		public virtual DocumentTreeNodeFilterResult GetResult(MethodDef method, Local local) => this.filter.GetResult(method, local);
-		public virtual DocumentTreeNodeFilterResult GetResult(string ns, IDsDocument owner) => this.filter.GetResult(ns, owner);
-		public virtual DocumentTreeNodeFilterResult GetResultBody(MethodDef method) => this.filter.GetResultBody(method);
-		public virtual DocumentTreeNodeFilterResult GetResultLocals(MethodDef method) => this.filter.GetResultLocals(method);
-		public virtual DocumentTreeNodeFilterResult GetResultOther(DocumentTreeNodeData node) => this.filter.GetResultOther(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(IDsDocument document) => this.filter.GetResult(document);
-		public virtual DocumentTreeNodeFilterResult GetResultParamDefs(MethodDef method) => this.filter.GetResultParamDefs(method);
-		public virtual DocumentTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) => this.filter.GetResultAttributes(hca);
+		public virtual DocumentTreeNodeFilterResult GetResult(FieldDef field) => filter.GetResult(field);
+		public virtual DocumentTreeNodeFilterResult GetResult(PropertyDef prop) => filter.GetResult(prop);
+		public virtual DocumentTreeNodeFilterResult GetResult(EventDef evt) => filter.GetResult(evt);
+		public virtual DocumentTreeNodeFilterResult GetResult(MethodDef method) => filter.GetResult(method);
+		public virtual DocumentTreeNodeFilterResult GetResult(TypeDef type) => filter.GetResult(type);
+		public virtual DocumentTreeNodeFilterResult GetResult(ModuleRef modRef) => filter.GetResult(modRef);
+		public virtual DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(ResourceElementNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(ResourceNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(DerivedTypeNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(BaseTypeNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(AssemblyRef asmRef) => filter.GetResult(asmRef);
+		public virtual DocumentTreeNodeFilterResult GetResult(ModuleDef mod) => filter.GetResult(mod);
+		public virtual DocumentTreeNodeFilterResult GetResult(AssemblyDef asm) => filter.GetResult(asm);
+		public virtual DocumentTreeNodeFilterResult GetResult(MethodDef method, ParamDef param) => filter.GetResult(method, param);
+		public virtual DocumentTreeNodeFilterResult GetResult(MethodDef method, Local local) => filter.GetResult(method, local);
+		public virtual DocumentTreeNodeFilterResult GetResult(string ns, IDsDocument owner) => filter.GetResult(ns, owner);
+		public virtual DocumentTreeNodeFilterResult GetResultBody(MethodDef method) => filter.GetResultBody(method);
+		public virtual DocumentTreeNodeFilterResult GetResultLocals(MethodDef method) => filter.GetResultLocals(method);
+		public virtual DocumentTreeNodeFilterResult GetResultOther(DocumentTreeNodeData node) => filter.GetResultOther(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(IDsDocument document) => filter.GetResult(document);
+		public virtual DocumentTreeNodeFilterResult GetResultParamDefs(MethodDef method) => filter.GetResultParamDefs(method);
+		public virtual DocumentTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) => filter.GetResultAttributes(hca);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

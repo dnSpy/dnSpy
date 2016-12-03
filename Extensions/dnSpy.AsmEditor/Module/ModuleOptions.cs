@@ -45,40 +45,40 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public ModuleOptions(ModuleDef module) {
-			this.Mvid = module.Mvid;
-			this.EncId = module.EncId;
-			this.EncBaseId = module.EncBaseId;
-			this.Name = module.Name;
-			this.Kind = module.Kind;
-			this.Characteristics = module.Characteristics;
-			this.DllCharacteristics = module.DllCharacteristics;
-			this.RuntimeVersion = module.RuntimeVersion;
-			this.Machine = module.Machine;
-			this.Cor20HeaderFlags = module.Cor20HeaderFlags;
-			this.Cor20HeaderRuntimeVersion = module.Cor20HeaderRuntimeVersion;
-			this.TablesHeaderVersion = module.TablesHeaderVersion;
-			this.ManagedEntryPoint = module.ManagedEntryPoint;
-			this.NativeEntryPoint = module.NativeEntryPoint;
-			this.CustomAttributes.AddRange(module.CustomAttributes);
+			Mvid = module.Mvid;
+			EncId = module.EncId;
+			EncBaseId = module.EncBaseId;
+			Name = module.Name;
+			Kind = module.Kind;
+			Characteristics = module.Characteristics;
+			DllCharacteristics = module.DllCharacteristics;
+			RuntimeVersion = module.RuntimeVersion;
+			Machine = module.Machine;
+			Cor20HeaderFlags = module.Cor20HeaderFlags;
+			Cor20HeaderRuntimeVersion = module.Cor20HeaderRuntimeVersion;
+			TablesHeaderVersion = module.TablesHeaderVersion;
+			ManagedEntryPoint = module.ManagedEntryPoint;
+			NativeEntryPoint = module.NativeEntryPoint;
+			CustomAttributes.AddRange(module.CustomAttributes);
 		}
 
 		public ModuleDef CopyTo(ModuleDef module) {
-			module.Mvid = this.Mvid;
-			module.EncId = this.EncId;
-			module.EncBaseId = this.EncBaseId;
-			module.Name = this.Name ?? UTF8String.Empty;
-			module.Kind = this.Kind;
-			module.Characteristics = this.Characteristics;
-			module.DllCharacteristics = this.DllCharacteristics;
-			module.RuntimeVersion = this.RuntimeVersion;
-			module.Machine = this.Machine;
-			module.Cor20HeaderFlags = this.Cor20HeaderFlags;
-			module.Cor20HeaderRuntimeVersion = this.Cor20HeaderRuntimeVersion;
-			module.TablesHeaderVersion = this.TablesHeaderVersion;
+			module.Mvid = Mvid;
+			module.EncId = EncId;
+			module.EncBaseId = EncBaseId;
+			module.Name = Name ?? UTF8String.Empty;
+			module.Kind = Kind;
+			module.Characteristics = Characteristics;
+			module.DllCharacteristics = DllCharacteristics;
+			module.RuntimeVersion = RuntimeVersion;
+			module.Machine = Machine;
+			module.Cor20HeaderFlags = Cor20HeaderFlags;
+			module.Cor20HeaderRuntimeVersion = Cor20HeaderRuntimeVersion;
+			module.TablesHeaderVersion = TablesHeaderVersion;
 			if (ManagedEntryPoint != null)
-				module.ManagedEntryPoint = this.ManagedEntryPoint;
+				module.ManagedEntryPoint = ManagedEntryPoint;
 			else
-				module.NativeEntryPoint = this.NativeEntryPoint;
+				module.NativeEntryPoint = NativeEntryPoint;
 			module.CustomAttributes.Clear();
 			module.CustomAttributes.AddRange(CustomAttributes);
 			return module;

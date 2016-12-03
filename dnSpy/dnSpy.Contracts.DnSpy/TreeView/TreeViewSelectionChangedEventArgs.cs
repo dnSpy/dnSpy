@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.TreeView {
 		/// <param name="added">Added nodes or null</param>
 		/// <param name="removed">Removed nodes or null</param>
 		public TreeViewSelectionChangedEventArgs(TreeNodeData[] added, TreeNodeData[] removed) {
-			this.Added = added ?? Array.Empty<TreeNodeData>();
-			this.Removed = removed ?? Array.Empty<TreeNodeData>();
+			Added = added ?? Array.Empty<TreeNodeData>();
+			Removed = removed ?? Array.Empty<TreeNodeData>();
 		}
 	}
 }

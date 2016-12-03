@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="value">Value</param>
 		public Box(object value) {
-			this.Value = value;
+			Value = value;
 		}
 	}
 }

@@ -59,10 +59,10 @@ namespace dnSpy.TreeView {
 
 		public TreeNodeImpl(TreeViewImpl treeViewImpl, TreeNodeData data) {
 			Debug.Assert(data.TreeNode == null);
-			this.TreeView = treeViewImpl;
-			this.nodeList = new SharpTreeNodeChildrenList(this);
-			this.Data = data;
-			this.Data.TreeNode = this;
+			TreeView = treeViewImpl;
+			nodeList = new SharpTreeNodeChildrenList(this);
+			Data = data;
+			Data.TreeNode = this;
 		}
 
 		public void AddChild(ITreeNode node) => TreeView.AddSorted(this, node);

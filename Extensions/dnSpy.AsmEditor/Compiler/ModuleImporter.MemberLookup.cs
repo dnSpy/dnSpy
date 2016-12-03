@@ -45,13 +45,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			public MemberLookup(ImportSigComparer comparer) {
-				this.properties = new Dictionary<PropertyDef, PropertyDef>(new ImportPropertyEqualityComparer(comparer));
-				this.events = new Dictionary<EventDef, EventDef>(new ImportEventEqualityComparer(comparer));
-				this.methods = new Dictionary<MethodDef, MethodDef>(new ImportMethodEqualityComparer(comparer));
-				this.fields = new Dictionary<FieldDef, FieldDef>(new ImportFieldEqualityComparer(comparer));
-				this.methodOverrides = new Dictionary<IMethodDefOrRef, MethodAndOverride>(new ImportMethodEqualityComparer(comparer));
+				properties = new Dictionary<PropertyDef, PropertyDef>(new ImportPropertyEqualityComparer(comparer));
+				events = new Dictionary<EventDef, EventDef>(new ImportEventEqualityComparer(comparer));
+				methods = new Dictionary<MethodDef, MethodDef>(new ImportMethodEqualityComparer(comparer));
+				fields = new Dictionary<FieldDef, FieldDef>(new ImportFieldEqualityComparer(comparer));
+				methodOverrides = new Dictionary<IMethodDefOrRef, MethodAndOverride>(new ImportMethodEqualityComparer(comparer));
 				this.comparer = comparer;
-				this.targetType = null;
+				targetType = null;
 			}
 
 			public void Initialize(TypeDef targetType) {

@@ -87,7 +87,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			this.docFactory = docFactory;
 			this.roslynDocumentChangedService = roslynDocumentChangedService;
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
-			this.documents = new List<RoslynCodeDocument>();
+			documents = new List<RoslynCodeDocument>();
 		}
 
 		public ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {

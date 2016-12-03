@@ -39,8 +39,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		[ImportingConstructor]
 		BreakpointMarker(IBreakpointService breakpointService, IGlyphTextMarkerService glyphTextMarkerService, IClassificationTypeRegistryService classificationTypeRegistryService, ILCodeBreakpointGlyphTextMarkerHandler ilCodeBreakpointGlyphTextMarkerHandler) {
 			this.glyphTextMarkerService = glyphTextMarkerService;
-			this.classificationTypeEnabledBreakpoint = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement);
-			this.toMethodMarkers = new Dictionary<ILCodeBreakpoint, IGlyphTextMethodMarker>();
+			classificationTypeEnabledBreakpoint = classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.BreakpointStatement);
+			toMethodMarkers = new Dictionary<ILCodeBreakpoint, IGlyphTextMethodMarker>();
 			this.ilCodeBreakpointGlyphTextMarkerHandler = ilCodeBreakpointGlyphTextMarkerHandler;
 			breakpointService.BreakpointsAdded += BreakpointService_BreakpointsAdded;
 			breakpointService.BreakpointsRemoved += BreakpointService_BreakpointsRemoved;

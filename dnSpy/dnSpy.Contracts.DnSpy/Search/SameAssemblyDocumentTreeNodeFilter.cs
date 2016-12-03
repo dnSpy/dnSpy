@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="filter">Filter</param>
 		public SameAssemblyDocumentTreeNodeFilter(ModuleDef allowedMod, IDocumentTreeNodeFilter filter)
 			: base(filter) {
-			this.allowedAsm = allowedMod.Assembly;
+			allowedAsm = allowedMod.Assembly;
 			this.allowedMod = allowedMod;
 		}
 

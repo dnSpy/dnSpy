@@ -60,7 +60,7 @@ namespace dnSpy.Text.Editor {
 			this.visualSpan = visualSpan;
 			this.style = style;
 			this.content = content;
-			this.popup = new Popup {
+			popup = new Popup {
 				PlacementTarget = wpfTextView.VisualElement,
 				Placement = PlacementMode.Relative,
 				Visibility = Visibility.Collapsed,

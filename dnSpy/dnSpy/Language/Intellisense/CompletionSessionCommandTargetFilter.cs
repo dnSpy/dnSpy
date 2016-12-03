@@ -34,7 +34,7 @@ namespace dnSpy.Language.Intellisense {
 			if (completionSession == null)
 				throw new ArgumentNullException(nameof(completionSession));
 			this.completionSession = completionSession;
-			this.dsWpfTextView = completionSession.TextView as IDsWpfTextView;
+			dsWpfTextView = completionSession.TextView as IDsWpfTextView;
 			Debug.Assert(dsWpfTextView != null);
 
 			dsWpfTextView?.CommandTarget.AddFilter(this, CommandTargetFilterOrder.IntellisenseDefaultStatmentCompletion);

@@ -26,7 +26,7 @@ namespace dndbg.Engine {
 
 		public ILCodeBreakpointConditionContext(DnDebugger debugger, DnILCodeBreakpoint bp)
 			: base(debugger) {
-			this.ILCodeBreakpoint = bp;
+			ILCodeBreakpoint = bp;
 		}
 	}
 
@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 
 		internal DnILCodeBreakpoint(DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond)
 			: base(module, token, offset) {
-			this.Condition = cond ?? defaultCond;
+			Condition = cond ?? defaultCond;
 		}
 		static readonly Func<ILCodeBreakpointConditionContext, bool> defaultCond = a => true;
 

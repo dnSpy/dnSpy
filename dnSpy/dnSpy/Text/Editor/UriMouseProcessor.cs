@@ -65,7 +65,7 @@ namespace dnSpy.Text.Editor {
 			this.wpfTextView = wpfTextView;
 			this.messageBoxService = messageBoxService;
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.origCursor = wpfTextView.VisualElement.Cursor;
+			origCursor = wpfTextView.VisualElement.Cursor;
 			wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
 			wpfTextView.VisualElement.PreviewKeyUp += VisualElement_PreviewKeyUp;
 			wpfTextView.Closed += WpfTextView_Closed;

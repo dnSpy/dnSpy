@@ -147,13 +147,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public MethodSigCreatorVM(MethodSigCreatorOptions options) {
 			this.options = options.Clone();
-			this.title = options.TypeSigCreatorOptions.Title;
-			this.ParametersCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
-			this.ParametersCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
-			this.SentinelCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
-			this.SentinelCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
-			this.SentinelCreateTypeSigArray.IsEnabled = CanHaveSentinel;
-			this.GenericParameterCount = new UInt32VM(0, a => {
+			title = options.TypeSigCreatorOptions.Title;
+			ParametersCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
+			ParametersCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
+			SentinelCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
+			SentinelCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
+			SentinelCreateTypeSigArray.IsEnabled = CanHaveSentinel;
+			GenericParameterCount = new UInt32VM(0, a => {
 				HasErrorUpdated();
 				OnPropertyChanged(nameof(SignatureFullName));
 				if (GenericParameterCount != null && !GenericParameterCount.HasError)
@@ -162,7 +162,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
 				Max = ModelUtils.COMPRESSED_UINT32_MAX,
 			};
-			this.MethodCallingConv = new EnumListVM(methodCallingConvList, (a, b) => {
+			MethodCallingConv = new EnumListVM(methodCallingConvList, (a, b) => {
 				if (!IsMethodSig)
 					throw new InvalidOperationException();
 				CallingConvention = (CallingConvention & ~dnlib.DotNet.CallingConvention.Mask) |

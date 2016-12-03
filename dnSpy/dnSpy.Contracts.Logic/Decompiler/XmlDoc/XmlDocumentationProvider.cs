@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			{
 				if (size <= 0)
 					throw new ArgumentOutOfRangeException(nameof(size), size, "Value must be positive");
-				this.entries = new KeyValuePair<string, string>[size];
+				entries = new KeyValuePair<string, string>[size];
 			}
 			
 			internal bool TryGet(string key, out string value)
@@ -86,11 +86,11 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			
 			internal IndexEntry(int hashCode, int positionInFile)
 			{
-				this.HashCode = hashCode;
-				this.PositionInFile = positionInFile;
+				HashCode = hashCode;
+				PositionInFile = positionInFile;
 			}
 
-			public int CompareTo(IndexEntry other) => this.HashCode.CompareTo(other.HashCode);
+			public int CompareTo(IndexEntry other) => HashCode.CompareTo(other.HashCode);
 		}
 		
 		[NonSerialized]
@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					xmlReader.MoveToContent();
 					if (string.IsNullOrEmpty(xmlReader.GetAttribute("redirect"))) {
 						this.fileName = fileName;
-						this.encoding = GetEncoding(xmlReader.Encoding);
+						encoding = GetEncoding(xmlReader.Encoding);
 						ReadXmlDoc(xmlReader);
 					} else {
 						string redirectionTarget = GetRedirectionTarget(fileName, xmlReader.GetAttribute("redirect"));
@@ -155,7 +155,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 									redirectedXmlReader.XmlResolver = null; // no DTD resolving
 									redirectedXmlReader.MoveToContent();
 									this.fileName = redirectionTarget;
-									this.encoding = GetEncoding(redirectedXmlReader.Encoding);
+									encoding = GetEncoding(redirectedXmlReader.Encoding);
 									ReadXmlDoc(redirectedXmlReader);
 								}
 							}
@@ -247,7 +247,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					}
 				}
 				indexList.Sort();
-				this.index = indexList.ToArray(); // volatile write
+				index = indexList.ToArray(); // volatile write
 			}
 		}
 		
@@ -263,7 +263,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			
 			public LinePositionMapper(FileStream fs, Encoding encoding)
 			{
-				this.decoder = encoding.GetDecoder();
+				decoder = encoding.GetDecoder();
 				this.fs = fs;
 			}
 			
@@ -403,10 +403,10 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				}
 			} catch (IOException) {
 				// Ignore errors on reload; IEntity.Documentation callers aren't prepared to handle exceptions
-				this.index = new IndexEntry[0]; // clear index to avoid future load attempts
+				index = new IndexEntry[0]; // clear index to avoid future load attempts
 				return null;
 			} catch (XmlException) {
-				this.index = new IndexEntry[0]; // clear index to avoid future load attempts
+				index = new IndexEntry[0]; // clear index to avoid future load attempts
 				return null;				
 			}
 			return GetDocumentation(key, allowReload: false); // prevent infinite reload loops

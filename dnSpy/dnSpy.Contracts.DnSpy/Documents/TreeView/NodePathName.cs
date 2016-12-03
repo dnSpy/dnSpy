@@ -43,8 +43,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="name">Extra data if needed or null</param>
 		public NodePathName(Guid guid, string name = null) {
 			Debug.Assert(guid != System.Guid.Empty);
-			this.Guid = guid;
-			this.Name = name ?? string.Empty;
+			Guid = guid;
+			Name = name ?? string.Empty;
 		}
 
 		/// <summary>

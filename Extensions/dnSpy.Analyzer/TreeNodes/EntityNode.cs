@@ -33,20 +33,20 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public override bool HandleAssemblyListChanged(IDsDocument[] removedAssemblies, IDsDocument[] addedAssemblies) {
 			foreach (var asm in removedAssemblies) {
-				if (this.Member.Module == asm.ModuleDef)
+				if (Member.Module == asm.ModuleDef)
 					return false; // remove this node
 			}
-			HandleAssemblyListChanged(this.TreeNode, removedAssemblies, addedAssemblies);
+			HandleAssemblyListChanged(TreeNode, removedAssemblies, addedAssemblies);
 			return true;
 		}
 
 		public override bool HandleModelUpdated(IDsDocument[] documents) {
-			if (this.Member.Module == null)
+			if (Member.Module == null)
 				return false; // remove this node
-			if ((this.Member is IField || this.Member is IMethod || this.Member is PropertyDef || this.Member is EventDef) &&
-				this.Member.DeclaringType == null)
+			if ((Member is IField || Member is IMethod || Member is PropertyDef || Member is EventDef) &&
+				Member.DeclaringType == null)
 				return false;
-			HandleModelUpdated(this.TreeNode, documents);
+			HandleModelUpdated(TreeNode, documents);
 			return true;
 		}
 	}

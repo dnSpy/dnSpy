@@ -38,7 +38,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 				throw new ArgumentNullException(nameof(textClassifierAggregatorService));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			this.classifierAggregator = textClassifierAggregatorService.Create(contentType);
+			classifierAggregator = textClassifierAggregatorService.Create(contentType);
 			this.classificationFormatMap = classificationFormatMap;
 		}
 

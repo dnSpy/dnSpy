@@ -38,8 +38,8 @@ namespace dnSpy.Debugger.Exceptions {
 		public object Argument { get; }
 
 		public ExceptionServiceEventArgs(ExceptionServiceEventType eventType, object arg = null) {
-			this.EventType = eventType;
-			this.Argument = arg;
+			EventType = eventType;
+			Argument = arg;
 		}
 	}
 

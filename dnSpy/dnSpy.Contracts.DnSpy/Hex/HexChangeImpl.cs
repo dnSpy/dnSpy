@@ -50,8 +50,8 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentNullException(nameof(oldData));
 			if (newData == null)
 				throw new ArgumentNullException(nameof(newData));
-			this.oldPosition = position;
-			this.newPosition = position;
+			oldPosition = position;
+			newPosition = position;
 			this.oldData = oldData;
 			this.newData = newData;
 		}

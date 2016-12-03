@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <param name="added">true if it was added</param>
 		/// <param name="tabGroup">Tab group</param>
 		public ToolWindowGroupCollectionChangedEventArgs(bool added, IToolWindowGroup tabGroup) {
-			this.Added = added;
-			this.TabGroup = tabGroup;
+			Added = added;
+			TabGroup = tabGroup;
 		}
 	}
 }

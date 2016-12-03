@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public PropertyNodeCreator(ModuleDocumentNode modNode, TypeNode ownerNode, PropertyDef property) {
 			this.ownerNode = ownerNode;
-			this.propNode = modNode.Context.DocumentTreeView.Create(property);
+			propNode = modNode.Context.DocumentTreeView.Create(property);
 		}
 
 		IEnumerable<MethodDef> GetMethods() {

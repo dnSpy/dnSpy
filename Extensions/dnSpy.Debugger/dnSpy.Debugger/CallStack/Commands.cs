@@ -67,8 +67,8 @@ namespace dnSpy.Debugger.CallStack {
 		public ICallStackFrameVM[] SelectedItems { get; }
 
 		public CallStackCtxMenuContext(ICallStackVM vm, ICallStackFrameVM[] selItems) {
-			this.VM = vm;
-			this.SelectedItems = selItems;
+			VM = vm;
+			SelectedItems = selItems;
 		}
 	}
 

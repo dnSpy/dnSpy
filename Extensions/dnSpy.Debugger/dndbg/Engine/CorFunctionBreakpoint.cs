@@ -55,9 +55,9 @@ namespace dndbg.Engine {
 
 		public CorFunctionBreakpoint(ICorDebugFunctionBreakpoint functionBreakpoint)
 			: base(functionBreakpoint) {
-			int hr = functionBreakpoint.GetOffset(out this.offset);
+			int hr = functionBreakpoint.GetOffset(out offset);
 			if (hr < 0)
-				this.offset = 0;
+				offset = 0;
 		}
 
 		public static bool operator ==(CorFunctionBreakpoint a, CorFunctionBreakpoint b) {

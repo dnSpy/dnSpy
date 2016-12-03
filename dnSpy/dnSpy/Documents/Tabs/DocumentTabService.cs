@@ -157,7 +157,7 @@ namespace dnSpy.Documents.Tabs {
 
 		[ImportingConstructor]
 		DocumentTabService(IDocumentTabUIContextLocatorProvider documentTabUIContextLocatorProvider, DocumentTreeView documentTreeView, ITabServiceProvider tabServiceProvider, IDocumentTabContentFactoryService documentTabContentFactoryService, IDocumentTabServiceSettings documentTabServiceSettings, IWpfFocusService wpfFocusService, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>> referenceDocumentTabContentProviders, [ImportMany] IEnumerable<Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>> defaultDocumentTabContentProviders, [ImportMany] IEnumerable<Lazy<IReferenceHandler, IReferenceHandlerMetadata>> referenceHandlers) {
-			this.Settings = documentTabServiceSettings;
+			Settings = documentTabServiceSettings;
 			this.documentTabUIContextLocatorProvider = documentTabUIContextLocatorProvider;
 			this.documentTabContentFactoryService = documentTabContentFactoryService;
 			this.wpfFocusService = wpfFocusService;
@@ -168,16 +168,16 @@ namespace dnSpy.Documents.Tabs {
 			var tvElem = documentTreeView.TreeView.UIObject;
 			tvElem.IsVisibleChanged += TreeView_IsVisibleChanged;
 			isTreeViewVisible = tvElem.IsVisible;
-			this.DocumentTreeView = documentTreeView;
-			this.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
-			this.DocumentTreeView.SelectionChanged += DocumentTreeView_SelectionChanged;
-			this.DocumentTreeView.NodesTextChanged += DocumentTreeView_NodesTextChanged;
-			this.DocumentTreeView.NodeActivated += DocumentTreeView_NodeActivated;
-			this.DocumentTreeView.TreeView.NodeRemoved += TreeView_NodeRemoved;
-			this.tabService = tabServiceProvider.Create();
-			this.TabGroupService = this.tabService.Create(new TabGroupServiceOptions(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID));
-			this.TabGroupService.TabSelectionChanged += TabGroupService_TabSelectionChanged;
-			this.TabGroupService.TabGroupSelectionChanged += TabGroupService_TabGroupSelectionChanged;
+			DocumentTreeView = documentTreeView;
+			DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
+			DocumentTreeView.SelectionChanged += DocumentTreeView_SelectionChanged;
+			DocumentTreeView.NodesTextChanged += DocumentTreeView_NodesTextChanged;
+			DocumentTreeView.NodeActivated += DocumentTreeView_NodeActivated;
+			DocumentTreeView.TreeView.NodeRemoved += TreeView_NodeRemoved;
+			tabService = tabServiceProvider.Create();
+			TabGroupService = tabService.Create(new TabGroupServiceOptions(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID));
+			TabGroupService.TabSelectionChanged += TabGroupService_TabSelectionChanged;
+			TabGroupService.TabGroupSelectionChanged += TabGroupService_TabGroupSelectionChanged;
 		}
 
 		void TreeView_NodeRemoved(object sender, TreeViewNodeRemovedEventArgs e) {
@@ -193,7 +193,7 @@ namespace dnSpy.Documents.Tabs {
 		void OnNodeRemoved(DsDocumentNode node) {
 			var hash = GetSelfAndDsDocumentNodeChildren(node);
 			foreach (TabContentImpl tab in VisibleFirstTabs)
-				tab.OnNodesRemoved(hash, () => this.CreateTabContent(Array.Empty<DocumentTreeNodeData>()));
+				tab.OnNodesRemoved(hash, () => CreateTabContent(Array.Empty<DocumentTreeNodeData>()));
 			decompilationCache.Clear(new HashSet<IDsDocument>(hash.Select(a => a.Document)));
 		}
 
@@ -606,8 +606,8 @@ namespace dnSpy.Documents.Tabs {
 
 			public ReloadAllHelper(DocumentTabService documentTabService) {
 				this.documentTabService = documentTabService;
-				this.originalDocuments = new HashSet<IDsDocument>(documentTabService.DocumentTreeView.DocumentService.GetDocuments(), new DsDocumentComparer());
-				this.old_disable_DocumentCollectionChanged = documentTabService.disable_DocumentCollectionChanged;
+				originalDocuments = new HashSet<IDsDocument>(documentTabService.DocumentTreeView.DocumentService.GetDocuments(), new DsDocumentComparer());
+				old_disable_DocumentCollectionChanged = documentTabService.disable_DocumentCollectionChanged;
 				documentTabService.disable_DocumentCollectionChanged = true;
 			}
 

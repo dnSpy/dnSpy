@@ -50,9 +50,9 @@ namespace Example1.Extension {
 		public MySettings Clone() => CopyTo(new MySettings());
 
 		public MySettings CopyTo(MySettings other) {
-			other.BoolOption1 = this.BoolOption1;
-			other.BoolOption2 = this.BoolOption2;
-			other.StringOption3 = this.StringOption3;
+			other.BoolOption1 = BoolOption1;
+			other.BoolOption2 = BoolOption2;
+			other.StringOption3 = StringOption3;
 			return other;
 		}
 	}
@@ -73,12 +73,12 @@ namespace Example1.Extension {
 			// Read the settings from the file or use the default values if our settings haven't
 			// been saved to it yet.
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			BoolOption1 = sect.Attribute<bool?>(nameof(BoolOption1)) ?? BoolOption1;
 			BoolOption2 = sect.Attribute<bool?>(nameof(BoolOption2)) ?? BoolOption2;
 			StringOption3 = sect.Attribute<string>(nameof(StringOption3)) ?? StringOption3;
-			this.disableSave = false;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

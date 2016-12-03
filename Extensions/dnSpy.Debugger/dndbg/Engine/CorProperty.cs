@@ -57,8 +57,8 @@ namespace dndbg.Engine {
 		}
 
 		public CorProperty(CorClass cls, uint token) {
-			this.Class = cls;
-			this.Token = token;
+			Class = cls;
+			Token = token;
 		}
 
 		public CorFunction[] GetOtherMethods() {

@@ -38,8 +38,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="filterType">Filter type</param>
 		/// <param name="isMatch">True if it was a match</param>
 		public DocumentTreeNodeFilterResult(FilterType filterType, bool isMatch) {
-			this.FilterType = filterType;
-			this.IsMatch = isMatch;
+			FilterType = filterType;
+			IsMatch = isMatch;
 		}
 	}
 }

@@ -109,20 +109,20 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public ITextElementProvider TextElementProvider { get; }
 
 		public OpenDocumentListVM(bool syntaxHighlight, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, DocumentListService documentListService, Func<string, string> askUser) {
-			this.SyntaxHighlight = syntaxHighlight;
-			this.ClassificationFormatMap = classificationFormatMap;
-			this.TextElementProvider = textElementProvider;
+			SyntaxHighlight = syntaxHighlight;
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
 			this.documentListService = documentListService;
 			this.askUser = askUser;
-			this.documentListColl = new ObservableCollection<DocumentListVM>();
-			this.collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(documentListColl);
-			this.collectionView.CustomSort = new DocumentListVM_Comparer();
-			this.selectedItems = Array.Empty<DocumentListVM>();
-			this.removedDocumentLists = new HashSet<DocumentListVM>();
-			this.addedDocumentLists = new List<DocumentListVM>();
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
-			this.searchingForDefaultLists = true;
+			documentListColl = new ObservableCollection<DocumentListVM>();
+			collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(documentListColl);
+			collectionView.CustomSort = new DocumentListVM_Comparer();
+			selectedItems = Array.Empty<DocumentListVM>();
+			removedDocumentLists = new HashSet<DocumentListVM>();
+			addedDocumentLists = new List<DocumentListVM>();
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
+			searchingForDefaultLists = true;
 
 			var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var documentList in documentListService.DocumentLists) {

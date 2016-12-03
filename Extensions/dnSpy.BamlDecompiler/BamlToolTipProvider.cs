@@ -41,7 +41,7 @@ namespace dnSpy.BamlDecompiler {
 		public string String { get; }
 
 		BamlToolTipReference(string s) {
-			this.String = s;
+			String = s;
 		}
 	}
 }

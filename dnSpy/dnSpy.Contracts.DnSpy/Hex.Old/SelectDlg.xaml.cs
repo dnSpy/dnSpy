@@ -29,8 +29,8 @@ namespace dnSpy.Contracts.Hex {
 
 		void OnLoaded(object sender, RoutedEventArgs e) {
 			Loaded -= OnLoaded;
-			this.startTextBox.SelectAll();
-			this.endTextBox.SelectAll();
+			startTextBox.SelectAll();
+			endTextBox.SelectAll();
 		}
 	}
 }

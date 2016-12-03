@@ -32,10 +32,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 
 		public CSharpVBDecompilerSettings(DecompilerSettings decompilerSettings = null) {
 			this.decompilerSettings = decompilerSettings ?? new DecompilerSettings();
-			this.options = CreateOptions().ToArray();
+			options = CreateOptions().ToArray();
 		}
 
-		public override DecompilerSettingsBase Clone() => new CSharpVBDecompilerSettings(this.decompilerSettings.Clone());
+		public override DecompilerSettingsBase Clone() => new CSharpVBDecompilerSettings(decompilerSettings.Clone());
 
 		public override IEnumerable<IDecompilerOption> Options => options;
 		readonly IDecompilerOption[] options;

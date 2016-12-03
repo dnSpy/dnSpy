@@ -46,10 +46,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new ArgumentNullException(nameof(documentWriterService));
 			if (dispatcher == null)
 				throw new ArgumentNullException(nameof(dispatcher));
-			this.DecompilationContext = decompilationContext;
-			this.Decompiler = decompiler;
-			this.Output = output;
-			this.DocumentWriterService = documentWriterService;
+			DecompilationContext = decompilationContext;
+			Decompiler = decompiler;
+			Output = output;
+			DocumentWriterService = documentWriterService;
 			this.dispatcher = dispatcher;
 		}
 

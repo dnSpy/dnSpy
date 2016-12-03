@@ -53,9 +53,9 @@ namespace dnSpy.Documents.Tabs {
 		readonly List<DocumentList> documentsList;
 
 		DocumentListService() {
-			this.documentsList = new List<DocumentList>();
-			this.selectedIndex = -1;
-			this.hasLoaded = false;
+			documentsList = new List<DocumentList>();
+			selectedIndex = -1;
+			hasLoaded = false;
 		}
 
 		void CreateDefaultList() {
@@ -83,7 +83,7 @@ namespace dnSpy.Documents.Tabs {
 					continue;
 				documentsList.Add(documentList);
 			}
-			this.hasLoaded = true;
+			hasLoaded = true;
 
 			SelectList(listName);
 		}

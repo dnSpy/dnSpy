@@ -37,11 +37,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 
 		public XmlDocLine(string s, int start, int length) {
 			this.s = s;
-			this.end = start + length;
-			this.current = null;
-			this.indent = null;
-			this.iter = new StringLineIterator(s, start, end - start);
-			this.emptyLines = 0;
+			end = start + length;
+			current = null;
+			indent = null;
+			iter = new StringLineIterator(s, start, end - start);
+			emptyLines = 0;
 		}
 
 		public XmlDocLine GetEnumerator() => this;
@@ -65,7 +65,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		public void Dispose() { }
 
 		public bool MoveNext() {
-			if (this.indent == null) {
+			if (indent == null) {
 				for (;;) {
 					if (!iter.MoveNext())
 						return false;

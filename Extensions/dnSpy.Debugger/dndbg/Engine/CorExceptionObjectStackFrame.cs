@@ -27,10 +27,10 @@ namespace dndbg.Engine {
 		public bool IsLastForeignExceptionFrame { get; }
 
 		public CorExceptionObjectStackFrame(CorDebugExceptionObjectStackFrame other) {
-			this.Module = other.pModule == null ? null : new CorModule(other.pModule);
-			this.IP = other.ip;
-			this.Token = other.methodDef;
-			this.IsLastForeignExceptionFrame = other.isLastForeignExceptionFrame;
+			Module = other.pModule == null ? null : new CorModule(other.pModule);
+			IP = other.ip;
+			Token = other.methodDef;
+			IsLastForeignExceptionFrame = other.isLastForeignExceptionFrame;
 		}
 	}
 }

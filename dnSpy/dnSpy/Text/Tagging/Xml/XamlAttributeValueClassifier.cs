@@ -82,7 +82,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		public XamlAttributeValueClassifier() {
-			this.buffer = new char[512];
+			buffer = new char[512];
 		}
 
 		public bool Initialize(SnapshotSpan span) {

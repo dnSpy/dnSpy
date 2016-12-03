@@ -32,7 +32,7 @@ namespace dnSpy.Language.Intellisense {
 
 			public CommandTargetFilter(IntellisenseSessionStack owner) {
 				this.owner = owner;
-				this.wpfTextView = owner.wpfTextView as IDsWpfTextView;
+				wpfTextView = owner.wpfTextView as IDsWpfTextView;
 				Debug.Assert(wpfTextView != null);
 			}
 

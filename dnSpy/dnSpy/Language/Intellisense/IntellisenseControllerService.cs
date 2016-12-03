@@ -51,7 +51,7 @@ namespace dnSpy.Language.Intellisense {
 
 			public TextViewState(IWpfTextView wpfTextView, Lazy<IIntellisenseControllerProvider, IContentTypeMetadata>[] intellisenseControllerProviders) {
 				this.wpfTextView = wpfTextView;
-				this.controllerInfos = intellisenseControllerProviders.Select(a => new ControllerInfo(a)).ToArray();
+				controllerInfos = intellisenseControllerProviders.Select(a => new ControllerInfo(a)).ToArray();
 				wpfTextView.Closed += WpfTextView_Closed;
 			}
 

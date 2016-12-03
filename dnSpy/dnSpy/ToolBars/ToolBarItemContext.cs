@@ -25,7 +25,7 @@ namespace dnSpy.ToolBars {
 		public Guid ToolBarGuid { get; }
 
 		public ToolBarItemContext(Guid toolBarGuid) {
-			this.ToolBarGuid = toolBarGuid;
+			ToolBarGuid = toolBarGuid;
 		}
 	}
 }

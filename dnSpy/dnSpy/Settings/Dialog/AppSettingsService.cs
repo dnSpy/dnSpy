@@ -60,7 +60,7 @@ namespace dnSpy.Settings.Dialog {
 
 		[ImportingConstructor]
 		AppSettingsService(IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, IAppWindow appWindow, ITreeViewService treeViewService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider, [ImportMany] IEnumerable<Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>> appSettingsPageContainers, [ImportMany] IEnumerable<Lazy<IAppSettingsPageProvider>> appSettingsPageProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> appSettingsModifiedListeners) {
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.OptionsDialog);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.OptionsDialog);
 			this.textElementProvider = textElementProvider;
 			this.appWindow = appWindow;
 			this.treeViewService = treeViewService;

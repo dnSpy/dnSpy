@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Text {
 			this.indentSize = indentSize;
 			this.tabSize = tabSize;
 			this.useTabs = useTabs;
-			this.cachedStrings = new List<string>();
+			cachedStrings = new List<string>();
 		}
 
 		/// <summary>

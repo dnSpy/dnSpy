@@ -67,9 +67,9 @@ namespace dnSpy.Decompiler {
 			this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Namespace_Types);
 			this.WriteCommentLine(output, string.Empty);
 			foreach (var type in types) {
-				this.WriteCommentBegin(output, true);
+				WriteCommentBegin(output, true);
 				output.Write(IdentifierEscaper.Escape(type.Name), type, DecompilerReferenceFlags.None, BoxedTextColor.Comment);
-				this.WriteCommentEnd(output, true);
+				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
 		}
@@ -82,15 +82,15 @@ namespace dnSpy.Decompiler {
 		protected void WriteAssembly(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
 			DecompileInternal(asm, output, ctx);
 			output.WriteLine();
-			this.PrintEntryPoint(asm.ManifestModule, output);
+			PrintEntryPoint(asm.ManifestModule, output);
 			var peImage = TryGetPEImage(asm.ManifestModule);
 			if (peImage != null) {
-				this.WriteCommentBegin(output, true);
+				WriteCommentBegin(output, true);
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 				output.Write(string.Format(dnSpy_Decompiler_Resources.Decompile_Timestamp, ts, dateString), BoxedTextColor.Comment);
-				this.WriteCommentEnd(output, true);
+				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
 			output.WriteLine();
@@ -100,12 +100,12 @@ namespace dnSpy.Decompiler {
 			DecompileInternal(mod, output, ctx);
 			output.WriteLine();
 			if (mod.Types.Count > 0) {
-				this.WriteCommentBegin(output, true);
+				WriteCommentBegin(output, true);
 				output.Write(dnSpy_Decompiler_Resources.Decompile_GlobalType + " ", BoxedTextColor.Comment);
 				output.Write(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, DecompilerReferenceFlags.None, BoxedTextColor.Comment);
 				output.WriteLine();
 			}
-			this.PrintEntryPoint(mod, output);
+			PrintEntryPoint(mod, output);
 			this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Architecture + " " + GetPlatformDisplayName(mod));
 			if (!mod.IsILOnly) {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
@@ -116,12 +116,12 @@ namespace dnSpy.Decompiler {
 			}
 			var peImage = TryGetPEImage(mod);
 			if (peImage != null) {
-				this.WriteCommentBegin(output, true);
+				WriteCommentBegin(output, true);
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 				output.Write(string.Format(dnSpy_Decompiler_Resources.Decompile_Timestamp, ts, dateString), BoxedTextColor.Comment);
-				this.WriteCommentEnd(output, true);
+				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
 			output.WriteLine();

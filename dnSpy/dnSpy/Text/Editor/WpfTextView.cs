@@ -192,7 +192,7 @@ namespace dnSpy.Text.Editor {
 			Options = editorOptionsFactoryService.GetOptions(this);
 			Options.Parent = parentOptions;
 			ViewScroller = new ViewScroller(this);
-			hasKeyboardFocus = this.IsKeyboardFocusWithin;
+			hasKeyboardFocus = IsKeyboardFocusWithin;
 			oldViewState = new ViewState(this);
 			aggregateClassifier = viewClassifierAggregatorService.GetClassifier(this);
 			textAndAdornmentSequencer = textAndAdornmentSequencerFactoryService.Create(this);
@@ -883,12 +883,12 @@ namespace dnSpy.Text.Editor {
 				return;
 			}
 
-			this.Loaded += WpfTextView_Loaded;
+			Loaded += WpfTextView_Loaded;
 		}
 		MetroWindow metroWindow;
 
 		void WpfTextView_Loaded(object sender, RoutedEventArgs e) {
-			this.Loaded -= WpfTextView_Loaded;
+			Loaded -= WpfTextView_Loaded;
 			var window = Window.GetWindow(this);
 			metroWindow = window as MetroWindow;
 			Debug.Assert(window != null);

@@ -25,13 +25,13 @@ namespace Example1.Extension {
 		readonly ComboBox comboBox;
 
 		TBCommand2() {
-			this.comboBox = new ComboBox();
-			this.comboBox.Width = 100;
-			this.comboBox.Items.Add("Item #1");
-			this.comboBox.Items.Add("Item #2");
-			this.comboBox.Items.Add("Item #3");
-			this.comboBox.Items.Add("Item #4");
-			this.comboBox.SelectedIndex = 1;
+			comboBox = new ComboBox();
+			comboBox.Width = 100;
+			comboBox.Items.Add("Item #1");
+			comboBox.Items.Add("Item #2");
+			comboBox.Items.Add("Item #3");
+			comboBox.Items.Add("Item #4");
+			comboBox.SelectedIndex = 1;
 		}
 
 		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) => comboBox;

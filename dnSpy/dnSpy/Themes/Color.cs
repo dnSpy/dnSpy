@@ -46,7 +46,7 @@ namespace dnSpy.Themes {
 		public ThemeColor InheritedColor;
 
 		public Color(ColorInfo colorInfo) {
-			this.ColorInfo = colorInfo;
+			ColorInfo = colorInfo;
 		}
 	}
 }

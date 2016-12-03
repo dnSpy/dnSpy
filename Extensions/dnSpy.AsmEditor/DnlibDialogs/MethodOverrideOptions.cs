@@ -28,8 +28,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public MethodOverrideOptions(MethodOverride mo) {
-			this.MethodBody = mo.MethodBody;
-			this.MethodDeclaration = mo.MethodDeclaration;
+			MethodBody = mo.MethodBody;
+			MethodDeclaration = mo.MethodDeclaration;
 		}
 
 		public MethodOverride Create() => new MethodOverride(MethodBody, MethodDeclaration);

@@ -47,9 +47,9 @@ namespace dnSpy.Contracts.HexEditor {
 		public static HexBoxPosition CreateByte(ulong offset, int kindPos) => new HexBoxPosition(offset, HexBoxPositionKind.HexByte, kindPos);
 
 		public HexBoxPosition(ulong offset, HexBoxPositionKind kind, int kindPos) {
-			this.Offset = offset;
-			this.Kind = kind;
-			this.KindPosition = (byte)kindPos;
+			Offset = offset;
+			Kind = kind;
+			KindPosition = (byte)kindPos;
 		}
 
 		public HexBoxPosition Create(ulong offset) => new HexBoxPosition(offset, Kind, KindPosition);

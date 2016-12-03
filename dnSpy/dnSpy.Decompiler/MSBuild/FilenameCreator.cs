@@ -34,15 +34,15 @@ namespace dnSpy.Decompiler.MSBuild {
 		public FilenameCreator(string baseDir) {
 			Debug.Assert(Path.IsPathRooted(baseDir));
 			this.baseDir = baseDir;
-			this.defaultNamespace = string.Empty;
-			this.usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			defaultNamespace = string.Empty;
+			usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		public FilenameCreator(string baseDir, string defaultNamespace) {
 			Debug.Assert(Path.IsPathRooted(baseDir));
 			this.baseDir = baseDir;
 			this.defaultNamespace = defaultNamespace;
-			this.usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		public string Create(string fileExt, string fullName) {

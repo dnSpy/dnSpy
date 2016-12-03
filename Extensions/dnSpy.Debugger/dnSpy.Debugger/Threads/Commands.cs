@@ -64,8 +64,8 @@ namespace dnSpy.Debugger.Threads {
 		public ThreadVM[] SelectedItems { get; }
 
 		public ThreadsCtxMenuContext(IThreadsVM vm, ThreadVM[] selItems) {
-			this.VM = vm;
-			this.SelectedItems = selItems;
+			VM = vm;
+			SelectedItems = selItems;
 		}
 	}
 

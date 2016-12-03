@@ -45,7 +45,7 @@ namespace dnSpy.Text.Editor {
 			TextView = textView;
 			this.layerKind = layerKind;
 			Info = info;
-			this.adornmentLayerElements = new List<AdornmentLayerElement>();
+			adornmentLayerElements = new List<AdornmentLayerElement>();
 		}
 
 		public bool AddAdornment(SnapshotSpan visualSpan, object tag, UIElement adornment) =>

@@ -56,7 +56,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsManifestModule {
 			get {
-				var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+				var mdi = GetMetaDataInterface<IMetaDataImport>();
 				// Only the manifest module should have an assembly row
 				return mdi != null && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
 			}
@@ -82,7 +82,7 @@ namespace dndbg.Engine {
 		string dnlibName;
 
 		internal UTF8String CalculateDnlibName(CorModule module) {
-			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = GetMetaDataInterface<IMetaDataImport>();
 			uint token = new MDToken(Table.Module, 1).Raw;
 
 			return DotNet.Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, token), MDAPI.GetModuleName(mdi) ?? string.Empty);
@@ -162,23 +162,23 @@ namespace dndbg.Engine {
 
 		public CorModule(ICorDebugModule module)
 			: base(module) {
-			this.Name = GetName(module) ?? string.Empty;
+			Name = GetName(module) ?? string.Empty;
 
-			int hr = module.GetBaseAddress(out this.address);
+			int hr = module.GetBaseAddress(out address);
 			if (hr < 0)
-				this.address = 0;
-			hr = module.GetSize(out this.size);
+				address = 0;
+			hr = module.GetSize(out size);
 			if (hr < 0)
-				this.size = 0;
-			hr = module.GetToken(out this.token);
+				size = 0;
+			hr = module.GetToken(out token);
 			if (hr < 0)
-				this.token = 0;
+				token = 0;
 
 			int b;
 			hr = module.IsDynamic(out b);
-			this.IsDynamic = hr >= 0 && b != 0;
+			IsDynamic = hr >= 0 && b != 0;
 			hr = module.IsInMemory(out b);
-			this.IsInMemory = hr >= 0 && b != 0;
+			IsInMemory = hr >= 0 && b != 0;
 
 			//TODO: ICorDebugModule2::ApplyChanges
 		}
@@ -196,21 +196,21 @@ namespace dndbg.Engine {
 		}
 
 		public CorField GetFieldFromToken(uint token) {
-			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = GetMetaDataInterface<IMetaDataImport>();
 			uint tdToken = 0x02000000 + MDAPI.GetFieldOwnerRid(mdi, token);
 			var cls = GetClassFromToken(tdToken);
 			return cls == null ? null : new CorField(cls, token);
 		}
 
 		public CorProperty GetPropertyFromToken(uint token) {
-			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = GetMetaDataInterface<IMetaDataImport>();
 			uint tdToken = 0x02000000 + MDAPI.GetPropertyOwnerRid(mdi, token);
 			var cls = GetClassFromToken(tdToken);
 			return cls == null ? null : new CorProperty(cls, token);
 		}
 
 		public CorEvent GetEventFromToken(uint token) {
-			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = GetMetaDataInterface<IMetaDataImport>();
 			uint tdToken = 0x02000000 + MDAPI.GetEventOwnerRid(mdi, token);
 			var cls = GetClassFromToken(tdToken);
 			return cls == null ? null : new CorEvent(cls, token);
@@ -292,10 +292,10 @@ namespace dndbg.Engine {
 		/// <param name="name">Full class name</param>
 		/// <returns></returns>
 		public CorClass FindClass(string name) {
-			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = GetMetaDataInterface<IMetaDataImport>();
 			foreach (var tdToken in MDAPI.GetTypeDefTokens(mdi)) {
 				if (MDAPI.GetTypeDefName(mdi, tdToken) == name)
-					return this.GetClassFromToken(tdToken);
+					return GetClassFromToken(tdToken);
 			}
 			return null;
 		}
@@ -309,7 +309,7 @@ namespace dndbg.Engine {
 		public CorClass FindClassCache(string name) {
 			uint token;
 			if (findClassCacheDict != null && findClassCacheDict.TryGetValue(name, out token))
-				return this.GetClassFromToken(token);
+				return GetClassFromToken(token);
 
 			if (findClassCacheDict == null) {
 				Debug.Assert(findClassCacheEnum == null);
@@ -324,7 +324,7 @@ namespace dndbg.Engine {
 				if (!findClassCacheDict.ContainsKey(typeName))
 					findClassCacheDict[typeName] = t.Item2;
 				if (typeName == name)
-					return this.GetClassFromToken(t.Item2);
+					return GetClassFromToken(t.Item2);
 			}
 			findClassCacheEnum.Dispose();
 			findClassCacheEnum = null;
@@ -334,7 +334,7 @@ namespace dndbg.Engine {
 		IEnumerator<Tuple<string, uint>> findClassCacheEnum;
 
 		IEnumerable<Tuple<string, uint>> GetClasses() {
-			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			var mdi = GetMetaDataInterface<IMetaDataImport>();
 			foreach (var tdToken in MDAPI.GetTypeDefTokens(mdi))
 				yield return Tuple.Create(MDAPI.GetTypeDefName(mdi, tdToken), tdToken);
 		}

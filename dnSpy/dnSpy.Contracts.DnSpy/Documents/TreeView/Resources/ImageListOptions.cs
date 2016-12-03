@@ -57,10 +57,10 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// Constructor
 		/// </summary>
 		public ImageListOptions() {
-			this.Name = string.Empty;
-			this.ColorDepth = ColorDepth.Depth32Bit;
-			this.ImageSize = new Size(16, 16);
-			this.TransparentColor = System.Drawing.Color.Transparent;
+			Name = string.Empty;
+			ColorDepth = ColorDepth.Depth32Bit;
+			ImageSize = new Size(16, 16);
+			TransparentColor = System.Drawing.Color.Transparent;
 		}
 
 		/// <summary>
@@ -68,11 +68,11 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		public ImageListOptions(ImageListOptions other) {
-			this.Name = other.Name ?? string.Empty;
-			this.ColorDepth = other.ColorDepth;
-			this.ImageSize = other.ImageSize;
-			this.TransparentColor = other.TransparentColor;
-			this.ImageSources.AddRange(other.ImageSources);
+			Name = other.Name ?? string.Empty;
+			ColorDepth = other.ColorDepth;
+			ImageSize = other.ImageSize;
+			TransparentColor = other.TransparentColor;
+			ImageSources.AddRange(other.ImageSources);
 		}
 	}
 }

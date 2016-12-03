@@ -49,7 +49,7 @@ namespace dnSpy.Hex {
 			if (hexBufferImpl == null)
 				throw new ArgumentNullException(nameof(hexBufferImpl));
 			this.hexBufferImpl = hexBufferImpl;
-			this.changes = new List<HexChange>();
+			changes = new List<HexChange>();
 			this.reiteratedVersionNumber = reiteratedVersionNumber;
 			this.editTag = editTag;
 		}

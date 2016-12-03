@@ -78,8 +78,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		void CancelAndClearChildren() {
 			AnalyzerTreeNodeData.CancelSelfAndChildren(this);
-			this.TreeNode.Children.Clear();
-			this.TreeNode.LazyLoading = true;
+			TreeNode.Children.Clear();
+			TreeNode.LazyLoading = true;
 		}
 
 		public void Cancel() {

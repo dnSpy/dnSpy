@@ -50,7 +50,7 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(textBuffer));
 			this.textBuffer = textBuffer;
 			TextSnapshot = textBuffer.CurrentSnapshot;
-			this.changes = new List<ITextChange>();
+			changes = new List<ITextChange>();
 			this.options = options;
 			this.reiteratedVersionNumber = reiteratedVersionNumber;
 			this.editTag = editTag;

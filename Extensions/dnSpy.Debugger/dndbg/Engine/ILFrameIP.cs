@@ -63,8 +63,8 @@ namespace dndbg.Engine {
 		/// <param name="offset">Offset</param>
 		/// <param name="mapping">Mapping flags</param>
 		public ILFrameIP(uint offset, CorDebugMappingResult mapping) {
-			this.Offset = offset;
-			this.Mapping = mapping;
+			Offset = offset;
+			Mapping = mapping;
 		}
 
 		/// <summary>

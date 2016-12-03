@@ -106,7 +106,7 @@ namespace dnSpy.Analyzer {
 		AnalyzerService(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, ITreeViewService treeViewService, IMenuService menuService, IAnalyzerSettings analyzerSettings, IDotNetImageService dotNetImageService, IDecompilerService decompilerService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
 			this.documentTabService = documentTabService;
 
-			this.context = new AnalyzerTreeNodeDataContext {
+			context = new AnalyzerTreeNodeDataContext {
 				DotNetImageService = dotNetImageService,
 				Decompiler = decompilerService.Decompiler,
 				TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider,
@@ -122,16 +122,16 @@ namespace dnSpy.Analyzer {
 				CanDragAndDrop = false,
 				TreeViewListener = this,
 			};
-			this.TreeView = treeViewService.Create(ANALYZER_TREEVIEW_GUID, options);
-			this.context.TreeView = this.TreeView;
+			TreeView = treeViewService.Create(ANALYZER_TREEVIEW_GUID, options);
+			context.TreeView = TreeView;
 
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 			documentTabService.DocumentModified += DocumentTabService_FileModified;
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
-			menuService.InitializeContextMenu(this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
-			wpfCommandService.Add(ControlConstants.GUID_ANALYZER_TREEVIEW, this.TreeView.UIObject);
+			menuService.InitializeContextMenu(TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsProvider(TreeView));
+			wpfCommandService.Add(ControlConstants.GUID_ANALYZER_TREEVIEW, TreeView.UIObject);
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
 			var command = new RelayCommand(a => ActivateNode());
 			cmds.Add(command, ModifierKeys.Control, Key.Enter);
@@ -170,7 +170,7 @@ namespace dnSpy.Analyzer {
 		}
 
 		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
-			this.context.Decompiler = ((IDecompilerService)sender).Decompiler;
+			context.Decompiler = ((IDecompilerService)sender).Decompiler;
 			RefreshNodes();
 		}
 
@@ -194,7 +194,7 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		void RefreshNodes() => this.TreeView.RefreshAllNodes();
+		void RefreshNodes() => TreeView.RefreshAllNodes();
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
@@ -212,24 +212,24 @@ namespace dnSpy.Analyzer {
 
 		void ClearAll() {
 			Cancel();
-			this.TreeView.Root.Children.Clear();
+			TreeView.Root.Children.Clear();
 		}
 
 		public void Add(AnalyzerTreeNodeData node) {
 			if (node is EntityNode) {
 				var an = node as EntityNode;
-				var found = this.TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
+				var found = TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
 				if (found != null) {
 					found.TreeNode.IsExpanded = true;
-					this.TreeView.SelectItems(new TreeNodeData[] { found });
-					this.TreeView.Focus();
+					TreeView.SelectItems(new TreeNodeData[] { found });
+					TreeView.Focus();
 					return;
 				}
 			}
-			this.TreeView.Root.Children.Add(this.TreeView.Create(node));
+			TreeView.Root.Children.Add(TreeView.Create(node));
 			node.TreeNode.IsExpanded = true;
-			this.TreeView.SelectItems(new TreeNodeData[] { node });
-			this.TreeView.Focus();
+			TreeView.SelectItems(new TreeNodeData[] { node });
+			TreeView.Focus();
 		}
 
 		public void OnActivated(AnalyzerTreeNodeData node) {

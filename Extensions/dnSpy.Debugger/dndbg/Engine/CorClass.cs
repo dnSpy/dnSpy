@@ -66,9 +66,9 @@ namespace dndbg.Engine {
 
 		public CorClass(ICorDebugClass cls)
 			: base(cls) {
-			int hr = cls.GetToken(out this.token);
+			int hr = cls.GetToken(out token);
 			if (hr < 0)
-				this.token = 0;
+				token = 0;
 		}
 
 		public TypeAttributes GetTypeAttributes() {

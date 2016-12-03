@@ -33,9 +33,9 @@ namespace dnSpy.Roslyn.Shared.Text {
 		public TextSnapshotSourceText(ITextSnapshot snapshot, Encoding encoding) {
 			if (snapshot == null)
 				throw new ArgumentNullException(nameof(snapshot));
-			this.TextSnapshot = snapshot;
-			this.Encoding = encoding;
-			this.Container = snapshot.TextBuffer.AsTextContainer();
+			TextSnapshot = snapshot;
+			Encoding = encoding;
+			Container = snapshot.TextBuffer.AsTextContainer();
 		}
 
 		public override void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) =>

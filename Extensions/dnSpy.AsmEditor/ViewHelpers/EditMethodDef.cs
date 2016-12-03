@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public EditMethodDef(ModuleDef ownerModule, Window ownerWindow) {
 			this.ownerModule = ownerModule;
-			this.dnlibTypePicker = new DnlibTypePicker(ownerWindow);
+			dnlibTypePicker = new DnlibTypePicker(ownerWindow);
 		}
 
 		public MethodDefVM Edit(string title, MethodDefVM vm) {

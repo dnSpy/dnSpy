@@ -138,9 +138,9 @@ namespace dnSpy.Contracts.Hex {
 			this.filename = filename;
 			ulong len = end - start + 1;
 			if (len == 0 || len + BUF_SIZE - 1 < len)
-				this.progressMaximum = (long)(0x8000000000000000UL / (BUF_SIZE / 2));
+				progressMaximum = (long)(0x8000000000000000UL / (BUF_SIZE / 2));
 			else
-				this.progressMaximum = (long)((len + BUF_SIZE - 1) / BUF_SIZE);
+				progressMaximum = (long)((len + BUF_SIZE - 1) / BUF_SIZE);
 		}
 
 		public void Execute(IProgress progress) {

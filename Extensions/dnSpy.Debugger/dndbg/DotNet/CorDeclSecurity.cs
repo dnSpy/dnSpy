@@ -32,14 +32,14 @@ namespace dndbg.DotNet {
 		public CorDeclSecurity(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			Initialize_NoLock();
 		}
 
 		void Initialize_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
-			this.action = MDAPI.GetPermissionSetAction(mdi, token);
+			action = MDAPI.GetPermissionSetAction(mdi, token);
 		}
 
 		protected override void InitializeCustomAttributes() =>

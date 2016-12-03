@@ -55,14 +55,14 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		CallStackContent(IWpfCommandService wpfCommandService, ICallStackVM callStackVM, Lazy<IStackFrameService> stackFrameService, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, IModuleIdProvider moduleIdProvider) {
-			this.callStackControl = new CallStackControl();
-			this.vmCallStack = callStackVM;
+			callStackControl = new CallStackControl();
+			vmCallStack = callStackVM;
 			this.stackFrameService = stackFrameService;
 			this.documentTabService = documentTabService;
 			this.moduleLoader = moduleLoader;
 			this.moduleIdProvider = moduleIdProvider;
-			this.callStackControl.DataContext = this.vmCallStack;
-			this.callStackControl.CallStackListViewDoubleClick += CallStackControl_CallStackListViewDoubleClick;
+			callStackControl.DataContext = vmCallStack;
+			callStackControl.CallStackListViewDoubleClick += CallStackControl_CallStackListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_CONTROL, callStackControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CALLSTACK_LISTVIEW, callStackControl.ListView);

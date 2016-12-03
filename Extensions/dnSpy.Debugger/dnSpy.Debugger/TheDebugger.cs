@@ -84,7 +84,7 @@ namespace dnSpy.Debugger {
 		[ImportingConstructor]
 		TheDebugger(IDebuggerSettings debuggerSettings, [ImportMany] IEnumerable<Lazy<ILoadBeforeDebug>> loadBeforeDebugInsts) {
 			this.debuggerSettings = debuggerSettings;
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			dispatcher = Dispatcher.CurrentDispatcher;
 			this.loadBeforeDebugInsts = loadBeforeDebugInsts.ToArray();
 			debuggedProcessRunningNotifier = new DebuggedProcessRunningNotifier(this);
 			debuggedProcessRunningNotifier.ProcessRunning += DebuggedProcessRunningNotifier_ProcessRunning;

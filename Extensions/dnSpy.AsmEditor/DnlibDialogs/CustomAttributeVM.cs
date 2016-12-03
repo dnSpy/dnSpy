@@ -133,14 +133,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly MethodDef ownerMethod;
 
 		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
-			this.origOptions = options;
+			origOptions = options;
 			this.ownerModule = ownerModule;
 			this.decompilerService = decompilerService;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 
-			this.RawData = new HexStringVM(a => HasErrorUpdated());
-			this.CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerService, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
+			RawData = new HexStringVM(a => HasErrorUpdated());
+			CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerService, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
 			ConstructorArguments.CollectionChanged += Args_CollectionChanged;
 			CANamedArgumentsVM.Collection.CollectionChanged += Args_CollectionChanged;
 

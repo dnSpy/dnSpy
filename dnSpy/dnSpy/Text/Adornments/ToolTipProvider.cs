@@ -43,7 +43,7 @@ namespace dnSpy.Text.Adornments {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			this.wpfTextView = wpfTextView;
-			this.spaceReservationManager = wpfTextView.GetSpaceReservationManager(PredefinedSpaceReservationManagerNames.ToolTip);
+			spaceReservationManager = wpfTextView.GetSpaceReservationManager(PredefinedSpaceReservationManagerNames.ToolTip);
 		}
 
 		public void ClearToolTip() {

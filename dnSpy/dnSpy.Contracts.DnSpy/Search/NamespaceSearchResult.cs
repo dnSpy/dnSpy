@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Search {
 		/// </summary>
 		/// <param name="namespace">Namespace</param>
 		public NamespaceSearchResult(string @namespace) {
-			this.Namespace = @namespace;
+			Namespace = @namespace;
 		}
 	}
 }

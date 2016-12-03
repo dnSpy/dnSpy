@@ -34,7 +34,7 @@ namespace dndbg.DotNet {
 		public CorParamDef(CorModuleDef readerModule, uint rid, CorMethodDef ownerMethod) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 			this.ownerMethod = ownerMethod;
 		}
 

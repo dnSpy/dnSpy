@@ -37,9 +37,9 @@ namespace dnSpy.Decompiler.MSBuild {
 			public readonly string CommonPrefix;
 			public readonly string[] Namespaces;
 			public Info(string first, string common, string[] namespaces) {
-				this.FirstPart = first;
-				this.CommonPrefix = common;
-				this.Namespaces = namespaces;
+				FirstPart = first;
+				CommonPrefix = common;
+				Namespaces = namespaces;
 			}
 		}
 

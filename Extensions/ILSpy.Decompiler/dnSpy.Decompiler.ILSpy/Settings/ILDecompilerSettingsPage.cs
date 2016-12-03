@@ -39,7 +39,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		public override object UIObject => this;
 
 		public ILDecompilerSettingsPage(ILSettings ilSettings) {
-			this._global_ilSettings = ilSettings;
+			_global_ilSettings = ilSettings;
 			this.ilSettings = ilSettings.Clone();
 		}
 

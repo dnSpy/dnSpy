@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.Scripting {
 		public AnyEventBreakpoint(Debugger debugger, Func<IAnyEventBreakpoint, IDebugEventContext, bool> cond) {
 			this.debugger = debugger;
 			this.cond = cond;
-			this.isEnabled = true;
+			isEnabled = true;
 		}
 
 		public void Remove() => debugger.Remove(this);

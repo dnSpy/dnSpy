@@ -45,7 +45,7 @@ namespace dndbg.DotNet {
 		public CorTypeDef(CorModuleDef readerModule, uint rid) {
 			this.readerModule = readerModule;
 			this.rid = rid;
-			this.origRid = rid;
+			origRid = rid;
 		}
 
 		readonly object lockObj = new object();
@@ -83,14 +83,14 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			InitializeName(MDAPI.GetUtf8Name(mdi, token), MDAPI.GetTypeDefName(mdi, token));
-			this.Attributes = MDAPI.GetTypeDefAttributes(mdi, token) ?? 0;
+			Attributes = MDAPI.GetTypeDefAttributes(mdi, token) ?? 0;
 		}
 
 		void InitializeName(UTF8String utf8Name, string fullName) {
 			UTF8String ns, name;
 			Utils.SplitNameAndNamespace(utf8Name, fullName, out ns, out name);
-			this.Namespace = ns;
-			this.Name = name;
+			Namespace = ns;
+			Name = name;
 		}
 
 		unsafe void InitClassLayout_NoLock() {
@@ -326,8 +326,8 @@ namespace dndbg.DotNet {
 			public readonly uint MethodDeclarationToken;
 
 			public MethodOverrideTokens(uint methodBodyToken, uint methodDeclarationToken) {
-				this.MethodBodyToken = methodBodyToken;
-				this.MethodDeclarationToken = methodDeclarationToken;
+				MethodBodyToken = methodBodyToken;
+				MethodDeclarationToken = methodDeclarationToken;
 			}
 		}
 

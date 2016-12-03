@@ -37,7 +37,7 @@ namespace dndbg.Engine {
 		}
 
 		public DesktopCLRTypeDebugInfo(string debuggeeVersion) {
-			this.DebuggeeVersion = debuggeeVersion;
+			DebuggeeVersion = debuggeeVersion;
 		}
 
 		public override CLRTypeDebugInfo Clone() => new DesktopCLRTypeDebugInfo(DebuggeeVersion);
@@ -62,9 +62,9 @@ namespace dndbg.Engine {
 		public override CLRType CLRType => CLRType.CoreCLR;
 
 		public CoreCLRTypeDebugInfo(string dbgShimFilename, string hostFilename, string hostCommandLine) {
-			this.DbgShimFilename = dbgShimFilename;
-			this.HostFilename = hostFilename;
-			this.HostCommandLine = hostCommandLine;
+			DbgShimFilename = dbgShimFilename;
+			HostFilename = hostFilename;
+			HostCommandLine = hostCommandLine;
 		}
 
 		public override CLRTypeDebugInfo Clone() => new CoreCLRTypeDebugInfo(DbgShimFilename, HostFilename, HostCommandLine);
@@ -119,24 +119,24 @@ namespace dndbg.Engine {
 		public static readonly ProcessCreationFlags DefaultProcessCreationFlags = Engine.ProcessCreationFlags.CREATE_NEW_CONSOLE;
 
 		public DebugProcessOptions(CLRTypeDebugInfo info) {
-			this.CLRTypeDebugInfo = info;
-			this.DebugOptions = new DebugOptions();
-			this.BreakProcessKind = BreakProcessKind.None;
+			CLRTypeDebugInfo = info;
+			DebugOptions = new DebugOptions();
+			BreakProcessKind = BreakProcessKind.None;
 		}
 
 		public DebugProcessOptions CopyTo(DebugProcessOptions other) {
-			other.CLRTypeDebugInfo = this.CLRTypeDebugInfo.Clone();
-			other.Filename = this.Filename;
-			other.CommandLine = this.CommandLine;
-			other.CurrentDirectory = this.CurrentDirectory;
-			other.InheritHandles = this.InheritHandles;
-			other.ProcessCreationFlags = this.ProcessCreationFlags;
-			other.DebugMessageDispatcher = this.DebugMessageDispatcher;
-			other.DebugOptions = this.DebugOptions == null ? null : this.DebugOptions.Clone();
-			other.BreakProcessKind = this.BreakProcessKind;
+			other.CLRTypeDebugInfo = CLRTypeDebugInfo.Clone();
+			other.Filename = Filename;
+			other.CommandLine = CommandLine;
+			other.CurrentDirectory = CurrentDirectory;
+			other.InheritHandles = InheritHandles;
+			other.ProcessCreationFlags = ProcessCreationFlags;
+			other.DebugMessageDispatcher = DebugMessageDispatcher;
+			other.DebugOptions = DebugOptions == null ? null : DebugOptions.Clone();
+			other.BreakProcessKind = BreakProcessKind;
 			return other;
 		}
 
-		public DebugProcessOptions Clone() => CopyTo(new DebugProcessOptions(this.CLRTypeDebugInfo));
+		public DebugProcessOptions Clone() => CopyTo(new DebugProcessOptions(CLRTypeDebugInfo));
 	}
 }

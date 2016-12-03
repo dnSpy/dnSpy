@@ -94,10 +94,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public CreateTypeSigArrayVM(TypeSigCreatorOptions options, int? requiredCount) {
-			this.title = options.Title;
-			this.TypeSigCreator = new TypeSigCreatorVM(options);
-			this.RequiredCount = requiredCount;
-			this.TypeSigCollection.CollectionChanged += (s, e) => UpdateNumberLeftProperties();
+			title = options.Title;
+			TypeSigCreator = new TypeSigCreatorVM(options);
+			RequiredCount = requiredCount;
+			TypeSigCollection.CollectionChanged += (s, e) => UpdateNumberLeftProperties();
 		}
 
 		void UpdateNumberLeftProperties() {

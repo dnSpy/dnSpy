@@ -492,10 +492,10 @@ namespace dnSpy.Debugger.Locals {
 			public object CorInfo;	// CorFieldInfo / CorPropertyInfo
 
 			public ObjectValueInfo(int index, string name, object corInfo) {
-				this.Name = name;
-				this.Overridden = false;
-				this.Index = index;
-				this.CorInfo = corInfo;
+				Name = name;
+				Overridden = false;
+				Index = index;
+				CorInfo = corInfo;
 			}
 
 			public static int SortFunc(ObjectValueInfo a, ObjectValueInfo b) {
@@ -854,14 +854,14 @@ namespace dnSpy.Debugger.Locals {
 		protected string CreateString(string s, out CorValue newString) {
 			newString = null;
 
-			if (this.context.LocalsOwner.TheDebugger.EvalDisabled)
+			if (context.LocalsOwner.TheDebugger.EvalDisabled)
 				return dnSpy_Debugger_Resources.Locals_Error_EvalTimedOutCantCreateNewStringsUntilContinue;
-			if (!this.context.LocalsOwner.TheDebugger.CanEvaluate)
+			if (!context.LocalsOwner.TheDebugger.CanEvaluate)
 				return dnSpy_Debugger_Resources.Locals_Error_CantEvaluateCantCreateStrings;
 
 			int hr;
 			EvalResult? res;
-			using (var eval = this.context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread))
+			using (var eval = context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread))
 				res = eval.CreateString(s, out hr);
 			if (res == null)
 				return string.Format(dnSpy_Debugger_Resources.Locals_Error_CouldNotCreateString, hr);
@@ -925,17 +925,17 @@ namespace dnSpy.Debugger.Locals {
 
 		public FieldValueVM(ValueContext context, CorFieldInfo info, bool overridden) {
 			var valueType = new FieldValueType(info.Name, this);
-			this.FieldAttributes = info.Attributes;
-			this.OwnerType = info.OwnerType;
-			this.Token = info.Token;
-			this.Overridden = overridden;
+			FieldAttributes = info.Attributes;
+			OwnerType = info.OwnerType;
+			Token = info.Token;
+			Overridden = overridden;
 			InitializeFromConstructor(CreateValueContext(context, OwnerType), info.FieldType, valueType);
 		}
 
 		public void Reinitialize(ValueContext newContext) {
-			this.context = CreateValueContext(newContext, OwnerType);
+			context = CreateValueContext(newContext, OwnerType);
 			CleanUpCorValue();
-			ReinitializeInternal(this.context);
+			ReinitializeInternal(context);
 		}
 
 		protected override int GetReadOnlyCorValue(out CorValue value) {
@@ -971,9 +971,9 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected override void CleanUpCorValue() {
-			Debug.Assert(this.context != null);
-			if (this.context != null)
-				this.context.LocalsOwner.TheDebugger.DisposeHandle(value);
+			Debug.Assert(context != null);
+			if (context != null)
+				context.LocalsOwner.TheDebugger.DisposeHandle(value);
 			value = null;
 		}
 	}
@@ -991,20 +991,20 @@ namespace dnSpy.Debugger.Locals {
 
 		public PropertyValueVM(ValueContext context, CorPropertyInfo info, bool overridden) {
 			var valueType = new PropertyValueType(info.Name, this);
-			this.OwnerType = info.OwnerType;
-			this.Name = info.Name;
-			this.PropertyType = info.GetSig.RetType;
-			this.GetMethodAttributes = info.GetMethodAttributes;
-			this.Overridden = overridden;
-			this.getToken = info.GetToken;
-			this.setToken = info.SetToken;
+			OwnerType = info.OwnerType;
+			Name = info.Name;
+			PropertyType = info.GetSig.RetType;
+			GetMethodAttributes = info.GetMethodAttributes;
+			Overridden = overridden;
+			getToken = info.GetToken;
+			setToken = info.SetToken;
 			InitializeFromConstructor(CreateValueContext(context, OwnerType), info.GetSig.RetType, valueType);
 		}
 
 		public void Reinitialize(ValueContext newContext) {
-			this.context = CreateValueContext(newContext, OwnerType);
+			context = CreateValueContext(newContext, OwnerType);
 			CleanUpCorValue();
-			ReinitializeInternal(this.context);
+			ReinitializeInternal(context);
 		}
 
 		protected override int GetReadOnlyCorValue(out CorValue value) {
@@ -1035,14 +1035,14 @@ namespace dnSpy.Debugger.Locals {
 
 			if (!context.LocalsOwner.PropertyEvalAndFunctionCalls)
 				return ERROR_PropertyEvalDisabled;
-			if (this.context.LocalsOwner.TheDebugger.EvalDisabled)
+			if (context.LocalsOwner.TheDebugger.EvalDisabled)
 				return ERROR_EvalDisabledTimedOut;
-			if (!this.context.LocalsOwner.TheDebugger.CanEvaluate)
+			if (!context.LocalsOwner.TheDebugger.CanEvaluate)
 				return ERROR_CantEvaluate;
 
 			try {
 				int hr;
-				using (var eval = this.context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
+				using (var eval = context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
 					var func = OwnerType.Class.Module.GetFunctionFromToken(getToken);
 					CorValue[] args;
 					if ((GetMethodAttributes & MethodAttributes.Static) != 0)
@@ -1070,16 +1070,16 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected override void CleanUpCorValue() {
-			Debug.Assert(this.context != null);
-			if (this.context != null)
-				this.context.LocalsOwner.TheDebugger.DisposeHandle(value);
+			Debug.Assert(context != null);
+			if (context != null)
+				context.LocalsOwner.TheDebugger.DisposeHandle(value);
 			value = null;
 		}
 
 		protected override string SetValueAsTextInternal(ValueStringParser parser) {
-			if (this.context.LocalsOwner.TheDebugger.EvalDisabled)
+			if (context.LocalsOwner.TheDebugger.EvalDisabled)
 				return EVAL_DISABLED_TIMEDOUT_ERROR_MSG;
-			if (!this.context.LocalsOwner.TheDebugger.CanEvaluate)
+			if (!context.LocalsOwner.TheDebugger.CanEvaluate)
 				return EVAL_DISABLED_CANT_CALL_PROPS_METHS;
 
 			var v = ReadOnlyCorValue;
@@ -1115,7 +1115,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 
 				int hr;
-				using (var eval = this.context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
+				using (var eval = context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
 					if (createNull)
 						v = eval.CreateNull();
 
@@ -1170,7 +1170,7 @@ namespace dnSpy.Debugger.Locals {
 		public int Index { get; }
 
 		public LocalValueType(int index) {
-			this.Index = index;
+			Index = index;
 		}
 
 		public void InitializeName(string name) {
@@ -1194,7 +1194,7 @@ namespace dnSpy.Debugger.Locals {
 		public int Index { get; }
 
 		public ArgumentValueType(int index) {
-			this.Index = index;
+			Index = index;
 		}
 
 		public void InitializeName(string name, bool isThis) {
@@ -1417,11 +1417,11 @@ namespace dnSpy.Debugger.Locals {
 
 		public ArrayState(CorValue v) {
 			Debug.Assert(v.IsArray);
-			this.ArrayElementType = v.ElementType;
-			this.ElementType = v.ArrayElementType;
-			this.Dimensions = v.Dimensions;
-			this.Indices = v.BaseIndicies;
-			this.Count = v.ArrayCount;
+			ArrayElementType = v.ElementType;
+			ElementType = v.ArrayElementType;
+			Dimensions = v.Dimensions;
+			Indices = v.BaseIndicies;
+			Count = v.ArrayCount;
 		}
 
 		public bool Equals(ArrayState other) {
@@ -1465,7 +1465,7 @@ namespace dnSpy.Debugger.Locals {
 		readonly CorType Type;
 
 		public ObjectState(CorType type) {
-			this.Type = type;
+			Type = type;
 		}
 
 		public bool Equals(ObjectState other) => other != null && Type == other.Type;
@@ -1479,7 +1479,7 @@ namespace dnSpy.Debugger.Locals {
 		protected sealed override CachedOutput CreateCachedOutputType() => CreateCachedOutputValue();
 
 		public void Reinitialize(ValueContext newContext, CorType type) {
-			this.context = newContext;
+			context = newContext;
 			this.type = type;
 
 			UpdateCachedOutputValue();

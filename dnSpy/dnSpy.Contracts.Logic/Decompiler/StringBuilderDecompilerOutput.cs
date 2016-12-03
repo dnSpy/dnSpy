@@ -47,8 +47,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		public StringBuilderDecompilerOutput() {
-			this.sb = new StringBuilder();
-			this.indenter = new Indenter(4, 4, true);
+			sb = new StringBuilder();
+			indenter = new Indenter(4, 4, true);
 		}
 
 		/// <summary>
@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public StringBuilderDecompilerOutput(Indenter indenter) {
 			if (indenter == null)
 				throw new ArgumentNullException(nameof(indenter));
-			this.sb = new StringBuilder();
+			sb = new StringBuilder();
 			this.indenter = indenter;
 		}
 
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (stringBuilder == null)
 				throw new ArgumentNullException(nameof(stringBuilder));
 			stringBuilder.Clear();
-			this.sb = stringBuilder;
+			sb = stringBuilder;
 			this.indenter = indenter ?? new Indenter(4, 4, true);
 		}
 

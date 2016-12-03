@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor {
 		public KeyProcessorCollection(IWpfTextView wpfTextView, Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders) {
 			this.wpfTextView = wpfTextView;
 			this.keyProcessorProviders = keyProcessorProviders;
-			this.keyProcessors = Array.Empty<KeyProcessor>();
+			keyProcessors = Array.Empty<KeyProcessor>();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			wpfTextView.VisualElement.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(VisualElement_KeyDown), true);

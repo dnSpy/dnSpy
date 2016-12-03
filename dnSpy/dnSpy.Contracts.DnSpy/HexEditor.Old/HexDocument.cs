@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.HexEditor {
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream));
 			this.stream = stream;
-			this.Name = name;
+			Name = name;
 		}
 
 		public int ReadByte(ulong offs) => stream.ReadByte(offs);

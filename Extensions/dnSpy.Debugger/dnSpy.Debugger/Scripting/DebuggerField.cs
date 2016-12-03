@@ -97,10 +97,10 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.field = field;
-			this.hashCode = field.GetHashCode();
-			this.token = field.Token;
-			this.Name = field.GetName() ?? string.Empty;
-			this.Attributes = field.GetAttributes();
+			hashCode = field.GetHashCode();
+			token = field.Token;
+			Name = field.GetName() ?? string.Empty;
+			Attributes = field.GetAttributes();
 		}
 
 		public IDebuggerValue ReadStatic(IStackFrame frame, IDebuggerType type) {

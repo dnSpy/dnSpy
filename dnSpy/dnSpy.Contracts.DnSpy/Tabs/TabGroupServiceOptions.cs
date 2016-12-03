@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// </summary>
 		/// <param name="tabGroupGuid">See <see cref="TabGroupGuid"/></param>
 		public TabGroupServiceOptions(Guid tabGroupGuid) {
-			this.TabGroupGuid = tabGroupGuid;
+			TabGroupGuid = tabGroupGuid;
 		}
 
 		/// <summary>

@@ -29,7 +29,7 @@ namespace dnSpy.Debugger {
 		public Process Process { get; }
 
 		public DebuggedProcessRunningEventArgs(Process process) {
-			this.Process = process;
+			Process = process;
 		}
 	}
 
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger {
 		readonly ITheDebugger theDebugger;
 
 		public DebuggedProcessRunningNotifier(ITheDebugger theDebugger) {
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			dispatcher = Dispatcher.CurrentDispatcher;
 			this.theDebugger = theDebugger;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}

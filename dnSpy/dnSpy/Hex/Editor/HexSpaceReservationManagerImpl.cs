@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Editor {
 			if (wpfHexView == null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			this.wpfHexView = wpfHexView;
-			this.spaceReservationAgents = new List<HexSpaceReservationAgent>();
+			spaceReservationAgents = new List<HexSpaceReservationAgent>();
 			Agents = new ReadOnlyCollection<HexSpaceReservationAgent>(spaceReservationAgents);
 			wpfHexView.Closed += WpfHexView_Closed;
 		}

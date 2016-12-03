@@ -37,8 +37,8 @@ namespace dnSpy.Text.Editor {
 
 			public MouseHoverHelper(WpfTextView owner) {
 				this.owner = owner;
-				this.handlers = new List<MouseHoverHandler>();
-				this.timer = new DispatcherTimer(DispatcherPriority.Normal, owner.Dispatcher);
+				handlers = new List<MouseHoverHandler>();
+				timer = new DispatcherTimer(DispatcherPriority.Normal, owner.Dispatcher);
 				timer.Tick += Timer_Tick;
 				owner.MouseDown += WpfTextView_MouseDown;
 				owner.MouseLeftButtonDown += WpfTextView_MouseLeftButtonDown;

@@ -104,9 +104,9 @@ namespace dnSpy.Text.Editor {
 			this.wpfTextView = wpfTextView;
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			this.editorFormatMapService = editorFormatMapService;
-			this.lineSeparatorElements = new List<LineSeparatorElement>();
-			this.usedLines = new HashSet<object>();
-			this.onRemovedDelegate = OnRemoved;
+			lineSeparatorElements = new List<LineSeparatorElement>();
+			usedLines = new HashSet<object>();
+			onRemovedDelegate = OnRemoved;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			UpdateLineSeparator();

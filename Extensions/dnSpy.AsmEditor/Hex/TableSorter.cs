@@ -90,8 +90,8 @@ namespace dnSpy.AsmEditor.Hex {
 			public readonly byte[] Data;
 
 			public Record(int index, byte[] data) {
-				this.OrigIndex = index;
-				this.Data = data;
+				OrigIndex = index;
+				Data = data;
 			}
 		}
 

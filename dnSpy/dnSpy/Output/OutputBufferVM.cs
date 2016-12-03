@@ -75,12 +75,12 @@ namespace dnSpy.Output {
 		readonly IEditorOperations editorOperations;
 
 		public OutputBufferVM(IEditorOperationsFactoryService editorOperationsFactoryService, Guid guid, string name, ILogEditor logEditor) {
-			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(logEditor.TextView);
+			editorOperations = editorOperationsFactoryService.GetEditorOperations(logEditor.TextView);
 			Guid = guid;
 			Name = name;
 			this.logEditor = logEditor;
-			this.index = -1;
-			this.needTimestamp = true;
+			index = -1;
+			needTimestamp = true;
 		}
 
 		public bool CanCopy {

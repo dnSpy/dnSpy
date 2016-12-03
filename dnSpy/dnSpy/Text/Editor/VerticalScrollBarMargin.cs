@@ -62,7 +62,7 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.scrollMap = scrollMapFactoryService.Create(wpfTextViewHost.TextView, true);
+			scrollMap = scrollMapFactoryService.Create(wpfTextViewHost.TextView, true);
 			IsVisibleChanged += VerticalScrollBarMargin_IsVisibleChanged;
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			SetResourceReference(StyleProperty, typeof(ScrollBar));

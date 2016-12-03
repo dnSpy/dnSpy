@@ -60,7 +60,7 @@ namespace dnSpy.Text.Editor {
 
 		public LineNumberMargin(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, ITextFormatterProvider textFormatterProvider)
 			: base(PredefinedMarginNames.LineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) {
-			this.lineNumberClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.LineNumber);
+			lineNumberClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.LineNumber);
 		}
 
 		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState state) {

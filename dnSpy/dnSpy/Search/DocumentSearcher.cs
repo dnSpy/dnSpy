@@ -67,9 +67,9 @@ namespace dnSpy.Search {
 			if (options.SearchComparer == null)
 				throw new ArgumentException("options.SearchComparer is null", nameof(options));
 			this.options = options.Clone();
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
-			this.filterSearcherOptions = new FilterSearcherOptions {
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
+			filterSearcherOptions = new FilterSearcherOptions {
 				Dispatcher = Dispatcher.CurrentDispatcher,
 				DocumentTreeView = documentTreeView,
 				DotNetImageService = dotNetImageService,
@@ -77,7 +77,7 @@ namespace dnSpy.Search {
 				SearchComparer = options.SearchComparer,
 				OnMatch = r => AddSearchResult(r),
 				Context = searchResultContext,
-				CancellationToken = this.cancellationToken,
+				CancellationToken = cancellationToken,
 				SearchDecompiledData = options.SearchDecompiledData,
 			};
 		}

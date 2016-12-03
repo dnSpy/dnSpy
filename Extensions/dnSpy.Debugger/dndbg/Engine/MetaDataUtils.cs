@@ -40,15 +40,15 @@ namespace dndbg.Engine {
 		public bool CompilerGeneratedAttribute { get; }
 
 		public CorFieldInfo(CorType ownerType, uint token, string name, TypeSig fieldType, FieldAttributes attrs, object constant, CorElementType constantType, DebuggerBrowsableState? debuggerBrowsableState, bool compilerGeneratedAttribute) {
-			this.OwnerType = ownerType;
-			this.Token = token;
-			this.Name = name;
-			this.FieldType = fieldType;
-			this.Attributes = attrs;
-			this.Constant = constant;
-			this.ConstantType = constantType;
-			this.DebuggerBrowsableState = debuggerBrowsableState;
-			this.CompilerGeneratedAttribute = compilerGeneratedAttribute;
+			OwnerType = ownerType;
+			Token = token;
+			Name = name;
+			FieldType = fieldType;
+			Attributes = attrs;
+			Constant = constant;
+			ConstantType = constantType;
+			DebuggerBrowsableState = debuggerBrowsableState;
+			CompilerGeneratedAttribute = compilerGeneratedAttribute;
 		}
 
 		public override string ToString() => string.Format("{0:X8} {1} {2} {3}", Token, TypePrinterUtils.ToString(FieldType), Name, OwnerType);
@@ -66,15 +66,15 @@ namespace dndbg.Engine {
 		public DebuggerBrowsableState? DebuggerBrowsableState { get; }
 
 		public CorPropertyInfo(CorType ownerType, uint token, uint getToken, uint setToken, string name, MethodSig getSig, MethodSig setSig, MethodAttributes getMethodAttributes, DebuggerBrowsableState? debuggerBrowsableState) {
-			this.OwnerType = ownerType;
-			this.Token = token;
-			this.GetToken = getToken;
-			this.SetToken = setToken;
-			this.Name = name;
-			this.GetSig = getSig;
-			this.SetSig = setSig;
-			this.GetMethodAttributes = getMethodAttributes;
-			this.DebuggerBrowsableState = debuggerBrowsableState;
+			OwnerType = ownerType;
+			Token = token;
+			GetToken = getToken;
+			SetToken = setToken;
+			Name = name;
+			GetSig = getSig;
+			SetSig = setSig;
+			GetMethodAttributes = getMethodAttributes;
+			DebuggerBrowsableState = debuggerBrowsableState;
 		}
 
 		public override string ToString() => string.Format("{0:X8} {1} {2}", Token, Name, OwnerType);
@@ -90,13 +90,13 @@ namespace dndbg.Engine {
 		public bool CompilerGeneratedAttribute { get; }
 
 		public CorMethodInfo(CorType ownerType, uint token, string name, MethodSig methodSig, MethodAttributes attrs, MethodImplAttributes implAttrs, bool compilerGeneratedAttribute) {
-			this.OwnerType = ownerType;
-			this.Token = token;
-			this.Name = name;
-			this.MethodSig = methodSig;
-			this.MethodAttributes = attrs;
-			this.MethodImplAttributes = implAttrs;
-			this.CompilerGeneratedAttribute = compilerGeneratedAttribute;
+			OwnerType = ownerType;
+			Token = token;
+			Name = name;
+			MethodSig = methodSig;
+			MethodAttributes = attrs;
+			MethodImplAttributes = implAttrs;
+			CompilerGeneratedAttribute = compilerGeneratedAttribute;
 		}
 	}
 
@@ -105,8 +105,8 @@ namespace dndbg.Engine {
 		public uint Token { get; }
 
 		public TokenAndName(string name, uint token) {
-			this.Name = name;
-			this.Token = token;
+			Name = name;
+			Token = token;
 		}
 	}
 
@@ -136,10 +136,10 @@ namespace dndbg.Engine {
 		public bool IsOut => (Flags & ParamAttributes.Out) != 0;
 
 		public MDParamInfo(string name, uint token, uint seq, ParamAttributes flags) {
-			this.Name = name;
-			this.Token = token;
-			this.Sequence = seq;
-			this.Flags = flags;
+			Name = name;
+			Token = token;
+			Sequence = seq;
+			Flags = flags;
 		}
 	}
 
@@ -147,8 +147,8 @@ namespace dndbg.Engine {
 		public uint BodyToken { get; }
 		public uint DeclToken { get; }
 		public MethodOverrideInfo(uint b, uint d) {
-			this.BodyToken = b;
-			this.DeclToken = d;
+			BodyToken = b;
+			DeclToken = d;
 		}
 	}
 

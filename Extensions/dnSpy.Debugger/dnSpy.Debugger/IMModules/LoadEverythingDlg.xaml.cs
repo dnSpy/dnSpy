@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.IMModules {
 			var data = DataContext as LoadEverythingVM;
 			Debug.Assert(data != null);
 			if (data != null) {
-				this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => {
+				Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => {
 					data.LoadFiles();
 				}));
 			}
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.IMModules {
 
 		void OnCompleted() {
 			var data = DataContext as LoadEverythingVM;
-			this.DialogResult = data != null && !data.WasCanceled;
+			DialogResult = data != null && !data.WasCanceled;
 			Close();
 		}
 	}

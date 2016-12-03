@@ -39,12 +39,12 @@ namespace dnSpy.Debugger.IMModules {
 		public TreeViewUpdater(IDocumentTabService documentTabService, CorModuleDefFile cmdf, ModuleDocumentNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
 			Debug.Assert(node.Document == cmdf);
 			this.documentTabService = documentTabService;
-			this.CorModuleDefFile = cmdf;
-			this.ModuleNode = node;
+			CorModuleDefFile = cmdf;
+			ModuleNode = node;
 			this.modifiedTypes = new HashSet<uint>(modifiedTypes);
 			this.loadedClassTokens = loadedClassTokens;
-			this.checkedTypes = new HashSet<TypeDef>();
-			this.modNode = node;
+			checkedTypes = new HashSet<TypeDef>();
+			modNode = node;
 		}
 
 		public void Update() {

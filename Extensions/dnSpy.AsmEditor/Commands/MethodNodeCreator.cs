@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public MethodNodeCreator(ModuleDocumentNode modNode, TypeNode ownerNode, MethodDef method) {
 			this.ownerNode = ownerNode;
-			this.methodNode = modNode.Context.DocumentTreeView.Create(method);
+			methodNode = modNode.Context.DocumentTreeView.Create(method);
 		}
 
 		public void Add() {

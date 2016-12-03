@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		UriClassificationTaggerProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IThemeClassificationTypeService themeClassificationTypeService) {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.classificationTag = new ClassificationTag(themeClassificationTypeService.GetClassificationType(TextColor.Url));
+			classificationTag = new ClassificationTag(themeClassificationTypeService.GetClassificationType(TextColor.Url));
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>

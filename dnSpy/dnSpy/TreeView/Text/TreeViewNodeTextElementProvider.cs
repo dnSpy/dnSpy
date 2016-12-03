@@ -32,7 +32,7 @@ namespace dnSpy.TreeView.Text {
 		[ImportingConstructor]
 		TreeViewNodeTextElementProvider(ITextElementProvider textElementProvider, IClassificationFormatMapService classificationFormatMapService) {
 			this.textElementProvider = textElementProvider;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewTextEditorFormatDefinition.TreeViewAppearanceCategory);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewTextEditorFormatDefinition.TreeViewAppearanceCategory);
 		}
 
 		public FrameworkElement CreateTextElement(TreeViewNodeClassifierContext context, string contentType, TextElementFlags flags) =>

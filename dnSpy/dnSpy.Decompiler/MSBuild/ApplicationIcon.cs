@@ -36,7 +36,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly byte[] data;
 
 		ApplicationIcon(string filename, byte[] data) {
-			this.Filename = filename;
+			Filename = filename;
 			this.data = data;
 		}
 

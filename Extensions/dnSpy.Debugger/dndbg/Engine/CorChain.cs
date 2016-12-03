@@ -136,15 +136,15 @@ namespace dndbg.Engine {
 			: base(chain) {
 			int isManaged;
 			int hr = chain.IsManaged(out isManaged);
-			this.IsManaged = hr >= 0 && isManaged != 0;
+			IsManaged = hr >= 0 && isManaged != 0;
 
-			hr = chain.GetReason(out this.reason);
+			hr = chain.GetReason(out reason);
 			if (hr < 0)
-				this.reason = 0;
+				reason = 0;
 
-			hr = chain.GetStackRange(out this.rangeStart, out this.rangeEnd);
+			hr = chain.GetStackRange(out rangeStart, out rangeEnd);
 			if (hr < 0)
-				this.rangeStart = this.rangeEnd = 0;
+				rangeStart = rangeEnd = 0;
 
 			//TODO: ICorDebugChain::GetContext
 			//TODO: ICorDebugChain::GetRegisterSet

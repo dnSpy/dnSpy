@@ -68,7 +68,7 @@ namespace dnSpy.BackgroundImage {
 		[ImportingConstructor]
 		BackgroundImageSettingsService(ISettingsService settingsService, IBackgroundImageOptionDefinitionService backgroundImageOptionDefinitionService) {
 			this.settingsService = settingsService;
-			this.settingsInfos = new Dictionary<string, SettingsInfo>(backgroundImageOptionDefinitionService.AllSettings.Length, StringComparer.Ordinal);
+			settingsInfos = new Dictionary<string, SettingsInfo>(backgroundImageOptionDefinitionService.AllSettings.Length, StringComparer.Ordinal);
 
 			foreach (var lazy in backgroundImageOptionDefinitionService.AllSettings) {
 				if (settingsInfos.ContainsKey(lazy.Value.Id))

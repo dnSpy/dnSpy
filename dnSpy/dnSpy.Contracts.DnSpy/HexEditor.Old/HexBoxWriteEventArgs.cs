@@ -31,12 +31,12 @@ namespace dnSpy.Contracts.HexEditor {
 		public bool IsAfterWrite => !IsBeforeWrite;
 
 		public HexBoxWriteEventArgs(HexWriteType type, ulong offs, int size, bool isBeforeWrite, Dictionary<object, object> context = null) {
-			this.Type = type;
-			this.StartOffset = offs;
-			this.EndOffset = size == 0 ? offs : NumberUtils.AddUInt64(offs, (ulong)(size - 1));
-			this.Size = size;
-			this.IsBeforeWrite = isBeforeWrite;
-			this.Context = context ?? new Dictionary<object, object>();
+			Type = type;
+			StartOffset = offs;
+			EndOffset = size == 0 ? offs : NumberUtils.AddUInt64(offs, (ulong)(size - 1));
+			Size = size;
+			IsBeforeWrite = isBeforeWrite;
+			Context = context ?? new Dictionary<object, object>();
 		}
 	}
 }

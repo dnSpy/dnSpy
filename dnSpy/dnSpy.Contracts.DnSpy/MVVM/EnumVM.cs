@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		public EnumVM(object value) {
 			this.value = value;
-			this.name = Enum.GetName(value.GetType(), value);
+			name = Enum.GetName(value.GetType(), value);
 		}
 
 		/// <summary>

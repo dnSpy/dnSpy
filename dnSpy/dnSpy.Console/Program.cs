@@ -201,25 +201,25 @@ namespace dnSpy_Console {
 		static readonly char PATHS_SEP = Path.PathSeparator;
 
 		public DnSpyDecompiler() {
-			this.files = new List<string>();
-			this.asmPaths = new List<string>();
-			this.userGacPaths = new List<string>();
-			this.gacFiles = new List<string>();
-			this.decompilationContext = new DecompilationContext();
-			this.moduleContext = ModuleDef.CreateModuleContext(false); // Same as dnSpy.exe
-			this.assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
-			this.assemblyResolver.EnableFrameworkRedirect = false; // Same as dnSpy.exe
-			this.assemblyResolver.FindExactMatch = true; // Same as dnSpy.exe
-			this.assemblyResolver.EnableTypeDefCache = true;
-			this.bamlDecompiler = TryLoadBamlDecompiler();
-			this.decompileBaml = bamlDecompiler != null;
-			this.reservedOptions = GetReservedOptions();
-			this.colorizeOutput = !Console.IsOutputRedirected;
+			files = new List<string>();
+			asmPaths = new List<string>();
+			userGacPaths = new List<string>();
+			gacFiles = new List<string>();
+			decompilationContext = new DecompilationContext();
+			moduleContext = ModuleDef.CreateModuleContext(false); // Same as dnSpy.exe
+			assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
+			assemblyResolver.EnableFrameworkRedirect = false; // Same as dnSpy.exe
+			assemblyResolver.FindExactMatch = true; // Same as dnSpy.exe
+			assemblyResolver.EnableTypeDefCache = true;
+			bamlDecompiler = TryLoadBamlDecompiler();
+			decompileBaml = bamlDecompiler != null;
+			reservedOptions = GetReservedOptions();
+			colorizeOutput = !Console.IsOutputRedirected;
 
 			var langs = new List<IDecompiler>();
 			langs.AddRange(GetAllLanguages());
 			langs.Sort((a, b) => a.OrderUI.CompareTo(b.OrderUI));
-			this.allLanguages = langs.ToArray();
+			allLanguages = langs.ToArray();
 		}
 
 		static IEnumerable<IDecompiler> GetAllLanguages() {
@@ -837,7 +837,7 @@ namespace dnSpy_Console {
 			var oldFindExactMatch = assemblyResolver.FindExactMatch;
 			assemblyResolver.FindExactMatch = false;
 			foreach (var asmName in gacFiles) {
-				var asm = this.assemblyResolver.Resolve(new AssemblyNameInfo(asmName), null);
+				var asm = assemblyResolver.Resolve(new AssemblyNameInfo(asmName), null);
 				if (asm == null)
 					throw new ErrorException(string.Format(dnSpy_Console_Resources.CouldNotResolveGacFileX, asmName));
 				yield return CreateProjectModuleOptions(asm.ManifestModule);

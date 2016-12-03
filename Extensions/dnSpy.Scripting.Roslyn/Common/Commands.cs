@@ -32,8 +32,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public readonly ScriptControlVM VM;
 
 		public ReplEditorCtxMenuContext(IReplEditor ui) {
-			this.UI = ui;
-			this.VM = ScriptContent.GetScriptContent(ui).ScriptControlVM;
+			UI = ui;
+			VM = ScriptContent.GetScriptContent(ui).ScriptControlVM;
 		}
 	}
 

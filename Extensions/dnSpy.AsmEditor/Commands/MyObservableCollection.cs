@@ -56,39 +56,39 @@ namespace dnSpy.AsmEditor.Commands {
 			if (!RemoveSelectedCanExecute())
 				return;
 			int index = SelectedIndex;
-			this.RemoveAt(index);
-			if (index < this.Count)
+			RemoveAt(index);
+			if (index < Count)
 				SelectedIndex = index;
-			else if (this.Count > 0)
-				SelectedIndex = this.Count - 1;
+			else if (Count > 0)
+				SelectedIndex = Count - 1;
 			else
 				SelectedIndex = -1;
 		}
 
-		bool RemoveSelectedCanExecute() => IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count;
+		bool RemoveSelectedCanExecute() => IsEnabled && SelectedIndex >= 0 && SelectedIndex < Count;
 
 		void MoveSelectedUp() {
 			if (!MoveSelectedUpCanExecute())
 				return;
 			int index = SelectedIndex;
 			var item = this[index];
-			this.RemoveAt(index);
-			this.Insert(index - 1, item);
+			RemoveAt(index);
+			Insert(index - 1, item);
 			SelectedIndex = index - 1;
 		}
 
-		bool MoveSelectedUpCanExecute() => IsEnabled && SelectedIndex > 0 && SelectedIndex < this.Count;
+		bool MoveSelectedUpCanExecute() => IsEnabled && SelectedIndex > 0 && SelectedIndex < Count;
 
 		void MoveSelectedDown() {
 			if (!MoveSelectedDownCanExecute())
 				return;
 			int index = SelectedIndex;
 			var item = this[index];
-			this.RemoveAt(index);
-			this.Insert(index + 1, item);
+			RemoveAt(index);
+			Insert(index + 1, item);
 			SelectedIndex = index + 1;
 		}
 
-		bool MoveSelectedDownCanExecute() => IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count - 1;
+		bool MoveSelectedDownCanExecute() => IsEnabled && SelectedIndex >= 0 && SelectedIndex < Count - 1;
 	}
 }

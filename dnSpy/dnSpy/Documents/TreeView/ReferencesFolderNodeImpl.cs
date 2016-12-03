@@ -40,7 +40,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public ReferencesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleDocumentNode moduleNode) {
 			Debug.Assert(moduleNode.Document.ModuleDef != null);
-			this.TreeNodeGroup = treeNodeGroup;
+			TreeNodeGroup = treeNodeGroup;
 			this.moduleNode = moduleNode;
 		}
 

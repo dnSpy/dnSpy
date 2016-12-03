@@ -117,11 +117,11 @@ namespace dnSpy.AsmEditor.Property {
 				public readonly MethodDef[] Methods;
 
 				public ModelInfo(PropertyDef evt) {
-					this.OwnerType = evt.DeclaringType;
-					this.PropertyIndex = this.OwnerType.Properties.IndexOf(evt);
-					Debug.Assert(this.PropertyIndex >= 0);
-					this.Methods = new HashSet<MethodDef>(GetMethods(evt)).ToArray();
-					this.MethodIndexes = new int[this.Methods.Length];
+					OwnerType = evt.DeclaringType;
+					PropertyIndex = OwnerType.Properties.IndexOf(evt);
+					Debug.Assert(PropertyIndex >= 0);
+					Methods = new HashSet<MethodDef>(GetMethods(evt)).ToArray();
+					MethodIndexes = new int[Methods.Length];
 				}
 
 				static IEnumerable<MethodDef> GetMethods(PropertyDef evt) {
@@ -181,7 +181,7 @@ namespace dnSpy.AsmEditor.Property {
 		DeleteModelNodes modelNodes;
 
 		DeletePropertyDefCommand(PropertyNode[] propNodes) {
-			this.nodes = new DeletableNodes<PropertyNode>(propNodes);
+			nodes = new DeletableNodes<PropertyNode>(propNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeletePropertyCommand;
@@ -294,7 +294,7 @@ namespace dnSpy.AsmEditor.Property {
 
 		CreatePropertyDefCommand(TypeNode ownerNode, PropertyDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.propNode = ownerNode.Create(options.CreatePropertyDef(ownerNode.TypeDef.Module));
+			propNode = ownerNode.Create(options.CreatePropertyDef(ownerNode.TypeDef.Module));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreatePropertyCommand2;
@@ -399,16 +399,16 @@ namespace dnSpy.AsmEditor.Property {
 
 		PropertyDefSettingsCommand(PropertyNode propNode, PropertyDefOptions options) {
 			this.propNode = propNode;
-			this.newOptions = options;
-			this.origOptions = new PropertyDefOptions(propNode.PropertyDef);
+			newOptions = options;
+			origOptions = new PropertyDefOptions(propNode.PropertyDef);
 
-			this.origParentNode = (DocumentTreeNodeData)propNode.TreeNode.Parent.Data;
-			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(propNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentNode = (DocumentTreeNodeData)propNode.TreeNode.Parent.Data;
+			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(propNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
-			this.nameChanged = origOptions.Name != newOptions.Name;
+			nameChanged = origOptions.Name != newOptions.Name;
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditPropertyCommand2;

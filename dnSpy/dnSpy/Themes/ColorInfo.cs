@@ -48,8 +48,8 @@ namespace dnSpy.Themes {
 		public abstract IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor);
 
 		protected ColorInfo(ColorType colorType, string description) {
-			this.ColorType = colorType;
-			this.Description = description;
+			ColorType = colorType;
+			Description = description;
 		}
 	}
 
@@ -168,9 +168,9 @@ namespace dnSpy.Themes {
 
 		public LinearGradientColorInfo(ColorType colorType, Point startPoint, Point endPoint, string description, params double[] gradientOffsets)
 			: base(colorType, description) {
-			this.StartPoint = startPoint;
-			this.EndPoint = endPoint;
-			this.GradientOffsets = gradientOffsets;
+			StartPoint = startPoint;
+			EndPoint = endPoint;
+			GradientOffsets = gradientOffsets;
 		}
 
 		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor) {

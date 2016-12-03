@@ -34,8 +34,8 @@ namespace dndbg.Engine {
 		public readonly bool IsValid;
 
 		public CorValueResult(object value) {
-			this.Value = value;
-			this.IsValid = true;
+			Value = value;
+			IsValid = true;
 		}
 
 		public T Write<T>(T output, CorValue value, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {

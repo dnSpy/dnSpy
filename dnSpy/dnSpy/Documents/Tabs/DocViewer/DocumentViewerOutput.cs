@@ -77,13 +77,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		internal static DocumentViewerOutput Create() => new DocumentViewerOutput();
 
 		DocumentViewerOutput() {
-			this.state = State.GeneratingContent;
-			this.cachedTextColorsCollection = new CachedTextColorsCollection();
-			this.stringBuilder = new StringBuilder();
-			this.referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
-			this.canBeCached = true;
-			this.customDataDict = new Dictionary<string, object>(StringComparer.Ordinal);
-			this.indenter = new Indenter(4, 4, true);
+			state = State.GeneratingContent;
+			cachedTextColorsCollection = new CachedTextColorsCollection();
+			stringBuilder = new StringBuilder();
+			referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
+			canBeCached = true;
+			customDataDict = new Dictionary<string, object>(StringComparer.Ordinal);
+			indenter = new Indenter(4, 4, true);
 		}
 
 		void VerifyGeneratingOrPostProcessing() {

@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void EditCodeVM_CodeCompiled(object sender, EventArgs e) {
 			((EditCodeVM)sender).CodeCompiled -= EditCodeVM_CodeCompiled;
-			this.ClickOK();
+			ClickOK();
 		}
 
 		protected override void OnClosed(EventArgs e) {

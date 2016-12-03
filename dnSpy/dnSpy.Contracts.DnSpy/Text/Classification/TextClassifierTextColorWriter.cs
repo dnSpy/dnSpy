@@ -44,8 +44,8 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Constructor
 		/// </summary>
 		public TextClassifierTextColorWriter() {
-			this.colors = new List<SpanData<object>>();
-			this.sb = new StringBuilder();
+			colors = new List<SpanData<object>>();
+			sb = new StringBuilder();
 		}
 
 		/// <inheritdoc/>

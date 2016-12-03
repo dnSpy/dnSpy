@@ -104,15 +104,15 @@ namespace dnSpy.Language.Intellisense {
 			this.session = session;
 			this.completionTextElementProvider = completionTextElementProvider;
 			this.completionUIElementProviders = completionUIElementProviders;
-			this.control = new CompletionPresenterControl { DataContext = this };
-			this.filters = new List<FilterVM>();
-			this.control.MinWidth = defaultMinWidth;
-			this.control.completionsListBox.MaxHeight = defaultMaxHeight;
+			control = new CompletionPresenterControl { DataContext = this };
+			filters = new List<FilterVM>();
+			control.MinWidth = defaultMinWidth;
+			control.completionsListBox.MaxHeight = defaultMaxHeight;
 			session.SelectedCompletionSetChanged += CompletionSession_SelectedCompletionSetChanged;
 			session.Dismissed += CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus += TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
-			this.wpfTextView = session.TextView as IWpfTextView;
+			wpfTextView = session.TextView as IWpfTextView;
 			Debug.Assert(wpfTextView != null);
 			if (wpfTextView != null)
 				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;

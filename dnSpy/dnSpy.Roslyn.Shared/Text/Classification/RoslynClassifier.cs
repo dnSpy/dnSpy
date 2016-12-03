@@ -48,8 +48,8 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// <param name="span">Span</param>
 		/// <param name="type">Classification type</param>
 		public ClassifierResult(Span span, IClassificationType type) {
-			this.Span = span;
-			this.Type = type;
+			Span = span;
+			Type = type;
 		}
 	}
 

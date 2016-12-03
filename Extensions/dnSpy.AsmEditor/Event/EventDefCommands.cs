@@ -117,11 +117,11 @@ namespace dnSpy.AsmEditor.Event {
 				public readonly MethodDef[] Methods;
 
 				public ModelInfo(EventDef evt) {
-					this.OwnerType = evt.DeclaringType;
-					this.EventIndex = this.OwnerType.Events.IndexOf(evt);
-					Debug.Assert(this.EventIndex >= 0);
-					this.Methods = new HashSet<MethodDef>(GetMethods(evt)).ToArray();
-					this.MethodIndexes = new int[this.Methods.Length];
+					OwnerType = evt.DeclaringType;
+					EventIndex = OwnerType.Events.IndexOf(evt);
+					Debug.Assert(EventIndex >= 0);
+					Methods = new HashSet<MethodDef>(GetMethods(evt)).ToArray();
+					MethodIndexes = new int[Methods.Length];
 				}
 
 				static IEnumerable<MethodDef> GetMethods(EventDef evt) {
@@ -186,7 +186,7 @@ namespace dnSpy.AsmEditor.Event {
 		DeleteModelNodes modelNodes;
 
 		DeleteEventDefCommand(EventNode[] eventNodes) {
-			this.nodes = new DeletableNodes<EventNode>(eventNodes);
+			nodes = new DeletableNodes<EventNode>(eventNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteEventCommand;
@@ -298,7 +298,7 @@ namespace dnSpy.AsmEditor.Event {
 
 		CreateEventDefCommand(TypeNode ownerNode, EventDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.eventNode = ownerNode.Create(options.CreateEventDef(ownerNode.TypeDef.Module));
+			eventNode = ownerNode.Create(options.CreateEventDef(ownerNode.TypeDef.Module));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateEventCommand2;
@@ -403,16 +403,16 @@ namespace dnSpy.AsmEditor.Event {
 
 		EventDefSettingsCommand(EventNode eventNode, EventDefOptions options) {
 			this.eventNode = eventNode;
-			this.newOptions = options;
-			this.origOptions = new EventDefOptions(eventNode.EventDef);
+			newOptions = options;
+			origOptions = new EventDefOptions(eventNode.EventDef);
 
-			this.origParentNode = (DocumentTreeNodeData)eventNode.TreeNode.Parent.Data;
-			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(eventNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentNode = (DocumentTreeNodeData)eventNode.TreeNode.Parent.Data;
+			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(eventNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
-			this.nameChanged = origOptions.Name != newOptions.Name;
+			nameChanged = origOptions.Name != newOptions.Name;
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditEventCommand2;

@@ -56,9 +56,9 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.asm = asm;
-			this.hashCode = asm.GetHashCode();
-			this.UniqueId = asm.UniqueId;
-			this.Name = asm.Name;
+			hashCode = asm.GetHashCode();
+			UniqueId = asm.UniqueId;
+			Name = asm.Name;
 		}
 
 		public override bool Equals(object obj) => (obj as DebuggerAssembly)?.asm == asm;

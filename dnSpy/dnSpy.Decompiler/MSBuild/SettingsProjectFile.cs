@@ -53,7 +53,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			public Value Value { get; set; }
 			public Value DesignTimeValue { get; set; }
 			public Setting() {
-				this.GenerateDefaultValueInCode = true;
+				GenerateDefaultValueInCode = true;
 			}
 		}
 		sealed class Value {

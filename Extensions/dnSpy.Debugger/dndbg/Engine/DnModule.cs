@@ -132,12 +132,12 @@ namespace dndbg.Engine {
 		public CorDebugJITCompilerFlags CachedJITCompilerFlags { get; private set; }
 
 		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
-			this.Assembly = ownerAssembly;
-			this.CorModule = new CorModule(module);
-			this.UniqueId = uniqueId;
-			this.UniqueIdProcess = uniqueIdProcess;
-			this.UniqueIdAppDomain = uniqueIdAppDomain;
-			this.DnModuleId = this.CorModule.DnModuleId;
+			Assembly = ownerAssembly;
+			CorModule = new CorModule(module);
+			UniqueId = uniqueId;
+			UniqueIdProcess = uniqueIdProcess;
+			UniqueIdAppDomain = uniqueIdAppDomain;
+			DnModuleId = CorModule.DnModuleId;
 		}
 
 		internal void InitializeCachedValues() {

@@ -129,9 +129,9 @@ namespace dndbg.Engine {
 		public string FullName => string.IsNullOrEmpty(Namespace) ? Name : Namespace + "." + Name;
 
 		public ECClass(string ns, string name, ECFunc[] funcs) {
-			this.Namespace = ns;
-			this.Name = name;
-			this.Functions = funcs;
+			Namespace = ns;
+			Name = name;
+			Functions = funcs;
 		}
 	}
 
@@ -166,11 +166,11 @@ namespace dndbg.Engine {
 		public DynamicID DynamicID => (DynamicID)(Flags >> 24);
 
 		public ECFunc(uint recRva, uint flags, uint methRva, string name, uint sigRva) {
-			this.RecordRVA = recRva;
-			this.Flags = flags;
-			this.FunctionRVA = methRva;
-			this.Name = name;
-			this.MethodSigRVA = sigRva;
+			RecordRVA = recRva;
+			Flags = flags;
+			FunctionRVA = methRva;
+			Name = name;
+			MethodSigRVA = sigRva;
 		}
 	}
 
@@ -193,14 +193,14 @@ namespace dndbg.Engine {
 		}
 
 		public ECallListReader(string filename) {
-			this.peImage = new PEImage(filename);
-			this.reader = peImage.CreateFullStream();
-			this.is32bit = peImage.ImageNTHeaders.OptionalHeader.Magic == 0x010B;
-			this.ptrSize = is32bit ? 4U : 8;
+			peImage = new PEImage(filename);
+			reader = peImage.CreateFullStream();
+			is32bit = peImage.ImageNTHeaders.OptionalHeader.Magic == 0x010B;
+			ptrSize = is32bit ? 4U : 8;
 			var last = peImage.ImageSectionHeaders[peImage.ImageSectionHeaders.Count - 1];
-			this.endRva = (uint)last.VirtualAddress + last.VirtualSize;
-			this.list = new List<ECClass>();
-			this.tableFormat = null;
+			endRva = (uint)last.VirtualAddress + last.VirtualSize;
+			list = new List<ECClass>();
+			tableFormat = null;
 			Read();
 		}
 

@@ -99,7 +99,7 @@ namespace dnSpy.MainApp {
 		readonly Action<MsgBoxButton> listener;
 
 		public MsgBoxVM(string message, Action<MsgBoxButton> listener) {
-			this.Message = message;
+			Message = message;
 			this.listener = listener;
 		}
 	}

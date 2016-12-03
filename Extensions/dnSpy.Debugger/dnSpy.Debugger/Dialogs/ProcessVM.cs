@@ -41,13 +41,13 @@ namespace dnSpy.Debugger.Dialogs {
 		public IProcessContext Context { get; }
 
 		public ProcessVM(int pid, string title, Machine machine, CLRTypeAttachInfo type, string fullPath, IProcessContext context) {
-			this.FullPath = fullPath;
-			this.PID = pid;
-			this.Title = title;
-			this.Machine = machine;
-			this.CLRVersion = type.Version;
-			this.CLRTypeInfo = type;
-			this.Context = context;
+			FullPath = fullPath;
+			PID = pid;
+			Title = title;
+			Machine = machine;
+			CLRVersion = type.Version;
+			CLRTypeInfo = type;
+			Context = context;
 		}
 	}
 }

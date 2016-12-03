@@ -331,7 +331,7 @@ namespace dnSpy.Contracts.Controls {
 
 			public MaximizedWindowFixer(MetroWindow metroWindow, Border border) {
 				this.border = border;
-				this.oldThickness = border.BorderThickness;
+				oldThickness = border.BorderThickness;
 				this.metroWindow = metroWindow;
 				metroWindow.StateChanged += MetroWindow_StateChanged;
 				border.Loaded += border_Loaded;

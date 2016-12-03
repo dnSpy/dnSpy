@@ -83,9 +83,9 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="reference">Reference or null</param>
 		/// <param name="flags">Flags</param>
 		public TextReference(object reference, DecompilerReferenceFlags flags) {
-			this.Reference = reference;
-			this.Flags = flags;
-			this.Span = null;
+			Reference = reference;
+			Flags = flags;
+			Span = null;
 		}
 
 		/// <summary>
@@ -95,9 +95,9 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="flags">Flags</param>
 		/// <param name="span">Span</param>
 		public TextReference(object reference, DecompilerReferenceFlags flags, Span span) {
-			this.Reference = reference;
-			this.Flags = flags;
-			this.Span = span;
+			Reference = reference;
+			Flags = flags;
+			Span = span;
 		}
 	}
 }

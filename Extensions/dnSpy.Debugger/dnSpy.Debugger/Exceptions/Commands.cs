@@ -69,8 +69,8 @@ namespace dnSpy.Debugger.Exceptions {
 		public ExceptionVM[] SelectedItems { get; }
 
 		public ExceptionsCtxMenuContext(IExceptionsVM vm, ExceptionVM[] selItems) {
-			this.VM = vm;
-			this.SelectedItems = selItems;
+			VM = vm;
+			SelectedItems = selItems;
 		}
 	}
 

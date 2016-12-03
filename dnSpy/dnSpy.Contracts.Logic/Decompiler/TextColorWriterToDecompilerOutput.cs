@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Decompiler {
 
 		TextColorWriterToDecompilerOutput(ITextColorWriter output) {
 			this.output = output;
-			this.indenter = new Indenter(4, 4, true);
-			this.offset = 0;
+			indenter = new Indenter(4, 4, true);
+			offset = 0;
 		}
 
 		int IDecompilerOutput.Length => offset;

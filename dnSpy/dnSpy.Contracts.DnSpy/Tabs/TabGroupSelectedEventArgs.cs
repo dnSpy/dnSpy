@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Tabs {
 		/// <param name="selected">Selected tab group or null</param>
 		/// <param name="unselected">Unselected tab group or null</param>
 		public TabGroupSelectedEventArgs(ITabGroup selected, ITabGroup unselected) {
-			this.Selected = selected;
-			this.Unselected = unselected;
+			Selected = selected;
+			Unselected = unselected;
 		}
 	}
 }

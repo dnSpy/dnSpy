@@ -66,8 +66,8 @@ namespace dndbg.Engine {
 		}
 
 		public CorEvent(CorClass cls, uint token) {
-			this.Class = cls;
-			this.Token = token;
+			Class = cls;
+			Token = token;
 		}
 
 		public EventAttributes GetAttributes() => MDAPI.GetEventAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);

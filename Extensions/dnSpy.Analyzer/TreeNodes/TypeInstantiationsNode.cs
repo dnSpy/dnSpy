@@ -35,7 +35,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				throw new ArgumentNullException(nameof(analyzedType));
 
 			this.analyzedType = analyzedType;
-			this.isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
+			isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>

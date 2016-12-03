@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.IMModules {
 			public readonly MemoryModuleDefFile MemoryModuleDefFile;
 
 			public Context(MemoryModuleDefFile file) {
-				this.MemoryModuleDefFile = file;
+				MemoryModuleDefFile = file;
 			}
 		}
 

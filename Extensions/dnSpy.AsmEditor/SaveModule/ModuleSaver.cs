@@ -39,8 +39,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public ModuleSaverLogEvent Event { get; }
 
 		public ModuleSaverLogEventArgs(string msg, ModuleSaverLogEvent evType) {
-			this.Message = msg;
-			this.Event = evType;
+			Message = msg;
+			Event = evType;
 		}
 	}
 
@@ -49,8 +49,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public bool Starting { get; }
 
 		public ModuleSaverWriteEventArgs(SaveOptionsVM vm, bool starting) {
-			this.File = vm;
-			this.Starting = starting;
+			File = vm;
+			Starting = starting;
 		}
 	}
 
@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			public double SizeRatio;
 
 			public SaveState(SaveOptionsVM vm) {
-				this.File = vm;
+				File = vm;
 			}
 		}
 
@@ -166,7 +166,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			public override double Progress => (double)BytesWritten / TotalSize;
 
 			public HexFileProgress(ulong totalSize) {
-				this.TotalSize = totalSize;
+				TotalSize = totalSize;
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public event EventHandler<ModuleSaverLogEventArgs> OnLogMessage;
 
 		public ModuleSaver(IEnumerable<SaveOptionsVM> moduleVms) {
-			this.filesToSave = moduleVms.Select(a => new SaveState(a)).ToArray();
+			filesToSave = moduleVms.Select(a => new SaveState(a)).ToArray();
 			var totalSize = filesToSave.Sum(a => GetSize(a.File));
 			if (totalSize == 0)
 				totalSize = 1;

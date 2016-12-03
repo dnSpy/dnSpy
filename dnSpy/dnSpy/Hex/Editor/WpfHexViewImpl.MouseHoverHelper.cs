@@ -59,8 +59,8 @@ namespace dnSpy.Hex.Editor {
 
 			public MouseHoverHelper(WpfHexViewImpl owner) {
 				this.owner = owner;
-				this.handlers = new List<MouseHoverHandler>();
-				this.timer = new DispatcherTimer(DispatcherPriority.Normal, owner.VisualElement.Dispatcher);
+				handlers = new List<MouseHoverHandler>();
+				timer = new DispatcherTimer(DispatcherPriority.Normal, owner.VisualElement.Dispatcher);
 				timer.Tick += Timer_Tick;
 				owner.VisualElement.MouseDown += WpfTextView_MouseDown;
 				owner.VisualElement.MouseLeftButtonDown += WpfTextView_MouseLeftButtonDown;

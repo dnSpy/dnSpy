@@ -182,17 +182,17 @@ namespace dndbg.Engine {
 		CorDebugNGENPolicy ngenPolicy;
 
 		public DebugOptions CopyTo(DebugOptions other) {
-			other.StepperInterceptMask = this.StepperInterceptMask;
-			other.StepperUnmappedStopMask = this.StepperUnmappedStopMask;
-			other.StepperJMC = this.StepperJMC;
-			other.JITCompilerFlags = this.JITCompilerFlags;
-			other.ModuleTrackJITInfo = this.ModuleTrackJITInfo;
-			other.ModuleAllowJitOptimizations = this.ModuleAllowJitOptimizations;
-			other.ModuleClassLoadCallbacks = this.ModuleClassLoadCallbacks;
-			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
-			other.LogMessages = this.LogMessages;
-			other.ExceptionCallbacksOutsideOfMyCode = this.ExceptionCallbacksOutsideOfMyCode;
-			other.NGENPolicy = this.NGENPolicy;
+			other.StepperInterceptMask = StepperInterceptMask;
+			other.StepperUnmappedStopMask = StepperUnmappedStopMask;
+			other.StepperJMC = StepperJMC;
+			other.JITCompilerFlags = JITCompilerFlags;
+			other.ModuleTrackJITInfo = ModuleTrackJITInfo;
+			other.ModuleAllowJitOptimizations = ModuleAllowJitOptimizations;
+			other.ModuleClassLoadCallbacks = ModuleClassLoadCallbacks;
+			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
+			other.LogMessages = LogMessages;
+			other.ExceptionCallbacksOutsideOfMyCode = ExceptionCallbacksOutsideOfMyCode;
+			other.NGENPolicy = NGENPolicy;
 			return other;
 		}
 

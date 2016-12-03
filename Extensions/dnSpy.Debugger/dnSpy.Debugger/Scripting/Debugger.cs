@@ -84,19 +84,19 @@ namespace dnSpy.Debugger.Scripting {
 
 		[ImportingConstructor]
 		Debugger(ITheDebugger theDebugger, Lazy<IStackFrameService> stackFrameService, Lazy<IDebugService> debugService) {
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			dispatcher = Dispatcher.CurrentDispatcher;
 			this.theDebugger = theDebugger;
 			this.theDebugger.OnProcessStateChanged_Last += TheDebugger_OnProcessStateChanged_Last;
 			this.stackFrameService = stackFrameService;
 			this.debugService = debugService;
-			this.pausedOrTerminatedEvent = new ManualResetEvent(false);
-			this.runningEvent = new ManualResetEvent(false);
+			pausedOrTerminatedEvent = new ManualResetEvent(false);
+			runningEvent = new ManualResetEvent(false);
 			InitializeProcessHandle();
 			InitializePausedOrTerminatedEvent();
 		}
 
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
-		void InitializeProcessHandle() => this.hProcess_debuggee = GetProcessHandle();
+		void InitializeProcessHandle() => hProcess_debuggee = GetProcessHandle();
 
 		IntPtr GetProcessHandle() {
 			var dbg = theDebugger.Debugger;

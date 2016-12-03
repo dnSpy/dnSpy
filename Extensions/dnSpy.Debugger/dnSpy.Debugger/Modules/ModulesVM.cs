@@ -60,11 +60,11 @@ namespace dnSpy.Debugger.Modules {
 		ModulesVM(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.ModulesWindow);
 			this.theDebugger = theDebugger;
-			this.moduleContext = new ModuleContext(theDebugger, classificationFormatMap, textElementProvider) {
+			moduleContext = new ModuleContext(theDebugger, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightModules,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 			};
-			this.modulesList = new ObservableCollection<ModuleVM>();
+			modulesList = new ObservableCollection<ModuleVM>();
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;

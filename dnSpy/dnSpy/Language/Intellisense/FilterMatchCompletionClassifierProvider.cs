@@ -46,7 +46,7 @@ namespace dnSpy.Language.Intellisense {
 		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.completionMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.CompletionMatchHighlight);
+			completionMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.CompletionMatchHighlight);
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

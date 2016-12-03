@@ -24,7 +24,7 @@ namespace dnSpy.AsmEditor.Commands {
 		public DocumentTreeNodeData[] Nodes { get; }
 
 		public AsmEditorContext(DocumentTreeNodeData[] nodes) {
-			this.Nodes = nodes;
+			Nodes = nodes;
 		}
 	}
 }

@@ -55,10 +55,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		ExportToProjectSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.ProjectVersion = sect.Attribute<ProjectVersion?>(nameof(ProjectVersion)) ?? this.ProjectVersion;
-			this.disableSave = false;
+			ProjectVersion = sect.Attribute<ProjectVersion?>(nameof(ProjectVersion)) ?? ProjectVersion;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

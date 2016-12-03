@@ -64,7 +64,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		void InitializeImageData(byte[] imageData) {
 			this.imageData = imageData;
-			this.imageSource = ImageResourceUtilities.CreateImageSource(imageData);
+			imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {

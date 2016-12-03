@@ -37,7 +37,7 @@ namespace dnSpy.Text.Classification {
 			DefaultSettings = CreateDefaultTextEditorFontSettings(textEditorSettings);
 			Result.Add(AppearanceCategoryConstants.TextEditor, DefaultSettings);
 			this.textEditorSettings = textEditorSettings;
-			this.toDef = new Dictionary<string, Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata>>(StringComparer.Ordinal);
+			toDef = new Dictionary<string, Lazy<TextEditorFormatDefinition, ITextEditorFormatDefinitionMetadata>>(StringComparer.Ordinal);
 			var allDefs = textEditorFormatDefinitions.ToArray();
 			foreach (var def in allDefs) {
 				Debug.Assert(!toDef.ContainsKey(def.Metadata.Name));

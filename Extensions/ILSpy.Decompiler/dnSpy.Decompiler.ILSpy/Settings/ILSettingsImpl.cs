@@ -33,14 +33,14 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		ILSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.ShowILComments = sect.Attribute<bool?>(nameof(ShowILComments)) ?? this.ShowILComments;
-			this.ShowXmlDocumentation = sect.Attribute<bool?>(nameof(ShowXmlDocumentation)) ?? this.ShowXmlDocumentation;
-			this.ShowTokenAndRvaComments = sect.Attribute<bool?>(nameof(ShowTokenAndRvaComments)) ?? this.ShowTokenAndRvaComments;
-			this.ShowILBytes = sect.Attribute<bool?>(nameof(ShowILBytes)) ?? this.ShowILBytes;
-			this.SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? this.SortMembers;
-			this.disableSave = false;
+			ShowILComments = sect.Attribute<bool?>(nameof(ShowILComments)) ?? ShowILComments;
+			ShowXmlDocumentation = sect.Attribute<bool?>(nameof(ShowXmlDocumentation)) ?? ShowXmlDocumentation;
+			ShowTokenAndRvaComments = sect.Attribute<bool?>(nameof(ShowTokenAndRvaComments)) ?? ShowTokenAndRvaComments;
+			ShowILBytes = sect.Attribute<bool?>(nameof(ShowILBytes)) ?? ShowILBytes;
+			SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? SortMembers;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

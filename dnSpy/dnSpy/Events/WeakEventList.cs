@@ -76,13 +76,13 @@ namespace dnSpy.Events {
 			public InstanceInfo(EventHandler<TEventArgs> handler) {
 				Debug.Assert(handler.Target != null);
 				Debug.Assert(handler.GetInvocationList().Length == 1);
-				this.target = new WeakReference(handler.Target);
-				this.methodInfo = handler.Method;
+				target = new WeakReference(handler.Target);
+				methodInfo = handler.Method;
 			}
 		}
 
 		public WeakEventList() {
-			this.handlers = new List<Info>();
+			handlers = new List<Info>();
 		}
 
 		public void Add(EventHandler<TEventArgs> h) {

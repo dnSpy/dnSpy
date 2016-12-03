@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		public UndoObject(object value) {
-			this.Value = value;
+			Value = value;
 		}
 	}
 }

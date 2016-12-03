@@ -35,7 +35,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				throw new ArgumentNullException(nameof(analyzedEvent));
 
 			this.analyzedEvent = analyzedEvent;
-			this.analyzedMethod = this.analyzedEvent.AddMethod ?? this.analyzedEvent.RemoveMethod;
+			analyzedMethod = this.analyzedEvent.AddMethod ?? this.analyzedEvent.RemoveMethod;
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>

@@ -47,18 +47,18 @@ namespace dnSpy.Decompiler.MSBuild {
 			});
 			this.filename = filename;
 
-			this.configs = new List<string>();
-			this.configs.Add("Debug");
-			this.configs.Add("Release");
+			configs = new List<string>();
+			configs.Add("Debug");
+			configs.Add("Release");
 
 			var hash = new HashSet<string>(projects.Select(a => a.Platform));
-			this.platforms = new List<string>(hash.Count);
-			this.platforms.Add("Any CPU");
+			platforms = new List<string>(hash.Count);
+			platforms.Add("Any CPU");
 			hash.Remove("AnyCPU");
 			if (hash.Count > 0)
-				this.platforms.Add("Mixed Platforms");
+				platforms.Add("Mixed Platforms");
 			foreach (var p in hash)
-				this.platforms.Add(p);
+				platforms.Add(p);
 		}
 
 		public void Write() {
