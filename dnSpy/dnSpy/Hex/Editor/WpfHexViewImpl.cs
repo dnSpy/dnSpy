@@ -791,7 +791,6 @@ namespace dnSpy.Hex.Editor {
 				viewportTop = layoutHelper.NewViewportTop;
 				Canvas.SetTop(normalAdornmentLayerCollection, -viewportTop);
 			}
-			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
 
 			if ((options & DisplayHexLineOptions.CanRecreateBufferLines) != 0) {
 				if (raiseBufferLinesChangedEvent)
@@ -818,6 +817,12 @@ namespace dnSpy.Hex.Editor {
 					}));
 				}
 			}
+
+			// Raise this event after BufferLinesChanged event. BufferLinesChanged is more low level and
+			// various code could use cached positions in LayoutChanged handlers (eg. the caret will use
+			// its cached position). If this event is raised afterwards, they have a chance to re-validate
+			// their cached values.
+			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
 		}
 
 		void RaiseBufferLinesChanged(HexBufferLineProvider oldBufferLines) {
