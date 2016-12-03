@@ -18,11 +18,13 @@
 */
 
 using System;
+using System.ComponentModel;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// A position in a <see cref="HexBufferStream"/>
 	/// </summary>
+	[TypeConverter(typeof(HexPositionConverter))]
 	public struct HexPosition : IEquatable<HexPosition>, IComparable<HexPosition> {
 		/// <summary>
 		/// Gets the value 0
@@ -176,6 +178,65 @@ namespace dnSpy.Contracts.Hex {
 			if (hi == 0)
 				return "0x" + lo.ToString("X");
 			return "0x" + hi.ToString("X") + lo.ToString("X16");
+		}
+
+		internal static HexPosition Parse(string value) {
+			if (value == null)
+				throw new ArgumentNullException(nameof(value));
+			HexPosition result;
+			if (!TryParse(value, out result))
+				throw new FormatException($"Invalid {nameof(HexPosition)} value: {value}");
+			return result;
+		}
+
+		static bool TryParse(string value, out HexPosition result) {
+			result = default(HexPosition);
+			if (value == null)
+				throw new ArgumentNullException(nameof(value));
+			value = value.Trim();
+			if (!value.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+				return false;
+			int hexLength = value.Length - 2;
+			if (hexLength == 0 || hexLength > 32)
+				return false;
+			ulong? lo = null;
+			ulong? hi = null;
+			if (hexLength <= 16) {
+				lo = TryParse(value, 2, value.Length - 2);
+				hi = 0;
+			}
+			else {
+				lo = TryParse(value, value.Length - 16, 16);
+				hi = TryParse(value, 2, value.Length - 16 - 2);
+			}
+			if (lo == null || hi == null)
+				return false;
+			result = new HexPosition(hi.Value, lo.Value);
+			return true;
+		}
+
+		static ulong? TryParse(string value, int index, int length) {
+			if (length < 0 || length > 16)
+				return null;
+			ulong res = 0;
+			for (int i = 0; i < length; i++) {
+				res <<= 4;
+				int nibble = HexToBin(value[index + i]);
+				if (nibble < 0)
+					return null;
+				res |= (uint)nibble;
+			}
+			return res;
+		}
+
+		static int HexToBin(char c) {
+			if ('0' <= c && c <= '9')
+				return c - '0';
+			if ('A' <= c && c <= 'F')
+				return c - 'A' + 10;
+			if ('a' <= c && c <= 'f')
+				return c - 'a' + 10;
+			return -1;
 		}
 	}
 }

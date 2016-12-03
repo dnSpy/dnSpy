@@ -410,6 +410,7 @@
     <Compile Include="Hex\HexContentChangingEventArgs.cs" />
     <Compile Include="Hex\HexEdit.cs" />
     <Compile Include="Hex\HexPosition.cs" />
+    <Compile Include="Hex\HexPositionConverter.cs" />
     <Compile Include="Hex\HexSimpleBufferStream.cs" />
     <Compile Include="Hex\HexSpan.cs" />
     <Compile Include="Hex\HexSpanInfo.cs" />
