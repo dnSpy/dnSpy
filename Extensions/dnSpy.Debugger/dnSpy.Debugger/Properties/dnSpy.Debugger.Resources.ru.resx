@@ -1293,4 +1293,10 @@ HResult: 0x{3:X8}</value>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>Add Method Breakpoint</value>
   </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Memory Window</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Hex Editor (Memory Window)</value>
+  </data>
 </root>

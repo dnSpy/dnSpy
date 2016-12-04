@@ -130,10 +130,10 @@
     <value>反汇编 BAML</value>
   </data>
   <data name="BamlSettings_NewLineOnAttributes" xml:space="preserve">
-    <value>One attribute per line</value>
+    <value>每行一个标签</value>
   </data>
   <data name="BamlSettings_UseTabs" xml:space="preserve">
-    <value>Use tabs</value>
+    <value>使用Tab缩进</value>
   </data>
   <data name="DisassembleBAMLCommand" xml:space="preserve">
     <value>反汇编 BAML</value>

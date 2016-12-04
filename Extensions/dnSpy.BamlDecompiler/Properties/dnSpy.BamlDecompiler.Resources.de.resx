@@ -121,19 +121,19 @@
     <value>Alle Dateien</value>
   </data>
   <data name="BAMLFile" xml:space="preserve">
-    <value>BAML Datei</value>
+    <value>BAML-Datei</value>
   </data>
   <data name="BamlOptionDlgTab" xml:space="preserve">
-    <value>BAML Dekompilierer</value>
+    <value>BAML-Dekompilierer</value>
   </data>
   <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
     <value>Disassembliere BAML</value>
   </data>
   <data name="BamlSettings_NewLineOnAttributes" xml:space="preserve">
-    <value>One attribute per line</value>
+    <value>Ein Attribut pro Zeile</value>
   </data>
   <data name="BamlSettings_UseTabs" xml:space="preserve">
-    <value>Use tabs</value>
+    <value>Tabs verwenden</value>
   </data>
   <data name="DisassembleBAMLCommand" xml:space="preserve">
     <value>Disassembliere BAML</value>
@@ -142,19 +142,19 @@
     <value>Ereignis '{0}' angehängt.</value>
   </data>
   <data name="Error_IComponentConnectorConnetCannotBeParsed" xml:space="preserve">
-    <value>Klasse '{0}' hat die IComponentConnector.Connect Methode, kann aber nicht umgewandelt werden.</value>
+    <value>Klasse '{0}' hat die IComponentConnector.Connect-Methode, kann aber nicht umgewandelt werden.</value>
   </data>
   <data name="Error_UnknownConnectionId" xml:space="preserve">
     <value>Unbekannte Verbindungs-ID: {0}</value>
   </data>
   <data name="Msg_GlobalNamespace" xml:space="preserve">
-    <value>{0} ist das Prefix für den globalen Namensraum.</value>
+    <value>{0} ist der Präfix für den globalen Namensraum.</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>BAML Dekompilierer</value>
+    <value>BAML-Dekompilierer</value>
   </data>
   <data name="SaveBAML" xml:space="preserve">
-    <value>BAML speichern...</value>
+    <value>BAML _speichern...</value>
   </data>
   <data name="SaveXAML" xml:space="preserve">
     <value>XAML _speichern...</value>

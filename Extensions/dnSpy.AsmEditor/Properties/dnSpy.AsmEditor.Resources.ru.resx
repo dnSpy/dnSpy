@@ -514,9 +514,6 @@
   <data name="HexField_Size" xml:space="preserve">
     <value>{0} Размер</value>
   </data>
-  <data name="HexField_UndoMessage_Write_Parent_Field" xml:space="preserve">
-    <value>Записать {0}.{1}</value>
-  </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
     <value>Предпочтительно 32-бит</value>
   </data>
@@ -1510,26 +1507,8 @@
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
     <value>Записать шестнадцатеричное 'return true' тело</value>
   </data>
-  <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
-    <value>Заполнить {0} байтов @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_InsertASCII" xml:space="preserve">
-    <value>Вставить ASCII</value>
-  </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
     <value>Вставить байты</value>
-  </data>
-  <data name="Hex_Undo_Message_PasteBytesAtAddress" xml:space="preserve">
-    <value>Вставить {0} байтов @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Record" xml:space="preserve">
-    <value>Вставить {0} {1} запись @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Records" xml:space="preserve">
-    <value>Вставить {0} {1} записи @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Write_Bytes" xml:space="preserve">
-    <value>Записать {0} байтов по смещению {1:X8}</value>
   </data>
   <data name="Images" xml:space="preserve">
     <value>Изображения</value>
@@ -2015,14 +1994,8 @@
   <data name="SortMetadataTableCommand" xml:space="preserve">
     <value>_Сортировать таблицу</value>
   </data>
-  <data name="SortMetadataTableCommand2" xml:space="preserve">
-    <value>Сортировка {0} таблиц</value>
-  </data>
   <data name="SortSelectionCommand" xml:space="preserve">
     <value>Со_ртировать выделенное</value>
-  </data>
-  <data name="SortTable_RowIdentifier" xml:space="preserve">
-    <value>Сортировать таблицу {0}, RID {1} - {2}</value>
   </data>
   <data name="TablesHeapOptionsTab" xml:space="preserve">
     <value>Tables Heap Options</value>

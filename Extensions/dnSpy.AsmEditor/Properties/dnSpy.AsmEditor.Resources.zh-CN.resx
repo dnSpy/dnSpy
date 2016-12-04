@@ -514,9 +514,6 @@
   <data name="HexField_Size" xml:space="preserve">
     <value>{0} Size</value>
   </data>
-  <data name="HexField_UndoMessage_Write_Parent_Field" xml:space="preserve">
-    <value>Write {0}.{1}</value>
-  </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
     <value>优先32位</value>
   </data>
@@ -1510,26 +1507,8 @@
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
     <value>十六进制写入方法体“return true”</value>
   </data>
-  <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
-    <value>Fill {0} bytes @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_InsertASCII" xml:space="preserve">
-    <value>Insert ASCII</value>
-  </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
     <value>Insert Bytes</value>
-  </data>
-  <data name="Hex_Undo_Message_PasteBytesAtAddress" xml:space="preserve">
-    <value>Paste {0} bytes @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Record" xml:space="preserve">
-    <value>Paste {0} {1} record @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Records" xml:space="preserve">
-    <value>Paste {0} {1} records @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Write_Bytes" xml:space="preserve">
-    <value>Write {0} bytes to offset {1:X8}</value>
   </data>
   <data name="Images" xml:space="preserve">
     <value>Images</value>
@@ -1694,7 +1673,7 @@
     <value>N_ame</value>
   </data>
   <data name="MoveTypesToEmptyNamespaceCommand" xml:space="preserve">
-    <value>Move Types to Empty Namespace</value>
+    <value>将类型移动到空命名空间下</value>
   </data>
   <data name="Namespace_Name" xml:space="preserve">
     <value>名称(_N)</value>
@@ -2017,14 +1996,8 @@
   <data name="SortMetadataTableCommand" xml:space="preserve">
     <value>_Sort Table</value>
   </data>
-  <data name="SortMetadataTableCommand2" xml:space="preserve">
-    <value>Sort {0} table</value>
-  </data>
   <data name="SortSelectionCommand" xml:space="preserve">
     <value>排序选区(_R)</value>
-  </data>
-  <data name="SortTable_RowIdentifier" xml:space="preserve">
-    <value>Sort {0} table, RID {1} - {2}</value>
   </data>
   <data name="TablesHeapOptionsTab" xml:space="preserve">
     <value>Tables Heap Options</value>
@@ -2495,19 +2468,19 @@
     <value>取消</value>
   </data>
   <data name="EditAssemblyCode" xml:space="preserve">
-    <value>Edit Assembly Attributes</value>
+    <value>编辑程序集标签</value>
   </data>
   <data name="EditCodeAddClass" xml:space="preserve">
-    <value>Add Class</value>
+    <value>添加类</value>
   </data>
   <data name="MergeWithAssemblyCommand" xml:space="preserve">
-    <value>Merge with Assembly...</value>
+    <value>与程序集合并...</value>
   </data>
   <data name="MergeWithAssemblyCommand2" xml:space="preserve">
-    <value>Merge with Assembly</value>
+    <value>与程序集合并</value>
   </data>
   <data name="EditAssemblyCode2" xml:space="preserve">
-    <value>Edit Assembly Attributes ({0})...</value>
+    <value>编辑程序集标签 ({0})...</value>
   </data>
   <data name="EditCodeAddClass2" xml:space="preserve">
     <value>Add Class ({0})...</value>
@@ -2522,6 +2495,6 @@
     <value>Couldn't find the edited type: {0}</value>
   </data>
   <data name="CloseOldInMemoryModules" xml:space="preserve">
-    <value>Close Old In-Memory Modules</value>
+    <value>关闭过时的内存缓存模块</value>
   </data>
 </root>

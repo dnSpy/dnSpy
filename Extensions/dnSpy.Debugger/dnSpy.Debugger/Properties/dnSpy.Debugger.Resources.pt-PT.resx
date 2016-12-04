@@ -1289,4 +1289,10 @@ Tem certeza que deseja expandi-la?</value>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>Adicionar interrupção de Método</value>
   </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Memory Window</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Hex Editor (Memory Window)</value>
+  </data>
 </root>

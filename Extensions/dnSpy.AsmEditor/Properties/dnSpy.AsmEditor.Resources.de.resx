@@ -514,9 +514,6 @@
   <data name="HexField_Size" xml:space="preserve">
     <value>{0} Größe</value>
   </data>
-  <data name="HexField_UndoMessage_Write_Parent_Field" xml:space="preserve">
-    <value>Schreibe {0}.{1}</value>
-  </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
     <value>32-Bit bevorzugt</value>
   </data>
@@ -1511,26 +1508,8 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
     <value>'return true' Rumpf als Hex schreiben</value>
   </data>
-  <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
-    <value>Fülle {0} Bytes @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_InsertASCII" xml:space="preserve">
-    <value>Füge ASCII ein</value>
-  </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
     <value>Füge Bytes ein</value>
-  </data>
-  <data name="Hex_Undo_Message_PasteBytesAtAddress" xml:space="preserve">
-    <value>Einfügen von {0} Bytes @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Record" xml:space="preserve">
-    <value>Einfügen von {0} {1} Datensatz @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Records" xml:space="preserve">
-    <value>Einfügen von {0} {1} Datensätzen @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Write_Bytes" xml:space="preserve">
-    <value>Schreibe {0} Bytes zu Versatz {1:X8}</value>
   </data>
   <data name="Images" xml:space="preserve">
     <value>Bilder</value>
@@ -2017,14 +1996,8 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="SortMetadataTableCommand" xml:space="preserve">
     <value>Tabelle _sortieren</value>
   </data>
-  <data name="SortMetadataTableCommand2" xml:space="preserve">
-    <value>Tabelle {0} sortieren</value>
-  </data>
   <data name="SortSelectionCommand" xml:space="preserve">
     <value>Auswahl so_rtieren</value>
-  </data>
-  <data name="SortTable_RowIdentifier" xml:space="preserve">
-    <value>Sortiert Tabelle {0}, RID {1} - {2}</value>
   </data>
   <data name="TablesHeapOptionsTab" xml:space="preserve">
     <value>Tabellen Heap Optionen</value>
@@ -2405,7 +2378,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Strg+Umschalt+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edit Method ({0})...</value>
+    <value>Methode ({0}) bearbeiten...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>Code bearbeiten</value>
@@ -2495,33 +2468,33 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Abbrechen</value>
   </data>
   <data name="EditAssemblyCode" xml:space="preserve">
-    <value>Edit Assembly Attributes</value>
+    <value>Assemblyattribute bearbeiten</value>
   </data>
   <data name="EditCodeAddClass" xml:space="preserve">
-    <value>Add Class</value>
+    <value>Klasse hinzufügen</value>
   </data>
   <data name="MergeWithAssemblyCommand" xml:space="preserve">
-    <value>Merge with Assembly...</value>
+    <value>Mit Assembly zusammenführen...</value>
   </data>
   <data name="MergeWithAssemblyCommand2" xml:space="preserve">
-    <value>Merge with Assembly</value>
+    <value>Mit Assembly zusammenführen</value>
   </data>
   <data name="EditAssemblyCode2" xml:space="preserve">
-    <value>Edit Assembly Attributes ({0})...</value>
+    <value>Assemblyattribute bearbeiten ({0})...</value>
   </data>
   <data name="EditCodeAddClass2" xml:space="preserve">
-    <value>Add Class ({0})...</value>
+    <value>Klasse ({0}) hinzufügen...</value>
   </data>
   <data name="EditCodeEditClass" xml:space="preserve">
-    <value>Edit Class</value>
+    <value>Klasse bearbeiten</value>
   </data>
   <data name="EditCodeEditClass2" xml:space="preserve">
-    <value>Edit Class ({0})...</value>
+    <value>Klasse ({0}) bearbeiten...</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
-    <value>Couldn't find the edited type: {0}</value>
+    <value>Der bearbeitete Typ konnte nicht gefunden werden: {0}</value>
   </data>
   <data name="CloseOldInMemoryModules" xml:space="preserve">
-    <value>Close Old In-Memory Modules</value>
+    <value>Alte In-Memory-Module schließen</value>
   </data>
 </root>

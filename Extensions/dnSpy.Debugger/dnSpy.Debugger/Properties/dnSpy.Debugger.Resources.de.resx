@@ -1293,4 +1293,10 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>Methodenhaltepunkt hinzufügen</value>
   </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Memory Window</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Hex Editor (Memory Window)</value>
+  </data>
 </root>

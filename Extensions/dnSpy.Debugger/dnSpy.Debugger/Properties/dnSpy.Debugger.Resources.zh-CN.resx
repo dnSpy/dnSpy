@@ -1288,9 +1288,15 @@ HResult: 0x{3:X8}</value>
     <value>位置</value>
   </data>
   <data name="AddClassBreakpointCommand" xml:space="preserve">
-    <value>Add Class Breakpoint</value>
+    <value>添加类断点</value>
   </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>Add Method Breakpoint</value>
+  </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Memory Window</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Hex Editor (Memory Window)</value>
   </data>
 </root>
