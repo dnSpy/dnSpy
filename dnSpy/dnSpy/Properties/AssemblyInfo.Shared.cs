@@ -28,7 +28,7 @@ static class DnSpyAssemblyConstants {
 	// Update App.config whenever this value changes.
 	public const string ASSEMBLY_VERSION							= "3.0.1.0";
 	// This is shown in the title bar. 3 numbers are enough
-	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "3.0.1";
+	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "3.x.x";
 	public const string ASSEMBLY_FILE_VERSION						= ASSEMBLY_VERSION;
 }
 #pragma warning restore 0436
