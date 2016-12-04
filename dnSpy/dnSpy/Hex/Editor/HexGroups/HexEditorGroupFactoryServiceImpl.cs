@@ -47,8 +47,25 @@ namespace dnSpy.Hex.Editor.HexGroups {
 				MenuGuid = menuGuid,
 			};
 			var hexView = hexEditorFactoryService.Create(buffer, roles, options);
-			new LocalGroupOptions(hexView.Buffer).WriteTo(hexView);
+			GetDefaultLocalOptions(hexView).WriteTo(hexView);
 			return hexEditorFactoryService.CreateHost(hexView, false);
+		}
+
+		public override LocalGroupOptions GetDefaultLocalOptions(HexView hexView) {
+			if (hexView == null)
+				throw new ArgumentNullException(nameof(hexView));
+			var options = new LocalGroupOptions();
+			options.ShowOffsetColumn = true;
+			options.ShowValuesColumn = true;
+			options.ShowAsciiColumn = true;
+			options.StartPosition = hexView.Buffer.Span.Start;
+			options.EndPosition = hexView.Buffer.Span.End;
+			options.BasePosition = HexPosition.Zero;
+			options.UseRelativePositions = false;
+			options.OffsetBitSize = 0;
+			options.HexValuesDisplayFormat = HexValuesDisplayFormat.HexByte;
+			options.BytesPerLine = 0;
+			return options;
 		}
 	}
 }

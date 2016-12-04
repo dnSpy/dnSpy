@@ -335,7 +335,6 @@
     <Compile Include="Hex\Editor\HexEditorOptionsFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexGlyphMargin.cs" />
     <Compile Include="Hex\Editor\HexGroups\HexEditorGroupFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Editor\HexGroups\LocalGroupOptions.cs" />
     <Compile Include="Hex\Editor\HexImageReferenceGlyphFactoryProvider.cs" />
     <Compile Include="Hex\Editor\HexIntraTextAdornmentService.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessorCollection.cs" />

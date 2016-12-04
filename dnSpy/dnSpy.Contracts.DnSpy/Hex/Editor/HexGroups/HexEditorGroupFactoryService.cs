@@ -38,5 +38,12 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// <param name="menuGuid">Menu guid or null</param>
 		/// <returns></returns>
 		public abstract WpfHexViewHost Create(HexBuffer buffer, string group, string subGroup, Guid? menuGuid);
+
+		/// <summary>
+		/// Gets the default local options
+		/// </summary>
+		/// <param name="hexView">Hex view</param>
+		/// <returns></returns>
+		public abstract LocalGroupOptions GetDefaultLocalOptions(HexView hexView);
 	}
 }

@@ -317,6 +317,7 @@
     <Compile Include="Hex\Editor\HexGlyphMouseProcessorProvider.cs" />
     <Compile Include="Hex\Editor\HexGlyphTag.cs" />
     <Compile Include="Hex\Editor\HexGroups\HexEditorGroupFactoryService.cs" />
+    <Compile Include="Hex\Editor\HexGroups\LocalGroupOptions.cs" />
     <Compile Include="Hex\Editor\HexImageReferenceTag.cs" />
     <Compile Include="Hex\Editor\HexIntraTextAdornmentTag.cs" />
     <Compile Include="Hex\Editor\HexMarginContextMenuHandlerProvider.cs" />
