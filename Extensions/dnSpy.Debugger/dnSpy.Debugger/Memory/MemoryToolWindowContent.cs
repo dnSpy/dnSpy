@@ -60,18 +60,14 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		readonly IWpfCommandService wpfCommandService;
-		readonly Lazy<ITheDebugger> theDebugger;
 		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
-		readonly Lazy<HexBufferFactoryService> hexBufferFactoryService;
-		readonly Lazy<HexBufferStreamFactoryService> hexBufferStreamFactoryService;
+		readonly Lazy<IMemoryVM> memoryVM;
 
 		[ImportingConstructor]
-		MemoryToolWindowContentProvider(IWpfCommandService wpfCommandService, Lazy<ITheDebugger> theDebugger, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexBufferFactoryService> hexBufferFactoryService, Lazy<HexBufferStreamFactoryService> hexBufferStreamFactoryService) {
+		MemoryToolWindowContentProvider(IWpfCommandService wpfCommandService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<IMemoryVM> memoryVM) {
 			this.wpfCommandService = wpfCommandService;
-			this.theDebugger = theDebugger;
 			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
-			this.hexBufferFactoryService = hexBufferFactoryService;
-			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
+			this.memoryVM = memoryVM;
 			contents = new TWContent[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < contents.Length; i++) {
 				var tmpIndex = i;
@@ -100,7 +96,7 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		IMemoryContent CreateMemoryContent(TWContent info) =>
-			new MemoryContent(wpfCommandService, new MemoryVM(theDebugger.Value, hexBufferFactoryService.Value, hexBufferStreamFactoryService.Value), hexEditorGroupFactoryService.Value);
+			new MemoryContent(wpfCommandService, memoryVM.Value, hexEditorGroupFactoryService.Value);
 	}
 
 	sealed class MemoryToolWindowContent : ToolWindowContent, IZoomable {

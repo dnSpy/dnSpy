@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
@@ -26,34 +27,15 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Memory {
 	interface IMemoryVM {
-		bool IsEnabled { get; set; }
-		bool IsVisible { get; set; }
 		HexBuffer Buffer { get; }
 		event EventHandler UnderlyingStreamChanged;
 	}
 
+	[Export(typeof(IMemoryVM))]
 	sealed class MemoryVM : ViewModelBase, IMemoryVM {
-		public bool IsEnabled {
-			get { return isEnabled; }
-			set {
-				if (isEnabled != value) {
-					// Don't call OnPropertyChanged() since it's only used internally by the View
-					isEnabled = value;
-					InitializeMemory();
-				}
-			}
-		}
-		bool isEnabled;
-
-		public bool IsVisible {//TODO: Use it
-			get { return isVisible; }
-			set { isVisible = value; }
-		}
-		bool isVisible;
-
 		public bool CanNotEditMemory {
 			get { return canNotEditMemory; }
-			set {
+			internal set {
 				if (canNotEditMemory != value) {
 					canNotEditMemory = value;
 					OnPropertyChanged(nameof(CanNotEditMemory));
@@ -64,7 +46,7 @@ namespace dnSpy.Debugger.Memory {
 
 		public bool IsStopped {
 			get { return isStopped; }
-			set {
+			internal set {
 				if (isStopped != value) {
 					isStopped = value;
 					OnPropertyChanged(nameof(IsStopped));
@@ -79,7 +61,8 @@ namespace dnSpy.Debugger.Memory {
 		readonly HexBufferStreamFactoryService hexBufferStreamFactoryService;
 		readonly DebuggerHexBufferStream debuggerStream;
 
-		public MemoryVM(ITheDebugger theDebugger, HexBufferFactoryService hexBufferFactoryService, HexBufferStreamFactoryService hexBufferStreamFactoryService) {
+		[ImportingConstructor]
+		MemoryVM(ITheDebugger theDebugger, HexBufferFactoryService hexBufferFactoryService, HexBufferStreamFactoryService hexBufferStreamFactoryService) {
 			this.theDebugger = theDebugger;
 			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
 			debuggerStream = new DebuggerHexBufferStream();

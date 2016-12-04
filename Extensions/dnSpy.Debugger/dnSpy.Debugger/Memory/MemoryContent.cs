@@ -63,9 +63,9 @@ namespace dnSpy.Debugger.Memory {
 			HexView.Options.SetOptionValue(DefaultHexViewOptions.EndPositionId, vmMemory.Buffer.Span.End);
 		}
 
-		public void OnClose() => vmMemory.IsEnabled = false;
-		public void OnShow() => vmMemory.IsEnabled = true;
-		public void OnHidden() => vmMemory.IsVisible = false;
-		public void OnVisible() => vmMemory.IsVisible = true;
+		public void OnClose() { }
+		public void OnShow() { }
+		public void OnHidden() { }
+		public void OnVisible() { }
 	}
 }
