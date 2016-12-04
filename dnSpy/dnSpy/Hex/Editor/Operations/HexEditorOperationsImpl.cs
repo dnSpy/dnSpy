@@ -1039,5 +1039,27 @@ namespace dnSpy.Hex.Editor.Operations {
 			HexView.DisplayHexLineContainingBufferPosition(ActiveCaretBufferPosition, 0, VSTE.ViewRelativePosition.Top);
 			Selection.Clear();
 		}
+
+		public override void ShowAllBytes() => SetNewVisibleSpan(new HexBufferSpan(Buffer, Buffer.Span));
+		public override void ShowOnlySelectedBytes() {
+			if (Selection.IsEmpty)
+				return;
+			SetNewVisibleSpan(Selection.StreamSelectionSpan);
+		}
+
+		void SetNewVisibleSpan(HexBufferSpan span) {
+			if (BufferLines.BufferSpan == span)
+				return;
+			Options.SetOptionValue(DefaultHexViewOptions.StartPositionId, span.Start);
+			Options.SetOptionValue(DefaultHexViewOptions.EndPositionId, span.End);
+			RedisplayHexLines();
+		}
+
+		void RedisplayHexLines() {
+			var line = HexView.HexViewLines.FirstVisibleLine;
+			var verticalDistance = line.Top - HexView.ViewportTop;
+			var bufferPosition = line.BufferStart;
+			HexView.DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, null, null, DisplayHexLineOptions.CanRecreateBufferLines);
+		}
 	}
 }

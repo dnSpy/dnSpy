@@ -337,6 +337,16 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		/// Moves the caret to the start of the previous span that contains data
 		/// </summary>
 		public abstract void MoveToStartOfPreviousValidSpan();
+
+		/// <summary>
+		/// Shows all bytes (<see cref="HexBuffer.Span"/>)
+		/// </summary>
+		public abstract void ShowAllBytes();
+
+		/// <summary>
+		/// Shows only the selected bytes
+		/// </summary>
+		public abstract void ShowOnlySelectedBytes();
 	}
 
 	/// <summary>

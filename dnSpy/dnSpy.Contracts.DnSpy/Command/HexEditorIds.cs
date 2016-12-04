@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Hex;
+
 namespace dnSpy.Contracts.Command {
 	/// <summary>
 	/// Text editor command IDs (group = <see cref="CommandConstants.HexEditorGroup"/>)
@@ -294,5 +296,13 @@ namespace dnSpy.Contracts.Command {
 		/// Moves the caret to the start of the previous span that contains data
 		/// </summary>
 		MoveToStartOfPreviousValidSpan,
+		/// <summary>
+		/// Shows all bytes (<see cref="HexBuffer.Span"/>)
+		/// </summary>
+		ShowAllBytes,
+		/// <summary>
+		/// Shows only the selected bytes
+		/// </summary>
+		ShowOnlySelectedBytes,
 	}
 }

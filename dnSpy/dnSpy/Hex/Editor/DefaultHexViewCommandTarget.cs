@@ -141,6 +141,8 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.SELECTALL:
 				case HexEditorIds.SELECTCURRENTWORD:
 				case HexEditorIds.SELSWAPANCHOR:
+				case HexEditorIds.ShowAllBytes:
+				case HexEditorIds.ShowOnlySelectedBytes:
 				case HexEditorIds.TAB:
 				case HexEditorIds.TOGGLE_OVERTYPE_MODE:
 				case HexEditorIds.TOPLINE:
@@ -233,6 +235,8 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.SELECTALL:
 				case HexEditorIds.SELECTCURRENTWORD:
 				case HexEditorIds.SELSWAPANCHOR:
+				case HexEditorIds.ShowAllBytes:
+				case HexEditorIds.ShowOnlySelectedBytes:
 				case HexEditorIds.TAB:
 				case HexEditorIds.TOGGLE_OVERTYPE_MODE:
 				case HexEditorIds.TOPLINE:
@@ -465,6 +469,14 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.SELSWAPANCHOR:
 					EditorOperations.SwapCaretAndAnchor();
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.ShowAllBytes:
+					EditorOperations.ShowAllBytes();
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.ShowOnlySelectedBytes:
+					EditorOperations.ShowOnlySelectedBytes();
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.TAB:
