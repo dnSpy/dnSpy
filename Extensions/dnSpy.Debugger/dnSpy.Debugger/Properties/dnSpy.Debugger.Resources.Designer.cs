@@ -205,7 +205,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hex Editor (Process Memory).
+        ///   Looks up a localized string similar to Hex Editor (Memory Window).
         /// </summary>
         public static string BgImgDisplayName_DebuggerMemory {
             get {
@@ -1899,7 +1899,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Process Memory.
+        ///   Looks up a localized string similar to Memory Window.
         /// </summary>
         public static string HexEditorGroup_DebuggerMemory {
             get {
