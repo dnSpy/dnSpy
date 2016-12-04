@@ -312,16 +312,32 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Editor</summary>
 		public const string GROUP_CTX_DOCVIEWER_EDITOR = "15000,FD52ABD1-6DB2-48C3-A5DB-809ECE5EBBB2";
 
+		/// <summary>Group: Context Menu, Type: HexView, Group: Show commands</summary>
+		public const string GROUP_CTX_HEXVIEW_SHOW = "0,261BB98C-6C43-4258-9C4E-7A3702298DE0";
+
+		/// <summary>Group: Context Menu, Type: HexView, Group: Edit</summary>
+		public const string GROUP_CTX_HEXVIEW_EDIT = "1000,63AE7AC9-B507-4474-9BB3-9B64B2036D34";
+
+		/// <summary>Group: Context Menu, Type: HexView, Group: Copy</summary>
+		public const string GROUP_CTX_HEXVIEW_COPY = "99000,34DCFAE6-7D6A-428A-8E71-5151616A08A3";
+
+		/// <summary>Group: Context Menu, Type: HexView, Group: Options</summary>
+		public const string GROUP_CTX_HEXVIEW_OPTS = "100000,0794156A-1EDE-45EC-9C41-48E27DE14085";
+
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Show commands</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_SHOW), true)]
 		public const string GROUP_CTX_HEXBOX_SHOW = "0,D49C0D59-BAC6-476C-B5C7-66E8CE6CBD83";
 
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Edit</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_EDIT), true)]
 		public const string GROUP_CTX_HEXBOX_EDIT = "1000,05719F94-21C1-4C73-8931-929E6A9B6A69";
 
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Options</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_OPTS), true)]
 		public const string GROUP_CTX_HEXBOX_OPTS = "2000,DFE105B4-78B1-4227-8A91-A7C8D4B00495";
 
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Copy</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_COPY), true)]
 		public const string GROUP_CTX_HEXBOX_COPY = "3000,CD7D55BB-5ED8-4E8D-B588-AD19AB771105";
 
 		/// <summary>Group: Context Menu, Type: Tabs, Group: Close/New commands</summary>

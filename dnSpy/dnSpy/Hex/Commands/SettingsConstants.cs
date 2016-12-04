@@ -19,7 +19,6 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Hex.Commands {
 	static class SettingsConstants {

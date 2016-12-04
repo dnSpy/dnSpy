@@ -595,6 +595,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bytes per Line.
+        /// </summary>
+        public static string BytesPerLineCommand {
+            get {
+                return ResourceManager.GetString("BytesPerLineCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t convert the input to the desired type: {0}.
         /// </summary>
         public static string CantConvertInputToType {
@@ -609,6 +618,24 @@ namespace dnSpy.Properties {
         public static string ClearAllCommand {
             get {
                 return ResourceManager.GetString("ClearAllCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear Byte.
+        /// </summary>
+        public static string ClearByteCommand {
+            get {
+                return ResourceManager.GetString("ClearByteCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear Selected Bytes.
+        /// </summary>
+        public static string ClearSelectedBytesCommand {
+            get {
+                return ResourceManager.GetString("ClearSelectedBytesCommand", resourceCulture);
             }
         }
         
@@ -703,6 +730,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy C# Array.
+        /// </summary>
+        public static string CopyCSharpArrayCommand {
+            get {
+                return ResourceManager.GetString("CopyCSharpArrayCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+C.
         /// </summary>
         public static string CopyKey {
@@ -717,6 +753,60 @@ namespace dnSpy.Properties {
         public static string CopyMDTokenCommand {
             get {
                 return ResourceManager.GetString("CopyMDTokenCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Offset.
+        /// </summary>
+        public static string CopyOffsetCommand {
+            get {
+                return ResourceManager.GetString("CopyOffsetCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Special.
+        /// </summary>
+        public static string CopySpecialCommand {
+            get {
+                return ResourceManager.GetString("CopySpecialCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Text.
+        /// </summary>
+        public static string CopyTextCommand {
+            get {
+                return ResourceManager.GetString("CopyTextCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Unicode String.
+        /// </summary>
+        public static string CopyUnicodeStringCommand {
+            get {
+                return ResourceManager.GetString("CopyUnicodeStringCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy UTF-8 String.
+        /// </summary>
+        public static string CopyUTF8StringCommand {
+            get {
+                return ResourceManager.GetString("CopyUTF8StringCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Visual Basic Array.
+        /// </summary>
+        public static string CopyVisualBasicArrayCommand {
+            get {
+                return ResourceManager.GetString("CopyVisualBasicArrayCommand", resourceCulture);
             }
         }
         
@@ -1146,6 +1236,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fill Selection with Byte....
+        /// </summary>
+        public static string FillSelectionCommand {
+            get {
+                return ResourceManager.GetString("FillSelectionCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Find.
         /// </summary>
         public static string FindCommand {
@@ -1223,6 +1322,15 @@ namespace dnSpy.Properties {
         public static string GeneralSettings_Theme {
             get {
                 return ResourceManager.GetString("GeneralSettings_Theme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to Address....
+        /// </summary>
+        public static string GoToAddressCommand {
+            get {
+                return ResourceManager.GetString("GoToAddressCommand", resourceCulture);
             }
         }
         
@@ -1317,6 +1425,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go to Offset....
+        /// </summary>
+        public static string GoToOffsetCommand {
+            get {
+                return ResourceManager.GetString("GoToOffsetCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Go to Reference.
         /// </summary>
         public static string GoToReferenceCommand {
@@ -1398,6 +1515,60 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _16 Bytes.
+        /// </summary>
+        public static string HexEditor_BytesPerLine_16 {
+            get {
+                return ResourceManager.GetString("HexEditor_BytesPerLine_16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _32 Bytes.
+        /// </summary>
+        public static string HexEditor_BytesPerLine_32 {
+            get {
+                return ResourceManager.GetString("HexEditor_BytesPerLine_32", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _48 Bytes.
+        /// </summary>
+        public static string HexEditor_BytesPerLine_48 {
+            get {
+                return ResourceManager.GetString("HexEditor_BytesPerLine_48", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _64 Bytes.
+        /// </summary>
+        public static string HexEditor_BytesPerLine_64 {
+            get {
+                return ResourceManager.GetString("HexEditor_BytesPerLine_64", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _8 Bytes.
+        /// </summary>
+        public static string HexEditor_BytesPerLine_8 {
+            get {
+                return ResourceManager.GetString("HexEditor_BytesPerLine_8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Fit to Width.
+        /// </summary>
+        public static string HexEditor_BytesPerLine_FitToWidth {
+            get {
+                return ResourceManager.GetString("HexEditor_BytesPerLine_FitToWidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encoding.
         /// </summary>
         public static string HexEditorEncoding {
@@ -1461,6 +1632,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save Se_lection....
+        /// </summary>
+        public static string HexEditorSaveSelectionCommand {
+            get {
+                return ResourceManager.GetString("HexEditorSaveSelectionCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _End.
         /// </summary>
         public static string HexEditorSelect_End {
@@ -1488,11 +1668,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select....
+        /// </summary>
+        public static string HexEditorSelectCommand {
+            get {
+                return ResourceManager.GetString("HexEditorSelectCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hex Editor.
         /// </summary>
         public static string HexEditorSettings {
             get {
                 return ResourceManager.GetString("HexEditorSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings....
+        /// </summary>
+        public static string HexEditorSettingsCommand {
+            get {
+                return ResourceManager.GetString("HexEditorSettingsCommand", resourceCulture);
             }
         }
         
@@ -2487,6 +2685,51 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Paste.
+        /// </summary>
+        public static string PasteCommand {
+            get {
+                return ResourceManager.GetString("PasteCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste (#Blob Data).
+        /// </summary>
+        public static string PasteDotNetMetaDataBlobCommand {
+            get {
+                return ResourceManager.GetString("PasteDotNetMetaDataBlobCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste Special.
+        /// </summary>
+        public static string PasteSpecialCommand {
+            get {
+                return ResourceManager.GetString("PasteSpecialCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste (Unicode).
+        /// </summary>
+        public static string PasteUnicodeCommand {
+            get {
+                return ResourceManager.GetString("PasteUnicodeCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste (UTF-8).
+        /// </summary>
+        public static string PasteUTF8Command {
+            get {
+                return ResourceManager.GetString("PasteUTF8Command", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to References.
         /// </summary>
         public static string ReferencesFolder {
@@ -3135,6 +3378,51 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+8.
+        /// </summary>
+        public static string ShortCutKeyCtrl8 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrl8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+O.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltO {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+S.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltS {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+B.
+        /// </summary>
+        public static string ShortCutKeyCtrlB {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+D.
+        /// </summary>
+        public static string ShortCutKeyCtrlD {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+{0}.
         /// </summary>
         public static string ShortCutKeyCtrlDIGIT {
@@ -3162,6 +3450,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+G.
+        /// </summary>
+        public static string ShortCutKeyCtrlG {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+I.
         /// </summary>
         public static string ShortCutKeyCtrlI {
@@ -3176,6 +3473,51 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlL {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+8.
+        /// </summary>
+        public static string ShortCutKeyCtrlShift8 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShift8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+B.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftB {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+C.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftC {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+D.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftD {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+H.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftH {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftH", resourceCulture);
             }
         }
         
@@ -3207,11 +3549,56 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+U.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftU {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+U.
+        /// </summary>
+        public static string ShortCutKeyCtrlU {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+V.
+        /// </summary>
+        public static string ShortCutKeyCtrlV {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Del.
+        /// </summary>
+        public static string ShortCutKeyDelete {
+            get {
+                return ResourceManager.GetString("ShortCutKeyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shift+Esc.
         /// </summary>
         public static string ShortCutKeyShiftEsc {
             get {
                 return ResourceManager.GetString("ShortCutKeyShiftEsc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show All Bytes.
+        /// </summary>
+        public static string ShowAllBytesCommand {
+            get {
+                return ResourceManager.GetString("ShowAllBytesCommand", resourceCulture);
             }
         }
         
@@ -3239,6 +3626,15 @@ namespace dnSpy.Properties {
         public static string ShowLineNumbersCommand {
             get {
                 return ResourceManager.GetString("ShowLineNumbersCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Only Selected Bytes.
+        /// </summary>
+        public static string ShowOnlySelectedBytesCommand {
+            get {
+                return ResourceManager.GetString("ShowOnlySelectedBytesCommand", resourceCulture);
             }
         }
         
@@ -3725,6 +4121,15 @@ namespace dnSpy.Properties {
         public static string UseVerticalTabGroupsCommand {
             get {
                 return ResourceManager.GetString("UseVerticalTabGroupsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value Format.
+        /// </summary>
+        public static string ValueFormatCommand {
+            get {
+                return ResourceManager.GetString("ValueFormatCommand", resourceCulture);
             }
         }
         
