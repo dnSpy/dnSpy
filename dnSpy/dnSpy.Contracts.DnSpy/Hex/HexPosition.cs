@@ -180,7 +180,12 @@ namespace dnSpy.Contracts.Hex {
 			return "0x" + hi.ToString("X") + lo.ToString("X16");
 		}
 
-		internal static HexPosition Parse(string value) {
+		/// <summary>
+		/// Parses a string and creates new <see cref="HexPosition"/>
+		/// </summary>
+		/// <param name="value">String</param>
+		/// <returns></returns>
+		public static HexPosition Parse(string value) {
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
 			HexPosition result;
@@ -189,30 +194,43 @@ namespace dnSpy.Contracts.Hex {
 			return result;
 		}
 
-		static bool TryParse(string value, out HexPosition result) {
+		/// <summary>
+		/// Tries to parse a string and creates a <see cref="HexPosition"/>
+		/// </summary>
+		/// <param name="value">String</param>
+		/// <param name="result">Result</param>
+		/// <returns></returns>
+		public static bool TryParse(string value, out HexPosition result) {
 			result = default(HexPosition);
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
 			value = value.Trim();
-			if (!value.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-				return false;
-			int hexLength = value.Length - 2;
-			if (hexLength == 0 || hexLength > 32)
-				return false;
-			ulong? lo = null;
-			ulong? hi = null;
-			if (hexLength <= 16) {
-				lo = TryParse(value, 2, value.Length - 2);
-				hi = 0;
+			if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || value.StartsWith("&H", StringComparison.OrdinalIgnoreCase)) {
+				int hexLength = value.Length - 2;
+				if (hexLength == 0 || hexLength > 32)
+					return false;
+				ulong? lo = null;
+				ulong? hi = null;
+				if (hexLength <= 16) {
+					lo = TryParse(value, 2, value.Length - 2);
+					hi = 0;
+				}
+				else {
+					lo = TryParse(value, value.Length - 16, 16);
+					hi = TryParse(value, 2, value.Length - 16 - 2);
+				}
+				if (lo == null || hi == null)
+					return false;
+				result = new HexPosition(hi.Value, lo.Value);
+				return true;
 			}
 			else {
-				lo = TryParse(value, value.Length - 16, 16);
-				hi = TryParse(value, 2, value.Length - 16 - 2);
+				ulong v;
+				if (!ulong.TryParse(value, out v))
+					return false;
+				result = new HexPosition(v);
+				return true;
 			}
-			if (lo == null || hi == null)
-				return false;
-			result = new HexPosition(hi.Value, lo.Value);
-			return true;
 		}
 
 		static ulong? TryParse(string value, int index, int length) {
