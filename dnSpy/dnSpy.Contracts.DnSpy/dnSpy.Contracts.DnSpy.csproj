@@ -262,33 +262,6 @@
     <Compile Include="Extension\ExtensionInfo.cs" />
     <Compile Include="Extension\IAutoLoaded.cs" />
     <Compile Include="Extension\IExtension.cs" />
-    <Compile Include="HexEditor.Old\AsciiEncoding.cs" />
-    <Compile Include="HexEditor.Old\ByteArrayHexStream.cs" />
-    <Compile Include="HexEditor.Old\CachedHexStream.cs" />
-    <Compile Include="HexEditor.Old\ClipboardUtils.cs" />
-    <Compile Include="HexEditor.Old\DataFormatter.cs" />
-    <Compile Include="HexEditor.Old\HexBox.cs" />
-    <Compile Include="HexEditor.Old\HexBoxPosition.cs" />
-    <Compile Include="HexEditor.Old\HexBoxPositionKind.cs" />
-    <Compile Include="HexEditor.Old\HexBoxState.cs" />
-    <Compile Include="HexEditor.Old\HexBoxWriteEventArgs.cs" />
-    <Compile Include="HexEditor.Old\HexCaret.cs" />
-    <Compile Include="HexEditor.Old\HexDocument.cs" />
-    <Compile Include="HexEditor.Old\HexDocumentModifiedEventArgs.cs" />
-    <Compile Include="HexEditor.Old\HexLine.cs" />
-    <Compile Include="HexEditor.Old\HexLineLayer.cs" />
-    <Compile Include="HexEditor.Old\HexLinePart.cs" />
-    <Compile Include="HexEditor.Old\HexLineTextSource.cs" />
-    <Compile Include="HexEditor.Old\HexPositionUI.cs" />
-    <Compile Include="HexEditor.Old\HexSelection.cs" />
-    <Compile Include="HexEditor.Old\HexTextParagraphProperties.cs" />
-    <Compile Include="HexEditor.Old\HexTextRunProperties.cs" />
-    <Compile Include="HexEditor.Old\HexWriteType.cs" />
-    <Compile Include="HexEditor.Old\IHexLayer.cs" />
-    <Compile Include="HexEditor.Old\IHexStream.cs" />
-    <Compile Include="HexEditor.Old\ISimpleHexStream.cs" />
-    <Compile Include="HexEditor.Old\NumberUtils.cs" />
-    <Compile Include="HexEditor.Old\SelectionLayer.cs" />
     <Compile Include="Hex\Adornments\HexToolTipProvider.cs" />
     <Compile Include="Hex\Adornments\HexToolTipProviderFactory.cs" />
     <Compile Include="Hex\Classification\HexAppearanceCategoryConstants.cs" />
@@ -439,25 +412,6 @@
     <Compile Include="Hex\Intellisense\PredefinedHexIntellisensePresenterProviders.cs" />
     <Compile Include="Hex\NormalizedHexBufferSpanCollection.cs" />
     <Compile Include="Hex\NormalizedHexChangeCollection.cs" />
-    <Compile Include="Hex.Old\DnHexBox.cs" />
-    <Compile Include="Hex.Old\GoToOffsetDlg.xaml.cs">
-      <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Hex.Old\GoToOffsetVM.cs" />
-    <Compile Include="Hex.Old\HexBoxCommands.cs" />
-    <Compile Include="Hex.Old\HexBoxThemeHelper.cs" />
-    <Compile Include="Hex.Old\HexEditorAppSettingsPage.cs" />
-    <Compile Include="Hex.Old\HexEditorSettings.cs" />
-    <Compile Include="Hex.Old\LocalHexSettings.cs" />
-    <Compile Include="Hex.Old\LocalSettingsDlg.xaml.cs">
-      <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Hex.Old\LocalSettingsVM.cs" />
-    <Compile Include="Hex.Old\MDUtils.cs" />
-    <Compile Include="Hex.Old\SelectDlg.xaml.cs">
-      <DependentUpon>SelectDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Hex.Old\SelectVM.cs" />
     <Compile Include="Hex\NormalizedHexSpanCollection.cs" />
     <Compile Include="Hex\PositionAndData.cs" />
     <Compile Include="Hex\PredefinedHexBufferTags.cs" />
@@ -876,23 +830,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.de.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Hex.Old\GoToOffsetDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Hex.Old\LocalSettingsDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Hex.Old\SelectDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
