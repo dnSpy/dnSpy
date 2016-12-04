@@ -1284,4 +1284,90 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
     <value>Show column line separators</value>
   </data>
+  <data name="GoToOffset_Offset_Label" xml:space="preserve">
+    <value>O_ffset</value>
+  </data>
+  <data name="GoToOffset_Title" xml:space="preserve">
+    <value>Go to Offset</value>
+  </data>
+  <data name="HexEditorSelect_End" xml:space="preserve">
+    <value>_End</value>
+  </data>
+  <data name="HexEditorSelect_Start" xml:space="preserve">
+    <value>_Start</value>
+  </data>
+  <data name="HexEditorSelect_Title" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="GoToOffset_Address_Label" xml:space="preserve">
+    <value>_Address</value>
+  </data>
+  <data name="GoToOffset_Title_Address" xml:space="preserve">
+    <value>Go to Address</value>
+  </data>
+  <data name="InvalidValue" xml:space="preserve">
+    <value>Invalid value</value>
+  </data>
+  <data name="ValueMustBeWithinRange" xml:space="preserve">
+    <value>Value must be between {0} and {1}</value>
+  </data>
+  <data name="AnErrorOccurred" xml:space="preserve">
+    <value>An error occurred:
+
+{0}</value>
+  </data>
+  <data name="HexEditorSaveSelection_Title" xml:space="preserve">
+    <value>Save Selection 0x{0:X}-0x{1:X}</value>
+  </data>
+  <data name="Button_DefaultSettings" xml:space="preserve">
+    <value>_Default Settings</value>
+  </data>
+  <data name="Button_RestoreSettings" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="FillSelection_Label" xml:space="preserve">
+    <value>_Byte</value>
+  </data>
+  <data name="FillSelection_Title" xml:space="preserve">
+    <value>Enter Value</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
+    <value>_Base Offset</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
+    <value>This value is added to start offset before it's shown on the screen</value>
+  </data>
+  <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
+    <value>B_ytes per Line</value>
+  </data>
+  <data name="LocalHexSettings_EndOffset" xml:space="preserve">
+    <value>_End Offset</value>
+  </data>
+  <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
+    <value>Offset Bi_t Size</value>
+  </data>
+  <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
+    <value>Sho_w ASCII</value>
+  </data>
+  <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
+    <value>S_how Offset</value>
+  </data>
+  <data name="LocalHexSettings_ShowValues" xml:space="preserve">
+    <value>Show _Values</value>
+  </data>
+  <data name="LocalHexSettings_StartOffset" xml:space="preserve">
+    <value>_Start Offset</value>
+  </data>
+  <data name="LocalHexSettings_Title" xml:space="preserve">
+    <value>Local Hex Editor Settings</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
+    <value>Use _Relative Offsets</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
+    <value>All offsets are relative to the start offset</value>
+  </data>
+  <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
+    <value>Value _Format</value>
+  </data>
 </root>

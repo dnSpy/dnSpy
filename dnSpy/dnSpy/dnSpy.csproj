@@ -311,6 +311,27 @@
     <Compile Include="Hex\Classification\HexViewClassifierAggregatorServiceImpl.cs" />
     <Compile Include="Hex\Classification\HexViewEditorFormatMap.cs" />
     <Compile Include="Hex\Classification\TextEditorFormatDefinitions.cs" />
+    <Compile Include="Hex\Commands\CommandInfoProvider.cs" />
+    <Compile Include="Hex\Commands\CommandTargetFilter.cs" />
+    <Compile Include="Hex\Commands\GoToPositionDlg.xaml.cs">
+      <DependentUpon>GoToPositionDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\Commands\GoToPositionVM.cs" />
+    <Compile Include="Hex\Commands\HexCommandConstants.cs" />
+    <Compile Include="Hex\Commands\HexCommandIds.cs" />
+    <Compile Include="Hex\Commands\HexCommandIdsExtensions.cs" />
+    <Compile Include="Hex\Commands\HexCommandOperations.cs" />
+    <Compile Include="Hex\Commands\HexCommandOperationsFactoryService.cs" />
+    <Compile Include="Hex\Commands\HexPositionVM.cs" />
+    <Compile Include="Hex\Commands\LocalSettingsDlg.xaml.cs">
+      <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\Commands\LocalSettingsVM.cs" />
+    <Compile Include="Hex\Commands\SelectDlg.xaml.cs">
+      <DependentUpon>SelectDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\Commands\SelectVM.cs" />
+    <Compile Include="Hex\Commands\SettingsConstants.cs" />
     <Compile Include="Hex\Editor\ActiveColumnHighlighter.cs" />
     <Compile Include="Hex\Editor\BottomControlMargin.cs" />
     <Compile Include="Hex\Editor\BottomRightCornerMargin.cs" />
@@ -1093,6 +1114,18 @@
     <Page Include="Documents\Tabs\DocViewer\WaitAdorner.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Hex\Commands\GoToPositionDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Hex\Commands\LocalSettingsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Hex\Commands\SelectDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Hex\Intellisense\HexQuickInfoPresenterControl.xaml">
       <Generator>MSBuild:Compile</Generator>

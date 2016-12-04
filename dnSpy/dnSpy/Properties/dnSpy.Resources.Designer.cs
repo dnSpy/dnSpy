@@ -160,6 +160,17 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred:
+        ///
+        ///{0}.
+        /// </summary>
+        public static string AnErrorOccurred {
+            get {
+                return ResourceManager.GetString("AnErrorOccurred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to load the saved settings?.
         /// </summary>
         public static string AskReadSettings {
@@ -521,6 +532,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Default Settings.
+        /// </summary>
+        public static string Button_DefaultSettings {
+            get {
+                return ResourceManager.GetString("Button_DefaultSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _No.
         /// </summary>
         public static string Button_No {
@@ -535,6 +555,15 @@ namespace dnSpy.Properties {
         public static string Button_OK {
             get {
                 return ResourceManager.GetString("Button_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string Button_RestoreSettings {
+            get {
+                return ResourceManager.GetString("Button_RestoreSettings", resourceCulture);
             }
         }
         
@@ -1099,6 +1128,24 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Byte.
+        /// </summary>
+        public static string FillSelection_Label {
+            get {
+                return ResourceManager.GetString("FillSelection_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter Value.
+        /// </summary>
+        public static string FillSelection_Title {
+            get {
+                return ResourceManager.GetString("FillSelection_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Find.
         /// </summary>
         public static string FindCommand {
@@ -1234,6 +1281,42 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Address.
+        /// </summary>
+        public static string GoToOffset_Address_Label {
+            get {
+                return ResourceManager.GetString("GoToOffset_Address_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O_ffset.
+        /// </summary>
+        public static string GoToOffset_Offset_Label {
+            get {
+                return ResourceManager.GetString("GoToOffset_Offset_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to Offset.
+        /// </summary>
+        public static string GoToOffset_Title {
+            get {
+                return ResourceManager.GetString("GoToOffset_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to Address.
+        /// </summary>
+        public static string GoToOffset_Title_Address {
+            get {
+                return ResourceManager.GetString("GoToOffset_Title_Address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Go to Reference.
         /// </summary>
         public static string GoToReferenceCommand {
@@ -1365,6 +1448,42 @@ namespace dnSpy.Properties {
         public static string HexEditorOffsetLowerCaseHex {
             get {
                 return ResourceManager.GetString("HexEditorOffsetLowerCaseHex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Selection 0x{0:X}-0x{1:X}.
+        /// </summary>
+        public static string HexEditorSaveSelection_Title {
+            get {
+                return ResourceManager.GetString("HexEditorSaveSelection_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _End.
+        /// </summary>
+        public static string HexEditorSelect_End {
+            get {
+                return ResourceManager.GetString("HexEditorSelect_End", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Start.
+        /// </summary>
+        public static string HexEditorSelect_Start {
+            get {
+                return ResourceManager.GetString("HexEditorSelect_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        public static string HexEditorSelect_Title {
+            get {
+                return ResourceManager.GetString("HexEditorSelect_Title", resourceCulture);
             }
         }
         
@@ -1531,6 +1650,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid value.
+        /// </summary>
+        public static string InvalidValue {
+            get {
+                return ResourceManager.GetString("InvalidValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to System.
         /// </summary>
         public static string Language_OperatingSystemLanguage {
@@ -1563,6 +1691,123 @@ namespace dnSpy.Properties {
         public static string LoadingDnSpyPleaseWait {
             get {
                 return ResourceManager.GetString("LoadingDnSpyPleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Base Offset.
+        /// </summary>
+        public static string LocalHexSettings_BaseOffset {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_BaseOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This value is added to start offset before it&apos;s shown on the screen.
+        /// </summary>
+        public static string LocalHexSettings_BaseOffset_ToolTip {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_BaseOffset_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B_ytes per Line.
+        /// </summary>
+        public static string LocalHexSettings_BytesPerLine {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_BytesPerLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _End Offset.
+        /// </summary>
+        public static string LocalHexSettings_EndOffset {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_EndOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Offset Bi_t Size.
+        /// </summary>
+        public static string LocalHexSettings_OffsetBitSize {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_OffsetBitSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sho_w ASCII.
+        /// </summary>
+        public static string LocalHexSettings_ShowASCII {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_ShowASCII", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to S_how Offset.
+        /// </summary>
+        public static string LocalHexSettings_ShowOffset {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_ShowOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show _Values.
+        /// </summary>
+        public static string LocalHexSettings_ShowValues {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_ShowValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Start Offset.
+        /// </summary>
+        public static string LocalHexSettings_StartOffset {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_StartOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local Hex Editor Settings.
+        /// </summary>
+        public static string LocalHexSettings_Title {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use _Relative Offsets.
+        /// </summary>
+        public static string LocalHexSettings_UseRelOffsets {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_UseRelOffsets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All offsets are relative to the start offset.
+        /// </summary>
+        public static string LocalHexSettings_UseRelOffsets_ToolTip {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_UseRelOffsets_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value _Format.
+        /// </summary>
+        public static string LocalHexSettings_ValueFormat {
+            get {
+                return ResourceManager.GetString("LocalHexSettings_ValueFormat", resourceCulture);
             }
         }
         
@@ -3480,6 +3725,15 @@ namespace dnSpy.Properties {
         public static string UseVerticalTabGroupsCommand {
             get {
                 return ResourceManager.GetString("UseVerticalTabGroupsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value must be between {0} and {1}.
+        /// </summary>
+        public static string ValueMustBeWithinRange {
+            get {
+                return ResourceManager.GetString("ValueMustBeWithinRange", resourceCulture);
             }
         }
         
