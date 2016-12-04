@@ -355,6 +355,11 @@ namespace dnSpy.Hex {
 			BufferStreamSpanInvalidated?.Invoke(this, new HexBufferStreamSpanInvalidatedEventArgs(span));
 		}
 
+		public override void ClearCache() {
+			simpleStream.ClearCache();
+			ClearAll();
+		}
+
 		protected override void DisposeCore() {
 			if (disposeStream)
 				simpleStream?.Dispose();

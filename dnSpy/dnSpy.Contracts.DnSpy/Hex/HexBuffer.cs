@@ -72,6 +72,11 @@ namespace dnSpy.Contracts.Hex {
 		public abstract event EventHandler<HexBufferSpanInvalidatedEventArgs> BufferSpanInvalidated;
 
 		/// <summary>
+		/// Clears any read caches and raises <see cref="BufferSpanInvalidated"/> if needed
+		/// </summary>
+		public abstract void Refresh();
+
+		/// <summary>
 		/// Gets the version
 		/// </summary>
 		public abstract HexVersion Version { get; }

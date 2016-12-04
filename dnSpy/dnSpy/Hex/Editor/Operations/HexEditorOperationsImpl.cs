@@ -1061,5 +1061,7 @@ namespace dnSpy.Hex.Editor.Operations {
 			var bufferPosition = line.BufferStart;
 			HexView.DisplayHexLineContainingBufferPosition(bufferPosition, verticalDistance, VSTE.ViewRelativePosition.Top, null, null, DisplayHexLineOptions.CanRecreateBufferLines);
 		}
+
+		public override void Refresh() => HexView.Refresh();
 	}
 }

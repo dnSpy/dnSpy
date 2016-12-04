@@ -304,5 +304,9 @@ namespace dnSpy.Contracts.Command {
 		/// Shows only the selected bytes
 		/// </summary>
 		ShowOnlySelectedBytes,
+		/// <summary>
+		/// Refreshes the screen and clears any read caches
+		/// </summary>
+		Refresh,
 	}
 }

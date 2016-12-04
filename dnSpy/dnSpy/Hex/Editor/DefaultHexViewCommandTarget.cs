@@ -126,6 +126,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.PAGEUP:
 				case HexEditorIds.PAGEUP_EXT:
 				case HexEditorIds.QUICKINFO:
+				case HexEditorIds.Refresh:
 				case HexEditorIds.RETURN:
 				case HexEditorIds.RIGHT:
 				case HexEditorIds.RIGHT_EXT:
@@ -220,6 +221,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.PasteBlob:
 				case HexEditorIds.PasteUnicodeString:
 				case HexEditorIds.PasteUtf8String:
+				case HexEditorIds.Refresh:
 				case HexEditorIds.RETURN:
 				case HexEditorIds.RIGHT:
 				case HexEditorIds.RIGHT_EXT:
@@ -413,6 +415,10 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.PasteUtf8String:
 					EditorOperations.PasteSpecial(HexPasteSpecialKind.Utf8String);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.Refresh:
+					EditorOperations.Refresh();
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.RIGHT:

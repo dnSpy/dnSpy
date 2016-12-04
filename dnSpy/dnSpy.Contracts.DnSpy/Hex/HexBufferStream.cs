@@ -55,6 +55,11 @@ namespace dnSpy.Contracts.Hex {
 		public abstract event EventHandler<HexBufferStreamSpanInvalidatedEventArgs> BufferStreamSpanInvalidated;
 
 		/// <summary>
+		/// Clears the cache if it uses a cache
+		/// </summary>
+		public virtual void ClearCache() { }
+
+		/// <summary>
 		/// Gets information about a position in the stream
 		/// </summary>
 		/// <param name="position">Position</param>

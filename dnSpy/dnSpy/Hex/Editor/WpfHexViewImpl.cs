@@ -1077,5 +1077,7 @@ namespace dnSpy.Hex.Editor {
 
 			return options;
 		}
+
+		public override void Refresh() => Buffer.Refresh();
 	}
 }

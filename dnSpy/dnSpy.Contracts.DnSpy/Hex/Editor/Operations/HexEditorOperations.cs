@@ -347,6 +347,11 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		/// Shows only the selected bytes
 		/// </summary>
 		public abstract void ShowOnlySelectedBytes();
+
+		/// <summary>
+		/// Refreshes the screen and clears any read caches
+		/// </summary>
+		public abstract void Refresh();
 	}
 
 	/// <summary>

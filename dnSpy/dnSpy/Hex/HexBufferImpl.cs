@@ -62,6 +62,14 @@ namespace dnSpy.Hex {
 			currentHexVersion = new HexVersionImpl(this, 0, 0);
 		}
 
+		public override void Refresh() {
+			VerifyAccess();
+			if (stream.IsVolatile) {
+				stream.ClearCache();
+				bufferSpanInvalidated?.Invoke(this, new HexBufferSpanInvalidatedEventArgs(Span));
+			}
+		}
+
 		void HexBufferStream_BufferStreamSpanInvalidated(object sender, HexBufferStreamSpanInvalidatedEventArgs e) =>
 			bufferSpanInvalidated?.Invoke(this, new HexBufferSpanInvalidatedEventArgs(e.Span));
 

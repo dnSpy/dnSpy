@@ -242,6 +242,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Queues a space reservation stack refresh
 		/// </summary>
 		public abstract void QueueSpaceReservationStackRefresh();
+
+		/// <summary>
+		/// Refreshes the screen and clears any read caches
+		/// </summary>
+		public abstract void Refresh();
 	}
 
 	/// <summary>

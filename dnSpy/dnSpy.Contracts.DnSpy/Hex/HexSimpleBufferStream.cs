@@ -101,6 +101,11 @@ namespace dnSpy.Contracts.Hex {
 		public abstract HexPosition Write(HexPosition position, byte[] source, long sourceIndex, long length);
 
 		/// <summary>
+		/// Clears the cache if it uses a cache
+		/// </summary>
+		public virtual void ClearCache() { }
+
+		/// <summary>
 		/// Raised after it is disposed
 		/// </summary>
 		public event EventHandler Disposed;
