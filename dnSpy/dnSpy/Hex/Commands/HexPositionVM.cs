@@ -49,7 +49,7 @@ namespace dnSpy.Hex.Commands {
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(HexPosition value) {
-			if (value < Min || value > Max)
+			if (!IsValid(value))
 				return dnSpy_Resources.InvalidValue;
 			return value.ToString();
 		}
@@ -57,11 +57,17 @@ namespace dnSpy.Hex.Commands {
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out HexPosition value) {
 			if (HexPosition.TryParse(StringValue, out value)) {
-				if (value < Min || value > Max)
+				if (!IsValid(value))
 					return string.Format(dnSpy_Resources.ValueMustBeWithinRange, Min, Max);
 				return null;
 			}
 			return dnSpy_Resources.InvalidValue;
+		}
+
+		bool IsValid(HexPosition position) {
+			if (Min <= Max)
+				return Min <= position && position <= Max;
+			return (position >= Min && position < HexPosition.MaxEndPosition) || position <= Max;
 		}
 	}
 }

@@ -94,9 +94,13 @@ namespace dnSpy.Hex.Commands {
 			var curr = HexView.BufferLines.ToLogicalPosition(HexView.Caret.Position.Position.ActivePosition.BufferPosition);
 			var minPos = HexView.BufferLines.ToLogicalPosition(HexView.BufferLines.StartPosition);
 			var maxPos = HexView.BufferLines.ToLogicalPosition(HexView.BufferLines.EndPosition);
-			if (maxPos <= minPos)
-				return;
-			var data = new GoToPositionVM(curr, minPos, maxPos - 1);
+			if (HexView.BufferLines.BufferSpan.IsEmpty) {
+			}
+			else if (maxPos == HexPosition.Zero)
+				maxPos = HexPosition.MaxEndPosition - 1;
+			else
+				maxPos = maxPos - 1;
+			var data = new GoToPositionVM(curr, minPos, maxPos);
 			var win = new GoToPositionDlg();
 			win.DataContext = data;
 			win.Owner = OwnerWindow;
@@ -164,8 +168,6 @@ namespace dnSpy.Hex.Commands {
 			}
 			var minPos = HexView.BufferLines.ToLogicalPosition(HexView.BufferLines.StartPosition);
 			var maxPos = HexView.BufferLines.ToLogicalPosition(HexView.BufferLines.EndPosition > HexView.BufferLines.StartPosition ? HexView.BufferLines.EndPosition - 1 : HexView.BufferLines.EndPosition);
-			if (maxPos < minPos)
-				return;
 			var logStart = HexView.BufferLines.ToLogicalPosition(start);
 			var logEnd = HexView.BufferLines.ToLogicalPosition(end);
 			var data = new SelectVM(logStart, logEnd, minPos, maxPos);
