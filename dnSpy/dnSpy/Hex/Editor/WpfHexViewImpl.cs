@@ -498,10 +498,7 @@ namespace dnSpy.Hex.Editor {
 			get {
 				if (InLayout)
 					throw new InvalidOperationException();
-				// The adornment layer accesses this property in its LayoutChanged handler to check
-				// whether an adornment intersects with the visible hexview lines. Don't create new
-				// lines if we're raising LayoutChanged.
-				if (delayLayoutLinesInProgress && !raisingLayoutChanged)
+				if (wpfHexViewLineCollection == null)
 					DoDelayDisplayLines();
 				return wpfHexViewLineCollection;
 			}

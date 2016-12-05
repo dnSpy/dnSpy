@@ -104,7 +104,23 @@ namespace dnSpy.Text.Editor {
 				SetNewSelection();
 		}
 
+		// Very rarely it could be called recursively when CreateStreamSelection() or
+		// CreateBoxSelection() accesses the TextViewLines property. That could raise
+		// a LayoutChanged event.
 		void SetNewSelection() {
+			if (setNewSelectionCounter > 0)
+				return;
+			try {
+				setNewSelectionCounter++;
+				SetNewSelectionCore();
+			}
+			finally {
+				setNewSelectionCounter--;
+			}
+		}
+		int setNewSelectionCounter;
+
+		void SetNewSelectionCore() {
 			RemoveAllAdornments();
 			if (textSelection.IsEmpty)
 				return;
