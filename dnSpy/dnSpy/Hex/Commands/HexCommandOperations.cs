@@ -26,6 +26,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.HexGroups;
+using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
 using dnSpy.Contracts.Utilities;
@@ -42,6 +43,7 @@ namespace dnSpy.Hex.Commands {
 		public abstract void FillSelection();
 		public abstract void EditLocalSettings();
 		public abstract void ResetLocalSettings();
+		public abstract void ToggleUseRelativePositions();
 	}
 
 	sealed class HexCommandOperationsImpl : HexCommandOperations {
@@ -262,6 +264,9 @@ namespace dnSpy.Hex.Commands {
 
 		public override void ResetLocalSettings() =>
 			hexEditorGroupFactoryService.GetDefaultLocalOptions(HexView).WriteTo(HexView);
+
+		public override void ToggleUseRelativePositions() =>
+			HexView.Options.SetOptionValue(DefaultHexViewOptions.UseRelativePositionsId, !HexView.Options.UseRelativePositions());
 	}
 
 	sealed class HexBufferDataSaver : IProgressTask {

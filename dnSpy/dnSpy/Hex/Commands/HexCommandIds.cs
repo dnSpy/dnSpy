@@ -25,5 +25,6 @@ namespace dnSpy.Hex.Commands {
 		FillSelection,
 		EditLocalSettings,
 		ResetLocalSettings,
+		ToggleUseRelativePositions,
 	}
 }

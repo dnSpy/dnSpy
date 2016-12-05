@@ -32,6 +32,7 @@ namespace dnSpy.Hex.Commands {
 			yield return CommandShortcut.Control(Key.G, HexCommandIds.GoToPosition.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.L, HexCommandIds.Select.ToCommandInfo());
 			yield return CommandShortcut.CtrlAlt(Key.S, HexCommandIds.SaveSelection.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.R, HexCommandIds.ToggleUseRelativePositions.ToCommandInfo());
 		}
 	}
 }
