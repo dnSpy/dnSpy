@@ -338,4 +338,12 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(HexEditorIds.PasteBlob) {
 		}
 	}
+
+	[ExportMenuItem(Header = "res:Refresh", Icon = DsImagesAttribute.Refresh, InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_CTX_HEXVIEW_MISC, Order = 1000)]
+	sealed class RefreshContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		RefreshContexMenuEntry()
+			: base(HexEditorIds.Refresh) {
+		}
+		public override bool IsVisible(HexViewContext context) => context.HexView.Buffer.IsVolatile;
+	}
 }

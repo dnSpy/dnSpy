@@ -2739,6 +2739,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string Refresh {
+            get {
+                return ResourceManager.GetString("Refresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Reload All Assemblies.
         /// </summary>
         public static string ReloadAsmsCommand {
@@ -3581,6 +3590,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyDelete {
             get {
                 return ResourceManager.GetString("ShortCutKeyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to F5.
+        /// </summary>
+        public static string ShortCutKeyF5 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyF5", resourceCulture);
             }
         }
         

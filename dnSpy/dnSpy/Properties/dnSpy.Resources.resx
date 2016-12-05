@@ -1506,4 +1506,10 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ValueFormatCommand" xml:space="preserve">
     <value>Value Format</value>
   </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
 </root>

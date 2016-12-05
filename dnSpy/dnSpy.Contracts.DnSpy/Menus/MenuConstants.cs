@@ -318,6 +318,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: HexView, Group: Edit</summary>
 		public const string GROUP_CTX_HEXVIEW_EDIT = "1000,63AE7AC9-B507-4474-9BB3-9B64B2036D34";
 
+		/// <summary>Group: Context Menu, Type: HexView, Group: Misc</summary>
+		public const string GROUP_CTX_HEXVIEW_MISC = "10000,73D6E16B-6AF4-4F6D-8515-6D63ECDBFA3F";
+
 		/// <summary>Group: Context Menu, Type: HexView, Group: Copy</summary>
 		public const string GROUP_CTX_HEXVIEW_COPY = "99000,34DCFAE6-7D6A-428A-8E71-5151616A08A3";
 
