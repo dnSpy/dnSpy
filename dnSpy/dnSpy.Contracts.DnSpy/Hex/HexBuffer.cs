@@ -503,6 +503,17 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <param name="destination">Destination array</param>
+		public void ReadBytes(HexPosition position, byte[] destination) {
+			if (destination == null)
+				throw new ArgumentNullException(nameof(destination));
+			ReadBytes(position, destination, 0, destination.LongLength);
+		}
+
+		/// <summary>
+		/// Reads bytes
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="destination">Destination array</param>
 		/// <param name="destinationIndex">Index</param>
 		/// <param name="length">Length</param>
 		public abstract void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length);

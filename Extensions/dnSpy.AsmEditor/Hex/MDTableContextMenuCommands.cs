@@ -191,7 +191,7 @@ namespace dnSpy.AsmEditor.Hex {
 			int len = (int)count * mdTblVM.TableInfo.RowSize;
 			var data = new byte[len];
 			var startOffset = mdTblVM.Span.Start + (rid - 1) * (ulong)mdTblVM.TableInfo.RowSize;
-			buffer.ReadBytes(startOffset, data, 0, data.LongLength);
+			buffer.ReadBytes(startOffset, data);
 			TableSorter.Sort(mdTblVM.TableInfo, data);
 			HexBufferWriterHelper.Write(buffer, startOffset, data);
 		}
@@ -361,7 +361,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var sb = new StringBuilder((int)totalSize);
 			var recData = new byte[context.MetaDataTableVM.TableInfo.RowSize];
 			foreach (var rec in context.Records) {
-				buffer.ReadBytes(rec.Span.Start, recData, 0, recData.Length);
+				buffer.ReadBytes(rec.Span.Start, recData);
 				foreach (var b in recData)
 					sb.Append(b.ToString("X2"));
 			}

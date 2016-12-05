@@ -168,7 +168,7 @@ namespace dnSpy.Hex.Editor {
 				// for the full cell.
 				Debug.Assert(BufferSpan.Length <= Data.Length);
 
-				BufferSpan.Buffer.ReadBytes(BufferSpan.Start, Data, 0, Data.Length);
+				BufferSpan.Buffer.ReadBytes(BufferSpan.Start, Data);
 			}
 
 			public bool TryUpdate(HexCellPosition cellPosition, HexBufferLine line, HexCell cell) {
@@ -180,7 +180,7 @@ namespace dnSpy.Hex.Editor {
 
 				bool dataDifferent;
 				if (oldBufferSpan != BufferSpan) {
-					BufferSpan.Buffer.ReadBytes(BufferSpan.Start, TempData, 0, TempData.Length);
+					BufferSpan.Buffer.ReadBytes(BufferSpan.Start, TempData);
 					dataDifferent = !CompareArrays(TempData, Data);
 					if (dataDifferent)
 						Array.Copy(TempData, Data, Data.Length);
@@ -204,7 +204,7 @@ namespace dnSpy.Hex.Editor {
 			public bool UpdateValue() {
 				Debug.Assert(!BufferSpan.IsDefault);
 				Array.Copy(Data, TempData, Data.Length);
-				BufferSpan.Buffer.ReadBytes(BufferSpan.Start, Data, 0, Data.Length);
+				BufferSpan.Buffer.ReadBytes(BufferSpan.Start, Data);
 				return CompareArrays(Data, TempData);
 			}
 
