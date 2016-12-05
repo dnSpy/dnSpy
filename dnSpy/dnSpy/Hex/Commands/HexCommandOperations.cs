@@ -41,6 +41,7 @@ namespace dnSpy.Hex.Commands {
 		public abstract void SaveSelection();
 		public abstract void FillSelection();
 		public abstract void EditLocalSettings();
+		public abstract void ResetLocalSettings();
 	}
 
 	sealed class HexCommandOperationsImpl : HexCommandOperations {
@@ -258,6 +259,9 @@ namespace dnSpy.Hex.Commands {
 
 			vm.TryGetLocalGroupOptions().WriteTo(HexView);
 		}
+
+		public override void ResetLocalSettings() =>
+			hexEditorGroupFactoryService.GetDefaultLocalOptions(HexView).WriteTo(HexView);
 	}
 
 	sealed class HexBufferDataSaver : IProgressTask {
