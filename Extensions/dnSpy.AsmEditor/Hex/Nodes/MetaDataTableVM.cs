@@ -79,6 +79,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		protected MetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
 			: base(owner) {
 			this.buffer = buffer;
+			this.stringsHeapSpan = stringsHeapSpan;
+			this.guidHeapSpan = guidHeapSpan;
 			Span = new HexSpan(startOffset, (ulong)mdTable.Rows * mdTable.RowSize);
 			Rows = mdTable.Rows;
 			TableInfo = CreateTableInfo(mdTable.TableInfo);
