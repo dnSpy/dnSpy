@@ -29,7 +29,6 @@ namespace dnSpy.Hex.Editor {
 			if (textSelection.IsEmpty)
 				return textSelection.HexView.Caret.ContainingHexViewLine.BufferSpan;
 			var anchorExtent = textSelection.HexView.GetHexViewLineContainingBufferPosition(textSelection.AnchorPoint).BufferSpan;
-			var activeExtent = textSelection.HexView.GetHexViewLineContainingBufferPosition(textSelection.ActivePoint).BufferSpan;
 			if (textSelection.AnchorPoint >= textSelection.ActivePoint) {
 				if (anchorExtent.Start == textSelection.AnchorPoint && textSelection.AnchorPoint > textSelection.HexView.BufferLines.BufferStart)
 					anchorExtent = textSelection.HexView.GetHexViewLineContainingBufferPosition(textSelection.AnchorPoint - 1).BufferSpan;

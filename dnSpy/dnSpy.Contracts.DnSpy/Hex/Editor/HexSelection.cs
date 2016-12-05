@@ -42,14 +42,16 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="selectionSpan">Span</param>
 		/// <param name="isReversed">true if the anchor point is the end point of <paramref name="selectionSpan"/></param>
-		public abstract void Select(HexBufferSpan selectionSpan, bool isReversed);
+		/// <param name="alignPoints">true to align the span to include all bytes of the cells</param>
+		public abstract void Select(HexBufferSpan selectionSpan, bool isReversed, bool alignPoints);
 
 		/// <summary>
 		/// Select a span
 		/// </summary>
 		/// <param name="anchorPoint">Anchor point</param>
 		/// <param name="activePoint">Active point</param>
-		public abstract void Select(HexBufferPoint anchorPoint, HexBufferPoint activePoint);
+		/// <param name="alignPoints">true to align the span to include all bytes of the cells</param>
+		public abstract void Select(HexBufferPoint anchorPoint, HexBufferPoint activePoint, bool alignPoints);
 
 		/// <summary>
 		/// Gets all selected spans

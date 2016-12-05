@@ -112,7 +112,7 @@ namespace dnSpy.Hex.Editor.Operations {
 
 		void SelectToCaret(HexBufferPoint anchorPoint) {
 			var info = GetSelectionInfoToCaret(anchorPoint, ActiveCaretBufferPosition);
-			Selection.Select(info.AnchorPoint, info.ActivePoint);
+			Selection.Select(info.AnchorPoint, info.ActivePoint, alignPoints: true);
 		}
 
 		void MoveCaretToSelection(HexBufferPoint anchorPoint, HexBufferPoint activePoint) {
@@ -122,7 +122,7 @@ namespace dnSpy.Hex.Editor.Operations {
 				Caret.MoveTo(activePoint - 1);
 		}
 
-		public override void SelectAndMoveCaret(HexColumnType column, HexBufferPoint anchorPoint, HexBufferPoint activePoint, VSTE.EnsureSpanVisibleOptions? scrollOptions) {
+		public override void SelectAndMoveCaret(HexColumnType column, HexBufferPoint anchorPoint, HexBufferPoint activePoint, bool alignPoints, VSTE.EnsureSpanVisibleOptions? scrollOptions) {
 			if (anchorPoint.IsDefault)
 				throw new ArgumentException();
 			if (activePoint.IsDefault)
@@ -130,7 +130,7 @@ namespace dnSpy.Hex.Editor.Operations {
 			if (anchorPoint == activePoint)
 				Selection.Clear();
 			else
-				Selection.Select(anchorPoint, activePoint);
+				Selection.Select(anchorPoint, activePoint, alignPoints);
 			MoveCaretToSelection(anchorPoint, activePoint);
 			if (scrollOptions == null)
 				return;
@@ -435,7 +435,7 @@ namespace dnSpy.Hex.Editor.Operations {
 		}
 
 		public override void SwapCaretAndAnchor() {
-			Selection.Select(anchorPoint: Selection.ActivePoint, activePoint: Selection.AnchorPoint);
+			Selection.Select(anchorPoint: Selection.ActivePoint, activePoint: Selection.AnchorPoint, alignPoints: false);
 			MoveCaretToSelection(Selection.AnchorPoint, Selection.ActivePoint);
 			Caret.EnsureVisible();
 		}
@@ -538,7 +538,7 @@ namespace dnSpy.Hex.Editor.Operations {
 					activePoint = lineStart;
 				}
 			}
-			Selection.Select(anchorPoint, activePoint);
+			Selection.Select(anchorPoint, activePoint, alignPoints: true);
 			// This moves the caret outside the selection but it matches the text editor when
 			// full lines are selected.
 			Caret.MoveTo(activePoint);
@@ -573,7 +573,7 @@ namespace dnSpy.Hex.Editor.Operations {
 			SelectAndMove(BufferLines.BufferSpan);
 
 		void SelectAndMove(HexBufferSpan span) {
-			Selection.Select(span, false);
+			Selection.Select(span, false, true);
 			MoveCaretToSelection(span.Start, span.End);
 			Caret.EnsureVisible();
 		}
@@ -583,7 +583,7 @@ namespace dnSpy.Hex.Editor.Operations {
 				throw new ArgumentException();
 			if (!BufferLines.IsValidPosition(newEnd))
 				throw new ArgumentOutOfRangeException(nameof(newEnd));
-			Selection.Select(Selection.AnchorPoint, newEnd);
+			Selection.Select(Selection.AnchorPoint, newEnd, alignPoints: true);
 			MoveCaretToSelection(Selection.AnchorPoint, Selection.ActivePoint);
 			var options = Selection.IsReversed ? VSTE.EnsureSpanVisibleOptions.ShowStart | VSTE.EnsureSpanVisibleOptions.MinimumScroll : VSTE.EnsureSpanVisibleOptions.ShowStart;
 			var flags = Caret.Position.Position.ActiveColumn == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii;

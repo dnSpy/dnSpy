@@ -209,7 +209,7 @@ namespace dnSpy.Hex.Editor {
 							activePoint = selEnd;
 							anchorPoint = mouseLeftDownInfo.Value.Span.Start;
 						}
-						wpfHexView.Selection.Select(anchorPoint, activePoint);
+						wpfHexView.Selection.Select(anchorPoint, activePoint, alignPoints: true);
 						wpfHexView.Caret.MoveTo(activePoint);
 						wpfHexView.Caret.EnsureVisible();
 					}

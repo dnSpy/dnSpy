@@ -97,7 +97,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (!IsVisible(hexView, start, end))
 				return;
 			var span = new HexBufferSpan(new HexBufferPoint(hexView.Buffer, start), new HexBufferPoint(hexView.Buffer, end));
-			hexView.Selection.Select(span.Start, span.End);
+			hexView.Selection.Select(span.Start, span.End, alignPoints: false);
 			var column = hexView.Caret.IsValuesCaretPresent ? HexColumnType.Values : HexColumnType.Ascii;
 			hexView.Caret.MoveTo(column, span.Start);
 			var flags = column == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii;

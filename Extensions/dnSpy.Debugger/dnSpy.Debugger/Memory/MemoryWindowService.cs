@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.Memory {
 			if (!IsVisible(hexView, span))
 				return;
 			var bufferSpan = new HexBufferSpan(hexView.Buffer, span);
-			hexView.Selection.Select(bufferSpan.Start, bufferSpan.End);
+			hexView.Selection.Select(bufferSpan.Start, bufferSpan.End, alignPoints: false);
 			var column = hexView.Caret.IsValuesCaretPresent ? HexColumnType.Values : HexColumnType.Ascii;
 			hexView.Caret.MoveTo(column, bufferSpan.Start);
 			var flags = column == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii;

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
@@ -78,7 +79,7 @@ namespace dnSpy.Hex.Editor {
 			var newActivePoint = Filter(activePoint);
 			var newAnchorPoint = Filter(anchorPoint);
 			if (newActivePoint != activePoint || newAnchorPoint != anchorPoint)
-				Select(newAnchorPoint, newActivePoint);
+				Select(newAnchorPoint, newActivePoint, alignPoints: true);
 		}
 
 		HexBufferPoint Filter(HexBufferPoint position) {
@@ -119,14 +120,14 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		public override void Select(HexBufferSpan selectionSpan, bool isReversed) {
+		public override void Select(HexBufferSpan selectionSpan, bool isReversed, bool alignPoints) {
 			if (isReversed)
-				Select(selectionSpan.End, selectionSpan.Start);
+				Select(selectionSpan.End, selectionSpan.Start, alignPoints);
 			else
-				Select(selectionSpan.Start, selectionSpan.End);
+				Select(selectionSpan.Start, selectionSpan.End, alignPoints);
 		}
 
-		public override void Select(HexBufferPoint anchorPoint, HexBufferPoint activePoint) {
+		public override void Select(HexBufferPoint anchorPoint, HexBufferPoint activePoint, bool alignPoints) {
 			if (anchorPoint.Buffer != activePoint.Buffer)
 				throw new ArgumentException();
 			if (anchorPoint.Buffer != HexView.Buffer)
@@ -137,12 +138,43 @@ namespace dnSpy.Hex.Editor {
 			}
 			ActivationTracksFocus = true;
 
+			if (alignPoints && HexView.Caret.Position.Position.ActiveColumn == HexColumnType.Values) {
+				var bufferLines = HexView.BufferLines;
+				if (bufferLines.BytesPerValue != 1) {
+					Debug.Assert(anchorPoint != activePoint);
+					if (anchorPoint < activePoint) {
+						var anchorCell = GetCell(bufferLines, anchorPoint);
+						var activeCell = GetCell(bufferLines, activePoint - 1);
+						if (anchorCell != null && activeCell != null) {
+							anchorPoint = anchorCell.BufferStart;
+							activePoint = activeCell.BufferEnd;
+						}
+					}
+					else {
+						var activeCell = GetCell(bufferLines, activePoint);
+						var anchorCell = GetCell(bufferLines, anchorPoint - 1);
+						if (anchorCell != null && activeCell != null) {
+							activePoint = activeCell.BufferStart;
+							anchorPoint = anchorCell.BufferEnd;
+						}
+					}
+				}
+			}
+
 			bool sameSelection = this.anchorPoint == anchorPoint && this.activePoint == activePoint;
 			if (!sameSelection) {
 				this.anchorPoint = anchorPoint;
 				this.activePoint = activePoint;
 				SelectionChanged?.Invoke(this, EventArgs.Empty);
 			}
+		}
+
+		static HexCell GetCell(HexBufferLineProvider bufferLines, HexBufferPoint position) {
+			var line = bufferLines.GetLineFromPosition(position);
+			var cell = line.ValueCells.GetCell(position);
+			if (cell == null && position == line.BufferEnd && position > line.BufferStart)
+				cell = line.ValueCells.GetCell(position - 1);
+			return cell;
 		}
 
 		internal void Dispose() {

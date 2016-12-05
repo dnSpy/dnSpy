@@ -61,8 +61,9 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		/// <param name="column">Column</param>
 		/// <param name="anchorPoint">Anchor position</param>
 		/// <param name="activePoint">Active position</param>
-		public void SelectAndMoveCaret(HexColumnType column, HexBufferPoint anchorPoint, HexBufferPoint activePoint) =>
-			SelectAndMoveCaret(column, anchorPoint, activePoint, VSTE.EnsureSpanVisibleOptions.MinimumScroll);
+		/// <param name="alignPoints">true to align the span to include all bytes of the cells</param>
+		public void SelectAndMoveCaret(HexColumnType column, HexBufferPoint anchorPoint, HexBufferPoint activePoint, bool alignPoints) =>
+			SelectAndMoveCaret(column, anchorPoint, activePoint, alignPoints, VSTE.EnsureSpanVisibleOptions.MinimumScroll);
 
 		/// <summary>
 		/// Selects data and moves the caret
@@ -70,8 +71,9 @@ namespace dnSpy.Contracts.Hex.Editor.Operations {
 		/// <param name="column">Column</param>
 		/// <param name="anchorPoint">Anchor position</param>
 		/// <param name="activePoint">Active position</param>
+		/// <param name="alignPoints">true to align the span to include all bytes of the cells</param>
 		/// <param name="scrollOptions">Scroll options</param>
-		public abstract void SelectAndMoveCaret(HexColumnType column, HexBufferPoint anchorPoint, HexBufferPoint activePoint, VSTE.EnsureSpanVisibleOptions? scrollOptions);
+		public abstract void SelectAndMoveCaret(HexColumnType column, HexBufferPoint anchorPoint, HexBufferPoint activePoint, bool alignPoints, VSTE.EnsureSpanVisibleOptions? scrollOptions);
 
 		/// <summary>
 		/// Moves the caret to the next character

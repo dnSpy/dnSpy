@@ -182,7 +182,7 @@ namespace dnSpy.Hex.Commands {
 			var info = UserValueToSelection(newStart, newEnd);
 
 			if (MoveTo(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), new HexBufferPoint(HexView.Buffer, info.Caret)))
-				HexView.Selection.Select(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active));
+				HexView.Selection.Select(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), alignPoints: false);
 		}
 
 		public override void SaveSelection() {
