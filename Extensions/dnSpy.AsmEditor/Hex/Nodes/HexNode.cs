@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeString = context.Decompiler.ContentTypeString;
-			context.Decompiler.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", Span.Start.ToUInt64(), Span.End.ToUInt64(), ToString()));
+			context.Decompiler.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", Span.Start.ToUInt64(), Span.End.ToUInt64() - 1, ToString()));
 			DecompileFields(context.Decompiler, context.Output);
 			(context.Output as IDocumentViewerOutput)?.DisableCaching();
 			return true;
@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				decompiler.WriteCommentLine(output, string.Empty);
 				decompiler.WriteCommentLine(output, string.Format("{0}:", vm.Name));
 				foreach (var field in vm.HexFields)
-					decompiler.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.Span.Start.ToUInt64(), field.Span.End.ToUInt64(), field.FormattedValue, field.Name));
+					decompiler.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.Span.Start.ToUInt64(), field.Span.End.ToUInt64() - 1, field.FormattedValue, field.Name));
 			}
 		}
 
