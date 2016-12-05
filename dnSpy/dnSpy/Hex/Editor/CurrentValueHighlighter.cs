@@ -156,8 +156,10 @@ namespace dnSpy.Hex.Editor {
 			byte[] TempData { get; }
 			public HexBufferSpan BufferSpan { get; private set; }
 			public HexColumnType Column { get; }
+			public HexValuesDisplayFormat ValuesFormat { get; }
 
-			public SavedValue(int size, HexCellPosition cellPosition, HexBufferSpan cellBufferSpan) {
+			public SavedValue(HexValuesDisplayFormat valuesFormat, int size, HexCellPosition cellPosition, HexBufferSpan cellBufferSpan) {
+				ValuesFormat = valuesFormat;
 				Data = new byte[size];
 				TempData = new byte[size];
 				BufferSpan = cellBufferSpan;
@@ -244,8 +246,8 @@ namespace dnSpy.Hex.Editor {
 			var line = wpfHexView.Caret.ContainingHexViewLine.BufferLine;
 			var cell = isValues ? line.ValueCells.GetCell(bufferPos) : line.AsciiCells.GetCell(bufferPos);
 
-			if (savedValue == null || savedValue.Column != pos.ActiveColumn)
-				savedValue = new SavedValue(isValues ? bufferLines.BytesPerValue : 1, pos.ActivePosition, cell?.BufferSpan ?? new HexBufferSpan(bufferLines.BufferSpan.Start, bufferLines.BufferSpan.Start));
+			if (savedValue == null || savedValue.Column != pos.ActiveColumn || savedValue.ValuesFormat != bufferLines.ValuesFormat)
+				savedValue = new SavedValue(bufferLines.ValuesFormat, isValues ? bufferLines.BytesPerValue : 1, pos.ActivePosition, cell?.BufferSpan ?? new HexBufferSpan(bufferLines.BufferSpan.Start, bufferLines.BufferSpan.Start));
 			else if (!savedValue.TryUpdate(pos.ActivePosition, line, cell))
 				return;
 			RefreshAll();
