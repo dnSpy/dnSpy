@@ -416,8 +416,11 @@ namespace dnSpy.Hex {
 			return 1;
 		}
 
-		int CalculateOffsetBitSize() {
-			var end = ToLogicalPosition(endPosition > 0 ? endPosition - 1 : 0).ToUInt64();
+		int CalculateOffsetBitSize() =>
+			Math.Max(CalculateOffsetBitSize(startPosition), CalculateOffsetBitSize(endPosition > 0 ? endPosition - 1 : 0));
+
+		int CalculateOffsetBitSize(HexPosition position) {
+			var end = ToLogicalPosition(position).ToUInt64();
 			if (end <= 0x00000000000000FFUL) return 8;
 			if (end <= 0x000000000000FFFFUL) return 16;
 			if (end <= 0x0000000000FFFFFFUL) return 24;
