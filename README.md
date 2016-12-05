@@ -6,7 +6,7 @@ dnSpy is a tool to reverse engineer .NET assemblies. It includes a decompiler, a
 
 [Latest release](https://github.com/0xd4d/dnSpy/releases)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/616rgr9ot3nvfjv5/branch/master?svg=true)](https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts)
+Latest build: [![Build status](https://ci.appveyor.com/api/projects/status/616rgr9ot3nvfjv5/branch/master?svg=true)](https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts)
 
 Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Building-dnSpy).
 
