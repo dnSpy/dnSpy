@@ -1253,208 +1253,208 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Hex Editor</value>
   </data>
   <data name="HexEditorGroup_Default" xml:space="preserve">
-    <value>Default</value>
+    <value>Padrão</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
     <value>Hex Editor</value>
   </data>
   <data name="HexEditorEncoding" xml:space="preserve">
-    <value>Encoding</value>
+    <value>Codificação</value>
   </data>
   <data name="HexEditorGroupSizeInBytes" xml:space="preserve">
-    <value>Group size</value>
+    <value>Tamanho do grupo</value>
   </data>
   <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
-    <value>Highlight current value</value>
+    <value>Realçar linha atual</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
     <value>Offset</value>
   </data>
   <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
-    <value>Lower case hex (offset)</value>
+    <value>Letra minúscula hex (offset)</value>
   </data>
   <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
-    <value>Lower case hex (values)</value>
+    <value>Letra minúscula hex (valores)</value>
   </data>
   <data name="BlockStructureLineKind_None" xml:space="preserve">
     <value>None</value>
   </data>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
-    <value>Show column line separators</value>
+    <value>Mostrar separador de linhas</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
     <value>O_ffset</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Go to Offset</value>
+    <value>Ir para Offset</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
-    <value>_End</value>
+    <value>Fim</value>
   </data>
   <data name="HexEditorSelect_Start" xml:space="preserve">
-    <value>_Start</value>
+    <value>Inicio</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Select</value>
+    <value>Selecionar</value>
   </data>
   <data name="GoToOffset_Address_Label" xml:space="preserve">
-    <value>_Address</value>
+    <value>Endereço</value>
   </data>
   <data name="GoToOffset_Title_Address" xml:space="preserve">
-    <value>Go to Address</value>
+    <value>Ir para Endereço</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>Invalid value</value>
+    <value>Valor inválido</value>
   </data>
   <data name="ValueMustBeWithinRange" xml:space="preserve">
-    <value>Value must be between {0} and {1}</value>
+    <value>Valor deve estar entre {0} e {1}</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
     <value>Ocorreu um erro:{0}</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Save Selection 0x{0:X}-0x{1:X}</value>
+    <value>Guardar Seleção 0x{0:X}-0x{1:X}</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>_Default Settings</value>
+    <value>Definições Padrão</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
     <value>Reset</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Bytes per Line</value>
+    <value>Bytes por Linha</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Clear Byte</value>
+    <value>Limpar Byte</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Clear Selected Bytes</value>
+    <value>Limpar Bytes Selecionados</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Copy C# Array</value>
+    <value>Copiar Array c#</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Copy Offset</value>
+    <value>Copiar Offset</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>Copy Special</value>
+    <value>Copiar Especial</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
-    <value>Copy Text</value>
+    <value>Copiar Texto</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Copy Unicode String</value>
+    <value>Copiar String Unicode</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>Copy UTF-8 String</value>
+    <value>Copiar String UTF-8</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Copy Visual Basic Array</value>
+    <value>Copiar Array Visual Basic</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Fill Selection with Byte...</value>
+    <value>Preencher Seleção com Byte...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
-    <value>_Byte</value>
+    <value>Byte</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Enter Value</value>
+    <value>Inserir Valor</value>
   </data>
   <data name="GoToAddressCommand" xml:space="preserve">
-    <value>Go to Address...</value>
+    <value>Ir para Endereço...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Go to Offset...</value>
+    <value>Ir para Offset...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Save Se_lection...</value>
+    <value>Guardar Seleção...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>Select...</value>
+    <value>Selecionar...</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>Settings...</value>
+    <value>Definições...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>_16 Bytes</value>
+    <value>16 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>_32 Bytes</value>
+    <value>32 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>_48 Bytes</value>
+    <value>48 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>_64 Bytes</value>
+    <value>64 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>_8 Bytes</value>
+    <value>8 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>_Fit to Width</value>
+    <value>Ajustar à Largura</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>_Base Offset</value>
+    <value>Offset Base</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>This value is added to start offset before it's shown on the screen</value>
+    <value>Esse valor é adicionado para o offset de início antes dele ser mostrado no ecrã</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>B_ytes per Line</value>
+    <value>Bytes por Linha</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>_End Offset</value>
+    <value>Offset Final</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
     <value>Offset Bi_t Size</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>Sho_w ASCII</value>
+    <value>Mostrar ASCII</value>
   </data>
   <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
-    <value>S_how Offset</value>
+    <value>Mostrar Offset</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
-    <value>Show _Values</value>
+    <value>Mostrar Valores</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Start Offset</value>
+    <value>Offset de Inicio</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Local Hex Editor Settings</value>
+    <value>Configurações de Hex Editor Local</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Use _Relative Offsets</value>
+    <value>Usar Offsets Relativos</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>All offsets are relative to the start offset</value>
+    <value>Todos os offsets são relativos para o offset de início</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
-    <value>Value _Format</value>
+    <value>Formato do Valor</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>Colar</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>Paste (#Blob Data)</value>
+    <value>Colar (#Blob Data)</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
-    <value>Paste Special</value>
+    <value>Colar Especial</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>Paste (Unicode)</value>
+    <value>Colar (Unicode)</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>Paste (UTF-8)</value>
+    <value>_Colar (UTF-8)</value>
   </data>
   <data name="ShortCutKeyCtrl8" xml:space="preserve">
-    <value>Ctrl+8</value>
+    <value>CTRL + 8</value>
   </data>
   <data name="ShortCutKeyCtrlAltO" xml:space="preserve">
-    <value>Ctrl+Alt+O</value>
+    <value>CTRL + Alt + O</value>
   </data>
   <data name="ShortCutKeyCtrlAltS" xml:space="preserve">
-    <value>Ctrl+Alt+S</value>
+    <value>CTRL + Alt + S</value>
   </data>
   <data name="ShortCutKeyCtrlB" xml:space="preserve">
     <value>CTRL + B</value>
@@ -1466,10 +1466,10 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + G</value>
   </data>
   <data name="ShortCutKeyCtrlShift8" xml:space="preserve">
-    <value>Ctrl+Shift+8</value>
+    <value>CTRL + Shift + 8</value>
   </data>
   <data name="ShortCutKeyCtrlShiftB" xml:space="preserve">
-    <value>Ctrl+Shift+B</value>
+    <value>CTRL + Shift + B</value>
   </data>
   <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
     <value>CTRL + Shift + C</value>
@@ -1478,10 +1478,10 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + Shift + D</value>
   </data>
   <data name="ShortCutKeyCtrlShiftH" xml:space="preserve">
-    <value>Ctrl+Shift+H</value>
+    <value>CTRL + Shift + H</value>
   </data>
   <data name="ShortCutKeyCtrlShiftU" xml:space="preserve">
-    <value>Ctrl+Shift+U</value>
+    <value>CTRL + Shift + U</value>
   </data>
   <data name="ShortCutKeyCtrlU" xml:space="preserve">
     <value>CTRL + U</value>
@@ -1494,12 +1494,18 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <comment>the delete key</comment>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Show All Bytes</value>
+    <value>Mostrar Todos os Bytes</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Show Only Selected Bytes</value>
+    <value>Mostrar Apenas Bytes Selecionados</value>
   </data>
   <data name="ValueFormatCommand" xml:space="preserve">
-    <value>Value Format</value>
+    <value>Formato do Valor</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
   </data>
 </root>
