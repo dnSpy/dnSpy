@@ -23,11 +23,11 @@ using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Hex.Commands;
 using dnSpy.Properties;
-using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Hex.ContextMenuCommands {
 	sealed class HexViewContext {
@@ -83,7 +83,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		GoToPositionContexMenuEntry()
 			: base(HexCommandIds.GoToPosition) {
 		}
-		public override string GetHeader(HexViewContext context) => context.HexView.Buffer.Tags.Contains(PredefinedHexBufferTags.Memory) ? dnSpy_Resources.GoToAddressCommand : dnSpy_Resources.GoToOffsetCommand;
+		public override string GetHeader(HexViewContext context) => context.HexView.Buffer.IsMemory ? dnSpy_Resources.GoToAddressCommand : dnSpy_Resources.GoToOffsetCommand;
 	}
 
 	[ExportMenuItem(Header = "res:HexEditorSelectCommand", InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]

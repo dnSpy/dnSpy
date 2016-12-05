@@ -47,6 +47,11 @@ namespace dnSpy.Contracts.Hex {
 		public HexTags Tags { get; }
 
 		/// <summary>
+		/// true if the underlying stream reads data from some process' memory
+		/// </summary>
+		public bool IsMemory => Tags.Contains(PredefinedHexBufferTags.Memory);
+
+		/// <summary>
 		/// true if the content can change at any time
 		/// </summary>
 		public abstract bool IsVolatile { get; }

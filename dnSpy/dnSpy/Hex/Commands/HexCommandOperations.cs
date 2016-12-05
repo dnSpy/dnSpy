@@ -104,7 +104,7 @@ namespace dnSpy.Hex.Commands {
 			var win = new GoToPositionDlg();
 			win.DataContext = data;
 			win.Owner = OwnerWindow;
-			if (HexView.Buffer.Tags.Contains(PredefinedHexBufferTags.Memory)) {
+			if (HexView.Buffer.IsMemory) {
 				win.Title = dnSpy_Resources.GoToOffset_Title_Address;
 				win.offsetLabel.Content = dnSpy_Resources.GoToOffset_Address_Label;
 			}
