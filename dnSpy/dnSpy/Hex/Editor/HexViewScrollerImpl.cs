@@ -148,6 +148,8 @@ namespace dnSpy.Hex.Editor {
 					return;
 				var first = lines[0];
 				var last = lines[lines.Count - 1];
+				if (lines.Count > 1 && last.BufferStart == span.End)
+					last = lines[lines.Count - 2];
 				var firstSpan = first.BufferSpan;
 				var lastSpan = last.BufferSpan;
 
