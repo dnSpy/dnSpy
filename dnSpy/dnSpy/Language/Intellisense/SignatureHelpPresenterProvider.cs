@@ -19,8 +19,8 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -48,7 +48,7 @@ namespace dnSpy.Language.Intellisense {
 			var signatureHelpSession = session as ISignatureHelpSession;
 			if (signatureHelpSession == null)
 				return null;
-			return new SignatureHelpPresenter(signatureHelpSession, textBufferFactoryService, contentTypeRegistryService, classifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.SignatureHelpToolTip));
+			return new SignatureHelpPresenter(signatureHelpSession, textBufferFactoryService, contentTypeRegistryService, classifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc));
 		}
 	}
 }

@@ -99,8 +99,6 @@
     <Compile Include="Text\Classification\TaggedTextElementProvider.cs" />
     <Compile Include="Text\Classification\TaggedTextElementProviderService.cs" />
     <Compile Include="Text\Classification\TextTagsHelper.cs" />
-    <Compile Include="Text\Editor\RoslynAppearanceCategoryConstants.cs" />
-    <Compile Include="Text\Editor\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Extensions.cs" />
     <Compile Include="Text\RoslynContentTypes.cs" />
     <Compile Include="Text\RoslynDocumentChangedService.cs" />

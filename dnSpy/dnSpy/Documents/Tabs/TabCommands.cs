@@ -28,6 +28,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
@@ -35,7 +36,6 @@ using dnSpy.Contracts.Utilities;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Documents.Tabs {
 	[ExportAutoLoaded]
@@ -567,19 +567,13 @@ namespace dnSpy.Documents.Tabs {
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly ITextElementProvider textElementProvider;
 
-		[Export(typeof(TextEditorFormatDefinition))]
-		[Name(AppearanceCategoryConstants.TabsDialog)]
-		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-		sealed class TabsDialogTextEditorFormatDefinition : TextEditorFormatDefinition {
-		}
-
 		[ImportingConstructor]
 		AllTabsMenuItemCommand(IDocumentTabService documentTabService, ISaveService saveService, ITabsVMSettings tabsVMSettings, IAppWindow appWindow, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider)
 			: base(documentTabService) {
 			this.saveService = saveService;
 			this.tabsVMSettings = tabsVMSettings;
 			this.appWindow = appWindow;
-			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.TabsDialog);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.textElementProvider = textElementProvider;
 		}
 

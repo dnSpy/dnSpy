@@ -31,6 +31,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.CallStack;
 using ICSharpCode.TreeView;
@@ -99,7 +100,7 @@ namespace dnSpy.Debugger.Locals {
 			this.stackFrameService = stackFrameService;
 			TheDebugger = theDebugger;
 
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.LocalsWindow);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			printerContext = new PrinterContext(classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,

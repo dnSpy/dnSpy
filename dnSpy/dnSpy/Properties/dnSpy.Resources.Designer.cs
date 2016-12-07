@@ -3783,6 +3783,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Text Editor.
+        /// </summary>
+        public static string TextEditor {
+            get {
+                return ResourceManager.GetString("TextEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Compress blank lines.
         /// </summary>
         public static string TextEditorCompressEmptyOrWhitespaceLines {

@@ -31,6 +31,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
@@ -103,7 +104,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView = wpfTextViewHost.TextView;
 			textViewUndoManager = textViewUndoManagerProvider.GetTextViewUndoManager(wpfTextView);
 			ReplEditorUtils.AddInstance(this, wpfTextView);
-			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.REPL);
+			wpfTextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.TextEditor);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			//TODO: ReplEditorOperations doesn't support virtual space
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.UseVirtualSpaceId, false);

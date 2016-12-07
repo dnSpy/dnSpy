@@ -25,6 +25,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.CallStack;
 using Microsoft.VisualStudio.Text.Classification;
@@ -84,7 +85,7 @@ namespace dnSpy.Debugger.Threads {
 		ThreadsVM(ITheDebugger theDebugger, IStackFrameService stackFrameService, IDebuggerSettings debuggerSettings, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.theDebugger = theDebugger;
 			this.stackFrameService = stackFrameService;
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.ThreadsWindow);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			threadContext = new ThreadContext(theDebugger, debuggerSettings, classificationFormatMap, textElementProvider) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightThreads,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,

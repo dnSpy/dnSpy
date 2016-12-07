@@ -18,16 +18,19 @@
 */
 
 using dnSpy.Contracts.Settings.AppearanceCategory;
-using Microsoft.VisualStudio.Utilities;
+using dnSpy.Contracts.Settings.Fonts;
 
-namespace dnSpy.Roslyn.Shared.Text.Classification {
-	interface ITaggedTextElementProviderService {
-		/// <summary>
-		/// Creates a <see cref="ITaggedTextElementProvider"/>
-		/// </summary>
-		/// <param name="contentType">Content type</param>
-		/// <param name="category">Category, eg. <see cref="AppearanceCategoryConstants.TextEditor"/></param>
-		/// <returns></returns>
-		ITaggedTextElementProvider Create(IContentType contentType, string category);
+namespace dnSpy.Settings.Fonts {
+	static class ThemeFontSettingsDefinitions {
+#pragma warning disable 0169
+		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.TextEditor, FontType.TextEditor)]
+		static readonly ThemeFontSettingsDefinition textEditorThemeFontSettingsDefinition;
+
+		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.HexEditor, FontType.HexEditor)]
+		static readonly ThemeFontSettingsDefinition hexEditorThemeFontSettingsDefinition;
+
+		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.UIMisc, FontType.UI)]
+		static readonly ThemeFontSettingsDefinition uiThemeFontSettingsDefinition;
+#pragma warning restore 0169
 	}
 }

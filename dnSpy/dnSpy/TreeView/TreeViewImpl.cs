@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Controls;
@@ -66,7 +67,7 @@ namespace dnSpy.TreeView {
 			Guid = guid;
 			this.treeViewService = treeViewService;
 			treeViewListener = options.TreeViewListener;
-			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewTextEditorFormatDefinition.TreeViewAppearanceCategory);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			foregroundBrushResourceKey = options.ForegroundBrushResourceKey ?? "TreeViewForeground";
 			sharpTreeView = new SharpTreeView();

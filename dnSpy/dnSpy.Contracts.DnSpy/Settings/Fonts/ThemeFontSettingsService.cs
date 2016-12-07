@@ -17,20 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 
-namespace dnSpy.Roslyn.Shared.Text.Editor {
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(RoslynAppearanceCategoryConstants.CodeEditor_CSharp)]
-	[BaseDefinition(AppearanceCategoryConstants.CodeEditor)]
-	sealed class CodeEditorCSharpTextEditorFormatDefinition : TextEditorFormatDefinition {
-	}
+namespace dnSpy.Contracts.Settings.Fonts {
+	/// <summary>
+	/// <see cref="ThemeFontSettings"/> service
+	/// </summary>
+	public abstract class ThemeFontSettingsService {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected ThemeFontSettingsService() { }
 
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(RoslynAppearanceCategoryConstants.CodeEditor_VisualBasic)]
-	[BaseDefinition(AppearanceCategoryConstants.CodeEditor)]
-	sealed class CodeEditorVisualBasicTextEditorFormatDefinition : TextEditorFormatDefinition {
+		/// <summary>
+		/// Gets a <see cref="ThemeFontSettings"/> instance
+		/// </summary>
+		/// <param name="name">Name, eg. <see cref="AppearanceCategoryConstants.TextEditor"/></param>
+		/// <returns></returns>
+		public abstract ThemeFontSettings GetSettings(string name);
 	}
 }

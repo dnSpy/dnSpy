@@ -221,7 +221,6 @@
     <Compile Include="Scripting\StackFrame.cs" />
     <Compile Include="Scripting\TypeComparer.cs" />
     <Compile Include="Scripting\Utils.cs" />
-    <Compile Include="TextEditorFormatDefinitions.cs" />
     <Compile Include="TheDebugger.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="Threads\Commands.cs" />

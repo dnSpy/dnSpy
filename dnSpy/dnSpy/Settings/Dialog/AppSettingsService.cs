@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -45,12 +46,6 @@ namespace dnSpy.Settings.Dialog {
 		Guid? lastSelectedGuid;
 		ShowAppSettingsDialog showAppSettings;
 
-		[Export(typeof(TextEditorFormatDefinition))]
-		[Name(AppearanceCategoryConstants.OptionsDialog)]
-		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-		sealed class OptionsDialogTextEditorFormatDefinition : TextEditorFormatDefinition {
-		}
-
 #pragma warning disable 0169
 		[Export]
 		[Name(ContentTypes.OptionsDialogText)]
@@ -60,7 +55,7 @@ namespace dnSpy.Settings.Dialog {
 
 		[ImportingConstructor]
 		AppSettingsService(IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, IAppWindow appWindow, ITreeViewService treeViewService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider, [ImportMany] IEnumerable<Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>> appSettingsPageContainers, [ImportMany] IEnumerable<Lazy<IAppSettingsPageProvider>> appSettingsPageProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> appSettingsModifiedListeners) {
-			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.OptionsDialog);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.textElementProvider = textElementProvider;
 			this.appWindow = appWindow;
 			this.treeViewService = treeViewService;

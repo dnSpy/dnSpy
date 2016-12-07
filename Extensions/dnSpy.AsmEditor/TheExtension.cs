@@ -23,23 +23,43 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Extension;
-using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Settings.AppearanceCategory;
+using dnSpy.Contracts.Settings.Fonts;
 
 namespace dnSpy.AsmEditor {
 	[ExportExtension]
 	sealed class TheExtension : IExtension {
 		[ImportingConstructor]
-		TheExtension(ITextEditorSettings textEditorSettings) {
-			textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
-			Initialize(textEditorSettings);
+		TheExtension(ThemeFontSettingsService themeFontSettingsService) {
+			var themeFontSettings = themeFontSettingsService.GetSettings(AppearanceCategoryConstants.TextEditor);
+			themeFontSettings.PropertyChanged += ThemeFontSettings_PropertyChanged;
+			Initialize(themeFontSettings.Active);
 		}
 
-		void Initialize(ITextEditorSettings textEditorSettings) =>
-			Application.Current.Resources["TextEditorFontFamily"] = textEditorSettings.FontFamily;
+		void ThemeFontSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var themeFontSettings = (ThemeFontSettings)sender;
+			if (e.PropertyName == nameof(themeFontSettings.Active))
+				Initialize(themeFontSettings.Active);
+		}
 
-		void TextEditorSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(ITextEditorSettings.FontFamily))
-				Initialize((ITextEditorSettings)sender);
+		void Initialize(FontSettings fontSettings) {
+			if (prevFontSettings == fontSettings)
+				return;
+			if (prevFontSettings != null)
+				prevFontSettings.PropertyChanged -= FontSettings_PropertyChanged;
+			prevFontSettings = fontSettings;
+			fontSettings.PropertyChanged += FontSettings_PropertyChanged;
+			UpdateFont(fontSettings);
+		}
+		FontSettings prevFontSettings;
+
+		void UpdateFont(FontSettings fontSettings) =>
+			Application.Current.Resources["TextEditorFontFamily"] = fontSettings.FontFamily;
+
+		void FontSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var fontSettings = (FontSettings)sender;
+			if (e.PropertyName == nameof(fontSettings.FontFamily))
+				UpdateFont(fontSettings);
 		}
 
 		public IEnumerable<string> MergedResourceDictionaries {

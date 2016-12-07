@@ -17,8 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Scripting.Roslyn.CSharp {
-	static class Constants {
-		public const string REPL_CSharp = "CC670CDC-B405-4B74-9798-7CC9A13546ED";
+namespace dnSpy.Contracts.Settings.AppearanceCategory {
+	/// <summary>
+	/// Appearance category constants
+	/// </summary>
+	static class AppearanceCategoryConstants {
+		/// <summary>
+		/// Text editor
+		/// </summary>
+		public const string TextEditor = "text";
+
+		/// <summary>
+		/// Hex editor
+		/// </summary>
+		public const string HexEditor = nameof(HexEditor);
+
+		/// <summary>
+		/// Output window
+		/// </summary>
+		public const string OutputWindow = nameof(OutputWindow);
+
+		/// <summary>
+		/// UI controls
+		/// </summary>
+		public const string UIMisc = nameof(UIMisc);
 	}
 }

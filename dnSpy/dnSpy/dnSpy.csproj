@@ -310,7 +310,6 @@
     <Compile Include="Hex\Classification\HexViewClassifierAggregator.cs" />
     <Compile Include="Hex\Classification\HexViewClassifierAggregatorServiceImpl.cs" />
     <Compile Include="Hex\Classification\HexViewEditorFormatMap.cs" />
-    <Compile Include="Hex\Classification\TextEditorFormatDefinitions.cs" />
     <Compile Include="Hex\Commands\CommandInfoProvider.cs" />
     <Compile Include="Hex\Commands\CommandTargetFilter.cs" />
     <Compile Include="Hex\Commands\GoToPositionDlg.xaml.cs">
@@ -536,7 +535,6 @@
     <Compile Include="Language\Intellisense\SignatureHelpSession.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
     <Compile Include="Language\Intellisense\SpaceReservationQuickInfoPresenter.cs" />
-    <Compile Include="Language\Intellisense\TextEditorFormatDefinitions.cs" />
     <Compile Include="Language\Intellisense\TrackingSpanHelpers.cs" />
     <Compile Include="Language\Intellisense\WpfUtils.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />
@@ -585,7 +583,6 @@
     <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="Output\CachedWriter.cs" />
     <Compile Include="Output\Commands.cs" />
-    <Compile Include="Output\Constants.cs" />
     <Compile Include="Output\DefaultOutputOptions.cs" />
     <Compile Include="Output\EditorOptionDefinitions.cs" />
     <Compile Include="Output\NotPresentOutputWriter.cs" />
@@ -598,7 +595,6 @@
     </Compile>
     <Compile Include="Output\OutputService.cs" />
     <Compile Include="Output\OutputServiceSettings.cs" />
-    <Compile Include="Output\OutputTextEditorFormatDefinition.cs" />
     <Compile Include="Output\OutputToolWindowContent.cs" />
     <Compile Include="Output\Settings\AdvancedAppSettingsPage.cs" />
     <Compile Include="Output\Settings\AppSettingsPageContainer.cs" />
@@ -612,6 +608,8 @@
     <Compile Include="Output\Settings\ScrollBarsAppSettingsPage.cs" />
     <Compile Include="Output\Settings\TabsAppSettingsPage.cs" />
     <Compile Include="Output\Settings\TextViewOptionsGroupNameProvider.cs" />
+    <Compile Include="Output\TextAppearanceCategoryDefinitions.cs" />
+    <Compile Include="Output\ThemeFontSettingsDefinitions.cs" />
     <Compile Include="Properties\AssemblyInfo.Shared.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -642,7 +640,11 @@
     <Compile Include="Search\SearchToolWindowContent.cs" />
     <Compile Include="Search\SearchType.cs" />
     <Compile Include="Search\SearchTypeVM.cs" />
-    <Compile Include="Search\TextEditorFormatDefinitions.cs" />
+    <Compile Include="Settings\AppearanceCategory\FontAndColorOptionsProviderImpl.cs" />
+    <Compile Include="Settings\AppearanceCategory\ITextAppearanceCategoryService.cs" />
+    <Compile Include="Settings\AppearanceCategory\TextAppearanceCategory.cs" />
+    <Compile Include="Settings\AppearanceCategory\TextAppearanceCategoryDefinitions.cs" />
+    <Compile Include="Settings\AppearanceCategory\TextAppearanceCategoryService.cs" />
     <Compile Include="Settings\Dialog\AppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\AppSettingsDlg.xaml.cs">
       <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
@@ -663,6 +665,12 @@
     <Compile Include="Settings\Dialog\ShowAppSettingsDialog.cs" />
     <Compile Include="Settings\Dialog\ShowOptionsCommand.cs" />
     <Compile Include="Settings\Dialog\UIHelpers.cs" />
+    <Compile Include="Settings\Fonts\DefaultFontInfo.cs" />
+    <Compile Include="Settings\Fonts\FontSettingsImpl.cs" />
+    <Compile Include="Settings\Fonts\ThemeFontSettingsDefinitions.cs" />
+    <Compile Include="Settings\Fonts\ThemeFontSettingsImpl.cs" />
+    <Compile Include="Settings\Fonts\ThemeFontSettingsSerializer.cs" />
+    <Compile Include="Settings\Fonts\ThemeFontSettingsServiceImpl.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
     <Compile Include="Settings\SettingsSection.cs" />
     <Compile Include="Settings\SettingsSectionProvider.cs" />
@@ -708,19 +716,12 @@
     <Compile Include="Text\Classification\ClassifierTagger.cs" />
     <Compile Include="Text\Classification\ClassifierTaggerProvider.cs" />
     <Compile Include="Text\Classification\DefaultTextClassifierProvider.cs" />
-    <Compile Include="Text\Classification\DefaultTextEditorFormatDefinition.cs" />
     <Compile Include="Text\Classification\EditorFormatDefinitionExtensions.cs" />
     <Compile Include="Text\Classification\EditorFormatDefinitionService.cs" />
     <Compile Include="Text\Classification\EditorFormatMapService.cs" />
-    <Compile Include="Text\Classification\ITextEditorFontSettings.cs" />
-    <Compile Include="Text\Classification\ITextEditorFontSettingsService.cs" />
     <Compile Include="Text\Classification\NullClassifier.cs" />
     <Compile Include="Text\Classification\TextClassifierAggregator.cs" />
     <Compile Include="Text\Classification\TextClassifierAggregatorService.cs" />
-    <Compile Include="Text\Classification\TextEditorFontSettings.cs" />
-    <Compile Include="Text\Classification\TextEditorFontSettingsDictionaryProvider.cs" />
-    <Compile Include="Text\Classification\TextEditorFontSettingsService.cs" />
-    <Compile Include="Text\Classification\TextEditorFormatDefinitions.cs" />
     <Compile Include="Text\Classification\TextElementProvider.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeService.cs" />
@@ -864,7 +865,6 @@
     <Compile Include="Text\Editor\TextCaret.cs" />
     <Compile Include="Text\Editor\TextCaretLayer.cs" />
     <Compile Include="Text\Editor\TextEditorFactoryService.cs" />
-    <Compile Include="Text\Editor\TextEditorSettings.cs" />
     <Compile Include="Text\Editor\TextFormattingUtilities.cs" />
     <Compile Include="Text\Editor\TextLayer.cs" />
     <Compile Include="Text\Editor\TextMarkerService.cs" />
@@ -1014,7 +1014,6 @@
     <Compile Include="TreeView\TreeNodeImpl.cs" />
     <Compile Include="TreeView\TreeViewImpl.cs" />
     <Compile Include="TreeView\TreeViewService.cs" />
-    <Compile Include="TreeView\TreeViewTextEditorFormatDefinition.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\dnSpy.Resources.resx">

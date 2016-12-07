@@ -24,6 +24,7 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Formatting {
@@ -74,7 +75,7 @@ namespace dnSpy.Hex.Formatting {
 				}
 				else {
 					classifier = spans.Count == 0 ? null : classifierAggregatorService.GetClassifier(spans[0].Buffer);
-					classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(HexAppearanceCategoryConstants.HexEditor);
+					classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.HexEditor);
 				}
 
 				const int tabSize = 4;

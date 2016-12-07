@@ -17,15 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
+using dnSpy.Contracts.Settings.AppearanceCategory;
+using dnSpy.Contracts.Settings.Fonts;
 
-namespace dnSpy.TreeView {
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(TreeViewAppearanceCategory)]
-	[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-	sealed class TreeViewTextEditorFormatDefinition : TextEditorFormatDefinition {
-		public const string TreeViewAppearanceCategory = "dnSpy-TreeView";
+namespace dnSpy.Output {
+	static class ThemeFontSettingsDefinitions {
+#pragma warning disable 0169
+		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.OutputWindow, FontType.TextEditor)]
+		static readonly ThemeFontSettingsDefinition outputWindowThemeFontSettingsDefinition;
+#pragma warning restore 0169
 	}
 }

@@ -35,7 +35,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
-using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Search {
@@ -109,7 +109,7 @@ namespace dnSpy.Search {
 
 		[ImportingConstructor]
 		SearchService(IDecompilerService decompilerService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, IClassificationFormatMapService classificationFormatMapService) {
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.Search);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.documentTabService = documentTabService;
 			searchControl = new SearchControl();
 			vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {

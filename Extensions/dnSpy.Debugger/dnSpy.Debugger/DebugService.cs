@@ -41,6 +41,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.CallStack;
@@ -775,7 +776,7 @@ namespace dnSpy.Debugger {
 			if (!CanAttach)
 				return false;
 
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.AttachToProcessWindow);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			var data = new AttachProcessVM(Dispatcher.CurrentDispatcher, DebuggerSettings.SyntaxHighlightAttach, classificationFormatMap, textElementProvider);
 			var win = new AttachProcessDlg();
 			win.DataContext = data;

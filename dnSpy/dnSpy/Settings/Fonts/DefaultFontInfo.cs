@@ -17,9 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Roslyn.Shared.Text.Editor {
-	static class RoslynAppearanceCategoryConstants {
-		public const string CodeEditor_CSharp = "dnSpy-CodeEditor-C#";
-		public const string CodeEditor_VisualBasic = "dnSpy-CodeEditor-Visual Basic";
+using System.Windows.Media;
+
+namespace dnSpy.Settings.Fonts {
+	struct DefaultFontInfo {
+		public FontFamily FontFamily { get; }
+		public double FontSize { get; }
+		public DefaultFontInfo(FontFamily fontFamily, double fontSize) {
+			FontFamily = fontFamily;
+			FontSize = fontSize;
+		}
 	}
 }

@@ -18,7 +18,7 @@
 */
 
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Hex.Classification;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class AppearanceCategoryEditorOptionDefinition : WpfHexViewOptionDefinition<string> {
 		public override VSTE.EditorOptionKey<string> Key => DefaultWpfHexViewOptions.AppearanceCategoryId;
-		public override string Default => HexAppearanceCategoryConstants.HexEditor;
+		public override string Default => AppearanceCategoryConstants.HexEditor;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Internal.QuickInfo;
 using Microsoft.VisualStudio.Text.Classification;
@@ -46,7 +47,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 			this.themeClassificationTypeService = themeClassificationTypeService;
 		}
 
-		public IQuickInfoContentCreator Create(ITextView textView) => new QuickInfoContentCreator(classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService, textView);
+		public IQuickInfoContentCreator Create(ITextView textView) => new QuickInfoContentCreator(classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc), themeClassificationTypeService, textView);
 	}
 
 	sealed class QuickInfoContentCreator : IQuickInfoContentCreator {

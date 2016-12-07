@@ -23,6 +23,7 @@ using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -39,7 +40,7 @@ namespace dnSpy.Search {
 			this.dotNetImageService = dotNetImageService;
 			this.decompilerService = decompilerService;
 			this.textElementProvider = textElementProvider;
-			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.Search);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 		}
 
 		public IDocumentSearcher Create(DocumentSearcherOptions options, IDocumentTreeView documentTreeView) {

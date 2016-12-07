@@ -98,13 +98,6 @@ namespace dnSpy.Text.MEF {
 		string Name { get; }
 	}
 
-	public interface ITextEditorFormatDefinitionMetadata {
-		[DefaultValue(null)]
-		IEnumerable<string> BaseDefinition { get; }
-
-		string Name { get; }
-	}
-
 	public interface IWpfTextViewMarginMetadata : IOrderableContentTypeAndTextViewRoleMetadata {
 		string MarginContainer { get; }
 

@@ -17,14 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
+namespace dnSpy.Contracts.Settings.Fonts {
+	/// <summary>
+	/// Font type
+	/// </summary>
+	public enum FontType {
+		/// <summary>
+		/// Text editor font
+		/// </summary>
+		TextEditor,
 
-namespace dnSpy.Scripting.Roslyn.CSharp {
-	[Export(typeof(TextEditorFormatDefinition))]
-	[Name(Constants.REPL_CSharp)]
-	[BaseDefinition(AppearanceCategoryConstants.REPL)]
-	sealed class REPLCSharpTextEditorFormatDefinition : TextEditorFormatDefinition {
+		/// <summary>
+		/// Hex editor font (monospaced font)
+		/// </summary>
+		HexEditor,
+
+		/// <summary>
+		/// Monospaced font
+		/// </summary>
+		Monospaced,
+
+		/// <summary>
+		/// UI font
+		/// </summary>
+		UI,
 	}
 }

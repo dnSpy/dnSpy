@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Themes;
+using dnSpy.Settings.AppearanceCategory;
 using TC = dnSpy.Text.Classification;
 using VSTC = Microsoft.VisualStudio.Text.Classification;
 
@@ -41,8 +42,8 @@ namespace dnSpy.Hex.Classification {
 		[Export(typeof(TheEditorFormatMapService))]
 		sealed class TheEditorFormatMapService : TC.EditorFormatMapService {
 			[ImportingConstructor]
-			public TheEditorFormatMapService(IThemeService themeService, TC.ITextEditorFontSettingsService textEditorFontSettingsService, TC.IEditorFormatDefinitionService editorFormatDefinitionService)
-				: base(themeService, textEditorFontSettingsService, editorFormatDefinitionService) {
+			public TheEditorFormatMapService(IThemeService themeService, ITextAppearanceCategoryService textAppearanceCategoryService, TC.IEditorFormatDefinitionService editorFormatDefinitionService)
+				: base(themeService, textAppearanceCategoryService, editorFormatDefinitionService) {
 			}
 
 			public VSTC.IEditorFormatMap GetEditorFormatMap(HexView view) {

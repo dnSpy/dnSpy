@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Scripting.Roslyn.VisualBasic {
-	static class Constants {
-		public const string REPL_VisualBasic = "C5456CC5-00F6-4423-A722-527C39194915";
+namespace dnSpy.Settings.AppearanceCategory {
+	interface ITextAppearanceCategoryService {
+		ITextAppearanceCategory GetSettings(string category);
 	}
 }

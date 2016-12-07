@@ -17,22 +17,36 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
-using System.Windows.Media;
+using dnSpy.Contracts.Themes;
 
-namespace dnSpy.Contracts.Text.Editor {
+namespace dnSpy.Contracts.Settings.AppearanceCategory {
 	/// <summary>
-	/// Settings used by all text editors
+	/// Text appearance category definition
 	/// </summary>
-	interface ITextEditorSettings : INotifyPropertyChanged {
+	abstract class TextAppearanceCategoryDefinition {
 		/// <summary>
-		/// Font family
+		/// Constructor
 		/// </summary>
-		FontFamily FontFamily { get; }
+		protected TextAppearanceCategoryDefinition() { }
 
 		/// <summary>
-		/// Font size
+		/// true if the user can change the settings
 		/// </summary>
-		double FontSize { get; }
+		public virtual bool IsUserVisible => true;
+
+		/// <summary>
+		/// Text shown in the UI
+		/// </summary>
+		public abstract string DisplayName { get; }
+
+		/// <summary>
+		/// Appearance category, eg. <see cref="AppearanceCategoryConstants.TextEditor"/>
+		/// </summary>
+		public abstract string Category { get; }
+
+		/// <summary>
+		/// Text color
+		/// </summary>
+		public abstract ColorType ColorType { get; }
 	}
 }

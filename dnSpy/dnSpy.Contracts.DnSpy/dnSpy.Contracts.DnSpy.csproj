@@ -264,7 +264,6 @@
     <Compile Include="Extension\IExtension.cs" />
     <Compile Include="Hex\Adornments\HexToolTipProvider.cs" />
     <Compile Include="Hex\Adornments\HexToolTipProviderFactory.cs" />
-    <Compile Include="Hex\Classification\HexAppearanceCategoryConstants.cs" />
     <Compile Include="Hex\Classification\HexClassificationChangedEventArgs.cs" />
     <Compile Include="Hex\Classification\HexClassificationContext.cs" />
     <Compile Include="Hex\Classification\HexClassificationFormatMapService.cs" />
@@ -591,6 +590,8 @@
     <Compile Include="Search\SearchTypeInfo.cs" />
     <Compile Include="Search\ShowNothingDocumentTreeNodeFilterBase.cs" />
     <Compile Include="Search\VisibleMembersFlags.cs" />
+    <Compile Include="Settings\AppearanceCategory\AppearanceCategoryConstants.cs" />
+    <Compile Include="Settings\AppearanceCategory\TextAppearanceCategoryDefinition.cs" />
     <Compile Include="Settings\CodeEditor\CodeEditorOptionsDefinition.cs" />
     <Compile Include="Settings\CodeEditor\DefaultCodeEditorOptions.cs" />
     <Compile Include="Settings\Dialog\AppSettingsConstants.cs" />
@@ -600,6 +601,14 @@
     <Compile Include="Settings\Dialog\IAppSettingsPageContainer.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsPageProvider.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsService.cs" />
+    <Compile Include="Settings\FontsAndColors\FontAndColorOptions.cs" />
+    <Compile Include="Settings\FontsAndColors\FontAndColorOptionsProvider.cs" />
+    <Compile Include="Settings\FontsAndColors\FontOption.cs" />
+    <Compile Include="Settings\Fonts\FontSettings.cs" />
+    <Compile Include="Settings\Fonts\FontType.cs" />
+    <Compile Include="Settings\Fonts\ThemeFontSettings.cs" />
+    <Compile Include="Settings\Fonts\ThemeFontSettingsDefinition.cs" />
+    <Compile Include="Settings\Fonts\ThemeFontSettingsService.cs" />
     <Compile Include="Settings\Groups\ContentTypeOptionDefinition.cs" />
     <Compile Include="Settings\Groups\IContentTypeOptionDefinitionProvider.cs" />
     <Compile Include="Settings\Groups\ITextViewOptionsGroup.cs" />
@@ -633,7 +642,6 @@
     <Compile Include="Tabs\TabGroupServiceOptions.cs" />
     <Compile Include="Tabs\TabSelectedEventArgs.cs" />
     <Compile Include="Text\CachedTextColorsCollection.cs" />
-    <Compile Include="Text\Classification\AppearanceCategoryConstants.cs" />
     <Compile Include="Text\Classification\EditorFormatMapConstants.cs" />
     <Compile Include="Text\Classification\ISynchronousClassifier.cs" />
     <Compile Include="Text\Classification\ISynchronousClassifierAggregatorService.cs" />
@@ -653,7 +661,6 @@
     <Compile Include="Text\Classification\TextClassificationTag.cs" />
     <Compile Include="Text\Classification\TextClassifierContext.cs" />
     <Compile Include="Text\Classification\TextClassifierTextColorWriter.cs" />
-    <Compile Include="Text\Classification\TextEditorFormatDefinition.cs" />
     <Compile Include="Text\Classification\TextElementFlags.cs" />
     <Compile Include="Text\Classification\ThemeClassificationFormatDefinition.cs" />
     <Compile Include="Text\Classification\ThemeClassificationTypeNameKeys.cs" />
@@ -699,7 +706,6 @@
     <Compile Include="Text\Editor\IReplEditor.cs" />
     <Compile Include="Text\Editor\IReplEditorProvider.cs" />
     <Compile Include="Text\Editor\IsOverlayLayerAttribute.cs" />
-    <Compile Include="Text\Editor\ITextEditorSettings.cs" />
     <Compile Include="Text\Editor\LayerKind.cs" />
     <Compile Include="Text\Editor\LayerKindAttribute.cs" />
     <Compile Include="Text\Editor\LogEditorOptions.cs" />

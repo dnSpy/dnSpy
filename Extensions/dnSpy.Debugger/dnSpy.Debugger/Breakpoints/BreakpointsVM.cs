@@ -27,6 +27,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.IMModules;
 using Microsoft.VisualStudio.Text.Classification;
@@ -58,7 +59,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		BreakpointsVM(IDecompilerService decompilerService, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointService breakpointService, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleService inMemoryModuleService, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.BreakpointsWindow);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			breakpointContext = new BreakpointContext(moduleLoader, classificationFormatMap, textElementProvider) {
 				Decompiler = decompilerService.Decompiler,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,

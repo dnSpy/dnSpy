@@ -18,16 +18,40 @@
 */
 
 using dnSpy.Contracts.Settings.AppearanceCategory;
-using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Roslyn.Shared.Text.Classification {
-	interface ITaggedTextElementProviderService {
+namespace dnSpy.Contracts.Settings.FontsAndColors {
+	/// <summary>
+	/// Font and color options
+	/// </summary>
+	public abstract class FontAndColorOptions {
 		/// <summary>
-		/// Creates a <see cref="ITaggedTextElementProvider"/>
+		/// Constructor
 		/// </summary>
-		/// <param name="contentType">Content type</param>
-		/// <param name="category">Category, eg. <see cref="AppearanceCategoryConstants.TextEditor"/></param>
-		/// <returns></returns>
-		ITaggedTextElementProvider Create(IContentType contentType, string category);
+		protected FontAndColorOptions() { }
+
+		/// <summary>
+		/// Name shown in the UI
+		/// </summary>
+		public abstract string DisplayName { get; }
+
+		/// <summary>
+		/// Unique name, eg. <see cref="AppearanceCategoryConstants.TextEditor"/>
+		/// </summary>
+		public abstract string Name { get; }
+
+		/// <summary>
+		/// Font option
+		/// </summary>
+		public abstract FontOption FontOption { get; }
+
+		/// <summary>
+		/// Saves all settings
+		/// </summary>
+		public abstract void OnApply();
+
+		/// <summary>
+		/// Called after the dialog box is closed
+		/// </summary>
+		public virtual void OnClosed() { }
 	}
 }

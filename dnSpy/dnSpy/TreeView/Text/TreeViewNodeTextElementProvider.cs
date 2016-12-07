@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using System.Windows;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -32,7 +33,7 @@ namespace dnSpy.TreeView.Text {
 		[ImportingConstructor]
 		TreeViewNodeTextElementProvider(ITextElementProvider textElementProvider, IClassificationFormatMapService classificationFormatMapService) {
 			this.textElementProvider = textElementProvider;
-			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(TreeViewTextEditorFormatDefinition.TreeViewAppearanceCategory);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 		}
 
 		public FrameworkElement CreateTextElement(TreeViewNodeClassifierContext context, string contentType, TextElementFlags flags) =>

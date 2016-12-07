@@ -32,6 +32,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Output;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Output.Settings;
 using dnSpy.Properties;
@@ -179,7 +180,7 @@ namespace dnSpy.Output {
 			};
 			logEditorOptions.ExtraRoles.Add(PredefinedDsTextViewRoles.OutputTextPane);
 			var logEditor = logEditorProvider.Create(logEditorOptions);
-			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, Constants.Output);
+			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.OutputWindow);
 
 			// Prevent toolwindow's ctx menu from showing up when right-clicking in the left margin
 			menuService.InitializeContextMenu(logEditor.TextViewHost.HostControl, Guid.NewGuid());

@@ -17,8 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Settings.AppearanceCategory;
+using dnSpy.Contracts.Themes;
+using dnSpy.Properties;
+
 namespace dnSpy.Output {
-	static class Constants {
-		public const string Output = "B04014C0-CBBC-46AC-8B4F-F22CEBAD326A";
+	static class TextAppearanceCategoryDefinitions {
+		[Export(typeof(TextAppearanceCategoryDefinition))]
+		sealed class OutputWindowTextAppearanceCategoryDefinition : TextAppearanceCategoryDefinition {
+			public override bool IsUserVisible => true;
+			public override string DisplayName => dnSpy_Resources.OutputWindowSettings;
+			public override string Category => AppearanceCategoryConstants.OutputWindow;
+			public override ColorType ColorType => ColorType.Text;
+		}
 	}
 }

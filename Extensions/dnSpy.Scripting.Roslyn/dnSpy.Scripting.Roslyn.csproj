@@ -71,13 +71,11 @@
     <Compile Include="Common\ScriptGlobals.cs" />
     <Compile Include="Common\ScriptToolWindowContent.cs" />
     <Compile Include="ContentTypeDefinitions.cs" />
-    <Compile Include="CSharp\Constants.cs" />
     <Compile Include="CSharp\CSharpContent.cs" />
     <Compile Include="CSharp\CSharpControlVM.cs" />
     <Compile Include="CSharp\CSharpReplSettingsImpl.cs" />
     <Compile Include="CSharp\CSharpToolWindowContent.cs" />
     <Compile Include="CSharp\ReplOptionsDefinitions.cs" />
-    <Compile Include="CSharp\TextEditorFormatDefinition.cs" />
     <Compile Include="Properties\dnSpy.Scripting.Roslyn.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -95,7 +93,6 @@
     <None Include="VisualBasic\VisualBasicControlVM.cs" />
     <None Include="VisualBasic\VisualBasicContent.cs" />
     <None Include="VisualBasic\TextEditorFormatDefinition.cs" />
-    <None Include="VisualBasic\Constants.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">

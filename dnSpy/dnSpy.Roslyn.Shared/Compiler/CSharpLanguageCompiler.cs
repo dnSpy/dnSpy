@@ -23,12 +23,12 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using dnSpy.Roslyn.Shared.Documentation;
 using dnSpy.Roslyn.Shared.Text;
-using dnSpy.Roslyn.Shared.Text.Editor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -60,7 +60,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		protected override CompilationOptions CompilationOptions => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 		protected override ParseOptions ParseOptions => new CSharpParseOptions();
 		protected override string FileExtension => ".cs";
-		protected override string AppearanceCategory => RoslynAppearanceCategoryConstants.CodeEditor_CSharp;
+		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
 		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
 
 		public CSharpLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)

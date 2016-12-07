@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Threading;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Text.Editor;

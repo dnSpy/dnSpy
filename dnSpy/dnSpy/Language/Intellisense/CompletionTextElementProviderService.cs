@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
@@ -37,6 +38,6 @@ namespace dnSpy.Language.Intellisense {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 		}
 
-		public ICompletionTextElementProvider Create() => new CompletionTextElementProvider(textClassifierAggregatorService.Value, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.CodeCompletion), contentTypeRegistryService);
+		public ICompletionTextElementProvider Create() => new CompletionTextElementProvider(textClassifierAggregatorService.Value, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc), contentTypeRegistryService);
 	}
 }

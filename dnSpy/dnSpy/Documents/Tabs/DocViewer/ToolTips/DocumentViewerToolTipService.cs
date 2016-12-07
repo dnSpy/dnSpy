@@ -29,6 +29,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
@@ -141,7 +142,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		public DocumentViewerToolTipService GetService(IDocumentViewer documentViewer) =>
-			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(dotNetImageService, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService, decompilerService));
+			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(dotNetImageService, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc), themeClassificationTypeService, decompilerService));
 	}
 
 	[Export(typeof(IQuickInfoSourceProvider))]

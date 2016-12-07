@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -58,7 +58,7 @@ namespace dnSpy.Text.Editor {
 			var roles = dsTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
 			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
 			TextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
-			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
+			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.TextEditor);
 			TextViewHost.TextView.Options.SetOptionValue(DefaultDsTextViewOptions.RefreshScreenOnChangeId, true);
 		}
 

@@ -17,16 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
+using System.Collections.Generic;
 
-namespace dnSpy.Search {
-	static class TextEditorFormatDefinitions {
-		[Export(typeof(TextEditorFormatDefinition))]
-		[Name(AppearanceCategoryConstants.Search)]
-		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-		sealed class SearchTextEditorFormatDefinition : TextEditorFormatDefinition {
-		}
+namespace dnSpy.Contracts.Settings.FontsAndColors {
+	/// <summary>
+	/// Creates <see cref="FontAndColorOptions"/> used by the fonts settings page
+	/// </summary>
+	public abstract class FontAndColorOptionsProvider {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected FontAndColorOptionsProvider() { }
+
+		/// <summary>
+		/// Creates <see cref="FontAndColorOptions"/> instances
+		/// </summary>
+		/// <returns></returns>
+		public abstract IEnumerable<FontAndColorOptions> GetFontAndColors();
 	}
 }

@@ -32,13 +32,13 @@ using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
 using Microsoft.Win32;
 
 namespace dnSpy.Documents.Tabs {
@@ -116,12 +116,6 @@ namespace dnSpy.Documents.Tabs {
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly ITextElementProvider textElementProvider;
 
-		[Export(typeof(TextEditorFormatDefinition))]
-		[Name(AppearanceCategoryConstants.DocListDialog)]
-		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-		sealed class TabsDialogTextEditorFormatDefinition : TextEditorFormatDefinition {
-		}
-
 		[ImportingConstructor]
 		OpenListCommand(IAppWindow appWindow, IDocumentListLoader documentListLoader, DocumentListService documentListService, IMessageBoxService messageBoxService, IDsDocumentService documentService, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.appWindow = appWindow;
@@ -129,7 +123,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentListService = documentListService;
 			this.messageBoxService = messageBoxService;
 			this.documentService = documentService;
-			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.DocListDialog);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.textElementProvider = textElementProvider;
 		}
 

@@ -27,8 +27,8 @@ using System.Windows.Media.Animation;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Text;
 using Microsoft.VisualStudio.Text;
@@ -81,7 +81,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, options);
 			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
-			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.Viewer);
+			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.TextEditor);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextViewHost.TextView.Options.SetOptionValue(DefaultTextViewHostOptions.GlyphMarginId, true);
 			Children.Add(wpfTextViewHost.HostControl);

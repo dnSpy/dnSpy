@@ -25,8 +25,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using Microsoft.CodeAnalysis.Completion;
@@ -104,7 +104,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			}
 
 			object CreateContent(CompletionDescription description) {
-				using (var elemProvider = taggedTextElementProviderService.Create(owner.contentType, AppearanceCategoryConstants.CodeCompletionToolTip))
+				using (var elemProvider = taggedTextElementProviderService.Create(owner.contentType, AppearanceCategoryConstants.UIMisc))
 					return elemProvider.Create(string.Empty, description.TaggedParts, colorize);
 			}
 

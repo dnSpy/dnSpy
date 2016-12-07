@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Properties;
 using Microsoft.VisualStudio.Text.Classification;
@@ -95,7 +96,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		CallStackVM(IDebuggerSettings debuggerSettings, ICallStackSettings callStackSettings, IStackFrameService stackFrameService, ITheDebugger theDebugger, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.CallStackWindow);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.debuggerSettings = debuggerSettings;
 			this.callStackSettings = callStackSettings;
 			this.theDebugger = theDebugger;

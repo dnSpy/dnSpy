@@ -24,6 +24,7 @@ using System.Globalization;
 using System.Windows.Data;
 using dnSpy.AsmEditor.MethodBody;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;

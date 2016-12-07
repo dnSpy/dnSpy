@@ -17,8 +17,35 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Text.Classification {
-	interface ITextEditorFontSettingsService {
-		ITextEditorFontSettings GetSettings(string category);
+using System.Windows.Media;
+using dnSpy.Contracts.Settings.Fonts;
+
+namespace dnSpy.Contracts.Settings.FontsAndColors {
+	/// <summary>
+	/// Font option
+	/// </summary>
+	public class FontOption {
+		/// <summary>
+		/// Font type
+		/// </summary>
+		public FontType FontType { get; }
+
+		/// <summary>
+		/// Gets/sets the font family
+		/// </summary>
+		public FontFamily FontFamily { get; set; }
+
+		/// <summary>
+		/// Gets/sets the font size
+		/// </summary>
+		public double FontSize { get; set; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="fontType"></param>
+		public FontOption(FontType fontType) {
+			FontType = fontType;
+		}
 	}
 }

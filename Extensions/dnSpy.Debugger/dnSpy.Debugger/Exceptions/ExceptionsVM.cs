@@ -27,6 +27,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -112,7 +113,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		[ImportingConstructor]
 		ExceptionsVM(IDebuggerSettings debuggerSettings, IExceptionService exceptionService, IExceptionListSettings exceptionListSettings, IGetNewExceptionName getNewExceptionName, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.ExceptionSettingsWindow);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.debuggerSettings = debuggerSettings;
 			this.exceptionService = exceptionService;
 			this.exceptionListSettings = exceptionListSettings;
