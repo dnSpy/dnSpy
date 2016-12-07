@@ -266,6 +266,7 @@ namespace dnSpy.Contracts.Text {
 		HexGlyphMargin,
 		HexCurrentValueCell,
 		HexCurrentAsciiCell,
+		OutputWindowText,
 
 		/// <summary>
 		/// Must be last
@@ -518,6 +519,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexGlyphMargin = TextColor.HexGlyphMargin;
 		public static readonly object HexCurrentValueCell = TextColor.HexCurrentValueCell;
 		public static readonly object HexCurrentAsciiCell = TextColor.HexCurrentAsciiCell;
+		public static readonly object OutputWindowText = TextColor.OutputWindowText;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -772,6 +774,7 @@ namespace dnSpy.Contracts.Text {
 			HexGlyphMargin,
 			HexCurrentValueCell,
 			HexCurrentAsciiCell,
+			OutputWindowText,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

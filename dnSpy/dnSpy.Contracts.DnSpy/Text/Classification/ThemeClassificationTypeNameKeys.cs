@@ -1226,5 +1226,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.HexCurrentAsciiCell"/>
 		/// </summary>
 		public const string HexCurrentAsciiCell = nameof(HexCurrentAsciiCell);
+
+		/// <summary>
+		/// <see cref="TextColor.OutputWindowText"/>
+		/// </summary>
+		public const string OutputWindowText = nameof(OutputWindowText);
 	}
 }

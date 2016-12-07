@@ -2093,6 +2093,7 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.HexAscii, "Hex ASCII"),
 							new BrushColorInfo(ColorType.HexCaret, "Hex Caret"),
 							new BrushColorInfo(ColorType.HexInactiveCaret, "Hex Inactive Caret"),
+							new BrushColorInfo(ColorType.OutputWindowText, "Output window text"),
 						},
 					},
 				},

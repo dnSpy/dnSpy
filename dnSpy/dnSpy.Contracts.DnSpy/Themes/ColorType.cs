@@ -264,6 +264,7 @@ namespace dnSpy.Contracts.Themes {
 		HexGlyphMargin,
 		HexCurrentValueCell,
 		HexCurrentAsciiCell,
+		OutputWindowText,
 
 		// Must be last in this group
 		LastNR,

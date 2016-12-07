@@ -29,7 +29,7 @@ namespace dnSpy.Output {
 			public override bool IsUserVisible => true;
 			public override string DisplayName => dnSpy_Resources.OutputWindowSettings;
 			public override string Category => AppearanceCategoryConstants.OutputWindow;
-			public override ColorType ColorType => ColorType.Text;
+			public override ColorType ColorType => ColorType.OutputWindowText;
 		}
 	}
 }

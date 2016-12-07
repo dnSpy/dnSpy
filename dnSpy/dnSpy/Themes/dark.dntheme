@@ -239,6 +239,7 @@
 		<color name="hexglyphmargin" bg="#FF333333" />
 		<color name="hexcurrentvaluecell" bg="#FF404040" />
 		<color name="hexcurrentasciicell" bg="#FF505050" />
+		<color name="outputwindowtext" fg="#DCDCDC" bg="#1E1E1E" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

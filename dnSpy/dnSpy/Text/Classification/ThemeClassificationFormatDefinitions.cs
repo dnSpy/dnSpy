@@ -1250,6 +1250,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexCurrentAsciiCell)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexCurrentAsciiCellClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.OutputWindowText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition OutputWindowTextClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3417,6 +3422,15 @@ namespace dnSpy.Text.Classification {
 			HexCurrentAsciiCell() : base(TextColor.HexCurrentAsciiCell) {
 				ZOrder = HexMarkerServiceZIndexes.CurrentValue;
 			}
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.OutputWindowText)]
+		[Name(ThemeClassificationTypeNameKeys.OutputWindowText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class OutputWindowText : ThemeClassificationFormatDefinition {
+			OutputWindowText() : base(TextColor.OutputWindowText) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
