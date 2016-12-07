@@ -30,7 +30,7 @@ namespace dnSpy.Hex {
 	sealed class HexBufferLineProviderImpl : HexBufferLineProvider {
 		const int DEFAULT_GROUP_SIZE_IN_BYTES = 8;
 
-		static HexValueFormatter[] valueFormatters = new HexValueFormatter[HexBufferLineProviderOptions.HexValuesDisplayFormat_Last - HexBufferLineProviderOptions.HexValuesDisplayFormat_First + 1] {
+		static readonly HexValueFormatter[] valueFormatters = new HexValueFormatter[HexBufferLineProviderOptions.HexValuesDisplayFormat_Last - HexBufferLineProviderOptions.HexValuesDisplayFormat_First + 1] {
 			new HexByteValueFormatter(),
 			new HexUInt16ValueFormatter(),
 			new HexUInt32ValueFormatter(),
@@ -83,7 +83,6 @@ namespace dnSpy.Hex {
 		public override HexBuffer Buffer => buffer;
 		public override HexBufferSpan BufferSpan => HexBufferSpan.FromBounds(new HexBufferPoint(buffer, startPosition), new HexBufferPoint(buffer, endPosition));
 		public override HexPosition LineCount { get; }
-
 		public override int CharsPerLine { get; }
 		public override int BytesPerLine => (int)bytesPerLine;
 		public override int GroupSizeInBytes => groupSizeInBytes;
@@ -137,7 +136,7 @@ namespace dnSpy.Hex {
 				throw new ArgumentNullException(nameof(options));
 			if (options.CharsPerLine < 0)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.BytesPerLine < 0)
+			if (options.BytesPerLine < HexBufferLineProviderOptions.MinBytesPerLine || options.BytesPerLine > HexBufferLineProviderOptions.MaxBytesPerLine)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.GroupSizeInBytes < 0)
 				throw new ArgumentOutOfRangeException(nameof(options));
@@ -420,14 +419,14 @@ namespace dnSpy.Hex {
 			Math.Max(CalculateOffsetBitSize(startPosition), CalculateOffsetBitSize(endPosition > 0 ? endPosition - 1 : 0));
 
 		int CalculateOffsetBitSize(HexPosition position) {
-			var end = ToLogicalPosition(position).ToUInt64();
-			if (end <= 0x00000000000000FFUL) return 8;
-			if (end <= 0x000000000000FFFFUL) return 16;
-			if (end <= 0x0000000000FFFFFFUL) return 24;
-			if (end <= 0x00000000FFFFFFFFUL) return 32;
-			if (end <= 0x000000FFFFFFFFFFUL) return 40;
-			if (end <= 0x0000FFFFFFFFFFFFUL) return 48;
-			if (end <= 0x00FFFFFFFFFFFFFFUL) return 56;
+			var logicalPosition = ToLogicalPosition(position).ToUInt64();
+			if (logicalPosition <= 0x00000000000000FFUL) return 8;
+			if (logicalPosition <= 0x000000000000FFFFUL) return 16;
+			if (logicalPosition <= 0x0000000000FFFFFFUL) return 24;
+			if (logicalPosition <= 0x00000000FFFFFFFFUL) return 32;
+			if (logicalPosition <= 0x000000FFFFFFFFFFUL) return 40;
+			if (logicalPosition <= 0x0000FFFFFFFFFFFFUL) return 48;
+			if (logicalPosition <= 0x00FFFFFFFFFFFFFFUL) return 56;
 			return 64;
 		}
 
@@ -446,8 +445,6 @@ namespace dnSpy.Hex {
 			position = FilterAndVerify(position);
 			return (position.Position - startPosition).ToUInt64() / bytesPerLine;
 		}
-
-		int CurrentTextIndex => stringBuilder.Length;
 
 		public override HexBufferPoint GetBufferPositionFromLineNumber(HexPosition lineNumber) {
 			if (lineNumber >= LineCount)
@@ -532,6 +529,8 @@ namespace dnSpy.Hex {
 			stringBuilder.Clear();
 			cellList.Clear();
 		}
+
+		int CurrentTextIndex => stringBuilder.Length;
 
 		void WriteOffset(HexPosition logicalPosition, out VST.Span offsetSpan) {
 			Debug.Assert(showOffset);
