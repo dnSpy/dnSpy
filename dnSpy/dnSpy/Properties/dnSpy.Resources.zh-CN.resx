@@ -1134,7 +1134,7 @@
     <value>代码编辑器</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
-    <value>Tabs</value>
+    <value>选项卡</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
     <value>将Tab转换为空格(_P)</value>
@@ -1191,7 +1191,7 @@
     <value>Show procedure line separators</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
-    <value>Margins</value>
+    <value>边距</value>
   </data>
   <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
     <value>Don't add extra line spacing</value>
@@ -1215,7 +1215,7 @@
     <value>缩放</value>
   </data>
   <data name="TextEditorZoomControl" xml:space="preserve">
-    <value>Zoom control</value>
+    <value>缩放控制</value>
   </data>
   <data name="OutputWindowSettings" xml:space="preserve">
     <value>输出窗口</value>
@@ -1230,44 +1230,44 @@
     <value>Dragged items filter</value>
   </data>
   <data name="DocumentFilterType_All" xml:space="preserve">
-    <value>All</value>
+    <value>全部</value>
   </data>
   <data name="DocumentFilterType_AllSupported" xml:space="preserve">
-    <value>All supported</value>
+    <value>所有支持</value>
   </data>
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
-    <value>.NET only</value>
+    <value>只显示.NET文件</value>
   </data>
   <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
     <value>All files have been filtered out.
 Filter can be changed in Assembly Explorer options.</value>
   </data>
   <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
-    <value>Dashed lines</value>
+    <value>虚线</value>
   </data>
   <data name="BlockStructureLineKind_SolidLines" xml:space="preserve">
-    <value>Solid lines</value>
+    <value>实线</value>
   </data>
   <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
-    <value>Ctrl+Shift+K</value>
+    <value>Ctrl + Shift + K</value>
   </data>
   <data name="BgImgDisplayName_HexEditor" xml:space="preserve">
     <value>HEX 编辑器</value>
   </data>
   <data name="HexEditorGroup_Default" xml:space="preserve">
-    <value>Default</value>
+    <value>默认</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
     <value>HEX 编辑器</value>
   </data>
   <data name="HexEditorEncoding" xml:space="preserve">
-    <value>Encoding</value>
+    <value>编码</value>
   </data>
   <data name="HexEditorGroupSizeInBytes" xml:space="preserve">
-    <value>Group size</value>
+    <value>组大小</value>
   </data>
   <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
-    <value>Highlight current value</value>
+    <value>突出显示当前值</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
     <value>偏移　　</value>
@@ -1288,7 +1288,7 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>偏移(_F)</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Go to Offset</value>
+    <value>转到偏移量</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
     <value>_End</value>
@@ -1362,10 +1362,10 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>_Byte</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Enter Value</value>
+    <value>输入值</value>
   </data>
   <data name="GoToAddressCommand" xml:space="preserve">
-    <value>Go to Address...</value>
+    <value>转到地址...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
     <value>Go to Offset...</value>
@@ -1431,25 +1431,25 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Use _Relative Offsets</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>All offsets are relative to the start offset</value>
+    <value>所有的偏移量为相对于起始偏移量</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
-    <value>Value _Format</value>
+    <value>值格式</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>粘贴(_P)</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>Paste (#Blob Data)</value>
+    <value>粘贴（#Blob 数据）</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
-    <value>Paste Special</value>
+    <value>选择性粘贴</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>Paste (Unicode)</value>
+    <value>粘贴 (Unicode)</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>Paste (UTF-8)</value>
+    <value>粘贴 (UTF-8)</value>
   </data>
   <data name="ShortCutKeyCtrl8" xml:space="preserve">
     <value>Ctrl+8</value>
@@ -1498,18 +1498,21 @@ Filter can be changed in Assembly Explorer options.</value>
     <comment>the delete key</comment>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Show All Bytes</value>
+    <value>显示所有字节</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Show Only Selected Bytes</value>
+    <value>仅显示选定字节</value>
   </data>
   <data name="ValueFormatCommand" xml:space="preserve">
-    <value>Value Format</value>
+    <value>值格式</value>
   </data>
   <data name="ShortCutKeyF5" xml:space="preserve">
     <value>F5</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>刷新</value>
+  </data>
+  <data name="TextEditor" xml:space="preserve">
+    <value>文本编辑器</value>
   </data>
 </root>

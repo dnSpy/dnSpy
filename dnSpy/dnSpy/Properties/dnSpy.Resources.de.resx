@@ -1512,4 +1512,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   <data name="Refresh" xml:space="preserve">
     <value>Refresh</value>
   </data>
+  <data name="TextEditor" xml:space="preserve">
+    <value>Text Editor</value>
+  </data>
 </root>

@@ -316,7 +316,7 @@
     <value>_Помощь</value>
   </data>
   <data name="Menu_Themes" xml:space="preserve">
-    <value>_Theme</value>
+    <value>_Тема</value>
   </data>
   <data name="Menu_View" xml:space="preserve">
     <value>_Вид</value>
@@ -517,7 +517,7 @@
     <value>_Искать в сборках</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Search Assemblies ({0})</value>
+    <value>Сборки поиска ({0})</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Поиск...</value>
@@ -1227,26 +1227,25 @@
     <value>REPL</value>
   </data>
   <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
-    <value>Dragged items filter</value>
+    <value>Фильтр перетаскиваемых элементов</value>
   </data>
   <data name="DocumentFilterType_All" xml:space="preserve">
     <value>Все</value>
   </data>
   <data name="DocumentFilterType_AllSupported" xml:space="preserve">
-    <value>All supported</value>
+    <value>Все поддерживаемые</value>
   </data>
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
-    <value>.NET only</value>
+    <value>Только .NET</value>
   </data>
   <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
-    <value>All files have been filtered out.
-Filter can be changed in Assembly Explorer options.</value>
+    <value>Все файлы были отфильтрованы. Фильтр можно изменить в опциях Assembly Explorer.</value>
   </data>
   <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
-    <value>Dashed lines</value>
+    <value>Штриховые линии</value>
   </data>
   <data name="BlockStructureLineKind_SolidLines" xml:space="preserve">
-    <value>Solid lines</value>
+    <value>Сплошные линии</value>
   </data>
   <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
     <value>Ctrl+Shift+K</value>
@@ -1255,61 +1254,61 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Hex-редактор</value>
   </data>
   <data name="HexEditorGroup_Default" xml:space="preserve">
-    <value>Default</value>
+    <value>По умолчанию</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
     <value>Hex-редактор</value>
   </data>
   <data name="HexEditorEncoding" xml:space="preserve">
-    <value>Encoding</value>
+    <value>Кодировка</value>
   </data>
   <data name="HexEditorGroupSizeInBytes" xml:space="preserve">
-    <value>Group size</value>
+    <value>Размер группы</value>
   </data>
   <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
-    <value>Highlight current value</value>
+    <value>Выделить текущее значение</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
     <value>Смещение</value>
   </data>
   <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
-    <value>Lower case hex (offset)</value>
+    <value>Hex в нижнем регистре (смещение)</value>
   </data>
   <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
-    <value>Lower case hex (values)</value>
+    <value>Hex в нижнем регистре (значения)</value>
   </data>
   <data name="BlockStructureLineKind_None" xml:space="preserve">
     <value>Нет</value>
   </data>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
-    <value>Show column line separators</value>
+    <value>Показать разделители столбцов</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
     <value>С_мещение</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Go to Offset</value>
+    <value>Переход по смещению</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
-    <value>_End</value>
+    <value>Кон_ец</value>
   </data>
   <data name="HexEditorSelect_Start" xml:space="preserve">
-    <value>_Start</value>
+    <value>_Начало</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Select</value>
+    <value>Выбор</value>
   </data>
   <data name="GoToOffset_Address_Label" xml:space="preserve">
-    <value>_Address</value>
+    <value>_Адрес</value>
   </data>
   <data name="GoToOffset_Title_Address" xml:space="preserve">
-    <value>Go to Address</value>
+    <value>Переход по адресу</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>Invalid value</value>
+    <value>Неверное значение</value>
   </data>
   <data name="ValueMustBeWithinRange" xml:space="preserve">
-    <value>Value must be between {0} and {1}</value>
+    <value>Значение должно быть между {0} и {1}</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
     <value>Произошла ошибка:
@@ -1317,139 +1316,139 @@ Filter can be changed in Assembly Explorer options.</value>
 {0}</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Save Selection 0x{0:X}-0x{1:X}</value>
+    <value>Сохранение выбранного 0x{0:X}-0x{1:X}</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>_Default Settings</value>
+    <value>Настройки _по умолчанию</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
     <value>Сброс</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Bytes per Line</value>
+    <value>Байтов в строке</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Clear Byte</value>
+    <value>Стереть байт</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Clear Selected Bytes</value>
+    <value>Стереть выбранные байты</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Copy C# Array</value>
+    <value>Копировать массив C#</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Copy Offset</value>
+    <value>Копировать смещение</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>Copy Special</value>
+    <value>Специальное копирование</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
-    <value>Copy Text</value>
+    <value>Копировать текст</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Copy Unicode String</value>
+    <value>Копировать строку Unicode</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>Copy UTF-8 String</value>
+    <value>Копировать строку UTF-8</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Copy Visual Basic Array</value>
+    <value>Копировать массив VB</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Fill Selection with Byte...</value>
+    <value>Заполнить выделенное байтом...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
-    <value>_Byte</value>
+    <value>_Байт</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Enter Value</value>
+    <value>Введите значение</value>
   </data>
   <data name="GoToAddressCommand" xml:space="preserve">
-    <value>Go to Address...</value>
+    <value>Перейти по адресу...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Go to Offset...</value>
+    <value>Перейти по смещению...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Save Se_lection...</value>
+    <value>Сохранить вы_бранное...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>Select...</value>
+    <value>Выбрать...</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>Settings...</value>
+    <value>Настройки...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>_16 Bytes</value>
+    <value>_16 байт</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>_32 Bytes</value>
+    <value>_32 байта</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>_48 Bytes</value>
+    <value>_48 байтов</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>_64 Bytes</value>
+    <value>_64 байта</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>_8 Bytes</value>
+    <value>_8 байтов</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>_Fit to Width</value>
+    <value>_Растянуть по ширине</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>_Base Offset</value>
+    <value>_Базовое смещение</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>This value is added to start offset before it's shown on the screen</value>
+    <value>Это значение добавляется по начальному смещению, прежде чем оно отображается на экране</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>B_ytes per Line</value>
+    <value>Б_айтов в строке</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>_End Offset</value>
+    <value>Смещение _конца</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>Offset Bi_t Size</value>
+    <value>Количество би_тов смещения</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>Sho_w ASCII</value>
+    <value>Пока_зать ASCII</value>
   </data>
   <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
-    <value>S_how Offset</value>
+    <value>Пок_азать смещение</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
-    <value>Show _Values</value>
+    <value>Показать з_начения</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Start Offset</value>
+    <value>_Стартовое смещение</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Local Hex Editor Settings</value>
+    <value>Настройки локального Hex-редактора</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Use _Relative Offsets</value>
+    <value>Использовать _относительные смещения</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>All offsets are relative to the start offset</value>
+    <value>Все смещения указаны относительно стартового смещения</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
-    <value>Value _Format</value>
+    <value>_Формат значения</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>_Вставить</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>Paste (#Blob Data)</value>
+    <value>_Вставить (#Blob Data)</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
-    <value>Paste Special</value>
+    <value>Специальная вставка</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>Paste (Unicode)</value>
+    <value>Вставить (Unicode)</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>Paste (UTF-8)</value>
+    <value>Вставить (UTF-8)</value>
   </data>
   <data name="ShortCutKeyCtrl8" xml:space="preserve">
     <value>Ctrl+8</value>
@@ -1498,18 +1497,21 @@ Filter can be changed in Assembly Explorer options.</value>
     <comment>the delete key</comment>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Show All Bytes</value>
+    <value>Показать все байты</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Show Only Selected Bytes</value>
+    <value>Показать только выбранные байты</value>
   </data>
   <data name="ValueFormatCommand" xml:space="preserve">
-    <value>Value Format</value>
+    <value>Формат значения</value>
   </data>
   <data name="ShortCutKeyF5" xml:space="preserve">
     <value>F5</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Обновить</value>
+  </data>
+  <data name="TextEditor" xml:space="preserve">
+    <value>Текстовый редактор</value>
   </data>
 </root>

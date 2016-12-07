@@ -289,7 +289,7 @@
     <value>Decompiles all .NET files in the above directory and saves files to C:\out\path</value>
   </data>
   <data name="ExampleDescription2" xml:space="preserve">
-    <value>Decompiles all .NET files in the above directory and all sub directories</value>
+    <value>反编译以上目录及子目录中所有.NET 文件</value>
   </data>
   <data name="ExampleDescription3" xml:space="preserve">
     <value>反编译目录中所有.NET的dll文件并保存到C:\out\path</value>
@@ -301,7 +301,7 @@
     <value>Decompiles System.Int32 from mscorlib</value>
   </data>
   <data name="ExamplesHeader" xml:space="preserve">
-    <value>Examples:</value>
+    <value>例如：</value>
   </data>
   <data name="UsageHeader" xml:space="preserve">
     <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
@@ -313,7 +313,7 @@
     <value>Size of a tab in spaces or 0 to use one tab</value>
   </data>
   <data name="InvalidSpacesArgument" xml:space="preserve">
-    <value>Number of spaces must be between {0} and {1}</value>
+    <value>空格的数量必须在 {0} 和 {1} 之间</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
     <value>缺少参数</value>

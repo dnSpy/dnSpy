@@ -121,16 +121,16 @@
     <value>类</value>
   </data>
   <data name="CompletionSet_All" xml:space="preserve">
-    <value>All</value>
+    <value>全部</value>
   </data>
   <data name="ConstantsToolTip" xml:space="preserve">
-    <value>Constants</value>
+    <value>常量</value>
   </data>
   <data name="DelegatesToolTip" xml:space="preserve">
-    <value>Delegates</value>
+    <value>委托</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
-    <value>Enums</value>
+    <value>枚举</value>
   </data>
   <data name="EventsToolTip" xml:space="preserve">
     <value>事件</value>
@@ -145,7 +145,7 @@
     <value>接口</value>
   </data>
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
-    <value>Locals and parameters</value>
+    <value>局部变量和参数</value>
   </data>
   <data name="MethodsToolTip" xml:space="preserve">
     <value>方法</value>
@@ -154,12 +154,12 @@
     <value>模块</value>
   </data>
   <data name="NamespacesToolTip" xml:space="preserve">
-    <value>Namespaces</value>
+    <value>命名空间</value>
   </data>
   <data name="PropertiesToolTip" xml:space="preserve">
     <value>属性</value>
   </data>
   <data name="StructuresToolTip" xml:space="preserve">
-    <value>Structures</value>
+    <value>结构</value>
   </data>
 </root>

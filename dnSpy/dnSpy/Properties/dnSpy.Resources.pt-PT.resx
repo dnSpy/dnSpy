@@ -1506,6 +1506,9 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>F5</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Atualizar</value>
+  </data>
+  <data name="TextEditor" xml:space="preserve">
+    <value>Editor de texto</value>
   </data>
 </root>
