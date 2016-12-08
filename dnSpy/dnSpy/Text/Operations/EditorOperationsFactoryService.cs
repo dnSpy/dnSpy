@@ -23,7 +23,7 @@ using dnSpy.Contracts.Text.Formatting;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 
-namespace dnSpy.Text.Editor.Operations {
+namespace dnSpy.Text.Operations {
 	[Export(typeof(IEditorOperationsFactoryService))]
 	sealed class EditorOperationsFactoryService : IEditorOperationsFactoryService {
 		readonly ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService;

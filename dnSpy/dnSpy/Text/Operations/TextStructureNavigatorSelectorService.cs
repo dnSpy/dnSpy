@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Text.Editor.Operations {
+namespace dnSpy.Text.Operations {
 	[Export(typeof(ITextStructureNavigatorSelectorService))]
 	sealed class TextStructureNavigatorSelectorService : ITextStructureNavigatorSelectorService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;

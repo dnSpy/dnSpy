@@ -710,7 +710,6 @@
     <Compile Include="Text\Editor\LayerKindAttribute.cs" />
     <Compile Include="Text\Editor\LogEditorOptions.cs" />
     <Compile Include="Text\Editor\MarginNameAttribute.cs" />
-    <Compile Include="Text\Editor\Operations\IReplEditorOperations.cs" />
     <Compile Include="Text\Editor\Operations\ITextViewUndoManager.cs" />
     <Compile Include="Text\Editor\Operations\ITextViewUndoManagerProvider.cs" />
     <Compile Include="Text\Editor\OptionsExtensionMethods\DefaultDsOptionsExtensions.cs" />
@@ -734,6 +733,7 @@
     <Compile Include="Text\Formatting\HtmlClipboardFormatWriter.cs" />
     <Compile Include="Text\Formatting\IHtmlBuilderService.cs" />
     <Compile Include="Text\LineConstants.cs" />
+    <Compile Include="Text\Operations\IReplEditorOperations.cs" />
     <Compile Include="Text\SpanDataCollection.cs" />
     <Compile Include="Text\StringBuilderTextColorOutput.cs" />
     <Compile Include="Text\Tagging\ISynchronousBufferTagAggregatorFactoryService.cs" />

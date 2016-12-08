@@ -28,13 +28,14 @@ using System.Threading;
 using System.Windows;
 using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Controls;
+using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 
-namespace dnSpy.Text.Editor.Operations {
+namespace dnSpy.Text.Operations {
 	sealed class EditorOperations : IEditorOperations3 {
 		public bool CanCut {
 			get {

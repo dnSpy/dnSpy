@@ -26,13 +26,14 @@ using System.Text;
 using System.Windows;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Contracts.Text.Operations;
+using dnSpy.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Operations;
 
-namespace dnSpy.Text.Editor.Operations {
+namespace dnSpy.Text.Operations {
 	sealed class ReplEditorOperations : IReplEditorOperations {
 		public IReplEditor ReplEditor => replEditor;
 		readonly IWpfTextView wpfTextView;

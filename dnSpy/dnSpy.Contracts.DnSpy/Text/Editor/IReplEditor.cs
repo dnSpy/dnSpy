@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Contracts.Text.Operations;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>

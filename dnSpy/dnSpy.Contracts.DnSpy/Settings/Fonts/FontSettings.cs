@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Settings.Fonts {
 		protected FontSettings() { }
 
 		/// <summary>
-		/// Raised when one of the properties is changed
+		/// Raised after a property is changed
 		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 

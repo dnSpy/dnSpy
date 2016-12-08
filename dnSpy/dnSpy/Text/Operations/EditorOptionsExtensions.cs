@@ -22,7 +22,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
-namespace dnSpy.Text.Editor.Operations {
+namespace dnSpy.Text.Operations {
 	static class EditorOptionsExtensions {
 		public static string GetLineBreak(this IEditorOptions editorOptions, SnapshotPoint pos) {
 			if (editorOptions.GetReplicateNewLineCharacter()) {

@@ -20,7 +20,7 @@
 using System.Diagnostics;
 using Microsoft.VisualStudio.Text;
 
-namespace dnSpy.Text.Editor.Operations {
+namespace dnSpy.Text.Operations {
 	struct WordParser {
 		public enum WordKind {
 			Word,

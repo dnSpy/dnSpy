@@ -22,18 +22,13 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Text.Editor.Operations {
-	/// <summary>
-	/// Default navigator. A word is just one character. This one shouldn't be used at all,
-	/// it's just the default one created by <see cref="TextStructureNavigatorSelectorService"/>
-	/// if nothing else is found.
-	/// </summary>
-	sealed class TextStructureNavigator : ITextStructureNavigator {
+namespace dnSpy.Text.Operations {
+	sealed class AnyTextStructureNavigator : ITextStructureNavigator {
 		public IContentType ContentType { get; }
 
 		readonly ITextBuffer textBuffer;
 
-		public TextStructureNavigator(ITextBuffer textBuffer, IContentType contentType) {
+		public AnyTextStructureNavigator(ITextBuffer textBuffer, IContentType contentType) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			if (contentType == null)
@@ -45,43 +40,33 @@ namespace dnSpy.Text.Editor.Operations {
 		public TextExtent GetExtentOfWord(SnapshotPoint currentPosition) {
 			if (currentPosition.Snapshot?.TextBuffer != textBuffer)
 				throw new ArgumentException();
-			if (currentPosition.Position >= currentPosition.Snapshot.Length)
-				return new TextExtent(new SnapshotSpan(currentPosition, currentPosition), true);
-			return new TextExtent(new SnapshotSpan(currentPosition, currentPosition + 1), true);
+			WordParser.WordKind kind;
+			var span = WordParser.GetWordSpan(currentPosition, out kind);
+			return new TextExtent(span, kind != WordParser.WordKind.Whitespace);
 		}
 
 		public SnapshotSpan GetSpanOfEnclosing(SnapshotSpan activeSpan) {
 			if (activeSpan.Snapshot?.TextBuffer != textBuffer)
 				throw new ArgumentException();
-			return new SnapshotSpan(activeSpan.Snapshot, 0, activeSpan.Snapshot.Length);
+			throw new NotImplementedException();//TODO:
 		}
 
 		public SnapshotSpan GetSpanOfFirstChild(SnapshotSpan activeSpan) {
 			if (activeSpan.Snapshot?.TextBuffer != textBuffer)
 				throw new ArgumentException();
-			if (activeSpan.IsEmpty || activeSpan.Length != 1)
-				return GetSpanOfEnclosing(activeSpan);
-			return new SnapshotSpan(activeSpan.Snapshot, 0, activeSpan.Snapshot.Length == 0 ? 0 : 1);
+			throw new NotImplementedException();//TODO:
 		}
 
 		public SnapshotSpan GetSpanOfNextSibling(SnapshotSpan activeSpan) {
 			if (activeSpan.Snapshot?.TextBuffer != textBuffer)
 				throw new ArgumentException();
-			if (activeSpan.IsEmpty || activeSpan.Length != 1)
-				return GetSpanOfEnclosing(activeSpan);
-			if (activeSpan.Start.Position + 1 >= activeSpan.Snapshot.Length)
-				return GetSpanOfEnclosing(activeSpan);
-			return new SnapshotSpan(activeSpan.Start + 1, activeSpan.Start + 2);
+			throw new NotImplementedException();//TODO:
 		}
 
 		public SnapshotSpan GetSpanOfPreviousSibling(SnapshotSpan activeSpan) {
 			if (activeSpan.Snapshot?.TextBuffer != textBuffer)
 				throw new ArgumentException();
-			if (activeSpan.IsEmpty || activeSpan.Length != 1)
-				return GetSpanOfEnclosing(activeSpan);
-			if (activeSpan.Start.Position == 0)
-				return GetSpanOfEnclosing(activeSpan);
-			return new SnapshotSpan(activeSpan.Start - 1, activeSpan.Start);
+			throw new NotImplementedException();//TODO:
 		}
 	}
 }

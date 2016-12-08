@@ -22,7 +22,7 @@ using System.Diagnostics;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
 
-namespace dnSpy.Text.Editor.Operations {
+namespace dnSpy.Text.Operations {
 	sealed class TextSearchNavigator : ITextSearchNavigator {
 		public string SearchTerm { get; set; }
 		public string ReplaceTerm { get; set; }

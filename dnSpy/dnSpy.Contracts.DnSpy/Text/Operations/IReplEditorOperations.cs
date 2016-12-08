@@ -17,10 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
 
-namespace dnSpy.Contracts.Text.Editor.Operations {
+namespace dnSpy.Contracts.Text.Operations {
 	/// <summary>
 	/// <see cref="IReplEditor"/> operations
 	/// </summary>

@@ -27,7 +27,7 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
 
-namespace dnSpy.Text.Editor.Operations {
+namespace dnSpy.Text.Operations {
 	[Export(typeof(ITextSearchService))]
 	[Export(typeof(ITextSearchService2))]
 	sealed class TextSearchService : ITextSearchService2 {
