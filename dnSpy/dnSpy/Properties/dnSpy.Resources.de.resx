@@ -1255,7 +1255,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Hex Editor</value>
   </data>
   <data name="HexEditorGroup_Default" xml:space="preserve">
-    <value>Default</value>
+    <value>Standard</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
     <value>Hex Editor</value>
@@ -1264,10 +1264,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Encoding</value>
   </data>
   <data name="HexEditorGroupSizeInBytes" xml:space="preserve">
-    <value>Group size</value>
+    <value>Gruppengröße</value>
   </data>
   <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
-    <value>Highlight current value</value>
+    <value>Aktuelle Zeile markieren</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
     <value>Offset</value>
@@ -1288,28 +1288,28 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>_Versatz</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Go to Offset</value>
+    <value>Gehe zu Versatz</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
-    <value>_End</value>
+    <value>_Ende</value>
   </data>
   <data name="HexEditorSelect_Start" xml:space="preserve">
     <value>_Start</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Select</value>
+    <value>Auswahl</value>
   </data>
   <data name="GoToOffset_Address_Label" xml:space="preserve">
-    <value>_Address</value>
+    <value>_Adresse</value>
   </data>
   <data name="GoToOffset_Title_Address" xml:space="preserve">
-    <value>Go to Address</value>
+    <value>Gehe zu Adresse</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>Invalid value</value>
+    <value>Ungültiger Wert</value>
   </data>
   <data name="ValueMustBeWithinRange" xml:space="preserve">
-    <value>Value must be between {0} and {1}</value>
+    <value>Der Wert muss zwischen {0} und {1} liegen</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
     <value>Ein Fehler ist aufgetreten:
@@ -1317,67 +1317,67 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
 {0}</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Save Selection 0x{0:X}-0x{1:X}</value>
+    <value>Auswahl 0x{0:X}-0x{1:X} speichern</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>_Default Settings</value>
+    <value>Standardeinstellungen</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
     <value>Zurücksetzen</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Bytes per Line</value>
+    <value>Bytes pro Zeile</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Clear Byte</value>
+    <value>Leere Byte</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Clear Selected Bytes</value>
+    <value>Leere ausgewählte Bytes</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Copy C# Array</value>
+    <value>C#-Array kopieren</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Copy Offset</value>
+    <value>Versatz kopieren</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>Copy Special</value>
+    <value>Kopieren spezial</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
-    <value>Copy Text</value>
+    <value>Text kopieren</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Copy Unicode String</value>
+    <value>Unicode-Zeichenfolge kopieren</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>Copy UTF-8 String</value>
+    <value>UTF-8-Zeichenfolge kopieren</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Copy Visual Basic Array</value>
+    <value>Visual-Basic-Array kopieren</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Fill Selection with Byte...</value>
+    <value>Fülle Auswahl mit Byte...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
     <value>_Byte</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Enter Value</value>
+    <value>Wert eingeben</value>
   </data>
   <data name="GoToAddressCommand" xml:space="preserve">
-    <value>Go to Address...</value>
+    <value>Gehe zu Adresse...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Go to Offset...</value>
+    <value>Gehe zu Versatz...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Save Se_lection...</value>
+    <value>Speichere Auswah_l...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>Select...</value>
+    <value>Auswählen...</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>Settings...</value>
+    <value>Einstellungen...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
     <value>_16 Bytes</value>
@@ -1395,70 +1395,70 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>_8 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>_Fit to Width</value>
+    <value>An Breite anpassen</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>_Base Offset</value>
+    <value>_Basisversatz</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>This value is added to start offset before it's shown on the screen</value>
+    <value>Dieser Wert wird zum Anfangsversatz hinzugefügt bevor er angezeigt wird</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>B_ytes per Line</value>
+    <value>B_ytes pro Zeile</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>_End Offset</value>
+    <value>_Endversatz</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
     <value>Offset Bi_t Size</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>Sho_w ASCII</value>
+    <value>_Zeige ASCII</value>
   </data>
   <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
-    <value>S_how Offset</value>
+    <value>Zeige Versatz</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
-    <value>Show _Values</value>
+    <value>Zeige Werte</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Start Offset</value>
+    <value>_Anfangsversatz</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Local Hex Editor Settings</value>
+    <value>Lokale Hex-Editor-Einstellungen</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Use _Relative Offsets</value>
+    <value>Relativen Versatz nutzen</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>All offsets are relative to the start offset</value>
+    <value>Alle Versätze sind relativ zum Anfangsversatz</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
-    <value>Value _Format</value>
+    <value>Wert_format</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>_Einfügen</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>Paste (#Blob Data)</value>
+    <value>Einfügen (#Blob-Daten)</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
-    <value>Paste Special</value>
+    <value>Einfügen spezial</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>Paste (Unicode)</value>
+    <value>Einfügen (Unicode)</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>Paste (UTF-8)</value>
+    <value>Einfügen (UTF-8)</value>
   </data>
   <data name="ShortCutKeyCtrl8" xml:space="preserve">
-    <value>Ctrl+8</value>
+    <value>Strg+8</value>
   </data>
   <data name="ShortCutKeyCtrlAltO" xml:space="preserve">
-    <value>Ctrl+Alt+O</value>
+    <value>Strg+Alt+O</value>
   </data>
   <data name="ShortCutKeyCtrlAltS" xml:space="preserve">
-    <value>Ctrl+Alt+S</value>
+    <value>Strg+Alt+S</value>
   </data>
   <data name="ShortCutKeyCtrlB" xml:space="preserve">
     <value>STRG + B</value>
@@ -1470,10 +1470,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Strg+G</value>
   </data>
   <data name="ShortCutKeyCtrlShift8" xml:space="preserve">
-    <value>Ctrl+Shift+8</value>
+    <value>Strg+Umschalt+8</value>
   </data>
   <data name="ShortCutKeyCtrlShiftB" xml:space="preserve">
-    <value>Ctrl+Shift+B</value>
+    <value>Strg+Umschalt+B</value>
   </data>
   <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
     <value>Strg+Umschalt+C</value>
@@ -1482,10 +1482,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Strg+Umschalt+D</value>
   </data>
   <data name="ShortCutKeyCtrlShiftH" xml:space="preserve">
-    <value>Ctrl+Shift+H</value>
+    <value>Strg+Umschalt+H</value>
   </data>
   <data name="ShortCutKeyCtrlShiftU" xml:space="preserve">
-    <value>Ctrl+Shift+U</value>
+    <value>Strg+Umschalt+U</value>
   </data>
   <data name="ShortCutKeyCtrlU" xml:space="preserve">
     <value>Strg+U</value>
@@ -1498,19 +1498,19 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <comment>the delete key</comment>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Show All Bytes</value>
+    <value>Alle Bytes anzeigen</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Show Only Selected Bytes</value>
+    <value>Nur ausgewählte Bytes anzeigen</value>
   </data>
   <data name="ValueFormatCommand" xml:space="preserve">
-    <value>Value Format</value>
+    <value>Wertformat</value>
   </data>
   <data name="ShortCutKeyF5" xml:space="preserve">
     <value>F5</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Aktualisieren</value>
   </data>
   <data name="TextEditor" xml:space="preserve">
     <value>Text Editor</value>

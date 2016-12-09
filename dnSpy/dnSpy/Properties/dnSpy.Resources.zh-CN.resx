@@ -1170,7 +1170,7 @@
     <value>压缩不包含数字和字母的行</value>
   </data>
   <data name="TextEditorGlyphMargin" xml:space="preserve">
-    <value>Indicator margin</value>
+    <value>指示器边距</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
     <value>高亮当前行</value>
@@ -1188,13 +1188,13 @@
     <value>行高</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
-    <value>Show procedure line separators</value>
+    <value>显示过程行分隔符</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
     <value>边距</value>
   </data>
   <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
-    <value>Don't add extra line spacing</value>
+    <value>不要添加多余行距</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
     <value>鼠标滚轮缩放</value>
@@ -1203,10 +1203,10 @@
     <value>高亮引用</value>
   </data>
   <data name="TextEditorSelectionMargin" xml:space="preserve">
-    <value>Selection margin</value>
+    <value>选定内容的边距</value>
   </data>
   <data name="TextEditorShowStructureLines" xml:space="preserve">
-    <value>Show indent guides</value>
+    <value>显示缩进参考线</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
     <value>显示垂直滚动条(_V)</value>
@@ -1227,7 +1227,7 @@
     <value>REPL</value>
   </data>
   <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
-    <value>Dragged items filter</value>
+    <value>拖放项目筛选器</value>
   </data>
   <data name="DocumentFilterType_All" xml:space="preserve">
     <value>全部</value>
@@ -1239,8 +1239,7 @@
     <value>只显示.NET文件</value>
   </data>
   <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
-    <value>All files have been filtered out.
-Filter can be changed in Assembly Explorer options.</value>
+    <value>所有文件已被都筛选掉。可以在程序集资源管理器选项中更改筛选器。</value>
   </data>
   <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
     <value>虚线</value>
@@ -1273,16 +1272,16 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>偏移　　</value>
   </data>
   <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
-    <value>Lower case hex (offset)</value>
+    <value>小写字母十六进制 （偏移量）</value>
   </data>
   <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
-    <value>Lower case hex (values)</value>
+    <value>小写字母十六进制 （值）</value>
   </data>
   <data name="BlockStructureLineKind_None" xml:space="preserve">
     <value>无</value>
   </data>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
-    <value>Show column line separators</value>
+    <value>显示列行分隔符</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
     <value>偏移(_F)</value>
@@ -1297,19 +1296,19 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>_Start</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Select</value>
+    <value>选择</value>
   </data>
   <data name="GoToOffset_Address_Label" xml:space="preserve">
     <value>_Address</value>
   </data>
   <data name="GoToOffset_Title_Address" xml:space="preserve">
-    <value>Go to Address</value>
+    <value>转到地址</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>Invalid value</value>
+    <value>无效的值</value>
   </data>
   <data name="ValueMustBeWithinRange" xml:space="preserve">
-    <value>Value must be between {0} and {1}</value>
+    <value>值必须在 {0} 和 {1} 之间</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
     <value>发生错误：
@@ -1317,46 +1316,46 @@ Filter can be changed in Assembly Explorer options.</value>
 {0}</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Save Selection 0x{0:X}-0x{1:X}</value>
+    <value>保存选中 0x{0:X}-0x{1:X}</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>_Default Settings</value>
+    <value>默认设置</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
     <value>重置</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Bytes per Line</value>
+    <value>每行的字节数</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Clear Byte</value>
+    <value>清除字节</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Clear Selected Bytes</value>
+    <value>清除选定字节</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Copy C# Array</value>
+    <value>复制 C# 数组</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Copy Offset</value>
+    <value>复制偏移量</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>Copy Special</value>
+    <value>选择性复制...</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
-    <value>Copy Text</value>
+    <value>复制文本</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Copy Unicode String</value>
+    <value>复制 Unicode 字符串</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>Copy UTF-8 String</value>
+    <value>复制 UTF-8 字符串</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Copy Visual Basic Array</value>
+    <value>复制 Visual Basic 数组</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Fill Selection with Byte...</value>
+    <value>用字节填充选择...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
     <value>_Byte</value>
@@ -1368,16 +1367,16 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>转到地址...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Go to Offset...</value>
+    <value>转到偏移量......</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Save Se_lection...</value>
+    <value>保存选中(_L)...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>Select...</value>
+    <value>选择(&amp;S)...</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>Settings...</value>
+    <value>设置(&amp;S)...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
     <value>_16 Bytes</value>
@@ -1395,7 +1394,7 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>_8 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>_Fit to Width</value>
+    <value>适应宽度</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
     <value>_Base Offset</value>

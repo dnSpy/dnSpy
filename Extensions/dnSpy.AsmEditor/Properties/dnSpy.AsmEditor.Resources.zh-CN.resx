@@ -902,7 +902,7 @@
     <value>以逗号分隔的数组长度 （无符号整数）</value>
   </data>
   <data name="TypeSigCreator_Array_ToolTip" xml:space="preserve">
-    <value>Convert type to a multidimensional array</value>
+    <value>将类型转换为一个多维数组</value>
   </data>
   <data name="TypeSigCreator_ByRef" xml:space="preserve">
     <value>_ByRef</value>
