@@ -412,6 +412,9 @@
     <Compile Include="Hex\NormalizedHexBufferSpanCollection.cs" />
     <Compile Include="Hex\NormalizedHexChangeCollection.cs" />
     <Compile Include="Hex\NormalizedHexSpanCollection.cs" />
+    <Compile Include="Hex\Operations\HexFindOptions.cs" />
+    <Compile Include="Hex\Operations\HexSearchService.cs" />
+    <Compile Include="Hex\Operations\HexSearchServiceProvider.cs" />
     <Compile Include="Hex\PositionAndData.cs" />
     <Compile Include="Hex\PredefinedHexBufferTags.cs" />
     <Compile Include="Hex\Tagging\HexBatchedTagsChangedEventArgs.cs" />
