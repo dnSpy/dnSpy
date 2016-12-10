@@ -240,5 +240,6 @@
 		<color name="hexcurrentvaluecell" bg="#FFDBE0CC" />
 		<color name="hexcurrentasciicell" bg="#FFDBE0CC" />
 		<color name="outputwindowtext" fg="Black" bg="White" />
+		<color name="hexfindmatchhighlightmarker" bg="#FFF4A721" />
 	</colors>
 </theme>

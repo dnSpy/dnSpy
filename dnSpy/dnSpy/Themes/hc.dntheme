@@ -81,6 +81,7 @@
 		<color name="hexcurrentvaluecell" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="hexcurrentasciicell" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="outputwindowtext" fg="#FFFFFFFF" bg="#FF000000" />
+		<color name="hexfindmatchhighlightmarker" bg="#FF008000" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />
@@ -502,5 +503,6 @@
 		<color name="environmenticongeneralfill" bg="#FFC8C8C8" />
 		<color name="environmenticonactionfill" bg="#FF7AC1FF" />
 		<color name="searchcontrolmouseoverdropdownbuttonglyph" bg="#FFFFFFFF" />
+		<color name="hexsearchcontrolmouseoverdropdownbuttonglyph" bg="#FFFFFFFF" />
 	</colors>
 </theme>

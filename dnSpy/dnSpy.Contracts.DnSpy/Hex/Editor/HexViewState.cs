@@ -60,6 +60,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public HexBuffer Buffer { get; }
 
 		/// <summary>
+		/// Gets the version
+		/// </summary>
+		public HexVersion Version { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="view">Hex view</param>
@@ -81,6 +86,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 			ViewportWidth = effectiveViewportWidth;
 			ViewportHeight = effectiveViewportHeight;
 			Buffer = view.Buffer;
+			Version = view.Buffer.Version;
 		}
 	}
 }

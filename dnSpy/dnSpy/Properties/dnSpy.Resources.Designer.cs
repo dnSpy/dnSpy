@@ -2811,6 +2811,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Big endian (Alt+B).
+        /// </summary>
+        public static string Search_BigEndian {
+            get {
+                return ResourceManager.GetString("Search_BigEndian", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close (Esc).
         /// </summary>
         public static string Search_CloseToolTip {
@@ -3378,11 +3387,38 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alt+8.
+        /// </summary>
+        public static string ShortCutKeyAlt8 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAlt8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+H.
+        /// </summary>
+        public static string ShortCutKeyAltH {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alt+{0}.
         /// </summary>
         public static string ShortCutKeyAltPlusAnyKey {
             get {
                 return ResourceManager.GetString("ShortCutKeyAltPlusAnyKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+U.
+        /// </summary>
+        public static string ShortCutKeyAltU {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltU", resourceCulture);
             }
         }
         

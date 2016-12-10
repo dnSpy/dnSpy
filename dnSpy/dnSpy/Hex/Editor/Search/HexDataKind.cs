@@ -17,20 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Editor {
-	/// <summary>
-	/// Hex marker service Z-indexes. Markers with a negative z-index are placed in a
-	/// marker layer below most other layers.
-	/// </summary>
-	public static class HexMarkerServiceZIndexes {
-		/// <summary>
-		/// Current value highlighter
-		/// </summary>
-		public const int CurrentValue = 0;
-
-		/// <summary>
-		/// Find match
-		/// </summary>
-		public const int FindMatch = 5000;
+namespace dnSpy.Hex.Editor.Search {
+	enum HexDataKind {
+		Bytes,
+		Utf8String,
+		Utf16String,
+		Byte,
+		SByte,
+		Int16,
+		UInt16,
+		Int32,
+		UInt32,
+		Int64,
+		UInt64,
+		Single,
+		Double,
 	}
 }

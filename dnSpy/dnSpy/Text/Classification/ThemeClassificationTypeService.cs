@@ -272,6 +272,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexCurrentValueCell),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexCurrentAsciiCell),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.OutputWindowText),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.HexFindMatchHighlightMarker),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

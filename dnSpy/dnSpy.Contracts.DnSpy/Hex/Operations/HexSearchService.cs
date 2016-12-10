@@ -32,6 +32,11 @@ namespace dnSpy.Contracts.Hex.Operations {
 		protected HexSearchService() { }
 
 		/// <summary>
+		/// Gets the size of the data this instances searches for
+		/// </summary>
+		public abstract int ByteCount { get; }
+
+		/// <summary>
 		/// Finds the pattern
 		/// </summary>
 		/// <param name="startingPosition">Starting position</param>

@@ -267,6 +267,7 @@ namespace dnSpy.Contracts.Text {
 		HexCurrentValueCell,
 		HexCurrentAsciiCell,
 		OutputWindowText,
+		HexFindMatchHighlightMarker,
 
 		/// <summary>
 		/// Must be last
@@ -520,6 +521,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object HexCurrentValueCell = TextColor.HexCurrentValueCell;
 		public static readonly object HexCurrentAsciiCell = TextColor.HexCurrentAsciiCell;
 		public static readonly object OutputWindowText = TextColor.OutputWindowText;
+		public static readonly object HexFindMatchHighlightMarker = TextColor.HexFindMatchHighlightMarker;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -775,6 +777,7 @@ namespace dnSpy.Contracts.Text {
 			HexCurrentValueCell,
 			HexCurrentAsciiCell,
 			OutputWindowText,
+			HexFindMatchHighlightMarker,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

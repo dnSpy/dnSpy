@@ -1831,6 +1831,10 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "SearchControlMouseOverDropDownButtonGlyph",
 			},
+			new BrushColorInfo(ColorType.HexSearchControlMouseOverDropDownButtonGlyph, "SearchControl MouseOverDropDownButtonGlyph (Hex Editor)") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "HexSearchControlMouseOverDropDownButtonGlyph",
+			},
 			new BrushColorInfo(ColorType.LineNumber, "Line number"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput1, "REPL line number #1 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput2, "REPL line number #2 (input)"),
@@ -1937,6 +1941,7 @@ namespace dnSpy.Themes {
 			},
 			new BrushColorInfo(ColorType.HexCurrentValueCell, "Current Value Cell"),
 			new BrushColorInfo(ColorType.HexCurrentAsciiCell, "Current Ascii Cell"),
+			new BrushColorInfo(ColorType.HexFindMatchHighlightMarker, "Find Match Highlight (Hex Editor)"),
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",

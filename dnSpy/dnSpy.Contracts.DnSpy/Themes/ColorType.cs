@@ -265,6 +265,7 @@ namespace dnSpy.Contracts.Themes {
 		HexCurrentValueCell,
 		HexCurrentAsciiCell,
 		OutputWindowText,
+		HexFindMatchHighlightMarker,
 
 		// Must be last in this group
 		LastNR,
@@ -701,6 +702,7 @@ namespace dnSpy.Contracts.Themes {
 		EnvironmentIconGeneralFill,
 		EnvironmentIconActionFill,
 		SearchControlMouseOverDropDownButtonGlyph,
+		HexSearchControlMouseOverDropDownButtonGlyph,
 
 		// Add new color types before this comment
 

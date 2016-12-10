@@ -31,6 +31,8 @@ namespace dnSpy.Hex.Operations {
 		readonly byte[] upperBytes;
 		readonly byte[] charLengths;
 
+		public override int ByteCount => lowerBytes.Length;
+
 		protected StringHexSearchService(string pattern) {
 			Initialize(pattern, out lowerBytes, out upperBytes, out charLengths);
 		}
@@ -85,7 +87,7 @@ namespace dnSpy.Hex.Operations {
 				for (;;) {
 					if (dataIndex >= dataLength)
 						FillNextData();
-					int len = (int)HexPosition.Min(end - dataPosition, dataLength - dataIndex).ToUInt64();
+					int len = (int)HexPosition.Min(end - (dataPosition + dataIndex), dataLength - dataIndex).ToUInt64();
 					int index1a = Array.IndexOf(dataLocal, (byte)value1a, dataIndex, len);
 					int index1b = Array.IndexOf(dataLocal, (byte)value1b, dataIndex, len);
 					int index = (int)Math.Min((uint)index1a, (uint)index1b);
@@ -108,7 +110,7 @@ namespace dnSpy.Hex.Operations {
 				for (;;) {
 					if (dataIndex >= dataLength)
 						FillNextData();
-					int len = (int)HexPosition.Min(end - dataPosition, dataLength - dataIndex).ToUInt64();
+					int len = (int)HexPosition.Min(end - (dataPosition + dataIndex), dataLength - dataIndex).ToUInt64();
 					int index1a = Array.IndexOf(dataLocal, (byte)value1a, dataIndex, len);
 					int index1b = Array.IndexOf(dataLocal, (byte)value1b, dataIndex, len);
 					int index = (int)Math.Min((uint)index1a, (uint)index1b);

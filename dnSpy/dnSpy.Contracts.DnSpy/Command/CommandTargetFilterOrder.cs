@@ -66,5 +66,11 @@ namespace dnSpy.Contracts.Command {
 
 		/// <summary>Intellisense session stack</summary>
 		public const double HexIntellisenseSessionStack = HexEditor - 4000;
+
+		/// <summary>Search service when UI is visible</summary>
+		public const double HexViewSearchServiceFocused = TextEditor - 1000000;
+
+		/// <summary>Search service</summary>
+		public const double HexViewSearchService = TextEditor - 1000;
 	}
 }

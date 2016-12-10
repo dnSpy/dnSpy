@@ -1231,5 +1231,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.OutputWindowText"/>
 		/// </summary>
 		public const string OutputWindowText = nameof(OutputWindowText);
+
+		/// <summary>
+		/// <see cref="TextColor.HexFindMatchHighlightMarker"/>
+		/// </summary>
+		public const string HexFindMatchHighlightMarker = nameof(HexFindMatchHighlightMarker);
 	}
 }

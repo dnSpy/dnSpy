@@ -391,6 +391,18 @@
     <Compile Include="Hex\Editor\Operations\HexEditorOperationsImpl.cs" />
     <Compile Include="Hex\Editor\Operations\MDUtils.cs" />
     <Compile Include="Hex\Editor\RightControlMargin.cs" />
+    <Compile Include="Hex\Editor\Search\CommandTargetFilter.cs" />
+    <Compile Include="Hex\Editor\Search\CommandTargetFilterProvider.cs" />
+    <Compile Include="Hex\Editor\Search\DataParser.cs" />
+    <Compile Include="Hex\Editor\Search\HexDataKind.cs" />
+    <Compile Include="Hex\Editor\Search\HexMarkerTagger.cs" />
+    <Compile Include="Hex\Editor\Search\HexSearchServiceFactory.cs" />
+    <Compile Include="Hex\Editor\Search\HexViewSearchService.cs" />
+    <Compile Include="Hex\Editor\Search\HexViewSearchServiceProvider.cs" />
+    <Compile Include="Hex\Editor\Search\SearchControl.xaml.cs">
+      <DependentUpon>SearchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\Editor\Search\SearchSettings.cs" />
     <Compile Include="Hex\Editor\SelectionUtilities.cs" />
     <Compile Include="Hex\Editor\SpacerMargin.cs" />
     <Compile Include="Hex\Editor\TextLayer.cs" />
@@ -1130,6 +1142,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Hex\Commands\SelectDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Hex\Editor\Search\SearchControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

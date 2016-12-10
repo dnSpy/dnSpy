@@ -1515,4 +1515,16 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="TextEditor" xml:space="preserve">
     <value>Text Editor</value>
   </data>
+  <data name="Search_BigEndian" xml:space="preserve">
+    <value>Big endian (Alt+B)</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="ShortCutKeyAltH" xml:space="preserve">
+    <value>Alt+H</value>
+  </data>
+  <data name="ShortCutKeyAltU" xml:space="preserve">
+    <value>Alt+U</value>
+  </data>
 </root>

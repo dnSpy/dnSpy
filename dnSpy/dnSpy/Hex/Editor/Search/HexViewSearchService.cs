@@ -19,53 +19,57 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.Operations;
+using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
+using dnSpy.Contracts.Hex.Formatting;
+using dnSpy.Contracts.Hex.Operations;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
-using Microsoft.VisualStudio.Text.Formatting;
-using Microsoft.VisualStudio.Text.Operations;
-using Microsoft.VisualStudio.Utilities;
+using dnSpy.Properties;
+using CT = dnSpy.Contracts.Text;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Text.Editor.Search {
-	interface ISearchService {
-		void ShowFind();
-		void ShowReplace();
-		void ShowIncrementalSearch(bool forward);
-		void FindNext(bool forward);
-		void FindNextSelected(bool forward);
-		CommandTargetStatus CanExecuteSearchControl(Guid group, int cmdId);
-		CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object args, ref object result);
-		IEnumerable<SnapshotSpan> GetSpans(NormalizedSnapshotSpanCollection spans);
-		void RegisterTextMarkerListener(ITextMarkerListener listener);
+namespace dnSpy.Hex.Editor.Search {
+	abstract class HexViewSearchService {
+		public abstract void ShowFind();
+		public abstract void ShowReplace();
+		public abstract void ShowIncrementalSearch(bool forward);
+		public abstract void FindNext(bool forward);
+		public abstract void FindNextSelected(bool forward);
+		public abstract CommandTargetStatus CanExecuteSearchControl(Guid group, int cmdId);
+		public abstract CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object args, ref object result);
+		public abstract IEnumerable<HexBufferSpan> GetSpans(NormalizedHexBufferSpanCollection spans);
+		public abstract void RegisterHexMarkerListener(IHexMarkerListener listener);
 	}
 
-	interface ITextMarkerListener {
-		void RaiseTagsChanged(SnapshotSpan span);
+	interface IHexMarkerListener {
+		void RaiseTagsChanged(HexBufferSpan span);
 	}
 
-	sealed class SearchService : ViewModelBase, ISearchService {
+	sealed class HexViewSearchServiceImpl : HexViewSearchService, INotifyPropertyChanged {
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
 #pragma warning disable 0169
-		[Export(typeof(AdornmentLayerDefinition))]
-		[Name(PredefinedDsAdornmentLayers.Search)]
-		[LayerKind(LayerKind.Overlay)]
-		static AdornmentLayerDefinition searchServiceAdornmentLayerDefinition;
+		[Export(typeof(HexAdornmentLayerDefinition))]
+		[VSUTIL.Name(PredefinedHexAdornmentLayers.Search)]
+		[HexLayerKind(HexLayerKind.Overlay)]
+		static HexAdornmentLayerDefinition searchServiceAdornmentLayerDefinition;
 #pragma warning restore 0169
-
-		const int MAX_SEARCH_RESULTS = 5000;
 
 		enum SearchKind {
 			None,
@@ -80,6 +84,14 @@ namespace dnSpy.Text.Editor.Search {
 			BottomRight,
 
 			Default = TopRight,
+		}
+
+		[Flags]
+		enum OurFindOptions {
+			None				= 0,
+			SearchReverse		= 0x00000001,
+			Wrap				= 0x00000002,
+			MatchCase			= int.MinValue,
 		}
 
 		public bool FoundMatch => foundSomething;
@@ -101,7 +113,7 @@ namespace dnSpy.Text.Editor.Search {
 				updateMarkers = true;
 			}
 			if (updateMarkers)
-				UpdateTextMarkerSearch();
+				UpdateHexMarkerSearch();
 			if (restartSearch && canSearch)
 				RestartSearch();
 		}
@@ -138,169 +150,171 @@ namespace dnSpy.Text.Editor.Search {
 		}
 		bool matchCase;
 
-		public bool MatchWholeWords {
-			get { return matchWholeWords; }
+		public bool IsBigEndian {
+			get { return isBigEndian; }
 			set {
-				if (matchWholeWords != value) {
-					matchWholeWords = value;
+				if (isBigEndian != value) {
+					isBigEndian = value;
 					SaveSettings();
-					OnPropertyChanged(nameof(MatchWholeWords));
+					OnPropertyChanged(nameof(IsBigEndian));
 					RestartSearchAndUpdateMarkers();
 				}
 			}
 		}
-		bool matchWholeWords;
+		bool isBigEndian;
 
-		public bool UseRegularExpressions {
-			get { return useRegularExpressions; }
-			set {
-				if (useRegularExpressions != value) {
-					useRegularExpressions = value;
-					SaveSettings();
-					OnPropertyChanged(nameof(UseRegularExpressions));
-					RestartSearchAndUpdateMarkers();
-				}
-			}
+		public HexDataKind DataKind {
+			get { return (HexDataKind)DataKindVM.SelectedItem; }
+			set { DataKindVM.SelectedItem = value; }
 		}
-		bool useRegularExpressions;
 
-		readonly IWpfTextView wpfTextView;
-		readonly IEditorOperations editorOperations;
-		readonly ITextSearchService2 textSearchService2;
-		readonly ISearchSettings searchSettings;
+		void OnDataKindChanged() {
+			SaveSettings();
+			RestartSearchAndUpdateMarkers();
+		}
+
+		public EnumListVM DataKindVM { get; }
+		static readonly EnumVM[] hexDataKindList = new EnumVM[] {
+			new EnumVM(HexDataKind.Bytes, AppendKeyboardShortcut("Hex", dnSpy_Resources.ShortCutKeyAltH)),
+			new EnumVM(HexDataKind.Utf8String, AppendKeyboardShortcut(GetStringDataKind("UTF-8"), dnSpy_Resources.ShortCutKeyAlt8)),
+			new EnumVM(HexDataKind.Utf16String, AppendKeyboardShortcut(GetStringDataKind("Unicode"), dnSpy_Resources.ShortCutKeyAltU)),
+			new EnumVM(HexDataKind.Byte, "Byte"),
+			new EnumVM(HexDataKind.SByte, "SByte"),
+			new EnumVM(HexDataKind.Int16, "Int16"),
+			new EnumVM(HexDataKind.UInt16, "UInt16"),
+			new EnumVM(HexDataKind.Int32, "Int32"),
+			new EnumVM(HexDataKind.UInt32, "UInt32"),
+			new EnumVM(HexDataKind.Int64, "Int64"),
+			new EnumVM(HexDataKind.UInt64, "UInt64"),
+			new EnumVM(HexDataKind.Single, "Single"),
+			new EnumVM(HexDataKind.Double, "Double"),
+		};
+		static string GetStringDataKind(string encodingName) =>
+			string.Format("String ({0})", encodingName);
+		static string AppendKeyboardShortcut(string s, string k) => s + " (" + k + ")";
+
+		readonly WpfHexView wpfHexView;
+		readonly HexEditorOperations editorOperations;
+		readonly HexSearchServiceFactory hexSearchServiceFactory;
+		readonly SearchSettings searchSettings;
 		readonly IMessageBoxService messageBoxService;
-		readonly ITextStructureNavigator textStructureNavigator;
-		readonly Lazy<IReplaceListenerProvider>[] replaceListenerProviders;
-		readonly List<ITextMarkerListener> listeners;
+		readonly List<IHexMarkerListener> listeners;
 		SearchControl searchControl;
 		SearchControlPosition searchControlPosition;
-		IAdornmentLayer layer;
-		NormalizedSnapshotSpanCollection findResultCollection;
-		IReplaceListener[] replaceListeners;
+		HexAdornmentLayer layer;
 
-		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxService messageBoxService, ITextStructureNavigator textStructureNavigator, Lazy<IReplaceListenerProvider>[] replaceListenerProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (textSearchService2 == null)
-				throw new ArgumentNullException(nameof(textSearchService2));
+		public HexViewSearchServiceImpl(WpfHexView wpfHexView, HexSearchServiceFactory hexSearchServiceFactory, SearchSettings searchSettings, IMessageBoxService messageBoxService, HexEditorOperationsFactoryService editorOperationsFactoryService) {
+			if (wpfHexView == null)
+				throw new ArgumentNullException(nameof(wpfHexView));
+			if (hexSearchServiceFactory == null)
+				throw new ArgumentNullException(nameof(hexSearchServiceFactory));
 			if (searchSettings == null)
 				throw new ArgumentNullException(nameof(searchSettings));
 			if (messageBoxService == null)
 				throw new ArgumentNullException(nameof(messageBoxService));
-			if (textStructureNavigator == null)
-				throw new ArgumentNullException(nameof(textStructureNavigator));
-			if (replaceListenerProviders == null)
-				throw new ArgumentNullException(nameof(replaceListenerProviders));
 			if (editorOperationsFactoryService == null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
-			this.wpfTextView = wpfTextView;
-			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
-			this.textSearchService2 = textSearchService2;
+			DataKindVM = new EnumListVM(hexDataKindList, (a, b) => OnDataKindChanged());
+			this.wpfHexView = wpfHexView;
+			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfHexView);
+			this.hexSearchServiceFactory = hexSearchServiceFactory;
 			this.searchSettings = searchSettings;
 			this.messageBoxService = messageBoxService;
-			this.textStructureNavigator = textStructureNavigator;
-			this.replaceListenerProviders = replaceListenerProviders;
-			listeners = new List<ITextMarkerListener>();
+			listeners = new List<IHexMarkerListener>();
 			searchString = string.Empty;
 			replaceString = string.Empty;
 			searchKind = SearchKind.None;
 			searchControlPosition = SearchControlPosition.Default;
-			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, (s, e) => ShowFind()));
-			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, (s, e) => ShowReplace()));
-			wpfTextView.Closed += WpfTextView_Closed;
+			wpfHexView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, (s, e) => ShowFind()));
+			wpfHexView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, (s, e) => ShowReplace()));
+			wpfHexView.Closed += WpfHexView_Closed;
 			UseGlobalSettings(true);
 		}
 
-		public CommandTargetStatus CanExecuteSearchControl(Guid group, int cmdId) {
-			if (wpfTextView.IsClosed)
+		public override CommandTargetStatus CanExecuteSearchControl(Guid group, int cmdId) {
+			if (wpfHexView.IsClosed)
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
 
 			if (inIncrementalSearch) {
-				if (group == CommandConstants.TextEditorGroup) {
-					switch ((TextEditorIds)cmdId) {
-					case TextEditorIds.BACKSPACE:
-					case TextEditorIds.TYPECHAR:
-					case TextEditorIds.TAB:
-					case TextEditorIds.RETURN:
-					case TextEditorIds.SCROLLUP:
-					case TextEditorIds.SCROLLDN:
-					case TextEditorIds.SCROLLPAGEUP:
-					case TextEditorIds.SCROLLPAGEDN:
-					case TextEditorIds.SCROLLLEFT:
-					case TextEditorIds.SCROLLRIGHT:
-					case TextEditorIds.SCROLLBOTTOM:
-					case TextEditorIds.SCROLLCENTER:
-					case TextEditorIds.SCROLLTOP:
+				if (group == CommandConstants.HexEditorGroup) {
+					switch ((HexEditorIds)cmdId) {
+					case HexEditorIds.BACKSPACE:
+					case HexEditorIds.TYPECHAR:
+					case HexEditorIds.TAB:
+					case HexEditorIds.RETURN:
+					case HexEditorIds.SCROLLUP:
+					case HexEditorIds.SCROLLDN:
+					case HexEditorIds.SCROLLPAGEUP:
+					case HexEditorIds.SCROLLPAGEDN:
+					case HexEditorIds.SCROLLLEFT:
+					case HexEditorIds.SCROLLRIGHT:
+					case HexEditorIds.SCROLLBOTTOM:
+					case HexEditorIds.SCROLLCENTER:
+					case HexEditorIds.SCROLLTOP:
 						return CommandTargetStatus.Handled;
 					}
 				}
 			}
-			if (group == CommandConstants.TextEditorGroup && cmdId == (int)TextEditorIds.CANCEL)
+			if (group == CommandConstants.HexEditorGroup && cmdId == (int)HexEditorIds.CANCEL)
 				return CommandTargetStatus.Handled;
 
 			if (!searchControl.IsKeyboardFocusWithin)
 				return CommandTargetStatus.NotHandled;
-			// Make sure the WPF controls work as expected by ignoring all other text editor commands
+			// Make sure the WPF controls work as expected by ignoring all other hex editor commands
 			return CommandTargetStatus.LetWpfHandleCommand;
 		}
 
-		public CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object args, ref object result) {
-			if (wpfTextView.IsClosed)
+		public override CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object args, ref object result) {
+			if (wpfHexView.IsClosed)
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
 
-			if (group == CommandConstants.TextEditorGroup && cmdId == (int)TextEditorIds.CANCEL) {
+			if (group == CommandConstants.HexEditorGroup && cmdId == (int)HexEditorIds.CANCEL) {
 				if (inIncrementalSearch)
-					wpfTextView.Selection.Clear();
+					wpfHexView.Selection.Clear();
 				CloseSearchControl();
 				return CommandTargetStatus.Handled;
 			}
 
 			if (inIncrementalSearch) {
-				if (group == CommandConstants.TextEditorGroup) {
-					switch ((TextEditorIds)cmdId) {
-					case TextEditorIds.BACKSPACE:
+				if (group == CommandConstants.HexEditorGroup) {
+					switch ((HexEditorIds)cmdId) {
+					case HexEditorIds.BACKSPACE:
 						if (SearchString.Length != 0)
 							SetIncrementalSearchString(SearchString.Substring(0, SearchString.Length - 1));
 						return CommandTargetStatus.Handled;
 
-					case TextEditorIds.TYPECHAR:
+					case HexEditorIds.TYPECHAR:
 						var s = args as string;
-						if (s != null && s.IndexOfAny(LineConstants.newLineChars) < 0)
+						if (s != null && s.IndexOfAny(CT.LineConstants.newLineChars) < 0)
 							SetIncrementalSearchString(SearchString + s);
 						else
 							CancelIncrementalSearch();
 						return CommandTargetStatus.Handled;
 
-					case TextEditorIds.TAB:
+					case HexEditorIds.TAB:
 						SetIncrementalSearchString(SearchString + "\t");
 						return CommandTargetStatus.Handled;
 
-					case TextEditorIds.RETURN:
+					case HexEditorIds.RETURN:
 						CancelIncrementalSearch();
 						return CommandTargetStatus.Handled;
 
-					case TextEditorIds.SCROLLUP:
-					case TextEditorIds.SCROLLDN:
-					case TextEditorIds.SCROLLPAGEUP:
-					case TextEditorIds.SCROLLPAGEDN:
-					case TextEditorIds.SCROLLLEFT:
-					case TextEditorIds.SCROLLRIGHT:
-					case TextEditorIds.SCROLLBOTTOM:
-					case TextEditorIds.SCROLLCENTER:
-					case TextEditorIds.SCROLLTOP:
+					case HexEditorIds.SCROLLUP:
+					case HexEditorIds.SCROLLDN:
+					case HexEditorIds.SCROLLPAGEUP:
+					case HexEditorIds.SCROLLPAGEDN:
+					case HexEditorIds.SCROLLLEFT:
+					case HexEditorIds.SCROLLRIGHT:
+					case HexEditorIds.SCROLLBOTTOM:
+					case HexEditorIds.SCROLLCENTER:
+					case HexEditorIds.SCROLLTOP:
 						// Allow scrolling by pressing eg. Ctrl+Up
 						return CommandTargetStatus.NotHandled;
 					}
-				}
-				else if (group == CommandConstants.TextReferenceGroup && (cmdId == (int)TextReferenceIds.FollowReference || cmdId == (int)TextReferenceIds.MoveToNextReference)) {
-					// HACK: This search service shouldn't know about these commands but there's no way for
-					// the text ref command handler to know that we're in incremental search mode either.
-					CancelIncrementalSearch();
-					return CommandTargetStatus.Handled;
 				}
 				else if (group == CommandConstants.StandardGroup) {
 					switch ((StandardIds)cmdId) {
@@ -344,8 +358,8 @@ namespace dnSpy.Text.Editor.Search {
 					SearchString = searchSettings.SearchString;
 				ReplaceString = searchSettings.ReplaceString;
 				MatchCase = searchSettings.MatchCase;
-				MatchWholeWords = searchSettings.MatchWholeWords;
-				UseRegularExpressions = searchSettings.UseRegularExpressions;
+				IsBigEndian = searchSettings.BigEndian;
+				DataKind = searchSettings.DataKind;
 				disableSaveSettings = false;
 			}
 		}
@@ -353,7 +367,7 @@ namespace dnSpy.Text.Editor.Search {
 		bool disableSaveSettings;
 		void SaveSettings() {
 			if (!disableSaveSettings)
-				searchSettings.SaveSettings(SearchString, ReplaceString, MatchCase, MatchWholeWords, UseRegularExpressions);
+				searchSettings.SaveSettings(SearchString, ReplaceString, MatchCase, IsBigEndian, DataKind);
 		}
 
 		void ShowSearchControl(SearchKind searchKind, bool canOverwriteSearchString) {
@@ -374,8 +388,10 @@ namespace dnSpy.Text.Editor.Search {
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => FocusSearchStringTextBox()), new KeyGesture(Key.N, ModifierKeys.Alt)));
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => FocusReplaceStringTextBox(), a => IsReplaceMode), new KeyGesture(Key.P, ModifierKeys.Alt)));
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => MatchCase = !MatchCase), new KeyGesture(Key.C, ModifierKeys.Alt)));
-				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => MatchWholeWords = !MatchWholeWords), new KeyGesture(Key.W, ModifierKeys.Alt)));
-				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => UseRegularExpressions = !UseRegularExpressions), new KeyGesture(Key.E, ModifierKeys.Alt)));
+				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => IsBigEndian = !IsBigEndian), new KeyGesture(Key.B, ModifierKeys.Alt)));
+				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => DataKind = HexDataKind.Bytes), new KeyGesture(Key.H, ModifierKeys.Alt)));
+				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => DataKind = HexDataKind.Utf16String), new KeyGesture(Key.U, ModifierKeys.Alt)));
+				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => DataKind = HexDataKind.Utf8String), new KeyGesture(Key.D8, ModifierKeys.Alt)));
 				searchControl.InputBindings.Add(new KeyBinding(ReplaceNextCommand, new KeyGesture(Key.R, ModifierKeys.Alt)));
 				searchControl.InputBindings.Add(new KeyBinding(ReplaceAllCommand, new KeyGesture(Key.A, ModifierKeys.Alt)));
 				searchControl.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(SearchControl_GotKeyboardFocus), true);
@@ -387,17 +403,18 @@ namespace dnSpy.Text.Editor.Search {
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			}
 			if (layer == null)
-				layer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.Search);
+				layer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.Search);
 			if (layer.IsEmpty) {
-				layer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, searchControl, null);
-				wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
+				layer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, searchControl, null);
+				wpfHexView.LayoutChanged += WpfHexView_LayoutChanged;
+				wpfHexView.BufferLinesChanged += WpfHexView_BufferLinesChanged;
 			}
 
 			SetSearchKind(searchKind);
 			RepositionControl();
 
 			if (!wasShown)
-				UpdateTextMarkerSearch();
+				UpdateHexMarkerSearch();
 		}
 
 		static void SelectAllWhenFocused(TextBox textBox) =>
@@ -412,7 +429,7 @@ namespace dnSpy.Text.Editor.Search {
 
 		void SearchControl_MouseDown(object sender, MouseButtonEventArgs e) => CloseSearchControlIfIncrementalSearch();
 		void CloseSearchControlIfIncrementalSearch() {
-			if (wpfTextView.IsClosed)
+			if (wpfHexView.IsClosed)
 				return;
 			if (inIncrementalSearch)
 				CloseSearchControl();
@@ -427,9 +444,9 @@ namespace dnSpy.Text.Editor.Search {
 				return;
 			searchKind = value;
 			if (searchKind == SearchKind.IncrementalSearchForward || searchKind == SearchKind.IncrementalSearchBackward) {
-				wpfTextView.VisualElement.Focus();
+				wpfHexView.VisualElement.Focus();
 				if (!inIncrementalSearch)
-					wpfTextView.Caret.PositionChanged += Caret_PositionChanged;
+					wpfHexView.Caret.PositionChanged += Caret_PositionChanged;
 				inIncrementalSearch = true;
 			}
 			else
@@ -451,12 +468,12 @@ namespace dnSpy.Text.Editor.Search {
 		void CleanUpIncrementalSearch() {
 			if (!inIncrementalSearch)
 				return;
-			wpfTextView.Caret.PositionChanged -= Caret_PositionChanged;
+			wpfHexView.Caret.PositionChanged -= Caret_PositionChanged;
 			inIncrementalSearch = false;
 			incrementalStartPosition = null;
 		}
 
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object sender, HexCaretPositionChangedEventArgs e) {
 			if (!isIncrementalSearchCaretMove)
 				CancelIncrementalSearch();
 		}
@@ -488,8 +505,8 @@ namespace dnSpy.Text.Editor.Search {
 			PositionSearchControl(SearchControlPosition.Default);
 		}
 
-		Rect TopRightRect => new Rect(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, 0, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
-		Rect BottomRightRect => new Rect(wpfTextView.ViewportWidth - searchControl.DesiredSize.Width, wpfTextView.ViewportHeight - searchControl.DesiredSize.Height, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
+		Rect TopRightRect => new Rect(wpfHexView.ViewportWidth - searchControl.DesiredSize.Width, 0, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
+		Rect BottomRightRect => new Rect(wpfHexView.ViewportWidth - searchControl.DesiredSize.Width, wpfHexView.ViewportHeight - searchControl.DesiredSize.Height, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
 
 		void PositionSearchControl(Rect rect) => PositionSearchControl(rect.Left, rect.Top);
 		void PositionSearchControl(double left, double top) {
@@ -499,7 +516,7 @@ namespace dnSpy.Text.Editor.Search {
 			Canvas.SetTop(searchControl, top);
 		}
 
-		void PositionWithoutCoveringSpan(SnapshotSpan span) =>
+		void PositionWithoutCoveringSpan(HexBufferSpan span) =>
 			PositionSearchControl(GetsearchControlPosition(span));
 
 		void PositionSearchControl(SearchControlPosition position) {
@@ -533,7 +550,7 @@ namespace dnSpy.Text.Editor.Search {
 			}
 		}
 
-		SearchControlPosition GetsearchControlPosition(SnapshotSpan span) {
+		SearchControlPosition GetsearchControlPosition(HexBufferSpan span) {
 			if (!IsSearchControlVisible)
 				return SearchControlPosition.Default;
 
@@ -544,7 +561,7 @@ namespace dnSpy.Text.Editor.Search {
 			};
 			Debug.Assert(infos.Length != 0 && infos[0].Position == SearchControlPosition.Default);
 
-			foreach (var line in wpfTextView.TextViewLines.GetTextViewLinesIntersectingSpan(span)) {
+			foreach (var line in wpfHexView.HexViewLines.GetHexViewLinesIntersectingSpan(span)) {
 				foreach (var info in infos) {
 					if (Intersects(span, line, info.Rect))
 						info.IntersectsSpan = true;
@@ -554,16 +571,24 @@ namespace dnSpy.Text.Editor.Search {
 			return info2.Position;
 		}
 
-		bool Intersects(SnapshotSpan fullSpan, ITextViewLine line, Rect rect) {
-			var span = fullSpan.Intersection(line.ExtentIncludingLineBreak);
+		bool Intersects(HexBufferSpan fullSpan, HexViewLine line, Rect rect) {
+			var span = fullSpan.Intersection(line.BufferSpan);
 			if (span == null || span.Value.Length == 0)
 				return false;
-			var start = line.GetExtendedCharacterBounds(span.Value.Start);
-			var end = line.GetExtendedCharacterBounds(span.Value.End - 1);
-			double left = Math.Min(start.Left, end.Left) - wpfTextView.ViewportLeft;
-			double top = Math.Min(start.Top, end.Top) - wpfTextView.ViewportTop;
-			double right = Math.Max(start.Right, end.Right) - wpfTextView.ViewportLeft;
-			double bottom = Math.Max(start.Bottom, end.Bottom) - wpfTextView.ViewportTop;
+			var allBounds = line.GetNormalizedTextBounds(span.Value, HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell);
+			if (allBounds.Count == 0)
+				return false;
+			double left = double.MaxValue, right = double.MinValue, top = double.MaxValue, bottom = double.MinValue;
+			foreach (var bounds in allBounds) {
+				left = Math.Min(left, bounds.Left);
+				right = Math.Max(right, bounds.Right);
+				top = Math.Min(top, bounds.TextTop);
+				bottom = Math.Max(bottom, bounds.TextBottom);
+			}
+			left -= wpfHexView.ViewportLeft;
+			top -= wpfHexView.ViewportTop;
+			right -= wpfHexView.ViewportLeft;
+			bottom -= wpfHexView.ViewportTop;
 			bool b = left <= right && top <= bottom;
 			Debug.Assert(b);
 			if (!b)
@@ -579,60 +604,59 @@ namespace dnSpy.Text.Editor.Search {
 			}
 			CleanUpIncrementalSearch();
 			layer.RemoveAllAdornments();
-			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-			findResultCollection = null;
+			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
+			wpfHexView.BufferLinesChanged -= WpfHexView_BufferLinesChanged;
+			hexMarkerSearchService = null;
 			RefreshAllTags();
-			wpfTextView.VisualElement.Focus();
+			wpfHexView.VisualElement.Focus();
 			searchKind = SearchKind.None;
 			searchControlPosition = SearchControlPosition.Default;
 			SaveSettings();
 		}
-		SnapshotPoint? incrementalStartPosition;
+		HexBufferPoint? incrementalStartPosition;
 
-		string TryGetSearchStringAtPoint(VirtualSnapshotPoint point) {
-			if (point.IsInVirtualSpace)
-				return null;
-
-			var extent = textStructureNavigator.GetExtentOfWord(point.Position);
-			if (extent.IsSignificant)
-				return extent.Span.GetText();
-
-			var line = point.Position.GetContainingLine();
-			if (line.Start == point.Position)
-				return null;
-
-			extent = textStructureNavigator.GetExtentOfWord(point.Position - 1);
-			if (extent.IsSignificant)
-				return extent.Span.GetText();
-
+		string TryGetSearchStringAtPoint(HexBufferPoint point) {
+			// The text editor can find the current word, but there's not much we can do
+			// so return null.
 			return null;
 		}
 
 		string TryGetSearchStringFromSelection() {
-			if (wpfTextView.Selection.IsEmpty)
-				return null;
-			if (wpfTextView.Selection.Start.IsInVirtualSpace)
+			if (wpfHexView.Selection.IsEmpty)
 				return null;
 
-			var start = wpfTextView.Selection.Start.Position;
-			var line = start.GetContainingLine();
-			var end = wpfTextView.Selection.End.Position;
-			if (end > line.EndIncludingLineBreak)
-				return null;
-			if (end > line.End)
-				end = line.End;
-			if (start >= end)
-				return null;
-			return new SnapshotSpan(start, end).GetText();
+			// The TextBox doesn't allow too long strings
+			const int MAX_BYTES = 1024;
+			var span = wpfHexView.Selection.StreamSelectionSpan;
+			var start = span.Start.Position;
+			var end = HexPosition.Min(start + MAX_BYTES, span.End.Position);
+			int byteCount = (int)(end - start).ToUInt64();
+			var chars = new char[byteCount * 2];
+			var buffer = span.Buffer;
+			var pos = start;
+			const bool upper = true;
+			for (int i = 0, j = 0; i < byteCount; i++) {
+				byte b = buffer.ReadByte(pos);
+				chars[j++] = ToHexChar(b >> 4, upper);
+				chars[j++] = ToHexChar(b & 0x0F, upper);
+				pos = pos + 1;
+			}
+			return new string(chars);
+		}
+
+		static char ToHexChar(int val, bool upper) {
+			if (0 <= val && val <= 9)
+				return (char)(val + (int)'0');
+			return (char)(val - 10 + (upper ? (int)'A' : (int)'a'));
 		}
 
 		string TryGetSearchStringAtCaret() {
 			string s;
-			if (!wpfTextView.Selection.IsEmpty)
+			if (!wpfHexView.Selection.IsEmpty)
 				s = TryGetSearchStringFromSelection();
 			else
-				s = TryGetSearchStringAtPoint(wpfTextView.Caret.Position.VirtualBufferPosition);
-			if (string.IsNullOrEmpty(s) || s.IndexOfAny(LineConstants.newLineChars) >= 0)
+				s = TryGetSearchStringAtPoint(wpfHexView.Caret.Position.Position.ActivePosition.BufferPosition);
+			if (string.IsNullOrEmpty(s) || s.IndexOfAny(CT.LineConstants.newLineChars) >= 0)
 				return null;
 			return s;
 		}
@@ -643,7 +667,7 @@ namespace dnSpy.Text.Editor.Search {
 				SetSearchString(newSearchString, canSearch);
 		}
 
-		public void ShowFind() {
+		public override void ShowFind() {
 			if (IsSearchControlVisible && searchControl.IsKeyboardFocusWithin) {
 				SetSearchKind(SearchKind.Find);
 				FocusSearchStringTextBox();
@@ -655,7 +679,7 @@ namespace dnSpy.Text.Editor.Search {
 			FocusSearchStringTextBox();
 		}
 
-		public void ShowReplace() {
+		public override void ShowReplace() {
 			if (IsSearchControlVisible && searchControl.IsKeyboardFocusWithin) {
 				SetSearchKind(SearchKind.Replace);
 				FocusSearchStringTextBox();
@@ -667,11 +691,11 @@ namespace dnSpy.Text.Editor.Search {
 			FocusSearchStringTextBox();
 		}
 
-		public void ShowIncrementalSearch(bool forward) {
+		public override void ShowIncrementalSearch(bool forward) {
 			var searchKind = forward ? SearchKind.IncrementalSearchForward : SearchKind.IncrementalSearchBackward;
-			if (IsSearchControlVisible && inIncrementalSearch && !wpfTextView.Selection.IsEmpty) {
+			if (IsSearchControlVisible && inIncrementalSearch && !wpfHexView.Selection.IsEmpty) {
 				var options = GetFindOptions(searchKind, forward);
-				var startingPosition = GetNextSearchPosition(wpfTextView.Selection.StreamSelectionSpan.SnapshotSpan, forward);
+				var startingPosition = GetNextSearchPosition(wpfHexView.Selection.StreamSelectionSpan, forward);
 				incrementalStartPosition = startingPosition;
 				ShowSearchControl(searchKind, canOverwriteSearchString: false);
 
@@ -686,49 +710,76 @@ namespace dnSpy.Text.Editor.Search {
 			}
 
 			SearchString = string.Empty;
-			wpfTextView.VisualElement.Focus();
-			incrementalStartPosition = wpfTextView.Caret.Position.BufferPosition;
+			wpfHexView.VisualElement.Focus();
+			incrementalStartPosition = wpfHexView.Caret.Position.Position.ActivePosition.BufferPosition;
 			ShowSearchControl(searchKind, canOverwriteSearchString: false);
 		}
 
-		SnapshotPoint GetNextSearchPosition(SnapshotSpan span, bool forward) {
-			var snapshot = span.Snapshot;
+		HexBufferPoint GetNextSearchPosition(HexBufferSpan span, bool forward) {
+			var validSpan = wpfHexView.BufferLines.BufferSpan;
+			if (validSpan.IsEmpty)
+				return validSpan.Start;
 			if (forward) {
-				if (span.Start.Position == snapshot.Length)
-					return new SnapshotPoint(snapshot, 0);
+				if (span.Start >= validSpan.End)
+					return validSpan.Start;
 				return span.Start + 1;
 			}
 			else {
-				if (span.End.Position == 0)
-					return new SnapshotPoint(snapshot, snapshot.Length);
-				return span.End - 1;
+				var end = span.End == HexPosition.Zero ? span.End : span.End - 1;
+				if (end <= validSpan.Start)
+					return validSpan.End;
+				return end - 1;
 			}
 		}
 
-		public bool CanReplace => IsReplaceMode && !wpfTextView.Options.DoesViewProhibitUserInput();
-		bool CanReplaceNext => CanReplace && SearchString.Length > 0;
+		bool IsReplaceStringValid() => DataParser.TryParseData(ReplaceString, DataKind, IsBigEndian) != null;
+
+		byte[] TryGetReplaceStringData(HexBufferSpan replaceSpan) {
+			var data = DataParser.TryParseData(ReplaceString, DataKind, IsBigEndian);
+			if (data.LongLength == replaceSpan.Length)
+				return data;
+			var newData = new byte[replaceSpan.Length >= ulong.MaxValue ? ulong.MaxValue : replaceSpan.Length.ToUInt64()];
+			Array.Copy(data, 0, newData, 0, Math.Min(data.LongLength, newData.LongLength));
+			return newData;
+		}
+
+		public bool CanReplace => IsReplaceMode && !wpfHexView.Options.DoesViewProhibitUserInput();
+		bool CanReplaceNext => CanReplace &&
+			hexSearchServiceFactory.IsSearchDataValid(DataKind, SearchString, (GetFindOptions(SearchKind.Replace, true) & OurFindOptions.MatchCase) != 0, IsBigEndian) &&
+			IsReplaceStringValid();
 		void ReplaceNext() {
 			if (!CanReplaceNext)
 				return;
 
-			string expandedReplacePattern;
-			var res = ReplaceFindNextCore(out expandedReplacePattern);
+			var res = ReplaceFindNextCore();
 			if (res == null)
 				return;
 
-			var vres = new VirtualSnapshotSpan(res.Value);
-			if (!wpfTextView.Selection.IsEmpty && wpfTextView.Selection.StreamSelectionSpan == vres) {
-				if (CanReplaceSpan(res.Value, expandedReplacePattern)) {
-					using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
-						if (ed.Replace(res.Value.Span, expandedReplacePattern))
+			var vres = res.Value;
+			if (!wpfHexView.Selection.IsEmpty && wpfHexView.Selection.StreamSelectionSpan == vres) {
+				try {
+					var newData = TryGetReplaceStringData(res.Value);
+					Debug.Assert(newData != null && newData.Length == res.Value.Length);
+					if (newData == null || newData.Length != res.Value.Length)
+						return;
+
+					using (var ed = wpfHexView.Buffer.CreateEdit()) {
+						if (ed.Replace(res.Value.Span.Start, newData))
 							ed.Apply();
 					}
 				}
-				wpfTextView.Selection.Clear();
-				var newPos = res.Value.End.TranslateTo(wpfTextView.TextSnapshot, PointTrackingMode.Positive);
-				wpfTextView.Caret.MoveTo(newPos);
+				catch (ArithmeticException) {
+					messageBoxService.Show("Out of memory");
+					return;
+				}
+				catch (OutOfMemoryException) {
+					messageBoxService.Show("Out of memory");
+					return;
+				}
+				wpfHexView.Selection.Clear();
+				wpfHexView.Caret.MoveTo(res.Value.IsEmpty ? res.Value.Start : res.Value.End - 1);
 
-				res = ReplaceFindNextCore(out expandedReplacePattern);
+				res = ReplaceFindNextCore();
 				if (res == null)
 					return;
 				ShowSearchResult(res.Value);
@@ -737,131 +788,91 @@ namespace dnSpy.Text.Editor.Search {
 				ShowSearchResult(res.Value);
 		}
 
-		static string Unescape(string s, FindOptions options) {
-			if ((options & FindOptions.UseRegularExpressions) == 0)
-				return s;
-			if (s.IndexOf('\\') < 0)
-				return s;
-			var sb = new StringBuilder(s.Length);
-			for (int i = 0; i < s.Length; i++) {
-				var c = s[i];
-				if (c == '\\' && i + 1 < s.Length) {
-					i++;
-					c = s[i];
-					switch (c) {
-					case 't': sb.Append('\t'); break;
-					case 'n': sb.Append('\n'); break;
-					case 'r': sb.Append('\r'); break;
-					default:
-						sb.Append('\\');
-						sb.Append(c);
-						break;
-					}
-				}
-				else
-					sb.Append(c);
-			}
-			return sb.ToString();
-		}
-
-		SnapshotSpan? ReplaceFindNextCore(out string expandedReplacePattern) {
-			if (SearchString.Length == 0) {
-				expandedReplacePattern = null;
+		HexBufferSpan? ReplaceFindNextCore() {
+			if (SearchString.Length == 0)
 				return null;
-			}
-			var snapshot = wpfTextView.TextSnapshot;
 			var options = GetFindOptions(SearchKind.Replace, true);
+			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, (options & OurFindOptions.MatchCase) != 0, IsBigEndian);
+			if (hexSearchService == null)
+				return null;
 			var startingPosition = GetStartingPosition(SearchKind.Replace, options, restart: true);
-			if (startingPosition == null) {
-				expandedReplacePattern = null;
+			if (startingPosition == null)
 				return null;
-			}
-			startingPosition = startingPosition.Value.TranslateTo(snapshot, PointTrackingMode.Negative);
-			try {
-				return textSearchService2.FindForReplace(startingPosition.Value, SearchString, Unescape(ReplaceString, options), options, out expandedReplacePattern);
-			}
-			catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
-				// Invalid regex string
-				expandedReplacePattern = null;
-				return null;
-			}
+			var searchRange = wpfHexView.BufferLines.BufferSpan;
+			return hexSearchService.Find(searchRange, startingPosition.Value, ToHexFindOptions(options), CancellationToken.None);
 		}
 
-		bool CanReplaceSpan(SnapshotSpan span, string newText) {
-			if (replaceListeners == null) {
-				var list = new List<IReplaceListener>(replaceListenerProviders.Length);
-				foreach (var provider in replaceListenerProviders) {
-					var listener = provider.Value.Create(wpfTextView);
-					if (listener != null)
-						list.Add(listener);
-				}
-				replaceListeners = list.Count == 0 ? Array.Empty<IReplaceListener>() : list.ToArray();
-			}
-			foreach (var listener in replaceListeners) {
-				if (!listener.CanReplace(span, newText))
-					return false;
-			}
-			return true;
+		static HexFindOptions ToHexFindOptions(OurFindOptions options) {
+			var res = HexFindOptions.None;
+			if ((options & OurFindOptions.SearchReverse) != 0)
+				res |= HexFindOptions.SearchReverse;
+			if ((options & OurFindOptions.Wrap) != 0)
+				res |= HexFindOptions.Wrap;
+			return res;
 		}
 
-		bool CanReplaceAll => CanReplace && SearchString.Length > 0;
+		bool CanReplaceAll => CanReplace &&
+			hexSearchServiceFactory.IsSearchDataValid(DataKind, SearchString, (GetFindOptions(SearchKind.Replace, true) & OurFindOptions.MatchCase) != 0, IsBigEndian) &&
+			IsReplaceStringValid();
 		void ReplaceAll() {
 			if (!CanReplaceAll)
 				return;
 
-			var oldSnapshot = wpfTextView.TextSnapshot;
+			var oldVersion = wpfHexView.Buffer.Version;
 			try {
-				using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
+				byte[] newData = null;
+				using (var ed = wpfHexView.Buffer.CreateEdit()) {
 					foreach (var res in GetAllResultsForReplaceAll()) {
-						if (CanReplaceSpan(res.Item1, res.Item2)) {
-							// Ignore errors due to read-only regions
-							ed.Replace(res.Item1.Span, res.Item2);
-						}
+						if (newData == null)
+							newData = TryGetReplaceStringData(res);
+						Debug.Assert(newData != null && newData.Length == res.Length);
+						if (newData == null || newData.Length != res.Length)
+							return;
+						// Ignore errors due to read-only regions
+						ed.Replace(res.Span.Start, newData);
 					}
 					ed.Apply();
 					if (ed.Canceled)
 						return;
 				}
 			}
+			catch (ArithmeticException) {
+				messageBoxService.Show("Out of memory");
+				return;
+			}
 			catch (OutOfMemoryException) {
 				messageBoxService.Show("Out of memory");
 				return;
 			}
-			if (oldSnapshot != wpfTextView.TextSnapshot)
-				wpfTextView.Selection.Clear();
-			wpfTextView.Caret.EnsureVisible();
+			if (oldVersion != wpfHexView.Buffer.Version)
+				wpfHexView.Selection.Clear();
+			wpfHexView.Caret.EnsureVisible();
 		}
 
 		// Finds all results but makes sure that all replacements never overlap another one,
 		// eg. if SearchString is aaa and text is aaaaaaaa, it returns two results, starting
 		// at offsets 0 and 3. The last two aa's aren't touched. Normal FindNext finds matches
 		// at offsets 0, 1, 2, 3, 4, 5.
-		IEnumerable<Tuple<SnapshotSpan, string>> GetAllResultsForReplaceAll() {
-			var snapshot = wpfTextView.TextSnapshot;
-			var options = GetFindOptions(SearchKind.Replace, true) & ~FindOptions.Wrap;
-			var startingPosition = new SnapshotPoint(snapshot, 0);
-			var searchString = SearchString;
-			var replaceString = Unescape(ReplaceString, options);
+		IEnumerable<HexBufferSpan> GetAllResultsForReplaceAll() {
+			var searchRange = wpfHexView.BufferLines.BufferSpan;
+			var options = GetFindOptions(SearchKind.Replace, true) & ~OurFindOptions.Wrap;
+			var startingPosition = searchRange.Start;
+			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, (options & OurFindOptions.MatchCase) != 0, IsBigEndian);
+			if (hexSearchService == null)
+				yield break;
 			for (;;) {
-				string expandedReplacePattern;
-				SnapshotSpan? res;
-				try {
-					res = textSearchService2.FindForReplace(startingPosition, searchString, replaceString, options, out expandedReplacePattern);
-				}
-				catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
-					// Invalid regex string
-					res = null;
-					expandedReplacePattern = null;
-				}
+				var res = hexSearchService.Find(searchRange, startingPosition, ToHexFindOptions(options), CancellationToken.None);
 				if (res == null)
 					break;
-				yield return Tuple.Create(res.Value, expandedReplacePattern);
-				if (startingPosition.Position == snapshot.Length)
+				yield return res.Value;
+				if (res.Value.End >= searchRange.End)
 					break;
 				if (res.Value.Length != 0)
 					startingPosition = res.Value.End;
 				else
 					startingPosition = res.Value.End + 1;
+				if (startingPosition >= searchRange.End)
+					break;
 			}
 		}
 
@@ -873,24 +884,20 @@ namespace dnSpy.Text.Editor.Search {
 				SetSearchKind(SearchKind.Find);
 		}
 
-		FindOptions GetFindOptions(SearchKind searchKind, bool? forward) {
+		OurFindOptions GetFindOptions(SearchKind searchKind, bool? forward) {
 			Debug.Assert(searchKind != SearchKind.None);
-			var options = FindOptions.None;
+			var options = OurFindOptions.None;
 			switch (searchKind) {
 			case SearchKind.Find:
 			case SearchKind.Replace:
 				if (MatchCase)
-					options |= FindOptions.MatchCase;
-				if (UseRegularExpressions)
-					options |= FindOptions.UseRegularExpressions;
-				if (MatchWholeWords)
-					options |= FindOptions.WholeWord;
+					options |= OurFindOptions.MatchCase;
 				break;
 
 			case SearchKind.IncrementalSearchBackward:
 			case SearchKind.IncrementalSearchForward:
 				if (SearchString.Any(c => char.IsUpper(c)))
-					options |= FindOptions.MatchCase;
+					options |= OurFindOptions.MatchCase;
 				if (forward == null)
 					forward = searchKind == SearchKind.IncrementalSearchForward;
 				break;
@@ -899,20 +906,14 @@ namespace dnSpy.Text.Editor.Search {
 				throw new ArgumentOutOfRangeException(nameof(searchKind));
 			}
 			if (forward == false)
-				options |= FindOptions.SearchReverse;
-			if ((options & FindOptions.UseRegularExpressions) != 0) {
-				if (IsMultiLineRegexPattern(SearchString))
-					options |= FindOptions.Multiline;
-				else
-					options |= FindOptions.SingleLine;
-			}
-			options |= FindOptions.Wrap | FindOptions.OrdinalComparison;
+				options |= OurFindOptions.SearchReverse;
+			options |= OurFindOptions.Wrap;
 			return options;
 		}
 
 		static bool IsMultiLineRegexPattern(string s) => s.Contains(@"\r") || s.Contains(@"\n") || s.Contains("$");
 
-		SnapshotPoint? GetStartingPosition(SearchKind searchKind, FindOptions options, bool restart) {
+		HexBufferPoint? GetStartingPosition(SearchKind searchKind, OurFindOptions options, bool restart) {
 			Debug.Assert(searchKind != SearchKind.None);
 			switch (searchKind) {
 			case SearchKind.Find:
@@ -928,36 +929,37 @@ namespace dnSpy.Text.Editor.Search {
 			}
 		}
 
-		SnapshotPoint? GetStartingPosition(FindOptions options, bool restart) {
-			if (wpfTextView.Selection.IsEmpty)
-				return wpfTextView.Caret.Position.BufferPosition;
+		HexBufferPoint? GetStartingPosition(OurFindOptions options, bool restart) {
+			if (wpfHexView.Selection.IsEmpty)
+				return wpfHexView.Caret.Position.Position.ActivePosition.BufferPosition;
 			if (restart) {
-				if ((options & FindOptions.SearchReverse) == 0)
-					return wpfTextView.Selection.Start.Position;
-				return wpfTextView.Selection.End.Position;
+				if ((options & OurFindOptions.SearchReverse) == 0)
+					return wpfHexView.Selection.Start;
+				return wpfHexView.Selection.End;
 			}
-			if ((options & FindOptions.SearchReverse) != 0) {
-				if (wpfTextView.Selection.End.Position.Position > 0)
-					return wpfTextView.Selection.End.Position - 1;
-				if ((options & FindOptions.Wrap) != 0)
-					return new SnapshotPoint(wpfTextView.TextSnapshot, wpfTextView.TextSnapshot.Length);
+			var validSpan = wpfHexView.BufferLines.BufferSpan;
+			if ((options & OurFindOptions.SearchReverse) != 0) {
+				if (wpfHexView.Selection.End.Position >= validSpan.Start.Position + 2)
+					return wpfHexView.Selection.End - 2;
+				if ((options & OurFindOptions.Wrap) != 0)
+					return validSpan.End;
 				return null;
 			}
-			if (wpfTextView.Selection.Start.Position.Position != wpfTextView.Selection.Start.Position.Snapshot.Length)
-				return wpfTextView.Selection.Start.Position + 1;
-			if ((options & FindOptions.Wrap) != 0)
-				return new SnapshotPoint(wpfTextView.TextSnapshot, 0);
+			if (wpfHexView.Selection.Start < validSpan.End)
+				return wpfHexView.Selection.Start + 1;
+			if ((options & OurFindOptions.Wrap) != 0)
+				return validSpan.Start;
 			return null;
 		}
 
-		public void FindNext(bool forward) {
+		public override void FindNext(bool forward) {
 			UseGlobalSettingsIfUiIsHidden(true);
 			var options = GetFindOptions(SearchKind.Find, forward);
 			var startingPosition = GetStartingPosition(SearchKind.Find, options, restart: false);
 			FindNextCore(options, startingPosition);
 		}
 
-		void FindNextCore(FindOptions options, SnapshotPoint? startingPosition) {
+		void FindNextCore(OurFindOptions options, HexBufferPoint? startingPosition) {
 			if (startingPosition == null)
 				return;
 			var res = FindNextResultCore(options, startingPosition.Value);
@@ -966,23 +968,18 @@ namespace dnSpy.Text.Editor.Search {
 			ShowSearchResult(res.Value);
 		}
 
-		SnapshotSpan? FindNextResultCore(FindOptions options, SnapshotPoint startingPosition) {
+		HexBufferSpan? FindNextResultCore(OurFindOptions options, HexBufferPoint startingPosition) {
 			if (SearchString.Length == 0)
 				return null;
-			var snapshot = wpfTextView.TextSnapshot;
-			startingPosition = startingPosition.TranslateTo(snapshot, PointTrackingMode.Negative);
-			var searchRange = new SnapshotSpan(snapshot, 0, snapshot.Length);
-			try {
-				return textSearchService2.Find(searchRange, startingPosition, SearchString, options);
-			}
-			catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
-				// Invalid regex string
+			var searchRange = wpfHexView.BufferLines.BufferSpan;
+			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, (options & OurFindOptions.MatchCase) != 0, IsBigEndian);
+			if (hexSearchService == null)
 				return null;
-			}
+			return hexSearchService.Find(searchRange, startingPosition, ToHexFindOptions(options), CancellationToken.None);
 		}
 
-		void ShowSearchResult(SnapshotSpan span) {
-			editorOperations.SelectAndMoveCaret(new VirtualSnapshotPoint(span.Start), new VirtualSnapshotPoint(span.End));
+		void ShowSearchResult(HexBufferSpan span) {
+			editorOperations.SelectAndMoveCaret(wpfHexView.Caret.Position.Position.ActiveColumn, span.Start, span.End, alignPoints: false);
 			if (IsSearchControlVisible)
 				PositionWithoutCoveringSpan(span);
 		}
@@ -995,7 +992,7 @@ namespace dnSpy.Text.Editor.Search {
 			OnPropertyChanged(nameof(SearchString));
 		}
 		bool foundSomething;
-		public void FindNextSelected(bool forward) => FindNextSelectedCore(forward, false);
+		public override void FindNextSelected(bool forward) => FindNextSelectedCore(forward, false);
 
 		void FindNextSelectedCore(bool forward, bool restart) {
 			var newSearchString = TryGetSearchStringAtCaret();
@@ -1003,75 +1000,42 @@ namespace dnSpy.Text.Editor.Search {
 				return;
 
 			ShowSearchControl(SearchKind.Find, canOverwriteSearchString: false);
-			// Don't focus the search control. Whoever has focus (most likely text editor)
+			// Don't focus the search control. Whoever has focus (most likely hex editor)
 			// should keep the focus.
 
 			// This search doesn't use the options from the search control
-			var options = FindOptions.Wrap | FindOptions.MatchCase | FindOptions.OrdinalComparison;
+			var options = OurFindOptions.Wrap | OurFindOptions.MatchCase;
 			if (!forward)
-				options |= FindOptions.SearchReverse;
+				options |= OurFindOptions.SearchReverse;
 			var startingPosition = GetStartingPosition(SearchKind.Find, options, restart);
 			SetSearchString(newSearchString, canSearch: false);
 			FindNextCore(options, startingPosition);
 		}
 
-		public IEnumerable<SnapshotSpan> GetSpans(NormalizedSnapshotSpanCollection spans) {
-			if (!IsSearchControlVisible)
+		public override IEnumerable<HexBufferSpan> GetSpans(NormalizedHexBufferSpanCollection spans) {
+			var searchService = hexMarkerSearchService;
+			if (searchService == null)
 				yield break;
-			if (findResultCollection == null)
-				yield break;
-			if (findResultCollection.Count == 0)
-				yield break;
-			if (spans.Count == 0)
-				yield break;
-			// If they're not identical, we'll soon invalidate all spans so just ignore this one for now
-			if (findResultCollection[0].Snapshot != spans[0].Snapshot)
-				yield break;
-
-			foreach (var snapshotSpan in spans) {
-				int index = GetFindResultStartIndex(snapshotSpan.Span.Start);
-				if (index < 0)
+			var validSpan = wpfHexView.BufferLines.BufferSpan;
+			int lengthLessOne = searchService.ByteCount - 1;
+			foreach (var span in spans) {
+				var overlap = validSpan.Overlap(span);
+				if (overlap == null)
 					continue;
-				for (int i = index; i < findResultCollection.Count; i++) {
-					var resSpan = findResultCollection[i];
-					if (resSpan.Start > snapshotSpan.End)
-						break;
-					yield return resSpan;
-				}
+				var start = validSpan.Start.Position + lengthLessOne <= overlap.Value.Start.Position ? overlap.Value.Start - lengthLessOne : validSpan.Start;
+				var end = new HexBufferPoint(validSpan.Buffer, HexPosition.Min(overlap.Value.End.Position + lengthLessOne, validSpan.End));
+				foreach (var res in searchService.FindAll(HexBufferSpan.FromBounds(start, end), start, HexFindOptions.None, CancellationToken.None))
+					yield return res;
 			}
 		}
 
-		int GetFindResultStartIndex(int position) {
-			if (findResultCollection == null)
-				return -1;
-			var array = findResultCollection;
-			int lo = 0, hi = array.Count - 1;
-			while (lo <= hi) {
-				int index = (lo + hi) / 2;
-
-				var span = array[index];
-				if (position < span.Span.Start)
-					hi = index - 1;
-				else if (position >= span.Span.End)
-					lo = index + 1;
-				else {
-					if (index > 0 && array[index - 1].End == position)
-						return index - 1;
-					return index;
-				}
-			}
-			if ((uint)hi < (uint)array.Count && array[hi].End == position)
-				return hi;
-			return lo < array.Count ? lo : -1;
-		}
-
-		public void RegisterTextMarkerListener(ITextMarkerListener listener) => listeners.Add(listener);
+		public override void RegisterHexMarkerListener(IHexMarkerListener listener) => listeners.Add(listener);
 
 		void RestartSearchAndUpdateMarkers() {
 			if (!IsSearchControlVisible)
 				return;
 
-			UpdateTextMarkerSearch();
+			UpdateHexMarkerSearch();
 			RestartSearch();
 		}
 
@@ -1086,51 +1050,37 @@ namespace dnSpy.Text.Editor.Search {
 			FindNextCore(options, startingPosition);
 		}
 
-		void UpdateTextMarkerSearch() {
+		void UpdateHexMarkerSearch() {
 			if (!IsSearchControlVisible)
 				return;
 
-			if (SearchString.Length == 0) {
-				var oldColl = findResultCollection;
-				findResultCollection = NormalizedSnapshotSpanCollection.Empty;
-				if (oldColl != null && oldColl.Count != 0)
+			var newHexMarkerSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, MatchCase, IsBigEndian);
+			if (newHexMarkerSearchService == null) {
+				bool refresh = hexMarkerSearchService != null;
+				hexMarkerSearchService = null;
+				if (refresh)
 					RefreshAllTags();
-				SetFoundResult(true);
+				// We could be here if the input string is invalid, in which case we tell the user there was nothing found
+				SetFoundResult(SearchString.Length == 0);
 				return;
 			}
 
-			var snapshot = wpfTextView.TextSnapshot;
-			var searchRange = new SnapshotSpan(snapshot, 0, snapshot.Length);
-			var options = GetFindOptions(searchKind, true);
-			int count = 0;
-			try {
-				var list = new List<SnapshotSpan>();
-				foreach (var res in textSearchService2.FindAll(searchRange, SearchString, options)) {
-					if (res.Length != 0)
-						list.Add(res);
-					count++;
-					if (count == MAX_SEARCH_RESULTS)
-						break;
-				}
-				findResultCollection = new NormalizedSnapshotSpanCollection(list);
-			}
-			catch (ArgumentException) when ((options & FindOptions.UseRegularExpressions) != 0) {
-				// Invalid regex string
-				findResultCollection = NormalizedSnapshotSpanCollection.Empty;
-				count = 0;
-			}
+			hexMarkerSearchService = newHexMarkerSearchService;
+			var searchRange = wpfHexView.BufferLines.BufferSpan;
+			var options = GetFindOptions(SearchKind.Find, true);
+			bool found = hexMarkerSearchService.Find(searchRange, searchRange.Start, ToHexFindOptions(options), CancellationToken.None) != null;
 			RefreshAllTags();
-			SetFoundResult(count != 0);
+			SetFoundResult(found);
 		}
+		HexSearchService hexMarkerSearchService;
 
 		void RefreshAllTags() {
-			var snapshot = wpfTextView.TextSnapshot;
-			var span = new SnapshotSpan(snapshot, 0, snapshot.Length);
+			var span = new HexBufferSpan(wpfHexView.Buffer, HexSpan.FromBounds(HexPosition.Zero, HexPosition.MaxEndPosition));
 			foreach (var listener in listeners)
 				listener.RaiseTagsChanged(span);
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void WpfHexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
 			Debug.Assert(IsSearchControlVisible);
 			if (!IsSearchControlVisible)
 				return;
@@ -1138,16 +1088,22 @@ namespace dnSpy.Text.Editor.Search {
 				RepositionControl(true);
 			else if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
 				RepositionControl(true);
-			if (e.OldSnapshot != e.NewSnapshot) {
+			if (e.OldVersion != e.NewVersion) {
 				CancelIncrementalSearch();
-				UpdateTextMarkerSearch();
+				UpdateHexMarkerSearch();
 			}
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfHexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) {
+			CancelIncrementalSearch();
+			UpdateHexMarkerSearch();
+		}
+
+		void WpfHexView_Closed(object sender, EventArgs e) {
 			CloseSearchControl();
-			wpfTextView.Closed -= WpfTextView_Closed;
-			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
+			wpfHexView.Closed -= WpfHexView_Closed;
+			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
+			wpfHexView.BufferLinesChanged -= WpfHexView_BufferLinesChanged;
 		}
 	}
 }

@@ -58,6 +58,16 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public bool HorizontalTranslation => OldViewState.ViewportLeft != NewViewState.ViewportLeft;
 
 		/// <summary>
+		/// Gets the old version
+		/// </summary>
+		public HexVersion OldVersion => OldViewState.Version;
+
+		/// <summary>
+		/// Gets the new version
+		/// </summary>
+		public HexVersion NewVersion => NewViewState.Version;
+
+		/// <summary>
 		/// Gets all new or reformatted spans
 		/// </summary>
 		public NormalizedHexBufferSpanCollection NewOrReformattedSpans {

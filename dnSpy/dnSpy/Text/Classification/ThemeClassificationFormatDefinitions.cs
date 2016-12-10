@@ -1255,6 +1255,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.OutputWindowText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition OutputWindowTextClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexFindMatchHighlightMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexFindMatchHighlightMarkerClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3431,6 +3436,17 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class OutputWindowText : ThemeClassificationFormatDefinition {
 			OutputWindowText() : base(TextColor.OutputWindowText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexFindMatchHighlightMarker)]
+		[Name(ThemeClassificationTypeNameKeys.HexFindMatchHighlightMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class HexFindMatchHighlightMarker : ThemeMarkerFormatDefinition {
+			HexFindMatchHighlightMarker() : base(TextColor.HexFindMatchHighlightMarker) {
+				ZOrder = HexMarkerServiceZIndexes.FindMatch;
+			}
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
