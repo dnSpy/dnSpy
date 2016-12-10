@@ -240,8 +240,9 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// </summary>
 		/// <param name="pattern">Pattern to search for</param>
 		/// <param name="isCaseSensitive">true if it's case sensitive, false if it's case insensitive</param>
+		/// <param name="isBigEndian">true if big-endian, false if little-endian</param>
 		/// <returns></returns>
-		public abstract HexSearchService CreateUtf16StringSearchService(string pattern, bool isCaseSensitive);
+		public abstract HexSearchService CreateUtf16StringSearchService(string pattern, bool isCaseSensitive, bool isBigEndian = false);
 
 		static byte[] GetBytes(ushort value, bool isBigEndian) {
 			if (isBigEndian) {

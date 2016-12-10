@@ -18,6 +18,8 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Operations;
 
@@ -54,6 +56,75 @@ namespace dnSpy.Hex.Operations {
 				if (span.Value.Start == 0)
 					break;
 				pos = span.Value.Start - 1;
+			}
+		}
+
+		protected abstract class SearchStateBase {
+			const int BUFFER_LENGTH = 0x1000;
+			public readonly HexBuffer Buffer;
+			protected readonly byte[] Data;
+			public /*readonly*/ CancellationToken CancellationToken;
+			protected int dataIndex;
+			protected int dataLength;
+			protected HexPosition dataPosition;
+
+			protected SearchStateBase(HexBuffer buffer, CancellationToken cancellationToken) {
+				Buffer = buffer;
+				Data = new byte[BUFFER_LENGTH];
+				CancellationToken = cancellationToken;
+			}
+
+			public void SetPosition(HexPosition position) {
+				if (dataPosition <= position && position <= dataPosition + dataLength)
+					dataIndex = (int)(position - dataPosition).ToUInt64();
+				else {
+					dataPosition = position;
+					dataIndex = 0;
+					dataLength = 0;
+				}
+			}
+
+			public void SetPreviousPosition(HexPosition position) {
+				if (dataPosition <= position && position < dataPosition + dataLength)
+					dataIndex = (int)(position - dataPosition).ToUInt64();
+				else {
+					dataPosition = position + 1;
+					dataIndex = -1;
+					dataLength = 0;
+				}
+			}
+
+			public byte GetNextByte() {
+				Debug.Assert(dataPosition < HexPosition.MaxEndPosition);
+				if (dataIndex >= dataLength)
+					FillNextData();
+				return Data[dataIndex++];
+			}
+
+			public byte GetPreviousByte() {
+				Debug.Assert(dataPosition < HexPosition.MaxEndPosition);
+				if (dataIndex < 0)
+					FillPreviousData();
+				return Data[dataIndex--];
+			}
+
+			protected void FillPreviousData() {
+				Debug.Assert(dataPosition > 0);
+				Debug.Assert(dataIndex == -1);
+				CancellationToken.ThrowIfCancellationRequested();
+				dataLength = (int)HexPosition.Min(dataPosition, Data.Length).ToUInt64();
+				dataPosition -= dataLength;
+				dataIndex = dataLength - 1;
+				Buffer.ReadBytes(dataPosition, Data, 0, dataLength);
+			}
+
+			protected void FillNextData() {
+				Debug.Assert(dataIndex == dataLength);
+				CancellationToken.ThrowIfCancellationRequested();
+				dataPosition += dataLength;
+				dataLength = (int)HexPosition.Min(HexPosition.MaxEndPosition - dataPosition, Data.Length).ToUInt64();
+				dataIndex = 0;
+				Buffer.ReadBytes(dataPosition, Data, 0, dataLength);
 			}
 		}
 	}

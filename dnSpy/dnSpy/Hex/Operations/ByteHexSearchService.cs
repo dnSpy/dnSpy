@@ -56,71 +56,9 @@ namespace dnSpy.Hex.Operations {
 			return FindAllCore(searchRange, startingPosition, options, cancellationToken);
 		}
 
-		sealed class SearchState {
-			const int BUFFER_LENGTH = 0x1000;
-			public readonly HexBuffer Buffer;
-			readonly byte[] Data;
-			public /*readonly*/ CancellationToken CancellationToken;
-			int dataIndex;
-			int dataLength;
-			HexPosition dataPosition;
-			public SearchState(HexBuffer buffer, CancellationToken cancellationToken) {
-				Buffer = buffer;
-				Data = new byte[BUFFER_LENGTH];
-				CancellationToken = cancellationToken;
-			}
-
-			public void SetPosition(HexPosition position) {
-				if (dataPosition <= position && position <= dataPosition + dataLength)
-					dataIndex = (int)(position - dataPosition).ToUInt64();
-				else {
-					dataPosition = position;
-					dataIndex = 0;
-					dataLength = 0;
-				}
-			}
-
-			public void SetPreviousPosition(HexPosition position) {
-				if (dataPosition <= position && position < dataPosition + dataLength)
-					dataIndex = (int)(position - dataPosition).ToUInt64();
-				else {
-					dataPosition = position + 1;
-					dataIndex = -1;
-					dataLength = 0;
-				}
-			}
-
-			public byte GetNextByte() {
-				Debug.Assert(dataPosition < HexPosition.MaxEndPosition);
-				if (dataIndex >= dataLength)
-					FillNextData();
-				return Data[dataIndex++];
-			}
-
-			public byte GetPreviousByte() {
-				Debug.Assert(dataPosition < HexPosition.MaxEndPosition);
-				if (dataIndex < 0)
-					FillPreviousData();
-				return Data[dataIndex--];
-			}
-
-			void FillPreviousData() {
-				Debug.Assert(dataPosition > 0);
-				Debug.Assert(dataIndex == -1);
-				CancellationToken.ThrowIfCancellationRequested();
-				dataLength = (int)HexPosition.Min(dataPosition, Data.Length).ToUInt64();
-				dataPosition -= dataLength;
-				dataIndex = dataLength - 1;
-				Buffer.ReadBytes(dataPosition, Data, 0, dataLength);
-			}
-
-			void FillNextData() {
-				Debug.Assert(dataIndex == dataLength);
-				CancellationToken.ThrowIfCancellationRequested();
-				dataPosition += dataLength;
-				dataLength = (int)HexPosition.Min(HexPosition.MaxEndPosition - dataPosition, Data.Length).ToUInt64();
-				dataIndex = 0;
-				Buffer.ReadBytes(dataPosition, Data, 0, dataLength);
+		sealed class SearchState : SearchStateBase {
+			public SearchState(HexBuffer buffer, CancellationToken cancellationToken)
+				: base(buffer, cancellationToken) {
 			}
 
 			public HexPosition? PositionAfter1(int value, HexPosition end) {
@@ -289,8 +227,7 @@ namespace dnSpy.Hex.Operations {
 						index--;
 						dataIndex = index;
 						if (dataIndex < 0) {
-							// dataPosition could be 0 so use +1 on the right side instead of -1 on the left side
-							if (dataPosition < lowerBounds + 1)
+							if (dataPosition <= lowerBounds)
 								return null;
 							FillPreviousData();
 							index = dataIndex;
@@ -364,8 +301,7 @@ namespace dnSpy.Hex.Operations {
 						index--;
 						dataIndex = index;
 						if (dataIndex < 0) {
-							// dataPosition could be 0 so use +1 on the right side instead of -1 on the left side
-							if (dataPosition < lowerBounds + 1)
+							if (dataPosition <= lowerBounds)
 								return null;
 							FillPreviousData();
 							index = dataIndex;

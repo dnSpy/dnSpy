@@ -35,17 +35,19 @@ namespace dnSpy.Hex.Operations {
 				throw new ArgumentOutOfRangeException(nameof(pattern));
 			if (isCaseSensitive)
 				return CreateByteSearchService(Encoding.UTF8.GetBytes(pattern));
-			throw new NotImplementedException();//TODO:
+			return new Utf8StringHexSearchService(pattern);
 		}
 
-		public override HexSearchService CreateUtf16StringSearchService(string pattern, bool isCaseSensitive) {
+		public override HexSearchService CreateUtf16StringSearchService(string pattern, bool isCaseSensitive, bool isBigEndian) {
 			if (pattern == null)
 				throw new ArgumentNullException(nameof(pattern));
 			if (pattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(pattern));
 			if (isCaseSensitive)
 				return CreateByteSearchService(Encoding.Unicode.GetBytes(pattern));
-			throw new NotImplementedException();//TODO:
+			if (isBigEndian)
+				return new BigEndianUtf16StringHexSearchService(pattern);
+			return new Utf16StringHexSearchService(pattern);
 		}
 	}
 }
