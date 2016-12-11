@@ -34,16 +34,10 @@ namespace dnSpy.Hex.Editor.Search {
 			}
 			else
 				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value);
-			if (!isValid) {
-				if (s.StartsWith("-"))
-					return false;
+			if (!isValid)
 				return false;
-			}
-			if (value < min || value > max) {
-				if (min == 0)
-					return false;
+			if (value < min || value > max)
 				return false;
-			}
 
 			return true;
 		}
@@ -77,11 +71,8 @@ namespace dnSpy.Hex.Editor.Search {
 					return false;
 				value = (long)value2;
 			}
-			if (value < min || value > max) {
-				if (min == 0)
-					return false;
+			if (value < min || value > max)
 				return false;
-			}
 
 			return true;
 		}

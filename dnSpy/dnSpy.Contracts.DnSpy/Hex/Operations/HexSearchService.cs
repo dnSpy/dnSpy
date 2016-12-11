@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Hex.Operations {
 		protected HexSearchService() { }
 
 		/// <summary>
-		/// Gets the size of the data this instances searches for
+		/// Gets the size of the data this instance searches for
 		/// </summary>
 		public abstract int ByteCount { get; }
 
