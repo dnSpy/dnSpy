@@ -327,6 +327,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: HexView, Group: Options</summary>
 		public const string GROUP_CTX_HEXVIEW_OPTS = "100000,0794156A-1EDE-45EC-9C41-48E27DE14085";
 
+		/// <summary>Group: Context Menu, Type: HexView, Group: Find</summary>
+		public const string GROUP_CTX_HEXVIEW_FIND = "101000,8BD504DA-A927-4CBC-9E77-C873560C530F";
+
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Show commands</summary>
 		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_SHOW), true)]
 		public const string GROUP_CTX_HEXBOX_SHOW = "0,D49C0D59-BAC6-476C-B5C7-66E8CE6CBD83";

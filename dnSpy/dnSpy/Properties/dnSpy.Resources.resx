@@ -1527,4 +1527,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ShortCutKeyAltU" xml:space="preserve">
     <value>Alt+U</value>
   </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
 </root>

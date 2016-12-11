@@ -3486,6 +3486,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+F.
+        /// </summary>
+        public static string ShortCutKeyCtrlF {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+F4.
         /// </summary>
         public static string ShortCutKeyCtrlF4 {

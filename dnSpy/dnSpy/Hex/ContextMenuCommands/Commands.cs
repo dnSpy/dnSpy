@@ -346,4 +346,18 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		}
 		public override bool IsVisible(HexViewContext context) => context.HexView.Buffer.IsVolatile;
 	}
+
+	[ExportMenuItem(Header = "res:FindCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlF", Group = MenuConstants.GROUP_CTX_HEXVIEW_FIND, Order = 0)]
+	sealed class FindCommandContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		FindCommandContexMenuEntry()
+			: base(StandardIds.Find) {
+		}
+	}
+
+	[ExportMenuItem(Header = "res:IncrementalSearchCommand", Icon = DsImagesAttribute.Search, InputGestureText = "res:ShortCutKeyCtrlI", Group = MenuConstants.GROUP_CTX_HEXVIEW_FIND, Order = 10)]
+	sealed class IncrementalSearchForwardContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		IncrementalSearchForwardContexMenuEntry()
+			: base(StandardIds.IncrementalSearchForward) {
+		}
+	}
 }
