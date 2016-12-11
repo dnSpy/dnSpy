@@ -162,8 +162,14 @@ namespace dnSpy.Hex.Editor {
 					return;
 				}
 
-				if (first.VisibilityState != VSTF.VisibilityState.FullyVisible)
-					hexView.DisplayHexLineContainingBufferPosition(first.BufferStart, 0, VSTE.ViewRelativePosition.Top);
+				if (first.VisibilityState != VSTF.VisibilityState.FullyVisible) {
+					if (first != last || !minimumScroll || first.VisibilityState != VSTF.VisibilityState.PartiallyVisible)
+						hexView.DisplayHexLineContainingBufferPosition(first.BufferStart, 0, VSTE.ViewRelativePosition.Top);
+					else if (first.Bottom > hexView.ViewportBottom)
+						hexView.DisplayHexLineContainingBufferPosition(first.BufferStart, 0, VSTE.ViewRelativePosition.Bottom);
+					else
+						hexView.DisplayHexLineContainingBufferPosition(first.BufferStart, 0, VSTE.ViewRelativePosition.Top);
+				}
 				else if (last.VisibilityState != VSTF.VisibilityState.FullyVisible)
 					hexView.DisplayHexLineContainingBufferPosition(last.BufferStart, 0, VSTE.ViewRelativePosition.Bottom);
 
