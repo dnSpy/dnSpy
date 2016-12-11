@@ -323,15 +323,17 @@ namespace dnSpy.Hex {
 				return null;
 
 			int bytePos = (ByteCount - cellPosition / 2 - 1) % ByteCount;
-			var dataPos = position + bytePos;
+			var dataPos = position.Position + bytePos;
+			if (dataPos >= HexPosition.MaxEndPosition)
+				return null;
 			var newData = new byte[1];
-			newData[0] = dataPos.Buffer.ReadByte(dataPos);
+			newData[0] = position.Buffer.ReadByte(dataPos);
 			if ((cellPosition & 1) == 0)
 				newData[0] = (byte)((newData[0] & 0x0F) | (v << 4));
 			else
 				newData[0] = (byte)((newData[0] & 0xF0) | v);
 
-			return new PositionAndData(dataPos, newData);
+			return new PositionAndData(new HexBufferPoint(position.Buffer, dataPos), newData);
 		}
 
 		protected PositionAndData? EditUnsignedHexBigEndian(HexBufferPoint position, int cellPosition, char c) {
@@ -339,15 +341,17 @@ namespace dnSpy.Hex {
 			if (v < 0)
 				return null;
 
-			var dataPos = position + cellPosition / 2;
+			var dataPos = position.Position + cellPosition / 2;
+			if (dataPos >= HexPosition.MaxEndPosition)
+				return null;
 			var newData = new byte[1];
-			newData[0] = dataPos.Buffer.ReadByte(dataPos);
+			newData[0] = position.Buffer.ReadByte(dataPos);
 			if ((cellPosition & 1) == 0)
 				newData[0] = (byte)((newData[0] & 0x0F) | (v << 4));
 			else
 				newData[0] = (byte)((newData[0] & 0xF0) | v);
 
-			return new PositionAndData(dataPos, newData);
+			return new PositionAndData(new HexBufferPoint(position.Buffer, dataPos), newData);
 		}
 
 		// Assumes input is valid. First char is <space> <+> or <->
@@ -490,13 +494,15 @@ namespace dnSpy.Hex {
 			if (newBit < 0)
 				return null;
 
-			var dataPos = position + cellPosition / 8;
+			var dataPos = position.Position + cellPosition / 8;
+			if (dataPos >= HexPosition.MaxEndPosition)
+				return null;
 			int bitNo = (8 - (cellPosition & 7) - 1) & 7;
 			var newData = new byte[1];
-			newData[0] = dataPos.Buffer.ReadByte(dataPos);
+			newData[0] = position.Buffer.ReadByte(dataPos);
 			newData[0] = (byte)((newData[0] & ~(1 << bitNo)) | (newBit << bitNo));
 
-			return new PositionAndData(dataPos, newData);
+			return new PositionAndData(new HexBufferPoint(position.Buffer, dataPos), newData);
 		}
 
 		static int ConvertFromHexCharacter(char c) {
@@ -552,7 +558,10 @@ namespace dnSpy.Hex {
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
 			if ((uint)cellPosition >= 4)
 				return base.GetBufferSpan(bufferSpan, cellPosition);
-			return new HexBufferSpan(bufferSpan.Start + (ulong)((2 - cellPosition / 2 - 1) & 1), 1);
+			var newPos = bufferSpan.Start.Position + (ulong)((2 - cellPosition / 2 - 1) & 1);
+			if (newPos >= HexPosition.MaxEndPosition)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(new HexBufferPoint(bufferSpan.Buffer, newPos), 1);
 		}
 
 		public override bool CanEdit => true;
@@ -570,7 +579,10 @@ namespace dnSpy.Hex {
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
 			if ((uint)cellPosition >= 8)
 				return base.GetBufferSpan(bufferSpan, cellPosition);
-			return new HexBufferSpan(bufferSpan.Start + (ulong)((4 - cellPosition / 2 - 1) & 3), 1);
+			var newPos = bufferSpan.Start.Position + (ulong)((4 - cellPosition / 2 - 1) & 3);
+			if (newPos >= HexPosition.MaxEndPosition)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(new HexBufferPoint(bufferSpan.Buffer, newPos), 1);
 		}
 
 		public override bool CanEdit => true;
@@ -588,7 +600,10 @@ namespace dnSpy.Hex {
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
 			if ((uint)cellPosition >= 16)
 				return base.GetBufferSpan(bufferSpan, cellPosition);
-			return new HexBufferSpan(bufferSpan.Start + (ulong)((8 - cellPosition / 2 - 1) & 7), 1);
+			var newPos = bufferSpan.Start.Position + (ulong)((8 - cellPosition / 2 - 1) & 7);
+			if (newPos >= HexPosition.MaxEndPosition)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(new HexBufferPoint(bufferSpan.Buffer, newPos), 1);
 		}
 
 		public override bool CanEdit => true;
@@ -774,7 +789,10 @@ namespace dnSpy.Hex {
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
 			if ((uint)cellPosition >= 4)
 				return base.GetBufferSpan(bufferSpan, cellPosition);
-			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
+			var newPos = bufferSpan.Start.Position + (ulong)(cellPosition / 2);
+			if (newPos >= HexPosition.MaxEndPosition)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(new HexBufferPoint(bufferSpan.Buffer, newPos), 1);
 		}
 
 		public override bool CanEdit => true;
@@ -792,7 +810,10 @@ namespace dnSpy.Hex {
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
 			if ((uint)cellPosition >= 8)
 				return base.GetBufferSpan(bufferSpan, cellPosition);
-			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
+			var newPos = bufferSpan.Start.Position + (ulong)(cellPosition / 2);
+			if (newPos >= HexPosition.MaxEndPosition)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(new HexBufferPoint(bufferSpan.Buffer, newPos), 1);
 		}
 
 		public override bool CanEdit => true;
@@ -810,7 +831,10 @@ namespace dnSpy.Hex {
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
 			if ((uint)cellPosition >= 16)
 				return base.GetBufferSpan(bufferSpan, cellPosition);
-			return new HexBufferSpan(bufferSpan.Start + (ulong)(cellPosition / 2), 1);
+			var newPos = bufferSpan.Start.Position + (ulong)(cellPosition / 2);
+			if (newPos >= HexPosition.MaxEndPosition)
+				return base.GetBufferSpan(bufferSpan, cellPosition);
+			return new HexBufferSpan(new HexBufferPoint(bufferSpan.Buffer, newPos), 1);
 		}
 
 		public override bool CanEdit => true;

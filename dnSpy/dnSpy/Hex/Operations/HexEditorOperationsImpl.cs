@@ -507,10 +507,10 @@ namespace dnSpy.Hex.Operations {
 				ed.Apply();
 			}
 
-			var newPos = cellPosition.BufferPosition + bytes.LongLength;
-			if (newPos > BufferLines.BufferEnd)
-				newPos = BufferLines.BufferEnd;
-			Caret.MoveTo(newPos);
+			var newPos = cellPosition.BufferPosition.Position + bytes.LongLength;
+			if (newPos > BufferLines.BufferEnd.Position)
+				newPos = BufferLines.BufferEnd.Position;
+			Caret.MoveTo(new HexBufferPoint(cellPosition.BufferPosition.Buffer, newPos));
 			Caret.EnsureVisible();
 			Selection.Clear();
 			return true;
@@ -803,10 +803,10 @@ namespace dnSpy.Hex.Operations {
 				ed.Apply();
 			}
 
-			var newPos = pos + data.LongLength;
-			if (newPos > BufferLines.BufferEnd)
-				newPos = BufferLines.BufferEnd;
-			Caret.MoveTo(newPos);
+			var newPos = pos.Position + data.LongLength;
+			if (newPos > BufferLines.BufferEnd.Position)
+				newPos = BufferLines.BufferEnd.Position;
+			Caret.MoveTo(new HexBufferPoint(pos.Buffer, newPos));
 			Caret.EnsureVisible();
 			Selection.Clear();
 			return true;
@@ -1000,10 +1000,10 @@ namespace dnSpy.Hex.Operations {
 			}
 
 			if (Selection.IsEmpty) {
-				var newPos = pos + newData.LongLength;
-				if (newPos > BufferLines.BufferEnd)
-					newPos = BufferLines.BufferEnd;
-				Caret.MoveTo(newPos);
+				var newPos = pos.Position + newData.LongLength;
+				if (newPos > BufferLines.BufferEnd.Position)
+					newPos = BufferLines.BufferEnd.Position;
+				Caret.MoveTo(new HexBufferPoint(pos.Buffer, newPos));
 			}
 			Caret.EnsureVisible();
 			Selection.Clear();
