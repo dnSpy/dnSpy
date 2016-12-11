@@ -681,7 +681,7 @@ namespace dnSpy.Hex {
 				throw new ArgumentNullException(nameof(cell));
 			if (cellPosition < 0 || cellPosition >= cell.CellSpan.Length)
 				throw new ArgumentOutOfRangeException(nameof(cellPosition));
-			return valueFormatter.GetBufferSpan(cell.BufferSpan, cell.CellSpan.Start + cellPosition);
+			return valueFormatter.GetBufferSpan(cell.BufferSpan, cellPosition);
 		}
 
 		public override bool CanEditValueCell => valueFormatter.CanEdit;

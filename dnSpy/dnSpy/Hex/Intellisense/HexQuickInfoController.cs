@@ -45,7 +45,7 @@ namespace dnSpy.Hex.Intellisense {
 			else if (posInfo.IsValueCell && posInfo.Cell.HasData)
 				triggerPoint = new HexCellPosition(HexColumnType.Values, hexView.BufferLines.GetValueBufferSpan(posInfo.Cell, posInfo.CellPosition).Start, posInfo.CellPosition);
 			else if (posInfo.IsValueCellSeparator && posInfo.Cell.HasData)
-				triggerPoint = new HexCellPosition(HexColumnType.Values, hexView.BufferLines.GetValueBufferSpan(posInfo.Cell, posInfo.Cell.TextSpan.Length - 1).Start, posInfo.Cell.TextSpan.Length - 1);
+				triggerPoint = new HexCellPosition(HexColumnType.Values, hexView.BufferLines.GetValueBufferSpan(posInfo.Cell, posInfo.Cell.CellSpan.Length - 1).Start, posInfo.Cell.CellSpan.Length - 1);
 			else
 				return;
 
