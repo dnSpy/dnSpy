@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -59,18 +60,30 @@ namespace dnSpy.Hex.Operations {
 			}
 		}
 
-		protected abstract class SearchStateBase {
-			const int BUFFER_LENGTH = 0x1000;
+		protected abstract class SearchStateBase : IDisposable {
 			public readonly HexBuffer Buffer;
-			protected readonly byte[] Data;
+			protected byte[] Data;
 			public /*readonly*/ CancellationToken CancellationToken;
 			protected int dataIndex;
 			protected int dataLength;
 			protected HexPosition dataPosition;
 
+			static class Cache {
+				const int BUFFER_LENGTH = 0x1000;
+				static WeakReference weakBuffer;
+				public static byte[] GetBuffer() => Interlocked.Exchange(ref weakBuffer, null)?.Target as byte[] ?? new byte[BUFFER_LENGTH];
+				public static void ReturnBuffer(ref byte[] buffer) {
+					var tmp = buffer;
+					if (tmp != null) {
+						buffer = null;
+						weakBuffer = new WeakReference(tmp);
+					}
+				}
+			}
+
 			protected SearchStateBase(HexBuffer buffer, CancellationToken cancellationToken) {
 				Buffer = buffer;
-				Data = new byte[BUFFER_LENGTH];
+				Data = Cache.GetBuffer();
 				CancellationToken = cancellationToken;
 			}
 
@@ -126,6 +139,8 @@ namespace dnSpy.Hex.Operations {
 				dataIndex = 0;
 				Buffer.ReadBytes(dataPosition, Data, 0, dataLength);
 			}
+
+			public void Dispose() => Cache.ReturnBuffer(ref Data);
 		}
 	}
 }

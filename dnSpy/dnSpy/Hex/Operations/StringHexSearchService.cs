@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -70,9 +71,51 @@ namespace dnSpy.Hex.Operations {
 				throw new ArgumentException();
 			if (searchRange.IsEmpty)
 				return Array.Empty<HexBufferSpan>();
-			if ((options & HexFindOptions.SearchReverse) != 0)
-				return FindAllCoreReverse(searchRange, startingPosition, options, cancellationToken);
-			return FindAllCore(searchRange, startingPosition, options, cancellationToken);
+			return new FindAllCoreEnumerable(this, searchRange, startingPosition, options, cancellationToken);
+		}
+
+		// Needed so we can return the byte[] buffer to the cache
+		sealed class FindAllCoreEnumerable : IEnumerable<HexBufferSpan> {
+			readonly StringHexSearchService owner;
+			/*readonly*/ HexBufferSpan searchRange;
+			/*readonly*/ HexBufferPoint startingPosition;
+			readonly HexFindOptions options;
+			/*readonly*/ CancellationToken cancellationToken;
+
+			public FindAllCoreEnumerable(StringHexSearchService owner, HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
+				this.owner = owner;
+				this.searchRange = searchRange;
+				this.startingPosition = startingPosition;
+				this.options = options;
+				this.cancellationToken = cancellationToken;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			public IEnumerator<HexBufferSpan> GetEnumerator() => new Enumerator(this);
+
+			sealed class Enumerator : IEnumerator<HexBufferSpan> {
+				readonly IEnumerator<HexBufferSpan> realEnumerator;
+				SearchState state;
+
+				public Enumerator(FindAllCoreEnumerable ownerEnumerable) {
+					state = new SearchState(ownerEnumerable.searchRange.Buffer, ownerEnumerable.cancellationToken);
+					if ((ownerEnumerable.options & HexFindOptions.SearchReverse) != 0)
+						realEnumerator = ownerEnumerable.owner.FindAllCoreReverse(state, ownerEnumerable.searchRange, ownerEnumerable.startingPosition, ownerEnumerable.options, ownerEnumerable.cancellationToken).GetEnumerator();
+					else
+						realEnumerator = ownerEnumerable.owner.FindAllCore(state, ownerEnumerable.searchRange, ownerEnumerable.startingPosition, ownerEnumerable.options, ownerEnumerable.cancellationToken).GetEnumerator();
+				}
+
+				object IEnumerator.Current => Current;
+				public HexBufferSpan Current => realEnumerator.Current;
+				public bool MoveNext() => realEnumerator.MoveNext();
+				public void Dispose() {
+					state?.Dispose();
+					state = null;
+					realEnumerator.Dispose();
+				}
+
+				public void Reset() { throw new NotSupportedException(); }
+			}
 		}
 
 		sealed class SearchState : SearchStateBase {
@@ -201,8 +244,7 @@ namespace dnSpy.Hex.Operations {
 			}
 		}
 
-		IEnumerable<HexBufferSpan> FindAllCore(HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
-			var state = new SearchState(searchRange.Buffer, cancellationToken);
+		IEnumerable<HexBufferSpan> FindAllCore(SearchState state, HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
 			foreach (var span in GetValidSpans(startingPosition.Buffer, startingPosition, searchRange.End)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var span2 in FindAllCore(state, span))
@@ -288,8 +330,7 @@ loop:
 			return pos;
 		}
 
-		IEnumerable<HexBufferSpan> FindAllCoreReverse(HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
-			var state = new SearchState(searchRange.Buffer, cancellationToken);
+		IEnumerable<HexBufferSpan> FindAllCoreReverse(SearchState state, HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
 			foreach (var span in GetValidSpansReverse(startingPosition.Buffer, startingPosition, searchRange.Start)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var span2 in FindAllCoreReverse(state, span))
