@@ -32,7 +32,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Editor.Operations;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Operations;

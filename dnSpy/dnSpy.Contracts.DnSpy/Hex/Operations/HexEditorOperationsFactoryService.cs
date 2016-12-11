@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Editor.Operations {
+using dnSpy.Contracts.Hex.Editor;
+
+namespace dnSpy.Contracts.Hex.Operations {
 	/// <summary>
 	/// Creates <see cref="HexEditorOperations"/> instances
 	/// </summary>

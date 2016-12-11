@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Editor.Operations;
+using dnSpy.Contracts.Hex.Operations;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSTF = Microsoft.VisualStudio.Text.Formatting;
 using VSUTIL = Microsoft.VisualStudio.Utilities;

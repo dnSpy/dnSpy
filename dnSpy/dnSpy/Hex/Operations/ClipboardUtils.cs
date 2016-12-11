@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.Hex.Editor.Operations {
+namespace dnSpy.Hex.Operations {
 	static class ClipboardUtils {
 		public static byte[] GetData(bool canBeEmpty) {
 			string s;

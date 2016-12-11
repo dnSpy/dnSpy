@@ -24,8 +24,8 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Editor.Operations;
 using dnSpy.Contracts.Hex.Formatting;
+using dnSpy.Contracts.Hex.Operations;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSTF = Microsoft.VisualStudio.Text.Formatting;
 

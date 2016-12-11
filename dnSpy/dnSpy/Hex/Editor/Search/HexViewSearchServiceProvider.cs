@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Editor.Operations;
+using dnSpy.Contracts.Hex.Operations;
 
 namespace dnSpy.Hex.Editor.Search {
 	abstract class HexViewSearchServiceProvider {

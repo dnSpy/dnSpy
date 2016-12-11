@@ -26,14 +26,15 @@ using System.Threading;
 using System.Windows;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Editor.Operations;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Formatting;
+using dnSpy.Contracts.Hex.Operations;
 using dnSpy.Controls;
+using dnSpy.Hex.Editor;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
-namespace dnSpy.Hex.Editor.Operations {
+namespace dnSpy.Hex.Operations {
 	sealed class HexEditorOperationsImpl : HexEditorOperations {
 		const ulong htmlMaxTotalBytesToCopy = 1 * 1024 * 1024;
 		const ulong textMaxTotalBytesToCopy = 10 * 1024 * 1024;

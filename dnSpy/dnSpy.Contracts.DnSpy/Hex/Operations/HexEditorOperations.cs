@@ -17,10 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
-namespace dnSpy.Contracts.Hex.Editor.Operations {
+namespace dnSpy.Contracts.Hex.Operations {
 	/// <summary>
 	/// Hex editor operations
 	/// </summary>

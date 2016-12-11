@@ -25,8 +25,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Editor.Operations;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
+using dnSpy.Contracts.Hex.Operations;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
