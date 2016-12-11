@@ -1012,18 +1012,18 @@ namespace dnSpy.Hex.Operations {
 
 		public override void MoveToStartOfNextValidSpan() {
 			var startPos = ActiveCaretBufferPosition;
-			var span = Buffer.GetNextValidSpan(startPos, BufferLines.EndPosition);
+			var span = Buffer.GetNextValidSpan(startPos, BufferLines.EndPosition, fullSpan: false);
 			if (span != null && span.Value.Contains(startPos) && span.Value.End < BufferLines.EndPosition)
-				span = Buffer.GetNextValidSpan(span.Value.End, BufferLines.EndPosition);
+				span = Buffer.GetNextValidSpan(span.Value.End, BufferLines.EndPosition, fullSpan: false);
 			if (span != null && !span.Value.Contains(startPos))
 				MoveToValidSpan(span);
 		}
 
 		public override void MoveToStartOfPreviousValidSpan() {
 			var startPos = ActiveCaretBufferPosition;
-			var span = Buffer.GetPreviousValidSpan(startPos, BufferLines.StartPosition);
+			var span = Buffer.GetPreviousValidSpan(startPos, BufferLines.StartPosition, fullSpan: false);
 			if (span != null && span.Value.Contains(startPos) && span.Value.Start > BufferLines.StartPosition)
-				span = Buffer.GetPreviousValidSpan(span.Value.Start - 1, BufferLines.StartPosition);
+				span = Buffer.GetPreviousValidSpan(span.Value.Start - 1, BufferLines.StartPosition, fullSpan: false);
 			if (span != null && !span.Value.Contains(startPos))
 				MoveToValidSpan(span);
 		}

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Contracts.Hex {
@@ -117,8 +118,10 @@ namespace dnSpy.Contracts.Hex {
 		/// This method merges all consecutive valid spans.
 		/// </summary>
 		/// <param name="position">Start position to check</param>
+		/// <param name="fullSpan">true if positions before <paramref name="position"/> should be included
+		/// in the returned result. This could result in worse performance.</param>
 		/// <returns></returns>
-		public HexSpan? GetNextValidSpan(HexPosition position) => GetNextValidSpan(position, HexPosition.MaxEndPosition);
+		public HexSpan? GetNextValidSpan(HexPosition position, bool fullSpan) => GetNextValidSpan(position, HexPosition.MaxEndPosition, fullSpan);
 
 		/// <summary>
 		/// Gets the next valid span or null if there's none left. This includes the input
@@ -127,8 +130,10 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Start position to check</param>
 		/// <param name="upperBounds">End position</param>
+		/// <param name="fullSpan">true if positions before <paramref name="position"/> should be included
+		/// in the returned result. This could result in worse performance.</param>
 		/// <returns></returns>
-		public HexSpan? GetNextValidSpan(HexPosition position, HexPosition upperBounds) {
+		public HexSpan? GetNextValidSpan(HexPosition position, HexPosition upperBounds, bool fullSpan) {
 			if (position >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(position));
 			if (upperBounds > HexPosition.MaxEndPosition)
@@ -148,14 +153,8 @@ namespace dnSpy.Contracts.Hex {
 							break;
 						end = info.Span.End;
 					}
-					if (checkBackwards) {
-						while (start > HexPosition.Zero) {
-							info = GetSpanInfo(start - 1);
-							if (!info.HasData)
-								break;
-							start = info.Span.Start;
-						}
-					}
+					if (fullSpan && checkBackwards)
+						start = GetStartOfData(start, validData: true);
 					return HexSpan.FromBounds(start, end);
 				}
 				checkBackwards = false;
@@ -170,8 +169,10 @@ namespace dnSpy.Contracts.Hex {
 		/// This method merges all consecutive valid spans.
 		/// </summary>
 		/// <param name="position">Start position to check</param>
+		/// <param name="fullSpan">true if positions after <paramref name="position"/> should be included
+		/// in the returned result. This could result in worse performance.</param>
 		/// <returns></returns>
-		public HexSpan? GetPreviousValidSpan(HexPosition position) => GetPreviousValidSpan(position, HexPosition.Zero);
+		public HexSpan? GetPreviousValidSpan(HexPosition position, bool fullSpan) => GetPreviousValidSpan(position, HexPosition.Zero, fullSpan);
 
 		/// <summary>
 		/// Gets the previous valid span or null if there's none left. This includes the input
@@ -180,8 +181,10 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="position">Start position to check</param>
 		/// <param name="lowerBounds">End position</param>
+		/// <param name="fullSpan">true if positions after <paramref name="position"/> should be included
+		/// in the returned result. This could result in worse performance.</param>
 		/// <returns></returns>
-		public HexSpan? GetPreviousValidSpan(HexPosition position, HexPosition lowerBounds) {
+		public HexSpan? GetPreviousValidSpan(HexPosition position, HexPosition lowerBounds, bool fullSpan) {
 			if (position >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(position));
 			if (lowerBounds > HexPosition.MaxEndPosition)
@@ -190,18 +193,9 @@ namespace dnSpy.Contracts.Hex {
 			while (position >= lowerBounds) {
 				var info = GetSpanInfo(position);
 				if (info.HasData) {
-					var start = info.Span.Start;
+					var start = GetStartOfData(info.Span.Start, validData: true);
 					var end = info.Span.End;
-					// We use HexPosition.Zero and not lowerBounds here since we must merge
-					// all consecutive spans even if some of them happen to be outside the
-					// requested range.
-					while (start > HexPosition.Zero) {
-						info = GetSpanInfo(start - 1);
-						if (!info.HasData)
-							break;
-						start = info.Span.Start;
-					}
-					if (checkForwards) {
+					if (fullSpan && checkForwards) {
 						while (end < HexPosition.MaxEndPosition) {
 							info = GetSpanInfo(end);
 							if (!info.HasData)
@@ -211,12 +205,66 @@ namespace dnSpy.Contracts.Hex {
 					}
 					return HexSpan.FromBounds(start, end);
 				}
-				if (info.Span.Start == HexPosition.Zero)
-					break;
 				checkForwards = false;
-				position = info.Span.Start - 1;
+				position = GetStartOfData(info.Span.Start, validData: false);
+				if (position == HexPosition.Zero)
+					break;
+				position = position - 1;
 			}
 			return null;
+		}
+
+		HexPosition GetStartOfData(HexPosition start, bool validData) {
+			var pos = GetStartOfDataCore(start, validData);
+			Debug.Assert(pos == HexPosition.Zero || GetSpanInfo(pos - 1).HasData != validData);
+			return pos;
+		}
+
+		// If the underlying stream is a memory stream, VirtualQueryEx() gets called but it only
+		// scans forward and a simple loop results in extremely poor PERF, and the code appears
+		// to have hung if the input position is in a big block with lots of data or lots of no data.
+		HexPosition GetStartOfDataCore(HexPosition start, bool validData) {
+			var bestGuess = start;
+			var pos = start;
+			ulong d = 0x10000;
+			while (pos > HexPosition.Zero) {
+				var testPos = pos >= d ? pos - d : HexPosition.Zero;
+				var info = GetSpanInfo(testPos);
+				if (d < ulong.MaxValue)
+					d <<= 1;
+				if (info.HasData == validData && info.Span.End >= bestGuess) {
+					bestGuess = info.Span.Start;
+					pos = info.Span.Start;
+					continue;
+				}
+				if (info.HasData != validData && info.Span.End == bestGuess)
+					return bestGuess;
+				pos = info.Span.End;
+				var lastCorrectDataPos = info.HasData == validData ? info.Span.Start : (HexPosition?)null;
+				bool foundOppositeData = info.HasData != validData;
+				for (;;) {
+					if (pos >= bestGuess)
+						return lastCorrectDataPos ?? bestGuess;
+					info = GetSpanInfo(pos);
+					if (info.HasData == validData) {
+						if (lastCorrectDataPos == null)
+							lastCorrectDataPos = info.Span.Start;
+					}
+					else {
+						lastCorrectDataPos = null;
+						foundOppositeData = true;
+					}
+					if (info.Span.End >= bestGuess) {
+						pos = lastCorrectDataPos ?? bestGuess;
+						if (foundOppositeData)
+							return pos;
+						bestGuess = pos;
+						break;
+					}
+					pos = info.Span.End;
+				}
+			}
+			return bestGuess;
 		}
 
 		/// <summary>
@@ -224,22 +272,25 @@ namespace dnSpy.Contracts.Hex {
 		/// This method merges all consecutive valid spans.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<HexSpan> GetValidSpans() => GetValidSpans(HexSpan.FullSpan);
+		public IEnumerable<HexSpan> GetValidSpans() => GetValidSpans(HexSpan.FullSpan, fullSpan: false);
 
 		/// <summary>
 		/// Gets all valid spans overlapping <paramref name="span"/>. This method merges all
 		/// consecutive valid spans.
 		/// </summary>
 		/// <param name="span">Span</param>
+		/// <param name="fullSpan">true if positions before <paramref name="span"/> should be included
+		/// in the returned result. This could result in worse performance.</param>
 		/// <returns></returns>
-		public IEnumerable<HexSpan> GetValidSpans(HexSpan span) {
+		public IEnumerable<HexSpan> GetValidSpans(HexSpan span, bool fullSpan) {
 			var pos = span.Start;
 			for (;;) {
-				var info = GetNextValidSpan(pos, span.End);
+				var info = GetNextValidSpan(pos, span.End, fullSpan);
 				if (info == null)
 					break;
 				yield return info.Value;
 				pos = info.Value.End;
+				fullSpan = false;
 			}
 		}
 

@@ -28,8 +28,9 @@ namespace dnSpy.Hex.Operations {
 	abstract class HexSearchServiceImpl : HexSearchService {
 		protected IEnumerable<HexSpan> GetValidSpans(HexBuffer buffer, HexPosition start, HexPosition upperBounds) {
 			var pos = start;
+			bool fullSpan = true;
 			while (pos < HexPosition.MaxEndPosition) {
-				var span = buffer.GetNextValidSpan(pos, upperBounds);
+				var span = buffer.GetNextValidSpan(pos, upperBounds, fullSpan);
 				if (span == null)
 					break;
 
@@ -39,13 +40,15 @@ namespace dnSpy.Hex.Operations {
 					yield return HexSpan.FromBounds(newStart, newEnd);
 
 				pos = span.Value.End;
+				fullSpan = false;
 			}
 		}
 
 		protected IEnumerable<HexSpan> GetValidSpansReverse(HexBuffer buffer, HexPosition start, HexPosition lowerBounds) {
 			var pos = start;
+			bool fullSpan = true;
 			for (;;) {
-				var span = buffer.GetPreviousValidSpan(pos, lowerBounds);
+				var span = buffer.GetPreviousValidSpan(pos, lowerBounds, fullSpan);
 				if (span == null)
 					break;
 
@@ -57,6 +60,7 @@ namespace dnSpy.Hex.Operations {
 				if (span.Value.Start == 0)
 					break;
 				pos = span.Value.Start - 1;
+				fullSpan = false;
 			}
 		}
 
