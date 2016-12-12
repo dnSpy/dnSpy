@@ -79,8 +79,10 @@ namespace dnSpy.Hex.Editor.Search {
 
 		public static byte[] TryParseByteArray(string text) {
 			int byteLength = GetByteLength(text);
-			if (byteLength <= 0)
+			if (byteLength < 0)
 				return null;
+			if (byteLength == 0)
+				return Array.Empty<byte>();
 
 			var bytes = new byte[byteLength];
 			int bytesIndex = 0;
