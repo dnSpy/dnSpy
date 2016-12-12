@@ -52,7 +52,8 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateCachedState() {
 			var lineCount = HexView.BufferLines.LineCount;
-			end = Start + (lineCount == HexPosition.MaxEndPosition ? ulong.MaxValue : lineCount.ToUInt64());
+			Debug.Assert(lineCount != HexPosition.Zero);
+			end = Start + (lineCount == HexPosition.MaxEndPosition ? ulong.MaxValue : (lineCount - 1).ToUInt64());
 			thumbSize = HexView.ViewportHeight / HexView.LineHeight;
 			MappingChanged?.Invoke(this, EventArgs.Empty);
 		}
