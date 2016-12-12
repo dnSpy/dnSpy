@@ -1514,4 +1514,19 @@
   <data name="TextEditor" xml:space="preserve">
     <value>文本编辑器</value>
   </data>
+  <data name="Search_BigEndian" xml:space="preserve">
+    <value>Big endian (Alt+B)</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="ShortCutKeyAltH" xml:space="preserve">
+    <value>Alt+H</value>
+  </data>
+  <data name="ShortCutKeyAltU" xml:space="preserve">
+    <value>Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
 </root>

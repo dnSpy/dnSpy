@@ -1511,4 +1511,19 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   <data name="TextEditor" xml:space="preserve">
     <value>Editor de texto</value>
   </data>
+  <data name="Search_BigEndian" xml:space="preserve">
+    <value>Endian grande (Alt + B)</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt + 8</value>
+  </data>
+  <data name="ShortCutKeyAltH" xml:space="preserve">
+    <value>Alt + H</value>
+  </data>
+  <data name="ShortCutKeyAltU" xml:space="preserve">
+    <value>Alt + U</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>CTRL + F</value>
+  </data>
 </root>

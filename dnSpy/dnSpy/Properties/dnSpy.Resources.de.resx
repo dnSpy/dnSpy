@@ -1267,16 +1267,16 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Gruppengröße</value>
   </data>
   <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
-    <value>Aktuelle Zeile markieren</value>
+    <value>Aktuellen Wert markieren</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
     <value>Offset</value>
   </data>
   <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
-    <value>Lower case hex (offset)</value>
+    <value>Kleinbuchstaben Hex (Versatz)</value>
   </data>
   <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
-    <value>Lower case hex (values)</value>
+    <value>Kleinbuchstaben Hex (Werte)</value>
   </data>
   <data name="BlockStructureLineKind_None" xml:space="preserve">
     <value>Kein</value>
@@ -1514,5 +1514,20 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   </data>
   <data name="TextEditor" xml:space="preserve">
     <value>Text Editor</value>
+  </data>
+  <data name="Search_BigEndian" xml:space="preserve">
+    <value>Big endian (Alt+B)</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="ShortCutKeyAltH" xml:space="preserve">
+    <value>Alt+H</value>
+  </data>
+  <data name="ShortCutKeyAltU" xml:space="preserve">
+    <value>Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Strg+F</value>
   </data>
 </root>
