@@ -222,16 +222,19 @@ namespace dnSpy.MainApp.Settings {
 	sealed class UseNewRendererVM : ViewModelBase {
 		public bool? UseNewRenderer {
 			get {
-				const int MAX = 2;
-				int count = (UseNewRenderer_HexEditor ? 1 : 0) +
+				const int MAX = 1;
+				int count = /*(UseNewRenderer_TextEditor ? 1 : 0) +
+							(UseNewRenderer_HexEditor ? 1 : 0) +*/
 							(UseNewRenderer_DocumentTreeView ? 1 : 0);
 				return count == 0 ? false : count == MAX ? (bool?)true : null;
 			}
 			set {
 				if (value == null)
 					return;
+				/*TODO: The text formatter doesn't support the hex view and text view
 				UseNewRenderer_TextEditor = value.Value;
 				UseNewRenderer_HexEditor = value.Value;
+				*/
 				UseNewRenderer_DocumentTreeView = value.Value;
 			}
 		}
