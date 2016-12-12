@@ -865,7 +865,7 @@ namespace dnSpy.Hex.Operations {
 		public override void ScrollUpAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(VSTE.ScrollDirection.Up);
 		public override void ScrollDownAndMoveCaretIfNecessary() => ScrollAndMoveCaretIfNecessary(VSTE.ScrollDirection.Down);
 		void ScrollAndMoveCaretIfNecessary(VSTE.ScrollDirection scrollDirection) {
-			var origCaretContainingTextViewLinePosition = Caret.ContainingHexViewLine.BufferStart;
+			var origCaretContainingHexViewLinePosition = Caret.ContainingHexViewLine.BufferStart;
 			bool firstDocLineWasVisible = HexView.HexViewLines.FirstVisibleLine.IsFirstDocumentLine();
 			ViewScroller.ScrollViewportVerticallyByLine(scrollDirection);
 
@@ -880,7 +880,7 @@ namespace dnSpy.Hex.Operations {
 			else if (line.VisibilityState != VSTF.VisibilityState.FullyVisible) {
 				if (scrollDirection == VSTE.ScrollDirection.Up) {
 					var newLine = lastVisLine;
-					if (newLine.BufferStart == origCaretContainingTextViewLinePosition) {
+					if (newLine.BufferStart == origCaretContainingHexViewLinePosition) {
 						if (newLine.BufferStart > BufferLines.BufferStart)
 							newLine = HexView.HexViewLines.GetHexViewLineContainingBufferPosition(newLine.BufferStart - 1) ?? newLine;
 					}
@@ -888,7 +888,7 @@ namespace dnSpy.Hex.Operations {
 				}
 				else {
 					var newLine = firstVisLine;
-					if (newLine.BufferStart == origCaretContainingTextViewLinePosition && !newLine.IsLastDocumentLine())
+					if (newLine.BufferStart == origCaretContainingHexViewLinePosition && !newLine.IsLastDocumentLine())
 						newLine = HexView.HexViewLines.GetHexViewLineContainingBufferPosition(newLine.BufferEnd) ?? newLine;
 					Caret.MoveTo(newLine);
 				}

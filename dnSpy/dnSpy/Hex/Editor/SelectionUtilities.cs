@@ -23,15 +23,15 @@ using dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Hex.Editor {
 	static class SelectionUtilities {
-		public static HexBufferSpan GetLineAnchorSpan(HexSelection textSelection) {
-			if (textSelection == null)
-				throw new ArgumentNullException(nameof(textSelection));
-			if (textSelection.IsEmpty)
-				return textSelection.HexView.Caret.ContainingHexViewLine.BufferSpan;
-			var anchorExtent = textSelection.HexView.GetHexViewLineContainingBufferPosition(textSelection.AnchorPoint).BufferSpan;
-			if (textSelection.AnchorPoint >= textSelection.ActivePoint) {
-				if (anchorExtent.Start == textSelection.AnchorPoint && textSelection.AnchorPoint > textSelection.HexView.BufferLines.BufferStart)
-					anchorExtent = textSelection.HexView.GetHexViewLineContainingBufferPosition(textSelection.AnchorPoint - 1).BufferSpan;
+		public static HexBufferSpan GetLineAnchorSpan(HexSelection selection) {
+			if (selection == null)
+				throw new ArgumentNullException(nameof(selection));
+			if (selection.IsEmpty)
+				return selection.HexView.Caret.ContainingHexViewLine.BufferSpan;
+			var anchorExtent = selection.HexView.GetHexViewLineContainingBufferPosition(selection.AnchorPoint).BufferSpan;
+			if (selection.AnchorPoint >= selection.ActivePoint) {
+				if (anchorExtent.Start == selection.AnchorPoint && selection.AnchorPoint > selection.HexView.BufferLines.BufferStart)
+					anchorExtent = selection.HexView.GetHexViewLineContainingBufferPosition(selection.AnchorPoint - 1).BufferSpan;
 			}
 			return anchorExtent;
 		}

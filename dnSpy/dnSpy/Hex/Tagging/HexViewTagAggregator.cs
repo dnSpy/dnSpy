@@ -31,15 +31,15 @@ namespace dnSpy.Hex.Tagging {
 			: base(hexView.Buffer) {
 			this.hexTaggerFactory = hexTaggerFactory;
 			this.hexView = hexView;
-			hexView.Closed += TextView_Closed;
+			hexView.Closed += HexView_Closed;
 			Initialize();
 		}
 
-		void TextView_Closed(object sender, EventArgs e) => Dispose();
+		void HexView_Closed(object sender, EventArgs e) => Dispose();
 
 		public override void Dispose() {
 			base.Dispose();
-			hexView.Closed -= TextView_Closed;
+			hexView.Closed -= HexView_Closed;
 		}
 
 		protected override bool CanRaiseBatchedTagsChanged => !hexView.InLayout;

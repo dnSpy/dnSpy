@@ -59,8 +59,8 @@ namespace dnSpy.Hex.Editor {
 			this.layer = layer;
 			this.editorFormatMap = editorFormatMap;
 			hexSelection.HexView.Options.OptionChanged += Options_OptionChanged;
-			hexSelection.SelectionChanged += TextSelection_SelectionChanged;
-			hexSelection.HexView.LayoutChanged += TextView_LayoutChanged;
+			hexSelection.SelectionChanged += HexSelection_SelectionChanged;
+			hexSelection.HexView.LayoutChanged += HexView_LayoutChanged;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 			UpdateUseReducedOpacityForHighContrastOption();
 			UpdateBackgroundBrush();
@@ -99,7 +99,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void TextView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
 			if (e.NewOrReformattedLines.Count > 0 || e.TranslatedLines.Count > 0 || e.VerticalTranslation)
 				SetNewSelection();
 		}
@@ -140,7 +140,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public void OnModeUpdated() => SetNewSelection();
-		void TextSelection_SelectionChanged(object sender, EventArgs e) => SetNewSelection();
+		void HexSelection_SelectionChanged(object sender, EventArgs e) => SetNewSelection();
 
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
@@ -189,8 +189,8 @@ namespace dnSpy.Hex.Editor {
 		internal void Dispose() {
 			RemoveAllAdornments();
 			hexSelection.HexView.Options.OptionChanged -= Options_OptionChanged;
-			hexSelection.SelectionChanged -= TextSelection_SelectionChanged;
-			hexSelection.HexView.LayoutChanged -= TextView_LayoutChanged;
+			hexSelection.SelectionChanged -= HexSelection_SelectionChanged;
+			hexSelection.HexView.LayoutChanged -= HexView_LayoutChanged;
 			editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 		}
 	}

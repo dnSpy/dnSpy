@@ -489,12 +489,12 @@
     <Compile Include="Hex\Settings\GeneralAppSettingsPageBase.cs" />
     <Compile Include="Hex\Settings\ScrollBarsAppSettingsPageBase.cs" />
     <Compile Include="Hex\Tagging\DefaultTagger.cs" />
+    <Compile Include="Hex\Tagging\HexBufferTagAggregator.cs" />
     <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryServiceImpl.cs" />
     <Compile Include="Hex\Tagging\HexTaggerFactory.cs" />
     <Compile Include="Hex\Tagging\HexViewTagAggregator.cs" />
     <Compile Include="Hex\Tagging\HexViewTagAggregatorFactoryServiceImpl.cs" />
     <Compile Include="Hex\Tagging\TagAggregator.cs" />
-    <Compile Include="Hex\Tagging\TextBufferTagAggregator.cs" />
     <Compile Include="Images\DefaultImageSourceInfoProvider.cs" />
     <Compile Include="Images\DotNetImageService.cs" />
     <Compile Include="Images\DsImageBitmapScalingModeConverter.cs" />

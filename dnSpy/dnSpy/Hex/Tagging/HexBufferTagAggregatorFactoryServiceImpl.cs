@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Tagging {
 		public override HexTagAggregator<T> CreateTagAggregator<T>(HexBuffer buffer) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
-			return new TextBufferTagAggregator<T>(hexTaggerFactory, buffer).HexTagAggregator;
+			return new HexBufferTagAggregator<T>(hexTaggerFactory, buffer).HexTagAggregator;
 		}
 	}
 }

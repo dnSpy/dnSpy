@@ -22,10 +22,10 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Tagging;
 
 namespace dnSpy.Hex.Tagging {
-	sealed class TextBufferTagAggregator<T> : TagAggregator<T> where T : HexTag {
+	sealed class HexBufferTagAggregator<T> : TagAggregator<T> where T : HexTag {
 		readonly HexTaggerFactory hexTaggerFactory;
 
-		public TextBufferTagAggregator(HexTaggerFactory hexTaggerFactory, HexBuffer buffer)
+		public HexBufferTagAggregator(HexTaggerFactory hexTaggerFactory, HexBuffer buffer)
 			: base(buffer) {
 			this.hexTaggerFactory = hexTaggerFactory;
 			Initialize();

@@ -74,10 +74,10 @@ namespace dnSpy.Hex.Intellisense {
 			TrackMouse = trackMouse;
 			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
 			this.quickInfoSourceProviders = quickInfoSourceProviders;
-			HexView.Closed += TextView_Closed;
+			HexView.Closed += HexView_Closed;
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void HexView_Closed(object sender, EventArgs e) {
 			if (!IsDismissed)
 				Dismiss();
 		}
@@ -161,7 +161,7 @@ namespace dnSpy.Hex.Intellisense {
 			if (IsDismissed)
 				return;
 			isDismissed = true;
-			HexView.Closed -= TextView_Closed;
+			HexView.Closed -= HexView_Closed;
 			Dismissed?.Invoke(this, EventArgs.Empty);
 			DisposeQuickInfoSources();
 		}

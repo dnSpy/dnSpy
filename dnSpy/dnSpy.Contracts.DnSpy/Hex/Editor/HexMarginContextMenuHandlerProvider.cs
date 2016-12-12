@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Creates <see cref="IHexMarginContextMenuHandler"/>s or returns null
 		/// </summary>
-		/// <param name="wpfHexViewHost">Text view host</param>
+		/// <param name="wpfHexViewHost">Hex view host</param>
 		/// <param name="margin">Margin</param>
 		/// <returns></returns>
 		public abstract IHexMarginContextMenuHandler Create(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin margin);

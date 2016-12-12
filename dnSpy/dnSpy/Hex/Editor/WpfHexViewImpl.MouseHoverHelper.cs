@@ -62,15 +62,15 @@ namespace dnSpy.Hex.Editor {
 				handlers = new List<MouseHoverHandler>();
 				timer = new DispatcherTimer(DispatcherPriority.Normal, owner.VisualElement.Dispatcher);
 				timer.Tick += Timer_Tick;
-				owner.VisualElement.MouseDown += WpfTextView_MouseDown;
-				owner.VisualElement.MouseLeftButtonDown += WpfTextView_MouseLeftButtonDown;
-				owner.VisualElement.MouseRightButtonDown += WpfTextView_MouseRightButtonDown;
-				owner.VisualElement.MouseLeave += WpfTextView_MouseLeave;
-				owner.VisualElement.MouseMove += WpfTextView_MouseMove;
-				owner.VisualElement.IsVisibleChanged += WpfTextView_IsVisibleChanged;
+				owner.VisualElement.MouseDown += WpfHexView_MouseDown;
+				owner.VisualElement.MouseLeftButtonDown += WpfHexView_MouseLeftButtonDown;
+				owner.VisualElement.MouseRightButtonDown += WpfHexView_MouseRightButtonDown;
+				owner.VisualElement.MouseLeave += WpfHexView_MouseLeave;
+				owner.VisualElement.MouseMove += WpfHexView_MouseMove;
+				owner.VisualElement.IsVisibleChanged += WpfHexView_IsVisibleChanged;
 			}
 
-			void WpfTextView_MouseMove(object sender, MouseEventArgs e) {
+			void WpfHexView_MouseMove(object sender, MouseEventArgs e) {
 				if (owner.IsClosed || owner.IsMouseOverOverlayLayerElement(e)) {
 					ClearMouseHoverPositionAndStopTimer();
 					return;
@@ -101,17 +101,17 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 
-			void WpfTextView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			void WpfHexView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 				if (owner.IsClosed || !owner.VisualElement.IsVisible)
 					ClearMouseHoverPositionAndStopTimer();
 				else
 					UpdateTimer();
 			}
 
-			void WpfTextView_MouseDown(object sender, MouseButtonEventArgs e) => StopTimer();
-			void WpfTextView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => StopTimer();
-			void WpfTextView_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => StopTimer();
-			void WpfTextView_MouseLeave(object sender, MouseEventArgs e) => ClearMouseHoverPositionAndStopTimer();
+			void WpfHexView_MouseDown(object sender, MouseButtonEventArgs e) => StopTimer();
+			void WpfHexView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => StopTimer();
+			void WpfHexView_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => StopTimer();
+			void WpfHexView_MouseLeave(object sender, MouseEventArgs e) => ClearMouseHoverPositionAndStopTimer();
 
 			public event EventHandler<HexMouseHoverEventArgs> MouseHover {
 				add {
@@ -220,12 +220,12 @@ namespace dnSpy.Hex.Editor {
 				StopTimer();
 				handlers.Clear();
 				timer.Tick -= Timer_Tick;
-				owner.VisualElement.MouseDown -= WpfTextView_MouseDown;
-				owner.VisualElement.MouseLeftButtonDown -= WpfTextView_MouseLeftButtonDown;
-				owner.VisualElement.MouseRightButtonDown -= WpfTextView_MouseRightButtonDown;
-				owner.VisualElement.MouseLeave -= WpfTextView_MouseLeave;
-				owner.VisualElement.MouseMove -= WpfTextView_MouseMove;
-				owner.VisualElement.IsVisibleChanged -= WpfTextView_IsVisibleChanged;
+				owner.VisualElement.MouseDown -= WpfHexView_MouseDown;
+				owner.VisualElement.MouseLeftButtonDown -= WpfHexView_MouseLeftButtonDown;
+				owner.VisualElement.MouseRightButtonDown -= WpfHexView_MouseRightButtonDown;
+				owner.VisualElement.MouseLeave -= WpfHexView_MouseLeave;
+				owner.VisualElement.MouseMove -= WpfHexView_MouseMove;
+				owner.VisualElement.IsVisibleChanged -= WpfHexView_IsVisibleChanged;
 			}
 
 			sealed class MouseHoverHandler {

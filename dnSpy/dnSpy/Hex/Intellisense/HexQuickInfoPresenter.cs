@@ -85,12 +85,12 @@ namespace dnSpy.Hex.Intellisense {
 			wpfHexView.VisualElement.MouseLeave += VisualElement_MouseLeave;
 			wpfHexView.VisualElement.MouseMove += VisualElement_MouseMove;
 			wpfHexView.Caret.PositionChanged += Caret_PositionChanged;
-			wpfHexView.LayoutChanged += TextView_LayoutChanged;
+			wpfHexView.LayoutChanged += HexView_LayoutChanged;
 			return true;
 		}
 
 		void VisualElement_MouseLeave(object sender, MouseEventArgs e) => session.Dismiss();
-		void TextView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) => session.Dismiss();
+		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) => session.Dismiss();
 		void Caret_PositionChanged(object sender, HexCaretPositionChangedEventArgs e) => session.Dismiss();
 
 		void VisualElement_MouseMove(object sender, MouseEventArgs e) {
@@ -136,7 +136,7 @@ namespace dnSpy.Hex.Intellisense {
 				wpfHexView.VisualElement.MouseLeave -= VisualElement_MouseLeave;
 				wpfHexView.VisualElement.MouseMove -= VisualElement_MouseMove;
 				wpfHexView.Caret.PositionChanged -= Caret_PositionChanged;
-				wpfHexView.LayoutChanged -= TextView_LayoutChanged;
+				wpfHexView.LayoutChanged -= HexView_LayoutChanged;
 			}
 		}
 	}

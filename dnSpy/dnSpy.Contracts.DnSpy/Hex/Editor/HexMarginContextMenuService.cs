@@ -18,11 +18,10 @@
 */
 
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Creates a <see cref="IGuidObjectsProvider"/> that uses <see cref="IMarginContextMenuHandler"/>s
+	/// Creates a <see cref="IGuidObjectsProvider"/> that uses <see cref="IHexMarginContextMenuHandler"/>s
 	/// to create objects.
 	/// </summary>
 	public abstract class HexMarginContextMenuService {
@@ -34,7 +33,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Creates a <see cref="IGuidObjectsProvider"/>
 		/// </summary>
-		/// <param name="wpfHexViewHost">Text view host</param>
+		/// <param name="wpfHexViewHost">Hex view host</param>
 		/// <param name="margin">Margin</param>
 		/// <param name="marginName">Margin name</param>
 		/// <returns></returns>

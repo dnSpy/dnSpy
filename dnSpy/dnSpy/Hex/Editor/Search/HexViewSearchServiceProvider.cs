@@ -43,11 +43,11 @@ namespace dnSpy.Hex.Editor.Search {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 
-		public override HexViewSearchService Get(WpfHexView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(HexViewSearchService),
-				() => new HexViewSearchServiceImpl(wpfTextView, hexSearchServiceFactory, searchSettings, messageBoxService, editorOperationsFactoryService));
+		public override HexViewSearchService Get(WpfHexView wpfHexView) {
+			if (wpfHexView == null)
+				throw new ArgumentNullException(nameof(wpfHexView));
+			return wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(HexViewSearchService),
+				() => new HexViewSearchServiceImpl(wpfHexView, hexSearchServiceFactory, searchSettings, messageBoxService, editorOperationsFactoryService));
 		}
 	}
 }

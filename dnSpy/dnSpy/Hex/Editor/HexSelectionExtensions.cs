@@ -22,9 +22,9 @@ using dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Hex.Editor {
 	static class HexSelectionExtensions {
-		public static string GetText(this HexSelection textSelection) {
-			var bufferLines = textSelection.HexView.BufferLines;
-			var span = textSelection.StreamSelectionSpan;
+		public static string GetText(this HexSelection selection) {
+			var bufferLines = selection.HexView.BufferLines;
+			var span = selection.StreamSelectionSpan;
 
 			var sb = new StringBuilder();
 			var pos = span.Start;

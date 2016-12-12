@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// Creates an HTML fragment that can be copied to the clipboard
 		/// </summary>
 		/// <param name="spans">Spans</param>
-		/// <param name="hexView">Text view</param>
+		/// <param name="hexView">Hex view</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexView hexView, CancellationToken cancellationToken) =>
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// Creates an HTML fragment that can be copied to the clipboard
 		/// </summary>
 		/// <param name="spans">Spans</param>
-		/// <param name="hexView">Text view</param>
+		/// <param name="hexView">Hex view</param>
 		/// <param name="delimiter">Delimiter added between generated html strings</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
