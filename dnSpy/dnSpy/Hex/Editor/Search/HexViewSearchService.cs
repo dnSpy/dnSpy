@@ -407,6 +407,7 @@ namespace dnSpy.Hex.Editor.Search {
 				layer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, searchControl, null);
 				wpfHexView.LayoutChanged += WpfHexView_LayoutChanged;
 				wpfHexView.BufferLinesChanged += WpfHexView_BufferLinesChanged;
+				wpfHexView.Buffer.BufferSpanInvalidated += Buffer_BufferSpanInvalidated;
 			}
 
 			SetSearchKind(searchKind);
@@ -605,6 +606,7 @@ namespace dnSpy.Hex.Editor.Search {
 			layer.RemoveAllAdornments();
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
 			wpfHexView.BufferLinesChanged -= WpfHexView_BufferLinesChanged;
+			wpfHexView.Buffer.BufferSpanInvalidated -= Buffer_BufferSpanInvalidated;
 			hexMarkerSearchService = null;
 			RefreshAllTags();
 			wpfHexView.VisualElement.Focus();
@@ -1087,13 +1089,14 @@ namespace dnSpy.Hex.Editor.Search {
 				RepositionControl(true);
 			else if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
 				RepositionControl(true);
-			if (e.OldVersion != e.NewVersion) {
-				CancelIncrementalSearch();
-				UpdateHexMarkerSearch();
-			}
+			if (e.OldVersion != e.NewVersion)
+				CancelIncrementalSearchAndUpdateMarkers();
 		}
 
-		void WpfHexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) {
+		void WpfHexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) => CancelIncrementalSearchAndUpdateMarkers();
+		void Buffer_BufferSpanInvalidated(object sender, HexBufferSpanInvalidatedEventArgs e) => CancelIncrementalSearchAndUpdateMarkers();
+
+		void CancelIncrementalSearchAndUpdateMarkers() {
 			CancelIncrementalSearch();
 			UpdateHexMarkerSearch();
 		}
@@ -1103,6 +1106,7 @@ namespace dnSpy.Hex.Editor.Search {
 			wpfHexView.Closed -= WpfHexView_Closed;
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
 			wpfHexView.BufferLinesChanged -= WpfHexView_BufferLinesChanged;
+			wpfHexView.Buffer.BufferSpanInvalidated -= Buffer_BufferSpanInvalidated;
 		}
 	}
 }
