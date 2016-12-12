@@ -52,6 +52,7 @@ namespace dnSpy.Hex {
 		HexSimpleBufferStream simpleStream;
 		readonly CachedPage[] cachedPages;
 		int lastHitIndex;
+		readonly object lockObj;
 		readonly ulong pageSize;
 		readonly ulong pageSizeMask;
 		readonly bool disposeStream;
@@ -59,6 +60,7 @@ namespace dnSpy.Hex {
 		public HexCachedBufferStreamImpl(HexSimpleBufferStream simpleStream, bool disposeStream) {
 			if (simpleStream == null)
 				throw new ArgumentNullException(nameof(simpleStream));
+			lockObj = new object();
 			this.simpleStream = simpleStream;
 			this.disposeStream = disposeStream;
 			pageSize = simpleStream.PageSize;
@@ -81,7 +83,7 @@ namespace dnSpy.Hex {
 
 		static bool IsPowerOfTwo(ulong v) => v != 0 && (v & (v - 1)) == 0;
 
-		CachedPage GetCachedPage(HexPosition position) {
+		CachedPage GetCachedPage_NoLock(HexPosition position) {
 			ulong pageOffset = position.ToUInt64() & ~pageSizeMask;
 			for (int i = 0; i < cachedPages.Length; i++) {
 				var cp = cachedPages[(i + lastHitIndex) % cachedPages.Length];
@@ -101,11 +103,11 @@ namespace dnSpy.Hex {
 				foundCp = cachedPages[(lastHitIndex + 1) % cachedPages.Length];
 
 			lastHitIndex = foundCp.Index;
-			Initialize(foundCp, pageOffset);
+			Initialize_NoLock(foundCp, pageOffset);
 			return foundCp;
 		}
 
-		void Initialize(CachedPage cp, ulong pageOffset) {
+		void Initialize_NoLock(CachedPage cp, ulong pageOffset) {
 			Debug.Assert((pageOffset & pageSizeMask) == 0);
 			int sizeRead = (int)simpleStream.Read(pageOffset, cp.Data, 0, cp.Data.Length).ToUInt64();
 			cp.DataSize = sizeRead;
@@ -120,13 +122,15 @@ namespace dnSpy.Hex {
 				return;
 			ulong startPage = span.Start.ToUInt64() & ~pageSizeMask;
 			ulong endPage = (span.End.ToUInt64() - 1) & ~pageSizeMask;
-			for (int i = 0; i < cachedPages.Length; i++) {
-				var cp = cachedPages[i];
-				if (!cp.IsInitialized)
-					continue;
-				if (startPage <= cp.Offset && cp.Offset <= endPage) {
-					cp.IsInitialized = false;
-					//TODO: Perhaps we should just re-read the data. It's usually just one byte
+			lock (lockObj) {
+				for (int i = 0; i < cachedPages.Length; i++) {
+					var cp = cachedPages[i];
+					if (!cp.IsInitialized)
+						continue;
+					if (startPage <= cp.Offset && cp.Offset <= endPage) {
+						cp.IsInitialized = false;
+						//TODO: Perhaps we should just re-read the data. It's usually just one byte
+					}
 				}
 			}
 		}
@@ -137,10 +141,12 @@ namespace dnSpy.Hex {
 		public override int TryReadByte(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index >= cp.DataSize)
-				return -1;
-			return cp.Data[index];
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				if (index >= cp.DataSize)
+					return -1;
+				return cp.Data[index];
+			}
 		}
 
 		byte[] ReadSlow(HexPosition position, int size) {
@@ -156,77 +162,99 @@ namespace dnSpy.Hex {
 		public override byte ReadByte(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index >= cp.DataSize)
-				return 0;
-			return cp.Data[index];
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				if (index >= cp.DataSize)
+					return 0;
+				return cp.Data[index];
+			}
 		}
 
 		public override sbyte ReadSByte(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index >= cp.DataSize)
-				return 0;
-			return (sbyte)cp.Data[index];
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				if (index >= cp.DataSize)
+					return 0;
+				return (sbyte)cp.Data[index];
+			}
 		}
 
 		public override short ReadInt16(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index + 1 < cp.Data.Length)
-				return (short)(cp.Data[0] | (cp.Data[1] << 8));
-			return BitConverter.ToInt16(ReadSlow(position, 2), 0);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 1 < data.Length)
+					return (short)(data[0] | (data[1] << 8));
+				return BitConverter.ToInt16(ReadSlow(position, 2), 0);
+			}
 		}
 
 		public override ushort ReadUInt16(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index + 1 < cp.Data.Length)
-				return (ushort)(cp.Data[0] | (cp.Data[1] << 8));
-			return BitConverter.ToUInt16(ReadSlow(position, 2), 0);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 1 < data.Length)
+					return (ushort)(data[0] | (data[1] << 8));
+				return BitConverter.ToUInt16(ReadSlow(position, 2), 0);
+			}
 		}
 
 		public override int ReadInt32(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index + 3 < cp.Data.Length)
-				return cp.Data[0] | (cp.Data[1] << 8) | (cp.Data[2] << 16) | (cp.Data[3] << 24);
-			return BitConverter.ToInt32(ReadSlow(position, 4), 0);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 3 < data.Length)
+					return data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+				return BitConverter.ToInt32(ReadSlow(position, 4), 0);
+			}
 		}
 
 		public override uint ReadUInt32(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index + 3 < cp.Data.Length)
-				return (uint)(cp.Data[0] | (cp.Data[1] << 8) | (cp.Data[2] << 16) | (cp.Data[3] << 24));
-			return BitConverter.ToUInt32(ReadSlow(position, 4), 0);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 3 < data.Length)
+					return (uint)(data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24));
+				return BitConverter.ToUInt32(ReadSlow(position, 4), 0);
+			}
 		}
 
 		public override long ReadInt64(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index + 7 < cp.Data.Length) {
-				return ((long)cp.Data[0] | ((long)cp.Data[1] << 8) | ((long)cp.Data[2] << 16) | ((long)cp.Data[3] << 24) |
-					((long)cp.Data[4] << 32) | ((long)cp.Data[5] << 40) | ((long)cp.Data[6] << 48) | ((long)cp.Data[7] << 56));
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 7 < data.Length) {
+					return ((long)data[0] | ((long)data[1] << 8) | ((long)data[2] << 16) | ((long)data[3] << 24) |
+						((long)data[4] << 32) | ((long)data[5] << 40) | ((long)data[6] << 48) | ((long)data[7] << 56));
+				}
+				return BitConverter.ToInt64(ReadSlow(position, 8), 0);
 			}
-			return BitConverter.ToInt64(ReadSlow(position, 8), 0);
 		}
 
 		public override ulong ReadUInt64(HexPosition position) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
 			int index = (int)(position.ToUInt64() & pageSizeMask);
-			var cp = GetCachedPage(position);
-			if (index + 7 < cp.Data.Length) {
-				return ((ulong)cp.Data[0] | ((ulong)cp.Data[1] << 8) | ((ulong)cp.Data[2] << 16) | ((ulong)cp.Data[3] << 24) |
-					((ulong)cp.Data[4] << 32) | ((ulong)cp.Data[5] << 40) | ((ulong)cp.Data[6] << 48) | ((ulong)cp.Data[7] << 56));
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 7 < data.Length) {
+					return ((ulong)data[0] | ((ulong)data[1] << 8) | ((ulong)data[2] << 16) | ((ulong)data[3] << 24) |
+						((ulong)data[4] << 32) | ((ulong)data[5] << 40) | ((ulong)data[6] << 48) | ((ulong)data[7] << 56));
+				}
+				return BitConverter.ToUInt64(ReadSlow(position, 8), 0);
 			}
-			return BitConverter.ToUInt64(ReadSlow(position, 8), 0);
 		}
 
 		public unsafe override float ReadSingle(HexPosition position) {
@@ -247,16 +275,18 @@ namespace dnSpy.Hex {
 
 		public override void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length) {
 			Debug.Assert(position < HexPosition.MaxEndPosition);
-			while (length > 0) {
-				var cp = GetCachedPage(position);
-				long srcIndex = (long)(position.ToUInt64() - cp.Offset);
-				int partSize = (int)(pageSize - (ulong)srcIndex);
-				if (partSize > length)
-					partSize = (int)length;
-				Array.Copy(cp.Data, srcIndex, destination, destinationIndex, partSize);
-				position += (ulong)partSize;
-				length -= partSize;
-				destinationIndex += partSize;
+			lock (lockObj) {
+				while (length > 0) {
+					var cp = GetCachedPage_NoLock(position);
+					long srcIndex = (long)(position.ToUInt64() - cp.Offset);
+					int partSize = (int)(pageSize - (ulong)srcIndex);
+					if (partSize > length)
+						partSize = (int)length;
+					Array.Copy(cp.Data, srcIndex, destination, destinationIndex, partSize);
+					position += (ulong)partSize;
+					length -= partSize;
+					destinationIndex += partSize;
+				}
 			}
 		}
 
@@ -271,48 +301,50 @@ namespace dnSpy.Hex {
 			long invalidBytes = 0, validBytes = 0;
 			long bytesRead = 0;
 			var pos = position;
-			while (length > 0) {
-				var cp = GetCachedPage(pos);
-				long srcIndex = (long)(pos.ToUInt64() - cp.Offset);
-				int partSize = (int)(pageSize - (ulong)srcIndex);
-				if (partSize > length)
-					partSize = (int)length;
-				if (srcIndex + partSize > cp.DataSize) {
-					if (srcIndex >= cp.DataSize && bytesRead == invalidBytes) {
+			lock (lockObj) {
+				while (length > 0) {
+					var cp = GetCachedPage_NoLock(pos);
+					long srcIndex = (long)(pos.ToUInt64() - cp.Offset);
+					int partSize = (int)(pageSize - (ulong)srcIndex);
+					if (partSize > length)
+						partSize = (int)length;
+					if (srcIndex + partSize > cp.DataSize) {
+						if (srcIndex >= cp.DataSize && bytesRead == invalidBytes) {
+							Debug.Assert(bitArray == null);
+							invalidBytes += partSize;
+						}
+						else {
+							if (bitArray == null)
+								bitArray = CreateBitArray(destination, invalidBytes, bytesRead);
+							int validCount = cp.DataSize - (int)srcIndex;
+							for (int i = 0; i < validCount; i++) {
+								long j = bytesRead + i;
+								if (j > int.MaxValue)
+									break;
+								bitArray.Set((int)j, true);
+							}
+						}
+					}
+					else if (bytesRead == validBytes) {
 						Debug.Assert(bitArray == null);
-						invalidBytes += partSize;
+						validBytes += partSize;
 					}
 					else {
 						if (bitArray == null)
 							bitArray = CreateBitArray(destination, invalidBytes, bytesRead);
-						int validCount = cp.DataSize - (int)srcIndex;
-						for (int i = 0; i < validCount; i++) {
+						for (int i = 0; i < partSize; i++) {
 							long j = bytesRead + i;
 							if (j > int.MaxValue)
 								break;
 							bitArray.Set((int)j, true);
 						}
 					}
+					Array.Copy(cp.Data, srcIndex, destination, destinationIndex, partSize);
+					pos += (ulong)partSize;
+					length -= partSize;
+					destinationIndex += partSize;
+					bytesRead += partSize;
 				}
-				else if (bytesRead == validBytes) {
-					Debug.Assert(bitArray == null);
-					validBytes += partSize;
-				}
-				else {
-					if (bitArray == null)
-						bitArray = CreateBitArray(destination, invalidBytes, bytesRead);
-					for (int i = 0; i < partSize; i++) {
-						long j = bytesRead + i;
-						if (j > int.MaxValue)
-							break;
-						bitArray.Set((int)j, true);
-					}
-				}
-				Array.Copy(cp.Data, srcIndex, destination, destinationIndex, partSize);
-				pos += (ulong)partSize;
-				length -= partSize;
-				destinationIndex += partSize;
-				bytesRead += partSize;
 			}
 
 			if (bitArray != null)
@@ -342,9 +374,11 @@ namespace dnSpy.Hex {
 		}
 
 		void ClearAll() {
-			foreach (var cp in cachedPages)
-				cp.IsInitialized = false;
-			lastHitIndex = 0;
+			lock (lockObj) {
+				foreach (var cp in cachedPages)
+					cp.IsInitialized = false;
+				lastHitIndex = 0;
+			}
 		}
 
 		public override void Invalidate(HexSpan span) {
