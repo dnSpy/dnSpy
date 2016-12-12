@@ -46,7 +46,7 @@ namespace dnSpy.Hex.Operations {
 		HexSelection Selection => HexView.Selection;
 		HexCaret Caret => HexView.Caret;
 		HexBuffer Buffer => HexView.Buffer;
-		HexBufferLineProvider BufferLines => HexView.BufferLines;
+		HexBufferLineFormatter BufferLines => HexView.BufferLines;
 		VSTE.ITextViewRoleSet Roles => HexView.Roles;
 		HexViewScroller ViewScroller => HexView.ViewScroller;
 		HexBufferPoint ActiveCaretBufferPosition => Caret.Position.Position.ActivePosition.BufferPosition;

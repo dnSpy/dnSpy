@@ -49,7 +49,7 @@ namespace dnSpy.Hex.Formatting {
 			cssWriter = new StringBuilder();
 		}
 
-		public void Add(HexBufferLineProvider bufferLines, HexClassifier classifier, NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
+		public void Add(HexBufferLineFormatter bufferLines, HexClassifier classifier, NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
 			if (bufferLines == null)
 				throw new ArgumentNullException(nameof(bufferLines));
 			if (classifier == null)

@@ -204,11 +204,11 @@ namespace dnSpy.AsmEditor.Hex {
 				return false;
 			if (state.EndPosition < state.StartPosition)
 				return false;
-			if (state.OffsetBitSize < HexBufferLineProviderOptions.MinOffsetBitSize || state.OffsetBitSize > HexBufferLineProviderOptions.MaxOffsetBitSize)
+			if (state.OffsetBitSize < HexBufferLineFormatterOptions.MinOffsetBitSize || state.OffsetBitSize > HexBufferLineFormatterOptions.MaxOffsetBitSize)
 				return false;
-			if (state.HexValuesDisplayFormat < HexBufferLineProviderOptions.HexValuesDisplayFormat_First || state.HexValuesDisplayFormat > HexBufferLineProviderOptions.HexValuesDisplayFormat_Last)
+			if (state.HexValuesDisplayFormat < HexBufferLineFormatterOptions.HexValuesDisplayFormat_First || state.HexValuesDisplayFormat > HexBufferLineFormatterOptions.HexValuesDisplayFormat_Last)
 				return false;
-			if (state.BytesPerLine < HexBufferLineProviderOptions.MinBytesPerLine || state.BytesPerLine > HexBufferLineProviderOptions.MaxBytesPerLine)
+			if (state.BytesPerLine < HexBufferLineFormatterOptions.MinBytesPerLine || state.BytesPerLine > HexBufferLineFormatterOptions.MaxBytesPerLine)
 				return false;
 			if (state.ValuesPosition >= HexPosition.MaxEndPosition)
 				return false;

@@ -429,9 +429,9 @@
     <Compile Include="Hex\Formatting\PhysicalLineCache.cs" />
     <Compile Include="Hex\HexBufferFactoryServiceImpl.cs" />
     <Compile Include="Hex\HexBufferImpl.cs" />
+    <Compile Include="Hex\HexBufferLineFormatterFactoryServiceImpl.cs" />
+    <Compile Include="Hex\HexBufferLineFormatterImpl.cs" />
     <Compile Include="Hex\HexBufferLineImpl.cs" />
-    <Compile Include="Hex\HexBufferLineProviderFactoryServiceImpl.cs" />
-    <Compile Include="Hex\HexBufferLineProviderImpl.cs" />
     <Compile Include="Hex\HexBufferStreamFactoryServiceImpl.cs" />
     <Compile Include="Hex\HexCachedBufferStreamImpl.cs" />
     <Compile Include="Hex\HexEditImpl.cs" />

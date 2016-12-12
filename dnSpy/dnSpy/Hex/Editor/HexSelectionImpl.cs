@@ -169,7 +169,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		static HexCell GetCell(HexBufferLineProvider bufferLines, HexBufferPoint position) {
+		static HexCell GetCell(HexBufferLineFormatter bufferLines, HexBufferPoint position) {
 			var line = bufferLines.GetLineFromPosition(position);
 			var cell = line.ValueCells.GetCell(position);
 			if (cell == null && position == line.BufferEnd && position > line.BufferStart)

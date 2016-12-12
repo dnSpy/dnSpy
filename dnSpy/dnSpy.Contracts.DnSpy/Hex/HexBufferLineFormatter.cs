@@ -25,11 +25,11 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Creates <see cref="HexBufferLine"/>s
 	/// </summary>
-	public abstract class HexBufferLineProvider {
+	public abstract class HexBufferLineFormatter {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected HexBufferLineProvider() { }
+		protected HexBufferLineFormatter() { }
 
 		/// <summary>
 		/// Gets the buffer

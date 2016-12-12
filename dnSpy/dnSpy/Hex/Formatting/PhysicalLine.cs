@@ -30,7 +30,7 @@ namespace dnSpy.Hex.Formatting {
 		public HexFormattedLine[] Lines { get; }
 		public HexBufferSpan BufferSpan => Lines[0].BufferLine.BufferSpan;
 		public bool IsLastLine { get; private set; }
-		public HexBufferLineProvider BufferLines => Lines[0].BufferLine.LineProvider;
+		public HexBufferLineFormatter BufferLines => Lines[0].BufferLine.LineProvider;
 
 		public PhysicalLine(HexFormattedLine[] lines) {
 			if (lines == null)

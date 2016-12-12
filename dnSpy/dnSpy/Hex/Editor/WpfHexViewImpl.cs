@@ -111,7 +111,7 @@ namespace dnSpy.Hex.Editor {
 		readonly FormattedHexSourceFactoryService formattedHexSourceFactoryService;
 		readonly HexClassifier aggregateClassifier;
 		readonly HexAndAdornmentSequencer hexAndAdornmentSequencer;
-		readonly HexBufferLineProviderFactoryService bufferLineProviderFactoryService;
+		readonly HexBufferLineFormatterFactoryService bufferLineProviderFactoryService;
 		readonly VSTC.IClassificationFormatMap classificationFormatMap;
 		readonly VSTC.IEditorFormatMap editorFormatMap;
 		readonly HexSpaceReservationStack spaceReservationStack;
@@ -145,7 +145,7 @@ namespace dnSpy.Hex.Editor {
 		static readonly HexAdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfHexViewImpl(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineProviderFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService) {
+		public WpfHexViewImpl(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineFormatterFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			if (roles == null)
@@ -381,7 +381,7 @@ namespace dnSpy.Hex.Editor {
 		void InvalidateFormattedLineSource(bool refreshAllLines) {
 			canvas.Dispatcher.VerifyAccess();
 			formattedLineSourceIsInvalidated = true;
-			recreateHexBufferLineProvider = true;
+			recreateHexBufferLineFormatter = true;
 			DelayLayoutLines(refreshAllLines);
 		}
 
@@ -637,7 +637,7 @@ namespace dnSpy.Hex.Editor {
 			case DefaultHexViewOptions.StartPositionName:
 			case DefaultHexViewOptions.UseRelativePositionsName:
 			case DefaultHexViewOptions.ValuesLowerCaseHexName:
-				InvalidateHexBufferLineProvider();
+				InvalidateHexBufferLineFormatter();
 				break;
 			}
 		}
@@ -677,7 +677,7 @@ namespace dnSpy.Hex.Editor {
 			return CreatePhysicalLineNoCache(BufferLines, FormattedLineSource, bufferPosition);
 		}
 
-		static PhysicalLine CreatePhysicalLineNoCache(HexBufferLineProvider bufferLines, HexFormattedLineSource formattedLineSource, HexBufferPoint bufferPosition) {
+		static PhysicalLine CreatePhysicalLineNoCache(HexBufferLineFormatter bufferLines, HexFormattedLineSource formattedLineSource, HexBufferPoint bufferPosition) {
 			var bufferLine = bufferLines.GetLineFromPosition(bufferPosition);
 			var formattedLine = formattedLineSource.FormatLineInVisualBuffer(bufferLine);
 			return new PhysicalLine(new[] { formattedLine });
@@ -690,8 +690,8 @@ namespace dnSpy.Hex.Editor {
 		void DisplayLines(HexBufferPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double viewportWidthOverride, double viewportHeightOverride, DisplayHexLineOptions options, double? newViewportTop) {
 			if (IsClosed)
 				throw new InvalidOperationException();
-			var oldBufferLines = hexBufferLineProvider;
-			var oldHexBufferLineProviderOptions = hexBufferLineProviderOptions;
+			var oldBufferLines = hexBufferLineFormatter;
+			var oldHexBufferLineFormatterOptions = hexBufferLineFormatterOptions;
 			Debug.Assert(oldBufferLines != null);
 			bool raiseBufferLinesChangedEvent = false;
 			bool revalidateBufferPosition = false;
@@ -707,7 +707,7 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentOutOfRangeException(nameof(viewportWidthOverride));
 
 			bool invalidateAllLines = false;
-			if (recreateHexBufferLineProvider)
+			if (recreateHexBufferLineFormatter)
 				invalidateAllLines = true;
 			if (viewportWidthOverride != lastViewportWidth || viewportWidthOverride != lastFormattedLineSourceViewportWidth) {
 				invalidateAllLines = true;
@@ -729,17 +729,17 @@ namespace dnSpy.Hex.Editor {
 			if (invalidateAllLines || formattedLineSourceIsInvalidated) {
 				CreateFormattedLineSource(viewportWidthOverride);
 				formattedLineSourceIsInvalidated = false;
-				recreateHexBufferLineProvider = true;
+				recreateHexBufferLineFormatter = true;
 			}
 
 			// This one depends on FormattedLineSource and must be created afterwards
-			if (recreateHexBufferLineProvider) {
-				recreateHexBufferLineProvider = false;
+			if (recreateHexBufferLineFormatter) {
+				recreateHexBufferLineFormatter = false;
 				raiseBufferLinesChangedEvent = true;
 				if ((options & DisplayHexLineOptions.CanRecreateBufferLines) != 0) {
 					// It's safe to invalidate it here since we were called by the dispatcher and
 					// not by user code.
-					hexBufferLineProvider = null;
+					hexBufferLineFormatter = null;
 					// Once the new instance gets created, the input bufferPosition could be invalid
 					// because start and/or end got updated. Re-validate it before creating new lines.
 					revalidateBufferPosition = true;
@@ -793,12 +793,12 @@ namespace dnSpy.Hex.Editor {
 				if (raiseBufferLinesChangedEvent)
 					RaiseBufferLinesChanged(oldBufferLines);
 			}
-			else if (raiseBufferLinesChangedEvent && oldBufferLines == hexBufferLineProvider) {
-				var newOptions = GetHexBufferLineProviderOptions();
-				if (!newOptions.Equals(oldHexBufferLineProviderOptions)) {
+			else if (raiseBufferLinesChangedEvent && oldBufferLines == hexBufferLineFormatter) {
+				var newOptions = GetHexBufferLineFormatterOptions();
+				if (!newOptions.Equals(oldHexBufferLineFormatterOptions)) {
 					canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
-						if (oldBufferLines == hexBufferLineProvider) {
-							hexBufferLineProvider = null;
+						if (oldBufferLines == hexBufferLineFormatter) {
+							hexBufferLineFormatter = null;
 							var newBufferLines = BufferLines;
 							RaiseBufferLinesChanged(oldBufferLines);
 
@@ -822,7 +822,7 @@ namespace dnSpy.Hex.Editor {
 			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
 		}
 
-		void RaiseBufferLinesChanged(HexBufferLineProvider oldBufferLines) {
+		void RaiseBufferLinesChanged(HexBufferLineFormatter oldBufferLines) {
 			// Always access the property so it's recreated if the backing field is null
 			var newBufferLines = BufferLines;
 			BufferLinesChanged?.Invoke(this, new BufferLinesChangedEventArgs(oldBufferLines, newBufferLines));
@@ -1006,29 +1006,29 @@ namespace dnSpy.Hex.Editor {
 		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
 
 		public override event EventHandler<BufferLinesChangedEventArgs> BufferLinesChanged;
-		public override HexBufferLineProvider BufferLines {
+		public override HexBufferLineFormatter BufferLines {
 			get {
 				// Don't raise BufferLinesChanged event here. It's the responsibility of the code
 				// clearing this field to raise the event. It's not safe to raise the event at any
 				// time (eg. in the middle of layout)
-				if (hexBufferLineProvider == null)
-					hexBufferLineProvider = bufferLineProviderFactoryService.Create(Buffer, hexBufferLineProviderOptions = GetHexBufferLineProviderOptions());
-				return hexBufferLineProvider;
+				if (hexBufferLineFormatter == null)
+					hexBufferLineFormatter = bufferLineProviderFactoryService.Create(Buffer, hexBufferLineFormatterOptions = GetHexBufferLineFormatterOptions());
+				return hexBufferLineFormatter;
 			}
 		}
-		HexBufferLineProviderOptions hexBufferLineProviderOptions;
-		HexBufferLineProvider hexBufferLineProvider;
-		bool recreateHexBufferLineProvider;
+		HexBufferLineFormatterOptions hexBufferLineFormatterOptions;
+		HexBufferLineFormatter hexBufferLineFormatter;
+		bool recreateHexBufferLineFormatter;
 
-		void InvalidateHexBufferLineProvider() {
+		void InvalidateHexBufferLineFormatter() {
 			canvas.Dispatcher.VerifyAccess();
-			recreateHexBufferLineProvider = true;
+			recreateHexBufferLineFormatter = true;
 			DelayLayoutLines(true);
 		}
 
-		HexBufferLineProviderOptions GetHexBufferLineProviderOptions() {
+		HexBufferLineFormatterOptions GetHexBufferLineFormatterOptions() {
 			Debug.Assert(!double.IsNaN(lastFormattedLineSourceViewportWidth));
-			var options = new HexBufferLineProviderOptions();
+			var options = new HexBufferLineFormatterOptions();
 			options.CharsPerLine = (int)((lastFormattedLineSourceViewportWidth - FormattedLineSource.BaseIndentation) / FormattedLineSource.ColumnWidth);
 			options.BytesPerLine = Options.GetBytesPerLine();
 			options.GroupSizeInBytes = Options.GetGroupSizeInBytes();
@@ -1049,10 +1049,10 @@ namespace dnSpy.Hex.Editor {
 			const int DEFAULT_CHARS_PER_LINE = 80;
 			if (options.CharsPerLine <= 0)
 				options.CharsPerLine = DEFAULT_CHARS_PER_LINE;
-			if (options.BytesPerLine < HexBufferLineProviderOptions.MinBytesPerLine)
+			if (options.BytesPerLine < HexBufferLineFormatterOptions.MinBytesPerLine)
 				options.BytesPerLine = 0;
-			else if (options.BytesPerLine > HexBufferLineProviderOptions.MaxBytesPerLine)
-				options.BytesPerLine = HexBufferLineProviderOptions.MaxBytesPerLine;
+			else if (options.BytesPerLine > HexBufferLineFormatterOptions.MaxBytesPerLine)
+				options.BytesPerLine = HexBufferLineFormatterOptions.MaxBytesPerLine;
 			if (options.GroupSizeInBytes < 0)
 				options.GroupSizeInBytes = 0;
 			if (options.StartPosition >= HexPosition.MaxEndPosition)
@@ -1063,13 +1063,13 @@ namespace dnSpy.Hex.Editor {
 				options.StartPosition = options.EndPosition;
 			if (options.BasePosition >= HexPosition.MaxEndPosition)
 				options.BasePosition = 0;
-			if (options.OffsetBitSize < HexBufferLineProviderOptions.MinOffsetBitSize)
-				options.OffsetBitSize = HexBufferLineProviderOptions.MinOffsetBitSize;
-			else if (options.OffsetBitSize > HexBufferLineProviderOptions.MaxOffsetBitSize)
-				options.OffsetBitSize = HexBufferLineProviderOptions.MaxOffsetBitSize;
-			if (options.OffsetFormat < HexBufferLineProviderOptions.HexOffsetFormat_First || options.OffsetFormat > HexBufferLineProviderOptions.HexOffsetFormat_Last)
+			if (options.OffsetBitSize < HexBufferLineFormatterOptions.MinOffsetBitSize)
+				options.OffsetBitSize = HexBufferLineFormatterOptions.MinOffsetBitSize;
+			else if (options.OffsetBitSize > HexBufferLineFormatterOptions.MaxOffsetBitSize)
+				options.OffsetBitSize = HexBufferLineFormatterOptions.MaxOffsetBitSize;
+			if (options.OffsetFormat < HexBufferLineFormatterOptions.HexOffsetFormat_First || options.OffsetFormat > HexBufferLineFormatterOptions.HexOffsetFormat_Last)
 				options.OffsetFormat = HexOffsetFormat.Hex;
-			if (options.ValuesFormat < HexBufferLineProviderOptions.HexValuesDisplayFormat_First || options.ValuesFormat > HexBufferLineProviderOptions.HexValuesDisplayFormat_Last)
+			if (options.ValuesFormat < HexBufferLineFormatterOptions.HexValuesDisplayFormat_First || options.ValuesFormat > HexBufferLineFormatterOptions.HexValuesDisplayFormat_Last)
 				options.ValuesFormat = HexValuesDisplayFormat.HexByte;
 
 			return options;

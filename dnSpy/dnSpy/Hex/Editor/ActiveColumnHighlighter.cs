@@ -172,7 +172,7 @@ namespace dnSpy.Hex.Editor {
 			else
 				UpdateRectanglesPositions(e);
 		}
-		HexBufferLineProvider latestBufferLines;
+		HexBufferLineFormatter latestBufferLines;
 
 		void UpdateRectanglesPositions(HexViewLayoutChangedEventArgs e) {
 			var d = e.NewViewState.ViewportTop - e.OldViewState.ViewportTop;

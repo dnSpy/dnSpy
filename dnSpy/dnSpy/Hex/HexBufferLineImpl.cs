@@ -24,7 +24,7 @@ using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex {
 	sealed class HexBufferLineImpl : HexBufferLine {
-		public override HexBufferLineProvider LineProvider { get; }
+		public override HexBufferLineFormatter LineProvider { get; }
 		public override HexPosition LineNumber { get; }
 		public override ReadOnlyCollection<HexColumnType> ColumnOrder { get; }
 		public override HexBufferSpan BufferSpan { get; }
@@ -43,9 +43,9 @@ namespace dnSpy.Hex {
 		readonly VST.Span fullAsciiSpan;
 		readonly VST.Span visibleAsciiSpan;
 
-		public HexBufferLineImpl(HexBufferLineProvider hexBufferLineProvider, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellCollection valueCells, HexCellCollection asciiCells, VST.Span offsetSpan, VST.Span fullValuesSpan, VST.Span visibleValuesSpan, VST.Span fullAsciiSpan, VST.Span visibleAsciiSpan) {
-			if (hexBufferLineProvider == null)
-				throw new ArgumentNullException(nameof(hexBufferLineProvider));
+		public HexBufferLineImpl(HexBufferLineFormatter hexBufferLineFormatter, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellCollection valueCells, HexCellCollection asciiCells, VST.Span offsetSpan, VST.Span fullValuesSpan, VST.Span visibleValuesSpan, VST.Span fullAsciiSpan, VST.Span visibleAsciiSpan) {
+			if (hexBufferLineFormatter == null)
+				throw new ArgumentNullException(nameof(hexBufferLineFormatter));
 			if (columnOrder == null)
 				throw new ArgumentNullException(nameof(columnOrder));
 			if (bufferSpan.IsDefault)
@@ -58,7 +58,7 @@ namespace dnSpy.Hex {
 				throw new ArgumentNullException(nameof(valueCells));
 			if (asciiCells.IsDefault)
 				throw new ArgumentNullException(nameof(asciiCells));
-			LineProvider = hexBufferLineProvider;
+			LineProvider = hexBufferLineFormatter;
 			LineNumber = lineNumber;
 			ColumnOrder = columnOrder;
 			BufferSpan = bufferSpan;

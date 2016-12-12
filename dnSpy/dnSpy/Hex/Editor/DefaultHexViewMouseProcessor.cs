@@ -113,15 +113,15 @@ namespace dnSpy.Hex.Editor {
 			public HexBufferSpan Span { get; }
 			public Point Point { get; }
 			public int Clicks { get; }
-			HexBufferLineProvider BufferLines { get; set; }
-			public MouseLeftDownInfo(HexBufferSpan span, Point point, int clicks, HexBufferLineProvider bufferLines) {
+			HexBufferLineFormatter BufferLines { get; set; }
+			public MouseLeftDownInfo(HexBufferSpan span, Point point, int clicks, HexBufferLineFormatter bufferLines) {
 				Span = span;
 				Point = point;
 				Clicks = clicks;
 				BufferLines = bufferLines;
 			}
 
-			public bool TryUpdateBufferLines(HexBufferLineProvider bufferLines) => BufferLines == bufferLines;
+			public bool TryUpdateBufferLines(HexBufferLineFormatter bufferLines) => BufferLines == bufferLines;
 		}
 
 		public override void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e) {

@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="bufferLines">Buffer lines provider</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineProvider bufferLines, CancellationToken cancellationToken) =>
+		public string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineFormatter bufferLines, CancellationToken cancellationToken) =>
 			GenerateHtmlFragment(spans, bufferLines, DefaultDelimiter, cancellationToken);
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <param name="delimiter">Delimiter added between generated html strings</param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public abstract string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineProvider bufferLines, string delimiter, CancellationToken cancellationToken);
+		public abstract string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineFormatter bufferLines, string delimiter, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates an HTML fragment that can be copied to the clipboard

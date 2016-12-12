@@ -190,7 +190,7 @@ namespace dnSpy.Hex.Editor {
 			else
 				UpdateLineElementPositions(e);
 		}
-		HexBufferLineProvider latestBufferLines;
+		HexBufferLineFormatter latestBufferLines;
 
 		void UpdateLineElementPositions(HexViewLayoutChangedEventArgs e) {
 			var d = e.NewViewState.ViewportTop - e.OldViewState.ViewportTop;

@@ -27,10 +27,10 @@ using dnSpy.Contracts.Hex;
 using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex {
-	sealed class HexBufferLineProviderImpl : HexBufferLineProvider {
+	sealed class HexBufferLineFormatterImpl : HexBufferLineFormatter {
 		const int DEFAULT_GROUP_SIZE_IN_BYTES = 8;
 
-		static readonly HexValueFormatter[] valueFormatters = new HexValueFormatter[HexBufferLineProviderOptions.HexValuesDisplayFormat_Last - HexBufferLineProviderOptions.HexValuesDisplayFormat_First + 1] {
+		static readonly HexValueFormatter[] valueFormatters = new HexValueFormatter[HexBufferLineFormatterOptions.HexValuesDisplayFormat_Last - HexBufferLineFormatterOptions.HexValuesDisplayFormat_First + 1] {
 			new HexByteValueFormatter(),
 			new HexUInt16ValueFormatter(),
 			new HexUInt32ValueFormatter(),
@@ -66,7 +66,7 @@ namespace dnSpy.Hex {
 			new DoubleBigEndianValueFormatter(),
 		};
 
-		static HexBufferLineProviderImpl() {
+		static HexBufferLineFormatterImpl() {
 			for (int i = 0; i < valueFormatters.Length; i++) {
 				if (valueFormatters[i].Format != (HexValuesDisplayFormat)i)
 					throw new InvalidOperationException();
@@ -75,7 +75,7 @@ namespace dnSpy.Hex {
 				if (!fi.IsLiteral)
 					continue;
 				var value = (HexValuesDisplayFormat)fi.GetValue(null);
-				if (value < HexBufferLineProviderOptions.HexValuesDisplayFormat_First || value > HexBufferLineProviderOptions.HexValuesDisplayFormat_Last)
+				if (value < HexBufferLineFormatterOptions.HexValuesDisplayFormat_First || value > HexBufferLineFormatterOptions.HexValuesDisplayFormat_Last)
 					throw new InvalidOperationException();
 			}
 		}
@@ -129,18 +129,18 @@ namespace dnSpy.Hex {
 			HexColumnType.Ascii,
 		};
 
-		public HexBufferLineProviderImpl(HexBuffer buffer, HexBufferLineProviderOptions options) {
+		public HexBufferLineFormatterImpl(HexBuffer buffer, HexBufferLineFormatterOptions options) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			if (options.CharsPerLine < 0)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.BytesPerLine < HexBufferLineProviderOptions.MinBytesPerLine || options.BytesPerLine > HexBufferLineProviderOptions.MaxBytesPerLine)
+			if (options.BytesPerLine < HexBufferLineFormatterOptions.MinBytesPerLine || options.BytesPerLine > HexBufferLineFormatterOptions.MaxBytesPerLine)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.GroupSizeInBytes < 0)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.OffsetFormat < HexBufferLineProviderOptions.HexOffsetFormat_First || options.OffsetFormat > HexBufferLineProviderOptions.HexOffsetFormat_Last)
+			if (options.OffsetFormat < HexBufferLineFormatterOptions.HexOffsetFormat_First || options.OffsetFormat > HexBufferLineFormatterOptions.HexOffsetFormat_Last)
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.StartPosition >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(options));
@@ -150,9 +150,9 @@ namespace dnSpy.Hex {
 				throw new ArgumentOutOfRangeException(nameof(options));
 			if (options.BasePosition >= HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.OffsetBitSize < HexBufferLineProviderOptions.MinOffsetBitSize || options.OffsetBitSize > HexBufferLineProviderOptions.MaxOffsetBitSize)
+			if (options.OffsetBitSize < HexBufferLineFormatterOptions.MinOffsetBitSize || options.OffsetBitSize > HexBufferLineFormatterOptions.MaxOffsetBitSize)
 				throw new ArgumentOutOfRangeException(nameof(options));
-			if (options.ValuesFormat < HexBufferLineProviderOptions.HexValuesDisplayFormat_First || options.ValuesFormat > HexBufferLineProviderOptions.HexValuesDisplayFormat_Last)
+			if (options.ValuesFormat < HexBufferLineFormatterOptions.HexValuesDisplayFormat_First || options.ValuesFormat > HexBufferLineFormatterOptions.HexValuesDisplayFormat_Last)
 				throw new ArgumentOutOfRangeException(nameof(options));
 
 			this.buffer = buffer;
@@ -180,8 +180,8 @@ namespace dnSpy.Hex {
 				bytesPerLine = (ulong)CalculateBytesPerLine(options.CharsPerLine);
 			if (bytesPerLine % (ulong)valueFormatter.ByteCount != 0)
 				bytesPerLine = bytesPerLine - bytesPerLine % (ulong)valueFormatter.ByteCount + (ulong)valueFormatter.ByteCount;
-			if (bytesPerLine > (ulong)HexBufferLineProviderOptions.MaxBytesPerLine)
-				bytesPerLine = (ulong)(HexBufferLineProviderOptions.MaxBytesPerLine / valueFormatter.ByteCount * valueFormatter.ByteCount);
+			if (bytesPerLine > (ulong)HexBufferLineFormatterOptions.MaxBytesPerLine)
+				bytesPerLine = (ulong)(HexBufferLineFormatterOptions.MaxBytesPerLine / valueFormatter.ByteCount * valueFormatter.ByteCount);
 			if (bytesPerLine <= 0)
 				throw new InvalidOperationException();
 			groupSizeInBytes = options.GroupSizeInBytes;

@@ -21,9 +21,9 @@ using System;
 
 namespace dnSpy.Contracts.Hex {
 	/// <summary>
-	/// Options passed to <see cref="HexBufferLineProviderFactoryService.Create(HexBuffer, HexBufferLineProviderOptions)"/>
+	/// Options passed to <see cref="HexBufferLineFormatterFactoryService.Create(HexBuffer, HexBufferLineFormatterOptions)"/>
 	/// </summary>
-	public sealed class HexBufferLineProviderOptions : IEquatable<HexBufferLineProviderOptions> {
+	public sealed class HexBufferLineFormatterOptions : IEquatable<HexBufferLineFormatterOptions> {
 		/// <summary>
 		/// Number of visible characters per line
 		/// </summary>
@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(HexBufferLineProviderOptions other) =>
+		public bool Equals(HexBufferLineFormatterOptions other) =>
 			CharsPerLine == other.CharsPerLine &&
 			BytesPerLine == other.BytesPerLine &&
 			GroupSizeInBytes == other.GroupSizeInBytes &&
@@ -188,7 +188,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Other object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexBufferLineProviderOptions && Equals((HexBufferLineProviderOptions)obj);
+		public override bool Equals(object obj) => obj is HexBufferLineFormatterOptions && Equals((HexBufferLineFormatterOptions)obj);
 
 		/// <summary>
 		/// GetHashCode()

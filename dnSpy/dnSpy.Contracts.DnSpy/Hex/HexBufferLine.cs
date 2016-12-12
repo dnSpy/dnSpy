@@ -34,9 +34,9 @@ namespace dnSpy.Contracts.Hex {
 		protected HexBufferLine() { }
 
 		/// <summary>
-		/// Gets the <see cref="HexBufferLineProvider"/> instance that created this line
+		/// Gets the <see cref="HexBufferLineFormatter"/> instance that created this line
 		/// </summary>
-		public abstract HexBufferLineProvider LineProvider { get; }
+		public abstract HexBufferLineFormatter LineProvider { get; }
 
 		/// <summary>
 		/// Gets the buffer

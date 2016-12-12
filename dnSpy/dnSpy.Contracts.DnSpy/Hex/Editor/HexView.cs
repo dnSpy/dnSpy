@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the hex buffer lines
 		/// </summary>
-		public abstract HexBufferLineProvider BufferLines { get; }
+		public abstract HexBufferLineFormatter BufferLines { get; }
 
 		/// <summary>
 		/// Raised after <see cref="BufferLines"/> is changed
@@ -256,19 +256,19 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the old instance. This value can be null.
 		/// </summary>
-		public HexBufferLineProvider OldBufferLines { get; }
+		public HexBufferLineFormatter OldBufferLines { get; }
 
 		/// <summary>
 		/// Gets the new instance. This instance is never null.
 		/// </summary>
-		public HexBufferLineProvider NewBufferLines { get; }
+		public HexBufferLineFormatter NewBufferLines { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="oldBufferLines">Old instance</param>
 		/// <param name="newBufferLines">New instance</param>
-		public BufferLinesChangedEventArgs(HexBufferLineProvider oldBufferLines, HexBufferLineProvider newBufferLines) {
+		public BufferLinesChangedEventArgs(HexBufferLineFormatter oldBufferLines, HexBufferLineFormatter newBufferLines) {
 			if (newBufferLines == null)
 				throw new ArgumentNullException(nameof(newBufferLines));
 			OldBufferLines = oldBufferLines;

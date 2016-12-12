@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Formatting {
 			this.viewClassifierAggregatorService = viewClassifierAggregatorService;
 		}
 
-		public override string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineProvider bufferLines, string delimiter, CancellationToken cancellationToken) {
+		public override string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineFormatter bufferLines, string delimiter, CancellationToken cancellationToken) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
 			if (bufferLines == null)
@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Formatting {
 			return GenerateHtmlFragmentCore(hexView.BufferLines, spans, hexView, delimiter, cancellationToken);
 		}
 
-		string GenerateHtmlFragmentCore(HexBufferLineProvider bufferLines, NormalizedHexBufferSpanCollection spans, HexView hexView, string delimiter, CancellationToken cancellationToken) {
+		string GenerateHtmlFragmentCore(HexBufferLineFormatter bufferLines, NormalizedHexBufferSpanCollection spans, HexView hexView, string delimiter, CancellationToken cancellationToken) {
 			HexClassifier classifier = null;
 			try {
 				VSTC.IClassificationFormatMap classificationFormatMap;

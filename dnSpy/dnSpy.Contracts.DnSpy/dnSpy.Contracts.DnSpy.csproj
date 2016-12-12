@@ -328,7 +328,7 @@
     <Compile Include="Hex\Formatting\HexFormattedLine.cs" />
     <Compile Include="Hex\Formatting\HexSequenceElement.cs" />
     <Compile Include="Hex\Editor\HexCaret.cs" />
-    <Compile Include="Hex\HexBufferLineProviderOptions.cs" />
+    <Compile Include="Hex\HexBufferLineFormatterOptions.cs" />
     <Compile Include="Hex\HexBufferSpanSelection.cs" />
     <Compile Include="Hex\HexCell.cs" />
     <Compile Include="Hex\HexCellCollection.cs" />
@@ -368,8 +368,8 @@
     <Compile Include="Hex\HexBuffer.cs" />
     <Compile Include="Hex\HexBufferCreatedEventArgs.cs" />
     <Compile Include="Hex\HexBufferFactoryService.cs" />
-    <Compile Include="Hex\HexBufferLineProvider.cs" />
-    <Compile Include="Hex\HexBufferLineProviderFactoryService.cs" />
+    <Compile Include="Hex\HexBufferLineFormatter.cs" />
+    <Compile Include="Hex\HexBufferLineFormatterFactoryService.cs" />
     <Compile Include="Hex\HexBufferPoint.cs" />
     <Compile Include="Hex\HexBufferSpan.cs" />
     <Compile Include="Hex\HexBufferSpanEventArgs.cs" />

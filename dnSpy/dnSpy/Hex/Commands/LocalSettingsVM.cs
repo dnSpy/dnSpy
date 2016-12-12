@@ -87,12 +87,12 @@ namespace dnSpy.Hex.Commands {
 			origOptions = options;
 			this.defaultOptions = defaultOptions;
 			BytesPerLineVM = new Int32VM(a => HasErrorUpdated(), true) {
-				Min = HexBufferLineProviderOptions.MinBytesPerLine,
-				Max = HexBufferLineProviderOptions.MaxBytesPerLine,
+				Min = HexBufferLineFormatterOptions.MinBytesPerLine,
+				Max = HexBufferLineFormatterOptions.MaxBytesPerLine,
 			};
 			OffsetBitSizeVM = new Int32VM(a => HasErrorUpdated(), true) {
-				Min = HexBufferLineProviderOptions.MinOffsetBitSize,
-				Max = HexBufferLineProviderOptions.MaxOffsetBitSize,
+				Min = HexBufferLineFormatterOptions.MinOffsetBitSize,
+				Max = HexBufferLineFormatterOptions.MaxOffsetBitSize,
 			};
 			BasePositionVM = new UInt64VM(a => HasErrorUpdated());
 			StartPositionVM = new UInt64VM(a => HasErrorUpdated());

@@ -17,22 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex {
-	/// <summary>
-	/// Creates <see cref="HexBufferLineProvider"/> instances
-	/// </summary>
-	public abstract class HexBufferLineProviderFactoryService {
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		protected HexBufferLineProviderFactoryService() { }
+using System;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Hex;
 
-		/// <summary>
-		/// Creates a new <see cref="HexBufferLineProvider"/> instance
-		/// </summary>
-		/// <param name="buffer">Buffer</param>
-		/// <param name="options">Options</param>
-		/// <returns></returns>
-		public abstract HexBufferLineProvider Create(HexBuffer buffer, HexBufferLineProviderOptions options);
+namespace dnSpy.Hex {
+	[Export(typeof(HexBufferLineFormatterFactoryService))]
+	sealed class HexBufferLineFormatterFactoryServiceImpl : HexBufferLineFormatterFactoryService {
+		public override HexBufferLineFormatter Create(HexBuffer buffer, HexBufferLineFormatterOptions options) {
+			if (buffer == null)
+				throw new ArgumentNullException(nameof(buffer));
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return new HexBufferLineFormatterImpl(buffer, options);
+		}
 	}
 }

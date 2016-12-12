@@ -31,7 +31,7 @@ using VSTF = Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Hex.Editor {
 	sealed partial class WpfHexViewImpl {
 		sealed class LayoutHelper {
-			readonly HexBufferLineProvider bufferLines;
+			readonly HexBufferLineFormatter bufferLines;
 			readonly HexLineTransformProvider lineTransformProvider;
 			readonly List<PhysicalLine> oldLines;
 			readonly HexFormattedLineSource formattedLineSource;
@@ -45,7 +45,7 @@ namespace dnSpy.Hex.Editor {
 			public List<WpfHexViewLine> TranslatedLines { get; private set; }
 			readonly double requestedViewportTop;
 
-			public LayoutHelper(HexBufferLineProvider bufferLines, HexLineTransformProvider lineTransformProvider, double newViewportTop, HashSet<HexViewLine> oldVisibleLines, List<PhysicalLine> oldLines, HexFormattedLineSource formattedLineSource) {
+			public LayoutHelper(HexBufferLineFormatter bufferLines, HexLineTransformProvider lineTransformProvider, double newViewportTop, HashSet<HexViewLine> oldVisibleLines, List<PhysicalLine> oldLines, HexFormattedLineSource formattedLineSource) {
 				this.bufferLines = bufferLines;
 				this.lineTransformProvider = lineTransformProvider;
 				requestedViewportTop = newViewportTop;
