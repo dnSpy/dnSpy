@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Hex.Adornments {
 	/// </summary>
 	public abstract class HexToolTipProvider {
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexToolTipProvider() { }
+
+		/// <summary>
 		/// Shows a tooltip
 		/// </summary>
 		/// <param name="span">Span and selection flags</param>

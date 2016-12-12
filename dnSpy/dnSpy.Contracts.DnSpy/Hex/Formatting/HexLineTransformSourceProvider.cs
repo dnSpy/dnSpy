@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Hex.Formatting {
 	/// </summary>
 	public abstract class HexLineTransformSourceProvider {
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexLineTransformSourceProvider() { }
+
+		/// <summary>
 		/// Creates a <see cref="HexLineTransformSource"/> or returns null
 		/// </summary>
 		/// <param name="hexView">Hex view</param>

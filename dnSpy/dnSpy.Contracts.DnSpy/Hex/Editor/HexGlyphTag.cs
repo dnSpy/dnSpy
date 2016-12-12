@@ -24,5 +24,9 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// A glyph margin tag
 	/// </summary>
 	public abstract class HexGlyphTag : HexTag {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexGlyphTag() { }
 	}
 }
