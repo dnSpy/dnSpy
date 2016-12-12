@@ -1835,6 +1835,16 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "HexSearchControlMouseOverDropDownButtonGlyph",
 			},
+			new BrushColorInfo(ColorType.HexSearchingTextBox, "Hex editor textbox (searching)") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "HexSearchingTextBoxForeground",
+				DefaultBackground = "#FFB7B7B7",
+				BackgroundResourceKey = "HexSearchingTextBoxBackground",
+			},
+			new BrushColorInfo(ColorType.HexSearchingTextBoxBorder, "Hex editor textbox border (searching)") {
+				DefaultBackground = "#FF0048B5",
+				BackgroundResourceKey = "HexSearchingTextBoxBorder",
+			},
 			new BrushColorInfo(ColorType.LineNumber, "Line number"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput1, "REPL line number #1 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput2, "REPL line number #2 (input)"),

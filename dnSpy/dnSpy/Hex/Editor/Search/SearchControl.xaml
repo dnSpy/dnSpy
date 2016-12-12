@@ -155,6 +155,12 @@
                                 <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxErrorBackground}" />
                                 <Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxBorderError}" Property="BorderBrush" />
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Searching}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource HexSearchingTextBoxBackground}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource HexSearchingTextBoxForeground}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource HexSearchingTextBoxBorder}" />
+                                <Setter TargetName="border" Value="{DynamicResource HexSearchingTextBoxBorder}" Property="BorderBrush" />
+                            </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

@@ -703,6 +703,8 @@ namespace dnSpy.Contracts.Themes {
 		EnvironmentIconActionFill,
 		SearchControlMouseOverDropDownButtonGlyph,
 		HexSearchControlMouseOverDropDownButtonGlyph,
+		HexSearchingTextBox,
+		HexSearchingTextBoxBorder,
 
 		// Add new color types before this comment
 

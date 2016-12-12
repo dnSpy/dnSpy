@@ -663,5 +663,7 @@
 		<color name="environmenticonactionfill" bg="#FF00529B" />
 		<color name="searchcontrolmouseoverdropdownbuttonglyph" bg="#FF1E1E1E" />
 		<color name="hexsearchcontrolmouseoverdropdownbuttonglyph" bg="#FF1E1E1E" />
+		<color name="hexsearchingtextbox" fg="#FF000000" bg="#FFB7B7B7" />
+		<color name="hexsearchingtextboxborder" bg="#FF0048B5" />
 	</colors>
 </theme>

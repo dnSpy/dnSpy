@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -57,6 +58,12 @@ namespace dnSpy.Hex.Editor.Search {
 
 	interface IHexMarkerListener {
 		void RaiseTagsChanged(HexBufferSpan span);
+	}
+
+	enum SearchState {
+		Found,
+		NotFound,
+		Searching,
 	}
 
 	sealed class HexViewSearchServiceImpl : HexViewSearchService, INotifyPropertyChanged {
@@ -93,7 +100,27 @@ namespace dnSpy.Hex.Editor.Search {
 			MatchCase			= int.MinValue,
 		}
 
-		public bool FoundMatch => foundSomething;
+		public bool FoundMatch {
+			get { return foundMatch; }
+			set {
+				if (foundMatch != value) {
+					foundMatch = value;
+					OnPropertyChanged(nameof(FoundMatch));
+				}
+			}
+		}
+		bool foundMatch;
+
+		public bool Searching {
+			get { return searching; }
+			set {
+				if (searching != value) {
+					searching = value;
+					OnPropertyChanged(nameof(Searching));
+				}
+			}
+		}
+		bool searching;
 
 		public string SearchString {
 			get { return searchString; }
@@ -602,6 +629,7 @@ namespace dnSpy.Hex.Editor.Search {
 				Debug.Assert(searchKind == SearchKind.None && searchControlPosition == SearchControlPosition.Default);
 				return;
 			}
+			CancelAsyncSearch();
 			CleanUpIncrementalSearch();
 			layer.RemoveAllAdornments();
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
@@ -700,13 +728,7 @@ namespace dnSpy.Hex.Editor.Search {
 				incrementalStartPosition = startingPosition;
 				ShowSearchControl(searchKind, canOverwriteSearchString: false);
 
-				isIncrementalSearchCaretMove = true;
-				try {
-					FindNextCore(options, startingPosition);
-				}
-				finally {
-					isIncrementalSearchCaretMove = false;
-				}
+				FindNextCore(options, startingPosition, isIncrementalSearch: true);
 				return;
 			}
 
@@ -957,26 +979,141 @@ namespace dnSpy.Hex.Editor.Search {
 			UseGlobalSettingsIfUiIsHidden(true);
 			var options = GetFindOptions(SearchKind.Find, forward);
 			var startingPosition = GetStartingPosition(SearchKind.Find, options, restart: false);
-			FindNextCore(options, startingPosition);
+			FindNextCore(options, startingPosition, isIncrementalSearch: false);
 		}
 
-		void FindNextCore(OurFindOptions options, HexBufferPoint? startingPosition) {
+		void FindNextCore(OurFindOptions options, HexBufferPoint? startingPosition, bool isIncrementalSearch) {
+			CancelFindAsyncSearcher();
 			if (startingPosition == null)
 				return;
-			var res = FindNextResultCore(options, startingPosition.Value);
-			if (res == null)
-				return;
-			ShowSearchResult(res.Value);
+
+			var searchOptions = new SearchOptions(wpfHexView.BufferLines.BufferSpan, startingPosition.Value, DataKind, SearchString, options, IsBigEndian);
+			IAsyncSearcher findAsyncSearcherTmp = null;
+			findAsyncSearcherTmp = FindAsync(searchOptions, (result, foundSpan) => {
+				if (findAsyncSearcher != findAsyncSearcherTmp)
+					return;
+				CancelFindAsyncSearcher();
+				if (foundSpan != null) {
+					try {
+						isIncrementalSearchCaretMove = isIncrementalSearch;
+						ShowSearchResult(foundSpan.Value);
+					}
+					finally {
+						isIncrementalSearchCaretMove = false;
+					}
+				}
+			});
+			findAsyncSearcher = findAsyncSearcherTmp;
+		}
+		IAsyncSearcher findAsyncSearcher;
+
+		void CancelFindAsyncSearcher() {
+			findAsyncSearcher?.CancelAndDispose();
+			findAsyncSearcher = null;
 		}
 
-		HexBufferSpan? FindNextResultCore(OurFindOptions options, HexBufferPoint startingPosition) {
-			if (SearchString.Length == 0)
+		enum FindAsyncResult {
+			InvalidSearchOptions,
+			HasResult,
+			Other,
+		}
+
+		IAsyncSearcher FindAsync(SearchOptions searchOptions, Action<FindAsyncResult, HexBufferSpan?> onCompleted) {
+			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(searchOptions.DataKind, searchOptions.SearchString, (searchOptions.FindOptions & OurFindOptions.MatchCase) != 0, searchOptions.IsBigEndian);
+			if (hexSearchService == null) {
+				onCompleted(FindAsyncResult.InvalidSearchOptions, null);
 				return null;
-			var searchRange = wpfHexView.BufferLines.BufferSpan;
-			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, (options & OurFindOptions.MatchCase) != 0, IsBigEndian);
-			if (hexSearchService == null)
-				return null;
-			return hexSearchService.Find(searchRange, startingPosition, ToHexFindOptions(options), CancellationToken.None);
+			}
+			var searcher = new AsyncSearcher(hexSearchService, searchOptions);
+			searcher.OnCompleted += onCompleted;
+			asyncSearchers.Add(searcher);
+			Searching = asyncSearchers.Count != 0;
+			StartSearchAsync(searcher).ContinueWith(t => {
+				var searcherWasCanceled = searcher.Canceled;
+				searcher.CancelAndDispose();
+				bool wasInList = asyncSearchers.Remove(searcher);
+				Searching = asyncSearchers.Count != 0;
+				var ex = t.Exception;
+				Debug.Assert(ex == null);
+				if (wasInList && !searcherWasCanceled && !t.IsCanceled && !t.IsFaulted)
+					searcher.RaiseCompleted(FindAsyncResult.HasResult, t.Result);
+				else
+					searcher.RaiseCompleted(FindAsyncResult.Other, null);
+			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+			return searcher;
+		}
+		readonly List<AsyncSearcher> asyncSearchers = new List<AsyncSearcher>();
+
+		Task<HexBufferSpan?> StartSearchAsync(AsyncSearcher asyncSearcher) =>
+			Task.Run(() => asyncSearcher.Find(), asyncSearcher.CancellationToken);
+
+		void CancelAllAsyncSearches() {
+			foreach (var searcher in asyncSearchers)
+				searcher.CancelAndDispose();
+			asyncSearchers.Clear();
+			Searching = asyncSearchers.Count != 0;
+		}
+
+		sealed class SearchOptions {
+			public HexBufferSpan SearchRange { get; }
+			public HexBufferPoint StartingPosition { get; }
+			public HexDataKind DataKind { get; }
+			public string SearchString { get; }
+			public OurFindOptions FindOptions { get; }
+			public bool IsBigEndian { get; }
+
+			public SearchOptions(HexBufferSpan searchRange, HexBufferPoint startingPosition, HexDataKind dataKind, string searchString, OurFindOptions findOptions, bool isBigEndian) {
+				SearchRange = searchRange;
+				StartingPosition = startingPosition;
+				DataKind = dataKind;
+				SearchString = searchString;
+				FindOptions = findOptions;
+				IsBigEndian = isBigEndian;
+			}
+		}
+
+		interface IAsyncSearcher {
+			HexSearchService HexSearchService { get; }
+			void CancelAndDispose();
+		}
+
+		sealed class AsyncSearcher : IAsyncSearcher {
+			public HexSearchService HexSearchService { get; }
+			public SearchOptions SearchOptions { get; }
+			readonly CancellationTokenSource cancellationTokenSource;
+			public CancellationToken CancellationToken { get; }
+			bool disposed;
+
+			public bool Canceled { get; private set; }
+			public event Action<FindAsyncResult, HexBufferSpan?> OnCompleted;
+
+			public AsyncSearcher(HexSearchService hexSearchService, SearchOptions searchOptions) {
+				HexSearchService = hexSearchService;
+				SearchOptions = searchOptions;
+				cancellationTokenSource = new CancellationTokenSource();
+				CancellationToken = cancellationTokenSource.Token;
+			}
+
+			public HexBufferSpan? Find() =>
+				HexSearchService.Find(SearchOptions.SearchRange, SearchOptions.StartingPosition, ToHexFindOptions(SearchOptions.FindOptions), CancellationToken);
+
+			public void RaiseCompleted(FindAsyncResult result, HexBufferSpan? span) => OnCompleted?.Invoke(result, span);
+
+			public void CancelAndDispose() {
+				Canceled = true;
+				Cancel();
+				Dispose();
+			}
+
+			void Cancel() {
+				if (!disposed)
+					cancellationTokenSource.Cancel();
+			}
+
+			void Dispose() {
+				disposed = true;
+				cancellationTokenSource.Dispose();
+			}
 		}
 
 		void ShowSearchResult(HexBufferSpan span) {
@@ -985,14 +1122,6 @@ namespace dnSpy.Hex.Editor.Search {
 				PositionWithoutCoveringSpan(span);
 		}
 
-		void SetFoundResult(bool found) {
-			if (foundSomething == found)
-				return;
-			foundSomething = found;
-			OnPropertyChanged(nameof(FoundMatch));
-			OnPropertyChanged(nameof(SearchString));
-		}
-		bool foundSomething;
 		public override void FindNextSelected(bool forward) => FindNextSelectedCore(forward, false);
 
 		void FindNextSelectedCore(bool forward, bool restart) {
@@ -1010,7 +1139,7 @@ namespace dnSpy.Hex.Editor.Search {
 				options |= OurFindOptions.SearchReverse;
 			var startingPosition = GetStartingPosition(SearchKind.Find, options, restart);
 			SetSearchString(newSearchString, canSearch: false);
-			FindNextCore(options, startingPosition);
+			FindNextCore(options, startingPosition, isIncrementalSearch: false);
 		}
 
 		public override IEnumerable<HexBufferSpan> GetSpans(NormalizedHexBufferSpanCollection spans) {
@@ -1048,32 +1177,42 @@ namespace dnSpy.Hex.Editor.Search {
 
 			var options = GetFindOptions(searchKind, null);
 			var startingPosition = GetStartingPosition(searchKind, options, restart: true);
-			FindNextCore(options, startingPosition);
+			FindNextCore(options, startingPosition, isIncrementalSearch: searchKind == SearchKind.IncrementalSearchBackward || searchKind == SearchKind.IncrementalSearchForward);
 		}
 
 		void UpdateHexMarkerSearch() {
+			CancelAsyncSearch();
 			if (!IsSearchControlVisible)
 				return;
 
-			var newHexMarkerSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, MatchCase, IsBigEndian);
-			if (newHexMarkerSearchService == null) {
-				bool refresh = hexMarkerSearchService != null;
-				hexMarkerSearchService = null;
-				if (refresh)
-					RefreshAllTags();
-				// We could be here if the input string is invalid, in which case we tell the user there was nothing found
-				SetFoundResult(SearchString.Length == 0);
-				return;
-			}
-
-			hexMarkerSearchService = newHexMarkerSearchService;
-			var searchRange = wpfHexView.BufferLines.BufferSpan;
 			var options = GetFindOptions(SearchKind.Find, true);
-			bool found = hexMarkerSearchService.Find(searchRange, searchRange.Start, ToHexFindOptions(options), CancellationToken.None) != null;
+			var searchRange = wpfHexView.BufferLines.BufferSpan;
+			var searchOptions = new SearchOptions(searchRange, searchRange.Start, DataKind, SearchString, options, IsBigEndian);
+
+			IAsyncSearcher searcher = null;
+			searcher = FindAsync(searchOptions, (result, foundSpan) => {
+				if (result == FindAsyncResult.InvalidSearchOptions) {
+					bool refresh = hexMarkerSearchService != null;
+					hexMarkerSearchService = null;
+					if (refresh)
+						RefreshAllTags();
+					// We could be here if the input string is invalid, in which case we tell the user there was nothing found
+					FoundMatch = SearchString.Length == 0;
+				}
+				else if (result == FindAsyncResult.HasResult && searcher != null && searcher.HexSearchService == hexMarkerSearchService)
+					FoundMatch = foundSpan != null;
+			});
+			hexMarkerSearchService = searcher?.HexSearchService;
 			RefreshAllTags();
-			SetFoundResult(found);
 		}
 		HexSearchService hexMarkerSearchService;
+		IAsyncSearcher hexMarkerAsyncSearcher;
+
+		void CancelAsyncSearch() {
+			hexMarkerAsyncSearcher?.CancelAndDispose();
+			hexMarkerAsyncSearcher = null;
+			hexMarkerSearchService = null;
+		}
 
 		void RefreshAllTags() {
 			var span = new HexBufferSpan(wpfHexView.Buffer, HexSpan.FromBounds(HexPosition.Zero, HexPosition.MaxEndPosition));
@@ -1103,6 +1242,7 @@ namespace dnSpy.Hex.Editor.Search {
 
 		void WpfHexView_Closed(object sender, EventArgs e) {
 			CloseSearchControl();
+			CancelAllAsyncSearches();
 			wpfHexView.Closed -= WpfHexView_Closed;
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
 			wpfHexView.BufferLinesChanged -= WpfHexView_BufferLinesChanged;
