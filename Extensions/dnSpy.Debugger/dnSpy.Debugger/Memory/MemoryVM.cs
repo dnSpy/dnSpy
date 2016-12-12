@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Memory {
 	sealed class MemoryVM : ViewModelBase, IMemoryVM {
 		public bool CanNotEditMemory {
 			get { return canNotEditMemory; }
-			internal set {
+			private set {
 				if (canNotEditMemory != value) {
 					canNotEditMemory = value;
 					OnPropertyChanged(nameof(CanNotEditMemory));
@@ -44,16 +44,16 @@ namespace dnSpy.Debugger.Memory {
 		}
 		bool canNotEditMemory;
 
-		public bool IsStopped {
-			get { return isStopped; }
-			internal set {
-				if (isStopped != value) {
-					isStopped = value;
-					OnPropertyChanged(nameof(IsStopped));
+		public bool CanEditMemory {
+			get { return canEditMemory; }
+			private set {
+				if (canEditMemory != value) {
+					canEditMemory = value;
+					OnPropertyChanged(nameof(CanEditMemory));
 				}
 			}
 		}
-		bool isStopped;
+		bool canEditMemory;
 
 		public HexBuffer Buffer { get; }
 
@@ -69,30 +69,31 @@ namespace dnSpy.Debugger.Memory {
 			debuggerStream.UnderlyingStreamChanged += DebuggerStream_UnderlyingStreamChanged;
 			Buffer = hexBufferFactoryService.Create(debuggerStream, hexBufferFactoryService.DefaultMemoryTags, disposeStream: true);
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
-			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
-			CanNotEditMemory = theDebugger.ProcessState != DebuggerProcessState.Paused;
-			IsStopped = theDebugger.ProcessState == DebuggerProcessState.Paused;
 			InitializeHexStream();
 		}
 
 		public event EventHandler UnderlyingStreamChanged;
 		void DebuggerStream_UnderlyingStreamChanged(object sender, EventArgs e) => UnderlyingStreamChanged?.Invoke(this, EventArgs.Empty);
-		void TheDebugger_ProcessRunning(object sender, EventArgs e) => CanNotEditMemory = true;
 
 		void InitializeHexStream() {
+			var stream = CreateHexBufferStream();
+			debuggerStream.SetUnderlyingStream(stream);
+			CanNotEditMemory = stream == null;
+			CanEditMemory = stream != null;
+		}
+
+		HexBufferStream CreateHexBufferStream() {
 			if (theDebugger.ProcessState == DebuggerProcessState.Terminated)
-				debuggerStream.SetUnderlyingStream(null);
-			else {
-				var process = theDebugger.Debugger.Processes.FirstOrDefault();
-				Debug.Assert(process != null);
-				if (process == null)
-					debuggerStream.SetUnderlyingStream(null);
-				else {
-					var processStream = hexBufferStreamFactoryService.CreateSimpleProcessStream(process.CorProcess.Handle);
-					var cachedStream = hexBufferStreamFactoryService.CreateCached(processStream, disposeStream: true);
-					debuggerStream.SetUnderlyingStream(cachedStream);
-				}
-			}
+				return null;
+
+			var process = theDebugger.Debugger.Processes.FirstOrDefault();
+			Debug.Assert(process != null);
+			if (process == null)
+				return null;
+
+			var processStream = hexBufferStreamFactoryService.CreateSimpleProcessStream(process.CorProcess.Handle);
+			var cachedStream = hexBufferStreamFactoryService.CreateCached(processStream, disposeStream: true);
+			return cachedStream;
 		}
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -111,10 +112,6 @@ namespace dnSpy.Debugger.Memory {
 				InitializeHexStream();
 				break;
 			}
-
-			IsStopped = state == DebuggerProcessState.Paused;
-			if (state != DebuggerProcessState.Continuing && state != DebuggerProcessState.Running)
-				CanNotEditMemory = state != DebuggerProcessState.Paused;
 
 			InitializeMemory();
 		}
