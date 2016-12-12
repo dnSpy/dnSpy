@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Hex {
 		None							= 0,
 
 		/// <summary>
-		/// Set if the span contains data, clear if the span contains no data
+		/// Set if the span contains data, clear if the span doesn't contain any data
 		/// </summary>
 		HasData							= 0x00000001,
 	}

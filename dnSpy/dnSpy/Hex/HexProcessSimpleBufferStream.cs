@@ -74,7 +74,7 @@ namespace dnSpy.Hex {
 
 			// Could fail if eg. the process has exited
 			if (res == 0)
-				return new HexSpanInfo(HexSpan.FromBounds(position, HexPosition.MaxEndPosition), HexSpanInfoFlags.None);
+				return new HexSpanInfo(HexSpan.FromBounds(HexPosition.Zero, endAddress), HexSpanInfoFlags.None);
 
 			var flags = HexSpanInfoFlags.None;
 			if (state == NativeMethods.MEM_COMMIT) {
