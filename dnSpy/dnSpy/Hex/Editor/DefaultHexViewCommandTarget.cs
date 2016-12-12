@@ -119,8 +119,10 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.INCREASEFILTER:
 				case HexEditorIds.LEFT:
 				case HexEditorIds.LEFT_EXT:
-				case HexEditorIds.MoveToStartOfNextValidSpan:
-				case HexEditorIds.MoveToStartOfPreviousValidSpan:
+				case HexEditorIds.MoveToNextValidStartEnd:
+				case HexEditorIds.MoveToNextValidStartEndExt:
+				case HexEditorIds.MoveToPreviousValidStartEnd:
+				case HexEditorIds.MoveToPreviousValidStartEndExt:
 				case HexEditorIds.PAGEDN:
 				case HexEditorIds.PAGEDN_EXT:
 				case HexEditorIds.PAGEUP:
@@ -213,8 +215,10 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.HOME_EXT:
 				case HexEditorIds.LEFT:
 				case HexEditorIds.LEFT_EXT:
-				case HexEditorIds.MoveToStartOfNextValidSpan:
-				case HexEditorIds.MoveToStartOfPreviousValidSpan:
+				case HexEditorIds.MoveToNextValidStartEnd:
+				case HexEditorIds.MoveToNextValidStartEndExt:
+				case HexEditorIds.MoveToPreviousValidStartEnd:
+				case HexEditorIds.MoveToPreviousValidStartEndExt:
 				case HexEditorIds.PAGEDN:
 				case HexEditorIds.PAGEDN_EXT:
 				case HexEditorIds.PAGEUP:
@@ -383,12 +387,20 @@ namespace dnSpy.Hex.Editor {
 					EditorOperations.MoveToPreviousCharacter(true);
 					return CommandTargetStatus.Handled;
 
-				case HexEditorIds.MoveToStartOfNextValidSpan:
-					EditorOperations.MoveToStartOfNextValidSpan();
+				case HexEditorIds.MoveToNextValidStartEnd:
+					EditorOperations.MoveToNextValidStartEnd(false);
 					return CommandTargetStatus.Handled;
 
-				case HexEditorIds.MoveToStartOfPreviousValidSpan:
-					EditorOperations.MoveToStartOfPreviousValidSpan();
+				case HexEditorIds.MoveToNextValidStartEndExt:
+					EditorOperations.MoveToNextValidStartEnd(true);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.MoveToPreviousValidStartEnd:
+					EditorOperations.MoveToPreviousValidStartEnd(false);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.MoveToPreviousValidStartEndExt:
+					EditorOperations.MoveToPreviousValidStartEnd(true);
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.PAGEDN:

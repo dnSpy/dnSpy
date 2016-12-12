@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Operations {
 		const ulong bytesMaxTotalBytesToCopy = 10 * 1024 * 1024;
 
 		public override HexView HexView { get; }
-		public override HexBufferSpan? ProvisionalCompositionSpan { get; set; }
+		public override HexBufferSpan? ProvisionalCompositionSpan { get; set; }//TODO:
 
 		HexSelection Selection => HexView.Selection;
 		HexCaret Caret => HexView.Caret;
@@ -1010,24 +1010,6 @@ namespace dnSpy.Hex.Operations {
 			return true;
 		}
 
-		public override void MoveToStartOfNextValidSpan() {
-			var startPos = ActiveCaretBufferPosition;
-			var span = Buffer.GetNextValidSpan(startPos, BufferLines.EndPosition, fullSpan: false);
-			if (span != null && span.Value.Contains(startPos) && span.Value.End < BufferLines.EndPosition)
-				span = Buffer.GetNextValidSpan(span.Value.End, BufferLines.EndPosition, fullSpan: false);
-			if (span != null && !span.Value.Contains(startPos))
-				MoveToValidSpan(span);
-		}
-
-		public override void MoveToStartOfPreviousValidSpan() {
-			var startPos = ActiveCaretBufferPosition;
-			var span = Buffer.GetPreviousValidSpan(startPos, BufferLines.StartPosition, fullSpan: false);
-			if (span != null && span.Value.Contains(startPos) && span.Value.Start > BufferLines.StartPosition)
-				span = Buffer.GetPreviousValidSpan(span.Value.Start - 1, BufferLines.StartPosition, fullSpan: false);
-			if (span != null && !span.Value.Contains(startPos))
-				MoveToValidSpan(span);
-		}
-
 		void MoveToValidSpan(HexSpan? span) {
 			if (span == null)
 				return;
@@ -1078,6 +1060,62 @@ namespace dnSpy.Hex.Operations {
 				return;
 
 			SelectAndMove(new HexBufferSpan(Buffer, overlap.Value), alignPoints: false);
+		}
+
+		public override void MoveToNextValidStartEnd(bool extendSelection) {
+			var startPos = ActiveCaretBufferPosition;
+			var span = Buffer.GetNextValidSpan(startPos, BufferLines.EndPosition, fullSpan: false);
+			if (span == null || span.Value.IsEmpty)
+				return;
+			HexPosition newPos;
+			if (startPos < span.Value.Start)
+				newPos = span.Value.Start;
+			else if (startPos < span.Value.End - 1)
+				newPos = span.Value.End - 1;
+			else {
+				if (startPos >= BufferLines.EndPosition)
+					return;
+				span = Buffer.GetNextValidSpan(startPos + 1, BufferLines.EndPosition, fullSpan: false);
+				if (span == null)
+					return;
+				newPos = span.Value.Start;
+			}
+			MoveToValidStartEnd(newPos, extendSelection);
+		}
+
+		public override void MoveToPreviousValidStartEnd(bool extendSelection) {
+			var startPos = ActiveCaretBufferPosition;
+			var span = Buffer.GetPreviousValidSpan(startPos, BufferLines.StartPosition, fullSpan: false);
+			if (span == null || span.Value.IsEmpty)
+				return;
+			HexPosition newPos;
+			if (startPos >= span.Value.End)
+				newPos = span.Value.End - 1;
+			else if (startPos > span.Value.Start)
+				newPos = span.Value.Start;
+			else {
+				if (startPos <= BufferLines.StartPosition)
+					return;
+				span = Buffer.GetPreviousValidSpan(startPos - 1, BufferLines.StartPosition, fullSpan: false);
+				if (span == null || span.Value.IsEmpty)
+					return;
+				newPos = span.Value.End - 1;
+			}
+			MoveToValidStartEnd(newPos, extendSelection);
+		}
+
+		void MoveToValidStartEnd(HexPosition position, bool extendSelection) {
+			if (position > BufferLines.EndPosition)
+				position = BufferLines.EndPosition;
+			if (position < BufferLines.StartPosition)
+				position = BufferLines.StartPosition;
+			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
+			Caret.MoveTo(new HexBufferPoint(Buffer, position));
+			Caret.EnsureVisible();
+			if (extendSelection)
+				SelectToCaret(anchorPoint);
+			else
+				Selection.Clear();
 		}
 	}
 }

@@ -332,16 +332,6 @@ namespace dnSpy.Contracts.Hex.Operations {
 		public abstract bool ClearData();
 
 		/// <summary>
-		/// Moves the caret to the start of the next span that contains data
-		/// </summary>
-		public abstract void MoveToStartOfNextValidSpan();
-
-		/// <summary>
-		/// Moves the caret to the start of the previous span that contains data
-		/// </summary>
-		public abstract void MoveToStartOfPreviousValidSpan();
-
-		/// <summary>
 		/// Shows all bytes (<see cref="HexBuffer.Span"/>)
 		/// </summary>
 		public abstract void ShowAllBytes();
@@ -360,6 +350,18 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// Selects all bytes in the current block, unless the caret is in a memory hole
 		/// </summary>
 		public abstract void SelectAllBytesBlock();
+
+		/// <summary>
+		/// Move to the next closest start/end position of a block of memory
+		/// </summary>
+		/// <param name="extendSelection">true to extend the selection</param>
+		public abstract void MoveToNextValidStartEnd(bool extendSelection);
+
+		/// <summary>
+		/// Move to the previous closest start/end position of a block of memory
+		/// </summary>
+		/// <param name="extendSelection">true to extend the selection</param>
+		public abstract void MoveToPreviousValidStartEnd(bool extendSelection);
 	}
 
 	/// <summary>

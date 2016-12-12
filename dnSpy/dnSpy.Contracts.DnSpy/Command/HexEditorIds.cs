@@ -289,14 +289,6 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		PasteBlob,
 		/// <summary>
-		/// Moves the caret to the start of the next span that contains data
-		/// </summary>
-		MoveToStartOfNextValidSpan,
-		/// <summary>
-		/// Moves the caret to the start of the previous span that contains data
-		/// </summary>
-		MoveToStartOfPreviousValidSpan,
-		/// <summary>
 		/// Shows all bytes (<see cref="HexBuffer.Span"/>)
 		/// </summary>
 		ShowAllBytes,
@@ -312,5 +304,21 @@ namespace dnSpy.Contracts.Command {
 		/// Selects all bytes in the current block, unless the caret is in a memory hole
 		/// </summary>
 		SelectAllBytesBlock,
+		/// <summary>
+		/// Move to the next closest start/end position of a block of memory
+		/// </summary>
+		MoveToNextValidStartEnd,
+		/// <summary>
+		/// Move to the next closest start/end position of a block of memory; extend selection
+		/// </summary>
+		MoveToNextValidStartEndExt,
+		/// <summary>
+		/// Move to the previous closest start/end position of a block of memory
+		/// </summary>
+		MoveToPreviousValidStartEnd,
+		/// <summary>
+		/// Move to the previous closest start/end position of a block of memory; extend selection
+		/// </summary>
+		MoveToPreviousValidStartEndExt,
 	}
 }
