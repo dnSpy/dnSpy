@@ -44,6 +44,7 @@
     <Compile Include="AssemblyChildNodeTabContent.cs" />
     <Compile Include="Colorizer.cs" />
     <Compile Include="DocumentViewerToolTipProvider.cs" />
+    <Compile Include="HexColorizer.cs" />
     <Compile Include="NewDsDocument.cs" />
     <Compile Include="OutputTextPane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
