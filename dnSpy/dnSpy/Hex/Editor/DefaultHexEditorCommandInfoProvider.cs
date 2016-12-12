@@ -112,6 +112,7 @@ namespace dnSpy.Hex.Editor {
 			yield return CommandShortcut.CtrlShift(Key.D, HexEditorIds.ShowAllBytes.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.D, HexEditorIds.ShowOnlySelectedBytes.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.F5, HexEditorIds.Refresh.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.A, HexEditorIds.SelectAllBytesBlock.ToCommandInfo());
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) {

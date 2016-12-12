@@ -140,6 +140,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.SCROLLTOP:
 				case HexEditorIds.SCROLLUP:
 				case HexEditorIds.SELECTALL:
+				case HexEditorIds.SelectAllBytesBlock:
 				case HexEditorIds.SELECTCURRENTWORD:
 				case HexEditorIds.SELSWAPANCHOR:
 				case HexEditorIds.ShowAllBytes:
@@ -235,6 +236,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.SCROLLTOP:
 				case HexEditorIds.SCROLLUP:
 				case HexEditorIds.SELECTALL:
+				case HexEditorIds.SelectAllBytesBlock:
 				case HexEditorIds.SELECTCURRENTWORD:
 				case HexEditorIds.SELSWAPANCHOR:
 				case HexEditorIds.ShowAllBytes:
@@ -467,6 +469,10 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.SELECTALL:
 					EditorOperations.SelectAll();
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.SelectAllBytesBlock:
+					EditorOperations.SelectAllBytesBlock();
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.SELECTCURRENTWORD:

@@ -308,5 +308,9 @@ namespace dnSpy.Contracts.Command {
 		/// Refreshes the screen and clears any read caches
 		/// </summary>
 		Refresh,
+		/// <summary>
+		/// Selects all bytes in the current block, unless the caret is in a memory hole
+		/// </summary>
+		SelectAllBytesBlock,
 	}
 }

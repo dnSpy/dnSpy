@@ -557,11 +557,11 @@ namespace dnSpy.Hex.Operations {
 				var cell = line.ValueCells.GetCell(position);
 				if (cell == null)
 					return;
-				SelectAndMove(cell.BufferSpan);
+				SelectAndMove(cell.BufferSpan, alignPoints: false);
 				break;
 
 			case HexColumnType.Ascii:
-				SelectAndMove(new HexBufferSpan(position, 1));
+				SelectAndMove(new HexBufferSpan(position, 1), alignPoints: false);
 				break;
 
 			case HexColumnType.Offset:
@@ -571,10 +571,10 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void SelectAll() =>
-			SelectAndMove(BufferLines.BufferSpan);
+			SelectAndMove(BufferLines.BufferSpan, alignPoints: false);
 
-		void SelectAndMove(HexBufferSpan span) {
-			Selection.Select(span, false, true);
+		void SelectAndMove(HexBufferSpan span, bool alignPoints) {
+			Selection.Select(span, isReversed: false, alignPoints: alignPoints);
 			MoveCaretToSelection(span.Start, span.End);
 			Caret.EnsureVisible();
 		}
@@ -1064,5 +1064,20 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void Refresh() => HexView.Refresh();
+
+		public override void SelectAllBytesBlock() {
+			var currPos = BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
+			var span = Buffer.GetNextValidSpan(currPos, fullSpan: true);
+			if (span == null)
+				return;
+			var overlap = BufferLines.BufferSpan.Span.Overlap(span.Value);
+			Debug.Assert(overlap != null);
+			if (overlap == null)
+				return;
+			if (!overlap.Value.Contains(currPos))
+				return;
+
+			SelectAndMove(new HexBufferSpan(Buffer, overlap.Value), alignPoints: false);
+		}
 	}
 }

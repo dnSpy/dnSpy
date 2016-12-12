@@ -355,6 +355,11 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// Refreshes the screen and clears any read caches
 		/// </summary>
 		public abstract void Refresh();
+
+		/// <summary>
+		/// Selects all bytes in the current block, unless the caret is in a memory hole
+		/// </summary>
+		public abstract void SelectAllBytesBlock();
 	}
 
 	/// <summary>
