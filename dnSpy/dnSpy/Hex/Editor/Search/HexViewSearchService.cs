@@ -60,12 +60,6 @@ namespace dnSpy.Hex.Editor.Search {
 		void RaiseTagsChanged(HexBufferSpan span);
 	}
 
-	enum SearchState {
-		Found,
-		NotFound,
-		Searching,
-	}
-
 	sealed class HexViewSearchServiceImpl : HexViewSearchService, INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
