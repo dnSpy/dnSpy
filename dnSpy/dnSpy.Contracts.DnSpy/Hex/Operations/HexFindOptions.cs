@@ -39,5 +39,10 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// Wrap around
 		/// </summary>
 		Wrap				= 0x00000002,
+
+		/// <summary>
+		/// Don't return spans that overlap a previous result. Useful by Replace All code.
+		/// </summary>
+		NoOverlaps			= 0x00000004,
 	}
 }

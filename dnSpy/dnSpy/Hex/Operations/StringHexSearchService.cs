@@ -245,23 +245,29 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		IEnumerable<HexBufferSpan> FindAllCore(SearchState state, HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
+			HexBufferSpan? firstBlockResult = null;
 			foreach (var span in GetValidSpans(startingPosition.Buffer, startingPosition, searchRange.End)) {
 				cancellationToken.ThrowIfCancellationRequested();
-				foreach (var span2 in FindAllCore(state, span))
+				foreach (var span2 in FindAllCore(state, span, options)) {
+					if (firstBlockResult == null)
+						firstBlockResult = span2;
 					yield return span2;
+				}
 			}
 
 			if ((options & HexFindOptions.Wrap) != 0) {
 				var upperBounds = HexPosition.Min(searchRange.Span.End, startingPosition.Position + lowerBytes.LongLength - 1);
+				if ((options & HexFindOptions.NoOverlaps) != 0 && firstBlockResult != null && upperBounds > firstBlockResult.Value.Start)
+					upperBounds = firstBlockResult.Value.Start;
 				foreach (var span in GetValidSpans(startingPosition.Buffer, searchRange.Start, upperBounds)) {
 					cancellationToken.ThrowIfCancellationRequested();
-					foreach (var span2 in FindAllCore(state, span))
+					foreach (var span2 in FindAllCore(state, span, options))
 						yield return span2;
 				}
 			}
 		}
 
-		IEnumerable<HexBufferSpan> FindAllCore(SearchState state, HexSpan span) {
+		IEnumerable<HexBufferSpan> FindAllCore(SearchState state, HexSpan span, HexFindOptions options) {
 			var pos = span.Start;
 			if (pos + lowerBytes.LongLength > span.End)
 				yield break;
@@ -272,9 +278,13 @@ namespace dnSpy.Hex.Operations {
 				if (result == null)
 					break;
 				yield return new HexBufferSpan(state.Buffer, new HexSpan(result.Value, (ulong)lowerBytes.LongLength));
-				// We must return all possible matches. If we search for aa and data is
-				// aaaa, we must return positions 0, 1, 2, and not 0, 2.
-				pos = result.Value + 1;
+				if ((options & HexFindOptions.NoOverlaps) != 0)
+					pos = result.Value + (ulong)lowerBytes.LongLength;
+				else {
+					// We must return all possible matches. If we search for aa and data is
+					// aaaa, we must return positions 0, 1, 2, and not 0, 2.
+					pos = result.Value + 1;
+				}
 			}
 		}
 
@@ -331,10 +341,14 @@ loop:
 		}
 
 		IEnumerable<HexBufferSpan> FindAllCoreReverse(SearchState state, HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
+			HexBufferSpan? firstBlockResult = null;
 			foreach (var span in GetValidSpansReverse(startingPosition.Buffer, startingPosition, searchRange.Start)) {
 				cancellationToken.ThrowIfCancellationRequested();
-				foreach (var span2 in FindAllCoreReverse(state, span))
+				foreach (var span2 in FindAllCoreReverse(state, span, options)) {
+					if (firstBlockResult == null)
+						firstBlockResult = span2;
 					yield return span2;
+				}
 			}
 
 			if ((options & HexFindOptions.Wrap) != 0) {
@@ -343,15 +357,17 @@ loop:
 					HexPosition.Zero;
 				if (lowerBounds < searchRange.Span.Start)
 					lowerBounds = searchRange.Span.Start;
+				if ((options & HexFindOptions.NoOverlaps) != 0 && firstBlockResult != null && lowerBounds < firstBlockResult.Value.End)
+					lowerBounds = firstBlockResult.Value.End;
 				foreach (var span in GetValidSpansReverse(startingPosition.Buffer, searchRange.End - 1, lowerBounds)) {
 					cancellationToken.ThrowIfCancellationRequested();
-					foreach (var span2 in FindAllCoreReverse(state, span))
+					foreach (var span2 in FindAllCoreReverse(state, span, options))
 						yield return span2;
 				}
 			}
 		}
 
-		IEnumerable<HexBufferSpan> FindAllCoreReverse(SearchState state, HexSpan span) {
+		IEnumerable<HexBufferSpan> FindAllCoreReverse(SearchState state, HexSpan span, HexFindOptions options) {
 			if (span.Length < lowerBytes.LongLength)
 				yield break;
 			var lowerBounds = span.Start + lowerBytes.LongLength - 1;
@@ -362,9 +378,19 @@ loop:
 				if (result == null)
 					break;
 				yield return new HexBufferSpan(state.Buffer, new HexSpan(result.Value, (ulong)lowerBytes.LongLength));
-				// We must return all possible matches. If we search for aa and data is
-				// aaaa, we must return positions 3, 2, 1, and not 3, 1
-				pos = result.Value + (lowerBytes.LongLength - 1);
+				if ((options & HexFindOptions.NoOverlaps) != 0) {
+					if (result.Value == HexPosition.Zero)
+						break;
+					pos = result.Value - 1;
+				}
+				else {
+					// We must return all possible matches. If we search for aa and data is
+					// aaaa, we must return positions 3, 2, 1, and not 3, 1
+					pos = result.Value + (lowerBytes.LongLength - 1);
+					if (pos == HexPosition.Zero)
+						break;
+					pos = pos - 1;
+				}
 			}
 		}
 
