@@ -548,6 +548,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close All Missing Files.
+        /// </summary>
+        public static string CloseAllMissingFilesCommand {
+            get {
+                return ResourceManager.GetString("CloseAllMissingFilesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close Old In-Memory Modules.
         /// </summary>
         public static string CloseOldInMemoryModules {
