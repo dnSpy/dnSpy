@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -58,6 +59,18 @@ namespace dnSpy.Hex.Editor.Search {
 
 	interface IHexMarkerListener {
 		void RaiseTagsChanged(HexBufferSpan span);
+	}
+
+	sealed class DataKindVM {
+		public HexDataKind DataKind { get; }
+		public string DisplayName { get; }
+		public string InputGestureText { get; }
+
+		public DataKindVM(HexDataKind dataKind, string displayName, string inputGestureText = null) {
+			DataKind = dataKind;
+			DisplayName = displayName;
+			InputGestureText = inputGestureText == null ? string.Empty : "(" + inputGestureText + ")";
+		}
 	}
 
 	sealed class HexViewSearchServiceImpl : HexViewSearchService, INotifyPropertyChanged {
@@ -185,34 +198,42 @@ namespace dnSpy.Hex.Editor.Search {
 		bool isBigEndian;
 
 		public HexDataKind DataKind {
-			get { return (HexDataKind)DataKindVM.SelectedItem; }
-			set { DataKindVM.SelectedItem = value; }
+			get { return selectedDataKindVM.DataKind; }
+			set { SelectedDataKindVM = dataKinds.First(a => a.DataKind == value); }
 		}
 
-		void OnDataKindChanged() {
-			SaveSettings();
-			RestartSearchAndUpdateMarkers();
+		public System.Collections.IList DataKinds => dataKinds;
+		readonly ObservableCollection<DataKindVM> dataKinds;
+		public object SelectedDataKindVM {
+			get { return selectedDataKindVM; }
+			set {
+				if (selectedDataKindVM != value) {
+					selectedDataKindVM = (DataKindVM)value;
+					SaveSettings();
+					OnPropertyChanged(nameof(SelectedDataKindVM));
+					RestartSearchAndUpdateMarkers();
+				}
+			}
 		}
+		DataKindVM selectedDataKindVM;
 
-		public EnumListVM DataKindVM { get; }
-		static readonly EnumVM[] hexDataKindList = new EnumVM[] {
-			new EnumVM(HexDataKind.Bytes, AppendKeyboardShortcut("Hex", dnSpy_Resources.ShortCutKeyAltH)),
-			new EnumVM(HexDataKind.Utf8String, AppendKeyboardShortcut(GetStringDataKind("UTF-8"), dnSpy_Resources.ShortCutKeyAlt8)),
-			new EnumVM(HexDataKind.Utf16String, AppendKeyboardShortcut(GetStringDataKind("Unicode"), dnSpy_Resources.ShortCutKeyAltU)),
-			new EnumVM(HexDataKind.Byte, "Byte"),
-			new EnumVM(HexDataKind.SByte, "SByte"),
-			new EnumVM(HexDataKind.Int16, "Int16"),
-			new EnumVM(HexDataKind.UInt16, "UInt16"),
-			new EnumVM(HexDataKind.Int32, "Int32"),
-			new EnumVM(HexDataKind.UInt32, "UInt32"),
-			new EnumVM(HexDataKind.Int64, "Int64"),
-			new EnumVM(HexDataKind.UInt64, "UInt64"),
-			new EnumVM(HexDataKind.Single, "Single"),
-			new EnumVM(HexDataKind.Double, "Double"),
+		static readonly DataKindVM[] dataKindVMList = new DataKindVM[] {
+			new DataKindVM(HexDataKind.Bytes, "Hex", dnSpy_Resources.ShortCutKeyAltH),
+			new DataKindVM(HexDataKind.Utf8String, GetStringDataKind("UTF-8"), dnSpy_Resources.ShortCutKeyAlt8),
+			new DataKindVM(HexDataKind.Utf16String, GetStringDataKind("Unicode"), dnSpy_Resources.ShortCutKeyAltU),
+			new DataKindVM(HexDataKind.Byte, "Byte"),
+			new DataKindVM(HexDataKind.SByte, "SByte"),
+			new DataKindVM(HexDataKind.Int16, "Int16"),
+			new DataKindVM(HexDataKind.UInt16, "UInt16"),
+			new DataKindVM(HexDataKind.Int32, "Int32"),
+			new DataKindVM(HexDataKind.UInt32, "UInt32"),
+			new DataKindVM(HexDataKind.Int64, "Int64"),
+			new DataKindVM(HexDataKind.UInt64, "UInt64"),
+			new DataKindVM(HexDataKind.Single, "Single"),
+			new DataKindVM(HexDataKind.Double, "Double"),
 		};
 		static string GetStringDataKind(string encodingName) =>
 			string.Format("String ({0})", encodingName);
-		static string AppendKeyboardShortcut(string s, string k) => s + " (" + k + ")";
 
 		readonly WpfHexView wpfHexView;
 		readonly HexEditorOperations editorOperations;
@@ -235,7 +256,8 @@ namespace dnSpy.Hex.Editor.Search {
 				throw new ArgumentNullException(nameof(messageBoxService));
 			if (editorOperationsFactoryService == null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
-			DataKindVM = new EnumListVM(hexDataKindList, (a, b) => OnDataKindChanged());
+			dataKinds = new ObservableCollection<DataKindVM>(dataKindVMList);
+			selectedDataKindVM = dataKinds.First();
 			this.wpfHexView = wpfHexView;
 			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfHexView);
 			this.hexSearchServiceFactory = hexSearchServiceFactory;
