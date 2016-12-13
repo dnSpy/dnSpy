@@ -1233,7 +1233,7 @@
     <value>全部</value>
   </data>
   <data name="DocumentFilterType_AllSupported" xml:space="preserve">
-    <value>所有支持</value>
+    <value>所有支持的文件</value>
   </data>
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
     <value>只显示.NET文件</value>
@@ -1319,7 +1319,7 @@
     <value>保存选中 0x{0:X}-0x{1:X}</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>默认设置</value>
+    <value>默认设置(_D)</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
     <value>重置</value>
@@ -1340,7 +1340,7 @@
     <value>复制偏移量</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>选择性复制...</value>
+    <value>选择性复制</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
     <value>复制文本</value>
@@ -1367,7 +1367,7 @@
     <value>转到地址...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>转到偏移量......</value>
+    <value>转到偏移量...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
     <value>保存选中(_L)...</value>
@@ -1394,7 +1394,7 @@
     <value>_8 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>适应宽度</value>
+    <value>适合宽度(_F)</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
     <value>_Base Offset</value>
@@ -1433,13 +1433,13 @@
     <value>所有的偏移量为相对于起始偏移量</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
-    <value>值格式</value>
+    <value>值格式(_F)</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>粘贴(_P)</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>粘贴（#Blob 数据）</value>
+    <value>粘贴(#Blob 数据)</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
     <value>选择性粘贴</value>
