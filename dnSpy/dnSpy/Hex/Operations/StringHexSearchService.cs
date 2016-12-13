@@ -31,35 +31,84 @@ namespace dnSpy.Hex.Operations {
 		readonly byte[] lowerBytes;
 		readonly byte[] upperBytes;
 		readonly byte[] charLengths;
+		readonly bool valid;
 
 		public override int ByteCount => lowerBytes.Length;
 
 		protected StringHexSearchService(string pattern) {
-			Initialize(pattern, out lowerBytes, out upperBytes, out charLengths);
+			valid = Initialize(pattern, out lowerBytes, out upperBytes, out charLengths);
+			Debug.Assert(valid);
 		}
 
-		protected abstract void Initialize(string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths);
+		protected abstract bool Initialize(string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths);
 
-		protected void Initialize(Encoding encoding, string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths) {
+		protected bool Initialize(Encoding encoding, string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths) {
+			lowerBytes = null;
+			upperBytes = null;
+			charLengths = null;
+
 			var lower = pattern.ToLowerInvariant();
 			var upper = pattern.ToUpperInvariant();
-			Debug.Assert(lower.Length == upper.Length);
-			var lowerBytesTmp = encoding.GetBytes(lower);
-			var upperBytesTmp = encoding.GetBytes(upper);
-			Debug.Assert(lowerBytesTmp.Length == upperBytesTmp.Length);
-			var charLengthsTmp = new byte[lower.Length];
-			var ca = new char[1];
-			int totalByteLength = 0;
-			for (int i = 0; i < lower.Length; i++) {
-				ca[0] = lower[i];
-				charLengthsTmp[i] = (byte)encoding.GetByteCount(ca);
-				Debug.Assert(charLengthsTmp[i] == encoding.GetByteCount(new[] { upper[i] }));
-				totalByteLength += charLengthsTmp[i];
+			if (lower.Length != upper.Length)
+				return false;
+
+			byte[] lowerBytesTmp, lowerCharLengths;
+			byte[] upperBytesTmp, upperCharLengths;
+			if (!GetCharLengths(encoding, lower, out lowerCharLengths, out lowerBytesTmp))
+				return false;
+			if (!GetCharLengths(encoding, upper, out upperCharLengths, out upperBytesTmp))
+				return false;
+
+			if (lowerBytesTmp.Length != upperBytesTmp.Length)
+				return false;
+			if (lowerCharLengths.Length != upperCharLengths.Length)
+				return false;
+			for (int i = 0; i < lowerCharLengths.Length; i++) {
+				if (lowerCharLengths[i] != upperCharLengths[i])
+					return false;
 			}
-			Debug.Assert(totalByteLength == lowerBytesTmp.Length);
+
 			lowerBytes = lowerBytesTmp;
 			upperBytes = upperBytesTmp;
+			charLengths = lowerCharLengths;
+			return true;
+		}
+
+		bool GetCharLengths(Encoding encoding, string s, out byte[] charLengths, out byte[] encodedBytes) {
+			charLengths = null;
+			encodedBytes = null;
+
+			var decoder = encoding.GetDecoder();
+			var encodedBytesTmp = encoding.GetBytes(s);
+			var bytes = new byte[1];
+			var chars = new char[2];
+			var charLengthsTmp = new byte[s.Length];
+			int charLengthsIndex = 0;
+			for (int encodedBytesIndex = 0; encodedBytesIndex < encodedBytesTmp.Length; encodedBytesIndex++) {
+				bytes[0] = encodedBytesTmp[encodedBytesIndex];
+				int bytesUsed;
+				int charsUsed;
+				bool completed;
+				var isLastByte = encodedBytesIndex + 1 == encodedBytesTmp.Length;
+				decoder.Convert(bytes, 0, 1, chars, 0, 2, isLastByte, out bytesUsed, out charsUsed, out completed);
+				if (isLastByte && charsUsed == 0)
+					return false;
+				if (charsUsed > byte.MaxValue)
+					return false;
+				if (charsUsed > 0) {
+					if (charLengthsIndex >= charLengthsTmp.Length)
+						return false;
+					charLengthsTmp[charLengthsIndex++] = (byte)charsUsed;
+				}
+			}
+			if (charLengthsTmp.Length != charLengthsIndex) {
+				var old = charLengthsTmp;
+				charLengthsTmp = new byte[charLengthsIndex];
+				Array.Copy(old, 0, charLengthsTmp, 0, charLengthsTmp.Length);
+			}
 			charLengths = charLengthsTmp;
+			encodedBytes = encodedBytesTmp;
+			return true;
 		}
 
 		public override IEnumerable<HexBufferSpan> FindAll(HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
@@ -69,6 +118,8 @@ namespace dnSpy.Hex.Operations {
 				throw new ArgumentException();
 			if (startingPosition < searchRange.Start || startingPosition > searchRange.End)
 				throw new ArgumentException();
+			if (!valid)
+				return Array.Empty<HexBufferSpan>();
 			if (searchRange.IsEmpty)
 				return Array.Empty<HexBufferSpan>();
 			return new FindAllCoreEnumerable(this, searchRange, startingPosition, options, cancellationToken);

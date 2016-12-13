@@ -25,7 +25,7 @@ namespace dnSpy.Hex.Operations {
 			: base(pattern) {
 		}
 
-		protected override void Initialize(string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths) =>
+		protected override bool Initialize(string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths) =>
 			Initialize(Encoding.UTF8, pattern, out lowerBytes, out upperBytes, out charLengths);
 	}
 }
