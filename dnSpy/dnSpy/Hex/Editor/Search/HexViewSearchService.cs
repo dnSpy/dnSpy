@@ -1181,7 +1181,13 @@ namespace dnSpy.Hex.Editor.Search {
 
 			var options = GetFindOptions(SearchKind.Find, true);
 			var searchRange = wpfHexView.BufferLines.BufferSpan;
-			var searchOptions = new SearchOptions(searchRange, searchRange.Start, DataKind, SearchString, options, IsBigEndian);
+			var startingPosition = searchRange.Start;
+			// Continue from the last match, instead of from the beginning of the range, if possible.
+			if (searchRange.Span.Contains(lastMatch)) {
+				startingPosition = new HexBufferPoint(searchRange.Buffer, lastMatch);
+				options |= OurFindOptions.Wrap;
+			}
+			var searchOptions = new SearchOptions(searchRange, startingPosition, DataKind, SearchString, options, IsBigEndian);
 
 			IAsyncSearcher searcher = null;
 			searcher = FindAsync(searchOptions, (result, foundSpan) => {
@@ -1193,12 +1199,15 @@ namespace dnSpy.Hex.Editor.Search {
 					// We could be here if the input string is invalid, in which case we tell the user there was nothing found
 					FoundMatch = SearchString.Length == 0;
 				}
-				else if (result == FindAsyncResult.HasResult && searcher != null && searcher.HexSearchService == hexMarkerSearchService)
+				else if (result == FindAsyncResult.HasResult && searcher != null && searcher.HexSearchService == hexMarkerSearchService) {
 					FoundMatch = foundSpan != null;
+					lastMatch = foundSpan == null ? HexPosition.Zero : foundSpan.Value.Span.Start;
+				}
 			});
 			hexMarkerSearchService = searcher?.HexSearchService;
 			RefreshAllTags();
 		}
+		HexPosition lastMatch;
 		HexSearchService hexMarkerSearchService;
 		IAsyncSearcher hexMarkerAsyncSearcher;
 
