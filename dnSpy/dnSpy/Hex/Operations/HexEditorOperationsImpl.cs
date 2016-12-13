@@ -821,9 +821,16 @@ namespace dnSpy.Hex.Operations {
 
 		public override bool PasteSpecial(HexPasteSpecialKind pasteKind) {
 			switch (pasteKind) {
-			case HexPasteSpecialKind.Utf8String:	return PasteString(Encoding.UTF8);
-			case HexPasteSpecialKind.UnicodeString:	return PasteString(Encoding.Unicode);
-			case HexPasteSpecialKind.Blob:			return PasteBlob();
+			case HexPasteSpecialKind.Utf8String:
+				return PasteString(Encoding.UTF8);
+			case HexPasteSpecialKind.Utf8String7BitEncodedLengthPrefix:
+				return PasteStringAnd7BitEncodedLengthPrefix(Encoding.UTF8);
+			case HexPasteSpecialKind.UnicodeString:
+				return PasteString(Encoding.Unicode);
+			case HexPasteSpecialKind.UnicodeString7BitEncodedLengthPrefix:
+				return PasteStringAnd7BitEncodedLengthPrefix(Encoding.Unicode);
+			case HexPasteSpecialKind.Blob:
+				return PasteBlob();
 			default:
 				throw new ArgumentOutOfRangeException(nameof(pasteKind));
 			}
@@ -834,6 +841,27 @@ namespace dnSpy.Hex.Operations {
 			if (text == null)
 				return false;
 			return PasteData(encoding.GetBytes(text));
+		}
+
+		bool PasteStringAnd7BitEncodedLengthPrefix(Encoding encoding) {
+			var text = ClipboardUtils.GetText(canBeEmpty: true);
+			if (text == null)
+				return false;
+			var data = encoding.GetBytes(text);
+			return PasteData(Get7BitEncodedLengthData(data));
+		}
+
+		static byte[] Get7BitEncodedLengthData(byte[] data) {
+			if (data == null)
+				return null;
+			uint len = (uint)data.Length;
+			int extraLen = MDUtils.Get7BitEncodedIntLength(len);
+			if (extraLen < 0)
+				return null;
+			var d = new byte[data.Length + extraLen];
+			MDUtils.Write7BitEncodedIntLength(d, 0, len);
+			Array.Copy(data, 0, d, extraLen, data.Length);
+			return d;
 		}
 
 		bool PasteBlob() {

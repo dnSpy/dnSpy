@@ -2712,11 +2712,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paste (Unicode and Length).
+        /// </summary>
+        public static string PasteUnicodeAndLength7Command {
+            get {
+                return ResourceManager.GetString("PasteUnicodeAndLength7Command", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Paste (Unicode).
         /// </summary>
         public static string PasteUnicodeCommand {
             get {
                 return ResourceManager.GetString("PasteUnicodeCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste (UTF-8 and Length).
+        /// </summary>
+        public static string PasteUTF8AndLength7Command {
+            get {
+                return ResourceManager.GetString("PasteUTF8AndLength7Command", resourceCulture);
             }
         }
         
@@ -3518,6 +3536,24 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlI {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+K, Ctrl+8.
+        /// </summary>
+        public static string ShortCutKeyCtrlKCtrl8 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlKCtrl8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+K, Ctrl+U.
+        /// </summary>
+        public static string ShortCutKeyCtrlKCtrlU {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlKCtrlU", resourceCulture);
             }
         }
         

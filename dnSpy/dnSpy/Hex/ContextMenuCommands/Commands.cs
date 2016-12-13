@@ -325,14 +325,28 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteUnicodeCommand", InputGestureText = "res:ShortCutKeyCtrlU", Group = Constants.GROUP_PASTE_SPECIAL, Order = 20)]
+	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteUTF8AndLength7Command", InputGestureText = "res:ShortCutKeyCtrlKCtrl8", Group = Constants.GROUP_PASTE_SPECIAL, Order = 20)]
+	sealed class PasteUtf8String7BitEncodedLengthPrefixContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
+		PasteUtf8String7BitEncodedLengthPrefixContexMenuEntry()
+			: base(HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteUnicodeCommand", InputGestureText = "res:ShortCutKeyCtrlU", Group = Constants.GROUP_PASTE_SPECIAL, Order = 30)]
 	sealed class PasteUnicodeStringContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
 		PasteUnicodeStringContexMenuEntry()
 			: base(HexEditorIds.PasteUnicodeString) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteDotNetMetaDataBlobCommand", InputGestureText = "res:ShortCutKeyCtrlB", Group = Constants.GROUP_PASTE_SPECIAL, Order = 30)]
+	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteUnicodeAndLength7Command", InputGestureText = "res:ShortCutKeyCtrlKCtrlU", Group = Constants.GROUP_PASTE_SPECIAL, Order = 40)]
+	sealed class PasteUnicodeString7BitEncodedLengthPrefixContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
+		PasteUnicodeString7BitEncodedLengthPrefixContexMenuEntry()
+			: base(HexEditorIds.PasteUnicodeString7BitEncodedLengthPrefix) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.PASTE_SPECIAL_GUID, Header = "res:PasteDotNetMetaDataBlobCommand", InputGestureText = "res:ShortCutKeyCtrlB", Group = Constants.GROUP_PASTE_SPECIAL, Order = 50)]
 	sealed class PasteBlobContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
 		PasteBlobContexMenuEntry()
 			: base(HexEditorIds.PasteBlob) {

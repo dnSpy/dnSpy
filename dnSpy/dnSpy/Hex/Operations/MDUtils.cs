@@ -47,5 +47,23 @@ namespace dnSpy.Hex.Operations {
 			else
 				throw new InvalidOperationException();
 		}
+
+		public static int Get7BitEncodedIntLength(uint value) {
+			if (value <= 0x7F)
+				return 1;
+			if (value <= 0x3FFF)
+				return 2;
+			if (value <= 0x1FFFFF)
+				return 3;
+			if (value <= 0xFFFFFFF)
+				return 4;
+			return 5;
+		}
+
+		public static void Write7BitEncodedIntLength(byte[] data, int index, uint value) {
+			for (; value >= 0x80; value >>= 7)
+				data[index++] = (byte)(value | 0x80);
+			data[index] = (byte)value;
+		}
 	}
 }

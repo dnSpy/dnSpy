@@ -281,9 +281,17 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		PasteUtf8String,
 		/// <summary>
-		/// Pastes unicode data
+		/// Pastes 7-bit encoded length followed by UTF-8 bytes
+		/// </summary>
+		PasteUtf8String7BitEncodedLengthPrefix,
+		/// <summary>
+		/// Pastes Unicode (UTF-16) data
 		/// </summary>
 		PasteUnicodeString,
+		/// <summary>
+		/// Pastes 7-bit encoded length followed by Unicode (UTF-16) bytes
+		/// </summary>
+		PasteUnicodeString7BitEncodedLengthPrefix,
 		/// <summary>
 		/// Pastes blob data
 		/// </summary>

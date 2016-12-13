@@ -105,7 +105,11 @@ namespace dnSpy.Hex.Editor {
 			yield return CommandShortcut.CtrlShift(Key.B, HexEditorIds.CopyVisualBasicArray.ToCommandInfo());
 			yield return CommandShortcut.CtrlAlt(Key.O, HexEditorIds.CopyOffset.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.D8, HexEditorIds.PasteUtf8String.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Create(Key.D8), HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.D8), HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.U, HexEditorIds.PasteUnicodeString.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Create(Key.U), HexEditorIds.PasteUnicodeString7BitEncodedLengthPrefix.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.U), HexEditorIds.PasteUnicodeString7BitEncodedLengthPrefix.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.B, HexEditorIds.PasteBlob.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.D, HexEditorIds.ShowAllBytes.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.D, HexEditorIds.ShowOnlySelectedBytes.ToCommandInfo());

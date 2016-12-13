@@ -92,7 +92,9 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.DELETETOEOL:
 				case HexEditorIds.PasteBlob:
 				case HexEditorIds.PasteUnicodeString:
+				case HexEditorIds.PasteUnicodeString7BitEncodedLengthPrefix:
 				case HexEditorIds.PasteUtf8String:
+				case HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix:
 				case HexEditorIds.TYPECHAR:
 					return true;
 
@@ -225,7 +227,9 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.PAGEUP_EXT:
 				case HexEditorIds.PasteBlob:
 				case HexEditorIds.PasteUnicodeString:
+				case HexEditorIds.PasteUnicodeString7BitEncodedLengthPrefix:
 				case HexEditorIds.PasteUtf8String:
+				case HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix:
 				case HexEditorIds.Refresh:
 				case HexEditorIds.RETURN:
 				case HexEditorIds.RIGHT:
@@ -427,8 +431,16 @@ namespace dnSpy.Hex.Editor {
 					EditorOperations.PasteSpecial(HexPasteSpecialKind.UnicodeString);
 					return CommandTargetStatus.Handled;
 
+				case HexEditorIds.PasteUnicodeString7BitEncodedLengthPrefix:
+					EditorOperations.PasteSpecial(HexPasteSpecialKind.UnicodeString7BitEncodedLengthPrefix);
+					return CommandTargetStatus.Handled;
+
 				case HexEditorIds.PasteUtf8String:
 					EditorOperations.PasteSpecial(HexPasteSpecialKind.Utf8String);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix:
+					EditorOperations.PasteSpecial(HexPasteSpecialKind.Utf8String7BitEncodedLengthPrefix);
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.Refresh:

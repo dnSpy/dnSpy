@@ -404,9 +404,19 @@ namespace dnSpy.Contracts.Hex.Operations {
 		Utf8String,
 
 		/// <summary>
-		/// Unicode string
+		/// 7-bit encoded length followed by UTF-8 bytes
+		/// </summary>
+		Utf8String7BitEncodedLengthPrefix,
+
+		/// <summary>
+		/// Unicode (UTF-16) string
 		/// </summary>
 		UnicodeString,
+
+		/// <summary>
+		/// 7-bit encoded length followed by Unicode (UTF-16) bytes
+		/// </summary>
+		UnicodeString7BitEncodedLengthPrefix,
 
 		/// <summary>
 		/// Metadata blob
