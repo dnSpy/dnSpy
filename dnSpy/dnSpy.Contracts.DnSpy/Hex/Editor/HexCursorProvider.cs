@@ -56,6 +56,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// High priority
 		/// </summary>
 		public static readonly double High = 100000;
+
+		/// <summary>
+		/// Priority of the offset cursor (hand)
+		/// </summary>
+		public static readonly double Offset = High;
 	}
 
 	/// <summary>
