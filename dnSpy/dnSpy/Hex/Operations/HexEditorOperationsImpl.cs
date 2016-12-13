@@ -485,6 +485,7 @@ namespace dnSpy.Hex.Operations {
 				ed.Apply();
 			}
 
+			Selection.Clear();
 			MoveToNextCharacter(false);
 			return true;
 		}
