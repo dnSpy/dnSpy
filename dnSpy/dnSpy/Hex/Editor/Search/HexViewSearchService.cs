@@ -91,6 +91,7 @@ namespace dnSpy.Hex.Editor.Search {
 			None				= 0,
 			SearchReverse		= 0x00000001,
 			Wrap				= 0x00000002,
+			NoOverlaps			= 0x40000000,
 			MatchCase			= int.MinValue,
 		}
 
@@ -825,6 +826,8 @@ namespace dnSpy.Hex.Editor.Search {
 				res |= HexFindOptions.SearchReverse;
 			if ((options & OurFindOptions.Wrap) != 0)
 				res |= HexFindOptions.Wrap;
+			if ((options & OurFindOptions.NoOverlaps) != 0)
+				res |= HexFindOptions.NoOverlaps;
 			return res;
 		}
 
@@ -873,24 +876,12 @@ namespace dnSpy.Hex.Editor.Search {
 		IEnumerable<HexBufferSpan> GetAllResultsForReplaceAll() {
 			var searchRange = wpfHexView.BufferLines.BufferSpan;
 			var options = GetFindOptions(SearchKind.Replace, true) & ~OurFindOptions.Wrap;
+			options |= OurFindOptions.NoOverlaps;
 			var startingPosition = searchRange.Start;
 			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, (options & OurFindOptions.MatchCase) != 0, IsBigEndian);
 			if (hexSearchService == null)
-				yield break;
-			for (;;) {
-				var res = hexSearchService.Find(searchRange, startingPosition, ToHexFindOptions(options), CancellationToken.None);
-				if (res == null)
-					break;
-				yield return res.Value;
-				if (res.Value.End >= searchRange.End)
-					break;
-				if (res.Value.Length != 0)
-					startingPosition = res.Value.End;
-				else
-					startingPosition = res.Value.End + 1;
-				if (startingPosition >= searchRange.End)
-					break;
-			}
+				return Array.Empty<HexBufferSpan>();
+			return hexSearchService.FindAll(searchRange, startingPosition, ToHexFindOptions(options), CancellationToken.None);
 		}
 
 		bool CanToggleFindReplace => true;
