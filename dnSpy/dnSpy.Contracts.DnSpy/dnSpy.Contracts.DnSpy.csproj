@@ -283,6 +283,7 @@
     <Compile Include="Hex\Editor\HexAdornmentLayerElement.cs" />
     <Compile Include="Hex\Editor\HexCaretPosition.cs" />
     <Compile Include="Hex\Editor\HexColumnLineKind.cs" />
+    <Compile Include="Hex\Editor\HexCursorProvider.cs" />
     <Compile Include="Hex\Editor\HexEditorFactoryServiceListener.cs" />
     <Compile Include="Hex\Editor\HexGlyphFactory.cs" />
     <Compile Include="Hex\Editor\HexGlyphFactoryProvider.cs" />

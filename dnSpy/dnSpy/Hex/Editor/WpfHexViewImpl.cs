@@ -124,6 +124,7 @@ namespace dnSpy.Hex.Editor {
 		readonly PhysicalLineCache physicalLineCache;
 		readonly List<PhysicalLine> visiblePhysicalLines;
 		readonly TextLayer textLayer;
+		readonly HexCursorProviderInfoCollection hexCursorProviderInfoCollection;
 
 #pragma warning disable 0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
@@ -145,7 +146,7 @@ namespace dnSpy.Hex.Editor {
 		static readonly HexAdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfHexViewImpl(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineFormatterFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService) {
+		public WpfHexViewImpl(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineFormatterFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, Lazy<HexCursorProviderFactory, ITextViewRoleMetadata>[] hexCursorProviderFactories) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			if (roles == null)
@@ -178,6 +179,8 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(wpfHexViewCreationListeners));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
+			if (hexCursorProviderFactories == null)
+				throw new ArgumentNullException(nameof(hexCursorProviderFactories));
 			canvas = new HexViewCanvas(this);
 			Buffer = buffer;
 			thisHexLineTransformSource = new MyHexLineTransformSource(this);
@@ -216,7 +219,6 @@ namespace dnSpy.Hex.Editor {
 			canvas.Children.Add(underlayAdornmentLayerCollection);
 			canvas.Children.Add(normalAdornmentLayerCollection);
 			canvas.Children.Add(overlayAdornmentLayerCollection);
-			canvas.Cursor = Cursors.IBeam;
 			canvas.Focusable = true;
 			canvas.FocusVisualStyle = null;
 			InitializeOptions();
@@ -244,7 +246,89 @@ namespace dnSpy.Hex.Editor {
 			else
 				RegisteredCommandElement = TE.NullRegisteredCommandElement.Instance;
 
+			hexCursorProviderInfoCollection = new HexCursorProviderInfoCollection(CreateCursorProviders(hexCursorProviderFactories), Cursors.IBeam);
+			hexCursorProviderInfoCollection.CursorChanged += HexCursorProviderInfoCollection_CursorChanged;
+			canvas.Cursor = hexCursorProviderInfoCollection.Cursor;
+
 			NotifyHexViewCreated();
+		}
+
+		void HexCursorProviderInfoCollection_CursorChanged(Cursor newCursor) {
+			if (IsClosed)
+				return;
+			canvas.Cursor = newCursor;
+		}
+
+		sealed class HexCursorProviderInfoCollection {
+			readonly ProviderInfo[] providerInfos;
+			readonly Cursor defaultCursor;
+			Cursor cachedCursor;
+
+			sealed class ProviderInfo {
+				public HexCursorProvider Provider { get; }
+				public HexCursorInfo CursorInfo { get; set; }
+
+				public ProviderInfo(HexCursorProvider provider) {
+					Provider = provider;
+					CursorInfo = provider.CursorInfo;
+				}
+			}
+
+			public Cursor Cursor {
+				get {
+					Cursor cursor = defaultCursor;
+					double priority = double.NegativeInfinity;
+					foreach (var providerInfo in providerInfos) {
+						var info = providerInfo.CursorInfo;
+						if (info.Cursor != null && info.Priority > priority) {
+							cursor = info.Cursor;
+							priority = info.Priority;
+						}
+					}
+					Debug.Assert(cursor != null);
+					return cursor ?? defaultCursor;
+				}
+			}
+
+			public event Action<Cursor> CursorChanged;
+
+			public HexCursorProviderInfoCollection(HexCursorProvider[] hexCursorProviders, Cursor defaultCursor) {
+				providerInfos = hexCursorProviders.Select(a => new ProviderInfo(a)).ToArray();
+				this.defaultCursor = defaultCursor;
+				foreach (var provider in hexCursorProviders)
+					provider.CursorInfoChanged += Provider_CursorInfoChanged;
+				cachedCursor = Cursor;
+			}
+
+			void Provider_CursorInfoChanged(object sender, EventArgs e) {
+				var providerInfo = providerInfos.FirstOrDefault(a => a.Provider == sender);
+				Debug.Assert(providerInfo != null);
+				if (providerInfo == null)
+					return;
+				providerInfo.CursorInfo = providerInfo.Provider.CursorInfo;
+				var newCursor = Cursor;
+				if (newCursor != cachedCursor) {
+					cachedCursor = newCursor;
+					CursorChanged?.Invoke(cachedCursor);
+				}
+			}
+
+			public void Dispose() {
+				foreach (var providerInfo in providerInfos)
+					providerInfo.Provider.CursorInfoChanged -= Provider_CursorInfoChanged;
+			}
+		}
+
+		HexCursorProvider[] CreateCursorProviders(Lazy<HexCursorProviderFactory, ITextViewRoleMetadata>[] hexCursorProviderFactories) {
+			var list = new List<HexCursorProvider>();
+			foreach (var lz in hexCursorProviderFactories) {
+				if (!Roles.ContainsAny(lz.Metadata.TextViewRoles))
+					continue;
+				var provider = lz.Value.Create(this);
+				if (provider != null)
+					list.Add(provider);
+			}
+			return list.ToArray();
 		}
 
 		void NotifyHexViewCreated() {
@@ -601,6 +685,8 @@ namespace dnSpy.Hex.Editor {
 			editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 			spaceReservationStack.GotAggregateFocus -= SpaceReservationStack_GotAggregateFocus;
 			spaceReservationStack.LostAggregateFocus -= SpaceReservationStack_LostAggregateFocus;
+			hexCursorProviderInfoCollection.CursorChanged -= HexCursorProviderInfoCollection_CursorChanged;
+			hexCursorProviderInfoCollection.Dispose();
 			if (metroWindow != null)
 				metroWindow.WindowDpiChanged -= MetroWindow_WindowDpiChanged;
 		}
