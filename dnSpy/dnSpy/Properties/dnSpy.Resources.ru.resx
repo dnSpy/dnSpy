@@ -1152,7 +1152,7 @@
     <value>Размер отступа</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
-    <value>Размер интервала табудяции</value>
+    <value>Размер интервала табуляции</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
     <value>Просмотр текста</value>
@@ -1515,7 +1515,7 @@
     <value>Текстовый редактор</value>
   </data>
   <data name="Search_BigEndian" xml:space="preserve">
-    <value>Big endian (Alt+B)</value>
+    <value>Прямой порядок байт (Alt+B)</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
@@ -1528,5 +1528,17 @@
   </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Ctrl+F</value>
+  </data>
+  <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
+    <value>Paste (Unicode and Length)</value>
+  </data>
+  <data name="PasteUTF8AndLength7Command" xml:space="preserve">
+    <value>Paste (UTF-8 and Length)</value>
+  </data>
+  <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
+    <value>Ctrl+K, Ctrl+8</value>
+  </data>
+  <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
+    <value>Ctrl+K, Ctrl+U</value>
   </data>
 </root>

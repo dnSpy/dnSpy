@@ -1530,4 +1530,16 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Strg+F</value>
   </data>
+  <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
+    <value>Paste (Unicode and Length)</value>
+  </data>
+  <data name="PasteUTF8AndLength7Command" xml:space="preserve">
+    <value>Paste (UTF-8 and Length)</value>
+  </data>
+  <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
+    <value>Ctrl+K, Ctrl+8</value>
+  </data>
+  <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
+    <value>Ctrl+K, Ctrl+U</value>
+  </data>
 </root>
