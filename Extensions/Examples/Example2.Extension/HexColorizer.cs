@@ -106,8 +106,7 @@ namespace Example2.Extension {
 					continue;
 
 				// Classify both columns (values and ASCII)
-				var flags = HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell;
-				yield return new HexTagSpan<HexClassificationTag>(ourSpan, flags, new HexClassificationTag(color2));
+				yield return new HexTagSpan<HexClassificationTag>(ourSpan, HexSpanSelectionFlags.Selection, new HexClassificationTag(color2));
 			}
 		}
 

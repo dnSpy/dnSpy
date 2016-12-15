@@ -79,5 +79,10 @@ namespace dnSpy.Contracts.Hex {
 		/// Select all visible cells in the values/ASCII column
 		/// </summary>
 		AllVisibleCells			= 0x00000200,
+
+		/// <summary>
+		/// Same as selection, select full cells and cells in values and ASCII columns
+		/// </summary>
+		Selection				= Values | Ascii | Cell,
 	}
 }

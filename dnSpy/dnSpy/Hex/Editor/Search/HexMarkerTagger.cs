@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Editor.Search {
 
 		public override IEnumerable<IHexTagSpan<HexMarkerTag>> GetTags(NormalizedHexBufferSpanCollection spans) {
 			foreach (var span in hexViewSearchService.GetSpans(spans))
-				yield return new HexTagSpan<HexMarkerTag>(span, HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell, searchHexMarkerTag);
+				yield return new HexTagSpan<HexMarkerTag>(span, HexSpanSelectionFlags.Selection, searchHexMarkerTag);
 		}
 
 		public override IEnumerable<IHexTextTagSpan<HexMarkerTag>> GetTags(HexTaggerContext context) {

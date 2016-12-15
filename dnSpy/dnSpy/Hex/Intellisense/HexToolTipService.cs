@@ -160,8 +160,7 @@ namespace dnSpy.Hex.Intellisense {
 			if (toolTipInfoCollection == null)
 				return;
 
-			const HexSpanSelectionFlags flags = HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell;
-			applicableToSpan = new HexBufferSpanSelection(toolTipInfoCollection.BufferSpan, flags);
+			applicableToSpan = new HexBufferSpanSelection(toolTipInfoCollection.BufferSpan, HexSpanSelectionFlags.Selection);
 			hexToolTipService.SetActiveToolTip(toolTipInfoCollection);
 			session.Dismissed += Session_Dismissed;
 			foreach (var info in toolTipInfoCollection) {
@@ -311,9 +310,8 @@ namespace dnSpy.Hex.Intellisense {
 				if (!collection.FullBufferSpan.IntersectsWith(span))
 					continue;
 
-				const HexSpanSelectionFlags flags = HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell;
 				foreach (var info in collection)
-					yield return new HexTagSpan<HexMarkerTag>(info.BufferSpan, flags, new HexMarkerTag(info.ClassificationType));
+					yield return new HexTagSpan<HexMarkerTag>(info.BufferSpan, HexSpanSelectionFlags.Selection, new HexMarkerTag(info.ClassificationType));
 			}
 		}
 

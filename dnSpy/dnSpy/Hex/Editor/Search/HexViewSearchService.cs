@@ -619,7 +619,7 @@ namespace dnSpy.Hex.Editor.Search {
 			var span = fullSpan.Intersection(line.BufferSpan);
 			if (span == null || span.Value.Length == 0)
 				return false;
-			var allBounds = line.GetNormalizedTextBounds(span.Value, HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell);
+			var allBounds = line.GetNormalizedTextBounds(span.Value, HexSpanSelectionFlags.Selection);
 			if (allBounds.Count == 0)
 				return false;
 			double left = double.MaxValue, right = double.MinValue, top = double.MaxValue, bottom = double.MinValue;

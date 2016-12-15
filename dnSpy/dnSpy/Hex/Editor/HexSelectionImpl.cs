@@ -28,7 +28,7 @@ using VSTC = Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexSelectionImpl : HexSelection {
-		internal static HexSpanSelectionFlags SelectionFlags = HexSpanSelectionFlags.Values | HexSpanSelectionFlags.Ascii | HexSpanSelectionFlags.Cell;
+		internal const HexSpanSelectionFlags SelectionFlags = HexSpanSelectionFlags.Selection;
 		public override HexView HexView { get; }
 		public override HexBufferPoint AnchorPoint => anchorPoint;
 		public override HexBufferPoint ActivePoint => activePoint;
