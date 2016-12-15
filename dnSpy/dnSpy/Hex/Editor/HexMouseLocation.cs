@@ -62,15 +62,23 @@ namespace dnSpy.Hex.Editor {
 			return new HexMouseLocation(hexViewLine, position, point);
 		}
 
-		public static HexMouseLocation TryCreateTextOnly(WpfHexView wpfHexView, MouseEventArgs e) {
+		public static HexMouseLocation TryCreateTextOnly(WpfHexView wpfHexView, MouseEventArgs e, bool fullLineHeight) {
 			var point = GetTextPoint(wpfHexView, e);
 			var line = wpfHexView.HexViewLines.GetHexViewLineContainingYCoordinate(point.Y);
 			if (line == null)
 				return null;
-			if (!(line.TextTop <= point.Y && point.Y < line.TextBottom))
-				return null;
-			if (!(line.TextLeft <= point.X && point.X < line.TextRight))
-				return null;
+			if (fullLineHeight) {
+				if (!(line.Top <= point.Y && point.Y < line.Bottom))
+					return null;
+				if (!(line.Left <= point.X && point.X < line.Right))
+					return null;
+			}
+			else {
+				if (!(line.TextTop <= point.Y && point.Y < line.TextBottom))
+					return null;
+				if (!(line.TextLeft <= point.X && point.X < line.TextRight))
+					return null;
+			}
 			var position = line.GetLinePositionFromXCoordinate(point.X, true);
 			if (position == null)
 				return null;

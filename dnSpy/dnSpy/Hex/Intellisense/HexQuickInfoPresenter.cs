@@ -117,7 +117,7 @@ namespace dnSpy.Hex.Intellisense {
 			var lines = session.HexView.HexViewLines.GetHexViewLinesIntersectingSpan(applicableToSpan.BufferSpan);
 			foreach (var line in lines) {
 				foreach (var bounds in line.GetNormalizedTextBounds(applicableToSpan)) {
-					if (bounds.Left <= mousePos.X && mousePos.X < bounds.Right && bounds.TextTop <= mousePos.Y && mousePos.Y < bounds.TextBottom)
+					if (bounds.Left <= mousePos.X && mousePos.X < bounds.Right && bounds.Top <= mousePos.Y && mousePos.Y < bounds.Bottom)
 						return true;
 				}
 			}

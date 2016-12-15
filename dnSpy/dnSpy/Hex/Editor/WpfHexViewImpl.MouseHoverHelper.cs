@@ -78,7 +78,7 @@ namespace dnSpy.Hex.Editor {
 				if (e.LeftButton != MouseButtonState.Released || e.RightButton != MouseButtonState.Released || e.MiddleButton != MouseButtonState.Released)
 					return;
 
-				var loc = HexMouseLocation.TryCreateTextOnly(owner, e);
+				var loc = HexMouseLocation.TryCreateTextOnly(owner, e, fullLineHeight: false);
 				LinePosition? newPosition;
 
 				if (loc == null)

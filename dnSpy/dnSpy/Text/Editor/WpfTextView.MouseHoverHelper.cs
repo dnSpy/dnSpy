@@ -56,7 +56,7 @@ namespace dnSpy.Text.Editor {
 				if (e.LeftButton != MouseButtonState.Released || e.RightButton != MouseButtonState.Released || e.MiddleButton != MouseButtonState.Released)
 					return;
 
-				var loc = MouseLocation.TryCreateTextOnly(owner, e);
+				var loc = MouseLocation.TryCreateTextOnly(owner, e, fullLineHeight: false);
 				int? newPosition;
 
 				if (loc == null)
