@@ -1260,6 +1260,21 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.HexFindMatchHighlightMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition HexFindMatchHighlightMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexToolTipServiceField0)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexToolTipServiceField0ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexToolTipServiceField1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexToolTipServiceField1ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexToolTipServiceCurrentField)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexToolTipServiceCurrentFieldClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3446,6 +3461,43 @@ namespace dnSpy.Text.Classification {
 		sealed class HexFindMatchHighlightMarker : ThemeMarkerFormatDefinition {
 			HexFindMatchHighlightMarker() : base(TextColor.HexFindMatchHighlightMarker) {
 				ZOrder = HexMarkerServiceZIndexes.FindMatch;
+			}
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexToolTipServiceField0)]
+		[Name(ThemeClassificationTypeNameKeys.HexToolTipServiceField0)]
+		[UserVisible(true)]
+		[Order(After = Priority.High, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField)]
+		[Order(After = ThemeClassificationTypeNameKeys.HexFindMatchHighlightMarker, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
+		sealed class HexToolTipServiceField0 : ThemeMarkerFormatDefinition {
+			HexToolTipServiceField0() : base(TextColor.HexToolTipServiceField0) {
+				ZOrder = HexMarkerServiceZIndexes.ToolTipField0;
+			}
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexToolTipServiceField1)]
+		[Name(ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
+		[UserVisible(true)]
+		[Order(After = Priority.High, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField)]
+		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField0)]
+		sealed class HexToolTipServiceField1 : ThemeMarkerFormatDefinition {
+			HexToolTipServiceField1() : base(TextColor.HexToolTipServiceField1) {
+				ZOrder = HexMarkerServiceZIndexes.ToolTipField1;
+			}
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexToolTipServiceCurrentField)]
+		[Name(ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField0)]
+		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
+		sealed class HexToolTipServiceCurrentField : ThemeMarkerFormatDefinition {
+			HexToolTipServiceCurrentField() : base(TextColor.HexToolTipServiceCurrentField) {
+				ZOrder = HexMarkerServiceZIndexes.ToolTipCurrentField;
 			}
 		}
 

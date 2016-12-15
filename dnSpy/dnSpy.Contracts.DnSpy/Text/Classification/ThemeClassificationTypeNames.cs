@@ -1236,5 +1236,20 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.HexFindMatchHighlightMarker"/>
 		/// </summary>
 		public const string HexFindMatchHighlightMarker = "Theme-" + nameof(HexFindMatchHighlightMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceField0"/>
+		/// </summary>
+		public const string HexToolTipServiceField0 = "Theme-" + nameof(HexToolTipServiceField0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceField1"/>
+		/// </summary>
+		public const string HexToolTipServiceField1 = "Theme-" + nameof(HexToolTipServiceField1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceCurrentField"/>
+		/// </summary>
+		public const string HexToolTipServiceCurrentField = "Theme-" + nameof(HexToolTipServiceCurrentField);
 	}
 }

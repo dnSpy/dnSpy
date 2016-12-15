@@ -83,13 +83,16 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		HexQuickInfoSource[] CreateQuickInfoSources() {
-			var list = new List<HexQuickInfoSource>();
+			List<HexQuickInfoSource> list = null;
 			foreach (var provider in quickInfoSourceProviders) {
 				var source = provider.Value.TryCreateQuickInfoSource(HexView);
-				if (source != null)
+				if (source != null) {
+					if (list == null)
+						list = new List<HexQuickInfoSource>();
 					list.Add(source);
+				}
 			}
-			return list.ToArray();
+			return list?.ToArray() ?? Array.Empty<HexQuickInfoSource>();
 		}
 
 		void DisposeQuickInfoSources() {

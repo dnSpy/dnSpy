@@ -241,6 +241,9 @@
 		<color name="hexcurrentasciicell" bg="#FF505050" />
 		<color name="outputwindowtext" fg="#DCDCDC" bg="#1E1E1E" />
 		<color name="hexfindmatchhighlightmarker" bg="#FF751500" />
+		<color name="hextooltipservicefield0" bg="#FF4C1D4C" fg="#FFCE4CCE" />
+		<color name="hextooltipservicefield1" bg="#FF491C1C" fg="#FFEA5B5B" />
+		<color name="hextooltipservicecurrentfield" bg="#FF082949" fg="#FFADC0D3" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

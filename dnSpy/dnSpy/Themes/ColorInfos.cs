@@ -1952,6 +1952,9 @@ namespace dnSpy.Themes {
 			new BrushColorInfo(ColorType.HexCurrentValueCell, "Current Value Cell"),
 			new BrushColorInfo(ColorType.HexCurrentAsciiCell, "Current Ascii Cell"),
 			new BrushColorInfo(ColorType.HexFindMatchHighlightMarker, "Find Match Highlight (Hex Editor)"),
+			new BrushColorInfo(ColorType.HexToolTipServiceField0, "ToolTip Field #0 (Hex Editor)"),
+			new BrushColorInfo(ColorType.HexToolTipServiceField1, "ToolTip Field #1 (Hex Editor)"),
+			new BrushColorInfo(ColorType.HexToolTipServiceCurrentField, "ToolTip Current Field (Hex Editor)"),
 			new BrushColorInfo(ColorType.XmlDocToolTipHeader, "XML doc tooltip"),
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",

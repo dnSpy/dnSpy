@@ -32,5 +32,20 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Find match
 		/// </summary>
 		public const int FindMatch = 5000;
+
+		/// <summary>
+		/// ToolTip field #0
+		/// </summary>
+		public const int ToolTipField0 = 6000;
+
+		/// <summary>
+		/// ToolTip field #1
+		/// </summary>
+		public const int ToolTipField1 = 6001;
+
+		/// <summary>
+		/// ToolTip current field
+		/// </summary>
+		public const int ToolTipCurrentField = 7000;
 	}
 }

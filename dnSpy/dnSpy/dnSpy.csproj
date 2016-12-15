@@ -472,6 +472,7 @@
     <Compile Include="Hex\Intellisense\HexQuickInfoPresenterProvider.cs" />
     <Compile Include="Hex\Intellisense\HexQuickInfoSessionImpl.cs" />
     <Compile Include="Hex\Intellisense\HexSpaceReservationQuickInfoPresenter.cs" />
+    <Compile Include="Hex\Intellisense\HexToolTipService.cs" />
     <Compile Include="Hex\MEF\Metadata.cs" />
     <Compile Include="Hex\NativeMethods.cs" />
     <Compile Include="Hex\NormalizedHexBufferSpanCollectionExtensions.cs" />

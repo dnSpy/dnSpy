@@ -82,6 +82,9 @@
 		<color name="hexcurrentasciicell" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="outputwindowtext" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="hexfindmatchhighlightmarker" bg="#FF008000" />
+		<color name="hextooltipservicefield0" fg="#FFFFFFFF" bg="#FF008000" />
+		<color name="hextooltipservicefield1" fg="#FFFFFFFF" bg="#FF008000" />
+		<color name="hextooltipservicecurrentfield" fg="#FFFFFFFF" bg="#FF800080" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

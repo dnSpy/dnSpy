@@ -266,6 +266,9 @@ namespace dnSpy.Contracts.Themes {
 		HexCurrentAsciiCell,
 		OutputWindowText,
 		HexFindMatchHighlightMarker,
+		HexToolTipServiceField0,
+		HexToolTipServiceField1,
+		HexToolTipServiceCurrentField,
 
 		// Must be last in this group
 		LastNR,
