@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
@@ -47,5 +48,21 @@ namespace dnSpy.Decompiler {
 		public DummyDecompiler() {
 			Settings = new DummySettings();
 		}
+
+		public override void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
+		public override void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
+		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
+		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
+		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
+		public override void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
+		public override void Decompile(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
+		public override void Decompile(ModuleDef mod, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
+
+		// Should not be localized
+		static readonly string errorText =
+			"The decompiler extension wasn't built. Make sure you build every project before you press F5." + Environment.NewLine +
+			"Uncheck: Settings -> Projects and Solutions -> Build and Run -> Only build startup projects and dependencies on Run" + Environment.NewLine;
+		private void WriteError(IDecompilerOutput output) =>
+			output.Write(errorText, BoxedTextColor.Error);
 	}
 }
