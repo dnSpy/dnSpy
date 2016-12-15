@@ -84,6 +84,7 @@ namespace dnSpy.Hex.Operations {
 			var chars = new char[2];
 			var charLengthsTmp = new byte[s.Length];
 			int charLengthsIndex = 0;
+			int charStartByteIndex = 0;
 			for (int encodedBytesIndex = 0; encodedBytesIndex < encodedBytesTmp.Length; encodedBytesIndex++) {
 				bytes[0] = encodedBytesTmp[encodedBytesIndex];
 				int bytesUsed;
@@ -93,12 +94,14 @@ namespace dnSpy.Hex.Operations {
 				decoder.Convert(bytes, 0, 1, chars, 0, 2, isLastByte, out bytesUsed, out charsUsed, out completed);
 				if (isLastByte && charsUsed == 0)
 					return false;
-				if (charsUsed > byte.MaxValue)
-					return false;
 				if (charsUsed > 0) {
 					if (charLengthsIndex >= charLengthsTmp.Length)
 						return false;
-					charLengthsTmp[charLengthsIndex++] = (byte)charsUsed;
+					int bytesPerChar = encodedBytesIndex - charStartByteIndex + 1;
+					if (bytesPerChar > byte.MaxValue)
+						return false;
+					charLengthsTmp[charLengthsIndex++] = (byte)bytesPerChar;
+					charStartByteIndex = encodedBytesIndex + 1;
 				}
 			}
 			if (charLengthsTmp.Length != charLengthsIndex) {
