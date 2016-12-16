@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;

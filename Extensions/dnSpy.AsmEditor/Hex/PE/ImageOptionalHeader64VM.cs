@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageOptionalHeader64VM : ImageOptionalHeaderVM {
 		public override string Name => "IMAGE_OPTIONAL_HEADER64";
 		public override bool Is32Bit => false;
@@ -30,8 +30,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public UInt64HexField SizeOfHeapReserveVM { get; }
 		public UInt64HexField SizeOfHeapCommitVM { get; }
 
-		public ImageOptionalHeader64VM(object owner, HexBuffer buffer, HexPosition startOffset, HexPosition endOffset)
-			: base(owner, buffer, startOffset, endOffset, 0x20, 0x68) {
+		public ImageOptionalHeader64VM(HexBuffer buffer, HexPosition startOffset, HexPosition endOffset)
+			: base(buffer, startOffset, endOffset, 0x20, 0x68) {
 			ImageBaseVM = new UInt64HexField(buffer, Name, "ImageBase", startOffset + 0x18);
 
 			SizeOfStackReserveVM = new UInt64HexField(buffer, Name, "SizeOfStackReserve", startOffset + 0x48);

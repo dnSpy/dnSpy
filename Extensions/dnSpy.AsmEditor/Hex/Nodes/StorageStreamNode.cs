@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
@@ -58,7 +59,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			: base(HexSpan.FromBounds((ulong)sh.StartOffset, (ulong)sh.EndOffset)) {
 			StreamNumber = streamNumber;
 			StorageStreamType = GetStorageStreamType(knownStream);
-			storageStreamVM = new StorageStreamVM(this, buffer, Span.Start, (int)(Span.Length - 8).ToUInt64());
+			storageStreamVM = new StorageStreamVM(buffer, Span.Start, (int)(Span.Length - 8).ToUInt64());
 
 			var tblStream = knownStream as TablesStream;
 			if (tblStream != null)

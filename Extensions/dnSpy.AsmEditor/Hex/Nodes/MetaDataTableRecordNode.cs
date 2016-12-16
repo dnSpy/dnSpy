@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;

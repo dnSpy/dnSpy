@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class ImageOptionalHeaderVM : HexVM {
 		public abstract bool Is32Bit { get; }
 		public UInt16HexField MagicVM { get; }
@@ -85,8 +85,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			new IntegerHexBitFieldEnumInfo(16, "WindowsBootApplication"),
 		};
 
-		protected ImageOptionalHeaderVM(object owner, HexBuffer buffer, HexPosition startOffset, HexPosition endOffset, ulong offs1, ulong offs2)
-			: base(owner) {
+		protected ImageOptionalHeaderVM(HexBuffer buffer, HexPosition startOffset, HexPosition endOffset, ulong offs1, ulong offs2) {
 			MagicVM = new UInt16HexField(buffer, Name, "Magic", startOffset + 0);
 			MajorLinkerVersionVM = new ByteHexField(buffer, Name, "MajorLinkerVersion", startOffset + 2, true);
 			MinorLinkerVersionVM = new ByteHexField(buffer, Name, "MinorLinkerVersion", startOffset + 3, true);

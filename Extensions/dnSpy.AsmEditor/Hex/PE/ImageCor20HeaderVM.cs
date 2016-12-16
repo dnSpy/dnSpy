@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageCor20HeaderVM : HexVM {
 		public override string Name => "IMAGE_COR20_HEADER";
 		public UInt32HexField CbVM { get; }
@@ -40,8 +40,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public ImageCor20HeaderVM(object owner, HexBuffer buffer, HexPosition startOffset)
-			: base(owner) {
+		public ImageCor20HeaderVM(HexBuffer buffer, HexPosition startOffset) {
 			CbVM = new UInt32HexField(buffer, Name, "cb", startOffset + 0);
 			MajorRuntimeVersionVM = new UInt16HexField(buffer, Name, "MajorRuntimeVersion", startOffset + 4, true);
 			MinorRuntimeVersionVM = new UInt16HexField(buffer, Name, "MinorRuntimeVersion", startOffset + 6, true);

@@ -26,7 +26,7 @@ using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class MetaDataTableVM : HexVM {
 		public Func<Table, MetaDataTableVM> FindMetaDataTable { get; set; }
 		public Table Table => TableInfo.Table;
@@ -71,16 +71,17 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public HexBuffer Buffer => buffer;
 		public HexSpan Span { get; }
+		public object Owner { get; }
 
 		readonly HexBuffer buffer;
 		readonly HexSpan stringsHeapSpan;
 		readonly HexSpan guidHeapSpan;
 
-		protected MetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner) {
+		protected MetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan) {
 			this.buffer = buffer;
 			this.stringsHeapSpan = stringsHeapSpan;
 			this.guidHeapSpan = guidHeapSpan;
+			Owner = owner;
 			Span = new HexSpan(startOffset, (ulong)mdTable.Rows * mdTable.RowSize);
 			Rows = mdTable.Rows;
 			TableInfo = CreateTableInfo(mdTable.TableInfo);

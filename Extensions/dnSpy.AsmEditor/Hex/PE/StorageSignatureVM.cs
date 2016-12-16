@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Text;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class StorageSignatureVM : HexVM {
 		public override string Name => "STORAGESIGNATURE";
 
@@ -35,8 +35,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public StorageSignatureVM(object owner, HexBuffer buffer, HexPosition startOffset, int stringLen)
-			: base(owner) {
+		public StorageSignatureVM(HexBuffer buffer, HexPosition startOffset, int stringLen) {
 			LSignatureVM = new UInt32HexField(buffer, Name, "lSignature", startOffset + 0);
 			IMajorVerVM = new UInt16HexField(buffer, Name, "iMajorVer", startOffset + 4, true);
 			IMinorVerVM = new UInt16HexField(buffer, Name, "iMinorVer", startOffset + 6, true);

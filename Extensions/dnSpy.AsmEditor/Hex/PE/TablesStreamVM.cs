@@ -22,7 +22,7 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class TablesStreamVM : HexVM {
 		public override string Name => "MiniMdSchema";
 
@@ -105,8 +105,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public TablesStreamVM(object owner, HexBuffer buffer, TablesStream tblStream)
-			: base(owner) {
+		public TablesStreamVM(HexBuffer buffer, TablesStream tblStream) {
 			var startOffset = new HexPosition((ulong)tblStream.StartOffset);
 			M_ulReservedVM = new UInt32HexField(buffer, Name, "m_ulReserved", startOffset + 0);
 			M_majorVM = new ByteHexField(buffer, Name, "m_major", startOffset + 4, true);

@@ -21,7 +21,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	interface IVirtualizedListItem {
 		int Index { get; }
 	}

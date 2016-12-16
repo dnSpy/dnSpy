@@ -25,7 +25,7 @@ using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Utilities;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class MetaDataTableRecordVM : HexVM, IVirtualizedListItem {
 		public int Index => (int)mdToken.Rid - 1;
 		public override string Name => string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid);
@@ -320,8 +320,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		MDToken mdToken;
 		readonly HexField[] hexFields;
 
-		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
-			: base(mdVM.Owner) {
+		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken) {
 			this.mdVM = mdVM;
 			this.mdToken = mdToken;
 			hexFields = new HexField[mdVM.TableInfo.Columns.Count];

@@ -23,7 +23,7 @@ using System.Globalization;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageFileHeaderVM : HexVM {
 		public override string Name => "IMAGE_FILE_HEADER";
 		public UInt16FlagsHexField MachineVM { get; }
@@ -84,8 +84,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			new IntegerHexBitFieldEnumInfo(0xC0EE, "CEE"),
 		};
 
-		public ImageFileHeaderVM(object owner, HexBuffer buffer, HexPosition startOffset)
-			: base(owner) {
+		public ImageFileHeaderVM(HexBuffer buffer, HexPosition startOffset) {
 			MachineVM = new UInt16FlagsHexField(buffer, Name, "Machine", startOffset + 0);
 			MachineVM.Add(new IntegerHexBitField("Machine", 0, 16, MachineInfos));
 			NumberOfSectionsVM = new UInt16HexField(buffer, Name, "NumberOfSections", startOffset + 2);

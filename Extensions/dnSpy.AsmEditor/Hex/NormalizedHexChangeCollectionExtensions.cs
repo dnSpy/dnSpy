@@ -17,25 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using System.Diagnostics;
 using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.MVVM;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
-	abstract class HexVM : ViewModelBase {
-		public abstract string Name { get; }
-		public abstract IEnumerable<HexField> HexFields { get; }
-		public object Owner { get; }
-
-		protected HexVM(object owner) {
-			Debug.Assert(owner != null);
-			Owner = owner;
-		}
-
-		public virtual void OnBufferChanged(NormalizedHexChangeCollection changes) {
-			foreach (var field in HexFields)
-				field.OnBufferChanged(changes);
+namespace dnSpy.AsmEditor.Hex {
+	static class NormalizedHexChangeCollectionExtensions {
+		public static bool OverlapsWith(this NormalizedHexChangeCollection changes, HexSpan span) {
+			foreach (var change in changes) {
+				if (change.OldSpan.OverlapsWith(span))
+					return true;
+			}
+			return false;
 		}
 	}
 }

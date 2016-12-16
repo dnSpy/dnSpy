@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageDosHeaderVM : HexVM {
 		public override string Name => "IMAGE_DOS_HEADER";
 		public UInt16HexField MagicVM { get; }
@@ -58,8 +58,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public ImageDosHeaderVM(object owner, HexBuffer buffer, HexPosition startOffset)
-			: base(owner) {
+		public ImageDosHeaderVM(HexBuffer buffer, HexPosition startOffset) {
 			MagicVM = new UInt16HexField(buffer, Name, "e_magic", startOffset + 0);
 			CblpVM = new UInt16HexField(buffer, Name, "e_cblp", startOffset + 2);
 			CpVM = new UInt16HexField(buffer, Name, "e_cp", startOffset + 4);

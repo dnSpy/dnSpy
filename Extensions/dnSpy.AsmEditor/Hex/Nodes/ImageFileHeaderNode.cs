@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.PE;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
@@ -40,7 +41,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public ImageFileHeaderNode(HexBuffer buffer, ImageFileHeader fileHeader)
 			: base(HexSpan.FromBounds((ulong)fileHeader.StartOffset, (ulong)fileHeader.EndOffset)) {
-			imageFileHeaderVM = new ImageFileHeaderVM(this, buffer, Span.Start);
+			imageFileHeaderVM = new ImageFileHeaderVM(buffer, Span.Start);
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>

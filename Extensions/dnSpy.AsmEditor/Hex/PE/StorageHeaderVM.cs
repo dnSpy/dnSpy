@@ -18,29 +18,28 @@
 */
 
 using System.Collections.Generic;
-using System.Text;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
-	sealed class StorageStreamVM : HexVM {
-		public override string Name => "STORAGESTREAM";
+namespace dnSpy.AsmEditor.Hex.PE {
+	sealed class StorageHeaderVM : HexVM {
+		public override string Name => "STORAGEHEADER";
+		public ByteFlagsHexField FFlagsVM { get; }
+		public ByteHexField PadVM { get; }
+		public UInt16HexField IStreamsVM { get; }
 
-		public UInt32HexField IOffsetVM { get; }
-		public UInt32HexField ISizeVM { get; }
-		public StringHexField RCNameVM { get; }
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public StorageStreamVM(object owner, HexBuffer buffer, HexPosition startOffset, int stringLen)
-			: base(owner) {
-			IOffsetVM = new UInt32HexField(buffer, Name, "iOffset", startOffset + 0);
-			ISizeVM = new UInt32HexField(buffer, Name, "iSize", startOffset + 4);
-			RCNameVM = new StringHexField(buffer, Name, "rcName", startOffset + 8, Encoding.ASCII, stringLen);
+		public StorageHeaderVM(HexBuffer buffer, HexPosition startOffset) {
+			FFlagsVM = new ByteFlagsHexField(buffer, Name, "fFlags", startOffset + 0);
+			FFlagsVM.Add(new BooleanHexBitField("ExtraData", 0));
+			PadVM = new ByteHexField(buffer, Name, "pad", startOffset + 1);
+			IStreamsVM = new UInt16HexField(buffer, Name, "iStreams", startOffset + 2);
 
 			hexFields = new HexField[] {
-				IOffsetVM,
-				ISizeVM,
-				RCNameVM,
+				FFlagsVM,
+				PadVM,
+				IStreamsVM,
 			};
 		}
 	}

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
@@ -44,7 +45,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public TablesStreamNode(HexBuffer buffer, TablesStream tblStream, IMetaData md)
 			: base(HexSpan.FromBounds((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset)) {
-			tablesStreamVM = new TablesStreamVM(this, buffer, tblStream);
+			tablesStreamVM = new TablesStreamVM(buffer, tblStream);
 
 			newChildren = new List<TreeNodeData>();
 			foreach (var mdTable in tblStream.MDTables) {

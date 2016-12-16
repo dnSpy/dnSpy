@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Text;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageSectionHeaderVM : HexVM {
 		public override string Name => "IMAGE_SECTION_HEADER";
 		public StringHexField NameVM { get; }
@@ -57,8 +57,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			new IntegerHexBitFieldEnumInfo(15, "Reserved"),
 		};
 
-		public ImageSectionHeaderVM(object owner, HexBuffer buffer, HexPosition startOffset)
-			: base(owner) {
+		public ImageSectionHeaderVM(HexBuffer buffer, HexPosition startOffset) {
 			NameVM = new StringHexField(buffer, Name, "Name", startOffset + 0, Encoding.UTF8, 8);
 			VirtualSizeVM = new UInt32HexField(buffer, Name, "VirtualSize", startOffset + 8);
 			VirtualAddressVM = new UInt32HexField(buffer, Name, "VirtualAddress", startOffset + 0x0C);

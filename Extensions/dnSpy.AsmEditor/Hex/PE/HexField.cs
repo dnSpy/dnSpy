@@ -27,7 +27,7 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
 
-namespace dnSpy.AsmEditor.Hex.Nodes {
+namespace dnSpy.AsmEditor.Hex.PE {
 	[DebuggerDisplay("{StartOffset} {EndOffset} {Name} {DataFieldVM.StringValue}")]
 	abstract class HexField {
 		protected readonly HexBuffer buffer;
