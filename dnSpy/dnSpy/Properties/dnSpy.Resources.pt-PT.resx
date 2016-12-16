@@ -1527,15 +1527,15 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + F</value>
   </data>
   <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
-    <value>Paste (Unicode and Length)</value>
+    <value>Colar (Unicode e comprimento)</value>
   </data>
   <data name="PasteUTF8AndLength7Command" xml:space="preserve">
-    <value>Paste (UTF-8 and Length)</value>
+    <value>Colar (UTF-8 e comprimento)</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+8</value>
+    <value>CTRL + K, CTRL + 8</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+U</value>
+    <value>CTRL + K, CTRL + U</value>
   </data>
 </root>
