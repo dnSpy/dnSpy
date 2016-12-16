@@ -376,6 +376,9 @@
     <Compile Include="Hex\Editor\HexSpaceReservationStackImpl.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationStackProvider.cs" />
     <Compile Include="Hex\Editor\HexSpaceReservationStackProviderImpl.cs" />
+    <Compile Include="Hex\Editor\HexStructureInfoAggregatorFactoryImpl.cs" />
+    <Compile Include="Hex\Editor\HexStructureInfoAggregatorImpl.cs" />
+    <Compile Include="Hex\Editor\HexToolTipStructureSpanTagger.cs" />
     <Compile Include="Hex\Editor\HexViewExtensions.cs" />
     <Compile Include="Hex\Editor\HexViewLineExtensions.cs" />
     <Compile Include="Hex\Editor\HexViewMouseProcessorCollection.cs" />
