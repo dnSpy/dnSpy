@@ -1548,4 +1548,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ShortCutKeyF12" xml:space="preserve">
     <value>F12</value>
   </data>
+  <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
+    <value>Highlight structure under mouse cursor</value>
+  </data>
 </root>

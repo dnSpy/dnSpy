@@ -68,6 +68,8 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		bool HighlightCurrentValue { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.EncodingCodePage"/></summary>
 		int EncodingCodePage { get; }
+		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.HighlightStructureUnderMouseCursor"/></summary>
+		bool HighlightStructureUnderMouseCursor { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.EnableHighlightCurrentLine"/></summary>
 		bool EnableHighlightCurrentLine { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.EnableMouseWheelZoom"/></summary>
@@ -128,6 +130,7 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 			HighlightActiveColumn = DefaultHexEditorOptions.HighlightActiveColumn;
 			HighlightCurrentValue = DefaultHexEditorOptions.HighlightCurrentValue;
 			EncodingCodePage = DefaultHexEditorOptions.EncodingCodePage;
+			HighlightStructureUnderMouseCursor = DefaultHexEditorOptions.HighlightStructureUnderMouseCursor;
 			EnableHighlightCurrentLine = DefaultHexEditorOptions.EnableHighlightCurrentLine;
 			EnableMouseWheelZoom = DefaultHexEditorOptions.EnableMouseWheelZoom;
 			ZoomLevel = DefaultHexEditorOptions.ZoomLevel;
@@ -228,6 +231,11 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		/// Encoding code page, default value is <see cref="DefaultHexEditorOptions.EncodingCodePage"/>
 		/// </summary>
 		public int EncodingCodePage { get; set; }
+
+		/// <summary>
+		/// Highlight structure under mouse cursor, default value is <see cref="DefaultHexEditorOptions.HighlightStructureUnderMouseCursor"/>
+		/// </summary>
+		public bool HighlightStructureUnderMouseCursor { get; set; }
 
 		/// <summary>
 		/// Highlight current line, default value is <see cref="DefaultHexEditorOptions.EnableHighlightCurrentLine"/>

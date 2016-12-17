@@ -184,4 +184,10 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public override VSTE.EditorOptionKey<int> Key => DefaultHexViewOptions.EncodingCodePageId;
 		public override int Default => Encoding.UTF8.CodePage;
 	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class HighlightStructureUnderMouseCursorEditorOptionDefinition : HexViewOptionDefinition<bool> {
+		public override VSTE.EditorOptionKey<bool> Key => DefaultHexViewOptions.HighlightStructureUnderMouseCursorId;
+		public override bool Default => true;
+	}
 }

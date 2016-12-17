@@ -1605,6 +1605,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Highlight structure under mouse cursor.
+        /// </summary>
+        public static string HexEditorHighlightStructureUnderMouseCursor {
+            get {
+                return ResourceManager.GetString("HexEditorHighlightStructureUnderMouseCursor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Offset.
         /// </summary>
         public static string HexEditorOffsetFormat {

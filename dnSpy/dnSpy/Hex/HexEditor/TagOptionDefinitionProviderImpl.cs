@@ -61,6 +61,7 @@ namespace dnSpy.Hex.HexEditor {
 				yield return new OptionDefinition<bool>(md.SubGroup, DefaultHexViewOptions.HighlightActiveColumnId, md.HighlightActiveColumn);
 				yield return new OptionDefinition<bool>(md.SubGroup, DefaultHexViewOptions.HighlightCurrentValueId, md.HighlightCurrentValue);
 				yield return new OptionDefinition<int>(md.SubGroup, DefaultHexViewOptions.EncodingCodePageId, md.EncodingCodePage);
+				yield return new OptionDefinition<bool>(md.SubGroup, DefaultHexViewOptions.HighlightStructureUnderMouseCursorId, md.HighlightStructureUnderMouseCursor);
 				yield return new OptionDefinition<bool>(md.SubGroup, DefaultWpfHexViewOptions.EnableHighlightCurrentLineId, md.EnableHighlightCurrentLine);
 				yield return new OptionDefinition<bool>(md.SubGroup, DefaultWpfHexViewOptions.EnableMouseWheelZoomId, md.EnableMouseWheelZoom);
 				yield return new OptionDefinition<double>(md.SubGroup, DefaultWpfHexViewOptions.ZoomLevelId, md.ZoomLevel);

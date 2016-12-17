@@ -106,6 +106,11 @@ namespace dnSpy.Hex.Settings {
 			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.EncodingCodePageId, value); }
 		}
 
+		public bool HighlightStructureUnderMouseCursor {
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.HighlightStructureUnderMouseCursorId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.HighlightStructureUnderMouseCursorId, value); }
+		}
+
 		public bool EnableHighlightCurrentLine {
 			get { return Group.GetOptionValue(SubGroup, DefaultWpfHexViewOptions.EnableHighlightCurrentLineId); }
 			set { Group.SetOptionValue(SubGroup, DefaultWpfHexViewOptions.EnableHighlightCurrentLineId, value); }

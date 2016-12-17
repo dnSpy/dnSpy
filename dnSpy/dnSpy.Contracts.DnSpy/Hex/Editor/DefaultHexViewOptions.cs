@@ -80,6 +80,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<bool> HighlightCurrentValueId = new VSTE.EditorOptionKey<bool>(HighlightCurrentValueName);
 		public const string EncodingCodePageName = "HexView/EncodingCodePage";
 		public static readonly VSTE.EditorOptionKey<int> EncodingCodePageId = new VSTE.EditorOptionKey<int>(EncodingCodePageName);
+		public const string HighlightStructureUnderMouseCursorName = "HexView/HighlightStructureUnderMouseCursor";
+		public static readonly VSTE.EditorOptionKey<bool> HighlightStructureUnderMouseCursorId = new VSTE.EditorOptionKey<bool>(HighlightStructureUnderMouseCursorName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

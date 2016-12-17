@@ -45,6 +45,17 @@ namespace dnSpy.Hex.Settings {
 		}
 		bool enableHighlightCurrentLine;
 
+		public bool HighlightStructureUnderMouseCursor {
+			get { return highlightStructureUnderMouseCursor; }
+			set {
+				if (highlightStructureUnderMouseCursor != value) {
+					highlightStructureUnderMouseCursor = value;
+					OnPropertyChanged(nameof(HighlightStructureUnderMouseCursor));
+				}
+			}
+		}
+		bool highlightStructureUnderMouseCursor;
+
 		public bool HighlightCurrentValue {
 			get { return highlightCurrentValue; }
 			set {
@@ -132,6 +143,7 @@ namespace dnSpy.Hex.Settings {
 
 			EnableHighlightCurrentLine = options.EnableHighlightCurrentLine;
 			HighlightCurrentValue = options.HighlightCurrentValue;
+			HighlightStructureUnderMouseCursor = options.HighlightStructureUnderMouseCursor;
 			HighlightActiveColumn = options.HighlightActiveColumn;
 			ValuesLowerCaseHex = options.ValuesLowerCaseHex;
 			OffsetLowerCaseHex = options.OffsetLowerCaseHex;
@@ -152,6 +164,7 @@ namespace dnSpy.Hex.Settings {
 
 		public override void OnApply() {
 			options.EnableHighlightCurrentLine = EnableHighlightCurrentLine;
+			options.HighlightStructureUnderMouseCursor = HighlightStructureUnderMouseCursor;
 			options.HighlightCurrentValue = HighlightCurrentValue;
 			options.HighlightActiveColumn = HighlightActiveColumn;
 			options.ValuesLowerCaseHex = ValuesLowerCaseHex;

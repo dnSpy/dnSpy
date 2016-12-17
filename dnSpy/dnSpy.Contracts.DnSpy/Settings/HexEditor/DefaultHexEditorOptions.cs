@@ -40,6 +40,7 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		public const bool HighlightActiveColumn = false;
 		public const bool HighlightCurrentValue = true;
 		public const int EncodingCodePage = 65001;// System.Text.Encoding.UTF8.CodePage
+		public const bool HighlightStructureUnderMouseCursor = true;
 		public const bool EnableHighlightCurrentLine = true;
 		public const bool EnableMouseWheelZoom = true;
 		public const double ZoomLevel = 100;

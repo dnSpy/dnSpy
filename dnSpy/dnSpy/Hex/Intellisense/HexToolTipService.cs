@@ -25,9 +25,11 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Intellisense;
 using dnSpy.Contracts.Hex.Tagging;
 using CTC = dnSpy.Contracts.Text.Classification;
+using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Intellisense {
@@ -226,6 +228,7 @@ namespace dnSpy.Hex.Intellisense {
 	sealed class HexToolTipServiceImpl : HexToolTipService {
 		readonly HexView hexView;
 		readonly HexTagAggregator<HexToolTipStructureSpanTag> tagAggregator;
+		bool highlightStructureUnderMouseCursor;
 
 		public HexToolTipServiceImpl(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService, HexView hexView) {
 			if (hexView == null)
@@ -235,6 +238,22 @@ namespace dnSpy.Hex.Intellisense {
 			this.hexView = hexView;
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<HexToolTipStructureSpanTag>(hexView);
 			hexView.Closed += HexView_Closed;
+			hexView.Options.OptionChanged += Options_OptionChanged;
+			UpdateHighlightStructureUnderMouseCursor();
+		}
+
+		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+			if (e.OptionId == DefaultHexViewOptions.HighlightStructureUnderMouseCursorName)
+				UpdateHighlightStructureUnderMouseCursor();
+		}
+
+		void UpdateHighlightStructureUnderMouseCursor() {
+			var newValue = hexView.Options.HighlightStructureUnderMouseCursor();
+			if (newValue == highlightStructureUnderMouseCursor)
+				return;
+			highlightStructureUnderMouseCursor = newValue;
+			if (activeToolTipInfoCollection != null)
+				tagger?.RaiseTagsChanged(activeToolTipInfoCollection.FullBufferSpan);
 		}
 
 		public override HexToolTipInfoCollection GetToolTipInfo(HexBufferPoint position) {
@@ -302,6 +321,8 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		public override IEnumerable<IHexTagSpan<HexMarkerTag>> GetTags(NormalizedHexBufferSpanCollection spans) {
+			if (!highlightStructureUnderMouseCursor)
+				yield break;
 			var collection = activeToolTipInfoCollection;
 			if (collection == null)
 				yield break;
@@ -326,6 +347,7 @@ namespace dnSpy.Hex.Intellisense {
 
 		void HexView_Closed(object sender, EventArgs e) {
 			hexView.Closed -= HexView_Closed;
+			hexView.Options.OptionChanged -= Options_OptionChanged;
 			tagAggregator.Dispose();
 		}
 	}

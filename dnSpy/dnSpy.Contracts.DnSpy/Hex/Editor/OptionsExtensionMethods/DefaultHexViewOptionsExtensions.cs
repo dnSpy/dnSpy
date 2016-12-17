@@ -339,5 +339,16 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 				return null;
 			}
 		}
+
+		/// <summary>
+		/// Returns true if the structure under the mouse cursor should be highlighted
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static bool HighlightStructureUnderMouseCursor(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.HighlightStructureUnderMouseCursorId);
+		}
 	}
 }
