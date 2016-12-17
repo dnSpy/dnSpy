@@ -24,12 +24,12 @@ using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class HexReference {
-		public HexBuffer Buffer { get; }
+		public HexBufferSpan PESpan { get; }
 
-		protected HexReference(HexBuffer buffer) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			Buffer = buffer;
+		protected HexReference(HexBufferSpan peSpan) {
+			if (peSpan.IsDefault)
+				throw new ArgumentException();
+			PESpan = peSpan;
 		}
 
 		public abstract override bool Equals(object obj);
@@ -39,8 +39,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class HexFieldReference : HexReference {
 		public HexField Field { get; }
 
-		public HexFieldReference(HexBuffer buffer, HexField field)
-			: base(buffer) {
+		public HexFieldReference(HexBufferSpan peSpan, HexField field)
+			: base(peSpan) {
 			if (field == null)
 				throw new ArgumentNullException(nameof(field));
 			Field = field;
@@ -49,19 +49,19 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override bool Equals(object obj) {
 			var other = obj as HexFieldReference;
 			return other != null &&
-				Buffer == other.Buffer &&
+				PESpan == other.PESpan &&
 				Field == other.Field;
 		}
 
-		public override int GetHashCode() => Buffer.GetHashCode() ^ Field.GetHashCode();
+		public override int GetHashCode() => PESpan.GetHashCode() ^ Field.GetHashCode();
 	}
 
 	sealed class HexMethodReference : HexReference {
 		public MDToken Token { get; }
 		public uint? Offset { get; }
 
-		public HexMethodReference(HexBuffer buffer, uint rid, uint? offset)
-			: base(buffer) {
+		public HexMethodReference(HexBufferSpan peSpan, uint rid, uint? offset)
+			: base(peSpan) {
 			if (rid == 0)
 				throw new ArgumentOutOfRangeException(nameof(rid));
 			Token = new MDToken(Table.Method, rid);
@@ -71,11 +71,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override bool Equals(object obj) {
 			var other = obj as HexMethodReference;
 			return other != null &&
-				Buffer == other.Buffer &&
+				PESpan == other.PESpan &&
 				Token == other.Token &&
 				Offset == other.Offset;
 		}
 
-		public override int GetHashCode() => Buffer.GetHashCode() ^ Token.GetHashCode() ^ (int)(Offset ?? 0);
+		public override int GetHashCode() => PESpan.GetHashCode() ^ Token.GetHashCode() ^ (int)(Offset ?? 0);
 	}
 }

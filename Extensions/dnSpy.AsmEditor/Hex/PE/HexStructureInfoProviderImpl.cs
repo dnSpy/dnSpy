@@ -59,6 +59,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		sealed class PEStructure {
 			public HexBuffer Buffer => peStructureProvider.Buffer;
+			public HexSpan PESpan => peStructureProvider.PESpan;
 			readonly PEStructureProvider peStructureProvider;
 			readonly HexVM[] hexStructures;
 			readonly HexSpan metadataTablesSpan;
@@ -169,14 +170,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override object GetReference(HexPosition position) {
 			var info = GetField(position);
 			if (info != null)
-				return new HexFieldReference(peStructure.Buffer, info.Value.Field);
+				return new HexFieldReference(new HexBufferSpan(peStructure.Buffer, peStructure.PESpan), info.Value.Field);
 
 			var mfInfo = peStructure.GetMethodBodyInfoAndField(position);
 			if (mfInfo != null) {
 				var minfo = mfInfo.Value.MethodBodyInfo;
 				if (minfo.InstructionsSpan.Contains(position))
-					return new HexMethodReference(peStructure.Buffer, minfo.Rids[0], (uint)(position - minfo.InstructionsSpan.Start).ToUInt64());
-				return new HexMethodReference(peStructure.Buffer, minfo.Rids[0], null);
+					return new HexMethodReference(new HexBufferSpan(peStructure.Buffer, peStructure.PESpan), minfo.Rids[0], (uint)(position - minfo.InstructionsSpan.Start).ToUInt64());
+				return new HexMethodReference(new HexBufferSpan(peStructure.Buffer, peStructure.PESpan), minfo.Rids[0], null);
 			}
 
 			return null;
