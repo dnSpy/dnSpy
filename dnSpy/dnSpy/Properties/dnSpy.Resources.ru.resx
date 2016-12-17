@@ -1521,24 +1521,24 @@
     <value>Alt+8</value>
   </data>
   <data name="ShortCutKeyAltH" xml:space="preserve">
-    <value>Alt+H</value>
+    <value>ALT+H</value>
   </data>
   <data name="ShortCutKeyAltU" xml:space="preserve">
-    <value>Alt+U</value>
+    <value>ALT+U</value>
   </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Ctrl+F</value>
   </data>
   <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
-    <value>Paste (Unicode and Length)</value>
+    <value>Вставить (Unicode и длина)</value>
   </data>
   <data name="PasteUTF8AndLength7Command" xml:space="preserve">
-    <value>Paste (UTF-8 and Length)</value>
+    <value>Вставить (UTF-8 и длина)</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+8</value>
+    <value>CTRL+K, Ctrl+8</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+U</value>
+    <value>CTRL+K, Ctrl+U</value>
   </data>
 </root>
