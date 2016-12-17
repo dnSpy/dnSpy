@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
@@ -24,7 +25,7 @@ using dnSpy.Contracts.Hex;
 namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class MethodBodyReader {
 		readonly HexBuffer buffer;
-		readonly uint rid;
+		readonly IList<uint> rids;
 		readonly HexPosition methodBodyPosition;
 		readonly HexPosition peEndPosition;
 		HexPosition currentPosition;
@@ -35,9 +36,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		uint codeSize;
 		uint localVarSigTok;
 
-		public MethodBodyReader(HexBuffer buffer, uint rid, HexPosition methodBodyPosition, HexPosition peEndPosition) {
+		public MethodBodyReader(HexBuffer buffer, IList<uint> rids, HexPosition methodBodyPosition, HexPosition peEndPosition) {
 			this.buffer = buffer;
-			this.rid = rid;
+			this.rids = rids;
 			this.methodBodyPosition = methodBodyPosition;
 			this.peEndPosition = peEndPosition;
 		}
@@ -53,7 +54,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			bool isSmallExceptionClauses;
 			var exceptionsSpan = ReadExceptionHandlers(out isSmallExceptionClauses);
 
-			return new MethodBodyInfo(new MDToken(Table.Method, rid), headerSpan, instructionsSpan, exceptionsSpan, isSmallExceptionClauses);
+			return new MethodBodyInfo(rids, headerSpan, instructionsSpan, exceptionsSpan, isSmallExceptionClauses);
 		}
 
 		byte ReadByte() => buffer.ReadByte(currentPosition++);

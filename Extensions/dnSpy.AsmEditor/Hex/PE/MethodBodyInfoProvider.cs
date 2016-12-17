@@ -43,7 +43,12 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		sealed class MethodBodyPositionAndRidComparer : IComparer<MethodBodyPositionAndRid> {
 			public static readonly MethodBodyPositionAndRidComparer Instance = new MethodBodyPositionAndRidComparer();
-			public int Compare(MethodBodyPositionAndRid x, MethodBodyPositionAndRid y) => x.Position.CompareTo(y.Position);
+			public int Compare(MethodBodyPositionAndRid x, MethodBodyPositionAndRid y) {
+				int c = x.Position.CompareTo(y.Position);
+				if (c != 0)
+					return c;
+				return (int)x.Rid - (int)y.Rid;
+			}
 		}
 
 		MethodBodyInfoProvider(PEStructureProvider peStructureProvider, MetaDataTableVM methodTable) {
@@ -57,7 +62,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			if (methodBodyPositions.Length == 0)
 				return default(HexSpan);
 			var last = methodBodyPositions[methodBodyPositions.Length - 1];
-			var info = TryParseMethodBody(last.Rid, last.Position);
+			var info = TryParseMethodBody(new[] { last.Rid }, last.Position);
 			return HexSpan.FromBounds(methodBodyPositions[0].Position, info?.Span.End ?? last.Position);
 		}
 
@@ -82,8 +87,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return list.ToArray();
 		}
 
-		MethodBodyInfo? TryParseMethodBody(uint rid, HexPosition methodBodyPosition) =>
-			new MethodBodyReader(peStructureProvider.Buffer, rid, methodBodyPosition, peStructureProvider.PESpan.End).Read();
+		MethodBodyInfo? TryParseMethodBody(IList<uint> rids, HexPosition methodBodyPosition) =>
+			new MethodBodyReader(peStructureProvider.Buffer, rids, methodBodyPosition, peStructureProvider.PESpan.End).Read();
 
 		public static MethodBodyInfoProvider TryCreate(PEStructureProvider peStructureProvider) {
 			if (peStructureProvider == null)
@@ -105,7 +110,12 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			if (index < 0)
 				return null;
 			var info = methodBodyPositions[index];
-			var methodInfo = TryParseMethodBody(info.Rid, info.Position);
+			var rids = new List<uint>();
+			rids.Add(info.Rid);
+			index++;
+			while (index < methodBodyPositions.Length && methodBodyPositions[index].Position == info.Position)
+				rids.Add(methodBodyPositions[index++].Rid);
+			var methodInfo = TryParseMethodBody(rids, info.Position);
 			if (methodInfo == null || !methodInfo.Value.Span.Contains(position))
 				return null;
 			return new MethodBodyInfoAndField(methodInfo.Value, GetFieldInfo(methodInfo.Value, position));
@@ -192,6 +202,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		int GetStartIndex(HexPosition position) {
+			int index = GetStartIndexCore(position);
+			while (index > 0 && methodBodyPositions[index - 1].Position == methodBodyPositions[index].Position)
+				index--;
+			return index;
+		}
+
+		int GetStartIndexCore(HexPosition position) {
 			var array = methodBodyPositions;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

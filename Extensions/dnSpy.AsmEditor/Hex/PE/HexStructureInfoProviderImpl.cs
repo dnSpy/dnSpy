@@ -176,8 +176,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			if (mfInfo != null) {
 				var minfo = mfInfo.Value.MethodBodyInfo;
 				if (minfo.InstructionsSpan.Contains(position))
-					return new HexMethodReference(peStructure.Buffer, minfo.Token.Rid, (uint)(position - minfo.InstructionsSpan.Start).ToUInt64());
-				return new HexMethodReference(peStructure.Buffer, minfo.Token.Rid, null);
+					return new HexMethodReference(peStructure.Buffer, minfo.Rids[0], (uint)(position - minfo.InstructionsSpan.Start).ToUInt64());
+				return new HexMethodReference(peStructure.Buffer, minfo.Rids[0], null);
 			}
 
 			return null;
@@ -214,7 +214,18 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 			output.Write(BoxedTextColor.Text, "Method");
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Number, "0x" + minfo.Token.Raw.ToString("X8"));
+			const int maxRids = 10;
+			for (int i = 0; i < minfo.Rids.Count; i++) {
+				if (i > 0) {
+					output.Write(BoxedTextColor.Punctuation, ",");
+					output.WriteSpace();
+				}
+				if (i > maxRids) {
+					output.Write(BoxedTextColor.Error, "...");
+					break;
+				}
+				output.Write(BoxedTextColor.Number, "0x06" + minfo.Rids[i].ToString("X6"));
+			}
 			output.WriteLine();
 
 			switch (finfo.FieldKind) {

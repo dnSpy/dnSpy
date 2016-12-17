@@ -17,20 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	struct MethodBodyInfo {
-		public MDToken Token { get; }
+		public IList<uint> Rids { get; }
 		public HexSpan HeaderSpan { get; }
 		public HexSpan InstructionsSpan { get; }
 		public HexSpan ExceptionsSpan { get; }
 		public bool IsSmallExceptionClauses { get; }
 		public HexSpan Span => HexSpan.FromBounds(HeaderSpan.Start, ExceptionsSpan.Length == 0 ? InstructionsSpan.End : ExceptionsSpan.End);
 
-		public MethodBodyInfo(MDToken token, HexSpan headerSpan, HexSpan instructionsSpan, HexSpan exceptionsSpan, bool isSmallExceptionClauses) {
-			Token = token;
+		public MethodBodyInfo(IList<uint> rids, HexSpan headerSpan, HexSpan instructionsSpan, HexSpan exceptionsSpan, bool isSmallExceptionClauses) {
+			Rids = rids;
 			HeaderSpan = headerSpan;
 			InstructionsSpan = instructionsSpan;
 			ExceptionsSpan = exceptionsSpan;
