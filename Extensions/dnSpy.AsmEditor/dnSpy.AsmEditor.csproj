@@ -361,6 +361,7 @@
     <Compile Include="Hex\Nodes\TokenReferenceDocumentTabContentProvider.cs" />
     <Compile Include="Hex\NormalizedHexChangeCollectionExtensions.cs" />
     <Compile Include="Hex\PE\BufferToDocumentNodeService.cs" />
+    <Compile Include="Hex\PE\DataFormatter.cs" />
     <Compile Include="Hex\PE\HexBufferImageStream.cs" />
     <Compile Include="Hex\PE\HexField.cs" />
     <Compile Include="Hex\PE\HexReferenceConverterImpl.cs" />

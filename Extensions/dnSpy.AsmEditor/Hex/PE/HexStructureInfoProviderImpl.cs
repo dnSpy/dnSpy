@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification.DnSpy;
 using dnSpy.Contracts.Hex.Editor;
@@ -210,23 +211,149 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		bool CreateFieldToolTip(ToolTipCreator creator, FieldAndStructure info) {
-			var output = creator.Writer;
-			creator.Image = DsImages.FieldPublic;
-			output.Write(BoxedTextColor.ValueType, info.Structure.Name);
-			output.Write(BoxedTextColor.Punctuation, ".");
-			output.Write(BoxedTextColor.InstanceField, info.Field.Name);
+			var output = new DataFormatter(creator.Writer);
+			var mdRec = info.Structure as MetaDataTableRecordVM;
+			if (mdRec != null) {
+				creator.Image = GetImageReference(mdRec.Token.Table);
+				output.Write(BoxedTextColor.ValueType, mdRec.Token.Table.ToString());
+				output.Write(BoxedTextColor.Punctuation, "[");
+				output.Write(BoxedTextColor.Number, mdRec.Token.Rid.ToString("X6"));
+				output.Write(BoxedTextColor.Punctuation, "]");
+				output.Write(BoxedTextColor.Operator, ".");
+				output.Write(BoxedTextColor.InstanceField, info.Field.Name);
+			}
+			else {
+				creator.Image = DsImages.FieldPublic;
+				output.WriteStructAndField(info.Structure.Name, info.Field.Name);
+			}
+			output.WriteEquals();
+			WriteValue(output, info.Field);
 			return true;
 		}
 
+		void WriteValue(DataFormatter output, HexField field) {
+			var stringField = field as StringHexField;
+			if (stringField != null) {
+				output.Write(BoxedTextColor.String, "\"" + stringField.FormattedValue + "\"");
+				return;
+			}
+
+			var buffer = peStructure.Buffer;
+			var fieldPosition = field.Span.Start;
+
+			switch (field.Size.ToUInt64()) {
+			case 1:
+				output.WriteByte(buffer.ReadByte(fieldPosition));
+				break;
+
+			case 2:
+				output.WriteUInt16(buffer.ReadUInt16(fieldPosition));
+				break;
+
+			case 4:
+				output.WriteUInt32(buffer.ReadUInt32(fieldPosition));
+				break;
+
+			case 8:
+				output.WriteUInt64(buffer.ReadUInt64(fieldPosition));
+				break;
+			}
+		}
+
+		static ImageReference GetImageReference(Table table) {
+			switch (table) {
+			case Table.Module:					return DsImages.ModulePublic;
+			case Table.TypeRef:					return DsImages.ClassPublic;
+			case Table.TypeDef:					return DsImages.ClassPublic;
+			case Table.FieldPtr:				return DsImages.FieldPublic;
+			case Table.Field:					return DsImages.FieldPublic;
+			case Table.MethodPtr:				return DsImages.MethodPublic;
+			case Table.Method:					return DsImages.MethodPublic;
+			case Table.ParamPtr:				return DsImages.Parameter;
+			case Table.Param:					return DsImages.Parameter;
+			case Table.InterfaceImpl:			return DsImages.InterfacePublic;
+			case Table.MemberRef:				return DsImages.Property;
+			case Table.Constant:				return DsImages.ConstantPublic;
+			case Table.CustomAttribute:			break;
+			case Table.FieldMarshal:			break;
+			case Table.DeclSecurity:			break;
+			case Table.ClassLayout:				break;
+			case Table.FieldLayout:				break;
+			case Table.StandAloneSig:			return DsImages.LocalVariable;
+			case Table.EventMap:				return DsImages.EventPublic;
+			case Table.EventPtr:				return DsImages.EventPublic;
+			case Table.Event:					return DsImages.EventPublic;
+			case Table.PropertyMap:				return DsImages.Property;
+			case Table.PropertyPtr:				return DsImages.Property;
+			case Table.Property:				return DsImages.Property;
+			case Table.MethodSemantics:			break;
+			case Table.MethodImpl:				break;
+			case Table.ModuleRef:				return DsImages.ModulePublic;
+			case Table.TypeSpec:				return DsImages.Template;
+			case Table.ImplMap:					break;
+			case Table.FieldRVA:				break;
+			case Table.ENCLog:					break;
+			case Table.ENCMap:					break;
+			case Table.Assembly:				return DsImages.Assembly;
+			case Table.AssemblyProcessor:		return DsImages.Assembly;
+			case Table.AssemblyOS:				return DsImages.Assembly;
+			case Table.AssemblyRef:				return DsImages.Assembly;
+			case Table.AssemblyRefProcessor:	return DsImages.Assembly;
+			case Table.AssemblyRefOS:			return DsImages.Assembly;
+			case Table.File:					return DsImages.ModuleFile;
+			case Table.ExportedType:			return DsImages.ClassPublic;
+			case Table.ManifestResource:		return DsImages.SourceFileGroup;
+			case Table.NestedClass:				return DsImages.ClassPublic;
+			case Table.GenericParam:			break;
+			case Table.MethodSpec:				return DsImages.MethodPublic;
+			case Table.GenericParamConstraint:	break;
+			case Table.Document:				break;
+			case Table.MethodDebugInformation:	break;
+			case Table.LocalScope:				break;
+			case Table.LocalVariable:			break;
+			case Table.LocalConstant:			break;
+			case Table.ImportScope:				break;
+			case Table.StateMachineMethod:		break;
+			case Table.CustomDebugInformation:	break;
+			default:
+				Debug.Fail($"Unknown table: {table}");
+				break;
+			}
+			return DsImages.Metadata;
+		}
+
+		static readonly FlagInfo[] fatHeaderFlagsFlagInfos = new FlagInfo[] {
+			new FlagInfo("TinyFormat", 0x7, 0x2),
+			new FlagInfo("FatFormat", 0x7, 0x3),
+			new FlagInfo("MoreSects", 0x8),
+			new FlagInfo("InitLocals", 0x10),
+		};
+
+		static readonly FlagInfo[] exceptionHeaderFlagInfos = new FlagInfo[] {
+			new FlagInfo("EHTable", 0x3F, 0x1),
+			new FlagInfo("OptILTable", 0x3F, 0x2),
+			new FlagInfo("FatFormat", 0x40),
+			new FlagInfo("MoreSects", 0x80),
+		};
+
+		static readonly FlagInfo[] exceptionClauseFlagInfos = new FlagInfo[] {
+			new FlagInfo("EXCEPTION", uint.MaxValue, 0),
+			new FlagInfo("FILTER", uint.MaxValue, 1),
+			new FlagInfo("FINALLY", uint.MaxValue, 2),
+			new FlagInfo("FAULT", uint.MaxValue, 4),
+		};
+
 		bool CreateMethodBodyToolTip(ToolTipCreator creator, MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position, bool isSmallExceptionClauses) {
-			const string methodHeader = "MethodHeader";
+			const string tinyMethodHeader = "TinyMethodHeader";
+			const string fatMethodHeader = "FatMethodHeader";
 			const string methodBody = "MethodBody";
 			const string exceptionHeader = "ExceptionHeader";
 			const string exceptionClauses = "ExceptionClauses";
-			const string unknown = "???";
 
 			creator.Image = DsImages.MethodPublic;
-			var output = creator.Writer;
+			var output = new DataFormatter(creator.Writer);
+			var buffer = peStructure.Buffer;
+			var fieldPosition = finfo.Span.Start;
 
 			output.Write(BoxedTextColor.Text, "Method");
 			output.WriteSpace();
@@ -242,7 +369,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				}
 				output.Write(BoxedTextColor.Number, "0x06" + minfo.Rids[i].ToString("X6"));
 			}
-			output = creator.CreateNewWriter();
+			output = new DataFormatter(creator.CreateNewWriter());
 
 			switch (finfo.FieldKind) {
 			case MethodBodyFieldKind.None:
@@ -254,41 +381,42 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				break;
 
 			case MethodBodyFieldKind.LargeHeaderFlags:
-				output.Write(BoxedTextColor.ValueType, methodHeader);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "Flags");
+				output.WriteStructAndField(fatMethodHeader, "Flags");
+				output.WriteEquals();
+				output.WriteFlags((uint)buffer.ReadUInt16(fieldPosition) & 0x0FFF, fatHeaderFlagsFlagInfos);
 				break;
 
 			case MethodBodyFieldKind.LargeHeaderMaxStack:
-				output.Write(BoxedTextColor.ValueType, methodHeader);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "MaxStack");
+				output.WriteStructAndField(fatMethodHeader, "MaxStack");
+				output.WriteEquals();
+				output.WriteUInt16(buffer.ReadUInt16(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.SmallHeaderCodeSize:
+				output.WriteStructAndField(tinyMethodHeader, "CodeSize");
+				output.WriteEquals();
+				output.WriteByte((byte)(buffer.ReadByte(fieldPosition) >> 2));
+				break;
+
 			case MethodBodyFieldKind.LargeHeaderCodeSize:
-				output.Write(BoxedTextColor.ValueType, methodHeader);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "CodeSize");
+				output.WriteStructAndField(fatMethodHeader, "CodeSize");
+				output.WriteEquals();
+				output.WriteUInt32(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.LargeHeaderLocalVarSigTok:
-				output.Write(BoxedTextColor.ValueType, methodHeader);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "LocalVarSigTok");
+				output.WriteStructAndField(fatMethodHeader, "LocalVarSigTok");
+				output.WriteEquals();
+				output.WriteToken(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.LargeHeaderUnknown:
-				output.Write(BoxedTextColor.ValueType, methodHeader);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.Error, unknown);
+				output.WriteStructAndErrorField(fatMethodHeader);
 				break;
 
 			case MethodBodyFieldKind.InstructionBytes:
 				//TODO: Disassemble the instruction
-				output.Write(BoxedTextColor.ValueType, methodBody);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "Instructions");
+				output.WriteStructAndField(methodBody, "Instructions");
 				output.Write(BoxedTextColor.Punctuation, ":");
 				output.WriteSpace();
 				output.Write(BoxedTextColor.Text, "offset");
@@ -298,68 +426,110 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 			case MethodBodyFieldKind.SmallExceptionHeaderKind:
 			case MethodBodyFieldKind.LargeExceptionHeaderKind:
-				output.Write(BoxedTextColor.ValueType, exceptionHeader);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "Kind");
+				output.WriteStructAndField(exceptionHeader, "Kind");
+				output.WriteEquals();
+				output.WriteFlags(buffer.ReadByte(fieldPosition), exceptionHeaderFlagInfos);
+				break;
+				 
+			case MethodBodyFieldKind.SmallExceptionHeaderDataSize:
+				output.WriteStructAndField(exceptionHeader, "DataSize");
+				output.WriteEquals();
+				output.WriteByte(buffer.ReadByte(fieldPosition));
 				break;
 
-			case MethodBodyFieldKind.SmallExceptionHeaderDataSize:
 			case MethodBodyFieldKind.LargeExceptionHeaderDataSize:
-				output.Write(BoxedTextColor.ValueType, exceptionHeader);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "DataSize");
+				output.WriteStructAndField(exceptionHeader, "DataSize");
+				output.WriteEquals();
+				output.WriteUInt24(buffer.ReadUInt32(fieldPosition - 1) >> 8);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionHeaderPadding:
-				output.Write(BoxedTextColor.ValueType, exceptionHeader);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "Padding");
+				output.WriteStructAndField(exceptionHeader, "Padding");
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseFlags:
+				WriteExceptionClause(output, minfo, position, "Flags", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteFlags(buffer.ReadUInt16(fieldPosition), exceptionClauseFlagInfos);
+				break;
+
 			case MethodBodyFieldKind.LargeExceptionClauseFlags:
 				WriteExceptionClause(output, minfo, position, "Flags", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteFlags(buffer.ReadUInt32(fieldPosition), exceptionClauseFlagInfos);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseTryOffset:
+				WriteExceptionClause(output, minfo, position, "TryOffset", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteUInt16(buffer.ReadUInt16(fieldPosition));
+				break;
+
 			case MethodBodyFieldKind.LargeExceptionClauseTryOffset:
 				WriteExceptionClause(output, minfo, position, "TryOffset", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteUInt32(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseTryLength:
+				WriteExceptionClause(output, minfo, position, "TryLength", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteByte(buffer.ReadByte(fieldPosition));
+				break;
+
 			case MethodBodyFieldKind.LargeExceptionClauseTryLength:
 				WriteExceptionClause(output, minfo, position, "TryLength", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteUInt32(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseHandlerOffset:
+				WriteExceptionClause(output, minfo, position, "HandlerOffset", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteUInt16(buffer.ReadUInt16(fieldPosition));
+				break;
+
 			case MethodBodyFieldKind.LargeExceptionClauseHandlerOffset:
 				WriteExceptionClause(output, minfo, position, "HandlerOffset", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteUInt32(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseHandlerLength:
+				WriteExceptionClause(output, minfo, position, "HandlerLength", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteByte(buffer.ReadByte(fieldPosition));
+				break;
+
 			case MethodBodyFieldKind.LargeExceptionClauseHandlerLength:
 				WriteExceptionClause(output, minfo, position, "HandlerLength", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteUInt32(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseClassToken:
 			case MethodBodyFieldKind.LargeExceptionClauseClassToken:
 				WriteExceptionClause(output, minfo, position, "ClassToken", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteToken(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseFilterOffset:
 			case MethodBodyFieldKind.LargeExceptionClauseFilterOffset:
 				WriteExceptionClause(output, minfo, position, "FilterOffset", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteUInt32(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseReserved:
 			case MethodBodyFieldKind.LargeExceptionClauseReserved:
 				WriteExceptionClause(output, minfo, position, "Reserved", isSmallExceptionClauses);
+				output.WriteEquals();
+				output.WriteUInt32(buffer.ReadUInt32(fieldPosition));
 				break;
 
 			case MethodBodyFieldKind.ExceptionClausesUnknown:
-				output.Write(BoxedTextColor.ValueType, exceptionClauses);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.Error, unknown);
+				output.WriteStructAndErrorField(exceptionClauses);
 				break;
 
 			default:
@@ -369,14 +539,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return true;
 		}
 
-		void WriteExceptionClause(ITextColorWriter output, MethodBodyInfo minfo, HexPosition position, string fieldName, bool isSmallExceptionClauses) {
+		void WriteExceptionClause(DataFormatter output, MethodBodyInfo minfo, HexPosition position, string fieldName, bool isSmallExceptionClauses) {
 			const string exceptionClauses = "ExceptionClauses";
 			int ehIndex = (int)((position - minfo.ExceptionsSpan.Start - 4).ToUInt64() / (isSmallExceptionClauses ? 12U : 24));
 			output.Write(BoxedTextColor.ValueType, exceptionClauses);
 			output.Write(BoxedTextColor.Punctuation, "[");
 			output.Write(BoxedTextColor.Number, ehIndex.ToString());
 			output.Write(BoxedTextColor.Punctuation, "]");
-			output.Write(BoxedTextColor.Punctuation, ".");
+			output.Write(BoxedTextColor.Operator, ".");
 			output.Write(BoxedTextColor.InstanceField, fieldName);
 		}
 	}
