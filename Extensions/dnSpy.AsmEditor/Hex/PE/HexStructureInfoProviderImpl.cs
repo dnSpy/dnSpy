@@ -430,7 +430,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				output.WriteEquals();
 				output.WriteFlags(buffer.ReadByte(fieldPosition), exceptionHeaderFlagInfos);
 				break;
-				 
+
 			case MethodBodyFieldKind.SmallExceptionHeaderDataSize:
 				output.WriteStructAndField(exceptionHeader, "DataSize");
 				output.WriteEquals();
