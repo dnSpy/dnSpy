@@ -17,24 +17,46 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.PE {
+	[Flags]
+	enum MethodBodyInfoFlags {
+		None							= 0,
+		SmallExceptionClauses			= 0x00000001,
+		Invalid							= 0x00000002,
+	}
+
 	struct MethodBodyInfo {
 		public IList<uint> Rids { get; }
 		public HexSpan HeaderSpan { get; }
 		public HexSpan InstructionsSpan { get; }
 		public HexSpan ExceptionsSpan { get; }
-		public bool IsSmallExceptionClauses { get; }
-		public HexSpan Span => HexSpan.FromBounds(HeaderSpan.Start, ExceptionsSpan.Length == 0 ? InstructionsSpan.End : ExceptionsSpan.End);
+		public MethodBodyInfoFlags Flags { get; }
+		public bool IsSmallExceptionClauses => (Flags & MethodBodyInfoFlags.SmallExceptionClauses) != 0;
+		public bool IsInvalid => (Flags & MethodBodyInfoFlags.Invalid) != 0;
 
-		public MethodBodyInfo(IList<uint> rids, HexSpan headerSpan, HexSpan instructionsSpan, HexSpan exceptionsSpan, bool isSmallExceptionClauses) {
+		public HexSpan Span {
+			get {
+				HexPosition end;
+				if (ExceptionsSpan.Length != 0)
+					end = ExceptionsSpan.End;
+				else if (InstructionsSpan.Length != 0)
+					end = InstructionsSpan.End;
+				else
+					end = HeaderSpan.End;
+				return HexSpan.FromBounds(HeaderSpan.Start, end);
+			}
+		}
+
+		public MethodBodyInfo(IList<uint> rids, HexSpan headerSpan, HexSpan instructionsSpan, HexSpan exceptionsSpan, MethodBodyInfoFlags flags) {
 			Rids = rids;
 			HeaderSpan = headerSpan;
 			InstructionsSpan = instructionsSpan;
 			ExceptionsSpan = exceptionsSpan;
-			IsSmallExceptionClauses = isSmallExceptionClauses;
+			Flags = flags;
 		}
 	}
 }

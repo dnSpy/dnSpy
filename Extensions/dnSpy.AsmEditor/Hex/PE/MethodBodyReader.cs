@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly HexBuffer buffer;
 		readonly IList<uint> rids;
 		readonly HexPosition methodBodyPosition;
-		readonly HexPosition peEndPosition;
+		readonly HexPosition maxMethodBodyEndPosition;
 		HexPosition currentPosition;
 
 		byte headerSize;
@@ -34,11 +34,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		uint codeSize;
 		uint localVarSigTok;
 
-		public MethodBodyReader(HexBuffer buffer, IList<uint> rids, HexPosition methodBodyPosition, HexPosition peEndPosition) {
+		public MethodBodyReader(HexBuffer buffer, IList<uint> rids, HexPosition methodBodyPosition, HexPosition maxMethodBodyEndPosition) {
 			this.buffer = buffer;
 			this.rids = rids;
 			this.methodBodyPosition = methodBodyPosition;
-			this.peEndPosition = peEndPosition;
+			this.maxMethodBodyEndPosition = maxMethodBodyEndPosition;
 		}
 
 		public MethodBodyInfo? Read() {
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			bool isSmallExceptionClauses;
 			var exceptionsSpan = ReadExceptionHandlers(out isSmallExceptionClauses);
 
-			return new MethodBodyInfo(rids, headerSpan, instructionsSpan, exceptionsSpan, isSmallExceptionClauses);
+			return new MethodBodyInfo(rids, headerSpan, instructionsSpan, exceptionsSpan, isSmallExceptionClauses ? MethodBodyInfoFlags.SmallExceptionClauses : MethodBodyInfoFlags.None);
 		}
 
 		byte ReadByte() => buffer.ReadByte(currentPosition++);
@@ -99,7 +99,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				return false;
 			}
 
-			if (currentPosition + codeSize > peEndPosition)
+			if (currentPosition + codeSize > maxMethodBodyEndPosition)
 				return false;
 
 			return true;

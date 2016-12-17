@@ -232,6 +232,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				return null;
 
 			case MethodBodyFieldKind.Unknown:
+			case MethodBodyFieldKind.InvalidBody:
 				output.Write(BoxedTextColor.ValueType, methodBody);
 				break;
 

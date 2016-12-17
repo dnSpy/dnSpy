@@ -60,12 +60,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			methodBodiesSpan = GetMethodBodiesSpan(methodBodyRvas);
 		}
 
-		HexSpan GetMethodBodiesSpan(MethodBodyRvaAndRid[] methodBodyPositions) {
-			if (methodBodyPositions.Length == 0)
+		HexSpan GetMethodBodiesSpan(MethodBodyRvaAndRid[] methodBodyRvas) {
+			if (methodBodyRvas.Length == 0)
 				return default(HexSpan);
-			var last = methodBodyPositions[methodBodyPositions.Length - 1];
-			var info = TryParseMethodBody(new[] { last.Rid }, peStructureProvider.RvaToBufferPosition(last.Rva));
-			return HexSpan.FromBounds(peStructureProvider.RvaToBufferPosition(methodBodyPositions[0].Rva), info?.Span.End ?? peStructureProvider.RvaToBufferPosition(last.Rva));
+			int index = methodBodyRvas.Length - 1;
+			var last = methodBodyRvas[index];
+			var info = ParseMethodBody(index + 1, new[] { last.Rid }, peStructureProvider.RvaToBufferPosition(last.Rva));
+			return HexSpan.FromBounds(peStructureProvider.RvaToBufferPosition(methodBodyRvas[0].Rva), info.Span.End);
 		}
 
 		MethodBodyRvaAndRid[] CreateMethodBodyRvas() {
@@ -88,8 +89,29 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return list.ToArray();
 		}
 
-		MethodBodyInfo? TryParseMethodBody(IList<uint> rids, HexPosition methodBodyPosition) =>
-			new MethodBodyReader(peStructureProvider.Buffer, rids, methodBodyPosition, peStructureProvider.PESpan.End).Read();
+		MethodBodyInfo ParseMethodBody(int nextMethodIndex, IList<uint> rids, HexPosition methodBodyPosition) {
+			uint maxMethodBodyEndRva;
+			HexPosition endPos;
+			if (nextMethodIndex >= methodBodyRvas.Length) {
+				maxMethodBodyEndRva = (uint)Math.Min(uint.MaxValue, (ulong)methodBodyRvas[methodBodyRvas.Length - 1].Rva + 1);
+				endPos = peStructureProvider.PESpan.End;
+			}
+			else {
+				maxMethodBodyEndRva = methodBodyRvas[nextMethodIndex].Rva;
+				endPos = HexPosition.Min(peStructureProvider.PESpan.End, peStructureProvider.RvaToBufferPosition(maxMethodBodyEndRva));
+			}
+			if (endPos < methodBodyPosition)
+				endPos = methodBodyPosition;
+			var info = new MethodBodyReader(peStructureProvider.Buffer, rids, methodBodyPosition, endPos).Read();
+			if (info != null)
+				return info.Value;
+
+			// The file could be obfuscated (encrypted methods), assume the method ends at the next method body RVA
+			endPos = HexPosition.Min(peStructureProvider.PESpan.End, peStructureProvider.RvaToBufferPosition(maxMethodBodyEndRva));
+			if (endPos < methodBodyPosition)
+				endPos = methodBodyPosition;
+			return new MethodBodyInfo(rids, HexSpan.FromBounds(methodBodyPosition, endPos), HexSpan.FromBounds(endPos, endPos), default(HexSpan), MethodBodyInfoFlags.Invalid);
+		}
 
 		public static MethodBodyInfoProvider TryCreate(PEStructureProvider peStructureProvider) {
 			if (peStructureProvider == null)
@@ -116,13 +138,15 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			index++;
 			while (index < methodBodyRvas.Length && methodBodyRvas[index].Rva == info.Rva)
 				rids.Add(methodBodyRvas[index++].Rid);
-			var methodInfo = TryParseMethodBody(rids, peStructureProvider.RvaToBufferPosition(info.Rva));
-			if (methodInfo == null || !methodInfo.Value.Span.Contains(position))
+			var methodInfo = ParseMethodBody(index, rids, peStructureProvider.RvaToBufferPosition(info.Rva));
+			if (!methodInfo.Span.Contains(position))
 				return null;
-			return new MethodBodyInfoAndField(methodInfo.Value, GetFieldInfo(methodInfo.Value, position));
+			return new MethodBodyInfoAndField(methodInfo, GetFieldInfo(methodInfo, position));
 		}
 
 		MethodBodyFieldInfo GetFieldInfo(MethodBodyInfo info, HexPosition position) {
+			if (info.IsInvalid)
+				return new MethodBodyFieldInfo(MethodBodyFieldKind.InvalidBody, info.Span);
 			if (info.HeaderSpan.Contains(position)) {
 				if (info.HeaderSpan.Length == 1)
 					return new MethodBodyFieldInfo(MethodBodyFieldKind.SmallHeaderCodeSize, info.HeaderSpan);
@@ -230,6 +254,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	enum MethodBodyFieldKind {
 		None,
 		Unknown,
+		InvalidBody,
 		SmallHeaderCodeSize,
 		LargeHeaderFlags,
 		LargeHeaderMaxStack,
