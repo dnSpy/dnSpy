@@ -302,6 +302,9 @@
     <Compile Include="Hex\Adornments\HexToolTipProviderFactoryImpl.cs" />
     <Compile Include="Hex\Adornments\HexToolTipProviderImpl.cs" />
     <Compile Include="Hex\ByteArrayHexBufferStream.cs" />
+    <Compile Include="Hex\Classification\DnSpy\ContentTypeDefinitions.cs" />
+    <Compile Include="Hex\Classification\DnSpy\HexTextElementCreatorImpl.cs" />
+    <Compile Include="Hex\Classification\DnSpy\HexTextElementCreatorProviderImpl.cs" />
     <Compile Include="Hex\Classification\HexBufferClassifierAggregator.cs" />
     <Compile Include="Hex\Classification\HexClassificationFormatMapServiceImpl.cs" />
     <Compile Include="Hex\Classification\HexClassifierAggregator.cs" />

@@ -264,6 +264,8 @@
     <Compile Include="Extension\IExtension.cs" />
     <Compile Include="Hex\Adornments\HexToolTipProvider.cs" />
     <Compile Include="Hex\Adornments\HexToolTipProviderFactory.cs" />
+    <Compile Include="Hex\Classification\DnSpy\HexTextElementCreator.cs" />
+    <Compile Include="Hex\Classification\DnSpy\HexTextElementCreatorProvider.cs" />
     <Compile Include="Hex\Classification\HexClassificationChangedEventArgs.cs" />
     <Compile Include="Hex\Classification\HexClassificationContext.cs" />
     <Compile Include="Hex\Classification\HexClassificationFormatMapService.cs" />

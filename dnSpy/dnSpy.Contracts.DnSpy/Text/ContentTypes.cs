@@ -232,5 +232,15 @@ namespace dnSpy.Contracts.Text {
 		/// Options dialog text
 		/// </summary>
 		public const string OptionsDialogText = nameof(OptionsDialogText);
+
+		/// <summary>
+		/// Hex tooltip
+		/// </summary>
+		public const string HexToolTip = nameof(HexToolTip);
+
+		/// <summary>
+		/// Default hex tooltip content type
+		/// </summary>
+		public const string DefaultHexToolTip = nameof(DefaultHexToolTip);
 	}
 }

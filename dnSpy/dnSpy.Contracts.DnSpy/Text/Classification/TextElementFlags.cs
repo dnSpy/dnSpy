@@ -27,6 +27,11 @@ namespace dnSpy.Contracts.Text.Classification {
 	[Flags]
 	public enum TextElementFlags {
 		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None							= 0,
+
+		/// <summary>
 		/// Filter out newlines from the string by replacing them with spaces
 		/// </summary>
 		FilterOutNewLines				= 0x00000001,
