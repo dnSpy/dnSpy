@@ -462,6 +462,13 @@ namespace dnSpy.Contracts.Hex {
 		public abstract int TryReadByte(HexPosition position);
 
 		/// <summary>
+		/// Reads a <see cref="char"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public char ReadChar(HexPosition position) => (char)ReadUInt16(position);
+
+		/// <summary>
 		/// Reads a <see cref="byte"/>
 		/// </summary>
 		/// <param name="position">Position</param>

@@ -221,7 +221,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			var chars = new char[count];
 			var addr = bufferDataStart + currentAddr;
 			for (int i = 0; i < count; i++)
-				chars[i] = (char)buffer.ReadUInt16(addr++);
+				chars[i] = buffer.ReadChar(addr++);
 			return chars;
 		}
 
