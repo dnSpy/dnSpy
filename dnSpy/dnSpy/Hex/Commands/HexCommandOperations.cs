@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Commands {
 		public abstract void EditLocalSettings();
 		public abstract void ResetLocalSettings();
 		public abstract void ToggleUseRelativePositions();
-		public abstract void GoToOwnerMember();
+		public abstract void GoToCodeOrStructure();
 	}
 
 	sealed class HexCommandOperationsImpl : HexCommandOperations {
@@ -282,7 +282,7 @@ namespace dnSpy.Hex.Commands {
 		public override void ToggleUseRelativePositions() =>
 			HexView.Options.SetOptionValue(DefaultHexViewOptions.UseRelativePositionsId, !HexView.Options.UseRelativePositions());
 
-		public override void GoToOwnerMember() {
+		public override void GoToCodeOrStructure() {
 			var pos = HexView.Caret.Position.Position.ActivePosition.BufferPosition;
 			foreach (var info in HexStructureInfoAggregator.GetReferences(pos)) {
 				if (info.Value == null)

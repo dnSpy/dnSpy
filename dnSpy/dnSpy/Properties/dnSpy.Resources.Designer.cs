@@ -1713,6 +1713,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go to Code or Structure.
+        /// </summary>
+        public static string HexGoToCodeOrStructure {
+            get {
+                return ResourceManager.GetString("HexGoToCodeOrStructure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to H_ide All Tabs.
         /// </summary>
         public static string HideAllToolWindowsCommand {
@@ -3671,6 +3680,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyDelete {
             get {
                 return ResourceManager.GetString("ShortCutKeyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to F12.
+        /// </summary>
+        public static string ShortCutKeyF12 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyF12", resourceCulture);
             }
         }
         

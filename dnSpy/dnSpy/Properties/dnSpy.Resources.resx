@@ -1542,4 +1542,10 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
     <value>Ctrl+K, Ctrl+U</value>
   </data>
+  <data name="HexGoToCodeOrStructure" xml:space="preserve">
+    <value>Go to Code or Structure</value>
+  </data>
+  <data name="ShortCutKeyF12" xml:space="preserve">
+    <value>F12</value>
+  </data>
 </root>

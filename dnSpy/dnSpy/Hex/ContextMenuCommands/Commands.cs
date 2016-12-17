@@ -86,14 +86,21 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		public override string GetHeader(HexViewContext context) => context.HexView.Buffer.IsMemory ? dnSpy_Resources.GoToAddressCommand : dnSpy_Resources.GoToOffsetCommand;
 	}
 
-	[ExportMenuItem(Header = "res:HexEditorSelectCommand", InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]
+	[ExportMenuItem(Header = "res:HexGoToCodeOrStructure", InputGestureText = "res:ShortCutKeyF12", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]
+	sealed class GoToCodeOrStructureContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		GoToCodeOrStructureContexMenuEntry()
+			: base(HexCommandIds.GoToCodeOrStructure) {
+		}
+	}
+
+	[ExportMenuItem(Header = "res:HexEditorSelectCommand", InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 100)]
 	sealed class SelectContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		SelectContexMenuEntry()
 			: base(HexCommandIds.Select) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:HexEditorSaveSelectionCommand", InputGestureText = "res:ShortCutKeyCtrlAltS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 20)]
+	[ExportMenuItem(Header = "res:HexEditorSaveSelectionCommand", InputGestureText = "res:ShortCutKeyCtrlAltS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 110)]
 	sealed class SaveSelectionContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		SaveSelectionContexMenuEntry()
 			: base(HexCommandIds.SaveSelection) {
@@ -101,7 +108,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		public override bool IsEnabled(HexViewContext context) => !context.HexView.Selection.IsEmpty;
 	}
 
-	[ExportMenuItem(Header = "res:ShowOnlySelectedBytesCommand", InputGestureText = "res:ShortCutKeyCtrlD", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 30)]
+	[ExportMenuItem(Header = "res:ShowOnlySelectedBytesCommand", InputGestureText = "res:ShortCutKeyCtrlD", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 200)]
 	sealed class ShowOnlySelectedBytesContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		ShowOnlySelectedBytesContexMenuEntry()
 			: base(HexEditorIds.ShowOnlySelectedBytes) {
@@ -109,7 +116,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		public override bool IsVisible(HexViewContext context) => !context.HexView.Selection.IsEmpty;
 	}
 
-	[ExportMenuItem(Header = "res:ShowAllBytesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftD", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 40)]
+	[ExportMenuItem(Header = "res:ShowAllBytesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftD", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 210)]
 	sealed class ShowAllBytesContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		ShowAllBytesContexMenuEntry()
 			: base(HexEditorIds.ShowAllBytes) {
