@@ -461,6 +461,7 @@
     <Compile Include="Hex\HexProcessSimpleBufferStream.cs" />
     <Compile Include="Hex\HexValueFormatter.cs" />
     <Compile Include="Hex\HexVersionImpl.cs" />
+    <Compile Include="Hex\Intellisense\DnSpy\QuickInfoCommandTargetFilter.cs" />
     <Compile Include="Hex\Intellisense\HexIntellisenseControllerService.cs" />
     <Compile Include="Hex\Intellisense\HexIntellisensePresenterFactoryService.cs" />
     <Compile Include="Hex\Intellisense\HexIntellisenseSessionStackImpl.CommandTargetFilter.cs" />
@@ -478,6 +479,7 @@
     <Compile Include="Hex\Intellisense\HexQuickInfoSessionImpl.cs" />
     <Compile Include="Hex\Intellisense\HexSpaceReservationQuickInfoPresenter.cs" />
     <Compile Include="Hex\Intellisense\HexToolTipService.cs" />
+    <Compile Include="Hex\Intellisense\SpaceReservationManagerDefinitions.cs" />
     <Compile Include="Hex\MEF\Metadata.cs" />
     <Compile Include="Hex\NativeMethods.cs" />
     <Compile Include="Hex\NormalizedHexBufferSpanCollectionExtensions.cs" />
