@@ -44,6 +44,12 @@ namespace dnSpy.Hex.Intellisense {
 				UseLayoutRounding = true,
 				SnapsToDevicePixels = true,
 			};
+
+			// It's possible that quick info gets triggered inside the space between two values but
+			// the full span doesn't include that space. In that case, dismiss the session.
+			var mousePos = GetMousePoint(Mouse.PrimaryDevice);
+			if (mousePos == null || !IsMouseWithinSpan(mousePos.Value))
+				session.Dismiss();
 		}
 
 		bool renderCalled;
@@ -104,7 +110,7 @@ namespace dnSpy.Hex.Intellisense {
 		Point? GetMousePoint(MouseDevice device) {
 			if (wpfHexView == null)
 				return null;
-			var mousePos = Mouse.PrimaryDevice.GetPosition(wpfHexView.VisualElement);
+			var mousePos = device.GetPosition(wpfHexView.VisualElement);
 			mousePos.X += wpfHexView.ViewportLeft;
 			mousePos.Y += wpfHexView.ViewportTop;
 			return mousePos;

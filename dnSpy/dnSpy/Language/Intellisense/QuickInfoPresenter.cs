@@ -103,7 +103,7 @@ namespace dnSpy.Language.Intellisense {
 		Point? GetMousePoint(MouseDevice device) {
 			if (wpfTextView == null)
 				return null;
-			var mousePos = Mouse.PrimaryDevice.GetPosition(wpfTextView.VisualElement);
+			var mousePos = device.GetPosition(wpfTextView.VisualElement);
 			mousePos.X += wpfTextView.ViewportLeft;
 			mousePos.Y += wpfTextView.ViewportTop;
 			return mousePos;
