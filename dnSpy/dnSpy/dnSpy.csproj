@@ -236,6 +236,7 @@
     <Compile Include="Documents\Tabs\DsDocumentInfoSerializer.cs" />
     <Compile Include="Documents\Tabs\EntryPointCommands.cs" />
     <Compile Include="Documents\Tabs\GoToTokenCommand.cs" />
+    <Compile Include="Documents\Tabs\Hex\HexReferenceHandlerImpl.cs" />
     <Compile Include="Documents\Tabs\IDecompilationCache.cs" />
     <Compile Include="Documents\Tabs\IDocumentTabUIContextLocatorProvider.cs" />
     <Compile Include="Documents\Tabs\NavigationCommands.cs" />
@@ -366,6 +367,7 @@
     <Compile Include="Hex\Editor\HexMouseProcessorCollection.cs" />
     <Compile Include="Hex\Editor\HexPopupHelper.cs" />
     <Compile Include="Hex\Editor\HexPopupSpaceReservationAgent.cs" />
+    <Compile Include="Hex\Editor\HexReferenceHandlerServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexScrollMapFactoryServiceImpl.cs" />
     <Compile Include="Hex\Editor\HexScrollMapImpl.cs" />
     <Compile Include="Hex\Editor\HexSelectionExtensions.cs" />

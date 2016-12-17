@@ -17,15 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Hex.Commands {
-	enum HexCommandIds {
-		GoToPosition,
-		Select,
-		SaveSelection,
-		FillSelection,
-		EditLocalSettings,
-		ResetLocalSettings,
-		ToggleUseRelativePositions,
-		GoToOwnerMember,
+namespace dnSpy.Contracts.Hex.Editor {
+	/// <summary>
+	/// Converts a reference
+	/// </summary>
+	public abstract class HexReferenceConverter {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected HexReferenceConverter() { }
+
+		/// <summary>
+		/// Converts the reference to a new reference or returns the original value
+		/// </summary>
+		/// <param name="hexView">Hex view</param>
+		/// <param name="reference">Reference</param>
+		/// <returns></returns>
+		public abstract object Convert(HexView hexView, object reference);
 	}
 }

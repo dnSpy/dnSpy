@@ -40,6 +40,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static object ResolveMemberDef(object @ref) {
+			var stmtRef = @ref as MethodStatementReference;
+			if (stmtRef != null)
+				return stmtRef.Method;
+
 			if (@ref is ParamDef)
 				return @ref;
 
@@ -144,6 +148,15 @@ namespace dnSpy.Documents.Tabs {
 			}
 
 			var content = decompileDocumentTabContentFactory.Create(new DocumentTreeNodeData[] { node });
+			var statementRef = @ref as MethodStatementReference;
+			if (statementRef != null && statementRef.Offset != null) {
+				return new DocumentTabReferenceResult(content, null, a => {
+					if (a.Success && !a.HasMovedCaret) {
+						GoToReference(content, resolvedRef, statementRef.Method, statementRef.Offset.Value, content.WasNewContent);
+						a.HasMovedCaret = true;
+					}
+				});
+			}
 			return new DocumentTabReferenceResult(content, null, a => {
 				if (a.Success && !a.HasMovedCaret) {
 					GoToReference(content, resolvedRef, content.WasNewContent);
@@ -164,6 +177,34 @@ namespace dnSpy.Documents.Tabs {
 			if (center)
 				options |= MoveCaretOptions.Center;
 			uiCtx.MoveCaretToReference(@ref, options);
+		}
+
+		void GoToReference(DocumentTabContent content, object @ref, MethodDef method, uint ilOffset, bool center) {
+			if (!GoToReferenceCore(content, method, ilOffset, center))
+				GoToReference(content, @ref, center);
+		}
+
+		bool GoToReferenceCore(DocumentTabContent content, MethodDef method, uint ilOffset, bool center) {
+			var uiCtx = content.DocumentTab.UIContext as IDocumentViewer;
+			if (uiCtx == null)
+				return false;
+
+			var methodDebugService = uiCtx.GetMethodDebugService();
+			if (methodDebugService == null)
+				return false;
+
+			var info = methodDebugService.TryGetMethodDebugInfo(method);
+			if (info == null)
+				return false;
+			var sourceStatement = info.GetSourceStatementByCodeOffset(ilOffset);
+			if (sourceStatement == null)
+				return false;
+
+			var options = MoveCaretOptions.Select | MoveCaretOptions.Focus;
+			if (center)
+				options |= MoveCaretOptions.Center;
+			uiCtx.MoveCaretToPosition(sourceStatement.Value.TextSpan.Start, options);
+			return true;
 		}
 	}
 }

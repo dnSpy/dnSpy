@@ -170,7 +170,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override object GetReference(HexPosition position) {
 			var info = GetField(position);
 			if (info != null)
-				return new HexFieldReference(new HexBufferSpan(peStructure.Buffer, peStructure.PESpan), info.Value.Field);
+				return new HexFieldReference(new HexBufferSpan(peStructure.Buffer, peStructure.PESpan), info.Value.Structure, info.Value.Field);
 
 			var mfInfo = peStructure.GetMethodBodyInfoAndField(position);
 			if (mfInfo != null) {

@@ -17,15 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Hex.Commands {
-	enum HexCommandIds {
-		GoToPosition,
-		Select,
-		SaveSelection,
-		FillSelection,
-		EditLocalSettings,
-		ResetLocalSettings,
-		ToggleUseRelativePositions,
-		GoToOwnerMember,
+namespace dnSpy.Contracts.Hex.Editor {
+	/// <summary>
+	/// Predefined <see cref="HexReferenceHandler"/> names
+	/// </summary>
+	public static class PredefinedHexReferenceHandlerNames {
+		/// <summary>
+		/// Default handler used by the application, and should be last
+		/// </summary>
+		public const string DefaultApplicationHandler = nameof(DefaultApplicationHandler);
 	}
 }

@@ -360,8 +360,10 @@
     <Compile Include="Hex\Nodes\TablesStreamNode.cs" />
     <Compile Include="Hex\Nodes\TokenReferenceDocumentTabContentProvider.cs" />
     <Compile Include="Hex\NormalizedHexChangeCollectionExtensions.cs" />
+    <Compile Include="Hex\PE\BufferToDocumentNodeService.cs" />
     <Compile Include="Hex\PE\HexBufferImageStream.cs" />
     <Compile Include="Hex\PE\HexField.cs" />
+    <Compile Include="Hex\PE\HexReferenceConverterImpl.cs" />
     <Compile Include="Hex\PE\HexReferences.cs" />
     <Compile Include="Hex\PE\HexStructureInfoProviderImpl.cs" />
     <Compile Include="Hex\PE\HexVM.cs" />

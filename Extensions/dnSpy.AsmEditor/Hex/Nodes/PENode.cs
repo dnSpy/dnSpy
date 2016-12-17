@@ -137,6 +137,19 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return stgStreamNode?.FindTokenNode(token);
 		}
 
+		public HexNode FindNode(HexVM structure, HexField field) {
+			var mdTblRecord = structure as MetaDataTableRecordVM;
+			if (mdTblRecord != null)
+				return FindTokenNode(mdTblRecord.Token.Raw);
+
+			TreeNode.EnsureChildrenLoaded();
+			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
+				if (child.Span.Contains(field.Span))
+					return child.FindNode(structure, field);
+			}
+			return null;
+		}
+
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Text, dnSpy_AsmEditor_Resources.HexNode_PE);
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PE_NODE_GUID);

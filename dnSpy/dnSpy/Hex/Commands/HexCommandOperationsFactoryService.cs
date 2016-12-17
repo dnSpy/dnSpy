@@ -31,18 +31,22 @@ namespace dnSpy.Hex.Commands {
 	[Export(typeof(HexCommandOperationsFactoryService))]
 	sealed class HexCommandOperationsFactoryServiceImpl : HexCommandOperationsFactoryService {
 		readonly IMessageBoxService messageBoxService;
-		readonly HexEditorGroupFactoryService hexEditorGroupFactoryService;
+		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
+		readonly Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory;
+		readonly Lazy<HexReferenceHandlerService> hexReferenceHandlerService;
 
 		[ImportingConstructor]
-		HexCommandOperationsFactoryServiceImpl(IMessageBoxService messageBoxService, HexEditorGroupFactoryService hexEditorGroupFactoryService) {
+		HexCommandOperationsFactoryServiceImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService) {
 			this.messageBoxService = messageBoxService;
 			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
+			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
+			this.hexReferenceHandlerService = hexReferenceHandlerService;
 		}
 
 		public override HexCommandOperations GetCommandOperations(HexView hexView) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
-			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexCommandOperations), () => new HexCommandOperationsImpl(messageBoxService, hexEditorGroupFactoryService, hexView));
+			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexCommandOperations), () => new HexCommandOperationsImpl(messageBoxService, hexEditorGroupFactoryService, hexStructureInfoAggregatorFactory, hexReferenceHandlerService, hexView));
 		}
 
 		internal static void RemoveFromProperties(HexCommandOperations hexCommandOperations) =>

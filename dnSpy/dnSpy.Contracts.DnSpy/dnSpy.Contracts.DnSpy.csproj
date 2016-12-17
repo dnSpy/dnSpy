@@ -297,12 +297,17 @@
     <Compile Include="Hex\Editor\HexMarginContextMenuService.cs" />
     <Compile Include="Hex\Editor\HexMarginNameAttribute.cs" />
     <Compile Include="Hex\Editor\HexMarkerServiceZIndexes.cs" />
+    <Compile Include="Hex\Editor\HexReferenceConverter.cs" />
+    <Compile Include="Hex\Editor\HexReferenceHandler.cs" />
+    <Compile Include="Hex\Editor\HexReferenceHandlerService.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoAggregator.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoAggregatorFactory.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoProvider.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoProviderAndData.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoProviderFactory.cs" />
     <Compile Include="Hex\Editor\PredefinedHexGlyphFactoryProviderNames.cs" />
+    <Compile Include="Hex\Editor\PredefinedHexReferenceHandlerNames.cs" />
+    <Compile Include="Hex\Editor\PredefinedHexReferenceHandlerTags.cs" />
     <Compile Include="Hex\HexCachedBufferStream.cs" />
     <Compile Include="Hex\HexColumnPosition.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessor.cs" />

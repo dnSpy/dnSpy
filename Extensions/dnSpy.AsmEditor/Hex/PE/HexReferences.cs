@@ -37,12 +37,16 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	}
 
 	sealed class HexFieldReference : HexReference {
+		public HexVM Structure { get; }
 		public HexField Field { get; }
 
-		public HexFieldReference(HexBufferSpan peSpan, HexField field)
+		public HexFieldReference(HexBufferSpan peSpan, HexVM structure, HexField field)
 			: base(peSpan) {
+			if (structure == null)
+				throw new ArgumentNullException(nameof(structure));
 			if (field == null)
 				throw new ArgumentNullException(nameof(field));
+			Structure = structure;
 			Field = field;
 		}
 

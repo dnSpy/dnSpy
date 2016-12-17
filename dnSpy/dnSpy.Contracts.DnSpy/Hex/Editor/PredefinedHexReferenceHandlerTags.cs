@@ -17,15 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Hex.Commands {
-	enum HexCommandIds {
-		GoToPosition,
-		Select,
-		SaveSelection,
-		FillSelection,
-		EditLocalSettings,
-		ResetLocalSettings,
-		ToggleUseRelativePositions,
-		GoToOwnerMember,
+namespace dnSpy.Contracts.Hex.Editor {
+	/// <summary>
+	/// Tags passed to <see cref="HexReferenceHandlerService"/>
+	/// </summary>
+	public static class PredefinedHexReferenceHandlerTags {
+		/// <summary>
+		/// Open the reference in a new tab
+		/// </summary>
+		public static readonly string NewTab = nameof(NewTab);
 	}
 }

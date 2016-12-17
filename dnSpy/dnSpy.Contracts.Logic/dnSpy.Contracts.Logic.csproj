@@ -72,6 +72,7 @@
     <Compile Include="Decompiler\MethodDebugInfo.cs" />
     <Compile Include="Decompiler\MethodDebugInfoBuilder.cs" />
     <Compile Include="Decompiler\MethodSourceStatement.cs" />
+    <Compile Include="Decompiler\MethodStatementReference.cs" />
     <Compile Include="Decompiler\NamespaceReference.cs" />
     <Compile Include="Decompiler\PredefinedCustomDataIds.cs" />
     <Compile Include="Decompiler\PredefinedSpanReferenceIds.cs" />

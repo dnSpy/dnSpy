@@ -64,6 +64,7 @@ namespace dnSpy.Hex.Commands {
 				case HexCommandIds.EditLocalSettings:
 				case HexCommandIds.ResetLocalSettings:
 				case HexCommandIds.ToggleUseRelativePositions:
+				case HexCommandIds.GoToOwnerMember:
 					return false;
 
 				case HexCommandIds.FillSelection:
@@ -92,6 +93,7 @@ namespace dnSpy.Hex.Commands {
 				case HexCommandIds.EditLocalSettings:
 				case HexCommandIds.ResetLocalSettings:
 				case HexCommandIds.ToggleUseRelativePositions:
+				case HexCommandIds.GoToOwnerMember:
 					return CommandTargetStatus.Handled;
 				default:
 					return CommandTargetStatus.NotHandled;
@@ -137,6 +139,10 @@ namespace dnSpy.Hex.Commands {
 
 				case HexCommandIds.ToggleUseRelativePositions:
 					hexCommandOperations.ToggleUseRelativePositions();
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToOwnerMember:
+					hexCommandOperations.GoToOwnerMember();
 					return CommandTargetStatus.Handled;
 
 				default:

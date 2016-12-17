@@ -18,6 +18,8 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -67,6 +69,27 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			foreach (var vm in HexVMs)
 				vm.OnBufferChanged(changes);
+		}
+
+		public HexNode FindNode(HexVM structure, HexField field) {
+			Debug.Assert(!(structure is MetaDataTableRecordVM), "Use " + nameof(PENode) + "'s method instead");
+			if (!Span.Contains(field.Span))
+				return null;
+
+			foreach (var vm in HexVMs) {
+				foreach (var f in vm.HexFields) {
+					if (f == field)
+						return this;
+				}
+			}
+
+			TreeNode.EnsureChildrenLoaded();
+			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
+				if (child.Span.Contains(field.Span))
+					return child.FindNode(structure, field);
+			}
+
+			return null;
 		}
 	}
 }
