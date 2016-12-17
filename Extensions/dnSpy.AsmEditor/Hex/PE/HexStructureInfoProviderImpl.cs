@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 			var mfInfo = peStructure.GetMethodBodyInfoAndField(position);
 			if (mfInfo != null)
-				return CreateMethodBodyToolTip(mfInfo.Value.MethodBodyInfo, mfInfo.Value.FieldInfo, position);
+				return CreateMethodBodyToolTip(mfInfo.Value.MethodBodyInfo, mfInfo.Value.FieldInfo, position, mfInfo.Value.MethodBodyInfo.IsSmallExceptionClauses);
 
 			return null;
 		}
@@ -203,11 +203,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return output.ToString();
 		}
 
-		object CreateMethodBodyToolTip(MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position) {
+		object CreateMethodBodyToolTip(MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position, bool isSmallExceptionClauses) {
 			const string methodHeader = "MethodHeader";
 			const string methodBody = "MethodBody";
 			const string exceptionHeader = "ExceptionHeader";
-			const string exceptionClause = "ExceptionClause";
 			const string exceptionClauses = "ExceptionClauses";
 			const string unknown = "???";
 			var output = new StringBuilderTextColorOutput();
@@ -220,7 +219,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					output.Write(BoxedTextColor.Punctuation, ",");
 					output.WriteSpace();
 				}
-				if (i > maxRids) {
+				if (i >= maxRids) {
 					output.Write(BoxedTextColor.Error, "...");
 					break;
 				}
@@ -301,58 +300,42 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 			case MethodBodyFieldKind.SmallExceptionClauseFlags:
 			case MethodBodyFieldKind.LargeExceptionClauseFlags:
-				output.Write(BoxedTextColor.ValueType, exceptionClause);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "Flags");
+				WriteExceptionClause(output, minfo, position, "Flags", isSmallExceptionClauses);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseTryOffset:
 			case MethodBodyFieldKind.LargeExceptionClauseTryOffset:
-				output.Write(BoxedTextColor.ValueType, exceptionClause);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "TryOffset");
+				WriteExceptionClause(output, minfo, position, "TryOffset", isSmallExceptionClauses);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseTryLength:
 			case MethodBodyFieldKind.LargeExceptionClauseTryLength:
-				output.Write(BoxedTextColor.ValueType, exceptionClause);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "TryLength");
+				WriteExceptionClause(output, minfo, position, "TryLength", isSmallExceptionClauses);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseHandlerOffset:
 			case MethodBodyFieldKind.LargeExceptionClauseHandlerOffset:
-				output.Write(BoxedTextColor.ValueType, exceptionClause);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "HandlerOffset");
+				WriteExceptionClause(output, minfo, position, "HandlerOffset", isSmallExceptionClauses);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseHandlerLength:
 			case MethodBodyFieldKind.LargeExceptionClauseHandlerLength:
-				output.Write(BoxedTextColor.ValueType, exceptionClause);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "HandlerLength");
+				WriteExceptionClause(output, minfo, position, "HandlerLength", isSmallExceptionClauses);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseClassToken:
 			case MethodBodyFieldKind.LargeExceptionClauseClassToken:
-				output.Write(BoxedTextColor.ValueType, exceptionClause);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "ClassToken");
+				WriteExceptionClause(output, minfo, position, "ClassToken", isSmallExceptionClauses);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseFilterOffset:
 			case MethodBodyFieldKind.LargeExceptionClauseFilterOffset:
-				output.Write(BoxedTextColor.ValueType, exceptionClause);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "FilterOffset");
+				WriteExceptionClause(output, minfo, position, "FilterOffset", isSmallExceptionClauses);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseReserved:
 			case MethodBodyFieldKind.LargeExceptionClauseReserved:
-				output.Write(BoxedTextColor.ValueType, exceptionClause);
-				output.Write(BoxedTextColor.Punctuation, ".");
-				output.Write(BoxedTextColor.InstanceField, "Reserved");
+				WriteExceptionClause(output, minfo, position, "Reserved", isSmallExceptionClauses);
 				break;
 
 			case MethodBodyFieldKind.ExceptionClausesUnknown:
@@ -366,6 +349,17 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 
 			return output.ToString();
+		}
+
+		void WriteExceptionClause(StringBuilderTextColorOutput output, MethodBodyInfo minfo, HexPosition position, string fieldName, bool isSmallExceptionClauses) {
+			const string exceptionClause = "ExceptionClause";
+			int ehIndex = (int)((position - minfo.ExceptionsSpan.Start - 4).ToUInt64() / (isSmallExceptionClauses ? 12U : 24));
+			output.Write(BoxedTextColor.ValueType, exceptionClause);
+			output.Write(BoxedTextColor.Punctuation, "[");
+			output.Write(BoxedTextColor.Number, ehIndex.ToString());
+			output.Write(BoxedTextColor.Punctuation, "]");
+			output.Write(BoxedTextColor.Punctuation, ".");
+			output.Write(BoxedTextColor.InstanceField, fieldName);
 		}
 	}
 }
