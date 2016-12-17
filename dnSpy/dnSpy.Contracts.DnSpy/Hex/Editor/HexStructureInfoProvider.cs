@@ -68,6 +68,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		Structure,
 
 		/// <summary>
+		/// Span is a sub structure
+		/// </summary>
+		SubStructure,
+
+		/// <summary>
 		/// Span is a field
 		/// </summary>
 		Field,

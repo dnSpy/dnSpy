@@ -22,8 +22,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	[Export(typeof(HexStructureInfoProviderFactory))]
@@ -61,9 +63,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			readonly PEStructureProvider peStructureProvider;
 			readonly HexVM[] hexStructures;
 			readonly HexSpan metadataTablesSpan;
+			readonly MethodBodyInfoProvider methodBodyInfoProvider;
 
 			public PEStructure(PEStructureProvider peStructureProvider) {
 				this.peStructureProvider = peStructureProvider;
+				methodBodyInfoProvider = MethodBodyInfoProvider.TryCreate(peStructureProvider);
 
 				var list = new List<HexVM> {
 					peStructureProvider.ImageDosHeader,
@@ -122,6 +126,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				}
 				return null;
 			}
+
+			public MethodBodyInfoAndField? GetMethodBodyInfoAndField(HexPosition position) =>
+				methodBodyInfoProvider.GetMethodBodyInfoAndField(position);
 		}
 
 		struct FieldAndStructure {
@@ -146,15 +153,208 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				yield return new HexStructureField(new HexBufferSpan(buffer, info.Value.Structure.Span), HexStructureFieldKind.Structure);
 				yield return new HexStructureField(new HexBufferSpan(buffer, info.Value.Field.Span), HexStructureFieldKind.CurrentField);
 			}
+
+			var mfInfo = peStructure.GetMethodBodyInfoAndField(position);
+			if (mfInfo != null) {
+				var minfo = mfInfo.Value.MethodBodyInfo;
+				var buffer = peStructure.Buffer;
+				yield return new HexStructureField(new HexBufferSpan(buffer, minfo.HeaderSpan), HexStructureFieldKind.SubStructure);
+				if (minfo.InstructionsSpan.Length != 0)
+					yield return new HexStructureField(new HexBufferSpan(buffer, minfo.InstructionsSpan), HexStructureFieldKind.SubStructure);
+				if (minfo.ExceptionsSpan.Length != 0)
+					yield return new HexStructureField(new HexBufferSpan(buffer, minfo.ExceptionsSpan), HexStructureFieldKind.SubStructure);
+				yield return new HexStructureField(new HexBufferSpan(buffer, mfInfo.Value.FieldInfo.Span), HexStructureFieldKind.CurrentField);
+			}
 		}
 
-		public override object GetReference(HexPosition position) => GetField(position)?.Field;
+		public override object GetReference(HexPosition position) {
+			var info = GetField(position);
+			if (info != null)
+				return new HexFieldReference(peStructure.Buffer, info.Value.Field);
+
+			var mfInfo = peStructure.GetMethodBodyInfoAndField(position);
+			if (mfInfo != null) {
+				var minfo = mfInfo.Value.MethodBodyInfo;
+				if (minfo.InstructionsSpan.Contains(position))
+					return new HexMethodReference(peStructure.Buffer, minfo.Token.Rid, (uint)(position - minfo.InstructionsSpan.Start).ToUInt64());
+				return new HexMethodReference(peStructure.Buffer, minfo.Token.Rid, null);
+			}
+
+			return null;
+		}
 
 		public override object GetToolTip(HexPosition position) {
 			var info = GetField(position);
 			if (info != null)
-				return info.Value.Structure.Name + "." + info.Value.Field.Name;
+				return CreateFieldToolTip(info.Value);
+
+			var mfInfo = peStructure.GetMethodBodyInfoAndField(position);
+			if (mfInfo != null)
+				return CreateMethodBodyToolTip(mfInfo.Value.MethodBodyInfo, mfInfo.Value.FieldInfo, position);
+
 			return null;
+		}
+
+		object CreateFieldToolTip(FieldAndStructure info) {
+			var output = new StringBuilderTextColorOutput();
+			output.Write(BoxedTextColor.ValueType, info.Structure.Name);
+			output.Write(BoxedTextColor.Punctuation, ".");
+			output.Write(BoxedTextColor.InstanceField, info.Field.Name);
+			return output.ToString();
+		}
+
+		object CreateMethodBodyToolTip(MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position) {
+			const string methodHeader = "MethodHeader";
+			const string methodBody = "MethodBody";
+			const string exceptionHeader = "ExceptionHeader";
+			const string exceptionClause = "ExceptionClause";
+			const string exceptionClauses = "ExceptionClauses";
+			const string unknown = "???";
+			var output = new StringBuilderTextColorOutput();
+
+			output.Write(BoxedTextColor.Text, "Method");
+			output.WriteSpace();
+			output.Write(BoxedTextColor.Number, "0x" + minfo.Token.Raw.ToString("X8"));
+			output.WriteLine();
+
+			switch (finfo.FieldKind) {
+			case MethodBodyFieldKind.None:
+				return null;
+
+			case MethodBodyFieldKind.Unknown:
+				output.Write(BoxedTextColor.ValueType, methodBody);
+				break;
+
+			case MethodBodyFieldKind.LargeHeaderFlags:
+				output.Write(BoxedTextColor.ValueType, methodHeader);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "Flags");
+				break;
+
+			case MethodBodyFieldKind.LargeHeaderMaxStack:
+				output.Write(BoxedTextColor.ValueType, methodHeader);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "MaxStack");
+				break;
+
+			case MethodBodyFieldKind.SmallHeaderCodeSize:
+			case MethodBodyFieldKind.LargeHeaderCodeSize:
+				output.Write(BoxedTextColor.ValueType, methodHeader);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "CodeSize");
+				break;
+
+			case MethodBodyFieldKind.LargeHeaderLocalVarSigTok:
+				output.Write(BoxedTextColor.ValueType, methodHeader);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "LocalVarSigTok");
+				break;
+
+			case MethodBodyFieldKind.LargeHeaderUnknown:
+				output.Write(BoxedTextColor.ValueType, methodHeader);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.Error, unknown);
+				break;
+
+			case MethodBodyFieldKind.InstructionBytes:
+				//TODO: Disassemble the instruction
+				output.Write(BoxedTextColor.ValueType, methodBody);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "Instructions");
+				output.Write(BoxedTextColor.Punctuation, ":");
+				output.WriteSpace();
+				output.Write(BoxedTextColor.Text, "offset");
+				output.WriteSpace();
+				output.Write(BoxedTextColor.Number, (position - minfo.InstructionsSpan.Start).ToString());
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionHeaderKind:
+			case MethodBodyFieldKind.LargeExceptionHeaderKind:
+				output.Write(BoxedTextColor.ValueType, exceptionHeader);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "Kind");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionHeaderDataSize:
+			case MethodBodyFieldKind.LargeExceptionHeaderDataSize:
+				output.Write(BoxedTextColor.ValueType, exceptionHeader);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "DataSize");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionHeaderPadding:
+				output.Write(BoxedTextColor.ValueType, exceptionHeader);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "Padding");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionClauseFlags:
+			case MethodBodyFieldKind.LargeExceptionClauseFlags:
+				output.Write(BoxedTextColor.ValueType, exceptionClause);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "Flags");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionClauseTryOffset:
+			case MethodBodyFieldKind.LargeExceptionClauseTryOffset:
+				output.Write(BoxedTextColor.ValueType, exceptionClause);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "TryOffset");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionClauseTryLength:
+			case MethodBodyFieldKind.LargeExceptionClauseTryLength:
+				output.Write(BoxedTextColor.ValueType, exceptionClause);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "TryLength");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionClauseHandlerOffset:
+			case MethodBodyFieldKind.LargeExceptionClauseHandlerOffset:
+				output.Write(BoxedTextColor.ValueType, exceptionClause);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "HandlerOffset");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionClauseHandlerLength:
+			case MethodBodyFieldKind.LargeExceptionClauseHandlerLength:
+				output.Write(BoxedTextColor.ValueType, exceptionClause);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "HandlerLength");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionClauseClassToken:
+			case MethodBodyFieldKind.LargeExceptionClauseClassToken:
+				output.Write(BoxedTextColor.ValueType, exceptionClause);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "ClassToken");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionClauseFilterOffset:
+			case MethodBodyFieldKind.LargeExceptionClauseFilterOffset:
+				output.Write(BoxedTextColor.ValueType, exceptionClause);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "FilterOffset");
+				break;
+
+			case MethodBodyFieldKind.SmallExceptionClauseReserved:
+			case MethodBodyFieldKind.LargeExceptionClauseReserved:
+				output.Write(BoxedTextColor.ValueType, exceptionClause);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.InstanceField, "Reserved");
+				break;
+
+			case MethodBodyFieldKind.ExceptionClausesUnknown:
+				output.Write(BoxedTextColor.ValueType, exceptionClauses);
+				output.Write(BoxedTextColor.Punctuation, ".");
+				output.Write(BoxedTextColor.Error, unknown);
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			return output.ToString();
 		}
 	}
 }

@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using dnlib.DotNet.MD;
+using dnlib.IO;
 using dnlib.PE;
 using dnSpy.Contracts.Hex;
 
@@ -100,7 +101,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 	abstract class PEStructureProvider {
 		public abstract HexBuffer Buffer { get; }
-		public abstract HexPosition PEPosition { get; }
+		public abstract HexSpan PESpan { get; }
 		public abstract ImageDosHeaderVM ImageDosHeader { get; }
 		public abstract ImageFileHeaderVM ImageFileHeader { get; }
 		public abstract ImageOptionalHeaderVM ImageOptionalHeader { get; }
@@ -114,11 +115,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public abstract StorageStreamVM[] StorageStreams { get; }
 		/// <summary>Can be null if it's not a .NET file</summary>
 		public abstract TablesStreamVM TablesStream { get; }
+		public abstract HexPosition RvaToBufferPosition(uint rva);
+		public abstract uint BufferPositionToRva(HexPosition position);
 	}
 
 	sealed class PEStructureProviderImpl : PEStructureProvider {
 		public override HexBuffer Buffer => buffer;
-		public override HexPosition PEPosition => pePosition;
+		public override HexSpan PESpan => HexSpan.FromBounds(pePosition, peEndPosition);
 		public override ImageDosHeaderVM ImageDosHeader => imageDosHeader;
 		public override ImageFileHeaderVM ImageFileHeader => imageFileHeader;
 		public override ImageOptionalHeaderVM ImageOptionalHeader => imageOptionalHeader;
@@ -131,6 +134,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		readonly HexBuffer buffer;
 		readonly HexPosition pePosition;
+		readonly HexPosition peEndPosition;
 		readonly IPEImage peImage;
 		readonly ImageDosHeaderVM imageDosHeader;
 		readonly ImageFileHeaderVM imageFileHeader;
@@ -200,6 +204,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					}
 				}
 			}
+
+			using (var stream = peImage.CreateFullStream())
+				peEndPosition = pePosition + (ulong)stream.Length;
 		}
 
 		static IMetaData TryCreateMetaData(IPEImage peImage) {
@@ -219,9 +226,22 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		static ImageCor20HeaderVM TryCreateCor20(HexBuffer buffer, IPEImage peImage) {
 			var dnDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-			if (dnDir.VirtualAddress == 0 || dnDir.Size < 0x48)
+			const int COR20_HDR_SIZE = 0x48;
+			if (dnDir.VirtualAddress == 0 || dnDir.Size < COR20_HDR_SIZE)
 				return null;
-			return new ImageCor20HeaderVM(buffer, new HexSpan((ulong)peImage.ToFileOffset(dnDir.VirtualAddress), dnDir.Size));
+			return new ImageCor20HeaderVM(buffer, new HexSpan((ulong)peImage.ToFileOffset(dnDir.VirtualAddress), COR20_HDR_SIZE));
+		}
+
+		public override HexPosition RvaToBufferPosition(uint rva) =>
+			pePosition + (ulong)peImage.ToFileOffset((RVA)rva);
+
+		public override uint BufferPositionToRva(HexPosition position) {
+			if (position < pePosition)
+				return 0;
+			var offset = position - pePosition;
+			if (offset > long.MaxValue)
+				return 0;
+			return (uint)peImage.ToRVA((FileOffset)offset.ToUInt64());
 		}
 	}
 }
