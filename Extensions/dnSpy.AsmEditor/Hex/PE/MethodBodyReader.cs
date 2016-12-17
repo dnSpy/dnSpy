@@ -18,8 +18,6 @@
 */
 
 using System.Collections.Generic;
-using dnlib.DotNet;
-using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.PE {
