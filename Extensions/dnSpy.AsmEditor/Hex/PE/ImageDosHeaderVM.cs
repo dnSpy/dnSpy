@@ -58,7 +58,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public ImageDosHeaderVM(HexBuffer buffer, HexPosition startOffset) {
+		public ImageDosHeaderVM(HexBuffer buffer, HexSpan span)
+			: base(span) {
+			var startOffset = span.Start;
 			MagicVM = new UInt16HexField(buffer, Name, "e_magic", startOffset + 0);
 			CblpVM = new UInt16HexField(buffer, Name, "e_cblp", startOffset + 2);
 			CpVM = new UInt16HexField(buffer, Name, "e_cp", startOffset + 4);

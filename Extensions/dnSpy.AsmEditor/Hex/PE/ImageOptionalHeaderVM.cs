@@ -85,7 +85,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			new IntegerHexBitFieldEnumInfo(16, "WindowsBootApplication"),
 		};
 
-		protected ImageOptionalHeaderVM(HexBuffer buffer, HexPosition startOffset, HexPosition endOffset, ulong offs1, ulong offs2) {
+		protected ImageOptionalHeaderVM(HexBuffer buffer, HexSpan span, ulong offs1, ulong offs2)
+			: base(span) {
+			var startOffset = span.Start;
 			MagicVM = new UInt16HexField(buffer, Name, "Magic", startOffset + 0);
 			MajorLinkerVersionVM = new ByteHexField(buffer, Name, "MajorLinkerVersion", startOffset + 2, true);
 			MinorLinkerVersionVM = new ByteHexField(buffer, Name, "MinorLinkerVersion", startOffset + 3, true);

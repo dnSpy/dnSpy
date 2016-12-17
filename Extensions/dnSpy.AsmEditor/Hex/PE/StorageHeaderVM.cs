@@ -30,7 +30,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public StorageHeaderVM(HexBuffer buffer, HexPosition startOffset) {
+		public StorageHeaderVM(HexBuffer buffer, HexPosition startOffset)
+			: base(new HexSpan(startOffset, 4)) {
 			FFlagsVM = new ByteFlagsHexField(buffer, Name, "fFlags", startOffset + 0);
 			FFlagsVM.Add(new BooleanHexBitField("ExtraData", 0));
 			PadVM = new ByteHexField(buffer, Name, "pad", startOffset + 1);

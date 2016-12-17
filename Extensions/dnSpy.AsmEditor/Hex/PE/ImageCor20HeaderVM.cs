@@ -40,7 +40,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public ImageCor20HeaderVM(HexBuffer buffer, HexPosition startOffset) {
+		public ImageCor20HeaderVM(HexBuffer buffer, HexSpan span)
+			: base(span) {
+			var startOffset = span.Start;
 			CbVM = new UInt32HexField(buffer, Name, "cb", startOffset + 0);
 			MajorRuntimeVersionVM = new UInt16HexField(buffer, Name, "MajorRuntimeVersion", startOffset + 4, true);
 			MinorRuntimeVersionVM = new UInt16HexField(buffer, Name, "MinorRuntimeVersion", startOffset + 6, true);

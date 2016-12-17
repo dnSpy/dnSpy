@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using dnlib.DotNet;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.TreeView;
@@ -29,9 +29,11 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class PETreeNodeDataProviderBase : ITreeNodeDataProvider {
 		readonly Lazy<IHexBufferService> hexBufferService;
+		readonly Lazy<PEStructureProviderFactory> peStructureProviderFactory;
 
-		protected PETreeNodeDataProviderBase(Lazy<IHexBufferService> hexBufferService) {
+		protected PETreeNodeDataProviderBase(Lazy<IHexBufferService> hexBufferService, Lazy<PEStructureProviderFactory> peStructureProviderFactory) {
 			this.hexBufferService = hexBufferService;
+			this.peStructureProviderFactory = peStructureProviderFactory;
 		}
 
 		public IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context) {
@@ -44,7 +46,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			var peImage = fileNode.Document.PEImage;
 			Debug.Assert(!hasPENode || peImage != null);
 			if (hasPENode && peImage != null)
-				yield return new PENode(hexBufferService.Value, peImage, fileNode.Document.ModuleDef as ModuleDefMD);
+				yield return new PENode(hexBufferService.Value, peStructureProviderFactory.Value, peImage);
 		}
 
 		public static bool HasPENode(DsDocumentNode node) {
@@ -65,16 +67,16 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.MODULE_NODE_GUID)]
 	sealed class ModulePETreeNodeDataProvider : PETreeNodeDataProviderBase {
 		[ImportingConstructor]
-		ModulePETreeNodeDataProvider(Lazy<IHexBufferService> hexBufferService)
-			: base(hexBufferService) {
+		ModulePETreeNodeDataProvider(Lazy<IHexBufferService> hexBufferService, Lazy<PEStructureProviderFactory> peStructureProviderFactory)
+			: base(hexBufferService, peStructureProviderFactory) {
 		}
 	}
 
 	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.PEDOCUMENT_NODE_GUID)]
 	sealed class PEFilePETreeNodeDataProvider : PETreeNodeDataProviderBase {
 		[ImportingConstructor]
-		PEFilePETreeNodeDataProvider(Lazy<IHexBufferService> hexBufferService)
-			: base(hexBufferService) {
+		PEFilePETreeNodeDataProvider(Lazy<IHexBufferService> hexBufferService, Lazy<PEStructureProviderFactory> peStructureProviderFactory)
+			: base(hexBufferService, peStructureProviderFactory) {
 		}
 	}
 }

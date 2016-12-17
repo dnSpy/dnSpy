@@ -31,7 +31,6 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override string Name => string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid);
 		public string OffsetString => string.Format("0x{0:X8}", Span.Start.ToUInt64());
 		public MDToken Token => mdToken;
-		public HexSpan Span => new HexSpan(mdVM.Span.Start + (mdToken.Rid - 1) * (ulong)mdVM.TableInfo.RowSize, (ulong)mdVM.TableInfo.RowSize);
 		public override IEnumerable<HexField> HexFields => hexFields;
 		public HexField Column0 => GetField(0);
 		public HexField Column1 => GetField(1);
@@ -175,7 +174,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		MetaDataTableRecordVM GetMetaDataTableRecordVM(Table table, uint rid) {
 			if (rid == 0)
 				return null;
-			var tblVM = mdVM.FindMetaDataTable(table);
+			var tblVM = mdVM.TablesStream.TryGetMetaDataTable(table);
 			if (tblVM == null)
 				return null;
 			if (rid - 1 >= (uint)tblVM.Collection.Count)
@@ -320,7 +319,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		MDToken mdToken;
 		readonly HexField[] hexFields;
 
-		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken) {
+		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(new HexSpan(mdVM.Span.Start + (mdToken.Rid - 1) * (ulong)mdVM.TableInfo.RowSize, (ulong)mdVM.TableInfo.RowSize)) {
 			this.mdVM = mdVM;
 			this.mdToken = mdToken;
 			hexFields = new HexField[mdVM.TableInfo.Columns.Count];

@@ -19,11 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -40,9 +38,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly StorageHeaderVM storageHeaderVM;
 
-		public StorageHeaderNode(HexBuffer buffer, MetaDataHeader mdHeader)
-			: base(HexSpan.FromBounds((ulong)mdHeader.StorageHeaderOffset, (ulong)mdHeader.StorageHeaderOffset + 4)) {
-			storageHeaderVM = new StorageHeaderVM(buffer, Span.Start);
+		public StorageHeaderNode(StorageHeaderVM storageHeader)
+			: base(storageHeader.Span) {
+			storageHeaderVM = storageHeader;
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>

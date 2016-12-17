@@ -84,7 +84,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			new IntegerHexBitFieldEnumInfo(0xC0EE, "CEE"),
 		};
 
-		public ImageFileHeaderVM(HexBuffer buffer, HexPosition startOffset) {
+		public ImageFileHeaderVM(HexBuffer buffer, HexSpan span)
+			: base(span) {
+			var startOffset = span.Start;
 			MachineVM = new UInt16FlagsHexField(buffer, Name, "Machine", startOffset + 0);
 			MachineVM.Add(new IntegerHexBitField("Machine", 0, 16, MachineInfos));
 			NumberOfSectionsVM = new UInt16HexField(buffer, Name, "NumberOfSections", startOffset + 2);

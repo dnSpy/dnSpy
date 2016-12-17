@@ -19,11 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using dnlib.PE;
 using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -39,16 +37,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 		readonly ImageCor20HeaderVM imageCor20HeaderVM;
 
-		public static ImageCor20HeaderNode Create(HexBuffer buffer, IPEImage peImage) {
-			var dnDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-			if (dnDir.VirtualAddress != 0 && dnDir.Size >= 0x48)
-				return new ImageCor20HeaderNode(buffer, (ulong)peImage.ToFileOffset(dnDir.VirtualAddress));
+		public static ImageCor20HeaderNode Create(ImageCor20HeaderVM cor20) {
+			if (cor20 != null)
+				return new ImageCor20HeaderNode(cor20);
 			return null;
 		}
 
-		public ImageCor20HeaderNode(HexBuffer buffer, HexPosition startOffset)
-			: base(new HexSpan(startOffset, 0x48)) {
-			imageCor20HeaderVM = new ImageCor20HeaderVM(buffer, Span.Start);
+		public ImageCor20HeaderNode(ImageCor20HeaderVM cor20)
+			: base(cor20.Span) {
+			imageCor20HeaderVM = cor20;
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>

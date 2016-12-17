@@ -49,16 +49,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override bool SingleClickExpandsChildren => false;
 
 		public TableInfo TableInfo { get; }
-		internal HexBuffer Buffer { get; }
+		internal HexBuffer Buffer => MetaDataTableVM.Buffer;
 
-		public MetaDataTableNode(HexBuffer buffer, MDTable mdTable, IMetaData md)
-			: base(HexSpan.FromBounds((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset)) {
-			Buffer = buffer;
+		public MetaDataTableNode(MetaDataTableVM mdTable)
+			: base(mdTable.Span) {
 			TableInfo = mdTable.TableInfo;
-			var stringsHeapSpan = HexSpan.FromBounds((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset);
-			var guidHeapSpan = HexSpan.FromBounds((ulong)md.GuidStream.StartOffset, (ulong)md.GuidStream.EndOffset);
-			MetaDataTableVM = MetaDataTableVM.Create(this, buffer, Span.Start, mdTable, stringsHeapSpan, guidHeapSpan);
-			MetaDataTableVM.FindMetaDataTable = FindMetaDataTable;
+			MetaDataTableVM = mdTable;
+			MetaDataTableVM.Owner = this;
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
@@ -164,7 +161,5 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			TreeNode.EnsureChildrenLoaded();
 			return (MetaDataTableRecordNode)TreeNode.Children[(int)rid - 1].Data;
 		}
-
-		MetaDataTableVM FindMetaDataTable(Table table) => ((TablesStreamNode)TreeNode.Parent.Data).FindMetaDataTable(table);
 	}
 }

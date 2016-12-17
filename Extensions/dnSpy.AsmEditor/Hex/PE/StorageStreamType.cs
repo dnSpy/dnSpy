@@ -17,23 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.MVVM;
-
 namespace dnSpy.AsmEditor.Hex.PE {
-	abstract class HexVM : ViewModelBase {
-		public abstract string Name { get; }
-		public abstract IEnumerable<HexField> HexFields { get; }
-		public HexSpan Span { get; }
-
-		protected HexVM(HexSpan span) {
-			Span = span;
-		}
-
-		public virtual void OnBufferChanged(NormalizedHexChangeCollection changes) {
-			foreach (var field in HexFields)
-				field.OnBufferChanged(changes);
-		}
+	enum StorageStreamType {
+		None,
+		Strings,
+		US,
+		Blob,
+		Guid,
+		Tables,
+		Pdb,
+		HotHeap,
 	}
 }

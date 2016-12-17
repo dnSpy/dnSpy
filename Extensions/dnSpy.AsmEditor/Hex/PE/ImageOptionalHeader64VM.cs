@@ -30,8 +30,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public UInt64HexField SizeOfHeapReserveVM { get; }
 		public UInt64HexField SizeOfHeapCommitVM { get; }
 
-		public ImageOptionalHeader64VM(HexBuffer buffer, HexPosition startOffset, HexPosition endOffset)
-			: base(buffer, startOffset, endOffset, 0x20, 0x68) {
+		public ImageOptionalHeader64VM(HexBuffer buffer, HexSpan span)
+			: base(buffer, span, 0x20, 0x68) {
+			var startOffset = span.Start;
 			ImageBaseVM = new UInt64HexField(buffer, Name, "ImageBase", startOffset + 0x18);
 
 			SizeOfStackReserveVM = new UInt64HexField(buffer, Name, "SizeOfStackReserve", startOffset + 0x48);
@@ -71,7 +72,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				NumberOfRvaAndSizesVM,
 			};
 
-			AddDataDirs(list, endOffset);
+			AddDataDirs(list, span.End);
 		}
 	}
 }

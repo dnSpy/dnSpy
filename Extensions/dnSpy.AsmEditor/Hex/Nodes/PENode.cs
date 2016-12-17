@@ -21,9 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using dnlib.DotNet;
-using dnlib.DotNet.MD;
 using dnlib.PE;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -36,13 +35,13 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class PENode : DocumentTreeNodeData, IDecompileSelf {
 		readonly IHexBufferService hexDocMgr;
+		readonly PEStructureProviderFactory peStructureProviderFactory;
 		readonly IPEImage peImage;
-		readonly ModuleDefMD module;
 
-		public PENode(IHexBufferService hexDocMgr, IPEImage peImage, ModuleDefMD module) {
+		public PENode(IHexBufferService hexDocMgr, PEStructureProviderFactory peStructureProviderFactory, IPEImage peImage) {
 			this.hexDocMgr = hexDocMgr;
+			this.peStructureProviderFactory = peStructureProviderFactory;
 			this.peImage = peImage;
-			this.module = module;
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
@@ -58,40 +57,31 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (buffer == null)
 				yield break;
 
+			var pePosition = HexPosition.Zero;
+			var peStructureProvider = peStructureProviderFactory.TryGetProvider(buffer, pePosition);
+			Debug.Assert(peStructureProvider != null);
+			if (peStructureProvider == null)
+				yield break;
+
 			weakDocListener = new WeakDocumentListener(this, buffer);
 
-			yield return new ImageDosHeaderNode(buffer, peImage.ImageDosHeader);
-			yield return new ImageFileHeaderNode(buffer, peImage.ImageNTHeaders.FileHeader);
-			if (peImage.ImageNTHeaders.OptionalHeader is ImageOptionalHeader32)
-				yield return new ImageOptionalHeader32Node(buffer, (ImageOptionalHeader32)peImage.ImageNTHeaders.OptionalHeader);
+			yield return new ImageDosHeaderNode(peStructureProvider.ImageDosHeader);
+			yield return new ImageFileHeaderNode(peStructureProvider.ImageFileHeader);
+			if (peStructureProvider.ImageOptionalHeader is ImageOptionalHeader32VM)
+				yield return new ImageOptionalHeader32Node((ImageOptionalHeader32VM)peStructureProvider.ImageOptionalHeader);
 			else
-				yield return new ImageOptionalHeader64Node(buffer, (ImageOptionalHeader64)peImage.ImageNTHeaders.OptionalHeader);
-			for (int i = 0; i < peImage.ImageSectionHeaders.Count; i++)
-				yield return new ImageSectionHeaderNode(buffer, peImage.ImageSectionHeaders[i], i);
-			var cor20Hdr = ImageCor20HeaderNode.Create(buffer, peImage);
+				yield return new ImageOptionalHeader64Node((ImageOptionalHeader64VM)peStructureProvider.ImageOptionalHeader);
+			for (int i = 0; i < peStructureProvider.Sections.Length; i++)
+				yield return new ImageSectionHeaderNode(peStructureProvider.Sections[i], i);
+			var cor20Hdr = ImageCor20HeaderNode.Create(peStructureProvider.ImageCor20Header);
 			if (cor20Hdr != null)
 				yield return cor20Hdr;
-			if (module != null) {
-				var md = module.MetaData;
-				yield return new StorageSignatureNode(buffer, md.MetaDataHeader);
-				yield return new StorageHeaderNode(buffer, md.MetaDataHeader);
-				var knownStreams = new List<DotNetStream> {
-					md.StringsStream,
-					md.USStream,
-					md.BlobStream,
-					md.GuidStream,
-					md.TablesStream,
-				};
-				if (md.IsCompressed) {
-					foreach (var stream in md.AllStreams) {
-						if (stream.Name == "#!")
-							knownStreams.Add(stream);
-					}
-				}
-				for (int i = 0; i < md.MetaDataHeader.StreamHeaders.Count; i++) {
-					var sh = md.MetaDataHeader.StreamHeaders[i];
-					var knownStream = knownStreams.FirstOrDefault(a => a.StreamHeader == sh);
-					yield return new StorageStreamNode(buffer, sh, i, knownStream, md);
+			if (cor20Hdr != null) {
+				yield return new StorageSignatureNode(peStructureProvider.StorageSignature);
+				yield return new StorageHeaderNode(peStructureProvider.StorageHeader);
+				foreach (var storageStream in peStructureProvider.StorageStreams) {
+					var child = storageStream.StorageStreamType == StorageStreamType.Tables ? peStructureProvider.TablesStream : null;
+					yield return new StorageStreamNode(storageStream, child);
 				}
 			}
 		}

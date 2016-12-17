@@ -57,7 +57,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			new IntegerHexBitFieldEnumInfo(15, "Reserved"),
 		};
 
-		public ImageSectionHeaderVM(HexBuffer buffer, HexPosition startOffset) {
+		public ImageSectionHeaderVM(HexBuffer buffer, HexSpan span)
+			: base(span) {
+			var startOffset = span.Start;
 			NameVM = new StringHexField(buffer, Name, "Name", startOffset + 0, Encoding.UTF8, 8);
 			VirtualSizeVM = new UInt32HexField(buffer, Name, "VirtualSize", startOffset + 8);
 			VirtualAddressVM = new UInt32HexField(buffer, Name, "VirtualAddress", startOffset + 0x0C);

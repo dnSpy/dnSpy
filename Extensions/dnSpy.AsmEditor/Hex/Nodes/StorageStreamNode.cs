@@ -19,8 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
@@ -30,24 +28,13 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	enum StorageStreamType {
-		None,
-		Strings,
-		US,
-		Blob,
-		Guid,
-		Tables,
-		Pdb,
-		HotHeap,
-	}
-
 	sealed class StorageStreamNode : HexNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.STRGSTREAM_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, StreamNumber.ToString());
-		public StorageStreamType StorageStreamType { get; }
+		public StorageStreamType StorageStreamType => storageStreamVM.StorageStreamType;
 		public override object VMObject => storageStreamVM;
 		protected override ImageReference IconReference => DsImages.BinaryFile;
-		public int StreamNumber { get; }
+		public int StreamNumber => storageStreamVM.StreamNumber;
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return storageStreamVM; }
@@ -55,15 +42,12 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly StorageStreamVM storageStreamVM;
 
-		public StorageStreamNode(HexBuffer buffer, StreamHeader sh, int streamNumber, DotNetStream knownStream, IMetaData md)
-			: base(HexSpan.FromBounds((ulong)sh.StartOffset, (ulong)sh.EndOffset)) {
-			StreamNumber = streamNumber;
-			StorageStreamType = GetStorageStreamType(knownStream);
-			storageStreamVM = new StorageStreamVM(buffer, Span.Start, (int)(Span.Length - 8).ToUInt64());
+		public StorageStreamNode(StorageStreamVM storageStream, TablesStreamVM childOrNull)
+			: base(storageStream.Span) {
+			storageStreamVM = storageStream;
 
-			var tblStream = knownStream as TablesStream;
-			if (tblStream != null)
-				newChild = new TablesStreamNode(buffer, tblStream, md);
+			if (childOrNull != null)
+				newChild = new TablesStreamNode(childOrNull);
 		}
 		TreeNodeData newChild;
 
@@ -71,27 +55,6 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (newChild != null)
 				yield return newChild;
 			newChild = null;
-		}
-
-		static StorageStreamType GetStorageStreamType(DotNetStream stream) {
-			if (stream == null)
-				return StorageStreamType.None;
-			if (stream is StringsStream)
-				return StorageStreamType.Strings;
-			if (stream is USStream)
-				return StorageStreamType.US;
-			if (stream is BlobStream)
-				return StorageStreamType.Blob;
-			if (stream is GuidStream)
-				return StorageStreamType.Guid;
-			if (stream is TablesStream)
-				return StorageStreamType.Tables;
-			if (stream.Name == "#Pdb")
-				return StorageStreamType.Pdb;
-			if (stream.Name == "#!")
-				return StorageStreamType.HotHeap;
-			Debug.Fail(string.Format("Shouldn't be here when stream is a known stream type: {0}", stream.GetType()));
-			return StorageStreamType.None;
 		}
 
 		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {

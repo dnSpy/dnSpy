@@ -35,7 +35,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public StorageSignatureVM(HexBuffer buffer, HexPosition startOffset, int stringLen) {
+		public StorageSignatureVM(HexBuffer buffer, HexPosition startOffset, int stringLen)
+			: base(new HexSpan(startOffset, (ulong)(0x10 + stringLen))) {
 			LSignatureVM = new UInt32HexField(buffer, Name, "lSignature", startOffset + 0);
 			IMajorVerVM = new UInt16HexField(buffer, Name, "iMajorVer", startOffset + 4, true);
 			IMinorVerVM = new UInt16HexField(buffer, Name, "iMinorVer", startOffset + 6, true);

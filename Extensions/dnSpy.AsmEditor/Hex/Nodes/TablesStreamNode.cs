@@ -43,14 +43,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly TablesStreamVM tablesStreamVM;
 
-		public TablesStreamNode(HexBuffer buffer, TablesStream tblStream, IMetaData md)
-			: base(HexSpan.FromBounds((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset)) {
-			tablesStreamVM = new TablesStreamVM(buffer, tblStream);
+		public TablesStreamNode(TablesStreamVM tablesStream)
+			: base(tablesStream.Span) {
+			tablesStreamVM = tablesStream;
 
 			newChildren = new List<TreeNodeData>();
-			foreach (var mdTable in tblStream.MDTables) {
-				if (mdTable.Rows != 0)
-					newChildren.Add(new MetaDataTableNode(buffer, mdTable, md));
+			foreach (var mdTable in tablesStream.MetaDataTables) {
+				if (mdTable != null)
+					newChildren.Add(new MetaDataTableNode(mdTable));
 			}
 		}
 		List<TreeNodeData> newChildren;
@@ -74,14 +74,6 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public MetaDataTableRecordNode FindTokenNode(uint token) {
 			var mdTblNode = (MetaDataTableNode)TreeNode.DataChildren.FirstOrDefault(a => ((MetaDataTableNode)a).TableInfo.Table == (Table)(token >> 24));
 			return mdTblNode?.FindTokenNode(token);
-		}
-
-		public MetaDataTableVM FindMetaDataTable(Table table) {
-			foreach (MetaDataTableNode node in TreeNode.DataChildren) {
-				if (node.TableInfo.Table == table)
-					return node.MetaDataTableVM;
-			}
-			return null;
 		}
 	}
 }

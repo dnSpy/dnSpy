@@ -28,7 +28,6 @@ using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class MetaDataTableVM : HexVM {
-		public Func<Table, MetaDataTableVM> FindMetaDataTable { get; set; }
 		public Table Table => TableInfo.Table;
 		public uint Rows { get; }
 		public TableInfo TableInfo { get; }
@@ -70,19 +69,19 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		object selectedItem;
 
 		public HexBuffer Buffer => buffer;
-		public HexSpan Span { get; }
-		public object Owner { get; }
+		public TablesStreamVM TablesStream { get; }
+		public object Owner { get; set; }
 
 		readonly HexBuffer buffer;
 		readonly HexSpan stringsHeapSpan;
 		readonly HexSpan guidHeapSpan;
 
-		protected MetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan) {
+		protected MetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(new HexSpan((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset)) {
 			this.buffer = buffer;
+			TablesStream = tablesStream;
 			this.stringsHeapSpan = stringsHeapSpan;
 			this.guidHeapSpan = guidHeapSpan;
-			Owner = owner;
-			Span = new HexSpan(startOffset, (ulong)mdTable.Rows * mdTable.RowSize);
 			Rows = mdTable.Rows;
 			TableInfo = CreateTableInfo(mdTable.TableInfo);
 			Collection = new VirtualizedList<MetaDataTableRecordVM>((int)Rows, CreateItem);
@@ -148,61 +147,61 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		public static MetaDataTableVM Create(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan) {
+		public static MetaDataTableVM Create(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan) {
 			switch (mdTable.Table) {
-			case Table.Module:					return new ModuleMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.TypeRef:					return new TypeRefMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.TypeDef:					return new TypeDefMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.FieldPtr:				return new FieldPtrMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.Field:					return new FieldMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.MethodPtr:				return new MethodPtrMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.Method:					return new MethodMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ParamPtr:				return new ParamPtrMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.Param:					return new ParamMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.InterfaceImpl:			return new InterfaceImplMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.MemberRef:				return new MemberRefMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.Constant:				return new ConstantMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.CustomAttribute:			return new CustomAttributeMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.FieldMarshal:			return new FieldMarshalMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.DeclSecurity:			return new DeclSecurityMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ClassLayout:				return new ClassLayoutMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.FieldLayout:				return new FieldLayoutMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.StandAloneSig:			return new StandAloneSigMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.EventMap:				return new EventMapMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.EventPtr:				return new EventPtrMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.Event:					return new EventMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.PropertyMap:				return new PropertyMapMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.PropertyPtr:				return new PropertyPtrMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.Property:				return new PropertyMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.MethodSemantics:			return new MethodSemanticsMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.MethodImpl:				return new MethodImplMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ModuleRef:				return new ModuleRefMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.TypeSpec:				return new TypeSpecMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ImplMap:					return new ImplMapMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.FieldRVA:				return new FieldRVAMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ENCLog:					return new ENCLogMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ENCMap:					return new ENCMapMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.Assembly:				return new AssemblyMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.AssemblyProcessor:		return new AssemblyProcessorMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.AssemblyOS:				return new AssemblyOSMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.AssemblyRef:				return new AssemblyRefMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.AssemblyRefProcessor:	return new AssemblyRefProcessorMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.AssemblyRefOS:			return new AssemblyRefOSMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.File:					return new FileMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ExportedType:			return new ExportedTypeMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ManifestResource:		return new ManifestResourceMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.NestedClass:				return new NestedClassMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.GenericParam:			return mdTable.Columns.Count == 5 ? (MetaDataTableVM)new GenericParamMetaDataTableV11VM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) : new GenericParamMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.MethodSpec:				return new MethodSpecMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.GenericParamConstraint:	return new GenericParamConstraintMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.Document:				return new DocumentMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.MethodDebugInformation:	return new MethodDebugInformationMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.LocalScope:				return new LocalScopeMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.LocalVariable:			return new LocalVariableMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.LocalConstant:			return new LocalConstantMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.ImportScope:				return new ImportScopeMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.StateMachineMethod:		return new StateMachineMethodMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
-			case Table.CustomDebugInformation:	return new CustomDebugInformationMetaDataTableVM(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Module:					return new ModuleMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.TypeRef:					return new TypeRefMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.TypeDef:					return new TypeDefMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.FieldPtr:				return new FieldPtrMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Field:					return new FieldMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.MethodPtr:				return new MethodPtrMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Method:					return new MethodMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ParamPtr:				return new ParamPtrMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Param:					return new ParamMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.InterfaceImpl:			return new InterfaceImplMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.MemberRef:				return new MemberRefMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Constant:				return new ConstantMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.CustomAttribute:			return new CustomAttributeMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.FieldMarshal:			return new FieldMarshalMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.DeclSecurity:			return new DeclSecurityMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ClassLayout:				return new ClassLayoutMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.FieldLayout:				return new FieldLayoutMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.StandAloneSig:			return new StandAloneSigMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.EventMap:				return new EventMapMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.EventPtr:				return new EventPtrMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Event:					return new EventMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.PropertyMap:				return new PropertyMapMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.PropertyPtr:				return new PropertyPtrMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Property:				return new PropertyMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.MethodSemantics:			return new MethodSemanticsMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.MethodImpl:				return new MethodImplMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ModuleRef:				return new ModuleRefMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.TypeSpec:				return new TypeSpecMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ImplMap:					return new ImplMapMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.FieldRVA:				return new FieldRVAMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ENCLog:					return new ENCLogMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ENCMap:					return new ENCMapMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Assembly:				return new AssemblyMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.AssemblyProcessor:		return new AssemblyProcessorMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.AssemblyOS:				return new AssemblyOSMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.AssemblyRef:				return new AssemblyRefMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.AssemblyRefProcessor:	return new AssemblyRefProcessorMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.AssemblyRefOS:			return new AssemblyRefOSMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.File:					return new FileMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ExportedType:			return new ExportedTypeMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ManifestResource:		return new ManifestResourceMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.NestedClass:				return new NestedClassMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.GenericParam:			return mdTable.Columns.Count == 5 ? (MetaDataTableVM)new GenericParamMetaDataTableV11VM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) : new GenericParamMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.MethodSpec:				return new MethodSpecMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.GenericParamConstraint:	return new GenericParamConstraintMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.Document:				return new DocumentMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.MethodDebugInformation:	return new MethodDebugInformationMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.LocalScope:				return new LocalScopeMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.LocalVariable:			return new LocalVariableMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.LocalConstant:			return new LocalConstantMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.ImportScope:				return new ImportScopeMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.StateMachineMethod:		return new StateMachineMethodMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+			case Table.CustomDebugInformation:	return new CustomDebugInformationMetaDataTableVM(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
 			default:							throw new InvalidOperationException();
 			}
 		}
@@ -289,424 +288,424 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	}
 
 	abstract class MetaDataTable1VM : MetaDataTableVM {
-		public MetaDataTable1VM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable1VM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable2VM : MetaDataTableVM {
-		public MetaDataTable2VM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable2VM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable3VM : MetaDataTableVM {
-		public MetaDataTable3VM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable3VM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable4VM : MetaDataTableVM {
-		public MetaDataTable4VM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable4VM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable5VM : MetaDataTableVM {
-		public MetaDataTable5VM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable5VM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable6VM : MetaDataTableVM {
-		public MetaDataTable6VM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable6VM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable9VM : MetaDataTableVM {
-		public MetaDataTable9VM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable9VM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable1InfoVM : MetaDataTable1VM {
 		public override bool HasInfo => true;
 
-		public MetaDataTable1InfoVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable1InfoVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable2InfoVM : MetaDataTable2VM {
 		public override bool HasInfo => true;
 
-		public MetaDataTable2InfoVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable2InfoVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable3InfoVM : MetaDataTable3VM {
 		public override bool HasInfo => true;
 
-		public MetaDataTable3InfoVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable3InfoVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable4InfoVM : MetaDataTable4VM {
 		public override bool HasInfo => true;
 
-		public MetaDataTable4InfoVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable4InfoVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable5InfoVM : MetaDataTable5VM {
 		public override bool HasInfo => true;
 
-		public MetaDataTable5InfoVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable5InfoVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable6InfoVM : MetaDataTable6VM {
 		public override bool HasInfo => true;
 
-		public MetaDataTable6InfoVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable6InfoVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	abstract class MetaDataTable9InfoVM : MetaDataTable9VM {
 		public override bool HasInfo => true;
 
-		public MetaDataTable9InfoVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MetaDataTable9InfoVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ModuleMetaDataTableVM : MetaDataTable5InfoVM {
-		public ModuleMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ModuleMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class TypeRefMetaDataTableVM : MetaDataTable3InfoVM {
-		public TypeRefMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public TypeRefMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class TypeDefMetaDataTableVM : MetaDataTable6InfoVM {
-		public TypeDefMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public TypeDefMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class FieldPtrMetaDataTableVM : MetaDataTable1VM {
-		public FieldPtrMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public FieldPtrMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class FieldMetaDataTableVM : MetaDataTable3InfoVM {
-		public FieldMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public FieldMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class MethodPtrMetaDataTableVM : MetaDataTable1VM {
-		public MethodPtrMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MethodPtrMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class MethodMetaDataTableVM : MetaDataTable6InfoVM {
-		public MethodMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MethodMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ParamPtrMetaDataTableVM : MetaDataTable1VM {
-		public ParamPtrMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ParamPtrMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ParamMetaDataTableVM : MetaDataTable3InfoVM {
-		public ParamMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ParamMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class InterfaceImplMetaDataTableVM : MetaDataTable2VM {
-		public InterfaceImplMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public InterfaceImplMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class MemberRefMetaDataTableVM : MetaDataTable3InfoVM {
-		public MemberRefMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MemberRefMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ConstantMetaDataTableVM : MetaDataTable4VM {
-		public ConstantMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ConstantMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class CustomAttributeMetaDataTableVM : MetaDataTable3VM {
-		public CustomAttributeMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public CustomAttributeMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class FieldMarshalMetaDataTableVM : MetaDataTable2VM {
-		public FieldMarshalMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public FieldMarshalMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class DeclSecurityMetaDataTableVM : MetaDataTable3VM {
-		public DeclSecurityMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public DeclSecurityMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ClassLayoutMetaDataTableVM : MetaDataTable3VM {
-		public ClassLayoutMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ClassLayoutMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class FieldLayoutMetaDataTableVM : MetaDataTable2VM {
-		public FieldLayoutMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public FieldLayoutMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class StandAloneSigMetaDataTableVM : MetaDataTable1VM {
-		public StandAloneSigMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public StandAloneSigMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class EventMapMetaDataTableVM : MetaDataTable2VM {
-		public EventMapMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public EventMapMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class EventPtrMetaDataTableVM : MetaDataTable1VM {
-		public EventPtrMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public EventPtrMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class EventMetaDataTableVM : MetaDataTable3InfoVM {
-		public EventMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public EventMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class PropertyMapMetaDataTableVM : MetaDataTable2VM {
-		public PropertyMapMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public PropertyMapMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class PropertyPtrMetaDataTableVM : MetaDataTable1VM {
-		public PropertyPtrMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public PropertyPtrMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class PropertyMetaDataTableVM : MetaDataTable3InfoVM {
-		public PropertyMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public PropertyMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class MethodSemanticsMetaDataTableVM : MetaDataTable3VM {
-		public MethodSemanticsMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MethodSemanticsMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class MethodImplMetaDataTableVM : MetaDataTable3VM {
-		public MethodImplMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MethodImplMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ModuleRefMetaDataTableVM : MetaDataTable1InfoVM {
-		public ModuleRefMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ModuleRefMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class TypeSpecMetaDataTableVM : MetaDataTable1VM {
-		public TypeSpecMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public TypeSpecMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ImplMapMetaDataTableVM : MetaDataTable4InfoVM {
-		public ImplMapMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ImplMapMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class FieldRVAMetaDataTableVM : MetaDataTable2VM {
-		public FieldRVAMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public FieldRVAMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ENCLogMetaDataTableVM : MetaDataTable2VM {
-		public ENCLogMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ENCLogMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ENCMapMetaDataTableVM : MetaDataTable1VM {
-		public ENCMapMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ENCMapMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class AssemblyMetaDataTableVM : MetaDataTable9InfoVM {
-		public AssemblyMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public AssemblyMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class AssemblyProcessorMetaDataTableVM : MetaDataTable1VM {
-		public AssemblyProcessorMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public AssemblyProcessorMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class AssemblyOSMetaDataTableVM : MetaDataTable3VM {
-		public AssemblyOSMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public AssemblyOSMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class AssemblyRefMetaDataTableVM : MetaDataTable9InfoVM {
-		public AssemblyRefMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public AssemblyRefMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class AssemblyRefProcessorMetaDataTableVM : MetaDataTable2VM {
-		public AssemblyRefProcessorMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public AssemblyRefProcessorMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class AssemblyRefOSMetaDataTableVM : MetaDataTable4VM {
-		public AssemblyRefOSMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public AssemblyRefOSMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class FileMetaDataTableVM : MetaDataTable3InfoVM {
-		public FileMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public FileMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ExportedTypeMetaDataTableVM : MetaDataTable5InfoVM {
-		public ExportedTypeMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ExportedTypeMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ManifestResourceMetaDataTableVM : MetaDataTable4InfoVM {
-		public ManifestResourceMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ManifestResourceMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class NestedClassMetaDataTableVM : MetaDataTable2VM {
-		public NestedClassMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public NestedClassMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class GenericParamMetaDataTableV11VM : MetaDataTable5InfoVM {
-		public GenericParamMetaDataTableV11VM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public GenericParamMetaDataTableV11VM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class GenericParamMetaDataTableVM : MetaDataTable4InfoVM {
-		public GenericParamMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public GenericParamMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class MethodSpecMetaDataTableVM : MetaDataTable2VM {
-		public MethodSpecMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MethodSpecMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class GenericParamConstraintMetaDataTableVM : MetaDataTable2VM {
-		public GenericParamConstraintMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public GenericParamConstraintMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class DocumentMetaDataTableVM : MetaDataTable4VM {
-		public DocumentMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public DocumentMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class MethodDebugInformationMetaDataTableVM : MetaDataTable2VM {
-		public MethodDebugInformationMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public MethodDebugInformationMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class LocalScopeMetaDataTableVM : MetaDataTable6VM {
-		public LocalScopeMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public LocalScopeMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class LocalVariableMetaDataTableVM : MetaDataTable3VM {
-		public LocalVariableMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public LocalVariableMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class LocalConstantMetaDataTableVM : MetaDataTable2VM {
-		public LocalConstantMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public LocalConstantMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class ImportScopeMetaDataTableVM : MetaDataTable2VM {
-		public ImportScopeMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public ImportScopeMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class StateMachineMethodMetaDataTableVM : MetaDataTable2VM {
-		public StateMachineMethodMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public StateMachineMethodMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 
 	sealed class CustomDebugInformationMetaDataTableVM : MetaDataTable3VM {
-		public CustomDebugInformationMetaDataTableVM(object owner, HexBuffer buffer, HexPosition startOffset, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(owner, buffer, startOffset, mdTable, stringsHeapSpan, guidHeapSpan) {
+		public CustomDebugInformationMetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
+			: base(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan) {
 		}
 	}
 }
