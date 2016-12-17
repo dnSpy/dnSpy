@@ -23,16 +23,20 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Classification.DnSpy;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	[Export(typeof(HexStructureInfoProviderFactory))]
 	sealed class HexStructureInfoProviderFactoryImpl : HexStructureInfoProviderFactory {
+		readonly HexTextElementCreatorProvider hexTextElementCreatorProvider;
 		readonly PEStructureProviderFactory peStructureProviderFactory;
 
 		[ImportingConstructor]
-		HexStructureInfoProviderFactoryImpl(PEStructureProviderFactory peStructureProviderFactory) {
+		HexStructureInfoProviderFactoryImpl(HexTextElementCreatorProvider hexTextElementCreatorProvider, PEStructureProviderFactory peStructureProviderFactory) {
+			this.hexTextElementCreatorProvider = hexTextElementCreatorProvider;
 			this.peStructureProviderFactory = peStructureProviderFactory;
 		}
 
@@ -44,16 +48,20 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			var peStructureProvider = peStructureProviderFactory.TryGetProvider(hexView.Buffer, pePosition);
 			if (peStructureProvider == null)
 				return null;
-			return new HexStructureInfoProviderImpl(peStructureProvider);
+			return new HexStructureInfoProviderImpl(hexTextElementCreatorProvider, peStructureProvider);
 		}
 	}
 
 	sealed class HexStructureInfoProviderImpl : HexStructureInfoProvider {
+		readonly HexTextElementCreatorProvider hexTextElementCreatorProvider;
 		readonly PEStructure peStructure;
 
-		public HexStructureInfoProviderImpl(PEStructureProvider peStructureProvider) {
+		public HexStructureInfoProviderImpl(HexTextElementCreatorProvider hexTextElementCreatorProvider, PEStructureProvider peStructureProvider) {
+			if (hexTextElementCreatorProvider == null)
+				throw new ArgumentNullException(nameof(hexTextElementCreatorProvider));
 			if (peStructureProvider == null)
 				throw new ArgumentNullException(nameof(peStructureProvider));
+			this.hexTextElementCreatorProvider = hexTextElementCreatorProvider;
 			peStructure = new PEStructure(peStructureProvider);
 		}
 
@@ -185,31 +193,40 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		public override object GetToolTip(HexPosition position) {
 			var info = GetField(position);
-			if (info != null)
-				return CreateFieldToolTip(info.Value);
+			if (info != null) {
+				var creator = new ToolTipCreator(hexTextElementCreatorProvider);
+				bool create = CreateFieldToolTip(creator, info.Value);
+				return create ? creator.Create() : null;
+			}
 
 			var mfInfo = peStructure.GetMethodBodyInfoAndField(position);
-			if (mfInfo != null)
-				return CreateMethodBodyToolTip(mfInfo.Value.MethodBodyInfo, mfInfo.Value.FieldInfo, position, mfInfo.Value.MethodBodyInfo.IsSmallExceptionClauses);
+			if (mfInfo != null) {
+				var creator = new ToolTipCreator(hexTextElementCreatorProvider);
+				bool create = CreateMethodBodyToolTip(creator, mfInfo.Value.MethodBodyInfo, mfInfo.Value.FieldInfo, position, mfInfo.Value.MethodBodyInfo.IsSmallExceptionClauses);
+				return create ? creator.Create() : null;
+			}
 
 			return null;
 		}
 
-		object CreateFieldToolTip(FieldAndStructure info) {
-			var output = new StringBuilderTextColorOutput();
+		bool CreateFieldToolTip(ToolTipCreator creator, FieldAndStructure info) {
+			var output = creator.Writer;
+			creator.Image = DsImages.FieldPublic;
 			output.Write(BoxedTextColor.ValueType, info.Structure.Name);
 			output.Write(BoxedTextColor.Punctuation, ".");
 			output.Write(BoxedTextColor.InstanceField, info.Field.Name);
-			return output.ToString();
+			return true;
 		}
 
-		object CreateMethodBodyToolTip(MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position, bool isSmallExceptionClauses) {
+		bool CreateMethodBodyToolTip(ToolTipCreator creator, MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position, bool isSmallExceptionClauses) {
 			const string methodHeader = "MethodHeader";
 			const string methodBody = "MethodBody";
 			const string exceptionHeader = "ExceptionHeader";
 			const string exceptionClauses = "ExceptionClauses";
 			const string unknown = "???";
-			var output = new StringBuilderTextColorOutput();
+
+			creator.Image = DsImages.MethodPublic;
+			var output = creator.Writer;
 
 			output.Write(BoxedTextColor.Text, "Method");
 			output.WriteSpace();
@@ -225,11 +242,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				}
 				output.Write(BoxedTextColor.Number, "0x06" + minfo.Rids[i].ToString("X6"));
 			}
-			output.WriteLine();
+			output = creator.CreateNewWriter();
 
 			switch (finfo.FieldKind) {
 			case MethodBodyFieldKind.None:
-				return null;
+				return false;
 
 			case MethodBodyFieldKind.Unknown:
 			case MethodBodyFieldKind.InvalidBody:
@@ -349,13 +366,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				throw new InvalidOperationException();
 			}
 
-			return output.ToString();
+			return true;
 		}
 
-		void WriteExceptionClause(StringBuilderTextColorOutput output, MethodBodyInfo minfo, HexPosition position, string fieldName, bool isSmallExceptionClauses) {
-			const string exceptionClause = "ExceptionClause";
+		void WriteExceptionClause(ITextColorWriter output, MethodBodyInfo minfo, HexPosition position, string fieldName, bool isSmallExceptionClauses) {
+			const string exceptionClauses = "ExceptionClauses";
 			int ehIndex = (int)((position - minfo.ExceptionsSpan.Start - 4).ToUInt64() / (isSmallExceptionClauses ? 12U : 24));
-			output.Write(BoxedTextColor.ValueType, exceptionClause);
+			output.Write(BoxedTextColor.ValueType, exceptionClauses);
 			output.Write(BoxedTextColor.Punctuation, "[");
 			output.Write(BoxedTextColor.Number, ehIndex.ToString());
 			output.Write(BoxedTextColor.Punctuation, "]");

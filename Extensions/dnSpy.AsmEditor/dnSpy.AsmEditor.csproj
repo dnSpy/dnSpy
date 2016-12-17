@@ -385,6 +385,7 @@
     <Compile Include="Hex\PE\StorageStreamType.cs" />
     <Compile Include="Hex\PE\StorageStreamVM.cs" />
     <Compile Include="Hex\PE\TablesStreamVM.cs" />
+    <Compile Include="Hex\PE\ToolTipCreator.cs" />
     <Compile Include="Hex\PE\VirtualizedList.cs" />
     <Compile Include="Hex\TableSorter.cs" />
     <Compile Include="MethodBody\BodyCommandUtils.cs" />
