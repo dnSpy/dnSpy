@@ -109,7 +109,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly MetaDataTableVM[] metaDataTables;
 
 		public TablesStreamVM(HexBuffer buffer, TablesStream tblStream, MetaDataTableVM[] metaDataTables)
-			: base(HexSpan.FromBounds((ulong)tblStream.StartOffset, (ulong)tblStream.EndOffset)) {
+			: base(HexSpan.FromBounds((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset)) {
 			Debug.Assert(metaDataTables.Length == 0x40);
 			this.metaDataTables = metaDataTables;
 			var startOffset = new HexPosition((ulong)tblStream.StartOffset);

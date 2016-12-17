@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly HexSpan guidHeapSpan;
 
 		protected MetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(new HexSpan((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset)) {
+			: base(HexSpan.FromBounds((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset)) {
 			this.buffer = buffer;
 			TablesStream = tablesStream;
 			this.stringsHeapSpan = stringsHeapSpan;

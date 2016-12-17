@@ -105,10 +105,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public abstract ImageFileHeaderVM ImageFileHeader { get; }
 		public abstract ImageOptionalHeaderVM ImageOptionalHeader { get; }
 		public abstract ImageSectionHeaderVM[] Sections { get; }
+		/// <summary>Can be null if it's not a .NET file</summary>
 		public abstract ImageCor20HeaderVM ImageCor20Header { get; }
+		/// <summary>Can be null if it's not a .NET file</summary>
 		public abstract StorageSignatureVM StorageSignature { get; }
+		/// <summary>Can be null if it's not a .NET file</summary>
 		public abstract StorageHeaderVM StorageHeader { get; }
 		public abstract StorageStreamVM[] StorageStreams { get; }
+		/// <summary>Can be null if it's not a .NET file</summary>
 		public abstract TablesStreamVM TablesStream { get; }
 	}
 
