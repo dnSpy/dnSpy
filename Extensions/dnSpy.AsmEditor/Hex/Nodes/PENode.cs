@@ -80,8 +80,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				yield return new StorageSignatureNode(peStructureProvider.StorageSignature);
 				yield return new StorageHeaderNode(peStructureProvider.StorageHeader);
 				foreach (var storageStream in peStructureProvider.StorageStreams) {
-					var child = storageStream.StorageStreamType == StorageStreamType.Tables ? peStructureProvider.TablesStream : null;
-					yield return new StorageStreamNode(storageStream, child);
+					if (storageStream.StorageStreamType == StorageStreamType.Tables)
+						yield return new TablesStorageStreamNode(storageStream, peStructureProvider.TablesStream);
+					else
+						yield return new StorageStreamNode(storageStream);
 				}
 			}
 		}
@@ -144,8 +146,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			TreeNode.EnsureChildrenLoaded();
 			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
-				if (child.Span.Contains(field.Span))
-					return child.FindNode(structure, field);
+				var node = child.FindNode(structure, field);
+				if (node != null)
+					return node;
 			}
 			return null;
 		}

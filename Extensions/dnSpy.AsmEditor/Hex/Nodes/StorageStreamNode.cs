@@ -28,7 +28,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	sealed class StorageStreamNode : HexNode {
+	class StorageStreamNode : HexNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.STRGSTREAM_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, StreamNumber.ToString());
 		public StorageStreamType StorageStreamType => storageStreamVM.StorageStreamType;
@@ -42,19 +42,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly StorageStreamVM storageStreamVM;
 
-		public StorageStreamNode(StorageStreamVM storageStream, TablesStreamVM childOrNull)
+		public StorageStreamNode(StorageStreamVM storageStream)
 			: base(storageStream.Span) {
 			storageStreamVM = storageStream;
-
-			if (childOrNull != null)
-				newChild = new TablesStreamNode(childOrNull);
-		}
-		TreeNodeData newChild;
-
-		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (newChild != null)
-				yield return newChild;
-			newChild = null;
 		}
 
 		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
@@ -80,6 +70,26 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (StorageStreamType != StorageStreamType.Tables)
 				return null;
 			return ((TablesStreamNode)TreeNode.Children[0].Data).FindTokenNode(token);
+		}
+	}
+
+	sealed class TablesStorageStreamNode : StorageStreamNode {
+		readonly TablesStreamVM tablesStream;
+
+		public TablesStorageStreamNode(StorageStreamVM storageStream, TablesStreamVM tablesStream)
+			: base(storageStream) {
+			this.tablesStream = tablesStream;
+		}
+
+		public override IEnumerable<TreeNodeData> CreateChildren() {
+			yield return new TablesStreamNode(tablesStream);
+		}
+
+		protected override IEnumerable<HexSpan> Spans {
+			get {
+				yield return Span;
+				yield return tablesStream.Span;
+			}
 		}
 	}
 }

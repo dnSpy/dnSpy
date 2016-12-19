@@ -37,6 +37,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		protected sealed override ImageReference GetIcon(IDotNetImageService dnImgMgr) => IconReference;
 		protected abstract ImageReference IconReference { get; }
 
+		protected virtual IEnumerable<HexSpan> Spans {
+			get { yield return Span; }
+		}
+
 		protected HexNode(HexSpan span) {
 			Span = span;
 		}
@@ -73,7 +77,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public HexNode FindNode(HexVM structure, HexField field) {
 			Debug.Assert(!(structure is MetaDataTableRecordVM), "Use " + nameof(PENode) + "'s method instead");
-			if (!Span.Contains(field.Span))
+			bool found = false;
+			foreach (var span in Spans) {
+				if (span.Contains(field.Span)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found)
 				return null;
 
 			foreach (var vm in HexVMs) {
@@ -85,8 +96,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			TreeNode.EnsureChildrenLoaded();
 			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
-				if (child.Span.Contains(field.Span))
-					return child.FindNode(structure, field);
+				var node = child.FindNode(structure, field);
+				if (node != null)
+					return node;
 			}
 
 			return null;
