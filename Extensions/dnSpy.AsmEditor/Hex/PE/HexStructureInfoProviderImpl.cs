@@ -28,6 +28,7 @@ using dnSpy.Contracts.Hex.Classification.DnSpy;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	[Export(typeof(HexStructureInfoProviderFactory))]
@@ -234,7 +235,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		void WriteValue(DataFormatter output, HexField field) {
 			var stringField = field as StringHexField;
 			if (stringField != null) {
-				output.Write(BoxedTextColor.String, "\"" + stringField.FormattedValue + "\"");
+				output.Write(BoxedTextColor.String, SimpleTypeConverter.ToString(stringField.FormattedValue, false));
 				return;
 			}
 
