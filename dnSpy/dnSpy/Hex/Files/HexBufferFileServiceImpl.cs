@@ -42,15 +42,19 @@ namespace dnSpy.Hex.Files {
 
 		readonly HexBuffer buffer;
 		readonly Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories;
+		readonly Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories;
 		readonly SpanDataCollection<HexBufferFileImpl> files;
 
-		public HexBufferFileServiceImpl(HexBuffer buffer, Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories) {
+		public HexBufferFileServiceImpl(HexBuffer buffer, Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			if (structureProviderFactories == null)
 				throw new ArgumentNullException(nameof(structureProviderFactories));
+			if (bufferFileHeadersProviderFactories == null)
+				throw new ArgumentNullException(nameof(bufferFileHeadersProviderFactories));
 			this.buffer = buffer;
 			this.structureProviderFactories = structureProviderFactories;
+			this.bufferFileHeadersProviderFactories = bufferFileHeadersProviderFactories;
 			files = new SpanDataCollection<HexBufferFileImpl>();
 		}
 
@@ -62,7 +66,7 @@ namespace dnSpy.Hex.Files {
 				var opts = options[i];
 				if (opts.IsDefault)
 					throw new ArgumentException();
-				newFiles[i] = new HexBufferFileImpl(structureProviderFactories, buffer, opts.Span, opts.Name, opts.Filename, opts.Tags);
+				newFiles[i] = new HexBufferFileImpl(structureProviderFactories, bufferFileHeadersProviderFactories, buffer, opts.Span, opts.Name, opts.Filename, opts.Tags);
 			}
 			files.Add(newFiles.Select(a => new SpanData<HexBufferFileImpl>(a.Span, a)));
 			BufferFilesAdded?.Invoke(this, new BufferFilesAddedEventArgs(newFiles));

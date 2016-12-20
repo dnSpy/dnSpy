@@ -30,10 +30,12 @@ namespace dnSpy.Hex.Files {
 	sealed class HexBufferFileServiceFactoryImpl : HexBufferFileServiceFactory {
 		public override event EventHandler<BufferFileServiceCreatedEventArgs> BufferFileServiceCreated;
 		readonly Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories;
+		readonly Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories;
 
 		[ImportingConstructor]
-		HexBufferFileServiceFactoryImpl([ImportMany] IEnumerable<Lazy<StructureProviderFactory, VSUTIL.IOrderable>> structureProviderFactories) {
+		HexBufferFileServiceFactoryImpl([ImportMany] IEnumerable<Lazy<StructureProviderFactory, VSUTIL.IOrderable>> structureProviderFactories, [ImportMany] IEnumerable<Lazy<BufferFileHeadersProviderFactory>> bufferFileHeadersProviderFactories) {
 			this.structureProviderFactories = VSUTIL.Orderer.Order(structureProviderFactories).ToArray();
+			this.bufferFileHeadersProviderFactories = bufferFileHeadersProviderFactories.ToArray();
 		}
 
 		public override HexBufferFileService Create(HexBuffer buffer) {
@@ -42,7 +44,7 @@ namespace dnSpy.Hex.Files {
 			HexBufferFileServiceImpl impl;
 			if (buffer.Properties.TryGetProperty(typeof(HexBufferFileServiceImpl), out impl))
 				return impl;
-			impl = new HexBufferFileServiceImpl(buffer, structureProviderFactories);
+			impl = new HexBufferFileServiceImpl(buffer, structureProviderFactories, bufferFileHeadersProviderFactories);
 			buffer.Properties.AddProperty(typeof(HexBufferFileServiceImpl), impl);
 			BufferFileServiceCreated?.Invoke(this, new BufferFileServiceCreatedEventArgs(impl));
 			return impl;

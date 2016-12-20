@@ -314,9 +314,14 @@
     <Compile Include="Hex\Files\BufferData.cs" />
     <Compile Include="Hex\Files\BufferField.cs" />
     <Compile Include="Hex\Files\BufferFieldWriter.cs" />
+    <Compile Include="Hex\Files\BufferFileHeadersProvider.cs" />
+    <Compile Include="Hex\Files\BufferFileHeadersProviderFactory.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetCor20Data.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetHeaders.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaderData.cs" />
     <Compile Include="Hex\Files\DotNet\PredefinedDotNetDataIds.cs" />
+    <Compile Include="Hex\Files\IBufferFileHeaders.cs" />
+    <Compile Include="Hex\Files\PE\PeHeaders.cs" />
     <Compile Include="Hex\Files\PredefinedStructureProviderFactoryNames.cs" />
     <Compile Include="Hex\Files\StructureProvider.cs" />
     <Compile Include="Hex\Files\StructureProviderFactory.cs" />

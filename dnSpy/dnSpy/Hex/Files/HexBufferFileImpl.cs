@@ -32,16 +32,21 @@ namespace dnSpy.Hex.Files {
 		public override event EventHandler StructuresInitialized;
 
 		readonly Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories;
+		readonly Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories;
 		StructureProvider[] structureProviders;
+		BufferFileHeadersProvider[] bufferFileHeadersProviders;
 		bool isInitializing;
 		bool isStructuresInitialized;
 		bool isRemoved;
 
-		public HexBufferFileImpl(Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, HexBuffer buffer, HexSpan span, string name, string filename, string[] tags)
+		public HexBufferFileImpl(Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories, HexBuffer buffer, HexSpan span, string name, string filename, string[] tags)
 			: base(buffer, span, name, filename, tags) {
 			if (structureProviderFactories == null)
 				throw new ArgumentNullException(nameof(structureProviderFactories));
+			if (bufferFileHeadersProviderFactories == null)
+				throw new ArgumentNullException(nameof(bufferFileHeadersProviderFactories));
 			this.structureProviderFactories = structureProviderFactories;
+			this.bufferFileHeadersProviderFactories = bufferFileHeadersProviderFactories;
 		}
 
 		void CreateStructureProviders(bool initialize) {
@@ -82,6 +87,27 @@ namespace dnSpy.Hex.Files {
 				if (structure != null)
 					return structure;
 			}
+			return null;
+		}
+
+		public override THeaders GetHeaders<THeaders>() {
+			if (bufferFileHeadersProviders == null) {
+				CreateStructureProviders(true);
+				var list = new List<BufferFileHeadersProvider>(bufferFileHeadersProviderFactories.Length);
+				foreach (var lz in bufferFileHeadersProviderFactories) {
+					var provider = lz.Value.Create(this);
+					if (provider != null)
+						list.Add(provider);
+				}
+				bufferFileHeadersProviders = list.ToArray();
+			}
+
+			foreach (var provider in bufferFileHeadersProviders) {
+				var headers = provider.GetHeaders<THeaders>();
+				if (headers != null)
+					return headers;
+			}
+
 			return null;
 		}
 

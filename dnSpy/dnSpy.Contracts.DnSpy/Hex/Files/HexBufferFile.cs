@@ -114,5 +114,12 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Raised after the default structures have been added
 		/// </summary>
 		public abstract event EventHandler StructuresInitialized;
+
+		/// <summary>
+		/// Gets headers
+		/// </summary>
+		/// <typeparam name="THeaders">Type</typeparam>
+		/// <returns></returns>
+		public abstract THeaders GetHeaders<THeaders>() where THeaders : class, IBufferFileHeaders;
 	}
 }
