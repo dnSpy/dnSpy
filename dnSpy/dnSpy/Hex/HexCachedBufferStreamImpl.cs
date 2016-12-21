@@ -188,7 +188,7 @@ namespace dnSpy.Hex {
 				var cp = GetCachedPage_NoLock(position);
 				var data = cp.Data;
 				if (index + 1 < data.Length)
-					return (short)(data[0] | (data[1] << 8));
+					return (short)(data[index] | (data[index + 1] << 8));
 				return BitConverter.ToInt16(ReadSlow(position, 2), 0);
 			}
 		}
@@ -200,7 +200,7 @@ namespace dnSpy.Hex {
 				var cp = GetCachedPage_NoLock(position);
 				var data = cp.Data;
 				if (index + 1 < data.Length)
-					return (ushort)(data[0] | (data[1] << 8));
+					return (ushort)(data[index] | (data[index + 1] << 8));
 				return BitConverter.ToUInt16(ReadSlow(position, 2), 0);
 			}
 		}
@@ -212,7 +212,7 @@ namespace dnSpy.Hex {
 				var cp = GetCachedPage_NoLock(position);
 				var data = cp.Data;
 				if (index + 3 < data.Length)
-					return data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+					return data[index] | (data[index + 1] << 8) | (data[index + 2] << 16) | (data[index + 3] << 24);
 				return BitConverter.ToInt32(ReadSlow(position, 4), 0);
 			}
 		}
@@ -224,7 +224,7 @@ namespace dnSpy.Hex {
 				var cp = GetCachedPage_NoLock(position);
 				var data = cp.Data;
 				if (index + 3 < data.Length)
-					return (uint)(data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24));
+					return (uint)(data[index] | (data[index + 1] << 8) | (data[index + 2] << 16) | (data[index + 3] << 24));
 				return BitConverter.ToUInt32(ReadSlow(position, 4), 0);
 			}
 		}
@@ -236,8 +236,8 @@ namespace dnSpy.Hex {
 				var cp = GetCachedPage_NoLock(position);
 				var data = cp.Data;
 				if (index + 7 < data.Length) {
-					return ((long)data[0] | ((long)data[1] << 8) | ((long)data[2] << 16) | ((long)data[3] << 24) |
-						((long)data[4] << 32) | ((long)data[5] << 40) | ((long)data[6] << 48) | ((long)data[7] << 56));
+					return ((long)data[index] | ((long)data[index + 1] << 8) | ((long)data[index + 2] << 16) | ((long)data[index + 3] << 24) |
+						((long)data[index + 4] << 32) | ((long)data[index + 5] << 40) | ((long)data[index + 6] << 48) | ((long)data[index + 7] << 56));
 				}
 				return BitConverter.ToInt64(ReadSlow(position, 8), 0);
 			}
@@ -250,8 +250,8 @@ namespace dnSpy.Hex {
 				var cp = GetCachedPage_NoLock(position);
 				var data = cp.Data;
 				if (index + 7 < data.Length) {
-					return ((ulong)data[0] | ((ulong)data[1] << 8) | ((ulong)data[2] << 16) | ((ulong)data[3] << 24) |
-						((ulong)data[4] << 32) | ((ulong)data[5] << 40) | ((ulong)data[6] << 48) | ((ulong)data[7] << 56));
+					return ((ulong)data[index] | ((ulong)data[index + 1] << 8) | ((ulong)data[index + 2] << 16) | ((ulong)data[index + 3] << 24) |
+						((ulong)data[index + 4] << 32) | ((ulong)data[index + 5] << 40) | ((ulong)data[index + 6] << 48) | ((ulong)data[index + 7] << 56));
 				}
 				return BitConverter.ToUInt64(ReadSlow(position, 8), 0);
 			}
