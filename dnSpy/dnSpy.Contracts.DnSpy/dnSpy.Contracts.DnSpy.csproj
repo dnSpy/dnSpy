@@ -321,6 +321,7 @@
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaderData.cs" />
     <Compile Include="Hex\Files\DotNet\PredefinedDotNetDataIds.cs" />
     <Compile Include="Hex\Files\IBufferFileHeaders.cs" />
+    <Compile Include="Hex\Files\PE\PeFileLayoutProvider.cs" />
     <Compile Include="Hex\Files\PE\PeHeaders.cs" />
     <Compile Include="Hex\Files\PredefinedStructureProviderFactoryNames.cs" />
     <Compile Include="Hex\Files\StructureProvider.cs" />

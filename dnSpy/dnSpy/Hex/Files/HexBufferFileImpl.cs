@@ -102,6 +102,12 @@ namespace dnSpy.Hex.Files {
 				bufferFileHeadersProviders = list.ToArray();
 			}
 
+			foreach (var provider in structureProviders) {
+				var headers = provider.GetHeaders<THeaders>();
+				if (headers != null)
+					return headers;
+			}
+
 			foreach (var provider in bufferFileHeadersProviders) {
 				var headers = provider.GetHeaders<THeaders>();
 				if (headers != null)

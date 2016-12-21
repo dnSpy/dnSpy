@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// A field in a structure
 	/// </summary>
-	public class NormalBufferField : BufferField {
+	public class StructField : BufferField {
 		/// <summary>
 		/// Gets the field name
 		/// </summary>
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <param name="data">Data type</param>
-		protected NormalBufferField(string name, BufferData data)
+		public StructField(string name, BufferData data)
 			: base(data) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
@@ -81,9 +81,28 @@ namespace dnSpy.Contracts.Hex.Files {
 	}
 
 	/// <summary>
+	/// A field in a structure
+	/// </summary>
+	public class StructField<TData> : StructField where TData : BufferData {
+		/// <summary>
+		/// Gets the data type
+		/// </summary>
+		public new TData Data => (TData)base.Data;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="data">Data type</param>
+		public StructField(string name, TData data)
+			: base(name, data) {
+		}
+	}
+
+	/// <summary>
 	/// An array field
 	/// </summary>
-	public class ArrayBufferField : BufferField {
+	public class ArrayField : BufferField {
 		readonly uint index;
 		readonly int bits;
 
@@ -98,7 +117,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="data">Data type</param>
 		/// <param name="index">Array index</param>
 		/// <param name="bits">Size of index in bits or 0 to use default</param>
-		protected ArrayBufferField(BufferData data, uint index, int bits)
+		public ArrayField(BufferData data, uint index, int bits)
 			: base(data) {
 			this.index = index;
 			this.bits = bits;
@@ -109,5 +128,25 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="writer">Writer</param>
 		public sealed override void WriteName(BufferFieldWriter writer) => writer.WriteArrayField(index, bits);
+	}
+
+	/// <summary>
+	/// An array field
+	/// </summary>
+	public class ArrayField<TData> : ArrayField where TData : BufferData {
+		/// <summary>
+		/// Gets the data type
+		/// </summary>
+		public new TData Data => (TData)base.Data;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="data">Data type</param>
+		/// <param name="index">Array index</param>
+		/// <param name="bits">Size of index in bits or 0 to use default</param>
+		public ArrayField(TData data, uint index, int bits)
+			: base(data, index, bits) {
+		}
 	}
 }

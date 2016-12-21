@@ -17,24 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Hex.Files.PE {
 	/// <summary>
 	/// Data directory
 	/// </summary>
-	public abstract class DataDirectoryData : StructureData {
+	public class DataDirectoryData : StructureData {
 		const string NAME = "IMAGE_DATA_DIRECTORY";
+
+		/// <summary>
+		/// Gets the fields
+		/// </summary>
+		protected override BufferField[] Fields { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Span</param>
-		protected DataDirectoryData(HexBufferSpan span)
+		public DataDirectoryData(HexBufferSpan span)
 			: base(NAME, span) {
+			if (span.Length != 8)
+				throw new ArgumentOutOfRangeException(nameof(span));
+			var buffer = span.Buffer;
+			var pos = span.Start;
+			VirtualAddress = new StructField<UInt32Data>("VirtualAddress", new UInt32Data(buffer, pos));
+			Size = new StructField<UInt32Data>("Size", new UInt32Data(buffer, pos + 4));
+			Fields = new BufferField[] {
+				VirtualAddress,
+				Size,
+			};
 		}
 
 		/// <summary>IMAGE_DATA_DIRECTORY.VirtualAddress</summary>
-		public abstract UInt32Data VirtualAddress { get; }
+		public StructField<UInt32Data> VirtualAddress { get; }
 		/// <summary>IMAGE_DATA_DIRECTORY.Size</summary>
-		public abstract UInt32Data Size { get; }
+		public StructField<UInt32Data> Size { get; }
 	}
 }

@@ -17,9 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using VSUTIL = Microsoft.VisualStudio.Utilities;
+
 namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
-	/// Creates <see cref="StructureProvider"/>s
+	/// Creates <see cref="StructureProvider"/>s. Export an instance with
+	/// a <see cref="VSUTIL.NameAttribute"/> and a <see cref="VSUTIL.OrderAttribute"/>,
+	/// see also <see cref="PredefinedStructureProviderFactoryNames"/>
 	/// </summary>
 	public abstract class StructureProviderFactory {
 		/// <summary>

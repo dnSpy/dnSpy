@@ -21,15 +21,16 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 	/// <summary>
 	/// Sections array
 	/// </summary>
-	public abstract class PeSectionsData : ArrayData {
+	public class PeSectionsData : ArrayData<PeSectionData> {
 		const string NAME = "Sections";
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Span</param>
-		protected PeSectionsData(HexBufferSpan span)
-			: base(NAME, span) {
+		/// <param name="fields">Array elements</param>
+		public PeSectionsData(HexBufferSpan span, ArrayField<PeSectionData>[] fields)
+			: base(NAME, span, fields) {
 		}
 	}
 
@@ -48,24 +49,24 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		}
 
 		/// <summary>IMAGE_SECTION_HEADER.Name</summary>
-		public abstract StringData SectionName { get; }
+		public abstract StructField<StringData> SectionName { get; }
 		/// <summary>IMAGE_SECTION_HEADER.VirtualSize</summary>
-		public abstract UInt32Data VirtualSize { get; }
+		public abstract StructField<UInt32Data> VirtualSize { get; }
 		/// <summary>IMAGE_SECTION_HEADER.VirtualAddress</summary>
-		public abstract UInt32Data VirtualAddress { get; }
+		public abstract StructField<UInt32Data> VirtualAddress { get; }
 		/// <summary>IMAGE_SECTION_HEADER.SizeOfRawData</summary>
-		public abstract UInt32Data SizeOfRawData { get; }
+		public abstract StructField<UInt32Data> SizeOfRawData { get; }
 		/// <summary>IMAGE_SECTION_HEADER.PointerToRawData</summary>
-		public abstract UInt32Data PointerToRawData { get; }
+		public abstract StructField<UInt32Data> PointerToRawData { get; }
 		/// <summary>IMAGE_SECTION_HEADER.PointerToRelocations</summary>
-		public abstract UInt32Data PointerToRelocations { get; }
+		public abstract StructField<UInt32Data> PointerToRelocations { get; }
 		/// <summary>IMAGE_SECTION_HEADER.PointerToLinenumbers</summary>
-		public abstract UInt32Data PointerToLinenumbers { get; }
+		public abstract StructField<UInt32Data> PointerToLinenumbers { get; }
 		/// <summary>IMAGE_SECTION_HEADER.NumberOfRelocations</summary>
-		public abstract UInt16Data NumberOfRelocations { get; }
+		public abstract StructField<UInt16Data> NumberOfRelocations { get; }
 		/// <summary>IMAGE_SECTION_HEADER.NumberOfLinenumbers</summary>
-		public abstract UInt16Data NumberOfLinenumbers { get; }
+		public abstract StructField<UInt16Data> NumberOfLinenumbers { get; }
 		/// <summary>IMAGE_SECTION_HEADER.Characteristics</summary>
-		public abstract UInt32FlagsData Characteristics { get; }
+		public abstract StructField<UInt32FlagsData> Characteristics { get; }
 	}
 }

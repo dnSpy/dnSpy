@@ -17,21 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files.PE {
-	/// <summary>
-	/// Predefined PE <see cref="BufferData"/> ids
-	/// </summary>
-	public static class PredefinedPeDataIds {
-		/// <summary><see cref="PeDosHeaderData"/></summary>
-		public const string PeDosHeader = nameof(PeDosHeader);
-
-		/// <summary><see cref="PeFileHeaderData"/></summary>
-		public const string PeFileHeader = nameof(PeFileHeader);
-
-		/// <summary><see cref="PeOptionalHeaderData"/></summary>
-		public const string PeOptionalHeader = nameof(PeOptionalHeader);
-
-		/// <summary><see cref="PeSectionsData"/></summary>
-		public const string PeSections = nameof(PeSections);
+namespace dnSpy.Hex.Files.PE {
+	struct ImageSectionHeader {
+		public uint VirtualSize { get; }
+		public uint VirtualAddress { get; }
+		public uint SizeOfRawData { get; }
+		public uint PointerToRawData { get; }
+		public ImageSectionHeader(uint virtualSize, uint virtualAddress, uint sizeOfRawData, uint pointerToRawData) {
+			VirtualSize = virtualSize;
+			VirtualAddress = virtualAddress;
+			SizeOfRawData = sizeOfRawData;
+			PointerToRawData = pointerToRawData;
+		}
 	}
 }

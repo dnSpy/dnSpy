@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Windows;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.HexGroups;
 using dnSpy.Contracts.ToolWindows;

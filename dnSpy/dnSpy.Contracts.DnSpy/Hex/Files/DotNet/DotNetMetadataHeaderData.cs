@@ -33,23 +33,23 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		}
 
 		/// <summary>STORAGEHEADER.fFlags</summary>
-		public abstract ByteFlagsData Flags { get; }
+		public abstract StructField<ByteFlagsData> Flags { get; }
 		/// <summary>STORAGEHEADER.pad</summary>
-		public abstract ByteData Pad { get; }
+		public abstract StructField<ByteData> Pad { get; }
 		/// <summary>STORAGEHEADER.iStreams</summary>
-		public abstract UInt16Data Streams { get; }
+		public abstract StructField<UInt16Data> Streams { get; }
 
 		/// <summary>STORAGESIGNATURE.lSignature</summary>
-		public abstract UInt32Data Signature { get; }
+		public abstract StructField<UInt32Data> Signature { get; }
 		/// <summary>STORAGESIGNATURE.iMajorVer</summary>
-		public abstract UInt16Data MajorVersion { get; }
+		public abstract StructField<UInt16Data> MajorVersion { get; }
 		/// <summary>STORAGESIGNATURE.iMinorVer</summary>
-		public abstract UInt16Data MinorVersion { get; }
+		public abstract StructField<UInt16Data> MinorVersion { get; }
 		/// <summary>STORAGESIGNATURE.iExtraData</summary>
-		public abstract UInt32Data ExtraData { get; }
+		public abstract StructField<UInt32Data> ExtraData { get; }
 		/// <summary>STORAGESIGNATURE.iVersionString</summary>
-		public abstract UInt32Data VersionStringCount { get; }
+		public abstract StructField<UInt32Data> VersionStringCount { get; }
 		/// <summary>STORAGESIGNATURE.VersionString</summary>
-		public abstract StringData VersionString { get; }
+		public abstract StructField<StringData> VersionString { get; }
 	}
 }

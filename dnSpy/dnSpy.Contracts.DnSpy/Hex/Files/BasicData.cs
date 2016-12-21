@@ -36,6 +36,15 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public ByteData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 1))) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -60,6 +69,15 @@ namespace dnSpy.Contracts.Hex.Files {
 			: base(span) {
 			if (span.Length != 2)
 				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public UInt16Data(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 2))) {
 		}
 
 		/// <summary>
@@ -90,6 +108,15 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public UInt24Data(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 3))) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -114,6 +141,15 @@ namespace dnSpy.Contracts.Hex.Files {
 			: base(span) {
 			if (span.Length != 4)
 				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public UInt32Data(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4))) {
 		}
 
 		/// <summary>
@@ -144,6 +180,15 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public UInt64Data(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 8))) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -168,6 +213,15 @@ namespace dnSpy.Contracts.Hex.Files {
 			: base(span) {
 			if (span.Length != 1)
 				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public SByteData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 1))) {
 		}
 
 		/// <summary>
@@ -198,6 +252,15 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public Int16Data(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 2))) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -222,6 +285,15 @@ namespace dnSpy.Contracts.Hex.Files {
 			: base(span) {
 			if (span.Length != 4)
 				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public Int32Data(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4))) {
 		}
 
 		/// <summary>
@@ -252,6 +324,15 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public Int64Data(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 8))) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -279,6 +360,15 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public SingleData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4))) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -303,6 +393,15 @@ namespace dnSpy.Contracts.Hex.Files {
 			: base(span) {
 			if (span.Length != 8)
 				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public DoubleData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 8))) {
 		}
 
 		/// <summary>
@@ -339,6 +438,16 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="flagInfos">Flag infos</param>
+		public ByteFlagsData(HexBuffer buffer, HexPosition position, FlagInfo[] flagInfos)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 1)), flagInfos) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -369,6 +478,16 @@ namespace dnSpy.Contracts.Hex.Files {
 			if (flagInfos == null)
 				throw new ArgumentNullException(nameof(flagInfos));
 			this.flagInfos = flagInfos;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="flagInfos">Flag infos</param>
+		public UInt16FlagsData(HexBuffer buffer, HexPosition position, FlagInfo[] flagInfos)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 2)), flagInfos) {
 		}
 
 		/// <summary>
@@ -405,6 +524,16 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="flagInfos">Flag infos</param>
+		public UInt32FlagsData(HexBuffer buffer, HexPosition position, FlagInfo[] flagInfos)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4)), flagInfos) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -435,6 +564,16 @@ namespace dnSpy.Contracts.Hex.Files {
 			if (flagInfos == null)
 				throw new ArgumentNullException(nameof(flagInfos));
 			this.flagInfos = flagInfos;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="flagInfos">Flag infos</param>
+		public UInt64FlagsData(HexBuffer buffer, HexPosition position, FlagInfo[] flagInfos)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 8)), flagInfos) {
 		}
 
 		/// <summary>
@@ -471,6 +610,16 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="enumFieldInfos">Enum field infos</param>
+		public ByteEnumData(HexBuffer buffer, HexPosition position, EnumFieldInfo[] enumFieldInfos)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 1)), enumFieldInfos) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -501,6 +650,16 @@ namespace dnSpy.Contracts.Hex.Files {
 			if (enumFieldInfos == null)
 				throw new ArgumentNullException(nameof(enumFieldInfos));
 			this.enumFieldInfos = enumFieldInfos;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="enumFieldInfos">Enum field infos</param>
+		public UInt16EnumData(HexBuffer buffer, HexPosition position, EnumFieldInfo[] enumFieldInfos)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 2)), enumFieldInfos) {
 		}
 
 		/// <summary>
@@ -537,6 +696,16 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="enumFieldInfos">Enum field infos</param>
+		public UInt32EnumData(HexBuffer buffer, HexPosition position, EnumFieldInfo[] enumFieldInfos)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4)), enumFieldInfos) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -570,6 +739,16 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="enumFieldInfos">Enum field infos</param>
+		public UInt64EnumData(HexBuffer buffer, HexPosition position, EnumFieldInfo[] enumFieldInfos)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 8)), enumFieldInfos) {
+		}
+
+		/// <summary>
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
@@ -598,6 +777,17 @@ namespace dnSpy.Contracts.Hex.Files {
 			if (encoding == null)
 				throw new ArgumentNullException(nameof(encoding));
 			this.encoding = encoding;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="byteLength">String length in bytes</param>
+		/// <param name="encoding">Encoding</param>
+		public StringData(HexBuffer buffer, HexPosition position, int byteLength, Encoding encoding)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, (uint)byteLength)), encoding) {
 		}
 
 		/// <summary>

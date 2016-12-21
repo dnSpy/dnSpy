@@ -35,28 +35,28 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		}
 
 		/// <summary>IMAGE_COR20_HEADER.cb</summary>
-		public abstract UInt32Data Cb { get; }
+		public abstract StructField<UInt32Data> Cb { get; }
 		/// <summary>IMAGE_COR20_HEADER.MajorRuntimeVersion</summary>
-		public abstract UInt16Data MajorRuntimeVersion { get; }
+		public abstract StructField<UInt16Data> MajorRuntimeVersion { get; }
 		/// <summary>IMAGE_COR20_HEADER.MinorRuntimeVersion</summary>
-		public abstract UInt16Data MinorRuntimeVersion { get; }
+		public abstract StructField<UInt16Data> MinorRuntimeVersion { get; }
 		/// <summary>IMAGE_COR20_HEADER.MetaData</summary>
-		public abstract DataDirectoryData MetaData { get; }
+		public abstract StructField<DataDirectoryData> MetaData { get; }
 		/// <summary>IMAGE_COR20_HEADER.Flags</summary>
-		public abstract UInt32FlagsData Flags { get; }
+		public abstract StructField<UInt32FlagsData> Flags { get; }
 		/// <summary>IMAGE_COR20_HEADER.EntryPointToken / IMAGE_COR20_HEADER.EntryPointRVA</summary>
-		public abstract UInt32Data EntryPointTokenOrRva { get; }
+		public abstract StructField<UInt32Data> EntryPointTokenOrRva { get; }
 		/// <summary>IMAGE_COR20_HEADER.Resources</summary>
-		public abstract DataDirectoryData Resources { get; }
+		public abstract StructField<DataDirectoryData> Resources { get; }
 		/// <summary>IMAGE_COR20_HEADER.StrongNameSignature</summary>
-		public abstract DataDirectoryData StrongNameSignature { get; }
+		public abstract StructField<DataDirectoryData> StrongNameSignature { get; }
 		/// <summary>IMAGE_COR20_HEADER.CodeManagerTable</summary>
-		public abstract DataDirectoryData CodeManagerTable { get; }
+		public abstract StructField<DataDirectoryData> CodeManagerTable { get; }
 		/// <summary>IMAGE_COR20_HEADER.VTableFixups</summary>
-		public abstract DataDirectoryData VTableFixups { get; }
+		public abstract StructField<DataDirectoryData> VTableFixups { get; }
 		/// <summary>IMAGE_COR20_HEADER.ExportAddressTableJumps</summary>
-		public abstract DataDirectoryData ExportAddressTableJumps { get; }
+		public abstract StructField<DataDirectoryData> ExportAddressTableJumps { get; }
 		/// <summary>IMAGE_COR20_HEADER.ManagedNativeHeader</summary>
-		public abstract DataDirectoryData ManagedNativeHeader { get; }
+		public abstract StructField<DataDirectoryData> ManagedNativeHeader { get; }
 	}
 }

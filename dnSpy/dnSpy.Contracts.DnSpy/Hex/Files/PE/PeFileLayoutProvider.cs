@@ -17,53 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.Contracts.Hex.Files {
+namespace dnSpy.Contracts.Hex.Files.PE {
 	/// <summary>
-	/// Flag info
+	/// Detects whether a PE file was loaded by the OS PE loader
 	/// </summary>
-	public struct FlagInfo {
-		/// <summary>
-		/// Name
-		/// </summary>
-		public string Name { get; }
-
-		/// <summary>
-		/// Mask
-		/// </summary>
-		public ulong Mask { get; }
-
-		/// <summary>
-		/// Value
-		/// </summary>
-		public ulong Value { get; }
-
+	public abstract class PeFileLayoutProvider {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="bitMask">Bit mask</param>
-		/// <param name="name">Name</param>
-		public FlagInfo(ulong bitMask, string name)
-			: this(bitMask, bitMask, name) {
-		}
+		protected PeFileLayoutProvider() { }
 
 		/// <summary>
-		/// Constructor
+		/// Gets the PE file layout
 		/// </summary>
-		/// <param name="mask">Mask</param>
-		/// <param name="value">Value</param>
-		/// <param name="name">Name</param>
-		public FlagInfo(ulong mask, ulong value, string name) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			if (mask == 0)
-				throw new ArgumentOutOfRangeException(nameof(mask));
-			if ((value & ~mask) != 0)
-				throw new ArgumentOutOfRangeException(nameof(value));
-			Name = name;
-			Mask = mask;
-			Value = value;
-		}
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public abstract PeFileLayout GetLayout(HexBufferFile file);
+	}
+
+	/// <summary>
+	/// PE file layout
+	/// </summary>
+	public enum PeFileLayout {
+		/// <summary>
+		/// Unknown layout
+		/// </summary>
+		Unknown,
+
+		/// <summary>
+		/// File layout
+		/// </summary>
+		File,
+
+		/// <summary>
+		/// Memory layout, the OS loader has loaded the file into memory
+		/// </summary>
+		Memory,
 	}
 }

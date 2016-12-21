@@ -83,6 +83,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			new IntegerHexBitFieldEnumInfo(13, "EfiRom"),
 			new IntegerHexBitFieldEnumInfo(14, "Xbox"),
 			new IntegerHexBitFieldEnumInfo(16, "WindowsBootApplication"),
+			new IntegerHexBitFieldEnumInfo(17, "XboxCodeCatalog"),
 		};
 
 		protected ImageOptionalHeaderVM(HexBuffer buffer, HexSpan span, ulong offs1, ulong offs2)

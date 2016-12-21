@@ -49,5 +49,11 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="id">Id, see eg. <see cref="PE.PredefinedPeDataIds"/></param>
 		/// <returns></returns>
 		public abstract ComplexData GetStructure(string id);
+
+		/// <summary>
+		/// Returns headers or null
+		/// </summary>
+		/// <returns></returns>
+		public virtual THeader GetHeaders<THeader>() where THeader : class, IBufferFileHeaders => null;
 	}
 }

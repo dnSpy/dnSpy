@@ -33,42 +33,42 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		}
 
 		/// <summary>IMAGE_DOS_HEADER.e_magic</summary>
-		public abstract UInt16Data Magic { get; }
+		public abstract StructField<UInt16Data> Magic { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_cblp</summary>
-		public abstract UInt16Data Cblp { get; }
+		public abstract StructField<UInt16Data> Cblp { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_cp</summary>
-		public abstract UInt16Data Cp { get; }
+		public abstract StructField<UInt16Data> Cp { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_crlc</summary>
-		public abstract UInt16Data Crlc { get; }
+		public abstract StructField<UInt16Data> Crlc { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_cparhdr</summary>
-		public abstract UInt16Data Cparhdr { get; }
+		public abstract StructField<UInt16Data> Cparhdr { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_minalloc</summary>
-		public abstract UInt16Data Minalloc { get; }
+		public abstract StructField<UInt16Data> Minalloc { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_maxalloc</summary>
-		public abstract UInt16Data Maxalloc { get; }
+		public abstract StructField<UInt16Data> Maxalloc { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_ss</summary>
-		public abstract UInt16Data Ss { get; }
+		public abstract StructField<UInt16Data> Ss { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_sp</summary>
-		public abstract UInt16Data Sp { get; }
+		public abstract StructField<UInt16Data> Sp { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_csum</summary>
-		public abstract UInt16Data Csum { get; }
+		public abstract StructField<UInt16Data> Csum { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_ip</summary>
-		public abstract UInt16Data Ip { get; }
+		public abstract StructField<UInt16Data> Ip { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_cs</summary>
-		public abstract UInt16Data Cs { get; }
+		public abstract StructField<UInt16Data> Cs { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_lfarlc</summary>
-		public abstract UInt16Data Lfarlc { get; }
+		public abstract StructField<UInt16Data> Lfarlc { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_ovno</summary>
-		public abstract UInt16Data Ovno { get; }
+		public abstract StructField<UInt16Data> Ovno { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_res[4]</summary>
-		public abstract ArrayData Res { get; }
+		public abstract StructField<ArrayData<UInt16Data>> Res { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_oemid</summary>
-		public abstract UInt16Data Oemid { get; }
+		public abstract StructField<UInt16Data> Oemid { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_oeminfo</summary>
-		public abstract UInt16Data Oeminfo { get; }
+		public abstract StructField<UInt16Data> Oeminfo { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_res2[10]</summary>
-		public abstract ArrayData Res2 { get; }
+		public abstract StructField<ArrayData<UInt16Data>> Res2 { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_lfanew</summary>
-		public abstract Int32Data Lfanew { get; }
+		public abstract StructField<Int32Data> Lfanew { get; }
 	}
 }

@@ -33,18 +33,18 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		}
 
 		/// <summary>IMAGE_FILE_HEADER.Machine</summary>
-		public abstract UInt16EnumData Machine { get; }
+		public abstract StructField<UInt16EnumData> Machine { get; }
 		/// <summary>IMAGE_FILE_HEADER.NumberOfSections</summary>
-		public abstract UInt16Data NumberOfSections { get; }
+		public abstract StructField<UInt16Data> NumberOfSections { get; }
 		/// <summary>IMAGE_FILE_HEADER.TimeDateStamp</summary>
-		public abstract UInt32Data TimeDateStamp { get; }
+		public abstract StructField<UInt32Data> TimeDateStamp { get; }
 		/// <summary>IMAGE_FILE_HEADER.PointerToSymbolTable</summary>
-		public abstract UInt32Data PointerToSymbolTable { get; }
+		public abstract StructField<UInt32Data> PointerToSymbolTable { get; }
 		/// <summary>IMAGE_FILE_HEADER.NumberOfSymbols</summary>
-		public abstract UInt32Data NumberOfSymbols { get; }
+		public abstract StructField<UInt32Data> NumberOfSymbols { get; }
 		/// <summary>IMAGE_FILE_HEADER.SizeOfOptionalHeader</summary>
-		public abstract UInt16Data SizeOfOptionalHeader { get; }
+		public abstract StructField<UInt16Data> SizeOfOptionalHeader { get; }
 		/// <summary>IMAGE_FILE_HEADER.Characteristics</summary>
-		public abstract UInt16FlagsData Characteristics { get; }
+		public abstract StructField<UInt16FlagsData> Characteristics { get; }
 	}
 }

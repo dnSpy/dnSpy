@@ -22,10 +22,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Intellisense;
-using dnSpy.Contracts.Hex.Operations;
-using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Intellisense.DnSpy {
 	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.HexDefaultIntellisenseQuickInfo)]
