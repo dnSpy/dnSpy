@@ -1,7 +1,7 @@
 {
 	"dependencies": {
 		"System.ValueTuple": "4.3.0",
-		"Microsoft.CodeAnalysis.CSharp.Scripting": "2.0.0-rc",
+		"Microsoft.CodeAnalysis.CSharp.Scripting": "2.0.0-rc2",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.25824-RC",
 		// Required after updating to 2.0.0-rc
 		"System.Runtime.InteropServices.RuntimeInformation": "4.0.0"
