@@ -53,6 +53,6 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public abstract StructField<UInt16Data> StreamCount { get; }
 
 		/// <summary>Streams following STORAGEHEADER.iStreams</summary>
-		public abstract StructField<VariableLengthArrayData<DotNetStorageStream>> Streams { get; }
+		public abstract StructField<VariableLengthArrayData<DotNetStorageStream>> StreamHeaders { get; }
 	}
 }

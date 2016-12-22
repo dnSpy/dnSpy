@@ -163,12 +163,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			return null;
 		}
 
-		public override THeader GetHeaders<THeader>() {
-			if (typeof(THeader) == typeof(DotNetMetadataHeaders))
-				return dotNetMetadataHeaders as THeader;
-			if (typeof(THeader) == typeof(DotNetHeaders))
-				return dotNetHeaders as THeader;
-			return null;
-		}
+		public override THeader GetHeaders<THeader>() =>
+			dotNetMetadataHeaders as THeader ??
+			dotNetHeaders as THeader;
 	}
 }

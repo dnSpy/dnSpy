@@ -119,10 +119,7 @@ namespace dnSpy.Hex.Files.PE {
 			return null;
 		}
 
-		public override THeader GetHeaders<THeader>() {
-			if (typeof(THeader) == typeof(PeHeaders))
-				return peHeadersImpl as THeader;
-			return null;
-		}
+		public override THeader GetHeaders<THeader>() =>
+			peHeadersImpl as THeader;
 	}
 }

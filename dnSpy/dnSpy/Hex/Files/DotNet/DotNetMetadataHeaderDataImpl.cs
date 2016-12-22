@@ -34,7 +34,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override StructField<ByteFlagsData> Flags { get; }
 		public override StructField<ByteData> Pad { get; }
 		public override StructField<UInt16Data> StreamCount { get; }
-		public override StructField<VariableLengthArrayData<DotNetStorageStream>> Streams { get; }
+		public override StructField<VariableLengthArrayData<DotNetStorageStream>> StreamHeaders { get; }
 
 		protected override BufferField[] Fields { get; }
 
@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				fields[i] = field;
 			}
 			var arraySpan = storageStreamHeaders.Length == 0 ? new HexSpan(pos, 0) : HexSpan.FromBounds(storageStreamHeaders[0].Span.Start, storageStreamHeaders[storageStreamHeaders.Length - 1].Span.End);
-			Streams = new StructField<VariableLengthArrayData<DotNetStorageStream>>("Pools", new VariableLengthArrayData<DotNetStorageStream>(string.Empty, new HexBufferSpan(buffer, arraySpan), fields));
+			StreamHeaders = new StructField<VariableLengthArrayData<DotNetStorageStream>>("Pools", new VariableLengthArrayData<DotNetStorageStream>(string.Empty, new HexBufferSpan(buffer, arraySpan), fields));
 			Fields = new BufferField[] {
 				Signature,
 				MajorVersion,
@@ -74,7 +74,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				Flags,
 				Pad,
 				StreamCount,
-				Streams,
+				StreamHeaders,
 			};
 		}
 

@@ -57,6 +57,46 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public MetaDataType MetaDataType { get; }
 
 		/// <summary>
+		/// Span of header
+		/// </summary>
+		public abstract HexSpan HeaderSpan { get; }
+
+		/// <summary>
+		/// Span of all tables
+		/// </summary>
+		public abstract HexSpan TablesSpan { get; }
+
+		/// <summary>
+		/// Gets the header
+		/// </summary>
+		public abstract TablesHeaderData Header { get; }
+
+		/// <summary>
+		/// Gets the major version, this value is cached
+		/// </summary>
+		public abstract byte MajorVersion { get; }
+
+		/// <summary>
+		/// Gets the minor version, this value is cached
+		/// </summary>
+		public abstract byte MinorVersion { get; }
+
+		/// <summary>
+		/// Gets the flags, this value is cached
+		/// </summary>
+		public abstract MDStreamFlags Flags { get; }
+
+		/// <summary>
+		/// Gets the valid mask, this value is cached
+		/// </summary>
+		public abstract ulong ValidMask { get; }
+
+		/// <summary>
+		/// Gets the sorted mask, this value is cached
+		/// </summary>
+		public abstract ulong SortedMask { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Heap span</param>

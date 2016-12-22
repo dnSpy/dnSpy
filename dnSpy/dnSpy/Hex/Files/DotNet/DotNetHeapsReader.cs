@@ -103,7 +103,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					break;
 
 				case "#~":
-					if (tablesHeap == null) {
+					if (tablesHeap == null && span.Length >= TablesHeapImpl.MinimumSize) {
 						tablesHeap = new TablesHeapImpl(span, MetaDataType.Compressed);
 						list.Add(tablesHeap);
 						continue;
@@ -174,7 +174,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 				case "#~":	// Only if #Schema is used
 				case "#-":
-					if (tablesHeap == null) {
+					if (tablesHeap == null && span.Length >= TablesHeapImpl.MinimumSize) {
 						tablesHeap = new TablesHeapImpl(span, MetaDataType.ENC);
 						list.Add(tablesHeap);
 						continue;
