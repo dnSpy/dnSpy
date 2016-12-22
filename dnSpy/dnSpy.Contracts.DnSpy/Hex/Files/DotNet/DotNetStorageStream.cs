@@ -17,20 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
+namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// Provides <see cref="HexBufferFile"/> headers
+	/// .NET metadata header storage stream
 	/// </summary>
-	public abstract class BufferFileHeadersProvider {
+	public abstract class DotNetStorageStream : StructureData {
+		const string NAME = "STORAGESTREAM";
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected BufferFileHeadersProvider() { }
+		/// <param name="span">Span</param>
+		protected DotNetStorageStream(HexBufferSpan span)
+			: base(NAME, span) {
+		}
 
-		/// <summary>
-		/// Returns headers or null. This method is called after <see cref="StructureProvider.GetHeaders{THeader}"/>
-		/// </summary>
-		/// <returns></returns>
-		public abstract THeader GetHeaders<THeader>() where THeader : class, IBufferFileHeaders;
+		/// <summary>STORAGESTREAM.iOffset</summary>
+		public abstract StructField<UInt32Data> Offset { get; }
+		/// <summary>STORAGESTREAM.iSize</summary>
+		public abstract StructField<UInt32Data> Size { get; }
+		/// <summary>STORAGESTREAM.rcName</summary>
+		public abstract StructField<StringData> StreamName { get; }
 	}
 }

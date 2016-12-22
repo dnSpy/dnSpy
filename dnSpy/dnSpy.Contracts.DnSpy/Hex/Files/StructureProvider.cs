@@ -30,14 +30,17 @@ namespace dnSpy.Contracts.Hex.Files {
 		protected StructureProvider() { }
 
 		/// <summary>
-		/// Called before any other method. This method is allowed to call <see cref="HexBufferFile.GetStructure(string)"/>
+		/// Called before any other method, but since this method is allowed to call <see cref="HexBufferFile.GetStructure(string)"/>,
+		/// the other methods could get called before this instance's <see cref="Initialize"/> method has been called.
+		/// 
+		/// This method is allowed to call <see cref="HexBufferFile.GetStructure(string)"/> and <see cref="HexBufferFile.GetHeaders{THeaders}"/>
 		/// but should make sure that any provider it depends on has already been initialized (eg. add a
 		/// <see cref="VSUTIL.OrderAttribute"/> on your <see cref="StructureProviderFactory"/> class)
 		/// </summary>
 		public abstract void Initialize();
 
 		/// <summary>
-		/// Returns a top level structure at <paramref name="position"/> or null
+		/// Returns a structure at <paramref name="position"/> or null
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
@@ -51,7 +54,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		public abstract ComplexData GetStructure(string id);
 
 		/// <summary>
-		/// Returns headers or null
+		/// Returns headers or null. This method is called before <see cref="BufferFileHeadersProvider.GetHeaders{THeader}"/>
 		/// </summary>
 		/// <returns></returns>
 		public virtual THeader GetHeaders<THeader>() where THeader : class, IBufferFileHeaders => null;

@@ -44,6 +44,7 @@ namespace dnSpy.Hex.Files.PE {
 		readonly HexBufferFile file;
 		readonly Lazy<PeFileLayoutProvider>[] peFileLayoutProviders;
 		PeHeadersImpl peHeadersImpl;
+		HexSpan peHeadersSpan;
 
 		public PeStructureProvider(HexBufferFile file, Lazy<PeFileLayoutProvider>[] peFileLayoutProviders) {
 			if (file == null)
@@ -56,11 +57,30 @@ namespace dnSpy.Hex.Files.PE {
 
 		public override void Initialize() {
 			var reader = new PeHeadersReader(file, peFileLayoutProviders);
-			if (reader.Read())
+			if (reader.Read()) {
 				peHeadersImpl = new PeHeadersImpl(reader, file.Span);
+				peHeadersSpan = GetSpan(peHeadersImpl.DosHeader.Span.Span, peHeadersImpl.FileHeader.Span.Span, peHeadersImpl.OptionalHeader.Span.Span, peHeadersImpl.Sections.Span.Span);
+			}
+		}
+
+		HexSpan GetSpan(params HexSpan[] spans) {
+			HexPosition start = HexPosition.MaxEndPosition;
+			HexPosition end = HexPosition.Zero;
+			foreach (var span in spans) {
+				if (span.Start < start)
+					start = span.Start;
+				if (span.End > end)
+					end = span.End;
+			}
+			if (start < end)
+				return HexSpan.FromBounds(start, end);
+			return default(HexSpan);
 		}
 
 		public override ComplexData GetStructure(HexPosition position) {
+			if (!peHeadersSpan.Contains(position))
+				return null;
+
 			var peHeaders = peHeadersImpl;
 			if (peHeaders == null)
 				return null;

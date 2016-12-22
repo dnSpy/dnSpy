@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>IMAGE_COR20_HEADER.Flags</summary>
 		public abstract StructField<UInt32FlagsData> Flags { get; }
 		/// <summary>IMAGE_COR20_HEADER.EntryPointToken / IMAGE_COR20_HEADER.EntryPointRVA</summary>
-		public abstract StructField<UInt32Data> EntryPointTokenOrRva { get; }
+		public abstract StructField<UInt32Data> EntryPointTokenOrRVA { get; }
 		/// <summary>IMAGE_COR20_HEADER.Resources</summary>
 		public abstract StructField<DataDirectoryData> Resources { get; }
 		/// <summary>IMAGE_COR20_HEADER.StrongNameSignature</summary>

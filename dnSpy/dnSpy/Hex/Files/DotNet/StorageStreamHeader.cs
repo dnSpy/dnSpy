@@ -17,20 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
-	/// <summary>
-	/// Provides <see cref="HexBufferFile"/> headers
-	/// </summary>
-	public abstract class BufferFileHeadersProvider {
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		protected BufferFileHeadersProvider() { }
+using System;
+using dnSpy.Contracts.Hex;
 
-		/// <summary>
-		/// Returns headers or null. This method is called after <see cref="StructureProvider.GetHeaders{THeader}"/>
-		/// </summary>
-		/// <returns></returns>
-		public abstract THeader GetHeaders<THeader>() where THeader : class, IBufferFileHeaders;
+namespace dnSpy.Hex.Files.DotNet {
+	struct StorageStreamHeader {
+		public string Name { get; }
+		public HexSpan Span { get; }
+		public HexSpan DataSpan { get; }
+		public int StringLength { get; }
+		public StorageStreamHeader(string name, HexSpan span, HexSpan dataSpan, int stringLength) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			Name = name;
+			Span = span;
+			DataSpan = dataSpan;
+			StringLength = stringLength;
+		}
 	}
 }

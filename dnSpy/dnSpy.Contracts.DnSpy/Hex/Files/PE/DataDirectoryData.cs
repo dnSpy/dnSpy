@@ -49,6 +49,15 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 			};
 		}
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public DataDirectoryData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 8))) {
+		}
+
 		/// <summary>IMAGE_DATA_DIRECTORY.VirtualAddress</summary>
 		public StructField<UInt32Data> VirtualAddress { get; }
 		/// <summary>IMAGE_DATA_DIRECTORY.Size</summary>

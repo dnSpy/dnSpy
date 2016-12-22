@@ -17,20 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
+namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// Provides <see cref="HexBufferFile"/> headers
+	/// Metadata tables type
 	/// </summary>
-	public abstract class BufferFileHeadersProvider {
+	public enum MetaDataType {
 		/// <summary>
-		/// Constructor
+		/// Compressed (#~)
 		/// </summary>
-		protected BufferFileHeadersProvider() { }
+		Compressed,
 
 		/// <summary>
-		/// Returns headers or null. This method is called after <see cref="StructureProvider.GetHeaders{THeader}"/>
+		/// Edit n' Continue (#-)
 		/// </summary>
-		/// <returns></returns>
-		public abstract THeader GetHeaders<THeader>() where THeader : class, IBufferFileHeaders;
+		ENC,
 	}
 }

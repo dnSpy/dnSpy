@@ -23,9 +23,12 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// </summary>
 	public static class PredefinedDotNetDataIds {
 		/// <summary><see cref="DotNetCor20Data"/></summary>
-		public const string DotNetCor20 = nameof(DotNetCor20);
+		public const string Cor20 = nameof(Cor20);
 
 		/// <summary><see cref="DotNetMetadataHeaderData"/></summary>
-		public const string DotNetMetadataHeader = nameof(DotNetMetadataHeader);
+		public const string MetadataHeader = nameof(MetadataHeader);
+
+		/// <summary><see cref="VirtualArrayData{TData}"/> of bytes (<see cref="ByteData"/>)</summary>
+		public const string StrongNameSignature = nameof(StrongNameSignature);
 	}
 }

@@ -32,13 +32,6 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			: base(NAME, span) {
 		}
 
-		/// <summary>STORAGEHEADER.fFlags</summary>
-		public abstract StructField<ByteFlagsData> Flags { get; }
-		/// <summary>STORAGEHEADER.pad</summary>
-		public abstract StructField<ByteData> Pad { get; }
-		/// <summary>STORAGEHEADER.iStreams</summary>
-		public abstract StructField<UInt16Data> Streams { get; }
-
 		/// <summary>STORAGESIGNATURE.lSignature</summary>
 		public abstract StructField<UInt32Data> Signature { get; }
 		/// <summary>STORAGESIGNATURE.iMajorVer</summary>
@@ -51,5 +44,15 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public abstract StructField<UInt32Data> VersionStringCount { get; }
 		/// <summary>STORAGESIGNATURE.VersionString</summary>
 		public abstract StructField<StringData> VersionString { get; }
+
+		/// <summary>STORAGEHEADER.fFlags</summary>
+		public abstract StructField<ByteFlagsData> Flags { get; }
+		/// <summary>STORAGEHEADER.pad</summary>
+		public abstract StructField<ByteData> Pad { get; }
+		/// <summary>STORAGEHEADER.iStreams</summary>
+		public abstract StructField<UInt16Data> StreamCount { get; }
+
+		/// <summary>Streams following STORAGEHEADER.iStreams</summary>
+		public abstract StructField<VariableLengthArrayData<DotNetStorageStream>> Streams { get; }
 	}
 }

@@ -89,7 +89,7 @@ namespace dnSpy.Hex.Files.PE {
 		PeFileHeaderDataImpl(HexBufferSpan span)
 			: base(span) {
 			var buffer = span.Buffer;
-			var pos = span.Start;
+			var pos = span.Start.Position;
 			Machine = new StructField<UInt16EnumData>("Machine", new UInt16EnumData(buffer, pos, machineEnumFieldInfos));
 			NumberOfSections = new StructField<UInt16Data>("NumberOfSections", new UInt16Data(buffer, pos + 2));
 			TimeDateStamp = new StructField<UInt32Data>("TimeDateStamp", new UInt32Data(buffer, pos + 4));

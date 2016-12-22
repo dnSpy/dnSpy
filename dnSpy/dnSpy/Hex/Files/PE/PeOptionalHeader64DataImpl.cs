@@ -60,8 +60,8 @@ namespace dnSpy.Hex.Files.PE {
 		PeOptionalHeader64DataImpl(HexBufferSpan span)
 			: base(span) {
 			var buffer = span.Buffer;
-			var pos = span.Start;
-			Magic = new StructField<UInt16Data>("Magic", new UInt16Data(buffer, pos + 0));
+			var pos = span.Start.Position;
+			Magic = new StructField<UInt16Data>("Magic", new UInt16Data(buffer, pos));
 			MajorLinkerVersion = new StructField<ByteData>("MajorLinkerVersion", new ByteData(buffer, pos + 2));
 			MinorLinkerVersion = new StructField<ByteData>("MinorLinkerVersion", new ByteData(buffer, pos + 3));
 			SizeOfCode = new StructField<UInt32Data>("SizeOfCode", new UInt32Data(buffer, pos + 4));

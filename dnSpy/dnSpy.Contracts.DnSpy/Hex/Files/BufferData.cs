@@ -168,6 +168,17 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Creates a virtual <see cref="byte"/> array
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <param name="bits">Size of index in bits or 0 to use default</param>
+		/// <param name="name">Array name or null</param>
+		/// <returns></returns>
+		public static VirtualArrayData<ByteData> CreateVirtualByteArray(HexBufferSpan span, int bits = 0, string name = null) =>
+			new VirtualArrayData<ByteData>(name ?? string.Empty, span, 1, createByteData, bits);
+		static readonly Func<HexBufferPoint, ByteData> createByteData = p => new ByteData(p.Buffer, p.Position);
+
+		/// <summary>
 		/// Creates a <see cref="byte"/> array
 		/// </summary>
 		/// <param name="buffer">Buffer</param>
@@ -395,6 +406,135 @@ namespace dnSpy.Contracts.Hex.Files {
 				return null;
 			int index = (int)((position - Span.Start).ToUInt64() / fields[0].Data.Span.Length.ToUInt64());
 			return fields[index];
+		}
+	}
+
+	/// <summary>
+	/// An array whose elements have different sizes
+	/// </summary>
+	/// <typeparam name="TData">Type of data</typeparam>
+	public class VariableLengthArrayData<TData> : ArrayData where TData : BufferData {
+		readonly ArrayField<TData>[] fields;
+
+		/// <summary>
+		/// Gets the field at <paramref name="index"/>
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		public ArrayField<TData> this[int index] => fields[index];
+
+		/// <summary>
+		/// Gets the field count
+		/// </summary>
+		public override int FieldCount => fields.Length;
+
+		/// <summary>
+		/// Constructor, see eg. <see cref="ArrayData.CreateByteArray(HexBuffer, HexPosition, int, int, string)"/>
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="span">Array span</param>
+		/// <param name="fields">Array elements</param>
+		public VariableLengthArrayData(string name, HexBufferSpan span, ArrayField<TData>[] fields)
+			: base(name, span) {
+			if (fields == null)
+				throw new ArgumentNullException(nameof(fields));
+			this.fields = fields;
+		}
+
+		/// <summary>
+		/// Gets a field by index
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		public override BufferField GetFieldByIndex(int index) => fields[index];
+
+		/// <summary>
+		/// Gets a field by position
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public override BufferField GetFieldByPosition(HexPosition position) {
+			if (!Span.Contains(position))
+				return null;
+			foreach (var field in fields) {
+				if (field.Data.Span.Span.Contains(position))
+					return field;
+			}
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// An array whose elements all have the same size and where each element is only created when needed.
+	/// The elements aren't cached so calling eg. <see cref="GetFieldByIndex(int)"/> multiple times with
+	/// the same input will always return new instances.
+	/// </summary>
+	/// <typeparam name="TData">Type of data</typeparam>
+	public class VirtualArrayData<TData> : ArrayData where TData : BufferData {
+		/// <summary>
+		/// Gets the field at <paramref name="index"/>
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		public ArrayField<TData> this[int index] {
+			get {
+				if ((uint)index >= (uint)FieldCount)
+					throw new ArgumentOutOfRangeException(nameof(index));
+				return new ArrayField<TData>(createElement(Span.Start + elementLength * (uint)index), (uint)index, bits);
+			}
+		}
+
+		/// <summary>
+		/// Gets the field count
+		/// </summary>
+		public override int FieldCount { get; }
+
+		readonly ulong elementLength;
+		readonly Func<HexBufferPoint, TData> createElement;
+		readonly int bits;
+
+		/// <summary>
+		/// Constructor, see eg. <see cref="ArrayData.CreateByteArray(HexBuffer, HexPosition, int, int, string)"/>
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="span">Array span</param>
+		/// <param name="elementLength">Size of each element in bytes</param>
+		/// <param name="createElement">Creates new elements; input parameter is the position of the data</param>
+		/// <param name="bits">Size of index in bits or 0 to use default</param>
+		public VirtualArrayData(string name, HexBufferSpan span, ulong elementLength, Func<HexBufferPoint, TData> createElement, int bits = 0)
+			: base(name, span) {
+			if (elementLength == 0)
+				throw new ArgumentOutOfRangeException(nameof(elementLength));
+			if (createElement == null)
+				throw new ArgumentNullException(nameof(createElement));
+			this.elementLength = elementLength;
+			this.createElement = createElement;
+			this.bits = bits;
+			ulong fieldCount = span.Length.ToUInt64() / elementLength;
+			if (fieldCount * elementLength != span.Length)
+				throw new ArgumentOutOfRangeException(nameof(span));
+			if (fieldCount > int.MaxValue)
+				throw new ArgumentOutOfRangeException(nameof(span));
+			FieldCount = (int)fieldCount;
+		}
+
+		/// <summary>
+		/// Gets a field by index
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		public override BufferField GetFieldByIndex(int index) => this[index];
+
+		/// <summary>
+		/// Gets a field by position
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public override BufferField GetFieldByPosition(HexPosition position) {
+			if (!Span.Contains(position))
+				return null;
+			int index = (int)((position - Span.Start).ToUInt64() / elementLength);
+			return this[index];
 		}
 	}
 }

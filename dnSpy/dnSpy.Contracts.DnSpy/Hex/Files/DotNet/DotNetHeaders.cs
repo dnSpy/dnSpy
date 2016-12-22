@@ -21,7 +21,7 @@ using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// .NET headers
+	/// .NET headers, present if the COR20 header exists in a PE file. The .NET metadata could still be null.
 	/// </summary>
 	public abstract class DotNetHeaders : IBufferFileHeaders {
 		/// <summary>
@@ -40,8 +40,13 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public abstract DotNetCor20Data Cor20 { get; }
 
 		/// <summary>
-		/// Gets the metadata header
+		/// Gets the .NET metadata-only headers or null if none
 		/// </summary>
-		public abstract DotNetMetadataHeaderData MetadataHeader { get; }
+		public abstract DotNetMetadataHeaders MetadataHeaders { get; }
+
+		/// <summary>
+		/// Gets the strong name signature or null if none
+		/// </summary>
+		public abstract VirtualArrayData<ByteData> StrongNameSignature { get; }
 	}
 }
