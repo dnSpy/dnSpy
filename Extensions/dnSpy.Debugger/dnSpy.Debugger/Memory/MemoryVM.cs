@@ -55,29 +55,26 @@ namespace dnSpy.Debugger.Memory {
 		}
 		bool canEditMemory;
 
-		public HexBuffer Buffer { get; }
+		public HexBuffer Buffer => debuggerHexBufferStreamProvider.Buffer;
 
 		readonly ITheDebugger theDebugger;
-		readonly HexBufferStreamFactoryService hexBufferStreamFactoryService;
-		readonly DebuggerHexBufferStream debuggerStream;
+		readonly IDebuggerHexBufferStreamProvider debuggerHexBufferStreamProvider;
 
 		[ImportingConstructor]
-		MemoryVM(ITheDebugger theDebugger, HexBufferFactoryService hexBufferFactoryService, HexBufferStreamFactoryService hexBufferStreamFactoryService) {
+		MemoryVM(ITheDebugger theDebugger, IDebuggerHexBufferStreamProvider debuggerHexBufferStreamProvider) {
 			this.theDebugger = theDebugger;
-			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
-			debuggerStream = new DebuggerHexBufferStream();
-			debuggerStream.UnderlyingStreamChanged += DebuggerStream_UnderlyingStreamChanged;
-			Buffer = hexBufferFactoryService.Create(debuggerStream, hexBufferFactoryService.DefaultMemoryTags, disposeStream: true);
+			this.debuggerHexBufferStreamProvider = debuggerHexBufferStreamProvider;
+			debuggerHexBufferStreamProvider.DebuggerHexBufferStream.UnderlyingStreamChanged += DebuggerHexBufferStream_UnderlyingStreamChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			InitializeHexStream();
 		}
 
 		public event EventHandler UnderlyingStreamChanged;
-		void DebuggerStream_UnderlyingStreamChanged(object sender, EventArgs e) => UnderlyingStreamChanged?.Invoke(this, EventArgs.Empty);
+		void DebuggerHexBufferStream_UnderlyingStreamChanged(object sender, EventArgs e) => UnderlyingStreamChanged?.Invoke(this, EventArgs.Empty);
 
 		void InitializeHexStream() {
 			var stream = CreateHexBufferStream();
-			debuggerStream.SetUnderlyingStream(stream);
+			debuggerHexBufferStreamProvider.DebuggerHexBufferStream.SetUnderlyingStream(stream);
 			CanNotEditMemory = stream == null;
 			CanEditMemory = stream != null;
 		}
@@ -91,9 +88,7 @@ namespace dnSpy.Debugger.Memory {
 			if (process == null)
 				return null;
 
-			var processStream = hexBufferStreamFactoryService.CreateSimpleProcessStream(process.CorProcess.Handle);
-			var cachedStream = hexBufferStreamFactoryService.CreateCached(processStream, disposeStream: true);
-			return cachedStream;
+			return debuggerHexBufferStreamProvider.CreateHexBufferStream(process.CorProcess.Handle);
 		}
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -116,6 +111,6 @@ namespace dnSpy.Debugger.Memory {
 			InitializeMemory();
 		}
 
-		void InitializeMemory() => debuggerStream.InvalidateAll();
+		void InitializeMemory() => debuggerHexBufferStreamProvider.DebuggerHexBufferStream.InvalidateAll();
 	}
 }

@@ -332,6 +332,7 @@
     <Compile Include="Hex\Commands.cs" />
     <Compile Include="Hex\HexAddressReferenceFileTabContentProvider.cs" />
     <Compile Include="Hex\HexBoxDocumentTabContent.cs" />
+    <Compile Include="Hex\HexBufferFileBufferServiceListener.cs" />
     <Compile Include="Hex\HexBufferService.cs" />
     <Compile Include="Hex\HexBufferUndoRedo.cs" />
     <Compile Include="Hex\HexBufferWriterHelper.cs" />

@@ -162,8 +162,10 @@
     <Compile Include="Logger\OutputLogger.cs" />
     <Compile Include="Logger\OutputLoggerSettings.cs" />
     <Compile Include="Memory\BackgroundImageOptionDefinitions.cs" />
+    <Compile Include="Memory\BufferFileCreator.cs" />
     <Compile Include="Memory\Commands.cs" />
     <Compile Include="Memory\DebuggerHexBufferStream.cs" />
+    <Compile Include="Memory\DebuggerHexBufferStreamProvider.cs" />
     <Compile Include="Memory\HexEditorOptionsDefinitions.cs" />
     <Compile Include="Memory\MemoryContent.cs" />
     <Compile Include="Memory\MemoryControl.xaml.cs">
