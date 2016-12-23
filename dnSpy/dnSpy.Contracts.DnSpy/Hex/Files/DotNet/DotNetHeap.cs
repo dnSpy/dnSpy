@@ -45,6 +45,18 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// Gets the heap kind
 		/// </summary>
 		public DotNetHeapKind HeapKind { get; }
+
+		/// <summary>
+		/// Gets the metadata headers
+		/// </summary>
+		public abstract DotNetMetadataHeaders Metadata { get; }
+
+		/// <summary>
+		/// Gets a structure or null 
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public virtual ComplexData GetStructure(HexPosition position) => null;
 	}
 
 	/// <summary>
@@ -105,6 +117,20 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			: base(span, DotNetHeapKind.Tables) {
 			MetaDataType = metaDataType;
 		}
+
+		/// <summary>
+		/// Gets a record or null if <paramref name="token"/> is invalid
+		/// </summary>
+		/// <param name="token">Token</param>
+		/// <returns></returns>
+		public TableRecordData GetRecord(uint token) => GetRecord(new MDToken(token));
+
+		/// <summary>
+		/// Gets a record or null if <paramref name="token"/> is invalid
+		/// </summary>
+		/// <param name="token">Token</param>
+		/// <returns></returns>
+		public abstract TableRecordData GetRecord(MDToken token);
 	}
 
 	/// <summary>
@@ -188,12 +214,12 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// Unknown .NET heap
 	/// </summary>
-	public class UnknownHeap : DotNetHeap {
+	public abstract class UnknownHeap : DotNetHeap {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Heap span</param>
-		public UnknownHeap(HexBufferSpan span)
+		protected UnknownHeap(HexBufferSpan span)
 			: base(span, DotNetHeapKind.Unknown) {
 		}
 	}

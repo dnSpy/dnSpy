@@ -19,10 +19,14 @@
 
 using System.Diagnostics;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
-	sealed class TablesHeapImpl : TablesHeap {
+	sealed class TablesHeapImpl : TablesHeap, IDotNetHeap {
+		public override DotNetMetadataHeaders Metadata => metadata;
+		DotNetMetadataHeaders metadata;
+
 		public override HexSpan HeaderSpan {
 			get {
 				if (!initialized)
@@ -101,6 +105,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		ulong sortedMask;
 		uint extraData;
 		MDTable[] mdTables;
+		TableRecordDataFactory[] tableRecordDataFactories;
 
 		internal static int MinimumSize => 0x18;
 
@@ -161,6 +166,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 			dnTableSizes.InitializeSizes((flags & MDStreamFlags.BigStrings) != 0, (flags & MDStreamFlags.BigGUID) != 0, (flags & MDStreamFlags.BigBlob) != 0, sizes);
 			mdTables = new MDTable[tableInfos.Length];
+			tableRecordDataFactories = new TableRecordDataFactory[tableInfos.Length];
 			var tablesStartPos = pos;
 			bool bad = !Span.Span.Contains(pos);
 			for (int i = 0; i < rowsCount.Length; i++) {
@@ -172,10 +178,85 @@ namespace dnSpy.Hex.Files.DotNet {
 				}
 				pos = mdTable.Span.End;
 				mdTables[i] = mdTable;
+				tableRecordDataFactories[i] = CreateFactory(mdTable);
 			}
 
 			tablesSpan = HexSpan.FromBounds(HexPosition.Min(Span.End.Position, tablesStartPos), HexPosition.Min(Span.End.Position, pos));
 			tablesHeaderData = new TablesHeaderDataImpl(new HexBufferSpan(buffer, tablesSpan), hasExtraData, rowsFieldCount);
 		}
+
+		TableRecordDataFactory CreateFactory(MDTable mdTable) {
+			switch (mdTable.Table) {
+			case Table.TypeDef:				return new TypeDefTableRecordDataFactory(this, mdTable);
+			case Table.Field:				return new FieldTableRecordDataFactory(this, mdTable);
+			case Table.Method:				return new MethodTableRecordDataFactory(this, mdTable);
+			case Table.Param:				return new ParamTableRecordDataFactory(this, mdTable);
+			case Table.Constant:			return new ConstantTableRecordDataFactory(this, mdTable);
+			case Table.DeclSecurity:		return new DeclSecurityTableRecordDataFactory(this, mdTable);
+			case Table.Event:				return new EventTableRecordDataFactory(this, mdTable);
+			case Table.Property:			return new PropertyTableRecordDataFactory(this, mdTable);
+			case Table.MethodSemantics:		return new MethodSemanticsTableRecordDataFactory(this, mdTable);
+			case Table.ImplMap:				return new ImplMapTableRecordDataFactory(this, mdTable);
+			case Table.Assembly:			return new AssemblyTableRecordDataFactory(this, mdTable);
+			case Table.AssemblyRef:			return new AssemblyRefTableRecordDataFactory(this, mdTable);
+			case Table.File:				return new FileTableRecordDataFactory(this, mdTable);
+			case Table.ExportedType:		return new ExportedTypeTableRecordDataFactory(this, mdTable);
+			case Table.ManifestResource:	return new ManifestResourceTableRecordDataFactory(this, mdTable);
+			case Table.GenericParam:		return new GenericParamTableRecordDataFactory(this, mdTable);
+			case Table.LocalVariable:		return new LocalVariableTableRecordDataFactory(this, mdTable);
+			default:						return new TableRecordDataFactory(this, mdTable);
+			}
+		}
+
+		public override ComplexData GetStructure(HexPosition position) {
+			if (!Span.Span.Contains(position))
+				return null;
+
+			if (HeaderSpan.Contains(position))
+				return Header;
+
+			var mdTable = GetTable(position);
+			if (mdTable != null)
+				return GetRecord(mdTable, position);
+
+			return null;
+		}
+
+		TableRecordData GetRecord(MDTable mdTable, HexPosition position) {
+			if (!mdTable.Span.Contains(position))
+				return null;
+			int index = (int)((position - mdTable.Span.Start).ToUInt64() / (uint)mdTable.TableInfo.RowSize);
+			return GetRecord(new MDToken(mdTable.Table, index + 1));
+		}
+
+		public override TableRecordData GetRecord(MDToken token) {
+			if (!initialized)
+				Initialize();
+			int tableIndex = (int)token.Table;
+			if ((uint)tableIndex >= (uint)tableRecordDataFactories.Length)
+				return null;
+			return tableRecordDataFactories[tableIndex].Create(token.Rid);
+		}
+
+		MDTable GetTable(HexPosition position) {
+			if (!initialized)
+				Initialize();
+			var array = mdTables;
+			int lo = 0, hi = array.Length - 1;
+			while (lo <= hi) {
+				int index = (lo + hi) / 2;
+
+				var mdTable = array[index];
+				if (position < mdTable.Span.Start)
+					hi = index - 1;
+				else if (position >= mdTable.Span.End)
+					lo = index + 1;
+				else
+					return mdTable;
+			}
+			return null;
+		}
+
+		void IDotNetHeap.SetMetadata(DotNetMetadataHeaders metadata) => this.metadata = metadata;
 	}
 }

@@ -17,18 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
-	sealed class StringsHeapImpl : StringsHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
-
-		public StringsHeapImpl(HexBufferSpan span)
-			: base(span) {
-		}
-
-		void IDotNetHeap.SetMetadata(DotNetMetadataHeaders metadata) => this.metadata = metadata;
+	interface IDotNetHeap {
+		void SetMetadata(DotNetMetadataHeaders metadata);
 	}
 }

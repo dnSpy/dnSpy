@@ -20,6 +20,7 @@
 using System;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
@@ -45,6 +46,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			GUIDStream = FindStream<GUIDHeap>(streams);
 			BlobStream = FindStream<BlobHeap>(streams);
 			PdbStream = FindStream<PdbHeap>(streams);
+			foreach (IDotNetHeap heap in streams)
+				heap.SetMetadata(this);
 		}
 
 		private T FindStream<T>(DotNetHeap[] streams) where T : DotNetHeap {
@@ -53,6 +56,21 @@ namespace dnSpy.Hex.Files.DotNet {
 				if (t != null)
 					return t;
 			}
+			return null;
+		}
+
+		public override ComplexData GetStructure(HexPosition position) {
+			if (!MetadataSpan.Contains(position))
+				return null;
+
+			if (MetadataHeader.Span.Span.Contains(position))
+				return MetadataHeader;
+
+			foreach (var stream in Streams) {
+				if (stream.Span.Span.Contains(position))
+					return stream.GetStructure(position);
+			}
+
 			return null;
 		}
 	}

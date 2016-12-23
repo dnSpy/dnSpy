@@ -435,11 +435,14 @@
     <Compile Include="Hex\Files\DotNet\DotNetTableSizes.cs" />
     <Compile Include="Hex\Files\DotNet\GUIDHeapImpl.cs" />
     <Compile Include="Hex\Files\DotNet\HotHeapImpl.cs" />
+    <Compile Include="Hex\Files\DotNet\IDotNetHeap.cs" />
     <Compile Include="Hex\Files\DotNet\PdbHeapImpl.cs" />
     <Compile Include="Hex\Files\DotNet\StorageStreamHeader.cs" />
     <Compile Include="Hex\Files\DotNet\StringsHeapImpl.cs" />
+    <Compile Include="Hex\Files\DotNet\TableRecordDataFactory.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeaderDataImpl.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeapImpl.cs" />
+    <Compile Include="Hex\Files\DotNet\UnknownHeapImpl.cs" />
     <Compile Include="Hex\Files\DotNet\USHeapImpl.cs" />
     <Compile Include="Hex\Files\HexBufferFileImpl.cs" />
     <Compile Include="Hex\Files\HexBufferFileServiceFactoryImpl.cs" />

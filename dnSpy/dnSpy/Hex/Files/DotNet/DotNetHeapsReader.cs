@@ -122,7 +122,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					}
 					break;
 				}
-				list.Add(new UnknownHeap(span));
+				list.Add(new UnknownHeapImpl(span));
 			}
 
 			list.Reverse();
@@ -181,7 +181,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					}
 					break;
 				}
-				list.Add(new UnknownHeap(span));
+				list.Add(new UnknownHeapImpl(span));
 			}
 			return list.ToArray();
 		}

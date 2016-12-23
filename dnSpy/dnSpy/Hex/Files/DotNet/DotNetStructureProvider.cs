@@ -140,10 +140,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (metadataSpan.Contains(position)) {
 				if (mdHeader?.Span.Span.Contains(position) == true)
 					return mdHeader;
-
-				//TODO: Return MD tables header struct
-				//TODO: Return MD tables record struct
-				//TODO: Return other MD heap structs
+				return dotNetMetadataHeaders?.GetStructure(position);
 			}
 
 			return null;

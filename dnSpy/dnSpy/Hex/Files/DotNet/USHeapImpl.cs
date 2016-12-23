@@ -21,9 +21,14 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
-	sealed class USHeapImpl : USHeap {
+	sealed class USHeapImpl : USHeap, IDotNetHeap {
+		public override DotNetMetadataHeaders Metadata => metadata;
+		DotNetMetadataHeaders metadata;
+
 		public USHeapImpl(HexBufferSpan span)
 			: base(span) {
 		}
+
+		void IDotNetHeap.SetMetadata(DotNetMetadataHeaders metadata) => this.metadata = metadata;
 	}
 }

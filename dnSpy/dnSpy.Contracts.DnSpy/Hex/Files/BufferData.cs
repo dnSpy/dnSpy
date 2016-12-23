@@ -34,6 +34,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="span">Data span</param>
 		protected BufferData(HexBufferSpan span) {
+			if (span.IsDefault)
+				throw new ArgumentException();
 			Span = span;
 		}
 	}

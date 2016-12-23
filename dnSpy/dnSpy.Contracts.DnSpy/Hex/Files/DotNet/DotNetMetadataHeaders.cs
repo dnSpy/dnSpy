@@ -76,5 +76,12 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// Gets all heaps
 		/// </summary>
 		public abstract ReadOnlyCollection<DotNetHeap> Streams { get; }
+
+		/// <summary>
+		/// Returns a structure at <paramref name="position"/> or null
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract ComplexData GetStructure(HexPosition position);
 	}
 }
