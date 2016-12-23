@@ -22,6 +22,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.PE;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Files.PE {
 	sealed class PeHeadersReader {
@@ -33,10 +34,10 @@ namespace dnSpy.Hex.Files.PE {
 		public bool IsFileLayout { get; private set; }
 
 		readonly HexBufferFile file;
-		readonly Lazy<PeFileLayoutProvider>[] peFileLayoutProviders;
+		readonly Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>[] peFileLayoutProviders;
 		readonly bool initFileLayout;
 
-		public PeHeadersReader(HexBufferFile file, Lazy<PeFileLayoutProvider>[] peFileLayoutProviders) {
+		public PeHeadersReader(HexBufferFile file, Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>[] peFileLayoutProviders) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (peFileLayoutProviders == null)

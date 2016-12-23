@@ -30,11 +30,11 @@ namespace dnSpy.Hex.Files.PE {
 	[Export(typeof(StructureProviderFactory))]
 	[VSUTIL.Name(PredefinedStructureProviderFactoryNames.PE)]
 	sealed class PeStructureProviderFactory : StructureProviderFactory {
-		readonly Lazy<PeFileLayoutProvider>[] peFileLayoutProviders;
+		readonly Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>[] peFileLayoutProviders;
 
 		[ImportingConstructor]
-		PeStructureProviderFactory([ImportMany] IEnumerable<Lazy<PeFileLayoutProvider>> peFileLayoutProviders) {
-			this.peFileLayoutProviders = peFileLayoutProviders.ToArray();
+		PeStructureProviderFactory([ImportMany] IEnumerable<Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>> peFileLayoutProviders) {
+			this.peFileLayoutProviders = VSUTIL.Orderer.Order(peFileLayoutProviders).ToArray();
 		}
 
 		public override StructureProvider Create(HexBufferFile file) => new PeStructureProvider(file, peFileLayoutProviders);
@@ -42,11 +42,11 @@ namespace dnSpy.Hex.Files.PE {
 
 	sealed class PeStructureProvider : StructureProvider {
 		readonly HexBufferFile file;
-		readonly Lazy<PeFileLayoutProvider>[] peFileLayoutProviders;
+		readonly Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>[] peFileLayoutProviders;
 		PeHeadersImpl peHeadersImpl;
 		HexSpan peHeadersSpan;
 
-		public PeStructureProvider(HexBufferFile file, Lazy<PeFileLayoutProvider>[] peFileLayoutProviders) {
+		public PeStructureProvider(HexBufferFile file, Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>[] peFileLayoutProviders) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (peFileLayoutProviders == null)

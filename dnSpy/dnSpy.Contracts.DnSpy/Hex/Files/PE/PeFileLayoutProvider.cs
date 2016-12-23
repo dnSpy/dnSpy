@@ -17,9 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using VSUTIL = Microsoft.VisualStudio.Utilities;
+
 namespace dnSpy.Contracts.Hex.Files.PE {
 	/// <summary>
-	/// Detects whether a PE file was loaded by the OS PE loader
+	/// Detects whether a PE file was loaded by the OS PE loader. Export an instance with
+	/// a <see cref="VSUTIL.NameAttribute"/> and an optional <see cref="VSUTIL.OrderAttribute"/>
 	/// </summary>
 	public abstract class PeFileLayoutProvider {
 		/// <summary>
