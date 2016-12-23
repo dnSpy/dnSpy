@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the metadata type
 		/// </summary>
-		public MetaDataType MetaDataType { get; }
+		public TablesHeapType TablesHeapType { get; }
 
 		/// <summary>
 		/// Span of header
@@ -112,10 +112,10 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Heap span</param>
-		/// <param name="metaDataType">Metadata type</param>
-		protected TablesHeap(HexBufferSpan span, MetaDataType metaDataType)
+		/// <param name="tablesHeapType">Tables heap type</param>
+		protected TablesHeap(HexBufferSpan span, TablesHeapType tablesHeapType)
 			: base(span, DotNetHeapKind.Tables) {
-			MetaDataType = metaDataType;
+			TablesHeapType = tablesHeapType;
 		}
 
 		/// <summary>

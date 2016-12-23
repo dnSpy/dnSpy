@@ -109,8 +109,8 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		internal static int MinimumSize => 0x18;
 
-		public TablesHeapImpl(HexBufferSpan span, MetaDataType metaDataType)
-			: base(span, metaDataType) {
+		public TablesHeapImpl(HexBufferSpan span, TablesHeapType tablesHeapType)
+			: base(span, tablesHeapType) {
 		}
 
 		void Initialize() {

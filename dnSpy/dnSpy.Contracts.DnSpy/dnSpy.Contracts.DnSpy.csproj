@@ -329,12 +329,12 @@
     <Compile Include="Hex\Files\DotNet\MDStreamFlags.cs" />
     <Compile Include="Hex\Files\DotNet\MDTable.cs" />
     <Compile Include="Hex\Files\DotNet\MDToken.cs" />
-    <Compile Include="Hex\Files\DotNet\MetaDataType.cs" />
     <Compile Include="Hex\Files\DotNet\PredefinedDotNetDataIds.cs" />
     <Compile Include="Hex\Files\DotNet\Table.cs" />
     <Compile Include="Hex\Files\DotNet\TableInfo.cs" />
     <Compile Include="Hex\Files\DotNet\TableRecordData.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeaderData.cs" />
+    <Compile Include="Hex\Files\DotNet\TablesHeapType.cs" />
     <Compile Include="Hex\Files\IBufferFileHeaders.cs" />
     <Compile Include="Hex\Files\PE\PeFileLayoutProvider.cs" />
     <Compile Include="Hex\Files\PE\PeHeaders.cs" />

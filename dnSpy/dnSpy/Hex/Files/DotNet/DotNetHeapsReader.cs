@@ -44,15 +44,15 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		public bool Read() {
-			var metaDataType = GetMetaDataType(storageStreamHeaders);
+			var metaDataType = GetTablesHeapType(storageStreamHeaders);
 			Streams = CreateHeaps(metaDataType);
 			return true;
 		}
 
-		DotNetHeap[] CreateHeaps(MetaDataType metaDataType) {
+		DotNetHeap[] CreateHeaps(TablesHeapType metaDataType) {
 			switch (metaDataType) {
-			case MetaDataType.Compressed:	return CreateCompressedHeaps();
-			case MetaDataType.ENC:			return CreateENCHeaps();
+			case TablesHeapType.Compressed:	return CreateCompressedHeaps();
+			case TablesHeapType.ENC:		return CreateENCHeaps();
 			default:						throw new InvalidOperationException();
 			}
 		}
@@ -104,7 +104,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 				case "#~":
 					if (tablesHeap == null && span.Length >= TablesHeapImpl.MinimumSize) {
-						tablesHeap = new TablesHeapImpl(span, MetaDataType.Compressed);
+						tablesHeap = new TablesHeapImpl(span, TablesHeapType.Compressed);
 						list.Add(tablesHeap);
 						continue;
 					}
@@ -175,7 +175,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				case "#~":	// Only if #Schema is used
 				case "#-":
 					if (tablesHeap == null && span.Length >= TablesHeapImpl.MinimumSize) {
-						tablesHeap = new TablesHeapImpl(span, MetaDataType.ENC);
+						tablesHeap = new TablesHeapImpl(span, TablesHeapType.ENC);
 						list.Add(tablesHeap);
 						continue;
 					}
@@ -186,19 +186,19 @@ namespace dnSpy.Hex.Files.DotNet {
 			return list.ToArray();
 		}
 
-		static MetaDataType GetMetaDataType(StorageStreamHeader[] storageStreamHeaders) {
-			MetaDataType? mdType = null;
+		static TablesHeapType GetTablesHeapType(StorageStreamHeader[] storageStreamHeaders) {
+			TablesHeapType? thType = null;
 			foreach (var sh in storageStreamHeaders) {
-				if (mdType == null) {
+				if (thType == null) {
 					if (sh.Name == "#~")
-						mdType = MetaDataType.Compressed;
+						thType = TablesHeapType.Compressed;
 					else if (sh.Name == "#-")
-						mdType = MetaDataType.ENC;
+						thType = TablesHeapType.ENC;
 				}
 				if (sh.Name == "#Schema")
-					mdType = MetaDataType.ENC;
+					thType = TablesHeapType.ENC;
 			}
-			return mdType ?? MetaDataType.Compressed;
+			return thType ?? TablesHeapType.Compressed;
 		}
 	}
 }

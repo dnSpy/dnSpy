@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// Metadata tables type
 	/// </summary>
-	public enum MetaDataType {
+	public enum TablesHeapType {
 		/// <summary>
 		/// Compressed (#~)
 		/// </summary>
