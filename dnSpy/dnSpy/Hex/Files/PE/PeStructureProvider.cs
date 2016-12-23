@@ -55,12 +55,13 @@ namespace dnSpy.Hex.Files.PE {
 			this.peFileLayoutProviders = peFileLayoutProviders;
 		}
 
-		public override void Initialize() {
+		public override bool Initialize() {
 			var reader = new PeHeadersReader(file, peFileLayoutProviders);
 			if (reader.Read()) {
 				peHeadersImpl = new PeHeadersImpl(reader, file.Span);
 				peHeadersSpan = GetSpan(peHeadersImpl.DosHeader.Span.Span, peHeadersImpl.FileHeader.Span.Span, peHeadersImpl.OptionalHeader.Span.Span, peHeadersImpl.Sections.Span.Span);
 			}
+			return peHeadersImpl != null;
 		}
 
 		HexSpan GetSpan(params HexSpan[] spans) {

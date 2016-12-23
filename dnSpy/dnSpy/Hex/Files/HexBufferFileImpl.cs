@@ -103,8 +103,12 @@ namespace dnSpy.Hex.Files {
 			}
 			if (initialize && !isStructuresInitialized && !isInitializing) {
 				isInitializing = true;
-				foreach (var provider in structureProviders)
-					provider.Initialize();
+				var list = new List<StructureProvider>(structureProviders.Length);
+				foreach (var provider in structureProviders) {
+					if (provider.Initialize())
+						list.Add(provider);
+				}
+				structureProviders = list.ToArray();
 				isStructuresInitialized = true;
 				StructuresInitialized?.Invoke(this, EventArgs.Empty);
 				isInitializing = false;

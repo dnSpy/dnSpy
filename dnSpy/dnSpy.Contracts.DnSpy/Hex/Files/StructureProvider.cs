@@ -33,11 +33,14 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Called before any other method, but since this method is allowed to call <see cref="HexBufferFile.GetStructure(string)"/>,
 		/// the other methods could get called before this instance's <see cref="Initialize"/> method has been called.
 		/// 
+		/// The method returns false if this instance should be removed (eg. the file isn't supported).
+		/// 
 		/// This method is allowed to call <see cref="HexBufferFile.GetStructure(string)"/> and <see cref="HexBufferFile.GetHeaders{THeaders}"/>
 		/// but should make sure that any provider it depends on has already been initialized (eg. add a
 		/// <see cref="VSUTIL.OrderAttribute"/> on your <see cref="StructureProviderFactory"/> class)
 		/// </summary>
-		public abstract void Initialize();
+		/// <returns></returns>
+		public abstract bool Initialize();
 
 		/// <summary>
 		/// Returns a structure at <paramref name="position"/> or null

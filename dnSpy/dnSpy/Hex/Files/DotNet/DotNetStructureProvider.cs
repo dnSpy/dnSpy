@@ -49,17 +49,17 @@ namespace dnSpy.Hex.Files.DotNet {
 			this.file = file;
 		}
 
-		public override void Initialize() {
+		public override bool Initialize() {
 			var peHeaders = file.GetHeaders<PeHeaders>();
 			if (peHeaders != null) {
 				if (peHeaders.OptionalHeader.DataDirectory.Data.FieldCount < 15)
-					return;
+					return false;
 				var cor20Span = Read(peHeaders, peHeaders.OptionalHeader.DataDirectory.Data[14].Data);
 				if (cor20Span == null)
-					return;
+					return false;
 				cor20 = DotNetCor20DataImpl.TryCreate(file, cor20Span.Value.Start);
 				if (cor20 == null)
-					return;
+					return false;
 
 				var mdSpan = Read(peHeaders, cor20.MetaData.Data);
 				var resourcesSpan = Read(peHeaders, cor20.Resources.Data);
@@ -78,6 +78,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				dotNetMetadataHeaders = new DotNetMetadataHeadersImpl(metadataSpan, mdHeader, dotNetHeaps);
 			if (peHeaders != null && cor20 != null)
 				dotNetHeaders = new DotNetHeadersImpl(peHeaders, cor20, dotNetMetadataHeaders, strongNameSignature);
+			return cor20 != null || !metadataSpan.IsEmpty;
 		}
 
 		HexSpan? Read(PeHeaders peHeaders, DataDirectoryData dir) {
