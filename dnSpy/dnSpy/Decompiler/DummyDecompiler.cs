@@ -62,7 +62,7 @@ namespace dnSpy.Decompiler {
 		static readonly string errorText =
 			"The decompiler extension wasn't built. Make sure you build every project before you press F5." + Environment.NewLine +
 			"Uncheck: Settings -> Projects and Solutions -> Build and Run -> Only build startup projects and dependencies on Run" + Environment.NewLine;
-		private void WriteError(IDecompilerOutput output) =>
+		void WriteError(IDecompilerOutput output) =>
 			output.Write(errorText, BoxedTextColor.Error);
 	}
 }

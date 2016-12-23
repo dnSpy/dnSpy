@@ -50,7 +50,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				heap.SetMetadata(this);
 		}
 
-		private T FindStream<T>(DotNetHeap[] streams) where T : DotNetHeap {
+		T FindStream<T>(DotNetHeap[] streams) where T : DotNetHeap {
 			foreach (var stream in streams) {
 				var t = stream as T;
 				if (t != null)
