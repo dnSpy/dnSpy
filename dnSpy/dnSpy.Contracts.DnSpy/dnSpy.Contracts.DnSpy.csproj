@@ -316,6 +316,8 @@
     <Compile Include="Hex\Files\BufferFieldWriter.cs" />
     <Compile Include="Hex\Files\BufferFileHeadersProvider.cs" />
     <Compile Include="Hex\Files\BufferFileHeadersProviderFactory.cs" />
+    <Compile Include="Hex\Files\BufferFileOptions.cs" />
+    <Compile Include="Hex\Files\BufferFilesEventArgs.cs" />
     <Compile Include="Hex\Files\DotNet\CodedToken.cs" />
     <Compile Include="Hex\Files\DotNet\ColumnInfo.cs" />
     <Compile Include="Hex\Files\DotNet\ColumnSize.cs" />

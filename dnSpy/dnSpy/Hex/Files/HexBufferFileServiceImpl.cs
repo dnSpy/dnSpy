@@ -34,7 +34,7 @@ namespace dnSpy.Hex.Files {
 			get {
 				// This property isn't defined to return an ordered enumerable of files so make
 				// sure no-one depends on sorted files.
-				int index = GetHashCode() % files.Count;
+				int index = (GetHashCode() & int.MaxValue) % files.Count;
 				for (int i = files.Count - 1; i >= 0; i--)
 					yield return files[(index + i) % files.Count].Data;
 			}
@@ -66,7 +66,7 @@ namespace dnSpy.Hex.Files {
 				var opts = options[i];
 				if (opts.IsDefault)
 					throw new ArgumentException();
-				newFiles[i] = new HexBufferFileImpl(structureProviderFactories, bufferFileHeadersProviderFactories, buffer, opts.Span, opts.Name, opts.Filename, opts.Tags);
+				newFiles[i] = new HexBufferFileImpl(null, structureProviderFactories, bufferFileHeadersProviderFactories, buffer, opts.Span, opts.Name, opts.Filename, opts.Tags);
 			}
 			files.Add(newFiles.Select(a => new SpanData<HexBufferFileImpl>(a.Span, a)));
 			BufferFilesAdded?.Invoke(this, new BufferFilesAddedEventArgs(newFiles));
@@ -95,6 +95,11 @@ namespace dnSpy.Hex.Files {
 			BufferFilesRemoved?.Invoke(this, new BufferFilesRemovedEventArgs(files.Select(a => a.Data).ToArray()));
 		}
 
-		public override HexBufferFile GetFile(HexPosition position) => files.FindData(position);
+		public override HexBufferFile GetFile(HexPosition position, bool checkNestedFiles) {
+			var file = files.FindData(position);
+			if (file == null || !checkNestedFiles)
+				return file;
+			return file.GetFile(position, checkNestedFiles) ?? file;
+		}
 	}
 }

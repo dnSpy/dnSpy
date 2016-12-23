@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <summary>
 		/// Gets the PE file layout
 		/// </summary>
-		/// <param name="file">File</param>
+		/// <param name="file">File. This can be a nested file.</param>
 		/// <returns></returns>
 		public abstract PeFileLayout GetLayout(HexBufferFile file);
 	}

@@ -20,33 +20,75 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Files {
 	sealed class HexBufferFileImpl : HexBufferFile {
+		public override HexBufferFile ParentFile { get; }
+		public override event EventHandler<BufferFilesAddedEventArgs> BufferFilesAdded;
 		public override bool IsRemoved => isRemoved;
 		public override event EventHandler Removed;
 		public override bool IsStructuresInitialized => isStructuresInitialized;
 		public override event EventHandler StructuresInitialized;
 
+		public override IEnumerable<HexBufferFile> Files {
+			get {
+				// This property isn't defined to return an ordered enumerable of files so make
+				// sure no-one depends on sorted files.
+				int index = (GetHashCode() & int.MaxValue) % files.Count;
+				for (int i = files.Count - 1; i >= 0; i--)
+					yield return files[(index + i) % files.Count].Data;
+			}
+		}
+
 		readonly Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories;
 		readonly Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories;
+		readonly SpanDataCollection<HexBufferFileImpl> files;
 		StructureProvider[] structureProviders;
 		BufferFileHeadersProvider[] bufferFileHeadersProviders;
 		bool isInitializing;
 		bool isStructuresInitialized;
 		bool isRemoved;
 
-		public HexBufferFileImpl(Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories, HexBuffer buffer, HexSpan span, string name, string filename, string[] tags)
+		public HexBufferFileImpl(HexBufferFile parentFile, Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories, HexBuffer buffer, HexSpan span, string name, string filename, string[] tags)
 			: base(buffer, span, name, filename, tags) {
 			if (structureProviderFactories == null)
 				throw new ArgumentNullException(nameof(structureProviderFactories));
 			if (bufferFileHeadersProviderFactories == null)
 				throw new ArgumentNullException(nameof(bufferFileHeadersProviderFactories));
+			if (parentFile?.Span.Contains(span) == false)
+				throw new ArgumentOutOfRangeException(nameof(span));
+			ParentFile = parentFile;
 			this.structureProviderFactories = structureProviderFactories;
 			this.bufferFileHeadersProviderFactories = bufferFileHeadersProviderFactories;
+			files = new SpanDataCollection<HexBufferFileImpl>();
+		}
+
+		public override HexBufferFile[] CreateFiles(params BufferFileOptions[] options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			var newFiles = new HexBufferFileImpl[options.Length];
+			for (int i = 0; i < newFiles.Length; i++) {
+				var opts = options[i];
+				if (opts.IsDefault)
+					throw new ArgumentException();
+				if (!Span.Contains(opts.Span))
+					throw new ArgumentOutOfRangeException();
+				newFiles[i] = new HexBufferFileImpl(this, structureProviderFactories, bufferFileHeadersProviderFactories, Buffer, opts.Span, opts.Name, opts.Filename, opts.Tags);
+			}
+			files.Add(newFiles.Select(a => new SpanData<HexBufferFileImpl>(a.Span, a)));
+			BufferFilesAdded?.Invoke(this, new BufferFilesAddedEventArgs(newFiles));
+			return newFiles;
+		}
+
+		public override HexBufferFile GetFile(HexPosition position, bool checkNestedFiles) {
+			var file = files.FindData(position);
+			if (file == null || !checkNestedFiles)
+				return file;
+			return file.GetFile(position, checkNestedFiles) ?? file;
 		}
 
 		void CreateStructureProviders(bool initialize) {
@@ -69,8 +111,15 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData GetStructure(HexPosition position, bool checkNestedFiles) {
 			Debug.Assert(Span.Contains(position));
+
+			if (checkNestedFiles && files.Count != 0) {
+				var file = files.FindData(position);
+				if (file != null)
+					return file.GetStructure(position, checkNestedFiles);
+			}
+
 			CreateStructureProviders(true);
 			foreach (var provider in structureProviders) {
 				var structure = provider.GetStructure(position);
@@ -122,6 +171,8 @@ namespace dnSpy.Hex.Files {
 				throw new InvalidOperationException();
 			isRemoved = true;
 			Removed?.Invoke(this, EventArgs.Empty);
+			foreach (var file in files.Remove(new[] { Span }))
+				file.Data.RaiseRemoved();
 		}
 	}
 }

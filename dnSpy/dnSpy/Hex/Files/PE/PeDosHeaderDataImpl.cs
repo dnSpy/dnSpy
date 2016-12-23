@@ -97,6 +97,8 @@ namespace dnSpy.Hex.Files.PE {
 				throw new ArgumentNullException(nameof(file));
 			if (!file.Span.Contains(position) || !file.Span.Contains(position + 0x40 - 1))
 				return null;
+			if (file.Buffer.ReadUInt16(position) != 0x5A4D)
+				return null;
 			return new PeDosHeaderDataImpl(new HexBufferSpan(file.Buffer, new HexSpan(position, 0x40)));
 		}
 	}

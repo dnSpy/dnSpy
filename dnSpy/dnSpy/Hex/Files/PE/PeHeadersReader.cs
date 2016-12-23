@@ -53,11 +53,7 @@ namespace dnSpy.Hex.Files.PE {
 		}
 
 		public bool Read() {
-			if (file.Span.Length < 0x40)
-				return false;
 			var pos = file.Span.Start;
-			if (file.Buffer.ReadUInt16(pos) != 0x5A4D)
-				return false;
 			DosHeader = PeDosHeaderDataImpl.TryCreate(file, pos);
 			if (DosHeader == null)
 				return false;
@@ -66,7 +62,7 @@ namespace dnSpy.Hex.Files.PE {
 			if (ntHeaderOffset < 0)
 				return false;
 			pos = file.Span.Start + ntHeaderOffset;
-			if (pos > file.Span.End)
+			if (pos + 4 > file.Span.End)
 				return false;
 			if (file.Buffer.ReadUInt32(pos) != 0x4550)
 				return false;
@@ -135,7 +131,7 @@ namespace dnSpy.Hex.Files.PE {
 			if (b != null)
 				return b.Value;
 
-			if (file.Buffer.IsMemory) {
+			if (!file.IsNestedFile && file.Buffer.IsMemory) {
 				// If there's unmapped memory, it's probably a file loaded by the OS loader
 				var pos = file.Span.Start;
 				while (pos < file.Span.End) {
@@ -146,7 +142,7 @@ namespace dnSpy.Hex.Files.PE {
 				}
 			}
 
-			return !file.Buffer.IsMemory;
+			return DefaultIsFileLayout;
 		}
 
 		bool? DotNetCheckIsFileLayout() {
@@ -161,7 +157,7 @@ namespace dnSpy.Hex.Files.PE {
 			bool mem = CheckDotNet(rva, MemoryLayout_ToBufferPosition);
 			bool file = CheckDotNet(rva, FileLayout_ToBufferPosition);
 			if (mem && file)
-				return !this.file.Buffer.IsMemory;
+				return DefaultIsFileLayout;
 			if (mem)
 				return false;
 			if (file)
@@ -169,6 +165,9 @@ namespace dnSpy.Hex.Files.PE {
 
 			return null;
 		}
+
+		// If it's a nested file, it's most likely file layout
+		bool DefaultIsFileLayout => file.IsNestedFile || !file.Buffer.IsMemory;
 
 		bool CheckDotNet(uint cor20Rva, Func<uint, HexPosition> rvaToPos) {
 			var pos = rvaToPos(cor20Rva);
