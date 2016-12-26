@@ -23,6 +23,7 @@ using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -31,7 +32,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	class StorageStreamNode : HexNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.STRGSTREAM_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, StreamNumber.ToString());
-		public StorageStreamType StorageStreamType => storageStreamVM.StorageStreamType;
+		public DotNetHeapKind HeapKind => storageStreamVM.HeapKind;
 		public override object VMObject => storageStreamVM;
 		protected override ImageReference IconReference => DsImages.BinaryFile;
 		public int StreamNumber => storageStreamVM.StreamNumber;
@@ -63,11 +64,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedTextColor.Number, StreamNumber.ToString());
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(StorageStreamType == StorageStreamType.None ? BoxedTextColor.HexStorageStreamNameInvalid : BoxedTextColor.HexStorageStreamName, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
+			output.Write(HeapKind == DotNetHeapKind.Unknown ? BoxedTextColor.HexStorageStreamNameInvalid : BoxedTextColor.HexStorageStreamName, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {
-			if (StorageStreamType != StorageStreamType.Tables)
+			if (HeapKind != DotNetHeapKind.Tables)
 				return null;
 			return ((TablesStreamNode)TreeNode.Children[0].Data).FindTokenNode(token);
 		}

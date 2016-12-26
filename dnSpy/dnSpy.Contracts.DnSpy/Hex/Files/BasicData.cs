@@ -765,7 +765,10 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// A <see cref="string"/>
 	/// </summary>
 	public class StringData : SimpleData {
-		readonly Encoding encoding;
+		/// <summary>
+		/// Gets the encoding
+		/// </summary>
+		public Encoding Encoding { get; }
 
 		/// <summary>
 		/// Constructor
@@ -776,7 +779,7 @@ namespace dnSpy.Contracts.Hex.Files {
 			: base(span) {
 			if (encoding == null)
 				throw new ArgumentNullException(nameof(encoding));
-			this.encoding = encoding;
+			Encoding = encoding;
 		}
 
 		/// <summary>
@@ -794,7 +797,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Reads the value
 		/// </summary>
 		/// <returns></returns>
-		public string ReadValue() => encoding.GetString(Span.GetData());
+		public string ReadValue() => Encoding.GetString(Span.GetData());
 
 		/// <summary>
 		/// Writes the value

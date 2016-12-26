@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageFileHeaderVM : HexVM {
-		public override string Name => "IMAGE_FILE_HEADER";
+		public override string Name { get; }
 		public UInt16FlagsHexField MachineVM { get; }
 		public UInt16HexField NumberOfSectionsVM { get; }
 		public UInt32HexField TimeDateStampVM { get; }
@@ -84,18 +85,18 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			new IntegerHexBitFieldEnumInfo(0xC0EE, "CEE"),
 		};
 
-		public ImageFileHeaderVM(HexBuffer buffer, HexSpan span)
-			: base(span) {
-			var startOffset = span.Start;
-			MachineVM = new UInt16FlagsHexField(buffer, Name, "Machine", startOffset + 0);
-			MachineVM.Add(new IntegerHexBitField("Machine", 0, 16, MachineInfos));
-			NumberOfSectionsVM = new UInt16HexField(buffer, Name, "NumberOfSections", startOffset + 2);
-			TimeDateStampVM = new UInt32HexField(buffer, Name, "TimeDateStamp", startOffset + 4);
+		public ImageFileHeaderVM(HexBuffer buffer, PeFileHeaderData fileHeader)
+			: base(fileHeader.Span) {
+			Name = fileHeader.Name;
+			MachineVM = new UInt16FlagsHexField(fileHeader.Machine);
+			MachineVM.Add(new IntegerHexBitField(fileHeader.Machine.Name, 0, 16, MachineInfos));
+			NumberOfSectionsVM = new UInt16HexField(fileHeader.NumberOfSections);
+			TimeDateStampVM = new UInt32HexField(fileHeader.TimeDateStamp);
 			TimeDateStampVM.DataFieldVM.PropertyChanged += (s, e) => OnPropertyChanged(nameof(TimeDateStampString));
-			PointerToSymbolTableVM = new UInt32HexField(buffer, Name, "PointerToSymbolTable", startOffset + 8);
-			NumberOfSymbolsVM = new UInt32HexField(buffer, Name, "NumberOfSymbols", startOffset + 0x0C);
-			SizeOfOptionalHeaderVM = new UInt16HexField(buffer, Name, "SizeOfOptionalHeader", startOffset + 0x10);
-			CharacteristicsVM = new UInt16FlagsHexField(buffer, Name, "Characteristics", startOffset + 0x12);
+			PointerToSymbolTableVM = new UInt32HexField(fileHeader.PointerToSymbolTable);
+			NumberOfSymbolsVM = new UInt32HexField(fileHeader.NumberOfSymbols);
+			SizeOfOptionalHeaderVM = new UInt16HexField(fileHeader.SizeOfOptionalHeader);
+			CharacteristicsVM = new UInt16FlagsHexField(fileHeader.Characteristics);
 			CharacteristicsVM.Add(new BooleanHexBitField("Relocs Stripped", 0));
 			CharacteristicsVM.Add(new BooleanHexBitField("Executable Image", 1));
 			CharacteristicsVM.Add(new BooleanHexBitField("Line Nums Stripped", 2));

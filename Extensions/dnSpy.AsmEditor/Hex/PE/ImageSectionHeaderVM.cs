@@ -18,12 +18,12 @@
 */
 
 using System.Collections.Generic;
-using System.Text;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageSectionHeaderVM : HexVM {
-		public override string Name => "IMAGE_SECTION_HEADER";
+		public override string Name { get; }
 		public StringHexField NameVM { get; }
 		public UInt32HexField VirtualSizeVM { get; }
 		public UInt32HexField VirtualAddressVM { get; }
@@ -57,19 +57,19 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			new IntegerHexBitFieldEnumInfo(15, "Reserved"),
 		};
 
-		public ImageSectionHeaderVM(HexBuffer buffer, HexSpan span)
-			: base(span) {
-			var startOffset = span.Start;
-			NameVM = new StringHexField(buffer, Name, "Name", startOffset + 0, Encoding.UTF8, 8);
-			VirtualSizeVM = new UInt32HexField(buffer, Name, "VirtualSize", startOffset + 8);
-			VirtualAddressVM = new UInt32HexField(buffer, Name, "VirtualAddress", startOffset + 0x0C);
-			SizeOfRawDataVM = new UInt32HexField(buffer, Name, "SizeOfRawData", startOffset + 0x10);
-			PointerToRawDataVM = new UInt32HexField(buffer, Name, "PointerToRawData", startOffset + 0x14);
-			PointerToRelocationsVM = new UInt32HexField(buffer, Name, "PointerToRelocations", startOffset + 0x18);
-			PointerToLinenumbersVM = new UInt32HexField(buffer, Name, "PointerToLinenumbers", startOffset + 0x1C);
-			NumberOfRelocationsVM = new UInt16HexField(buffer, Name, "NumberOfRelocations", startOffset + 0x20);
-			NumberOfLinenumbersVM = new UInt16HexField(buffer, Name, "NumberOfLinenumbers", startOffset + 0x22);
-			CharacteristicsVM = new UInt32FlagsHexField(buffer, Name, "Characteristics", startOffset + 0x24);
+		public ImageSectionHeaderVM(HexBuffer buffer, PeSectionData section)
+			: base(section.Span) {
+			Name = section.Name;
+			NameVM = new StringHexField(section.SectionName);
+			VirtualSizeVM = new UInt32HexField(section.VirtualSize);
+			VirtualAddressVM = new UInt32HexField(section.VirtualAddress);
+			SizeOfRawDataVM = new UInt32HexField(section.SizeOfRawData);
+			PointerToRawDataVM = new UInt32HexField(section.PointerToRawData);
+			PointerToRelocationsVM = new UInt32HexField(section.PointerToRelocations);
+			PointerToLinenumbersVM = new UInt32HexField(section.PointerToLinenumbers);
+			NumberOfRelocationsVM = new UInt16HexField(section.NumberOfRelocations);
+			NumberOfLinenumbersVM = new UInt16HexField(section.NumberOfLinenumbers);
+			CharacteristicsVM = new UInt32FlagsHexField(section.Characteristics);
 			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_DSECT", 0));
 			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_NOLOAD", 1));
 			CharacteristicsVM.Add(new BooleanHexBitField("TYPE_GROUP", 2));

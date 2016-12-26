@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
@@ -26,6 +27,14 @@ namespace dnSpy.Hex.Files.DotNet {
 	sealed class TablesHeapImpl : TablesHeap, IDotNetHeap {
 		public override DotNetMetadataHeaders Metadata => metadata;
 		DotNetMetadataHeaders metadata;
+
+		public override ReadOnlyCollection<MDTable> MDTables {
+			get {
+				if (!initialized)
+					Initialize();
+				return mdTablesReadOnly;
+			}
+		}
 
 		public override HexSpan HeaderSpan {
 			get {
@@ -105,6 +114,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		ulong sortedMask;
 		uint extraData;
 		MDTable[] mdTables;
+		ReadOnlyCollection<MDTable> mdTablesReadOnly;
 		TableRecordDataFactory[] tableRecordDataFactories;
 
 		internal static int MinimumSize => 0x18;
@@ -166,6 +176,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 			dnTableSizes.InitializeSizes((flags & MDStreamFlags.BigStrings) != 0, (flags & MDStreamFlags.BigGUID) != 0, (flags & MDStreamFlags.BigBlob) != 0, sizes);
 			mdTables = new MDTable[tableInfos.Length];
+			mdTablesReadOnly = new ReadOnlyCollection<MDTable>(mdTables);
 			tableRecordDataFactories = new TableRecordDataFactory[tableInfos.Length];
 			var tablesStartPos = pos;
 			bool bad = !Span.Span.Contains(pos);
@@ -182,7 +193,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 
 			tablesSpan = HexSpan.FromBounds(HexPosition.Min(Span.End.Position, tablesStartPos), HexPosition.Min(Span.End.Position, pos));
-			tablesHeaderData = new TablesHeaderDataImpl(new HexBufferSpan(buffer, tablesSpan), hasExtraData, rowsFieldCount);
+			tablesHeaderData = new TablesHeaderDataImpl(new HexBufferSpan(buffer, headerSpan), hasExtraData, rowsFieldCount);
 		}
 
 		TableRecordDataFactory CreateFactory(MDTable mdTable) {

@@ -64,9 +64,9 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// </summary>
 	public abstract class ComplexData : BufferData {
 		/// <summary>
-		/// Gets the name
+		/// Gets the name or an empty string
 		/// </summary>
-		protected string Name { get; }
+		public string Name { get; }
 
 		/// <summary>
 		/// Constructor

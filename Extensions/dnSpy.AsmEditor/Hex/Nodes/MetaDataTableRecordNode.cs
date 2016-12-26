@@ -20,10 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;

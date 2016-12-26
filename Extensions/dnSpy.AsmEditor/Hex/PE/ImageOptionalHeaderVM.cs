@@ -20,6 +20,7 @@
 using System.Collections.Generic;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class ImageOptionalHeaderVM : HexVM {
@@ -48,22 +49,22 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public UInt16FlagsHexField DllCharacteristicsVM { get; }
 		public UInt32HexField LoaderFlagsVM { get; }
 		public UInt32HexField NumberOfRvaAndSizesVM { get; }
-		public DataDirVM DataDir0VM { get; }
-		public DataDirVM DataDir1VM { get; }
-		public DataDirVM DataDir2VM { get; }
-		public DataDirVM DataDir3VM { get; }
-		public DataDirVM DataDir4VM { get; }
-		public DataDirVM DataDir5VM { get; }
-		public DataDirVM DataDir6VM { get; }
-		public DataDirVM DataDir7VM { get; }
-		public DataDirVM DataDir8VM { get; }
-		public DataDirVM DataDir9VM { get; }
-		public DataDirVM DataDir10VM { get; }
-		public DataDirVM DataDir11VM { get; }
-		public DataDirVM DataDir12VM { get; }
-		public DataDirVM DataDir13VM { get; }
-		public DataDirVM DataDir14VM { get; }
-		public DataDirVM DataDir15VM { get; }
+		public DataDirectoryVM DataDir0VM { get; }
+		public DataDirectoryVM DataDir1VM { get; }
+		public DataDirectoryVM DataDir2VM { get; }
+		public DataDirectoryVM DataDir3VM { get; }
+		public DataDirectoryVM DataDir4VM { get; }
+		public DataDirectoryVM DataDir5VM { get; }
+		public DataDirectoryVM DataDir6VM { get; }
+		public DataDirectoryVM DataDir7VM { get; }
+		public DataDirectoryVM DataDir8VM { get; }
+		public DataDirectoryVM DataDir9VM { get; }
+		public DataDirectoryVM DataDir10VM { get; }
+		public DataDirectoryVM DataDir11VM { get; }
+		public DataDirectoryVM DataDir12VM { get; }
+		public DataDirectoryVM DataDir13VM { get; }
+		public DataDirectoryVM DataDir14VM { get; }
+		public DataDirectoryVM DataDir15VM { get; }
 
 		public override IEnumerable<HexField> HexFields => hexFields;
 		HexField[] hexFields;
@@ -86,33 +87,32 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			new IntegerHexBitFieldEnumInfo(17, "XboxCodeCatalog"),
 		};
 
-		protected ImageOptionalHeaderVM(HexBuffer buffer, HexSpan span, ulong offs1, ulong offs2)
-			: base(span) {
-			var startOffset = span.Start;
-			MagicVM = new UInt16HexField(buffer, Name, "Magic", startOffset + 0);
-			MajorLinkerVersionVM = new ByteHexField(buffer, Name, "MajorLinkerVersion", startOffset + 2, true);
-			MinorLinkerVersionVM = new ByteHexField(buffer, Name, "MinorLinkerVersion", startOffset + 3, true);
-			SizeOfCodeVM = new UInt32HexField(buffer, Name, "SizeOfCode", startOffset + 4);
-			SizeOfInitializedDataVM = new UInt32HexField(buffer, Name, "SizeOfInitializedData", startOffset + 8);
-			SizeOfUninitializedDataVM = new UInt32HexField(buffer, Name, "SizeOfUninitializedData", startOffset + 0x0C);
-			AddressOfEntryPointVM = new UInt32HexField(buffer, Name, "AddressOfEntryPoint", startOffset + 0x10);
-			BaseOfCodeVM = new UInt32HexField(buffer, Name, "BaseOfCode", startOffset + 0x14);
+		protected ImageOptionalHeaderVM(HexBuffer buffer, PeOptionalHeaderData optionalHeader)
+			: base(optionalHeader.Span) {
+			MagicVM = new UInt16HexField(optionalHeader.Magic);
+			MajorLinkerVersionVM = new ByteHexField(optionalHeader.MajorLinkerVersion, true);
+			MinorLinkerVersionVM = new ByteHexField(optionalHeader.MinorLinkerVersion, true);
+			SizeOfCodeVM = new UInt32HexField(optionalHeader.SizeOfCode);
+			SizeOfInitializedDataVM = new UInt32HexField(optionalHeader.SizeOfInitializedData);
+			SizeOfUninitializedDataVM = new UInt32HexField(optionalHeader.SizeOfUninitializedData);
+			AddressOfEntryPointVM = new UInt32HexField(optionalHeader.AddressOfEntryPoint);
+			BaseOfCodeVM = new UInt32HexField(optionalHeader.BaseOfCode);
 
-			SectionAlignmentVM = new UInt32HexField(buffer, Name, "SectionAlignment", startOffset + offs1 + 0);
-			FileAlignmentVM = new UInt32HexField(buffer, Name, "FileAlignment", startOffset + offs1 + 4);
-			MajorOperatingSystemVersionVM = new UInt16HexField(buffer, Name, "MajorOperatingSystemVersion", startOffset + offs1 + 8, true);
-			MinorOperatingSystemVersionVM = new UInt16HexField(buffer, Name, "MinorOperatingSystemVersion", startOffset + offs1 + 0x0A, true);
-			MajorImageVersionVM = new UInt16HexField(buffer, Name, "MajorImageVersion", startOffset + offs1 + 0x0C, true);
-			MinorImageVersionVM = new UInt16HexField(buffer, Name, "MinorImageVersion", startOffset + offs1 + 0x0E, true);
-			MajorSubsystemVersionVM = new UInt16HexField(buffer, Name, "MajorSubsystemVersion", startOffset + offs1 + 0x10, true);
-			MinorSubsystemVersionVM = new UInt16HexField(buffer, Name, "MinorSubsystemVersion", startOffset + offs1 + 0x12, true);
-			Win32VersionValueVM = new UInt32HexField(buffer, Name, "Win32VersionValue", startOffset + offs1 + 0x14, true);
-			SizeOfImageVM = new UInt32HexField(buffer, Name, "SizeOfImage", startOffset + offs1 + 0x18);
-			SizeOfHeadersVM = new UInt32HexField(buffer, Name, "SizeOfHeaders", startOffset + offs1 + 0x1C);
-			CheckSumVM = new UInt32HexField(buffer, Name, "CheckSum", startOffset + offs1 + 0x20);
-			SubsystemVM = new UInt16FlagsHexField(buffer, Name, "Subsystem", startOffset + offs1 + 0x24);
+			SectionAlignmentVM = new UInt32HexField(optionalHeader.SectionAlignment);
+			FileAlignmentVM = new UInt32HexField(optionalHeader.FileAlignment);
+			MajorOperatingSystemVersionVM = new UInt16HexField(optionalHeader.MajorOperatingSystemVersion, true);
+			MinorOperatingSystemVersionVM = new UInt16HexField(optionalHeader.MinorOperatingSystemVersion, true);
+			MajorImageVersionVM = new UInt16HexField(optionalHeader.MajorImageVersion, true);
+			MinorImageVersionVM = new UInt16HexField(optionalHeader.MinorImageVersion, true);
+			MajorSubsystemVersionVM = new UInt16HexField(optionalHeader.MajorSubsystemVersion, true);
+			MinorSubsystemVersionVM = new UInt16HexField(optionalHeader.MinorSubsystemVersion, true);
+			Win32VersionValueVM = new UInt32HexField(optionalHeader.Win32VersionValue, true);
+			SizeOfImageVM = new UInt32HexField(optionalHeader.SizeOfImage);
+			SizeOfHeadersVM = new UInt32HexField(optionalHeader.SizeOfHeaders);
+			CheckSumVM = new UInt32HexField(optionalHeader.CheckSum);
+			SubsystemVM = new UInt16FlagsHexField(optionalHeader.Subsystem);
 			SubsystemVM.Add(new IntegerHexBitField("Subsystem", 0, 16, SubsystemInfos));
-			DllCharacteristicsVM = new UInt16FlagsHexField(buffer, Name, "DllCharacteristics", startOffset + offs1 + 0x26);
+			DllCharacteristicsVM = new UInt16FlagsHexField(optionalHeader.DllCharacteristics);
 			DllCharacteristicsVM.Add(new BooleanHexBitField("Reserved1", 0));
 			DllCharacteristicsVM.Add(new BooleanHexBitField("Reserved2", 1));
 			DllCharacteristicsVM.Add(new BooleanHexBitField("Reserved3", 2));
@@ -129,30 +129,35 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			DllCharacteristicsVM.Add(new BooleanHexBitField("WDM Driver", 13));
 			DllCharacteristicsVM.Add(new BooleanHexBitField("Guard CF", 14));
 			DllCharacteristicsVM.Add(new BooleanHexBitField("Terminal Server Aware", 15));
-			LoaderFlagsVM = new UInt32HexField(buffer, Name, "LoaderFlags", startOffset + offs2 + 0);
-			NumberOfRvaAndSizesVM = new UInt32HexField(buffer, Name, "NumberOfRvaAndSizes", startOffset + offs2 + 4);
+			LoaderFlagsVM = new UInt32HexField(optionalHeader.LoaderFlags);
+			NumberOfRvaAndSizesVM = new UInt32HexField(optionalHeader.NumberOfRvaAndSizes);
 
-			ulong doffs = offs2 + 8;
-			DataDir0VM = new DataDirVM(buffer, Name, "Export", startOffset + doffs + 0);
-			DataDir1VM = new DataDirVM(buffer, Name, "Import", startOffset + doffs + 8);
-			DataDir2VM = new DataDirVM(buffer, Name, "Resource", startOffset + doffs + 0x10);
-			DataDir3VM = new DataDirVM(buffer, Name, "Exception", startOffset + doffs + 0x18);
-			DataDir4VM = new DataDirVM(buffer, Name, "Security", startOffset + doffs + 0x20);
-			DataDir5VM = new DataDirVM(buffer, Name, "Base Reloc", startOffset + doffs + 0x28);
-			DataDir6VM = new DataDirVM(buffer, Name, "Debug", startOffset + doffs + 0x30);
-			DataDir7VM = new DataDirVM(buffer, Name, "Architecture", startOffset + doffs + 0x38);
-			DataDir8VM = new DataDirVM(buffer, Name, "Global Ptr", startOffset + doffs + 0x40);
-			DataDir9VM = new DataDirVM(buffer, Name, "TLS", startOffset + doffs + 0x48);
-			DataDir10VM = new DataDirVM(buffer, Name, "Load Config", startOffset + doffs + 0x50);
-			DataDir11VM = new DataDirVM(buffer, Name, "Bound Import", startOffset + doffs + 0x58);
-			DataDir12VM = new DataDirVM(buffer, Name, "IAT", startOffset + doffs + 0x60);
-			DataDir13VM = new DataDirVM(buffer, Name, "Delay Import", startOffset + doffs + 0x68);
-			DataDir14VM = new DataDirVM(buffer, Name, ".NET", startOffset + doffs + 0x70);
-			DataDir15VM = new DataDirVM(buffer, Name, "Reserved15", startOffset + doffs + 0x78);
+			DataDir0VM = Create(optionalHeader, 0, "Export");
+			DataDir1VM = Create(optionalHeader, 1, "Import");
+			DataDir2VM = Create(optionalHeader, 2, "Resource");
+			DataDir3VM = Create(optionalHeader, 3, "Exception");
+			DataDir4VM = Create(optionalHeader, 4, "Security");
+			DataDir5VM = Create(optionalHeader, 5, "Base Reloc");
+			DataDir6VM = Create(optionalHeader, 6, "Debug");
+			DataDir7VM = Create(optionalHeader, 7, "Architecture");
+			DataDir8VM = Create(optionalHeader, 8, "Global Ptr");
+			DataDir9VM = Create(optionalHeader, 9, "TLS");
+			DataDir10VM = Create(optionalHeader, 10, "Load Config");
+			DataDir11VM = Create(optionalHeader, 11, "Bound Import");
+			DataDir12VM = Create(optionalHeader, 12, "IAT");
+			DataDir13VM = Create(optionalHeader, 13, "Delay Import");
+			DataDir14VM = Create(optionalHeader, 14, ".NET");
+			DataDir15VM = Create(optionalHeader, 15, "Reserved15");
 		}
 
-		protected void AddDataDirs(List<HexField> fields, HexPosition end) {
-			var dataDirs = new DataDirVM[16] {
+		static DataDirectoryVM Create(PeOptionalHeaderData optionalHeader, int index, string name) {
+			if (index < optionalHeader.DataDirectory.Data.FieldCount)
+				return new DataDirectoryVM(optionalHeader.DataDirectory.Data[index].Data, name);
+			return DataDirectoryVM.CreateEmpty();
+		}
+
+		protected void AddDataDirs(List<HexField> fields, PeOptionalHeaderData optionalHeader) {
+			var dataDirs = new DataDirectoryVM[16] {
 				DataDir0VM,
 				DataDir1VM,
 				DataDir2VM,
@@ -171,16 +176,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				DataDir15VM,
 			};
 
-			var position = dataDirs[0].RVAVM.Span.Start;
 			for (int i = 0; i < dataDirs.Length; i++) {
-				var nextPosition = position + 8;
-				if (nextPosition <= end) {
+				if (i < optionalHeader.DataDirectory.Data.FieldCount) {
 					fields.Add(dataDirs[i].RVAVM);
 					fields.Add(dataDirs[i].SizeVM);
 				}
 				else
 					dataDirs[i].IsVisible = false;
-				position = nextPosition;
 			}
 
 			hexFields = fields.ToArray();

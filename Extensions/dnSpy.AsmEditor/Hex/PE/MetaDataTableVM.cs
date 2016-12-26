@@ -21,10 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using dnlib.DotNet;
-using dnlib.DotNet.MD;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class MetaDataTableVM : HexVM {
@@ -77,7 +76,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly HexSpan guidHeapSpan;
 
 		protected MetaDataTableVM(HexBuffer buffer, TablesStreamVM tablesStream, MDTable mdTable, HexSpan stringsHeapSpan, HexSpan guidHeapSpan)
-			: base(HexSpan.FromBounds((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset)) {
+			: base(mdTable.Span) {
 			this.buffer = buffer;
 			TablesStream = tablesStream;
 			this.stringsHeapSpan = stringsHeapSpan;

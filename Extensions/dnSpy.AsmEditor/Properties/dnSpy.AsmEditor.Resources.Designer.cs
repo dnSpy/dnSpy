@@ -3068,24 +3068,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} RVA.
-        /// </summary>
-        public static string HexField_RelativeVirtualAddress {
-            get {
-                return ResourceManager.GetString("HexField_RelativeVirtualAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} Size.
-        /// </summary>
-        public static string HexField_Size {
-            get {
-                return ResourceManager.GetString("HexField_Size", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cor20 Header.
         /// </summary>
         public static string HexNode_Cor20_Header {

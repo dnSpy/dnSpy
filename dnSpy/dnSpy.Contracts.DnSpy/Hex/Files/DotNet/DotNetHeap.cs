@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
@@ -67,6 +68,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// Gets the metadata type
 		/// </summary>
 		public TablesHeapType TablesHeapType { get; }
+
+		/// <summary>
+		/// Gets all metadata table infos
+		/// </summary>
+		public abstract ReadOnlyCollection<MDTable> MDTables { get; }
 
 		/// <summary>
 		/// Span of header

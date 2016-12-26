@@ -20,9 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnlib.DotNet;
-using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.PE {
@@ -667,7 +666,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new Int16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Action", 0, 16, SecurityActionInfos));
 				return field;
 			}

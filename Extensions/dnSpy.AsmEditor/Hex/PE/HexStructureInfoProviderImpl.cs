@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification.DnSpy;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Files;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
@@ -35,36 +36,64 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class HexStructureInfoProviderFactoryImpl : HexStructureInfoProviderFactory {
 		readonly HexTextElementCreatorProvider hexTextElementCreatorProvider;
 		readonly PEStructureProviderFactory peStructureProviderFactory;
+		readonly HexBufferFileServiceFactory hexBufferFileServiceFactory;
 
 		[ImportingConstructor]
-		HexStructureInfoProviderFactoryImpl(HexTextElementCreatorProvider hexTextElementCreatorProvider, PEStructureProviderFactory peStructureProviderFactory) {
+		HexStructureInfoProviderFactoryImpl(HexTextElementCreatorProvider hexTextElementCreatorProvider, PEStructureProviderFactory peStructureProviderFactory, HexBufferFileServiceFactory hexBufferFileServiceFactory) {
 			this.hexTextElementCreatorProvider = hexTextElementCreatorProvider;
 			this.peStructureProviderFactory = peStructureProviderFactory;
+			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
 		}
 
-		public override HexStructureInfoProvider Create(HexView hexView) {
-			//TODO: The current code only supports file layout, not memory layout
-			if (hexView.Buffer.IsMemory)
-				return null;
-			var pePosition = HexPosition.Zero;
-			var peStructureProvider = peStructureProviderFactory.TryGetProvider(hexView.Buffer, pePosition);
-			if (peStructureProvider == null)
-				return null;
-			return new HexStructureInfoProviderImpl(hexTextElementCreatorProvider, peStructureProvider);
-		}
+		public override HexStructureInfoProvider Create(HexView hexView) =>
+			new HexStructureInfoProviderImpl(hexTextElementCreatorProvider, peStructureProviderFactory, hexBufferFileServiceFactory.Create(hexView.Buffer));
 	}
 
 	sealed class HexStructureInfoProviderImpl : HexStructureInfoProvider {
 		readonly HexTextElementCreatorProvider hexTextElementCreatorProvider;
-		readonly PEStructure peStructure;
+		readonly PEStructureProviderFactory peStructureProviderFactory;
+		readonly HexBufferFileService hexBufferFileService;
+		readonly Dictionary<HexBufferFile, PEStructure> peStructures;
 
-		public HexStructureInfoProviderImpl(HexTextElementCreatorProvider hexTextElementCreatorProvider, PEStructureProvider peStructureProvider) {
+		public HexStructureInfoProviderImpl(HexTextElementCreatorProvider hexTextElementCreatorProvider, PEStructureProviderFactory peStructureProviderFactory, HexBufferFileService hexBufferFileService) {
 			if (hexTextElementCreatorProvider == null)
 				throw new ArgumentNullException(nameof(hexTextElementCreatorProvider));
-			if (peStructureProvider == null)
-				throw new ArgumentNullException(nameof(peStructureProvider));
+			if (peStructureProviderFactory == null)
+				throw new ArgumentNullException(nameof(peStructureProviderFactory));
+			if (hexBufferFileService == null)
+				throw new ArgumentNullException(nameof(hexBufferFileService));
 			this.hexTextElementCreatorProvider = hexTextElementCreatorProvider;
-			peStructure = new PEStructure(peStructureProvider);
+			this.peStructureProviderFactory = peStructureProviderFactory;
+			this.hexBufferFileService = hexBufferFileService;
+			peStructures = new Dictionary<HexBufferFile, PEStructure>();
+			hexBufferFileService.BufferFilesRemoved += HexBufferFileService_BufferFilesRemoved;
+			foreach (var file in hexBufferFileService.Files)
+				AddFile(file);
+		}
+
+		void HexBufferFileService_BufferFilesRemoved(object sender, BufferFilesRemovedEventArgs e) {
+			foreach (var file in e.Files) {
+				bool b = peStructures.Remove(file);
+				Debug.Assert(b);
+			}
+		}
+
+		void AddFile(HexBufferFile file) {
+			if (file.IsRemoved)
+				return;
+			var provider = peStructureProviderFactory.TryGetProvider(file);
+			if (provider == null)
+				return;
+			peStructures.Add(file, new PEStructure(provider));
+		}
+
+		PEStructure GetPEStructure(HexPosition position) {
+			var file = hexBufferFileService.GetFile(position, checkNestedFiles: false);
+			if (file == null)
+				return null;
+			PEStructure peStructure;
+			bool b = peStructures.TryGetValue(file, out peStructure);
+			return peStructure;
 		}
 
 		sealed class PEStructure {
@@ -154,9 +183,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		FieldAndStructure? GetField(HexPosition position) => peStructure.GetField(position);
+		FieldAndStructure? GetField(HexPosition position) => GetPEStructure(position)?.GetField(position);
 
 		public override IEnumerable<HexStructureField> GetFields(HexPosition position) {
+			var peStructure = GetPEStructure(position);
+			if (peStructure == null)
+				yield break;
+
 			var info = GetField(position);
 			if (info != null) {
 				var buffer = peStructure.Buffer;
@@ -178,6 +211,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		public override object GetReference(HexPosition position) {
+			var peStructure = GetPEStructure(position);
+			if (peStructure == null)
+				return null;
+
 			var info = GetField(position);
 			if (info != null)
 				return new HexFieldReference(new HexBufferSpan(peStructure.Buffer, peStructure.PESpan), info.Value.Structure, info.Value.Field);
@@ -194,24 +231,28 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		public override object GetToolTip(HexPosition position) {
+			var peStructure = GetPEStructure(position);
+			if (peStructure == null)
+				return null;
+
 			var info = GetField(position);
 			if (info != null) {
 				var creator = new ToolTipCreator(hexTextElementCreatorProvider);
-				bool create = CreateFieldToolTip(creator, info.Value);
+				bool create = CreateFieldToolTip(peStructure, creator, info.Value);
 				return create ? creator.Create() : null;
 			}
 
 			var mfInfo = peStructure.GetMethodBodyInfoAndField(position);
 			if (mfInfo != null) {
 				var creator = new ToolTipCreator(hexTextElementCreatorProvider);
-				bool create = CreateMethodBodyToolTip(creator, mfInfo.Value.MethodBodyInfo, mfInfo.Value.FieldInfo, position, mfInfo.Value.MethodBodyInfo.IsSmallExceptionClauses);
+				bool create = CreateMethodBodyToolTip(peStructure, creator, mfInfo.Value.MethodBodyInfo, mfInfo.Value.FieldInfo, position, mfInfo.Value.MethodBodyInfo.IsSmallExceptionClauses);
 				return create ? creator.Create() : null;
 			}
 
 			return null;
 		}
 
-		bool CreateFieldToolTip(ToolTipCreator creator, FieldAndStructure info) {
+		bool CreateFieldToolTip(PEStructure peStructure, ToolTipCreator creator, FieldAndStructure info) {
 			var output = new DataFormatter(creator.Writer);
 			var mdRec = info.Structure as MetaDataTableRecordVM;
 			if (mdRec != null) {
@@ -228,11 +269,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				output.WriteStructAndField(info.Structure.Name, info.Field.Name);
 			}
 			output.WriteEquals();
-			WriteValue(output, info.Field);
+			WriteValue(peStructure, output, info.Field);
 			return true;
 		}
 
-		void WriteValue(DataFormatter output, HexField field) {
+		void WriteValue(PEStructure peStructure, DataFormatter output, HexField field) {
 			var stringField = field as StringHexField;
 			if (stringField != null) {
 				output.Write(BoxedTextColor.String, SimpleTypeConverter.ToString(stringField.FormattedValue, false));
@@ -344,7 +385,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			new FlagInfo("FAULT", uint.MaxValue, 4),
 		};
 
-		bool CreateMethodBodyToolTip(ToolTipCreator creator, MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position, bool isSmallExceptionClauses) {
+		bool CreateMethodBodyToolTip(PEStructure peStructure, ToolTipCreator creator, MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position, bool isSmallExceptionClauses) {
 			const string tinyMethodHeader = "TinyMethodHeader";
 			const string fatMethodHeader = "FatMethodHeader";
 			const string methodBody = "MethodBody";

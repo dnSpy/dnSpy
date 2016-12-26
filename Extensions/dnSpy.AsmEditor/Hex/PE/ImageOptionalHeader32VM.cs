@@ -19,10 +19,11 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageOptionalHeader32VM : ImageOptionalHeaderVM {
-		public override string Name => "IMAGE_OPTIONAL_HEADER32";
+		public override string Name { get; }
 		public override bool Is32Bit => true;
 		public UInt32HexField BaseOfDataVM { get; }
 		public UInt32HexField ImageBaseVM { get; }
@@ -31,16 +32,16 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public UInt32HexField SizeOfHeapReserveVM { get; }
 		public UInt32HexField SizeOfHeapCommitVM { get; }
 
-		public ImageOptionalHeader32VM(HexBuffer buffer, HexSpan span)
-			: base(buffer, span, 0x20, 0x58) {
-			var startOffset = span.Start;
-			BaseOfDataVM = new UInt32HexField(buffer, Name, "BaseOfData", startOffset + 0x18);
-			ImageBaseVM = new UInt32HexField(buffer, Name, "ImageBase", startOffset + 0x1C);
+		public ImageOptionalHeader32VM(HexBuffer buffer, PeOptionalHeader32Data optionalHeader)
+			: base(buffer, optionalHeader) {
+			Name = optionalHeader.Name;
+			BaseOfDataVM = new UInt32HexField(optionalHeader.BaseOfData);
+			ImageBaseVM = new UInt32HexField(optionalHeader.ImageBase);
 
-			SizeOfStackReserveVM = new UInt32HexField(buffer, Name, "SizeOfStackReserve", startOffset + 0x48);
-			SizeOfStackCommitVM = new UInt32HexField(buffer, Name, "SizeOfStackCommit", startOffset + 0x4C);
-			SizeOfHeapReserveVM = new UInt32HexField(buffer, Name, "SizeOfHeapReserve", startOffset + 0x50);
-			SizeOfHeapCommitVM = new UInt32HexField(buffer, Name, "SizeOfHeapCommit", startOffset + 0x54);
+			SizeOfStackReserveVM = new UInt32HexField(optionalHeader.SizeOfStackReserve);
+			SizeOfStackCommitVM = new UInt32HexField(optionalHeader.SizeOfStackCommit);
+			SizeOfHeapReserveVM = new UInt32HexField(optionalHeader.SizeOfHeapReserve);
+			SizeOfHeapCommitVM = new UInt32HexField(optionalHeader.SizeOfHeapCommit);
 
 			var list = new List<HexField> {
 				MagicVM,
@@ -75,7 +76,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				NumberOfRvaAndSizesVM,
 			};
 
-			AddDataDirs(list, span.End);
+			AddDataDirs(list, optionalHeader);
 		}
 	}
 }

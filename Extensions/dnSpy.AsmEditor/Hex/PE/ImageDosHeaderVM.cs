@@ -19,10 +19,11 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class ImageDosHeaderVM : HexVM {
-		public override string Name => "IMAGE_DOS_HEADER";
+		public override string Name { get; }
 		public UInt16HexField MagicVM { get; }
 		public UInt16HexField CblpVM { get; }
 		public UInt16HexField CpVM { get; }
@@ -58,40 +59,40 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public ImageDosHeaderVM(HexBuffer buffer, HexSpan span)
-			: base(span) {
-			var startOffset = span.Start;
-			MagicVM = new UInt16HexField(buffer, Name, "e_magic", startOffset + 0);
-			CblpVM = new UInt16HexField(buffer, Name, "e_cblp", startOffset + 2);
-			CpVM = new UInt16HexField(buffer, Name, "e_cp", startOffset + 4);
-			CrlcVM = new UInt16HexField(buffer, Name, "e_crlc", startOffset + 6);
-			CparhdrVM = new UInt16HexField(buffer, Name, "e_cparhdr", startOffset + 8);
-			MinallocVM = new UInt16HexField(buffer, Name, "e_minalloc", startOffset + 0x0A);
-			MaxallocVM = new UInt16HexField(buffer, Name, "e_maxalloc", startOffset + 0x0C);
-			SsVM = new UInt16HexField(buffer, Name, "e_ss", startOffset + 0x0E);
-			SpVM = new UInt16HexField(buffer, Name, "e_sp", startOffset + 0x10);
-			CsumVM = new UInt16HexField(buffer, Name, "e_csum", startOffset + 0x12);
-			IpVM = new UInt16HexField(buffer, Name, "e_ip", startOffset + 0x14);
-			CsVM = new UInt16HexField(buffer, Name, "e_cs", startOffset + 0x16);
-			LfarlcVM = new UInt16HexField(buffer, Name, "e_lfarlc", startOffset + 0x18);
-			OvnoVM = new UInt16HexField(buffer, Name, "e_ovno", startOffset + 0x1A);
-			Res_0VM = new UInt16HexField(buffer, Name, "e_res[0]", startOffset + 0x1C);
-			Res_1VM = new UInt16HexField(buffer, Name, "e_res[1]", startOffset + 0x1E);
-			Res_2VM = new UInt16HexField(buffer, Name, "e_res[2]", startOffset + 0x20);
-			Res_3VM = new UInt16HexField(buffer, Name, "e_res[3]", startOffset + 0x22);
-			OemidVM = new UInt16HexField(buffer, Name, "e_oemid", startOffset + 0x24);
-			OeminfoVM = new UInt16HexField(buffer, Name, "e_oeminfo", startOffset + 0x26);
-			Res2_0VM = new UInt16HexField(buffer, Name, "e_res2[0]", startOffset + 0x28);
-			Res2_1VM = new UInt16HexField(buffer, Name, "e_res2[1]", startOffset + 0x2A);
-			Res2_2VM = new UInt16HexField(buffer, Name, "e_res2[2]", startOffset + 0x2C);
-			Res2_3VM = new UInt16HexField(buffer, Name, "e_res2[3]", startOffset + 0x2E);
-			Res2_4VM = new UInt16HexField(buffer, Name, "e_res2[4]", startOffset + 0x30);
-			Res2_5VM = new UInt16HexField(buffer, Name, "e_res2[5]", startOffset + 0x32);
-			Res2_6VM = new UInt16HexField(buffer, Name, "e_res2[6]", startOffset + 0x34);
-			Res2_7VM = new UInt16HexField(buffer, Name, "e_res2[7]", startOffset + 0x36);
-			Res2_8VM = new UInt16HexField(buffer, Name, "e_res2[8]", startOffset + 0x38);
-			Res2_9VM = new UInt16HexField(buffer, Name, "e_res2[9]", startOffset + 0x3A);
-			LfanewVM = new Int32HexField(buffer, Name, "e_lfanew", startOffset + 0x3C);
+		public ImageDosHeaderVM(HexBuffer buffer, PeDosHeaderData dosHeader)
+			: base(dosHeader.Span.Span) {
+			Name = dosHeader.Name;
+			MagicVM = new UInt16HexField(dosHeader.Magic);
+			CblpVM = new UInt16HexField(dosHeader.Cblp);
+			CpVM = new UInt16HexField(dosHeader.Cp);
+			CrlcVM = new UInt16HexField(dosHeader.Crlc);
+			CparhdrVM = new UInt16HexField(dosHeader.Cparhdr);
+			MinallocVM = new UInt16HexField(dosHeader.Minalloc);
+			MaxallocVM = new UInt16HexField(dosHeader.Maxalloc);
+			SsVM = new UInt16HexField(dosHeader.Ss);
+			SpVM = new UInt16HexField(dosHeader.Sp);
+			CsumVM = new UInt16HexField(dosHeader.Csum);
+			IpVM = new UInt16HexField(dosHeader.Ip);
+			CsVM = new UInt16HexField(dosHeader.Cs);
+			LfarlcVM = new UInt16HexField(dosHeader.Lfarlc);
+			OvnoVM = new UInt16HexField(dosHeader.Ovno);
+			Res_0VM = new UInt16HexField(dosHeader.Res.Data[0].Data, dosHeader.Res.Name + "[0]");
+			Res_1VM = new UInt16HexField(dosHeader.Res.Data[1].Data, dosHeader.Res.Name + "[1]");
+			Res_2VM = new UInt16HexField(dosHeader.Res.Data[2].Data, dosHeader.Res.Name + "[2]");
+			Res_3VM = new UInt16HexField(dosHeader.Res.Data[3].Data, dosHeader.Res.Name + "[3]");
+			OemidVM = new UInt16HexField(dosHeader.Oemid);
+			OeminfoVM = new UInt16HexField(dosHeader.Oeminfo);
+			Res2_0VM = new UInt16HexField(dosHeader.Res2.Data[0].Data, dosHeader.Res2.Name + "[0]");
+			Res2_1VM = new UInt16HexField(dosHeader.Res2.Data[1].Data, dosHeader.Res2.Name + "[1]");
+			Res2_2VM = new UInt16HexField(dosHeader.Res2.Data[2].Data, dosHeader.Res2.Name + "[2]");
+			Res2_3VM = new UInt16HexField(dosHeader.Res2.Data[3].Data, dosHeader.Res2.Name + "[3]");
+			Res2_4VM = new UInt16HexField(dosHeader.Res2.Data[4].Data, dosHeader.Res2.Name + "[4]");
+			Res2_5VM = new UInt16HexField(dosHeader.Res2.Data[5].Data, dosHeader.Res2.Name + "[5]");
+			Res2_6VM = new UInt16HexField(dosHeader.Res2.Data[6].Data, dosHeader.Res2.Name + "[6]");
+			Res2_7VM = new UInt16HexField(dosHeader.Res2.Data[7].Data, dosHeader.Res2.Name + "[7]");
+			Res2_8VM = new UInt16HexField(dosHeader.Res2.Data[8].Data, dosHeader.Res2.Name + "[8]");
+			Res2_9VM = new UInt16HexField(dosHeader.Res2.Data[9].Data, dosHeader.Res2.Name + "[9]");
+			LfanewVM = new Int32HexField(dosHeader.Lfanew);
 
 			hexFields = new HexField[] {
 				MagicVM,

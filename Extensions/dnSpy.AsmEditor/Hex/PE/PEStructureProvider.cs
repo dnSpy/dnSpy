@@ -18,88 +18,31 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
-using dnlib.DotNet.MD;
-using dnlib.IO;
-using dnlib.PE;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
+using dnSpy.Contracts.Hex.Files.DotNet;
+using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class PEStructureProviderFactory {
-		public abstract PEStructureProvider TryGetProvider(HexBuffer buffer, HexPosition pePosition);
+		public abstract PEStructureProvider TryGetProvider(HexBufferFile file);
 	}
 
 	[Export(typeof(PEStructureProviderFactory))]
 	sealed class PEStructureProviderFactoryImpl : PEStructureProviderFactory {
-		public override PEStructureProvider TryGetProvider(HexBuffer buffer, HexPosition pePosition) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			if (pePosition >= HexPosition.MaxEndPosition)
-				throw new ArgumentOutOfRangeException(nameof(pePosition));
-			var imageLayout = GetImageLayout(buffer, pePosition);
-			//TODO: The current code assumes the PE data is in file layout, not memory layout
-			if (imageLayout != ImageLayout.File)
+		public override PEStructureProvider TryGetProvider(HexBufferFile file) {
+			if (file == null)
+				throw new ArgumentNullException(nameof(file));
+			var peHeaders = file.GetHeaders<PeHeaders>();
+			if (peHeaders == null)
 				return null;
-			if (!buffer.Span.Contains(pePosition))
-				return null;
-
-			IPEImage peImage;
-			try {
-				var creator = new HexBufferImageStreamCreator(buffer, HexSpan.FromBounds(pePosition, buffer.Span.End));
-				peImage = new PEImage(creator, imageLayout, true);
-			}
-			catch (BadImageFormatException) {
-				return null;
-			}
-			catch (IOException) {
-				return null;
-			}
-
-			var dict = buffer.Properties.GetOrCreateSingletonProperty(() => new Dict());
-			return dict.GetOrCreate(buffer, pePosition, () => new PEStructureProviderImpl(buffer, pePosition, peImage));
-		}
-
-		static ImageLayout GetImageLayout(HexBuffer buffer, HexPosition pePosition) {
-			//TODO: Checking IsMemory doesn't verify that it's memory layout, it just means that the underlying stream is a process stream
-			if (buffer.IsMemory)
-				return ImageLayout.Memory;
-			return ImageLayout.File;
-		}
-
-		sealed class Dict {
-			readonly Dictionary<Key, PEStructureProvider> dict;
-
-			struct Key : IEquatable<Key> {
-				readonly HexBuffer buffer;
-				readonly HexPosition position;
-				public Key(HexBuffer buffer, HexPosition position) {
-					this.buffer = buffer;
-					this.position = position;
-				}
-
-				public bool Equals(Key other) => buffer == other.buffer && position == other.position;
-				public override bool Equals(object obj) => obj is Key && Equals((Key)obj);
-				public override int GetHashCode() => (buffer?.GetHashCode() ?? 0) ^ position.GetHashCode();
-			}
-
-			public Dict() {
-				dict = new Dictionary<Key, PEStructureProvider>();
-			}
-
-			public PEStructureProvider GetOrCreate(HexBuffer buffer, HexPosition position, Func<PEStructureProvider> create) {
-				var key = new Key(buffer, position);
-				PEStructureProvider provider;
-				if (!dict.TryGetValue(key, out provider))
-					dict.Add(key, provider = create());
-				return provider;
-			}
+			return file.Properties.GetOrCreateSingletonProperty(typeof(PEStructureProviderImpl), () => new PEStructureProviderImpl(file, peHeaders));
 		}
 	}
 
 	abstract class PEStructureProvider {
+		public abstract HexBufferFile BufferFile { get; }
 		public abstract HexBuffer Buffer { get; }
 		public abstract HexSpan PESpan { get; }
 		public abstract ImageDosHeaderVM ImageDosHeader { get; }
@@ -120,8 +63,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	}
 
 	sealed class PEStructureProviderImpl : PEStructureProvider {
-		public override HexBuffer Buffer => buffer;
-		public override HexSpan PESpan => HexSpan.FromBounds(pePosition, peEndPosition);
+		public override HexBufferFile BufferFile => file;
+		public override HexBuffer Buffer => file.Buffer;
+		public override HexSpan PESpan => file.Span;
 		public override ImageDosHeaderVM ImageDosHeader => imageDosHeader;
 		public override ImageFileHeaderVM ImageFileHeader => imageFileHeader;
 		public override ImageOptionalHeaderVM ImageOptionalHeader => imageOptionalHeader;
@@ -132,10 +76,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override StorageStreamVM[] StorageStreams => storageStreams;
 		public override TablesStreamVM TablesStream => tablesStream;
 
-		readonly HexBuffer buffer;
-		readonly HexPosition pePosition;
-		readonly HexPosition peEndPosition;
-		readonly IPEImage peImage;
+		readonly HexBufferFile file;
+		readonly PeHeaders peHeaders;
 		readonly ImageDosHeaderVM imageDosHeader;
 		readonly ImageFileHeaderVM imageFileHeader;
 		readonly ImageOptionalHeaderVM imageOptionalHeader;
@@ -146,102 +88,60 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly StorageStreamVM[] storageStreams;
 		readonly TablesStreamVM tablesStream;
 
-		public PEStructureProviderImpl(HexBuffer buffer, HexPosition pePosition, IPEImage peImage) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			if (!buffer.Span.Contains(pePosition))
-				throw new ArgumentOutOfRangeException(nameof(pePosition));
-			if (peImage == null)
-				throw new ArgumentNullException(nameof(peImage));
-			this.buffer = buffer;
-			this.pePosition = pePosition;
-			this.peImage = peImage;
+		public PEStructureProviderImpl(HexBufferFile file, PeHeaders peHeaders) {
+			if (file == null)
+				throw new ArgumentNullException(nameof(file));
+			if (peHeaders == null)
+				throw new ArgumentNullException(nameof(peHeaders));
+			if (peHeaders != file.GetHeaders<PeHeaders>())
+				throw new ArgumentException();
+			this.file = file;
+			this.peHeaders = peHeaders;
+			var buffer = file.Buffer;
 
-			imageDosHeader = new ImageDosHeaderVM(buffer, HexSpan.FromBounds((ulong)peImage.ImageDosHeader.StartOffset, (ulong)peImage.ImageDosHeader.EndOffset));
-			imageFileHeader = new ImageFileHeaderVM(buffer, HexSpan.FromBounds((ulong)peImage.ImageNTHeaders.FileHeader.StartOffset, (ulong)peImage.ImageNTHeaders.FileHeader.EndOffset));
-			if (peImage.ImageNTHeaders.OptionalHeader is ImageOptionalHeader32)
-				imageOptionalHeader = new ImageOptionalHeader32VM(buffer, HexSpan.FromBounds((ulong)peImage.ImageNTHeaders.OptionalHeader.StartOffset, (ulong)peImage.ImageNTHeaders.OptionalHeader.EndOffset));
+			imageDosHeader = new ImageDosHeaderVM(buffer, peHeaders.DosHeader);
+			imageFileHeader = new ImageFileHeaderVM(buffer, peHeaders.FileHeader);
+			if (peHeaders.OptionalHeader.Is32Bit)
+				imageOptionalHeader = new ImageOptionalHeader32VM(buffer, (PeOptionalHeader32Data)peHeaders.OptionalHeader);
 			else
-				imageOptionalHeader = new ImageOptionalHeader64VM(buffer, HexSpan.FromBounds((ulong)peImage.ImageNTHeaders.OptionalHeader.StartOffset, (ulong)peImage.ImageNTHeaders.OptionalHeader.EndOffset));
-			sections = new ImageSectionHeaderVM[peImage.ImageSectionHeaders.Count];
+				imageOptionalHeader = new ImageOptionalHeader64VM(buffer, (PeOptionalHeader64Data)peHeaders.OptionalHeader);
+			sections = new ImageSectionHeaderVM[peHeaders.Sections.FieldCount];
 			for (int i = 0; i < sections.Length; i++)
-				sections[i] = new ImageSectionHeaderVM(buffer, HexSpan.FromBounds((ulong)peImage.ImageSectionHeaders[i].StartOffset, (ulong)peImage.ImageSectionHeaders[i].EndOffset));
-			imageCor20Header = TryCreateCor20(buffer, peImage);
+				sections[i] = new ImageSectionHeaderVM(buffer, peHeaders.Sections[i].Data);
+			var dnHeaders = file.GetHeaders<DotNetHeaders>();
 			storageStreams = Array.Empty<StorageStreamVM>();
-			if (imageCor20Header != null) {
-				var md = TryCreateMetaData(peImage);
-				if (md != null) {
-					var mdHeader = md.MetaDataHeader;
-					storageSignature = new StorageSignatureVM(buffer, (ulong)mdHeader.StartOffset, (int)(mdHeader.StorageHeaderOffset - mdHeader.StartOffset - 0x10));
-					storageHeader = new StorageHeaderVM(buffer, (ulong)mdHeader.StorageHeaderOffset);
-					var knownStreams = new List<DotNetStream> {
-						md.StringsStream,
-						md.USStream,
-						md.BlobStream,
-						md.GuidStream,
-						md.TablesStream,
-					};
-					if (md.IsCompressed) {
-						foreach (var stream in md.AllStreams) {
-							if (stream.Name == "#!")
-								knownStreams.Add(stream);
-						}
-					}
-					storageStreams = new StorageStreamVM[md.MetaDataHeader.StreamHeaders.Count];
+			if (dnHeaders != null) {
+				imageCor20Header = new ImageCor20HeaderVM(buffer, dnHeaders.Cor20);
+				var mdHeaders = dnHeaders.MetadataHeaders;
+				if (mdHeaders != null) {
+					storageSignature = new StorageSignatureVM(buffer, mdHeaders.MetadataHeader);
+					storageHeader = new StorageHeaderVM(buffer, mdHeaders.MetadataHeader);
+					storageStreams = new StorageStreamVM[mdHeaders.Streams.Count];
 					for (int i = 0; i < storageStreams.Length; i++) {
-						var sh = md.MetaDataHeader.StreamHeaders[i];
-						var knownStream = knownStreams.FirstOrDefault(a => a.StreamHeader == sh);
-						storageStreams[i] = new StorageStreamVM(buffer, knownStream, i, (ulong)sh.StartOffset, (int)(sh.EndOffset - sh.StartOffset - 8));
+						var ssh = mdHeaders.MetadataHeader.StreamHeaders.Data[i].Data;
+						var heap = mdHeaders.Streams[i];
+						storageStreams[i] = new StorageStreamVM(buffer, heap, ssh, i);
 					}
 
 					var metaDataTables = new MetaDataTableVM[0x40];
-					tablesStream = new TablesStreamVM(buffer, md.TablesStream, metaDataTables);
-					var stringsHeapSpan = HexSpan.FromBounds((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset);
-					var guidHeapSpan = HexSpan.FromBounds((ulong)md.GuidStream.StartOffset, (ulong)md.GuidStream.EndOffset);
-					foreach (var mdTable in md.TablesStream.MDTables) {
-						if (mdTable.Rows != 0)
-							metaDataTables[(int)mdTable.Table] = MetaDataTableVM.Create(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+					if (mdHeaders.TablesStream != null) {
+						tablesStream = new TablesStreamVM(buffer, mdHeaders.TablesStream, metaDataTables);
+						var stringsHeapSpan = GetSpan(mdHeaders.StringsStream);
+						var guidHeapSpan = GetSpan(mdHeaders.GUIDStream);
+						foreach (var mdTable in mdHeaders.TablesStream.MDTables) {
+							if (mdTable.Rows != 0)
+								metaDataTables[(int)mdTable.Table] = MetaDataTableVM.Create(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+						}
 					}
 				}
 			}
-
-			using (var stream = peImage.CreateFullStream())
-				peEndPosition = pePosition + (ulong)stream.Length;
 		}
 
-		static IMetaData TryCreateMetaData(IPEImage peImage) {
-			var dnDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-			if (dnDir.VirtualAddress == 0 || dnDir.Size < 0x48)
-				return null;
-			try {
-				return MetaDataCreator.CreateMetaData(peImage, true);
-			}
-			catch (BadImageFormatException) {
-				return null;
-			}
-			catch (IOException) {
-				return null;
-			}
-		}
-
-		static ImageCor20HeaderVM TryCreateCor20(HexBuffer buffer, IPEImage peImage) {
-			var dnDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-			const int COR20_HDR_SIZE = 0x48;
-			if (dnDir.VirtualAddress == 0 || dnDir.Size < COR20_HDR_SIZE)
-				return null;
-			return new ImageCor20HeaderVM(buffer, new HexSpan((ulong)peImage.ToFileOffset(dnDir.VirtualAddress), COR20_HDR_SIZE));
-		}
+		static HexSpan GetSpan(DotNetHeap heap) => heap?.Span.Span ?? default(HexSpan);
 
 		public override HexPosition RvaToBufferPosition(uint rva) =>
-			pePosition + (ulong)peImage.ToFileOffset((RVA)rva);
-
-		public override uint BufferPositionToRva(HexPosition position) {
-			if (position < pePosition)
-				return 0;
-			var offset = position - pePosition;
-			if (offset > long.MaxValue)
-				return 0;
-			return (uint)peImage.ToRVA((FileOffset)offset.ToUInt64());
-		}
+			peHeaders.RvaToBufferPosition(rva);
+		public override uint BufferPositionToRva(HexPosition position) =>
+			peHeaders.BufferPositionToRva(position);
 	}
 }

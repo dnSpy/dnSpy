@@ -18,16 +18,14 @@
 */
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class StorageStreamVM : HexVM {
-		public override string Name => "STORAGESTREAM";
+		public override string Name { get; }
 
-		public StorageStreamType StorageStreamType { get; }
+		public DotNetHeapKind HeapKind { get; }
 		public int StreamNumber { get; }
 		public UInt32HexField IOffsetVM { get; }
 		public UInt32HexField ISizeVM { get; }
@@ -35,40 +33,20 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public StorageStreamVM(HexBuffer buffer, DotNetStream knownStream, int streamNumber, HexPosition startOffset, int stringLen)
-			: base(new HexSpan(startOffset, (ulong)(8 + stringLen))) {
-			StorageStreamType = GetStorageStreamType(knownStream);
+		public StorageStreamVM(HexBuffer buffer, DotNetHeap heap, DotNetStorageStream storageStream, int streamNumber)
+			: base(storageStream.Span) {
+			Name = storageStream.Name;
+			HeapKind = heap.HeapKind;
 			StreamNumber = streamNumber;
-			IOffsetVM = new UInt32HexField(buffer, Name, "iOffset", startOffset + 0);
-			ISizeVM = new UInt32HexField(buffer, Name, "iSize", startOffset + 4);
-			RCNameVM = new StringHexField(buffer, Name, "rcName", startOffset + 8, Encoding.ASCII, stringLen);
+			IOffsetVM = new UInt32HexField(storageStream.Offset);
+			ISizeVM = new UInt32HexField(storageStream.Size);
+			RCNameVM = new StringHexField(storageStream.StreamName);
 
 			hexFields = new HexField[] {
 				IOffsetVM,
 				ISizeVM,
 				RCNameVM,
 			};
-		}
-
-		static StorageStreamType GetStorageStreamType(DotNetStream stream) {
-			if (stream == null)
-				return StorageStreamType.None;
-			if (stream is StringsStream)
-				return StorageStreamType.Strings;
-			if (stream is USStream)
-				return StorageStreamType.US;
-			if (stream is BlobStream)
-				return StorageStreamType.Blob;
-			if (stream is GuidStream)
-				return StorageStreamType.Guid;
-			if (stream is TablesStream)
-				return StorageStreamType.Tables;
-			if (stream.Name == "#Pdb")
-				return StorageStreamType.Pdb;
-			if (stream.Name == "#!")
-				return StorageStreamType.HotHeap;
-			Debug.Fail(string.Format("Shouldn't be here when stream is a known stream type: {0}", stream.GetType()));
-			return StorageStreamType.None;
 		}
 	}
 }

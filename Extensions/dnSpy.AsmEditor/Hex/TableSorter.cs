@@ -19,7 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using dnlib.DotNet.MD;
+using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.AsmEditor.Hex {
 	static class TableSorter {

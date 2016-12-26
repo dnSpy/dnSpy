@@ -363,7 +363,6 @@
     <Compile Include="Hex\NormalizedHexChangeCollectionExtensions.cs" />
     <Compile Include="Hex\PE\BufferToDocumentNodeService.cs" />
     <Compile Include="Hex\PE\DataFormatter.cs" />
-    <Compile Include="Hex\PE\HexBufferImageStream.cs" />
     <Compile Include="Hex\PE\HexField.cs" />
     <Compile Include="Hex\PE\HexReferenceConverterImpl.cs" />
     <Compile Include="Hex\PE\HexReferences.cs" />
@@ -384,7 +383,6 @@
     <Compile Include="Hex\PE\PEStructureProvider.cs" />
     <Compile Include="Hex\PE\StorageHeaderVM.cs" />
     <Compile Include="Hex\PE\StorageSignatureVM.cs" />
-    <Compile Include="Hex\PE\StorageStreamType.cs" />
     <Compile Include="Hex\PE\StorageStreamVM.cs" />
     <Compile Include="Hex\PE\TablesStreamVM.cs" />
     <Compile Include="Hex\PE\ToolTipCreator.cs" />

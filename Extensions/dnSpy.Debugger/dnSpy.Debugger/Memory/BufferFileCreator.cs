@@ -39,7 +39,6 @@ namespace dnSpy.Debugger.Memory {
 			this.debuggerHexBufferStreamProvider = debuggerHexBufferStreamProvider;
 			moduleReferences = new Dictionary<HexPosition, int>();
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
-			debuggerHexBufferStreamProvider.DebuggerHexBufferStream.UnderlyingStreamChanged += DebuggerHexBufferStream_UnderlyingStreamChanged;
 		}
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -100,7 +99,5 @@ namespace dnSpy.Debugger.Memory {
 			service.RemoveAllFiles();
 			moduleReferences.Clear();
 		}
-
-		void DebuggerHexBufferStream_UnderlyingStreamChanged(object sender, EventArgs e) => ClearAllFiles();
 	}
 }

@@ -36,6 +36,8 @@ namespace dnSpy.Hex.Files {
 
 		public override IEnumerable<HexBufferFile> Files {
 			get {
+				if (files.Count == 0)
+					yield break;
 				// This property isn't defined to return an ordered enumerable of files so make
 				// sure no-one depends on sorted files.
 				int index = (GetHashCode() & int.MaxValue) % files.Count;

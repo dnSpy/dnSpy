@@ -19,12 +19,12 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnlib.DotNet.MD;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class TablesStreamVM : HexVM {
-		public override string Name => "MiniMdSchema";
+		public override string Name { get; }
 
 		public UInt32HexField M_ulReservedVM { get; }
 		public ByteHexField M_majorVM { get; }
@@ -108,15 +108,15 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public MetaDataTableVM[] MetaDataTables => metaDataTables;
 		readonly MetaDataTableVM[] metaDataTables;
 
-		public TablesStreamVM(HexBuffer buffer, TablesStream tblStream, MetaDataTableVM[] metaDataTables)
-			: base(HexSpan.FromBounds((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset)) {
+		public TablesStreamVM(HexBuffer buffer, TablesHeap tablesHeap, MetaDataTableVM[] metaDataTables)
+			: base(tablesHeap.HeaderSpan) {
 			Debug.Assert(metaDataTables.Length == 0x40);
 			this.metaDataTables = metaDataTables;
-			var startOffset = new HexPosition((ulong)tblStream.StartOffset);
-			M_ulReservedVM = new UInt32HexField(buffer, Name, "m_ulReserved", startOffset + 0);
-			M_majorVM = new ByteHexField(buffer, Name, "m_major", startOffset + 4, true);
-			M_minorVM = new ByteHexField(buffer, Name, "m_minor", startOffset + 5, true);
-			M_heapsVM = new ByteFlagsHexField(buffer, Name, "m_heaps", startOffset + 6);
+			Name = tablesHeap.Header.Name;
+			M_ulReservedVM = new UInt32HexField(tablesHeap.Header.Reserved);
+			M_majorVM = new ByteHexField(tablesHeap.Header.MajorVersion, true);
+			M_minorVM = new ByteHexField(tablesHeap.Header.MinorVersion, true);
+			M_heapsVM = new ByteFlagsHexField(tablesHeap.Header.Flags);
 			M_heapsVM.Add(new BooleanHexBitField("BigStrings", 0));
 			M_heapsVM.Add(new BooleanHexBitField("BigGUID", 1));
 			M_heapsVM.Add(new BooleanHexBitField("BigBlob", 2));
@@ -125,10 +125,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			M_heapsVM.Add(new BooleanHexBitField("DeltaOnly", 5));
 			M_heapsVM.Add(new BooleanHexBitField("ExtraData", 6));
 			M_heapsVM.Add(new BooleanHexBitField("HasDelete", 7));
-			M_ridVM = new ByteHexField(buffer, Name, "m_rid", startOffset + 7);
-			M_maskvalidVM = new UInt64FlagsHexField(buffer, Name, "m_maskvalid", startOffset + 8);
+			M_ridVM = new ByteHexField(tablesHeap.Header.Log2Rid);
+			M_maskvalidVM = new UInt64FlagsHexField(tablesHeap.Header.ValidMask);
 			AddTableFlags(M_maskvalidVM);
-			M_sortedVM = new UInt64FlagsHexField(buffer, Name, "m_sorted", startOffset + 0x10);
+			M_sortedVM = new UInt64FlagsHexField(tablesHeap.Header.SortedMask);
 			AddTableFlags(M_sortedVM);
 
 			var list = new List<HexField> {
@@ -142,26 +142,25 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			};
 
 			rowsVM = new UInt32HexField[64];
-			ulong valid = tblStream.ValidMask;
-			var offs = startOffset + 0x18;
-			for (int i = 0; i < rowsVM.Length; i++) {
-				rowsVM[i] = new UInt32HexField(buffer, Name, string.Format("rows[{0:X2}]", i), offs);
-				if ((valid & 1) != 0) {
-					list.Add(rowsVM[i]);
-					offs += 4;
+			ulong valid = tablesHeap.ValidMask;
+			for (int i = 0, rowIndex = 0; i < rowsVM.Length; i++) {
+				UInt32HexField field;
+				if ((valid & 1) != 0 && rowIndex < tablesHeap.Header.Rows.Data.FieldCount) {
+					var row = tablesHeap.Header.Rows.Data[rowIndex++].Data;
+					field = new UInt32HexField(row, tablesHeap.Header.Rows.Name + "[" + i.ToString("X2") + "]");
+					list.Add(field);
 				}
 				else
-					rowsVM[i].IsVisible = false;
+					field = UInt32HexField.TryCreate(null);
 
+				rowsVM[i] = field;
 				valid >>= 1;
 			}
 
-			M_ulExtraVM = new UInt32HexField(buffer, Name, "m_ulExtra", offs);
-			M_ulExtraVM.IsVisible = tblStream.HasExtraData;
-			if (tblStream.HasExtraData)
+			M_ulExtraVM = UInt32HexField.TryCreate(tablesHeap.Header.ExtraData);
+			M_ulExtraVM.IsVisible = tablesHeap.Header.HasExtraData;
+			if (tablesHeap.Header.HasExtraData)
 				list.Add(M_ulExtraVM);
-
-			Debug.Assert(offs == (ulong)tblStream.MDTables[0].StartOffset);
 
 			hexFields = list.ToArray();
 		}
