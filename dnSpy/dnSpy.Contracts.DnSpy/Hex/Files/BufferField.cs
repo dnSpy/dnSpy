@@ -47,8 +47,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the field name
 		/// </summary>
-		/// <param name="writer">Writer</param>
-		public abstract void WriteName(BufferFieldWriter writer);
+		/// <param name="formatter">Formatter</param>
+		public abstract void WriteName(HexFieldFormatter formatter);
 	}
 
 	/// <summary>
@@ -76,8 +76,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the field name
 		/// </summary>
-		/// <param name="writer">Writer</param>
-		public sealed override void WriteName(BufferFieldWriter writer) => writer.WriteField(Name);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteName(HexFieldFormatter formatter) => formatter.WriteField(Name);
 	}
 
 	/// <summary>
@@ -104,7 +104,6 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// </summary>
 	public class ArrayField : BufferField {
 		readonly uint index;
-		readonly int bits;
 
 		/// <summary>
 		/// Gets the name
@@ -116,18 +115,16 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="data">Data type</param>
 		/// <param name="index">Array index</param>
-		/// <param name="bits">Size of index in bits or 0 to use default</param>
-		public ArrayField(BufferData data, uint index, int bits)
+		public ArrayField(BufferData data, uint index)
 			: base(data) {
 			this.index = index;
-			this.bits = bits;
 		}
 
 		/// <summary>
 		/// Writes the field name
 		/// </summary>
-		/// <param name="writer">Writer</param>
-		public sealed override void WriteName(BufferFieldWriter writer) => writer.WriteArrayField(index, bits);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteName(HexFieldFormatter formatter) => formatter.WriteArrayField(index);
 	}
 
 	/// <summary>
@@ -144,9 +141,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="data">Data type</param>
 		/// <param name="index">Array index</param>
-		/// <param name="bits">Size of index in bits or 0 to use default</param>
-		public ArrayField(TData data, uint index, int bits)
-			: base(data, index, bits) {
+		public ArrayField(TData data, uint index)
+			: base(data, index) {
 		}
 	}
 }

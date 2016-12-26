@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			pos += 4;
 			var fields = new ArrayField<DotNetStorageStream>[storageStreamHeaders.Length];
 			for (int i = 0; i < storageStreamHeaders.Length; i++) {
-				var field = new ArrayField<DotNetStorageStream>(new DotNetStorageStreamImpl(new HexBufferSpan(buffer, storageStreamHeaders[i].Span)), (uint)i, 0);
+				var field = new ArrayField<DotNetStorageStream>(new DotNetStorageStreamImpl(new HexBufferSpan(buffer, storageStreamHeaders[i].Span)), (uint)i);
 				fields[i] = field;
 			}
 			var arraySpan = storageStreamHeaders.Length == 0 ? new HexSpan(pos, 0) : HexSpan.FromBounds(storageStreamHeaders[0].Span.Start, storageStreamHeaders[storageStreamHeaders.Length - 1].Span.End);

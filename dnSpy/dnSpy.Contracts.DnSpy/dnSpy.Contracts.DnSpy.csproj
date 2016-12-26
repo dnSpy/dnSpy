@@ -314,7 +314,6 @@
     <Compile Include="Hex\Files\BasicData.cs" />
     <Compile Include="Hex\Files\BufferData.cs" />
     <Compile Include="Hex\Files\BufferField.cs" />
-    <Compile Include="Hex\Files\BufferFieldWriter.cs" />
     <Compile Include="Hex\Files\BufferFileHeadersProvider.cs" />
     <Compile Include="Hex\Files\BufferFileHeadersProviderFactory.cs" />
     <Compile Include="Hex\Files\BufferFileOptions.cs" />
@@ -338,8 +337,12 @@
     <Compile Include="Hex\Files\DotNet\TableRecordData.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeaderData.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeapType.cs" />
+    <Compile Include="Hex\Files\HexFieldFormatter.cs" />
+    <Compile Include="Hex\Files\HexFieldFormatterFactory.cs" />
+    <Compile Include="Hex\Files\HexFieldFormatterOptions.cs" />
     <Compile Include="Hex\Files\HexFileStructureInfoProvider.cs" />
     <Compile Include="Hex\Files\HexFileStructureInfoProviderFactory.cs" />
+    <Compile Include="Hex\Files\HexNumberOptions.cs" />
     <Compile Include="Hex\Files\IBufferFileHeaders.cs" />
     <Compile Include="Hex\Files\PE\PeFileLayoutProvider.cs" />
     <Compile Include="Hex\Files\PE\PeHeaders.cs" />
@@ -497,6 +500,10 @@
     <Compile Include="Hex\Tagging\HexViewTagAggregatorFactoryService.cs" />
     <Compile Include="Hex\Tagging\HexViewTaggerProvider.cs" />
     <Compile Include="Hex\TextAndHexSpan.cs" />
+    <Compile Include="Hex\Text\HexClassifiedText.cs" />
+    <Compile Include="Hex\Text\HexClassifiedTextCollection.cs" />
+    <Compile Include="Hex\Text\HexTextWriter.cs" />
+    <Compile Include="Hex\Text\PredefinedClassifiedTextTags.cs" />
     <Compile Include="Images\DsImage.cs" />
     <Compile Include="Images\DsImages.cs" />
     <Compile Include="Images\DsImagesAttribute.cs" />

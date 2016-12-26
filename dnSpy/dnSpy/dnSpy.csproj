@@ -448,6 +448,8 @@
     <Compile Include="Hex\Files\HexBufferFileImpl.cs" />
     <Compile Include="Hex\Files\HexBufferFileServiceFactoryImpl.cs" />
     <Compile Include="Hex\Files\HexBufferFileServiceImpl.cs" />
+    <Compile Include="Hex\Files\HexFieldFormatterImpl.cs" />
+    <Compile Include="Hex\Files\NumberFormatter.cs" />
     <Compile Include="Hex\Files\PE\ImageSectionHeader.cs" />
     <Compile Include="Hex\Files\PE\PeDosHeaderDataImpl.cs" />
     <Compile Include="Hex\Files\PE\PeFileHeaderDataImpl.cs" />

@@ -181,7 +181,7 @@ namespace dnSpy.Hex.Files.PE {
 			var fields = new ArrayField<DataDirectoryData>[count];
 			var currPos = position;
 			for (int i = 0; i < fields.Length; i++) {
-				var field = new ArrayField<DataDirectoryData>(new DataDirectoryData(new HexBufferSpan(buffer, new HexSpan(currPos, 8))), (uint)i, 0);
+				var field = new ArrayField<DataDirectoryData>(new DataDirectoryData(new HexBufferSpan(buffer, new HexSpan(currPos, 8))), (uint)i);
 				fields[i] = field;
 				currPos = field.Data.Span.End;
 			}

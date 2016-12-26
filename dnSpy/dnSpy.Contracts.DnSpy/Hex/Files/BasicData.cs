@@ -53,8 +53,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteByte(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteByte(ReadValue());
 	}
 
 	/// <summary>
@@ -89,8 +89,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteUInt16(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt16(ReadValue());
 	}
 
 	/// <summary>
@@ -125,8 +125,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteUInt24(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt24(ReadValue());
 	}
 
 	/// <summary>
@@ -161,8 +161,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteUInt32(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt32(ReadValue());
 	}
 
 	/// <summary>
@@ -197,8 +197,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteUInt64(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt64(ReadValue());
 	}
 
 	/// <summary>
@@ -233,8 +233,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteSByte(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteSByte(ReadValue());
 	}
 
 	/// <summary>
@@ -269,8 +269,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteInt16(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteInt16(ReadValue());
 	}
 
 	/// <summary>
@@ -305,8 +305,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteInt32(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteInt32(ReadValue());
 	}
 
 	/// <summary>
@@ -341,8 +341,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteInt64(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteInt64(ReadValue());
 	}
 
 	/// <summary>
@@ -377,8 +377,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteSingle(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteSingle(ReadValue());
 	}
 
 	/// <summary>
@@ -413,8 +413,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteDouble(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteDouble(ReadValue());
 	}
 
 	/// <summary>
@@ -456,8 +456,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteFlags(ReadValue(), flagInfos);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), flagInfos);
 	}
 
 	/// <summary>
@@ -499,8 +499,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteFlags(ReadValue(), flagInfos);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), flagInfos);
 	}
 
 	/// <summary>
@@ -542,8 +542,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteFlags(ReadValue(), flagInfos);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), flagInfos);
 	}
 
 	/// <summary>
@@ -585,8 +585,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteFlags(ReadValue(), flagInfos);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), flagInfos);
 	}
 
 	/// <summary>
@@ -628,8 +628,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteEnum(ReadValue(), enumFieldInfos);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), enumFieldInfos);
 	}
 
 	/// <summary>
@@ -671,8 +671,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteEnum(ReadValue(), enumFieldInfos);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), enumFieldInfos);
 	}
 
 	/// <summary>
@@ -714,8 +714,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteEnum(ReadValue(), enumFieldInfos);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), enumFieldInfos);
 	}
 
 	/// <summary>
@@ -757,8 +757,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteEnum(ReadValue(), enumFieldInfos);
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), enumFieldInfos);
 	}
 
 	/// <summary>
@@ -802,7 +802,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Writes the value
 		/// </summary>
-		/// <param name="writer"></param>
-		public sealed override void WriteValue(BufferFieldWriter writer) => writer.WriteString(ReadValue());
+		/// <param name="formatter">Formatter</param>
+		public sealed override void WriteValue(HexFieldFormatter formatter) => formatter.WriteString(ReadValue());
 	}
 }

@@ -111,7 +111,7 @@ namespace dnSpy.Hex.Files.PE {
 				var data = PeSectionDataImpl.TryCreate(file, currPos);
 				if (data == null)
 					return null;
-				var field = new ArrayField<PeSectionData>(data, (uint)i, 0);
+				var field = new ArrayField<PeSectionData>(data, (uint)i);
 				fields[i] = field;
 				currPos = field.Data.Span.End;
 			}

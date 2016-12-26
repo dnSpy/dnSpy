@@ -1,0 +1,221 @@
+﻿/*
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.ComponentModel.Composition;
+using System.Diagnostics;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
+using dnSpy.Contracts.Hex.Files.DotNet;
+using dnSpy.Contracts.Hex.Text;
+
+namespace dnSpy.Hex.Files {
+	[Export(typeof(HexFieldFormatterFactory))]
+	sealed class HexFieldFormatterFactoryImpl : HexFieldFormatterFactory {
+		public override HexFieldFormatter Create(HexTextWriter writer, HexFieldFormatterOptions options, HexNumberOptions arrayIndexOptions, HexNumberOptions valueNumberOptions) {
+			if (writer == null)
+				throw new ArgumentNullException(nameof(writer));
+			return new HexFieldFormatterImpl(writer, options, new NumberFormatter(arrayIndexOptions), new NumberFormatter(valueNumberOptions));
+		}
+	}
+
+	sealed class HexFieldFormatterImpl : HexFieldFormatter {
+		readonly HexTextWriter writer;
+		readonly HexFieldFormatterOptions options;
+		/*readonly*/ NumberFormatter arrayIndexFormatter;
+		/*readonly*/ NumberFormatter numberFormatter;
+		/*readonly*/ NumberFormatter numberFormatterShort;
+		/*readonly*/ NumberFormatter tokenFormatter;
+
+		public HexFieldFormatterImpl(HexTextWriter writer, HexFieldFormatterOptions options, NumberFormatter arrayIndexFormatter, NumberFormatter numberFormatter) {
+			if (writer == null)
+				throw new ArgumentNullException(nameof(writer));
+			this.writer = writer;
+			this.options = options;
+			this.arrayIndexFormatter = arrayIndexFormatter;
+			this.numberFormatter = numberFormatter;
+			numberFormatterShort = new NumberFormatter(numberFormatter.Options | HexNumberOptions.MinimumDigits);
+
+			var tokenOptions = numberFormatter.Options & ~HexNumberOptions.MinimumDigits;
+			if ((tokenOptions & HexNumberOptions.NumberBaseMask) == HexNumberOptions.Decimal)
+				tokenOptions |= HexNumberOptions.HexCSharp;
+			tokenFormatter = new NumberFormatter(tokenOptions);
+		}
+
+		public override void Write(string text, string tag) => writer.Write(text, tag);
+
+		public override void WriteEquals() {
+			writer.WriteSpace();
+			writer.Write("=", PredefinedClassifiedTextTags.Operator);
+			writer.WriteSpace();
+		}
+
+		public override void WriteField(string name) {
+			writer.Write(".", PredefinedClassifiedTextTags.Operator);
+			Write(name, PredefinedClassifiedTextTags.Field);
+		}
+
+		public override void WriteArrayField(uint index) {
+			writer.Write("[", PredefinedClassifiedTextTags.Punctuation);
+			writer.Write(arrayIndexFormatter.ToString(index), PredefinedClassifiedTextTags.Number);
+			writer.Write("]", PredefinedClassifiedTextTags.Punctuation);
+		}
+
+		public override void WriteField(ComplexData structure, HexPosition position) {
+			if (structure == null)
+				throw new ArgumentNullException(nameof(structure));
+			if (!structure.Span.Span.Contains(position))
+				throw new ArgumentOutOfRangeException(nameof(position));
+			structure.WriteName(this);
+			for (;;) {
+				var field = structure.GetFieldByPosition(position);
+				if (field == null)
+					break;
+				field.WriteName(this);
+				structure = field.Data as ComplexData;
+				if (structure == null)
+					break;
+			}
+		}
+
+		static BufferField GetField(ComplexData structure, HexPosition position) {
+			for (;;) {
+				var field = structure.GetFieldByPosition(position);
+				if (field == null)
+					return null;
+				structure = field.Data as ComplexData;
+				if (structure == null)
+					return field;
+			}
+		}
+
+		public override void WriteValue(ComplexData structure, HexPosition position) {
+			if (structure == null)
+				throw new ArgumentNullException(nameof(structure));
+			if (!structure.Span.Span.Contains(position))
+				throw new ArgumentOutOfRangeException(nameof(position));
+			var field = GetField(structure, position);
+			Debug.Assert(field != null);
+			if (field == null)
+				return;
+			var data = field.Data as SimpleData;
+			Debug.Assert(data != null);
+			data?.WriteValue(this);
+		}
+
+		public override void WriteToken(uint token) {
+			writer.Write(tokenFormatter.ToString(token), PredefinedClassifiedTextTags.Number);
+			writer.WriteSpace();
+			writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+			var mdToken = new MDToken(token);
+			writer.Write(mdToken.Table.ToString(), PredefinedClassifiedTextTags.Enum);
+			writer.Write(",", PredefinedClassifiedTextTags.Punctuation);
+			writer.WriteSpace();
+			writer.Write(mdToken.Rid.ToString(), PredefinedClassifiedTextTags.Number);
+			writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+		}
+
+		void WriteShortNumber(ulong value) => writer.Write(numberFormatterShort.ToString(value), PredefinedClassifiedTextTags.Number);
+
+		void WriteValue(string text, ulong value) {
+			writer.Write(text, PredefinedClassifiedTextTags.Number);
+
+			if ((options & HexFieldFormatterOptions.DontPrintDecimalValueInParens) == 0 && (numberFormatter.Options & HexNumberOptions.NumberBaseMask) != HexNumberOptions.Decimal) {
+				writer.WriteSpace();
+				writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+				writer.Write(value.ToString(), PredefinedClassifiedTextTags.Number);
+				writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+			}
+		}
+
+		void WriteValue(string text, long value) {
+			writer.Write(text, PredefinedClassifiedTextTags.Number);
+
+			if ((options & HexFieldFormatterOptions.DontPrintDecimalValueInParens) == 0 && (numberFormatter.Options & HexNumberOptions.NumberBaseMask) != HexNumberOptions.Decimal) {
+				writer.WriteSpace();
+				writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+				writer.Write(value.ToString(), PredefinedClassifiedTextTags.Number);
+				writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+			}
+		}
+
+		public override void WriteByte(byte value) => WriteValue(numberFormatter.ToString(value), (ulong)value);
+		public override void WriteUInt16(ushort value) => WriteValue(numberFormatter.ToString(value), (ulong)value);
+		public override void WriteUInt24(uint value) => WriteValue(numberFormatter.ToString24(value), (ulong)value);
+		public override void WriteUInt32(uint value) => WriteValue(numberFormatter.ToString(value), (ulong)value);
+		public override void WriteUInt64(ulong value) => WriteValue(numberFormatter.ToString(value), value);
+		public override void WriteSByte(sbyte value) => WriteValue(numberFormatter.ToString(value), value);
+		public override void WriteInt16(short value) => WriteValue(numberFormatter.ToString(value), value);
+		public override void WriteInt32(int value) => WriteValue(numberFormatter.ToString(value), value);
+		public override void WriteInt64(long value) => WriteValue(numberFormatter.ToString(value), value);
+		public override void WriteSingle(float value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
+		public override void WriteDouble(double value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
+		public override void WriteString(string value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.String);
+
+		public override void WriteFlags(ulong value, FlagInfo[] infos) {
+			ulong checkedBits = 0;
+			foreach (var info in infos) {
+				if (info.IsEnumName)
+					continue;
+				if ((value & info.Mask) == info.Value && (info.Mask & checkedBits) == 0) {
+					if (checkedBits != 0) {
+						writer.WriteSpace();
+						writer.Write("|", PredefinedClassifiedTextTags.Operator);
+						writer.WriteSpace();
+					}
+					writer.Write(info.Name, PredefinedClassifiedTextTags.EnumField);
+
+					if ((options & HexFieldFormatterOptions.DontPrintFlagValueInParens) == 0) {
+						writer.WriteSpace();
+						writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+						WriteShortNumber(info.Value);
+						writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+					}
+
+					checkedBits |= info.Mask;
+				}
+			}
+			if ((value & ~checkedBits) != 0 || checkedBits == 0) {
+				if (checkedBits != 0) {
+					writer.WriteSpace();
+					writer.Write("|", PredefinedClassifiedTextTags.Operator);
+					writer.WriteSpace();
+				}
+				WriteShortNumber(value & ~checkedBits);
+			}
+		}
+
+		public override void WriteEnum(ulong value, EnumFieldInfo[] infos) {
+			foreach (var info in infos) {
+				if (info.Value == value) {
+					writer.Write(info.Name, PredefinedClassifiedTextTags.EnumField);
+
+					if ((options & HexFieldFormatterOptions.DontPrintEnumValueInParens) == 0) {
+						writer.WriteSpace();
+						writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+						WriteShortNumber(info.Value);
+						writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+					}
+					return;
+				}
+			}
+			WriteShortNumber(value);
+		}
+	}
+}
