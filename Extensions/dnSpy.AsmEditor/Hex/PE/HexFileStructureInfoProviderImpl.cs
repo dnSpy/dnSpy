@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		public override object GetReference(HexBufferFile file, HexPosition position, ComplexData structure) {
+		public override object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
 			var peStructure = PEStructure.TryCreate(peStructureProviderFactory, file);
 			if (peStructure == null)
 				return null;
@@ -158,7 +158,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return null;
 		}
 
-		public override int[] GetSubStructureIndexes(HexBufferFile file, HexPosition position, ComplexData structure) {
+		public override int[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
 			var sections = structure as PeSectionsData;
 			if (sections != null)
 				return Array.Empty<int>();

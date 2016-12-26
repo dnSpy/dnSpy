@@ -33,27 +33,27 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// is empty, every field is a sub structure.
 		/// </summary>
 		/// <param name="file">File</param>
-		/// <param name="position">Position</param>
 		/// <param name="structure">Structure</param>
+		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual int[] GetSubStructureIndexes(HexBufferFile file, HexPosition position, ComplexData structure) => null;
+		public virtual int[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) => null;
 
 		/// <summary>
 		/// Returns a tooltip or null
 		/// </summary>
 		/// <param name="file">File</param>
-		/// <param name="position">Position</param>
 		/// <param name="structure">Structure</param>
+		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual object GetToolTip(HexBufferFile file, HexPosition position, ComplexData structure) => null;
+		public virtual object GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) => null;
 
 		/// <summary>
 		/// Returns a reference or null
 		/// </summary>
 		/// <param name="file">File</param>
-		/// <param name="position">Position</param>
 		/// <param name="structure">Structure</param>
+		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual object GetReference(HexBufferFile file, HexPosition position, ComplexData structure) => null;
+		public virtual object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) => null;
 	}
 }

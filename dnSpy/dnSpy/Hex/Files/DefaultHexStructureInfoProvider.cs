@@ -102,7 +102,7 @@ namespace dnSpy.Hex.Files {
 				yield break;
 			yield return new HexStructureField(field.Data.Span, HexStructureFieldKind.CurrentField);
 
-			var indexes = GetSubStructureIndexes(info.Value.Key, position, structure);
+			var indexes = GetSubStructureIndexes(info.Value.Key, structure, position);
 			if (indexes != null) {
 				if (indexes.Length == 0) {
 					for (int i = 0; i < structure.FieldCount; i++) {
@@ -136,9 +136,9 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 
-		int[] GetSubStructureIndexes(HexBufferFile file, HexPosition position, ComplexData structure) {
+		int[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
 			foreach (var provider in HexFileStructureInfoProviders) {
-				var indexes = provider.GetSubStructureIndexes(file, position, structure);
+				var indexes = provider.GetSubStructureIndexes(file, structure, position);
 				if (IsValidIndexes(indexes, structure))
 					return indexes;
 			}
@@ -169,7 +169,7 @@ namespace dnSpy.Hex.Files {
 				return null;
 
 			foreach (var provider in HexFileStructureInfoProviders) {
-				var toolTip = provider.GetToolTip(info.Value.Key, position, info.Value.Value);
+				var toolTip = provider.GetToolTip(info.Value.Key, info.Value.Value, position);
 				if (toolTip != null)
 					return toolTip;
 			}
@@ -183,7 +183,7 @@ namespace dnSpy.Hex.Files {
 				return null;
 
 			foreach (var provider in HexFileStructureInfoProviders) {
-				var toolTip = provider.GetReference(info.Value.Key, position, info.Value.Value);
+				var toolTip = provider.GetReference(info.Value.Key, info.Value.Value, position);
 				if (toolTip != null)
 					return toolTip;
 			}
