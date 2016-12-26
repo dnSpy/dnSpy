@@ -99,6 +99,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		internal static readonly FlagInfo[] typeAttrFlagInfos = new FlagInfo[] {
+			FlagInfo.CreateEnumName(0x00000007, "Visibility"),
 			new FlagInfo(0x00000007, 0x00000000, "NotPublic"),
 			new FlagInfo(0x00000007, 0x00000001, "Public"),
 			new FlagInfo(0x00000007, 0x00000002, "NestedPublic"),
@@ -108,10 +109,12 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x00000007, 0x00000006, "NestedFamANDAssem"),
 			new FlagInfo(0x00000007, 0x00000007, "NestedFamORAssem"),
 
+			FlagInfo.CreateEnumName(0x00000018, "Layout"),
 			new FlagInfo(0x00000018, 0x00000000, "AutoLayout"),
 			new FlagInfo(0x00000018, 0x00000008, "SequentialLayout"),
 			new FlagInfo(0x00000018, 0x00000010, "ExplicitLayout"),
 
+			FlagInfo.CreateEnumName(0x00000020, "ClassSemantics"),
 			new FlagInfo(0x00000020, 0x00000000, "Class"),
 			new FlagInfo(0x00000020, 0x00000020, "Interface"),
 
@@ -126,11 +129,13 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x00100000, "BeforeFieldInit"),
 			new FlagInfo(0x00200000, "Forwarder"),
 
+			FlagInfo.CreateEnumName(0x00030000, "StringFormat"),
 			new FlagInfo(0x00030000, 0x00000000, "AnsiClass"),
 			new FlagInfo(0x00030000, 0x00010000, "UnicodeClass"),
 			new FlagInfo(0x00030000, 0x00020000, "AutoClass"),
 			new FlagInfo(0x00030000, 0x00030000, "CustomFormatClass"),
 
+			FlagInfo.CreateEnumName(0x00C00000, "CustomFormatClass"),
 			new FlagInfo(0x00C00000, 0x00000000, "CustomFormat0"),
 			new FlagInfo(0x00C00000, 0x00400000, "CustomFormat1"),
 			new FlagInfo(0x00C00000, 0x00800000, "CustomFormat2"),
@@ -150,6 +155,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		static readonly FlagInfo[] fieldAttrFlagInfos = new FlagInfo[] {
+			FlagInfo.CreateEnumName(0x0007, "FieldAccess"),
 			new FlagInfo(0x0007, 0x0000, "PrivateScope"),
 			new FlagInfo(0x0007, 0x0001, "Private"),
 			new FlagInfo(0x0007, 0x0002, "FamANDAssem"),
@@ -183,11 +189,13 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		static readonly FlagInfo[] implAttrFlagInfos = new FlagInfo[] {
+			FlagInfo.CreateEnumName(0x0003, "CodeType"),
 			new FlagInfo(0x0003, 0x0000, "IL"),
 			new FlagInfo(0x0003, 0x0001, "Native"),
 			new FlagInfo(0x0003, 0x0002, "OPTIL"),
 			new FlagInfo(0x0003, 0x0003, "Runtime"),
 
+			FlagInfo.CreateEnumName(0x0004, "Managed"),
 			new FlagInfo(0x0004, 0x0000, "Managed"),
 			new FlagInfo(0x0004, 0x0004, "Unmanaged"),
 
@@ -201,6 +209,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		};
 
 		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+			FlagInfo.CreateEnumName(0x0007, "MemberAccess"),
 			new FlagInfo(0x0007, 0x0000, "PrivateScope"),
 			new FlagInfo(0x0007, 0x0001, "Private"),
 			new FlagInfo(0x0007, 0x0002, "FamANDAssem"),
@@ -215,6 +224,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x0040, "Virtual"),
 			new FlagInfo(0x0080, "HideBySig"),
 
+			FlagInfo.CreateEnumName(0x0100, "VtableLayout"),
 			new FlagInfo(0x0100, 0x0000, "ReuseSlot"),
 			new FlagInfo(0x0100, 0x0100, "NewSlot"),
 
@@ -315,6 +325,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		static readonly FlagInfo[] actionFlagInfos = new FlagInfo[] {
+			FlagInfo.CreateEnumName(0x001F, "Action"),
 			new FlagInfo(0x001F, 0x0000, "ActionNil"),
 			new FlagInfo(0x001F, 0x0001, "Request"),
 			new FlagInfo(0x001F, 0x0002, "Demand"),
@@ -404,23 +415,27 @@ namespace dnSpy.Hex.Files.DotNet {
 		static readonly FlagInfo[] implMapFlagInfos = new FlagInfo[] {
 			new FlagInfo(0x0001, "NoMangle"),
 
+			FlagInfo.CreateEnumName(0x0006, "CharSet"),
 			new FlagInfo(0x0006, 0x0000, "CharSetNotSpec"),
 			new FlagInfo(0x0006, 0x0002, "Ansi"),
 			new FlagInfo(0x0006, 0x0004, "Unicode"),
 			new FlagInfo(0x0006, 0x0006, "CharSetAuto"),
 
+			FlagInfo.CreateEnumName(0x0030, "BestFit"),
 			new FlagInfo(0x0030, 0x0000, "BestFitUseAssem"),
 			new FlagInfo(0x0030, 0x0010, "BestFitEnabled"),
 			new FlagInfo(0x0030, 0x0020, "BestFitDisabled"),
 
 			new FlagInfo(0x0040, "SupportsLastError"),
 
+			FlagInfo.CreateEnumName(0x0700, "CallConv"),
 			new FlagInfo(0x0700, 0x0100, "Winapi"),
 			new FlagInfo(0x0700, 0x0200, "Cdecl"),
 			new FlagInfo(0x0700, 0x0300, "Stdcall"),
 			new FlagInfo(0x0700, 0x0400, "Thiscall"),
 			new FlagInfo(0x0700, 0x0500, "Fastcall"),
 
+			FlagInfo.CreateEnumName(0x3000, "ThrowOnUnmappableChar"),
 			new FlagInfo(0x3000, 0x0000, "ThrowOnUnmappableCharUseAssem"),
 			new FlagInfo(0x3000, 0x1000, "ThrowOnUnmappableCharEnabled"),
 			new FlagInfo(0x3000, 0x2000, "ThrowOnUnmappableCharDisabled"),
@@ -457,6 +472,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		internal static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
 			new FlagInfo(0x0001, "PublicKey"),
 
+			FlagInfo.CreateEnumName(0x0070, "ProcessorArch"),
 			new FlagInfo(0x0070, 0x0000, "PA_None"),
 			new FlagInfo(0x0070, 0x0010, "MSIL"),
 			new FlagInfo(0x0070, 0x0020, "x86"),
@@ -470,6 +486,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x4000, "DisableJITcompileOptimizer"),
 			new FlagInfo(0x8000, "EnableJITcompileTracking"),
 
+			FlagInfo.CreateEnumName(0x0E00, "ContentType"),
 			new FlagInfo(0x0E00, 0x0000, "Default"),
 			new FlagInfo(0x0E00, 0x0200, "WindowsRuntime"),
 		};
@@ -501,6 +518,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+			FlagInfo.CreateEnumName(0x0001, "ContainsNoMetaData"),
 			new FlagInfo(0x0001, 0x0000, "ContainsMetaData"),
 			new FlagInfo(0x0001, 0x0001, "ContainsNoMetaData"),
 		};
@@ -530,6 +548,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+			FlagInfo.CreateEnumName(0x0007, "Visibility"),
 			new FlagInfo(0x0007, 0x0001, "Public"),
 			new FlagInfo(0x0007, 0x0002, "Private"),
 		};
@@ -547,10 +566,12 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+			FlagInfo.CreateEnumName(0x0003, "Variance"),
 			new FlagInfo(0x0003, 0x0000, "NonVariant"),
 			new FlagInfo(0x0003, 0x0001, "Covariant"),
 			new FlagInfo(0x0003, 0x0002, "Contravariant"),
 
+			FlagInfo.CreateEnumName(0x001C, "SpecialConstraint"),
 			new FlagInfo(0x001C, 0x0000, "NoSpecialConstraint"),
 			new FlagInfo(0x001C, 0x0004, "ReferenceTypeConstraint"),
 			new FlagInfo(0x001C, 0x0008, "NotNullableValueTypeConstraint"),

@@ -18,7 +18,8 @@
 */
 
 using System;
-using dnlib.DotNet;
+using dnSpy.Contracts.Hex.Files;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.Hex.PE {
@@ -47,7 +48,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
-		void WriteShortNumber(uint value) {
+		void WriteShortNumber(ulong value) {
 			if (value <= 9)
 				output.Write(BoxedTextColor.Number, value.ToString());
 			else
@@ -112,9 +113,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			output.Write(BoxedTextColor.InstanceField, fieldName);
 		}
 
-		public void WriteFlags(uint value, FlagInfo[] flagInfos) {
-			uint checkedBits = 0;
+		public void WriteFlags(ulong value, FlagInfo[] flagInfos) {
+			ulong checkedBits = 0;
 			foreach (var info in flagInfos) {
+				if (info.IsEnumName)
+					continue;
 				if ((value & info.Mask) == info.Value && (info.Mask & checkedBits) == 0) {
 					if (checkedBits != 0) {
 						output.WriteSpace();
@@ -140,25 +143,20 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				WriteShortNumber(value & ~checkedBits);
 			}
 		}
-	}
 
-	struct FlagInfo {
-		public string Name { get; }
-		public uint Mask { get; }
-		public uint Value { get; }
+		public void WriteEnum(ulong value, EnumFieldInfo[] enumFieldInfos) {
+			foreach (var info in enumFieldInfos) {
+				if (info.Value == value) {
+					output.Write(BoxedTextColor.EnumField, info.Name);
 
-		public FlagInfo(string name, uint bitMask)
-			: this(name, bitMask, bitMask) {
-		}
-
-		public FlagInfo(string name, uint mask, uint value) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			if (mask == 0)
-				throw new ArgumentOutOfRangeException(nameof(mask));
-			Name = name;
-			Mask = mask;
-			Value = value;
+					output.WriteSpace();
+					output.Write(BoxedTextColor.Punctuation, "(");
+					WriteShortNumber(info.Value);
+					output.Write(BoxedTextColor.Punctuation, ")");
+					return;
+				}
+			}
+			WriteShortNumber(value);
 		}
 	}
 }

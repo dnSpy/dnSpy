@@ -365,24 +365,26 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		static readonly FlagInfo[] fatHeaderFlagsFlagInfos = new FlagInfo[] {
-			new FlagInfo("TinyFormat", 0x7, 0x2),
-			new FlagInfo("FatFormat", 0x7, 0x3),
-			new FlagInfo("MoreSects", 0x8),
-			new FlagInfo("InitLocals", 0x10),
+			FlagInfo.CreateEnumName(0x7, "Format"),
+			new FlagInfo(0x7, 0x2, "TinyFormat"),
+			new FlagInfo(0x7, 0x3, "FatFormat"),
+			new FlagInfo(0x8, "MoreSects"),
+			new FlagInfo(0x10, "InitLocals"),
 		};
 
 		static readonly FlagInfo[] exceptionHeaderFlagInfos = new FlagInfo[] {
-			new FlagInfo("EHTable", 0x3F, 0x1),
-			new FlagInfo("OptILTable", 0x3F, 0x2),
-			new FlagInfo("FatFormat", 0x40),
-			new FlagInfo("MoreSects", 0x80),
+			FlagInfo.CreateEnumName(0x3F, "Table"),
+			new FlagInfo(0x3F, 0x1, "EHTable"),
+			new FlagInfo(0x3F, 0x2, "OptILTable"),
+			new FlagInfo(0x40, "FatFormat"),
+			new FlagInfo(0x80, "MoreSects"),
 		};
 
-		static readonly FlagInfo[] exceptionClauseFlagInfos = new FlagInfo[] {
-			new FlagInfo("EXCEPTION", uint.MaxValue, 0),
-			new FlagInfo("FILTER", uint.MaxValue, 1),
-			new FlagInfo("FINALLY", uint.MaxValue, 2),
-			new FlagInfo("FAULT", uint.MaxValue, 4),
+		static readonly EnumFieldInfo[] exceptionClauseEnumFieldInfos = new EnumFieldInfo[] {
+			new EnumFieldInfo(0, "EXCEPTION"),
+			new EnumFieldInfo(1, "FILTER"),
+			new EnumFieldInfo(2, "FINALLY"),
+			new EnumFieldInfo(4, "FAULT"),
 		};
 
 		bool CreateMethodBodyToolTip(PEStructure peStructure, ToolTipCreator creator, MethodBodyInfo minfo, MethodBodyFieldInfo finfo, HexPosition position, bool isSmallExceptionClauses) {
@@ -492,13 +494,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			case MethodBodyFieldKind.SmallExceptionClauseFlags:
 				WriteExceptionClause(output, minfo, position, "Flags", isSmallExceptionClauses);
 				output.WriteEquals();
-				output.WriteFlags(buffer.ReadUInt16(fieldPosition), exceptionClauseFlagInfos);
+				output.WriteEnum(buffer.ReadUInt16(fieldPosition), exceptionClauseEnumFieldInfos);
 				break;
 
 			case MethodBodyFieldKind.LargeExceptionClauseFlags:
 				WriteExceptionClause(output, minfo, position, "Flags", isSmallExceptionClauses);
 				output.WriteEquals();
-				output.WriteFlags(buffer.ReadUInt32(fieldPosition), exceptionClauseFlagInfos);
+				output.WriteEnum(buffer.ReadUInt32(fieldPosition), exceptionClauseEnumFieldInfos);
 				break;
 
 			case MethodBodyFieldKind.SmallExceptionClauseTryOffset:

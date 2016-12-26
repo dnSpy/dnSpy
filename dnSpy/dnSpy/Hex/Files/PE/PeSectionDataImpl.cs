@@ -52,6 +52,7 @@ namespace dnSpy.Hex.Files.PE {
 			new FlagInfo(0x00020000, "MEM_PURGEABLE"),
 			new FlagInfo(0x00040000, "MEM_LOCKED"),
 			new FlagInfo(0x00080000, "MEM_PRELOAD"),
+			FlagInfo.CreateEnumName(0x00F00000, "ALIGNMENT"),
 			new FlagInfo(0x00F00000, 0x00100000, "ALIGN_1BYTES"),
 			new FlagInfo(0x00F00000, 0x00200000, "ALIGN_2BYTES"),
 			new FlagInfo(0x00F00000, 0x00300000, "ALIGN_4BYTES"),

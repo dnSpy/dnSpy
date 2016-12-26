@@ -24,6 +24,8 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// Flag info
 	/// </summary>
 	public struct FlagInfo {
+		const ulong EnumNameValue = ulong.MaxValue;
+
 		/// <summary>
 		/// Name
 		/// </summary>
@@ -38,6 +40,30 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Value
 		/// </summary>
 		public ulong Value { get; }
+
+		/// <summary>
+		/// true if it only stores the name of the enum and the enum mask. <see cref="Value"/> is not used
+		/// and should be ignored.
+		/// </summary>
+		public bool IsEnumName => (Value & ~Mask) != 0 && Value == EnumNameValue;
+
+		/// <summary>
+		/// Creates an instance that only holds the name of the embedded enum value
+		/// </summary>
+		/// <param name="mask">Enum mask</param>
+		/// <param name="name">Name of enum</param>
+		/// <returns></returns>
+		public static FlagInfo CreateEnumName(ulong mask, string name) => new FlagInfo(mask, name, false);
+
+		FlagInfo(ulong mask, string name, bool dummy) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			if (mask == 0)
+				throw new ArgumentOutOfRangeException(nameof(mask));
+			Name = name;
+			Mask = mask;
+			Value = EnumNameValue;
+		}
 
 		/// <summary>
 		/// Constructor
