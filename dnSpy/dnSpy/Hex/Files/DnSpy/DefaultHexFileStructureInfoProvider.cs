@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Files;
@@ -31,33 +33,48 @@ namespace dnSpy.Hex.Files.DnSpy {
 	[VSUTIL.Name(PredefinedHexFileStructureInfoProviderFactoryNames.Default)]
 	sealed class DefaultHexFileStructureInfoProviderFactory : HexFileStructureInfoProviderFactory {
 		readonly ToolTipCreatorFactory toolTipCreatorFactory;
+		readonly Lazy<HexFileImageReferenceProvider>[] hexFileImageReferenceProviders;
 
 		[ImportingConstructor]
-		DefaultHexFileStructureInfoProviderFactory(ToolTipCreatorFactory toolTipCreatorFactory) {
+		DefaultHexFileStructureInfoProviderFactory(ToolTipCreatorFactory toolTipCreatorFactory, [ImportMany] IEnumerable<Lazy<HexFileImageReferenceProvider>> hexFileImageReferenceProviders) {
 			this.toolTipCreatorFactory = toolTipCreatorFactory;
+			this.hexFileImageReferenceProviders = hexFileImageReferenceProviders.ToArray();
 		}
 
 		public override HexFileStructureInfoProvider Create(HexView hexView) =>
-			new DefaultHexFileStructureInfoProvider(toolTipCreatorFactory);
+			new DefaultHexFileStructureInfoProvider(toolTipCreatorFactory, hexFileImageReferenceProviders);
 	}
 
 	sealed class DefaultHexFileStructureInfoProvider : HexFileStructureInfoProvider {
 		readonly ToolTipCreatorFactory toolTipCreatorFactory;
+		readonly Lazy<HexFileImageReferenceProvider>[] hexFileImageReferenceProviders;
 
-		public DefaultHexFileStructureInfoProvider(ToolTipCreatorFactory toolTipCreatorFactory) {
+		public DefaultHexFileStructureInfoProvider(ToolTipCreatorFactory toolTipCreatorFactory, Lazy<HexFileImageReferenceProvider>[] hexFileImageReferenceProviders) {
 			if (toolTipCreatorFactory == null)
 				throw new ArgumentNullException(nameof(toolTipCreatorFactory));
+			if (hexFileImageReferenceProviders == null)
+				throw new ArgumentNullException(nameof(hexFileImageReferenceProviders));
 			this.toolTipCreatorFactory = toolTipCreatorFactory;
+			this.hexFileImageReferenceProviders = hexFileImageReferenceProviders;
 		}
 
 		public override object GetToolTip(HexBufferFile file, HexPosition position, ComplexData structure) {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 
-			contentCreator.Image = DsImages.FieldPublic;
+			contentCreator.Image = GetImage(structure, position);
 			contentCreator.Writer.WriteFieldAndValue(structure, position);
 
 			return toolTipCreator.Create();
+		}
+
+		ImageReference GetImage(ComplexData structure, HexPosition position) {
+			foreach (var lz in hexFileImageReferenceProviders) {
+				var imgRef = lz.Value.GetImage(structure, position);
+				if (imgRef != null)
+					return imgRef.Value;
+			}
+			return DsImages.FieldPublic;
 		}
 	}
 }

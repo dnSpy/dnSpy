@@ -153,7 +153,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the name
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public sealed override void WriteName(HexFieldFormatter formatter) => formatter.WriteStructure(Name);
+		public override void WriteName(HexFieldFormatter formatter) => formatter.WriteStructure(Name);
 	}
 
 	/// <summary>
@@ -335,7 +335,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the name
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public sealed override void WriteName(HexFieldFormatter formatter) => formatter.WriteArray(Name);
+		public override void WriteName(HexFieldFormatter formatter) => formatter.WriteArray(Name);
 	}
 
 	/// <summary>

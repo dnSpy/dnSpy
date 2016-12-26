@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Hex.Text;
 
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
@@ -58,6 +59,15 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			Token = token;
 			Fields = fields;
 			TablesHeap = tablesHeap;
+		}
+
+		/// <summary>
+		/// Writes the name
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteName(HexFieldFormatter formatter) {
+			formatter.Write(Token.Table.ToString(), PredefinedClassifiedTextTags.ValueType);
+			formatter.WriteArrayField(Token.Rid);
 		}
 	}
 }

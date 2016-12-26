@@ -425,6 +425,7 @@
     <Compile Include="Hex\Editor\ZoomControlMargin.cs" />
     <Compile Include="Hex\Files\DefaultHexStructureInfoProvider.cs" />
     <Compile Include="Hex\Files\DnSpy\DefaultHexFileStructureInfoProvider.cs" />
+    <Compile Include="Hex\Files\DnSpy\DotNetHexFileImageReferenceProvider.cs" />
     <Compile Include="Hex\Files\DnSpy\ToolTipCreatorImpl.cs" />
     <Compile Include="Hex\Files\DnSpy\ToolTipObjectFactoryImpl.cs" />
     <Compile Include="Hex\Files\DotNet\BlobHeapImpl.cs" />
