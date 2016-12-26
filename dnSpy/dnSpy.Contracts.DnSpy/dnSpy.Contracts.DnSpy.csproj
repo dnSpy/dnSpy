@@ -338,9 +338,12 @@
     <Compile Include="Hex\Files\DotNet\TableRecordData.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeaderData.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeapType.cs" />
+    <Compile Include="Hex\Files\HexFileStructureInfoProvider.cs" />
+    <Compile Include="Hex\Files\HexFileStructureInfoProviderFactory.cs" />
     <Compile Include="Hex\Files\IBufferFileHeaders.cs" />
     <Compile Include="Hex\Files\PE\PeFileLayoutProvider.cs" />
     <Compile Include="Hex\Files\PE\PeHeaders.cs" />
+    <Compile Include="Hex\Files\PredefinedHexFileStructureInfoProviderFactoryNames.cs" />
     <Compile Include="Hex\Files\PredefinedStructureProviderFactoryNames.cs" />
     <Compile Include="Hex\Files\StructureProvider.cs" />
     <Compile Include="Hex\Files\StructureProviderFactory.cs" />

@@ -364,6 +364,7 @@
     <Compile Include="Hex\PE\BufferToDocumentNodeService.cs" />
     <Compile Include="Hex\PE\DataFormatter.cs" />
     <Compile Include="Hex\PE\HexField.cs" />
+    <Compile Include="Hex\PE\HexFileStructureInfoProviderImpl.cs" />
     <Compile Include="Hex\PE\HexReferenceConverterImpl.cs" />
     <Compile Include="Hex\PE\HexReferences.cs" />
     <Compile Include="Hex\PE\HexStructureInfoProviderImpl.cs" />

@@ -423,6 +423,7 @@
     <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionImpl.cs" />
     <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionProviderImpl.cs" />
     <Compile Include="Hex\Editor\ZoomControlMargin.cs" />
+    <Compile Include="Hex\Files\DefaultHexStructureInfoProvider.cs" />
     <Compile Include="Hex\Files\DotNet\BlobHeapImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetCor20DataImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetHeadersImpl.cs" />
