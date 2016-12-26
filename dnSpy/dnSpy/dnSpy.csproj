@@ -424,6 +424,9 @@
     <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionProviderImpl.cs" />
     <Compile Include="Hex\Editor\ZoomControlMargin.cs" />
     <Compile Include="Hex\Files\DefaultHexStructureInfoProvider.cs" />
+    <Compile Include="Hex\Files\DnSpy\DefaultHexFileStructureInfoProvider.cs" />
+    <Compile Include="Hex\Files\DnSpy\ToolTipCreatorImpl.cs" />
+    <Compile Include="Hex\Files\DnSpy\ToolTipObjectFactoryImpl.cs" />
     <Compile Include="Hex\Files\DotNet\BlobHeapImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetCor20DataImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetHeadersImpl.cs" />
@@ -460,6 +463,7 @@
     <Compile Include="Hex\Files\PE\PeSectionDataImpl.cs" />
     <Compile Include="Hex\Files\PE\PeStructureProvider.cs" />
     <Compile Include="Hex\Files\SpanDataCollection.cs" />
+    <Compile Include="Hex\Files\ToolTips\HexToolTipContentCreatorImpl.cs" />
     <Compile Include="Hex\Formatting\FormattedHexSourceFactoryServiceImpl.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencerFactoryServiceImpl.cs" />
     <Compile Include="Hex\Formatting\HexAndAdornmentSequencerImpl.cs" />

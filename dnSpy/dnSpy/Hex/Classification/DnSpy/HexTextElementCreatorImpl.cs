@@ -49,7 +49,7 @@ namespace dnSpy.Hex.Classification.DnSpy {
 
 		public override FrameworkElement CreateTextElement(bool colorize, string tag) {
 			var context = new CTC.TextClassifierContext(writer.Text, tag, colorize, writer.Colors);
-			return textElementProvider.CreateTextElement(classificationFormatMap, context, contentType, CTC.TextElementFlags.None);
+			return textElementProvider.CreateTextElement(classificationFormatMap, context, contentType, CTC.TextElementFlags.Wrap);
 		}
 	}
 }

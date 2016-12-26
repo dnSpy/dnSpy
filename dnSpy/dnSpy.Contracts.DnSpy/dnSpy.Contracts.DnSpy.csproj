@@ -318,6 +318,9 @@
     <Compile Include="Hex\Files\BufferFileHeadersProviderFactory.cs" />
     <Compile Include="Hex\Files\BufferFileOptions.cs" />
     <Compile Include="Hex\Files\BufferFilesEventArgs.cs" />
+    <Compile Include="Hex\Files\DnSpy\ToolTipCreator.cs" />
+    <Compile Include="Hex\Files\DnSpy\ToolTipCreatorFactory.cs" />
+    <Compile Include="Hex\Files\DnSpy\ToolTipObjectFactory.cs" />
     <Compile Include="Hex\Files\DotNet\CodedToken.cs" />
     <Compile Include="Hex\Files\DotNet\ColumnInfo.cs" />
     <Compile Include="Hex\Files\DotNet\ColumnSize.cs" />
@@ -362,6 +365,9 @@
     <Compile Include="Hex\Files\PE\PeSectionsData.cs" />
     <Compile Include="Hex\Files\PE\PredefinedPeDataIds.cs" />
     <Compile Include="Hex\Files\PredefinedBufferFileTags.cs" />
+    <Compile Include="Hex\Files\ToolTips\HexToolTipContent.cs" />
+    <Compile Include="Hex\Files\ToolTips\HexToolTipContentCreator.cs" />
+    <Compile Include="Hex\Files\ToolTips\HexToolTipContentCreatorFactory.cs" />
     <Compile Include="Hex\HexCachedBufferStream.cs" />
     <Compile Include="Hex\HexColumnPosition.cs" />
     <Compile Include="Hex\Editor\HexKeyProcessor.cs" />
