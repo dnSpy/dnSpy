@@ -30,9 +30,11 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	[Export(typeof(HexStructureInfoProviderFactory))]
+	[VSUTIL.Name("AsmEditor")]
 	sealed class HexStructureInfoProviderFactoryImpl : HexStructureInfoProviderFactory {
 		readonly HexTextElementCreatorProvider hexTextElementCreatorProvider;
 		readonly PEStructureProviderFactory peStructureProviderFactory;

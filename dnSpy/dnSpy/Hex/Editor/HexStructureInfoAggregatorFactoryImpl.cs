@@ -22,15 +22,16 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Hex.Editor;
+using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Editor {
 	[Export(typeof(HexStructureInfoAggregatorFactory))]
 	sealed class HexStructureInfoAggregatorFactoryImpl : HexStructureInfoAggregatorFactory {
-		readonly Lazy<HexStructureInfoProviderFactory>[] hexStructureInfoProviderFactories;
+		readonly Lazy<HexStructureInfoProviderFactory, VSUTIL.IOrderable>[] hexStructureInfoProviderFactories;
 
 		[ImportingConstructor]
-		HexStructureInfoAggregatorFactoryImpl([ImportMany] IEnumerable<Lazy<HexStructureInfoProviderFactory>> hexStructureInfoProviderFactories) {
-			this.hexStructureInfoProviderFactories = hexStructureInfoProviderFactories.ToArray();
+		HexStructureInfoAggregatorFactoryImpl([ImportMany] IEnumerable<Lazy<HexStructureInfoProviderFactory, VSUTIL.IOrderable>> hexStructureInfoProviderFactories) {
+			this.hexStructureInfoProviderFactories = VSUTIL.Orderer.Order(hexStructureInfoProviderFactories).ToArray();
 		}
 
 		public override HexStructureInfoAggregator Create(HexView hexView) {

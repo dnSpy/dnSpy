@@ -310,6 +310,7 @@
     <Compile Include="Hex\Editor\PredefinedHexGlyphFactoryProviderNames.cs" />
     <Compile Include="Hex\Editor\PredefinedHexReferenceHandlerNames.cs" />
     <Compile Include="Hex\Editor\PredefinedHexReferenceHandlerTags.cs" />
+    <Compile Include="Hex\Editor\PredefinedHexStructureInfoProviderFactoryNames.cs" />
     <Compile Include="Hex\Files\BasicData.cs" />
     <Compile Include="Hex\Files\BufferData.cs" />
     <Compile Include="Hex\Files\BufferField.cs" />

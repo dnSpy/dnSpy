@@ -17,25 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using VSUTIL = Microsoft.VisualStudio.Utilities;
+using dnSpy.Contracts.Hex.Files;
 
 namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
-	/// Creates <see cref="HexStructureInfoProvider"/> instances. Export an instance with a
-	/// <see cref="VSUTIL.NameAttribute"/> and an optional <see cref="VSUTIL.OrderAttribute"/>.
-	/// See <see cref="PredefinedHexStructureInfoProviderFactoryNames"/>.
+	/// <see cref="HexStructureInfoProviderFactory"/> names
 	/// </summary>
-	public abstract class HexStructureInfoProviderFactory {
+	public static class PredefinedHexStructureInfoProviderFactoryNames {
 		/// <summary>
-		/// Constructor
+		/// Name of provider that uses <see cref="HexBufferFile"/>s
 		/// </summary>
-		protected HexStructureInfoProviderFactory() { }
-
-		/// <summary>
-		/// Creates a <see cref="HexStructureInfoProvider"/> instance
-		/// </summary>
-		/// <param name="hexView">Hex view</param>
-		/// <returns></returns>
-		public abstract HexStructureInfoProvider Create(HexView hexView);
+		public const string DefaultHexFileStructure = nameof(DefaultHexFileStructure);
 	}
 }
