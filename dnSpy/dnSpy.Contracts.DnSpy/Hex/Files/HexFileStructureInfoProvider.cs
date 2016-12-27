@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// Provides tooltips and references
@@ -28,15 +30,14 @@ namespace dnSpy.Contracts.Hex.Files {
 		protected HexFileStructureInfoProvider() { }
 
 		/// <summary>
-		/// Gets indexes of sub structures or null. The returned array must be sorted, an example
-		/// is <c>0, 3, 10</c> if <paramref name="structure"/> contains 42 fields. If the array
+		/// Gets indexes of sub structures or null. The returned array must be sorted. If the array
 		/// is empty, every field is a sub structure.
 		/// </summary>
 		/// <param name="file">File</param>
 		/// <param name="structure">Structure</param>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual int[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) => null;
+		public virtual HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) => null;
 
 		/// <summary>
 		/// Returns a tooltip or null
@@ -55,5 +56,41 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="position">Position</param>
 		/// <returns></returns>
 		public virtual object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) => null;
+	}
+
+	/// <summary>
+	/// Indexes
+	/// </summary>
+	public struct HexIndexes {
+		/// <summary>
+		/// Gets the start index
+		/// </summary>
+		public int Start { get; }
+
+		/// <summary>
+		/// Gets the end index
+		/// </summary>
+		public int End { get; }
+
+		/// <summary>
+		/// true if it's empty
+		/// </summary>
+		public bool IsEmpty => Start == End;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="start">Start index</param>
+		/// <param name="length">Length</param>
+		public HexIndexes(int start, int length) {
+			if (start < 0)
+				throw new ArgumentOutOfRangeException(nameof(start));
+			if (length < 0)
+				throw new ArgumentOutOfRangeException(nameof(length));
+			if (start + length < start)
+				throw new ArgumentOutOfRangeException(nameof(length));
+			Start = start;
+			End = start + length;
+		}
 	}
 }

@@ -331,6 +331,8 @@
     <Compile Include="Hex\Files\DotNet\DotNetHeapKind.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaderData.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaders.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetMethodBodyData.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetMethodProvider.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetStorageStream.cs" />
     <Compile Include="Hex\Files\DotNet\MDStreamFlags.cs" />
     <Compile Include="Hex\Files\DotNet\MDTable.cs" />
@@ -341,6 +343,7 @@
     <Compile Include="Hex\Files\DotNet\TableRecordData.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeaderData.cs" />
     <Compile Include="Hex\Files\DotNet\TablesHeapType.cs" />
+    <Compile Include="Hex\Files\DotNet\TokenData.cs" />
     <Compile Include="Hex\Files\HexFieldFormatter.cs" />
     <Compile Include="Hex\Files\HexFieldFormatterFactory.cs" />
     <Compile Include="Hex\Files\HexFieldFormatterOptions.cs" />

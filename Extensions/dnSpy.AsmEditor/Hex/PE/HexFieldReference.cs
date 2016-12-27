@@ -17,19 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
-	/// <summary>
-	/// <see cref="HexFileStructureInfoProviderFactory"/> names
-	/// </summary>
-	public static class PredefinedHexFileStructureInfoProviderFactoryNames {
-		/// <summary>
-		/// Default <see cref="HexFileStructureInfoProviderFactory"/>
-		/// </summary>
-		public const string Default = nameof(Default);
+using System;
+using dnSpy.Contracts.Hex.Files;
 
-		/// <summary>
-		/// .NET <see cref="HexFileStructureInfoProviderFactory"/>
-		/// </summary>
-		public const string DotNet = nameof(DotNet);
+namespace dnSpy.AsmEditor.Hex.PE {
+	sealed class HexFieldReference {
+		public HexBufferFile File { get; }
+		public HexVM Structure { get; }
+		public HexField Field { get; }
+
+		public HexFieldReference(HexBufferFile file, HexVM structure, HexField field) {
+			if (file == null)
+				throw new ArgumentNullException(nameof(file));
+			if (structure == null)
+				throw new ArgumentNullException(nameof(structure));
+			if (field == null)
+				throw new ArgumentNullException(nameof(field));
+			File = file;
+			Structure = structure;
+			Field = field;
+		}
 	}
 }

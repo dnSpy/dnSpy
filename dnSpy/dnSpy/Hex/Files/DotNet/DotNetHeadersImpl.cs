@@ -28,8 +28,9 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override DotNetCor20Data Cor20 { get; }
 		public override DotNetMetadataHeaders MetadataHeaders { get; }
 		public override VirtualArrayData<ByteData> StrongNameSignature { get; }
+		public override DotNetMethodProvider MethodProvider { get; }
 
-		public DotNetHeadersImpl(PeHeaders peHeaders, DotNetCor20Data cor20, DotNetMetadataHeaders metadataHeaders, VirtualArrayData<ByteData> strongNameSignature) {
+		public DotNetHeadersImpl(PeHeaders peHeaders, DotNetCor20Data cor20, DotNetMetadataHeaders metadataHeaders, VirtualArrayData<ByteData> strongNameSignature, DotNetMethodProvider methodProvider) {
 			if (peHeaders == null)
 				throw new ArgumentNullException(nameof(peHeaders));
 			if (cor20 == null)
@@ -38,6 +39,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			Cor20 = cor20;
 			MetadataHeaders = metadataHeaders;
 			StrongNameSignature = strongNameSignature;
+			MethodProvider = methodProvider;
 		}
 	}
 }

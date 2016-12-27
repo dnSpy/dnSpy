@@ -112,10 +112,8 @@ namespace dnSpy.Hex.Files {
 				}
 				else {
 					for (int i = 0; i < indexes.Length; i++) {
-						var start = structure.GetFieldByIndex(indexes[i]).Data.Span.Start;
-						var end = i + 1 < indexes.Length ?
-							structure.GetFieldByIndex(indexes[i + 1]).Data.Span.Start :
-							structure.GetFieldByIndex(structure.FieldCount - 1).Data.Span.End;
+						var start = structure.GetFieldByIndex(indexes[i].Start).Data.Span.Start;
+						var end = structure.GetFieldByIndex(indexes[i].End - 1).Data.Span.End;
 						var span = HexBufferSpan.FromBounds(start, end);
 						yield return new HexStructureField(span, HexStructureFieldKind.SubStructure);
 					}
@@ -136,28 +134,34 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 
-		int[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
+		HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
 			foreach (var provider in HexFileStructureInfoProviders) {
 				var indexes = provider.GetSubStructureIndexes(file, structure, position);
-				if (IsValidIndexes(indexes, structure))
+				if (indexes == null)
+					continue;
+				bool b = IsValidIndexes(indexes, structure);
+				Debug.Assert(b);
+				if (b)
 					return indexes;
 			}
 			return null;
 		}
 
-		static bool IsValidIndexes(int[] indexes, ComplexData structure) {
+		static bool IsValidIndexes(HexIndexes[] indexes, ComplexData structure) {
 			if (indexes == null)
 				return false;
 			if (indexes.Length == 0)
 				return true;
-			if (indexes[0] != 0)
+			if ((uint)indexes[0].End > (uint)structure.FieldCount)
 				return false;
-			if ((uint)indexes[0] >= (uint)structure.FieldCount)
+			if (indexes[0].IsEmpty)
 				return false;
 			for (int i = 1; i < indexes.Length; i++) {
-				if (indexes[i - 1] >= indexes[i])
+				if (indexes[i - 1].End > indexes[i].Start)
 					return false;
-				if ((uint)indexes[i] >= (uint)structure.FieldCount)
+				if ((uint)indexes[i].End > (uint)structure.FieldCount)
+					return false;
+				if (indexes[i].IsEmpty)
 					return false;
 			}
 			return true;

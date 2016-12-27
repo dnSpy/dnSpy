@@ -20,10 +20,10 @@
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.PE {
+namespace dnSpy.Hex.Files.DotNet {
 	sealed class MethodBodyReader {
 		readonly HexBuffer buffer;
-		readonly IList<uint> rids;
+		readonly IList<uint> tokens;
 		readonly HexPosition methodBodyPosition;
 		readonly HexPosition maxMethodBodyEndPosition;
 		HexPosition currentPosition;
@@ -34,9 +34,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		uint codeSize;
 		uint localVarSigTok;
 
-		public MethodBodyReader(HexBuffer buffer, IList<uint> rids, HexPosition methodBodyPosition, HexPosition maxMethodBodyEndPosition) {
+		public MethodBodyReader(HexBuffer buffer, IList<uint> tokens, HexPosition methodBodyPosition, HexPosition maxMethodBodyEndPosition) {
 			this.buffer = buffer;
-			this.rids = rids;
+			this.tokens = tokens;
 			this.methodBodyPosition = methodBodyPosition;
 			this.maxMethodBodyEndPosition = maxMethodBodyEndPosition;
 		}
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			bool isSmallExceptionClauses;
 			var exceptionsSpan = ReadExceptionHandlers(out isSmallExceptionClauses);
 
-			return new MethodBodyInfo(rids, headerSpan, instructionsSpan, exceptionsSpan, isSmallExceptionClauses ? MethodBodyInfoFlags.SmallExceptionClauses : MethodBodyInfoFlags.None);
+			return new MethodBodyInfo(tokens, headerSpan, instructionsSpan, exceptionsSpan, isSmallExceptionClauses ? MethodBodyInfoFlags.SmallExceptionClauses : MethodBodyInfoFlags.None);
 		}
 
 		byte ReadByte() => buffer.ReadByte(currentPosition++);

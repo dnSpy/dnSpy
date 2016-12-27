@@ -42,6 +42,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		DotNetMetadataHeaders dotNetMetadataHeaders;
 		DotNetHeaders dotNetHeaders;
 		VirtualArrayData<ByteData> strongNameSignature;
+		DotNetMethodProviderImpl dotNetMethodProvider;
 
 		public DotNetStructureProvider(HexBufferFile file) {
 			if (file == null)
@@ -76,8 +77,11 @@ namespace dnSpy.Hex.Files.DotNet {
 
 			if (mdHeader != null && dotNetHeaps != null)
 				dotNetMetadataHeaders = new DotNetMetadataHeadersImpl(metadataSpan, mdHeader, dotNetHeaps);
-			if (peHeaders != null && cor20 != null)
-				dotNetHeaders = new DotNetHeadersImpl(peHeaders, cor20, dotNetMetadataHeaders, strongNameSignature);
+			if (peHeaders != null && cor20 != null) {
+				if (dotNetMetadataHeaders?.TablesStream != null)
+					dotNetMethodProvider = new DotNetMethodProviderImpl(file.Buffer, file.Span, peHeaders, dotNetMetadataHeaders.TablesStream);
+				dotNetHeaders = new DotNetHeadersImpl(peHeaders, cor20, dotNetMetadataHeaders, strongNameSignature, dotNetMethodProvider);
+			}
 			return cor20 != null || !metadataSpan.IsEmpty;
 		}
 
@@ -134,8 +138,10 @@ namespace dnSpy.Hex.Files.DotNet {
 					return cor20;
 				if (strongNameSignature?.Span.Span.Contains(position) == true)
 					return strongNameSignature;
+				var body = dotNetMethodProvider?.GetMethodBody(position);
+				if (body != null)
+					return body;
 				//TODO: Return resources struct
-				//TODO: Return method struct
 			}
 
 			if (metadataSpan.Contains(position)) {
@@ -163,6 +169,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override THeader GetHeaders<THeader>() =>
 			dotNetMetadataHeaders as THeader ??
-			dotNetHeaders as THeader;
+			dotNetHeaders as THeader ??
+			dotNetMethodProvider as THeader;
 	}
 }

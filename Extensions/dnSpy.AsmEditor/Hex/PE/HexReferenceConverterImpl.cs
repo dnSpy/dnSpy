@@ -18,8 +18,6 @@
 */
 
 using System.ComponentModel.Composition;
-using dnlib.DotNet;
-using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Hex.Editor;
 
@@ -38,33 +36,15 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			if (fieldRef != null)
 				return ConvertFieldReference(fieldRef);
 
-			var methodRef = reference as HexMethodReference;
-			if (methodRef != null)
-				return ConvertMethodReference(methodRef);
-
 			return reference;
 		}
 
 		DocumentTreeNodeData ConvertFieldReference(HexFieldReference fieldRef) {
-			var peNode = bufferToDocumentNodeService.FindPENode(fieldRef.PESpan.Buffer, fieldRef.PESpan.Start);
+			var peNode = bufferToDocumentNodeService.FindPENode(fieldRef.File);
 			if (peNode == null)
 				return null;
 
 			return peNode.FindNode(fieldRef.Structure, fieldRef.Field);
-		}
-
-		MethodStatementReference ConvertMethodReference(HexMethodReference methodRef) {
-			var docNode = bufferToDocumentNodeService.Find(methodRef.PESpan.Buffer, methodRef.PESpan.Start);
-			if (docNode == null)
-				return null;
-			var module = docNode.Document.ModuleDef;
-			if (module == null)
-				return null;
-			var method = module.ResolveToken(methodRef.Token) as MethodDef;
-			if (method == null)
-				return null;
-
-			return new MethodStatementReference(method, methodRef.Offset);
 		}
 	}
 }

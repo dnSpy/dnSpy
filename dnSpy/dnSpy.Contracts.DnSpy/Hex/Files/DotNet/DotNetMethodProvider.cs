@@ -17,19 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
+namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// <see cref="HexFileStructureInfoProviderFactory"/> names
+	/// Provides <see cref="DotNetMethodBody"/> instances
 	/// </summary>
-	public static class PredefinedHexFileStructureInfoProviderFactoryNames {
+	public abstract class DotNetMethodProvider : IBufferFileHeaders {
 		/// <summary>
-		/// Default <see cref="HexFileStructureInfoProviderFactory"/>
+		/// Returns true if <paramref name="position"/> is probably within a method body
 		/// </summary>
-		public const string Default = nameof(Default);
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract bool IsMethodPosition(HexPosition position);
 
 		/// <summary>
-		/// .NET <see cref="HexFileStructureInfoProviderFactory"/>
+		/// Gets a method or null if <paramref name="position"/> isn't within a method body
 		/// </summary>
-		public const string DotNet = nameof(DotNet);
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract DotNetMethodBody GetMethodBody(HexPosition position);
 	}
 }

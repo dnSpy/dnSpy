@@ -17,41 +17,32 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Hex.Files.PE;
-
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// .NET headers, present if the COR20 header exists in a PE file. The .NET metadata could still be null.
+	/// .NET metadata token
 	/// </summary>
-	public abstract class DotNetHeaders : IBufferFileHeaders {
+	public class TokenData : UInt32Data {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected DotNetHeaders() { }
+		/// <param name="span">Data span</param>
+		public TokenData(HexBufferSpan span)
+			: base(span) {
+		}
 
 		/// <summary>
-		/// Gets the PE headers
+		/// Constructor
 		/// </summary>
-		public abstract PeHeaders PeHeaders { get; }
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public TokenData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4))) {
+		}
 
 		/// <summary>
-		/// Gets the COR20 header
+		/// Writes the value
 		/// </summary>
-		public abstract DotNetCor20Data Cor20 { get; }
-
-		/// <summary>
-		/// Gets the .NET metadata-only headers or null if none
-		/// </summary>
-		public abstract DotNetMetadataHeaders MetadataHeaders { get; }
-
-		/// <summary>
-		/// Gets the strong name signature or null if none
-		/// </summary>
-		public abstract VirtualArrayData<ByteData> StrongNameSignature { get; }
-
-		/// <summary>
-		/// Gets the method provider or null
-		/// </summary>
-		public abstract DotNetMethodProvider MethodProvider { get; }
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteToken(ReadValue());
 	}
 }

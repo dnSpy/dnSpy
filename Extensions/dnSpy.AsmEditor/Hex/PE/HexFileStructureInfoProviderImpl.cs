@@ -153,15 +153,15 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 			var info = peStructure.GetField(position);
 			if (info != null)
-				return new HexFieldReference(new HexBufferSpan(file.Buffer, file.Span), info.Value.Structure, info.Value.Field);
+				return new HexFieldReference(file, info.Value.Structure, info.Value.Field);
 
 			return null;
 		}
 
-		public override int[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
 			var sections = structure as PeSectionsData;
 			if (sections != null)
-				return Array.Empty<int>();
+				return Array.Empty<HexIndexes>();
 
 			return null;
 		}

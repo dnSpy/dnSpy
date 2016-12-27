@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
 
-namespace dnSpy.AsmEditor.Hex.PE {
+namespace dnSpy.Hex.Files.DotNet {
 	[Flags]
 	enum MethodBodyInfoFlags {
 		None							= 0,
@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	}
 
 	struct MethodBodyInfo {
-		public IList<uint> Rids { get; }
+		public IList<uint> Tokens { get; }
 		public HexSpan HeaderSpan { get; }
 		public HexSpan InstructionsSpan { get; }
 		public HexSpan ExceptionsSpan { get; }
@@ -51,8 +51,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		public MethodBodyInfo(IList<uint> rids, HexSpan headerSpan, HexSpan instructionsSpan, HexSpan exceptionsSpan, MethodBodyInfoFlags flags) {
-			Rids = rids;
+		public MethodBodyInfo(IList<uint> tokens, HexSpan headerSpan, HexSpan instructionsSpan, HexSpan exceptionsSpan, MethodBodyInfoFlags flags) {
+			Tokens = tokens;
 			HeaderSpan = headerSpan;
 			InstructionsSpan = instructionsSpan;
 			ExceptionsSpan = exceptionsSpan;
