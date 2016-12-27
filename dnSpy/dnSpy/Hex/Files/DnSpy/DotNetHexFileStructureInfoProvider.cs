@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Files;
@@ -26,6 +27,7 @@ using dnSpy.Contracts.Hex.Files.DnSpy;
 using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Hex.Text;
 using dnSpy.Contracts.Images;
+using dnSpy.Hex.Files.DotNet;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Files.DnSpy {
@@ -58,6 +60,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 			if (body != null)
 				return GetToolTip(body, position);
 
+			var resource = structure as DotNetEmbeddedResource;
+			if (resource != null)
+				return GetToolTip(resource, position);
+
 			return base.GetToolTip(file, structure, position);
 		}
 
@@ -87,6 +93,42 @@ namespace dnSpy.Hex.Files.DnSpy {
 			contentCreator.Writer.WriteFieldAndValue(body, position);
 
 			return toolTipCreator.Create();
+		}
+
+		object GetToolTip(DotNetEmbeddedResource resource, HexPosition position) {
+			var mdHeaders = resource.ResourceProvider.File.GetHeaders<DotNetMetadataHeaders>();
+			Debug.Assert(mdHeaders != null);
+			if (mdHeaders == null)
+				return null;
+			var rec = mdHeaders.TablesStream?.GetRecord(resource.Token);
+			Debug.Assert(rec != null);
+			if (rec == null)
+				return null;
+			const int NameColumn = 2;
+			var filteredName = NameUtils.FilterName(mdHeaders.StringsStream?.Read(rec.ReadColumn(NameColumn)) ?? string.Empty);
+
+			var toolTipCreator = toolTipCreatorFactory.Create();
+			var contentCreator = toolTipCreator.ToolTipContentCreator;
+
+			contentCreator.Image = GetResourceImage(resource);
+
+			contentCreator.Writer.WriteFilename(filteredName);
+			contentCreator.Writer.WriteSpace();
+			contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+			contentCreator.Writer.WriteToken(resource.Token.Raw);
+			contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+			contentCreator.CreateNewWriter();
+			contentCreator.Writer.WriteFieldAndValue(resource, position);
+
+			return toolTipCreator.Create();
+		}
+
+		ImageReference GetResourceImage(DotNetEmbeddedResource resource) {
+			var span = resource.Content.Data.Span;
+			// Check if it's a multi-file resource
+			if (span.Length >= 4 && span.Buffer.ReadUInt32(span.Start) == 0xBEEFCACE)
+				return DsImages.SourceFileGroup;
+			return DsImages.Dialog;
 		}
 
 		public override object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
