@@ -35,13 +35,13 @@ namespace dnSpy.Hex.Files.DotNet {
 		struct ResourceInfo {
 			public uint Token { get; }
 			public HexSpan Span { get; }
-			public string Name { get; }
-			public ResourceInfo(uint token, HexSpan span, string name) {
-				if (name == null)
-					throw new ArgumentNullException(nameof(name));
+			public string FilteredName { get; }
+			public ResourceInfo(uint token, HexSpan span, string filteredName) {
+				if (filteredName == null)
+					throw new ArgumentNullException(nameof(filteredName));
 				Token = token;
 				Span = span;
-				Name = name;
+				FilteredName = filteredName;
 			}
 		}
 
@@ -55,17 +55,17 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, TablesHeap tablesHeap, HexSpan? resourcesSpan) {
+		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders metadataHeaders, HexSpan? resourcesSpan) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (peHeaders == null)
 				throw new ArgumentNullException(nameof(peHeaders));
 			this.peHeaders = peHeaders;
 			buffer = file.Buffer;
-			if (tablesHeap != null && resourcesSpan != null) {
+			if (metadataHeaders?.TablesStream != null && resourcesSpan != null) {
 				Debug.Assert(file.Span.Contains(resourcesSpan.Value));// Verified by caller
 				this.resourcesSpan = resourcesSpan.Value;
-				resourceInfos = CreateResourceInfos(file, tablesHeap.MDTables[(int)Table.ManifestResource]);
+				resourceInfos = CreateResourceInfos(file, metadataHeaders.TablesStream.MDTables[(int)Table.ManifestResource], metadataHeaders.StringsStream);
 			}
 			else
 				resourceInfos = Array.Empty<ResourceInfo>();
@@ -77,7 +77,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				foreach (var info in resourceInfos) {
 					if (info.Span.Start < lastEnd)
 						continue;
-					filesToCreate.Add(new BufferFileOptions(HexSpan.FromBounds(info.Span.Start + 4, info.Span.End), info.Name, string.Empty, tags));
+					filesToCreate.Add(new BufferFileOptions(HexSpan.FromBounds(info.Span.Start + 4, info.Span.End), info.FilteredName, string.Empty, tags));
 					lastEnd = info.Span.End;
 				}
 				if (filesToCreate.Count > 0)
@@ -85,7 +85,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		ResourceInfo[] CreateResourceInfos(HexBufferFile file, MDTable resourceTable) {
+		ResourceInfo[] CreateResourceInfos(HexBufferFile file, MDTable resourceTable, StringsHeap stringsHeap) {
 			if (resourceTable == null)
 				return Array.Empty<ResourceInfo>();
 			var list = new List<ResourceInfo>((int)resourceTable.Rows);
@@ -112,8 +112,8 @@ namespace dnSpy.Hex.Files.DotNet {
 					continue;
 
 				var token = new MDToken(Table.ManifestResource, rid);
-				var name = string.Empty;
-				list.Add(new ResourceInfo(token.Raw, resourceSpan.Value, name));
+				var filteredName = NameUtils.FilterName(stringsHeap?.Read(nameOffset) ?? string.Empty);
+				list.Add(new ResourceInfo(token.Raw, resourceSpan.Value, filteredName));
 			}
 
 			list.Sort(ResourceInfoComparer.Instance);
