@@ -69,5 +69,23 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			formatter.Write(Token.Table.ToString(), PredefinedClassifiedTextTags.ValueType);
 			formatter.WriteArrayField(Token.Rid);
 		}
+
+		/// <summary>
+		/// Reads a column, treating the column value as an unsigned integer
+		/// </summary>
+		/// <param name="index">Index of column</param>
+		/// <returns></returns>
+		public uint ReadColumn(int index) {
+			var mdTable = TablesHeap.MDTables[(int)Token.Table];
+			if ((uint)index >= (uint)mdTable.Columns.Count)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			var column = mdTable.Columns[index];
+			switch (column.Size) {
+			case 1: return Span.Buffer.ReadByte(Span.Start + column.Offset);
+			case 2: return Span.Buffer.ReadUInt16(Span.Start + column.Offset);
+			case 4: return Span.Buffer.ReadUInt32(Span.Start + column.Offset);
+			default: throw new InvalidOperationException();
+			}
+		}
 	}
 }
