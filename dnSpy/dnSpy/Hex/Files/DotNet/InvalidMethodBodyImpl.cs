@@ -28,8 +28,8 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		public InvalidMethodBodyImpl(HexBufferSpan span, ReadOnlyCollection<uint> tokens)
-			: base(span, tokens) {
+		public InvalidMethodBodyImpl(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
+			: base(methodProvider, span, tokens) {
 			var buffer = span.Buffer;
 			var pos = span.Start.Position;
 			Instructions = new StructField<VirtualArrayData<ByteData>>(TinyMethodBodyImpl.InstructionsFieldName, ArrayData.CreateVirtualByteArray(HexBufferSpan.FromBounds(span.Start, span.End), TinyMethodBodyImpl.InstructionsFieldName));

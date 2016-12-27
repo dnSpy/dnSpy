@@ -35,8 +35,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x03, 0x02, "TinyFormat"),
 		};
 
-		public TinyMethodBodyImpl(HexBufferSpan span, ReadOnlyCollection<uint> tokens)
-			: base(span, tokens) {
+		public TinyMethodBodyImpl(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
+			: base(methodProvider, span, tokens) {
 			var buffer = span.Buffer;
 			var pos = span.Start.Position;
 			Flags_CodeSize = new StructField<ByteFlagsData>("Flags_CodeSize", new ByteFlagsData(buffer, pos, flagsCodeSizeFlagInfos));

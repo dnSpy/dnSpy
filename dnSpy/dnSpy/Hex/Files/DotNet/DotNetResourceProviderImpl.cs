@@ -28,7 +28,6 @@ using dnSpy.Contracts.Hex.Files.PE;
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class DotNetResourceProviderImpl : DotNetResourceProvider {
 		readonly PeHeaders peHeaders;
-		readonly HexBuffer buffer;
 		readonly HexSpan resourcesSpan;
 		readonly ResourceInfo[] resourceInfos;
 
@@ -55,13 +54,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders metadataHeaders, HexSpan? resourcesSpan) {
-			if (file == null)
-				throw new ArgumentNullException(nameof(file));
+		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders metadataHeaders, HexSpan? resourcesSpan)
+			: base(file) {
 			if (peHeaders == null)
 				throw new ArgumentNullException(nameof(peHeaders));
 			this.peHeaders = peHeaders;
-			buffer = file.Buffer;
 			if (metadataHeaders?.TablesStream != null && resourcesSpan != null) {
 				Debug.Assert(file.Span.Contains(resourcesSpan.Value));// Verified by caller
 				this.resourcesSpan = resourcesSpan.Value;
@@ -140,7 +137,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (index < 0)
 				return null;
 			var info = resourceInfos[index];
-			return new DotNetEmbeddedResourceImpl(new HexBufferSpan(buffer, info.Span), info.Token);
+			return new DotNetEmbeddedResourceImpl(this, new HexBufferSpan(File.Buffer, info.Span), info.Token);
 		}
 
 		int GetIndex(HexPosition position) {

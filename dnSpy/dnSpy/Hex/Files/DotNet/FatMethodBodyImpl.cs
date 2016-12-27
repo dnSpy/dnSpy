@@ -48,8 +48,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x3000, "Size0C"),
 		};
 
-		public FatMethodBodyImpl(HexBufferSpan span, ReadOnlyCollection<uint> tokens, HexSpan instructionsSpan, HexSpan ehSpan, bool fatEH)
-			: base(span, tokens) {
+		public FatMethodBodyImpl(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens, HexSpan instructionsSpan, HexSpan ehSpan, bool fatEH)
+			: base(methodProvider, span, tokens) {
 			var buffer = span.Buffer;
 			var pos = span.Start.Position;
 			Flags_Size = new StructField<UInt16FlagsData>("Flags", new UInt16FlagsData(buffer, pos, fatHeaderFlagsFlagInfos));

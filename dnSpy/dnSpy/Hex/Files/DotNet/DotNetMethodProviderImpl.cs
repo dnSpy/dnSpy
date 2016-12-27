@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Hex.Files.PE;
 
@@ -29,8 +30,6 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly PeHeaders peHeaders;
 		readonly MethodBodyRvaAndRid[] methodBodyRvas;
 		readonly HexSpan methodBodiesSpan;
-		readonly HexBuffer buffer;
-		readonly HexSpan fileSpan;
 
 		struct MethodBodyRvaAndRid {
 			// This is an RVA instead of a HexPosition so it's not needed to translate all method
@@ -54,13 +53,12 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public DotNetMethodProviderImpl(HexBuffer buffer, HexSpan fileSpan, PeHeaders peHeaders, TablesHeap tablesHeap) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
+		public DotNetMethodProviderImpl(HexBufferFile file, PeHeaders peHeaders, TablesHeap tablesHeap)
+			: base(file) {
+			if (file == null)
+				throw new ArgumentNullException(nameof(file));
 			if (peHeaders == null)
 				throw new ArgumentNullException(nameof(peHeaders));
-			this.buffer = buffer;
-			this.fileSpan = fileSpan;
 			this.peHeaders = peHeaders;
 			methodBodyRvas = CreateMethodBodyRvas(tablesHeap?.MDTables[(int)Table.Method]);
 			methodBodiesSpan = GetMethodBodiesSpan(methodBodyRvas);
@@ -80,7 +78,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				return Array.Empty<MethodBodyRvaAndRid>();
 			var list = new List<MethodBodyRvaAndRid>((int)methodTable.Rows);
 			var recordPos = methodTable.Span.Start;
-			var buffer = this.buffer;
+			var buffer = File.Buffer;
 			for (uint rid = 1; rid <= methodTable.Rows; rid++, recordPos += methodTable.RowSize) {
 				uint rva = buffer.ReadUInt32(recordPos);
 				// This should match the impl in dnlib
@@ -102,20 +100,20 @@ namespace dnSpy.Hex.Files.DotNet {
 			HexPosition endPos;
 			if (nextMethodIndex >= methodBodyRvas.Length) {
 				maxMethodBodyEndRva = (uint)Math.Min(uint.MaxValue, (ulong)methodBodyRvas[methodBodyRvas.Length - 1].Rva + 1);
-				endPos = fileSpan.End;
+				endPos = File.Span.End;
 			}
 			else {
 				maxMethodBodyEndRva = methodBodyRvas[nextMethodIndex].Rva;
-				endPos = HexPosition.Min(fileSpan.End, peHeaders.RvaToBufferPosition(maxMethodBodyEndRva));
+				endPos = HexPosition.Min(File.Span.End, peHeaders.RvaToBufferPosition(maxMethodBodyEndRva));
 			}
 			if (endPos < methodBodyPosition)
 				endPos = methodBodyPosition;
-			var info = new MethodBodyReader(buffer, tokens, methodBodyPosition, endPos).Read();
+			var info = new MethodBodyReader(File.Buffer, tokens, methodBodyPosition, endPos).Read();
 			if (info != null)
 				return info.Value;
 
 			// The file could be obfuscated (encrypted methods), assume the method ends at the next method body RVA
-			endPos = HexPosition.Min(fileSpan.End, peHeaders.RvaToBufferPosition(maxMethodBodyEndRva));
+			endPos = HexPosition.Min(File.Span.End, peHeaders.RvaToBufferPosition(maxMethodBodyEndRva));
 			if (endPos < methodBodyPosition)
 				endPos = methodBodyPosition;
 			return new MethodBodyInfo(tokens, HexSpan.FromBounds(methodBodyPosition, endPos), HexSpan.FromBounds(endPos, endPos), default(HexSpan), MethodBodyInfoFlags.Invalid);
@@ -140,13 +138,13 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (!methodInfo.Span.Contains(position))
 				return null;
 
-			var methodSpan = new HexBufferSpan(buffer, methodInfo.Span);
+			var methodSpan = new HexBufferSpan(File.Buffer, methodInfo.Span);
 			var roTokens = new ReadOnlyCollection<uint>(tokens);
 			if (methodInfo.IsInvalid)
-				return new InvalidMethodBodyImpl(methodSpan, roTokens);
+				return new InvalidMethodBodyImpl(this, methodSpan, roTokens);
 			if (methodInfo.HeaderSpan.Length == 1)
-				return new TinyMethodBodyImpl(methodSpan, roTokens);
-			return new FatMethodBodyImpl(methodSpan, roTokens, methodInfo.InstructionsSpan, methodInfo.ExceptionsSpan, !methodInfo.IsSmallExceptionClauses);
+				return new TinyMethodBodyImpl(this, methodSpan, roTokens);
+			return new FatMethodBodyImpl(this, methodSpan, roTokens, methodInfo.InstructionsSpan, methodInfo.ExceptionsSpan, !methodInfo.IsSmallExceptionClauses);
 		}
 
 		int GetStartIndex(HexPosition position) {

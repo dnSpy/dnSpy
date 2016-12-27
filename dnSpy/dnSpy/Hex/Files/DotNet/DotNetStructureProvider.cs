@@ -79,7 +79,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (mdHeader != null && dotNetHeaps != null)
 				dotNetMetadataHeaders = new DotNetMetadataHeadersImpl(metadataSpan, mdHeader, dotNetHeaps);
 			if (peHeaders != null && cor20 != null) {
-				dotNetMethodProvider = new DotNetMethodProviderImpl(file.Buffer, file.Span, peHeaders, dotNetMetadataHeaders?.TablesStream);
+				dotNetMethodProvider = new DotNetMethodProviderImpl(file, peHeaders, dotNetMetadataHeaders?.TablesStream);
 				dotNetResourceProvider = new DotNetResourceProviderImpl(file, peHeaders, dotNetMetadataHeaders, resourcesSpan);
 				dotNetHeaders = new DotNetHeadersImpl(peHeaders, cor20, dotNetMetadataHeaders, strongNameSignature, dotNetMethodProvider, dotNetResourceProvider);
 			}

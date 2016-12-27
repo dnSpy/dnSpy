@@ -51,17 +51,26 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public ReadOnlyCollection<uint> Tokens { get; }
 
 		/// <summary>
+		/// Gets the owner <see cref="DotNetMethodProvider"/> instance
+		/// </summary>
+		public DotNetMethodProvider MethodProvider { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="methodProvider">Owner</param>
 		/// <param name="name">Name</param>
 		/// <param name="span">Span</param>
 		/// <param name="tokens">Tokens of all methods that reference this method body</param>
-		protected DotNetMethodBody(string name, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
+		protected DotNetMethodBody(DotNetMethodProvider methodProvider, string name, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
 			: base(name, span) {
+			if (methodProvider == null)
+				throw new ArgumentNullException(nameof(methodProvider));
 			if (tokens == null)
 				throw new ArgumentOutOfRangeException(nameof(tokens));
 			if (tokens.Count == 0)
 				throw new ArgumentOutOfRangeException(nameof(tokens));
+			MethodProvider = methodProvider;
 			Tokens = tokens;
 		}
 
@@ -85,10 +94,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="methodProvider">Owner</param>
 		/// <param name="span">Span</param>
 		/// <param name="tokens">Tokens of all methods that reference this method body</param>
-		protected InvalidMethodBody(HexBufferSpan span, ReadOnlyCollection<uint> tokens)
-			: base(NAME, span, tokens) {
+		protected InvalidMethodBody(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
+			: base(methodProvider, NAME, span, tokens) {
 		}
 
 		/// <summary>
@@ -106,10 +116,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="methodProvider">Owner</param>
 		/// <param name="span">Span</param>
 		/// <param name="tokens">Tokens of all methods that reference this method body</param>
-		protected TinyMethodBody(HexBufferSpan span, ReadOnlyCollection<uint> tokens)
-			: base(NAME, span, tokens) {
+		protected TinyMethodBody(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
+			: base(methodProvider, NAME, span, tokens) {
 		}
 
 		/// <summary>
@@ -130,10 +141,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="methodProvider">Owner</param>
 		/// <param name="span">Span</param>
 		/// <param name="tokens">Tokens of all methods that reference this method body</param>
-		protected FatMethodBody(HexBufferSpan span, ReadOnlyCollection<uint> tokens)
-			: base(NAME, span, tokens) {
+		protected FatMethodBody(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
+			: base(methodProvider, NAME, span, tokens) {
 		}
 
 		/// <summary>

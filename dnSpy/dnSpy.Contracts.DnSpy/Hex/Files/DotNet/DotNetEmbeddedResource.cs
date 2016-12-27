@@ -17,12 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// .NET embedded resource
 	/// </summary>
 	public abstract class DotNetEmbeddedResource : StructureData {
 		const string NAME = "DotNetResource";
+
+		/// <summary>
+		/// Gets the owner <see cref="DotNetResourceProvider"/> instance
+		/// </summary>
+		public DotNetResourceProvider ResourceProvider { get; }
 
 		/// <summary>
 		/// Gets the token
@@ -32,10 +39,14 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="resourceProvider">Owner</param>
 		/// <param name="span">Span</param>
 		/// <param name="token">Token</param>
-		protected DotNetEmbeddedResource(HexBufferSpan span, uint token)
+		protected DotNetEmbeddedResource(DotNetResourceProvider resourceProvider, HexBufferSpan span, uint token)
 			: base(NAME, span) {
+			if (resourceProvider == null)
+				throw new ArgumentNullException(nameof(resourceProvider));
+			ResourceProvider = resourceProvider;
 			Token = new MDToken(token);
 		}
 

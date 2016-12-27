@@ -29,8 +29,8 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		public DotNetEmbeddedResourceImpl(HexBufferSpan span, uint token)
-			: base(span, token) {
+		public DotNetEmbeddedResourceImpl(DotNetResourceProvider resourceProvider, HexBufferSpan span, uint token)
+			: base(resourceProvider, span, token) {
 			if (span.Length < 4)
 				throw new ArgumentOutOfRangeException(nameof(span));
 			Size = new StructField<UInt32Data>("Size", new UInt32Data(span.Buffer, span.Start.Position));

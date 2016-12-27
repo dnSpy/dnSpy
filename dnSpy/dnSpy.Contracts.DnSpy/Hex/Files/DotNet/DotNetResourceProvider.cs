@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// Provides <see cref="DotNetEmbeddedResource"/> instances
@@ -25,7 +27,17 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected DotNetResourceProvider() { }
+		/// <param name="file">File</param>
+		protected DotNetResourceProvider(HexBufferFile file) {
+			if (file == null)
+				throw new ArgumentNullException(nameof(file));
+			File = file;
+		}
+
+		/// <summary>
+		/// Gets the file
+		/// </summary>
+		public HexBufferFile File { get; }
 
 		/// <summary>
 		/// Returns true if <paramref name="position"/> is probably within a resource
