@@ -182,8 +182,8 @@ namespace dnSpy.Hex {
 		public override ulong ReadUInt64(HexPosition position) => stream.ReadUInt64(position);
 		public override float ReadSingle(HexPosition position) => stream.ReadSingle(position);
 		public override double ReadDouble(HexPosition position) => stream.ReadDouble(position);
-		public override byte[] ReadBytes(HexPosition position, long length) => stream.ReadBytes(position, length);
-		public override byte[] ReadBytes(HexPosition position, ulong length) => stream.ReadBytes(position, checked((long)length));
+		public override byte[] ReadBytes(HexPosition position, long length) => length == 0 ? Array.Empty<byte>() : stream.ReadBytes(position, length);
+		public override byte[] ReadBytes(HexPosition position, ulong length) => length == 0 ? Array.Empty<byte>() : stream.ReadBytes(position, checked((long)length));
 		public override void ReadBytes(HexPosition position, byte[] destination, long destinationIndex, long length) =>
 			stream.ReadBytes(position, destination, destinationIndex, length);
 		public override HexBytes ReadHexBytes(HexPosition position, long length) => stream.ReadHexBytes(position, length);

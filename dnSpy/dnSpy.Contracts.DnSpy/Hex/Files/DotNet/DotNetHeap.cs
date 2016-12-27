@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
@@ -58,6 +59,43 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="position">Position</param>
 		/// <returns></returns>
 		public virtual ComplexData GetStructure(HexPosition position) => null;
+
+		/// <summary>
+		/// Checks whether <paramref name="offset"/> is valid. Note that some heaps
+		/// treat <paramref name="offset"/> as an index, eg. <see cref="GUIDHeap"/>.
+		/// </summary>
+		/// <param name="offset">Offset (or index if #GUID heap)</param>
+		/// <returns></returns>
+		public virtual bool IsValidOffset(uint offset) => offset == 0 || offset < Span.Length;
+
+		/// <summary>
+		/// Reads a compressed <see cref="int"/> and increments <paramref name="position"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		protected int? ReadCompressedInt32(ref HexPosition position) {
+			if (!Span.Contains(position))
+				return null;
+
+			var buffer = Span.Buffer;
+			byte b = buffer.ReadByte(position++);
+			if ((b & 0x80) == 0)
+				return b;
+
+			if ((b & 0xC0) == 0x80) {
+				if (position >= Span.Span.End)
+					return null;
+				return ((b & 0x3F) << 8) | buffer.ReadByte(position++);
+			}
+
+			// The encoding 111x isn't allowed but the CLR sometimes doesn't verify this
+			// and just assumes it's 110x. Don't fail if it's 111x, just assume it's 110x.
+
+			if (position + 3 > Span.Span.End)
+				return null;
+			return ((b & 0x1F) << 24) | (buffer.ReadByte(position++) << 16) |
+					(buffer.ReadByte(position++) << 8) | buffer.ReadByte(position++);
+		}
 	}
 
 	/// <summary>
@@ -150,6 +188,65 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		protected StringsHeap(HexBufferSpan span)
 			: base(span, DotNetHeapKind.Strings) {
 		}
+
+		/// <summary>
+		/// Gets the span of the string, not including the terminating zero byte.
+		/// Returns an empty span if <paramref name="offset"/> is invalid.
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public HexBufferSpan GetStringSpan(uint offset) => GetStringSpan(offset, int.MaxValue);
+
+		/// <summary>
+		/// Gets the span of the string, not including the terminating zero byte.
+		/// Returns an empty span if <paramref name="offset"/> is invalid.
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <param name="maxByteLength">Maximum number of bytes to read</param>
+		/// <returns></returns>
+		public HexBufferSpan GetStringSpan(uint offset, int maxByteLength) {
+			var start = Span.Span.Start + offset;
+			var pos = start;
+			var buffer = Span.Buffer;
+			var end = HexPosition.Min(Span.Span.End, start + maxByteLength);
+			while (pos < end && buffer.ReadByte(pos) != 0)
+				pos++;
+			if (start <= pos)
+				return new HexBufferSpan(buffer, HexSpan.FromBounds(start, pos));
+			return new HexBufferSpan(buffer, Span.Span.Start, 0);
+		}
+
+		/// <summary>
+		/// Reads string data which should be a UTF-8 encoded string. The array doesn't include the terminating zero.
+		/// Returns an empty array if <paramref name="offset"/> is invalid
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public byte[] ReadBytes(uint offset) => ReadBytes(offset, int.MaxValue);
+
+		/// <summary>
+		/// Reads string data which should be a UTF-8 encoded string. The array doesn't include the terminating zero.
+		/// Returns an empty array if <paramref name="offset"/> is invalid
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <param name="maxByteLength">Maximum number of bytes to read</param>
+		/// <returns></returns>
+		public byte[] ReadBytes(uint offset, int maxByteLength) => GetStringSpan(offset, maxByteLength).GetData();
+
+		/// <summary>
+		/// Reads a string. Returns an empty string if <paramref name="offset"/> is invalid
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public string Read(uint offset) => Read(offset, int.MaxValue);
+
+		/// <summary>
+		/// Reads a string. Returns an empty string if <paramref name="offset"/> is invalid
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <param name="maxByteLength">Maximum number of bytes to read</param>
+		/// <returns></returns>
+		public string Read(uint offset, int maxByteLength) => Encoding.UTF8.GetString(ReadBytes(offset, maxByteLength));
 	}
 
 	/// <summary>
@@ -163,6 +260,40 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		protected USHeap(HexBufferSpan span)
 			: base(span, DotNetHeapKind.US) {
 		}
+
+		/// <summary>
+		/// Returns the span of the string data or an empty span if <paramref name="offset"/> is 0 or invalid.
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public HexBufferSpan GetStringSpan(uint offset) {
+			// The CLR assumes offset 0 contains byte 0x00
+			if (offset == 0 || !IsValidOffset(offset))
+				return new HexBufferSpan(Span.Start, 0);
+			var pos = Span.Start.Position + offset;
+			int length = ReadCompressedInt32(ref pos) ?? -1;
+			if (length <= 0)
+				return new HexBufferSpan(Span.Start, 0);
+			if (pos + length > Span.End.Position)
+				return new HexBufferSpan(Span.Start, 0);
+			return new HexBufferSpan(Span.Buffer, new HexSpan(pos, (ulong)length));
+		}
+
+		/// <summary>
+		/// Reads data at <paramref name="offset"/>. Returns an empty array if <paramref name="offset"/> is invalid.
+		/// The returned data doesn't include the compressed data length at <paramref name="offset"/>.
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public byte[] ReadData(uint offset) => GetStringSpan(offset).GetData();
+
+		/// <summary>
+		/// Reads the string at <paramref name="offset"/>. Returns an empty string if
+		/// <paramref name="offset"/> is 0 or invalid.
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public string Read(uint offset) => Encoding.Unicode.GetString(ReadData(offset));
 	}
 
 	/// <summary>
@@ -175,6 +306,31 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="span">Heap span</param>
 		protected GUIDHeap(HexBufferSpan span)
 			: base(span, DotNetHeapKind.GUID) {
+		}
+
+		/// <summary>
+		/// Checks whether <paramref name="index"/> is valid. This method is identical to <see cref="IsValidOffset(uint)"/>
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		public bool IsValidIndex(uint index) => IsValidOffset(index);
+
+		/// <summary>
+		/// Checks whether <paramref name="index"/> is valid
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		public override bool IsValidOffset(uint index) => index == 0 || (ulong)index * 16 <= Span.Length;
+
+		/// <summary>
+		/// Reads a <see cref="Guid"/>. Returns null if <paramref name="index"/> is 0 or invalid
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		public Guid? Read(uint index) {
+			if (index == 0 || !IsValidIndex(index))
+				return null;
+			return new Guid(Span.Buffer.ReadBytes(Span.Start.Position + (index - 1) * 16, 16));
 		}
 	}
 
@@ -189,6 +345,34 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		protected BlobHeap(HexBufferSpan span)
 			: base(span, DotNetHeapKind.Blob) {
 		}
+
+		/// <summary>
+		/// Gets the span of data in this heap. The span doesn't include the compressed data length
+		/// at <paramref name="offset"/>. An empty span is returned if <paramref name="offset"/>
+		/// is invalid or 0.
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public HexBufferSpan GetDataSpan(uint offset) {
+			// The CLR assumes offset 0 contains byte 0x00
+			if (offset == 0 || !IsValidOffset(offset))
+				return new HexBufferSpan(Span.Start, 0);
+			var pos = Span.Start.Position + offset;
+			int length = ReadCompressedInt32(ref pos) ?? -1;
+			if (length <= 0)
+				return new HexBufferSpan(Span.Start, 0);
+			if (pos + length > Span.End.Position)
+				return new HexBufferSpan(Span.Start, 0);
+			return new HexBufferSpan(Span.Buffer, new HexSpan(pos, (ulong)length));
+		}
+
+		/// <summary>
+		/// Reads data at <paramref name="offset"/>. Returns an empty array if <paramref name="offset"/> is invalid.
+		/// The returned data doesn't include the compressed data length at <paramref name="offset"/>.
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public byte[] Read(uint offset) => GetDataSpan(offset).GetData();
 	}
 
 	/// <summary>
