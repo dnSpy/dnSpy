@@ -42,7 +42,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		DotNetMetadataHeaders dotNetMetadataHeaders;
 		DotNetHeaders dotNetHeaders;
 		VirtualArrayData<ByteData> strongNameSignature;
-		DotNetMethodProviderImpl dotNetMethodProvider;
+		DotNetMethodProvider dotNetMethodProvider;
+		DotNetResourceProvider dotNetResourceProvider;
 
 		public DotNetStructureProvider(HexBufferFile file) {
 			if (file == null)
@@ -51,6 +52,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		public override bool Initialize() {
+			HexSpan? resourcesSpan = null;
 			var peHeaders = file.GetHeaders<PeHeaders>();
 			if (peHeaders != null) {
 				if (peHeaders.OptionalHeader.DataDirectory.Data.FieldCount < 15)
@@ -63,11 +65,10 @@ namespace dnSpy.Hex.Files.DotNet {
 					return false;
 
 				var mdSpan = Read(peHeaders, cor20.MetaData.Data);
-				var resourcesSpan = Read(peHeaders, cor20.Resources.Data);
+				resourcesSpan = Read(peHeaders, cor20.Resources.Data);
 				var snSpan = Read(peHeaders, cor20.StrongNameSignature.Data);
 
 				ReadDotNetMetadataHeader(peHeaders, mdSpan);
-				ReadResources(peHeaders, resourcesSpan);
 				ReadStrongNameSignature(peHeaders, snSpan);
 			}
 			else {
@@ -78,9 +79,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (mdHeader != null && dotNetHeaps != null)
 				dotNetMetadataHeaders = new DotNetMetadataHeadersImpl(metadataSpan, mdHeader, dotNetHeaps);
 			if (peHeaders != null && cor20 != null) {
-				if (dotNetMetadataHeaders?.TablesStream != null)
-					dotNetMethodProvider = new DotNetMethodProviderImpl(file.Buffer, file.Span, peHeaders, dotNetMetadataHeaders.TablesStream);
-				dotNetHeaders = new DotNetHeadersImpl(peHeaders, cor20, dotNetMetadataHeaders, strongNameSignature, dotNetMethodProvider);
+				dotNetMethodProvider = new DotNetMethodProviderImpl(file.Buffer, file.Span, peHeaders, dotNetMetadataHeaders?.TablesStream);
+				dotNetResourceProvider = new DotNetResourceProviderImpl(file, peHeaders, dotNetMetadataHeaders?.TablesStream, resourcesSpan);
+				dotNetHeaders = new DotNetHeadersImpl(peHeaders, cor20, dotNetMetadataHeaders, strongNameSignature, dotNetMethodProvider, dotNetResourceProvider);
 			}
 			return cor20 != null || !metadataSpan.IsEmpty;
 		}
@@ -119,12 +120,6 @@ namespace dnSpy.Hex.Files.DotNet {
 				dotNetHeaps = dnReader.Streams;
 		}
 
-		void ReadResources(PeHeaders peHeaders, HexSpan? span) {
-			if (span == null)
-				return;
-			//TODO:
-		}
-
 		void ReadStrongNameSignature(PeHeaders peHeaders, HexSpan? span) {
 			if (span == null)
 				return;
@@ -141,7 +136,9 @@ namespace dnSpy.Hex.Files.DotNet {
 				var body = dotNetMethodProvider?.GetMethodBody(position);
 				if (body != null)
 					return body;
-				//TODO: Return resources struct
+				var resource = dotNetResourceProvider?.GetResource(position);
+				if (resource != null)
+					return resource;
 			}
 
 			if (metadataSpan.Contains(position)) {
@@ -170,6 +167,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override THeader GetHeaders<THeader>() =>
 			dotNetMetadataHeaders as THeader ??
 			dotNetHeaders as THeader ??
-			dotNetMethodProvider as THeader;
+			dotNetMethodProvider as THeader ??
+			dotNetResourceProvider as THeader;
 	}
 }

@@ -81,7 +81,11 @@ namespace dnSpy.Hex.Files {
 		}
 
 		KeyValuePair<HexBufferFile, ComplexData>? GetStructure(HexPosition position) {
-			var file = hexBufferFileService.GetFile(position, checkNestedFiles: true);
+			// Don't get the inner-most file since if it doesn't contain any structures,
+			// nothing will be shown. If we only grab the first file and let it find
+			// structures recursively, it could find a structure in a parent file,
+			// eg. a .NET resources structure.
+			var file = hexBufferFileService.GetFile(position, checkNestedFiles: false);
 			if (file == null)
 				return null;
 			var structure = file.GetStructure(position, checkNestedFiles: true);

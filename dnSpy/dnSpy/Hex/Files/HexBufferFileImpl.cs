@@ -122,8 +122,9 @@ namespace dnSpy.Hex.Files {
 
 			if (checkNestedFiles && files.Count != 0) {
 				var file = files.FindData(position);
-				if (file != null)
-					return file.GetStructure(position, checkNestedFiles);
+				var structure = file?.GetStructure(position, checkNestedFiles);
+				if (structure != null)
+					return structure;
 			}
 
 			CreateStructureProviders(true);

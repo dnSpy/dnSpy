@@ -17,24 +17,36 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
+namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// Predefined <see cref="HexBufferFile"/> tags
+	/// .NET embedded resource
 	/// </summary>
-	public static class PredefinedBufferFileTags {
-		/// <summary>
-		/// Normal file layout, eg. a PE file on disk
-		/// </summary>
-		public static readonly string FileLayout = nameof(FileLayout);
+	public abstract class DotNetEmbeddedResource : StructureData {
+		const string NAME = "DotNetResource";
 
 		/// <summary>
-		/// Memory layout, eg. a PE file loaded by the OS
+		/// Gets the token
 		/// </summary>
-		public static readonly string MemoryLayout = nameof(MemoryLayout);
+		public MDToken Token { get; }
 
 		/// <summary>
-		/// The file is part of .NET resources
+		/// Constructor
 		/// </summary>
-		public static readonly string DotNetResources = nameof(DotNetResources);
+		/// <param name="span">Span</param>
+		/// <param name="token">Token</param>
+		protected DotNetEmbeddedResource(HexBufferSpan span, uint token)
+			: base(NAME, span) {
+			Token = new MDToken(token);
+		}
+
+		/// <summary>
+		/// Gets the size of the resource
+		/// </summary>
+		public abstract StructField<UInt32Data> Size { get; }
+
+		/// <summary>
+		/// Gets the resource content
+		/// </summary>
+		public abstract StructField<VirtualArrayData<ByteData>> Content { get; }
 	}
 }

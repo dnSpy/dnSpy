@@ -48,6 +48,9 @@ namespace dnSpy.Hex.Files.DotNet {
 				}
 			}
 
+			if (structure is DotNetEmbeddedResource)
+				return Array.Empty<HexIndexes>();
+
 			return base.GetSubStructureIndexes(file, structure, position);
 		}
 		static readonly HexIndexes[] subStructFatWithEH = new HexIndexes[] {

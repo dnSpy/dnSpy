@@ -23,6 +23,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// </summary>
 	public abstract class DotNetMethodProvider : IBufferFileHeaders {
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected DotNetMethodProvider() { }
+
+		/// <summary>
 		/// Returns true if <paramref name="position"/> is probably within a method body
 		/// </summary>
 		/// <param name="position">Position</param>

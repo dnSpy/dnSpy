@@ -17,24 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
+namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// Predefined <see cref="HexBufferFile"/> tags
+	/// Provides <see cref="DotNetEmbeddedResource"/> instances
 	/// </summary>
-	public static class PredefinedBufferFileTags {
+	public abstract class DotNetResourceProvider {
 		/// <summary>
-		/// Normal file layout, eg. a PE file on disk
+		/// Constructor
 		/// </summary>
-		public static readonly string FileLayout = nameof(FileLayout);
+		protected DotNetResourceProvider() { }
 
 		/// <summary>
-		/// Memory layout, eg. a PE file loaded by the OS
+		/// Returns true if <paramref name="position"/> is probably within a resource
 		/// </summary>
-		public static readonly string MemoryLayout = nameof(MemoryLayout);
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract bool IsResourcePosition(HexPosition position);
 
 		/// <summary>
-		/// The file is part of .NET resources
+		/// Gets a resource or null if <paramref name="position"/> isn't within a resource
 		/// </summary>
-		public static readonly string DotNetResources = nameof(DotNetResources);
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract DotNetEmbeddedResource GetResource(HexPosition position);
 	}
 }

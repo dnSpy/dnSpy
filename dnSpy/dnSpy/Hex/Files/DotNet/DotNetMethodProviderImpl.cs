@@ -59,12 +59,10 @@ namespace dnSpy.Hex.Files.DotNet {
 				throw new ArgumentNullException(nameof(buffer));
 			if (peHeaders == null)
 				throw new ArgumentNullException(nameof(peHeaders));
-			if (tablesHeap == null)
-				throw new ArgumentNullException(nameof(tablesHeap));
 			this.buffer = buffer;
 			this.fileSpan = fileSpan;
 			this.peHeaders = peHeaders;
-			methodBodyRvas = CreateMethodBodyRvas(tablesHeap.MDTables[(int)Table.Method]);
+			methodBodyRvas = CreateMethodBodyRvas(tablesHeap?.MDTables[(int)Table.Method]);
 			methodBodiesSpan = GetMethodBodiesSpan(methodBodyRvas);
 		}
 
@@ -78,10 +76,12 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		MethodBodyRvaAndRid[] CreateMethodBodyRvas(MDTable methodTable) {
+			if (methodTable == null)
+				return Array.Empty<MethodBodyRvaAndRid>();
 			var list = new List<MethodBodyRvaAndRid>((int)methodTable.Rows);
 			var recordPos = methodTable.Span.Start;
 			var buffer = this.buffer;
-			for (uint rid = 1; rid <= methodTable.Rows; rid++, recordPos += methodTable.TableInfo.RowSize) {
+			for (uint rid = 1; rid <= methodTable.Rows; rid++, recordPos += methodTable.RowSize) {
 				uint rva = buffer.ReadUInt32(recordPos);
 				// This should match the impl in dnlib
 				if (rva == 0)

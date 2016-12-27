@@ -29,17 +29,23 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override DotNetMetadataHeaders MetadataHeaders { get; }
 		public override VirtualArrayData<ByteData> StrongNameSignature { get; }
 		public override DotNetMethodProvider MethodProvider { get; }
+		public override DotNetResourceProvider ResourceProvider { get; }
 
-		public DotNetHeadersImpl(PeHeaders peHeaders, DotNetCor20Data cor20, DotNetMetadataHeaders metadataHeaders, VirtualArrayData<ByteData> strongNameSignature, DotNetMethodProvider methodProvider) {
+		public DotNetHeadersImpl(PeHeaders peHeaders, DotNetCor20Data cor20, DotNetMetadataHeaders metadataHeaders, VirtualArrayData<ByteData> strongNameSignature, DotNetMethodProvider methodProvider, DotNetResourceProvider resourceProvider) {
 			if (peHeaders == null)
 				throw new ArgumentNullException(nameof(peHeaders));
 			if (cor20 == null)
 				throw new ArgumentNullException(nameof(cor20));
+			if (methodProvider == null)
+				throw new ArgumentNullException(nameof(methodProvider));
+			if (resourceProvider == null)
+				throw new ArgumentNullException(nameof(resourceProvider));
 			PeHeaders = peHeaders;
 			Cor20 = cor20;
 			MetadataHeaders = metadataHeaders;
 			StrongNameSignature = strongNameSignature;
 			MethodProvider = methodProvider;
+			ResourceProvider = resourceProvider;
 		}
 	}
 }

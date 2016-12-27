@@ -50,8 +50,13 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public abstract VirtualArrayData<ByteData> StrongNameSignature { get; }
 
 		/// <summary>
-		/// Gets the method provider or null
+		/// Gets the method provider
 		/// </summary>
 		public abstract DotNetMethodProvider MethodProvider { get; }
+
+		/// <summary>
+		/// Gets the .NET resource provider
+		/// </summary>
+		public abstract DotNetResourceProvider ResourceProvider { get; }
 	}
 }

@@ -432,6 +432,7 @@
     <Compile Include="Hex\Files\DnSpy\ToolTipObjectFactoryImpl.cs" />
     <Compile Include="Hex\Files\DotNet\BlobHeapImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetCor20DataImpl.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetEmbeddedResourceImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetHeadersImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetHeapsReader.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetHexFileStructureInfoProvider.cs" />
@@ -439,6 +440,7 @@
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaderReader.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeadersImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMethodProviderImpl.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetResourceProviderImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetStorageStreamImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetStructureProvider.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetTableSizes.cs" />

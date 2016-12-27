@@ -326,6 +326,7 @@
     <Compile Include="Hex\Files\DotNet\ColumnInfo.cs" />
     <Compile Include="Hex\Files\DotNet\ColumnSize.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetCor20Data.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetEmbeddedResource.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetHeaders.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetHeap.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetHeapKind.cs" />
@@ -333,6 +334,7 @@
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaders.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMethodBodyData.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMethodProvider.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetResourceProvider.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetStorageStream.cs" />
     <Compile Include="Hex\Files\DotNet\MDStreamFlags.cs" />
     <Compile Include="Hex\Files\DotNet\MDTable.cs" />
