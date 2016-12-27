@@ -361,7 +361,10 @@ namespace dnSpy.Hex.Editor {
 
 		MarkerElement TryCreateMarkerElement(HexBufferSpan span, HexSpanSelectionFlags flags, HexMarkerTag tag) {
 			Debug.Assert(tag.Type != null);
-			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetMarkerGeometry(span, flags), span, tag);
+			var overlap = wpfHexView.WpfHexViewLines.FormattedSpan.Overlap(span);
+			if (overlap == null)
+				return null;
+			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetMarkerGeometry(overlap.Value, flags), overlap.Value, tag);
 		}
 
 		MarkerElement TryCreateMarkerElement(WpfHexViewLine line, VST.Span span, HexMarkerTag tag) {
