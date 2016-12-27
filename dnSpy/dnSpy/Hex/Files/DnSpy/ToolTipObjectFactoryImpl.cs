@@ -95,6 +95,11 @@ namespace dnSpy.Hex.Files.DnSpy {
 			case PredefinedClassifiedTextTags.Enum:					return BoxedTextColor.Enum;
 			case PredefinedClassifiedTextTags.EnumField:			return BoxedTextColor.EnumField;
 			case PredefinedClassifiedTextTags.Field:				return BoxedTextColor.InstanceField;
+			case PredefinedClassifiedTextTags.PathName:				return BoxedTextColor.DirectoryPart;
+			case PredefinedClassifiedTextTags.PathSeparator:		return BoxedTextColor.Text;
+			case PredefinedClassifiedTextTags.Filename:				return BoxedTextColor.FileNameNoExtension;
+			case PredefinedClassifiedTextTags.FileDot:				return BoxedTextColor.Text;
+			case PredefinedClassifiedTextTags.FileExtension:		return BoxedTextColor.FileExtension;
 			default:												return BoxedTextColor.Text;
 			}
 		}

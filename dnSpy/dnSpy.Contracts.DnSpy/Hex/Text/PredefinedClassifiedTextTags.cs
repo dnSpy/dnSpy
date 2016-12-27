@@ -46,5 +46,15 @@ namespace dnSpy.Contracts.Hex.Text {
 		public const string EnumField = nameof(EnumField);
 		/// <summary>Field</summary>
 		public const string Field = nameof(Field);
+		/// <summary>Path name</summary>
+		public const string PathName = nameof(PathName);
+		/// <summary>Path separator</summary>
+		public const string PathSeparator = nameof(PathSeparator);
+		/// <summary>Filename without extension</summary>
+		public const string Filename = nameof(Filename);
+		/// <summary>Dot between filename and extension</summary>
+		public const string FileDot = nameof(FileDot);
+		/// <summary>File extension</summary>
+		public const string FileExtension = nameof(FileExtension);
 	}
 }

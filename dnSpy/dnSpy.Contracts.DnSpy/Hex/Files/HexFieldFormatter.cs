@@ -174,5 +174,11 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="value">Value</param>
 		/// <param name="infos">Enum field infos</param>
 		public abstract void WriteEnum(ulong value, EnumFieldInfo[] infos);
+
+		/// <summary>
+		/// Writes a filename which could contain path separators
+		/// </summary>
+		/// <param name="filename">Filename with or without path separators</param>
+		public abstract void WriteFilename(string filename);
 	}
 }

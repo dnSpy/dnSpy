@@ -217,5 +217,29 @@ namespace dnSpy.Hex.Files {
 			}
 			WriteShortNumber(value);
 		}
+
+		public override void WriteFilename(string filename) {
+			if (filename == null)
+				throw new ArgumentNullException(nameof(filename));
+			var parts = filename.Split(pathSeparators);
+			int index = 0;
+			for (int i = 0; i < parts.Length - 1; i++) {
+				var part = parts[i];
+				writer.Write(part, PredefinedClassifiedTextTags.PathName);
+				index += part.Length + 1;
+				writer.Write(filename.Substring(index - 1, 1), PredefinedClassifiedTextTags.PathSeparator);
+			}
+
+			var name = parts[parts.Length - 1];
+			int dot = name.LastIndexOf('.');
+			if (dot < 0)
+				writer.Write(name, PredefinedClassifiedTextTags.Filename);
+			else {
+				writer.Write(name.Substring(0, dot), PredefinedClassifiedTextTags.Filename);
+				writer.Write(name.Substring(dot, 1), PredefinedClassifiedTextTags.FileDot);
+				writer.Write(name.Substring(dot + 1), PredefinedClassifiedTextTags.FileExtension);
+			}
+		}
+		static readonly char[] pathSeparators = new[] { '/', '\\' };
 	}
 }
