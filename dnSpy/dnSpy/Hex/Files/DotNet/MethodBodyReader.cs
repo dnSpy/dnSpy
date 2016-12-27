@@ -19,10 +19,11 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class MethodBodyReader {
-		readonly HexBuffer buffer;
+		readonly HexBufferFile file;
 		readonly IList<uint> tokens;
 		readonly HexPosition methodBodyPosition;
 		readonly HexPosition maxMethodBodyEndPosition;
@@ -34,8 +35,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		uint codeSize;
 		uint localVarSigTok;
 
-		public MethodBodyReader(HexBuffer buffer, IList<uint> tokens, HexPosition methodBodyPosition, HexPosition maxMethodBodyEndPosition) {
-			this.buffer = buffer;
+		public MethodBodyReader(HexBufferFile file, IList<uint> tokens, HexPosition methodBodyPosition, HexPosition maxMethodBodyEndPosition) {
+			this.file = file;
 			this.tokens = tokens;
 			this.methodBodyPosition = methodBodyPosition;
 			this.maxMethodBodyEndPosition = maxMethodBodyEndPosition;
@@ -55,16 +56,16 @@ namespace dnSpy.Hex.Files.DotNet {
 			return new MethodBodyInfo(tokens, headerSpan, instructionsSpan, exceptionsSpan, isSmallExceptionClauses ? MethodBodyInfoFlags.SmallExceptionClauses : MethodBodyInfoFlags.None);
 		}
 
-		byte ReadByte() => buffer.ReadByte(currentPosition++);
+		byte ReadByte() => file.Buffer.ReadByte(currentPosition++);
 
 		ushort ReadUInt16() {
-			var res = buffer.ReadUInt16(currentPosition);
+			var res = file.Buffer.ReadUInt16(currentPosition);
 			currentPosition += 2;
 			return res;
 		}
 
 		uint ReadUInt32() {
-			var res = buffer.ReadUInt32(currentPosition);
+			var res = file.Buffer.ReadUInt32(currentPosition);
 			currentPosition += 4;
 			return res;
 		}
@@ -108,10 +109,10 @@ namespace dnSpy.Hex.Files.DotNet {
 		// From dnlib's MethodBodyReader
 		HexSpan ReadExceptionHandlers(out bool isSmallExceptionClauses) {
 			isSmallExceptionClauses = false;
-			if ((flags & 8) == 0)
+			if ((flags & 8) == 0 || !file.Span.Contains(currentPosition))
 				return default(HexSpan);
 
-			currentPosition = (currentPosition.ToUInt64() + 3) & ~3UL;
+			currentPosition = file.AlignUp(currentPosition, 4);
 			// Only read the first one. Any others aren't used.
 			byte b = ReadByte();
 			if ((b & 0x3F) != 1)

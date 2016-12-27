@@ -108,7 +108,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 			if (endPos < methodBodyPosition)
 				endPos = methodBodyPosition;
-			var info = new MethodBodyReader(File.Buffer, tokens, methodBodyPosition, endPos).Read();
+			var info = new MethodBodyReader(File, tokens, methodBodyPosition, endPos).Read();
 			if (info != null)
 				return info.Value;
 

@@ -178,5 +178,24 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <typeparam name="THeaders">Type</typeparam>
 		/// <returns></returns>
 		public abstract THeaders GetHeaders<THeaders>() where THeaders : class, IBufferFileHeaders;
+
+		/// <summary>
+		/// Aligns <paramref name="position"/> up. The returned position is aligned relative to the
+		/// start of the file, not relative to buffer position 0. I.e., if the file starts at position
+		/// 2, <paramref name="position"/> is 3 and <paramref name="alignment"/> is 4, the returned
+		/// value is 6, not 4.
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="alignment">Alignment, must be a power of 2</param>
+		/// <returns></returns>
+		public HexPosition AlignUp(HexPosition position, uint alignment) {
+			if (!Span.Contains(position))
+				throw new ArgumentOutOfRangeException(nameof(position));
+			if (!IsPowerOfTwo(alignment))
+				throw new ArgumentOutOfRangeException(nameof(alignment));
+			return Span.Start + (((position - Span.Start).ToUInt64() + alignment - 1) & ~(alignment - 1UL));
+		}
+
+		static bool IsPowerOfTwo(uint v) => v != 0 && (v & (v - 1)) == 0;
 	}
 }
