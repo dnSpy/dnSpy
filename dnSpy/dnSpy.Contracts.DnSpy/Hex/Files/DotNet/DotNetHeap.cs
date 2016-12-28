@@ -272,7 +272,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 				return new HexBufferSpan(Span.Start, 0);
 			var pos = Span.Start.Position + offset;
 			int length = ReadCompressedInt32(ref pos) ?? -1;
-			if (length <= 0)
+			if (length < 0)
 				return new HexBufferSpan(Span.Start, 0);
 			if (pos + length > Span.End.Position)
 				return new HexBufferSpan(Span.Start, 0);
@@ -359,7 +359,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 				return new HexBufferSpan(Span.Start, 0);
 			var pos = Span.Start.Position + offset;
 			int length = ReadCompressedInt32(ref pos) ?? -1;
-			if (length <= 0)
+			if (length < 0)
 				return new HexBufferSpan(Span.Start, 0);
 			if (pos + length > Span.End.Position)
 				return new HexBufferSpan(Span.Start, 0);
