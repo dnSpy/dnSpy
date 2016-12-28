@@ -93,14 +93,14 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:HexEditorSelectCommand", InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 100)]
+	[ExportMenuItem(Header = "res:HexEditorSelectCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 100)]
 	sealed class SelectContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		SelectContexMenuEntry()
 			: base(HexCommandIds.Select) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:HexEditorSaveSelectionCommand", InputGestureText = "res:ShortCutKeyCtrlAltS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 110)]
+	[ExportMenuItem(Header = "res:HexEditorSaveSelectionCommand", Icon = DsImagesAttribute.Save, InputGestureText = "res:ShortCutKeyCtrlAltS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 110)]
 	sealed class SaveSelectionContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		SaveSelectionContexMenuEntry()
 			: base(HexCommandIds.SaveSelection) {
@@ -125,7 +125,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			context.HexView.BufferLines.BufferSpan != new HexBufferSpan(context.HexView.Buffer, context.HexView.Buffer.Span);
 	}
 
-	[ExportMenuItem(InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_HEXVIEW_EDIT, Order = 0)]
+	[ExportMenuItem(Icon = DsImagesAttribute.Cancel, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_HEXVIEW_EDIT, Order = 0)]
 	sealed class DeleteContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		DeleteContexMenuEntry()
 			: base(HexEditorIds.DELETE) {
