@@ -116,7 +116,17 @@ namespace dnSpy.Hex.Files {
 				return;
 			var data = field.Data as SimpleData;
 			Debug.Assert(data != null);
-			data?.WriteValue(this);
+			if (data == null)
+				return;
+			try {
+				data.WriteValue(this);
+				return;
+			}
+			catch (ArithmeticException) {
+			}
+			catch (OutOfMemoryException) {
+			}
+			WriteUnknownValue();
 		}
 
 		public override void WriteToken(uint token) {
