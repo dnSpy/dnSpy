@@ -81,6 +81,20 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		public BufferField this[int index] => GetFieldByIndex(index);
+
+		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <returns></returns>
+		public BufferField this[string name] => GetFieldByName(name);
+
+		/// <summary>
 		/// Gets the field count
 		/// </summary>
 		public abstract int FieldCount { get; }
@@ -98,6 +112,13 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="position">Position</param>
 		/// <returns></returns>
 		public abstract BufferField GetFieldByPosition(HexPosition position);
+
+		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="name">Name of field</param>
+		/// <returns></returns>
+		public abstract BufferField GetFieldByName(string name);
 
 		/// <summary>
 		/// Writes the name
@@ -144,6 +165,21 @@ namespace dnSpy.Contracts.Hex.Files {
 		public sealed override BufferField GetFieldByPosition(HexPosition position) {
 			foreach (var field in Fields) {
 				if (field.Data.Span.Span.Contains(position))
+					return field;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="name">Name of field</param>
+		/// <returns></returns>
+		public override BufferField GetFieldByName(string name) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			foreach (var field in Fields) {
+				if (field.Name == name)
 					return field;
 			}
 			return null;
@@ -358,6 +394,23 @@ namespace dnSpy.Contracts.Hex.Files {
 		}
 
 		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="name">Name of field</param>
+		/// <returns></returns>
+		public override BufferField GetFieldByName(string name) {
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			int index;
+			if (!int.TryParse(name, out index))
+				return null;
+			// Don't throw if it's outside the range, it's a look up by name that should return null if the name doesn't exist
+			if ((uint)index >= (uint)FieldCount)
+				return null;
+			return GetFieldByIndex(index);
+		}
+
+		/// <summary>
 		/// Writes the name
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
@@ -376,7 +429,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="index">Index</param>
 		/// <returns></returns>
-		public ArrayField<TData> this[int index] => fields[index];
+		public new ArrayField<TData> this[int index] => fields[index];
 
 		/// <summary>
 		/// Gets the field count
@@ -440,7 +493,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="index">Index</param>
 		/// <returns></returns>
-		public ArrayField<TData> this[int index] => fields[index];
+		public new ArrayField<TData> this[int index] => fields[index];
 
 		/// <summary>
 		/// Gets the field count
@@ -495,7 +548,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="index">Index</param>
 		/// <returns></returns>
-		public ArrayField<TData> this[int index] {
+		public new ArrayField<TData> this[int index] {
 			get {
 				if ((uint)index >= (uint)FieldCount)
 					throw new ArgumentOutOfRangeException(nameof(index));
