@@ -167,6 +167,46 @@ namespace dnSpy.Debugger.Memory {
 			return stream?.ReadDouble(position) ?? 0;
 		}
 
+		public override short ReadInt16BigEndian(HexPosition position) {
+			CheckDisposed();
+			return stream?.ReadInt16BigEndian(position) ?? 0;
+		}
+
+		public override ushort ReadUInt16BigEndian(HexPosition position) {
+			CheckDisposed();
+			return stream?.ReadUInt16BigEndian(position) ?? 0;
+		}
+
+		public override int ReadInt32BigEndian(HexPosition position) {
+			CheckDisposed();
+			return stream?.ReadInt32BigEndian(position) ?? 0;
+		}
+
+		public override uint ReadUInt32BigEndian(HexPosition position) {
+			CheckDisposed();
+			return stream?.ReadUInt32BigEndian(position) ?? 0;
+		}
+
+		public override long ReadInt64BigEndian(HexPosition position) {
+			CheckDisposed();
+			return stream?.ReadInt64BigEndian(position) ?? 0;
+		}
+
+		public override ulong ReadUInt64BigEndian(HexPosition position) {
+			CheckDisposed();
+			return stream?.ReadUInt64BigEndian(position) ?? 0;
+		}
+
+		public override float ReadSingleBigEndian(HexPosition position) {
+			CheckDisposed();
+			return stream?.ReadSingleBigEndian(position) ?? 0;
+		}
+
+		public override double ReadDoubleBigEndian(HexPosition position) {
+			CheckDisposed();
+			return stream?.ReadDoubleBigEndian(position) ?? 0;
+		}
+
 		public override byte[] ReadBytes(HexPosition position, long length) {
 			CheckDisposed();
 			if (stream != null)

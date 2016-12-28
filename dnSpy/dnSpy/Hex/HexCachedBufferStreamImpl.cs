@@ -267,6 +267,102 @@ namespace dnSpy.Hex {
 			return *(double*)&v;
 		}
 
+		public override short ReadInt16BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			int index = (int)(position.ToUInt64() & pageSizeMask);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 1 >= data.Length) {
+					data = ReadSlow(position, 2);
+					index = 0;
+				}
+				return (short)(data[index + 1] | (data[index] << 8));
+			}
+		}
+
+		public override ushort ReadUInt16BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			int index = (int)(position.ToUInt64() & pageSizeMask);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 1 >= data.Length) {
+					data = ReadSlow(position, 2);
+					index = 0;
+				}
+				return (ushort)(data[index + 1] | (data[index] << 8));
+			}
+		}
+
+		public override int ReadInt32BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			int index = (int)(position.ToUInt64() & pageSizeMask);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 3 >= data.Length) {
+					data = ReadSlow(position, 4);
+					index = 0;
+				}
+				return data[index + 3] | (data[index + 2] << 8) | (data[index + 1] << 16) | (data[index] << 24);
+			}
+		}
+
+		public override uint ReadUInt32BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			int index = (int)(position.ToUInt64() & pageSizeMask);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 3 >= data.Length) {
+					data = ReadSlow(position, 4);
+					index = 0;
+				}
+				return (uint)(data[index + 3] | (data[index + 2] << 8) | (data[index + 1] << 16) | (data[index] << 24));
+			}
+		}
+
+		public override long ReadInt64BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			int index = (int)(position.ToUInt64() & pageSizeMask);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 7 >= data.Length) {
+					data = ReadSlow(position, 8);
+					index = 0;
+				}
+				return ((long)data[index + 7] | ((long)data[index + 6] << 8) | ((long)data[index + 5] << 16) | ((long)data[index + 4] << 24) |
+					((long)data[index + 3] << 32) | ((long)data[index + 2] << 40) | ((long)data[index + 1] << 48) | ((long)data[index] << 56));
+			}
+		}
+
+		public override ulong ReadUInt64BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			int index = (int)(position.ToUInt64() & pageSizeMask);
+			lock (lockObj) {
+				var cp = GetCachedPage_NoLock(position);
+				var data = cp.Data;
+				if (index + 7 >= data.Length) {
+					data = ReadSlow(position, 8);
+					index = 0;
+				}
+				return ((ulong)data[index + 7] | ((ulong)data[index + 6] << 8) | ((ulong)data[index + 5] << 16) | ((ulong)data[index + 4] << 24) |
+					((ulong)data[index + 3] << 32) | ((ulong)data[index + 2] << 40) | ((ulong)data[index + 1] << 48) | ((ulong)data[index] << 56));
+			}
+		}
+
+		public unsafe override float ReadSingleBigEndian(HexPosition position) {
+			int v = ReadInt32BigEndian(position);
+			return *(float*)&v;
+		}
+
+		public unsafe override double ReadDoubleBigEndian(HexPosition position) {
+			long v = ReadInt64BigEndian(position);
+			return *(double*)&v;
+		}
+
 		public override byte[] ReadBytes(HexPosition position, long length) {
 			var res = new byte[length];
 			ReadBytes(position, res, 0, res.LongLength);

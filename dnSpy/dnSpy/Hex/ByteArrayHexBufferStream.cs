@@ -218,6 +218,152 @@ namespace dnSpy.Hex {
 			return *(double*)&v;
 		}
 
+		public override short ReadInt16BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
+			var d = data;
+			if (pos + 1 < pos || pos + 1 >= (ulong)d.LongLength)
+				return pos < (ulong)d.LongLength ? (short)(d[pos] << 8) : (short)0;
+
+			return (short)(d[pos + 1] | (d[pos] << 8));
+		}
+
+		public override ushort ReadUInt16BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
+			var d = data;
+			if (pos + 1 < pos || pos + 1 >= (ulong)d.LongLength)
+				return pos < (ulong)d.LongLength ? (ushort)(d[pos] << 8) : (ushort)0;
+
+			return (ushort)(d[pos + 1] | (d[pos] << 8));
+		}
+
+		public override int ReadInt32BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
+			var d = data;
+			if (pos + 3 < pos)
+				return 0;
+			if (pos + 3 >= (ulong)d.LongLength) {
+				int res = 0;
+				if (pos < (ulong)d.LongLength)
+					res = d[pos] << 24;
+				if (pos + 1 < (ulong)d.LongLength)
+					res |= d[pos + 1] << 16;
+				if (pos + 2 < (ulong)d.LongLength)
+					res |= d[pos + 2] << 8;
+				return res;
+			}
+
+			return d[pos + 3] |
+					(d[pos + 2] << 8) |
+					(d[pos + 1] << 16) |
+					(d[pos] << 24);
+		}
+
+		public override uint ReadUInt32BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
+			var d = data;
+			if (pos + 3 < pos)
+				return 0;
+			if (pos + 3 >= (ulong)d.LongLength) {
+				int res = 0;
+				if (pos < (ulong)d.LongLength)
+					res = d[pos] << 24;
+				if (pos + 1 < (ulong)d.LongLength)
+					res |= d[pos + 1] << 16;
+				if (pos + 2 < (ulong)d.LongLength)
+					res |= d[pos + 2] << 8;
+				return (uint)res;
+			}
+
+			return (uint)(d[pos + 3] |
+					(d[pos + 2] << 8) |
+					(d[pos + 1] << 16) |
+					(d[pos] << 24));
+		}
+
+		public override long ReadInt64BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
+			var d = data;
+			if (pos + 7 < pos)
+				return 0;
+			if (pos + 7 >= (ulong)d.LongLength) {
+				long res = 0;
+				if (pos < (ulong)d.LongLength)
+					res = (long)d[pos] << 56;
+				if (pos + 1 < (ulong)d.LongLength)
+					res |= (long)d[pos + 1] << 48;
+				if (pos + 2 < (ulong)d.LongLength)
+					res |= (long)d[pos + 2] << 40;
+				if (pos + 3 < (ulong)d.LongLength)
+					res |= (long)d[pos + 3] << 32;
+				if (pos + 4 < (ulong)d.LongLength)
+					res |= (long)d[pos + 4] << 24;
+				if (pos + 5 < (ulong)d.LongLength)
+					res |= (long)d[pos + 5] << 16;
+				if (pos + 6 < (ulong)d.LongLength)
+					res |= (long)d[pos + 6] << 8;
+				return res;
+			}
+
+			return d[pos + 7] |
+					((long)d[pos + 6] << 8) |
+					((long)d[pos + 5] << 16) |
+					((long)d[pos + 4] << 24) |
+					((long)d[pos + 3] << 32) |
+					((long)d[pos + 2] << 40) |
+					((long)d[pos + 1] << 48) |
+					((long)d[pos] << 56);
+		}
+
+		public override ulong ReadUInt64BigEndian(HexPosition position) {
+			Debug.Assert(position < HexPosition.MaxEndPosition);
+			var pos = position.ToUInt64();
+			var d = data;
+			if (pos + 7 < pos)
+				return 0;
+			if (pos + 7 >= (ulong)d.LongLength) {
+				ulong res = 0;
+				if (pos < (ulong)d.LongLength)
+					res = (ulong)d[pos] << 56;
+				if (pos + 1 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 1] << 48;
+				if (pos + 2 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 2] << 40;
+				if (pos + 3 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 3] << 32;
+				if (pos + 4 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 4] << 24;
+				if (pos + 5 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 5] << 16;
+				if (pos + 6 < (ulong)d.LongLength)
+					res |= (ulong)d[pos + 6] << 8;
+				return res;
+			}
+
+			return d[pos + 7] |
+					((ulong)d[pos + 6] << 8) |
+					((ulong)d[pos + 5] << 16) |
+					((ulong)d[pos + 4] << 24) |
+					((ulong)d[pos + 3] << 32) |
+					((ulong)d[pos + 2] << 40) |
+					((ulong)d[pos + 1] << 48) |
+					((ulong)d[pos] << 56);
+		}
+
+		public unsafe override float ReadSingleBigEndian(HexPosition position) {
+			int v = ReadInt32BigEndian(position);
+			return *(float*)&v;
+		}
+
+		public unsafe override double ReadDoubleBigEndian(HexPosition position) {
+			long v = ReadInt64BigEndian(position);
+			return *(double*)&v;
+		}
+
 		public override byte[] ReadBytes(HexPosition position, long length) {
 			var res = new byte[length];
 			ReadBytes(position, res, 0, res.LongLength);

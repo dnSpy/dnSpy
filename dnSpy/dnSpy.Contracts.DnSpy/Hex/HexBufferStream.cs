@@ -161,6 +161,62 @@ namespace dnSpy.Contracts.Hex {
 		public abstract double ReadDouble(HexPosition position);
 
 		/// <summary>
+		/// Reads a <see cref="short"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract short ReadInt16BigEndian(HexPosition position);
+
+		/// <summary>
+		/// Reads a <see cref="ushort"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract ushort ReadUInt16BigEndian(HexPosition position);
+
+		/// <summary>
+		/// Reads a <see cref="int"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract int ReadInt32BigEndian(HexPosition position);
+
+		/// <summary>
+		/// Reads a <see cref="uint"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract uint ReadUInt32BigEndian(HexPosition position);
+
+		/// <summary>
+		/// Reads a <see cref="long"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract long ReadInt64BigEndian(HexPosition position);
+
+		/// <summary>
+		/// Reads a <see cref="ulong"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract ulong ReadUInt64BigEndian(HexPosition position);
+
+		/// <summary>
+		/// Reads a <see cref="float"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract float ReadSingleBigEndian(HexPosition position);
+
+		/// <summary>
+		/// Reads a <see cref="double"/>
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract double ReadDoubleBigEndian(HexPosition position);
+
+		/// <summary>
 		/// Reads bytes
 		/// </summary>
 		/// <param name="position">Position</param>
