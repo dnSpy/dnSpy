@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Files;
@@ -51,6 +52,15 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (structure is DotNetEmbeddedResource)
 				return Array.Empty<HexIndexes>();
 
+			var multiResource = structure as MultiResourceDataHeaderData;
+			if (multiResource != null) {
+				if (multiResource is MultiResourceSimplDataHeaderData || multiResource is MultiResourceStringDataHeaderData)
+					return multiResourceFields2;
+				if (multiResource is MultiResourceArrayDataHeaderData)
+					return multiResourceFields3;
+				Debug.Fail($"Unknown multi res type: {multiResource.GetType()}");
+			}
+
 			return base.GetSubStructureIndexes(file, structure, position);
 		}
 		static readonly HexIndexes[] subStructFatWithEH = new HexIndexes[] {
@@ -62,6 +72,14 @@ namespace dnSpy.Hex.Files.DotNet {
 		static readonly HexIndexes[] subStructFatWithoutEH = new HexIndexes[] {
 			new HexIndexes(0, 4),
 			new HexIndexes(4, 1),
+		};
+		static readonly HexIndexes[] multiResourceFields2 = new HexIndexes[] {
+			new HexIndexes(0, 1),
+			new HexIndexes(1, 1),
+		};
+		static readonly HexIndexes[] multiResourceFields3 = new HexIndexes[] {
+			new HexIndexes(0, 2),
+			new HexIndexes(2, 1),
 		};
 	}
 }

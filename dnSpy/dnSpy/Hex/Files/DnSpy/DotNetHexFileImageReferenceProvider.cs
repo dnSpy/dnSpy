@@ -33,7 +33,16 @@ namespace dnSpy.Hex.Files.DnSpy {
 			if (record != null)
 				return GetImageReference(record.Token.Table);
 
+			var nameOffset = structure as MultiResourceUnicodeNameAndOffsetData;
+			if (nameOffset != null)
+				return GetImageReference(nameOffset);
+
 			return null;
+		}
+
+		ImageReference? GetImageReference(MultiResourceUnicodeNameAndOffsetData nameOffset) {
+			var name = nameOffset.ResourceName.Data.String.Data.ReadValue();
+			return ImageReferenceUtils.GetImageReference(name);
 		}
 
 		static ImageReference GetImageReference(Table table) {

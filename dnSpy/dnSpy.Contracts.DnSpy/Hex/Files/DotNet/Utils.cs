@@ -17,24 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
-	/// <summary>
-	/// <see cref="StructureProviderFactory"/> names
-	/// </summary>
-	public static class PredefinedStructureProviderFactoryNames {
-		/// <summary>
-		/// PE file data provider
-		/// </summary>
-		public const string PE = nameof(PE);
-
-		/// <summary>
-		/// .NET file data provider
-		/// </summary>
-		public const string DotNet = nameof(DotNet);
-
-		/// <summary>
-		/// .NET multi-file resource data provider
-		/// </summary>
-		public const string DotNetMultiResource = nameof(DotNetMultiResource);
+namespace dnSpy.Contracts.Hex.Files.DotNet {
+	static class Utils {
+		public static int? Read7BitEncodedInt32(HexBuffer buffer, ref HexPosition position) {
+			uint val = 0;
+			int bits = 0;
+			for (int i = 0; i < 5; i++) {
+				byte b = buffer.ReadByte(position++);
+				val |= (uint)(b & 0x7F) << bits;
+				if ((b & 0x80) == 0)
+					return (int)val;
+				bits += 7;
+			}
+			return null;
+		}
 	}
 }

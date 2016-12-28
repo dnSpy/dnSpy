@@ -17,24 +17,38 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
+using System;
+
+namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// <see cref="StructureProviderFactory"/> names
+	/// Present if the file is a .NET multi-file resource file
 	/// </summary>
-	public static class PredefinedStructureProviderFactoryNames {
+	public abstract class DotNetMultiFileResources : IBufferFileHeaders {
 		/// <summary>
-		/// PE file data provider
+		/// Constructor
 		/// </summary>
-		public const string PE = nameof(PE);
+		/// <param name="file">File</param>
+		protected DotNetMultiFileResources(HexBufferFile file) {
+			if (file == null)
+				throw new ArgumentNullException(nameof(file));
+			File = file;
+		}
 
 		/// <summary>
-		/// .NET file data provider
+		/// Gets the file
 		/// </summary>
-		public const string DotNet = nameof(DotNet);
+		public HexBufferFile File { get; }
 
 		/// <summary>
-		/// .NET multi-file resource data provider
+		/// Gets the header
 		/// </summary>
-		public const string DotNetMultiResource = nameof(DotNetMultiResource);
+		public abstract DotNetMultiFileResourceHeaderData Header { get; }
+
+		/// <summary>
+		/// Returns a structure at <paramref name="position"/> or null
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public abstract ComplexData GetStructure(HexPosition position);
 	}
 }

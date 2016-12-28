@@ -22,6 +22,78 @@ using System.Text;
 
 namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
+	/// A <see cref="bool"/>
+	/// </summary>
+	public class BooleanData : SimpleData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public BooleanData(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 1)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public BooleanData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 1))) {
+		}
+
+		/// <summary>
+		/// Reads the value
+		/// </summary>
+		/// <returns></returns>
+		public bool ReadValue() => Span.Buffer.ReadByte(Span.Start) != 0;
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteBoolean(ReadValue());
+	}
+
+	/// <summary>
+	/// A <see cref="char"/>
+	/// </summary>
+	public class CharData : SimpleData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public CharData(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 2)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public CharData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 2))) {
+		}
+
+		/// <summary>
+		/// Reads the value
+		/// </summary>
+		/// <returns></returns>
+		public char ReadValue() => Span.Buffer.ReadChar(Span.Start);
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteChar(ReadValue());
+	}
+
+	/// <summary>
 	/// A <see cref="byte"/>
 	/// </summary>
 	public class ByteData : SimpleData {
@@ -415,6 +487,57 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
 		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteDouble(ReadValue());
+	}
+
+	/// <summary>
+	/// A <see cref="decimal"/>
+	/// </summary>
+	public class DecimalData : SimpleData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public DecimalData(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 16)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public DecimalData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 16))) {
+		}
+
+		static decimal ReadDecimal(HexBuffer buffer, HexPosition position) {
+			var bits = new int[4] {
+				buffer.ReadInt32(position),			// lo
+				buffer.ReadInt32(position + 4),		// mid
+				buffer.ReadInt32(position + 8),		// hi
+				buffer.ReadInt32(position + 0x0C),	// flags
+			};
+			try {
+				return new decimal(bits);
+			}
+			catch (ArgumentException) {
+			}
+			return decimal.Zero;
+		}
+
+		/// <summary>
+		/// Reads the value
+		/// </summary>
+		/// <returns></returns>
+		public decimal ReadValue() => ReadDecimal(Span.Buffer, Span.Start);
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteDecimal(ReadValue());
 	}
 
 	/// <summary>

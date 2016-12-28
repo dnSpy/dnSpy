@@ -323,7 +323,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return d;
 		}
 
-		protected override object ReadData() => encoding.GetString(buffer.ReadBytes(Span.Start, Span.Length.ToUInt64()));
+		protected override object ReadData() => encoding.GetString(buffer.ReadBytes(Span));
 	}
 
 	abstract class FlagsHexField : HexField {

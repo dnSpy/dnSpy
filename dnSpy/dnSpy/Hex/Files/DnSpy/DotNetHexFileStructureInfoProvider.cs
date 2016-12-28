@@ -64,6 +64,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 			if (resource != null)
 				return GetToolTip(resource, position);
 
+			var resDataHdr = structure as MultiResourceDataHeaderData;
+			if (resDataHdr != null)
+				return GetToolTip(resDataHdr, position);
+
 			return base.GetToolTip(file, structure, position);
 		}
 
@@ -110,7 +114,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 
-			contentCreator.Image = GetResourceImage(resource);
+			contentCreator.Image = GetResourceImage(resource, filteredName);
 
 			contentCreator.Writer.WriteFilename(filteredName);
 			contentCreator.Writer.WriteSpace();
@@ -123,12 +127,41 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return toolTipCreator.Create();
 		}
 
-		ImageReference GetResourceImage(DotNetEmbeddedResource resource) {
+		ImageReference GetResourceImage(DotNetEmbeddedResource resource, string filename) {
 			var span = resource.Content.Data.Span;
 			// Check if it's a multi-file resource
 			if (span.Length >= 4 && span.Buffer.ReadUInt32(span.Start) == 0xBEEFCACE)
 				return DsImages.SourceFileGroup;
-			return DsImages.Dialog;
+			return ImageReferenceUtils.GetImageReference(filename) ?? DsImages.Dialog;
+		}
+
+		object GetToolTip(MultiResourceDataHeaderData resDataHdr, HexPosition position) {
+			var toolTipCreator = toolTipCreatorFactory.Create();
+			var contentCreator = toolTipCreator.ToolTipContentCreator;
+
+			contentCreator.Image = ImageReferenceUtils.GetImageReference(resDataHdr.ResourceInfo.Name) ??
+						ImageReferenceUtils.GetImageReference(resDataHdr.ResourceInfo.TypeCode);
+
+			contentCreator.Writer.WriteFilename(resDataHdr.ResourceInfo.Name);
+			if (string.IsNullOrEmpty(resDataHdr.ResourceInfo.UserTypeName)) {
+				contentCreator.Writer.WriteSpace();
+				contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+				var typeCode = resDataHdr.ResourceInfo.TypeCode;
+				if (typeCode < ResourceTypeCode.UserTypes)
+					contentCreator.Writer.Write(typeCode.ToString(), PredefinedClassifiedTextTags.EnumField);
+				else
+					contentCreator.Writer.Write("UserType" + (typeCode - ResourceTypeCode.UserTypes).ToString(), PredefinedClassifiedTextTags.EnumField);
+				contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+				contentCreator.CreateNewWriter();
+			}
+			else {
+				contentCreator.CreateNewWriter();
+				contentCreator.Writer.Write(resDataHdr.ResourceInfo.UserTypeName, PredefinedClassifiedTextTags.Text);
+				contentCreator.Writer.WriteLine();
+			}
+			contentCreator.Writer.WriteFieldAndValue(resDataHdr, position);
+
+			return toolTipCreator.Create();
 		}
 
 		public override object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {

@@ -36,5 +36,10 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// The file is part of .NET resources
 		/// </summary>
 		public static readonly string DotNetResources = nameof(DotNetResources);
+
+		/// <summary>
+		/// This file is part of a multi-file .NET resource
+		/// </summary>
+		public static readonly string DotNetMultiFileResource = nameof(DotNetMultiFileResource);
 	}
 }

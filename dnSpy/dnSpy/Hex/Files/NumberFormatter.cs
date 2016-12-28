@@ -270,6 +270,7 @@ namespace dnSpy.Hex.Files {
 
 		public string ToString(float value) => value.ToString();
 		public string ToString(double value) => value.ToString();
+		public string ToString(decimal value) => value.ToString();
 
 		public string ToString(string value) {
 			var sb = new StringBuilder(value.Length + 10);
@@ -295,6 +296,31 @@ namespace dnSpy.Hex.Files {
 				}
 			}
 			sb.Append('"');
+			return sb.ToString();
+		}
+
+		public string ToString(char value) {
+			var sb = new StringBuilder(8);
+			sb.Append('\'');
+			switch (value) {
+			case '\a': sb.Append(@"\a"); break;
+			case '\b': sb.Append(@"\b"); break;
+			case '\f': sb.Append(@"\f"); break;
+			case '\n': sb.Append(@"\n"); break;
+			case '\r': sb.Append(@"\r"); break;
+			case '\t': sb.Append(@"\t"); break;
+			case '\v': sb.Append(@"\v"); break;
+			case '\\': sb.Append(@"\\"); break;
+			case '\0': sb.Append(@"\0"); break;
+			case '\'': sb.Append(@"\'"); break;
+			default:
+				if (char.IsControl(value))
+					sb.Append(string.Format(@"\u{0:X4}", (ushort)value));
+				else
+					sb.Append(value);
+				break;
+			}
+			sb.Append('\'');
 			return sb.ToString();
 		}
 	}

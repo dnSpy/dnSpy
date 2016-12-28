@@ -180,6 +180,32 @@ namespace dnSpy.Contracts.Hex.Files {
 		static readonly Func<HexBufferPoint, ByteData> createByteData = p => new ByteData(p.Buffer, p.Position);
 
 		/// <summary>
+		/// Creates a virtual <see cref="ushort"/> array
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <param name="name">Array name or null</param>
+		/// <returns></returns>
+		public static VirtualArrayData<UInt16Data> CreateVirtualUInt16Array(HexBufferSpan span, string name = null) {
+			if ((span.Length.ToUInt64() & 1) != 0)
+				throw new ArgumentOutOfRangeException(nameof(span));
+			return new VirtualArrayData<UInt16Data>(name ?? string.Empty, span, 2, createUInt16Data);
+		}
+		static readonly Func<HexBufferPoint, UInt16Data> createUInt16Data = p => new UInt16Data(p.Buffer, p.Position);
+
+		/// <summary>
+		/// Creates a virtual <see cref="uint"/> array
+		/// </summary>
+		/// <param name="span">Span</param>
+		/// <param name="name">Array name or null</param>
+		/// <returns></returns>
+		public static VirtualArrayData<UInt32Data> CreateVirtualUInt32Array(HexBufferSpan span, string name = null) {
+			if ((span.Length.ToUInt64() & 3) != 0)
+				throw new ArgumentOutOfRangeException(nameof(span));
+			return new VirtualArrayData<UInt32Data>(name ?? string.Empty, span, 4, createUInt32Data);
+		}
+		static readonly Func<HexBufferPoint, UInt32Data> createUInt32Data = p => new UInt32Data(p.Buffer, p.Position);
+
+		/// <summary>
 		/// Creates a <see cref="byte"/> array
 		/// </summary>
 		/// <param name="buffer">Buffer</param>

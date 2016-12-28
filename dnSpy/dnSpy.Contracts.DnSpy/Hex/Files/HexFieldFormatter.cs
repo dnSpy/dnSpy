@@ -90,6 +90,18 @@ namespace dnSpy.Contracts.Hex.Files {
 		public abstract void WriteToken(uint token);
 
 		/// <summary>
+		/// Writes a <see cref="bool"/> value
+		/// </summary>
+		/// <param name="value">Value</param>
+		public abstract void WriteBoolean(bool value);
+
+		/// <summary>
+		/// Writes a <see cref="char"/> value
+		/// </summary>
+		/// <param name="value">Value</param>
+		public abstract void WriteChar(char value);
+
+		/// <summary>
 		/// Writes a <see cref="byte"/> value
 		/// </summary>
 		/// <param name="value">Value</param>
@@ -156,6 +168,12 @@ namespace dnSpy.Contracts.Hex.Files {
 		public abstract void WriteDouble(double value);
 
 		/// <summary>
+		/// Writes a <see cref="decimal"/> value
+		/// </summary>
+		/// <param name="value">Value</param>
+		public abstract void WriteDecimal(decimal value);
+
+		/// <summary>
 		/// Writes a <see cref="string"/> value
 		/// </summary>
 		/// <param name="value">Value</param>
@@ -180,5 +198,10 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="filename">Filename with or without path separators</param>
 		public abstract void WriteFilename(string filename);
+
+		/// <summary>
+		/// Writes an unknown value, eg. "???"
+		/// </summary>
+		public abstract void WriteUnknownValue();
 	}
 }

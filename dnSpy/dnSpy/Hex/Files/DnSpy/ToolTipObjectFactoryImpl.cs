@@ -85,8 +85,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 			switch (tag) {
 			case PredefinedClassifiedTextTags.Text:					return BoxedTextColor.Text;
 			case PredefinedClassifiedTextTags.Error:				return BoxedTextColor.Error;
+			case PredefinedClassifiedTextTags.Keyword:				return BoxedTextColor.Keyword;
 			case PredefinedClassifiedTextTags.Number:				return BoxedTextColor.Number;
 			case PredefinedClassifiedTextTags.String:				return BoxedTextColor.String;
+			case PredefinedClassifiedTextTags.Char:					return BoxedTextColor.Char;
 			case PredefinedClassifiedTextTags.Operator:				return BoxedTextColor.Operator;
 			case PredefinedClassifiedTextTags.Punctuation:			return BoxedTextColor.Punctuation;
 			case PredefinedClassifiedTextTags.ArrayName:			return BoxedTextColor.Type;

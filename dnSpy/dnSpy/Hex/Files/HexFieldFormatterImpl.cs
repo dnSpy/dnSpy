@@ -155,6 +155,8 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 
+		public override void WriteBoolean(bool value) => writer.Write(value ? "true" : "false", PredefinedClassifiedTextTags.Keyword);
+		public override void WriteChar(char value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Char);
 		public override void WriteByte(byte value) => WriteValue(numberFormatter.ToString(value), (ulong)value);
 		public override void WriteUInt16(ushort value) => WriteValue(numberFormatter.ToString(value), (ulong)value);
 		public override void WriteUInt24(uint value) => WriteValue(numberFormatter.ToString24(value), (ulong)value);
@@ -167,6 +169,7 @@ namespace dnSpy.Hex.Files {
 		public override void WriteSingle(float value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
 		public override void WriteDouble(double value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
 		public override void WriteString(string value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.String);
+		public override void WriteDecimal(decimal value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
 
 		public override void WriteFlags(ulong value, FlagInfo[] infos) {
 			ulong checkedBits = 0;
@@ -241,5 +244,7 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 		static readonly char[] pathSeparators = new[] { '/', '\\' };
+
+		public override void WriteUnknownValue() => writer.Write("???", PredefinedClassifiedTextTags.Error);
 	}
 }

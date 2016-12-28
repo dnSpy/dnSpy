@@ -30,5 +30,8 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 
 		/// <summary><see cref="VirtualArrayData{TData}"/> of bytes (<see cref="ByteData"/>)</summary>
 		public const string StrongNameSignature = nameof(StrongNameSignature);
+
+		/// <summary><see cref="DotNetMultiFileResourceHeaderData"/></summary>
+		public const string MultiFileResource = nameof(MultiFileResource);
 	}
 }

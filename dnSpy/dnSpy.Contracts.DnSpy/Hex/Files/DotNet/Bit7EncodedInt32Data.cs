@@ -17,24 +17,35 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Hex.Files {
+using System;
+using dnSpy.Contracts.Hex.Text;
+
+namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// <see cref="StructureProviderFactory"/> names
+	/// 7-bit encoded integer
 	/// </summary>
-	public static class PredefinedStructureProviderFactoryNames {
+	public sealed class Bit7EncodedInt32Data : SimpleData {
 		/// <summary>
-		/// PE file data provider
+		/// Constructor
 		/// </summary>
-		public const string PE = nameof(PE);
+		/// <param name="span">Span of data</param>
+		public Bit7EncodedInt32Data(HexBufferSpan span)
+			: base(span) {
+			if (span.IsEmpty || span.Length > 5)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
 
 		/// <summary>
-		/// .NET file data provider
+		/// Writes the value
 		/// </summary>
-		public const string DotNet = nameof(DotNet);
-
-		/// <summary>
-		/// .NET multi-file resource data provider
-		/// </summary>
-		public const string DotNetMultiResource = nameof(DotNetMultiResource);
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) {
+			var pos = Span.Span.Start;
+			var value = Utils.Read7BitEncodedInt32(Span.Buffer, ref pos);
+			if (value == null)
+				formatter.WriteUnknownValue();
+			else
+				formatter.WriteInt32(value.Value);
+		}
 	}
 }

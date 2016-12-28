@@ -428,6 +428,7 @@
     <Compile Include="Hex\Files\DnSpy\DotNetHexFileImageReferenceProvider.cs" />
     <Compile Include="Hex\Files\DnSpy\DotNetHexFileStructureInfoProvider.cs" />
     <Compile Include="Hex\Files\DnSpy\HexReferenceConverterImpl.cs" />
+    <Compile Include="Hex\Files\DnSpy\ImageReferenceUtils.cs" />
     <Compile Include="Hex\Files\DnSpy\ToolTipCreatorImpl.cs" />
     <Compile Include="Hex\Files\DnSpy\ToolTipObjectFactoryImpl.cs" />
     <Compile Include="Hex\Files\DotNet\BlobHeapImpl.cs" />
@@ -440,6 +441,8 @@
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaderReader.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMetadataHeadersImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetMethodProviderImpl.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetMultiFileResourceHeaderDataImpl.cs" />
+    <Compile Include="Hex\Files\DotNet\DotNetMultiFileResourcesImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetResourceProviderImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetStorageStreamImpl.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetStructureProvider.cs" />
@@ -454,6 +457,7 @@
     <Compile Include="Hex\Files\DotNet\MethodBodyInfo.cs" />
     <Compile Include="Hex\Files\DotNet\MethodBodyReader.cs" />
     <Compile Include="Hex\Files\DotNet\MethodSection.cs" />
+    <Compile Include="Hex\Files\DotNet\MultiResourceStructureProviderFactory.cs" />
     <Compile Include="Hex\Files\DotNet\NameUtils.cs" />
     <Compile Include="Hex\Files\DotNet\PdbHeapImpl.cs" />
     <Compile Include="Hex\Files\DotNet\StorageStreamHeader.cs" />

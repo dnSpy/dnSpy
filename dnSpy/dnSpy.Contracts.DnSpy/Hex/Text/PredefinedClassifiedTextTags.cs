@@ -26,10 +26,14 @@ namespace dnSpy.Contracts.Hex.Text {
 		public const string Text = nameof(Text);
 		/// <summary>Error</summary>
 		public const string Error = nameof(Error);
+		/// <summary>Keyword</summary>
+		public const string Keyword = nameof(Keyword);
 		/// <summary>Number</summary>
 		public const string Number = nameof(Number);
 		/// <summary>String</summary>
 		public const string String = nameof(String);
+		/// <summary>Char</summary>
+		public const string Char = nameof(Char);
 		/// <summary>Operator</summary>
 		public const string Operator = nameof(Operator);
 		/// <summary>Punctuation</summary>
