@@ -26,7 +26,7 @@ namespace dnSpy.Hex.Files.PE {
 	sealed class PeFileHeaderDataImpl : PeFileHeaderData {
 		public override StructField<UInt16EnumData> Machine { get; }
 		public override StructField<UInt16Data> NumberOfSections { get; }
-		public override StructField<UInt32Data> TimeDateStamp { get; }
+		public override StructField<UnixTime32Data> TimeDateStamp { get; }
 		public override StructField<UInt32Data> PointerToSymbolTable { get; }
 		public override StructField<UInt32Data> NumberOfSymbols { get; }
 		public override StructField<UInt16Data> SizeOfOptionalHeader { get; }
@@ -92,7 +92,7 @@ namespace dnSpy.Hex.Files.PE {
 			var pos = span.Start.Position;
 			Machine = new StructField<UInt16EnumData>("Machine", new UInt16EnumData(buffer, pos, machineEnumFieldInfos));
 			NumberOfSections = new StructField<UInt16Data>("NumberOfSections", new UInt16Data(buffer, pos + 2));
-			TimeDateStamp = new StructField<UInt32Data>("TimeDateStamp", new UInt32Data(buffer, pos + 4));
+			TimeDateStamp = new StructField<UnixTime32Data>("TimeDateStamp", new UnixTime32Data(buffer, pos + 4));
 			PointerToSymbolTable = new StructField<UInt32Data>("PointerToSymbolTable", new UInt32Data(buffer, pos + 8));
 			NumberOfSymbols = new StructField<UInt32Data>("NumberOfSymbols", new UInt32Data(buffer, pos + 0x0C));
 			SizeOfOptionalHeader = new StructField<UInt16Data>("SizeOfOptionalHeader", new UInt16Data(buffer, pos + 0x10));

@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					return string.Empty;
 
 				var date = EpochToDate((uint)TimeDateStampVM.DataFieldVM.ObjectValue);
-				return date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
+				return date.ToString(CultureInfo.CurrentCulture.DateTimeFormat);
 			}
 		}
 
@@ -91,7 +91,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			MachineVM = new UInt16FlagsHexField(fileHeader.Machine);
 			MachineVM.Add(new IntegerHexBitField(fileHeader.Machine.Name, 0, 16, MachineInfos));
 			NumberOfSectionsVM = new UInt16HexField(fileHeader.NumberOfSections);
-			TimeDateStampVM = new UInt32HexField(fileHeader.TimeDateStamp);
+			TimeDateStampVM = new UInt32HexField(fileHeader.TimeDateStamp.Data, fileHeader.TimeDateStamp.Name);
 			TimeDateStampVM.DataFieldVM.PropertyChanged += (s, e) => OnPropertyChanged(nameof(TimeDateStampString));
 			PointerToSymbolTableVM = new UInt32HexField(fileHeader.PointerToSymbolTable);
 			NumberOfSymbolsVM = new UInt32HexField(fileHeader.NumberOfSymbols);

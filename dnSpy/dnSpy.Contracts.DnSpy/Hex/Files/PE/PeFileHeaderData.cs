@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <summary>IMAGE_FILE_HEADER.NumberOfSections</summary>
 		public abstract StructField<UInt16Data> NumberOfSections { get; }
 		/// <summary>IMAGE_FILE_HEADER.TimeDateStamp</summary>
-		public abstract StructField<UInt32Data> TimeDateStamp { get; }
+		public abstract StructField<UnixTime32Data> TimeDateStamp { get; }
 		/// <summary>IMAGE_FILE_HEADER.PointerToSymbolTable</summary>
 		public abstract StructField<UInt32Data> PointerToSymbolTable { get; }
 		/// <summary>IMAGE_FILE_HEADER.NumberOfSymbols</summary>
