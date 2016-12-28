@@ -178,7 +178,7 @@ namespace dnSpy.Hex.Files {
 		public override void WriteInt64(long value) => WriteValue(numberFormatter.ToString(value), value);
 		public override void WriteSingle(float value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
 		public override void WriteDouble(double value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
-		public override void WriteString(string value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.String);
+		public override void WriteString(string value) => writer.Write(numberFormatter.ToString(FilterStringLength(value)), PredefinedClassifiedTextTags.String);
 		public override void WriteDecimal(decimal value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
 
 		public override void WriteFlags(ulong value, FlagInfo[] infos) {
@@ -234,6 +234,7 @@ namespace dnSpy.Hex.Files {
 		public override void WriteFilename(string filename) {
 			if (filename == null)
 				throw new ArgumentNullException(nameof(filename));
+			filename = FilterStringLength(filename);
 			var parts = filename.Split(pathSeparators);
 			int index = 0;
 			for (int i = 0; i < parts.Length - 1; i++) {
@@ -254,6 +255,13 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 		static readonly char[] pathSeparators = new[] { '/', '\\' };
+
+		string FilterStringLength(string s) {
+			const int MAX = 1024;
+			if (s.Length <= MAX)
+				return s;
+			return s.Substring(0, MAX) + "[...]";
+		}
 
 		public override void WriteUnknownValue() => writer.Write("???", PredefinedClassifiedTextTags.Error);
 	}
