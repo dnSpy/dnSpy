@@ -70,17 +70,17 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (resourceInfos.Length > 0) {
 				var lastEnd = resourceInfos[0].Span.Start;
 				var filesToCreate = new List<BufferFileOptions>();
-				var tags = new[] { PredefinedBufferFileTags.DotNetResources };
 				foreach (var info in resourceInfos) {
 					if (info.Span.Start < lastEnd)
 						continue;
-					filesToCreate.Add(new BufferFileOptions(HexSpan.FromBounds(info.Span.Start + 4, info.Span.End), info.FilteredName, string.Empty, tags));
+					filesToCreate.Add(new BufferFileOptions(HexSpan.FromBounds(info.Span.Start + 4, info.Span.End), info.FilteredName, string.Empty, defaultTags));
 					lastEnd = info.Span.End;
 				}
 				if (filesToCreate.Count > 0)
 					file.CreateFiles(filesToCreate.ToArray());
 			}
 		}
+		static readonly string[] defaultTags = new string[] { PredefinedBufferFileTags.DotNetResources };
 
 		ResourceInfo[] CreateResourceInfos(HexBufferFile file, MDTable resourceTable, StringsHeap stringsHeap) {
 			if (resourceTable == null)

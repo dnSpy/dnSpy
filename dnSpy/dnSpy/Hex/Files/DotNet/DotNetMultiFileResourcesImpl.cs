@@ -81,7 +81,6 @@ namespace dnSpy.Hex.Files.DotNet {
 			dataArray = CreateDataArray(typeNames, numResources, paddingSpan.End, dataSectionPosition, nameSectionPosition, out resourceInfos);
 
 			var files = new List<BufferFileOptions>(resourceInfos.Length);
-			var tags = new string[] { PredefinedBufferFileTags.DotNetMultiFileResource };
 			foreach (var info in resourceInfos) {
 				var data = info.ResData;
 				if (data == null)
@@ -92,11 +91,14 @@ namespace dnSpy.Hex.Files.DotNet {
 					continue;
 				var name = Encoding.Unicode.GetString(File.Buffer.ReadBytes(info.UnicodeName.StringSpan));
 				var filteredName = NameUtils.FilterName(name);
+				var tags = data.TypeCode >= ResourceTypeCode.UserTypes ? tagsSerialized : tagsNonSerialized;
 				files.Add(new BufferFileOptions(data.NestedFileData, filteredName, string.Empty, tags));
 			}
 			if (files.Count > 0)
 				File.CreateFiles(files.ToArray());
 		}
+		static readonly string[] tagsNonSerialized = new string[] { PredefinedBufferFileTags.DotNetMultiFileResource };
+		static readonly string[] tagsSerialized = new string[] { PredefinedBufferFileTags.DotNetMultiFileResource, PredefinedBufferFileTags.SerializedData };
 
 		bool IsNestedFile(ResourceTypeCode code) {
 			switch (code) {
