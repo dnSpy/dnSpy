@@ -1731,6 +1731,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to index.
+        /// </summary>
+        public static string HexToolTipIndex {
+            get {
+                return ResourceManager.GetString("HexToolTipIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to H_ide All Tabs.
         /// </summary>
         public static string HideAllToolWindowsCommand {

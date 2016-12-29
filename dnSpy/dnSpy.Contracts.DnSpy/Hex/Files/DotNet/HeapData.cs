@@ -21,30 +21,34 @@ using System;
 
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
-	/// 7-bit encoded integer
+	/// #GUID heap record data
 	/// </summary>
-	public sealed class Bit7EncodedInt32Data : SimpleData {
+	public sealed class GuidHeapRecordData : GuidData {
+		/// <summary>
+		/// Gets the heap
+		/// </summary>
+		public GUIDHeap Heap { get; }
+
+		/// <summary>
+		/// Gets the GUID index (1-based)
+		/// </summary>
+		public uint Index { get; }
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="span">Span of data</param>
-		public Bit7EncodedInt32Data(HexBufferSpan span)
-			: base(span) {
-			if (span.IsEmpty || span.Length > 5)
-				throw new ArgumentOutOfRangeException(nameof(span));
-		}
-
-		/// <summary>
-		/// Writes the value
-		/// </summary>
-		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) {
-			var pos = Span.Span.Start;
-			var value = Utils.Read7BitEncodedInt32(Span.Buffer, ref pos);
-			if (value == null)
-				formatter.WriteUnknownValue();
-			else
-				formatter.WriteInt32(value.Value);
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		/// <param name="heap">Owner heap</param>
+		/// <param name="index">Guid index (1-based)</param>
+		public GuidHeapRecordData(HexBuffer buffer, HexPosition position, GUIDHeap heap, uint index)
+			: base(buffer, position) {
+			if (heap == null)
+				throw new ArgumentNullException(nameof(heap));
+			if (index == 0)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			Heap = heap;
+			Index = index;
 		}
 	}
 }

@@ -340,6 +340,7 @@
     <Compile Include="Hex\Files\DotNet\DotNetMultiFileResources.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetResourceProvider.cs" />
     <Compile Include="Hex\Files\DotNet\DotNetStorageStream.cs" />
+    <Compile Include="Hex\Files\DotNet\HeapData.cs" />
     <Compile Include="Hex\Files\DotNet\MDStreamFlags.cs" />
     <Compile Include="Hex\Files\DotNet\MDTable.cs" />
     <Compile Include="Hex\Files\DotNet\MDToken.cs" />
@@ -349,6 +350,7 @@
     <Compile Include="Hex\Files\DotNet\ResourceTypeCode.cs" />
     <Compile Include="Hex\Files\DotNet\ResourceTypeCodeData.cs" />
     <Compile Include="Hex\Files\DotNet\SimpleData.cs" />
+    <Compile Include="Hex\Files\DotNet\StructureData.cs" />
     <Compile Include="Hex\Files\DotNet\Table.cs" />
     <Compile Include="Hex\Files\DotNet\TableInfo.cs" />
     <Compile Include="Hex\Files\DotNet\TableRecordData.cs" />

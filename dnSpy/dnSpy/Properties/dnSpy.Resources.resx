@@ -1551,4 +1551,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
     <value>Highlight structure under mouse cursor</value>
   </data>
+  <data name="HexToolTipIndex" xml:space="preserve">
+    <value>index</value>
+  </data>
 </root>

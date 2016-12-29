@@ -60,5 +60,7 @@ namespace dnSpy.Contracts.Hex.Text {
 		public const string FileDot = nameof(FileDot);
 		/// <summary>File extension</summary>
 		public const string FileExtension = nameof(FileExtension);
+		/// <summary>.NET heap name, eg. #GUID</summary>
+		public const string DotNetHeapName = nameof(DotNetHeapName);
 	}
 }

@@ -28,6 +28,7 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Hex.Text;
 using dnSpy.Contracts.Images;
 using dnSpy.Hex.Files.DotNet;
+using dnSpy.Properties;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Files.DnSpy {
@@ -67,6 +68,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 			var resDataHdr = structure as MultiResourceDataHeaderData;
 			if (resDataHdr != null)
 				return GetToolTip(resDataHdr, position);
+
+			var guidRecord = structure as GuidHeapRecordData;
+			if (guidRecord != null)
+				return GetToolTip(guidRecord, position);
 
 			return base.GetToolTip(file, structure, position);
 		}
@@ -160,6 +165,26 @@ namespace dnSpy.Hex.Files.DnSpy {
 				contentCreator.Writer.WriteLine();
 			}
 			contentCreator.Writer.WriteFieldAndValue(resDataHdr, position);
+
+			return toolTipCreator.Create();
+		}
+
+		object GetToolTip(GuidHeapRecordData guidRecord, HexPosition position) {
+			var toolTipCreator = toolTipCreatorFactory.Create();
+			var contentCreator = toolTipCreator.ToolTipContentCreator;
+
+			contentCreator.Image = DsImages.StructurePublic;
+			contentCreator.Writer.Write("#GUID", PredefinedClassifiedTextTags.DotNetHeapName);
+			contentCreator.Writer.Write(", ", PredefinedClassifiedTextTags.Text);
+			contentCreator.Writer.Write(dnSpy_Resources.HexToolTipIndex, PredefinedClassifiedTextTags.Text);
+			contentCreator.Writer.WriteSpace();
+			contentCreator.Writer.WriteUInt32(guidRecord.Index);
+			contentCreator.Writer.WriteSpace();
+			contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+			contentCreator.Writer.Write(new Guid(guidRecord.Span.GetData()).ToString(), PredefinedClassifiedTextTags.Text);
+			contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+			contentCreator.CreateNewWriter();
+			contentCreator.Writer.WriteFieldAndValue(guidRecord, position);
 
 			return toolTipCreator.Create();
 		}

@@ -102,6 +102,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			case PredefinedClassifiedTextTags.Filename:				return BoxedTextColor.FileNameNoExtension;
 			case PredefinedClassifiedTextTags.FileDot:				return BoxedTextColor.Text;
 			case PredefinedClassifiedTextTags.FileExtension:		return BoxedTextColor.FileExtension;
+			case PredefinedClassifiedTextTags.DotNetHeapName:		return BoxedTextColor.HexTableName;
 			default:												return BoxedTextColor.Text;
 			}
 		}

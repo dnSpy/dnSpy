@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
@@ -27,6 +28,15 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public GUIDHeapImpl(HexBufferSpan span)
 			: base(span) {
+		}
+
+		public override ComplexData GetStructure(HexPosition position) {
+			if (!Span.Contains(position))
+				return null;
+			uint index = (uint)((position - Span.Span.Start).ToUInt64() / 16);
+			if (!IsValidIndex(index + 1))
+				return null;
+			return new GuidHeapRecordData(Span.Buffer, Span.Span.Start + (ulong)index * 16, this, index + 1);
 		}
 
 		void IDotNetHeap.SetMetadata(DotNetMetadataHeaders metadata) => this.metadata = metadata;
