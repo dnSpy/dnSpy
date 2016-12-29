@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Hex;
@@ -73,7 +74,26 @@ namespace dnSpy.Hex.Files.DnSpy {
 			if (guidRecord != null)
 				return GetToolTip(guidRecord, position);
 
+			var stringsRecord = structure as StringsHeapRecordData;
+			if (stringsRecord != null)
+				return GetToolTip(stringsRecord, position);
+
 			return base.GetToolTip(file, structure, position);
+		}
+
+		void WriteTokens(HexFieldFormatter writer, IList<uint> tokens) {
+			const int maxTokens = 10;
+			for (int i = 0; i < tokens.Count; i++) {
+				if (i > 0) {
+					writer.Write(",", PredefinedClassifiedTextTags.Punctuation);
+					writer.WriteSpace();
+				}
+				if (i >= maxTokens) {
+					writer.Write("...", PredefinedClassifiedTextTags.Error);
+					break;
+				}
+				writer.Write("0x" + tokens[i].ToString("X8"), PredefinedClassifiedTextTags.Number);
+			}
 		}
 
 		object GetToolTip(DotNetMethodBody body, HexPosition position) {
@@ -85,18 +105,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			var writer = contentCreator.Writer;
 			writer.Write("Method", PredefinedClassifiedTextTags.Text);
 			writer.WriteSpace();
-			const int maxRids = 10;
-			for (int i = 0; i < body.Tokens.Count; i++) {
-				if (i > 0) {
-					writer.Write(",", PredefinedClassifiedTextTags.Punctuation);
-					writer.WriteSpace();
-				}
-				if (i >= maxRids) {
-					writer.Write("...", PredefinedClassifiedTextTags.Error);
-					break;
-				}
-				writer.Write("0x" + body.Tokens[i].ToString("X8"), PredefinedClassifiedTextTags.Number);
-			}
+			WriteTokens(writer, body.Tokens);
 			contentCreator.CreateNewWriter();
 
 			contentCreator.Writer.WriteFieldAndValue(body, position);
@@ -185,6 +194,29 @@ namespace dnSpy.Hex.Files.DnSpy {
 			contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
 			contentCreator.CreateNewWriter();
 			contentCreator.Writer.WriteFieldAndValue(guidRecord, position);
+
+			return toolTipCreator.Create();
+		}
+
+		object GetToolTip(StringsHeapRecordData stringsRecord, HexPosition position) {
+			var toolTipCreator = toolTipCreatorFactory.Create();
+			var contentCreator = toolTipCreator.ToolTipContentCreator;
+
+			contentCreator.Image = DsImages.String;
+			contentCreator.Writer.Write("#Strings", PredefinedClassifiedTextTags.DotNetHeapName);
+			contentCreator.Writer.Write(", ", PredefinedClassifiedTextTags.Text);
+			contentCreator.Writer.Write(dnSpy_Resources.HexToolTipOffset, PredefinedClassifiedTextTags.Text);
+			contentCreator.Writer.WriteSpace();
+			uint offset = (uint)(stringsRecord.Span.Span.Start - stringsRecord.Heap.Span.Span.Start).ToUInt64();
+			contentCreator.Writer.WriteUInt32(offset);
+			if (stringsRecord.Tokens.Count > 0) {
+				contentCreator.Writer.WriteSpace();
+				contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+				WriteTokens(contentCreator.Writer, stringsRecord.Tokens);
+				contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+			}
+			contentCreator.CreateNewWriter();
+			contentCreator.Writer.WriteFieldAndValue(stringsRecord, position);
 
 			return toolTipCreator.Create();
 		}

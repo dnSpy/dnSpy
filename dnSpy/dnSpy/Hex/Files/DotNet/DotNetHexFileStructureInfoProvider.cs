@@ -61,6 +61,10 @@ namespace dnSpy.Hex.Files.DotNet {
 				Debug.Fail($"Unknown multi res type: {multiResource.GetType()}");
 			}
 
+			var stringsRec = structure as StringsHeapRecordData;
+			if (stringsRec?.Terminator != null)
+				return stringsRecordIndexes;
+
 			return base.GetSubStructureIndexes(file, structure, position);
 		}
 		static readonly HexIndexes[] subStructFatWithEH = new HexIndexes[] {
@@ -80,6 +84,10 @@ namespace dnSpy.Hex.Files.DotNet {
 		static readonly HexIndexes[] multiResourceFields3 = new HexIndexes[] {
 			new HexIndexes(0, 2),
 			new HexIndexes(2, 1),
+		};
+		static readonly HexIndexes[] stringsRecordIndexes = new HexIndexes[] {
+			new HexIndexes(0, 1),
+			new HexIndexes(1, 1),
 		};
 	}
 }

@@ -1740,6 +1740,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to offset.
+        /// </summary>
+        public static string HexToolTipOffset {
+            get {
+                return ResourceManager.GetString("HexToolTipOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to H_ide All Tabs.
         /// </summary>
         public static string HideAllToolWindowsCommand {

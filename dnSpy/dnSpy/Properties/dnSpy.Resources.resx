@@ -1554,4 +1554,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="HexToolTipIndex" xml:space="preserve">
     <value>index</value>
   </data>
+  <data name="HexToolTipOffset" xml:space="preserve">
+    <value>offset</value>
+  </data>
 </root>
