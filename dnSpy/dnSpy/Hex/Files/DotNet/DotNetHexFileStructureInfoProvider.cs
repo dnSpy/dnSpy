@@ -72,6 +72,9 @@ namespace dnSpy.Hex.Files.DotNet {
 				return usRecordIndexes2;
 			}
 
+			if (structure is BlobHeapRecordData)
+				return blobRecordIndexes2;
+
 			return base.GetSubStructureIndexes(file, structure, position);
 		}
 		static readonly HexIndexes[] subStructFatWithEH = new HexIndexes[] {
@@ -104,6 +107,10 @@ namespace dnSpy.Hex.Files.DotNet {
 			new HexIndexes(0, 1),
 			new HexIndexes(1, 1),
 			new HexIndexes(2, 1),
+		};
+		static readonly HexIndexes[] blobRecordIndexes2 = new HexIndexes[] {
+			new HexIndexes(0, 1),
+			new HexIndexes(1, 1),
 		};
 	}
 }

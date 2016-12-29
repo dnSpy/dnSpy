@@ -23,12 +23,12 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// Compressed integer stored in #Blob and #US heaps
 	/// </summary>
-	public sealed class BlobEncodedInt32Data : SimpleData {
+	public sealed class BlobEncodedUInt32Data : SimpleData {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Span of data</param>
-		public BlobEncodedInt32Data(HexBufferSpan span)
+		public BlobEncodedUInt32Data(HexBufferSpan span)
 			: base(span) {
 			if (span.IsEmpty || span.Length > 5)
 				throw new ArgumentOutOfRangeException(nameof(span));
@@ -40,11 +40,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="formatter">Formatter</param>
 		public override void WriteValue(HexFieldFormatter formatter) {
 			var pos = Span.Span.Start;
-			var value = Utils.ReadCompressedInt32(Span.Buffer, ref pos);
-			if (value == null || pos > Span.Span.End)
+			var value = Utils.ReadCompressedUInt32(Span.Buffer, ref pos);
+			if (pos > Span.Span.End)
 				formatter.WriteUnknownValue();
 			else
-				formatter.WriteInt32(value.Value);
+				formatter.WriteUInt32(value);
 		}
 	}
 }

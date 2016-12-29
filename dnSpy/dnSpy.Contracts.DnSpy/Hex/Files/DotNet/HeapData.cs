@@ -133,7 +133,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the length
 		/// </summary>
-		public StructField<BlobEncodedInt32Data> Length { get; }
+		public StructField<BlobEncodedUInt32Data> Length { get; }
 
 		/// <summary>
 		/// Gets the string data
@@ -169,7 +169,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			if (heap == null)
 				throw new ArgumentNullException(nameof(heap));
 			Heap = heap;
-			Length = new StructField<BlobEncodedInt32Data>("Length", new BlobEncodedInt32Data(new HexBufferSpan(buffer, lengthSpan)));
+			Length = new StructField<BlobEncodedUInt32Data>("Length", new BlobEncodedUInt32Data(new HexBufferSpan(buffer, lengthSpan)));
 			String = new StructField<StringData>("String", new StringData(new HexBufferSpan(buffer, stringSpan), Encoding.Unicode));
 			if (!terminalByteSpan.IsEmpty)
 				TerminalByte = new StructField<ByteData>("TerminalByte", new ByteData(new HexBufferSpan(buffer, terminalByteSpan)));
@@ -186,6 +186,65 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 					String,
 				};
 			}
+		}
+	}
+
+	/// <summary>
+	/// #Blob heap record data
+	/// </summary>
+	public sealed class BlobHeapRecordData : StructureData {
+		const string NAME = "Blob";
+
+		/// <summary>
+		/// Gets the owner heap
+		/// </summary>
+		public BlobHeap Heap { get; }
+
+		/// <summary>
+		/// Gets the token referencing the blob or 0 if none (eg. referenced from data in the #Blob)
+		/// </summary>
+		public uint Token { get; }
+
+		/// <summary>
+		/// Gets the length
+		/// </summary>
+		public StructField<BlobEncodedUInt32Data> Length { get; }
+
+		/// <summary>
+		/// Gets the data
+		/// </summary>
+		public StructField<BufferData> Data { get; }
+
+		/// <summary>
+		/// Gets the fields
+		/// </summary>
+		protected override BufferField[] Fields { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="span">Span</param>
+		/// <param name="lengthSpan">Span of length</param>
+		/// <param name="data">Data</param>
+		/// <param name="token">Token referencing this blob or 0 if none</param>
+		/// <param name="heap">Owner heap</param>
+		public BlobHeapRecordData(HexBuffer buffer, HexSpan span, HexSpan lengthSpan, BufferData data, uint token, BlobHeap heap)
+			: base(NAME, new HexBufferSpan(buffer, span)) {
+			if (lengthSpan.Start != span.Start)
+				throw new ArgumentOutOfRangeException(nameof(lengthSpan));
+			if (data == null)
+				throw new ArgumentNullException(nameof(data));
+			if (heap == null)
+				throw new ArgumentNullException(nameof(heap));
+			Heap = heap;
+			Token = token;
+			Length = new StructField<BlobEncodedUInt32Data>("Length", new BlobEncodedUInt32Data(new HexBufferSpan(buffer, lengthSpan)));
+			Data = new StructField<BufferData>("Data", data);
+			Fields = new BufferField[] {
+				Length,
+				Data,
+			};
 		}
 	}
 }

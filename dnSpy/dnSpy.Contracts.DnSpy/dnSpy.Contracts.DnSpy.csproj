@@ -324,7 +324,7 @@
     <Compile Include="Hex\Files\DnSpy\ToolTipObjectFactory.cs" />
     <Compile Include="Hex\Files\DotNet\Bit7EncodedInt32Data.cs" />
     <Compile Include="Hex\Files\DotNet\Bit7EncodedStringData.cs" />
-    <Compile Include="Hex\Files\DotNet\BlobEncodedInt32Data.cs" />
+    <Compile Include="Hex\Files\DotNet\BlobEncodedUInt32Data.cs" />
     <Compile Include="Hex\Files\DotNet\CodedToken.cs" />
     <Compile Include="Hex\Files\DotNet\ColumnInfo.cs" />
     <Compile Include="Hex\Files\DotNet\ColumnSize.cs" />

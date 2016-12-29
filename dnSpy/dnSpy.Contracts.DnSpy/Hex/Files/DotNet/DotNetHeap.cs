@@ -69,17 +69,17 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public virtual bool IsValidOffset(uint offset) => offset == 0 || offset < Span.Length;
 
 		/// <summary>
-		/// Reads a compressed <see cref="int"/> and increments <paramref name="position"/>
+		/// Reads a compressed <see cref="uint"/> and increments <paramref name="position"/>
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		protected int? ReadCompressedInt32(ref HexPosition position) {
+		protected int? ReadCompressedUInt32(ref HexPosition position) {
 			if (!Span.Contains(position))
 				return null;
-			var res = Utils.ReadCompressedInt32(Span.Buffer, ref position);
+			var res = Utils.ReadCompressedUInt32(Span.Buffer, ref position);
 			if (position > Span.Span.End)
 				return null;
-			return res;
+			return (int)res;
 		}
 	}
 
@@ -256,7 +256,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			if (offset == 0 || !IsValidOffset(offset))
 				return new HexBufferSpan(Span.Start, 0);
 			var pos = Span.Start.Position + offset;
-			int length = ReadCompressedInt32(ref pos) ?? -1;
+			int length = ReadCompressedUInt32(ref pos) ?? -1;
 			if (length < 0)
 				return new HexBufferSpan(Span.Start, 0);
 			if (pos + length > Span.End.Position)
@@ -343,7 +343,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			if (offset == 0 || !IsValidOffset(offset))
 				return new HexBufferSpan(Span.Start, 0);
 			var pos = Span.Start.Position + offset;
-			int length = ReadCompressedInt32(ref pos) ?? -1;
+			int length = ReadCompressedUInt32(ref pos) ?? -1;
 			if (length < 0)
 				return new HexBufferSpan(Span.Start, 0);
 			if (pos + length > Span.End.Position)

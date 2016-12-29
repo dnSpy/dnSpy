@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var buffer = Span.Buffer;
 			while (pos < end) {
 				var start = pos;
-				var len = ReadCompressedInt32(ref pos) ?? -1;
+				var len = ReadCompressedUInt32(ref pos) ?? -1;
 				if (len < 0) {
 					pos++;
 					continue;

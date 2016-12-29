@@ -82,6 +82,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 			if (usRecord != null)
 				return GetToolTip(usRecord, position);
 
+			var blobRecord = structure as BlobHeapRecordData;
+			if (blobRecord != null)
+				return GetToolTip(blobRecord, position);
+
 			return base.GetToolTip(file, structure, position);
 		}
 
@@ -236,6 +240,27 @@ namespace dnSpy.Hex.Files.DnSpy {
 			contentCreator.Writer.Write("0x" + token.ToString("X8"), PredefinedClassifiedTextTags.Number);
 			contentCreator.CreateNewWriter();
 			contentCreator.Writer.WriteFieldAndValue(usRecord, position);
+
+			return toolTipCreator.Create();
+		}
+
+		object GetToolTip(BlobHeapRecordData blobRecord, HexPosition position) {
+			var toolTipCreator = toolTipCreatorFactory.Create();
+			var contentCreator = toolTipCreator.ToolTipContentCreator;
+
+			contentCreator.Image = DsImages.Binary;
+			contentCreator.Writer.Write("#Blob", PredefinedClassifiedTextTags.DotNetHeapName);
+			contentCreator.Writer.Write(", ", PredefinedClassifiedTextTags.Text);
+			if (blobRecord.Token != 0)
+				contentCreator.Writer.WriteToken(blobRecord.Token);
+			else {
+				contentCreator.Writer.Write(dnSpy_Resources.HexToolTipOffset, PredefinedClassifiedTextTags.Text);
+				contentCreator.Writer.WriteSpace();
+				uint offset = (uint)(blobRecord.Span.Span.Start - blobRecord.Heap.Span.Span.Start).ToUInt64();
+				contentCreator.Writer.WriteUInt32(offset);
+			}
+			contentCreator.CreateNewWriter();
+			contentCreator.Writer.WriteFieldAndValue(blobRecord, position);
 
 			return toolTipCreator.Create();
 		}
