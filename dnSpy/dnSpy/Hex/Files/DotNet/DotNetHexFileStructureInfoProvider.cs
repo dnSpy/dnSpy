@@ -65,6 +65,13 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (stringsRec?.Terminator != null)
 				return stringsRecordIndexes;
 
+			var usRec = structure as USHeapRecordData;
+			if (usRec != null) {
+				if (usRec.TerminalByte != null)
+					return usRecordIndexes3;
+				return usRecordIndexes2;
+			}
+
 			return base.GetSubStructureIndexes(file, structure, position);
 		}
 		static readonly HexIndexes[] subStructFatWithEH = new HexIndexes[] {
@@ -88,6 +95,15 @@ namespace dnSpy.Hex.Files.DotNet {
 		static readonly HexIndexes[] stringsRecordIndexes = new HexIndexes[] {
 			new HexIndexes(0, 1),
 			new HexIndexes(1, 1),
+		};
+		static readonly HexIndexes[] usRecordIndexes2 = new HexIndexes[] {
+			new HexIndexes(0, 1),
+			new HexIndexes(1, 1),
+		};
+		static readonly HexIndexes[] usRecordIndexes3 = new HexIndexes[] {
+			new HexIndexes(0, 1),
+			new HexIndexes(1, 1),
+			new HexIndexes(2, 1),
 		};
 	}
 }

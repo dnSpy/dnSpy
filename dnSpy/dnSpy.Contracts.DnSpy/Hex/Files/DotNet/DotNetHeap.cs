@@ -76,25 +76,10 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		protected int? ReadCompressedInt32(ref HexPosition position) {
 			if (!Span.Contains(position))
 				return null;
-
-			var buffer = Span.Buffer;
-			byte b = buffer.ReadByte(position++);
-			if ((b & 0x80) == 0)
-				return b;
-
-			if ((b & 0xC0) == 0x80) {
-				if (position >= Span.Span.End)
-					return null;
-				return ((b & 0x3F) << 8) | buffer.ReadByte(position++);
-			}
-
-			// The encoding 111x isn't allowed but the CLR sometimes doesn't verify this
-			// and just assumes it's 110x. Don't fail if it's 111x, just assume it's 110x.
-
-			if (position + 3 > Span.Span.End)
+			var res = Utils.ReadCompressedInt32(Span.Buffer, ref position);
+			if (position > Span.Span.End)
 				return null;
-			return ((b & 0x1F) << 24) | (buffer.ReadByte(position++) << 16) |
-					(buffer.ReadByte(position++) << 8) | buffer.ReadByte(position++);
+			return res;
 		}
 	}
 

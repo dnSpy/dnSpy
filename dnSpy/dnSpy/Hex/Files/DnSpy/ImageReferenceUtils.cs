@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 

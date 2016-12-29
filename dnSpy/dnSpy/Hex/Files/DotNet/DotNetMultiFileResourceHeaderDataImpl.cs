@@ -19,9 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;

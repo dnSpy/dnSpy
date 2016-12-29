@@ -31,5 +31,21 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			}
 			return null;
 		}
+
+		// #US / #Blob
+		public static int? ReadCompressedInt32(HexBuffer buffer, ref HexPosition position) {
+			byte b = buffer.ReadByte(position++);
+			if ((b & 0x80) == 0)
+				return b;
+
+			if ((b & 0xC0) == 0x80)
+				return ((b & 0x3F) << 8) | buffer.ReadByte(position++);
+
+			// The encoding 111x isn't allowed but the CLR sometimes doesn't verify this
+			// and just assumes it's 110x. Don't fail if it's 111x, just assume it's 110x.
+
+			return ((b & 0x1F) << 24) | (buffer.ReadByte(position++) << 16) |
+					(buffer.ReadByte(position++) << 8) | buffer.ReadByte(position++);
+		}
 	}
 }

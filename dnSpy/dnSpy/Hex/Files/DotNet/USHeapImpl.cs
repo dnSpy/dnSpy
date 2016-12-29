@@ -17,18 +17,109 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
 using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class USHeapImpl : USHeap, IDotNetHeap {
 		public override DotNetMetadataHeaders Metadata => metadata;
 		DotNetMetadataHeaders metadata;
+		USString[] usStringInfos;
 
 		public USHeapImpl(HexBufferSpan span)
 			: base(span) {
 		}
 
+		public override ComplexData GetStructure(HexPosition position) {
+			var info = GetStringInfo(position);
+			if (info != null)
+				return new USHeapRecordData(Span.Buffer, info.Value.LengthSpan, info.Value.StringSpan, info.Value.TerminalByteSpan, this);
+
+			return null;
+		}
+
+		USString? GetStringInfo(HexPosition position) {
+			if (!Span.Contains(position))
+				return null;
+			var index = GetIndex(position);
+			if (index < 0)
+				return null;
+			return usStringInfos[index];
+		}
+
+		void Initialize() {
+			if (usStringInfos != null)
+				return;
+			usStringInfos = CreateUSStringInfos();
+		}
+
+		USString[] CreateUSStringInfos() {
+			var list = new List<USString>();
+			var pos = Span.Span.Start;
+			var end = Span.Span.End;
+			var buffer = Span.Buffer;
+			while (pos < end) {
+				var start = pos;
+				var len = ReadCompressedInt32(ref pos) ?? -1;
+				if (len < 0) {
+					pos++;
+					continue;
+				}
+
+				if (pos + len > end) {
+					pos++;
+					continue;
+				}
+
+				var byteLen = len & ~1;
+				var stringSpan = new HexSpan(pos, (ulong)byteLen);
+				var terminalSpan = HexSpan.FromBounds(stringSpan.End, pos + len);
+				list.Add(new USString(HexSpan.FromBounds(start, pos), stringSpan, terminalSpan));
+				pos = terminalSpan.End;
+			}
+			return list.ToArray();
+		}
+
+		int GetIndex(HexPosition position) {
+			var array = usStringInfos;
+			if (array == null) {
+				Initialize();
+				array = usStringInfos;
+			}
+			int lo = 0, hi = array.Length - 1;
+			while (lo <= hi) {
+				int index = (lo + hi) / 2;
+
+				var span = array[index].FullSpan;
+				if (position < span.Start)
+					hi = index - 1;
+				else if (position >= span.End)
+					lo = index + 1;
+				else
+					return index;
+			}
+			return -1;
+		}
+
 		void IDotNetHeap.SetMetadata(DotNetMetadataHeaders metadata) => this.metadata = metadata;
+	}
+
+	struct USString {
+		public HexSpan FullSpan => HexSpan.FromBounds(LengthSpan.Start, TerminalByteSpan.End);
+		public HexSpan LengthSpan { get; }
+		public HexSpan StringSpan { get; }
+		public HexSpan TerminalByteSpan { get; }
+		public USString(HexSpan lengthSpan, HexSpan stringSpan, HexSpan terminalByteSpan) {
+			if (lengthSpan.End != stringSpan.Start)
+				throw new ArgumentOutOfRangeException(nameof(stringSpan));
+			if (stringSpan.End != terminalByteSpan.Start)
+				throw new ArgumentOutOfRangeException(nameof(stringSpan));
+			LengthSpan = lengthSpan;
+			StringSpan = stringSpan;
+			TerminalByteSpan = terminalByteSpan;
+		}
 	}
 }

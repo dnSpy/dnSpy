@@ -78,6 +78,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 			if (stringsRecord != null)
 				return GetToolTip(stringsRecord, position);
 
+			var usRecord = structure as USHeapRecordData;
+			if (usRecord != null)
+				return GetToolTip(usRecord, position);
+
 			return base.GetToolTip(file, structure, position);
 		}
 
@@ -217,6 +221,21 @@ namespace dnSpy.Hex.Files.DnSpy {
 			}
 			contentCreator.CreateNewWriter();
 			contentCreator.Writer.WriteFieldAndValue(stringsRecord, position);
+
+			return toolTipCreator.Create();
+		}
+
+		object GetToolTip(USHeapRecordData usRecord, HexPosition position) {
+			var toolTipCreator = toolTipCreatorFactory.Create();
+			var contentCreator = toolTipCreator.ToolTipContentCreator;
+
+			contentCreator.Image = DsImages.String;
+			contentCreator.Writer.Write("#US", PredefinedClassifiedTextTags.DotNetHeapName);
+			contentCreator.Writer.Write(", ", PredefinedClassifiedTextTags.Text);
+			uint token = 0x70000000 + (uint)(usRecord.Span.Span.Start - usRecord.Heap.Span.Span.Start).ToUInt64();
+			contentCreator.Writer.Write("0x" + token.ToString("X8"), PredefinedClassifiedTextTags.Number);
+			contentCreator.CreateNewWriter();
+			contentCreator.Writer.WriteFieldAndValue(usRecord, position);
 
 			return toolTipCreator.Create();
 		}

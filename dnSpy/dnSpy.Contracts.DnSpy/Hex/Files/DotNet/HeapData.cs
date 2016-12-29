@@ -118,4 +118,74 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			}
 		}
 	}
+
+	/// <summary>
+	/// #US heap record data
+	/// </summary>
+	public sealed class USHeapRecordData : StructureData {
+		const string NAME = "US";
+
+		/// <summary>
+		/// Gets the owner heap
+		/// </summary>
+		public USHeap Heap { get; }
+
+		/// <summary>
+		/// Gets the length
+		/// </summary>
+		public StructField<BlobEncodedInt32Data> Length { get; }
+
+		/// <summary>
+		/// Gets the string data
+		/// </summary>
+		public StructField<StringData> String { get; }
+
+		/// <summary>
+		/// Gets the terminal byte or null if none exists
+		/// </summary>
+		public StructField<ByteData> TerminalByte { get; }
+
+		/// <summary>
+		/// Gets the fields
+		/// </summary>
+		protected override BufferField[] Fields { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="lengthSpan">Span of length</param>
+		/// <param name="stringSpan">Span of string data</param>
+		/// <param name="terminalByteSpan">Span of terminal byte (0 or 1 byte)</param>
+		/// <param name="heap">Owner heap</param>
+		public USHeapRecordData(HexBuffer buffer, HexSpan lengthSpan, HexSpan stringSpan, HexSpan terminalByteSpan, USHeap heap)
+			: base(NAME, new HexBufferSpan(buffer, HexSpan.FromBounds(lengthSpan.Start, terminalByteSpan.End))) {
+			if (lengthSpan.End != stringSpan.Start)
+				throw new ArgumentOutOfRangeException(nameof(stringSpan));
+			if (stringSpan.End != terminalByteSpan.Start)
+				throw new ArgumentOutOfRangeException(nameof(stringSpan));
+			if (!terminalByteSpan.IsEmpty && terminalByteSpan.Length != 1)
+				throw new ArgumentOutOfRangeException(nameof(terminalByteSpan));
+			if (heap == null)
+				throw new ArgumentNullException(nameof(heap));
+			Heap = heap;
+			Length = new StructField<BlobEncodedInt32Data>("Length", new BlobEncodedInt32Data(new HexBufferSpan(buffer, lengthSpan)));
+			String = new StructField<StringData>("String", new StringData(new HexBufferSpan(buffer, stringSpan), Encoding.Unicode));
+			if (!terminalByteSpan.IsEmpty)
+				TerminalByte = new StructField<ByteData>("TerminalByte", new ByteData(new HexBufferSpan(buffer, terminalByteSpan)));
+			if (TerminalByte != null) {
+				Fields = new BufferField[] {
+					Length,
+					String,
+					TerminalByte,
+				};
+			}
+			else {
+				Fields = new BufferField[] {
+					Length,
+					String,
+				};
+			}
+		}
+	}
 }
