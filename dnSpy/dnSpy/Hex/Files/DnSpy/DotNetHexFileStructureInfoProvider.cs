@@ -251,13 +251,15 @@ namespace dnSpy.Hex.Files.DnSpy {
 			contentCreator.Image = DsImages.Binary;
 			contentCreator.Writer.Write("#Blob", PredefinedClassifiedTextTags.DotNetHeapName);
 			contentCreator.Writer.Write(", ", PredefinedClassifiedTextTags.Text);
-			if (blobRecord.Token != 0)
-				contentCreator.Writer.WriteToken(blobRecord.Token);
-			else {
-				contentCreator.Writer.Write(dnSpy_Resources.HexToolTipOffset, PredefinedClassifiedTextTags.Text);
+			contentCreator.Writer.Write(dnSpy_Resources.HexToolTipOffset, PredefinedClassifiedTextTags.Text);
+			contentCreator.Writer.WriteSpace();
+			uint offset = (uint)(blobRecord.Span.Span.Start - blobRecord.Heap.Span.Span.Start).ToUInt64();
+			contentCreator.Writer.WriteUInt32(offset);
+			if (blobRecord.Token != 0) {
 				contentCreator.Writer.WriteSpace();
-				uint offset = (uint)(blobRecord.Span.Span.Start - blobRecord.Heap.Span.Span.Start).ToUInt64();
-				contentCreator.Writer.WriteUInt32(offset);
+				contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+				contentCreator.Writer.WriteToken(blobRecord.Token);
+				contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
 			}
 			contentCreator.CreateNewWriter();
 			contentCreator.Writer.WriteFieldAndValue(blobRecord, position);
