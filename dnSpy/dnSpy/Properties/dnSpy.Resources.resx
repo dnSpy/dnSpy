@@ -1299,12 +1299,6 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="HexEditorSelect_Title" xml:space="preserve">
     <value>Select</value>
   </data>
-  <data name="GoToOffset_Address_Label" xml:space="preserve">
-    <value>_Address</value>
-  </data>
-  <data name="GoToOffset_Title_Address" xml:space="preserve">
-    <value>Go to Address</value>
-  </data>
   <data name="InvalidValue" xml:space="preserve">
     <value>Invalid value</value>
   </data>
@@ -1363,9 +1357,6 @@ Filter can be changed in Assembly Explorer options.</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
     <value>Enter Value</value>
-  </data>
-  <data name="GoToAddressCommand" xml:space="preserve">
-    <value>Go to Address...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
     <value>Go to Offset...</value>
@@ -1586,5 +1577,29 @@ Filter can be changed in Assembly Explorer options.</value>
   </data>
   <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
     <value>Ctrl+Shift+V</value>
+  </data>
+  <data name="GoToAbsolutePosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="GoToCurrentPosition" xml:space="preserve">
+    <value>Current Position</value>
+  </data>
+  <data name="GoToFilePosition" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="ShortCutKeyCtrl1" xml:space="preserve">
+    <value>Ctrl+1</value>
+  </data>
+  <data name="ShortCutKeyCtrl2" xml:space="preserve">
+    <value>Ctrl+2</value>
+  </data>
+  <data name="ShortCutKeyCtrl3" xml:space="preserve">
+    <value>Ctrl+3</value>
+  </data>
+  <data name="ShortCutKeyCtrl4" xml:space="preserve">
+    <value>Ctrl+4</value>
+  </data>
+  <data name="SelectToNewPosition" xml:space="preserve">
+    <value>_Select to new position</value>
   </data>
 </root>

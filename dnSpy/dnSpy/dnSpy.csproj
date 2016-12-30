@@ -326,6 +326,7 @@
     <Compile Include="Hex\Commands\HexCommandOperations.cs" />
     <Compile Include="Hex\Commands\HexCommandOperationsFactoryService.cs" />
     <Compile Include="Hex\Commands\HexPositionVM.cs" />
+    <Compile Include="Hex\Commands\Integer64VM.cs" />
     <Compile Include="Hex\Commands\LocalSettingsDlg.xaml.cs">
       <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
     </Compile>

@@ -27,6 +27,8 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.HexGroups;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
+using dnSpy.Contracts.Hex.Files;
+using dnSpy.Contracts.Hex.Files.PE;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
 using dnSpy.Contracts.Utilities;
@@ -37,7 +39,7 @@ using WF = System.Windows.Forms;
 namespace dnSpy.Hex.Commands {
 	abstract class HexCommandOperations {
 		public abstract HexView HexView { get; }
-		public abstract void GoToPosition();
+		public abstract void GoToPosition(PositionKind positionKind);
 		public abstract void Select();
 		public abstract void SaveSelection();
 		public abstract void FillSelection();
@@ -47,17 +49,28 @@ namespace dnSpy.Hex.Commands {
 		public abstract void GoToCodeOrStructure();
 	}
 
+	enum PositionKind {
+		Absolute,
+		File,
+		RVA,
+		CurrentPosition,
+	}
+
 	sealed class HexCommandOperationsImpl : HexCommandOperations {
 		public override HexView HexView { get; }
 		readonly IMessageBoxService messageBoxService;
 		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
 		readonly Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory;
 		readonly Lazy<HexReferenceHandlerService> hexReferenceHandlerService;
+		readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
 
 		HexStructureInfoAggregator HexStructureInfoAggregator => __hexStructureInfoAggregator ?? (__hexStructureInfoAggregator = hexStructureInfoAggregatorFactory.Value.Create(HexView));
 		HexStructureInfoAggregator __hexStructureInfoAggregator;
 
-		public HexCommandOperationsImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService, HexView hexView) {
+		HexBufferFileService HexBufferFileService => __hexBufferFileService ?? (__hexBufferFileService = hexBufferFileServiceFactory.Value.Create(HexView.Buffer));
+		HexBufferFileService __hexBufferFileService;
+
+		public HexCommandOperationsImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, HexView hexView) {
 			if (messageBoxService == null)
 				throw new ArgumentNullException(nameof(messageBoxService));
 			if (hexEditorGroupFactoryService == null)
@@ -66,12 +79,15 @@ namespace dnSpy.Hex.Commands {
 				throw new ArgumentNullException(nameof(hexStructureInfoAggregatorFactory));
 			if (hexReferenceHandlerService == null)
 				throw new ArgumentNullException(nameof(hexReferenceHandlerService));
+			if (hexBufferFileServiceFactory == null)
+				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			this.messageBoxService = messageBoxService;
 			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
 			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
 			this.hexReferenceHandlerService = hexReferenceHandlerService;
+			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
 			HexView = hexView;
 			hexView.Closed += HexView_Closed;
 		}
@@ -102,43 +118,76 @@ namespace dnSpy.Hex.Commands {
 			}
 		}
 
-		public override void GoToPosition() {
-			var curr = HexView.BufferLines.ToLogicalPosition(HexView.Caret.Position.Position.ActivePosition.BufferPosition);
-			var minPos = HexView.BufferLines.ToLogicalPosition(HexView.BufferLines.StartPosition);
-			var maxPos = HexView.BufferLines.ToLogicalPosition(HexView.BufferLines.EndPosition);
-			if (HexView.BufferLines.BufferSpan.IsEmpty) {
-			}
-			else if (maxPos == HexPosition.Zero)
-				maxPos = HexPosition.MaxEndPosition - 1;
-			else
-				maxPos = maxPos - 1;
-			var data = new GoToPositionVM(curr, minPos, maxPos);
+		public override void GoToPosition(PositionKind positionKind) {
+			var origPos = HexView.Caret.Position.Position.ActivePosition.BufferPosition;
+			var data = new GoToPositionVM(HexView.Buffer.ReadUInt32(origPos));
+			data.PositionKind = positionKind;
 			var win = new GoToPositionDlg();
 			win.DataContext = data;
 			win.Owner = OwnerWindow;
-			if (HexView.Buffer.IsMemory) {
-				win.Title = dnSpy_Resources.GoToOffset_Title_Address;
-				win.offsetLabel.Content = dnSpy_Resources.GoToOffset_Address_Label;
-			}
-			else {
-				win.Title = dnSpy_Resources.GoToOffset_Title;
-				win.offsetLabel.Content = dnSpy_Resources.GoToOffset_Offset_Label;
-			}
 			if (win.ShowDialog() != true)
 				return;
 
-			var newPos = new HexBufferPoint(HexView.Buffer, HexView.BufferLines.ToPhysicalPosition(data.OffsetVM.Value));
-			MoveTo(newPos, newPos, newPos);
+			var pos = Filter(ToBufferPosition(origPos, data.OffsetVM.Value, data.PositionKind));
+			var newPos = new HexBufferPoint(HexView.Buffer, pos);
+			if (!data.SelectToNewPosition)
+				MoveTo(newPos, newPos, newPos, select: false);
+			else {
+				var start = origPos;
+				var end = newPos;
+				if (start <= end)
+					end = Filter(end + 1);
+				else
+					start = Filter(start + 1);
+				MoveTo(start, end, newPos, select: true);
+			}
 		}
 
-		bool MoveTo(HexBufferPoint start, HexBufferPoint end, HexBufferPoint caret) {
+		HexBufferPoint Filter(HexBufferPoint position) =>
+			new HexBufferPoint(position.Buffer, Filter(position.Position));
+
+		HexPosition Filter(HexPosition position) {
+			if (position < HexView.BufferLines.StartPosition)
+				return HexView.BufferLines.StartPosition;
+			else if (position > HexView.BufferLines.EndPosition)
+				return HexView.BufferLines.EndPosition;
+			return position;
+		}
+
+		HexPosition ToBufferPosition(HexPosition origPosition, ulong position, PositionKind positionKind) {
+			switch (positionKind) {
+			case PositionKind.Absolute:
+				return HexView.BufferLines.ToPhysicalPosition(position);
+
+			case PositionKind.File:
+				return TryGetPeHeaders(origPosition)?.FilePositionToBufferPosition(position) ?? position;
+
+			case PositionKind.RVA:
+				return TryGetPeHeaders(origPosition)?.RvaToBufferPosition((uint)position) ?? position;
+
+			case PositionKind.CurrentPosition:
+				return (origPosition + position).ToUInt64();
+
+			default:
+				throw new ArgumentOutOfRangeException(nameof(positionKind));
+			}
+		}
+
+		HexBufferFile TryGetFile(HexPosition position) => HexBufferFileService.GetFile(position, checkNestedFiles: false);
+		PeHeaders TryGetPeHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<PeHeaders>();
+
+		bool MoveTo(HexBufferPoint start, HexBufferPoint end, HexBufferPoint caret, bool select) {
 			if (!HexView.BufferLines.IsValidPosition(start) || !HexView.BufferLines.IsValidPosition(end) || !HexView.BufferLines.IsValidPosition(caret))
 				return false;
 			HexView.Caret.MoveTo(caret);
 			var flags = HexView.Caret.Position.Position.ActiveColumn == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii;
 			var span = start <= end ? new HexBufferSpan(start, end) : new HexBufferSpan(end, start);
 			HexView.ViewScroller.EnsureSpanVisible(span, flags, VSTE.EnsureSpanVisibleOptions.ShowStart);
-			HexView.Selection.Clear();
+			HexView.Caret.EnsureVisible();
+			if (select)
+				HexView.Selection.Select(start, end, alignPoints: false);
+			else
+				HexView.Selection.Clear();
 			return true;
 		}
 
@@ -193,8 +242,7 @@ namespace dnSpy.Hex.Commands {
 			var newEnd = HexView.BufferLines.ToPhysicalPosition(data.EndVM.Value);
 			var info = UserValueToSelection(newStart, newEnd);
 
-			if (MoveTo(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), new HexBufferPoint(HexView.Buffer, info.Caret)))
-				HexView.Selection.Select(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), alignPoints: false);
+			MoveTo(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), new HexBufferPoint(HexView.Buffer, info.Caret), select: true);
 		}
 
 		public override void SaveSelection() {

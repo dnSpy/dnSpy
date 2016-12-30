@@ -1380,11 +1380,20 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Go to Address....
+        ///   Looks up a localized string similar to Position.
         /// </summary>
-        public static string GoToAddressCommand {
+        public static string GoToAbsolutePosition {
             get {
-                return ResourceManager.GetString("GoToAddressCommand", resourceCulture);
+                return ResourceManager.GetString("GoToAbsolutePosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current Position.
+        /// </summary>
+        public static string GoToCurrentPosition {
+            get {
+                return ResourceManager.GetString("GoToCurrentPosition", resourceCulture);
             }
         }
         
@@ -1394,6 +1403,15 @@ namespace dnSpy.Properties {
         public static string GoToEntryPointCommand {
             get {
                 return ResourceManager.GetString("GoToEntryPointCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File.
+        /// </summary>
+        public static string GoToFilePosition {
+            get {
+                return ResourceManager.GetString("GoToFilePosition", resourceCulture);
             }
         }
         
@@ -1443,15 +1461,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Address.
-        /// </summary>
-        public static string GoToOffset_Address_Label {
-            get {
-                return ResourceManager.GetString("GoToOffset_Address_Label", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to O_ffset.
         /// </summary>
         public static string GoToOffset_Offset_Label {
@@ -1466,15 +1475,6 @@ namespace dnSpy.Properties {
         public static string GoToOffset_Title {
             get {
                 return ResourceManager.GetString("GoToOffset_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go to Address.
-        /// </summary>
-        public static string GoToOffset_Title_Address {
-            get {
-                return ResourceManager.GetString("GoToOffset_Title_Address", resourceCulture);
             }
         }
         
@@ -3486,6 +3486,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Select to new position.
+        /// </summary>
+        public static string SelectToNewPosition {
+            get {
+                return ResourceManager.GetString("SelectToNewPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alt+2.
         /// </summary>
         public static string ShortCutKeyAlt2 {
@@ -3527,6 +3536,42 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyAltU {
             get {
                 return ResourceManager.GetString("ShortCutKeyAltU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+1.
+        /// </summary>
+        public static string ShortCutKeyCtrl1 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrl1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+2.
+        /// </summary>
+        public static string ShortCutKeyCtrl2 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrl2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+3.
+        /// </summary>
+        public static string ShortCutKeyCtrl3 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrl3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+4.
+        /// </summary>
+        public static string ShortCutKeyCtrl4 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrl4", resourceCulture);
             }
         }
         

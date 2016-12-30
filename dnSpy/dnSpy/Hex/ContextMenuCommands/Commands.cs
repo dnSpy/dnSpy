@@ -78,12 +78,11 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		public override bool IsEnabled(HexViewContext context) => true;
 	}
 
-	[ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlG", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 0)]
+	[ExportMenuItem(Header = "res:GoToOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlG", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 0)]
 	sealed class GoToPositionContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		GoToPositionContexMenuEntry()
-			: base(HexCommandIds.GoToPosition) {
+			: base(HexCommandIds.GoToPositionAbsolute) {
 		}
-		public override string GetHeader(HexViewContext context) => context.HexView.Buffer.IsMemory ? dnSpy_Resources.GoToAddressCommand : dnSpy_Resources.GoToOffsetCommand;
 	}
 
 	[ExportMenuItem(Header = "res:HexGoToCodeOrStructure", InputGestureText = "res:ShortCutKeyF12", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]

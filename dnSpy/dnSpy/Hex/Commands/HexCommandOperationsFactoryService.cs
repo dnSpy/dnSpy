@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.HexGroups;
+using dnSpy.Contracts.Hex.Files;
 
 namespace dnSpy.Hex.Commands {
 	abstract class HexCommandOperationsFactoryService {
@@ -34,19 +35,21 @@ namespace dnSpy.Hex.Commands {
 		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
 		readonly Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory;
 		readonly Lazy<HexReferenceHandlerService> hexReferenceHandlerService;
+		readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
 
 		[ImportingConstructor]
-		HexCommandOperationsFactoryServiceImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService) {
+		HexCommandOperationsFactoryServiceImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory) {
 			this.messageBoxService = messageBoxService;
 			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
 			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
 			this.hexReferenceHandlerService = hexReferenceHandlerService;
+			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
 		}
 
 		public override HexCommandOperations GetCommandOperations(HexView hexView) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
-			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexCommandOperations), () => new HexCommandOperationsImpl(messageBoxService, hexEditorGroupFactoryService, hexStructureInfoAggregatorFactory, hexReferenceHandlerService, hexView));
+			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexCommandOperations), () => new HexCommandOperationsImpl(messageBoxService, hexEditorGroupFactoryService, hexStructureInfoAggregatorFactory, hexReferenceHandlerService, hexBufferFileServiceFactory, hexView));
 		}
 
 		internal static void RemoveFromProperties(HexCommandOperations hexCommandOperations) =>

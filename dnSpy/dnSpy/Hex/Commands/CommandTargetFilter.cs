@@ -58,7 +58,10 @@ namespace dnSpy.Hex.Commands {
 		static bool IsEditCommand(Guid group, int cmdId) {
 			if (group == HexCommandConstants.HexCommandGroup) {
 				switch ((HexCommandIds)cmdId) {
-				case HexCommandIds.GoToPosition:
+				case HexCommandIds.GoToPositionAbsolute:
+				case HexCommandIds.GoToPositionFile:
+				case HexCommandIds.GoToPositionRVA:
+				case HexCommandIds.GoToPositionCurrent:
 				case HexCommandIds.Select:
 				case HexCommandIds.SaveSelection:
 				case HexCommandIds.EditLocalSettings:
@@ -86,7 +89,10 @@ namespace dnSpy.Hex.Commands {
 
 			if (group == HexCommandConstants.HexCommandGroup) {
 				switch ((HexCommandIds)cmdId) {
-				case HexCommandIds.GoToPosition:
+				case HexCommandIds.GoToPositionAbsolute:
+				case HexCommandIds.GoToPositionFile:
+				case HexCommandIds.GoToPositionRVA:
+				case HexCommandIds.GoToPositionCurrent:
 				case HexCommandIds.Select:
 				case HexCommandIds.SaveSelection:
 				case HexCommandIds.FillSelection:
@@ -113,8 +119,20 @@ namespace dnSpy.Hex.Commands {
 
 			if (group == HexCommandConstants.HexCommandGroup) {
 				switch ((HexCommandIds)cmdId) {
-				case HexCommandIds.GoToPosition:
-					hexCommandOperations.GoToPosition();
+				case HexCommandIds.GoToPositionAbsolute:
+					hexCommandOperations.GoToPosition(PositionKind.Absolute);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToPositionFile:
+					hexCommandOperations.GoToPosition(PositionKind.File);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToPositionRVA:
+					hexCommandOperations.GoToPosition(PositionKind.RVA);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToPositionCurrent:
+					hexCommandOperations.GoToPosition(PositionKind.CurrentPosition);
 					return CommandTargetStatus.Handled;
 
 				case HexCommandIds.Select:

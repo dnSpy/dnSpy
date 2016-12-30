@@ -19,7 +19,10 @@
 
 namespace dnSpy.Hex.Commands {
 	enum HexCommandIds {
-		GoToPosition,
+		GoToPositionAbsolute,
+		GoToPositionFile,
+		GoToPositionRVA,
+		GoToPositionCurrent,
 		Select,
 		SaveSelection,
 		FillSelection,
