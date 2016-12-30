@@ -110,4 +110,40 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			formatter.Write(")", PredefinedClassifiedTextTags.Punctuation);
 		}
 	}
+
+	/// <summary>
+	/// Portable PDB Id (20 bytes)
+	/// </summary>
+	public sealed class PortablePdbIdData : SimpleData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public PortablePdbIdData(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 20)
+				throw new ArgumentOutOfRangeException();
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public PortablePdbIdData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 20))) {
+		}
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) {
+			var buffer = Span.Buffer;
+			var pos = Span.Span.Start;
+			var end = Span.Span.End;
+			while (pos < end)
+				formatter.Write(buffer.ReadByte(pos++).ToString("X2"), PredefinedClassifiedTextTags.Number);
+		}
+	}
 }

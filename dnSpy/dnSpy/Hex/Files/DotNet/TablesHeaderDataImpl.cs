@@ -47,7 +47,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x80, "HAS_DELETE"),
 		};
 
-		static readonly FlagInfo[] tableFlagInfos = new FlagInfo[64] {
+		internal static readonly FlagInfo[] tableFlagInfos = new FlagInfo[64] {
 			new FlagInfo(0x0000000000000001, "Module"),
 			new FlagInfo(0x0000000000000002, "TypeRef"),
 			new FlagInfo(0x0000000000000004, "TypeDef"),

@@ -347,6 +347,7 @@
     <Compile Include="Hex\Files\DotNet\MDToken.cs" />
     <Compile Include="Hex\Files\DotNet\MultiResourceDataHeaderData.cs" />
     <Compile Include="Hex\Files\DotNet\MultiResourceUnicodeNameAndOffsetData.cs" />
+    <Compile Include="Hex\Files\DotNet\PdbStreamHeaderData.cs" />
     <Compile Include="Hex\Files\DotNet\PredefinedDotNetDataIds.cs" />
     <Compile Include="Hex\Files\DotNet\ResourceTypeCode.cs" />
     <Compile Include="Hex\Files\DotNet\ResourceTypeCodeData.cs" />

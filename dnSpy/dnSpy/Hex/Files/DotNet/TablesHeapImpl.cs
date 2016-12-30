@@ -129,7 +129,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			initialized = true;
 
 			var buffer = Span.Buffer;
-			var pos = Span.Start.Position;
+			var pos = Span.Span.Start;
 			reserved1 = buffer.ReadUInt32(pos);
 			majorVersion = buffer.ReadByte(pos + 4);
 			minorVersion = buffer.ReadByte(pos + 5);

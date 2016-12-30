@@ -460,6 +460,7 @@
     <Compile Include="Hex\Files\DotNet\MultiResourceStructureProviderFactory.cs" />
     <Compile Include="Hex\Files\DotNet\NameUtils.cs" />
     <Compile Include="Hex\Files\DotNet\PdbHeapImpl.cs" />
+    <Compile Include="Hex\Files\DotNet\PdbStreamHeaderDataImpl.cs" />
     <Compile Include="Hex\Files\DotNet\StorageStreamHeader.cs" />
     <Compile Include="Hex\Files\DotNet\StringsHeapImpl.cs" />
     <Compile Include="Hex\Files\DotNet\TableRecordDataFactory.cs" />

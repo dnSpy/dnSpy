@@ -115,7 +115,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					continue;
 
 				case "#Pdb":
-					if (pdbHeap == null) {
+					if (pdbHeap == null && span.Length >= PdbHeapImpl.MinimumSize) {
 						pdbHeap = new PdbHeapImpl(span);
 						list.Add(pdbHeap);
 						continue;

@@ -378,6 +378,31 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// </summary>
 	public abstract class PdbHeap : DotNetHeap {
 		/// <summary>
+		/// Gets the header
+		/// </summary>
+		public abstract PdbStreamHeaderData Header { get; }
+
+		/// <summary>
+		/// Gets the PDB id, this value is cached
+		/// </summary>
+		public abstract ReadOnlyCollection<byte> PdbId { get; }
+
+		/// <summary>
+		/// Gets the entry point, this value is cached
+		/// </summary>
+		public abstract MDToken EntryPoint { get; }
+
+		/// <summary>
+		/// Gets a bit mask of all referenced type system tables, this value is cached
+		/// </summary>
+		public abstract ulong ReferencedTypeSystemTables { get; }
+
+		/// <summary>
+		/// Gets the rows, this value is cached
+		/// </summary>
+		public abstract ReadOnlyCollection<uint> TypeSystemTableRows { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Heap span</param>
