@@ -294,7 +294,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlAltO", Group = Constants.GROUP_COPY_SPECIAL, Order = 60)]
-	sealed class CopyOffsetContexMenuEntry : CopyHexViewCommandTargetMenuItemBase {
+	sealed class CopyOffsetContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		CopyOffsetContexMenuEntry()
 			: base(HexEditorIds.CopyOffset) {
 		}
