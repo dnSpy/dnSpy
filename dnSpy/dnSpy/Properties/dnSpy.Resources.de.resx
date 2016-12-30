@@ -1299,12 +1299,6 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   <data name="HexEditorSelect_Title" xml:space="preserve">
     <value>Auswahl</value>
   </data>
-  <data name="GoToOffset_Address_Label" xml:space="preserve">
-    <value>_Adresse</value>
-  </data>
-  <data name="GoToOffset_Title_Address" xml:space="preserve">
-    <value>Gehe zu Adresse</value>
-  </data>
   <data name="InvalidValue" xml:space="preserve">
     <value>Ungültiger Wert</value>
   </data>
@@ -1363,9 +1357,6 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
     <value>Wert eingeben</value>
-  </data>
-  <data name="GoToAddressCommand" xml:space="preserve">
-    <value>Gehe zu Adresse...</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
     <value>Gehe zu Versatz...</value>
@@ -1541,5 +1532,74 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
     <value>Ctrl+K, Ctrl+U</value>
+  </data>
+  <data name="HexGoToCodeOrStructure" xml:space="preserve">
+    <value>Go to Code or Structure</value>
+  </data>
+  <data name="ShortCutKeyF12" xml:space="preserve">
+    <value>F12</value>
+  </data>
+  <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
+    <value>Highlight structure under mouse cursor</value>
+  </data>
+  <data name="HexToolTipIndex" xml:space="preserve">
+    <value>index</value>
+  </data>
+  <data name="HexToolTipOffset" xml:space="preserve">
+    <value>offset</value>
+  </data>
+  <data name="BigEndian" xml:space="preserve">
+    <value>Big Endian</value>
+  </data>
+  <data name="CopyDataCommand" xml:space="preserve">
+    <value>Copy {0}</value>
+  </data>
+  <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
+    <value>Copy Absolute Offset</value>
+  </data>
+  <data name="CopyFileOffsetCommand" xml:space="preserve">
+    <value>Kopiere Dateiversatz</value>
+  </data>
+  <data name="CopyRVACommand" xml:space="preserve">
+    <value>Copy RVA</value>
+  </data>
+  <data name="CopyValueCommand" xml:space="preserve">
+    <value>Copy Value</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
+    <value>Ctrl+Shift+3</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>Ctrl+Shift+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
+    <value>Strg+Umschalt+R</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
+    <value>Ctrl+Shift+V</value>
+  </data>
+  <data name="GoToAbsolutePosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="GoToCurrentPosition" xml:space="preserve">
+    <value>Current Position</value>
+  </data>
+  <data name="GoToFilePosition" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="ShortCutKeyCtrl1" xml:space="preserve">
+    <value>Ctrl+1</value>
+  </data>
+  <data name="ShortCutKeyCtrl2" xml:space="preserve">
+    <value>Ctrl+2</value>
+  </data>
+  <data name="ShortCutKeyCtrl3" xml:space="preserve">
+    <value>Ctrl+3</value>
+  </data>
+  <data name="ShortCutKeyCtrl4" xml:space="preserve">
+    <value>Ctrl+4</value>
+  </data>
+  <data name="SelectToNewPosition" xml:space="preserve">
+    <value>_Select to new position</value>
   </data>
 </root>
