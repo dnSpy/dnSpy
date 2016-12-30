@@ -487,6 +487,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Big Endian.
+        /// </summary>
+        public static string BigEndian {
+            get {
+                return ResourceManager.GetString("BigEndian", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dashed lines.
         /// </summary>
         public static string BlockStructureLineKind_DashedLines {
@@ -721,6 +730,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy Absolute Offset.
+        /// </summary>
+        public static string CopyAbsoluteFileOffsetCommand {
+            get {
+                return ResourceManager.GetString("CopyAbsoluteFileOffsetCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cop_y.
         /// </summary>
         public static string CopyCommand {
@@ -735,6 +753,24 @@ namespace dnSpy.Properties {
         public static string CopyCSharpArrayCommand {
             get {
                 return ResourceManager.GetString("CopyCSharpArrayCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy {0}.
+        /// </summary>
+        public static string CopyDataCommand {
+            get {
+                return ResourceManager.GetString("CopyDataCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy File Offset.
+        /// </summary>
+        public static string CopyFileOffsetCommand {
+            get {
+                return ResourceManager.GetString("CopyFileOffsetCommand", resourceCulture);
             }
         }
         
@@ -762,6 +798,15 @@ namespace dnSpy.Properties {
         public static string CopyOffsetCommand {
             get {
                 return ResourceManager.GetString("CopyOffsetCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy RVA.
+        /// </summary>
+        public static string CopyRVACommand {
+            get {
+                return ResourceManager.GetString("CopyRVACommand", resourceCulture);
             }
         }
         
@@ -798,6 +843,15 @@ namespace dnSpy.Properties {
         public static string CopyUTF8StringCommand {
             get {
                 return ResourceManager.GetString("CopyUTF8StringCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Value.
+        /// </summary>
+        public static string CopyValueCommand {
+            get {
+                return ResourceManager.GetString("CopyValueCommand", resourceCulture);
             }
         }
         
@@ -3603,11 +3657,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+3.
+        /// </summary>
+        public static string ShortCutKeyCtrlShift3 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShift3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Shift+8.
         /// </summary>
         public static string ShortCutKeyCtrlShift8 {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShift8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+A.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftA {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftA", resourceCulture);
             }
         }
         
@@ -3675,11 +3747,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+R.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftR {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Shift+U.
         /// </summary>
         public static string ShortCutKeyCtrlShiftU {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShiftU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+V.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftV {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftV", resourceCulture);
             }
         }
         

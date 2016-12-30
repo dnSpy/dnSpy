@@ -277,6 +277,48 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		CopyOffset,
 		/// <summary>
+		/// Copies data (Value)
+		/// </summary>
+		CopyValue,
+		/// <summary>
+		/// Copies data (<see cref="ushort"/>)
+		/// </summary>
+		CopyUInt16,
+		/// <summary>
+		/// Copies data (<see cref="ushort"/> Big Endian)
+		/// </summary>
+		CopyUInt16BigEndian,
+		/// <summary>
+		/// Copies data (<see cref="uint"/>)
+		/// </summary>
+		CopyUInt32,
+		/// <summary>
+		/// Copies data (<see cref="uint"/> Big Endian)
+		/// </summary>
+		CopyUInt32BigEndian,
+		/// <summary>
+		/// Copies data (<see cref="ulong"/>)
+		/// </summary>
+		CopyUInt64,
+		/// <summary>
+		/// Copies data (<see cref="ulong"/> Big Endian)
+		/// </summary>
+		CopyUInt64BigEndian,
+		/// <summary>
+		/// Copies file offset. If it's a PE file, the position is converted to a position
+		/// within the PE file on disk. If it's not a PE file, it's the offset relative
+		/// to the start of the file.
+		/// </summary>
+		CopyFileOffset,
+		/// <summary>
+		/// Copies absolute file offset (the position in the buffer)
+		/// </summary>
+		CopyAbsoluteFileOffset,
+		/// <summary>
+		/// Copies RVA
+		/// </summary>
+		CopyRVA,
+		/// <summary>
 		/// Pastes UTF-8 data
 		/// </summary>
 		PasteUtf8String,

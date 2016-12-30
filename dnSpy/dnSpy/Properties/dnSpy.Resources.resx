@@ -1557,4 +1557,34 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="HexToolTipOffset" xml:space="preserve">
     <value>offset</value>
   </data>
+  <data name="BigEndian" xml:space="preserve">
+    <value>Big Endian</value>
+  </data>
+  <data name="CopyDataCommand" xml:space="preserve">
+    <value>Copy {0}</value>
+  </data>
+  <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
+    <value>Copy Absolute Offset</value>
+  </data>
+  <data name="CopyFileOffsetCommand" xml:space="preserve">
+    <value>Copy File Offset</value>
+  </data>
+  <data name="CopyRVACommand" xml:space="preserve">
+    <value>Copy RVA</value>
+  </data>
+  <data name="CopyValueCommand" xml:space="preserve">
+    <value>Copy Value</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
+    <value>Ctrl+Shift+3</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>Ctrl+Shift+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
+    <value>Ctrl+Shift+R</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
+    <value>Ctrl+Shift+V</value>
+  </data>
 </root>

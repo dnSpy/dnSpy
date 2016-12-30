@@ -27,6 +27,8 @@ using System.Windows;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
+using dnSpy.Contracts.Hex.Files;
+using dnSpy.Contracts.Hex.Files.PE;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Operations;
 using dnSpy.Controls;
@@ -52,13 +54,17 @@ namespace dnSpy.Hex.Operations {
 		HexBufferPoint ActiveCaretBufferPosition => Caret.Position.Position.ActivePosition.BufferPosition;
 
 		readonly HexHtmlBuilderService htmlBuilderService;
+		readonly HexBufferFileService hexBufferFileService;
 
-		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService) {
+		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			if (htmlBuilderService == null)
 				throw new ArgumentNullException(nameof(htmlBuilderService));
+			if (hexBufferFileServiceFactory == null)
+				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
 			HexView = hexView;
+			hexBufferFileService = hexBufferFileServiceFactory.Create(hexView.Buffer);
 			HexView.Closed += HexView_Closed;
 			this.htmlBuilderService = htmlBuilderService;
 		}
@@ -680,16 +686,27 @@ namespace dnSpy.Hex.Operations {
 
 		public override bool CopySpecial(HexCopySpecialKind copyKind) {
 			switch (copyKind) {
-			case HexCopySpecialKind.Utf8String:			return CopyString(Encoding.UTF8);
-			case HexCopySpecialKind.UnicodeString:		return CopyString(Encoding.Unicode);
-			case HexCopySpecialKind.CSharpArray:		return CopyCSharpArray();
-			case HexCopySpecialKind.VisualBasicArray:	return CopyVisualBasicArray();
-			case HexCopySpecialKind.Offset:				return CopyOffset();
-			default:
-				throw new ArgumentOutOfRangeException(nameof(copyKind));
+			case HexCopySpecialKind.Utf8String:				return CopyUtf8String();
+			case HexCopySpecialKind.UnicodeString:			return CopyUnicodeString();
+			case HexCopySpecialKind.CSharpArray:			return CopyCSharpArray();
+			case HexCopySpecialKind.VisualBasicArray:		return CopyVisualBasicArray();
+			case HexCopySpecialKind.Offset:					return CopyOffset();
+			case HexCopySpecialKind.Value:					return CopyValue();
+			case HexCopySpecialKind.UInt16:					return CopyUInt16();
+			case HexCopySpecialKind.UInt16BigEndian:		return CopyUInt16BigEndian();
+			case HexCopySpecialKind.UInt32:					return CopyUInt32();
+			case HexCopySpecialKind.UInt32BigEndian:		return CopyUInt32BigEndian();
+			case HexCopySpecialKind.UInt64:					return CopyUInt64();
+			case HexCopySpecialKind.UInt64BigEndian:		return CopyUInt64BigEndian();
+			case HexCopySpecialKind.FileOffset:				return CopyFileOffset();
+			case HexCopySpecialKind.AbsoluteFileOffset:		return CopyAbsoluteFileOffset();
+			case HexCopySpecialKind.RVA:					return CopyRVA();
+			default:										throw new ArgumentOutOfRangeException(nameof(copyKind));
 			}
 		}
 
+		bool CopyUtf8String() => CopyString(Encoding.UTF8);
+		bool CopyUnicodeString() => CopyString(Encoding.Unicode);
 		bool CopyString(Encoding encoding) {
 			var span = Selection.StreamSelectionSpan;
 			if (span.Length > bytesMaxTotalBytesToCopy)
@@ -748,10 +765,59 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		bool CopyOffset() {
-			var pos = BufferLines.ToLogicalPosition(Caret.Position.Position.ActivePosition.BufferPosition);
+			var pos = BufferLines.ToLogicalPosition(ActiveCaretBufferPosition);
 			var s = BufferLines.GetFormattedOffset(pos);
 			return CopyToClipboard(s, null, isFullLineData: false, isBoxData: false);
 		}
+
+		bool CopyValue() {
+			if (!BufferLines.ShowValues)
+				return false;
+			var pos = ActiveCaretBufferPosition;
+			var line = BufferLines.GetLineFromPosition(pos);
+			var cell = line.ValueCells.GetCell(pos);
+			Debug.Assert(cell != null);
+			if (cell == null)
+				return false;
+			var cellText = line.Text.Substring(cell.TextSpan.Start, cell.TextSpan.Length);
+			return CopyToClipboard(cellText, htmlText: null, isFullLineData: false, isBoxData: false);
+		}
+
+		bool CopyUInt16() => CopyHexValue(Buffer.ReadUInt16(ActiveCaretBufferPosition));
+		bool CopyUInt16BigEndian() => CopyHexValue(Buffer.ReadUInt16BigEndian(ActiveCaretBufferPosition));
+		bool CopyUInt32() => CopyHexValue(Buffer.ReadUInt32(ActiveCaretBufferPosition));
+		bool CopyUInt32BigEndian() => CopyHexValue(Buffer.ReadUInt32BigEndian(ActiveCaretBufferPosition));
+		bool CopyUInt64() => CopyHexValue(Buffer.ReadUInt64(ActiveCaretBufferPosition));
+		bool CopyUInt64BigEndian() => CopyHexValue(Buffer.ReadUInt64BigEndian(ActiveCaretBufferPosition));
+
+		bool CopyFileOffset() {
+			var pos = ActiveCaretBufferPosition.Position;
+			var peHeaders = TryGetPeHeaders(pos);
+			if (peHeaders != null)
+				return CopyHexValue(peHeaders.BufferPositionToFilePosition(pos));
+			var file = TryGetFile(pos);
+			if (file != null)
+				return CopyHexValue((pos - file.Span.Start).ToUInt64());
+			return CopyHexValue(pos.ToUInt64());
+		}
+
+		bool CopyAbsoluteFileOffset() => CopyHexValue(ActiveCaretBufferPosition.Position.ToUInt64());
+
+		bool CopyRVA() {
+			var pos = ActiveCaretBufferPosition.Position;
+			var peHeaders = TryGetPeHeaders(pos);
+			if (peHeaders == null)
+				return false;
+			return CopyHexValue(peHeaders.BufferPositionToRva(pos));
+		}
+
+		bool CopyHexValue(ulong value) =>
+			CopyToClipboard("0x" + value.ToString("X"), htmlText: null, isFullLineData: false, isBoxData: false);
+
+		PeHeaders TryGetPeHeaders() => TryGetPeHeaders(ActiveCaretBufferPosition);
+		PeHeaders TryGetPeHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<PeHeaders>();
+		HexBufferFile TryGetFile() => TryGetFile(ActiveCaretBufferPosition);
+		HexBufferFile TryGetFile(HexPosition position) => hexBufferFileService.GetFile(position, checkNestedFiles: false);
 
 		public override bool CanPaste {
 			get {
@@ -1007,9 +1073,9 @@ namespace dnSpy.Hex.Operations {
 			if (!Selection.IsEmpty)
 				return Selection.StreamSelectionSpan;
 
-			var line = BufferLines.GetLineFromPosition(Caret.Position.Position.ActivePosition.BufferPosition);
+			var line = BufferLines.GetLineFromPosition(ActiveCaretBufferPosition);
 			var cells = Caret.Position.Position.ActivePosition.Column == HexColumnType.Values ? line.ValueCells : line.AsciiCells;
-			var cell = cells.GetCell(Caret.Position.Position.ActivePosition.BufferPosition);
+			var cell = cells.GetCell(ActiveCaretBufferPosition);
 			return cell?.BufferSpan;
 		}
 

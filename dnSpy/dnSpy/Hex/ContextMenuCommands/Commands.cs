@@ -300,6 +300,88 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		}
 	}
 
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyValueCommand", InputGestureText = "res:ShortCutKeyCtrlShiftV", Group = Constants.GROUP_COPY_SPECIAL, Order = 70)]
+	sealed class CopyValueContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyValueContexMenuEntry()
+			: base(HexEditorIds.CopyValue) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 80)]
+	sealed class CopyUInt16ContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt16ContexMenuEntry()
+			: base(HexEditorIds.CopyUInt16) {
+		}
+
+		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt16");
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 90)]
+	sealed class CopyUInt16BigEndianContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt16BigEndianContexMenuEntry()
+			: base(HexEditorIds.CopyUInt16BigEndian) {
+		}
+
+		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt16" + " (" + dnSpy_Resources.BigEndian + ")");
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, InputGestureText = "res:ShortCutKeyCtrlShift3", Group = Constants.GROUP_COPY_SPECIAL, Order = 100)]
+	sealed class CopyUInt32ContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt32ContexMenuEntry()
+			: base(HexEditorIds.CopyUInt32) {
+		}
+
+		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt32");
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 110)]
+	sealed class CopyUInt32BigEndianContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt32BigEndianContexMenuEntry()
+			: base(HexEditorIds.CopyUInt32BigEndian) {
+		}
+
+		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt32" + " (" + dnSpy_Resources.BigEndian + ")");
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 120)]
+	sealed class CopyUInt64ContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt64ContexMenuEntry()
+			: base(HexEditorIds.CopyUInt64) {
+		}
+
+		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt64");
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 130)]
+	sealed class CopyUInt64BigEndianContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyUInt64BigEndianContexMenuEntry()
+			: base(HexEditorIds.CopyUInt64BigEndian) {
+		}
+
+		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt64" + " (" + dnSpy_Resources.BigEndian + ")");
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyFileOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlShiftO", Group = Constants.GROUP_COPY_SPECIAL, Order = 140)]
+	sealed class CopyFileOffsetContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyFileOffsetContexMenuEntry()
+			: base(HexEditorIds.CopyFileOffset) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyAbsoluteFileOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlShiftA", Group = Constants.GROUP_COPY_SPECIAL, Order = 150)]
+	sealed class CopyAbsoluteFileOffsetContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyAbsoluteFileOffsetContexMenuEntry()
+			: base(HexEditorIds.CopyAbsoluteFileOffset) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyRVACommand", InputGestureText = "res:ShortCutKeyCtrlShiftR", Group = Constants.GROUP_COPY_SPECIAL, Order = 160)]
+	sealed class CopyRVAContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		CopyRVAContexMenuEntry()
+			: base(HexEditorIds.CopyRVA) {
+		}
+	}
+
 	[ExportMenuItem(Header = "res:PasteSpecialCommand", Icon = DsImagesAttribute.Paste, Guid = Constants.PASTE_SPECIAL_GUID, Group = MenuConstants.GROUP_CTX_HEXVIEW_COPY, Order = 10)]
 	sealed class PasteSpecialContexMenuEntry : HexViewCommandTargetMenuItemBase2 {
 		public override bool IsVisible(HexViewContext context) => !IsReadOnly(context) && base.IsVisible(context);

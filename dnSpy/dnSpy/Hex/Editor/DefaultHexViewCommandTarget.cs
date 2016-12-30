@@ -103,11 +103,21 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.BOTTOMLINE:
 				case HexEditorIds.BOTTOMLINE_EXT:
 				case HexEditorIds.CANCEL:
+				case HexEditorIds.CopyAbsoluteFileOffset:
 				case HexEditorIds.CopyCSharpArray:
+				case HexEditorIds.CopyFileOffset:
 				case HexEditorIds.CopyOffset:
+				case HexEditorIds.CopyRVA:
 				case HexEditorIds.CopyText:
+				case HexEditorIds.CopyUInt16:
+				case HexEditorIds.CopyUInt16BigEndian:
+				case HexEditorIds.CopyUInt32:
+				case HexEditorIds.CopyUInt32BigEndian:
+				case HexEditorIds.CopyUInt64:
+				case HexEditorIds.CopyUInt64BigEndian:
 				case HexEditorIds.CopyUnicodeString:
 				case HexEditorIds.CopyUtf8String:
+				case HexEditorIds.CopyValue:
 				case HexEditorIds.CopyVisualBasicArray:
 				case HexEditorIds.DECREASEFILTER:
 				case HexEditorIds.DOWN:
@@ -197,11 +207,21 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.BOL_EXT:
 				case HexEditorIds.BOTTOMLINE:
 				case HexEditorIds.BOTTOMLINE_EXT:
+				case HexEditorIds.CopyAbsoluteFileOffset:
 				case HexEditorIds.CopyCSharpArray:
+				case HexEditorIds.CopyFileOffset:
 				case HexEditorIds.CopyOffset:
+				case HexEditorIds.CopyRVA:
 				case HexEditorIds.CopyText:
+				case HexEditorIds.CopyUInt16:
+				case HexEditorIds.CopyUInt16BigEndian:
+				case HexEditorIds.CopyUInt32:
+				case HexEditorIds.CopyUInt32BigEndian:
+				case HexEditorIds.CopyUInt64:
+				case HexEditorIds.CopyUInt64BigEndian:
 				case HexEditorIds.CopyUnicodeString:
 				case HexEditorIds.CopyUtf8String:
+				case HexEditorIds.CopyValue:
 				case HexEditorIds.CopyVisualBasicArray:
 				case HexEditorIds.DELETE:
 				case HexEditorIds.DELETELINE:
@@ -345,6 +365,46 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.CopyOffset:
 					EditorOperations.CopySpecial(HexCopySpecialKind.Offset);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyValue:
+					EditorOperations.CopySpecial(HexCopySpecialKind.Value);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyUInt16:
+					EditorOperations.CopySpecial(HexCopySpecialKind.UInt16);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyUInt16BigEndian:
+					EditorOperations.CopySpecial(HexCopySpecialKind.UInt16BigEndian);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyUInt32:
+					EditorOperations.CopySpecial(HexCopySpecialKind.UInt32);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyUInt32BigEndian:
+					EditorOperations.CopySpecial(HexCopySpecialKind.UInt32BigEndian);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyUInt64:
+					EditorOperations.CopySpecial(HexCopySpecialKind.UInt64);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyUInt64BigEndian:
+					EditorOperations.CopySpecial(HexCopySpecialKind.UInt64BigEndian);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyFileOffset:
+					EditorOperations.CopySpecial(HexCopySpecialKind.FileOffset);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyAbsoluteFileOffset:
+					EditorOperations.CopySpecial(HexCopySpecialKind.AbsoluteFileOffset);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.CopyRVA:
+					EditorOperations.CopySpecial(HexCopySpecialKind.RVA);
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.DELETE:

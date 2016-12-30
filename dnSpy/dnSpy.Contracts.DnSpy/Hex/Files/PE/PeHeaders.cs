@@ -67,5 +67,21 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <param name="position">Buffer position</param>
 		/// <returns></returns>
 		public abstract uint BufferPositionToRva(HexPosition position);
+
+		/// <summary>
+		/// Converts a buffer position to a file position in the PE file. If the input is invalid, 0 is returned.
+		/// This method uses data from cached section headers.
+		/// </summary>
+		/// <param name="position">Buffer position</param>
+		/// <returns></returns>
+		public abstract ulong BufferPositionToFilePosition(HexPosition position);
+
+		/// <summary>
+		/// Converts a file position in the PE file to a buffer position. If the input is invalid, 0 is returned.
+		/// This method uses data from cached section headers.
+		/// </summary>
+		/// <param name="position">File position</param>
+		/// <returns></returns>
+		public abstract HexPosition FilePositionToBufferPosition(ulong position);
 	}
 }

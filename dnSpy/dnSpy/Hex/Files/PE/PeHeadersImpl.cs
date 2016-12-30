@@ -45,12 +45,11 @@ namespace dnSpy.Hex.Files.PE {
 
 		public override HexPosition RvaToBufferPosition(uint rva) {
 			var fileSpan = this.fileSpan;
-			if (!IsFileLayout)
-				return fileSpan.Start + rva;
-
-			foreach (var sect in SectionHeaders) {
-				if (rva >= sect.VirtualAddress && rva < sect.VirtualAddress + Math.Max(sect.VirtualSize, sect.SizeOfRawData))
-					return fileSpan.Start + ((rva - sect.VirtualAddress) + sect.PointerToRawData);
+			if (IsFileLayout) {
+				foreach (var sect in SectionHeaders) {
+					if (rva >= sect.VirtualAddress && rva < sect.VirtualAddress + Math.Max(sect.VirtualSize, sect.SizeOfRawData))
+						return fileSpan.Start + ((rva - sect.VirtualAddress) + sect.PointerToRawData);
+				}
 			}
 
 			return fileSpan.Start + rva;
@@ -60,16 +59,45 @@ namespace dnSpy.Hex.Files.PE {
 			var fileSpan = this.fileSpan;
 			if (!fileSpan.Contains(position))
 				return 0;
-			if (!IsFileLayout)
-				return (uint)(position - fileSpan.Start).ToUInt64();
-
-			ulong offset = (position - fileSpan.Start).ToUInt64();
-			foreach (var sect in SectionHeaders) {
-				if (offset >= sect.PointerToRawData && offset < sect.PointerToRawData + sect.SizeOfRawData)
-					return (uint)(offset - sect.PointerToRawData) + sect.VirtualAddress;
+			if (IsFileLayout) {
+				ulong offset = (position - fileSpan.Start).ToUInt64();
+				foreach (var sect in SectionHeaders) {
+					if (offset >= sect.PointerToRawData && offset < sect.PointerToRawData + sect.SizeOfRawData)
+						return (uint)(offset - sect.PointerToRawData) + sect.VirtualAddress;
+				}
 			}
 
 			return (uint)(position - fileSpan.Start).ToUInt64();
+		}
+
+		public override ulong BufferPositionToFilePosition(HexPosition position) {
+			var fileSpan = this.fileSpan;
+			if (!fileSpan.Contains(position))
+				return 0;
+
+			ulong pos = (position - fileSpan.Start).ToUInt64();
+			if (!IsFileLayout) {
+				foreach (var sect in SectionHeaders) {
+					if (pos >= sect.VirtualAddress && pos < sect.VirtualAddress + Math.Max(sect.VirtualSize, sect.SizeOfRawData))
+						return (pos - sect.VirtualAddress) + sect.PointerToRawData;
+				}
+			}
+
+			return pos;
+		}
+
+		public override HexPosition FilePositionToBufferPosition(ulong position) {
+			var fileSpan = this.fileSpan;
+			if (!IsFileLayout) {
+				foreach (var sect in SectionHeaders) {
+					if (position >= sect.PointerToRawData && position < sect.PointerToRawData + sect.SizeOfRawData)
+						return fileSpan.Start + position - sect.PointerToRawData + sect.VirtualAddress;
+				}
+			}
+
+			if (position >= fileSpan.Length)
+				return 0;
+			return fileSpan.Start + position;
 		}
 	}
 }

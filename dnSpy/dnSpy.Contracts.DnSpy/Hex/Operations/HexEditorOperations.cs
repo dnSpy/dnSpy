@@ -392,6 +392,58 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// Offset
 		/// </summary>
 		Offset,
+
+		/// <summary>
+		/// Value at caret
+		/// </summary>
+		Value,
+
+		/// <summary>
+		/// <see cref="ushort"/> (little endian) at caret
+		/// </summary>
+		UInt16,
+
+		/// <summary>
+		/// <see cref="ushort"/> (big endian) at caret
+		/// </summary>
+		UInt16BigEndian,
+
+		/// <summary>
+		/// <see cref="uint"/> (little endian) at caret
+		/// </summary>
+		UInt32,
+
+		/// <summary>
+		/// <see cref="uint"/> (big endian) at caret
+		/// </summary>
+		UInt32BigEndian,
+
+		/// <summary>
+		/// <see cref="ulong"/> (little endian) at caret
+		/// </summary>
+		UInt64,
+
+		/// <summary>
+		/// <see cref="ulong"/> (big endian) at caret
+		/// </summary>
+		UInt64BigEndian,
+
+		/// <summary>
+		/// File offset. If it's a PE file, the position is converted to a position
+		/// within the PE file on disk. If it's not a PE file, it's the offset relative
+		/// to the start of the file.
+		/// </summary>
+		FileOffset,
+
+		/// <summary>
+		/// Current position
+		/// </summary>
+		AbsoluteFileOffset,
+
+		/// <summary>
+		/// RVA
+		/// </summary>
+		RVA,
 	}
 
 	/// <summary>

@@ -104,6 +104,11 @@ namespace dnSpy.Hex.Editor {
 			yield return CommandShortcut.CtrlShift(Key.H, HexEditorIds.CopyCSharpArray.ToCommandInfo());
 			yield return CommandShortcut.CtrlShift(Key.B, HexEditorIds.CopyVisualBasicArray.ToCommandInfo());
 			yield return CommandShortcut.CtrlAlt(Key.O, HexEditorIds.CopyOffset.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.V, HexEditorIds.CopyValue.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.D3, HexEditorIds.CopyUInt32.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.O, HexEditorIds.CopyFileOffset.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.A, HexEditorIds.CopyAbsoluteFileOffset.ToCommandInfo());
+			yield return CommandShortcut.CtrlShift(Key.R, HexEditorIds.CopyRVA.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.D8, HexEditorIds.PasteUtf8String.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Create(Key.D8), HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix.ToCommandInfo());
 			yield return CommandShortcut.Create(KeyInput.Control(Key.K), KeyInput.Control(Key.D8), HexEditorIds.PasteUtf8String7BitEncodedLengthPrefix.ToCommandInfo());
