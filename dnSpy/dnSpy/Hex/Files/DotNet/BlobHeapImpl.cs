@@ -89,6 +89,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			var len = ReadCompressedUInt32(ref pos) ?? -1;
 			if (len < 0)
 				return null;
+			if (pos + len > Span.Span.End)
+				return null;
 			var lengthSpan = HexSpan.FromBounds(lengthStart, pos);
 			var dataSpan = new HexSpan(lengthSpan.End, (ulong)len);
 			var fullSpan = HexSpan.FromBounds(lengthSpan.Start, dataSpan.End);
