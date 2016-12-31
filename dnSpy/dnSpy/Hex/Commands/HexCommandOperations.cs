@@ -120,6 +120,9 @@ namespace dnSpy.Hex.Commands {
 
 		public override void GoToPosition(PositionKind positionKind) {
 			var origPos = HexView.Caret.Position.Position.ActivePosition.BufferPosition;
+			var selectPos = HexView.Selection.IsEmpty ? origPos :
+				HexView.Selection.AnchorPoint < HexView.Selection.ActivePoint ?
+				HexView.Selection.AnchorPoint : HexView.Selection.AnchorPoint - 1;
 			var data = new GoToPositionVM(HexView.Buffer.ReadUInt32(origPos));
 			data.PositionKind = positionKind;
 			var win = new GoToPositionDlg();
@@ -133,18 +136,10 @@ namespace dnSpy.Hex.Commands {
 			if (!data.SelectToNewPosition)
 				MoveTo(newPos, newPos, newPos, select: false);
 			else {
-				var start = origPos;
-				var end = newPos;
-				if (start <= end)
-					end = Filter(end + 1);
-				else
-					start = Filter(start + 1);
-				MoveTo(start, end, newPos, select: true);
+				var info = UserValueToSelection(selectPos, newPos);
+				MoveTo(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), new HexBufferPoint(HexView.Buffer, info.Caret), select: true);
 			}
 		}
-
-		HexBufferPoint Filter(HexBufferPoint position) =>
-			new HexBufferPoint(position.Buffer, Filter(position.Position));
 
 		HexPosition Filter(HexPosition position) {
 			if (position < HexView.BufferLines.StartPosition)
