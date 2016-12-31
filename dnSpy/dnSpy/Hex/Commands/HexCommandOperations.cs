@@ -28,6 +28,7 @@ using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Editor.HexGroups;
 using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Files;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Hex.Files.PE;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
@@ -40,6 +41,7 @@ namespace dnSpy.Hex.Commands {
 	abstract class HexCommandOperations {
 		public abstract HexView HexView { get; }
 		public abstract void GoToPosition(PositionKind positionKind);
+		public abstract void GoToMetadata(GoToMetadataKind mdKind);
 		public abstract void Select();
 		public abstract void SaveSelection();
 		public abstract void FillSelection();
@@ -54,6 +56,15 @@ namespace dnSpy.Hex.Commands {
 		File,
 		RVA,
 		CurrentPosition,
+	}
+
+	enum GoToMetadataKind {
+		Blob,
+		Strings,
+		US,
+		GUID,
+		Table,
+		MemberRva,
 	}
 
 	sealed class HexCommandOperationsImpl : HexCommandOperations {
@@ -170,6 +181,88 @@ namespace dnSpy.Hex.Commands {
 
 		HexBufferFile TryGetFile(HexPosition position) => HexBufferFileService.GetFile(position, checkNestedFiles: false);
 		PeHeaders TryGetPeHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<PeHeaders>();
+		DotNetMetadataHeaders TryGetMetadataHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<DotNetMetadataHeaders>();
+
+		public override void GoToMetadata(GoToMetadataKind mdKind) {
+			var origPos = HexView.Caret.Position.Position.ActivePosition.BufferPosition;
+			var mdHeaders = TryGetMetadataHeaders(origPos);
+			if (mdHeaders == null)
+				return;
+			var peHeaders = TryGetPeHeaders(origPos);
+			if (peHeaders == null && mdKind == GoToMetadataKind.MemberRva)
+				mdKind = GoToMetadataKind.Table;
+			var data = new GoToMetadataVM(HexView.Buffer, mdHeaders, peHeaders, HexView.Buffer.ReadUInt32(origPos));
+			data.GoToMetadataKind = mdKind;
+			var win = new GoToMetadataDlg();
+			win.DataContext = data;
+			win.Owner = OwnerWindow;
+			if (win.ShowDialog() != true)
+				return;
+
+			var span = GetGoToMetadataSpan(mdHeaders, peHeaders, data.OffsetTokenValue, data.GoToMetadataKind);
+			Debug.Assert(span != null);
+			if (span == null)
+				return;
+			var info = UserValueToSelection(span.Value.End, span.Value.Start);
+			MoveTo(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), new HexBufferPoint(HexView.Buffer, info.Caret), select: false);
+		}
+
+		HexSpan? GetGoToMetadataSpan(DotNetMetadataHeaders mdHeaders, PeHeaders peHeaders, uint offsetTokenValue, GoToMetadataKind mdKind) {
+			MDTable mdTable;
+			switch (mdKind) {
+			case GoToMetadataKind.Blob:
+				if (mdHeaders.BlobStream == null)
+					return null;
+				return new HexSpan(mdHeaders.BlobStream.Span.Span.Start + offsetTokenValue, 0);
+
+			case GoToMetadataKind.Strings:
+				if (mdHeaders.StringsStream == null)
+					return null;
+				return new HexSpan(mdHeaders.StringsStream.Span.Span.Start + offsetTokenValue, 0);
+
+			case GoToMetadataKind.US:
+				if (mdHeaders.USStream == null)
+					return null;
+				return new HexSpan(mdHeaders.USStream.Span.Span.Start + (offsetTokenValue & 0x00FFFFFF), 0);
+
+			case GoToMetadataKind.GUID:
+				if (mdHeaders.GUIDStream == null)
+					return null;
+				return new HexSpan(mdHeaders.GUIDStream.Span.Span.Start + (offsetTokenValue - 1) * 16, 16);
+
+			case GoToMetadataKind.Table:
+				mdTable = GetMDTable(mdHeaders, offsetTokenValue);
+				if (mdTable == null)
+					return null;
+				return new HexSpan(mdTable.Span.Start + ((offsetTokenValue & 0x00FFFFFF) - 1) * mdTable.RowSize, mdTable.RowSize);
+
+			case GoToMetadataKind.MemberRva:
+				if (peHeaders == null)
+					return null;
+				mdTable = GetMDTable(mdHeaders, offsetTokenValue);
+				if (mdTable == null)
+					return null;
+				if (mdTable.Table != Table.Method && mdTable.Table != Table.FieldRVA)
+					return null;
+				// Column 0 is the RVA in both Method and FieldRVA tables
+				var pos = mdTable.Span.Start + ((offsetTokenValue & 0x00FFFFFF) - 1) * mdTable.RowSize;
+				var rva = HexView.Buffer.ReadUInt32(pos);
+				return new HexSpan(peHeaders.RvaToBufferPosition(rva), 0);
+
+			default: throw new InvalidOperationException();
+			}
+		}
+
+		static MDTable GetMDTable(DotNetMetadataHeaders mdHeaders, uint token) {
+			var tablesStream = mdHeaders.TablesStream;
+			if (tablesStream == null)
+				return null;
+			var table = token >> 24;
+			if (table >= (uint)tablesStream.MDTables.Count)
+				return null;
+			var mdTable = tablesStream.MDTables[(int)table];
+			return mdTable?.IsValidRID(token & 0x00FFFFFF) == true ? mdTable : null;
+		}
 
 		bool MoveTo(HexBufferPoint start, HexBufferPoint end, HexBufferPoint caret, bool select) {
 			if (!HexView.BufferLines.IsValidPosition(start) || !HexView.BufferLines.IsValidPosition(end) || !HexView.BufferLines.IsValidPosition(caret))

@@ -316,6 +316,10 @@
     <Compile Include="Hex\Classification\HexViewEditorFormatMap.cs" />
     <Compile Include="Hex\Commands\CommandInfoProvider.cs" />
     <Compile Include="Hex\Commands\CommandTargetFilter.cs" />
+    <Compile Include="Hex\Commands\GoToMetadataDlg.xaml.cs">
+      <DependentUpon>GoToMetadataDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hex\Commands\GoToMetadataVM.cs" />
     <Compile Include="Hex\Commands\GoToPositionDlg.xaml.cs">
       <DependentUpon>GoToPositionDlg.xaml</DependentUpon>
     </Compile>
@@ -1207,6 +1211,10 @@
     <Page Include="Documents\Tabs\DocViewer\WaitAdorner.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Hex\Commands\GoToMetadataDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Hex\Commands\GoToPositionDlg.xaml">
       <SubType>Designer</SubType>

@@ -85,7 +85,14 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:HexGoToCodeOrStructure", InputGestureText = "res:ShortCutKeyF12", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]
+	[ExportMenuItem(Header = "res:GoToMetadataCommand", InputGestureText = "res:ShortCutKeyCtrlM", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]
+	sealed class GoToMetadataTableContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		GoToMetadataTableContexMenuEntry()
+			: base(HexCommandIds.GoToMetadataTable) {
+		}
+	}
+
+	[ExportMenuItem(Header = "res:HexGoToCodeOrStructure", InputGestureText = "res:ShortCutKeyF12", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 20)]
 	sealed class GoToCodeOrStructureContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		GoToCodeOrStructureContexMenuEntry()
 			: base(HexCommandIds.GoToCodeOrStructure) {

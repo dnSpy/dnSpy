@@ -1608,4 +1608,34 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="SelectLength" xml:space="preserve">
     <value>Length</value>
   </data>
+  <data name="GoToMetadata_Title" xml:space="preserve">
+    <value>Go to Metadata</value>
+  </data>
+  <data name="GoToMetadata_Token_Label" xml:space="preserve">
+    <value>_Token</value>
+  </data>
+  <data name="ShortCutKeyCtrl5" xml:space="preserve">
+    <value>Ctrl+5</value>
+  </data>
+  <data name="ShortCutKeyCtrl6" xml:space="preserve">
+    <value>Ctrl+6</value>
+  </data>
+  <data name="GoToMetadataCommand" xml:space="preserve">
+    <value>Go to Metadata...</value>
+  </data>
+  <data name="ShortCutKeyCtrlM" xml:space="preserve">
+    <value>Ctrl+M</value>
+  </data>
+  <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
+    <value>Invalid offset or metadata token</value>
+  </data>
+  <data name="GoToMetadataMethodBody" xml:space="preserve">
+    <value>Method Body</value>
+  </data>
+  <data name="GoToMetadataToken" xml:space="preserve">
+    <value>Metadata Token</value>
+  </data>
+  <data name="GoToMetadata_Index_Label" xml:space="preserve">
+    <value>_Index</value>
+  </data>
 </root>

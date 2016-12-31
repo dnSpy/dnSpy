@@ -1461,6 +1461,69 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Index.
+        /// </summary>
+        public static string GoToMetadata_Index_Label {
+            get {
+                return ResourceManager.GetString("GoToMetadata_Index_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to Metadata.
+        /// </summary>
+        public static string GoToMetadata_Title {
+            get {
+                return ResourceManager.GetString("GoToMetadata_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Token.
+        /// </summary>
+        public static string GoToMetadata_Token_Label {
+            get {
+                return ResourceManager.GetString("GoToMetadata_Token_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to Metadata....
+        /// </summary>
+        public static string GoToMetadataCommand {
+            get {
+                return ResourceManager.GetString("GoToMetadataCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid offset or metadata token.
+        /// </summary>
+        public static string GoToMetadataInvalidOffsetOrToken {
+            get {
+                return ResourceManager.GetString("GoToMetadataInvalidOffsetOrToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Method Body.
+        /// </summary>
+        public static string GoToMetadataMethodBody {
+            get {
+                return ResourceManager.GetString("GoToMetadataMethodBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Metadata Token.
+        /// </summary>
+        public static string GoToMetadataToken {
+            get {
+                return ResourceManager.GetString("GoToMetadataToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O_ffset.
         /// </summary>
         public static string GoToOffset_Offset_Label {
@@ -3585,6 +3648,24 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+5.
+        /// </summary>
+        public static string ShortCutKeyCtrl5 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrl5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+6.
+        /// </summary>
+        public static string ShortCutKeyCtrl6 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrl6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+8.
         /// </summary>
         public static string ShortCutKeyCtrl8 {
@@ -3707,6 +3788,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlL {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+M.
+        /// </summary>
+        public static string ShortCutKeyCtrlM {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlM", resourceCulture);
             }
         }
         

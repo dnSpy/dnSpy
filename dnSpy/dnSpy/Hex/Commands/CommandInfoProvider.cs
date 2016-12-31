@@ -30,6 +30,7 @@ namespace dnSpy.Hex.Commands {
 				yield break;
 
 			yield return CommandShortcut.Control(Key.G, HexCommandIds.GoToPositionAbsolute.ToCommandInfo());
+			yield return CommandShortcut.Control(Key.M, HexCommandIds.GoToMetadataTable.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.L, HexCommandIds.Select.ToCommandInfo());
 			yield return CommandShortcut.CtrlAlt(Key.S, HexCommandIds.SaveSelection.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.R, HexCommandIds.ToggleUseRelativePositions.ToCommandInfo());

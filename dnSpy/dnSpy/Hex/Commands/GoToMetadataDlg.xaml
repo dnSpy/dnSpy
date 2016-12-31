@@ -1,0 +1,83 @@
+﻿<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<winlocal:WindowBase x:Class="dnSpy.Hex.Commands.GoToMetadataDlg"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:dnSpy.Hex.Commands"
+        mc:Ignorable="d"
+        xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
+        xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
+        xmlns:p="clr-namespace:dnSpy.Properties"
+        Width="500"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        Title="{x:Static p:dnSpy_Resources.GoToMetadata_Title}"
+        Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+        MinWidth="200">
+    <winlocal:WindowBase.Resources>
+        <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+    </winlocal:WindowBase.Resources>
+    <Grid FocusManager.FocusedElement="{Binding ElementName=numberTextBox}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="5 5 5 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=numberTextBox}" Content="{x:Static p:dnSpy_Resources.GoToOffset_Offset_Label}" Visibility="{Binding IsOffset, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=numberTextBox}" Content="{x:Static p:dnSpy_Resources.GoToMetadata_Token_Label}" Visibility="{Binding IsToken, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=numberTextBox}" Content="{x:Static p:dnSpy_Resources.GoToMetadata_Index_Label}" Visibility="{Binding IsIndex, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="numberTextBox" Text="{Binding OffsetToken.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <ComboBox Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" HorizontalAlignment="Stretch" ItemsSource="{Binding GoToMetadataCollection}" SelectedItem="{Binding SelectedItem}" VerticalContentAlignment="Center" Width="200">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:GoToMetadataKindVM}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Text}" />
+                            <TextBlock Grid.Column="2" Text="{Binding InputGestureText}" />
+                        </Grid>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Content="{x:Static p:dnSpy_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
+        </Grid>
+    </Grid>
+</winlocal:WindowBase>

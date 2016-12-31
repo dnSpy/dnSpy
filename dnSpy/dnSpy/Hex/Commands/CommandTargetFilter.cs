@@ -62,6 +62,12 @@ namespace dnSpy.Hex.Commands {
 				case HexCommandIds.GoToPositionFile:
 				case HexCommandIds.GoToPositionRVA:
 				case HexCommandIds.GoToPositionCurrent:
+				case HexCommandIds.GoToMetadataBlob:
+				case HexCommandIds.GoToMetadataStrings:
+				case HexCommandIds.GoToMetadataUS:
+				case HexCommandIds.GoToMetadataGUID:
+				case HexCommandIds.GoToMetadataTable:
+				case HexCommandIds.GoToMetadataMemberRva:
 				case HexCommandIds.Select:
 				case HexCommandIds.SaveSelection:
 				case HexCommandIds.EditLocalSettings:
@@ -93,6 +99,12 @@ namespace dnSpy.Hex.Commands {
 				case HexCommandIds.GoToPositionFile:
 				case HexCommandIds.GoToPositionRVA:
 				case HexCommandIds.GoToPositionCurrent:
+				case HexCommandIds.GoToMetadataBlob:
+				case HexCommandIds.GoToMetadataStrings:
+				case HexCommandIds.GoToMetadataUS:
+				case HexCommandIds.GoToMetadataGUID:
+				case HexCommandIds.GoToMetadataTable:
+				case HexCommandIds.GoToMetadataMemberRva:
 				case HexCommandIds.Select:
 				case HexCommandIds.SaveSelection:
 				case HexCommandIds.FillSelection:
@@ -133,6 +145,30 @@ namespace dnSpy.Hex.Commands {
 
 				case HexCommandIds.GoToPositionCurrent:
 					hexCommandOperations.GoToPosition(PositionKind.CurrentPosition);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToMetadataBlob:
+					hexCommandOperations.GoToMetadata(GoToMetadataKind.Blob);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToMetadataStrings:
+					hexCommandOperations.GoToMetadata(GoToMetadataKind.Strings);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToMetadataUS:
+					hexCommandOperations.GoToMetadata(GoToMetadataKind.US);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToMetadataGUID:
+					hexCommandOperations.GoToMetadata(GoToMetadataKind.GUID);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToMetadataTable:
+					hexCommandOperations.GoToMetadata(GoToMetadataKind.Table);
+					return CommandTargetStatus.Handled;
+
+				case HexCommandIds.GoToMetadataMemberRva:
+					hexCommandOperations.GoToMetadata(GoToMetadataKind.MemberRva);
 					return CommandTargetStatus.Handled;
 
 				case HexCommandIds.Select:
