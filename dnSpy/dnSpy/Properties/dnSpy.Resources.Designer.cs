@@ -3486,6 +3486,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Length.
+        /// </summary>
+        public static string SelectLength {
+            get {
+                return ResourceManager.GetString("SelectLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Select to new position.
         /// </summary>
         public static string SelectToNewPosition {
@@ -3698,6 +3707,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlL {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+O.
+        /// </summary>
+        public static string ShortCutKeyCtrlO {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlO", resourceCulture);
             }
         }
         

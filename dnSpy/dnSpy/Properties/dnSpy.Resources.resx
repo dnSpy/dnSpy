@@ -1602,4 +1602,10 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="SelectToNewPosition" xml:space="preserve">
     <value>_Select to new position</value>
   </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="SelectLength" xml:space="preserve">
+    <value>Length</value>
+  </data>
 </root>

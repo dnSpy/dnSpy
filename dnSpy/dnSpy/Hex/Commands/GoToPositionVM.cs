@@ -27,10 +27,10 @@ namespace dnSpy.Hex.Commands {
 	sealed class GoToPositionVM : ViewModelBase {
 		public Integer64VM OffsetVM { get; }
 
-		public ICommand SelectPositionAbsolute => new RelayCommand(a => PositionKind = PositionKind.Absolute);
-		public ICommand SelectPositionFile => new RelayCommand(a => PositionKind = PositionKind.File);
-		public ICommand SelectPositionRVA => new RelayCommand(a => PositionKind = PositionKind.RVA);
-		public ICommand SelectPositionCurrent => new RelayCommand(a => PositionKind = PositionKind.CurrentPosition);
+		public ICommand SelectPositionAbsoluteCommand => new RelayCommand(a => PositionKind = PositionKind.Absolute);
+		public ICommand SelectPositionFileCommand => new RelayCommand(a => PositionKind = PositionKind.File);
+		public ICommand SelectPositionRVACommand => new RelayCommand(a => PositionKind = PositionKind.RVA);
+		public ICommand SelectPositionCurrentCommand => new RelayCommand(a => PositionKind = PositionKind.CurrentPosition);
 
 		public ObservableCollection<PositionVM> PositionsCollection { get; }
 

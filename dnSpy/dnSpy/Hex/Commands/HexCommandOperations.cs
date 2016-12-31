@@ -222,22 +222,46 @@ namespace dnSpy.Hex.Commands {
 				start = info2.Anchor;
 				end = info2.Active;
 			}
-			var minPos = HexView.BufferLines.ToLogicalPosition(HexView.BufferLines.StartPosition);
-			var maxPos = HexView.BufferLines.ToLogicalPosition(HexView.BufferLines.EndPosition > HexView.BufferLines.StartPosition ? HexView.BufferLines.EndPosition - 1 : HexView.BufferLines.EndPosition);
 			var logStart = HexView.BufferLines.ToLogicalPosition(start);
 			var logEnd = HexView.BufferLines.ToLogicalPosition(end);
-			var data = new SelectVM(logStart, logEnd, minPos, maxPos);
+			var data = new SelectVM(logStart, logEnd);
+			data.PositionKind = PositionKind.Absolute;
+			data.PositionLengthKind = SelectPositionLengthKind.Position;
 			var win = new SelectDlg();
 			win.DataContext = data;
 			win.Owner = OwnerWindow;
 			if (win.ShowDialog() != true)
 				return;
 
-			var newStart = HexView.BufferLines.ToPhysicalPosition(data.StartVM.Value);
-			var newEnd = HexView.BufferLines.ToPhysicalPosition(data.EndVM.Value);
+			var newStart = ToBufferPosition(logStart, data.StartVM.Value.ToUInt64(), data.PositionKind);
+			var newEnd = GetEndPosition(logStart, newStart, data.EndVM.Value, data.PositionKind, data.PositionLengthKind);
 			var info = UserValueToSelection(newStart, newEnd);
 
 			MoveTo(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), new HexBufferPoint(HexView.Buffer, info.Caret), select: true);
+		}
+
+		HexPosition GetEndPosition(HexPosition origPos, HexPosition startPos, HexPosition pos, PositionKind positionKind, SelectPositionLengthKind selectPosKind) {
+			switch (selectPosKind) {
+			case SelectPositionLengthKind.Position:
+				switch (positionKind) {
+				case PositionKind.Absolute:
+				case PositionKind.File:
+				case PositionKind.RVA:
+					return ToBufferPosition(origPos, pos.ToUInt64(), positionKind);
+
+				case PositionKind.CurrentPosition:
+					return (origPos + pos).ToUInt64();
+
+				default: throw new InvalidOperationException();
+				}
+
+			case SelectPositionLengthKind.Length:
+				if (pos == HexPosition.Zero)
+					return startPos;
+				return (startPos + pos - 1).ToUInt64();
+
+			default: throw new InvalidOperationException();
+			}
 		}
 
 		public override void SaveSelection() {

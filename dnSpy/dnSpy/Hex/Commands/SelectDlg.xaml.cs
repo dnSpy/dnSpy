@@ -18,12 +18,25 @@
 */
 
 using System.Windows;
+using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Hex.Commands {
 	sealed partial class SelectDlg : WindowBase {
 		public SelectDlg() {
 			InitializeComponent();
+			DataContextChanged += (s, e) => {
+				var vm = DataContext as SelectVM;
+				if (vm != null) {
+					InputBindings.Add(new KeyBinding(vm.SelectPositionAbsoluteCommand, new KeyGesture(Key.D1, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.SelectPositionFileCommand, new KeyGesture(Key.D2, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.SelectPositionRVACommand, new KeyGesture(Key.D3, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.SelectPositionCurrentCommand, new KeyGesture(Key.D4, ModifierKeys.Control)));
+
+					InputBindings.Add(new KeyBinding(vm.SelectPositionCommand, new KeyGesture(Key.O, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.SelectLengthCommand, new KeyGesture(Key.L, ModifierKeys.Control)));
+				}
+			};
 			Loaded += OnLoaded;
 		}
 

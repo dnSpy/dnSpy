@@ -28,10 +28,10 @@ namespace dnSpy.Hex.Commands {
 			DataContextChanged += (s, e) => {
 				var vm = DataContext as GoToPositionVM;
 				if (vm != null) {
-					InputBindings.Add(new KeyBinding(vm.SelectPositionAbsolute, new KeyGesture(Key.D1, ModifierKeys.Control)));
-					InputBindings.Add(new KeyBinding(vm.SelectPositionFile, new KeyGesture(Key.D2, ModifierKeys.Control)));
-					InputBindings.Add(new KeyBinding(vm.SelectPositionRVA, new KeyGesture(Key.D3, ModifierKeys.Control)));
-					InputBindings.Add(new KeyBinding(vm.SelectPositionCurrent, new KeyGesture(Key.D4, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.SelectPositionAbsoluteCommand, new KeyGesture(Key.D1, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.SelectPositionFileCommand, new KeyGesture(Key.D2, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.SelectPositionRVACommand, new KeyGesture(Key.D3, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.SelectPositionCurrentCommand, new KeyGesture(Key.D4, ModifierKeys.Control)));
 				}
 			};
 			Loaded += OnLoaded;
