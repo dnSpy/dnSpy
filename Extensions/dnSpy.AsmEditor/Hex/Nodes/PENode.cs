@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			var cor20Hdr = ImageCor20HeaderNode.Create(peStructureProvider.ImageCor20Header);
 			if (cor20Hdr != null)
 				yield return cor20Hdr;
-			if (cor20Hdr != null) {
+			if (cor20Hdr != null && peStructureProvider.StorageSignature != null) {
 				yield return new StorageSignatureNode(peStructureProvider.StorageSignature);
 				yield return new StorageHeaderNode(peStructureProvider.StorageHeader);
 				foreach (var storageStream in peStructureProvider.StorageStreams) {
