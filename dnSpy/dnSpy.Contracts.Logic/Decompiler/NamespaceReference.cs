@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public string Namespace { get; }
 
 		/// <summary>
-		/// Gets the assembly
+		/// Gets the assembly, could be null
 		/// </summary>
 		public AssemblyRef Assembly { get; }
 
@@ -41,8 +41,6 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="assembly">Target assembly</param>
 		/// <param name="namespace">Namespace</param>
 		public NamespaceReference(IAssembly assembly, string @namespace) {
-			if (assembly == null)
-				throw new ArgumentNullException(nameof(assembly));
 			Assembly = assembly.ToAssemblyRef();
 			Namespace = @namespace;
 		}

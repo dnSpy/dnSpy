@@ -83,6 +83,8 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		DocumentTabReferenceResult Create(NamespaceReference nsRef) {
+			if (nsRef.Assembly == null)
+				return null;
 			var asm = documentTreeView.DocumentService.Resolve(nsRef.Assembly, null) as IDsDotNetDocument;
 			if (asm == null)
 				return null;
