@@ -28,12 +28,12 @@ namespace dnSpy.Hex.Commands {
 			DataContextChanged += (s, e) => {
 				var vm = DataContext as GoToMetadataVM;
 				if (vm != null) {
-					InputBindings.Add(new KeyBinding(vm.SelectTableCommand, new KeyGesture(Key.D1, ModifierKeys.Control)));
-					InputBindings.Add(new KeyBinding(vm.SelectMemberRvaCommand, new KeyGesture(Key.D2, ModifierKeys.Control)));
-					InputBindings.Add(new KeyBinding(vm.SelectBlobCommand, new KeyGesture(Key.D3, ModifierKeys.Control)));
-					InputBindings.Add(new KeyBinding(vm.SelectStringsCommand, new KeyGesture(Key.D4, ModifierKeys.Control)));
-					InputBindings.Add(new KeyBinding(vm.SelectUSCommand, new KeyGesture(Key.D5, ModifierKeys.Control)));
-					InputBindings.Add(new KeyBinding(vm.SelectGUIDCommand, new KeyGesture(Key.D6, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.GoToMetadataTableCommand, new KeyGesture(Key.D1, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.GoToMetadataMemberRvaCommand, new KeyGesture(Key.D2, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.GoToMetadataBlobCommand, new KeyGesture(Key.D3, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.GoToMetadatatStringsCommand, new KeyGesture(Key.D4, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.GoToMetadataUSCommand, new KeyGesture(Key.D5, ModifierKeys.Control)));
+					InputBindings.Add(new KeyBinding(vm.GoToMetadataGUIDCommand, new KeyGesture(Key.D6, ModifierKeys.Control)));
 				}
 			};
 			Loaded += OnLoaded;

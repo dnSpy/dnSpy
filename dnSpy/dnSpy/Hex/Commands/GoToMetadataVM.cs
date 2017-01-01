@@ -30,12 +30,12 @@ using dnSpy.Properties;
 
 namespace dnSpy.Hex.Commands {
 	sealed class GoToMetadataVM : ViewModelBase {
-		public ICommand SelectBlobCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.Blob);
-		public ICommand SelectStringsCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.Strings);
-		public ICommand SelectUSCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.US);
-		public ICommand SelectGUIDCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.GUID);
-		public ICommand SelectTableCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.Table);
-		public ICommand SelectMemberRvaCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.MemberRva, a => peHeaders != null);
+		public ICommand GoToMetadataBlobCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.Blob);
+		public ICommand GoToMetadatatStringsCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.Strings);
+		public ICommand GoToMetadataUSCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.US);
+		public ICommand GoToMetadataGUIDCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.GUID);
+		public ICommand GoToMetadataTableCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.Table);
+		public ICommand GoToMetadataMemberRvaCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.MemberRva, a => peHeaders != null);
 
 		public bool IsOffset {
 			get {
