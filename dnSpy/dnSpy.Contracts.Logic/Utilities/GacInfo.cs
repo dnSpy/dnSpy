@@ -303,9 +303,16 @@ namespace dnSpy.Contracts.Utilities {
 			var asmSimpleName = UTF8String.ToSystemStringOrEmpty(assembly.Name);
 			foreach (var subDir in gacInfo.SubDirs) {
 				var baseDir = Path.Combine(gacInfo.Path, subDir);
-				baseDir = Path.Combine(baseDir, asmSimpleName);
-				baseDir = Path.Combine(baseDir, $"{gacInfo.Prefix}{verString}_{cultureString}_{pktString}");
-				var pathName = Path.Combine(baseDir, asmSimpleName + ".dll");
+				string pathName;
+				try {
+					baseDir = Path.Combine(baseDir, asmSimpleName);
+					baseDir = Path.Combine(baseDir, $"{gacInfo.Prefix}{verString}_{cultureString}_{pktString}");
+					pathName = Path.Combine(baseDir, asmSimpleName + ".dll");
+				}
+				catch (ArgumentException) {
+					// Invalid char(s) in asmSimpleName, cultureString
+					yield break;
+				}
 				if (File.Exists(pathName))
 					yield return pathName;
 			}
