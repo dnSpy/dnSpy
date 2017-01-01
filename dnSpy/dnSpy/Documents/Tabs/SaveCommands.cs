@@ -287,7 +287,7 @@ namespace dnSpy.Documents.Tabs {
 				if (!string.IsNullOrWhiteSpace(name))
 					return name;
 			}
-			Debug.Fail("Should never be reached");
+			// Here if eg. assembly name is empty
 			return GetSolutionName("solution");
 		}
 
