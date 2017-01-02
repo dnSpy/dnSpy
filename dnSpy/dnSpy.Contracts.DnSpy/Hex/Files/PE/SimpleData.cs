@@ -65,4 +65,76 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 			formatter.Write(")", PredefinedClassifiedTextTags.Punctuation);
 		}
 	}
+
+	/// <summary>
+	/// RVA data
+	/// </summary>
+	public class RvaData : UInt32Data {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public RvaData(HexBufferSpan span)
+			: base(span) {
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public RvaData(HexBuffer buffer, HexPosition position)
+			: base(buffer, position) {
+		}
+
+		/// <summary>
+		/// Returns the span the field value references or null. The span can be empty.
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
+			var peHeaders = file.GetHeaders<PeHeaders>();
+			if (peHeaders == null)
+				return null;
+			var rva = ReadValue();
+			if (rva == 0)
+				return null;
+			return new HexSpan(peHeaders.RvaToBufferPosition(rva), 0);
+		}
+	}
+
+	/// <summary>
+	/// 32-bit file offset
+	/// </summary>
+	public class FileOffsetData : UInt32Data {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public FileOffsetData(HexBufferSpan span)
+			: base(span) {
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public FileOffsetData(HexBuffer buffer, HexPosition position)
+			: base(buffer, position) {
+		}
+
+		/// <summary>
+		/// Returns the span the field value references or null. The span can be empty.
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
+			var offset = ReadValue();
+			if (offset == 0)
+				return null;
+			var pos = file.GetHeaders<PeHeaders>()?.FilePositionToBufferPosition(offset) ?? HexPosition.Min(HexPosition.MaxEndPosition - 1, file.Span.Start + offset);
+			return new HexSpan(pos, 0);
+		}
+	}
 }

@@ -22,6 +22,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
+using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.Hex.Files.DotNet {
 	class TableRecordDataFactory {
@@ -56,6 +57,9 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		protected virtual BufferData CreateData(HexPosition position, ColumnInfo column) {
+			if (column.ColumnSize < (ColumnSize)0x40)
+				return CreateRidData(position, column);
+
 			switch (column.ColumnSize) {
 			case ColumnSize.Byte:
 				if (column.Size != 1)
@@ -82,6 +86,36 @@ namespace dnSpy.Hex.Files.DotNet {
 					throw new InvalidOperationException();
 				return new UInt32Data(Buffer, position);
 
+			case ColumnSize.Strings:
+				if (column.Size == 2)
+					return new StringsHeapData16(Buffer, position);
+				return new StringsHeapData32(Buffer, position);
+
+			case ColumnSize.GUID:
+				if (column.Size == 2)
+					return new GUIDHeapData16(Buffer, position);
+				return new GUIDHeapData32(Buffer, position);
+
+			case ColumnSize.Blob:
+				if (column.Size == 2)
+					return new BlobHeapData16(Buffer, position);
+				return new BlobHeapData32(Buffer, position);
+
+			case ColumnSize.TypeDefOrRef:				return CreateCodedTokenData(position, column, CodedToken.TypeDefOrRef);
+			case ColumnSize.HasConstant:				return CreateCodedTokenData(position, column, CodedToken.HasConstant);
+			case ColumnSize.HasCustomAttribute:			return CreateCodedTokenData(position, column, CodedToken.HasCustomAttribute);
+			case ColumnSize.HasFieldMarshal:			return CreateCodedTokenData(position, column, CodedToken.HasFieldMarshal);
+			case ColumnSize.HasDeclSecurity:			return CreateCodedTokenData(position, column, CodedToken.HasDeclSecurity);
+			case ColumnSize.MemberRefParent:			return CreateCodedTokenData(position, column, CodedToken.MemberRefParent);
+			case ColumnSize.HasSemantic:				return CreateCodedTokenData(position, column, CodedToken.HasSemantic);
+			case ColumnSize.MethodDefOrRef:				return CreateCodedTokenData(position, column, CodedToken.MethodDefOrRef);
+			case ColumnSize.MemberForwarded:			return CreateCodedTokenData(position, column, CodedToken.MemberForwarded);
+			case ColumnSize.Implementation:				return CreateCodedTokenData(position, column, CodedToken.Implementation);
+			case ColumnSize.CustomAttributeType:		return CreateCodedTokenData(position, column, CodedToken.CustomAttributeType);
+			case ColumnSize.ResolutionScope:			return CreateCodedTokenData(position, column, CodedToken.ResolutionScope);
+			case ColumnSize.TypeOrMethodDef:			return CreateCodedTokenData(position, column, CodedToken.TypeOrMethodDef);
+			case ColumnSize.HasCustomDebugInformation:	return CreateCodedTokenData(position, column, CodedToken.HasCustomDebugInformation);
+
 			default:
 				switch (column.Size) {
 				case 1:		return new ByteData(Buffer, position);
@@ -91,6 +125,12 @@ namespace dnSpy.Hex.Files.DotNet {
 				}
 			}
 		}
+
+		RidData CreateRidData(HexPosition position, ColumnInfo column) =>
+			column.Size == 2 ? (RidData)new Rid16Data(Buffer, position, (Table)column.ColumnSize) : new Rid32Data(Buffer, position, (Table)column.ColumnSize);
+
+		CodedTokenData CreateCodedTokenData(HexPosition position, ColumnInfo column, CodedToken codedToken) =>
+			column.Size == 2 ? (CodedTokenData)new CodedToken16Data(Buffer, position, codedToken) : new CodedToken32Data(Buffer, position, codedToken);
 	}
 
 	sealed class TypeDefTableRecordDataFactory : TableRecordDataFactory {
@@ -238,6 +278,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		};
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
+			if (column.Index == 0)
+				return new RvaData(Buffer, position);
 			if (column.Index == 1)
 				return new UInt16FlagsData(Buffer, position, implAttrFlagInfos);
 			if (column.Index == 2)
@@ -448,6 +490,42 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 	}
 
+	sealed class FieldRVATableRecordDataFactory : TableRecordDataFactory {
+		public FieldRVATableRecordDataFactory(TablesHeap tablesHeap, MDTable mdTable)
+			: base(tablesHeap, mdTable) {
+		}
+
+		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
+			if (column.Index == 0)
+				return new RvaData(Buffer, position);
+			return base.CreateData(position, column);
+		}
+	}
+
+	sealed class ENCLogTableRecordDataFactory : TableRecordDataFactory {
+		public ENCLogTableRecordDataFactory(TablesHeap tablesHeap, MDTable mdTable)
+			: base(tablesHeap, mdTable) {
+		}
+
+		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
+			if (column.Index == 0)
+				return new TokenData(Buffer, position);
+			return base.CreateData(position, column);
+		}
+	}
+
+	sealed class ENCMapTableRecordDataFactory : TableRecordDataFactory {
+		public ENCMapTableRecordDataFactory(TablesHeap tablesHeap, MDTable mdTable)
+			: base(tablesHeap, mdTable) {
+		}
+
+		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
+			if (column.Index == 0)
+				return new TokenData(Buffer, position);
+			return base.CreateData(position, column);
+		}
+	}
+
 	sealed class AssemblyTableRecordDataFactory : TableRecordDataFactory {
 		public AssemblyTableRecordDataFactory(TablesHeap tablesHeap, MDTable mdTable)
 			: base(tablesHeap, mdTable) {
@@ -554,6 +632,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		};
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
+			if (column.Index == 0)
+				return new DotNetResourceOffsetData(Buffer, position);
 			if (column.Index == 1)
 				return new UInt32FlagsData(Buffer, position, attrFlagInfos);
 			return base.CreateData(position, column);

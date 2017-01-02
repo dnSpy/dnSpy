@@ -27,11 +27,11 @@ namespace dnSpy.Hex.Files.PE {
 	sealed class PeSectionDataImpl : PeSectionData {
 		public override StructField<StringData> SectionName { get; }
 		public override StructField<UInt32Data> VirtualSize { get; }
-		public override StructField<UInt32Data> VirtualAddress { get; }
+		public override StructField<RvaData> VirtualAddress { get; }
 		public override StructField<UInt32Data> SizeOfRawData { get; }
-		public override StructField<UInt32Data> PointerToRawData { get; }
-		public override StructField<UInt32Data> PointerToRelocations { get; }
-		public override StructField<UInt32Data> PointerToLinenumbers { get; }
+		public override StructField<FileOffsetData> PointerToRawData { get; }
+		public override StructField<FileOffsetData> PointerToRelocations { get; }
+		public override StructField<FileOffsetData> PointerToLinenumbers { get; }
 		public override StructField<UInt16Data> NumberOfRelocations { get; }
 		public override StructField<UInt16Data> NumberOfLinenumbers { get; }
 		public override StructField<UInt32FlagsData> Characteristics { get; }
@@ -83,11 +83,11 @@ namespace dnSpy.Hex.Files.PE {
 			var pos = span.Start.Position;
 			SectionName = new StructField<StringData>("Name", new StringData(buffer, pos, 8, Encoding.ASCII));
 			VirtualSize = new StructField<UInt32Data>("VirtualSize", new UInt32Data(buffer, pos + 8));
-			VirtualAddress = new StructField<UInt32Data>("VirtualAddress", new UInt32Data(buffer, pos + 0x0C));
+			VirtualAddress = new StructField<RvaData>("VirtualAddress", new RvaData(buffer, pos + 0x0C));
 			SizeOfRawData = new StructField<UInt32Data>("SizeOfRawData", new UInt32Data(buffer, pos + 0x10));
-			PointerToRawData = new StructField<UInt32Data>("PointerToRawData", new UInt32Data(buffer, pos + 0x14));
-			PointerToRelocations = new StructField<UInt32Data>("PointerToRelocations", new UInt32Data(buffer, pos + 0x18));
-			PointerToLinenumbers = new StructField<UInt32Data>("PointerToLinenumbers", new UInt32Data(buffer, pos + 0x1C));
+			PointerToRawData = new StructField<FileOffsetData>("PointerToRawData", new FileOffsetData(buffer, pos + 0x14));
+			PointerToRelocations = new StructField<FileOffsetData>("PointerToRelocations", new FileOffsetData(buffer, pos + 0x18));
+			PointerToLinenumbers = new StructField<FileOffsetData>("PointerToLinenumbers", new FileOffsetData(buffer, pos + 0x1C));
 			NumberOfRelocations = new StructField<UInt16Data>("NumberOfRelocations", new UInt16Data(buffer, pos + 0x20));
 			NumberOfLinenumbers = new StructField<UInt16Data>("NumberOfLinenumbers", new UInt16Data(buffer, pos + 0x22));
 			Characteristics = new StructField<UInt32FlagsData>("Characteristics", new UInt32FlagsData(buffer, pos + 0x24, characteristicsFlagInfos));

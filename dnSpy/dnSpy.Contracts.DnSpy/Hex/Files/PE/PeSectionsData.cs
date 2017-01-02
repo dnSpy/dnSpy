@@ -53,15 +53,15 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <summary>IMAGE_SECTION_HEADER.VirtualSize</summary>
 		public abstract StructField<UInt32Data> VirtualSize { get; }
 		/// <summary>IMAGE_SECTION_HEADER.VirtualAddress</summary>
-		public abstract StructField<UInt32Data> VirtualAddress { get; }
+		public abstract StructField<RvaData> VirtualAddress { get; }
 		/// <summary>IMAGE_SECTION_HEADER.SizeOfRawData</summary>
 		public abstract StructField<UInt32Data> SizeOfRawData { get; }
 		/// <summary>IMAGE_SECTION_HEADER.PointerToRawData</summary>
-		public abstract StructField<UInt32Data> PointerToRawData { get; }
+		public abstract StructField<FileOffsetData> PointerToRawData { get; }
 		/// <summary>IMAGE_SECTION_HEADER.PointerToRelocations</summary>
-		public abstract StructField<UInt32Data> PointerToRelocations { get; }
+		public abstract StructField<FileOffsetData> PointerToRelocations { get; }
 		/// <summary>IMAGE_SECTION_HEADER.PointerToLinenumbers</summary>
-		public abstract StructField<UInt32Data> PointerToLinenumbers { get; }
+		public abstract StructField<FileOffsetData> PointerToLinenumbers { get; }
 		/// <summary>IMAGE_SECTION_HEADER.NumberOfRelocations</summary>
 		public abstract StructField<UInt16Data> NumberOfRelocations { get; }
 		/// <summary>IMAGE_SECTION_HEADER.NumberOfLinenumbers</summary>

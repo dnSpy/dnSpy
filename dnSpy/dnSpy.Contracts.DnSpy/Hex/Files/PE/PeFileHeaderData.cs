@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <summary>IMAGE_FILE_HEADER.TimeDateStamp</summary>
 		public abstract StructField<UnixTime32Data> TimeDateStamp { get; }
 		/// <summary>IMAGE_FILE_HEADER.PointerToSymbolTable</summary>
-		public abstract StructField<UInt32Data> PointerToSymbolTable { get; }
+		public abstract StructField<FileOffsetData> PointerToSymbolTable { get; }
 		/// <summary>IMAGE_FILE_HEADER.NumberOfSymbols</summary>
 		public abstract StructField<UInt32Data> NumberOfSymbols { get; }
 		/// <summary>IMAGE_FILE_HEADER.SizeOfOptionalHeader</summary>

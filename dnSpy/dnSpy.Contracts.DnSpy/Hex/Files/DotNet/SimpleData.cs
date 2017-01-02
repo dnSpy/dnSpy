@@ -146,4 +146,46 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 				formatter.Write(buffer.ReadByte(pos++).ToString("X2"), PredefinedClassifiedTextTags.Number);
 		}
 	}
+
+	/// <summary>
+	/// Offset relative to the .NET resources
+	/// </summary>
+	public class DotNetResourceOffsetData : UInt32Data {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public DotNetResourceOffsetData(HexBufferSpan span)
+			: base(span) {
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public DotNetResourceOffsetData(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4))) {
+		}
+
+		/// <summary>
+		/// Returns the span the field value references or null. The span can be empty.
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
+			var resources = file.GetHeaders<DotNetHeaders>()?.ResourceProvider;
+			if (resources == null)
+				return null;
+			uint offset = ReadValue();
+			if (offset >= resources.ResourcesSpan.Length)
+				return null;
+			var pos = resources.ResourcesSpan.Start + offset;
+			uint size = pos + 4 > resources.ResourcesSpan.End ? 0 : Span.Buffer.ReadUInt32(pos);
+			var end = (pos + 4) + size;
+			if (end > resources.ResourcesSpan.End)
+				return new HexSpan(pos, 0);
+			return HexSpan.FromBounds(pos, end);
+		}
+	}
 }

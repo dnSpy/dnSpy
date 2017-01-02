@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Hex.Files.PE;
+
 namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// .NET multi-file resource header
@@ -59,6 +61,6 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>Name positions</summary>
 		public abstract StructField<VirtualArrayData<UInt32Data>> NamePositions { get; }
 		/// <summary>DataSectionOffset</summary>
-		public abstract StructField<UInt32Data> DataSectionOffset { get; }
+		public abstract StructField<FileOffsetData> DataSectionOffset { get; }
 	}
 }

@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public UInt16HexField Res2_7VM { get; }
 		public UInt16HexField Res2_8VM { get; }
 		public UInt16HexField Res2_9VM { get; }
-		public Int32HexField LfanewVM { get; }
+		public UInt32HexField LfanewVM { get; }
 
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
@@ -92,7 +92,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			Res2_7VM = new UInt16HexField(dosHeader.Res2.Data[7].Data, dosHeader.Res2.Name + "[7]");
 			Res2_8VM = new UInt16HexField(dosHeader.Res2.Data[8].Data, dosHeader.Res2.Name + "[8]");
 			Res2_9VM = new UInt16HexField(dosHeader.Res2.Data[9].Data, dosHeader.Res2.Name + "[9]");
-			LfanewVM = new Int32HexField(dosHeader.Lfanew);
+			LfanewVM = new UInt32HexField(dosHeader.Lfanew);
 
 			hexFields = new HexField[] {
 				MagicVM,

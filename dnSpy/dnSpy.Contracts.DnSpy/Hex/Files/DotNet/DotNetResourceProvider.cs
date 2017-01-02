@@ -40,6 +40,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public HexBufferFile File { get; }
 
 		/// <summary>
+		/// Gets the span of the .NET resources or an empty span if there are no .NET resources
+		/// </summary>
+		public abstract HexSpan ResourcesSpan { get; }
+
+		/// <summary>
 		/// Returns true if <paramref name="position"/> is probably within a resource
 		/// </summary>
 		/// <param name="position">Position</param>

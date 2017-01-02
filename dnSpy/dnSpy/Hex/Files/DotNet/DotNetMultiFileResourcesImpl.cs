@@ -28,6 +28,7 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class DotNetMultiFileResourcesImpl : DotNetMultiFileResources {
 		public override DotNetMultiFileResourceHeaderData Header { get; }
+		public override HexPosition DataSectionPosition { get; }
 
 		enum DataKind {
 			UnicodeNameAndOffset,
@@ -75,6 +76,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		DotNetMultiFileResourcesImpl(HexBufferFile file, Bit7String? resourceTypeSpan, Bit7String? resourceSetTypeSpan, HexPosition versionPosition, HexSpan paddingSpan, Bit7String[] typeNames, int numResources, HexPosition dataSectionPosition, HexPosition nameSectionPosition)
 			: base(file) {
+			DataSectionPosition = dataSectionPosition;
 			var headerSpan = new HexBufferSpan(file.Buffer, HexSpan.FromBounds(file.Span.Start, nameSectionPosition));
 			Header = new DotNetMultiFileResourceHeaderDataImpl(headerSpan, resourceTypeSpan, resourceSetTypeSpan, versionPosition, paddingSpan, typeNames, numResources);
 			ResourceInfo[] resourceInfos;

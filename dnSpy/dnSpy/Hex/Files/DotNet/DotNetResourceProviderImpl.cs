@@ -27,8 +27,9 @@ using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class DotNetResourceProviderImpl : DotNetResourceProvider {
+		public override HexSpan ResourcesSpan { get; }
+
 		readonly PeHeaders peHeaders;
-		readonly HexSpan resourcesSpan;
 		readonly ResourceInfo[] resourceInfos;
 
 		struct ResourceInfo {
@@ -61,7 +62,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			this.peHeaders = peHeaders;
 			if (metadataHeaders?.TablesStream != null && resourcesSpan != null) {
 				Debug.Assert(file.Span.Contains(resourcesSpan.Value));// Verified by caller
-				this.resourcesSpan = resourcesSpan.Value;
+				ResourcesSpan = resourcesSpan.Value;
 				resourceInfos = CreateResourceInfos(file, metadataHeaders.TablesStream.MDTables[(int)Table.ManifestResource], metadataHeaders.StringsStream);
 			}
 			else
@@ -118,17 +119,17 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		HexSpan? GetResourceSpan(HexBuffer buffer, uint offset) {
-			var start = resourcesSpan.Start + offset;
-			if (start + 4 > resourcesSpan.End)
+			var start = ResourcesSpan.Start + offset;
+			if (start + 4 > ResourcesSpan.End)
 				return null;
 			uint size = buffer.ReadUInt32(start);
 			var end = start + 4 + size;
-			if (end > resourcesSpan.End)
+			if (end > ResourcesSpan.End)
 				return null;
 			return HexSpan.FromBounds(start, end);
 		}
 
-		public override bool IsResourcePosition(HexPosition position) => resourcesSpan.Contains(position);
+		public override bool IsResourcePosition(HexPosition position) => ResourcesSpan.Contains(position);
 
 		public override DotNetEmbeddedResource GetResource(HexPosition position) {
 			if (!IsResourcePosition(position))

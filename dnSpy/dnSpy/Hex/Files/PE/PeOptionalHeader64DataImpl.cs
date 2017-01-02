@@ -30,8 +30,8 @@ namespace dnSpy.Hex.Files.PE {
 		public override StructField<UInt32Data> SizeOfCode { get; }
 		public override StructField<UInt32Data> SizeOfInitializedData { get; }
 		public override StructField<UInt32Data> SizeOfUninitializedData { get; }
-		public override StructField<UInt32Data> AddressOfEntryPoint { get; }
-		public override StructField<UInt32Data> BaseOfCode { get; }
+		public override StructField<RvaData> AddressOfEntryPoint { get; }
+		public override StructField<RvaData> BaseOfCode { get; }
 		public override StructField<UInt64Data> ImageBase { get; }
 		public override StructField<UInt32Data> SectionAlignment { get; }
 		public override StructField<UInt32Data> FileAlignment { get; }
@@ -67,8 +67,8 @@ namespace dnSpy.Hex.Files.PE {
 			SizeOfCode = new StructField<UInt32Data>("SizeOfCode", new UInt32Data(buffer, pos + 4));
 			SizeOfInitializedData = new StructField<UInt32Data>("SizeOfInitializedData", new UInt32Data(buffer, pos + 8));
 			SizeOfUninitializedData = new StructField<UInt32Data>("SizeOfUninitializedData", new UInt32Data(buffer, pos + 0x0C));
-			AddressOfEntryPoint = new StructField<UInt32Data>("AddressOfEntryPoint", new UInt32Data(buffer, pos + 0x10));
-			BaseOfCode = new StructField<UInt32Data>("BaseOfCode", new UInt32Data(buffer, pos + 0x14));
+			AddressOfEntryPoint = new StructField<RvaData>("AddressOfEntryPoint", new RvaData(buffer, pos + 0x10));
+			BaseOfCode = new StructField<RvaData>("BaseOfCode", new RvaData(buffer, pos + 0x14));
 			ImageBase = new StructField<UInt64Data>("ImageBase", new UInt64Data(buffer, pos + 0x18));
 			SectionAlignment = new StructField<UInt32Data>("SectionAlignment", new UInt32Data(buffer, pos + 0x20));
 			FileAlignment = new StructField<UInt32Data>("FileAlignment", new UInt32Data(buffer, pos + 0x24));

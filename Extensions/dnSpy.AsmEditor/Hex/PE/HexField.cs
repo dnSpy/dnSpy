@@ -237,6 +237,16 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			data = new UInt32VM(buffer.ReadUInt32(Span.Start), a => UpdateValue(), useDecimal);
 		}
 
+		public UInt32HexField(StructField<RvaData> field, bool useDecimal = false)
+			: base(field) {
+			data = new UInt32VM(buffer.ReadUInt32(Span.Start), a => UpdateValue(), useDecimal);
+		}
+
+		public UInt32HexField(StructField<FileOffsetData> field, bool useDecimal = false)
+			: base(field) {
+			data = new UInt32VM(buffer.ReadUInt32(Span.Start), a => UpdateValue(), useDecimal);
+		}
+
 		public UInt32HexField(HexBuffer buffer, string parentName, string name, HexPosition start, bool useDecimal = false)
 			: base(buffer, parentName, name, start, 4) {
 			data = new UInt32VM(buffer.ReadUInt32(start), a => UpdateValue(), useDecimal);

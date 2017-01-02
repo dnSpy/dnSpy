@@ -69,6 +69,6 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <summary>IMAGE_DOS_HEADER.e_res2[10]</summary>
 		public abstract StructField<ArrayData<UInt16Data>> Res2 { get; }
 		/// <summary>IMAGE_DOS_HEADER.e_lfanew</summary>
-		public abstract StructField<Int32Data> Lfanew { get; }
+		public abstract StructField<FileOffsetData> Lfanew { get; }
 	}
 }

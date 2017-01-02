@@ -482,11 +482,13 @@
     <Compile Include="Hex\Files\HexFileStructureInfoServiceFactoryImpl.cs" />
     <Compile Include="Hex\Files\HexFileStructureInfoServiceImpl.cs" />
     <Compile Include="Hex\Files\NumberFormatter.cs" />
+    <Compile Include="Hex\Files\PE\DataDirectoryDataUtils.cs" />
     <Compile Include="Hex\Files\PE\ImageSectionHeader.cs" />
     <Compile Include="Hex\Files\PE\PeDosHeaderDataImpl.cs" />
     <Compile Include="Hex\Files\PE\PeFileHeaderDataImpl.cs" />
     <Compile Include="Hex\Files\PE\PeHeadersImpl.cs" />
     <Compile Include="Hex\Files\PE\PeHeadersReader.cs" />
+    <Compile Include="Hex\Files\PE\PeHexFileStructureInfoProvider.cs" />
     <Compile Include="Hex\Files\PE\PeOptionalHeader32DataImpl.cs" />
     <Compile Include="Hex\Files\PE\PeOptionalHeader64DataImpl.cs" />
     <Compile Include="Hex\Files\PE\PeSectionDataImpl.cs" />

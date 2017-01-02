@@ -59,9 +59,7 @@ namespace dnSpy.Hex.Files.PE {
 			if (DosHeader == null)
 				return false;
 
-			int ntHeaderOffset = DosHeader.Lfanew.Data.ReadValue();
-			if (ntHeaderOffset < 0)
-				return false;
+			uint ntHeaderOffset = DosHeader.Lfanew.Data.ReadValue();
 			pos = file.Span.Start + ntHeaderOffset;
 			if (pos + 4 > file.Span.End)
 				return false;

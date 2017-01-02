@@ -247,4 +247,340 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			};
 		}
 	}
+
+	/// <summary>
+	/// #Strings heap reference
+	/// </summary>
+	public abstract class StringsHeapData : SimpleData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		protected StringsHeapData(HexBufferSpan span)
+			: base(span) {
+		}
+
+		/// <summary>
+		/// Reads the rid
+		/// </summary>
+		/// <returns></returns>
+		protected abstract uint ReadOffset();
+
+		/// <summary>
+		/// Returns the span the field value references or null. The span can be empty.
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
+			var stringsStream = file.GetHeaders<DotNetMetadataHeaders>()?.StringsStream;
+			if (stringsStream == null)
+				return null;
+			uint offset = ReadOffset();
+			if (offset >= stringsStream.Span.Length)
+				return null;
+			var pos = stringsStream.Span.Span.Start + offset;
+			int len = GetStringLength(pos, stringsStream.Span.Span.End);
+			return new HexSpan(pos, (ulong)len);
+		}
+
+		int GetStringLength(HexPosition position, HexPosition heapEnd) {
+			var buffer = Span.Buffer;
+			const int MAX_LEN = 0x400;
+			var end = HexPosition.Min(heapEnd, position + MAX_LEN);
+			var start = position;
+			while (position < end) {
+				if (buffer.ReadByte(position++) == 0)
+					break;
+			}
+			return (int)(position - start).ToUInt64();
+		}
+	}
+
+	/// <summary>
+	/// 16-bit #Strings heap reference
+	/// </summary>
+	public class StringsHeapData16 : StringsHeapData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public StringsHeapData16(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 2)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public StringsHeapData16(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 2))) {
+		}
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt16((ushort)ReadOffset());
+
+		/// <summary>
+		/// Reads the token value
+		/// </summary>
+		/// <returns></returns>
+		protected override uint ReadOffset() => Span.Buffer.ReadUInt16(Span.Start);
+	}
+
+	/// <summary>
+	/// 32-bit #Strings heap reference
+	/// </summary>
+	public class StringsHeapData32 : StringsHeapData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public StringsHeapData32(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 4)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public StringsHeapData32(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4))) {
+		}
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt32(ReadOffset());
+
+		/// <summary>
+		/// Reads the token value
+		/// </summary>
+		/// <returns></returns>
+		protected override uint ReadOffset() => Span.Buffer.ReadUInt32(Span.Start);
+	}
+
+	/// <summary>
+	/// #Blob heap reference
+	/// </summary>
+	public abstract class BlobHeapData : SimpleData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		protected BlobHeapData(HexBufferSpan span)
+			: base(span) {
+		}
+
+		/// <summary>
+		/// Reads the rid
+		/// </summary>
+		/// <returns></returns>
+		protected abstract uint ReadOffset();
+
+		/// <summary>
+		/// Returns the span the field value references or null. The span can be empty.
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
+			var blobStream = file.GetHeaders<DotNetMetadataHeaders>()?.BlobStream;
+			if (blobStream == null)
+				return null;
+			uint offset = ReadOffset();
+			if (offset >= blobStream.Span.Length)
+				return null;
+			var start = blobStream.Span.Span.Start + offset;
+			var pos = start;
+			int size = (int)Utils.ReadCompressedUInt32(Span.Buffer, ref pos);
+			ulong blobSize = pos + size > blobStream.Span.Span.End ? 0 : (ulong)size + (pos - start).ToUInt64();
+			return new HexSpan(start, blobSize);
+		}
+	}
+
+	/// <summary>
+	/// 16-bit #Blob heap reference
+	/// </summary>
+	public class BlobHeapData16 : BlobHeapData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public BlobHeapData16(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 2)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public BlobHeapData16(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 2))) {
+		}
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt16((ushort)ReadOffset());
+
+		/// <summary>
+		/// Reads the token value
+		/// </summary>
+		/// <returns></returns>
+		protected override uint ReadOffset() => Span.Buffer.ReadUInt16(Span.Start);
+	}
+
+	/// <summary>
+	/// 32-bit #Blob heap reference
+	/// </summary>
+	public class BlobHeapData32 : BlobHeapData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public BlobHeapData32(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 4)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public BlobHeapData32(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4))) {
+		}
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt32(ReadOffset());
+
+		/// <summary>
+		/// Reads the token value
+		/// </summary>
+		/// <returns></returns>
+		protected override uint ReadOffset() => Span.Buffer.ReadUInt32(Span.Start);
+	}
+
+	/// <summary>
+	/// #GUID heap reference
+	/// </summary>
+	public abstract class GUIDHeapData : SimpleData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		protected GUIDHeapData(HexBufferSpan span)
+			: base(span) {
+		}
+
+		/// <summary>
+		/// Reads the rid
+		/// </summary>
+		/// <returns></returns>
+		protected abstract uint ReadIndex();
+
+		/// <summary>
+		/// Returns the span the field value references or null. The span can be empty.
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
+			var guidStream = file.GetHeaders<DotNetMetadataHeaders>()?.GUIDStream;
+			if (guidStream == null)
+				return null;
+			uint index = ReadIndex();
+			if (index == 0 || !guidStream.IsValidIndex(index))
+				return null;
+			return new HexSpan(guidStream.Span.Span.Start + (index - 1) * 16, 16);
+		}
+	}
+
+	/// <summary>
+	/// 16-bit #GUID heap reference
+	/// </summary>
+	public class GUIDHeapData16 : GUIDHeapData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public GUIDHeapData16(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 2)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public GUIDHeapData16(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 2))) {
+		}
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt16((ushort)ReadIndex());
+
+		/// <summary>
+		/// Reads the token value
+		/// </summary>
+		/// <returns></returns>
+		protected override uint ReadIndex() => Span.Buffer.ReadUInt16(Span.Start);
+	}
+
+	/// <summary>
+	/// 32-bit #GUID heap reference
+	/// </summary>
+	public class GUIDHeapData32 : GUIDHeapData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		public GUIDHeapData32(HexBufferSpan span)
+			: base(span) {
+			if (span.Length != 4)
+				throw new ArgumentOutOfRangeException(nameof(span));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="position">Position</param>
+		public GUIDHeapData32(HexBuffer buffer, HexPosition position)
+			: this(new HexBufferSpan(buffer, new HexSpan(position, 4))) {
+		}
+
+		/// <summary>
+		/// Writes the value
+		/// </summary>
+		/// <param name="formatter">Formatter</param>
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteUInt32(ReadIndex());
+
+		/// <summary>
+		/// Reads the token value
+		/// </summary>
+		/// <returns></returns>
+		protected override uint ReadIndex() => Span.Buffer.ReadUInt32(Span.Start);
+	}
 }

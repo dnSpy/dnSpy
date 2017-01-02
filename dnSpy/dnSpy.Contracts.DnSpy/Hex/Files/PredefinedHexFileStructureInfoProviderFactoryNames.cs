@@ -28,6 +28,11 @@ namespace dnSpy.Contracts.Hex.Files {
 		public const string Default = nameof(Default);
 
 		/// <summary>
+		/// PE <see cref="HexFileStructureInfoProviderFactory"/>
+		/// </summary>
+		public const string PE = nameof(PE);
+
+		/// <summary>
 		/// .NET <see cref="HexFileStructureInfoProviderFactory"/>
 		/// </summary>
 		public const string DotNet = nameof(DotNet);

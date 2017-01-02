@@ -208,6 +208,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			case Table.Property:			return new PropertyTableRecordDataFactory(this, mdTable);
 			case Table.MethodSemantics:		return new MethodSemanticsTableRecordDataFactory(this, mdTable);
 			case Table.ImplMap:				return new ImplMapTableRecordDataFactory(this, mdTable);
+			case Table.FieldRVA:			return new FieldRVATableRecordDataFactory(this, mdTable);
+			case Table.ENCLog:				return new ENCLogTableRecordDataFactory(this, mdTable);
+			case Table.ENCMap:				return new ENCMapTableRecordDataFactory(this, mdTable);
 			case Table.Assembly:			return new AssemblyTableRecordDataFactory(this, mdTable);
 			case Table.AssemblyRef:			return new AssemblyRefTableRecordDataFactory(this, mdTable);
 			case Table.File:				return new FileTableRecordDataFactory(this, mdTable);

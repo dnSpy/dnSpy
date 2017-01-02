@@ -49,9 +49,9 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <summary>IMAGE_OPTIONAL_HEADER.SizeOfUninitializedData</summary>
 		public abstract StructField<UInt32Data> SizeOfUninitializedData { get; }
 		/// <summary>IMAGE_OPTIONAL_HEADER.AddressOfEntryPoint</summary>
-		public abstract StructField<UInt32Data> AddressOfEntryPoint { get; }
+		public abstract StructField<RvaData> AddressOfEntryPoint { get; }
 		/// <summary>IMAGE_OPTIONAL_HEADER.BaseOfCode</summary>
-		public abstract StructField<UInt32Data> BaseOfCode { get; }
+		public abstract StructField<RvaData> BaseOfCode { get; }
 		/// <summary>IMAGE_OPTIONAL_HEADER.SectionAlignment</summary>
 		public abstract StructField<UInt32Data> SectionAlignment { get; }
 		/// <summary>IMAGE_OPTIONAL_HEADER.FileAlignment</summary>
@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		public sealed override bool Is32Bit => true;
 
 		/// <summary>IMAGE_OPTIONAL_HEADER32.BaseOfData</summary>
-		public abstract StructField<UInt32Data> BaseOfData { get; }
+		public abstract StructField<RvaData> BaseOfData { get; }
 		/// <summary>IMAGE_OPTIONAL_HEADER32.ImageBase</summary>
 		public abstract StructField<UInt32Data> ImageBase { get; }
 		/// <summary>IMAGE_OPTIONAL_HEADER32.SizeOfStackReserve</summary>

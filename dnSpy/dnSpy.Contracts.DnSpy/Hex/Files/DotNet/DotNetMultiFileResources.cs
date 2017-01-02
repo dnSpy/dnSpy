@@ -40,6 +40,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public HexBufferFile File { get; }
 
 		/// <summary>
+		/// Position of data section
+		/// </summary>
+		public abstract HexPosition DataSectionPosition { get; }
+
+		/// <summary>
 		/// Gets the header
 		/// </summary>
 		public abstract DotNetMultiFileResourceHeaderData Header { get; }

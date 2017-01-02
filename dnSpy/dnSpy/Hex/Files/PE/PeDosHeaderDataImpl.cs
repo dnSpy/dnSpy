@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Files.PE {
 		public override StructField<UInt16Data> Oemid { get; }
 		public override StructField<UInt16Data> Oeminfo { get; }
 		public override StructField<ArrayData<UInt16Data>> Res2 { get; }
-		public override StructField<Int32Data> Lfanew { get; }
+		public override StructField<FileOffsetData> Lfanew { get; }
 
 		protected override BufferField[] Fields { get; }
 
@@ -68,7 +68,7 @@ namespace dnSpy.Hex.Files.PE {
 			Oemid = new StructField<UInt16Data>("e_oemid", new UInt16Data(buffer, pos + 0x24));
 			Oeminfo = new StructField<UInt16Data>("e_oeminfo", new UInt16Data(buffer, pos + 0x26));
 			Res2 = new StructField<ArrayData<UInt16Data>>("e_res2", ArrayData.CreateUInt16Array(buffer, pos + 0x28, 10));
-			Lfanew = new StructField<Int32Data>("e_lfanew", new Int32Data(buffer, pos + 0x3C));
+			Lfanew = new StructField<FileOffsetData>("e_lfanew", new FileOffsetData(buffer, pos + 0x3C));
 			Fields = new StructField[] {
 				Magic,
 				Cblp,

@@ -23,6 +23,7 @@ using System.Text;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
+using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class DotNetMultiFileResourceHeaderDataImpl : DotNetMultiFileResourceHeaderData {
@@ -39,7 +40,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override StructField<ArrayData<ByteData>> Alignment8 { get; }
 		public override StructField<VirtualArrayData<UInt32Data>> NameHashes { get; }
 		public override StructField<VirtualArrayData<UInt32Data>> NamePositions { get; }
-		public override StructField<UInt32Data> DataSectionOffset { get; }
+		public override StructField<FileOffsetData> DataSectionOffset { get; }
 
 		protected override BufferField[] Fields { get; }
 
@@ -87,7 +88,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			pos += (ulong)numResources * 4;
 			NamePositions = new StructField<VirtualArrayData<UInt32Data>>("NamePositions", ArrayData.CreateVirtualUInt32Array(new HexBufferSpan(buffer, new HexSpan(pos, (ulong)numResources * 4))));
 			pos += (ulong)numResources * 4;
-			DataSectionOffset = new StructField<UInt32Data>("DataSectionOffset", new UInt32Data(buffer, pos));
+			DataSectionOffset = new StructField<FileOffsetData>("DataSectionOffset", new FileOffsetData(buffer, pos));
 			pos += 4;
 			if (pos != span.Span.End)
 				throw new ArgumentOutOfRangeException(nameof(span));

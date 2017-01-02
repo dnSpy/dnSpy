@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 				throw new ArgumentOutOfRangeException(nameof(span));
 			var buffer = span.Buffer;
 			var pos = span.Start;
-			VirtualAddress = new StructField<UInt32Data>("VirtualAddress", new UInt32Data(buffer, pos));
+			VirtualAddress = new StructField<RvaData>("VirtualAddress", new RvaData(buffer, pos));
 			Size = new StructField<UInt32Data>("Size", new UInt32Data(buffer, pos + 4));
 			Fields = new BufferField[] {
 				VirtualAddress,
@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		}
 
 		/// <summary>IMAGE_DATA_DIRECTORY.VirtualAddress</summary>
-		public StructField<UInt32Data> VirtualAddress { get; }
+		public StructField<RvaData> VirtualAddress { get; }
 		/// <summary>IMAGE_DATA_DIRECTORY.Size</summary>
 		public StructField<UInt32Data> Size { get; }
 	}
