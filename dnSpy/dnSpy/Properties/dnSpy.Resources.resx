@@ -1638,4 +1638,10 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
     <value>_Index</value>
   </data>
+  <data name="HexFollowFieldValueReference" xml:space="preserve">
+    <value>Follow Reference</value>
+  </data>
+  <data name="ShortCutKeyCtrlF12" xml:space="preserve">
+    <value>Ctrl+F12</value>
+  </data>
 </root>

@@ -31,20 +31,22 @@ namespace dnSpy.Hex.Operations {
 		readonly HexBufferFileServiceFactory hexBufferFileServiceFactory;
 		readonly Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory;
 		readonly Lazy<HexReferenceHandlerService> hexReferenceHandlerService;
+		readonly Lazy<HexFileStructureInfoServiceFactory> hexFileStructureInfoServiceFactory;
 
 		[ImportingConstructor]
-		HexEditorOperationsFactoryServiceImpl(HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService) {
+		HexEditorOperationsFactoryServiceImpl(HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService, Lazy<HexFileStructureInfoServiceFactory> hexFileStructureInfoServiceFactory) {
 			this.htmlBuilderService = htmlBuilderService;
 			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
 			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
 			this.hexReferenceHandlerService = hexReferenceHandlerService;
+			this.hexFileStructureInfoServiceFactory = hexFileStructureInfoServiceFactory;
 		}
 
 		public override HexEditorOperations GetEditorOperations(HexView hexView) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexEditorOperations),
-				() => new HexEditorOperationsImpl(hexView, htmlBuilderService, hexBufferFileServiceFactory, hexStructureInfoAggregatorFactory, hexReferenceHandlerService));
+				() => new HexEditorOperationsImpl(hexView, htmlBuilderService, hexBufferFileServiceFactory, hexStructureInfoAggregatorFactory, hexReferenceHandlerService, hexFileStructureInfoServiceFactory));
 		}
 
 		internal static void RemoveFromProperties(HexEditorOperations editorOperations) =>

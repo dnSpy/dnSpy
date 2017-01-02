@@ -99,6 +99,13 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		}
 	}
 
+	[ExportMenuItem(Header = "res:HexFollowFieldValueReference", InputGestureText = "res:ShortCutKeyCtrlF12", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 30)]
+	sealed class FollowFieldValueReferenceContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		FollowFieldValueReferenceContexMenuEntry()
+			: base(HexEditorIds.FollowFieldValueReference) {
+		}
+	}
+
 	[ExportMenuItem(Header = "res:HexEditorSelectCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 100)]
 	sealed class SelectContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		SelectContexMenuEntry()

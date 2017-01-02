@@ -126,6 +126,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.END_EXT:
 				case HexEditorIds.EOL:
 				case HexEditorIds.EOL_EXT:
+				case HexEditorIds.FollowFieldValueReference:
 				case HexEditorIds.GoToCodeOrStructure:
 				case HexEditorIds.HOME:
 				case HexEditorIds.HOME_EXT:
@@ -234,6 +235,7 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.END_EXT:
 				case HexEditorIds.EOL:
 				case HexEditorIds.EOL_EXT:
+				case HexEditorIds.FollowFieldValueReference:
 				case HexEditorIds.GoToCodeOrStructure:
 				case HexEditorIds.HOME:
 				case HexEditorIds.HOME_EXT:
@@ -435,6 +437,10 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.EOL_EXT:
 					EditorOperations.MoveToEndOfLine(true);
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.FollowFieldValueReference:
+					EditorOperations.FollowFieldValueReference();
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.GoToCodeOrStructure:

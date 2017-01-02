@@ -367,6 +367,11 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// Go to high-level code (eg. decompiled code) or other high level structure
 		/// </summary>
 		public abstract void GoToCodeOrStructure();
+
+		/// <summary>
+		/// Follows the field reference
+		/// </summary>
+		public abstract void FollowFieldValueReference();
 	}
 
 	/// <summary>

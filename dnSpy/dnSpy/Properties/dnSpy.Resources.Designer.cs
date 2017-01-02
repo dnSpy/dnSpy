@@ -1839,6 +1839,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Follow Reference.
+        /// </summary>
+        public static string HexFollowFieldValueReference {
+            get {
+                return ResourceManager.GetString("HexFollowFieldValueReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Go to Code or Structure.
         /// </summary>
         public static string HexGoToCodeOrStructure {
@@ -3734,6 +3743,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlF {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+F12.
+        /// </summary>
+        public static string ShortCutKeyCtrlF12 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlF12", resourceCulture);
             }
         }
         

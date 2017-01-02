@@ -374,5 +374,9 @@ namespace dnSpy.Contracts.Command {
 		/// Go to high-level code (eg. decompiled code) or other high level structure
 		/// </summary>
 		GoToCodeOrStructure,
+		/// <summary>
+		/// Follows the field reference
+		/// </summary>
+		FollowFieldValueReference,
 	}
 }

@@ -56,12 +56,16 @@ namespace dnSpy.Hex.Operations {
 		HexStructureInfoAggregator HexStructureInfoAggregator => __hexStructureInfoAggregator ?? (__hexStructureInfoAggregator = hexStructureInfoAggregatorFactory.Value.Create(HexView));
 		HexStructureInfoAggregator __hexStructureInfoAggregator;
 
+		HexFileStructureInfoService HexFileStructureInfoService => __hexFileStructureInfoService ?? (__hexFileStructureInfoService = hexFileStructureInfoServiceFactory.Value.Create(HexView));
+		HexFileStructureInfoService __hexFileStructureInfoService;
+
 		readonly HexHtmlBuilderService htmlBuilderService;
 		readonly HexBufferFileService hexBufferFileService;
 		readonly Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory;
 		readonly Lazy<HexReferenceHandlerService> hexReferenceHandlerService;
+		readonly Lazy<HexFileStructureInfoServiceFactory> hexFileStructureInfoServiceFactory;
 
-		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService) {
+		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService, Lazy<HexFileStructureInfoServiceFactory> hexFileStructureInfoServiceFactory) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			if (htmlBuilderService == null)
@@ -72,11 +76,14 @@ namespace dnSpy.Hex.Operations {
 				throw new ArgumentNullException(nameof(hexStructureInfoAggregatorFactory));
 			if (hexReferenceHandlerService == null)
 				throw new ArgumentNullException(nameof(hexReferenceHandlerService));
+			if (hexFileStructureInfoServiceFactory == null)
+				throw new ArgumentNullException(nameof(hexFileStructureInfoServiceFactory));
 			HexView = hexView;
 			hexBufferFileService = hexBufferFileServiceFactory.Create(hexView.Buffer);
 			this.htmlBuilderService = htmlBuilderService;
 			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
 			this.hexReferenceHandlerService = hexReferenceHandlerService;
+			this.hexFileStructureInfoServiceFactory = hexFileStructureInfoServiceFactory;
 			HexView.Closed += HexView_Closed;
 		}
 
@@ -1231,6 +1238,19 @@ namespace dnSpy.Hex.Operations {
 					continue;
 				if (hexReferenceHandlerService.Value.Handle(HexView, info.Value))
 					return;
+			}
+		}
+
+		public override void FollowFieldValueReference() {
+			var span = HexFileStructureInfoService.GetFieldReferenceSpan(ActiveCaretBufferPosition);
+			if (span != null) {
+				var point = new HexBufferPoint(Buffer, span.Value.Start);
+				if (BufferLines.IsValidPosition(point)) {
+					ViewScroller.EnsureSpanVisible(new HexBufferSpan(Buffer, new HexSpan(span.Value.Start, 0)), HexSpanSelectionFlags.Selection, VSTE.EnsureSpanVisibleOptions.ShowStart);
+					Caret.MoveTo(point);
+					Caret.EnsureVisible();
+					Selection.Clear();
+				}
 			}
 		}
 	}
