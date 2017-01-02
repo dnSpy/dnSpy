@@ -35,6 +35,5 @@ namespace dnSpy.Hex.Commands {
 		EditLocalSettings,
 		ResetLocalSettings,
 		ToggleUseRelativePositions,
-		GoToCodeOrStructure,
 	}
 }

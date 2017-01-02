@@ -362,6 +362,11 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// </summary>
 		/// <param name="extendSelection">true to extend the selection</param>
 		public abstract void MoveToPreviousValidStartEnd(bool extendSelection);
+
+		/// <summary>
+		/// Go to high-level code (eg. decompiled code) or other high level structure
+		/// </summary>
+		public abstract void GoToCodeOrStructure();
 	}
 
 	/// <summary>

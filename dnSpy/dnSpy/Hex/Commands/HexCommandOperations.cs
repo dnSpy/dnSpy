@@ -48,7 +48,6 @@ namespace dnSpy.Hex.Commands {
 		public abstract void EditLocalSettings();
 		public abstract void ResetLocalSettings();
 		public abstract void ToggleUseRelativePositions();
-		public abstract void GoToCodeOrStructure();
 	}
 
 	enum PositionKind {
@@ -71,33 +70,22 @@ namespace dnSpy.Hex.Commands {
 		public override HexView HexView { get; }
 		readonly IMessageBoxService messageBoxService;
 		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
-		readonly Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory;
-		readonly Lazy<HexReferenceHandlerService> hexReferenceHandlerService;
 		readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
-
-		HexStructureInfoAggregator HexStructureInfoAggregator => __hexStructureInfoAggregator ?? (__hexStructureInfoAggregator = hexStructureInfoAggregatorFactory.Value.Create(HexView));
-		HexStructureInfoAggregator __hexStructureInfoAggregator;
 
 		HexBufferFileService HexBufferFileService => __hexBufferFileService ?? (__hexBufferFileService = hexBufferFileServiceFactory.Value.Create(HexView.Buffer));
 		HexBufferFileService __hexBufferFileService;
 
-		public HexCommandOperationsImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, HexView hexView) {
+		public HexCommandOperationsImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, HexView hexView) {
 			if (messageBoxService == null)
 				throw new ArgumentNullException(nameof(messageBoxService));
 			if (hexEditorGroupFactoryService == null)
 				throw new ArgumentNullException(nameof(hexEditorGroupFactoryService));
-			if (hexStructureInfoAggregatorFactory == null)
-				throw new ArgumentNullException(nameof(hexStructureInfoAggregatorFactory));
-			if (hexReferenceHandlerService == null)
-				throw new ArgumentNullException(nameof(hexReferenceHandlerService));
 			if (hexBufferFileServiceFactory == null)
 				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			this.messageBoxService = messageBoxService;
 			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
-			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
-			this.hexReferenceHandlerService = hexReferenceHandlerService;
 			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
 			HexView = hexView;
 			hexView.Closed += HexView_Closed;
@@ -441,16 +429,6 @@ namespace dnSpy.Hex.Commands {
 
 		public override void ToggleUseRelativePositions() =>
 			HexView.Options.SetOptionValue(DefaultHexViewOptions.UseRelativePositionsId, !HexView.Options.UseRelativePositions());
-
-		public override void GoToCodeOrStructure() {
-			var pos = HexView.Caret.Position.Position.ActivePosition.BufferPosition;
-			foreach (var info in HexStructureInfoAggregator.GetReferences(pos)) {
-				if (info.Value == null)
-					continue;
-				if (hexReferenceHandlerService.Value.Handle(HexView, info.Value))
-					return;
-			}
-		}
 	}
 
 	sealed class HexBufferDataSaver : IProgressTask {

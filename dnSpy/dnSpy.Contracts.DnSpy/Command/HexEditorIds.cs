@@ -370,5 +370,9 @@ namespace dnSpy.Contracts.Command {
 		/// Move to the previous closest start/end position of a block of memory; extend selection
 		/// </summary>
 		MoveToPreviousValidStartEndExt,
+		/// <summary>
+		/// Go to high-level code (eg. decompiled code) or other high level structure
+		/// </summary>
+		GoToCodeOrStructure,
 	}
 }

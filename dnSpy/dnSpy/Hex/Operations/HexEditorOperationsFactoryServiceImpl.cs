@@ -29,18 +29,22 @@ namespace dnSpy.Hex.Operations {
 	sealed class HexEditorOperationsFactoryServiceImpl : HexEditorOperationsFactoryService {
 		readonly HexHtmlBuilderService htmlBuilderService;
 		readonly HexBufferFileServiceFactory hexBufferFileServiceFactory;
+		readonly Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory;
+		readonly Lazy<HexReferenceHandlerService> hexReferenceHandlerService;
 
 		[ImportingConstructor]
-		HexEditorOperationsFactoryServiceImpl(HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory) {
+		HexEditorOperationsFactoryServiceImpl(HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService) {
 			this.htmlBuilderService = htmlBuilderService;
 			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
+			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
+			this.hexReferenceHandlerService = hexReferenceHandlerService;
 		}
 
 		public override HexEditorOperations GetEditorOperations(HexView hexView) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexEditorOperations),
-				() => new HexEditorOperationsImpl(hexView, htmlBuilderService, hexBufferFileServiceFactory));
+				() => new HexEditorOperationsImpl(hexView, htmlBuilderService, hexBufferFileServiceFactory, hexStructureInfoAggregatorFactory, hexReferenceHandlerService));
 		}
 
 		internal static void RemoveFromProperties(HexEditorOperations editorOperations) =>

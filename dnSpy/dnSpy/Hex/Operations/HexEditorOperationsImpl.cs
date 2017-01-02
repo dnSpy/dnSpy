@@ -53,20 +53,31 @@ namespace dnSpy.Hex.Operations {
 		HexViewScroller ViewScroller => HexView.ViewScroller;
 		HexBufferPoint ActiveCaretBufferPosition => Caret.Position.Position.ActivePosition.BufferPosition;
 
+		HexStructureInfoAggregator HexStructureInfoAggregator => __hexStructureInfoAggregator ?? (__hexStructureInfoAggregator = hexStructureInfoAggregatorFactory.Value.Create(HexView));
+		HexStructureInfoAggregator __hexStructureInfoAggregator;
+
 		readonly HexHtmlBuilderService htmlBuilderService;
 		readonly HexBufferFileService hexBufferFileService;
+		readonly Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory;
+		readonly Lazy<HexReferenceHandlerService> hexReferenceHandlerService;
 
-		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory) {
+		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			if (htmlBuilderService == null)
 				throw new ArgumentNullException(nameof(htmlBuilderService));
 			if (hexBufferFileServiceFactory == null)
 				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
+			if (hexStructureInfoAggregatorFactory == null)
+				throw new ArgumentNullException(nameof(hexStructureInfoAggregatorFactory));
+			if (hexReferenceHandlerService == null)
+				throw new ArgumentNullException(nameof(hexReferenceHandlerService));
 			HexView = hexView;
 			hexBufferFileService = hexBufferFileServiceFactory.Create(hexView.Buffer);
-			HexView.Closed += HexView_Closed;
 			this.htmlBuilderService = htmlBuilderService;
+			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
+			this.hexReferenceHandlerService = hexReferenceHandlerService;
+			HexView.Closed += HexView_Closed;
 		}
 
 		void HexView_Closed(object sender, EventArgs e) {
@@ -1211,6 +1222,16 @@ namespace dnSpy.Hex.Operations {
 				SelectToCaret(anchorPoint);
 			else
 				Selection.Clear();
+		}
+
+		public override void GoToCodeOrStructure() {
+			var pos = ActiveCaretBufferPosition;
+			foreach (var info in HexStructureInfoAggregator.GetReferences(pos)) {
+				if (info.Value == null)
+					continue;
+				if (hexReferenceHandlerService.Value.Handle(HexView, info.Value))
+					return;
+			}
 		}
 	}
 }

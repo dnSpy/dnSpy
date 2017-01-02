@@ -124,6 +124,7 @@ namespace dnSpy.Hex.Editor {
 			yield return CommandShortcut.ShiftAlt(Key.Up, HexEditorIds.MoveToPreviousValidStartEndExt.ToCommandInfo());
 			yield return CommandShortcut.Alt(Key.Down, HexEditorIds.MoveToNextValidStartEnd.ToCommandInfo());
 			yield return CommandShortcut.ShiftAlt(Key.Down, HexEditorIds.MoveToNextValidStartEndExt.ToCommandInfo());
+			yield return CommandShortcut.Create(Key.F12, HexEditorIds.GoToCodeOrStructure.ToCommandInfo());
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) {
