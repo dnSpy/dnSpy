@@ -57,6 +57,13 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
 		public abstract void WriteValue(HexFieldFormatter formatter);
+
+		/// <summary>
+		/// Returns the span the field value references or null. The span can be empty.
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public virtual HexSpan? GetFieldReferenceSpan(HexBufferFile file) => null;
 	}
 
 	/// <summary>

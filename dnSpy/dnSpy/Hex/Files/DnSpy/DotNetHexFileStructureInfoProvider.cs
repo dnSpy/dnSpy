@@ -86,7 +86,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			if (blobRecord != null)
 				return GetToolTip(blobRecord, position);
 
-			return base.GetToolTip(file, structure, position);
+			return null;
 		}
 
 		void WriteTokens(HexFieldFormatter writer, IList<uint> tokens) {
@@ -271,7 +271,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			var body = structure as DotNetMethodBody;
 			if (body != null)
 				return GetReference(file, body, position);
-			return base.GetReference(file, structure, position);
+			return null;
 		}
 
 		object GetReference(HexBufferFile file, DotNetMethodBody body, HexPosition position) {

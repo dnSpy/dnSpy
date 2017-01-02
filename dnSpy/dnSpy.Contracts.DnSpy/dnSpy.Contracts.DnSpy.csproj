@@ -365,6 +365,8 @@
     <Compile Include="Hex\Files\HexFieldFormatterOptions.cs" />
     <Compile Include="Hex\Files\HexFileStructureInfoProvider.cs" />
     <Compile Include="Hex\Files\HexFileStructureInfoProviderFactory.cs" />
+    <Compile Include="Hex\Files\HexFileStructureInfoService.cs" />
+    <Compile Include="Hex\Files\HexFileStructureInfoServiceFactory.cs" />
     <Compile Include="Hex\Files\HexNumberOptions.cs" />
     <Compile Include="Hex\Files\IBufferFileHeaders.cs" />
     <Compile Include="Hex\Files\PE\PeFileLayoutProvider.cs" />
