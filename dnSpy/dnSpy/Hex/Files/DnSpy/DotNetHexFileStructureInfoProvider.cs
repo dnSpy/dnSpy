@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Files;
@@ -85,6 +87,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 			var blobRecord = structure as BlobHeapRecordData;
 			if (blobRecord != null)
 				return GetToolTip(blobRecord, position);
+
+			var tableRecord = structure as TableRecordData;
+			if (tableRecord != null)
+				return GetToolTip(tableRecord, position);
 
 			return null;
 		}
@@ -265,6 +271,68 @@ namespace dnSpy.Hex.Files.DnSpy {
 			contentCreator.Writer.WriteFieldAndValue(blobRecord, position);
 
 			return toolTipCreator.Create();
+		}
+
+		object GetToolTip(TableRecordData tableRecord, HexPosition position) {
+			var tablesHeap = tableRecord.TablesHeap;
+			Debug.Assert((uint)tableRecord.Token.Table < (uint)tablesHeap.MDTables.Count);
+			if ((uint)tableRecord.Token.Table >= (uint)tablesHeap.MDTables.Count)
+				return null;
+			var mdTable = tablesHeap.MDTables[(int)tableRecord.Token.Table];
+			int offset = (int)(position - tableRecord.Span.Span.Start).ToUInt64();
+			var column = mdTable.Columns.FirstOrDefault(a => a.Offset <= offset && offset < a.Offset + a.Size);
+			Debug.Assert(column != null);
+			if (column == null)
+				return null;
+			var mdHeaders = tablesHeap.Metadata;
+
+			var toolTipCreator = toolTipCreatorFactory.Create();
+			var contentCreator = toolTipCreator.ToolTipContentCreator;
+
+			contentCreator.Image = ImageReferenceUtils.GetImageReference(tableRecord.Token.Table);
+			contentCreator.Writer.WriteFieldAndValue(tableRecord, position);
+
+			var pos = tableRecord.Span.Span.Start + column.Offset;
+			switch (column.ColumnSize) {
+			case ColumnSize.Strings:
+				var s = GetString(mdHeaders.StringsStream, column, pos);
+				if (s == null)
+					break;
+				contentCreator.Writer.WriteSpace();
+				contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+				contentCreator.Writer.WriteString(s);
+				contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+				break;
+
+			case ColumnSize.GUID:
+				var g = GetGuid(mdHeaders.GUIDStream, column, pos);
+				if (g == null)
+					break;
+				contentCreator.Writer.WriteSpace();
+				contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
+				contentCreator.Writer.Write(g.Value.ToString(), PredefinedClassifiedTextTags.Text);
+				contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
+				break;
+			}
+
+			return toolTipCreator.Create();
+		}
+
+		static string GetString(StringsHeap heap, ColumnInfo column, HexPosition position) {
+			if (heap == null)
+				return null;
+			uint value = column.Size == 2 ? heap.Span.Buffer.ReadUInt16(position) : heap.Span.Buffer.ReadUInt32(position);
+			if (value == 0)
+				return null;
+			const int MAX_LEN = 0x400;
+			return heap.Read(value, MAX_LEN);
+		}
+
+		static Guid? GetGuid(GUIDHeap heap, ColumnInfo column, HexPosition position) {
+			if (heap == null)
+				return null;
+			uint index = column.Size == 2 ? heap.Span.Buffer.ReadUInt16(position) : heap.Span.Buffer.ReadUInt32(position);
+			return heap.Read(index);
 		}
 
 		public override object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
