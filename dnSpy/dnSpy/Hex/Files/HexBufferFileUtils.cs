@@ -34,6 +34,10 @@ namespace dnSpy.Hex.Files {
 			var structure = file.GetStructure(position, checkNestedFiles: true);
 			if (structure == null || structure.Span.IsEmpty)
 				return null;
+			// Make sure we always use the inner-most file since it could also be a PE file and
+			// all RVAs are then relative to it, or it could be eg. a mult-file resource file
+			// and file offsets are relative to it and not the non-nested PE file.
+			file = file.GetFile(position, checkNestedFiles: true) ?? file;
 			return new KeyValuePair<HexBufferFile, ComplexData>(file, structure);
 		}
 	}
