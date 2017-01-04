@@ -136,6 +136,10 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (fatBody != null)
 				return GetFieldReferenceSpan(file, fatBody, position);
 
+			var record = structure as TableRecordData;
+			if (record != null)
+				return GetFieldReferenceSpan(file, record, position);
+
 			return null;
 		}
 
@@ -306,6 +310,40 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (end > fatBody.Instructions.Data.Span.Span.End)
 				return null;
 			return HexSpan.FromBounds(pos, end);
+		}
+
+		HexSpan? GetFieldReferenceSpan(HexBufferFile file, TableRecordData record, HexPosition position) {
+			if (record.Token.Table == Table.ManifestResource) {
+				var mdTable = record.TablesHeap.MDTables[(int)Table.ManifestResource];
+				Debug.Assert(mdTable.IsValidRID(record.Token.Rid));
+				if (!mdTable.IsValidRID(record.Token.Rid))
+					return null;
+				var recordPos = mdTable.Span.Start + (record.Token.Rid - 1) * mdTable.RowSize;
+				var buffer = file.Buffer;
+				uint offset = buffer.ReadUInt32(recordPos);
+				uint implementation = mdTable.TableInfo.Columns[3].Size == 2 ?
+					buffer.ReadUInt16(recordPos + mdTable.RowSize - 2) :
+					buffer.ReadUInt32(recordPos + mdTable.RowSize - 4);
+				MDToken implementationToken;
+				if (!CodedToken.Implementation.Decode(implementation, out implementationToken))
+					return null;
+				if (implementationToken.Rid != 0)
+					return null;
+
+				var resources = file.GetHeaders<DotNetHeaders>()?.ResourceProvider;
+				if (resources == null)
+					return null;
+				if (offset >= resources.ResourcesSpan.Length)
+					return null;
+				var pos = resources.ResourcesSpan.Start + offset;
+				uint size = pos + 4 > resources.ResourcesSpan.End ? 0 : buffer.ReadUInt32(pos);
+				var end = (pos + 4) + size;
+				if (end > resources.ResourcesSpan.End)
+					return new HexSpan(pos, 0);
+				return HexSpan.FromBounds(pos, end);
+			}
+
+			return null;
 		}
 	}
 }

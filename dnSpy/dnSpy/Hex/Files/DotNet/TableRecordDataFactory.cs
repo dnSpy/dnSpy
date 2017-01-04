@@ -632,8 +632,6 @@ namespace dnSpy.Hex.Files.DotNet {
 		};
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
-			if (column.Index == 0)
-				return new DotNetResourceOffsetData(Buffer, position);
 			if (column.Index == 1)
 				return new UInt32FlagsData(Buffer, position, attrFlagInfos);
 			return base.CreateData(position, column);
