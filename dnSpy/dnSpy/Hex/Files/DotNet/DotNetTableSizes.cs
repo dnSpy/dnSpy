@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					var col = cols[j];
 					var size = GetSize(col.ColumnSize);
 					newCols[j] = new ColumnInfo(col.Index, col.Name, col.ColumnSize, offset, size);
-					offset += size + (size & 1);
+					offset += size;
 				}
 				tableInfos[i] = new TableInfo(tableInfo.Table, tableInfo.Name, newCols, offset);
 			}
@@ -194,8 +194,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			});
 			tableInfos[(int)Table.Constant] = new TableInfo(Table.Constant, "Constant", new ColumnInfo[] {
 				new ColumnInfo(0, "Type", ColumnSize.Byte),
-				new ColumnInfo(1, "Parent", ColumnSize.HasConstant),
-				new ColumnInfo(2, "Value", ColumnSize.Blob),
+				new ColumnInfo(1, "Padding", ColumnSize.Byte),
+				new ColumnInfo(2, "Parent", ColumnSize.HasConstant),
+				new ColumnInfo(3, "Value", ColumnSize.Blob),
 			});
 			tableInfos[(int)Table.CustomAttribute] = new TableInfo(Table.CustomAttribute, "CustomAttribute", new ColumnInfo[] {
 				new ColumnInfo(0, "Parent", ColumnSize.HasCustomAttribute),

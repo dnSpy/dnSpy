@@ -175,7 +175,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new TableInitInfo(Table.Field, 2, BlobDataKind.Signature),// Signature
 			new TableInitInfo(Table.Method, 4, BlobDataKind.Signature),// Signature
 			new TableInitInfo(Table.MemberRef, 2, BlobDataKind.Signature),// Signature
-			new TableInitInfo(Table.Constant, 2, BlobDataKind.Constant),// Value
+			new TableInitInfo(Table.Constant, 3, BlobDataKind.Constant),// Value
 			new TableInitInfo(Table.CustomAttribute, 2, BlobDataKind.CustomAttribute),// Value
 			new TableInitInfo(Table.FieldMarshal, 1, BlobDataKind.NativeType),// NativeType
 			new TableInitInfo(Table.DeclSecurity, 2, BlobDataKind.PermissionSet),// PermissionSet
