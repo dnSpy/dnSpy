@@ -255,10 +255,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 			contentCreator.Writer.WriteSpace();
 			uint offset = (uint)(blobRecord.Span.Span.Start - blobRecord.Heap.Span.Span.Start).ToUInt64();
 			contentCreator.Writer.WriteUInt32(offset);
-			if (blobRecord.Token != 0) {
+			if (blobRecord.Tokens.Count != 0) {
 				contentCreator.Writer.WriteSpace();
 				contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
-				contentCreator.Writer.WriteToken(blobRecord.Token);
+				WriteTokens(contentCreator.Writer, blobRecord.Tokens);
 				contentCreator.Writer.Write(")", PredefinedClassifiedTextTags.Punctuation);
 			}
 			contentCreator.CreateNewWriter();

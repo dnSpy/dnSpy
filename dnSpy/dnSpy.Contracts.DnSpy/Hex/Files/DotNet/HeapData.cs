@@ -201,9 +201,9 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public BlobHeap Heap { get; }
 
 		/// <summary>
-		/// Gets the token referencing the blob or 0 if none (eg. referenced from data in the #Blob)
+		/// Gets the tokens referencing the blob or an empty collection if none (eg. referenced from data in the #Blob)
 		/// </summary>
-		public uint Token { get; }
+		public ReadOnlyCollection<uint> Tokens { get; }
 
 		/// <summary>
 		/// Gets the length
@@ -227,18 +227,20 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="span">Span</param>
 		/// <param name="lengthSpan">Span of length</param>
 		/// <param name="data">Data</param>
-		/// <param name="token">Token referencing this blob or 0 if none</param>
+		/// <param name="tokens">Tokens referencing this blob or an empty collection</param>
 		/// <param name="heap">Owner heap</param>
-		public BlobHeapRecordData(HexBuffer buffer, HexSpan span, HexSpan lengthSpan, BufferData data, uint token, BlobHeap heap)
+		public BlobHeapRecordData(HexBuffer buffer, HexSpan span, HexSpan lengthSpan, BufferData data, ReadOnlyCollection<uint> tokens, BlobHeap heap)
 			: base(NAME, new HexBufferSpan(buffer, span)) {
 			if (lengthSpan.Start != span.Start)
 				throw new ArgumentOutOfRangeException(nameof(lengthSpan));
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));
+			if (tokens == null)
+				throw new ArgumentNullException(nameof(tokens));
 			if (heap == null)
 				throw new ArgumentNullException(nameof(heap));
 			Heap = heap;
-			Token = token;
+			Tokens = tokens;
 			Length = new StructField<BlobEncodedUInt32Data>("Length", new BlobEncodedUInt32Data(new HexBufferSpan(buffer, lengthSpan)));
 			Data = new StructField<BufferData>("Data", data);
 			Fields = new BufferField[] {

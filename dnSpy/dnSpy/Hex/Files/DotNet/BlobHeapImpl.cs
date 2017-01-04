@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -53,12 +54,24 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		struct BlobDataInfo {
 			public HexSpan Span { get; }
-			public uint Token { get; }
+			public ReadOnlyCollection<uint> Tokens { get; }
 			public BlobDataKind Kind { get; }
 
-			public BlobDataInfo(HexSpan span, uint token, BlobDataKind kind) {
+			public BlobDataInfo(HexSpan span, uint[] tokens, BlobDataKind kind) {
 				Span = span;
-				Token = token;
+				Tokens = new ReadOnlyCollection<uint>(tokens);
+				Kind = kind;
+			}
+		}
+
+		struct BlobDataInfoPosition {
+			public HexPosition Position { get; }
+			public List<uint> Tokens { get; }
+			public BlobDataKind Kind { get; }
+
+			public BlobDataInfoPosition(HexPosition position, BlobDataKind kind) {
+				Position = position;
+				Tokens = new List<uint>();
 				Kind = kind;
 			}
 		}
@@ -115,7 +128,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			case BlobDataKind.Imports:
 			case BlobDataKind.CustomDebugInformationValue:
 				var varray = ArrayData.CreateVirtualByteArray(new HexBufferSpan(Span.Buffer, dataSpan));
-				return new BlobHeapRecordData(Span.Buffer, fullSpan, lengthSpan, varray, info.Token, this);
+				return new BlobHeapRecordData(Span.Buffer, fullSpan, lengthSpan, varray, info.Tokens, this);
 
 			default:
 				throw new InvalidOperationException();
@@ -135,7 +148,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (tables == null || Span.IsEmpty)
 				return Array.Empty<BlobDataInfo>();
 
-			var dict = new Dictionary<uint, BlobDataInfo>();
+			var dict = new Dictionary<uint, BlobDataInfoPosition>();
 			foreach (var info in tableInitInfos) {
 				if (info.Column2 >= 0)
 					Add(dict, tables.MDTables[(int)info.Table], info.Column1, info.Kind1, info.Column2, info.Kind2);
@@ -144,17 +157,18 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 			AddNameIndexes(dict, tables, Table.Document, 0);
 			AddImportScopeIndexes(dict, tables, Table.ImportScope, 1);
-			dict[0] = new BlobDataInfo(new HexSpan(Span.Span.Start, 1), 0, BlobDataKind.None);
+			dict[0] = new BlobDataInfoPosition(Span.Span.Start, BlobDataKind.None);
 
 			var infos = dict.Values.ToArray();
-			Array.Sort(infos, (a, b) => a.Span.Start.CompareTo(b.Span.Start));
+			var res = new BlobDataInfo[infos.Length];
+			Array.Sort(infos, (a, b) => a.Position.CompareTo(b.Position));
 			for (int i = 0; i < infos.Length; i++) {
 				var info = infos[i];
-				var end = i + 1 < infos.Length ? infos[i + 1].Span.Start : Span.Span.End;
-				infos[i] = new BlobDataInfo(HexSpan.FromBounds(info.Span.Start, end), info.Token, info.Kind);
+				var end = i + 1 < infos.Length ? infos[i + 1].Position : Span.Span.End;
+				res[i] = new BlobDataInfo(HexSpan.FromBounds(info.Position, end), info.Tokens.ToArray(), info.Kind);
 			}
 
-			return infos;
+			return res;
 		}
 		// Sorted on Table and column position so we read from increasing positions
 		static readonly TableInitInfo[] tableInitInfos = new TableInitInfo[] {
@@ -203,7 +217,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		void Add(Dictionary<uint, BlobDataInfo> dict, MDTable mdTable, int column1, BlobDataKind kind1) {
+		void Add(Dictionary<uint, BlobDataInfoPosition> dict, MDTable mdTable, int column1, BlobDataKind kind1) {
 			var heapStart = Span.Span.Start;
 			var heapEnd = Span.Span.End;
 			var buffer = Span.Buffer;
@@ -218,15 +232,25 @@ namespace dnSpy.Hex.Files.DotNet {
 				uint offs1 = bigBlob ? buffer.ReadUInt32(recPos + colInfo1.Offset) : buffer.ReadUInt16(recPos + colInfo1.Offset);
 				if (offs1 == 0)
 					continue;
-				if (!dict.ContainsKey(offs1)) {
+
+				List<uint> tokens;
+				BlobDataInfoPosition info;
+				if (dict.TryGetValue(offs1, out info))
+					tokens = info.Tokens;
+				else {
 					var pos = heapStart + offs1;
-					if (pos < heapEnd)
-						dict[offs1] = new BlobDataInfo(new HexSpan(heapStart + offs1, 0), tokenBase + rid, kind1);
+					if (pos < heapEnd) {
+						dict[offs1] = info = new BlobDataInfoPosition(pos, kind1);
+						tokens = info.Tokens;
+					}
+					else
+						tokens = null;
 				}
+				tokens?.Add(tokenBase + rid);
 			}
 		}
 
-		void Add(Dictionary<uint, BlobDataInfo> dict, MDTable mdTable, int column1, BlobDataKind kind1, int column2, BlobDataKind kind2) {
+		void Add(Dictionary<uint, BlobDataInfoPosition> dict, MDTable mdTable, int column1, BlobDataKind kind1, int column2, BlobDataKind kind2) {
 			var heapStart = Span.Span.Start;
 			var heapEnd = Span.Span.End;
 			var buffer = Span.Buffer;
@@ -242,20 +266,48 @@ namespace dnSpy.Hex.Files.DotNet {
 			for (uint rid = 1; rid <= rows; rid++, recPos += recSize) {
 				uint offs1 = bigBlob ? buffer.ReadUInt32(recPos + colInfo1.Offset) : buffer.ReadUInt16(recPos + colInfo1.Offset);
 				uint offs2 = bigBlob ? buffer.ReadUInt32(recPos + colInfo2.Offset) : buffer.ReadUInt16(recPos + colInfo2.Offset);
-				if (offs1 != 0 && !dict.ContainsKey(offs1)) {
-					var pos = heapStart + offs1;
-					if (pos < heapEnd)
-						dict[offs1] = new BlobDataInfo(new HexSpan(heapStart + offs1, 0), tokenBase + rid, kind1);
+
+				{
+					List<uint> tokens;
+					BlobDataInfoPosition info;
+					if (offs1 == 0)
+						tokens = null;
+					else if (dict.TryGetValue(offs1, out info))
+						tokens = info.Tokens;
+					else {
+						var pos = heapStart + offs1;
+						if (pos < heapEnd) {
+							dict[offs1] = info = new BlobDataInfoPosition(pos, kind1);
+							tokens = info.Tokens;
+						}
+						else
+							tokens = null;
+					}
+					tokens?.Add(tokenBase + rid);
 				}
-				if (offs2 != 0 && !dict.ContainsKey(offs2)) {
-					var pos = heapStart + offs2;
-					if (pos < heapEnd)
-						dict[offs2] = new BlobDataInfo(new HexSpan(heapStart + offs2, 0), tokenBase + rid, kind1);
+
+				{
+					List<uint> tokens;
+					BlobDataInfoPosition info;
+					if (offs2 == 0)
+						tokens = null;
+					else if (dict.TryGetValue(offs2, out info))
+						tokens = info.Tokens;
+					else {
+						var pos = heapStart + offs2;
+						if (pos < heapEnd) {
+							dict[offs2] = info = new BlobDataInfoPosition(pos, kind2);
+							tokens = info.Tokens;
+						}
+						else
+							tokens = null;
+					}
+					tokens?.Add(tokenBase + rid);
 				}
 			}
 		}
 
-		void AddNameIndexes(Dictionary<uint, BlobDataInfo> dict, TablesHeap tables, Table table, int column) {
+		void AddNameIndexes(Dictionary<uint, BlobDataInfoPosition> dict, TablesHeap tables, Table table, int column) {
 			var mdTable = tables.MDTables[(int)table];
 			if (mdTable.Rows == 0)
 				return;
@@ -286,7 +338,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					if (nameOffs != 0 && !dict.ContainsKey((uint)nameOffs)) {
 						var namePos = heapStart + nameOffs;
 						if (namePos < heapEnd)
-							dict[(uint)nameOffs] = new BlobDataInfo(new HexSpan(namePos, 0), 0, BlobDataKind.Utf8Name);
+							dict[(uint)nameOffs] = new BlobDataInfoPosition(namePos, BlobDataKind.Utf8Name);
 					}
 				}
 			}
@@ -308,7 +360,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return pos;
 		}
 
-		void AddImportScopeIndexes(Dictionary<uint, BlobDataInfo> dict, TablesHeap tables, Table table, int column) {
+		void AddImportScopeIndexes(Dictionary<uint, BlobDataInfoPosition> dict, TablesHeap tables, Table table, int column) {
 			var mdTable = tables.MDTables[(int)table];
 			if (mdTable.Rows == 0)
 				return;
@@ -348,7 +400,7 @@ namespace dnSpy.Hex.Files.DotNet {
 						if (value != 0 && !dict.ContainsKey((uint)value)) {
 							var namePos = heapStart + value;
 							if (namePos < heapEnd)
-								dict[(uint)value] = new BlobDataInfo(new HexSpan(namePos, 0), 0, BlobDataKind.Utf8Name);
+								dict[(uint)value] = new BlobDataInfoPosition(namePos, BlobDataKind.Utf8Name);
 						}
 					}
 
@@ -366,7 +418,7 @@ namespace dnSpy.Hex.Files.DotNet {
 						if (value != 0 && !dict.ContainsKey((uint)value)) {
 							var namePos = heapStart + value;
 							if (namePos < heapEnd)
-								dict[(uint)value] = new BlobDataInfo(new HexSpan(namePos, 0), 0, BlobDataKind.Utf8Name);
+								dict[(uint)value] = new BlobDataInfoPosition(namePos, BlobDataKind.Utf8Name);
 						}
 					}
 
