@@ -117,7 +117,7 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 
-		public override ComplexData GetStructure(HexPosition position, bool checkNestedFiles) {
+		public override FileAndStructure? GetFileAndStructure(HexPosition position, bool checkNestedFiles) {
 			Debug.Assert(Span.Contains(position));
 
 			// Always initialize this first to make sure nested files get created
@@ -125,15 +125,15 @@ namespace dnSpy.Hex.Files {
 
 			if (checkNestedFiles && files.Count != 0) {
 				var file = files.FindData(position);
-				var structure = file?.GetStructure(position, checkNestedFiles);
-				if (structure != null)
-					return structure;
+				var info = file?.GetFileAndStructure(position, checkNestedFiles);
+				if (info != null)
+					return info;
 			}
 
 			foreach (var provider in structureProviders) {
 				var structure = provider.GetStructure(position);
 				if (structure != null)
-					return structure;
+					return new FileAndStructure(this, structure);
 			}
 			return null;
 		}

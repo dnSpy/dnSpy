@@ -63,12 +63,12 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override HexIndexes[] GetSubStructureIndexes(HexPosition position) {
-			var info = HexBufferFileUtils.GetStructure(hexBufferFileService, position);
+			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
 				return null;
 
-			var file = info.Value.Key;
-			var structure = info.Value.Value;
+			var file = info.Value.File;
+			var structure = info.Value.Structure;
 			foreach (var provider in HexFileStructureInfoProviders) {
 				var indexes = provider.GetSubStructureIndexes(file, structure, position);
 				if (indexes == null)
@@ -102,14 +102,14 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override object GetToolTip(HexPosition position) {
-			var info = HexBufferFileUtils.GetStructure(hexBufferFileService, position);
+			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
 				return null;
 
-			var file = info.Value.Key;
-			var structure = info.Value.Value;
+			var file = info.Value.File;
+			var structure = info.Value.Structure;
 			foreach (var provider in HexFileStructureInfoProviders) {
-				var toolTip = provider.GetToolTip(info.Value.Key, info.Value.Value, position);
+				var toolTip = provider.GetToolTip(file, structure, position);
 				if (toolTip != null)
 					return toolTip;
 			}
@@ -118,14 +118,14 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override object GetReference(HexPosition position) {
-			var info = HexBufferFileUtils.GetStructure(hexBufferFileService, position);
+			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
 				return null;
 
-			var file = info.Value.Key;
-			var structure = info.Value.Value;
+			var file = info.Value.File;
+			var structure = info.Value.Structure;
 			foreach (var provider in HexFileStructureInfoProviders) {
-				var toolTip = provider.GetReference(info.Value.Key, info.Value.Value, position);
+				var toolTip = provider.GetReference(file, structure, position);
 				if (toolTip != null)
 					return toolTip;
 			}
@@ -145,16 +145,16 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override HexSpan? GetFieldReferenceSpan(HexPosition position) {
-			var info = HexBufferFileUtils.GetStructure(hexBufferFileService, position);
+			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
 				return null;
 
-			var file = info.Value.Key;
-			var structure = info.Value.Value;
+			var file = info.Value.File;
+			var structure = info.Value.Structure;
 
 			HexSpan? span;
 			foreach (var provider in HexFileStructureInfoProviders) {
-				span = provider.GetFieldReferenceSpan(info.Value.Key, info.Value.Value, position);
+				span = provider.GetFieldReferenceSpan(file, structure, position);
 				if (span != null)
 					return span;
 			}

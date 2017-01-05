@@ -59,11 +59,11 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override IEnumerable<HexStructureField> GetFields(HexPosition position) {
-			var info = HexBufferFileUtils.GetStructure(hexBufferFileService, position);
+			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
 				yield break;
 
-			var structure = info.Value.Value;
+			var structure = info.Value.Structure;
 			var field = GetField(structure, position);
 			Debug.Assert(field != null);
 			if (field == null)

@@ -153,7 +153,16 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="position">Position</param>
 		/// <param name="checkNestedFiles">true to check nested files, false to only check this file</param>
 		/// <returns></returns>
-		public abstract ComplexData GetStructure(HexPosition position, bool checkNestedFiles = true);
+		public ComplexData GetStructure(HexPosition position, bool checkNestedFiles = true) =>
+			GetFileAndStructure(position, checkNestedFiles)?.Structure;
+
+		/// <summary>
+		/// Gets a structure
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <param name="checkNestedFiles">true to check nested files, false to only check this file</param>
+		/// <returns></returns>
+		public abstract FileAndStructure? GetFileAndStructure(HexPosition position, bool checkNestedFiles = true);
 
 		/// <summary>
 		/// Gets a structure. Nested files aren't checked.

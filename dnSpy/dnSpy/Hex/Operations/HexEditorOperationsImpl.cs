@@ -1263,9 +1263,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void SelectStructure() {
-			var pos = ActiveCaretBufferPosition.Position;
-			var file = hexBufferFileService.GetFile(pos, checkNestedFiles: false);
-			var structure = file?.GetStructure(pos, checkNestedFiles: true);
+			var structure = hexBufferFileService.GetFileAndStructure(ActiveCaretBufferPosition)?.Structure;
 			if (structure == null)
 				return;
 			SelectCore(structure.Span.Span);

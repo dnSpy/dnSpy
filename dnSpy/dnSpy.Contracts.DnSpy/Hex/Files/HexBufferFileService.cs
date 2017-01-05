@@ -99,5 +99,47 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="checkNestedFiles">true to check nested files</param>
 		/// <returns></returns>
 		public abstract HexBufferFile GetFile(HexPosition position, bool checkNestedFiles);
+
+		/// <summary>
+		/// Gets a <see cref="HexBufferFile"/> and structure at <paramref name="position"/> or null if
+		/// there's no structure
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public FileAndStructure? GetFileAndStructure(HexPosition position) {
+			// Don't get the inner-most file since if it doesn't contain any structures,
+			// nothing will be returned.
+			var file = GetFile(position, checkNestedFiles: false);
+			return file?.GetFileAndStructure(position, checkNestedFiles: true);
+		}
+	}
+
+	/// <summary>
+	/// File and structure
+	/// </summary>
+	public struct FileAndStructure {
+		/// <summary>
+		/// Gets the file
+		/// </summary>
+		public HexBufferFile File { get; }
+
+		/// <summary>
+		/// Gets the structure
+		/// </summary>
+		public ComplexData Structure { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <param name="structure">Structure</param>
+		public FileAndStructure(HexBufferFile file, ComplexData structure) {
+			if (file == null)
+				throw new ArgumentNullException(nameof(file));
+			if (structure == null)
+				throw new ArgumentNullException(nameof(structure));
+			File = file;
+			Structure = structure;
+		}
 	}
 }
