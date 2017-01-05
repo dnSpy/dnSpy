@@ -42,7 +42,9 @@ namespace dnSpy.Hex.Intellisense {
 			get { return presentationSpan; }
 		}
 
-		void SetPresentationSpan(HexBufferSpanSelection newValue) {
+		void SetPresentationSpan(HexBufferSpanSelection newValue, HexCellPosition triggerPoint) {
+			// Make sure that the popup is shown in the right column
+			newValue = new HexBufferSpanSelection(newValue.BufferSpan, HexSpanSelectionFlags.Cell | (triggerPoint.Column == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii));
 			if (!presentationSpan.Equals(newValue)) {
 				presentationSpan = newValue;
 				PresentationSpanChanged?.Invoke(this, EventArgs.Empty);
@@ -52,14 +54,14 @@ namespace dnSpy.Hex.Intellisense {
 
 		public HexSpaceReservationQuickInfoPresenter(HexQuickInfoSession session)
 			: base(session) {
-			SetPresentationSpan(session.ApplicableToSpan);
+			SetPresentationSpan(session.ApplicableToSpan, session.TriggerPoint);
 			session.ApplicableToSpanChanged += Session_ApplicableToSpanChanged;
 		}
 
 		void Session_ApplicableToSpanChanged(object sender, EventArgs e) {
 			if (session.IsDismissed)
 				return;
-			SetPresentationSpan(session.ApplicableToSpan);
+			SetPresentationSpan(session.ApplicableToSpan, session.TriggerPoint);
 		}
 
 		protected override void OnSessionDismissed() => session.ApplicableToSpanChanged -= Session_ApplicableToSpanChanged;
