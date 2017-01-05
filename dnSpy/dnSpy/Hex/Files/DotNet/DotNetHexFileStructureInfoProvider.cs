@@ -314,6 +314,11 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, TableRecordData record, HexPosition position) {
 			if (record.Token.Table == Table.ManifestResource) {
+				var recordOffset = (position - record.Span.Span.Start).ToUInt64();
+				// Check if it's not Offset column
+				if (recordOffset >= 4)
+					return null;
+
 				var mdTable = record.TablesHeap.MDTables[(int)Table.ManifestResource];
 				Debug.Assert(mdTable.IsValidRID(record.Token.Rid));
 				if (!mdTable.IsValidRID(record.Token.Rid))
