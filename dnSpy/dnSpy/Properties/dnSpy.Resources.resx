@@ -1644,4 +1644,25 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ShortCutKeyCtrlF12" xml:space="preserve">
     <value>Ctrl+F12</value>
   </data>
+  <data name="HexEditorSelectFileCommand" xml:space="preserve">
+    <value>Select File</value>
+  </data>
+  <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
+    <value>Select Nested File</value>
+  </data>
+  <data name="SelectSpecialCommand" xml:space="preserve">
+    <value>Select Special</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+F</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlN" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+N</value>
+  </data>
+  <data name="HexEditorSelectStructureCommand" xml:space="preserve">
+    <value>Select Structure</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+S</value>
+  </data>
 </root>

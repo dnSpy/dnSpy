@@ -106,14 +106,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:HexEditorSelectCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 100)]
-	sealed class SelectContexMenuEntry : HexViewCommandTargetMenuItemBase {
-		SelectContexMenuEntry()
-			: base(HexCommandIds.Select) {
-		}
-	}
-
-	[ExportMenuItem(Header = "res:HexEditorSaveSelectionCommand", Icon = DsImagesAttribute.Save, InputGestureText = "res:ShortCutKeyCtrlAltS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 110)]
+	[ExportMenuItem(Header = "res:HexEditorSaveSelectionCommand", Icon = DsImagesAttribute.Save, InputGestureText = "res:ShortCutKeyCtrlAltS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 100)]
 	sealed class SaveSelectionContexMenuEntry : HexViewCommandTargetMenuItemBase {
 		SaveSelectionContexMenuEntry()
 			: base(HexCommandIds.SaveSelection) {
@@ -165,6 +158,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		public const string GROUP_COPY_SPECIAL = "0,9BD31DFF-6415-46C5-87B9-84B082F41C0F";
 		public const string PASTE_SPECIAL_GUID = "48DD26BA-2A11-444C-BE29-355BFA72C97D";
 		public const string GROUP_PASTE_SPECIAL = "0,4EA9BCF4-A2E1-4D46-B17F-B61787CEF6FF";
+		public const string SELECT_SPECIAL_GUID = "2DD0F02F-8DB4-40AF-A03A-1EE06849FEEA";
+		public const string GROUP_SELECT_SPECIAL = "0,004AC2AF-7261-4004-B2D2-A809961B3A74";
 	}
 
 	sealed class MyMenuItem : MenuItemBase {
@@ -452,6 +447,39 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	sealed class PasteBlobContexMenuEntry : PasteHexViewCommandTargetMenuItemBase {
 		PasteBlobContexMenuEntry()
 			: base(HexEditorIds.PasteBlob) {
+		}
+	}
+
+	[ExportMenuItem(Header = "res:SelectSpecialCommand", Icon = DsImagesAttribute.Select, Guid = Constants.SELECT_SPECIAL_GUID, Group = MenuConstants.GROUP_CTX_HEXVIEW_COPY, Order = 10)]
+	sealed class SelectSpecialContexMenuEntry : HexViewCommandTargetMenuItemBase2 {
+		public override void Execute(HexViewContext context) { }
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.SELECT_SPECIAL_GUID, Header = "res:HexEditorSelectCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 0)]
+	sealed class SelectContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		SelectContexMenuEntry()
+			: base(HexCommandIds.Select) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.SELECT_SPECIAL_GUID, Header = "res:HexEditorSelectFileCommand", InputGestureText = "res:ShortCutKeyCtrlECtrlF", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 10)]
+	sealed class SelectFileContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		SelectFileContexMenuEntry()
+			: base(HexEditorIds.SelectFile) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.SELECT_SPECIAL_GUID, Header = "res:HexEditorSelectNestedFileCommand", InputGestureText = "res:ShortCutKeyCtrlECtrlN", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 20)]
+	sealed class SelectNestedFileContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		SelectNestedFileContexMenuEntry()
+			: base(HexEditorIds.SelectNestedFile) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.SELECT_SPECIAL_GUID, Header = "res:HexEditorSelectStructureCommand", InputGestureText = "res:ShortCutKeyCtrlECtrlS", Group = MenuConstants.GROUP_CTX_HEXVIEW_SHOW, Order = 30)]
+	sealed class SelectStructureContexMenuEntry : HexViewCommandTargetMenuItemBase {
+		SelectStructureContexMenuEntry()
+			: base(HexEditorIds.SelectStructure) {
 		}
 	}
 

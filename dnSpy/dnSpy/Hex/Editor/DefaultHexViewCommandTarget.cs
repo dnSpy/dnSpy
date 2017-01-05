@@ -158,6 +158,9 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.SELECTALL:
 				case HexEditorIds.SelectAllBytesBlock:
 				case HexEditorIds.SELECTCURRENTWORD:
+				case HexEditorIds.SelectFile:
+				case HexEditorIds.SelectNestedFile:
+				case HexEditorIds.SelectStructure:
 				case HexEditorIds.SELSWAPANCHOR:
 				case HexEditorIds.ShowAllBytes:
 				case HexEditorIds.ShowOnlySelectedBytes:
@@ -270,6 +273,9 @@ namespace dnSpy.Hex.Editor {
 				case HexEditorIds.SELECTALL:
 				case HexEditorIds.SelectAllBytesBlock:
 				case HexEditorIds.SELECTCURRENTWORD:
+				case HexEditorIds.SelectFile:
+				case HexEditorIds.SelectNestedFile:
+				case HexEditorIds.SelectStructure:
 				case HexEditorIds.SELSWAPANCHOR:
 				case HexEditorIds.ShowAllBytes:
 				case HexEditorIds.ShowOnlySelectedBytes:
@@ -573,6 +579,18 @@ namespace dnSpy.Hex.Editor {
 
 				case HexEditorIds.SELECTCURRENTWORD:
 					EditorOperations.SelectCurrentWord();
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.SelectFile:
+					EditorOperations.SelectFile();
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.SelectNestedFile:
+					EditorOperations.SelectNestedFile();
+					return CommandTargetStatus.Handled;
+
+				case HexEditorIds.SelectStructure:
+					EditorOperations.SelectStructure();
 					return CommandTargetStatus.Handled;
 
 				case HexEditorIds.SELSWAPANCHOR:

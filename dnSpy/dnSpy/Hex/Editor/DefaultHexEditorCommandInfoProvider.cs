@@ -126,6 +126,9 @@ namespace dnSpy.Hex.Editor {
 			yield return CommandShortcut.ShiftAlt(Key.Down, HexEditorIds.MoveToNextValidStartEndExt.ToCommandInfo());
 			yield return CommandShortcut.Create(Key.F12, HexEditorIds.GoToCodeOrStructure.ToCommandInfo());
 			yield return CommandShortcut.Control(Key.F12, HexEditorIds.FollowFieldValueReference.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.N), HexEditorIds.SelectNestedFile.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.F), HexEditorIds.SelectFile.ToCommandInfo());
+			yield return CommandShortcut.Create(KeyInput.Control(Key.E), KeyInput.Control(Key.S), HexEditorIds.SelectStructure.ToCommandInfo());
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) {

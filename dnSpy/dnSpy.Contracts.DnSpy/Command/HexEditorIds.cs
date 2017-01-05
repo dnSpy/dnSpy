@@ -378,5 +378,17 @@ namespace dnSpy.Contracts.Command {
 		/// Follows the field reference
 		/// </summary>
 		FollowFieldValueReference,
+		/// <summary>
+		/// Select the most nested file at current position
+		/// </summary>
+		SelectNestedFile,
+		/// <summary>
+		/// Select the non-nested file at current position
+		/// </summary>
+		SelectFile,
+		/// <summary>
+		/// Selects the current structure
+		/// </summary>
+		SelectStructure,
 	}
 }

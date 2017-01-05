@@ -1803,6 +1803,33 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select File.
+        /// </summary>
+        public static string HexEditorSelectFileCommand {
+            get {
+                return ResourceManager.GetString("HexEditorSelectFileCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Nested File.
+        /// </summary>
+        public static string HexEditorSelectNestedFileCommand {
+            get {
+                return ResourceManager.GetString("HexEditorSelectNestedFileCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Structure.
+        /// </summary>
+        public static string HexEditorSelectStructureCommand {
+            get {
+                return ResourceManager.GetString("HexEditorSelectStructureCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hex Editor.
         /// </summary>
         public static string HexEditorSettings {
@@ -3567,6 +3594,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select Special.
+        /// </summary>
+        public static string SelectSpecialCommand {
+            get {
+                return ResourceManager.GetString("SelectSpecialCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Select to new position.
         /// </summary>
         public static string SelectToNewPosition {
@@ -3725,6 +3761,33 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlDIGIT {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlDIGIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+E, Ctrl+F.
+        /// </summary>
+        public static string ShortCutKeyCtrlECtrlF {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlECtrlF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+E, Ctrl+N.
+        /// </summary>
+        public static string ShortCutKeyCtrlECtrlN {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlECtrlN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+E, Ctrl+S.
+        /// </summary>
+        public static string ShortCutKeyCtrlECtrlS {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlECtrlS", resourceCulture);
             }
         }
         

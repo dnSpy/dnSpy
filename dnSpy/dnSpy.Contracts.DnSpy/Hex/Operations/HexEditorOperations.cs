@@ -372,6 +372,21 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// Follows the field reference
 		/// </summary>
 		public abstract void FollowFieldValueReference();
+
+		/// <summary>
+		/// Select the most nested file at current position
+		/// </summary>
+		public abstract void SelectNestedFile();
+
+		/// <summary>
+		/// Select the non-nested file at current position
+		/// </summary>
+		public abstract void SelectFile();
+
+		/// <summary>
+		/// Selects the current structure
+		/// </summary>
+		public abstract void SelectStructure();
 	}
 
 	/// <summary>

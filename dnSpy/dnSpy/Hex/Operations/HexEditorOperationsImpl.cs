@@ -1253,5 +1253,40 @@ namespace dnSpy.Hex.Operations {
 				}
 			}
 		}
+
+		public override void SelectNestedFile() => SelectFileCore(hexBufferFileService.GetFile(ActiveCaretBufferPosition, checkNestedFiles: true));
+		public override void SelectFile() => SelectFileCore(hexBufferFileService.GetFile(ActiveCaretBufferPosition, checkNestedFiles: false));
+		void SelectFileCore(HexBufferFile file) {
+			if (file == null)
+				return;
+			SelectCore(file.Span);
+		}
+
+		public override void SelectStructure() {
+			var pos = ActiveCaretBufferPosition.Position;
+			var file = hexBufferFileService.GetFile(pos, checkNestedFiles: false);
+			var structure = file?.GetStructure(pos, checkNestedFiles: true);
+			if (structure == null)
+				return;
+			SelectCore(structure.Span.Span);
+		}
+
+		void SelectCore(HexSpan selectionSpan) {
+			selectionSpan = Filter(selectionSpan);
+			var span = new HexBufferSpan(Buffer, selectionSpan);
+			Selection.Select(span, isReversed: false, alignPoints: false);
+			Caret.MoveTo(span.Length == 0 ? span.Start : span.End - 1);
+			Caret.EnsureVisible();
+		}
+
+		HexSpan Filter(HexSpan span) {
+			var start = span.Start;
+			var end = span.End;
+			if (start < BufferLines.StartPosition)
+				start = BufferLines.StartPosition;
+			if (end > BufferLines.EndPosition)
+				end = BufferLines.EndPosition;
+			return HexSpan.FromBounds(start, end);
+		}
 	}
 }
