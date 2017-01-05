@@ -2784,6 +2784,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Colorize the text.
+        /// </summary>
+        public static string OptionColorizeText {
+            get {
+                return ResourceManager.GetString("OptionColorizeText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable all warning messages.
         /// </summary>
         public static string Options_Misc_Button_EnableAllWarnings {

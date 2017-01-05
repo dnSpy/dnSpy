@@ -6582,6 +6582,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -6592,12 +6593,13 @@
             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding HighlightStructureUnderMouseCursor}" Content="{x:Static p:dnSpy_Resources.HexEditorHighlightStructureUnderMouseCursor}" />
             <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ValuesLowerCaseHex}" Content="{x:Static p:dnSpy_Resources.HexEditorValuesLowerCaseHex}" />
             <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding OffsetLowerCaseHex}" Content="{x:Static p:dnSpy_Resources.HexEditorOffsetLowerCaseHex}" />
-            <Label Grid.Row="5" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=groupSizeInBytesTextBox}" Content="{x:Static p:dnSpy_Resources.HexEditorGroupSizeInBytes}" />
-            <TextBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Name="groupSizeInBytesTextBox" Text="{Binding GroupSizeInBytesVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="6" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexOffsetFormatComboBox}" Content="{x:Static p:dnSpy_Resources.HexEditorOffsetFormat}" />
-            <ComboBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="hexOffsetFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding HexOffsetFormatVM.Items}" SelectedIndex="{Binding HexOffsetFormatVM.SelectedIndex}" VerticalContentAlignment="Center" />
-            <Label Grid.Row="7" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=encodingComboBox}" Content="{x:Static p:dnSpy_Resources.HexEditorEncoding}" />
-            <ComboBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="encodingComboBox" DisplayMemberPath="Name" ItemsSource="{Binding EncodingInfoVM.Items}" SelectedIndex="{Binding EncodingInfoVM.SelectedIndex}" VerticalContentAlignment="Center" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding EnableColorization}" Content="{x:Static p:dnSpy_Resources.OptionColorizeText}" />
+            <Label Grid.Row="6" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=groupSizeInBytesTextBox}" Content="{x:Static p:dnSpy_Resources.HexEditorGroupSizeInBytes}" />
+            <TextBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Name="groupSizeInBytesTextBox" Text="{Binding GroupSizeInBytesVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="7" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexOffsetFormatComboBox}" Content="{x:Static p:dnSpy_Resources.HexEditorOffsetFormat}" />
+            <ComboBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="hexOffsetFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding HexOffsetFormatVM.Items}" SelectedIndex="{Binding HexOffsetFormatVM.SelectedIndex}" VerticalContentAlignment="Center" />
+            <Label Grid.Row="8" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=encodingComboBox}" Content="{x:Static p:dnSpy_Resources.HexEditorEncoding}" />
+            <ComboBox Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="encodingComboBox" DisplayMemberPath="Name" ItemsSource="{Binding EncodingInfoVM.Items}" SelectedIndex="{Binding EncodingInfoVM.SelectedIndex}" VerticalContentAlignment="Center" />
         </Grid>
     </DataTemplate>
 

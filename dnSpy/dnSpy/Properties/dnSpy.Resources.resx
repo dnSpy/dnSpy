@@ -1668,4 +1668,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="HexEditFieldCommand" xml:space="preserve">
     <value>Edit Field</value>
   </data>
+  <data name="OptionColorizeText" xml:space="preserve">
+    <value>Colorize the text</value>
+  </data>
 </root>
