@@ -45,7 +45,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x10, "InitLocals"),
 			new FlagInfo(0x40, "CompressedIL"),
 			FlagInfo.CreateEnumName(0xF000, "Size"),
-			new FlagInfo(0x3000, "Size0C"),
+			new FlagInfo(0xF000, 0x3000, "Size0C"),
 		});
 
 		public FatMethodBodyImpl(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens, HexSpan instructionsSpan, HexSpan ehSpan, bool fatEH)
