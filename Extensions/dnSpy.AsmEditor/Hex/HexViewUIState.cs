@@ -34,6 +34,8 @@ namespace dnSpy.AsmEditor.Hex {
 			var line = hexView.HexViewLines.FirstVisibleLine;
 			TopLinePosition = line.BufferStart.Position;
 			TopLineVerticalDistance = line.Top - hexView.ViewportTop;
+			AnchorPoint = hexView.Selection.AnchorPoint;
+			ActivePoint = hexView.Selection.ActivePoint;
 		}
 
 		public bool ShowOffsetColumn { get; set; }
@@ -54,5 +56,7 @@ namespace dnSpy.AsmEditor.Hex {
 		public double ViewportLeft { get; set; }
 		public HexPosition TopLinePosition { get; set; }
 		public double TopLineVerticalDistance { get; set; }
+		public HexPosition AnchorPoint { get; set; }
+		public HexPosition ActivePoint { get; set; }
 	}
 }

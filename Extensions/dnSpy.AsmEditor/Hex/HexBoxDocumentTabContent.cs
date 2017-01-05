@@ -187,10 +187,18 @@ namespace dnSpy.AsmEditor.Hex {
 				// BufferLines could've been recreated, re-verify the new position
 				if (HexView.BufferLines.IsValidPosition(newPos.ValuePosition.BufferPosition) && HexView.BufferLines.IsValidPosition(newPos.AsciiPosition.BufferPosition))
 					HexView.Caret.MoveTo(newPos);
+
+				var anchorPoint = new HexBufferPoint(HexView.Buffer, state.AnchorPoint);
+				var activePoint = new HexBufferPoint(HexView.Buffer, state.ActivePoint);
+				if (HexView.BufferLines.IsValidPosition(anchorPoint) && HexView.BufferLines.IsValidPosition(activePoint))
+					HexView.Selection.Select(anchorPoint, activePoint, alignPoints: false);
+				else
+					HexView.Selection.Clear();
 			}
-			else
+			else {
 				HexView.Caret.MoveTo(HexView.BufferLines.BufferStart);
-			HexView.Selection.Clear();
+				HexView.Selection.Clear();
+			}
 		}
 
 		bool IsValid(HexViewUIState state) {
@@ -224,6 +232,18 @@ namespace dnSpy.AsmEditor.Hex {
 				return false;
 			if (state.TopLinePosition < state.StartPosition || state.TopLinePosition > state.EndPosition)
 				return false;
+			if (state.AnchorPoint < state.ActivePoint) {
+				if (state.AnchorPoint >= HexPosition.MaxEndPosition)
+					return false;
+				if (state.ActivePoint > HexPosition.MaxEndPosition)
+					return false;
+			}
+			else {
+				if (state.AnchorPoint > HexPosition.MaxEndPosition)
+					return false;
+				if (state.ActivePoint >= HexPosition.MaxEndPosition)
+					return false;
+			}
 			if (double.IsNaN(state.ViewportLeft) || state.ViewportLeft < 0 || state.ViewportLeft > 100000)
 				return false;
 			if (double.IsNaN(state.TopLineVerticalDistance) || Math.Abs(state.TopLineVerticalDistance) > 10000)

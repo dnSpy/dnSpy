@@ -41,6 +41,8 @@ namespace dnSpy.AsmEditor.Hex {
 			section.Attribute("ViewportLeft", s.ViewportLeft);
 			section.Attribute("TopLinePosition", s.TopLinePosition);
 			section.Attribute("TopLineVerticalDistance", s.TopLineVerticalDistance);
+			section.Attribute("AnchorPoint", s.AnchorPoint);
+			section.Attribute("ActivePoint", s.ActivePoint);
 
 			return s;
 		}
@@ -65,6 +67,8 @@ namespace dnSpy.AsmEditor.Hex {
 			s.ViewportLeft = GetValue<double>(section, "ViewportLeft", ref failed);
 			s.TopLinePosition = GetValue<HexPosition>(section, "TopLinePosition", ref failed);
 			s.TopLineVerticalDistance = GetValue<double>(section, "TopLineVerticalDistance", ref failed);
+			s.AnchorPoint = GetValue<HexPosition>(section, "AnchorPoint", ref failed);
+			s.ActivePoint = GetValue<HexPosition>(section, "ActivePoint", ref failed);
 
 			if (failed)
 				return null;
