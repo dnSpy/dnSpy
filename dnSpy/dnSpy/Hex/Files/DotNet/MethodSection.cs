@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
@@ -28,14 +29,14 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		internal static readonly FlagInfo[] methodSectionKindFlagInfos = new FlagInfo[] {
+		internal static readonly ReadOnlyCollection<FlagInfo> methodSectionKindFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x3F, "Kind"),
 			new FlagInfo(0x3F, 0x00, "Reserved"),
 			new FlagInfo(0x3F, 0x01, "EHTable"),
 			new FlagInfo(0x3F, 0x02, "OptILTable"),
 			new FlagInfo(0x40, "FatFormat"),
 			new FlagInfo(0x80, "MoreSects"),
-		};
+		});
 
 		public SmallSectionImpl(HexBuffer buffer, HexPosition pos)
 			: base(new HexBufferSpan(buffer, new HexSpan(pos, 2))) {

@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
@@ -36,7 +37,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		static readonly FlagInfo[] heapsFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> heapsFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x01, "HEAP_STRING_4"),
 			new FlagInfo(0x02, "HEAP_GUID_4"),
 			new FlagInfo(0x04, "HEAP_BLOB_4"),
@@ -45,9 +46,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x20, "DELTA_ONLY"),
 			new FlagInfo(0x40, "EXTRA_DATA"),
 			new FlagInfo(0x80, "HAS_DELETE"),
-		};
+		});
 
-		internal static readonly FlagInfo[] tableFlagInfos = new FlagInfo[64] {
+		internal static readonly ReadOnlyCollection<FlagInfo> tableFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[64] {
 			new FlagInfo(0x0000000000000001, "Module"),
 			new FlagInfo(0x0000000000000002, "TypeRef"),
 			new FlagInfo(0x0000000000000004, "TypeDef"),
@@ -112,7 +113,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x2000000000000000, "Reserved3D"),
 			new FlagInfo(0x4000000000000000, "Reserved3E"),
 			new FlagInfo(0x8000000000000000, "Reserved3F"),
-		};
+		});
 
 		public TablesHeaderDataImpl(HexBufferSpan span, bool hasExtraData, int rowsFieldCount)
 			: base(span) {

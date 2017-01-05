@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Hex;
@@ -170,9 +171,11 @@ namespace dnSpy.Hex.Files {
 		public override void WriteString(string value) => writer.Write(numberFormatter.ToString(FilterStringLength(value)), PredefinedClassifiedTextTags.String);
 		public override void WriteDecimal(decimal value) => writer.Write(numberFormatter.ToString(value), PredefinedClassifiedTextTags.Number);
 
-		public override void WriteFlags(ulong value, FlagInfo[] infos) {
+		public override void WriteFlags(ulong value, ReadOnlyCollection<FlagInfo> infos) {
 			ulong checkedBits = 0;
-			foreach (var info in infos) {
+			int count = infos.Count;
+			for (int i = 0; i < count; i++) {
+				var info = infos[i];
 				if (info.IsEnumName)
 					continue;
 				if ((value & info.Mask) == info.Value && (info.Mask & checkedBits) == 0) {
@@ -203,8 +206,10 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 
-		public override void WriteEnum(ulong value, EnumFieldInfo[] infos) {
-			foreach (var info in infos) {
+		public override void WriteEnum(ulong value, ReadOnlyCollection<EnumFieldInfo> infos) {
+			int count = infos.Count;
+			for (int i = 0; i < count; i++) {
+				var info = infos[i];
 				if (info.Value == value) {
 					writer.Write(info.Name, PredefinedClassifiedTextTags.EnumField);
 

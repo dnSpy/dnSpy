@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Text;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
@@ -38,9 +39,9 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		static readonly FlagInfo[] flagsFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> flagsFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x01, "ExtraData"),
-		};
+		});
 
 		DotNetMetadataHeaderDataImpl(HexBufferSpan span, int stringLength, StorageStreamHeader[] storageStreamHeaders)
 			: base(span) {

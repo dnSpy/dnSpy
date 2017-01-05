@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
@@ -138,7 +139,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		internal static readonly FlagInfo[] typeAttrFlagInfos = new FlagInfo[] {
+		internal static readonly ReadOnlyCollection<FlagInfo> typeAttrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x00000007, "Visibility"),
 			new FlagInfo(0x00000007, 0x00000000, "NotPublic"),
 			new FlagInfo(0x00000007, 0x00000001, "Public"),
@@ -180,7 +181,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x00C00000, 0x00400000, "CustomFormat1"),
 			new FlagInfo(0x00C00000, 0x00800000, "CustomFormat2"),
 			new FlagInfo(0x00C00000, 0x00C00000, "CustomFormat3"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -194,7 +195,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] fieldAttrFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> fieldAttrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x0007, "FieldAccess"),
 			new FlagInfo(0x0007, 0x0000, "PrivateScope"),
 			new FlagInfo(0x0007, 0x0001, "Private"),
@@ -214,7 +215,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x1000, "HasFieldMarshal"),
 			new FlagInfo(0x2000, "PinvokeImpl"),
 			new FlagInfo(0x8000, "HasDefault"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -228,7 +229,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] implAttrFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> implAttrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x0003, "CodeType"),
 			new FlagInfo(0x0003, 0x0000, "IL"),
 			new FlagInfo(0x0003, 0x0001, "Native"),
@@ -246,9 +247,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x0080, "PreserveSig"),
 			new FlagInfo(0x0100, "AggressiveInlining"),
 			new FlagInfo(0x1000, "InternalCall"),
-		};
+		});
 
-		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> attrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x0007, "MemberAccess"),
 			new FlagInfo(0x0007, 0x0000, "PrivateScope"),
 			new FlagInfo(0x0007, 0x0001, "Private"),
@@ -275,7 +276,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x2000, "PinvokeImpl"),
 			new FlagInfo(0x4000, "HasSecurity"),
 			new FlagInfo(0x8000, "RequireSecObject"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -293,13 +294,13 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] paramAttrFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> paramAttrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0001, "In"),
 			new FlagInfo(0x0002, "Out"),
 			new FlagInfo(0x0010, "Optional"),
 			new FlagInfo(0x1000, "HasDefault"),
 			new FlagInfo(0x2000, "HasFieldMarshal"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -313,7 +314,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly EnumFieldInfo[] typeEnumInfos = new EnumFieldInfo[] {
+		static readonly ReadOnlyCollection<EnumFieldInfo> typeEnumInfos = new ReadOnlyCollection<EnumFieldInfo>(new EnumFieldInfo[] {
 			new EnumFieldInfo(0x00, "END"),
 			new EnumFieldInfo(0x01, "VOID"),
 			new EnumFieldInfo(0x02, "BOOLEAN"),
@@ -352,7 +353,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new EnumFieldInfo(0x40, "MODIFIER"),
 			new EnumFieldInfo(0x41, "SENTINEL"),
 			new EnumFieldInfo(0x45, "PINNED"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -366,7 +367,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] actionFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> actionFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x001F, "Action"),
 			new FlagInfo(0x001F, 0x0000, "ActionNil"),
 			new FlagInfo(0x001F, 0x0001, "Request"),
@@ -384,7 +385,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x001F, 0x000D, "NonCasDemand"),
 			new FlagInfo(0x001F, 0x000E, "NonCasLinkDemand"),
 			new FlagInfo(0x001F, 0x000F, "NonCasInheritance"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -398,10 +399,10 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] eventFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> eventFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0200, "SpecialName"),
 			new FlagInfo(0x0400, "RTSpecialName"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -415,11 +416,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] propertyFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> propertyFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0200, "SpecialName"),
 			new FlagInfo(0x0400, "RTSpecialName"),
 			new FlagInfo(0x1000, "HasDefault"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -433,14 +434,14 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] methodSemanticsFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> methodSemanticsFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0001, "Setter"),
 			new FlagInfo(0x0002, "Getter"),
 			new FlagInfo(0x0004, "Other"),
 			new FlagInfo(0x0008, "AddOn"),
 			new FlagInfo(0x0010, "RemoveOn"),
 			new FlagInfo(0x0020, "Fire"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -454,7 +455,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] implMapFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> implMapFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0001, "NoMangle"),
 
 			FlagInfo.CreateEnumName(0x0006, "CharSet"),
@@ -481,7 +482,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x3000, 0x0000, "ThrowOnUnmappableCharUseAssem"),
 			new FlagInfo(0x3000, 0x1000, "ThrowOnUnmappableCharEnabled"),
 			new FlagInfo(0x3000, 0x2000, "ThrowOnUnmappableCharDisabled"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -531,7 +532,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly EnumFieldInfo[] hashAlgEnumFields = new EnumFieldInfo[] {
+		static readonly ReadOnlyCollection<EnumFieldInfo> hashAlgEnumFields = new ReadOnlyCollection<EnumFieldInfo>(new EnumFieldInfo[] {
 			new EnumFieldInfo(0x0000, "None"),
 			new EnumFieldInfo(0x8001, "MD2"),
 			new EnumFieldInfo(0x8002, "MD4"),
@@ -545,9 +546,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			new EnumFieldInfo(0x800C, "SHA_256"),
 			new EnumFieldInfo(0x800D, "SHA_384"),
 			new EnumFieldInfo(0x800E, "SHA_512"),
-		};
+		});
 
-		internal static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+		internal static readonly ReadOnlyCollection<FlagInfo> attrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0001, "PublicKey"),
 
 			FlagInfo.CreateEnumName(0x0070, "ProcessorArch"),
@@ -567,7 +568,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			FlagInfo.CreateEnumName(0x0E00, "ContentType"),
 			new FlagInfo(0x0E00, 0x0000, "Default"),
 			new FlagInfo(0x0E00, 0x0200, "WindowsRuntime"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -595,11 +596,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> attrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x0001, "ContainsNoMetaData"),
 			new FlagInfo(0x0001, 0x0000, "ContainsMetaData"),
 			new FlagInfo(0x0001, 0x0001, "ContainsNoMetaData"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)
@@ -625,11 +626,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> attrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x0007, "Visibility"),
 			new FlagInfo(0x0007, 0x0001, "Public"),
 			new FlagInfo(0x0007, 0x0002, "Private"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 1)
@@ -643,7 +644,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> attrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x0003, "Variance"),
 			new FlagInfo(0x0003, 0x0000, "NonVariant"),
 			new FlagInfo(0x0003, 0x0001, "Covariant"),
@@ -654,7 +655,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x001C, 0x0004, "ReferenceTypeConstraint"),
 			new FlagInfo(0x001C, 0x0008, "NotNullableValueTypeConstraint"),
 			new FlagInfo(0x001C, 0x0010, "DefaultConstructorConstraint"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 1)
@@ -668,9 +669,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(tablesHeap, mdTable) {
 		}
 
-		static readonly FlagInfo[] attrFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> attrFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0001, "DebuggerHidden"),
-		};
+		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {
 			if (column.Index == 0)

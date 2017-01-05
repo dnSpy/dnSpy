@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex.Text;
 
 namespace dnSpy.Contracts.Hex.Files.DotNet {
@@ -58,7 +59,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			: base(span) {
 		}
 
-		static readonly EnumFieldInfo[] typeCodeEnumFieldInfos = new EnumFieldInfo[] {
+		static readonly ReadOnlyCollection<EnumFieldInfo> typeCodeEnumFieldInfos = new ReadOnlyCollection<EnumFieldInfo>(new EnumFieldInfo[] {
 			new EnumFieldInfo((ulong)ResourceTypeCode.Null, "Null"),
 			new EnumFieldInfo((ulong)ResourceTypeCode.String, "String"),
 			new EnumFieldInfo((ulong)ResourceTypeCode.Boolean, "Boolean"),
@@ -78,7 +79,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			new EnumFieldInfo((ulong)ResourceTypeCode.TimeSpan, "TimeSpan"),
 			new EnumFieldInfo((ulong)ResourceTypeCode.ByteArray, "ByteArray"),
 			new EnumFieldInfo((ulong)ResourceTypeCode.Stream, "Stream"),
-		};
+		});
 
 		/// <summary>
 		/// Writes the value

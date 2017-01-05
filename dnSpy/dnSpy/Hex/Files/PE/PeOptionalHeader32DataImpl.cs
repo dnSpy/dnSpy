@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.PE;
@@ -58,7 +59,7 @@ namespace dnSpy.Hex.Files.PE {
 
 		protected override BufferField[] Fields { get; }
 
-		internal static readonly EnumFieldInfo[] subsystemEnumFieldInfos = new EnumFieldInfo[] {
+		internal static readonly ReadOnlyCollection<EnumFieldInfo> subsystemEnumFieldInfos = new ReadOnlyCollection<EnumFieldInfo>(new EnumFieldInfo[] {
 			new EnumFieldInfo(0, "UNKNOWN"),
 			new EnumFieldInfo(1, "NATIVE"),
 			new EnumFieldInfo(2, "WINDOWS_GUI"),
@@ -74,9 +75,9 @@ namespace dnSpy.Hex.Files.PE {
 			new EnumFieldInfo(14, "XBOX"),
 			new EnumFieldInfo(16, "WINDOWS_BOOT_APPLICATION"),
 			new EnumFieldInfo(17, "XBOX_CODE_CATALOG"),
-		};
+		});
 
-		internal static readonly FlagInfo[] dllCharacteristicsFlagInfos = new FlagInfo[] {
+		internal static readonly ReadOnlyCollection<FlagInfo> dllCharacteristicsFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0001, "RESERVED0"),
 			new FlagInfo(0x0002, "RESERVED1"),
 			new FlagInfo(0x0004, "RESERVED2"),
@@ -93,7 +94,7 @@ namespace dnSpy.Hex.Files.PE {
 			new FlagInfo(0x2000, "WDM_DRIVER"),
 			new FlagInfo(0x4000, "GUARD_CF"),
 			new FlagInfo(0x8000, "TERMINAL_SERVER_AWARE"),
-		};
+		});
 
 		PeOptionalHeader32DataImpl(HexBufferSpan span)
 			: base(span) {

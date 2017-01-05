@@ -30,10 +30,10 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		static readonly FlagInfo[] flagsCodeSizeFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> flagsCodeSizeFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x03, "Format"),
 			new FlagInfo(0x03, 0x02, "TinyFormat"),
-		};
+		});
 
 		public TinyMethodBodyImpl(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
 			: base(methodProvider, span, tokens) {

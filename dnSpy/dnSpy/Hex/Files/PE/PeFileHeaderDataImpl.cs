@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.PE;
@@ -34,7 +35,7 @@ namespace dnSpy.Hex.Files.PE {
 
 		protected override BufferField[] Fields { get; }
 
-		static readonly EnumFieldInfo[] machineEnumFieldInfos = new EnumFieldInfo[] {
+		static readonly ReadOnlyCollection<EnumFieldInfo> machineEnumFieldInfos = new ReadOnlyCollection<EnumFieldInfo>(new EnumFieldInfo[] {
 			new EnumFieldInfo(0x014C, "I386"),
 			new EnumFieldInfo(0x8664, "AMD64"),
 			new EnumFieldInfo(0x0200, "IA64"),
@@ -65,9 +66,9 @@ namespace dnSpy.Hex.Files.PE {
 			new EnumFieldInfo(0x0EBC, "EBC"),
 			new EnumFieldInfo(0x9041, "M32R"),
 			new EnumFieldInfo(0xC0EE, "CEE"),
-		};
+		});
 
-		static readonly FlagInfo[] characteristicsFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> characteristicsFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x0001, "RELOCS_STRIPPED"),
 			new FlagInfo(0x0002, "EXECUTABLE_IMAGE"),
 			new FlagInfo(0x0004, "LINE_NUMS_STRIPPED"),
@@ -84,7 +85,7 @@ namespace dnSpy.Hex.Files.PE {
 			new FlagInfo(0x2000, "DLL"),
 			new FlagInfo(0x4000, "UP_SYSTEM_ONLY"),
 			new FlagInfo(0x8000, "BYTES_REVERSED_HI"),
-		};
+		});
 
 		PeFileHeaderDataImpl(HexBufferSpan span)
 			: base(span) {

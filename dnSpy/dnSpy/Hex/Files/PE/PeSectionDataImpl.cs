@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Text;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
@@ -38,7 +39,7 @@ namespace dnSpy.Hex.Files.PE {
 
 		protected override BufferField[] Fields { get; }
 
-		static readonly FlagInfo[] characteristicsFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> characteristicsFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x00000008, "TYPE_NO_PAD"),
 			new FlagInfo(0x00000020, "CNT_CODE"),
 			new FlagInfo(0x00000040, "CNT_INITIALIZED_DATA"),
@@ -75,7 +76,7 @@ namespace dnSpy.Hex.Files.PE {
 			new FlagInfo(0x20000000, "MEM_EXECUTE"),
 			new FlagInfo(0x40000000, "MEM_READ"),
 			new FlagInfo(0x80000000, "MEM_WRITE"),
-		};
+		});
 
 		PeSectionDataImpl(HexBufferSpan span)
 			: base(span) {

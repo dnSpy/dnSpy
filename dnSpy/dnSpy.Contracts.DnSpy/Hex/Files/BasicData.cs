@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace dnSpy.Contracts.Hex.Files {
@@ -541,23 +542,40 @@ namespace dnSpy.Contracts.Hex.Files {
 	}
 
 	/// <summary>
-	/// A <see cref="byte"/> flags field
+	/// Flags data
 	/// </summary>
-	public class ByteFlagsData : SimpleData {
-		readonly FlagInfo[] flagInfos;
+	public abstract class FlagsData : SimpleData {
+		/// <summary>
+		/// Gets all flag infos
+		/// </summary>
+		public ReadOnlyCollection<FlagInfo> FlagInfos { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Data span</param>
 		/// <param name="flagInfos">Flag infos</param>
-		public ByteFlagsData(HexBufferSpan span, FlagInfo[] flagInfos)
+		protected FlagsData(HexBufferSpan span, ReadOnlyCollection<FlagInfo> flagInfos)
 			: base(span) {
-			if (span.Length != 1)
-				throw new ArgumentOutOfRangeException(nameof(span));
 			if (flagInfos == null)
 				throw new ArgumentNullException(nameof(flagInfos));
-			this.flagInfos = flagInfos;
+			FlagInfos = flagInfos;
+		}
+	}
+
+	/// <summary>
+	/// A <see cref="byte"/> flags field
+	/// </summary>
+	public class ByteFlagsData : FlagsData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		/// <param name="flagInfos">Flag infos</param>
+		public ByteFlagsData(HexBufferSpan span, ReadOnlyCollection<FlagInfo> flagInfos)
+			: base(span, flagInfos) {
+			if (span.Length != 1)
+				throw new ArgumentOutOfRangeException(nameof(span));
 		}
 
 		/// <summary>
@@ -566,7 +584,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
 		/// <param name="flagInfos">Flag infos</param>
-		public ByteFlagsData(HexBuffer buffer, HexPosition position, FlagInfo[] flagInfos)
+		public ByteFlagsData(HexBuffer buffer, HexPosition position, ReadOnlyCollection<FlagInfo> flagInfos)
 			: this(new HexBufferSpan(buffer, new HexSpan(position, 1)), flagInfos) {
 		}
 
@@ -580,27 +598,22 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the value
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), flagInfos);
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), FlagInfos);
 	}
 
 	/// <summary>
 	/// A <see cref="ushort"/> flags field
 	/// </summary>
-	public class UInt16FlagsData : SimpleData {
-		readonly FlagInfo[] flagInfos;
-
+	public class UInt16FlagsData : FlagsData {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Data span</param>
 		/// <param name="flagInfos">Flag infos</param>
-		public UInt16FlagsData(HexBufferSpan span, FlagInfo[] flagInfos)
-			: base(span) {
+		public UInt16FlagsData(HexBufferSpan span, ReadOnlyCollection<FlagInfo> flagInfos)
+			: base(span, flagInfos) {
 			if (span.Length != 2)
 				throw new ArgumentOutOfRangeException(nameof(span));
-			if (flagInfos == null)
-				throw new ArgumentNullException(nameof(flagInfos));
-			this.flagInfos = flagInfos;
 		}
 
 		/// <summary>
@@ -609,7 +622,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
 		/// <param name="flagInfos">Flag infos</param>
-		public UInt16FlagsData(HexBuffer buffer, HexPosition position, FlagInfo[] flagInfos)
+		public UInt16FlagsData(HexBuffer buffer, HexPosition position, ReadOnlyCollection<FlagInfo> flagInfos)
 			: this(new HexBufferSpan(buffer, new HexSpan(position, 2)), flagInfos) {
 		}
 
@@ -623,27 +636,22 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the value
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), flagInfos);
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), FlagInfos);
 	}
 
 	/// <summary>
 	/// A <see cref="uint"/> flags field
 	/// </summary>
-	public class UInt32FlagsData : SimpleData {
-		readonly FlagInfo[] flagInfos;
-
+	public class UInt32FlagsData : FlagsData {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Data span</param>
 		/// <param name="flagInfos">Flag infos</param>
-		public UInt32FlagsData(HexBufferSpan span, FlagInfo[] flagInfos)
-			: base(span) {
+		public UInt32FlagsData(HexBufferSpan span, ReadOnlyCollection<FlagInfo> flagInfos)
+			: base(span, flagInfos) {
 			if (span.Length != 4)
 				throw new ArgumentOutOfRangeException(nameof(span));
-			if (flagInfos == null)
-				throw new ArgumentNullException(nameof(flagInfos));
-			this.flagInfos = flagInfos;
 		}
 
 		/// <summary>
@@ -652,7 +660,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
 		/// <param name="flagInfos">Flag infos</param>
-		public UInt32FlagsData(HexBuffer buffer, HexPosition position, FlagInfo[] flagInfos)
+		public UInt32FlagsData(HexBuffer buffer, HexPosition position, ReadOnlyCollection<FlagInfo> flagInfos)
 			: this(new HexBufferSpan(buffer, new HexSpan(position, 4)), flagInfos) {
 		}
 
@@ -666,27 +674,22 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the value
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), flagInfos);
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), FlagInfos);
 	}
 
 	/// <summary>
 	/// A <see cref="ulong"/> flags field
 	/// </summary>
-	public class UInt64FlagsData : SimpleData {
-		readonly FlagInfo[] flagInfos;
-
+	public class UInt64FlagsData : FlagsData {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Data span</param>
 		/// <param name="flagInfos">Flag infos</param>
-		public UInt64FlagsData(HexBufferSpan span, FlagInfo[] flagInfos)
-			: base(span) {
+		public UInt64FlagsData(HexBufferSpan span, ReadOnlyCollection<FlagInfo> flagInfos)
+			: base(span, flagInfos) {
 			if (span.Length != 8)
 				throw new ArgumentOutOfRangeException(nameof(span));
-			if (flagInfos == null)
-				throw new ArgumentNullException(nameof(flagInfos));
-			this.flagInfos = flagInfos;
 		}
 
 		/// <summary>
@@ -695,7 +698,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
 		/// <param name="flagInfos">Flag infos</param>
-		public UInt64FlagsData(HexBuffer buffer, HexPosition position, FlagInfo[] flagInfos)
+		public UInt64FlagsData(HexBuffer buffer, HexPosition position, ReadOnlyCollection<FlagInfo> flagInfos)
 			: this(new HexBufferSpan(buffer, new HexSpan(position, 8)), flagInfos) {
 		}
 
@@ -709,27 +712,44 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the value
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), flagInfos);
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteFlags(ReadValue(), FlagInfos);
 	}
 
 	/// <summary>
-	/// A <see cref="byte"/> enum field
+	/// Enum data
 	/// </summary>
-	public class ByteEnumData : SimpleData {
-		readonly EnumFieldInfo[] enumFieldInfos;
+	public abstract class EnumData : SimpleData {
+		/// <summary>
+		/// Gets all flag infos
+		/// </summary>
+		public ReadOnlyCollection<EnumFieldInfo> EnumFieldInfos { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Data span</param>
 		/// <param name="enumFieldInfos">Enum field infos</param>
-		public ByteEnumData(HexBufferSpan span, EnumFieldInfo[] enumFieldInfos)
+		protected EnumData(HexBufferSpan span, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
 			: base(span) {
-			if (span.Length != 1)
-				throw new ArgumentOutOfRangeException(nameof(span));
 			if (enumFieldInfos == null)
 				throw new ArgumentNullException(nameof(enumFieldInfos));
-			this.enumFieldInfos = enumFieldInfos;
+			EnumFieldInfos = enumFieldInfos;
+		}
+	}
+
+	/// <summary>
+	/// A <see cref="byte"/> enum field
+	/// </summary>
+	public class ByteEnumData : EnumData {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="span">Data span</param>
+		/// <param name="enumFieldInfos">Enum field infos</param>
+		public ByteEnumData(HexBufferSpan span, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
+			: base(span, enumFieldInfos) {
+			if (span.Length != 1)
+				throw new ArgumentOutOfRangeException(nameof(span));
 		}
 
 		/// <summary>
@@ -738,7 +758,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
 		/// <param name="enumFieldInfos">Enum field infos</param>
-		public ByteEnumData(HexBuffer buffer, HexPosition position, EnumFieldInfo[] enumFieldInfos)
+		public ByteEnumData(HexBuffer buffer, HexPosition position, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
 			: this(new HexBufferSpan(buffer, new HexSpan(position, 1)), enumFieldInfos) {
 		}
 
@@ -752,27 +772,22 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the value
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), enumFieldInfos);
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), EnumFieldInfos);
 	}
 
 	/// <summary>
 	/// A <see cref="ushort"/> enum field
 	/// </summary>
-	public class UInt16EnumData : SimpleData {
-		readonly EnumFieldInfo[] enumFieldInfos;
-
+	public class UInt16EnumData : EnumData {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Data span</param>
 		/// <param name="enumFieldInfos">Enum field infos</param>
-		public UInt16EnumData(HexBufferSpan span, EnumFieldInfo[] enumFieldInfos)
-			: base(span) {
+		public UInt16EnumData(HexBufferSpan span, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
+			: base(span, enumFieldInfos) {
 			if (span.Length != 2)
 				throw new ArgumentOutOfRangeException(nameof(span));
-			if (enumFieldInfos == null)
-				throw new ArgumentNullException(nameof(enumFieldInfos));
-			this.enumFieldInfos = enumFieldInfos;
 		}
 
 		/// <summary>
@@ -781,7 +796,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
 		/// <param name="enumFieldInfos">Enum field infos</param>
-		public UInt16EnumData(HexBuffer buffer, HexPosition position, EnumFieldInfo[] enumFieldInfos)
+		public UInt16EnumData(HexBuffer buffer, HexPosition position, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
 			: this(new HexBufferSpan(buffer, new HexSpan(position, 2)), enumFieldInfos) {
 		}
 
@@ -795,27 +810,22 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the value
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), enumFieldInfos);
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), EnumFieldInfos);
 	}
 
 	/// <summary>
 	/// A <see cref="uint"/> enum field
 	/// </summary>
-	public class UInt32EnumData : SimpleData {
-		readonly EnumFieldInfo[] enumFieldInfos;
-
+	public class UInt32EnumData : EnumData {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Data span</param>
 		/// <param name="enumFieldInfos">Enum field infos</param>
-		public UInt32EnumData(HexBufferSpan span, EnumFieldInfo[] enumFieldInfos)
-			: base(span) {
+		public UInt32EnumData(HexBufferSpan span, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
+			: base(span, enumFieldInfos) {
 			if (span.Length != 4)
 				throw new ArgumentOutOfRangeException(nameof(span));
-			if (enumFieldInfos == null)
-				throw new ArgumentNullException(nameof(enumFieldInfos));
-			this.enumFieldInfos = enumFieldInfos;
 		}
 
 		/// <summary>
@@ -824,7 +834,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
 		/// <param name="enumFieldInfos">Enum field infos</param>
-		public UInt32EnumData(HexBuffer buffer, HexPosition position, EnumFieldInfo[] enumFieldInfos)
+		public UInt32EnumData(HexBuffer buffer, HexPosition position, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
 			: this(new HexBufferSpan(buffer, new HexSpan(position, 4)), enumFieldInfos) {
 		}
 
@@ -838,27 +848,22 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the value
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), enumFieldInfos);
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), EnumFieldInfos);
 	}
 
 	/// <summary>
 	/// A <see cref="ulong"/> enum field
 	/// </summary>
-	public class UInt64EnumData : SimpleData {
-		readonly EnumFieldInfo[] enumFieldInfos;
-
+	public class UInt64EnumData : EnumData {
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Data span</param>
 		/// <param name="enumFieldInfos">Enum field infos</param>
-		public UInt64EnumData(HexBufferSpan span, EnumFieldInfo[] enumFieldInfos)
-			: base(span) {
+		public UInt64EnumData(HexBufferSpan span, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
+			: base(span, enumFieldInfos) {
 			if (span.Length != 8)
 				throw new ArgumentOutOfRangeException(nameof(span));
-			if (enumFieldInfos == null)
-				throw new ArgumentNullException(nameof(enumFieldInfos));
-			this.enumFieldInfos = enumFieldInfos;
 		}
 
 		/// <summary>
@@ -867,7 +872,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="position">Position</param>
 		/// <param name="enumFieldInfos">Enum field infos</param>
-		public UInt64EnumData(HexBuffer buffer, HexPosition position, EnumFieldInfo[] enumFieldInfos)
+		public UInt64EnumData(HexBuffer buffer, HexPosition position, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
 			: this(new HexBufferSpan(buffer, new HexSpan(position, 8)), enumFieldInfos) {
 		}
 
@@ -881,7 +886,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Writes the value
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
-		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), enumFieldInfos);
+		public override void WriteValue(HexFieldFormatter formatter) => formatter.WriteEnum(ReadValue(), EnumFieldInfos);
 	}
 
 	/// <summary>

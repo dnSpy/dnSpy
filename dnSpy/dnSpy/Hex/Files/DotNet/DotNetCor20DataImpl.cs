@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
@@ -40,7 +41,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		static readonly FlagInfo[] flagsFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> flagsFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(0x00000001, "ILONLY"),
 			new FlagInfo(0x00000002, "32BITREQUIRED"),
 			new FlagInfo(0x00000004, "IL_LIBRARY"),
@@ -48,7 +49,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x00000010, "NATIVE_ENTRYPOINT"),
 			new FlagInfo(0x00010000, "TRACKDEBUGDATA"),
 			new FlagInfo(0x00020000, "32BITPREFERRED"),
-		};
+		});
 
 		DotNetCor20DataImpl(HexBufferSpan span)
 			: base(span) {

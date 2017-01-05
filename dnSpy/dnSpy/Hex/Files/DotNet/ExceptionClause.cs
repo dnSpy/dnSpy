@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
@@ -32,13 +33,13 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		internal static readonly FlagInfo[] exceptionClauseFlagsFlagInfo = new FlagInfo[] {
+		internal static readonly ReadOnlyCollection<FlagInfo> exceptionClauseFlagsFlagInfo = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			new FlagInfo(uint.MaxValue, 0, "EXCEPTION"),
 			new FlagInfo(uint.MaxValue, 1, "FILTER"),
 			new FlagInfo(uint.MaxValue, 2, "FINALLY"),
 			new FlagInfo(uint.MaxValue, 4, "FAULT"),
 			new FlagInfo(uint.MaxValue, 8, "DUPLICATED"),
-		};
+		});
 
 		public SmallExceptionClauseImpl(HexBuffer buffer, HexPosition pos)
 			: base(new HexBufferSpan(buffer, pos, 12)) {

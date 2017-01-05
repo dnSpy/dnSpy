@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		static readonly FlagInfo[] fatHeaderFlagsFlagInfos = new FlagInfo[] {
+		static readonly ReadOnlyCollection<FlagInfo> fatHeaderFlagsFlagInfos = new ReadOnlyCollection<FlagInfo>(new FlagInfo[] {
 			FlagInfo.CreateEnumName(0x07, "Format"),
 			new FlagInfo(0x07, 0x00, "SmallFormat"),
 			new FlagInfo(0x07, 0x02, "TinyFormat"),
@@ -46,7 +46,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x40, "CompressedIL"),
 			FlagInfo.CreateEnumName(0xF000, "Size"),
 			new FlagInfo(0x3000, "Size0C"),
-		};
+		});
 
 		public FatMethodBodyImpl(DotNetMethodProvider methodProvider, HexBufferSpan span, ReadOnlyCollection<uint> tokens, HexSpan instructionsSpan, HexSpan ehSpan, bool fatEH)
 			: base(methodProvider, span, tokens) {

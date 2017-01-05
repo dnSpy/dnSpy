@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Hex.Text;
 
 namespace dnSpy.Contracts.Hex.Files {
@@ -184,14 +185,14 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <param name="infos">Flag infos</param>
-		public abstract void WriteFlags(ulong value, FlagInfo[] infos);
+		public abstract void WriteFlags(ulong value, ReadOnlyCollection<FlagInfo> infos);
 
 		/// <summary>
 		/// Writes an enum value
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <param name="infos">Enum field infos</param>
-		public abstract void WriteEnum(ulong value, EnumFieldInfo[] infos);
+		public abstract void WriteEnum(ulong value, ReadOnlyCollection<EnumFieldInfo> infos);
 
 		/// <summary>
 		/// Writes a filename which could contain path separators
