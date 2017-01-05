@@ -27,7 +27,10 @@ namespace dnSpy.Contracts.Hex.Editor {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string ForceClearTypeIfNeededName = "WpfHexView/ForceClearTypeIfNeeded";
 		public static readonly VSTE.EditorOptionKey<bool> ForceClearTypeIfNeededId = new VSTE.EditorOptionKey<bool>(ForceClearTypeIfNeededName);
-		public const string AppearanceCategoryName = "WpfHexView/Appearance/Category";
+		// Must match the text editor option name since we create a temp ITextView for the HexView
+		// so we can re-use the text editor's IClassificationFormatMapService and IEditorFormatMapService
+		// interfaces. See HexTextView.
+		public const string AppearanceCategoryName = "Appearance/Category";
 		public static readonly VSTE.EditorOptionKey<string> AppearanceCategoryId = new VSTE.EditorOptionKey<string>(AppearanceCategoryName);
 		public const string EnableHighlightCurrentLineName = "WpfHexView/EnableHighlightCurrentLine";
 		public static readonly VSTE.EditorOptionKey<bool> EnableHighlightCurrentLineId = new VSTE.EditorOptionKey<bool>(EnableHighlightCurrentLineName);

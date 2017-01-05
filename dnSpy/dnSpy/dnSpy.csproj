@@ -310,6 +310,7 @@
     <Compile Include="Hex\Classification\HexClassifierAggregator.cs" />
     <Compile Include="Hex\Classification\HexClassifierAggregatorServiceImpl.cs" />
     <Compile Include="Hex\Classification\HexEditorFormatMapServiceImpl.cs" />
+    <Compile Include="Hex\Classification\HexTextView.cs" />
     <Compile Include="Hex\Classification\HexViewClassificationFormatMap.cs" />
     <Compile Include="Hex\Classification\HexViewClassifierAggregator.cs" />
     <Compile Include="Hex\Classification\HexViewClassifierAggregatorServiceImpl.cs" />
