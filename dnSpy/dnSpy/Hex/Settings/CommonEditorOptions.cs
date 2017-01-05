@@ -101,6 +101,11 @@ namespace dnSpy.Hex.Settings {
 			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.HighlightCurrentValueId, value); }
 		}
 
+		public int HighlightCurrentValueDelayMilliSeconds {
+			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.HighlightCurrentValueDelayMilliSecondsId); }
+			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.HighlightCurrentValueDelayMilliSecondsId, value); }
+		}
+
 		public int EncodingCodePage {
 			get { return Group.GetOptionValue(SubGroup, DefaultHexViewOptions.EncodingCodePageId); }
 			set { Group.SetOptionValue(SubGroup, DefaultHexViewOptions.EncodingCodePageId, value); }

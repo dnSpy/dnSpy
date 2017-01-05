@@ -78,6 +78,9 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<bool> HighlightActiveColumnId = new VSTE.EditorOptionKey<bool>(HighlightActiveColumnName);
 		public const string HighlightCurrentValueName = "HexView/HighlightCurrentValue";
 		public static readonly VSTE.EditorOptionKey<bool> HighlightCurrentValueId = new VSTE.EditorOptionKey<bool>(HighlightCurrentValueName);
+		public const string HighlightCurrentValueDelayMilliSecondsName = "HexView/HighlightCurrentValueDelayMilliSeconds";
+		public static readonly VSTE.EditorOptionKey<int> HighlightCurrentValueDelayMilliSecondsId = new VSTE.EditorOptionKey<int>(HighlightCurrentValueDelayMilliSecondsName);
+		public const int DefaultHighlightCurrentValueDelayMilliSeconds = 100;
 		public const string EncodingCodePageName = "HexView/EncodingCodePage";
 		public static readonly VSTE.EditorOptionKey<int> EncodingCodePageId = new VSTE.EditorOptionKey<int>(EncodingCodePageName);
 		public const string HighlightStructureUnderMouseCursorName = "HexView/HighlightStructureUnderMouseCursor";

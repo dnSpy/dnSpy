@@ -313,6 +313,17 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		}
 
 		/// <summary>
+		/// Returns the delay in milliseconds before highlighting the new value
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		public static int GetHighlightCurrentValueDelayMilliSeconds(this VSTE.IEditorOptions options) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
+			return options.GetOptionValue(DefaultHexViewOptions.HighlightCurrentValueDelayMilliSecondsId);
+		}
+
+		/// <summary>
 		/// Returns the encoding code page
 		/// </summary>
 		/// <param name="options">Options</param>

@@ -39,6 +39,7 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		public const HexColumnLineKind ColumnGroupLine1 = HexColumnLineKind.Dashed_3_3;
 		public const bool HighlightActiveColumn = false;
 		public const bool HighlightCurrentValue = true;
+		public const int HighlightCurrentValueDelayMilliSeconds = DefaultHexViewOptions.DefaultHighlightCurrentValueDelayMilliSeconds;
 		public const int EncodingCodePage = 65001;// System.Text.Encoding.UTF8.CodePage
 		public const bool HighlightStructureUnderMouseCursor = true;
 		public const bool EnableHighlightCurrentLine = true;

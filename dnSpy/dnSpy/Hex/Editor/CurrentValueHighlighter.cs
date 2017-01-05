@@ -116,6 +116,7 @@ namespace dnSpy.Hex.Editor {
 			else {
 				UnhookEvents();
 				UninitializeCurrentValue();
+				StopTimer();
 			}
 			RefreshAll();
 		}
@@ -139,7 +140,7 @@ namespace dnSpy.Hex.Editor {
 
 		void RefreshAll() => currentValueHighlighterTagger?.RaiseTagsChanged(new HexBufferSpan(new HexBufferPoint(wpfHexView.Buffer, 0), new HexBufferPoint(wpfHexView.Buffer, HexPosition.MaxEndPosition)));
 
-		void Caret_PositionChanged(object sender, HexCaretPositionChangedEventArgs e) => UpdateCurrentValue();
+		void Caret_PositionChanged(object sender, HexCaretPositionChangedEventArgs e) => DelayUpdateCurrentValue();
 
 		void ReinitializeCurrentValue() {
 			if (wpfHexView.IsClosed)
@@ -233,11 +234,64 @@ namespace dnSpy.Hex.Editor {
 
 		void UninitializeCurrentValue() => savedValue = null;
 
+		// PERF: delay refreshing the changed value to speed up scrolling up/down
+		// by eg. holding down PgDown/PgUp.
+		void DelayUpdateCurrentValue() {
+			int delayMs = wpfHexView.Options.GetHighlightCurrentValueDelayMilliSeconds();
+			if (delayMs <= 0) {
+				StopTimer();
+				UpdateCurrentValue();
+				return;
+			}
+
+			if (delayDispatcherTimer == null) {
+				if (savedValue != null && !TryUpdateCurrentValue())
+					return;
+				savedValue = null;
+				// Make sure old highlighting gets cleared immediately
+				RefreshAll();
+			}
+			// Always stop and restart the timer so nothing is highlighted if eg. PgDown is held down
+			StopTimer();
+			delayDispatcherTimer = new DispatcherTimer(DispatcherPriority.Normal, wpfHexView.VisualElement.Dispatcher);
+			if (delayMs < 20 || delayMs > 2000)
+				delayMs = DefaultHexViewOptions.DefaultHighlightCurrentValueDelayMilliSeconds;
+			delayDispatcherTimer.Interval = TimeSpan.FromMilliseconds(delayMs);
+			delayDispatcherTimer.Tick += Timer_Tick;
+			delayDispatcherTimer.Start();
+		}
+		DispatcherTimer delayDispatcherTimer;
+
+		void StopTimer() {
+			var timer = delayDispatcherTimer;
+			delayDispatcherTimer = null;
+			if (timer != null) {
+				timer.Stop();
+				timer.Tick -= Timer_Tick;
+			}
+		}
+
+		void Timer_Tick(object sender, EventArgs e) {
+			var timer = (DispatcherTimer)sender;
+			timer.Tick -= Timer_Tick;
+			timer.Stop();
+			if (delayDispatcherTimer != timer)
+				return;
+			delayDispatcherTimer = null;
+
+			UpdateCurrentValue();
+		}
+
 		void UpdateCurrentValue() {
+			if (TryUpdateCurrentValue())
+				RefreshAll();
+		}
+
+		bool TryUpdateCurrentValue() {
 			if (wpfHexView.IsClosed)
-				return;
+				return false;
 			if (!enabled)
-				return;
+				return false;
 
 			var bufferLines = wpfHexView.BufferLines;
 			var pos = wpfHexView.Caret.Position.Position;
@@ -249,8 +303,8 @@ namespace dnSpy.Hex.Editor {
 			if (savedValue == null || savedValue.Column != pos.ActiveColumn || savedValue.ValuesFormat != bufferLines.ValuesFormat)
 				savedValue = new SavedValue(bufferLines.ValuesFormat, isValues ? bufferLines.BytesPerValue : 1, pos.ActivePosition, cell?.BufferSpan ?? new HexBufferSpan(bufferLines.BufferSpan.Start, bufferLines.BufferSpan.Start));
 			else if (!savedValue.TryUpdate(pos.ActivePosition, line, cell))
-				return;
-			RefreshAll();
+				return false;
+			return true;
 		}
 
 		void Buffer_BufferSpanInvalidated(object sender, HexBufferSpanInvalidatedEventArgs e) {
@@ -277,7 +331,6 @@ namespace dnSpy.Hex.Editor {
 				yield break;
 			if (!enabled)
 				yield break;
-			Debug.Assert(savedValue != null);
 			if (savedValue == null)
 				yield break;
 			var cells = (savedValue.Column == HexColumnType.Values ? context.Line.ValueCells : context.Line.AsciiCells).GetVisibleCells();
@@ -324,6 +377,7 @@ namespace dnSpy.Hex.Editor {
 			wpfHexView.Options.OptionChanged -= Options_OptionChanged;
 			UninitializeCurrentValue();
 			UnhookEvents();
+			StopTimer();
 		}
 	}
 }

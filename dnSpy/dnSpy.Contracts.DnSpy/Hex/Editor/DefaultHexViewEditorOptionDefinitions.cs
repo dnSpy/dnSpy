@@ -180,6 +180,12 @@ namespace dnSpy.Contracts.Hex.Editor {
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]
+	sealed class HighlightCurrentValueDelayMilliSecondsEditorOptionDefinition : HexViewOptionDefinition<int> {
+		public override VSTE.EditorOptionKey<int> Key => DefaultHexViewOptions.HighlightCurrentValueDelayMilliSecondsId;
+		public override int Default => DefaultHexViewOptions.DefaultHighlightCurrentValueDelayMilliSeconds;
+	}
+
+	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class EncodingCodePageEditorOptionDefinition : HexViewOptionDefinition<int> {
 		public override VSTE.EditorOptionKey<int> Key => DefaultHexViewOptions.EncodingCodePageId;
 		public override int Default => Encoding.UTF8.CodePage;

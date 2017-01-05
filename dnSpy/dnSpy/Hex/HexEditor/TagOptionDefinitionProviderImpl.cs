@@ -60,6 +60,7 @@ namespace dnSpy.Hex.HexEditor {
 				yield return new OptionDefinition<HexColumnLineKind>(md.SubGroup, DefaultHexViewOptions.ColumnGroupLine1Id, md.ColumnGroupLine1);
 				yield return new OptionDefinition<bool>(md.SubGroup, DefaultHexViewOptions.HighlightActiveColumnId, md.HighlightActiveColumn);
 				yield return new OptionDefinition<bool>(md.SubGroup, DefaultHexViewOptions.HighlightCurrentValueId, md.HighlightCurrentValue);
+				yield return new OptionDefinition<int>(md.SubGroup, DefaultHexViewOptions.HighlightCurrentValueDelayMilliSecondsId, md.HighlightCurrentValueDelayMilliSeconds);
 				yield return new OptionDefinition<int>(md.SubGroup, DefaultHexViewOptions.EncodingCodePageId, md.EncodingCodePage);
 				yield return new OptionDefinition<bool>(md.SubGroup, DefaultHexViewOptions.HighlightStructureUnderMouseCursorId, md.HighlightStructureUnderMouseCursor);
 				yield return new OptionDefinition<bool>(md.SubGroup, DefaultWpfHexViewOptions.EnableHighlightCurrentLineId, md.EnableHighlightCurrentLine);

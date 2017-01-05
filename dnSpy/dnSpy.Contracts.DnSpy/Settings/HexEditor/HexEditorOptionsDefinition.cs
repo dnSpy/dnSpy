@@ -66,6 +66,8 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		bool HighlightActiveColumn { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.HighlightCurrentValue"/></summary>
 		bool HighlightCurrentValue { get; }
+		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.HighlightCurrentValueDelayMilliSeconds"/></summary>
+		int HighlightCurrentValueDelayMilliSeconds { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.EncodingCodePage"/></summary>
 		int EncodingCodePage { get; }
 		/// <summary>See <see cref="ExportHexEditorOptionsDefinitionAttribute.HighlightStructureUnderMouseCursor"/></summary>
@@ -129,6 +131,7 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 			ColumnGroupLine1 = DefaultHexEditorOptions.ColumnGroupLine1;
 			HighlightActiveColumn = DefaultHexEditorOptions.HighlightActiveColumn;
 			HighlightCurrentValue = DefaultHexEditorOptions.HighlightCurrentValue;
+			HighlightCurrentValueDelayMilliSeconds = DefaultHexEditorOptions.HighlightCurrentValueDelayMilliSeconds;
 			EncodingCodePage = DefaultHexEditorOptions.EncodingCodePage;
 			HighlightStructureUnderMouseCursor = DefaultHexEditorOptions.HighlightStructureUnderMouseCursor;
 			EnableHighlightCurrentLine = DefaultHexEditorOptions.EnableHighlightCurrentLine;
@@ -226,6 +229,11 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		/// Highlight current value, default value is <see cref="DefaultHexEditorOptions.HighlightCurrentValue"/>
 		/// </summary>
 		public bool HighlightCurrentValue { get; set; }
+
+		/// <summary>
+		/// Highlight current value delay in milliseconds, default value is <see cref="DefaultHexEditorOptions.HighlightCurrentValueDelayMilliSeconds"/>
+		/// </summary>
+		public int HighlightCurrentValueDelayMilliSeconds { get; set; }
 
 		/// <summary>
 		/// Encoding code page, default value is <see cref="DefaultHexEditorOptions.EncodingCodePage"/>
