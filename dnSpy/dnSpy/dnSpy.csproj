@@ -341,6 +341,7 @@
     <Compile Include="Hex\Commands\SelectVM.cs" />
     <Compile Include="Hex\Commands\SettingsConstants.cs" />
     <Compile Include="Hex\ContextMenuCommands\Commands.cs" />
+    <Compile Include="Hex\ContextMenuCommands\EditFieldCommand.cs" />
     <Compile Include="Hex\Editor\ActiveColumnHighlighter.cs" />
     <Compile Include="Hex\Editor\BottomControlMargin.cs" />
     <Compile Include="Hex\Editor\BottomRightCornerMargin.cs" />

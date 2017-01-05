@@ -1665,4 +1665,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
     <value>Ctrl+E, Ctrl+S</value>
   </data>
+  <data name="HexEditFieldCommand" xml:space="preserve">
+    <value>Edit Field</value>
+  </data>
 </root>

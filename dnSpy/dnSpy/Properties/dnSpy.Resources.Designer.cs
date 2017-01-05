@@ -1632,6 +1632,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Field.
+        /// </summary>
+        public static string HexEditFieldCommand {
+            get {
+                return ResourceManager.GetString("HexEditFieldCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _16 Bytes.
         /// </summary>
         public static string HexEditor_BytesPerLine_16 {
