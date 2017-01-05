@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Files.PE {
 			new EnumFieldInfo(0x0200, "IA64"),
 			new EnumFieldInfo(0x01C4, "ARMNT"),
 			new EnumFieldInfo(0xAA64, "ARM64"),
-			new EnumFieldInfo(0x0000, "???"),
+			new EnumFieldInfo(0x0000, "UNKNOWN"),
 			new EnumFieldInfo(0x0162, "R3000"),
 			new EnumFieldInfo(0x0166, "R4000"),
 			new EnumFieldInfo(0x0168, "R10000"),
