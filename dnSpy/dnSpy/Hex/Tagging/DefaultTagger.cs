@@ -20,10 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Tagging;
 using CT = dnSpy.Contracts.Text;
 using CTC = dnSpy.Contracts.Text.Classification;
+using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Tagging {
 	[Export(typeof(HexClassificationTags))]
@@ -83,6 +85,43 @@ namespace dnSpy.Hex.Tagging {
 		}
 
 		public override IEnumerable<IHexTextTagSpan<HexClassificationTag>> GetTags(HexTaggerContext context) {
+			// Minimize color switches between columns: colorize the space between eg. OFFSET/VALUES and
+			// VALUES/ASCII. This results in a small speed up displaying the lines.
+			var columnOrder = context.Line.ColumnOrder;
+			const HexColumnType INVALID_COLUMN = (HexColumnType)(-1);
+			var prevColumnType = INVALID_COLUMN;
+			for (int i = 0; i < columnOrder.Count; i++) {
+				var columnType = columnOrder[i];
+				if (!context.Line.IsColumnPresent(columnType))
+					continue;
+
+				if (prevColumnType != INVALID_COLUMN) {
+					// Don't prefer VALUES column since it has two group colors
+					var columnToUse = prevColumnType != HexColumnType.Values ? prevColumnType : columnType;
+					HexClassificationTag tag;
+					switch (columnToUse) {
+					case HexColumnType.Offset:
+						tag = hexClassificationTags.HexOffsetTag;
+						break;
+					case HexColumnType.Ascii:
+						tag = hexClassificationTags.HexAsciiTag;
+						break;
+					case HexColumnType.Values:
+						Debug.Fail("Should never happen");
+						tag = hexClassificationTags.HexValue0Tag;
+						break;
+
+					default: throw new InvalidOperationException();
+					}
+					var start = context.Line.GetSpan(prevColumnType, onlyVisibleCells: false).End;
+					var end = context.Line.GetSpan(columnType, onlyVisibleCells: false).Start;
+					if (start < end)
+						yield return new HexTextTagSpan<HexClassificationTag>(VST.Span.FromBounds(start, end), tag);
+				}
+
+				prevColumnType = columnType;
+			}
+
 			var allValid = context.Line.HexBytes.AllValid;
 			if (allValid == null) {
 				foreach (var cell in context.Line.ValueCells.GetVisibleCells()) {
