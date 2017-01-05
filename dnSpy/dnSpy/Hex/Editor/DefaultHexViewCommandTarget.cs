@@ -187,7 +187,7 @@ namespace dnSpy.Hex.Editor {
 			return false;
 		}
 
-		bool IsReadOnly => hexView.Options.DoesViewProhibitUserInput();
+		bool IsReadOnly => hexView.Buffer.IsReadOnly || hexView.Options.DoesViewProhibitUserInput();
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (IsReadOnly && IsEditCommand(group, cmdId))

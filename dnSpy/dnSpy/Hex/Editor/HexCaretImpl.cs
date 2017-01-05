@@ -212,7 +212,7 @@ namespace dnSpy.Hex.Editor {
 			Debug.Assert(imeState.Context == IntPtr.Zero);
 			Debug.Assert(imeState.HWND == IntPtr.Zero);
 			Debug.Assert(imeState.OldContext == IntPtr.Zero);
-			if (hexView.Options.DoesViewProhibitUserInput()) {
+			if (hexView.Buffer.IsReadOnly || hexView.Options.DoesViewProhibitUserInput()) {
 				imeState.Context = IntPtr.Zero;
 				imeState.HWND = IntPtr.Zero;
 			}

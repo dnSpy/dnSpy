@@ -783,7 +783,7 @@ namespace dnSpy.Hex.Editor.Search {
 			return newData;
 		}
 
-		public bool CanReplace => IsReplaceMode && !wpfHexView.Options.DoesViewProhibitUserInput();
+		public bool CanReplace => IsReplaceMode && !(wpfHexView.Buffer.IsReadOnly || wpfHexView.Options.DoesViewProhibitUserInput());
 		bool CanReplaceNext => CanReplace &&
 			hexSearchServiceFactory.IsSearchDataValid(DataKind, SearchString, (GetFindOptions(SearchKind.Replace, true) & OurFindOptions.MatchCase) != 0, IsBigEndian) &&
 			IsReplaceStringValid();

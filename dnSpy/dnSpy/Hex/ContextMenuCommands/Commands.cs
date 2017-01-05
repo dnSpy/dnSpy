@@ -67,7 +67,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		}
 
 		protected override ICommandTarget GetCommandTarget(HexViewContext context) => context.HexView.CommandTarget;
-		protected bool IsReadOnly(HexViewContext context) => context.HexView.Options.DoesViewProhibitUserInput();
+		protected bool IsReadOnly(HexViewContext context) => context.HexView.Buffer.IsReadOnly || context.HexView.Options.DoesViewProhibitUserInput();
 	}
 
 	abstract class HexViewCommandTargetMenuItemBase2 : HexViewCommandTargetMenuItemBase {
