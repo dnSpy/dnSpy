@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 
 namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
@@ -132,6 +133,26 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="formatter">Formatter</param>
 		public abstract void WriteName(HexFieldFormatter formatter);
+
+		/// <summary>
+		/// Returns the first field (recursively) that contains a <see cref="SimpleData"/> or null if none was found.
+		/// This field could be contained in a nested <see cref="ComplexData"/> instance.
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public BufferField GetSimpleField(HexPosition position) {
+			var structure = this;
+			for (;;) {
+				var field = structure.GetFieldByPosition(position);
+				if (field == null)
+					return null;
+				structure = field.Data as ComplexData;
+				if (structure == null) {
+					Debug.Assert(field.Data is SimpleData);
+					return field.Data is SimpleData ? field : null;
+				}
+			}
+		}
 	}
 
 	/// <summary>

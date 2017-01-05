@@ -94,23 +94,12 @@ namespace dnSpy.Hex.Files {
 			}
 		}
 
-		static BufferField GetField(ComplexData structure, HexPosition position) {
-			for (;;) {
-				var field = structure.GetFieldByPosition(position);
-				if (field == null)
-					return null;
-				structure = field.Data as ComplexData;
-				if (structure == null)
-					return field;
-			}
-		}
-
 		public override void WriteValue(ComplexData structure, HexPosition position) {
 			if (structure == null)
 				throw new ArgumentNullException(nameof(structure));
 			if (!structure.Span.Span.Contains(position))
 				throw new ArgumentOutOfRangeException(nameof(position));
-			var field = GetField(structure, position);
+			var field = structure.GetSimpleField(position);
 			Debug.Assert(field != null);
 			if (field == null)
 				return;

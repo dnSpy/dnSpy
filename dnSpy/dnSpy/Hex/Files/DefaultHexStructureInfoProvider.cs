@@ -64,7 +64,7 @@ namespace dnSpy.Hex.Files {
 				yield break;
 
 			var structure = info.Value.Structure;
-			var field = GetField(structure, position);
+			var field = structure.GetSimpleField(position);
 			Debug.Assert(field != null);
 			if (field == null)
 				yield break;
@@ -89,17 +89,6 @@ namespace dnSpy.Hex.Files {
 			}
 			else
 				yield return new HexStructureField(structure.Span, HexStructureFieldKind.Structure);
-		}
-
-		static BufferField GetField(ComplexData structure, HexPosition position) {
-			for (;;) {
-				var field = structure.GetFieldByPosition(position);
-				if (field == null)
-					return null;
-				structure = field.Data as ComplexData;
-				if (structure == null)
-					return field;
-			}
 		}
 
 		public override object GetToolTip(HexPosition position) => hexFileStructureInfoService.GetToolTip(position);

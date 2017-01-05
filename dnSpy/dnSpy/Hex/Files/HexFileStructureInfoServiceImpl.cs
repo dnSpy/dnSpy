@@ -133,17 +133,6 @@ namespace dnSpy.Hex.Files {
 			return null;
 		}
 
-		static BufferField GetField(ComplexData structure, HexPosition position) {
-			for (;;) {
-				var field = structure.GetFieldByPosition(position);
-				if (field == null)
-					return null;
-				structure = field.Data as ComplexData;
-				if (structure == null)
-					return field;
-			}
-		}
-
 		public override HexSpan? GetFieldReferenceSpan(HexPosition position) {
 			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
@@ -159,7 +148,7 @@ namespace dnSpy.Hex.Files {
 					return span;
 			}
 
-			var field = GetField(structure, position);
+			var field = structure.GetSimpleField(position);
 			span = (field?.Data as SimpleData)?.GetFieldReferenceSpan(file);
 			if (span != null)
 				return span;
