@@ -103,6 +103,8 @@ namespace dnSpy.Decompiler.MSBuild {
 					continue;
 				if (o.MethodDeclaration.DeclaringType.FullName != "System.Windows.Markup.IComponentConnector")
 					continue;
+				if (o.MethodDeclaration.Name != "Connect")
+					continue;
 				return true;
 			}
 
