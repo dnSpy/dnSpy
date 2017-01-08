@@ -60,7 +60,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			baseDirs.Add(baseDir);
 			//TODO: Add all privatePath dirs found in app.config
 			foreach (var bd in baseDirs) {
-				foreach (var dir in GetDirectories(baseDir)) {
+				foreach (var dir in GetDirectories(bd)) {
 					var name = Path.GetFileName(dir);
 					if (!IsValidCulture(name))
 						continue;
