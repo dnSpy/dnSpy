@@ -130,7 +130,7 @@
     <value>.sln Name ({0}) muss relativ zum Projektverzeichnis sein</value>
   </data>
   <data name="InvalidToken" xml:space="preserve">
-    <value>Ungültiger Metadatentoken</value>
+    <value>Ungültiges Metadatentoken</value>
   </data>
   <data name="InvalidVSVersion" xml:space="preserve">
     <value>Ungültige Version von Visual Studio: {0}</value>
@@ -154,7 +154,7 @@
     <value>Fehlender Sprachenname</value>
   </data>
   <data name="MissingMDToken" xml:space="preserve">
-    <value>Fehlender Metadatentoken</value>
+    <value>Fehlendes Metadatentoken</value>
   </data>
   <data name="MissingNumberOfThreads" xml:space="preserve">
     <value>Fehlende Anzahl von threads</value>

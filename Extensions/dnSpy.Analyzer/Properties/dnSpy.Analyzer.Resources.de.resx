@@ -205,7 +205,7 @@
     <value>Löschen</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Zeige Tokens</value>
+    <value>Tokens zeigen</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Syntax hervorheben</value>

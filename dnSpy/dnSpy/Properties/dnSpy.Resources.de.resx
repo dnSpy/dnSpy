@@ -187,7 +187,7 @@
     <value>Registergruppe schließen</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Cop_y</value>
+    <value>_Kopieren</value>
   </data>
   <data name="CopyKey" xml:space="preserve">
     <value>Strg+C</value>
@@ -607,7 +607,7 @@
     <value>Alle oberhalb</value>
   </data>
   <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
-    <value>STRG + B</value>
+    <value>Strg+B</value>
   </data>
   <data name="SearchWindow_Assembly" xml:space="preserve">
     <value>Assembly</value>
@@ -1282,7 +1282,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Kein</value>
   </data>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
-    <value>Show column line separators</value>
+    <value>Zeilentrennzeichen in Spalten anzeigen</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
     <value>_Versatz</value>
@@ -1401,7 +1401,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>_Endversatz</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>Offset Bi_t Size</value>
+    <value>Offset Bi_t Größe</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
     <value>_Zeige ASCII</value>
@@ -1452,7 +1452,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Strg+Alt+S</value>
   </data>
   <data name="ShortCutKeyCtrlB" xml:space="preserve">
-    <value>STRG + B</value>
+    <value>Strg+B</value>
   </data>
   <data name="ShortCutKeyCtrlD" xml:space="preserve">
     <value>Strg+D</value>
@@ -1507,7 +1507,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Text Editor</value>
   </data>
   <data name="Search_BigEndian" xml:space="preserve">
-    <value>Big endian (Alt+B)</value>
+    <value>Big Endian (Alt+B)</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
@@ -1522,84 +1522,153 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Strg+F</value>
   </data>
   <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
-    <value>Paste (Unicode and Length)</value>
+    <value>Einfügen (Unicode und Länge)</value>
   </data>
   <data name="PasteUTF8AndLength7Command" xml:space="preserve">
-    <value>Paste (UTF-8 and Length)</value>
+    <value>Einfügen (UTF-8 und Länge)</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+8</value>
+    <value>Strg+K, Strg+8</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
-    <value>Ctrl+K, Ctrl+U</value>
+    <value>Strg+K, Strg+U</value>
   </data>
   <data name="HexGoToCodeOrStructure" xml:space="preserve">
-    <value>Go to Code or Structure</value>
+    <value>Gehe zu Code oder Struktur</value>
   </data>
   <data name="ShortCutKeyF12" xml:space="preserve">
     <value>F12</value>
   </data>
   <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
-    <value>Highlight structure under mouse cursor</value>
+    <value>Struktur unter Cursor hervorheben</value>
   </data>
   <data name="HexToolTipIndex" xml:space="preserve">
-    <value>index</value>
+    <value>Index</value>
   </data>
   <data name="HexToolTipOffset" xml:space="preserve">
-    <value>offset</value>
+    <value>Versatz</value>
   </data>
   <data name="BigEndian" xml:space="preserve">
     <value>Big Endian</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
-    <value>Copy {0}</value>
+    <value>{0} kopieren</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>Copy Absolute Offset</value>
+    <value>Absoluten Versatz kopieren</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>Kopiere Dateiversatz</value>
+    <value>Dateiversatz kopieren</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>Copy RVA</value>
+    <value>RVA kopieren</value>
   </data>
   <data name="CopyValueCommand" xml:space="preserve">
-    <value>Copy Value</value>
+    <value>Wert kopieren</value>
   </data>
   <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
-    <value>Ctrl+Shift+3</value>
+    <value>Strg+Umschalt+3</value>
   </data>
   <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
-    <value>Ctrl+Shift+A</value>
+    <value>Strg+Umschalt+A</value>
   </data>
   <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
     <value>Strg+Umschalt+R</value>
   </data>
   <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
-    <value>Ctrl+Shift+V</value>
+    <value>Strg+Umschalt+V</value>
   </data>
   <data name="GoToAbsolutePosition" xml:space="preserve">
     <value>Position</value>
   </data>
   <data name="GoToCurrentPosition" xml:space="preserve">
-    <value>Current Position</value>
+    <value>Aktuelle Position</value>
   </data>
   <data name="GoToFilePosition" xml:space="preserve">
     <value>Datei</value>
   </data>
   <data name="ShortCutKeyCtrl1" xml:space="preserve">
-    <value>Ctrl+1</value>
+    <value>Strg+1</value>
   </data>
   <data name="ShortCutKeyCtrl2" xml:space="preserve">
-    <value>Ctrl+2</value>
+    <value>Strg+2</value>
   </data>
   <data name="ShortCutKeyCtrl3" xml:space="preserve">
-    <value>Ctrl+3</value>
+    <value>Strg+3</value>
   </data>
   <data name="ShortCutKeyCtrl4" xml:space="preserve">
-    <value>Ctrl+4</value>
+    <value>Strg+4</value>
   </data>
   <data name="SelectToNewPosition" xml:space="preserve">
-    <value>_Select to new position</value>
+    <value>Bis zur neuen Position auswählen</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>Strg+O</value>
+  </data>
+  <data name="SelectLength" xml:space="preserve">
+    <value>Länge</value>
+  </data>
+  <data name="GoToMetadata_Title" xml:space="preserve">
+    <value>Gehe zu Metadaten</value>
+  </data>
+  <data name="GoToMetadata_Token_Label" xml:space="preserve">
+    <value>_Token</value>
+  </data>
+  <data name="ShortCutKeyCtrl5" xml:space="preserve">
+    <value>Strg+5</value>
+  </data>
+  <data name="ShortCutKeyCtrl6" xml:space="preserve">
+    <value>Strg+6</value>
+  </data>
+  <data name="GoToMetadataCommand" xml:space="preserve">
+    <value>Gehe zu Metadaten...</value>
+  </data>
+  <data name="ShortCutKeyCtrlM" xml:space="preserve">
+    <value>Strg+M</value>
+  </data>
+  <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
+    <value>Ungültiger Versatz oder Metadaten Token</value>
+  </data>
+  <data name="GoToMetadataMethodBody" xml:space="preserve">
+    <value>Methodenrumpf</value>
+  </data>
+  <data name="GoToMetadataToken" xml:space="preserve">
+    <value>Metadaten Token</value>
+  </data>
+  <data name="GoToMetadata_Index_Label" xml:space="preserve">
+    <value>_Index</value>
+  </data>
+  <data name="HexFollowFieldValueReference" xml:space="preserve">
+    <value>Verweis folgen</value>
+  </data>
+  <data name="ShortCutKeyCtrlF12" xml:space="preserve">
+    <value>Strg+F12</value>
+  </data>
+  <data name="HexEditorSelectFileCommand" xml:space="preserve">
+    <value>Datei auswählen</value>
+  </data>
+  <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
+    <value>Verschachtelte Datei auswählen</value>
+  </data>
+  <data name="SelectSpecialCommand" xml:space="preserve">
+    <value>Auswählen spezial</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
+    <value>Strg+E, Strg+F</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlN" xml:space="preserve">
+    <value>Strg+E, Strg+N</value>
+  </data>
+  <data name="HexEditorSelectStructureCommand" xml:space="preserve">
+    <value>Struktur auswählen</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
+    <value>Strg+E, Strg+S</value>
+  </data>
+  <data name="HexEditFieldCommand" xml:space="preserve">
+    <value>Bearbeite Feld</value>
+  </data>
+  <data name="OptionColorizeText" xml:space="preserve">
+    <value>Den Text einfärben</value>
   </data>
 </root>

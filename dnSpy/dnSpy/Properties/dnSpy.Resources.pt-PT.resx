@@ -1539,7 +1539,7 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Realçar estrutura sob cursor do rato</value>
   </data>
   <data name="HexToolTipIndex" xml:space="preserve">
-    <value>index</value>
+    <value>índice</value>
   </data>
   <data name="HexToolTipOffset" xml:space="preserve">
     <value>offset</value>
@@ -1548,54 +1548,123 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Big Endian</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
-    <value>Copy {0}</value>
+    <value>Copiar {0}</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>Copy Absolute Offset</value>
+    <value>Copiar Offset Absoluto</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
     <value>Copiar offset do ficheiro</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>Copy RVA</value>
+    <value>Copiar RVA</value>
   </data>
   <data name="CopyValueCommand" xml:space="preserve">
-    <value>Copy Value</value>
+    <value>Copiar Valor</value>
   </data>
   <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
-    <value>Ctrl+Shift+3</value>
+    <value>CTRL + Shift + 3</value>
   </data>
   <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
-    <value>Ctrl+Shift+A</value>
+    <value>CTRL + Shift + A</value>
   </data>
   <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
     <value>CTRL+Shift+R</value>
   </data>
   <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
-    <value>Ctrl+Shift+V</value>
+    <value>CTRL + Shift + V</value>
   </data>
   <data name="GoToAbsolutePosition" xml:space="preserve">
     <value>Position</value>
   </data>
   <data name="GoToCurrentPosition" xml:space="preserve">
-    <value>Current Position</value>
+    <value>Posição Atual</value>
   </data>
   <data name="GoToFilePosition" xml:space="preserve">
     <value>Ficheiro</value>
   </data>
   <data name="ShortCutKeyCtrl1" xml:space="preserve">
-    <value>Ctrl+1</value>
+    <value>CTRL + 1</value>
   </data>
   <data name="ShortCutKeyCtrl2" xml:space="preserve">
-    <value>Ctrl+2</value>
+    <value>CTRL + 2</value>
   </data>
   <data name="ShortCutKeyCtrl3" xml:space="preserve">
-    <value>Ctrl+3</value>
+    <value>CTRL + 3</value>
   </data>
   <data name="ShortCutKeyCtrl4" xml:space="preserve">
-    <value>Ctrl+4</value>
+    <value>CTRL + 4</value>
   </data>
   <data name="SelectToNewPosition" xml:space="preserve">
     <value>_Select to new position</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>CTRL + O</value>
+  </data>
+  <data name="SelectLength" xml:space="preserve">
+    <value>Comprimento</value>
+  </data>
+  <data name="GoToMetadata_Title" xml:space="preserve">
+    <value>Ir para Metadados</value>
+  </data>
+  <data name="GoToMetadata_Token_Label" xml:space="preserve">
+    <value>_Token</value>
+  </data>
+  <data name="ShortCutKeyCtrl5" xml:space="preserve">
+    <value>CTRL + 5</value>
+  </data>
+  <data name="ShortCutKeyCtrl6" xml:space="preserve">
+    <value>CTRL + 6</value>
+  </data>
+  <data name="GoToMetadataCommand" xml:space="preserve">
+    <value>Go to Metadata...</value>
+  </data>
+  <data name="ShortCutKeyCtrlM" xml:space="preserve">
+    <value>CTRL + M</value>
+  </data>
+  <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
+    <value>Invalid offset or metadata token</value>
+  </data>
+  <data name="GoToMetadataMethodBody" xml:space="preserve">
+    <value>Method Body</value>
+  </data>
+  <data name="GoToMetadataToken" xml:space="preserve">
+    <value>Metadata Token</value>
+  </data>
+  <data name="GoToMetadata_Index_Label" xml:space="preserve">
+    <value>_Índice</value>
+  </data>
+  <data name="HexFollowFieldValueReference" xml:space="preserve">
+    <value>Follow Reference</value>
+  </data>
+  <data name="ShortCutKeyCtrlF12" xml:space="preserve">
+    <value>CTRL + F12</value>
+  </data>
+  <data name="HexEditorSelectFileCommand" xml:space="preserve">
+    <value>Selecionar Ficheiro</value>
+  </data>
+  <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
+    <value>Select Nested File</value>
+  </data>
+  <data name="SelectSpecialCommand" xml:space="preserve">
+    <value>Select Special</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
+    <value>CTRL + E, Ctrl + F</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlN" xml:space="preserve">
+    <value>CTRL + E, Ctrl + N</value>
+  </data>
+  <data name="HexEditorSelectStructureCommand" xml:space="preserve">
+    <value>Select Structure</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
+    <value>CTRL + K, CTRL + S</value>
+  </data>
+  <data name="HexEditFieldCommand" xml:space="preserve">
+    <value>Editar Campo</value>
+  </data>
+  <data name="OptionColorizeText" xml:space="preserve">
+    <value>Colorize the text</value>
   </data>
 </root>

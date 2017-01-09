@@ -280,7 +280,7 @@
     <value>_Weiter</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Kop_ieren</value>
+    <value>_Kopieren</value>
   </data>
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>A_rgumente</value>
@@ -1009,7 +1009,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Rückgabetypen anzeigen</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Zeige Tokens</value>
+    <value>Tokens zeigen</value>
   </data>
   <data name="ShowTypeKeywordsCommand" xml:space="preserve">
     <value>Typschlüsselwörter anzeigen</value>

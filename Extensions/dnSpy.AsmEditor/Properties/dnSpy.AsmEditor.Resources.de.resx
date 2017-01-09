@@ -214,13 +214,13 @@
     <value>Als Te_xt kopieren</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Cop_y</value>
+    <value>_Kopieren</value>
   </data>
   <data name="CopyILBytesCommand" xml:space="preserve">
-    <value>Kopiere IL Bytes</value>
+    <value>IL Bytes kopieren</value>
   </data>
   <data name="CopyILBytesKey" xml:space="preserve">
-    <value>STRG + B</value>
+    <value>Strg+B</value>
   </data>
   <data name="CouldNotResolveType" xml:space="preserve">
     <value>Der Typ konnte nicht aufgelöst werden. Stellen Sie sicher, dass dessen Assembly bereits geladen wurde.</value>
@@ -1083,25 +1083,25 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Konvertiere NetModule zu Assembly</value>
   </data>
   <data name="CopyAsTextCommand2" xml:space="preserve">
-    <value>Kopiere als _Text</value>
+    <value>Als _Text kopieren</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>Kopiere Dateiversatz</value>
+    <value>Dateiversatz kopieren</value>
   </data>
   <data name="CopyFileOffsetsCommand" xml:space="preserve">
-    <value>Kopiere Dateiversätze</value>
+    <value>Dateiversätze kopieren</value>
   </data>
   <data name="CopyMetaDataToken" xml:space="preserve">
-    <value>Kopiere _MD Token</value>
+    <value>_MD Token kopieren</value>
   </data>
   <data name="CopyMetaDataTokens" xml:space="preserve">
-    <value>Kopiere _MD Tokens</value>
+    <value>_MD Tokens kopieren</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>K_opiere RVA</value>
+    <value>RVA _kopieren</value>
   </data>
   <data name="CopyRVAsCommand" xml:space="preserve">
-    <value>K_opiere RVAs</value>
+    <value>RVAs _kopieren</value>
   </data>
   <data name="CreateAnExceptionCatchType" xml:space="preserve">
     <value>Erstelle einen Ausnahmefangtyp</value>
@@ -2498,6 +2498,6 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Alte In-Memory-Module schließen</value>
   </data>
   <data name="CloseAllMissingFilesCommand" xml:space="preserve">
-    <value>Close All Missing Files</value>
+    <value>Alle fehlenden Dateien schließen</value>
   </data>
 </root>
