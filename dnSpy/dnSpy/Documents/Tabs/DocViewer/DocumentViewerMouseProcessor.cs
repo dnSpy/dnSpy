@@ -173,7 +173,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		Cursor oldCursor;
 
 		public override void PostprocessMouseLeave(MouseEventArgs e) => RestoreState();
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => RestoreState();
+
+		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			if (e.OldSnapshot != e.NewSnapshot)
+				RestoreState();
+		}
 
 		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) => UpdateModifiers();
 		void VisualElement_PreviewKeyUp(object sender, KeyEventArgs e) => UpdateModifiers();
