@@ -1409,16 +1409,16 @@
     <value>S_how Offset</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
-    <value>Show _Values</value>
+    <value>显示数值(_V)</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Start Offset</value>
+    <value>起始偏移量(_S)</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Local Hex Editor Settings</value>
+    <value>本地十六进制编辑器设置</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Use _Relative Offsets</value>
+    <value>使用相对偏移</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
     <value>所有的偏移量为相对于起始偏移量</value>
@@ -1521,10 +1521,10 @@
     <value>Ctrl+F</value>
   </data>
   <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
-    <value>Paste (Unicode and Length)</value>
+    <value>粘贴 (Unicode 及 长度)</value>
   </data>
   <data name="PasteUTF8AndLength7Command" xml:space="preserve">
-    <value>Paste (UTF-8 and Length)</value>
+    <value>粘贴 (UTF-8 及 长度)</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
     <value>Ctrl+K, Ctrl+8</value>
@@ -1545,13 +1545,13 @@
     <value>index</value>
   </data>
   <data name="HexToolTipOffset" xml:space="preserve">
-    <value>offset</value>
+    <value>偏移</value>
   </data>
   <data name="BigEndian" xml:space="preserve">
     <value>Big Endian</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
-    <value>Copy {0}</value>
+    <value>复制 {0}</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
     <value>Copy Absolute Offset</value>
@@ -1563,7 +1563,7 @@
     <value>Copy RVA</value>
   </data>
   <data name="CopyValueCommand" xml:space="preserve">
-    <value>Copy Value</value>
+    <value>复制数值</value>
   </data>
   <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
     <value>Ctrl+Shift+3</value>
@@ -1578,10 +1578,10 @@
     <value>Ctrl+Shift+V</value>
   </data>
   <data name="GoToAbsolutePosition" xml:space="preserve">
-    <value>Position</value>
+    <value>位置</value>
   </data>
   <data name="GoToCurrentPosition" xml:space="preserve">
-    <value>Current Position</value>
+    <value>当前位置</value>
   </data>
   <data name="GoToFilePosition" xml:space="preserve">
     <value>文件</value>
@@ -1605,7 +1605,7 @@
     <value>Ctrl+O</value>
   </data>
   <data name="SelectLength" xml:space="preserve">
-    <value>Length</value>
+    <value>长度</value>
   </data>
   <data name="GoToMetadata_Title" xml:space="preserve">
     <value>Go to Metadata</value>
@@ -1644,7 +1644,7 @@
     <value>Ctrl+F12</value>
   </data>
   <data name="HexEditorSelectFileCommand" xml:space="preserve">
-    <value>Select File</value>
+    <value>选择文件</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
     <value>Select Nested File</value>
