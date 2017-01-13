@@ -19,6 +19,7 @@
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortSystemUsingStatementsFirst}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_SortSystemFirst}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortCustomAttributes}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_SortCustomAttributes}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.UseSourceCodeOrder}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_UseSourceCodeOrder}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.OneCustomAttributePerLine}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_OneCustomAttributePerLine}"/>
             <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_DecompilationOrder}">
                 <Grid>
                     <Grid.RowDefinitions>

@@ -251,6 +251,15 @@ namespace dnSpy.Decompiler.ILSpy.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show one custom attribute per line.
+        /// </summary>
+        public static string DecompilerSettings_OneCustomAttributePerLine {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_OneCustomAttributePerLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove empty default constructors.
         /// </summary>
         public static string DecompilerSettings_RemoveEmptyDefaultCtors {

@@ -191,6 +191,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_AllowFieldInitializers,
 				Name = DecompilerOptionConstants.AllowFieldInitializers_NAME,
 			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.OneCustomAttributePerLine_GUID,
+						() => decompilerSettings.OneCustomAttributePerLine, a => decompilerSettings.OneCustomAttributePerLine = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_OneCustomAttributePerLine,
+				Name = DecompilerOptionConstants.OneCustomAttributePerLine_NAME,
+			};
 		}
 
 		string GetMemberOrder() =>

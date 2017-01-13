@@ -175,6 +175,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			if (g.SortCustomAttributes != d.SortCustomAttributes) flags |= RefreshFlags.CSharp;
 			if (g.UseSourceCodeOrder != d.UseSourceCodeOrder) flags |= RefreshFlags.CSharp;
 			if (g.AllowFieldInitializers != d.AllowFieldInitializers) flags |= RefreshFlags.CSharp;
+			if (g.OneCustomAttributePerLine != d.OneCustomAttributePerLine) flags |= RefreshFlags.CSharp;
 
 			if ((flags & RefreshFlags.ShowMember) != 0)
 				appRefreshSettings.Add(AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER);

@@ -83,23 +83,6 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				if (def == null)
 					continue;
 
-				// The decompiler doesn't remove IteratorStateMachineAttributes/AsyncStateMachineAttribute.
-				// These attributes usually contain the name of a type with invalid characters in its name
-				// and will prevent the user from compiling the code.
-				if (en.SymbolKind == SymbolKind.Method) {
-					foreach (var sect in en.Attributes) {
-						foreach (var attr in sect.Attributes) {
-							var ca = attr.Annotation<CustomAttribute>();
-							var fn = ca?.TypeFullName;
-							if (fn == "System.Runtime.CompilerServices.IteratorStateMachineAttribute" ||
-								fn == "System.Runtime.CompilerServices.AsyncStateMachineAttribute")
-								attr.Remove();
-						}
-						if (!sect.Attributes.Any())
-							sect.Remove();
-					}
-				}
-
 				if (makeEverythingPublic) {
 					const Modifiers accessFlags = Modifiers.Private | Modifiers.Internal | Modifiers.Protected | Modifiers.Public;
 					en.Modifiers = (en.Modifiers & ~accessFlags) | Modifiers.Public;
@@ -136,6 +119,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 
 					if (clearModifiers)
 						en.Modifiers &= ~accessFlags;
+
+					// Make sure the comments are still shown before the method and its modifiers
+					var comments = en.GetChildrenByRole(Roles.Comment).Reverse().ToArray();
+					foreach (var c in comments) {
+						c.Remove();
+						en.InsertChildAfter(null, c, Roles.Comment);
+					}
 				}
 
 				if (partialTypes.Contains(def)) {
@@ -150,11 +140,6 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 					}
 				}
 				else {
-					// The decompiler doesn't support Roslyn yet so remove this since
-					// it will break compilation
-					if (def is TypeDef && def.Name == "<>c")
-						en.Remove();
-
 					if (showDefinitions) {
 						if (!showAll && !defsToShow.Contains(def))
 							en.Remove();
