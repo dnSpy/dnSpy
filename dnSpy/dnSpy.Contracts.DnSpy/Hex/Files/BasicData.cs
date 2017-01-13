@@ -720,7 +720,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// </summary>
 	public abstract class EnumData : SimpleData {
 		/// <summary>
-		/// Gets all flag infos
+		/// Gets all enum field infos
 		/// </summary>
 		public ReadOnlyCollection<EnumFieldInfo> EnumFieldInfos { get; }
 
