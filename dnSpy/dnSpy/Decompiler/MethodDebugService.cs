@@ -104,8 +104,16 @@ namespace dnSpy.Decompiler {
 			var methodStatements = FindByLineAndTextOffset(line.Start.Position, line.End.Position, textPosition);
 			if (methodStatements == null && line.Start.Position != textPosition)
 				methodStatements = FindByLineAndTextOffset(line.Start.Position, line.End.Position, line.Start.Position);
+			if (methodStatements != null && methodStatements.Count > 1) {
+				// If there are two methods (get; set;) on the same line, only return one of them
+				var exact = methodStatements.Where(a => a.Statement.TextSpan.Start <= textPosition && textPosition < a.Statement.TextSpan.End).ToList();
+				if (exact.Count != 0)
+					methodStatements = exact;
+				else
+					methodStatements = null;
+			}
 			if (methodStatements == null)
-				methodStatements = GetClosest(line.Start.Position, line.End.Position);
+				methodStatements = GetClosest(line.Start.Position, line.End.Position, textPosition);
 
 			if (methodStatements != null) {
 				if (!sameMethod || IsSameMethod(methodStatements, textPosition))
@@ -149,7 +157,7 @@ namespace dnSpy.Decompiler {
 			return list == null ? null : list.Distinct().ToList();
 		}
 
-		List<MethodSourceStatement> GetClosest(int lineStart, int lineEnd) {
+		List<MethodSourceStatement> GetClosest(int lineStart, int lineEnd, int textPosition) {
 			var list = new List<MethodSourceStatement>();
 			foreach (var info in dict.Values) {
 				MethodSourceStatement? methodSourceStatement = null;
@@ -164,7 +172,7 @@ namespace dnSpy.Decompiler {
 						list.Add(methodSourceStatement.Value);
 					else if (methodSourceStatement.Value.Statement.TextSpan.Start == list[0].Statement.TextSpan.Start)
 						list.Add(methodSourceStatement.Value);
-					else if (methodSourceStatement.Value.Statement.TextSpan.Start < list[0].Statement.TextSpan.Start) {
+					else if (GetDist(methodSourceStatement.Value.Statement.TextSpan, textPosition) < GetDist(list[0].Statement.TextSpan, textPosition)) {
 						list.Clear();
 						list.Add(methodSourceStatement.Value);
 					}
@@ -174,6 +182,12 @@ namespace dnSpy.Decompiler {
 			if (list.Count == 0)
 				return null;
 			return list.Distinct().ToList();
+		}
+
+		static int GetDist(TextSpan span, int textPosition) {
+			int a = Math.Abs(span.Start - textPosition);
+			int b = Math.Abs(span.End - textPosition);
+			return Math.Min(a, b);
 		}
 
 		public MethodSourceStatement? FindByCodeOffset(MethodDef method, uint codeOffset) =>
