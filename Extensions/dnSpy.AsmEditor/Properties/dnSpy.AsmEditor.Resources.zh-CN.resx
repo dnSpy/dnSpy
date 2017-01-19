@@ -440,7 +440,7 @@
     <value>字段类型: {0}</value>
   </data>
   <data name="Field_Access" xml:space="preserve">
-    <value>_Access</value>
+    <value>访问</value>
   </data>
   <data name="Field_DefaultValueInfo" xml:space="preserve">
     <value>字段默认值</value>
@@ -491,7 +491,7 @@
     <value>默认构造函数(_D)</value>
   </data>
   <data name="GP_Kind" xml:space="preserve">
-    <value>Kind</value>
+    <value>类别</value>
   </data>
   <data name="GP_Kind_ToolTip" xml:space="preserve">
     <value>Only used if MD header version is 1.1 (0x0101). It's never 1.1 so ignore Kind</value>
@@ -512,7 +512,7 @@
     <value>{0} RVA</value>
   </data>
   <data name="HexField_Size" xml:space="preserve">
-    <value>{0} Size</value>
+    <value>{0} 大小</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
     <value>优先32位</value>
@@ -623,7 +623,7 @@
     <value>_NativeType</value>
   </data>
   <data name="MarshalType_Nothing" xml:space="preserve">
-    <value>nothing</value>
+    <value>无</value>
   </data>
   <data name="MarshalType_NumElems" xml:space="preserve">
     <value>_NumElems</value>

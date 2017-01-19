@@ -180,6 +180,9 @@
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>反编译对象或集合的初始值设定项</value>
   </data>
+  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
+    <value>每行显示一个自定义属性</value>
+  </data>
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
     <value>删除空的默认构造函数</value>
   </data>

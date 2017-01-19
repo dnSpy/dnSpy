@@ -1533,13 +1533,13 @@
     <value>Ctrl+K, Ctrl+U</value>
   </data>
   <data name="HexGoToCodeOrStructure" xml:space="preserve">
-    <value>Go to Code or Structure</value>
+    <value>转到代码或结构</value>
   </data>
   <data name="ShortCutKeyF12" xml:space="preserve">
     <value>F12</value>
   </data>
   <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
-    <value>Highlight structure under mouse cursor</value>
+    <value>高亮光标指向的结构</value>
   </data>
   <data name="HexToolTipIndex" xml:space="preserve">
     <value>index</value>
@@ -1608,7 +1608,7 @@
     <value>长度</value>
   </data>
   <data name="GoToMetadata_Title" xml:space="preserve">
-    <value>Go to Metadata</value>
+    <value>转至元数据</value>
   </data>
   <data name="GoToMetadata_Token_Label" xml:space="preserve">
     <value>_Token</value>
@@ -1620,7 +1620,7 @@
     <value>Ctrl+6</value>
   </data>
   <data name="GoToMetadataCommand" xml:space="preserve">
-    <value>Go to Metadata...</value>
+    <value>转至元数据...</value>
   </data>
   <data name="ShortCutKeyCtrlM" xml:space="preserve">
     <value>Ctrl+M</value>
@@ -1629,7 +1629,7 @@
     <value>Invalid offset or metadata token</value>
   </data>
   <data name="GoToMetadataMethodBody" xml:space="preserve">
-    <value>Method Body</value>
+    <value>方法主体</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
     <value>Metadata Token</value>
@@ -1668,6 +1668,6 @@
     <value>编辑字段</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
-    <value>Colorize the text</value>
+    <value>对文本进行着色</value>
   </data>
 </root>

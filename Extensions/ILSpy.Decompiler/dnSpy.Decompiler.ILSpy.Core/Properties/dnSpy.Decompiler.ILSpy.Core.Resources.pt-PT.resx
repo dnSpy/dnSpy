@@ -180,6 +180,9 @@
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Descompilar objetos ou inicializadores de coleção</value>
   </data>
+  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
+    <value>Show one custom attribute per line</value>
+  </data>
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
     <value>Remover construtores padrão vazios</value>
   </data>

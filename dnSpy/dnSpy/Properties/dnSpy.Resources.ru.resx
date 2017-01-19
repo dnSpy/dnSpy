@@ -1533,37 +1533,37 @@
     <value>CTRL+K, Ctrl+U</value>
   </data>
   <data name="HexGoToCodeOrStructure" xml:space="preserve">
-    <value>Go to Code or Structure</value>
+    <value>Перейти к коду или структуре</value>
   </data>
   <data name="ShortCutKeyF12" xml:space="preserve">
     <value>F12</value>
   </data>
   <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
-    <value>Highlight structure under mouse cursor</value>
+    <value>Подсветить структуру под курсором</value>
   </data>
   <data name="HexToolTipIndex" xml:space="preserve">
-    <value>index</value>
+    <value>индекс</value>
   </data>
   <data name="HexToolTipOffset" xml:space="preserve">
-    <value>offset</value>
+    <value>смещение</value>
   </data>
   <data name="BigEndian" xml:space="preserve">
     <value>Big Endian</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
-    <value>Copy {0}</value>
+    <value>Копировать {0}</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>Copy Absolute Offset</value>
+    <value>Копировать абсолютное смещение</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
     <value>Копировать смещение в файле</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>Copy RVA</value>
+    <value>Копировать RVA</value>
   </data>
   <data name="CopyValueCommand" xml:space="preserve">
-    <value>Copy Value</value>
+    <value>Копировать значение</value>
   </data>
   <data name="ShortCutKeyCtrlShift3" xml:space="preserve">
     <value>Ctrl+Shift+3</value>
@@ -1578,10 +1578,10 @@
     <value>Ctrl+Shift+V</value>
   </data>
   <data name="GoToAbsolutePosition" xml:space="preserve">
-    <value>Position</value>
+    <value>Позиция</value>
   </data>
   <data name="GoToCurrentPosition" xml:space="preserve">
-    <value>Current Position</value>
+    <value>Текущая позиция</value>
   </data>
   <data name="GoToFilePosition" xml:space="preserve">
     <value>Файл</value>
@@ -1599,19 +1599,19 @@
     <value>Ctrl+4</value>
   </data>
   <data name="SelectToNewPosition" xml:space="preserve">
-    <value>_Select to new position</value>
+    <value>_Выбрать в новую позицию</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
     <value>Ctrl+O</value>
   </data>
   <data name="SelectLength" xml:space="preserve">
-    <value>Length</value>
+    <value>Длина</value>
   </data>
   <data name="GoToMetadata_Title" xml:space="preserve">
-    <value>Go to Metadata</value>
+    <value>Переход к метаданным</value>
   </data>
   <data name="GoToMetadata_Token_Label" xml:space="preserve">
-    <value>_Token</value>
+    <value>_Токен</value>
   </data>
   <data name="ShortCutKeyCtrl5" xml:space="preserve">
     <value>Ctrl+5</value>
@@ -1620,37 +1620,37 @@
     <value>Ctrl+6</value>
   </data>
   <data name="GoToMetadataCommand" xml:space="preserve">
-    <value>Go to Metadata...</value>
+    <value>Перейти к метаданным...</value>
   </data>
   <data name="ShortCutKeyCtrlM" xml:space="preserve">
     <value>Ctrl+M</value>
   </data>
   <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
-    <value>Invalid offset or metadata token</value>
+    <value>Неверное смещение или токен метаданных</value>
   </data>
   <data name="GoToMetadataMethodBody" xml:space="preserve">
-    <value>Method Body</value>
+    <value>Тело метода</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
-    <value>Metadata Token</value>
+    <value>Токен метаданных</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
-    <value>_Index</value>
+    <value>_Индекс</value>
   </data>
   <data name="HexFollowFieldValueReference" xml:space="preserve">
-    <value>Follow Reference</value>
+    <value>Перейти по ссылке</value>
   </data>
   <data name="ShortCutKeyCtrlF12" xml:space="preserve">
     <value>Ctrl+F12</value>
   </data>
   <data name="HexEditorSelectFileCommand" xml:space="preserve">
-    <value>Select File</value>
+    <value>Выбрать файл</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
-    <value>Select Nested File</value>
+    <value>Выбрать вложенный файл</value>
   </data>
   <data name="SelectSpecialCommand" xml:space="preserve">
-    <value>Select Special</value>
+    <value>Выбрать специальное</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
     <value>Ctrl+E, Ctrl+F</value>
@@ -1659,7 +1659,7 @@
     <value>Ctrl+E, Ctrl+N</value>
   </data>
   <data name="HexEditorSelectStructureCommand" xml:space="preserve">
-    <value>Select Structure</value>
+    <value>Выбрать структуру</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
     <value>Ctrl+E, Ctrl+S</value>
@@ -1668,6 +1668,6 @@
     <value>Изменить поле</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
-    <value>Colorize the text</value>
+    <value>Раскрасить текст</value>
   </data>
 </root>

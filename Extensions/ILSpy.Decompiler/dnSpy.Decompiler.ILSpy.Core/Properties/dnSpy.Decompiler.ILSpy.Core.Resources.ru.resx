@@ -180,6 +180,9 @@
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Декомпилировать инициализаторы объекта или коллекции</value>
   </data>
+  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
+    <value>Показывать по одному атрибуту на строке</value>
+  </data>
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
     <value>Удалить пустые конструкторы по умолчанию</value>
   </data>

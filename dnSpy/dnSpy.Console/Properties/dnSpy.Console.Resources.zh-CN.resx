@@ -286,7 +286,7 @@
     <value>路径</value>
   </data>
   <data name="ExampleDescription1" xml:space="preserve">
-    <value>Decompiles all .NET files in the above directory and saves files to C:\out\path</value>
+    <value>反编译目录中所有.NET文件并保存到C:\out\path</value>
   </data>
   <data name="ExampleDescription2" xml:space="preserve">
     <value>反编译以上目录及子目录中所有.NET 文件</value>
@@ -298,7 +298,7 @@
     <value>Decompiles the member with token 0x06000123</value>
   </data>
   <data name="ExampleDescription5" xml:space="preserve">
-    <value>Decompiles System.Int32 from mscorlib</value>
+    <value>从 mscorlib 反编译 System.Int32</value>
   </data>
   <data name="ExamplesHeader" xml:space="preserve">
     <value>例如：</value>
