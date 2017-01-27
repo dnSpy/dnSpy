@@ -120,28 +120,16 @@ namespace dnSpy.Search {
 
 				if (o is DsDocumentNode[]) {
 					Parallel.ForEach((DsDocumentNode[])o, opts, node => {
-						try {
-							cancellationToken.ThrowIfCancellationRequested();
-							var searcher = new FilterSearcher(filterSearcherOptions);
-							searcher.SearchAssemblies(new DsDocumentNode[] { node });
-						}
-						catch {
-							Cancel();
-							throw;
-						}
+						cancellationToken.ThrowIfCancellationRequested();
+						var searcher = new FilterSearcher(filterSearcherOptions);
+						searcher.SearchAssemblies(new DsDocumentNode[] { node });
 					});
 				}
 				else if (o is SearchTypeInfo[]) {
 					Parallel.ForEach((SearchTypeInfo[])o, opts, info => {
-						try {
-							cancellationToken.ThrowIfCancellationRequested();
-							var searcher = new FilterSearcher(filterSearcherOptions);
-							searcher.SearchTypes(new SearchTypeInfo[] { info });
-						}
-						catch {
-							Cancel();
-							throw;
-						}
+						cancellationToken.ThrowIfCancellationRequested();
+						var searcher = new FilterSearcher(filterSearcherOptions);
+						searcher.SearchTypes(new SearchTypeInfo[] { info });
 					});
 				}
 				else
@@ -151,10 +139,13 @@ namespace dnSpy.Search {
 				if (ex.InnerExceptions.Any(a => a is TooManyResultsException))
 					TooManyResults = true;
 				else
-					throw;
+					Cancel();
 			}
 			catch (TooManyResultsException) {
 				TooManyResults = true;
+			}
+			catch {
+				Cancel();
 			}
 			finally {
 				filterSearcherOptions.Dispatcher.BeginInvoke(DISPATCHER_PRIO, new Action(SearchCompleted));
