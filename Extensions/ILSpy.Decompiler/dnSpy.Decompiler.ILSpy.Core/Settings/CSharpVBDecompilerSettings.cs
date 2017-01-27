@@ -196,6 +196,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_OneCustomAttributePerLine,
 				Name = DecompilerOptionConstants.OneCustomAttributePerLine_NAME,
 			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.TypeAddInternalModifier_GUID,
+						() => decompilerSettings.TypeAddInternalModifier, a => decompilerSettings.TypeAddInternalModifier = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_TypeAddInternalModifier,
+				Name = DecompilerOptionConstants.TypeAddInternalModifier_NAME,
+			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.MemberAddPrivateModifier_GUID,
+						() => decompilerSettings.MemberAddPrivateModifier, a => decompilerSettings.MemberAddPrivateModifier = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MemberAddPrivateModifier,
+				Name = DecompilerOptionConstants.MemberAddPrivateModifier_NAME,
+			};
 		}
 
 		string GetMemberOrder() =>

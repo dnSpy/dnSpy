@@ -188,5 +188,15 @@ namespace dnSpy.Contracts.Decompiler {
 		public static readonly Guid OneCustomAttributePerLine_GUID = new Guid("DFFAF5AE-2A25-4A3A-A82E-779B58DA734A");
 		/// <summary />
 		public static readonly string OneCustomAttributePerLine_NAME = "field-initializers";
+
+		/// <summary />
+		public static readonly Guid TypeAddInternalModifier_GUID = new Guid("354FAA68-7CDC-478E-9414-5C066C45C3F3");
+		/// <summary />
+		public static readonly string TypeAddInternalModifier_NAME = "field-initializers";
+
+		/// <summary />
+		public static readonly Guid MemberAddPrivateModifier_GUID = new Guid("2E764781-2075-47DC-BEE5-7F5F560BA726");
+		/// <summary />
+		public static readonly string MemberAddPrivateModifier_NAME = "field-initializers";
 	}
 }

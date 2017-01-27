@@ -134,6 +134,12 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 					return variable.OriginalVariable;
 				return variable.Id;
 			}
+			var lbl = (node.Parent?.Parent as GoToStatement)?.Label ?? (node.Parent?.Parent as LabelDeclarationStatement)?.Label;
+			if (lbl != null) {
+				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
+				if (method != null)
+					return method.ToString() + lbl;
+			}
 			return null;
 		}
 

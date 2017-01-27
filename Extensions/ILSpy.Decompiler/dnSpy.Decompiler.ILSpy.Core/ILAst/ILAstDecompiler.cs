@@ -92,7 +92,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			var bodyInfo = StartKeywordBlock(output, ".body", method);
 
 			ILAstBuilder astBuilder = new ILAstBuilder();
-			ILBlock ilMethod = new ILBlock();
+			ILBlock ilMethod = new ILBlock(CodeBracesRangeFlags.MethodBraces);
 			DecompilerContext context = new DecompilerContext(method.Module, MetadataTextColorProvider) { CurrentType = method.DeclaringType, CurrentMethod = method };
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 
@@ -100,6 +100,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
 			}
 
+			if (context.CurrentMethodIsYieldReturn) {
+				output.Write("yield", BoxedTextColor.Keyword);
+				output.Write(" ", BoxedTextColor.Text);
+				output.WriteLine("return", BoxedTextColor.Keyword);
+			}
 			if (context.CurrentMethodIsAsync) {
 				output.Write("async", BoxedTextColor.Keyword);
 				output.Write("/", BoxedTextColor.Punctuation);
@@ -109,7 +114,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.Write(IdentifierEscaper.Escape(v.Name), (object)v.OriginalVariable ?? (object)v.OriginalParameter ?? v, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextColor.Parameter : BoxedTextColor.Local);
+				output.Write(IdentifierEscaper.Escape(v.Name), (object)v.OriginalVariable ?? (object)v.OriginalParameter ?? v.Id, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextColor.Parameter : BoxedTextColor.Local);
 				if (v.Type != null) {
 					output.Write(" ", BoxedTextColor.Text);
 					output.Write(":", BoxedTextColor.Punctuation);
@@ -139,7 +144,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 					output.WriteLine();
 			}
 			output.AddDebugInfo(builder.Create());
-			EndKeywordBlock(output, bodyInfo, addLineSeparator: true);
+			EndKeywordBlock(output, bodyInfo, CodeBracesRangeFlags.MethodBraces, addLineSeparator: true);
 		}
 
 		struct BraceInfo {
@@ -161,11 +166,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			return new BraceInfo(start);
 		}
 
-		void EndKeywordBlock(IDecompilerOutput output, BraceInfo info, bool addLineSeparator = false) {
+		void EndKeywordBlock(IDecompilerOutput output, BraceInfo info, CodeBracesRangeFlags flags, bool addLineSeparator = false) {
 			output.DecreaseIndent();
 			var end = output.NextPosition;
 			output.Write("}", BoxedTextColor.Punctuation);
-			output.AddBracePair(new TextSpan(info.Start, 1), new TextSpan(end, 1), CodeBracesRangeFlags.MethodBraces);
+			output.AddBracePair(new TextSpan(info.Start, 1), new TextSpan(end, 1), flags);
 			if (addLineSeparator)
 				output.AddLineSeparator(end);
 			output.WriteLine();
@@ -176,20 +181,20 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 			if (ev.AddMethod != null) {
 				var info = StartKeywordBlock(output, ".add", ev.AddMethod);
-				EndKeywordBlock(output, info);
+				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
 			if (ev.InvokeMethod != null) {
 				var info = StartKeywordBlock(output, ".invoke", ev.InvokeMethod);
-				EndKeywordBlock(output, info);
+				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
 			if (ev.RemoveMethod != null) {
 				var info = StartKeywordBlock(output, ".remove", ev.RemoveMethod);
-				EndKeywordBlock(output, info);
+				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
-			EndKeywordBlock(output, eventInfo, addLineSeparator: true);
+			EndKeywordBlock(output, eventInfo, CodeBracesRangeFlags.EventBraces, addLineSeparator: true);
 		}
 
 		public override void Decompile(FieldDef field, IDecompilerOutput output, DecompilationContext ctx) {
@@ -248,20 +253,20 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 			foreach (var getter in property.GetMethods) {
 				var info = StartKeywordBlock(output, ".get", getter);
-				EndKeywordBlock(output, info);
+				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
 			foreach (var setter in property.SetMethods) {
 				var info = StartKeywordBlock(output, ".set", setter);
-				EndKeywordBlock(output, info);
+				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
 			foreach (var other in property.OtherMethods) {
 				var info = StartKeywordBlock(output, ".other", other);
-				EndKeywordBlock(output, info);
+				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
-			EndKeywordBlock(output, propInfo, addLineSeparator: true);
+			EndKeywordBlock(output, propInfo, CodeBracesRangeFlags.PropertyBraces, addLineSeparator: true);
 		}
 
 		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) {
