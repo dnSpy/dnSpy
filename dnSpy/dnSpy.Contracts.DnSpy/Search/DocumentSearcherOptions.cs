@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Default number of results to return
 		/// </summary>
-		public static readonly int DEFAULT_MAX_RESULTS = 1000;
+		public static readonly int DEFAULT_MAX_RESULTS = 10000;
 
 		/// <summary>
 		/// Max results to return
