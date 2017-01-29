@@ -41,6 +41,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			new RoslynIntellisenseFilter(imageMonikerService, DsImages.EnumerationPublic, dnSpy_Roslyn_Shared_Resources.EnumsToolTip, "E", CompletionTags.Enum),
 			new RoslynIntellisenseFilter(imageMonikerService, DsImages.DelegatePublic, dnSpy_Roslyn_Shared_Resources.DelegatesToolTip, "D", CompletionTags.Delegate),
 			new RoslynIntellisenseFilter(imageMonikerService, DsImages.Namespace, dnSpy_Roslyn_Shared_Resources.NamespacesToolTip, "N", CompletionTags.Namespace),
+			new RoslynIntellisenseFilter(imageMonikerService, DsImages.IntellisenseKeyword, dnSpy_Roslyn_Shared_Resources.KeywordsToolTip, "K", CompletionTags.Keyword),
+			new RoslynIntellisenseFilter(imageMonikerService, DsImages.Snippet, dnSpy_Roslyn_Shared_Resources.SnippetsToolTip, "T", CompletionTags.Snippet),
 		};
 	}
 

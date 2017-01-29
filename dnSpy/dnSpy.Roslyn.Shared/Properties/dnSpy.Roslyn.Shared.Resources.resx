@@ -144,6 +144,9 @@
   <data name="InterfacesToolTip" xml:space="preserve">
     <value>Interfaces</value>
   </data>
+  <data name="KeywordsToolTip" xml:space="preserve">
+    <value>Keywords</value>
+  </data>
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
     <value>Locals and parameters</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="PropertiesToolTip" xml:space="preserve">
     <value>Properties</value>
+  </data>
+  <data name="SnippetsToolTip" xml:space="preserve">
+    <value>Snippets</value>
   </data>
   <data name="StructuresToolTip" xml:space="preserve">
     <value>Structures</value>

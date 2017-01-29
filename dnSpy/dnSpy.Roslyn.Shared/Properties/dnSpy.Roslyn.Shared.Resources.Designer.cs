@@ -142,6 +142,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Keywords.
+        /// </summary>
+        internal static string KeywordsToolTip {
+            get {
+                return ResourceManager.GetString("KeywordsToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Locals and parameters.
         /// </summary>
         internal static string LocalsAndParametersToolTip {
@@ -183,6 +192,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         internal static string PropertiesToolTip {
             get {
                 return ResourceManager.GetString("PropertiesToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Snippets.
+        /// </summary>
+        internal static string SnippetsToolTip {
+            get {
+                return ResourceManager.GetString("SnippetsToolTip", resourceCulture);
             }
         }
         
