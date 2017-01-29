@@ -7,7 +7,7 @@
 		<color name="comment" fg="#008000" />
 		<color name="keyword" fg="#0000FF" />
 		<color name="string" fg="#A31515" />
-		<color name="verbatimstring" fg="#A31515" />
+		<color name="verbatimstring" fg="#800000" />
 		<color name="char" fg="#A31515" />
 		<color name="namespace" fg="#9E7E00" />
 		<color name="type" fg="#2B91AF" />
@@ -33,7 +33,7 @@
 		<color name="staticproperty" fg="#7A5229" />
 		<color name="local" fg="#000080" />
 		<color name="parameter" fg="#000080" bold="true" />
-		<color name="preprocessorkeyword" fg="#FF0000FF" />
+		<color name="preprocessorkeyword" fg="#FF808080" />
 		<color name="preprocessortext" fg="#FF000000" />
 		<color name="label" fg="#663300" />
 		<color name="opcode" fg="#993366" />
@@ -98,7 +98,7 @@
 		<color name="repllinenumberinput2" fg="#0000FF" />
 		<color name="repllinenumberoutput" fg="#2B91AF" />
 		<color name="visiblewhitespace" fg="#FF2B91AF" />
-		<color name="selectedtext" bg="#FF3399FF" />
+		<color name="selectedtext" bg="#FF0078D7" />
 		<color name="inactiveselectedtext" bg="#FFBFCDDB" />
 		<color name="highlightedreference" bg="#FFDBE0CC" />
 		<color name="highlightedwrittenreference" bg="#FFDBE0CC" />
@@ -113,7 +113,7 @@
 		<color name="selectedbreakpointstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
 		<color name="disabledbreakpointstatementmarker" fg="#FF800000" />
 		<color name="currentline" fg="#EAEAF2" />
-		<color name="currentlinenofocus" fg="#EEEEEE" />
+		<color name="currentlinenofocus" fg="#EAEAF2" />
 		<color name="hextext" fg="Black" bg="White" />
 		<color name="hexoffset" fg="#FF000000" />
 		<color name="hexbyte0" fg="#FF3333CC" />
