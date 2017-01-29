@@ -91,9 +91,14 @@ namespace dnSpy.Settings.Dialog {
 				return spans;
 
 			foreach (var part in searchParts) {
-				int index = text.IndexOf(part, StringComparison.CurrentCultureIgnoreCase);
-				if (index >= 0)
+				for (int index = 0; index < text.Length;) {
+					index = text.IndexOf(part, index, StringComparison.CurrentCultureIgnoreCase);
+					if (index < 0)
+						break;
 					spans.Add(new Span(index, part.Length));
+					// "aa" should match "aaa" at index 0 and 1
+					index++;
+				}
 			}
 
 			return spans;
