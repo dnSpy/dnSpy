@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging.Xml {
 	abstract class XmlTaggerBase : ITagger<IClassificationTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
 
 		readonly TaggerClassificationTypes taggerClassificationTypes;
 		SpanDataCollection<ClassificationTag> classifications;
