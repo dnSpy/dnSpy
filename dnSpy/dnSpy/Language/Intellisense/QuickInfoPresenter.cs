@@ -83,21 +83,35 @@ namespace dnSpy.Language.Intellisense {
 
 			wpfTextView.VisualElement.MouseLeave += VisualElement_MouseLeave;
 			wpfTextView.VisualElement.MouseMove += VisualElement_MouseMove;
+			popup.AddHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Popup_MouseLeave), handledEventsToo: true);
 			wpfTextView.Caret.PositionChanged += Caret_PositionChanged;
 			wpfTextView.LayoutChanged += TextView_LayoutChanged;
 			return true;
 		}
 
-		void VisualElement_MouseLeave(object sender, MouseEventArgs e) => session.Dismiss();
+		void Popup_MouseLeave(object sender, MouseEventArgs e) => DismissIfNeeded(e);
+		void VisualElement_MouseLeave(object sender, MouseEventArgs e) => DismissIfNeeded(e);
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => session.Dismiss();
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => session.Dismiss();
+		void VisualElement_MouseMove(object sender, MouseEventArgs e) => DismissIfNeeded(e);
 
-		void VisualElement_MouseMove(object sender, MouseEventArgs e) {
+		void DismissIfNeeded(MouseEventArgs e) {
 			if (session.IsDismissed)
 				return;
-			var mousePos = GetMousePoint(e.MouseDevice);
-			if (mousePos == null || !IsMouseWithinSpan(mousePos.Value))
+			if (ShouldDismiss(e))
 				session.Dismiss();
+		}
+
+		bool ShouldDismiss(MouseEventArgs e) {
+			var mousePos = GetMousePoint(e.MouseDevice);
+			if (mousePos == null)
+				return true;
+			if (IsMouseWithinSpan(mousePos.Value) && wpfTextView.VisualElement.IsMouseOver)
+				return false;
+			if (popup.IsMouseOver)
+				return false;
+			// Not over popup or applicable-to-span
+			return true;
 		}
 
 		Point? GetMousePoint(MouseDevice device) {
@@ -135,6 +149,7 @@ namespace dnSpy.Language.Intellisense {
 			if (wpfTextView != null) {
 				wpfTextView.VisualElement.MouseLeave -= VisualElement_MouseLeave;
 				wpfTextView.VisualElement.MouseMove -= VisualElement_MouseMove;
+				popup.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Popup_MouseLeave));
 				wpfTextView.Caret.PositionChanged -= Caret_PositionChanged;
 				wpfTextView.LayoutChanged -= TextView_LayoutChanged;
 			}
