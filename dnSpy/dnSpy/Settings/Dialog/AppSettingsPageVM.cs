@@ -42,8 +42,19 @@ namespace dnSpy.Settings.Dialog {
 		public double Order => Page.Order;
 		public List<AppSettingsPageVM> Children { get; }
 		internal AppSettingsPage Page { get; }
-		public object UIObject => uiObject ?? (uiObject = GetOrCreateUIObject());
-		object uiObject;
+		public object UIObject => VisiblePageAndUIObject.UIObject;
+		internal AppSettingsPageVM VisiblePage => VisiblePageAndUIObject.Page;
+		PageAndUIObject VisiblePageAndUIObject => pageAndUIObject ?? (pageAndUIObject = GetOrCreatePageAndUIObject());
+		PageAndUIObject pageAndUIObject;
+
+		sealed class PageAndUIObject {
+			public AppSettingsPageVM Page { get; }
+			public object UIObject { get; }
+			public PageAndUIObject(AppSettingsPageVM page, object uiObject) {
+				Page = page;
+				UIObject = uiObject;
+			}
+		}
 
 		public bool SavedIsExpanded { get; set; }
 
@@ -68,22 +79,22 @@ namespace dnSpy.Settings.Dialog {
 			this.context = context;
 		}
 
-		object GetOrCreateUIObject() {
+		PageAndUIObject GetOrCreatePageAndUIObject() {
 			var uiObj = context.PageUIObjectLoader.GetUIObject(Page);
 			if (uiObj != null)
-				return createdUIObject ?? (createdUIObject = CreateUIObject(uiObj));
+				return createdPageAndUIObject ?? (createdPageAndUIObject = new PageAndUIObject(this, CreateUIObject(uiObj)));
 
 			// Try to pick a visible child
 			foreach (var child in Children) {
 				if (!child.TreeNode.IsHidden)
-					return child.UIObject;
+					return child.VisiblePageAndUIObject;
 			}
 
 			if (Children.Count == 0)
 				return null;
-			return Children[0].UIObject;
+			return Children[0].VisiblePageAndUIObject;
 		}
-		object createdUIObject;
+		PageAndUIObject createdPageAndUIObject;
 
 		static object CreateUIObject(object uiObj) {
 			if (uiObj is ScrollViewer)
@@ -97,7 +108,7 @@ namespace dnSpy.Settings.Dialog {
 
 		public void ClearUICache() {
 			// Make sure we don't show hidden pages
-			uiObject = null;
+			pageAndUIObject = null;
 		}
 
 		public void RefreshUI() {
