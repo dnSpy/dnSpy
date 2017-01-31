@@ -2108,7 +2108,8 @@ namespace dndbg.COM.CorDebug {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
-		void GetCount(out uint pcelt);
+		[PreserveSig]
+		int GetCount(out uint pcelt);
 		[PreserveSig]
 		int Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue values, out uint pceltFetched);
 	}

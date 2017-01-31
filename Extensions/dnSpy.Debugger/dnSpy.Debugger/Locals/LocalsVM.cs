@@ -277,8 +277,8 @@ namespace dnSpy.Debugger.Locals {
 
 			CorValue[] corArgs, corLocals;
 			if (frame != null) {
-				corArgs = frame.ILArguments.ToArray();
-				corLocals = frame.ILLocals.ToArray();
+				corArgs = frame.ILArguments.Where(a => a != null).ToArray();
+				corLocals = frame.ILLocals.Where(a => a != null).ToArray();
 			}
 			else
 				corArgs = corLocals = Array.Empty<CorValue>();

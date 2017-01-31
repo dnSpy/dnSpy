@@ -79,15 +79,19 @@ namespace dnSpy.Debugger.Scripting {
 
 		public IDebuggerValue[] Arguments => debugger.Dispatcher.UI(() => {
 			var list = new List<IDebuggerValue>();
-			foreach (var v in CorFrame.ILArguments)
-				list.Add(new DebuggerValue(debugger, v));
+			foreach (var v in CorFrame.ILArguments) {
+				if (v != null)
+					list.Add(new DebuggerValue(debugger, v));
+			}
 			return list.ToArray();
 		});
 
 		public IDebuggerValue[] Locals => debugger.Dispatcher.UI(() => {
 			var list = new List<IDebuggerValue>();
-			foreach (var v in CorFrame.ILLocals)
-				list.Add(new DebuggerValue(debugger, v));
+			foreach (var v in CorFrame.ILLocals) {
+				if (v != null)
+					list.Add(new DebuggerValue(debugger, v));
+			}
 			return list.ToArray();
 		});
 

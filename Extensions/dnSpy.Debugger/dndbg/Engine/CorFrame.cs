@@ -183,7 +183,7 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Gets all arguments
+		/// Gets all arguments. A returned argument could be null if there was an error
 		/// </summary>
 		public IEnumerable<CorValue> ILArguments {
 			get {
@@ -194,19 +194,24 @@ namespace dndbg.Engine {
 				int hr = ilf.EnumerateArguments(out valueEnum);
 				if (hr < 0)
 					yield break;
-				for (;;) {
+				uint totalCount;
+				hr = valueEnum.GetCount(out totalCount);
+				if (hr < 0)
+					yield break;
+				for (uint i = 0; i < totalCount; i++) {
 					ICorDebugValue value = null;
 					uint count;
 					hr = valueEnum.Next(1, out value, out count);
 					if (hr != 0 || value == null)
-						break;
-					yield return new CorValue(value);
+						yield return null;
+					else
+						yield return new CorValue(value);
 				}
 			}
 		}
 
 		/// <summary>
-		/// Gets all locals
+		/// Gets all locals. A returned local could be null if there was an error
 		/// </summary>
 		public IEnumerable<CorValue> ILLocals {
 			get {
@@ -217,13 +222,18 @@ namespace dndbg.Engine {
 				int hr = ilf.EnumerateLocalVariables(out valueEnum);
 				if (hr < 0)
 					yield break;
-				for (;;) {
+				uint totalCount;
+				hr = valueEnum.GetCount(out totalCount);
+				if (hr < 0)
+					yield break;
+				for (uint i = 0; i < totalCount; i++) {
 					ICorDebugValue value = null;
 					uint count;
 					hr = valueEnum.Next(1, out value, out count);
 					if (hr != 0 || value == null)
-						break;
-					yield return new CorValue(value);
+						yield return null;
+					else
+						yield return new CorValue(value);
 				}
 			}
 		}

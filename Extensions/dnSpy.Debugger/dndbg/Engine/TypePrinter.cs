@@ -1352,7 +1352,7 @@ namespace dndbg.Engine {
 						Write(ma, typeGenArgs, methGenArgs, emptyTokenAndNameList, emptyTokenAndNameList);
 					}
 					else {
-						var type = arg.ExactType;
+						var type = arg?.ExactType;
 						if (type != null) {
 							if (type.ElementType == CorElementType.ByRef) {
 								OutputWrite(isCSharpOut ? "out" : "ref", TypeColor.Keyword);
@@ -1362,7 +1362,7 @@ namespace dndbg.Engine {
 							Write(type);
 						}
 						else {
-							var cls = arg.Class;
+							var cls = arg?.Class;
 							if (cls != null)
 								Write(cls);
 							else
