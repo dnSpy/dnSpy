@@ -116,7 +116,6 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 			public int? SelectedParameter { get { return _selectedParameter; } }
 			public SignatureHelpItem SelectedItem { get { return _selectedItem; } }
 		}
-
 		internal static class DefaultSignatureHelpSelector {
 			public static SignatureHelpSelection GetSelection(
 				IList<SignatureHelpItem> items,
@@ -131,7 +130,7 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 			}
 
 			private static int GetSelectedParameter(SignatureHelpItem bestItem, int parameterIndex, string parameterName, bool isCaseSensitive) {
-				if (parameterName != null) {
+				if (!string.IsNullOrEmpty(parameterName)) {
 					var comparer = isCaseSensitive ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase;
 					var index = bestItem.Parameters.IndexOf(p => comparer.Equals(p.Name, parameterName));
 					if (index >= 0) {

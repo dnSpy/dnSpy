@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -110,7 +111,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo.CSharp
 
             foreach (var trivia in triviaSearchList)
             {
-                if (IsCommentTrivia(trivia))
+                if (trivia.IsSingleOrMultiLineComment())
                 {
                     nearbyTrivia = trivia;
                 }
@@ -120,12 +121,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo.CSharp
                 }
             }
 
-            return IsCommentTrivia(nearbyTrivia);
-        }
-
-        private static bool IsCommentTrivia(SyntaxTrivia trivia)
-        {
-            return trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) || trivia.IsKind(SyntaxKind.SingleLineCommentTrivia);
+            return nearbyTrivia.IsSingleOrMultiLineComment();
         }
     }
 }

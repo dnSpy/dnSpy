@@ -30,41 +30,21 @@ Namespace Global.dnSpy.Roslyn.VisualBasic.Internal.SmartIndent
 				MyBase.New(syntaxFacts, syntaxTree, rules, optionSet, line, cancellationToken)
 			End Sub
 
-			Public Overrides Function GetDesiredIndentation() As IndentationResult?
-				Dim indentStyle = OptionSet.GetOption(FormattingOptions.SmartIndent, LanguageNames.VisualBasic)
-				If indentStyle = FormattingOptions.IndentStyle.None Then
-					Return Nothing
-				End If
+			Protected Overrides Function GetDesiredIndentationWorker(
+					token As SyntaxToken,
+					previousLine As TextLine,
+					lastNonWhitespacePosition As Integer) As IndentationResult?
 
-				Dim previousLine = GetPreviousNonBlankOrPreprocessorLine()
-
-				' first token in the file
-				If previousLine Is Nothing Then
-					Return IndentFromStartOfLine(0)
-				End If
-
-				Dim lastNonWhitespacePosition = previousLine.Value.GetLastNonWhitespacePosition()
-				If Not lastNonWhitespacePosition.HasValue Then
-					Return Nothing
-				End If
-
-				Dim token = Tree.GetRoot(CancellationToken).FindToken(lastNonWhitespacePosition.Value)
-				If token.Kind = SyntaxKind.None OrElse
-					indentStyle = FormattingOptions.IndentStyle.Block Then
-
-					Return GetIndentationOfLine(previousLine.Value)
-				End If
-
-				If token.Span.End = lastNonWhitespacePosition.Value + 1 Then
+				If token.Span.End = lastNonWhitespacePosition + 1 Then
 					Return GetIndentationBasedOnToken(token)
 				Else
-					'Contract.Assert(token.FullSpan.Contains(lastNonWhitespacePosition.Value))
+					'Contract.Assert(token.FullSpan.Contains(lastNonWhitespacePosition))
 
-					Dim trivia = Tree.GetRoot(CancellationToken).FindTrivia(lastNonWhitespacePosition.Value)
+					Dim trivia = Tree.GetRoot(CancellationToken).FindTrivia(lastNonWhitespacePosition)
 
 					' preserve the indentation of the comment trivia before a case statement
 					If trivia.Kind = SyntaxKind.CommentTrivia AndAlso trivia.Token.IsKind(SyntaxKind.CaseKeyword) AndAlso trivia.Token.Parent.IsKind(SyntaxKind.CaseStatement) Then
-						Return GetIndentationOfLine(previousLine.Value)
+						Return GetIndentationOfLine(previousLine)
 					End If
 
 					If trivia.Kind = SyntaxKind.LineContinuationTrivia OrElse trivia.Kind = SyntaxKind.CommentTrivia Then
@@ -77,7 +57,7 @@ Namespace Global.dnSpy.Roslyn.VisualBasic.Internal.SmartIndent
 					End If
 
 					' okay, now check whether the trivia is at the beginning of the line
-					Dim firstNonWhitespacePosition = previousLine.Value.GetFirstNonWhitespacePosition()
+					Dim firstNonWhitespacePosition = previousLine.GetFirstNonWhitespacePosition()
 					If Not firstNonWhitespacePosition.HasValue Then
 						Return IndentFromStartOfLine(0)
 					End If
@@ -88,7 +68,7 @@ Namespace Global.dnSpy.Roslyn.VisualBasic.Internal.SmartIndent
 						Return GetIndentationBasedOnToken(firstTokenOnLine)
 					End If
 
-					Return GetIndentationOfLine(previousLine.Value)
+					Return GetIndentationOfLine(previousLine)
 				End If
 			End Function
 
@@ -99,16 +79,6 @@ Namespace Global.dnSpy.Roslyn.VisualBasic.Internal.SmartIndent
 				End If
 
 				Return token.GetPreviousToken()
-			End Function
-
-			Protected Overrides Function HasPreprocessorCharacter(currentLine As TextLine) As Boolean
-				Dim text = currentLine.ToString()
-				'Contract.Assert(String.IsNullOrWhiteSpace(text) = False)
-
-				Dim trimmedText = text.Trim()
-
-				'Contract.Assert(SyntaxFacts.GetText(SyntaxKind.HashToken).Length = 1)
-				Return trimmedText(0) = SyntaxFacts.GetText(SyntaxKind.HashToken)(0)
 			End Function
 
 			Private Function GetIndentationBasedOnToken(token As SyntaxToken, Optional trivia As SyntaxTrivia = Nothing) As IndentationResult?
@@ -330,17 +300,6 @@ Namespace Global.dnSpy.Roslyn.VisualBasic.Internal.SmartIndent
 
 			Private Function HasLinesBetween(lineNumber1 As Integer, lineNumber2 As Integer) As Boolean
 				Return lineNumber1 + 1 < lineNumber2
-			End Function
-
-			Private Function GetCurrentPositionNotBelongToEndOfFileToken(position As Integer) As Integer
-				If Not Tree.HasCompilationUnitRoot Then
-					Return position
-				End If
-
-				Dim compilationUnit = DirectCast(Tree.GetRoot(CancellationToken), CompilationUnitSyntax)
-				Debug.Assert(compilationUnit IsNot Nothing)
-
-				Return Math.Min(compilationUnit.EndOfFileToken.FullSpan.Start, position)
 			End Function
 		End Class
 	End Class

@@ -13,7 +13,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic.Utilities.IntrinsicOperators
 
 Namespace Global.Microsoft.CodeAnalysis.Editor.VisualBasic.QuickInfo
 
-	<ExportQuickInfoProviderAttribute(PredefinedQuickInfoProviderNames.Semantic, LanguageNames.VisualBasic)>
+	<ExportQuickInfoProvider(PredefinedQuickInfoProviderNames.Semantic, LanguageNames.VisualBasic)>
 	Friend Class SemanticQuickInfoProvider
 		Inherits AbstractSemanticQuickInfoProvider
 
@@ -113,8 +113,13 @@ Namespace Global.Microsoft.CodeAnalysis.Editor.VisualBasic.QuickInfo
 						Return Nothing
 					End If
 
-					Return symbol.TypeSwitch(Function(local As ILocalSymbol) local.Type,
-											 Function(field As IFieldSymbol) field.Type)
+					If TypeOf symbol Is ILocalSymbol Then
+						Return DirectCast(symbol, ILocalSymbol).Type
+					ElseIf TypeOf symbol Is IFieldSymbol Then
+						Return DirectCast(symbol, IFieldSymbol).Type
+					Else
+						Return Nothing
+					End If
 				End Function).WhereNotNull().Distinct().ToList()
 
 			If types.Count = 0 Then
@@ -123,9 +128,8 @@ Namespace Global.Microsoft.CodeAnalysis.Editor.VisualBasic.QuickInfo
 
 			'If types.Count > 1 Then
 			'	Dim contentBuilder = New List(Of TaggedText)
-			'	contentBuilder.AddText(dnSpy_Roslyn_VisualBasic_Internal.Multiple_Types)
+			'	contentBuilder.AddText(VBEditorResources.Multiple_Types)
 			'	Return Me.CreateClassifiableDeferredContent(contentBuilder)
-			'	Return Nothing
 			'End If
 
 			Return Await CreateContentAsync(document.Project.Solution.Workspace, token, semantics, types, supportedPlatforms:=Nothing, cancellationToken:=cancellationToken).ConfigureAwait(False)
@@ -134,7 +138,7 @@ Namespace Global.Microsoft.CodeAnalysis.Editor.VisualBasic.QuickInfo
 		Private Async Function BuildContentForIntrinsicOperatorAsync(document As Document,
 																	 expression As SyntaxNode,
 																	 documentation As AbstractIntrinsicOperatorDocumentation,
-																	 glyph As Global.dnSpy.Roslyn.Internal.Glyph,
+																	 glyph As Glyph,
 																	 cancellationToken As CancellationToken) As Task(Of QuickInfoContent)
 			Dim builder = New List(Of SymbolDisplayPart)
 

@@ -23,7 +23,6 @@ namespace dnSpy.Roslyn.EditorFeatures.SmartIndent
             {
                 throw new ArgumentNullException(nameof(textView));
             }
-
             _textView = textView;
         }
 

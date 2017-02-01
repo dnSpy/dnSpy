@@ -1,7 +1,7 @@
 ﻿{
 	"dependencies": {
-		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.0.0-rc2",
-		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.25824-RC"
+		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.0.0-rc3",
+		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.26105-RC3"
 	},
 	"frameworks": {
 		"net46": { }

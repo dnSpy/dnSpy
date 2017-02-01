@@ -1,7 +1,7 @@
 {
 	"dependencies": {
-		"Microsoft.CodeAnalysis.CSharp.Features": "2.0.0-rc2",
-		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.0.0-rc2"
+		"Microsoft.CodeAnalysis.CSharp.Features": "2.0.0-rc3",
+		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.0.0-rc3"
 	},
 	"frameworks": {
 		"net46": { }

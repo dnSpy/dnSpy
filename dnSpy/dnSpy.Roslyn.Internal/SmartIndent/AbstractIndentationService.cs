@@ -28,7 +28,8 @@ namespace dnSpy.Roslyn.Internal.SmartIndent
             return formattingRules;
         }
 
-        public IndentationResult? GetDesiredIndentation(Document document, int lineNumber, CancellationToken cancellationToken)
+        public IndentationResult? GetDesiredIndentation(
+            Document document, int lineNumber, CancellationToken cancellationToken)
         {
             var root = document.GetSyntaxRootSynchronously(cancellationToken);
             var sourceText = root.SyntaxTree.GetText(cancellationToken);
@@ -38,7 +39,14 @@ namespace dnSpy.Roslyn.Internal.SmartIndent
 
             var formattingRules = GetFormattingRules(document, lineToBeIndented.Start);
 
-            // enter on a token case.
+            // There are two important cases for indentation.  The first is when we're simply
+            // trying to figure out the appropriate indentation on a blank line (i.e. after
+            // hitting enter at the end of a line, or after moving to a blank line).  The 
+            // second is when we're trying to figure out indentation for a non-blank line
+            // (i.e. after hitting enter in the middle of a line, causing tokens to move to
+            // the next line).  If we're in the latter case, we defer to the Formatting engine
+            // as we need it to use all its rules to determine where the appropriate location is
+            // for the following tokens to go.
             if (ShouldUseSmartTokenFormatterInsteadOfIndenter(formattingRules, root, lineToBeIndented, documentOptions, cancellationToken))
             {
                 return null;
@@ -49,7 +57,7 @@ namespace dnSpy.Roslyn.Internal.SmartIndent
                 root.SyntaxTree, lineToBeIndented, formattingRules,
                 documentOptions, cancellationToken);
 
-            return indenter.GetDesiredIndentation();
+            return indenter.GetDesiredIndentation(document);
         }
 
         protected abstract AbstractIndenter GetIndenter(
