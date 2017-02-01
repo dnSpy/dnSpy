@@ -162,6 +162,7 @@ namespace dnSpy.Documents.Tabs {
 #endif
 
 			if (visEvent == TabContentVisibilityEvent.Removed) {
+				Debug.Assert(!removed);
 				CancelAsyncWorker();
 				elementZoomer.Dispose();
 				var id = documentTabUIContextLocator as IDisposable;
@@ -169,8 +170,10 @@ namespace dnSpy.Documents.Tabs {
 				if (id != null)
 					id.Dispose();
 				documentTabService.OnRemoved(this);
+				removed = true;
 			}
 		}
+		bool removed;
 
 		sealed class ReferenceHandlerContext : IReferenceHandlerContext {
 			public object Reference { get; }
@@ -195,6 +198,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void FollowReference(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
+			if (removed) {
+				onShown(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
+				return;
+			}
 			if (NotifyReferenceHandlers(@ref, Content, onShown))
 				return;
 			FollowReferenceCore(@ref, sourceContent, onShown);
@@ -224,6 +231,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void FollowReferenceNewTab(object @ref, Action<ShowTabContentEventArgs> onShown) {
+			if (removed) {
+				onShown(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
+				return;
+			}
 			if (NotifyReferenceHandlers(@ref, Content, onShown))
 				return;
 			var tab = (TabContentImpl)DocumentTabService.OpenEmptyTab();
@@ -232,6 +243,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown) {
+			if (removed) {
+				onShown(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
+				return;
+			}
 			if (newTab)
 				FollowReferenceNewTab(@ref, onShown);
 			else
@@ -257,6 +272,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void Show(DocumentTabContent tabContent, object uiState, Action<ShowTabContentEventArgs> onShown) {
+			if (removed) {
+				onShown(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
+				return;
+			}
 			if (tabContent == null)
 				throw new ArgumentNullException(nameof(tabContent));
 			Debug.Assert(tabContent.DocumentTab == null || tabContent.DocumentTab == this);
@@ -433,8 +452,8 @@ namespace dnSpy.Documents.Tabs {
 			ToolTip = Content.ToolTip;
 		}
 
-		public bool CanNavigateBackward => tabHistory.CanNavigateBackward;
-		public bool CanNavigateForward => tabHistory.CanNavigateForward;
+		public bool CanNavigateBackward => !removed && tabHistory.CanNavigateBackward;
+		public bool CanNavigateForward => !removed && tabHistory.CanNavigateForward;
 
 		public void NavigateBackward() {
 			if (!CanNavigateBackward)
@@ -453,12 +472,16 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void Refresh() {
+			if (removed)
+				return;
 			// Pretend it gets hidden and then shown again. Will also cancel any async output threads
 			HideCurrentContent();
 			ShowInternal(Content, UIContext.CreateUIState(), null, true);
 		}
 
 		public void TrySetFocus() {
+			if (removed)
+				return;
 			if (IsActiveTab)
 				DocumentTabService.SetFocus(this);
 		}
