@@ -155,17 +155,13 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			var body = new ILBlock(new ILAstBuilder().Build(method, true, context));
 			new ILAstOptimizer().Optimize(context, body);
 
-			var sw = body.GetSelfAndChildrenRecursive<ILSwitch>().FirstOrDefault();
-			if (sw == null)
-				return null;
-
 			var connIds = new Dictionary<int, Action<XamlContext, XElement>>();
-			foreach (var cas in sw.CaseBlocks) {
-				if (cas.Values == null)
-					continue;
-
+			var infos = GetCaseBlocks(body);
+			if (infos == null)
+				return null;
+			foreach (var info in infos) {
 				Action<XamlContext, XElement> cb = null;
-				foreach (var node in cas.Body) {
+				foreach (var node in info.Value) {
 					var expr = node as ILExpression;
 					if (expr == null)
 						continue;
@@ -223,12 +219,90 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				}
 
 				if (cb != null) {
-					foreach (var id in cas.Values)
+					foreach (var id in info.Key)
 						connIds[id] = cb;
 				}
 			}
 
-			return connIds.Count == 0 ? null : connIds;
+			return connIds;
+		}
+
+		List<KeyValuePair<IList<int>, List<ILNode>>> GetCaseBlocks(ILBlock method) {
+			var list = new List<KeyValuePair<IList<int>, List<ILNode>>>();
+			var body = method.Body;
+			if (body.Count == 0)
+				return list;
+
+			var sw = method.GetSelfAndChildrenRecursive<ILSwitch>().FirstOrDefault();
+			if (sw != null) {
+				foreach (var lbl in sw.CaseBlocks) {
+					if (lbl.Values == null)
+						continue;
+					list.Add(new KeyValuePair<IList<int>, List<ILNode>>(lbl.Values, lbl.Body));
+				}
+				return list;
+			}
+			else {
+				int pos = 0;
+				for (;;) {
+					if (pos >= body.Count)
+						return null;
+					var cond = body[pos] as ILCondition;
+					if (cond == null) {
+						ILExpression ldthis, ldci4;
+						IField field;
+						if (!body[pos].Match(ILCode.Stfld, out field, out ldthis, out ldci4) || !ldthis.MatchThis() || !ldci4.MatchLdcI4(1))
+							return null;
+						return list;
+					}
+					pos++;
+					if (cond.TrueBlock == null || cond.FalseBlock == null)
+						return null;
+
+					bool isEq = true;
+					var condExpr = cond.Condition;
+					for (;;) {
+						ILExpression expr;
+						if (!condExpr.Match(ILCode.LogicNot, out expr))
+							break;
+						isEq = !isEq;
+						condExpr = expr;
+					}
+					int val;
+					if (condExpr.Code != ILCode.Ceq && condExpr.Code != ILCode.Cne)
+						return null;
+					if (condExpr.Arguments.Count != 2)
+						return null;
+					ILVariable v;
+					if (!condExpr.Arguments[0].Match(ILCode.Ldloc, out v) || v.OriginalParameter?.Index != 1)
+						return null;
+					if (!condExpr.Arguments[1].Match(ILCode.Ldc_I4, out val))
+						return null;
+					if (condExpr.Code == ILCode.Cne)
+						isEq ^= true;
+
+					if (isEq) {
+						list.Add(new KeyValuePair<IList<int>, List<ILNode>>(new[] { val }, cond.TrueBlock.Body));
+						if (cond.FalseBlock.Body.Count != 0) {
+							body = cond.FalseBlock.Body;
+							pos = 0;
+						}
+					}
+					else {
+						if (cond.FalseBlock.Body.Count != 0) {
+							list.Add(new KeyValuePair<IList<int>, List<ILNode>>(new[] { val }, cond.FalseBlock.Body));
+							if (cond.TrueBlock.Body.Count != 0) {
+								body = cond.TrueBlock.Body;
+								pos = 0;
+							}
+						}
+						else {
+							list.Add(new KeyValuePair<IList<int>, List<ILNode>>(new[] { val }, body.Skip(pos).ToList()));
+							return list;
+						}
+					}
+				}
+			}
 		}
 	}
 }
