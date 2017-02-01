@@ -93,7 +93,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 			ILAstBuilder astBuilder = new ILAstBuilder();
 			ILBlock ilMethod = new ILBlock(CodeBracesRangeFlags.MethodBraces);
-			DecompilerContext context = new DecompilerContext(method.Module, MetadataTextColorProvider) { CurrentType = method.DeclaringType, CurrentMethod = method };
+			DecompilerContext context = new DecompilerContext(method.Module, MetadataTextColorProvider) {
+				CurrentType = method.DeclaringType,
+				CurrentMethod = method,
+				CalculateBinSpans = ctx.CalculateBinSpans,
+			};
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 
 			if (abortBeforeStep != null) {
