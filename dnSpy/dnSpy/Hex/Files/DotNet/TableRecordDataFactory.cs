@@ -650,11 +650,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x0003, 0x0001, "Covariant"),
 			new FlagInfo(0x0003, 0x0002, "Contravariant"),
 
-			FlagInfo.CreateEnumName(0x001C, "SpecialConstraint"),
-			new FlagInfo(0x001C, 0x0000, "NoSpecialConstraint"),
-			new FlagInfo(0x001C, 0x0004, "ReferenceTypeConstraint"),
-			new FlagInfo(0x001C, 0x0008, "NotNullableValueTypeConstraint"),
-			new FlagInfo(0x001C, 0x0010, "DefaultConstructorConstraint"),
+			new FlagInfo(0x0004, "ReferenceTypeConstraint"),
+			new FlagInfo(0x0008, "NotNullableValueTypeConstraint"),
+			new FlagInfo(0x0010, "DefaultConstructorConstraint"),
 		});
 
 		protected override BufferData CreateData(HexPosition position, ColumnInfo column) {

@@ -326,14 +326,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		void RefreshTags(BracePairResultCollection? a, BracePairResultCollection? b) {
 			if (a != null) {
 				RefreshTags(a.Value.First);
-				RefreshTags(a.Value.First);
-				RefreshTags(a.Value.Second);
 				RefreshTags(a.Value.Second);
 			}
 			if (b != null) {
 				RefreshTags(b.Value.First);
-				RefreshTags(b.Value.First);
-				RefreshTags(b.Value.Second);
 				RefreshTags(b.Value.Second);
 			}
 		}
