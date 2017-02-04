@@ -144,6 +144,9 @@
   <data name="InterfacesToolTip" xml:space="preserve">
     <value>接口</value>
   </data>
+  <data name="KeywordsToolTip" xml:space="preserve">
+    <value>Keywords</value>
+  </data>
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
     <value>局部变量和参数</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="PropertiesToolTip" xml:space="preserve">
     <value>属性</value>
+  </data>
+  <data name="SnippetsToolTip" xml:space="preserve">
+    <value>Snippets</value>
   </data>
   <data name="StructuresToolTip" xml:space="preserve">
     <value>结构</value>

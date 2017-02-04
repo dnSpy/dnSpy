@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Максимальное количество отображаемых элементов массива</value>
   </data>
+  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
+    <value>Добавить модификатор «private» к членам типа</value>
+  </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Декомпилировать инициализаторы объекта или коллекции</value>
   </data>
@@ -209,6 +212,9 @@
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
     <value>Поместить директивы 'System' в начало при сортировке</value>
+  </data>
+  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
+    <value>Добавить модификатор «internal» к типам</value>
   </data>
   <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
     <value>Использовать имена переменных из отладочных символов, при наличии</value>

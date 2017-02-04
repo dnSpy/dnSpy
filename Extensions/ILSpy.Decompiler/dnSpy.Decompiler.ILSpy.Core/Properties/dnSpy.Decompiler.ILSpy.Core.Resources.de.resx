@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Maximale Anzahl an anzuzeigenden Array-Elementen</value>
   </data>
+  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
+    <value>Modifizierer 'private' zu Typmembern hinzufügen</value>
+  </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Dekompiliere Objekt oder Auflistung Initialisierungen</value>
   </data>
@@ -209,6 +212,9 @@
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
     <value>"System"-Direktiven beim Sortieren von using-Direktiven zuerst anordnen</value>
+  </data>
+  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
+    <value>Modifizierer 'internal' zu Typen hinzufügen</value>
   </data>
   <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
     <value>Variablennamen von Debugsymbolen verwenden, falls vorhanden</value>

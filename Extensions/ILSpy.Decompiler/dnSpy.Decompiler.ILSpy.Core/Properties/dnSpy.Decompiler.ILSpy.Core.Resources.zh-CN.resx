@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>要显示的数组元素最大数量</value>
   </data>
+  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
+    <value>Add 'private' modifier to type members</value>
+  </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>反编译对象或集合的初始值设定项</value>
   </data>
@@ -209,6 +212,9 @@
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
     <value>在排序using时将System系列置于首位</value>
+  </data>
+  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
+    <value>Add 'internal' modifier to types</value>
   </data>
   <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
     <value>如果可用，使用debug symbols声明的变量名称</value>
