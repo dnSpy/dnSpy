@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Resources;
@@ -118,9 +119,19 @@ namespace dnSpy.Decompiler.MSBuild {
 							key = iter.Key as string;
 							if (key == null)
 								continue;
+							var value = iter.Value;
+							// ResXDataNode ctor checks if the input is serializable, which this stream isn't.
+							// We have no choice but to create a new stream.
+							if (value is Stream && !value.GetType().IsSerializable) {
+								var stream = (Stream)value;
+								var data = new byte[stream.Length];
+								if (stream.Read(data, 0, data.Length) != data.Length)
+									throw new IOException("Could not read all bytes");
+								value = new MemoryStream(data);
+							}
 							//TODO: Some resources, like images, should be saved as separate files. Use ResXFileRef.
 							//		Don't do it if it's a satellite assembly.
-							list.Add(delegateResXDataNodeConstructor?.Invoke(key, iter.Value, TypeNameConverter) ?? new ResXDataNode(key, iter.Value));
+							list.Add(delegateResXDataNodeConstructor?.Invoke(key, value, TypeNameConverter) ?? new ResXDataNode(key, value));
 						}
 						catch (Exception ex) {
 							if (errors++ < 30)
