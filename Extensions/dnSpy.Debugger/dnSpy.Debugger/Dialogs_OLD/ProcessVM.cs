@@ -22,7 +22,7 @@ using dndbg.Engine;
 using dnlib.PE;
 using dnSpy.Contracts.MVVM;
 
-namespace dnSpy.Debugger.Dialogs {
+namespace dnSpy.Debugger.Dialogs_OLD {
 	sealed class ProcessVM : ViewModelBase {
 		public string Filename => Path.GetFileName(FullPath);
 		public object FullPathObject => this;

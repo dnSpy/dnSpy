@@ -28,7 +28,7 @@ using dndbg.COM.MetaHost;
 using dndbg.Engine;
 using dnlib.PE;
 
-namespace dnSpy.Debugger.Dialogs {
+namespace dnSpy.Debugger.Dialogs_OLD {
 	sealed class ManagedProcessesFinder {
 		public sealed class Info {
 			public int ProcessId { get; }

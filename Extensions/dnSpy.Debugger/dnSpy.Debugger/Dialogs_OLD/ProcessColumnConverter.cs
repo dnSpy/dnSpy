@@ -24,7 +24,7 @@ using System.Windows.Data;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 
-namespace dnSpy.Debugger.Dialogs {
+namespace dnSpy.Debugger.Dialogs_OLD {
 	sealed class ProcessColumnConverter : IValueConverter {
 		static class Cache {
 			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();

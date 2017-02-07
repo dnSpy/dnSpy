@@ -24,8 +24,8 @@ using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.Properties;
 
-namespace dnSpy.Debugger.Dialogs {
-	sealed class DebugCoreCLRVM : ViewModelBase {
+namespace dnSpy.Debugger.Dialogs_OLD {
+	sealed class DebugProcessVM : ViewModelBase {
 		public IPickFilename PickFilename {
 			set { pickFilename = value; }
 		}
@@ -36,53 +36,28 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 		IPickDirectory pickDirectory;
 
-		public ICommand PickDbgShimFilenameCommand => new RelayCommand(a => PickNewDbgShimFilename());
-		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
 		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
 		public ICommand PickCurrentDirectoryCommand => new RelayCommand(a => PickNewCurrentDirectory());
 
+		public static readonly EnumVM[] breakProcessKindList = new EnumVM[(int)BreakProcessKind.Last] {
+			new EnumVM(BreakProcessKind.None, dnSpy_Debugger_Resources.DbgBreak_Dont),
+			new EnumVM(BreakProcessKind.CreateProcess, dnSpy_Debugger_Resources.DbgBreak_CreateProcessEvent),
+			new EnumVM(BreakProcessKind.CreateAppDomain, dnSpy_Debugger_Resources.DbgBreak_FirstCreateAppDomainEvent),
+			new EnumVM(BreakProcessKind.LoadModule, dnSpy_Debugger_Resources.DbgBreak_FirstLoadModuleEvent),
+			new EnumVM(BreakProcessKind.LoadClass, dnSpy_Debugger_Resources.DbgBreak_FirstLoadClassEvent),
+			new EnumVM(BreakProcessKind.CreateThread, dnSpy_Debugger_Resources.DbgBreak_FirstCreateThreadEvent),
+			new EnumVM(BreakProcessKind.ExeLoadModule, dnSpy_Debugger_Resources.DbgBreak_ExeLoadModuleEvent),
+			new EnumVM(BreakProcessKind.ExeLoadClass, dnSpy_Debugger_Resources.DbgBreak_ExeFirstLoadClassEvent),
+			new EnumVM(BreakProcessKind.ModuleCctorOrEntryPoint, dnSpy_Debugger_Resources.DbgBreak_ModuleClassConstructorOrEntryPoint),
+			new EnumVM(BreakProcessKind.EntryPoint, dnSpy_Debugger_Resources.DbgBreak_EntryPoint),
+		};
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
-		readonly EnumListVM breakProcessKindVM = new EnumListVM(DebugProcessVM.breakProcessKindList);
+		readonly EnumListVM breakProcessKindVM = new EnumListVM(breakProcessKindList);
 
 		public BreakProcessKind BreakProcessKind {
 			get { return (BreakProcessKind)BreakProcessKindVM.SelectedItem; }
 			set { BreakProcessKindVM.SelectedItem = value; }
 		}
-
-		public string DbgShimFilename {
-			get { return dbgShimFilename; }
-			set {
-				if (dbgShimFilename != value) {
-					dbgShimFilename = value;
-					OnPropertyChanged(nameof(DbgShimFilename));
-					HasErrorUpdated();
-				}
-			}
-		}
-		string dbgShimFilename;
-
-		public string HostFilename {
-			get { return hostFilename; }
-			set {
-				if (hostFilename != value) {
-					hostFilename = value;
-					OnPropertyChanged(nameof(HostFilename));
-					HasErrorUpdated();
-				}
-			}
-		}
-		string hostFilename;
-
-		public string HostCommandLine {
-			get { return hostCommandLine; }
-			set {
-				if (hostCommandLine != value) {
-					hostCommandLine = value;
-					OnPropertyChanged(nameof(HostCommandLine));
-				}
-			}
-		}
-		string hostCommandLine;
 
 		public string Filename {
 			get { return filename; }
@@ -121,7 +96,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 		string currentDirectory;
 
-		public DebugCoreCLRVM() {
+		public DebugProcessVM() {
 		}
 
 		static string GetPath(string file) {
@@ -131,29 +106,6 @@ namespace dnSpy.Debugger.Dialogs {
 			catch {
 			}
 			return null;
-		}
-
-		void PickNewDbgShimFilename() {
-			if (pickFilename == null)
-				throw new InvalidOperationException();
-
-			var filter = string.Format("dbgshim.dll|dbgshim.dll|{0} (*.*)|*.*", dnSpy_Debugger_Resources.AllFiles);
-			var newFilename = pickFilename.GetFilename(DbgShimFilename, "exe", filter);
-			if (newFilename == null)
-				return;
-
-			DbgShimFilename = newFilename;
-		}
-
-		void PickNewHostFilename() {
-			if (pickFilename == null)
-				throw new InvalidOperationException();
-
-			var newFilename = pickFilename.GetFilename(HostFilename, "exe", PickFilenameConstants.ExecutableFilter);
-			if (newFilename == null)
-				return;
-
-			HostFilename = newFilename;
 		}
 
 		void PickNewFilename() {
@@ -178,12 +130,9 @@ namespace dnSpy.Debugger.Dialogs {
 			CurrentDirectory = newDir;
 		}
 
-		public DebugCoreCLRVM Clone() => CopyTo(new DebugCoreCLRVM());
+		public DebugProcessVM Clone() => CopyTo(new DebugProcessVM());
 
-		public DebugCoreCLRVM CopyTo(DebugCoreCLRVM other) {
-			other.DbgShimFilename = DbgShimFilename;
-			other.HostFilename = HostFilename;
-			other.HostCommandLine = HostCommandLine;
+		public DebugProcessVM CopyTo(DebugProcessVM other) {
 			other.Filename = Filename;
 			other.CommandLine = CommandLine;
 			other.CurrentDirectory = CurrentDirectory;
@@ -191,36 +140,22 @@ namespace dnSpy.Debugger.Dialogs {
 			return other;
 		}
 
-		static string VerifyFilename(string filename) {
-			if (!File.Exists(filename)) {
-				if (string.IsNullOrWhiteSpace(filename))
-					return dnSpy_Debugger_Resources.Error_MissingFilename;
-				return dnSpy_Debugger_Resources.Error_FileDoesNotExist;
-			}
-			return string.Empty;
-		}
-
 		protected override string Verify(string columnName) {
-			if (columnName == nameof(HostFilename)) {
-				if (string.IsNullOrWhiteSpace(HostFilename))
-					return dnSpy_Debugger_Resources.Error_HostEgCoreRunExe;
-				return VerifyFilename(HostFilename);
+			if (columnName == nameof(Filename)) {
+				if (!File.Exists(filename)) {
+					if (string.IsNullOrWhiteSpace(filename))
+						return dnSpy_Debugger_Resources.Error_MissingFilename;
+					return dnSpy_Debugger_Resources.Error_FileDoesNotExist;
+				}
+				return string.Empty;
 			}
-			if (columnName == nameof(Filename))
-				return VerifyFilename(Filename);
-			if (columnName == nameof(DbgShimFilename))
-				return VerifyFilename(DbgShimFilename);
 
 			return string.Empty;
 		}
 
 		public override bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(Verify(nameof(HostFilename))))
-					return true;
 				if (!string.IsNullOrEmpty(Verify(nameof(Filename))))
-					return true;
-				if (!string.IsNullOrEmpty(Verify(nameof(DbgShimFilename))))
 					return true;
 
 				return false;

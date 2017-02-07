@@ -20,7 +20,7 @@
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace dnSpy.Debugger.Dialogs {
+namespace dnSpy.Debugger.Dialogs_OLD {
 	interface IProcessContext {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }

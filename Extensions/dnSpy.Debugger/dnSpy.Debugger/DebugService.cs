@@ -45,7 +45,7 @@ using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.CallStack;
-using dnSpy.Debugger.Dialogs;
+using dnSpy.Debugger.Dialogs_OLD;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Properties;
 using Microsoft.VisualStudio.Text.Classification;

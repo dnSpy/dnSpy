@@ -28,7 +28,7 @@ using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Properties;
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace dnSpy.Debugger.Dialogs {
+namespace dnSpy.Debugger.Dialogs_OLD {
 	sealed class AttachProcessVM : ViewModelBase, IDisposable {
 		public ICommand RefreshCommand => new RelayCommand(a => Refresh(), a => CanRefresh);
 

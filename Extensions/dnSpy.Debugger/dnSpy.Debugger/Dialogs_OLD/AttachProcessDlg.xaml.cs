@@ -27,7 +27,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Utilities;
 
-namespace dnSpy.Debugger.Dialogs {
+namespace dnSpy.Debugger.Dialogs_OLD {
 	sealed partial class AttachProcessDlg : WindowBase {
 		public AttachProcessDlg() {
 			InitializeComponent();

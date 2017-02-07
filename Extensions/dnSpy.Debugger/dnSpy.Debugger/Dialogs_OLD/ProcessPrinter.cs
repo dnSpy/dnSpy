@@ -23,7 +23,7 @@ using dnlib.PE;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 
-namespace dnSpy.Debugger.Dialogs {
+namespace dnSpy.Debugger.Dialogs_OLD {
 	sealed class ProcessPrinter {
 		readonly ITextColorWriter output;
 		readonly bool useHex;

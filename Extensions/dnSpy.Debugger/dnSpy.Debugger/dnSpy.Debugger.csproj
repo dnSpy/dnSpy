@@ -87,23 +87,23 @@
     <Compile Include="DebugService.cs" />
     <Compile Include="DebugServiceCommandLoader.cs" />
     <Compile Include="DebugUtils.cs" />
-    <Compile Include="Dialogs\AttachProcessDlg.xaml.cs">
+    <Compile Include="Dialogs_OLD\AttachProcessDlg.xaml.cs">
       <DependentUpon>AttachProcessDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\AttachProcessVM.cs" />
-    <Compile Include="Dialogs\DebugCoreCLRDlg.xaml.cs">
+    <Compile Include="Dialogs_OLD\AttachProcessVM.cs" />
+    <Compile Include="Dialogs_OLD\DebugCoreCLRDlg.xaml.cs">
       <DependentUpon>DebugCoreCLRDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\DebugCoreCLRVM.cs" />
-    <Compile Include="Dialogs\DebugProcessDlg.xaml.cs">
+    <Compile Include="Dialogs_OLD\DebugCoreCLRVM.cs" />
+    <Compile Include="Dialogs_OLD\DebugProcessDlg.xaml.cs">
       <DependentUpon>DebugProcessDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\DebugProcessVM.cs" />
-    <Compile Include="Dialogs\ManagedProcessesFinder.cs" />
-    <Compile Include="Dialogs\ProcessColumnConverter.cs" />
-    <Compile Include="Dialogs\ProcessContext.cs" />
-    <Compile Include="Dialogs\ProcessPrinter.cs" />
-    <Compile Include="Dialogs\ProcessVM.cs" />
+    <Compile Include="Dialogs_OLD\DebugProcessVM.cs" />
+    <Compile Include="Dialogs_OLD\ManagedProcessesFinder.cs" />
+    <Compile Include="Dialogs_OLD\ProcessColumnConverter.cs" />
+    <Compile Include="Dialogs_OLD\ProcessContext.cs" />
+    <Compile Include="Dialogs_OLD\ProcessPrinter.cs" />
+    <Compile Include="Dialogs_OLD\ProcessVM.cs" />
     <Compile Include="DnModuleIdExtensions.cs" />
     <Compile Include="EvalUtils.cs" />
     <Compile Include="Exceptions\ClickFocusAP.cs" />
@@ -297,15 +297,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\AttachProcessDlg.xaml">
+    <Page Include="Dialogs_OLD\AttachProcessDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\DebugCoreCLRDlg.xaml">
+    <Page Include="Dialogs_OLD\DebugCoreCLRDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\DebugProcessDlg.xaml">
+    <Page Include="Dialogs_OLD\DebugProcessDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

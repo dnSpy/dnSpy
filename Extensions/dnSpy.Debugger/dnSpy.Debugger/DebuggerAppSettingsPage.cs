@@ -25,7 +25,7 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Debugger.Dialogs;
+using dnSpy.Debugger.Dialogs_OLD;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger {

@@ -22,7 +22,7 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
 
-namespace dnSpy.Debugger.Dialogs {
+namespace dnSpy.Debugger.Dialogs_OLD {
 	sealed partial class DebugCoreCLRDlg : WindowBase {
 		public DebugCoreCLRDlg() {
 			InitializeComponent();
