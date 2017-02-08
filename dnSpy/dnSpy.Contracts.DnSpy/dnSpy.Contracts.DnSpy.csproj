@@ -118,6 +118,7 @@
     <Compile Include="Controls\MetroWindowCreatedEventArgs.cs" />
     <Compile Include="Controls\TextControl.cs" />
     <Compile Include="Controls\WindowBase.cs" />
+    <Compile Include="Debugger\Cordb\BreakProcessKind.cs" />
     <Compile Include="Debugger\Cordb\DotNetFrameworkStartDebuggingOptions.cs" />
     <Compile Include="Debugger\DbgEngine.cs" />
     <Compile Include="Debugger\DbgEngineProvider.cs" />

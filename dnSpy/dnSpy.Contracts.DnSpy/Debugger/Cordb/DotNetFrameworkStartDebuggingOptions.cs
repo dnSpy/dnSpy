@@ -37,5 +37,10 @@ namespace dnSpy.Contracts.Debugger.Cordb {
 		/// Working directory
 		/// </summary>
 		public string WorkingDirectory { get; set; }
+
+		/// <summary>
+		/// Break kind, defaults to <see cref="BreakProcessKind.None"/>
+		/// </summary>
+		public BreakProcessKind BreakProcessKind { get; set; } = BreakProcessKind.None;
 	}
 }

@@ -56,7 +56,9 @@
                 <ComboBox Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="debugEngineComboBox" DisplayMemberPath="Name" ItemsSource="{Binding OptionsPages}" SelectedItem="{Binding OptionsPages_SelectedItem}" VerticalContentAlignment="Center" />
             </Grid>
 
-            <ContentPresenter Grid.Row="1" Content="{Binding OptionsPages_SelectedItem.UIObject}" />
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ContentPresenter Content="{Binding OptionsPages_SelectedItem.UIObject}" />
+            </ScrollViewer>
         </Grid>
 
         <Grid Grid.Row="1" Margin="5">

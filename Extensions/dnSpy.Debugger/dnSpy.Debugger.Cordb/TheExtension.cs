@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.Cordb {
 	[ExportExtension]
 	sealed class TheExtension : IExtension {
 		public IEnumerable<string> MergedResourceDictionaries {
-			get { yield break; }
+			get { yield return "Themes/wpf.styles.templates.xaml"; }
 		}
 
 		public ExtensionInfo ExtensionInfo => new ExtensionInfo {

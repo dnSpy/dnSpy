@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DbgUI {
 			var list = new List<StartDebuggingOptionsPage>();
 			foreach (var provider in startDebuggingOptionsPageProviders)
 				list.AddRange(provider.Value.Create(context));
-			return list.ToArray();
+			return list.OrderBy(a => a.DisplayOrder).ToArray();
 		}
 
 		string GetCurrentFilename() {

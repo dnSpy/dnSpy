@@ -61,6 +61,150 @@ namespace dnSpy.Debugger.Cordb.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A_rguments.
+        /// </summary>
+        public static string DbgAsm_Args {
+            get {
+                return ResourceManager.GetString("DbgAsm_Args", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Assembly.
+        /// </summary>
+        public static string DbgAsm_Assembly {
+            get {
+                return ResourceManager.GetString("DbgAsm_Assembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Break at.
+        /// </summary>
+        public static string DbgAsm_BreakAt {
+            get {
+                return ResourceManager.GetString("DbgAsm_BreakAt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Working Directory.
+        /// </summary>
+        public static string DbgAsm_WorkingDir {
+            get {
+                return ResourceManager.GetString("DbgAsm_WorkingDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CreateProcess Event.
+        /// </summary>
+        public static string DbgBreak_CreateProcessEvent {
+            get {
+                return ResourceManager.GetString("DbgBreak_CreateProcessEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Don&apos;t Break.
+        /// </summary>
+        public static string DbgBreak_Dont {
+            get {
+                return ResourceManager.GetString("DbgBreak_Dont", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entry Point.
+        /// </summary>
+        public static string DbgBreak_EntryPoint {
+            get {
+                return ResourceManager.GetString("DbgBreak_EntryPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exe&apos;s First LoadClass Event.
+        /// </summary>
+        public static string DbgBreak_ExeFirstLoadClassEvent {
+            get {
+                return ResourceManager.GetString("DbgBreak_ExeFirstLoadClassEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exe&apos;s LoadModule Event.
+        /// </summary>
+        public static string DbgBreak_ExeLoadModuleEvent {
+            get {
+                return ResourceManager.GetString("DbgBreak_ExeLoadModuleEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First CreateAppDomain Event.
+        /// </summary>
+        public static string DbgBreak_FirstCreateAppDomainEvent {
+            get {
+                return ResourceManager.GetString("DbgBreak_FirstCreateAppDomainEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First CreateThread Event.
+        /// </summary>
+        public static string DbgBreak_FirstCreateThreadEvent {
+            get {
+                return ResourceManager.GetString("DbgBreak_FirstCreateThreadEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First LoadClass Event.
+        /// </summary>
+        public static string DbgBreak_FirstLoadClassEvent {
+            get {
+                return ResourceManager.GetString("DbgBreak_FirstLoadClassEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First LoadModule Event.
+        /// </summary>
+        public static string DbgBreak_FirstLoadModuleEvent {
+            get {
+                return ResourceManager.GetString("DbgBreak_FirstLoadModuleEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module .cctor or Entry Point.
+        /// </summary>
+        public static string DbgBreak_ModuleClassConstructorOrEntryPoint {
+            get {
+                return ResourceManager.GetString("DbgBreak_ModuleClassConstructorOrEntryPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file doesn&apos;t exist.
+        /// </summary>
+        public static string Error_FileDoesNotExist {
+            get {
+                return ResourceManager.GetString("Error_FileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing filename.
+        /// </summary>
+        public static string Error_MissingFilename {
+            get {
+                return ResourceManager.GetString("Error_MissingFilename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debugger ({0}).
         /// </summary>
         public static string Plugin_ShortDescription {

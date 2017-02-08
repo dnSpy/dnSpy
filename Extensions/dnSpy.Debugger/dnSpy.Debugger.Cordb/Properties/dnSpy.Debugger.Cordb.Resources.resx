@@ -117,6 +117,54 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DbgAsm_Args" xml:space="preserve">
+    <value>A_rguments</value>
+  </data>
+  <data name="DbgAsm_Assembly" xml:space="preserve">
+    <value>_Assembly</value>
+  </data>
+  <data name="DbgAsm_BreakAt" xml:space="preserve">
+    <value>_Break at</value>
+  </data>
+  <data name="DbgAsm_WorkingDir" xml:space="preserve">
+    <value>_Working Directory</value>
+  </data>
+  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
+    <value>CreateProcess Event</value>
+  </data>
+  <data name="DbgBreak_Dont" xml:space="preserve">
+    <value>Don't Break</value>
+  </data>
+  <data name="DbgBreak_EntryPoint" xml:space="preserve">
+    <value>Entry Point</value>
+  </data>
+  <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
+    <value>Exe's First LoadClass Event</value>
+  </data>
+  <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
+    <value>Exe's LoadModule Event</value>
+  </data>
+  <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
+    <value>First CreateAppDomain Event</value>
+  </data>
+  <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
+    <value>First CreateThread Event</value>
+  </data>
+  <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
+    <value>First LoadClass Event</value>
+  </data>
+  <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
+    <value>First LoadModule Event</value>
+  </data>
+  <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
+    <value>Module .cctor or Entry Point</value>
+  </data>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>The file doesn't exist</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Missing filename</value>
+  </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Debugger ({0})</value>
   </data>
