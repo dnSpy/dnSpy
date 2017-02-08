@@ -37,6 +37,16 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DbgUI\Debugger.cs" />
+    <Compile Include="DbgUI\DebuggerImpl.cs" />
+    <Compile Include="DbgUI\StartDebuggingOptionsProvider.cs" />
+    <Compile Include="DbgUI\ToolbarButtonCommands.cs" />
+    <Compile Include="Dialogs\DebugProgram\DebugProgramDlg.xaml.cs">
+      <DependentUpon>DebugProgramDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DebugProgram\DebugProgramVM.cs" />
+    <Compile Include="Dialogs\DebugProgram\OptionsPageVM.cs" />
+    <Compile Include="Impl\DbgManagerImpl.cs" />
     <Compile Include="Properties\dnSpy.Debugger.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -82,6 +92,12 @@
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
       <Link>Properties\AssemblyInfo.Shared.cs</Link>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Dialogs\DebugProgram\DebugProgramDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

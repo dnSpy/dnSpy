@@ -619,6 +619,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Debug engine.
+        /// </summary>
+        public static string DbgAsm_DebugEngine {
+            get {
+                return ResourceManager.GetString("DbgAsm_DebugEngine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Host.
         /// </summary>
         public static string DbgAsm_Host {

@@ -1299,4 +1299,7 @@ Are you sure you want to expand it?</value>
   <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
     <value>Hex Editor (Memory Window)</value>
   </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Debug engine</value>
+  </data>
 </root>
