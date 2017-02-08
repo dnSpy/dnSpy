@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("dnSpy")]
-[assembly: AssemblyCopyright("Copyright (C) 2014-2016 de4dot@gmail.com")]
+[assembly: AssemblyCopyright("Copyright (C) 2014-2017 de4dot@gmail.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
