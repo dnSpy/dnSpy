@@ -23,7 +23,7 @@ using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger {
-	[ExportModuleIdFactoryProvider(ModuleIdFactoryProviderConstants.OrderDebugger)]
+	//[ExportModuleIdFactoryProvider(ModuleIdFactoryProviderConstants.OrderDebugger)]
 	sealed class DebuggerModuleIdFactoryProvider : IModuleIdFactoryProvider {
 		readonly IDocumentTreeView documentTreeView;
 

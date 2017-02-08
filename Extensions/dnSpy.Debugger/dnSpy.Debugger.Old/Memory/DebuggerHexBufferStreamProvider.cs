@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Memory {
 		HexBufferStream CreateHexBufferStream(IntPtr processHandle);
 	}
 
-	[Export(typeof(IDebuggerHexBufferStreamProvider))]
+	//[Export(typeof(IDebuggerHexBufferStreamProvider))]
 	sealed class DebuggerHexBufferStreamProvider : IDebuggerHexBufferStreamProvider {
 		public HexBuffer Buffer { get; }
 		public DebuggerHexBufferStream DebuggerHexBufferStream { get; }

@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Memory {
 		void Show(HexSpan span, int windowIndex);
 	}
 
-	[Export(typeof(IMemoryWindowService))]
+	//[Export(typeof(IMemoryWindowService))]
 	sealed class MemoryWindowService : IMemoryWindowService {
 		readonly Lazy<MemoryToolWindowContentProvider> memoryToolWindowContentProvider;
 		readonly IDsToolWindowService toolWindowService;

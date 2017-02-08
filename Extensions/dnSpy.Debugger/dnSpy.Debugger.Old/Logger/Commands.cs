@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Logger {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:ShowExceptionMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 0)]
+	//[ExportMenuItem(Header = "res:ShowExceptionMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 0)]
 	sealed class ShowExceptionMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		readonly OutputLoggerSettingsImpl settings;
 
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Logger {
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowExceptionMessages = !settings.ShowExceptionMessages;
 	}
 
-	[ExportMenuItem(Header = "res:ShowStepFilteringMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 10)]
+	//[ExportMenuItem(Header = "res:ShowStepFilteringMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 10)]
 	sealed class ShowStepFilteringMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		readonly OutputLoggerSettingsImpl settings;
 
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.Logger {
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowStepFilteringMessages = !settings.ShowStepFilteringMessages;
 	}
 
-	[ExportMenuItem(Header = "res:ShowModuleLoadMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 20)]
+	//[ExportMenuItem(Header = "res:ShowModuleLoadMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 20)]
 	sealed class ShowModuleLoadMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		readonly OutputLoggerSettingsImpl settings;
 
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.Logger {
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowModuleLoadMessages = !settings.ShowModuleLoadMessages;
 	}
 
-	[ExportMenuItem(Header = "res:ShowModuleUnloadMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 30)]
+	//[ExportMenuItem(Header = "res:ShowModuleUnloadMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 30)]
 	sealed class ShowModuleUnloadMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		readonly OutputLoggerSettingsImpl settings;
 
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.Logger {
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowModuleUnloadMessages = !settings.ShowModuleUnloadMessages;
 	}
 
-	[ExportMenuItem(Header = "res:ShowProcessExitMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 40)]
+	//[ExportMenuItem(Header = "res:ShowProcessExitMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 40)]
 	sealed class ShowProcessExitMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		readonly OutputLoggerSettingsImpl settings;
 
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.Logger {
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowProcessExitMessages = !settings.ShowProcessExitMessages;
 	}
 
-	[ExportMenuItem(Header = "res:ShowThreadExitMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 50)]
+	//[ExportMenuItem(Header = "res:ShowThreadExitMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 50)]
 	sealed class ShowThreadExitMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		readonly OutputLoggerSettingsImpl settings;
 
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.Logger {
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowThreadExitMessages = !settings.ShowThreadExitMessages;
 	}
 
-	[ExportMenuItem(Header = "res:ShowProgramOutputMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 60)]
+	//[ExportMenuItem(Header = "res:ShowProgramOutputMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 60)]
 	sealed class ShowProgramOutputMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		readonly OutputLoggerSettingsImpl settings;
 
@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.Logger {
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowProgramOutputMessages = !settings.ShowProgramOutputMessages;
 	}
 
-	[ExportMenuItem(Header = "res:ShowMDAMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 60)]
+	//[ExportMenuItem(Header = "res:ShowMDAMessages", Group = MenuConstants.GROUP_CTX_OUTPUT_USER_COMMANDS, Order = 60)]
 	sealed class ShowMDAMessagesCtxMenuCommand : LogEditorCtxMenuCommand {
 		readonly OutputLoggerSettingsImpl settings;
 

@@ -26,7 +26,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Breakpoints {
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class BreakpointListLoader : IAutoLoaded {
 		[ImportingConstructor]
 		BreakpointListLoader(IBreakpointListSettings breakpointListSettings) {
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointListSettings {
 	}
 
-	[Export, Export(typeof(IBreakpointListSettings))]
+	//[Export, Export(typeof(IBreakpointListSettings))]
 	sealed class BreakpointListSettings : IBreakpointListSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3");
 

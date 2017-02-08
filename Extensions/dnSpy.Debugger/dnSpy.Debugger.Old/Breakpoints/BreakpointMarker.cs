@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.Breakpoints {
-	[Export(typeof(IBreakpointListener))]
+	//[Export(typeof(IBreakpointListener))]
 	sealed class BreakpointMarker : IBreakpointListener {
 		readonly IGlyphTextMarkerService glyphTextMarkerService;
 		readonly IClassificationType classificationTypeEnabledBreakpoint;

@@ -29,7 +29,7 @@ using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.Old.Properties;
 
 namespace dnSpy.Debugger {
-	[Export(typeof(IAppSettingsPageProvider))]
+	//[Export(typeof(IAppSettingsPageProvider))]
 	sealed class DebuggerAppSettingsPageProvider : IAppSettingsPageProvider {
 		readonly DebuggerSettingsImpl debuggerSettingsImpl;
 

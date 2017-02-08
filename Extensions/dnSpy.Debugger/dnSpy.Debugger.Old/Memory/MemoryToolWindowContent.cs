@@ -30,7 +30,7 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Old.Properties;
 
 namespace dnSpy.Debugger.Memory {
-	[Export, Export(typeof(IToolWindowContentProvider))]
+	//[Export, Export(typeof(IToolWindowContentProvider))]
 	sealed class MemoryToolWindowContentProvider : IToolWindowContentProvider {
 		public TWContent[] Contents => contents;
 		readonly TWContent[] contents;

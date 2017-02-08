@@ -34,7 +34,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.Breakpoints {
-	[Export(typeof(ILCodeBreakpointGlyphTextMarkerHandler))]
+	//[Export(typeof(ILCodeBreakpointGlyphTextMarkerHandler))]
 	sealed class ILCodeBreakpointGlyphTextMarkerHandler : IGlyphTextMarkerHandler {
 		readonly IDecompilerService decompilerService;
 

@@ -37,7 +37,7 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.CallStack;
 
 namespace dnSpy.Debugger.Threads {
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class ThreadsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ThreadsContentCommandLoader(IWpfCommandService wpfCommandService, CopyCallThreadsCtxMenuCommand copyCmd, SwitchToThreadThreadsCtxMenuCommand switchCmd, SwitchToThreadNewTabThreadsCtxMenuCommand switchNewTabCmd) {
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class ThreadsCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ThreadsCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
+	//[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
 	sealed class CopyCallThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly IDebuggerSettings debuggerSettings;
 
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.Threads {
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
+	//[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
 	sealed class SelectAllThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
@@ -173,7 +173,7 @@ namespace dnSpy.Debugger.Threads {
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_HEXOPTS, Order = 0)]
+	//[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly DebuggerSettingsImpl debuggerSettings;
 
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.Threads {
 		public override bool IsChecked(ThreadsCtxMenuContext context) => debuggerSettings.UseHexadecimal;
 	}
 
-	[Export, ExportMenuItem(Header = "res:SwitchToThreadCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
+	//[Export, ExportMenuItem(Header = "res:SwitchToThreadCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
 	sealed class SwitchToThreadThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly Lazy<IStackFrameService> stackFrameService;
 		readonly IDocumentTabService documentTabService;
@@ -224,7 +224,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:SwitchToThreadNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
+	//[Export, ExportMenuItem(Header = "res:SwitchToThreadNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
 	sealed class SwitchToThreadNewTabThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly Lazy<IStackFrameService> stackFrameService;
 		readonly IDocumentTabService documentTabService;
@@ -244,7 +244,7 @@ namespace dnSpy.Debugger.Threads {
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => SwitchToThreadThreadsCtxMenuCommand.CanGoToThread(context);
 	}
 
-	[ExportMenuItem(Header = "res:RenameThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
+	//[ExportMenuItem(Header = "res:RenameThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
 	sealed class RenameThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		RenameThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
@@ -260,7 +260,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:FreezeThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 30)]
+	//[ExportMenuItem(Header = "res:FreezeThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 30)]
 	sealed class FreezeThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		FreezeThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
@@ -275,7 +275,7 @@ namespace dnSpy.Debugger.Threads {
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => context.SelectedItems.Any(t => !t.IsSuspended);
 	}
 
-	[ExportMenuItem(Header = "res:ThawThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 40)]
+	//[ExportMenuItem(Header = "res:ThawThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 40)]
 	sealed class ThawThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		ThawThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)

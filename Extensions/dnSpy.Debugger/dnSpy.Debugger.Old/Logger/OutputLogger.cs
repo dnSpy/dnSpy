@@ -32,8 +32,8 @@ using dnSpy.Debugger.Old.Properties;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.Logger {
-	[Export(typeof(ILoadBeforeDebug))]
-	[ExportOutputServiceListener]
+	//[Export(typeof(ILoadBeforeDebug))]
+	//[ExportOutputServiceListener]
 	sealed class OutputLogger : ILoadBeforeDebug, IOutputServiceListener {
 		public static readonly Guid GUID_OUTPUT_LOGGER_DEBUG = new Guid("7B6E802A-B58C-4689-877E-3358FCDCEFAC");
 

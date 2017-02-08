@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.IMModules {
 				inMemoryModuleService.Value.UpdateModuleMemory(context.MemoryModuleDefFile);
 		}
 
-		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = DsImagesAttribute.Refresh, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUGRT, Order = 0)]
+		//[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = DsImagesAttribute.Refresh, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUGRT, Order = 0)]
 		sealed class FilesCommand : CommandBase {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = DsImagesAttribute.Refresh, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUGRT, Order = 0)]
+		//[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = DsImagesAttribute.Refresh, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUGRT, Order = 0)]
 		sealed class CodeCommand : CommandBase {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();

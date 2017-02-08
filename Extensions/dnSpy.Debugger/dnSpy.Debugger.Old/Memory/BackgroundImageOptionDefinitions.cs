@@ -24,7 +24,7 @@ using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.Memory {
 	static class BackgroundImageOptionDefinitions {
-		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_HexEditorDebuggerMemory)]
+		//[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_HexEditorDebuggerMemory)]
 		sealed class HexEditorProcessMemory : IBackgroundImageOptionDefinition2 {
 			public string Id => "Hex Editor - Memory Window";
 			public string DisplayName => dnSpy_Debugger_Resources.BgImgDisplayName_DebuggerMemory;

@@ -24,7 +24,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
 
 namespace dnSpy.Debugger {
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class DebugServiceCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		DebugServiceCommandLoader(Lazy<DebugService> debugService, IWpfCommandService wpfCommandService) {

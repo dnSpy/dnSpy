@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointListener {
 	}
 
-	[Export, Export(typeof(IBreakpointService)), Export(typeof(ILoadBeforeDebug))]
+	//[Export, Export(typeof(IBreakpointService)), Export(typeof(ILoadBeforeDebug))]
 	sealed class BreakpointService : IBreakpointService, ILoadBeforeDebug {
 		public event EventHandler<BreakpointsAddedEventArgs> BreakpointsAdded;
 		public event EventHandler<BreakpointsRemovedEventArgs> BreakpointsRemoved;

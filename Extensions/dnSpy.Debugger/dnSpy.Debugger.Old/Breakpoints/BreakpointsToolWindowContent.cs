@@ -27,7 +27,7 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Old.Properties;
 
 namespace dnSpy.Debugger.Breakpoints {
-	[Export(typeof(IToolWindowContentProvider))]
+	//[Export(typeof(IToolWindowContentProvider))]
 	sealed class BreakpointsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IBreakpointsContent> breakpointsContent;
 

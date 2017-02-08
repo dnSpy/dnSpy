@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.Memory {
 		public abstract void Read(IntPtr hProcess, HexPosition position, byte[] destination, long destinationIndex, long length);
 	}
 
-	[Export(typeof(SimpleProcessReader))]
+	//[Export(typeof(SimpleProcessReader))]
 	sealed class SimpleProcessReaderImpl : SimpleProcessReader {
 		readonly HexBufferStreamFactoryService hexBufferStreamFactoryService;
 

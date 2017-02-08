@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Modules {
 		IModulesVM ModulesVM { get; }
 	}
 
-	[Export(typeof(IModulesContent))]
+	//[Export(typeof(IModulesContent))]
 	sealed class ModulesContent : IModulesContent {
 		public object UIObject => modulesControl;
 		public IInputElement FocusedElement => modulesControl.ListView;

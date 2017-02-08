@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Memory {
 		event EventHandler UnderlyingStreamChanged;
 	}
 
-	[Export(typeof(IMemoryVM))]
+	//[Export(typeof(IMemoryVM))]
 	sealed class MemoryVM : ViewModelBase, IMemoryVM {
 		public bool CanNotEditMemory {
 			get { return canNotEditMemory; }

@@ -22,7 +22,7 @@ using dnSpy.Contracts.Extension;
 using dnSpy.Debugger.Old.Properties;
 
 namespace dnSpy.Debugger {
-	[ExportExtension]
+	//[ExportExtension]
 	sealed class TheExtension : IExtension {
 		public IEnumerable<string> MergedResourceDictionaries {
 			get { yield return "Themes/wpf.styles.templates.xaml"; }

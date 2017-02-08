@@ -24,37 +24,37 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Debugger {
 	static class ContentTypeDefinitions {
 #pragma warning disable 0169
-		[Export]
+		//[Export]
 		[Name(ContentTypes.BreakpointsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition BreakpointsWindow;
 
-		[Export]
+		//[Export]
 		[Name(ContentTypes.CallStackWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition CallStackWindow;
 
-		[Export]
+		//[Export]
 		[Name(ContentTypes.AttachToProcessWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition AttachToProcessWindow;
 
-		[Export]
+		//[Export]
 		[Name(ContentTypes.ExceptionSettingsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition ExceptionSettingsWindow;
 
-		[Export]
+		//[Export]
 		[Name(ContentTypes.LocalsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition LocalsWindow;
 
-		[Export]
+		//[Export]
 		[Name(ContentTypes.ModulesWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition ModulesWindow;
 
-		[Export]
+		//[Export]
 		[Name(ContentTypes.ThreadsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition ThreadsWindow;

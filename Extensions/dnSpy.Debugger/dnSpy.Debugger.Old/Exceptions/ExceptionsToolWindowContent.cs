@@ -27,7 +27,7 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Old.Properties;
 
 namespace dnSpy.Debugger.Exceptions {
-	[Export(typeof(IToolWindowContentProvider))]
+	//[Export(typeof(IToolWindowContentProvider))]
 	sealed class ExceptionsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IExceptionsContent> exceptionsContent;
 

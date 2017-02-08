@@ -29,7 +29,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.Breakpoints {
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class BreakpointsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		BreakpointsContentCommandLoader(IWpfCommandService wpfCommandService, CopyBreakpointCtxMenuCommand copyCmd, DeleteBreakpointCtxMenuCommand deleteCmd, GoToSourceBreakpointCtxMenuCommand gotoSrcCmd, GoToSourceNewTabBreakpointCtxMenuCommand gotoSrcNewTabCmd, ToggleEnableBreakpointCtxMenuCommand toggleBpCmd) {
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		ListView ListView { get; }
 	}
 
-	[Export(typeof(IBreakpointsContent))]
+	//[Export(typeof(IBreakpointsContent))]
 	sealed class BreakpointsContent : IBreakpointsContent {
 		public object UIObject => BreakpointsControl;
 		public IInputElement FocusedElement => BreakpointsControl.ListView;

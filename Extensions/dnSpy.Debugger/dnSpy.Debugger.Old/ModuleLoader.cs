@@ -36,7 +36,7 @@ namespace dnSpy.Debugger {
 		DnModule GetDnModule(CorModule module);
 	}
 
-	[Export(typeof(IModuleLoader))]
+	//[Export(typeof(IModuleLoader))]
 	sealed class ModuleLoader : IModuleLoader {
 		bool UseMemoryModules => debuggerSettings.UseMemoryModules;
 

@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.Exceptions {
 		string GetName();
 	}
 
-	[Export(typeof(IGetNewExceptionName))]
+	//[Export(typeof(IGetNewExceptionName))]
 	sealed class GetNewExceptionName : IGetNewExceptionName {
 		readonly IMessageBoxService messageBoxService;
 

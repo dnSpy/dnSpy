@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.CallStack {
 		bool IsVisible { get; set; }
 	}
 
-	[Export(typeof(ICallStackVM))]
+	//[Export(typeof(ICallStackVM))]
 	sealed class CallStackVM : ViewModelBase, ICallStackVM {
 		public bool IsEnabled {
 			get { return isEnabled; }

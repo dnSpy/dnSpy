@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Locals {
 		MsgBoxButton AskUser(string msg, AskUserButton buttons);
 	}
 
-	[Export(typeof(IAskUser))]
+	//[Export(typeof(IAskUser))]
 	sealed class AskUser : IAskUser {
 		MsgBoxButton IAskUser.AskUser(string msg, AskUserButton buttons) => MsgBox.Instance.Show(msg, Convert(buttons));
 

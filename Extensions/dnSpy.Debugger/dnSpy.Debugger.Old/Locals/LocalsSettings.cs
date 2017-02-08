@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Locals {
 		bool showTokens = false;
 	}
 
-	[Export, Export(typeof(ILocalsSettings))]
+	//[Export, Export(typeof(ILocalsSettings))]
 	sealed class LocalsSettingsImpl : LocalsSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("33608C69-6696-4721-8011-81ECCCC80C64");
 

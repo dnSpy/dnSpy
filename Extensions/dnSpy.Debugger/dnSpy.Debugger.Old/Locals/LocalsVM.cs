@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Locals {
 		bool IsVisible { get; set; }
 	}
 
-	[Export(typeof(ILocalsVM)), Export(typeof(ILoadBeforeDebug))]
+	//[Export(typeof(ILocalsVM)), Export(typeof(ILoadBeforeDebug))]
 	sealed class LocalsVM : ViewModelBase, ILocalsOwner, ILocalsVM, ILoadBeforeDebug {
 		public bool IsEnabled {
 			get { return isEnabled; }

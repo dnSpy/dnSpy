@@ -47,7 +47,7 @@ using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Old.Properties;
 
 namespace dnSpy.Debugger.Modules {
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class ModulesContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ModulesContentCommandLoader(IWpfCommandService wpfCommandService, Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowService> memoryWindowService, CopyCallModulesCtxMenuCommand copyCmd, GoToModuleModulesCtxMenuCommand goToCmd, GoToModuleNewTabModulesCtxMenuCommand goToNewTabCmd, ShowInMemoryModulesCtxMenuCommand showInMemoryCmd) {
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class ModulesCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ModulesCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 0)]
+	//[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 0)]
 	sealed class CopyCallModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		IDebuggerSettings debuggerSettings;
 
@@ -175,7 +175,7 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 10)]
+	//[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 10)]
 	sealed class SelectAllModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
@@ -186,7 +186,7 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[Export, ExportMenuItem(Header = "res:GoToModuleCommand", Icon = DsImagesAttribute.ModulePublic, InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
+	//[Export, ExportMenuItem(Header = "res:GoToModuleCommand", Icon = DsImagesAttribute.ModulePublic, InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
 	sealed class GoToModuleModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
@@ -238,7 +238,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[Export]
+	//[Export]
 	sealed class GoToModuleNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IModuleLoader> moduleLoader;
@@ -257,7 +257,7 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsEnabled(ModulesCtxMenuContext context) => GoToModuleModulesCtxMenuCommand.CanGoToModule(context);
 	}
 
-	[ExportMenuItem(Icon = DsImagesAttribute.ModulePublic, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
+	//[ExportMenuItem(Icon = DsImagesAttribute.ModulePublic, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
 	sealed class LoadModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
@@ -290,7 +290,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = DsImagesAttribute.ModulePublic, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
+	//[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = DsImagesAttribute.ModulePublic, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
 	sealed class OpenModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 		readonly IDocumentTabService documentTabService;
@@ -334,7 +334,7 @@ namespace dnSpy.Debugger.Modules {
 		public const string GROUP_SHOW_IN_MEMORY_WINDOW = "0,E1F6906B-64C8-4411-B8B7-07C331197BFE";
 	}
 
-	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = DsImagesAttribute.MemoryWindow, Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 30)]
+	//[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = DsImagesAttribute.MemoryWindow, Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 30)]
 	sealed class ShowInMemoryXModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		ShowInMemoryXModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.Modules {
 		public override void Execute(ModulesCtxMenuContext context) { }
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
+	//[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
 	sealed class ShowInMemoryXModulesSubCtxMenuCommand : ModulesCtxMenuCommand, IMenuItemProvider {
 		readonly Tuple<IMenuItem, string, string>[] subCmds;
 
@@ -377,7 +377,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[Export]
+	//[Export]
 	sealed class ShowInMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly Lazy<IMemoryWindowService> memoryWindowService;
 
@@ -434,7 +434,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_HEXOPTS, Order = 0)]
+	//[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly DebuggerSettingsImpl debuggerSettings;
 
@@ -448,7 +448,7 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsChecked(ModulesCtxMenuContext context) => debuggerSettings.UseHexadecimal;
 	}
 
-	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 0)]
+	//[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 0)]
 	sealed class OpenContainingFolderModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		OpenContainingFolderModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
@@ -477,7 +477,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:ModuleCopyFilenameCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 10)]
+	//[ExportMenuItem(Header = "res:ModuleCopyFilenameCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 10)]
 	sealed class CopyFilenameModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		CopyFilenameModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
@@ -496,7 +496,7 @@ namespace dnSpy.Debugger.Modules {
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.SelectedItems.Length == 1;
 	}
 
-	[ExportMenuItem(Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_CTX_DBG_MODULES_SAVE, Order = 0)]
+	//[ExportMenuItem(Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_CTX_DBG_MODULES_SAVE, Order = 0)]
 	sealed class SaveModuleToDiskModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IAppWindow appWindow;
 		readonly IMessageBoxService messageBoxService;

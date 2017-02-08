@@ -82,7 +82,7 @@ namespace dnSpy.Debugger {
 		IStackFrameService StackFrameService { get; }
 	}
 
-	[ExportDocumentListListener]
+	//[ExportDocumentListListener]
 	sealed class DebugServiceFileListListener : IDocumentListListener {
 		public bool CanLoad => !debugService.Value.TheDebugger.IsDebugging;
 		public bool CanReload => !debugService.Value.TheDebugger.IsDebugging;
@@ -99,7 +99,7 @@ namespace dnSpy.Debugger {
 		public bool CheckCanLoad(bool isReload) => true;
 	}
 
-	[Export, Export(typeof(IDebugService))]
+	//[Export, Export(typeof(IDebugService))]
 	sealed class DebugService : IDebugService {
 		readonly IAppWindow appWindow;
 		readonly IDocumentTabService documentTabService;

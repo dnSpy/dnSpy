@@ -34,7 +34,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.CallStack {
-	[Export(typeof(IViewTaggerProvider))]
+	//[Export(typeof(IViewTaggerProvider))]
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Debuggable)]
 	[TagType(typeof(ITextMarkerTag))]
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[Export(typeof(ActiveStatementService))]
+	//[Export(typeof(ActiveStatementService))]
 	sealed class ActiveStatementService {
 		readonly IModuleIdProvider moduleIdProvider;
 		readonly HashSet<ActiveStatementTagger> taggers;

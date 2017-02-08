@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Modules {
 		bool IsVisible { get; set; }
 	}
 
-	[Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug))]
+	//[Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug))]
 	sealed class ModulesVM : ViewModelBase, IModulesVM, ILoadBeforeDebug {
 		public ObservableCollection<ModuleVM> Collection => modulesList;
 		readonly ObservableCollection<ModuleVM> modulesList;

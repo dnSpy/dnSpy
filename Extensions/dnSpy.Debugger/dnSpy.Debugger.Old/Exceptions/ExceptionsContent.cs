@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Exceptions {
 		IExceptionsVM ExceptionsVM { get; }
 	}
 
-	[Export(typeof(IExceptionsContent))]
+	//[Export(typeof(IExceptionsContent))]
 	sealed class ExceptionsContent : IExceptionsContent {
 		public object UIObject => ExceptionsControl;
 		public IInputElement FocusedElement => ExceptionsControl.ListBox;

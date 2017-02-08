@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[Export(typeof(IStackFrameService)), Export(typeof(ILoadBeforeDebug))]
+	//[Export(typeof(IStackFrameService)), Export(typeof(ILoadBeforeDebug))]
 	sealed class StackFrameService : ViewModelBase, IStackFrameService, ILoadBeforeDebug {
 		const int MaxShownFrames = 50000;
 

@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Locals {
 			InitializeTreeView(treeView);
 		}
 
-		[ExportAutoLoaded]
+		//[ExportAutoLoaded]
 		sealed class ThemeServiceLoader : IAutoLoaded {
 			[ImportingConstructor]
 			ThemeServiceLoader(IThemeService themeService) {

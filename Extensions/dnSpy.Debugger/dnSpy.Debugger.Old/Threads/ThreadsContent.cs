@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Threads {
 		IThreadsVM ThreadsVM { get; }
 	}
 
-	[Export(typeof(IThreadsContent))]
+	//[Export(typeof(IThreadsContent))]
 	sealed class ThreadsContent : IThreadsContent {
 		public object UIObject => threadsControl;
 		public IInputElement FocusedElement => threadsControl.ListView;

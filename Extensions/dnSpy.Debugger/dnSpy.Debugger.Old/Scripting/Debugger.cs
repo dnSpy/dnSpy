@@ -35,7 +35,7 @@ using dnSpy.Debugger.CallStack;
 using DBG = dndbg.Engine;
 
 namespace dnSpy.Debugger.Scripting {
-	[Export(typeof(IDebugger))]
+	//[Export(typeof(IDebugger))]
 	sealed class Debugger : IDebugger {
 		public Dispatcher Dispatcher => dispatcher;
 		readonly Dispatcher dispatcher;

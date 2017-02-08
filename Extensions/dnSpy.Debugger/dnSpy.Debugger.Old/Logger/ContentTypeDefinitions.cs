@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Debugger.Logger {
 	static class ContentTypeDefinitions {
 #pragma warning disable 0169
-		[Export]
+		//[Export]
 		[Name(ContentTypes.OutputDebug)]
 		[BaseDefinition(ContentTypes.Output)]
 		static readonly ContentTypeDefinition OutputDebugContentTypeDefinition;

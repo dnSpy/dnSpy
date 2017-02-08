@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Threads {
 		bool IsVisible { get; set; }
 	}
 
-	[Export(typeof(IThreadsVM)), Export(typeof(ILoadBeforeDebug))]
+	//[Export(typeof(IThreadsVM)), Export(typeof(ILoadBeforeDebug))]
 	sealed class ThreadsVM : ViewModelBase, IThreadsVM, ILoadBeforeDebug {
 		public bool IsEnabled {
 			get { return isEnabled; }

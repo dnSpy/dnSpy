@@ -25,7 +25,7 @@ using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 
 namespace dnSpy.Debugger.Memory {
-	[Export(typeof(ILoadBeforeDebug))]
+	//[Export(typeof(ILoadBeforeDebug))]
 	sealed class BufferFileCreator : ILoadBeforeDebug {
 		readonly ITheDebugger theDebugger;
 		readonly HexBufferFileServiceFactory hexBufferFileServiceFactory;

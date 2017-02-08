@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.Breakpoints {
-	[Export(typeof(IGlyphTextMarkerMouseProcessorProvider))]
+	//[Export(typeof(IGlyphTextMarkerMouseProcessorProvider))]
 	[Name(PredefinedDsGlyphTextMarkerMouseProcessorProviderNames.DebuggerBreakpoints)]
 	[TextViewRole(PredefinedTextViewRoles.Debuggable)]
 	sealed class GlyphTextMarkerMouseProcessorProvider : IGlyphTextMarkerMouseProcessorProvider {

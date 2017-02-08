@@ -37,7 +37,7 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Debugger.Exceptions {
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class ExceptionsContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ExceptionsContentCommandLoader(IWpfCommandService wpfCommandService, Lazy<IExceptionsContent> exceptionsContent, CopyCallExceptionsCtxMenuCommand copyCmd, AddExceptionsCtxMenuCommand addExCmd, RemoveExceptionsCtxMenuCommand removeExCmd, ToggleEnableExceptionsCtxMenuCommand toggleExCmd) {
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class CallStackCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		CallStackCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 0)]
+	//[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 0)]
 	sealed class CopyCallExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		CopyCallExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 10)]
+	//[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 10)]
 	sealed class SelectAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -154,7 +154,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
 
-	[Export, ExportMenuItem(Header = "res:AddExceptionCommand", Icon = DsImagesAttribute.Add, InputGestureText = "res:ShortCutKeyInsert", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 0)]
+	//[Export, ExportMenuItem(Header = "res:AddExceptionCommand", Icon = DsImagesAttribute.Add, InputGestureText = "res:ShortCutKeyInsert", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 0)]
 	sealed class AddExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		AddExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanAddException;
 	}
 
-	[Export, ExportMenuItem(Header = "res:RemoveExceptionCommand", Icon = DsImagesAttribute.RemoveCommand, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 10)]
+	//[Export, ExportMenuItem(Header = "res:RemoveExceptionCommand", Icon = DsImagesAttribute.RemoveCommand, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 10)]
 	sealed class RemoveExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		RemoveExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanRemoveExceptions;
 	}
 
-	[ExportMenuItem(Header = "res:RestoreDefaultExceptionSettingsCommand", Icon = DsImagesAttribute.UndoCheckBoxList, Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 20)]
+	//[ExportMenuItem(Header = "res:RestoreDefaultExceptionSettingsCommand", Icon = DsImagesAttribute.UndoCheckBoxList, Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 20)]
 	sealed class RestoreDefaultsExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		RestoreDefaultsExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanRestoreDefaults;
 	}
 
-	[Export]
+	//[Export]
 	sealed class ToggleEnableExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		readonly IExceptionListSettings exceptionListSettings;
 
@@ -205,7 +205,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:EnableAllFilteredExceptionsCommand", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 30)]
+	//[ExportMenuItem(Header = "res:EnableAllFilteredExceptionsCommand", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 30)]
 	sealed class EnableAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		EnableAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -216,7 +216,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override bool IsEnabled(ExceptionsCtxMenuContext context) => context.VM.CanEnableAllFilteredExceptions;
 	}
 
-	[ExportMenuItem(Header = "res:DisableAllFilteredExceptionsCommand", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 40)]
+	//[ExportMenuItem(Header = "res:DisableAllFilteredExceptionsCommand", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 40)]
 	sealed class DisableAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		DisableAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -301,7 +301,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = DsImagesAttribute.Add, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 0)]
+		//[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = DsImagesAttribute.Add, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 0)]
 		sealed class FilesCommand : CommandBase {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();
@@ -314,7 +314,7 @@ namespace dnSpy.Debugger.Exceptions {
 			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 		}
 
-		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = DsImagesAttribute.Add, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 1000)]
+		//[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = DsImagesAttribute.Add, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 1000)]
 		sealed class CodeCommand : CommandBase {
 			protected sealed override object CachedContextKey => ContextKey;
 			static readonly object ContextKey = new object();

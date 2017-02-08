@@ -33,8 +33,8 @@ namespace dnSpy.Debugger.Locals {
 		event EventHandler NewMethodInfoAvailable;
 	}
 
-	[Export(typeof(IMethodLocalProvider))]
-	[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_DEBUGGER_METHODLOCALPROVIDER)]
+	//[Export(typeof(IMethodLocalProvider))]
+	//[ExportDocumentViewerListener(DocumentViewerListenerConstants.ORDER_DEBUGGER_METHODLOCALPROVIDER)]
 	sealed class MethodLocalProvider : IMethodLocalProvider, IDocumentViewerListener {
 		public event EventHandler NewMethodInfoAvailable;
 

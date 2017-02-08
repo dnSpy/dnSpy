@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.CallStack {
-	[Export(typeof(ILoadBeforeDebug))]
+	//[Export(typeof(ILoadBeforeDebug))]
 	sealed class CallStackMarker : ILoadBeforeDebug {
 		readonly IStackFrameService stackFrameService;
 		readonly IGlyphTextMarkerService glyphTextMarkerService;

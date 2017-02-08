@@ -55,25 +55,25 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 100)]
+		//[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 100)]
 		sealed class CodeCommand : MenuItemCommon {
 			[ImportingConstructor]
 			CodeCommand(Lazy<IBreakpointService> breakpointService) : base(breakpointService, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) { }
 		}
 
-		[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 100)]
+		//[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 100)]
 		sealed class AssemblyExplorerCommand : MenuItemCommon {
 			[ImportingConstructor]
 			AssemblyExplorerCommand(Lazy<IBreakpointService> breakpointService) : base(breakpointService, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) { }
 		}
 
-		[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_SEARCH_DEBUG, Order = 100)]
+		//[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_SEARCH_DEBUG, Order = 100)]
 		sealed class SearchCommand : MenuItemCommon {
 			[ImportingConstructor]
 			SearchCommand(Lazy<IBreakpointService> breakpointService) : base(breakpointService, MenuConstants.GUIDOBJ_SEARCH_GUID) { }
 		}
 
-		[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_ANALYZER_DEBUG, Order = 100)]
+		//[ExportMenuItem(Header = "res:AddClassBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_ANALYZER_DEBUG, Order = 100)]
 		sealed class AnalyzerCommand : MenuItemCommon {
 			[ImportingConstructor]
 			AnalyzerCommand(Lazy<IBreakpointService> breakpointService) : base(breakpointService, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID) { }
@@ -160,25 +160,25 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 150)]
+		//[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 150)]
 		sealed class CodeCommand : MenuItemCommon {
 			[ImportingConstructor]
 			CodeCommand(Lazy<IBreakpointService> breakpointService) : base(breakpointService, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID) { }
 		}
 
-		[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 150)]
+		//[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_DOCUMENTS_DEBUG, Order = 150)]
 		sealed class AssemblyExplorerCommand : MenuItemCommon {
 			[ImportingConstructor]
 			AssemblyExplorerCommand(Lazy<IBreakpointService> breakpointService) : base(breakpointService, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) { }
 		}
 
-		[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_SEARCH_DEBUG, Order = 150)]
+		//[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_SEARCH_DEBUG, Order = 150)]
 		sealed class SearchCommand : MenuItemCommon {
 			[ImportingConstructor]
 			SearchCommand(Lazy<IBreakpointService> breakpointService) : base(breakpointService, MenuConstants.GUIDOBJ_SEARCH_GUID) { }
 		}
 
-		[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_ANALYZER_DEBUG, Order = 150)]
+		//[ExportMenuItem(Header = "res:AddMethodBreakpointCommand", Icon = DsImagesAttribute.CheckDot, Group = MenuConstants.GROUP_CTX_ANALYZER_DEBUG, Order = 150)]
 		sealed class AnalyzerCommand : MenuItemCommon {
 			[ImportingConstructor]
 			AnalyzerCommand(Lazy<IBreakpointService> breakpointService) : base(breakpointService, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID) { }

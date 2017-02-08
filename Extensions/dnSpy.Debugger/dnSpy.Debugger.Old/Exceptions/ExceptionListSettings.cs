@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Exceptions {
 		AddOrUpdate,
 	}
 
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class ExceptionListSettingsLoader : IAutoLoaded {
 		[ImportingConstructor]
 		ExceptionListSettingsLoader(ExceptionListSettings exceptionListSettings) {
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Exceptions {
 		IDisposable TemporarilyDisableSave();
 	}
 
-	[Export, Export(typeof(IExceptionListSettings))]
+	//[Export, Export(typeof(IExceptionListSettings))]
 	sealed class ExceptionListSettings : IExceptionListSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("102DCD2E-BE0A-477C-B4D0-600C5CA28A6A");
 

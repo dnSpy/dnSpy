@@ -25,7 +25,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Debugger.Memory {
-	[ExportAutoLoaded]
+	//[ExportAutoLoaded]
 	sealed class MemoryContentCommandLoader : IAutoLoaded {
 		[ImportingConstructor]
 		MemoryContentCommandLoader(IWpfCommandService wpfCommandService, MemoryToolWindowContentProvider memoryToolWindowContentProvider, IDsToolWindowService toolWindowService) {
