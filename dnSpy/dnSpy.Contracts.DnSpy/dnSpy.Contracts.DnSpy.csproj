@@ -120,8 +120,6 @@
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Debugger\CorDebug\BreakProcessKind.cs" />
     <Compile Include="Debugger\CorDebug\DotNetFrameworkStartDebuggingOptions.cs" />
-    <Compile Include="Debugger\DbgEngine.cs" />
-    <Compile Include="Debugger\DbgEngineProvider.cs" />
     <Compile Include="Debugger\DbgImageLayout.cs" />
     <Compile Include="Debugger\DbgManager.cs" />
     <Compile Include="Debugger\DbgModule.cs" />
@@ -135,6 +133,10 @@
     <Compile Include="Debugger\DotNet\DbgDnModule.cs" />
     <Compile Include="Debugger\DotNet\DbgDnRuntime.cs" />
     <Compile Include="Debugger\DotNet\DbgDnThread.cs" />
+    <Compile Include="Debugger\Engine\DbgEngine.cs" />
+    <Compile Include="Debugger\Engine\DbgEngineMessage.cs" />
+    <Compile Include="Debugger\Engine\DbgEngineMessageKind.cs" />
+    <Compile Include="Debugger\Engine\DbgEngineProvider.cs" />
     <Compile Include="Debugger\StartDebuggingOptions.cs" />
     <Compile Include="Debugger\UI\AttachProgramOptions.cs" />
     <Compile Include="Debugger\UI\AttachProgramOptionsProvider.cs" />

@@ -17,25 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger {
-	/// <summary>
-	/// Manages all debug engines
-	/// </summary>
-	public abstract class DbgManager {
-		/// <summary>
-		/// Starts debugging. Returns false if it failed to create a debug engine.
-		/// </summary>
-		/// <param name="options">Options needed to start the program or attach to it</param>
-		public abstract bool Start(StartDebuggingOptions options);
+using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CorDebug;
+using dnSpy.Contracts.Debugger.Engine;
 
-		/// <summary>
-		/// true if a program is being debugged
-		/// </summary>
-		public abstract bool IsDebugging { get; }
+namespace dnSpy.Debugger.CorDebug.Impl {
+	[ExportDbgEngineProvider]
+	sealed class DbgEngineProviderImpl : DbgEngineProvider {
+		public override DbgEngine Start(StartDebuggingOptions options) {
+			var dnfOptions = options as DotNetFrameworkStartDebuggingOptions;
+			if (dnfOptions != null)
+				return StartDotNetFramework(dnfOptions);
 
-		/// <summary>
-		/// Gets all debugged processes. Can be empty even if <see cref="IsDebugging"/> is true
-		/// </summary>
-		public abstract DbgProcess[] Processes { get; }
+			return null;
+		}
+
+		DbgEngine StartDotNetFramework(DotNetFrameworkStartDebuggingOptions dnfOptions) {
+			var engine = new DbgEngineImpl(DbgStartKind.Start);
+			engine.Start(dnfOptions);
+			return engine;
+		}
 	}
 }

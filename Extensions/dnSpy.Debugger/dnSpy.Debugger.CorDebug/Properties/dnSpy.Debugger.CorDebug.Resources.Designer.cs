@@ -187,6 +187,35 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not start the debugger. {0}.
+        /// </summary>
+        public static string Error_CouldNotStartDebugger {
+            get {
+                return ResourceManager.GetString("Error_CouldNotStartDebugger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not start the debugger. Make sure you have access to the file &apos;{0}&apos;
+        ///
+        ///Error: {1}.
+        /// </summary>
+        public static string Error_CouldNotStartDebuggerCheckAccessToFile {
+            get {
+                return ResourceManager.GetString("Error_CouldNotStartDebuggerCheckAccessToFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not start the debugger. The debugged program requires admin privileges. Restart dnSpy with admin rights and try again..
+        /// </summary>
+        public static string Error_CouldNotStartDebuggerRequireAdminPrivLvl {
+            get {
+                return ResourceManager.GetString("Error_CouldNotStartDebuggerRequireAdminPrivLvl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file doesn&apos;t exist.
         /// </summary>
         public static string Error_FileDoesNotExist {
@@ -210,6 +239,24 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         public static string Plugin_ShortDescription {
             get {
                 return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use dnSpy-x86.exe to debug 32-bit applications..
+        /// </summary>
+        public static string UseDnSpy64ExeToDebug32 {
+            get {
+                return ResourceManager.GetString("UseDnSpy64ExeToDebug32", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use dnSpy.exe to debug 64-bit applications..
+        /// </summary>
+        public static string UseDnSpyExeToDebug64 {
+            get {
+                return ResourceManager.GetString("UseDnSpyExeToDebug64", resourceCulture);
             }
         }
     }

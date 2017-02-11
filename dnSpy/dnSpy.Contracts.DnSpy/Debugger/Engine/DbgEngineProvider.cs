@@ -17,9 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger {
+using System;
+using System.ComponentModel.Composition;
+
+namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
-	/// Creates <see cref="DbgEngine"/> instances
+	/// Creates <see cref="DbgEngine"/> instances. Use <see cref="ExportDbgEngineProviderAttribute"/>
+	/// to export an instance.
 	/// </summary>
 	public abstract class DbgEngineProvider {
 		/// <summary>
@@ -29,5 +33,30 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public abstract DbgEngine Start(StartDebuggingOptions options);
+	}
+
+	/// <summary>Metadata</summary>
+	public interface IDbgEngineProviderMetadata {
+		/// <summary>See <see cref="ExportDbgEngineProviderAttribute.Order"/></summary>
+		double Order { get; }
+	}
+
+	/// <summary>
+	/// Exports a <see cref="DbgEngineProvider"/> instance
+	/// </summary>
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class ExportDbgEngineProviderAttribute : ExportAttribute, IDbgEngineProviderMetadata {
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="order">Order</param>
+		public ExportDbgEngineProviderAttribute(double order = double.MaxValue)
+			: base(typeof(DbgEngineProvider)) {
+		}
+
+		/// <summary>
+		/// Order
+		/// </summary>
+		public double Order { get; }
 	}
 }

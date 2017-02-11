@@ -17,25 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger {
+namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
-	/// Manages all debug engines
+	/// <see cref="DbgEngineMessage"/> kind
 	/// </summary>
-	public abstract class DbgManager {
+	public enum DbgEngineMessageKind {
 		/// <summary>
-		/// Starts debugging. Returns false if it failed to create a debug engine.
+		/// The engine has connected with the debugged process
 		/// </summary>
-		/// <param name="options">Options needed to start the program or attach to it</param>
-		public abstract bool Start(StartDebuggingOptions options);
+		Connected,
 
 		/// <summary>
-		/// true if a program is being debugged
+		/// The engine has been disconnected from the debugged process
 		/// </summary>
-		public abstract bool IsDebugging { get; }
-
-		/// <summary>
-		/// Gets all debugged processes. Can be empty even if <see cref="IsDebugging"/> is true
-		/// </summary>
-		public abstract DbgProcess[] Processes { get; }
+		Disconnected,
 	}
 }

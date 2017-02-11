@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider;
 
-		public override bool IsDebugging => false;//TODO:
+		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
 		DebuggerImpl(Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider) {

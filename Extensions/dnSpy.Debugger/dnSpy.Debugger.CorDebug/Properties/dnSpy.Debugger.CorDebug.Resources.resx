@@ -159,6 +159,17 @@
   <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
     <value>Module .cctor or Entry Point</value>
   </data>
+  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
+    <value>Could not start the debugger. {0}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
+    <value>Could not start the debugger. Make sure you have access to the file '{0}'
+
+Error: {1}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
+    <value>Could not start the debugger. The debugged program requires admin privileges. Restart dnSpy with admin rights and try again.</value>
+  </data>
   <data name="Error_FileDoesNotExist" xml:space="preserve">
     <value>The file doesn't exist</value>
   </data>
@@ -167,5 +178,11 @@
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Debugger ({0})</value>
+  </data>
+  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
+    <value>Use dnSpy-x86.exe to debug 32-bit applications.</value>
+  </data>
+  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
+    <value>Use dnSpy.exe to debug 64-bit applications.</value>
   </data>
 </root>

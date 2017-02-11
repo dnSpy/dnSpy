@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger {
+using System;
+
+namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
 	/// A debug engine contains all the logic to control the debugged process
 	/// </summary>
@@ -26,6 +28,16 @@ namespace dnSpy.Contracts.Debugger {
 		/// How did we start the debugged process?
 		/// </summary>
 		public abstract DbgStartKind StartKind { get; }
+
+		/// <summary>
+		/// Called when the engine can start sending messages
+		/// </summary>
+		public abstract void EnableMessages();
+
+		/// <summary>
+		/// Raised when there's a new message. It can be raised on any internal debugger thread.
+		/// </summary>
+		public abstract event EventHandler<DbgEngineMessage> Message;
 	}
 
 	/// <summary>

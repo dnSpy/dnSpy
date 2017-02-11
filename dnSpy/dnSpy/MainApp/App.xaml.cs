@@ -161,7 +161,7 @@ namespace dnSpy.MainApp {
 			// dnSpy.Roslyn.VisualBasic.EditorFeatures
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly));
 			AddExtensionFiles(aggregateCatalog);
-			var options = CompositionOptions.Default;
+			var options = CompositionOptions.IsThreadSafe;
 #if DEBUG
 			options |= CompositionOptions.DisableSilentRejection;
 #endif
