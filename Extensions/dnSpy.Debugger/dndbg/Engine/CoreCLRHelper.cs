@@ -250,7 +250,7 @@ namespace dndbg.Engine {
 					if (res == NativeMethods.WAIT_TIMEOUT) {
 						if (keepWaiting())
 							continue;
-						throw new TimeoutException("Waiting for CoreCLR timed out");
+						throw new TimeoutException("Waiting for CoreCLR timed out. Debug 32-bit .NET Core apps with 32-bit dnSpy (dnSpy-x86.exe), and 64-bit .NET Core apps with 64-bit dnSpy (dnSpy.exe).");
 					}
 					Debug.Fail(string.Format("Unknown result from WaitForMultipleObjects: 0x{0:X8}", res));
 					throw new Exception("Error waiting for startup event");

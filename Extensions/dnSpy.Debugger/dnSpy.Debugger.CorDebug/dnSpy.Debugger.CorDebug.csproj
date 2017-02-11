@@ -112,4 +112,12 @@
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(TargetDir)debug" mkdir "$(TargetDir)debug"
+if not exist "$(TargetDir)debug\x86" mkdir "$(TargetDir)debug\x86"
+if not exist "$(TargetDir)debug\x64" mkdir "$(TargetDir)debug\x64"
+copy $(ProjectDir)..\netcorefiles\x86\dbgshim.dll "$(TargetDir)debug\x86" &gt; NUL
+copy $(ProjectDir)..\netcorefiles\x64\dbgshim.dll "$(TargetDir)debug\x64" &gt; NUL
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

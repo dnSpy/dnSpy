@@ -66,9 +66,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		public static string GetDebugShimFilename(int bitSize) {
-			if (bitSize != 32 && bitSize != 64)
-				throw new ArgumentOutOfRangeException(nameof(bitSize));
-			return null;//TODO:
+			var basePath = Path.GetDirectoryName(typeof(DotNetCoreHelpers).Assembly.Location);
+			basePath = Path.Combine(basePath, "debug");
+			const string filename = "dbgshim.dll";
+			switch (bitSize) {
+			case 32:	return Path.Combine(basePath, "x86", filename);
+			case 64:	return Path.Combine(basePath, "x64", filename);
+			default:	throw new ArgumentOutOfRangeException(nameof(bitSize));
+			}
 		}
 	}
 }

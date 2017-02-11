@@ -13,3 +13,6 @@
 [submodule "dnSpy/dnSpy.Images"]
 	path = dnSpy/dnSpy.Images
 	url = https://github.com/0xd4d/dnSpy.Images.git
+[submodule "Extensions/dnSpy.Debugger/netcorefiles"]
+	path = Extensions/dnSpy.Debugger/netcorefiles
+	url = https://github.com/0xd4d/netcorefiles.git
