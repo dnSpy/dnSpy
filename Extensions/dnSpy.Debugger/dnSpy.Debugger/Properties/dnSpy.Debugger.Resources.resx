@@ -301,7 +301,7 @@
     <value>Host Ar_guments</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>Debug Assembly</value>
+    <value>Debug Program</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Working Directory</value>
@@ -1135,7 +1135,7 @@ Are you sure you want to expand it?</value>
     <value>Continue (F5)</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>Debug an Assembly (F5)</value>
+    <value>Debug a Program ({0})</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
     <value>Restart (Ctrl+Shift+F5)</value>

@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
 	static class ToolbarButtonCommands {
@@ -46,7 +47,7 @@ namespace dnSpy.Debugger.DbgUI {
 			public override bool IsVisible(IToolBarItemContext context) => initd && debugger.Value.IsDebugging;
 		}
 
-		[ExportToolBarButton(Icon = DsImagesAttribute.Run, ToolTip = "res:ToolBarDebugAssemblyToolTip", Header = "res:ToolBarStartDebuggingButton", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG, Order = 0)]
+		[ExportToolBarButton(Icon = DsImagesAttribute.Run, Header = "res:ToolBarStartDebuggingButton", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG, Order = 0)]
 		sealed class DebugAssemblyToolbarCommand : DebugToolBarButton {
 			[ImportingConstructor]
 			public DebugAssemblyToolbarCommand(Lazy<Debugger> debugger)
@@ -55,6 +56,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override bool IsVisible(IToolBarItemContext context) => !initd || !debugger.Value.IsDebugging;
 			public override void Execute(IToolBarItemContext context) => debugger.Value.DebugProgram();
+			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarDebugAssemblyToolTip, "F5");
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Run, ToolTip = "res:ToolBarContinueDebuggingToolTip", Header = "res:ToolBarContinueDebuggingButton", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 0)]

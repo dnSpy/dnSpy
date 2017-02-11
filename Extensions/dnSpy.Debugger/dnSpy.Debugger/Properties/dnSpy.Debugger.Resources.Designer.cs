@@ -646,7 +646,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Debug Assembly.
+        ///   Looks up a localized string similar to Debug Program.
         /// </summary>
         public static string DbgAsm_Title {
             get {
@@ -3361,7 +3361,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Debug an Assembly (F5).
+        ///   Looks up a localized string similar to Debug a Program ({0}).
         /// </summary>
         public static string ToolBarDebugAssemblyToolTip {
             get {
