@@ -126,6 +126,12 @@
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Break at</value>
   </data>
+  <data name="DbgAsm_Host" xml:space="preserve">
+    <value>_Host</value>
+  </data>
+  <data name="DbgAsm_HostArgs" xml:space="preserve">
+    <value>Host Ar_guments</value>
+  </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Working Directory</value>
   </data>

@@ -36,6 +36,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 
 		public override IEnumerable<StartDebuggingOptionsPage> Create(StartDebuggingOptionsPageContext context) {
 			yield return new DotNetFrameworkStartDebuggingOptionsPage(context.CurrentFilename, pickFilename, pickDirectory);
+			yield return new DotNetCoreStartDebuggingOptionsPage(context.CurrentFilename, pickFilename, pickDirectory);
 		}
 	}
 }

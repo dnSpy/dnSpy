@@ -29,6 +29,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (dnfOptions != null)
 				return StartDotNetFramework(dnfOptions);
 
+			var dncOptions = options as DotNetCoreStartDebuggingOptions;
+			if (dncOptions != null)
+				return StartDotNetCore(dncOptions);
+
 			return null;
 		}
 
@@ -36,6 +40,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			var engine = new DbgEngineImpl(DbgStartKind.Start);
 			engine.Start(dnfOptions);
 			return engine;
+		}
+
+		DbgEngine StartDotNetCore(DotNetCoreStartDebuggingOptions dncOptions) {
+			return null;//TODO:
 		}
 	}
 }

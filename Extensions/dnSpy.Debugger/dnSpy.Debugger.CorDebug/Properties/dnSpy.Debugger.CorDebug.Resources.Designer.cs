@@ -88,6 +88,24 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Host.
+        /// </summary>
+        public static string DbgAsm_Host {
+            get {
+                return ResourceManager.GetString("DbgAsm_Host", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Host Ar_guments.
+        /// </summary>
+        public static string DbgAsm_HostArgs {
+            get {
+                return ResourceManager.GetString("DbgAsm_HostArgs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Working Directory.
         /// </summary>
         public static string DbgAsm_WorkingDir {

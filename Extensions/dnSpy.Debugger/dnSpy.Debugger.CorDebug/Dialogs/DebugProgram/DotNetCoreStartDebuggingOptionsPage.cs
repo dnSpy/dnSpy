@@ -28,13 +28,36 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
-	sealed class DotNetFrameworkStartDebuggingOptionsPage : StartDebuggingOptionsPage, IDataErrorInfo {
-		// This guid is also used by DebugProgramVM
-		public override Guid Guid => new Guid("3FB8FCB5-AECE-443A-ABDE-601F2C23F1C1");
-		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetFramework;
+	sealed class DotNetCoreStartDebuggingOptionsPage : StartDebuggingOptionsPage, IDataErrorInfo {
+		public override Guid Guid => new Guid("6DA15E33-27DA-498B-8AF1-552399485002");
+		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetCore;
 		// Shouldn't be localized
-		public override string DisplayName => ".NET Framework";
+		public override string DisplayName => ".NET Core";
 		public override object UIObject => this;
+
+		public string HostFilename {
+			get { return hostFilename; }
+			set {
+				if (hostFilename != value) {
+					hostFilename = value;
+					OnPropertyChanged(nameof(HostFilename));
+					UpdateIsValid();
+				}
+			}
+		}
+		string hostFilename = string.Empty;
+
+		public string HostArguments {
+			get { return hostArguments; }
+			set {
+				if (hostArguments != value) {
+					hostArguments = value;
+					OnPropertyChanged(nameof(HostArguments));
+					UpdateIsValid();
+				}
+			}
+		}
+		string hostArguments = string.Empty;
 
 		public string Filename {
 			get { return filename; }
@@ -75,23 +98,12 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		}
 		string workingDirectory = string.Empty;
 
+		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
 		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
 		public ICommand PickWorkingDirectoryCommand => new RelayCommand(a => PickNewWorkingDirectory());
 
-		internal static readonly EnumVM[] breakProcessKindList = new EnumVM[(int)BreakProcessKind.Last] {
-			new EnumVM(BreakProcessKind.None, dnSpy_Debugger_CorDebug_Resources.DbgBreak_Dont),
-			new EnumVM(BreakProcessKind.CreateProcess, dnSpy_Debugger_CorDebug_Resources.DbgBreak_CreateProcessEvent),
-			new EnumVM(BreakProcessKind.CreateAppDomain, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstCreateAppDomainEvent),
-			new EnumVM(BreakProcessKind.LoadModule, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstLoadModuleEvent),
-			new EnumVM(BreakProcessKind.LoadClass, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstLoadClassEvent),
-			new EnumVM(BreakProcessKind.CreateThread, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstCreateThreadEvent),
-			new EnumVM(BreakProcessKind.ExeLoadModule, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ExeLoadModuleEvent),
-			new EnumVM(BreakProcessKind.ExeLoadClass, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ExeFirstLoadClassEvent),
-			new EnumVM(BreakProcessKind.ModuleCctorOrEntryPoint, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ModuleClassConstructorOrEntryPoint),
-			new EnumVM(BreakProcessKind.EntryPoint, dnSpy_Debugger_CorDebug_Resources.DbgBreak_EntryPoint),
-		};
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
-		readonly EnumListVM breakProcessKindVM = new EnumListVM(breakProcessKindList);
+		readonly EnumListVM breakProcessKindVM = new EnumListVM(DotNetFrameworkStartDebuggingOptionsPage.breakProcessKindList);
 
 		public BreakProcessKind BreakProcessKind {
 			get { return (BreakProcessKind)BreakProcessKindVM.SelectedItem; }
@@ -109,12 +121,12 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			OnPropertyChanged(nameof(IsValid));
 		}
 
-		bool CalculateIsValid() => string.IsNullOrEmpty(Verify(nameof(Filename)));
+		bool CalculateIsValid() => string.IsNullOrEmpty(Verify(nameof(HostFilename))) && string.IsNullOrEmpty(Verify(nameof(Filename)));
 
 		readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
-		public DotNetFrameworkStartDebuggingOptionsPage(string currentFilename, IPickFilename pickFilename, IPickDirectory pickDirectory) {
+		public DotNetCoreStartDebuggingOptionsPage(string currentFilename, IPickFilename pickFilename, IPickDirectory pickDirectory) {
 			if (currentFilename == null)
 				throw new ArgumentNullException(nameof(currentFilename));
 			if (pickFilename == null)
@@ -135,6 +147,14 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			return null;
 		}
 
+		void PickNewHostFilename() {
+			var newFilename = pickFilename.GetFilename(HostFilename, "exe", PickFilenameConstants.ExecutableFilter);
+			if (newFilename == null)
+				return;
+
+			HostFilename = newFilename;
+		}
+
 		void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
 			if (newFilename == null)
@@ -152,7 +172,9 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		}
 
 		public override StartDebuggingOptions GetOptions() {
-			return new DotNetFrameworkStartDebuggingOptions {
+			return new DotNetCoreStartDebuggingOptions {
+				Host = HostFilename,
+				HostArguments = HostArguments,
 				Filename = Filename,
 				CommandLine = CommandLine,
 				WorkingDirectory = WorkingDirectory,
@@ -163,15 +185,25 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		string IDataErrorInfo.Error { get { throw new NotImplementedException(); } }
 		string IDataErrorInfo.this[string columnName] => Verify(columnName);
 
-		string Verify(string columnName) {
-			if (columnName == nameof(Filename)) {
-				if (!File.Exists(filename)) {
-					if (string.IsNullOrWhiteSpace(filename))
-						return dnSpy_Debugger_CorDebug_Resources.Error_MissingFilename;
-					return dnSpy_Debugger_CorDebug_Resources.Error_FileDoesNotExist;
-				}
-				return string.Empty;
+		static string VerifyFilename(string filename) {
+			if (!File.Exists(filename)) {
+				if (string.IsNullOrWhiteSpace(filename))
+					return dnSpy_Debugger_CorDebug_Resources.Error_MissingFilename;
+				return dnSpy_Debugger_CorDebug_Resources.Error_FileDoesNotExist;
 			}
+			return string.Empty;
+		}
+
+		string Verify(string columnName) {
+
+			// Also update CalculateIsValid() if this method gets updated
+
+			if (columnName == nameof(HostFilename)) {
+				if (!string.IsNullOrWhiteSpace(HostFilename))
+					return VerifyFilename(HostFilename);
+			}
+			else if (columnName == nameof(Filename))
+				return VerifyFilename(Filename);
 
 			return string.Empty;
 		}

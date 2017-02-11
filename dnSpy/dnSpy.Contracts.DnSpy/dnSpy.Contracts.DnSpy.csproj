@@ -119,6 +119,7 @@
     <Compile Include="Controls\TextControl.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Debugger\CorDebug\BreakProcessKind.cs" />
+    <Compile Include="Debugger\CorDebug\DotNetCoreStartDebuggingOptions.cs" />
     <Compile Include="Debugger\CorDebug\DotNetFrameworkStartDebuggingOptions.cs" />
     <Compile Include="Debugger\DbgImageLayout.cs" />
     <Compile Include="Debugger\DbgManager.cs" />
