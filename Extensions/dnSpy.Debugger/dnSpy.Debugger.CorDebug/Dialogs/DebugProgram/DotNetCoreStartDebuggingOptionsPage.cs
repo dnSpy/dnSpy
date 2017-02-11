@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		}
 
 		void PickNewFilename() {
-			var newFilename = pickFilename.GetFilename(Filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
+			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
 			if (newFilename == null)
 				return;
 
