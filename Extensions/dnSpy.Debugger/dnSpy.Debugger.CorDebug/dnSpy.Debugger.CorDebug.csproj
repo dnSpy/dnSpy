@@ -7,8 +7,8 @@
     <ProjectGuid>{AD6EE4B9-7EE6-4FF0-869E-32DADCAA1E4A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>dnSpy.Debugger.Cordb</RootNamespace>
-    <AssemblyName>dnSpy.Debugger.Cordb.x</AssemblyName>
+    <RootNamespace>dnSpy.Debugger.CorDebug</RootNamespace>
+    <AssemblyName>dnSpy.Debugger.CorDebug.x</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
@@ -49,10 +49,10 @@
   <ItemGroup>
     <Compile Include="Dialogs\DebugProgram\DotNetFrameworkStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
-    <Compile Include="Properties\dnSpy.Debugger.Cordb.Resources.Designer.cs">
+    <Compile Include="Properties\dnSpy.Debugger.CorDebug.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>dnSpy.Debugger.Cordb.Resources.resx</DependentUpon>
+      <DependentUpon>dnSpy.Debugger.CorDebug.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TheExtension.cs" />
@@ -85,9 +85,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.Cordb.Resources.resx">
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.CorDebug.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.Debugger.Cordb.Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>dnSpy.Debugger.CorDebug.Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

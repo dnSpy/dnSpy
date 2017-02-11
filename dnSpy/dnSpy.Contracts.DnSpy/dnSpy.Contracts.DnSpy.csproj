@@ -118,8 +118,8 @@
     <Compile Include="Controls\MetroWindowCreatedEventArgs.cs" />
     <Compile Include="Controls\TextControl.cs" />
     <Compile Include="Controls\WindowBase.cs" />
-    <Compile Include="Debugger\Cordb\BreakProcessKind.cs" />
-    <Compile Include="Debugger\Cordb\DotNetFrameworkStartDebuggingOptions.cs" />
+    <Compile Include="Debugger\CorDebug\BreakProcessKind.cs" />
+    <Compile Include="Debugger\CorDebug\DotNetFrameworkStartDebuggingOptions.cs" />
     <Compile Include="Debugger\DbgEngine.cs" />
     <Compile Include="Debugger\DbgEngineProvider.cs" />
     <Compile Include="Debugger\DbgImageLayout.cs" />
@@ -129,7 +129,7 @@
     <Compile Include="Debugger\DbgProcess.cs" />
     <Compile Include="Debugger\DbgRuntime.cs" />
     <Compile Include="Debugger\DbgThread.cs" />
-    <Compile Include="Debugger\DotNet\Cordb\CordbRuntime.cs" />
+    <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntime.cs" />
     <Compile Include="Debugger\DotNet\DbgDnAppDomain.cs" />
     <Compile Include="Debugger\DotNet\DbgDnAssembly.cs" />
     <Compile Include="Debugger\DotNet\DbgDnModule.cs" />

@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.UI;
 using dnSpy.Contracts.MVVM;
 
-namespace dnSpy.Debugger.Cordb.Dialogs.DebugProgram {
+namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 	[Export(typeof(StartDebuggingOptionsPageProvider))]
 	sealed class StartDebuggingOptionsPageProviderImpl : StartDebuggingOptionsPageProvider {
 		readonly IPickFilename pickFilename;

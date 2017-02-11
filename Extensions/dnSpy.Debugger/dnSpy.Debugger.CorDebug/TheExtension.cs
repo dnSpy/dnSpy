@@ -19,9 +19,9 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Extension;
-using dnSpy.Debugger.Cordb.Properties;
+using dnSpy.Debugger.CorDebug.Properties;
 
-namespace dnSpy.Debugger.Cordb {
+namespace dnSpy.Debugger.CorDebug {
 	[ExportExtension]
 	sealed class TheExtension : IExtension {
 		public IEnumerable<string> MergedResourceDictionaries {
@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Cordb {
 		}
 
 		public ExtensionInfo ExtensionInfo => new ExtensionInfo {
-			ShortDescription = string.Format(dnSpy_Debugger_Cordb_Resources.Plugin_ShortDescription, ".NET Framework, .NET Core"),
+			ShortDescription = string.Format(dnSpy_Debugger_CorDebug_Resources.Plugin_ShortDescription, ".NET Framework, .NET Core"),
 		};
 
 		public void OnEvent(ExtensionEvent @event, object obj) { }

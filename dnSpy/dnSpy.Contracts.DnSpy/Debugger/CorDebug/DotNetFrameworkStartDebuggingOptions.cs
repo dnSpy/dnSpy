@@ -17,44 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.DotNet.Cordb {
+namespace dnSpy.Contracts.Debugger.CorDebug {
 	/// <summary>
-	/// .NET runtime in a process
+	/// Debugging options that will start and debug an application when passed to <see cref="DbgManager.Start(StartDebuggingOptions)"/>.
+	/// This is used to debug .NET Framework assemblies.
 	/// </summary>
-	public abstract class CordbRuntime : DbgDnRuntime {
+	public sealed class DotNetFrameworkStartDebuggingOptions : StartDebuggingOptions {
 		/// <summary>
-		/// Gets the version, eg. "v4.0.30319"
+		/// Path to application to debug
 		/// </summary>
-		public abstract string Version { get; }
+		public string Filename { get; set; }
 
 		/// <summary>
-		/// Gets the kind
+		/// Command line
 		/// </summary>
-		public abstract CordbRuntimeKind Kind { get; }
+		public string CommandLine { get; set; }
 
 		/// <summary>
-		/// Path to clr.dll / mscorwks.dll / coreclr.dll
+		/// Working directory
 		/// </summary>
-		public abstract string ClrFilename { get; }
+		public string WorkingDirectory { get; set; }
 
 		/// <summary>
-		/// Path to the runtime directory
+		/// Break kind, defaults to <see cref="BreakProcessKind.None"/>
 		/// </summary>
-		public abstract string RuntimeDirectory { get; }
-	}
-
-	/// <summary>
-	/// <see cref="CordbRuntime"/> kind
-	/// </summary>
-	public enum CordbRuntimeKind {
-		/// <summary>
-		/// .NET Framework
-		/// </summary>
-		DotNetFramework,
-
-		/// <summary>
-		/// .NET Core
-		/// </summary>
-		DotNetCore,
+		public BreakProcessKind BreakProcessKind { get; set; } = BreakProcessKind.None;
 	}
 }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace dnSpy.Debugger.Cordb.Properties {
+namespace dnSpy.Debugger.CorDebug.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace dnSpy.Debugger.Cordb.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class dnSpy_Debugger_Cordb_Resources {
+    public class dnSpy_Debugger_CorDebug_Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal dnSpy_Debugger_Cordb_Resources() {
+        internal dnSpy_Debugger_CorDebug_Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Cordb.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Debugger.Cordb.Properties.dnSpy.Debugger.Cordb.Resources", typeof(dnSpy_Debugger_Cordb_Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Debugger.CorDebug.Properties.dnSpy.Debugger.CorDebug.Resources", typeof(dnSpy_Debugger_CorDebug_Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

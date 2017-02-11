@@ -18,8 +18,8 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:p="clr-namespace:dnSpy.Debugger.Cordb.Properties"
-                    xmlns:dbgprog="clr-namespace:dnSpy.Debugger.Cordb.Dialogs.DebugProgram">
+                    xmlns:p="clr-namespace:dnSpy.Debugger.CorDebug.Properties"
+                    xmlns:dbgprog="clr-namespace:dnSpy.Debugger.CorDebug.Dialogs.DebugProgram">
 
     <DataTemplate DataType="{x:Type dbgprog:DotNetFrameworkStartDebuggingOptionsPage}">
         <Grid Grid.Row="0" Margin="0 0 0 0">
@@ -35,18 +35,18 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_Cordb_Resources.DbgAsm_Assembly}" Target="{Binding ElementName=exeTextBox}" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_Assembly}" Target="{Binding ElementName=exeTextBox}" />
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="exeTextBox" Text="{Binding Filename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
 
-            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Cordb_Resources.DbgAsm_Args}" Target="{Binding ElementName=argsTextBox}" />
+            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_Args}" Target="{Binding ElementName=argsTextBox}" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="argsTextBox" Text="{Binding CommandLine, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Cordb_Resources.DbgAsm_WorkingDir}" Target="{Binding ElementName=cwdTextBox}" />
+            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_WorkingDir}" Target="{Binding ElementName=cwdTextBox}" />
             <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="cwdTextBox" Text="{Binding WorkingDirectory, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickWorkingDirectoryCommand}" />
 
-            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Cordb_Resources.DbgAsm_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
+            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
             <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessKindVM.Items}" SelectedIndex="{Binding BreakProcessKindVM.SelectedIndex}" VerticalContentAlignment="Center" />
         </Grid>
     </DataTemplate>
