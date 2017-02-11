@@ -18,9 +18,11 @@
 */
 
 using System;
+using System.IO;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetCoreDbgEngineImpl : DbgEngineImpl {
@@ -35,10 +37,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			DotNetCoreStartDebuggingOptions options = null;
 			try {
 				options = (DotNetCoreStartDebuggingOptions)arg;
-				string dbgShimFilename = null;//TODO:
+				var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(IntPtr.Size * 8);
+				if (!File.Exists(dbgShimFilename))
+					throw new Exception("Couldn't find dbgshim.dll");
 				string hostFilename, hostCommandLine;
 				if (string.IsNullOrEmpty(options.Host)) {
-					throw new NotImplementedException();//TODO:
+					hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
+					if (!File.Exists(hostFilename))
+						throw new Exception(string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetCoreHelpers.DotNetExeName));
+					hostCommandLine = "exec";
 				}
 				else {
 					hostFilename = options.Host;

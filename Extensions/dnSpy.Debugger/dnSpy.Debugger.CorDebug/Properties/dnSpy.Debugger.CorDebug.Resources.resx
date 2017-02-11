@@ -165,6 +165,9 @@
   <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
     <value>Module .cctor or Entry Point</value>
   </data>
+  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
+    <value>Couldn't find .NET Core host '{0}'</value>
+  </data>
   <data name="Error_CouldNotStartDebugger" xml:space="preserve">
     <value>Could not start the debugger. {0}</value>
   </data>

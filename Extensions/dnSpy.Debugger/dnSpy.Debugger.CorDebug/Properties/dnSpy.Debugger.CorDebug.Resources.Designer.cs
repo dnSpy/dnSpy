@@ -205,6 +205,15 @@ namespace dnSpy.Debugger.CorDebug.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t find .NET Core host &apos;{0}&apos;.
+        /// </summary>
+        public static string Error_CouldNotFindDotNetCoreHost {
+            get {
+                return ResourceManager.GetString("Error_CouldNotFindDotNetCoreHost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not start the debugger. {0}.
         /// </summary>
         public static string Error_CouldNotStartDebugger {

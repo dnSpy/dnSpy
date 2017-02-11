@@ -55,6 +55,7 @@
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
+    <Compile Include="Impl\DotNetCoreHelpers.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
     <Compile Include="Properties\dnSpy.Debugger.CorDebug.Resources.Designer.cs">
