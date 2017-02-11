@@ -2407,7 +2407,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .NET debugger.
+        ///   Looks up a localized string similar to Debugger.
         /// </summary>
         public static string Plugin_ShortDescription {
             get {

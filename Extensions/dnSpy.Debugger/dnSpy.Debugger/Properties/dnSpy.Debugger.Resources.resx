@@ -1219,7 +1219,7 @@ Are you sure you want to expand it?</value>
     <value>Show Parameter Types</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>.NET debugger</value>
+    <value>Debugger</value>
   </data>
   <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
     <value>Breakpoint</value>
