@@ -1145,7 +1145,6 @@ namespace dndbg.Engine {
 			debuggeeVersion = clrType.DebuggeeVersion;
 			ICLRRuntimeInfo rtInfo = null;
 			var process = Process.GetProcessById(options.ProcessId);
-			var filename = process.MainModule.FileName;
 			foreach (var t in GetCLRRuntimeInfos(process)) {
 				if (string.IsNullOrEmpty(clrType.DebuggeeVersion) || t.Item1 == clrType.DebuggeeVersion) {
 					rtInfo = t.Item2;

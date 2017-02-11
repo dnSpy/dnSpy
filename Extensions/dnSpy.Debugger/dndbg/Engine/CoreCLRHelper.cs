@@ -217,10 +217,9 @@ namespace dndbg.Engine {
 			IntPtr hThread = IntPtr.Zero;
 			IntPtr pHandleArray = IntPtr.Zero, pStringArray = IntPtr.Zero;
 			uint dwArrayLength = 0;
-			string version = null;
 
 			var pi = new PROCESS_INFORMATION();
-			bool error = true;
+			bool error = true, calledSetEvent = false;
 			try {
 				var dwCreationFlags = options.ProcessCreationFlags ?? DebugProcessOptions.DefaultProcessCreationFlags;
 				dwCreationFlags |= ProcessCreationFlags.CREATE_SUSPENDED;
@@ -240,7 +239,7 @@ namespace dndbg.Engine {
 
 				NativeMethods.ResumeThread(hThread);
 
-				const uint WAIT_MS = 1000;
+				const uint WAIT_MS = 5000;
 				for (;;) {
 					uint res = NativeMethods.WaitForSingleObject(startupEvent, WAIT_MS);
 					if (res == 0)
@@ -264,7 +263,7 @@ namespace dndbg.Engine {
 				var pha = (IntPtr*)pHandleArray;
 				string moduleFilename;
 				const int index = 0;
-				version = GetVersionStringFromModule(dbgShimState, pi.dwProcessId, psa[index], out moduleFilename);
+				var version = GetVersionStringFromModule(dbgShimState, pi.dwProcessId, psa[index], out moduleFilename);
 				object obj;
 				hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion.CorDebugVersion_4_0, version, out obj);
 				var corDebug = obj as ICorDebug;
@@ -273,10 +272,16 @@ namespace dndbg.Engine {
 				var dbg = createDnDebugger(corDebug, pi.dwProcessId);
 				for (uint i = 0; i < dwArrayLength; i++)
 					NativeMethods.SetEvent(pha[i]);
+				calledSetEvent = true;
 				error = false;
 				return dbg;
 			}
 			finally {
+				if (!calledSetEvent && pHandleArray != IntPtr.Zero && dwArrayLength != 0) {
+					var pha = (IntPtr*)pHandleArray;
+					for (uint i = 0; i < dwArrayLength; i++)
+						NativeMethods.SetEvent(pha[i]);
+				}
 				if (startupEvent != IntPtr.Zero)
 					NativeMethods.CloseHandle(startupEvent);
 				if (hThread != IntPtr.Zero)
