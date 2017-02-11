@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 
 namespace dnSpy.Contracts.Debugger.UI {
@@ -36,6 +37,11 @@ namespace dnSpy.Contracts.Debugger.UI {
 		/// </summary>
 		/// <param name="propName">Name of property that got changed</param>
 		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
+		/// <summary>
+		/// Guid of this page
+		/// </summary>
+		public abstract Guid Guid { get; }
 
 		/// <summary>
 		/// Display order of the UI object compared to other instances, see <see cref="PredefinedStartDebuggingOptionsPageDisplayOrders"/>

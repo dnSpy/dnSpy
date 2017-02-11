@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger.UI;
 namespace dnSpy.Debugger.Dialogs.DebugProgram {
 	sealed class OptionsPageVM {
 		internal StartDebuggingOptionsPage StartDebuggingOptionsPage { get; }
+		internal Guid PageGuid => StartDebuggingOptionsPage.Guid;
 
 		public bool IsValid => StartDebuggingOptionsPage.IsValid;
 		public event EventHandler IsValidChanged;

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using dnSpy.Contracts.App;
@@ -35,6 +36,7 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly IAppWindow appWindow;
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<StartDebuggingOptionsPageProvider>[] startDebuggingOptionsPageProviders;
+		Guid lastSelectedPage;
 
 		[ImportingConstructor]
 		StartDebuggingOptionsProvider(IAppWindow appWindow, IDocumentTabService documentTabService, [ImportMany] IEnumerable<Lazy<StartDebuggingOptionsPageProvider>> startDebuggingOptionsPageProviders) {
@@ -60,14 +62,16 @@ namespace dnSpy.Debugger.DbgUI {
 		public StartDebuggingOptions GetStartDebuggingOptions() {
 			var context = new StartDebuggingOptionsPageContext(GetCurrentFilename());
 			var pages = GetStartDebuggingOptionsPages(context);
+			Debug.Assert(pages.Length != 0, "No debug engines!");
 			if (pages.Length == 0)
 				return null;
 
 			var dlg = new DebugProgramDlg();
-			var vm = new DebugProgramVM(pages);
+			var vm = new DebugProgramVM(pages, lastSelectedPage);
 			dlg.DataContext = vm;
 			dlg.Owner = appWindow.MainWindow;
 			var res = dlg.ShowDialog();
+			lastSelectedPage = vm.SelectedPageGuid;
 			vm.Close();
 			if (res != true)
 				return null;

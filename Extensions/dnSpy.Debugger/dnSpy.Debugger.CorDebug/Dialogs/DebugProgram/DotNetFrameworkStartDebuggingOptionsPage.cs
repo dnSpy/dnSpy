@@ -29,6 +29,8 @@ using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 	sealed class DotNetFrameworkStartDebuggingOptionsPage : StartDebuggingOptionsPage, IDataErrorInfo {
+		// This guid is also used by DebugProgramVM
+		public override Guid Guid => new Guid("3FB8FCB5-AECE-443A-ABDE-601F2C23F1C1");
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetFramework;
 		public override string DisplayName => ".NET Framework";
 		public override object UIObject => this;

@@ -49,15 +49,21 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 			}
 		}
 
-		public DebugProgramVM(StartDebuggingOptionsPage[] pages) {
+		public Guid SelectedPageGuid => optionsPages_selectedItem?.PageGuid ?? Guid.Empty;
+
+		public DebugProgramVM(StartDebuggingOptionsPage[] pages, Guid selectedPageGuid) {
 			if (pages == null)
 				throw new ArgumentNullException(nameof(pages));
 			Debug.Assert(pages.Length != 0);
 			optionsPages = new ObservableCollection<OptionsPageVM>(pages.Select(a => new OptionsPageVM(a)));
-			OptionsPages_SelectedItem = optionsPages.FirstOrDefault();
+			OptionsPages_SelectedItem =
+				optionsPages.FirstOrDefault(a => a.PageGuid == selectedPageGuid) ??
+				optionsPages.FirstOrDefault(a => a.PageGuid == dotNetFrameworkPageGuid) ??
+				optionsPages.FirstOrDefault();
 			foreach (var page in optionsPages)
 				page.IsValidChanged += OptionsPageVM_IsValidChanged;
 		}
+		static readonly Guid dotNetFrameworkPageGuid = new Guid("3FB8FCB5-AECE-443A-ABDE-601F2C23F1C1");
 
 		void OptionsPageVM_IsValidChanged(object sender, EventArgs e) => HasErrorUpdated();
 		public override bool HasError => optionsPages_selectedItem?.IsValid != true;
