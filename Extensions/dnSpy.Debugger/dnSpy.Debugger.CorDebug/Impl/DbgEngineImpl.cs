@@ -22,21 +22,20 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using dndbg.Engine;
-using dnSpy.Contracts.Debugger.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
-	sealed class DbgEngineImpl : DbgEngine {
+	abstract class DbgEngineImpl : DbgEngine {
 		public override DbgStartKind StartKind { get; }
 		public override event EventHandler<DbgEngineMessage> Message;
 
 		readonly DebuggerThread debuggerThread;
-		readonly Dispatcher debuggerDispatcher;
+		protected readonly Dispatcher debuggerDispatcher;
 		readonly object lockObj;
-		DnDebugger dnDebugger;
+		protected DnDebugger dnDebugger;
 
-		public DbgEngineImpl(DbgStartKind startKind) {
+		protected DbgEngineImpl(DbgStartKind startKind) {
 			StartKind = startKind;
 			lockObj = new object();
 
@@ -55,7 +54,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		void ExecDebugThreadAsync(Action<object> action, object arg) =>
+		protected void ExecDebugThreadAsync(Action<object> action, object arg) =>
 			debuggerDispatcher.BeginInvoke(DispatcherPriority.Send, action, arg);
 
 		public override void EnableMessages() {
@@ -70,60 +69,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				SendMessage(msg);
 			debuggerThread.CallDispatcherRun();
 		}
-		volatile bool messagesEnabled;
-		DbgMessageConnected connectedErrorMessage;
+		protected volatile bool messagesEnabled;
+		protected DbgMessageConnected connectedErrorMessage;
 
-		internal void Start(DotNetFrameworkStartDebuggingOptions options) =>
-			ExecDebugThreadAsync(StartDotNetFrameworkCore, options);
-
-		void StartDotNetFrameworkCore(object arg) {
-			DotNetFrameworkStartDebuggingOptions options = null;
-			try {
-				options = (DotNetFrameworkStartDebuggingOptions)arg;
-				var dbgOptions = new DebugProcessOptions(new DesktopCLRTypeDebugInfo()) {
-					DebugMessageDispatcher = new WpfDebugMessageDispatcher(debuggerDispatcher),
-					CurrentDirectory = options.WorkingDirectory,
-					Filename = options.Filename,
-					CommandLine = options.CommandLine,
-					BreakProcessKind = options.BreakProcessKind.ToDndbg(),
-				};
-				dbgOptions.DebugOptions.IgnoreBreakInstructions = options.IgnoreBreakInstructions;
-
-				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
-				if (options.DisableManagedDebuggerDetection)
-					DisableSystemDebuggerDetection.Initialize(dnDebugger);
-
-				dnDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
-				return;
-			}
-			catch (Exception ex) {
-				var cex = ex as COMException;
-				const int ERROR_NOT_SUPPORTED = unchecked((int)0x80070032);
-				string errMsg;
-				if (cex != null && cex.ErrorCode == ERROR_NOT_SUPPORTED)
-					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
-				else if (cex != null && cex.ErrorCode == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
-					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
-				else if (cex != null && cex.ErrorCode == unchecked((int)0x800702E4))
-					errMsg = dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerRequireAdminPrivLvl;
-				else
-					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, options?.Filename ?? "<???>", ex.Message);
-
-				DbgMessageConnected msg = null;
-				lock (lockObj) {
-					connectedErrorMessage = new DbgMessageConnected(errMsg);
-					if (messagesEnabled) {
-						msg = connectedErrorMessage;
-						connectedErrorMessage = null;
-					}
-				}
-				if (msg != null)
-					SendMessage(msg);
-				return;
-			}
-		}
-
-		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
+		protected void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
 			Debug.Assert(messagesEnabled);
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
@@ -139,15 +88,40 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			//TODO:
 		}
 
+		protected void SendMessage(DbgEngineMessage message) {
+			Debug.Assert(messagesEnabled);
+			Message?.Invoke(this, message);
+		}
+
+		protected void HandleExceptionInStart(Exception ex, string filename) {
+			var cex = ex as COMException;
+			const int ERROR_NOT_SUPPORTED = unchecked((int)0x80070032);
+			string errMsg;
+			if (cex != null && cex.ErrorCode == ERROR_NOT_SUPPORTED)
+				errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
+			else if (cex != null && cex.ErrorCode == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
+				errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
+			else if (cex != null && cex.ErrorCode == unchecked((int)0x800702E4))
+				errMsg = dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerRequireAdminPrivLvl;
+			else
+				errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, filename ?? "<???>", ex.Message);
+
+			DbgMessageConnected msg = null;
+			lock (lockObj) {
+				connectedErrorMessage = new DbgMessageConnected(errMsg);
+				if (messagesEnabled) {
+					msg = connectedErrorMessage;
+					connectedErrorMessage = null;
+				}
+			}
+			if (msg != null)
+				SendMessage(msg);
+		}
+
 		static string GetIncompatiblePlatformErrorMessage() {
 			if (IntPtr.Size == 4)
 				return dnSpy_Debugger_CorDebug_Resources.UseDnSpyExeToDebug64;
 			return dnSpy_Debugger_CorDebug_Resources.UseDnSpy64ExeToDebug32;
-		}
-
-		void SendMessage(DbgEngineMessage message) {
-			Debug.Assert(messagesEnabled);
-			Message?.Invoke(this, message);
 		}
 	}
 }

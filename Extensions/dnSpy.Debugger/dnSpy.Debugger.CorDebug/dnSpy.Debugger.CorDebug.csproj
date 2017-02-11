@@ -54,6 +54,7 @@
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
+    <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
     <Compile Include="Properties\dnSpy.Debugger.CorDebug.Resources.Designer.cs">
       <AutoGen>True</AutoGen>

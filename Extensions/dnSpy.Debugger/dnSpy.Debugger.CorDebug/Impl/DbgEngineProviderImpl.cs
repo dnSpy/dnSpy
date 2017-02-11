@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		DbgEngine StartDotNetFramework(DotNetFrameworkStartDebuggingOptions dnfOptions) {
-			var engine = new DbgEngineImpl(DbgStartKind.Start);
+			var engine = new DotNetFrameworkDbgEngineImpl(DbgStartKind.Start);
 			engine.Start(dnfOptions);
 			return engine;
 		}
