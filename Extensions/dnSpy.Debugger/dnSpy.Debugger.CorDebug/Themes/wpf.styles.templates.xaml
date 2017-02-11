@@ -35,9 +35,9 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_Assembly}" Target="{Binding ElementName=exeTextBox}" />
-            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="exeTextBox" Text="{Binding Filename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_Assembly}" Target="{Binding ElementName=exeTextBox}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="exeTextBox" Text="{Binding Filename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
 
             <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_Args}" Target="{Binding ElementName=argsTextBox}" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="argsTextBox" Text="{Binding CommandLine, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
@@ -67,9 +67,9 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_Assembly}" Target="{Binding ElementName=exeTextBox}" />
-            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="exeTextBox" Text="{Binding Filename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_Assembly}" Target="{Binding ElementName=exeTextBox}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="exeTextBox" Text="{Binding Filename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
 
             <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_CorDebug_Resources.DbgAsm_Args}" Target="{Binding ElementName=argsTextBox}" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="argsTextBox" Text="{Binding CommandLine, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
