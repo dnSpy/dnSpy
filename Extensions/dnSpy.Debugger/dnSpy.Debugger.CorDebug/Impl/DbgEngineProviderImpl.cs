@@ -43,7 +43,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		DbgEngine StartDotNetCore(DotNetCoreStartDebuggingOptions dncOptions) {
-			return null;//TODO:
+			var engine = new DotNetCoreDbgEngineImpl(DbgStartKind.Start);
+			engine.Start(dncOptions);
+			return engine;
 		}
 	}
 }
