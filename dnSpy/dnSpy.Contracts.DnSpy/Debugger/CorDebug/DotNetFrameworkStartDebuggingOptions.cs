@@ -22,35 +22,6 @@ namespace dnSpy.Contracts.Debugger.CorDebug {
 	/// Debugging options that will start and debug an application when passed to <see cref="DbgManager.Start(StartDebuggingOptions)"/>.
 	/// This is used to debug .NET Framework assemblies.
 	/// </summary>
-	public sealed class DotNetFrameworkStartDebuggingOptions : StartDebuggingOptions {
-		/// <summary>
-		/// Path to application to debug
-		/// </summary>
-		public string Filename { get; set; }
-
-		/// <summary>
-		/// Command line
-		/// </summary>
-		public string CommandLine { get; set; }
-
-		/// <summary>
-		/// Working directory
-		/// </summary>
-		public string WorkingDirectory { get; set; }
-
-		/// <summary>
-		/// Break kind, defaults to <see cref="BreakProcessKind.None"/>
-		/// </summary>
-		public BreakProcessKind BreakProcessKind { get; set; } = BreakProcessKind.None;
-
-		/// <summary>
-		/// true to ignore the break instruction and <see cref="System.Diagnostics.Debugger.Break"/> method calls
-		/// </summary>
-		public bool IgnoreBreakInstructions { get; set; }
-
-		/// <summary>
-		/// true to disable detection of managed debuggers
-		/// </summary>
-		public bool DisableManagedDebuggerDetection { get; set; }
+	public sealed class DotNetFrameworkStartDebuggingOptions : CorDebugStartDebuggingOptions {
 	}
 }
