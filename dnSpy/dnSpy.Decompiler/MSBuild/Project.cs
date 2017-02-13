@@ -56,9 +56,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly Func<TextWriter, IDecompilerOutput> createDecompilerOutput;
 
 		public Project(ProjectModuleOptions options, string projDir, SatelliteAssemblyFinder satelliteAssemblyFinder, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			Options = options;
+			Options = options ?? throw new ArgumentNullException(nameof(options));
 			Directory = projDir;
 			this.satelliteAssemblyFinder = satelliteAssemblyFinder;
 			this.createDecompilerOutput = createDecompilerOutput;
@@ -331,8 +329,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		BamlResourceProjectFile TryGetBamlFile(TypeDef type) {
-			BamlResourceProjectFile bamlFile;
-			typeFullNameToBamlFile.TryGetValue(type.FullName, out bamlFile);
+			typeFullNameToBamlFile.TryGetValue(type.FullName, out var bamlFile);
 			return bamlFile;
 		}
 
@@ -346,14 +343,12 @@ namespace dnSpy.Decompiler.MSBuild {
 		Dictionary<string, ResXProjectFile> typeFullNameToResXFile;
 
 		ResXProjectFile TryGetResXFile(TypeDef type) {
-			ResXProjectFile resxFile;
-			typeFullNameToResXFile.TryGetValue(type.FullName, out resxFile);
+			typeFullNameToResXFile.TryGetValue(type.FullName, out var resxFile);
 			return resxFile;
 		}
 
 		string GetTypeExtension(TypeDef type) {
-			BamlResourceProjectFile bamlFile;
-			if (typeFullNameToBamlFile.TryGetValue(type.FullName, out bamlFile))
+			if (typeFullNameToBamlFile.TryGetValue(type.FullName, out var bamlFile))
 				return ".xaml" + Options.Decompiler.FileExtension;
 			return Options.Decompiler.FileExtension;
 		}
@@ -389,8 +384,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (IsXamlResource(module, er.Name, set))
 				return CreateXamlResourceFiles(module, resourceNameCreator, set).ToList();
 			if (Options.CreateResX) {
-				string typeFullName;
-				string filename = resourceNameCreator.GetResxFilename(er.Name, out typeFullName);
+				string filename = resourceNameCreator.GetResxFilename(er.Name, out string typeFullName);
 				return new List<ProjectFile>() { CreateResXFile(module, er, set, filename, typeFullName, false) };
 			}
 
@@ -423,8 +417,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				var data = (byte[])((BuiltInResourceData)e.ResourceData).Data;
 
 				if (decompileBaml && e.Name.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
-					string typeFullName;
-					var filename = resourceNameCreator.GetBamlResourceName(e.Name, out typeFullName);
+					var filename = resourceNameCreator.GetBamlResourceName(e.Name, out string typeFullName);
 					yield return new BamlResourceProjectFile(filename, data, typeFullName, (bamlData, stream) => Options.DecompileBaml(module, bamlData, Options.DecompilationContext.CancellationToken, stream));
 				}
 				else if (StringComparer.InvariantCultureIgnoreCase.Equals(splashScreenImageName, e.Name)) {

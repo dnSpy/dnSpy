@@ -35,14 +35,10 @@ namespace dnSpy.Text.Editor {
 		readonly ITextSnapshot snapshot;
 
 		public WpfTextViewLineCollection(IWpfTextView textView, ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (snapshot == null)
-				throw new ArgumentNullException(nameof(snapshot));
 			if (lines == null)
 				throw new ArgumentNullException(nameof(lines));
-			this.textView = textView;
-			this.snapshot = snapshot;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
 			this.lines = new ReadOnlyCollection<IWpfTextViewLine>(lines);
 			IsValid = true;
 			if (lines.Count == 0)

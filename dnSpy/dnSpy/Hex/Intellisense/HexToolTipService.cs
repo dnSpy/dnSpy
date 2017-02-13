@@ -148,9 +148,7 @@ namespace dnSpy.Hex.Intellisense {
 		HexToolTipInfoCollection toolTipInfoCollection;
 
 		public HexToolTipServiceQuickInfoSource(HexToolTipService hexToolTipService) {
-			if (hexToolTipService == null)
-				throw new ArgumentNullException(nameof(hexToolTipService));
-			this.hexToolTipService = hexToolTipService;
+			this.hexToolTipService = hexToolTipService ?? throw new ArgumentNullException(nameof(hexToolTipService));
 		}
 
 		public override void AugmentQuickInfoSession(HexQuickInfoSession session, IList<object> quickInfoContent, out HexBufferSpanSelection applicableToSpan) {
@@ -207,9 +205,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly HexToolTipService hexToolTipService;
 
 		public HexToolTipServiceTagger(HexToolTipService hexToolTipService) {
-			if (hexToolTipService == null)
-				throw new ArgumentNullException(nameof(hexToolTipService));
-			this.hexToolTipService = hexToolTipService;
+			this.hexToolTipService = hexToolTipService ?? throw new ArgumentNullException(nameof(hexToolTipService));
 			hexToolTipService.RegisterTagger(this);
 		}
 
@@ -231,11 +227,9 @@ namespace dnSpy.Hex.Intellisense {
 		bool highlightStructureUnderMouseCursor;
 
 		public HexToolTipServiceImpl(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService, HexView hexView) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
 			if (viewTagAggregatorFactoryService == null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			this.hexView = hexView;
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<HexToolTipStructureSpanTag>(hexView);
 			hexView.Closed += HexView_Closed;
 			hexView.Options.OptionChanged += Options_OptionChanged;
@@ -292,12 +286,10 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		public override void SetActiveToolTip(HexToolTipInfoCollection collection) {
-			if (collection == null)
-				throw new ArgumentNullException(nameof(collection));
 			if (hexView.IsClosed)
 				return;
 			RemoveCurrentToolTip();
-			activeToolTipInfoCollection = collection;
+			activeToolTipInfoCollection = collection ?? throw new ArgumentNullException(nameof(collection));
 			tagger?.RaiseTagsChanged(activeToolTipInfoCollection.FullBufferSpan);
 		}
 		HexToolTipInfoCollection activeToolTipInfoCollection;
@@ -337,11 +329,9 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		public override void RegisterTagger(IHexToolTipServiceTagger tagger) {
-			if (tagger == null)
-				throw new ArgumentNullException(nameof(tagger));
 			if (this.tagger != null)
 				throw new InvalidOperationException();
-			this.tagger = tagger;
+			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
 		IHexToolTipServiceTagger tagger;
 

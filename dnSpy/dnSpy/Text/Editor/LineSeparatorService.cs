@@ -95,15 +95,9 @@ namespace dnSpy.Text.Editor {
 		Brush lineSeparatorBrush;
 
 		public LineSeparatorService(IWpfTextView wpfTextView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (viewTagAggregatorFactoryService == null)
-				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			if (editorFormatMapService == null)
-				throw new ArgumentNullException(nameof(editorFormatMapService));
-			this.wpfTextView = wpfTextView;
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.editorFormatMapService = editorFormatMapService;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService ?? throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
+			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
 			lineSeparatorElements = new List<LineSeparatorElement>();
 			usedLines = new HashSet<object>();
 			onRemovedDelegate = OnRemoved;

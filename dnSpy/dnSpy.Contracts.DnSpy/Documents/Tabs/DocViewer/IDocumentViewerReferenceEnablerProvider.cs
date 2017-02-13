@@ -51,9 +51,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// must equal an id stored in <see cref="SpanReference.Id"/></param>
 		public ExportDocumentViewerReferenceEnablerProviderAttribute(string id)
 			: base(typeof(IDocumentViewerReferenceEnablerProvider)) {
-			if (id == null)
-				throw new ArgumentNullException(nameof(id));
-			Id = id;
+			Id = id ?? throw new ArgumentNullException(nameof(id));
 		}
 
 		/// <summary>

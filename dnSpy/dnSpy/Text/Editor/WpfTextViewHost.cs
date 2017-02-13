@@ -45,13 +45,9 @@ namespace dnSpy.Text.Editor {
 		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IDsWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
 			if (wpfTextViewMarginProviderCollectionProvider == null)
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (editorOperationsFactoryService == null)
-				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
-			this.editorOperationsFactoryService = editorOperationsFactoryService;
+			this.editorOperationsFactoryService = editorOperationsFactoryService ?? throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			grid = CreateGrid();
-			TextView = wpfTextView;
+			TextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			Focusable = false;
 			Content = grid;
 

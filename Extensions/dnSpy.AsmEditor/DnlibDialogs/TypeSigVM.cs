@@ -60,8 +60,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickType() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
-			bool canceled;
-			var newTypeSig = typeSigCreator.Create(options, ToTypeSig(type), out canceled);
+			var newTypeSig = typeSigCreator.Create(options, ToTypeSig(type), out bool canceled);
 			if (!canceled)
 				SetValue(ToType(newTypeSig));
 		}
@@ -137,8 +136,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void AddType() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
-			bool canceled;
-			var newTypeSig = typeSigCreator.Create(options, null, out canceled);
+			var newTypeSig = typeSigCreator.Create(options, null, out bool canceled);
 			if (canceled)
 				return;
 

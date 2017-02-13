@@ -42,10 +42,8 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// <param name="span">Span</param>
 		/// <param name="classification">Classification type</param>
 		public HexClassificationSpan(VST.Span span, VSTC.IClassificationType classification) {
-			if (classification == null)
-				throw new ArgumentNullException(nameof(classification));
 			Span = span;
-			ClassificationType = classification;
+			ClassificationType = classification ?? throw new ArgumentNullException(nameof(classification));
 		}
 	}
 }

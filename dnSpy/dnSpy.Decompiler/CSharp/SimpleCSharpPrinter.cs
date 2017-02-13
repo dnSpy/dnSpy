@@ -432,8 +432,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void WriteMethodName(IMethod method, string name) {
-			string[] list;
-			if (nameToOperatorName.TryGetValue(name, out list)) {
+			if (nameToOperatorName.TryGetValue(name, out var list)) {
 				for (int i = 0; i < list.Length; i++) {
 					if (i > 0)
 						WriteSpace();

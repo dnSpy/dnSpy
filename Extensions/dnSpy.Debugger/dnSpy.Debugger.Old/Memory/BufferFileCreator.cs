@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dndbg.Engine;
@@ -74,9 +73,8 @@ namespace dnSpy.Debugger.Memory {
 			if (module.Address == 0 || module.Size == 0)
 				return;
 			var service = hexBufferFileServiceFactory.Create(debuggerHexBufferStreamProvider.Buffer);
-			int refCount;
 			var pos = new HexPosition(module.Address);
-			moduleReferences.TryGetValue(pos, out refCount);
+			moduleReferences.TryGetValue(pos, out int refCount);
 			if (added) {
 				if (refCount == 0) {
 					var tags = module.IsInMemory ?

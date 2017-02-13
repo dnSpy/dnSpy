@@ -36,10 +36,8 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 				throw new ArgumentNullException(nameof(contentType));
 			if (textClassifierAggregatorService == null)
 				throw new ArgumentNullException(nameof(textClassifierAggregatorService));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
 			classifierAggregator = textClassifierAggregatorService.Create(contentType);
-			this.classificationFormatMap = classificationFormatMap;
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 		}
 
 		public TextBlock Create(string tag, ImmutableArray<TaggedText> taggedParts, bool colorize) {

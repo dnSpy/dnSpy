@@ -44,9 +44,7 @@ namespace dnSpy.Settings.Dialog {
 		readonly IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType;
 
 		public AppSettingsTreeViewNodeSearchTextClassifier(IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType) {
-			if (appSettingsTreeViewNodeMatchHighlightClassificationType == null)
-				throw new ArgumentNullException(nameof(appSettingsTreeViewNodeMatchHighlightClassificationType));
-			this.appSettingsTreeViewNodeMatchHighlightClassificationType = appSettingsTreeViewNodeMatchHighlightClassificationType;
+			this.appSettingsTreeViewNodeMatchHighlightClassificationType = appSettingsTreeViewNodeMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(appSettingsTreeViewNodeMatchHighlightClassificationType));
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

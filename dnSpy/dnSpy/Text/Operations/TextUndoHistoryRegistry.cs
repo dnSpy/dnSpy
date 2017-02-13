@@ -47,8 +47,7 @@ namespace dnSpy.Text.Operations {
 			var propertyOwner = context as IPropertyOwner;
 			if (propertyOwner == null)
 				throw new ArgumentException();
-			TextUndoHistory history;
-			if (propertyOwner.Properties.TryGetProperty(textUndoHistoryKey, out history))
+			if (propertyOwner.Properties.TryGetProperty(textUndoHistoryKey, out TextUndoHistory history))
 				return history;
 			throw new ArgumentException();
 		}

@@ -329,15 +329,13 @@ namespace dnSpy.Documents.Tabs {
 	[ExportMenuItem(Header = "res:OpenInNewTabCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TABS, Order = 0)]
 	sealed class OpenReferenceInNewTabCtxMenuCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
-			IDocumentViewer documentViewer;
-			var @ref = GetReference(context, out documentViewer);
+			var @ref = GetReference(context, out var documentViewer);
 			if (@ref != null)
 				documentViewer.DocumentTab.FollowReferenceNewTab(@ref);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			IDocumentViewer documentViewer;
-			return GetReference(context, out documentViewer) != null;
+			return GetReference(context, out var documentViewer) != null;
 		}
 
 		static object GetReference(IMenuItemContext context, out IDocumentViewer documentViewer) {

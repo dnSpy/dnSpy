@@ -45,13 +45,9 @@ namespace dnSpy.MainApp {
 		readonly Func<string, string> verifier;
 
 		public AskVM(string labelMessage, Func<string, object> converter, Func<string, string> verifier) {
-			if (converter == null)
-				throw new ArgumentNullException(nameof(converter));
-			if (verifier == null)
-				throw new ArgumentNullException(nameof(verifier));
 			this.labelMessage = labelMessage;
-			this.converter = converter;
-			this.verifier = verifier;
+			this.converter = converter ?? throw new ArgumentNullException(nameof(converter));
+			this.verifier = verifier ?? throw new ArgumentNullException(nameof(verifier));
 		}
 
 		protected override string Verify(string columnName) {

@@ -36,10 +36,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		ConcurrentDictionary<MethodDef, int> foundMethods;
 
 		public EventFiredByNode(EventDef analyzedEvent) {
-			if (analyzedEvent == null)
-				throw new ArgumentNullException(nameof(analyzedEvent));
-
-			this.analyzedEvent = analyzedEvent;
+			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
 
 			eventBackingField = GetBackingField(analyzedEvent);
 			var eventType = analyzedEvent.EventType.ResolveTypeDef();

@@ -61,9 +61,7 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="order">Order of this instance</param>
 		public ExportImageSourceInfoProviderAttribute(Type type, double order)
 			: base(typeof(IImageSourceInfoProvider)) {
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			Type = type;
+			Type = type ?? throw new ArgumentNullException(nameof(type));
 			Order = order;
 		}
 

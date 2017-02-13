@@ -54,14 +54,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		readonly SignatureHelpParameter parameter;
 
 		public Parameter(Signature signature, SignatureHelpParameter parameter, Span locus, Span prettyPrintedLocus) {
-			if (signature == null)
-				throw new ArgumentNullException(nameof(signature));
-			if (parameter == null)
-				throw new ArgumentNullException(nameof(parameter));
-			Signature = signature;
+			Signature = signature ?? throw new ArgumentNullException(nameof(signature));
 			Locus = locus;
 			PrettyPrintedLocus = prettyPrintedLocus;
-			this.parameter = parameter;
+			this.parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
 		}
 
 		void InitializeDocumentation() {

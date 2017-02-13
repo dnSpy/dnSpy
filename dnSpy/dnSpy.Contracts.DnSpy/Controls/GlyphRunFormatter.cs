@@ -131,8 +131,7 @@ namespace dnSpy.Contracts.Controls {
 					var charBuf = getCharBuf(chrs.CharacterBufferReference);
 					var charOffset = getCharOffset(chrs.CharacterBufferReference);
 
-					GlyphTypeface gl;
-					if (!textProps.Typeface.TryGetGlyphTypeface(out gl))
+					if (!textProps.Typeface.TryGetGlyphTypeface(out var gl))
 						throw new Exception("GlyphTypeface does not exists for font '" + textProps.Typeface.FontFamily + "'.");
 
 					ushort[] glyphIndexes = new ushort[len];

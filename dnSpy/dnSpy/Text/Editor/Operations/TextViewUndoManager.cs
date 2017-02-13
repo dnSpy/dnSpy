@@ -34,15 +34,9 @@ namespace dnSpy.Text.Editor.Operations {
 		readonly UndoRedoCommandTargetFilter undoRedoCommandTargetFilter;
 
 		public TextViewUndoManager(IDsWpfTextView textView, ITextViewUndoManagerProvider textViewUndoManagerProvider, ITextBufferUndoManagerProvider textBufferUndoManagerProvider) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (textViewUndoManagerProvider == null)
-				throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
-			if (textBufferUndoManagerProvider == null)
-				throw new ArgumentNullException(nameof(textBufferUndoManagerProvider));
-			TextView = textView;
-			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
-			this.textBufferUndoManagerProvider = textBufferUndoManagerProvider;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.textViewUndoManagerProvider = textViewUndoManagerProvider ?? throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
+			this.textBufferUndoManagerProvider = textBufferUndoManagerProvider ?? throw new ArgumentNullException(nameof(textBufferUndoManagerProvider));
 			textBufferUndoManager = textBufferUndoManagerProvider.GetTextBufferUndoManager(TextView.TextBuffer);
 			undoRedoCommandTargetFilter = new UndoRedoCommandTargetFilter(this);
 			TextView.CommandTarget.AddFilter(undoRedoCommandTargetFilter, CommandTargetFilterOrder.UndoRedo);

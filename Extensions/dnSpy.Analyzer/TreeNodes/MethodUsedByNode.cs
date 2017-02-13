@@ -32,10 +32,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		ConcurrentDictionary<MethodDef, int> foundMethods;
 
 		public MethodUsedByNode(MethodDef analyzedMethod) {
-			if (analyzedMethod == null)
-				throw new ArgumentNullException(nameof(analyzedMethod));
-
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>

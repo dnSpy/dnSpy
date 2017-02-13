@@ -33,15 +33,9 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		public ComplexData Structure { get; }
 		public SimpleData Field { get; }
 		public EditFieldCommandContext(HexView hexView, ComplexData structure, SimpleData field) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			if (structure == null)
-				throw new ArgumentNullException(nameof(structure));
-			if (field == null)
-				throw new ArgumentNullException(nameof(field));
-			HexView = hexView;
-			Structure = structure;
-			Field = field;
+			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
+			Structure = structure ?? throw new ArgumentNullException(nameof(structure));
+			Field = field ?? throw new ArgumentNullException(nameof(field));
 		}
 	}
 
@@ -52,9 +46,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		protected readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
 
 		protected EditFieldCommandTargetMenuItemBase(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory) {
-			if (hexBufferFileServiceFactory == null)
-				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
-			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
+			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory ?? throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
 		}
 
 		protected override EditFieldCommandContext CreateContext(IMenuItemContext context) {

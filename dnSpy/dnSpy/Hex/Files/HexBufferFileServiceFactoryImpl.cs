@@ -41,8 +41,7 @@ namespace dnSpy.Hex.Files {
 		public override HexBufferFileService Create(HexBuffer buffer) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
-			HexBufferFileServiceImpl impl;
-			if (buffer.Properties.TryGetProperty(typeof(HexBufferFileServiceImpl), out impl))
+			if (buffer.Properties.TryGetProperty(typeof(HexBufferFileServiceImpl), out HexBufferFileServiceImpl impl))
 				return impl;
 			impl = new HexBufferFileServiceImpl(buffer, structureProviderFactories, bufferFileHeadersProviderFactories);
 			buffer.Properties.AddProperty(typeof(HexBufferFileServiceImpl), impl);

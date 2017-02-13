@@ -44,9 +44,7 @@ namespace dnSpy.Text.Editor {
 		bool enableLinks;
 
 		public UriTagger(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			maxLineLength = textView.Options.GetOptionValue(DefaultOptions.LongBufferLineThresholdId);
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;

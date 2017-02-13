@@ -38,9 +38,7 @@ namespace dnSpy.Hex.Editor {
 		const HexMoveToFlags hexMoveToFlags = HexMoveToFlags.CaptureHorizontalPosition;
 
 		public DefaultHexViewMouseProcessor(WpfHexView wpfHexView, HexEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			this.wpfHexView = wpfHexView;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfHexView);
 		}
 
@@ -145,8 +143,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		HexBufferSpan GetSelectionOrCaretIfNoSelection() {
-			HexBufferPoint start, end;
-			GetSelectionOrCaretIfNoSelection(out start, out end);
+			GetSelectionOrCaretIfNoSelection(out var start, out var end);
 			return new HexBufferSpan(start, end);
 		}
 
@@ -197,8 +194,7 @@ namespace dnSpy.Hex.Editor {
 							editorOperations.SelectCurrentWord();
 						else
 							editorOperations.SelectLine(wpfHexView.Caret.ContainingHexViewLine, false);
-						HexBufferPoint selStart, selEnd;
-						GetSelectionOrCaretIfNoSelection(out selStart, out selEnd);
+						GetSelectionOrCaretIfNoSelection(out var selStart, out var selEnd);
 
 						HexBufferPoint anchorPoint, activePoint;
 						if (selStart < mouseLeftDownInfo.Value.Span.Start) {
@@ -233,8 +229,7 @@ namespace dnSpy.Hex.Editor {
 		void UpdateScrolling(MouseEventArgs e) {
 			var mouseLoc = GetLocation(e);
 			dispatcherTimerXCoord = mouseLoc.Point.X;
-			TimeSpan interval;
-			var scrollDir = GetScrollDirection(mouseLoc, out interval);
+			var scrollDir = GetScrollDirection(mouseLoc, out var interval);
 			if (scrollDir == null) {
 				StopScrolling();
 				wpfHexView.Caret.EnsureVisible();

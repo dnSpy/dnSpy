@@ -29,10 +29,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly EventDef analyzedEvent;
 
 		public EventOverridesNode(EventDef analyzedEvent) {
-			if (analyzedEvent == null)
-				throw new ArgumentNullException(nameof(analyzedEvent));
-
-			this.analyzedEvent = analyzedEvent;
+			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>

@@ -34,9 +34,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		public string Name => StartDebuggingOptionsPage.DisplayName;
 
 		public OptionsPageVM(StartDebuggingOptionsPage page) {
-			if (page == null)
-				throw new ArgumentNullException(nameof(page));
-			StartDebuggingOptionsPage = page;
+			StartDebuggingOptionsPage = page ?? throw new ArgumentNullException(nameof(page));
 			StartDebuggingOptionsPage.PropertyChanged += StartDebuggingOptionsPage_PropertyChanged;
 		}
 

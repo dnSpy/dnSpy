@@ -42,18 +42,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		public DbgClrRuntimeImpl(DbgProcess process, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
-			if (process == null)
-				throw new ArgumentNullException(nameof(process));
 			if (version == null)
 				throw new ArgumentNullException(nameof(version));
-			if (clrPath == null)
-				throw new ArgumentNullException(nameof(clrPath));
-			if (runtimeDir == null)
-				throw new ArgumentNullException(nameof(runtimeDir));
-			Process = process;
+			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Version = new CorDebugRuntimeVersion(kind, version);
-			ClrFilename = clrPath;
-			RuntimeDirectory = runtimeDir;
+			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
+			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
 		}
 	}
 }

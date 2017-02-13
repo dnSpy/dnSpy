@@ -30,11 +30,9 @@ namespace dnSpy.Text {
 		readonly PointTrackingMode trackingMode;
 
 		public MappingPoint(IBufferGraph bufferGraph, SnapshotPoint snapshotPoint, PointTrackingMode trackingMode) {
-			if (bufferGraph == null)
-				throw new ArgumentNullException(nameof(bufferGraph));
 			if (snapshotPoint.Snapshot == null)
 				throw new ArgumentException();
-			BufferGraph = bufferGraph;
+			BufferGraph = bufferGraph ?? throw new ArgumentNullException(nameof(bufferGraph));
 			this.snapshotPoint = snapshotPoint;
 			this.trackingMode = trackingMode;
 		}

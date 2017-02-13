@@ -85,8 +85,7 @@ namespace dnSpy.Text {
 			}
 
 			ContentType TryGet(string typeName) {
-				ContentType contentType;
-				owner.contentTypes.TryGetValue(typeName, out contentType);
+				owner.contentTypes.TryGetValue(typeName, out var contentType);
 				return contentType;
 			}
 
@@ -100,8 +99,7 @@ namespace dnSpy.Text {
 				if (recurse > MAX_RECURSE)
 					return null;
 
-				RawContentType rawCt;
-				bool b = rawContentTypes.TryGetValue(typeName, out rawCt);
+				bool b = rawContentTypes.TryGetValue(typeName, out var rawCt);
 				Debug.Assert(b);
 				if (!b)
 					return null;

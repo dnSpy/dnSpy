@@ -33,10 +33,8 @@ namespace dnSpy.Debugger.Scripting {
 		List<DBG.CorValue> valuesToKeep;
 
 		public Eval(Debugger debugger, IAppDomain appDomain, DBG.DnEval eval) {
-			if (appDomain == null)
-				throw new InvalidOperationException("The thread has no owner AppDomain and can't be used to evaluate funcs");
 			this.debugger = debugger;
-			this.appDomain = appDomain;
+			this.appDomain = appDomain ?? throw new InvalidOperationException("The thread has no owner AppDomain and can't be used to evaluate funcs");
 			this.eval = eval;
 			this.eval.SetNoTotalTimeout();
 		}
@@ -400,8 +398,7 @@ namespace dnSpy.Debugger.Scripting {
 			if (s == null)
 				return CreateNull();
 			return debugger.Dispatcher.UI(() => {
-				int hr;
-				var res = eval.CreateString(s, out hr);
+				var res = eval.CreateString(s, out int hr);
 				if (res == null)
 					throw new ScriptException(string.Format("Could not create a string: 0x{0:X8}", hr));
 				return res.Value.ToDebuggerValue(debugger);
@@ -820,8 +817,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		DebuggerValue CreateNoConstructorUI(IDebuggerType type) {
 			debugger.Dispatcher.VerifyAccess();
-			int hr;
-			var res = eval.CreateDontCallConstructor(((DebuggerType)type).CorType, out hr);
+			var res = eval.CreateDontCallConstructor(((DebuggerType)type).CorType, out int hr);
 			if (res == null)
 				throw new ScriptException(string.Format("Could not create a type value: 0x{0:X8}", hr));
 			return (DebuggerValue)res.Value.ToDebuggerValue(debugger);
@@ -863,8 +859,7 @@ namespace dnSpy.Debugger.Scripting {
 			if (v == null)
 				return null;
 
-			int hr;
-			var res = eval.Call(toStringFunc, null, new DBG.CorValue[1] { v }, out hr);
+			var res = eval.Call(toStringFunc, null, new DBG.CorValue[1] { v }, out int hr);
 			if (res == null || res.Value.WasException)
 				return null;
 			var rv = res.Value.ResultOrException;

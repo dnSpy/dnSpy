@@ -59,9 +59,7 @@ namespace dnSpy.ToolWindows {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
 				var tg = GetTabGroup(value);
-				if (tg == null)
-					throw new InvalidOperationException();
-				tabGroupService.ActiveTabGroup = tg;
+				tabGroupService.ActiveTabGroup = tg ?? throw new InvalidOperationException();
 			}
 		}
 

@@ -32,9 +32,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool hidesParent;
 
 		public MethodNode(MethodDef analyzedMethod, bool hidesParent = false) {
-			if (analyzedMethod == null)
-				throw new ArgumentNullException(nameof(analyzedMethod));
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 			this.hidesParent = hidesParent;
 		}
 

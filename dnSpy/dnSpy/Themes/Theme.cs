@@ -355,8 +355,7 @@ namespace dnSpy.Themes {
 		}
 
 		static ColorType ToColorType(string name) {
-			ColorType type;
-			if (nameToColorType.TryGetValue(name, out type))
+			if (nameToColorType.TryGetValue(name, out var type))
 				return type;
 			Debug.Fail(string.Format("Invalid color found: {0}", name));
 			return ColorType.LastUI;

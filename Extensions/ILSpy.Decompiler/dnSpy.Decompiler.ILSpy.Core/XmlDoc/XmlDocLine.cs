@@ -99,8 +99,7 @@ start2:
 				emptyLines = 0;
 			}
 
-			int index, end;
-			Trim(out index, out end);
+			Trim(out int index, out int end);
 			current = new SubString(s, index, end - index);
 			return true;
 		}

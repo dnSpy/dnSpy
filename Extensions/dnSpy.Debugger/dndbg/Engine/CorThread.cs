@@ -28,8 +28,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorProcess Process {
 			get {
-				ICorDebugProcess process;
-				int hr = obj.GetProcess(out process);
+				int hr = obj.GetProcess(out var process);
 				return hr < 0 || process == null ? null : new CorProcess(process);
 			}
 		}
@@ -40,8 +39,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public int ThreadId {
 			get {
-				int tid;
-				int hr = obj.GetID(out tid);
+				int hr = obj.GetID(out int tid);
 				return hr < 0 ? -1 : tid;
 			}
 		}
@@ -51,8 +49,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorAppDomain AppDomain {
 			get {
-				ICorDebugAppDomain appDomain;
-				int hr = obj.GetAppDomain(out appDomain);
+				int hr = obj.GetAppDomain(out var appDomain);
 				return hr < 0 || appDomain == null ? null : new CorAppDomain(appDomain);
 			}
 		}
@@ -66,8 +63,7 @@ namespace dndbg.Engine {
 				var th2 = obj as ICorDebugThread2;
 				if (th2 == null)
 					return -1;
-				int tid;
-				int hr = th2.GetVolatileOSThreadID(out tid);
+				int hr = th2.GetVolatileOSThreadID(out int tid);
 				return hr < 0 ? -1 : tid;
 			}
 		}
@@ -77,8 +73,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorChain ActiveChain {
 			get {
-				ICorDebugChain chain;
-				int hr = obj.GetActiveChain(out chain);
+				int hr = obj.GetActiveChain(out var chain);
 				return hr < 0 || chain == null ? null : new CorChain(chain);
 			}
 		}
@@ -88,8 +83,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorFrame ActiveFrame {
 			get {
-				ICorDebugFrame frame;
-				int hr = obj.GetActiveFrame(out frame);
+				int hr = obj.GetActiveFrame(out var frame);
 				return hr < 0 || frame == null ? null : new CorFrame(frame);
 			}
 		}
@@ -99,14 +93,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorChain> Chains {
 			get {
-				ICorDebugChainEnum chainEnum;
-				int hr = obj.EnumerateChains(out chainEnum);
+				int hr = obj.EnumerateChains(out var chainEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugChain chain = null;
-					uint count;
-					hr = chainEnum.Next(1, out chain, out count);
+					hr = chainEnum.Next(1, out var chain, out uint count);
 					if (hr != 0 || chain == null)
 						break;
 					yield return new CorChain(chain);
@@ -132,8 +123,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IntPtr Handle {
 			get {
-				IntPtr handle;
-				int hr = obj.GetHandle(out handle);
+				int hr = obj.GetHandle(out var handle);
 				return hr < 0 ? IntPtr.Zero : handle;
 			}
 		}
@@ -146,8 +136,7 @@ namespace dndbg.Engine {
 				var t2 = obj as ICorDebugThread2;
 				if (t2 == null)
 					return 0;
-				ulong taskId;
-				int hr = t2.GetTaskID(out taskId);
+				int hr = t2.GetTaskID(out ulong taskId);
 				return hr < 0 ? 0 : taskId;
 			}
 		}
@@ -167,8 +156,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorDebugThreadState State {
 			get {
-				CorDebugThreadState state;
-				int hr = obj.GetDebugState(out state);
+				int hr = obj.GetDebugState(out var state);
 				return hr < 0 ? 0 : state;
 			}
 			set {
@@ -181,8 +169,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorValue CurrentException {
 			get {
-				ICorDebugValue value;
-				int hr = obj.GetCurrentException(out value);
+				int hr = obj.GetCurrentException(out var value);
 				return hr < 0 || value == null ? null : new CorValue(value);
 			}
 		}
@@ -239,8 +226,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorDebugUserState UserState {
 			get {
-				CorDebugUserState state;
-				int hr = obj.GetUserState(out state);
+				int hr = obj.GetUserState(out var state);
 				return hr < 0 ? 0 : state;
 			}
 		}
@@ -250,8 +236,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorValue Object {
 			get {
-				ICorDebugValue value;
-				int hr = obj.GetObject(out value);
+				int hr = obj.GetObject(out var value);
 				return hr < 0 || value == null ? null : new CorValue(value);
 			}
 		}
@@ -275,8 +260,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public CorEval CreateEval() {
-			ICorDebugEval eval;
-			int hr = obj.CreateEval(out eval);
+			int hr = obj.CreateEval(out var eval);
 			return hr < 0 || eval == null ? null : new CorEval(eval);
 		}
 

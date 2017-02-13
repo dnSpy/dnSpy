@@ -35,9 +35,7 @@ namespace dnSpy.Text.Operations {
 		public string Description {
 			get { return description; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				description = value;
+				description = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		string description;
@@ -47,16 +45,12 @@ namespace dnSpy.Text.Operations {
 		readonly ReadOnlyCollection<ITextUndoPrimitive> readOnlyUndoPrimitives;
 
 		public TextUndoTransaction(TextUndoHistory history, ITextUndoTransaction parent, string description) {
-			if (history == null)
-				throw new ArgumentNullException(nameof(history));
-			if (description == null)
-				throw new ArgumentNullException(nameof(description));
-			this.history = history;
+			this.history = history ?? throw new ArgumentNullException(nameof(history));
 			Parent = parent;
 			undoPrimitives = new List<ITextUndoPrimitive>();
 			readOnlyUndoPrimitives = new ReadOnlyCollection<ITextUndoPrimitive>(undoPrimitives);
 			State = UndoTransactionState.Open;
-			this.description = description;
+			this.description = description ?? throw new ArgumentNullException(nameof(description));
 		}
 
 		public void AddUndo(ITextUndoPrimitive undo) {

@@ -105,15 +105,9 @@ namespace dnSpy.Contracts.Settings.CodeEditor {
 		/// <param name="guid">Guid of settings, eg. <see cref="AppSettingsConstants.GUID_CODE_EDITOR_CSHARP_ROSLYN"/></param>
 		public ExportCodeEditorOptionsDefinitionAttribute(string languageName, string contentType, string guid)
 			: base(typeof(CodeEditorOptionsDefinition)) {
-			if (languageName == null)
-				throw new ArgumentNullException(nameof(languageName));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			if (guid == null)
-				throw new ArgumentNullException(nameof(guid));
-			LanguageName = languageName;
-			ContentType = contentType;
-			Guid = guid;
+			LanguageName = languageName ?? throw new ArgumentNullException(nameof(languageName));
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
+			Guid = guid ?? throw new ArgumentNullException(nameof(guid));
 			UseVirtualSpace = DefaultCodeEditorOptions.UseVirtualSpace;
 			WordWrapStyle = DefaultCodeEditorOptions.WordWrapStyle;
 			ShowLineNumbers = DefaultCodeEditorOptions.ShowLineNumbers;

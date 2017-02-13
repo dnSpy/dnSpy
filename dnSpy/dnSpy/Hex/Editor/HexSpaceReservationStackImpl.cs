@@ -53,12 +53,8 @@ namespace dnSpy.Hex.Editor {
 		readonly HexSpaceReservationManagerImpl[] spaceReservationManagers;
 
 		public HexSpaceReservationStackImpl(WpfHexView wpfHexView, string[] spaceReservationManagerNames) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			if (spaceReservationManagerNames == null)
-				throw new ArgumentNullException(nameof(spaceReservationManagerNames));
-			this.wpfHexView = wpfHexView;
-			this.spaceReservationManagerNames = spaceReservationManagerNames;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
+			this.spaceReservationManagerNames = spaceReservationManagerNames ?? throw new ArgumentNullException(nameof(spaceReservationManagerNames));
 			spaceReservationManagers = new HexSpaceReservationManagerImpl[spaceReservationManagerNames.Length];
 			wpfHexView.Closed += WpfHexView_Closed;
 		}

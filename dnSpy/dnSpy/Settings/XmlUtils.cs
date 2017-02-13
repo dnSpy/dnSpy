@@ -68,8 +68,7 @@ namespace dnSpy.Settings {
 				return -1;
 			if (!IsHex(hex[0]) || !IsHex(hex[1]) || !IsHex(hex[2]) || !IsHex(hex[3]))
 				return -1;
-			int val;
-			bool b = int.TryParse(hex, NumberStyles.HexNumber, null, out val);
+			bool b = int.TryParse(hex, NumberStyles.HexNumber, null, out int val);
 			Debug.Assert(b);
 			if (b)
 				return val;

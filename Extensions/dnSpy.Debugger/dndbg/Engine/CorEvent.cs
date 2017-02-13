@@ -41,8 +41,7 @@ namespace dndbg.Engine {
 		public CorFunction AddMethod {
 			get {
 				var mod = Module;
-				uint addToken, removeToken, fireToken;
-				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out addToken, out removeToken, out fireToken);
+				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out uint addToken, out uint removeToken, out uint fireToken);
 				return mod?.GetFunctionFromToken(addToken);
 			}
 		}
@@ -50,8 +49,7 @@ namespace dndbg.Engine {
 		public CorFunction RemoveMethod {
 			get {
 				var mod = Module;
-				uint addToken, removeToken, fireToken;
-				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out addToken, out removeToken, out fireToken);
+				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out uint addToken, out uint removeToken, out uint fireToken);
 				return mod?.GetFunctionFromToken(removeToken);
 			}
 		}
@@ -59,8 +57,7 @@ namespace dndbg.Engine {
 		public CorFunction FireMethod {
 			get {
 				var mod = Module;
-				uint addToken, removeToken, fireToken;
-				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out addToken, out removeToken, out fireToken);
+				MDAPI.GetEventAddRemoveFireTokens(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out uint addToken, out uint removeToken, out uint fireToken);
 				return mod?.GetFunctionFromToken(fireToken);
 			}
 		}

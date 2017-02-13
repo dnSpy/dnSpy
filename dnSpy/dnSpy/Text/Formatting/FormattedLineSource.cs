@@ -61,10 +61,6 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentNullException(nameof(sourceTextSnapshot));
 			if (visualBufferSnapshot == null)
 				throw new ArgumentNullException(nameof(visualBufferSnapshot));
-			if (aggregateClassifier == null)
-				throw new ArgumentNullException(nameof(aggregateClassifier));
-			if (sequencer == null)
-				throw new ArgumentNullException(nameof(sequencer));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (tabSize <= 0)
@@ -87,8 +83,8 @@ namespace dnSpy.Text.Formatting {
 			LineHeight = WpfTextViewLine.DEFAULT_TOP_SPACE + WpfTextViewLine.DEFAULT_BOTTOM_SPACE + formattedTextCache.GetLineHeight(classificationFormatMap.DefaultTextProperties);
 			TextHeightAboveBaseline = formattedTextCache.GetTextHeightAboveBaseline(classificationFormatMap.DefaultTextProperties);
 			TextHeightBelowBaseline = formattedTextCache.GetTextHeightBelowBaseline(classificationFormatMap.DefaultTextProperties);
-			TextAndAdornmentSequencer = sequencer;
-			this.aggregateClassifier = aggregateClassifier;
+			TextAndAdornmentSequencer = sequencer ?? throw new ArgumentNullException(nameof(sequencer));
+			this.aggregateClassifier = aggregateClassifier ?? throw new ArgumentNullException(nameof(aggregateClassifier));
 			this.classificationFormatMap = classificationFormatMap;
 			defaultTextParagraphProperties = new TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
 		}

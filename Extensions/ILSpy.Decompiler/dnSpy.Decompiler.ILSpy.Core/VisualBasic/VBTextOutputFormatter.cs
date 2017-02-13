@@ -33,9 +33,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 
 		public VBTextOutputFormatter(IDecompilerOutput output) {
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			this.output = output;
+			this.output = output ?? throw new ArgumentNullException(nameof(output));
 		}
 
 		MethodDebugInfoBuilder currentMethodDebugInfoBuilder;

@@ -343,8 +343,7 @@ namespace dnSpy.Documents {
 				foreach (var n in this.documents)
 					dict[n] = i++;
 				var list = new List<Tuple<IDsDocument, int>>(documents.Select(a => {
-					int j;
-					bool b = dict.TryGetValue(a, out j);
+					bool b = dict.TryGetValue(a, out int j);
 					Debug.Assert(b);
 					return Tuple.Create(a, b ? j : -1);
 				}));
@@ -364,11 +363,9 @@ namespace dnSpy.Documents {
 		}
 
 		public void SetDispatcher(Action<Action> action) {
-			if (action == null)
-				throw new ArgumentNullException(nameof(action));
 			if (dispatcher != null)
 				throw new InvalidOperationException("SetDispatcher() can only be called once");
-			dispatcher = action;
+			dispatcher = action ?? throw new ArgumentNullException(nameof(action));
 		}
 		Action<Action> dispatcher;
 	}

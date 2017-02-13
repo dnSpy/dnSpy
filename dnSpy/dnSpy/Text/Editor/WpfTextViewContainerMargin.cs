@@ -38,9 +38,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			this.name = name;
+			this.name = name ?? throw new ArgumentNullException(nameof(name));
 			this.isHorizontal = isHorizontal;
 			margins = Array.Empty<WpfTextViewMarginInfo>();
 			wpfTextViewMarginProviderCollection = wpfTextViewMarginProviderCollectionProvider.Create(wpfTextViewHost, this, name);

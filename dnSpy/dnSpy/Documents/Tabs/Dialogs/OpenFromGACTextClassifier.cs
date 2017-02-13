@@ -44,9 +44,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly IClassificationType gacMatchHighlightClassificationType;
 
 		public OpenFromGACTextClassifier(IClassificationType gacMatchHighlightClassificationType) {
-			if (gacMatchHighlightClassificationType == null)
-				throw new ArgumentNullException(nameof(gacMatchHighlightClassificationType));
-			this.gacMatchHighlightClassificationType = gacMatchHighlightClassificationType;
+			this.gacMatchHighlightClassificationType = gacMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(gacMatchHighlightClassificationType));
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

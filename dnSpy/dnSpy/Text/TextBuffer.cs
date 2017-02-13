@@ -79,10 +79,8 @@ namespace dnSpy.Text {
 		public PropertyCollection Properties { get; }
 
 		public TextBuffer(IContentType contentType, string text) {
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
 			Properties = new PropertyCollection();
-			this.contentType = contentType;
+			this.contentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
 			currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
 			Document = new TextDocument(text);
 			Document.SetOwnerThread(null);

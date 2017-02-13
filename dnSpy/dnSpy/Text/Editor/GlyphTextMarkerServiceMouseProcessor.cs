@@ -82,11 +82,9 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (margin == null)
-				throw new ArgumentNullException(nameof(margin));
 			glyphTextViewMarkerService = GlyphTextViewMarkerService.GetOrCreate(glyphTextMarkerServiceImpl, wpfTextViewHost.TextView);
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.margin = margin;
+			this.margin = margin ?? throw new ArgumentNullException(nameof(margin));
 			toolTipDispatcherTimer = new DispatcherTimer(DispatcherPriority.Normal, margin.VisualElement.Dispatcher);
 			popup = new Popup { AllowsTransparency = true };
 

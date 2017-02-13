@@ -41,15 +41,11 @@ namespace dnSpy.Hex.Files {
 		HexFileStructureInfoProvider[] hexFileStructureInfoProviders;
 
 		public HexFileStructureInfoServiceImpl(HexView hexView, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexFileStructureInfoProviderFactory, IOrderable>[] hexFileStructureInfoProviderFactories) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
 			if (hexBufferFileServiceFactory == null)
 				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
-			if (hexFileStructureInfoProviderFactories == null)
-				throw new ArgumentNullException(nameof(hexFileStructureInfoProviderFactories));
-			this.hexView = hexView;
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			hexBufferFileService = hexBufferFileServiceFactory.Create(hexView.Buffer);
-			this.hexFileStructureInfoProviderFactories = hexFileStructureInfoProviderFactories;
+			this.hexFileStructureInfoProviderFactories = hexFileStructureInfoProviderFactories ?? throw new ArgumentNullException(nameof(hexFileStructureInfoProviderFactories));
 		}
 
 		HexFileStructureInfoProvider[] CreateProviders() {

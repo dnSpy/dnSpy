@@ -32,15 +32,9 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly StorageStreamHeader[] storageStreamHeaders;
 
 		public DotNetHeapsReader(HexBufferFile file, DotNetMetadataHeaderData mdHeader, StorageStreamHeader[] storageStreamHeaders) {
-			if (file == null)
-				throw new ArgumentNullException(nameof(file));
-			if (mdHeader == null)
-				throw new ArgumentNullException(nameof(mdHeader));
-			if (storageStreamHeaders == null)
-				throw new ArgumentNullException(nameof(storageStreamHeaders));
-			this.file = file;
-			this.mdHeader = mdHeader;
-			this.storageStreamHeaders = storageStreamHeaders;
+			this.file = file ?? throw new ArgumentNullException(nameof(file));
+			this.mdHeader = mdHeader ?? throw new ArgumentNullException(nameof(mdHeader));
+			this.storageStreamHeaders = storageStreamHeaders ?? throw new ArgumentNullException(nameof(storageStreamHeaders));
 		}
 
 		public bool Read() {

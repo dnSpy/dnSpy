@@ -55,12 +55,8 @@ namespace dnSpy.Contracts.TreeView.Text {
 		/// must be <see cref="IClassificationType"/>s or <see cref="TextColor"/>s</param>
 		public TreeViewNodeClassifierContext(string text, ITreeView treeView, TreeNodeData node, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
 			: base(text, string.Empty, colorize, colors) {
-			if (treeView == null)
-				throw new ArgumentNullException(nameof(treeView));
-			if (node == null)
-				throw new ArgumentNullException(nameof(node));
-			TreeView = treeView;
-			Node = node;
+			TreeView = treeView ?? throw new ArgumentNullException(nameof(treeView));
+			Node = node ?? throw new ArgumentNullException(nameof(node));
 			IsToolTip = isToolTip;
 		}
 	}

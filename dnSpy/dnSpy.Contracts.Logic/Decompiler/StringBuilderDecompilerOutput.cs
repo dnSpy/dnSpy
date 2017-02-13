@@ -56,10 +56,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="indenter">Indenter</param>
 		public StringBuilderDecompilerOutput(Indenter indenter) {
-			if (indenter == null)
-				throw new ArgumentNullException(nameof(indenter));
 			sb = new StringBuilder();
-			this.indenter = indenter;
+			this.indenter = indenter ?? throw new ArgumentNullException(nameof(indenter));
 		}
 
 		/// <summary>

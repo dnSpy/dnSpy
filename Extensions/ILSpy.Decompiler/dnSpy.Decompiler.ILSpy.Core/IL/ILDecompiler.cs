@@ -41,9 +41,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
 			Debug.Assert(decompilerSettingsService != null);
-			if (decompilerSettingsService == null)
-				throw new ArgumentNullException(nameof(decompilerSettingsService));
-			this.decompilerSettingsService = decompilerSettingsService;
+			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
 		public IEnumerable<IDecompiler> Create() {

@@ -141,9 +141,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			Debug.Assert(Span.Span.Start + MinimumSize == pos);
 			Debug.Assert(Span.Span.Contains(pos - 1), "Creator should've verified this");
 
-			int maxPresentTables;
 			var dnTableSizes = new DotNetTableSizes();
-			var tableInfos = dnTableSizes.CreateTables(majorVersion, minorVersion, out maxPresentTables);
+			var tableInfos = dnTableSizes.CreateTables(majorVersion, minorVersion, out int maxPresentTables);
 			var rowsCount = new uint[tableInfos.Length];
 
 			ulong valid = validMask;

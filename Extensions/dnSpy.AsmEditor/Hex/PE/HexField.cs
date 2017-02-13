@@ -53,11 +53,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		protected HexField(BufferData data, string fieldName) {
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));
-			if (fieldName == null)
-				throw new ArgumentNullException(nameof(fieldName));
 			buffer = data.Span.Buffer;
 			IsVisible = true;
-			Name = fieldName;
+			Name = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
 			Span = data.Span.Span;
 		}
 
@@ -405,8 +403,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public HexBitField Bit63 => GetBitField(63);
 
 		HexBitField GetBitField(int bit) {
-			HexBitField bitField;
-			bool b = bitFields.TryGetValue(bit, out bitField);
+			bool b = bitFields.TryGetValue(bit, out var bitField);
 			Debug.Assert(b);
 			return bitField;
 		}

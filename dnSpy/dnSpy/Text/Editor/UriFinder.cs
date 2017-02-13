@@ -27,9 +27,7 @@ namespace dnSpy.Text.Editor {
 		int lineIndex;
 
 		public UriFinder(string line) {
-			if (line == null)
-				throw new ArgumentNullException(nameof(line));
-			this.line = line;
+			this.line = line ?? throw new ArgumentNullException(nameof(line));
 			lineIndex = 0;
 		}
 

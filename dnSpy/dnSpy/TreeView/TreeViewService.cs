@@ -47,14 +47,12 @@ namespace dnSpy.TreeView {
 
 		void InitializeGuidToProvider(IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
 			foreach (var provider in treeNodeDataProviders.OrderBy(a => a.Metadata.Order)) {
-				Guid guid;
-				bool b = Guid.TryParse(provider.Metadata.Guid, out guid);
+				bool b = Guid.TryParse(provider.Metadata.Guid, out var guid);
 				Debug.Assert(b, string.Format("Couldn't parse guid: '{0}'", provider.Metadata.Guid));
 				if (!b)
 					continue;
 
-				List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> list;
-				if (!guidToProvider.TryGetValue(guid, out list))
+				if (!guidToProvider.TryGetValue(guid, out var list))
 					guidToProvider.Add(guid, list = new List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>>());
 				list.Add(provider);
 			}
@@ -63,8 +61,7 @@ namespace dnSpy.TreeView {
 		public ITreeView Create(Guid guid, TreeViewOptions options) => new TreeViewImpl(this, themeService, classificationFormatMapService, guid, options);
 
 		public IEnumerable<ITreeNodeDataProvider> GetProviders(Guid guid) {
-			List<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> list;
-			if (!guidToProvider.TryGetValue(guid, out list))
+			if (!guidToProvider.TryGetValue(guid, out var list))
 				return Array.Empty<ITreeNodeDataProvider>();
 			return list.Select(a => a.Value);
 		}

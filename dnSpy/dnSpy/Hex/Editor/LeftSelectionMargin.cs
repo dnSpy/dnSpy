@@ -52,11 +52,9 @@ namespace dnSpy.Hex.Editor {
 
 		public LeftSelectionMargin(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider, WpfHexViewHost wpfHexViewHost, HexEditorOperations editorOperations)
 			: base(wpfHexViewMarginProviderCollectionProvider, wpfHexViewHost, PredefinedHexMarginNames.LeftSelection, false) {
-			if (editorOperations == null)
-				throw new ArgumentNullException(nameof(editorOperations));
 			VisualElement.Cursor = Cursors.Arrow;//TODO: Use an arrow pointing to the right
 			this.wpfHexViewHost = wpfHexViewHost;
-			this.editorOperations = editorOperations;
+			this.editorOperations = editorOperations ?? throw new ArgumentNullException(nameof(editorOperations));
 			wpfHexViewHost.HexView.ZoomLevelChanged += HexView_ZoomLevelChanged;
 			// Make sure that the user can click anywhere in this margin so we'll get mouse events
 			Grid.Background = Brushes.Transparent;

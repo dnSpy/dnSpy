@@ -61,9 +61,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="type">Type</param>
 		public DecompileTypeMethods(IDecompilerOutput output, DecompilationContext ctx, TypeDef type)
 			: base(output, ctx) {
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			Type = type;
+			Type = type ?? throw new ArgumentNullException(nameof(type));
 			Methods = new HashSet<MethodDef>();
 			DecompileHidden = false;
 		}

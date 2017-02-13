@@ -58,9 +58,7 @@ namespace dnSpy.MainApp {
 
 		public void Show(string text) {
 			Debug.Assert(openCounter > 0);
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
-			textBlock.Text = text;
+			textBlock.Text = text ?? throw new ArgumentNullException(nameof(text));
 		}
 	}
 }

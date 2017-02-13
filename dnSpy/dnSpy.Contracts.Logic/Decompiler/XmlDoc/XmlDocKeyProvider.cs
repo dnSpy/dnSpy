@@ -190,8 +190,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				if (len != b.Length)
 					b.Append('.');
 			}
-			int localTypeParameterCount = 0;
-			b.Append(SplitTypeParameterCountFromReflectionName(type.Name, out localTypeParameterCount));
+			b.Append(SplitTypeParameterCountFromReflectionName(type.Name, out int localTypeParameterCount));
 
 			if (localTypeParameterCount > 0) {
 				int totalTypeParameterCount = outerTypeParameterCount + localTypeParameterCount;

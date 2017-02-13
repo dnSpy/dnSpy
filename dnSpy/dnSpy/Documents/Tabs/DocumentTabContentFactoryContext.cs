@@ -26,9 +26,7 @@ namespace dnSpy.Documents.Tabs {
 		public DocumentTreeNodeData[] Nodes { get; }
 
 		public DocumentTabContentFactoryContext(DocumentTreeNodeData[] nodes) {
-			if (nodes == null)
-				throw new InvalidOperationException();
-			Nodes = nodes;
+			Nodes = nodes ?? throw new InvalidOperationException();
 		}
 	}
 }

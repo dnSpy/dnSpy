@@ -48,8 +48,7 @@ namespace dnSpy.Hex.HexEditor {
 
 			if (md.Guid == null)
 				return null;
-			Guid guid;
-			if (!Guid.TryParse(md.Guid, out guid))
+			if (!Guid.TryParse(md.Guid, out var guid))
 				return null;
 
 			if (md.Name == null)

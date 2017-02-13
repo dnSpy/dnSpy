@@ -40,10 +40,8 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="value">Enum field value</param>
 		/// <param name="name">Enum field name</param>
 		public EnumFieldInfo(ulong value, string name) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
 			Value = value;
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 	}
 }

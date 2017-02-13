@@ -40,12 +40,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
 		protected DecompileTypeBase(IDecompilerOutput output, DecompilationContext ctx) {
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			if (ctx == null)
-				throw new ArgumentNullException(nameof(ctx));
-			Output = output;
-			Context = ctx;
+			Output = output ?? throw new ArgumentNullException(nameof(output));
+			Context = ctx ?? throw new ArgumentNullException(nameof(ctx));
 		}
 	}
 }

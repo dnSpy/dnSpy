@@ -74,8 +74,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			MethodDef LookupOverride(MethodOverride o) {
-				MethodAndOverride info;
-				if (!methodOverrides.TryGetValue(o.MethodDeclaration, out info))
+				if (!methodOverrides.TryGetValue(o.MethodDeclaration, out var info))
 					return null;
 				if (!comparer.Equals(info.MethodDeclaration.DeclaringType, o.MethodDeclaration.DeclaringType))
 					return null;
@@ -83,8 +82,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			public PropertyDef FindProperty(PropertyDef compiledProp) {
-				PropertyDef targetProp;
-				if (properties.TryGetValue(compiledProp, out targetProp))
+				if (properties.TryGetValue(compiledProp, out var targetProp))
 					return targetProp;
 				return FindPropertyOverride(compiledProp.GetMethod) ?? FindPropertyOverride(compiledProp.SetMethod);
 			}
@@ -101,8 +99,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			public EventDef FindEvent(EventDef compiledEvent) {
-				EventDef targetEvent;
-				if (events.TryGetValue(compiledEvent, out targetEvent))
+				if (events.TryGetValue(compiledEvent, out var targetEvent))
 					return targetEvent;
 				return FindEventOverride(compiledEvent.AddMethod) ?? FindEventOverride(compiledEvent.RemoveMethod) ?? FindEventOverride(compiledEvent.InvokeMethod);
 			}
@@ -119,8 +116,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			public MethodDef FindMethod(MethodDef compiledMethod) {
-				MethodDef targetMethod;
-				if (methods.TryGetValue(compiledMethod, out targetMethod))
+				if (methods.TryGetValue(compiledMethod, out var targetMethod))
 					return targetMethod;
 				foreach (var o in compiledMethod.Overrides) {
 					targetMethod = LookupOverride(o);
@@ -131,8 +127,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			public FieldDef FindField(FieldDef compiledField) {
-				FieldDef targetField;
-				fields.TryGetValue(compiledField, out targetField);
+				fields.TryGetValue(compiledField, out var targetField);
 				return targetField;
 			}
 

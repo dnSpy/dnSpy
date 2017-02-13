@@ -354,8 +354,7 @@ namespace dnSpy.Search {
 			var ns = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 
 			foreach (var type in module.Types) {
-				List<TypeDef> list;
-				if (!ns.TryGetValue(type.Namespace, out list))
+				if (!ns.TryGetValue(type.Namespace, out var list))
 					ns.Add(type.Namespace, list = new List<TypeDef>());
 				list.Add(type);
 			}

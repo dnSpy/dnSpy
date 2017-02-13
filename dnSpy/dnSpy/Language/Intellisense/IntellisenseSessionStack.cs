@@ -50,18 +50,14 @@ namespace dnSpy.Language.Intellisense {
 				Session = session;
 			}
 			public void SetSpaceReservationManager(ISpaceReservationManager manager) {
-				if (manager == null)
-					throw new ArgumentNullException(nameof(manager));
 				if (SpaceReservationManager != null)
 					throw new InvalidOperationException();
-				SpaceReservationManager = manager;
+				SpaceReservationManager = manager ?? throw new ArgumentNullException(nameof(manager));
 			}
 		}
 
 		public IntellisenseSessionStack(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			sessions = new ObservableCollection<IIntellisenseSession>();
 			commandTargetFilter = new CommandTargetFilter(this);
 			sessionStates = new List<SessionState>();

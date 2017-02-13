@@ -80,8 +80,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static object TryGetVM(Dictionary<object, object> ops, object objModel) {
 			if (objModel == null)
 				return null;
-			object objVm;
-			if (!ops.TryGetValue(objModel, out objVm))
+			if (!ops.TryGetValue(objModel, out object objVm))
 				return objModel;
 			return objVm;
 		}
@@ -89,8 +88,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static object TryGetModel(Dictionary<object, object> ops, object objVm) {
 			if (IsNull(objVm))
 				return null;
-			object objModel;
-			if (!ops.TryGetValue(objVm, out objModel))
+			if (!ops.TryGetValue(objVm, out object objModel))
 				return objVm;
 			return objModel;
 		}

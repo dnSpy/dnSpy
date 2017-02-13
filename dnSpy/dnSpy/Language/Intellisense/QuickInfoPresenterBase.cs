@@ -30,9 +30,7 @@ namespace dnSpy.Language.Intellisense {
 		protected readonly QuickInfoPresenterControl control;
 
 		protected QuickInfoPresenterBase(IQuickInfoSession session) {
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
-			this.session = session;
+			this.session = session ?? throw new ArgumentNullException(nameof(session));
 			control = new QuickInfoPresenterControl { DataContext = this };
 			session.Dismissed += Session_Dismissed;
 		}

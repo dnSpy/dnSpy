@@ -32,12 +32,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		protected MDTable MDTable { get; }
 
 		public TableRecordDataFactory(TablesHeap tablesHeap, MDTable mdTable) {
-			if (tablesHeap == null)
-				throw new ArgumentNullException(nameof(tablesHeap));
-			if (mdTable == null)
-				throw new ArgumentNullException(nameof(mdTable));
-			TablesHeap = tablesHeap;
-			MDTable = mdTable;
+			TablesHeap = tablesHeap ?? throw new ArgumentNullException(nameof(tablesHeap));
+			MDTable = mdTable ?? throw new ArgumentNullException(nameof(mdTable));
 		}
 
 		public TableRecordData Create(uint rid) {

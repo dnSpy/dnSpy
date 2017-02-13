@@ -47,12 +47,8 @@ namespace dnSpy.Hex.Files.PE {
 		HexSpan peHeadersSpan;
 
 		public PeStructureProvider(HexBufferFile file, Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>[] peFileLayoutProviders) {
-			if (file == null)
-				throw new ArgumentNullException(nameof(file));
-			if (peFileLayoutProviders == null)
-				throw new ArgumentNullException(nameof(peFileLayoutProviders));
-			this.file = file;
-			this.peFileLayoutProviders = peFileLayoutProviders;
+			this.file = file ?? throw new ArgumentNullException(nameof(file));
+			this.peFileLayoutProviders = peFileLayoutProviders ?? throw new ArgumentNullException(nameof(peFileLayoutProviders));
 		}
 
 		public override bool Initialize() {

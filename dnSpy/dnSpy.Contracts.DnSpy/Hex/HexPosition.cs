@@ -188,8 +188,7 @@ namespace dnSpy.Contracts.Hex {
 		public static HexPosition Parse(string value) {
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
-			HexPosition result;
-			if (!TryParse(value, out result))
+			if (!TryParse(value, out var result))
 				throw new FormatException($"Invalid {nameof(HexPosition)} value: {value}");
 			return result;
 		}
@@ -225,8 +224,7 @@ namespace dnSpy.Contracts.Hex {
 				return true;
 			}
 			else {
-				ulong v;
-				if (!ulong.TryParse(value, out v))
+				if (!ulong.TryParse(value, out ulong v))
 					return false;
 				result = new HexPosition(v);
 				return true;

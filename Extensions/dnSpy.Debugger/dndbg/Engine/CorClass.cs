@@ -38,8 +38,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorModule Module {
 			get {
-				ICorDebugModule module;
-				int hr = obj.GetModule(out module);
+				int hr = obj.GetModule(out var module);
 				return hr < 0 || module == null ? null : new CorModule(module);
 			}
 		}
@@ -87,8 +86,7 @@ namespace dndbg.Engine {
 			var c2 = obj as ICorDebugClass2;
 			if (c2 == null)
 				return null;
-			ICorDebugType value;
-			int hr = c2.GetParameterizedType(etype, typeArgs?.Length ?? 0, typeArgs.ToCorDebugArray(), out value);
+			int hr = c2.GetParameterizedType(etype, typeArgs?.Length ?? 0, typeArgs.ToCorDebugArray(), out var value);
 			return hr < 0 || value == null ? null : new CorType(value);
 		}
 
@@ -119,8 +117,7 @@ namespace dndbg.Engine {
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
 		public CorValue GetStaticFieldValue(uint token, CorFrame frame) {
-			int hr;
-			return GetStaticFieldValue(token, frame, out hr);
+			return GetStaticFieldValue(token, frame, out int hr);
 		}
 
 		/// <summary>
@@ -131,8 +128,7 @@ namespace dndbg.Engine {
 		/// <param name="hr">Updated with HRESULT</param>
 		/// <returns></returns>
 		public CorValue GetStaticFieldValue(uint token, CorFrame frame, out int hr) {
-			ICorDebugValue value;
-			hr = obj.GetStaticFieldValue(token, frame?.RawObject, out value);
+			hr = obj.GetStaticFieldValue(token, frame?.RawObject, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -379,9 +375,7 @@ namespace dndbg.Engine {
 			var mod = Module;
 			var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var mdToken in MDAPI.GetMethodTokens(mdi, token)) {
-				MethodAttributes attrs;
-				MethodImplAttributes implAttrs;
-				if (!MDAPI.GetMethodAttributes(mdi, mdToken, out attrs, out implAttrs))
+				if (!MDAPI.GetMethodAttributes(mdi, mdToken, out var attrs, out var implAttrs))
 					continue;
 				if ((attrs & MethodAttributes.RTSpecialName) == 0)
 					continue;

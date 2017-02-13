@@ -54,10 +54,8 @@ namespace dnSpy.Hex.Editor {
 		readonly WpfHexViewHost wpfHexViewHost;
 
 		public HorizontalScrollBarMargin(WpfHexViewHost wpfHexViewHost) {
-			if (wpfHexViewHost == null)
-				throw new ArgumentNullException(nameof(wpfHexViewHost));
 			theScrollBar = new TheScrollBar(this);
-			this.wpfHexViewHost = wpfHexViewHost;
+			this.wpfHexViewHost = wpfHexViewHost ?? throw new ArgumentNullException(nameof(wpfHexViewHost));
 			theScrollBar.IsVisibleChanged += HorizontalScrollBarMargin_IsVisibleChanged;
 			wpfHexViewHost.HexView.Options.OptionChanged += Options_OptionChanged;
 			theScrollBar.SetResourceReference(FrameworkElement.StyleProperty, typeof(ScrollBar));

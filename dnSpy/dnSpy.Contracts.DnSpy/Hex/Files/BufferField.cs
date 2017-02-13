@@ -29,9 +29,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="data">Data type</param>
 		protected BufferField(BufferData data) {
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
-			Data = data;
+			Data = data ?? throw new ArgumentNullException(nameof(data));
 		}
 
 		/// <summary>
@@ -68,9 +66,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="data">Data type</param>
 		public StructField(string name, BufferData data)
 			: base(data) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			this.name = name;
+			this.name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 
 		/// <summary>

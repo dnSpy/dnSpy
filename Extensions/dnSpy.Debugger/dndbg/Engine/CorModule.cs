@@ -34,8 +34,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorProcess Process {
 			get {
-				ICorDebugProcess process;
-				int hr = obj.GetProcess(out process);
+				int hr = obj.GetProcess(out var process);
 				return hr < 0 || process == null ? null : new CorProcess(process);
 			}
 		}
@@ -45,8 +44,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorAssembly Assembly {
 			get {
-				ICorDebugAssembly assembly;
-				int hr = obj.GetAssembly(out assembly);
+				int hr = obj.GetAssembly(out var assembly);
 				return hr < 0 || assembly == null ? null : new CorAssembly(assembly);
 			}
 		}
@@ -148,8 +146,7 @@ namespace dndbg.Engine {
 				var m2 = obj as ICorDebugModule2;
 				if (m2 == null)
 					return 0;
-				CorDebugJITCompilerFlags flags;
-				int hr = m2.GetJITCompilerFlags(out flags);
+				int hr = m2.GetJITCompilerFlags(out var flags);
 				return hr < 0 ? 0 : flags;
 			}
 			set {
@@ -174,8 +171,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				token = 0;
 
-			int b;
-			hr = module.IsDynamic(out b);
+			hr = module.IsDynamic(out int b);
 			IsDynamic = hr >= 0 && b != 0;
 			hr = module.IsInMemory(out b);
 			IsInMemory = hr >= 0 && b != 0;
@@ -184,8 +180,7 @@ namespace dndbg.Engine {
 		}
 
 		static string GetName(ICorDebugModule module) {
-			uint cchName = 0;
-			int hr = module.GetName(0, out cchName, null);
+			int hr = module.GetName(0, out uint cchName, null);
 			if (hr < 0)
 				return null;
 			var sb = new StringBuilder((int)cchName);
@@ -217,8 +212,7 @@ namespace dndbg.Engine {
 		}
 
 		public CorFunction GetFunctionFromToken(uint token) {
-			ICorDebugFunction func;
-			int hr = obj.GetFunctionFromToken(token, out func);
+			int hr = obj.GetFunctionFromToken(token, out var func);
 			return hr < 0 || func == null ? null : new CorFunction(func, this);
 		}
 
@@ -243,8 +237,7 @@ namespace dndbg.Engine {
 		/// <param name="fdToken">Token of a global field</param>
 		/// <returns></returns>
 		public CorValue GetGlobalVariableValue(uint fdToken) {
-			ICorDebugValue value;
-			int hr = obj.GetGlobalVariableValue(fdToken, out value);
+			int hr = obj.GetGlobalVariableValue(fdToken, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -254,8 +247,7 @@ namespace dndbg.Engine {
 		/// <param name="token">TypeDef token</param>
 		/// <returns></returns>
 		public CorClass GetClassFromToken(uint token) {
-			ICorDebugClass cls;
-			int hr = obj.GetClassFromToken(token, out cls);
+			int hr = obj.GetClassFromToken(token, out var cls);
 			return hr < 0 || cls == null ? null : new CorClass(cls);
 		}
 
@@ -269,8 +261,7 @@ namespace dndbg.Engine {
 			var m2 = obj as ICorDebugModule2;
 			if (m2 == null)
 				return null;
-			ICorDebugAssembly asm;
-			int hr = m2.ResolveAssembly(asmRefToken, out asm);
+			int hr = m2.ResolveAssembly(asmRefToken, out var asm);
 			return hr < 0 || asm == null ? null : new CorAssembly(asm);
 		}
 
@@ -280,9 +271,8 @@ namespace dndbg.Engine {
 		/// <typeparam name="T">Type of COM metadata interface</typeparam>
 		/// <returns></returns>
 		public T GetMetaDataInterface<T>() where T : class {
-			object o;
 			var riid = typeof(T).GUID;
-			int hr = obj.GetMetaDataInterface(ref riid, out o);
+			int hr = obj.GetMetaDataInterface(ref riid, out object o);
 			return o as T;
 		}
 
@@ -307,8 +297,7 @@ namespace dndbg.Engine {
 		/// <param name="name">Full class name</param>
 		/// <returns></returns>
 		public CorClass FindClassCache(string name) {
-			uint token;
-			if (findClassCacheDict != null && findClassCacheDict.TryGetValue(name, out token))
+			if (findClassCacheDict != null && findClassCacheDict.TryGetValue(name, out uint token))
 				return GetClassFromToken(token);
 
 			if (findClassCacheDict == null) {

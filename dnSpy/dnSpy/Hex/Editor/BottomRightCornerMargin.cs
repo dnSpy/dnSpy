@@ -48,10 +48,8 @@ namespace dnSpy.Hex.Editor {
 		readonly WpfHexViewHost wpfHexViewHost;
 
 		public BottomRightCornerMargin(WpfHexViewHost wpfHexViewHost) {
-			if (wpfHexViewHost == null)
-				throw new ArgumentNullException(nameof(wpfHexViewHost));
 			canvas = new Canvas();
-			this.wpfHexViewHost = wpfHexViewHost;
+			this.wpfHexViewHost = wpfHexViewHost ?? throw new ArgumentNullException(nameof(wpfHexViewHost));
 			wpfHexViewHost.HexView.Options.OptionChanged += Options_OptionChanged;
 			canvas.SetResourceReference(Control.BackgroundProperty, "EnvironmentScrollBarBackground");
 			UpdateVisibility();

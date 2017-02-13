@@ -92,8 +92,7 @@ namespace dndbg.Engine {
 			if (thread == null)
 				throw new InvalidOperationException();
 
-			ICorDebugEval ce;
-			int hr = thread.RawObject.CreateEval(out ce);
+			int hr = thread.RawObject.CreateEval(out var ce);
 			if (hr < 0 || ce == null)
 				throw new EvalException(hr, string.Format("Could not create an evaluator, HR=0x{0:X8}", hr));
 			this.thread = thread;
@@ -150,8 +149,7 @@ namespace dndbg.Engine {
 		public EvalResult CallConstructor(CorFunction ctor, CorValue[] args) => CallConstructor(ctor, null, args);
 
 		public EvalResult CallConstructor(CorFunction ctor, CorType[] typeArgs, CorValue[] args) {
-			int hr;
-			var res = CallConstructor(ctor, typeArgs, args, out hr);
+			var res = CallConstructor(ctor, typeArgs, args, out int hr);
 			if (res != null)
 				return res.Value;
 			throw new EvalException(hr, string.Format("Could not call .ctor {0:X8}, HR=0x{1:X8}", ctor.Token, hr));
@@ -160,8 +158,7 @@ namespace dndbg.Engine {
 		public EvalResult Call(CorFunction func, CorValue[] args) => Call(func, null, args);
 
 		public EvalResult Call(CorFunction func, CorType[] typeArgs, CorValue[] args) {
-			int hr;
-			var res = Call(func, typeArgs, args, out hr);
+			var res = Call(func, typeArgs, args, out int hr);
 			if (res != null)
 				return res.Value;
 			throw new EvalException(hr, string.Format("Could not call method {0:X8}, HR=0x{1:X8}", func.Token, hr));
@@ -266,17 +263,15 @@ namespace dndbg.Engine {
 			var infos = new ThreadInfos(thread, SuspendOtherThreads);
 			object dispResult;
 			debugger.DebugCallbackEvent += Debugger_DebugCallbackEvent;
-			bool timedOut;
 			try {
 				infos.EnableThread();
 
 				debugger.EvalStarted();
-				dispResult = debugMessageDispatcher.DispatchQueue(timeLeft, out timedOut);
+				dispResult = debugMessageDispatcher.DispatchQueue(timeLeft, out bool timedOut);
 				if (timedOut) {
-					bool timedOutTmp;
 					int hr = eval.Abort();
 					if (hr >= 0) {
-						debugMessageDispatcher.DispatchQueue(TimeSpan.FromMilliseconds(ABORT_TIMEOUT_MS), out timedOutTmp);
+						debugMessageDispatcher.DispatchQueue(TimeSpan.FromMilliseconds(ABORT_TIMEOUT_MS), out bool timedOutTmp);
 						if (timedOutTmp) {
 							hr = eval.RudeAbort();
 							if (hr >= 0)

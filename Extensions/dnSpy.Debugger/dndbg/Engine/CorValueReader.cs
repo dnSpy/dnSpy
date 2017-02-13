@@ -295,8 +295,7 @@ namespace dndbg.Engine {
 		}
 
 		static CorValueResult? GetNullableResult(CorValue value) {
-			CorValue nullableValue;
-			if (!value.GetNullableValue(out nullableValue))
+			if (!value.GetNullableValue(out var nullableValue))
 				return null;
 			if (nullableValue == null)
 				return new CorValueResult(null);

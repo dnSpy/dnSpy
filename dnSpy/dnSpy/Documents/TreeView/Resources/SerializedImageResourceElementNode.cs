@@ -41,8 +41,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			if (serializedData == null)
 				return null;
 
-			byte[] imageData;
-			if (SerializedImageUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
+			if (SerializedImageUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out var imageData))
 				return new SerializedImageResourceElementNodeImpl(treeNodeGroup, resourceElement, imageData);
 
 			return null;
@@ -96,8 +95,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 				return res;
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
-			byte[] imageData;
-			if (!SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData))
+			if (!SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out var imageData))
 				return dnSpy_Resources.NewDataIsNotAnImage;
 
 			try {
@@ -114,8 +112,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			base.UpdateData(newResElem);
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
-			byte[] imageData;
-			SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData);
+			SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out var imageData);
 			InitializeImageData(imageData);
 		}
 	}

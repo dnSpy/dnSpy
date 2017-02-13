@@ -70,13 +70,9 @@ namespace dnSpy.Settings.Dialog {
 		readonly PageContext context;
 
 		public AppSettingsPageVM(AppSettingsPage page, PageContext context) {
-			if (page == null)
-				throw new ArgumentNullException(nameof(page));
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			Page = page;
+			Page = page ?? throw new ArgumentNullException(nameof(page));
 			Children = new List<AppSettingsPageVM>();
-			this.context = context;
+			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
 		PageAndUIObject GetOrCreatePageAndUIObject() {

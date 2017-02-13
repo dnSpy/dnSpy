@@ -193,9 +193,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="selectedMarkerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) (<see cref="IGlyphTextMarker.SelectedMarkerTypeName"/>)</param>
 		/// <param name="zIndex">Z-index of this text marker (<see cref="IGlyphTextMarker.ZIndex"/>)</param>
 		public GlyphTextMarkerTag(string markerTypeName, string selectedMarkerTypeName, int zIndex) {
-			if (markerTypeName == null)
-				throw new ArgumentNullException(nameof(markerTypeName));
-			MarkerTypeName = markerTypeName;
+			MarkerTypeName = markerTypeName ?? throw new ArgumentNullException(nameof(markerTypeName));
 			SelectedMarkerTypeName = selectedMarkerTypeName;
 			ZIndex = zIndex;
 		}

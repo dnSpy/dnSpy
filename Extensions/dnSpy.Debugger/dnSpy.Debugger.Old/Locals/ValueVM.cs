@@ -244,8 +244,7 @@ namespace dnSpy.Debugger.Locals {
 		/// </summary>
 		public CorValue ReadOnlyCorValue {
 			get {
-				CorValue value;
-				hr_ReadOnlyCorValue = GetReadOnlyCorValue(out value);
+				hr_ReadOnlyCorValue = GetReadOnlyCorValue(out var value);
 				CorValueError = hr_ReadOnlyCorValue != 0 || value == null;
 				return value;
 			}
@@ -260,9 +259,7 @@ namespace dnSpy.Debugger.Locals {
 			var et = value.ExactType;
 			if (et == null)
 				return false;
-			TokenAndName hasValueInfo, valueInfo;
-			CorType nullableElemType;
-			if (!et.GetSystemNullableFields(out hasValueInfo, out valueInfo, out nullableElemType))
+			if (!et.GetSystemNullableFields(out var hasValueInfo, out var valueInfo, out var nullableElemType))
 				return false;
 			var hasValueValue = value.GetFieldValue(et.Class, hasValueInfo.Token);
 			var valueValue = value.GetFieldValue(et.Class, valueInfo.Token);
@@ -325,9 +322,7 @@ namespace dnSpy.Debugger.Locals {
 
 		void InitializeChildren() {
 			var v = ReadOnlyCorValue;
-			CorValue nullableValue;
-			bool nullableIsNull;
-			bool isNullable = GetReadOnlyCorValueNullable(v, out nullableValue, out nullableIsNull);
+			bool isNullable = GetReadOnlyCorValueNullable(v, out var nullableValue, out bool nullableIsNull);
 			loadChildrenDel = null;
 
 			// If eg. the array has been collapsed, forget about all the children. This speeds up
@@ -468,9 +463,7 @@ namespace dnSpy.Debugger.Locals {
 
 		CorValue GetObjectCorValue() {
 			var v = ReadOnlyCorValue;
-			CorValue nullableValue;
-			bool nullableIsNull;
-			if (GetReadOnlyCorValueNullable(v, out nullableValue, out nullableIsNull)) {
+			if (GetReadOnlyCorValueNullable(v, out var nullableValue, out bool nullableIsNull)) {
 				Debug.Assert(!nullableIsNull);
 				if (!nullableIsNull)
 					v = nullableValue;
@@ -741,9 +734,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			var et = value.ExactType;
-			TokenAndName hasValueInfo, valueInfo;
-			CorType nullableElemType;
-			if (et.GetSystemNullableFields(out hasValueInfo, out valueInfo, out nullableElemType)) {
+			if (et.GetSystemNullableFields(out var hasValueInfo, out var valueInfo, out var nullableElemType)) {
 				var hasValueValue = value.GetFieldValue(et.Class, hasValueInfo.Token);
 				var valueValue = value.GetFieldValue(et.Class, valueInfo.Token);
 				Debug.Assert(hasValueValue != null && valueValue != null);
@@ -783,8 +774,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			if (value.IsGeneric) {
-				byte[] bytes;
-				var error = parser.GetPrimitiveValue(value.ExactType, out bytes);
+				var error = parser.GetPrimitiveValue(value.ExactType, out var bytes);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				if (bytes != null) {
@@ -796,15 +786,13 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			if (value.IsReference && (value.ElementType == CorElementType.Ptr || value.ElementType == CorElementType.FnPtr)) {
-				byte[] bytes;
-				var error = parser.GetPrimitiveValue(value.ExactType, out bytes);
+				var error = parser.GetPrimitiveValue(value.ExactType, out var bytes);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				if (bytes != null) {
 					if ((uint)bytes.Length != value.Size)
 						return "Wrong buffer size";
-					int sizeWritten;
-					int hr = context.Process.CorProcess.WriteMemory(value.Address, bytes, 0, bytes.Length, out sizeWritten);
+					int hr = context.Process.CorProcess.WriteMemory(value.Address, bytes, 0, bytes.Length, out int sizeWritten);
 					if (sizeWritten == bytes.Length)
 						return null;
 					return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotWriteTheValue, hr);
@@ -812,8 +800,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			if (value.IsReference && value.ElementType == CorElementType.String) {
-				string s;
-				var error = parser.GetString(out s);
+				var error = parser.GetString(out string s);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				if (s == null) {
@@ -821,8 +808,7 @@ namespace dnSpy.Debugger.Locals {
 					return null;
 				}
 
-				CorValue newStringValue;
-				error = CreateString(s, out newStringValue);
+				error = CreateString(s, out var newStringValue);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				value = getValue();
@@ -950,8 +936,7 @@ namespace dnSpy.Debugger.Locals {
 		int InitializeValue() {
 			CleanUpCorValue();
 			if ((FieldAttributes & FieldAttributes.Static) != 0) {
-				int hr;
-				value = OwnerType.GetStaticFieldValue(Token, context.FrameCouldBeNeutered, out hr);
+				value = OwnerType.GetStaticFieldValue(Token, context.FrameCouldBeNeutered, out int hr);
 				return hr;
 			}
 			else {
@@ -964,8 +949,7 @@ namespace dnSpy.Debugger.Locals {
 				if (parentValue == null)
 					return -1;
 
-				int hr;
-				value = parentValue.GetFieldValue(OwnerType.Class, Token, out hr);
+				value = parentValue.GetFieldValue(OwnerType.Class, Token, out int hr);
 				return hr;
 			}
 		}
@@ -1041,7 +1025,6 @@ namespace dnSpy.Debugger.Locals {
 				return ERROR_CantEvaluate;
 
 			try {
-				int hr;
 				using (var eval = context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
 					var func = OwnerType.Class.Module.GetFunctionFromToken(getToken);
 					CorValue[] args;
@@ -1049,7 +1032,7 @@ namespace dnSpy.Debugger.Locals {
 						args = Array.Empty<CorValue>();
 					else
 						args = new CorValue[1] { GetThisArg() };
-					var res = eval.Call(func, GetTypeArgs(), args, out hr);
+					var res = eval.Call(func, GetTypeArgs(), args, out int hr);
 					if (res == null)
 						return hr;
 					if (res.Value.WasException) {
@@ -1088,12 +1071,10 @@ namespace dnSpy.Debugger.Locals {
 			if (v.IsReference && parser.IsNull)
 				createNull = true;
 			else if (v.IsReference && v.ElementType == CorElementType.String) {
-				string s;
-				var error = parser.GetString(out s);
+				var error = parser.GetString(out string s);
 				if (!string.IsNullOrEmpty(error))
 					return error;
-				CorValue newStringValue;
-				error = CreateString(s, out newStringValue);
+				error = CreateString(s, out var newStringValue);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				v = newStringValue;
@@ -1114,7 +1095,6 @@ namespace dnSpy.Debugger.Locals {
 						return "Internal error: Can't get a value type";
 				}
 
-				int hr;
 				using (var eval = context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
 					if (createNull)
 						v = eval.CreateNull();
@@ -1125,7 +1105,7 @@ namespace dnSpy.Debugger.Locals {
 						args = new CorValue[1] { v };
 					else
 						args = new CorValue[2] { GetThisArg(), v };
-					var res = eval.Call(func, GetTypeArgs(), args, out hr);
+					var res = eval.Call(func, GetTypeArgs(), args, out int hr);
 					if (res == null)
 						return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotCallPropSetter, hr);
 					if (res.Value.WasException) {

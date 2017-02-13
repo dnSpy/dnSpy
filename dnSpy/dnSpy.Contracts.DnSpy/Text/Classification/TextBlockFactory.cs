@@ -166,8 +166,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		static string GetFontName(TextFormattingRunProperties props) {
 			if (props.TypefaceEmpty)
 				return string.Empty;
-			string name;
-			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out name))
+			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string name))
 				name = null;
 			return name ?? string.Empty;
 		}
@@ -194,10 +193,8 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="span">Span</param>
 		/// <param name="properties">Text properties</param>
 		public TextRunPropertiesAndSpan(Span span, TextFormattingRunProperties properties) {
-			if (properties == null)
-				throw new System.ArgumentNullException(nameof(properties));
 			Span = span;
-			Properties = properties;
+			Properties = properties ?? throw new System.ArgumentNullException(nameof(properties));
 		}
 	}
 }

@@ -213,8 +213,7 @@ namespace dnSpy.Debugger.Scripting {
 		public bool GetNullableValue(out IDebuggerValue value) {
 			IDebuggerValue valueTmp = null;
 			bool res = debugger.Dispatcher.UI(() => {
-				CorValue corValue;
-				bool res2 = CorValue.GetNullableValue(out corValue);
+				bool res2 = CorValue.GetNullableValue(out var corValue);
 				valueTmp = corValue == null ? null : new DebuggerValue(debugger, corValue);
 				return res2;
 			});
@@ -441,8 +440,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public ulong GetArrayDataAddress() {
-			ulong elemSize;
-			return GetArrayDataAddress(out elemSize);
+			return GetArrayDataAddress(out ulong elemSize);
 		}
 
 		public ulong GetArrayDataAddress(out ulong elemSize2) {

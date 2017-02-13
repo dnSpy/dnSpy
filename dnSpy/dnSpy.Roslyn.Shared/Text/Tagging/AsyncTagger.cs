@@ -56,9 +56,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			readonly CancellationTokenSource cancellationTokenSource;
 
 			public SnapshotState(ITextSnapshot snapshot) {
-				if (snapshot == null)
-					throw new ArgumentNullException(nameof(snapshot));
-				Snapshot = snapshot;
+				Snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
 				cancellationTokenSource = new CancellationTokenSource();
 				CancellationToken = cancellationTokenSource.Token;
 				GetTagsStateImpl = new GetTagsStateImpl(CancellationToken);
@@ -95,10 +93,8 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			public TagsResult(SnapshotSpan span, ITagSpan<TTagType>[] tags) {
 				if (span.Snapshot == null)
 					throw new ArgumentException();
-				if (tags == null)
-					throw new ArgumentNullException(nameof(tags));
 				Span = span;
-				Tags = tags;
+				Tags = tags ?? throw new ArgumentNullException(nameof(tags));
 			}
 		}
 
@@ -229,8 +225,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 				}
 
 				foreach (var span in spans) {
-					IEnumerable<ITagSpan<TTagType>> tags;
-					if (cachedTags.TryGetValue(span.Start.Position, out tags)) {
+					if (cachedTags.TryGetValue(span.Start.Position, out var tags)) {
 						if (singleResult == null)
 							singleResult = tags;
 						else {

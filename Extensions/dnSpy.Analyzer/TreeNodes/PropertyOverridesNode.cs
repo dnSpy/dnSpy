@@ -29,10 +29,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly PropertyDef analyzedProperty;
 
 		public PropertyOverridesNode(PropertyDef analyzedProperty) {
-			if (analyzedProperty == null)
-				throw new ArgumentNullException(nameof(analyzedProperty));
-
-			this.analyzedProperty = analyzedProperty;
+			this.analyzedProperty = analyzedProperty ?? throw new ArgumentNullException(nameof(analyzedProperty));
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>

@@ -214,8 +214,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			var data = GetSaveOptionsVM(obj);
 			if (data == null)
 				return false;
-			bool saved;
-			savedFile.TryGetValue(data, out saved);
+			savedFile.TryGetValue(data, out bool saved);
 			return saved;
 		}
 

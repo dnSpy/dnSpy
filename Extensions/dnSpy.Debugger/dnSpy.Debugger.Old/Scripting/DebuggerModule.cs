@@ -294,8 +294,7 @@ namespace dnSpy.Debugger.Scripting {
 			if (IsInMemory)
 				return allBytes;
 			var bytes = new byte[Size];
-			int finalSize;
-			PEFilesSaver.WritePEFile(allBytes, bytes, allBytes.Length, out finalSize);
+			PEFilesSaver.WritePEFile(allBytes, bytes, allBytes.Length, out int finalSize);
 			if (finalSize == bytes.Length)
 				return bytes;
 			var final = new byte[finalSize];

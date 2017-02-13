@@ -159,18 +159,12 @@ namespace dnSpy.Hex.Editor {
 		readonly VSTC.IClassificationType inactiveCaretClassificationType;
 
 		public HexCaretLayer(HexCaretImpl hexCaret, HexAdornmentLayer layer, VSTC.IClassificationFormatMap classificationFormatMap, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService) {
-			if (hexCaret == null)
-				throw new ArgumentNullException(nameof(hexCaret));
-			if (layer == null)
-				throw new ArgumentNullException(nameof(layer));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			overwriteMode = true;
-			this.hexCaret = hexCaret;
-			this.layer = layer;
-			this.classificationFormatMap = classificationFormatMap;
+			this.hexCaret = hexCaret ?? throw new ArgumentNullException(nameof(hexCaret));
+			this.layer = layer ?? throw new ArgumentNullException(nameof(layer));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			activeCaretClassificationType = classificationTypeRegistryService.GetClassificationType(CTC.ThemeClassificationTypeNames.HexCaret);
 			inactiveCaretClassificationType = classificationTypeRegistryService.GetClassificationType(CTC.ThemeClassificationTypeNames.HexInactiveCaret);
 			valuesCaretGeometry = new CaretGeometry();

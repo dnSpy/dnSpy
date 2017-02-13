@@ -66,24 +66,14 @@ namespace dnSpy.Hex.Operations {
 		readonly Lazy<HexFileStructureInfoServiceFactory> hexFileStructureInfoServiceFactory;
 
 		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService, Lazy<HexFileStructureInfoServiceFactory> hexFileStructureInfoServiceFactory) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			if (htmlBuilderService == null)
-				throw new ArgumentNullException(nameof(htmlBuilderService));
 			if (hexBufferFileServiceFactory == null)
 				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
-			if (hexStructureInfoAggregatorFactory == null)
-				throw new ArgumentNullException(nameof(hexStructureInfoAggregatorFactory));
-			if (hexReferenceHandlerService == null)
-				throw new ArgumentNullException(nameof(hexReferenceHandlerService));
-			if (hexFileStructureInfoServiceFactory == null)
-				throw new ArgumentNullException(nameof(hexFileStructureInfoServiceFactory));
-			HexView = hexView;
+			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			hexBufferFileService = hexBufferFileServiceFactory.Create(hexView.Buffer);
-			this.htmlBuilderService = htmlBuilderService;
-			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
-			this.hexReferenceHandlerService = hexReferenceHandlerService;
-			this.hexFileStructureInfoServiceFactory = hexFileStructureInfoServiceFactory;
+			this.htmlBuilderService = htmlBuilderService ?? throw new ArgumentNullException(nameof(htmlBuilderService));
+			this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory ?? throw new ArgumentNullException(nameof(hexStructureInfoAggregatorFactory));
+			this.hexReferenceHandlerService = hexReferenceHandlerService ?? throw new ArgumentNullException(nameof(hexReferenceHandlerService));
+			this.hexFileStructureInfoServiceFactory = hexFileStructureInfoServiceFactory ?? throw new ArgumentNullException(nameof(hexFileStructureInfoServiceFactory));
 			HexView.Closed += HexView_Closed;
 		}
 
@@ -93,8 +83,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		HexBufferPoint GetAnchorPositionOrCaretIfNoSelection() {
-			HexBufferPoint anchorPoint, activePoint;
-			GetSelectionOrCaretIfNoSelection(out anchorPoint, out activePoint);
+			GetSelectionOrCaretIfNoSelection(out var anchorPoint, out var activePoint);
 			return anchorPoint;
 		}
 

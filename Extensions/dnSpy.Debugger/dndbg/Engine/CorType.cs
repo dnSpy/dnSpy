@@ -44,8 +44,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorType FirstTypeParameter {
 			get {
-				ICorDebugType type;
-				int hr = obj.GetFirstTypeParameter(out type);
+				int hr = obj.GetFirstTypeParameter(out var type);
 				return hr < 0 || type == null ? null : new CorType(type);
 			}
 		}
@@ -61,14 +60,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorType> TypeParameters {
 			get {
-				ICorDebugTypeEnum typeEnum;
-				int hr = obj.EnumerateTypeParameters(out typeEnum);
+				int hr = obj.EnumerateTypeParameters(out var typeEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugType type = null;
-					uint count;
-					hr = typeEnum.Next(1, out type, out count);
+					hr = typeEnum.Next(1, out var type, out uint count);
 					if (hr != 0 || type == null)
 						break;
 					yield return new CorType(type);
@@ -88,8 +84,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorClass Class {
 			get {
-				ICorDebugClass cls;
-				int hr = obj.GetClass(out cls);
+				int hr = obj.GetClass(out var cls);
 				return hr < 0 || cls == null ? null : new CorClass(cls);
 			}
 		}
@@ -99,8 +94,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorType Base {
 			get {
-				ICorDebugType @base;
-				int hr = obj.GetBase(out @base);
+				int hr = obj.GetBase(out var @base);
 				return hr < 0 || @base == null ? null : new CorType(@base);
 			}
 		}
@@ -211,8 +205,7 @@ namespace dndbg.Engine {
 
 		internal IMetaDataImport MetaDataImport {
 			get {
-				uint token;
-				return GetMetaDataImport(out token);
+				return GetMetaDataImport(out uint token);
 			}
 		}
 
@@ -230,8 +223,7 @@ namespace dndbg.Engine {
 			get {
 				if (TypeParameters.Count() != 1)
 					return false;
-				uint token;
-				var mdi = GetMetaDataImport(out token);
+				var mdi = GetMetaDataImport(out uint token);
 				if (MetaDataUtils.GetCountGenericParameters(mdi, token) != 1)
 					return false;
 				var names = MetaDataUtils.GetTypeDefFullNames(mdi, token);
@@ -251,8 +243,7 @@ namespace dndbg.Engine {
 			if (etype != CorElementType.Class && etype != CorElementType.ValueType)
 				return etype;
 
-			uint token;
-			var mdi = GetMetaDataImport(out token);
+			var mdi = GetMetaDataImport(out uint token);
 			var list = MetaDataUtils.GetTypeDefFullNames(mdi, token);
 			if (list.Count != 1)
 				return etype;
@@ -358,8 +349,7 @@ namespace dndbg.Engine {
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
 		public CorValue GetStaticFieldValue(uint token, CorFrame frame) {
-			int hr;
-			return GetStaticFieldValue(token, frame, out hr);
+			return GetStaticFieldValue(token, frame, out int hr);
 		}
 
 		/// <summary>
@@ -370,8 +360,7 @@ namespace dndbg.Engine {
 		/// <param name="hr">Updated with HRESULT</param>
 		/// <returns></returns>
 		public CorValue GetStaticFieldValue(uint token, CorFrame frame, out int hr) {
-			ICorDebugValue value;
-			hr = obj.GetStaticFieldValue(token, frame?.RawObject, out value);
+			hr = obj.GetStaticFieldValue(token, frame?.RawObject, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 

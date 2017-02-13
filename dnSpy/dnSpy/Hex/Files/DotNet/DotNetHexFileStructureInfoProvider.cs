@@ -329,8 +329,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				uint implementation = mdTable.TableInfo.Columns[3].Size == 2 ?
 					buffer.ReadUInt16(recordPos + mdTable.RowSize - 2) :
 					buffer.ReadUInt32(recordPos + mdTable.RowSize - 4);
-				MDToken implementationToken;
-				if (!CodedToken.Implementation.Decode(implementation, out implementationToken))
+				if (!CodedToken.Implementation.Decode(implementation, out MDToken implementationToken))
 					return null;
 				if (implementationToken.Rid != 0)
 					return null;

@@ -38,8 +38,7 @@ namespace dnSpy.Text.Editor {
 		public static IWpfTextView TryGetTextView(ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			IWpfTextView wpfTextView;
-			if (textBuffer.Properties.TryGetProperty(textViewKey, out wpfTextView))
+			if (textBuffer.Properties.TryGetProperty(textViewKey, out IWpfTextView wpfTextView))
 				return wpfTextView;
 			return null;
 		}

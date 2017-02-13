@@ -106,18 +106,10 @@ namespace dnSpy.Contracts.Settings.HexEditor {
 		/// <param name="type">A type in your assembly so resource strings can be read from the resources</param>
 		public ExportHexEditorOptionsDefinitionAttribute(string name, string subGroup, string guid, Type type)
 			: base(typeof(HexEditorOptionsDefinition)) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			if (subGroup == null)
-				throw new ArgumentNullException(nameof(subGroup));
-			if (guid == null)
-				throw new ArgumentNullException(nameof(guid));
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			Name = name;
-			SubGroup = subGroup;
-			Guid = guid;
-			Type = type;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+			SubGroup = subGroup ?? throw new ArgumentNullException(nameof(subGroup));
+			Guid = guid ?? throw new ArgumentNullException(nameof(guid));
+			Type = type ?? throw new ArgumentNullException(nameof(type));
 			HexOffsetFormat = DefaultHexEditorOptions.HexOffsetFormat;
 			ValuesLowerCaseHex = DefaultHexEditorOptions.ValuesLowerCaseHex;
 			OffsetLowerCaseHex = DefaultHexEditorOptions.OffsetLowerCaseHex;

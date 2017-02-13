@@ -32,12 +32,8 @@ namespace dnSpy.Output.Settings {
 		public string OptionId { get; }
 
 		public OptionChangedEventArgs(string contentType, string optionId) {
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			if (optionId == null)
-				throw new ArgumentNullException(nameof(optionId));
-			ContentType = contentType;
-			OptionId = optionId;
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
+			OptionId = optionId ?? throw new ArgumentNullException(nameof(optionId));
 		}
 	}
 }

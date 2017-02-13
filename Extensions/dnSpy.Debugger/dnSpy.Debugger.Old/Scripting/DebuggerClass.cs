@@ -43,8 +43,7 @@ namespace dnSpy.Debugger.Scripting {
 		void InitializeNamespaceName() {
 			debugger.Dispatcher.VerifyAccess();
 			Debug.Assert(name == null);
-			string tmpNs, tmpName;
-			CorClass.GetName(out tmpNs, out tmpName);
+			CorClass.GetName(out string tmpNs, out string tmpName);
 			@namespace = tmpNs;
 			name = tmpName ?? string.Empty;
 		}

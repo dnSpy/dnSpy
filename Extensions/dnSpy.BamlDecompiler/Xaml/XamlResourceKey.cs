@@ -81,8 +81,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		}
 
 		public static XamlResourceKey FindKeyInAncestors(BamlNode node) {
-			BamlNode found;
-			return FindKeyInAncestors(node, out found);
+			return FindKeyInAncestors(node, out var found);
 		}
 
 		public static XamlResourceKey FindKeyInAncestors(BamlNode node, out BamlNode found) {

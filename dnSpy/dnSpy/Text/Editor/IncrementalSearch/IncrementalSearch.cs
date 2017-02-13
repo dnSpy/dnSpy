@@ -32,9 +32,7 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 		public string SearchString {
 			get { return searchString; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				searchString = value;
+				searchString = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		string searchString;
@@ -69,14 +67,10 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 		readonly IEditorOperations editorOperations;
 
 		public IncrementalSearch(ITextView textView, ITextSearchService textSearchService, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (textSearchService == null)
-				throw new ArgumentNullException(nameof(textSearchService));
 			if (editorOperationsFactoryService == null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
-			TextView = textView;
-			this.textSearchService = textSearchService;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.textSearchService = textSearchService ?? throw new ArgumentNullException(nameof(textSearchService));
 			editorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
 			SearchString = string.Empty;
 		}

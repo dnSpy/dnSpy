@@ -45,9 +45,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="module">Type</param>
 		public DecompileAssemblyInfo(IDecompilerOutput output, DecompilationContext ctx, ModuleDef module)
 			: base(output, ctx) {
-			if (module == null)
-				throw new ArgumentNullException(nameof(module));
-			Module = module;
+			Module = module ?? throw new ArgumentNullException(nameof(module));
 			KeepAllAttributes = false;
 		}
 	}

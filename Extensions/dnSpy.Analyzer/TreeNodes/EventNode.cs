@@ -32,9 +32,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool hidesParent;
 
 		public EventNode(EventDef analyzedEvent, bool hidesParent = false) {
-			if (analyzedEvent == null)
-				throw new ArgumentNullException(nameof(analyzedEvent));
-			this.analyzedEvent = analyzedEvent;
+			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
 			this.hidesParent = hidesParent;
 		}
 

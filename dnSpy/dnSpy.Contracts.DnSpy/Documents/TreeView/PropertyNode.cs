@@ -38,9 +38,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="property">Property</param>
 		protected PropertyNode(PropertyDef property) {
-			if (property == null)
-				throw new ArgumentNullException(nameof(property));
-			PropertyDef = property;
+			PropertyDef = property ?? throw new ArgumentNullException(nameof(property));
 		}
 
 		/// <summary>

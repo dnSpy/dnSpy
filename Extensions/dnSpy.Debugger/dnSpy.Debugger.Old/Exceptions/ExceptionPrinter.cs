@@ -36,8 +36,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void WriteFullTypeName(string fullName) {
-			string ns, name;
-			SplitTypeName(fullName, out ns, out name);
+			SplitTypeName(fullName, out string ns, out string name);
 			if (!string.IsNullOrEmpty(ns)) {
 				output.WriteNamespace(ns);
 				output.Write(BoxedTextColor.Operator, ".");

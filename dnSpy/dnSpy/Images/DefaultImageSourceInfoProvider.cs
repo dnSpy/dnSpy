@@ -33,16 +33,13 @@ namespace dnSpy.Images {
 		Dictionary<string, ImageSourceInfo[]> nameToInfosDict;
 
 		public DefaultImageSourceInfoProvider(Assembly assembly) {
-			if (assembly == null)
-				throw new ArgumentNullException(nameof(assembly));
-			this.assembly = assembly;
+			this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 		}
 
 		public ImageSourceInfo[] GetImageSourceInfos(string name) {
 			if (nameToInfosDict == null)
 				InitializeResources();
-			ImageSourceInfo[] infos;
-			if (nameToInfosDict.TryGetValue(name, out infos))
+			if (nameToInfosDict.TryGetValue(name, out var infos))
 				return infos;
 			return null;
 		}
@@ -82,8 +79,7 @@ namespace dnSpy.Images {
 									};
 								}
 								if (info != null && nameKey != null) {
-									List<ImageSourceInfo> list;
-									if (!dict.TryGetValue(nameKey, out list))
+									if (!dict.TryGetValue(nameKey, out var list))
 										dict.Add(nameKey, list = new List<ImageSourceInfo>());
 									list.Add(info.Value);
 								}
@@ -114,10 +110,9 @@ namespace dnSpy.Images {
 				return null;
 			if (match.Groups.Count != 3)
 				return null;
-			int width, height;
-			if (!int.TryParse(match.Groups[1].Value, out width))
+			if (!int.TryParse(match.Groups[1].Value, out int width))
 				return null;
-			if (!int.TryParse(match.Groups[2].Value, out height))
+			if (!int.TryParse(match.Groups[2].Value, out int height))
 				return null;
 			nameKey = name.Substring(0, match.Index);
 			return new Size(width, height);

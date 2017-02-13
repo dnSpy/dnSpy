@@ -38,9 +38,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IDocumentViewer documentViewer;
 
 		public HighlightRelatedKeywordsDocumentViewerReferenceEnabler(IDocumentViewer documentViewer) {
-			if (documentViewer == null)
-				throw new ArgumentNullException(nameof(documentViewer));
-			this.documentViewer = documentViewer;
+			this.documentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
 			IsEnabled = documentViewer.TextView.Options.IsHighlightRelatedKeywordsEnabled();
 			documentViewer.TextView.Options.OptionChanged += Options_OptionChanged;
 		}

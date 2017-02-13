@@ -46,12 +46,8 @@ namespace dnSpy.Language.Intellisense {
 		readonly IImageMonikerService imageMonikerService;
 
 		public CompletionCollectionVM(IList<Completion> completionList, IImageMonikerService imageMonikerService) {
-			if (completionList == null)
-				throw new ArgumentNullException(nameof(completionList));
-			if (imageMonikerService == null)
-				throw new ArgumentNullException(nameof(imageMonikerService));
-			this.completionList = completionList;
-			this.imageMonikerService = imageMonikerService;
+			this.completionList = completionList ?? throw new ArgumentNullException(nameof(completionList));
+			this.imageMonikerService = imageMonikerService ?? throw new ArgumentNullException(nameof(imageMonikerService));
 			completionListNotifyCollectionChanged = completionList as INotifyCollectionChanged;
 			if (completionListNotifyCollectionChanged != null)
 				completionListNotifyCollectionChanged.CollectionChanged += CompletionList_CollectionChanged;

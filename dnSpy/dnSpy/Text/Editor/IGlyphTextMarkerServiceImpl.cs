@@ -41,9 +41,7 @@ namespace dnSpy.Text.Editor {
 		public IGlyphTextMarkerImpl Marker { get; }
 
 		protected GlyphTextMarkerEventArgs(IGlyphTextMarkerImpl marker) {
-			if (marker == null)
-				throw new ArgumentNullException(nameof(marker));
-			Marker = marker;
+			Marker = marker ?? throw new ArgumentNullException(nameof(marker));
 		}
 	}
 
@@ -63,9 +61,7 @@ namespace dnSpy.Text.Editor {
 		public HashSet<IGlyphTextMarkerImpl> Markers { get; }
 
 		public GlyphTextMarkersRemovedEventArgs(HashSet<IGlyphTextMarkerImpl> markers) {
-			if (markers == null)
-				throw new ArgumentNullException(nameof(markers));
-			Markers = markers;
+			Markers = markers ?? throw new ArgumentNullException(nameof(markers));
 		}
 	}
 }

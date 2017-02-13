@@ -189,8 +189,7 @@ namespace dnSpy.MainApp {
 		public bool HasArgument(string argName) => userArgs.ContainsKey(argName);
 
 		public string GetArgumentValue(string argName) {
-			string value;
-			userArgs.TryGetValue(argName, out value);
+			userArgs.TryGetValue(argName, out string value);
 			return value;
 		}
 

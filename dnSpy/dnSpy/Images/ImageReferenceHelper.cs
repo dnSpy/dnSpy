@@ -30,8 +30,7 @@ namespace dnSpy.Images {
 				var type = iconName.Substring(0, colonIndex).Trim();
 				iconName = iconName.Substring(colonIndex + 1).Trim();
 				if (type.Equals("img", StringComparison.OrdinalIgnoreCase)) {
-					ImageReference imageReference;
-					if (ImageReference.TryParse(iconName, out imageReference))
+					if (ImageReference.TryParse(iconName, out var imageReference))
 						return imageReference;
 					return null;
 				}

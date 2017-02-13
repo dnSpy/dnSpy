@@ -48,8 +48,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint OSThreadId {
 			get {
-				uint osThreadId;
-				int hr = obj.GetOSThreadId(out osThreadId);
+				int hr = obj.GetOSThreadId(out uint osThreadId);
 				return hr < 0 ? 0 : osThreadId;
 			}
 		}
@@ -59,8 +58,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string Name {
 			get {
-				uint cchName;
-				int hr = obj.GetName(0, out cchName, null);
+				int hr = obj.GetName(0, out uint cchName, null);
 				StringBuilder sb = null;
 				if (hr >= 0) {
 					sb = new StringBuilder((int)cchName);
@@ -75,8 +73,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string Description {
 			get {
-				uint cchName;
-				int hr = obj.GetDescription(0, out cchName, null);
+				int hr = obj.GetDescription(0, out uint cchName, null);
 				StringBuilder sb = null;
 				if (hr >= 0) {
 					sb = new StringBuilder((int)cchName);
@@ -91,8 +88,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string XML {
 			get {
-				uint cchName;
-				int hr = obj.GetXML(0, out cchName, null);
+				int hr = obj.GetXML(0, out uint cchName, null);
 				StringBuilder sb = null;
 				if (hr >= 0) {
 					sb = new StringBuilder((int)cchName);

@@ -98,13 +98,9 @@ namespace dnSpy.Hex.Editor {
 			public HexGlyphFactoryProvider FactoryProvider { get; }
 			public Canvas Canvas { get; }
 			public GlyphFactoryInfo(int order, HexGlyphFactory factory, HexGlyphFactoryProvider glyphFactoryProvider) {
-				if (factory == null)
-					throw new ArgumentNullException(nameof(factory));
-				if (glyphFactoryProvider == null)
-					throw new ArgumentNullException(nameof(glyphFactoryProvider));
 				Order = order;
-				Factory = factory;
-				FactoryProvider = glyphFactoryProvider;
+				Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+				FactoryProvider = glyphFactoryProvider ?? throw new ArgumentNullException(nameof(glyphFactoryProvider));
 				Canvas = new Canvas { Background = Brushes.Transparent };
 			}
 		}
@@ -114,12 +110,8 @@ namespace dnSpy.Hex.Editor {
 			public List<IconInfo> Icons { get; }
 
 			public LineInfo(HexViewLine hexViewLine, List<IconInfo> icons) {
-				if (hexViewLine == null)
-					throw new ArgumentNullException(nameof(hexViewLine));
-				if (icons == null)
-					throw new ArgumentNullException(nameof(icons));
-				Line = hexViewLine;
-				Icons = icons;
+				Line = hexViewLine ?? throw new ArgumentNullException(nameof(hexViewLine));
+				Icons = icons ?? throw new ArgumentNullException(nameof(icons));
 			}
 		}
 
@@ -128,9 +120,7 @@ namespace dnSpy.Hex.Editor {
 			public double BaseTopValue { get; }
 			public int Order { get; }
 			public IconInfo(int order, UIElement element) {
-				if (element == null)
-					throw new ArgumentNullException(nameof(element));
-				Element = element;
+				Element = element ?? throw new ArgumentNullException(nameof(element));
 				BaseTopValue = GetBaseTopValue(element);
 				Order = order;
 			}
@@ -147,24 +137,14 @@ namespace dnSpy.Hex.Editor {
 		public HexGlyphMargin(IMenuService menuService, WpfHexViewHost wpfHexViewHost, HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService, HexEditorFormatMapService editorFormatMapService, Lazy<HexGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] glyphMouseProcessorProviders, Lazy<HexGlyphFactoryProvider, IGlyphMetadata>[] glyphFactoryProviders, HexMarginContextMenuService marginContextMenuHandlerProviderService) {
 			if (menuService == null)
 				throw new ArgumentNullException(nameof(menuService));
-			if (wpfHexViewHost == null)
-				throw new ArgumentNullException(nameof(wpfHexViewHost));
-			if (viewTagAggregatorFactoryService == null)
-				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			if (editorFormatMapService == null)
-				throw new ArgumentNullException(nameof(editorFormatMapService));
-			if (glyphMouseProcessorProviders == null)
-				throw new ArgumentNullException(nameof(glyphMouseProcessorProviders));
-			if (glyphFactoryProviders == null)
-				throw new ArgumentNullException(nameof(glyphFactoryProviders));
 			canvas = new Canvas();
 			glyphFactories = new Dictionary<Type, GlyphFactoryInfo>();
 			childCanvases = Array.Empty<Canvas>();
-			this.wpfHexViewHost = wpfHexViewHost;
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.editorFormatMapService = editorFormatMapService;
-			lazyGlyphMouseProcessorProviders = glyphMouseProcessorProviders;
-			lazyGlyphFactoryProviders = glyphFactoryProviders;
+			this.wpfHexViewHost = wpfHexViewHost ?? throw new ArgumentNullException(nameof(wpfHexViewHost));
+			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService ?? throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
+			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
+			lazyGlyphMouseProcessorProviders = glyphMouseProcessorProviders ?? throw new ArgumentNullException(nameof(glyphMouseProcessorProviders));
+			lazyGlyphFactoryProviders = glyphFactoryProviders ?? throw new ArgumentNullException(nameof(glyphFactoryProviders));
 
 			var binding = new Binding {
 				Path = new PropertyPath(Panel.BackgroundProperty),
@@ -307,8 +287,7 @@ namespace dnSpy.Hex.Editor {
 				AddLine(newInfos, line);
 
 			foreach (var line in translatedLines) {
-				LineInfo info;
-				bool b = lineInfos.TryGetValue(line.IdentityTag, out info);
+				bool b = lineInfos.TryGetValue(line.IdentityTag, out var info);
 				Debug.Assert(b);
 				if (!b)
 					continue;
@@ -321,8 +300,7 @@ namespace dnSpy.Hex.Editor {
 			foreach (var line in wpfHexViewHost.HexView.HexViewLines) {
 				if (newInfos.ContainsKey(line.IdentityTag))
 					continue;
-				LineInfo info;
-				if (!lineInfos.TryGetValue(line.IdentityTag, out info))
+				if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 					continue;
 				lineInfos.Remove(line.IdentityTag);
 				newInfos.Add(line.IdentityTag, info);
@@ -352,9 +330,8 @@ namespace dnSpy.Hex.Editor {
 				Debug.Assert(glyphTag != null);
 				if (glyphTag == null)
 					continue;
-				GlyphFactoryInfo factoryInfo;
 				// Fails if someone forgot to Export(typeof(HexGlyphFactoryProvider)) with the correct tag types
-				bool b = glyphFactories.TryGetValue(glyphTag.GetType(), out factoryInfo);
+				bool b = glyphFactories.TryGetValue(glyphTag.GetType(), out var factoryInfo);
 				Debug.Assert(b);
 				if (!b)
 					continue;
@@ -412,8 +389,7 @@ namespace dnSpy.Hex.Editor {
 
 		void Update(WpfHexViewLine line) {
 			Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
-			LineInfo info;
-			if (!lineInfos.TryGetValue(line.IdentityTag, out info))
+			if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 				return;
 			lineInfos.Remove(line.IdentityTag);
 			foreach (var iconInfo in info.Icons)

@@ -34,9 +34,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="document">Document</param>
 		protected DsDocumentNode(IDsDocument document) {
-			if (document == null)
-				throw new ArgumentNullException(nameof(document));
-			Document = document;
+			Document = document ?? throw new ArgumentNullException(nameof(document));
 		}
 
 		/// <summary>

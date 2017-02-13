@@ -174,13 +174,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		GlyphTextViewMarkerService(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl, IWpfTextView wpfTextView) {
-			if (glyphTextMarkerServiceImpl == null)
-				throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
 			onRemovedDelegate = OnRemoved;
-			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
-			TextView = wpfTextView;
+			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl ?? throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
+			TextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			markerLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.GlyphTextMarker);
 			markerAndSpanCollection = new MarkerAndSpanCollection(this);
 			markerElements = new List<MarkerElement>();
@@ -288,11 +284,9 @@ namespace dnSpy.Text.Editor {
 		bool glyphTextMarkerTagAggregatorWasNull;
 
 		internal void AddGlyphTextMarkerListener(IGlyphTextMarkerListener listener) {
-			if (listener == null)
-				throw new ArgumentNullException(nameof(listener));
 			if (glyphTextMarkerListener != null)
 				throw new InvalidOperationException("Only one instance is supported");
-			glyphTextMarkerListener = listener;
+			glyphTextMarkerListener = listener ?? throw new ArgumentNullException(nameof(listener));
 		}
 
 		internal void RemoveGlyphTextMarkerListener(IGlyphTextMarkerListener listener) {
@@ -337,16 +331,12 @@ namespace dnSpy.Text.Editor {
 			public MarkerElement(SnapshotSpan span, string formatType, string type, string selectedType, int zIndex, Geometry geometry) {
 				if (span.Snapshot == null)
 					throw new ArgumentException();
-				if (type == null)
-					throw new ArgumentNullException(nameof(type));
-				if (geometry == null)
-					throw new ArgumentNullException(nameof(geometry));
 				Span = span;
 				FormatType = formatType;
-				Type = type;
+				Type = type ?? throw new ArgumentNullException(nameof(type));
 				SelectedType = selectedType;
 				ZIndex = zIndex;
-				this.geometry = geometry;
+				this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 				Panel.SetZIndex(this, zIndex);
 			}
 
@@ -560,8 +550,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			GlyphTextViewMarkerService service;
-			if (wpfTextView.TextBuffer.Properties.TryGetProperty(typeof(GlyphTextViewMarkerService), out service))
+			if (wpfTextView.TextBuffer.Properties.TryGetProperty(typeof(GlyphTextViewMarkerService), out GlyphTextViewMarkerService service))
 				return service;
 			service = new GlyphTextViewMarkerService(glyphTextMarkerServiceImpl, wpfTextView);
 			wpfTextView.TextBuffer.Properties.AddProperty(typeof(GlyphTextViewMarkerService), service);
@@ -572,8 +561,7 @@ namespace dnSpy.Text.Editor {
 		public static IGlyphTextViewMarkerService TryGet(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			GlyphTextViewMarkerService service;
-			textView.TextBuffer.Properties.TryGetProperty(typeof(GlyphTextViewMarkerService), out service);
+			textView.TextBuffer.Properties.TryGetProperty(typeof(GlyphTextViewMarkerService), out GlyphTextViewMarkerService service);
 			return service;
 		}
 

@@ -213,8 +213,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 
-			bool canceled;
-			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateReturnType), ReturnType, out canceled);
+			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateReturnType), ReturnType, out bool canceled);
 			if (newTypeSig != null)
 				ReturnType = newTypeSig;
 		}

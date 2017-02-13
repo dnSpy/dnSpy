@@ -557,8 +557,7 @@ namespace dnSpy.Debugger {
 		static void AddExceptionInfo(StringBuilder sb, CorValue exValue, string msg) {
 			var exType = exValue?.ExactType;
 			int? hr = EvalUtils.ReflectionReadExceptionHResult(exValue);
-			string exMsg;
-			EvalUtils.ReflectionReadExceptionMessage(exValue, out exMsg);
+			EvalUtils.ReflectionReadExceptionMessage(exValue, out string exMsg);
 			string exTypeString = exType?.ToString() ?? dnSpy_Debugger_Resources.UnknownExceptionType;
 			var s = string.Format(dnSpy_Debugger_Resources.ExceptionInfoFormat, msg, exTypeString, exMsg ?? dnSpy_Debugger_Resources.ExceptionMessageIsNull, hr ?? -1);
 			sb.Append(s);
@@ -793,8 +792,7 @@ namespace dnSpy.Debugger {
 			var options = new AttachProcessOptions(processVM.CLRTypeInfo);
 			options.ProcessId = processVM.PID;
 			options.DebugMessageDispatcher = WpfDebugMessageDispatcher.Instance;
-			string errMsg;
-			if (!Attach(options, out errMsg)) {
+			if (!Attach(options, out string errMsg)) {
 				if (!string.IsNullOrEmpty(errMsg))
 					messageBoxService.Show(errMsg);
 				return false;
@@ -803,8 +801,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool Attach(AttachProcessOptions options) {
-			string errMsg;
-			return Attach(options, out errMsg);
+			return Attach(options, out string errMsg);
 		}
 
 		bool Attach(AttachProcessOptions options, out string errMsg) {
@@ -1192,9 +1189,7 @@ namespace dnSpy.Debugger {
 			if (!IsDebugging)
 				return false;
 
-			MethodSourceStatement methodStatement;
-			string errMsg;
-			if (!DebugGetMethodSourceStatementForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out methodStatement))
+			if (!DebugGetMethodSourceStatementForSetNextStatement(TryGetDocumentViewer(parameter), out string errMsg, out var methodStatement))
 				return false;
 
 			return CanSetNextStatement(methodStatement.Statement.BinSpan.Start);
@@ -1211,8 +1206,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool SetNextStatement(object parameter) {
-			string errMsg;
-			if (!DebugSetNextStatement(parameter, out errMsg)) {
+			if (!DebugSetNextStatement(parameter, out string errMsg)) {
 				if (string.IsNullOrEmpty(errMsg))
 					errMsg = dnSpy_Debugger_Resources.Error_CouldNotSetNextStatement_UnknownReason;
 				messageBoxService.Show(errMsg);
@@ -1223,8 +1217,7 @@ namespace dnSpy.Debugger {
 		}
 
 		bool DebugSetNextStatement(object parameter, out string errMsg) {
-			MethodSourceStatement methodStatement;
-			if (!DebugGetMethodSourceStatementForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out methodStatement))
+			if (!DebugGetMethodSourceStatementForSetNextStatement(TryGetDocumentViewer(parameter), out errMsg, out var methodStatement))
 				return false;
 			return SetOffset(methodStatement.Statement.BinSpan.Start, out errMsg);
 		}
@@ -1300,8 +1293,7 @@ namespace dnSpy.Debugger {
 				}
 			}
 
-			IMethodDebugService methodDebugService;
-			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(documentViewer, currentLocation.Value.SerializedDnToken, out methodDebugService)) {
+			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(documentViewer, currentLocation.Value.SerializedDnToken, out var methodDebugService)) {
 				errMsg = dnSpy_Debugger_Resources.Error_NoDebugInfoAvailable;
 				return false;
 			}

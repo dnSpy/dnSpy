@@ -35,9 +35,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		protected SignatureHelpTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
@@ -76,15 +74,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		public SignatureHelpTagger(ISignatureHelpSession session, ITextBuffer buffer, IThemeClassificationTypeService themeClassificationTypeService) {
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.session = session;
-			this.buffer = buffer;
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.session = session ?? throw new ArgumentNullException(nameof(session));
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 		}
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {

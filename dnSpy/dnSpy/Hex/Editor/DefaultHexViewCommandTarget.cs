@@ -50,9 +50,7 @@ namespace dnSpy.Hex.Editor {
 		HexEditorOperations EditorOperations { get; }
 
 		public DefaultHexViewCommandTarget(HexView hexView, HexEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			this.hexView = hexView;
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(hexView);
 		}
 

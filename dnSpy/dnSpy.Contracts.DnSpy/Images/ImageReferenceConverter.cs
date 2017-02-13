@@ -54,8 +54,7 @@ namespace dnSpy.Contracts.Images {
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) {
 			var s = value as string;
 			if (s != null) {
-				ImageReference imageReference;
-				if (ImageReference.TryParse(s, out imageReference))
+				if (ImageReference.TryParse(s, out var imageReference))
 					return imageReference;
 
 			}

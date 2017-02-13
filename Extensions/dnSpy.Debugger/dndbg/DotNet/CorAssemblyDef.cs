@@ -46,8 +46,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			Name = MDAPI.GetAssemblySimpleName(mdai, token) ?? string.Empty;
-			string locale;
-			Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out locale) ?? new Version(0, 0, 0, 0);
+			Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out string locale) ?? new Version(0, 0, 0, 0);
 			Culture = locale ?? string.Empty;
 			HashAlgorithm = MDAPI.GetAssemblyHashAlgorithm(mdai, token) ?? AssemblyHashAlgorithm.SHA1;
 			Attributes = MDAPI.GetAssemblyAttributes(mdai, token) ?? AssemblyAttributes.None;

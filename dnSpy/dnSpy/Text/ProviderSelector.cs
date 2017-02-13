@@ -31,9 +31,7 @@ namespace dnSpy.Text {
 		readonly Lazy<TProvider, TProviderMetadata>[] providers;
 
 		public ProviderSelector(IContentTypeRegistryService contentTypeRegistryService, IEnumerable<Lazy<TProvider, TProviderMetadata>> providers) {
-			if (contentTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(contentTypeRegistryService));
-			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.contentTypeRegistryService = contentTypeRegistryService ?? throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			dict = new Dictionary<IContentType, Lazy<TProvider, TProviderMetadata>[]>();
 			this.providers = providers.ToArray();
 		}
@@ -42,8 +40,7 @@ namespace dnSpy.Text {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 
-			Lazy<TProvider, TProviderMetadata>[] result;
-			if (!dict.TryGetValue(contentType, out result))
+			if (!dict.TryGetValue(contentType, out var result))
 				dict[contentType] = result = CreateProviderList(contentType);
 			return result;
 		}

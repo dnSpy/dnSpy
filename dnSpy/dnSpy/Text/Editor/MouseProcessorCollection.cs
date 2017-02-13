@@ -32,16 +32,10 @@ namespace dnSpy.Text.Editor {
 		static readonly Func<MouseEventArgs, bool> defaultAllowEvent = a => true;
 
 		public MouseProcessorCollection(UIElement mouseElement, UIElement manipulationElement, DefaultMouseProcessor defaultMouseProcessor, IMouseProcessor[] mouseProcessors, Func<MouseEventArgs, bool> allowEvent) {
-			if (mouseElement == null)
-				throw new ArgumentNullException(nameof(mouseElement));
-			if (defaultMouseProcessor == null)
-				throw new ArgumentNullException(nameof(defaultMouseProcessor));
-			if (mouseProcessors == null)
-				throw new ArgumentNullException(nameof(mouseProcessors));
-			this.mouseElement = mouseElement;
+			this.mouseElement = mouseElement ?? throw new ArgumentNullException(nameof(mouseElement));
 			this.manipulationElement = manipulationElement;
-			this.defaultMouseProcessor = defaultMouseProcessor;
-			this.mouseProcessors = mouseProcessors;
+			this.defaultMouseProcessor = defaultMouseProcessor ?? throw new ArgumentNullException(nameof(defaultMouseProcessor));
+			this.mouseProcessors = mouseProcessors ?? throw new ArgumentNullException(nameof(mouseProcessors));
 			this.allowEvent = allowEvent ?? defaultAllowEvent;
 			mouseElement.AddHandler(UIElement.QueryContinueDragEvent, new QueryContinueDragEventHandler(MouseElement_QueryContinueDrag), true);
 			mouseElement.AddHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(MouseElement_MouseWheel), true);

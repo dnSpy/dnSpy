@@ -234,8 +234,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					continue;
 
 				List<uint> tokens;
-				BlobDataInfoPosition info;
-				if (dict.TryGetValue(offs1, out info))
+				if (dict.TryGetValue(offs1, out var info))
 					tokens = info.Tokens;
 				else {
 					var pos = heapStart + offs1;
@@ -269,10 +268,9 @@ namespace dnSpy.Hex.Files.DotNet {
 
 				{
 					List<uint> tokens;
-					BlobDataInfoPosition info;
 					if (offs1 == 0)
 						tokens = null;
-					else if (dict.TryGetValue(offs1, out info))
+					else if (dict.TryGetValue(offs1, out var info))
 						tokens = info.Tokens;
 					else {
 						var pos = heapStart + offs1;
@@ -288,10 +286,9 @@ namespace dnSpy.Hex.Files.DotNet {
 
 				{
 					List<uint> tokens;
-					BlobDataInfoPosition info;
 					if (offs2 == 0)
 						tokens = null;
-					else if (dict.TryGetValue(offs2, out info))
+					else if (dict.TryGetValue(offs2, out var info))
 						tokens = info.Tokens;
 					else {
 						var pos = heapStart + offs2;
@@ -350,10 +347,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var chars = new char[2];
 			while (pos < end) {
 				byte b = Span.Buffer.ReadByte(pos++);
-				int bytesUsed;
-				int charsUsed;
-				bool completed;
-				decoder.Convert(bytes, 0, 1, chars, 0, 2, pos == end, out bytesUsed, out charsUsed, out completed);
+				decoder.Convert(bytes, 0, 1, chars, 0, 2, pos == end, out int bytesUsed, out int charsUsed, out bool completed);
 				if (charsUsed > 0)
 					break;
 			}

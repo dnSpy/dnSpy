@@ -43,9 +43,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			Name = MDAPI.GetManifestResourceName(mdai, token) ?? string.Empty;
-			uint implementation;
-			ManifestResourceAttributes attrs;
-			MDAPI.GetManifestResourceProps(mdai, token, out offset, out implementation, out attrs);
+			MDAPI.GetManifestResourceProps(mdai, token, out offset, out uint implementation, out var attrs);
 			attributes = (int)attrs;
 			this.implementation = readerModule.ResolveToken(implementation) as IImplementation;
 		}

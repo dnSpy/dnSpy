@@ -86,16 +86,12 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public CategoryClassificationFormatMap(IThemeService themeService, IEditorFormatMap editorFormatMap, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
 			if (editorFormatDefinitionService == null)
 				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
-			this.themeService = themeService;
-			this.editorFormatMap = editorFormatMap;
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
 			toClassificationInfo = new Dictionary<IClassificationType, ClassificationInfo>();
 			toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>>(editorFormatDefinitionService.ClassificationFormatDefinitions.Length);
 			toClassificationTypeOrder = new Dictionary<IClassificationType, int>();
@@ -150,10 +146,8 @@ namespace dnSpy.Text.Classification {
 		}
 
 		ClassificationInfo TryGetClassificationInfo(IClassificationType classificationType, bool canCreate) {
-			ClassificationInfo info;
-			if (!toClassificationInfo.TryGetValue(classificationType, out info)) {
-				Lazy<EditorFormatDefinition, IClassificationFormatMetadata> lazy;
-				if (!toEditorFormatDefinition.TryGetValue(classificationType, out lazy)) {
+			if (!toClassificationInfo.TryGetValue(classificationType, out var info)) {
+				if (!toEditorFormatDefinition.TryGetValue(classificationType, out var lazy)) {
 					if (!canCreate)
 						return null;
 					lazy = new Lazy<EditorFormatDefinition, IClassificationFormatMetadata>(() => new TransientClassificationFormatDefinition(), new ClassificationFormatMetadata(classificationType.Classification));
@@ -230,8 +224,7 @@ namespace dnSpy.Text.Classification {
 		public string GetEditorFormatMapKey(IClassificationType classificationType) {
 			if (classificationType == null)
 				throw new ArgumentNullException(nameof(classificationType));
-			string key;
-			if (!classificationToEditorFormatMapKey.TryGetValue(classificationType.Classification, out key))
+			if (!classificationToEditorFormatMapKey.TryGetValue(classificationType.Classification, out string key))
 				key = classificationType.Classification;
 			return key;
 		}
@@ -276,8 +269,7 @@ namespace dnSpy.Text.Classification {
 			int GetOrder(IClassificationType a) {
 				if (a == null)
 					return -1;
-				int order;
-				if (owner.toClassificationTypeOrder.TryGetValue(a, out order))
+				if (owner.toClassificationTypeOrder.TryGetValue(a, out int order))
 					return order;
 				return -1;
 			}

@@ -41,9 +41,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 	sealed class RoslynDocumentChangedEventArgs : EventArgs {
 		public ITextSnapshot Snapshot { get; }
 		public RoslynDocumentChangedEventArgs(ITextSnapshot snapshot) {
-			if (snapshot == null)
-				throw new ArgumentNullException(nameof(snapshot));
-			Snapshot = snapshot;
+			Snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
 		}
 	}
 }

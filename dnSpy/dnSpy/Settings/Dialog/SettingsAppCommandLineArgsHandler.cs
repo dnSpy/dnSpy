@@ -50,8 +50,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		static Guid? TryParse(string guidString) {
-			Guid guid;
-			if (Guid.TryParse(guidString, out guid))
+			if (Guid.TryParse(guidString, out var guid))
 				return guid;
 			return null;
 		}

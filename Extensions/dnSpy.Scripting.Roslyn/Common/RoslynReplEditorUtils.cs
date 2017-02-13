@@ -45,8 +45,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public static ScriptControlVM TryGetInstance(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			ScriptControlVM vm;
-			textView.Properties.TryGetProperty(Key, out vm);
+			textView.Properties.TryGetProperty(Key, out ScriptControlVM vm);
 			return vm;
 		}
 	}

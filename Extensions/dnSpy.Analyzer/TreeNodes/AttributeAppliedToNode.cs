@@ -52,10 +52,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public AttributeAppliedToNode(TypeDef analyzedType) {
-			if (analyzedType == null)
-				throw new ArgumentNullException(nameof(analyzedType));
-
-			this.analyzedType = analyzedType;
+			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
 			attributeName = this.analyzedType.FullName;
 			GetAttributeUsage();
 		}

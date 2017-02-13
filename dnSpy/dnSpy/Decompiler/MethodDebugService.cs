@@ -62,14 +62,9 @@ namespace dnSpy.Decompiler {
 		public MethodDebugService(IReadOnlyList<MethodDebugInfo> methodDebugInfos, ITextSnapshot snapshot, IModuleIdProvider moduleIdProvider) {
 			if (methodDebugInfos == null)
 				throw new ArgumentNullException(nameof(methodDebugInfos));
-			if (snapshot == null)
-				throw new ArgumentNullException(nameof(snapshot));
-			if (moduleIdProvider == null)
-				throw new ArgumentNullException(nameof(moduleIdProvider));
-
 			dict = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
-			this.snapshot = snapshot;
-			this.moduleIdProvider = moduleIdProvider;
+			this.snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
+			this.moduleIdProvider = moduleIdProvider ?? throw new ArgumentNullException(nameof(moduleIdProvider));
 
 			var modIdDict = new Dictionary<ModuleDef, ModuleId>();
 			foreach (var info in methodDebugInfos) {
@@ -77,14 +72,12 @@ namespace dnSpy.Decompiler {
 				if (module == null)
 					continue;
 
-				ModuleId moduleId;
-				if (!modIdDict.TryGetValue(module, out moduleId)) {
+				if (!modIdDict.TryGetValue(module, out var moduleId)) {
 					moduleId = moduleIdProvider.Create(module);
 					modIdDict.Add(module, moduleId);
 				}
 				var key = new ModuleTokenId(moduleId, info.Method.MDToken);
-				MethodDebugInfo oldDebugInfo;
-				if (dict.TryGetValue(key, out oldDebugInfo)) {
+				if (dict.TryGetValue(key, out var oldDebugInfo)) {
 					if (info.Statements.Length < oldDebugInfo.Statements.Length)
 						continue;
 				}
@@ -194,8 +187,7 @@ namespace dnSpy.Decompiler {
 			FindByCodeOffset(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken), codeOffset);
 
 		public MethodSourceStatement? FindByCodeOffset(ModuleTokenId token, uint codeOffset) {
-			MethodDebugInfo info;
-			if (!dict.TryGetValue(token, out info))
+			if (!dict.TryGetValue(token, out var info))
 				return null;
 			foreach (var sourceStatement in info.Statements) {
 				if (sourceStatement.BinSpan.Start <= codeOffset && codeOffset < sourceStatement.BinSpan.End)
@@ -208,8 +200,7 @@ namespace dnSpy.Decompiler {
 			TryGetMethodDebugInfo(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken));
 
 		public MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId token) {
-			MethodDebugInfo info;
-			dict.TryGetValue(token, out info);
+			dict.TryGetValue(token, out var info);
 			return info;
 		}
 

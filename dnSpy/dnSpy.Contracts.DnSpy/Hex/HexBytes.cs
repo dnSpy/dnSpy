@@ -55,9 +55,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="bytes">All bytes and all of them are valid</param>
 		public HexBytes(byte[] bytes) {
-			if (bytes == null)
-				throw new ArgumentNullException(nameof(bytes));
-			this.bytes = bytes;
+			this.bytes = bytes ?? throw new ArgumentNullException(nameof(bytes));
 			validBytes = null;
 			allValid = true;
 		}
@@ -68,9 +66,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="bytes">All bytes</param>
 		/// <param name="allValid">true if all bytes are valid, false if all bytes are invalid</param>
 		public HexBytes(byte[] bytes, bool allValid) {
-			if (bytes == null)
-				throw new ArgumentNullException(nameof(bytes));
-			this.bytes = bytes;
+			this.bytes = bytes ?? throw new ArgumentNullException(nameof(bytes));
 			validBytes = null;
 			this.allValid = allValid;
 		}

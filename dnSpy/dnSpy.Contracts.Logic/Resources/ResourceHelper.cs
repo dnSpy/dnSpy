@@ -52,8 +52,7 @@ namespace dnSpy.Contracts.Resources {
 		}
 
 		static ResourceManager GetResourceManager(Assembly assembly) {
-			ResourceManager mgr;
-			if (asmToMgr.TryGetValue(assembly, out mgr))
+			if (asmToMgr.TryGetValue(assembly, out var mgr))
 				return mgr;
 
 			foreach (var type in assembly.ManifestModule.GetTypes().Where(a => a.Namespace != null && a.Namespace.EndsWith(".Properties", StringComparison.InvariantCultureIgnoreCase))) {

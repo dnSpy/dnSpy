@@ -77,12 +77,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public BlockStructureService(IWpfTextView wpfTextView, IEditorFormatMapService editorFormatMapService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (editorFormatMapService == null)
-				throw new ArgumentNullException(nameof(editorFormatMapService));
-			this.wpfTextView = wpfTextView;
-			this.editorFormatMapService = editorFormatMapService;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
 			blockStructureServiceDataProvider = NullBlockStructureServiceDataProvider.Instance;
 			onRemovedDelegate = OnRemoved;
 			lineElements = new List<LineElement>();
@@ -448,8 +444,7 @@ namespace dnSpy.Text.Editor {
 			public double GetXPosition(BlockStructureData data) {
 				TryUpdateState();
 				var topPoint = data.Top.Start.TranslateTo(toXPosDictSnapshot, PointTrackingMode.Negative);
-				double x;
-				if (toXPosDict.TryGetValue(topPoint.Position, out x))
+				if (toXPosDict.TryGetValue(topPoint.Position, out double x))
 					return x;
 
 				var point = GetBlockStartPoint(topPoint, data.Bottom.Start.TranslateTo(toXPosDictSnapshot, PointTrackingMode.Negative));
@@ -461,9 +456,8 @@ namespace dnSpy.Text.Editor {
 			}
 
 			SnapshotPoint GetBlockStartPoint(SnapshotPoint top, SnapshotPoint bottom) {
-				int topColumn, bottomColumn;
-				var topPoint = GetPositionOfNonWhitespace(top, out topColumn);
-				var bottomPoint = GetPositionOfNonWhitespace(bottom, out bottomColumn);
+				var topPoint = GetPositionOfNonWhitespace(top, out int topColumn);
+				var bottomPoint = GetPositionOfNonWhitespace(bottom, out int bottomColumn);
 				return topColumn <= bottomColumn ? topPoint : bottomPoint;
 			}
 

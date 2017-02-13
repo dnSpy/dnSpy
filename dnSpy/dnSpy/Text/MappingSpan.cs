@@ -34,11 +34,9 @@ namespace dnSpy.Text {
 		PointTrackingMode PointTrackingMode => spanTrackingMode == SpanTrackingMode.EdgeExclusive || spanTrackingMode == SpanTrackingMode.EdgeNegative ? PointTrackingMode.Negative : PointTrackingMode.Positive;
 
 		public MappingSpan(IBufferGraph bufferGraph, SnapshotSpan snapshotSpan, SpanTrackingMode trackingMode) {
-			if (bufferGraph == null)
-				throw new ArgumentNullException(nameof(bufferGraph));
 			if (snapshotSpan.Snapshot == null)
 				throw new ArgumentException();
-			BufferGraph = bufferGraph;
+			BufferGraph = bufferGraph ?? throw new ArgumentNullException(nameof(bufferGraph));
 			this.snapshotSpan = snapshotSpan;
 			spanTrackingMode = trackingMode;
 		}

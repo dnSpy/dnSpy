@@ -87,8 +87,7 @@ namespace dndbg.DotNet {
 		}
 
 		void InitializeName(UTF8String utf8Name, string fullName) {
-			UTF8String ns, name;
-			Utils.SplitNameAndNamespace(utf8Name, fullName, out ns, out name);
+			Utils.SplitNameAndNamespace(utf8Name, fullName, out var ns, out var name);
 			Namespace = ns;
 			Name = name;
 		}
@@ -97,9 +96,7 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
-			ushort packingSize;
-			uint classSize;
-			bool b = MDAPI.GetClassLayout(mdi, token, out packingSize, out classSize);
+			bool b = MDAPI.GetClassLayout(mdi, token, out ushort packingSize, out uint classSize);
 			if (!b)
 				ClassLayout = null;
 			else
@@ -126,8 +123,7 @@ namespace dndbg.DotNet {
 			Debug.Assert(fieldRidToFieldOffset != null);
 			if (fieldRidToFieldOffset == null)
 				return null;
-			uint fieldOffset;
-			if (fieldRidToFieldOffset.TryGetValue(cfd.OriginalToken.Rid, out fieldOffset))
+			if (fieldRidToFieldOffset.TryGetValue(cfd.OriginalToken.Rid, out uint fieldOffset))
 				return fieldOffset;
 			return null;
 		}
@@ -303,8 +299,7 @@ namespace dndbg.DotNet {
 			if (dict == null)
 				dict = InitializeMethodOverrides();
 
-			ThreadSafe.IList<MethodOverrideTokens> overrides;
-			if (dict.TryGetValue(cmd.OriginalToken.Rid, out overrides)) {
+			if (dict.TryGetValue(cmd.OriginalToken.Rid, out var overrides)) {
 				var newList = ThreadSafeListCreator.Create<MethodOverride>(overrides.Count);
 
 				for (int i = 0; i < overrides.Count; i++) {
@@ -346,10 +341,9 @@ namespace dndbg.DotNet {
 				if (method == null || method.DeclaringType != this)
 					continue;
 
-				ThreadSafe.IList<MethodOverrideTokens> overrides;
 				var cmd = method as CorMethodDef;
 				uint rid = cmd != null ? cmd.OriginalToken.Rid : method.Rid;
-				if (!newMethodRidToOverrides.TryGetValue(rid, out overrides))
+				if (!newMethodRidToOverrides.TryGetValue(rid, out var overrides))
 					newMethodRidToOverrides[rid] = overrides = ThreadSafeListCreator.Create<MethodOverrideTokens>();
 				overrides.Add(new MethodOverrideTokens(methodBody.MDToken.Raw, methodDecl.MDToken.Raw));
 			}
@@ -366,9 +360,7 @@ namespace dndbg.DotNet {
 
 			var mdi = readerModule.MetaDataImport;
 			uint token = prop.OriginalToken.Raw;
-
-			uint getToken, setToken;
-			MDAPI.GetPropertyGetterSetter(mdi, token, out getToken, out setToken);
+			MDAPI.GetPropertyGetterSetter(mdi, token, out uint getToken, out uint setToken);
 			var otherTokens = MDAPI.GetPropertyOtherMethodTokens(mdi, token);
 
 			var dict = CreateMethodDict();
@@ -396,9 +388,7 @@ namespace dndbg.DotNet {
 
 			var mdi = readerModule.MetaDataImport;
 			uint token = evt.OriginalToken.Raw;
-
-			uint addToken, removeToken, fireToken;
-			MDAPI.GetEventAddRemoveFireTokens(mdi, token, out addToken, out removeToken, out fireToken);
+			MDAPI.GetEventAddRemoveFireTokens(mdi, token, out uint addToken, out uint removeToken, out uint fireToken);
 			var otherTokens = MDAPI.GetEventOtherMethodTokens(mdi, token);
 
 			var dict = CreateMethodDict();
@@ -413,8 +403,7 @@ namespace dndbg.DotNet {
 			var mdToken = new MDToken(token);
 			if (mdToken.Table != Table.Method)
 				return null;
-			CorMethodDef cmd;
-			dict.TryGetValue(mdToken.Rid, out cmd);
+			dict.TryGetValue(mdToken.Rid, out var cmd);
 			return cmd;
 		}
 

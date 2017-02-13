@@ -160,13 +160,9 @@ namespace dnSpy.Hex.Editor {
 		readonly HexEditorOperations editorOperations;
 
 		public ZoomControlMargin(WpfHexViewHost wpfHexViewHost, HexEditorOperations editorOperations) {
-			if (wpfHexViewHost == null)
-				throw new ArgumentNullException(nameof(wpfHexViewHost));
-			if (editorOperations == null)
-				throw new ArgumentNullException(nameof(editorOperations));
 			zoomControl = new TheZoomControl(this);
-			this.wpfHexViewHost = wpfHexViewHost;
-			this.editorOperations = editorOperations;
+			this.wpfHexViewHost = wpfHexViewHost ?? throw new ArgumentNullException(nameof(wpfHexViewHost));
+			this.editorOperations = editorOperations ?? throw new ArgumentNullException(nameof(editorOperations));
 
 			wpfHexViewHost.HexView.Options.OptionChanged += Options_OptionChanged;
 

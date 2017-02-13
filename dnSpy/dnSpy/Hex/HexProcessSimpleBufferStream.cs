@@ -54,8 +54,7 @@ namespace dnSpy.Hex {
 			uint state, protect;
 			int res;
 			if (IntPtr.Size == 4) {
-				NativeMethods.MEMORY_BASIC_INFORMATION32 info;
-				res = NativeMethods.VirtualQueryEx32(hProcess, new IntPtr((void*)position.ToUInt64()), out info, NativeMethods.MEMORY_BASIC_INFORMATION32_SIZE);
+				res = NativeMethods.VirtualQueryEx32(hProcess, new IntPtr((void*)position.ToUInt64()), out var info, NativeMethods.MEMORY_BASIC_INFORMATION32_SIZE);
 				baseAddress = info.BaseAddress;
 				regionSize = info.RegionSize;
 				state = info.State;
@@ -63,8 +62,7 @@ namespace dnSpy.Hex {
 				Debug.Assert(res == 0 || res == NativeMethods.MEMORY_BASIC_INFORMATION32_SIZE);
 			}
 			else {
-				NativeMethods.MEMORY_BASIC_INFORMATION64 info;
-				res = NativeMethods.VirtualQueryEx64(hProcess, new IntPtr((void*)position.ToUInt64()), out info, NativeMethods.MEMORY_BASIC_INFORMATION64_SIZE);
+				res = NativeMethods.VirtualQueryEx64(hProcess, new IntPtr((void*)position.ToUInt64()), out var info, NativeMethods.MEMORY_BASIC_INFORMATION64_SIZE);
 				baseAddress = info.BaseAddress;
 				regionSize = info.RegionSize;
 				state = info.State;
@@ -86,8 +84,7 @@ namespace dnSpy.Hex {
 		}
 
 		static HexPosition GetEndAddress(IntPtr hProcess) {
-			NativeMethods.SYSTEM_INFO info;
-			NativeMethods.GetSystemInfo(out info);
+			NativeMethods.GetSystemInfo(out var info);
 			ulong mask = IntPtr.Size == 4 ? uint.MaxValue : ulong.MaxValue;
 			return new HexPosition((ulong)info.lpMaximumApplicationAddress.ToInt64() & mask) + 1;
 		}
@@ -106,8 +103,7 @@ namespace dnSpy.Hex {
 				// so return span [0,2^32)
 				if (IntPtr.Size != 8)
 					return HexSpan.FromBounds(0, new HexPosition(uint.MaxValue + 1UL));
-				NativeMethods.SYSTEM_INFO info;
-				NativeMethods.GetSystemInfo(out info);
+				NativeMethods.GetSystemInfo(out var info);
 				var lastAddr = (ulong)info.lpMaximumApplicationAddress.ToInt64();
 				// Include the last part so we get a nice even address
 				if ((lastAddr & 0xFFFFF) == 0xEFFFF)
@@ -125,8 +121,7 @@ namespace dnSpy.Hex {
 				Debug.Assert(IntPtr.Size == 4);
 				return IntPtr.Size * 8;
 			}
-			bool isWow64Process;
-			if (NativeMethods.IsWow64Process(hProcess, out isWow64Process)) {
+			if (NativeMethods.IsWow64Process(hProcess, out bool isWow64Process)) {
 				if (isWow64Process)
 					return 32;
 				return 64;
@@ -152,8 +147,7 @@ namespace dnSpy.Hex {
 			if (position >= Span.End)
 				return 0;
 			int bytesToWrite = (int)Math.Min(length, int.MaxValue);
-			uint oldProtect;
-			bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)position.ToUInt64()), new IntPtr(bytesToWrite), NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
+			bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)position.ToUInt64()), new IntPtr(bytesToWrite), NativeMethods.PAGE_EXECUTE_READWRITE, out uint oldProtect);
 			IntPtr sizeWritten;
 			bool b;
 			fixed (void* p = &source[sourceIndex])

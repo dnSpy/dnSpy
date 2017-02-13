@@ -115,9 +115,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Creates a new StringTextSource with the given text.
 		/// </summary>
 		public StringTextSource(string text) {
-			if (text == null)
-				throw new ArgumentNullException("text");
-			this.text = text;
+			this.text = text ?? throw new ArgumentNullException("text");
 		}
 
 		/// <inheritdoc/>

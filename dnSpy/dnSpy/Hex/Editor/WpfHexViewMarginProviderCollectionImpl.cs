@@ -57,8 +57,6 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(wpfHexViewMarginProviders));
 			if (wpfHexViewHost == null)
 				throw new ArgumentNullException(nameof(wpfHexViewHost));
-			if (marginContainer == null)
-				throw new ArgumentNullException(nameof(marginContainer));
 			if (marginContainerName == null)
 				throw new ArgumentNullException(nameof(marginContainerName));
 			this.wpfHexViewMarginProviders = wpfHexViewMarginProviders.Where(a =>
@@ -66,7 +64,7 @@ namespace dnSpy.Hex.Editor {
 				wpfHexViewHost.HexView.Roles.ContainsAny(a.Metadata.TextViewRoles)
 			).ToArray();
 			this.wpfHexViewHost = wpfHexViewHost;
-			this.marginContainer = marginContainer;
+			this.marginContainer = marginContainer ?? throw new ArgumentNullException(nameof(marginContainer));
 			currentMargins = Array.Empty<WpfHexViewMarginInfo>();
 			wpfHexViewHost.Closed += WpfHexViewHost_Closed;
 			UpdateMargins();
@@ -82,8 +80,7 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			foreach (var lazy in wpfHexViewMarginProviders) {
-				WpfHexViewMarginInfo info;
-				if (existingInfos.TryGetValue(lazy.Value, out info)) {
+				if (existingInfos.TryGetValue(lazy.Value, out var info)) {
 					newInfos.Add(info);
 					existingInfos.Remove(lazy.Value);
 				}

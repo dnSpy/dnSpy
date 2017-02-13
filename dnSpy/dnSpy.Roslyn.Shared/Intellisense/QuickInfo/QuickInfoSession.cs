@@ -46,15 +46,11 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 				throw new ArgumentException();
 			if (triggerPoint.Snapshot != state.Snapshot)
 				throw new ArgumentNullException(nameof(triggerPoint));
-			if (quickInfoBroker == null)
-				throw new ArgumentNullException(nameof(quickInfoBroker));
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
 			State = state;
 			this.triggerPoint = triggerPoint;
 			this.trackMouse = trackMouse;
-			this.quickInfoBroker = quickInfoBroker;
-			this.textView = textView;
+			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			cancellationTokenSource = new CancellationTokenSource();
 			cancellationToken = cancellationTokenSource.Token;
 		}
@@ -91,8 +87,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		public static QuickInfoSession TryGetSession(IQuickInfoSession session) {
 			if (session == null)
 				return null;
-			QuickInfoSession instance;
-			if (session.Properties.TryGetProperty(thisInstanceKey, out instance))
+			if (session.Properties.TryGetProperty(thisInstanceKey, out QuickInfoSession instance))
 				return instance;
 			return null;
 		}

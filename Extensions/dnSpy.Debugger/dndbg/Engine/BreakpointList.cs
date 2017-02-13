@@ -32,22 +32,19 @@ namespace dndbg.Engine {
 		}
 
 		public TBP[] GetBreakpoints(DnModuleId module) {
-			List<TBP> list;
-			if (!dict.TryGetValue(module, out list))
+			if (!dict.TryGetValue(module, out var list))
 				return Array.Empty<TBP>();
 			return list.ToArray();
 		}
 
 		public void Add(DnModuleId module, TBP bp) {
-			List<TBP> list;
-			if (!dict.TryGetValue(module, out list))
+			if (!dict.TryGetValue(module, out var list))
 				dict.Add(module, list = new List<TBP>());
 			list.Add(bp);
 		}
 
 		public bool Remove(DnModuleId module, TBP bp) {
-			List<TBP> list;
-			if (!dict.TryGetValue(module, out list))
+			if (!dict.TryGetValue(module, out var list))
 				return false;
 			return list.Remove(bp);
 		}

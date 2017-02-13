@@ -36,18 +36,14 @@ namespace dnSpy.Hex.HexGroups {
 		readonly string groupName;
 
 		public HexViewOptionsGroupImpl(HexViewOptionsGroupServiceImpl owner, string groupName, TagOptionDefinition[] defaultOptions, OptionsStorage optionsStorage) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
-			if (groupName == null)
-				throw new ArgumentNullException(nameof(groupName));
 			if (defaultOptions == null)
 				throw new ArgumentNullException(nameof(defaultOptions));
 			if (optionsStorage == null)
 				throw new ArgumentNullException(nameof(optionsStorage));
-			this.owner = owner;
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			hexViews = new List<WpfHexView>();
 			toOptions = new Dictionary<string, HexViewGroupOptionCollection>(StringComparer.OrdinalIgnoreCase);
-			this.groupName = groupName;
+			this.groupName = groupName ?? throw new ArgumentNullException(nameof(groupName));
 
 			foreach (var option in defaultOptions) {
 				Debug.Assert(option.Name != null);
@@ -59,8 +55,7 @@ namespace dnSpy.Hex.HexGroups {
 				if (subGroup == null)
 					continue;
 
-				HexViewGroupOptionCollection coll;
-				if (!toOptions.TryGetValue(subGroup, out coll))
+				if (!toOptions.TryGetValue(subGroup, out var coll))
 					toOptions.Add(subGroup, coll = new HexViewGroupOptionCollection(subGroup));
 				coll.Add(new HexViewGroupOption(this, option));
 			}
@@ -74,8 +69,7 @@ namespace dnSpy.Hex.HexGroups {
 			if (tag == null)
 				tag = string.Empty;
 
-			HexViewGroupOptionCollection coll;
-			if (toOptions.TryGetValue(tag, out coll))
+			if (toOptions.TryGetValue(tag, out var coll))
 				return coll;
 
 			coll = ErrorCollection;

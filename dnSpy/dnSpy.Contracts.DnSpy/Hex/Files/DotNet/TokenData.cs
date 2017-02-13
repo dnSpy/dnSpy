@@ -82,9 +82,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="codedToken">Coded token info</param>
 		protected CodedTokenData(HexBufferSpan span, CodedToken codedToken)
 			: base(span) {
-			if (codedToken == null)
-				throw new ArgumentNullException(nameof(codedToken));
-			this.codedToken = codedToken;
+			this.codedToken = codedToken ?? throw new ArgumentNullException(nameof(codedToken));
 		}
 
 		/// <summary>
@@ -100,8 +98,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		protected abstract void WriteValueError(HexFieldFormatter formatter);
 
 		MDToken? ReadToken() {
-			MDToken token;
-			if (!codedToken.Decode(ReadTokenValue(), out token))
+			if (!codedToken.Decode(ReadTokenValue(), out MDToken token))
 				return null;
 			return token;
 		}

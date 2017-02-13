@@ -67,10 +67,8 @@ namespace dndbg.Engine {
 		/// <param name="getCorValue">Delegate to fetch a new value once it's been neutered. The
 		/// returned value will be owned by this <see cref="CorValueHolder"/> instance</param>
 		public CorValueHolder(CorValue value, Func<CorValue> getCorValue) {
-			if (getCorValue == null)
-				throw new ArgumentNullException(nameof(getCorValue));
 			this.value = value;
-			this.getCorValue = getCorValue;
+			this.getCorValue = getCorValue ?? throw new ArgumentNullException(nameof(getCorValue));
 		}
 
 		public void InvalidateCorValue() {

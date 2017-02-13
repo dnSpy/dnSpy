@@ -48,9 +48,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly PEStructureProviderFactory peStructureProviderFactory;
 
 		public HexFileStructureInfoProviderImpl(PEStructureProviderFactory peStructureProviderFactory) {
-			if (peStructureProviderFactory == null)
-				throw new ArgumentNullException(nameof(peStructureProviderFactory));
-			this.peStructureProviderFactory = peStructureProviderFactory;
+			this.peStructureProviderFactory = peStructureProviderFactory ?? throw new ArgumentNullException(nameof(peStructureProviderFactory));
 		}
 
 		sealed class PEStructure {
@@ -59,8 +57,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			readonly HexSpan metadataTablesSpan;
 
 			public static PEStructure TryCreate(PEStructureProviderFactory peStructureProviderFactory, HexBufferFile file) {
-				PEStructure peStructure;
-				if (file.Properties.TryGetProperty(typeof(PEStructure), out peStructure))
+				if (file.Properties.TryGetProperty(typeof(PEStructure), out PEStructure peStructure))
 					return peStructure;
 
 				var provider = peStructureProviderFactory.TryGetProvider(file);
@@ -137,12 +134,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			public HexVM Structure { get; }
 			public HexField Field { get; }
 			public FieldAndStructure(HexVM structure, HexField field) {
-				if (structure == null)
-					throw new ArgumentNullException(nameof(structure));
-				if (field == null)
-					throw new ArgumentNullException(nameof(field));
-				Structure = structure;
-				Field = field;
+				Structure = structure ?? throw new ArgumentNullException(nameof(structure));
+				Field = field ?? throw new ArgumentNullException(nameof(field));
 			}
 		}
 

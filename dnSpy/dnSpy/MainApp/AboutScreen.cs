@@ -241,8 +241,7 @@ namespace dnSpy.MainApp {
 			var random = new Random();
 			foreach (var x in extensionService.LoadedExtensions.OrderBy(a => random.Next())) {
 				ExtensionInfo extensionInfo;
-				IExtension extension;
-				if (toExtension.TryGetValue(x.Assembly, out extension))
+				if (toExtension.TryGetValue(x.Assembly, out var extension))
 					extensionInfo = extension.ExtensionInfo;
 				else
 					extensionInfo = new ExtensionInfo();

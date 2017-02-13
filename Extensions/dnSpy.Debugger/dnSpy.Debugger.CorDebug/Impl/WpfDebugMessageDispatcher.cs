@@ -30,9 +30,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly Dispatcher dispatcher;
 
 		public WpfDebugMessageDispatcher(Dispatcher dispatcher) {
-			if (dispatcher == null)
-				throw new ArgumentNullException(nameof(dispatcher));
-			this.dispatcher = dispatcher;
+			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
 
 		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
@@ -60,8 +58,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				return;
 			disp.VerifyAccess();
 
-			Action action;
-			while (queue.TryDequeue(out action))
+			while (queue.TryDequeue(out var action))
 				action();
 		}
 
@@ -89,8 +86,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				var infTime = TimeSpan.FromMilliseconds(-1);
 				var endTime = startTime + waitTime;
 				while (!cancelDispatchQueue) {
-					Action action;
-					while (queue.TryDequeue(out action))
+					while (queue.TryDequeue(out var action))
 						action();
 					if (cancelDispatchQueue)
 						break;

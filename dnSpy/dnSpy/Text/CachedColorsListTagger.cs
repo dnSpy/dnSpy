@@ -41,8 +41,7 @@ namespace dnSpy.Text {
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
-			CachedColorsListTagger colorizer;
-			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out colorizer)) {
+			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out CachedColorsListTagger colorizer)) {
 				colorizer.ThemeClassificationTypeService = themeClassificationTypeService;
 				return colorizer as ITagger<T>;
 			}

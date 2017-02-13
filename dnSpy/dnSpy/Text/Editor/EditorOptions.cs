@@ -104,8 +104,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		object GetValueOrDefault(string optionId) {
-			object value;
-			if (!TryGetValue(optionId, out value))
+			if (!TryGetValue(optionId, out object value))
 				value = service.GetOption(optionId).DefaultValue;
 			return value;
 		}
@@ -139,8 +138,7 @@ namespace dnSpy.Text.Editor {
 		public bool ClearOptionValue(string optionId) {
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
-			object oldValue;
-			if (parent == null || !dict.TryGetValue(optionId, out oldValue))
+			if (parent == null || !dict.TryGetValue(optionId, out object oldValue))
 				return false;
 			dict.Remove(optionId);
 			var newValue = GetValueOrDefault(optionId);

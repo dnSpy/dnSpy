@@ -31,10 +31,8 @@ namespace dnSpy.Contracts.Hex {
 		/// Constructor
 		/// </summary>
 		protected HexBuffer(HexTags tags) {
-			if (tags == null)
-				throw new ArgumentNullException(nameof(tags));
 			Properties = new VSUTIL.PropertyCollection();
-			Tags = tags;
+			Tags = tags ?? throw new ArgumentNullException(nameof(tags));
 		}
 
 		/// <summary>

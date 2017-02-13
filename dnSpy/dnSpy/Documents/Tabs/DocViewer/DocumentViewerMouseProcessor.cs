@@ -43,9 +43,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IWpfTextView wpfTextView;
 
 		public DocumentViewerMouseProcessor(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 			wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;

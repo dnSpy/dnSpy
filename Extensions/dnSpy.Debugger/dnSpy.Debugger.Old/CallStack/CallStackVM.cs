@@ -185,8 +185,7 @@ namespace dnSpy.Debugger.CallStack {
 				return;
 			}
 
-			bool tooManyFrames;
-			var newFrames = stackFrameService.GetFrames(out tooManyFrames);
+			var newFrames = stackFrameService.GetFrames(out bool tooManyFrames);
 
 			bool oldHadTooManyFrames = framesList.Count > 0 && framesList[framesList.Count - 1] is MessageCallStackFrameVM;
 			int oldVisibleFramesCount = framesList.Count - (oldHadTooManyFrames ? 1 : 0);

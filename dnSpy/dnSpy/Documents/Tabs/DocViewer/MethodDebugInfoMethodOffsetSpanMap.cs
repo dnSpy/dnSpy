@@ -36,8 +36,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			toMethodDebugInfo = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
 			foreach (var info in methodDebugInfos) {
 				var token = new ModuleTokenId(moduleIdProvider.Create(info.Method.Module), info.Method.MDToken);
-				MethodDebugInfo otherInfo;
-				if (toMethodDebugInfo.TryGetValue(token, out otherInfo)) {
+				if (toMethodDebugInfo.TryGetValue(token, out var otherInfo)) {
 					if (info.Statements.Length < otherInfo.Statements.Length)
 						continue;
 				}
@@ -46,8 +45,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public Span? ToSpan(ModuleTokenId method, uint ilOffset) {
-			MethodDebugInfo info;
-			if (!toMethodDebugInfo.TryGetValue(method, out info))
+			if (!toMethodDebugInfo.TryGetValue(method, out var info))
 				return null;
 			var statement = info.GetSourceStatementByCodeOffset(ilOffset);
 			if (statement == null)

@@ -133,9 +133,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="runtime">The runtime that got added or removed</param>
 		/// <param name="added">true if the runtime was added, false if it was removed</param>
 		public RuntimesChangedEventArgs(DbgRuntime runtime, bool added) {
-			if (runtime == null)
-				throw new ArgumentNullException(nameof(runtime));
-			Runtime = runtime;
+			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Added = added;
 		}
 	}

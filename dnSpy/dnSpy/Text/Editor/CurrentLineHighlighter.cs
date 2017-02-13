@@ -77,12 +77,8 @@ namespace dnSpy.Text.Editor {
 		bool enabled;
 
 		public CurrentLineHighlighter(IWpfTextView wpfTextView, IEditorFormatMap editorFormatMap) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
-			this.wpfTextView = wpfTextView;
-			this.editorFormatMap = editorFormatMap;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
 			currentLineHighlighterElement = new CurrentLineHighlighterElement();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;

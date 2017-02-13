@@ -46,12 +46,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly Lazy<IBreakpointService> breakpointService;
 
 		public GlyphTextMarkerMouseProcessor(IWpfTextViewHost wpfTextViewHost, Lazy<IBreakpointService> breakpointService) {
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (breakpointService == null)
-				throw new ArgumentNullException(nameof(breakpointService));
-			this.wpfTextViewHost = wpfTextViewHost;
-			this.breakpointService = breakpointService;
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
+			this.breakpointService = breakpointService ?? throw new ArgumentNullException(nameof(breakpointService));
 			wpfTextViewHost.TextView.Closed += TextView_Closed;
 			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
 		}

@@ -54,12 +54,8 @@ namespace dnSpy.Text.Editor {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 
 		public UriQuickInfoSource(IWpfTextView textView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (viewTagAggregatorFactoryService == null)
-				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			this.textView = textView;
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService ?? throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 		}
 
 		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {

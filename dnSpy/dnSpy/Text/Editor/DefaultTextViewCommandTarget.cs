@@ -51,9 +51,7 @@ namespace dnSpy.Text.Editor {
 		IEditorOperations2 EditorOperations2 => EditorOperations as IEditorOperations2;
 
 		public DefaultTextViewCommandTarget(ITextView textView, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
 		}
 

@@ -30,9 +30,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly HashSet<IAssembly> checkedContractsAssemblies;
 
 		public MetadataReferenceFinder(ModuleDef module, CancellationToken cancellationToken) {
-			if (module == null)
-				throw new ArgumentNullException(nameof(module));
-			this.module = module;
+			this.module = module ?? throw new ArgumentNullException(nameof(module));
 			this.cancellationToken = cancellationToken;
 			assemblies = new Dictionary<IAssembly, AssemblyDef>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
 			checkedContractsAssemblies = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
@@ -52,8 +50,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		void Initialize(IEnumerable<string> extraAssemblyReferences) {
 			foreach (var asm in GetAssemblies(module, extraAssemblyReferences)) {
 				cancellationToken.ThrowIfCancellationRequested();
-				AssemblyDef otherAsm;
-				if (!assemblies.TryGetValue(asm, out otherAsm))
+				if (!assemblies.TryGetValue(asm, out var otherAsm))
 					assemblies[asm] = asm;
 				else if (asm.Version > otherAsm.Version)
 					assemblies[asm] = asm;

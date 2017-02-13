@@ -53,9 +53,7 @@ namespace dnSpy.Search {
 		public IDecompiler Decompiler {
 			get { return filterSearcherOptions.Context.Decompiler; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				filterSearcherOptions.Context.Decompiler = value;
+				filterSearcherOptions.Context.Decompiler = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 

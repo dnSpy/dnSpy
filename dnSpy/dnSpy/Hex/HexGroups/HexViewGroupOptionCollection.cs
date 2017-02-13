@@ -27,10 +27,8 @@ namespace dnSpy.Hex.HexGroups {
 		public string SubGroup { get; }
 
 		public HexViewGroupOptionCollection(string subGroup) {
-			if (subGroup == null)
-				throw new ArgumentNullException(nameof(subGroup));
 			Options = new List<HexViewGroupOption>();
-			SubGroup = subGroup;
+			SubGroup = subGroup ?? throw new ArgumentNullException(nameof(subGroup));
 		}
 
 		public void Add(HexViewGroupOption option) => Options.Add(option);

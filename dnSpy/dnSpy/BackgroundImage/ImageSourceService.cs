@@ -100,12 +100,8 @@ namespace dnSpy.BackgroundImage {
 				public ImageSource ImageSource { get; }
 				public string Filename { get; }
 				public ImageInfo(ImageSource imageSource, string filename) {
-					if (imageSource == null)
-						throw new ArgumentNullException(nameof(imageSource));
-					if (filename == null)
-						throw new ArgumentNullException(nameof(filename));
-					ImageSource = imageSource;
-					Filename = filename;
+					ImageSource = imageSource ?? throw new ArgumentNullException(nameof(imageSource));
+					Filename = filename ?? throw new ArgumentNullException(nameof(filename));
 				}
 			}
 
@@ -153,8 +149,7 @@ namespace dnSpy.BackgroundImage {
 						return true;
 					if (StringComparer.InvariantCultureIgnoreCase.Equals(theme.Name, themeName))
 						return true;
-					Guid guid;
-					if (Guid.TryParse(themeName, out guid) && theme.Guid == guid)
+					if (Guid.TryParse(themeName, out var guid) && theme.Guid == guid)
 						return true;
 					return false;
 				}
@@ -268,8 +263,6 @@ namespace dnSpy.BackgroundImage {
 			public void SetImagePaths(string[] imagePaths, bool isRandom, ITheme theme) {
 				if (imagePaths == null)
 					throw new ArgumentNullException(nameof(imagePaths));
-				if (theme == null)
-					throw new ArgumentNullException(nameof(theme));
 				var list = new List<FilenameIterator>(imagePaths.Length);
 				foreach (var pathInfo in imagePaths) {
 					if (pathInfo == null)
@@ -292,7 +285,7 @@ namespace dnSpy.BackgroundImage {
 						list.Add(new DirectoryIterator(path, sourceOptions));
 				}
 				this.isRandom = isRandom;
-				this.theme = theme;
+				this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
 				cachedAllFilenamesListWeakRef = null;
 				currentEnumeratorInfo?.Dispose();
 				currentEnumeratorInfo = null;
@@ -426,12 +419,8 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public ImageSourceService(IThemeService themeService, IBackgroundImageSettings backgroundImageSettings) {
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			if (backgroundImageSettings == null)
-				throw new ArgumentNullException(nameof(backgroundImageSettings));
-			this.themeService = themeService;
-			this.backgroundImageSettings = backgroundImageSettings;
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			this.backgroundImageSettings = backgroundImageSettings ?? throw new ArgumentNullException(nameof(backgroundImageSettings));
 			listeners = new List<IImageSourceServiceListener>();
 		}
 

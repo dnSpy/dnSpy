@@ -51,9 +51,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="stringSpan">Span of string data</param>
 		public MultiResourceUnicodeNameAndOffsetData(DotNetMultiFileResources resourceProvider, HexBuffer buffer, HexSpan lengthSpan, HexSpan stringSpan)
 			: base(NAME, new HexBufferSpan(buffer, HexSpan.FromBounds(lengthSpan.Start, stringSpan.End + 4))) {
-			if (resourceProvider == null)
-				throw new ArgumentNullException(nameof(resourceProvider));
-			ResourceProvider = resourceProvider;
+			ResourceProvider = resourceProvider ?? throw new ArgumentNullException(nameof(resourceProvider));
 			ResourceName = new StructField<Bit7EncodedStringData>("ResourceName", new Bit7EncodedStringData(buffer, lengthSpan, stringSpan, Encoding.Unicode));
 			DataOffset = new StructField<UInt32Data>("DataOffset", new UInt32Data(buffer, stringSpan.End));
 			Fields = new BufferField[] {

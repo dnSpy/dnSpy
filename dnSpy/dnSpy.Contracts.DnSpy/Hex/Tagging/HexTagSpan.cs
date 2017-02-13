@@ -70,11 +70,9 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		public HexTagSpan(HexBufferSpan span, HexSpanSelectionFlags flags, T tag) {
 			if (span.IsDefault)
 				throw new ArgumentException();
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
 			Span = span;
 			Flags = flags;
-			Tag = tag;
+			Tag = tag ?? throw new ArgumentNullException(nameof(tag));
 		}
 	}
 }

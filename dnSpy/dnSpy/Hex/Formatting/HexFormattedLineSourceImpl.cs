@@ -54,10 +54,6 @@ namespace dnSpy.Hex.Formatting {
 		public HexFormattedLineSourceImpl(TF.ITextFormatterProvider textFormatterProvider, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap) {
 			if (textFormatterProvider == null)
 				throw new ArgumentNullException(nameof(textFormatterProvider));
-			if (aggregateClassifier == null)
-				throw new ArgumentNullException(nameof(aggregateClassifier));
-			if (sequencer == null)
-				throw new ArgumentNullException(nameof(sequencer));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 
@@ -69,8 +65,8 @@ namespace dnSpy.Hex.Formatting {
 			LineHeight = HexFormattedLineImpl.DEFAULT_TOP_SPACE + HexFormattedLineImpl.DEFAULT_BOTTOM_SPACE + formattedTextCache.GetLineHeight(classificationFormatMap.DefaultTextProperties);
 			TextHeightAboveBaseline = formattedTextCache.GetTextHeightAboveBaseline(classificationFormatMap.DefaultTextProperties);
 			TextHeightBelowBaseline = formattedTextCache.GetTextHeightBelowBaseline(classificationFormatMap.DefaultTextProperties);
-			HexAndAdornmentSequencer = sequencer;
-			this.aggregateClassifier = aggregateClassifier;
+			HexAndAdornmentSequencer = sequencer ?? throw new ArgumentNullException(nameof(sequencer));
+			this.aggregateClassifier = aggregateClassifier ?? throw new ArgumentNullException(nameof(aggregateClassifier));
 			this.classificationFormatMap = classificationFormatMap;
 			defaultTextParagraphProperties = new VSTF.TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
 		}

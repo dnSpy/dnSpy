@@ -41,10 +41,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		/// <param name="kind">Kind</param>
 		/// <param name="version">Version string</param>
 		public CorDebugRuntimeVersion(CorDebugRuntimeKind kind, string version) {
-			if (version == null)
-				throw new ArgumentNullException(nameof(version));
 			Kind = kind;
-			Version = version;
+			Version = version ?? throw new ArgumentNullException(nameof(version));
 		}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member

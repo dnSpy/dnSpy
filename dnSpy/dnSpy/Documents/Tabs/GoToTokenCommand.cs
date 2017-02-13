@@ -63,8 +63,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		internal static bool CanExecuteInternal(IDocumentTabService documentTabService) {
-			IDocumentTab tab;
-			return GetResolver(documentTabService, out tab) != null;
+			return GetResolver(documentTabService, out var tab) != null;
 		}
 
 		static object ResolveDef(object mr) {
@@ -80,8 +79,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		internal static void ExecuteInternal(IDocumentTabService documentTabService) {
-			IDocumentTab tab;
-			var resolver = GetResolver(documentTabService, out tab);
+			var resolver = GetResolver(documentTabService, out var tab);
 			if (resolver == null)
 				return;
 
@@ -93,14 +91,12 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static object AskForDef(string title, ITokenResolver resolver) => MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
-			string error;
-			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out string error);
 			var memberRef = resolver.ResolveToken(token);
 			var member = ResolveDef(memberRef);
 			return member;
 		}, s => {
-			string error;
-			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out string error);
 			if (!string.IsNullOrEmpty(error))
 				return error;
 			var memberRef = resolver.ResolveToken(token);

@@ -44,9 +44,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="token">Token</param>
 		protected DotNetEmbeddedResource(DotNetResourceProvider resourceProvider, HexBufferSpan span, uint token)
 			: base(NAME, span) {
-			if (resourceProvider == null)
-				throw new ArgumentNullException(nameof(resourceProvider));
-			ResourceProvider = resourceProvider;
+			ResourceProvider = resourceProvider ?? throw new ArgumentNullException(nameof(resourceProvider));
 			Token = new MDToken(token);
 		}
 

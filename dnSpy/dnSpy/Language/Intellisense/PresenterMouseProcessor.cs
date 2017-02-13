@@ -51,9 +51,7 @@ namespace dnSpy.Language.Intellisense {
 		IMouseProcessor2 MouseProcessor2 => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor2;
 
 		public PresenterMouseProcessor(IIntellisenseSessionStack intellisenseSessionStack) {
-			if (intellisenseSessionStack == null)
-				throw new ArgumentNullException(nameof(intellisenseSessionStack));
-			this.intellisenseSessionStack = intellisenseSessionStack;
+			this.intellisenseSessionStack = intellisenseSessionStack ?? throw new ArgumentNullException(nameof(intellisenseSessionStack));
 		}
 
 		void IMouseProcessor.PreprocessMouseLeftButtonDown(MouseButtonEventArgs e) => intellisenseSessionStack.CollapseAllSessions();

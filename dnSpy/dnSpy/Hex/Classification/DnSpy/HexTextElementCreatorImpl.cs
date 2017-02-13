@@ -35,15 +35,9 @@ namespace dnSpy.Hex.Classification.DnSpy {
 		readonly CTC.TextClassifierTextColorWriter writer;
 
 		public HexTextElementCreatorImpl(CTC.ITextElementProvider textElementProvider, VSTC.IClassificationFormatMap classificationFormatMap, string contentType) {
-			if (textElementProvider == null)
-				throw new ArgumentNullException(nameof(textElementProvider));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			this.textElementProvider = textElementProvider;
-			this.classificationFormatMap = classificationFormatMap;
-			this.contentType = contentType;
+			this.textElementProvider = textElementProvider ?? throw new ArgumentNullException(nameof(textElementProvider));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.contentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
 			writer = new CTC.TextClassifierTextColorWriter();
 		}
 

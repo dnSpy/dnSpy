@@ -46,14 +46,11 @@ namespace dndbg.DotNet {
 		void InitNameAndAttrs_NoLock() {
 			var mdai = readerModule.MetaDataAssemblyImport;
 			uint token = OriginalToken.Raw;
-
-			UTF8String ns, name;
-			Utils.SplitNameAndNamespace(null, MDAPI.GetExportedTypeName(mdai, token), out ns, out name);
+			Utils.SplitNameAndNamespace(null, MDAPI.GetExportedTypeName(mdai, token), out var ns, out var name);
 			TypeName = name;
 			TypeNamespace = ns;
 
-			TypeAttributes attrs;
-			MDAPI.GetExportedTypeProps(mdai, token, out implementation, out typeDefId, out attrs);
+			MDAPI.GetExportedTypeProps(mdai, token, out implementation, out typeDefId, out var attrs);
 			attributes = (int)attrs;
 		}
 

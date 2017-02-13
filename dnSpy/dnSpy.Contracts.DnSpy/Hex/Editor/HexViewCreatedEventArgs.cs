@@ -34,9 +34,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		public HexViewCreatedEventArgs(HexView hexView) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			HexView = hexView;
+			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 		}
 	}
 }

@@ -43,9 +43,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		protected BreakpointsEventArgs(Breakpoint[] breakpoints) {
-			if (breakpoints == null)
-				throw new ArgumentNullException(nameof(breakpoints));
-			Breakpoints = breakpoints;
+			Breakpoints = breakpoints ?? throw new ArgumentNullException(nameof(breakpoints));
 		}
 	}
 

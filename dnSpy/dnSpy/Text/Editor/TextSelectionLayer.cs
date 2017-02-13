@@ -46,16 +46,10 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorFormatMap editorFormatMap;
 
 		public TextSelectionLayer(TextSelection textSelection, IAdornmentLayer layer, IEditorFormatMap editorFormatMap) {
-			if (textSelection == null)
-				throw new ArgumentNullException(nameof(textSelection));
-			if (layer == null)
-				throw new ArgumentNullException(nameof(layer));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
 			markerElementRemovedCallBack = (tag, element) => OnMarkerElementRemoved();
-			this.textSelection = textSelection;
-			this.layer = layer;
-			this.editorFormatMap = editorFormatMap;
+			this.textSelection = textSelection ?? throw new ArgumentNullException(nameof(textSelection));
+			this.layer = layer ?? throw new ArgumentNullException(nameof(layer));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
 			textSelection.TextView.Options.OptionChanged += Options_OptionChanged;
 			textSelection.SelectionChanged += TextSelection_SelectionChanged;
 			textSelection.TextView.LayoutChanged += TextView_LayoutChanged;
@@ -218,9 +212,7 @@ namespace dnSpy.Text.Editor {
 			Pen pen;
 
 			public MarkerElement(Geometry geometry) {
-				if (geometry == null)
-					throw new ArgumentNullException(nameof(geometry));
-				this.geometry = geometry;
+				this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 			}
 
 			protected override void OnRender(DrawingContext drawingContext) {

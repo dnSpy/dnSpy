@@ -42,10 +42,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public DocumentViewerUIElement(int position, Func<UIElement> createElement) {
 			if (position < 0)
 				throw new ArgumentOutOfRangeException(nameof(position));
-			if (createElement == null)
-				throw new ArgumentNullException(nameof(createElement));
 			Position = position;
-			CreateElement = createElement;
+			CreateElement = createElement ?? throw new ArgumentNullException(nameof(createElement));
 		}
 	}
 
@@ -58,9 +56,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly DocumentViewerUIElement[] elements;
 
 		public DocumentViewerUIElementCollection(DocumentViewerUIElement[] elements) {
-			if (elements == null)
-				throw new ArgumentNullException(nameof(elements));
-			this.elements = elements;
+			this.elements = elements ?? throw new ArgumentNullException(nameof(elements));
 		}
 
 		public int GetStartIndex(int position) {
@@ -139,9 +135,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IDocumentViewerUIElementService documentViewerUIElementService;
 
 		public DocumentViewerUIElementTagger(IDocumentViewerUIElementService documentViewerUIElementService) {
-			if (documentViewerUIElementService == null)
-				throw new ArgumentNullException(nameof(documentViewerUIElementService));
-			this.documentViewerUIElementService = documentViewerUIElementService;
+			this.documentViewerUIElementService = documentViewerUIElementService ?? throw new ArgumentNullException(nameof(documentViewerUIElementService));
 			documentViewerUIElementService.RegisterTagger(this);
 		}
 
@@ -175,9 +169,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		int textVersionNumber;
 
 		public DocumentViewerUIElementService(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			cachedUIElements = new Dictionary<int, UIElement>();
 			collection = DocumentViewerUIElementCollection.Empty;
 			textVersionNumber = -1;
@@ -198,9 +190,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void RegisterTagger(IDocumentViewerUIElementTagger tagger) {
 			if (this.tagger != null)
 				throw new InvalidOperationException();
-			if (tagger == null)
-				throw new ArgumentNullException(nameof(tagger));
-			this.tagger = tagger;
+			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
 
 		public IEnumerable<ITagSpan<IntraTextAdornmentTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
@@ -220,8 +210,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					if (info.Position > span.End)
 						break;
 
-					UIElement uiElem;
-					if (!cachedUIElements.TryGetValue(index, out uiElem)) {
+					if (!cachedUIElements.TryGetValue(index, out var uiElem)) {
 						uiElem = info.CreateElement();
 						cachedUIElements.Add(index, uiElem);
 						Debug.Assert(uiElem != null);

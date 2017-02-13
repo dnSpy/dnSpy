@@ -42,8 +42,7 @@ namespace dnSpy.Text.Operations {
 		public void RemoveTextBufferUndoManager(ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			TextBufferUndoManager manager;
-			if (!textBuffer.Properties.TryGetProperty(textBufferUndoManagerKey, out manager))
+			if (!textBuffer.Properties.TryGetProperty(textBufferUndoManagerKey, out TextBufferUndoManager manager))
 				return;
 			textBuffer.Properties.RemoveProperty(textBufferUndoManagerKey);
 			manager.Dispose();

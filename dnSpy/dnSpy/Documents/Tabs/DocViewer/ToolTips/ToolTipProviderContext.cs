@@ -36,24 +36,12 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		public ToolTipProviderContext(IDotNetImageService dotNetImageService, IDecompiler decompiler, ICodeToolTipSettings codeToolTipSettings, IDocumentViewer documentViewer, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
-			if (dotNetImageService == null)
-				throw new ArgumentNullException(nameof(dotNetImageService));
-			if (decompiler == null)
-				throw new ArgumentNullException(nameof(decompiler));
-			if (codeToolTipSettings == null)
-				throw new ArgumentNullException(nameof(codeToolTipSettings));
-			if (documentViewer == null)
-				throw new ArgumentNullException(nameof(documentViewer));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			DocumentViewer = documentViewer;
-			this.dotNetImageService = dotNetImageService;
-			Decompiler = decompiler;
-			this.codeToolTipSettings = codeToolTipSettings;
-			this.classificationFormatMap = classificationFormatMap;
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			DocumentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
+			this.dotNetImageService = dotNetImageService ?? throw new ArgumentNullException(nameof(dotNetImageService));
+			Decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
+			this.codeToolTipSettings = codeToolTipSettings ?? throw new ArgumentNullException(nameof(codeToolTipSettings));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 		}
 
 		public ICodeToolTipProvider Create() =>

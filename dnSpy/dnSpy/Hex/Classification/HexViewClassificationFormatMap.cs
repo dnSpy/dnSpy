@@ -28,9 +28,7 @@ namespace dnSpy.Hex.Classification {
 
 		public HexViewClassificationFormatMap(TC.ClassificationFormatMapService classificationFormatMapService, HexView hexView)
 			: base(classificationFormatMapService, DefaultWpfHexViewOptions.AppearanceCategoryName) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			this.hexView = hexView;
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			hexView.Options.OptionChanged += Options_OptionChanged;
 			Initialize();
 		}

@@ -255,9 +255,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		BracePairResultCollection? currentBracePair;
 
 		public BracePairService(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			bracePairCollection = BracePairCollection.Empty;
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;
@@ -363,11 +361,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void SetBracePairViewTagger(BracePairViewTagger tagger) {
-			if (tagger == null)
-				throw new ArgumentNullException(nameof(tagger));
 			if (this.tagger != null)
 				throw new InvalidOperationException();
-			this.tagger = tagger;
+			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
 
 		public IEnumerable<ITagSpan<IBracePairTag>> GetTags(NormalizedSnapshotSpanCollection spans) {

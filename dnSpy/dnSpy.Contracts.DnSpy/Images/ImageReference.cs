@@ -53,10 +53,8 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="assembly">Assembly of image or null if <paramref name="name"/> is a pack: URI</param>
 		/// <param name="name">Name of image</param>
 		public ImageReference(Assembly assembly, string name) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
 			Assembly = assembly;
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 
 		/// <summary>

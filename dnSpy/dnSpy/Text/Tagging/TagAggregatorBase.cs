@@ -38,15 +38,11 @@ namespace dnSpy.Text.Tagging {
 		protected ITextBuffer TextBuffer { get; }
 
 		protected TagAggregatorBase(IBufferGraph bufferGraph, ITextBuffer textBuffer, TagAggregatorOptions options) {
-			if (bufferGraph == null)
-				throw new ArgumentNullException(nameof(bufferGraph));
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
 			dispatcher = Dispatcher.CurrentDispatcher;
 			batchedTagsChangedList = new List<IMappingSpan>();
 			lockObj = new object();
-			BufferGraph = bufferGraph;
-			TextBuffer = textBuffer;
+			BufferGraph = bufferGraph ?? throw new ArgumentNullException(nameof(bufferGraph));
+			TextBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			taggers = Array.Empty<ITagger<T>>();
 		}

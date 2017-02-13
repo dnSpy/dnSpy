@@ -76,18 +76,10 @@ namespace dnSpy.Hex.Commands {
 		HexBufferFileService __hexBufferFileService;
 
 		public HexCommandOperationsImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, HexView hexView) {
-			if (messageBoxService == null)
-				throw new ArgumentNullException(nameof(messageBoxService));
-			if (hexEditorGroupFactoryService == null)
-				throw new ArgumentNullException(nameof(hexEditorGroupFactoryService));
-			if (hexBufferFileServiceFactory == null)
-				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			this.messageBoxService = messageBoxService;
-			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
-			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
-			HexView = hexView;
+			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
+			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService ?? throw new ArgumentNullException(nameof(hexEditorGroupFactoryService));
+			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory ?? throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
+			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			hexView.Closed += HexView_Closed;
 		}
 
@@ -377,12 +369,10 @@ namespace dnSpy.Hex.Commands {
 				return;
 
 			var res = messageBoxService.Ask<byte?>(dnSpy_Resources.FillSelection_Label, "0xFF", dnSpy_Resources.FillSelection_Title, s => {
-				string error;
-				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out error);
+				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out string error);
 				return string.IsNullOrEmpty(error) ? b : (byte?)null;
 			}, s => {
-				string error;
-				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out error);
+				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out string error);
 				return error;
 			});
 			if (res == null)

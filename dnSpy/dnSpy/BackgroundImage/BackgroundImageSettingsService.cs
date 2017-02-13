@@ -82,8 +82,7 @@ namespace dnSpy.BackgroundImage {
 				var rawSettings = new RawSettings(section);
 				if (!rawSettings.IsValid)
 					continue;
-				SettingsInfo info;
-				if (!settingsInfos.TryGetValue(rawSettings.Id, out info))
+				if (!settingsInfos.TryGetValue(rawSettings.Id, out var info))
 					continue;
 				if (!allSettingsIds.Contains(rawSettings.Id))
 					continue;
@@ -113,8 +112,7 @@ namespace dnSpy.BackgroundImage {
 			foreach (var rs in settings) {
 				if (rs.Id == null)
 					continue;
-				SettingsInfo info;
-				if (!settingsInfos.TryGetValue(rs.Id, out info))
+				if (!settingsInfos.TryGetValue(rs.Id, out var info))
 					continue;
 				if (info.RawSettings.Equals(rs))
 					continue;

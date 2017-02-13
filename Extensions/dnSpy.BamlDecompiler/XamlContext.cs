@@ -101,8 +101,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public XamlType ResolveType(ushort id) {
-			XamlType xamlType;
-			if (typeMap.TryGetValue(id, out xamlType))
+			if (typeMap.TryGetValue(id, out var xamlType))
 				return xamlType;
 
 			ITypeDefOrRef type;
@@ -129,8 +128,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public XamlProperty ResolveProperty(ushort id) {
-			XamlProperty xamlProp;
-			if (propertyMap.TryGetValue(id, out xamlProp))
+			if (propertyMap.TryGetValue(id, out var xamlProp))
 				return xamlProp;
 
 			XamlType type;
@@ -172,8 +170,7 @@ namespace dnSpy.BamlDecompiler {
 			if (xmlns == null)
 				return null;
 
-			XNamespace ns;
-			if (!xmlnsMap.TryGetValue(xmlns, out ns))
+			if (!xmlnsMap.TryGetValue(xmlns, out var ns))
 				xmlnsMap[xmlns] = ns = XNamespace.Get(xmlns);
 			return ns;
 		}

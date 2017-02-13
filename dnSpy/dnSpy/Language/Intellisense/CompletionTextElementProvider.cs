@@ -38,21 +38,14 @@ namespace dnSpy.Language.Intellisense {
 		readonly Dictionary<IContentType, ITextClassifier> toClassifier;
 
 		public CompletionTextElementProvider(ITextClassifierAggregatorService textClassifierAggregatorService, IClassificationFormatMap classificationFormatMap, IContentTypeRegistryService contentTypeRegistryService) {
-			if (textClassifierAggregatorService == null)
-				throw new ArgumentNullException(nameof(textClassifierAggregatorService));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (contentTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(contentTypeRegistryService));
-			this.textClassifierAggregatorService = textClassifierAggregatorService;
-			this.classificationFormatMap = classificationFormatMap;
-			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.textClassifierAggregatorService = textClassifierAggregatorService ?? throw new ArgumentNullException(nameof(textClassifierAggregatorService));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.contentTypeRegistryService = contentTypeRegistryService ?? throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			toClassifier = new Dictionary<IContentType, ITextClassifier>();
 		}
 
 		ITextClassifier GetTextClassifier(IContentType contentType) {
-			ITextClassifier completionClassifier;
-			if (!toClassifier.TryGetValue(contentType, out completionClassifier))
+			if (!toClassifier.TryGetValue(contentType, out var completionClassifier))
 				toClassifier.Add(contentType, completionClassifier = textClassifierAggregatorService.Create(contentType));
 			return completionClassifier;
 		}

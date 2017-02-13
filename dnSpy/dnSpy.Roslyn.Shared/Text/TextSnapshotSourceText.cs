@@ -31,9 +31,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 		public ITextSnapshot TextSnapshot { get; }
 
 		public TextSnapshotSourceText(ITextSnapshot snapshot, Encoding encoding) {
-			if (snapshot == null)
-				throw new ArgumentNullException(nameof(snapshot));
-			TextSnapshot = snapshot;
+			TextSnapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
 			Encoding = encoding;
 			Container = snapshot.TextBuffer.AsTextContainer();
 		}

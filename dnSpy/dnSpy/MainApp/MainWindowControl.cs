@@ -402,8 +402,7 @@ namespace dnSpy.MainApp {
 		}
 
 		AppToolWindowLocation? GetSavedLocation(Guid guid) {
-			AppToolWindowLocation location;
-			if (savedLocations.TryGetValue(guid, out location))
+			if (savedLocations.TryGetValue(guid, out var location))
 				return location;
 			return null;
 		}
@@ -444,8 +443,7 @@ namespace dnSpy.MainApp {
 		}
 
 		IToolWindowGroup GetOrCreateGroup(AppToolWindowLocation location) {
-			ToolWindowUI ui;
-			if (!toolWindowUIs.TryGetValue(Convert(location), out ui))
+			if (!toolWindowUIs.TryGetValue(Convert(location), out var ui))
 				throw new ArgumentException();
 			Show(ui);
 			var g = ui.ToolWindowGroupService.ActiveTabGroup;

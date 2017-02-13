@@ -62,15 +62,13 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		static Point ReadPoint(BinaryReader reader) => new Point(reader.ReadXamlDouble(), reader.ReadXamlDouble());
 
 		static void ReadPointBoolBool(BinaryReader reader, byte b, out Point pt, out bool b1, out bool b2) {
-			bool sx, sy;
-			UnpackBools(b, out b1, out b2, out sx, out sy);
+			UnpackBools(b, out b1, out b2, out bool sx, out bool sy);
 
 			pt = new Point(reader.ReadXamlDouble(sx), reader.ReadXamlDouble(sy));
 		}
 
 		static IList<Point> ReadPointsBoolBool(BinaryReader reader, byte b, out bool b1, out bool b2) {
-			bool b3, b4;
-			UnpackBools(b, out b1, out b2, out b3, out b4);
+			UnpackBools(b, out b1, out b2, out bool b3, out bool b4);
 
 			var count = reader.ReadInt32();
 			var pts = new List<Point>();
@@ -92,24 +90,21 @@ namespace dnSpy.BamlDecompiler.Xaml {
 
 				switch ((PathOpCodes)(b & 0xf)) {
 					case PathOpCodes.BeginFigure: {
-						bool filled, closed;
-						ReadPointBoolBool(reader, b, out pt1, out filled, out closed);
+						ReadPointBoolBool(reader, b, out pt1, out bool filled, out bool closed);
 
 						sb.AppendFormat("M{0} ", pt1);
 						break;
 					}
 
 					case PathOpCodes.LineTo: {
-						bool stroked, smoothJoin;
-						ReadPointBoolBool(reader, b, out pt1, out stroked, out smoothJoin);
+						ReadPointBoolBool(reader, b, out pt1, out bool stroked, out bool smoothJoin);
 
 						sb.AppendFormat("L{0} ", pt1);
 						break;
 					}
 
 					case PathOpCodes.QuadraticBezierTo: {
-						bool stroked, smoothJoin;
-						ReadPointBoolBool(reader, b, out pt1, out stroked, out smoothJoin);
+						ReadPointBoolBool(reader, b, out pt1, out bool stroked, out bool smoothJoin);
 						pt2 = ReadPoint(reader);
 
 						sb.AppendFormat("Q{0} {1} ", pt1, pt2);
@@ -117,8 +112,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 					}
 
 					case PathOpCodes.BezierTo: {
-						bool stroked, smoothJoin;
-						ReadPointBoolBool(reader, b, out pt1, out stroked, out smoothJoin);
+						ReadPointBoolBool(reader, b, out pt1, out bool stroked, out bool smoothJoin);
 						pt2 = ReadPoint(reader);
 						pt3 = ReadPoint(reader);
 
@@ -127,8 +121,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 					}
 
 					case PathOpCodes.PolyLineTo: {
-						bool stroked, smoothJoin;
-						pts = ReadPointsBoolBool(reader, b, out stroked, out smoothJoin);
+						pts = ReadPointsBoolBool(reader, b, out bool stroked, out bool smoothJoin);
 
 						sb.Append('L');
 						foreach (var pt in pts)
@@ -137,8 +130,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 					}
 
 					case PathOpCodes.PolyQuadraticBezierTo: {
-						bool stroked, smoothJoin;
-						pts = ReadPointsBoolBool(reader, b, out stroked, out smoothJoin);
+						pts = ReadPointsBoolBool(reader, b, out bool stroked, out bool smoothJoin);
 
 						sb.Append('Q');
 						foreach (var pt in pts)
@@ -147,8 +139,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 					}
 
 					case PathOpCodes.PolyBezierTo: {
-						bool stroked, smoothJoin;
-						pts = ReadPointsBoolBool(reader, b, out stroked, out smoothJoin);
+						pts = ReadPointsBoolBool(reader, b, out bool stroked, out bool smoothJoin);
 
 						sb.Append('C');
 						foreach (var pt in pts)
@@ -157,8 +148,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 					}
 
 					case PathOpCodes.ArcTo: {
-						bool stroked, smoothJoin;
-						ReadPointBoolBool(reader, b, out pt1, out stroked, out smoothJoin);
+						ReadPointBoolBool(reader, b, out pt1, out bool stroked, out bool smoothJoin);
 						byte b2 = reader.ReadByte();
 						bool largeArc = (b2 & 0x0f) != 0;
 						bool sweepDirection = (b2 & 0xf0) != 0;
@@ -174,8 +164,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 						break;
 
 					case PathOpCodes.FillRule: {
-						bool fillRule, b2, b3, b4;
-						UnpackBools(b, out fillRule, out b2, out b3, out b4);
+						UnpackBools(b, out bool fillRule, out bool b2, out bool b3, out bool b4);
 						if (fillRule)
 							sb.Insert(0, "F1 ");
 						break;

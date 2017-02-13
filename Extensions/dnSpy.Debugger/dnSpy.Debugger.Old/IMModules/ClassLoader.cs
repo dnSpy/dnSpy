@@ -48,8 +48,7 @@ namespace dnSpy.Debugger.IMModules {
 			if (dnModule.CorModuleDef == null)
 				return;
 
-			HashSet<uint> hash;
-			if (!loadedClasses.TryGetValue(dnModule, out hash))
+			if (!loadedClasses.TryGetValue(dnModule, out var hash))
 				loadedClasses.Add(dnModule, hash = new HashSet<uint>());
 			hash.Add(token);
 		}
@@ -86,8 +85,7 @@ namespace dnSpy.Debugger.IMModules {
 			var states = new List<ModuleState>(visibleModules.Count);
 			foreach (var kv in visibleModules) {
 				Debug.Assert(kv.Key.DnModule.IsDynamic, "Only dynamic modules can add new types, members");
-				HashSet<uint> hash;
-				oldLoadedClasses.TryGetValue(kv.Key.DnModule, out hash);
+				oldLoadedClasses.TryGetValue(kv.Key.DnModule, out var hash);
 				states.Add(new ModuleState(kv.Key, kv.Value, GetModifiedTypesList(kv.Key), hash));
 			}
 

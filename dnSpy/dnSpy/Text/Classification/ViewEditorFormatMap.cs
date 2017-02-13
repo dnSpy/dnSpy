@@ -37,12 +37,8 @@ namespace dnSpy.Text.Classification {
 		readonly HashSet<string> viewProps;
 
 		protected ViewEditorFormatMap(EditorFormatMapService editorFormatMapService, string appearanceCategoryName) {
-			if (editorFormatMapService == null)
-				throw new ArgumentNullException(nameof(editorFormatMapService));
-			if (appearanceCategoryName == null)
-				throw new ArgumentNullException(nameof(appearanceCategoryName));
-			this.editorFormatMapService = editorFormatMapService;
-			this.appearanceCategoryName = appearanceCategoryName;
+			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
+			this.appearanceCategoryName = appearanceCategoryName ?? throw new ArgumentNullException(nameof(appearanceCategoryName));
 			viewProps = new HashSet<string>(StringComparer.Ordinal);
 		}
 
@@ -102,9 +98,7 @@ namespace dnSpy.Text.Classification {
 
 		public TextViewEditorFormatMap(ITextView textView, EditorFormatMapService editorFormatMapService)
 			: base(editorFormatMapService, DefaultWpfViewOptions.AppearanceCategoryName) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			textView.Options.OptionChanged += Options_OptionChanged;
 			Initialize();
 		}

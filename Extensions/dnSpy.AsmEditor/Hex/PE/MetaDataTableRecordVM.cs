@@ -208,8 +208,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		string GetCodedTokenDescription(CodedToken codedToken, string codedTokenName, ColumnInfo col, HexField field) {
-			MDToken token;
-			if (!codedToken.Decode(ReadFieldValue(field), out token))
+			if (!codedToken.Decode(ReadFieldValue(field), out MDToken token))
 				return string.Format("Invalid {0} Coded Token", codedTokenName);
 
 			var info = GetInfo(token.Table, token.Rid);

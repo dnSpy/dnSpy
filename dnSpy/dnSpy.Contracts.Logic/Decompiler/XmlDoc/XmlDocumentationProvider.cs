@@ -276,10 +276,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					int b = fs.ReadByte();
 					if (b < 0)
 						throw new EndOfStreamException();
-					int bytesUsed, charsUsed;
-					bool completed;
 					inputLocal[0] = (byte)b;
-					decoder.Convert(inputLocal, 0, 1, outputLocal, 0, outputLocal.Length, false, out bytesUsed, out charsUsed, out completed);
+					decoder.Convert(inputLocal, 0, 1, outputLocal, 0, outputLocal.Length, false, out int bytesUsed, out int charsUsed, out bool completed);
 					Debug.Assert(bytesUsed == 1);
 					for (int i = 0; i < charsUsed; i++) {
 						if (outputLocal[i] == '\n')
@@ -367,8 +365,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			
 			XmlDocumentationCache cache = this.cache;
 			lock (cache) {
-				string val;
-				if (!cache.TryGet(key, out val)) {
+				if (!cache.TryGet(key, out string val)) {
 					try {
 						// go through all items that have the correct hash
 						while (++m < index.Length && index[m].HashCode == hashcode) {

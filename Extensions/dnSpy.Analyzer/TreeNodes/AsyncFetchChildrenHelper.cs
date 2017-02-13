@@ -19,7 +19,6 @@
 
 using System;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;

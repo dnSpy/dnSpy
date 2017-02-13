@@ -44,9 +44,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly IClassificationType documentListMatchHighlightClassificationType;
 
 		public OpenDocumentListTextClassifier(IClassificationType documentListMatchHighlightClassificationType) {
-			if (documentListMatchHighlightClassificationType == null)
-				throw new ArgumentNullException(nameof(documentListMatchHighlightClassificationType));
-			this.documentListMatchHighlightClassificationType = documentListMatchHighlightClassificationType;
+			this.documentListMatchHighlightClassificationType = documentListMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(documentListMatchHighlightClassificationType));
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

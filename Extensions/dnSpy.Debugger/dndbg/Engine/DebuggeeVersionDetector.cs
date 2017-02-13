@@ -41,7 +41,6 @@ namespace dndbg.Engine {
 				uint versionLength = (uint)sbVersion.Capacity;
 				var sbImageVersion = new StringBuilder(STRING_LEN);
 				uint imageVersionLength = (uint)sbImageVersion.Capacity;
-				uint configFlags;
 				riid = typeof(ICLRRuntimeInfo).GUID;
 
 				mhp.GetRequestedRuntime(
@@ -52,7 +51,7 @@ namespace dndbg.Engine {
 						ref versionLength,
 						sbImageVersion,
 						ref imageVersionLength,
-						out configFlags,
+						out uint configFlags,
 						ref riid);
 
 				return sbVersion.ToString();

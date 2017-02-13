@@ -110,18 +110,14 @@ namespace dnSpy.Commands {
 		}
 
 		public RegisteredCommandElement(CommandService commandService, UIElement sourceElement, KeyShortcutCollection keyShortcutCollection, object target) {
-			if (commandService == null)
-				throw new ArgumentNullException(nameof(commandService));
 			if (sourceElement == null)
 				throw new ArgumentNullException(nameof(sourceElement));
-			if (keyShortcutCollection == null)
-				throw new ArgumentNullException(nameof(keyShortcutCollection));
 			if (target == null)
 				throw new ArgumentNullException(nameof(target));
-			this.commandService = commandService;
+			this.commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 			weakSourceElement = new WeakReference(sourceElement);
 			weakTarget = new WeakReference(target);
-			this.keyShortcutCollection = keyShortcutCollection;
+			this.keyShortcutCollection = keyShortcutCollection ?? throw new ArgumentNullException(nameof(keyShortcutCollection));
 			commandTargetInfos = new List<CommandTargetFilterInfo>();
 			CommandTarget = new CommandTargetCollection(this);
 			sourceElement.PreviewKeyDown += SourceElement_PreviewKeyDown;
@@ -170,8 +166,7 @@ namespace dnSpy.Commands {
 			var target = TryGetTargetOrUnregister();
 			if (target == null)
 				return;
-			bool waitForSecondKey;
-			var cmd = GetCommand(e, target, out waitForSecondKey);
+			var cmd = GetCommand(e, target, out bool waitForSecondKey);
 			if (waitForSecondKey) {
 				e.Handled = true;
 				return;

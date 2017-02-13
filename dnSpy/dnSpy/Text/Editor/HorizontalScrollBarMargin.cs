@@ -46,9 +46,7 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextViewHost wpfTextViewHost;
 
 		public HorizontalScrollBarMargin(IWpfTextViewHost wpfTextViewHost) {
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			this.wpfTextViewHost = wpfTextViewHost;
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
 			IsVisibleChanged += HorizontalScrollBarMargin_IsVisibleChanged;
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			SetResourceReference(StyleProperty, typeof(ScrollBar));

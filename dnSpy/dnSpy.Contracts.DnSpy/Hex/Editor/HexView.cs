@@ -269,10 +269,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="oldBufferLines">Old instance</param>
 		/// <param name="newBufferLines">New instance</param>
 		public BufferLinesChangedEventArgs(HexBufferLineFormatter oldBufferLines, HexBufferLineFormatter newBufferLines) {
-			if (newBufferLines == null)
-				throw new ArgumentNullException(nameof(newBufferLines));
 			OldBufferLines = oldBufferLines;
-			NewBufferLines = newBufferLines;
+			NewBufferLines = newBufferLines ?? throw new ArgumentNullException(nameof(newBufferLines));
 		}
 	}
 

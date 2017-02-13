@@ -53,8 +53,7 @@ namespace dnSpy.Text.Classification {
 		static bool Filter(string s) => s != Priority.Low && s != Priority.Default && s != Priority.High;
 
 		public EditorFormatDefinition GetDefinition(string key) {
-			Lazy<EditorFormatDefinition, IEditorFormatMetadata> lazy;
-			if (!toLazy.TryGetValue(key, out lazy))
+			if (!toLazy.TryGetValue(key, out var lazy))
 				return null;
 			return lazy.Value;
 		}

@@ -34,9 +34,7 @@ namespace dnSpy.Hex.Editor {
 		double thumbSize;
 
 		public HexScrollMapImpl(HexView hexView) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			HexView = hexView;
+			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			HexView.BufferLinesChanged += HexView_BufferLinesChanged;
 			HexView.LayoutChanged += HexView_LayoutChanged;
 			HexView.Closed += HexView_Closed;

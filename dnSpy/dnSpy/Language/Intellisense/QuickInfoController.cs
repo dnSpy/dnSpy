@@ -28,12 +28,8 @@ namespace dnSpy.Language.Intellisense {
 		readonly ITextView textView;
 
 		public QuickInfoController(IQuickInfoBroker quickInfoBroker, ITextView textView) {
-			if (quickInfoBroker == null)
-				throw new ArgumentNullException(nameof(quickInfoBroker));
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
-			this.quickInfoBroker = quickInfoBroker;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));
 			textView.MouseHover += TextView_MouseHover;
 		}
 

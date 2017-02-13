@@ -76,8 +76,7 @@ namespace dnSpy.Debugger.Dialogs {
 						continue;
 				}
 				if (Environment.Is64BitOperatingSystem) {
-					bool isWow64Process;
-					if (NativeMethods.IsWow64Process(process.Handle, out isWow64Process)) {
+					if (NativeMethods.IsWow64Process(process.Handle, out bool isWow64Process)) {
 						if (IntPtr.Size == 4 && !isWow64Process)
 							continue;
 					}
@@ -86,13 +85,10 @@ namespace dnSpy.Debugger.Dialogs {
 					continue;
 				processes.Add(process);
 
-				IEnumUnknown iter;
-				int hr = mh.EnumerateLoadedRuntimes(process.Handle, out iter);
+				int hr = mh.EnumerateLoadedRuntimes(process.Handle, out var iter);
 				if (hr >= 0) {
 					for (;;) {
-						object obj;
-						uint fetched;
-						hr = iter.Next(1, out obj, out fetched);
+						hr = iter.Next(1, out object obj, out uint fetched);
 						if (hr < 0 || fetched == 0)
 							break;
 

@@ -51,12 +51,9 @@ namespace dnSpy.Hex.Operations {
 			var upper = pattern.ToUpperInvariant();
 			if (lower.Length != upper.Length)
 				return false;
-
-			byte[] lowerBytesTmp, lowerCharLengths;
-			byte[] upperBytesTmp, upperCharLengths;
-			if (!GetCharLengths(encoding, lower, out lowerCharLengths, out lowerBytesTmp))
+			if (!GetCharLengths(encoding, lower, out var lowerCharLengths, out var lowerBytesTmp))
 				return false;
-			if (!GetCharLengths(encoding, upper, out upperCharLengths, out upperBytesTmp))
+			if (!GetCharLengths(encoding, upper, out var upperCharLengths, out var upperBytesTmp))
 				return false;
 
 			if (lowerBytesTmp.Length != upperBytesTmp.Length)
@@ -87,11 +84,8 @@ namespace dnSpy.Hex.Operations {
 			int charStartByteIndex = 0;
 			for (int encodedBytesIndex = 0; encodedBytesIndex < encodedBytesTmp.Length; encodedBytesIndex++) {
 				bytes[0] = encodedBytesTmp[encodedBytesIndex];
-				int bytesUsed;
-				int charsUsed;
-				bool completed;
 				var isLastByte = encodedBytesIndex + 1 == encodedBytesTmp.Length;
-				decoder.Convert(bytes, 0, 1, chars, 0, 2, isLastByte, out bytesUsed, out charsUsed, out completed);
+				decoder.Convert(bytes, 0, 1, chars, 0, 2, isLastByte, out int bytesUsed, out int charsUsed, out bool completed);
 				if (isLastByte && charsUsed == 0)
 					return false;
 				if (charsUsed > 0) {

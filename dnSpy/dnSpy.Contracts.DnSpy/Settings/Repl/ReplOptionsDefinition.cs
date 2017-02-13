@@ -105,15 +105,9 @@ namespace dnSpy.Contracts.Settings.Repl {
 		/// <param name="guid">Guid of settings, eg. <see cref="AppSettingsConstants.GUID_REPL_CSHARP_ROSLYN"/></param>
 		public ExportReplOptionsDefinitionAttribute(string languageName, string contentType, string guid)
 			: base(typeof(ReplOptionsDefinition)) {
-			if (languageName == null)
-				throw new ArgumentNullException(nameof(languageName));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			if (guid == null)
-				throw new ArgumentNullException(nameof(guid));
-			ContentType = contentType;
-			Guid = guid;
-			LanguageName = languageName;
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
+			Guid = guid ?? throw new ArgumentNullException(nameof(guid));
+			LanguageName = languageName ?? throw new ArgumentNullException(nameof(languageName));
 			UseVirtualSpace = DefaultReplOptions.UseVirtualSpace;
 			WordWrapStyle = DefaultReplOptions.WordWrapStyle;
 			ShowLineNumbers = DefaultReplOptions.ShowLineNumbers;

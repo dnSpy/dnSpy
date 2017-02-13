@@ -38,9 +38,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="method">Method</param>
 		protected MethodNode(MethodDef method) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
-			MethodDef = method;
+			MethodDef = method ?? throw new ArgumentNullException(nameof(method));
 		}
 	}
 }

@@ -34,9 +34,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public StorageStreamHeader[] StorageStreamHeaders { get; private set; }
 
 		DotNetMetadataHeaderReader(HexBufferFile file, HexSpan mdSpan) {
-			if (file == null)
-				throw new ArgumentNullException(nameof(file));
-			this.file = file;
+			this.file = file ?? throw new ArgumentNullException(nameof(file));
 			MetadataSpan = mdSpan;
 		}
 

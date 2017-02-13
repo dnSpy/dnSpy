@@ -42,12 +42,8 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		public bool IsEmpty => sb.Length == 0;
 
 		public CodeToolTipWriter(IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.classificationFormatMap = classificationFormatMap;
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.syntaxHighlight = syntaxHighlight;
 			result = new List<ColorAndText>();
 			sb = new StringBuilder();

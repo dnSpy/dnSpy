@@ -44,18 +44,10 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly bool syntaxHighlight;
 
 		public CodeToolTipProvider(IWpfTextView wpfTextView, IDotNetImageService dotNetImageService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (dotNetImageService == null)
-				throw new ArgumentNullException(nameof(dotNetImageService));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.wpfTextView = wpfTextView;
-			this.dotNetImageService = dotNetImageService;
-			this.classificationFormatMap = classificationFormatMap;
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.dotNetImageService = dotNetImageService ?? throw new ArgumentNullException(nameof(dotNetImageService));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.syntaxHighlight = syntaxHighlight;
 			writers = new List<CodeToolTipWriter>();
 			CreateNewOutput();

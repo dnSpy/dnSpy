@@ -50,9 +50,8 @@ namespace dnSpy.Documents.TreeView {
 
 			var nsDict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var td in Document.ModuleDef.Types) {
-				List<TypeDef> list;
 				var ns = UTF8String.ToSystemStringOrEmpty(td.Namespace);
-				if (!nsDict.TryGetValue(ns, out list))
+				if (!nsDict.TryGetValue(ns, out var list))
 					nsDict.Add(ns, list = new List<TypeDef>());
 				list.Add(td);
 			}

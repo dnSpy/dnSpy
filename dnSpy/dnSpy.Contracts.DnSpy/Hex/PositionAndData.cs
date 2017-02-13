@@ -47,10 +47,8 @@ namespace dnSpy.Contracts.Hex {
 		public PositionAndData(HexBufferPoint position, byte[] data) {
 			if (position.IsDefault)
 				throw new ArgumentException();
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
 			Position = position;
-			Data = data;
+			Data = data ?? throw new ArgumentNullException(nameof(data));
 		}
 	}
 }

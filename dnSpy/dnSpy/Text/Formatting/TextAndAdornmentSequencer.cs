@@ -36,12 +36,8 @@ namespace dnSpy.Text.Formatting {
 		readonly ITagAggregator<SpaceNegotiatingAdornmentTag> tagAggregator;
 
 		public TextAndAdornmentSequencer(ITextView textView, ITagAggregator<SpaceNegotiatingAdornmentTag> tagAggregator) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (tagAggregator == null)
-				throw new ArgumentNullException(nameof(tagAggregator));
-			this.textView = textView;
-			this.tagAggregator = tagAggregator;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.tagAggregator = tagAggregator ?? throw new ArgumentNullException(nameof(tagAggregator));
 			textView.Closed += TextView_Closed;
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 		}
@@ -169,9 +165,7 @@ namespace dnSpy.Text.Formatting {
 			readonly IMappingTagSpan<SpaceNegotiatingAdornmentTag> tagSpan;
 
 			public AdornmentElement(IMappingTagSpan<SpaceNegotiatingAdornmentTag> tagSpan) {
-				if (tagSpan == null)
-					throw new ArgumentNullException(nameof(tagSpan));
-				this.tagSpan = tagSpan;
+				this.tagSpan = tagSpan ?? throw new ArgumentNullException(nameof(tagSpan));
 			}
 		}
 

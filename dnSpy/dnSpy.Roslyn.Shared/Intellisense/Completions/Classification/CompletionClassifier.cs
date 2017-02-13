@@ -52,9 +52,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 		StringBuilder stringBuilder;
 
 		public CompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			punctuationClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Punctuation);
 		}
 

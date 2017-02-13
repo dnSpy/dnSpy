@@ -21,7 +21,6 @@ using System;
 using System.ComponentModel.Composition;
 using dndbg.Engine;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 

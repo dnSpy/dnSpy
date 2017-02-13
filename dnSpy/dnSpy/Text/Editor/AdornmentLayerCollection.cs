@@ -34,9 +34,7 @@ namespace dnSpy.Text.Editor {
 		readonly LayerKind layerKind;
 
 		public AdornmentLayerCollection(IWpfTextView wpfTextView, LayerKind layerKind) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			this.layerKind = layerKind;
 			adornmentLayers = new List<AdornmentLayer>();
 			if (layerKind != LayerKind.Normal)

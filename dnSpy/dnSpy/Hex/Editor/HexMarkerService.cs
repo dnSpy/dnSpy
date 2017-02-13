@@ -83,18 +83,10 @@ namespace dnSpy.Hex.Editor {
 		bool useReducedOpacityForHighContrast;
 
 		public HexMarkerService(WpfHexView wpfHexView, HexTagAggregator<HexMarkerTag> tagAggregator, VSTC.IEditorFormatMap editorFormatMap, IThemeService themeService) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			if (tagAggregator == null)
-				throw new ArgumentNullException(nameof(tagAggregator));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			this.wpfHexView = wpfHexView;
-			this.tagAggregator = tagAggregator;
-			this.editorFormatMap = editorFormatMap;
-			this.themeService = themeService;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
+			this.tagAggregator = tagAggregator ?? throw new ArgumentNullException(nameof(tagAggregator));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
 			textMarkerAdornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.TextMarker);
 			negativeTextMarkerAdornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.NegativeTextMarker);
 			markerElements = new List<MarkerElement>();
@@ -149,14 +141,10 @@ namespace dnSpy.Hex.Editor {
 			public MarkerElement(HexBufferSpan span, string type, int zIndex, Geometry geometry) {
 				if (span.IsDefault)
 					throw new ArgumentException();
-				if (type == null)
-					throw new ArgumentNullException(nameof(type));
-				if (geometry == null)
-					throw new ArgumentNullException(nameof(geometry));
 				Span = span;
-				Type = type;
+				Type = type ?? throw new ArgumentNullException(nameof(type));
 				ZIndex = zIndex;
-				this.geometry = geometry;
+				this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 				Panel.SetZIndex(this, zIndex);
 			}
 

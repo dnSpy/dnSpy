@@ -46,14 +46,10 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="line">Line</param>
 		/// <param name="textPosition">Text position</param>
 		public HexMouseHoverEventArgs(HexView view, HexBufferLine line, int textPosition) {
-			if (view == null)
-				throw new ArgumentNullException(nameof(view));
-			if (line == null)
-				throw new ArgumentNullException(nameof(line));
 			if (textPosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(textPosition));
-			View = view;
-			Line = line;
+			View = view ?? throw new ArgumentNullException(nameof(view));
+			Line = line ?? throw new ArgumentNullException(nameof(line));
 			TextPosition = textPosition;
 		}
 	}

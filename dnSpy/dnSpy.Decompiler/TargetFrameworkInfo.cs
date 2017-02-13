@@ -53,12 +53,8 @@ namespace dnSpy.Decompiler {
 		public bool FromAttribute { get; }
 
 		TargetFrameworkInfo(string framework, string version, string profile, bool fromAttribute) {
-			if (framework == null)
-				throw new ArgumentNullException(nameof(framework));
-			if (version == null)
-				throw new ArgumentNullException(nameof(version));
-			Framework = framework;
-			Version = version;
+			Framework = framework ?? throw new ArgumentNullException(nameof(framework));
+			Version = version ?? throw new ArgumentNullException(nameof(version));
 			Profile = profile;
 			FromAttribute = fromAttribute;
 		}
@@ -125,8 +121,7 @@ namespace dnSpy.Decompiler {
 					if (value.StartsWith("v", StringComparison.OrdinalIgnoreCase))
 						value = value.Substring(1);
 					versionStr = value;
-					Version version = null;
-					if (!System.Version.TryParse(value, out version))
+					if (!System.Version.TryParse(value, out var version))
 						return null;
 				}
 				else if (key.Equals("Profile", StringComparison.OrdinalIgnoreCase)) {

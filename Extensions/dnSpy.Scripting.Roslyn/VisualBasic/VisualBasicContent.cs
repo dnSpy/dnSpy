@@ -45,7 +45,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
 				ContentTypeString = ContentTypes.ReplVisualBasicRoslyn,
 			};
-			options.Roles.Add(PredefinedDnSpyTextViewRoles.VisualBasicRepl);
+			options.Roles.Add(PredefinedDsTextViewRoles.VisualBasicRepl);
 			return options;
 		}
 	}

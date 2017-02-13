@@ -33,9 +33,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	sealed class HexViewContext {
 		public HexView HexView { get; }
 		public HexViewContext(HexView hexView) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			HexView = hexView;
+			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 		}
 	}
 

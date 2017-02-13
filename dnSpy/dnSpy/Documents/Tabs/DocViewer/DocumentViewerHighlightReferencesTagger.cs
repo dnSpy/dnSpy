@@ -89,9 +89,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		bool canHighlightReferences;
 
 		DocumentViewerHighlightReferencesTagger(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			spanReferenceCollection = SpanDataCollection<ReferenceAndId>.Empty;
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;
@@ -139,14 +137,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void SetDocumentViewer(IDocumentViewer documentViewer, Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>> documentViewerReferenceEnablerProviders) {
-			if (documentViewer == null)
-				throw new ArgumentNullException(nameof(documentViewer));
-			if (documentViewerReferenceEnablerProviders == null)
-				throw new ArgumentNullException(nameof(documentViewerReferenceEnablerProviders));
 			if (this.documentViewer != null)
 				throw new InvalidOperationException();
-			this.documentViewer = documentViewer;
-			this.documentViewerReferenceEnablerProviders = documentViewerReferenceEnablerProviders;
+			this.documentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
+			this.documentViewerReferenceEnablerProviders = documentViewerReferenceEnablerProviders ?? throw new ArgumentNullException(nameof(documentViewerReferenceEnablerProviders));
 			documentViewerReferenceEnablers = new Dictionary<string, IDocumentViewerReferenceEnabler>(documentViewerReferenceEnablerProviders.Count, StringComparer.Ordinal);
 			documentViewer.GotNewContent += DocumentViewer_GotNewContent;
 		}
@@ -183,10 +177,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (id == null)
 				return true;
 
-			IDocumentViewerReferenceEnabler refChecker;
-			if (!documentViewerReferenceEnablers.TryGetValue(id, out refChecker)) {
-				Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata> lazy;
-				bool b = documentViewerReferenceEnablerProviders.TryGetValue(id, out lazy);
+			if (!documentViewerReferenceEnablers.TryGetValue(id, out var refChecker)) {
+				bool b = documentViewerReferenceEnablerProviders.TryGetValue(id, out var lazy);
 				Debug.Assert(b, $"Missing {nameof(IDocumentViewerReferenceEnablerProvider)} for reference id = {id}");
 				if (b) {
 					refChecker = lazy.Value.Create(documentViewer);

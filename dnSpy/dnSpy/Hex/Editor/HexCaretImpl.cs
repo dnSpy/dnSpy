@@ -68,15 +68,13 @@ namespace dnSpy.Hex.Editor {
 		double preferredXCoordinate;
 
 		public HexCaretImpl(WpfHexView hexView, HexAdornmentLayer caretLayer, VSTC.IClassificationFormatMap classificationFormatMap, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
 			if (caretLayer == null)
 				throw new ArgumentNullException(nameof(caretLayer));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
-			this.hexView = hexView;
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			imeState = new ImeState();
 			preferredXCoordinate = 0;
 			__preferredYCoordinate = 0;

@@ -41,12 +41,8 @@ namespace dnSpy.Text.Groups {
 		readonly TextViewOptionsGroup owner;
 
 		public TextViewGroupOption(TextViewOptionsGroup owner, ContentTypeOptionDefinition definition) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
-			if (definition == null)
-				throw new ArgumentNullException(nameof(definition));
-			this.owner = owner;
-			Definition = definition;
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+			Definition = definition ?? throw new ArgumentNullException(nameof(definition));
 			theValue = Definition.DefaultValue;
 		}
 	}

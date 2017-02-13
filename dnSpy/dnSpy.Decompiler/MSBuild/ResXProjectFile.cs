@@ -96,8 +96,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		string TypeNameConverter(Type type) {
 			var newAsm = new AssemblyNameInfo(type.Assembly.GetName());
-			IAssembly oldAsm;
-			if (!newToOldAsm.TryGetValue(newAsm, out oldAsm))
+			if (!newToOldAsm.TryGetValue(newAsm, out var oldAsm))
 				return type.AssemblyQualifiedName;
 			if (type.IsGenericType)
 				return type.AssemblyQualifiedName;

@@ -147,8 +147,7 @@ namespace dnSpy.Contracts.Controls {
 		/// <returns></returns>
 		public static bool IsSymbol(FontFamily ff) {
 			foreach (var tf in ff.GetTypefaces()) {
-				GlyphTypeface gtf;
-				if (!tf.TryGetGlyphTypeface(out gtf))
+				if (!tf.TryGetGlyphTypeface(out var gtf))
 					return true;
 				if (gtf.Symbol)
 					return true;
@@ -178,8 +177,7 @@ namespace dnSpy.Contracts.Controls {
 				if (tf.Style != FontStyles.Normal)
 					continue;
 
-				GlyphTypeface gtf;
-				if (!tf.TryGetGlyphTypeface(out gtf))
+				if (!tf.TryGetGlyphTypeface(out var gtf))
 					return false;
 				if (gtf.Symbol)
 					return false;
@@ -195,19 +193,16 @@ namespace dnSpy.Contracts.Controls {
 		static bool CheckSameSize(GlyphTypeface gtf) {
 			double? width = null, height = null;
 			for (char c = ' '; c <= (char)0x7E; c++) {
-				ushort glyphIndex;
-				if (!gtf.CharacterToGlyphMap.TryGetValue(c, out glyphIndex))
+				if (!gtf.CharacterToGlyphMap.TryGetValue(c, out ushort glyphIndex))
 					return false;
-				double w;
-				if (!gtf.AdvanceWidths.TryGetValue(glyphIndex, out w))
+				if (!gtf.AdvanceWidths.TryGetValue(glyphIndex, out double w))
 					return false;
 				if (width == null)
 					width = w;
 				else if (width.Value != w)
 					return false;
 
-				double h;
-				if (!gtf.AdvanceHeights.TryGetValue(glyphIndex, out h))
+				if (!gtf.AdvanceHeights.TryGetValue(glyphIndex, out double h))
 					return false;
 				if (height == null)
 					height = h;

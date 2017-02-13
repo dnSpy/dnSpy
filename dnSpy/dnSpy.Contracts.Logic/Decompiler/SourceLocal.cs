@@ -41,12 +41,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="local">Local</param>
 		/// <param name="name">Name used by the decompiler</param>
 		public SourceLocal(Local local, string name) {
-			if (local == null)
-				throw new ArgumentNullException(nameof(local));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			Local = local;
-			Name = name;
+			Local = local ?? throw new ArgumentNullException(nameof(local));
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 	}
 }

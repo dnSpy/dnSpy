@@ -43,9 +43,7 @@ namespace dnSpy.Settings.Dialog {
 		readonly IClassificationType appSettingsTextMatchHighlightClassificationType;
 
 		public AppSettingsSearchTextClassifier(IClassificationType appSettingsTextMatchHighlightClassificationType) {
-			if (appSettingsTextMatchHighlightClassificationType == null)
-				throw new ArgumentNullException(nameof(appSettingsTextMatchHighlightClassificationType));
-			this.appSettingsTextMatchHighlightClassificationType = appSettingsTextMatchHighlightClassificationType;
+			this.appSettingsTextMatchHighlightClassificationType = appSettingsTextMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(appSettingsTextMatchHighlightClassificationType));
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

@@ -104,16 +104,14 @@ namespace dnSpy.Debugger.Scripting {
 
 		public IDebuggerType[] GenericTypeArguments {
 			get {
-				List<IDebuggerType> targs, margs;
-				GetGenericArguments(out targs, out margs);
+				GetGenericArguments(out var targs, out var margs);
 				return targs.ToArray();
 			}
 		}
 
 		public IDebuggerType[] GenericMethodArguments {
 			get {
-				List<IDebuggerType> targs, margs;
-				GetGenericArguments(out targs, out margs);
+				GetGenericArguments(out var targs, out var margs);
 				return margs.ToArray();
 			}
 		}
@@ -207,8 +205,7 @@ namespace dnSpy.Debugger.Scripting {
 		public bool GetGenericArguments(out List<IDebuggerType> typeGenArgs, out List<IDebuggerType> methGenArgs) {
 			List<IDebuggerType> typeGenArgsTmp = null, methGenArgsTmp = null;
 			bool res = debugger.Dispatcher.UI(() => {
-				List<CorType> corTypeGenArgs, corMethGenArgs;
-				var res2 = CorFrame.GetTypeAndMethodGenericParameters(out corTypeGenArgs, out corMethGenArgs);
+				var res2 = CorFrame.GetTypeAndMethodGenericParameters(out var corTypeGenArgs, out var corMethGenArgs);
 				typeGenArgsTmp = new List<IDebuggerType>(corTypeGenArgs.Count);
 				methGenArgsTmp = new List<IDebuggerType>(corMethGenArgs.Count);
 				foreach (var t in corTypeGenArgs)

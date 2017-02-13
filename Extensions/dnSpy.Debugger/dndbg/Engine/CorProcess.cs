@@ -29,8 +29,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint HelperThreadId {
 			get {
-				uint threadId;
-				int hr = obj.GetHelperThreadID(out threadId);
+				int hr = obj.GetHelperThreadID(out uint threadId);
 				return hr < 0 ? 0 : threadId;
 			}
 		}
@@ -46,8 +45,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsRunning {
 			get {
-				int running;
-				int hr = obj.IsRunning(out running);
+				int hr = obj.IsRunning(out int running);
 				return hr >= 0 && running != 0;
 			}
 		}
@@ -57,14 +55,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorThread> Threads {
 			get {
-				ICorDebugThreadEnum threadEnum;
-				int hr = obj.EnumerateThreads(out threadEnum);
+				int hr = obj.EnumerateThreads(out var threadEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugThread thread = null;
-					uint count;
-					hr = threadEnum.Next(1, out thread, out count);
+					hr = threadEnum.Next(1, out var thread, out uint count);
 					if (hr != 0 || thread == null)
 						break;
 					yield return new CorThread(thread);
@@ -77,14 +72,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorAppDomain> AppDomains {
 			get {
-				ICorDebugAppDomainEnum appDomainEnum;
-				int hr = obj.EnumerateAppDomains(out appDomainEnum);
+				int hr = obj.EnumerateAppDomains(out var appDomainEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugAppDomain appDomain = null;
-					uint count;
-					hr = appDomainEnum.Next(1, out appDomain, out count);
+					hr = appDomainEnum.Next(1, out var appDomain, out uint count);
 					if (hr != 0 || appDomain == null)
 						break;
 					yield return new CorAppDomain(appDomain);
@@ -97,8 +89,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IntPtr Handle {
 			get {
-				IntPtr handle;
-				int hr = obj.GetHandle(out handle);
+				int hr = obj.GetHandle(out var handle);
 				return hr < 0 ? IntPtr.Zero : handle;
 			}
 		}
@@ -110,8 +101,7 @@ namespace dndbg.Engine {
 			get {
 				var p2 = obj as ICorDebugProcess2;
 				if (p2 != null) {
-					COR_VERSION ver;
-					int hr = p2.GetVersion(out ver);
+					int hr = p2.GetVersion(out var ver);
 					if (hr >= 0)
 						return new Version((int)ver.dwMajor, (int)ver.dwMinor, (int)ver.dwBuild, (int)ver.dwSubBuild);
 				}
@@ -128,8 +118,7 @@ namespace dndbg.Engine {
 				var p2 = obj as ICorDebugProcess2;
 				if (p2 == null)
 					return 0;
-				CorDebugJITCompilerFlags flags;
-				int hr = p2.GetDesiredNGENCompilerFlags(out flags);
+				int hr = p2.GetDesiredNGENCompilerFlags(out var flags);
 				return hr < 0 ? 0 : flags;
 			}
 			set {
@@ -210,9 +199,8 @@ namespace dndbg.Engine {
 				return null;
 			var buf = new byte[size];
 			for (int index = 0; index < size;) {
-				int sizeRead;
 				int sizeLeft = size - index;
-				int hr = ReadMemory(addr, buf, index, sizeLeft, out sizeRead);
+				int hr = ReadMemory(addr, buf, index, sizeLeft, out int sizeRead);
 				if (hr < 0 || sizeRead <= 0)
 					return null;
 				index += sizeRead;
@@ -235,8 +223,7 @@ namespace dndbg.Engine {
 		/// <param name="thread">Thread or null to check all threads</param>
 		/// <returns></returns>
 		public bool HasQueuedCallbacks(CorThread thread) {
-			int queued;
-			int hr = obj.HasQueuedCallbacks(thread?.RawObject, out queued);
+			int hr = obj.HasQueuedCallbacks(thread?.RawObject, out int queued);
 			return hr >= 0 && queued != 0;
 		}
 
@@ -246,8 +233,7 @@ namespace dndbg.Engine {
 		/// <param name="threadId">Thread ID</param>
 		/// <returns></returns>
 		public CorThread GetThread(uint threadId) {
-			ICorDebugThread thread;
-			int hr = obj.GetThread(threadId, out thread);
+			int hr = obj.GetThread(threadId, out var thread);
 			return hr < 0 || thread == null ? null : new CorThread(thread);
 		}
 
@@ -257,8 +243,7 @@ namespace dndbg.Engine {
 		/// <param name="threadId">Thread id</param>
 		/// <returns></returns>
 		public bool IsOSSuspended(uint threadId) {
-			int susp;
-			int hr = obj.IsOSSuspended(threadId, out susp);
+			int hr = obj.IsOSSuspended(threadId, out int susp);
 			return hr >= 0 && susp != 0;
 		}
 
@@ -303,16 +288,14 @@ namespace dndbg.Engine {
 		}
 
 		public bool IsTransitionStub(ulong addr) {
-			int ts;
-			int hr = obj.IsTransitionStub(addr, out ts);
+			int hr = obj.IsTransitionStub(addr, out int ts);
 			return hr >= 0 && ts != 0;
 		}
 
 		public void ClearCurrentException(uint threadId) => obj.ClearCurrentException(threadId);
 
 		public CorThread ThreadForFiberCookie(uint fiberCookie) {
-			ICorDebugThread thread;
-			int hr = obj.ThreadForFiberCookie(fiberCookie, out thread);
+			int hr = obj.ThreadForFiberCookie(fiberCookie, out var thread);
 			return hr < 0 || thread == null ? null : new CorThread(thread);
 		}
 
@@ -326,8 +309,7 @@ namespace dndbg.Engine {
 			var p5 = obj as ICorDebugProcess5;
 			if (p5 == null)
 				return null;
-			ICorDebugObjectValue value;
-			int hr = p5.GetObject(address, out value);
+			int hr = p5.GetObject(address, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 

@@ -281,14 +281,10 @@ namespace dnSpy.AsmEditor.Resources {
 			Resource NewResource;
 
 			public ModuleInfo(ResourceElementSetNode node) {
-				if (node == null)
-					throw new InvalidOperationException();
-				Node = node;
+				Node = node ?? throw new InvalidOperationException();
 				var module = node.GetModule();
 				Debug.Assert(module != null);
-				if (module == null)
-					throw new InvalidOperationException();
-				Module = module;
+				Module = module ?? throw new InvalidOperationException();
 				Index = module.Resources.IndexOf(node.Resource);
 				Debug.Assert(Index >= 0);
 				if (Index < 0)

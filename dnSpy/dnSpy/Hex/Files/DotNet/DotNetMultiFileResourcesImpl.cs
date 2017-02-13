@@ -79,8 +79,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			DataSectionPosition = dataSectionPosition;
 			var headerSpan = new HexBufferSpan(file.Buffer, HexSpan.FromBounds(file.Span.Start, nameSectionPosition));
 			Header = new DotNetMultiFileResourceHeaderDataImpl(headerSpan, resourceTypeSpan, resourceSetTypeSpan, versionPosition, paddingSpan, typeNames, numResources);
-			ResourceInfo[] resourceInfos;
-			dataArray = CreateDataArray(typeNames, numResources, paddingSpan.End, dataSectionPosition, nameSectionPosition, out resourceInfos);
+			dataArray = CreateDataArray(typeNames, numResources, paddingSpan.End, dataSectionPosition, nameSectionPosition, out var resourceInfos);
 
 			var files = new List<BufferFileOptions>(resourceInfos.Length);
 			foreach (var info in resourceInfos) {

@@ -47,9 +47,7 @@ namespace dnSpy.Contracts.Settings.Fonts {
 		/// <param name="name">Name</param>
 		/// <param name="fontType">Font type</param>
 		public ExportThemeFontSettingsDefinitionAttribute(string name, FontType fontType) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 			FontType = fontType;
 		}
 

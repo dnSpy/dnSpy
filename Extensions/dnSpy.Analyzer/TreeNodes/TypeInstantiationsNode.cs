@@ -31,10 +31,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool isSystemObject;
 
 		public TypeInstantiationsNode(TypeDef analyzedType) {
-			if (analyzedType == null)
-				throw new ArgumentNullException(nameof(analyzedType));
-
-			this.analyzedType = analyzedType;
+			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
 			isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
 		}
 

@@ -66,9 +66,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		public uint? Offset { get; }
 
 		public HexMethodReference(HexBufferFile file, uint token, uint? offset) {
-			if (file == null)
-				throw new ArgumentNullException(nameof(file));
-			File = file;
+			File = file ?? throw new ArgumentNullException(nameof(file));
 			Token = token;
 			Offset = offset;
 		}

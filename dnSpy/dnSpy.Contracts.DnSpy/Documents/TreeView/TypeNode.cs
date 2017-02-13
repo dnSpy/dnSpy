@@ -38,9 +38,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="type">Type</param>
 		protected TypeNode(TypeDef type) {
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			TypeDef = type;
+			TypeDef = type ?? throw new ArgumentNullException(nameof(type));
 		}
 
 		/// <summary>

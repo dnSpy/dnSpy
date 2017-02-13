@@ -75,8 +75,7 @@ namespace dnSpy.Debugger.Logger {
 				Debug.Assert(debugState?.dbg == dbg);
 
 				if (outputLoggerSettings.ShowProcessExitMessages) {
-					int processExitCode;
-					if (debugState == null || !NativeMethods.GetExitCodeProcess(debugState.hProcess_debuggee, out processExitCode))
+					if (debugState == null || !NativeMethods.GetExitCodeProcess(debugState.hProcess_debuggee, out int processExitCode))
 						processExitCode = -1;
 					textPane.WriteLine(BoxedTextColor.DebugLogExitProcess,
 						string.Format(dnSpy_Debugger_Resources.DebugLogExitProcess,
@@ -175,8 +174,7 @@ namespace dnSpy.Debugger.Logger {
 		}
 
 		string GetExceptionMessage(CorValue exValue) {
-			string exMsg;
-			if (EvalUtils.ReflectionReadExceptionMessage(exValue, out exMsg))
+			if (EvalUtils.ReflectionReadExceptionMessage(exValue, out string exMsg))
 				return exMsg ?? dnSpy_Debugger_Resources.ExceptionMessageIsNull;
 			return "???";
 		}
@@ -220,8 +218,7 @@ namespace dnSpy.Debugger.Logger {
 			case DebugCallbackKind.ExitThread:
 				if (outputLoggerSettings.ShowThreadExitMessages) {
 					var etArgs = (ExitThreadDebugCallbackEventArgs)e;
-					int threadExitCode;
-					if (!NativeMethods.GetExitCodeThread(etArgs.CorThread?.Handle ?? IntPtr.Zero, out threadExitCode))
+					if (!NativeMethods.GetExitCodeThread(etArgs.CorThread?.Handle ?? IntPtr.Zero, out int threadExitCode))
 						threadExitCode = -1;
 					textPane.WriteLine(BoxedTextColor.DebugLogExitThread,
 						string.Format(dnSpy_Debugger_Resources.DebugLogExitThread,

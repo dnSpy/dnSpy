@@ -198,8 +198,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
-			int count;
-			bool? enabled = breakpointService.Value.GetAddRemoveBreakpointsInfo(out count);
+			bool? enabled = breakpointService.Value.GetAddRemoveBreakpointsInfo(out int count);
 
 			if (enabled == null)
 				return dnSpy_Debugger_Resources.AddBreakpointCommand;
@@ -220,14 +219,12 @@ namespace dnSpy.Debugger {
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) {
-			int count;
-			bool enabled = breakpointService.Value.GetEnableDisableBreakpointsInfo(out count);
+			bool enabled = breakpointService.Value.GetEnableDisableBreakpointsInfo(out int count);
 			return IsMenuItemEnabledInternal(count);
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
-			int count;
-			bool enabled = breakpointService.Value.GetEnableDisableBreakpointsInfo(out count);
+			bool enabled = breakpointService.Value.GetEnableDisableBreakpointsInfo(out int count);
 			return GetHeaderInternal(enabled, count);
 		}
 

@@ -54,8 +54,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 			if (CouldBeIcon(module, typeName)) {
 				var dict = Deserializer.Deserialize(SystemDrawingIcon.DefinitionAssembly.FullName, SystemDrawingIcon.ReflectionFullName, serializedData);
-				DeserializedDataInfo info;
-				if (!dict.TryGetValue("IconData", out info))
+				if (!dict.TryGetValue("IconData", out var info))
 					return false;
 				imageData = info.Value as byte[];
 				return imageData != null;

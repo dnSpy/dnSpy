@@ -27,7 +27,6 @@ using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Text;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 
@@ -100,8 +99,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			if (connId == null)
 				return;
 
-			Action<XamlContext, XElement> cb;
-			if (!connIds.TryGetValue((int)connId.Id, out cb)) {
+			if (!connIds.TryGetValue((int)connId.Id, out var cb)) {
 				elem.AddBeforeSelf(new XComment(string.Format(dnSpy_BamlDecompiler_Resources.Error_UnknownConnectionId, connId.Id)));
 				return;
 			}
@@ -249,9 +247,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 						return null;
 					var cond = body[pos] as ILCondition;
 					if (cond == null) {
-						ILExpression ldthis, ldci4;
-						IField field;
-						if (!body[pos].Match(ILCode.Stfld, out field, out ldthis, out ldci4) || !ldthis.MatchThis() || !ldci4.MatchLdcI4(1))
+						if (!body[pos].Match(ILCode.Stfld, out IField field, out var ldthis, out var ldci4) || !ldthis.MatchThis() || !ldci4.MatchLdcI4(1))
 							return null;
 						return list;
 					}
@@ -262,21 +258,18 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					bool isEq = true;
 					var condExpr = cond.Condition;
 					for (;;) {
-						ILExpression expr;
-						if (!condExpr.Match(ILCode.LogicNot, out expr))
+						if (!condExpr.Match(ILCode.LogicNot, out ILExpression expr))
 							break;
 						isEq = !isEq;
 						condExpr = expr;
 					}
-					int val;
 					if (condExpr.Code != ILCode.Ceq && condExpr.Code != ILCode.Cne)
 						return null;
 					if (condExpr.Arguments.Count != 2)
 						return null;
-					ILVariable v;
-					if (!condExpr.Arguments[0].Match(ILCode.Ldloc, out v) || v.OriginalParameter?.Index != 1)
+					if (!condExpr.Arguments[0].Match(ILCode.Ldloc, out ILVariable v) || v.OriginalParameter?.Index != 1)
 						return null;
-					if (!condExpr.Arguments[1].Match(ILCode.Ldc_I4, out val))
+					if (!condExpr.Arguments[1].Match(ILCode.Ldc_I4, out int val))
 						return null;
 					if (condExpr.Code == ILCode.Cne)
 						isEq ^= true;

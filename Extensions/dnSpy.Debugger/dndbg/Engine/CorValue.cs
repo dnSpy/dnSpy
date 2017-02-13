@@ -114,8 +114,7 @@ namespace dndbg.Engine {
 				var o = obj as ICorDebugObjectValue;
 				if (o == null)
 					return null;
-				ICorDebugClass cls;
-				int hr = o.GetClass(out cls);
+				int hr = o.GetClass(out var cls);
 				return hr < 0 || cls == null ? null : new CorClass(cls);
 			}
 		}
@@ -128,8 +127,7 @@ namespace dndbg.Engine {
 				var v2 = obj as ICorDebugValue2;
 				if (v2 == null)
 					return null;
-				ICorDebugType type;
-				int hr = v2.GetExactType(out type);
+				int hr = v2.GetExactType(out var type);
 				return hr < 0 || type == null ? null : new CorType(type);
 			}
 		}
@@ -142,8 +140,7 @@ namespace dndbg.Engine {
 				var r = obj as ICorDebugReferenceValue;
 				if (r == null)
 					return false;
-				int isn;
-				int hr = r.IsNull(out isn);
+				int hr = r.IsNull(out int isn);
 				return hr >= 0 && isn != 0;
 			}
 		}
@@ -156,8 +153,7 @@ namespace dndbg.Engine {
 				var r = obj as ICorDebugReferenceValue;
 				if (r == null)
 					return 0;
-				ulong addr;
-				int hr = r.GetValue(out addr);
+				int hr = r.GetValue(out ulong addr);
 				return hr < 0 ? 0 : addr;
 			}
 			set {
@@ -176,8 +172,7 @@ namespace dndbg.Engine {
 				var h = obj as ICorDebugHandleValue;
 				if (h == null)
 					return 0;
-				CorDebugHandleType type;
-				int hr = h.GetHandleType(out type);
+				int hr = h.GetHandleType(out var type);
 				return hr < 0 ? 0 : type;
 			}
 		}
@@ -190,8 +185,7 @@ namespace dndbg.Engine {
 				var r = obj as ICorDebugReferenceValue;
 				if (r == null)
 					return null;
-				ICorDebugValue value;
-				int hr = r.Dereference(out value);
+				int hr = r.Dereference(out var value);
 				return hr < 0 || value == null ? null : new CorValue(value);
 			}
 		}
@@ -216,8 +210,7 @@ namespace dndbg.Engine {
 				var a = obj as ICorDebugArrayValue;
 				if (a == null)
 					return CorElementType.End;
-				CorElementType etype;
-				int hr = a.GetElementType(out etype);
+				int hr = a.GetElementType(out var etype);
 				return hr < 0 ? 0 : etype;
 			}
 		}
@@ -230,8 +223,7 @@ namespace dndbg.Engine {
 				var a = obj as ICorDebugArrayValue;
 				if (a == null)
 					return 0;
-				uint rank;
-				int hr = a.GetRank(out rank);
+				int hr = a.GetRank(out uint rank);
 				return hr < 0 ? 0 : rank;
 			}
 		}
@@ -244,8 +236,7 @@ namespace dndbg.Engine {
 				var a = obj as ICorDebugArrayValue;
 				if (a == null)
 					return 0;
-				uint count;
-				int hr = a.GetCount(out count);
+				int hr = a.GetCount(out uint count);
 				return hr < 0 ? 0 : count;
 			}
 		}
@@ -274,8 +265,7 @@ namespace dndbg.Engine {
 				var a = obj as ICorDebugArrayValue;
 				if (a == null)
 					return false;
-				int has;
-				int hr = a.HasBaseIndicies(out has);
+				int hr = a.HasBaseIndicies(out int has);
 				return hr >= 0 && has != 0;
 			}
 		}
@@ -304,8 +294,7 @@ namespace dndbg.Engine {
 				var b = obj as ICorDebugBoxValue;
 				if (b == null)
 					return null;
-				ICorDebugObjectValue value;
-				int hr = b.GetObject(out value);
+				int hr = b.GetObject(out var value);
 				return hr < 0 || value == null ? null : new CorValue(value);
 			}
 		}
@@ -318,8 +307,7 @@ namespace dndbg.Engine {
 				var s = obj as ICorDebugStringValue;
 				if (s == null)
 					return 0;
-				uint len;
-				int hr = s.GetLength(out len);
+				int hr = s.GetLength(out uint len);
 				return hr < 0 ? 0 : len;
 			}
 		}
@@ -354,8 +342,7 @@ namespace dndbg.Engine {
 				var o = obj as ICorDebugObjectValue;
 				if (o == null)
 					return false;
-				int i;
-				int hr = o.IsValueClass(out i);
+				int hr = o.IsValueClass(out int i);
 				return hr >= 0 && i != 0;
 			}
 		}
@@ -369,14 +356,11 @@ namespace dndbg.Engine {
 				var h3 = obj as ICorDebugHeapValue3;
 				if (h3 == null)
 					yield break;
-				ICorDebugThreadEnum threadEnum;
-				int hr = h3.GetMonitorEventWaitList(out threadEnum);
+				int hr = h3.GetMonitorEventWaitList(out var threadEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugThread thread = null;
-					uint count;
-					hr = threadEnum.Next(1, out thread, out count);
+					hr = threadEnum.Next(1, out var thread, out uint count);
 					if (hr != 0 || thread == null)
 						break;
 					yield return new CorThread(thread);
@@ -392,14 +376,11 @@ namespace dndbg.Engine {
 				var dex = obj as ICorDebugExceptionObjectValue;
 				if (dex == null)
 					yield break;
-				ICorDebugExceptionObjectCallStackEnum exEnum;
-				int hr = dex.EnumerateExceptionCallStack(out exEnum);
+				int hr = dex.EnumerateExceptionCallStack(out var exEnum);
 				if (hr < 0 || exEnum == null)
 					yield break;
 				for (;;) {
-					CorDebugExceptionObjectStackFrame objStackFrame;
-					uint count;
-					hr = exEnum.Next(1, out objStackFrame, out count);
+					hr = exEnum.Next(1, out var objStackFrame, out uint count);
 					if (hr != 0)
 						break;
 					yield return new CorExceptionObjectStackFrame(objStackFrame);
@@ -419,18 +400,15 @@ namespace dndbg.Engine {
 		public bool IsNeutered {
 			get {
 				// If it's neutered, at least one of these (most likely GetType()) should fail.
-				CorElementType type;
-				int hr = obj.GetType(out type);
+				int hr = obj.GetType(out var type);
 				if (hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED)
 					return true;
 				Debug.Assert(hr == 0);
-				ulong addr;
-				hr = obj.GetAddress(out addr);
+				hr = obj.GetAddress(out ulong addr);
 				if (hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED)
 					return true;
 				Debug.Assert(hr == 0);
-				uint size;
-				hr = obj.GetSize(out size);
+				hr = obj.GetSize(out uint size);
 				if (hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED)
 					return true;
 				Debug.Assert(hr == 0);
@@ -450,8 +428,7 @@ namespace dndbg.Engine {
 			if (v3 != null)
 				initdSize = v3.GetSize64(out size) == 0;
 			if (!initdSize) {
-				uint size32;
-				hr = value.GetSize(out size32);
+				hr = value.GetSize(out uint size32);
 				if (hr < 0)
 					size32 = 0;
 				size = size32;
@@ -486,8 +463,7 @@ namespace dndbg.Engine {
 			var a = obj as ICorDebugArrayValue;
 			if (a == null)
 				return null;
-			ICorDebugValue value;
-			int hr = a.GetElementAtPosition(index, out value);
+			int hr = a.GetElementAtPosition(index, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -542,8 +518,7 @@ namespace dndbg.Engine {
 		/// <param name="token">Token of field in <paramref name="cls"/></param>
 		/// <returns></returns>
 		public CorValue GetFieldValue(CorClass cls, uint token) {
-			int hr;
-			return GetFieldValue(cls, token, out hr);
+			return GetFieldValue(cls, token, out int hr);
 		}
 
 		/// <summary>
@@ -559,8 +534,7 @@ namespace dndbg.Engine {
 				hr = -1;
 				return null;
 			}
-			ICorDebugValue value;
-			hr = o.GetFieldValue(cls.RawObject, token, out value);
+			hr = o.GetFieldValue(cls.RawObject, token, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -597,8 +571,7 @@ namespace dndbg.Engine {
 			var h2 = obj as ICorDebugHeapValue2;
 			if (h2 == null)
 				return null;
-			ICorDebugHandleValue value;
-			int hr = h2.CreateHandle(type, out value);
+			int hr = h2.CreateHandle(type, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -613,8 +586,7 @@ namespace dndbg.Engine {
 			var h3 = obj as ICorDebugHeapValue3;
 			if (h3 == null)
 				return null;
-			ICorDebugThread thread;
-			int hr = h3.GetThreadOwningMonitorLock(out thread, out acquisitionCount);
+			int hr = h3.GetThreadOwningMonitorLock(out var thread, out acquisitionCount);
 			return hr < 0 || thread == null ? null : new CorThread(thread);
 		}
 
@@ -662,8 +634,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public bool GetNullableValue(out CorValue value) {
 			value = null;
-			TokenAndName hasValueInfo, valueInfo;
-			if (!Utils.GetSystemNullableFields(ExactType, out hasValueInfo, out valueInfo))
+			if (!Utils.GetSystemNullableFields(ExactType, out var hasValueInfo, out var valueInfo))
 				return false;
 			var type = ExactType;
 			if (type == null)

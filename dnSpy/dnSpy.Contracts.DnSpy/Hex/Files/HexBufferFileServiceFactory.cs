@@ -56,9 +56,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="bufferFileService">Created instance</param>
 		public BufferFileServiceCreatedEventArgs(HexBufferFileService bufferFileService) {
-			if (bufferFileService == null)
-				throw new ArgumentNullException(nameof(bufferFileService));
-			BufferFileService = bufferFileService;
+			BufferFileService = bufferFileService ?? throw new ArgumentNullException(nameof(bufferFileService));
 		}
 	}
 }

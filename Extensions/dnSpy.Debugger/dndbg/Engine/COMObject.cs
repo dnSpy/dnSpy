@@ -27,9 +27,7 @@ namespace dndbg.Engine {
 
 		protected COMObject(T obj) {
 			Debug.Assert(obj != null);
-			if (obj == null)
-				throw new ArgumentNullException(nameof(obj));
-			this.obj = obj;
+			this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 		}
 
 		public static bool operator ==(COMObject<T> a, COMObject<T> b) {

@@ -75,12 +75,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		DocumentViewerOutput documentViewerOutput;
 
 		public DocumentViewerContentFactory(Lazy<IDocumentViewerPostProcessor, IDocumentViewerPostProcessorMetadata>[] documentViewerPostProcessors, Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] documentViewerCustomDataProviders) {
-			if (documentViewerPostProcessors == null)
-				throw new ArgumentNullException(nameof(documentViewerPostProcessors));
-			if (documentViewerCustomDataProviders == null)
-				throw new ArgumentNullException(nameof(documentViewerCustomDataProviders));
-			this.documentViewerPostProcessors = documentViewerPostProcessors;
-			this.documentViewerCustomDataProviders = documentViewerCustomDataProviders;
+			this.documentViewerPostProcessors = documentViewerPostProcessors ?? throw new ArgumentNullException(nameof(documentViewerPostProcessors));
+			this.documentViewerCustomDataProviders = documentViewerCustomDataProviders ?? throw new ArgumentNullException(nameof(documentViewerCustomDataProviders));
 			documentViewerOutput = DocumentViewerOutput.Create();
 		}
 
@@ -117,8 +113,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				if (id == null)
 					throw new ArgumentNullException(nameof(id));
 
-				object listObj;
-				if (!customDataDict.TryGetValue(id, out listObj))
+				if (!customDataDict.TryGetValue(id, out object listObj))
 					return Array.Empty<TData>();
 				var list = (List<TData>)listObj;
 				return list.ToArray();

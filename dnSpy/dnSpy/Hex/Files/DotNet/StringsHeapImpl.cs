@@ -35,10 +35,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			public uint[] Tokens { get; }
 
 			public KnownStringInfo(HexSpan span, uint[] tokens) {
-				if (tokens == null)
-					throw new ArgumentNullException(nameof(tokens));
 				Span = span;
-				Tokens = tokens;
+				Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
 			}
 		}
 
@@ -50,10 +48,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			public StringZ String { get; }
 			public uint[] Tokens { get; }
 			public StringInfo(StringZ span, uint[] tokens) {
-				if (tokens == null)
-					throw new ArgumentNullException(nameof(tokens));
 				String = span;
-				Tokens = tokens;
+				Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
 			}
 		}
 
@@ -204,12 +200,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			uint recSize = mdTable.RowSize;
 			bool bigStrings = colInfo1.Size == 4;
 			uint tokenBase = new MDToken(mdTable.Table, 0).Raw;
-			List<uint> list;
 			for (uint rid = 1; rid <= rows; rid++, recPos += recSize) {
 				uint offs1 = bigStrings ? buffer.ReadUInt32(recPos + colInfo1.Offset) : buffer.ReadUInt16(recPos + colInfo1.Offset);
 				if (offs1 == 0)
 					continue;
-				if (!dict.TryGetValue(offs1, out list))
+				if (!dict.TryGetValue(offs1, out var list))
 					dict[offs1] = list = new List<uint>();
 				list.Add(tokenBase + rid);
 			}

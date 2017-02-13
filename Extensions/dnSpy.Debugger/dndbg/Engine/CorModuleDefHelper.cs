@@ -182,8 +182,7 @@ namespace dndbg.Engine {
 				if (addr == 0)
 					return sectionHeaders = Array.Empty<ImageSectionHeader>();
 				var data = new byte[0x1000];
-				int sizeRead;
-				module.Process.CorProcess.ReadMemory(module.Address, data, 0, data.Length, out sizeRead);
+				module.Process.CorProcess.ReadMemory(module.Address, data, 0, data.Length, out int sizeRead);
 				using (var peImage = new PEImage(data, !module.IsDynamic && module.IsInMemory ? ImageLayout.File : ImageLayout.Memory, true))
 					return sectionHeaders = peImage.ImageSectionHeaders.ToArray();
 			}

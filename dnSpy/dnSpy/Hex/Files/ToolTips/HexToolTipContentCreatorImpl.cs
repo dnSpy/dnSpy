@@ -56,9 +56,7 @@ namespace dnSpy.Hex.Files.ToolTips {
 		readonly List<WriterState> writerStateList;
 
 		public HexToolTipContentCreatorImpl(HexFieldFormatterFactory hexFieldFormatterFactory) {
-			if (hexFieldFormatterFactory == null)
-				throw new ArgumentNullException(nameof(hexFieldFormatterFactory));
-			this.hexFieldFormatterFactory = hexFieldFormatterFactory;
+			this.hexFieldFormatterFactory = hexFieldFormatterFactory ?? throw new ArgumentNullException(nameof(hexFieldFormatterFactory));
 			writerStateList = new List<WriterState>();
 			CreateNewWriter();
 		}

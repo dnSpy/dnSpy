@@ -87,8 +87,7 @@ namespace dndbg.Engine {
 		public bool CheckValid() {
 			if (HasExited)
 				return false;
-			int running;
-			return CorAppDomain.RawObject.IsRunning(out running) >= 0;
+			return CorAppDomain.RawObject.IsRunning(out int running) >= 0;
 		}
 
 		internal DnAssembly TryAdd(ICorDebugAssembly comAssembly) => assemblies.Add(comAssembly);

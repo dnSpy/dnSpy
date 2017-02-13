@@ -313,8 +313,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		static readonly object editCodeTextViewKey = new object();
 
 		internal static EditCodeVM TryGet(ITextView textView) {
-			EditCodeVM vm;
-			textView.Properties.TryGetProperty(editCodeTextViewKey, out vm);
+			textView.Properties.TryGetProperty(editCodeTextViewKey, out EditCodeVM vm);
 			return vm;
 		}
 

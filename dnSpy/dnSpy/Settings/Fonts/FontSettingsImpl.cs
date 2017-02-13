@@ -53,13 +53,9 @@ namespace dnSpy.Settings.Fonts {
 		double fontSize;
 
 		public FontSettingsImpl(ThemeFontSettings owner, Guid themeGuid, FontFamily fontFamily, double fontSize) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
-			if (fontFamily == null)
-				throw new ArgumentNullException(nameof(fontFamily));
-			ThemeFontSettings = owner;
+			ThemeFontSettings = owner ?? throw new ArgumentNullException(nameof(owner));
 			ThemeGuid = themeGuid;
-			this.fontFamily = fontFamily;
+			this.fontFamily = fontFamily ?? throw new ArgumentNullException(nameof(fontFamily));
 			FontSize = fontSize;
 		}
 	}

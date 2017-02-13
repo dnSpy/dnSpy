@@ -48,9 +48,7 @@ namespace dnSpy.Text.Editor {
 		readonly List<ISpaceReservationAgent> spaceReservationAgents;
 
 		public SpaceReservationManager(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			spaceReservationAgents = new List<ISpaceReservationAgent>();
 			Agents = new ReadOnlyCollection<ISpaceReservationAgent>(spaceReservationAgents);
 			wpfTextView.Closed += WpfTextView_Closed;

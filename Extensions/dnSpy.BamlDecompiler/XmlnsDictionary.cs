@@ -75,8 +75,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		NamespaceMap PIFixup(NamespaceMap map) {
-			NamespaceMap piMap;
-			if (piMappings.TryGetValue(map.XMLNamespace, out piMap)) {
+			if (piMappings.TryGetValue(map.XMLNamespace, out var piMap)) {
 				map.Assembly = piMap.Assembly;
 				map.CLRNamespace = piMap.CLRNamespace;
 			}

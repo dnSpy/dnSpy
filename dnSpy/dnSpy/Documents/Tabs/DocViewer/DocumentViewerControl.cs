@@ -65,9 +65,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new ArgumentNullException(nameof(textBufferFactoryService));
 			if (dsTextEditorFactoryService == null)
 				throw new ArgumentNullException(nameof(dsTextEditorFactoryService));
-			if (textEditorHelper == null)
-				throw new ArgumentNullException(nameof(textEditorHelper));
-			this.textEditorHelper = textEditorHelper;
+			this.textEditorHelper = textEditorHelper ?? throw new ArgumentNullException(nameof(textEditorHelper));
 			defaultContentType = textBufferFactoryService.TextContentType;
 			cachedColorsList = new CachedColorsList();
 			emptyContent = new DocumentViewerContent(string.Empty, CachedTextColorsCollection.Empty, SpanDataCollection<ReferenceInfo>.Empty, new Dictionary<string, object>());

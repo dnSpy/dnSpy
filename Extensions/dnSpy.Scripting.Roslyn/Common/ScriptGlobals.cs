@@ -36,13 +36,9 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		readonly PrintOptionsImpl printOptionsImpl;
 
 		public ScriptGlobals(IScriptGlobalsHelper owner, Dispatcher dispatcher, CancellationToken token) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
-			if (dispatcher == null)
-				throw new ArgumentNullException(nameof(dispatcher));
-			this.owner = owner;
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			this.token = token;
-			this.dispatcher = dispatcher;
+			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 			printOptionsImpl = new PrintOptionsImpl();
 		}
 

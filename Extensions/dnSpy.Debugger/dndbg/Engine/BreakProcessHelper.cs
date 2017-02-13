@@ -34,9 +34,7 @@ namespace dndbg.Engine {
 		DnBreakpoint breakpoint;
 
 		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename) {
-			if (debugger == null)
-				throw new ArgumentNullException(nameof(debugger));
-			this.debugger = debugger;
+			this.debugger = debugger ?? throw new ArgumentNullException(nameof(debugger));
 			this.type = type;
 			this.filename = filename;
 			AddStartupBreakpoint();
@@ -160,8 +158,7 @@ namespace dndbg.Engine {
 				}
 			}
 
-			string otherModuleName;
-			uint epToken = GetEntryPointToken(filename, out otherModuleName);
+			uint epToken = GetEntryPointToken(filename, out string otherModuleName);
 			if (epToken != 0) {
 				if ((Table)(epToken >> 24) == Table.Method) {
 					SetILBreakpoint(moduleId, epToken);
@@ -193,8 +190,7 @@ namespace dndbg.Engine {
 			debugger.RemoveBreakpoint(breakpoint);
 			breakpoint = null;
 
-			string otherModuleName;
-			uint epToken = GetEntryPointToken(otherModuleFullName, out otherModuleName);
+			uint epToken = GetEntryPointToken(otherModuleFullName, out string otherModuleName);
 			if (epToken != 0 && (Table)(epToken >> 24) == Table.Method) {
 				SetILBreakpoint(mod.DnModuleId, epToken);
 				return false;

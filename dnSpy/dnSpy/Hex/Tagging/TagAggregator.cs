@@ -68,12 +68,10 @@ namespace dnSpy.Hex.Tagging {
 		}
 
 		protected TagAggregator(HexBuffer buffer) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
 			dispatcher = Dispatcher.CurrentDispatcher;
 			batchedTagsChangedList = new List<HexBufferSpan>();
 			lockObj = new object();
-			Buffer = buffer;
+			Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 			taggers = Array.Empty<IHexTagger<T>>();
 			hexTagAggregatorProxy = new HexTagAggregatorProxy(this);
 		}

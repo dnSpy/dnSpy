@@ -161,12 +161,8 @@ namespace dnSpy.Text.Settings {
 		protected readonly ITextViewOptionsGroup group;
 
 		protected CommonEditorOptions(ITextViewOptionsGroup group, IContentType contentType) {
-			if (group == null)
-				throw new ArgumentNullException(nameof(group));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			this.group = group;
-			ContentType = contentType;
+			this.group = group ?? throw new ArgumentNullException(nameof(group));
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
 		}
 	}
 }

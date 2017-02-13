@@ -34,12 +34,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public ContextMenuInitializer(IWpfTextView textView, FrameworkElement ctrl) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (ctrl == null)
-				throw new ArgumentNullException(nameof(ctrl));
-			this.textView = textView;
-			this.ctrl = ctrl;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.ctrl = ctrl ?? throw new ArgumentNullException(nameof(ctrl));
 		}
 
 		public void Initialize(IMenuItemContext context, ContextMenu menu) {

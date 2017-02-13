@@ -151,8 +151,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns>Coded token</returns>
 		/// <seealso cref="Encode(uint,out uint)"/>
 		public uint Encode(uint token) {
-			uint codedToken;
-			Encode(token, out codedToken);
+			Encode(token, out uint codedToken);
 			return codedToken;
 		}
 
@@ -191,8 +190,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns>Decoded token or 0 on failure</returns>
 		/// <seealso cref="Decode(uint,out MDToken)"/>
 		public MDToken Decode2(uint codedToken) {
-			uint token;
-			Decode(codedToken, out token);
+			Decode(codedToken, out uint token);
 			return new MDToken(token);
 		}
 
@@ -203,8 +201,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns>Decoded token or 0 on failure</returns>
 		/// <seealso cref="Decode(uint,out uint)"/>
 		public uint Decode(uint codedToken) {
-			uint token;
-			Decode(codedToken, out token);
+			Decode(codedToken, out uint token);
 			return token;
 		}
 
@@ -215,8 +212,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="token">Decoded token</param>
 		/// <returns><c>true</c> if successful</returns>
 		public bool Decode(uint codedToken, out MDToken token) {
-			uint decodedToken;
-			bool result = Decode(codedToken, out decodedToken);
+			bool result = Decode(codedToken, out uint decodedToken);
 			token = new MDToken(decodedToken);
 			return result;
 		}

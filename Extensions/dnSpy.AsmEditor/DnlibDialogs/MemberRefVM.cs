@@ -142,8 +142,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickTypeSpec() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
-			bool canceled;
-			var newType = typeSigCreator.Create(typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec), (Class as ITypeDefOrRef).ToTypeSig(), out canceled);
+			var newType = typeSigCreator.Create(typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec), (Class as ITypeDefOrRef).ToTypeSig(), out bool canceled);
 			if (!canceled)
 				Class = newType.ToTypeDefOrRef();
 		}

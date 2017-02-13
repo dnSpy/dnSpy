@@ -30,9 +30,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly TypeDef analyzedType;
 
 		public TypeNode(TypeDef analyzedType) {
-			if (analyzedType == null)
-				throw new ArgumentNullException(nameof(analyzedType));
-			this.analyzedType = analyzedType;
+			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;

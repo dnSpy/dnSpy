@@ -28,9 +28,7 @@ namespace dnSpy.Settings.Dialog {
 		public SearchMatcher SearchMatcher { get; }
 		public AppSettingsTreeViewNodeClassifierContext(SearchMatcher searchMatcher, string text, ITreeView treeView, TreeNodeData node, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
 			: base(text, treeView, node, isToolTip, colorize, colors) {
-			if (searchMatcher == null)
-				throw new ArgumentNullException(nameof(searchMatcher));
-			SearchMatcher = searchMatcher;
+			SearchMatcher = searchMatcher ?? throw new ArgumentNullException(nameof(searchMatcher));
 		}
 	}
 }

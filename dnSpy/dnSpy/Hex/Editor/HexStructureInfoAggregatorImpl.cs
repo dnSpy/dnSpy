@@ -27,9 +27,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexStructureInfoProvider[] providers;
 
 		public HexStructureInfoAggregatorImpl(HexStructureInfoProvider[] providers) {
-			if (providers == null)
-				throw new ArgumentNullException(nameof(providers));
-			this.providers = providers;
+			this.providers = providers ?? throw new ArgumentNullException(nameof(providers));
 		}
 	}
 }

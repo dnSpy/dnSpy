@@ -48,8 +48,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static IReplEditor TryGetInstance(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			IReplEditor replEditor;
-			textView.Properties.TryGetProperty(Key, out replEditor);
+			textView.Properties.TryGetProperty(Key, out IReplEditor replEditor);
 			return replEditor;
 		}
 	}

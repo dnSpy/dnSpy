@@ -218,9 +218,7 @@ namespace dnSpy.Text.Editor {
 				const int MIN_DELAY_MILLISECS = 50;
 
 				public MouseHoverHandler(EventHandler<MouseHoverEventArgs> handler) {
-					if (handler == null)
-						throw new ArgumentNullException(nameof(handler));
-					Handler = handler;
+					Handler = handler ?? throw new ArgumentNullException(nameof(handler));
 					var attr = handler.Method.GetCustomAttributes(typeof(MouseHoverAttribute), false).FirstOrDefault() as MouseHoverAttribute;
 					DelayTicks = Math.Max(MIN_DELAY_MILLISECS, attr?.Delay ?? DEFAULT_DELAY_MILLISECS) * 10000L;
 				}

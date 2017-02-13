@@ -101,9 +101,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			Name = Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, OriginalToken.Raw), MDAPI.GetMethodName(mdi, token) ?? string.Empty);
-			MethodAttributes attrs;
-			MethodImplAttributes implAttrs;
-			MDAPI.GetMethodAttributes(mdi, token, out attrs, out implAttrs);
+			MDAPI.GetMethodAttributes(mdi, token, out var attrs, out var implAttrs);
 			Attributes = attrs;
 			ImplAttributes = implAttrs;
 			origAttributes = attrs;
@@ -193,9 +191,7 @@ namespace dndbg.DotNet {
 			var name = MDAPI.GetPinvokeMapName(mdi, token);
 			if (name == null)
 				return null;
-			PInvokeAttributes attrs;
-			uint moduleToken;
-			if (!MDAPI.GetPinvokeMapProps(mdi, token, out attrs, out moduleToken))
+			if (!MDAPI.GetPinvokeMapProps(mdi, token, out var attrs, out uint moduleToken))
 				return null;
 			var mr = readerModule.ResolveToken(moduleToken) as ModuleRef;
 			if (mr == null)

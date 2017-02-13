@@ -27,8 +27,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsActive {
 			get {
-				int active;
-				int hr = obj.IsActive(out active);
+				int hr = obj.IsActive(out int active);
 				return hr >= 0 && active != 0;
 			}
 		}

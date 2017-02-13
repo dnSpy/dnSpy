@@ -179,27 +179,15 @@ namespace dnSpy.Text.Editor.Search {
 		IReplaceListener[] replaceListeners;
 
 		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxService messageBoxService, ITextStructureNavigator textStructureNavigator, Lazy<IReplaceListenerProvider>[] replaceListenerProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (textSearchService2 == null)
-				throw new ArgumentNullException(nameof(textSearchService2));
-			if (searchSettings == null)
-				throw new ArgumentNullException(nameof(searchSettings));
-			if (messageBoxService == null)
-				throw new ArgumentNullException(nameof(messageBoxService));
-			if (textStructureNavigator == null)
-				throw new ArgumentNullException(nameof(textStructureNavigator));
-			if (replaceListenerProviders == null)
-				throw new ArgumentNullException(nameof(replaceListenerProviders));
 			if (editorOperationsFactoryService == null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
-			this.textSearchService2 = textSearchService2;
-			this.searchSettings = searchSettings;
-			this.messageBoxService = messageBoxService;
-			this.textStructureNavigator = textStructureNavigator;
-			this.replaceListenerProviders = replaceListenerProviders;
+			this.textSearchService2 = textSearchService2 ?? throw new ArgumentNullException(nameof(textSearchService2));
+			this.searchSettings = searchSettings ?? throw new ArgumentNullException(nameof(searchSettings));
+			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
+			this.textStructureNavigator = textStructureNavigator ?? throw new ArgumentNullException(nameof(textStructureNavigator));
+			this.replaceListenerProviders = replaceListenerProviders ?? throw new ArgumentNullException(nameof(replaceListenerProviders));
 			listeners = new List<ITextMarkerListener>();
 			searchString = string.Empty;
 			replaceString = string.Empty;
@@ -711,8 +699,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (!CanReplaceNext)
 				return;
 
-			string expandedReplacePattern;
-			var res = ReplaceFindNextCore(out expandedReplacePattern);
+			var res = ReplaceFindNextCore(out string expandedReplacePattern);
 			if (res == null)
 				return;
 

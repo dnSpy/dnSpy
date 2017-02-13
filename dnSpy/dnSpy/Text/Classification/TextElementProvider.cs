@@ -53,8 +53,7 @@ namespace dnSpy.Text.Classification {
 			if (ct == null)
 				throw new ArgumentException($"Invalid content type: {contentType}");
 
-			ITextClassifierAggregator aggregator;
-			if (!toAggregator.TryGetValue(ct, out aggregator))
+			if (!toAggregator.TryGetValue(ct, out var aggregator))
 				toAggregator.Add(ct, aggregator = textClassifierAggregatorService.Create(ct));
 			try {
 				tagsList.AddRange(aggregator.GetTags(context));

@@ -19,7 +19,6 @@
 
 using System;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Text;
 using ICSharpCode.Decompiler.Ast;
 
 namespace dnSpy.Decompiler.ILSpy.Core.CSharp {

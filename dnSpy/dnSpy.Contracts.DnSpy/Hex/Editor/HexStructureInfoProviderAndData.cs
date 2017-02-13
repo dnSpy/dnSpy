@@ -46,9 +46,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="provider">Provider</param>
 		/// <param name="value">Value</param>
 		public HexStructureInfoProviderAndData(HexStructureInfoProvider provider, TValue value) {
-			if (provider == null)
-				throw new ArgumentNullException(nameof(provider));
-			Provider = provider;
+			Provider = provider ?? throw new ArgumentNullException(nameof(provider));
 			Value = value;
 		}
 	}

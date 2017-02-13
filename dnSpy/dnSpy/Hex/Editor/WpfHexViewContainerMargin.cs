@@ -40,10 +40,8 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(wpfHexViewMarginProviderCollectionProvider));
 			if (wpfHexViewHost == null)
 				throw new ArgumentNullException(nameof(wpfHexViewHost));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
 			grid = new Grid();
-			this.name = name;
+			this.name = name ?? throw new ArgumentNullException(nameof(name));
 			this.isHorizontal = isHorizontal;
 			margins = Array.Empty<WpfHexViewMarginInfo>();
 			wpfHexViewMarginProviderCollection = wpfHexViewMarginProviderCollectionProvider.Create(wpfHexViewHost, this, name);

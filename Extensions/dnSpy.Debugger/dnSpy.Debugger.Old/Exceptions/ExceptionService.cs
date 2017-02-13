@@ -112,8 +112,7 @@ namespace dnSpy.Debugger.Exceptions {
 				return;
 			var exTypeName = exType.ToString(TypePrinterFlags.ShowNamespaces);
 			var key = new ExceptionInfoKey(ExceptionType.DotNet, exTypeName);
-			ExceptionInfo info;
-			if (!exceptions.TryGetValue(key, out info))
+			if (!exceptions.TryGetValue(key, out var info))
 				info = otherExceptions[(int)ExceptionType.DotNet];
 			if (!info.BreakOnFirstChance)
 				return;
@@ -122,8 +121,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public void BreakOnFirstChanceChanged(ExceptionInfo info) {
-			ExceptionInfo info2;
-			bool b = exceptions.TryGetValue(info.Key, out info2) && ReferenceEquals(info, info2);
+			bool b = exceptions.TryGetValue(info.Key, out var info2) && ReferenceEquals(info, info2);
 			Debug.Assert(b);
 			if (!b)
 				return;
@@ -156,8 +154,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public void Remove(ExceptionInfoKey key) {
-			ExceptionInfo info;
-			if (!exceptions.TryGetValue(key, out info))
+			if (!exceptions.TryGetValue(key, out var info))
 				return;
 			RemoveExceptions(new ExceptionInfo[] { info });
 		}
@@ -176,8 +173,7 @@ namespace dnSpy.Debugger.Exceptions {
 					WriteBreakOnFirstChance(otherExceptions[index], breakOnFirstChance);
 			}
 			else {
-				ExceptionInfo info;
-				if (exceptions.TryGetValue(key, out info))
+				if (exceptions.TryGetValue(key, out var info))
 					WriteBreakOnFirstChance(info, breakOnFirstChance);
 				else {
 					exceptions[key] = info = new ExceptionInfo(key, breakOnFirstChance);
@@ -201,8 +197,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public bool Exists(ExceptionInfoKey key) => exceptions.ContainsKey(key);
 
 		public void Add(ExceptionInfoKey key) {
-			ExceptionInfo info;
-			if (exceptions.TryGetValue(key, out info))
+			if (exceptions.TryGetValue(key, out var info))
 				return;
 
 			info = new ExceptionInfo(key, true);

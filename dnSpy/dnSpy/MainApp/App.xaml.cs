@@ -421,8 +421,7 @@ namespace dnSpy.MainApp {
 			if (string.IsNullOrEmpty(language))
 				return null;
 
-			Guid guid;
-			if (Guid.TryParse(language, out guid)) {
+			if (Guid.TryParse(language, out var guid)) {
 				var lang = decompilerService.Value.Find(guid);
 				if (lang != null)
 					return lang;

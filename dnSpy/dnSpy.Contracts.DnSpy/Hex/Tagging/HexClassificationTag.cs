@@ -35,9 +35,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// </summary>
 		/// <param name="classificationType">Classification type</param>
 		public HexClassificationTag(VSTC.IClassificationType classificationType) {
-			if (classificationType == null)
-				throw new ArgumentNullException(nameof(classificationType));
-			ClassificationType = classificationType;
+			ClassificationType = classificationType ?? throw new ArgumentNullException(nameof(classificationType));
 		}
 	}
 }

@@ -22,7 +22,6 @@ using dndbg.Engine;
 using dnlib.DotNet;
 
 #if THREAD_SAFE
-using ThreadSafe = dnlib.Threading.Collections;
 #else
 using ThreadSafe = System.Collections.Generic;
 #endif
@@ -92,8 +91,7 @@ namespace dndbg.DotNet {
 		}
 
 		protected override void InitializeEventMethods_NoLock() {
-			ThreadSafe.IList<MethodDef> newOtherMethods;
-			ownerType.InitializeEvent(this, out addMethod, out invokeMethod, out removeMethod, out newOtherMethods);
+			ownerType.InitializeEvent(this, out addMethod, out invokeMethod, out removeMethod, out var newOtherMethods);
 			otherMethods = newOtherMethods;
 		}
 	}

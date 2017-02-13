@@ -75,18 +75,10 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 		AdhocWorkspace workspace;
 
 		protected RoslynLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
-			if (codeEditorProvider == null)
-				throw new ArgumentNullException(nameof(codeEditorProvider));
-			if (docFactory == null)
-				throw new ArgumentNullException(nameof(docFactory));
-			if (roslynDocumentChangedService == null)
-				throw new ArgumentNullException(nameof(roslynDocumentChangedService));
-			if (textViewUndoManagerProvider == null)
-				throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
-			this.codeEditorProvider = codeEditorProvider;
-			this.docFactory = docFactory;
-			this.roslynDocumentChangedService = roslynDocumentChangedService;
-			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
+			this.codeEditorProvider = codeEditorProvider ?? throw new ArgumentNullException(nameof(codeEditorProvider));
+			this.docFactory = docFactory ?? throw new ArgumentNullException(nameof(docFactory));
+			this.roslynDocumentChangedService = roslynDocumentChangedService ?? throw new ArgumentNullException(nameof(roslynDocumentChangedService));
+			this.textViewUndoManagerProvider = textViewUndoManagerProvider ?? throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
 			documents = new List<RoslynCodeDocument>();
 		}
 
@@ -115,8 +107,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 				workspace.OpenDocument(doc.Info.Id);
 
 			foreach (var doc in documents) {
-				ITextViewUndoManager manager;
-				if (textViewUndoManagerProvider.TryGetTextViewUndoManager(doc.TextView, out manager))
+				if (textViewUndoManagerProvider.TryGetTextViewUndoManager(doc.TextView, out var manager))
 					manager.ClearUndoHistory();
 			}
 

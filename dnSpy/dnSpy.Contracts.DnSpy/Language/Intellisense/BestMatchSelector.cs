@@ -91,9 +91,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		readonly int[] acronymMatchIndexes;
 
 		public BestMatchSelector(string searchText) {
-			if (searchText == null)
-				throw new ArgumentNullException(nameof(searchText));
-			this.searchText = searchText;
+			this.searchText = searchText ?? throw new ArgumentNullException(nameof(searchText));
 			matchPriority = MatchPriority.Nothing;
 			bestCompletion = null;
 			acronymMatchIndexes = AcronymSearchHelpers.TryCreateMatchIndexes(searchText);

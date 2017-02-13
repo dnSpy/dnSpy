@@ -192,9 +192,7 @@ namespace dnSpy.Text.Settings {
 		readonly ICommonEditorOptions options;
 
 		protected AdvancedAppSettingsPageBase(ICommonEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			BlockStructureLineKindVM = new EnumListVM(blockStructureLineKindList);
 			ReferenceHighlighting = options.ReferenceHighlighting;
 			HighlightRelatedKeywords = options.HighlightRelatedKeywords;

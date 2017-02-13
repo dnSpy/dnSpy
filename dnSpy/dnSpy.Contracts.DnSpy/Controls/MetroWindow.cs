@@ -114,9 +114,8 @@ namespace dnSpy.Contracts.Controls {
 		static Size GetDpi_Win81(IntPtr hWnd) {
 			const int MONITOR_DEFAULTTONEAREST = 0x00000002;
 			var hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
-			int dpiX, dpiY;
 			const int MDT_EFFECTIVE_DPI = 0;
-			int hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, out dpiX, out dpiY);
+			int hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, out int dpiX, out int dpiY);
 			Debug.Assert(hr == 0);
 			if (hr != 0)
 				return new Size(96, 96);

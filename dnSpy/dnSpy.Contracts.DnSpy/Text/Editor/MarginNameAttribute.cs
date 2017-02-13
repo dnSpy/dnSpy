@@ -31,9 +31,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="marginName">Name of margin, eg. <see cref="PredefinedMarginNames.Glyph"/></param>
 		public MarginNameAttribute(string marginName) {
-			if (marginName == null)
-				throw new ArgumentNullException(nameof(marginName));
-			MarginName = marginName;
+			MarginName = marginName ?? throw new ArgumentNullException(nameof(marginName));
 		}
 
 		/// <summary>

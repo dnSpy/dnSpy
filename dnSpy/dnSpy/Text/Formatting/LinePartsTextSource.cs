@@ -35,9 +35,7 @@ namespace dnSpy.Text.Formatting {
 		int linePartIndex;
 
 		public LinePartsTextSource(LinePartsCollection linePartsCollection) {
-			if (linePartsCollection == null)
-				throw new ArgumentNullException(nameof(linePartsCollection));
-			this.linePartsCollection = linePartsCollection;
+			this.linePartsCollection = linePartsCollection ?? throw new ArgumentNullException(nameof(linePartsCollection));
 			text = linePartsCollection.Span.GetText();
 		}
 

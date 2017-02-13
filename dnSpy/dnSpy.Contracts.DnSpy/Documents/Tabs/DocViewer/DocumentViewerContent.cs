@@ -58,19 +58,13 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="referenceCollection">References</param>
 		/// <param name="customDataDict">Custom data dictionary</param>
 		internal DocumentViewerContent(string text, CachedTextColorsCollection colorCollection, SpanDataCollection<ReferenceInfo> referenceCollection, Dictionary<string, object> customDataDict) {
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
 			if (colorCollection == null)
 				throw new ArgumentNullException(nameof(colorCollection));
-			if (referenceCollection == null)
-				throw new ArgumentNullException(nameof(referenceCollection));
-			if (customDataDict == null)
-				throw new ArgumentNullException(nameof(customDataDict));
 			colorCollection.Freeze();
-			Text = text;
+			Text = text ?? throw new ArgumentNullException(nameof(text));
 			ColorCollection = colorCollection;
-			ReferenceCollection = referenceCollection;
-			this.customDataDict = customDataDict;
+			ReferenceCollection = referenceCollection ?? throw new ArgumentNullException(nameof(referenceCollection));
+			this.customDataDict = customDataDict ?? throw new ArgumentNullException(nameof(customDataDict));
 			MethodDebugInfos = (IReadOnlyList<MethodDebugInfo>)GetCustomData<ReadOnlyCollection<MethodDebugInfo>>(DocumentViewerContentDataIds.DebugInfo) ?? Array.Empty<MethodDebugInfo>();
 		}
 
@@ -82,8 +76,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="data">Updated with data</param>
 		/// <returns></returns>
 		public bool TryGetCustomData<TData>(string id, out TData data) {
-			object obj;
-			if (!customDataDict.TryGetValue(id, out obj)) {
+			if (!customDataDict.TryGetValue(id, out object obj)) {
 				data = default(TData);
 				return false;
 			}
@@ -99,8 +92,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="id">Key, eg., <see cref="DocumentViewerContentDataIds.DebugInfo"/></param>
 		/// <returns></returns>
 		public TData GetCustomData<TData>(string id) {
-			object obj;
-			if (!customDataDict.TryGetValue(id, out obj))
+			if (!customDataDict.TryGetValue(id, out object obj))
 				return default(TData);
 			return (TData)obj;
 		}

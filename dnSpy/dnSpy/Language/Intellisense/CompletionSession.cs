@@ -69,21 +69,13 @@ namespace dnSpy.Language.Intellisense {
 		ICompletionSource[] completionSources;
 
 		public CompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
-				throw new ArgumentNullException(nameof(triggerPoint));
-			if (intellisensePresenterFactoryService == null)
-				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
-			if (completionSourceProviders == null)
-				throw new ArgumentNullException(nameof(completionSourceProviders));
 			completionSets = new ObservableCollection<CompletionSet>();
 			CompletionSets = new ReadOnlyObservableCollection<CompletionSet>(completionSets);
 			Properties = new PropertyCollection();
-			TextView = textView;
-			this.triggerPoint = triggerPoint;
-			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
-			this.completionSourceProviders = completionSourceProviders;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.triggerPoint = triggerPoint ?? throw new ArgumentNullException(nameof(triggerPoint));
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService ?? throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
+			this.completionSourceProviders = completionSourceProviders ?? throw new ArgumentNullException(nameof(completionSourceProviders));
 			//TODO: Use trackCaret
 			TextView.Closed += TextView_Closed;
 		}

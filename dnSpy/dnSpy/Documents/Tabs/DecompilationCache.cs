@@ -160,8 +160,7 @@ namespace dnSpy.Documents.Tabs {
 			lock (lockObj) {
 				var key = new Key(decompiler, nodes, settings);
 
-				Item item;
-				if (cachedItems.TryGetValue(key, out item)) {
+				if (cachedItems.TryGetValue(key, out var item)) {
 					contentType = item.ContentType;
 					item.Hit();
 					var content = item.Content;

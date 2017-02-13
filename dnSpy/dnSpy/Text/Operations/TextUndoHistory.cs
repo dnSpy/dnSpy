@@ -49,10 +49,8 @@ namespace dnSpy.Text.Operations {
 		TextUndoTransaction currentTransaction;
 
 		public TextUndoHistory(IPropertyOwner propertyOwner) {
-			if (propertyOwner == null)
-				throw new ArgumentNullException(nameof(propertyOwner));
 			State = TextUndoHistoryState.Idle;
-			PropertyOwner = propertyOwner;
+			PropertyOwner = propertyOwner ?? throw new ArgumentNullException(nameof(propertyOwner));
 			Properties = new PropertyCollection();
 			redoList = new List<TextUndoTransaction>();
 			undoList = new List<TextUndoTransaction>();

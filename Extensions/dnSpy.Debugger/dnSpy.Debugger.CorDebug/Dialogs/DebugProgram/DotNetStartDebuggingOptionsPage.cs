@@ -111,12 +111,8 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		protected DotNetStartDebuggingOptionsPage(CorDebugStartDebuggingOptions options, IPickFilename pickFilename, IPickDirectory pickDirectory) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
-			if (pickFilename == null)
-				throw new ArgumentNullException(nameof(pickFilename));
-			if (pickDirectory == null)
-				throw new ArgumentNullException(nameof(pickDirectory));
-			this.pickFilename = pickFilename;
-			this.pickDirectory = pickDirectory;
+			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
+			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
 
 			Filename = options.Filename;
 			CommandLine = options.CommandLine;

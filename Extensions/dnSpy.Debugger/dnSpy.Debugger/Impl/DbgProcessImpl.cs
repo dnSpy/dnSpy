@@ -66,11 +66,9 @@ namespace dnSpy.Debugger.Impl {
 		readonly SafeFileHandle hProcess;
 
 		public DbgProcessImpl(DbgManager owner, int pid) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
 			lockObj = new object();
 			engineInfos = new List<EngineInfo>();
-			DbgManager = owner;
+			DbgManager = owner ?? throw new ArgumentNullException(nameof(owner));
 			Id = pid;
 
 			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE;
@@ -87,8 +85,7 @@ namespace dnSpy.Debugger.Impl {
 				Debug.Assert(IntPtr.Size == 4);
 				return IntPtr.Size * 8;
 			}
-			bool isWow64Process;
-			if (NativeMethods.IsWow64Process(hProcess, out isWow64Process)) {
+			if (NativeMethods.IsWow64Process(hProcess, out bool isWow64Process)) {
 				if (isWow64Process)
 					return 32;
 				return 64;

@@ -38,8 +38,7 @@ namespace dnSpy.Themes {
 			if (string.IsNullOrEmpty(args.Theme))
 				return;
 
-			Guid guid;
-			bool isGuid = Guid.TryParse(args.Theme, out guid);
+			bool isGuid = Guid.TryParse(args.Theme, out var guid);
 			var theme = themeService.AllThemes.FirstOrDefault(a => isGuid ? a.Guid == guid : !string.IsNullOrEmpty(a.Name) && StringComparer.InvariantCulture.Equals(a.Name, args.Theme));
 			if (theme != null)
 				themeService.Theme = theme;

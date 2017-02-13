@@ -111,8 +111,7 @@ namespace dndbg.Engine {
 		public bool CheckValid() {
 			if (HasExited)
 				return false;
-			int running;
-			return CorProcess.RawObject.IsRunning(out running) >= 0;
+			return CorProcess.RawObject.IsRunning(out int running) >= 0;
 		}
 
 		internal DnAppDomain TryAdd(ICorDebugAppDomain comAppDomain) => appDomains.Add(comAppDomain);

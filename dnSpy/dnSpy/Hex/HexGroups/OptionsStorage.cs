@@ -107,8 +107,7 @@ namespace dnSpy.Hex.HexGroups {
 			if (collection == null)
 				throw new ArgumentNullException(nameof(collection));
 
-			ISettingsSection ctSect;
-			if (!toSubGroupSection.TryGetValue(new SubGroupKey(groupName, collection.SubGroup), out ctSect))
+			if (!toSubGroupSection.TryGetValue(new SubGroupKey(groupName, collection.SubGroup), out var ctSect))
 				return;
 
 			var toOption = new Dictionary<string, HexViewGroupOption>(StringComparer.Ordinal);
@@ -124,14 +123,12 @@ namespace dnSpy.Hex.HexGroups {
 				if (textValue == null)
 					continue;
 
-				HexViewGroupOption option;
-				if (!toOption.TryGetValue(name, out option))
+				if (!toOption.TryGetValue(name, out var option))
 					continue;
 				if (!option.Definition.CanBeSaved)
 					continue;
 
-				object value;
-				if (!TryGetValue(option, textValue, out value))
+				if (!TryGetValue(option, textValue, out object value))
 					continue;
 
 				option.Value = value;
@@ -177,8 +174,7 @@ namespace dnSpy.Hex.HexGroups {
 		}
 
 		ISettingsSection GetOrCreateGroupSection(string groupName) {
-			ISettingsSection sect;
-			if (toGroupSection.TryGetValue(groupName, out sect))
+			if (toGroupSection.TryGetValue(groupName, out var sect))
 				return sect;
 			sect = settingsSection.CreateSection(GroupName);
 			toGroupSection.Add(groupName, sect);
@@ -188,8 +184,7 @@ namespace dnSpy.Hex.HexGroups {
 
 		ISettingsSection GetOrCreateSubGroupSection(string groupName, string subGroup) {
 			var key = new SubGroupKey(groupName, subGroup);
-			ISettingsSection sect;
-			if (toSubGroupSection.TryGetValue(key, out sect))
+			if (toSubGroupSection.TryGetValue(key, out var sect))
 				return sect;
 			var groupSect = GetOrCreateGroupSection(groupName);
 			sect = groupSect.CreateSection(SubGroupName);
@@ -200,8 +195,7 @@ namespace dnSpy.Hex.HexGroups {
 
 		ISettingsSection GetOrCreateOptionSection(string groupName, HexViewGroupOption option) {
 			var key = new OptionKey(new SubGroupKey(groupName, option.Definition.SubGroup), option.OptionId);
-			ISettingsSection sect;
-			if (toOptionSection.TryGetValue(key, out sect))
+			if (toOptionSection.TryGetValue(key, out var sect))
 				return sect;
 			var ctSect = GetOrCreateSubGroupSection(groupName, option.Definition.SubGroup);
 			sect = ctSect.CreateSection(OptionName);
@@ -218,8 +212,7 @@ namespace dnSpy.Hex.HexGroups {
 			if (!option.Definition.CanBeSaved)
 				return;
 			var sect = GetOrCreateOptionSection(groupName, option);
-			string valueString;
-			if (!TryGetValueString(option, out valueString))
+			if (!TryGetValueString(option, out string valueString))
 				return;
 			sect.Attribute(OptionValueAttr, valueString);
 		}

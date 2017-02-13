@@ -66,9 +66,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.modNode = modNode;
 			var dict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var t in importer.NewNonNestedTypes) {
-				List<TypeDef> list;
 				var ns = (t.TargetType.Namespace ?? UTF8String.Empty).String;
-				if (!dict.TryGetValue(ns, out list))
+				if (!dict.TryGetValue(ns, out var list))
 					dict[ns] = list = new List<TypeDef>();
 				list.Add(t.TargetType);
 			}

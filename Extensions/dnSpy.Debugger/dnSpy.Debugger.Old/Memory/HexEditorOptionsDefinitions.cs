@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Hex.Editor;
-using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Settings.HexEditor;
 
 namespace dnSpy.Debugger.Memory {

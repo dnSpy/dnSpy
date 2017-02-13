@@ -96,9 +96,7 @@ namespace dnSpy.Text.Settings {
 		readonly ICommonEditorOptions options;
 
 		protected GeneralAppSettingsPageBase(ICommonEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			UseVirtualSpace = options.UseVirtualSpace;
 			ShowLineNumbers = options.LineNumberMargin;
 			WordWrap = (options.WordWrapStyle & WordWrapStyles.WordWrap) != 0;

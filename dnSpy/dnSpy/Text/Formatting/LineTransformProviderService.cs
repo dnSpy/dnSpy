@@ -66,9 +66,7 @@ namespace dnSpy.Text.Formatting {
 			readonly bool removeExtraTextLineVerticalPixels;
 
 			public LineTransformProvider(ILineTransformSource[] lineTransformSources, bool removeExtraTextLineVerticalPixels) {
-				if (lineTransformSources == null)
-					throw new ArgumentNullException(nameof(lineTransformSources));
-				this.lineTransformSources = lineTransformSources;
+				this.lineTransformSources = lineTransformSources ?? throw new ArgumentNullException(nameof(lineTransformSources));
 				this.removeExtraTextLineVerticalPixels = removeExtraTextLineVerticalPixels;
 			}
 

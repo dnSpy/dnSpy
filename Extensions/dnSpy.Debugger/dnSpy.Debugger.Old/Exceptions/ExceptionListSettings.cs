@@ -129,8 +129,7 @@ namespace dnSpy.Debugger.Exceptions {
 					continue;
 				}
 
-				ExceptionInfo info2;
-				if (defaultInfos.TryGetValue(info.Key, out info2)) {
+				if (defaultInfos.TryGetValue(info.Key, out var info2)) {
 					defaultInfos.Remove(info.Key);
 					if (info.Equals(info2))
 						continue;

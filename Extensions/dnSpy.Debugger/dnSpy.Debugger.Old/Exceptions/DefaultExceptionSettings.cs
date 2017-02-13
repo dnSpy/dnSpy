@@ -18,7 +18,6 @@
 */
 
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 
 namespace dnSpy.Debugger.Exceptions {

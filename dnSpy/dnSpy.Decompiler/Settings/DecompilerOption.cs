@@ -35,13 +35,9 @@ namespace dnSpy.Decompiler.Settings {
 		readonly Action<T> setter;
 
 		public DecompilerOption(Guid guid, Func<T> getter, Action<T> setter) {
-			if (getter == null)
-				throw new ArgumentNullException(nameof(getter));
-			if (setter == null)
-				throw new ArgumentNullException(nameof(setter));
 			Guid = guid;
-			this.getter = getter;
-			this.setter = setter;
+			this.getter = getter ?? throw new ArgumentNullException(nameof(getter));
+			this.setter = setter ?? throw new ArgumentNullException(nameof(setter));
 		}
 	}
 }

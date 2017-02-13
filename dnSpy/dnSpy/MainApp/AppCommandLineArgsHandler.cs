@@ -65,8 +65,7 @@ namespace dnSpy.MainApp {
 				yield break;
 			foreach (var tw in arg.Split(new char[] { ',' })) {
 				var opts = tw.Split(new char[] { '!' }, 2);
-				Guid guid;
-				bool b = Guid.TryParse(opts[0], out guid);
+				bool b = Guid.TryParse(opts[0], out var guid);
 				Debug.Assert(b);
 				if (!b)
 					continue;

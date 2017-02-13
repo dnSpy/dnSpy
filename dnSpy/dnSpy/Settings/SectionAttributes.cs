@@ -38,8 +38,7 @@ namespace dnSpy.Settings {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
-			string stringValue;
-			if (!attributes.TryGetValue(name, out stringValue))
+			if (!attributes.TryGetValue(name, out string stringValue))
 				return default(T);
 
 			var c = TypeDescriptor.GetConverter(typeof(T));

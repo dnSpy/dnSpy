@@ -70,8 +70,7 @@ namespace dnSpy.Text.Classification {
 			}
 
 			IClassificationType TryGet(string type) {
-				IClassificationType classificationType;
-				owner.toClassificationType.TryGetValue(type, out classificationType);
+				owner.toClassificationType.TryGetValue(type, out var classificationType);
 				return classificationType;
 			}
 
@@ -85,8 +84,7 @@ namespace dnSpy.Text.Classification {
 				if (recurse > MAX_RECURSE)
 					return null;
 
-				RawClassificationType rawCt;
-				bool b = rawClassificationTypes.TryGetValue(type, out rawCt);
+				bool b = rawClassificationTypes.TryGetValue(type, out var rawCt);
 				Debug.Assert(b);
 				if (!b)
 					return null;
@@ -144,8 +142,7 @@ namespace dnSpy.Text.Classification {
 
 			Array.Sort(bts, (a, b) => a.Classification.CompareTo(b.Classification));
 			var name = GetTransientName(bts);
-			IClassificationType ct;
-			if (transientNameToType.TryGetValue(name, out ct))
+			if (transientNameToType.TryGetValue(name, out var ct))
 				return ct;
 
 			ct = new ClassificationType(name, baseTypes);
@@ -164,8 +161,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public IClassificationType GetClassificationType(string type) {
-			IClassificationType ct;
-			toClassificationType.TryGetValue(type, out ct);
+			toClassificationType.TryGetValue(type, out var ct);
 			return ct;
 		}
 	}

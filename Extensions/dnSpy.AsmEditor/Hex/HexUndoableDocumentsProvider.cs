@@ -50,8 +50,7 @@ namespace dnSpy.AsmEditor.Hex {
 		internal static HexBuffer TryGetHexBuffer(IUndoObject iuo) => (iuo as UndoObject)?.Value as HexBuffer;
 
 		static IUndoObject TryGetUndoObject(HexBuffer buffer) {
-			IUndoObject undoObject;
-			buffer.Properties.TryGetProperty(undoObjectKey, out undoObject);
+			buffer.Properties.TryGetProperty(undoObjectKey, out IUndoObject undoObject);
 			return undoObject;
 		}
 

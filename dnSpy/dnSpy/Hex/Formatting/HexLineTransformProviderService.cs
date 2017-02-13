@@ -61,9 +61,7 @@ namespace dnSpy.Hex.Formatting {
 			readonly bool removeExtraTextLineVerticalPixels;
 
 			public HexLineTransformProviderImpl(HexLineTransformSource[] lineTransformSources, bool removeExtraTextLineVerticalPixels) {
-				if (lineTransformSources == null)
-					throw new ArgumentNullException(nameof(lineTransformSources));
-				this.lineTransformSources = lineTransformSources;
+				this.lineTransformSources = lineTransformSources ?? throw new ArgumentNullException(nameof(lineTransformSources));
 				this.removeExtraTextLineVerticalPixels = removeExtraTextLineVerticalPixels;
 			}
 

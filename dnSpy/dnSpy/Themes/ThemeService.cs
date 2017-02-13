@@ -127,8 +127,7 @@ namespace dnSpy.Themes {
 		static readonly Guid DefaultHighContrastThemeGuid = ThemeConstants.THEME_HIGHCONTRAST_GUID;
 
 		ITheme GetThemeOrDefault(Guid guid) {
-			Theme theme;
-			if (themes.TryGetValue(guid, out theme))
+			if (themes.TryGetValue(guid, out var theme))
 				return theme;
 			if (themes.TryGetValue(DefaultThemeGuid, out theme))
 				return theme;

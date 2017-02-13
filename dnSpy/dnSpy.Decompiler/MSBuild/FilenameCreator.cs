@@ -127,8 +127,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		public string CreateFromNamespaceFilename(string @namespace, string filename) {
 			var fileExt = FileUtils.GetExtension(filename);
 			var relPath = filename.Substring(0, filename.Length - fileExt.Length);
-			string ns, filenameNoExt;
-			ExtractNamespace(relPath, out ns, out filenameNoExt);
+			ExtractNamespace(relPath, out string ns, out string filenameNoExt);
 			if (!string.IsNullOrEmpty(ns)) {
 				if (string.IsNullOrEmpty(@namespace))
 					@namespace = ns;

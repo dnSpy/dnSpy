@@ -51,18 +51,14 @@ namespace dnSpy.Hex.Intellisense {
 				Session = session;
 			}
 			public void SetSpaceReservationManager(HexSpaceReservationManager manager) {
-				if (manager == null)
-					throw new ArgumentNullException(nameof(manager));
 				if (SpaceReservationManager != null)
 					throw new InvalidOperationException();
-				SpaceReservationManager = manager;
+				SpaceReservationManager = manager ?? throw new ArgumentNullException(nameof(manager));
 			}
 		}
 
 		public HexIntellisenseSessionStackImpl(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			this.wpfHexView = wpfHexView;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			sessions = new ObservableCollection<HexIntellisenseSession>();
 			commandTargetFilter = new CommandTargetFilter(this);
 			sessionStates = new List<SessionState>();

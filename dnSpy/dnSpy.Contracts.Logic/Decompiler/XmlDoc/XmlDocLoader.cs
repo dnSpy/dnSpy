@@ -71,8 +71,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			if (assemblyFilename == null)
 				throw new ArgumentNullException(nameof(assemblyFilename));
 			lock (cache) {
-				XmlDocumentationProvider xmlDoc;
-				if (!cache.TryGetValue(key, out xmlDoc)) {
+				if (!cache.TryGetValue(key, out var xmlDoc)) {
 					string xmlDocFile = LookupLocalizedXmlDoc(assemblyFilename);
 					if (xmlDocFile == null) {
 						xmlDocFile = FindXmlDocumentation(Path.GetFileName(assemblyFilename), runtimeVersion);
@@ -100,8 +99,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				var s = Path.GetFileName(dir);
 				if (!s.StartsWith("v", StringComparison.OrdinalIgnoreCase))
 					continue;
-				Version version;
-				if (!Version.TryParse(s.Substring(1), out version))
+				if (!Version.TryParse(s.Substring(1), out var version))
 					continue;
 				if (version.Major < 4)
 					continue;

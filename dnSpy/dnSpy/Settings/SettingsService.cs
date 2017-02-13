@@ -40,8 +40,7 @@ namespace dnSpy.Settings {
 				throw new ArgumentOutOfRangeException(nameof(guid));
 
 			var name = guid.ToString();
-			ISettingsSection section;
-			if (sections.TryGetValue(name, out section))
+			if (sections.TryGetValue(name, out var section))
 				return section;
 
 			section = new SettingsSection(name);
@@ -62,8 +61,7 @@ namespace dnSpy.Settings {
 			if (section == null)
 				throw new ArgumentNullException(nameof(section));
 
-			ISettingsSection other;
-			bool b = sections.TryGetValue(section.Name, out other);
+			bool b = sections.TryGetValue(section.Name, out var other);
 			Debug.Assert(b && other == section);
 			if (!b || other != section)
 				return;

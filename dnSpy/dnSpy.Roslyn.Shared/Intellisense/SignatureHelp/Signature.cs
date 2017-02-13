@@ -140,13 +140,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		}
 
 		public Signature(ITrackingSpan applicableToSpan, SignatureHelpItem item, bool isSelected, int? selectedParameter) {
-			if (applicableToSpan == null)
-				throw new ArgumentNullException(nameof(applicableToSpan));
-			if (item == null)
-				throw new ArgumentNullException(nameof(item));
 			IsSelected = isSelected;
-			ApplicableToSpan = applicableToSpan;
-			this.item = item;
+			ApplicableToSpan = applicableToSpan ?? throw new ArgumentNullException(nameof(applicableToSpan));
+			this.item = item ?? throw new ArgumentNullException(nameof(item));
 
 			var builder = new Builder(this, item, selectedParameter);
 

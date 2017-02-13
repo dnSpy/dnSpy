@@ -134,9 +134,7 @@ namespace dnSpy.Hex.Settings {
 		readonly CommonEditorOptions options;
 
 		protected GeneralAppSettingsPageBase(CommonEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			GroupSizeInBytesVM = new Int32VM(a => { }, useDecimal: true) { Min = 0, Max = int.MaxValue };
 			HexOffsetFormatVM = new EnumListVM(hexOffsetFormatList);
 			EncodingInfoVM = new EnumListVM(Encoding.GetEncodings().OrderBy(a => a.DisplayName, StringComparer.CurrentCultureIgnoreCase).Select(a => new EnumVM(a, a.DisplayName)).ToArray());

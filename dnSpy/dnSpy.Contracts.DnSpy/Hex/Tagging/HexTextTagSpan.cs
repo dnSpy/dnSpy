@@ -58,10 +58,8 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="span"></param>
 		/// <param name="tag"></param>
 		public HexTextTagSpan(VST.Span span, T tag) {
-			if (tag == null)
-				throw new ArgumentNullException(nameof(tag));
 			Span = span;
-			Tag = tag;
+			Tag = tag ?? throw new ArgumentNullException(nameof(tag));
 		}
 	}
 }

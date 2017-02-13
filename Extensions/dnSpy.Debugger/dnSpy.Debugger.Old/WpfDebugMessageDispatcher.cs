@@ -60,8 +60,7 @@ namespace dnSpy.Debugger {
 				return;
 			disp.VerifyAccess();
 
-			Action action;
-			while (queue.TryDequeue(out action))
+			while (queue.TryDequeue(out var action))
 				action();
 		}
 
@@ -83,8 +82,7 @@ namespace dnSpy.Debugger {
 				var infTime = TimeSpan.FromMilliseconds(-1);
 				var endTime = startTime + waitTime;
 				while (!cancelDispatchQueue) {
-					Action action;
-					while (queue.TryDequeue(out action))
+					while (queue.TryDequeue(out var action))
 						action();
 					if (cancelDispatchQueue)
 						break;

@@ -29,13 +29,9 @@ namespace dnSpy.Hex.Formatting {
 		public VST.Span Span { get; }
 
 		public HexLinePartsCollection(List<HexLinePart> lineParts, VST.Span lineSpan, string text) {
-			if (lineParts == null)
-				throw new ArgumentNullException(nameof(lineParts));
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
-			Text = text;
+			Text = text ?? throw new ArgumentNullException(nameof(text));
 			Span = lineSpan;
-			LineParts = lineParts;
+			LineParts = lineParts ?? throw new ArgumentNullException(nameof(lineParts));
 			if (lineParts.Count == 0)
 				Length = 0;
 			else {

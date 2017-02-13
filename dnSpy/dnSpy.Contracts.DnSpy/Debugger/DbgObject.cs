@@ -77,8 +77,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <returns></returns>
 		public bool HasData<T>() where T : class {
-			T value;
-			return TryGetData<T>(out value);
+			return TryGetData<T>(out var value);
 		}
 
 		/// <summary>

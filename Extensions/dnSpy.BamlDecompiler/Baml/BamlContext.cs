@@ -79,10 +79,8 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public IAssembly ResolveAssembly(ushort id) {
 			id &= 0xfff;
-			IAssembly assembly;
-			if (!assemblyMap.TryGetValue(id, out assembly)) {
-				AssemblyInfoRecord assemblyRec;
-				if (AssemblyIdMap.TryGetValue(id, out assemblyRec)) {
+			if (!assemblyMap.TryGetValue(id, out var assembly)) {
+				if (AssemblyIdMap.TryGetValue(id, out var assemblyRec)) {
 					var assemblyName = new AssemblyNameInfo(assemblyRec.AssemblyFullName);
 
 					if (assemblyName.Name == Module.Assembly.Name)

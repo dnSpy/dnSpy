@@ -41,9 +41,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="method">Method</param>
 		/// <param name="offset">Offset or null</param>
 		public MethodStatementReference(MethodDef method, uint? offset) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
-			Method = method;
+			Method = method ?? throw new ArgumentNullException(nameof(method));
 			Offset = offset;
 		}
 

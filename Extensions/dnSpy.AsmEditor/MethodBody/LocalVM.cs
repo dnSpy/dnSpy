@@ -126,8 +126,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 
-			bool canceled;
-			var newType = typeSigCreator.Create(typeSigCreatorOptions, Type, out canceled);
+			var newType = typeSigCreator.Create(typeSigCreatorOptions, Type, out bool canceled);
 			if (canceled)
 				return;
 

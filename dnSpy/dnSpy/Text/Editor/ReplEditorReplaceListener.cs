@@ -38,9 +38,7 @@ namespace dnSpy.Text.Editor {
 		readonly ReplEditor replEditor;
 
 		public ReplEditorReplaceListener(ReplEditor replEditor) {
-			if (replEditor == null)
-				throw new ArgumentNullException(nameof(replEditor));
-			this.replEditor = replEditor;
+			this.replEditor = replEditor ?? throw new ArgumentNullException(nameof(replEditor));
 		}
 
 		public bool CanReplace(SnapshotSpan span, string newText) => replEditor.CanReplace(span, newText);

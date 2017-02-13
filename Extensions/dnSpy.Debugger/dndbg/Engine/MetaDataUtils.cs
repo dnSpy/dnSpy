@@ -120,8 +120,7 @@ namespace dndbg.Engine {
 		}
 
 		public MDParamInfo? Get(uint seq) {
-			MDParamInfo info;
-			if (dict.TryGetValue(seq, out info))
+			if (dict.TryGetValue(seq, out var info))
 				return info;
 			return null;
 		}
@@ -170,9 +169,7 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
-			uint seq;
-			ParamAttributes attrs;
-			if (!MDAPI.GetParamSeqAndAttrs(mdi, token, out seq, out attrs))
+			if (!MDAPI.GetParamSeqAndAttrs(mdi, token, out uint seq, out var attrs))
 				return null;
 			var name = MDAPI.GetParamName(mdi, token);
 			if (name == null)
@@ -266,9 +263,7 @@ namespace dndbg.Engine {
 				string name = MDAPI.GetMethodName(mdi, mdToken);
 				if (name != ".cctor")
 					continue;
-				MethodAttributes attrs;
-				MethodImplAttributes implAttrs;
-				if (!MDAPI.GetMethodAttributes(mdi, mdToken, out attrs, out implAttrs))
+				if (!MDAPI.GetMethodAttributes(mdi, mdToken, out var attrs, out var implAttrs))
 					continue;
 				if ((attrs & MethodAttributes.RTSpecialName) == 0)
 					continue;
@@ -333,8 +328,7 @@ namespace dndbg.Engine {
 			if (fieldType == null)
 				return null;
 			var attrs = MDAPI.GetFieldAttributes(mdi, token);
-			CorElementType constantType;
-			var constant = MDAPI.GetFieldConstant(mdi, token, out constantType);
+			var constant = MDAPI.GetFieldConstant(mdi, token, out var constantType);
 			var browseState = GetDebuggerBrowsableState(mdi, token);
 			bool compilerGeneratedAttribute = GetCompilerGeneratedAttribute(mdi, token);
 			return new CorFieldInfo(type, token, name, fieldType, attrs, constant, constantType, browseState, compilerGeneratedAttribute);
@@ -373,8 +367,7 @@ namespace dndbg.Engine {
 			var name = MDAPI.GetPropertyName(mdi, token);
 			if (name == null)
 				return null;
-			uint mdSetter, mdGetter;
-			if (!MDAPI.GetPropertyGetterSetter(mdi, token, out mdGetter, out mdSetter))
+			if (!MDAPI.GetPropertyGetterSetter(mdi, token, out uint mdGetter, out uint mdSetter))
 				return null;
 
 			var getSig = GetMethodSignature(mdi, mdGetter);
@@ -408,9 +401,7 @@ namespace dndbg.Engine {
 			if (setSig == null)
 				mdSetter = 0;
 
-			MethodAttributes getMethodAttrs;
-			MethodImplAttributes getMethodImplAttrs;
-			if (!MDAPI.GetMethodAttributes(mdi, mdGetter, out getMethodAttrs, out getMethodImplAttrs))
+			if (!MDAPI.GetMethodAttributes(mdi, mdGetter, out var getMethodAttrs, out var getMethodImplAttrs))
 				return null;
 
 			var browseState = GetDebuggerBrowsableState(mdi, token);
@@ -422,8 +413,7 @@ namespace dndbg.Engine {
 
 		public static IEnumerable<CorPropertyInfo> GetProperties(CorType type, bool checkBaseClasses = true) {
 			for (; type != null; type = type.Base) {
-				uint token;
-				var mdi = type.GetMetaDataImport(out token);
+				var mdi = type.GetMetaDataImport(out uint token);
 				var pdTokens = MDAPI.GetPropertyTokens(mdi, token);
 				foreach (var pdToken in pdTokens) {
 					var info = ReadPropertyInfo(mdi, pdToken, type);
@@ -443,9 +433,7 @@ namespace dndbg.Engine {
 			if (name == null)
 				return null;
 
-			MethodAttributes attrs;
-			MethodImplAttributes implAttrs;
-			if (!MDAPI.GetMethodAttributes(mdi, token, out attrs, out implAttrs))
+			if (!MDAPI.GetMethodAttributes(mdi, token, out var attrs, out var implAttrs))
 				return null;
 
 			var sig = GetMethodSignature(mdi, token);
@@ -460,8 +448,7 @@ namespace dndbg.Engine {
 		public static CorMethodInfo GetToStringMethod(CorType type) {
 			//TODO: Check for method overrides!
 			for (; type != null; type = type.Base) {
-				uint token;
-				var mdi = type.GetMetaDataImport(out token);
+				var mdi = type.GetMetaDataImport(out uint token);
 				var mdTokens = MDAPI.GetMethodTokens(mdi, token);
 				foreach (var mdToken in mdTokens) {
 					var info = ReadMethodInfo(mdi, mdToken, type);

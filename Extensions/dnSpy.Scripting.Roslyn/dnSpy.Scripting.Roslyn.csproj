@@ -91,7 +91,6 @@
     <None Include="VisualBasic\VisualBasicReplSettingsImpl.cs" />
     <None Include="VisualBasic\VisualBasicControlVM.cs" />
     <None Include="VisualBasic\VisualBasicContent.cs" />
-    <None Include="VisualBasic\TextEditorFormatDefinition.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">

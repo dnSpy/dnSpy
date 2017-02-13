@@ -870,9 +870,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var mod = md.Module;
 			if (mod == null || !File.Exists(mod.Location))
 				return null;
-			uint rva;
-			long fileOffset;
-			if (!md.GetRVA(out rva, out fileOffset))
+			if (!md.GetRVA(out uint rva, out long fileOffset))
 				return null;
 
 			return new LengthAndOffset(mod.Location, (ulong)fileOffset, InstructionUtils.GetTotalMethodBodyLength(md));
@@ -1333,8 +1331,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static bool IsVisibleInternal(HexContext context) => CanExecute(context);
 
 		static bool CanExecute(HexContext context) {
-			IDocumentTab tab;
-			return GetModule(context, out tab) != null;
+			return GetModule(context, out var tab) != null;
 		}
 
 		static ModuleDef GetModule(HexContext context, out IDocumentTab tab) {
@@ -1372,8 +1369,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static ModuleDef GetModule(ModuleDocumentNode node) => GoToMDTableRowHexEditorCommand.HasPENode(node) ? node.Document.ModuleDef : null;
 
 		static void Execute2(IDocumentTabService documentTabService, HexContext context) {
-			IDocumentTab tab;
-			var module = GetModule(context, out tab);
+			var module = GetModule(context, out var tab);
 			if (module == null)
 				return;
 
@@ -1395,12 +1391,10 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static uint? AskForDef(string title, ModuleDef module) {
 			return MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
-				string error;
-				uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+				uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out string error);
 				return string.IsNullOrEmpty(error) ? token : (uint?)null;
 			}, s => {
-				string error;
-				uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+				uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out string error);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				var memberRef = module.ResolveToken(token);

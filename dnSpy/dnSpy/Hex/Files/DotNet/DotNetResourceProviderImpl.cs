@@ -37,11 +37,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			public HexSpan Span { get; }
 			public string FilteredName { get; }
 			public ResourceInfo(uint token, HexSpan span, string filteredName) {
-				if (filteredName == null)
-					throw new ArgumentNullException(nameof(filteredName));
 				Token = token;
 				Span = span;
-				FilteredName = filteredName;
+				FilteredName = filteredName ?? throw new ArgumentNullException(nameof(filteredName));
 			}
 		}
 
@@ -57,9 +55,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders metadataHeaders, HexSpan? resourcesSpan)
 			: base(file) {
-			if (peHeaders == null)
-				throw new ArgumentNullException(nameof(peHeaders));
-			this.peHeaders = peHeaders;
+			this.peHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
 			if (metadataHeaders?.TablesStream != null && resourcesSpan != null) {
 				Debug.Assert(file.Span.Contains(resourcesSpan.Value));// Verified by caller
 				ResourcesSpan = resourcesSpan.Value;
@@ -99,8 +95,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					buffer.ReadUInt16(recordPos + resourceTable.RowSize - 2) :
 					buffer.ReadUInt32(recordPos + resourceTable.RowSize - 4);
 
-				MDToken implementationToken;
-				if (!CodedToken.Implementation.Decode(implementation, out implementationToken))
+				if (!CodedToken.Implementation.Decode(implementation, out MDToken implementationToken))
 					continue;
 				if (implementationToken.Rid != 0)
 					continue;

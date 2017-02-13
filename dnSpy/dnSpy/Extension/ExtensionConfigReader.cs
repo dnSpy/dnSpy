@@ -57,8 +57,7 @@ namespace dnSpy.Extension {
 				return null;
 
 			var s = ((XText)fn).Value;
-			Version version;
-			if (Version.TryParse(s, out version))
+			if (Version.TryParse(s, out var version))
 				return version;
 
 			return null;

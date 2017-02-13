@@ -43,9 +43,7 @@ namespace dnSpy.Text.Classification {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		public DefaultTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

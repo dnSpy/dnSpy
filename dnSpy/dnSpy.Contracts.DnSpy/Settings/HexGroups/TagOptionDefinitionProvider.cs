@@ -65,9 +65,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <param name="order">Order of this instanec</param>
 		public ExportTagOptionDefinitionProviderAttribute(string group, double order = double.MaxValue)
 			: base(typeof(TagOptionDefinitionProvider)) {
-			if (group == null)
-				throw new ArgumentNullException(nameof(group));
-			Group = group;
+			Group = group ?? throw new ArgumentNullException(nameof(group));
 			Order = order;
 		}
 

@@ -131,9 +131,7 @@ namespace dnSpy.Hex.Settings {
 		readonly CommonEditorOptions options;
 
 		protected AdvancedAppSettingsPageBase(CommonEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			ColumnLine0VM = new EnumListVM(hexColumnLineKindList);
 			ColumnLine1VM = new EnumListVM(hexColumnLineKindList);
 			ColumnGroupLine0VM = new EnumListVM(hexColumnLineKindList);

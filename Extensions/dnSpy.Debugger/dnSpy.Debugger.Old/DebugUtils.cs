@@ -73,8 +73,7 @@ namespace dnSpy.Debugger {
 			if (documentViewer == null)
 				return false;
 
-			IMethodDebugService methodDebugService;
-			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, key, out methodDebugService))
+			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, key, out var methodDebugService))
 				return false;
 
 			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(key).GetSourceStatementByCodeOffset(ilOffset);

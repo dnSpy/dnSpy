@@ -557,9 +557,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="flagInfos">Flag infos</param>
 		protected FlagsData(HexBufferSpan span, ReadOnlyCollection<FlagInfo> flagInfos)
 			: base(span) {
-			if (flagInfos == null)
-				throw new ArgumentNullException(nameof(flagInfos));
-			FlagInfos = flagInfos;
+			FlagInfos = flagInfos ?? throw new ArgumentNullException(nameof(flagInfos));
 		}
 	}
 
@@ -731,9 +729,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="enumFieldInfos">Enum field infos</param>
 		protected EnumData(HexBufferSpan span, ReadOnlyCollection<EnumFieldInfo> enumFieldInfos)
 			: base(span) {
-			if (enumFieldInfos == null)
-				throw new ArgumentNullException(nameof(enumFieldInfos));
-			EnumFieldInfos = enumFieldInfos;
+			EnumFieldInfos = enumFieldInfos ?? throw new ArgumentNullException(nameof(enumFieldInfos));
 		}
 	}
 
@@ -905,9 +901,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="encoding">Encoding</param>
 		public StringData(HexBufferSpan span, Encoding encoding)
 			: base(span) {
-			if (encoding == null)
-				throw new ArgumentNullException(nameof(encoding));
-			Encoding = encoding;
+			Encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
 		}
 
 		/// <summary>

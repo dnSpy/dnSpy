@@ -38,18 +38,14 @@ namespace dnSpy.Text.Groups {
 		readonly string groupName;
 
 		public TextViewOptionsGroup(string groupName, IContentTypeRegistryService contentTypeRegistryService, ContentTypeOptionDefinition[] defaultOptions, OptionsStorage optionsStorage) {
-			if (groupName == null)
-				throw new ArgumentNullException(nameof(groupName));
-			if (contentTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			if (defaultOptions == null)
 				throw new ArgumentNullException(nameof(defaultOptions));
 			if (optionsStorage == null)
 				throw new ArgumentNullException(nameof(optionsStorage));
-			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.contentTypeRegistryService = contentTypeRegistryService ?? throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			textViews = new List<IWpfTextView>();
 			toOptions = new Dictionary<IContentType, TextViewGroupOptionCollection>();
-			this.groupName = groupName;
+			this.groupName = groupName ?? throw new ArgumentNullException(nameof(groupName));
 
 			foreach (var option in defaultOptions) {
 				Debug.Assert(option.Name != null);
@@ -61,8 +57,7 @@ namespace dnSpy.Text.Groups {
 				if (ct == null)
 					continue;
 
-				TextViewGroupOptionCollection coll;
-				if (!toOptions.TryGetValue(ct, out coll))
+				if (!toOptions.TryGetValue(ct, out var coll))
 					toOptions.Add(ct, coll = new TextViewGroupOptionCollection(ct));
 				coll.Add(new TextViewGroupOption(this, option));
 			}
@@ -80,8 +75,7 @@ namespace dnSpy.Text.Groups {
 			if (contentType == null)
 				return ErrorCollection;
 
-			TextViewGroupOptionCollection coll;
-			if (toOptions.TryGetValue(contentType, out coll))
+			if (toOptions.TryGetValue(contentType, out var coll))
 				return coll;
 
 			// No perfect match, use inherited options

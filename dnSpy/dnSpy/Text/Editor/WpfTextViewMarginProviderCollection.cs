@@ -58,8 +58,6 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviders));
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (marginContainer == null)
-				throw new ArgumentNullException(nameof(marginContainer));
 			if (marginContainerName == null)
 				throw new ArgumentNullException(nameof(marginContainerName));
 			this.wpfTextViewMarginProviders = wpfTextViewMarginProviders.Where(a =>
@@ -67,7 +65,7 @@ namespace dnSpy.Text.Editor {
 				wpfTextViewHost.TextView.Roles.ContainsAny(a.Metadata.TextViewRoles)
 			).ToArray();
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.marginContainer = marginContainer;
+			this.marginContainer = marginContainer ?? throw new ArgumentNullException(nameof(marginContainer));
 			currentMargins = Array.Empty<WpfTextViewMarginInfo>();
 			wpfTextViewHost.Closed += WpfTextViewHost_Closed;
 			wpfTextViewHost.TextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
@@ -86,8 +84,7 @@ namespace dnSpy.Text.Editor {
 			foreach (var lazy in wpfTextViewMarginProviders) {
 				if (!CanUse(lazy.Metadata))
 					continue;
-				WpfTextViewMarginInfo info;
-				if (existingInfos.TryGetValue(lazy.Value, out info)) {
+				if (existingInfos.TryGetValue(lazy.Value, out var info)) {
 					newInfos.Add(info);
 					existingInfos.Remove(lazy.Value);
 				}

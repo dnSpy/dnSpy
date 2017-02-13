@@ -236,9 +236,7 @@ namespace dnSpy.Hex.Editor {
 				const int MIN_DELAY_MILLISECS = 50;
 
 				public MouseHoverHandler(EventHandler<HexMouseHoverEventArgs> handler) {
-					if (handler == null)
-						throw new ArgumentNullException(nameof(handler));
-					Handler = handler;
+					Handler = handler ?? throw new ArgumentNullException(nameof(handler));
 					var attr = handler.Method.GetCustomAttributes(typeof(HexMouseHoverAttribute), false).FirstOrDefault() as HexMouseHoverAttribute;
 					DelayTicks = Math.Max(MIN_DELAY_MILLISECS, attr?.Delay ?? DEFAULT_DELAY_MILLISECS) * 10000L;
 				}

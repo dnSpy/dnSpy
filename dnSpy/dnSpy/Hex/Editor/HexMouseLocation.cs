@@ -30,9 +30,7 @@ namespace dnSpy.Hex.Editor {
 		public Point Point { get; }
 
 		HexMouseLocation(HexViewLine hexViewLine, int position, Point point) {
-			if (hexViewLine == null)
-				throw new ArgumentNullException(nameof(hexViewLine));
-			HexViewLine = hexViewLine;
+			HexViewLine = hexViewLine ?? throw new ArgumentNullException(nameof(hexViewLine));
 			Position = position;
 			Point = point;
 		}

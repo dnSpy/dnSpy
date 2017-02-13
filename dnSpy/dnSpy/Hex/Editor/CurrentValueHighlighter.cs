@@ -70,9 +70,7 @@ namespace dnSpy.Hex.Editor {
 		readonly CurrentValueHighlighter currentValueHighlighter;
 
 		public CurrentValueHighlighterTagger(CurrentValueHighlighter currentValueHighlighter) {
-			if (currentValueHighlighter == null)
-				throw new ArgumentNullException(nameof(currentValueHighlighter));
-			this.currentValueHighlighter = currentValueHighlighter;
+			this.currentValueHighlighter = currentValueHighlighter ?? throw new ArgumentNullException(nameof(currentValueHighlighter));
 			currentValueHighlighter.Register(this);
 		}
 
@@ -88,9 +86,7 @@ namespace dnSpy.Hex.Editor {
 		bool enabled;
 
 		public CurrentValueHighlighter(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			this.wpfHexView = wpfHexView;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			wpfHexView.Closed += WpfHexView_Closed;
 			wpfHexView.Selection.SelectionChanged += Selection_SelectionChanged;
 			wpfHexView.Options.OptionChanged += Options_OptionChanged;
@@ -363,11 +359,9 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		internal void Register(CurrentValueHighlighterTagger currentValueHighlighterTagger) {
-			if (currentValueHighlighterTagger == null)
-				throw new ArgumentNullException(nameof(currentValueHighlighterTagger));
 			if (this.currentValueHighlighterTagger != null)
 				throw new InvalidOperationException();
-			this.currentValueHighlighterTagger = currentValueHighlighterTagger;
+			this.currentValueHighlighterTagger = currentValueHighlighterTagger ?? throw new ArgumentNullException(nameof(currentValueHighlighterTagger));
 		}
 		CurrentValueHighlighterTagger currentValueHighlighterTagger;
 

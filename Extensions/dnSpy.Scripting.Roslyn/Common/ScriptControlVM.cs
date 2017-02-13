@@ -464,13 +464,10 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		ExecScriptCommandState ParseScriptCommand(string input) {
-			string name;
-			string[] args;
-			if (!UnpackScriptCommand(input, out name, out args))
+			if (!UnpackScriptCommand(input, out string name, out var args))
 				return null;
 
-			IScriptCommand sc;
-			if (!toScriptCommand.TryGetValue(name, out sc))
+			if (!toScriptCommand.TryGetValue(name, out var sc))
 				return null;
 
 			return new ExecScriptCommandState(sc, args);

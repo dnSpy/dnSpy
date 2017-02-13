@@ -63,8 +63,7 @@ namespace dnSpy.Contracts.Search {
 			var uval64 = TryParseUInt64(s);
 			if (uval64 != null)
 				return new IntegerLiteralSearchComparer(unchecked((long)uval64.Value));
-			double dbl;
-			if (double.TryParse(s, out dbl))
+			if (double.TryParse(s, out double dbl))
 				return new DoubleLiteralSearchComparer(dbl);
 
 			if (s.Length >= 2 && s[0] == '"' && s[s.Length - 1] == '"')
@@ -143,9 +142,7 @@ namespace dnSpy.Contracts.Search {
 		readonly Regex regex;
 
 		public RegExStringLiteralSearchComparer(Regex regex) {
-			if (regex == null)
-				throw new ArgumentNullException(nameof(regex));
-			this.regex = regex;
+			this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
 		}
 
 		public bool IsMatch(string text, object obj) {
@@ -164,9 +161,7 @@ namespace dnSpy.Contracts.Search {
 		readonly bool matchWholeString;
 
 		public StringLiteralSearchComparer(string s, bool caseSensitive = false, bool matchWholeString = false) {
-			if (s == null)
-				throw new ArgumentNullException(nameof(s));
-			str = s;
+			str = s ?? throw new ArgumentNullException(nameof(s));
 			stringComparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
 			this.matchWholeString = matchWholeString;
 		}
@@ -255,9 +250,7 @@ namespace dnSpy.Contracts.Search {
 		readonly Regex regex;
 
 		public RegExSearchComparer(Regex regex) {
-			if (regex == null)
-				throw new ArgumentNullException(nameof(regex));
-			this.regex = regex;
+			this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
 		}
 
 		public bool IsMatch(string text, object obj) {

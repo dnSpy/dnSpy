@@ -41,8 +41,7 @@ namespace dndbg.Engine {
 			if (key == null)
 				return null;
 
-			TValue value;
-			dict.TryGetValue(key, out value);
+			dict.TryGetValue(key, out var value);
 
 			return value;
 		}

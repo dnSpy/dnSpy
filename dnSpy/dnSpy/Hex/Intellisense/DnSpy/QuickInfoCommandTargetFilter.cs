@@ -48,12 +48,8 @@ namespace dnSpy.Hex.Intellisense.DnSpy {
 		HexQuickInfoSession quickInfoSession;
 
 		public QuickInfoCommandTargetFilter(HexQuickInfoBroker quickInfoBroker, HexView hexView) {
-			if (quickInfoBroker == null)
-				throw new ArgumentNullException(nameof(quickInfoBroker));
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			this.quickInfoBroker = quickInfoBroker;
-			this.hexView = hexView;
+			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 		}
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {

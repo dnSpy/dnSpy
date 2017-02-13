@@ -56,9 +56,7 @@ namespace dnSpy.Contracts.Hex.Text {
 		/// </summary>
 		/// <param name="text">Text</param>
 		public HexClassifiedTextCollection(HexClassifiedText[] text) {
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
-			this.text = text;
+			this.text = text ?? throw new ArgumentNullException(nameof(text));
 		}
 
 		/// <summary>

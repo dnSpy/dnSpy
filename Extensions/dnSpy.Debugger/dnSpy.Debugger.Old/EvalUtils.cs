@@ -89,8 +89,7 @@ namespace dnSpy.Debugger {
 				var mdi = mod.GetMetaDataInterface<IMetaDataImport>();
 				if (mdi == null)
 					return default(T);
-				uint mdToken;
-				int hr = mdi.FindMethod(cls.Token, methodName, IntPtr.Zero, 0, out mdToken);
+				int hr = mdi.FindMethod(cls.Token, methodName, IntPtr.Zero, 0, out uint mdToken);
 				if (hr < 0)
 					return default(T);
 				var func = mod.GetFunctionFromToken(mdToken);

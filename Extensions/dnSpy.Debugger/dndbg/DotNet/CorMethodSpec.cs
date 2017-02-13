@@ -40,8 +40,7 @@ namespace dndbg.DotNet {
 			var mdi2 = readerModule.MetaDataImport2;
 			uint token = OriginalToken.Raw;
 
-			uint method;
-			var instData = MDAPI.GetMethodSpecProps(mdi2, token, out method);
+			var instData = MDAPI.GetMethodSpecProps(mdi2, token, out uint method);
 			this.method = readerModule.ResolveToken(method, gpContext) as IMethodDefOrRef;
 			instantiation = readerModule.ReadSignature(instData, gpContext);
 		}

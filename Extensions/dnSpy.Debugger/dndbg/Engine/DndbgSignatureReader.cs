@@ -39,14 +39,11 @@ namespace dndbg.Engine {
 
 			public SignatureReaderHelper(IMetaDataImport mdi) {
 				Debug.Assert(mdi != null);
-				if (mdi == null)
-					throw new ArgumentNullException(nameof(mdi));
-				this.mdi = mdi;
+				this.mdi = mdi ?? throw new ArgumentNullException(nameof(mdi));
 			}
 
 			public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken, GenericParamContext gpContext) {
-				uint token;
-				if (!CodedToken.TypeDefOrRef.Decode(codedToken, out token))
+				if (!CodedToken.TypeDefOrRef.Decode(codedToken, out uint token))
 					return null;
 				uint rid = MDToken.ToRID(token);
 				switch (MDToken.ToTable(token)) {

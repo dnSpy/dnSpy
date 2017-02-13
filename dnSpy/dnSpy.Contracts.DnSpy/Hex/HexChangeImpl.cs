@@ -46,14 +46,10 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentOutOfRangeException(nameof(position));
 			if (position + newData.LongLength > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(position));
-			if (oldData == null)
-				throw new ArgumentNullException(nameof(oldData));
-			if (newData == null)
-				throw new ArgumentNullException(nameof(newData));
 			oldPosition = position;
 			newPosition = position;
-			this.oldData = oldData;
-			this.newData = newData;
+			this.oldData = oldData ?? throw new ArgumentNullException(nameof(oldData));
+			this.newData = newData ?? throw new ArgumentNullException(nameof(newData));
 		}
 
 		public HexChangeImpl(HexPosition oldPosition, byte[] oldData, HexPosition newPosition, byte[] newData) {
@@ -61,14 +57,10 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentOutOfRangeException(nameof(oldPosition));
 			if (newPosition > HexPosition.MaxEndPosition || newPosition + newData.LongLength > HexPosition.MaxEndPosition)
 				throw new ArgumentOutOfRangeException(nameof(newPosition));
-			if (oldData == null)
-				throw new ArgumentNullException(nameof(oldData));
-			if (newData == null)
-				throw new ArgumentNullException(nameof(newData));
 			this.oldPosition = oldPosition;
 			this.newPosition = newPosition;
-			this.oldData = oldData;
-			this.newData = newData;
+			this.oldData = oldData ?? throw new ArgumentNullException(nameof(oldData));
+			this.newData = newData ?? throw new ArgumentNullException(nameof(newData));
 		}
 
 		public override string ToString() => $"old={OldSpan}:'{GetString(OldData)}' new={NewSpan}:'{GetString(NewData)}'";

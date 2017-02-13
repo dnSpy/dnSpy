@@ -56,11 +56,9 @@ namespace dnSpy.Contracts.Hex.Files {
 		public static FlagInfo CreateEnumName(ulong mask, string name) => new FlagInfo(mask, name, false);
 
 		FlagInfo(ulong mask, string name, bool dummy) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
 			if (mask == 0)
 				throw new ArgumentOutOfRangeException(nameof(mask));
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Mask = mask;
 			Value = EnumNameValue;
 		}
@@ -81,13 +79,11 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="value">Value</param>
 		/// <param name="name">Name</param>
 		public FlagInfo(ulong mask, ulong value, string name) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
 			if (mask == 0)
 				throw new ArgumentOutOfRangeException(nameof(mask));
 			if ((value & ~mask) != 0)
 				throw new ArgumentOutOfRangeException(nameof(value));
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Mask = mask;
 			Value = value;
 		}

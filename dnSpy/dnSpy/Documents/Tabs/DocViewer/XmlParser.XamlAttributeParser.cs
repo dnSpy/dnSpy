@@ -86,9 +86,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			public XamlAttributeParser(XmlParser owner) {
-				if (owner == null)
-					throw new ArgumentNullException(nameof(owner));
-				this.owner = owner;
+				this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			}
 
 			public void Parse(string text, Span span) {

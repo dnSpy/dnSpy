@@ -48,16 +48,10 @@ namespace dnSpy.Hex.Editor {
 		readonly VSTC.IEditorFormatMap editorFormatMap;
 
 		public HexSelectionLayer(HexSelectionImpl hexSelection, HexAdornmentLayer layer, VSTC.IEditorFormatMap editorFormatMap) {
-			if (hexSelection == null)
-				throw new ArgumentNullException(nameof(hexSelection));
-			if (layer == null)
-				throw new ArgumentNullException(nameof(layer));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
 			markerElementRemovedCallBack = (tag, element) => OnMarkerElementRemoved();
-			this.hexSelection = hexSelection;
-			this.layer = layer;
-			this.editorFormatMap = editorFormatMap;
+			this.hexSelection = hexSelection ?? throw new ArgumentNullException(nameof(hexSelection));
+			this.layer = layer ?? throw new ArgumentNullException(nameof(layer));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
 			hexSelection.HexView.Options.OptionChanged += Options_OptionChanged;
 			hexSelection.SelectionChanged += HexSelection_SelectionChanged;
 			hexSelection.HexView.LayoutChanged += HexView_LayoutChanged;
@@ -170,9 +164,7 @@ namespace dnSpy.Hex.Editor {
 			Pen pen;
 
 			public MarkerElement(Geometry geometry) {
-				if (geometry == null)
-					throw new ArgumentNullException(nameof(geometry));
-				this.geometry = geometry;
+				this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 			}
 
 			protected override void OnRender(DrawingContext drawingContext) {

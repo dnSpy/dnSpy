@@ -47,19 +47,13 @@ namespace dnSpy.Text.Editor {
 		double popupZoomLevel = double.NaN;
 
 		public PopupSpaceReservationAgent(ISpaceReservationManager spaceReservationManager, IWpfTextView wpfTextView, ITrackingSpan visualSpan, PopupStyles style, UIElement content) {
-			if (spaceReservationManager == null)
-				throw new ArgumentNullException(nameof(spaceReservationManager));
-			if (visualSpan == null)
-				throw new ArgumentNullException(nameof(visualSpan));
-			if (content == null)
-				throw new ArgumentNullException(nameof(content));
 			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
-			this.spaceReservationManager = spaceReservationManager;
+			this.spaceReservationManager = spaceReservationManager ?? throw new ArgumentNullException(nameof(spaceReservationManager));
 			this.wpfTextView = wpfTextView;
-			this.visualSpan = visualSpan;
+			this.visualSpan = visualSpan ?? throw new ArgumentNullException(nameof(visualSpan));
 			this.style = style;
-			this.content = content;
+			this.content = content ?? throw new ArgumentNullException(nameof(content));
 			popup = new Popup {
 				PlacementTarget = wpfTextView.VisualElement,
 				Placement = PlacementMode.Relative,
@@ -75,11 +69,9 @@ namespace dnSpy.Text.Editor {
 		void Content_LostFocus(object sender, RoutedEventArgs e) => LostFocus?.Invoke(this, EventArgs.Empty);
 
 		internal void Update(ITrackingSpan visualSpan, PopupStyles style) {
-			if (visualSpan == null)
-				throw new ArgumentNullException(nameof(visualSpan));
 			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
-			this.visualSpan = visualSpan;
+			this.visualSpan = visualSpan ?? throw new ArgumentNullException(nameof(visualSpan));
 			this.style = style;
 			wpfTextView.QueueSpaceReservationStackRefresh();
 		}

@@ -464,8 +464,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void AddTypeSpec(InstructionOperandVM opvm) {
 			var creator = new TypeSigCreator(Window.GetWindow(listBox));
 			var opts = cilBodyVM.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec);
-			bool canceled;
-			var newSig = creator.Create(opts, (opvm.Other as ITypeDefOrRef).ToTypeSig(), out canceled);
+			var newSig = creator.Create(opts, (opvm.Other as ITypeDefOrRef).ToTypeSig(), out bool canceled);
 			if (canceled)
 				return;
 
@@ -593,8 +592,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case MethodBody.InstructionOperandType.Local:
 					if (!fromThisInstance) {
 						var oldLocal = (origInstr.InstructionOperandVM.OperandListItem as LocalVM) ?? LocalVM.Null;
-						LocalVM newLocal;
-						if (!createdLocals.TryGetValue(oldLocal, out newLocal)) {
+						if (!createdLocals.TryGetValue(oldLocal, out var newLocal)) {
 							newLocal = oldLocal.Import(cilBodyVM.TypeSigCreatorOptions, cilBodyVM.OwnerModule);
 							cilBodyVM.LocalsListVM.Add(newLocal);
 							createdLocals.Add(oldLocal, newLocal);

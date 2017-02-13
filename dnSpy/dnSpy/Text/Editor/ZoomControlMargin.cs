@@ -58,12 +58,8 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorOperations editorOperations;
 
 		public ZoomControlMargin(IWpfTextViewHost wpfTextViewHost, IEditorOperations editorOperations) {
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (editorOperations == null)
-				throw new ArgumentNullException(nameof(editorOperations));
-			this.wpfTextViewHost = wpfTextViewHost;
-			this.editorOperations = editorOperations;
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
+			this.editorOperations = editorOperations ?? throw new ArgumentNullException(nameof(editorOperations));
 
 			IsVisibleChanged += ZoomControlMargin_IsVisibleChanged;
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;

@@ -79,15 +79,9 @@ namespace dnSpy.Decompiler.MSBuild {
 		public Func<ModuleDef, byte[], CancellationToken, Stream, IList<string>> DecompileBaml;
 
 		public ProjectModuleOptions(ModuleDef module, IDecompiler decompiler, DecompilationContext decompilationContext) {
-			if (decompiler == null)
-				throw new ArgumentNullException(nameof(decompiler));
-			if (decompilationContext == null)
-				throw new ArgumentNullException(nameof(decompilationContext));
-			if (module == null)
-				throw new ArgumentNullException(nameof(module));
-			Module = module;
-			Decompiler = decompiler;
-			DecompilationContext = decompilationContext;
+			Module = module ?? throw new ArgumentNullException(nameof(module));
+			Decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
+			DecompilationContext = decompilationContext ?? throw new ArgumentNullException(nameof(decompilationContext));
 			ProjectGuid = Guid.NewGuid();
 			UnpackResources = true;
 			CreateResX = true;

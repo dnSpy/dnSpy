@@ -45,9 +45,7 @@ namespace dnSpy.Hex.Files {
 		/*readonly*/ NumberFormatter tokenFormatter;
 
 		public HexFieldFormatterImpl(HexTextWriter writer, HexFieldFormatterOptions options, NumberFormatter arrayIndexFormatter, NumberFormatter numberFormatter) {
-			if (writer == null)
-				throw new ArgumentNullException(nameof(writer));
-			this.writer = writer;
+			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
 			this.options = options;
 			this.arrayIndexFormatter = arrayIndexFormatter;
 			this.numberFormatter = numberFormatter;

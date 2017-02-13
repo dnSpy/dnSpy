@@ -76,8 +76,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		public ulong FileOffset {
 			get {
-				FileOffset fo;
-				GetModuleOffset(out fo);
+				GetModuleOffset(out var fo);
 				return (ulong)fo;
 			}
 		}
@@ -92,8 +91,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		public uint RVA {
 			get {
-				FileOffset fo;
-				var module = GetModuleOffset(out fo);
+				var module = GetModuleOffset(out var fo);
 				if (module == null)
 					return 0;
 
@@ -122,12 +120,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="treeNodeGroup">Treenode group</param>
 		/// <param name="resourceElement">Resource element</param>
 		protected ResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement) {
-			if (treeNodeGroup == null)
-				throw new ArgumentNullException(nameof(treeNodeGroup));
-			if (resourceElement == null)
-				throw new ArgumentNullException(nameof(resourceElement));
-			this.treeNodeGroup = treeNodeGroup;
-			this.resourceElement = resourceElement;
+			this.treeNodeGroup = treeNodeGroup ?? throw new ArgumentNullException(nameof(treeNodeGroup));
+			this.resourceElement = resourceElement ?? throw new ArgumentNullException(nameof(resourceElement));
 		}
 
 		/// <inheritdoc/>

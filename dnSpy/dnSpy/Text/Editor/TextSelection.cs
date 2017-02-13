@@ -105,13 +105,11 @@ namespace dnSpy.Text.Editor {
 		VirtualSnapshotPoint anchorPoint, activePoint;
 
 		public TextSelection(IWpfTextView textView, IAdornmentLayer selectionLayer, IEditorFormatMap editorFormatMap) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
 			if (selectionLayer == null)
 				throw new ArgumentNullException(nameof(selectionLayer));
 			if (editorFormatMap == null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
-			TextView = textView;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			Mode = TextSelectionMode.Stream;
 			activePoint = anchorPoint = new VirtualSnapshotPoint(TextView.TextSnapshot, 0);
 			TextView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;

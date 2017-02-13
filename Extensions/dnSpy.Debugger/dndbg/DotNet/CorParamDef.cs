@@ -78,9 +78,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			Name = Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, OriginalToken.Raw), MDAPI.GetParamName(mdi, token) ?? string.Empty);
-			uint seq;
-			ParamAttributes attrs;
-			MDAPI.GetParamSeqAndAttrs(mdi, token, out seq, out attrs);
+			MDAPI.GetParamSeqAndAttrs(mdi, token, out uint seq, out var attrs);
 			Sequence = (ushort)seq;
 			Attributes = attrs;
 		}
@@ -93,8 +91,7 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
-			CorElementType etype;
-			var c = MDAPI.GetParamConstant(mdi, token, out etype);
+			var c = MDAPI.GetParamConstant(mdi, token, out var etype);
 			if (etype == CorElementType.End)
 				return null;
 			return readerModule.UpdateRowId(new ConstantUser(c, (ElementType)etype));

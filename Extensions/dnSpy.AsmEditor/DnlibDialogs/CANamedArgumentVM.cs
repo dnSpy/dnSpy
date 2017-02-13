@@ -188,8 +188,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 			Name = namedArg.Name;
 			IsField = namedArg.IsField;
-			ITypeDefOrRef newEnumType;
-			ConstantTypeEnumList.SelectedItem = GetConstantType(namedArg.Type, out newEnumType);
+			ConstantTypeEnumList.SelectedItem = GetConstantType(namedArg.Type, out var newEnumType);
 			EnumType = newEnumType;
 			CAArgumentVM.StorageType = GetType((ConstantType)ConstantTypeEnumList.SelectedItem);
 		}

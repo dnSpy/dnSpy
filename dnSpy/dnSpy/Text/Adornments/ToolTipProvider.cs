@@ -40,9 +40,7 @@ namespace dnSpy.Text.Adornments {
 #pragma warning restore 0169
 
 		public ToolTipProvider(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			spaceReservationManager = wpfTextView.GetSpaceReservationManager(PredefinedSpaceReservationManagerNames.ToolTip);
 		}
 

@@ -57,8 +57,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		public static SignatureHelpSession TryGetSession(ISignatureHelpSession session) {
 			if (session == null)
 				return null;
-			SignatureHelpSession ourSession;
-			if (session.Properties.TryGetProperty(sigHelpSessionKey, out ourSession))
+			if (session.Properties.TryGetProperty(sigHelpSessionKey, out SignatureHelpSession ourSession))
 				return ourSession;
 			return null;
 		}

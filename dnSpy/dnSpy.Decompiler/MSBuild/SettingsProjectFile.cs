@@ -220,8 +220,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		string GetConnectionStringDesignTimeValue(PropertyDef prop) {
 			if (toConnectionStringInfo == null)
 				InitializeConnectionStringDesignTimeValues();
-			ConnectionStringInfo info;
-			if (!toConnectionStringInfo.TryGetValue(prop.Name, out info))
+			if (!toConnectionStringInfo.TryGetValue(prop.Name, out var info))
 				return null;
 
 			return string.Format(connectionIdStringFormat, EscapeXmlString(info.String), EscapeXmlString(info.ProviderName));

@@ -55,12 +55,10 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="columns">All columns</param>
 		/// <param name="rowSize">Row size</param>
 		public TableInfo(Table table, string name, ColumnInfo[] columns, int rowSize = 0) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
 			if (columns == null)
 				throw new ArgumentNullException(nameof(columns));
 			Table = table;
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Columns = new ReadOnlyCollection<ColumnInfo>(columns);
 			RowSize = rowSize;
 		}

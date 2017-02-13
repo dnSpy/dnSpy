@@ -35,9 +35,7 @@ namespace dnSpy.Text.Editor {
 		bool IsWordWrap => (TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
 
 		public ScrollMap(ITextView textView, bool areElisionsExpanded) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			TextView = textView;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			//TODO: Support AreElisionsExpanded == false (use visual snapshot instead of text snapshot)
 			AreElisionsExpanded = areElisionsExpanded;
 			TextView.Options.OptionChanged += Options_OptionChanged;
@@ -82,8 +80,7 @@ namespace dnSpy.Text.Editor {
 				return line.Start;
 			double fraction = coordinate - (int)coordinate;
 			var viewLine = TextView.GetTextViewLineContainingBufferPosition(line.Start);
-			int logicalLineNumber;
-			int logicalLines = GetNumberOfLogicalLines(viewLine, out logicalLineNumber);
+			int logicalLines = GetNumberOfLogicalLines(viewLine, out int logicalLineNumber);
 			logicalLineNumber = (int)Math.Round(fraction * logicalLines, MidpointRounding.AwayFromZero);
 			while (!viewLine.IsLastTextViewLineForSnapshotLine && logicalLineNumber-- > 0)
 				viewLine = TextView.GetTextViewLineContainingBufferPosition(viewLine.GetPointAfterLineBreak());
@@ -100,8 +97,7 @@ namespace dnSpy.Text.Editor {
 			}
 			else {
 				var viewLine = TextView.GetTextViewLineContainingBufferPosition(bufferPosition);
-				int logicalLineNumber;
-				int logicalLines = GetNumberOfLogicalLines(viewLine, out logicalLineNumber);
+				int logicalLines = GetNumberOfLogicalLines(viewLine, out int logicalLineNumber);
 				double fraction = (double)logicalLineNumber / logicalLines;
 				line = viewLine.Start.GetContainingLine();
 				return Start + line.LineNumber + fraction;

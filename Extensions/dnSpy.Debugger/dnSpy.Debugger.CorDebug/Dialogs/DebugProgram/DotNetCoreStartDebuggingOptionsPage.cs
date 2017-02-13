@@ -61,9 +61,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 
 		public DotNetCoreStartDebuggingOptionsPage(DotNetCoreStartDebuggingOptions options, SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions, IPickFilename pickFilename, IPickDirectory pickDirectory)
 			: base(options, pickFilename, pickDirectory) {
-			if (savedDotNetStartDebuggingOptions == null)
-				throw new ArgumentNullException(nameof(savedDotNetStartDebuggingOptions));
-			this.savedDotNetStartDebuggingOptions = savedDotNetStartDebuggingOptions;
+			this.savedDotNetStartDebuggingOptions = savedDotNetStartDebuggingOptions ?? throw new ArgumentNullException(nameof(savedDotNetStartDebuggingOptions));
 			HostFilename = options.Host;
 			HostArguments = options.HostArguments;
 		}

@@ -292,13 +292,11 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="oldPosition">Old position</param>
 		/// <param name="newPosition">New position</param>
 		public HexCaretPositionChangedEventArgs(HexView hexView, HexCaretPosition oldPosition, HexCaretPosition newPosition) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
 			if (oldPosition.IsDefault)
 				throw new ArgumentException();
 			if (newPosition.IsDefault)
 				throw new ArgumentException();
-			HexView = hexView;
+			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			OldPosition = oldPosition;
 			NewPosition = newPosition;
 		}

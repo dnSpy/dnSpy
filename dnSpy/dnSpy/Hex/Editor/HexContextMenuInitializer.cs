@@ -35,12 +35,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public HexContextMenuInitializer(WpfHexView hexView, FrameworkElement ctrl) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			if (ctrl == null)
-				throw new ArgumentNullException(nameof(ctrl));
-			this.hexView = hexView;
-			this.ctrl = ctrl;
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
+			this.ctrl = ctrl ?? throw new ArgumentNullException(nameof(ctrl));
 		}
 
 		public void Initialize(IMenuItemContext context, ContextMenu menu) {

@@ -53,12 +53,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 		readonly IMruCompletionService mruCompletionService;
 
 		public CompletionSource(IImageMonikerService imageMonikerService, IMruCompletionService mruCompletionService) {
-			if (imageMonikerService == null)
-				throw new ArgumentNullException(nameof(imageMonikerService));
-			if (mruCompletionService == null)
-				throw new ArgumentNullException(nameof(mruCompletionService));
-			this.imageMonikerService = imageMonikerService;
-			this.mruCompletionService = mruCompletionService;
+			this.imageMonikerService = imageMonikerService ?? throw new ArgumentNullException(nameof(imageMonikerService));
+			this.mruCompletionService = mruCompletionService ?? throw new ArgumentNullException(nameof(mruCompletionService));
 		}
 
 		public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets) {
@@ -73,8 +69,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			// This helps a little to speed up the code
 			ProfileOptimizationHelper.StartProfile("roslyn-completion-" + info.Value.CompletionService.Language);
 
-			CompletionTrigger completionTrigger;
-			session.Properties.TryGetProperty(typeof(CompletionTrigger), out completionTrigger);
+			session.Properties.TryGetProperty(typeof(CompletionTrigger), out CompletionTrigger completionTrigger);
 
 			var completionList = info.Value.CompletionService.GetCompletionsAsync(info.Value.Document, triggerPoint.Value.Position, completionTrigger).GetAwaiter().GetResult();
 			if (completionList == null)

@@ -67,9 +67,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="colorize">true if it should be colorized. Only special classifiers can ignore this, eg. highlighters</param>
 		/// <param name="colors">Default colors or null (see <see cref="TextClassifierTextColorWriter"/>)</param>
 		public TextClassifierContext(string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null) {
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
-			Text = text;
+			Text = text ?? throw new ArgumentNullException(nameof(text));
 			Tag = tag ?? string.Empty;
 			Colorize = colorize;
 			Colors = colors ?? Array.Empty<SpanData<object>>();

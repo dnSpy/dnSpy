@@ -28,9 +28,7 @@ namespace dnSpy.Text.Formatting {
 
 		public TextAndAdornmentCollection(ITextAndAdornmentSequencer textAndAdornmentSequencer, IList<ISequenceElement> list)
 			: base(list) {
-			if (textAndAdornmentSequencer == null)
-				throw new ArgumentNullException(nameof(textAndAdornmentSequencer));
-			Sequencer = textAndAdornmentSequencer;
+			Sequencer = textAndAdornmentSequencer ?? throw new ArgumentNullException(nameof(textAndAdornmentSequencer));
 		}
 	}
 }

@@ -42,12 +42,8 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="document">Document</param>
 		/// <param name="type">Type</param>
 		public SearchTypeInfo(IDsDocument document, TypeDef type) {
-			if (document == null)
-				throw new ArgumentNullException(nameof(document));
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			Document = document;
-			Type = type;
+			Document = document ?? throw new ArgumentNullException(nameof(document));
+			Type = type ?? throw new ArgumentNullException(nameof(type));
 		}
 	}
 }

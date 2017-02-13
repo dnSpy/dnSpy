@@ -50,12 +50,8 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		/// <param name="colorize">true if it should be colorized</param>
 		protected CompletionClassifierContext(CompletionSet completionSet, Completion completion, string text, bool colorize)
 			: base(text, string.Empty, colorize) {
-			if (completionSet == null)
-				throw new ArgumentNullException(nameof(completionSet));
-			if (completion == null)
-				throw new ArgumentNullException(nameof(completion));
-			CompletionSet = completionSet;
-			Completion = completion;
+			CompletionSet = completionSet ?? throw new ArgumentNullException(nameof(completionSet));
+			Completion = completion ?? throw new ArgumentNullException(nameof(completion));
 		}
 	}
 }

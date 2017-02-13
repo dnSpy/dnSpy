@@ -26,7 +26,6 @@ using System.Linq;
 using System.Windows.Threading;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
@@ -367,9 +366,7 @@ namespace dnSpy.Debugger.Locals {
 			var func = frameInfo.ValueContext.Function;
 			if (func == null)
 				return;
-			MethodAttributes methodAttrs;
-			MethodImplAttributes methodImplAttrs;
-			var ps = func.GetMDParameters(out methodAttrs, out methodImplAttrs);
+			var ps = func.GetMDParameters(out var methodAttrs, out var methodImplAttrs);
 			if (ps == null)
 				return;
 
@@ -409,10 +406,7 @@ namespace dnSpy.Debugger.Locals {
 			if (key == null)
 				return;
 
-			Parameter[] parameters;
-			Local[] locals;
-			SourceLocal[] decompilerLocals;
-			methodLocalProvider.GetMethodInfo(key.Value, out parameters, out locals, out decompilerLocals);
+			methodLocalProvider.GetMethodInfo(key.Value, out var parameters, out var locals, out var decompilerLocals);
 			if (!hasInitializedArgNames && parameters != null) {
 				hasInitializedArgNames = true;
 				foreach (var vm in Root.Children.OfType<NormalValueVM>()) {

@@ -163,8 +163,7 @@ namespace dnSpy.Hex.Commands {
 			protected override string OnNewValue(uint value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
 			protected override string ConvertToValue(out uint value) {
-				string error;
-				value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out error);
+				value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out string error);
 				if (error != null)
 					return error;
 				return CheckOffsetToken(value) ? null : dnSpy_Resources.GoToMetadataInvalidOffsetOrToken;

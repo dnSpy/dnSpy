@@ -92,18 +92,10 @@ namespace dnSpy.Language.Intellisense {
 		const double toolTipDelayMilliSeconds = 250;
 
 		public CompletionPresenter(IImageMonikerService imageMonikerService, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
-			if (imageMonikerService == null)
-				throw new ArgumentNullException(nameof(imageMonikerService));
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
-			if (completionTextElementProvider == null)
-				throw new ArgumentNullException(nameof(completionTextElementProvider));
-			if (completionUIElementProviders == null)
-				throw new ArgumentNullException(nameof(completionUIElementProviders));
-			this.imageMonikerService = imageMonikerService;
-			this.session = session;
-			this.completionTextElementProvider = completionTextElementProvider;
-			this.completionUIElementProviders = completionUIElementProviders;
+			this.imageMonikerService = imageMonikerService ?? throw new ArgumentNullException(nameof(imageMonikerService));
+			this.session = session ?? throw new ArgumentNullException(nameof(session));
+			this.completionTextElementProvider = completionTextElementProvider ?? throw new ArgumentNullException(nameof(completionTextElementProvider));
+			this.completionUIElementProviders = completionUIElementProviders ?? throw new ArgumentNullException(nameof(completionUIElementProviders));
 			control = new CompletionPresenterControl { DataContext = this };
 			filters = new List<FilterVM>();
 			control.MinWidth = defaultMinWidth;

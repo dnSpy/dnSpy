@@ -33,8 +33,7 @@ namespace dndbg.Engine {
 			get {
 				if (module != null)
 					return module;
-				ICorDebugModule mod;
-				int hr = obj.GetModule(out mod);
+				int hr = obj.GetModule(out var mod);
 				return module = hr < 0 || mod == null ? null : new CorModule(mod);
 			}
 		}
@@ -45,8 +44,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorClass Class {
 			get {
-				ICorDebugClass cls;
-				int hr = obj.GetClass(out cls);
+				int hr = obj.GetClass(out var cls);
 				if (hr >= 0 && cls != null)
 					return new CorClass(cls);
 
@@ -65,8 +63,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint Token {
 			get {
-				uint token;
-				int hr = obj.GetToken(out token);
+				int hr = obj.GetToken(out uint token);
 				return hr < 0 ? 0 : token;
 			}
 		}
@@ -79,8 +76,7 @@ namespace dndbg.Engine {
 				var func2 = obj as ICorDebugFunction2;
 				if (func2 == null)
 					return false;
-				int status;
-				int hr = func2.GetJMCStatus(out status);
+				int hr = func2.GetJMCStatus(out int status);
 				return hr >= 0 && status != 0;
 			}
 			set {
@@ -97,8 +93,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint CurrentVersionNumber {
 			get {
-				uint ver;
-				int hr = obj.GetCurrentVersionNumber(out ver);
+				int hr = obj.GetCurrentVersionNumber(out uint ver);
 				return hr < 0 ? 0 : ver;
 			}
 		}
@@ -111,8 +106,7 @@ namespace dndbg.Engine {
 				var func2 = obj as ICorDebugFunction2;
 				if (func2 == null)
 					return CurrentVersionNumber;
-				uint ver;
-				int hr = func2.GetVersionNumber(out ver);
+				int hr = func2.GetVersionNumber(out uint ver);
 				return hr < 0 ? 0 : ver;
 			}
 		}
@@ -122,8 +116,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint LocalVarSigToken {
 			get {
-				uint token;
-				int hr = obj.GetLocalVarSigToken(out token);
+				int hr = obj.GetLocalVarSigToken(out uint token);
 				return hr < 0 ? 0 : token;
 			}
 		}
@@ -133,8 +126,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorCode ILCode {
 			get {
-				ICorDebugCode code;
-				int hr = obj.GetILCode(out code);
+				int hr = obj.GetILCode(out var code);
 				return hr < 0 || code == null ? null : new CorCode(code);
 			}
 		}
@@ -147,8 +139,7 @@ namespace dndbg.Engine {
 		/// implemented by the CLR debugger yet.</remarks>
 		public CorCode NativeCode {
 			get {
-				ICorDebugCode code;
-				int hr = obj.GetNativeCode(out code);
+				int hr = obj.GetNativeCode(out var code);
 				return hr < 0 || code == null ? null : new CorCode(code);
 			}
 		}
@@ -163,9 +154,7 @@ namespace dndbg.Engine {
 			MDAPI.GetMethodAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, out attributes, out implAttributes);
 
 		public MethodAttributes GetAttributes() {
-			MethodImplAttributes implAttributes;
-			MethodAttributes attributes;
-			MDAPI.GetMethodAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, out attributes, out implAttributes);
+			MDAPI.GetMethodAttributes(Module?.GetMetaDataInterface<IMetaDataImport>(), Token, out var attributes, out var implAttributes);
 			return attributes;
 		}
 
@@ -174,8 +163,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public CorFunctionBreakpoint CreateBreakpoint() {
-			ICorDebugFunctionBreakpoint fnbp;
-			int hr = obj.CreateBreakpoint(out fnbp);
+			int hr = obj.CreateBreakpoint(out var fnbp);
 			return hr < 0 || fnbp == null ? null : new CorFunctionBreakpoint(fnbp);
 		}
 

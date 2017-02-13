@@ -49,9 +49,7 @@ namespace dnSpy.Text.Settings {
 		readonly ICommonEditorOptions options;
 
 		protected TabsAppSettingsPageBase(ICommonEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			TabSizeVM = new Int32VM(options.TabSize, a => { }, true) { Min = OptionsHelpers.MinimumTabSize, Max = OptionsHelpers.MaximumTabSize };
 			IndentSizeVM = new Int32VM(options.IndentSize, a => { }, true) { Min = OptionsHelpers.MinimumIndentSize, Max = OptionsHelpers.MaximumIndentSize };
 			ConvertTabsToSpaces = options.ConvertTabsToSpaces;

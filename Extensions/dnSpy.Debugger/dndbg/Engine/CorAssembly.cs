@@ -33,8 +33,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorProcess Process {
 			get {
-				ICorDebugProcess process;
-				int hr = obj.GetProcess(out process);
+				int hr = obj.GetProcess(out var process);
 				return hr < 0 || process == null ? null : new CorProcess(process);
 			}
 		}
@@ -44,8 +43,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorAppDomain AppDomain {
 			get {
-				ICorDebugAppDomain appDomain;
-				int hr = obj.GetAppDomain(out appDomain);
+				int hr = obj.GetAppDomain(out var appDomain);
 				return hr < 0 || appDomain == null ? null : new CorAppDomain(appDomain);
 			}
 		}
@@ -55,14 +53,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorModule> Modules {
 			get {
-				ICorDebugModuleEnum moduleEnum;
-				int hr = obj.EnumerateModules(out moduleEnum);
+				int hr = obj.EnumerateModules(out var moduleEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugModule module = null;
-					uint count;
-					hr = moduleEnum.Next(1, out module, out count);
+					hr = moduleEnum.Next(1, out var module, out uint count);
 					if (hr != 0 || module == null)
 						break;
 					yield return new CorModule(module);
@@ -78,8 +73,7 @@ namespace dndbg.Engine {
 				var asm2 = obj as ICorDebugAssembly2;
 				if (asm2 == null)
 					return false;
-				int ft;
-				int hr = asm2.IsFullyTrusted(out ft);
+				int hr = asm2.IsFullyTrusted(out int ft);
 				return hr >= 0 && ft != 0;
 			}
 		}
@@ -109,8 +103,7 @@ namespace dndbg.Engine {
 
 			var asm = new AssemblyNameInfo();
 			asm.Name = MDAPI.GetAssemblySimpleName(mdai, token) ?? string.Empty;
-			string locale;
-			asm.Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out locale) ?? new Version(0, 0, 0, 0);
+			asm.Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out string locale) ?? new Version(0, 0, 0, 0);
 			asm.Culture = locale ?? string.Empty;
 			asm.HashAlgId = MDAPI.GetAssemblyHashAlgorithm(mdai, token) ?? AssemblyHashAlgorithm.SHA1;
 			asm.Attributes = MDAPI.GetAssemblyAttributes(mdai, token) ?? AssemblyAttributes.None;
@@ -140,8 +133,7 @@ namespace dndbg.Engine {
 		}
 
 		static string GetName(ICorDebugAssembly assembly) {
-			uint cchName = 0;
-			int hr = assembly.GetName(0, out cchName, null);
+			int hr = assembly.GetName(0, out uint cchName, null);
 			if (hr < 0)
 				return null;
 			var sb = new StringBuilder((int)cchName);

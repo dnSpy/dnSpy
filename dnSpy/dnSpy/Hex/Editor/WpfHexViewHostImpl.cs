@@ -45,14 +45,10 @@ namespace dnSpy.Hex.Editor {
 		public WpfHexViewHostImpl(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider, WpfHexView wpfHexView, HexEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
 			if (wpfHexViewMarginProviderCollectionProvider == null)
 				throw new ArgumentNullException(nameof(wpfHexViewMarginProviderCollectionProvider));
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			if (editorOperationsFactoryService == null)
-				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			contentControl = new ContentControl();
-			this.editorOperationsFactoryService = editorOperationsFactoryService;
+			this.editorOperationsFactoryService = editorOperationsFactoryService ?? throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			grid = CreateGrid();
-			HexView = wpfHexView;
+			HexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			contentControl.Focusable = false;
 			contentControl.Content = grid;
 			contentControl.MouseWheel += ContentControl_MouseWheel;

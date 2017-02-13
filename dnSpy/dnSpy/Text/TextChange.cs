@@ -50,14 +50,10 @@ namespace dnSpy.Text {
 		public string OldText => oldText.Text;
 
 		public TextChange(int offset, ITextSource oldText, ITextSource newText) {
-			if (oldText == null)
-				throw new ArgumentNullException(nameof(oldText));
-			if (newText == null)
-				throw new ArgumentNullException(nameof(newText));
 			oldOffset = offset;
 			newOffset = offset;
-			this.oldText = oldText;
-			this.newText = newText;
+			this.oldText = oldText ?? throw new ArgumentNullException(nameof(oldText));
+			this.newText = newText ?? throw new ArgumentNullException(nameof(newText));
 		}
 
 		public TextChange(int offset, string oldText, string newText) {

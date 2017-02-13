@@ -37,12 +37,8 @@ namespace dnSpy.Text.Classification {
 		readonly Dictionary<string, ResourceDictionary> resourceDicts;
 
 		public CategoryEditorFormatMap(Dispatcher dispatcher, IEditorFormatDefinitionService editorFormatDefinitionService) {
-			if (dispatcher == null)
-				throw new ArgumentNullException(nameof(dispatcher));
-			if (editorFormatDefinitionService == null)
-				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
-			this.dispatcher = dispatcher;
-			this.editorFormatDefinitionService = editorFormatDefinitionService;
+			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+			this.editorFormatDefinitionService = editorFormatDefinitionService ?? throw new ArgumentNullException(nameof(editorFormatDefinitionService));
 			batchChanges = new HashSet<string>(StringComparer.Ordinal);
 			resourceDicts = new Dictionary<string, ResourceDictionary>(StringComparer.Ordinal);
 		}
@@ -85,8 +81,7 @@ namespace dnSpy.Text.Classification {
 		public ResourceDictionary GetProperties(string key) {
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
-			ResourceDictionary resDict;
-			if (resourceDicts.TryGetValue(key, out resDict))
+			if (resourceDicts.TryGetValue(key, out var resDict))
 				return resDict;
 			resDict = editorFormatDefinitionService.GetDefinition(key)?.CreateResourceDictionary() ?? new ResourceDictionary();
 			resourceDicts.Add(key, resDict);

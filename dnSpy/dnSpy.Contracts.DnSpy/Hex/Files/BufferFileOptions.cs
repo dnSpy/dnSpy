@@ -57,16 +57,10 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="filename">Filename if possible, otherwise any name</param>
 		/// <param name="tags">Tags, see eg. <see cref="PredefinedBufferFileTags"/></param>
 		public BufferFileOptions(HexSpan span, string name, string filename, string[] tags) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			if (tags == null)
-				throw new ArgumentNullException(nameof(tags));
 			Span = span;
-			Name = name;
-			Filename = filename;
-			Tags = tags;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+			Filename = filename ?? throw new ArgumentNullException(nameof(filename));
+			Tags = tags ?? throw new ArgumentNullException(nameof(tags));
 		}
 	}
 }

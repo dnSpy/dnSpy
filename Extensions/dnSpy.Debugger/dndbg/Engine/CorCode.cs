@@ -45,8 +45,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint VersionNumber {
 			get {
-				uint ver;
-				int hr = obj.GetVersionNumber(out ver);
+				int hr = obj.GetVersionNumber(out uint ver);
 				return hr < 0 ? 0 : ver;
 			}
 		}
@@ -56,8 +55,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorFunction Function {
 			get {
-				ICorDebugFunction func;
-				int hr = obj.GetFunction(out func);
+				int hr = obj.GetFunction(out var func);
 				return hr < 0 || func == null ? null : new CorFunction(func);
 			}
 		}
@@ -70,16 +68,14 @@ namespace dndbg.Engine {
 				var c2 = obj as ICorDebugCode2;
 				if (c2 == null)
 					return 0;
-				CorDebugJITCompilerFlags flags;
-				int hr = c2.GetCompilerFlags(out flags);
+				int hr = c2.GetCompilerFlags(out var flags);
 				return hr < 0 ? 0 : flags;
 			}
 		}
 
 		public CorCode(ICorDebugCode code)
 			: base(code) {
-			int i;
-			int hr = code.IsIL(out i);
+			int hr = code.IsIL(out int i);
 			IsIL = hr >= 0 && i != 0;
 
 			hr = code.GetSize(out size);
@@ -101,8 +97,7 @@ namespace dndbg.Engine {
 		/// <param name="offset">Offset relative to the start of the method</param>
 		/// <returns></returns>
 		public CorFunctionBreakpoint CreateBreakpoint(uint offset) {
-			ICorDebugFunctionBreakpoint fnbp;
-			int hr = obj.CreateBreakpoint(offset, out fnbp);
+			int hr = obj.CreateBreakpoint(offset, out var fnbp);
 			return hr < 0 || fnbp == null ? null : new CorFunctionBreakpoint(fnbp);
 		}
 
@@ -114,8 +109,7 @@ namespace dndbg.Engine {
 			var c2 = obj as ICorDebugCode2;
 			if (c2 == null)
 				return Array.Empty<CodeChunkInfo>();
-			uint cnumChunks;
-			int hr = c2.GetCodeChunks(0, out cnumChunks, IntPtr.Zero);
+			int hr = c2.GetCodeChunks(0, out uint cnumChunks, IntPtr.Zero);
 			if (hr < 0)
 				return Array.Empty<CodeChunkInfo>();
 			var infos = new CodeChunkInfo[cnumChunks];

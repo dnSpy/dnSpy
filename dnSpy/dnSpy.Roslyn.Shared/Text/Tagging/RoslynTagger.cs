@@ -38,16 +38,12 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 
 		public RoslynTagger(ITextBuffer textBuffer, IThemeClassificationTypeService themeClassificationTypeService, IRoslynDocumentChangedService roslynDocumentChangedService) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			if (roslynDocumentChangedService == null)
-				throw new ArgumentNullException(nameof(roslynDocumentChangedService));
-			this.textBuffer = textBuffer;
+			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
 			roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
-			this.roslynDocumentChangedService = roslynDocumentChangedService;
+			this.roslynDocumentChangedService = roslynDocumentChangedService ?? throw new ArgumentNullException(nameof(roslynDocumentChangedService));
 			roslynDocumentChangedService.DocumentChanged += RoslynDocumentChangedService_DocumentChanged;
 		}
 

@@ -42,12 +42,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="method">Method</param>
 		/// <param name="instruction">Instruction</param>
 		public InstructionReference(MethodDef method, Instruction instruction) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
-			if (instruction == null)
-				throw new ArgumentNullException(nameof(instruction));
-			Method = method;
-			Instruction = instruction;
+			Method = method ?? throw new ArgumentNullException(nameof(method));
+			Instruction = instruction ?? throw new ArgumentNullException(nameof(instruction));
 		}
 
 		/// <summary>

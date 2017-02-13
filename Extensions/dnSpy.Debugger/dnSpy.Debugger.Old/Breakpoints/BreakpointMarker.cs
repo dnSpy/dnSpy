@@ -77,8 +77,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void RemoveMarker(ILCodeBreakpoint ilbp) {
-			IGlyphTextMethodMarker marker;
-			if (toMethodMarkers.TryGetValue(ilbp, out marker)) {
+			if (toMethodMarkers.TryGetValue(ilbp, out var marker)) {
 				glyphTextMarkerService.Remove(marker);
 				toMethodMarkers.Remove(ilbp);
 			}

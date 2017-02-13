@@ -44,9 +44,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		public TaggedTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

@@ -170,9 +170,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 
 		public AssemblyExplorerAppSettingsPage(DocumentTreeViewSettingsImpl documentTreeViewSettings) {
-			if (documentTreeViewSettings == null)
-				throw new ArgumentNullException(nameof(documentTreeViewSettings));
-			this.documentTreeViewSettings = documentTreeViewSettings;
+			this.documentTreeViewSettings = documentTreeViewSettings ?? throw new ArgumentNullException(nameof(documentTreeViewSettings));
 
 			ShowToken = documentTreeViewSettings.ShowToken;
 			ShowAssemblyVersion = documentTreeViewSettings.ShowAssemblyVersion;

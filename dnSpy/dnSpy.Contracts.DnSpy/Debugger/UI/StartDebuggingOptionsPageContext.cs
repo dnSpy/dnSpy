@@ -34,9 +34,7 @@ namespace dnSpy.Contracts.Debugger.UI {
 		/// </summary>
 		/// <param name="currentFilename">Filename of the current selected file or an empty string</param>
 		public StartDebuggingOptionsPageContext(string currentFilename) {
-			if (currentFilename == null)
-				throw new ArgumentNullException(nameof(currentFilename));
-			CurrentFilename = currentFilename;
+			CurrentFilename = currentFilename ?? throw new ArgumentNullException(nameof(currentFilename));
 		}
 	}
 }

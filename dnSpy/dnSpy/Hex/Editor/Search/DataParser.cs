@@ -171,71 +171,61 @@ namespace dnSpy.Hex.Editor.Search {
 			isBigEndian ? Encoding.BigEndianUnicode.GetBytes(text) : Encoding.Unicode.GetBytes(text);
 
 		static byte[] TryParseByte(string text) {
-			ulong value;
-			if (!NumberParser.TryParseUnsigned(text, byte.MinValue, byte.MaxValue, out value))
+			if (!NumberParser.TryParseUnsigned(text, byte.MinValue, byte.MaxValue, out ulong value))
 				return null;
 			return new byte[1] { (byte)value };
 		}
 
 		static byte[] TryParseSByte(string text) {
-			long value;
-			if (!NumberParser.TryParseSigned(text, sbyte.MinValue, sbyte.MaxValue, out value))
+			if (!NumberParser.TryParseSigned(text, sbyte.MinValue, sbyte.MaxValue, out long value))
 				return null;
 			return new byte[1] { (byte)value };
 		}
 
 		static byte[] TryParseInt16(string text, bool isBigEndian) {
-			long value;
-			if (!NumberParser.TryParseSigned(text, short.MinValue, short.MaxValue, out value))
+			if (!NumberParser.TryParseSigned(text, short.MinValue, short.MaxValue, out long value))
 				return null;
 			return GetBytes((ushort)value, isBigEndian);
 		}
 
 		static byte[] TryParseUInt16(string text, bool isBigEndian) {
-			ulong value;
-			if (!NumberParser.TryParseUnsigned(text, ushort.MinValue, ushort.MaxValue, out value))
+			if (!NumberParser.TryParseUnsigned(text, ushort.MinValue, ushort.MaxValue, out ulong value))
 				return null;
 			return GetBytes((ushort)value, isBigEndian);
 		}
 
 		static byte[] TryParseInt32(string text, bool isBigEndian) {
-			long value;
-			if (!NumberParser.TryParseSigned(text, int.MinValue, int.MaxValue, out value))
+			if (!NumberParser.TryParseSigned(text, int.MinValue, int.MaxValue, out long value))
 				return null;
 			return GetBytes((uint)value, isBigEndian);
 		}
 
 		static byte[] TryParseUInt32(string text, bool isBigEndian) {
-			ulong value;
-			if (!NumberParser.TryParseUnsigned(text, uint.MinValue, uint.MaxValue, out value))
+			if (!NumberParser.TryParseUnsigned(text, uint.MinValue, uint.MaxValue, out ulong value))
 				return null;
 			return GetBytes((uint)value, isBigEndian);
 		}
 
 		static byte[] TryParseInt64(string text, bool isBigEndian) {
-			long value;
-			if (!NumberParser.TryParseSigned(text, long.MinValue, long.MaxValue, out value))
+			if (!NumberParser.TryParseSigned(text, long.MinValue, long.MaxValue, out long value))
 				return null;
 			return GetBytes((ulong)value, isBigEndian);
 		}
 
 		static byte[] TryParseUInt64(string text, bool isBigEndian) {
-			ulong value;
-			if (!NumberParser.TryParseUnsigned(text, ulong.MinValue, ulong.MaxValue, out value))
+			if (!NumberParser.TryParseUnsigned(text, ulong.MinValue, ulong.MaxValue, out ulong value))
 				return null;
 			return GetBytes((ulong)value, isBigEndian);
 		}
 
 		static byte[] TryParseSingle(string text, bool isBigEndian) {
-			float value;
-			if (!float.TryParse(text, out value))
+			if (!float.TryParse(text, out float value))
 				return null;
 			return GetBytes(value, isBigEndian);
 		}
 
 		static byte[] TryParseDouble(string text, bool isBigEndian) {
-			double value;
-			if (!double.TryParse(text, out value))
+			if (!double.TryParse(text, out double value))
 				return null;
 			return GetBytes(value, isBigEndian);
 		}

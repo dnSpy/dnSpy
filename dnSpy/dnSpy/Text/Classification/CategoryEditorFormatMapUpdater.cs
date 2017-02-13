@@ -35,18 +35,10 @@ namespace dnSpy.Text.Classification {
 		readonly IEditorFormatMap editorFormatMap;
 
 		public CategoryEditorFormatMapUpdater(IThemeService themeService, ITextAppearanceCategory textAppearanceCategory, IEditorFormatDefinitionService editorFormatDefinitionService, IEditorFormatMap editorFormatMap) {
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			if (textAppearanceCategory == null)
-				throw new ArgumentNullException(nameof(textAppearanceCategory));
-			if (editorFormatDefinitionService == null)
-				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
-			this.themeService = themeService;
-			this.textAppearanceCategory = textAppearanceCategory;
-			this.editorFormatDefinitionService = editorFormatDefinitionService;
-			this.editorFormatMap = editorFormatMap;
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			this.textAppearanceCategory = textAppearanceCategory ?? throw new ArgumentNullException(nameof(textAppearanceCategory));
+			this.editorFormatDefinitionService = editorFormatDefinitionService ?? throw new ArgumentNullException(nameof(editorFormatDefinitionService));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
 
 			themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
 			textAppearanceCategory.SettingsChanged += TextAppearanceCategory_SettingsChanged;

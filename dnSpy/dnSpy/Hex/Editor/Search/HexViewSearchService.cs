@@ -246,23 +246,15 @@ namespace dnSpy.Hex.Editor.Search {
 		HexAdornmentLayer layer;
 
 		public HexViewSearchServiceImpl(WpfHexView wpfHexView, HexSearchServiceFactory hexSearchServiceFactory, SearchSettings searchSettings, IMessageBoxService messageBoxService, HexEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			if (hexSearchServiceFactory == null)
-				throw new ArgumentNullException(nameof(hexSearchServiceFactory));
-			if (searchSettings == null)
-				throw new ArgumentNullException(nameof(searchSettings));
-			if (messageBoxService == null)
-				throw new ArgumentNullException(nameof(messageBoxService));
 			if (editorOperationsFactoryService == null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			dataKinds = new ObservableCollection<DataKindVM>(dataKindVMList);
 			selectedDataKindVM = dataKinds.First();
-			this.wpfHexView = wpfHexView;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfHexView);
-			this.hexSearchServiceFactory = hexSearchServiceFactory;
-			this.searchSettings = searchSettings;
-			this.messageBoxService = messageBoxService;
+			this.hexSearchServiceFactory = hexSearchServiceFactory ?? throw new ArgumentNullException(nameof(hexSearchServiceFactory));
+			this.searchSettings = searchSettings ?? throw new ArgumentNullException(nameof(searchSettings));
+			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
 			listeners = new List<IHexMarkerListener>();
 			searchString = string.Empty;
 			replaceString = string.Empty;

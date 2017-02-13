@@ -52,9 +52,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <param name="debugFile">Debug file result or null</param>
 		/// <param name="diagnostics">Diagnostics or null</param>
 		public CompilationResult(byte[] rawFile, DebugFileResult? debugFile = null, CompilerDiagnostic[] diagnostics = null) {
-			if (rawFile == null)
-				throw new ArgumentNullException(nameof(rawFile));
-			RawFile = rawFile;
+			RawFile = rawFile ?? throw new ArgumentNullException(nameof(rawFile));
 			DebugFile = debugFile ?? new DebugFileResult();
 			Diagnostics = diagnostics ?? Array.Empty<CompilerDiagnostic>();
 		}

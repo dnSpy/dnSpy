@@ -62,17 +62,13 @@ namespace dnSpy.Text.Editor {
 		double preferredXCoordinate;
 
 		public TextCaret(IWpfTextView textView, IAdornmentLayer caretLayer, ISmartIndentationService smartIndentationService, IClassificationFormatMap classificationFormatMap) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
 			if (caretLayer == null)
 				throw new ArgumentNullException(nameof(caretLayer));
-			if (smartIndentationService == null)
-				throw new ArgumentNullException(nameof(smartIndentationService));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			this.textView = textView;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			imeState = new ImeState();
-			this.smartIndentationService = smartIndentationService;
+			this.smartIndentationService = smartIndentationService ?? throw new ArgumentNullException(nameof(smartIndentationService));
 			preferredXCoordinate = 0;
 			__preferredYCoordinate = 0;
 			Affinity = PositionAffinity.Successor;

@@ -46,9 +46,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		public bool IsAssemblyReference { get; }
 
 		CompilerMetadataReference(byte[] data, IAssembly assembly, string filename, bool isAssemblyReference) {
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
-			Data = data;
+			Data = data ?? throw new ArgumentNullException(nameof(data));
 			Assembly = assembly;
 			Filename = filename;
 			IsAssemblyReference = isAssemblyReference;

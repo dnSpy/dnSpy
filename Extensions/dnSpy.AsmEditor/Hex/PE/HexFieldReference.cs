@@ -27,15 +27,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public HexField Field { get; }
 
 		public HexFieldReference(HexBufferFile file, HexVM structure, HexField field) {
-			if (file == null)
-				throw new ArgumentNullException(nameof(file));
-			if (structure == null)
-				throw new ArgumentNullException(nameof(structure));
-			if (field == null)
-				throw new ArgumentNullException(nameof(field));
-			File = file;
-			Structure = structure;
-			Field = field;
+			File = file ?? throw new ArgumentNullException(nameof(file));
+			Structure = structure ?? throw new ArgumentNullException(nameof(structure));
+			Field = field ?? throw new ArgumentNullException(nameof(field));
 		}
 	}
 }

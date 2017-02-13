@@ -47,8 +47,7 @@ namespace dnSpy.Settings {
 				var name = XmlUtils.UnescapeAttributeValue((string)xmlSect.Attribute(XmlSettingsConstants.SECTION_ATTRIBUTE_NAME));
 				if (name == null)
 					continue;
-				Guid guid;
-				if (!Guid.TryParse(name, out guid))
+				if (!Guid.TryParse(name, out var guid))
 					continue;
 				var section = mgr.GetOrCreateSection(guid);
 				ReadSection(xmlSect, section, 0);

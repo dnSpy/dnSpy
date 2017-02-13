@@ -107,9 +107,7 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
 
 		public HexViewDocumentTabContent(Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, HexBuffer buffer) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			this.buffer = buffer;
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
 		}
 

@@ -87,8 +87,7 @@ namespace dnSpy_Console {
 		public ConsoleColorPair? GetColor(TextColor? color) {
 			if (color == null)
 				return null;
-			ConsoleColorPair ccPair;
-			return colors.TryGetValue(color.Value, out ccPair) ? ccPair : (ConsoleColorPair?)null;
+			return colors.TryGetValue(color.Value, out var ccPair) ? ccPair : (ConsoleColorPair?)null;
 		}
 	}
 
@@ -105,15 +104,9 @@ namespace dnSpy_Console {
 		bool IDecompilerOutput.UsesCustomData => false;
 
 		public ConsoleColorizerOutput(TextWriter writer, ColorProvider colorProvider, Indenter indenter) {
-			if (writer == null)
-				throw new ArgumentNullException(nameof(writer));
-			if (colorProvider == null)
-				throw new ArgumentNullException(nameof(colorProvider));
-			if (indenter == null)
-				throw new ArgumentNullException(nameof(indenter));
-			this.writer = writer;
-			this.colorProvider = colorProvider;
-			this.indenter = indenter;
+			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
+			this.colorProvider = colorProvider ?? throw new ArgumentNullException(nameof(colorProvider));
+			this.indenter = indenter ?? throw new ArgumentNullException(nameof(indenter));
 		}
 
 		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
@@ -384,8 +377,7 @@ namespace dnSpy_Console {
 			var list = new List<List<IDecompiler>>();
 			var dict = new Dictionary<object, List<IDecompiler>>();
 			foreach (var lang in AllLanguages) {
-				List<IDecompiler> opts;
-				if (!dict.TryGetValue(lang.Settings, out opts)) {
+				if (!dict.TryGetValue(lang.Settings, out var opts)) {
 					dict.Add(lang.Settings, opts = new List<IDecompiler>());
 					list.Add(opts);
 				}
@@ -639,8 +631,7 @@ namespace dnSpy_Console {
 		}
 
 		static int ParseInt32(string s) {
-			string error;
-			var v = SimpleTypeConverter.ParseInt32(s, int.MinValue, int.MaxValue, out error);
+			var v = SimpleTypeConverter.ParseInt32(s, int.MinValue, int.MaxValue, out string error);
 			if (!string.IsNullOrEmpty(error))
 				throw new ErrorException(error);
 			return v;
@@ -966,8 +957,7 @@ namespace dnSpy_Console {
 		}
 
 		IDecompiler GetLanguage() {
-			Guid guid;
-			bool hasGuid = Guid.TryParse(language, out guid);
+			bool hasGuid = Guid.TryParse(language, out var guid);
 			return AllLanguages.FirstOrDefault(a => {
 				if (StringComparer.OrdinalIgnoreCase.Equals(language, a.UniqueNameUI))
 					return true;

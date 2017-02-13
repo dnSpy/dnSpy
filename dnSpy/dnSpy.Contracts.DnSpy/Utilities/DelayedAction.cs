@@ -35,10 +35,8 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="milliseconds">Milliseconds to wait</param>
 		/// <param name="action">Code to execute</param>
 		public DelayedAction(int milliseconds, Action action) {
-			if (action == null)
-				throw new ArgumentNullException(nameof(action));
 			this.milliseconds = milliseconds;
-			this.action = action;
+			this.action = action ?? throw new ArgumentNullException(nameof(action));
 			dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(milliseconds), DispatcherPriority.Send, StartIt, Dispatcher.CurrentDispatcher);
 		}
 

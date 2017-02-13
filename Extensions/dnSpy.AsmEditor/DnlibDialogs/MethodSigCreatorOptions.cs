@@ -39,9 +39,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public TypeSigCreatorOptions TypeSigCreatorOptions {
 			get { return typeSigCreatorOptions; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				typeSigCreatorOptions = value;
+				typeSigCreatorOptions = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		TypeSigCreatorOptions typeSigCreatorOptions;

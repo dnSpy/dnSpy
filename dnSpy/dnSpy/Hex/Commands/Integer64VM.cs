@@ -49,8 +49,7 @@ namespace dnSpy.Hex.Commands {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out ulong value) {
-			string error;
-			long v = SimpleTypeConverter.ParseInt64(StringValue, long.MinValue, long.MaxValue, out error);
+			long v = SimpleTypeConverter.ParseInt64(StringValue, long.MinValue, long.MaxValue, out string error);
 			if (error == null) {
 				value = (ulong)v;
 				return null;

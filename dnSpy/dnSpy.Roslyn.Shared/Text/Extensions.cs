@@ -61,8 +61,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 		/// <param name="buffer">Text buffer</param>
 		/// <returns></returns>
 		public static Workspace TryGetWorkspace(this ITextBuffer buffer) {
-			Workspace ws;
-			Workspace.TryGetWorkspace(buffer.AsTextContainer(), out ws);
+			Workspace.TryGetWorkspace(buffer.AsTextContainer(), out var ws);
 			return ws;
 		}
 
@@ -115,8 +114,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 		/// <returns></returns>
 		public static Document GetOpenDocumentInCurrentContextWithChanges(this SourceText text) {
 			// This internal Roslyn method was copied from roslyn/src/Workspaces/Core/Portable/Workspace/TextExtensions.cs
-			Workspace workspace;
-			if (Workspace.TryGetWorkspace(text.Container, out workspace)) {
+			if (Workspace.TryGetWorkspace(text.Container, out var workspace)) {
 				var id = workspace.GetDocumentIdInCurrentContext(text.Container);
 				if (id == null || !workspace.CurrentSolution.ContainsDocument(id))
 					return null;

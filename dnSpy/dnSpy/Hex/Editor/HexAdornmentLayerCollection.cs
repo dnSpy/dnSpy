@@ -33,9 +33,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexLayerKind layerKind;
 
 		public HexAdornmentLayerCollection(WpfHexView wpfHexView, HexLayerKind layerKind) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			this.wpfHexView = wpfHexView;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			this.layerKind = layerKind;
 			adornmentLayers = new List<HexAdornmentLayerImpl>();
 			if (layerKind != HexLayerKind.Normal)

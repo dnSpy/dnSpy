@@ -34,10 +34,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly object hashLock = new object();
 
 		public FieldAccessNode(FieldDef analyzedField, bool showWrites) {
-			if (analyzedField == null)
-				throw new ArgumentNullException(nameof(analyzedField));
-
-			this.analyzedField = analyzedField;
+			this.analyzedField = analyzedField ?? throw new ArgumentNullException(nameof(analyzedField));
 			this.showWrites = showWrites;
 		}
 

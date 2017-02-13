@@ -403,43 +403,35 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public bool SetOffset(int offset) => dispatcher.UI(() => {
-			string errMsg;
-			return debugService.Value.SetOffset((uint)offset, out errMsg);
+			return debugService.Value.SetOffset((uint)offset, out string errMsg);
 		});
 
 		public bool SetOffset(uint offset) => dispatcher.UI(() => {
-			string errMsg;
-			return debugService.Value.SetOffset(offset, out errMsg);
+			return debugService.Value.SetOffset(offset, out string errMsg);
 		});
 
 		public bool SetNativeOffset(int offset) => dispatcher.UI(() => {
-			string errMsg;
-			return debugService.Value.SetNativeOffset((uint)offset, out errMsg);
+			return debugService.Value.SetNativeOffset((uint)offset, out string errMsg);
 		});
 
 		public bool SetNativeOffset(uint offset) => dispatcher.UI(() => {
-			string errMsg;
-			return debugService.Value.SetNativeOffset(offset, out errMsg);
+			return debugService.Value.SetNativeOffset(offset, out string errMsg);
 		});
 
 		public bool SetOffset(IStackFrame frame, int offset) => dispatcher.UI(() => {
-			string errMsg;
-			return debugService.Value.SetOffset(((StackFrame)frame).CorFrame, (uint)offset, out errMsg);
+			return debugService.Value.SetOffset(((StackFrame)frame).CorFrame, (uint)offset, out string errMsg);
 		});
 
 		public bool SetOffset(IStackFrame frame, uint offset) => dispatcher.UI(() => {
-			string errMsg;
-			return debugService.Value.SetOffset(((StackFrame)frame).CorFrame, offset, out errMsg);
+			return debugService.Value.SetOffset(((StackFrame)frame).CorFrame, offset, out string errMsg);
 		});
 
 		public bool SetNativeOffset(IStackFrame frame, int offset) => dispatcher.UI(() => {
-			string errMsg;
-			return debugService.Value.SetNativeOffset(((StackFrame)frame).CorFrame, (uint)offset, out errMsg);
+			return debugService.Value.SetNativeOffset(((StackFrame)frame).CorFrame, (uint)offset, out string errMsg);
 		});
 
 		public bool SetNativeOffset(IStackFrame frame, uint offset) => dispatcher.UI(() => {
-			string errMsg;
-			return debugService.Value.SetNativeOffset(((StackFrame)frame).CorFrame, offset, out errMsg);
+			return debugService.Value.SetNativeOffset(((StackFrame)frame).CorFrame, offset, out string errMsg);
 		});
 
 		public IEnumerable<IDebuggerThread> Threads => dispatcher.UIIter(GetThreadsUI);
@@ -800,12 +792,10 @@ namespace dnSpy.Debugger.Scripting {
 				if ((ulong)len > pageSizeLeft)
 					len = (int)pageSizeLeft;
 
-				uint oldProtect;
-				bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(len), NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
-				IntPtr sizeWritten;
+				bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(len), NativeMethods.PAGE_EXECUTE_READWRITE, out uint oldProtect);
 				bool b;
 				fixed (void* p = &array[index])
-					b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(p), new IntPtr(len), out sizeWritten);
+					b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(p), new IntPtr(len), out var sizeWritten);
 				if (restoreOldProtect)
 					NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(len), oldProtect, out oldProtect);
 
@@ -838,8 +828,7 @@ namespace dnSpy.Debugger.Scripting {
 		internal unsafe int WriteMemory(ulong address, IntPtr sourceData, int sourceSize) {
 			if (hProcess_debuggee == IntPtr.Zero || address == 0)
 				return 0;
-			IntPtr sizeWritten;
-			bool b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), sourceData, new IntPtr(sourceSize), out sizeWritten);
+			bool b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), sourceData, new IntPtr(sourceSize), out var sizeWritten);
 			return !b ? 0 : (int)sizeWritten.ToInt64();
 		}
 

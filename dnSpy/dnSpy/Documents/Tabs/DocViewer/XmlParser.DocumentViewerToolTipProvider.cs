@@ -42,8 +42,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				const string prefix = "clr-namespace:";
 				if (name.StartsWith(prefix)) {
 					name = name.Substring(prefix.Length);
-					string assemblyName, @namespace;
-					ParseClrNamespace(name, out assemblyName, out @namespace);
+					ParseClrNamespace(name, out string assemblyName, out string @namespace);
 					if (assemblyName == null && @namespace == null)
 						provider.Output.Write(nsRef.XmlNamespaceReference.Definition.Name);
 					else {

@@ -96,18 +96,12 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public EditorOperations(ITextView textView, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISmartIndentationService smartIndentationService, IHtmlBuilderService htmlBuilderService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (textStructureNavigatorSelectorService == null)
-				throw new ArgumentNullException(nameof(textStructureNavigatorSelectorService));
-			if (htmlBuilderService == null)
-				throw new ArgumentNullException(nameof(htmlBuilderService));
-			TextView = textView;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			TextView.Closed += TextView_Closed;
 			TextView.TextViewModel.DataModel.ContentTypeChanged += OnContentTypeChanged;
-			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService;
+			this.textStructureNavigatorSelectorService = textStructureNavigatorSelectorService ?? throw new ArgumentNullException(nameof(textStructureNavigatorSelectorService));
 			this.smartIndentationService = smartIndentationService;
-			this.htmlBuilderService = htmlBuilderService;
+			this.htmlBuilderService = htmlBuilderService ?? throw new ArgumentNullException(nameof(htmlBuilderService));
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {
@@ -339,8 +333,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		VirtualSnapshotPoint GetAnchorPositionOrCaretIfNoSelection() {
-			VirtualSnapshotPoint anchorPoint, activePoint;
-			GetSelectionOrCaretIfNoSelection(out anchorPoint, out activePoint);
+			GetSelectionOrCaretIfNoSelection(out var anchorPoint, out var activePoint);
 			return anchorPoint;
 		}
 

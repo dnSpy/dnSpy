@@ -89,8 +89,7 @@ namespace dndbg.DotNet {
 
 			Name = MDAPI.GetGenericParamName(mdi2, token) ?? string.Empty;
 			Kind = null;
-			GenericParamAttributes attrs;
-			MDAPI.GetGenericParamNumAndAttrs(mdi2, token, out number, out attrs);
+			MDAPI.GetGenericParamNumAndAttrs(mdi2, token, out number, out var attrs);
 			attributes = (int)attrs;
 		}
 

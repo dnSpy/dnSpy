@@ -68,8 +68,7 @@ namespace dnSpy.Hex.HexGroups {
 		HexViewOptionsGroupImpl GetGroupCore(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			HexViewOptionsGroupImpl group;
-			if (!nameToGroup.TryGetValue(name, out group)) {
+			if (!nameToGroup.TryGetValue(name, out var group)) {
 				var defaultOptions = GetDefaultOptions(name);
 				nameToGroup.Add(name, group = new HexViewOptionsGroupImpl(this, name, defaultOptions, optionsStorage));
 			}

@@ -44,7 +44,6 @@ namespace dndbg.Engine {
 					return false;
 
 				const string debuggerClassName = "System.Diagnostics.Debugger";
-				ulong addr;
 				bool error = false, b;
 
 				bool isClrV2OrOlder =
@@ -54,7 +53,7 @@ namespace dndbg.Engine {
 
 				// Launch() returns true in CLR 4.x and false in earlier CLR versions when there's
 				// no debugger. At least on my system...
-				b = mgr.FindFunc(debuggerClassName, "LaunchInternal", out addr);
+				b = mgr.FindFunc(debuggerClassName, "LaunchInternal", out ulong addr);
 				error |= !b;
 				if (b)
 					error |= !(isClrV2OrOlder ? WriteReturnFalse(process, addr) : WriteReturnTrue(process, addr));
@@ -89,8 +88,7 @@ namespace dndbg.Engine {
 				return false;
 
 			var hProcess = process.Handle;
-			uint oldProtect;
-			if (!NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)addr), new IntPtr(data.Length), NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect))
+			if (!NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)addr), new IntPtr(data.Length), NativeMethods.PAGE_EXECUTE_READWRITE, out uint oldProtect))
 				return false;
 			int sizeWritten;
 			try {

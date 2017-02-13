@@ -39,12 +39,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		readonly PEStructureProviderFactory peStructureProviderFactory;
 
 		public PENode(Func<HexBufferFile> createBufferFile, PEStructureProviderFactory peStructureProviderFactory) {
-			if (createBufferFile == null)
-				throw new ArgumentNullException(nameof(createBufferFile));
-			if (peStructureProviderFactory == null)
-				throw new ArgumentNullException(nameof(peStructureProviderFactory));
-			this.createBufferFile = createBufferFile;
-			this.peStructureProviderFactory = peStructureProviderFactory;
+			this.createBufferFile = createBufferFile ?? throw new ArgumentNullException(nameof(createBufferFile));
+			this.peStructureProviderFactory = peStructureProviderFactory ?? throw new ArgumentNullException(nameof(peStructureProviderFactory));
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;

@@ -49,8 +49,7 @@ namespace dnSpy.Text.Editor {
 		public static IOutputTextPane TryGetInstance(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			IOutputTextPane outputTextPane;
-			textView.Properties.TryGetProperty(Key, out outputTextPane);
+			textView.Properties.TryGetProperty(Key, out IOutputTextPane outputTextPane);
 			return outputTextPane;
 		}
 	}

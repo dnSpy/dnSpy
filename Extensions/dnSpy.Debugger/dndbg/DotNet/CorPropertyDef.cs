@@ -23,7 +23,6 @@ using dndbg.Engine;
 using dnlib.DotNet;
 
 #if THREAD_SAFE
-using ThreadSafe = dnlib.Threading.Collections;
 #else
 using ThreadSafe = System.Collections.Generic;
 #endif
@@ -87,8 +86,7 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
-			CorElementType etype;
-			var c = MDAPI.GetPropertyConstant(mdi, token, out etype);
+			var c = MDAPI.GetPropertyConstant(mdi, token, out var etype);
 			if (etype == CorElementType.End)
 				return null;
 			return readerModule.UpdateRowId(new ConstantUser(c, (ElementType)etype));
@@ -106,9 +104,7 @@ namespace dndbg.DotNet {
 		protected override void InitializePropertyMethods_NoLock() {
 			if (otherMethods != null)
 				return;
-			ThreadSafe.IList<MethodDef> newOtherMethods;
-			ThreadSafe.IList<MethodDef> newGetMethods, newSetMethods;
-			ownerType.InitializeProperty(this, out newGetMethods, out newSetMethods, out newOtherMethods);
+			ownerType.InitializeProperty(this, out var newGetMethods, out var newSetMethods, out var newOtherMethods);
 			getMethods = newGetMethods;
 			setMethods = newSetMethods;
 			// Must be initialized last

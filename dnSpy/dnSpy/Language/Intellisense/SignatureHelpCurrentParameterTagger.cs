@@ -66,15 +66,9 @@ namespace dnSpy.Language.Intellisense {
 		readonly ClassificationTag signatureHelpCurrentParameterClassificationTag;
 
 		public SignatureHelpCurrentParameterTagger(ISignatureHelpSession session, ITextBuffer buffer, ClassificationTag signatureHelpCurrentParameterClassificationTag) {
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			if (signatureHelpCurrentParameterClassificationTag == null)
-				throw new ArgumentNullException(nameof(signatureHelpCurrentParameterClassificationTag));
-			this.session = session;
-			this.buffer = buffer;
-			this.signatureHelpCurrentParameterClassificationTag = signatureHelpCurrentParameterClassificationTag;
+			this.session = session ?? throw new ArgumentNullException(nameof(session));
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
+			this.signatureHelpCurrentParameterClassificationTag = signatureHelpCurrentParameterClassificationTag ?? throw new ArgumentNullException(nameof(signatureHelpCurrentParameterClassificationTag));
 		}
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
@@ -103,18 +97,10 @@ namespace dnSpy.Language.Intellisense {
 		readonly ClassificationTag signatureHelpParameterDocumentationClassificationTag;
 
 		public SignatureHelpCurrentParameterTaggerEx(ITextBuffer buffer, ClassificationTag signatureHelpDocumentationClassificationTag, ClassificationTag signatureHelpParameterClassificationTag, ClassificationTag signatureHelpParameterDocumentationClassificationTag) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			if (signatureHelpDocumentationClassificationTag == null)
-				throw new ArgumentNullException(nameof(signatureHelpDocumentationClassificationTag));
-			if (signatureHelpParameterClassificationTag == null)
-				throw new ArgumentNullException(nameof(signatureHelpParameterClassificationTag));
-			if (signatureHelpParameterDocumentationClassificationTag == null)
-				throw new ArgumentNullException(nameof(signatureHelpParameterDocumentationClassificationTag));
-			this.buffer = buffer;
-			this.signatureHelpDocumentationClassificationTag = signatureHelpDocumentationClassificationTag;
-			this.signatureHelpParameterClassificationTag = signatureHelpParameterClassificationTag;
-			this.signatureHelpParameterDocumentationClassificationTag = signatureHelpParameterDocumentationClassificationTag;
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
+			this.signatureHelpDocumentationClassificationTag = signatureHelpDocumentationClassificationTag ?? throw new ArgumentNullException(nameof(signatureHelpDocumentationClassificationTag));
+			this.signatureHelpParameterClassificationTag = signatureHelpParameterClassificationTag ?? throw new ArgumentNullException(nameof(signatureHelpParameterClassificationTag));
+			this.signatureHelpParameterDocumentationClassificationTag = signatureHelpParameterDocumentationClassificationTag ?? throw new ArgumentNullException(nameof(signatureHelpParameterDocumentationClassificationTag));
 		}
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {

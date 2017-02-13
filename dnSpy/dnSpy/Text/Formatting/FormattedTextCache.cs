@@ -46,8 +46,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		Info GetInfo(TextFormattingRunProperties props) {
-			Info info;
-			if (dict.TryGetValue(props, out info))
+			if (dict.TryGetValue(props, out var info))
 				return info;
 			var ft = new FormattedText("Xg ", props.CultureInfo, FlowDirection.LeftToRight, props.Typeface, props.FontRenderingEmSize, props.ForegroundBrush, null, textFormattingMode);
 			info = new Info(ft);

@@ -28,9 +28,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly LazyBlockStructureCollection lazyCollection;
 
 		BlockStructureServiceDataProvider(LazyBlockStructureCollection lazyCollection) {
-			if (lazyCollection == null)
-				throw new ArgumentNullException(nameof(lazyCollection));
-			this.lazyCollection = lazyCollection;
+			this.lazyCollection = lazyCollection ?? throw new ArgumentNullException(nameof(lazyCollection));
 		}
 
 		public static IBlockStructureServiceDataProvider TryCreate(IDocumentViewer documentViewer) {

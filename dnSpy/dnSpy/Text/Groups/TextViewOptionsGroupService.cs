@@ -68,8 +68,7 @@ namespace dnSpy.Text.Groups {
 		TextViewOptionsGroup GetGroup(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			TextViewOptionsGroup group;
-			if (!nameToGroup.TryGetValue(name, out group)) {
+			if (!nameToGroup.TryGetValue(name, out var group)) {
 				var defaultOptions = GetDefaultOptions(name);
 				nameToGroup.Add(name, group = new TextViewOptionsGroup(name, contentTypeRegistryService, defaultOptions, optionsStorage));
 			}

@@ -62,8 +62,7 @@ namespace dnSpy.MainApp {
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			foreach (var ignoredSect in sect.SectionsWithName(IGNORED_SECTION)) {
 				var id = ignoredSect.Attribute<string>(IGNORED_ATTR);
-				Guid guid;
-				if (!Guid.TryParse(id, out guid))
+				if (!Guid.TryParse(id, out var guid))
 					continue;
 				ignoredMessages.Add(guid);
 			}
@@ -85,9 +84,7 @@ namespace dnSpy.MainApp {
 		public MsgBoxButton? ShowIgnorableMessage(Guid guid, string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
 			if (ignoredMessages.Contains(guid))
 				return null;
-			MsgBoxDlg win;
-			MsgBoxVM vm;
-			Create(message, buttons, true, ownerWindow, out win, out vm);
+			Create(message, buttons, true, ownerWindow, out var win, out var vm);
 			win.ShowDialog();
 			if (win.ClickedButton != MsgBoxButton.None && vm.DontShowAgain) {
 				ignoredMessages.Add(guid);
@@ -97,9 +94,7 @@ namespace dnSpy.MainApp {
 		}
 
 		public MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
-			MsgBoxDlg win;
-			MsgBoxVM vm;
-			Create(message, buttons, false, ownerWindow, out win, out vm);
+			Create(message, buttons, false, ownerWindow, out var win, out var vm);
 			win.ShowDialog();
 			return win.ClickedButton;
 		}

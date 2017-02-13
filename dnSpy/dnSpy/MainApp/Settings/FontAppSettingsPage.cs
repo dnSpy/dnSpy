@@ -195,12 +195,8 @@ namespace dnSpy.MainApp.Settings {
 		readonly FontAndColorOptions options;
 
 		public FontAndColorOptionsVM(FontAndColorOptions options, FontCollection fontCollection) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			if (fontCollection == null)
-				throw new ArgumentNullException(nameof(fontCollection));
-			this.options = options;
-			FontCollection = fontCollection;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
+			FontCollection = fontCollection ?? throw new ArgumentNullException(nameof(fontCollection));
 			fontFamilyVM = new FontFamilyVM(FontFamily);
 		}
 

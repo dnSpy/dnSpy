@@ -105,8 +105,7 @@ namespace dnSpy.Debugger.CallStack {
 		void AddMarkers(bool updateActiveStatements) {
 			Debug.Assert(currentStatementMarker == null);
 			Debug.Assert(callReturnMarker == null);
-			bool tooManyFrames;
-			var frames = stackFrameService.GetFrames(out tooManyFrames);
+			var frames = stackFrameService.GetFrames(out bool tooManyFrames);
 
 			if (frames.Count == 0)
 				return;

@@ -103,8 +103,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <returns></returns>
 		public static string CheckCanUpdateData(ModuleDef module, ResourceElement newResElem) {
 			var binData = (BinaryResourceData)newResElem.ResourceData;
-			byte[] imageData;
-			if (!GetImageData(module, binData.TypeName, binData.Data, out imageData))
+			if (!GetImageData(module, binData.TypeName, binData.Data, out var imageData))
 				return dnSpy_Contracts_DnSpy_Resources.NewDataNotImageList;
 
 			try {

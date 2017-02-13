@@ -70,11 +70,9 @@ namespace dnSpy.Contracts.TreeView {
 		public ITreeNode TreeNode {
 			get { return treeNode; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
 				if (treeNode != null)
 					throw new InvalidOperationException();
-				treeNode = value;
+				treeNode = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		ITreeNode treeNode;

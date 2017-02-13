@@ -59,11 +59,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void ICustomLineNumberMargin.SetOwner(ICustomLineNumberMarginOwner owner) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
 			if (this.owner != null)
 				throw new InvalidOperationException();
-			this.owner = owner;
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			if (Visibility == Visibility.Visible)
 				owner.OnVisible();
 			RefreshMargin();

@@ -34,8 +34,7 @@ namespace dndbg.Engine {
 		static bool IsGlobal(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
 				return false;
-			int bGlobal;
-			int hr = mdi.IsGlobal(token, out bGlobal);
+			int hr = mdi.IsGlobal(token, out int bGlobal);
 			return hr == 0 && bGlobal != 0;
 		}
 
@@ -65,8 +64,7 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
-			uint ulCodeRVA;
-			int hr = mdi.GetRVA(token, out ulCodeRVA, IntPtr.Zero);
+			int hr = mdi.GetRVA(token, out uint ulCodeRVA, IntPtr.Zero);
 			if (hr != 0)
 				return null;
 			return ulCodeRVA;
@@ -75,8 +73,7 @@ namespace dndbg.Engine {
 		public unsafe static UTF8String GetUtf8Name(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
 				return null;
-			IntPtr pszUtf8NamePtr;
-			int hr = mdi.GetNameFromToken(token, out pszUtf8NamePtr);
+			int hr = mdi.GetNameFromToken(token, out var pszUtf8NamePtr);
 			if (hr != 0 || pszUtf8NamePtr == IntPtr.Zero)
 				return null;
 			const int MAX_LEN = 0x1000;
@@ -95,8 +92,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumPermissionSets(ref iter, token, 0, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumPermissionSets(ref iter, token, 0, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -233,8 +229,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumMethods(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumMethods(ref iter, token, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -312,8 +307,7 @@ namespace dndbg.Engine {
 				return Array.Empty<MethodOverrideInfo>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumMethodImpls(ref iter, token, IntPtr.Zero, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumMethodImpls(ref iter, token, IntPtr.Zero, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<MethodOverrideInfo>();
 
@@ -350,8 +344,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumMethodSemantics(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumMethodSemantics(ref iter, token, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -380,8 +373,7 @@ namespace dndbg.Engine {
 		public unsafe static MethodSemanticsAttributes GetMethodSemanticsAttributes(IMetaDataImport mdi, uint token, uint tkPropEvent) {
 			if (mdi == null)
 				return 0;
-			uint dwSemanticsFlags;
-			int hr = mdi.GetMethodSemantics(token, tkPropEvent, out dwSemanticsFlags);
+			int hr = mdi.GetMethodSemantics(token, tkPropEvent, out uint dwSemanticsFlags);
 			return hr == 0 ? (MethodSemanticsAttributes)dwSemanticsFlags : 0;
 		}
 
@@ -400,8 +392,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumInterfaceImpls(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumInterfaceImpls(ref iter, token, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -441,8 +432,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumParams(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumParams(ref iter, token, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -559,8 +549,7 @@ namespace dndbg.Engine {
 
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint count;
-				int hr = mdi.EnumTypeDefs(ref iter, IntPtr.Zero, 0, out count);
+				int hr = mdi.EnumTypeDefs(ref iter, IntPtr.Zero, 0, out uint count);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -634,8 +623,7 @@ namespace dndbg.Engine {
 				return 0;
 
 			if ((dwTypeDefFlags & 7) >= 2) {
-				uint enclType;
-				hr = mdi.GetNestedClassProps(token, out enclType);
+				hr = mdi.GetNestedClassProps(token, out uint enclType);
 				if (hr == 0)
 					return enclType;
 			}
@@ -696,8 +684,7 @@ namespace dndbg.Engine {
 
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cGenericParams;
-				int hr = mdi2.EnumGenericParams(ref iter, token, IntPtr.Zero, 0, out cGenericParams);
+				int hr = mdi2.EnumGenericParams(ref iter, token, IntPtr.Zero, 0, out uint cGenericParams);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -750,8 +737,7 @@ namespace dndbg.Engine {
 
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cGenericParamConstraints;
-				int hr = mdi2.EnumGenericParamConstraints(ref iter, token, IntPtr.Zero, 0, out cGenericParamConstraints);
+				int hr = mdi2.EnumGenericParamConstraints(ref iter, token, IntPtr.Zero, 0, out uint cGenericParamConstraints);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -781,9 +767,7 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
-			IntPtr pvSig;
-			uint cbSig;
-			int hr = mdi.GetSigFromToken(token, out pvSig, out cbSig);
+			int hr = mdi.GetSigFromToken(token, out var pvSig, out uint cbSig);
 			if (hr < 0 || pvSig == IntPtr.Zero)
 				return null;
 			var sig = new byte[cbSig];
@@ -808,9 +792,7 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
-			IntPtr pvNativeType;
-			uint cbNativeType;
-			int hr = mdi.GetFieldMarshal(token, out pvNativeType, out cbNativeType);
+			int hr = mdi.GetFieldMarshal(token, out var pvNativeType, out uint cbNativeType);
 			Debug.Assert(hr == 0 || hr == CordbgErrors.CLDB_E_RECORD_NOTFOUND);
 			if (hr != 0)
 				return null;
@@ -857,8 +839,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumFields(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumFields(ref iter, token, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -1029,8 +1010,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumEvents(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumEvents(ref iter, token, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -1074,8 +1054,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumProperties(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumProperties(ref iter, token, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -1188,9 +1167,7 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
-			IntPtr pvSig;
-			uint cbSig;
-			int hr = mdi.GetTypeSpecFromToken(token, out pvSig, out cbSig);
+			int hr = mdi.GetTypeSpecFromToken(token, out var pvSig, out uint cbSig);
 			if (hr != 0 || pvSig == IntPtr.Zero)
 				return null;
 
@@ -1204,9 +1181,7 @@ namespace dndbg.Engine {
 			if (mdi2 == null)
 				return null;
 
-			IntPtr pvSigBlob;
-			uint cbSigBlob;
-			int hr = mdi2.GetMethodSpecProps(token, out method, out pvSigBlob, out cbSigBlob);
+			int hr = mdi2.GetMethodSpecProps(token, out method, out var pvSigBlob, out uint cbSigBlob);
 			if (hr != 0 || pvSigBlob == IntPtr.Zero)
 				return null;
 
@@ -1365,9 +1340,7 @@ namespace dndbg.Engine {
 			peKind = 0;
 			if (mdi2 == null)
 				return null;
-
-			uint dwPEKind, dwMachine;
-			int hr = mdi2.GetPEKind(out dwPEKind, out dwMachine);
+			int hr = mdi2.GetPEKind(out uint dwPEKind, out uint dwMachine);
 			if (hr != 0)
 				return null;
 			peKind = (CorPEKind)dwPEKind;
@@ -1378,8 +1351,7 @@ namespace dndbg.Engine {
 			if (mdi2 == null)
 				return null;
 			char[] nameBuf = null;
-			uint ccBufSize = 0;
-			int hr = mdi2.GetVersionString(IntPtr.Zero, 0, out ccBufSize);
+			int hr = mdi2.GetVersionString(IntPtr.Zero, 0, out uint ccBufSize);
 			if (hr >= 0 && ccBufSize != 0) {
 				nameBuf = new char[ccBufSize];
 				fixed (char* p = &nameBuf[0])
@@ -1426,9 +1398,8 @@ namespace dndbg.Engine {
 		public unsafe static string GetModuleRefName(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
 				return null;
-			uint chName;
 			char[] nameBuf = null;
-			int hr = mdi.GetModuleRefProps(token, IntPtr.Zero, 0, out chName);
+			int hr = mdi.GetModuleRefProps(token, IntPtr.Zero, 0, out uint chName);
 			if (hr >= 0 && chName != 0) {
 				nameBuf = new char[chName];
 				fixed (char* p = &nameBuf[0])
@@ -1445,9 +1416,8 @@ namespace dndbg.Engine {
 		public unsafe static string GetUserString(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
 				return null;
-			uint chString;
 			char[] stringBuf = null;
-			int hr = mdi.GetUserString(token, IntPtr.Zero, 0, out chString);
+			int hr = mdi.GetUserString(token, IntPtr.Zero, 0, out uint chString);
 			if (hr >= 0 && chString != 0) {
 				stringBuf = new char[chString];
 				fixed (char* p = &stringBuf[0])
@@ -1486,8 +1456,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdi.EnumCustomAttributes(ref iter, token, 0, IntPtr.Zero, 0, out cTokens);
+				int hr = mdi.EnumCustomAttributes(ref iter, token, 0, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -1518,9 +1487,7 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
-			IntPtr pBlob;
-			uint cbSize;
-			int hr = mdi.GetCustomAttributeProps(token, IntPtr.Zero, out typeToken, out pBlob, out cbSize);
+			int hr = mdi.GetCustomAttributeProps(token, IntPtr.Zero, out typeToken, out var pBlob, out uint cbSize);
 			if (hr != 0 || pBlob == IntPtr.Zero)
 				return null;
 
@@ -1574,8 +1541,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdai.EnumExportedTypes(ref iter, IntPtr.Zero, 0, out cTokens);
+				int hr = mdai.EnumExportedTypes(ref iter, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 
@@ -1642,8 +1608,7 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			IntPtr iter = IntPtr.Zero;
 			try {
-				uint cTokens;
-				int hr = mdai.EnumManifestResources(ref iter, IntPtr.Zero, 0, out cTokens);
+				int hr = mdai.EnumManifestResources(ref iter, IntPtr.Zero, 0, out uint cTokens);
 				if (hr < 0)
 					return Array.Empty<uint>();
 

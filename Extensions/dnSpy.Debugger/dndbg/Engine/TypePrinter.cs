@@ -253,8 +253,7 @@ namespace dndbg.Engine {
 			if (dictMetaDataImport == null)
 				dictMetaDataImport = new Dictionary<CorModule, IMetaDataImport>();
 
-			IMetaDataImport mdi;
-			if (dictMetaDataImport.TryGetValue(module, out mdi))
+			if (dictMetaDataImport.TryGetValue(module, out var mdi))
 				return mdi;
 
 			mdi = module.GetMetaDataInterface<IMetaDataImport>();
@@ -1265,9 +1264,7 @@ namespace dndbg.Engine {
 		}
 
 		TypeColor GetTypeColor(IMetaDataImport mdi, uint token) {
-			MethodAttributes attrs;
-			MethodImplAttributes implAttrs;
-			MDAPI.GetMethodAttributes(mdi, token, out attrs, out implAttrs);
+			MDAPI.GetMethodAttributes(mdi, token, out var attrs, out var implAttrs);
 
 			if ((attrs & MethodAttributes.Static) != 0) {
 				if (MDAPI.HasAttribute(mdi, token, "System.Runtime.CompilerServices"))
@@ -1443,8 +1440,7 @@ namespace dndbg.Engine {
 				}
 
 				if (ShowParameterLiteralValues && paramInfo != null) {
-					CorElementType etype;
-					var c = MDAPI.GetParamConstant(mdi, paramInfo.Value.Token, out etype);
+					var c = MDAPI.GetParamConstant(mdi, paramInfo.Value.Token, out var etype);
 					if (etype != CorElementType.End) {
 						if (needSpace) {
 							WriteSpace();
@@ -1607,8 +1603,7 @@ namespace dndbg.Engine {
 					return;
 				}
 
-				CorValue nullableValue;
-				if (value.GetNullableValue(out nullableValue) && nullableValue != null)
+				if (value.GetNullableValue(out var nullableValue) && nullableValue != null)
 					value = nullableValue;
 
 				//TODO: Support DebuggerDisplayAttribute
@@ -1664,8 +1659,7 @@ namespace dndbg.Engine {
 						WriteTypeOfValue(value);
 						return;
 					}
-					int hr;
-					var res = eval.Call(func, null, new CorValue[1] { v }, out hr);
+					var res = eval.Call(func, null, new CorValue[1] { v }, out int hr);
 					if (res == null || CordbgErrors.IsCantEvaluateError(hr) || res.Value.WasException) {
 						WriteTypeOfValue(value);
 						return;
@@ -1770,8 +1764,7 @@ namespace dndbg.Engine {
 			}
 			Debug.Assert(type.IsEnum);
 
-			uint token;
-			var mdi = type.GetMetaDataImport(out token);
+			var mdi = type.GetMetaDataImport(out uint token);
 			WriteEnum(mdi, token, value, MetaDataUtils.GetFieldInfos(type, false));
 		}
 

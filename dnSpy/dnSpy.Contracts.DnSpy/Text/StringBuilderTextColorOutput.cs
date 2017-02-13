@@ -50,9 +50,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="stringBuilder">String builder</param>
 		public StringBuilderTextColorOutput(StringBuilder stringBuilder) {
-			if (stringBuilder == null)
-				throw new ArgumentNullException(nameof(stringBuilder));
-			sb = stringBuilder;
+			sb = stringBuilder ?? throw new ArgumentNullException(nameof(stringBuilder));
 		}
 
 		/// <summary>

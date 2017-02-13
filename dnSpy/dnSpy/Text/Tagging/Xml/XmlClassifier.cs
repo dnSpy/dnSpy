@@ -120,9 +120,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		public XmlClassifier(ITextSnapshot snapshot) {
-			if (snapshot == null)
-				throw new ArgumentNullException(nameof(snapshot));
-			this.snapshot = snapshot;
+			this.snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
 			snapshotLength = snapshot.Length;
 			buffer = new char[Math.Min(BUFFER_SIZE, snapshot.Length)];
 			state = State.Element;

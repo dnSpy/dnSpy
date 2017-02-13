@@ -41,8 +41,7 @@ namespace dndbg.Engine {
 		public CorFunction GetMethod {
 			get {
 				var mod = Module;
-				uint mdGetter, mdSetter;
-				MDAPI.GetPropertyGetterSetter(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out mdGetter, out mdSetter);
+				MDAPI.GetPropertyGetterSetter(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out uint mdGetter, out uint mdSetter);
 				return mod?.GetFunctionFromToken(mdGetter);
 			}
 		}
@@ -50,8 +49,7 @@ namespace dndbg.Engine {
 		public CorFunction SetMethod {
 			get {
 				var mod = Module;
-				uint mdGetter, mdSetter;
-				MDAPI.GetPropertyGetterSetter(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out mdGetter, out mdSetter);
+				MDAPI.GetPropertyGetterSetter(mod?.GetMetaDataInterface<IMetaDataImport>(), Token, out uint mdGetter, out uint mdSetter);
 				return mod?.GetFunctionFromToken(mdSetter);
 			}
 		}

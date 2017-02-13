@@ -61,10 +61,9 @@ namespace Example1.Extension {
 		public override void Execute(TVContext context) {
 			int secretNum = new Random().Next() % 10;
 			MsgBox.Instance.Ask<int?>("Number", null, "Guess a number", null, s => {
-				int num;
 				if (string.IsNullOrWhiteSpace(s))
 					return "Enter a number";
-				if (!int.TryParse(s, out num))
+				if (!int.TryParse(s, out int num))
 					return "Not an integer";
 				if (num == 42)
 					return "Nope!";

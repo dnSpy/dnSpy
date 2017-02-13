@@ -69,9 +69,7 @@ namespace dnSpy.Hex.Tagging {
 		readonly HexClassificationTags hexClassificationTags;
 
 		public DefaultTagger(HexClassificationTags hexClassificationTags) {
-			if (hexClassificationTags == null)
-				throw new ArgumentNullException(nameof(hexClassificationTags));
-			this.hexClassificationTags = hexClassificationTags;
+			this.hexClassificationTags = hexClassificationTags ?? throw new ArgumentNullException(nameof(hexClassificationTags));
 		}
 
 		static bool IsValid(HexCell cell, HexBufferLine line) {

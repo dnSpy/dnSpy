@@ -56,15 +56,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		readonly ITextView textView;
 
 		public QuickInfoContentCreator(IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, ITextView textView) {
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.classificationFormatMap = classificationFormatMap;
-			this.themeClassificationTypeService = themeClassificationTypeService;
-			this.textView = textView;
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 		}
 
 		public IEnumerable<object> Create(QuickInfoItem item) {

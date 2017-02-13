@@ -151,26 +151,14 @@ namespace dnSpy.MainApp.Settings {
 		public UseNewRendererVM UseNewRendererVM { get; }
 
 		public GeneralAppSettingsPage(IThemeServiceImpl themeService, IWindowsExplorerIntegrationService windowsExplorerIntegrationService, IDocumentTabServiceSettings documentTabServiceSettings, DocumentTreeViewSettingsImpl documentTreeViewSettings, IDsDocumentServiceSettings documentServiceSettings, AppSettingsImpl appSettings, MessageBoxService messageBoxService) {
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			if (windowsExplorerIntegrationService == null)
-				throw new ArgumentNullException(nameof(windowsExplorerIntegrationService));
-			if (documentTabServiceSettings == null)
-				throw new ArgumentNullException(nameof(documentTabServiceSettings));
-			if (documentTreeViewSettings == null)
-				throw new ArgumentNullException(nameof(documentTreeViewSettings));
-			if (documentServiceSettings == null)
-				throw new ArgumentNullException(nameof(documentServiceSettings));
 			if (appSettings == null)
 				throw new ArgumentNullException(nameof(appSettings));
-			if (messageBoxService == null)
-				throw new ArgumentNullException(nameof(messageBoxService));
-			this.themeService = themeService;
-			this.windowsExplorerIntegrationService = windowsExplorerIntegrationService;
-			this.documentTabServiceSettings = documentTabServiceSettings;
-			this.documentTreeViewSettings = documentTreeViewSettings;
-			this.documentServiceSettings = documentServiceSettings;
-			this.messageBoxService = messageBoxService;
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			this.windowsExplorerIntegrationService = windowsExplorerIntegrationService ?? throw new ArgumentNullException(nameof(windowsExplorerIntegrationService));
+			this.documentTabServiceSettings = documentTabServiceSettings ?? throw new ArgumentNullException(nameof(documentTabServiceSettings));
+			this.documentTreeViewSettings = documentTreeViewSettings ?? throw new ArgumentNullException(nameof(documentTreeViewSettings));
+			this.documentServiceSettings = documentServiceSettings ?? throw new ArgumentNullException(nameof(documentServiceSettings));
+			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
 
 			ThemesVM = new ObservableCollection<ThemeVM>(themeService.VisibleThemes.Select(a => new ThemeVM(a)));
 			if (!ThemesVM.Any(a => a.Theme == themeService.Theme))
@@ -213,9 +201,7 @@ namespace dnSpy.MainApp.Settings {
 		public string Name => Theme.GetName();
 
 		public ThemeVM(ITheme theme) {
-			if (theme == null)
-				throw new ArgumentNullException(nameof(theme));
-			Theme = theme;
+			Theme = theme ?? throw new ArgumentNullException(nameof(theme));
 		}
 	}
 

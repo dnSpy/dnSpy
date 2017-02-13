@@ -48,12 +48,8 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="spans">Spans</param>
 		public NormalizedHexBufferSpanCollection(HexBuffer buffer, NormalizedHexSpanCollection spans) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			if (spans == null)
-				throw new ArgumentNullException(nameof(spans));
-			coll = spans;
-			this.buffer = buffer;
+			coll = spans ?? throw new ArgumentNullException(nameof(spans));
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 		}
 
 		/// <summary>
@@ -62,12 +58,10 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="spans">Spans</param>
 		public NormalizedHexBufferSpanCollection(HexBuffer buffer, IEnumerable<HexSpan> spans) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
 			coll = new NormalizedHexSpanCollection(spans);
-			this.buffer = buffer;
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 		}
 
 		/// <summary>
@@ -76,10 +70,8 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="buffer">Buffer</param>
 		/// <param name="span">Span</param>
 		public NormalizedHexBufferSpanCollection(HexBuffer buffer, HexSpan span) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
 			coll = new NormalizedHexSpanCollection(span);
-			this.buffer = buffer;
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 		}
 
 		/// <summary>

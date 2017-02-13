@@ -60,12 +60,8 @@ namespace dnSpy.Text.Operations {
 		readonly ITextSearchService2 textSearchService2;
 
 		public TextSearchNavigator(ITextBuffer buffer, ITextSearchService2 textSearchService2) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			if (textSearchService2 == null)
-				throw new ArgumentNullException(nameof(textSearchService2));
-			this.buffer = buffer;
-			this.textSearchService2 = textSearchService2;
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
+			this.textSearchService2 = textSearchService2 ?? throw new ArgumentNullException(nameof(textSearchService2));
 		}
 
 		bool IsValidStartingPosition(SnapshotSpan range, SnapshotPoint startingPosition) =>
@@ -143,8 +139,7 @@ namespace dnSpy.Text.Operations {
 				searchRange = new SnapshotSpan(CurrentResult.Value.Start, spanToUse.End);
 			}
 
-			string expandedReplacePattern;
-			var span = textSearchService2.FindForReplace(searchRange, SearchTerm, ReplaceTerm, SearchOptions, out expandedReplacePattern);
+			var span = textSearchService2.FindForReplace(searchRange, SearchTerm, ReplaceTerm, SearchOptions, out string expandedReplacePattern);
 			if (span == null)
 				return false;
 			using (var ed = buffer.CreateEdit()) {

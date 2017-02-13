@@ -46,9 +46,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="method">Method</param>
 		/// <param name="locals">Locals or null</param>
 		public MethodDebugInfoBuilder(MethodDef method, SourceLocal[] locals = null) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
-			this.method = method;
+			this.method = method ?? throw new ArgumentNullException(nameof(method));
 			statements = new List<SourceStatement>();
 			this.locals = locals ?? Array.Empty<SourceLocal>();
 		}

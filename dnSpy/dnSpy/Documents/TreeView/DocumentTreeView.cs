@@ -325,8 +325,7 @@ namespace dnSpy.Documents.TreeView {
 					dict2[n.Document] = n;
 				}
 				var list = new List<Tuple<DsDocumentNode, int>>(e.Documents.Select(a => {
-					DsDocumentNode node;
-					bool b = dict2.TryGetValue(a, out node);
+					bool b = dict2.TryGetValue(a, out var node);
 					Debug.Assert(b);
 					int j = -1;
 					b = b && dict.TryGetValue(node, out j);

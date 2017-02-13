@@ -130,8 +130,6 @@ namespace dnSpy.Hex {
 		};
 
 		public HexBufferLineFormatterImpl(HexBuffer buffer, HexBufferLineFormatterOptions options) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			if (options.CharsPerLine < 0)
@@ -155,7 +153,7 @@ namespace dnSpy.Hex {
 			if (options.ValuesFormat < HexBufferLineFormatterOptions.HexValuesDisplayFormat_First || options.ValuesFormat > HexBufferLineFormatterOptions.HexValuesDisplayFormat_Last)
 				throw new ArgumentOutOfRangeException(nameof(options));
 
-			this.buffer = buffer;
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 			columnOrder = TryCreateColumns(options.ColumnOrder ?? defaultColumnOrders);
 			if (columnOrder == null)
 				throw new ArgumentOutOfRangeException(nameof(options));
@@ -214,9 +212,7 @@ namespace dnSpy.Hex {
 			}
 			if (LineCount == 0)
 				throw new InvalidOperationException();
-
-			VST.Span offsetSpan, valuesSpan, asciiSpan;
-			CalculateColumnSpans(out offsetSpan, out valuesSpan, out asciiSpan);
+			CalculateColumnSpans(out var offsetSpan, out var valuesSpan, out var asciiSpan);
 			OffsetSpan = offsetSpan;
 			ValuesSpan = valuesSpan;
 			AsciiSpan = asciiSpan;

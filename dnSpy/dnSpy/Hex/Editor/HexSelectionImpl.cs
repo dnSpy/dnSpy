@@ -57,13 +57,11 @@ namespace dnSpy.Hex.Editor {
 		HexBufferPoint anchorPoint, activePoint;
 
 		public HexSelectionImpl(WpfHexView hexView, HexAdornmentLayer selectionLayer, VSTC.IEditorFormatMap editorFormatMap) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
 			if (selectionLayer == null)
 				throw new ArgumentNullException(nameof(selectionLayer));
 			if (editorFormatMap == null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
-			HexView = hexView;
+			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			HexView.GotAggregateFocus += HexView_GotAggregateFocus;
 			HexView.LostAggregateFocus += HexView_LostAggregateFocus;
 			hexSelectionLayer = new HexSelectionLayer(this, selectionLayer, editorFormatMap);

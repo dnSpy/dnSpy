@@ -43,11 +43,9 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		T GetOrCreate<T>(object key, Func<ReferenceResult<T>> creator) where T : class {
-			object obj;
-			if (strongCachedInstances.TryGetValue(key, out obj))
+			if (strongCachedInstances.TryGetValue(key, out object obj))
 				return (T)obj;
-			WeakReference weakRef;
-			if (weakCachedInstances.TryGetValue(key, out weakRef)) {
+			if (weakCachedInstances.TryGetValue(key, out var weakRef)) {
 				obj = weakRef.Target;
 				if (obj != null)
 					return (T)obj;
@@ -87,9 +85,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly object obj;
 
 			public Key(object obj) {
-				if (obj == null)
-					throw new ArgumentNullException(nameof(obj));
-				this.obj = obj;
+				this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 			}
 
 			public bool Equals(Key other) => other != null && obj.Equals(other.obj);

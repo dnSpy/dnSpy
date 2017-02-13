@@ -47,8 +47,7 @@ namespace dnSpy.Controls {
 		IWpfCommands IWpfCommandService.GetCommands(Guid guid) => GetCommands(guid);
 
 		WpfCommands GetCommands(Guid guid) {
-			WpfCommands c;
-			if (!toWpfCommands.TryGetValue(guid, out c))
+			if (!toWpfCommands.TryGetValue(guid, out var c))
 				toWpfCommands.Add(guid, c = new WpfCommands(guid));
 			return c;
 		}

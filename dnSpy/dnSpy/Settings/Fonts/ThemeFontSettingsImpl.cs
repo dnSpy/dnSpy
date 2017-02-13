@@ -35,9 +35,7 @@ namespace dnSpy.Settings.Fonts {
 		FontSettings active;
 
 		public ThemeFontSettingsImpl(string name, FontType fontType, DefaultFontInfo defaultFontInfo) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 			FontType = fontType;
 			toSettings = new Dictionary<Guid, FontSettingsImpl>();
 			this.defaultFontInfo = defaultFontInfo;
@@ -46,8 +44,7 @@ namespace dnSpy.Settings.Fonts {
 		internal void Initialize(Guid activeThemeGuid) => active = GetSettings(activeThemeGuid);
 
 		public override FontSettings GetSettings(Guid themeGuid) {
-			FontSettingsImpl settings;
-			if (toSettings.TryGetValue(themeGuid, out settings))
+			if (toSettings.TryGetValue(themeGuid, out var settings))
 				return settings;
 			settings = new FontSettingsImpl(this, themeGuid, defaultFontInfo.FontFamily, defaultFontInfo.FontSize);
 			toSettings.Add(themeGuid, settings);
@@ -69,9 +66,7 @@ namespace dnSpy.Settings.Fonts {
 	sealed class FontSettingsCreatedEventArgs : EventArgs {
 		public FontSettings FontSettings { get; }
 		public FontSettingsCreatedEventArgs(FontSettings fontSettings) {
-			if (fontSettings == null)
-				throw new ArgumentNullException(nameof(fontSettings));
-			FontSettings = fontSettings;
+			FontSettings = fontSettings ?? throw new ArgumentNullException(nameof(fontSettings));
 		}
 	}
 }

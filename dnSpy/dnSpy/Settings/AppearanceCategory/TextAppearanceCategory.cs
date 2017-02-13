@@ -46,12 +46,8 @@ namespace dnSpy.Settings.AppearanceCategory {
 		FontSettings activeFontSettings;
 
 		public TextAppearanceCategory(TextAppearanceCategoryDefinition def, ThemeFontSettings themeFontSettings) {
-			if (def == null)
-				throw new ArgumentNullException(nameof(def));
-			if (themeFontSettings == null)
-				throw new ArgumentNullException(nameof(themeFontSettings));
-			this.def = def;
-			ThemeFontSettings = themeFontSettings;
+			this.def = def ?? throw new ArgumentNullException(nameof(def));
+			ThemeFontSettings = themeFontSettings ?? throw new ArgumentNullException(nameof(themeFontSettings));
 			themeFontSettings.PropertyChanged += ThemeFontSettings_PropertyChanged;
 			UpdateActive();
 		}

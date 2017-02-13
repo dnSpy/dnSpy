@@ -66,12 +66,10 @@ namespace dnSpy.Debugger.Locals {
 				ulong value = 0;
 				foreach (var c in consts) {
 					ulong? newv;
-					object o;
-					string error;
-					if (dict.TryGetValue(c, out o))
+					if (dict.TryGetValue(c, out object o))
 						newv = IntegerToUInt64ZeroExtend(o);
 					else
-						newv = ParseIntegerConstant(etype, c, out error);
+						newv = ParseIntegerConstant(etype, c, out string error);
 					if (newv == null)
 						return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_UnknownEnumValue, c);
 					value |= newv.Value;
@@ -95,8 +93,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 
 				if (isInteger) {
-					string error;
-					var newv = ParseIntegerConstant(etype, c, out error);
+					var newv = ParseIntegerConstant(etype, c, out string error);
 					if (newv != null) {
 						bytes = Convert(etype, ConvertUInt64(etype, newv.Value));
 						if (bytes != null)
@@ -105,16 +102,14 @@ namespace dnSpy.Debugger.Locals {
 				}
 				else {
 					if (etype == CorElementType.R4) {
-						float v;
-						if (float.TryParse(c, out v)) {
+						if (float.TryParse(c, out float v)) {
 							bytes = BitConverter.GetBytes(v);
 							return null;
 						}
 					}
 					else {
 						Debug.Assert(etype == CorElementType.R8);
-						double v;
-						if (double.TryParse(c, out v)) {
+						if (double.TryParse(c, out double v)) {
 							bytes = BitConverter.GetBytes(v);
 							return null;
 						}
@@ -433,8 +428,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public string GetString(out string s) {
-			string error;
-			s = SimpleTypeConverter.ParseString(text, true, out error);
+			s = SimpleTypeConverter.ParseString(text, true, out string error);
 			return error;
 		}
 	}

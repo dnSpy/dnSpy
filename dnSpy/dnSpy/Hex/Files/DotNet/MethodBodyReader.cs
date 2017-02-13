@@ -50,8 +50,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var headerSpan = HexSpan.FromBounds(methodBodyPosition, currentPosition);
 			var instructionsSpan = new HexSpan(currentPosition, codeSize);
 			currentPosition += codeSize;
-			bool isSmallExceptionClauses;
-			var exceptionsSpan = ReadExceptionHandlers(out isSmallExceptionClauses);
+			var exceptionsSpan = ReadExceptionHandlers(out bool isSmallExceptionClauses);
 
 			return new MethodBodyInfo(tokens, headerSpan, instructionsSpan, exceptionsSpan, isSmallExceptionClauses ? MethodBodyInfoFlags.SmallExceptionClauses : MethodBodyInfoFlags.None);
 		}

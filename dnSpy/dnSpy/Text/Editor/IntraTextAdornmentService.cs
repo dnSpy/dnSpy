@@ -67,9 +67,7 @@ namespace dnSpy.Text.Editor {
 		readonly IIntraTextAdornmentService intraTextAdornmentService;
 
 		public IntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger(IIntraTextAdornmentService intraTextAdornmentService) {
-			if (intraTextAdornmentService == null)
-				throw new ArgumentNullException(nameof(intraTextAdornmentService));
-			this.intraTextAdornmentService = intraTextAdornmentService;
+			this.intraTextAdornmentService = intraTextAdornmentService ?? throw new ArgumentNullException(nameof(intraTextAdornmentService));
 			intraTextAdornmentService.RegisterTagger(this);
 		}
 
@@ -122,13 +120,11 @@ namespace dnSpy.Text.Editor {
 		static readonly object providerTag = new object();
 
 		public IntraTextAdornmentService(IWpfTextView wpfTextView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
 			if (viewTagAggregatorFactoryService == null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 			adornmentTagInfos = new List<AdornmentTagInfo>();
 			currentLineIdentityTags = new HashSet<object>();
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IntraTextAdornmentTag>(wpfTextView);
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 			wpfTextView.Closed += WpfTextView_Closed;
@@ -298,9 +294,7 @@ namespace dnSpy.Text.Editor {
 		public void RegisterTagger(IIntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger tagger) {
 			if (this.tagger != null)
 				throw new InvalidOperationException();
-			if (tagger == null)
-				throw new ArgumentNullException(nameof(tagger));
-			this.tagger = tagger;
+			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
 
 		public IEnumerable<ITagSpan<SpaceNegotiatingAdornmentTag>> GetTags(NormalizedSnapshotSpanCollection spans) {

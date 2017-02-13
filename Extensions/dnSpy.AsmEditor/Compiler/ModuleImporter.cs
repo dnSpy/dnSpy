@@ -411,8 +411,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					throw new InvalidOperationException();
 
 				foreach (var newMember in GetMembers(newType)) {
-					T targetMember;
-					if (targetMembersDict.TryGetValue(newMember, out targetMember))
+					if (targetMembersDict.TryGetValue(newMember, out var targetMember))
 						Existing.Add(new ExistingMember<T>(newMember, targetMember));
 					else
 						New.Add(newMember);
@@ -516,8 +515,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					continue;
 				}
 
-				TypeDef targetNestedType;
-				if (targetTypesDict.TryGetValue(nestedType, out targetNestedType)) {
+				if (targetTypesDict.TryGetValue(nestedType, out var targetNestedType)) {
 					existingTypes.Add(new ExistingMember<TypeDef>(nestedType, targetNestedType));
 					continue;
 				}
@@ -731,8 +729,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 				foreach (var nestedTargetType in targetType.NestedTypes) {
 					targetTypes.Remove(nestedTargetType);
-					TypeDef nestedNewType;
-					if (newTypes.TryGetValue(nestedTargetType, out nestedNewType)) {
+					if (newTypes.TryGetValue(nestedTargetType, out var nestedNewType)) {
 						// If it's a state machine type, it's a new type
 						if (!newStateMachineTypes.Contains(nestedNewType)) {
 							newTypes.Remove(nestedTargetType);
@@ -832,8 +829,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var compiledMethod in compiledType.Methods) {
 				var newMethod = oldMethodToNewMethod[compiledMethod].EditedMember;
 
-				string suggestedName;
-				suggestedNames.TryGetValue(newMethod, out suggestedName);
+				suggestedNames.TryGetValue(newMethod, out string suggestedName);
 
 				if (suggestedName == null && !existingMethods.Contains(newMethod))
 					continue;
@@ -1129,8 +1125,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 				else if (importedType.MergeKind == MergeKind.Edit) {
 					foreach (var compiledField in compiledType.Fields) {
-						FieldDef targetField;
-						if (editedFieldsToFix.TryGetValue(compiledField, out targetField)) {
+						if (editedFieldsToFix.TryGetValue(compiledField, out var targetField)) {
 							var editedField = targetModule.UpdateRowId(new FieldDefUser(targetField.Name));
 							oldFieldToNewField.Add(compiledField, new MemberInfo<FieldDef>(targetField, editedField));
 						}
@@ -1138,8 +1133,7 @@ namespace dnSpy.AsmEditor.Compiler {
 							Create(compiledField);
 					}
 					foreach (var compiledMethod in compiledType.Methods) {
-						MethodDef targetMethod;
-						if (editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod)) {
+						if (editedMethodsToFix.TryGetValue(compiledMethod, out var targetMethod)) {
 							var editedMethod = targetModule.UpdateRowId(new MethodDefUser(targetMethod.Name));
 							oldMethodToNewMethod.Add(compiledMethod, new MemberInfo<MethodDef>(targetMethod, editedMethod));
 						}
@@ -1147,8 +1141,7 @@ namespace dnSpy.AsmEditor.Compiler {
 							Create(compiledMethod);
 					}
 					foreach (var compiledProperty in compiledType.Properties) {
-						PropertyDef targetProperty;
-						if (editedPropertiesToFix.TryGetValue(compiledProperty, out targetProperty)) {
+						if (editedPropertiesToFix.TryGetValue(compiledProperty, out var targetProperty)) {
 							var editedProperty = targetModule.UpdateRowId(new PropertyDefUser(targetProperty.Name));
 							oldPropertyToNewProperty.Add(compiledProperty, new MemberInfo<PropertyDef>(targetProperty, editedProperty));
 						}
@@ -1156,8 +1149,7 @@ namespace dnSpy.AsmEditor.Compiler {
 							Create(compiledProperty);
 					}
 					foreach (var compiledEvent in compiledType.Events) {
-						EventDef targetEvent;
-						if (editedEventsToFix.TryGetValue(compiledEvent, out targetEvent)) {
+						if (editedEventsToFix.TryGetValue(compiledEvent, out var targetEvent)) {
 							var editedEvent = targetModule.UpdateRowId(new EventDefUser(targetEvent.Name));
 							oldEventToNewEvent.Add(compiledEvent, new MemberInfo<EventDef>(targetEvent, editedEvent));
 						}
@@ -1261,29 +1253,25 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 				else if (importedType.MergeKind == MergeKind.Edit) {
 					foreach (var compiledField in compiledType.Fields) {
-						FieldDef targetField;
-						if (editedFieldsToFix.TryGetValue(compiledField, out targetField))
+						if (editedFieldsToFix.TryGetValue(compiledField, out var targetField))
 							Initialize(compiledField);
 						else
 							importedType.NewFields.Add(Initialize(compiledField));
 					}
 					foreach (var compiledMethod in compiledType.Methods) {
-						MethodDef targetMethod;
-						if (editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod))
+						if (editedMethodsToFix.TryGetValue(compiledMethod, out var targetMethod))
 							Initialize(compiledMethod);
 						else
 							importedType.NewMethods.Add(Initialize(compiledMethod));
 					}
 					foreach (var compiledProperty in compiledType.Properties) {
-						PropertyDef targetProperty;
-						if (editedPropertiesToFix.TryGetValue(compiledProperty, out targetProperty))
+						if (editedPropertiesToFix.TryGetValue(compiledProperty, out var targetProperty))
 							Initialize(compiledProperty);
 						else
 							importedType.NewProperties.Add(Initialize(compiledProperty));
 					}
 					foreach (var compiledEvent in compiledType.Events) {
-						EventDef targetEvent;
-						if (editedEventsToFix.TryGetValue(compiledEvent, out targetEvent))
+						if (editedEventsToFix.TryGetValue(compiledEvent, out var targetEvent))
 							Initialize(compiledEvent);
 						else
 							importedType.NewEvents.Add(Initialize(compiledEvent));
@@ -1307,8 +1295,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var importedType in importedTypes) {
 				foreach (var compiledMethod in toExtraData[importedType].CompiledType.Methods) {
 					var targetInfo = oldMethodToNewMethod[compiledMethod];
-					MethodDef targetMethod2;
-					if (editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod2)) {
+					if (editedMethodsToFix.TryGetValue(compiledMethod, out var targetMethod2)) {
 						if (targetInfo.TargetMember != targetMethod2)
 							throw new InvalidOperationException();
 						if (compiledMethod.IsStatic != targetInfo.TargetMember.IsStatic)
@@ -1328,8 +1315,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (type == null)
 				return null;
 
-			ImportedType importedType;
-			var res = TryGetTypeInTargetModule(type, out importedType);
+			var res = TryGetTypeInTargetModule(type, out var importedType);
 			if (res != null)
 				return res;
 
@@ -1405,8 +1391,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var tr = tdr as TypeRef;
 			if (tr != null) {
-				ImportedType importedTypeTmp;
-				if (oldTypeRefToNewType.TryGetValue(tr, out importedTypeTmp))
+				if (oldTypeRefToNewType.TryGetValue(tr, out var importedTypeTmp))
 					return (importedType = importedTypeTmp).TargetType;
 
 				var tr2 = (TypeRef)tr.GetNonNestedTypeRefScope();
@@ -1985,8 +1970,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				if (op == null)
 					continue;
 
-				object obj;
-				if (bodyDict.TryGetValue(op, out obj)) {
+				if (bodyDict.TryGetValue(op, out object obj)) {
 					newInstr.Operand = obj;
 					continue;
 				}
@@ -2031,8 +2015,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static Instruction GetInstruction(Dictionary<object, object> dict, Instruction instr) {
-			object obj;
-			if (instr == null || !dict.TryGetValue(instr, out obj))
+			if (instr == null || !dict.TryGetValue(instr, out object obj))
 				return null;
 			return (Instruction)obj;
 		}
@@ -2053,8 +2036,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			var mr = (MemberRef)method;
-			ImportedType importedType;
-			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef, out importedType);
+			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef, out var importedType);
 			if (td != null) {
 				var targetMethod = FindMethod(td, mr);
 				if (targetMethod != null)
@@ -2092,8 +2074,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return oldFieldToNewField[fd].TargetMember;
 
 			var mr = (MemberRef)field;
-			ImportedType importedType;
-			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef, out importedType);
+			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef, out var importedType);
 			if (td != null) {
 				var targetField = FindField(td, mr);
 				if (targetField != null)

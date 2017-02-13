@@ -57,12 +57,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 		ICompletionSession completionSession;
 
 		public CommandTargetFilter(ITextView textView, Lazy<ICompletionBroker> completionBroker) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (completionBroker == null)
-				throw new ArgumentNullException(nameof(completionBroker));
-			this.textView = textView;
-			this.completionBroker = completionBroker;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.completionBroker = completionBroker ?? throw new ArgumentNullException(nameof(completionBroker));
 		}
 
 		CompletionService TryGetRoslynCompletionService() => CompletionInfo.Create(textView.TextSnapshot)?.CompletionService;

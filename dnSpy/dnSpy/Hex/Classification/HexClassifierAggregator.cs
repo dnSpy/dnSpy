@@ -36,15 +36,9 @@ namespace dnSpy.Hex.Classification {
 		public override event EventHandler<HexClassificationChangedEventArgs> ClassificationChanged;
 
 		protected HexClassifierAggregator(HexTagAggregator<HexClassificationTag> hexTagAggregator, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, HexBuffer buffer) {
-			if (hexTagAggregator == null)
-				throw new ArgumentNullException(nameof(hexTagAggregator));
-			if (classificationTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			this.classificationTypeRegistryService = classificationTypeRegistryService;
-			this.hexTagAggregator = hexTagAggregator;
-			this.buffer = buffer;
+			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
+			this.hexTagAggregator = hexTagAggregator ?? throw new ArgumentNullException(nameof(hexTagAggregator));
+			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 			hexTagAggregator.TagsChanged += HexTagAggregator_TagsChanged;
 		}
 

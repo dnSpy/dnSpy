@@ -30,8 +30,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorThread Thread {
 			get {
-				ICorDebugThread thread;
-				int hr = obj.GetThread(out thread);
+				int hr = obj.GetThread(out var thread);
 				return hr < 0 || thread == null ? null : new CorThread(thread);
 			}
 		}
@@ -41,8 +40,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsActive {
 			get {
-				int act;
-				int hr = obj.IsActive(out act);
+				int hr = obj.IsActive(out int act);
 				return hr >= 0 && act != 0;
 			}
 		}
@@ -52,8 +50,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorValue Result {
 			get {
-				ICorDebugValue value;
-				int hr = obj.GetResult(out value);
+				int hr = obj.GetResult(out var value);
 				return hr < 0 || value == null ? null : new CorValue(value);
 			}
 		}
@@ -86,8 +83,7 @@ namespace dndbg.Engine {
 		/// <param name="cls">Type or null if it's not a Class/ValueType</param>
 		/// <returns></returns>
 		public CorValue CreateValue(CorElementType et, CorClass cls = null) {
-			ICorDebugValue value;
-			int hr = obj.CreateValue(et, cls?.RawObject, out value);
+			int hr = obj.CreateValue(et, cls?.RawObject, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -99,8 +95,7 @@ namespace dndbg.Engine {
 		public CorValue CreateValueForType(CorType type) {
 			if (eval2 == null)
 				return null;
-			ICorDebugValue value;
-			int hr = eval2.CreateValueForType(type.RawObject, out value);
+			int hr = eval2.CreateValueForType(type.RawObject, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 

@@ -57,9 +57,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(file) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
-			if (peHeaders == null)
-				throw new ArgumentNullException(nameof(peHeaders));
-			this.peHeaders = peHeaders;
+			this.peHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
 			methodBodyRvas = CreateMethodBodyRvas(tablesHeap?.MDTables[(int)Table.Method]);
 			methodBodiesSpan = GetMethodBodiesSpan(methodBodyRvas);
 		}

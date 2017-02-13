@@ -42,18 +42,10 @@ namespace dnSpy.Text {
 		TextBuffer TextBuffer { get; }
 
 		public TextSnapshot(ITextSource textSource, IContentType contentType, TextBuffer textBuffer, ITextVersion textVersion) {
-			if (textSource == null)
-				throw new ArgumentNullException(nameof(textSource));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			if (textVersion == null)
-				throw new ArgumentNullException(nameof(textVersion));
-			this.textSource = textSource;
-			ContentType = contentType;
-			TextBuffer = textBuffer;
-			Version = textVersion;
+			this.textSource = textSource ?? throw new ArgumentNullException(nameof(textSource));
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
+			TextBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
+			Version = textVersion ?? throw new ArgumentNullException(nameof(textVersion));
 		}
 
 		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) => textSource.CopyTo(sourceIndex, destination, destinationIndex, count);

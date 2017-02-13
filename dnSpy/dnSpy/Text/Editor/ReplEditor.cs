@@ -986,11 +986,9 @@ namespace dnSpy.Text.Editor {
 		readonly IReplEditor2 replEditor;
 
 		public ReplCustomLineNumberMarginOwner(IReplEditor2 replEditor, IThemeClassificationTypeService themeClassificationTypeService) {
-			if (replEditor == null)
-				throw new ArgumentNullException(nameof(replEditor));
 			if (themeClassificationTypeService == null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.replEditor = replEditor;
+			this.replEditor = replEditor ?? throw new ArgumentNullException(nameof(replEditor));
 			replLineNumberInput1ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput1);
 			replLineNumberInput2ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput2);
 			replLineNumberOutputClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberOutput);

@@ -62,9 +62,7 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextViewHost wpfTextViewHost;
 
 		public SpacerMargin(IWpfTextViewHost wpfTextViewHost) {
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			this.wpfTextViewHost = wpfTextViewHost;
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			Width = SELECTION_MARGIN_WIDTH;
 			ClipToBounds = true;

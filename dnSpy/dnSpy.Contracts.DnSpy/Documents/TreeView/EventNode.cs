@@ -38,9 +38,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="event">Event</param>
 		protected EventNode(EventDef @event) {
-			if (@event == null)
-				throw new ArgumentNullException(nameof(@event));
-			EventDef = @event;
+			EventDef = @event ?? throw new ArgumentNullException(nameof(@event));
 		}
 
 		/// <summary>

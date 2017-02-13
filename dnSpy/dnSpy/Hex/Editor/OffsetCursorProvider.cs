@@ -47,12 +47,8 @@ namespace dnSpy.Hex.Editor {
 		readonly WpfHexView wpfHexView;
 
 		public OffsetHexMouseProcessor(OffsetCursorProvider offsetCursorProvider, WpfHexView wpfHexView) {
-			if (offsetCursorProvider == null)
-				throw new ArgumentNullException(nameof(offsetCursorProvider));
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			this.offsetCursorProvider = offsetCursorProvider;
-			this.wpfHexView = wpfHexView;
+			this.offsetCursorProvider = offsetCursorProvider ?? throw new ArgumentNullException(nameof(offsetCursorProvider));
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 		}
 
 		HexMouseLocation GetMouseLocation(MouseEventArgs e) => HexMouseLocation.Create(wpfHexView, e, insertionPosition: false);
@@ -95,9 +91,7 @@ namespace dnSpy.Hex.Editor {
 		readonly OffsetCursorProvider offsetCursorProvider;
 
 		public OffsetHexCursorProvider(OffsetCursorProvider offsetCursorProvider) {
-			if (offsetCursorProvider == null)
-				throw new ArgumentNullException(nameof(offsetCursorProvider));
-			this.offsetCursorProvider = offsetCursorProvider;
+			this.offsetCursorProvider = offsetCursorProvider ?? throw new ArgumentNullException(nameof(offsetCursorProvider));
 			offsetCursorProvider.CursorInfoChanged += OffsetCursorProvider_CursorInfoChanged;
 		}
 

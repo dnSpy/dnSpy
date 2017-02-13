@@ -48,19 +48,15 @@ namespace dnSpy.Hex.Editor {
 		double popupZoomLevel = double.NaN;
 
 		public HexPopupSpaceReservationAgent(HexSpaceReservationManager spaceReservationManager, WpfHexView wpfHexView, HexLineSpan lineSpan, VSTA.PopupStyles style, UIElement content) {
-			if (spaceReservationManager == null)
-				throw new ArgumentNullException(nameof(spaceReservationManager));
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
-			if (content == null)
-				throw new ArgumentNullException(nameof(content));
 			if ((style & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) == (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
-			this.spaceReservationManager = spaceReservationManager;
+			this.spaceReservationManager = spaceReservationManager ?? throw new ArgumentNullException(nameof(spaceReservationManager));
 			this.wpfHexView = wpfHexView;
 			this.lineSpan = lineSpan;
 			this.style = style;
-			this.content = content;
+			this.content = content ?? throw new ArgumentNullException(nameof(content));
 			popup = new Popup {
 				PlacementTarget = wpfHexView.VisualElement,
 				Placement = PlacementMode.Relative,

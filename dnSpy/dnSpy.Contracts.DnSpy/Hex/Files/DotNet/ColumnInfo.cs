@@ -62,14 +62,12 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public ColumnInfo(int index, string name, ColumnSize columnSize, int offset = 0, int size = 0) {
 			if (index < 0)
 				throw new ArgumentOutOfRangeException(nameof(index));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException(nameof(offset));
 			if (size < 0)
 				throw new ArgumentOutOfRangeException(nameof(size));
 			Index = index;
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 			ColumnSize = columnSize;
 			Offset = offset;
 			Size = size;

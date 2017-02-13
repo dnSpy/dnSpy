@@ -28,10 +28,8 @@ namespace dnSpy.Text.Groups {
 		public IContentType ContentType { get; }
 
 		public TextViewGroupOptionCollection(IContentType contentType) {
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
 			Options = new List<TextViewGroupOption>();
-			ContentType = contentType;
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
 		}
 
 		public void Add(TextViewGroupOption option) => Options.Add(option);

@@ -131,9 +131,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="documentViewer"><see cref="IDocumentViewer"/> instance</param>
 		protected DocumentViewerEventArgs(IDocumentViewer documentViewer) {
-			if (documentViewer == null)
-				throw new ArgumentNullException(nameof(documentViewer));
-			DocumentViewer = documentViewer;
+			DocumentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
 		}
 	}
 
@@ -200,12 +198,8 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="contentType">Content type</param>
 		public DocumentViewerGotNewContentEventArgs(IDocumentViewer documentViewer, DocumentViewerContent content, IContentType contentType)
 			: base(documentViewer) {
-			if (content == null)
-				throw new ArgumentNullException(nameof(content));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			Content = content;
-			ContentType = contentType;
+			Content = content ?? throw new ArgumentNullException(nameof(content));
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
 		}
 	}
 }

@@ -64,9 +64,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="errorMessage">Error message</param>
 		public DbgMessageConnected(string errorMessage) {
-			if (errorMessage == null)
-				throw new ArgumentNullException(nameof(errorMessage));
-			ErrorMessage = errorMessage;
+			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 		}
 	}
 

@@ -36,15 +36,9 @@ namespace dnSpy.Text.Classification {
 		public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
 
 		protected ClassifierAggregatorBase(ISynchronousTagAggregator<IClassificationTag> tagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService, ITextBuffer textBuffer) {
-			if (tagAggregator == null)
-				throw new ArgumentNullException(nameof(tagAggregator));
-			if (classificationTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			this.classificationTypeRegistryService = classificationTypeRegistryService;
-			this.tagAggregator = tagAggregator;
-			this.textBuffer = textBuffer;
+			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
+			this.tagAggregator = tagAggregator ?? throw new ArgumentNullException(nameof(tagAggregator));
+			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 		}
 

@@ -53,9 +53,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		readonly ToolTipCreatorFactory toolTipCreatorFactory;
 
 		public DotNetHexFileStructureInfoProvider(ToolTipCreatorFactory toolTipCreatorFactory) {
-			if (toolTipCreatorFactory == null)
-				throw new ArgumentNullException(nameof(toolTipCreatorFactory));
-			this.toolTipCreatorFactory = toolTipCreatorFactory;
+			this.toolTipCreatorFactory = toolTipCreatorFactory ?? throw new ArgumentNullException(nameof(toolTipCreatorFactory));
 		}
 
 		public override object GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) {

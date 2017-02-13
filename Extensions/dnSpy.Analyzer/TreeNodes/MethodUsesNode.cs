@@ -34,10 +34,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly MethodDef analyzedMethod;
 
 		public MethodUsesNode(MethodDef analyzedMethod) {
-			if (analyzedMethod == null)
-				throw new ArgumentNullException(nameof(analyzedMethod));
-
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>

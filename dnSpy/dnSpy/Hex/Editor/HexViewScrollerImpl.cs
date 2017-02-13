@@ -31,9 +31,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexView hexView;
 
 		public HexViewScrollerImpl(HexView hexView) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			this.hexView = hexView;
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 		}
 
 		public override void EnsureSpanVisible(HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options) {

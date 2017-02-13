@@ -47,8 +47,7 @@ namespace dndbg.DotNet {
 		}
 
 		void InitializeName(UTF8String utf8Name, string fullName) {
-			UTF8String ns, name;
-			Utils.SplitNameAndNamespace(utf8Name, fullName, out ns, out name);
+			Utils.SplitNameAndNamespace(utf8Name, fullName, out var ns, out var name);
 			Namespace = ns;
 			Name = name;
 		}

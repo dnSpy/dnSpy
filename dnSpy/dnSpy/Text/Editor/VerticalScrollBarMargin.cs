@@ -59,9 +59,7 @@ namespace dnSpy.Text.Editor {
 		public VerticalScrollBarMargin(IScrollMapFactoryService scrollMapFactoryService, IWpfTextViewHost wpfTextViewHost) {
 			if (scrollMapFactoryService == null)
 				throw new ArgumentNullException(nameof(scrollMapFactoryService));
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			this.wpfTextViewHost = wpfTextViewHost;
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
 			scrollMap = scrollMapFactoryService.Create(wpfTextViewHost.TextView, true);
 			IsVisibleChanged += VerticalScrollBarMargin_IsVisibleChanged;
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;

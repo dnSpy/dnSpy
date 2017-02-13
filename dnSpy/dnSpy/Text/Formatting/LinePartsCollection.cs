@@ -29,12 +29,10 @@ namespace dnSpy.Text.Formatting {
 		public SnapshotSpan Span { get; private set; }
 
 		public LinePartsCollection(List<LinePart> lineParts, SnapshotSpan span) {
-			if (lineParts == null)
-				throw new ArgumentNullException(nameof(lineParts));
 			if (span.Snapshot == null)
 				throw new ArgumentException();
 			Span = span;
-			LineParts = lineParts;
+			LineParts = lineParts ?? throw new ArgumentNullException(nameof(lineParts));
 			if (lineParts.Count == 0)
 				Length = 0;
 			else {

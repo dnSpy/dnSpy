@@ -39,12 +39,8 @@ namespace dnSpy.Text.Editor.Search {
 		public bool UseRegularExpressions { get; private set; } = false;
 
 		public void SaveSettings(string searchString, string replaceString, bool matchCase, bool matchWholeWords, bool useRegularExpressions) {
-			if (searchString == null)
-				throw new ArgumentNullException(nameof(searchString));
-			if (replaceString == null)
-				throw new ArgumentNullException(nameof(replaceString));
-			SearchString = searchString;
-			ReplaceString = replaceString;
+			SearchString = searchString ?? throw new ArgumentNullException(nameof(searchString));
+			ReplaceString = replaceString ?? throw new ArgumentNullException(nameof(replaceString));
 			MatchCase = matchCase;
 			MatchWholeWords = matchWholeWords;
 			UseRegularExpressions = useRegularExpressions;

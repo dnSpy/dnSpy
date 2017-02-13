@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
 
 namespace dnSpy.Debugger.Locals {

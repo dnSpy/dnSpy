@@ -30,9 +30,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="marginName">Name of margin, eg. <see cref="PredefinedHexMarginNames.Glyph"/></param>
 		public HexMarginNameAttribute(string marginName) {
-			if (marginName == null)
-				throw new ArgumentNullException(nameof(marginName));
-			MarginName = marginName;
+			MarginName = marginName ?? throw new ArgumentNullException(nameof(marginName));
 		}
 
 		/// <summary>

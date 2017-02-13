@@ -86,9 +86,7 @@ namespace dnSpy.Tabs {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
 				var impl = GetTabItemImpl(value);
-				if (impl == null)
-					throw new InvalidOperationException();
-				tabControl.SelectedItem = impl;
+				tabControl.SelectedItem = impl ?? throw new InvalidOperationException();
 			}
 		}
 
@@ -96,9 +94,7 @@ namespace dnSpy.Tabs {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabItemImpl(content);
-			if (impl == null)
-				throw new InvalidOperationException();
-			tabControl.SelectedItem = impl;
+			tabControl.SelectedItem = impl ?? throw new InvalidOperationException();
 			tabGroupService.SetActive(this);
 			SetFocus2(impl.TabContent);
 		}
@@ -347,9 +343,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void tabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
-			TabItemImpl tabItem;
-			TabControl tabControl;
-			if (!GetTabItem(sender, e, out tabItem, out tabControl))
+			if (!GetTabItem(sender, e, out var tabItem, out var tabControl))
 				return;
 
 			if (tabControl.SelectedItem == tabItem)
@@ -375,9 +369,7 @@ namespace dnSpy.Tabs {
 			if (!(Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed))
 				return;
 
-			TabItemImpl tabItem;
-			TabControl tabControl;
-			if (!GetTabItem(sender, e, out tabItem, out tabControl))
+			if (!GetTabItem(sender, e, out var tabItem, out var tabControl))
 				return;
 
 			if (tabControl.SelectedItem == tabItem) {
@@ -427,10 +419,7 @@ namespace dnSpy.Tabs {
 			if (tabItem == null)
 				return;
 			bool canDrag = false;
-
-			TabItemImpl tabItemSource, tabItemTarget;
-			TabGroup tabGroupSource, tabGroupTarget;
-			if (GetInfo(sender, e, out tabItemSource, out tabItemTarget, out tabGroupSource, out tabGroupTarget, true))
+			if (GetInfo(sender, e, out var tabItemSource, out var tabItemTarget, out var tabGroupSource, out var tabGroupTarget, true))
 				canDrag = true;
 
 			e.Effects = canDrag ? DragDropEffects.Move : DragDropEffects.None;
@@ -438,9 +427,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void tabItem_Drop(object sender, DragEventArgs e) {
-			TabItemImpl tabItemSource, tabItemTarget;
-			TabGroup tabGroupSource, tabGroupTarget;
-			if (!GetInfo(sender, e, out tabItemSource, out tabItemTarget, out tabGroupSource, out tabGroupTarget, false))
+			if (!GetInfo(sender, e, out var tabItemSource, out var tabItemTarget, out var tabGroupSource, out var tabGroupTarget, false))
 				return;
 
 			if (tabGroupSource.MoveToAndSelect(tabGroupTarget, tabItemSource, tabItemTarget))

@@ -36,9 +36,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <param name="searchText">Search text</param>
 		public CompletionFilter(string searchText) {
-			if (searchText == null)
-				throw new ArgumentNullException(nameof(searchText));
-			this.searchText = searchText;
+			this.searchText = searchText ?? throw new ArgumentNullException(nameof(searchText));
 			acronymMatchIndexes = AcronymSearchHelpers.TryCreateMatchIndexes(searchText);
 		}
 

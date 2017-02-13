@@ -31,9 +31,7 @@ namespace dnSpy.Hex.Intellisense {
 		protected readonly HexQuickInfoPresenterControl control;
 
 		protected HexQuickInfoPresenterBase(HexQuickInfoSession session) {
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
-			this.session = session;
+			this.session = session ?? throw new ArgumentNullException(nameof(session));
 			control = new HexQuickInfoPresenterControl { DataContext = this };
 			session.Dismissed += Session_Dismissed;
 		}

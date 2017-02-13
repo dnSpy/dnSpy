@@ -153,8 +153,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var dict = InstructionsListVM.ToDictionary(a => a.Offset);
 			var instrs = offsets.Select(a => {
-				InstructionVM instr;
-				dict.TryGetValue(a, out instr);
+				dict.TryGetValue(a, out var instr);
 				return instr;
 			}).Where(a => a != null).Distinct().ToArray();
 			if (instrs.Length == 0)
@@ -460,8 +459,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var code = instr.Code;
 			if (code == Code.Pop || code == Code.Nop)
 				return null;
-			int pushes, pops;
-			instr.CalculateStackUsage(out pushes, out pops);
+			instr.CalculateStackUsage(out int pushes, out int pops);
 			if (pops < 0)
 				return null;
 			if (pushes == 1 && (code == Code.Call || code == Code.Callvirt || code == Code.Calli))

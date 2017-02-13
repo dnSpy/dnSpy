@@ -74,9 +74,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bottomSpace">Bottom space or null to use the default value</param>
 		/// <param name="affinity">Position affinity or null to use the default value</param>
 		public HexIntraTextAdornmentTag(UIElement adornment, VSTE.AdornmentRemovedCallback removalCallback, double? topSpace, double? baseline, double? textHeight, double? bottomSpace, VST.PositionAffinity? affinity) {
-			if (adornment == null)
-				throw new ArgumentNullException(nameof(adornment));
-			Adornment = adornment;
+			Adornment = adornment ?? throw new ArgumentNullException(nameof(adornment));
 			RemovalCallback = removalCallback;
 			TopSpace = topSpace;
 			Baseline = baseline;

@@ -59,21 +59,13 @@ namespace dnSpy.Language.Intellisense {
 		IIntellisensePresenter quickInfoPresenter;
 
 		public QuickInfoSession(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>[] quickInfoSourceProviders) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
-				throw new ArgumentNullException(nameof(triggerPoint));
-			if (intellisensePresenterFactoryService == null)
-				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
-			if (quickInfoSourceProviders == null)
-				throw new ArgumentNullException(nameof(quickInfoSourceProviders));
 			Properties = new PropertyCollection();
 			QuickInfoContent = new BulkObservableCollection<object>();
-			TextView = textView;
-			this.triggerPoint = triggerPoint;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.triggerPoint = triggerPoint ?? throw new ArgumentNullException(nameof(triggerPoint));
 			TrackMouse = trackMouse;
-			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
-			this.quickInfoSourceProviders = quickInfoSourceProviders;
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService ?? throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
+			this.quickInfoSourceProviders = quickInfoSourceProviders ?? throw new ArgumentNullException(nameof(quickInfoSourceProviders));
 			TextView.Closed += TextView_Closed;
 		}
 
@@ -125,8 +117,7 @@ namespace dnSpy.Language.Intellisense {
 			var newContent = new List<object>();
 			ITrackingSpan applicableToSpan = null;
 			foreach (var source in quickInfoSources) {
-				ITrackingSpan applicableToSpanTmp;
-				source.AugmentQuickInfoSession(this, newContent, out applicableToSpanTmp);
+				source.AugmentQuickInfoSession(this, newContent, out var applicableToSpanTmp);
 				if (IsDismissed)
 					return;
 				if (applicableToSpan == null)

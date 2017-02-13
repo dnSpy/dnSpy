@@ -106,25 +106,17 @@ namespace dnSpy.Language.Intellisense {
 #pragma warning restore 0169
 
 		public SignatureHelpPresenter(ISignatureHelpSession session, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
 			if (textBufferFactoryService == null)
 				throw new ArgumentNullException(nameof(textBufferFactoryService));
-			if (contentTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(contentTypeRegistryService));
-			if (classifierAggregatorService == null)
-				throw new ArgumentNullException(nameof(classifierAggregatorService));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			this.session = session;
+			this.session = session ?? throw new ArgumentNullException(nameof(session));
 			control = new SignatureHelpPresenterControl { DataContext = this };
 			signatureTextBuffer = textBufferFactoryService.CreateTextBuffer();
 			otherTextBuffer = textBufferFactoryService.CreateTextBuffer();
 			signatureTextBuffer.Properties[SignatureHelpConstants.SessionBufferKey] = session;
 			otherTextBuffer.Properties[SignatureHelpConstants.SessionBufferKey] = session;
-			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.classifierAggregatorService = classifierAggregatorService;
-			this.classificationFormatMap = classificationFormatMap;
+			this.contentTypeRegistryService = contentTypeRegistryService ?? throw new ArgumentNullException(nameof(contentTypeRegistryService));
+			this.classifierAggregatorService = classifierAggregatorService ?? throw new ArgumentNullException(nameof(classifierAggregatorService));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			defaultExtendedContentType = contentTypeRegistryService.GetContentType(DefaultExtendedContentTypeName);
 			Debug.Assert(defaultExtendedContentType != null);
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;

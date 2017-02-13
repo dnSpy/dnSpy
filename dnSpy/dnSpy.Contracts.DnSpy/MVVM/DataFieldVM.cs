@@ -46,9 +46,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		public CachedValidationError(Func<string> checkError) {
-			if (checkError == null)
-				throw new ArgumentNullException(nameof(checkError));
-			this.checkError = checkError;
+			this.checkError = checkError ?? throw new ArgumentNullException(nameof(checkError));
 			errorMsgValid = false;
 			errorMsg = null;
 		}
@@ -134,9 +132,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		protected DataFieldVM(Action<DataFieldVM> onUpdated) {
-			if (onUpdated == null)
-				throw new ArgumentNullException(nameof(onUpdated));
-			this.onUpdated = onUpdated;
+			this.onUpdated = onUpdated ?? throw new ArgumentNullException(nameof(onUpdated));
 			cachedError = new CachedValidationError(() => Validate());
 		}
 
@@ -191,8 +187,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		public T Value {
 			get {
-				T value;
-				var s = ConvertToValue(out value);
+				var s = ConvertToValue(out var value);
 				if (string.IsNullOrEmpty(s))
 					return value;
 				throw new FormatException(s);
@@ -242,8 +237,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Result</param>
 		/// <returns></returns>
 		public override string ConvertToObjectValue(out object value) {
-			T v;
-			var error = ConvertToValue(out v);
+			var error = ConvertToValue(out var v);
 			value = v;
 			return error;
 		}
@@ -254,9 +248,8 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <returns></returns>
 		protected override string Validate() {
-			T value;
 			try {
-				return ConvertToValue(out value);
+				return ConvertToValue(out var value);
 			}
 			catch (Exception ex) {
 				Debug.Fail("Exception caught in Validate(). ConvertToValue() should return an error string instead of throwing for performance reasons! Throwing is SLOOOOW!");
@@ -364,8 +357,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		internal static Guid ParseGuid(string s, out string error) {
-			Guid res;
-			if (Guid.TryParse(s, out res)) {
+			if (Guid.TryParse(s, out var res)) {
 				error = null;
 				return res;
 			}
@@ -411,8 +403,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<byte> value) {
-			string error;
-			value = SimpleTypeConverter.ParseByteArray(StringValue, out error);
+			value = SimpleTypeConverter.ParseByteArray(StringValue, out string error);
 			return error;
 		}
 	}
@@ -784,8 +775,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out bool value) {
-			string error;
-			value = SimpleTypeConverter.ParseBoolean(StringValue, out error);
+			value = SimpleTypeConverter.ParseBoolean(StringValue, out string error);
 			return error;
 		}
 	}
@@ -817,8 +807,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out char value) {
-			string error;
-			value = SimpleTypeConverter.ParseChar(StringValue, out error);
+			value = SimpleTypeConverter.ParseChar(StringValue, out string error);
 			return error;
 		}
 	}
@@ -852,8 +841,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out byte value) {
-			string error;
-			value = SimpleTypeConverter.ParseByte(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseByte(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -887,8 +875,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out ushort value) {
-			string error;
-			value = SimpleTypeConverter.ParseUInt16(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt16(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -922,8 +909,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out uint value) {
-			string error;
-			value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -957,8 +943,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out ulong value) {
-			string error;
-			value = SimpleTypeConverter.ParseUInt64(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt64(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -992,8 +977,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out sbyte value) {
-			string error;
-			value = SimpleTypeConverter.ParseSByte(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseSByte(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1027,8 +1011,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out short value) {
-			string error;
-			value = SimpleTypeConverter.ParseInt16(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt16(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1062,8 +1045,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out int value) {
-			string error;
-			value = SimpleTypeConverter.ParseInt32(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt32(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1097,8 +1079,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out long value) {
-			string error;
-			value = SimpleTypeConverter.ParseInt64(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt64(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1130,8 +1111,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out float value) {
-			string error;
-			value = SimpleTypeConverter.ParseSingle(StringValue, out error);
+			value = SimpleTypeConverter.ParseSingle(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1163,8 +1143,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out double value) {
-			string error;
-			value = SimpleTypeConverter.ParseDouble(StringValue, out error);
+			value = SimpleTypeConverter.ParseDouble(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1201,8 +1180,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out string value) {
-			string error;
-			value = SimpleTypeConverter.ParseString(StringValue, allowNullString, out error);
+			value = SimpleTypeConverter.ParseString(StringValue, allowNullString, out string error);
 			return error;
 		}
 	}
@@ -1234,8 +1212,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out decimal value) {
-			string error;
-			value = SimpleTypeConverter.ParseDecimal(StringValue, out error);
+			value = SimpleTypeConverter.ParseDecimal(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1267,8 +1244,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out DateTime value) {
-			string error;
-			value = SimpleTypeConverter.ParseDateTime(StringValue, out error);
+			value = SimpleTypeConverter.ParseDateTime(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1300,8 +1276,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out TimeSpan value) {
-			string error;
-			value = SimpleTypeConverter.ParseTimeSpan(StringValue, out error);
+			value = SimpleTypeConverter.ParseTimeSpan(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1333,8 +1308,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out Guid value) {
-			string error;
-			value = NullableGuidVM.ParseGuid(StringValue, out error);
+			value = NullableGuidVM.ParseGuid(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1366,8 +1340,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<bool> value) {
-			string error;
-			value = SimpleTypeConverter.ParseBooleanList(StringValue, out error);
+			value = SimpleTypeConverter.ParseBooleanList(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1399,8 +1372,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<char> value) {
-			string error;
-			value = SimpleTypeConverter.ParseCharList(StringValue, out error);
+			value = SimpleTypeConverter.ParseCharList(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1434,8 +1406,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<byte> value) {
-			string error;
-			value = SimpleTypeConverter.ParseByteList(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseByteList(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1469,8 +1440,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<ushort> value) {
-			string error;
-			value = SimpleTypeConverter.ParseUInt16List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt16List(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1504,8 +1474,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<uint> value) {
-			string error;
-			value = SimpleTypeConverter.ParseUInt32List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt32List(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1539,8 +1508,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<ulong> value) {
-			string error;
-			value = SimpleTypeConverter.ParseUInt64List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseUInt64List(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1574,8 +1542,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<sbyte> value) {
-			string error;
-			value = SimpleTypeConverter.ParseSByteList(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseSByteList(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1609,8 +1576,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<short> value) {
-			string error;
-			value = SimpleTypeConverter.ParseInt16List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt16List(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1644,8 +1610,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<int> value) {
-			string error;
-			value = SimpleTypeConverter.ParseInt32List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt32List(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1679,8 +1644,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<long> value) {
-			string error;
-			value = SimpleTypeConverter.ParseInt64List(StringValue, Min, Max, out error);
+			value = SimpleTypeConverter.ParseInt64List(StringValue, Min, Max, out string error);
 			return error;
 		}
 	}
@@ -1712,8 +1676,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<float> value) {
-			string error;
-			value = SimpleTypeConverter.ParseSingleList(StringValue, out error);
+			value = SimpleTypeConverter.ParseSingleList(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1745,8 +1708,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<double> value) {
-			string error;
-			value = SimpleTypeConverter.ParseDoubleList(StringValue, out error);
+			value = SimpleTypeConverter.ParseDoubleList(StringValue, out string error);
 			return error;
 		}
 	}
@@ -1783,8 +1745,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		/// <inheritdoc/>
 		protected override string ConvertToValue(out IList<string> value) {
-			string error;
-			value = SimpleTypeConverter.ParseStringList(StringValue, allowNullString, out error);
+			value = SimpleTypeConverter.ParseStringList(StringValue, allowNullString, out string error);
 			return error;
 		}
 	}

@@ -255,8 +255,7 @@ namespace dnSpy.BamlDecompiler {
 
 			output.Write(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Keyword);
 
-			Action<BamlContext, BamlRecord> handler;
-			if (handlerMap.TryGetValue(record.Type, out handler)) {
+			if (handlerMap.TryGetValue(record.Type, out var handler)) {
 				output.Write(" [", BoxedTextColor.Text);
 				handler(ctx, record);
 				output.Write("]", BoxedTextColor.Text);

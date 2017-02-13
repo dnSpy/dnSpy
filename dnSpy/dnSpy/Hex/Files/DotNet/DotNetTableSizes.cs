@@ -118,8 +118,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		/// <param name="minorVersion">Minor table version</param>
 		/// <returns>All table infos (not completely initialized)</returns>
 		public TableInfo[] CreateTables(byte majorVersion, byte minorVersion) {
-			int maxPresentTables;
-			return CreateTables(majorVersion, minorVersion, out maxPresentTables);
+			return CreateTables(majorVersion, minorVersion, out int maxPresentTables);
 		}
 
 		/// <summary>

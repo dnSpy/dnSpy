@@ -29,8 +29,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorProcess Process {
 			get {
-				ICorDebugProcess process;
-				int hr = obj.GetProcess(out process);
+				int hr = obj.GetProcess(out var process);
 				return hr < 0 || process == null ? null : new CorProcess(process);
 			}
 		}
@@ -46,8 +45,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsAttached {
 			get {
-				int attached;
-				int hr = obj.IsAttached(out attached);
+				int hr = obj.IsAttached(out int attached);
 				return hr >= 0 && attached != 0;
 			}
 		}
@@ -57,8 +55,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsRunning {
 			get {
-				int running;
-				int hr = obj.IsRunning(out running);
+				int hr = obj.IsRunning(out int running);
 				return hr >= 0 && running != 0;
 			}
 		}
@@ -68,14 +65,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorThread> Threads {
 			get {
-				ICorDebugThreadEnum threadEnum;
-				int hr = obj.EnumerateThreads(out threadEnum);
+				int hr = obj.EnumerateThreads(out var threadEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugThread thread = null;
-					uint count;
-					hr = threadEnum.Next(1, out thread, out count);
+					hr = threadEnum.Next(1, out var thread, out uint count);
 					if (hr != 0 || thread == null)
 						break;
 					yield return new CorThread(thread);
@@ -88,14 +82,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorAssembly> Assemblies {
 			get {
-				ICorDebugAssemblyEnum assemblyEnum;
-				int hr = obj.EnumerateAssemblies(out assemblyEnum);
+				int hr = obj.EnumerateAssemblies(out var assemblyEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugAssembly assembly = null;
-					uint count;
-					hr = assemblyEnum.Next(1, out assembly, out count);
+					hr = assemblyEnum.Next(1, out var assembly, out uint count);
 					if (hr != 0 || assembly == null)
 						break;
 					yield return new CorAssembly(assembly);
@@ -108,14 +99,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorStepper> Steppers {
 			get {
-				ICorDebugStepperEnum stepperEnum;
-				int hr = obj.EnumerateSteppers(out stepperEnum);
+				int hr = obj.EnumerateSteppers(out var stepperEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugStepper stepper = null;
-					uint count;
-					hr = stepperEnum.Next(1, out stepper, out count);
+					hr = stepperEnum.Next(1, out var stepper, out uint count);
 					if (hr != 0 || stepper == null)
 						break;
 					yield return new CorStepper(stepper);
@@ -129,8 +117,7 @@ namespace dndbg.Engine {
 		public string Name => GetName(obj) ?? string.Empty;
 
 		static string GetName(ICorDebugAppDomain appDomain) {
-			uint cchName = 0;
-			int hr = appDomain.GetName(0, out cchName, null);
+			int hr = appDomain.GetName(0, out uint cchName, null);
 			if (hr < 0)
 				return null;
 			var sb = new StringBuilder((int)cchName);
@@ -145,8 +132,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorValue Object {
 			get {
-				ICorDebugValue value;
-				int hr = obj.GetObject(out value);
+				int hr = obj.GetObject(out var value);
 				return hr < 0 || value == null ? null : new CorValue(value);
 			}
 		}
@@ -175,8 +161,7 @@ namespace dndbg.Engine {
 		/// <param name="thread">Thread or null to check all threads</param>
 		/// <returns></returns>
 		public bool HasQueuedCallbacks(CorThread thread) {
-			int queued;
-			int hr = obj.HasQueuedCallbacks(thread == null ? null : thread.RawObject, out queued);
+			int hr = obj.HasQueuedCallbacks(thread == null ? null : thread.RawObject, out int queued);
 			return hr >= 0 && queued != 0;
 		}
 
@@ -186,8 +171,7 @@ namespace dndbg.Engine {
 			var ad2 = obj as ICorDebugAppDomain2;
 			if (ad2 == null)
 				return null;
-			ICorDebugType res;
-			int hr = ad2.GetArrayOrPointerType(CorElementType.Ptr, 0, type.RawObject, out res);
+			int hr = ad2.GetArrayOrPointerType(CorElementType.Ptr, 0, type.RawObject, out var res);
 			return res == null ? null : new CorType(res);
 		}
 
@@ -195,8 +179,7 @@ namespace dndbg.Engine {
 			var ad2 = obj as ICorDebugAppDomain2;
 			if (ad2 == null)
 				return null;
-			ICorDebugType res;
-			int hr = ad2.GetArrayOrPointerType(CorElementType.ByRef, 0, type.RawObject, out res);
+			int hr = ad2.GetArrayOrPointerType(CorElementType.ByRef, 0, type.RawObject, out var res);
 			return res == null ? null : new CorType(res);
 		}
 
@@ -204,8 +187,7 @@ namespace dndbg.Engine {
 			var ad2 = obj as ICorDebugAppDomain2;
 			if (ad2 == null)
 				return null;
-			ICorDebugType res;
-			int hr = ad2.GetArrayOrPointerType(CorElementType.SZArray, 1, type.RawObject, out res);
+			int hr = ad2.GetArrayOrPointerType(CorElementType.SZArray, 1, type.RawObject, out var res);
 			return res == null ? null : new CorType(res);
 		}
 
@@ -213,8 +195,7 @@ namespace dndbg.Engine {
 			var ad2 = obj as ICorDebugAppDomain2;
 			if (ad2 == null)
 				return null;
-			ICorDebugType res;
-			int hr = ad2.GetArrayOrPointerType(CorElementType.Array, rank, type.RawObject, out res);
+			int hr = ad2.GetArrayOrPointerType(CorElementType.Array, rank, type.RawObject, out var res);
 			return res == null ? null : new CorType(res);
 		}
 
@@ -222,8 +203,7 @@ namespace dndbg.Engine {
 			var ad2 = obj as ICorDebugAppDomain2;
 			if (ad2 == null)
 				return null;
-			ICorDebugType res;
-			int hr = ad2.GetFunctionPointerType(args.Length, args.ToCorDebugArray(), out res);
+			int hr = ad2.GetFunctionPointerType(args.Length, args.ToCorDebugArray(), out var res);
 			return res == null ? null : new CorType(res);
 		}
 

@@ -51,12 +51,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		readonly IQuickInfoTriggerService quickInfoTriggerService;
 
 		public CommandTargetFilter(ITextView textView, IQuickInfoTriggerService quickInfoTriggerService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (quickInfoTriggerService == null)
-				throw new ArgumentNullException(nameof(quickInfoTriggerService));
-			this.textView = textView;
-			this.quickInfoTriggerService = quickInfoTriggerService;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.quickInfoTriggerService = quickInfoTriggerService ?? throw new ArgumentNullException(nameof(quickInfoTriggerService));
 		}
 
 		bool IsSupportedContentType => textView.TextDataModel.ContentType.IsOfType(ContentTypes.RoslynCode);

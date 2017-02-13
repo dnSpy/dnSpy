@@ -53,20 +53,14 @@ namespace dnSpy.Text.Editor {
 		double lineNumberTextRight;
 
 		protected LineNumberMarginBase(string marginName, IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, ITextFormatterProvider textFormatterProvider) {
-			if (marginName == null)
-				throw new ArgumentNullException(nameof(marginName));
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
 			if (classificationFormatMapService == null)
 				throw new ArgumentNullException(nameof(classificationFormatMapService));
-			if (textFormatterProvider == null)
-				throw new ArgumentNullException(nameof(textFormatterProvider));
 			identityTagToLine = new Dictionary<object, Line>();
-			this.marginName = marginName;
-			this.wpfTextViewHost = wpfTextViewHost;
+			this.marginName = marginName ?? throw new ArgumentNullException(nameof(marginName));
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
 			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(wpfTextViewHost.TextView);
 			textLayer = new Layer();
-			this.textFormatterProvider = textFormatterProvider;
+			this.textFormatterProvider = textFormatterProvider ?? throw new ArgumentNullException(nameof(textFormatterProvider));
 			Children.Add(textLayer);
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			IsVisibleChanged += LineNumberMargin_IsVisibleChanged;
@@ -166,15 +160,13 @@ namespace dnSpy.Text.Editor {
 				return;
 
 			foreach (var viewLine in newOrReformattedLines) {
-				Line line;
-				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out line)) {
+				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line)) {
 					identityTagToLine.Remove(viewLine.IdentityTag);
 					line.Dispose();
 				}
 			}
 			foreach (var viewLine in translatedLines) {
-				Line line;
-				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out line)) {
+				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line)) {
 					identityTagToLine.Remove(viewLine.IdentityTag);
 					line.Dispose();
 				}
@@ -186,8 +178,7 @@ namespace dnSpy.Text.Editor {
 				if (lineNumber == null)
 					continue;
 
-				Line line;
-				if (!identityTagToLine.TryGetValue(viewLine.IdentityTag, out line) || line.Number != lineNumber)
+				if (!identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line) || line.Number != lineNumber)
 					line = CreateLine(viewLine, lineNumberState, lineNumber.Value);
 				else
 					identityTagToLine.Remove(viewLine.IdentityTag);
@@ -306,10 +297,8 @@ namespace dnSpy.Text.Editor {
 			public Line(int number, TextLine textLine, double right, double top) {
 				if (number <= 0)
 					throw new ArgumentOutOfRangeException(nameof(number));
-				if (textLine == null)
-					throw new ArgumentNullException(nameof(textLine));
 				Number = number;
-				this.textLine = textLine;
+				this.textLine = textLine ?? throw new ArgumentNullException(nameof(textLine));
 				this.right = right;
 				this.top = top;
 			}
@@ -398,12 +387,8 @@ namespace dnSpy.Text.Editor {
 			readonly TextRunProperties textRunProperties;
 
 			public LineNumberSource(string text, TextRunProperties textRunProperties) {
-				if (text == null)
-					throw new ArgumentNullException(nameof(text));
-				if (textRunProperties == null)
-					throw new ArgumentNullException(nameof(textRunProperties));
-				this.text = text;
-				this.textRunProperties = textRunProperties;
+				this.text = text ?? throw new ArgumentNullException(nameof(text));
+				this.textRunProperties = textRunProperties ?? throw new ArgumentNullException(nameof(textRunProperties));
 			}
 
 			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) =>

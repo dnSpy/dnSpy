@@ -87,9 +87,7 @@ namespace dnSpy.Language.Intellisense {
 		int activeSessions;
 
 		public CurrentLineSpaceReservationAgent(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			wpfTextView.Closed += WpfTextView_Closed;
 		}
 

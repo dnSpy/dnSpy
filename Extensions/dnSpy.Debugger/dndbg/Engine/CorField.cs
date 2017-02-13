@@ -57,8 +57,7 @@ namespace dndbg.Engine {
 		}
 
 		public object GetConstant() {
-			CorElementType etype;
-			return GetConstant(out etype);
+			return GetConstant(out var etype);
 		}
 
 		public static bool operator ==(CorField a, CorField b) {

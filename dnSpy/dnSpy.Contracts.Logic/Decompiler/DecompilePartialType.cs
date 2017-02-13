@@ -65,9 +65,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="type">Type</param>
 		public DecompilePartialType(IDecompilerOutput output, DecompilationContext ctx, TypeDef type)
 			: base(output, ctx) {
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			Type = type;
+			Type = type ?? throw new ArgumentNullException(nameof(type));
 			AddPartialKeyword = true;
 			UseUsingDeclarations = true;
 			Definitions = new HashSet<IMemberDef>();

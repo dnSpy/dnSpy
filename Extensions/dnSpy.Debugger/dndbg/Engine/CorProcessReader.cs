@@ -29,14 +29,11 @@ namespace dndbg.Engine {
 		}
 
 		public CorProcessReader(CorProcess process) {
-			if (process == null)
-				throw new ArgumentNullException(nameof(process));
-			this.process = process;
+			this.process = process ?? throw new ArgumentNullException(nameof(process));
 		}
 
 		public int ReadBytes(ulong address, byte[] data, int index, int count) {
-			int sizeRead;
-			int hr = process.ReadMemory(address, data, index, count, out sizeRead);
+			int hr = process.ReadMemory(address, data, index, count, out int sizeRead);
 			return sizeRead;
 		}
 	}

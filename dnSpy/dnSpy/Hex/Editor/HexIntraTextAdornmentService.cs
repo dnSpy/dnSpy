@@ -67,9 +67,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexIntraTextAdornmentService intraTextAdornmentService;
 
 		public IntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger(HexIntraTextAdornmentService intraTextAdornmentService) {
-			if (intraTextAdornmentService == null)
-				throw new ArgumentNullException(nameof(intraTextAdornmentService));
-			this.intraTextAdornmentService = intraTextAdornmentService;
+			this.intraTextAdornmentService = intraTextAdornmentService ?? throw new ArgumentNullException(nameof(intraTextAdornmentService));
 			intraTextAdornmentService.RegisterTagger(this);
 		}
 
@@ -126,13 +124,11 @@ namespace dnSpy.Hex.Editor {
 		static readonly object providerTag = new object();
 
 		public HexIntraTextAdornmentServiceImpl(WpfHexView wpfHexView, HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
 			if (viewTagAggregatorFactoryService == null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 			adornmentTagInfos = new List<AdornmentTagInfo>();
 			currentLineIdentityTags = new HashSet<object>();
-			this.wpfHexView = wpfHexView;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<HexIntraTextAdornmentTag>(wpfHexView);
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 			wpfHexView.Closed += WpfHexView_Closed;
@@ -334,9 +330,7 @@ namespace dnSpy.Hex.Editor {
 		public override void RegisterTagger(IIntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger tagger) {
 			if (this.tagger != null)
 				throw new InvalidOperationException();
-			if (tagger == null)
-				throw new ArgumentNullException(nameof(tagger));
-			this.tagger = tagger;
+			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
 
 		public override IEnumerable<IHexTagSpan<HexSpaceNegotiatingAdornmentTag>> GetTags(NormalizedHexBufferSpanCollection spans) {

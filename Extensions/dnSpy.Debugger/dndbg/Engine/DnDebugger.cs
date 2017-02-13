@@ -167,17 +167,13 @@ namespace dndbg.Engine {
 		readonly int debuggerManagedThreadId;
 
 		DnDebugger(ICorDebug corDebug, DebugOptions debugOptions, IDebugMessageDispatcher debugMessageDispatcher, string clrPath, string debuggeeVersion) {
-			if (debugMessageDispatcher == null)
-				throw new ArgumentNullException(nameof(debugMessageDispatcher));
-			if (clrPath == null)
-				throw new ArgumentNullException(nameof(clrPath));
 			debuggerManagedThreadId = Thread.CurrentThread.ManagedThreadId;
 			processes = new DebuggerCollection<ICorDebugProcess, DnProcess>(CreateDnProcess);
-			this.debugMessageDispatcher = debugMessageDispatcher;
+			this.debugMessageDispatcher = debugMessageDispatcher ?? throw new ArgumentNullException(nameof(debugMessageDispatcher));
 			this.corDebug = corDebug;
 			this.debugOptions = debugOptions ?? new DebugOptions();
 			DebuggeeVersion = debuggeeVersion ?? string.Empty;
-			CLRPath = clrPath;
+			CLRPath = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
 			RuntimeDirectory = Path.GetDirectoryName(clrPath);
 
 			// I have not tested debugging with CLR 1.x. It's too old to support it so this is a won't fix
@@ -343,8 +339,7 @@ namespace dndbg.Engine {
 			var thread = Current.Thread;
 			if (thread == null)
 				return false;
-			int qcbs;
-			int hr = e.CorDebugController.HasQueuedCallbacks(thread.CorThread.RawObject, out qcbs);
+			int hr = e.CorDebugController.HasQueuedCallbacks(thread.CorThread.RawObject, out int qcbs);
 			return hr >= 0 && qcbs != 0;
 		}
 
@@ -1099,8 +1094,7 @@ namespace dndbg.Engine {
 		static DnDebugger CreateDnDebuggerDesktop(DebugProcessOptions options) {
 			var clrType = (DesktopCLRTypeDebugInfo)options.CLRTypeDebugInfo;
 			var debuggeeVersion = clrType.DebuggeeVersion ?? DebuggeeVersionDetector.GetVersion(options.Filename);
-			string clrPath;
-			var corDebug = CreateCorDebug(debuggeeVersion, out clrPath);
+			var corDebug = CreateCorDebug(debuggeeVersion, out string clrPath);
 			if (corDebug == null)
 				throw new Exception("Could not create an ICorDebug instance");
 			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion);
@@ -1116,8 +1110,7 @@ namespace dndbg.Engine {
 				var dbg = new DnDebugger(cd, options.DebugOptions, options.DebugMessageDispatcher, coreclrFilename, null);
 				if (options.BreakProcessKind != BreakProcessKind.None)
 					new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
-				ICorDebugProcess comProcess;
-				cd.DebugActiveProcess((int)pid, 0, out comProcess);
+				cd.DebugActiveProcess((int)pid, 0, out var comProcess);
 				var dnProcess = dbg.TryAdd(comProcess);
 				if (dnProcess != null)
 					dnProcess.Initialize(false, options.Filename, options.CurrentDirectory, options.CommandLine);
@@ -1158,14 +1151,11 @@ namespace dndbg.Engine {
 		public static DnDebugger Attach(AttachProcessOptions options) {
 			var process = Process.GetProcessById(options.ProcessId);
 			var filename = process.MainModule.FileName;
-
-			string debuggeeVersion, clrPath;
-			var corDebug = CreateCorDebug(options, out debuggeeVersion, out clrPath);
+			var corDebug = CreateCorDebug(options, out string debuggeeVersion, out string clrPath);
 			if (corDebug == null)
 				throw new Exception("An ICorDebug instance couldn't be created");
 			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion);
-			ICorDebugProcess comProcess;
-			corDebug.DebugActiveProcess(options.ProcessId, 0, out comProcess);
+			corDebug.DebugActiveProcess(options.ProcessId, 0, out var comProcess);
 			var dnProcess = dbg.TryAdd(comProcess);
 			if (dnProcess != null)
 				dnProcess.Initialize(true, filename, string.Empty, string.Empty);
@@ -1214,14 +1204,11 @@ namespace dndbg.Engine {
 			var riid = typeof(ICLRMetaHost).GUID;
 			var mh = (ICLRMetaHost)NativeMethods.CLRCreateInstance(ref clsid, ref riid);
 
-			IEnumUnknown iter;
-			int hr = mh.EnumerateLoadedRuntimes(process.Handle, out iter);
+			int hr = mh.EnumerateLoadedRuntimes(process.Handle, out var iter);
 			if (hr < 0)
 				yield break;
 			for (;;) {
-				object obj;
-				uint fetched;
-				hr = iter.Next(1, out obj, out fetched);
+				hr = iter.Next(1, out object obj, out uint fetched);
 				if (hr < 0 || fetched == 0)
 					break;
 
@@ -1244,8 +1231,7 @@ namespace dndbg.Engine {
 			// handler. It's possible that it's been terminated before DebugProcess() calls this method.
 
 			// Check if it's terminated. Error should be 0x8013134F: CORDBG_E_OBJECT_NEUTERED
-			int running;
-			if (comProcess.IsRunning(out running) < 0)
+			if (comProcess.IsRunning(out int running) < 0)
 				return null;
 
 			return processes.Add(comProcess);
@@ -1283,8 +1269,7 @@ namespace dndbg.Engine {
 			DebugVerifyThread();
 			if (comAppDomain == null)
 				return null;
-			ICorDebugProcess comProcess;
-			int hr = comAppDomain.GetProcess(out comProcess);
+			int hr = comAppDomain.GetProcess(out var comProcess);
 			if (hr < 0)
 				return null;
 			return TryGetValidProcess(comProcess);
@@ -1294,8 +1279,7 @@ namespace dndbg.Engine {
 			DebugVerifyThread();
 			if (comThread == null)
 				return null;
-			ICorDebugProcess comProcess;
-			int hr = comThread.GetProcess(out comProcess);
+			int hr = comThread.GetProcess(out var comProcess);
 			if (hr < 0)
 				return null;
 			return TryGetValidProcess(comProcess);
@@ -1305,8 +1289,7 @@ namespace dndbg.Engine {
 			DebugVerifyThread();
 			if (comAppDomain == null)
 				return null;
-			ICorDebugProcess comProcess;
-			int hr = comAppDomain.GetProcess(out comProcess);
+			int hr = comAppDomain.GetProcess(out var comProcess);
 			if (hr < 0)
 				return null;
 			var process = processes.TryGet(comProcess);
@@ -1317,8 +1300,7 @@ namespace dndbg.Engine {
 			DebugVerifyThread();
 			if (comAppDomain == null)
 				return null;
-			ICorDebugProcess comProcess;
-			int hr = comAppDomain.GetProcess(out comProcess);
+			int hr = comAppDomain.GetProcess(out var comProcess);
 			if (hr < 0)
 				return null;
 			return TryGetValidAppDomain(comProcess, comAppDomain);
@@ -1341,8 +1323,7 @@ namespace dndbg.Engine {
 			if (appDomain == null)
 				return null;
 
-			ICorDebugAssembly comAssembly;
-			int hr = comModule.GetAssembly(out comAssembly);
+			int hr = comModule.GetAssembly(out var comAssembly);
 			if (hr < 0)
 				return null;
 

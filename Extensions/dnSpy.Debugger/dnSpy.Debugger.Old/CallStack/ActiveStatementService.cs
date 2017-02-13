@@ -151,8 +151,7 @@ namespace dnSpy.Debugger.CallStack {
 					continue;
 
 				var key = new ModuleTokenId(mod.Value.ToModuleId(), frame.Token);
-				List<uint> list;
-				if (!dict.TryGetValue(key, out list))
+				if (!dict.TryGetValue(key, out var list))
 					dict.Add(key, list = new List<uint>());
 				uint offset = ip.Offset;
 				// The list should be small so Contains() should be fast

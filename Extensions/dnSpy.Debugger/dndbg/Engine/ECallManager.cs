@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 using dnlib.IO;
 using dnlib.PE;
@@ -76,8 +75,7 @@ namespace dndbg.Engine {
 
 		public bool FindFunc(string classFullName, string methodName, out ulong methodAddr) {
 			methodAddr = 0;
-			ECFunc[] funcs;
-			if (!classToFuncsDict.TryGetValue(classFullName, out funcs))
+			if (!classToFuncsDict.TryGetValue(classFullName, out var funcs))
 				return false;
 			foreach (var func in funcs) {
 				if (func.Name == methodName) {

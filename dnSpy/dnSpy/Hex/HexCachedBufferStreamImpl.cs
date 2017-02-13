@@ -58,10 +58,8 @@ namespace dnSpy.Hex {
 		readonly bool disposeStream;
 
 		public HexCachedBufferStreamImpl(HexSimpleBufferStream simpleStream, bool disposeStream) {
-			if (simpleStream == null)
-				throw new ArgumentNullException(nameof(simpleStream));
 			lockObj = new object();
-			this.simpleStream = simpleStream;
+			this.simpleStream = simpleStream ?? throw new ArgumentNullException(nameof(simpleStream));
 			this.disposeStream = disposeStream;
 			pageSize = simpleStream.PageSize;
 			Debug.Assert(pageSize == 0 || IsPowerOfTwo(pageSize));

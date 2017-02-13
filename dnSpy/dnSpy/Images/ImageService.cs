@@ -82,8 +82,7 @@ namespace dnSpy.Images {
 			imageSourceInfoProvidersDict = new Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>>();
 			this.themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
 			foreach (var lz in imageSourceInfoProviders.OrderBy(a => a.Metadata.Order)) {
-				List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> list;
-				if (!imageSourceInfoProvidersDict.TryGetValue(lz.Metadata.Type.Assembly, out list)) {
+				if (!imageSourceInfoProvidersDict.TryGetValue(lz.Metadata.Type.Assembly, out var list)) {
 					list = new List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>();
 					imageSourceInfoProvidersDict.Add(lz.Metadata.Type.Assembly, list);
 					list.Add(CreateDefaultProvider(lz.Metadata.Type.Assembly));
@@ -106,8 +105,7 @@ namespace dnSpy.Images {
 		List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> GetProviders(Assembly assembly) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
-			List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> list;
-			if (imageSourceInfoProvidersDict.TryGetValue(assembly, out list))
+			if (imageSourceInfoProvidersDict.TryGetValue(assembly, out var list))
 				return list;
 			list = new List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>();
 			list.Add(CreateDefaultProvider(assembly));
@@ -211,9 +209,8 @@ namespace dnSpy.Images {
 				return null;
 
 			var key = new ImageKey(uriString, options);
-			WeakReference weakImage;
 			BitmapSource image;
-			if (imageCache.TryGetValue(key, out weakImage)) {
+			if (imageCache.TryGetValue(key, out var weakImage)) {
 				image = weakImage.Target as BitmapSource;
 				if (image != null)
 					return image;

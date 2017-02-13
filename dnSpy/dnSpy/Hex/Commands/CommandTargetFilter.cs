@@ -47,12 +47,8 @@ namespace dnSpy.Hex.Commands {
 		readonly HexCommandOperations hexCommandOperations;
 
 		public CommandTargetFilter(HexView hexView, HexCommandOperations hexCommandOperations) {
-			if (hexView == null)
-				throw new ArgumentNullException(nameof(hexView));
-			if (hexCommandOperations == null)
-				throw new ArgumentNullException(nameof(hexCommandOperations));
-			this.hexView = hexView;
-			this.hexCommandOperations = hexCommandOperations;
+			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
+			this.hexCommandOperations = hexCommandOperations ?? throw new ArgumentNullException(nameof(hexCommandOperations));
 		}
 
 		static bool IsEditCommand(Guid group, int cmdId) {

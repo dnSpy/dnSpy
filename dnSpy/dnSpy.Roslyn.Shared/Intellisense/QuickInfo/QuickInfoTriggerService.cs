@@ -62,12 +62,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		QuickInfoSession currentQuickInfoSession;
 
 		public QuickInfoTriggerService(IQuickInfoBroker quickInfoBroker, ITextView textView) {
-			if (quickInfoBroker == null)
-				throw new ArgumentNullException(nameof(quickInfoBroker));
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.quickInfoBroker = quickInfoBroker;
-			this.textView = textView;
+			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 		}
 
 		public bool TryTrigger(SnapshotPoint point, bool trackMouse) {

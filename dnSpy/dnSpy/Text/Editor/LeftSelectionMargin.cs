@@ -53,11 +53,9 @@ namespace dnSpy.Text.Editor {
 
 		public LeftSelectionMargin(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IWpfTextViewHost wpfTextViewHost, IEditorOperations editorOperations)
 			: base(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, PredefinedMarginNames.LeftSelection, false) {
-			if (editorOperations == null)
-				throw new ArgumentNullException(nameof(editorOperations));
 			Cursor = Cursors.Arrow;//TODO: Use an arrow pointing to the right
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.editorOperations = editorOperations;
+			this.editorOperations = editorOperations ?? throw new ArgumentNullException(nameof(editorOperations));
 			wpfTextViewHost.TextView.ZoomLevelChanged += TextView_ZoomLevelChanged;
 			// Make sure that the user can click anywhere in this margin so we'll get mouse events
 			Background = Brushes.Transparent;

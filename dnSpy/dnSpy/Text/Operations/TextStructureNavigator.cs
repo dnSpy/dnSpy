@@ -34,12 +34,8 @@ namespace dnSpy.Text.Operations {
 		readonly ITextBuffer textBuffer;
 
 		public TextStructureNavigator(ITextBuffer textBuffer, IContentType contentType) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			this.textBuffer = textBuffer;
-			ContentType = contentType;
+			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
 		}
 
 		public TextExtent GetExtentOfWord(SnapshotPoint currentPosition) {

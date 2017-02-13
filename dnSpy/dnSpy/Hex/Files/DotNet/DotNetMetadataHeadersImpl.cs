@@ -36,9 +36,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public DotNetMetadataHeadersImpl(HexSpan metadataSpan, DotNetMetadataHeaderData metadataHeader, DotNetHeap[] streams)
 			: base(metadataSpan) {
-			if (metadataHeader == null)
-				throw new ArgumentNullException(nameof(metadataHeader));
-			MetadataHeader = metadataHeader;
+			MetadataHeader = metadataHeader ?? throw new ArgumentNullException(nameof(metadataHeader));
 			Streams = new ReadOnlyCollection<DotNetHeap>(streams);
 			TablesStream = FindStream<TablesHeap>(streams);
 			StringsStream = FindStream<StringsHeap>(streams);

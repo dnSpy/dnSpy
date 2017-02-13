@@ -61,17 +61,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="locals">Locals</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
 		public MethodDebugInfo(MethodDef method, SourceStatement[] statements, SourceLocal[] locals, TextSpan? methodSpan) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
-			if (locals == null)
-				throw new ArgumentNullException(nameof(locals));
-			Method = method;
+			Method = method ?? throw new ArgumentNullException(nameof(method));
 			if (statements.Length > 1)
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
 			Statements = statements;
-			Locals = locals;
+			Locals = locals ?? throw new ArgumentNullException(nameof(locals));
 			Span = methodSpan ?? CalculateMethodSpan(statements) ?? new TextSpan(0, 0);
 		}
 

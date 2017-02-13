@@ -77,7 +77,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 			var rspFile = GetResponseFile("VisualBasicInteractive.rsp");
 			if (rspFile == null)
 				return;
-			this.replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
+			ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
 
 			foreach (var t in ResponseFileReader.Read(rspFile)) {
 				switch (t.Item1.ToLowerInvariant()) {

@@ -54,9 +54,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public MSBuildProjectCreator(ProjectCreatorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			logger = new MyLogger(this, options.Logger);
 			progressListener = options.ProgressListener ?? NoMSBuildProgressListener.Instance;
 			projects = new List<Project>();

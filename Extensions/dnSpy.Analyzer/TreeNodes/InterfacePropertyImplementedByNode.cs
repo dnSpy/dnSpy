@@ -31,10 +31,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly MethodDef analyzedMethod;
 
 		public InterfacePropertyImplementedByNode(PropertyDef analyzedProperty) {
-			if (analyzedProperty == null)
-				throw new ArgumentNullException(nameof(analyzedProperty));
-
-			this.analyzedProperty = analyzedProperty;
+			this.analyzedProperty = analyzedProperty ?? throw new ArgumentNullException(nameof(analyzedProperty));
 			analyzedMethod = this.analyzedProperty.GetMethod ?? this.analyzedProperty.SetMethod;
 		}
 

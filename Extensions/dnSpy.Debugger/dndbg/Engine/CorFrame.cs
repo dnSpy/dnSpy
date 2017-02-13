@@ -32,8 +32,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorFrame Callee {
 			get {
-				ICorDebugFrame calleeFrame;
-				int hr = obj.GetCallee(out calleeFrame);
+				int hr = obj.GetCallee(out var calleeFrame);
 				return hr < 0 || calleeFrame == null ? null : new CorFrame(calleeFrame);
 			}
 		}
@@ -43,8 +42,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorFrame Caller {
 			get {
-				ICorDebugFrame callerFrame;
-				int hr = obj.GetCaller(out callerFrame);
+				int hr = obj.GetCaller(out var callerFrame);
 				return hr < 0 || callerFrame == null ? null : new CorFrame(callerFrame);
 			}
 		}
@@ -54,8 +52,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorChain Chain {
 			get {
-				ICorDebugChain chain;
-				int hr = obj.GetChain(out chain);
+				int hr = obj.GetChain(out var chain);
 				return hr < 0 || chain == null ? null : new CorChain(chain);
 			}
 		}
@@ -65,8 +62,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsNeutered {
 			get {
-				ICorDebugChain chain;
-				int hr = obj.GetChain(out chain);
+				int hr = obj.GetChain(out var chain);
 				return hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED;
 			}
 		}
@@ -124,9 +120,7 @@ namespace dndbg.Engine {
 				var ilf = obj as ICorDebugILFrame;
 				if (ilf == null)
 					return new ILFrameIP();
-				uint offset;
-				CorDebugMappingResult mappingResult;
-				int hr = ilf.GetIP(out offset, out mappingResult);
+				int hr = ilf.GetIP(out uint offset, out var mappingResult);
 				return hr < 0 ? new ILFrameIP() : new ILFrameIP(offset, mappingResult);
 			}
 		}
@@ -139,8 +133,7 @@ namespace dndbg.Engine {
 				var nf = obj as ICorDebugNativeFrame;
 				if (nf == null)
 					return 0;
-				uint offset;
-				int hr = nf.GetIP(out offset);
+				int hr = nf.GetIP(out uint offset);
 				return hr < 0 ? 0 : offset;
 			}
 		}
@@ -154,8 +147,7 @@ namespace dndbg.Engine {
 				var @if = obj as ICorDebugInternalFrame;
 				if (@if == null)
 					return CorDebugInternalFrameType.STUBFRAME_NONE;
-				CorDebugInternalFrameType type;
-				int hr = @if.GetFrameType(out type);
+				int hr = @if.GetFrameType(out var type);
 				return hr < 0 ? CorDebugInternalFrameType.STUBFRAME_NONE : type;
 			}
 		}
@@ -165,8 +157,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorFunction Function {
 			get {
-				ICorDebugFunction func;
-				int hr = obj.GetFunction(out func);
+				int hr = obj.GetFunction(out var func);
 				return hr < 0 || func == null ? null : new CorFunction(func);
 			}
 		}
@@ -176,8 +167,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorCode Code {
 			get {
-				ICorDebugCode code;
-				int hr = obj.GetCode(out code);
+				int hr = obj.GetCode(out var code);
 				return hr < 0 || code == null ? null : new CorCode(code);
 			}
 		}
@@ -190,18 +180,14 @@ namespace dndbg.Engine {
 				var ilf = obj as ICorDebugILFrame;
 				if (ilf == null)
 					yield break;
-				ICorDebugValueEnum valueEnum;
-				int hr = ilf.EnumerateArguments(out valueEnum);
+				int hr = ilf.EnumerateArguments(out var valueEnum);
 				if (hr < 0)
 					yield break;
-				uint totalCount;
-				hr = valueEnum.GetCount(out totalCount);
+				hr = valueEnum.GetCount(out uint totalCount);
 				if (hr < 0)
 					yield break;
 				for (uint i = 0; i < totalCount; i++) {
-					ICorDebugValue value = null;
-					uint count;
-					hr = valueEnum.Next(1, out value, out count);
+					hr = valueEnum.Next(1, out var value, out uint count);
 					if (hr != 0 || value == null)
 						yield return null;
 					else
@@ -218,18 +204,14 @@ namespace dndbg.Engine {
 				var ilf = obj as ICorDebugILFrame;
 				if (ilf == null)
 					yield break;
-				ICorDebugValueEnum valueEnum;
-				int hr = ilf.EnumerateLocalVariables(out valueEnum);
+				int hr = ilf.EnumerateLocalVariables(out var valueEnum);
 				if (hr < 0)
 					yield break;
-				uint totalCount;
-				hr = valueEnum.GetCount(out totalCount);
+				hr = valueEnum.GetCount(out uint totalCount);
 				if (hr < 0)
 					yield break;
 				for (uint i = 0; i < totalCount; i++) {
-					ICorDebugValue value = null;
-					uint count;
-					hr = valueEnum.Next(1, out value, out count);
+					hr = valueEnum.Next(1, out var value, out uint count);
 					if (hr != 0 || value == null)
 						yield return null;
 					else
@@ -247,14 +229,11 @@ namespace dndbg.Engine {
 				var ilf2 = obj as ICorDebugILFrame2;
 				if (ilf2 == null)
 					yield break;
-				ICorDebugTypeEnum valueEnum;
-				int hr = ilf2.EnumerateTypeParameters(out valueEnum);
+				int hr = ilf2.EnumerateTypeParameters(out var valueEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugType value = null;
-					uint count;
-					hr = valueEnum.Next(1, out value, out count);
+					hr = valueEnum.Next(1, out var value, out uint count);
 					if (hr != 0 || value == null)
 						break;
 					yield return new CorType(value);
@@ -284,8 +263,7 @@ namespace dndbg.Engine {
 		}
 
 		public CorStepper CreateStepper() {
-			ICorDebugStepper stepper;
-			int hr = obj.CreateStepper(out stepper);
+			int hr = obj.CreateStepper(out var stepper);
 			return hr < 0 || stepper == null ? null : new CorStepper(stepper);
 		}
 
@@ -355,8 +333,7 @@ namespace dndbg.Engine {
 			var ilf = obj as ICorDebugILFrame;
 			if (ilf == null)
 				return null;
-			ICorDebugValue value;
-			int hr = ilf.GetLocalVariable(index, out value);
+			int hr = ilf.GetLocalVariable(index, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -378,8 +355,7 @@ namespace dndbg.Engine {
 			var ilf = obj as ICorDebugILFrame;
 			if (ilf == null)
 				return null;
-			ICorDebugValue value;
-			int hr = ilf.GetArgument(index, out value);
+			int hr = ilf.GetArgument(index, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -399,14 +375,11 @@ namespace dndbg.Engine {
 			var ilf4 = obj as ICorDebugILFrame4;
 			if (ilf4 == null)
 				yield break;
-			ICorDebugValueEnum valueEnum;
-			int hr = ilf4.EnumerateLocalVariablesEx(kind, out valueEnum);
+			int hr = ilf4.EnumerateLocalVariablesEx(kind, out var valueEnum);
 			if (hr < 0)
 				yield break;
 			for (;;) {
-				ICorDebugValue value = null;
-				uint count;
-				hr = valueEnum.Next(1, out value, out count);
+				hr = valueEnum.Next(1, out var value, out uint count);
 				if (hr != 0 || value == null)
 					break;
 				yield return new CorValue(value);
@@ -424,8 +397,7 @@ namespace dndbg.Engine {
 			var ilf4 = obj as ICorDebugILFrame4;
 			if (ilf4 == null)
 				return null;
-			ICorDebugValue value;
-			int hr = ilf4.GetLocalVariableEx(kind, index, out value);
+			int hr = ilf4.GetLocalVariableEx(kind, index, out var value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -448,8 +420,7 @@ namespace dndbg.Engine {
 			var ilf4 = obj as ICorDebugILFrame4;
 			if (ilf4 == null)
 				return null;
-			ICorDebugCode code;
-			int hr = ilf4.GetCodeEx(kind, out code);
+			int hr = ilf4.GetCodeEx(kind, out var code);
 			return hr < 0 || code == null ? null : new CorCode(code);
 		}
 

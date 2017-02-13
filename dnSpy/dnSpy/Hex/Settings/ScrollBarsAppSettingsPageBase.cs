@@ -55,9 +55,7 @@ namespace dnSpy.Hex.Settings {
 		readonly CommonEditorOptions options;
 
 		protected ScrollBarsAppSettingsPageBase(CommonEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			HorizontalScrollBar = options.HorizontalScrollBar;
 			VerticalScrollBar = options.VerticalScrollBar;
 		}

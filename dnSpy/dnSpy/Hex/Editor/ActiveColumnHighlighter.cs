@@ -107,12 +107,10 @@ namespace dnSpy.Hex.Editor {
 #pragma warning restore 0169
 
 		public ActiveColumnHighlighterService(WpfHexView wpfHexView, HexEditorFormatMapService editorFormatMapService) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
 			if (editorFormatMapService == null)
 				throw new ArgumentNullException(nameof(editorFormatMapService));
 			rectangleElements = new List<RectangleElement>();
-			this.wpfHexView = wpfHexView;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfHexView);
 			wpfHexView.Closed += WpfHexView_Closed;
 			wpfHexView.Options.OptionChanged += Options_OptionChanged;

@@ -55,12 +55,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		SignatureHelpSession session;
 
 		public CommandTargetFilter(ITextView textView, Lazy<ISignatureHelpBroker> signatureHelpBroker) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (signatureHelpBroker == null)
-				throw new ArgumentNullException(nameof(signatureHelpBroker));
-			this.textView = textView;
-			this.signatureHelpBroker = signatureHelpBroker;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.signatureHelpBroker = signatureHelpBroker ?? throw new ArgumentNullException(nameof(signatureHelpBroker));
 			textView.Caret.PositionChanged += Caret_PositionChanged;
 		}
 

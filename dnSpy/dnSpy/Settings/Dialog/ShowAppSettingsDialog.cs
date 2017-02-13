@@ -106,8 +106,6 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		public void Show(Guid? guid, Window ownerWindow) {
-			if (ownerWindow == null)
-				throw new ArgumentNullException(nameof(ownerWindow));
 			LastSelectedGuid = guid;
 
 			allPages = CreateSettingsPages();
@@ -124,7 +122,7 @@ namespace dnSpy.Settings.Dialog {
 
 			ContentConverterProperties.SetContentConverter(appSettingsDlg, this);
 			ContentConverterProperties.SetContentConverterVersion(appSettingsDlg, converterVersion);
-			appSettingsDlg.Owner = ownerWindow;
+			appSettingsDlg.Owner = ownerWindow ?? throw new ArgumentNullException(nameof(ownerWindow));
 
 			AppSettingsPageVM selectedItem = null;
 			if (guid != null)
@@ -361,8 +359,7 @@ namespace dnSpy.Settings.Dialog {
 				if (page.Page.Guid == rootGuid)
 					continue;
 
-				AppSettingsPageVM parentPage;
-				if (!dict.TryGetValue(page.Page.ParentGuid, out parentPage)) {
+				if (!dict.TryGetValue(page.Page.ParentGuid, out var parentPage)) {
 					Debug.Fail($"No parent with Guid {page.Page.ParentGuid}");
 					continue;
 				}
@@ -447,8 +444,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		static Guid? TryParseGuid(string guidString) {
-			Guid guid;
-			if (Guid.TryParse(guidString, out guid))
+			if (Guid.TryParse(guidString, out var guid))
 				return guid;
 			return null;
 		}

@@ -80,8 +80,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public void SetData(byte[] data) => StringValue = GetString(data);
 
 		public byte[] GetSerializedData() {
-			object obj;
-			if (!string.IsNullOrEmpty(GetSerializedData(out obj)))
+			if (!string.IsNullOrEmpty(GetSerializedData(out object obj)))
 				return null;
 			return SerializationUtilities.Serialize(obj);
 		}
@@ -93,8 +92,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (data == null)
 				return string.Empty;
 
-			object obj;
-			if (!string.IsNullOrEmpty(SerializationUtilities.Deserialize(data, out obj)))
+			if (!string.IsNullOrEmpty(SerializationUtilities.Deserialize(data, out object obj)))
 				return string.Empty;
 
 			return SerializationUtilities.ConvertObjectToString(obj);
@@ -102,8 +100,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		string GetSerializedData(out object obj) {
 			obj = null;
-			Type type;
-			var error = LoadType(out type);
+			var error = LoadType(out var type);
 			if (!string.IsNullOrEmpty(error))
 				return error;
 
@@ -132,16 +129,14 @@ namespace dnSpy.AsmEditor.Resources {
 
 		protected override string Verify(string columnName) {
 			if (columnName == nameof(TypeFullName)) {
-				Type type;
-				var error = LoadType(out type);
+				var error = LoadType(out var type);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				return string.Empty;
 			}
 
 			if (columnName == nameof(StringValue)) {
-				object obj;
-				return GetSerializedData(out obj);
+				return GetSerializedData(out object obj);
 			}
 
 			return string.Empty;

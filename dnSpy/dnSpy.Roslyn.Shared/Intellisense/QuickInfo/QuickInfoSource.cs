@@ -51,15 +51,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		readonly IQuickInfoTriggerServiceProvider quickInfoTriggerServiceProvider;
 
 		public QuickInfoSource(ITextBuffer textBuffer, IQuickInfoContentCreatorProvider quickInfoContentCreatorProvider, IQuickInfoTriggerServiceProvider quickInfoTriggerServiceProvider) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			if (quickInfoContentCreatorProvider == null)
-				throw new ArgumentNullException(nameof(quickInfoContentCreatorProvider));
-			if (quickInfoTriggerServiceProvider == null)
-				throw new ArgumentNullException(nameof(quickInfoTriggerServiceProvider));
-			this.textBuffer = textBuffer;
-			this.quickInfoContentCreatorProvider = quickInfoContentCreatorProvider;
-			this.quickInfoTriggerServiceProvider = quickInfoTriggerServiceProvider;
+			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
+			this.quickInfoContentCreatorProvider = quickInfoContentCreatorProvider ?? throw new ArgumentNullException(nameof(quickInfoContentCreatorProvider));
+			this.quickInfoTriggerServiceProvider = quickInfoTriggerServiceProvider ?? throw new ArgumentNullException(nameof(quickInfoTriggerServiceProvider));
 		}
 		static readonly object hasTriggeredQuickInfoKey = new object();
 

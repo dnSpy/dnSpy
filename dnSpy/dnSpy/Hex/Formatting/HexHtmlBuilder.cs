@@ -37,14 +37,10 @@ namespace dnSpy.Hex.Formatting {
 		int spansCount;
 
 		public HexHtmlBuilder(VSTC.IClassificationFormatMap classificationFormatMap, string delimiter, int tabSize) {
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (delimiter == null)
-				throw new ArgumentNullException(nameof(delimiter));
 			if (tabSize < 1)
 				throw new ArgumentOutOfRangeException(nameof(tabSize));
-			this.classificationFormatMap = classificationFormatMap;
-			this.delimiter = delimiter;
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.delimiter = delimiter ?? throw new ArgumentNullException(nameof(delimiter));
 			htmlWriter = new CTF.HtmlClipboardFormatWriter() { TabSize = tabSize };
 			cssWriter = new StringBuilder();
 		}

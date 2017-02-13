@@ -37,9 +37,7 @@ namespace dnSpy.ToolWindows {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
 				var impl = GetTabContentImpl(value);
-				if (impl == null)
-					throw new ArgumentException();
-				TabGroup.ActiveTabContent = impl;
+				TabGroup.ActiveTabContent = impl ?? throw new ArgumentException();
 			}
 		}
 

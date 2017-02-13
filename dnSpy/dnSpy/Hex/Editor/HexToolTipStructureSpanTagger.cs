@@ -43,9 +43,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexStructureInfoAggregator hexStructureInfoAggregator;
 
 		public HexToolTipStructureSpanTagger(HexStructureInfoAggregator hexStructureInfoAggregator) {
-			if (hexStructureInfoAggregator == null)
-				throw new ArgumentNullException(nameof(hexStructureInfoAggregator));
-			this.hexStructureInfoAggregator = hexStructureInfoAggregator;
+			this.hexStructureInfoAggregator = hexStructureInfoAggregator ?? throw new ArgumentNullException(nameof(hexStructureInfoAggregator));
 		}
 
 		public override event EventHandler<HexBufferSpanEventArgs> TagsChanged { add { } remove { } }

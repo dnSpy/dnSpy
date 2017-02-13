@@ -34,9 +34,7 @@ namespace dnSpy.Hex {
 		HexVersion next;
 
 		public HexVersionImpl(HexBuffer buffer, int versionNumber, int reiteratedVersionNumber) {
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
-			Buffer = buffer;
+			Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 			VersionNumber = versionNumber;
 			ReiteratedVersionNumber = reiteratedVersionNumber;
 		}

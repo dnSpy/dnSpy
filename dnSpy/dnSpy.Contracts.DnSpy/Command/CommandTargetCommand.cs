@@ -54,9 +54,7 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="group">Command group, eg. <see cref="CommandConstants.StandardGroup"/></param>
 		/// <param name="cmdId">Command ID</param>
 		public CommandTargetCommand(ICommandTarget commandTarget, Guid group, int cmdId) {
-			if (commandTarget == null)
-				throw new ArgumentNullException(nameof(commandTarget));
-			this.commandTarget = commandTarget;
+			this.commandTarget = commandTarget ?? throw new ArgumentNullException(nameof(commandTarget));
 			this.group = group;
 			this.cmdId = cmdId;
 		}

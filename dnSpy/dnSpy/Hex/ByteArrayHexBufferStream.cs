@@ -35,10 +35,8 @@ namespace dnSpy.Hex {
 		public ByteArrayHexBufferStream(byte[] data, string name) {
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
 			Span = new HexSpan(0, (ulong)data.LongLength);
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 			this.data = data;
 		}
 

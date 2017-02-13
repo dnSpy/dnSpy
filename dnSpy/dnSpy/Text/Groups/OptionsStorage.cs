@@ -107,8 +107,7 @@ namespace dnSpy.Text.Groups {
 			if (collection == null)
 				throw new ArgumentNullException(nameof(collection));
 
-			ISettingsSection ctSect;
-			if (!toContentTypeSection.TryGetValue(new ContentTypeKey(groupName, collection.ContentType.TypeName), out ctSect))
+			if (!toContentTypeSection.TryGetValue(new ContentTypeKey(groupName, collection.ContentType.TypeName), out var ctSect))
 				return;
 
 			var toOption = new Dictionary<string, TextViewGroupOption>(StringComparer.Ordinal);
@@ -124,14 +123,12 @@ namespace dnSpy.Text.Groups {
 				if (textValue == null)
 					continue;
 
-				TextViewGroupOption option;
-				if (!toOption.TryGetValue(name, out option))
+				if (!toOption.TryGetValue(name, out var option))
 					continue;
 				if (!option.Definition.CanBeSaved)
 					continue;
 
-				object value;
-				if (!TryGetValue(option, textValue, out value))
+				if (!TryGetValue(option, textValue, out object value))
 					continue;
 
 				option.Value = value;
@@ -177,8 +174,7 @@ namespace dnSpy.Text.Groups {
 		}
 
 		ISettingsSection GetOrCreateGroupSection(string groupName) {
-			ISettingsSection sect;
-			if (toGroupSection.TryGetValue(groupName, out sect))
+			if (toGroupSection.TryGetValue(groupName, out var sect))
 				return sect;
 			sect = settingsSection.CreateSection(GroupName);
 			toGroupSection.Add(groupName, sect);
@@ -188,8 +184,7 @@ namespace dnSpy.Text.Groups {
 
 		ISettingsSection GetOrCreateContentTypeSection(string groupName, string contentType) {
 			var key = new ContentTypeKey(groupName, contentType);
-			ISettingsSection sect;
-			if (toContentTypeSection.TryGetValue(key, out sect))
+			if (toContentTypeSection.TryGetValue(key, out var sect))
 				return sect;
 			var groupSect = GetOrCreateGroupSection(groupName);
 			sect = groupSect.CreateSection(ContentTypeName);
@@ -200,8 +195,7 @@ namespace dnSpy.Text.Groups {
 
 		ISettingsSection GetOrCreateOptionSection(string groupName, TextViewGroupOption option) {
 			var key = new OptionKey(new ContentTypeKey(groupName, option.Definition.ContentType), option.OptionId);
-			ISettingsSection sect;
-			if (toOptionSection.TryGetValue(key, out sect))
+			if (toOptionSection.TryGetValue(key, out var sect))
 				return sect;
 			var ctSect = GetOrCreateContentTypeSection(groupName, option.Definition.ContentType);
 			sect = ctSect.CreateSection(OptionName);
@@ -218,8 +212,7 @@ namespace dnSpy.Text.Groups {
 			if (!option.Definition.CanBeSaved)
 				return;
 			var sect = GetOrCreateOptionSection(groupName, option);
-			string valueString;
-			if (!TryGetValueString(option, out valueString))
+			if (!TryGetValueString(option, out string valueString))
 				return;
 			sect.Attribute(OptionValueAttr, valueString);
 		}

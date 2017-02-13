@@ -191,20 +191,14 @@ namespace dnSpy.BackgroundImage.Dialog {
 		readonly IPickDirectory pickDirectory;
 
 		public AppSettingsPageImpl(IBackgroundImageSettingsService backgroundImageSettingsService, IPickFilename pickFilename, IPickDirectory pickDirectory, ImageSettingsInfo[] settings) {
-			if (backgroundImageSettingsService == null)
-				throw new ArgumentNullException(nameof(backgroundImageSettingsService));
-			if (pickFilename == null)
-				throw new ArgumentNullException(nameof(pickFilename));
-			if (pickDirectory == null)
-				throw new ArgumentNullException(nameof(pickDirectory));
 			if (settings == null)
 				throw new ArgumentNullException(nameof(settings));
 			if (settings.Length == 0)
 				throw new ArgumentException();
 			Debug.Assert(settings.All(a => a.Lazy.Value.UserVisible));
-			this.backgroundImageSettingsService = backgroundImageSettingsService;
-			this.pickFilename = pickFilename;
-			this.pickDirectory = pickDirectory;
+			this.backgroundImageSettingsService = backgroundImageSettingsService ?? throw new ArgumentNullException(nameof(backgroundImageSettingsService));
+			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
+			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
 			Settings = new ObservableCollection<Settings>(settings.OrderBy(a => a.Lazy.Value.UIOrder).Select(a => new Settings(a)));
 			stretchVM = new EnumListVM(EnumVM.Create(false, typeof(Stretch)), (a, b) => currentItem.RawSettings.Stretch = (Stretch)stretchVM.SelectedItem);
 			stretchDirectionVM = new EnumListVM(stretchDirectionList, (a, b) => currentItem.RawSettings.StretchDirection = (StretchDirection)stretchDirectionVM.SelectedItem);

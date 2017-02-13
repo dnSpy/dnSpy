@@ -91,11 +91,9 @@ namespace dnSpy.Settings.Fonts {
 		ThemeFontSettingsImpl TryGetSettings(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			ThemeFontSettingsImpl settings;
-			if (toSettings.TryGetValue(name, out settings))
+			if (toSettings.TryGetValue(name, out var settings))
 				return settings;
-			IThemeFontSettingsDefinitionMetadata md;
-			if (!toMetadata.TryGetValue(name, out md))
+			if (!toMetadata.TryGetValue(name, out var md))
 				return null;
 			settings = new ThemeFontSettingsImpl(name, md.FontType, GetDefaultFontInfo(md.FontType));
 			toSettings.Add(name, settings);

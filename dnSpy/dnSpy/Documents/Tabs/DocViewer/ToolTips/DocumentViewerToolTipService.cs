@@ -63,12 +63,8 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
 
 		public DocumentViewerToolTipServiceCommandTargetFilter(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider, ITextView textView) {
-			if (documentViewerToolTipServiceProvider == null)
-				throw new ArgumentNullException(nameof(documentViewerToolTipServiceProvider));
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
-			this.textView = textView;
+			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider ?? throw new ArgumentNullException(nameof(documentViewerToolTipServiceProvider));
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 		}
 
 		DocumentViewerToolTipService TryGetInstance() {
@@ -168,9 +164,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly DocumentViewerToolTipService documentViewerToolTipService;
 
 		public DocumentViewerToolTipServiceQuickInfoSource(DocumentViewerToolTipService documentViewerToolTipService) {
-			if (documentViewerToolTipService == null)
-				throw new ArgumentNullException(nameof(documentViewerToolTipService));
-			this.documentViewerToolTipService = documentViewerToolTipService;
+			this.documentViewerToolTipService = documentViewerToolTipService ?? throw new ArgumentNullException(nameof(documentViewerToolTipService));
 		}
 
 		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) =>
@@ -190,30 +184,14 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly IDecompilerService decompilerService;
 
 		public DocumentViewerToolTipService(IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer, IQuickInfoBroker quickInfoBroker, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, IDecompilerService decompilerService) {
-			if (dotNetImageService == null)
-				throw new ArgumentNullException(nameof(dotNetImageService));
-			if (codeToolTipSettings == null)
-				throw new ArgumentNullException(nameof(codeToolTipSettings));
-			if (documentViewerToolTipProviders == null)
-				throw new ArgumentNullException(nameof(documentViewerToolTipProviders));
-			if (documentViewer == null)
-				throw new ArgumentNullException(nameof(documentViewer));
-			if (quickInfoBroker == null)
-				throw new ArgumentNullException(nameof(quickInfoBroker));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			if (decompilerService == null)
-				throw new ArgumentNullException(nameof(decompilerService));
-			this.dotNetImageService = dotNetImageService;
-			this.codeToolTipSettings = codeToolTipSettings;
-			this.documentViewerToolTipProviders = documentViewerToolTipProviders;
-			this.documentViewer = documentViewer;
-			this.quickInfoBroker = quickInfoBroker;
-			this.classificationFormatMap = classificationFormatMap;
-			this.themeClassificationTypeService = themeClassificationTypeService;
-			this.decompilerService = decompilerService;
+			this.dotNetImageService = dotNetImageService ?? throw new ArgumentNullException(nameof(dotNetImageService));
+			this.codeToolTipSettings = codeToolTipSettings ?? throw new ArgumentNullException(nameof(codeToolTipSettings));
+			this.documentViewerToolTipProviders = documentViewerToolTipProviders ?? throw new ArgumentNullException(nameof(documentViewerToolTipProviders));
+			this.documentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
+			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.decompilerService = decompilerService ?? throw new ArgumentNullException(nameof(decompilerService));
 		}
 
 		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {

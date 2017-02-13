@@ -81,17 +81,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public DocumentViewer(IWpfCommandService wpfCommandService, IDocumentViewerServiceImpl documentViewerServiceImpl, IMenuService menuService, DocumentViewerControl documentViewerControl) {
-			if (wpfCommandService == null)
-				throw new ArgumentNullException(nameof(wpfCommandService));
-			if (documentViewerServiceImpl == null)
-				throw new ArgumentNullException(nameof(documentViewerServiceImpl));
 			if (menuService == null)
 				throw new ArgumentNullException(nameof(menuService));
-			if (documentViewerControl == null)
-				throw new ArgumentNullException(nameof(documentViewerControl));
-			this.wpfCommandService = wpfCommandService;
-			this.documentViewerServiceImpl = documentViewerServiceImpl;
-			this.documentViewerControl = documentViewerControl;
+			this.wpfCommandService = wpfCommandService ?? throw new ArgumentNullException(nameof(wpfCommandService));
+			this.documentViewerServiceImpl = documentViewerServiceImpl ?? throw new ArgumentNullException(nameof(documentViewerServiceImpl));
+			this.documentViewerControl = documentViewerControl ?? throw new ArgumentNullException(nameof(documentViewerControl));
 			menuService.InitializeContextMenu(documentViewerControl.TextView.VisualElement, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID, new GuidObjectsProvider(this), new ContextMenuInitializer(documentViewerControl.TextView));
 			// Prevent the tab control's context menu from popping up when right-clicking in the textview host margin
 			menuService.InitializeContextMenu(documentViewerControl, Guid.NewGuid());
@@ -101,8 +95,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		internal static DocumentViewer TryGetInstance(ITextView textView) {
-			DocumentViewer documentViewer;
-			textView.Properties.TryGetProperty(typeof(DocumentViewer), out documentViewer);
+			textView.Properties.TryGetProperty(typeof(DocumentViewer), out DocumentViewer documentViewer);
 			return documentViewer;
 		}
 
@@ -278,8 +271,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
-			object data;
-			outputData.TryGetValue(key, out data);
+			outputData.TryGetValue(key, out object data);
 			return data;
 		}
 		readonly Dictionary<object, object> outputData = new Dictionary<object, object>();

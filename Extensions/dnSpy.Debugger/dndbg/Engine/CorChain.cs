@@ -28,8 +28,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorThread Thread {
 			get {
-				ICorDebugThread thread;
-				int hr = obj.GetThread(out thread);
+				int hr = obj.GetThread(out var thread);
 				return hr < 0 || thread == null ? null : new CorThread(thread);
 			}
 		}
@@ -62,8 +61,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorFrame ActiveFrame {
 			get {
-				ICorDebugFrame frame;
-				int hr = obj.GetActiveFrame(out frame);
+				int hr = obj.GetActiveFrame(out var frame);
 				return hr < 0 || frame == null ? null : new CorFrame(frame);
 			}
 		}
@@ -73,8 +71,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorChain Callee {
 			get {
-				ICorDebugChain callee;
-				int hr = obj.GetCallee(out callee);
+				int hr = obj.GetCallee(out var callee);
 				return hr < 0 || callee == null ? null : new CorChain(callee);
 			}
 		}
@@ -84,8 +81,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorChain Caller {
 			get {
-				ICorDebugChain caller;
-				int hr = obj.GetCaller(out caller);
+				int hr = obj.GetCaller(out var caller);
 				return hr < 0 || caller == null ? null : new CorChain(caller);
 			}
 		}
@@ -95,8 +91,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorChain Next {
 			get {
-				ICorDebugChain next;
-				int hr = obj.GetNext(out next);
+				int hr = obj.GetNext(out var next);
 				return hr < 0 || next == null ? null : new CorChain(next);
 			}
 		}
@@ -106,8 +101,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorChain Previous {
 			get {
-				ICorDebugChain prev;
-				int hr = obj.GetPrevious(out prev);
+				int hr = obj.GetPrevious(out var prev);
 				return hr < 0 || prev == null ? null : new CorChain(prev);
 			}
 		}
@@ -117,14 +111,11 @@ namespace dndbg.Engine {
 		/// </summary>
 		public IEnumerable<CorFrame> Frames {
 			get {
-				ICorDebugFrameEnum frameEnum;
-				int hr = obj.EnumerateFrames(out frameEnum);
+				int hr = obj.EnumerateFrames(out var frameEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
-					ICorDebugFrame frame = null;
-					uint count;
-					hr = frameEnum.Next(1, out frame, out count);
+					hr = frameEnum.Next(1, out var frame, out uint count);
 					if (hr != 0 || frame == null)
 						break;
 					yield return new CorFrame(frame);
@@ -134,8 +125,7 @@ namespace dndbg.Engine {
 
 		public CorChain(ICorDebugChain chain)
 			: base(chain) {
-			int isManaged;
-			int hr = chain.IsManaged(out isManaged);
+			int hr = chain.IsManaged(out int isManaged);
 			IsManaged = hr >= 0 && isManaged != 0;
 
 			hr = chain.GetReason(out reason);

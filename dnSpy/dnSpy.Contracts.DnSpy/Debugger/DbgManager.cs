@@ -72,9 +72,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="process">The process that got added or removed</param>
 		/// <param name="added">true if the process was added, false if it was removed</param>
 		public ProcessesChangedEventArgs(DbgProcess process, bool added) {
-			if (process == null)
-				throw new ArgumentNullException(nameof(process));
-			Process = process;
+			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Added = added;
 		}
 	}

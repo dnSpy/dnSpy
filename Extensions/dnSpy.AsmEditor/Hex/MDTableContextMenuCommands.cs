@@ -244,14 +244,12 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static MetaDataTableRecordVM Ask(string title, MDTableContext context) {
 			return MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
-				string error;
-				uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
+				uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out string error);
 				if (!string.IsNullOrEmpty(error))
 					return null;
 				return context.MetaDataTableVM.Get((int)(rid - 1));
 			}, s => {
-				string error;
-				uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
+				uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out string error);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				if (rid == 0 || rid > context.MetaDataTableVM.Rows)

@@ -40,9 +40,7 @@ namespace dnSpy.Hex.Adornments {
 #pragma warning restore 0169
 
 		public HexToolTipProviderImpl(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
-				throw new ArgumentNullException(nameof(wpfHexView));
-			this.wpfHexView = wpfHexView;
+			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			spaceReservationManager = wpfHexView.GetSpaceReservationManager(PredefinedHexSpaceReservationManagerNames.ToolTip);
 		}
 
