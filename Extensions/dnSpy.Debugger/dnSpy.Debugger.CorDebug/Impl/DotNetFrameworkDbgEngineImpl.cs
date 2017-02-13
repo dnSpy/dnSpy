@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
@@ -28,33 +27,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			: base(startKind) {
 		}
 
-		internal void Start(DotNetFrameworkStartDebuggingOptions options) =>
-			ExecDebugThreadAsync(StartCore, options);
-
-		void StartCore(object arg) {
-			DotNetFrameworkStartDebuggingOptions options = null;
-			try {
-				options = (DotNetFrameworkStartDebuggingOptions)arg;
-				var dbgOptions = new DebugProcessOptions(new DesktopCLRTypeDebugInfo()) {
-					DebugMessageDispatcher = new WpfDebugMessageDispatcher(debuggerDispatcher),
-					CurrentDirectory = options.WorkingDirectory,
-					Filename = options.Filename,
-					CommandLine = options.CommandLine,
-					BreakProcessKind = options.BreakProcessKind.ToDndbg(),
-				};
-				dbgOptions.DebugOptions.IgnoreBreakInstructions = options.IgnoreBreakInstructions;
-
-				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
-				if (options.DisableManagedDebuggerDetection)
-					DisableSystemDebuggerDetection.Initialize(dnDebugger);
-
-				dnDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
-				return;
-			}
-			catch (Exception ex) {
-				HandleExceptionInStart(ex, options?.Filename);
-				return;
-			}
-		}
+		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) =>
+			new DesktopCLRTypeDebugInfo();
 	}
 }

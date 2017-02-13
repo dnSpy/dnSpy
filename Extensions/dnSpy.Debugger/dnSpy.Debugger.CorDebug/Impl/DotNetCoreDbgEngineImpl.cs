@@ -30,50 +30,27 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			: base(startKind) {
 		}
 
-		internal void Start(DotNetCoreStartDebuggingOptions options) =>
-			ExecDebugThreadAsync(StartCore, options);
+		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) {
+			var dncOptions = (DotNetCoreStartDebuggingOptions)options;
 
-		void StartCore(object arg) {
-			DotNetCoreStartDebuggingOptions options = null;
-			try {
-				options = (DotNetCoreStartDebuggingOptions)arg;
-				var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(IntPtr.Size * 8);
-				if (!File.Exists(dbgShimFilename))
-					throw new Exception("Couldn't find dbgshim.dll");
-				string hostFilename, hostCommandLine;
-				if (string.IsNullOrWhiteSpace(options.Host)) {
-					hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
-					if (!File.Exists(hostFilename))
-						throw new Exception(string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetCoreHelpers.DotNetExeName));
-					if (string.IsNullOrWhiteSpace(options.HostArguments))
-						hostCommandLine = "exec";
-					else
-						hostCommandLine = options.HostArguments;
-				}
-				else {
-					hostFilename = options.Host;
-					hostCommandLine = options.CommandLine ?? string.Empty;
-				}
-				var dbgOptions = new DebugProcessOptions(new CoreCLRTypeDebugInfo(dbgShimFilename, hostFilename, hostCommandLine)) {
-					DebugMessageDispatcher = new WpfDebugMessageDispatcher(debuggerDispatcher),
-					CurrentDirectory = options.WorkingDirectory,
-					Filename = options.Filename,
-					CommandLine = options.CommandLine,
-					BreakProcessKind = options.BreakProcessKind.ToDndbg(),
-				};
-				dbgOptions.DebugOptions.IgnoreBreakInstructions = options.IgnoreBreakInstructions;
-
-				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
-				if (options.DisableManagedDebuggerDetection)
-					DisableSystemDebuggerDetection.Initialize(dnDebugger);
-
-				dnDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
-				return;
+			var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(IntPtr.Size * 8);
+			if (!File.Exists(dbgShimFilename))
+				throw new Exception("Couldn't find dbgshim.dll");
+			string hostFilename, hostCommandLine;
+			if (string.IsNullOrWhiteSpace(dncOptions.Host)) {
+				hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
+				if (!File.Exists(hostFilename))
+					throw new Exception(string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetCoreHelpers.DotNetExeName));
+				if (string.IsNullOrWhiteSpace(dncOptions.HostArguments))
+					hostCommandLine = "exec";
+				else
+					hostCommandLine = dncOptions.HostArguments;
 			}
-			catch (Exception ex) {
-				HandleExceptionInStart(ex, options?.Filename);
-				return;
+			else {
+				hostFilename = dncOptions.Host;
+				hostCommandLine = dncOptions.HostArguments ?? string.Empty;
 			}
+			return new CoreCLRTypeDebugInfo(dbgShimFilename, hostFilename, hostCommandLine);
 		}
 	}
 }
