@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
@@ -71,18 +72,28 @@ namespace dnSpy.Debugger.Impl {
 			engineInfos = new List<EngineInfo>();
 			DbgManager = owner;
 			Id = pid;
-			Bitness = GetBitness();
-			Machine = GetMachine(Bitness);
 
 			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE;
 			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
 			if (hProcess.IsInvalid)
 				throw new InvalidOperationException($"Couldn't open process {pid}");
+
+			Bitness = GetBitness(hProcess.DangerousGetHandle());
+			Machine = GetMachine(Bitness);
 		}
 
-		static int GetBitness() {
-			// Identical to this process. We don't create a new process to debug anything
-			// so our bitness must equal the debugged process' bitness.
+		static int GetBitness(IntPtr hProcess) {
+			if (!Environment.Is64BitOperatingSystem) {
+				Debug.Assert(IntPtr.Size == 4);
+				return IntPtr.Size * 8;
+			}
+			bool isWow64Process;
+			if (NativeMethods.IsWow64Process(hProcess, out isWow64Process)) {
+				if (isWow64Process)
+					return 32;
+				return 64;
+			}
+			Debug.Fail("IsWow64Process failed");
 			return IntPtr.Size * 8;
 		}
 

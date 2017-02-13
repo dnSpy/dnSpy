@@ -98,7 +98,7 @@ namespace dnSpy.Hex {
 		}
 
 		static HexSpan GetDefaultSpan(IntPtr hProcess) {
-			int bitness = GetProcessAddressBitness(hProcess);
+			int bitness = GetBitness(hProcess);
 			if (bitness == 32)
 				return HexSpan.FromBounds(0, uint.MaxValue + 1UL);
 			if (bitness == 64) {
@@ -120,7 +120,7 @@ namespace dnSpy.Hex {
 
 		static ulong GetDefaultPageSize(IntPtr hProcess) => (ulong)Environment.SystemPageSize;
 
-		static int GetProcessAddressBitness(IntPtr hProcess) {
+		static int GetBitness(IntPtr hProcess) {
 			if (!Environment.Is64BitOperatingSystem) {
 				Debug.Assert(IntPtr.Size == 4);
 				return IntPtr.Size * 8;

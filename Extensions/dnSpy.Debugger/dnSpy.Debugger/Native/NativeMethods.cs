@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
@@ -27,5 +28,9 @@ namespace dnSpy.Debugger.Native {
 		public const int PROCESS_VM_OPERATION = 0x0008;
 		public const int PROCESS_VM_READ = 0x0010;
 		public const int PROCESS_VM_WRITE = 0x0020;
+
+		[DllImport("kernel32", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
 	}
 }
