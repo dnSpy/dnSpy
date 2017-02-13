@@ -57,11 +57,15 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 
 		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
 
-		public DotNetCoreStartDebuggingOptionsPage(string currentFilename, IPickFilename pickFilename, IPickDirectory pickDirectory)
-			: base(pickFilename, pickDirectory) {
-			if (currentFilename == null)
-				throw new ArgumentNullException(nameof(currentFilename));
-			Filename = currentFilename;
+		readonly SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions;
+
+		public DotNetCoreStartDebuggingOptionsPage(DotNetCoreStartDebuggingOptions options, SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions, IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(options, pickFilename, pickDirectory) {
+			if (savedDotNetStartDebuggingOptions == null)
+				throw new ArgumentNullException(nameof(savedDotNetStartDebuggingOptions));
+			this.savedDotNetStartDebuggingOptions = savedDotNetStartDebuggingOptions;
+			HostFilename = options.Host;
+			HostArguments = options.HostArguments;
 		}
 
 		void PickNewHostFilename() {
@@ -81,7 +85,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		}
 
 		public override StartDebuggingOptions GetOptions() {
-			return new DotNetCoreStartDebuggingOptions {
+			var options = new DotNetCoreStartDebuggingOptions {
 				Host = HostFilename,
 				HostArguments = HostArguments,
 				Filename = Filename,
@@ -89,6 +93,8 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 				WorkingDirectory = WorkingDirectory,
 				BreakProcessKind = BreakProcessKind,
 			};
+			savedDotNetStartDebuggingOptions.SetOptions(options);
+			return options;
 		}
 
 		protected override bool CalculateIsValid() =>

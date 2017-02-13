@@ -108,13 +108,20 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		protected readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
-		protected DotNetStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory) {
+		protected DotNetStartDebuggingOptionsPage(CorDebugStartDebuggingOptions options, IPickFilename pickFilename, IPickDirectory pickDirectory) {
+			if (options == null)
+				throw new ArgumentNullException(nameof(options));
 			if (pickFilename == null)
 				throw new ArgumentNullException(nameof(pickFilename));
 			if (pickDirectory == null)
 				throw new ArgumentNullException(nameof(pickDirectory));
 			this.pickFilename = pickFilename;
 			this.pickDirectory = pickDirectory;
+
+			Filename = options.Filename;
+			CommandLine = options.CommandLine;
+			// Must be init'd after Filename since it also overwrites this property
+			WorkingDirectory = options.WorkingDirectory;
 		}
 
 		static string GetPath(string file) {

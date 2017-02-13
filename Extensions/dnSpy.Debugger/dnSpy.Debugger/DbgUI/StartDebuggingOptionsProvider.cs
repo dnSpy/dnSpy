@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		string GetCurrentFilename() {
-			var filename = (documentTabService.ActiveTab?.Content.Nodes ?? Array.Empty<DocumentTreeNodeData>()).FirstOrDefault().GetDocumentNode()?.Document.Filename ?? string.Empty;
+			var filename = documentTabService.DocumentTreeView.TreeView.SelectedItem.GetDocumentNode()?.Document.Filename ?? string.Empty;
 			if (File.Exists(filename))
 				return filename;
 			return string.Empty;

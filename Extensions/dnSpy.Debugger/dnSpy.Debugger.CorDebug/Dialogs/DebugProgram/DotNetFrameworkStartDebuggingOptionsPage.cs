@@ -31,11 +31,13 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		// Shouldn't be localized
 		public override string DisplayName => ".NET Framework";
 
-		public DotNetFrameworkStartDebuggingOptionsPage(string currentFilename, IPickFilename pickFilename, IPickDirectory pickDirectory)
-			: base(pickFilename, pickDirectory) {
-			if (currentFilename == null)
-				throw new ArgumentNullException(nameof(currentFilename));
-			Filename = currentFilename;
+		readonly SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions;
+
+		public DotNetFrameworkStartDebuggingOptionsPage(DotNetFrameworkStartDebuggingOptions options, SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions, IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(options, pickFilename, pickDirectory) {
+			if (savedDotNetStartDebuggingOptions == null)
+				throw new ArgumentNullException(nameof(savedDotNetStartDebuggingOptions));
+			this.savedDotNetStartDebuggingOptions = savedDotNetStartDebuggingOptions;
 		}
 
 		protected override void PickNewFilename() {
@@ -47,12 +49,14 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		}
 
 		public override StartDebuggingOptions GetOptions() {
-			return new DotNetFrameworkStartDebuggingOptions {
+			var options = new DotNetFrameworkStartDebuggingOptions {
 				Filename = Filename,
 				CommandLine = CommandLine,
 				WorkingDirectory = WorkingDirectory,
 				BreakProcessKind = BreakProcessKind,
 			};
+			savedDotNetStartDebuggingOptions.SetOptions(options);
+			return options;
 		}
 
 		protected override bool CalculateIsValid() => string.IsNullOrEmpty(Verify(nameof(Filename)));

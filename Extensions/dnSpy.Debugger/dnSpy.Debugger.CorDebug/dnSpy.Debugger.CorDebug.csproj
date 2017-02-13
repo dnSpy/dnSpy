@@ -50,6 +50,8 @@
     <Compile Include="Dialogs\DebugProgram\DotNetCoreStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetFrameworkStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetStartDebuggingOptionsPage.cs" />
+    <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
+    <Compile Include="Dialogs\DebugProgram\SavedDotNetStartDebuggingOptions.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Impl\BreakProcessKindHelpers.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />

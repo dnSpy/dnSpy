@@ -41,11 +41,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				if (!File.Exists(dbgShimFilename))
 					throw new Exception("Couldn't find dbgshim.dll");
 				string hostFilename, hostCommandLine;
-				if (string.IsNullOrEmpty(options.Host)) {
+				if (string.IsNullOrWhiteSpace(options.Host)) {
 					hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
 					if (!File.Exists(hostFilename))
 						throw new Exception(string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetCoreHelpers.DotNetExeName));
-					hostCommandLine = "exec";
+					if (string.IsNullOrWhiteSpace(options.HostArguments))
+						hostCommandLine = "exec";
+					else
+						hostCommandLine = options.HostArguments;
 				}
 				else {
 					hostFilename = options.Host;

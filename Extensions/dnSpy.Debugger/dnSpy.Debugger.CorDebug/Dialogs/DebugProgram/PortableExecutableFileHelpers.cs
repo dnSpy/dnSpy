@@ -17,20 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.CorDebug {
-	/// <summary>
-	/// Debugging options that will start and debug an application when passed to <see cref="DbgManager.Start(StartDebuggingOptions)"/>.
-	/// This is used to debug .NET Core assemblies.
-	/// </summary>
-	public sealed class DotNetCoreStartDebuggingOptions : CorDebugStartDebuggingOptions {
-		/// <summary>
-		/// Path to host (eg. dotnet.exe) or null if dnSpy should try to find dotnet.exe
-		/// </summary>
-		public string Host { get; set; }
+using System.IO;
 
-		/// <summary>
-		/// Host arguments (eg. "exec" if .NET Core's dotnext.exe is used)
-		/// </summary>
-		public string HostArguments { get; set; }
+namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
+	static class PortableExecutableFileHelpers {
+		public static bool IsExecutable(string file) {
+			if (!File.Exists(file))
+				return false;
+			try {
+				using (var f = File.OpenRead(file)) {
+					var r = new BinaryReader(f);
+					if (r.ReadUInt16() != 0x5A4D)
+						return false;
+					f.Position = 0x3C;
+					f.Position = r.ReadUInt32();
+					if (r.ReadUInt32() != 0x4550)
+						return false;
+					f.Position += 0x12;
+					var flags = r.ReadUInt16();
+					return (flags & 0x2000) == 0;
+				}
+			}
+			catch {
+			}
+			return false;
+		}
 	}
 }
