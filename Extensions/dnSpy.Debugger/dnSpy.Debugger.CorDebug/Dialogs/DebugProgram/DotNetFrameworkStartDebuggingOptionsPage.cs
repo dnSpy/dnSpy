@@ -18,137 +18,32 @@
 */
 
 using System;
-using System.ComponentModel;
-using System.IO;
-using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CorDebug;
 using dnSpy.Contracts.Debugger.UI;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
-	sealed class DotNetFrameworkStartDebuggingOptionsPage : StartDebuggingOptionsPage, IDataErrorInfo {
+	sealed class DotNetFrameworkStartDebuggingOptionsPage : DotNetStartDebuggingOptionsPage {
 		// This guid is also used by DebugProgramVM
 		public override Guid Guid => new Guid("3FB8FCB5-AECE-443A-ABDE-601F2C23F1C1");
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetFramework;
 		// Shouldn't be localized
 		public override string DisplayName => ".NET Framework";
-		public override object UIObject => this;
 
-		public string Filename {
-			get { return filename; }
-			set {
-				if (filename != value) {
-					filename = value;
-					OnPropertyChanged(nameof(Filename));
-					UpdateIsValid();
-					var path = GetPath(filename);
-					if (path != null)
-						WorkingDirectory = path;
-				}
-			}
-		}
-		string filename = string.Empty;
-
-		public string CommandLine {
-			get { return commandLine; }
-			set {
-				if (commandLine != value) {
-					commandLine = value;
-					OnPropertyChanged(nameof(CommandLine));
-					UpdateIsValid();
-				}
-			}
-		}
-		string commandLine = string.Empty;
-
-		public string WorkingDirectory {
-			get { return workingDirectory; }
-			set {
-				if (workingDirectory != value) {
-					workingDirectory = value;
-					OnPropertyChanged(nameof(WorkingDirectory));
-					UpdateIsValid();
-				}
-			}
-		}
-		string workingDirectory = string.Empty;
-
-		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
-		public ICommand PickWorkingDirectoryCommand => new RelayCommand(a => PickNewWorkingDirectory());
-
-		internal static readonly EnumVM[] breakProcessKindList = new EnumVM[(int)BreakProcessKind.Last] {
-			new EnumVM(BreakProcessKind.None, dnSpy_Debugger_CorDebug_Resources.DbgBreak_Dont),
-			new EnumVM(BreakProcessKind.CreateProcess, dnSpy_Debugger_CorDebug_Resources.DbgBreak_CreateProcessEvent),
-			new EnumVM(BreakProcessKind.CreateAppDomain, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstCreateAppDomainEvent),
-			new EnumVM(BreakProcessKind.LoadModule, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstLoadModuleEvent),
-			new EnumVM(BreakProcessKind.LoadClass, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstLoadClassEvent),
-			new EnumVM(BreakProcessKind.CreateThread, dnSpy_Debugger_CorDebug_Resources.DbgBreak_FirstCreateThreadEvent),
-			new EnumVM(BreakProcessKind.ExeLoadModule, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ExeLoadModuleEvent),
-			new EnumVM(BreakProcessKind.ExeLoadClass, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ExeFirstLoadClassEvent),
-			new EnumVM(BreakProcessKind.ModuleCctorOrEntryPoint, dnSpy_Debugger_CorDebug_Resources.DbgBreak_ModuleClassConstructorOrEntryPoint),
-			new EnumVM(BreakProcessKind.EntryPoint, dnSpy_Debugger_CorDebug_Resources.DbgBreak_EntryPoint),
-		};
-		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
-		readonly EnumListVM breakProcessKindVM = new EnumListVM(breakProcessKindList);
-
-		public BreakProcessKind BreakProcessKind {
-			get { return (BreakProcessKind)BreakProcessKindVM.SelectedItem; }
-			set { BreakProcessKindVM.SelectedItem = value; }
-		}
-
-		public override bool IsValid => isValid;
-		bool isValid;
-
-		void UpdateIsValid() {
-			var newIsValid = CalculateIsValid();
-			if (newIsValid == isValid)
-				return;
-			isValid = newIsValid;
-			OnPropertyChanged(nameof(IsValid));
-		}
-
-		bool CalculateIsValid() => string.IsNullOrEmpty(Verify(nameof(Filename)));
-
-		readonly IPickFilename pickFilename;
-		readonly IPickDirectory pickDirectory;
-
-		public DotNetFrameworkStartDebuggingOptionsPage(string currentFilename, IPickFilename pickFilename, IPickDirectory pickDirectory) {
+		public DotNetFrameworkStartDebuggingOptionsPage(string currentFilename, IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(pickFilename, pickDirectory) {
 			if (currentFilename == null)
 				throw new ArgumentNullException(nameof(currentFilename));
-			if (pickFilename == null)
-				throw new ArgumentNullException(nameof(pickFilename));
-			if (pickDirectory == null)
-				throw new ArgumentNullException(nameof(pickDirectory));
 			Filename = currentFilename;
-			this.pickFilename = pickFilename;
-			this.pickDirectory = pickDirectory;
 		}
 
-		static string GetPath(string file) {
-			try {
-				return Path.GetDirectoryName(file);
-			}
-			catch {
-			}
-			return null;
-		}
-
-		void PickNewFilename() {
+		protected override void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
 			if (newFilename == null)
 				return;
 
 			Filename = newFilename;
-		}
-
-		void PickNewWorkingDirectory() {
-			var newDir = pickDirectory.GetDirectory(WorkingDirectory);
-			if (newDir == null)
-				return;
-
-			WorkingDirectory = newDir;
 		}
 
 		public override StartDebuggingOptions GetOptions() {
@@ -160,19 +55,11 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			};
 		}
 
-		string IDataErrorInfo.Error { get { throw new NotImplementedException(); } }
-		string IDataErrorInfo.this[string columnName] => Verify(columnName);
+		protected override bool CalculateIsValid() => string.IsNullOrEmpty(Verify(nameof(Filename)));
 
-		string Verify(string columnName) {
-			if (columnName == nameof(Filename)) {
-				if (!File.Exists(filename)) {
-					if (string.IsNullOrWhiteSpace(filename))
-						return dnSpy_Debugger_CorDebug_Resources.Error_MissingFilename;
-					return dnSpy_Debugger_CorDebug_Resources.Error_FileDoesNotExist;
-				}
-				return string.Empty;
-			}
-
+		protected override string Verify(string columnName) {
+			if (columnName == nameof(Filename))
+				return VerifyFilename(Filename);
 			return string.Empty;
 		}
 	}

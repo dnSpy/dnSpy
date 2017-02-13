@@ -18,22 +18,18 @@
 */
 
 using System;
-using System.ComponentModel;
-using System.IO;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CorDebug;
 using dnSpy.Contracts.Debugger.UI;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
-	sealed class DotNetCoreStartDebuggingOptionsPage : StartDebuggingOptionsPage, IDataErrorInfo {
+	sealed class DotNetCoreStartDebuggingOptionsPage : DotNetStartDebuggingOptionsPage {
 		public override Guid Guid => new Guid("6DA15E33-27DA-498B-8AF1-552399485002");
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetCore;
 		// Shouldn't be localized
 		public override string DisplayName => ".NET Core";
-		public override object UIObject => this;
 
 		public string HostFilename {
 			get { return hostFilename; }
@@ -59,92 +55,13 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		}
 		string hostArguments = string.Empty;
 
-		public string Filename {
-			get { return filename; }
-			set {
-				if (filename != value) {
-					filename = value;
-					OnPropertyChanged(nameof(Filename));
-					UpdateIsValid();
-					var path = GetPath(filename);
-					if (path != null)
-						WorkingDirectory = path;
-				}
-			}
-		}
-		string filename = string.Empty;
-
-		public string CommandLine {
-			get { return commandLine; }
-			set {
-				if (commandLine != value) {
-					commandLine = value;
-					OnPropertyChanged(nameof(CommandLine));
-					UpdateIsValid();
-				}
-			}
-		}
-		string commandLine = string.Empty;
-
-		public string WorkingDirectory {
-			get { return workingDirectory; }
-			set {
-				if (workingDirectory != value) {
-					workingDirectory = value;
-					OnPropertyChanged(nameof(WorkingDirectory));
-					UpdateIsValid();
-				}
-			}
-		}
-		string workingDirectory = string.Empty;
-
 		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
-		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
-		public ICommand PickWorkingDirectoryCommand => new RelayCommand(a => PickNewWorkingDirectory());
 
-		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
-		readonly EnumListVM breakProcessKindVM = new EnumListVM(DotNetFrameworkStartDebuggingOptionsPage.breakProcessKindList);
-
-		public BreakProcessKind BreakProcessKind {
-			get { return (BreakProcessKind)BreakProcessKindVM.SelectedItem; }
-			set { BreakProcessKindVM.SelectedItem = value; }
-		}
-
-		public override bool IsValid => isValid;
-		bool isValid;
-
-		void UpdateIsValid() {
-			var newIsValid = CalculateIsValid();
-			if (newIsValid == isValid)
-				return;
-			isValid = newIsValid;
-			OnPropertyChanged(nameof(IsValid));
-		}
-
-		bool CalculateIsValid() => string.IsNullOrEmpty(Verify(nameof(HostFilename))) && string.IsNullOrEmpty(Verify(nameof(Filename)));
-
-		readonly IPickFilename pickFilename;
-		readonly IPickDirectory pickDirectory;
-
-		public DotNetCoreStartDebuggingOptionsPage(string currentFilename, IPickFilename pickFilename, IPickDirectory pickDirectory) {
+		public DotNetCoreStartDebuggingOptionsPage(string currentFilename, IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(pickFilename, pickDirectory) {
 			if (currentFilename == null)
 				throw new ArgumentNullException(nameof(currentFilename));
-			if (pickFilename == null)
-				throw new ArgumentNullException(nameof(pickFilename));
-			if (pickDirectory == null)
-				throw new ArgumentNullException(nameof(pickDirectory));
 			Filename = currentFilename;
-			this.pickFilename = pickFilename;
-			this.pickDirectory = pickDirectory;
-		}
-
-		static string GetPath(string file) {
-			try {
-				return Path.GetDirectoryName(file);
-			}
-			catch {
-			}
-			return null;
 		}
 
 		void PickNewHostFilename() {
@@ -155,20 +72,12 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			HostFilename = newFilename;
 		}
 
-		void PickNewFilename() {
+		protected override void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
 			if (newFilename == null)
 				return;
 
 			Filename = newFilename;
-		}
-
-		void PickNewWorkingDirectory() {
-			var newDir = pickDirectory.GetDirectory(WorkingDirectory);
-			if (newDir == null)
-				return;
-
-			WorkingDirectory = newDir;
 		}
 
 		public override StartDebuggingOptions GetOptions() {
@@ -182,22 +91,11 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			};
 		}
 
-		string IDataErrorInfo.Error { get { throw new NotImplementedException(); } }
-		string IDataErrorInfo.this[string columnName] => Verify(columnName);
+		protected override bool CalculateIsValid() =>
+			string.IsNullOrEmpty(Verify(nameof(HostFilename))) &&
+			string.IsNullOrEmpty(Verify(nameof(Filename)));
 
-		static string VerifyFilename(string filename) {
-			if (!File.Exists(filename)) {
-				if (string.IsNullOrWhiteSpace(filename))
-					return dnSpy_Debugger_CorDebug_Resources.Error_MissingFilename;
-				return dnSpy_Debugger_CorDebug_Resources.Error_FileDoesNotExist;
-			}
-			return string.Empty;
-		}
-
-		string Verify(string columnName) {
-
-			// Also update CalculateIsValid() if this method gets updated
-
+		protected override string Verify(string columnName) {
 			if (columnName == nameof(HostFilename)) {
 				if (!string.IsNullOrWhiteSpace(HostFilename))
 					return VerifyFilename(HostFilename);
