@@ -135,5 +135,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.de.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

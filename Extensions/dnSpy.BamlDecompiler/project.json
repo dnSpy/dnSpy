@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"System.ValueTuple": "4.3.0",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.26105-RC3"
 	},
 	"frameworks": {

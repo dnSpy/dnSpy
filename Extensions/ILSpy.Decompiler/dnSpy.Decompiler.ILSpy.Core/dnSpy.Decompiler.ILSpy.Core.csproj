@@ -115,5 +115,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.de.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
