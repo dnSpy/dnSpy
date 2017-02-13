@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -153,17 +154,31 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string DebuggeeVersion { get; }
 
+		/// <summary>
+		/// Path to the CLR dll (clr.dll, mscorwks.dll, mscorsvr.dll, coreclr.dll)
+		/// </summary>
+		public string CLRPath { get; }
+
+		/// <summary>
+		/// Path to the runtime directory
+		/// </summary>
+		public string RuntimeDirectory { get; }
+
 		readonly int debuggerManagedThreadId;
 
-		DnDebugger(ICorDebug corDebug, DebugOptions debugOptions, IDebugMessageDispatcher debugMessageDispatcher, string debuggeeVersion) {
+		DnDebugger(ICorDebug corDebug, DebugOptions debugOptions, IDebugMessageDispatcher debugMessageDispatcher, string clrPath, string debuggeeVersion) {
 			if (debugMessageDispatcher == null)
 				throw new ArgumentNullException(nameof(debugMessageDispatcher));
+			if (clrPath == null)
+				throw new ArgumentNullException(nameof(clrPath));
 			debuggerManagedThreadId = Thread.CurrentThread.ManagedThreadId;
 			processes = new DebuggerCollection<ICorDebugProcess, DnProcess>(CreateDnProcess);
 			this.debugMessageDispatcher = debugMessageDispatcher;
 			this.corDebug = corDebug;
 			this.debugOptions = debugOptions ?? new DebugOptions();
 			DebuggeeVersion = debuggeeVersion ?? string.Empty;
+			CLRPath = clrPath;
+			RuntimeDirectory = Path.GetDirectoryName(clrPath);
 
 			// I have not tested debugging with CLR 1.x. It's too old to support it so this is a won't fix
 			if (DebuggeeVersion.StartsWith("1."))
@@ -182,18 +197,44 @@ namespace dndbg.Engine {
 			Debug.Assert(Thread.CurrentThread.ManagedThreadId == debuggerManagedThreadId);
 		}
 
-		static ICorDebug CreateCorDebug(string debuggeeVersion) {
+		static ICorDebug CreateCorDebug(string debuggeeVersion, out string clrPath) {
 			var clsid = new Guid("9280188D-0E8E-4867-B30C-7FA83884E8DE");
 			var riid = typeof(ICLRMetaHost).GUID;
 			var mh = (ICLRMetaHost)NativeMethods.CLRCreateInstance(ref clsid, ref riid);
 
 			riid = typeof(ICLRRuntimeInfo).GUID;
-			var ri = (ICLRRuntimeInfo)mh.GetRuntime(debuggeeVersion, ref riid);
+			var rtInfo = (ICLRRuntimeInfo)mh.GetRuntime(debuggeeVersion, ref riid);
+			clrPath = GetCLRPathDesktop(rtInfo, debuggeeVersion);
 
 			clsid = new Guid("DF8395B5-A4BA-450B-A77C-A9A47762C520");
 			riid = typeof(ICorDebug).GUID;
-			return (ICorDebug)ri.GetInterface(ref clsid, ref riid);
+			return (ICorDebug)rtInfo.GetInterface(ref clsid, ref riid);
 		}
+
+		static string GetCLRPathDesktop(ICLRRuntimeInfo rtInfo, string debuggeeVersion) {
+			uint chBuffer = 0;
+			var sb = new StringBuilder(300);
+			int hr = rtInfo.GetRuntimeDirectory(sb, ref chBuffer);
+			sb.EnsureCapacity((int)chBuffer);
+			hr = rtInfo.GetRuntimeDirectory(sb, ref chBuffer);
+
+			string[] files;
+			if (debuggeeVersion.StartsWith("v2."))
+				files = clrFiles_v2;
+			else
+				files = clrFiles_v4;
+			var basePath = sb.ToString();
+			if (basePath.Length != 0) {
+				foreach (var file in files) {
+					var filename = Path.Combine(basePath, file);
+					if (File.Exists(filename))
+						return filename;
+				}
+			}
+			throw new InvalidOperationException("Couldn't find the CLR dll file");
+		}
+		static readonly string[] clrFiles_v2 = new string[] { "mscorwks.dll", "mscorsvr.dll" };
+		static readonly string[] clrFiles_v4 = new string[] { "clr.dll" };
 
 		public event DebugCallbackEventHandler DebugCallbackEvent;
 
@@ -1058,10 +1099,11 @@ namespace dndbg.Engine {
 		static DnDebugger CreateDnDebuggerDesktop(DebugProcessOptions options) {
 			var clrType = (DesktopCLRTypeDebugInfo)options.CLRTypeDebugInfo;
 			var debuggeeVersion = clrType.DebuggeeVersion ?? DebuggeeVersionDetector.GetVersion(options.Filename);
-			var corDebug = CreateCorDebug(debuggeeVersion);
+			string clrPath;
+			var corDebug = CreateCorDebug(debuggeeVersion, out clrPath);
 			if (corDebug == null)
 				throw new Exception("Could not create an ICorDebug instance");
-			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, debuggeeVersion);
+			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion);
 			if (options.BreakProcessKind != BreakProcessKind.None)
 				new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
 			dbg.CreateProcess(options);
@@ -1070,8 +1112,8 @@ namespace dndbg.Engine {
 
 		static DnDebugger CreateDnDebuggerCoreCLR(DebugProcessOptions options) {
 			var clrType = (CoreCLRTypeDebugInfo)options.CLRTypeDebugInfo;
-			var dbg2 = CoreCLRHelper.CreateDnDebugger(options, clrType, () => false, (cd, pid) => {
-				var dbg = new DnDebugger(cd, options.DebugOptions, options.DebugMessageDispatcher, null);
+			var dbg2 = CoreCLRHelper.CreateDnDebugger(options, clrType, () => false, (cd, coreclrFilename, pid) => {
+				var dbg = new DnDebugger(cd, options.DebugOptions, options.DebugMessageDispatcher, coreclrFilename, null);
 				if (options.BreakProcessKind != BreakProcessKind.None)
 					new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
 				ICorDebugProcess comProcess;
@@ -1117,11 +1159,11 @@ namespace dndbg.Engine {
 			var process = Process.GetProcessById(options.ProcessId);
 			var filename = process.MainModule.FileName;
 
-			string debuggeeVersion;
-			var corDebug = CreateCorDebug(options, out debuggeeVersion);
+			string debuggeeVersion, clrPath;
+			var corDebug = CreateCorDebug(options, out debuggeeVersion, out clrPath);
 			if (corDebug == null)
 				throw new Exception("An ICorDebug instance couldn't be created");
-			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, debuggeeVersion);
+			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion);
 			ICorDebugProcess comProcess;
 			corDebug.DebugActiveProcess(options.ProcessId, 0, out comProcess);
 			var dnProcess = dbg.TryAdd(comProcess);
@@ -1130,17 +1172,17 @@ namespace dndbg.Engine {
 			return dbg;
 		}
 
-		static ICorDebug CreateCorDebug(AttachProcessOptions options, out string debuggeeVersion) {
+		static ICorDebug CreateCorDebug(AttachProcessOptions options, out string debuggeeVersion, out string clrPath) {
 			switch (options.CLRTypeAttachInfo.CLRType) {
-			case CLRType.Desktop:	return CreateCorDebugDesktop(options, out debuggeeVersion);
-			case CLRType.CoreCLR:	return CreateCorDebugCoreCLR(options, out debuggeeVersion);
+			case CLRType.Desktop:	return CreateCorDebugDesktop(options, out debuggeeVersion, out clrPath);
+			case CLRType.CoreCLR:	return CreateCorDebugCoreCLR(options, out debuggeeVersion, out clrPath);
 			default:
 				Debug.Fail("Invalid CLRType");
 				throw new InvalidOperationException();
 			}
 		}
 
-		static ICorDebug CreateCorDebugDesktop(AttachProcessOptions options, out string debuggeeVersion) {
+		static ICorDebug CreateCorDebugDesktop(AttachProcessOptions options, out string debuggeeVersion, out string clrPath) {
 			var clrType = (DesktopCLRTypeAttachInfo)options.CLRTypeAttachInfo;
 			debuggeeVersion = clrType.DebuggeeVersion;
 			ICLRRuntimeInfo rtInfo = null;
@@ -1154,15 +1196,17 @@ namespace dndbg.Engine {
 			if (rtInfo == null)
 				throw new Exception("Couldn't find a .NET runtime or the correct .NET runtime");
 
+			clrPath = GetCLRPathDesktop(rtInfo, debuggeeVersion);
+
 			var clsid = new Guid("DF8395B5-A4BA-450B-A77C-A9A47762C520");
 			var riid = typeof(ICorDebug).GUID;
 			return (ICorDebug)rtInfo.GetInterface(ref clsid, ref riid);
 		}
 
-		static ICorDebug CreateCorDebugCoreCLR(AttachProcessOptions options, out string debuggeeVersion) {
+		static ICorDebug CreateCorDebugCoreCLR(AttachProcessOptions options, out string debuggeeVersion, out string clrPath) {
 			debuggeeVersion = null;
 			var clrType = (CoreCLRTypeAttachInfo)options.CLRTypeAttachInfo;
-			return CoreCLRHelper.CreateCorDebug(clrType);
+			return CoreCLRHelper.CreateCorDebug(clrType, out clrPath);
 		}
 
 		static IEnumerable<Tuple<string, ICLRRuntimeInfo>> GetCLRRuntimeInfos(Process process) {

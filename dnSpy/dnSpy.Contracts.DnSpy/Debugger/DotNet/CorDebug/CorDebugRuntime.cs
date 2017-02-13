@@ -23,7 +23,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// </summary>
 	public abstract class CorDebugRuntime : DbgDnRuntime {
 		/// <summary>
-		/// Gets the version, eg. "v4.0.30319"
+		/// Gets the version string, eg. "v2.0.50727" or "v4.0.30319" if it's .NET Framework.
+		/// If it's .NET Core, this is currently an empty string.
 		/// </summary>
 		public abstract string Version { get; }
 
@@ -33,7 +34,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		public abstract CorDebugRuntimeKind Kind { get; }
 
 		/// <summary>
-		/// Path to clr.dll / mscorwks.dll / coreclr.dll
+		/// Path to the CLR dll (clr.dll, mscorwks.dll, mscorsvr.dll, coreclr.dll)
 		/// </summary>
 		public abstract string ClrFilename { get; }
 

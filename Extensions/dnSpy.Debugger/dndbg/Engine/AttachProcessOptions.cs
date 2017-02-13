@@ -46,15 +46,14 @@ namespace dndbg.Engine {
 	public sealed class CoreCLRTypeAttachInfo : CLRTypeAttachInfo {
 		public override CLRType CLRType => CLRType.CoreCLR;
 
-		public override string Version => version;
-		readonly string version;
+		public override string Version { get; }
+		public string DbgShimFilename { get; }
+		public string CoreCLRFilename { get; }
 
-		public string DbgShimFilename => dbgShimFilename;
-		readonly string dbgShimFilename;
-
-		public CoreCLRTypeAttachInfo(string version, string dbgShimFilename) {
-			this.version = version;
-			this.dbgShimFilename = dbgShimFilename;
+		public CoreCLRTypeAttachInfo(string version, string dbgShimFilename, string coreclrFilename) {
+			Version = version;
+			DbgShimFilename = dbgShimFilename;
+			CoreCLRFilename = coreclrFilename;
 		}
 	}
 

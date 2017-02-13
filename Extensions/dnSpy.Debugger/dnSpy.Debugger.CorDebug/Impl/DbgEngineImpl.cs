@@ -155,6 +155,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		protected abstract CorDebugRuntimeKind CorDebugRuntimeKind { get; }
-		public override DbgRuntime CreateRuntime(DbgProcess process) => new DbgDnRuntimeImpl(process, CorDebugRuntimeKind);
+		public override DbgRuntime CreateRuntime(DbgProcess process) =>
+			new DbgDnRuntimeImpl(process, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
 	}
 }

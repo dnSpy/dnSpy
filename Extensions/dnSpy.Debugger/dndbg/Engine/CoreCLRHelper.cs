@@ -30,12 +30,10 @@ namespace dndbg.Engine {
 	public struct CoreCLRInfo {
 		public int ProcessId { get; }
 		public CoreCLRTypeAttachInfo CoreCLRTypeInfo { get; }
-		public string CoreCLRFilename { get; }
 
-		public CoreCLRInfo(int pid, string filename, string version, string dbgShimFilename) {
+		public CoreCLRInfo(int pid, string coreclrFilename, string version, string dbgShimFilename) {
 			ProcessId = pid;
-			CoreCLRTypeInfo = new CoreCLRTypeAttachInfo(version, dbgShimFilename);
-			CoreCLRFilename = filename;
+			CoreCLRTypeInfo = new CoreCLRTypeAttachInfo(version, dbgShimFilename, coreclrFilename);
 		}
 	}
 
@@ -77,9 +75,9 @@ namespace dndbg.Engine {
 				var ary = new CoreCLRInfo[dwArrayLength];
 				var psa = (IntPtr*)pStringArray;
 				for (int i = 0; i < ary.Length; i++) {
-					string moduleFilename;
-					var version = GetVersionStringFromModule(dbgShimState, (uint)pid, psa[i], out moduleFilename);
-					ary[i] = new CoreCLRInfo(pid, moduleFilename, version, dbgShimState.Filename);
+					string coreclrFilename;
+					var version = GetVersionStringFromModule(dbgShimState, (uint)pid, psa[i], out coreclrFilename);
+					ary[i] = new CoreCLRInfo(pid, coreclrFilename, version, dbgShimState.Filename);
 				}
 
 				return ary;
@@ -90,14 +88,14 @@ namespace dndbg.Engine {
 			}
 		}
 
-		static string GetVersionStringFromModule(DbgShimState dbgShimState, uint pid, IntPtr ps, out string moduleFilename) {
+		static string GetVersionStringFromModule(DbgShimState dbgShimState, uint pid, IntPtr ps, out string coreclrFilename) {
 			var sb = new StringBuilder(0x1000);
-			moduleFilename = Marshal.PtrToStringUni(ps);
+			coreclrFilename = Marshal.PtrToStringUni(ps);
 			uint verLen;
-			int hr = dbgShimState.CreateVersionStringFromModule(pid, moduleFilename, sb, (uint)sb.Capacity, out verLen);
+			int hr = dbgShimState.CreateVersionStringFromModule(pid, coreclrFilename, sb, (uint)sb.Capacity, out verLen);
 			if (hr != 0) {
 				sb.EnsureCapacity((int)verLen);
-				hr = dbgShimState.CreateVersionStringFromModule(pid, moduleFilename, sb, (uint)sb.Capacity, out verLen);
+				hr = dbgShimState.CreateVersionStringFromModule(pid, coreclrFilename, sb, (uint)sb.Capacity, out verLen);
 			}
 			return hr < 0 ? null : sb.ToString();
 		}
@@ -198,7 +196,8 @@ namespace dndbg.Engine {
 			return null;
 		}
 
-		public static ICorDebug CreateCorDebug(CoreCLRTypeAttachInfo info) {
+		public static ICorDebug CreateCorDebug(CoreCLRTypeAttachInfo info, out string coreclrFilename) {
+			coreclrFilename = info.CoreCLRFilename;
 			var dbgShimState = GetOrCreateDbgShimState(null, info.DbgShimFilename);
 			if (dbgShimState == null)
 				return null;
@@ -208,7 +207,7 @@ namespace dndbg.Engine {
 			return obj as ICorDebug;
 		}
 
-		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, Func<bool> keepWaiting, Func<ICorDebug, uint, DnDebugger> createDnDebugger) {
+		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, Func<bool> keepWaiting, Func<ICorDebug, string, uint, DnDebugger> createDnDebugger) {
 			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
 			if (dbgShimState == null)
 				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}' . Make sure you use the {1}-bit version", info.DbgShimFilename, IntPtr.Size * 8));
@@ -261,15 +260,15 @@ namespace dndbg.Engine {
 					throw new Exception("Process started but no CoreCLR found");
 				var psa = (IntPtr*)pStringArray;
 				var pha = (IntPtr*)pHandleArray;
-				string moduleFilename;
+				string coreclrFilename;
 				const int index = 0;
-				var version = GetVersionStringFromModule(dbgShimState, pi.dwProcessId, psa[index], out moduleFilename);
+				var version = GetVersionStringFromModule(dbgShimState, pi.dwProcessId, psa[index], out coreclrFilename);
 				object obj;
 				hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion.CorDebugVersion_4_0, version, out obj);
 				var corDebug = obj as ICorDebug;
 				if (corDebug == null)
 					throw new Exception(string.Format("Could not create a ICorDebug: hr=0x{0:X8}", hr));
-				var dbg = createDnDebugger(corDebug, pi.dwProcessId);
+				var dbg = createDnDebugger(corDebug, coreclrFilename, pi.dwProcessId);
 				for (uint i = 0; i < dwArrayLength; i++)
 					NativeMethods.SetEvent(pha[i]);
 				calledSetEvent = true;

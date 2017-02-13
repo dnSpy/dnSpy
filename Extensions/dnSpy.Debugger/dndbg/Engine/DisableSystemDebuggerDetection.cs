@@ -32,14 +32,14 @@ namespace dndbg.Engine {
 			if (e.Kind == DebugCallbackKind.CreateProcess) {
 				dbg.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
 				var cpArgs = (CreateProcessDebugCallbackEventArgs)e;
-				bool b = Initialize(cpArgs.CorProcess, dbg.DebuggeeVersion);
+				bool b = Initialize(cpArgs.CorProcess, dbg.DebuggeeVersion, dbg.CLRPath);
 				Debug.Assert(b);
 			}
 		}
 
-		bool Initialize(CorProcess process, string debuggeeVersion) {
+		bool Initialize(CorProcess process, string debuggeeVersion, string clrPath) {
 			try {
-				var mgr = new ECallManager(process.ProcessId, debuggeeVersion);
+				var mgr = new ECallManager(process.ProcessId, clrPath);
 				if (!mgr.FoundClrModule)
 					return false;
 

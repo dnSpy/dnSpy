@@ -60,7 +60,8 @@ namespace dndbg.COM.MetaHost {
 	public interface ICLRRuntimeInfo {
 		[PreserveSig]
 		int GetVersionString([MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);
-		void GetRuntimeDirectory([MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);
+		[PreserveSig]
+		int GetRuntimeDirectory([MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);
 		int IsLoaded([In] IntPtr hndProcess);
 		[LCIDConversion(3)]
 		void LoadErrorString([In] uint iResourceID, [MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);

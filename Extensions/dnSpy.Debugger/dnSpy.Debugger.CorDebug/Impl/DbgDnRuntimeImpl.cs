@@ -25,6 +25,10 @@ using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DbgDnRuntimeImpl : CorDebugRuntime {
 		public override DbgProcess Process { get; }
+		public override CorDebugRuntimeKind Kind { get; }
+		public override string Version { get; }
+		public override string ClrFilename { get; }
+		public override string RuntimeDirectory { get; }
 
 		public override DbgModule[] Modules {
 			get {
@@ -38,31 +42,20 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		public override CorDebugRuntimeKind Kind { get; }
-
-		public override string Version {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public override string ClrFilename {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public override string RuntimeDirectory {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
-
-		public DbgDnRuntimeImpl(DbgProcess process, CorDebugRuntimeKind kind) {
+		public DbgDnRuntimeImpl(DbgProcess process, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
 			if (process == null)
 				throw new ArgumentNullException(nameof(process));
+			if (version == null)
+				throw new ArgumentNullException(nameof(version));
+			if (clrPath == null)
+				throw new ArgumentNullException(nameof(clrPath));
+			if (runtimeDir == null)
+				throw new ArgumentNullException(nameof(runtimeDir));
 			Process = process;
 			Kind = kind;
+			Version = version;
+			ClrFilename = clrPath;
+			RuntimeDirectory = runtimeDir;
 		}
 	}
 }

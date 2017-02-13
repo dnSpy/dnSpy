@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using dnlib.IO;
 using dnlib.PE;
@@ -29,7 +28,7 @@ using dnlib.PE;
 namespace dndbg.Engine {
 	sealed class ECallManager {
 		/// <summary>
-		/// true if we found the CLR module (mscorwks/clr.dll)
+		/// true if we found the CLR module (mscorwks/clr.dll/coreclr.dll)
 		/// </summary>
 		public bool FoundClrModule { get; }
 
@@ -45,43 +44,19 @@ namespace dndbg.Engine {
 			Initialize(filename);
 		}
 
-		public ECallManager(int pid, string debuggeeVersion) {
-			var modNames = GetClrModuleNames(debuggeeVersion);
-
+		public ECallManager(int pid, string clrPath) {
 			var process = Process.GetProcessById(pid);
 			FoundClrModule = false;
 			foreach (ProcessModule mod in process.Modules) {
-				if (IsClrModule(mod, modNames)) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(clrPath, mod.FileName)) {
 					FoundClrModule = true;
 					Initialize(mod.FileName);
 					clrDllBaseAddress = (ulong)mod.BaseAddress.ToInt64();
 					break;
 				}
 			}
-			Debug.Assert(FoundClrModule, "Couldn't find mscorwks/clr.dll");
+			Debug.Assert(FoundClrModule, $"Couldn't find {clrPath}");
 		}
-
-		static bool IsClrModule(ProcessModule mod, string[] clrNames) {
-			var fname = Path.GetFileName(mod.FileName);
-			return clrNames.Any(n => StringComparer.OrdinalIgnoreCase.Equals(n, fname));
-		}
-
-		static string[] GetClrModuleNames(string debuggeeVersion) {
-			if (IsCLR2OrEarlier(debuggeeVersion))
-				return clr20_module_names;
-			return clr40_module_names;
-		}
-		static readonly string[] clr20_module_names = new string[] {
-			"mscorwks.dll",
-			"mscorsvr.dll",
-		};
-		static readonly string[] clr40_module_names = new string[] {
-			"clr.dll",
-			"coreclr.dll",
-		};
-
-		static bool IsCLR2OrEarlier(string debuggeeVersion) =>
-			debuggeeVersion != null && (debuggeeVersion.StartsWith("v1.") || debuggeeVersion.StartsWith("v2."));
 
 		void Initialize(string filename) {
 			try {
