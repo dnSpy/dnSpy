@@ -50,6 +50,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract int Bitness { get; }
 
 		/// <summary>
+		/// Machine
+		/// </summary>
+		public abstract DbgMachine Machine { get; }
+
+		/// <summary>
 		/// Gets all threads
 		/// </summary>
 		public abstract DbgThread[] Threads { get; }
@@ -91,6 +96,21 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="size">Number of bytes to write</param>
 		/// <returns></returns>
 		public abstract int WriteMemory(ulong address, byte[] source, int sourceIndex, int size);
+	}
+
+	/// <summary>
+	/// Machine
+	/// </summary>
+	public enum DbgMachine {
+		/// <summary>
+		/// x86, 32-bit
+		/// </summary>
+		X86,
+
+		/// <summary>
+		/// x64, 64-bit
+		/// </summary>
+		X64,
 	}
 
 	/// <summary>

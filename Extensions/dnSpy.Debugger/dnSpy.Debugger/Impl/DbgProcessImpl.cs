@@ -29,6 +29,7 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgManager DbgManager { get; }
 		public override int Id { get; }
 		public override int Bitness { get; }
+		public override DbgMachine Machine { get; }
 
 		struct EngineInfo {
 			public DbgEngine Engine { get; }
@@ -71,6 +72,7 @@ namespace dnSpy.Debugger.Impl {
 			DbgManager = owner;
 			Id = pid;
 			Bitness = GetBitness();
+			Machine = GetMachine(Bitness);
 
 			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE;
 			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
@@ -82,6 +84,15 @@ namespace dnSpy.Debugger.Impl {
 			// Identical to this process. We don't create a new process to debug anything
 			// so our bitness must equal the debugged process' bitness.
 			return IntPtr.Size * 8;
+		}
+
+		static DbgMachine GetMachine(int bitness) {
+			// We only allow debugging on the same computer and this is x86 or x64
+			switch (bitness) {
+			case 32: return DbgMachine.X86;
+			case 64: return DbgMachine.X64;
+			default: throw new ArgumentOutOfRangeException(nameof(bitness));
+			}
 		}
 
 		public override int ReadMemory(ulong address, IntPtr destination, int size) {
