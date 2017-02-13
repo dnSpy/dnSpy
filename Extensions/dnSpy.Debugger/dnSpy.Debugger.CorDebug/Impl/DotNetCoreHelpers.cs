@@ -24,9 +24,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 	static class DotNetCoreHelpers {
 		public const string DotNetExeName = "dotnet.exe";
 
-		public static string GetPathToDotNetExeHost(int bitSize) {
-			if (bitSize != 32 && bitSize != 64)
-				throw new ArgumentOutOfRangeException(nameof(bitSize));
+		public static string GetPathToDotNetExeHost(int bitness) {
+			if (bitness != 32 && bitness != 64)
+				throw new ArgumentOutOfRangeException(nameof(bitness));
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
 			if (pathEnvVar == null)
 				return null;
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					var file = Path.Combine(path, DotNetExeName);
 					if (!File.Exists(file))
 						continue;
-					if (GetPeFileBitSize(file) == bitSize)
+					if (GetPeFileBitness(file) == bitness)
 						return file;
 				}
 				catch {
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return null;
 		}
 
-		static int GetPeFileBitSize(string file) {
+		static int GetPeFileBitness(string file) {
 			using (var f = File.OpenRead(file)) {
 				var r = new BinaryReader(f);
 				if (r.ReadUInt16() != 0x5A4D)
@@ -65,14 +65,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		public static string GetDebugShimFilename(int bitSize) {
+		public static string GetDebugShimFilename(int bitness) {
 			var basePath = Path.GetDirectoryName(typeof(DotNetCoreHelpers).Assembly.Location);
 			basePath = Path.Combine(basePath, "debug");
 			const string filename = "dbgshim.dll";
-			switch (bitSize) {
+			switch (bitness) {
 			case 32:	return Path.Combine(basePath, "x86", filename);
 			case 64:	return Path.Combine(basePath, "x64", filename);
-			default:	throw new ArgumentOutOfRangeException(nameof(bitSize));
+			default:	throw new ArgumentOutOfRangeException(nameof(bitness));
 			}
 		}
 	}

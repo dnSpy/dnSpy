@@ -45,9 +45,9 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler<RuntimesChangedEventArgs> RuntimesChanged;
 
 		/// <summary>
-		/// Gets the process bit size (32 or 64)
+		/// Gets the process bitness (32 or 64)
 		/// </summary>
-		public abstract int BitSize { get; }
+		public abstract int Bitness { get; }
 
 		/// <summary>
 		/// Gets all threads

@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Impl {
 	sealed class DbgProcessImpl : DbgProcess {
 		public override DbgManager DbgManager { get; }
 		public override int Id { get; }
-		public override int BitSize { get; }
+		public override int Bitness { get; }
 
 		struct EngineInfo {
 			public DbgEngine Engine { get; }
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Impl {
 			engineInfos = new List<EngineInfo>();
 			DbgManager = owner;
 			Id = pid;
-			BitSize = GetBitSize();
+			Bitness = GetBitness();
 
 			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE;
 			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
@@ -78,9 +78,9 @@ namespace dnSpy.Debugger.Impl {
 				throw new InvalidOperationException($"Couldn't open process {pid}");
 		}
 
-		static int GetBitSize() {
+		static int GetBitness() {
 			// Identical to this process. We don't create a new process to debug anything
-			// so our bit size must equal the debugged process' bit size.
+			// so our bitness must equal the debugged process' bitness.
 			return IntPtr.Size * 8;
 		}
 

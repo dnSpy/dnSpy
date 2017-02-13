@@ -98,10 +98,10 @@ namespace dnSpy.Hex {
 		}
 
 		static HexSpan GetDefaultSpan(IntPtr hProcess) {
-			int bitSize = GetProcessAddressBitSize(hProcess);
-			if (bitSize == 32)
+			int bitness = GetProcessAddressBitness(hProcess);
+			if (bitness == 32)
 				return HexSpan.FromBounds(0, uint.MaxValue + 1UL);
-			if (bitSize == 64) {
+			if (bitness == 64) {
 				// If we're a 32-bit process, we can't read anything >= 2^32 from the other process
 				// so return span [0,2^32)
 				if (IntPtr.Size != 8)
@@ -114,13 +114,13 @@ namespace dnSpy.Hex {
 					lastAddr += 0x10000;
 				return HexSpan.FromBounds(0, new HexPosition(lastAddr) + 1);
 			}
-			Debug.Fail($"Unsupported bit size: {bitSize}");
+			Debug.Fail($"Unsupported bitness: {bitness}");
 			return HexSpan.FromBounds(0, HexPosition.MaxEndPosition);
 		}
 
 		static ulong GetDefaultPageSize(IntPtr hProcess) => (ulong)Environment.SystemPageSize;
 
-		static int GetProcessAddressBitSize(IntPtr hProcess) {
+		static int GetProcessAddressBitness(IntPtr hProcess) {
 			if (!Environment.Is64BitOperatingSystem) {
 				Debug.Assert(IntPtr.Size == 4);
 				return IntPtr.Size * 8;
