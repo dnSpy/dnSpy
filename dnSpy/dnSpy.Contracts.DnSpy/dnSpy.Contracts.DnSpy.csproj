@@ -132,11 +132,11 @@
     <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntime.cs" />
     <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntimeKind.cs" />
     <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntimeVersion.cs" />
-    <Compile Include="Debugger\DotNet\DbgDnAppDomain.cs" />
-    <Compile Include="Debugger\DotNet\DbgDnAssembly.cs" />
-    <Compile Include="Debugger\DotNet\DbgDnModule.cs" />
-    <Compile Include="Debugger\DotNet\DbgDnRuntime.cs" />
-    <Compile Include="Debugger\DotNet\DbgDnThread.cs" />
+    <Compile Include="Debugger\DotNet\DbgClrAppDomain.cs" />
+    <Compile Include="Debugger\DotNet\DbgClrAssembly.cs" />
+    <Compile Include="Debugger\DotNet\DbgClrModule.cs" />
+    <Compile Include="Debugger\DotNet\DbgClrRuntime.cs" />
+    <Compile Include="Debugger\DotNet\DbgClrThread.cs" />
     <Compile Include="Debugger\Engine\DbgEngine.cs" />
     <Compile Include="Debugger\Engine\DbgEngineMessage.cs" />
     <Compile Include="Debugger\Engine\DbgEngineMessageKind.cs" />

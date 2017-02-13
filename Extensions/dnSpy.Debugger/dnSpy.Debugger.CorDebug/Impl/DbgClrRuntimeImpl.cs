@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
-	sealed class DbgDnRuntimeImpl : CorDebugRuntime {
+	sealed class DbgClrRuntimeImpl : CorDebugRuntime {
 		public override DbgProcess Process { get; }
 		public override CorDebugRuntimeVersion Version { get; }
 		public override string ClrFilename { get; }
@@ -35,13 +35,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		public override DbgDnAppDomain[] AppDomains {
+		public override DbgClrAppDomain[] AppDomains {
 			get {
 				throw new NotImplementedException();//TODO:
 			}
 		}
 
-		public DbgDnRuntimeImpl(DbgProcess process, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
+		public DbgClrRuntimeImpl(DbgProcess process, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
 			if (process == null)
 				throw new ArgumentNullException(nameof(process));
 			if (version == null)

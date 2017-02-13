@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
 	/// .NET runtime in a process
 	/// </summary>
-	public abstract class CorDebugRuntime : DbgDnRuntime {
+	public abstract class CorDebugRuntime : DbgClrRuntime {
 		/// <summary>
 		/// Gets the runtime version
 		/// </summary>

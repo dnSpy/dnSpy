@@ -19,18 +19,32 @@
 
 namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
-	/// A .NET thread in a process
+	/// A .NET app domain
 	/// </summary>
-	public abstract class DbgDnThread : DbgThread {
+	public abstract class DbgClrAppDomain : DbgObject {
 		/// <summary>
-		/// Gets the app domain or null if none found
+		/// Gets the runtime
 		/// </summary>
-		/// <returns></returns>
-		public abstract DbgDnAppDomain TryGetAppDomain();
+		public abstract DbgClrRuntime Runtime { get; }
 
 		/// <summary>
-		/// Gets the managed id of this thread
+		/// Gets the name of the app domain
 		/// </summary>
-		public abstract int ManagedId { get; }
+		public abstract string Name { get; }
+
+		/// <summary>
+		/// Gets the app domain id
+		/// </summary>
+		public abstract int Id { get; }
+
+		/// <summary>
+		/// Gets all modules
+		/// </summary>
+		public abstract DbgClrModule[] Modules { get; }
+
+		/// <summary>
+		/// Gets the core module (eg. mscorlib)
+		/// </summary>
+		public abstract DbgClrModule CorModule { get; }
 	}
 }

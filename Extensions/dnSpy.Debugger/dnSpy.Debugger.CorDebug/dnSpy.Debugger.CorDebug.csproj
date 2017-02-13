@@ -54,7 +54,7 @@
     <Compile Include="Dialogs\DebugProgram\SavedDotNetStartDebuggingOptions.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Impl\BreakProcessKindHelpers.cs" />
-    <Compile Include="Impl\DbgDnRuntimeImpl.cs" />
+    <Compile Include="Impl\DbgClrRuntimeImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />
     <Compile Include="Impl\DbgEngineProviderImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />

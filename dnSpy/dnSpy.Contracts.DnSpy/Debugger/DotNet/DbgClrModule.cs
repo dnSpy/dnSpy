@@ -17,34 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
-	/// A .NET app domain
+	/// A .NET module in a process
 	/// </summary>
-	public abstract class DbgDnAppDomain : DbgObject {
+	public abstract class DbgClrModule : DbgModule {
 		/// <summary>
-		/// Gets the runtime
+		/// Gets the assembly
 		/// </summary>
-		public abstract DbgDnRuntime Runtime { get; }
+		public abstract DbgClrAssembly Assembly { get; }
 
 		/// <summary>
-		/// Gets the name of the app domain
+		/// true if it's a dynamic module (the application can add more types and members to the module at runtime)
 		/// </summary>
-		public abstract string Name { get; }
+		public abstract bool IsDynamic { get; }
 
 		/// <summary>
-		/// Gets the app domain id
+		/// true if it's an optimized module
 		/// </summary>
-		public abstract int Id { get; }
+		public abstract bool IsOptimized { get; }
 
 		/// <summary>
-		/// Gets all modules
+		/// Gets the version found in the metadata
 		/// </summary>
-		public abstract DbgDnModule[] Modules { get; }
-
-		/// <summary>
-		/// Gets the core module (eg. mscorlib)
-		/// </summary>
-		public abstract DbgDnModule CorModule { get; }
+		public abstract Version Version { get; }
 	}
 }
