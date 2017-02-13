@@ -19,18 +19,21 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.DbgUI {
 	[Export(typeof(Debugger))]
 	sealed class DebuggerImpl : Debugger {
+		readonly IMessageBoxService messageBoxService;
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider) {
+		DebuggerImpl(IMessageBoxService messageBoxService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider) {
+			this.messageBoxService = messageBoxService;
 			this.dbgManager = dbgManager;
 			this.startDebuggingOptionsProvider = startDebuggingOptionsProvider;
 		}
@@ -40,7 +43,9 @@ namespace dnSpy.Debugger.DbgUI {
 			if (options == null)
 				return;
 
-			dbgManager.Value.Start(options);
+			var errMsg = dbgManager.Value.Start(options);
+			if (errMsg != null)
+				messageBoxService.Show(errMsg);
 		}
 
 		public override void Continue() {

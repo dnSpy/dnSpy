@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
@@ -27,12 +28,16 @@ using dnSpy.Contracts.Debugger.Engine;
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
 	sealed class DbgManagerImpl : DbgManager {
+		public override event EventHandler<ProcessesChangedEventArgs> ProcessesChanged;
 		public override DbgProcess[] Processes {
 			get {
-				return Array.Empty<DbgProcess>();//TODO:
+				lock (lockObj)
+					return processes.ToArray();
 			}
 		}
+		readonly List<DbgProcessImpl> processes;
 
+		public override event EventHandler IsDebuggingChanged;
 		public override bool IsDebugging {
 			get {
 				lock (lockObj)
@@ -42,7 +47,7 @@ namespace dnSpy.Debugger.Impl {
 
 		sealed class EngineInfo {
 			public DbgEngine Engine { get; }
-			public int ProcessId { get; set; }
+			public DbgProcessImpl Process { get; set; }
 			public EngineInfo(DbgEngine engine) {
 				Engine = engine;
 			}
@@ -56,27 +61,34 @@ namespace dnSpy.Debugger.Impl {
 		DbgManagerImpl([ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders) {
 			lockObj = new object();
 			engines = new List<EngineInfo>();
+			processes = new List<DbgProcessImpl>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public override bool Start(StartDebuggingOptions options) {
+		public override string Start(StartDebuggingOptions options) {
 			try {
 				foreach (var lz in dbgEngineProviders) {
 					var engine = lz.Value.Start(options);
 					if (engine != null) {
-						lock (lockObj)
+						bool raiseEvent;
+						lock (lockObj) {
+							raiseEvent = engines.Count == 0;
 							engines.Add(new EngineInfo(engine));
+						}
+						if (raiseEvent)
+							IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
 						engine.Message += DbgEngine_Message;
 						engine.EnableMessages();
-						return true;
+						return null;
 					}
 				}
 			}
-			catch {
-				//TODO: ex msg should be shown to the user
-				return false;
+			catch (Exception ex) {
+				return ex.ToString();
 			}
-			return false;
+			Debug.Fail("Couldn't create a debug engine");
+			// Doesn't need to be localized, should be considered a bug if this is ever reached
+			return "Couldn't create a debug engine";
 		}
 
 		void DbgEngine_Message(object sender, DbgEngineMessage e) {
@@ -118,17 +130,33 @@ namespace dnSpy.Debugger.Impl {
 			return info;
 		}
 
+		DbgProcessImpl GetOrCreateProcess(int pid) {
+			DbgProcessImpl process;
+			lock (lockObj) {
+				foreach (var p in processes) {
+					if (p.Id == pid)
+						return p;
+				}
+				process = new DbgProcessImpl(this, pid);
+				processes.Add(process);
+			}
+			ProcessesChanged?.Invoke(this, new ProcessesChangedEventArgs(process, added: true));
+			return process;
+		}
+
 		void OnConnected(DbgEngine engine, DbgMessageConnected e) {
 			if (e.ErrorMessage != null) {
 				//TODO: Show error msg, clean up
 				return;
 			}
 
+			var process = GetOrCreateProcess(e.ProcessId);
+
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
-				info.ProcessId = e.ProcessId;
-				//TODO:
+				info.Process = process;
 			}
+			process.Add(engine, engine.CreateRuntime(process));
 		}
 
 		void OnDisconnected(DbgEngine engine, DbgMessageDisconnected e) {

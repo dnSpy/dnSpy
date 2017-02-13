@@ -17,20 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dndbg.Engine;
-using dnSpy.Contracts.Debugger.CorDebug;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
-using dnSpy.Contracts.Debugger.Engine;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
-namespace dnSpy.Debugger.CorDebug.Impl {
-	sealed class DotNetFrameworkDbgEngineImpl : DbgEngineImpl {
-		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetFramework;
-
-		public DotNetFrameworkDbgEngineImpl(DbgStartKind startKind)
-			: base(startKind) {
-		}
-
-		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) =>
-			new DesktopCLRTypeDebugInfo();
+namespace dnSpy.Debugger.Native {
+	static class NativeMethods {
+		[DllImport("kernel32")]
+		public static extern SafeFileHandle OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+		public const int PROCESS_VM_OPERATION = 0x0008;
+		public const int PROCESS_VM_READ = 0x0010;
+		public const int PROCESS_VM_WRITE = 0x0020;
 	}
 }

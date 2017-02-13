@@ -38,6 +38,13 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Raised when there's a new message. It can be raised on any internal debugger thread.
 		/// </summary>
 		public abstract event EventHandler<DbgEngineMessage> Message;
+
+		/// <summary>
+		/// Creates the runtime. Called once after the engine has connected with the debugged process.
+		/// </summary>
+		/// <param name="process">Owner process</param>
+		/// <returns></returns>
+		public abstract DbgRuntime CreateRuntime(DbgProcess process);
 	}
 
 	/// <summary>

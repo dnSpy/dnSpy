@@ -22,7 +22,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.CorDebug.Properties;
 
@@ -151,5 +153,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				return dnSpy_Debugger_CorDebug_Resources.UseDnSpyExeToDebug64;
 			return dnSpy_Debugger_CorDebug_Resources.UseDnSpy64ExeToDebug32;
 		}
+
+		protected abstract CorDebugRuntimeKind CorDebugRuntimeKind { get; }
+		public override DbgRuntime CreateRuntime(DbgProcess process) => new DbgDnRuntimeImpl(process, CorDebugRuntimeKind);
 	}
 }

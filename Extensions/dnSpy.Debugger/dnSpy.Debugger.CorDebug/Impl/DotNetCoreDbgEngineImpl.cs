@@ -21,11 +21,14 @@ using System;
 using System.IO;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.CorDebug.Properties;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetCoreDbgEngineImpl : DbgEngineImpl {
+		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetCore;
+
 		public DotNetCoreDbgEngineImpl(DbgStartKind startKind)
 			: base(startKind) {
 		}

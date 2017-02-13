@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Debugger {
 	/// </summary>
 	public abstract class DbgProcess : DbgObject {
 		/// <summary>
+		/// Gets the owner debug manager
+		/// </summary>
+		public abstract DbgManager DbgManager { get; }
+
+		/// <summary>
 		/// Process id
 		/// </summary>
 		public abstract int Id { get; }
@@ -33,6 +38,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets all runtimes
 		/// </summary>
 		public abstract DbgRuntime[] Runtimes { get; }
+
+		/// <summary>
+		/// Raised when a runtime gets added or removed
+		/// </summary>
+		public abstract event EventHandler<RuntimesChangedEventArgs> RuntimesChanged;
 
 		/// <summary>
 		/// Gets the process bit size (32 or 64)
@@ -81,5 +91,32 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="size">Number of bytes to write</param>
 		/// <returns></returns>
 		public abstract int WriteMemory(ulong address, byte[] source, int sourceIndex, int size);
+	}
+
+	/// <summary>
+	/// <see cref="DbgProcess.RuntimesChanged"/> event args
+	/// </summary>
+	public struct RuntimesChangedEventArgs {
+		/// <summary>
+		/// The runtime that got added or removed
+		/// </summary>
+		public DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// true if the runtime was added, false if it was removed
+		/// </summary>
+		public bool Added { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="runtime">The runtime that got added or removed</param>
+		/// <param name="added">true if the runtime was added, false if it was removed</param>
+		public RuntimesChangedEventArgs(DbgRuntime runtime, bool added) {
+			if (runtime == null)
+				throw new ArgumentNullException(nameof(runtime));
+			Runtime = runtime;
+			Added = added;
+		}
 	}
 }
