@@ -130,6 +130,8 @@
     <Compile Include="Debugger\DbgRuntime.cs" />
     <Compile Include="Debugger\DbgThread.cs" />
     <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntime.cs" />
+    <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntimeKind.cs" />
+    <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntimeVersion.cs" />
     <Compile Include="Debugger\DotNet\DbgDnAppDomain.cs" />
     <Compile Include="Debugger\DotNet\DbgDnAssembly.cs" />
     <Compile Include="Debugger\DotNet\DbgDnModule.cs" />

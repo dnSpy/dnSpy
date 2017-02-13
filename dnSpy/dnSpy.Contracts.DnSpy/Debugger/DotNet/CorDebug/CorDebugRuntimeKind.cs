@@ -19,27 +19,17 @@
 
 namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
-	/// .NET runtime in a process
+	/// <see cref="CorDebugRuntime"/> kind
 	/// </summary>
-	public abstract class CorDebugRuntime : DbgDnRuntime {
+	public enum CorDebugRuntimeKind {
 		/// <summary>
-		/// Gets the runtime version
+		/// .NET Framework
 		/// </summary>
-		public abstract CorDebugRuntimeVersion Version { get; }
+		DotNetFramework,
 
 		/// <summary>
-		/// Gets the kind
+		/// .NET Core
 		/// </summary>
-		public CorDebugRuntimeKind Kind => Version.Kind;
-
-		/// <summary>
-		/// Path to the CLR dll (clr.dll, mscorwks.dll, mscorsvr.dll, coreclr.dll)
-		/// </summary>
-		public abstract string ClrFilename { get; }
-
-		/// <summary>
-		/// Path to the runtime directory
-		/// </summary>
-		public abstract string RuntimeDirectory { get; }
+		DotNetCore,
 	}
 }
