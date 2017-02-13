@@ -197,7 +197,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is an unsaved file. Are you sure you want to exit?.
+        ///   Looks up a localized string similar to There is an unsaved file. Do you want to save it before exiting?.
         /// </summary>
         public static string AskExitUnsavedFile {
             get {
@@ -206,7 +206,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are {0} unsaved files. Are you sure you want to exit?.
+        ///   Looks up a localized string similar to There are {0} unsaved files. Do you want to save them before exiting?.
         /// </summary>
         public static string AskExitUnsavedFiles {
             get {
