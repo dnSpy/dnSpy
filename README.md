@@ -202,13 +202,7 @@ Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Buil
 
 Check the [issues](https://github.com/0xd4d/dnSpy/issues) for open issues, especially issues with the [up for grabs](https://github.com/0xd4d/dnSpy/issues?q=is%3Aissue+is%3Aopen+label%3A%22up+for+grabs%22) tag since they should be easier to start with.
 
-If you send a PR, try to use the same coding style as the current project you're editing. Here's a short list:
-
-- Standard C# coding convention except:
-- Tabs, size = 4
-- Open curly braces ({) are always on the same line as the `if`/`while`/method-signature
-- Use `var` most of the time, except for primitive types where you can use the primitive type (eg. `int`) instead of `var`
-- Only use 'this.' if required
+If you send a PR, try to use the same coding style as the current project you're editing.
 
 # Translating dnSpy
 
