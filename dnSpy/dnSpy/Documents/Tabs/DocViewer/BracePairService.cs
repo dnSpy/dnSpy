@@ -151,13 +151,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var t = GetMatchingBracePosition(documentViewer);
 			if (t == null)
 				return;
-			var pos = t.Item1;
+			var pos = t.Value.position;
 			if (pos == null)
 				return;
 			var snapshot = documentViewer.TextView.TextSnapshot;
 			if (pos.Value > snapshot.Length)
 				return;
-			var bpResult = t.Item2;
+			var bpResult = t.Value.bracePairResult;
 			if (bpResult.Left.End > snapshot.Length || bpResult.Right.End > snapshot.Length)
 				return;
 			if (bpResult.Left.Start > bpResult.Right.Start)
@@ -173,7 +173,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			documentViewer.Caret.EnsureVisible();
 		}
 
-		static Tuple<int?, BracePairResult> GetMatchingBracePosition(IDocumentViewer documentViewer) {
+		static (int? position, BracePairResult bracePairResult)? GetMatchingBracePosition(IDocumentViewer documentViewer) {
 			var caretPos = documentViewer.TextView.Caret.Position;
 			if (caretPos.VirtualSpaces > 0)
 				return null;
@@ -186,18 +186,18 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return null;
 			var pair = pairColl.Value.First;
 			if (pair.Left.Start == pos)
-				return Tuple.Create<int?, BracePairResult>(pair.Right.End, pair);
+				return (pair.Right.End, pair);
 			if (pair.Right.End == pos)
-				return Tuple.Create<int?, BracePairResult>(pair.Left.Start, pair);
+				return (pair.Left.Start, pair);
 			if (pair.Right.Start == pos) {
 				var pair2 = coll.GetBracePairs(pos - 1);
 				if (pair2 != null && pair2.Value.First.Right.End == pos)
-					return Tuple.Create<int?, BracePairResult>(pair2.Value.First.Left.Start, pair2.Value.First);
+					return (pair2.Value.First.Left.Start, pair2.Value.First);
 			}
 			if (pair.Left.Start <= pos && pos <= pair.Left.End)
-				return Tuple.Create<int?, BracePairResult>(pair.Right.End, pair);
+				return (pair.Right.End, pair);
 			if (pair.Right.Start <= pos && pos <= pair.Right.End)
-				return Tuple.Create<int?, BracePairResult>(pair.Left.Start, pair);
+				return (pair.Left.Start, pair);
 			return null;
 		}
 

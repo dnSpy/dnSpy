@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
@@ -177,7 +176,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (accessor != null && accessor.HasOverrides) {
 				var baseAccessor = accessor.Overrides.First().MethodDeclaration.ResolveMethodDef();
 				if (baseAccessor != null) {
-					foreach (PropertyDef baseProp in baseAccessor.DeclaringType.Properties) {
+					foreach (var baseProp in baseAccessor.DeclaringType.Properties) {
 						if (baseProp.GetMethod == baseAccessor || baseProp.SetMethod == baseAccessor) {
 							basePropDef = baseProp;
 							break;
@@ -212,7 +211,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static TypeDef Resolve(this IType type) => type == null ? null : type.ScopeType.ResolveTypeDef();
+		public static TypeDef Resolve(this IType type) => type?.ScopeType.ResolveTypeDef();
 
 		/// <summary>
 		/// Returns true if the fields can be sorted and false if the original metadata order must be used
@@ -235,32 +234,32 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public static IEnumerable<IMemberDef> GetNonSortedMethodsPropertiesEvents(this TypeDef type) {
 			var hash = new HashSet<MethodDef>();
-			var defs = new List<Tuple<IMemberDef, List<MethodDef>>>();
+			var defs = new List<(IMemberDef def, List<MethodDef> list)>();
 			foreach (var p in type.Properties) {
 				var methods = new List<MethodDef>(p.GetAllMethods());
 				foreach (var m in methods)
 					hash.Add(m);
 				methods.Sort((a, b) => a.MDToken.Raw.CompareTo(b.MDToken.Raw));
-				defs.Add(Tuple.Create((IMemberDef)p, methods));
+				defs.Add((p, methods));
 			}
 			foreach (var e in type.Events) {
 				var methods = new List<MethodDef>(e.GetAllMethods());
 				foreach (var m in methods)
 					hash.Add(m);
 				methods.Sort((a, b) => a.MDToken.Raw.CompareTo(b.MDToken.Raw));
-				defs.Add(Tuple.Create((IMemberDef)e, methods));
+				defs.Add((e, methods));
 			}
 			foreach (var m in type.Methods) {
 				if (hash.Contains(m))
 					continue;
-				defs.Add(Tuple.Create((IMemberDef)m, new List<MethodDef> { m }));
+				defs.Add((m, new List<MethodDef> { m }));
 			}
 			defs.Sort((a, b) => {
-				if (a.Item2.Count == 0 || b.Item2.Count == 0)
-					return b.Item2.Count.CompareTo(a.Item2.Count);
-				return a.Item2[0].MDToken.Raw.CompareTo(b.Item2[0].MDToken.Raw);
+				if (a.list.Count == 0 || b.list.Count == 0)
+					return b.list.Count.CompareTo(a.list.Count);
+				return a.list[0].MDToken.Raw.CompareTo(b.list[0].MDToken.Raw);
 			});
-			return defs.Select(a => a.Item1);
+			return defs.Select(a => a.def);
 		}
 	}
 }

@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand GoToPreviousDiagnosticCommand => new RelayCommand(a => GoToPreviousDiagnostic(), a => CanGoToPreviousDiagnostic);
 
 		public bool CanCompile {
-			get { return canCompile; }
+			get => canCompile;
 			set {
 				if (canCompile != value) {
 					canCompile = value;
@@ -114,7 +114,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public ObservableCollection<CodeDocument> Documents { get; } = new ObservableCollection<CodeDocument>();
 		public CodeDocument SelectedDocument {
-			get { return selectedDocument; }
+			get => selectedDocument;
 			set {
 				if (selectedDocument != value) {
 					selectedDocument = value;
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
 		public CompilerDiagnosticVM SelectedCompilerDiagnosticVM {
-			get { return selectedCompilerDiagnosticVM; }
+			get => selectedCompilerDiagnosticVM;
 			set {
 				if (selectedCompilerDiagnosticVM != value) {
 					selectedCompilerDiagnosticVM = value;
@@ -259,11 +259,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		async Task StartDecompileAsync() {
 			bool canCompile = false, canceled = false;
 			var assemblyReferences = Array.Empty<CompilerMetadataReference>();
-			SimpleDocument[] simpleDocuments = Array.Empty<SimpleDocument>();
+			var simpleDocuments = Array.Empty<SimpleDocument>();
 			try {
 				var result = await DecompileAndGetRefsAsync();
-				assemblyReferences = result.Value;
-				simpleDocuments = result.Key.Documents.ToArray();
+				assemblyReferences = result.assemblyReferences;
+				simpleDocuments = result.result.Documents.ToArray();
 				canCompile = true;
 			}
 			catch (OperationCanceledException) {
@@ -313,11 +313,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			return vm;
 		}
 
-		async Task<KeyValuePair<DecompileAsyncResult, CompilerMetadataReference[]>> DecompileAndGetRefsAsync() {
+		async Task<(DecompileAsyncResult result, CompilerMetadataReference[] assemblyReferences)> DecompileAndGetRefsAsync() {
 			var result = await DecompileAsync().ConfigureAwait(false);
 			decompileCodeState.CancellationToken.ThrowIfCancellationRequested();
 			var refs = await CreateCompilerMetadataReferencesAsync(languageCompiler.RequiredAssemblyReferences, decompileCodeState.CancellationToken).ConfigureAwait(false);
-			return new KeyValuePair<DecompileAsyncResult, CompilerMetadataReference[]>(result, refs);
+			return (result, refs);
 		}
 
 		Task<DecompileAsyncResult> DecompileAsync() {

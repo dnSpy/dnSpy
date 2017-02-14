@@ -157,7 +157,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				return null;
 			foreach (var info in infos) {
 				Action<XamlContext, XElement> cb = null;
-				foreach (var node in info.Value) {
+				foreach (var node in info.nodes) {
 					var expr = node as ILExpression;
 					if (expr == null)
 						continue;
@@ -215,7 +215,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				}
 
 				if (cb != null) {
-					foreach (var id in info.Key)
+					foreach (var id in info.connIds)
 						connIds[id] = cb;
 				}
 			}
@@ -223,8 +223,8 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			return connIds;
 		}
 
-		List<KeyValuePair<IList<int>, List<ILNode>>> GetCaseBlocks(ILBlock method) {
-			var list = new List<KeyValuePair<IList<int>, List<ILNode>>>();
+		List<(IList<int> connIds, List<ILNode> nodes)> GetCaseBlocks(ILBlock method) {
+			var list = new List<(IList<int>, List<ILNode>)>();
 			var body = method.Body;
 			if (body.Count == 0)
 				return list;
@@ -234,7 +234,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				foreach (var lbl in sw.CaseBlocks) {
 					if (lbl.Values == null)
 						continue;
-					list.Add(new KeyValuePair<IList<int>, List<ILNode>>(lbl.Values, lbl.Body));
+					list.Add((lbl.Values, lbl.Body));
 				}
 				return list;
 			}
@@ -273,7 +273,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 						isEq ^= true;
 
 					if (isEq) {
-						list.Add(new KeyValuePair<IList<int>, List<ILNode>>(new[] { val }, cond.TrueBlock.Body));
+						list.Add((new[] { val }, cond.TrueBlock.Body));
 						if (cond.FalseBlock.Body.Count != 0) {
 							body = cond.FalseBlock.Body;
 							pos = 0;
@@ -281,14 +281,14 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					}
 					else {
 						if (cond.FalseBlock.Body.Count != 0) {
-							list.Add(new KeyValuePair<IList<int>, List<ILNode>>(new[] { val }, cond.FalseBlock.Body));
+							list.Add((new[] { val }, cond.FalseBlock.Body));
 							if (cond.TrueBlock.Body.Count != 0) {
 								body = cond.TrueBlock.Body;
 								pos = 0;
 							}
 						}
 						else {
-							list.Add(new KeyValuePair<IList<int>, List<ILNode>>(new[] { val }, body.Skip(pos).ToList()));
+							list.Add((new[] { val }, body.Skip(pos).ToList()));
 							return list;
 						}
 					}

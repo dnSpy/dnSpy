@@ -342,19 +342,19 @@ namespace dnSpy.Documents {
 				int i = 0;
 				foreach (var n in this.documents)
 					dict[n] = i++;
-				var list = new List<Tuple<IDsDocument, int>>(documents.Select(a => {
+				var list = new List<(IDsDocument document, int index)>(documents.Select(a => {
 					bool b = dict.TryGetValue(a, out int j);
 					Debug.Assert(b);
-					return Tuple.Create(a, b ? j : -1);
+					return ValueTuple.Create(a, b ? j : -1);
 				}));
-				list.Sort((a, b) => b.Item2.CompareTo(a.Item2));
+				list.Sort((a, b) => b.index.CompareTo(a.index));
 				foreach (var t in list) {
-					if (t.Item2 < 0)
+					if (t.index < 0)
 						continue;
-					Debug.Assert((uint)t.Item2 < (uint)this.documents.Count);
-					Debug.Assert(this.documents[t.Item2] == t.Item1);
-					this.documents.RemoveAt(t.Item2);
-					removedDocuments.Add(t.Item1);
+					Debug.Assert((uint)t.index < (uint)this.documents.Count);
+					Debug.Assert(this.documents[t.index] == t.document);
+					this.documents.RemoveAt(t.index);
+					removedDocuments.Add(t.document);
 				}
 			}
 

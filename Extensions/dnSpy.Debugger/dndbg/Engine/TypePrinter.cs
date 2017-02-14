@@ -322,14 +322,14 @@ namespace dndbg.Engine {
 				if (i > 0)
 					OutputWrite(".", TypeColor.Operator);
 
-				uint token = types[i].Item2.Token;
+				uint token = types[i].@class.Token;
 				var fullName = MDAPI.GetTypeDefName(mdi, token);
 
 				var typeKeyword = !ShowTypeKeywords || i != 0 ? null : GetTypeKeyword(fullName);
 				if (typeKeyword != null)
 					OutputWrite(typeKeyword, TypeColor.TypeKeyword);
 				else
-					WriteTypeName(fullName, token, GetTypeColor(types[i].Item1, types[i].Item2));
+					WriteTypeName(fullName, token, GetTypeColor(types[i].type, types[i].@class));
 			}
 		}
 
@@ -366,9 +366,9 @@ namespace dndbg.Engine {
 			return baseType.IsSystem("MulticastDelegate");
 		}
 
-		List<Tuple<CorType, CorClass>> GetEnclosingTypesAndSelf(CorType type, CorClass cls, CorModule module, IMetaDataImport mdi) {
-			var list = new List<Tuple<CorType, CorClass>>();
-			list.Add(Tuple.Create(type, cls));
+		List<(CorType type, CorClass @class)> GetEnclosingTypesAndSelf(CorType type, CorClass cls, CorModule module, IMetaDataImport mdi) {
+			var list = new List<(CorType, CorClass)>();
+			list.Add((type, cls));
 			uint token = cls.Token;
 			if (token == 0)
 				return null;
@@ -383,7 +383,7 @@ namespace dndbg.Engine {
 				type = cls.GetParameterizedType(CorElementType.Class);
 				if (type == null)
 					return null;
-				list.Add(Tuple.Create(type, cls));
+				list.Add((type, cls));
 			}
 
 			list.Reverse();
@@ -493,20 +493,20 @@ namespace dndbg.Engine {
 					value = value.NeuterCheckDereferencedValue ?? value;
 
 				// It's shown reverse in C# so need to collect all array types here
-				List<Tuple<CorType, CorValue>> list = null;
+				List<(CorType type, CorValue value)> list = null;
 				while (type != null && (type.ElementType == CorElementType.SZArray || type.ElementType == CorElementType.Array)) {
 					if (list == null)
-						list = new List<Tuple<CorType, CorValue>>();
-					list.Add(Tuple.Create(type, value));
+						list = new List<(CorType, CorValue)>();
+					list.Add((type, value));
 					value = value?.NeuterCheckDereferencedValue;
 					type = type.FirstTypeParameter;
 				}
 				if (list != null) {
 					var t = list[list.Count - 1];
-					Write(t.Item1.FirstTypeParameter, t.Item2?.NeuterCheckDereferencedValue);
+					Write(t.type.FirstTypeParameter, t.value?.NeuterCheckDereferencedValue);
 					foreach (var tuple in list) {
-						var aryType = tuple.Item1;
-						var aryValue = tuple.Item2;
+						var aryType = tuple.type;
+						var aryValue = tuple.value;
 						if (aryType.ElementType == CorElementType.Array) {
 							OutputWrite("[", TypeColor.Punctuation);
 							uint rank = aryType.Rank;

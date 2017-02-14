@@ -144,28 +144,28 @@ namespace dnSpy.Debugger.Threads {
 			output.Write(BoxedTextColor.Number, sb.ToString());
 		}
 
-		static readonly Tuple<CorDebugUserState, string>[] UserStates = new Tuple<CorDebugUserState, string>[] {
-			Tuple.Create(CorDebugUserState.USER_STOP_REQUESTED, dnSpy_Debugger_Resources.Thread_UserState_StopRequested),
-			Tuple.Create(CorDebugUserState.USER_SUSPEND_REQUESTED, dnSpy_Debugger_Resources.Thread_UserState_SuspendRequested),
-			Tuple.Create(CorDebugUserState.USER_BACKGROUND, dnSpy_Debugger_Resources.Thread_UserState_Background),
-			Tuple.Create(CorDebugUserState.USER_UNSTARTED, dnSpy_Debugger_Resources.Thread_UserState_Unstarted),
-			Tuple.Create(CorDebugUserState.USER_STOPPED, dnSpy_Debugger_Resources.Thread_UserState_Stopped),
-			Tuple.Create(CorDebugUserState.USER_WAIT_SLEEP_JOIN, dnSpy_Debugger_Resources.Thread_UserState_WaitSleepJoin),
-			Tuple.Create(CorDebugUserState.USER_SUSPENDED, dnSpy_Debugger_Resources.Thread_UserState_Suspended),
-			Tuple.Create(CorDebugUserState.USER_UNSAFE_POINT, dnSpy_Debugger_Resources.Thread_UserState_UnsafePoint),
-			Tuple.Create(CorDebugUserState.USER_THREADPOOL, dnSpy_Debugger_Resources.Thread_UserState_ThreadPool),
+		static readonly (CorDebugUserState flag, string name)[] UserStates = new (CorDebugUserState, string)[] {
+			(CorDebugUserState.USER_STOP_REQUESTED, dnSpy_Debugger_Resources.Thread_UserState_StopRequested),
+			(CorDebugUserState.USER_SUSPEND_REQUESTED, dnSpy_Debugger_Resources.Thread_UserState_SuspendRequested),
+			(CorDebugUserState.USER_BACKGROUND, dnSpy_Debugger_Resources.Thread_UserState_Background),
+			(CorDebugUserState.USER_UNSTARTED, dnSpy_Debugger_Resources.Thread_UserState_Unstarted),
+			(CorDebugUserState.USER_STOPPED, dnSpy_Debugger_Resources.Thread_UserState_Stopped),
+			(CorDebugUserState.USER_WAIT_SLEEP_JOIN, dnSpy_Debugger_Resources.Thread_UserState_WaitSleepJoin),
+			(CorDebugUserState.USER_SUSPENDED, dnSpy_Debugger_Resources.Thread_UserState_Suspended),
+			(CorDebugUserState.USER_UNSAFE_POINT, dnSpy_Debugger_Resources.Thread_UserState_UnsafePoint),
+			(CorDebugUserState.USER_THREADPOOL, dnSpy_Debugger_Resources.Thread_UserState_ThreadPool),
 		};
 
 		public void WriteUserState(ThreadVM vm) {
 			var state = vm.UserState;
 			bool needComma = false;
 			foreach (var t in UserStates) {
-				if ((state & t.Item1) != 0) {
-					state &= ~t.Item1;
+				if ((state & t.flag) != 0) {
+					state &= ~t.flag;
 					if (needComma)
 						output.WriteCommaSpace();
 					needComma = true;
-					output.Write(BoxedTextColor.EnumField, t.Item2);
+					output.Write(BoxedTextColor.EnumField, t.name);
 				}
 			}
 			if (state != 0) {

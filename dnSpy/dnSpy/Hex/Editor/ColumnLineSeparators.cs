@@ -240,14 +240,14 @@ namespace dnSpy.Hex.Editor {
 			var top = wpfHexView.ViewportTop;
 			var bottom = wpfHexView.ViewportBottom;
 			foreach (var info in GetColumnPositions(line.BufferLine)) {
-				var lineKind = GetColumnLineKind(info.Key);
+				var lineKind = GetColumnLineKind(info.kind);
 				if (lineKind == HexColumnLineKind.None)
 					continue;
-				var props = editorFormatMap.GetProperties(classificationTypeNames[(int)info.Key]);
+				var props = editorFormatMap.GetProperties(classificationTypeNames[(int)info.kind]);
 				var pen = GetPen(props, lineKind);
-				var bounds = line.GetCharacterBounds(info.Value);
+				var bounds = line.GetCharacterBounds(info.linePosition);
 				var x = Math.Round(bounds.Left + bounds.Width / 2 - PEN_THICKNESS / 2) + 0.5;
-				var lineElem = new LineElement(info.Key, x, top, bottom, pen);
+				var lineElem = new LineElement(info.kind, x, top, bottom, pen);
 				bool added = adornmentLayer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, lineElem, null);
 				if (added)
 					lineElements.Add(lineElem);
@@ -332,7 +332,7 @@ namespace dnSpy.Hex.Editor {
 		static readonly IEnumerable<double> dashed_3_3_DashStyle = new ReadOnlyCollection<double>(new double[] { 3, 3 });
 		static readonly IEnumerable<double> dashed_4_4_DashStyle = new ReadOnlyCollection<double>(new double[] { 4, 4 });
 
-		IEnumerable<KeyValuePair<LineElementKind, int>> GetColumnPositions(HexBufferLine line) {
+		IEnumerable<(LineElementKind kind, int linePosition)> GetColumnPositions(HexBufferLine line) {
 			var columns = line.ColumnOrder.Where(a => line.IsColumnPresent(a)).ToArray();
 			for (int i = 1; i < columns.Length; i++) {
 				Debug.Assert(i < 3);
@@ -342,7 +342,7 @@ namespace dnSpy.Hex.Editor {
 				var colSpan2 = line.LineProvider.GetColumnSpan(columns[i]);
 				Debug.Assert(colSpan1.End < colSpan2.Start);
 				var kind = i == 1 ? LineElementKind.Column0 : LineElementKind.Column1;
-				yield return new KeyValuePair<LineElementKind, int>(kind, colSpan1.End);
+				yield return (kind, colSpan1.End);
 			}
 
 			if (line.IsValuesColumnPresent) {
@@ -351,7 +351,7 @@ namespace dnSpy.Hex.Editor {
 					Debug.Assert(spanInfos[i - 1].TextSpan.End == spanInfos[i].TextSpan.Start);
 					int linePosition = spanInfos[i - 1].TextSpan.End - 1;
 					var kind = i % 2 == 1 ? LineElementKind.Group0 : LineElementKind.Group1;
-					yield return new KeyValuePair<LineElementKind, int>(kind, linePosition);
+					yield return (kind, linePosition);
 				}
 			}
 		}

@@ -1172,8 +1172,8 @@ namespace dndbg.Engine {
 			ICLRRuntimeInfo rtInfo = null;
 			var process = Process.GetProcessById(options.ProcessId);
 			foreach (var t in GetCLRRuntimeInfos(process)) {
-				if (string.IsNullOrEmpty(clrType.DebuggeeVersion) || t.Item1 == clrType.DebuggeeVersion) {
-					rtInfo = t.Item2;
+				if (string.IsNullOrEmpty(clrType.DebuggeeVersion) || t.versionString == clrType.DebuggeeVersion) {
+					rtInfo = t.rtInfo;
 					break;
 				}
 			}
@@ -1193,7 +1193,7 @@ namespace dndbg.Engine {
 			return CoreCLRHelper.CreateCorDebug(clrType, out clrPath);
 		}
 
-		static IEnumerable<Tuple<string, ICLRRuntimeInfo>> GetCLRRuntimeInfos(Process process) {
+		static IEnumerable<(string versionString, ICLRRuntimeInfo rtInfo)> GetCLRRuntimeInfos(Process process) {
 			var clsid = new Guid("9280188D-0E8E-4867-B30C-7FA83884E8DE");
 			var riid = typeof(ICLRMetaHost).GUID;
 			var mh = (ICLRMetaHost)NativeMethods.CLRCreateInstance(ref clsid, ref riid);
@@ -1213,7 +1213,7 @@ namespace dndbg.Engine {
 				sb.EnsureCapacity((int)chBuffer);
 				hr = rtInfo.GetVersionString(sb, ref chBuffer);
 
-				yield return Tuple.Create(sb.ToString(), rtInfo);
+				yield return (sb.ToString(), rtInfo);
 			}
 		}
 

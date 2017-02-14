@@ -142,7 +142,7 @@ namespace dnSpy.Documents.Tabs {
 
 		static void AddTimerWait(DecompilationCache dc) {
 			Timer timer = null;
-			WeakReference weakSelf = new WeakReference(dc);
+			var weakSelf = new WeakReference(dc);
 			timer = new Timer(a => {
 				timer.Dispose();
 				var self = (DecompilationCache)weakSelf.Target;

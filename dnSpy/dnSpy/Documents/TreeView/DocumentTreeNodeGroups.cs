@@ -99,21 +99,21 @@ namespace dnSpy.Documents.TreeView {
 			if (newOrders == null)
 				throw new ArgumentNullException(nameof(newOrders));
 
-			var infos = new Tuple<double, MemberKind, ITreeNodeGroup2>[] {
-				Tuple.Create(DocumentTreeViewConstants.ORDER_TYPE_METHOD, MemberKind.Methods, MethodTreeNodeGroupType),
-				Tuple.Create(DocumentTreeViewConstants.ORDER_TYPE_PROPERTY, MemberKind.Properties, PropertyTreeNodeGroupType),
-				Tuple.Create(DocumentTreeViewConstants.ORDER_TYPE_EVENT, MemberKind.Events, EventTreeNodeGroupType),
-				Tuple.Create(DocumentTreeViewConstants.ORDER_TYPE_FIELD, MemberKind.Fields, FieldTreeNodeGroupType),
-				Tuple.Create(DocumentTreeViewConstants.ORDER_TYPE_TYPE, MemberKind.NestedTypes, TypeTreeNodeGroupType),
+			var infos = new (double order, MemberKind kind, ITreeNodeGroup2 group)[] {
+				(DocumentTreeViewConstants.ORDER_TYPE_METHOD, MemberKind.Methods, MethodTreeNodeGroupType),
+				(DocumentTreeViewConstants.ORDER_TYPE_PROPERTY, MemberKind.Properties, PropertyTreeNodeGroupType),
+				(DocumentTreeViewConstants.ORDER_TYPE_EVENT, MemberKind.Events, EventTreeNodeGroupType),
+				(DocumentTreeViewConstants.ORDER_TYPE_FIELD, MemberKind.Fields, FieldTreeNodeGroupType),
+				(DocumentTreeViewConstants.ORDER_TYPE_TYPE, MemberKind.NestedTypes, TypeTreeNodeGroupType),
 			};
 			if (infos.Length != newOrders.Length)
 				throw new ArgumentException();
 
 			var dict = new Dictionary<MemberKind, ITreeNodeGroup2>(infos.Length);
 			foreach (var info in infos)
-				dict[info.Item2] = info.Item3;
+				dict[info.kind] = info.group;
 			for (int i = 0; i < newOrders.Length; i++)
-				dict[newOrders[i]].Order = infos[i].Item1;
+				dict[newOrders[i]].Order = infos[i].order;
 		}
 	}
 

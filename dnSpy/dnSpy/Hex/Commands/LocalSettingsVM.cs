@@ -81,7 +81,7 @@ namespace dnSpy.Hex.Commands {
 		public Int32VM OffsetBitSizeVM { get; }
 		public Int32VM BytesPerLineVM { get; }
 		public EnumListVM HexValuesDisplayFormatVM { get; }
-		static readonly EnumVM[] hexValuesDisplayFormatList = SettingsConstants.ValueFormatList.Select(a => new EnumVM(a.Key, a.Value)).ToArray();
+		static readonly EnumVM[] hexValuesDisplayFormatList = SettingsConstants.ValueFormatList.Select(a => new EnumVM(a.displayFormat, a.text)).ToArray();
 
 		public LocalSettingsVM(LocalGroupOptions options, LocalGroupOptions defaultOptions) {
 			origOptions = options;

@@ -342,16 +342,16 @@ namespace dnSpy.Debugger.Modules {
 
 	//[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
 	sealed class ShowInMemoryXModulesSubCtxMenuCommand : ModulesCtxMenuCommand, IMenuItemProvider {
-		readonly Tuple<IMenuItem, string, string>[] subCmds;
+		readonly (IMenuItem command, string header, string inputGestureText)[] subCmds;
 
 		[ImportingConstructor]
 		ShowInMemoryXModulesSubCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowService> memoryWindowService)
 			: base(theDebugger, modulesContent) {
-			subCmds = new Tuple<IMenuItem, string, string>[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
+			subCmds = new (IMenuItem, string, string)[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < subCmds.Length; i++) {
 				var header = MemoryWindowsHelper.GetHeaderText(i);
 				var inputGestureText = MemoryWindowsHelper.GetCtrlInputGestureText(i);
-				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowModulesCtxMenuCommand(theDebugger, modulesContent, i, memoryWindowService), header, inputGestureText);
+				subCmds[i] = (new ShowInMemoryWindowModulesCtxMenuCommand(theDebugger, modulesContent, i, memoryWindowService), header, inputGestureText);
 			}
 		}
 
@@ -365,10 +365,10 @@ namespace dnSpy.Debugger.Modules {
 
 			for (int i = 0; i < subCmds.Length; i++) {
 				var info = subCmds[i];
-				var attr = new ExportMenuItemAttribute { Header = info.Item2, Icon = DsImagesAttribute.MemoryWindow };
-				if (!string.IsNullOrEmpty(info.Item3))
-					attr.InputGestureText = info.Item3;
-				yield return new CreatedMenuItem(attr, info.Item1);
+				var attr = new ExportMenuItemAttribute { Header = info.header, Icon = DsImagesAttribute.MemoryWindow };
+				if (!string.IsNullOrEmpty(info.inputGestureText))
+					attr.InputGestureText = info.inputGestureText;
+				yield return new CreatedMenuItem(attr, info.command);
 			}
 		}
 	}
@@ -513,13 +513,13 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		void Save(ModuleVM[] files) {
-			var list = new Tuple<DnModule, string>[files.Length];
+			var list = new (DnModule module, string filename)[files.Length];
 			if (files.Length == 1) {
 				var vm = files[0];
 				var filename = new PickSaveFilename().GetFilename(GetModuleFilename(vm.Module), GetDefaultExtension(GetModuleFilename(vm.Module), vm.IsExe, vm.Module.CorModule.IsManifestModule), PickFilenameConstants.DotNetAssemblyOrModuleFilter);
 				if (string.IsNullOrEmpty(filename))
 					return;
-				list[0] = Tuple.Create(vm.Module, filename);
+				list[0] = (vm.Module, filename);
 			}
 			else {
 				var dir = new PickDirectory().GetDirectory(null);
@@ -535,7 +535,7 @@ namespace dnSpy.Debugger.Modules {
 						filename += file.IsExe ? ".exe" : ".dll";
 					else
 						filename += ".netmodule";
-					list[i] = Tuple.Create(file.Module, Path.Combine(dir, filename));
+					list[i] = (file.Module, Path.Combine(dir, filename));
 				}
 			}
 

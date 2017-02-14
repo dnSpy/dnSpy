@@ -105,18 +105,18 @@ namespace dnSpy.Debugger.Exceptions {
 			if (disableSaveCounter != 0)
 				return;
 			var section = settingsService.RecreateSection(SETTINGS_GUID);
-			foreach (var tuple in GetDiff()) {
+			foreach (var t in GetDiff()) {
 				var exx = section.CreateSection("Exception");
-				exx.Attribute("ExceptionType", tuple.Item2.ExceptionType);
-				exx.Attribute("FullName", tuple.Item2.Name);
-				exx.Attribute("BreakOnFirstChance", tuple.Item2.BreakOnFirstChance);
-				if (tuple.Item2.IsOtherExceptions)
-					exx.Attribute("IsOtherExceptions", tuple.Item2.IsOtherExceptions);
-				exx.Attribute("DiffType", tuple.Item1);
+				exx.Attribute("ExceptionType", t.exInfo.ExceptionType);
+				exx.Attribute("FullName", t.exInfo.Name);
+				exx.Attribute("BreakOnFirstChance", t.exInfo.BreakOnFirstChance);
+				if (t.exInfo.IsOtherExceptions)
+					exx.Attribute("IsOtherExceptions", t.exInfo.IsOtherExceptions);
+				exx.Attribute("DiffType", t.diffType);
 			}
 		}
 
-		IEnumerable<Tuple<ExceptionDiffType, ExceptionInfo>> GetDiff() {
+		IEnumerable<(ExceptionDiffType diffType, ExceptionInfo exInfo)> GetDiff() {
 			var defaultInfos = new Dictionary<ExceptionInfoKey, ExceptionInfo>();
 			foreach (var info in defaultExceptionSettings.Value.ExceptionInfos)
 				defaultInfos[info.Key] = info;
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Exceptions {
 				if (info.IsOtherExceptions) {
 					if (!info.BreakOnFirstChance)
 						continue;
-					yield return Tuple.Create(ExceptionDiffType.AddOrUpdate, info);
+					yield return (ExceptionDiffType.AddOrUpdate, info);
 					continue;
 				}
 
@@ -134,10 +134,10 @@ namespace dnSpy.Debugger.Exceptions {
 					if (info.Equals(info2))
 						continue;
 				}
-				yield return Tuple.Create(ExceptionDiffType.AddOrUpdate, info);
+				yield return (ExceptionDiffType.AddOrUpdate, info);
 			}
 			foreach (var info in defaultInfos.Values)
-				yield return Tuple.Create(ExceptionDiffType.Remove, info);
+				yield return (ExceptionDiffType.Remove, info);
 		}
 
 		sealed class TemporarilyDisableSaveHelper : IDisposable {

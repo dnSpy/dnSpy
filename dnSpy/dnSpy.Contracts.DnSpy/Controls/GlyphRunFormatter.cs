@@ -97,7 +97,7 @@ namespace dnSpy.Contracts.Controls {
 		}
 
 		public TextLine FormatLine(TextSource textSource, int firstCharIndex, double paragraphWidth, TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak) {
-			var runs = new List<Tuple<TextRun, GlyphRun, int, double>>();
+			var runs = new List<(TextRun, GlyphRun, int, double)>();
 
 			int index = firstCharIndex;
 			double x = paragraphProperties.Indent, height = 0, baseline = 0;
@@ -115,7 +115,7 @@ namespace dnSpy.Contracts.Controls {
 
 				if (run is TextEndOfLine || run == null) {
 					index += len;
-					runs.Add(Tuple.Create(run, (GlyphRun)null, 0, 0.0));
+					runs.Add((run, (GlyphRun)null, 0, 0.0));
 					break;
 				}
 				else if (run is TextCharacters chrs) {
@@ -165,7 +165,7 @@ namespace dnSpy.Contracts.Controls {
 					var glyphRun = new GlyphRun(
 						gl, 0, false, fontSize, glyphIndexes, origin, advanceWidths,
 						null, null, null, null, null, null);
-					runs.Add(Tuple.Create(run, glyphRun, trailWhitespace, trailWhitespaceWidth));
+					runs.Add((run, glyphRun, trailWhitespace, trailWhitespaceWidth));
 
 					x += totalWidth + trailWhitespaceWidth;
 
@@ -173,7 +173,7 @@ namespace dnSpy.Contracts.Controls {
 				}
 				else if (run is TextEmbeddedObject obj) {
 					var metrics = obj.Format(paragraphWidth - x);
-					runs.Add(Tuple.Create(run, (GlyphRun)null, 0, metrics.Width));
+					runs.Add((run, (GlyphRun)null, 0, metrics.Width));
 
 					height = Math.Max(height, obj.Format(paragraphWidth - x).Height);
 					x += metrics.Width;
@@ -192,7 +192,7 @@ namespace dnSpy.Contracts.Controls {
 		}
 
 		class GlyphRunLine : TextLine {
-			internal Tuple<TextRun, GlyphRun, int, double>[] entries;
+			internal (TextRun textRun, GlyphRun glyphRun, int trailWhitespace, double trailWhitespaceWidth)[] entries;
 			internal double baseline;
 			internal double width;
 			internal double height;
@@ -278,13 +278,13 @@ namespace dnSpy.Contracts.Controls {
 
 			public override void Draw(DrawingContext drawingContext, Point origin, InvertAxes inversion) {
 				foreach (var entry in entries) {
-					if (entry.Item2 == null)
+					if (entry.glyphRun == null)
 						continue;
-					if (entry.Item3 == entry.Item1.Length) // All whitespace, no need to render
+					if (entry.trailWhitespace == entry.textRun.Length) // All whitespace, no need to render
 						continue;
 
-					var textRun = entry.Item1;
-					var glyphRun = entry.Item2;
+					var textRun = entry.textRun;
+					var glyphRun = entry.glyphRun;
 					var textProps = textRun.Properties;
 
 					var newRun = Clone(glyphRun, new Point {
@@ -323,18 +323,18 @@ namespace dnSpy.Contracts.Controls {
 				double currentDistance = 0;
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.Item2 == null) {
-						var newDistance = currentDistance + entry.Item4;
+					if (entry.glyphRun == null) {
+						var newDistance = currentDistance + entry.trailWhitespaceWidth;
 						if (newDistance > distance)
 							return new CharacterHit(index, 0);
 						currentDistance = newDistance;
-						index += entry.Item1.Length;
+						index += entry.textRun.Length;
 
 						continue;
 					}
 
-					index = getCharOffset(entry.Item1.CharacterBufferReference);
-					var widthList = entry.Item2.AdvanceWidths;
+					index = getCharOffset(entry.textRun.CharacterBufferReference);
+					var widthList = entry.glyphRun.AdvanceWidths;
 					for (int i = 0; i < widthList.Count; i++) {
 						var newDistance = currentDistance + widthList[i];
 						if (newDistance > distance + widthList[i] * 2 / 3)
@@ -350,17 +350,17 @@ namespace dnSpy.Contracts.Controls {
 				double distance = 0;
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.Item2 == null) {
+					if (entry.glyphRun == null) {
 						if (index == characterHit.FirstCharacterIndex)
 							return distance;
-						distance += entry.Item4;
-						index += entry.Item1.Length;
+						distance += entry.trailWhitespaceWidth;
+						index += entry.textRun.Length;
 
 						continue;
 					}
 
-					index = getCharOffset(entry.Item1.CharacterBufferReference);
-					var widthList = entry.Item2.AdvanceWidths;
+					index = getCharOffset(entry.textRun.CharacterBufferReference);
+					var widthList = entry.glyphRun.AdvanceWidths;
 					for (int i = 0; i < widthList.Count; i++) {
 						if (index == characterHit.FirstCharacterIndex)
 							return distance;
@@ -379,25 +379,25 @@ namespace dnSpy.Contracts.Controls {
 
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.Item2 == null) {
+					if (entry.glyphRun == null) {
 						if (index == firstTextSourceCharacterIndex) {
 							found = true;
 							x = d;
 						}
 						if (found) {
-							width += entry.Item4;
-							textLength -= entry.Item1.Length;
+							width += entry.trailWhitespaceWidth;
+							textLength -= entry.textRun.Length;
 							if (textLength == 0)
 								return new[] { makeBounds(new Rect(x, 0, width, height)) };
 						}
-						d += entry.Item4;
-						index += entry.Item1.Length;
+						d += entry.trailWhitespaceWidth;
+						index += entry.textRun.Length;
 
 						continue;
 					}
 
-					index = getCharOffset(entry.Item1.CharacterBufferReference);
-					var widthList = entry.Item2.AdvanceWidths;
+					index = getCharOffset(entry.textRun.CharacterBufferReference);
+					var widthList = entry.glyphRun.AdvanceWidths;
 					for (int i = 0; i < widthList.Count; i++) {
 						if (index == firstTextSourceCharacterIndex) {
 							found = true;
@@ -421,33 +421,27 @@ namespace dnSpy.Contracts.Controls {
 
 			public override IList<TextSpan<TextRun>> GetTextRunSpans() => entries.Select(entry => new TextSpan<TextRun>(entry.Item1.Length, entry.Item1)).ToList();
 
-			public override double Width {
-				get { return width; }
-			}
-
-			public override double Height {
-				get { return height; }
-			}
-
-			public override double Baseline {
-				get { return baseline; }
-			}
-
-			public override int Length {
-				get { return entries.Sum(entry => entry.Item1.Length); }
-			}
-
+			public override double Width => width;
+			public override double Height => height;
+			public override double Baseline => baseline;
+			public override int Length => entries.Sum(entry => entry.textRun.Length);
 			public override int TrailingWhitespaceLength {
 				get {
-					var entry = entries.LastOrDefault(e => e.Item2 != null);
-					return entry == null ? 0 : entry.Item3;
+					foreach (var e in entries.Reverse()) {
+						if (e.glyphRun != null)
+							return e.trailWhitespace;
+					}
+					return 0;
 				}
 			}
 
 			public override double WidthIncludingTrailingWhitespace {
 				get {
-					var entry = entries.LastOrDefault(e => e.Item2 != null);
-					return entry == null ? width : width + entry.Item4;
+					foreach (var e in entries.Reverse()) {
+						if (e.glyphRun != null)
+							return width + e.trailWhitespaceWidth;
+					}
+					return width;
 				}
 			}
 		}

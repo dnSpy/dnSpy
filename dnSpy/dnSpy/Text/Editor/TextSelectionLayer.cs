@@ -123,14 +123,14 @@ namespace dnSpy.Text.Editor {
 				var info = CreateStreamSelection();
 				if (info == null)
 					return;
-				CreateMarkerElement(info.Value.Key, info.Value.Value);
+				CreateMarkerElement(info.Value.span, info.Value.geometry);
 			}
 			else {
 				Debug.Assert(textSelection.Mode == TextSelectionMode.Box);
 				var info = CreateBoxSelection();
 				if (info == null)
 					return;
-				CreateMarkerElement(info.Value.Key, info.Value.Value);
+				CreateMarkerElement(info.Value.span, info.Value.geometry);
 			}
 		}
 
@@ -146,7 +146,7 @@ namespace dnSpy.Text.Editor {
 
 		void OnMarkerElementRemoved() => markerElement = null;
 
-		KeyValuePair<SnapshotSpan, Geometry>? CreateStreamSelection() {
+		(SnapshotSpan span, Geometry geometry)? CreateStreamSelection() {
 			Debug.Assert(!textSelection.IsEmpty && textSelection.Mode == TextSelectionMode.Stream);
 			bool isMultiLine = MarkerHelper.IsMultiLineSpan(textSelection.TextView, textSelection.StreamSelectionSpan.SnapshotSpan);
 			var span = textSelection.StreamSelectionSpan.Overlap(new VirtualSnapshotSpan(textSelection.TextView.TextViewLines.FormattedSpan));
@@ -155,10 +155,10 @@ namespace dnSpy.Text.Editor {
 			var geo = MarkerHelper.CreateGeometry(textSelection.TextView, span.Value, false, isMultiLine);
 			if (geo == null)
 				return null;
-			return new KeyValuePair<SnapshotSpan, Geometry>(span.Value.SnapshotSpan, geo);
+			return (span.Value.SnapshotSpan, geo);
 		}
 
-		KeyValuePair<SnapshotSpan, Geometry>? CreateBoxSelection() {
+		(SnapshotSpan span, Geometry geometry)? CreateBoxSelection() {
 			Debug.Assert(!textSelection.IsEmpty && textSelection.Mode == TextSelectionMode.Box);
 			var allSpans = textSelection.VirtualSelectedSpans;
 			var spans = GetVisibleBoxSpans(allSpans);
@@ -168,7 +168,7 @@ namespace dnSpy.Text.Editor {
 			if (geo == null)
 				return null;
 			var fullSpan = new SnapshotSpan(spans[0].SnapshotSpan.Start, spans[spans.Count - 1].SnapshotSpan.End);
-			return new KeyValuePair<SnapshotSpan, Geometry>(fullSpan, geo);
+			return (fullSpan, geo);
 		}
 
 		List<VirtualSnapshotSpan> GetVisibleBoxSpans(IList<VirtualSnapshotSpan> allSpans) {

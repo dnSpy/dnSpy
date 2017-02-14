@@ -25,13 +25,13 @@ using dnlib.DotNet;
 
 namespace dnSpy.Debugger {
 	struct CachedOutput : IEquatable<CachedOutput> {
-		public readonly List<Tuple<string, TypeColor>> data;
+		public readonly List<(string text, TypeColor color)> data;
 
 		public static CachedOutput Create() => new CachedOutput(false);
 
-		public CachedOutput(bool dummy) => data = new List<Tuple<string, TypeColor>>();
+		public CachedOutput(bool dummy) => data = new List<(string, TypeColor)>();
 
-		public void Add(string s, TypeColor type) => data.Add(Tuple.Create(s, type));
+		public void Add(string s, TypeColor type) => data.Add((s, type));
 
 		public bool Equals(CachedOutput other) {
 			if (data.Count != other.data.Count)
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger {
 			for (int i = 0; i < data.Count; i++) {
 				var di = data[i];
 				var odi = other.data[i];
-				if (di.Item2 != odi.Item2 || di.Item1 != odi.Item1)
+				if (di.color != odi.color || di.text != odi.text)
 					return false;
 			}
 			return true;
@@ -50,14 +50,14 @@ namespace dnSpy.Debugger {
 		public override int GetHashCode() {
 			int hc = data.Count << 16;
 			foreach (var d in data)
-				hc ^= d.Item1.GetHashCode() ^ (int)d.Item2;
+				hc ^= d.text.GetHashCode() ^ (int)d.color;
 			return hc;
 		}
 
 		public override string ToString() {
 			var sb = new StringBuilder();
 			foreach (var t in data)
-				sb.Append(t.Item1);
+				sb.Append(t.text);
 			return sb.ToString();
 		}
 

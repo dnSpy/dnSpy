@@ -128,10 +128,10 @@ namespace dnSpy.Hex.Files.DotNet {
 					Add(dict, tables.MDTables[(int)info.Table], info.Column1);
 			}
 
-			var list = new List<KeyValuePair<uint, uint[]>>(dict.Count);
+			var list = new List<(uint pos, uint[] tokens)>(dict.Count);
 			foreach (var kv in dict)
-				list.Add(new KeyValuePair<uint, uint[]>(kv.Key, kv.Value.ToArray()));
-			list.Sort((a, b) => a.Key.CompareTo(b.Key));
+				list.Add((kv.Key, kv.Value.ToArray()));
+			list.Sort((a, b) => a.pos.CompareTo(b.pos));
 
 			var infos = new KnownStringInfo[list.Count];
 			var start = Span.Span.Start;
@@ -139,11 +139,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			int i;
 			for (i = 0; i < infos.Length; i++) {
 				var kv = list[i];
-				var pos = start + kv.Key;
+				var pos = start + kv.pos;
 				if (pos >= end)
 					break;
-				var span = HexSpan.FromBounds(pos, i + 1 < list.Count ? start + list[i + 1].Key : end);
-				infos[i] = new KnownStringInfo(span, kv.Value);
+				var span = HexSpan.FromBounds(pos, i + 1 < list.Count ? start + list[i + 1].pos : end);
+				infos[i] = new KnownStringInfo(span, kv.tokens);
 			}
 			if (i != infos.Length)
 				Array.Resize(ref infos, i);

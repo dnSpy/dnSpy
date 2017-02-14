@@ -180,13 +180,13 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	sealed class BytesPerLineSubContexMenuEntry : HexViewCommandTargetMenuItemBase2, IMenuItemProvider {
 		public override void Execute(HexViewContext context) { }
 
-		static readonly Tuple<int, string>[] subMenus = new Tuple<int, string>[] {
-			Tuple.Create(0, dnSpy_Resources.HexEditor_BytesPerLine_FitToWidth),
-			Tuple.Create(8, dnSpy_Resources.HexEditor_BytesPerLine_8),
-			Tuple.Create(16, dnSpy_Resources.HexEditor_BytesPerLine_16),
-			Tuple.Create(32, dnSpy_Resources.HexEditor_BytesPerLine_32),
-			Tuple.Create(48, dnSpy_Resources.HexEditor_BytesPerLine_48),
-			Tuple.Create(64, dnSpy_Resources.HexEditor_BytesPerLine_64),
+		static readonly (int bits, string header)[] subMenus = new (int, string)[] {
+			(0, dnSpy_Resources.HexEditor_BytesPerLine_FitToWidth),
+			(8, dnSpy_Resources.HexEditor_BytesPerLine_8),
+			(16, dnSpy_Resources.HexEditor_BytesPerLine_16),
+			(32, dnSpy_Resources.HexEditor_BytesPerLine_32),
+			(48, dnSpy_Resources.HexEditor_BytesPerLine_48),
+			(64, dnSpy_Resources.HexEditor_BytesPerLine_64),
 		};
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
@@ -198,9 +198,9 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 			for (int i = 0; i < subMenus.Length; i++) {
 				var info = subMenus[i];
-				var attr = new ExportMenuItemAttribute { Header = info.Item2 };
-				bool isChecked = info.Item1 == hexView.Options.GetOptionValue(DefaultHexViewOptions.BytesPerLineId);
-				var item = new MyMenuItem(ctx2 => hexView.Options.SetOptionValue(DefaultHexViewOptions.BytesPerLineId, info.Item1), isChecked);
+				var attr = new ExportMenuItemAttribute { Header = info.header };
+				bool isChecked = info.bits == hexView.Options.GetOptionValue(DefaultHexViewOptions.BytesPerLineId);
+				var item = new MyMenuItem(ctx2 => hexView.Options.SetOptionValue(DefaultHexViewOptions.BytesPerLineId, info.bits), isChecked);
 				yield return new CreatedMenuItem(attr, item);
 			}
 		}
@@ -223,9 +223,9 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			var hexView = ctx.HexView;
 
 			foreach (var info in SettingsConstants.ValueFormatList) {
-				var attr = new ExportMenuItemAttribute { Header = info.Value };
-				bool isChecked = info.Key == hexView.BufferLines.ValuesFormat;
-				var item = new MyMenuItem(ctx2 => hexView.Options.SetOptionValue(DefaultHexViewOptions.HexValuesDisplayFormatId, info.Key), isChecked);
+				var attr = new ExportMenuItemAttribute { Header = info.text };
+				bool isChecked = info.displayFormat == hexView.BufferLines.ValuesFormat;
+				var item = new MyMenuItem(ctx2 => hexView.Options.SetOptionValue(DefaultHexViewOptions.HexValuesDisplayFormatId, info.displayFormat), isChecked);
 				yield return new CreatedMenuItem(attr, item);
 			}
 		}

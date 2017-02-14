@@ -55,16 +55,16 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 				RefreshCode<Core.VisualBasic.VBDecompiler>();
 		}
 
-		IEnumerable<Tuple<IDocumentTab, IDecompiler>> DecompilerTabs {
+		IEnumerable<(IDocumentTab tab, IDecompiler decompiler)> DecompilerTabs {
 			get {
 				foreach (var tab in documentTabService.VisibleFirstTabs) {
 					var decompiler = (tab.Content as IDecompilerTabContent)?.Decompiler;
 					if (decompiler != null)
-						yield return Tuple.Create(tab, decompiler);
+						yield return (tab, decompiler);
 				}
 			}
 		}
 
-		void RefreshCode<T>() => documentTabService.Refresh(DecompilerTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
+		void RefreshCode<T>() => documentTabService.Refresh(DecompilerTabs.Where(t => t.decompiler is T).Select(a => a.tab).ToArray());
 	}
 }

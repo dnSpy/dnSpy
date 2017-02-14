@@ -445,7 +445,7 @@ namespace dnSpy_Console {
 
 			bool canParseCommands = true;
 			IDecompiler lang = null;
-			Dictionary<string, Tuple<IDecompilerOption, Action<string>>> langDict = null;
+			Dictionary<string, (IDecompilerOption setOption, Action<string> setOptionValue)> langDict = null;
 			for (int i = 0; i < args.Length; i++) {
 				if (lang == null) {
 					lang = GetLanguage();
@@ -611,14 +611,14 @@ namespace dnSpy_Console {
 						break;
 
 					default:
-						Tuple<IDecompilerOption, Action<string>> tuple;
+						(IDecompilerOption option, Action<string> setOptionValue) tuple;
 						if (langDict.TryGetValue(arg, out tuple)) {
-							bool hasArg = tuple.Item1.Type != typeof(bool);
+							bool hasArg = tuple.option.Type != typeof(bool);
 							if (hasArg && next == null)
 								throw new ErrorException(dnSpy_Console_Resources.MissingOptionArgument);
 							if (hasArg)
 								i++;
-							tuple.Item2(next);
+							tuple.setOptionValue(next);
 							break;
 						}
 
@@ -639,8 +639,8 @@ namespace dnSpy_Console {
 
 		static string ParseString(string s) => s;
 
-		Dictionary<string, Tuple<IDecompilerOption, Action<string>>> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
-			var dict = new Dictionary<string, Tuple<IDecompilerOption, Action<string>>>();
+		Dictionary<string, (IDecompilerOption option, Action<string> setOptionValue)> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
+			var dict = new Dictionary<string, (IDecompilerOption, Action<string>)>();
 
 			if (decompiler == null)
 				return dict;
@@ -648,14 +648,14 @@ namespace dnSpy_Console {
 			foreach (var tmp in decompiler.Settings.Options) {
 				var opt = tmp;
 				if (opt.Type == typeof(bool)) {
-					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = true));
-					dict[GetOptionName(opt, BOOLEAN_NO_PREFIX)] = Tuple.Create(opt, new Action<string>(a => opt.Value = false));
-					dict[GetOptionName(opt, BOOLEAN_DONT_PREFIX)] = Tuple.Create(opt, new Action<string>(a => opt.Value = false));
+					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = true));
+					dict[GetOptionName(opt, BOOLEAN_NO_PREFIX)] = (opt, new Action<string>(a => opt.Value = false));
+					dict[GetOptionName(opt, BOOLEAN_DONT_PREFIX)] = (opt, new Action<string>(a => opt.Value = false));
 				}
 				else if (opt.Type == typeof(int))
-					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = ParseInt32(a)));
+					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = ParseInt32(a)));
 				else if (opt.Type == typeof(string))
-					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = ParseString(a)));
+					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = ParseString(a)));
 				else
 					Debug.Fail($"Unsupported type: {opt.Type}");
 			}

@@ -106,8 +106,8 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			if (indexes != null) {
 				int pos = 0;
 				var parts = description.TaggedParts;
-				int endIndex = indexes.Value.Value;
-				for (int i = indexes.Value.Key; i <= endIndex; i++) {
+				int endIndex = indexes.Value.endIndex;
+				for (int i = indexes.Value.index; i <= endIndex; i++) {
 					var part = parts[i];
 					if (part.Tag == TextTags.LineBreak)
 						break;
@@ -130,7 +130,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 			'(', ')',
 		};
 
-		KeyValuePair<int, int>? GetMatchIndexes(RoslynCompletion completion, CompletionDescription description) {
+		(int index, int endIndex)? GetMatchIndexes(RoslynCompletion completion, CompletionDescription description) {
 			if (completion == null || description == null)
 				return null;
 			if (stringBuilder == null)
@@ -153,13 +153,13 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 					if (!StartsWith(displayText, stringBuilder.Length, part.Text)) {
 						// Partial match, could happen if the type is System.Collections.Generic.List<int> but
 						// the documentation is using System.Collections.Generic.List<T>.
-						return new KeyValuePair<int, int>(matchIndex, index - 1);
+						return (matchIndex, index - 1);
 					}
 				}
 				stringBuilder.Append(part.Text);
 				if (stringBuilder.Length == displayText.Length) {
 					if (stringBuilder.ToString() == completion.DisplayText)
-						return new KeyValuePair<int, int>(matchIndex, index);
+						return (matchIndex, index);
 					break;
 				}
 				else if (stringBuilder.Length > displayText.Length)

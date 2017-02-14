@@ -63,8 +63,8 @@ namespace dnSpy.Text.Classification {
 			}
 
 			foreach (var t in GetEditorFormatDefinitions()) {
-				var key = t.Item1.Name;
-				var props = t.Item2.CreateThemeResourceDictionary(theme);
+				var key = t.metadata.Name;
+				var props = t.def.CreateThemeResourceDictionary(theme);
 				editorFormatMap.SetProperties(key, props);
 			}
 
@@ -92,9 +92,9 @@ namespace dnSpy.Text.Classification {
 			ClassificationFormatDefinition.TypefaceId,
 		};
 
-		IEnumerable<Tuple<IEditorFormatMetadata, EditorFormatDefinition>> GetEditorFormatDefinitions() {
+		IEnumerable<(IEditorFormatMetadata metadata, EditorFormatDefinition def)> GetEditorFormatDefinitions() {
 			foreach (var lazy in editorFormatDefinitionService.EditorFormatDefinitions)
-				yield return Tuple.Create(lazy.Metadata, lazy.Value);
+				yield return (lazy.Metadata, lazy.Value);
 		}
 	}
 }

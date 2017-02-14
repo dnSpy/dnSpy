@@ -309,23 +309,23 @@ namespace dndbg.Engine {
 				return null;
 			while (findClassCacheEnum.MoveNext()) {
 				var t = findClassCacheEnum.Current;
-				var typeName = t.Item1;
+				var typeName = t.name;
 				if (!findClassCacheDict.ContainsKey(typeName))
-					findClassCacheDict[typeName] = t.Item2;
+					findClassCacheDict[typeName] = t.token;
 				if (typeName == name)
-					return GetClassFromToken(t.Item2);
+					return GetClassFromToken(t.token);
 			}
 			findClassCacheEnum.Dispose();
 			findClassCacheEnum = null;
 			return null;
 		}
 		Dictionary<string, uint> findClassCacheDict;
-		IEnumerator<Tuple<string, uint>> findClassCacheEnum;
+		IEnumerator<(string name, uint token)> findClassCacheEnum;
 
-		IEnumerable<Tuple<string, uint>> GetClasses() {
+		IEnumerable<(string name, uint token)> GetClasses() {
 			var mdi = GetMetaDataInterface<IMetaDataImport>();
 			foreach (var tdToken in MDAPI.GetTypeDefTokens(mdi))
-				yield return Tuple.Create(MDAPI.GetTypeDefName(mdi, tdToken), tdToken);
+				yield return (MDAPI.GetTypeDefName(mdi, tdToken), tdToken);
 		}
 
 		public CorType CreateTypeFromTypeDefOrRef(uint token) => null;//TODO:

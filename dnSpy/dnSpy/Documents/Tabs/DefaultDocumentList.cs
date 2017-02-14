@@ -347,7 +347,7 @@ namespace dnSpy.Documents.Tabs {
 			var finder = new ReferenceFileFinder(cancellationToken);
 			finder.Find();
 
-			var xmlFiles = new List<Tuple<DefaultDocumentList, bool>>();
+			var xmlFiles = new List<(DefaultDocumentList list, bool isDefault)>();
 			foreach (var dir in FilesDirs) {
 				cancellationToken.ThrowIfCancellationRequested();
 				if (!Directory.Exists(dir))
@@ -358,23 +358,23 @@ namespace dnSpy.Documents.Tabs {
 					cancellationToken.ThrowIfCancellationRequested();
 					var d = ReadDefaultFileList(f);
 					if (d != null)
-						xmlFiles.Add(d);
+						xmlFiles.Add(d.Value);
 				}
 			}
 
 			var dict = new Dictionary<string, DefaultDocumentList>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (var t in xmlFiles) {
-				if (t.Item2)	// if non-user file
-					dict[t.Item1.Name] = t.Item1;
+				if (t.isDefault)	// if non-user file
+					dict[t.list.Name] = t.list;
 			}
 
 			foreach (var f in finder.AllFiles)
 				dict[f.Name] = f;
 
 			foreach (var t in xmlFiles) {
-				if (!t.Item2)	// if user file
-					dict[t.Item1.Name] = t.Item1;
+				if (!t.isDefault)	// if user file
+					dict[t.list.Name] = t.list;
 			}
 
 			lists.AddRange(dict.Values);
@@ -382,7 +382,7 @@ namespace dnSpy.Documents.Tabs {
 			return lists.ToArray();
 		}
 
-		static Tuple<DefaultDocumentList, bool> ReadDefaultFileList(string filename) {
+		static (DefaultDocumentList list, bool isDefault)? ReadDefaultFileList(string filename) {
 			try {
 				var doc = XDocument.Load(filename, LoadOptions.None);
 				var root = doc.Root;
@@ -410,7 +410,7 @@ namespace dnSpy.Documents.Tabs {
 					else // should be "gac"
 						l.Add(DsDocumentInfo.CreateGacDocument(name2));
 				}
-				return Tuple.Create(l, isDefault ?? false);
+				return (l, isDefault ?? false);
 			}
 			catch {
 				Debug.Fail("Exception");

@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		KeyValuePair<ModuleTokenId, uint>? GetModuleTokenId(CorFrame frame) {
+		(ModuleTokenId moduleTokenId, uint offset)? GetModuleTokenId(CorFrame frame) {
 			if (!frame.IsILFrame)
 				return null;
 			var ip = frame.ILFrameIP;
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.CallStack {
 			var mod = frame.DnModuleId;
 			if (mod == null)
 				return null;
-			return new KeyValuePair<ModuleTokenId, uint>(new ModuleTokenId(mod.Value.ToModuleId(), frame.Token), ip.Offset);
+			return (new ModuleTokenId(mod.Value.ToModuleId(), frame.Token), ip.Offset);
 		}
 
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
@@ -113,8 +113,8 @@ namespace dnSpy.Debugger.CallStack {
 			var methodOffset = GetModuleTokenId(frames[0]);
 			if (methodOffset != null) {
 				currentStatementMarker = glyphTextMarkerService.AddMarker(
-					methodOffset.Value.Key,
-					methodOffset.Value.Value,
+					methodOffset.Value.moduleTokenId,
+					methodOffset.Value.offset,
 					DsImages.CurrentInstructionPointer,
 					ThemeClassificationTypeNameKeys.CurrentStatementMarker,
 					null,
@@ -129,8 +129,8 @@ namespace dnSpy.Debugger.CallStack {
 			methodOffset = selectedFrameNumber != 0 && selectedFrameNumber < frames.Count ? GetModuleTokenId(frames[selectedFrameNumber]) : null;
 			if (methodOffset != null) {
 				callReturnMarker = glyphTextMarkerService.AddMarker(
-					methodOffset.Value.Key,
-					methodOffset.Value.Value,
+					methodOffset.Value.moduleTokenId,
+					methodOffset.Value.offset,
 					DsImages.CallReturnInstructionPointer,
 					ThemeClassificationTypeNameKeys.CallReturnMarker,
 					null,

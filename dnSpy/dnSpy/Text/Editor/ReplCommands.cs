@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Text.Editor {
@@ -49,21 +48,21 @@ namespace dnSpy.Text.Editor {
 
 		public bool CanSelectPrevious => HasCommands;
 
-		IEnumerable<Tuple<int, string>> PreviousCommands {
+		IEnumerable<(int index, string command)> PreviousCommands {
 			get {
 				if (!HasCommands)
 					yield break;
 				if (selectedIndex == null)
-					yield return Tuple.Create(LastCommandIndex, commands[LastCommandIndex]);
+					yield return (LastCommandIndex, commands[LastCommandIndex]);
 				int index = selectedIndex == null ? LastCommandIndex : selectedIndex.Value;
 				while (index != firstIndex) {
 					index = (index - 1 + commands.Count) % commands.Count;
-					yield return Tuple.Create(index, commands[index]);
+					yield return (index, commands[index]);
 				}
 			}
 		}
 
-		IEnumerable<Tuple<int, string>> NextCommands {
+		IEnumerable<(int index, string command)> NextCommands {
 			get {
 				if (!HasCommands)
 					yield break;
@@ -75,15 +74,15 @@ namespace dnSpy.Text.Editor {
 					yield break;
 				do {
 					index = (index + 1) % commands.Count;
-					yield return Tuple.Create(index, commands[index]);
+					yield return (index, commands[index]);
 				} while (last != index);
 			}
 		}
 
 		public bool SelectPrevious(string text = null) {
 			foreach (var t in PreviousCommands) {
-				if (string.IsNullOrEmpty(text) || t.Item2.Contains(text)) {
-					selectedIndex = t.Item1;
+				if (string.IsNullOrEmpty(text) || t.command.Contains(text)) {
+					selectedIndex = t.index;
 					return true;
 				}
 			}
@@ -94,8 +93,8 @@ namespace dnSpy.Text.Editor {
 
 		public bool SelectNext(string text = null) {
 			foreach (var t in NextCommands) {
-				if (string.IsNullOrEmpty(text) || t.Item2.Contains(text)) {
-					selectedIndex = t.Item1;
+				if (string.IsNullOrEmpty(text) || t.command.Contains(text)) {
+					selectedIndex = t.index;
 					return true;
 				}
 			}

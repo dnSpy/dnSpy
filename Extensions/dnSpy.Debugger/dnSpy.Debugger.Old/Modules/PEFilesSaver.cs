@@ -47,12 +47,12 @@ namespace dnSpy.Debugger.Modules {
 		readonly SimpleProcessReader simpleProcessReader;
 		readonly ModuleInfo[] infos;
 
-		public PEFilesSaver(SimpleProcessReader simpleProcessReader, Tuple<DnModule, string>[] files) {
+		public PEFilesSaver(SimpleProcessReader simpleProcessReader, (DnModule module, string filename)[] files) {
 			this.simpleProcessReader = simpleProcessReader;
 			infos = new ModuleInfo[files.Length];
 			for (int i = 0; i < files.Length; i++) {
-				var module = files[i].Item1;
-				infos[i] = new ModuleInfo(module.Process.CorProcess.Handle, module.Address, module.Size, files[i].Item2, !module.IsInMemory);
+				var module = files[i].module;
+				infos[i] = new ModuleInfo(module.Process.CorProcess.Handle, module.Address, module.Size, files[i].filename, !module.IsInMemory);
 				maxProgress += 2;
 			}
 		}

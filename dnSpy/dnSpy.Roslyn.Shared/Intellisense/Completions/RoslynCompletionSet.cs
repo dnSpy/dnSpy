@@ -78,14 +78,14 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (applicableTo == null)
 				throw new ArgumentNullException(nameof(applicableTo));
 			var completions = new List<Completion>(completionList.Items.Length);
-			var remainingFilters = new List<KeyValuePair<RoslynIntellisenseFilter, int>>(RoslynIntellisenseFilters.CreateFilters(imageMonikerService).Select((a, index) => new KeyValuePair<RoslynIntellisenseFilter, int>(a, index)));
-			var filters = new List<KeyValuePair<RoslynIntellisenseFilter, int>>(remainingFilters.Count);
+			var remainingFilters = new List<(RoslynIntellisenseFilter filter, int index)>(RoslynIntellisenseFilters.CreateFilters(imageMonikerService).Select((a, index) => (a, index)));
+			var filters = new List<(RoslynIntellisenseFilter filter, int index)>(remainingFilters.Count);
 			foreach (var item in completionList.Items) {
 				if (string.IsNullOrEmpty(item.DisplayText))
 					continue;
 				for (int i = remainingFilters.Count - 1; i >= 0; i--) {
 					var kv = remainingFilters[i];
-					foreach (var tag in kv.Key.Tags) {
+					foreach (var tag in kv.filter.Tags) {
 						if (item.Tags.Contains(tag)) {
 							remainingFilters.RemoveAt(i);
 							filters.Add(kv);
@@ -95,9 +95,9 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				}
 				completions.Add(new RoslynCompletion(imageMonikerService, item));
 			}
-			filters.Sort((a, b) => a.Value - b.Value);
+			filters.Sort((a, b) => a.index - b.index);
 			var completionBuilders = new List<Completion>();
-			return new RoslynCompletionSet(mruCompletionService, completionService, textView, moniker, displayName, applicableTo, completions, completionBuilders, filters.Select(a => a.Key).ToArray());
+			return new RoslynCompletionSet(mruCompletionService, completionService, textView, moniker, displayName, applicableTo, completions, completionBuilders, filters.Select(a => a.filter).ToArray());
 		}
 
 		protected override int GetMruIndex(Completion completion) => mruCompletionService.GetMruIndex(completion.DisplayText);

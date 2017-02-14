@@ -46,7 +46,7 @@ namespace dnSpy.Text {
 		}
 
 		Lazy<TProvider, TProviderMetadata>[] CreateProviderList(IContentType contentType) {
-			List<KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>> list = null;
+			List<(Lazy<TProvider, TProviderMetadata> lz, int dist)> list = null;
 
 			// We only allow a provider to match if its supported content type equals the
 			// requested content type or if it's a child of the requested content type.
@@ -63,15 +63,15 @@ namespace dnSpy.Text {
 					if (dist < 0)
 						continue;
 					if (list == null)
-						list = new List<KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>>();
-					list.Add(new KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>(provider, dist));
+						list = new List<(Lazy<TProvider, TProviderMetadata>, int)>();
+					list.Add((provider, dist));
 				}
 			}
 
 			if (list == null)
 				return Array.Empty<Lazy<TProvider, TProviderMetadata>>();
-			list.Sort((a, b) => a.Value - b.Value);
-			return list.Select(a => a.Key).ToArray();
+			list.Sort((a, b) => a.dist - b.dist);
+			return list.Select(a => a.lz).ToArray();
 		}
 
 		int GetDistance(IContentType baseType, IContentType other) {

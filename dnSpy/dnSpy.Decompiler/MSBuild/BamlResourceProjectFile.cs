@@ -86,11 +86,11 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		CilBody GetInitializeComponentBody() {
 			var m = type.FindMethods("InitializeComponent").FirstOrDefault(a => a.Parameters.Count == 1 && !a.IsStatic);
-			return m == null ? null : m.Body;
+			return m?.Body;
 		}
 
 		string GetStartupUri(CilBody body) =>
-			body == null ? null : body.Instructions.Where(a => a.Operand is string && ((string)a.Operand).EndsWith(".xaml", StringComparison.OrdinalIgnoreCase)).Select(a => (string)a.Operand).FirstOrDefault();
+			body?.Instructions.Where(a => a.Operand is string && ((string)a.Operand).EndsWith(".xaml", StringComparison.OrdinalIgnoreCase)).Select(a => (string)a.Operand).FirstOrDefault();
 
 		public override void Create(DecompileContext ctx) {
 			var settings = new XmlWriterSettings {
@@ -127,7 +127,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		IEnumerable<Tuple<string,string>> GetEvents(CilBody body) {
+		IEnumerable<(string, string)> GetEvents(CilBody body) {
 			var instrs = body.Instructions;
 			for (int i = 0; i + 2 < instrs.Count; i++) {
 				if (instrs[i].OpCode.Code != Code.Ldftn && instrs[i].OpCode.Code != Code.Ldvirtftn)
@@ -144,7 +144,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					continue;
 				if (!addMethod.Name.StartsWith("add_"))
 					continue;
-				yield return Tuple.Create(addMethod.Name.String.Substring(4), m.Name.String);
+				yield return (addMethod.Name.String.Substring(4), m.Name.String);
 			}
 		}
 	}

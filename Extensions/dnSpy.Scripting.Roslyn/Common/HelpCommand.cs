@@ -27,20 +27,20 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class HelpCommand : IScriptCommand {
 		const int LEFT_COL_LEN = 20;
 
-		static readonly Tuple<string, string>[] keyboardShortcuts = new Tuple<string, string>[] {
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyEnter, dnSpy_Scripting_Roslyn_Resources.HelpEnter),
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlEnter, dnSpy_Scripting_Roslyn_Resources.HelpCtrlEnter),
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyShiftEnter, dnSpy_Scripting_Roslyn_Resources.HelpShiftEnter),
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyEscape, dnSpy_Scripting_Roslyn_Resources.HelpEscape),
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyAltUp, dnSpy_Scripting_Roslyn_Resources.HelpAltUp),
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyAltDown, dnSpy_Scripting_Roslyn_Resources.HelpAltDown),
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlAltUp, dnSpy_Scripting_Roslyn_Resources.HelpCtrlAltUp),
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlAltDown, dnSpy_Scripting_Roslyn_Resources.HelpCtrlAltDown),
-			Tuple.Create(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlA, dnSpy_Scripting_Roslyn_Resources.HelpCtrlA),
+		static readonly (string shortcut, string help)[] keyboardShortcuts = new (string, string)[] {
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyEnter, dnSpy_Scripting_Roslyn_Resources.HelpEnter),
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlEnter, dnSpy_Scripting_Roslyn_Resources.HelpCtrlEnter),
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyShiftEnter, dnSpy_Scripting_Roslyn_Resources.HelpShiftEnter),
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyEscape, dnSpy_Scripting_Roslyn_Resources.HelpEscape),
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyAltUp, dnSpy_Scripting_Roslyn_Resources.HelpAltUp),
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyAltDown, dnSpy_Scripting_Roslyn_Resources.HelpAltDown),
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlAltUp, dnSpy_Scripting_Roslyn_Resources.HelpCtrlAltUp),
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlAltDown, dnSpy_Scripting_Roslyn_Resources.HelpCtrlAltDown),
+			(dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlA, dnSpy_Scripting_Roslyn_Resources.HelpCtrlA),
 		};
-		static readonly Tuple<string, string>[] scriptDirectives = new Tuple<string, string>[] {
-			Tuple.Create("#r", dnSpy_Scripting_Roslyn_Resources.HelpScriptDirective_r),
-			Tuple.Create("#load", dnSpy_Scripting_Roslyn_Resources.HelpScriptDirective_load),
+		static readonly (string directive, string help)[] scriptDirectives = new (string, string)[] {
+			("#r", dnSpy_Scripting_Roslyn_Resources.HelpScriptDirective_r),
+			("#load", dnSpy_Scripting_Roslyn_Resources.HelpScriptDirective_load),
 		};
 
 		public IEnumerable<string> Names {
@@ -58,15 +58,15 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			Print(vm, scriptDirectives, BoxedTextColor.PreprocessorKeyword, BoxedTextColor.ReplOutputText);
 		}
 
-		void Print(ScriptControlVM vm, IEnumerable<Tuple<string, string>> descs, object color1, object color2) {
+		void Print(ScriptControlVM vm, IEnumerable<(string cmd, string help)> descs, object color1, object color2) {
 			foreach (var t in descs) {
 				vm.ReplEditor.OutputPrint("  ", BoxedTextColor.ReplOutputText);
-				vm.ReplEditor.OutputPrint(t.Item1, color1);
-				int len = LEFT_COL_LEN - t.Item1.Length;
+				vm.ReplEditor.OutputPrint(t.cmd, color1);
+				int len = LEFT_COL_LEN - t.cmd.Length;
 				if (len > 0)
 					vm.ReplEditor.OutputPrint(new string(' ', len), BoxedTextColor.ReplOutputText);
 				vm.ReplEditor.OutputPrint(" ", BoxedTextColor.ReplOutputText);
-				vm.ReplEditor.OutputPrint(t.Item2, color2);
+				vm.ReplEditor.OutputPrint(t.help, color2);
 				vm.ReplEditor.OutputPrintLine(string.Empty, BoxedTextColor.ReplOutputText);
 			}
 		}

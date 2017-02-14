@@ -800,9 +800,9 @@ namespace dnSpy.Text.Editor.Search {
 			try {
 				using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
 					foreach (var res in GetAllResultsForReplaceAll()) {
-						if (CanReplaceSpan(res.Item1, res.Item2)) {
+						if (CanReplaceSpan(res.span, res.expandedReplacePattern)) {
 							// Ignore errors due to read-only regions
-							ed.Replace(res.Item1.Span, res.Item2);
+							ed.Replace(res.span.Span, res.expandedReplacePattern);
 						}
 					}
 					ed.Apply();
@@ -823,7 +823,7 @@ namespace dnSpy.Text.Editor.Search {
 		// eg. if SearchString is aaa and text is aaaaaaaa, it returns two results, starting
 		// at offsets 0 and 3. The last two aa's aren't touched. Normal FindNext finds matches
 		// at offsets 0, 1, 2, 3, 4, 5.
-		IEnumerable<Tuple<SnapshotSpan, string>> GetAllResultsForReplaceAll() {
+		IEnumerable<(SnapshotSpan span, string expandedReplacePattern)> GetAllResultsForReplaceAll() {
 			var snapshot = wpfTextView.TextSnapshot;
 			var options = GetFindOptions(SearchKind.Replace, true) & ~FindOptions.Wrap;
 			var startingPosition = new SnapshotPoint(snapshot, 0);
@@ -842,7 +842,7 @@ namespace dnSpy.Text.Editor.Search {
 				}
 				if (res == null)
 					break;
-				yield return Tuple.Create(res.Value, expandedReplacePattern);
+				yield return (res.Value, expandedReplacePattern);
 				if (startingPosition.Position == snapshot.Length)
 					break;
 				if (res.Value.Length != 0)

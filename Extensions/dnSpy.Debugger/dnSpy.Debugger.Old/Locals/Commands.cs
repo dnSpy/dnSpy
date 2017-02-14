@@ -395,14 +395,14 @@ namespace dnSpy.Debugger.Locals {
 
 	//[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
 	sealed class ShowInMemoryXLocalsSubCtxMenuCommand : LocalsCtxMenuCommand, IMenuItemProvider {
-		readonly Tuple<IMenuItem, string, string>[] subCmds;
+		readonly (IMenuItem command, string header, string inputGestureText)[] subCmds;
 
 		[ImportingConstructor]
 		ShowInMemoryXLocalsSubCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowService memoryWindowService)
 			: base(theDebugger, localsContent) {
-			subCmds = new Tuple<IMenuItem, string, string>[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
+			subCmds = new (IMenuItem, string, string)[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < subCmds.Length; i++)
-				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowService, i), MemoryWindowsHelper.GetHeaderText(i), MemoryWindowsHelper.GetCtrlInputGestureText(i));
+				subCmds[i] = (new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowService, i), MemoryWindowsHelper.GetHeaderText(i), MemoryWindowsHelper.GetCtrlInputGestureText(i));
 		}
 
 		public override void Execute(LocalsCtxMenuContext context) { }
@@ -415,10 +415,10 @@ namespace dnSpy.Debugger.Locals {
 
 			for (int i = 0; i < subCmds.Length; i++) {
 				var info = subCmds[i];
-				var attr = new ExportMenuItemAttribute { Header = info.Item2, Icon = DsImagesAttribute.MemoryWindow };
-				if (!string.IsNullOrEmpty(info.Item3))
-					attr.InputGestureText = info.Item3;
-				yield return new CreatedMenuItem(attr, info.Item1);
+				var attr = new ExportMenuItemAttribute { Header = info.header, Icon = DsImagesAttribute.MemoryWindow };
+				if (!string.IsNullOrEmpty(info.inputGestureText))
+					attr.InputGestureText = info.inputGestureText;
+				yield return new CreatedMenuItem(attr, info.command);
 			}
 		}
 	}

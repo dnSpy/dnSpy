@@ -322,25 +322,25 @@ namespace dnSpy.Documents.TreeView {
 					dict[n] = i++;
 					dict2[n.Document] = n;
 				}
-				var list = new List<Tuple<DsDocumentNode, int>>(e.Documents.Select(a => {
+				var list = new List<(DsDocumentNode docNode, int index)>(e.Documents.Select(a => {
 					bool b = dict2.TryGetValue(a, out var node);
 					Debug.Assert(b);
 					int j = -1;
 					b = b && dict.TryGetValue(node, out j);
 					Debug.Assert(b);
-					return Tuple.Create(node, b ? j : -1);
+					return ValueTuple.Create(node, b ? j : -1);
 				}));
-				list.Sort((a, b) => b.Item2.CompareTo(a.Item2));
+				list.Sort((a, b) => b.index.CompareTo(a.index));
 				var removed = new List<DsDocumentNode>();
 				foreach (var t in list) {
-					if (t.Item2 < 0)
+					if (t.index < 0)
 						continue;
-					Debug.Assert((uint)t.Item2 < (uint)TreeView.Root.Children.Count);
-					Debug.Assert(TreeView.Root.Children[t.Item2].Data == t.Item1);
-					TreeView.Root.Children.RemoveAt(t.Item2);
-					removed.Add(t.Item1);
+					Debug.Assert((uint)t.index < (uint)TreeView.Root.Children.Count);
+					Debug.Assert(TreeView.Root.Children[t.index].Data == t.docNode);
+					TreeView.Root.Children.RemoveAt(t.index);
+					removed.Add(t.docNode);
 				}
-				DisableMemoryMappedIO(list.Select(a => a.Item1).ToArray());
+				DisableMemoryMappedIO(list.Select(a => a.docNode).ToArray());
 				CallCollectionChanged(NotifyDocumentTreeViewCollectionChangedEventArgs.CreateRemove(removed.ToArray()));
 				break;
 
@@ -800,7 +800,7 @@ namespace dnSpy.Documents.TreeView {
 
 		DsDocumentNode[] GetNewSortedNodes() {
 			var origOrder = TopNodes.ToArray();
-			var documents = origOrder.Select((a, i) => Tuple.Create(a, i)).ToList();
+			var documents = origOrder.Select((a, i) => (a, i)).ToList();
 			documents.Sort(DsDocumentNodeComparer.Instance);
 			var sorted = documents.Select(a => a.Item1).ToArray();
 			if (Equals(sorted, origOrder))
@@ -839,16 +839,12 @@ namespace dnSpy.Documents.TreeView {
 			return true;
 		}
 
-		sealed class DsDocumentNodeComparer : IComparer<Tuple<DsDocumentNode, int>> {
+		sealed class DsDocumentNodeComparer : IComparer<(DsDocumentNode, int)> {
 			public static readonly DsDocumentNodeComparer Instance = new DsDocumentNodeComparer();
 
-			public int Compare(Tuple<DsDocumentNode, int> x, Tuple<DsDocumentNode, int> y) {
-				if (x == y)
+			public int Compare((DsDocumentNode, int) x, (DsDocumentNode, int) y) {
+				if (x.Equals(y))
 					return 0;
-				if (x == null)
-					return -1;
-				if (y == null)
-					return 1;
 				int c = GetIsAutoLoadedOrder(x.Item1.Document.IsAutoLoaded).CompareTo(GetIsAutoLoadedOrder(y.Item1.Document.IsAutoLoaded));
 				if (c != 0)
 					return c;

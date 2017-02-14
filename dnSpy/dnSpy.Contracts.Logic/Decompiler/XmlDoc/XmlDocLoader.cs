@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 
 		static string[] GetReferenceV4PathsSortedByHighestestVersion() {
 			var baseDir = Path.Combine(referenceAssembliesPath, ".NETFramework");
-			var list = new List<Tuple<string, Version>>();
+			var list = new List<(string dir, Version version)>();
 			foreach (var dir in GetDirectories(baseDir)) {
 				var s = Path.GetFileName(dir);
 				if (!s.StartsWith("v", StringComparison.OrdinalIgnoreCase))
@@ -103,9 +103,9 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					continue;
 				if (version.Major < 4)
 					continue;
-				list.Add(Tuple.Create(dir, version));
+				list.Add((dir, version));
 			}
-			return list.OrderByDescending(a => a.Item2).Select(a => a.Item1).ToArray();
+			return list.OrderByDescending(a => a.version).Select(a => a.dir).ToArray();
 		}
 
 		static string[] GetDirectories(string path) {

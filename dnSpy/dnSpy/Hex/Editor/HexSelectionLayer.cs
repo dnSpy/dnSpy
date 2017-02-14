@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
@@ -106,7 +105,7 @@ namespace dnSpy.Hex.Editor {
 			var info = CreateStreamSelection();
 			if (info == null)
 				return;
-			CreateMarkerElement(info.Value.Key, info.Value.Value);
+			CreateMarkerElement(info.Value.span, info.Value.geometry);
 		}
 
 		void CreateMarkerElement(HexBufferSpan fullSpan, Geometry geo) {
@@ -121,7 +120,7 @@ namespace dnSpy.Hex.Editor {
 
 		void OnMarkerElementRemoved() => markerElement = null;
 
-		KeyValuePair<HexBufferSpan, Geometry>? CreateStreamSelection() {
+		(HexBufferSpan span, Geometry geometry)? CreateStreamSelection() {
 			Debug.Assert(!hexSelection.IsEmpty);
 			var linesColl = (WpfHexViewLineCollection)hexSelection.HexView.HexViewLines;
 			var span = hexSelection.StreamSelectionSpan.Overlap(linesColl.FormattedSpan);
@@ -130,7 +129,7 @@ namespace dnSpy.Hex.Editor {
 			var geo = linesColl.GetMarkerGeometry(span.Value, HexSelectionImpl.SelectionFlags);
 			if (geo == null)
 				return null;
-			return new KeyValuePair<HexBufferSpan, Geometry>(span.Value, geo);
+			return (span.Value, geo);
 		}
 
 		public void OnModeUpdated() => SetNewSelection();

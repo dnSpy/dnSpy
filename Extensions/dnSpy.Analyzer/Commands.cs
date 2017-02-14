@@ -131,8 +131,8 @@ namespace dnSpy.Analyzer {
 			foreach (var t in GetNodes(analyzerService.Value.TreeView, items)) {
 				if (count > 0)
 					sb.Append(Environment.NewLine);
-				sb.Append(new string('\t', t.Item1));
-				sb.Append(t.Item2.ToString());
+				sb.Append(new string('\t', t.level));
+				sb.Append(t.node.ToString());
 				count++;
 			}
 			if (count > 1)
@@ -155,7 +155,7 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		static IEnumerable<Tuple<int, TreeNodeData>> GetNodes(ITreeView treeView, IEnumerable<TreeNodeData> nodes) {
+		static IEnumerable<(int level, TreeNodeData node)> GetNodes(ITreeView treeView, IEnumerable<TreeNodeData> nodes) {
 			var hash = new HashSet<TreeNodeData>(nodes);
 			var stack = new Stack<State>();
 			stack.Push(new State(treeView.Root, 0));
@@ -165,7 +165,7 @@ namespace dnSpy.Analyzer {
 					continue;
 				var child = state.Nodes[state.Index++];
 				if (hash.Contains(child.Data))
-					yield return Tuple.Create(state.Level, child.Data);
+					yield return (state.Level, child.Data);
 				stack.Push(state);
 				stack.Push(new State(child, state.Level + 1));
 			}

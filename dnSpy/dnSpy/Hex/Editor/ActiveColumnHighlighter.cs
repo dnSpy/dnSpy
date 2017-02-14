@@ -208,11 +208,11 @@ namespace dnSpy.Hex.Editor {
 			var top = wpfHexView.ViewportTop;
 			var bottom = wpfHexView.ViewportBottom;
 			foreach (var info in GetRectanglePositions(line)) {
-				var props = editorFormatMap.GetProperties(GetClassificationTypeName(info.Key));
+				var props = editorFormatMap.GetProperties(GetClassificationTypeName(info.type));
 				var bgBrush = GetBackgroundBrush(props);
 				if (bgBrush == null || TWPF.BrushComparer.Equals(bgBrush, Brushes.Transparent))
 					continue;
-				var lineElem = new RectangleElement(info.Key, info.Value, bgBrush, null);
+				var lineElem = new RectangleElement(info.type, info.rect, bgBrush, null);
 				bool added = adornmentLayer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, lineElem, null);
 				if (added)
 					rectangleElements.Add(lineElem);
@@ -279,7 +279,7 @@ namespace dnSpy.Hex.Editor {
 			return new Rect(left, top, right - left, bottom - top);
 		}
 
-		IEnumerable<KeyValuePair<HexColumnType, Rect>> GetRectanglePositions(HexViewLine line) {
+		IEnumerable<(HexColumnType type, Rect rect)> GetRectanglePositions(HexViewLine line) {
 			var column = wpfHexView.Caret.Position.Position.ActiveColumn;
 			if (!line.BufferLine.IsColumnPresent(column))
 				yield break;
@@ -287,7 +287,7 @@ namespace dnSpy.Hex.Editor {
 			var rect = GetBounds(line.GetNormalizedTextBounds(span));
 			if (rect == null || rect.Value.Width <= 0)
 				yield break;
-			yield return new KeyValuePair<HexColumnType, Rect>(column, new Rect(rect.Value.X, wpfHexView.ViewportTop, rect.Value.Width, wpfHexView.ViewportHeight));
+			yield return (column, new Rect(rect.Value.X, wpfHexView.ViewportTop, rect.Value.Width, wpfHexView.ViewportHeight));
 		}
 
 		void RemoveAllRectangles() {

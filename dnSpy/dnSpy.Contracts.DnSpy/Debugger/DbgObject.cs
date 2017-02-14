@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// </summary>
 	public abstract class DbgObject {
 		readonly object lockObj;
-		List<KeyValuePair<Type, object>> dataList;
+		List<(Type key, object data)> dataList;
 
 		/// <summary>
 		/// Constructor
@@ -55,13 +55,13 @@ namespace dnSpy.Contracts.Debugger {
 			OnClosed();
 			Closed?.Invoke(this, EventArgs.Empty);
 
-			KeyValuePair<Type, object>[] data;
+			(Type key, object data)[] data;
 			lock (lockObj) {
-				data = dataList.Count == 0 ? Array.Empty<KeyValuePair<Type, object>>() : dataList.ToArray();
+				data = dataList.Count == 0 ? Array.Empty<(Type, object)>() : dataList.ToArray();
 				dataList.Clear();
 			}
 			foreach (var kv in data)
-				(kv.Value as IDisposable)?.Dispose();
+				(kv.data as IDisposable)?.Dispose();
 		}
 
 		/// <summary>
@@ -94,8 +94,8 @@ namespace dnSpy.Contracts.Debugger {
 				if (dataList != null) {
 					var type = typeof(T);
 					foreach (var kv in dataList) {
-						if (kv.Key == type) {
-							value = (T)kv.Value;
+						if (kv.key == type) {
+							value = (T)kv.data;
 							return true;
 						}
 					}
@@ -114,14 +114,14 @@ namespace dnSpy.Contracts.Debugger {
 		public T GetOrCreateData<T>(Func<T> create) where T : class {
 			lock (lockObj) {
 				if (dataList == null)
-					dataList = new List<KeyValuePair<Type, object>>();
+					dataList = new List<(Type, object)>();
 				var type = typeof(T);
 				foreach (var kv in dataList) {
-					if (kv.Key == type)
-						return (T)kv.Value;
+					if (kv.key == type)
+						return (T)kv.data;
 				}
 				var value = create();
-				dataList.Add(new KeyValuePair<Type, object>(type, value));
+				dataList.Add((type, value));
 				return value;
 			}
 		}
