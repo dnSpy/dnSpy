@@ -78,9 +78,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance, eg. <see cref="DocumentViewerListenerConstants.ORDER_GLYPHTEXTMARKERSERVICE"/></param>
 		public ExportDocumentViewerListenerAttribute(double order)
-			: base(typeof(IDocumentViewerListener)) {
-			Order = order;
-		}
+			: base(typeof(IDocumentViewerListener)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance
@@ -130,9 +128,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// Constructor
 		/// </summary>
 		/// <param name="documentViewer"><see cref="IDocumentViewer"/> instance</param>
-		protected DocumentViewerEventArgs(IDocumentViewer documentViewer) {
-			DocumentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
-		}
+		protected DocumentViewerEventArgs(IDocumentViewer documentViewer) => DocumentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
 	}
 
 	/// <summary>

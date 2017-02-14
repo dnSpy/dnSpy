@@ -86,8 +86,6 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		}
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
-		public void Reset() {
-			throw new NotImplementedException();
-		}
+		public void Reset() => throw new NotImplementedException();
 	}
 }

@@ -55,13 +55,11 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 			cancellationToken = cancellationTokenSource.Token;
 		}
 
-		public void Start() {
-			StartAsync()
+		public void Start() => StartAsync()
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
-		}
 
 		async Task StartAsync() {
 			if (isDisposed || cancellationToken.IsCancellationRequested) {

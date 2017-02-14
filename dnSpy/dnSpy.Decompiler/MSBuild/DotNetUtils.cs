@@ -45,8 +45,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var body = method.Body;
 			if (body != null) {
 				foreach (var instr in body.Instructions) {
-					var def = instr.Operand as IMemberDef;
-					if (def != null && def.DeclaringType == method.DeclaringType)
+					if (instr.Operand is IMemberDef def && def.DeclaringType == method.DeclaringType)
 						yield return def;
 				}
 			}

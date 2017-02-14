@@ -47,9 +47,7 @@ namespace dnSpy.MainApp {
 
 		readonly IDsToolWindowService toolWindowService;
 
-		protected CtxMenuToolWindowGroupCommand(IDsToolWindowService toolWindowService) {
-			this.toolWindowService = toolWindowService;
-		}
+		protected CtxMenuToolWindowGroupCommand(IDsToolWindowService toolWindowService) => this.toolWindowService = toolWindowService;
 
 		protected ToolWindowGroupContext CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID))

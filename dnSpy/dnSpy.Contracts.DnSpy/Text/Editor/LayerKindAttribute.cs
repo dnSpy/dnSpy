@@ -28,9 +28,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Constructor
 		/// </summary>
 		/// <param name="kind">Kind of layer</param>
-		public LayerKindAttribute(LayerKind kind) {
-			LayerKind = kind;
-		}
+		public LayerKindAttribute(LayerKind kind) => LayerKind = kind;
 
 		/// <summary>
 		/// Layer kind

@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public ShowWarningMessage(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public ShowWarningMessage(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public void Show(Guid? guid, string msg) {
 			if (guid == null)

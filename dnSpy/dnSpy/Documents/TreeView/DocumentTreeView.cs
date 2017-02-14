@@ -83,9 +83,7 @@ namespace dnSpy.Documents.TreeView {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly ITreeView treeView;
 
-			public GuidObjectsProvider(ITreeView treeView) {
-				this.treeView = treeView;
-			}
+			public GuidObjectsProvider(ITreeView treeView) => this.treeView = treeView;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID, treeView.TopLevelSelection);
@@ -384,8 +382,7 @@ namespace dnSpy.Documents.TreeView {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
 				Debug.Assert(context != null);
 				var node = (ITreeNode)e.Argument;
-				var d = node.Data as DocumentTreeNodeData;
-				if (d != null)
+				if (node.Data is DocumentTreeNodeData d)
 					d.Context = context;
 				return;
 			}
@@ -441,8 +438,7 @@ namespace dnSpy.Documents.TreeView {
 				return FindNode((EventDef)@ref);
 			if (@ref is ParamDef)
 				return FindNode(((ParamDef)@ref).DeclaringMethod);
-			if (@ref is NamespaceRef) {
-				var nsRef = (NamespaceRef)@ref;
+			if (@ref is NamespaceRef nsRef) {
 				return FindNamespaceNode(nsRef.Module, nsRef.Namespace);
 			}
 
@@ -566,8 +562,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public NamespaceNode FindNamespaceNode(IDsDocument module, string @namespace) {
-			var modNode = FindNode(module) as ModuleDocumentNode;
-			if (modNode != null)
+			if (FindNode(module) is ModuleDocumentNode modNode)
 				return modNode.FindNode(@namespace);
 			return null;
 		}
@@ -658,14 +653,12 @@ namespace dnSpy.Documents.TreeView {
 
 		public IEnumerable<ModuleDocumentNode> GetAllModuleNodes() {
 			foreach (var node in TopNodes) {
-				var modNode = node as ModuleDocumentNode;
-				if (modNode != null) {
+				if (node is ModuleDocumentNode modNode) {
 					yield return modNode;
 					continue;
 				}
 
-				var asmNode = node as AssemblyDocumentNode;
-				if (asmNode != null) {
+				if (node is AssemblyDocumentNode asmNode) {
 					asmNode.TreeNode.EnsureChildrenLoaded();
 					foreach (var c in asmNode.TreeNode.DataChildren) {
 						modNode = c as ModuleDocumentNode;
@@ -684,8 +677,7 @@ namespace dnSpy.Documents.TreeView {
 
 		IEnumerable<DsDocumentNode> GetAllCreatedDsDocumentNodes(IEnumerable<TreeNodeData> nodes) {
 			foreach (var n in nodes) {
-				var fn = n as DsDocumentNode;
-				if (fn != null) {
+				if (n is DsDocumentNode fn) {
 					yield return fn;
 					// Don't call fn.TreeNode.EnsureChildrenLoaded(), only return created nodes
 					foreach (var c in GetAllCreatedDsDocumentNodes(fn.TreeNode.DataChildren))

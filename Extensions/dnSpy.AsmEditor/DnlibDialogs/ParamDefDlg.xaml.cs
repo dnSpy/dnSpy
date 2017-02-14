@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class ParamDefDlg : WindowBase {
-		public ParamDefDlg() {
-			InitializeComponent();
-		}
+		public ParamDefDlg() => InitializeComponent();
 	}
 }

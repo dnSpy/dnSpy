@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CANamedArgumentControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as CANamedArgumentVM;
-				if (data != null) {
+				if (DataContext is CANamedArgumentVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 				}

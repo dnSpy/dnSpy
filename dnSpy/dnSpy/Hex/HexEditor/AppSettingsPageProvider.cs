@@ -35,9 +35,7 @@ namespace dnSpy.Hex.HexEditor {
 		const int ADVANCED_GUID_INC = 3;
 
 		[ImportingConstructor]
-		AppSettingsPageProvider(HexEditorOptionsService hexEditorSettingsService) {
-			this.hexEditorSettingsService = hexEditorSettingsService;
-		}
+		AppSettingsPageProvider(HexEditorOptionsService hexEditorSettingsService) => this.hexEditorSettingsService = hexEditorSettingsService;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			var options = hexEditorSettingsService.Options.OrderBy(a => a.Name, StringComparer.CurrentCultureIgnoreCase).ToArray();

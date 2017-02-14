@@ -48,16 +48,14 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		void BreakpointService_BreakpointsAdded(object sender, BreakpointsAddedEventArgs e) {
 			foreach (var bp in e.Breakpoints) {
-				var ilbp = bp as ILCodeBreakpoint;
-				if (ilbp != null)
+				if (bp is ILCodeBreakpoint ilbp)
 					BreakpointAdded(ilbp);
 			}
 		}
 
 		void BreakpointService_BreakpointsRemoved(object sender, BreakpointsRemovedEventArgs e) {
 			foreach (var bp in e.Breakpoints) {
-				var ilbp = bp as ILCodeBreakpoint;
-				if (ilbp != null)
+				if (bp is ILCodeBreakpoint ilbp)
 					BreakpointRemoved(ilbp);
 			}
 		}

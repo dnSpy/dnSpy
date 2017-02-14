@@ -129,8 +129,7 @@ namespace dnSpy.Hex.Editor {
 			foreach (var margin in containerMargins) {
 				if (margin == null)
 					continue;
-				var result = margin.GetHexViewMargin(marginName) as WpfHexViewMargin;
-				if (result != null)
+				if (margin.GetHexViewMargin(marginName) is WpfHexViewMargin result)
 					return result;
 			}
 			return null;

@@ -49,23 +49,15 @@ namespace dnSpy.BamlDecompiler {
 	internal class XmlnsDictionary {
 		Dictionary<string, NamespaceMap> piMappings = new Dictionary<string, NamespaceMap>();
 
-		public XmlnsDictionary() {
-			CurrentScope = null;
-		}
+		public XmlnsDictionary() => CurrentScope = null;
 
 		public XmlnsScope CurrentScope { get; set; }
 
-		public void PushScope(BamlElement element) {
-			CurrentScope = new XmlnsScope(CurrentScope, element);
-		}
+		public void PushScope(BamlElement element) => CurrentScope = new XmlnsScope(CurrentScope, element);
 
-		public void PopScope() {
-			CurrentScope = CurrentScope.PreviousScope;
-		}
+		public void PopScope() => CurrentScope = CurrentScope.PreviousScope;
 
-		public void Add(NamespaceMap map) {
-			CurrentScope.Add(map);
-		}
+		public void Add(NamespaceMap map) => CurrentScope.Add(map);
 
 		public void SetPIMapping(string xmlNs, string clrNs, IAssembly assembly) {
 			if (!piMappings.ContainsKey(xmlNs)) {

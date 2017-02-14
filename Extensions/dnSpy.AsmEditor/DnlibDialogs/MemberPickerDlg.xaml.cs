@@ -33,8 +33,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MemberPickerDlg(IDocumentTreeView globalDocumentTreeView, IDocumentTreeView newDocumentTreeView) {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as MemberPickerVM;
-				if (data != null) {
+				if (DataContext is MemberPickerVM data) {
 					data.OpenAssembly = new OpenAssembly(globalDocumentTreeView.DocumentService);
 					data.PropertyChanged += MemberPickerVM_PropertyChanged;
 				}

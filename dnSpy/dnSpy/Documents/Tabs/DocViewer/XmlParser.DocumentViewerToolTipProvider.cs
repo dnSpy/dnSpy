@@ -28,8 +28,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[ExportDocumentViewerToolTipProvider]
 		sealed class DocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
 			public object Create(IDocumentViewerToolTipProviderContext context, object @ref) {
-				var nsRef = @ref as XmlNamespaceTextViewerReference;
-				if (nsRef != null)
+				if (@ref is XmlNamespaceTextViewerReference nsRef)
 					return Create(context, nsRef);
 				return null;
 			}

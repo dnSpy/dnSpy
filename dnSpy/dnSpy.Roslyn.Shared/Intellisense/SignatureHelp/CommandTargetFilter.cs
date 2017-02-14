@@ -33,13 +33,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 		readonly Lazy<ISignatureHelpBroker> signatureHelpBroker;
 
 		[ImportingConstructor]
-		DefaultTextViewCommandTargetFilterProvider(Lazy<ISignatureHelpBroker> signatureHelpBroker) {
-			this.signatureHelpBroker = signatureHelpBroker;
-		}
+		DefaultTextViewCommandTargetFilterProvider(Lazy<ISignatureHelpBroker> signatureHelpBroker) => this.signatureHelpBroker = signatureHelpBroker;
 
 		public ICommandTargetFilter Create(object target) {
-			var textView = target as ITextView;
-			if (textView != null && textView.Roles.ContainsAll(roles))
+			if (target is ITextView textView && textView.Roles.ContainsAll(roles))
 				return new CommandTargetFilter(textView, signatureHelpBroker);
 			return null;
 		}

@@ -77,9 +77,7 @@ namespace dnSpy.Debugger.Exceptions {
 		readonly ExceptionsCtxMenuCommand cmd;
 
 		public ExceptionsCtxMenuCommandProxy(ExceptionsCtxMenuCommand cmd)
-			: base(cmd) {
-			this.cmd = cmd;
-		}
+			: base(cmd) => this.cmd = cmd;
 
 		protected override ExceptionsCtxMenuContext CreateContext() => cmd.Create();
 	}
@@ -90,9 +88,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		protected readonly Lazy<IExceptionsContent> exceptionsContent;
 
-		protected ExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent) {
-			this.exceptionsContent = exceptionsContent;
-		}
+		protected ExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent) => this.exceptionsContent = exceptionsContent;
 
 		protected sealed override ExceptionsCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object != null && context.CreatorObject.Object.GetType() == typeof(ListBox)))
@@ -192,9 +188,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		[ImportingConstructor]
 		ToggleEnableExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent, IExceptionListSettings exceptionListSettings)
-			: base(exceptionsContent) {
-			this.exceptionListSettings = exceptionListSettings;
-		}
+			: base(exceptionsContent) => this.exceptionListSettings = exceptionListSettings;
 
 		public override void Execute(ExceptionsCtxMenuContext context) {
 			using (exceptionListSettings.TemporarilyDisableSave()) {
@@ -230,9 +224,7 @@ namespace dnSpy.Debugger.Exceptions {
 		abstract class CommandBase : MenuItemBase<string> {
 			protected readonly Lazy<IExceptionsContent> exceptionsContent;
 
-			protected CommandBase(Lazy<IExceptionsContent> exceptionsContent) {
-				this.exceptionsContent = exceptionsContent;
-			}
+			protected CommandBase(Lazy<IExceptionsContent> exceptionsContent) => this.exceptionsContent = exceptionsContent;
 
 			protected sealed override string CreateContext(IMenuItemContext context) => GetExceptionTypeName(context);
 

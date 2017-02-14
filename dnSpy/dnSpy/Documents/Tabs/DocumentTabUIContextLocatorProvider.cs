@@ -29,9 +29,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly Lazy<IDocumentTabUIContextProvider, IDocumentTabUIContextProviderMetadata>[] documentTabUIContextProviders;
 
 		[ImportingConstructor]
-		DocumentTabUIContextLocatorProvider([ImportMany] IEnumerable<Lazy<IDocumentTabUIContextProvider, IDocumentTabUIContextProviderMetadata>> documentTabUIContextProviders) {
-			this.documentTabUIContextProviders = documentTabUIContextProviders.OrderBy(a => a.Metadata.Order).ToArray();
-		}
+		DocumentTabUIContextLocatorProvider([ImportMany] IEnumerable<Lazy<IDocumentTabUIContextProvider, IDocumentTabUIContextProviderMetadata>> documentTabUIContextProviders) => this.documentTabUIContextProviders = documentTabUIContextProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public IDocumentTabUIContextLocator Create() => new DocumentTabUIContextLocator(documentTabUIContextProviders);
 	}

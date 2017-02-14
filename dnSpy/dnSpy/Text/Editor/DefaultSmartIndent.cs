@@ -25,9 +25,7 @@ namespace dnSpy.Text.Editor {
 	sealed class DefaultSmartIndent : ISmartIndent {
 		readonly ITextView textView;
 
-		public DefaultSmartIndent(ITextView textView) {
-			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
-		}
+		public DefaultSmartIndent(ITextView textView) => this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 
 		public int? GetDesiredIndentation(ITextSnapshotLine line) => IndentHelper.GetDesiredBlockIndentation(textView, line);
 		public void Dispose() { }

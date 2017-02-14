@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class CreateTypeSigArrayDlg : WindowBase {
-		public CreateTypeSigArrayDlg() {
-			InitializeComponent();
-		}
+		public CreateTypeSigArrayDlg() => InitializeComponent();
 	}
 }

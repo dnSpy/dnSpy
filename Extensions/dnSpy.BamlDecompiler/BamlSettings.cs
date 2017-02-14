@@ -115,9 +115,7 @@ namespace dnSpy.BamlDecompiler {
 		readonly BamlSettingsImpl bamlSettings;
 
 		[ImportingConstructor]
-		BamlSettingsPageProvider(BamlSettingsImpl bamlSettings) {
-			this.bamlSettings = bamlSettings;
-		}
+		BamlSettingsPageProvider(BamlSettingsImpl bamlSettings) => this.bamlSettings = bamlSettings;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			yield return new BamlAppSettingsPage(bamlSettings);

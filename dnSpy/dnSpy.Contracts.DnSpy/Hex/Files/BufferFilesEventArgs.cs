@@ -33,9 +33,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Constructor
 		/// </summary>
 		/// <param name="files">Files</param>
-		protected BufferFilesEventArgs(HexBufferFile[] files) {
-			Files = files ?? throw new ArgumentNullException(nameof(files));
-		}
+		protected BufferFilesEventArgs(HexBufferFile[] files) => Files = files ?? throw new ArgumentNullException(nameof(files));
 	}
 
 	/// <summary>

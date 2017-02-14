@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ImageListStreamerControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as ImageListStreamerVM;
-				if (data != null) {
+				if (DataContext is ImageListStreamerVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.EditObject = new EditImage(ownerWindow);
 				}

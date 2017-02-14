@@ -35,9 +35,7 @@ namespace dnSpy.Documents.TreeView {
 		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public TypeNodeImpl(ITreeNodeGroup treeNodeGroup, TypeDef type)
-			: base(type) {
-			TreeNodeGroup = treeNodeGroup;
-		}
+			: base(type) => TreeNodeGroup = treeNodeGroup;
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 

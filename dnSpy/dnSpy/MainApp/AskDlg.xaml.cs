@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.MainApp {
 	sealed partial class AskDlg : WindowBase {
-		public AskDlg() {
-			InitializeComponent();
-		}
+		public AskDlg() => InitializeComponent();
 	}
 }

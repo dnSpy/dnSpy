@@ -32,13 +32,9 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly IUndoCommandService undoCommandService;
 
 		[ImportingConstructor]
-		HexBufferUndoRedo(IUndoCommandService undoCommandService) {
-			this.undoCommandService = undoCommandService;
-		}
+		HexBufferUndoRedo(IUndoCommandService undoCommandService) => this.undoCommandService = undoCommandService;
 
-		void IHexBufferServiceListener.BufferCreated(HexBuffer buffer) {
-			buffer.Changed += Buffer_Changed;
-		}
+		void IHexBufferServiceListener.BufferCreated(HexBuffer buffer) => buffer.Changed += Buffer_Changed;
 
 		void IHexBufferServiceListener.BuffersCleared(IEnumerable<HexBuffer> buffers) {
 			foreach (var buffer in buffers)

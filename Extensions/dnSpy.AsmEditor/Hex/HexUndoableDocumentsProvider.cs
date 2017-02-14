@@ -32,15 +32,12 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly Lazy<IHexBufferService> hexBufferService;
 
 		[ImportingConstructor]
-		HexUndoableDocumentsProvider(Lazy<IHexBufferService> hexBufferService) {
-			this.hexBufferService = hexBufferService;
-		}
+		HexUndoableDocumentsProvider(Lazy<IHexBufferService> hexBufferService) => this.hexBufferService = hexBufferService;
 
 		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexBufferService.Value.GetBuffers().Select(a => TryGetUndoObject(a)).Where(a => a != null);
 
 		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
-			var buffer = obj as HexBuffer;
-			if (buffer != null)
+			if (obj is HexBuffer buffer)
 				return TryGetUndoObject(buffer);
 			return null;
 		}

@@ -73,8 +73,7 @@ namespace dnSpy.Debugger.Scripting {
 			if (sig.Params.Count != mps.Length)
 				return false;
 
-			var minfo = method as MethodInfo;
-			if (minfo != null) {
+			if (method is MethodInfo minfo) {
 				if (!Equals(sig.RetType, minfo.ReturnType))
 					return false;
 			}
@@ -95,16 +94,13 @@ namespace dnSpy.Debugger.Scripting {
 			if (a == null)
 				return null;
 
-			var st = a as Type;
-			if (st != null)
+			if (a is Type st)
 				return SystemTypeToString(st);
 
-			var dt = a as IType;
-			if (dt != null)
+			if (a is IType dt)
 				return DnLibTypeToString(dt);
 
-			var s = a as string;
-			if (s != null)
+			if (a is string s)
 				return s;
 
 			Debug.Fail("Unsupported type");

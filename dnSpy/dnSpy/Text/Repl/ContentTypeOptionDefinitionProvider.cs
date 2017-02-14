@@ -33,9 +33,7 @@ namespace dnSpy.Text.Repl {
 		readonly Lazy<ReplOptionsDefinition, IReplOptionsDefinitionMetadata>[] replOptionsDefinitions;
 
 		[ImportingConstructor]
-		ContentTypeOptionDefinitionProvider([ImportMany] IEnumerable<Lazy<ReplOptionsDefinition, IReplOptionsDefinitionMetadata>> replOptionsDefinitions) {
-			this.replOptionsDefinitions = replOptionsDefinitions.ToArray();
-		}
+		ContentTypeOptionDefinitionProvider([ImportMany] IEnumerable<Lazy<ReplOptionsDefinition, IReplOptionsDefinitionMetadata>> replOptionsDefinitions) => this.replOptionsDefinitions = replOptionsDefinitions.ToArray();
 
 		IEnumerable<IReplOptionsDefinitionMetadata> GetOptionsDefinitions() {
 			foreach (var lz in replOptionsDefinitions)

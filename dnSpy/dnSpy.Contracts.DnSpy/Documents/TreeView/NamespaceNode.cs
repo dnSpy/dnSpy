@@ -33,9 +33,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="name">Name</param>
-		protected NamespaceNode(string name) {
-			Name = name;
-		}
+		protected NamespaceNode(string name) => Name = name;
 
 		/// <summary>
 		/// Creates a <see cref="TypeNode"/>

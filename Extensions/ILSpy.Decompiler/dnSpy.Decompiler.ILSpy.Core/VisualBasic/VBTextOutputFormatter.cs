@@ -32,9 +32,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		readonly IDecompilerOutput output;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 
-		public VBTextOutputFormatter(IDecompilerOutput output) {
-			this.output = output ?? throw new ArgumentNullException(nameof(output));
-		}
+		public VBTextOutputFormatter(IDecompilerOutput output) => this.output = output ?? throw new ArgumentNullException(nameof(output));
 
 		MethodDebugInfoBuilder currentMethodDebugInfoBuilder;
 		Stack<MethodDebugInfoBuilder> parentMethodDebugInfoBuilder = new Stack<MethodDebugInfoBuilder>();
@@ -177,8 +175,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 				}
 			}
 
-			var label = node as LabelDeclarationStatement;
-			if (label != null) {
+			if (node is LabelDeclarationStatement label) {
 				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
 				if (method != null)
 					return method.ToString() + label.Label;
@@ -295,8 +292,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		public void DebugStart(AstNode node) => debugStack.Push(new DebugState { StartLocation = output.NextPosition });
 
 		public void DebugHidden(object hiddenBinSpans) {
-			var list = hiddenBinSpans as IList<BinSpan>;
-			if (list != null) {
+			if (hiddenBinSpans is IList<BinSpan> list) {
 				if (debugStack.Count > 0)
 					debugStack.Peek().ExtraBinSpans.AddRange(list);
 			}

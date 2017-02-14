@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CustomAttributeControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as CustomAttributeVM;
-				if (data != null) {
+				if (DataContext is CustomAttributeVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 				}

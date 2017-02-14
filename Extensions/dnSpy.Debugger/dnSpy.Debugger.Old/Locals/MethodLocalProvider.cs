@@ -41,9 +41,7 @@ namespace dnSpy.Debugger.Locals {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		MethodLocalProvider(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		MethodLocalProvider(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)

@@ -25,8 +25,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		public AssemblyOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as AssemblyOptionsVM;
-				if (data != null)
+				if (DataContext is AssemblyOptionsVM data)
 					data.OpenPublicKeyFile = new OpenPublicKeyFile(this);
 			};
 		}

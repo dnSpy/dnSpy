@@ -28,9 +28,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// Constructor
 		/// </summary>
 		/// <param name="metadataSpan">Metadata span</param>
-		protected DotNetMetadataHeaders(HexSpan metadataSpan) {
-			MetadataSpan = metadataSpan;
-		}
+		protected DotNetMetadataHeaders(HexSpan metadataSpan) => MetadataSpan = metadataSpan;
 
 		/// <summary>
 		/// Gets the metadata span

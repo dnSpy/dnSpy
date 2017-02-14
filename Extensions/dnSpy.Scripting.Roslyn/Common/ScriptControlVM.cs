@@ -410,8 +410,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 							execState.Executing = false;
 					}
 					var innerEx = t.Exception?.InnerException;
-					if (innerEx is CompilationErrorException) {
-						var cee = (CompilationErrorException)innerEx;
+					if (innerEx is CompilationErrorException cee) {
 						PrintDiagnostics(cee.Diagnostics);
 						CommandExecuted();
 					}

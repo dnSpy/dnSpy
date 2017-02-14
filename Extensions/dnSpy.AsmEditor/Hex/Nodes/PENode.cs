@@ -136,8 +136,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public HexNode FindNode(HexVM structure, HexField field) {
-			var mdTblRecord = structure as MetaDataTableRecordVM;
-			if (mdTblRecord != null)
+			if (structure is MetaDataTableRecordVM mdTblRecord)
 				return FindTokenNode(mdTblRecord.Token.Raw);
 
 			TreeNode.EnsureChildrenLoaded();
@@ -159,9 +158,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class PETreeNodeGroup : ITreeNodeGroup {
 		public static readonly PETreeNodeGroup Instance = new PETreeNodeGroup(DocumentTreeViewConstants.ORDER_MODULE_PE);
 
-		public PETreeNodeGroup(double order) {
-			Order = order;
-		}
+		public PETreeNodeGroup(double order) => Order = order;
 
 		public double Order { get; }
 

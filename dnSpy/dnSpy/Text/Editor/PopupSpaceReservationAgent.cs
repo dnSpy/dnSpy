@@ -325,8 +325,7 @@ namespace dnSpy.Text.Editor {
 
 		void AddEvents() {
 			wpfTextView.LostAggregateFocus += WpfTextView_LostAggregateFocus;
-			var fwElem = content as FrameworkElement;
-			if (fwElem != null)
+			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged += Content_SizeChanged;
 			var window = Window.GetWindow(wpfTextView.VisualElement);
 			if (window != null)
@@ -342,8 +341,7 @@ namespace dnSpy.Text.Editor {
 
 		void RemoveEvents() {
 			wpfTextView.LostAggregateFocus -= WpfTextView_LostAggregateFocus;
-			var fwElem = content as FrameworkElement;
-			if (fwElem != null)
+			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged -= Content_SizeChanged;
 			var window = Window.GetWindow(wpfTextView.VisualElement);
 			if (window != null)

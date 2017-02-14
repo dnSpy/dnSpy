@@ -65,8 +65,6 @@ namespace dnSpy.Settings.Fonts {
 
 	sealed class FontSettingsCreatedEventArgs : EventArgs {
 		public FontSettings FontSettings { get; }
-		public FontSettingsCreatedEventArgs(FontSettings fontSettings) {
-			FontSettings = fontSettings ?? throw new ArgumentNullException(nameof(fontSettings));
-		}
+		public FontSettingsCreatedEventArgs(FontSettings fontSettings) => FontSettings = fontSettings ?? throw new ArgumentNullException(nameof(fontSettings));
 	}
 }

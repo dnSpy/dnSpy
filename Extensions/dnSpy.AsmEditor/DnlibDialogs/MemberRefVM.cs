@@ -125,8 +125,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType<IMethod>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), null, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null) {
-				var mr = typeSigCreatorOptions.OwnerModule.Import(newMethod) as MemberRef;
-				if (mr != null)
+				if (typeSigCreatorOptions.OwnerModule.Import(newMethod) is MemberRef mr)
 					InitializeFrom(new MemberRefOptions(mr));
 			}
 		}

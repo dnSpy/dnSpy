@@ -27,9 +27,7 @@ namespace dnSpy.Text.Editor {
 	sealed class OutputTextPaneCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		public OutputTextPaneCommandTargetFilter(ITextView textView) {
-			this.textView = textView;
-		}
+		public OutputTextPaneCommandTargetFilter(ITextView textView) => this.textView = textView;
 
 		IOutputTextPane TryGetInstance() =>
 			__outputTextPane ?? (__outputTextPane = OutputTextPaneUtils.TryGetInstance(textView));

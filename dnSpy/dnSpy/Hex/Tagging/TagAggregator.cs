@@ -44,9 +44,7 @@ namespace dnSpy.Hex.Tagging {
 
 			readonly TagAggregator<T> owner;
 
-			public HexTagAggregatorProxy(TagAggregator<T> owner) {
-				this.owner = owner;
-			}
+			public HexTagAggregatorProxy(TagAggregator<T> owner) => this.owner = owner;
 
 			public override IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans) =>
 				owner.GetTags(spans);
@@ -166,10 +164,9 @@ namespace dnSpy.Hex.Tagging {
 			taggers = Array.Empty<IHexTagger<T>>();
 		}
 
-		void Tagger_TagsChanged(object sender, HexBufferSpanEventArgs e) {
+		void Tagger_TagsChanged(object sender, HexBufferSpanEventArgs e) =>
 			// Use original sender, not us
 			RaiseTagsChanged(e.Span, sender);
-		}
 
 		void RaiseTagsChanged(HexBufferSpan span, object sender = null) {
 			if (IsDisposed)

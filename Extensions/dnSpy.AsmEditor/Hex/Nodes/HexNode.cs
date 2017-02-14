@@ -41,9 +41,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			get { yield return Span; }
 		}
 
-		protected HexNode(HexSpan span) {
-			Span = span;
-		}
+		protected HexNode(HexSpan span) => Span = span;
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResultOther(this).FilterType;
 

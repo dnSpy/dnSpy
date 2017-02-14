@@ -34,9 +34,7 @@ namespace dnSpy.BamlDecompiler {
 		readonly BamlSettingsImpl bamlSettings;
 
 		[ImportingConstructor]
-		DisassembleBamlCommand(BamlSettingsImpl bamlSettings) {
-			this.bamlSettings = bamlSettings;
-		}
+		DisassembleBamlCommand(BamlSettingsImpl bamlSettings) => this.bamlSettings = bamlSettings;
 
 		public override void Execute(IMenuItemContext context) => bamlSettings.DisassembleBaml = !bamlSettings.DisassembleBaml;
 		public override bool IsChecked(IMenuItemContext context) => bamlSettings.DisassembleBaml;

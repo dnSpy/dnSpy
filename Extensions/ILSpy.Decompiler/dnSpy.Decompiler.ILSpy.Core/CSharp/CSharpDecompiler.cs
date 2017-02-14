@@ -128,15 +128,12 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		class SelectCtorTransform : IAstTransform {
 			readonly MethodDef ctorDef;
 
-			public SelectCtorTransform(MethodDef ctorDef) {
-				this.ctorDef = ctorDef;
-			}
+			public SelectCtorTransform(MethodDef ctorDef) => this.ctorDef = ctorDef;
 
 			public void Run(AstNode compilationUnit) {
 				ConstructorDeclaration ctorDecl = null;
 				foreach (var node in compilationUnit.Children) {
-					ConstructorDeclaration ctor = node as ConstructorDeclaration;
-					if (ctor != null) {
+					if (node is ConstructorDeclaration ctor) {
 						if (ctor.Annotation<MethodDef>() == ctorDef) {
 							ctorDecl = ctor;
 						}
@@ -146,8 +143,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 						}
 					}
 					// Remove any fields without initializers
-					FieldDeclaration fd = node as FieldDeclaration;
-					if (fd != null && fd.Variables.All(v => v.Initializer.IsNull))
+					if (node is FieldDeclaration fd && fd.Variables.All(v => v.Initializer.IsNull))
 						fd.Remove();
 				}
 				if (ctorDecl.Initializer.ConstructorInitializerType == ConstructorInitializerType.This) {
@@ -195,9 +191,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		sealed class SelectFieldTransform : IAstTransform {
 			readonly FieldDef field;
 
-			public SelectFieldTransform(FieldDef field) {
-				this.field = field;
-			}
+			public SelectFieldTransform(FieldDef field) => this.field = field;
 
 			public void Run(AstNode compilationUnit) {
 				foreach (var child in compilationUnit.Children) {
@@ -421,8 +415,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		internal static bool ShowMember(IMemberRef member, bool showAllMembers, DecompilerSettings settings) {
 			if (showAllMembers)
 				return true;
-			var md = member as MethodDef;
-			if (md != null && (md.IsGetter || md.IsSetter || md.IsAddOn || md.IsRemoveOn))
+			if (member is MethodDef md && (md.IsGetter || md.IsSetter || md.IsAddOn || md.IsRemoveOn))
 				return true;
 			return !AstBuilder.MemberIsHidden(member, settings);
 		}

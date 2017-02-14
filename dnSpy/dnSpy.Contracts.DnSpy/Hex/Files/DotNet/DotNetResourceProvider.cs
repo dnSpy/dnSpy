@@ -28,9 +28,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// Constructor
 		/// </summary>
 		/// <param name="file">File</param>
-		protected DotNetResourceProvider(HexBufferFile file) {
-			File = file ?? throw new ArgumentNullException(nameof(file));
-		}
+		protected DotNetResourceProvider(HexBufferFile file) => File = file ?? throw new ArgumentNullException(nameof(file));
 
 		/// <summary>
 		/// Gets the file

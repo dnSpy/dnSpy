@@ -36,9 +36,7 @@ namespace dnSpy.AsmEditor.Namespace {
 	[ExportAutoLoaded]
 	sealed class CommandLoader : IAutoLoaded {
 		[ImportingConstructor]
-		CommandLoader(IWpfCommandService wpfCommandService, DeleteNamespaceCommand.EditMenuCommand removeCmd) {
-			wpfCommandService.AddRemoveCommand(removeCmd);
-		}
+		CommandLoader(IWpfCommandService wpfCommandService, DeleteNamespaceCommand.EditMenuCommand removeCmd) => wpfCommandService.AddRemoveCommand(removeCmd);
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -48,9 +46,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
-				this.undoCommandService = undoCommandService;
-			}
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteNamespaceCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandService, context.Nodes);
@@ -63,26 +59,22 @@ namespace dnSpy.AsmEditor.Namespace {
 
 			[ImportingConstructor]
 			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteNamespaceCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandService, context.Nodes);
 			public override string GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
 		}
 
-		static string GetCommandName(int count) {
-			return count == 1 ?
-				dnSpy_AsmEditor_Resources.DeleteNamespaceCommand :
-				string.Format(dnSpy_AsmEditor_Resources.DeleteNamespacesCommand, count);
-		}
+		static string GetCommandName(int count) =>
+			count == 1 ?
+			dnSpy_AsmEditor_Resources.DeleteNamespaceCommand :
+			string.Format(dnSpy_AsmEditor_Resources.DeleteNamespacesCommand, count);
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) {
-			return nodes != null &&
-				nodes.Length > 0 &&
-				nodes.All(a => a is NamespaceNode);
-		}
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
+			nodes != null &&
+			nodes.Length > 0 &&
+			nodes.All(a => a is NamespaceNode);
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -199,9 +191,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
-				this.undoCommandService = undoCommandService;
-			}
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandService, context.Nodes);
@@ -213,23 +203,20 @@ namespace dnSpy.AsmEditor.Namespace {
 
 			[ImportingConstructor]
 			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandService, context.Nodes);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) {
-			return nodes != null &&
-				nodes.Length > 0 &&
-				nodes.All(a => a is NamespaceNode) &&
-				nodes.Any(a => ((NamespaceNode)a).Name != string.Empty) &&
-				IsInSameModule(nodes) &&
-				nodes[0].TreeNode.Parent != null &&
-				nodes[0].TreeNode.Parent.DataChildren.Any(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
-		}
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
+			nodes != null &&
+			nodes.Length > 0 &&
+			nodes.All(a => a is NamespaceNode) &&
+			nodes.Any(a => ((NamespaceNode)a).Name != string.Empty) &&
+			IsInSameModule(nodes) &&
+			nodes[0].TreeNode.Parent != null &&
+			nodes[0].TreeNode.Parent.DataChildren.Any(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 
 		static bool IsInSameModule(DocumentTreeNodeData[] nodes) {
 			if (nodes == null || nodes.Length == 0)
@@ -373,11 +360,10 @@ namespace dnSpy.AsmEditor.Namespace {
 			public override void Execute(AsmEditorContext context) => RenameNamespaceCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) {
-			return nodes != null &&
-				nodes.Length == 1 &&
-				nodes[0] is NamespaceNode;
-		}
+		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
+			nodes != null &&
+			nodes.Length == 1 &&
+			nodes[0] is NamespaceNode;
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))

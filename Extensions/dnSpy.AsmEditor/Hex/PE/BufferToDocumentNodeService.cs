@@ -36,9 +36,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		BufferToDocumentNodeServiceImpl(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		BufferToDocumentNodeServiceImpl(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		DsDocumentNode Find(HexBufferFile file) {
 			if (file == null)

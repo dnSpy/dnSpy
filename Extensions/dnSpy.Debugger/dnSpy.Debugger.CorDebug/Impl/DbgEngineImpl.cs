@@ -87,8 +87,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			Debug.Assert(messagesEnabled);
 			//TODO:
+			Debug.Assert(messagesEnabled);
 		}
 
 		void SendMessage(DbgEngineMessage message) {

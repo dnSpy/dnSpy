@@ -63,9 +63,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 		bool isEnabled;
 
-		protected Breakpoint(bool isEnabled) {
-			this.isEnabled = isEnabled;
-		}
+		protected Breakpoint(bool isEnabled) => this.isEnabled = isEnabled;
 
 		protected virtual void OnIsEnabledChanged() { }
 	}

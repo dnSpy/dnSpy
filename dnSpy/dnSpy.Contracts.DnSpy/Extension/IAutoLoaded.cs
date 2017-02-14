@@ -68,9 +68,7 @@ namespace dnSpy.Contracts.Extension {
 	public sealed class ExportAutoLoadedAttribute : ExportAttribute, IAutoLoadedMetadata {
 		/// <summary>Constructor</summary>
 		public ExportAutoLoadedAttribute()
-			: base(typeof(IAutoLoaded)) {
-			LoadType = AutoLoadedLoadType.AppLoaded;
-		}
+			: base(typeof(IAutoLoaded)) => LoadType = AutoLoadedLoadType.AppLoaded;
 
 		/// <summary>
 		/// Order of this instance

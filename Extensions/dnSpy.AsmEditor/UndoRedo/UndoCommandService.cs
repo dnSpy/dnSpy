@@ -183,8 +183,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		static bool NeedsToCallGc(List<UndoState> list) {
 			foreach (var state in list) {
 				foreach (var c in state.Commands) {
-					var c2 = c as IGCUndoCommand;
-					if (c2 != null && c2.CallGarbageCollectorAfterDispose)
+					if (c is IGCUndoCommand c2 && c2.CallGarbageCollectorAfterDispose)
 						return true;
 				}
 			}
@@ -242,8 +241,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		static void Clear(List<UndoState> list) {
 			foreach (var group in list) {
 				foreach (var cmd in group.Commands) {
-					var id = cmd as IDisposable;
-					if (id != null)
+					if (cmd is IDisposable id)
 						id.Dispose();
 				}
 			}

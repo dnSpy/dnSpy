@@ -75,9 +75,7 @@ namespace dnSpy.Debugger.CallStack {
 		readonly CallStackCtxMenuCommand cmd;
 
 		public CallStackCtxMenuCommandProxy(CallStackCtxMenuCommand cmd)
-			: base(cmd) {
-			this.cmd = cmd;
-		}
+			: base(cmd) => this.cmd = cmd;
 
 		protected override CallStackCtxMenuContext CreateContext() => cmd.Create();
 	}
@@ -146,9 +144,7 @@ namespace dnSpy.Debugger.CallStack {
 			: base(theDebugger, callStackContent) {
 		}
 
-		public override void Execute(CallStackCtxMenuContext context) {
-			callStackContent.Value.ListView.SelectAll();
-		}
+		public override void Execute(CallStackCtxMenuContext context) => callStackContent.Value.ListView.SelectAll();
 
 		public override bool IsEnabled(CallStackCtxMenuContext context) => context.SelectedItems.Length > 0;
 	}
@@ -256,9 +252,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		RunToCursorCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, Lazy<IDebugService> debugService)
-			: base(theDebugger, callStackContent) {
-			this.debugService = debugService;
-		}
+			: base(theDebugger, callStackContent) => this.debugService = debugService;
 
 		public override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
@@ -276,9 +270,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		HexadecimalDisplayCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, DebuggerSettingsImpl debuggerSettings)
-			: base(theDebugger, callStackContent) {
-			this.debuggerSettings = debuggerSettings;
-		}
+			: base(theDebugger, callStackContent) => this.debuggerSettings = debuggerSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
 		public override bool IsChecked(CallStackCtxMenuContext context) => debuggerSettings.UseHexadecimal;
@@ -290,9 +282,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowModuleNamesCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowModuleNames = !callStackSettings.ShowModuleNames;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowModuleNames;
@@ -304,9 +294,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowParameterTypesCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowParameterTypes = !callStackSettings.ShowParameterTypes;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowParameterTypes;
@@ -318,9 +306,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowParameterNamesCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowParameterNames = !callStackSettings.ShowParameterNames;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowParameterNames;
@@ -332,9 +318,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowParameterValuesCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowParameterValues = !callStackSettings.ShowParameterValues;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowParameterValues;
@@ -346,9 +330,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowIPCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowIP = !callStackSettings.ShowIP;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowIP;
@@ -360,9 +342,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowOwnerTypesCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowOwnerTypes = !callStackSettings.ShowOwnerTypes;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowOwnerTypes;
@@ -374,9 +354,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowNamespacesCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowNamespaces = !callStackSettings.ShowNamespaces;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowNamespaces;
@@ -388,9 +366,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowReturnTypesCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowReturnTypes = !callStackSettings.ShowReturnTypes;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowReturnTypes;
@@ -402,9 +378,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowTypeKeywordsCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowTypeKeywords = !callStackSettings.ShowTypeKeywords;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowTypeKeywords;
@@ -416,9 +390,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[ImportingConstructor]
 		ShowTokensCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent, CallStackSettingsImpl callStackSettings)
-			: base(theDebugger, callStackContent) {
-			this.callStackSettings = callStackSettings;
-		}
+			: base(theDebugger, callStackContent) => this.callStackSettings = callStackSettings;
 
 		public override void Execute(CallStackCtxMenuContext context) => callStackSettings.ShowTokens = !callStackSettings.ShowTokens;
 		public override bool IsChecked(CallStackCtxMenuContext context) => callStackSettings.ShowTokens;

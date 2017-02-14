@@ -87,11 +87,9 @@ namespace dndbg.Engine {
 
 		public static bool operator !=(CorProperty a, CorProperty b) => !(a == b);
 
-		public bool Equals(CorProperty other) {
-			return !ReferenceEquals(other, null) &&
+		public bool Equals(CorProperty other) => !ReferenceEquals(other, null) &&
 				Token == other.Token &&
 				Class == other.Class;
-		}
 
 		public override bool Equals(object obj) => Equals(obj as CorProperty);
 		public override int GetHashCode() => (int)Token ^ Class.GetHashCode();

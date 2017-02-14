@@ -32,9 +32,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public LogEditorOptions() {
-			EnableUndoHistory = false;
-		}
+		public LogEditorOptions() => EnableUndoHistory = false;
 
 		/// <summary>
 		/// Clones this

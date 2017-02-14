@@ -30,8 +30,6 @@ namespace dnSpy.Language.Intellisense {
 			return collection == null || collection.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-			throw new NotSupportedException();
-		}
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
 	}
 }

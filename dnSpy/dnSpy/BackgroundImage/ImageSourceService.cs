@@ -128,9 +128,7 @@ namespace dnSpy.BackgroundImage {
 
 				readonly string[] themeNames;
 
-				SourceOptions(string[] themeNames) {
-					this.themeNames = themeNames;
-				}
+				SourceOptions(string[] themeNames) => this.themeNames = themeNames;
 
 				public bool IsSupportedTheme(ITheme theme) {
 					if (themeNames.Length == 0)
@@ -198,18 +196,14 @@ namespace dnSpy.BackgroundImage {
 			abstract class FilenameIterator {
 				public abstract IEnumerable<string> Filenames { get; }
 				public SourceOptions SourceOptions { get; }
-				protected FilenameIterator(SourceOptions sourceOptions) {
-					SourceOptions = sourceOptions;
-				}
+				protected FilenameIterator(SourceOptions sourceOptions) => SourceOptions = sourceOptions;
 			}
 
 			sealed class FileIterator : FilenameIterator {
 				readonly string filename;
 
 				public FileIterator(string filename, SourceOptions sourceOptions)
-					: base(sourceOptions) {
-					this.filename = filename;
-				}
+					: base(sourceOptions) => this.filename = filename;
 
 				public override IEnumerable<string> Filenames {
 					get { yield return filename; }
@@ -227,9 +221,7 @@ namespace dnSpy.BackgroundImage {
 				readonly string dirPath;
 
 				public DirectoryIterator(string dirPath, SourceOptions sourceOptions)
-					: base(sourceOptions) {
-					this.dirPath = dirPath;
-				}
+					: base(sourceOptions) => this.dirPath = dirPath;
 
 				public override IEnumerable<string> Filenames => GetFiles();
 
@@ -319,8 +311,7 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			List<string> GetAllFilenames() {
-				var list = cachedAllFilenamesListWeakRef?.Target as List<string>;
-				if (list != null && (DateTimeOffset.UtcNow - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
+				if (cachedAllFilenamesListWeakRef?.Target is List<string> list && (DateTimeOffset.UtcNow - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
 					return list;
 
 				var hash = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);

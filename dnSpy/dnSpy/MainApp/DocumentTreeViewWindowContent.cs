@@ -41,9 +41,7 @@ namespace dnSpy.MainApp {
 		DocumentTreeViewWindowContent documentTreeViewWindowContent;
 
 		[ImportingConstructor]
-		DocumentTreeViewWindowContentProvider(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		DocumentTreeViewWindowContentProvider(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(DocumentTreeViewWindowContent.THE_GUID, DocumentTreeViewWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_LEFT_FILES, true); }
@@ -82,13 +80,12 @@ namespace dnSpy.MainApp {
 		public static readonly RoutedCommand ShowDocumentTreeViewRoutedCommand = new RoutedCommand("ShowDocumentTreeViewRoutedCommand", typeof(ShowDocumentTreeViewCommandLoader));
 
 		[ImportingConstructor]
-		ShowDocumentTreeViewCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
+		ShowDocumentTreeViewCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) =>
 			wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW).Add(
 				ShowDocumentTreeViewRoutedCommand,
 				(s, e) => toolWindowService.Show(DocumentTreeViewWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.L);
-		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:AssemblyExplorerCommand", InputGestureText = "res:AssemblyExplorerKey", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 10)]

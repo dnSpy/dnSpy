@@ -30,9 +30,7 @@ namespace dnSpy.Hex.Files.ToolTips {
 		readonly HexFieldFormatterFactory hexFieldFormatterFactory;
 
 		[ImportingConstructor]
-		HexToolTipContentCreatorFactoryImpl(HexFieldFormatterFactory hexFieldFormatterFactory) {
-			this.hexFieldFormatterFactory = hexFieldFormatterFactory;
-		}
+		HexToolTipContentCreatorFactoryImpl(HexFieldFormatterFactory hexFieldFormatterFactory) => this.hexFieldFormatterFactory = hexFieldFormatterFactory;
 
 		public override HexToolTipContentCreator Create() =>
 			new HexToolTipContentCreatorImpl(hexFieldFormatterFactory);

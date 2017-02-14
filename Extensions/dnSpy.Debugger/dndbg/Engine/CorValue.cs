@@ -424,8 +424,7 @@ namespace dndbg.Engine {
 				elemType = CorElementType.End;
 
 			bool initdSize = false;
-			var v3 = value as ICorDebugValue3;
-			if (v3 != null)
+			if (value is ICorDebugValue3 v3)
 				initdSize = v3.GetSize64(out size) == 0;
 			if (!initdSize) {
 				hr = value.GetSize(out uint size32);
@@ -517,9 +516,7 @@ namespace dndbg.Engine {
 		/// <param name="cls">Class</param>
 		/// <param name="token">Token of field in <paramref name="cls"/></param>
 		/// <returns></returns>
-		public CorValue GetFieldValue(CorClass cls, uint token) {
-			return GetFieldValue(cls, token, out int hr);
-		}
+		public CorValue GetFieldValue(CorClass cls, uint token) => GetFieldValue(cls, token, out int hr);
 
 		/// <summary>
 		/// Gets the value of a field or null if it's not a <see cref="ICorDebugObjectValue"/>

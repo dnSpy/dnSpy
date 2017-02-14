@@ -127,9 +127,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 				currentResult.Add(result);
 			}
 
-			public void OnStartNewJob(NormalizedSnapshotSpanCollection spans) {
-				currentResult.Clear();
-			}
+			public void OnStartNewJob(NormalizedSnapshotSpanCollection spans) => currentResult.Clear();
 
 			public void OnEndNewJob(NormalizedSnapshotSpanCollection spans) {
 				AddMissingResults(spans);

@@ -28,9 +28,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Constructor
 		/// </summary>
 		/// <param name="kind">Kind of layer</param>
-		public HexLayerKindAttribute(HexLayerKind kind) {
-			LayerKind = kind;
-		}
+		public HexLayerKindAttribute(HexLayerKind kind) => LayerKind = kind;
 
 		/// <summary>
 		/// Layer kind

@@ -99,8 +99,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public Version CLRVersion {
 			get {
-				var p2 = obj as ICorDebugProcess2;
-				if (p2 != null) {
+				if (obj is ICorDebugProcess2 p2) {
 					int hr = p2.GetVersion(out var ver);
 					if (hr >= 0)
 						return new Version((int)ver.dwMajor, (int)ver.dwMinor, (int)ver.dwBuild, (int)ver.dwSubBuild);
@@ -248,15 +247,13 @@ namespace dndbg.Engine {
 		}
 
 		public void SetEnableCustomNotification(CorClass cls, bool enable) {
-			var p3 = obj as ICorDebugProcess3;
-			if (p3 != null) {
+			if (obj is ICorDebugProcess3 p3) {
 				int hr = p3.SetEnableCustomNotification(cls.RawObject, enable ? 1 : 0);
 			}
 		}
 
 		public void SetWriteableMetadataUpdateMode(WriteableMetadataUpdateMode mode) {
-			var p7 = obj as ICorDebugProcess7;
-			if (p7 != null) {
+			if (obj is ICorDebugProcess7 p7) {
 				int hr = p7.SetWriteableMetadataUpdateMode(mode);
 				// 0x80131c4e: CORDBG_E_UNSUPPORTED
 				// Not supported in V2 debuggers (when shim is used). Supported in V3, which we're
@@ -267,15 +264,13 @@ namespace dndbg.Engine {
 		public void EnableLogMessages(bool enable) => obj.EnableLogMessages(enable ? 1 : 0);
 
 		public void EnableExceptionCallbacksOutsideOfMyCode(bool value) {
-			var p8 = obj as ICorDebugProcess8;
-			if (p8 != null) {
+			if (obj is ICorDebugProcess8 p8) {
 				int hr = p8.EnableExceptionCallbacksOutsideOfMyCode(value ? 1 : 0);
 			}
 		}
 
 		public void EnableNGENPolicy(CorDebugNGENPolicy policy) {
-			var p5 = obj as ICorDebugProcess5;
-			if (p5 != null) {
+			if (obj is ICorDebugProcess5 p5) {
 				int hr = p5.EnableNGENPolicy(policy);
 			}
 		}

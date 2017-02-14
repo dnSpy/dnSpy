@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Method {
 	sealed partial class MethodOptionsDlg : WindowBase {
-		public MethodOptionsDlg() {
-			InitializeComponent();
-		}
+		public MethodOptionsDlg() => InitializeComponent();
 	}
 }

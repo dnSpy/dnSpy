@@ -64,16 +64,12 @@ namespace dnSpy.Debugger {
 		//[ExportAutoLoaded]
 		sealed class Loader : IAutoLoaded {
 			[ImportingConstructor]
-			Loader(IAppWindow appWindow) {
-				initd = true;
-			}
+			Loader(IAppWindow appWindow) => initd = true;
 		}
 		protected static bool initd;
 
 		protected DebugToolBarButtonCommand(ICommand command, Lazy<ITheDebugger> theDebugger)
-			: base(command) {
-			this.theDebugger = theDebugger;
-		}
+			: base(command) => this.theDebugger = theDebugger;
 
 		public override bool IsVisible(IToolBarItemContext context) => initd && theDebugger.Value.IsDebugging;
 	}
@@ -155,9 +151,7 @@ namespace dnSpy.Debugger {
 	abstract class DebugCtxMenuCommand : MenuItemBase {
 		readonly ICommand realCmd;
 
-		protected DebugCtxMenuCommand(ICommand realCmd) {
-			this.realCmd = realCmd;
-		}
+		protected DebugCtxMenuCommand(ICommand realCmd) => this.realCmd = realCmd;
 
 		public override void Execute(IMenuItemContext context) => realCmd.Execute(context);
 		public override bool IsVisible(IMenuItemContext context) => IsValidElement(context.CreatorObject) && realCmd.CanExecute(context);
@@ -171,9 +165,7 @@ namespace dnSpy.Debugger {
 
 		[ImportingConstructor]
 		public DebugAssemblyDebugCtxMenuCommand(Lazy<IDebugService> debugService)
-			: base(DebugRoutedCommands.DebugCurrentAssembly) {
-			this.debugService = debugService;
-		}
+			: base(DebugRoutedCommands.DebugCurrentAssembly) => this.debugService = debugService;
 
 		public override string GetHeader(IMenuItemContext context) {
 			var asm = debugService.Value.GetCurrentExecutableAssembly(context);
@@ -193,9 +185,7 @@ namespace dnSpy.Debugger {
 
 		[ImportingConstructor]
 		public ToggleBreakpointDebugCtxMenuCommand(Lazy<IBreakpointService> breakpointService)
-			: base(DebugRoutedCommands.ToggleBreakpoint) {
-			this.breakpointService = breakpointService;
-		}
+			: base(DebugRoutedCommands.ToggleBreakpoint) => this.breakpointService = breakpointService;
 
 		public override string GetHeader(IMenuItemContext context) {
 			bool? enabled = breakpointService.Value.GetAddRemoveBreakpointsInfo(out int count);
@@ -214,9 +204,7 @@ namespace dnSpy.Debugger {
 
 		[ImportingConstructor]
 		public EnableDisableBreakpointDebugCtxMenuCommand(Lazy<IBreakpointService> breakpointService)
-			: base(DebugRoutedCommands.DisableBreakpoint) {
-			this.breakpointService = breakpointService;
-		}
+			: base(DebugRoutedCommands.DisableBreakpoint) => this.breakpointService = breakpointService;
 
 		public override bool IsEnabled(IMenuItemContext context) {
 			bool enabled = breakpointService.Value.GetEnableDisableBreakpointsInfo(out int count);
@@ -385,9 +373,7 @@ namespace dnSpy.Debugger {
 
 		[ImportingConstructor]
 		public EnableAllBreakpointsDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger, IAppWindow appWindow)
-			: base(DebugRoutedCommands.EnableAllBreakpoints, theDebugger, null) {
-			this.appWindow = appWindow;
-		}
+			: base(DebugRoutedCommands.EnableAllBreakpoints, theDebugger, null) => this.appWindow = appWindow;
 
 		public override bool IsVisible(IMenuItemContext context) => DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
@@ -398,9 +384,7 @@ namespace dnSpy.Debugger {
 
 		[ImportingConstructor]
 		public DisableAllBreakpointsDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger, IAppWindow appWindow)
-			: base(DebugRoutedCommands.DisableAllBreakpoints, theDebugger, null) {
-			this.appWindow = appWindow;
-		}
+			: base(DebugRoutedCommands.DisableAllBreakpoints, theDebugger, null) => this.appWindow = appWindow;
 
 		public override bool IsVisible(IMenuItemContext context) => DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 	}
@@ -463,9 +447,7 @@ namespace dnSpy.Debugger {
 		readonly Lazy<ITheDebugger> theDebugger;
 
 		[ImportingConstructor]
-		MemoryWindowCommand(Lazy<ITheDebugger> theDebugger) {
-			this.theDebugger = theDebugger;
-		}
+		MemoryWindowCommand(Lazy<ITheDebugger> theDebugger) => this.theDebugger = theDebugger;
 
 		public override void Execute(IMenuItemContext context) { }
 		public override bool IsVisible(IMenuItemContext context) => theDebugger.Value.IsDebugging;
@@ -474,9 +456,7 @@ namespace dnSpy.Debugger {
 	sealed class CommandToMenuItem : MenuItemBase {
 		readonly ICommand cmd;
 
-		public CommandToMenuItem(ICommand cmd) {
-			this.cmd = cmd;
-		}
+		public CommandToMenuItem(ICommand cmd) => this.cmd = cmd;
 
 		public override void Execute(IMenuItemContext context) => cmd.Execute(context);
 		public override bool IsVisible(IMenuItemContext context) => cmd.CanExecute(context);
@@ -535,9 +515,7 @@ namespace dnSpy.Debugger {
 		readonly Lazy<IBreakpointService> breakpointService;
 
 		[ImportingConstructor]
-		DeleteBreakpointCommand(Lazy<IBreakpointService> breakpointService) {
-			this.breakpointService = breakpointService;
-		}
+		DeleteBreakpointCommand(Lazy<IBreakpointService> breakpointService) => this.breakpointService = breakpointService;
 
 		public override void Execute(ILCodeBreakpoint context) => breakpointService.Value.Remove(context);
 	}

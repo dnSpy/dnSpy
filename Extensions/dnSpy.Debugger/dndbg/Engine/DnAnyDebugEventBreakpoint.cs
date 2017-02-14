@@ -35,9 +35,7 @@ namespace dndbg.Engine {
 	public sealed class DnAnyDebugEventBreakpoint : DnBreakpoint {
 		internal Func<AnyDebugEventBreakpointConditionContext, bool> Condition { get; }
 
-		internal DnAnyDebugEventBreakpoint(Func<AnyDebugEventBreakpointConditionContext, bool> cond) {
-			Condition = cond ?? defaultCond;
-		}
+		internal DnAnyDebugEventBreakpoint(Func<AnyDebugEventBreakpointConditionContext, bool> cond) => Condition = cond ?? defaultCond;
 		static readonly Func<AnyDebugEventBreakpointConditionContext, bool> defaultCond = a => true;
 	}
 }

@@ -45,9 +45,7 @@ namespace dnSpy.Text.Editor {
 		readonly ILineSeparatorServiceProvider lineSeparatorServiceProvider;
 
 		[ImportingConstructor]
-		LineSeparatorWpfTextViewCreationListener(ILineSeparatorServiceProvider lineSeparatorServiceProvider) {
-			this.lineSeparatorServiceProvider = lineSeparatorServiceProvider;
-		}
+		LineSeparatorWpfTextViewCreationListener(ILineSeparatorServiceProvider lineSeparatorServiceProvider) => this.lineSeparatorServiceProvider = lineSeparatorServiceProvider;
 
 		public void TextViewCreated(IWpfTextView textView) =>
 			lineSeparatorServiceProvider.InstallLineSeparatorService(textView);

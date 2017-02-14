@@ -67,9 +67,7 @@ namespace dnSpy.Contracts.Images {
 
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance</param>
-		internal ExportImageSourceInfoProviderAttribute(double order) {
-			Order = order;
-		}
+		internal ExportImageSourceInfoProviderAttribute(double order) => Order = order;
 
 		/// <summary>
 		/// Gets the type

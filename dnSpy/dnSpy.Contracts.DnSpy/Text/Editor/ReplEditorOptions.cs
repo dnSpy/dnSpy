@@ -73,9 +73,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ReplEditorOptions() {
-			Roles = new HashSet<string>(defaultRoles, StringComparer.InvariantCultureIgnoreCase);
-		}
+		public ReplEditorOptions() => Roles = new HashSet<string>(defaultRoles, StringComparer.InvariantCultureIgnoreCase);
 
 		/// <summary>
 		/// Clones this

@@ -33,9 +33,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class MethodUsesNode : SearchNode {
 		readonly MethodDef analyzedMethod;
 
-		public MethodUsesNode(MethodDef analyzedMethod) {
-			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
-		}
+		public MethodUsesNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsesTreeNode);
@@ -60,8 +58,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<DefRef<MethodDef>> GetUsedMethods() {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
-				IMethod mr = instr.Operand as IMethod;
-				if (mr != null && !mr.IsField) {
+				if (instr.Operand is IMethod mr && !mr.IsField) {
 					MethodDef def = mr.ResolveMethodDef();
 					if (def != null)
 						yield return new DefRef<MethodDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
@@ -71,8 +68,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<DefRef<FieldDef>> GetUsedFields() {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
-				IField fr = instr.Operand as IField;
-				if (fr != null && !fr.IsMethod) {
+				if (instr.Operand is IField fr && !fr.IsMethod) {
 					FieldDef def = fr.ResolveFieldDef();
 					if (def != null)
 						yield return new DefRef<FieldDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));

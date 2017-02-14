@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.Language.Intellisense {
 	sealed partial class QuickInfoPresenterControl : UserControl {
-		public QuickInfoPresenterControl() {
-			InitializeComponent();
-		}
+		public QuickInfoPresenterControl() => InitializeComponent();
 	}
 }

@@ -56,9 +56,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	sealed class BuilderCache {
 		readonly ThreadSafeObjectPool<AstBuilderState> astBuilderStatePool;
 
-		public BuilderCache() {
-			astBuilderStatePool = new ThreadSafeObjectPool<AstBuilderState>(Environment.ProcessorCount, createAstBuilderState, resetAstBuilderState);
-		}
+		public BuilderCache() => astBuilderStatePool = new ThreadSafeObjectPool<AstBuilderState>(Environment.ProcessorCount, createAstBuilderState, resetAstBuilderState);
 
 		static readonly Func<AstBuilderState> createAstBuilderState = () => new AstBuilderState();
 		static readonly Action<AstBuilderState> resetAstBuilderState = abs => abs.Reset();

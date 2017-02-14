@@ -59,14 +59,12 @@ namespace dnSpy.Debugger.Breakpoints {
 				output.Write(BoxedTextColor.Number, string.Format(GetHexFormatUInt32(), offset));
 		}
 
-		void WriteToken(ITextColorWriter output, uint token) {
+		void WriteToken(ITextColorWriter output, uint token) =>
 			// Tokens are always in hex
 			output.Write(BoxedTextColor.Number, string.Format(GetHexFormatUInt32(), token));
-		}
 
 		public void WriteName(BreakpointVM vm) {
-			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
-			if (ilbp != null) {
+			if (vm.Breakpoint is ILCodeBreakpoint ilbp) {
 				vm.NameError = false;
 				bool printedToken = false;
 				if (vm.Context.ShowTokens) {
@@ -96,8 +94,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				return;
 			}
 
-			var debp = vm.Breakpoint as DebugEventBreakpoint;
-			if (debp != null) {
+			if (vm.Breakpoint is DebugEventBreakpoint debp) {
 				//TODO:
 				return;
 			}
@@ -118,14 +115,12 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public void WriteAssembly(BreakpointVM vm) {
-			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
-			if (ilbp != null) {
+			if (vm.Breakpoint is ILCodeBreakpoint ilbp) {
 				output.Write(new AssemblyNameInfo(ilbp.MethodToken.Module.AssemblyFullName));
 				return;
 			}
 
-			var debp = vm.Breakpoint as DebugEventBreakpoint;
-			if (debp != null) {
+			if (vm.Breakpoint is DebugEventBreakpoint debp) {
 				// nothing
 				return;
 			}
@@ -141,30 +136,26 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public void WriteModule(BreakpointVM vm) {
-			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
-			if (ilbp != null) {
+			if (vm.Breakpoint is ILCodeBreakpoint ilbp) {
 				// Always use the filename since it matches the module names in the call stack and
 				// modules windows
 				output.WriteModule(ModulePathToModuleName(ilbp.MethodToken.Module.ModuleName));
 				return;
 			}
 
-			var debp = vm.Breakpoint as DebugEventBreakpoint;
-			if (debp != null) {
+			if (vm.Breakpoint is DebugEventBreakpoint debp) {
 				// nothing
 				return;
 			}
 		}
 
 		public void WriteFile(BreakpointVM vm) {
-			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
-			if (ilbp != null) {
+			if (vm.Breakpoint is ILCodeBreakpoint ilbp) {
 				output.WriteFilename(ilbp.MethodToken.Module.ModuleName);
 				return;
 			}
 
-			var debp = vm.Breakpoint as DebugEventBreakpoint;
-			if (debp != null) {
+			if (vm.Breakpoint is DebugEventBreakpoint debp) {
 				// nothing
 				return;
 			}

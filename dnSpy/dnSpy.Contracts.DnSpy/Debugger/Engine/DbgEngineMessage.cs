@@ -55,17 +55,13 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Constructor
 		/// </summary>
 		/// <param name="processId">Process id</param>
-		public DbgMessageConnected(int processId) {
-			ProcessId = processId;
-		}
+		public DbgMessageConnected(int processId) => ProcessId = processId;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="errorMessage">Error message</param>
-		public DbgMessageConnected(string errorMessage) {
-			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
-		}
+		public DbgMessageConnected(string errorMessage) => ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 	}
 
 	/// <summary>
@@ -86,8 +82,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Constructor
 		/// </summary>
 		/// <param name="exitCode">Exit code</param>
-		public DbgMessageDisconnected(int exitCode) {
-			ExitCode = exitCode;
-		}
+		public DbgMessageDisconnected(int exitCode) => ExitCode = exitCode;
 	}
 }

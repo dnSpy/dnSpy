@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditCustomAttribute(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditCustomAttribute(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public CustomAttributeVM Edit(string title, CustomAttributeVM ca) {
 			var win = new CustomAttributeDlg();

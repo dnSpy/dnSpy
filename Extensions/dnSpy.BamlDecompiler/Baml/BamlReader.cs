@@ -249,8 +249,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 				recs.Add(pos, rec);
 			}
 			for (int i = 0; i < ret.Count; i++) {
-				var defer = ret[i] as IBamlDeferRecord;
-				if (defer != null)
+				if (ret[i] is IBamlDeferRecord defer)
 					defer.ReadDefer(ret, i, _ => recs[_]);
 			}
 

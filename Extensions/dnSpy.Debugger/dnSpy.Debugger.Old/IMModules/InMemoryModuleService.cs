@@ -137,8 +137,7 @@ namespace dnSpy.Debugger.IMModules {
 			{
 				var manifestKey = CorModuleDefFile.CreateKey(manifestModule);
 				var asmFile = FindAssemblyByKey(manifestKey);
-				var asmNode = documentTreeView.FindNode(asmFile) as AssemblyDocumentNode;
-				if (asmNode != null) {
+				if (documentTreeView.FindNode(asmFile) is AssemblyDocumentNode asmNode) {
 					var cmdf = (CorModuleDefFile)asmNode.Document;
 					var moduleKey = CorModuleDefFile.CreateKey(module);
 					asmNode.TreeNode.EnsureChildrenLoaded();
@@ -159,8 +158,7 @@ namespace dnSpy.Debugger.IMModules {
 			if (manifestModule.Address != 0 && module.Address != 0) {
 				var manifestKey = MemoryModuleDefFile.CreateKey(manifestModule.Process, manifestModule.Address);
 				var asmFile = FindAssemblyByKey(manifestKey);
-				var asmNode = documentTreeView.FindNode(asmFile) as AssemblyDocumentNode;
-				if (asmNode != null) {
+				if (documentTreeView.FindNode(asmFile) is AssemblyDocumentNode asmNode) {
 					var mmdf = (MemoryModuleDefFile)asmNode.Document;
 					var moduleKey = MemoryModuleDefFile.CreateKey(module.Process, module.Address);
 					asmNode.TreeNode.EnsureChildrenLoaded();

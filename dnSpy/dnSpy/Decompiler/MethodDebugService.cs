@@ -34,9 +34,7 @@ namespace dnSpy.Decompiler {
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		MethodDebugServiceDocumentViewerListener(IModuleIdProvider moduleIdProvider) {
-			this.moduleIdProvider = moduleIdProvider;
-		}
+		MethodDebugServiceDocumentViewerListener(IModuleIdProvider moduleIdProvider) => this.moduleIdProvider = moduleIdProvider;
 
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)

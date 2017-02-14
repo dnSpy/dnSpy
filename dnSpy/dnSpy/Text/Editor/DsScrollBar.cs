@@ -23,9 +23,7 @@ using System.Windows.Input;
 
 namespace dnSpy.Text.Editor {
 	abstract class DsScrollBar : ScrollBar {
-		protected DsScrollBar() {
-			Scroll += DsScrollBar_Scroll;
-		}
+		protected DsScrollBar() => Scroll += DsScrollBar_Scroll;
 
 		void DsScrollBar_Scroll(object sender, ScrollEventArgs e) => OnScroll(e);
 

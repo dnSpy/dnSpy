@@ -56,9 +56,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public SerializedImageListStreamerResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
-			: base(treeNodeGroup, resourceElement) {
-			InitializeImageData(imageData);
-		}
+			: base(treeNodeGroup, resourceElement) => InitializeImageData(imageData);
 
 		void InitializeImageData(byte[] imageData) {
 			imageListOptions = SerializedImageListStreamerUtilities.ReadImageData(imageData);
@@ -66,8 +64,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
-			var documentViewerOutput = output as IDocumentViewerOutput;
-			if (documentViewerOutput != null) {
+			if (output is IDocumentViewerOutput documentViewerOutput) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
 						output.Write(" ", BoxedTextColor.Text);

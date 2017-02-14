@@ -33,9 +33,7 @@ namespace dnSpy.MainApp {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforeExtensions, Order = double.MinValue)]
 	sealed class MessageBoxServiceLoader : IAutoLoaded {
 		[ImportingConstructor]
-		MessageBoxServiceLoader(IMessageBoxService messageBoxService) {
-			MsgBox.Instance = messageBoxService;
-		}
+		MessageBoxServiceLoader(IMessageBoxService messageBoxService) => MsgBox.Instance = messageBoxService;
 	}
 
 	[Export, Export(typeof(IMessageBoxService))]

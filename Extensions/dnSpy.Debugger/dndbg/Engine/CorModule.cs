@@ -328,9 +328,7 @@ namespace dndbg.Engine {
 				yield return Tuple.Create(MDAPI.GetTypeDefName(mdi, tdToken), tdToken);
 		}
 
-		public CorType CreateTypeFromTypeDefOrRef(uint token) {
-			return null;//TODO:
-		}
+		public CorType CreateTypeFromTypeDefOrRef(uint token) => null;//TODO:
 
 		public static bool operator ==(CorModule a, CorModule b) {
 			if (ReferenceEquals(a, b))

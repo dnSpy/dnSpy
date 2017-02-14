@@ -148,9 +148,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		public override BamlRecord Record => record;
 		public override BamlRecordType Type => Record.Type;
 
-		public BamlRecordNode(BamlRecord record) {
-			this.record = record;
-		}
+		public BamlRecordNode(BamlRecord record) => this.record = record;
 	}
 
 	internal class BamlBlockNode : BamlNode {
@@ -161,8 +159,6 @@ namespace dnSpy.BamlDecompiler.Baml {
 		public override BamlRecord Record => Header;
 		public override BamlRecordType Type => Header.Type;
 
-		public BamlBlockNode() {
-			Children = new List<BamlNode>();
-		}
+		public BamlBlockNode() => Children = new List<BamlNode>();
 	}
 }

@@ -39,9 +39,7 @@ namespace dnSpy.MainApp {
 		Menu menu;
 
 		[ImportingConstructor]
-		MainMenuToolbarCommand(IMenuService menuService) {
-			this.menuService = menuService;
-		}
+		MainMenuToolbarCommand(IMenuService menuService) => this.menuService = menuService;
 
 		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) {
 			if (menu == null)

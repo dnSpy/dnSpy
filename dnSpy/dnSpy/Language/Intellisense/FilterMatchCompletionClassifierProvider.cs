@@ -33,9 +33,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		FilterMatchCompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService;
-		}
+		FilterMatchCompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
 		public ITextClassifier Create(IContentType contentType) => new FilterMatchCompletionClassifier(themeClassificationTypeService);
 	}

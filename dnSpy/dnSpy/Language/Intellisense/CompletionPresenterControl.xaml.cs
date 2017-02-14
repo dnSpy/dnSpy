@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.Language.Intellisense {
 	sealed partial class CompletionPresenterControl : UserControl {
-		public CompletionPresenterControl() {
-			InitializeComponent();
-		}
+		public CompletionPresenterControl() => InitializeComponent();
 	}
 }

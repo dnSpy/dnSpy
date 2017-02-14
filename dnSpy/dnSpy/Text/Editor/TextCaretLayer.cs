@@ -131,9 +131,7 @@ namespace dnSpy.Text.Editor {
 		struct SelectionState {
 			byte state;
 
-			public SelectionState(ITextSelection selection) {
-				state = (byte)((selection.IsEmpty ? 1 : 0) | (selection.Mode == TextSelectionMode.Box ? 2 : 0));
-			}
+			public SelectionState(ITextSelection selection) => state = (byte)((selection.IsEmpty ? 1 : 0) | (selection.Mode == TextSelectionMode.Box ? 2 : 0));
 
 			public bool Equals(SelectionState other) => state == other.state;
 		}

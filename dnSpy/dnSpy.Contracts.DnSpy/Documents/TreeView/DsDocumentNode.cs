@@ -33,9 +33,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="document">Document</param>
-		protected DsDocumentNode(IDsDocument document) {
-			Document = document ?? throw new ArgumentNullException(nameof(document));
-		}
+		protected DsDocumentNode(IDsDocument document) => Document = document ?? throw new ArgumentNullException(nameof(document));
 
 		/// <summary>
 		/// Gets the node path name

@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class DeclSecurityControl : UserControl {
-		public DeclSecurityControl() {
-			InitializeComponent();
-		}
+		public DeclSecurityControl() => InitializeComponent();
 	}
 }

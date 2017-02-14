@@ -26,8 +26,6 @@ namespace dnSpy.Settings.Dialog {
 	sealed class AppSettingsTextClassifierContext : TextClassifierContext {
 		public SearchMatcher SearchMatcher { get; }
 		public AppSettingsTextClassifierContext(SearchMatcher searchMatcher, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
-			: base(text, tag, colorize, colors) {
-			SearchMatcher = searchMatcher ?? throw new ArgumentNullException(nameof(searchMatcher));
-		}
+			: base(text, tag, colorize, colors) => SearchMatcher = searchMatcher ?? throw new ArgumentNullException(nameof(searchMatcher));
 	}
 }

@@ -170,11 +170,9 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(DnModuleId other) {
-			return (ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
+		public bool Equals(DnModuleId other) => (ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
 					ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
 					(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
-		}
 
 		/// <summary>
 		/// Equals()
@@ -192,10 +190,9 @@ namespace dndbg.Engine {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() {
+		public override int GetHashCode() =>
 			// We can't use AssemblyFullName since it's not used if ModuleNameOnly is true
-			return ModuleNameComparer.GetHashCode(ModuleName) ^ ((int)(flags & Flags.CompareMask) << 16);
-		}
+			ModuleNameComparer.GetHashCode(ModuleName) ^ ((int)(flags & Flags.CompareMask) << 16);
 
 		/// <summary>
 		/// ToString()

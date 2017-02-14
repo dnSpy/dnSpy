@@ -88,9 +88,7 @@ namespace dnSpy.Debugger.Modules {
 		readonly ModulesCtxMenuCommand cmd;
 
 		public ModulesCtxMenuCommandProxy(ModulesCtxMenuCommand cmd)
-			: base(cmd) {
-			this.cmd = cmd;
-		}
+			: base(cmd) => this.cmd = cmd;
 
 		protected override ModulesCtxMenuContext CreateContext() => cmd.Create();
 	}
@@ -132,9 +130,7 @@ namespace dnSpy.Debugger.Modules {
 
 		[ImportingConstructor]
 		CopyCallModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IDebuggerSettings debuggerSettings)
-			: base(theDebugger, modulesContent) {
-			this.debuggerSettings = debuggerSettings;
-		}
+			: base(theDebugger, modulesContent) => this.debuggerSettings = debuggerSettings;
 
 		public override void Execute(ModulesCtxMenuContext context) {
 			var output = new StringBuilderTextColorOutput();
@@ -383,9 +379,7 @@ namespace dnSpy.Debugger.Modules {
 
 		[ImportingConstructor]
 		ShowInMemoryModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<IMemoryWindowService> memoryWindowService)
-			: base(theDebugger, modulesContent) {
-			this.memoryWindowService = memoryWindowService;
-		}
+			: base(theDebugger, modulesContent) => this.memoryWindowService = memoryWindowService;
 
 		public override void Execute(ModulesCtxMenuContext context) {
 			var vm = ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context);
@@ -440,9 +434,7 @@ namespace dnSpy.Debugger.Modules {
 
 		[ImportingConstructor]
 		HexadecimalDisplayModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, DebuggerSettingsImpl debuggerSettings)
-			: base(theDebugger, modulesContent) {
-			this.debuggerSettings = debuggerSettings;
-		}
+			: base(theDebugger, modulesContent) => this.debuggerSettings = debuggerSettings;
 
 		public override void Execute(ModulesCtxMenuContext context) => debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
 		public override bool IsChecked(ModulesCtxMenuContext context) => debuggerSettings.UseHexadecimal;
@@ -460,11 +452,9 @@ namespace dnSpy.Debugger.Modules {
 				OpenContainingFolder(context.SelectedItems[0].Module.Name);
 		}
 
-		public override bool IsEnabled(ModulesCtxMenuContext context) {
-			return context.SelectedItems.Length == 1 &&
+		public override bool IsEnabled(ModulesCtxMenuContext context) => context.SelectedItems.Length == 1 &&
 				!context.SelectedItems[0].Module.IsDynamic &&
 				!context.SelectedItems[0].Module.IsInMemory;
-		}
 
 		static void OpenContainingFolder(string filename) {
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.

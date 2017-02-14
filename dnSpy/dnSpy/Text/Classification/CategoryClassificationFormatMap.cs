@@ -229,40 +229,24 @@ namespace dnSpy.Text.Classification {
 			return key;
 		}
 
-		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
 
-		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties, IClassificationType priority) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties, IClassificationType priority) => throw new NotImplementedException();//TODO:
 
-		public void SetTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void SetTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
 
-		public void SetExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void SetExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
 
-		public void SwapPriorities(IClassificationType firstType, IClassificationType secondType) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void SwapPriorities(IClassificationType firstType, IClassificationType secondType) => throw new NotImplementedException();//TODO:
 
-		public void BeginBatchUpdate() {
-			throw new NotImplementedException();//TODO:
-		}
+		public void BeginBatchUpdate() => throw new NotImplementedException();//TODO:
 
-		public void EndBatchUpdate() {
-			throw new NotImplementedException();//TODO:
-		}
+		public void EndBatchUpdate() => throw new NotImplementedException();//TODO:
 
 		sealed class ClassificationTypeComparer : IComparer<IClassificationType> {
 			readonly CategoryClassificationFormatMap owner;
 
-			public ClassificationTypeComparer(CategoryClassificationFormatMap owner) {
-				this.owner = owner;
-			}
+			public ClassificationTypeComparer(CategoryClassificationFormatMap owner) => this.owner = owner;
 
 			public int Compare(IClassificationType x, IClassificationType y) => GetOrder(y) - GetOrder(x);
 

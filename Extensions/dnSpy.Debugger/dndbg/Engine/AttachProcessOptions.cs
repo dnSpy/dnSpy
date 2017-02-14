@@ -38,9 +38,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string DebuggeeVersion { get; }
 
-		public DesktopCLRTypeAttachInfo(string debuggeeVersion) {
-			DebuggeeVersion = debuggeeVersion;
-		}
+		public DesktopCLRTypeAttachInfo(string debuggeeVersion) => DebuggeeVersion = debuggeeVersion;
 	}
 
 	public sealed class CoreCLRTypeAttachInfo : CLRTypeAttachInfo {

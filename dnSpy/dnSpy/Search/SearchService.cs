@@ -97,8 +97,7 @@ namespace dnSpy.Search {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				var listBox = (ListBox)args.CreatorObject.Object;
-				var searchResult = listBox.SelectedItem as ISearchResult;
-				if (searchResult != null) {
+				if (listBox.SelectedItem is ISearchResult searchResult) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_SEARCHRESULT_GUID, searchResult);
 					var @ref = searchResult.Reference;
 					if (@ref != null)
@@ -230,9 +229,7 @@ namespace dnSpy.Search {
 			searchControl.SearchTextBox.Focus();
 		}
 
-		public void OnShow() {
-			vmSearch.CanSearch = true;
-		}
+		public void OnShow() => vmSearch.CanSearch = true;
 
 		public void OnClose() {
 			vmSearch.CanSearch = false;
@@ -249,8 +246,7 @@ namespace dnSpy.Search {
 			if (@ref != null) {
 				documentTabService.FollowReference(@ref, newTab, true, a => {
 					if (!a.HasMovedCaret && a.Success) {
-						var bodyResult = searchResult.ObjectInfo as BodyResult;
-						if (bodyResult != null)
+						if (searchResult.ObjectInfo is BodyResult bodyResult)
 							a.HasMovedCaret = GoTo(a.Tab, searchResult.Object as MethodDef, bodyResult.ILOffset);
 					}
 				});

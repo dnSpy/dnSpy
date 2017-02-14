@@ -197,12 +197,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		static SaveOptionsVM Create(object obj) {
-			var document = obj as IDsDocument;
-			if (document != null)
+			if (obj is IDsDocument document)
 				return new SaveModuleOptionsVM(document);
 
-			var buffer = obj as HexBuffer;
-			if (buffer != null)
+			if (obj is HexBuffer buffer)
 				return new SaveHexOptionsVM(buffer);
 
 			throw new InvalidOperationException();

@@ -36,9 +36,7 @@ namespace dnSpy.Text.Repl {
 		const int ADVANCED_GUID_INC = 4;
 
 		[ImportingConstructor]
-		AppSettingsPageProvider(IReplOptionsService replOptionsService) {
-			this.replOptionsService = replOptionsService;
-		}
+		AppSettingsPageProvider(IReplOptionsService replOptionsService) => this.replOptionsService = replOptionsService;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			var options = replOptionsService.Options.OrderBy(a => a.LanguageName, StringComparer.CurrentCultureIgnoreCase).ToArray();

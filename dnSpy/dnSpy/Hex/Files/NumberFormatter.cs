@@ -28,9 +28,7 @@ namespace dnSpy.Hex.Files {
 		bool Decimal => (options & HexNumberOptions.NumberBaseMask) == HexNumberOptions.Decimal;
 		bool MinimumDigits => (options & HexNumberOptions.MinimumDigits) != 0;
 
-		public NumberFormatter(HexNumberOptions options) {
-			this.options = options;
-		}
+		public NumberFormatter(HexNumberOptions options) => this.options = options;
 
 		string AddHexIndicator(string text, bool isSigned) {
 			switch (options & HexNumberOptions.NumberBaseMask) {

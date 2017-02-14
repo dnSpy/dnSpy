@@ -87,9 +87,7 @@ namespace dndbg.Engine {
 		public CorValue CorValue { get; }
 		public bool IsNeutered => false;
 
-		public DummyCorValueHolder(CorValue value) {
-			CorValue = value;
-		}
+		public DummyCorValueHolder(CorValue value) => CorValue = value;
 
 		public void InvalidateCorValue() { }
 		public void Dispose() { }

@@ -69,8 +69,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 
 				if (foundInstr != null) {
-					MethodDef codeLocation = GetOriginalCodeLocation(method) as MethodDef;
-					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
+					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)
 							node.SourceRef = new SourceRef(method, foundInstr.Offset, foundInstr.Operand as IMDTokenProvider);

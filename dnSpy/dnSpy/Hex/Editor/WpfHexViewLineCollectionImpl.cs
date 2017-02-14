@@ -254,8 +254,6 @@ namespace dnSpy.Hex.Editor {
 			return coll;
 		}
 
-		public void Invalidate() {
-			isValid = false;
-		}
+		public void Invalidate() => isValid = false;
 	}
 }

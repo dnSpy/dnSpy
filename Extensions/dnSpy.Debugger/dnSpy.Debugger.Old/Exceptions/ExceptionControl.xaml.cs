@@ -24,8 +24,6 @@ namespace dnSpy.Debugger.Exceptions {
 		public ListBox ListBox => listBox;
 		public TextBox SearchTextBox => searchTextBox;
 
-		public ExceptionsControl() {
-			InitializeComponent();
-		}
+		public ExceptionsControl() => InitializeComponent();
 	}
 }

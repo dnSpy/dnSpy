@@ -341,8 +341,7 @@ namespace dnSpy.Hex.Editor {
 
 		void AddEvents() {
 			wpfHexView.LostAggregateFocus += WpfHexView_LostAggregateFocus;
-			var fwElem = content as FrameworkElement;
-			if (fwElem != null)
+			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged += Content_SizeChanged;
 			var window = Window.GetWindow(wpfHexView.VisualElement);
 			if (window != null)
@@ -358,8 +357,7 @@ namespace dnSpy.Hex.Editor {
 
 		void RemoveEvents() {
 			wpfHexView.LostAggregateFocus -= WpfHexView_LostAggregateFocus;
-			var fwElem = content as FrameworkElement;
-			if (fwElem != null)
+			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged -= Content_SizeChanged;
 			var window = Window.GetWindow(wpfHexView.VisualElement);
 			if (window != null)

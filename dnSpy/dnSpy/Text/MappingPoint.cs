@@ -57,9 +57,7 @@ namespace dnSpy.Text {
 			return GetPoint(targetBuffer.CurrentSnapshot, affinity);
 		}
 
-		public SnapshotPoint? GetInsertionPoint(Predicate<ITextBuffer> match) {
-			throw new NotImplementedException();//TODO:
-		}
+		public SnapshotPoint? GetInsertionPoint(Predicate<ITextBuffer> match) => throw new NotImplementedException();//TODO:
 
 		public override string ToString() => nameof(IMappingPoint) + "@" + snapshotPoint.ToString();
 	}

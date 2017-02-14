@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Module {
 	sealed partial class NetModuleOptionsDlg : WindowBase {
-		public NetModuleOptionsDlg() {
-			InitializeComponent();
-		}
+		public NetModuleOptionsDlg() => InitializeComponent();
 	}
 }

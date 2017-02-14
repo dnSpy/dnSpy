@@ -114,9 +114,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <summary>
 		/// Creates a new StringTextSource with the given text.
 		/// </summary>
-		public StringTextSource(string text) {
-			this.text = text ?? throw new ArgumentNullException("text");
-		}
+		public StringTextSource(string text) => this.text = text ?? throw new ArgumentNullException("text");
 
 		/// <inheritdoc/>
 		public int TextLength {
@@ -129,39 +127,25 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		/// <inheritdoc/>
-		public ITextSource CreateSnapshot() {
-			return this; // StringTextSource is immutable
-		}
+		public ITextSource CreateSnapshot() => this; // StringTextSource is immutable
 
 		/// <inheritdoc/>
-		public void WriteTextTo(TextWriter writer) {
-			writer.Write(text);
-		}
+		public void WriteTextTo(TextWriter writer) => writer.Write(text);
 
 		/// <inheritdoc/>
-		public void WriteTextTo(TextWriter writer, int offset, int length) {
-			writer.Write(text.Substring(offset, length));
-		}
+		public void WriteTextTo(TextWriter writer, int offset, int length) => writer.Write(text.Substring(offset, length));
 
 		/// <inheritdoc/>
-		public char GetCharAt(int offset) {
-			return text[offset];
-		}
+		public char GetCharAt(int offset) => text[offset];
 
 		/// <inheritdoc/>
-		public string GetText(int offset, int length) {
-			return text.Substring(offset, length);
-		}
+		public string GetText(int offset, int length) => text.Substring(offset, length);
 
 		/// <inheritdoc/>
-		public int IndexOfAny(char[] anyOf, int startIndex, int count) {
-			return text.IndexOfAny(anyOf, startIndex, count);
-		}
+		public int IndexOfAny(char[] anyOf, int startIndex, int count) => text.IndexOfAny(anyOf, startIndex, count);
 
 		/// <inheritdoc/>
-		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) {
-			text.CopyTo(sourceIndex, destination, destinationIndex, count);
-		}
+		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) => text.CopyTo(sourceIndex, destination, destinationIndex, count);
 
 		/// <inheritdoc/>
 		public char[] ToCharArray(int startIndex, int length) {

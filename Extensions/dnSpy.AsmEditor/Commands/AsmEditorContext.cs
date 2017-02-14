@@ -23,8 +23,6 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class AsmEditorContext {
 		public DocumentTreeNodeData[] Nodes { get; }
 
-		public AsmEditorContext(DocumentTreeNodeData[] nodes) {
-			Nodes = nodes;
-		}
+		public AsmEditorContext(DocumentTreeNodeData[] nodes) => Nodes = nodes;
 	}
 }

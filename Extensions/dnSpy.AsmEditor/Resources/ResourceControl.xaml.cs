@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ResourceControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as ResourceVM;
-				if (data != null) {
+				if (DataContext is ResourceVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 				}

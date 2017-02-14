@@ -61,14 +61,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			readonly IAnalyzerTreeNodeDataContext context;
 
-			public MessageNode(IAnalyzerTreeNodeDataContext context) {
-				this.context = context;
-			}
+			public MessageNode(IAnalyzerTreeNodeDataContext context) => this.context = context;
 
 			static class Cache {
 				static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
 				public static TextClassifierTextColorWriter GetWriter() => writer;
-				public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+				public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 			}
 
 			public override object Text {

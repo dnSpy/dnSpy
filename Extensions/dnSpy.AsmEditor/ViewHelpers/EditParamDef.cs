@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditParamDef(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditParamDef(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public ParamDefVM Edit(string title, ParamDefVM pd) {
 			var win = new ParamDefDlg();

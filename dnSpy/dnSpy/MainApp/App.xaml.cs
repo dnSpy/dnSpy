@@ -115,11 +115,10 @@ namespace dnSpy.MainApp {
 
 		// These can also be put in the App.config file (semicolon-separated) but I prefer code in
 		// this case.
-		void AddAppContextFixes() {
+		void AddAppContextFixes() =>
 			// This prevents a thin line between the tab item and its content when dpi is eg. 144.
 			// It's hard to miss if you check the Options dialog box.
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotApplyLayoutRoundingToMarginsAndBorderThickness", true);
-		}
 
 		void InitializeMEF(bool readSettings) {
 			compositionContainer = InitializeCompositionContainer();

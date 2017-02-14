@@ -37,9 +37,7 @@ namespace Example2.Extension {
 		[UserVisible(true)]
 		[Order(After = Priority.High)]
 		sealed class Color1ClassificationFormatDefinition : ClassificationFormatDefinition {
-			Color1ClassificationFormatDefinition() {
-				BackgroundBrush = Brushes.LightGray;
-			}
+			Color1ClassificationFormatDefinition() => BackgroundBrush = Brushes.LightGray;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -62,9 +60,7 @@ namespace Example2.Extension {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		HexTaggerProviderImpl(IClassificationTypeRegistryService classificationTypeRegistryService) {
-			this.classificationTypeRegistryService = classificationTypeRegistryService;
-		}
+		HexTaggerProviderImpl(IClassificationTypeRegistryService classificationTypeRegistryService) => this.classificationTypeRegistryService = classificationTypeRegistryService;
 
 		public override IHexTagger<T> CreateTagger<T>(HexBuffer buffer) =>
 			new HexTaggerImpl(classificationTypeRegistryService) as IHexTagger<T>;

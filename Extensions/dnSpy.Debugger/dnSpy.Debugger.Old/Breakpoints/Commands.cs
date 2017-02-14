@@ -68,9 +68,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly BreakpointCtxMenuCommand cmd;
 
 		public BreakpointCtxMenuCommandProxy(BreakpointCtxMenuCommand cmd)
-			: base(cmd) {
-			this.cmd = cmd;
-		}
+			: base(cmd) => this.cmd = cmd;
 
 		protected override BreakpointCtxMenuContext CreateContext() => cmd.Create();
 	}
@@ -81,9 +79,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		protected readonly Lazy<IBreakpointsContent> breakpointsContent;
 
-		protected BreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent) {
-			this.breakpointsContent = breakpointsContent;
-		}
+		protected BreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent) => this.breakpointsContent = breakpointsContent;
 
 		protected sealed override BreakpointCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
@@ -172,9 +168,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		DeleteAllBPsBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, IAppWindow appWindow)
-			: base(breakpointsContent) {
-			this.appWindow = appWindow;
-		}
+			: base(breakpointsContent) => this.appWindow = appWindow;
 
 		public override void Execute(BreakpointCtxMenuContext context) => DebugRoutedCommands.DeleteAllBreakpoints.Execute(null, appWindow.MainWindow);
 		public override bool IsEnabled(BreakpointCtxMenuContext context) => DebugRoutedCommands.DeleteAllBreakpoints.CanExecute(null, appWindow.MainWindow);
@@ -186,9 +180,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		EnableAllBPsBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, IAppWindow appWindow)
-			: base(breakpointsContent) {
-			this.appWindow = appWindow;
-		}
+			: base(breakpointsContent) => this.appWindow = appWindow;
 
 		public override void Execute(BreakpointCtxMenuContext context) => DebugRoutedCommands.EnableAllBreakpoints.Execute(null, appWindow.MainWindow);
 		public override bool IsVisible(BreakpointCtxMenuContext context) => DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
@@ -200,9 +192,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		DisableAllBPsBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, IAppWindow appWindow)
-			: base(breakpointsContent) {
-			this.appWindow = appWindow;
-		}
+			: base(breakpointsContent) => this.appWindow = appWindow;
 
 		public override void Execute(BreakpointCtxMenuContext context) => DebugRoutedCommands.DisableAllBreakpoints.Execute(null, appWindow.MainWindow);
 		public override bool IsVisible(BreakpointCtxMenuContext context) => DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
@@ -272,9 +262,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			//TODO:
 		}
 
-		public override bool IsEnabled(BreakpointCtxMenuContext context) {
-			return false;//TODO:
-		}
+		public override bool IsEnabled(BreakpointCtxMenuContext context) => false;//TODO:
 	}
 
 	//[Export]
@@ -296,9 +284,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		ShowTokensBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
-			: base(breakpointsContent) {
-			this.breakpointSettings = breakpointSettings;
-		}
+			: base(breakpointsContent) => this.breakpointSettings = breakpointSettings;
 
 		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowTokens = !breakpointSettings.ShowTokens;
 		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowTokens;
@@ -310,9 +296,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		ShowModuleNamesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
-			: base(breakpointsContent) {
-			this.breakpointSettings = breakpointSettings;
-		}
+			: base(breakpointsContent) => this.breakpointSettings = breakpointSettings;
 
 		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowModuleNames = !breakpointSettings.ShowModuleNames;
 		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowModuleNames;
@@ -324,9 +308,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		ShowParameterTypesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
-			: base(breakpointsContent) {
-			this.breakpointSettings = breakpointSettings;
-		}
+			: base(breakpointsContent) => this.breakpointSettings = breakpointSettings;
 
 		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowParameterTypes = !breakpointSettings.ShowParameterTypes;
 		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowParameterTypes;
@@ -338,9 +320,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		ShowParameterNamesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
-			: base(breakpointsContent) {
-			this.breakpointSettings = breakpointSettings;
-		}
+			: base(breakpointsContent) => this.breakpointSettings = breakpointSettings;
 
 		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowParameterNames = !breakpointSettings.ShowParameterNames;
 		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowParameterNames;
@@ -352,9 +332,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		ShowOwnerTypesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
-			: base(breakpointsContent) {
-			this.breakpointSettings = breakpointSettings;
-		}
+			: base(breakpointsContent) => this.breakpointSettings = breakpointSettings;
 
 		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowOwnerTypes = !breakpointSettings.ShowOwnerTypes;
 		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowOwnerTypes;
@@ -366,9 +344,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		ShowNamespacesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
-			: base(breakpointsContent) {
-			this.breakpointSettings = breakpointSettings;
-		}
+			: base(breakpointsContent) => this.breakpointSettings = breakpointSettings;
 
 		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowNamespaces = !breakpointSettings.ShowNamespaces;
 		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowNamespaces;
@@ -380,9 +356,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		ShowReturnTypesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
-			: base(breakpointsContent) {
-			this.breakpointSettings = breakpointSettings;
-		}
+			: base(breakpointsContent) => this.breakpointSettings = breakpointSettings;
 
 		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowReturnTypes = !breakpointSettings.ShowReturnTypes;
 		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowReturnTypes;
@@ -394,9 +368,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		ShowTypeKeywordsBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
-			: base(breakpointsContent) {
-			this.breakpointSettings = breakpointSettings;
-		}
+			: base(breakpointsContent) => this.breakpointSettings = breakpointSettings;
 
 		public override void Execute(BreakpointCtxMenuContext context) => breakpointSettings.ShowTypeKeywords = !breakpointSettings.ShowTypeKeywords;
 		public override bool IsChecked(BreakpointCtxMenuContext context) => breakpointSettings.ShowTypeKeywords;

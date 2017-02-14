@@ -28,9 +28,7 @@ namespace dnSpy.MVVM {
 		readonly IMenuService menuService;
 
 		[ImportingConstructor]
-		InitializeDataTemplateContextMenu(IMenuService menuService) {
-			this.menuService = menuService;
-		}
+		InitializeDataTemplateContextMenu(IMenuService menuService) => this.menuService = menuService;
 
 		public void Initialize(DependencyObject d) {
 			var fwe = d as FrameworkElement;

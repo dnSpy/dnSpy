@@ -225,8 +225,7 @@ namespace dnSpy.TreeView {
 				// ScrollIntoView() does nothing so add another call.
 				// Background priority won't work, we need ContextIdle prio
 				sharpTreeView.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-					var item = sharpTreeView.SelectedItem as SharpTreeNode;
-					if (item != null)
+					if (sharpTreeView.SelectedItem is SharpTreeNode item)
 						sharpTreeView.ScrollIntoView(item);
 				}));
 			}
@@ -248,16 +247,14 @@ namespace dnSpy.TreeView {
 		}
 
 		void Focus2() {
-			var node = sharpTreeView.SelectedItem as SharpTreeNode;
-			if (node != null)
+			if (sharpTreeView.SelectedItem is SharpTreeNode node)
 				sharpTreeView.FocusNode(node);
 			else
 				sharpTreeView.Focus();
 		}
 
 		public void ScrollIntoView() {
-			var node = sharpTreeView.SelectedItem as SharpTreeNode;
-			if (node != null)
+			if (sharpTreeView.SelectedItem is SharpTreeNode node)
 				sharpTreeView.ScrollIntoView(node);
 		}
 

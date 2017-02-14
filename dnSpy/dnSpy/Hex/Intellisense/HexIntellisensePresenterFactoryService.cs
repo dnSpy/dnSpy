@@ -34,9 +34,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly Lazy<HexIntellisensePresenterProvider, VSUTIL.IOrderable>[] intellisensePresenterProviders;
 
 		[ImportingConstructor]
-		HexIntellisensePresenterFactoryServiceImpl([ImportMany] IEnumerable<Lazy<HexIntellisensePresenterProvider, VSUTIL.IOrderable>> intellisensePresenterProviders) {
-			this.intellisensePresenterProviders = VSUTIL.Orderer.Order(intellisensePresenterProviders).ToArray();
-		}
+		HexIntellisensePresenterFactoryServiceImpl([ImportMany] IEnumerable<Lazy<HexIntellisensePresenterProvider, VSUTIL.IOrderable>> intellisensePresenterProviders) => this.intellisensePresenterProviders = VSUTIL.Orderer.Order(intellisensePresenterProviders).ToArray();
 
 		public override HexIntellisensePresenter TryCreateIntellisensePresenter(HexIntellisenseSession session) {
 			if (session == null)

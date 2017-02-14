@@ -23,8 +23,7 @@ using System.Windows;
 namespace dnSpy.Tabs {
 	static class TabUtils {
 		public static void SetStyle(this FrameworkElement elem, object obj) {
-			var style = obj as Style;
-			if (style != null) {
+			if (obj is Style style) {
 				elem.Style = style;
 				return;
 			}

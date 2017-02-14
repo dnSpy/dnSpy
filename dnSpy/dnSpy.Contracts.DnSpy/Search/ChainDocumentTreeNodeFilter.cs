@@ -34,9 +34,7 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		/// <param name="filter"></param>
-		public ChainDocumentTreeNodeFilter(IDocumentTreeNodeFilter filter) {
-			this.filter = filter;
-		}
+		public ChainDocumentTreeNodeFilter(IDocumentTreeNodeFilter filter) => this.filter = filter;
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public virtual DocumentTreeNodeFilterResult GetResult(FieldDef field) => filter.GetResult(field);

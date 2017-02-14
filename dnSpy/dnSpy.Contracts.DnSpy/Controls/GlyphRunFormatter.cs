@@ -46,18 +46,12 @@ namespace dnSpy.Contracts.Controls {
 	sealed class WpfTextFormatter : ITextFormatter {
 		readonly TextFormatter formatter;
 
-		public WpfTextFormatter(TextFormattingMode mode) {
-			formatter = TextFormatter.Create(mode);
-		}
+		public WpfTextFormatter(TextFormattingMode mode) => formatter = TextFormatter.Create(mode);
 
 		public TextLine FormatLine(TextSource textSource, int firstCharIndex, double paragraphWidth,
-			TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak) {
-			return formatter.FormatLine(textSource, firstCharIndex, paragraphWidth, paragraphProperties, previousLineBreak);
-		}
+			TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak) => formatter.FormatLine(textSource, firstCharIndex, paragraphWidth, paragraphProperties, previousLineBreak);
 
-		public void Dispose() {
-			formatter.Dispose();
-		}
+		public void Dispose() => formatter.Dispose();
 	}
 
 	sealed class GlyphRunFormatter : ITextFormatter {
@@ -96,9 +90,7 @@ namespace dnSpy.Contracts.Controls {
 			}
 		}
 
-		public GlyphRunFormatter(object mode) {
-			this.mode = mode;
-		}
+		public GlyphRunFormatter(object mode) => this.mode = mode;
 
 		public void Dispose() {
 			//
@@ -126,8 +118,7 @@ namespace dnSpy.Contracts.Controls {
 					runs.Add(Tuple.Create(run, (GlyphRun)null, 0, 0.0));
 					break;
 				}
-				else if (run is TextCharacters) {
-					var chrs = (TextCharacters)run;
+				else if (run is TextCharacters chrs) {
 					var charBuf = getCharBuf(chrs.CharacterBufferReference);
 					var charOffset = getCharOffset(chrs.CharacterBufferReference);
 
@@ -180,8 +171,7 @@ namespace dnSpy.Contracts.Controls {
 
 					index += len;
 				}
-				else if (run is TextEmbeddedObject) {
-					var obj = (TextEmbeddedObject)run;
+				else if (run is TextEmbeddedObject obj) {
 					var metrics = obj.Format(paragraphWidth - x);
 					runs.Add(Tuple.Create(run, (GlyphRun)null, 0, metrics.Width));
 
@@ -210,9 +200,7 @@ namespace dnSpy.Contracts.Controls {
 
 			#region Unused members
 
-			public override TextLine Collapse(params TextCollapsingProperties[] collapsingPropertiesList) {
-				throw new NotSupportedException();
-			}
+			public override TextLine Collapse(params TextCollapsingProperties[] collapsingPropertiesList) => throw new NotSupportedException();
 
 			public override int DependentLength {
 				get { throw new NotSupportedException(); }
@@ -266,25 +254,15 @@ namespace dnSpy.Contracts.Controls {
 				get { throw new NotSupportedException(); }
 			}
 
-			public override CharacterHit GetBackspaceCaretCharacterHit(CharacterHit characterHit) {
-				throw new NotSupportedException();
-			}
+			public override CharacterHit GetBackspaceCaretCharacterHit(CharacterHit characterHit) => throw new NotSupportedException();
 
-			public override IEnumerable<IndexedGlyphRun> GetIndexedGlyphRuns() {
-				throw new NotSupportedException();
-			}
+			public override IEnumerable<IndexedGlyphRun> GetIndexedGlyphRuns() => throw new NotSupportedException();
 
-			public override CharacterHit GetNextCaretCharacterHit(CharacterHit characterHit) {
-				throw new NotSupportedException();
-			}
+			public override CharacterHit GetNextCaretCharacterHit(CharacterHit characterHit) => throw new NotSupportedException();
 
-			public override CharacterHit GetPreviousCaretCharacterHit(CharacterHit characterHit) {
-				throw new NotSupportedException();
-			}
+			public override CharacterHit GetPreviousCaretCharacterHit(CharacterHit characterHit) => throw new NotSupportedException();
 
-			public override IList<TextCollapsedRange> GetTextCollapsedRanges() {
-				throw new NotSupportedException();
-			}
+			public override IList<TextCollapsedRange> GetTextCollapsedRanges() => throw new NotSupportedException();
 
 			#endregion
 
@@ -292,13 +270,11 @@ namespace dnSpy.Contracts.Controls {
 				//
 			}
 
-			static GlyphRun Clone(GlyphRun run, Point origin) {
-				return new GlyphRun(
+			static GlyphRun Clone(GlyphRun run, Point origin) => new GlyphRun(
 					run.GlyphTypeface, run.BidiLevel, run.IsSideways,
 					run.FontRenderingEmSize, run.GlyphIndices, origin,
 					run.AdvanceWidths, run.GlyphOffsets, run.Characters,
 					run.DeviceFontName, run.ClusterMap, run.CaretStops, run.Language);
-			}
 
 			public override void Draw(DrawingContext drawingContext, Point origin, InvertAxes inversion) {
 				foreach (var entry in entries) {
@@ -441,13 +417,9 @@ namespace dnSpy.Contracts.Controls {
 				return new[] { makeBounds(new Rect(x, 0, width, height)) };
 			}
 
-			public override TextLineBreak GetTextLineBreak() {
-				return null;
-			}
+			public override TextLineBreak GetTextLineBreak() => null;
 
-			public override IList<TextSpan<TextRun>> GetTextRunSpans() {
-				return entries.Select(entry => new TextSpan<TextRun>(entry.Item1.Length, entry.Item1)).ToList();
-			}
+			public override IList<TextSpan<TextRun>> GetTextRunSpans() => entries.Select(entry => new TextSpan<TextRun>(entry.Item1.Length, entry.Item1)).ToList();
 
 			public override double Width {
 				get { return width; }

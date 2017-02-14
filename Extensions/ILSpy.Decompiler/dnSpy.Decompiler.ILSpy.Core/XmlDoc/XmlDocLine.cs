@@ -148,8 +148,6 @@ start2:
 			return true;
 		}
 
-		public void Reset() {
-			throw new NotImplementedException();
-		}
+		public void Reset() => throw new NotImplementedException();
 	}
 }

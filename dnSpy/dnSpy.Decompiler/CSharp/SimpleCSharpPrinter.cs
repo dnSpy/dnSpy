@@ -228,38 +228,32 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 			}
 
-			var method = member as IMethod;
-			if (method != null && method.MethodSig != null) {
+			if (member is IMethod method && method.MethodSig != null) {
 				WriteToolTip(method);
 				return;
 			}
 
-			var field = member as IField;
-			if (field != null && field.FieldSig != null) {
+			if (member is IField field && field.FieldSig != null) {
 				WriteToolTip(field);
 				return;
 			}
 
-			var prop = member as PropertyDef;
-			if (prop != null && prop.PropertySig != null) {
+			if (member is PropertyDef prop && prop.PropertySig != null) {
 				WriteToolTip(prop);
 				return;
 			}
 
-			var evt = member as EventDef;
-			if (evt != null && evt.EventType != null) {
+			if (member is EventDef evt && evt.EventType != null) {
 				WriteToolTip(evt);
 				return;
 			}
 
-			var tdr = member as ITypeDefOrRef;
-			if (tdr != null) {
+			if (member is ITypeDefOrRef tdr) {
 				WriteToolTip(tdr);
 				return;
 			}
 
-			var gp = member as GenericParam;
-			if (gp != null) {
+			if (member is GenericParam gp) {
 				WriteToolTip(gp);
 				return;
 			}
@@ -273,38 +267,32 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 			}
 
-			var method = member as IMethod;
-			if (method != null && method.MethodSig != null) {
+			if (member is IMethod method && method.MethodSig != null) {
 				Write(method);
 				return;
 			}
 
-			var field = member as IField;
-			if (field != null && field.FieldSig != null) {
+			if (member is IField field && field.FieldSig != null) {
 				Write(field);
 				return;
 			}
 
-			var prop = member as PropertyDef;
-			if (prop != null && prop.PropertySig != null) {
+			if (member is PropertyDef prop && prop.PropertySig != null) {
 				Write(prop);
 				return;
 			}
 
-			var evt = member as EventDef;
-			if (evt != null && evt.EventType != null) {
+			if (member is EventDef evt && evt.EventType != null) {
 				Write(evt);
 				return;
 			}
 
-			var tdr = member as ITypeDefOrRef;
-			if (tdr != null) {
+			if (member is ITypeDefOrRef tdr) {
 				Write(tdr);
 				return;
 			}
 
-			var gp = member as GenericParam;
-			if (gp != null) {
+			if (member is GenericParam gp) {
 				Write(gp);
 				return;
 			}
@@ -641,8 +629,7 @@ namespace dnSpy.Decompiler.CSharp {
 			OutputWrite(dnSpy_Decompiler_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedTextColor.Text);
 			WriteSpace();
 
-			var td = gp.Owner as TypeDef;
-			if (td != null)
+			if (gp.Owner is TypeDef td)
 				WriteType(td, ShowNamespaces, ShowTypeKeywords);
 			else
 				Write(gp.Owner as MethodDef);
@@ -709,8 +696,7 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 			recursionCounter++;
 			try {
-				var ts = type as TypeSpec;
-				if (ts != null) {
+				if (type is TypeSpec ts) {
 					Write(ts.TypeSig, null, null, null);
 					return;
 				}
@@ -773,8 +759,7 @@ namespace dnSpy.Decompiler.CSharp {
 
 		void Write(TypeSig type, ParamDef ownerParam, IList<TypeSig> typeGenArgs, IList<TypeSig> methGenArgs) {
 			WriteRefIfByRef(type, ownerParam);
-			var byRef = type.RemovePinnedAndModifiers() as ByRefSig;
-			if (byRef != null)
+			if (type.RemovePinnedAndModifiers() is ByRefSig byRef)
 				type = byRef.Next;
 			Write(type, typeGenArgs, methGenArgs);
 		}
@@ -999,8 +984,7 @@ namespace dnSpy.Decompiler.CSharp {
 				if (ms != null) {
 					var ts = ms.Method == null ? null : ms.Method.DeclaringType as TypeSpec;
 					if (ts != null) {
-						var gp = ts.TypeSig.RemovePinnedAndModifiers() as GenericInstSig;
-						if (gp != null)
+						if (ts.TypeSig.RemovePinnedAndModifiers() is GenericInstSig gp)
 							TypeGenericParams = gp.GenericArguments;
 					}
 
@@ -1011,10 +995,8 @@ namespace dnSpy.Decompiler.CSharp {
 					MethodDef = ms.Method.ResolveMethodDef();
 				}
 				else if (mr != null) {
-					var ts = mr.DeclaringType as TypeSpec;
-					if (ts != null) {
-						var gp = ts.TypeSig.RemovePinnedAndModifiers() as GenericInstSig;
-						if (gp != null)
+					if (mr.DeclaringType is TypeSpec ts) {
+						if (ts.TypeSig.RemovePinnedAndModifiers() is GenericInstSig gp)
 							TypeGenericParams = gp.GenericArguments;
 					}
 
@@ -1199,10 +1181,8 @@ namespace dnSpy.Decompiler.CSharp {
 				gt.TypeDefOrRef.FullName == "System.Nullable`1";
 		}
 
-		static bool IsDelegate(TypeDef td) {
-			return td != null &&
+		static bool IsDelegate(TypeDef td) => td != null &&
 				new SigComparer().Equals(td.BaseType, td.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
 				td.BaseType.DefinitionAssembly.IsCorLib();
-		}
 	}
 }

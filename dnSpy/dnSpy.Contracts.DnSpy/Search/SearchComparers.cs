@@ -141,13 +141,10 @@ namespace dnSpy.Contracts.Search {
 	sealed class RegExStringLiteralSearchComparer : ISearchComparer {
 		readonly Regex regex;
 
-		public RegExStringLiteralSearchComparer(Regex regex) {
-			this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
-		}
+		public RegExStringLiteralSearchComparer(Regex regex) => this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
 
 		public bool IsMatch(string text, object obj) {
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null)
+			if (obj is IHasConstant hc && hc.Constant != null)
 				obj = hc.Constant.Value;
 
 			text = obj as string;
@@ -167,8 +164,7 @@ namespace dnSpy.Contracts.Search {
 		}
 
 		public bool IsMatch(string text, object obj) {
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null)
+			if (obj is IHasConstant hc && hc.Constant != null)
 				obj = hc.Constant.Value;
 
 			text = obj as string;
@@ -183,13 +179,10 @@ namespace dnSpy.Contracts.Search {
 	sealed class IntegerLiteralSearchComparer : ISearchComparer {
 		readonly long searchValue;
 
-		public IntegerLiteralSearchComparer(long value) {
-			searchValue = value;
-		}
+		public IntegerLiteralSearchComparer(long value) => searchValue = value;
 
 		public bool IsMatch(string text, object obj) {
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null)
+			if (obj is IHasConstant hc && hc.Constant != null)
 				obj = hc.Constant.Value;
 			if (obj == null)
 				return false;
@@ -217,13 +210,10 @@ namespace dnSpy.Contracts.Search {
 	sealed class DoubleLiteralSearchComparer : ISearchComparer {
 		readonly double searchValue;
 
-		public DoubleLiteralSearchComparer(double value) {
-			searchValue = value;
-		}
+		public DoubleLiteralSearchComparer(double value) => searchValue = value;
 
 		public bool IsMatch(string text, object obj) {
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null)
+			if (obj is IHasConstant hc && hc.Constant != null)
 				obj = hc.Constant.Value;
 			if (obj == null)
 				return false;
@@ -249,9 +239,7 @@ namespace dnSpy.Contracts.Search {
 	sealed class RegExSearchComparer : ISearchComparer {
 		readonly Regex regex;
 
-		public RegExSearchComparer(Regex regex) {
-			this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
-		}
+		public RegExSearchComparer(Regex regex) => this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
 
 		public bool IsMatch(string text, object obj) {
 			if (text == null)

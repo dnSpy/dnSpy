@@ -29,9 +29,7 @@ namespace dnSpy.Settings {
 
 		public Tuple<string, string>[] Attributes => attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
 
-		public SectionAttributes() {
-			attributes = new Dictionary<string, string>(StringComparer.Ordinal);
-		}
+		public SectionAttributes() => attributes = new Dictionary<string, string>(StringComparer.Ordinal);
 
 		public T Attribute<T>(string name) {
 			Debug.Assert(name != null);

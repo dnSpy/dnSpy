@@ -25,8 +25,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public SaveHexOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as SaveHexOptionsVM;
-				if (data != null)
+				if (DataContext is SaveHexOptionsVM data)
 					data.PickSaveFilename = new PickSaveFilename();
 			};
 		}

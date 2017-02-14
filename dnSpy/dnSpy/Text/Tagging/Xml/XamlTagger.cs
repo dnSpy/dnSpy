@@ -33,9 +33,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		readonly XamlTaggerClassificationTypes xamlTaggerClassificationTypes;
 
 		[ImportingConstructor]
-		XamlTaggerProvider(XamlTaggerClassificationTypes xamlTaggerClassificationTypes) {
-			this.xamlTaggerClassificationTypes = xamlTaggerClassificationTypes;
-		}
+		XamlTaggerProvider(XamlTaggerClassificationTypes xamlTaggerClassificationTypes) => this.xamlTaggerClassificationTypes = xamlTaggerClassificationTypes;
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag => new XamlTagger(xamlTaggerClassificationTypes) as ITagger<T>;
 	}

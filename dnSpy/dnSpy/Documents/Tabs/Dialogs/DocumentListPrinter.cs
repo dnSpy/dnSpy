@@ -23,9 +23,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class DocumentListPrinter {
 		readonly ITextColorWriter output;
 
-		public DocumentListPrinter(ITextColorWriter output) {
-			this.output = output;
-		}
+		public DocumentListPrinter(ITextColorWriter output) => this.output = output;
 
 		public void WriteName(DocumentListVM vm) => output.Write(BoxedTextColor.Assembly, vm.Name);
 		public void WriteDocumentCount(DocumentListVM vm) => output.Write(BoxedTextColor.Number, vm.DocumentCount.ToString());

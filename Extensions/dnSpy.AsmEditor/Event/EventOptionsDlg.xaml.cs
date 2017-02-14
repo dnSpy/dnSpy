@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.Event {
 		public EventOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as EventOptionsVM;
-				if (data != null) {
+				if (DataContext is EventOptionsVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 				}

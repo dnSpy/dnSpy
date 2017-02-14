@@ -373,8 +373,7 @@ namespace dndbg.DotNet {
 		Dictionary<uint, CorMethodDef> CreateMethodDict() {
 			var dict = new Dictionary<uint, CorMethodDef>(Methods.Count);
 			foreach (var m in Methods) {
-				var cmd = m as CorMethodDef;
-				if (cmd != null)
+				if (m is CorMethodDef cmd)
 					dict[cmd.OriginalToken.Rid] = cmd;
 			}
 			return dict;

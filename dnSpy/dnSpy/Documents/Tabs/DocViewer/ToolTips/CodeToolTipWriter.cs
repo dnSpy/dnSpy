@@ -144,8 +144,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
 					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedTextColor.Text);
-				else if (elem is XElement) {
-					var xelem = (XElement)elem;
+				else if (elem is XElement xelem) {
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");

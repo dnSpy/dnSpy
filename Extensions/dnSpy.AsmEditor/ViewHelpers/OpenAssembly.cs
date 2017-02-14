@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenAssembly : IOpenAssembly {
 		readonly IDsDocumentService documentService;
 
-		public OpenAssembly(IDsDocumentService documentService) {
-			this.documentService = documentService;
-		}
+		public OpenAssembly(IDsDocumentService documentService) => this.documentService = documentService;
 
 		public IDsDocument Open() => Open(false).FirstOrDefault();
 		public IDsDocument[] OpenMany() => Open(true);

@@ -28,9 +28,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 	struct AddXmlDocTransform {
 		readonly StringBuilder stringBuilder;
 
-		public AddXmlDocTransform(StringBuilder sb) {
-			stringBuilder = sb;
-		}
+		public AddXmlDocTransform(StringBuilder sb) => stringBuilder = sb;
 
 		public void Run(AstNode node) {
 			if (node is EntityDeclaration) {

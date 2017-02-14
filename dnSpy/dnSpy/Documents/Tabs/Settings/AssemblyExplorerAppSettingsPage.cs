@@ -34,9 +34,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 
 		[ImportingConstructor]
-		AssemblyExplorerAppSettingsPageProvider(DocumentTreeViewSettingsImpl documentTreeViewSettings) {
-			this.documentTreeViewSettings = documentTreeViewSettings;
-		}
+		AssemblyExplorerAppSettingsPageProvider(DocumentTreeViewSettingsImpl documentTreeViewSettings) => this.documentTreeViewSettings = documentTreeViewSettings;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			yield return new AssemblyExplorerAppSettingsPage(documentTreeViewSettings);
@@ -222,8 +220,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 			}
 		}
 
-		public override void OnApply() { throw new InvalidOperationException(); }
-
+		public override void OnApply() => throw new InvalidOperationException();
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			documentTreeViewSettings.ShowToken = ShowToken;
 			documentTreeViewSettings.ShowAssemblyVersion = ShowAssemblyVersion;

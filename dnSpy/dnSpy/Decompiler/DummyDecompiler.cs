@@ -45,9 +45,7 @@ namespace dnSpy.Decompiler {
 			protected override int GetHashCodeCore() => 0;
 		}
 
-		public DummyDecompiler() {
-			Settings = new DummySettings();
-		}
+		public DummyDecompiler() => Settings = new DummySettings();
 
 		public override void Decompile(MethodDef method, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);
 		public override void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) => WriteError(output);

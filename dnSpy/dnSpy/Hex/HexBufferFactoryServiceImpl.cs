@@ -29,9 +29,7 @@ namespace dnSpy.Hex {
 		public override event EventHandler<HexBufferCreatedEventArgs> HexBufferCreated;
 
 		[ImportingConstructor]
-		HexBufferFactoryServiceImpl(HexBufferStreamFactoryService hexBufferStreamFactoryService) {
-			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
-		}
+		HexBufferFactoryServiceImpl(HexBufferStreamFactoryService hexBufferStreamFactoryService) => this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
 
 		public override HexBuffer Create(string filename, HexTags tags) {
 			if (filename == null)

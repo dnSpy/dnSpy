@@ -52,9 +52,7 @@ namespace dnSpy.Hex.Tagging {
 		readonly HexClassificationTags hexClassificationTags;
 
 		[ImportingConstructor]
-		DefaultTaggerProvider(HexClassificationTags hexClassificationTags) {
-			this.hexClassificationTags = hexClassificationTags;
-		}
+		DefaultTaggerProvider(HexClassificationTags hexClassificationTags) => this.hexClassificationTags = hexClassificationTags;
 
 		public override IHexTagger<T> CreateTagger<T>(HexBuffer buffer) =>
 			new DefaultTagger(hexClassificationTags) as IHexTagger<T>;
@@ -68,9 +66,7 @@ namespace dnSpy.Hex.Tagging {
 
 		readonly HexClassificationTags hexClassificationTags;
 
-		public DefaultTagger(HexClassificationTags hexClassificationTags) {
-			this.hexClassificationTags = hexClassificationTags ?? throw new ArgumentNullException(nameof(hexClassificationTags));
-		}
+		public DefaultTagger(HexClassificationTags hexClassificationTags) => this.hexClassificationTags = hexClassificationTags ?? throw new ArgumentNullException(nameof(hexClassificationTags));
 
 		static bool IsValid(HexCell cell, HexBufferLine line) {
 			long len = checked((long)cell.BufferSpan.Length.ToUInt64());

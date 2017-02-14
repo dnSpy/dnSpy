@@ -27,9 +27,7 @@ namespace dnSpy.Documents.Tabs {
 		public bool IsCanceled { get; }
 		public bool CanShowOutput { get; }
 
-		public AsyncShowResult() {
-			CanShowOutput = true;
-		}
+		public AsyncShowResult() => CanShowOutput = true;
 
 		public AsyncShowResult(Task t, bool canShowOutput) {
 			Exception = t.Exception;

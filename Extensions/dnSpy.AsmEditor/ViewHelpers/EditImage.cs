@@ -34,9 +34,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditImage(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditImage(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public ImageVM Edit(string title, ImageVM mo) {
 			var dlg = new WF.OpenFileDialog {

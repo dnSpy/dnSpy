@@ -48,9 +48,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IBracePairServiceProvider bracePairServiceProvider;
 
 		[ImportingConstructor]
-		BracePairViewTaggerProvider(IBracePairServiceProvider bracePairServiceProvider) {
-			this.bracePairServiceProvider = bracePairServiceProvider;
-		}
+		BracePairViewTaggerProvider(IBracePairServiceProvider bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
@@ -82,9 +80,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly Lazy<IBracePairServiceProvider> bracePairServiceProvider;
 
 		[ImportingConstructor]
-		BracePairCommandTargetFilterProvider(Lazy<IBracePairServiceProvider> bracePairServiceProvider) {
-			this.bracePairServiceProvider = bracePairServiceProvider;
-		}
+		BracePairCommandTargetFilterProvider(Lazy<IBracePairServiceProvider> bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
@@ -214,9 +210,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IBracePairServiceProvider bracePairServiceProvider;
 
 		[ImportingConstructor]
-		BracePairDocumentViewerListener(IBracePairServiceProvider bracePairServiceProvider) {
-			this.bracePairServiceProvider = bracePairServiceProvider;
-		}
+		BracePairDocumentViewerListener(IBracePairServiceProvider bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)

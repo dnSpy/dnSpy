@@ -30,13 +30,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		readonly Lazy<IQuickInfoTriggerServiceProvider> quickInfoTriggerServiceProvider;
 
 		[ImportingConstructor]
-		DefaultTextViewCommandTargetFilterProvider(Lazy<IQuickInfoTriggerServiceProvider> quickInfoTriggerServiceProvider) {
-			this.quickInfoTriggerServiceProvider = quickInfoTriggerServiceProvider;
-		}
+		DefaultTextViewCommandTargetFilterProvider(Lazy<IQuickInfoTriggerServiceProvider> quickInfoTriggerServiceProvider) => this.quickInfoTriggerServiceProvider = quickInfoTriggerServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
-			var textView = target as ITextView;
-			if (textView != null && textView.Roles.ContainsAll(roles))
+			if (target is ITextView textView && textView.Roles.ContainsAll(roles))
 				return new CommandTargetFilter(textView, quickInfoTriggerServiceProvider.Value.Create(textView));
 			return null;
 		}

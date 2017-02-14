@@ -38,11 +38,9 @@ namespace dnSpy.Search {
 
 		public object Reference {
 			get {
-				var ns = Object as string;
-				if (ns != null)
+				if (Object is string ns)
 					return new NamespaceRef(Document, ns);
-				var node = Object as DocumentTreeNodeData;
-				if (node != null)
+				if (Object is DocumentTreeNodeData node)
 					return node;
 				return Reference2;
 			}
@@ -93,7 +91,7 @@ namespace dnSpy.Search {
 		static class Cache {
 			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
 			public static TextClassifierTextColorWriter GetWriter() => writer;
-			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
 		object CreateUI(object o, bool includeNamespace) {
@@ -109,94 +107,79 @@ namespace dnSpy.Search {
 		}
 
 		void CreateUI(ITextColorWriter output, object o, bool includeNamespace) {
-			var ns = o as NamespaceSearchResult;
-			if (ns != null) {
+			if (o is NamespaceSearchResult ns) {
 				output.WriteNamespace(ns.Namespace);
 				return;
 			}
 
-			var td = o as TypeDef;
-			if (td != null) {
+			if (o is TypeDef td) {
 				Debug.Assert(Context.Decompiler != null);
 				Context.Decompiler.WriteType(output, td, includeNamespace);
 				return;
 			}
 
-			var md = o as MethodDef;
-			if (md != null) {
+			if (o is MethodDef md) {
 				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(md), IdentifierEscaper.Escape(md.Name));
 				return;
 			}
 
-			var fd = o as FieldDef;
-			if (fd != null) {
+			if (o is FieldDef fd) {
 				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(fd), IdentifierEscaper.Escape(fd.Name));
 				return;
 			}
 
-			var pd = o as PropertyDef;
-			if (pd != null) {
+			if (o is PropertyDef pd) {
 				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(pd), IdentifierEscaper.Escape(pd.Name));
 				return;
 			}
 
-			var ed = o as EventDef;
-			if (ed != null) {
+			if (o is EventDef ed) {
 				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(ed), IdentifierEscaper.Escape(ed.Name));
 				return;
 			}
 
-			var asm = o as AssemblyDef;
-			if (asm != null) {
+			if (o is AssemblyDef asm) {
 				output.Write(asm);
 				return;
 			}
 
-			var mod = o as ModuleDef;
-			if (mod != null) {
+			if (o is ModuleDef mod) {
 				output.WriteModule(mod.FullName);
 				return;
 			}
 
-			var asmRef = o as AssemblyRef;
-			if (asmRef != null) {
+			if (o is AssemblyRef asmRef) {
 				output.Write(asmRef);
 				return;
 			}
 
-			var modRef = o as ModuleRef;
-			if (modRef != null) {
+			if (o is ModuleRef modRef) {
 				output.WriteModule(modRef.FullName);
 				return;
 			}
 
-			var paramDef = o as ParamDef;
-			if (paramDef != null) {
+			if (o is ParamDef paramDef) {
 				output.Write(BoxedTextColor.Parameter, IdentifierEscaper.Escape(paramDef.Name));
 				return;
 			}
 
 			// non-.NET file
-			var document = o as IDsDocument;
-			if (document != null) {
+			if (o is IDsDocument document) {
 				output.Write(BoxedTextColor.Text, document.GetShortName());
 				return;
 			}
 
-			var resNode = o as ResourceNode;
-			if (resNode != null) {
+			if (o is ResourceNode resNode) {
 				output.WriteFilename(resNode.Name);
 				return;
 			}
 
-			var resElNode = o as ResourceElementNode;
-			if (resElNode != null) {
+			if (o is ResourceElementNode resElNode) {
 				output.WriteFilename(resElNode.Name);
 				return;
 			}
 
-			var em = o as ErrorMessage;
-			if (em != null) {
+			if (o is ErrorMessage em) {
 				output.Write(em.Color, em.Text);
 				return;
 			}

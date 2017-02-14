@@ -30,8 +30,8 @@ namespace dnSpy.Language.Intellisense {
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
 		public object this[int index] {
-			get { return list[index]; }
-			set { throw new NotImplementedException(); }
+			get => list[index];
+			set => throw new NotImplementedException();
 		}
 
 		public int Count => list.Count;
@@ -112,12 +112,11 @@ namespace dnSpy.Language.Intellisense {
 		public void CopyTo(Array array, int index) => Array.Copy(list.ToArray(), 0, array, index, list.Count);
 		public IEnumerator GetEnumerator() => list.GetEnumerator();
 
-		public int Add(object value) { throw new NotSupportedException(); }
-		public void Clear() { throw new NotSupportedException(); }
-		public void Insert(int index, object value) { throw new NotSupportedException(); }
-		public void Remove(object value) { throw new NotSupportedException(); }
-		public void RemoveAt(int index) { throw new NotSupportedException(); }
-
+		public int Add(object value) => throw new NotSupportedException();
+		public void Clear() => throw new NotSupportedException();
+		public void Insert(int index, object value) => throw new NotSupportedException();
+		public void Remove(object value) => throw new NotSupportedException();
+		public void RemoveAt(int index) => throw new NotSupportedException();
 		public void Dispose() {
 			if (completionListNotifyCollectionChanged != null)
 				completionListNotifyCollectionChanged.CollectionChanged -= CompletionList_CollectionChanged;

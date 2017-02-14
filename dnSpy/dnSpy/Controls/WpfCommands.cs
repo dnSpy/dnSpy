@@ -68,8 +68,7 @@ namespace dnSpy.Controls {
 		IEnumerable<UIElement> UIElements {
 			get {
 				foreach (var r in uiElements) {
-					var u = r.Target as UIElement;
-					if (u != null)
+					if (r.Target is UIElement u)
 						yield return u;
 				}
 			}

@@ -33,9 +33,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly Lazy<IBreakpointService> breakpointService;
 
 		[ImportingConstructor]
-		GlyphTextMarkerMouseProcessorProvider(Lazy<IBreakpointService> breakpointService) {
-			this.breakpointService = breakpointService;
-		}
+		GlyphTextMarkerMouseProcessorProvider(Lazy<IBreakpointService> breakpointService) => this.breakpointService = breakpointService;
 
 		public IGlyphTextMarkerMouseProcessor GetAssociatedMouseProcessor(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin) =>
 			new GlyphTextMarkerMouseProcessor(wpfTextViewHost, breakpointService);

@@ -131,13 +131,9 @@ namespace dnSpy.Debugger.Scripting {
 
 			public readonly ImageSectionHeader[] Sections;
 
-			PEState() {
-				Sections = Array.Empty<ImageSectionHeader>();
-			}
+			PEState() => Sections = Array.Empty<ImageSectionHeader>();
 
-			public PEState(ImageSectionHeader[] sections) {
-				Sections = sections;
-			}
+			public PEState(ImageSectionHeader[] sections) => Sections = sections;
 		}
 		PEState peState;
 

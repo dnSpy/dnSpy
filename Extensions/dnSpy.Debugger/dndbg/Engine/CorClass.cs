@@ -116,9 +116,7 @@ namespace dndbg.Engine {
 		/// <param name="token">Token of field</param>
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
-		public CorValue GetStaticFieldValue(uint token, CorFrame frame) {
-			return GetStaticFieldValue(token, frame, out int hr);
-		}
+		public CorValue GetStaticFieldValue(uint token, CorFrame frame) => GetStaticFieldValue(token, frame, out int hr);
 
 		/// <summary>
 		/// Reads a static field

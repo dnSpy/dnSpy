@@ -44,9 +44,7 @@ namespace dnSpy.Hex.Editor {
 
 		sealed class TheScrollBar : TE.DsScrollBar {
 			readonly HorizontalScrollBarMargin owner;
-			public TheScrollBar(HorizontalScrollBarMargin owner) {
-				this.owner = owner;
-			}
+			public TheScrollBar(HorizontalScrollBarMargin owner) => this.owner = owner;
 			protected override void OnScroll(ScrollEventArgs e) => owner.OnScroll(Value);
 		}
 

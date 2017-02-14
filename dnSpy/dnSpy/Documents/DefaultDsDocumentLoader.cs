@@ -24,9 +24,7 @@ namespace dnSpy.Documents {
 	sealed class DefaultDsDocumentLoader : IDsDocumentLoader {
 		readonly IDsDocumentService documentService;
 
-		public DefaultDsDocumentLoader(IDsDocumentService documentService) {
-			this.documentService = documentService;
-		}
+		public DefaultDsDocumentLoader(IDsDocumentService documentService) => this.documentService = documentService;
 
 		public IDsDocument[] Load(IEnumerable<DocumentToLoad> documents) {
 			var loadedDocuments = new List<IDsDocument>();

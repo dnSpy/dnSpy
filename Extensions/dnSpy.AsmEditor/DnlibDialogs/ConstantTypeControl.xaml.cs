@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ConstantTypeControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as ConstantTypeVM;
-				if (data != null) {
+				if (DataContext is ConstantTypeVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 					data.TypeSigCreator = new TypeSigCreator(ownerWindow);

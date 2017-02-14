@@ -102,10 +102,9 @@ namespace dnSpy.Settings.Dialog {
 			};
 		}
 
-		public void ClearUICache() {
+		public void ClearUICache() =>
 			// Make sure we don't show hidden pages
 			pageAndUIObject = null;
-		}
 
 		public void RefreshUI() {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UIObject)));
@@ -130,8 +129,7 @@ namespace dnSpy.Settings.Dialog {
 			if (obj == null)
 				return Array.Empty<string>();
 
-			var uiElem = obj as UIElement;
-			if (uiElem != null)
+			if (obj is UIElement uiElem)
 				return GetStrings(uiElem);
 
 			var key = new DataTemplateKey(obj as Type ?? obj.GetType());

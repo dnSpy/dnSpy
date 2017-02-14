@@ -102,9 +102,7 @@ namespace dnSpy.Debugger.Locals {
 		readonly LocalsCtxMenuCommand cmd;
 
 		public LocalsCtxMenuCommandProxy(LocalsCtxMenuCommand cmd)
-			: base(cmd) {
-			this.cmd = cmd;
-		}
+			: base(cmd) => this.cmd = cmd;
 
 		protected override LocalsCtxMenuContext CreateContext() => cmd.Create();
 	}
@@ -179,9 +177,7 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		CopyLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IDebuggerSettings debuggerSettings)
-			: base(theDebugger, localsContent) {
-			this.debuggerSettings = debuggerSettings;
-		}
+			: base(theDebugger, localsContent) => this.debuggerSettings = debuggerSettings;
 
 		public override void Execute(LocalsCtxMenuContext context) {
 			var output = new StringBuilderTextColorOutput();
@@ -244,9 +240,7 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		CopyValueLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IDebuggerSettings debuggerSettings)
-			: base(theDebugger, localsContent) {
-			this.debuggerSettings = debuggerSettings;
-		}
+			: base(theDebugger, localsContent) => this.debuggerSettings = debuggerSettings;
 
 		public override void Execute(LocalsCtxMenuContext context) {
 			var output = new StringBuilderTextColorOutput();
@@ -280,9 +274,7 @@ namespace dnSpy.Debugger.Locals {
 			//TODO:
 		}
 
-		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return false;//TODO:
-		}
+		public override bool IsEnabled(LocalsCtxMenuContext context) => false;//TODO:
 	}
 
 	//[ExportMenuItem(Header = "res:LocalsSaveCommand", Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 30)]
@@ -291,9 +283,7 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		SaveDataLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMessageBoxService messageBoxService)
-			: base(theDebugger, localsContent) {
-			this.messageBoxService = messageBoxService;
-		}
+			: base(theDebugger, localsContent) => this.messageBoxService = messageBoxService;
 
 		public override void Execute(LocalsCtxMenuContext context) {
 			var value = GetValue(context);
@@ -388,9 +378,7 @@ namespace dnSpy.Debugger.Locals {
 	sealed class SimpleMenuItem : MenuItemBase {
 		readonly Action<IMenuItemContext> action;
 
-		public SimpleMenuItem(Action<IMenuItemContext> action) {
-			this.action = action;
-		}
+		public SimpleMenuItem(Action<IMenuItemContext> action) => this.action = action;
 
 		public override void Execute(IMenuItemContext context) => action(context);
 	}
@@ -441,9 +429,7 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		ShowInMemoryLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowService memoryWindowService)
-			: base(theDebugger, localsContent) {
-			this.memoryWindowService = memoryWindowService;
-		}
+			: base(theDebugger, localsContent) => this.memoryWindowService = memoryWindowService;
 
 		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context);
@@ -504,9 +490,7 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		HexadecimalDisplayLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, DebuggerSettingsImpl debuggerSettings)
-			: base(theDebugger, localsContent) {
-			this.debuggerSettings = debuggerSettings;
-		}
+			: base(theDebugger, localsContent) => this.debuggerSettings = debuggerSettings;
 
 		public override void Execute(LocalsCtxMenuContext context) => debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
 		public override bool IsChecked(LocalsCtxMenuContext context) => debuggerSettings.UseHexadecimal;
@@ -614,9 +598,7 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		ShowNamespacesLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, LocalsSettingsImpl localsSettings)
-			: base(theDebugger, localsContent) {
-			this.localsSettings = localsSettings;
-		}
+			: base(theDebugger, localsContent) => this.localsSettings = localsSettings;
 
 		public override void Execute(LocalsCtxMenuContext context) => localsSettings.ShowNamespaces = !localsSettings.ShowNamespaces;
 		public override bool IsChecked(LocalsCtxMenuContext context) => localsSettings.ShowNamespaces;
@@ -628,9 +610,7 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		ShowTypeKeywordsLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, LocalsSettingsImpl localsSettings)
-			: base(theDebugger, localsContent) {
-			this.localsSettings = localsSettings;
-		}
+			: base(theDebugger, localsContent) => this.localsSettings = localsSettings;
 
 		public override void Execute(LocalsCtxMenuContext context) => localsSettings.ShowTypeKeywords = !localsSettings.ShowTypeKeywords;
 		public override bool IsChecked(LocalsCtxMenuContext context) => localsSettings.ShowTypeKeywords;
@@ -642,9 +622,7 @@ namespace dnSpy.Debugger.Locals {
 
 		[ImportingConstructor]
 		ShowTokensLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, LocalsSettingsImpl localsSettings)
-			: base(theDebugger, localsContent) {
-			this.localsSettings = localsSettings;
-		}
+			: base(theDebugger, localsContent) => this.localsSettings = localsSettings;
 
 		public override void Execute(LocalsCtxMenuContext context) => localsSettings.ShowTokens = !localsSettings.ShowTokens;
 		public override bool IsChecked(LocalsCtxMenuContext context) => localsSettings.ShowTokens;

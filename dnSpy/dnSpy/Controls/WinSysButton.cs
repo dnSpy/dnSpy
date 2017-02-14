@@ -56,13 +56,9 @@ namespace dnSpy.Controls {
 
 		Window window;
 
-		static WinSysButton() {
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(WinSysButton), new FrameworkPropertyMetadata(typeof(WinSysButton)));
-		}
+		static WinSysButton() => DefaultStyleKeyProperty.OverrideMetadata(typeof(WinSysButton), new FrameworkPropertyMetadata(typeof(WinSysButton)));
 
-		public WinSysButton() {
-			Loaded += WinSysButton_Loaded;
-		}
+		public WinSysButton() => Loaded += WinSysButton_Loaded;
 
 		void WinSysButton_Loaded(object sender, RoutedEventArgs e) {
 			Loaded -= WinSysButton_Loaded;

@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class CustomAttributeDlg : WindowBase {
-		public CustomAttributeDlg() {
-			InitializeComponent();
-		}
+		public CustomAttributeDlg() => InitializeComponent();
 	}
 }

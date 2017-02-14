@@ -122,8 +122,7 @@ namespace dnSpy.Images {
 
 		Size GetDpi(DependencyObject dpiObject, Size dpi) {
 			if (dpiObject != null) {
-				var window = Window.GetWindow(dpiObject) as MetroWindow;
-				if (window != null)
+				if (Window.GetWindow(dpiObject) is MetroWindow window)
 					return window.WindowDpi;
 			}
 
@@ -232,8 +231,7 @@ namespace dnSpy.Images {
 				var info = Application.GetResourceStream(uri);
 				if (info.ContentType.Equals("application/xaml+xml", StringComparison.OrdinalIgnoreCase) || info.ContentType.Equals("application/baml+xml", StringComparison.OrdinalIgnoreCase)) {
 					var component = Application.LoadComponent(uri);
-					var elem = component as FrameworkElement;
-					if (elem != null)
+					if (component is FrameworkElement elem)
 						return ResizeElement(elem, physicalSize);
 					return null;
 				}

@@ -30,9 +30,7 @@ namespace dnSpy.Hex.Editor {
 		readonly Lazy<HexStructureInfoProviderFactory, VSUTIL.IOrderable>[] hexStructureInfoProviderFactories;
 
 		[ImportingConstructor]
-		HexStructureInfoAggregatorFactoryImpl([ImportMany] IEnumerable<Lazy<HexStructureInfoProviderFactory, VSUTIL.IOrderable>> hexStructureInfoProviderFactories) {
-			this.hexStructureInfoProviderFactories = VSUTIL.Orderer.Order(hexStructureInfoProviderFactories).ToArray();
-		}
+		HexStructureInfoAggregatorFactoryImpl([ImportMany] IEnumerable<Lazy<HexStructureInfoProviderFactory, VSUTIL.IOrderable>> hexStructureInfoProviderFactories) => this.hexStructureInfoProviderFactories = VSUTIL.Orderer.Order(hexStructureInfoProviderFactories).ToArray();
 
 		public override HexStructureInfoAggregator Create(HexView hexView) {
 			if (hexView == null)

@@ -41,9 +41,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			CodeCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			CodeCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(documentTabService, context) != null;
 
@@ -66,9 +64,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			DocumentsCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			DocumentsCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(context) != null;
 
@@ -95,9 +91,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			CodeCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			CodeCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(documentTabService, context) != null;
 
@@ -123,9 +117,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			DocumentsCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			DocumentsCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(context) != null;
 

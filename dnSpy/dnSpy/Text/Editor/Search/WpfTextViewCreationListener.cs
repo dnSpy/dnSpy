@@ -30,9 +30,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ISearchServiceProvider searchServiceProvider;
 
 		[ImportingConstructor]
-		WpfTextViewCreationListener(ISearchServiceProvider searchServiceProvider) {
-			this.searchServiceProvider = searchServiceProvider;
-		}
+		WpfTextViewCreationListener(ISearchServiceProvider searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
 		public void TextViewCreated(IWpfTextView textView) => searchServiceProvider.Get(textView);
 	}

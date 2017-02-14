@@ -32,13 +32,10 @@ namespace dnSpy.Hex.Editor {
 		readonly Lazy<HexEditorOperationsFactoryService> editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		DefaultHexViewCommandTargetFilterProvider(Lazy<HexEditorOperationsFactoryService> editorOperationsFactoryService) {
-			this.editorOperationsFactoryService = editorOperationsFactoryService;
-		}
+		DefaultHexViewCommandTargetFilterProvider(Lazy<HexEditorOperationsFactoryService> editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
 		public ICommandTargetFilter Create(object target) {
-			var hexView = target as HexView;
-			if (hexView != null)
+			if (target is HexView hexView)
 				return new DefaultHexViewCommandTarget(hexView, editorOperationsFactoryService.Value);
 			return null;
 		}

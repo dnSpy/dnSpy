@@ -34,8 +34,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-			var vm = DataContext as TabsVM;
-			if (vm != null)
+			if (DataContext is TabsVM vm)
 				vm.SelectedItems = listView.SelectedItems.OfType<TabVM>().ToArray();
 		}
 

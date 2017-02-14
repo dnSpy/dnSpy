@@ -37,8 +37,6 @@ namespace dnSpy.BamlDecompiler {
 		readonly BamlSettingsImpl bamlSettings;
 
 		[ImportingConstructor]
-		XamlOutputOptionsProvider(BamlSettingsImpl bamlSettings) {
-			this.bamlSettings = bamlSettings;
-		}
+		XamlOutputOptionsProvider(BamlSettingsImpl bamlSettings) => this.bamlSettings = bamlSettings;
 	}
 }

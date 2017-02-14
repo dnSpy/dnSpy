@@ -127,8 +127,7 @@ namespace dnSpy.Text.Editor {
 			foreach (var margin in containerMargins) {
 				if (margin == null)
 					continue;
-				var result = margin.GetTextViewMargin(marginName) as IWpfTextViewMargin;
-				if (result != null)
+				if (margin.GetTextViewMargin(marginName) is IWpfTextViewMargin result)
 					return result;
 			}
 			return null;

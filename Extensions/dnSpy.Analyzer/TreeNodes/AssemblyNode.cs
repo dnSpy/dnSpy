@@ -25,9 +25,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AssemblyNode : EntityNode {
 		readonly AssemblyDef analyzedAssembly;
 
-		public AssemblyNode(AssemblyDef analyzedAssembly) {
-			this.analyzedAssembly = analyzedAssembly;
-		}
+		public AssemblyNode(AssemblyDef analyzedAssembly) => this.analyzedAssembly = analyzedAssembly;
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedAssembly);
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) => output.Write(analyzedAssembly);

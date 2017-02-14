@@ -28,9 +28,7 @@ namespace dnSpy.Decompiler.MSBuild {
 	struct DefaultNamespaceFinder {
 		readonly ModuleDef module;
 
-		public DefaultNamespaceFinder(ModuleDef module) {
-			this.module = module;
-		}
+		public DefaultNamespaceFinder(ModuleDef module) => this.module = module;
 
 		struct Info {
 			public readonly string FirstPart;

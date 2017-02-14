@@ -118,11 +118,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			TypeSigCreator.TypeSig = null;
 		}
 
-		bool AddCurrentCanExecute() {
-			return IsEnabled &&
-				(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
-				TypeSigCreator.TypeSig != null;
-		}
+		bool AddCurrentCanExecute() =>
+			IsEnabled &&
+			(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
+			TypeSigCreator.TypeSig != null;
 
 		public override bool HasError => !IsUnlimitedCount && NumberOfTypesLeft > 0;
 	}

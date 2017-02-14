@@ -32,9 +32,7 @@ namespace dnSpy.BackgroundImage {
 		readonly IImageSourceServiceProvider imageSourceServiceProvider;
 
 		[ImportingConstructor]
-		WpfTextViewCreationListener(IImageSourceServiceProvider imageSourceServiceProvider) {
-			this.imageSourceServiceProvider = imageSourceServiceProvider;
-		}
+		WpfTextViewCreationListener(IImageSourceServiceProvider imageSourceServiceProvider) => this.imageSourceServiceProvider = imageSourceServiceProvider;
 
 		public void TextViewCreated(IWpfTextView textView) =>
 			TextViewBackgroundImageService.InstallService(textView, imageSourceServiceProvider.Create(textView));

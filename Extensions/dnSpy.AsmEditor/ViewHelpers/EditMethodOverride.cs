@@ -31,9 +31,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditMethodOverride(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditMethodOverride(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public MethodOverrideVM Edit(string title, MethodOverrideVM mo) {
 			var dnlibPicker = new DnlibTypePicker(ownerWindow);

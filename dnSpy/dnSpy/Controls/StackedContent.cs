@@ -59,13 +59,10 @@ namespace dnSpy.Controls {
 	sealed class StackedContentChildImpl : IStackedContentChild {
 		public object UIObject { get; }
 
-		public StackedContentChildImpl(object uiObject) {
-			UIObject = uiObject;
-		}
+		public StackedContentChildImpl(object uiObject) => UIObject = uiObject;
 
 		public static IStackedContentChild GetOrCreate(object uiObjectOwner, object uiObject) {
-			var scc = uiObjectOwner as IStackedContentChild;
-			if (scc != null)
+			if (uiObjectOwner is IStackedContentChild scc)
 				return scc;
 			return new StackedContentChildImpl(uiObject);
 		}

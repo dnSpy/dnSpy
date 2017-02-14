@@ -40,9 +40,7 @@ namespace dnSpy.Menus {
 		public IMenuItem MenuItem => lazy.Value;
 		public IMenuItemMetadata Metadata => lazy.Metadata;
 
-		public MenuItemMD(Lazy<IMenuItem, IMenuItemMetadata> lazy) {
-			this.lazy = lazy;
-		}
+		public MenuItemMD(Lazy<IMenuItem, IMenuItemMetadata> lazy) => this.lazy = lazy;
 	}
 
 	sealed class MenuItemGroupMD {
@@ -61,9 +59,7 @@ namespace dnSpy.Menus {
 		public IMenu Menu => lazy.Value;
 		public IMenuMetadata Metadata => lazy.Metadata;
 
-		public MenuMD(Lazy<IMenu, IMenuMetadata> lazy) {
-			this.lazy = lazy;
-		}
+		public MenuMD(Lazy<IMenu, IMenuMetadata> lazy) => this.lazy = lazy;
 	}
 
 	[Export(typeof(IWpfFocusChecker))]
@@ -73,9 +69,7 @@ namespace dnSpy.Menus {
 		readonly MenuService menuService;
 
 		[ImportingConstructor]
-		MenuWpfFocusChecker(MenuService menuService) {
-			this.menuService = menuService;
-		}
+		MenuWpfFocusChecker(MenuService menuService) => this.menuService = menuService;
 	}
 
 	[Export, Export(typeof(IMenuService))]
@@ -268,8 +262,7 @@ namespace dnSpy.Menus {
 				needSeparator = true;
 
 				foreach (var item in items) {
-					var itemProvider = item.MenuItem as IMenuItemProvider;
-					if (itemProvider != null) {
+					if (item.MenuItem is IMenuItemProvider itemProvider) {
 						foreach (var createdItem in itemProvider.Create(ctx)) {
 							var menuItem = Create(createdItem.MenuItem, createdItem.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
 							firstMenuItem = null;

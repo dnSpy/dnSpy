@@ -45,9 +45,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		DotNetMethodProvider dotNetMethodProvider;
 		DotNetResourceProvider dotNetResourceProvider;
 
-		public DotNetStructureProvider(HexBufferFile file) {
-			this.file = file ?? throw new ArgumentNullException(nameof(file));
-		}
+		public DotNetStructureProvider(HexBufferFile file) => this.file = file ?? throw new ArgumentNullException(nameof(file));
 
 		public override bool Initialize() {
 			HexSpan? resourcesSpan = null;

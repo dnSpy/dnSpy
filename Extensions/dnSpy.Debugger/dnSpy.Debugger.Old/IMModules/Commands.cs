@@ -29,17 +29,13 @@ namespace dnSpy.Debugger.IMModules {
 		sealed class Context {
 			public readonly MemoryModuleDefFile MemoryModuleDefFile;
 
-			public Context(MemoryModuleDefFile file) {
-				MemoryModuleDefFile = file;
-			}
+			public Context(MemoryModuleDefFile file) => MemoryModuleDefFile = file;
 		}
 
 		abstract class CommandBase : MenuItemBase<Context> {
 			readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 
-			protected CommandBase(Lazy<IInMemoryModuleService> inMemoryModuleService) {
-				this.inMemoryModuleService = inMemoryModuleService;
-			}
+			protected CommandBase(Lazy<IInMemoryModuleService> inMemoryModuleService) => this.inMemoryModuleService = inMemoryModuleService;
 
 			protected sealed override Context CreateContext(IMenuItemContext context) {
 				var file = GetFile(context);
@@ -91,9 +87,7 @@ namespace dnSpy.Debugger.IMModules {
 
 			[ImportingConstructor]
 			CodeCommand(Lazy<IInMemoryModuleService> inMemoryModuleService, IDocumentTreeView documentTreeView)
-				: base(inMemoryModuleService) {
-				this.documentTreeView = documentTreeView;
-			}
+				: base(inMemoryModuleService) => this.documentTreeView = documentTreeView;
 
 			public override void Execute(Context context) => ExecuteInternal(context);
 

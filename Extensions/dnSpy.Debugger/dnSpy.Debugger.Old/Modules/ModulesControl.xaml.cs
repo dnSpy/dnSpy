@@ -26,9 +26,7 @@ namespace dnSpy.Debugger.Modules {
 	sealed partial class ModulesControl : UserControl {
 		public ListView ListView => listView;
 
-		public ModulesControl() {
-			InitializeComponent();
-		}
+		public ModulesControl() => InitializeComponent();
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))

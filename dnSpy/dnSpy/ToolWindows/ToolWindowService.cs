@@ -29,9 +29,7 @@ namespace dnSpy.ToolWindows {
 	sealed class ToolWindowService : IToolWindowService {
 		readonly ITabService tabService;
 
-		public ToolWindowService(ITabService tabService) {
-			this.tabService = tabService;
-		}
+		public ToolWindowService(ITabService tabService) => this.tabService = tabService;
 
 		public IToolWindowGroupService Create(ToolWindowGroupServiceOptions options) {
 			var newOptions = Convert(options);
@@ -58,9 +56,7 @@ namespace dnSpy.ToolWindows {
 
 			public ToolWindowGroupService ToolWindowGroupService { get; set; }
 
-			public InitializeContextMenuHelper(Guid tabGroupGuid) {
-				this.tabGroupGuid = tabGroupGuid;
-			}
+			public InitializeContextMenuHelper(Guid tabGroupGuid) => this.tabGroupGuid = tabGroupGuid;
 
 			public IContextMenuProvider InitializeContextMenu(IMenuService menuService, ITabGroup tabGroup, FrameworkElement elem) => menuService.InitializeContextMenu(elem, tabGroupGuid, new GuidObjectsProvider(this, tabGroup));
 

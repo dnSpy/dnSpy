@@ -191,9 +191,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected HexView() {
-			Properties = new VSUTIL.PropertyCollection();
-		}
+		protected HexView() => Properties = new VSUTIL.PropertyCollection();
 
 		/// <summary>
 		/// Closes the hex view

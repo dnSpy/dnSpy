@@ -65,9 +65,7 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
 
 		[ImportingConstructor]
-		CopyILBytesCodeCommand(Lazy<IMethodAnnotations> methodAnnotations) {
-			this.methodAnnotations = methodAnnotations;
-		}
+		CopyILBytesCodeCommand(Lazy<IMethodAnnotations> methodAnnotations) => this.methodAnnotations = methodAnnotations;
 
 		public override bool IsVisible(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))

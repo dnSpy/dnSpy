@@ -28,9 +28,7 @@ namespace dnSpy.Themes {
 		readonly IThemeServiceImpl themeService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(IThemeServiceImpl themeService) {
-			this.themeService = themeService;
-		}
+		AppCommandLineArgsHandler(IThemeServiceImpl themeService) => this.themeService = themeService;
 
 		public double Order => 0;
 

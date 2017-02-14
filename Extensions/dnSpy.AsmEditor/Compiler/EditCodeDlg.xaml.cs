@@ -38,8 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			decompilingControl.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
 
 			DataContextChanged += (s, e) => {
-				var vm = DataContext as EditCodeVM;
-				if (vm != null) {
+				if (DataContext is EditCodeVM vm) {
 					vm.PropertyChanged += EditCodeVM_PropertyChanged;
 					vm.OwnerWindow = this;
 					vm.CodeCompiled += EditCodeVM_CodeCompiled;
@@ -72,8 +71,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected override void OnClosed(EventArgs e) {
 			base.OnClosed(e);
-			var vm = DataContext as EditCodeVM;
-			if (vm != null)
+			if (DataContext is EditCodeVM vm)
 				vm.CodeCompiled -= EditCodeVM_CodeCompiled;
 		}
 

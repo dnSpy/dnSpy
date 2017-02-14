@@ -79,14 +79,12 @@ namespace dnSpy.AsmEditor.Method {
 
 		public MethodDef CreateMethodDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new MethodDefUser()));
 
-		public static MethodDefOptions Create(UTF8String name, MethodSig methodSig) {
-			return new MethodDefOptions {
-				ImplAttributes = MethodImplAttributes.IL | MethodImplAttributes.Managed,
-				Attributes = MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.HideBySig | (methodSig.HasThis ? 0 : MethodAttributes.Static),
-				Name = name,
-				MethodSig = methodSig,
-				ImplMap = null,
-			};
-		}
+		public static MethodDefOptions Create(UTF8String name, MethodSig methodSig) => new MethodDefOptions {
+			ImplAttributes = MethodImplAttributes.IL | MethodImplAttributes.Managed,
+			Attributes = MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.HideBySig | (methodSig.HasThis ? 0 : MethodAttributes.Static),
+			Name = name,
+			MethodSig = methodSig,
+			ImplMap = null,
+		};
 	}
 }

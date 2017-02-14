@@ -42,9 +42,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <remarks>
 		/// RopeTextSource only publishes a copy of the contained rope to ensure that the underlying rope cannot be modified.
 		/// </remarks>
-		public Rope<char> GetRope() {
-			return rope.Clone();
-		}
+		public Rope<char> GetRope() => rope.Clone();
 
 		/// <inheritdoc/>
 		public string Text {
@@ -57,39 +55,25 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		/// <inheritdoc/>
-		public char GetCharAt(int offset) {
-			return rope[offset];
-		}
+		public char GetCharAt(int offset) => rope[offset];
 
 		/// <inheritdoc/>
-		public string GetText(int offset, int length) {
-			return rope.ToString(offset, length);
-		}
+		public string GetText(int offset, int length) => rope.ToString(offset, length);
 
 		/// <inheritdoc/>
-		public ITextSource CreateSnapshot() {
-			return this;
-		}
+		public ITextSource CreateSnapshot() => this;
 
 		/// <inheritdoc/>
-		public int IndexOfAny(char[] anyOf, int startIndex, int count) {
-			return rope.IndexOfAny(anyOf, startIndex, count);
-		}
+		public int IndexOfAny(char[] anyOf, int startIndex, int count) => rope.IndexOfAny(anyOf, startIndex, count);
 
 		/// <inheritdoc/>
-		public void WriteTextTo(TextWriter writer) {
-			rope.WriteTo(writer, 0, rope.Length);
-		}
+		public void WriteTextTo(TextWriter writer) => rope.WriteTo(writer, 0, rope.Length);
 
 		/// <inheritdoc/>
-		public void WriteTextTo(TextWriter writer, int offset, int length) {
-			rope.WriteTo(writer, offset, length);
-		}
+		public void WriteTextTo(TextWriter writer, int offset, int length) => rope.WriteTo(writer, offset, length);
 
 		/// <inheritdoc/>
-		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) {
-			rope.CopyTo(sourceIndex, destination, destinationIndex, count);
-		}
+		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) => rope.CopyTo(sourceIndex, destination, destinationIndex, count);
 
 		/// <inheritdoc/>
 		public char[] ToCharArray(int startIndex, int length) {

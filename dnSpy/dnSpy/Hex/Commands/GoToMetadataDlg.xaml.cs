@@ -26,8 +26,7 @@ namespace dnSpy.Hex.Commands {
 		public GoToMetadataDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var vm = DataContext as GoToMetadataVM;
-				if (vm != null) {
+				if (DataContext is GoToMetadataVM vm) {
 					InputBindings.Add(new KeyBinding(vm.GoToMetadataTableCommand, new KeyGesture(Key.D1, ModifierKeys.Control)));
 					InputBindings.Add(new KeyBinding(vm.GoToMetadataMemberRvaCommand, new KeyGesture(Key.D2, ModifierKeys.Control)));
 					InputBindings.Add(new KeyBinding(vm.GoToMetadataBlobCommand, new KeyGesture(Key.D3, ModifierKeys.Control)));

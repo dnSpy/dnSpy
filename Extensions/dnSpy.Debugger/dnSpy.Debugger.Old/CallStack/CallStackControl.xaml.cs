@@ -26,9 +26,7 @@ namespace dnSpy.Debugger.CallStack {
 	sealed partial class CallStackControl : UserControl {
 		public ListView ListView => listView;
 
-		public CallStackControl() {
-			InitializeComponent();
-		}
+		public CallStackControl() => InitializeComponent();
 
 		public void FocusPane() => UIUtilities.FocusSelector(listView);
 

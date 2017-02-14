@@ -31,9 +31,7 @@ namespace dnSpy.Contracts.Documents {
 		/// Constructor
 		/// </summary>
 		/// <param name="filename">Filename</param>
-		public FilenameKey(string filename) {
-			this.filename = GetFullPath(filename);
-		}
+		public FilenameKey(string filename) => this.filename = GetFullPath(filename);
 
 		static string GetFullPath(string filename) {
 			try {

@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.MainApp {
 	sealed partial class DsLoaderControl : UserControl {
-		public DsLoaderControl() {
-			InitializeComponent();
-		}
+		public DsLoaderControl() => InitializeComponent();
 	}
 }

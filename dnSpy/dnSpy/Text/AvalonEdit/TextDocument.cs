@@ -135,9 +135,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		/// <inheritdoc/>
-		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) {
-			rope.CopyTo(sourceIndex, destination, destinationIndex, count);
-		}
+		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) => rope.CopyTo(sourceIndex, destination, destinationIndex, count);
 
 		/// <inheritdoc/>
 		public char[] ToCharArray(int startIndex, int length) {
@@ -325,8 +323,7 @@ namespace dnSpy.Text.AvalonEdit {
 				if (offset == 0 && length == rope.Length) {
 					// optimize replacing the whole document
 					rope.Clear();
-					var newRopeTextSource = newText as RopeTextSource;
-					if (newRopeTextSource != null)
+					if (newText is RopeTextSource newRopeTextSource)
 						rope.InsertRange(0, newRopeTextSource.GetRope());
 					else
 						rope.InsertText(0, newText.Text);
@@ -338,8 +335,7 @@ namespace dnSpy.Text.AvalonEdit {
 #if DEBUG
 					lineTree.CheckProperties();
 #endif
-					var newRopeTextSource = newText as RopeTextSource;
-					if (newRopeTextSource != null)
+					if (newText is RopeTextSource newRopeTextSource)
 						rope.InsertRange(offset, newRopeTextSource.GetRope());
 					else
 						rope.InsertText(offset, newText.Text);
@@ -354,9 +350,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		#region Debugging
 		[Conditional("DEBUG")]
-		internal void DebugVerifyAccess() {
-			VerifyAccess();
-		}
+		internal void DebugVerifyAccess() => VerifyAccess();
 		#endregion
 	}
 }

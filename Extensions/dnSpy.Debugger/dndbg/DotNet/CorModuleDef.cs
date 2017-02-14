@@ -315,9 +315,7 @@ namespace dndbg.DotNet {
 			return SignatureReader.ReadTypeSig(this, CorLibTypes, data, gpContext, out extraData);
 		}
 
-		protected override void InitializeCustomAttributes() {
-			InitCustomAttributes(this, ref customAttributes, new GenericParamContext());
-		}
+		protected override void InitializeCustomAttributes() => InitCustomAttributes(this, ref customAttributes, new GenericParamContext());
 
 		internal void InitCustomAttributes(ICorHasCustomAttribute hca, ref CustomAttributeCollection customAttributes, GenericParamContext gpContext) {
 			var tokens = MDAPI.GetCustomAttributeTokens(mdi, hca.OriginalToken.Raw);
@@ -1173,12 +1171,10 @@ namespace dndbg.DotNet {
 			if (token.Rid == 0)
 				return new EmbeddedResource(mr.Name, CreateResourceStream(mr.Offset), mr.Flags) { Rid = rid, Offset = mr.Offset };
 
-			var file = mr.Implementation as FileDef;
-			if (file != null)
+			if (mr.Implementation is FileDef file)
 				return new LinkedResource(mr.Name, file, mr.Flags) { Rid = rid, Offset = mr.Offset };
 
-			var asmRef = mr.Implementation as AssemblyRef;
-			if (asmRef != null)
+			if (mr.Implementation is AssemblyRef asmRef)
 				return new AssemblyLinkedResource(mr.Name, asmRef, mr.Flags) { Rid = rid, Offset = mr.Offset };
 
 			return new EmbeddedResource(mr.Name, MemoryImageStream.CreateEmpty(), mr.Flags) { Rid = rid, Offset = mr.Offset };

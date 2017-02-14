@@ -28,9 +28,7 @@ namespace dnSpy.Debugger {
 	sealed class DebuggedProcessRunningEventArgs : EventArgs {
 		public Process Process { get; }
 
-		public DebuggedProcessRunningEventArgs(Process process) {
-			Process = process;
-		}
+		public DebuggedProcessRunningEventArgs(Process process) => Process = process;
 	}
 
 	sealed class DebuggedProcessRunningNotifier {

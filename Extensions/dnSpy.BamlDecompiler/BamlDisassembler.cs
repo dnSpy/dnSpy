@@ -94,9 +94,7 @@ namespace dnSpy.BamlDecompiler {
 			InitRecordHandlers();
 		}
 
-		void WriteText(string value) {
-			output.Write(value, BoxedTextColor.Text);
-		}
+		void WriteText(string value) => output.Write(value, BoxedTextColor.Text);
 
 		void WriteString(string value) {
 			string str = SimpleTypeConverter.ToString(value, true);
@@ -118,9 +116,7 @@ namespace dnSpy.BamlDecompiler {
 			output.Write(num.ToString("x8", CultureInfo.InvariantCulture), BoxedTextColor.Number);
 		}
 
-		void WriteBool(bool value) {
-			output.Write(value ? "true" : "false", BoxedTextColor.Keyword);
-		}
+		void WriteBool(bool value) => output.Write(value ? "true" : "false", BoxedTextColor.Keyword);
 
 		void WriteVersion(BamlDocument.BamlVersion value) {
 			output.Write("[", BoxedTextColor.Text);
@@ -202,9 +198,7 @@ namespace dnSpy.BamlDecompiler {
 			output.Write(str, BamlToolTipReference.Create(def ?? IdentifierEscaper.Escape(value)), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.String);
 		}
 
-		void WriteRecordRef(BamlRecord record) {
-			output.Write(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), DecompilerReferenceFlags.Local, BoxedTextColor.Keyword);
-		}
+		void WriteRecordRef(BamlRecord record) => output.Write(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), DecompilerReferenceFlags.Local, BoxedTextColor.Keyword);
 
 		public void Disassemble(ModuleDef module, BamlDocument document) {
 			WriteText("Signature:      \t");

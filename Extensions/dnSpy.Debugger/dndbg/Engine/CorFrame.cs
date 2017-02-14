@@ -488,8 +488,7 @@ namespace dndbg.Engine {
 
 			uint localVarSigTok = func.LocalVarSigToken;
 			if ((localVarSigTok & 0x00FFFFFF) != 0) {
-				var localSig = MetaDataUtils.ReadStandAloneSig(mdi, localVarSigTok) as LocalSig;
-				if (localSig != null)
+				if (MetaDataUtils.ReadStandAloneSig(mdi, localVarSigTok) is LocalSig localSig)
 					localTypes.AddRange(localSig.Locals);
 			}
 

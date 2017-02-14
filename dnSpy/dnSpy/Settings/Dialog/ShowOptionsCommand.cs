@@ -29,9 +29,7 @@ namespace dnSpy.Settings.Dialog {
 		readonly Lazy<IAppSettingsService> appSettingsService;
 
 		[ImportingConstructor]
-		ShowOptionsCommand(Lazy<IAppSettingsService> appSettingsService) {
-			this.appSettingsService = appSettingsService;
-		}
+		ShowOptionsCommand(Lazy<IAppSettingsService> appSettingsService) => this.appSettingsService = appSettingsService;
 
 		public override void Execute(IMenuItemContext context) => appSettingsService.Value.Show();
 	}

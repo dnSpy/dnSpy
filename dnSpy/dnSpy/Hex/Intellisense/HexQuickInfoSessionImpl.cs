@@ -162,10 +162,9 @@ namespace dnSpy.Hex.Intellisense {
 			DisposeQuickInfoSources();
 		}
 
-		public override bool Match() {
+		public override bool Match() =>
 			// There's nothing to match...
-			return false;
-		}
+			false;
 
 		public override void Collapse() => Dismiss();
 	}

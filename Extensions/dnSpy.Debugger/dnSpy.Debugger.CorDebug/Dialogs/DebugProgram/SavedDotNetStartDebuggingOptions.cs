@@ -38,12 +38,8 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		public DotNetFrameworkStartDebuggingOptions CreateDotNetFramework() => new DotNetFrameworkStartDebuggingOptions();
 		public DotNetCoreStartDebuggingOptions CreateDotNetCore() => new DotNetCoreStartDebuggingOptions { HostArguments = "exec" };
 
-		public void SetOptions(DotNetFrameworkStartDebuggingOptions newOptions) {
-			dotNetFrameworkOptions = newOptions ?? throw new ArgumentNullException(nameof(newOptions));
-		}
+		public void SetOptions(DotNetFrameworkStartDebuggingOptions newOptions) => dotNetFrameworkOptions = newOptions ?? throw new ArgumentNullException(nameof(newOptions));
 
-		public void SetOptions(DotNetCoreStartDebuggingOptions newOptions) {
-			dotNetCoreOptions = newOptions ?? throw new ArgumentNullException(nameof(newOptions));
-		}
+		public void SetOptions(DotNetCoreStartDebuggingOptions newOptions) => dotNetCoreOptions = newOptions ?? throw new ArgumentNullException(nameof(newOptions));
 	}
 }

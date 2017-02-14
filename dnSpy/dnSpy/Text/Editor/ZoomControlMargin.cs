@@ -41,9 +41,7 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		ZoomControlMarginProvider(IEditorOperationsFactoryService editorOperationsFactoryService) {
-			this.editorOperationsFactoryService = editorOperationsFactoryService;
-		}
+		ZoomControlMarginProvider(IEditorOperationsFactoryService editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new ZoomControlMargin(wpfTextViewHost, editorOperationsFactoryService.GetEditorOperations(wpfTextViewHost.TextView));

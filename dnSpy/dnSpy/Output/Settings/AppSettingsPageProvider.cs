@@ -27,9 +27,7 @@ namespace dnSpy.Output.Settings {
 		readonly IOutputWindowOptionsService outputWindowOptionsService;
 
 		[ImportingConstructor]
-		AppSettingsPageProvider(IOutputWindowOptionsService outputWindowOptionsService) {
-			this.outputWindowOptionsService = outputWindowOptionsService;
-		}
+		AppSettingsPageProvider(IOutputWindowOptionsService outputWindowOptionsService) => this.outputWindowOptionsService = outputWindowOptionsService;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			yield return new GeneralAppSettingsPage(outputWindowOptionsService.Default);

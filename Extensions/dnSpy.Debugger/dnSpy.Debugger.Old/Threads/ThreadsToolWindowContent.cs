@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.Threads {
 		ThreadsToolWindowContent threadsToolWindowContent;
 
 		[ImportingConstructor]
-		ThreadsToolWindowContentProvider(Lazy<IThreadsContent> threadsContent) {
-			this.threadsContent = threadsContent;
-		}
+		ThreadsToolWindowContentProvider(Lazy<IThreadsContent> threadsContent) => this.threadsContent = threadsContent;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(ThreadsToolWindowContent.THE_GUID, ThreadsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_THREADS, false); }
@@ -59,9 +57,7 @@ namespace dnSpy.Debugger.Threads {
 
 		readonly Lazy<IThreadsContent> threadsContent;
 
-		public ThreadsToolWindowContent(Lazy<IThreadsContent> threadsContent) {
-			this.threadsContent = threadsContent;
-		}
+		public ThreadsToolWindowContent(Lazy<IThreadsContent> threadsContent) => this.threadsContent = threadsContent;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {

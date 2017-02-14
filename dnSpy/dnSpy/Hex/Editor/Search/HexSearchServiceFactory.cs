@@ -32,9 +32,7 @@ namespace dnSpy.Hex.Editor.Search {
 		readonly HexSearchServiceProvider hexSearchServiceProvider;
 
 		[ImportingConstructor]
-		HexSearchServiceFactoryImpl(HexSearchServiceProvider hexSearchServiceProvider) {
-			this.hexSearchServiceProvider = hexSearchServiceProvider;
-		}
+		HexSearchServiceFactoryImpl(HexSearchServiceProvider hexSearchServiceProvider) => this.hexSearchServiceProvider = hexSearchServiceProvider;
 
 		public override bool IsSearchDataValid(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian) {
 			if (searchString == string.Empty)

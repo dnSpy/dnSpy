@@ -43,8 +43,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="value"></param>
 		/// <returns></returns>
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) {
-			var s = value as string;
-			if (s != null)
+			if (value is string s)
 				return HexPosition.Parse(s);
 			return base.ConvertFrom(context, culture, value);
 		}

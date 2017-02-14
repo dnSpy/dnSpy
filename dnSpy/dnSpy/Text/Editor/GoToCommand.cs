@@ -34,9 +34,7 @@ namespace dnSpy.Text.Editor {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		GoToCommandTargetFilterProvider(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		GoToCommandTargetFilterProvider(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;

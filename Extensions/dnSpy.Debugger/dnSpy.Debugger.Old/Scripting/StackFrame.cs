@@ -219,9 +219,7 @@ namespace dnSpy.Debugger.Scripting {
 			return res;
 		}
 
-		public void StepInto() {
-			debugger.StepInto(this);
-		}
+		public void StepInto() => debugger.StepInto(this);
 
 		public Task<bool> StepIntoAsync(int millisecondsTimeout) => debugger.StepIntoAsync(this, millisecondsTimeout);
 		public bool StepIntoWait(int millisecondsTimeout) => debugger.StepIntoWait(this, millisecondsTimeout);

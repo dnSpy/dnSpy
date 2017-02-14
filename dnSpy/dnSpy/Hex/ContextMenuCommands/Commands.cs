@@ -32,9 +32,7 @@ using dnSpy.Properties;
 namespace dnSpy.Hex.ContextMenuCommands {
 	sealed class HexViewContext {
 		public HexView HexView { get; }
-		public HexViewContext(HexView hexView) {
-			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
-		}
+		public HexViewContext(HexView hexView) => HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 	}
 
 	abstract class HexViewCommandTargetMenuItemBase : CommandTargetMenuItemBase<HexViewContext> {

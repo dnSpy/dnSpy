@@ -27,9 +27,7 @@ namespace dnSpy.Documents {
 		readonly IDsDocumentService documentService;
 
 		[ImportingConstructor]
-		DsDocumentServiceAppSettingsModifiedListener(IDsDocumentService documentService) {
-			this.documentService = documentService;
-		}
+		DsDocumentServiceAppSettingsModifiedListener(IDsDocumentService documentService) => this.documentService = documentService;
 
 		public void OnSettingsModified(IAppRefreshSettings appRefreshSettings) {
 			if (appRefreshSettings.Has(AppSettingsConstants.DISABLE_MEMORY_MAPPED_IO))

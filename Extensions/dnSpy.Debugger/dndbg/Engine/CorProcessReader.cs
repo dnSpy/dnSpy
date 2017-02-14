@@ -28,9 +28,7 @@ namespace dndbg.Engine {
 			: this(process.CorProcess) {
 		}
 
-		public CorProcessReader(CorProcess process) {
-			this.process = process ?? throw new ArgumentNullException(nameof(process));
-		}
+		public CorProcessReader(CorProcess process) => this.process = process ?? throw new ArgumentNullException(nameof(process));
 
 		public int ReadBytes(ulong address, byte[] data, int index, int count) {
 			int hr = process.ReadMemory(address, data, index, count, out int sizeRead);

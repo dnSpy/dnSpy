@@ -27,9 +27,7 @@ namespace dnSpy.ToolWindows {
 		readonly ITabServiceProvider tabServiceProvider;
 
 		[ImportingConstructor]
-		ToolWindowServiceProvider(ITabServiceProvider tabServiceProvider) {
-			this.tabServiceProvider = tabServiceProvider;
-		}
+		ToolWindowServiceProvider(ITabServiceProvider tabServiceProvider) => this.tabServiceProvider = tabServiceProvider;
 
 		public IToolWindowService Create() => new ToolWindowService(tabServiceProvider.Create());
 	}

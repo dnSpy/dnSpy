@@ -256,8 +256,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 
 					if (found) {
-						MethodDef codeLocation = GetOriginalCodeLocation(method) as MethodDef;
-						if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
+						if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 							yield return new MethodNode(codeLocation) { Context = Context };
 						}
 					}

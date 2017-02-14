@@ -433,11 +433,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 		}
 		#endregion
-		
+
 		/// <inheritdoc/>
-		public virtual void OnDeserialization(object sender)
-		{
-			cache = new XmlDocumentationCache();
-		}
+		public virtual void OnDeserialization(object sender) => cache = new XmlDocumentationCache();
 	}
 }

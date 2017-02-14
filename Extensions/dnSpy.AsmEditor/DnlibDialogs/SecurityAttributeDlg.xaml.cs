@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class SecurityAttributeDlg : WindowBase {
-		public SecurityAttributeDlg() {
-			InitializeComponent();
-		}
+		public SecurityAttributeDlg() => InitializeComponent();
 	}
 }

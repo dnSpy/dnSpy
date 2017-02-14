@@ -25,9 +25,7 @@ namespace dndbg.Engine {
 	sealed class CorDebugManagedCallback : ICorDebugManagedCallback, ICorDebugManagedCallback2, ICorDebugManagedCallback3 {
 		readonly DnDebugger dbg;
 
-		public CorDebugManagedCallback(DnDebugger dbg) {
-			this.dbg = dbg;
-		}
+		public CorDebugManagedCallback(DnDebugger dbg) => this.dbg = dbg;
 
 		static T I<T>(IntPtr ptr) where T : class {
 			if (ptr == IntPtr.Zero)

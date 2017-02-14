@@ -150,8 +150,7 @@ namespace dnSpy.Hex.Formatting {
 					}
 				}
 				else {
-					var adornmentElement = seqElem as HexAdornmentElement;
-					if (adornmentElement != null) {
+					if (seqElem is HexAdornmentElement adornmentElement) {
 						var span = seqElem.Span;
 						list.Add(new HexLinePart(list.Count, column, new VST.Span(span.Start - startOffs, span.Length), adornmentElement, DefaultTextProperties));
 						column += list[list.Count - 1].ColumnLength;

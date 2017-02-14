@@ -208,9 +208,7 @@ namespace dnSpy.Hex.Editor {
 		struct SelectionState {
 			byte state;
 
-			public SelectionState(HexSelection selection) {
-				state = (byte)(selection.IsEmpty ? 1 : 0);
-			}
+			public SelectionState(HexSelection selection) => state = (byte)(selection.IsEmpty ? 1 : 0);
 
 			public bool Equals(SelectionState other) => state == other.state;
 		}

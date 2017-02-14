@@ -58,10 +58,9 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			scriptControl.DataContext = scriptControlVM;
 		}
 
-		void ScriptControlVM_OnCommandExecuted(object sender, EventArgs e) {
+		void ScriptControlVM_OnCommandExecuted(object sender, EventArgs e) =>
 			// Make sure the up/down arrow icons are updated
 			CommandManager.InvalidateRequerySuggested();
-		}
 
 		public static ScriptContent GetScriptContent(IReplEditor replEditor) => (ScriptContent)replEditor.Tag;
 		protected abstract ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator, ReplSettings replSettings);

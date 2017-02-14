@@ -30,13 +30,10 @@ namespace dnSpy.Hex.Intellisense.DnSpy {
 		readonly HexQuickInfoBroker quickInfoBroker;
 
 		[ImportingConstructor]
-		QuickInfoCommandTargetFilterProvider(HexQuickInfoBroker quickInfoBroker) {
-			this.quickInfoBroker = quickInfoBroker;
-		}
+		QuickInfoCommandTargetFilterProvider(HexQuickInfoBroker quickInfoBroker) => this.quickInfoBroker = quickInfoBroker;
 
 		public ICommandTargetFilter Create(object target) {
-			var hexView = target as HexView;
-			if (hexView != null)
+			if (target is HexView hexView)
 				return new QuickInfoCommandTargetFilter(quickInfoBroker, hexView);
 			return null;
 		}

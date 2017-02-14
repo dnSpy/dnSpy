@@ -38,9 +38,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="document">Document</param>
 		protected ModuleDocumentNode(IDsDotNetDocument document)
-			: base(document) {
-			Debug.Assert(document.ModuleDef != null);
-		}
+			: base(document) => Debug.Assert(document.ModuleDef != null);
 
 		/// <summary>
 		/// Creates a <see cref="NamespaceNode"/>

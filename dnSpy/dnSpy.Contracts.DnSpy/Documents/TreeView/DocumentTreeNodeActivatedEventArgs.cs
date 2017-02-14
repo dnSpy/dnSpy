@@ -38,8 +38,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="node">Node</param>
-		public DocumentTreeNodeActivatedEventArgs(DocumentTreeNodeData node) {
-			Node = node ?? throw new ArgumentNullException(nameof(node));
-		}
+		public DocumentTreeNodeActivatedEventArgs(DocumentTreeNodeData node) => Node = node ?? throw new ArgumentNullException(nameof(node));
 	}
 }

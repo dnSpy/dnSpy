@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public CreateMethodPropertySig(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public CreateMethodPropertySig(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public MethodBaseSig Create(MethodSigCreatorOptions options, MethodBaseSig origSig) {
 			var data = new MethodSigCreatorVM(options);

@@ -35,9 +35,7 @@ namespace dnSpy.Text.Formatting {
 			public double TextHeightAboveBaseline => formattedText.Baseline;
 			public double TextHeightBelowBaseline => formattedText.Height - formattedText.Baseline;
 
-			public Info(FormattedText formattedText) {
-				this.formattedText = formattedText;
-			}
+			public Info(FormattedText formattedText) => this.formattedText = formattedText;
 		}
 
 		public FormattedTextCache(bool useDisplayMode) {

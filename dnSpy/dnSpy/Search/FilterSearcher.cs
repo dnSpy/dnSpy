@@ -38,9 +38,7 @@ namespace dnSpy.Search {
 	sealed class FilterSearcher {
 		readonly FilterSearcherOptions options;
 
-		public FilterSearcher(FilterSearcherOptions options) {
-			this.options = options;
-		}
+		public FilterSearcher(FilterSearcherOptions options) => this.options = options;
 
 		bool IsMatch(string text, object obj) => options.SearchComparer.IsMatch(text, obj);
 
@@ -160,8 +158,7 @@ namespace dnSpy.Search {
 
 			foreach (var node in asmNode.TreeNode.DataChildren) {
 				options.CancellationToken.ThrowIfCancellationRequested();
-				var modNode = node as ModuleDocumentNode;
-				if (modNode != null)
+				if (node is ModuleDocumentNode modNode)
 					SearchModule(modNode.Document);
 			}
 		}
@@ -326,8 +323,7 @@ namespace dnSpy.Search {
 			if (res.IsMatch) {
 				bool m = IsMatch(resElNode.Name, resElNode);
 				if (!m) {
-					var builtin = resElNode.ResourceElement.ResourceData as BuiltInResourceData;
-					if (builtin != null) {
+					if (resElNode.ResourceElement.ResourceData is BuiltInResourceData builtin) {
 						var val = builtin.Data;
 						if (builtin.Code == ResourceTypeCode.TimeSpan)
 							val = ((TimeSpan)val).Ticks;

@@ -39,13 +39,9 @@ namespace dnSpy.Text.AvalonEdit {
 			}
 		}
 
-		public override bool Equals(object obj) {
-			return (obj is SimpleSegment) && Equals((SimpleSegment)obj);
-		}
+		public override bool Equals(object obj) => (obj is SimpleSegment) && Equals((SimpleSegment)obj);
 
-		public bool Equals(SimpleSegment other) {
-			return Offset == other.Offset && Length == other.Length;
-		}
+		public bool Equals(SimpleSegment other) => Offset == other.Offset && Length == other.Length;
 
 		public static bool operator ==(SimpleSegment left, SimpleSegment right) {
 			return left.Equals(right);
@@ -56,8 +52,6 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		/// <inheritdoc/>
-		public override string ToString() {
-			return "[Offset=" + Offset.ToString(CultureInfo.InvariantCulture) + ", Length=" + Length.ToString(CultureInfo.InvariantCulture) + "]";
-		}
+		public override string ToString() => "[Offset=" + Offset.ToString(CultureInfo.InvariantCulture) + ", Length=" + Length.ToString(CultureInfo.InvariantCulture) + "]";
 	}
 }

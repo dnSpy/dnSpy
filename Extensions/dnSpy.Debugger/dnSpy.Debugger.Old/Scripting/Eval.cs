@@ -94,8 +94,7 @@ namespace dnSpy.Debugger.Scripting {
 		});
 
 		public IDebuggerValue CreateBox(object value) => debugger.Dispatcher.UI(() => {
-			var v = value as IDebuggerValue;
-			if (v != null)
+			if (value is IDebuggerValue v)
 				return Box(v);
 
 			if (value is bool)
@@ -294,8 +293,7 @@ namespace dnSpy.Debugger.Scripting {
 			var res = new DBG.CorType[types.Length];
 			for (int i = 0; i < res.Length; i++) {
 				var type = types[i];
-				var dt = type as DebuggerType;
-				if (dt != null)
+				if (type is DebuggerType dt)
 					res[i] = dt.CorType;
 				else
 					res[i] = ((DebuggerType)FindTypeThrow(type as Type)).CorType;
@@ -307,15 +305,12 @@ namespace dnSpy.Debugger.Scripting {
 			if (value == null)
 				return CreateNull();
 
-			var box = value as Box;
-			if (box != null)
+			if (value is Box box)
 				return CreateBox(box.Value);
 
-			var v = value as IDebuggerValue;
-			if (v != null)
+			if (value is IDebuggerValue v)
 				return v;
-			var s = value as string;
-			if (s != null)
+			if (value is string s)
 				return Create(s);
 
 			if (value is bool)
@@ -939,17 +934,15 @@ namespace dnSpy.Debugger.Scripting {
 		public IDebuggerValue AssemblyLoadFrom(string assemblyFile) => debugger.Dispatcher.UI(() => Call(FindAssemblyLoadFromStringThrow(), assemblyFile));
 		public IDebuggerValue AssemblyLoadFile(string filename) => debugger.Dispatcher.UI(() => Call(FindAssemblyLoadFileStringThrow(), filename));
 
-		public void Dispose() {
-			debugger.Dispatcher.UI(() => {
-				if (valuesToKeep != null) {
-					foreach (var v in valuesToKeep) {
-						if (v.IsHandle)
-							v.DisposeHandle();
-					}
-					valuesToKeep = null;
+		public void Dispose() => debugger.Dispatcher.UI(() => {
+			if (valuesToKeep != null) {
+				foreach (var v in valuesToKeep) {
+					if (v.IsHandle)
+						v.DisposeHandle();
 				}
-				eval.Dispose();
-			});
-		}
+				valuesToKeep = null;
+			}
+			eval.Dispose();
+		});
 	}
 }

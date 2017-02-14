@@ -45,8 +45,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		protected override void OnClosed(EventArgs e) {
-			var id = DataContext as IDisposable;
-			if (id != null)
+			if (DataContext is IDisposable id)
 				id.Dispose();
 		}
 

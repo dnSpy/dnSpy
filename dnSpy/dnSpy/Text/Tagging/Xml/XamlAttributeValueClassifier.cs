@@ -81,9 +81,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			}
 		}
 
-		public XamlAttributeValueClassifier() {
-			buffer = new char[512];
-		}
+		public XamlAttributeValueClassifier() => buffer = new char[512];
 
 		public bool Initialize(SnapshotSpan span) {
 			// Quick check that will filter out many small strings

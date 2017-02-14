@@ -32,17 +32,13 @@ namespace dnSpy.Debugger.DbgUI {
 			[ExportAutoLoaded]
 			sealed class Loader : IAutoLoaded {
 				[ImportingConstructor]
-				Loader() {
-					initd = true;
-				}
+				Loader() => initd = true;
 			}
 			protected static bool initd;
 
 			protected readonly Lazy<Debugger> debugger;
 
-			protected DebugToolBarButton(Lazy<Debugger> debugger) {
-				this.debugger = debugger;
-			}
+			protected DebugToolBarButton(Lazy<Debugger> debugger) => this.debugger = debugger;
 
 			public override bool IsVisible(IToolBarItemContext context) => initd && debugger.Value.IsDebugging;
 		}

@@ -41,9 +41,7 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorFormatMapService editorFormatMapService;
 
 		[ImportingConstructor]
-		BlockStructureServiceProvider(IEditorFormatMapService editorFormatMapService) {
-			this.editorFormatMapService = editorFormatMapService;
-		}
+		BlockStructureServiceProvider(IEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public IBlockStructureService GetService(IWpfTextView wpfTextView) {
 			if (wpfTextView == null)
@@ -123,9 +121,7 @@ namespace dnSpy.Text.Editor {
 			public string Type { get; }
 			public Pen Pen { get; set; }
 
-			public LineColorInfo(string type) {
-				Type = type;
-			}
+			public LineColorInfo(string type) => Type = type;
 		}
 
 		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
@@ -528,9 +524,7 @@ done:
 			double bottom;
 			Pen pen;
 
-			public LineElement(BlockStructureData info) {
-				BlockStructureData = info;
-			}
+			public LineElement(BlockStructureData info) => BlockStructureData = info;
 
 			protected override void OnRender(DrawingContext drawingContext) {
 				base.OnRender(drawingContext);

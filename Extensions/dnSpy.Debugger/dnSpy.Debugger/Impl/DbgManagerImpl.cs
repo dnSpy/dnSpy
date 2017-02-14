@@ -48,9 +48,7 @@ namespace dnSpy.Debugger.Impl {
 		sealed class EngineInfo {
 			public DbgEngine Engine { get; }
 			public DbgProcessImpl Process { get; set; }
-			public EngineInfo(DbgEngine engine) {
-				Engine = engine;
-			}
+			public EngineInfo(DbgEngine engine) => Engine = engine;
 		}
 
 		readonly object lockObj;

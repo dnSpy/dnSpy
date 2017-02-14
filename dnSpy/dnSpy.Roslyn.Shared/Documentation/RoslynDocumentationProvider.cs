@@ -30,9 +30,7 @@ namespace dnSpy.Roslyn.Shared.Documentation {
 		bool hasLoaded;
 		readonly string filename;
 
-		public RoslynDocumentationProvider(string filename) {
-			this.filename = filename;
-		}
+		public RoslynDocumentationProvider(string filename) => this.filename = filename;
 
 		protected override string GetDocumentationForSymbol(string documentationMemberID, CultureInfo preferredCulture, CancellationToken cancellationToken) {
 			if (!hasLoaded) {

@@ -34,9 +34,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		MethodDef baseMethod;
 		List<ITypeDefOrRef> possibleTypes;
 
-		public VirtualMethodUsedByNode(MethodDef analyzedMethod) {
-			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
-		}
+		public VirtualMethodUsedByNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
@@ -83,8 +81,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					continue;
 				Instruction foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
-					IMethod mr = instr.Operand as IMethod;
-					if (mr != null && !mr.IsField && mr.Name == name) {
+					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name) {
 						// explicit call to the requested method 
 						if (instr.OpCode.Code == Code.Call
 							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
@@ -108,8 +105,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 
 				if (foundInstr != null) {
-					MethodDef codeLocation = GetOriginalCodeLocation(method) as MethodDef;
-					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
+					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)
 							node.SourceRef = new SourceRef(method, foundInstr.Offset, foundInstr.Operand as IMDTokenProvider);

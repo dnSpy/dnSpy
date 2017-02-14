@@ -41,9 +41,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public event EventHandler<DocumentViewerGotNewContentEventArgs> GotNewContent;
 
 		[ImportingConstructor]
-		DocumentViewerService([ImportMany] IEnumerable<Lazy<IDocumentViewerListener, IDocumentViewerListenerMetadata>> documentViewerListeners) {
-			this.documentViewerListeners = documentViewerListeners.OrderBy(a => a.Metadata.Order).ToArray();
-		}
+		DocumentViewerService([ImportMany] IEnumerable<Lazy<IDocumentViewerListener, IDocumentViewerListenerMetadata>> documentViewerListeners) => this.documentViewerListeners = documentViewerListeners.OrderBy(a => a.Metadata.Order).ToArray();
 
 		void NotifyListeners(DocumentViewerEventArgs e) {
 			foreach (var lazy in documentViewerListeners)

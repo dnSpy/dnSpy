@@ -50,9 +50,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="id">Reference id, eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/>. This id
 		/// must equal an id stored in <see cref="SpanReference.Id"/></param>
 		public ExportDocumentViewerReferenceEnablerProviderAttribute(string id)
-			: base(typeof(IDocumentViewerReferenceEnablerProvider)) {
-			Id = id ?? throw new ArgumentNullException(nameof(id));
-		}
+			: base(typeof(IDocumentViewerReferenceEnablerProvider)) => Id = id ?? throw new ArgumentNullException(nameof(id));
 
 		/// <summary>
 		/// Reference id, eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/>

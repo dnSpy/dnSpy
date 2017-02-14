@@ -30,9 +30,7 @@ namespace dnSpy.MainApp {
 		readonly IDsToolWindowService toolWindowService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(IDsToolWindowService toolWindowService) {
-			this.toolWindowService = toolWindowService;
-		}
+		AppCommandLineArgsHandler(IDsToolWindowService toolWindowService) => this.toolWindowService = toolWindowService;
 
 		public double Order => 0;
 
@@ -40,9 +38,7 @@ namespace dnSpy.MainApp {
 			public Guid Guid { get; }
 			public AppToolWindowLocation? Location { get; set; }
 
-			public ToolWindowInfo(Guid guid) {
-				Guid = guid;
-			}
+			public ToolWindowInfo(Guid guid) => Guid = guid;
 		}
 
 		public void OnNewArgs(IAppCommandLineArgs args) {

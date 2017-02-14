@@ -147,8 +147,7 @@ namespace dnSpy.Decompiler {
 			var ep = GetEntryPoint(mod);
 			if (ep is uint)
 				this.WriteCommentLine(output, string.Format(dnSpy_Decompiler_Resources.Decompile_NativeEntryPoint, (uint)ep));
-			else if (ep is MethodDef) {
-				var epMethod = (MethodDef)ep;
+			else if (ep is MethodDef epMethod) {
 				WriteCommentBegin(output, true);
 				output.Write(dnSpy_Decompiler_Resources.Decompile_EntryPoint + " ", BoxedTextColor.Comment);
 				if (epMethod.DeclaringType != null) {
@@ -169,8 +168,7 @@ namespace dnSpy.Decompiler {
 					return (uint)rva;
 
 				var manEp = module.ManagedEntryPoint;
-				var ep = manEp as MethodDef;
-				if (ep != null)
+				if (manEp is MethodDef ep)
 					return ep;
 
 				var file = manEp as FileDef;
@@ -254,8 +252,6 @@ namespace dnSpy.Decompiler {
 		protected static string GetRuntimeDisplayName(ModuleDef module) => TargetFrameworkInfo.Create(module).ToString();
 		public virtual bool CanDecompile(DecompilationType decompilationType) => false;
 
-		public virtual void Decompile(DecompilationType decompilationType, object data) {
-			throw new NotImplementedException();
-		}
+		public virtual void Decompile(DecompilationType decompilationType, object data) => throw new NotImplementedException();
 	}
 }

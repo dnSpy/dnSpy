@@ -24,9 +24,7 @@ namespace dnSpy.Debugger {
 	sealed class OutputWriterConverter : ITypeOutput {
 		readonly IOutputWriter output;
 
-		public OutputWriterConverter(IOutputWriter output) {
-			this.output = output;
-		}
+		public OutputWriterConverter(IOutputWriter output) => this.output = output;
 
 		public void Write(string s, TypeColor type) => output.Write(s, OutputConverter.Convert(type));
 	}

@@ -118,9 +118,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		SyntaxHighlightCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		SyntaxHighlightCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.SyntaxHighlight;
@@ -132,9 +130,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		MatchWholeWordsCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		MatchWholeWordsCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.MatchWholeWords;
@@ -146,9 +142,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		CaseSensitiveCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		CaseSensitiveCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.CaseSensitive;
@@ -160,9 +154,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		MatchAnyCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		MatchAnyCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.MatchAnySearchTerm;
@@ -174,9 +166,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		DecompileResourcesCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		DecompileResourcesCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.SearchDecompiledData;
@@ -188,9 +178,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		SearchGacAssembliesCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		SearchGacAssembliesCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.SearchGacAssemblies;

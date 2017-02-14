@@ -50,9 +50,7 @@ namespace dnSpy.Contracts.TreeView {
 	public sealed class ExportTreeNodeDataProviderAttribute : ExportAttribute, ITreeNodeDataProviderMetadata {
 		/// <summary>Constructor</summary>
 		public ExportTreeNodeDataProviderAttribute()
-			: base(typeof(ITreeNodeDataProvider)) {
-			Order = double.MaxValue;
-		}
+			: base(typeof(ITreeNodeDataProvider)) => Order = double.MaxValue;
 
 		/// <summary>
 		/// Order of this instance

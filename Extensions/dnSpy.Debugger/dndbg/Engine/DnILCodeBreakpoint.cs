@@ -25,18 +25,14 @@ namespace dndbg.Engine {
 		public DnILCodeBreakpoint ILCodeBreakpoint { get; }
 
 		public ILCodeBreakpointConditionContext(DnDebugger debugger, DnILCodeBreakpoint bp)
-			: base(debugger) {
-			ILCodeBreakpoint = bp;
-		}
+			: base(debugger) => ILCodeBreakpoint = bp;
 	}
 
 	public sealed class DnILCodeBreakpoint : DnCodeBreakpoint {
 		internal Func<ILCodeBreakpointConditionContext, bool> Condition { get; }
 
 		internal DnILCodeBreakpoint(DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond)
-			: base(module, token, offset) {
-			Condition = cond ?? defaultCond;
-		}
+			: base(module, token, offset) => Condition = cond ?? defaultCond;
 		static readonly Func<ILCodeBreakpointConditionContext, bool> defaultCond = a => true;
 
 		internal override CorCode GetCode(CorFunction func) => func.ILCode;

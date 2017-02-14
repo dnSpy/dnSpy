@@ -44,9 +44,7 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		InitializeMDTableKeyboardShortcuts(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		InitializeMDTableKeyboardShortcuts(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public void Initialize(DependencyObject d) {
 			var lv = d as ListView;
@@ -63,9 +61,7 @@ namespace dnSpy.AsmEditor.Hex {
 			Add(lv, ApplicationCommands.Paste, new CtxMenuMDTableCommandProxy(documentTabService, new PasteMDTableCommand.TheMenuMDTableCommand()));
 		}
 
-		static void Add(UIElement elem, ICommand cmd, ICommand realCmd) {
-			elem.CommandBindings.Add(new CommandBinding(cmd, (s, e) => realCmd.Execute(e.Parameter), (s, e) => e.CanExecute = realCmd.CanExecute(e.Parameter)));
-		}
+		static void Add(UIElement elem, ICommand cmd, ICommand realCmd) => elem.CommandBindings.Add(new CommandBinding(cmd, (s, e) => realCmd.Execute(e.Parameter), (s, e) => e.CanExecute = realCmd.CanExecute(e.Parameter)));
 	}
 
 	sealed class MDTableContext {
@@ -117,8 +113,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static ListView FindListView(IDocumentTab tab) {
 			var o = tab.UIContext.UIObject as DependencyObject;
 			while (o != null) {
-				var lv = o as ListView;
-				if (lv != null && InitDataTemplateAP.GetInitialize(lv))
+				if (o is ListView lv && InitDataTemplateAP.GetInitialize(lv))
 					return lv;
 				var children = UIUtils.GetChildren(o).ToArray();
 				if (children.Length != 1)
@@ -242,21 +237,19 @@ namespace dnSpy.AsmEditor.Hex {
 				UIUtils.ScrollSelectAndSetFocus(context.ListView, recVM);
 		}
 
-		static MetaDataTableRecordVM Ask(string title, MDTableContext context) {
-			return MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
-				uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out string error);
-				if (!string.IsNullOrEmpty(error))
-					return null;
-				return context.MetaDataTableVM.Get((int)(rid - 1));
-			}, s => {
-				uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out string error);
-				if (!string.IsNullOrEmpty(error))
-					return error;
-				if (rid == 0 || rid > context.MetaDataTableVM.Rows)
-					return string.Format(dnSpy_AsmEditor_Resources.GoToRowIdentifier_InvalidRowIdentifier, rid);
-				return string.Empty;
-			});
-		}
+		static MetaDataTableRecordVM Ask(string title, MDTableContext context) => MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
+			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out string error);
+			if (!string.IsNullOrEmpty(error))
+				return null;
+			return context.MetaDataTableVM.Get((int)(rid - 1));
+		}, s => {
+			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out string error);
+			if (!string.IsNullOrEmpty(error))
+				return error;
+			if (rid == 0 || rid > context.MetaDataTableVM.Rows)
+				return string.Format(dnSpy_AsmEditor_Resources.GoToRowIdentifier_InvalidRowIdentifier, rid);
+			return string.Empty;
+		});
 	}
 
 	static class ShowInHexEditorMDTableCommand {
@@ -265,9 +258,7 @@ namespace dnSpy.AsmEditor.Hex {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			TheCtxMenuMDTableCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			TheCtxMenuMDTableCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override void Execute(MDTableContext context) => ExecuteInternal(documentTabService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
@@ -278,9 +269,7 @@ namespace dnSpy.AsmEditor.Hex {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			public TheMenuMDTableCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			public TheMenuMDTableCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override void Execute(MDTableContext context) => ExecuteInternal(documentTabService, context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);

@@ -33,9 +33,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly IClassificationType documentListMatchHighlightClassificationType;
 
 		[ImportingConstructor]
-		OpenDocumentListTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			documentListMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.DocumentListMatchHighlight);
-		}
+		OpenDocumentListTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => documentListMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.DocumentListMatchHighlight);
 
 		public ITextClassifier Create(IContentType contentType) => new OpenDocumentListTextClassifier(documentListMatchHighlightClassificationType);
 	}
@@ -43,9 +41,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class OpenDocumentListTextClassifier : ITextClassifier {
 		readonly IClassificationType documentListMatchHighlightClassificationType;
 
-		public OpenDocumentListTextClassifier(IClassificationType documentListMatchHighlightClassificationType) {
-			this.documentListMatchHighlightClassificationType = documentListMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(documentListMatchHighlightClassificationType));
-		}
+		public OpenDocumentListTextClassifier(IClassificationType documentListMatchHighlightClassificationType) => this.documentListMatchHighlightClassificationType = documentListMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(documentListMatchHighlightClassificationType));
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var listContext = context as OpenDocumentListTextClassifierContext;

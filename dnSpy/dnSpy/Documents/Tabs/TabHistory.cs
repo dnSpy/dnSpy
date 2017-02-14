@@ -52,9 +52,7 @@ namespace dnSpy.Documents.Tabs {
 			newList.Clear();
 		}
 
-		public void OverwriteCurrent(DocumentTabContent content) {
-			current = content ?? throw new ArgumentNullException(nameof(content));
-		}
+		public void OverwriteCurrent(DocumentTabContent content) => current = content ?? throw new ArgumentNullException(nameof(content));
 
 		public bool CanNavigateBackward => oldList.Count > 0;
 		public bool CanNavigateForward => newList.Count > 0;

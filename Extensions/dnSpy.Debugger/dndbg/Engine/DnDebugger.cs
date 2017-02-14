@@ -48,9 +48,7 @@ namespace dndbg.Engine {
 		sealed class StepInfo {
 			public readonly Action<DnDebugger, StepCompleteDebugCallbackEventArgs> OnCompleted;
 
-			public StepInfo(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action) {
-				OnCompleted = action;
-			}
+			public StepInfo(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action) => OnCompleted = action;
 		}
 
 		public DebugOptions Options {
@@ -189,9 +187,7 @@ namespace dndbg.Engine {
 		DnProcess CreateDnProcess(ICorDebugProcess comProcess) => new DnProcess(this, comProcess, GetNextProcessId());
 
 		[Conditional("DEBUG")]
-		internal void DebugVerifyThread() {
-			Debug.Assert(Thread.CurrentThread.ManagedThreadId == debuggerManagedThreadId);
-		}
+		internal void DebugVerifyThread() => Debug.Assert(Thread.CurrentThread.ManagedThreadId == debuggerManagedThreadId);
 
 		static ICorDebug CreateCorDebug(string debuggeeVersion, out string clrPath) {
 			var clsid = new Guid("9280188D-0E8E-4867-B30C-7FA83884E8DE");
@@ -235,19 +231,17 @@ namespace dndbg.Engine {
 		public event DebugCallbackEventHandler DebugCallbackEvent;
 
 		// Could be called from any thread
-		internal void OnManagedCallbackFromAnyThread(Func<DebugCallbackEventArgs> func) {
-			debugMessageDispatcher.ExecuteAsync(() => {
-				DebugCallbackEventArgs e;
-				try {
-					e = func();
-				}
-				catch {
-					// most likely debugger has already stopped
-					return;
-				}
-				OnManagedCallbackInDebuggerThread(e);
-			});
-		}
+		internal void OnManagedCallbackFromAnyThread(Func<DebugCallbackEventArgs> func) => debugMessageDispatcher.ExecuteAsync(() => {
+			DebugCallbackEventArgs e;
+			try {
+				e = func();
+			}
+			catch {
+				// most likely debugger has already stopped
+				return;
+			}
+			OnManagedCallbackInDebuggerThread(e);
+		});
 
 		// Same as above method but called by CreateProcess, LoadModule, CreateAppDomain because
 		// certain methods must be called before we return to the CLR debugger.
@@ -1455,29 +1449,25 @@ namespace dndbg.Engine {
 
 		public void RemoveBreakpoint(DnBreakpoint bp) {
 			DebugVerifyThread();
-			var debp = bp as DnDebugEventBreakpoint;
-			if (debp != null) {
+			if (bp is DnDebugEventBreakpoint debp) {
 				debugEventBreakpointList.Remove(debp);
 				debp.OnRemoved();
 				return;
 			}
 
-			var adebp = bp as DnAnyDebugEventBreakpoint;
-			if (adebp != null) {
+			if (bp is DnAnyDebugEventBreakpoint adebp) {
 				anyDebugEventBreakpointList.Remove(adebp);
 				adebp.OnRemoved();
 				return;
 			}
 
-			var ilbp = bp as DnILCodeBreakpoint;
-			if (ilbp != null) {
+			if (bp is DnILCodeBreakpoint ilbp) {
 				ilCodeBreakpointList.Remove(ilbp.Module, ilbp);
 				ilbp.OnRemoved();
 				return;
 			}
 
-			var nbp = bp as DnNativeCodeBreakpoint;
-			if (nbp != null) {
+			if (bp is DnNativeCodeBreakpoint nbp) {
 				nativeCodeBreakpointList.Remove(nbp.Module, nbp);
 				nbp.OnRemoved();
 				return;

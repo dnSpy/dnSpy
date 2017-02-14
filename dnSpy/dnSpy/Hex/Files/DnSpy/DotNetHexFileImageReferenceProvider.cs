@@ -28,8 +28,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 	[Export(typeof(HexFileImageReferenceProvider))]
 	sealed class DotNetHexFileImageReferenceProvider : HexFileImageReferenceProvider {
 		public override ImageReference? GetImage(ComplexData structure, HexPosition position) {
-			var nameOffset = structure as MultiResourceUnicodeNameAndOffsetData;
-			if (nameOffset != null)
+			if (structure is MultiResourceUnicodeNameAndOffsetData nameOffset)
 				return GetImageReference(nameOffset);
 
 			return null;

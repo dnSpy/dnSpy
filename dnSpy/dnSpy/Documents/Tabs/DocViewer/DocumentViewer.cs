@@ -61,9 +61,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly DocumentViewer documentViewer;
 
-			public GuidObjectsProvider(DocumentViewer documentViewer) {
-				this.documentViewer = documentViewer;
-			}
+			public GuidObjectsProvider(DocumentViewer documentViewer) => this.documentViewer = documentViewer;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_DOCUMENTVIEWER_GUID, documentViewer);

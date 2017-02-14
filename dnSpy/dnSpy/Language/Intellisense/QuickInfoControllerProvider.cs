@@ -32,9 +32,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly IQuickInfoBroker quickInfoBroker;
 
 		[ImportingConstructor]
-		QuickInfoControllerProvider(IQuickInfoBroker quickInfoBroker) {
-			this.quickInfoBroker = quickInfoBroker;
-		}
+		QuickInfoControllerProvider(IQuickInfoBroker quickInfoBroker) => this.quickInfoBroker = quickInfoBroker;
 
 		public IIntellisenseController TryCreateIntellisenseController(ITextView textView, IList<ITextBuffer> subjectBuffers) =>
 			new QuickInfoController(quickInfoBroker, textView);

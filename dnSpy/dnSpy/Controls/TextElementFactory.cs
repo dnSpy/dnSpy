@@ -153,31 +153,25 @@ namespace dnSpy.Controls {
 				public override Typeface Typeface => typeface;
 			}
 
-			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) {
-				return new TextSpan<CultureSpecificCharacterBufferRange>(0,
+			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) => new TextSpan<CultureSpecificCharacterBufferRange>(0,
 					new CultureSpecificCharacterBufferRange(CultureInfo.CurrentUICulture, new CharacterBufferRange(string.Empty, 0, 0)));
-			}
 
-			public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) {
-				throw new NotSupportedException();
-			}
+			public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) => throw new NotSupportedException();
 
 			public void UpdateParent(FastTextBlock ftb) => parent = ftb;
 			public TextSource Source => this;
 
-			TextRunProperties GetDefaultTextRunProperties() {
-				return new TextProps {
-					background = (Brush)parent.GetValue(TextElement.BackgroundProperty),
-					foreground = TextElement.GetForeground(parent),
-					typeface = new Typeface(
-											TextElement.GetFontFamily(parent),
-											TextElement.GetFontStyle(parent),
-											TextElement.GetFontWeight(parent),
-											TextElement.GetFontStretch(parent)
+			TextRunProperties GetDefaultTextRunProperties() => new TextProps {
+				background = (Brush)parent.GetValue(TextElement.BackgroundProperty),
+				foreground = TextElement.GetForeground(parent),
+				typeface = new Typeface(
+										TextElement.GetFontFamily(parent),
+										TextElement.GetFontStyle(parent),
+										TextElement.GetFontWeight(parent),
+										TextElement.GetFontStretch(parent)
 										),
-					fontSize = TextElement.GetFontSize(parent),
-				};
-			}
+				fontSize = TextElement.GetFontSize(parent),
+			};
 
 			int GetStartIndex(int position) {
 				var list = tagsList;

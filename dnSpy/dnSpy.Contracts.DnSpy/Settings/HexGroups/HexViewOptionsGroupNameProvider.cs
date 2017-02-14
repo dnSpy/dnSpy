@@ -54,9 +54,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instanec</param>
 		public ExportHexViewOptionsGroupNameProviderAttribute(double order = double.MaxValue)
-			: base(typeof(HexViewOptionsGroupNameProvider)) {
-			Order = order;
-		}
+			: base(typeof(HexViewOptionsGroupNameProvider)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

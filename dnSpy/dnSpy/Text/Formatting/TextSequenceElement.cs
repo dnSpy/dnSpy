@@ -26,8 +26,6 @@ namespace dnSpy.Text.Formatting {
 		public bool ShouldRenderText => true;
 		public IMappingSpan Span { get; }
 
-		public TextSequenceElement(IMappingSpan span) {
-			Span = span ?? throw new ArgumentNullException(nameof(span));
-		}
+		public TextSequenceElement(IMappingSpan span) => Span = span ?? throw new ArgumentNullException(nameof(span));
 	}
 }

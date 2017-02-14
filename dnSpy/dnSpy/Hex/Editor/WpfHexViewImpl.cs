@@ -48,9 +48,7 @@ namespace dnSpy.Hex.Editor {
 	sealed partial class WpfHexViewImpl : WpfHexView {
 		sealed class HexViewCanvas : Canvas {
 			readonly WpfHexViewImpl owner;
-			public HexViewCanvas(WpfHexViewImpl owner) {
-				this.owner = owner;
-			}
+			public HexViewCanvas(WpfHexViewImpl owner) => this.owner = owner;
 			protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e) {
 				base.OnPropertyChanged(e);
 				owner.OnPropertyChanged(e);
@@ -373,14 +371,12 @@ namespace dnSpy.Hex.Editor {
 		void AggregateClassifier_ClassificationChanged(object sender, HexClassificationChangedEventArgs e) =>
 			canvas.Dispatcher.BeginInvoke(new Action(() => InvalidateSpan(e.ChangeSpan)), DispatcherPriority.Normal);
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
-			canvas.Dispatcher.BeginInvoke(new Action(() => {
-				if (IsClosed)
-					return;
-				UpdateForceClearTypeIfNeeded();
-				InvalidateFormattedLineSource(true);
-			}), DispatcherPriority.Normal);
-		}
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => canvas.Dispatcher.BeginInvoke(new Action(() => {
+			if (IsClosed)
+				return;
+			UpdateForceClearTypeIfNeeded();
+			InvalidateFormattedLineSource(true);
+		}), DispatcherPriority.Normal);
 
 		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
 			if (e.ChangedItems.Contains(CTC.EditorFormatMapConstants.TextViewBackgroundId))
@@ -1040,9 +1036,7 @@ namespace dnSpy.Hex.Editor {
 
 		sealed class MyHexLineTransformSource : HexLineTransformSource {
 			readonly WpfHexViewImpl owner;
-			public MyHexLineTransformSource(WpfHexViewImpl owner) {
-				this.owner = owner;
-			}
+			public MyHexLineTransformSource(WpfHexViewImpl owner) => this.owner = owner;
 			public override VSTF.LineTransform GetLineTransform(HexViewLine line, double yPosition, VSTE.ViewRelativePosition placement) =>
 				owner.LineTransformProvider.GetLineTransform(line, yPosition, placement);
 		}

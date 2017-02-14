@@ -44,9 +44,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexEditorFormatMapService editorFormatMapService;
 
 		[ImportingConstructor]
-		CurrentLineHighlighterWpfHexViewCreationListener(HexEditorFormatMapService editorFormatMapService) {
-			this.editorFormatMapService = editorFormatMapService;
-		}
+		CurrentLineHighlighterWpfHexViewCreationListener(HexEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public override void HexViewCreated(WpfHexView hexView) =>
 			hexView.Properties.GetOrCreateSingletonProperty(() => new CurrentLineHighlighter(hexView, editorFormatMapService.GetEditorFormatMap(hexView)));

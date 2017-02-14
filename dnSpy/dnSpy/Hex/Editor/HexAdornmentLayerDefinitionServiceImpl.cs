@@ -31,9 +31,7 @@ namespace dnSpy.Hex.Editor {
 		readonly Lazy<HexAdornmentLayerDefinition, IAdornmentLayersMetadata>[] adornmentLayerDefinitions;
 
 		[ImportingConstructor]
-		HexAdornmentLayerDefinitionServiceImpl([ImportMany] IEnumerable<Lazy<HexAdornmentLayerDefinition, IAdornmentLayersMetadata>> adornmentLayerDefinitions) {
-			this.adornmentLayerDefinitions = VSUTIL.Orderer.Order(adornmentLayerDefinitions).ToArray();
-		}
+		HexAdornmentLayerDefinitionServiceImpl([ImportMany] IEnumerable<Lazy<HexAdornmentLayerDefinition, IAdornmentLayersMetadata>> adornmentLayerDefinitions) => this.adornmentLayerDefinitions = VSUTIL.Orderer.Order(adornmentLayerDefinitions).ToArray();
 
 		public override MetadataAndOrder<IAdornmentLayersMetadata>? GetLayerDefinition(string name) {
 			for (int i = 0; i < adornmentLayerDefinitions.Length; i++) {

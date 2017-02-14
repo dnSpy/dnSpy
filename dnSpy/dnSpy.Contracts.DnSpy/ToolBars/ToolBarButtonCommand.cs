@@ -34,9 +34,7 @@ namespace dnSpy.Contracts.ToolBars {
 		/// Constructor
 		/// </summary>
 		/// <param name="realCommand">Real command that gets executed the button is pressed</param>
-		protected ToolBarButtonCommand(ICommand realCommand) {
-			Command = realCommand;
-		}
+		protected ToolBarButtonCommand(ICommand realCommand) => Command = realCommand;
 
 		/// <inheritdoc/>
 		public override void Execute(IToolBarItemContext context) => Command.Execute(context);

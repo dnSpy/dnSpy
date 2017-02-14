@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class ConstantTypeDlg : WindowBase {
-		public ConstantTypeDlg() {
-			InitializeComponent();
-		}
+		public ConstantTypeDlg() => InitializeComponent();
 	}
 }

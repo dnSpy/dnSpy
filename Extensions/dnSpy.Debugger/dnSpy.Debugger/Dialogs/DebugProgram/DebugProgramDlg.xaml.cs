@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Debugger.Dialogs.DebugProgram {
 	partial class DebugProgramDlg : WindowBase {
-		public DebugProgramDlg() {
-			InitializeComponent();
-		}
+		public DebugProgramDlg() => InitializeComponent();
 	}
 }

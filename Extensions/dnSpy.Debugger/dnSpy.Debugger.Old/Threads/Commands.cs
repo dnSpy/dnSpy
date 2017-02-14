@@ -72,9 +72,7 @@ namespace dnSpy.Debugger.Threads {
 		readonly ThreadsCtxMenuCommand cmd;
 
 		public ThreadsCtxMenuCommandProxy(ThreadsCtxMenuCommand cmd)
-			: base(cmd) {
-			this.cmd = cmd;
-		}
+			: base(cmd) => this.cmd = cmd;
 
 		protected override ThreadsCtxMenuContext CreateContext() => cmd.Create();
 	}
@@ -116,9 +114,7 @@ namespace dnSpy.Debugger.Threads {
 
 		[ImportingConstructor]
 		CopyCallThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, IDebuggerSettings debuggerSettings)
-			: base(theDebugger, threadsContent) {
-			this.debuggerSettings = debuggerSettings;
-		}
+			: base(theDebugger, threadsContent) => this.debuggerSettings = debuggerSettings;
 
 		public override void Execute(ThreadsCtxMenuContext context) {
 			var output = new StringBuilderTextColorOutput();
@@ -178,9 +174,7 @@ namespace dnSpy.Debugger.Threads {
 
 		[ImportingConstructor]
 		HexadecimalDisplayThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, DebuggerSettingsImpl debuggerSettings)
-			: base(theDebugger, threadsContent) {
-			this.debuggerSettings = debuggerSettings;
-		}
+			: base(theDebugger, threadsContent) => this.debuggerSettings = debuggerSettings;
 
 		public override void Execute(ThreadsCtxMenuContext context) => debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
 		public override bool IsChecked(ThreadsCtxMenuContext context) => debuggerSettings.UseHexadecimal;
@@ -202,9 +196,7 @@ namespace dnSpy.Debugger.Threads {
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
-		public override void Execute(ThreadsCtxMenuContext context) {
-			GoTo(moduleIdProvider, stackFrameService, documentTabService, moduleLoader, context, false);
-		}
+		public override void Execute(ThreadsCtxMenuContext context) => GoTo(moduleIdProvider, stackFrameService, documentTabService, moduleLoader, context, false);
 
 		public override bool IsEnabled(ThreadsCtxMenuContext context) => CanGoToThread(context);
 		internal static bool CanGoToThread(ThreadsCtxMenuContext context) => context.SelectedItems.Length == 1;
@@ -254,9 +246,7 @@ namespace dnSpy.Debugger.Threads {
 			//TODO:
 		}
 
-		public override bool IsEnabled(ThreadsCtxMenuContext context) {
-			return false;//TODO:
-		}
+		public override bool IsEnabled(ThreadsCtxMenuContext context) => false;//TODO:
 	}
 
 	//[ExportMenuItem(Header = "res:FreezeThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 30)]

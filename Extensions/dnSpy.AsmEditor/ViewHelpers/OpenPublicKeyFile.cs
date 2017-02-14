@@ -32,9 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public OpenPublicKeyFile(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public OpenPublicKeyFile(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public PublicKey Open() {
 			var dialog = new OpenFileDialog() {

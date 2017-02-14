@@ -33,9 +33,7 @@ namespace dnSpy.Hex.HexEditor {
 		readonly Lazy<HexEditorOptionsDefinition, IHexEditorOptionsDefinitionMetadata>[] hexEditorOptionsDefinitions;
 
 		[ImportingConstructor]
-		TagOptionDefinitionProviderImpl([ImportMany] IEnumerable<Lazy<HexEditorOptionsDefinition, IHexEditorOptionsDefinitionMetadata>> hexEditorOptionsDefinitions) {
-			this.hexEditorOptionsDefinitions = hexEditorOptionsDefinitions.ToArray();
-		}
+		TagOptionDefinitionProviderImpl([ImportMany] IEnumerable<Lazy<HexEditorOptionsDefinition, IHexEditorOptionsDefinitionMetadata>> hexEditorOptionsDefinitions) => this.hexEditorOptionsDefinitions = hexEditorOptionsDefinitions.ToArray();
 
 		IEnumerable<IHexEditorOptionsDefinitionMetadata> GetOptionsDefinitions() {
 			foreach (var lz in hexEditorOptionsDefinitions)

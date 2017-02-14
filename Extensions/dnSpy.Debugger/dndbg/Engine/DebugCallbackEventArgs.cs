@@ -80,9 +80,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public ICorDebugController CorDebugController { get; }
 
-		protected DebugCallbackEventArgs(ICorDebugController ctrl) {
-			CorDebugController = ctrl;
-		}
+		protected DebugCallbackEventArgs(ICorDebugController ctrl) => CorDebugController = ctrl;
 
 		public void AddPauseReason(DebuggerPauseReason reason) => AddPauseState(new DebuggerPauseState(reason));
 
@@ -212,9 +210,7 @@ namespace dndbg.Engine {
 		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
 
 		protected ProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
-			: base(pProcess) {
-			Process = pProcess;
-		}
+			: base(pProcess) => Process = pProcess;
 	}
 
 	public sealed class CreateProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
@@ -442,9 +438,7 @@ namespace dndbg.Engine {
 		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
 
 		public ControlCTrapDebugCallbackEventArgs(ICorDebugProcess pProcess)
-			: base(pProcess) {
-			Process = pProcess;
-		}
+			: base(pProcess) => Process = pProcess;
 	}
 
 	public sealed class NameChangeDebugCallbackEventArgs : DebugCallbackEventArgs {
@@ -567,9 +561,7 @@ namespace dndbg.Engine {
 		public string Name { get; }
 
 		public CreateConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId, string pConnName)
-			: base(pProcess, dwConnectionId) {
-			Name = pConnName;
-		}
+			: base(pProcess, dwConnectionId) => Name = pConnName;
 	}
 
 	public sealed class ChangeConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {

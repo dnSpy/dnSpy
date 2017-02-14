@@ -27,9 +27,7 @@ namespace dnSpy.TreeView {
 		public DsSharpTreeNode Node => node;
 		readonly DsSharpTreeNode node;
 
-		public SharpTreeNodeChildrenList(TreeNodeImpl owner) {
-			node = new DsSharpTreeNode(owner);
-		}
+		public SharpTreeNodeChildrenList(TreeNodeImpl owner) => node = new DsSharpTreeNode(owner);
 
 		public ITreeNode this[int index] {
 			get { return ((DsSharpTreeNode)node.Children[index]).TreeNodeImpl; }

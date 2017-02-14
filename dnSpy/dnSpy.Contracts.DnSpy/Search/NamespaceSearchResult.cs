@@ -31,8 +31,6 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		/// <param name="namespace">Namespace</param>
-		public NamespaceSearchResult(string @namespace) {
-			Namespace = @namespace;
-		}
+		public NamespaceSearchResult(string @namespace) => Namespace = @namespace;
 	}
 }

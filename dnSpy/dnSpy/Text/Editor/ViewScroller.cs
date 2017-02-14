@@ -29,9 +29,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ViewScroller : IViewScroller {
 		readonly ITextView textView;
 
-		public ViewScroller(ITextView textView) {
-			this.textView = textView;
-		}
+		public ViewScroller(ITextView textView) => this.textView = textView;
 
 		public void EnsureSpanVisible(SnapshotSpan span) =>
 			EnsureSpanVisible(new VirtualSnapshotSpan(span), EnsureSpanVisibleOptions.None);

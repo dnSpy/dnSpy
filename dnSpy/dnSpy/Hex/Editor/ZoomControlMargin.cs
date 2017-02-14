@@ -40,9 +40,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexEditorOperationsFactoryService editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		ZoomControlMarginProvider(HexEditorOperationsFactoryService editorOperationsFactoryService) {
-			this.editorOperationsFactoryService = editorOperationsFactoryService;
-		}
+		ZoomControlMarginProvider(HexEditorOperationsFactoryService editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
 		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new ZoomControlMargin(wpfHexViewHost, editorOperationsFactoryService.GetEditorOperations(wpfHexViewHost.HexView));

@@ -77,15 +77,13 @@ namespace dnSpy.AsmEditor.Types {
 
 		public TypeDef CreateTypeDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new TypeDefUser(UTF8String.Empty), ownerModule));
 
-		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType) {
-			return new TypeDefOptions {
-				Attributes = (isNestedType ? TypeAttributes.NestedPublic : TypeAttributes.Public) | TypeAttributes.AutoLayout | TypeAttributes.Class | TypeAttributes.AnsiClass,
-				Namespace = ns ?? UTF8String.Empty,
-				Name = name ?? UTF8String.Empty,
-				PackingSize = null,
-				ClassSize = null,
-				BaseType = baseType,
-			};
-		}
+		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType) => new TypeDefOptions {
+			Attributes = (isNestedType ? TypeAttributes.NestedPublic : TypeAttributes.Public) | TypeAttributes.AutoLayout | TypeAttributes.Class | TypeAttributes.AnsiClass,
+			Namespace = ns ?? UTF8String.Empty,
+			Name = name ?? UTF8String.Empty,
+			PackingSize = null,
+			ClassSize = null,
+			BaseType = baseType,
+		};
 	}
 }

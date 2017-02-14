@@ -25,9 +25,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly string name;
 
 		public EventAccessorNode(MethodDef analyzedMethod, string name)
-			: base(analyzedMethod) {
-			this.name = name;
-		}
+			: base(analyzedMethod) => this.name = name;
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			if (name != null)

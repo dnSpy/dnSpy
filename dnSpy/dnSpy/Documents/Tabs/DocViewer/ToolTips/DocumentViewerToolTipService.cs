@@ -45,9 +45,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider;
 
 		[ImportingConstructor]
-		DocumentViewerToolTipServiceCommandTargetFilterProvider(Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider) {
-			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
-		}
+		DocumentViewerToolTipServiceCommandTargetFilterProvider(Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider) => this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
@@ -148,9 +146,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
 
 		[ImportingConstructor]
-		DocumentViewerToolTipServiceQuickInfoSourceProvider(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) {
-			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
-		}
+		DocumentViewerToolTipServiceQuickInfoSourceProvider(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) => this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
 
 		public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
 			var docViewer = textBuffer.TryGetDocumentViewer();
@@ -163,9 +159,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 	sealed class DocumentViewerToolTipServiceQuickInfoSource : IQuickInfoSource {
 		readonly DocumentViewerToolTipService documentViewerToolTipService;
 
-		public DocumentViewerToolTipServiceQuickInfoSource(DocumentViewerToolTipService documentViewerToolTipService) {
-			this.documentViewerToolTipService = documentViewerToolTipService ?? throw new ArgumentNullException(nameof(documentViewerToolTipService));
-		}
+		public DocumentViewerToolTipServiceQuickInfoSource(DocumentViewerToolTipService documentViewerToolTipService) => this.documentViewerToolTipService = documentViewerToolTipService ?? throw new ArgumentNullException(nameof(documentViewerToolTipService));
 
 		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) =>
 			documentViewerToolTipService.AugmentQuickInfoSession(session, quickInfoContent, out applicableToSpan);

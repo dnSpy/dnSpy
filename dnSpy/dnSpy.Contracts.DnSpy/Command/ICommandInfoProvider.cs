@@ -62,9 +62,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance, eg. <see cref="CommandInfoProviderOrder.Default"/></param>
 		public ExportCommandInfoProviderAttribute(double order)
-			: base(typeof(ICommandInfoProvider)) {
-			Order = order;
-		}
+			: base(typeof(ICommandInfoProvider)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

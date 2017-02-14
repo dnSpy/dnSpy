@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MethodSpecControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as MethodSpecVM;
-				if (data != null) {
+				if (DataContext is MethodSpecVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 				}

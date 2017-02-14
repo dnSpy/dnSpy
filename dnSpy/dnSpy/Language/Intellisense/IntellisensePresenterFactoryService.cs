@@ -36,9 +36,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly Lazy<IIntellisensePresenterProvider, IOrderableContentTypeMetadata>[] intellisensePresenterProviders;
 
 		[ImportingConstructor]
-		IntellisensePresenterFactoryService([ImportMany] IEnumerable<Lazy<IIntellisensePresenterProvider, IOrderableContentTypeMetadata>> intellisensePresenterProviders) {
-			this.intellisensePresenterProviders = Orderer.Order(intellisensePresenterProviders).ToArray();
-		}
+		IntellisensePresenterFactoryService([ImportMany] IEnumerable<Lazy<IIntellisensePresenterProvider, IOrderableContentTypeMetadata>> intellisensePresenterProviders) => this.intellisensePresenterProviders = Orderer.Order(intellisensePresenterProviders).ToArray();
 
 		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			if (session == null)

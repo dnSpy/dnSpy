@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.Module {
 		public ModuleOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as ModuleOptionsVM;
-				if (data != null) {
+				if (DataContext is ModuleOptionsVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 				}

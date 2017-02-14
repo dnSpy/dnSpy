@@ -51,9 +51,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public TextViewCreatorOptions() {
-			EnableUndoHistory = true;
-		}
+		public TextViewCreatorOptions() => EnableUndoHistory = true;
 
 		/// <summary>
 		/// Copy this to <paramref name="other"/>

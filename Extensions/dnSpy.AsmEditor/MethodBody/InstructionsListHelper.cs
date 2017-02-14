@@ -391,15 +391,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void AddFieldDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			object op = opvm.Other as IField ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
-			var field = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.FieldDef), op, cilBodyVM.OwnerModule) as IField;
-			if (field != null)
+			if (picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.FieldDef), op, cilBodyVM.OwnerModule) is IField field)
 				opvm.Other = field;
 		}
 
 		void AddFieldMemberRef(InstructionOperandVM opvm) {
 			MemberRef mr = opvm.Other as MemberRef;
-			var fd = opvm.Other as FieldDef;
-			if (fd != null)
+			if (opvm.Other is FieldDef fd)
 				mr = cilBodyVM.OwnerModule.Import(fd);
 			if (mr != null && mr.FieldSig == null)
 				mr = null;
@@ -409,16 +407,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void AddMethodDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			object op = opvm.Other as IMethod ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
-			var method = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), op, cilBodyVM.OwnerModule) as IMethod;
-			if (method != null)
+			if (picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), op, cilBodyVM.OwnerModule) is IMethod method)
 				opvm.Other = method;
 		}
 
 		void AddMethodMemberRef(InstructionOperandVM opvm) {
 			MemberRef mr = opvm.Other as MemberRef;
 			var md = opvm.Other as MethodDef;
-			var ms = opvm.Other as MethodSpec;
-			if (ms != null) {
+			if (opvm.Other is MethodSpec ms) {
 				mr = ms.Method as MemberRef;
 				md = ms.Method as MethodDef;
 			}
@@ -456,8 +452,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void AddType(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			object op = opvm.Other as ITypeDefOrRef ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
-			var type = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), op, cilBodyVM.OwnerModule) as ITypeDefOrRef;
-			if (type != null)
+			if (picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), op, cilBodyVM.OwnerModule) is ITypeDefOrRef type)
 				opvm.Other = type;
 		}
 

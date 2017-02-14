@@ -40,15 +40,13 @@ namespace dnSpy.Contracts.Decompiler {
 			if (provider == null || provider.CustomAttributes.Count == 0)
 				return false;
 			foreach (var ca in provider.CustomAttributes) {
-				var tr = ca.AttributeType as TypeRef;
-				if (tr != null) {
+				if (ca.AttributeType is TypeRef tr) {
 					if (tr.Namespace == @namespace && tr.Name == name)
 						return true;
 					continue;
 				}
 
-				var td = ca.AttributeType as TypeDef;
-				if (td != null) {
+				if (ca.AttributeType is TypeDef td) {
 					if (td.Namespace == @namespace && td.Name == name)
 						return true;
 					continue;
@@ -117,8 +115,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (method == null || method.MethodSig == null)
 				return new List<Parameter>();
 
-			var md = method as MethodDef;
-			if (md != null)
+			if (method is MethodDef md)
 				return md.Parameters;
 
 			var list = new List<Parameter>();

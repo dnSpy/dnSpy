@@ -27,9 +27,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 		readonly IDocumentViewerOptionsService documentViewerOptionsService;
 
 		[ImportingConstructor]
-		AppSettingsPageProvider(IDocumentViewerOptionsService documentViewerOptionsService) {
-			this.documentViewerOptionsService = documentViewerOptionsService;
-		}
+		AppSettingsPageProvider(IDocumentViewerOptionsService documentViewerOptionsService) => this.documentViewerOptionsService = documentViewerOptionsService;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			yield return new GeneralAppSettingsPage(documentViewerOptionsService.Default);

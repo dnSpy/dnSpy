@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditMethodSpec(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditMethodSpec(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public MethodSpecVM Edit(string title, MethodSpecVM pd) {
 			var win = new MethodSpecDlg();

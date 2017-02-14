@@ -140,9 +140,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="token">The token</param>
 		/// <returns>Coded token</returns>
 		/// <seealso cref="Encode(MDToken,out uint)"/>
-		public uint Encode(MDToken token) {
-			return Encode(token.Raw);
-		}
+		public uint Encode(MDToken token) => Encode(token.Raw);
 
 		/// <summary>
 		/// Encodes a token
@@ -161,9 +159,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="token">The token</param>
 		/// <param name="codedToken">Coded token</param>
 		/// <returns><c>true</c> if successful</returns>
-		public bool Encode(MDToken token, out uint codedToken) {
-			return Encode(token.Raw, out codedToken);
-		}
+		public bool Encode(MDToken token, out uint codedToken) => Encode(token.Raw, out codedToken);
 
 		/// <summary>
 		/// Encodes a token

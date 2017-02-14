@@ -35,9 +35,7 @@ namespace dnSpy.Roslyn.Shared.Utilities {
 	static class ImmutableArrayUtilities<T> {
 		static readonly Func<T[], ImmutableArray<T>> delegateToImmutableArray;
 
-		static ImmutableArrayUtilities() {
-			delegateToImmutableArray = CreateImmutableArrayDelegate();
-		}
+		static ImmutableArrayUtilities() => delegateToImmutableArray = CreateImmutableArrayDelegate();
 
 		static Func<T[], ImmutableArray<T>> CreateImmutableArrayDelegate() {
 			var immutableArrayType = typeof(ImmutableArray<T>);

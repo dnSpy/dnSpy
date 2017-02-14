@@ -52,23 +52,19 @@ namespace dnSpy.BamlDecompiler.Baml {
 			foreach (var record in document) {
 				token.ThrowIfCancellationRequested();
 
-				if (record is AssemblyInfoRecord) {
-					var assemblyInfo = (AssemblyInfoRecord)record;
+				if (record is AssemblyInfoRecord assemblyInfo) {
 					if (assemblyInfo.AssemblyId == ctx.AssemblyIdMap.Count)
 						ctx.AssemblyIdMap.Add(assemblyInfo.AssemblyId, assemblyInfo);
 				}
-				else if (record is AttributeInfoRecord) {
-					var attrInfo = (AttributeInfoRecord)record;
+				else if (record is AttributeInfoRecord attrInfo) {
 					if (attrInfo.AttributeId == ctx.AttributeIdMap.Count)
 						ctx.AttributeIdMap.Add(attrInfo.AttributeId, attrInfo);
 				}
-				else if (record is StringInfoRecord) {
-					var strInfo = (StringInfoRecord)record;
+				else if (record is StringInfoRecord strInfo) {
 					if (strInfo.StringId == ctx.StringIdMap.Count)
 						ctx.StringIdMap.Add(strInfo.StringId, strInfo);
 				}
-				else if (record is TypeInfoRecord) {
-					var typeInfo = (TypeInfoRecord)record;
+				else if (record is TypeInfoRecord typeInfo) {
 					if (typeInfo.TypeId == ctx.TypeIdMap.Count)
 						ctx.TypeIdMap.Add(typeInfo.TypeId, typeInfo);
 				}

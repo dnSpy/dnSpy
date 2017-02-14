@@ -31,9 +31,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		DecompilerAppSettingsModifiedListener(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		DecompilerAppSettingsModifiedListener(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public void OnSettingsModified(IAppRefreshSettings appRefreshSettings) {
 			bool refreshIL = appRefreshSettings.Has(SettingsConstants.REDISASSEMBLE_IL_ILSPY_CODE);

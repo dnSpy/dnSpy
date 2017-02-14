@@ -38,9 +38,7 @@ namespace dnSpy.Text.Editor {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 
 		[ImportingConstructor]
-		GlyphTextViewMarkerGlyphTextMarkerTaggerProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) {
-			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
-		}
+		GlyphTextViewMarkerGlyphTextMarkerTaggerProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) => this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
@@ -59,9 +57,7 @@ namespace dnSpy.Text.Editor {
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
-		public GlyphTextViewMarkerGlyphTextMarkerTagger(GlyphTextViewMarkerService service) {
-			this.service = service;
-		}
+		public GlyphTextViewMarkerGlyphTextMarkerTagger(GlyphTextViewMarkerService service) => this.service = service;
 
 		public IEnumerable<ITagSpan<IGlyphTextMarkerTag>> GetTags(NormalizedSnapshotSpanCollection spans) =>
 			service.GetGlyphTextMarkerTags(spans);

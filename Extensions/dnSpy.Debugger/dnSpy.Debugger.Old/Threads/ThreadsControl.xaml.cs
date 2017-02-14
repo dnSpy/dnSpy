@@ -26,9 +26,7 @@ namespace dnSpy.Debugger.Threads {
 	sealed partial class ThreadsControl : UserControl {
 		public ListView ListView => listView;
 
-		public ThreadsControl() {
-			InitializeComponent();
-		}
+		public ThreadsControl() => InitializeComponent();
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))

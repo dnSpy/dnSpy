@@ -63,9 +63,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="session">Signature help session</param>
 		/// <param name="signature">Signature to classify</param>
 		public SignatureDocumentationSignatureHelpClassifierContext(ISignatureHelpSession session, ISignature signature)
-			: base(SignatureHelpClassifierContextTypes.SignatureDocumentation, session) {
-			Signature = signature ?? throw new ArgumentNullException(nameof(signature));
-		}
+			: base(SignatureHelpClassifierContextTypes.SignatureDocumentation, session) => Signature = signature ?? throw new ArgumentNullException(nameof(signature));
 	}
 
 	/// <summary>
@@ -112,9 +110,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="session">Signature help session</param>
 		/// <param name="parameter">Parameter to classify</param>
 		public ParameterDocumentationSignatureHelpClassifierContext(ISignatureHelpSession session, IParameter parameter)
-			: base(SignatureHelpClassifierContextTypes.ParameterDocumentation, session) {
-			Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
-		}
+			: base(SignatureHelpClassifierContextTypes.ParameterDocumentation, session) => Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
 	}
 
 	/// <summary>

@@ -38,9 +38,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 		readonly IQuickInfoBroker quickInfoBroker;
 
 		[ImportingConstructor]
-		QuickInfoTriggerServiceProvider(IQuickInfoBroker quickInfoBroker) {
-			this.quickInfoBroker = quickInfoBroker;
-		}
+		QuickInfoTriggerServiceProvider(IQuickInfoBroker quickInfoBroker) => this.quickInfoBroker = quickInfoBroker;
 
 		public IQuickInfoTriggerService Create(ITextView textView) {
 			if (textView == null)

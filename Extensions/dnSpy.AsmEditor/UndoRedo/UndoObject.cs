@@ -28,8 +28,6 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public UndoObject() {
 		}
 
-		public UndoObject(object value) {
-			Value = value;
-		}
+		public UndoObject(object value) => Value = value;
 	}
 }

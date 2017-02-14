@@ -30,9 +30,7 @@ namespace dnSpy.Hex.Formatting {
 		readonly TF.ITextFormatterProvider textFormatterProvider;
 
 		[ImportingConstructor]
-		FormattedHexSourceFactoryServiceImpl(TF.ITextFormatterProvider textFormatterProvider) {
-			this.textFormatterProvider = textFormatterProvider;
-		}
+		FormattedHexSourceFactoryServiceImpl(TF.ITextFormatterProvider textFormatterProvider) => this.textFormatterProvider = textFormatterProvider;
 
 		public override HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap) {
 			if (aggregateClassifier == null)

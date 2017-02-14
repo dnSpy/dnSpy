@@ -40,8 +40,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static object ResolveMemberDef(object @ref) {
-			var stmtRef = @ref as MethodStatementReference;
-			if (stmtRef != null)
+			if (@ref is MethodStatementReference stmtRef)
 				return stmtRef.Method;
 
 			if (@ref is ParamDef)
@@ -59,8 +58,7 @@ namespace dnSpy.Documents.Tabs {
 				return m as MethodDef;
 			}
 
-			if (@ref is IField) {
-				var f = (IField)@ref;
+			if (@ref is IField f) {
 				if (f is MemberRef)
 					return ((MemberRef)f).ResolveField();
 				return f as FieldDef;
@@ -89,8 +87,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
-			var textRef = @ref as TextReference;
-			if (textRef != null) {
+			if (@ref is TextReference textRef) {
 				if (textRef.Reference is IAssembly || textRef.Reference is ModuleDef || textRef.Reference is ModuleRef || textRef.Reference is NamespaceReference)
 					return null;
 				var result = CreateMemberRefResult(documentTabService, textRef.Reference);
@@ -148,8 +145,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 
 			var content = decompileDocumentTabContentFactory.Create(new DocumentTreeNodeData[] { node });
-			var statementRef = @ref as MethodStatementReference;
-			if (statementRef != null && statementRef.Offset != null) {
+			if (@ref is MethodStatementReference statementRef && statementRef.Offset != null) {
 				return new DocumentTabReferenceResult(content, null, a => {
 					if (a.Success && !a.HasMovedCaret) {
 						GoToReference(content, resolvedRef, statementRef.Method, statementRef.Offset.Value, content.WasNewContent);

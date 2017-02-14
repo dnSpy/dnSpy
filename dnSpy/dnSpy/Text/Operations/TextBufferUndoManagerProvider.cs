@@ -29,9 +29,7 @@ namespace dnSpy.Text.Operations {
 		readonly ITextUndoHistoryRegistry textUndoHistoryRegistry;
 
 		[ImportingConstructor]
-		TextBufferUndoManagerProvider(ITextUndoHistoryRegistry textUndoHistoryRegistry) {
-			this.textUndoHistoryRegistry = textUndoHistoryRegistry;
-		}
+		TextBufferUndoManagerProvider(ITextUndoHistoryRegistry textUndoHistoryRegistry) => this.textUndoHistoryRegistry = textUndoHistoryRegistry;
 
 		public ITextBufferUndoManager GetTextBufferUndoManager(ITextBuffer textBuffer) {
 			if (textBuffer == null)

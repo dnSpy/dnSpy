@@ -45,9 +45,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		protected readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
 
-		protected EditFieldCommandTargetMenuItemBase(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory) {
-			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory ?? throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
-		}
+		protected EditFieldCommandTargetMenuItemBase(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory) => this.hexBufferFileServiceFactory = hexBufferFileServiceFactory ?? throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
 
 		protected override EditFieldCommandContext CreateContext(IMenuItemContext context) {
 			var hexView = context.Find<HexView>();
@@ -98,8 +96,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			if (ctx == null)
 				yield break;
 
-			if (ctx.Field is FlagsData) {
-				var flagsData = (FlagsData)ctx.Field;
+			if (ctx.Field is FlagsData flagsData) {
 				var isEnum = new HashSet<ulong>();
 				foreach (var info in flagsData.FlagInfos) {
 					if (info.IsEnumName)
@@ -114,8 +111,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 					yield return new CreatedMenuItem(attr, new EditFlagsFieldCommand(hexBufferFileServiceFactory, info, !isEnum.Contains(info.Mask)));
 				}
 			}
-			else if (ctx.Field is EnumData) {
-				var enumData = (EnumData)ctx.Field;
+			else if (ctx.Field is EnumData enumData) {
 				foreach (var info in enumData.EnumFieldInfos) {
 					var attr = new ExportMenuItemAttribute {
 						Header = UIUtilities.EscapeMenuItemHeader(info.Name),
@@ -224,9 +220,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		readonly EnumFieldInfo enumFieldInfo;
 
 		public EditEnumFieldCommand(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, EnumFieldInfo enumFieldInfo)
-			: base(hexBufferFileServiceFactory) {
-			this.enumFieldInfo = enumFieldInfo;
-		}
+			: base(hexBufferFileServiceFactory) => this.enumFieldInfo = enumFieldInfo;
 
 		public override bool IsChecked(EditFieldCommandContext context) {
 			var enumData = (EnumData)context.Field;

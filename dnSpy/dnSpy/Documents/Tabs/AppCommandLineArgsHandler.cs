@@ -33,9 +33,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		AppCommandLineArgsHandler(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public double Order => -1000;
 

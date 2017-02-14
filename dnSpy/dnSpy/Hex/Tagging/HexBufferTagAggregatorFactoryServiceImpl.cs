@@ -28,9 +28,7 @@ namespace dnSpy.Hex.Tagging {
 		readonly HexTaggerFactory hexTaggerFactory;
 
 		[ImportingConstructor]
-		HexBufferTagAggregatorFactoryServiceImpl(HexTaggerFactory hexTaggerFactory) {
-			this.hexTaggerFactory = hexTaggerFactory;
-		}
+		HexBufferTagAggregatorFactoryServiceImpl(HexTaggerFactory hexTaggerFactory) => this.hexTaggerFactory = hexTaggerFactory;
 
 		public override HexTagAggregator<T> CreateTagAggregator<T>(HexBuffer buffer) {
 			if (buffer == null)

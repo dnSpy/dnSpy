@@ -38,9 +38,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		readonly ImageFileHeaderVM imageFileHeaderVM;
 
 		public ImageFileHeaderNode(ImageFileHeaderVM fileHeader)
-			: base(fileHeader.Span) {
-			imageFileHeaderVM = fileHeader;
-		}
+			: base(fileHeader.Span) => imageFileHeaderVM = fileHeader;
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.HexPeFileHeader, dnSpy_AsmEditor_Resources.HexNode_FileHeader);

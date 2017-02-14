@@ -118,9 +118,7 @@ namespace dnSpy.Text.AvalonEdit {
 			SetLineLength(startLine, startLine.TotalLength - charactersRemovedInStartLine + charactersLeftInEndLine);
 		}
 
-		void RemoveLine(DocumentLine lineToRemove) {
-			documentLineTree.RemoveLine(lineToRemove);
-		}
+		void RemoveLine(DocumentLine lineToRemove) => documentLineTree.RemoveLine(lineToRemove);
 
 		#endregion
 

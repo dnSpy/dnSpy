@@ -72,8 +72,7 @@ namespace dnSpy.BamlDecompiler {
 			NodeMap[node.Header] = node;
 
 			foreach (var child in node.Children) {
-				var childBlock = child as BamlBlockNode;
-				if (childBlock != null)
+				if (child is BamlBlockNode childBlock)
 					BuildNodeMap(childBlock, counter);
 			}
 
@@ -93,9 +92,7 @@ namespace dnSpy.BamlDecompiler {
 		class DummyAssemblyRefFinder : IAssemblyRefFinder {
 			readonly IAssembly assemblyDef;
 
-			public DummyAssemblyRefFinder(IAssembly assemblyDef) {
-				this.assemblyDef = assemblyDef;
-			}
+			public DummyAssemblyRefFinder(IAssembly assemblyDef) => this.assemblyDef = assemblyDef;
 
 			public AssemblyRef FindAssemblyRef(TypeRef nonNestedTypeRef) => assemblyDef.ToAssemblyRef();
 		}

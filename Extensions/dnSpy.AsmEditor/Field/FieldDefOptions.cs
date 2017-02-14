@@ -67,18 +67,16 @@ namespace dnSpy.AsmEditor.Field {
 
 		public FieldDef CreateFieldDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new FieldDefUser()));
 
-		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig) {
-			return new FieldDefOptions {
-				Attributes = FieldAttributes.Public,
-				Name = name,
-				FieldSig = fieldSig,
-				FieldOffset = null,
-				MarshalType = null,
-				RVA = 0,
-				InitialValue = null,
-				ImplMap = null,
-				Constant = null,
-			};
-		}
+		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig) => new FieldDefOptions {
+			Attributes = FieldAttributes.Public,
+			Name = name,
+			FieldSig = fieldSig,
+			FieldOffset = null,
+			MarshalType = null,
+			RVA = 0,
+			InitialValue = null,
+			ImplMap = null,
+			Constant = null,
+		};
 	}
 }

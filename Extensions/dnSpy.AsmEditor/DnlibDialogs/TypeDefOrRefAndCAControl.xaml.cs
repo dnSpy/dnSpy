@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class TypeDefOrRefAndCAControl : UserControl {
-		public TypeDefOrRefAndCAControl() {
-			InitializeComponent();
-		}
+		public TypeDefOrRefAndCAControl() => InitializeComponent();
 	}
 }

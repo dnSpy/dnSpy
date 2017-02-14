@@ -211,9 +211,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		class MyAction {
 			public readonly Action Action;
 
-			public MyAction(Action action) {
-				Action = action;
-			}
+			public MyAction(Action action) => Action = action;
 		}
 
 		sealed class UpdateProgressAction : MyAction {

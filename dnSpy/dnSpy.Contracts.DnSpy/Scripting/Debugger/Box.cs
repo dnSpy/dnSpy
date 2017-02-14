@@ -31,8 +31,6 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>
-		public Box(object value) {
-			Value = value;
-		}
+		public Box(object value) => Value = value;
 	}
 }

@@ -55,9 +55,7 @@ namespace dnSpy.Text.Editor {
 		readonly ITextMarkerProviderFactory textMarkerProviderFactory;
 
 		[ImportingConstructor]
-		TextMarkerServiceTaggerProvider(ITextMarkerProviderFactory textMarkerProviderFactory) {
-			this.textMarkerProviderFactory = textMarkerProviderFactory;
-		}
+		TextMarkerServiceTaggerProvider(ITextMarkerProviderFactory textMarkerProviderFactory) => this.textMarkerProviderFactory = textMarkerProviderFactory;
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			if (buffer == null)

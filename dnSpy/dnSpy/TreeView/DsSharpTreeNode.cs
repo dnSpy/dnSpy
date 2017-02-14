@@ -31,9 +31,7 @@ namespace dnSpy.TreeView {
 		public TreeNodeImpl TreeNodeImpl => treeNodeImpl;
 		readonly TreeNodeImpl treeNodeImpl;
 
-		public DsSharpTreeNode(TreeNodeImpl treeNodeImpl) {
-			this.treeNodeImpl = treeNodeImpl;
-		}
+		public DsSharpTreeNode(TreeNodeImpl treeNodeImpl) => this.treeNodeImpl = treeNodeImpl;
 
 		// Needed by XAML
 		public TreeNodeData Data => treeNodeImpl.Data;

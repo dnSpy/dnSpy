@@ -28,9 +28,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ReplCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		public ReplCommandTargetFilter(ITextView textView) {
-			this.textView = textView;
-		}
+		public ReplCommandTargetFilter(ITextView textView) => this.textView = textView;
 
 		ReplEditor TryGetInstance() =>
 			__replEditor ?? (__replEditor = ReplEditorUtils.TryGetInstance(textView) as ReplEditor);

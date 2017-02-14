@@ -76,8 +76,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 						}
 					}
 					if (readBackingField && (code == Code.Callvirt || code == Code.Call)) {
-						IMethod mr = instr.Operand as IMethod;
-						if (mr != null && eventFiringMethod != null && mr.Name == eventFiringMethod.Name && mr.ResolveMethodDef() == eventFiringMethod) {
+						if (instr.Operand is IMethod mr && eventFiringMethod != null && mr.Name == eventFiringMethod.Name && mr.ResolveMethodDef() == eventFiringMethod) {
 							foundInstr = instr;
 							break;
 						}
@@ -85,8 +84,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 
 				if (foundInstr != null) {
-					MethodDef codeLocation = GetOriginalCodeLocation(method) as MethodDef;
-					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
+					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)
 							node.SourceRef = new SourceRef(method, foundInstr.Offset, foundInstr.Operand as IMDTokenProvider);

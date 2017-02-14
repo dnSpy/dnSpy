@@ -387,47 +387,45 @@ namespace dnSpy.Debugger.Scripting {
 			return v;
 		}
 
-		public byte[] SaveData() {
-			return debugger.Dispatcher.UI(() => {
-				byte[] data;
-				int? dataIndex = null, dataSize = null;
-				var v = GetDataValue();
-				if (v == null)
-					return Array.Empty<byte>();
-				if (v.IsString) {
-					var s = v.String;
-					data = s == null ? null : Encoding.Unicode.GetBytes(s);
-				}
-				else if (v.IsArray) {
-					if (v.ArrayCount == 0)
-						data = Array.Empty<byte>();
-					else {
-						var elemValue = v.GetElementAtPosition(0);
-						ulong elemSize = elemValue?.Size ?? 0;
-						ulong elemAddr = elemValue?.Address ?? 0;
-						ulong addr = v.Address;
-						ulong totalSize = elemSize * v.ArrayCount;
-						if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue)
-							return Array.Empty<byte>();
-						data = v.ReadGenericValue();
-						dataIndex = (int)(elemAddr - addr);
-						dataSize = (int)totalSize;
-					}
-				}
-				else
+		public byte[] SaveData() => debugger.Dispatcher.UI(() => {
+			byte[] data;
+			int? dataIndex = null, dataSize = null;
+			var v = GetDataValue();
+			if (v == null)
+				return Array.Empty<byte>();
+			if (v.IsString) {
+				var s = v.String;
+				data = s == null ? null : Encoding.Unicode.GetBytes(s);
+			}
+			else if (v.IsArray) {
+				if (v.ArrayCount == 0)
+					data = Array.Empty<byte>();
+				else {
+					var elemValue = v.GetElementAtPosition(0);
+					ulong elemSize = elemValue?.Size ?? 0;
+					ulong elemAddr = elemValue?.Address ?? 0;
+					ulong addr = v.Address;
+					ulong totalSize = elemSize * v.ArrayCount;
+					if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue)
+						return Array.Empty<byte>();
 					data = v.ReadGenericValue();
-				if (data == null)
-					return Array.Empty<byte>();
+					dataIndex = (int)(elemAddr - addr);
+					dataSize = (int)totalSize;
+				}
+			}
+			else
+				data = v.ReadGenericValue();
+			if (data == null)
+				return Array.Empty<byte>();
 
-				if (dataIndex == null)
-					dataIndex = 0;
-				if (dataSize == null)
-					dataSize = data.Length - dataIndex.Value;
-				var data2 = new byte[dataSize.Value];
-				Array.Copy(data, dataIndex.Value, data2, 0, data2.Length);
-				return data2;
-			});
-		}
+			if (dataIndex == null)
+				dataIndex = 0;
+			if (dataSize == null)
+				dataSize = data.Length - dataIndex.Value;
+			var data2 = new byte[dataSize.Value];
+			Array.Copy(data, dataIndex.Value, data2, 0, data2.Length);
+			return data2;
+		});
 
 		public void SaveData(Stream stream) {
 			var bytes = SaveData();
@@ -439,9 +437,7 @@ namespace dnSpy.Debugger.Scripting {
 				SaveData(stream);
 		}
 
-		public ulong GetArrayDataAddress() {
-			return GetArrayDataAddress(out ulong elemSize);
-		}
+		public ulong GetArrayDataAddress() => GetArrayDataAddress(out ulong elemSize);
 
 		public ulong GetArrayDataAddress(out ulong elemSize2) {
 			ulong elemSizeTmp = 0;

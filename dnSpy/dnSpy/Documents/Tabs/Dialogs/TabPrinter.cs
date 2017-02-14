@@ -23,9 +23,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class TabPrinter {
 		readonly ITextColorWriter output;
 
-		public TabPrinter(ITextColorWriter output) {
-			this.output = output;
-		}
+		public TabPrinter(ITextColorWriter output) => this.output = output;
 
 		public void WriteName(TabVM vm) => output.Write(BoxedTextColor.Text, vm.Name);
 		public void WriteModule(TabVM vm) => output.WriteModule(vm.Module);

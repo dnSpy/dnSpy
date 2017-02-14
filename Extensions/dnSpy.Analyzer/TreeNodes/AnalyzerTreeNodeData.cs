@@ -41,7 +41,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		static class Cache {
 			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
 			public static TextClassifierTextColorWriter GetWriter() => writer;
-			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
 		public sealed override object Text {
@@ -81,8 +81,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public static void CancelSelfAndChildren(TreeNodeData node) {
 			foreach (var c in node.DescendantsAndSelf()) {
-				var id = c as IAsyncCancellable;
-				if (id != null)
+				if (c is IAsyncCancellable id)
 					id.Cancel();
 			}
 		}

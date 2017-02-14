@@ -29,9 +29,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		int callingEmptyQueue;
 		readonly Dispatcher dispatcher;
 
-		public WpfDebugMessageDispatcher(Dispatcher dispatcher) {
-			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-		}
+		public WpfDebugMessageDispatcher(Dispatcher dispatcher) => this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
 		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
 

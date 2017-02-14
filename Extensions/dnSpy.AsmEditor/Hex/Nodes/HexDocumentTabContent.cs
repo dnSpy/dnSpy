@@ -30,8 +30,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class HexDocumentTabContentFactory : IDocumentTabContentFactory {
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) {
 			if (context.Nodes.Length == 1) {
-				var hexNode = context.Nodes[0] as HexNode;
-				if (hexNode != null)
+				if (context.Nodes[0] is HexNode hexNode)
 					return new HexDocumentTabContent(hexNode);
 			}
 
@@ -69,9 +68,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly HexNode hexNode;
 
-		public HexDocumentTabContent(HexNode hexNode) {
-			this.hexNode = hexNode;
-		}
+		public HexDocumentTabContent(HexNode hexNode) => this.hexNode = hexNode;
 
 		public override DocumentTabContent Clone() => new HexDocumentTabContent(hexNode);
 		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>

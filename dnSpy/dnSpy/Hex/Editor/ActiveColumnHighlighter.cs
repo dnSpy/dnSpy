@@ -43,9 +43,7 @@ namespace dnSpy.Hex.Editor {
 		readonly ActiveColumnHighlighterServiceProvider activeColumnHighlighterServiceProvider;
 
 		[ImportingConstructor]
-		ActiveColumnHighlighterWpfHexViewCreationListener(ActiveColumnHighlighterServiceProvider activeColumnHighlighterServiceProvider) {
-			this.activeColumnHighlighterServiceProvider = activeColumnHighlighterServiceProvider;
-		}
+		ActiveColumnHighlighterWpfHexViewCreationListener(ActiveColumnHighlighterServiceProvider activeColumnHighlighterServiceProvider) => this.activeColumnHighlighterServiceProvider = activeColumnHighlighterServiceProvider;
 
 		public override void HexViewCreated(WpfHexView wpfHexView) =>
 			activeColumnHighlighterServiceProvider.InstallService(wpfHexView);
@@ -60,9 +58,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexEditorFormatMapService editorFormatMapService;
 
 		[ImportingConstructor]
-		ActiveColumnHighlighterServiceProviderImpl(HexEditorFormatMapService editorFormatMapService) {
-			this.editorFormatMapService = editorFormatMapService;
-		}
+		ActiveColumnHighlighterServiceProviderImpl(HexEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public override void InstallService(WpfHexView wpfHexView) {
 			if (wpfHexView == null)

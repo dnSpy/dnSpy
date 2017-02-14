@@ -52,9 +52,7 @@ namespace dnSpy.AsmEditor.Event {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
-				this.undoCommandService = undoCommandService;
-			}
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteEventDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
@@ -67,9 +65,7 @@ namespace dnSpy.AsmEditor.Event {
 
 			[ImportingConstructor]
 			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteEventDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
@@ -82,9 +78,7 @@ namespace dnSpy.AsmEditor.Event {
 
 			[ImportingConstructor]
 			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteEventDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
@@ -185,9 +179,7 @@ namespace dnSpy.AsmEditor.Event {
 		DeletableNodes<EventNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteEventDefCommand(EventNode[] eventNodes) {
-			nodes = new DeletableNodes<EventNode>(eventNodes);
-		}
+		DeleteEventDefCommand(EventNode[] eventNodes) => nodes = new DeletableNodes<EventNode>(eventNodes);
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteEventCommand;
 
@@ -249,11 +241,10 @@ namespace dnSpy.AsmEditor.Event {
 				this.appService = appService;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsDefinition &&
-					context.Nodes.Length == 1 &&
-					context.Nodes[0] is TypeNode;
-			}
+			public override bool IsEnabled(CodeContext context) =>
+				context.IsDefinition &&
+				context.Nodes.Length == 1 &&
+				context.Nodes[0] is TypeNode;
 
 			public override void Execute(CodeContext context) => CreateEventDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}

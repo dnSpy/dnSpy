@@ -32,9 +32,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 		const int MaxItems = 10;
 		readonly List<string> items;
 
-		MruCompletionService() {
-			items = new List<string>(MaxItems);
-		}
+		MruCompletionService() => items = new List<string>(MaxItems);
 
 		public void AddText(string text) {
 			int index = items.IndexOf(text);

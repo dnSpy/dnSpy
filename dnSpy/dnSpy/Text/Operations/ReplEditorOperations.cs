@@ -197,21 +197,13 @@ namespace dnSpy.Text.Operations {
 			return true;
 		}
 
-		public bool Capitalize() {
-			return false;//TODO:
-		}
+		public bool Capitalize() => false;//TODO:
 
-		public bool ConvertSpacesToTabs() {
-			return false;//TODO:
-		}
+		public bool ConvertSpacesToTabs() => false;//TODO:
 
-		public bool ConvertTabsToSpaces() {
-			return false;//TODO:
-		}
+		public bool ConvertTabsToSpaces() => false;//TODO:
 
-		public bool CutFullLine() {
-			return false;//TODO:
-		}
+		public bool CutFullLine() => false;//TODO:
 
 		public bool CutSelection() {
 			if (!UpdateCaretForEdit())
@@ -225,9 +217,7 @@ namespace dnSpy.Text.Operations {
 			return true;
 		}
 
-		public bool DecreaseLineIndent() {
-			return false;//TODO:
-		}
+		public bool DecreaseLineIndent() => false;//TODO:
 
 		public bool Delete() {
 			if (!UpdateCaretForEdit())
@@ -250,37 +240,21 @@ namespace dnSpy.Text.Operations {
 			return true;
 		}
 
-		public bool DeleteBlankLines() {
-			return false;//TODO:
-		}
+		public bool DeleteBlankLines() => false;//TODO:
 
-		public bool DeleteFullLine() {
-			return false;//TODO:
-		}
+		public bool DeleteFullLine() => false;//TODO:
 
-		public bool DeleteHorizontalWhiteSpace() {
-			return false;//TODO:
-		}
+		public bool DeleteHorizontalWhiteSpace() => false;//TODO:
 
-		public bool DeleteToBeginningOfLine() {
-			return false;//TODO:
-		}
+		public bool DeleteToBeginningOfLine() => false;//TODO:
 
-		public bool DeleteToEndOfLine() {
-			return false;//TODO:
-		}
+		public bool DeleteToEndOfLine() => false;//TODO:
 
-		public bool DeleteWordToLeft() {
-			return false;//TODO:
-		}
+		public bool DeleteWordToLeft() => false;//TODO:
 
-		public bool DeleteWordToRight() {
-			return false;//TODO:
-		}
+		public bool DeleteWordToRight() => false;//TODO:
 
-		public bool IncreaseLineIndent() {
-			return false;//TODO:
-		}
+		public bool IncreaseLineIndent() => false;//TODO:
 
 		public bool Indent() {
 			if (!UpdateCaretForEdit())
@@ -310,29 +284,17 @@ namespace dnSpy.Text.Operations {
 			return true;
 		}
 
-		public bool MakeLowercase() {
-			return false;//TODO:
-		}
+		public bool MakeLowercase() => false;//TODO:
 
-		public bool MakeUppercase() {
-			return false;//TODO:
-		}
+		public bool MakeUppercase() => false;//TODO:
 
-		public bool MoveSelectedLinesDown() {
-			return false;//TODO:
-		}
+		public bool MoveSelectedLinesDown() => false;//TODO:
 
-		public bool MoveSelectedLinesUp() {
-			return false;//TODO:
-		}
+		public bool MoveSelectedLinesUp() => false;//TODO:
 
-		public bool OpenLineAbove() {
-			return false;//TODO:
-		}
+		public bool OpenLineAbove() => false;//TODO:
 
-		public bool OpenLineBelow() {
-			return false;//TODO:
-		}
+		public bool OpenLineBelow() => false;//TODO:
 
 		public bool Paste() {
 			if (!UpdateCaretForEdit())
@@ -350,33 +312,19 @@ namespace dnSpy.Text.Operations {
 			return true;
 		}
 
-		public bool Tabify() {
-			return false;//TODO:
-		}
+		public bool Tabify() => false;//TODO:
 
-		public bool ToggleCase() {
-			return false;//TODO:
-		}
+		public bool ToggleCase() => false;//TODO:
 
-		public bool TransposeCharacter() {
-			return false;//TODO:
-		}
+		public bool TransposeCharacter() => false;//TODO:
 
-		public bool TransposeLine() {
-			return false;//TODO:
-		}
+		public bool TransposeLine() => false;//TODO:
 
-		public bool TransposeWord() {
-			return false;//TODO:
-		}
+		public bool TransposeWord() => false;//TODO:
 
-		public bool Unindent() {
-			return false;//TODO:
-		}
+		public bool Unindent() => false;//TODO:
 
-		public bool Untabify() {
-			return false;//TODO:
-		}
+		public bool Untabify() => false;//TODO:
 
 		public bool Submit() {
 			MoveToEndOfDocument(false);
@@ -440,9 +388,7 @@ namespace dnSpy.Text.Operations {
 			return true;
 		}
 
-		public bool InsertProvisionalText(string text) {
-			return false;//TODO:
-		}
+		public bool InsertProvisionalText(string text) => false;//TODO:
 
 		public bool InsertTextAsBox(string text, out VirtualSnapshotPoint boxStart, out VirtualSnapshotPoint boxEnd) {
 			boxStart = new VirtualSnapshotPoint(wpfTextView.TextSnapshot, 0);
@@ -450,94 +396,69 @@ namespace dnSpy.Text.Operations {
 			return false;//TODO:
 		}
 
-		public bool NormalizeLineEndings(string replacement) {
-			return false;//TODO:
-		}
+		public bool NormalizeLineEndings(string replacement) => false;//TODO:
 
-		public int ReplaceAllMatches(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegularExpressions) {
-			return 0;//TODO:
-		}
+		public int ReplaceAllMatches(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegularExpressions) => 0;//TODO:
 
-		public bool ReplaceSelection(string text) {
-			return false;//TODO:
-		}
+		public bool ReplaceSelection(string text) => false;//TODO:
 
-		public bool ReplaceText(Span replaceSpan, string text) {
-			return false;//TODO:
-		}
+		public bool ReplaceText(Span replaceSpan, string text) => false;//TODO:
 
-		public bool InsertFinalNewLine() {
-			return false;//TODO:
-		}
+		public bool InsertFinalNewLine() => false;//TODO:
 
-		public bool TrimTrailingWhiteSpace() {
-			return false;//TODO:
-		}
+		public bool TrimTrailingWhiteSpace() => false;//TODO:
 
-		public void MoveToHome(bool extendSelection) {
+		public void MoveToHome(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToHome(extendSelection);
-		}
 
-		public void MoveToLastNonWhiteSpaceCharacter(bool extendSelection) {
+		public void MoveToLastNonWhiteSpaceCharacter(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToLastNonWhiteSpaceCharacter(extendSelection);
-		}
 
-		public void MoveToNextCharacter(bool extendSelection) {
+		public void MoveToNextCharacter(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToNextCharacter(extendSelection);
-		}
 
-		public void MoveToNextWord(bool extendSelection) {
+		public void MoveToNextWord(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToNextWord(extendSelection);
-		}
 
-		public void MoveToPreviousCharacter(bool extendSelection) {
+		public void MoveToPreviousCharacter(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToPreviousCharacter(extendSelection);
-		}
 
-		public void MoveToPreviousWord(bool extendSelection) {
+		public void MoveToPreviousWord(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToPreviousWord(extendSelection);
-		}
 
-		public void MoveToStartOfDocument(bool extendSelection) {
+		public void MoveToStartOfDocument(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToStartOfDocument(extendSelection);
-		}
 
-		public void MoveToStartOfLine(bool extendSelection) {
+		public void MoveToStartOfLine(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToStartOfLine(extendSelection);
-		}
 
-		public void MoveToStartOfLineAfterWhiteSpace(bool extendSelection) {
+		public void MoveToStartOfLineAfterWhiteSpace(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToStartOfLineAfterWhiteSpace(extendSelection);
-		}
 
-		public void MoveToStartOfNextLineAfterWhiteSpace(bool extendSelection) {
+		public void MoveToStartOfNextLineAfterWhiteSpace(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToStartOfNextLineAfterWhiteSpace(extendSelection);
-		}
 
-		public void MoveToStartOfPreviousLineAfterWhiteSpace(bool extendSelection) {
+		public void MoveToStartOfPreviousLineAfterWhiteSpace(bool extendSelection) =>
 			//TODO: Ignore the prompt
 			EditorOperations.MoveToStartOfPreviousLineAfterWhiteSpace(extendSelection);
-		}
 
-		public void SelectCurrentWord() {
+		public void SelectCurrentWord() =>
 			//TODO: Ignore the prompt
 			EditorOperations.SelectCurrentWord();
-		}
 
-		public void SelectLine(ITextViewLine viewLine, bool extendSelection) {
+		public void SelectLine(ITextViewLine viewLine, bool extendSelection) =>
 			//TODO: If in a code buffer, don't select the prompt
 			EditorOperations.SelectLine(viewLine, extendSelection);
-		}
 
 		public void AddAfterTextBufferChangePrimitive() => EditorOperations.AddAfterTextBufferChangePrimitive();
 		public void AddBeforeTextBufferChangePrimitive() => EditorOperations.AddBeforeTextBufferChangePrimitive();

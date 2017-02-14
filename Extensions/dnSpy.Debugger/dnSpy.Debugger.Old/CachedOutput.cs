@@ -29,9 +29,7 @@ namespace dnSpy.Debugger {
 
 		public static CachedOutput Create() => new CachedOutput(false);
 
-		public CachedOutput(bool dummy) {
-			data = new List<Tuple<string, TypeColor>>();
-		}
+		public CachedOutput(bool dummy) => data = new List<Tuple<string, TypeColor>>();
 
 		public void Add(string s, TypeColor type) => data.Add(Tuple.Create(s, type));
 

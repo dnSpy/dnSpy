@@ -39,9 +39,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		readonly ImageOptionalHeader64VM imageOptionalHeader64VM;
 
 		public ImageOptionalHeader64Node(ImageOptionalHeader64VM optHdr)
-			: base(optHdr.Span) {
-			imageOptionalHeader64VM = optHdr;
-		}
+			: base(optHdr.Span) => imageOptionalHeader64VM = optHdr;
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.HexPeOptionalHeader64, dnSpy_AsmEditor_Resources.HexNode_OptHeader64);

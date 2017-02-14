@@ -32,9 +32,7 @@ namespace dnSpy.Settings.Dialog {
 		readonly IClassificationType appSettingsTextMatchHighlightClassificationType;
 
 		[ImportingConstructor]
-		AppSettingsSearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			appSettingsTextMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.AppSettingsTextMatchHighlight);
-		}
+		AppSettingsSearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => appSettingsTextMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.AppSettingsTextMatchHighlight);
 
 		public ITextClassifier Create(IContentType contentType) => new AppSettingsSearchTextClassifier(appSettingsTextMatchHighlightClassificationType);
 	}
@@ -42,9 +40,7 @@ namespace dnSpy.Settings.Dialog {
 	sealed class AppSettingsSearchTextClassifier : ITextClassifier {
 		readonly IClassificationType appSettingsTextMatchHighlightClassificationType;
 
-		public AppSettingsSearchTextClassifier(IClassificationType appSettingsTextMatchHighlightClassificationType) {
-			this.appSettingsTextMatchHighlightClassificationType = appSettingsTextMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(appSettingsTextMatchHighlightClassificationType));
-		}
+		public AppSettingsSearchTextClassifier(IClassificationType appSettingsTextMatchHighlightClassificationType) => this.appSettingsTextMatchHighlightClassificationType = appSettingsTextMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(appSettingsTextMatchHighlightClassificationType));
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var optionsContext = context as AppSettingsTextClassifierContext;

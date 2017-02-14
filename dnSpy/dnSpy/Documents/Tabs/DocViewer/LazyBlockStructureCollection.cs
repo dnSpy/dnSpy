@@ -36,12 +36,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		BlockStructureCollection coll;
 		CodeBracesRange[] ranges;
 
-		LazyBlockStructureCollection() {
-			coll = BlockStructureCollection.Empty;
-		}
+		LazyBlockStructureCollection() => coll = BlockStructureCollection.Empty;
 
-		public LazyBlockStructureCollection(CodeBracesRange[] ranges) {
-			this.ranges = ranges ?? throw new ArgumentNullException(nameof(ranges));
-		}
+		public LazyBlockStructureCollection(CodeBracesRange[] ranges) => this.ranges = ranges ?? throw new ArgumentNullException(nameof(ranges));
 	}
 }

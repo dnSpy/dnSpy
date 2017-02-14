@@ -117,9 +117,7 @@ namespace dnSpy.Contracts.Documents {
 		/// Constructor
 		/// </summary>
 		/// <param name="filename">Filename</param>
-		public DsUnknownDocument(string filename) {
-			Filename = filename ?? string.Empty;
-		}
+		public DsUnknownDocument(string filename) => Filename = filename ?? string.Empty;
 	}
 
 	/// <summary>
@@ -292,9 +290,7 @@ namespace dnSpy.Contracts.Documents {
 		IDsDotNetDocument module;
 
 		public DsDotNetDocumentAsmWithMod(IDsDotNetDocument modmodule)
-			: base(modmodule.SerializedDocument ?? new DsDocumentInfo(), modmodule.ModuleDef, false, true) {
-			module = modmodule;
-		}
+			: base(modmodule.SerializedDocument ?? new DsDocumentInfo(), modmodule.ModuleDef, false, true) => module = modmodule;
 
 		protected override List<IDsDocument> CreateChildren() {
 			Debug.Assert(module != null);

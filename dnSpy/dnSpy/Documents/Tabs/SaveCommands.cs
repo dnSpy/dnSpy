@@ -47,9 +47,7 @@ namespace dnSpy.Documents.Tabs {
 	[ExportAutoLoaded]
 	sealed class SaveCommandInit : IAutoLoaded {
 		[ImportingConstructor]
-		SaveCommandInit(ISaveService saveService, IAppWindow appWindow, IDocumentTabService documentTabService) {
-			appWindow.MainWindowCommands.Add(ApplicationCommands.Save, (s, e) => saveService.Save(documentTabService.ActiveTab), (s, e) => e.CanExecute = saveService.CanSave(documentTabService.ActiveTab));
-		}
+		SaveCommandInit(ISaveService saveService, IAppWindow appWindow, IDocumentTabService documentTabService) => appWindow.MainWindowCommands.Add(ApplicationCommands.Save, (s, e) => saveService.Save(documentTabService.ActiveTab), (s, e) => e.CanExecute = saveService.CanSave(documentTabService.ActiveTab));
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ExportToProjectCommand", Icon = DsImagesAttribute.Solution, Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 0)]
@@ -243,13 +241,11 @@ namespace dnSpy.Documents.Tabs {
 					vm.AddError(string.Join(Environment.NewLine, list.ToArray()));
 			}
 
-			void IMSBuildProgressListener.SetMaxProgress(int maxProgress) {
-				dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
-					vm.ProgressMinimum = 0;
-					vm.ProgressMaximum = maxProgress;
-					vm.IsIndeterminate = false;
-				}));
-			}
+			void IMSBuildProgressListener.SetMaxProgress(int maxProgress) => dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+				vm.ProgressMinimum = 0;
+				vm.ProgressMaximum = maxProgress;
+				vm.IsIndeterminate = false;
+			}));
 
 			void IMSBuildProgressListener.SetProgress(int progress) {
 				bool start;

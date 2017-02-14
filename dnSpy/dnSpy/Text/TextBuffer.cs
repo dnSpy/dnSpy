@@ -203,28 +203,16 @@ namespace dnSpy.Text {
 				throw new InvalidOperationException();
 		}
 
-		public IReadOnlyRegionEdit CreateReadOnlyRegionEdit() {
-			throw new NotImplementedException();//TODO:
-		}
+		public IReadOnlyRegionEdit CreateReadOnlyRegionEdit() => throw new NotImplementedException();//TODO:
 
-		public bool IsReadOnly(int position) {
-			throw new NotImplementedException();//TODO:
-		}
+		public bool IsReadOnly(int position) => throw new NotImplementedException();//TODO:
 
-		public bool IsReadOnly(int position, bool isEdit) {
-			throw new NotImplementedException();//TODO:
-		}
+		public bool IsReadOnly(int position, bool isEdit) => throw new NotImplementedException();//TODO:
 
-		public bool IsReadOnly(Span span) {
-			throw new NotImplementedException();//TODO:
-		}
+		public bool IsReadOnly(Span span) => throw new NotImplementedException();//TODO:
 
-		public bool IsReadOnly(Span span, bool isEdit) {
-			throw new NotImplementedException();//TODO:
-		}
+		public bool IsReadOnly(Span span, bool isEdit) => throw new NotImplementedException();//TODO:
 
-		public NormalizedSpanCollection GetReadOnlyExtents(Span span) {
-			throw new NotImplementedException();//TODO:
-		}
+		public NormalizedSpanCollection GetReadOnlyExtents(Span span) => throw new NotImplementedException();//TODO:
 	}
 }

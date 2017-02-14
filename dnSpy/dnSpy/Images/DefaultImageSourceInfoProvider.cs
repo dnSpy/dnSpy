@@ -32,9 +32,7 @@ namespace dnSpy.Images {
 		readonly Assembly assembly;
 		Dictionary<string, ImageSourceInfo[]> nameToInfosDict;
 
-		public DefaultImageSourceInfoProvider(Assembly assembly) {
-			this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
-		}
+		public DefaultImageSourceInfoProvider(Assembly assembly) => this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 
 		public ImageSourceInfo[] GetImageSourceInfos(string name) {
 			if (nameToInfosDict == null)

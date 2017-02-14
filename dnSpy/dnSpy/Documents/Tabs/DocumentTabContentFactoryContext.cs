@@ -25,8 +25,6 @@ namespace dnSpy.Documents.Tabs {
 	sealed class DocumentTabContentFactoryContext : IDocumentTabContentFactoryContext {
 		public DocumentTreeNodeData[] Nodes { get; }
 
-		public DocumentTabContentFactoryContext(DocumentTreeNodeData[] nodes) {
-			Nodes = nodes ?? throw new InvalidOperationException();
-		}
+		public DocumentTabContentFactoryContext(DocumentTreeNodeData[] nodes) => Nodes = nodes ?? throw new InvalidOperationException();
 	}
 }

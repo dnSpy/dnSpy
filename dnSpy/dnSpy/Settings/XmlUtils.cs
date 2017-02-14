@@ -75,11 +75,7 @@ namespace dnSpy.Settings {
 			return -1;
 		}
 
-		static bool IsHex(char c) {
-			return ('0' <= c && c <= '9') ||
-					('A' <= c && c <= 'F') ||
-					('a' <= c && c <= 'f');
-		}
+		static bool IsHex(char c) => ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f');
 
 		public static string FilterAttributeName(string s) {
 			if (s == null || s.Length == 0)
@@ -97,17 +93,15 @@ namespace dnSpy.Settings {
 			return s;
 		}
 
-		static bool IsValidFirstXmlAttrChar(char c) {
-			return c == '-' || c == '_' || c == '.' ||
-					('A' <= c && c <= 'Z') ||
-					('a' <= c && c <= 'z');
-		}
+		static bool IsValidFirstXmlAttrChar(char c) =>
+			c == '-' || c == '_' || c == '.' ||
+			('A' <= c && c <= 'Z') ||
+			('a' <= c && c <= 'z');
 
-		static bool IsValidXmlAttrChar(char c) {
-			return c == '-' || c == '_' || c == '.' ||
-					('0' <= c && c <= '9') ||
-					('A' <= c && c <= 'Z') ||
-					('a' <= c && c <= 'z');
-		}
+		static bool IsValidXmlAttrChar(char c) =>
+			c == '-' || c == '_' || c == '.' ||
+			('0' <= c && c <= '9') ||
+			('A' <= c && c <= 'Z') ||
+			('a' <= c && c <= 'z');
 	}
 }

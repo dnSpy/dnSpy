@@ -43,9 +43,7 @@ namespace dnSpy.Text.Editor {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 
 		[ImportingConstructor]
-		GlyphTextMarkerContextMenuHandlerProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) {
-			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
-		}
+		GlyphTextMarkerContextMenuHandlerProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) => this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
 
 		public IMarginContextMenuHandler Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin) =>
 			wpfTextViewHost.TextView.Properties.GetOrCreateSingletonProperty(typeof(GlyphTextMarkerServiceMouseProcessor), () => new GlyphTextMarkerServiceMouseProcessor(glyphTextMarkerServiceImpl, wpfTextViewHost, margin));
@@ -60,9 +58,7 @@ namespace dnSpy.Text.Editor {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 
 		[ImportingConstructor]
-		GlyphTextMarkerServiceMouseProcessorProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) {
-			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
-		}
+		GlyphTextMarkerServiceMouseProcessorProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) => this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
 
 		public IMouseProcessor GetAssociatedMouseProcessor(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin) {
 			if (margin.GetTextViewMargin(PredefinedMarginNames.Glyph) == margin)
@@ -468,8 +464,7 @@ namespace dnSpy.Text.Editor {
 					toolTip = new ToolTip();
 					PopupHelper.SetScaleTransform(wpfTextViewHost.TextView, toolTip);
 
-					var toolTipContentString = toolTipInfo.Content as string;
-					if (toolTipContentString != null) {
+					if (toolTipInfo.Content is string toolTipContentString) {
 						toolTip.Content = new TextBlock {
 							Text = toolTipContentString,
 							TextWrapping = TextWrapping.Wrap,
@@ -478,8 +473,7 @@ namespace dnSpy.Text.Editor {
 					else
 						toolTip.Content = toolTipInfo.Content;
 
-					var toolTipStyle = toolTipInfo.Style as Style;
-					if (toolTipStyle != null)
+					if (toolTipInfo.Style is Style toolTipStyle)
 						toolTip.Style = toolTipStyle;
 					else
 						toolTip.SetResourceReference(FrameworkElement.StyleProperty, toolTipInfo.Style ?? "GlyphTextMarkerToolTipStyle");

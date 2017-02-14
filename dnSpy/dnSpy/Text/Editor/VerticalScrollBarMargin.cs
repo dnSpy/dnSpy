@@ -37,9 +37,7 @@ namespace dnSpy.Text.Editor {
 		readonly IScrollMapFactoryService scrollMapFactoryService;
 
 		[ImportingConstructor]
-		VerticalScrollBarMarginProvider(IScrollMapFactoryService scrollMapFactoryService) {
-			this.scrollMapFactoryService = scrollMapFactoryService;
-		}
+		VerticalScrollBarMarginProvider(IScrollMapFactoryService scrollMapFactoryService) => this.scrollMapFactoryService = scrollMapFactoryService;
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new VerticalScrollBarMargin(scrollMapFactoryService, wpfTextViewHost);

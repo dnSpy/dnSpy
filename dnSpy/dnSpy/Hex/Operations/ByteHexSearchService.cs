@@ -97,7 +97,7 @@ namespace dnSpy.Hex.Operations {
 					realEnumerator.Dispose();
 				}
 
-				public void Reset() { throw new NotSupportedException(); }
+				public void Reset() => throw new NotSupportedException();
 			}
 		}
 

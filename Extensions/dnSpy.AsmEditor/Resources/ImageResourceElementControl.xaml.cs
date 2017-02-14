@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ImageResourceElementControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as ImageResourceElementVM;
-				if (data != null) {
+				if (DataContext is ImageResourceElementVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.OpenFile = new OpenFile(ownerWindow);
 				}

@@ -103,14 +103,11 @@ namespace dnSpy.Tabs {
 			var fel = content.FocusedElement;
 			if (fel == null)
 				fel = content.UIObject as IInputElement;
-			var sv = fel as ScrollViewer;
-			if (sv != null)
+			if (fel is ScrollViewer sv)
 				fel = sv.Content as IInputElement ?? fel;
 
-			var focusable = content as IFocusable;
-			if (focusable != null && focusable.CanFocus) {
-				var uiel = fel as UIElement;
-				if (uiel != null && !uiel.IsVisible)
+			if (content is IFocusable focusable && focusable.CanFocus) {
+				if (fel is UIElement uiel && !uiel.IsVisible)
 					new SetFocusWhenVisible(this, content, uiel, () => {
 						if (wpfFocusService.CanFocus)
 							focusable.Focus();
@@ -124,8 +121,7 @@ namespace dnSpy.Tabs {
 				if (fel == null || !fel.Focusable)
 					return;
 
-				var uiel = fel as UIElement;
-				if (uiel != null && !uiel.IsVisible)
+				if (fel is UIElement uiel && !uiel.IsVisible)
 					new SetFocusWhenVisible(this, content, uiel, () => SetFocusNoChecks(fel));
 				else
 					SetFocusNoChecks(fel);
@@ -206,9 +202,7 @@ namespace dnSpy.Tabs {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly TabGroup tabGroup;
 
-			public GuidObjectsProvider(TabGroup tabGroup) {
-				this.tabGroup = tabGroup;
-			}
+			public GuidObjectsProvider(TabGroup tabGroup) => this.tabGroup = tabGroup;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TABGROUP_GUID, tabGroup);

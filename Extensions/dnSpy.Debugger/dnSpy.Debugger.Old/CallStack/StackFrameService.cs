@@ -29,9 +29,7 @@ namespace dnSpy.Debugger.CallStack {
 	sealed class StackFramesUpdatedEventArgs : EventArgs {
 		public DnDebugger Debugger { get; }
 
-		public StackFramesUpdatedEventArgs(DnDebugger debugger) {
-			Debugger = debugger;
-		}
+		public StackFramesUpdatedEventArgs(DnDebugger debugger) => Debugger = debugger;
 	}
 
 	interface IStackFrameService : INotifyPropertyChanged {
@@ -66,9 +64,7 @@ namespace dnSpy.Debugger.CallStack {
 
 	sealed class NewFramesEventArgs : EventArgs {
 		public NewFramesKind Kind { get; }
-		public NewFramesEventArgs(NewFramesKind kind) {
-			Kind = kind;
-		}
+		public NewFramesEventArgs(NewFramesKind kind) => Kind = kind;
 	}
 
 	//[Export(typeof(IStackFrameService)), Export(typeof(ILoadBeforeDebug))]

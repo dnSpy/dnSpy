@@ -45,9 +45,7 @@ namespace dnSpy.AsmEditor.Commands {
 			: this(null) {
 		}
 
-		public IndexObservableCollection(Func<T> createNewItem) {
-			this.createNewItem = createNewItem;
-		}
+		public IndexObservableCollection(Func<T> createNewItem) => this.createNewItem = createNewItem;
 
 		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
 			if (!DisableAutoUpdateProps) {

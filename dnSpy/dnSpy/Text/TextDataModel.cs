@@ -45,8 +45,6 @@ namespace dnSpy.Text {
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) =>
 			realContentTypeChanged?.Invoke(this, new TextDataModelContentTypeChangedEventArgs(e.BeforeContentType, e.AfterContentType));
 
-		public TextDataModel(ITextBuffer textBuffer) {
-			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
-		}
+		public TextDataModel(ITextBuffer textBuffer) => this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 	}
 }

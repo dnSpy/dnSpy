@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class ConstantControl : UserControl {
-		public ConstantControl() {
-			InitializeComponent();
-		}
+		public ConstantControl() => InitializeComponent();
 	}
 }

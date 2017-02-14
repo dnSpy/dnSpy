@@ -61,9 +61,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			public readonly SaveOptionsVM File;
 			public double SizeRatio;
 
-			public SaveState(SaveOptionsVM vm) {
-				File = vm;
-			}
+			public SaveState(SaveOptionsVM vm) => File = vm;
 		}
 
 		public double TotalProgress {
@@ -165,9 +163,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			public override double Progress => (double)BytesWritten / TotalSize;
 
-			public HexFileProgress(ulong totalSize) {
-				TotalSize = totalSize;
-			}
+			public HexFileProgress(ulong totalSize) => TotalSize = totalSize;
 		}
 
 		public event EventHandler OnProgressUpdated;

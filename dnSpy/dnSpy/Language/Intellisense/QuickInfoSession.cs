@@ -163,10 +163,9 @@ namespace dnSpy.Language.Intellisense {
 			DisposeQuickInfoSources();
 		}
 
-		public bool Match() {
+		public bool Match() =>
 			// There's nothing to match...
-			return false;
-		}
+			false;
 
 		public void Collapse() => Dismiss();
 

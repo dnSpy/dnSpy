@@ -24,14 +24,11 @@ using System.Windows.Threading;
 
 namespace dnSpy.Debugger.Utilities {
 	static class UIUtils {
-		public static void SetFocus(Selector selector, object obj, DispatcherPriority prio) {
-			selector.Dispatcher.BeginInvoke(prio, new Action(() => {
-				if (selector.SelectedItem == obj) {
-					var item = selector.ItemContainerGenerator.ContainerFromItem(obj) as IInputElement;
-					if (item != null)
-						item.Focus();
-				}
-			}));
-		}
+		public static void SetFocus(Selector selector, object obj, DispatcherPriority prio) => selector.Dispatcher.BeginInvoke(prio, new Action(() => {
+			if (selector.SelectedItem == obj) {
+				if (selector.ItemContainerGenerator.ContainerFromItem(obj) is IInputElement item)
+					item.Focus();
+			}
+		}));
 	}
 }

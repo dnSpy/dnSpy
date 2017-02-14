@@ -57,15 +57,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			AutoColorizeObjects = true;
 		}
 
-		public PrintOptionsImpl Clone() {
-			return new PrintOptionsImpl {
-				Ellipsis = Ellipsis,
-				EscapeNonPrintableCharacters = EscapeNonPrintableCharacters,
-				MaximumOutputLength = MaximumOutputLength,
-				MemberDisplayFormat = MemberDisplayFormat,
-				NumberRadix = NumberRadix,
-				AutoColorizeObjects = AutoColorizeObjects,
-			};
-		}
+		public PrintOptionsImpl Clone() => new PrintOptionsImpl {
+			Ellipsis = Ellipsis,
+			EscapeNonPrintableCharacters = EscapeNonPrintableCharacters,
+			MaximumOutputLength = MaximumOutputLength,
+			MemberDisplayFormat = MemberDisplayFormat,
+			NumberRadix = NumberRadix,
+			AutoColorizeObjects = AutoColorizeObjects,
+		};
 	}
 }

@@ -47,9 +47,7 @@ namespace dnSpy.Contracts.Output {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance</param>
 		public ExportOutputServiceListenerAttribute(double order)
-			: base(typeof(IOutputServiceListener)) {
-			Order = order;
-		}
+			: base(typeof(IOutputServiceListener)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

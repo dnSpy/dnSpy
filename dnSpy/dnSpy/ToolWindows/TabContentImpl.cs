@@ -223,14 +223,12 @@ namespace dnSpy.ToolWindows {
 		void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
 		void AddEvents() {
-			var npc = Content as INotifyPropertyChanged;
-			if (npc != null)
+			if (Content is INotifyPropertyChanged npc)
 				npc.PropertyChanged += ToolWindowContent_PropertyChanged;
 		}
 
 		void RemoveEvents() {
-			var npc = Content as INotifyPropertyChanged;
-			if (npc != null)
+			if (Content is INotifyPropertyChanged npc)
 				npc.PropertyChanged -= ToolWindowContent_PropertyChanged;
 		}
 

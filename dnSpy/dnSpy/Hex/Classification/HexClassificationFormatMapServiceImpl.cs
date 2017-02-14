@@ -28,9 +28,7 @@ namespace dnSpy.Hex.Classification {
 		readonly VSTC.IClassificationFormatMapService classificationFormatMapService;
 
 		[ImportingConstructor]
-		HexClassificationFormatMapServiceImpl(VSTC.IClassificationFormatMapService classificationFormatMapService) {
-			this.classificationFormatMapService = classificationFormatMapService;
-		}
+		HexClassificationFormatMapServiceImpl(VSTC.IClassificationFormatMapService classificationFormatMapService) => this.classificationFormatMapService = classificationFormatMapService;
 
 		public override VSTC.IClassificationFormatMap GetClassificationFormatMap(string category) => classificationFormatMapService.GetClassificationFormatMap(category);
 		public override VSTC.IClassificationFormatMap GetClassificationFormatMap(HexView hexView) => classificationFormatMapService.GetClassificationFormatMap(HexTextView.GetOrCreate(hexView));

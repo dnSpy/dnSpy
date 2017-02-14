@@ -30,9 +30,7 @@ namespace dnSpy.Debugger.IMModules {
 	sealed class MyCancellationToken : ICancellationToken {
 		/*readonly*/ CancellationToken cancellationToken;
 
-		public MyCancellationToken(CancellationToken cancellationToken) {
-			this.cancellationToken = cancellationToken;
-		}
+		public MyCancellationToken(CancellationToken cancellationToken) => this.cancellationToken = cancellationToken;
 
 		public void ThrowIfCancellationRequested() => cancellationToken.ThrowIfCancellationRequested();
 	}

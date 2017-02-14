@@ -50,9 +50,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 	public sealed class ExportReferenceDocumentTabContentProviderAttribute : ExportAttribute, IReferenceDocumentTabContentProviderMetadata {
 		/// <summary>Constructor</summary>
 		public ExportReferenceDocumentTabContentProviderAttribute()
-			: base(typeof(IReferenceDocumentTabContentProvider)) {
-			Order = double.MaxValue;
-		}
+			: base(typeof(IReferenceDocumentTabContentProvider)) => Order = double.MaxValue;
 
 		/// <summary>
 		/// Order of this instance

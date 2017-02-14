@@ -28,9 +28,7 @@ namespace dnSpy.Controls {
 	sealed class WpfCommandService : IWpfCommandService {
 		readonly Dictionary<Guid, WpfCommands> toWpfCommands;
 
-		WpfCommandService() {
-			toWpfCommands = new Dictionary<Guid, WpfCommands>();
-		}
+		WpfCommandService() => toWpfCommands = new Dictionary<Guid, WpfCommands>();
 
 		public void Add(Guid guid, UIElement elem) {
 			if (elem == null)

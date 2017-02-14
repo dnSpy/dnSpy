@@ -35,9 +35,7 @@ namespace dnSpy.Search {
 		SearchToolWindowContent searchToolWindowContent;
 
 		[ImportingConstructor]
-		SearchToolWindowContentProvider(Lazy<ISearchService> searchService) {
-			this.searchService = searchService;
-		}
+		SearchToolWindowContentProvider(Lazy<ISearchService> searchService) => this.searchService = searchService;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(SearchToolWindowContent.THE_GUID, SearchToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_TOP_SEARCH, false); }
@@ -63,9 +61,7 @@ namespace dnSpy.Search {
 
 		readonly Lazy<ISearchService> searchService;
 
-		public SearchToolWindowContent(Lazy<ISearchService> searchService) {
-			this.searchService = searchService;
-		}
+		public SearchToolWindowContent(Lazy<ISearchService> searchService) => this.searchService = searchService;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			if (visEvent == ToolWindowContentVisibilityEvent.Removed)

@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class ImplMapControl : UserControl {
-		public ImplMapControl() {
-			InitializeComponent();
-		}
+		public ImplMapControl() => InitializeComponent();
 	}
 }

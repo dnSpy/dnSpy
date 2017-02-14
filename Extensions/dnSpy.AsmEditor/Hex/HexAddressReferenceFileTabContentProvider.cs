@@ -37,9 +37,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		readonly Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator;
 
 		[ImportingConstructor]
-		HexAddressReferenceFileTabContentCreator(Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator, IDocumentTreeView documentTreeView) {
-			this.hexViewDocumentTabContentCreator = hexViewDocumentTabContentCreator;
-		}
+		HexAddressReferenceFileTabContentCreator(Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator, IDocumentTreeView documentTreeView) => this.hexViewDocumentTabContentCreator = hexViewDocumentTabContentCreator;
 
 		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
 			var addrRef = @ref as AddressReference;

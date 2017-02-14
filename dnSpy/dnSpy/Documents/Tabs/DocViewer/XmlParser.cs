@@ -154,9 +154,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		sealed class XmlNamespaceTextViewerReference {
 			public XmlNamespaceReference XmlNamespaceReference { get; }
-			public XmlNamespaceTextViewerReference(XmlNamespaceReference nsRef) {
-				XmlNamespaceReference = nsRef ?? throw new ArgumentNullException(nameof(nsRef));
-			}
+			public XmlNamespaceTextViewerReference(XmlNamespaceReference nsRef) => XmlNamespaceReference = nsRef ?? throw new ArgumentNullException(nameof(nsRef));
 			public override bool Equals(object obj) {
 				var other = obj as XmlNamespaceTextViewerReference;
 				return other != null && XmlNamespaceReference.Equals(other.XmlNamespaceReference);
@@ -423,9 +421,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			XmlNamespaces previous;
 			readonly Dictionary<string, XmlNamespaceDefinition> namespaces;
 
-			public XmlNamespaces() {
-				namespaces = new Dictionary<string, XmlNamespaceDefinition>(StringComparer.Ordinal);
-			}
+			public XmlNamespaces() => namespaces = new Dictionary<string, XmlNamespaceDefinition>(StringComparer.Ordinal);
 
 			public void Clear() {
 				previous = null;
@@ -473,9 +469,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		sealed class XmlNamespaceReference : IEquatable<XmlNamespaceReference> {
 			public string Alias { get; }
 			public XmlNamespaceDefinition Definition { get; set; }
-			public XmlNamespaceReference(string alias) {
-				Alias = alias ?? throw new ArgumentNullException(nameof(alias));
-			}
+			public XmlNamespaceReference(string alias) => Alias = alias ?? throw new ArgumentNullException(nameof(alias));
 			public bool Equals(XmlNamespaceReference other) => Equals(Definition, other.Definition);
 			public override bool Equals(object obj) => obj is XmlNamespaceReference && Equals((XmlNamespaceReference)obj);
 			public override int GetHashCode() => Definition?.GetHashCode() ?? 0;

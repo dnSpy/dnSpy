@@ -55,9 +55,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected ContentTypeOptionDefinition() {
-			CanBeSaved = true;
-		}
+		protected ContentTypeOptionDefinition() => CanBeSaved = true;
 	}
 
 	/// <summary>
@@ -77,17 +75,13 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// </summary>
 		/// <param name="option">Name of option</param>
 		public ContentTypeOptionDefinition(EditorOptionKey<T> option)
-			: this() {
-			Name = option.Name;
-		}
+			: this() => Name = option.Name;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="optionId">Name of option</param>
 		public ContentTypeOptionDefinition(string optionId)
-			: this() {
-			Name = optionId;
-		}
+			: this() => Name = optionId;
 	}
 }

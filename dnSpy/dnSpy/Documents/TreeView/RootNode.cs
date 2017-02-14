@@ -65,15 +65,13 @@ namespace dnSpy.Documents.TreeView {
 			if (!Context.CanDragAndDrop)
 				return;
 
-			var nodeIndexes = e.Data.GetData(DocumentTreeViewConstants.DATAFORMAT_COPIED_ROOT_NODES) as int[];
-			if (nodeIndexes != null) {
+			if (e.Data.GetData(DocumentTreeViewConstants.DATAFORMAT_COPIED_ROOT_NODES) is int[] nodeIndexes) {
 				Debug.Assert(DropNodes != null);
 				DropNodes?.Invoke(index, nodeIndexes);
 				return;
 			}
 
-			var filenames = e.Data.GetData(DataFormats.FileDrop) as string[];
-			if (filenames != null) {
+			if (e.Data.GetData(DataFormats.FileDrop) is string[] filenames) {
 				Debug.Assert(DropFiles != null);
 				DropFiles?.Invoke(index, filenames);
 				return;

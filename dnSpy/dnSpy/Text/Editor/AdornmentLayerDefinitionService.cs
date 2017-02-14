@@ -31,9 +31,7 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<AdornmentLayerDefinition, IAdornmentLayersMetadata>[] adornmentLayerDefinitions;
 
 		[ImportingConstructor]
-		AdornmentLayerDefinitionService([ImportMany] IEnumerable<Lazy<AdornmentLayerDefinition, IAdornmentLayersMetadata>> adornmentLayerDefinitions) {
-			this.adornmentLayerDefinitions = Orderer.Order(adornmentLayerDefinitions).ToArray();
-		}
+		AdornmentLayerDefinitionService([ImportMany] IEnumerable<Lazy<AdornmentLayerDefinition, IAdornmentLayersMetadata>> adornmentLayerDefinitions) => this.adornmentLayerDefinitions = Orderer.Order(adornmentLayerDefinitions).ToArray();
 
 		public MetadataAndOrder<IAdornmentLayersMetadata>? GetLayerDefinition(string name) {
 			for (int i = 0; i < adornmentLayerDefinitions.Length; i++) {

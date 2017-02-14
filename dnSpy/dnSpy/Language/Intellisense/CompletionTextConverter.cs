@@ -43,8 +43,6 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-			throw new NotSupportedException();
-		}
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotSupportedException();
 	}
 }

@@ -34,8 +34,6 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// Constructor
 		/// </summary>
 		/// <param name="type">Classification type</param>
-		public HexMarkerTag(string type) {
-			Type = type ?? throw new ArgumentNullException(nameof(type));
-		}
+		public HexMarkerTag(string type) => Type = type ?? throw new ArgumentNullException(nameof(type));
 	}
 }

@@ -31,9 +31,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class MethodOverridesNode : SearchNode {
 		readonly MethodDef analyzedMethod;
 
-		public MethodOverridesNode(MethodDef analyzedMethod) {
-			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
-		}
+		public MethodOverridesNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.OverriddenByTreeNode);

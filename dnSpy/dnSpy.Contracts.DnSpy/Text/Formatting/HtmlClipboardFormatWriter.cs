@@ -80,15 +80,13 @@ namespace dnSpy.Contracts.Text.Formatting {
 			}
 		}
 
-		static string GetHeader(int startHtml, int endHtml, int startFragment, int endFragment) {
-			return string.Format(
+		static string GetHeader(int startHtml, int endHtml, int startFragment, int endFragment) => string.Format(
 				"Version:0.9" + Environment.NewLine +
 				"StartHTML:{0:D10}" + Environment.NewLine +
 				"EndHTML:{1:D10}" + Environment.NewLine +
 				"StartFragment:{2:D10}" + Environment.NewLine +
 				"EndFragment:{3:D10}" + Environment.NewLine,
 				startHtml, endHtml, startFragment, endFragment);
-		}
 
 		public override string ToString() {
 			var header = GetHeader(0, 0, 0, 0);

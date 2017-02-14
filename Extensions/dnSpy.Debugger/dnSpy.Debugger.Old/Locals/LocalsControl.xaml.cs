@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.Locals {
 		//[ExportAutoLoaded]
 		sealed class ThemeServiceLoader : IAutoLoaded {
 			[ImportingConstructor]
-			ThemeServiceLoader(IThemeService themeService) {
-				LocalsControl.themeService = themeService;
-			}
+			ThemeServiceLoader(IThemeService themeService) => LocalsControl.themeService = themeService;
 		}
 		static IThemeService themeService;
 

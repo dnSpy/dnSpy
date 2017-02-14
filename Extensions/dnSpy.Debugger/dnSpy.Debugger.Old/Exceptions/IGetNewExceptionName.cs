@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.Exceptions {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		GetNewExceptionName(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		GetNewExceptionName(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public string GetName() {
 			var res = messageBoxService.Ask(dnSpy_Debugger_Resources.Exceptions_Add_Label, null,

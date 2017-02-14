@@ -28,9 +28,7 @@ namespace dndbg.Engine {
 
 		public int Count => dict.Count;
 
-		public DebuggerCollection(Func<TKey, TValue> createValue) {
-			this.createValue = createValue;
-		}
+		public DebuggerCollection(Func<TKey, TValue> createValue) => this.createValue = createValue;
 
 		/// <summary>
 		/// Tries to get an existing item. Returns null if it doesn't exist.

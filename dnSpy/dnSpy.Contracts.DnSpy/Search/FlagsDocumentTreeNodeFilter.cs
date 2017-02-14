@@ -35,9 +35,7 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		/// <param name="flags">Flags</param>
-		public FlagsDocumentTreeNodeFilter(VisibleMembersFlags flags) {
-			this.flags = flags;
-		}
+		public FlagsDocumentTreeNodeFilter(VisibleMembersFlags flags) => this.flags = flags;
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public override DocumentTreeNodeFilterResult GetResult(AssemblyRef asmRef) {

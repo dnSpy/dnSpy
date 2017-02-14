@@ -32,13 +32,10 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		DefaultTextViewCommandTargetFilterProvider(Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService) {
-			this.editorOperationsFactoryService = editorOperationsFactoryService;
-		}
+		DefaultTextViewCommandTargetFilterProvider(Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
 		public ICommandTargetFilter Create(object target) {
-			var textView = target as ITextView;
-			if (textView != null)
+			if (target is ITextView textView)
 				return new DefaultTextViewCommandTarget(textView, editorOperationsFactoryService.Value);
 			return null;
 		}

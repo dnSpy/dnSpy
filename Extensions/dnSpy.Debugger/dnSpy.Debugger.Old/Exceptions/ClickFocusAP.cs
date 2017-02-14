@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public static readonly DependencyProperty TargetProperty = DependencyProperty.RegisterAttached(
 			"Target", typeof(UIElement), typeof(ClickFocusAP), new PropertyMetadata(null, TargetPropertyChangedCallback));
 
-		public static void SetTarget(DependencyObject obj, UIElement value) {
-			obj.SetValue(TargetProperty, value);
-		}
+		public static void SetTarget(DependencyObject obj, UIElement value) => obj.SetValue(TargetProperty, value);
 
 		public static UIElement GetTarget(DependencyObject obj) => (UIElement)obj.GetValue(TargetProperty);
 

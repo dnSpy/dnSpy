@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.CallStack {
 		CallStackToolWindowContent callStackToolWindowContent;
 
 		[ImportingConstructor]
-		CallStackToolWindowContentProvider(Lazy<ICallStackContent> callStackContent) {
-			this.callStackContent = callStackContent;
-		}
+		CallStackToolWindowContentProvider(Lazy<ICallStackContent> callStackContent) => this.callStackContent = callStackContent;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(CallStackToolWindowContent.THE_GUID, CallStackToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CALLSTACK, false); }
@@ -59,9 +57,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		readonly Lazy<ICallStackContent> callStackContent;
 
-		public CallStackToolWindowContent(Lazy<ICallStackContent> callStackContent) {
-			this.callStackContent = callStackContent;
-		}
+		public CallStackToolWindowContent(Lazy<ICallStackContent> callStackContent) => this.callStackContent = callStackContent;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {

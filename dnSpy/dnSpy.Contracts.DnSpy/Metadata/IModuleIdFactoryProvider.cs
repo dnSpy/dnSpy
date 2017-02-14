@@ -52,9 +52,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance, eg. <see cref="ModuleIdFactoryProviderConstants.OrderDebugger"/></param>
 		public ExportModuleIdFactoryProviderAttribute(double order)
-			: base(typeof(IModuleIdFactoryProvider)) {
-			Order = order;
-		}
+			: base(typeof(IModuleIdFactoryProvider)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

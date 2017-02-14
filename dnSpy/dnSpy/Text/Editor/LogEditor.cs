@@ -60,9 +60,7 @@ namespace dnSpy.Text.Editor {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly LogEditor logEditorUI;
 
-			public GuidObjectsProvider(LogEditor logEditorUI) {
-				this.logEditorUI = logEditorUI;
-			}
+			public GuidObjectsProvider(LogEditor logEditorUI) => this.logEditorUI = logEditorUI;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_LOG_EDITOR_GUID, logEditorUI);

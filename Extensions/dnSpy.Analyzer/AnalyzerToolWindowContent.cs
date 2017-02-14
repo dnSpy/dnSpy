@@ -35,9 +35,7 @@ namespace dnSpy.Analyzer {
 		AnalyzerToolWindowContent analyzerToolWindowContent;
 
 		[ImportingConstructor]
-		AnalyzerToolWindowContentProvider(Lazy<IAnalyzerService> analyzerService) {
-			this.analyzerService = analyzerService;
-		}
+		AnalyzerToolWindowContentProvider(Lazy<IAnalyzerService> analyzerService) => this.analyzerService = analyzerService;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(AnalyzerToolWindowContent.THE_GUID, AnalyzerToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_ANALYZER, false); }
@@ -59,9 +57,7 @@ namespace dnSpy.Analyzer {
 
 		readonly Lazy<IAnalyzerService> analyzerService;
 
-		public AnalyzerToolWindowContent(Lazy<IAnalyzerService> analyzerService) {
-			this.analyzerService = analyzerService;
-		}
+		public AnalyzerToolWindowContent(Lazy<IAnalyzerService> analyzerService) => this.analyzerService = analyzerService;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			if (visEvent == ToolWindowContentVisibilityEvent.Removed)

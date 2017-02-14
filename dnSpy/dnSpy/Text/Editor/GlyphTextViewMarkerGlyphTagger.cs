@@ -40,9 +40,7 @@ namespace dnSpy.Text.Editor {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 
 		[ImportingConstructor]
-		GlyphTextViewMarkerGlyphTaggerProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) {
-			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
-		}
+		GlyphTextViewMarkerGlyphTaggerProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) => this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
@@ -61,9 +59,7 @@ namespace dnSpy.Text.Editor {
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
-		public GlyphTextViewMarkerGlyphTagger(GlyphTextViewMarkerService service) {
-			this.service = service;
-		}
+		public GlyphTextViewMarkerGlyphTagger(GlyphTextViewMarkerService service) => this.service = service;
 
 		public IEnumerable<ITagSpan<GlyphTextMarkerGlyphTag>> GetTags(NormalizedSnapshotSpanCollection spans) =>
 			service.GetGlyphTextMarkerGlyphTags(spans);
@@ -89,9 +85,7 @@ namespace dnSpy.Text.Editor {
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 
 		[ImportingConstructor]
-		GlyphTextViewMarkerGlyphFactoryProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) {
-			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
-		}
+		GlyphTextViewMarkerGlyphFactoryProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) => this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
 
 		static readonly string[] textViewRoles = new string[] {
 			PredefinedTextViewRoles.Interactive,
@@ -109,9 +103,7 @@ namespace dnSpy.Text.Editor {
 	sealed class GlyphTextViewMarkerGlyphFactory : IGlyphFactory {
 		readonly GlyphTextViewMarkerService service;
 
-		public GlyphTextViewMarkerGlyphFactory(GlyphTextViewMarkerService service) {
-			this.service = service;
-		}
+		public GlyphTextViewMarkerGlyphFactory(GlyphTextViewMarkerService service) => this.service = service;
 
 		public UIElement GenerateGlyph(IWpfTextViewLine line, IGlyphTag tag) {
 			var glyphTag = tag as GlyphTextMarkerGlyphTag;

@@ -75,9 +75,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 					DeserializedDataInfos[c.Name] = new DeserializedDataInfo(c.ObjectType, c.Name, c.Value);
 			}
 
-			public void GetObjectData(SerializationInfo info, StreamingContext context) {
-				throw new NotImplementedException();
-			}
+			public void GetObjectData(SerializationInfo info, StreamingContext context) => throw new NotImplementedException();
 		}
 
 		[Serializable]
@@ -85,9 +83,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			public DontDeserializeType(SerializationInfo info, StreamingContext context) {
 			}
 
-			public void GetObjectData(SerializationInfo info, StreamingContext context) {
-				throw new NotImplementedException();
-			}
+			public void GetObjectData(SerializationInfo info, StreamingContext context) => throw new NotImplementedException();
 		}
 
 		public static Dictionary<string, DeserializedDataInfo> Deserialize(string asmName, string typeName, byte[] data) {

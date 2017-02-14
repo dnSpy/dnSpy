@@ -43,9 +43,7 @@ namespace dnSpy.Hex.Editor {
 		readonly ColumnLineSeparatorServiceProvider columnLineSeparatorServiceProvider;
 
 		[ImportingConstructor]
-		ColumnLineSeparatorWpfHexViewCreationListener(ColumnLineSeparatorServiceProvider columnLineSeparatorServiceProvider) {
-			this.columnLineSeparatorServiceProvider = columnLineSeparatorServiceProvider;
-		}
+		ColumnLineSeparatorWpfHexViewCreationListener(ColumnLineSeparatorServiceProvider columnLineSeparatorServiceProvider) => this.columnLineSeparatorServiceProvider = columnLineSeparatorServiceProvider;
 
 		public override void HexViewCreated(WpfHexView wpfHexView) =>
 			columnLineSeparatorServiceProvider.InstallLineSeparatorService(wpfHexView);
@@ -60,9 +58,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexEditorFormatMapService editorFormatMapService;
 
 		[ImportingConstructor]
-		ColumnLineSeparatorServiceProviderImpl(HexEditorFormatMapService editorFormatMapService) {
-			this.editorFormatMapService = editorFormatMapService;
-		}
+		ColumnLineSeparatorServiceProviderImpl(HexEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public override void InstallLineSeparatorService(WpfHexView wpfHexView) {
 			if (wpfHexView == null)

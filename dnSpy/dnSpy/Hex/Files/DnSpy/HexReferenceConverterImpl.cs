@@ -33,13 +33,10 @@ namespace dnSpy.Hex.Files.DnSpy {
 		readonly BufferToDocumentNodeService bufferToDocumentNodeService;
 
 		[ImportingConstructor]
-		HexReferenceConverterImpl(BufferToDocumentNodeService bufferToDocumentNodeService) {
-			this.bufferToDocumentNodeService = bufferToDocumentNodeService;
-		}
+		HexReferenceConverterImpl(BufferToDocumentNodeService bufferToDocumentNodeService) => this.bufferToDocumentNodeService = bufferToDocumentNodeService;
 
 		public override object Convert(HexView hexView, object reference) {
-			var methodRef = reference as HexMethodReference;
-			if (methodRef != null)
+			if (reference is HexMethodReference methodRef)
 				return ConvertMethodReference(methodRef);
 
 			return reference;
@@ -81,9 +78,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		BufferToDocumentNodeServiceImpl(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		BufferToDocumentNodeServiceImpl(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public override DsDocumentNode Find(HexBufferFile file) {
 			if (file == null)

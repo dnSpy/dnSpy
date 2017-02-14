@@ -62,9 +62,7 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		MethodAnnotations() {
-			AddTimerWait(this);
-		}
+		MethodAnnotations() => AddTimerWait(this);
 
 		static void AddTimerWait(MethodAnnotations ma) {
 			Timer timer = null;

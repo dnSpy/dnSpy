@@ -653,11 +653,10 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 		HexBufferPoint? incrementalStartPosition;
 
-		string TryGetSearchStringAtPoint(HexBufferPoint point) {
+		string TryGetSearchStringAtPoint(HexBufferPoint point) =>
 			// The text editor can find the current word, but there's not much we can do
 			// so return null.
-			return null;
-		}
+			null;
 
 		string TryGetSearchStringFromSelection() {
 			if (wpfHexView.Selection.IsEmpty)

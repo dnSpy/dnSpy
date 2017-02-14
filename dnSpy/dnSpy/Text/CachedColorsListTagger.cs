@@ -36,9 +36,7 @@ namespace dnSpy.Text {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		CachedColorsListTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService;
-		}
+		CachedColorsListTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out CachedColorsListTagger colorizer)) {
@@ -63,9 +61,7 @@ namespace dnSpy.Text {
 
 		public IThemeClassificationTypeService ThemeClassificationTypeService { get; internal set; }
 
-		CachedColorsListTagger(CachedColorsList cachedColorsList) {
-			this.cachedColorsList = cachedColorsList;
-		}
+		CachedColorsListTagger(CachedColorsList cachedColorsList) => this.cachedColorsList = cachedColorsList;
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged {
 			add { }

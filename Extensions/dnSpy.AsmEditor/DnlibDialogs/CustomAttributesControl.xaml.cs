@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CustomAttributesControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as CustomAttributesVM;
-				if (data != null) {
+				if (DataContext is CustomAttributesVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.EditObject = new EditCustomAttribute(ownerWindow);
 				}

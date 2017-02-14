@@ -33,9 +33,7 @@ namespace dnSpy.Text.CodeEditor {
 		readonly Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>[] codeEditorOptionsDefinitions;
 
 		[ImportingConstructor]
-		ContentTypeOptionDefinitionProvider([ImportMany] IEnumerable<Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>> codeEditorOptionsDefinitions) {
-			this.codeEditorOptionsDefinitions = codeEditorOptionsDefinitions.ToArray();
-		}
+		ContentTypeOptionDefinitionProvider([ImportMany] IEnumerable<Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>> codeEditorOptionsDefinitions) => this.codeEditorOptionsDefinitions = codeEditorOptionsDefinitions.ToArray();
 
 		IEnumerable<ICodeEditorOptionsDefinitionMetadata> GetOptionsDefinitions() {
 			foreach (var lz in codeEditorOptionsDefinitions)

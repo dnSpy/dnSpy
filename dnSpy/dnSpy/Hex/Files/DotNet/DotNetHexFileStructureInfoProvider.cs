@@ -39,12 +39,10 @@ namespace dnSpy.Hex.Files.DotNet {
 
 	sealed class DotNetHexFileStructureInfoProvider : HexFileStructureInfoProvider {
 		public override HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
-			var body = structure as DotNetMethodBody;
-			if (body != null) {
+			if (structure is DotNetMethodBody body) {
 				if (body.Kind == DotNetMethodBodyKind.Tiny)
 					return Array.Empty<HexIndexes>();
-				var fatBody = body as FatMethodBody;
-				if (fatBody != null) {
+				if (body is FatMethodBody fatBody) {
 					if (fatBody.EHTable == null)
 						return subStructFatWithoutEH;
 					return subStructFatWithEH;
@@ -54,8 +52,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (structure is DotNetEmbeddedResource)
 				return Array.Empty<HexIndexes>();
 
-			var multiResource = structure as MultiResourceDataHeaderData;
-			if (multiResource != null) {
+			if (structure is MultiResourceDataHeaderData multiResource) {
 				if (multiResource is MultiResourceSimplDataHeaderData || multiResource is MultiResourceStringDataHeaderData)
 					return multiResourceFields2;
 				if (multiResource is MultiResourceArrayDataHeaderData)
@@ -67,8 +64,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (stringsRec?.Terminator != null)
 				return stringsRecordIndexes;
 
-			var usRec = structure as USHeapRecordData;
-			if (usRec != null) {
+			if (structure is USHeapRecordData usRec) {
 				if (usRec.TerminalByte != null)
 					return usRecordIndexes3;
 				return usRecordIndexes2;
@@ -116,28 +112,22 @@ namespace dnSpy.Hex.Files.DotNet {
 		};
 
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file, ComplexData structure, HexPosition position) {
-			var resourceNameOffs = structure as MultiResourceUnicodeNameAndOffsetData;
-			if (resourceNameOffs != null)
+			if (structure is MultiResourceUnicodeNameAndOffsetData resourceNameOffs)
 				return GetFieldReferenceSpan(file, resourceNameOffs, position);
 
-			var cor20 = structure as DotNetCor20Data;
-			if (cor20 != null)
+			if (structure is DotNetCor20Data cor20)
 				return GetFieldReferenceSpan(file, cor20, position);
 
-			var multiResourceHeader = structure as DotNetMultiFileResourceHeaderData;
-			if (multiResourceHeader != null)
+			if (structure is DotNetMultiFileResourceHeaderData multiResourceHeader)
 				return GetFieldReferenceSpan(file, multiResourceHeader, position);
 
-			var mdHeader = structure as DotNetMetadataHeaderData;
-			if (mdHeader != null)
+			if (structure is DotNetMetadataHeaderData mdHeader)
 				return GetFieldReferenceSpan(file, mdHeader, position);
 
-			var fatBody = structure as FatMethodBody;
-			if (fatBody != null)
+			if (structure is FatMethodBody fatBody)
 				return GetFieldReferenceSpan(file, fatBody, position);
 
-			var record = structure as TableRecordData;
-			if (record != null)
+			if (structure is TableRecordData record)
 				return GetFieldReferenceSpan(file, record, position);
 
 			return null;

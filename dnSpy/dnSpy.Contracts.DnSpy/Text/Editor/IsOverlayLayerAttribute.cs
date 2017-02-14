@@ -28,9 +28,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Constructor
 		/// </summary>
 		/// <param name="isOverlayLayer">true if it's an overlay layer, false if it's a normal layer</param>
-		public IsOverlayLayerAttribute(bool isOverlayLayer) {
-			IsOverlayLayer = isOverlayLayer;
-		}
+		public IsOverlayLayerAttribute(bool isOverlayLayer) => IsOverlayLayer = isOverlayLayer;
 
 		/// <summary>
 		/// true if it's an overlay layer, false if it's a normal layer

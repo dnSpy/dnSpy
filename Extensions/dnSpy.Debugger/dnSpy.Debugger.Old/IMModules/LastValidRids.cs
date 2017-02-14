@@ -30,16 +30,14 @@ namespace dnSpy.Debugger.IMModules {
 		public uint GenericParamRid;
 		public uint GenericParamConstraintRid;
 
-		public bool Equals(LastValidRids other) {
-			return
-				TypeDefRid == other.TypeDefRid &&
-				FieldRid == other.FieldRid &&
-				MethodRid == other.MethodRid &&
-				ParamRid == other.ParamRid &&
-				EventRid == other.EventRid &&
-				PropertyRid == other.PropertyRid &&
-				GenericParamRid == other.GenericParamRid &&
-				GenericParamConstraintRid == other.GenericParamConstraintRid;
-		}
+		public bool Equals(LastValidRids other) =>
+			TypeDefRid == other.TypeDefRid &&
+			FieldRid == other.FieldRid &&
+			MethodRid == other.MethodRid &&
+			ParamRid == other.ParamRid &&
+			EventRid == other.EventRid &&
+			PropertyRid == other.PropertyRid &&
+			GenericParamRid == other.GenericParamRid &&
+			GenericParamConstraintRid == other.GenericParamConstraintRid;
 	}
 }

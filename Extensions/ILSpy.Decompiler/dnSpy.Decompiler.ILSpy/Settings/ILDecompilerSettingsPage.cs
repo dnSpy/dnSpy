@@ -43,8 +43,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			this.ilSettings = ilSettings.Clone();
 		}
 
-		public override void OnApply() { throw new InvalidOperationException(); }
-
+		public override void OnApply() => throw new InvalidOperationException();
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			if (!_global_ilSettings.Equals(ilSettings))
 				appRefreshSettings.Add(SettingsConstants.REDISASSEMBLE_IL_ILSPY_CODE);

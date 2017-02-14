@@ -38,9 +38,7 @@ namespace dnSpy.Themes {
 		readonly IThemeServiceImpl themeService;
 
 		[ImportingConstructor]
-		ThemesMenu(IThemeServiceImpl themeService) {
-			this.themeService = themeService;
-		}
+		ThemesMenu(IThemeServiceImpl themeService) => this.themeService = themeService;
 
 		public override void Execute(IMenuItemContext context) { }
 
@@ -53,9 +51,7 @@ namespace dnSpy.Themes {
 				this.isChecked = isChecked;
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				action(context);
-			}
+			public override void Execute(IMenuItemContext context) => action(context);
 
 			public override bool IsChecked(IMenuItemContext context) => isChecked;
 		}

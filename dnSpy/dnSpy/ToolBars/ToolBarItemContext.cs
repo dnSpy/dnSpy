@@ -24,8 +24,6 @@ namespace dnSpy.ToolBars {
 	sealed class ToolBarItemContext : IToolBarItemContext {
 		public Guid ToolBarGuid { get; }
 
-		public ToolBarItemContext(Guid toolBarGuid) {
-			ToolBarGuid = toolBarGuid;
-		}
+		public ToolBarItemContext(Guid toolBarGuid) => ToolBarGuid = toolBarGuid;
 	}
 }

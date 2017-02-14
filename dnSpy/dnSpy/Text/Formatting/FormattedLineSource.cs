@@ -213,8 +213,7 @@ namespace dnSpy.Text.Formatting {
 					}
 				}
 				else {
-					var adornmentElement = seqElem as IAdornmentElement;
-					if (adornmentElement != null && seqSpans.Count == 1) {
+					if (seqElem is IAdornmentElement adornmentElement && seqSpans.Count == 1) {
 						var span = seqSpans[0].Span;
 						list.Add(new LinePart(list.Count, column, new Span(span.Start - startOffs, span.Length), adornmentElement, DefaultTextProperties));
 						column += list[list.Count - 1].ColumnLength;

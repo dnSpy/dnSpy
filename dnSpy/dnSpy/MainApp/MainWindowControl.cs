@@ -73,12 +73,11 @@ namespace dnSpy.MainApp {
 			return this;
 		}
 
-		static bool IsValid(AppToolWindowLocation value) {
-			return value == AppToolWindowLocation.Top ||
-					value == AppToolWindowLocation.Left ||
-					value == AppToolWindowLocation.Right ||
-					value == AppToolWindowLocation.Bottom;
-		}
+		static bool IsValid(AppToolWindowLocation value) =>
+			value == AppToolWindowLocation.Top ||
+			value == AppToolWindowLocation.Left ||
+			value == AppToolWindowLocation.Right ||
+			value == AppToolWindowLocation.Bottom;
 
 		public void Write(ISettingsSection section) {
 			Debug.Assert(HorizontalContentState != null && VerticalContentState != null);
@@ -116,9 +115,7 @@ namespace dnSpy.MainApp {
 		public bool IsHorizontal;
 		public List<ToolWindowGroupState> Groups { get; }
 
-		public ToolWindowUIState() {
-			Groups = new List<ToolWindowGroupState>();
-		}
+		public ToolWindowUIState() => Groups = new List<ToolWindowGroupState>();
 
 		public ToolWindowUIState Save(AppToolWindowLocation location, MainWindowControl.ToolWindowUI ui) {
 			Location = location;
@@ -208,9 +205,7 @@ namespace dnSpy.MainApp {
 		public int Index;
 		public List<ToolWindowContentState> Contents { get; }
 
-		public ToolWindowGroupState() {
-			Contents = new List<ToolWindowContentState>();
-		}
+		public ToolWindowGroupState() => Contents = new List<ToolWindowContentState>();
 
 		public static ToolWindowGroupState TryDeserialize(ISettingsSection section) {
 			int? index = section.Attribute<int?>(INDEX_ATTR);
@@ -252,9 +247,7 @@ namespace dnSpy.MainApp {
 		public ToolWindowContentState() {
 		}
 
-		public ToolWindowContentState(Guid guid) {
-			Guid = guid;
-		}
+		public ToolWindowContentState(Guid guid) => Guid = guid;
 
 		public static ToolWindowContentState TryDeserialize(ISettingsSection section) {
 			var guid = section.Attribute<Guid?>(GUID_ATTR);
@@ -320,9 +313,7 @@ namespace dnSpy.MainApp {
 				ToolWindowGroupService.TabGroupCollectionChanged += ToolWindowGroupService_TabGroupCollectionChanged;
 			}
 
-			void ToolWindowGroupService_TabGroupCollectionChanged(object sender, ToolWindowGroupCollectionChangedEventArgs e) {
-				mainWindowControl.TabGroupCollectionChanged(this);
-			}
+			void ToolWindowGroupService_TabGroupCollectionChanged(object sender, ToolWindowGroupCollectionChangedEventArgs e) => mainWindowControl.TabGroupCollectionChanged(this);
 
 			public StackedContentChildInfo GetSizeInfo() => new StackedContentChildInfo {
 				Horizontal = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),

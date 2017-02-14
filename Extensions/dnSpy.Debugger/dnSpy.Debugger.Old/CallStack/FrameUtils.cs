@@ -83,8 +83,7 @@ namespace dnSpy.Debugger.CallStack {
 
 			if (ip.IsEpilog) {
 				var mod = moduleLoader.LoadModule(frame.Function?.Module, canLoadDynFile: true, isAutoLoaded: true)?.ModuleDef;
-				var md = mod?.ResolveToken(frame.Token) as MethodDef;
-				if (md != null && md.Body != null && md.Body.Instructions.Count > 0)
+				if (mod?.ResolveToken(frame.Token) is MethodDef md && md.Body != null && md.Body.Instructions.Count > 0)
 					return md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
 			}
 

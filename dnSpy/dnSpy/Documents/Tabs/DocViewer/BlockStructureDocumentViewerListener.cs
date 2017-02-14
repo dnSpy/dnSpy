@@ -27,9 +27,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IBlockStructureServiceProvider blockStructureServiceProvider;
 
 		[ImportingConstructor]
-		BlockStructureDocumentViewerListener(IBlockStructureServiceProvider blockStructureServiceProvider) {
-			this.blockStructureServiceProvider = blockStructureServiceProvider;
-		}
+		BlockStructureDocumentViewerListener(IBlockStructureServiceProvider blockStructureServiceProvider) => this.blockStructureServiceProvider = blockStructureServiceProvider;
 
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)

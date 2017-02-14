@@ -58,9 +58,7 @@ namespace dnSpy.Contracts.Extension {
 	public sealed class ExportExtensionAttribute : ExportAttribute, IExtensionMetadata {
 		/// <summary>Constructor</summary>
 		public ExportExtensionAttribute()
-			: base(typeof(IExtension)) {
-			Order = double.MaxValue;
-		}
+			: base(typeof(IExtension)) => Order = double.MaxValue;
 
 		/// <summary>
 		/// Order of this instance

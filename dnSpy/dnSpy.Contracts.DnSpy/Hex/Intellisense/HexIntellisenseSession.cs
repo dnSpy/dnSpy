@@ -29,9 +29,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected HexIntellisenseSession() {
-			Properties = new VSUTIL.PropertyCollection();
-		}
+		protected HexIntellisenseSession() => Properties = new VSUTIL.PropertyCollection();
 
 		/// <summary>
 		/// Gets all properties

@@ -31,9 +31,7 @@ namespace dnSpy.Settings {
 
 		public ISettingsSection[] Sections => sections.Values.ToArray();
 
-		SettingsService() {
-			sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
-		}
+		SettingsService() => sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
 
 		public ISettingsSection GetOrCreateSection(Guid guid) {
 			if (guid == Guid.Empty)

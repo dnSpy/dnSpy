@@ -32,9 +32,7 @@ namespace dnSpy.Settings.Dialog {
 		public double Order => 0;
 
 		[ImportingConstructor]
-		SettingsAppCommandLineArgsHandler(Lazy<IAppSettingsService> appSettingsService) {
-			this.appSettingsService = appSettingsService;
-		}
+		SettingsAppCommandLineArgsHandler(Lazy<IAppSettingsService> appSettingsService) => this.appSettingsService = appSettingsService;
 
 		public void OnNewArgs(IAppCommandLineArgs args) {
 			if (!args.HasArgument(ARG_NAME))

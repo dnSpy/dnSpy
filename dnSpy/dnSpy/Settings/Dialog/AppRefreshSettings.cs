@@ -25,9 +25,7 @@ namespace dnSpy.Settings.Dialog {
 	sealed class AppRefreshSettings : IAppRefreshSettings {
 		readonly Dictionary<Guid, object> dict = new Dictionary<Guid, object>();
 
-		public void Add(Guid guid, object value = null) {
-			dict[guid] = value;
-		}
+		public void Add(Guid guid, object value = null) => dict[guid] = value;
 
 		public bool Has(Guid guid) => dict.ContainsKey(guid);
 

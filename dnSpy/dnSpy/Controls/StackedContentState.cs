@@ -26,9 +26,7 @@ namespace dnSpy.Controls {
 		public List<GridLength> RowsCols { get; }
 		public bool IsHorizontal { get; set; }
 
-		public StackedContentState() {
-			RowsCols = new List<GridLength>();
-		}
+		public StackedContentState() => RowsCols = new List<GridLength>();
 	}
 
 	static class StackedContentStateSerializer {

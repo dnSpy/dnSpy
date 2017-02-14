@@ -56,9 +56,7 @@ namespace dndbg.Engine {
 			return c;
 		}
 
-		public object GetConstant() {
-			return GetConstant(out var etype);
-		}
+		public object GetConstant() => GetConstant(out var etype);
 
 		public static bool operator ==(CorField a, CorField b) {
 			if (ReferenceEquals(a, b))
@@ -70,11 +68,9 @@ namespace dndbg.Engine {
 
 		public static bool operator !=(CorField a, CorField b) => !(a == b);
 
-		public bool Equals(CorField other) {
-			return !ReferenceEquals(other, null) &&
+		public bool Equals(CorField other) => !ReferenceEquals(other, null) &&
 				Token == other.Token &&
 				Class == other.Class;
-		}
 
 		public override bool Equals(object obj) => Equals(obj as CorField);
 		public override int GetHashCode() => (int)Token ^ Class.GetHashCode();

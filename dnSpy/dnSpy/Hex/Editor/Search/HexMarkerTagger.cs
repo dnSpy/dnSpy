@@ -34,9 +34,7 @@ namespace dnSpy.Hex.Editor.Search {
 		readonly HexViewSearchServiceProvider hexViewSearchServiceProvider;
 
 		[ImportingConstructor]
-		HexMarkerTaggerProvider(HexViewSearchServiceProvider hexViewSearchServiceProvider) {
-			this.hexViewSearchServiceProvider = hexViewSearchServiceProvider;
-		}
+		HexMarkerTaggerProvider(HexViewSearchServiceProvider hexViewSearchServiceProvider) => this.hexViewSearchServiceProvider = hexViewSearchServiceProvider;
 
 		public override IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) {
 			var wpfHexView = hexView as WpfHexView;

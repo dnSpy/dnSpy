@@ -331,8 +331,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (value is TypeSig)
 				return new CAArgument(new ClassSig(module.CorLibTypes.GetTypeRef("System", "Type")), value);
 
-			if (value is EnumInfo) {
-				var enumInfo = (EnumInfo)value;
+			if (value is EnumInfo enumInfo) {
 				var enumSig = enumInfo.EnumType.ToTypeSig();
 				if (!enumInfo.IsArray)
 					return new CAArgument(enumSig, enumInfo.Value);

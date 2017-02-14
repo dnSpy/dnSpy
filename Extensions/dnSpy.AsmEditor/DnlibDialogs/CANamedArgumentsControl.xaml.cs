@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class CANamedArgumentsControl : UserControl {
-		public CANamedArgumentsControl() {
-			InitializeComponent();
-		}
+		public CANamedArgumentsControl() => InitializeComponent();
 	}
 }

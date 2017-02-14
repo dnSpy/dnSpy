@@ -37,9 +37,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="property">Property</param>
-		protected PropertyNode(PropertyDef property) {
-			PropertyDef = property ?? throw new ArgumentNullException(nameof(property));
-		}
+		protected PropertyNode(PropertyDef property) => PropertyDef = property ?? throw new ArgumentNullException(nameof(property));
 
 		/// <summary>
 		/// Creates a <see cref="MethodNode"/>, a getter, setter, or an other property method

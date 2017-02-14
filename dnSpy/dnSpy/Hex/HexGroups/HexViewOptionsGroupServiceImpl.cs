@@ -32,9 +32,7 @@ namespace dnSpy.Hex.HexGroups {
 		readonly HexViewOptionsGroupServiceImpl hexViewOptionsGroupServiceImpl;
 
 		[ImportingConstructor]
-		HexEditorFactoryServiceListenerImpl(HexViewOptionsGroupServiceImpl hexViewOptionsGroupServiceImpl) {
-			this.hexViewOptionsGroupServiceImpl = hexViewOptionsGroupServiceImpl;
-		}
+		HexEditorFactoryServiceListenerImpl(HexViewOptionsGroupServiceImpl hexViewOptionsGroupServiceImpl) => this.hexViewOptionsGroupServiceImpl = hexViewOptionsGroupServiceImpl;
 
 		public override void HexViewCreated(WpfHexView hexView) => hexViewOptionsGroupServiceImpl.HexViewCreated(hexView);
 	}

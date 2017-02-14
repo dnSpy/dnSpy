@@ -33,8 +33,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// Constructor
 		/// </summary>
 		/// <param name="documents">Documents</param>
-		public DocumentModifiedEventArgs(IDsDocument[] documents) {
-			Documents = documents;
-		}
+		public DocumentModifiedEventArgs(IDsDocument[] documents) => Documents = documents;
 	}
 }

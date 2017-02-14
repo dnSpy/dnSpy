@@ -28,9 +28,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeExtensionMethodsNode : SearchNode {
 		readonly TypeDef analyzedType;
 
-		public TypeExtensionMethodsNode(TypeDef analyzedType) {
-			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
-		}
+		public TypeExtensionMethodsNode(TypeDef analyzedType) => this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ExtensionMethodsTreeNode);

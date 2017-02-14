@@ -34,9 +34,7 @@ namespace dnSpy.Hex.Editor {
 		readonly OffsetCursorProviderService offsetCursorProviderService;
 
 		[ImportingConstructor]
-		OffsetHexMouseProcessorProvider(OffsetCursorProviderService offsetCursorProviderService) {
-			this.offsetCursorProviderService = offsetCursorProviderService;
-		}
+		OffsetHexMouseProcessorProvider(OffsetCursorProviderService offsetCursorProviderService) => this.offsetCursorProviderService = offsetCursorProviderService;
 
 		public override HexMouseProcessor GetAssociatedProcessor(WpfHexView wpfHexView) =>
 			new OffsetHexMouseProcessor(offsetCursorProviderService.Get(wpfHexView), wpfHexView);
@@ -77,9 +75,7 @@ namespace dnSpy.Hex.Editor {
 		readonly OffsetCursorProviderService offsetCursorProviderService;
 
 		[ImportingConstructor]
-		OffsetHexCursorProviderFactory(OffsetCursorProviderService offsetCursorProviderService) {
-			this.offsetCursorProviderService = offsetCursorProviderService;
-		}
+		OffsetHexCursorProviderFactory(OffsetCursorProviderService offsetCursorProviderService) => this.offsetCursorProviderService = offsetCursorProviderService;
 
 		public override HexCursorProvider Create(WpfHexView wpfHexView) =>
 			new OffsetHexCursorProvider(offsetCursorProviderService.Get(wpfHexView));

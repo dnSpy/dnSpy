@@ -21,8 +21,6 @@ namespace dnSpy.Language.Intellisense {
 	sealed class CompletionIconVM {
 		public object ImageUIObject { get; }
 
-		public CompletionIconVM(object imageUIObject) {
-			ImageUIObject = imageUIObject;
-		}
+		public CompletionIconVM(object imageUIObject) => ImageUIObject = imageUIObject;
 	}
 }

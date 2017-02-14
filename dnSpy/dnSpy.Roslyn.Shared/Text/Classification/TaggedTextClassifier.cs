@@ -32,9 +32,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		TaggedTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService;
-		}
+		TaggedTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
 		public ITextClassifier Create(IContentType contentType) =>
 			new TaggedTextClassifier(themeClassificationTypeService);
@@ -43,9 +41,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 	sealed class TaggedTextClassifier : ITextClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
-		public TaggedTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
-		}
+		public TaggedTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			if (!context.Colorize)

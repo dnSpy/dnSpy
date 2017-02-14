@@ -176,8 +176,7 @@ namespace dnSpy.MainApp.Settings {
 
 		public override string[] GetSearchStrings() => ThemesVM.Select(a => a.Name).ToArray();
 
-		public override void OnApply() { throw new InvalidOperationException(); }
-
+		public override void OnApply() => throw new InvalidOperationException();
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			if (SelectedThemeVM != null)
 				themeService.Theme = SelectedThemeVM.Theme;
@@ -200,9 +199,7 @@ namespace dnSpy.MainApp.Settings {
 		public ITheme Theme { get; }
 		public string Name => Theme.GetName();
 
-		public ThemeVM(ITheme theme) {
-			Theme = theme ?? throw new ArgumentNullException(nameof(theme));
-		}
+		public ThemeVM(ITheme theme) => Theme = theme ?? throw new ArgumentNullException(nameof(theme));
 	}
 
 	sealed class UseNewRendererVM : ViewModelBase {

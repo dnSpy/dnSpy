@@ -44,8 +44,6 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		/// <param name="inputText">Current user input text</param>
 		/// <param name="colorize">true if it should be colorized</param>
 		public CompletionDisplayTextClassifierContext(CompletionSet completionSet, Completion completion, string displayText, string inputText, bool colorize)
-			: base(completionSet, completion, displayText, colorize) {
-			InputText = inputText ?? throw new ArgumentNullException(nameof(inputText));
-		}
+			: base(completionSet, completion, displayText, colorize) => InputText = inputText ?? throw new ArgumentNullException(nameof(inputText));
 	}
 }

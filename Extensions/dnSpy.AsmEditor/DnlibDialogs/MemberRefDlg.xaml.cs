@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class MemberRefDlg : WindowBase {
-		public MemberRefDlg() {
-			InitializeComponent();
-		}
+		public MemberRefDlg() => InitializeComponent();
 	}
 }

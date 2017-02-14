@@ -59,9 +59,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Constructor
 		/// </summary>
 		/// <param name="items">Items</param>
-		internal FilteredCompletionCollection(IEnumerable<Completion> items) {
-			this.items = items.ToList();
-		}
+		internal FilteredCompletionCollection(IEnumerable<Completion> items) => this.items = items.ToList();
 
 		/// <summary>
 		/// Should be called when the list has been filtered
@@ -117,15 +115,15 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			set { throw new NotSupportedException(); }
 		}
 
-		void ICollection<Completion>.Add(Completion item) { throw new NotSupportedException(); }
-		void ICollection<Completion>.Clear() { throw new NotSupportedException(); }
-		void IList<Completion>.Insert(int index, Completion item) { throw new NotSupportedException(); }
-		bool ICollection<Completion>.Remove(Completion item) { throw new NotSupportedException(); }
-		void IList<Completion>.RemoveAt(int index) { throw new NotSupportedException(); }
-		int IList.Add(object value) { throw new NotSupportedException(); }
-		void IList.Clear() { throw new NotSupportedException(); }
-		void IList.Insert(int index, object value) { throw new NotSupportedException(); }
-		void IList.Remove(object value) { throw new NotSupportedException(); }
-		void IList.RemoveAt(int index) { throw new NotSupportedException(); }
+		void ICollection<Completion>.Add(Completion item) => throw new NotSupportedException();
+		void ICollection<Completion>.Clear() => throw new NotSupportedException();
+		void IList<Completion>.Insert(int index, Completion item) => throw new NotSupportedException();
+		bool ICollection<Completion>.Remove(Completion item) => throw new NotSupportedException();
+		void IList<Completion>.RemoveAt(int index) => throw new NotSupportedException();
+		int IList.Add(object value) => throw new NotSupportedException();
+		void IList.Clear() => throw new NotSupportedException();
+		void IList.Insert(int index, object value) => throw new NotSupportedException();
+		void IList.Remove(object value) => throw new NotSupportedException();
+		void IList.RemoveAt(int index) => throw new NotSupportedException();
 	}
 }

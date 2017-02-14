@@ -55,9 +55,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public DnlibTypePicker(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public DnlibTypePicker(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public T GetDnlibType<T>(string title, IDocumentTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
 			var newDocumentTreeView = documentTreeViewProvider.Create(filter);
@@ -81,16 +79,13 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		static object ImportObject(ModuleDef ownerModule, object obj) {
 			var importer = new Importer(ownerModule, ImporterOptions.TryToUseDefs);
 
-			var type = obj as IType;
-			if (type != null)
+			if (obj is IType type)
 				return importer.Import(type);
 
-			var field = obj as IField;
-			if (field != null && field.IsField)
+			if (obj is IField field && field.IsField)
 				return importer.Import(field);
 
-			var method = obj as IMethod;
-			if (method != null && method.IsMethod)
+			if (obj is IMethod method && method.IsMethod)
 				return importer.Import(method);
 
 			// DsDocument, namespace, PropertyDef, EventDef, AssemblyRef, ModuleRef

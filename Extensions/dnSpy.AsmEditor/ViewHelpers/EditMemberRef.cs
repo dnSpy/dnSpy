@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditMemberRef(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditMemberRef(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public MemberRefVM Edit(string title, MemberRefVM pd) {
 			var win = new MemberRefDlg();

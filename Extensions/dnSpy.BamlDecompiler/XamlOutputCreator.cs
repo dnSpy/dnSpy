@@ -28,9 +28,7 @@ namespace dnSpy.BamlDecompiler {
 	struct XamlOutputCreator {
 		readonly XamlOutputOptions options;
 
-		public XamlOutputCreator(XamlOutputOptions options) {
-			this.options = options ?? throw new ArgumentNullException(nameof(options));
-		}
+		public XamlOutputCreator(XamlOutputOptions options) => this.options = options ?? throw new ArgumentNullException(nameof(options));
 
 		public string CreateText(XDocument document) {
 			if (options == null)

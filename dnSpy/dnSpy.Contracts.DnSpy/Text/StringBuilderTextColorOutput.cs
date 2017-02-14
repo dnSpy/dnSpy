@@ -41,17 +41,13 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public StringBuilderTextColorOutput() {
-			sb = new StringBuilder();
-		}
+		public StringBuilderTextColorOutput() => sb = new StringBuilder();
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="stringBuilder">String builder</param>
-		public StringBuilderTextColorOutput(StringBuilder stringBuilder) {
-			sb = stringBuilder ?? throw new ArgumentNullException(nameof(stringBuilder));
-		}
+		public StringBuilderTextColorOutput(StringBuilder stringBuilder) => sb = stringBuilder ?? throw new ArgumentNullException(nameof(stringBuilder));
 
 		/// <summary>
 		/// Writes text

@@ -28,9 +28,7 @@ namespace dnSpy.Hex.Classification {
 		readonly VSTC.IEditorFormatMapService editorFormatMapService;
 
 		[ImportingConstructor]
-		HexEditorFormatMapServiceImpl(VSTC.IEditorFormatMapService editorFormatMapService) {
-			this.editorFormatMapService = editorFormatMapService;
-		}
+		HexEditorFormatMapServiceImpl(VSTC.IEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public override VSTC.IEditorFormatMap GetEditorFormatMap(HexView view) => editorFormatMapService.GetEditorFormatMap(HexTextView.GetOrCreate(view));
 		public override VSTC.IEditorFormatMap GetEditorFormatMap(string category) => editorFormatMapService.GetEditorFormatMap(category);

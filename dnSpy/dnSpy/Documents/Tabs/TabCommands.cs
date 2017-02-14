@@ -107,9 +107,7 @@ namespace dnSpy.Documents.Tabs {
 
 		protected readonly IDocumentTabService documentTabService;
 
-		protected CtxMenuTabGroupCommand(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		protected CtxMenuTabGroupCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		TabGroupContext CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID))
@@ -314,9 +312,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		OpenInNewTabCtxMenuCommand(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		OpenInNewTabCtxMenuCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public override bool IsVisible(IMenuItemContext context) =>
 			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) &&
@@ -334,9 +330,7 @@ namespace dnSpy.Documents.Tabs {
 				documentViewer.DocumentTab.FollowReferenceNewTab(@ref);
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			return GetReference(context, out var documentViewer) != null;
-		}
+		public override bool IsVisible(IMenuItemContext context) => GetReference(context, out var documentViewer) != null;
 
 		static object GetReference(IMenuItemContext context, out IDocumentViewer documentViewer) {
 			documentViewer = null;
@@ -375,9 +369,7 @@ namespace dnSpy.Documents.Tabs {
 
 		protected readonly IDocumentTabService documentTabService;
 
-		protected MenuTabGroupCommand(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		protected MenuTabGroupCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewWindowCommand", Icon = DsImagesAttribute.NewWindow, Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 0)]

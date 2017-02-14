@@ -90,24 +90,19 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		public void SetImage(object @ref) => Image = TryGetImageReference(@ref);
 
 		ImageReference? TryGetImageReference(object @ref) {
-			var td = @ref as TypeDef;
-			if (td != null)
+			if (@ref is TypeDef td)
 				return dotNetImageService.GetImageReference(td);
 
-			var md = @ref as MethodDef;
-			if (md != null)
+			if (@ref is MethodDef md)
 				return dotNetImageService.GetImageReference(md);
 
-			var pd = @ref as PropertyDef;
-			if (pd != null)
+			if (@ref is PropertyDef pd)
 				return dotNetImageService.GetImageReference(pd);
 
-			var ed = @ref as EventDef;
-			if (ed != null)
+			if (@ref is EventDef ed)
 				return dotNetImageService.GetImageReference(ed);
 
-			var fd = @ref as FieldDef;
-			if (fd != null)
+			if (@ref is FieldDef fd)
 				return dotNetImageService.GetImageReference(fd);
 
 			if (@ref is NamespaceReference)

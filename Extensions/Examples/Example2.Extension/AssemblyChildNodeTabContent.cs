@@ -55,9 +55,7 @@ namespace Example2.Extension {
 
 		readonly AssemblyChildNode node;
 
-		public AssemblyChildNodeTabContent(AssemblyChildNode node) {
-			this.node = node;
-		}
+		public AssemblyChildNodeTabContent(AssemblyChildNode node) => this.node = node;
 
 		// Called when the user opens a new tab. Override CanClone and return false if
 		// Clone() isn't supported

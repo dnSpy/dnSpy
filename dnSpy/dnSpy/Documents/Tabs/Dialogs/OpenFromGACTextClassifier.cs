@@ -33,9 +33,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly IClassificationType gacMatchHighlightClassificationType;
 
 		[ImportingConstructor]
-		OpenFromGACTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			gacMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.GacMatchHighlight);
-		}
+		OpenFromGACTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => gacMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.GacMatchHighlight);
 
 		public ITextClassifier Create(IContentType contentType) => new OpenFromGACTextClassifier(gacMatchHighlightClassificationType);
 	}
@@ -43,9 +41,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class OpenFromGACTextClassifier : ITextClassifier {
 		readonly IClassificationType gacMatchHighlightClassificationType;
 
-		public OpenFromGACTextClassifier(IClassificationType gacMatchHighlightClassificationType) {
-			this.gacMatchHighlightClassificationType = gacMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(gacMatchHighlightClassificationType));
-		}
+		public OpenFromGACTextClassifier(IClassificationType gacMatchHighlightClassificationType) => this.gacMatchHighlightClassificationType = gacMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(gacMatchHighlightClassificationType));
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var gacContext = context as OpenFromGACTextClassifierContext;

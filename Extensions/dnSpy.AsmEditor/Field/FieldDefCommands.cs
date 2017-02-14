@@ -53,9 +53,7 @@ namespace dnSpy.AsmEditor.Field {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
-				this.undoCommandService = undoCommandService;
-			}
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteFieldDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteFieldDefCommand.Execute(undoCommandService, context.Nodes);
@@ -68,9 +66,7 @@ namespace dnSpy.AsmEditor.Field {
 
 			[ImportingConstructor]
 			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteFieldDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteFieldDefCommand.Execute(undoCommandService, context.Nodes);
@@ -83,9 +79,7 @@ namespace dnSpy.AsmEditor.Field {
 
 			[ImportingConstructor]
 			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteFieldDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteFieldDefCommand.Execute(undoCommandService, context.Nodes);
@@ -162,9 +156,7 @@ namespace dnSpy.AsmEditor.Field {
 		DeletableNodes<FieldNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteFieldDefCommand(FieldNode[] fieldNodes) {
-			nodes = new DeletableNodes<FieldNode>(fieldNodes);
-		}
+		DeleteFieldDefCommand(FieldNode[] fieldNodes) => nodes = new DeletableNodes<FieldNode>(fieldNodes);
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteFieldCommand;
 
@@ -226,11 +218,10 @@ namespace dnSpy.AsmEditor.Field {
 				this.appService = appService;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsDefinition &&
-					context.Nodes.Length == 1 &&
-					context.Nodes[0] is TypeNode;
-			}
+			public override bool IsEnabled(CodeContext context) =>
+				context.IsDefinition &&
+				context.Nodes.Length == 1 &&
+				context.Nodes[0] is TypeNode;
 
 			public override void Execute(CodeContext context) => CreateFieldDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}

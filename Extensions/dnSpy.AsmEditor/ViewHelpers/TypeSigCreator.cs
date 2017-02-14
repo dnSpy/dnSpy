@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public TypeSigCreator(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public TypeSigCreator(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig, out bool canceled) {
 			var data = new TypeSigCreatorVM(options, typeSig);

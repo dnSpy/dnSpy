@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditGenericParam(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditGenericParam(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public GenericParamVM Edit(string title, GenericParamVM pd) {
 			var win = new GenericParamDlg();

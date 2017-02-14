@@ -44,9 +44,7 @@ namespace Example1.Extension {
 		readonly MySettings mySettings;
 
 		[ImportingConstructor]
-		TextEditorCommand1(MySettings mySettings) {
-			this.mySettings = mySettings;
-		}
+		TextEditorCommand1(MySettings mySettings) => this.mySettings = mySettings;
 
 		public override bool IsChecked(IMenuItemContext context) => mySettings.BoolOption1;
 		public override void Execute(IMenuItemContext context) => mySettings.BoolOption1 = !mySettings.BoolOption1;
@@ -60,9 +58,7 @@ namespace Example1.Extension {
 		readonly MySettings mySettings;
 
 		[ImportingConstructor]
-		TextEditorCommand2(MySettings mySettings) {
-			this.mySettings = mySettings;
-		}
+		TextEditorCommand2(MySettings mySettings) => this.mySettings = mySettings;
 
 		public override bool IsChecked(IMenuItemContext context) => mySettings.BoolOption2;
 		public override void Execute(IMenuItemContext context) => mySettings.BoolOption2 = !mySettings.BoolOption2;

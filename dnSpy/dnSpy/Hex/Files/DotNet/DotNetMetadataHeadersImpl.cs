@@ -50,8 +50,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		T FindStream<T>(DotNetHeap[] streams) where T : DotNetHeap {
 			foreach (var stream in streams) {
-				var t = stream as T;
-				if (t != null)
+				if (stream is T t)
 					return t;
 			}
 			return null;

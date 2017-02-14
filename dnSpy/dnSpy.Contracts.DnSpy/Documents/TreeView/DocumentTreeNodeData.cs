@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		static class Cache {
 			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
 			public static TextClassifierTextColorWriter GetWriter() => writer;
-			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
 		/// <summary>
@@ -363,8 +363,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public static DsDocumentNode GetTopNode(this TreeNodeData self) {
 			var root = self == null ? null : self.TreeNode.TreeView.Root;
 			while (self != null) {
-				var found = self as DsDocumentNode;
-				if (found != null) {
+				if (self is DsDocumentNode found) {
 					var p = found.TreeNode.Parent;
 					if (p == null || p == root)
 						return found;

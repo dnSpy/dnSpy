@@ -36,9 +36,7 @@ namespace dnSpy.Text.CodeEditor {
 		const int ADVANCED_GUID_INC = 4;
 
 		[ImportingConstructor]
-		AppSettingsPageProvider(ICodeEditorOptionsService codeEditorSettingsService) {
-			this.codeEditorSettingsService = codeEditorSettingsService;
-		}
+		AppSettingsPageProvider(ICodeEditorOptionsService codeEditorSettingsService) => this.codeEditorSettingsService = codeEditorSettingsService;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			var options = codeEditorSettingsService.Options.OrderBy(a => a.LanguageName, StringComparer.CurrentCultureIgnoreCase).ToArray();

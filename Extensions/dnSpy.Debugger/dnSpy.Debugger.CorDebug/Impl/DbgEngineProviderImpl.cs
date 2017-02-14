@@ -25,12 +25,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 	[ExportDbgEngineProvider]
 	sealed class DbgEngineProviderImpl : DbgEngineProvider {
 		public override DbgEngine Start(StartDebuggingOptions options) {
-			var dnfOptions = options as DotNetFrameworkStartDebuggingOptions;
-			if (dnfOptions != null)
+			if (options is DotNetFrameworkStartDebuggingOptions dnfOptions)
 				return StartDotNetFramework(dnfOptions);
 
-			var dncOptions = options as DotNetCoreStartDebuggingOptions;
-			if (dncOptions != null)
+			if (options is DotNetCoreStartDebuggingOptions dncOptions)
 				return StartDotNetCore(dncOptions);
 
 			return null;

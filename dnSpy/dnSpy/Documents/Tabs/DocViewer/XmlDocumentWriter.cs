@@ -35,9 +35,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class XmlDocumentWriter : IDocumentWriter {
 		readonly bool isXaml;
 
-		public XmlDocumentWriter(bool isXaml) {
-			this.isXaml = isXaml;
-		}
+		public XmlDocumentWriter(bool isXaml) => this.isXaml = isXaml;
 
 		public void Write(IDecompilerOutput output, string text) {
 			var parser = new XmlParser(text, isXaml);

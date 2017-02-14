@@ -2597,9 +2597,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedReference : ThemeMarkerFormatDefinition {
-			HighlightedReference() : base(TextColor.HighlightedReference) {
-				ZOrder = TextMarkerServiceZIndexes.HighlightedReference;
-			}
+			HighlightedReference() : base(TextColor.HighlightedReference) => ZOrder = TextMarkerServiceZIndexes.HighlightedReference;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2608,9 +2606,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedWrittenReference : ThemeMarkerFormatDefinition {
-			HighlightedWrittenReference() : base(TextColor.HighlightedWrittenReference) {
-				ZOrder = TextMarkerServiceZIndexes.HighlightedWrittenReference;
-			}
+			HighlightedWrittenReference() : base(TextColor.HighlightedWrittenReference) => ZOrder = TextMarkerServiceZIndexes.HighlightedWrittenReference;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2619,9 +2615,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedDefinition : ThemeMarkerFormatDefinition {
-			HighlightedDefinition() : base(TextColor.HighlightedDefinition) {
-				ZOrder = TextMarkerServiceZIndexes.HighlightedDefinition;
-			}
+			HighlightedDefinition() : base(TextColor.HighlightedDefinition) => ZOrder = TextMarkerServiceZIndexes.HighlightedDefinition;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2666,9 +2660,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class ActiveStatementMarker : ThemeMarkerFormatDefinition {
-			ActiveStatementMarker() : base(TextColor.ActiveStatementMarker) {
-				ZOrder = TextMarkerServiceZIndexes.ActiveStatement;
-			}
+			ActiveStatementMarker() : base(TextColor.ActiveStatementMarker) => ZOrder = TextMarkerServiceZIndexes.ActiveStatement;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2839,9 +2831,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.High)]
 		sealed class FindMatchHighlightMarker : ThemeMarkerFormatDefinition {
-			FindMatchHighlightMarker() : base(TextColor.FindMatchHighlightMarker) {
-				ZOrder = TextMarkerServiceZIndexes.FindMatch;
-			}
+			FindMatchHighlightMarker() : base(TextColor.FindMatchHighlightMarker) => ZOrder = TextMarkerServiceZIndexes.FindMatch;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3165,9 +3155,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.High)]
 		sealed class Url : ThemeClassificationFormatDefinition {
-			Url() : base(TextColor.Url) {
-				TextDecorations = System.Windows.TextDecorations.Underline;
-			}
+			Url() : base(TextColor.Url) => TextDecorations = System.Windows.TextDecorations.Underline;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3428,9 +3416,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexCurrentValueCell : ThemeMarkerFormatDefinition {
-			HexCurrentValueCell() : base(TextColor.HexCurrentValueCell) {
-				ZOrder = HexMarkerServiceZIndexes.CurrentValue;
-			}
+			HexCurrentValueCell() : base(TextColor.HexCurrentValueCell) => ZOrder = HexMarkerServiceZIndexes.CurrentValue;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3439,9 +3425,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HexCurrentAsciiCell : ThemeMarkerFormatDefinition {
-			HexCurrentAsciiCell() : base(TextColor.HexCurrentAsciiCell) {
-				ZOrder = HexMarkerServiceZIndexes.CurrentValue;
-			}
+			HexCurrentAsciiCell() : base(TextColor.HexCurrentAsciiCell) => ZOrder = HexMarkerServiceZIndexes.CurrentValue;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3459,9 +3443,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.High)]
 		sealed class HexFindMatchHighlightMarker : ThemeMarkerFormatDefinition {
-			HexFindMatchHighlightMarker() : base(TextColor.HexFindMatchHighlightMarker) {
-				ZOrder = HexMarkerServiceZIndexes.FindMatch;
-			}
+			HexFindMatchHighlightMarker() : base(TextColor.HexFindMatchHighlightMarker) => ZOrder = HexMarkerServiceZIndexes.FindMatch;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3471,9 +3453,7 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField)]
 		[Order(After = ThemeClassificationTypeNameKeys.HexFindMatchHighlightMarker, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
 		sealed class HexToolTipServiceField0 : ThemeMarkerFormatDefinition {
-			HexToolTipServiceField0() : base(TextColor.HexToolTipServiceField0) {
-				ZOrder = HexMarkerServiceZIndexes.ToolTipField0;
-			}
+			HexToolTipServiceField0() : base(TextColor.HexToolTipServiceField0) => ZOrder = HexMarkerServiceZIndexes.ToolTipField0;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3483,9 +3463,7 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField)]
 		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField0)]
 		sealed class HexToolTipServiceField1 : ThemeMarkerFormatDefinition {
-			HexToolTipServiceField1() : base(TextColor.HexToolTipServiceField1) {
-				ZOrder = HexMarkerServiceZIndexes.ToolTipField1;
-			}
+			HexToolTipServiceField1() : base(TextColor.HexToolTipServiceField1) => ZOrder = HexMarkerServiceZIndexes.ToolTipField1;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3496,9 +3474,7 @@ namespace dnSpy.Text.Classification {
 		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField0)]
 		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
 		sealed class HexToolTipServiceCurrentField : ThemeMarkerFormatDefinition {
-			HexToolTipServiceCurrentField() : base(TextColor.HexToolTipServiceCurrentField) {
-				ZOrder = HexMarkerServiceZIndexes.ToolTipCurrentField;
-			}
+			HexToolTipServiceCurrentField() : base(TextColor.HexToolTipServiceCurrentField) => ZOrder = HexMarkerServiceZIndexes.ToolTipCurrentField;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

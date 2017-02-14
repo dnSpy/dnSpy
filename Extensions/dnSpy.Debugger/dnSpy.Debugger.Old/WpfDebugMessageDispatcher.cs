@@ -31,9 +31,7 @@ namespace dnSpy.Debugger {
 		int callingEmptyQueue;
 		readonly Dispatcher dispatcher;
 
-		WpfDebugMessageDispatcher() {
-			dispatcher = Dispatcher.CurrentDispatcher;
-		}
+		WpfDebugMessageDispatcher() => dispatcher = Dispatcher.CurrentDispatcher;
 
 		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
 

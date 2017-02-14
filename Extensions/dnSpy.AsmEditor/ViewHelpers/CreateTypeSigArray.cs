@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public CreateTypeSigArray(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public CreateTypeSigArray(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs) {
 			var data = new CreateTypeSigArrayVM(options, count);

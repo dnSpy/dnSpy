@@ -50,9 +50,7 @@ namespace dnSpy.Hex.Editor {
 		readonly CurrentValueHighlighterProvider currentValueHighlighterProvider;
 
 		[ImportingConstructor]
-		CurrentValueHighlighterHexViewTaggerProvider(CurrentValueHighlighterProvider currentValueHighlighterProvider) {
-			this.currentValueHighlighterProvider = currentValueHighlighterProvider;
-		}
+		CurrentValueHighlighterHexViewTaggerProvider(CurrentValueHighlighterProvider currentValueHighlighterProvider) => this.currentValueHighlighterProvider = currentValueHighlighterProvider;
 
 		public override IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) {
 			var wpfHexView = hexView as WpfHexView;

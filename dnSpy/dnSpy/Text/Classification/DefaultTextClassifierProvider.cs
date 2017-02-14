@@ -32,9 +32,7 @@ namespace dnSpy.Text.Classification {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		DefaultTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService;
-		}
+		DefaultTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
 		public ITextClassifier Create(IContentType contentType) => new DefaultTextClassifier(themeClassificationTypeService);
 	}
@@ -42,9 +40,7 @@ namespace dnSpy.Text.Classification {
 	sealed class DefaultTextClassifier : ITextClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
-		public DefaultTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
-		}
+		public DefaultTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			if (!context.Colorize)

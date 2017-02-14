@@ -108,9 +108,7 @@ namespace dnSpy.Contracts.Controls {
 		class TextProps : TextRunProperties {
 			FastTextBlock tb;
 
-			public TextProps(FastTextBlock tb) {
-				this.tb = tb;
-			}
+			public TextProps(FastTextBlock tb) => this.tb = tb;
 
 			public override Brush BackgroundBrush => (Brush)tb.GetValue(BackgroundProperty);
 			public override CultureInfo CultureInfo => CultureInfo.CurrentUICulture;
@@ -133,14 +131,10 @@ namespace dnSpy.Contracts.Controls {
 				return new TextCharacters(text, textSourceCharacterIndex, text.Length - textSourceCharacterIndex, props);
 			}
 
-			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) {
-				return new TextSpan<CultureSpecificCharacterBufferRange>(0,
+			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) => new TextSpan<CultureSpecificCharacterBufferRange>(0,
 					new CultureSpecificCharacterBufferRange(CultureInfo.CurrentUICulture, new CharacterBufferRange(string.Empty, 0, 0)));
-			}
 
-			public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) {
-				throw new NotSupportedException();
-			}
+			public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) => throw new NotSupportedException();
 
 			public void UpdateParent(FastTextBlock ftb) {
 				text = ftb.Text;

@@ -31,8 +31,6 @@ namespace dnSpy.Contracts.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="owner">Owner</param>
-		public TreeNodeDataProviderContext(ITreeNode owner) {
-			Owner = owner;
-		}
+		public TreeNodeDataProviderContext(ITreeNode owner) => Owner = owner;
 	}
 }

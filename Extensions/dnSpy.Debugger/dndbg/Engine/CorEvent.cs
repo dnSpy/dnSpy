@@ -102,11 +102,9 @@ namespace dndbg.Engine {
 
 		public static bool operator !=(CorEvent a, CorEvent b) => !(a == b);
 
-		public bool Equals(CorEvent other) {
-			return !ReferenceEquals(other, null) &&
+		public bool Equals(CorEvent other) => !ReferenceEquals(other, null) &&
 				Token == other.Token &&
 				Class == other.Class;
-		}
 
 		public override bool Equals(object obj) => Equals(obj as CorEvent);
 		public override int GetHashCode() => (int)Token ^ Class.GetHashCode();

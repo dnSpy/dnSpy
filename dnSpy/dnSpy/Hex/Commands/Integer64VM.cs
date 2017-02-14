@@ -40,9 +40,7 @@ namespace dnSpy.Hex.Commands {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public Integer64VM(ulong value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(ulong value) => SimpleTypeConverter.ToString(value, ulong.MinValue, ulong.MaxValue, null);

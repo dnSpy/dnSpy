@@ -101,18 +101,15 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 						clearModifiers = true;
 					else if (en.SymbolKind == SymbolKind.Constructor && en.HasModifier(Modifiers.Static))
 						clearModifiers = true;
-					else if (en is MethodDeclaration) {
-						var md = (MethodDeclaration)en;
+					else if (en is MethodDeclaration md) {
 						if (!md.PrivateImplementationType.IsNull || (md.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
 							clearModifiers = true;
 					}
-					else if (en is CustomEventDeclaration) {
-						var ed = (CustomEventDeclaration)en;
+					else if (en is CustomEventDeclaration ed) {
 						if (!ed.PrivateImplementationType.IsNull || (ed.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
 							clearModifiers = true;
 					}
-					else if (en is PropertyDeclaration) {
-						var pd = (PropertyDeclaration)en;
+					else if (en is PropertyDeclaration pd) {
 						if (!pd.PrivateImplementationType.IsNull || (pd.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
 							clearModifiers = true;
 					}
@@ -147,13 +144,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 					else {
 						if (showAll || defsToShow.Contains(def))
 							en.Remove();
-						else if (en is CustomEventDeclaration) {
+						else if (en is CustomEventDeclaration ced) {
 							// Convert this hidden event to an event without accessor bodies.
 							// AstBuilder doesn't write empty bodies to it if it's a hidden event because
 							// then it can't be optimized to an auto event. We want real auto events to
 							// become auto events and custom events to stay custom, but without bodies.
-
-							var ced = (CustomEventDeclaration)en;
 							if (!ced.AddAccessor.IsNull)
 								ced.AddAccessor.Body = new BlockStatement();
 							if (!ced.RemoveAccessor.IsNull)

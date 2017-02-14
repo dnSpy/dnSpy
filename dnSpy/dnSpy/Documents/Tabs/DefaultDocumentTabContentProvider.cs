@@ -28,9 +28,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTabContentFactoryService documentTabContentFactoryService;
 
 		[ImportingConstructor]
-		DefaultDocumentTabContentProvider(IDocumentTabContentFactoryService documentTabContentFactoryService) {
-			this.documentTabContentFactoryService = documentTabContentFactoryService;
-		}
+		DefaultDocumentTabContentProvider(IDocumentTabContentFactoryService documentTabContentFactoryService) => this.documentTabContentFactoryService = documentTabContentFactoryService;
 
 		public DocumentTabContent Create(IDocumentTabService documentTabService) =>
 			documentTabContentFactoryService.CreateTabContent(Array.Empty<DocumentTreeNodeData>());

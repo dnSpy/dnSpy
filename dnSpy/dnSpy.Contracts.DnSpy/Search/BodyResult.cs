@@ -31,8 +31,6 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		/// <param name="ilOffset">IL offset of instruction</param>
-		public BodyResult(uint ilOffset) {
-			ILOffset = ilOffset;
-		}
+		public BodyResult(uint ilOffset) => ILOffset = ilOffset;
 	}
 }

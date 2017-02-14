@@ -73,8 +73,7 @@ namespace dndbg.DotNet {
 		int initCounter;
 
 		static GenericParamContext GetGenericParamContext(ITypeOrMethodDef tmOwner) {
-			var md = tmOwner as MethodDef;
-			if (md != null)
+			if (tmOwner is MethodDef md)
 				return GenericParamContext.Create(md);
 			return new GenericParamContext(tmOwner as TypeDef);
 		}

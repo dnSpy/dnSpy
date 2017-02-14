@@ -37,8 +37,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="moduleRef">Module reference</param>
-		protected ModuleReferenceNode(ModuleRef moduleRef) {
-			ModuleRef = moduleRef ?? throw new ArgumentNullException(nameof(moduleRef));
-		}
+		protected ModuleReferenceNode(ModuleRef moduleRef) => ModuleRef = moduleRef ?? throw new ArgumentNullException(nameof(moduleRef));
 	}
 }

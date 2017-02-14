@@ -43,9 +43,7 @@ namespace dnSpy.MainApp {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		OpenReleasesUrlCommand(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		OpenReleasesUrlCommand(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"releases", messageBoxService);
@@ -56,9 +54,7 @@ namespace dnSpy.MainApp {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		OpenLatestBuildUrlCommand(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		OpenLatestBuildUrlCommand(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BUILD_URL, messageBoxService);
@@ -69,9 +65,7 @@ namespace dnSpy.MainApp {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		OpenIssuesUrlCommand(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		OpenIssuesUrlCommand(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"issues", messageBoxService);
@@ -82,9 +76,7 @@ namespace dnSpy.MainApp {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		OpenWikiUrlCommand(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		OpenWikiUrlCommand(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"wiki", messageBoxService);
@@ -95,9 +87,7 @@ namespace dnSpy.MainApp {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		OpenSourceCodeUrlCommand(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		OpenSourceCodeUrlCommand(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public override void Execute(IMenuItemContext context) =>
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL, messageBoxService);

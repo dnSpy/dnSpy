@@ -28,9 +28,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		readonly TextAppearanceCategoryService textAppearanceCategoryService;
 
 		[ImportingConstructor]
-		FontAndColorOptionsProviderImpl(TextAppearanceCategoryService textAppearanceCategoryService) {
-			this.textAppearanceCategoryService = textAppearanceCategoryService;
-		}
+		FontAndColorOptionsProviderImpl(TextAppearanceCategoryService textAppearanceCategoryService) => this.textAppearanceCategoryService = textAppearanceCategoryService;
 
 		public override IEnumerable<FontAndColorOptions> GetFontAndColors() {
 			foreach (var category in textAppearanceCategoryService.TextAppearanceCategories) {

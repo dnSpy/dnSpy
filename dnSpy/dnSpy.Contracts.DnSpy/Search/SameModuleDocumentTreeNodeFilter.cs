@@ -33,9 +33,7 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="allowedModule">Module</param>
 		/// <param name="filter">Filter</param>
 		public SameModuleDocumentTreeNodeFilter(ModuleDef allowedModule, IDocumentTreeNodeFilter filter)
-			: base(filter) {
-			this.allowedModule = allowedModule;
-		}
+			: base(filter) => this.allowedModule = allowedModule;
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public override DocumentTreeNodeFilterResult GetResult(AssemblyDef asm) {

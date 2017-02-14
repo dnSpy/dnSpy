@@ -64,9 +64,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		public override double OrderUI => DecompilerConstants.VISUALBASIC_ILSPY_ORDERUI;
 		public override MetadataTextColorProvider MetadataTextColorProvider => VisualBasicMetadataTextColorProvider.Instance;
 
-		public VBDecompiler(CSharpVBDecompilerSettings langSettings) {
-			this.langSettings = langSettings;
-		}
+		public VBDecompiler(CSharpVBDecompilerSettings langSettings) => this.langSettings = langSettings;
 
 		public override string ContentTypeString => ContentTypesInternal.VisualBasicILSpy;
 		public override string GenericNameUI => DecompilerConstants.GENERIC_NAMEUI_VISUALBASIC;

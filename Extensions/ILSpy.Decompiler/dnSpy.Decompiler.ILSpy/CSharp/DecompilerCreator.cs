@@ -29,9 +29,7 @@ namespace dnSpy.Decompiler.ILSpy.CSharp {
 		readonly DecompilerSettingsService decompilerSettingsService;
 
 		[ImportingConstructor]
-		MyDecompilerCreator(DecompilerSettingsService decompilerSettingsService) {
-			this.decompilerSettingsService = decompilerSettingsService;
-		}
+		MyDecompilerCreator(DecompilerSettingsService decompilerSettingsService) => this.decompilerSettingsService = decompilerSettingsService;
 
 		public IEnumerable<IDecompiler> Create() => new DecompilerProvider(decompilerSettingsService).Create();
 	}

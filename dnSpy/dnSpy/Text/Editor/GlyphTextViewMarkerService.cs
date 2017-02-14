@@ -103,8 +103,7 @@ namespace dnSpy.Text.Editor {
 				if (map != null) {
 					var allMarkers = this.allMarkers;
 					for (int i = 0; i < allMarkers.Count; i++) {
-						var methodMarker = allMarkers[i] as IGlyphTextMethodMarkerImpl;
-						if (methodMarker != null) {
+						if (allMarkers[i] is IGlyphTextMethodMarkerImpl methodMarker) {
 							var span = map.ToSpan(methodMarker.Method, methodMarker.ILOffset);
 							if (span != null) {
 								inDocMarkers.Add(methodMarker, span.Value);
@@ -586,8 +585,7 @@ namespace dnSpy.Text.Editor {
 		void Refresh(IGlyphTextMarkerImpl marker) {
 			if (!marker.TextViewFilter(TextView))
 				return;
-			var methodMarker = marker as IGlyphTextMethodMarkerImpl;
-			if (methodMarker != null) {
+			if (marker is IGlyphTextMethodMarkerImpl methodMarker) {
 				Refresh(methodMarker);
 				return;
 			}
@@ -614,8 +612,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		SnapshotSpan? GetSnapshotSpan(IGlyphTextMarker marker) {
-			var methodMarker = marker as IGlyphTextMethodMarker;
-			if (methodMarker != null)
+			if (marker is IGlyphTextMethodMarker methodMarker)
 				return GetSnapshotSpan(methodMarker);
 
 			Debug.Fail("Unknown marker type: " + marker.GetType());
@@ -779,8 +776,7 @@ namespace dnSpy.Text.Editor {
 			if (marker == null)
 				throw new ArgumentNullException(nameof(marker));
 
-			var methodMarker = marker as IGlyphTextMethodMarkerImpl;
-			if (methodMarker != null)
+			if (marker is IGlyphTextMethodMarkerImpl methodMarker)
 				return GetVisibleLine(methodMarker);
 
 			Debug.Fail("Unknown marker type: " + marker.GetType());

@@ -86,14 +86,13 @@ namespace dnSpy.Text.Operations {
 		}
 		ITextStructureNavigator textStructureNavigator;
 
-		void OnContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) {
+		void OnContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) =>
 			// The TextStructureNavigator prop checks it for null and re-initializes it. The reason that we
 			// don't just call GetTextStructureNavigator() now is that the ITextStructureNavigatorSelectorService
 			// instance will remove the cached navigator instance from its ContentTypeChanged handler. If this
 			// method is called before its ContentTypeChanged handler, we'll get the old cached nav instance.
 			// We can't depend on always being called after it so re-initialize this field lazily.
 			textStructureNavigator = null;
-		}
 
 		public EditorOperations(ITextView textView, ITextStructureNavigatorSelectorService textStructureNavigatorSelectorService, ISmartIndentationService smartIndentationService, IHtmlBuilderService htmlBuilderService) {
 			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
@@ -258,13 +257,9 @@ namespace dnSpy.Text.Operations {
 			}
 		}
 
-		public bool ConvertSpacesToTabs() {
-			return true;//TODO:
-		}
+		public bool ConvertSpacesToTabs() => true;//TODO:
 
-		public bool ConvertTabsToSpaces() {
-			return true;//TODO:
-		}
+		public bool ConvertTabsToSpaces() => true;//TODO:
 
 		const string VS_COPY_FULL_LINE_DATA_FORMAT = "VisualStudioEditorOperationsLineCutCopyClipboardTag";
 		const string VS_COPY_BOX_DATA_FORMAT = "MSDEVColumnSelect";
@@ -773,17 +768,11 @@ namespace dnSpy.Text.Operations {
 			ViewScroller.EnsureSpanVisible(span);
 		}
 
-		public bool DecreaseLineIndent() {
-			return true;//TODO:
-		}
+		public bool DecreaseLineIndent() => true;//TODO:
 
-		public bool IncreaseLineIndent() {
-			return true;//TODO:
-		}
+		public bool IncreaseLineIndent() => true;//TODO:
 
-		public bool Unindent() {
-			return true;//TODO:
-		}
+		public bool Unindent() => true;//TODO:
 
 		public bool Indent() {
 			if (Selection.IsEmpty)
@@ -990,9 +979,7 @@ namespace dnSpy.Text.Operations {
 			return InsertText(text, isProvisional, overwriteMode);
 		}
 
-		public bool InsertFinalNewLine() {
-			return false;//TODO:
-		}
+		public bool InsertFinalNewLine() => false;//TODO:
 
 		public bool Paste() {
 			string text;
@@ -1138,13 +1125,9 @@ namespace dnSpy.Text.Operations {
 				Selection.Clear();
 		}
 
-		public bool MoveSelectedLinesDown() {
-			return true;//TODO:
-		}
+		public bool MoveSelectedLinesDown() => true;//TODO:
 
-		public bool MoveSelectedLinesUp() {
-			return true;//TODO:
-		}
+		public bool MoveSelectedLinesUp() => true;//TODO:
 
 		ITextViewLine GetBottomFullyVisibleLine() =>
 			TextView.TextViewLines.LastOrDefault(a => a.VisibilityState == VisibilityState.FullyVisible) ??
@@ -1405,9 +1388,7 @@ namespace dnSpy.Text.Operations {
 				Selection.Clear();
 		}
 
-		public bool NormalizeLineEndings(string replacement) {
-			return true;//TODO:
-		}
+		public bool NormalizeLineEndings(string replacement) => true;//TODO:
 
 		public bool OpenLineAbove() {
 			Selection.Clear();
@@ -1488,17 +1469,11 @@ namespace dnSpy.Text.Operations {
 				Selection.Clear();
 		}
 
-		public int ReplaceAllMatches(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegularExpressions) {
-			return 0;//TODO:
-		}
+		public int ReplaceAllMatches(string searchText, string replaceText, bool matchCase, bool matchWholeWord, bool useRegularExpressions) => 0;//TODO:
 
-		public bool ReplaceSelection(string text) {
-			return true;//TODO:
-		}
+		public bool ReplaceSelection(string text) => true;//TODO:
 
-		public bool ReplaceText(Span replaceSpan, string text) {
-			return true;//TODO:
-		}
+		public bool ReplaceText(Span replaceSpan, string text) => true;//TODO:
 
 		public void ResetSelection() => Selection.Clear();
 
@@ -1684,33 +1659,19 @@ namespace dnSpy.Text.Operations {
 			Caret.EnsureVisible();
 		}
 
-		public bool Tabify() {
-			return true;//TODO:
-		}
+		public bool Tabify() => true;//TODO:
 
-		public bool ToggleCase() {
-			return true;//TODO:
-		}
+		public bool ToggleCase() => true;//TODO:
 
-		public bool TransposeCharacter() {
-			return true;//TODO:
-		}
+		public bool TransposeCharacter() => true;//TODO:
 
-		public bool TransposeLine() {
-			return true;//TODO:
-		}
+		public bool TransposeLine() => true;//TODO:
 
-		public bool TransposeWord() {
-			return true;//TODO:
-		}
+		public bool TransposeWord() => true;//TODO:
 
-		public bool TrimTrailingWhiteSpace() {
-			return false;//TODO:
-		}
+		public bool TrimTrailingWhiteSpace() => false;//TODO:
 
-		public bool Untabify() {
-			return true;//TODO:
-		}
+		public bool Untabify() => true;//TODO:
 
 		IWpfTextView GetZoomableView() {
 			if (!Roles.Contains(PredefinedTextViewRoles.Zoomable))

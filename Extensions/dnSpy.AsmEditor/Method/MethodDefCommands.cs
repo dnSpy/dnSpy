@@ -53,9 +53,7 @@ namespace dnSpy.AsmEditor.Method {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
-				this.undoCommandService = undoCommandService;
-			}
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteMethodDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteMethodDefCommand.Execute(undoCommandService, context.Nodes);
@@ -68,9 +66,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			[ImportingConstructor]
 			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteMethodDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteMethodDefCommand.Execute(undoCommandService, context.Nodes);
@@ -83,9 +79,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			[ImportingConstructor]
 			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteMethodDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteMethodDefCommand.Execute(undoCommandService, context.Nodes);
@@ -275,9 +269,7 @@ namespace dnSpy.AsmEditor.Method {
 		DeletableNodes<MethodNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteMethodDefCommand(MethodNode[] methodNodes) {
-			nodes = new DeletableNodes<MethodNode>(methodNodes);
-		}
+		DeleteMethodDefCommand(MethodNode[] methodNodes) => nodes = new DeletableNodes<MethodNode>(methodNodes);
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteMethodCommand;
 

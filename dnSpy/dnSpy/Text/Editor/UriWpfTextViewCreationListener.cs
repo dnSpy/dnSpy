@@ -31,9 +31,7 @@ namespace dnSpy.Text.Editor {
 	sealed class UriWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		static readonly object textViewKey = new object();
 
-		public void TextViewCreated(IWpfTextView textView) {
-			textView.TextBuffer.Properties.AddProperty(textViewKey, textView);
-		}
+		public void TextViewCreated(IWpfTextView textView) => textView.TextBuffer.Properties.AddProperty(textViewKey, textView);
 
 		public static IWpfTextView TryGetTextView(ITextBuffer textBuffer) {
 			if (textBuffer == null)

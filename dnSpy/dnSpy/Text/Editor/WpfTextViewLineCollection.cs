@@ -282,31 +282,19 @@ namespace dnSpy.Text.Editor {
 		public bool Contains(ITextViewLine item) => IndexOf(item) >= 0;
 		public int IndexOf(ITextViewLine item) => lines.IndexOf(item as IWpfTextViewLine);
 
-		public void Add(ITextViewLine item) {
-			throw new NotSupportedException();
-		}
+		public void Add(ITextViewLine item) => throw new NotSupportedException();
 
-		public void Clear() {
-			throw new NotSupportedException();
-		}
+		public void Clear() => throw new NotSupportedException();
 
-		public void Insert(int index, ITextViewLine item) {
-			throw new NotSupportedException();
-		}
+		public void Insert(int index, ITextViewLine item) => throw new NotSupportedException();
 
-		public bool Remove(ITextViewLine item) {
-			throw new NotSupportedException();
-		}
+		public bool Remove(ITextViewLine item) => throw new NotSupportedException();
 
-		public void RemoveAt(int index) {
-			throw new NotSupportedException();
-		}
+		public void RemoveAt(int index) => throw new NotSupportedException();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		public IEnumerator<ITextViewLine> GetEnumerator() => lines.GetEnumerator();
 
-		public void Invalidate() {
-			IsValid = false;
-		}
+		public void Invalidate() => IsValid = false;
 	}
 }

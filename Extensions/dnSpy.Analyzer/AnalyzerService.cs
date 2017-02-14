@@ -90,9 +90,7 @@ namespace dnSpy.Analyzer {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly ITreeView treeView;
 
-			public GuidObjectsProvider(ITreeView treeView) {
-				this.treeView = treeView;
-			}
+			public GuidObjectsProvider(ITreeView treeView) => this.treeView = treeView;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID, treeView.TopLevelSelection);
@@ -200,8 +198,7 @@ namespace dnSpy.Analyzer {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
 				Debug.Assert(context != null);
 				var node = (ITreeNode)e.Argument;
-				var d = node.Data as AnalyzerTreeNodeData;
-				if (d != null)
+				if (node.Data is AnalyzerTreeNodeData d)
 					d.Context = context;
 				return;
 			}
@@ -329,14 +326,12 @@ namespace dnSpy.Analyzer {
 				return false;
 
 			{
-				var pb = b as PropertyDef;
-				if (pb != null) {
+				if (b is PropertyDef pb) {
 					var tmp = a;
 					a = b;
 					b = tmp;
 				}
-				var eb = b as EventDef;
-				if (eb != null) {
+				if (b is EventDef eb) {
 					var tmp = a;
 					a = b;
 					b = tmp;
@@ -345,20 +340,16 @@ namespace dnSpy.Analyzer {
 
 			const SigComparerOptions flags = SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable;
 
-			var type = a as IType;
-			if (type != null)
+			if (a is IType type)
 				return new SigComparer().Equals(type, b as IType);
 
-			var method = a as IMethod;
-			if (method != null && method.IsMethod)
+			if (a is IMethod method && method.IsMethod)
 				return new SigComparer(flags).Equals(method, b as IMethod);
 
-			var field = a as IField;
-			if (field != null && field.IsField)
+			if (a is IField field && field.IsField)
 				return new SigComparer(flags).Equals(field, b as IField);
 
-			var prop = a as PropertyDef;
-			if (prop != null) {
+			if (a is PropertyDef prop) {
 				if (new SigComparer(flags).Equals(prop, b as PropertyDef))
 					return true;
 				var bm = b as IMethod;
@@ -367,8 +358,7 @@ namespace dnSpy.Analyzer {
 					new SigComparer(flags).Equals(prop.SetMethod, bm));
 			}
 
-			var evt = a as EventDef;
-			if (evt != null) {
+			if (a is EventDef evt) {
 				if (new SigComparer(flags).Equals(evt, b as EventDef))
 					return true;
 				var bm = b as IMethod;

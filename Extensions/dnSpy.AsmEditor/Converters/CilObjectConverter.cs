@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.Converters {
 		static class Cache {
 			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
 			public static TextClassifierTextColorWriter GetWriter() => writer;
-			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
@@ -83,8 +83,6 @@ namespace dnSpy.AsmEditor.Converters {
 			return value.ToString();
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-			throw new NotImplementedException();
-		}
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 	}
 }

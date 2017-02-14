@@ -25,9 +25,7 @@ namespace dnSpy.Debugger {
 	abstract class MenuItemCommandProxy<TContext> : ICommand where TContext : class {
 		readonly MenuItemBase<TContext> cmd;
 
-		protected MenuItemCommandProxy(MenuItemBase<TContext> cmd) {
-			this.cmd = cmd;
-		}
+		protected MenuItemCommandProxy(MenuItemBase<TContext> cmd) => this.cmd = cmd;
 
 		protected abstract TContext CreateContext();
 

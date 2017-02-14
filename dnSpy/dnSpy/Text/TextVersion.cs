@@ -76,9 +76,7 @@ namespace dnSpy.Text {
 			return new TrackingSpan(this, span, trackingMode, trackingFidelity);
 		}
 
-		public ITrackingSpan CreateCustomTrackingSpan(Span span, TrackingFidelityMode trackingFidelity, object customState, CustomTrackToVersion behavior) {
-			throw new NotImplementedException();//TODO:
-		}
+		public ITrackingSpan CreateCustomTrackingSpan(Span span, TrackingFidelityMode trackingFidelity, object customState, CustomTrackToVersion behavior) => throw new NotImplementedException();//TODO:
 
 		public override string ToString() => $"V{VersionNumber} (r{ReiteratedVersionNumber})";
 	}

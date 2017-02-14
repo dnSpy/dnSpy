@@ -49,9 +49,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instanec</param>
 		public ExportTextViewOptionsGroupNameProviderAttribute(double order = double.MaxValue)
-			: base(typeof(ITextViewOptionsGroupNameProvider)) {
-			Order = order;
-		}
+			: base(typeof(ITextViewOptionsGroupNameProvider)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

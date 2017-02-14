@@ -30,9 +30,7 @@ namespace dnSpy.Hex.Editor.HexGroups {
 		readonly HexEditorFactoryService hexEditorFactoryService;
 
 		[ImportingConstructor]
-		HexEditorGroupFactoryServiceImpl(HexEditorFactoryService hexEditorFactoryService) {
-			this.hexEditorFactoryService = hexEditorFactoryService;
-		}
+		HexEditorGroupFactoryServiceImpl(HexEditorFactoryService hexEditorFactoryService) => this.hexEditorFactoryService = hexEditorFactoryService;
 
 		public override WpfHexViewHost Create(HexBuffer buffer, string group, string subGroup, Guid? menuGuid) {
 			if (buffer == null)

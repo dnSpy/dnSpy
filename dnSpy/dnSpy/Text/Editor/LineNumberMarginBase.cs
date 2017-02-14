@@ -332,9 +332,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			public LineCollection() {
-				lines = new List<LineInfo>();
-			}
+			public LineCollection() => lines = new List<LineInfo>();
 
 			protected override int VisualChildrenCount => lines.Count;
 			protected override Visual GetVisualChild(int index) => lines[index].Visual;

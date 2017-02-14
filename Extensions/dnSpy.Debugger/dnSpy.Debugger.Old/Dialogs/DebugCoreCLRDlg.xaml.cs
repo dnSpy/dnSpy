@@ -27,8 +27,7 @@ namespace dnSpy.Debugger.Dialogs {
 		public DebugCoreCLRDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as DebugCoreCLRVM;
-				if (data != null) {
+				if (DataContext is DebugCoreCLRVM data) {
 					data.PickDirectory = new PickDirectory();
 					data.PickFilename = new PickFilename();
 				}

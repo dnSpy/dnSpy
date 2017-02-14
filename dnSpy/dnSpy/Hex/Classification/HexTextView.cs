@@ -51,204 +51,100 @@ namespace dnSpy.Hex.Classification {
 		public event EventHandler Closed;
 
 		Brush VSTE.IWpfTextView.Background {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get => throw new NotImplementedException();
+			set => throw new NotImplementedException();
 		}
-
-		VSTP.IBufferGraph VSTE.ITextView.BufferGraph {
-			get { throw new NotImplementedException(); }
-		}
-
-		VSTE.ITextCaret VSTE.ITextView.Caret {
-			get { throw new NotImplementedException(); }
-		}
-
-		VSTF.IFormattedLineSource VSTE.IWpfTextView.FormattedLineSource {
-			get { throw new NotImplementedException(); }
-		}
-
-		bool VSTE.ITextView.HasAggregateFocus {
-			get { throw new NotImplementedException(); }
-		}
-
-		bool VSTE.ITextView.InLayout {
-			get { throw new NotImplementedException(); }
-		}
-
-		bool VSTE.ITextView.IsMouseOverViewOrAdornments {
-			get { throw new NotImplementedException(); }
-		}
-
-		double VSTE.ITextView.LineHeight {
-			get { throw new NotImplementedException(); }
-		}
-
-		VSTF.ILineTransformSource VSTE.IWpfTextView.LineTransformSource {
-			get { throw new NotImplementedException(); }
-		}
-
-		double VSTE.ITextView.MaxTextRightCoordinate {
-			get { throw new NotImplementedException(); }
-		}
-
+		VSTP.IBufferGraph VSTE.ITextView.BufferGraph => throw new NotImplementedException();
+		VSTE.ITextCaret VSTE.ITextView.Caret => throw new NotImplementedException();
+		VSTF.IFormattedLineSource VSTE.IWpfTextView.FormattedLineSource => throw new NotImplementedException();
+		bool VSTE.ITextView.HasAggregateFocus => throw new NotImplementedException();
+		bool VSTE.ITextView.InLayout => throw new NotImplementedException();
+		bool VSTE.ITextView.IsMouseOverViewOrAdornments => throw new NotImplementedException();
+		double VSTE.ITextView.LineHeight => throw new NotImplementedException();
+		VSTF.ILineTransformSource VSTE.IWpfTextView.LineTransformSource => throw new NotImplementedException();
+		double VSTE.ITextView.MaxTextRightCoordinate => throw new NotImplementedException();
 		VST.ITrackingSpan VSTE.ITextView.ProvisionalTextHighlight {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get => throw new NotImplementedException();
+			set => throw new NotImplementedException();
 		}
-
-		VSTE.ITextViewRoleSet VSTE.ITextView.Roles {
-			get { throw new NotImplementedException(); }
-		}
-
-		VSTE.ITextSelection VSTE.ITextView.Selection {
-			get { throw new NotImplementedException(); }
-		}
-
-		VST.ITextBuffer VSTE.ITextView.TextBuffer {
-			get { throw new NotImplementedException(); }
-		}
-
-		VST.ITextDataModel VSTE.ITextView.TextDataModel {
-			get { throw new NotImplementedException(); }
-		}
-
-		VST.ITextSnapshot VSTE.ITextView.TextSnapshot {
-			get { throw new NotImplementedException(); }
-		}
-
-		VSTE.ITextViewLineCollection VSTE.ITextView.TextViewLines {
-			get { throw new NotImplementedException(); }
-		}
-
-		VSTE.IWpfTextViewLineCollection VSTE.IWpfTextView.TextViewLines {
-			get { throw new NotImplementedException(); }
-		}
-
-		VSTE.ITextViewModel VSTE.ITextView.TextViewModel {
-			get { throw new NotImplementedException(); }
-		}
-
-		double VSTE.ITextView.ViewportBottom {
-			get { throw new NotImplementedException(); }
-		}
-
-		double VSTE.ITextView.ViewportHeight {
-			get { throw new NotImplementedException(); }
-		}
-
+		VSTE.ITextViewRoleSet VSTE.ITextView.Roles => throw new NotImplementedException();
+		VSTE.ITextSelection VSTE.ITextView.Selection => throw new NotImplementedException();
+		VST.ITextBuffer VSTE.ITextView.TextBuffer => throw new NotImplementedException();
+		VST.ITextDataModel VSTE.ITextView.TextDataModel => throw new NotImplementedException();
+		VST.ITextSnapshot VSTE.ITextView.TextSnapshot => throw new NotImplementedException();
+		VSTE.ITextViewLineCollection VSTE.ITextView.TextViewLines => throw new NotImplementedException();
+		VSTE.IWpfTextViewLineCollection VSTE.IWpfTextView.TextViewLines => throw new NotImplementedException();
+		VSTE.ITextViewModel VSTE.ITextView.TextViewModel => throw new NotImplementedException();
+		double VSTE.ITextView.ViewportBottom => throw new NotImplementedException();
+		double VSTE.ITextView.ViewportHeight => throw new NotImplementedException();
 		double VSTE.ITextView.ViewportLeft {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get => throw new NotImplementedException();
+			set => throw new NotImplementedException();
 		}
-
-		double VSTE.ITextView.ViewportRight {
-			get { throw new NotImplementedException(); }
-		}
-
-		double VSTE.ITextView.ViewportTop {
-			get { throw new NotImplementedException(); }
-		}
-
-		double VSTE.ITextView.ViewportWidth {
-			get { throw new NotImplementedException(); }
-		}
-
-		VSTE.IViewScroller VSTE.ITextView.ViewScroller {
-			get { throw new NotImplementedException(); }
-		}
-
-		FrameworkElement VSTE.IWpfTextView.VisualElement {
-			get { throw new NotImplementedException(); }
-		}
-
-		VST.ITextSnapshot VSTE.ITextView.VisualSnapshot {
-			get { throw new NotImplementedException(); }
-		}
-
+		double VSTE.ITextView.ViewportRight => throw new NotImplementedException();
+		double VSTE.ITextView.ViewportTop => throw new NotImplementedException();
+		double VSTE.ITextView.ViewportWidth => throw new NotImplementedException();
+		VSTE.IViewScroller VSTE.ITextView.ViewScroller => throw new NotImplementedException();
+		FrameworkElement VSTE.IWpfTextView.VisualElement => throw new NotImplementedException();
+		VST.ITextSnapshot VSTE.ITextView.VisualSnapshot => throw new NotImplementedException();
 		double VSTE.IWpfTextView.ZoomLevel {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get => throw new NotImplementedException();
+			set => throw new NotImplementedException();
 		}
 
 		event EventHandler<VSTE.BackgroundBrushChangedEventArgs> VSTE.IWpfTextView.BackgroundBrushChanged {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
 		event EventHandler VSTE.ITextView.GotAggregateFocus {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
 		event EventHandler<VSTE.TextViewLayoutChangedEventArgs> VSTE.ITextView.LayoutChanged {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
 		event EventHandler VSTE.ITextView.LostAggregateFocus {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
 		event EventHandler<VSTE.MouseHoverEventArgs> VSTE.ITextView.MouseHover {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
 		event EventHandler VSTE.ITextView.ViewportHeightChanged {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
 		event EventHandler VSTE.ITextView.ViewportLeftChanged {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
 		event EventHandler VSTE.ITextView.ViewportWidthChanged {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
 		event EventHandler<VSTE.ZoomLevelChangedEventArgs> VSTE.IWpfTextView.ZoomLevelChanged {
-			add { throw new NotImplementedException(); }
-			remove { throw new NotImplementedException(); }
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
 		}
 
-		void VSTE.ITextView.Close() {
-			throw new NotImplementedException();
-		}
-
-		void VSTE.ITextView.DisplayTextLineContainingBufferPosition(VST.SnapshotPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo) {
-			throw new NotImplementedException();
-		}
-
-		void VSTE.ITextView.DisplayTextLineContainingBufferPosition(VST.SnapshotPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) {
-			throw new NotImplementedException();
-		}
-
-		VSTE.IAdornmentLayer VSTE.IWpfTextView.GetAdornmentLayer(string name) {
-			throw new NotImplementedException();
-		}
-
-		VSTE.ISpaceReservationManager VSTE.IWpfTextView.GetSpaceReservationManager(string name) {
-			throw new NotImplementedException();
-		}
-
-		VST.SnapshotSpan VSTE.ITextView.GetTextElementSpan(VST.SnapshotPoint point) {
-			throw new NotImplementedException();
-		}
-
-		VSTF.ITextViewLine VSTE.ITextView.GetTextViewLineContainingBufferPosition(VST.SnapshotPoint bufferPosition) {
-			throw new NotImplementedException();
-		}
-
-		VSTF.IWpfTextViewLine VSTE.IWpfTextView.GetTextViewLineContainingBufferPosition(VST.SnapshotPoint bufferPosition) {
-			throw new NotImplementedException();
-		}
-
-		void VSTE.ITextView.QueueSpaceReservationStackRefresh() {
-			throw new NotImplementedException();
-		}
+		void VSTE.ITextView.Close() => throw new NotImplementedException();
+		void VSTE.ITextView.DisplayTextLineContainingBufferPosition(VST.SnapshotPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo) => throw new NotImplementedException();
+		void VSTE.ITextView.DisplayTextLineContainingBufferPosition(VST.SnapshotPoint bufferPosition, double verticalDistance, VSTE.ViewRelativePosition relativeTo, double? viewportWidthOverride, double? viewportHeightOverride) => throw new NotImplementedException();
+		VSTE.IAdornmentLayer VSTE.IWpfTextView.GetAdornmentLayer(string name) => throw new NotImplementedException();
+		VSTE.ISpaceReservationManager VSTE.IWpfTextView.GetSpaceReservationManager(string name) => throw new NotImplementedException();
+		VST.SnapshotSpan VSTE.ITextView.GetTextElementSpan(VST.SnapshotPoint point) => throw new NotImplementedException();
+		VSTF.ITextViewLine VSTE.ITextView.GetTextViewLineContainingBufferPosition(VST.SnapshotPoint bufferPosition) => throw new NotImplementedException();
+		VSTF.IWpfTextViewLine VSTE.IWpfTextView.GetTextViewLineContainingBufferPosition(VST.SnapshotPoint bufferPosition) => throw new NotImplementedException();
+		void VSTE.ITextView.QueueSpaceReservationStackRefresh() => throw new NotImplementedException();
 	}
 }

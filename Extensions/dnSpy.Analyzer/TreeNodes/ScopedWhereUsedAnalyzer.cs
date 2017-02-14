@@ -45,9 +45,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, method.DeclaringType, typeAnalysisFunction) {
-			memberAccessibility = GetMethodAccessibility(method);
-		}
+			: this(documentService, method.DeclaringType, typeAnalysisFunction) => memberAccessibility = GetMethodAccessibility(method);
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
 			: this(documentService, property.DeclaringType, typeAnalysisFunction) {
@@ -57,11 +55,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, EventDef eventDef, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, eventDef.DeclaringType, typeAnalysisFunction) {
+			: this(documentService, eventDef.DeclaringType, typeAnalysisFunction) =>
 			// we only have to check the accessibility of the the get method
 			// [CLS Rule 30: The accessibility of an event and of its accessors shall be identical.]
 			memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
-		}
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
 			: this(documentService, field.DeclaringType, typeAnalysisFunction) {

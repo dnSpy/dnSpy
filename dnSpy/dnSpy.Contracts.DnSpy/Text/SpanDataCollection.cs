@@ -244,13 +244,9 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static SpanDataCollectionBuilder<TData> CreateBuilder(int capacity) => new SpanDataCollectionBuilder<TData>(capacity);
 
-		SpanDataCollectionBuilder(bool unused) {
-			list = new List<SpanData<TData>>();
-		}
+		SpanDataCollectionBuilder(bool unused) => list = new List<SpanData<TData>>();
 
-		SpanDataCollectionBuilder(int capacity) {
-			list = new List<SpanData<TData>>(capacity);
-		}
+		SpanDataCollectionBuilder(int capacity) => list = new List<SpanData<TData>>(capacity);
 
 		/// <summary>
 		/// Clears the created list

@@ -33,9 +33,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		DsDocumentUndoableDocumentsProvider(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		DsDocumentUndoableDocumentsProvider(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() {
 			foreach (var file in GetAllDocuments())
@@ -45,8 +43,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		IEnumerable<IDsDocument> GetAllDocuments() => documentTabService.DocumentTreeView.GetAllCreatedDocumentNodes().Select(a => a.Document);
 
 		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
-			var node = obj as DocumentTreeNodeData;
-			if (node != null) {
+			if (obj is DocumentTreeNodeData node) {
 				var documentNode = node.GetDocumentNode();
 				Debug.Assert(documentNode != null);
 				if (documentNode != null) {
@@ -54,8 +51,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 					// and they haven't yet been inserted into the treeview.
 					if (documentNode is ModuleDocumentNode)
 						return GetUndoObjectNoChecks(documentNode.Document);
-					if (documentNode is AssemblyDocumentNode) {
-						var asmNode = (AssemblyDocumentNode)documentNode;
+					if (documentNode is AssemblyDocumentNode asmNode) {
 						asmNode.TreeNode.EnsureChildrenLoaded();
 						var modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
 						Debug.Assert(modNode != null);
@@ -65,8 +61,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 					return GetUndoObject(documentNode.Document);
 				}
 			}
-			var document = obj as IDsDocument;
-			if (document != null)
+			if (obj is IDsDocument document)
 				return GetUndoObject(document);
 
 			return null;
@@ -88,8 +83,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetDocument(obj);
 
 		IDsDocument GetDocumentFile(IDsDocument document) {
-			var dnDocument = document as IDsDotNetDocument;
-			if (dnDocument != null) {
+			if (document is IDsDotNetDocument dnDocument) {
 				// Assemblies and manifest modules don't share a IDsDocument instance, but we must
 				// use the same IUndoObject instance since they're part of the same file.
 				var module = document.ModuleDef;

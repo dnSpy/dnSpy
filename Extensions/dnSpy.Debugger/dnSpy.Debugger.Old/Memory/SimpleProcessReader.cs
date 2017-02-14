@@ -31,9 +31,7 @@ namespace dnSpy.Debugger.Memory {
 		readonly HexBufferStreamFactoryService hexBufferStreamFactoryService;
 
 		[ImportingConstructor]
-		SimpleProcessReaderImpl(HexBufferStreamFactoryService hexBufferStreamFactoryService) {
-			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
-		}
+		SimpleProcessReaderImpl(HexBufferStreamFactoryService hexBufferStreamFactoryService) => this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
 
 		public override void Read(IntPtr hProcess, HexPosition position, byte[] destination, long destinationIndex, long length) {
 			if (hProcess == IntPtr.Zero)

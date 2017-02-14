@@ -47,9 +47,7 @@ namespace dnSpy.Hex.Intellisense {
 			public HexSpaceReservationManager SpaceReservationManager { get; private set; }
 			public HexSpaceReservationAgent SpaceReservationAgent;
 			public IHexPopupIntellisensePresenter PopupIntellisensePresenter { get; set; }
-			public SessionState(HexIntellisenseSession session) {
-				Session = session;
-			}
+			public SessionState(HexIntellisenseSession session) => Session = session;
 			public void SetSpaceReservationManager(HexSpaceReservationManager manager) {
 				if (SpaceReservationManager != null)
 					throw new InvalidOperationException();
@@ -113,8 +111,7 @@ namespace dnSpy.Hex.Intellisense {
 				return;
 			isInClearOpacityMode = newIsInClearOpacityMode;
 			foreach (var session in sessions.ToArray()) {
-				var popupPresenter = session.Presenter as IHexPopupIntellisensePresenter;
-				if (popupPresenter != null)
+				if (session.Presenter is IHexPopupIntellisensePresenter popupPresenter)
 					popupPresenter.Opacity = opacity;
 			}
 		}
@@ -225,8 +222,7 @@ namespace dnSpy.Hex.Intellisense {
 			Debug.Assert(sessionState.SpaceReservationAgent == null);
 
 			var presenter = session.Presenter;
-			var popupPresenter = presenter as IHexPopupIntellisensePresenter;
-			if (popupPresenter != null) {
+			if (presenter is IHexPopupIntellisensePresenter popupPresenter) {
 				if (sessionState.SpaceReservationManager == null) {
 					sessionState.SetSpaceReservationManager(wpfHexView.GetSpaceReservationManager(popupPresenter.SpaceReservationManagerName));
 					sessionState.SpaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
@@ -243,8 +239,7 @@ namespace dnSpy.Hex.Intellisense {
 				}
 			}
 			else {
-				var customPresenter = presenter as IHexCustomIntellisensePresenter;
-				if (customPresenter != null)
+				if (presenter is IHexCustomIntellisensePresenter customPresenter)
 					customPresenter.Render();
 				else
 					Debug.Assert(presenter == null, $"Unsupported presenter: {presenter?.GetType()}");

@@ -140,8 +140,7 @@ namespace dnSpy.Settings.Dialog {
 			var appRefreshSettings = new AppRefreshSettings();
 			if (saveSettings) {
 				foreach (var page in allPages) {
-					var page2 = page.Page as IAppSettingsPage2;
-					if (page2 != null)
+					if (page.Page is IAppSettingsPage2 page2)
 						page2.OnApply(appRefreshSettings);
 					else
 						page.Page.OnApply();
@@ -247,8 +246,7 @@ namespace dnSpy.Settings.Dialog {
 			if (result != null)
 				return result;
 
-			var textControl = ownerControl as TextControl;
-			if (textControl != null) {
+			if (ownerControl is TextControl textControl) {
 				return new TextBlock {
 					Text = textControl.Content as string,
 					TextTrimming = textControl.TextTrimming,
@@ -281,8 +279,7 @@ namespace dnSpy.Settings.Dialog {
 			TextTrimming textTrimming = TextTrimming.None;
 			TextWrapping textWrapping = TextWrapping.NoWrap;
 
-			var textControl = ownerControl as TextControl;
-			if (textControl != null) {
+			if (ownerControl is TextControl textControl) {
 				textTrimming = textControl.TextTrimming;
 				textWrapping = textControl.TextWrapping;
 			}
@@ -449,8 +446,6 @@ namespace dnSpy.Settings.Dialog {
 			return null;
 		}
 
-		public void Dispose() {
-			pageContext?.TreeView?.Dispose();
-		}
+		public void Dispose() => pageContext?.TreeView?.Dispose();
 	}
 }

@@ -103,21 +103,13 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		public override int ReadMemory(ulong address, IntPtr destination, int size) {
-			throw new NotImplementedException();//TODO:
-		}
+		public override int ReadMemory(ulong address, IntPtr destination, int size) => throw new NotImplementedException();//TODO:
 
-		public override int ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) {
-			throw new NotImplementedException();//TODO:
-		}
+		public override int ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) => throw new NotImplementedException();//TODO:
 
-		public override int WriteMemory(ulong address, IntPtr source, int size) {
-			throw new NotImplementedException();//TODO:
-		}
+		public override int WriteMemory(ulong address, IntPtr source, int size) => throw new NotImplementedException();//TODO:
 
-		public override int WriteMemory(ulong address, byte[] source, int sourceIndex, int size) {
-			throw new NotImplementedException();//TODO:
-		}
+		public override int WriteMemory(ulong address, byte[] source, int sourceIndex, int size) => throw new NotImplementedException();//TODO:
 
 		internal void Add(DbgEngine engine, DbgRuntime runtime) {
 			lock (lockObj)

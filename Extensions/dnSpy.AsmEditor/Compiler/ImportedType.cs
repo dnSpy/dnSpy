@@ -38,9 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	/// This is a new type that got imported into the target module
 	/// </summary>
 	sealed class NewImportedType : ImportedType {
-		public NewImportedType(TypeDef targetType) {
-			TargetType = targetType;
-		}
+		public NewImportedType(TypeDef targetType) => TargetType = targetType;
 	}
 
 	struct EditedProperty {

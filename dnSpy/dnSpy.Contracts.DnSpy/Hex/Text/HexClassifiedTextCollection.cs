@@ -55,9 +55,7 @@ namespace dnSpy.Contracts.Hex.Text {
 		/// Constructor
 		/// </summary>
 		/// <param name="text">Text</param>
-		public HexClassifiedTextCollection(HexClassifiedText[] text) {
-			this.text = text ?? throw new ArgumentNullException(nameof(text));
-		}
+		public HexClassifiedTextCollection(HexClassifiedText[] text) => this.text = text ?? throw new ArgumentNullException(nameof(text));
 
 		/// <summary>
 		/// Gets the enumerator

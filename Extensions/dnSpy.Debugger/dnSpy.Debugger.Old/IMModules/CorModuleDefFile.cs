@@ -33,9 +33,7 @@ namespace dnSpy.Debugger.IMModules {
 		sealed class MyKey : IDsDocumentNameKey {
 			readonly DnModule dnModule;
 
-			public MyKey(DnModule dnModule) {
-				this.dnModule = dnModule;
-			}
+			public MyKey(DnModule dnModule) => this.dnModule = dnModule;
 
 			public override bool Equals(object obj) {
 				var o = obj as MyKey;

@@ -119,13 +119,11 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static void AppendTypeName(StringBuilder b, TypeSig type) {
 			if (type == null)
 				return;
-			if (type is GenericInstSig) {
-				GenericInstSig giType = (GenericInstSig)type;
+			if (type is GenericInstSig giType) {
 				AppendTypeNameWithArguments(b, giType.GenericType == null ? null : giType.GenericType.TypeDefOrRef, giType.GenericArguments);
 				return;
 			}
-			ArraySigBase arrayType = type as ArraySigBase;
-			if (arrayType != null) {
+			if (type is ArraySigBase arrayType) {
 				AppendTypeName(b, arrayType.Next);
 				b.Append('[');
 				var lowerBounds = arrayType.GetLowerBounds();
@@ -142,20 +140,17 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				b.Append(']');
 				return;
 			}
-			ByRefSig refType = type as ByRefSig;
-			if (refType != null) {
+			if (type is ByRefSig refType) {
 				AppendTypeName(b, refType.Next);
 				b.Append('@');
 				return;
 			}
-			PtrSig ptrType = type as PtrSig;
-			if (ptrType != null) {
+			if (type is PtrSig ptrType) {
 				AppendTypeName(b, ptrType.Next);
 				b.Append('*');
 				return;
 			}
-			GenericSig gp = type as GenericSig;
-			if (gp != null) {
+			if (type is GenericSig gp) {
 				b.Append('`');
 				if (gp.IsMethodVar) {
 					b.Append('`');

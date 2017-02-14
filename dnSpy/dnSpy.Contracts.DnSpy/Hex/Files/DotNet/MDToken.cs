@@ -75,9 +75,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// Constructor
 		/// </summary>
 		/// <param name="token">Raw token</param>
-		public MDToken(uint token) {
-			this.token = token;
-		}
+		public MDToken(uint token) => this.token = token;
 
 		/// <summary>
 		/// Constructor
@@ -110,50 +108,38 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// </summary>
 		/// <param name="token">A raw metadata token</param>
 		/// <returns>A <c>rid</c></returns>
-		public static uint ToRID(uint token) {
-			return token & RID_MASK;
-		}
+		public static uint ToRID(uint token) => token & RID_MASK;
 
 		/// <summary>
 		/// Returns the <c>rid</c> (row ID)
 		/// </summary>
 		/// <param name="token">A raw metadata token</param>
 		/// <returns>A <c>rid</c></returns>
-		public static uint ToRID(int token) {
-			return ToRID((uint)token);
-		}
+		public static uint ToRID(int token) => ToRID((uint)token);
 
 		/// <summary>
 		/// Returns the <c>table</c>
 		/// </summary>
 		/// <param name="token">A raw metadata token</param>
 		/// <returns>A metadata table index</returns>
-		public static Table ToTable(uint token) {
-			return (Table)(token >> TABLE_SHIFT);
-		}
+		public static Table ToTable(uint token) => (Table)(token >> TABLE_SHIFT);
 
 		/// <summary>
 		/// Returns the <c>table</c>
 		/// </summary>
 		/// <param name="token">A raw metadata token</param>
 		/// <returns>A metadata table index</returns>
-		public static Table ToTable(int token) {
-			return ToTable((uint)token);
-		}
+		public static Table ToTable(int token) => ToTable((uint)token);
 
 		/// <summary>
 		/// Gets the token as a raw 32-bit signed integer
 		/// </summary>
-		public int ToInt32() {
-			return (int)token;
-		}
+		public int ToInt32() => (int)token;
 
 		/// <summary>
 		/// Gets the token as a raw 32-bit unsigned integer
 		/// </summary>
-		public uint ToUInt32() {
-			return token;
-		}
+		public uint ToUInt32() => token;
 
 		/// <summary>Overloaded operator</summary>
 		public static bool operator ==(MDToken left, MDToken right) {
@@ -186,14 +172,10 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		}
 
 		/// <inheritdoc/>
-		public int CompareTo(MDToken other) {
-			return token.CompareTo(other.token);
-		}
+		public int CompareTo(MDToken other) => token.CompareTo(other.token);
 
 		/// <inheritdoc/>
-		public bool Equals(MDToken other) {
-			return CompareTo(other) == 0;
-		}
+		public bool Equals(MDToken other) => CompareTo(other) == 0;
 
 		/// <inheritdoc/>
 		public override bool Equals(object obj) {
@@ -203,13 +185,9 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		}
 
 		/// <inheritdoc/>
-		public override int GetHashCode() {
-			return (int)token;
-		}
+		public override int GetHashCode() => (int)token;
 
 		/// <inheritdoc/>
-		public override string ToString() {
-			return string.Format("{0:X8}", token);
-		}
+		public override string ToString() => string.Format("{0:X8}", token);
 	}
 }

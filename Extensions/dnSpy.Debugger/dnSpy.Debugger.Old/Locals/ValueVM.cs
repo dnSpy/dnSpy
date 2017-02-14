@@ -158,8 +158,7 @@ namespace dnSpy.Debugger.Locals {
 			var nodes = (includeSelf ? node.DescendantsAndSelf() : node.Descendants()).ToArray();
 			node.Children.Clear();
 			foreach (var n in nodes) {
-				var id = n as IDisposable;
-				if (id != null)
+				if (n is IDisposable id)
 					id.Dispose();
 			}
 		}
@@ -280,14 +279,11 @@ namespace dnSpy.Debugger.Locals {
 
 		protected sealed override CachedOutput CreateCachedOutputType() {
 			var value = ReadOnlyCorValue;
-			var ts = type as TypeSig;
-			if (ts != null)
+			if (type is TypeSig ts)
 				return CachedOutput.CreateType(value, ts, context.GenericTypeArguments, context.GenericMethodArguments, TypePrinterFlags);
-			var ct = type as CorType;
-			if (ct != null)
+			if (type is CorType ct)
 				return CachedOutput.CreateType(value, ct, TypePrinterFlags);
-			var cc = type as CorClass;
-			if (cc != null)
+			if (type is CorClass cc)
 				return CachedOutput.CreateType(value, cc, TypePrinterFlags);
 			return CachedOutput.CreateType(value, TypePrinterFlags);
 		}
@@ -436,20 +432,17 @@ namespace dnSpy.Debugger.Locals {
 			else {
 				Debug.Assert(!LazyLoading && loadChildrenDel == null);
 				foreach (var child in Children) {
-					var field = child as FieldValueVM;
-					if (field != null) {
+					if (child is FieldValueVM field) {
 						field.Reinitialize(context);
 						continue;
 					}
 
-					var lfield = child as LiteralFieldValueVM;
-					if (lfield != null) {
+					if (child is LiteralFieldValueVM lfield) {
 						lfield.Reinitialize(context);
 						continue;
 					}
 
-					var prop = child as PropertyValueVM;
-					if (prop != null) {
+					if (child is PropertyValueVM prop) {
 						prop.Reinitialize(context);
 						continue;
 					}
@@ -567,8 +560,7 @@ namespace dnSpy.Debugger.Locals {
 				return;
 
 			foreach (var info in GetObjectValueInfos(et)) {
-				if (info.CorInfo is CorFieldInfo) {
-					var finfo = (CorFieldInfo)info.CorInfo;
+				if (info.CorInfo is CorFieldInfo finfo) {
 					if ((finfo.Attributes & FieldAttributes.Literal) != 0)
 						Children.Add(new LiteralFieldValueVM(context, finfo, info.Overridden));
 					else {
@@ -695,9 +687,7 @@ namespace dnSpy.Debugger.Locals {
 		protected NormalValueVM() {
 		}
 
-		protected NormalValueVM(ValueContext context, object type, NormalValueType valueType) {
-			InitializeFromConstructor(context, type, valueType);
-		}
+		protected NormalValueVM(ValueContext context, object type, NormalValueType valueType) => InitializeFromConstructor(context, type, valueType);
 
 		protected void InitializeFromConstructor(ValueContext context, object type, NormalValueType valueType) {
 			this.valueType = valueType;
@@ -884,9 +874,7 @@ namespace dnSpy.Debugger.Locals {
 		ICorValueHolder valueHolder;
 
 		public CorValueVM(ValueContext context, ICorValueHolder value, object type, NormalValueType valueType)
-			: base(context, type, valueType) {
-			Reinitialize(context, value, type);
-		}
+			: base(context, type, valueType) => Reinitialize(context, value, type);
 
 		public void Reinitialize(ValueContext newContext, ICorValueHolder newValue, object newType) {
 			if (valueHolder != null && valueHolder != newValue)
@@ -1124,8 +1112,7 @@ namespace dnSpy.Debugger.Locals {
 			ts = ts.RemovePinnedAndModifiers();
 			if (ts.GetElementType().IsValueType())
 				return true;
-			var gis = ts as GenericInstSig;
-			if (gis != null)
+			if (ts is GenericInstSig gis)
 				return gis.GenericType is ValueTypeSig;
 			return false;
 		}
@@ -1149,9 +1136,7 @@ namespace dnSpy.Debugger.Locals {
 		public override ImageReference IconReference => DsImages.FieldPublic;
 		public int Index { get; }
 
-		public LocalValueType(int index) {
-			Index = index;
-		}
+		public LocalValueType(int index) => Index = index;
 
 		public void InitializeName(string name) {
 			if (this.name != name) {
@@ -1173,9 +1158,7 @@ namespace dnSpy.Debugger.Locals {
 		public override ImageReference IconReference => DsImages.FieldPublic;
 		public int Index { get; }
 
-		public ArgumentValueType(int index) {
-			Index = index;
-		}
+		public ArgumentValueType(int index) => Index = index;
 
 		public void InitializeName(string name, bool isThis) {
 			if (this.name != name || this.isThis != isThis) {
@@ -1444,9 +1427,7 @@ namespace dnSpy.Debugger.Locals {
 	sealed class ObjectState : IEquatable<ObjectState> {
 		readonly CorType Type;
 
-		public ObjectState(CorType type) {
-			Type = type;
-		}
+		public ObjectState(CorType type) => Type = type;
 
 		public bool Equals(ObjectState other) => other != null && Type == other.Type;
 		public override bool Equals(object obj) => Equals(obj as ObjectState);
@@ -1550,9 +1531,7 @@ namespace dnSpy.Debugger.Locals {
 			return index == Children.Count;
 		}
 
-		public TypeVariablesValueVM(ValueContext context) {
-			Reinitialize(context);
-		}
+		public TypeVariablesValueVM(ValueContext context) => Reinitialize(context);
 
 		public override void WriteName(ITextColorWriter output) =>
 			output.Write(BoxedTextColor.TypeGenericParameter, dnSpy_Debugger_Resources.Locals_TypeVariables);

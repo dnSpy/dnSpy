@@ -33,9 +33,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 	sealed class ImportTypeEqualityComparer : IEqualityComparer<TypeDef>, IEqualityComparer<ITypeDefOrRef>, IEqualityComparer<IType>, IEqualityComparer<TypeSig> {
 		/*readonly*/ ImportSigComparer comparer;
-		public ImportTypeEqualityComparer(ImportSigComparer comparer) {
-			this.comparer = comparer;
-		}
+		public ImportTypeEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
 		public bool Equals(TypeDef x, TypeDef y) => comparer.Equals(x, y);
 		public int GetHashCode(TypeDef obj) => comparer.GetHashCode(obj);
 		public bool Equals(ITypeDefOrRef x, ITypeDefOrRef y) => comparer.Equals(x, y);
@@ -48,27 +46,21 @@ namespace dnSpy.AsmEditor.Compiler {
 
 	sealed class ImportPropertyEqualityComparer : IEqualityComparer<PropertyDef> {
 		/*readonly*/ ImportSigComparer comparer;
-		public ImportPropertyEqualityComparer(ImportSigComparer comparer) {
-			this.comparer = comparer;
-		}
+		public ImportPropertyEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
 		public bool Equals(PropertyDef x, PropertyDef y) => comparer.Equals(x, y);
 		public int GetHashCode(PropertyDef obj) => comparer.GetHashCode(obj);
 	}
 
 	sealed class ImportEventEqualityComparer : IEqualityComparer<EventDef> {
 		/*readonly*/ ImportSigComparer comparer;
-		public ImportEventEqualityComparer(ImportSigComparer comparer) {
-			this.comparer = comparer;
-		}
+		public ImportEventEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
 		public bool Equals(EventDef x, EventDef y) => comparer.Equals(x, y);
 		public int GetHashCode(EventDef obj) => comparer.GetHashCode(obj);
 	}
 
 	sealed class ImportMethodEqualityComparer : IEqualityComparer<MethodDef>, IEqualityComparer<MemberRef>, IEqualityComparer<IMethod> {
 		/*readonly*/ ImportSigComparer comparer;
-		public ImportMethodEqualityComparer(ImportSigComparer comparer) {
-			this.comparer = comparer;
-		}
+		public ImportMethodEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
 		public bool Equals(MethodDef x, MethodDef y) => comparer.Equals(x, y);
 		public int GetHashCode(MethodDef obj) => comparer.GetHashCode(obj);
 		public bool Equals(MemberRef x, MemberRef y) => comparer.Equals(x, y);
@@ -79,9 +71,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 	sealed class ImportFieldEqualityComparer : IEqualityComparer<FieldDef>, IEqualityComparer<MemberRef>, IEqualityComparer<IField> {
 		/*readonly*/ ImportSigComparer comparer;
-		public ImportFieldEqualityComparer(ImportSigComparer comparer) {
-			this.comparer = comparer;
-		}
+		public ImportFieldEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
 		public bool Equals(FieldDef x, FieldDef y) => comparer.Equals(x, y);
 		public int GetHashCode(FieldDef obj) => comparer.GetHashCode(obj);
 		public bool Equals(MemberRef x, MemberRef y) => comparer.Equals(x, y);
@@ -145,10 +135,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.sourceModule = sourceModule;
 		}
 
-		int GetHashCode_FnPtr_SystemIntPtr() {
-			return GetHashCode_TypeNamespace("System") +
-					GetHashCode_TypeName("IntPtr");
-		}
+		int GetHashCode_FnPtr_SystemIntPtr() =>
+			GetHashCode_TypeNamespace("System") +
+			GetHashCode_TypeName("IntPtr");
 
 		bool Equals_Names(bool caseInsensitive, UTF8String a, UTF8String b) {
 			if (caseInsensitive)
@@ -168,85 +157,45 @@ namespace dnSpy.AsmEditor.Compiler {
 			return (a ?? string.Empty).GetHashCode();
 		}
 
-		bool Equals_TypeNamespaces(UTF8String a, UTF8String b) {
-			return Equals_Names(CaseInsensitiveTypeNamespaces, a, b);
-		}
+		bool Equals_TypeNamespaces(UTF8String a, UTF8String b) => Equals_Names(CaseInsensitiveTypeNamespaces, a, b);
 
-		bool Equals_TypeNamespaces(UTF8String a, string b) {
-			return Equals_Names(CaseInsensitiveTypeNamespaces, UTF8String.ToSystemStringOrEmpty(a), b);
-		}
+		bool Equals_TypeNamespaces(UTF8String a, string b) => Equals_Names(CaseInsensitiveTypeNamespaces, UTF8String.ToSystemStringOrEmpty(a), b);
 
-		int GetHashCode_TypeNamespace(UTF8String a) {
-			return GetHashCode_Name(CaseInsensitiveTypeNamespaces, UTF8String.ToSystemStringOrEmpty(a));
-		}
+		int GetHashCode_TypeNamespace(UTF8String a) => GetHashCode_Name(CaseInsensitiveTypeNamespaces, UTF8String.ToSystemStringOrEmpty(a));
 
-		int GetHashCode_TypeNamespace(string a) {
-			return GetHashCode_Name(CaseInsensitiveTypeNamespaces, a);
-		}
+		int GetHashCode_TypeNamespace(string a) => GetHashCode_Name(CaseInsensitiveTypeNamespaces, a);
 
-		bool Equals_TypeNames(UTF8String a, UTF8String b) {
-			return Equals_Names(CaseInsensitiveTypeNames, a, b);
-		}
+		bool Equals_TypeNames(UTF8String a, UTF8String b) => Equals_Names(CaseInsensitiveTypeNames, a, b);
 
-		bool Equals_TypeNames(UTF8String a, string b) {
-			return Equals_Names(CaseInsensitiveTypeNames, UTF8String.ToSystemStringOrEmpty(a), b);
-		}
+		bool Equals_TypeNames(UTF8String a, string b) => Equals_Names(CaseInsensitiveTypeNames, UTF8String.ToSystemStringOrEmpty(a), b);
 
-		int GetHashCode_TypeName(UTF8String a) {
-			return GetHashCode_Name(CaseInsensitiveTypeNames, UTF8String.ToSystemStringOrEmpty(a));
-		}
+		int GetHashCode_TypeName(UTF8String a) => GetHashCode_Name(CaseInsensitiveTypeNames, UTF8String.ToSystemStringOrEmpty(a));
 
-		int GetHashCode_TypeName(string a) {
-			return GetHashCode_Name(CaseInsensitiveTypeNames, a);
-		}
+		int GetHashCode_TypeName(string a) => GetHashCode_Name(CaseInsensitiveTypeNames, a);
 
-		bool Equals_MethodFieldNames(UTF8String a, UTF8String b) {
-			return Equals_Names(CaseInsensitiveMethodFieldNames, a, b);
-		}
+		bool Equals_MethodFieldNames(UTF8String a, UTF8String b) => Equals_Names(CaseInsensitiveMethodFieldNames, a, b);
 
-		bool Equals_MethodFieldNames(UTF8String a, string b) {
-			return Equals_Names(CaseInsensitiveMethodFieldNames, UTF8String.ToSystemStringOrEmpty(a), b);
-		}
+		bool Equals_MethodFieldNames(UTF8String a, string b) => Equals_Names(CaseInsensitiveMethodFieldNames, UTF8String.ToSystemStringOrEmpty(a), b);
 
-		int GetHashCode_MethodFieldName(UTF8String a) {
-			return GetHashCode_Name(CaseInsensitiveMethodFieldNames, UTF8String.ToSystemStringOrEmpty(a));
-		}
+		int GetHashCode_MethodFieldName(UTF8String a) => GetHashCode_Name(CaseInsensitiveMethodFieldNames, UTF8String.ToSystemStringOrEmpty(a));
 
-		int GetHashCode_MethodFieldName(string a) {
-			return GetHashCode_Name(CaseInsensitiveMethodFieldNames, a);
-		}
+		int GetHashCode_MethodFieldName(string a) => GetHashCode_Name(CaseInsensitiveMethodFieldNames, a);
 
-		bool Equals_PropertyNames(UTF8String a, UTF8String b) {
-			return Equals_Names(CaseInsensitivePropertyNames, a, b);
-		}
+		bool Equals_PropertyNames(UTF8String a, UTF8String b) => Equals_Names(CaseInsensitivePropertyNames, a, b);
 
-		bool Equals_PropertyNames(UTF8String a, string b) {
-			return Equals_Names(CaseInsensitivePropertyNames, UTF8String.ToSystemStringOrEmpty(a), b);
-		}
+		bool Equals_PropertyNames(UTF8String a, string b) => Equals_Names(CaseInsensitivePropertyNames, UTF8String.ToSystemStringOrEmpty(a), b);
 
-		int GetHashCode_PropertyName(UTF8String a) {
-			return GetHashCode_Name(CaseInsensitivePropertyNames, UTF8String.ToSystemStringOrEmpty(a));
-		}
+		int GetHashCode_PropertyName(UTF8String a) => GetHashCode_Name(CaseInsensitivePropertyNames, UTF8String.ToSystemStringOrEmpty(a));
 
-		int GetHashCode_PropertyName(string a) {
-			return GetHashCode_Name(CaseInsensitivePropertyNames, a);
-		}
+		int GetHashCode_PropertyName(string a) => GetHashCode_Name(CaseInsensitivePropertyNames, a);
 
-		bool Equals_EventNames(UTF8String a, UTF8String b) {
-			return Equals_Names(CaseInsensitiveEventNames, a, b);
-		}
+		bool Equals_EventNames(UTF8String a, UTF8String b) => Equals_Names(CaseInsensitiveEventNames, a, b);
 
-		bool Equals_EventNames(UTF8String a, string b) {
-			return Equals_Names(CaseInsensitiveEventNames, UTF8String.ToSystemStringOrEmpty(a), b);
-		}
+		bool Equals_EventNames(UTF8String a, string b) => Equals_Names(CaseInsensitiveEventNames, UTF8String.ToSystemStringOrEmpty(a), b);
 
-		int GetHashCode_EventName(UTF8String a) {
-			return GetHashCode_Name(CaseInsensitiveEventNames, UTF8String.ToSystemStringOrEmpty(a));
-		}
+		int GetHashCode_EventName(UTF8String a) => GetHashCode_Name(CaseInsensitiveEventNames, UTF8String.ToSystemStringOrEmpty(a));
 
-		int GetHashCode_EventName(string a) {
-			return GetHashCode_Name(CaseInsensitiveEventNames, a);
-		}
+		int GetHashCode_EventName(string a) => GetHashCode_Name(CaseInsensitiveEventNames, a);
 
 		SigComparerOptions ClearOptions(SigComparerOptions flags) {
 			var old = options;
@@ -260,9 +209,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return old;
 		}
 
-		void RestoreOptions(SigComparerOptions oldFlags) {
-			options = oldFlags;
-		}
+		void RestoreOptions(SigComparerOptions oldFlags) => options = oldFlags;
 
 		void InitializeGenericArguments() {
 			if (genericArguments == null)
@@ -437,13 +384,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(ITypeDefOrRef a, ITypeDefOrRef b) {
-			return Equals((IType)a, (IType)b);
-		}
+		public bool Equals(ITypeDefOrRef a, ITypeDefOrRef b) => Equals((IType)a, (IType)b);
 
-		public int GetHashCode(ITypeDefOrRef a) {
-			return GetHashCode((IType)a);
-		}
+		public int GetHashCode(ITypeDefOrRef a) => GetHashCode((IType)a);
 
 		public bool Equals(IType a, IType b) {
 			if (a == b)
@@ -547,9 +490,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(TypeRef a, TypeDef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(TypeRef a, TypeDef b) => Equals(b, a);
 
 		public bool Equals(TypeDef a, TypeRef b) {
 			if ((object)a == (object)b)
@@ -593,9 +534,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(ExportedType a, TypeDef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(ExportedType a, TypeDef b) => Equals(b, a);
 
 		public bool Equals(TypeDef a, ExportedType b) {
 			if ((object)a == (object)b)
@@ -639,9 +578,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(TypeSpec a, TypeDef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(TypeSpec a, TypeDef b) => Equals(b, a);
 
 		public bool Equals(TypeDef a, TypeSpec b) {
 			if ((object)a == (object)b)
@@ -651,9 +588,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return Equals(a, b.TypeSig);
 		}
 
-		public bool Equals(TypeSig a, TypeDef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(TypeSig a, TypeDef b) => Equals(b, a);
 
 		public bool Equals(TypeDef a, TypeSig b) {
 			if ((object)a == (object)b)
@@ -664,8 +599,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 			bool result;
 
-			var b2 = b as TypeDefOrRefSig;
-			if (b2 != null)
+			if (b is TypeDefOrRefSig b2)
 				result = Equals(a, (IType)b2.TypeDefOrRef);
 			else if (b is ModifierSig || b is PinnedSig)
 				result = Equals(a, b.Next);
@@ -676,9 +610,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(TypeSpec a, TypeRef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(TypeSpec a, TypeRef b) => Equals(b, a);
 
 		public bool Equals(TypeRef a, TypeSpec b) {
 			if ((object)a == (object)b)
@@ -688,9 +620,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return Equals(a, b.TypeSig);
 		}
 
-		public bool Equals(ExportedType a, TypeRef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(ExportedType a, TypeRef b) => Equals(b, a);
 
 		public bool Equals(TypeRef a, ExportedType b) {
 			if ((object)a == (object)b)
@@ -708,9 +638,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(TypeSig a, TypeRef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(TypeSig a, TypeRef b) => Equals(b, a);
 
 		public bool Equals(TypeRef a, TypeSig b) {
 			if ((object)a == (object)b)
@@ -721,8 +649,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 			bool result;
 
-			var b2 = b as TypeDefOrRefSig;
-			if (b2 != null)
+			if (b is TypeDefOrRefSig b2)
 				result = Equals(a, (IType)b2.TypeDefOrRef);
 			else if (b is ModifierSig || b is PinnedSig)
 				result = Equals(a, b.Next);
@@ -733,9 +660,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(TypeSig a, TypeSpec b) {
-			return Equals(b, a);
-		}
+		public bool Equals(TypeSig a, TypeSpec b) => Equals(b, a);
 
 		public bool Equals(TypeSpec a, TypeSig b) {
 			if ((object)a == (object)b)
@@ -745,9 +670,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return Equals(a.TypeSig, b);
 		}
 
-		public bool Equals(ExportedType a, TypeSpec b) {
-			return Equals(b, a);
-		}
+		public bool Equals(ExportedType a, TypeSpec b) => Equals(b, a);
 
 		public bool Equals(TypeSpec a, ExportedType b) {
 			if ((object)a == (object)b)
@@ -757,9 +680,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return Equals(a.TypeSig, b);
 		}
 
-		public bool Equals(ExportedType a, TypeSig b) {
-			return Equals(b, a);
-		}
+		public bool Equals(ExportedType a, TypeSig b) => Equals(b, a);
 
 		public bool Equals(TypeSig a, ExportedType b) {
 			if ((object)a == (object)b)
@@ -770,8 +691,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 			bool result;
 
-			var a2 = a as TypeDefOrRefSig;
-			if (a2 != null)
+			if (a is TypeDefOrRefSig a2)
 				result = Equals(a2.TypeDefOrRef, b);
 			else if (a is ModifierSig || a is PinnedSig)
 				result = Equals(a.Next, b);
@@ -782,11 +702,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		int GetHashCodeGlobalType() {
+		int GetHashCodeGlobalType() =>
 			// We don't always know the name+namespace of the global type, eg. when it's
 			// referenced by a ModuleRef. Use the same hash for all global types.
-			return HASHCODE_MAGIC_GLOBAL_TYPE;
-		}
+			HASHCODE_MAGIC_GLOBAL_TYPE;
 
 		public bool Equals(TypeRef a, TypeRef b) {
 			if (a == b)
@@ -1059,18 +978,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			return UTF8String.CaseInsensitiveEquals(a.Name, b.Name) || (IsTargetOrSourceModule(a) && IsTargetOrSourceModule(b));
 		}
 
-		static bool IsCorLib(ModuleDef a) {
-			return a != null && a.IsManifestModule && a.Assembly.IsCorLib();
-		}
+		static bool IsCorLib(ModuleDef a) => a != null && a.IsManifestModule && a.Assembly.IsCorLib();
 
 		static bool IsCorLib(IModule a) {
 			var mod = a as ModuleDef;
 			return mod != null && mod.IsManifestModule && mod.Assembly.IsCorLib();
 		}
 
-		static bool IsCorLib(IAssembly a) {
-			return a.IsCorLib();
-		}
+		static bool IsCorLib(IAssembly a) => a.IsCorLib();
 
 		bool Equals(ModuleDef a, ModuleDef b) {
 			if (a == b)
@@ -1120,8 +1035,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return true;
 			if (a == null || b == null)
 				return false;
-			var a2 = a as AssemblyDef;
-			if (a2 != null)
+			if (a is AssemblyDef a2)
 				return a2 == b;
 			return AssemblyNameComparer.CompareAll.Equals(a, b);
 		}
@@ -1130,8 +1044,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return true;
 			if (a == null || b == null)
 				return false;
-			var a2 = a as ModuleDef;
-			if (a2 != null)
+			if (a is ModuleDef a2)
 				return a2 == b;
 			return StringComparer.OrdinalIgnoreCase.Equals(a.Name, b.Name);
 		}
@@ -1583,9 +1496,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		int GetHashCode_CallingConvention(CallingConventionSig a) {
-			return GetHashCode(a.GetCallingConvention());
-		}
+		int GetHashCode_CallingConvention(CallingConventionSig a) => GetHashCode(a.GetCallingConvention());
 
 		int GetHashCode(CallingConvention a) {
 			switch (a & CallingConvention.Mask) {
@@ -1743,9 +1654,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(MemberRef a, MethodDef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(MemberRef a, MethodDef b) => Equals(b, a);
 
 		public bool Equals(MethodDef a, MemberRef b) {
 			if ((object)a == (object)b)
@@ -1980,9 +1889,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(MemberRef a, FieldDef b) {
-			return Equals(b, a);
-		}
+		public bool Equals(MemberRef a, FieldDef b) => Equals(b, a);
 
 		public bool Equals(FieldDef a, MemberRef b) {
 			if ((object)a == (object)b)
@@ -2114,13 +2021,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		static AssemblyDef GetAssembly(ModuleDef module) {
-			return module == null ? null : module.Assembly;
-		}
+		static AssemblyDef GetAssembly(ModuleDef module) => module == null ? null : module.Assembly;
 
-		static int GetHashCode_ElementType_MVar(int numGenericParams) {
-			return GetHashCode(numGenericParams, HASHCODE_MAGIC_ET_MVAR);
-		}
+		static int GetHashCode_ElementType_MVar(int numGenericParams) => GetHashCode(numGenericParams, HASHCODE_MAGIC_ET_MVAR);
 
 		static int GetHashCode(int numGenericParams, int etypeHashCode) {
 			uint hash = 0;
@@ -2131,9 +2034,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return (int)hash;
 		}
 
-		public override string ToString() {
-			return string.Format("{0} - {1}", recursionCounter, options);
-		}
+		public override string ToString() => string.Format("{0} - {1}", recursionCounter, options);
 	}
 
 	// From dnlib.DotNet.dnlib_Utils

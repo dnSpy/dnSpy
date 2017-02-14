@@ -37,9 +37,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="type">Type</param>
-		protected TypeNode(TypeDef type) {
-			TypeDef = type ?? throw new ArgumentNullException(nameof(type));
-		}
+		protected TypeNode(TypeDef type) => TypeDef = type ?? throw new ArgumentNullException(nameof(type));
 
 		/// <summary>
 		/// Creates a <see cref="MethodNode"/>

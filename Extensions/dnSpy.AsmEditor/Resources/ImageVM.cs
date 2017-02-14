@@ -33,8 +33,6 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		ImageSource imageSource;
 
-		public ImageVM(ImageSource imageSource) {
-			this.imageSource = imageSource;
-		}
+		public ImageVM(ImageSource imageSource) => this.imageSource = imageSource;
 	}
 }

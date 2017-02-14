@@ -240,9 +240,7 @@ namespace dnSpy.Debugger.CallStack {
 				framesList.Add(new MessageCallStackFrameVM(callStackFrameContext, newFrames.Count, dnSpy_Debugger_Resources.CallStack_MaxFramesExceeded));
 		}
 
-		bool IsUserCode(CorFrame frame) {
-			return true;//TODO:
-		}
+		bool IsUserCode(CorFrame frame) => true;//TODO:
 
 		void UpdateSelectedFrame(VMPropertyChangedEventArgs<int> e) {
 			Debug.Assert(e != null);
@@ -256,23 +254,20 @@ namespace dnSpy.Debugger.CallStack {
 			if ((uint)index >= (uint)framesList.Count)
 				return;
 
-			var vm = framesList[index] as CallStackFrameVM;
-			if (vm != null)
+			if (framesList[index] is CallStackFrameVM vm)
 				vm.IsCurrentFrame = value;
 		}
 
 		void RefreshThemeFields() {
 			foreach (var vm in framesList) {
-				var vm2 = vm as CallStackFrameVM;
-				if (vm2 != null)
+				if (vm is CallStackFrameVM vm2)
 					vm2.RefreshThemeFields();
 			}
 		}
 
 		void RefreshFrameNames() {
 			foreach (var vm in framesList) {
-				var vm2 = vm as CallStackFrameVM;
-				if (vm2 != null)
+				if (vm is CallStackFrameVM vm2)
 					vm2.RefreshName();
 			}
 		}

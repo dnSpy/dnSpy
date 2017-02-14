@@ -46,9 +46,7 @@ namespace Example2.Extension {
 			return new MyDsDocument(filename);
 		}
 
-		MyDsDocument(string filename) {
-			Filename = filename;
-		}
+		MyDsDocument(string filename) => Filename = filename;
 	}
 
 	// Gets called by the IDsDocumentService instance to create IDsDocument instances. If it's a .txt file
@@ -91,8 +89,7 @@ namespace Example2.Extension {
 	[ExportDsDocumentNodeProvider]
 	sealed class MyDsDocumentNodeProvider : IDsDocumentNodeProvider {
 		public DsDocumentNode Create(IDocumentTreeView documentTreeView, DsDocumentNode owner, IDsDocument document) {
-			var myDocument = document as MyDsDocument;
-			if (myDocument != null)
+			if (document is MyDsDocument myDocument)
 				return new MyDsDocumentNode(myDocument);
 			return null;
 		}
@@ -110,9 +107,7 @@ namespace Example2.Extension {
 		public override Guid Guid => THE_GUID;
 
 		public MyDsDocumentNode(MyDsDocument document)
-			: base(document) {
-			this.document = document;
-		}
+			: base(document) => this.document = document;
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.TextFile;
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>

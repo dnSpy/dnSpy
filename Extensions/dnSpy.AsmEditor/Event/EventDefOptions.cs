@@ -61,12 +61,10 @@ namespace dnSpy.AsmEditor.Event {
 
 		public EventDef CreateEventDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new EventDefUser()));
 
-		public static EventDefOptions Create(UTF8String name, ITypeDefOrRef eventType) {
-			return new EventDefOptions {
-				Attributes = 0,
-				Name = name,
-				EventType = eventType,
-			};
-		}
+		public static EventDefOptions Create(UTF8String name, ITypeDefOrRef eventType) => new EventDefOptions {
+			Attributes = 0,
+			Name = name,
+			EventType = eventType,
+		};
 	}
 }

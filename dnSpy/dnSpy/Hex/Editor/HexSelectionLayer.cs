@@ -163,9 +163,7 @@ namespace dnSpy.Hex.Editor {
 			}
 			Pen pen;
 
-			public MarkerElement(Geometry geometry) {
-				this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
-			}
+			public MarkerElement(Geometry geometry) => this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 
 			protected override void OnRender(DrawingContext drawingContext) {
 				base.OnRender(drawingContext);

@@ -36,9 +36,7 @@ namespace dnSpy.Contracts.Menus {
 		/// Constructor
 		/// </summary>
 		/// <param name="realCommand">The real command that gets executed</param>
-		protected MenuItemCommand(ICommand realCommand) {
-			this.realCommand = realCommand;
-		}
+		protected MenuItemCommand(ICommand realCommand) => this.realCommand = realCommand;
 
 		/// <inheritdoc/>
 		public override void Execute(IMenuItemContext context) => realCommand.Execute(context);
@@ -60,9 +58,7 @@ namespace dnSpy.Contracts.Menus {
 		/// Constructor
 		/// </summary>
 		/// <param name="realCommand">The real command that gets executed</param>
-		protected MenuItemCommand(ICommand realCommand) {
-			this.realCommand = realCommand;
-		}
+		protected MenuItemCommand(ICommand realCommand) => this.realCommand = realCommand;
 
 		/// <inheritdoc/>
 		public sealed override void Execute(TContext context) {

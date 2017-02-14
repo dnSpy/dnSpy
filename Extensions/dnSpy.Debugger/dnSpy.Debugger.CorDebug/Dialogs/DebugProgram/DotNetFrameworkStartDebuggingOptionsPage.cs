@@ -34,9 +34,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		readonly SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions;
 
 		public DotNetFrameworkStartDebuggingOptionsPage(DotNetFrameworkStartDebuggingOptions options, SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions, IPickFilename pickFilename, IPickDirectory pickDirectory)
-			: base(options, pickFilename, pickDirectory) {
-			this.savedDotNetStartDebuggingOptions = savedDotNetStartDebuggingOptions ?? throw new ArgumentNullException(nameof(savedDotNetStartDebuggingOptions));
-		}
+			: base(options, pickFilename, pickDirectory) => this.savedDotNetStartDebuggingOptions = savedDotNetStartDebuggingOptions ?? throw new ArgumentNullException(nameof(savedDotNetStartDebuggingOptions));
 
 		protected override void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "exe", PickFilenameConstants.DotNetExecutableFilter);

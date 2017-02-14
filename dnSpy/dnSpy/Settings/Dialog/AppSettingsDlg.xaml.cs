@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Settings.Dialog {
 	sealed partial class AppSettingsDlg : WindowBase {
-		public AppSettingsDlg() {
-			InitializeComponent();
-		}
+		public AppSettingsDlg() => InitializeComponent();
 	}
 }

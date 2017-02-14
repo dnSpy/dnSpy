@@ -213,9 +213,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 			}
 
-			public FrameInfo(ILocalsOwner localsOwner, DnThread thread, DnProcess process, CorFrame frame, int frameNo) {
-				ValueContext = new ValueContext(localsOwner, frame, thread, process);
-			}
+			public FrameInfo(ILocalsOwner localsOwner, DnThread thread, DnProcess process, CorFrame frame, int frameNo) => ValueContext = new ValueContext(localsOwner, frame, thread, process);
 
 			public bool Equals(FrameInfo other) => ValueContext.Function == other.ValueContext.Function;
 			public override bool Equals(object obj) => Equals(obj as FrameInfo);

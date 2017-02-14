@@ -43,9 +43,7 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorFormatMapService editorFormatMapService;
 
 		[ImportingConstructor]
-		CurrentLineHighlighterWpfTextViewCreationListener(IEditorFormatMapService editorFormatMapService) {
-			this.editorFormatMapService = editorFormatMapService;
-		}
+		CurrentLineHighlighterWpfTextViewCreationListener(IEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public void TextViewCreated(IWpfTextView textView) =>
 			textView.Properties.GetOrCreateSingletonProperty(() => new CurrentLineHighlighter(textView, editorFormatMapService.GetEditorFormatMap(textView)));

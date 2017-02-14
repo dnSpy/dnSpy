@@ -31,9 +31,7 @@ namespace dnSpy.Text.Editor.Operations {
 		readonly ITextBufferUndoManagerProvider textBufferUndoManagerProvider;
 
 		[ImportingConstructor]
-		TextViewUndoManagerProvider(ITextBufferUndoManagerProvider textBufferUndoManagerProvider) {
-			this.textBufferUndoManagerProvider = textBufferUndoManagerProvider;
-		}
+		TextViewUndoManagerProvider(ITextBufferUndoManagerProvider textBufferUndoManagerProvider) => this.textBufferUndoManagerProvider = textBufferUndoManagerProvider;
 
 		public ITextViewUndoManager GetTextViewUndoManager(IDsWpfTextView textView) {
 			if (textView == null)

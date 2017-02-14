@@ -105,8 +105,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		void WriteCssColor(string name, Brush brush) {
-			var scb = brush as SolidColorBrush;
-			if (scb != null)
+			if (brush is SolidColorBrush scb)
 				cssWriter.Append(string.Format(name + ": rgb({0}, {1}, {2}); ", scb.Color.R, scb.Color.G, scb.Color.B));
 		}
 

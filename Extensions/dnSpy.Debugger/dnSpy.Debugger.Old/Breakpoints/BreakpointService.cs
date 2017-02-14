@@ -42,9 +42,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			Breakpoints = new[] { breakpoint };
 		}
 
-		protected BreakpointsEventArgs(Breakpoint[] breakpoints) {
-			Breakpoints = breakpoints ?? throw new ArgumentNullException(nameof(breakpoints));
-		}
+		protected BreakpointsEventArgs(Breakpoint[] breakpoints) => Breakpoints = breakpoints ?? throw new ArgumentNullException(nameof(breakpoints));
 	}
 
 	sealed class BreakpointsAddedEventArgs : BreakpointsEventArgs {
@@ -226,8 +224,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				}
 			}
 
-			var ilbp = bp as ILCodeBreakpoint;
-			if (ilbp != null) {
+			if (bp is ILCodeBreakpoint ilbp) {
 				bool b = ilCodeBreakpoints.Add(ilbp);
 				Debug.Assert(b);
 				if (b) {
@@ -237,8 +234,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				return;
 			}
 
-			var debp = bp as DebugEventBreakpoint;
-			if (debp != null) {
+			if (bp is DebugEventBreakpoint debp) {
 				bool b = eventBreakpoints.Add(debp);
 				Debug.Assert(b);
 				if (b) {
@@ -250,8 +246,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public void Remove(Breakpoint bp) {
-			var ilbp = bp as ILCodeBreakpoint;
-			if (ilbp != null) {
+			if (bp is ILCodeBreakpoint ilbp) {
 				bool b = ilCodeBreakpoints.Remove(ilbp);
 				Debug.Assert(b);
 				if (b) {
@@ -261,8 +256,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				return;
 			}
 
-			var debp = bp as DebugEventBreakpoint;
-			if (debp != null) {
+			if (bp is DebugEventBreakpoint debp) {
 				bool b = eventBreakpoints.Remove(debp);
 				Debug.Assert(b);
 				if (b) {

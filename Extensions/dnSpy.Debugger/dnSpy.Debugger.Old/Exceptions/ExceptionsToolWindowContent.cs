@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.Exceptions {
 		ExceptionsToolWindowContent exceptionsToolWindowContent;
 
 		[ImportingConstructor]
-		ExceptionsToolWindowContentProvider(Lazy<IExceptionsContent> exceptionsContent) {
-			this.exceptionsContent = exceptionsContent;
-		}
+		ExceptionsToolWindowContentProvider(Lazy<IExceptionsContent> exceptionsContent) => this.exceptionsContent = exceptionsContent;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(ExceptionsToolWindowContent.THE_GUID, ExceptionsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_EXCEPTIONS, false); }
@@ -59,9 +57,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		readonly Lazy<IExceptionsContent> exceptionsContent;
 
-		public ExceptionsToolWindowContent(Lazy<IExceptionsContent> exceptionsContent) {
-			this.exceptionsContent = exceptionsContent;
-		}
+		public ExceptionsToolWindowContent(Lazy<IExceptionsContent> exceptionsContent) => this.exceptionsContent = exceptionsContent;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {

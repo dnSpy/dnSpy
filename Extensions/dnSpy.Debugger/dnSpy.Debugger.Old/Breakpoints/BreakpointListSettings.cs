@@ -159,8 +159,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var section = settingsService.RecreateSection(SETTINGS_GUID);
 
 			foreach (var bp in breakpointService.GetBreakpoints()) {
-				var ilbp = bp as ILCodeBreakpoint;
-				if (ilbp != null) {
+				if (bp is ILCodeBreakpoint ilbp) {
 					if (string.IsNullOrEmpty(ilbp.MethodToken.Module.ModuleName))
 						continue;
 					if (string.IsNullOrEmpty(ilbp.MethodToken.Module.AssemblyFullName) && !ilbp.MethodToken.Module.ModuleNameOnly)
@@ -185,8 +184,7 @@ namespace dnSpy.Debugger.Breakpoints {
 					continue;
 				}
 
-				var debp = bp as DebugEventBreakpoint;
-				if (debp != null) {
+				if (bp is DebugEventBreakpoint debp) {
 					//TODO:
 					continue;
 				}

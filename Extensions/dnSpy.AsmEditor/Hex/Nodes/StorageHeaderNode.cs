@@ -39,9 +39,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		readonly StorageHeaderVM storageHeaderVM;
 
 		public StorageHeaderNode(StorageHeaderVM storageHeader)
-			: base(storageHeader.Span) {
-			storageHeaderVM = storageHeader;
-		}
+			: base(storageHeader.Span) => storageHeaderVM = storageHeader;
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.HexStorageHeader, dnSpy_AsmEditor_Resources.HexNode_StorageHeader);

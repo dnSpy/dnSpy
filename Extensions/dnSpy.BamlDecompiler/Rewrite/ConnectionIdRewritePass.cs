@@ -139,9 +139,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 		struct Error {
 			public string Msg;
 
-			public void Callback(XamlContext ctx, XElement elem) {
-				elem.AddBeforeSelf(new XComment(Msg));
-			}
+			public void Callback(XamlContext ctx, XElement elem) => elem.AddBeforeSelf(new XComment(Msg));
 		}
 
 		Dictionary<int, Action<XamlContext, XElement>> ExtractConnectionId(XamlContext ctx, MethodDef method) {

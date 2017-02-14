@@ -40,9 +40,7 @@ namespace dnSpy.Hex.Formatting {
 		readonly Lazy<HexLineTransformSourceProvider, ITextViewRoleMetadata>[] lineTransformSourceProviders;
 
 		[ImportingConstructor]
-		HexLineTransformProviderServiceImpl([ImportMany] IEnumerable<Lazy<HexLineTransformSourceProvider, ITextViewRoleMetadata>> lineTransformSourceProviders) {
-			this.lineTransformSourceProviders = lineTransformSourceProviders.ToArray();
-		}
+		HexLineTransformProviderServiceImpl([ImportMany] IEnumerable<Lazy<HexLineTransformSourceProvider, ITextViewRoleMetadata>> lineTransformSourceProviders) => this.lineTransformSourceProviders = lineTransformSourceProviders.ToArray();
 
 		public override HexLineTransformProvider Create(WpfHexView hexView, bool removeExtraTextLineVerticalPixels) {
 			var list = new List<HexLineTransformSource>();

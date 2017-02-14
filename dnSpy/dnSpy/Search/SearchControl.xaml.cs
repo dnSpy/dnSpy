@@ -27,9 +27,7 @@ namespace dnSpy.Search {
 		public TextBox SearchTextBox => searchTextBox;
 		public ListBox ListBox => searchListBox;
 
-		public SearchControl() {
-			InitializeComponent();
-		}
+		public SearchControl() => InitializeComponent();
 
 		void searchListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListBoxItem>(searchListBox, e))

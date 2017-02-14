@@ -97,8 +97,7 @@ namespace dnSpy.Decompiler.MSBuild {
 						throw;
 					}
 					catch (Exception ex) {
-						var fjob = job as IFileJob;
-						if (fjob != null)
+						if (job is IFileJob fjob)
 							logger.Error(string.Format(dnSpy_Decompiler_Resources.MSBuild_FileCreationFailed3, fjob.Filename, job.Description, ex.Message));
 						else
 							logger.Error(string.Format(dnSpy_Decompiler_Resources.MSBuild_FileCreationFailed2, job.Description, ex.Message));

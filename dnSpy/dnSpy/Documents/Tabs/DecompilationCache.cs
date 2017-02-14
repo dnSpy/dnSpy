@@ -36,9 +36,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDecompilationCache decompilationCache;
 
 		[ImportingConstructor]
-		DecompilationCacheDocumentListListener(IDecompilationCache decompilationCache) {
-			this.decompilationCache = decompilationCache;
-		}
+		DecompilationCacheDocumentListListener(IDecompilationCache decompilationCache) => this.decompilationCache = decompilationCache;
 
 		public bool CanLoad => true;
 		public bool CanReload => true;

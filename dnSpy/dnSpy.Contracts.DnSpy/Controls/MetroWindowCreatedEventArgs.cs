@@ -33,8 +33,6 @@ namespace dnSpy.Contracts.Controls {
 		/// Constructor
 		/// </summary>
 		/// <param name="metroWindow">Created instance</param>
-		public MetroWindowCreatedEventArgs(MetroWindow metroWindow) {
-			MetroWindow = metroWindow ?? throw new ArgumentNullException(nameof(metroWindow));
-		}
+		public MetroWindowCreatedEventArgs(MetroWindow metroWindow) => MetroWindow = metroWindow ?? throw new ArgumentNullException(nameof(metroWindow));
 	}
 }

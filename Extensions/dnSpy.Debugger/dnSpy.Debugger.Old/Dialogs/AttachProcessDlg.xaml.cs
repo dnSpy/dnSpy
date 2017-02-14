@@ -32,8 +32,7 @@ namespace dnSpy.Debugger.Dialogs {
 		public AttachProcessDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as AttachProcessVM;
-				if (data != null) {
+				if (DataContext is AttachProcessVM data) {
 					data.PropertyChanged += AttachProcessVM_PropertyChanged;
 					data.Collection.CollectionChanged += AttachProcessVM_Collection_CollectionChanged;
 				}

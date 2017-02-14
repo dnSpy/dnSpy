@@ -51,9 +51,7 @@ namespace Example2.Extension {
 
 		// Add any deps to the constructor if needed, else remove the constructor
 		[ImportingConstructor]
-		MainToolWindowContentProvider(DeppDep deppDep) {
-			deppDep.Hello();
-		}
+		MainToolWindowContentProvider(DeppDep deppDep) => deppDep.Hello();
 
 		// Lets dnSpy know which tool windows it can create and their default locations
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {

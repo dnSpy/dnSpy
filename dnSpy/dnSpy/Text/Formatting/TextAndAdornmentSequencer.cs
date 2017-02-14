@@ -164,9 +164,7 @@ namespace dnSpy.Text.Formatting {
 
 			readonly IMappingTagSpan<SpaceNegotiatingAdornmentTag> tagSpan;
 
-			public AdornmentElement(IMappingTagSpan<SpaceNegotiatingAdornmentTag> tagSpan) {
-				this.tagSpan = tagSpan ?? throw new ArgumentNullException(nameof(tagSpan));
-			}
+			public AdornmentElement(IMappingTagSpan<SpaceNegotiatingAdornmentTag> tagSpan) => this.tagSpan = tagSpan ?? throw new ArgumentNullException(nameof(tagSpan));
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {

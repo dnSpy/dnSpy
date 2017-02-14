@@ -2,8 +2,6 @@
 
 namespace Example1.Extension {
 	public partial class MySettingsControl : UserControl {
-		public MySettingsControl() {
-			InitializeComponent();
-		}
+		public MySettingsControl() => InitializeComponent();
 	}
 }

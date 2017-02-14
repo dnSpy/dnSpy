@@ -55,9 +55,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		readonly DocumentViewerUIElement[] elements;
 
-		public DocumentViewerUIElementCollection(DocumentViewerUIElement[] elements) {
-			this.elements = elements ?? throw new ArgumentNullException(nameof(elements));
-		}
+		public DocumentViewerUIElementCollection(DocumentViewerUIElement[] elements) => this.elements = elements ?? throw new ArgumentNullException(nameof(elements));
 
 		public int GetStartIndex(int position) {
 			var array = elements;
@@ -91,9 +89,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IDocumentViewerUIElementServiceProvider documentViewerUIElementServiceProvider;
 
 		[ImportingConstructor]
-		DocumentViewerUIElementListener(IDocumentViewerUIElementServiceProvider documentViewerUIElementServiceProvider) {
-			this.documentViewerUIElementServiceProvider = documentViewerUIElementServiceProvider;
-		}
+		DocumentViewerUIElementListener(IDocumentViewerUIElementServiceProvider documentViewerUIElementServiceProvider) => this.documentViewerUIElementServiceProvider = documentViewerUIElementServiceProvider;
 
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)
@@ -108,9 +104,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IDocumentViewerUIElementServiceProvider documentViewerUIElementServiceProvider;
 
 		[ImportingConstructor]
-		DocumentViewerUIElementTaggerProvider(IDocumentViewerUIElementServiceProvider documentViewerUIElementServiceProvider) {
-			this.documentViewerUIElementServiceProvider = documentViewerUIElementServiceProvider;
-		}
+		DocumentViewerUIElementTaggerProvider(IDocumentViewerUIElementServiceProvider documentViewerUIElementServiceProvider) => this.documentViewerUIElementServiceProvider = documentViewerUIElementServiceProvider;
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)

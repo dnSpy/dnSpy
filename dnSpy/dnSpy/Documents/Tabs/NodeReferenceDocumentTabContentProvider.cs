@@ -40,29 +40,21 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
-			var textRef = @ref as TextReference;
-			if (textRef != null)
+			if (@ref is TextReference textRef)
 				@ref = textRef.Reference;
-			var node = @ref as DocumentTreeNodeData;
-			if (node != null)
+			if (@ref is DocumentTreeNodeData node)
 				return Create(node);
-			var nsRef = @ref as NamespaceRef;
-			if (nsRef != null)
+			if (@ref is NamespaceRef nsRef)
 				return Create(nsRef);
-			var nsRef2 = @ref as NamespaceReference;
-			if (nsRef2 != null)
+			if (@ref is NamespaceReference nsRef2)
 				return Create(nsRef2);
-			var document = @ref as IDsDocument;
-			if (document != null)
+			if (@ref is IDsDocument document)
 				return Create(document);
-			var asm = @ref as AssemblyDef;
-			if (asm != null)
+			if (@ref is AssemblyDef asm)
 				return Create(asm);
-			var mod = @ref as ModuleDef;
-			if (mod != null)
+			if (@ref is ModuleDef mod)
 				return Create(mod);
-			var asmRef = @ref as IAssembly;
-			if (asmRef != null) {
+			if (@ref is IAssembly asmRef) {
 				document = documentTreeView.DocumentService.Resolve(asmRef, null);
 				if (document != null)
 					return Create(document);

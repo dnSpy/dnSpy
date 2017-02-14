@@ -32,9 +32,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected DbgObject() {
-			lockObj = new object();
-		}
+		protected DbgObject() => lockObj = new object();
 
 		/// <summary>
 		/// true if the instance has been closed
@@ -76,9 +74,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <returns></returns>
-		public bool HasData<T>() where T : class {
-			return TryGetData<T>(out var value);
-		}
+		public bool HasData<T>() where T : class => TryGetData<T>(out var value);
 
 		/// <summary>
 		/// Gets or creates data

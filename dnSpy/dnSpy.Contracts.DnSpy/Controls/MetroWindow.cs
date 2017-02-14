@@ -124,7 +124,7 @@ namespace dnSpy.Contracts.Controls {
 
 		struct RECT {
 			public int left, top, right, bottom;
-			RECT(bool dummy) { left = top = right = bottom = 0; }// disable compiler warning
+			RECT(bool dummy) => left = top = right = bottom = 0;// disable compiler warning
 		}
 
 		[DllImport("user32", SetLastError = true)]

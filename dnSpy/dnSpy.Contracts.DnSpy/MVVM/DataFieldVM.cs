@@ -339,9 +339,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public NullableGuidVM(Guid? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(Guid? value) => value == null ? string.Empty : value.Value.ToString();
@@ -394,9 +392,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public HexStringVM(IList<byte> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<byte> value) => SimpleTypeConverter.ByteArrayToString(value, UpperCaseHex);
@@ -426,9 +422,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public NullableBooleanVM(bool? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(bool? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value);
@@ -464,9 +458,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public NullableSByteVM(sbyte? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(sbyte? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
@@ -502,9 +494,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public NullableByteVM(byte? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(byte? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
@@ -540,9 +530,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public NullableInt16VM(short? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(short? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
@@ -578,9 +566,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public NullableUInt16VM(ushort? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(ushort? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
@@ -616,9 +602,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public NullableInt32VM(int? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(int? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
@@ -654,9 +638,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public NullableUInt32VM(uint? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(uint? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
@@ -692,9 +674,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public NullableInt64VM(long? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(long? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
@@ -730,9 +710,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public NullableUInt64VM(ulong? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(ulong? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
@@ -766,9 +744,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public BooleanVM(bool value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(bool value) => SimpleTypeConverter.ToString(value);
@@ -798,9 +774,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public CharVM(char value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(char value) => SimpleTypeConverter.ToString(value);
@@ -832,9 +806,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public ByteVM(byte value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(byte value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -866,9 +838,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public UInt16VM(ushort value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(ushort value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -900,9 +870,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public UInt32VM(uint value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(uint value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -934,9 +902,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public UInt64VM(ulong value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(ulong value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -968,9 +934,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public SByteVM(sbyte value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(sbyte value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1002,9 +966,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public Int16VM(short value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(short value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1036,9 +998,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public Int32VM(int value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(int value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1070,9 +1030,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public Int64VM(long value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(long value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1102,9 +1060,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public SingleVM(float value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(float value) => SimpleTypeConverter.ToString(value);
@@ -1134,9 +1090,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public DoubleVM(double value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(double value) => SimpleTypeConverter.ToString(value);
@@ -1203,9 +1157,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public DecimalVM(decimal value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(decimal value) => SimpleTypeConverter.ToString(value);
@@ -1235,9 +1187,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public DateTimeVM(DateTime value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(DateTime value) => SimpleTypeConverter.ToString(value);
@@ -1267,9 +1217,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public TimeSpanVM(TimeSpan value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(TimeSpan value) => SimpleTypeConverter.ToString(value);
@@ -1299,9 +1247,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public GuidVM(Guid value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(Guid value) => value.ToString();
@@ -1331,9 +1277,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public BooleanListDataFieldVM(IList<bool> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<bool> value) => SimpleTypeConverter.ToString(value);
@@ -1363,9 +1307,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public CharListDataFieldVM(IList<char> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<char> value) => SimpleTypeConverter.ToString(value);
@@ -1397,9 +1339,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public ByteListDataFieldVM(IList<byte> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<byte> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1431,9 +1371,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public UInt16ListDataFieldVM(IList<ushort> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<ushort> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1465,9 +1403,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public UInt32ListDataFieldVM(IList<uint> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<uint> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1499,9 +1435,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public UInt64ListDataFieldVM(IList<ulong> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<ulong> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1533,9 +1467,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public SByteListDataFieldVM(IList<sbyte> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<sbyte> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1567,9 +1499,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public Int16ListDataFieldVM(IList<short> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<short> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1601,9 +1531,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public Int32ListDataFieldVM(IList<int> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<int> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1635,9 +1563,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="onUpdated">Called when value gets updated</param>
 		/// <param name="useDecimal">true to use decimal, false to use hex, or null if it depends on the value</param>
 		public Int64ListDataFieldVM(IList<long> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
-			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<long> value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
@@ -1667,9 +1593,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public SingleListDataFieldVM(IList<float> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<float> value) => SimpleTypeConverter.ToString(value);
@@ -1699,9 +1623,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public DoubleListDataFieldVM(IList<double> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(IList<double> value) => SimpleTypeConverter.ToString(value);
@@ -1778,9 +1700,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="value">Initial value</param>
 		/// <param name="onUpdated">Called when value gets updated</param>
 		public DefaultConverterVM(T value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated) {
-			SetValueFromConstructor(value);
-		}
+			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
 		protected override string OnNewValue(T value) => (string)converter.ConvertTo(null, CultureInfo.InvariantCulture, value, typeof(string));

@@ -31,10 +31,8 @@ using ICSharpCode.TreeView;
 
 namespace dnSpy.Controls {
 	sealed class FastTreeNodeView : SharpTreeNodeView {
-		static FastTreeNodeView() {
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(FastTreeNodeView),
+		static FastTreeNodeView() => DefaultStyleKeyProperty.OverrideMetadata(typeof(FastTreeNodeView),
 				new FrameworkPropertyMetadata(typeof(FastTreeNodeView)));
-		}
 
 		ToggleButton expander;
 		DsImage icon;

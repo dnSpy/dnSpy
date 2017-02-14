@@ -35,9 +35,7 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<IWpfTextViewMarginProvider, IWpfTextViewMarginMetadata>[] wpfTextViewMarginProviders;
 
 		[ImportingConstructor]
-		WpfTextViewMarginProviderCollectionProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewMarginProvider, IWpfTextViewMarginMetadata>> wpfTextViewMarginProviders) {
-			this.wpfTextViewMarginProviders = Orderer.Order(wpfTextViewMarginProviders).ToArray();
-		}
+		WpfTextViewMarginProviderCollectionProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewMarginProvider, IWpfTextViewMarginMetadata>> wpfTextViewMarginProviders) => this.wpfTextViewMarginProviders = Orderer.Order(wpfTextViewMarginProviders).ToArray();
 
 		public IWpfTextViewMarginProviderCollection Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer, string marginContainerName) {
 			if (wpfTextViewHost == null)

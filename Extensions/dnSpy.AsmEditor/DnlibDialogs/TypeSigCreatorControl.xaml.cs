@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public TypeSigCreatorControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as TypeSigCreatorVM;
-				if (data != null) {
+				if (DataContext is TypeSigCreatorVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 					data.ShowWarningMessage = new ShowWarningMessage(ownerWindow);

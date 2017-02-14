@@ -29,9 +29,7 @@ namespace dnSpy.Scripting {
 	sealed class ServiceLocator : IServiceLocator {
 		readonly Dispatcher dispatcher;
 
-		ServiceLocator() {
-			dispatcher = Dispatcher.CurrentDispatcher;
-		}
+		ServiceLocator() => dispatcher = Dispatcher.CurrentDispatcher;
 
 		public T Resolve<T>() {
 			Debug.Assert(compositionContainer != null);

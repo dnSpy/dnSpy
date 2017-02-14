@@ -132,10 +132,9 @@ namespace dnSpy.Text.Tagging {
 			taggers = Array.Empty<ITagger<T>>();
 		}
 
-		void Tagger_TagsChanged(object sender, SnapshotSpanEventArgs e) {
+		void Tagger_TagsChanged(object sender, SnapshotSpanEventArgs e) =>
 			// Use original sender, not us
 			RaiseTagsChanged(e.Span, sender);
-		}
 
 		void RaiseTagsChanged(SnapshotSpan span, object sender = null) {
 			if (IsDisposed)

@@ -107,16 +107,14 @@ namespace dnSpy.Debugger {
 		IEnumerable<IDsDocument> AllActiveDocuments {
 			get {
 				foreach (var file in AllDocuments) {
-					var cmdf = file as CorModuleDefFile;
-					if (cmdf != null) {
+					if (file is CorModuleDefFile cmdf) {
 						if (cmdf.DnModule.Process.HasExited || cmdf.DnModule.Debugger.ProcessState == DebuggerProcessState.Terminated)
 							continue;
 						yield return cmdf;
 						continue;
 					}
 
-					var mmdf = file as MemoryModuleDefFile;
-					if (mmdf != null) {
+					if (file is MemoryModuleDefFile mmdf) {
 						if (mmdf.Process.HasExited || mmdf.Process.Debugger.ProcessState == DebuggerProcessState.Terminated)
 							continue;
 						yield return mmdf;

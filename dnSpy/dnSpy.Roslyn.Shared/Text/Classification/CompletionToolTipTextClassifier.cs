@@ -33,9 +33,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		CompletionToolTipTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService;
-		}
+		CompletionToolTipTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
 		public ITextClassifier Create(IContentType contentType) =>
 			new CompletionToolTipTextClassifier(themeClassificationTypeService);
@@ -44,9 +42,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 	sealed class CompletionToolTipTextClassifier : ITextClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
-		public CompletionToolTipTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
-		}
+		public CompletionToolTipTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 
 		static string[] keywordSuffixes = new string[] {
 			// C# / Visual Basic

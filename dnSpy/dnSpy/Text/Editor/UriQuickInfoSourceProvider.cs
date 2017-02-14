@@ -37,9 +37,7 @@ namespace dnSpy.Text.Editor {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 
 		[ImportingConstructor]
-		UriQuickInfoSourceProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-		}
+		UriQuickInfoSourceProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
 			var textView = UriWpfTextViewCreationListener.TryGetTextView(textBuffer);

@@ -316,9 +316,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public List<NodePathName> Names { get; }
 
-		SerializedPath() {
-			Names = new List<NodePathName>();
-		}
+		SerializedPath() => Names = new List<NodePathName>();
 
 		public static SerializedPath Load(ISettingsSection pathSection) {
 			var path = new SerializedPath();

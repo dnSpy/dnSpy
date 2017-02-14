@@ -173,11 +173,10 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(ModuleId other) {
-			return (ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
-					ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
-					(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
-		}
+		public bool Equals(ModuleId other) =>
+			(ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
+			ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
+			(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
 
 		/// <summary>
 		/// Equals()
@@ -195,10 +194,9 @@ namespace dnSpy.Contracts.Metadata {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() {
+		public override int GetHashCode() =>
 			// We can't use AssemblyFullName since it's not used if ModuleNameOnly is true
-			return ModuleNameComparer.GetHashCode(ModuleName) ^ ((int)(flags & Flags.CompareMask) << 16);
-		}
+			ModuleNameComparer.GetHashCode(ModuleName) ^ ((int)(flags & Flags.CompareMask) << 16);
 
 		/// <summary>
 		/// ToString()

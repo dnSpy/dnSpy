@@ -31,9 +31,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 			}
 		}
 
-		public TextSnapshotTextLineCollection(TextSnapshotSourceText sourceText) {
-			this.sourceText = sourceText;
-		}
+		public TextSnapshotTextLineCollection(TextSnapshotSourceText sourceText) => this.sourceText = sourceText;
 
 		public override int IndexOf(int position) => sourceText.TextSnapshot.GetLineNumberFromPosition(position);
 		public override TextLine GetLineFromPosition(int position) => this[IndexOf(position)];

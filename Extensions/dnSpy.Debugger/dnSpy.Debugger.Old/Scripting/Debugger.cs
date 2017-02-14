@@ -686,8 +686,7 @@ namespace dnSpy.Debugger.Scripting {
 		void Initialize(IBreakpoint bp) {
 			Debug.Assert(theDebugger.IsDebugging);
 
-			var bph = bp as IDnBreakpointHolder;
-			if (bph != null) {
+			if (bp is IDnBreakpointHolder bph) {
 				bph.Initialize(theDebugger.Debugger);
 				return;
 			}
@@ -695,24 +694,21 @@ namespace dnSpy.Debugger.Scripting {
 			Debug.Fail("Unknown breakpoint: " + bp);
 		}
 
-		public void Remove(IBreakpoint bp) {
-			dispatcher.UI(() => {
-				if (theDebugger.IsDebugging) {
-					var bph = bp as IDnBreakpointHolder;
-					if (bph != null) {
-						var dnbp = bph.DnBreakpoint;
-						if (dnbp != null)
-							theDebugger.Debugger.RemoveBreakpoint(bph.DnBreakpoint);
-					}
-					else
-						Debug.Fail("Unknown breakpoint: " + bp);
+		public void Remove(IBreakpoint bp) => dispatcher.UI(() => {
+			if (theDebugger.IsDebugging) {
+				if (bp is IDnBreakpointHolder bph) {
+					var dnbp = bph.DnBreakpoint;
+					if (dnbp != null)
+						theDebugger.Debugger.RemoveBreakpoint(bph.DnBreakpoint);
 				}
-				else {
-					bool b = breakpointsToInitialize.Remove(bp);
-					Debug.Assert(b);
-				}
-			});
-		}
+				else
+					Debug.Fail("Unknown breakpoint: " + bp);
+			}
+			else {
+				bool b = breakpointsToInitialize.Remove(bp);
+				Debug.Assert(b);
+			}
+		});
 
 		public unsafe void Read(ulong address, byte[] array, long index, uint count) {
 			if (hProcess_debuggee == IntPtr.Zero || (IntPtr.Size == 4 && address > uint.MaxValue)) {

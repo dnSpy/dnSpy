@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.Text.Editor.Search {
 	sealed partial class SearchControl : UserControl {
-		public SearchControl() {
-			InitializeComponent();
-		}
+		public SearchControl() => InitializeComponent();
 	}
 }

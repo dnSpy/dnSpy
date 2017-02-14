@@ -37,8 +37,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="field">Field</param>
-		protected FieldNode(FieldDef field) {
-			FieldDef = field ?? throw new ArgumentNullException(nameof(field));
-		}
+		protected FieldNode(FieldDef field) => FieldDef = field ?? throw new ArgumentNullException(nameof(field));
 	}
 }

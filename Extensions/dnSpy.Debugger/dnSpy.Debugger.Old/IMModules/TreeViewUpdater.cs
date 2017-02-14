@@ -158,8 +158,7 @@ namespace dnSpy.Debugger.IMModules {
 
 			var existing = new HashSet<object>();
 			foreach (var child in typeNode.TreeNode.DataChildren) {
-				var tokenNode = child as IMDTokenNode;
-				if (tokenNode != null)
+				if (child is IMDTokenNode tokenNode)
 					existing.Add(tokenNode.Reference);
 			}
 

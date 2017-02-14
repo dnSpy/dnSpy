@@ -33,8 +33,6 @@ namespace dnSpy.Contracts.Hex {
 		/// Constructor
 		/// </summary>
 		/// <param name="buffer">Buffer</param>
-		public HexBufferCreatedEventArgs(HexBuffer buffer) {
-			Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
-		}
+		public HexBufferCreatedEventArgs(HexBuffer buffer) => Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 	}
 }

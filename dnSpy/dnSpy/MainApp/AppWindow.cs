@@ -64,9 +64,7 @@ namespace dnSpy.MainApp {
 			public SavedWindowState SavedWindowState;
 			public MainWindowControlState MainWindowControlState;
 
-			public UISettings(ISettingsService settingsService) {
-				this.settingsService = settingsService;
-			}
+			public UISettings(ISettingsService settingsService) => this.settingsService = settingsService;
 
 			public void Read() {
 				var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
@@ -150,9 +148,7 @@ namespace dnSpy.MainApp {
 			uiSettings.Write();
 		}
 
-		void MainWindow_Closed(object sender, EventArgs e) {
-			mainWindowClosed.Raise(this, e);
-		}
+		void MainWindow_Closed(object sender, EventArgs e) => mainWindowClosed.Raise(this, e);
 
 		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			if (e.NewFocus == MainWindow) {

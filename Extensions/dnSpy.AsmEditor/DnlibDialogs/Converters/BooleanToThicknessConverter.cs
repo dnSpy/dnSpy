@@ -36,8 +36,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs.Converters {
 		}
 		static readonly char[] sep = new char[] { '|' };
 
-		object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-			throw new NotImplementedException();
-		}
+		object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 	}
 }

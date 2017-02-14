@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
 	sealed partial class InformationQuickInfoContentControl : UserControl {
-		public InformationQuickInfoContentControl() {
-			InitializeComponent();
-		}
+		public InformationQuickInfoContentControl() => InitializeComponent();
 	}
 }

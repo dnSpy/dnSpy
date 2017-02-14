@@ -96,9 +96,7 @@ namespace dnSpy.Controls {
 			set { SetValue(PressedBorderThicknessProperty, value); }
 		}
 
-		static TabButton() {
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(TabButton), new FrameworkPropertyMetadata(typeof(TabButton)));
-		}
+		static TabButton() => DefaultStyleKeyProperty.OverrideMetadata(typeof(TabButton), new FrameworkPropertyMetadata(typeof(TabButton)));
 
 		public TabButton() {
 		}

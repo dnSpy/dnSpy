@@ -36,9 +36,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly IIntellisenseSessionStackMapService intellisenseSessionStackMapService;
 
 		[ImportingConstructor]
-		PresenterMouseProcessorProvider(IIntellisenseSessionStackMapService intellisenseSessionStackMapService) {
-			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
-		}
+		PresenterMouseProcessorProvider(IIntellisenseSessionStackMapService intellisenseSessionStackMapService) => this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
 
 		public IMouseProcessor GetAssociatedProcessor(IWpfTextView wpfTextView) =>
 			wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(PresenterMouseProcessor), () => new PresenterMouseProcessor(intellisenseSessionStackMapService.GetStackForTextView(wpfTextView)));
@@ -50,9 +48,7 @@ namespace dnSpy.Language.Intellisense {
 		IMouseProcessor MouseProcessor => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor;
 		IMouseProcessor2 MouseProcessor2 => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor2;
 
-		public PresenterMouseProcessor(IIntellisenseSessionStack intellisenseSessionStack) {
-			this.intellisenseSessionStack = intellisenseSessionStack ?? throw new ArgumentNullException(nameof(intellisenseSessionStack));
-		}
+		public PresenterMouseProcessor(IIntellisenseSessionStack intellisenseSessionStack) => this.intellisenseSessionStack = intellisenseSessionStack ?? throw new ArgumentNullException(nameof(intellisenseSessionStack));
 
 		void IMouseProcessor.PreprocessMouseLeftButtonDown(MouseButtonEventArgs e) => intellisenseSessionStack.CollapseAllSessions();
 		void IMouseProcessor.PostprocessMouseLeftButtonDown(MouseButtonEventArgs e) => MouseProcessor?.PostprocessMouseLeftButtonDown(e);

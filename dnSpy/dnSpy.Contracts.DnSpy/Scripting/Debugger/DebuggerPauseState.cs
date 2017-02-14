@@ -96,9 +96,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// Constructor
 		/// </summary>
 		/// <param name="reason">Reason</param>
-		public DebuggerPauseState(PauseReason reason) {
-			Reason = reason;
-		}
+		public DebuggerPauseState(PauseReason reason) => Reason = reason;
 	}
 
 	/// <summary>
@@ -115,9 +113,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="bp">Breakpoint</param>
 		public EventBreakpointPauseState(IEventBreakpoint bp)
-			: base(PauseReason.DebugEventBreakpoint) {
-			Breakpoint = bp;
-		}
+			: base(PauseReason.DebugEventBreakpoint) => Breakpoint = bp;
 	}
 
 	/// <summary>
@@ -134,9 +130,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="bp">Breakpoint</param>
 		public AnyEventBreakpointPauseState(IAnyEventBreakpoint bp)
-			: base(PauseReason.AnyDebugEventBreakpoint) {
-			Breakpoint = bp;
-		}
+			: base(PauseReason.AnyDebugEventBreakpoint) => Breakpoint = bp;
 	}
 
 	/// <summary>
@@ -153,9 +147,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="bp">Breakpoint</param>
 		public ILBreakpointPauseState(IILBreakpoint bp)
-			: base(PauseReason.ILCodeBreakpoint) {
-			Breakpoint = bp;
-		}
+			: base(PauseReason.ILCodeBreakpoint) => Breakpoint = bp;
 	}
 
 	/// <summary>
@@ -172,9 +164,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="bp">Breakpoint</param>
 		public NativeBreakpointPauseState(INativeBreakpoint bp)
-			: base(PauseReason.NativeCodeBreakpoint) {
-			Breakpoint = bp;
-		}
+			: base(PauseReason.NativeCodeBreakpoint) => Breakpoint = bp;
 	}
 
 	/// <summary>
@@ -191,8 +181,6 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="stepReason">Step reason</param>
 		public StepPauseState(DebugStepReason stepReason)
-			: base(PauseReason.Step) {
-			StepReason = stepReason;
-		}
+			: base(PauseReason.Step) => StepReason = stepReason;
 	}
 }

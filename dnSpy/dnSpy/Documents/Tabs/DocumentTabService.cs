@@ -202,8 +202,7 @@ namespace dnSpy.Documents.Tabs {
 				hash = new HashSet<DsDocumentNode>();
 			hash.Add(node);
 			foreach (var c in node.TreeNode.DataChildren) {
-				var documentNode = c as DsDocumentNode;
-				if (documentNode != null)
+				if (c is DsDocumentNode documentNode)
 					GetSelfAndDsDocumentNodeChildren(documentNode, hash);
 			}
 			return hash;
@@ -250,8 +249,7 @@ namespace dnSpy.Documents.Tabs {
 		void DocumentTreeView_NodeActivated(object sender, DocumentTreeNodeActivatedEventArgs e) {
 			e.Handled = true;
 
-			var asmRefNode = e.Node as AssemblyReferenceNode;
-			if (asmRefNode != null) {
+			if (e.Node is AssemblyReferenceNode asmRefNode) {
 				var asm = DocumentTreeView.DocumentService.Resolve(asmRefNode.AssemblyRef, asmRefNode.GetModule());
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var asmNode = DocumentTreeView.FindNode(asm);
@@ -261,8 +259,7 @@ namespace dnSpy.Documents.Tabs {
 				return;
 			}
 
-			var derivedTypeNode = e.Node as DerivedTypeNode;
-			if (derivedTypeNode != null) {
+			if (e.Node is DerivedTypeNode derivedTypeNode) {
 				var td = derivedTypeNode.TypeDef;
 				Debug.Assert(td != null);
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
@@ -273,8 +270,7 @@ namespace dnSpy.Documents.Tabs {
 				return;
 			}
 
-			var baseTypeNode = e.Node as BaseTypeNode;
-			if (baseTypeNode != null) {
+			if (e.Node is BaseTypeNode baseTypeNode) {
 				var tdr = baseTypeNode.TypeDefOrRef;
 				Debug.Assert(tdr != null);
 				var td = tdr?.ScopeType.ResolveTypeDef();

@@ -33,9 +33,7 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<IMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders;
 
 		[ImportingConstructor]
-		MarginContextMenuService([ImportMany] IEnumerable<Lazy<IMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>> marginContextMenuHandlerProviders) {
-			this.marginContextMenuHandlerProviders = marginContextMenuHandlerProviders.ToArray();
-		}
+		MarginContextMenuService([ImportMany] IEnumerable<Lazy<IMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>> marginContextMenuHandlerProviders) => this.marginContextMenuHandlerProviders = marginContextMenuHandlerProviders.ToArray();
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IWpfTextViewHost wpfTextViewHost;

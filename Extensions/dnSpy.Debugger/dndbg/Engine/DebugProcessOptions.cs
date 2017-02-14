@@ -36,9 +36,7 @@ namespace dndbg.Engine {
 			: this(null) {
 		}
 
-		public DesktopCLRTypeDebugInfo(string debuggeeVersion) {
-			DebuggeeVersion = debuggeeVersion;
-		}
+		public DesktopCLRTypeDebugInfo(string debuggeeVersion) => DebuggeeVersion = debuggeeVersion;
 
 		public override CLRTypeDebugInfo Clone() => new DesktopCLRTypeDebugInfo(DebuggeeVersion);
 	}

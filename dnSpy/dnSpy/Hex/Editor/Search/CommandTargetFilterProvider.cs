@@ -28,9 +28,7 @@ namespace dnSpy.Hex.Editor.Search {
 		readonly Lazy<HexViewSearchServiceProvider> hexViewSearchServiceProvider;
 
 		[ImportingConstructor]
-		CommandTargetFilterProvider(Lazy<HexViewSearchServiceProvider> hexViewSearchServiceProvider) {
-			this.hexViewSearchServiceProvider = hexViewSearchServiceProvider;
-		}
+		CommandTargetFilterProvider(Lazy<HexViewSearchServiceProvider> hexViewSearchServiceProvider) => this.hexViewSearchServiceProvider = hexViewSearchServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
 			var hexView = target as WpfHexView;
@@ -46,9 +44,7 @@ namespace dnSpy.Hex.Editor.Search {
 		readonly Lazy<HexViewSearchServiceProvider> hexViewSearchServiceProvider;
 
 		[ImportingConstructor]
-		CommandTargetFilterProviderFocus(Lazy<HexViewSearchServiceProvider> hexViewSearchServiceProvider) {
-			this.hexViewSearchServiceProvider = hexViewSearchServiceProvider;
-		}
+		CommandTargetFilterProviderFocus(Lazy<HexViewSearchServiceProvider> hexViewSearchServiceProvider) => this.hexViewSearchServiceProvider = hexViewSearchServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
 			var hexView = target as WpfHexView;

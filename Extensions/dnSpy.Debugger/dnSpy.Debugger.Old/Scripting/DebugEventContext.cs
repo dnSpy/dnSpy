@@ -42,9 +42,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.ThreadDebugCallbackEventArgs args;
 
 		public ThreadEventContext(Debugger debugger, DBG.ThreadDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
@@ -54,9 +52,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.ModuleDebugCallbackEventArgs args;
 
 		public ModuleEventContext(Debugger debugger, DBG.ModuleDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 		public IDebuggerModule Module => debugger.FindModuleUI(args.CorModule);
@@ -66,9 +62,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.ClassDebugCallbackEventArgs args;
 
 		public ClassEventContext(Debugger debugger, DBG.ClassDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 
@@ -85,9 +79,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.AppDomainDebugCallbackEventArgs args;
 
 		public AppDomainEventContext(Debugger debugger, DBG.AppDomainDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 	}
@@ -96,9 +88,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.AssemblyDebugCallbackEventArgs args;
 
 		public AssemblyEventContext(Debugger debugger, DBG.AssemblyDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 		public IDebuggerAssembly Assembly => debugger.FindAssemblyUI(args.CorAssembly);
@@ -108,9 +98,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.LogMessageDebugCallbackEventArgs args;
 
 		public LogMessageEventContext(Debugger debugger, DBG.LogMessageDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
@@ -141,9 +129,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.LogSwitchDebugCallbackEventArgs args;
 
 		public LogSwitchEventContext(Debugger debugger, DBG.LogSwitchDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
@@ -187,9 +173,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.NameChangeDebugCallbackEventArgs args;
 
 		public NameChangeEventContext(Debugger debugger, DBG.NameChangeDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);
@@ -199,9 +183,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.UpdateModuleSymbolsDebugCallbackEventArgs args;
 
 		public UpdateModuleSymbolsEventContext(Debugger debugger, DBG.UpdateModuleSymbolsDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 		public IDebuggerModule Module => debugger.FindModuleUI(args.CorModule);
@@ -266,9 +248,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly DBG.CustomNotificationDebugCallbackEventArgs args;
 
 		public CustomNotificationEventContext(Debugger debugger, DBG.CustomNotificationDebugCallbackEventArgs e)
-			: base(debugger, e.Kind.ToDebugEventKind()) {
-			args = e;
-		}
+			: base(debugger, e.Kind.ToDebugEventKind()) => args = e;
 
 		public IAppDomain AppDomain => debugger.FindAppDomainUI(args.CorAppDomain);
 		public IDebuggerThread Thread => debugger.FindThreadUI(args.CorThread);

@@ -31,8 +31,6 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="position">Position of the line that gets a line separator</param>
-		public LineSeparator(int position) {
-			Position = position;
-		}
+		public LineSeparator(int position) => Position = position;
 	}
 }

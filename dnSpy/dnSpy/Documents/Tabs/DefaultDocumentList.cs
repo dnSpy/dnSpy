@@ -337,9 +337,7 @@ namespace dnSpy.Documents.Tabs {
 	sealed class DefaultDocumentListFinder {
 		readonly CancellationToken cancellationToken;
 
-		public DefaultDocumentListFinder(CancellationToken cancellationToken) {
-			this.cancellationToken = cancellationToken;
-		}
+		public DefaultDocumentListFinder(CancellationToken cancellationToken) => this.cancellationToken = cancellationToken;
 
 		static IEnumerable<string> FilesDirs => AppDirectories.GetDirectories("FileLists");
 

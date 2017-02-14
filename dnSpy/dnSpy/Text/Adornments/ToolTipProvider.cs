@@ -84,11 +84,9 @@ namespace dnSpy.Text.Adornments {
 		}
 
 		UIElement GetUIElement(object toolTipContent) {
-			var elem = toolTipContent as UIElement;
-			if (elem != null)
+			if (toolTipContent is UIElement elem)
 				return elem;
-			var s = toolTipContent as string;
-			if (s != null)
+			if (toolTipContent is string s)
 				return CreateUIElement(s);
 			return null;
 		}

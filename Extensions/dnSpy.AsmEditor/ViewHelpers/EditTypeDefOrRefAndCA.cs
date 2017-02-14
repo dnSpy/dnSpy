@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditTypeDefOrRefAndCA(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditTypeDefOrRefAndCA(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public TypeDefOrRefAndCAVM Edit(string title, TypeDefOrRefAndCAVM obj) {
 			var win = new TypeDefOrRefAndCADlg();

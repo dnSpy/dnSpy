@@ -33,9 +33,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		public ImmutableArray<TaggedText> TaggedParts { get; }
 
 		TaggedTextClassifierContext(string text, string tag, ImmutableArray<TaggedText> taggedParts, bool colorize)
-			: base(text, tag, colorize) {
-			TaggedParts = taggedParts.IsDefault ? ImmutableArray<TaggedText>.Empty : taggedParts;
-		}
+			: base(text, tag, colorize) => TaggedParts = taggedParts.IsDefault ? ImmutableArray<TaggedText>.Empty : taggedParts;
 
 		static string ToString(ImmutableArray<TaggedText> taggedParts) {
 			if (taggedParts.IsDefault || taggedParts.Length == 0)

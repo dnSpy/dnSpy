@@ -37,9 +37,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class EditCodeCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		public EditCodeCommandTargetFilter(ITextView textView) {
-			this.textView = textView;
-		}
+		public EditCodeCommandTargetFilter(ITextView textView) => this.textView = textView;
 
 		EditCodeVM TryGetInstance() =>
 			__editCodeVM ?? (__editCodeVM = EditCodeVM.TryGet(textView));

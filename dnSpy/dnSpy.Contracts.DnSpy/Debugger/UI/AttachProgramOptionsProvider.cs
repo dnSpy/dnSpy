@@ -46,8 +46,6 @@ namespace dnSpy.Contracts.Debugger.UI {
 		/// Constructor
 		/// </summary>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public AttachProgramOptionsProviderContext(CancellationToken cancellationToken) {
-			CancellationToken = cancellationToken;
-		}
+		public AttachProgramOptionsProviderContext(CancellationToken cancellationToken) => CancellationToken = cancellationToken;
 	}
 }

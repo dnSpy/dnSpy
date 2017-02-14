@@ -168,9 +168,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentListLoader documentListLoader;
 
 		[ImportingConstructor]
-		ReloadCommand(IDocumentListLoader documentListLoader) {
-			this.documentListLoader = documentListLoader;
-		}
+		ReloadCommand(IDocumentListLoader documentListLoader) => this.documentListLoader = documentListLoader;
 
 		public override bool IsEnabled(IMenuItemContext context) => documentListLoader.CanReload;
 		public override void Execute(IMenuItemContext context) => documentListLoader.Reload();
@@ -181,9 +179,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentListLoader documentListLoader;
 
 		[ImportingConstructor]
-		CloseAllDocumentsCommand(IDocumentListLoader documentListLoader) {
-			this.documentListLoader = documentListLoader;
-		}
+		CloseAllDocumentsCommand(IDocumentListLoader documentListLoader) => this.documentListLoader = documentListLoader;
 
 		public override bool IsEnabled(IMenuItemContext context) => documentListLoader.CanCloseAll;
 		public override void Execute(IMenuItemContext context) => documentListLoader.CloseAll();
@@ -194,9 +190,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTreeView documentTreeView;
 
 		[ImportingConstructor]
-		SortAssembliesCommand(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		SortAssembliesCommand(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		public override bool IsEnabled(IMenuItemContext context) => documentTreeView.CanSortTopNodes;
 		public override void Execute(IMenuItemContext context) => documentTreeView.SortTopNodes();
@@ -207,9 +201,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTreeView documentTreeView;
 
 		[ImportingConstructor]
-		SortAssembliesCtxMenuCommand(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		SortAssembliesCtxMenuCommand(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 		public override bool IsEnabled(IMenuItemContext context) => documentTreeView.CanSortTopNodes;

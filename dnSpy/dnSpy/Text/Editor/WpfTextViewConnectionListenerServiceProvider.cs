@@ -30,9 +30,7 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] wpfTextViewConnectionListeners;
 
 		[ImportingConstructor]
-		WpfTextViewConnectionListenerServiceProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>> wpfTextViewConnectionListeners) {
-			this.wpfTextViewConnectionListeners = wpfTextViewConnectionListeners.ToArray();
-		}
+		WpfTextViewConnectionListenerServiceProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>> wpfTextViewConnectionListeners) => this.wpfTextViewConnectionListeners = wpfTextViewConnectionListeners.ToArray();
 
 		public void Create(IWpfTextView wpfTextView) {
 			if (wpfTextView == null)

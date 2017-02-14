@@ -123,8 +123,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 				base.Filter(filteredResult, completions);
 			else {
 				foreach (var completion in completions) {
-					var roslynCompletion = completion as RoslynCompletion;
-					if (roslynCompletion != null) {
+					if (completion is RoslynCompletion roslynCompletion) {
 						foreach (var tag in roslynCompletion.CompletionItem.Tags) {
 							if (filteredTags.Contains(tag))
 								goto matched;

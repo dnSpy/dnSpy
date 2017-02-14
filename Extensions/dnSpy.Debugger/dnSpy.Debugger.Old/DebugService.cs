@@ -90,9 +90,7 @@ namespace dnSpy.Debugger {
 		readonly Lazy<DebugService> debugService;
 
 		[ImportingConstructor]
-		DebugServiceFileListListener(Lazy<DebugService> debugService) {
-			this.debugService = debugService;
-		}
+		DebugServiceFileListListener(Lazy<DebugService> debugService) => this.debugService = debugService;
 
 		public void AfterLoad(bool isReload) { }
 		public void BeforeLoad(bool isReload) { }
@@ -800,9 +798,7 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public bool Attach(AttachProcessOptions options) {
-			return Attach(options, out string errMsg);
-		}
+		public bool Attach(AttachProcessOptions options) => Attach(options, out string errMsg);
 
 		bool Attach(AttachProcessOptions options, out string errMsg) {
 			errMsg = null;

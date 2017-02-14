@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed partial class ImageListDlg : WindowBase {
-		public ImageListDlg() {
-			InitializeComponent();
-		}
+		public ImageListDlg() => InitializeComponent();
 	}
 }

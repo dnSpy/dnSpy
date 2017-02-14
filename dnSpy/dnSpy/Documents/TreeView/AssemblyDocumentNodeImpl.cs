@@ -31,9 +31,7 @@ using dnSpy.Decompiler;
 namespace dnSpy.Documents.TreeView {
 	sealed class AssemblyDocumentNodeImpl : AssemblyDocumentNode {
 		public AssemblyDocumentNodeImpl(IDsDotNetDocument document)
-			: base(document) {
-			Debug.Assert(document.AssemblyDef != null);
-		}
+			: base(document) => Debug.Assert(document.AssemblyDef != null);
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.ASSEMBLY_NODE_GUID);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.AssemblyDef);

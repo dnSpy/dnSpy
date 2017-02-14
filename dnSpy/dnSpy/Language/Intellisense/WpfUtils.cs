@@ -48,8 +48,7 @@ namespace dnSpy.Language.Intellisense {
 			int childrenCount = VisualTreeHelper.GetChildrenCount(obj);
 			for (int i = 0; i < childrenCount; i++) {
 				var child = VisualTreeHelper.GetChild(obj, i);
-				var res = child as T;
-				if (res != null)
+				if (child is T res)
 					return res;
 
 				res = FindVisualChild<T>(child);

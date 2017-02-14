@@ -33,9 +33,7 @@ namespace dnSpy.Settings.Dialog {
 		readonly IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType;
 
 		[ImportingConstructor]
-		AppSettingsTreeViewNodeSearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			appSettingsTreeViewNodeMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.AppSettingsTreeViewNodeMatchHighlight);
-		}
+		AppSettingsTreeViewNodeSearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => appSettingsTreeViewNodeMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.AppSettingsTreeViewNodeMatchHighlight);
 
 		public ITextClassifier Create(IContentType contentType) => new AppSettingsTreeViewNodeSearchTextClassifier(appSettingsTreeViewNodeMatchHighlightClassificationType);
 	}
@@ -43,9 +41,7 @@ namespace dnSpy.Settings.Dialog {
 	sealed class AppSettingsTreeViewNodeSearchTextClassifier : ITextClassifier {
 		readonly IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType;
 
-		public AppSettingsTreeViewNodeSearchTextClassifier(IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType) {
-			this.appSettingsTreeViewNodeMatchHighlightClassificationType = appSettingsTreeViewNodeMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(appSettingsTreeViewNodeMatchHighlightClassificationType));
-		}
+		public AppSettingsTreeViewNodeSearchTextClassifier(IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType) => this.appSettingsTreeViewNodeMatchHighlightClassificationType = appSettingsTreeViewNodeMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(appSettingsTreeViewNodeMatchHighlightClassificationType));
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var tvContext = context as AppSettingsTreeViewNodeClassifierContext;

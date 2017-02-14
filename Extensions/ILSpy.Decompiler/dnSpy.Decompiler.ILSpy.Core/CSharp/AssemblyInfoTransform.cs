@@ -49,11 +49,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			if (type == null)
 				return false;
 
-			var tr = type as TypeRef;
-			if (tr != null)
+			if (type is TypeRef tr)
 				return tr.Namespace == expNs && tr.Name == expName;
-			var td = type as TypeDef;
-			if (td != null)
+			if (type is TypeDef td)
 				return td.Namespace == expNs && td.Name == expName;
 
 			return false;

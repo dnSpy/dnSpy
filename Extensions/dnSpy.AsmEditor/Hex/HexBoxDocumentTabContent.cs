@@ -37,9 +37,7 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator;
 
 		[ImportingConstructor]
-		HexViewDocumentTabContentFactory(Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator) {
-			this.hexViewDocumentTabContentCreator = hexViewDocumentTabContentCreator;
-		}
+		HexViewDocumentTabContentFactory(Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator) => this.hexViewDocumentTabContentCreator = hexViewDocumentTabContentCreator;
 
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
 
@@ -126,9 +124,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		readonly WpfHexViewHost hexViewHost;
 
-		public HexViewDocumentTabUIContext(HexEditorGroupFactoryService hexEditorGroupFactoryService, HexBuffer buffer) {
-			hexViewHost = hexEditorGroupFactoryService.Create(buffer, PredefinedHexViewRoles.HexEditorGroup, PredefinedHexViewRoles.HexEditorGroupDefault, new Guid(MenuConstants.GUIDOBJ_ASMEDITOR_HEXVIEW_GUID));
-		}
+		public HexViewDocumentTabUIContext(HexEditorGroupFactoryService hexEditorGroupFactoryService, HexBuffer buffer) => hexViewHost = hexEditorGroupFactoryService.Create(buffer, PredefinedHexViewRoles.HexEditorGroup, PredefinedHexViewRoles.HexEditorGroupDefault, new Guid(MenuConstants.GUIDOBJ_ASMEDITOR_HEXVIEW_GUID));
 
 		public override object CreateUIState() {
 			if (cachedHexViewUIState != null)

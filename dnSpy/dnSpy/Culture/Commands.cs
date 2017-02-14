@@ -38,9 +38,7 @@ namespace dnSpy.Culture {
 		readonly ICultureService cultureService;
 
 		[ImportingConstructor]
-		LanguagesCommand(ICultureService cultureService) {
-			this.cultureService = cultureService;
-		}
+		LanguagesCommand(ICultureService cultureService) => this.cultureService = cultureService;
 
 		public override bool IsVisible(IMenuItemContext context) => cultureService.HasExtraLanguages;
 		public override void Execute(IMenuItemContext context) => Debug.Fail("Shouldn't execute");
@@ -51,9 +49,7 @@ namespace dnSpy.Culture {
 		readonly ICultureService cultureService;
 
 		[ImportingConstructor]
-		ShowSupportedLanguagesCommand(ICultureService cultureService) {
-			this.cultureService = cultureService;
-		}
+		ShowSupportedLanguagesCommand(ICultureService cultureService) => this.cultureService = cultureService;
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var langs = cultureService.AllLanguages.OrderBy(a => a, LanguageInfoComparer.Instance);

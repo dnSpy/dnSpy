@@ -31,9 +31,7 @@ namespace dnSpy.Text.Editor.Operations {
 
 		bool IsReadOnly => textViewUndoManager.TextView.Options.DoesViewProhibitUserInput();
 
-		public UndoRedoCommandTargetFilter(ITextViewUndoManager textViewUndoManager) {
-			this.textViewUndoManager = textViewUndoManager ?? throw new ArgumentNullException(nameof(textViewUndoManager));
-		}
+		public UndoRedoCommandTargetFilter(ITextViewUndoManager textViewUndoManager) => this.textViewUndoManager = textViewUndoManager ?? throw new ArgumentNullException(nameof(textViewUndoManager));
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (group == CommandConstants.StandardGroup) {

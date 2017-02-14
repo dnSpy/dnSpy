@@ -48,9 +48,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order</param>
 		public ExportReferenceHandlerAttribute(double order = double.MaxValue)
-			: base(typeof(IReferenceHandler)) {
-			Order = order;
-		}
+			: base(typeof(IReferenceHandler)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

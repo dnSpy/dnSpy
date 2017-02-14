@@ -142,18 +142,14 @@ namespace dnSpy.Hex.Formatting {
 
 			readonly IHexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan;
 
-			public HexAdornmentElementImpl(IHexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan) {
-				this.tagSpan = tagSpan ?? throw new ArgumentNullException(nameof(tagSpan));
-			}
+			public HexAdornmentElementImpl(IHexTextTagSpan<HexSpaceNegotiatingAdornmentTag> tagSpan) => this.tagSpan = tagSpan ?? throw new ArgumentNullException(nameof(tagSpan));
 		}
 
 		sealed class HexSequenceElementImpl : HexSequenceElement {
 			public override bool ShouldRenderText => true;
 			public override VST.Span Span { get; }
 
-			public HexSequenceElementImpl(VST.Span span) {
-				Span = span;
-			}
+			public HexSequenceElementImpl(VST.Span span) => Span = span;
 		}
 
 		sealed class HexAndAdornmentCollectionImpl : HexAndAdornmentCollection {

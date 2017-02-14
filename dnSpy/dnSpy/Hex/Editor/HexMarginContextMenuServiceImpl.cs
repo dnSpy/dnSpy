@@ -32,9 +32,7 @@ namespace dnSpy.Hex.Editor {
 		readonly Lazy<HexMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders;
 
 		[ImportingConstructor]
-		HexMarginContextMenuServiceImpl([ImportMany] IEnumerable<Lazy<HexMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>> marginContextMenuHandlerProviders) {
-			this.marginContextMenuHandlerProviders = marginContextMenuHandlerProviders.ToArray();
-		}
+		HexMarginContextMenuServiceImpl([ImportMany] IEnumerable<Lazy<HexMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>> marginContextMenuHandlerProviders) => this.marginContextMenuHandlerProviders = marginContextMenuHandlerProviders.ToArray();
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly WpfHexViewHost wpfHexViewHost;

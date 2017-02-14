@@ -301,8 +301,6 @@ namespace dnSpy.Contracts.Hex {
 		/// Constructor
 		/// </summary>
 		/// <param name="span">Span</param>
-		public HexBufferStreamSpanInvalidatedEventArgs(HexSpan span) {
-			Span = span;
-		}
+		public HexBufferStreamSpanInvalidatedEventArgs(HexSpan span) => Span = span;
 	}
 }

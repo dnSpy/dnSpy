@@ -34,9 +34,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 		static readonly char[] searchSeparators = new char[] { ' ', '\t', '\r', '\n' };
 
-		public void SetSearchText(string searchText) {
-			searchParts = (searchText ?? string.Empty).Split(searchSeparators, StringSplitOptions.RemoveEmptyEntries);
-		}
+		public void SetSearchText(string searchText) => searchParts = (searchText ?? string.Empty).Split(searchSeparators, StringSplitOptions.RemoveEmptyEntries);
 
 		public bool IsMatchAll(List<string> pageTitles, List<string> pageStrings) {
 			if (searchParts.Length == 0)

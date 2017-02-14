@@ -43,9 +43,7 @@ namespace Example2.Extension {
 	sealed class LogEditorCtxMenuContext {
 		public readonly IOutputTextPane TextPane;
 
-		public LogEditorCtxMenuContext(IOutputTextPane pane) {
-			TextPane = pane;
-		}
+		public LogEditorCtxMenuContext(IOutputTextPane pane) => TextPane = pane;
 	}
 
 	abstract class LogEditorCtxMenuCommand : MenuItemBase<LogEditorCtxMenuContext> {

@@ -160,8 +160,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public ImplMapVM(ModuleDef ownerModule) {
-			this.ownerModule = ownerModule;
-		}
+		public ImplMapVM(ModuleDef ownerModule) => this.ownerModule = ownerModule;
 	}
 }

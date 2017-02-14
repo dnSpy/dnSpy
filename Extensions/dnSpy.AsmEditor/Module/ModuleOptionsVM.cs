@@ -402,8 +402,7 @@ namespace dnSpy.AsmEditor.Module {
 			if (ep == null)
 				return string.Empty;
 			string s;
-			var method = ep as MethodDef;
-			if (method != null) {
+			if (ep is MethodDef method) {
 				var declType = method.DeclaringType;
 				if (declType != null)
 					s = string.Format("{0} ({1})", method.Name, declType.FullName);

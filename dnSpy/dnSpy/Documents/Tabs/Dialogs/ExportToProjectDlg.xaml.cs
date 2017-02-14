@@ -22,15 +22,12 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed partial class ExportToProjectDlg : WindowBase {
-		public ExportToProjectDlg() {
-			InitializeComponent();
-		}
+		public ExportToProjectDlg() => InitializeComponent();
 
 		protected override void OnClosed(EventArgs e) {
 			base.OnClosed(e);
 
-			var vm = DataContext as ExportToProjectVM;
-			if (vm != null)
+			if (DataContext is ExportToProjectVM vm)
 				vm.Cancel();
 		}
 	}

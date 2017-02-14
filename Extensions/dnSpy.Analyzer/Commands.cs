@@ -59,8 +59,7 @@ namespace dnSpy.Analyzer {
 			if (nodes == null || nodes.Length != 1)
 				return null;
 
-			var tokenNode = nodes[0] as IMDTokenNode;
-			if (tokenNode != null && tokenNode.Reference != null) {
+			if (nodes[0] is IMDTokenNode tokenNode && tokenNode.Reference != null) {
 				if (!analyzerService.Value.CanFollowNode(nodes[0], useCodeRef))
 					return null;
 				return nodes[0];
@@ -118,9 +117,7 @@ namespace dnSpy.Analyzer {
 		readonly Lazy<IAnalyzerService> analyzerService;
 
 		[ImportingConstructor]
-		CopyCtxMenuCommand(Lazy<IAnalyzerService> analyzerService) {
-			this.analyzerService = analyzerService;
-		}
+		CopyCtxMenuCommand(Lazy<IAnalyzerService> analyzerService) => this.analyzerService = analyzerService;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 		public override bool IsEnabled(IMenuItemContext context) => CanExecuteInternal(analyzerService);
@@ -180,9 +177,7 @@ namespace dnSpy.Analyzer {
 		readonly AnalyzerSettingsImpl analyzerSettings;
 
 		[ImportingConstructor]
-		ShowTokensCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) {
-			this.analyzerSettings = analyzerSettings;
-		}
+		ShowTokensCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) => this.analyzerSettings = analyzerSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 		public override bool IsChecked(IMenuItemContext context) => analyzerSettings.ShowToken;
@@ -194,9 +189,7 @@ namespace dnSpy.Analyzer {
 		readonly AnalyzerSettingsImpl analyzerSettings;
 
 		[ImportingConstructor]
-		SyntaxHighlightCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) {
-			this.analyzerSettings = analyzerSettings;
-		}
+		SyntaxHighlightCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) => this.analyzerSettings = analyzerSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 		public override bool IsChecked(IMenuItemContext context) => analyzerSettings.SyntaxHighlight;

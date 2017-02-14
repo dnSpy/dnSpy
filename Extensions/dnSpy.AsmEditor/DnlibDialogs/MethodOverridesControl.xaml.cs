@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MethodOverridesControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as MethodOverridesVM;
-				if (data != null) {
+				if (DataContext is MethodOverridesVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.EditObject = new EditMethodOverride(ownerWindow);
 				}

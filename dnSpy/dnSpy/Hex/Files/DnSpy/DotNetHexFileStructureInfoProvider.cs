@@ -41,9 +41,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		readonly ToolTipCreatorFactory toolTipCreatorFactory;
 
 		[ImportingConstructor]
-		DotNetHexFileStructureInfoProviderFactory(ToolTipCreatorFactory toolTipCreatorFactory) {
-			this.toolTipCreatorFactory = toolTipCreatorFactory;
-		}
+		DotNetHexFileStructureInfoProviderFactory(ToolTipCreatorFactory toolTipCreatorFactory) => this.toolTipCreatorFactory = toolTipCreatorFactory;
 
 		public override HexFileStructureInfoProvider Create(HexView hexView) =>
 			new DotNetHexFileStructureInfoProvider(toolTipCreatorFactory);
@@ -52,41 +50,31 @@ namespace dnSpy.Hex.Files.DnSpy {
 	sealed class DotNetHexFileStructureInfoProvider : HexFileStructureInfoProvider {
 		readonly ToolTipCreatorFactory toolTipCreatorFactory;
 
-		public DotNetHexFileStructureInfoProvider(ToolTipCreatorFactory toolTipCreatorFactory) {
-			this.toolTipCreatorFactory = toolTipCreatorFactory ?? throw new ArgumentNullException(nameof(toolTipCreatorFactory));
-		}
+		public DotNetHexFileStructureInfoProvider(ToolTipCreatorFactory toolTipCreatorFactory) => this.toolTipCreatorFactory = toolTipCreatorFactory ?? throw new ArgumentNullException(nameof(toolTipCreatorFactory));
 
 		public override object GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) {
-			var body = structure as DotNetMethodBody;
-			if (body != null)
+			if (structure is DotNetMethodBody body)
 				return GetToolTip(body, position);
 
-			var resource = structure as DotNetEmbeddedResource;
-			if (resource != null)
+			if (structure is DotNetEmbeddedResource resource)
 				return GetToolTip(resource, position);
 
-			var resDataHdr = structure as MultiResourceDataHeaderData;
-			if (resDataHdr != null)
+			if (structure is MultiResourceDataHeaderData resDataHdr)
 				return GetToolTip(resDataHdr, position);
 
-			var guidRecord = structure as GuidHeapRecordData;
-			if (guidRecord != null)
+			if (structure is GuidHeapRecordData guidRecord)
 				return GetToolTip(guidRecord, position);
 
-			var stringsRecord = structure as StringsHeapRecordData;
-			if (stringsRecord != null)
+			if (structure is StringsHeapRecordData stringsRecord)
 				return GetToolTip(stringsRecord, position);
 
-			var usRecord = structure as USHeapRecordData;
-			if (usRecord != null)
+			if (structure is USHeapRecordData usRecord)
 				return GetToolTip(usRecord, position);
 
-			var blobRecord = structure as BlobHeapRecordData;
-			if (blobRecord != null)
+			if (structure is BlobHeapRecordData blobRecord)
 				return GetToolTip(blobRecord, position);
 
-			var tableRecord = structure as TableRecordData;
-			if (tableRecord != null)
+			if (structure is TableRecordData tableRecord)
 				return GetToolTip(tableRecord, position);
 
 			return null;
@@ -333,8 +321,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		}
 
 		public override object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
-			var body = structure as DotNetMethodBody;
-			if (body != null)
+			if (structure is DotNetMethodBody body)
 				return GetReference(file, body, position);
 			return null;
 		}

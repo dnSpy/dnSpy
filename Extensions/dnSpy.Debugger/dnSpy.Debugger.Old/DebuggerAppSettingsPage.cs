@@ -34,9 +34,7 @@ namespace dnSpy.Debugger {
 		readonly DebuggerSettingsImpl debuggerSettingsImpl;
 
 		[ImportingConstructor]
-		DebuggerAppSettingsPageProvider(DebuggerSettingsImpl debuggerSettingsImpl, IPickFilename pickFilename) {
-			this.debuggerSettingsImpl = debuggerSettingsImpl;
-		}
+		DebuggerAppSettingsPageProvider(DebuggerSettingsImpl debuggerSettingsImpl, IPickFilename pickFilename) => this.debuggerSettingsImpl = debuggerSettingsImpl;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			yield return new DebuggerAppSettingsPage(debuggerSettingsImpl, new PickFilename());

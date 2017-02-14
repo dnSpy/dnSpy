@@ -164,9 +164,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public ImageResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
-			: base(treeNodeGroup, resourceElement) {
-			InitializeImageData();
-		}
+			: base(treeNodeGroup, resourceElement) => InitializeImageData();
 
 		void InitializeImageData() {
 			imageData = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
@@ -174,8 +172,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
-			var documentViewerOutput = output as IDocumentViewerOutput;
-			if (documentViewerOutput != null) {
+			if (output is IDocumentViewerOutput documentViewerOutput) {
 				decompiler.WriteCommentBegin(output, true);
 				output.WriteOffsetComment(this, showOffset);
 				documentViewerOutput.AddUIElement(() => {

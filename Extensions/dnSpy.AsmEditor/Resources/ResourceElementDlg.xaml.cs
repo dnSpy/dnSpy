@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed partial class ResourceElementDlg : WindowBase {
-		public ResourceElementDlg() {
-			InitializeComponent();
-		}
+		public ResourceElementDlg() => InitializeComponent();
 	}
 }

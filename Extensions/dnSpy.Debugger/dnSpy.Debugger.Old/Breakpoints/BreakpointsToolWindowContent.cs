@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		BreakpointsToolWindowContent breakpointsToolWindowContent;
 
 		[ImportingConstructor]
-		BreakpointsToolWindowContentProvider(Lazy<IBreakpointsContent> breakpointsContent) {
-			this.breakpointsContent = breakpointsContent;
-		}
+		BreakpointsToolWindowContentProvider(Lazy<IBreakpointsContent> breakpointsContent) => this.breakpointsContent = breakpointsContent;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(BreakpointsToolWindowContent.THE_GUID, BreakpointsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_BREAKPOINTS, false); }
@@ -59,9 +57,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		readonly Lazy<IBreakpointsContent> breakpointsContent;
 
-		public BreakpointsToolWindowContent(Lazy<IBreakpointsContent> breakpointsContent) {
-			this.breakpointsContent = breakpointsContent;
-		}
+		public BreakpointsToolWindowContent(Lazy<IBreakpointsContent> breakpointsContent) => this.breakpointsContent = breakpointsContent;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {

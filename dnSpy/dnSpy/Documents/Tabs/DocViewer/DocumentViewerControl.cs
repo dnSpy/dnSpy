@@ -199,20 +199,17 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (reference == null)
 				return false;
 
-			var member = reference as IMemberDef;
-			if (member != null) {
+			if (reference is IMemberDef member) {
 				var spanData = currentContent.Content.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && a.Data.Reference == member);
 				return GoToTarget(spanData, false, false, options);
 			}
 
-			var pd = reference as ParamDef;
-			if (pd != null) {
+			if (reference is ParamDef pd) {
 				var spanData = currentContent.Content.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && (a.Data.Reference as Parameter)?.ParamDef == pd);
 				return GoToTarget(spanData, false, false, options);
 			}
 
-			var textRef = reference as TextReference;
-			if (textRef != null) {
+			if (reference is TextReference textRef) {
 				var spanData = currentContent.Content.ReferenceCollection.FirstOrNull(a => a.Data.IsLocal == textRef.IsLocal && a.Data.IsDefinition == textRef.IsDefinition && a.Data.Reference == textRef.Reference);
 				return GoToTarget(spanData, false, false, options);
 			}
@@ -403,13 +400,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public MethodSourceStatement? MethodSourceStatement { get; }
 			public SpanData<ReferenceInfo>? SpanData { get; }
 
-			public ReferencePosition(SpanData<ReferenceInfo> spanData) {
-				SpanData = spanData;
-			}
+			public ReferencePosition(SpanData<ReferenceInfo> spanData) => SpanData = spanData;
 
-			public ReferencePosition(IList<MethodSourceStatement> methodSourceStatements) {
-				MethodSourceStatement = methodSourceStatements.Count > 0 ? methodSourceStatements[0] : (MethodSourceStatement?)null;
-			}
+			public ReferencePosition(IList<MethodSourceStatement> methodSourceStatements) => MethodSourceStatement = methodSourceStatements.Count > 0 ? methodSourceStatements[0] : (MethodSourceStatement?)null;
 		}
 
 		ReferencePosition GetReferencePosition(IMethodDebugService methodDebugService) {

@@ -102,13 +102,9 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public RawSettings(string id)
-			: this() {
-			Id = id ?? throw new ArgumentNullException(nameof(id));
-		}
+			: this() => Id = id ?? throw new ArgumentNullException(nameof(id));
 
-		public RawSettings(ISettingsSection section) {
-			ReadSettings(section);
-		}
+		public RawSettings(ISettingsSection section) => ReadSettings(section);
 
 		void ReadSettings(ISettingsSection section) {
 			Id = section.Attribute<string>(nameof(Id));

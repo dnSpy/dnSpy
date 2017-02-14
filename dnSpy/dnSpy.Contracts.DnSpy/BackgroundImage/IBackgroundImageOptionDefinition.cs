@@ -91,9 +91,7 @@ namespace dnSpy.Contracts.BackgroundImage {
 		/// </summary>
 		/// <param name="order">Order of this instance, eg. <see cref="BackgroundImageOptionDefinitionConstants.AttrOrder_Default"/></param>
 		public ExportBackgroundImageOptionDefinitionAttribute(double order)
-			: base(typeof(IBackgroundImageOptionDefinition)) {
-			Order = order;
-		}
+			: base(typeof(IBackgroundImageOptionDefinition)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

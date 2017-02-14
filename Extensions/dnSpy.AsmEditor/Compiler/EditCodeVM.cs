@@ -223,11 +223,9 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected abstract class DecompileCodeState : AsyncStateBase {
 			public DecompilationContext DecompilationContext { get; }
-			protected DecompileCodeState() {
-				DecompilationContext = new DecompilationContext {
-					CancellationToken = CancellationToken,
-				};
-			}
+			protected DecompileCodeState() => DecompilationContext = new DecompilationContext {
+				CancellationToken = CancellationToken,
+			};
 		}
 		protected DecompileCodeState decompileCodeState;
 
@@ -235,12 +233,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 		CompileCodeState compileCodeState;
 
-		protected void StartDecompile() {
-			StartDecompileAsync().ContinueWith(t => {
-				var ex = t.Exception;
-				Debug.Assert(ex == null);
-			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
-		}
+		protected void StartDecompile() => StartDecompileAsync().ContinueWith(t => {
+			var ex = t.Exception;
+			Debug.Assert(ex == null);
+		}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
 		protected struct SimpleDocument {
 			public string NameNoExtension { get; }

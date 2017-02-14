@@ -333,8 +333,7 @@ namespace dnSpy.Documents.Tabs {
 			var showCtx = new ShowContext(cachedUIContext, isRefresh);
 			tabContent.OnShow(showCtx);
 			bool asyncShow = false;
-			var asyncTabContent = tabContent as AsyncDocumentTabContent;
-			if (asyncTabContent != null) {
+			if (tabContent is AsyncDocumentTabContent asyncTabContent) {
 				if (asyncTabContent.NeedAsyncWork(showCtx)) {
 					asyncShow = true;
 					var ctx = new AsyncWorkerContext();
@@ -490,10 +489,9 @@ namespace dnSpy.Documents.Tabs {
 		public void OnSelected() => Content.OnSelected();
 		public void OnUnselected() => Content.OnUnselected();
 
-		internal void OnTabsLoaded() {
+		internal void OnTabsLoaded() =>
 			// Make sure that the tab initializes eg. Language to the language it's using.
 			OnSelected();
-		}
 
 		const string ZOOM_ATTR = "zoom";
 

@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MethodDefsControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as MethodDefsVM;
-				if (data != null) {
+				if (DataContext is MethodDefsVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.EditObject = new EditMethodDef(data.OwnerModule, ownerWindow);
 				}

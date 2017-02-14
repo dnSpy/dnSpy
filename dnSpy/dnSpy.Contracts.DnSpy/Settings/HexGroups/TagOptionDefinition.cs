@@ -55,9 +55,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected TagOptionDefinition() {
-			CanBeSaved = true;
-		}
+		protected TagOptionDefinition() => CanBeSaved = true;
 	}
 
 	/// <summary>
@@ -77,17 +75,13 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// </summary>
 		/// <param name="option">Name of option</param>
 		public TagOptionDefinition(VSTE.EditorOptionKey<T> option)
-			: this() {
-			Name = option.Name;
-		}
+			: this() => Name = option.Name;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="optionId">Name of option</param>
 		public TagOptionDefinition(string optionId)
-			: this() {
-			Name = optionId;
-		}
+			: this() => Name = optionId;
 	}
 }

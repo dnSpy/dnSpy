@@ -28,22 +28,17 @@ namespace dnSpy.Debugger {
 		readonly IDocumentTreeView documentTreeView;
 
 		[ImportingConstructor]
-		DebuggerModuleIdFactoryProvider(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		DebuggerModuleIdFactoryProvider(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		public IModuleIdFactory Create() => new ModuleIdFactory(documentTreeView);
 
 		sealed class ModuleIdFactory : IModuleIdFactory {
 			readonly IDocumentTreeView documentTreeView;
 
-			public ModuleIdFactory(IDocumentTreeView documentTreeView) {
-				this.documentTreeView = documentTreeView;
-			}
+			public ModuleIdFactory(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 			public ModuleId? Create(ModuleDef module) {
-				var midHolder = documentTreeView.FindNode(module)?.Document as IModuleIdHolder;
-				if (midHolder != null)
+				if (documentTreeView.FindNode(module)?.Document is IModuleIdHolder midHolder)
 					return midHolder.ModuleId;
 				return null;
 			}

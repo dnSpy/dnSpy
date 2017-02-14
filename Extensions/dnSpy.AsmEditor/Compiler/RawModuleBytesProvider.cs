@@ -38,8 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return fileBytes;
 
 			// If there's no file, use the in-memory data
-			var m = module as ModuleDefMD;
-			if (m != null)
+			if (module is ModuleDefMD m)
 				return m.MetaData.PEImage.CreateFullStream().ReadAllBytes();
 
 			return null;

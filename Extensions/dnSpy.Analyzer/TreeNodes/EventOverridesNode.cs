@@ -28,9 +28,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventOverridesNode : SearchNode {
 		readonly EventDef analyzedEvent;
 
-		public EventOverridesNode(EventDef analyzedEvent) {
-			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
-		}
+		public EventOverridesNode(EventDef analyzedEvent) => this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.OverriddenByTreeNode);

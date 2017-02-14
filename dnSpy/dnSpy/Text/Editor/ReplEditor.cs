@@ -73,9 +73,7 @@ namespace dnSpy.Text.Editor {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly ReplEditor replEditorUI;
 
-			public GuidObjectsProvider(ReplEditor replEditorUI) {
-				this.replEditorUI = replEditorUI;
-			}
+			public GuidObjectsProvider(ReplEditor replEditorUI) => this.replEditorUI = replEditorUI;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_REPL_EDITOR_GUID, replEditorUI);
@@ -944,9 +942,7 @@ namespace dnSpy.Text.Editor {
 
 		public List<SpanAndClassificationType> ColorInfos { get; } = new List<SpanAndClassificationType>();
 
-		public ReplCommandInput(string input) {
-			Input = input;
-		}
+		public ReplCommandInput(string input) => Input = input;
 
 		public void AddClassification(int offset, int length, IClassificationType classificationType) {
 #if DEBUG

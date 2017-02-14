@@ -42,9 +42,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 
 		[ImportingConstructor]
-		HexToolTipServiceFactoryImpl(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-		}
+		HexToolTipServiceFactoryImpl(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public override HexToolTipService Get(HexView hexView) {
 			if (hexView == null)
@@ -135,9 +133,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly HexToolTipServiceFactory hexToolTipServiceFactory;
 
 		[ImportingConstructor]
-		HexToolTipServiceQuickInfoSourceProvider(HexToolTipServiceFactory hexToolTipServiceFactory) {
-			this.hexToolTipServiceFactory = hexToolTipServiceFactory;
-		}
+		HexToolTipServiceQuickInfoSourceProvider(HexToolTipServiceFactory hexToolTipServiceFactory) => this.hexToolTipServiceFactory = hexToolTipServiceFactory;
 
 		public override HexQuickInfoSource TryCreateQuickInfoSource(HexView hexView) =>
 			new HexToolTipServiceQuickInfoSource(hexToolTipServiceFactory.Get(hexView));
@@ -147,9 +143,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly HexToolTipService hexToolTipService;
 		HexToolTipInfoCollection toolTipInfoCollection;
 
-		public HexToolTipServiceQuickInfoSource(HexToolTipService hexToolTipService) {
-			this.hexToolTipService = hexToolTipService ?? throw new ArgumentNullException(nameof(hexToolTipService));
-		}
+		public HexToolTipServiceQuickInfoSource(HexToolTipService hexToolTipService) => this.hexToolTipService = hexToolTipService ?? throw new ArgumentNullException(nameof(hexToolTipService));
 
 		public override void AugmentQuickInfoSession(HexQuickInfoSession session, IList<object> quickInfoContent, out HexBufferSpanSelection applicableToSpan) {
 			applicableToSpan = default(HexBufferSpanSelection);
@@ -189,9 +183,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly HexToolTipServiceFactory hexToolTipServiceFactory;
 
 		[ImportingConstructor]
-		HexToolTipServiceViewTaggerProvider(HexToolTipServiceFactory hexToolTipServiceFactory) {
-			this.hexToolTipServiceFactory = hexToolTipServiceFactory;
-		}
+		HexToolTipServiceViewTaggerProvider(HexToolTipServiceFactory hexToolTipServiceFactory) => this.hexToolTipServiceFactory = hexToolTipServiceFactory;
 
 		public override IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) =>
 			new HexToolTipServiceTagger(hexToolTipServiceFactory.Get(hexView)) as IHexTagger<T>;

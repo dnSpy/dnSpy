@@ -298,10 +298,9 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
+		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) =>
 			// The value is cached, make sure it uses the latest snapshot
 			OnImplicitCaretPositionChanged();
-		}
 
 		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
 			// The value is cached, make sure it uses the latest snapshot
@@ -411,8 +410,7 @@ namespace dnSpy.Text.Editor {
 			bool filterPos = true;
 			// Don't auto indent if it's at column 0
 			if (canAutoIndent && CanAutoIndent(textLine) && xCoordinate > textLine.TextRight) {
-				var wpfView = textView as IWpfTextView;
-				if (wpfView != null) {
+				if (textView is IWpfTextView wpfView) {
 					int indentation = IndentHelper.GetDesiredIndentation(textView, smartIndentationService, textLine.Start.GetContainingLine()) ?? 0;
 					var textBounds = textLine.GetExtendedCharacterBounds(new VirtualSnapshotPoint(textLine.Start, indentation));
 					xCoordinate = textBounds.Leading;

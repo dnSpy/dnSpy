@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public GenericParamsControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as GenericParamsVM;
-				if (data != null) {
+				if (DataContext is GenericParamsVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.EditObject = new EditGenericParam(ownerWindow);
 				}

@@ -122,8 +122,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			try {
 				var typeConverter = TypeDescriptor.GetConverter(objType);
 				if (typeConverter.CanConvertTo(null, typeof(string))) {
-					var s = typeConverter.ConvertTo(null, CultureInfo.InvariantCulture, obj, typeof(string)) as string;
-					if (s != null)
+					if (typeConverter.ConvertTo(null, CultureInfo.InvariantCulture, obj, typeof(string)) is string s)
 						return s;
 				}
 			}

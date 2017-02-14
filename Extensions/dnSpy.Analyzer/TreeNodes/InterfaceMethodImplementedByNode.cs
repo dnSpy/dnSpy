@@ -29,9 +29,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class InterfaceMethodImplementedByNode : SearchNode {
 		readonly MethodDef analyzedMethod;
 
-		public InterfaceMethodImplementedByNode(MethodDef analyzedMethod) {
-			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
-		}
+		public InterfaceMethodImplementedByNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ImplementedByTreeNode);

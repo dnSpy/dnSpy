@@ -27,9 +27,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly HexQuickInfoBroker quickInfoBroker;
 
 		[ImportingConstructor]
-		HexQuickInfoControllerProvider(HexQuickInfoBroker quickInfoBroker) {
-			this.quickInfoBroker = quickInfoBroker;
-		}
+		HexQuickInfoControllerProvider(HexQuickInfoBroker quickInfoBroker) => this.quickInfoBroker = quickInfoBroker;
 
 		public override HexIntellisenseController TryCreateIntellisenseController(HexView hexView) =>
 			new HexQuickInfoController(quickInfoBroker, hexView);

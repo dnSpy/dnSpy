@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public CreateConstantType(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public CreateConstantType(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		static readonly ConstantType[] DefaultConstants = new ConstantType[] {
 			ConstantType.Boolean,

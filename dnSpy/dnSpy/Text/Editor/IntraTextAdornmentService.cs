@@ -40,9 +40,7 @@ namespace dnSpy.Text.Editor {
 		readonly IIntraTextAdornmentServiceProvider intraTextAdornmentServiceProvider;
 
 		[ImportingConstructor]
-		IntraTextAdornmentServiceSpaceNegotiatingAdornmentTaggerProvider(IIntraTextAdornmentServiceProvider intraTextAdornmentServiceProvider) {
-			this.intraTextAdornmentServiceProvider = intraTextAdornmentServiceProvider;
-		}
+		IntraTextAdornmentServiceSpaceNegotiatingAdornmentTaggerProvider(IIntraTextAdornmentServiceProvider intraTextAdornmentServiceProvider) => this.intraTextAdornmentServiceProvider = intraTextAdornmentServiceProvider;
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
@@ -86,9 +84,7 @@ namespace dnSpy.Text.Editor {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 
 		[ImportingConstructor]
-		IntraTextAdornmentServiceProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-		}
+		IntraTextAdornmentServiceProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public IIntraTextAdornmentService Get(IWpfTextView wpfTextView) {
 			if (wpfTextView == null)
@@ -281,9 +277,7 @@ namespace dnSpy.Text.Editor {
 
 		sealed class ZoomingUIElement : ContentControl {
 			readonly UIElement uiElem;
-			public ZoomingUIElement(UIElement uiElem) {
-				this.uiElem = uiElem;
-			}
+			public ZoomingUIElement(UIElement uiElem) => this.uiElem = uiElem;
 			public void Initialize() => Content = uiElem;
 			public void SetScale(double value) =>
 				LayoutTransform = value == 1 ? ScaleTransform.Identity : new ScaleTransform(1, value);

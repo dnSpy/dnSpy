@@ -749,12 +749,11 @@ namespace dnSpy_Console {
 			return new Indenter(spaces, spaces, false);
 		}
 
-		static TypeDef FindType(ModuleDef module, string name) {
-			return FindTypeFullName(module, name, StringComparer.Ordinal) ??
-				FindTypeFullName(module, name, StringComparer.OrdinalIgnoreCase) ??
-				FindTypeName(module, name, StringComparer.Ordinal) ??
-				FindTypeName(module, name, StringComparer.OrdinalIgnoreCase);
-		}
+		static TypeDef FindType(ModuleDef module, string name) =>
+			FindTypeFullName(module, name, StringComparer.Ordinal) ??
+			FindTypeFullName(module, name, StringComparer.OrdinalIgnoreCase) ??
+			FindTypeName(module, name, StringComparer.Ordinal) ??
+			FindTypeName(module, name, StringComparer.OrdinalIgnoreCase);
 
 		static TypeDef FindTypeFullName(ModuleDef module, string name, StringComparer comparer) {
 			var sb = new StringBuilder();

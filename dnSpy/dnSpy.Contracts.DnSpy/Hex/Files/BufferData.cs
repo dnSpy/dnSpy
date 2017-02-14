@@ -82,9 +82,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="name">Name</param>
 		/// <param name="span">Span</param>
 		protected ComplexData(string name, HexBufferSpan span)
-			: base(span) {
-			Name = name ?? throw new ArgumentNullException(nameof(name));
-		}
+			: base(span) => Name = name ?? throw new ArgumentNullException(nameof(name));
 
 		/// <summary>
 		/// Gets a field
@@ -532,9 +530,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="span">Array span</param>
 		/// <param name="fields">Array elements</param>
 		public VariableLengthArrayData(string name, HexBufferSpan span, ArrayField<TData>[] fields)
-			: base(name, span) {
-			this.fields = fields ?? throw new ArgumentNullException(nameof(fields));
-		}
+			: base(name, span) => this.fields = fields ?? throw new ArgumentNullException(nameof(fields));
 
 		/// <summary>
 		/// Gets a field by index

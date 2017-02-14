@@ -238,9 +238,7 @@ namespace dnSpy.AsmEditor.Field {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
 
 		public FieldDefOptions CreateFieldDefOptions() => CopyTo(new FieldDefOptions());
 

@@ -39,9 +39,7 @@ namespace dnSpy.BackgroundImage {
 		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>[] AllSettings => backgroundImageOptionDefinitions;
 
 		[ImportingConstructor]
-		BackgroundImageOptionDefinitionService([ImportMany] IEnumerable<Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>> backgroundImageOptionDefinitions) {
-			this.backgroundImageOptionDefinitions = backgroundImageOptionDefinitions.OrderBy(a => a.Metadata.Order).ToArray();
-		}
+		BackgroundImageOptionDefinitionService([ImportMany] IEnumerable<Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>> backgroundImageOptionDefinitions) => this.backgroundImageOptionDefinitions = backgroundImageOptionDefinitions.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(IWpfTextView wpfTextView) {
 			foreach (var lz in backgroundImageOptionDefinitions) {

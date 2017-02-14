@@ -44,9 +44,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		protected override string RemoveAllMessage => dnSpy_AsmEditor_Resources.EH_Command6;
 
 		public ExceptionHandlersListHelper(ListView listView, Window ownerWindow)
-			: base(listView) {
-			typeSigCreator = new TypeSigCreator(ownerWindow);
-		}
+			: base(listView) => typeSigCreator = new TypeSigCreator(ownerWindow);
 
 		protected override ExceptionHandlerVM[] GetSelectedItems() => listBox.SelectedItems.Cast<ExceptionHandlerVM>().ToArray();
 

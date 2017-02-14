@@ -25,8 +25,7 @@ using Microsoft.VisualStudio.Text.Classification;
 namespace dnSpy.Text.Classification {
 	static class EditorFormatDefinitionExtensions {
 		public static ResourceDictionary CreateThemeResourceDictionary(this EditorFormatDefinition def, ITheme theme) {
-			var themeDef = def as IThemeFormatDefinition;
-			if (themeDef != null)
+			if (def is IThemeFormatDefinition themeDef)
 				return themeDef.CreateResourceDictionary(theme);
 			return def.CreateResourceDictionary();
 		}

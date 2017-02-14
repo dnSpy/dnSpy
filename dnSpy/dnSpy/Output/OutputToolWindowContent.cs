@@ -39,9 +39,7 @@ namespace dnSpy.Output {
 		OutputToolWindowContent outputToolWindowContent;
 
 		[ImportingConstructor]
-		OutputToolWindowContentProvider(Lazy<IOutputContent> outputContent) {
-			this.outputContent = outputContent;
-		}
+		OutputToolWindowContentProvider(Lazy<IOutputContent> outputContent) => this.outputContent = outputContent;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(OutputToolWindowContent.THE_GUID, OutputToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_OUTPUT, false); }
@@ -63,9 +61,7 @@ namespace dnSpy.Output {
 
 		readonly Lazy<IOutputContent> outputContent;
 
-		public OutputToolWindowContent(Lazy<IOutputContent> outputContent) {
-			this.outputContent = outputContent;
-		}
+		public OutputToolWindowContent(Lazy<IOutputContent> outputContent) => this.outputContent = outputContent;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {

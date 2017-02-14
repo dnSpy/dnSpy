@@ -44,9 +44,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		readonly IDocumentTreeView documentTreeView;
 
-		protected CodeContextMenuHandler(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		protected CodeContextMenuHandler(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
@@ -68,9 +66,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		readonly IDocumentTreeView documentTreeView;
 
-		protected NodesCodeContextMenuHandler(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		protected NodesCodeContextMenuHandler(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))

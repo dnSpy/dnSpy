@@ -35,9 +35,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly HexBufferFile file;
 		DotNetMultiFileResourcesImpl multiFileResources;
 
-		public MultiResourceStructureProvider(HexBufferFile file) {
-			this.file = file ?? throw new ArgumentNullException(nameof(file));
-		}
+		public MultiResourceStructureProvider(HexBufferFile file) => this.file = file ?? throw new ArgumentNullException(nameof(file));
 
 		public override bool Initialize() {
 			multiFileResources = DotNetMultiFileResourcesImpl.TryRead(file);

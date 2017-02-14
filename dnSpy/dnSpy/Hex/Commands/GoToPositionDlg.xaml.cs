@@ -26,8 +26,7 @@ namespace dnSpy.Hex.Commands {
 		public GoToPositionDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var vm = DataContext as GoToPositionVM;
-				if (vm != null) {
+				if (DataContext is GoToPositionVM vm) {
 					InputBindings.Add(new KeyBinding(vm.SelectPositionAbsoluteCommand, new KeyGesture(Key.D1, ModifierKeys.Control)));
 					InputBindings.Add(new KeyBinding(vm.SelectPositionFileCommand, new KeyGesture(Key.D2, ModifierKeys.Control)));
 					InputBindings.Add(new KeyBinding(vm.SelectPositionRVACommand, new KeyGesture(Key.D3, ModifierKeys.Control)));

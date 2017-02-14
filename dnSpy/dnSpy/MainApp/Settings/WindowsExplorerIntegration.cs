@@ -44,9 +44,7 @@ namespace dnSpy.MainApp.Settings {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		WindowsExplorerIntegrationService(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		WindowsExplorerIntegrationService(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public bool? WindowsExplorerIntegration {
 			get {

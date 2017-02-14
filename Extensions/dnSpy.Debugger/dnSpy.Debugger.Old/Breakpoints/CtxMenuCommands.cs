@@ -95,8 +95,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			var nodes = context.Find<TreeNodeData[]>();
 			if (nodes != null && nodes.Length != 0) {
-				var node = nodes[0] as IMDTokenNode;
-				if (node != null)
+				if (nodes[0] is IMDTokenNode node)
 					return node.Reference;
 			}
 
@@ -106,12 +105,10 @@ namespace dnSpy.Debugger.Breakpoints {
 		static IMethod[] GetMethodReferences(IMenuItemContext context, Guid guid) {
 			var @ref = GetReference(context, guid);
 
-			var methodRef = @ref as IMethod;
-			if (methodRef != null)
+			if (@ref is IMethod methodRef)
 				return methodRef.IsMethod ? new[] { methodRef } : null;
 
-			var prop = @ref as PropertyDef;
-			if (prop != null) {
+			if (@ref is PropertyDef prop) {
 				var list = new List<IMethod>();
 				list.AddRange(prop.GetMethods);
 				list.AddRange(prop.SetMethods);
@@ -119,8 +116,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				return list.Count == 0 ? null : list.ToArray();
 			}
 
-			var evt = @ref as EventDef;
-			if (evt != null) {
+			if (@ref is EventDef evt) {
 				var list = new List<IMethod>();
 				if (evt.AddMethod != null)
 					list.Add(evt.AddMethod);

@@ -47,9 +47,7 @@ namespace dnSpy.Commands {
 		sealed class CommandTargetCollection : ICommandTargetCollection {
 			RegisteredCommandElement registeredCommandElement;
 
-			public CommandTargetCollection(RegisteredCommandElement registeredCommandElement) {
-				this.registeredCommandElement = registeredCommandElement;
-			}
+			public CommandTargetCollection(RegisteredCommandElement registeredCommandElement) => this.registeredCommandElement = registeredCommandElement;
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 				if (registeredCommandElement?.TryGetTargetOrUnregister() == null) {

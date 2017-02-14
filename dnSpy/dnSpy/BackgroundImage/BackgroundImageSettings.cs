@@ -68,9 +68,7 @@ namespace dnSpy.BackgroundImage {
 		public bool IsEnabled => rawSettings.IsEnabled;
 		public TimeSpan Interval => rawSettings.Interval;
 
-		public BackgroundImageSettings(RawSettings rawSettings) {
-			this.rawSettings = rawSettings ?? throw new ArgumentNullException(nameof(rawSettings));
-		}
+		public BackgroundImageSettings(RawSettings rawSettings) => this.rawSettings = rawSettings ?? throw new ArgumentNullException(nameof(rawSettings));
 
 		public void RaiseSettingsChanged() => SettingsChanged?.Invoke(this, EventArgs.Empty);
 	}

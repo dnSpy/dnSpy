@@ -55,9 +55,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance</param>
 		public ExportDocumentViewerPostProcessorAttribute(double order)
-			: base(typeof(IDocumentViewerPostProcessor)) {
-			Order = order;
-		}
+			: base(typeof(IDocumentViewerPostProcessor)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

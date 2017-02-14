@@ -44,8 +44,6 @@ namespace dnSpy.Contracts.Settings.FontsAndColors {
 		/// Constructor
 		/// </summary>
 		/// <param name="fontType"></param>
-		public FontOption(FontType fontType) {
-			FontType = fontType;
-		}
+		public FontOption(FontType fontType) => FontType = fontType;
 	}
 }

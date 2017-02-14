@@ -62,9 +62,7 @@ namespace dnSpy.Documents.Tabs {
 			return tab.Content.Nodes.FirstOrDefault().GetModule();
 		}
 
-		internal static bool CanExecuteInternal(IDocumentTabService documentTabService) {
-			return GetResolver(documentTabService, out var tab) != null;
-		}
+		internal static bool CanExecuteInternal(IDocumentTabService documentTabService) => GetResolver(documentTabService, out var tab) != null;
 
 		static object ResolveDef(object mr) {
 			if (mr is ParamDef)
@@ -113,9 +111,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			CodeCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			CodeCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override bool IsVisible(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
@@ -133,9 +129,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			DocumentsCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			DocumentsCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override bool IsVisible(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))

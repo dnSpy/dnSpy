@@ -33,9 +33,7 @@ namespace dnSpy.Hex.Editor {
 		readonly WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider;
 
 		[ImportingConstructor]
-		HorizontalScrollBarContainerMarginProvider(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider) {
-			this.wpfHexViewMarginProviderCollectionProvider = wpfHexViewMarginProviderCollectionProvider;
-		}
+		HorizontalScrollBarContainerMarginProvider(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider) => this.wpfHexViewMarginProviderCollectionProvider = wpfHexViewMarginProviderCollectionProvider;
 
 		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new HorizontalScrollBarContainerMargin(wpfHexViewMarginProviderCollectionProvider, wpfHexViewHost);
@@ -43,8 +41,6 @@ namespace dnSpy.Hex.Editor {
 
 	sealed class HorizontalScrollBarContainerMargin : WpfHexViewContainerMargin {
 		public HorizontalScrollBarContainerMargin(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider, WpfHexViewHost wpfHexViewHost)
-			: base(wpfHexViewMarginProviderCollectionProvider, wpfHexViewHost, PredefinedHexMarginNames.HorizontalScrollBarContainer, true) {
-			VisualElement.VerticalAlignment = VerticalAlignment.Bottom;
-		}
+			: base(wpfHexViewMarginProviderCollectionProvider, wpfHexViewHost, PredefinedHexMarginNames.HorizontalScrollBarContainer, true) => VisualElement.VerticalAlignment = VerticalAlignment.Bottom;
 	}
 }

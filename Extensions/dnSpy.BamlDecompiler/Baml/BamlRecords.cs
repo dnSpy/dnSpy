@@ -462,13 +462,9 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public string Value { get; set; }
 
-		protected override void ReadData(BamlBinaryReader reader, int size) {
-			Value = reader.ReadString();
-		}
+		protected override void ReadData(BamlBinaryReader reader, int size) => Value = reader.ReadString();
 
-		protected override void WriteData(BamlBinaryWriter writer) {
-			writer.Write(Value);
-		}
+		protected override void WriteData(BamlBinaryWriter writer) => writer.Write(Value);
 	}
 
 	internal class TextWithConverterRecord : TextRecord {
@@ -492,13 +488,9 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public ushort ValueId { get; set; }
 
-		protected override void ReadData(BamlBinaryReader reader, int size) {
-			ValueId = reader.ReadUInt16();
-		}
+		protected override void ReadData(BamlBinaryReader reader, int size) => ValueId = reader.ReadUInt16();
 
-		protected override void WriteData(BamlBinaryWriter writer) {
-			writer.Write(ValueId);
-		}
+		protected override void WriteData(BamlBinaryWriter writer) => writer.Write(ValueId);
 	}
 
 	internal class LiteralContentRecord : SizedBamlRecord {
@@ -615,13 +607,9 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public uint ConnectionId { get; set; }
 
-		public override void Read(BamlBinaryReader reader) {
-			ConnectionId = reader.ReadUInt32();
-		}
+		public override void Read(BamlBinaryReader reader) => ConnectionId = reader.ReadUInt32();
 
-		public override void Write(BamlBinaryWriter writer) {
-			writer.Write(ConnectionId);
-		}
+		public override void Write(BamlBinaryWriter writer) => writer.Write(ConnectionId);
 	}
 
 	internal class PropertyWithExtensionRecord : BamlRecord {
@@ -697,13 +685,9 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public ushort AttributeId { get; set; }
 
-		public override void Read(BamlBinaryReader reader) {
-			AttributeId = reader.ReadUInt16();
-		}
+		public override void Read(BamlBinaryReader reader) => AttributeId = reader.ReadUInt16();
 
-		public override void Write(BamlBinaryWriter writer) {
-			writer.Write(AttributeId);
-		}
+		public override void Write(BamlBinaryWriter writer) => writer.Write(AttributeId);
 	}
 
 	internal class DefAttributeKeyTypeRecord : ElementStartRecord, IBamlDeferRecord {
@@ -845,13 +829,9 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public ushort AttributeId { get; set; }
 
-		public override void Read(BamlBinaryReader reader) {
-			AttributeId = reader.ReadUInt16();
-		}
+		public override void Read(BamlBinaryReader reader) => AttributeId = reader.ReadUInt16();
 
-		public override void Write(BamlBinaryWriter writer) {
-			writer.Write(AttributeId);
-		}
+		public override void Write(BamlBinaryWriter writer) => writer.Write(AttributeId);
 	}
 
 	internal class PropertyComplexEndRecord : BamlRecord {
@@ -889,13 +869,9 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public ushort TypeId { get; set; }
 
-		public override void Read(BamlBinaryReader reader) {
-			TypeId = reader.ReadUInt16();
-		}
+		public override void Read(BamlBinaryReader reader) => TypeId = reader.ReadUInt16();
 
-		public override void Write(BamlBinaryWriter writer) {
-			writer.Write(TypeId);
-		}
+		public override void Write(BamlBinaryWriter writer) => writer.Write(TypeId);
 	}
 
 	internal class DeferableContentStartRecord : BamlRecord, IBamlDeferRecord {
@@ -906,9 +882,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public BamlRecord Record { get; set; }
 
-		public void ReadDefer(BamlDocument doc, int index, Func<long, BamlRecord> resolve) {
-			Record = resolve(pos + size);
-		}
+		public void ReadDefer(BamlDocument doc, int index, Func<long, BamlRecord> resolve) => Record = resolve(pos + size);
 
 		public void WriteDefer(BamlDocument doc, int index, BinaryWriter wtr) {
 			wtr.BaseStream.Seek(pos, SeekOrigin.Begin);
@@ -945,13 +919,9 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public ushort StaticResourceId { get; set; }
 
-		public override void Read(BamlBinaryReader reader) {
-			StaticResourceId = reader.ReadUInt16();
-		}
+		public override void Read(BamlBinaryReader reader) => StaticResourceId = reader.ReadUInt16();
 
-		public override void Write(BamlBinaryWriter writer) {
-			writer.Write(StaticResourceId);
-		}
+		public override void Write(BamlBinaryWriter writer) => writer.Write(StaticResourceId);
 	}
 
 	internal class OptimizedStaticResourceRecord : BamlRecord {
@@ -997,13 +967,9 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public uint LinePosition { get; set; }
 
-		public override void Read(BamlBinaryReader reader) {
-			LinePosition = reader.ReadUInt32();
-		}
+		public override void Read(BamlBinaryReader reader) => LinePosition = reader.ReadUInt32();
 
-		public override void Write(BamlBinaryWriter writer) {
-			writer.Write(LinePosition);
-		}
+		public override void Write(BamlBinaryWriter writer) => writer.Write(LinePosition);
 	}
 
 	internal class NamedElementStartRecord : ElementStartRecord {

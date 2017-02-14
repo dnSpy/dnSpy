@@ -81,9 +81,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="span">Data span</param>
 		/// <param name="codedToken">Coded token info</param>
 		protected CodedTokenData(HexBufferSpan span, CodedToken codedToken)
-			: base(span) {
-			this.codedToken = codedToken ?? throw new ArgumentNullException(nameof(codedToken));
-		}
+			: base(span) => this.codedToken = codedToken ?? throw new ArgumentNullException(nameof(codedToken));
 
 		/// <summary>
 		/// Reads the token value
@@ -224,9 +222,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="span">Data span</param>
 		/// <param name="table">Table</param>
 		protected RidData(HexBufferSpan span, Table table)
-			: base(span) {
-			this.table = table;
-		}
+			: base(span) => this.table = table;
 
 		/// <summary>
 		/// Reads the rid

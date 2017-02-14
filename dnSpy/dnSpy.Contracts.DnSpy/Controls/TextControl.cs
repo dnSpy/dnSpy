@@ -56,8 +56,6 @@ namespace dnSpy.Contracts.Controls {
 			set { SetValue(TextTrimmingProperty, value); }
 		}
 
-		static TextControl() {
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(TextControl), new FrameworkPropertyMetadata(typeof(TextControl)));
-		}
+		static TextControl() => DefaultStyleKeyProperty.OverrideMetadata(typeof(TextControl), new FrameworkPropertyMetadata(typeof(TextControl)));
 	}
 }

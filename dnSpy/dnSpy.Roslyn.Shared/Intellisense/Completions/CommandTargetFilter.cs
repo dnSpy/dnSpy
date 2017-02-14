@@ -35,13 +35,10 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 		readonly Lazy<ICompletionBroker> completionBroker;
 
 		[ImportingConstructor]
-		DefaultTextViewCommandTargetFilterProvider(Lazy<ICompletionBroker> completionBroker) {
-			this.completionBroker = completionBroker;
-		}
+		DefaultTextViewCommandTargetFilterProvider(Lazy<ICompletionBroker> completionBroker) => this.completionBroker = completionBroker;
 
 		public ICommandTargetFilter Create(object target) {
-			var textView = target as ITextView;
-			if (textView != null && textView.Roles.ContainsAll(roles))
+			if (target is ITextView textView && textView.Roles.ContainsAll(roles))
 				return new CommandTargetFilter(textView, completionBroker);
 			return null;
 		}
@@ -67,8 +64,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions {
 			if (!HasSession)
 				return null;
 
-			var completion = completionSession.SelectedCompletionSet?.SelectionStatus.Completion as RoslynCompletion;
-			if (completion != null)
+			if (completionSession.SelectedCompletionSet?.SelectionStatus.Completion is RoslynCompletion completion)
 				return completion.CompletionItem.Rules.EnterKeyRule;
 
 			return TryGetRoslynCompletionService()?.GetRules().DefaultEnterKeyRule;

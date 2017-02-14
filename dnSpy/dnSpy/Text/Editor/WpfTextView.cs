@@ -292,14 +292,12 @@ namespace dnSpy.Text.Editor {
 		void AggregateClassifier_ClassificationChanged(object sender, ClassificationChangedEventArgs e) =>
 			Dispatcher.BeginInvoke(new Action(() => InvalidateSpan(e.ChangeSpan)), DispatcherPriority.Normal);
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
-			Dispatcher.BeginInvoke(new Action(() => {
-				if (IsClosed)
-					return;
-				UpdateForceClearTypeIfNeeded();
-				InvalidateFormattedLineSource(true);
-			}), DispatcherPriority.Normal);
-		}
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => Dispatcher.BeginInvoke(new Action(() => {
+			if (IsClosed)
+				return;
+			UpdateForceClearTypeIfNeeded();
+			InvalidateFormattedLineSource(true);
+		}), DispatcherPriority.Normal);
 
 		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
 			if (e.ChangedItems.Contains(EditorFormatMapConstants.TextViewBackgroundId))

@@ -43,8 +43,6 @@ namespace dnSpy.Images {
 		static readonly object boxedBitmapScalingModeHighQuality = BitmapScalingMode.HighQuality;
 		static readonly object boxedBitmapScalingModeNearestNeighbor = BitmapScalingMode.NearestNeighbor;
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-			throw new NotSupportedException();
-		}
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotSupportedException();
 	}
 }

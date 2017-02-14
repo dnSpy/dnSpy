@@ -157,8 +157,7 @@ namespace dnSpy.Language.Intellisense {
 			var completion = completionSet?.SelectionStatus.Completion;
 			if (completion != null) {
 				Debug.Assert(completionSet.SelectionStatus.IsSelected);
-				var customCommit = completion as ICustomCommit;
-				if (customCommit != null)
+				if (completion is ICustomCommit customCommit)
 					customCommit.Commit();
 				else {
 					var insertionText = completion.InsertionText;

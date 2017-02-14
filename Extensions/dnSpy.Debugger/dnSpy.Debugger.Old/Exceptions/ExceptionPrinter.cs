@@ -24,9 +24,7 @@ namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionPrinter {
 		readonly ITextColorWriter output;
 
-		public ExceptionPrinter(ITextColorWriter output) {
-			this.output = output;
-		}
+		public ExceptionPrinter(ITextColorWriter output) => this.output = output;
 
 		public void WriteName(ExceptionVM vm) {
 			if (vm.ExceptionInfo.IsOtherExceptions)

@@ -30,9 +30,7 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.Documents.TreeView {
 	sealed class UnknownDocumentNodeImpl : UnknownDocumentNode {
 		public UnknownDocumentNodeImpl(IDsDocument document)
-			: base(document) {
-			Debug.Assert(document.PEImage == null && document.ModuleDef == null);
-		}
+			: base(document) => Debug.Assert(document.PEImage == null && document.ModuleDef == null);
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.UNKNOWN_DOCUMENT_NODE_GUID);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.AssemblyError;

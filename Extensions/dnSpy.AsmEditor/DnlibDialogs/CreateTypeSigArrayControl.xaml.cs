@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class CreateTypeSigArrayControl : UserControl {
-		public CreateTypeSigArrayControl() {
-			InitializeComponent();
-		}
+		public CreateTypeSigArrayControl() => InitializeComponent();
 	}
 }

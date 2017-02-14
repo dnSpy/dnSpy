@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed partial class SwitchOperandDlg : WindowBase {
-		public SwitchOperandDlg() {
-			InitializeComponent();
-		}
+		public SwitchOperandDlg() => InitializeComponent();
 	}
 }

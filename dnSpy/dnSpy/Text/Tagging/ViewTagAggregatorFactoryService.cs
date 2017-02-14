@@ -30,9 +30,7 @@ namespace dnSpy.Text.Tagging {
 		readonly ITaggerFactory taggerFactory;
 
 		[ImportingConstructor]
-		ViewTagAggregatorFactoryService(ITaggerFactory taggerFactory) {
-			this.taggerFactory = taggerFactory;
-		}
+		ViewTagAggregatorFactoryService(ITaggerFactory taggerFactory) => this.taggerFactory = taggerFactory;
 
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextView textView) where T : ITag => CreateTagAggregator<T>(textView, TagAggregatorOptions.None);
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextView textView, TagAggregatorOptions options) where T : ITag {

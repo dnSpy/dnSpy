@@ -197,8 +197,7 @@ namespace dnSpy.Output {
 
 		IEnumerable<GuidObject> CreateGuidObjects(GuidObjectsProviderArgs args) {
 			yield return new GuidObject(MenuConstants.GUIDOBJ_OUTPUT_SERVICE_GUID, this);
-			var vm = SelectedOutputBufferVM as IOutputTextPane;
-			if (vm != null)
+			if (SelectedOutputBufferVM is IOutputTextPane vm)
 				yield return new GuidObject(MenuConstants.GUIDOBJ_ACTIVE_OUTPUT_TEXTPANE_GUID, vm);
 		}
 

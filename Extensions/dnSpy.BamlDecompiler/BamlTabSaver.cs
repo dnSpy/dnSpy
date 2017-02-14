@@ -36,9 +36,7 @@ namespace dnSpy.BamlDecompiler {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		BamlTabSaverProvider(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		BamlTabSaverProvider(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public ITabSaver Create(IDocumentTab tab) => BamlTabSaver.TryCreate(tab, messageBoxService);
 	}

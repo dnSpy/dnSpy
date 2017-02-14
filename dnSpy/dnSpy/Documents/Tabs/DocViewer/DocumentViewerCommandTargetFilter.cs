@@ -26,9 +26,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class DocumentViewerCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		public DocumentViewerCommandTargetFilter(ITextView textView) {
-			this.textView = textView;
-		}
+		public DocumentViewerCommandTargetFilter(ITextView textView) => this.textView = textView;
 
 		DocumentViewer TryGetInstance() =>
 			__documentViewer ?? (__documentViewer = DocumentViewer.TryGetInstance(textView));

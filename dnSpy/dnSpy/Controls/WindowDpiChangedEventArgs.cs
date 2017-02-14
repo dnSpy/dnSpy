@@ -34,8 +34,6 @@ namespace dnSpy.Controls {
 		/// Constructor
 		/// </summary>
 		/// <param name="window">Window</param>
-		public WindowDpiChangedEventArgs(Window window) {
-			Window = window ?? throw new ArgumentNullException(nameof(window));
-		}
+		public WindowDpiChangedEventArgs(Window window) => Window = window ?? throw new ArgumentNullException(nameof(window));
 	}
 }

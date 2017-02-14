@@ -27,9 +27,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public abstract IEnumerable<HexField> HexFields { get; }
 		public HexSpan Span { get; }
 
-		protected HexVM(HexSpan span) {
-			Span = span;
-		}
+		protected HexVM(HexSpan span) => Span = span;
 
 		public virtual void OnBufferChanged(NormalizedHexChangeCollection changes) {
 			foreach (var field in HexFields)

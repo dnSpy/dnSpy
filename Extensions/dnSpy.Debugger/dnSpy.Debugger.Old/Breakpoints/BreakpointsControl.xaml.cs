@@ -26,9 +26,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed partial class BreakpointsControl : UserControl {
 		public ListView ListView => listView;
 
-		public BreakpointsControl() {
-			InitializeComponent();
-		}
+		public BreakpointsControl() => InitializeComponent();
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))

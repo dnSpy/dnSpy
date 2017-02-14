@@ -56,9 +56,7 @@ namespace dndbg.Engine {
 		}
 
 		public CorEval(ICorDebugEval eval)
-			: base(eval) {
-			eval2 = eval as ICorDebugEval2;
-		}
+			: base(eval) => eval2 = eval as ICorDebugEval2;
 
 		/// <summary>
 		/// Aborts the computation this ICorDebugEval object is currently performing
@@ -105,10 +103,9 @@ namespace dndbg.Engine {
 		/// <param name="ctor">Constructor</param>
 		/// <param name="args">Constructor arguments</param>
 		/// <returns></returns>
-		public int NewObject(CorFunction ctor, CorValue[] args) {
+		public int NewObject(CorFunction ctor, CorValue[] args) =>
 			// Same thing as calling NewParameterizedObject(ctor, null, args)
-			return obj.NewObject(ctor.RawObject, args.Length, args.ToCorDebugArray());
-		}
+			obj.NewObject(ctor.RawObject, args.Length, args.ToCorDebugArray());
 
 		/// <summary>
 		/// Instantiates a new parameterized type object and calls the object's constructor method
@@ -131,10 +128,9 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="cls">Class</param>
 		/// <returns></returns>
-		public int NewObjectNoConstructor(CorClass cls) {
+		public int NewObjectNoConstructor(CorClass cls) =>
 			// Same thing as calling NewParameterizedObjectNoConstructor(cls, null)
-			return obj.NewObjectNoConstructor(cls.RawObject);
-		}
+			obj.NewObjectNoConstructor(cls.RawObject);
 
 		/// <summary>
 		/// Instantiates a new parameterized type object of the specified class without attempting to call a constructor method
@@ -195,10 +191,9 @@ namespace dndbg.Engine {
 		/// <param name="func">Method</param>
 		/// <param name="args">Arguments</param>
 		/// <returns></returns>
-		public int CallFunction(CorFunction func, CorValue[] args) {
+		public int CallFunction(CorFunction func, CorValue[] args) =>
 			// Same thing as calling CallParameterizedFunction(func, null, args)
-			return obj.CallFunction(func.RawObject, args.Length, args.ToCorDebugArray());
-		}
+			obj.CallFunction(func.RawObject, args.Length, args.ToCorDebugArray());
 
 		/// <summary>
 		/// Sets up a call to the specified function
@@ -226,10 +221,8 @@ namespace dndbg.Engine {
 
 		public static bool operator !=(CorEval a, CorEval b) => !(a == b);
 
-		public bool Equals(CorEval other) {
-			return !ReferenceEquals(other, null) &&
+		public bool Equals(CorEval other) => !ReferenceEquals(other, null) &&
 				RawObject == other.RawObject;
-		}
 
 		public override bool Equals(object obj) => Equals(obj as CorEval);
 		public override int GetHashCode() => RawObject.GetHashCode();

@@ -52,9 +52,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			public string Scope { get; set; }
 			public Value Value { get; set; }
 			public Value DesignTimeValue { get; set; }
-			public Setting() {
-				GenerateDefaultValueInCode = true;
-			}
+			public Setting() => GenerateDefaultValueInCode = true;
 		}
 		sealed class Value {
 			public string Profile { get; set; }
@@ -186,8 +184,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					if (argType.GetElementType() == ElementType.String)
 						provider = arg.Value as UTF8String;
 					else if (argType != null && argType.FullName == "System.Type") {
-						var t = arg.Value as TypeDefOrRefSig;
-						if (t != null && t.TypeDefOrRef != null)
+						if (arg.Value is TypeDefOrRefSig t && t.TypeDefOrRef != null)
 							provider = t.TypeDefOrRef.ReflectionFullName;
 					}
 				}

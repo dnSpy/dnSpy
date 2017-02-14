@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class MarshalTypeControl : UserControl {
-		public MarshalTypeControl() {
-			InitializeComponent();
-		}
+		public MarshalTypeControl() => InitializeComponent();
 	}
 }

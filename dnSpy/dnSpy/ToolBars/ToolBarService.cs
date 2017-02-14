@@ -46,9 +46,7 @@ namespace dnSpy.ToolBars {
 		public override IToolBarItem ToolBarItem => md.Value;
 		public override IToolBarItemMetadata Metadata => md.Metadata;
 
-		public ToolBarButtonMD(Lazy<IToolBarButton, IToolBarButtonMetadata> md) {
-			this.md = md;
-		}
+		public ToolBarButtonMD(Lazy<IToolBarButton, IToolBarButtonMetadata> md) => this.md = md;
 	}
 
 	sealed class ToolBarObjectMD : ToolBarItemMD {
@@ -57,9 +55,7 @@ namespace dnSpy.ToolBars {
 		public override IToolBarItem ToolBarItem => md.Value;
 		public override IToolBarItemMetadata Metadata => md.Metadata;
 
-		public ToolBarObjectMD(Lazy<IToolBarObject, IToolBarObjectMetadata> md) {
-			this.md = md;
-		}
+		public ToolBarObjectMD(Lazy<IToolBarObject, IToolBarObjectMetadata> md) => this.md = md;
 	}
 
 	sealed class ToolBarItemGroupMD {
@@ -171,12 +167,10 @@ namespace dnSpy.ToolBars {
 		}
 
 		object Create(ToolBarItemMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
-			var mdButton = md as ToolBarButtonMD;
-			if (mdButton != null)
+			if (md is ToolBarButtonMD mdButton)
 				return Create(mdButton, ctx, commandTarget);
 
-			var mdObj = md as ToolBarObjectMD;
-			if (mdObj != null)
+			if (md is ToolBarObjectMD mdObj)
 				return Create(mdObj, ctx, commandTarget);
 
 			Debug.Fail("Unknown TB MD");

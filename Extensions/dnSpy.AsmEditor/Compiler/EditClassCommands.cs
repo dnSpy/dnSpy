@@ -121,8 +121,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			TypeNode typeNode = null;
 			for (TreeNodeData n = node; n != null;) {
-				var t = n as TypeNode;
-				if (t != null)
+				if (n is TypeNode t)
 					typeNode = t;
 				n = n.TreeNode.Parent?.Data;
 			}
@@ -184,13 +183,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(editCodeVMCreator, context);
 
 		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context));
-		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) {
-			return editCodeVMCreator.CanCreate(CompilationKind.EditClass) &&
-				list != null &&
-				list.Count != 0 &&
-				list[0].Method.Body != null &&
-				list[0].Method.Body.Instructions.Count > 0;
-		}
+		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) =>
+			editCodeVMCreator.CanCreate(CompilationKind.EditClass) &&
+			list != null &&
+			list.Count != 0 &&
+			list[0].Method.Body != null &&
+			list[0].Method.Body.Instructions.Count > 0;
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context));
 

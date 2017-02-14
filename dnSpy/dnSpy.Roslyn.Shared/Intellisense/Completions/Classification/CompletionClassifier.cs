@@ -39,9 +39,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.Completions.Classification {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		CompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService;
-		}
+		CompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
 		public ITextClassifier Create(IContentType contentType) => new CompletionClassifier(themeClassificationTypeService);
 	}

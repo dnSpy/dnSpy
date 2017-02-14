@@ -53,9 +53,7 @@ namespace dnSpy.Events {
 
 			readonly EventHandler<TEventArgs> handler;
 
-			public HardRefInfo(EventHandler<TEventArgs> handler) {
-				this.handler = handler;
-			}
+			public HardRefInfo(EventHandler<TEventArgs> handler) => this.handler = handler;
 		}
 
 		sealed class InstanceInfo : Info {
@@ -81,9 +79,7 @@ namespace dnSpy.Events {
 			}
 		}
 
-		public WeakEventList() {
-			handlers = new List<Info>();
-		}
+		public WeakEventList() => handlers = new List<Info>();
 
 		public void Add(EventHandler<TEventArgs> h) {
 			if (h == null)

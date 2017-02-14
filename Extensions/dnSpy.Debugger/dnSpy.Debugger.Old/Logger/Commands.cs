@@ -26,9 +26,7 @@ namespace dnSpy.Debugger.Logger {
 	sealed class LogEditorCtxMenuContext {
 		public readonly IOutputTextPane TextPane;
 
-		public LogEditorCtxMenuContext(IOutputTextPane pane) {
-			TextPane = pane;
-		}
+		public LogEditorCtxMenuContext(IOutputTextPane pane) => TextPane = pane;
 	}
 
 	abstract class LogEditorCtxMenuCommand : MenuItemBase<LogEditorCtxMenuContext> {
@@ -53,9 +51,7 @@ namespace dnSpy.Debugger.Logger {
 		readonly OutputLoggerSettingsImpl settings;
 
 		[ImportingConstructor]
-		ShowExceptionMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) {
-			this.settings = settings;
-		}
+		ShowExceptionMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) => this.settings = settings;
 
 		public override bool IsChecked(LogEditorCtxMenuContext context) => settings.ShowExceptionMessages;
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowExceptionMessages = !settings.ShowExceptionMessages;
@@ -66,9 +62,7 @@ namespace dnSpy.Debugger.Logger {
 		readonly OutputLoggerSettingsImpl settings;
 
 		[ImportingConstructor]
-		ShowStepFilteringMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) {
-			this.settings = settings;
-		}
+		ShowStepFilteringMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) => this.settings = settings;
 
 		public override bool IsChecked(LogEditorCtxMenuContext context) => settings.ShowStepFilteringMessages;
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowStepFilteringMessages = !settings.ShowStepFilteringMessages;
@@ -79,9 +73,7 @@ namespace dnSpy.Debugger.Logger {
 		readonly OutputLoggerSettingsImpl settings;
 
 		[ImportingConstructor]
-		ShowModuleLoadMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) {
-			this.settings = settings;
-		}
+		ShowModuleLoadMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) => this.settings = settings;
 
 		public override bool IsChecked(LogEditorCtxMenuContext context) => settings.ShowModuleLoadMessages;
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowModuleLoadMessages = !settings.ShowModuleLoadMessages;
@@ -92,9 +84,7 @@ namespace dnSpy.Debugger.Logger {
 		readonly OutputLoggerSettingsImpl settings;
 
 		[ImportingConstructor]
-		ShowModuleUnloadMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) {
-			this.settings = settings;
-		}
+		ShowModuleUnloadMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) => this.settings = settings;
 
 		public override bool IsChecked(LogEditorCtxMenuContext context) => settings.ShowModuleUnloadMessages;
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowModuleUnloadMessages = !settings.ShowModuleUnloadMessages;
@@ -105,9 +95,7 @@ namespace dnSpy.Debugger.Logger {
 		readonly OutputLoggerSettingsImpl settings;
 
 		[ImportingConstructor]
-		ShowProcessExitMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) {
-			this.settings = settings;
-		}
+		ShowProcessExitMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) => this.settings = settings;
 
 		public override bool IsChecked(LogEditorCtxMenuContext context) => settings.ShowProcessExitMessages;
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowProcessExitMessages = !settings.ShowProcessExitMessages;
@@ -118,9 +106,7 @@ namespace dnSpy.Debugger.Logger {
 		readonly OutputLoggerSettingsImpl settings;
 
 		[ImportingConstructor]
-		ShowThreadExitMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) {
-			this.settings = settings;
-		}
+		ShowThreadExitMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) => this.settings = settings;
 
 		public override bool IsChecked(LogEditorCtxMenuContext context) => settings.ShowThreadExitMessages;
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowThreadExitMessages = !settings.ShowThreadExitMessages;
@@ -131,9 +117,7 @@ namespace dnSpy.Debugger.Logger {
 		readonly OutputLoggerSettingsImpl settings;
 
 		[ImportingConstructor]
-		ShowProgramOutputMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) {
-			this.settings = settings;
-		}
+		ShowProgramOutputMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) => this.settings = settings;
 
 		public override bool IsChecked(LogEditorCtxMenuContext context) => settings.ShowProgramOutputMessages;
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowProgramOutputMessages = !settings.ShowProgramOutputMessages;
@@ -144,9 +128,7 @@ namespace dnSpy.Debugger.Logger {
 		readonly OutputLoggerSettingsImpl settings;
 
 		[ImportingConstructor]
-		ShowMDAMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) {
-			this.settings = settings;
-		}
+		ShowMDAMessagesCtxMenuCommand(OutputLoggerSettingsImpl settings) => this.settings = settings;
 
 		public override bool IsChecked(LogEditorCtxMenuContext context) => settings.ShowMDAMessages;
 		public override void Execute(LogEditorCtxMenuContext context) => settings.ShowMDAMessages = !settings.ShowMDAMessages;

@@ -25,9 +25,7 @@ using dnSpy.Contracts.Documents.Tabs;
 namespace dnSpy.AsmEditor.Commands {
 	static class CommandUtils {
 		static readonly RoutedCommand SettingsRoutedCommand = new RoutedCommand("Settings", typeof(CommandUtils));
-		static CommandUtils() {
-			SettingsRoutedCommand.InputGestures.Add(new KeyGesture(Key.Enter, ModifierKeys.Alt));
-		}
+		static CommandUtils() => SettingsRoutedCommand.InputGestures.Add(new KeyGesture(Key.Enter, ModifierKeys.Alt));
 
 		public static void AddRemoveCommand(this IWpfCommandService wpfCommandService, EditMenuHandler settingsCmd) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENT_TREEVIEW);

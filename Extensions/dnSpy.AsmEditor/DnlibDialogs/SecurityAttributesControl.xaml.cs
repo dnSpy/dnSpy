@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public SecurityAttributesControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as SecurityAttributesVM;
-				if (data != null) {
+				if (DataContext is SecurityAttributesVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.EditObject = new EditSecurityAttribute(ownerWindow);
 				}

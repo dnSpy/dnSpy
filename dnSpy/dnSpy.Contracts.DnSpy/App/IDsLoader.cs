@@ -63,9 +63,7 @@ namespace dnSpy.Contracts.App {
 	public sealed class ExportDsLoaderAttribute : ExportAttribute, IDsLoaderMetadata {
 		/// <summary>Constructor</summary>
 		public ExportDsLoaderAttribute()
-			: base(typeof(IDsLoader)) {
-			Order = double.MaxValue;
-		}
+			: base(typeof(IDsLoader)) => Order = double.MaxValue;
 
 		/// <summary>
 		/// Order of this instance

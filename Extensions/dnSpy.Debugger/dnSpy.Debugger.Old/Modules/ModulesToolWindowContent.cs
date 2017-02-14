@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.Modules {
 		ModulesToolWindowContent modulesToolWindowContent;
 
 		[ImportingConstructor]
-		ModulesToolWindowContentProvider(Lazy<IModulesContent> modulesContent) {
-			this.modulesContent = modulesContent;
-		}
+		ModulesToolWindowContentProvider(Lazy<IModulesContent> modulesContent) => this.modulesContent = modulesContent;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(ModulesToolWindowContent.THE_GUID, ModulesToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULES, false); }
@@ -59,9 +57,7 @@ namespace dnSpy.Debugger.Modules {
 
 		readonly Lazy<IModulesContent> modulesContent;
 
-		public ModulesToolWindowContent(Lazy<IModulesContent> modulesContent) {
-			this.modulesContent = modulesContent;
-		}
+		public ModulesToolWindowContent(Lazy<IModulesContent> modulesContent) => this.modulesContent = modulesContent;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {

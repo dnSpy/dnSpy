@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Field {
 	sealed partial class FieldOptionsDlg : WindowBase {
-		public FieldOptionsDlg() {
-			InitializeComponent();
-		}
+		public FieldOptionsDlg() => InitializeComponent();
 	}
 }

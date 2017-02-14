@@ -32,9 +32,7 @@ namespace dnSpy.Contracts.Text {
 		int currentOffset;
 		bool frozen;
 
-		public CachedTextColorsCollection() {
-			colorsList = new List<SpanData<object>>();
-		}
+		public CachedTextColorsCollection() => colorsList = new List<SpanData<object>>();
 
 		public CachedTextColorsCollection Freeze() {
 			frozen = true;

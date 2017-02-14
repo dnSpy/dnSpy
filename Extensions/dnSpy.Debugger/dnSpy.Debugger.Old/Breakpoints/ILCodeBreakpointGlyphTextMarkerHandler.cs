@@ -39,15 +39,11 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly IDecompilerService decompilerService;
 
 		[ImportingConstructor]
-		ILCodeBreakpointGlyphTextMarkerHandler(IDecompilerService decompilerService) {
-			this.decompilerService = decompilerService;
-		}
+		ILCodeBreakpointGlyphTextMarkerHandler(IDecompilerService decompilerService) => this.decompilerService = decompilerService;
 
 		IGlyphTextMarkerHandlerMouseProcessor IGlyphTextMarkerHandler.MouseProcessor => null;
 
-		FrameworkElement IGlyphTextMarkerHandler.GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
-			return null;//TODO: Return debugger settings toolbar
-		}
+		FrameworkElement IGlyphTextMarkerHandler.GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;//TODO: Return debugger settings toolbar
 
 		GlyphTextMarkerToolTip IGlyphTextMarkerHandler.GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
 			var ilbp = GlyphTextMarkerHelper.ToILCodeBreakpoint(marker);

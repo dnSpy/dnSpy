@@ -143,9 +143,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="span">Heap span</param>
 		/// <param name="tablesHeapType">Tables heap type</param>
 		protected TablesHeap(HexBufferSpan span, TablesHeapType tablesHeapType)
-			: base(span, DotNetHeapKind.Tables) {
-			TablesHeapType = tablesHeapType;
-		}
+			: base(span, DotNetHeapKind.Tables) => TablesHeapType = tablesHeapType;
 
 		/// <summary>
 		/// Gets a record or null if <paramref name="token"/> is invalid

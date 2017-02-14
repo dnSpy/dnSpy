@@ -67,15 +67,13 @@ namespace dnSpy.Documents.Tabs {
 				if (nodes == null)
 					yield break;
 				foreach (var node in nodes) {
-					var tokNode = node as IMDTokenNode;
-					if (tokNode != null) {
+					if (node is IMDTokenNode tokNode) {
 						if (IsPublic(tokNode.Reference as IMemberRef))
 							yield return node;
 						continue;
 					}
 
-					var nsNode = node as NamespaceNode;
-					if (nsNode != null) {
+					if (node is NamespaceNode nsNode) {
 						if (!string.IsNullOrEmpty(nsNode.Name))
 							yield return node;
 						continue;
@@ -155,20 +153,16 @@ namespace dnSpy.Documents.Tabs {
 			if (!IsAccessible(md.DeclaringType))
 				return false;
 
-			var method = def as MethodDef;
-			if (method != null)
+			if (def is MethodDef method)
 				return IsAccessible(method);
 
-			var field = def as FieldDef;
-			if (field != null)
+			if (def is FieldDef field)
 				return IsAccessible(field);
 
-			var prop = def as PropertyDef;
-			if (prop != null)
+			if (def is PropertyDef prop)
 				return IsAccessible(prop);
 
-			var evt = def as EventDef;
-			if (evt != null)
+			if (def is EventDef evt)
 				return IsAccessible(evt);
 
 			return false;
@@ -240,14 +234,12 @@ namespace dnSpy.Documents.Tabs {
 
 		static void ExecuteInternal(IEnumerable<TreeNodeData> nodes) {
 			foreach (var node in nodes) {
-				var nsNode = node as NamespaceNode;
-				if (nsNode != null) {
+				if (node is NamespaceNode nsNode) {
 					SearchMsdn(string.Format(msdnAddress, nsNode.Name));
 					continue;
 				}
 
-				var mrNode = node as IMDTokenNode;
-				if (mrNode != null) {
+				if (node is IMDTokenNode mrNode) {
 					SearchMsdn(mrNode.Reference as IMemberRef);
 					continue;
 				}

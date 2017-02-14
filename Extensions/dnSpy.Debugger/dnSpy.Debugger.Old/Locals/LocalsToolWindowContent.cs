@@ -35,9 +35,7 @@ namespace dnSpy.Debugger.Locals {
 		LocalsToolWindowContent localsToolWindowContent;
 
 		[ImportingConstructor]
-		LocalsToolWindowContentProvider(Lazy<ILocalsContent> localsContent) {
-			this.localsContent = localsContent;
-		}
+		LocalsToolWindowContentProvider(Lazy<ILocalsContent> localsContent) => this.localsContent = localsContent;
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
 			get { yield return new ToolWindowContentInfo(LocalsToolWindowContent.THE_GUID, LocalsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_LOCALS, false); }
@@ -59,9 +57,7 @@ namespace dnSpy.Debugger.Locals {
 
 		readonly Lazy<ILocalsContent> localsContent;
 
-		public LocalsToolWindowContent(Lazy<ILocalsContent> localsContent) {
-			this.localsContent = localsContent;
-		}
+		public LocalsToolWindowContent(Lazy<ILocalsContent> localsContent) => this.localsContent = localsContent;
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
 			switch (visEvent) {

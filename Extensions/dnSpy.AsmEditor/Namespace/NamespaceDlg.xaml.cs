@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Namespace {
 	sealed partial class NamespaceDlg : WindowBase {
-		public NamespaceDlg() {
-			InitializeComponent();
-		}
+		public NamespaceDlg() => InitializeComponent();
 	}
 }

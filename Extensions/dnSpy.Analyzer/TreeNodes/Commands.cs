@@ -137,8 +137,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					yield break;
 
 				foreach (var node in nodes) {
-					var mr = node as IMDTokenNode;
-					if (mr != null && CanAnalyze(mr.Reference as IMemberRef, decompilerService.Decompiler))
+					if (node is IMDTokenNode mr && CanAnalyze(mr.Reference as IMemberRef, decompilerService.Decompiler))
 						yield return mr.Reference as IMemberRef;
 				}
 			}
@@ -190,8 +189,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 				var @ref = context.Find<TextReference>();
 				if (@ref != null) {
-					var mr = @ref.Reference as IMemberRef;
-					if (mr != null)
+					if (@ref.Reference is IMemberRef mr)
 						yield return mr;
 				}
 			}
@@ -237,20 +235,17 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public static void Analyze(IDsToolWindowService toolWindowService, Lazy<IAnalyzerService> analyzerService, IDecompiler decompiler, IMemberRef member) {
 			var memberDef = ResolveReference(member);
 
-			var type = memberDef as TypeDef;
-			if (type != null) {
+			if (memberDef is TypeDef type) {
 				toolWindowService.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerService.Value.Add(new TypeNode(type));
 			}
 
-			var field = memberDef as FieldDef;
-			if (field != null) {
+			if (memberDef is FieldDef field) {
 				toolWindowService.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerService.Value.Add(new FieldNode(field));
 			}
 
-			var method = memberDef as MethodDef;
-			if (method != null) {
+			if (memberDef is MethodDef method) {
 				toolWindowService.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerService.Value.Add(new MethodNode(method));
 			}

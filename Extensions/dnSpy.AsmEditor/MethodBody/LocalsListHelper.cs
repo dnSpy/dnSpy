@@ -41,9 +41,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		protected override string RemoveAllMessage => dnSpy_AsmEditor_Resources.Local_Command6;
 
 		public LocalsListHelper(ListView listView, Window ownerWindow)
-			: base(listView) {
-			typeSigCreator = new TypeSigCreator(ownerWindow);
-		}
+			: base(listView) => typeSigCreator = new TypeSigCreator(ownerWindow);
 
 		protected override LocalVM[] GetSelectedItems() => listBox.SelectedItems.Cast<LocalVM>().ToArray();
 

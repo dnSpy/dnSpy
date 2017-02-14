@@ -38,9 +38,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexScrollMapFactoryService scrollMapFactoryService;
 
 		[ImportingConstructor]
-		VerticalScrollBarMarginProvider(HexScrollMapFactoryService scrollMapFactoryService) {
-			this.scrollMapFactoryService = scrollMapFactoryService;
-		}
+		VerticalScrollBarMarginProvider(HexScrollMapFactoryService scrollMapFactoryService) => this.scrollMapFactoryService = scrollMapFactoryService;
 
 		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new VerticalScrollBarMargin(scrollMapFactoryService, wpfHexViewHost);
@@ -68,11 +66,10 @@ namespace dnSpy.Hex.Editor {
 				Add(ScrollBar.PageDownCommand, ScrollEventType.LargeIncrement);
 			}
 
-			void Add(RoutedCommand routedCommand, ScrollEventType @event) {
+			void Add(RoutedCommand routedCommand, ScrollEventType @event) =>
 				CommandBindings.Add(new CommandBinding(routedCommand,
 					(s, e) => owner.OnScroll(new ScrollEventArgs(@event, Value)),
 					(s, e) => { e.CanExecute = true; }));
-			}
 
 			protected override void OnScroll(ScrollEventArgs e) => owner.OnScroll(e);
 		}

@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class TypeDefOrRefAndCADlg : WindowBase {
-		public TypeDefOrRefAndCADlg() {
-			InitializeComponent();
-		}
+		public TypeDefOrRefAndCADlg() => InitializeComponent();
 	}
 }

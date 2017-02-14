@@ -28,9 +28,7 @@ namespace dnSpy.Debugger.Exceptions {
 	sealed class SelectedItemsProvider<T> : ISelectedItemsProvider<T> {
 		readonly ListBox listBox;
 
-		public SelectedItemsProvider(ListBox listBox) {
-			this.listBox = listBox;
-		}
+		public SelectedItemsProvider(ListBox listBox) => this.listBox = listBox;
 
 		public T[] SelectedItems => listBox.SelectedItems.OfType<T>().ToArray();
 	}

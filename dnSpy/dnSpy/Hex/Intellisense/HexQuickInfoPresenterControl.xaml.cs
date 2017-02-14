@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.Hex.Intellisense {
 	sealed partial class HexQuickInfoPresenterControl : UserControl {
-		public HexQuickInfoPresenterControl() {
-			InitializeComponent();
-		}
+		public HexQuickInfoPresenterControl() => InitializeComponent();
 	}
 }

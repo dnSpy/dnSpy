@@ -128,9 +128,7 @@ namespace dndbg.Engine {
 		}
 
 		public CorAssembly(ICorDebugAssembly assembly)
-			: base(assembly) {
-			Name = GetName(assembly) ?? string.Empty;
-		}
+			: base(assembly) => Name = GetName(assembly) ?? string.Empty;
 
 		static string GetName(ICorDebugAssembly assembly) {
 			int hr = assembly.GetName(0, out uint cchName, null);

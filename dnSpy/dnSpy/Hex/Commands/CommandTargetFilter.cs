@@ -30,13 +30,10 @@ namespace dnSpy.Hex.Commands {
 		readonly HexCommandOperationsFactoryService hexCommandOperationsFactoryService;
 
 		[ImportingConstructor]
-		CommandTargetFilterProvider(HexCommandOperationsFactoryService hexCommandOperationsFactoryService) {
-			this.hexCommandOperationsFactoryService = hexCommandOperationsFactoryService;
-		}
+		CommandTargetFilterProvider(HexCommandOperationsFactoryService hexCommandOperationsFactoryService) => this.hexCommandOperationsFactoryService = hexCommandOperationsFactoryService;
 
 		public ICommandTargetFilter Create(object target) {
-			var hexView = target as HexView;
-			if (hexView != null)
+			if (target is HexView hexView)
 				return new CommandTargetFilter(hexView, hexCommandOperationsFactoryService.GetCommandOperations(hexView));
 			return null;
 		}

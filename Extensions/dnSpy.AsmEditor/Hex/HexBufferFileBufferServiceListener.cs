@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly HexBufferFileServiceFactory hexBufferFileServiceFactory;
 
 		[ImportingConstructor]
-		HexBufferFileBufferServiceListener(HexBufferFileServiceFactory hexBufferFileServiceFactory) {
-			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
-		}
+		HexBufferFileBufferServiceListener(HexBufferFileServiceFactory hexBufferFileServiceFactory) => this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
 
 		public void BufferCreated(HexBuffer buffer) {
 			var service = hexBufferFileServiceFactory.Create(buffer);

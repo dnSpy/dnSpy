@@ -33,9 +33,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly Lazy<HexIntellisenseControllerProvider>[] intellisenseControllerProviders;
 
 		[ImportingConstructor]
-		HexIntellisenseControllerService([ImportMany] IEnumerable<Lazy<HexIntellisenseControllerProvider>> intellisenseControllerProviders) {
-			this.intellisenseControllerProviders = intellisenseControllerProviders.ToArray();
-		}
+		HexIntellisenseControllerService([ImportMany] IEnumerable<Lazy<HexIntellisenseControllerProvider>> intellisenseControllerProviders) => this.intellisenseControllerProviders = intellisenseControllerProviders.ToArray();
 
 		sealed class HexViewState {
 			readonly WpfHexView hexView;

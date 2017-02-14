@@ -46,9 +46,7 @@ namespace Example2.Extension {
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(1);
 
-			public TreeNodeGroupImpl(double order) {
-				Order = order;
-			}
+			public TreeNodeGroupImpl(double order) => Order = order;
 
 			public double Order { get; }
 
@@ -75,10 +73,9 @@ namespace Example2.Extension {
 
 		// Initialize() is called after the constructor has been called, and after the TreeNode prop
 		// has been initialized
-		public override void Initialize() {
+		public override void Initialize() =>
 			// Set LazyLoading if creating the children could take a while
 			TreeNode.LazyLoading = true;
-		}
 
 		// If TreeNode.LazyLoading is false, CreateChildren() is called after Initialize(), else it's
 		// called when this node gets expanded.
@@ -93,9 +90,7 @@ namespace Example2.Extension {
 		// The image must be in an Images folder (in the resources) and have a .png extension
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.String;
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
-			output.Write(BoxedTextColor.Text, "Module Child");
-		}
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) => output.Write(BoxedTextColor.Text, "Module Child");
 
 		// Gets called by dnSpy if there's only one node to decompile. This method gets called in a
 		// worker thread. The output is also cached unless you call IDocumentViewerOutput.DisableCaching().
@@ -133,9 +128,7 @@ namespace Example2.Extension {
 			// Make sure the order is unique. 0 is already used by the PE node, so use 1
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(1);
 
-			public TreeNodeGroupImpl(double order) {
-				Order = order;
-			}
+			public TreeNodeGroupImpl(double order) => Order = order;
 
 			public double Order { get; }
 
@@ -158,9 +151,7 @@ namespace Example2.Extension {
 
 		public string Message { get; }
 
-		public SomeMessageNode(string msg) {
-			Message = msg;
-		}
+		public SomeMessageNode(string msg) => Message = msg;
 
 		public override Guid Guid => THE_GUID;
 		public override NodePathName NodePathName => new NodePathName(THE_GUID, Message);
@@ -174,9 +165,7 @@ namespace Example2.Extension {
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(0);
 
-			public TreeNodeGroupImpl(double order) {
-				Order = order;
-			}
+			public TreeNodeGroupImpl(double order) => Order = order;
 
 			public double Order { get; }
 

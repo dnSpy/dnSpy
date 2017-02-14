@@ -40,9 +40,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexIntraTextAdornmentServiceProvider intraTextAdornmentServiceProvider;
 
 		[ImportingConstructor]
-		IntraTextAdornmentServiceSpaceNegotiatingAdornmentTaggerProvider(HexIntraTextAdornmentServiceProvider intraTextAdornmentServiceProvider) {
-			this.intraTextAdornmentServiceProvider = intraTextAdornmentServiceProvider;
-		}
+		IntraTextAdornmentServiceSpaceNegotiatingAdornmentTaggerProvider(HexIntraTextAdornmentServiceProvider intraTextAdornmentServiceProvider) => this.intraTextAdornmentServiceProvider = intraTextAdornmentServiceProvider;
 
 		public override IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) {
 			if (hexView.Buffer != buffer)
@@ -89,9 +87,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 
 		[ImportingConstructor]
-		HexIntraTextAdornmentServiceProviderImpl(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-		}
+		HexIntraTextAdornmentServiceProviderImpl(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public override HexIntraTextAdornmentService Get(WpfHexView wpfHexView) {
 			if (wpfHexView == null)
@@ -317,9 +313,7 @@ namespace dnSpy.Hex.Editor {
 
 		sealed class ZoomingUIElement : ContentControl {
 			readonly UIElement uiElem;
-			public ZoomingUIElement(UIElement uiElem) {
-				this.uiElem = uiElem;
-			}
+			public ZoomingUIElement(UIElement uiElem) => this.uiElem = uiElem;
 			public void Initialize() => Content = uiElem;
 			public void SetScale(double value) =>
 				LayoutTransform = value == 1 ? ScaleTransform.Identity : new ScaleTransform(1, value);

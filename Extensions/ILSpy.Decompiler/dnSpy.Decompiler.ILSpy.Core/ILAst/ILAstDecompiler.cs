@@ -151,9 +151,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 		struct BraceInfo {
 			public int Start { get; }
-			public BraceInfo(int start) {
-				Start = start;
-			}
+			public BraceInfo(int start) => Start = start;
 		}
 
 		BraceInfo StartKeywordBlock(IDecompilerOutput output, string keyword, IMemberDef member) {

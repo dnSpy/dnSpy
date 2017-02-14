@@ -192,8 +192,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <returns></returns>
 		protected virtual IEnumerable<ResourceData> GetSerializedData() {
-			var er = Resource as EmbeddedResource;
-			if (er != null)
+			if (Resource is EmbeddedResource er)
 				yield return new ResourceData(Resource.Name, token => new MemoryStream(er.GetResourceData()));
 		}
 

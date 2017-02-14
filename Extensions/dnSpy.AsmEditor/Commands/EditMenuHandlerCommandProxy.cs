@@ -25,9 +25,7 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class EditMenuHandlerCommandProxy : ICommand {
 		readonly EditMenuHandler command;
 
-		public EditMenuHandlerCommandProxy(EditMenuHandler command) {
-			this.command = command;
-		}
+		public EditMenuHandlerCommandProxy(EditMenuHandler command) => this.command = command;
 
 		AsmEditorContext CreateContext() => command.CreateContext();
 

@@ -38,9 +38,7 @@ namespace Example2.Extension {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class UnderlineClassificationFormatDefinition : ClassificationFormatDefinition {
-			UnderlineClassificationFormatDefinition() {
-				TextDecorations = System.Windows.TextDecorations.Underline;
-			}
+			UnderlineClassificationFormatDefinition() => TextDecorations = System.Windows.TextDecorations.Underline;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -49,9 +47,7 @@ namespace Example2.Extension {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class LightGreenBackgroundClassificationFormatDefinition : ClassificationFormatDefinition {
-			LightGreenBackgroundClassificationFormatDefinition() {
-				BackgroundBrush = Brushes.LightGreen;
-			}
+			LightGreenBackgroundClassificationFormatDefinition() => BackgroundBrush = Brushes.LightGreen;
 		}
 	}
 
@@ -62,9 +58,7 @@ namespace Example2.Extension {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		TreeViewNodeColorizerProvider(IClassificationTypeRegistryService classificationTypeRegistryService) {
-			this.classificationTypeRegistryService = classificationTypeRegistryService;
-		}
+		TreeViewNodeColorizerProvider(IClassificationTypeRegistryService classificationTypeRegistryService) => this.classificationTypeRegistryService = classificationTypeRegistryService;
 
 		public ITextClassifier Create(IContentType contentType) => new TreeViewNodeColorizer(classificationTypeRegistryService);
 	}
@@ -72,9 +66,7 @@ namespace Example2.Extension {
 	sealed class TreeViewNodeColorizer : ITextClassifier {
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
-		public TreeViewNodeColorizer(IClassificationTypeRegistryService classificationTypeRegistryService) {
-			this.classificationTypeRegistryService = classificationTypeRegistryService;
-		}
+		public TreeViewNodeColorizer(IClassificationTypeRegistryService classificationTypeRegistryService) => this.classificationTypeRegistryService = classificationTypeRegistryService;
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var tvContext = context as TreeViewNodeClassifierContext;

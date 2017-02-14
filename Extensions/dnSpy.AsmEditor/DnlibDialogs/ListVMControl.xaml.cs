@@ -23,15 +23,12 @@ using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class ListVMControl : UserControl {
-		public ListVMControl() {
-			InitializeComponent();
-		}
+		public ListVMControl() => InitializeComponent();
 
 		void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
-			var data = DataContext as ListVM;
-			if (data != null)
+			if (DataContext is ListVM data)
 				data.EditItem();
 		}
 	}

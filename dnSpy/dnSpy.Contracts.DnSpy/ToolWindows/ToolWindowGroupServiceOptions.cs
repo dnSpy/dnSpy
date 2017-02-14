@@ -58,20 +58,16 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// Constructor
 		/// </summary>
 		/// <param name="groupGuid">See <see cref="ToolWindowGroupGuid"/></param>
-		public ToolWindowGroupServiceOptions(Guid groupGuid) {
-			ToolWindowGroupGuid = groupGuid;
-		}
+		public ToolWindowGroupServiceOptions(Guid groupGuid) => ToolWindowGroupGuid = groupGuid;
 
 		/// <summary>
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public ToolWindowGroupServiceOptions Clone() {
-			return new ToolWindowGroupServiceOptions {
-				TabControlStyle = TabControlStyle,
-				TabItemStyle = TabItemStyle,
-				ToolWindowGroupGuid = ToolWindowGroupGuid,
-			};
-		}
+		public ToolWindowGroupServiceOptions Clone() => new ToolWindowGroupServiceOptions {
+			TabControlStyle = TabControlStyle,
+			TabItemStyle = TabItemStyle,
+			ToolWindowGroupGuid = ToolWindowGroupGuid,
+		};
 	}
 }

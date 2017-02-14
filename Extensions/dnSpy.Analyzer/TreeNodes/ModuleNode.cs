@@ -29,9 +29,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public override IMemberRef Member => null;
 		public override IMDTokenProvider Reference => module;
 
-		public ModuleNode(ModuleDef module) {
-			this.module = module;
-		}
+		public ModuleNode(ModuleDef module) => this.module = module;
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(module);
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>

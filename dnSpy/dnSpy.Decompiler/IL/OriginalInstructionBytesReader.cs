@@ -28,10 +28,9 @@ namespace dnSpy.Decompiler.IL {
 
 		public bool IsOriginalBytes => true;
 
-		public OriginalInstructionBytesReader(MethodDef method) {
+		public OriginalInstructionBytesReader(MethodDef method) =>
 			//TODO: This fails and returns null if it's a CorMethodDef!
 			stream = GetImageStream(method.Module, (uint)method.RVA + method.Body.HeaderSize);
-		}
 
 		static IImageStream GetImageStream(ModuleDef module, uint rva) {
 			var m = module as ModuleDefMD;//TODO: Support CorModuleDef

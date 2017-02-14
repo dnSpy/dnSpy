@@ -23,8 +23,6 @@ namespace dnSpy.Extension {
 	sealed class LoadedExtension {
 		public Assembly Assembly { get; }
 
-		public LoadedExtension(Assembly asm) {
-			Assembly = asm;
-		}
+		public LoadedExtension(Assembly asm) => Assembly = asm;
 	}
 }

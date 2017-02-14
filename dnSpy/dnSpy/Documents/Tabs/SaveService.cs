@@ -30,9 +30,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly ITabSaverProvider[] tabSaverProviders;
 
 		[ImportingConstructor]
-		SaveService([ImportMany] IEnumerable<Lazy<ITabSaverProvider, ITabSaverProviderMetadata>> tabSaverProviders) {
-			this.tabSaverProviders = tabSaverProviders.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
-		}
+		SaveService([ImportMany] IEnumerable<Lazy<ITabSaverProvider, ITabSaverProviderMetadata>> tabSaverProviders) => this.tabSaverProviders = tabSaverProviders.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
 
 		ITabSaver GetTabSaver(IDocumentTab tab) {
 			if (tab == null)

@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public DeclSecuritiesControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as DeclSecuritiesVM;
-				if (data != null) {
+				if (DataContext is DeclSecuritiesVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.EditObject = new EditDeclSecurity(ownerWindow);
 				}

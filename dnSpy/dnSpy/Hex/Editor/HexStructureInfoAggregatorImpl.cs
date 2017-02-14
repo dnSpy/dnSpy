@@ -26,8 +26,6 @@ namespace dnSpy.Hex.Editor {
 		protected override IEnumerable<HexStructureInfoProvider> Providers => providers;
 		readonly HexStructureInfoProvider[] providers;
 
-		public HexStructureInfoAggregatorImpl(HexStructureInfoProvider[] providers) {
-			this.providers = providers ?? throw new ArgumentNullException(nameof(providers));
-		}
+		public HexStructureInfoAggregatorImpl(HexStructureInfoProvider[] providers) => this.providers = providers ?? throw new ArgumentNullException(nameof(providers));
 	}
 }

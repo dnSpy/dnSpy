@@ -29,9 +29,7 @@ namespace dnSpy.Text.Formatting {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 
 		[ImportingConstructor]
-		TextAndAdornmentSequencerFactoryService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-		}
+		TextAndAdornmentSequencerFactoryService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public ITextAndAdornmentSequencer Create(ITextView view) {
 			if (view == null)

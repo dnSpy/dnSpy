@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.Output {
 	sealed partial class OutputControl : UserControl {
-		public OutputControl() {
-			InitializeComponent();
-		}
+		public OutputControl() => InitializeComponent();
 	}
 }

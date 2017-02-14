@@ -54,9 +54,7 @@ namespace dnSpy.Text.Editor {
 		ICustomLineNumberMarginOwner owner;
 
 		public CustomLineNumberMarginImpl(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, ITextFormatterProvider textFormatterProvider)
-			: base(PredefinedDsMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) {
-			CustomLineNumberMargin.SetMargin(wpfTextViewHost.TextView, this);
-		}
+			: base(PredefinedDsMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) => CustomLineNumberMargin.SetMargin(wpfTextViewHost.TextView, this);
 
 		void ICustomLineNumberMargin.SetOwner(ICustomLineNumberMarginOwner owner) {
 			if (this.owner != null)

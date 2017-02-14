@@ -36,9 +36,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly PEStructureProviderFactory peStructureProviderFactory;
 
 		[ImportingConstructor]
-		HexFileStructureInfoProviderFactoryImpl(PEStructureProviderFactory peStructureProviderFactory) {
-			this.peStructureProviderFactory = peStructureProviderFactory;
-		}
+		HexFileStructureInfoProviderFactoryImpl(PEStructureProviderFactory peStructureProviderFactory) => this.peStructureProviderFactory = peStructureProviderFactory;
 
 		public override HexFileStructureInfoProvider Create(HexView hexView) =>
 			new HexFileStructureInfoProviderImpl(peStructureProviderFactory);
@@ -47,9 +45,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	sealed class HexFileStructureInfoProviderImpl : HexFileStructureInfoProvider {
 		readonly PEStructureProviderFactory peStructureProviderFactory;
 
-		public HexFileStructureInfoProviderImpl(PEStructureProviderFactory peStructureProviderFactory) {
-			this.peStructureProviderFactory = peStructureProviderFactory ?? throw new ArgumentNullException(nameof(peStructureProviderFactory));
-		}
+		public HexFileStructureInfoProviderImpl(PEStructureProviderFactory peStructureProviderFactory) => this.peStructureProviderFactory = peStructureProviderFactory ?? throw new ArgumentNullException(nameof(peStructureProviderFactory));
 
 		sealed class PEStructure {
 			readonly PEStructureProvider peStructureProvider;
@@ -152,8 +148,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		public override HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
-			var sections = structure as PeSectionsData;
-			if (sections != null)
+			if (structure is PeSectionsData sections)
 				return Array.Empty<HexIndexes>();
 
 			return null;

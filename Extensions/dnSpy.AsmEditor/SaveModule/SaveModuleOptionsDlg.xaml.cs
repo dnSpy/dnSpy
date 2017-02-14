@@ -25,8 +25,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public SaveModuleOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as SaveModuleOptionsVM;
-				if (data != null)
+				if (DataContext is SaveModuleOptionsVM data)
 					data.PickSaveFilename = new PickSaveFilename();
 			};
 		}

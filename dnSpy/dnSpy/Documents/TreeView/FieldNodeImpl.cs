@@ -33,9 +33,7 @@ namespace dnSpy.Documents.TreeView {
 		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public FieldNodeImpl(ITreeNodeGroup treeNodeGroup, FieldDef field)
-			: base(field) {
-			TreeNodeGroup = treeNodeGroup;
-		}
+			: base(field) => TreeNodeGroup = treeNodeGroup;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			new NodePrinter().Write(output, decompiler, FieldDef, GetShowToken(options));

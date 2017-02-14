@@ -26,9 +26,7 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	class SaveModuleWindow : WindowBase {
-		public SaveModuleWindow() {
-			Loaded += SaveMultiModule_Loaded;
-		}
+		public SaveModuleWindow() => Loaded += SaveMultiModule_Loaded;
 
 		void SaveMultiModule_Loaded(object sender, RoutedEventArgs e) {
 			var data = (SaveMultiModuleVM)DataContext;
@@ -65,8 +63,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			if (data == null)
 				return;
 
-			var mvm = data as SaveModuleOptionsVM;
-			if (mvm != null) {
+			if (data is SaveModuleOptionsVM mvm) {
 				var win = new SaveModuleOptionsDlg();
 				win.Owner = this;
 				var clone = mvm.Clone();
@@ -79,8 +76,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				return;
 			}
 
-			var hvm = data as SaveHexOptionsVM;
-			if (hvm != null) {
+			if (data is SaveHexOptionsVM hvm) {
 				var win = new SaveHexOptionsDlg();
 				win.Owner = this;
 				var clone = hvm.Clone();

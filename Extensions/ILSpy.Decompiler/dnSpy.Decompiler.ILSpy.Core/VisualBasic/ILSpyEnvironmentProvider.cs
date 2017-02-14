@@ -32,9 +32,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		readonly StringBuilder sb;
 
-		public ILSpyEnvironmentProvider(StringBuilder sb = null) {
-			this.sb = sb ?? new StringBuilder();
-		}
+		public ILSpyEnvironmentProvider(StringBuilder sb = null) => this.sb = sb ?? new StringBuilder();
 
 		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute) {
 			var mr = attribute.Type.Annotations

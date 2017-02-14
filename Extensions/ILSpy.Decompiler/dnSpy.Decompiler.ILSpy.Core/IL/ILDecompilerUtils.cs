@@ -24,34 +24,29 @@ using ICSharpCode.Decompiler.Disassembler;
 namespace dnSpy.Decompiler.ILSpy.Core.IL {
 	static class ILDecompilerUtils {
 		public static bool Write(IDecompilerOutput output, IMemberRef member) {
-			var method = member as IMethod;
-			if (method != null && method.IsMethod) {
+			if (member is IMethod method && method.IsMethod) {
 				method.WriteMethodTo(output);
 				return true;
 			}
 
-			var field = member as IField;
-			if (field != null && field.IsField) {
+			if (member is IField field && field.IsField) {
 				field.WriteFieldTo(output);
 				return true;
 			}
 
-			var prop = member as PropertyDef;
-			if (prop != null) {
+			if (member is PropertyDef prop) {
 				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken(), null));
 				dis.DisassembleProperty(prop, false);
 				return true;
 			}
 
-			var evt = member as EventDef;
-			if (evt != null) {
+			if (member is EventDef evt) {
 				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken(), null));
 				dis.DisassembleEvent(evt, false);
 				return true;
 			}
 
-			var type = member as ITypeDefOrRef;
-			if (type != null) {
+			if (member is ITypeDefOrRef type) {
 				type.WriteTo(output, ILNameSyntax.TypeName);
 				return true;
 			}

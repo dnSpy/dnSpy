@@ -34,9 +34,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Constructor
 		/// </summary>
 		/// <param name="textColor">Color</param>
-		protected ThemeMarkerFormatDefinition(TextColor textColor) {
-			this.textColor = textColor;
-		}
+		protected ThemeMarkerFormatDefinition(TextColor textColor) => this.textColor = textColor;
 
 		/// <summary>
 		/// Creates a new <see cref="ResourceDictionary"/>

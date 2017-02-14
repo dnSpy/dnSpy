@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Hex.Commands {
 	sealed partial class LocalSettingsDlg : WindowBase {
-		public LocalSettingsDlg() {
-			InitializeComponent();
-		}
+		public LocalSettingsDlg() => InitializeComponent();
 	}
 }

@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.Language.Intellisense {
 	sealed partial class SignatureHelpPresenterControl : UserControl {
-		public SignatureHelpPresenterControl() {
-			InitializeComponent();
-		}
+		public SignatureHelpPresenterControl() => InitializeComponent();
 	}
 }

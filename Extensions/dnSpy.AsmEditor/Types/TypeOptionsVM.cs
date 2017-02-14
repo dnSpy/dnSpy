@@ -329,51 +329,45 @@ namespace dnSpy.AsmEditor.Types {
 				TypeKind.SelectedItem = Types.TypeKind.Unknown;
 		}
 
-		bool IsClass() {
-			return IsClassBaseType(BaseTypeSig) &&
-				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class;
-		}
+		bool IsClass() =>
+			IsClassBaseType(BaseTypeSig) &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class;
 
-		bool IsStaticClass() {
-			return new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.Object.TypeDefOrRef) &&
-				BaseTypeSig.DefinitionAssembly.IsCorLib() &&
-				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
-				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
-				Abstract &&
-				Sealed;
-		}
+		bool IsStaticClass() =>
+			new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.Object.TypeDefOrRef) &&
+			BaseTypeSig.DefinitionAssembly.IsCorLib() &&
+			(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
+			Abstract &&
+			Sealed;
 
-		bool IsInterface() {
-			return BaseTypeSig == null &&
-				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
-				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Interface &&
-				Abstract &&
-				!Sealed;
-		}
+		bool IsInterface() =>
+			BaseTypeSig == null &&
+			(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Interface &&
+			Abstract &&
+			!Sealed;
 
-		bool IsStruct() {
-			return IsSystemValueType(BaseTypeSig) &&
-				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
-				!Abstract &&
-				Sealed;
-		}
+		bool IsStruct() =>
+			IsSystemValueType(BaseTypeSig) &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
+			!Abstract &&
+			Sealed;
 
-		bool IsEnum() {
-			return IsSystemEnum(BaseTypeSig) &&
-				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
-				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
-				!Abstract &&
-				Sealed;
-		}
+		bool IsEnum() =>
+			IsSystemEnum(BaseTypeSig) &&
+			(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
+			!Abstract &&
+			Sealed;
 
-		bool IsDelegate() {
-			return new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
-				BaseTypeSig.DefinitionAssembly.IsCorLib() &&
-				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
-				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
-				!Abstract &&
-				Sealed;
-		}
+		bool IsDelegate() =>
+			new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
+			BaseTypeSig.DefinitionAssembly.IsCorLib() &&
+			(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
+			!Abstract &&
+			Sealed;
 
 		bool OnTypeKindChanged_called;
 		void OnTypeKindChanged() {
@@ -443,11 +437,10 @@ namespace dnSpy.AsmEditor.Types {
 			}
 		}
 
-		bool IsClassBaseType(IType type) {
-			return type != null &&
-				!IsSystemEnum(type) &&
-				!IsSystemValueType(type);
-		}
+		bool IsClassBaseType(IType type) =>
+			type != null &&
+			!IsSystemEnum(type) &&
+			!IsSystemValueType(type);
 
 		void Reinitialize() => InitializeFrom(origOptions);
 		public TypeDefOptions CreateTypeDefOptions() => CopyTo(new TypeDefOptions());
