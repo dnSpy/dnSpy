@@ -31,15 +31,13 @@ namespace dnSpy.AsmEditor.UndoRedo {
 	sealed class UndoRedoCommmandLoader : IAutoLoaded {
 		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly IMessageBoxService messageBoxService;
-        readonly Lazy<IDocumentSaver> documentSaver;
-        readonly IAppWindow appWindow;
+		readonly Lazy<IDocumentSaver> documentSaver;
 
-        [ImportingConstructor]
+		[ImportingConstructor]
 		UndoRedoCommmandLoader(IWpfCommandService wpfCommandService, Lazy<IUndoCommandService> undoCommandService, IAppWindow appWindow, IMessageBoxService messageBoxService, Lazy<IDocumentSaver> documentSaver) {
-            this.appWindow = appWindow;
-            this.undoCommandService = undoCommandService;
+			this.undoCommandService = undoCommandService;
 			this.messageBoxService = messageBoxService;
-            this.documentSaver = documentSaver;
+			this.documentSaver = documentSaver;
 
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(UndoRoutedCommands.Undo, (s, e) => undoCommandService.Value.Undo(), (s, e) => e.CanExecute = undoCommandService.Value.CanUndo);
