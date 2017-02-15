@@ -55,12 +55,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			var msg = count == 1 ? dnSpy_AsmEditor_Resources.AskExitUnsavedFile :
 					string.Format(dnSpy_AsmEditor_Resources.AskExitUnsavedFiles, count);
 			var res = messageBoxService.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No);
-            if (res == MsgBoxButton.Yes) {
-                appWindow.MainWindow.Hide();
-                documentSaver.Value.Save(undoCommandService.Value.GetModifiedDocuments());
-            }
+			if (res == MsgBoxButton.Yes)
+				documentSaver.Value.Save(undoCommandService.Value.GetModifiedDocuments());
 
-            if (res == MsgBoxButton.None)
+			if (res == MsgBoxButton.None)
 				e.Cancel = true;
 		}
 	}
