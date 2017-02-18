@@ -95,9 +95,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void UnregisterEventsAndCloseProcessHandle() {
-			dnDebugger.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
-			dnDebugger.OnProcessStateChanged -= DnDebugger_OnProcessStateChanged;
-			hProcess_debuggee.Close();
+			if (dnDebugger != null) {
+				dnDebugger.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
+				dnDebugger.OnProcessStateChanged -= DnDebugger_OnProcessStateChanged;
+			}
+			hProcess_debuggee?.Close();
 		}
 
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {

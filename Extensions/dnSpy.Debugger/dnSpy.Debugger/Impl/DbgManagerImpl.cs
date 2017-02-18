@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.Impl {
 		void OnConnected(DbgEngine engine, DbgMessageConnected e) {
 			if (e.ErrorMessage != null) {
 				//TODO: Show error msg
-				DisposeEngine(engine, null);
+				OnDisconnected(engine);
 				return;
 			}
 
@@ -171,7 +171,9 @@ namespace dnSpy.Debugger.Impl {
 			process.Add(engine, engine.CreateRuntime(process));
 		}
 
-		void OnDisconnected(DbgEngine engine, DbgMessageDisconnected e) {
+		void OnDisconnected(DbgEngine engine, DbgMessageDisconnected e) => OnDisconnected(engine);
+
+		void OnDisconnected(DbgEngine engine) {
 			bool raiseEvent;
 			DbgProcessImpl process;
 			lock (lockObj) {
