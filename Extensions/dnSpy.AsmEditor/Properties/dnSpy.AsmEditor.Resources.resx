@@ -1035,10 +1035,10 @@ Are you sure you want to close the window?</value>
     <value>There could be code in some assembly that references this type. Are you sure you want to delete the type?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>There is an unsaved file. Are you sure you want to exit?</value>
+    <value>There is an unsaved file. Do you want to save it before exiting?</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>There are {0} unsaved files. Are you sure you want to exit?</value>
+    <value>There are {0} unsaved files. Do you want to save them before exiting?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
     <value>Are you sure you want to load new assemblies and lose all changes?</value>

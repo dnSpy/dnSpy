@@ -67,6 +67,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			var msg = modifiedDocs.Length == 1 ? dnSpy_AsmEditor_Resources.AskSaveFile : dnSpy_AsmEditor_Resources.AskSaveFiles;
 			var res = MsgBox.Instance.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No);
+			if (res == MsgBoxButton.None)
+				return false;
 			if (res == MsgBoxButton.No)
 				return true;
 			return Save(modifiedDocs);
