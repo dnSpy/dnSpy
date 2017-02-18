@@ -19,21 +19,27 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Windows;
+using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
 	[Export(typeof(Debugger))]
-	sealed class DebuggerImpl : Debugger {
+	[ExportDbgManagerStartListener]
+	sealed class DebuggerImpl : Debugger, IDbgManagerStartListener {
 		readonly IMessageBoxService messageBoxService;
+		readonly IAppWindow appWindow;
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(IMessageBoxService messageBoxService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider) {
+		DebuggerImpl(IMessageBoxService messageBoxService, IAppWindow appWindow, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider) {
 			this.messageBoxService = messageBoxService;
+			this.appWindow = appWindow;
 			this.dbgManager = dbgManager;
 			this.startDebuggingOptionsProvider = startDebuggingOptionsProvider;
 		}
@@ -79,5 +85,37 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StepOut() {
 			//TODO:
 		}
+
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
+
+		void UI(Action action) {
+			var dispatcher = appWindow.MainWindow.Dispatcher;
+			if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
+				dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+		}
+
+		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender;
+			UI(() => {
+				var newIsDebugging = dbgManager.IsDebugging;
+				if (newIsDebugging == oldIsDebugging)
+					return;
+				oldIsDebugging = newIsDebugging;
+				Application.Current.Resources["IsDebuggingKey"] = newIsDebugging;
+				if (newIsDebugging) {
+					appWindow.StatusBar.Open();
+					SetRunningStatusMessage();
+					appWindow.AddTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
+				}
+				else {
+					appWindow.StatusBar.Close();
+					appWindow.RemoveTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
+				}
+				appWindow.RefreshToolBar();
+			});
+		}
+		bool oldIsDebugging;
+
+		void SetRunningStatusMessage() => appWindow.StatusBar.Show(dnSpy_Debugger_Resources.StatusBar_Running);
 	}
 }
