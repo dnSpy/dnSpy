@@ -26,7 +26,7 @@ using dnSpy.Debugger.Native;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Impl {
-	sealed class DbgProcessImpl : DbgProcess {
+	unsafe sealed class DbgProcessImpl : DbgProcess {
 		public override DbgManager DbgManager { get; }
 		public override int Id { get; }
 		public override int Bitness { get; }
@@ -103,9 +103,9 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		public override int ReadMemory(ulong address, IntPtr destination, int size) => throw new NotImplementedException();//TODO:
+		public override int ReadMemory(ulong address, byte* destination, int size) => throw new NotImplementedException();//TODO:
 		public override int ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) => throw new NotImplementedException();//TODO:
-		public override int WriteMemory(ulong address, IntPtr source, int size) => throw new NotImplementedException();//TODO:
+		public override int WriteMemory(ulong address, byte* source, int size) => throw new NotImplementedException();//TODO:
 		public override int WriteMemory(ulong address, byte[] source, int sourceIndex, int size) => throw new NotImplementedException();//TODO:
 
 		internal void Add(DbgEngine engine, DbgRuntime runtime) {

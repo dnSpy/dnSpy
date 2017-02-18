@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="destination">Destination address</param>
 		/// <param name="size">Number of bytes to read</param>
 		/// <returns></returns>
-		public abstract int ReadMemory(ulong address, IntPtr destination, int size);
+		public unsafe abstract int ReadMemory(ulong address, byte* destination, int size);
 
 		/// <summary>
 		/// Reads memory. Returns the number of bytes read.
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="source">Source address</param>
 		/// <param name="size">Number of bytes to write</param>
 		/// <returns></returns>
-		public abstract int WriteMemory(ulong address, IntPtr source, int size);
+		public unsafe abstract int WriteMemory(ulong address, byte* source, int size);
 
 		/// <summary>
 		/// Writes memory. Returns the number of bytes written.
