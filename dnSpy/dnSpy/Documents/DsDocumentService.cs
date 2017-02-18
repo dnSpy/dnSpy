@@ -345,7 +345,7 @@ namespace dnSpy.Documents {
 				var list = new List<(IDsDocument document, int index)>(documents.Select(a => {
 					bool b = dict.TryGetValue(a, out int j);
 					Debug.Assert(b);
-					return ValueTuple.Create(a, b ? j : -1);
+					return (a, (b ? j : -1));
 				}));
 				list.Sort((a, b) => b.index.CompareTo(a.index));
 				foreach (var t in list) {

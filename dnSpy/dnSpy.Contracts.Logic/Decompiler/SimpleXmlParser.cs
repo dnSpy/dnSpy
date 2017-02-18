@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Decompiler {
 						if (c == '<')
 							yield return (text.Substring(index, specialIndex - index), BoxedTextColor.XmlDocCommentText);
 						else // c == '"'
-							yield return ValueTuple.Create(text.Substring(index, specialIndex - index), inTag ? BoxedTextColor.XmlDocCommentName : BoxedTextColor.XmlDocCommentText);
+							yield return (text.Substring(index, specialIndex - index), (inTag ? BoxedTextColor.XmlDocCommentName : BoxedTextColor.XmlDocCommentText));
 					}
 
 					index = specialIndex;

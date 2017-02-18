@@ -328,7 +328,7 @@ namespace dnSpy.Documents.TreeView {
 					int j = -1;
 					b = b && dict.TryGetValue(node, out j);
 					Debug.Assert(b);
-					return ValueTuple.Create(node, b ? j : -1);
+					return (node, (b ? j : -1));
 				}));
 				list.Sort((a, b) => b.index.CompareTo(a.index));
 				var removed = new List<DsDocumentNode>();
