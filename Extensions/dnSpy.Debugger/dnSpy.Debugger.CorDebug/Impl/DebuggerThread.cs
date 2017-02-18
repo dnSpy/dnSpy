@@ -55,10 +55,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		internal void CallDispatcherRun() => callDispatcherRunEvent.Set();
 
-		internal void Terminate(Input threadInput) {
+		internal void Terminate(Dispatcher dispatcher) {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
-			threadInput.Dispatcher?.BeginInvokeShutdown(DispatcherPriority.Send);
+			if (dispatcher != null && !dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
+				dispatcher.BeginInvokeShutdown(DispatcherPriority.Send);
 		}
 	}
 }

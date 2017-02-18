@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
 	/// A debug engine contains all the logic to control the debugged process
 	/// </summary>
-	public abstract class DbgEngine {
+	public abstract class DbgEngine : DbgObject {
 		/// <summary>
 		/// How did we start the debugged process?
 		/// </summary>

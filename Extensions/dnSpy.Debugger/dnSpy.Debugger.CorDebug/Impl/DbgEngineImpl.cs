@@ -37,6 +37,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly Dispatcher debuggerDispatcher;
 		readonly object lockObj;
 		DnDebugger dnDebugger;
+		SafeHandle hProcess_debuggee;
 
 		protected DbgEngineImpl(DbgStartKind startKind) {
 			StartKind = startKind;
@@ -52,13 +53,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				debuggerDispatcher = threadInput.Dispatcher;
 			}
 			catch {
-				debuggerThread?.Terminate(threadInput);
+				debuggerThread?.Terminate(threadInput?.Dispatcher);
 				throw;
 			}
 		}
 
-		void ExecDebugThreadAsync(Action<object> action, object arg) =>
-			debuggerDispatcher.BeginInvoke(DispatcherPriority.Send, action, arg);
+		void ExecDebugThreadAsync(Action<object> action, object arg) {
+			if (!debuggerDispatcher.HasShutdownStarted && !debuggerDispatcher.HasShutdownFinished)
+				debuggerDispatcher.BeginInvoke(DispatcherPriority.Send, action, arg);
+		}
 
 		public override void EnableMessages() {
 			Debug.Assert(!messagesEnabled);
@@ -80,15 +83,35 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
+				hProcess_debuggee = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
 				dnDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
 				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId));
+				break;
+
+			case DebugCallbackKind.ExitProcess:
+				// Handled in DnDebugger_OnProcessStateChanged()
 				break;
 			}
 		}
 
+		void UnregisterEventsAndCloseProcessHandle() {
+			dnDebugger.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
+			dnDebugger.OnProcessStateChanged -= DnDebugger_OnProcessStateChanged;
+			hProcess_debuggee.Close();
+		}
+
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			//TODO:
+			Debug.Assert(sender != null && sender == dnDebugger);
 			Debug.Assert(messagesEnabled);
+
+			if (dnDebugger.ProcessState == DebuggerProcessState.Terminated) {
+				if (hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
+					exitCode = -1;
+				UnregisterEventsAndCloseProcessHandle();
+
+				SendMessage(new DbgMessageDisconnected(exitCode));
+				return;
+			}
 		}
 
 		void SendMessage(DbgEngineMessage message) {
@@ -104,6 +127,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected void StartCore(object arg) {
 			CorDebugStartDebuggingOptions options = null;
 			try {
+				if (debuggerDispatcher.HasShutdownStarted || debuggerDispatcher.HasShutdownFinished)
+					throw new InvalidOperationException("Dispatcher has shut down");
 				options = (CorDebugStartDebuggingOptions)arg;
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
 					DebugMessageDispatcher = new WpfDebugMessageDispatcher(debuggerDispatcher),
@@ -157,5 +182,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected abstract CorDebugRuntimeKind CorDebugRuntimeKind { get; }
 		public override DbgRuntime CreateRuntime(DbgProcess process) =>
 			new DbgClrRuntimeImpl(process, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+
+		protected override void CloseCore() {
+			UnregisterEventsAndCloseProcessHandle();
+			debuggerThread.Terminate(debuggerDispatcher);
+		}
 	}
 }

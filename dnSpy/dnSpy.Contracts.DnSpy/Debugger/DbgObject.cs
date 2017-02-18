@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
@@ -37,37 +38,41 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// true if the instance has been closed
 		/// </summary>
-		public bool IsClosed { get; private set; }
+		public bool IsClosed => isClosed != 0;
+		volatile int isClosed;
 
 		/// <summary>
-		/// Raised when it's closed
+		/// Raised when it's closed. Data methods eg. <see cref="TryGetData{T}(out T)"/> can be called
+		/// but some other methods could throw or can't be called. After all handlers have been notified,
+		/// all data get disposed (if they implement <see cref="IDisposable"/>).
 		/// </summary>
 		public event EventHandler Closed;
 
 		/// <summary>
-		/// Closes the instance
+		/// Closes the instance. NOTE: Must only be called by the owner object!
 		/// </summary>
-		protected void Close() {
+		public void Close() {
 			Debug.Assert(!IsClosed);
-			if (IsClosed)
+			if (Interlocked.Increment(ref isClosed) != 1)
 				return;
-			IsClosed = true;
-			OnClosed();
 			Closed?.Invoke(this, EventArgs.Empty);
+
+			CloseCore();
 
 			(Type key, object data)[] data;
 			lock (lockObj) {
-				data = dataList.Count == 0 ? Array.Empty<(Type, object)>() : dataList.ToArray();
-				dataList.Clear();
+				data = dataList == null || dataList.Count == 0 ? Array.Empty<(Type, object)>() : dataList.ToArray();
+				dataList?.Clear();
 			}
 			foreach (var kv in data)
 				(kv.data as IDisposable)?.Dispose();
 		}
 
 		/// <summary>
-		/// Called when it gets closed
+		/// Called by <see cref="Close"/> after it has raised <see cref="Closed"/> and before it disposes
+		/// of all data.
 		/// </summary>
-		protected virtual void OnClosed() { }
+		protected abstract void CloseCore();
 
 		/// <summary>
 		/// Checks if the data exists or is null
@@ -77,7 +82,8 @@ namespace dnSpy.Contracts.Debugger {
 		public bool HasData<T>() where T : class => TryGetData<T>(out var value);
 
 		/// <summary>
-		/// Gets or creates data
+		/// Gets or creates data. If it implements <see cref="IDisposable"/>, it will get disposed
+		/// when this object gets closed.
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <returns></returns>
@@ -106,7 +112,8 @@ namespace dnSpy.Contracts.Debugger {
 		}
 
 		/// <summary>
-		/// Gets or creates data
+		/// Gets or creates data. If it implements <see cref="IDisposable"/>, it will get disposed
+		/// when this object gets closed.
 		/// </summary>
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="create">Creates the data if it doesn't exist</param>

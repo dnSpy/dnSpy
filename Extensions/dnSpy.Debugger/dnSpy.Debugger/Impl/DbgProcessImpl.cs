@@ -104,11 +104,8 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override int ReadMemory(ulong address, IntPtr destination, int size) => throw new NotImplementedException();//TODO:
-
 		public override int ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) => throw new NotImplementedException();//TODO:
-
 		public override int WriteMemory(ulong address, IntPtr source, int size) => throw new NotImplementedException();//TODO:
-
 		public override int WriteMemory(ulong address, byte[] source, int sourceIndex, int size) => throw new NotImplementedException();//TODO:
 
 		internal void Add(DbgEngine engine, DbgRuntime runtime) {
@@ -117,7 +114,43 @@ namespace dnSpy.Debugger.Impl {
 			RuntimesChanged?.Invoke(this, new RuntimesChangedEventArgs(runtime, added: true));
 		}
 
-		//TODO: Call this method
-		public void Dispose() => hProcess.Dispose();
+		internal (DbgRuntime runtime, bool hasMoreRuntimes) Remove(DbgEngine engine) {
+			DbgRuntime runtime = null;
+			bool hasMoreRuntimes;
+			lock (lockObj) {
+				for (int i = 0; i < engineInfos.Count; i++) {
+					var info = engineInfos[i];
+					if (info.Engine == engine) {
+						runtime = info.Runtime;
+						engineInfos.RemoveAt(i);
+						break;
+					}
+				}
+				hasMoreRuntimes = engineInfos.Count > 0;
+			}
+			if (runtime != null)
+				RuntimesChanged?.Invoke(this, new RuntimesChangedEventArgs(runtime, added: false));
+			return (runtime, hasMoreRuntimes);
+		}
+
+		internal bool ExecuteLockedIfNoMoreRuntimes(Func<bool> funcIfNoMoreRuntimes, bool defaultValue) {
+			lock (lockObj) {
+				if (engineInfos.Count == 0)
+					return funcIfNoMoreRuntimes();
+				else
+					return defaultValue;
+			}
+		}
+
+		[Conditional("DEBUG")]
+		void VerifyHasNoRuntimes() {
+			lock (lockObj)
+				Debug.Assert(engineInfos.Count == 0);
+		}
+
+		protected override void CloseCore() {
+			VerifyHasNoRuntimes();
+			hProcess.Dispose();
+		}
 	}
 }

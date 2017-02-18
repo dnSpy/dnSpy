@@ -144,7 +144,8 @@ namespace dnSpy.Debugger.Impl {
 
 		void OnConnected(DbgEngine engine, DbgMessageConnected e) {
 			if (e.ErrorMessage != null) {
-				//TODO: Show error msg, clean up
+				//TODO: Show error msg
+				DisposeEngine(engine, null);
 				return;
 			}
 
@@ -158,7 +159,38 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void OnDisconnected(DbgEngine engine, DbgMessageDisconnected e) {
-			//TODO:
+			bool raiseEvent;
+			DbgProcessImpl process;
+			lock (lockObj) {
+				var info = TryGetEngineInfo_NoLock(engine);
+				if (info != null)
+					engines.Remove(info);
+				process = info?.Process;
+				raiseEvent = engines.Count == 0;
+			}
+			DisposeEngine(engine, process);
+			if (raiseEvent)
+				IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		void DisposeEngine(DbgEngine engine, DbgProcessImpl process) {
+			engine.Message -= DbgEngine_Message;
+			engine.Close();
+			if (process != null) {
+				var info = process.Remove(engine);
+				Debug.Assert(info.runtime != null);
+				info.runtime?.Close();
+
+				if (!info.hasMoreRuntimes) {
+					bool disposeProcess;
+					lock (lockObj)
+						disposeProcess = process.ExecuteLockedIfNoMoreRuntimes(() => processes.Remove(process), false);
+					if (disposeProcess) {
+						ProcessesChanged?.Invoke(this, new ProcessesChangedEventArgs(process, added: false));
+						process.Close();
+					}
+				}
+			}
 		}
 	}
 }

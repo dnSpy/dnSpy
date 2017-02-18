@@ -49,5 +49,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
 			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
 		}
+
+		protected override void CloseCore() {
+			//TODO: Dispose of all DbgObject instances
+		}
 	}
 }
