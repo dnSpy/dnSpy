@@ -17,18 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Menus;
+
 namespace dnSpy.Debugger.DbgUI {
-	abstract class Debugger {
-		public abstract bool IsDebugging { get; }
-		public abstract void DebugProgram();
-		public abstract void Continue();
-		public abstract void BreakAll();
-		public abstract void Stop();
-		public abstract void DetachAll();
-		public abstract void Restart();
-		public abstract void ShowNextStatement();
-		public abstract void StepInto();
-		public abstract void StepOver();
-		public abstract void StepOut();
+	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_DEBUG_GUID, Order = MenuConstants.ORDER_APP_MENU_DEBUG, Header = "res:AppMenu_Debug")]
+	sealed class DebugMenu : IMenu {
 	}
 }

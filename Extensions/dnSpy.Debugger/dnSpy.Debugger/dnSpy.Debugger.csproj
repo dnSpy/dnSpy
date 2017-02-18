@@ -38,6 +38,8 @@
   <ItemGroup>
     <Compile Include="DbgUI\Debugger.cs" />
     <Compile Include="DbgUI\DebuggerImpl.cs" />
+    <Compile Include="DbgUI\DebugMenu.cs" />
+    <Compile Include="DbgUI\DebugMenuCommands.cs" />
     <Compile Include="DbgUI\StartDebuggingOptionsProvider.cs" />
     <Compile Include="DbgUI\ToolbarButtonCommands.cs" />
     <Compile Include="Dialogs\DebugProgram\DebugProgramDlg.xaml.cs">

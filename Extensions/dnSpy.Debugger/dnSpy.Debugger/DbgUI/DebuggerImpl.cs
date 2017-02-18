@@ -66,6 +66,10 @@ namespace dnSpy.Debugger.DbgUI {
 			//TODO:
 		}
 
+		public override void DetachAll() {
+			//TODO:
+		}
+
 		public override void Restart() {
 			//TODO:
 		}
