@@ -140,6 +140,7 @@
     <Compile Include="Debugger\Engine\DbgEngineMessage.cs" />
     <Compile Include="Debugger\Engine\DbgEngineMessageKind.cs" />
     <Compile Include="Debugger\Engine\DbgEngineProvider.cs" />
+    <Compile Include="Debugger\IDbgManagerStartListener.cs" />
     <Compile Include="Debugger\StartDebuggingOptions.cs" />
     <Compile Include="Debugger\UI\AttachProgramOptions.cs" />
     <Compile Include="Debugger\UI\AttachProgramOptionsProvider.cs" />

@@ -54,16 +54,29 @@ namespace dnSpy.Debugger.Impl {
 		readonly object lockObj;
 		readonly List<EngineInfo> engines;
 		readonly Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>[] dbgEngineProviders;
+		readonly Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>[] dbgManagerStartListeners;
+		int hasNotifiedStartListenersCounter;
 
 		[ImportingConstructor]
-		DbgManagerImpl([ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders) {
+		DbgManagerImpl([ImportMany] IEnumerable<Lazy<DbgEngineProvider, IDbgEngineProviderMetadata>> dbgEngineProviders, [ImportMany] IEnumerable<Lazy<IDbgManagerStartListener, IDbgManagerStartListenerMetadata>> dbgManagerStartListeners) {
 			lockObj = new object();
 			engines = new List<EngineInfo>();
 			processes = new List<DbgProcessImpl>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
+			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public override string Start(StartDebuggingOptions options) {
+			lock (dbgManagerStartListeners) {
+				if (hasNotifiedStartListenersCounter == 0) {
+					hasNotifiedStartListenersCounter++;
+					foreach (var lz in dbgManagerStartListeners)
+						lz.Value.OnStart(this);
+					hasNotifiedStartListenersCounter++;
+				}
+				else if (hasNotifiedStartListenersCounter != 2)
+					throw new InvalidOperationException("Recursive call: Start()");
+			}
 			try {
 				foreach (var lz in dbgEngineProviders) {
 					var engine = lz.Value.Start(options);
