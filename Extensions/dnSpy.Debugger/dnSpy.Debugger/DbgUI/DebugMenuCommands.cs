@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DbgUI {
 			public override bool IsVisible(IMenuItemContext context) => mustBeDebugging == null || debugger.Value.IsDebugging == mustBeDebugging;
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DebugAssemblyCommand2", Icon = DsImagesAttribute.Run, InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StartDebugging2", Icon = DsImagesAttribute.Run, InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 0)]
 		sealed class DebugAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
 			[ImportingConstructor]
 			public DebugAssemblyDebugMainMenuCommand(Lazy<Debugger> debugger)
@@ -426,6 +426,18 @@ namespace dnSpy.Debugger.DbgUI {
 						attr.InputGestureText = info.Item3;
 					yield return new CreatedMenuItem(attr, info.Item1);
 				}
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:Options", Icon = DsImagesAttribute.Settings, Group = MenuConstants.GROUP_APP_MENU_DEBUG_OPTIONS, Order = 0)]
+		sealed class OptionsDebugMainMenuCommand : DebugMainMenuCommand {
+			[ImportingConstructor]
+			public OptionsDebugMainMenuCommand(Lazy<Debugger> debugger)
+				: base(debugger, null) {
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				//TODO: Show debugger options
 			}
 		}
 	}

@@ -1177,15 +1177,6 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Debug an Assembl_y....
-        /// </summary>
-        public static string DebugAssemblyCommand2 {
-            get {
-                return ResourceManager.GetString("DebugAssemblyCommand2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Debug a CoreCLR Assembl_y....
         /// </summary>
         public static string DebugCoreCLRAssemblyCommand {
@@ -2416,6 +2407,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Options....
+        /// </summary>
+        public static string Options {
+            get {
+                return ResourceManager.GetString("Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Output.
         /// </summary>
         public static string OutputCommand {
@@ -3024,6 +3024,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShowTypeKeywordsCommand {
             get {
                 return ResourceManager.GetString("ShowTypeKeywordsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Start Debugging....
+        /// </summary>
+        public static string StartDebugging2 {
+            get {
+                return ResourceManager.GetString("StartDebugging2", resourceCulture);
             }
         }
         

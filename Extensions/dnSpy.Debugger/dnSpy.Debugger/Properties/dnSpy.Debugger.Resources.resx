@@ -390,8 +390,8 @@
   <data name="DebugAssemblyCommand" xml:space="preserve">
     <value>_Debug Assembly</value>
   </data>
-  <data name="DebugAssemblyCommand2" xml:space="preserve">
-    <value>Debug an Assembl_y...</value>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>_Start Debugging...</value>
   </data>
   <data name="DebugCoreCLRAssemblyCommand" xml:space="preserve">
     <value>Debug a CoreCLR Assembl_y...</value>
@@ -1328,5 +1328,8 @@ Are you sure you want to expand it?</value>
   </data>
   <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
     <value>Watch {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>_Options...</value>
   </data>
 </root>

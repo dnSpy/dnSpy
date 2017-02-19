@@ -256,6 +256,9 @@ namespace dnSpy.Contracts.Menus {
 		[Obsolete("Move debug tool windows to Debug -> Windows", true)]
 		public const string GROUP_APP_MENU_DEBUG_SHOW = "4000,26D43C29-2EDF-4094-8993-10B7CECEAACA";
 
+		/// <summary>Group: App Menu: Debug, Group: Options</summary>
+		public const string GROUP_APP_MENU_DEBUG_OPTIONS = "1000000,F3B4A871-C8D8-40CA-A881-7BEF2328145C";
+
 		/// <summary>Group: App Menu: Debug \ Windows, Group: Settings</summary>
 		public const string GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS = "0,37136731-930E-4D87-8144-03DB3217668D";
 
