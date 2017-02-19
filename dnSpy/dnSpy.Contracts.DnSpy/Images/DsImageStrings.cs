@@ -108,6 +108,7 @@ namespace dnSpy.Contracts.Images {
 		public const string FieldPublic = nameof(FieldPublic);
 		public const string FieldSealed = nameof(FieldSealed);
 		public const string FieldShortcut = nameof(FieldShortcut);
+		public const string FileSystemWatcher = nameof(FileSystemWatcher);
 		public const string Fill = nameof(Fill);
 		public const string Filter = nameof(Filter);
 		public const string FolderClosed = nameof(FolderClosed);

@@ -59,6 +59,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Guid of app menu: Help</summary>
 		public const string APP_MENU_HELP_GUID = "52504C1B-7C35-464A-A35D-6D9F59E035D9";
 
+		/// <summary>Guid of app menu: Debug \ Windows</summary>
+		public const string APP_MENU_DEBUG_WINDOWS_GUID = "7F95892B-975D-4217-A497-2EB0504489F4";
+
 		/// <summary>Guid of glyph margin</summary>
 		public const string GLYPHMARGIN_GUID = "53F9F2FF-5AF8-4FC6-B849-74AB88EFB367";
 
@@ -234,6 +237,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: App Menu: Themes, Group: Themes</summary>
 		public const string GROUP_APP_MENU_THEMES_THEMES = "0,AAE0CE90-DB6E-4E8D-9E1B-9BF7ABBDBB32";
 
+		/// <summary>Group: App Menu: Debug, Group: Windows</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS = "-1000,B4D89733-91AC-4C2F-8808-3AEBD2A686C9";
+
 		/// <summary>Group: App Menu: Debug, Group: Start</summary>
 		public const string GROUP_APP_MENU_DEBUG_START = "0,118A7201-7560-443E-B2F6-7F6369A253A2";
 
@@ -247,7 +253,20 @@ namespace dnSpy.Contracts.Menus {
 		public const string GROUP_APP_MENU_DEBUG_BREAKPOINTS = "3000,2684EC1B-45A7-4412-BCBF-81345845FF54";
 
 		/// <summary>Group: App Menu: Debug, Group: Show Debug Windows</summary>
+		[Obsolete("Move debug tool windows to Debug -> Windows", true)]
 		public const string GROUP_APP_MENU_DEBUG_SHOW = "4000,26D43C29-2EDF-4094-8993-10B7CECEAACA";
+
+		/// <summary>Group: App Menu: Debug \ Windows, Group: Settings</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS = "0,37136731-930E-4D87-8144-03DB3217668D";
+
+		/// <summary>Group: App Menu: Debug \ Windows, Group: Values</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_VALUES = "3000,BC7F81CF-49A1-4F59-B789-56EEDAA375BE";
+
+		/// <summary>Group: App Menu: Debug \ Windows, Group: Info</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_INFO = "6000,2721D995-74E5-4AA8-9E32-FBB2EDCE768F";
+
+		/// <summary>Group: App Menu: Debug \ Windows, Group: Memory</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_MEMORY = "7000,246D698C-04F2-4998-88FB-46853D62E290";
 
 		/// <summary>Group: App Menu: Window, Group: Window</summary>
 		public const string GROUP_APP_MENU_WINDOW_WINDOW = "0,27A8834B-D6BF-4267-803D-15DECAFAEA05";

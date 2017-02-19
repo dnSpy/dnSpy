@@ -1294,6 +1294,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Windows.
+        /// </summary>
+        public static string DebugWindows {
+            get {
+                return ResourceManager.GetString("DebugWindows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete _All Breakpoints.
         /// </summary>
         public static string DeleteAllBreakpointsCommand {
@@ -2407,6 +2416,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Output.
+        /// </summary>
+        public static string OutputCommand {
+            get {
+                return ResourceManager.GetString("OutputCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debugger.
         /// </summary>
         public static string Plugin_ShortDescription {
@@ -2628,6 +2646,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyCtrlAltU {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlAltU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+W, {0}.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltW_DIGIT {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltW_DIGIT", resourceCulture);
             }
         }
         
@@ -3469,6 +3496,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Watch.
+        /// </summary>
+        public static string WatchCommand {
+            get {
+                return ResourceManager.GetString("WatchCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Breakpoints.
         /// </summary>
         public static string Window_Breakpoints {
@@ -3555,6 +3591,42 @@ namespace dnSpy.Debugger.Properties {
         public static string Window_Threads {
             get {
                 return ResourceManager.GetString("Window_Threads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Watch 1_0.
+        /// </summary>
+        public static string Window_Watch_10_MenuItem {
+            get {
+                return ResourceManager.GetString("Window_Watch_10_MenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Watch {0}.
+        /// </summary>
+        public static string Window_Watch_N {
+            get {
+                return ResourceManager.GetString("Window_Watch_N", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Watch _{0}.
+        /// </summary>
+        public static string Window_Watch_N_MenuItem {
+            get {
+                return ResourceManager.GetString("Window_Watch_N_MenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Watch {0}.
+        /// </summary>
+        public static string Window_Watch_N_MenuItem2 {
+            get {
+                return ResourceManager.GetString("Window_Watch_N_MenuItem2", resourceCulture);
             }
         }
         

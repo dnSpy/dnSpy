@@ -112,6 +112,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference FieldPublic { get; } = new ImageReference(assembly, DsImageStrings.FieldPublic);
 		public static ImageReference FieldSealed { get; } = new ImageReference(assembly, DsImageStrings.FieldSealed);
 		public static ImageReference FieldShortcut { get; } = new ImageReference(assembly, DsImageStrings.FieldShortcut);
+		public static ImageReference FileSystemWatcher { get; } = new ImageReference(assembly, DsImageStrings.FileSystemWatcher);
 		public static ImageReference Fill { get; } = new ImageReference(assembly, DsImageStrings.Fill);
 		public static ImageReference Filter { get; } = new ImageReference(assembly, DsImageStrings.Filter);
 		public static ImageReference FolderClosed { get; } = new ImageReference(assembly, DsImageStrings.FolderClosed);

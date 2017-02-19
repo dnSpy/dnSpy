@@ -1302,7 +1302,31 @@ Are you sure you want to expand it?</value>
   <data name="DbgAsm_DebugEngine" xml:space="preserve">
     <value>_Debug engine</value>
   </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Windows</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>_Output</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
   <data name="TerminateAllCommand" xml:space="preserve">
     <value>Ter_minate All</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_Watch</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Watch 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>Watch {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>Watch _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>Watch {0}</value>
   </data>
 </root>

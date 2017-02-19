@@ -109,6 +109,7 @@ namespace dnSpy.Contracts.Images {
 		public const string FieldPublic = Prefix + DsImageStrings.FieldPublic;
 		public const string FieldSealed = Prefix + DsImageStrings.FieldSealed;
 		public const string FieldShortcut = Prefix + DsImageStrings.FieldShortcut;
+		public const string FileSystemWatcher = Prefix + DsImageStrings.FileSystemWatcher;
 		public const string Fill = Prefix + DsImageStrings.Fill;
 		public const string Filter = Prefix + DsImageStrings.Filter;
 		public const string FolderClosed = Prefix + DsImageStrings.FolderClosed;
