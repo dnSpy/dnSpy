@@ -126,7 +126,7 @@
 {0}</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>取消</value>
+    <value>取消(_C)</value>
   </data>
   <data name="CouldNotConvert" xml:space="preserve">
     <value>无法转换 '{0}'</value>

@@ -124,7 +124,7 @@
     <value>+ 额外的 {0} 个错误</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>复制</value>
+    <value>复制(_Y)</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
     <value>剪切</value>
@@ -178,7 +178,7 @@
     <value>从 '{0}' 加载上下文。</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>粘贴</value>
+    <value>粘贴(_P)</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>脚本</value>

@@ -160,7 +160,7 @@
     <value>Use dnSpy-x86.exe para anexar a processos de 32 bits</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>Break</value>
+    <value>Brea_k All</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
     <value>Breakpoints</value>
@@ -301,7 +301,7 @@
     <value>Argumentos anfitrião</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>Depurar Assembly</value>
+    <value>Debug Program</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>Diretório de Trabalho</value>
@@ -495,8 +495,8 @@
   <data name="DeleteCommand" xml:space="preserve">
     <value>Eliminar</value>
   </data>
-  <data name="DetachCommand" xml:space="preserve">
-    <value>_Detach</value>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Detach A_ll</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
     <value>Desativar Todos Pontos de interrupção</value>
@@ -911,8 +911,8 @@ Tem certeza que deseja expandi-la?</value>
   <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
     <value>Ctrl + Shift +{0}</value>
   </data>
-  <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
-    <value>Ctrl + Break</value>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>CTRL + C</value>
@@ -1131,7 +1131,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Continue (F5)</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>Depurar um Assembly (F5)</value>
+    <value>Debug a Program ({0})</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
     <value>Reiniciar (Ctrl+Shift+F5)</value>
@@ -1215,7 +1215,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Mostrar Tipos de Parâmetro</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador de .NET</value>
+    <value>Depurador</value>
   </data>
   <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
     <value>Ponto de interrupção</value>
@@ -1294,5 +1294,35 @@ Tem certeza que deseja expandi-la?</value>
   </data>
   <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
     <value>Hex Editor (Janela de Memória)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Debug engine</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Windows</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Ter_minate All</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_Watch</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Watch 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>Watch {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>Watch _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>Watch {0}</value>
   </data>
 </root>

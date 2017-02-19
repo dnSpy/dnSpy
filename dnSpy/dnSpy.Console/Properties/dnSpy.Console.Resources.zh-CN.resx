@@ -232,7 +232,7 @@
     <value>不将BAML反编译为XAML</value>
   </data>
   <data name="CmdLineDescription_NoGAC" xml:space="preserve">
-    <value>don't use the GAC to look up assemblies. Useful with --no-stdlib</value>
+    <value>不从GAC中搜寻程序集。与 --no-stdlib 参数搭配使用</value>
   </data>
   <data name="CmdLineDescription_NoResources" xml:space="preserve">
     <value>不要解包资源文件</value>

@@ -160,7 +160,7 @@
     <value>Verwende dnSpy-x86.exe beim Anhängen an 32-bit Prozesse</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>Unter_brechen</value>
+    <value>Brea_k All</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
     <value>_Haltepunkte</value>
@@ -301,7 +301,7 @@
     <value>Host Ar_gumente</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>Assembly debuggen</value>
+    <value>Debug Program</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Arbeitsverzeichnis</value>
@@ -495,8 +495,8 @@
   <data name="DeleteCommand" xml:space="preserve">
     <value>_Löschen</value>
   </data>
-  <data name="DetachCommand" xml:space="preserve">
-    <value>_Trennen</value>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Detach A_ll</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
     <value>Alle Haltepunkte _deaktivieren</value>
@@ -915,8 +915,8 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
     <value>Strg+Umschalt+{0}</value>
   </data>
-  <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
-    <value>Strg+Unterbrechen</value>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Strg+C</value>
@@ -1135,7 +1135,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Weiter (F5)</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>Assembly debuggen (F5)</value>
+    <value>Debug a Program ({0})</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
     <value>Neustarten (Strg+Umschalt+F5)</value>
@@ -1219,7 +1219,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Parametertypen anzeigen</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>.NET Debugger</value>
+    <value>Debugger</value>
   </data>
   <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
     <value>Haltepunkt</value>
@@ -1298,5 +1298,35 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   </data>
   <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
     <value>Hex-Editor (Fenster "Speicher")</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Debug engine</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Windows</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>Ausga_be</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Ter_minate All</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_Watch</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Watch 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>Watch {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>Watch _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>Watch {0}</value>
   </data>
 </root>

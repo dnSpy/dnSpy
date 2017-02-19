@@ -124,7 +124,7 @@
     <value>追加类型</value>
   </data>
   <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
-    <value>禁用 JIT 编译优化器</value>
+    <value>禁用 JIT编译优化(_D)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
     <value>启用 JIT 编译跟踪</value>
@@ -163,31 +163,31 @@
     <value>版本</value>
   </data>
   <data name="Button_Add" xml:space="preserve">
-    <value>添加</value>
+    <value>添加(_A)</value>
   </data>
   <data name="Button_Add2" xml:space="preserve">
-    <value>添加...</value>
+    <value>添加(_A)...</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>取消</value>
+    <value>取消(_C)</value>
   </data>
   <data name="Button_Delete" xml:space="preserve">
-    <value>删除</value>
+    <value>删除(_D)</value>
   </data>
   <data name="Button_Edit" xml:space="preserve">
-    <value>编辑</value>
+    <value>编辑(_E)...</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>确定</value>
+    <value>_OK</value>
   </data>
   <data name="Button_Remove" xml:space="preserve">
-    <value>移除</value>
+    <value>移除(_R)</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
     <value>重置</value>
   </data>
   <data name="CA_NA_Name" xml:space="preserve">
-    <value>名称</value>
+    <value>名称(_N)</value>
   </data>
   <data name="CA_NA_PropertyFieldTypeToolTip" xml:space="preserve">
     <value>属性/字段类型</value>
@@ -211,10 +211,10 @@
     <value>构造器参数</value>
   </data>
   <data name="CopyAsTextCommand" xml:space="preserve">
-    <value>复制为文本</value>
+    <value>复制为文本(_X)</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>复制</value>
+    <value>复制(_Y)</value>
   </data>
   <data name="CopyILBytesCommand" xml:space="preserve">
     <value>复制 IL 字节</value>
@@ -508,12 +508,6 @@
   <data name="GP_Variance" xml:space="preserve">
     <value>_Variance</value>
   </data>
-  <data name="HexField_RelativeVirtualAddress" xml:space="preserve">
-    <value>{0} RVA</value>
-  </data>
-  <data name="HexField_Size" xml:space="preserve">
-    <value>{0} 大小</value>
-  </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
     <value>优先32位</value>
   </data>
@@ -692,7 +686,7 @@
     <value>Initialize Class to a TypeSpec</value>
   </data>
   <data name="MemberRef_Type_ToolTip" xml:space="preserve">
-    <value>Initialize Class to a Type</value>
+    <value>初始化类至类型</value>
   </data>
   <data name="MethodCantBeNull" xml:space="preserve">
     <value>方法不能为 null</value>
@@ -1040,10 +1034,10 @@
     <value>程序集中的部分代码可能会引用此类型。确定要删除此类型吗？</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>有文件未保存，确定要退出吗？</value>
+    <value>有文件尚未保存。要在退出前保存吗？</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>有 {0} 个未保存文件，确定要退出吗？</value>
+    <value>有 {0} 个文件尚未保存。要在退出前保存吗？</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
     <value>确定要加载新程序集并放弃所有修改吗？</value>
@@ -1496,7 +1490,7 @@
     <value>Tables Stream</value>
   </data>
   <data name="HexPasteMethodBodyCommand" xml:space="preserve">
-    <value>Hex Paste Method Body</value>
+    <value>十六进制粘贴方法体</value>
   </data>
   <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
     <value>十六进制写入空方法体</value>
@@ -1670,7 +1664,7 @@
     <value>模块类型(_T)</value>
   </data>
   <data name="Module_Name" xml:space="preserve">
-    <value>N_ame</value>
+    <value>名称(_A)</value>
   </data>
   <data name="MoveTypesToEmptyNamespaceCommand" xml:space="preserve">
     <value>将类型移动到空命名空间下</value>
@@ -1793,7 +1787,7 @@
     <value>RID</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>_Save...</value>
+    <value>保存(_S)...</value>
   </data>
   <data name="SaveAllCommand" xml:space="preserve">
     <value>全部保存(_L)...</value>
@@ -2240,7 +2234,7 @@
     <value>特殊名称</value>
   </data>
   <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
-    <value>_Entry Point</value>
+    <value>入口点(_E)</value>
   </data>
   <data name="SaveModule_Cor20_Flags_Bit32Preferred" xml:space="preserve">
     <value>优先32位(_P)</value>
@@ -2372,13 +2366,13 @@
     <value>_RID</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Assembly editor</value>
+    <value>程序集编辑器</value>
   </data>
   <data name="ShortCutKeyCtrlShiftE" xml:space="preserve">
     <value>Ctrl+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edit Method ({0})...</value>
+    <value>编辑方法 ({0})...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>修改代码</value>
@@ -2399,19 +2393,19 @@
     <value>Line</value>
   </data>
   <data name="Button_Compile" xml:space="preserve">
-    <value>Compile</value>
+    <value>编译</value>
   </data>
   <data name="StatusError" xml:space="preserve">
-    <value>Error</value>
+    <value>错误</value>
   </data>
   <data name="StatusHidden" xml:space="preserve">
     <value>Hidden</value>
   </data>
   <data name="StatusInfo" xml:space="preserve">
-    <value>Info</value>
+    <value>信息</value>
   </data>
   <data name="StatusWarning" xml:space="preserve">
-    <value>Warning</value>
+    <value>警告</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
     <value>添加程序集引用 (Ctrl+O)</value>
@@ -2483,13 +2477,13 @@
     <value>编辑程序集标签 ({0})...</value>
   </data>
   <data name="EditCodeAddClass2" xml:space="preserve">
-    <value>Add Class ({0})...</value>
+    <value>添加类 ({0})...</value>
   </data>
   <data name="EditCodeEditClass" xml:space="preserve">
-    <value>Edit Class</value>
+    <value>编辑类</value>
   </data>
   <data name="EditCodeEditClass2" xml:space="preserve">
-    <value>Edit Class ({0})...</value>
+    <value>编辑类 ({0})...</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
     <value>Couldn't find the edited type: {0}</value>
@@ -2498,6 +2492,6 @@
     <value>关闭过时的内存缓存模块</value>
   </data>
   <data name="CloseAllMissingFilesCommand" xml:space="preserve">
-    <value>Close All Missing Files</value>
+    <value>关闭所有已丢失的文件</value>
   </data>
 </root>

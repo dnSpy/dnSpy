@@ -124,13 +124,13 @@
     <value>Neuester _Build</value>
   </data>
   <data name="About_LatestRelease" xml:space="preserve">
-    <value>_Aktuellste Version</value>
+    <value>_Aktuelle Version</value>
   </data>
   <data name="About_Menu" xml:space="preserve">
     <value>_Über</value>
   </data>
   <data name="About_SourceCode" xml:space="preserve">
-    <value>_Source Code</value>
+    <value>Quelltext</value>
   </data>
   <data name="About_TabTitle" xml:space="preserve">
     <value>Über</value>
@@ -169,10 +169,10 @@
     <value>_Ja</value>
   </data>
   <data name="CantConvertInputToType" xml:space="preserve">
-    <value>Die Eingabe kann nicht in den benötigten Typ umgewandelt werden: {0}</value>
+    <value>Die Eingabe kann nicht in den gewünschten Typ konvertiert werden: {0}</value>
   </data>
   <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
-    <value>Alle Registergruppen außer diesem schließen</value>
+    <value>Alle Registergruppen außer dieser schließen</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
     <value>_Alle außer diesem schließen</value>
@@ -193,16 +193,16 @@
     <value>Strg+C</value>
   </data>
   <data name="CopyMDTokenCommand" xml:space="preserve">
-    <value>MD Token _kopieren</value>
+    <value>MD-Token _kopieren</value>
   </data>
   <data name="CouldNotStartBrowser" xml:space="preserve">
     <value>Konnte Browser nicht starten</value>
   </data>
   <data name="DecompilationCanceled" xml:space="preserve">
-    <value>Die Aktion wurde abgebrochen</value>
+    <value>Der Vorgang wurde abgebrochen</value>
   </data>
   <data name="DecompilationException" xml:space="preserve">
-    <value>Ein Fehler trat auf</value>
+    <value>Ein Fehler ist aufgetreten</value>
   </data>
   <data name="DecompileCancelButton" xml:space="preserve">
     <value>Abbrechen</value>
@@ -211,7 +211,7 @@
     <value>Dekompiliere...</value>
   </data>
   <data name="DerivedTypes" xml:space="preserve">
-    <value>Vererbte Typen</value>
+    <value>Abgeleitete Typen</value>
   </data>
   <data name="DotNetExes" xml:space="preserve">
     <value>.NET Executables</value>
@@ -262,7 +262,7 @@
     <value>Ungültige Zeile: {0}</value>
   </data>
   <data name="GoToLine_Label" xml:space="preserve">
-    <value>_Zeile [, column]</value>
+    <value>_Zeile [, Spalte]</value>
   </data>
   <data name="GoToLine_Title" xml:space="preserve">
     <value>Gehe zu Zeile</value>

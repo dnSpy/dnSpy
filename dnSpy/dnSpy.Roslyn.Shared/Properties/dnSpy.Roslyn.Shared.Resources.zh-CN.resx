@@ -145,7 +145,7 @@
     <value>接口</value>
   </data>
   <data name="KeywordsToolTip" xml:space="preserve">
-    <value>Keywords</value>
+    <value>关键字</value>
   </data>
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
     <value>局部变量和参数</value>
@@ -163,7 +163,7 @@
     <value>属性</value>
   </data>
   <data name="SnippetsToolTip" xml:space="preserve">
-    <value>Snippets</value>
+    <value>代码块</value>
   </data>
   <data name="StructuresToolTip" xml:space="preserve">
     <value>结构</value>

@@ -508,12 +508,6 @@
   <data name="GP_Variance" xml:space="preserve">
     <value>_Вариантность</value>
   </data>
-  <data name="HexField_RelativeVirtualAddress" xml:space="preserve">
-    <value>{0} RVA</value>
-  </data>
-  <data name="HexField_Size" xml:space="preserve">
-    <value>{0} Размер</value>
-  </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
     <value>Предпочтительно 32-бит</value>
   </data>
@@ -1040,10 +1034,10 @@
     <value>Этот тип может использоваться в какой-нибудь сборке. Вы уверены, что хотите удалить тип?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>Файл не сохранен. Вы уверены, что хотите выйти?</value>
+    <value>There is an unsaved file. Do you want to save it before exiting?</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>{0} файлов не сохранено. Вы уверены, что хотите выйти?</value>
+    <value>There are {0} unsaved files. Do you want to save them before exiting?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
     <value>Вы уверены, что вы хотите загрузить новые сборки и потерять все изменения?</value>

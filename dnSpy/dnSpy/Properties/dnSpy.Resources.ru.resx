@@ -1002,7 +1002,7 @@
     <value>Сброс</value>
   </data>
   <data name="BgImgSettings_Zoom" xml:space="preserve">
-    <value>Масштаб %</value>
+    <value>Масштаб, %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
     <value>Показать изображения</value>
@@ -1053,16 +1053,16 @@
     <value>Изображения</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Нижний отступ %</value>
+    <value>Нижний отступ, %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Левый отступ %</value>
+    <value>Левый отступ, %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Правый отступ %</value>
+    <value>Правый отступ, %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Верхний отступ %</value>
+    <value>Верхний отступ, %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
     <value>Искать следующее (F3)</value>
@@ -1116,7 +1116,7 @@
     <value>Тема</value>
   </data>
   <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
-    <value>Интегрировать в Windows проводник</value>
+    <value>Интегрировать в проводник Windows</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
     <value>Сортировка (требуется перезагрузка)</value>
@@ -1197,7 +1197,7 @@
     <value>Не добавлять дополнительный межстрочный интервал</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
-    <value>Масштаб с помощью колеса мыши</value>
+    <value>Масштабировать с помощью колеса мыши</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
     <value>Выделять ссылки</value>

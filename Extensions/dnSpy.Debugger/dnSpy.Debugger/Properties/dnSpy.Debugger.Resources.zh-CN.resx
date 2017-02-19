@@ -160,7 +160,7 @@
     <value>请改用dnSpy-x86.exe来附加到32位进程</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>中断(_K)</value>
+    <value>Brea_k All</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
     <value>断点(_B)</value>
@@ -301,7 +301,7 @@
     <value>宿主参数(_G)</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>调试程序集</value>
+    <value>Debug Program</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>工作目录(_W)</value>
@@ -495,8 +495,8 @@
   <data name="DeleteCommand" xml:space="preserve">
     <value>删除(_D)</value>
   </data>
-  <data name="DetachCommand" xml:space="preserve">
-    <value>分离(_D)</value>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Detach A_ll</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
     <value>禁用所有断点(_N)</value>
@@ -915,8 +915,8 @@ HResult: 0x{3:X8}</value>
   <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
     <value>Ctrl+Shift+{0}</value>
   </data>
-  <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
-    <value>Ctrl+Break</value>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Ctrl+C</value>
@@ -1135,7 +1135,7 @@ HResult: 0x{3:X8}</value>
     <value>继续(F5)</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>调试程序集(F5)</value>
+    <value>Debug a Program ({0})</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
     <value>重新开始(Ctrl + Shift + F5)</value>
@@ -1219,7 +1219,7 @@ HResult: 0x{3:X8}</value>
     <value>显示参数类型</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>.NET 调试器</value>
+    <value>调试器</value>
   </data>
   <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
     <value>断点</value>
@@ -1291,12 +1291,42 @@ HResult: 0x{3:X8}</value>
     <value>添加类断点</value>
   </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
-    <value>Add Method Breakpoint</value>
+    <value>添加方法断点</value>
   </data>
   <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
-    <value>Memory Window</value>
+    <value>内存窗口</value>
   </data>
   <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
-    <value>Hex Editor (Memory Window)</value>
+    <value>十六进制编辑器 (内存窗口)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Debug engine</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Windows</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>输出(_O)</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Ter_minate All</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_Watch</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Watch 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>Watch {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>Watch _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>Watch {0}</value>
   </data>
 </root>

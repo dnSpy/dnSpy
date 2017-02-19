@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MSBuild_CopyAppConfig" xml:space="preserve">
-    <value>复制 app.config({0})</value>
+    <value>复制 app.config ({0})</value>
   </data>
   <data name="MSBuild_CouldNotCreateDirectory2" xml:space="preserve">
     <value>无法创建目录{0}，错误信息：{1}</value>

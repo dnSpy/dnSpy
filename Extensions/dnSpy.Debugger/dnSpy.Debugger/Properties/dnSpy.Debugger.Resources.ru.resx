@@ -160,7 +160,7 @@
     <value>Используйте dnSpy-x86.exe для присоединения к 32-битным процессам</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>Ос_тановить</value>
+    <value>Brea_k All</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
     <value>Точки _останова</value>
@@ -301,7 +301,7 @@
     <value>Ар_гументы хоста</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>Отладка сборки</value>
+    <value>Debug Program</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Рабочий каталог</value>
@@ -358,7 +358,7 @@
     <value>Игнорировать Debugger.Break() и другие инструкции останова</value>
   </data>
   <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
-    <value>Включить вычисление свойств и другие неявные вызовы функций</value>
+    <value>Разрешить вычисление свойств и другие неявные вызовы функций</value>
   </data>
   <data name="DbgSettings_SyntaxHighlightAttach" xml:space="preserve">
     <value>Присоеди_ниться</value>
@@ -385,7 +385,7 @@
     <value>Отлаживать файлы, загруженные из памяти процесса (снимите флажок для того, чтобы использовать файлы с диска)</value>
   </data>
   <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
-    <value>Вызывать функции конвертирования строк в окнах переменных</value>
+    <value>Вызывать функцию конвертирования строк в окнах переменных</value>
   </data>
   <data name="DebugAssemblyCommand" xml:space="preserve">
     <value>_Отладить сборку</value>
@@ -495,8 +495,8 @@
   <data name="DeleteCommand" xml:space="preserve">
     <value>_Удалить</value>
   </data>
-  <data name="DetachCommand" xml:space="preserve">
-    <value>_Отсоединить</value>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Detach A_ll</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
     <value>Выключить все точки оста_нова</value>
@@ -915,8 +915,8 @@ HResult: 0x{3:X8}</value>
   <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
     <value>Ctrl+Shift+{0}</value>
   </data>
-  <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
-    <value>Ctrl+Break</value>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Ctrl+C</value>
@@ -1135,7 +1135,7 @@ HResult: 0x{3:X8}</value>
     <value>Продолжить (F5)</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>Отладить сборку (F5)</value>
+    <value>Debug a Program ({0})</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
     <value>Рестарт (Ctrl+Shift+F5)</value>
@@ -1219,7 +1219,7 @@ HResult: 0x{3:X8}</value>
     <value>Показать типы параметров</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Дебаггер .NET</value>
+    <value>Отладчик</value>
   </data>
   <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
     <value>Точки останова</value>
@@ -1298,5 +1298,35 @@ HResult: 0x{3:X8}</value>
   </data>
   <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
     <value>Редактор Hex (Память)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Debug engine</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Windows</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>Выв_од</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Ter_minate All</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_Watch</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Watch 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>Watch {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>Watch _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>Watch {0}</value>
   </data>
 </root>

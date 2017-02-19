@@ -337,13 +337,13 @@
     <value>移动全部到前一标签组</value>
   </data>
   <data name="MoveBottomCommand" xml:space="preserve">
-    <value>底部</value>
+    <value>底部(_B)</value>
   </data>
   <data name="MoveLeftCommand" xml:space="preserve">
-    <value>左侧</value>
+    <value>左侧(_L)</value>
   </data>
   <data name="MoveRightCommand" xml:space="preserve">
-    <value>右侧</value>
+    <value>右侧(_R)</value>
   </data>
   <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
     <value>移动标签组到下一标签组之后</value>
@@ -352,7 +352,7 @@
     <value>移动标签组到前一标签组之前</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
-    <value>移动到下一标签组</value>
+    <value>移动到下一标签组(_X)</value>
   </data>
   <data name="MoveToolWindowCommand" xml:space="preserve">
     <value>移动(_M)</value>
@@ -442,7 +442,7 @@
     <value>Ctrl+O</value>
   </data>
   <data name="OpenListCommand" xml:space="preserve">
-    <value>打开列表...</value>
+    <value>打开列表(_I)...</value>
   </data>
   <data name="OpenList_AskForName" xml:space="preserve">
     <value>名称</value>
@@ -481,7 +481,7 @@
     <value>选项</value>
   </data>
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
-    <value>开启所有警告讯息</value>
+    <value>启用所有警告信息</value>
   </data>
   <data name="Options_Misc_Deserialize" xml:space="preserve">
     <value>反序列化资源中的类型 （不安全）</value>
@@ -496,7 +496,7 @@
     <value>引用</value>
   </data>
   <data name="ReloadAsmsCommand" xml:space="preserve">
-    <value>重新加载所有程序集</value>
+    <value>重新加载所有程序集(_R)</value>
   </data>
   <data name="ResourcesFolder" xml:space="preserve">
     <value>资源</value>
@@ -580,7 +580,7 @@
     <value>关闭</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Decompile a member's enclosing class instead of the class member</value>
+    <value>反编译成员时也反编译成员所在的类</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
     <value>高亮引用</value>
@@ -879,7 +879,7 @@
     <value>折叠 Tree_View 节点</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
-    <value>关闭全部</value>
+    <value>全部关闭</value>
   </data>
   <data name="ExportToProject_NewGuid" xml:space="preserve">
     <value>新建(_N)</value>
@@ -1290,10 +1290,10 @@
     <value>转到偏移量</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
-    <value>_End</value>
+    <value>结束(_E)</value>
   </data>
   <data name="HexEditorSelect_Start" xml:space="preserve">
-    <value>_Start</value>
+    <value>开始(_S)</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
     <value>选择</value>
@@ -1352,7 +1352,7 @@
     <value>用字节填充选择...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
-    <value>_Byte</value>
+    <value>字节(_B)</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
     <value>输入值</value>
@@ -1394,7 +1394,7 @@
     <value>This value is added to start offset before it's shown on the screen</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>B_ytes per Line</value>
+    <value>每行的字节数(_Y)</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
     <value>_End Offset</value>
@@ -1403,10 +1403,10 @@
     <value>Offset Bi_t Size</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>Sho_w ASCII</value>
+    <value>显示ASCII (_W)</value>
   </data>
   <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
-    <value>S_how Offset</value>
+    <value>显示偏移(_H)</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
     <value>显示数值(_V)</value>
@@ -1418,7 +1418,7 @@
     <value>本地十六进制编辑器设置</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>使用相对偏移</value>
+    <value>使用相对偏移量(_R)</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
     <value>所有的偏移量为相对于起始偏移量</value>
@@ -1554,13 +1554,13 @@
     <value>复制 {0}</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>Copy Absolute Offset</value>
+    <value>复制绝对偏移</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
     <value>复制文件偏移</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>Copy RVA</value>
+    <value>复制RVA</value>
   </data>
   <data name="CopyValueCommand" xml:space="preserve">
     <value>复制数值</value>
@@ -1626,10 +1626,10 @@
     <value>Ctrl+M</value>
   </data>
   <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
-    <value>Invalid offset or metadata token</value>
+    <value>偏移量或元数据Token无效</value>
   </data>
   <data name="GoToMetadataMethodBody" xml:space="preserve">
-    <value>方法主体</value>
+    <value>方法体</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
     <value>Metadata Token</value>
