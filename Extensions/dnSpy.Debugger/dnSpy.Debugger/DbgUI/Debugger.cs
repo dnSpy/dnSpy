@@ -20,7 +20,10 @@
 namespace dnSpy.Debugger.DbgUI {
 	abstract class Debugger {
 		public abstract bool IsDebugging { get; }
+		public abstract bool CanDebugProgram { get; }
 		public abstract void DebugProgram();
+		public abstract bool CanAttachProgram { get; }
+		public abstract void AttachProgram();
 		public abstract bool CanContinue { get; }
 		public abstract void Continue();
 		public abstract bool CanBreakAll { get; }
@@ -29,6 +32,8 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void StopDebugging();
 		public abstract bool CanDetachAll { get; }
 		public abstract void DetachAll();
+		public abstract bool CanTerminateAll { get; }
+		public abstract void TerminateAll();
 		public abstract bool CanRestart { get; }
 		public abstract void Restart();
 		public abstract bool CanShowNextStatement { get; }

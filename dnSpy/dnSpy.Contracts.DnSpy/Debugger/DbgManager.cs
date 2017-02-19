@@ -82,6 +82,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract void StopDebuggingAll();
 
 		/// <summary>
+		/// Terminates all debugged programs
+		/// </summary>
+		public abstract void TerminateAll();
+
+		/// <summary>
 		/// Detaches all debugged programs, if possible. If it's not possible to detach a
 		/// program, it will be terminated.
 		/// </summary>

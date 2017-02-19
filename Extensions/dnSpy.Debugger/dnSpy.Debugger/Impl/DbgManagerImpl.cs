@@ -338,6 +338,15 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
+		public override void TerminateAll() {
+			lock (lockObj) {
+				// Make a copy of it in the unlikely event that an engine gets disconnected
+				// when we call Terminate() inside the lock
+				foreach (var info in engines.ToArray())
+					info.Engine.Terminate();
+			}
+		}
+
 		public override void DetachAll() {
 			lock (lockObj) {
 				// Make a copy of it in the unlikely event that an engine gets disconnected

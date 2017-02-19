@@ -160,7 +160,7 @@
     <value>Use dnSpy-x86.exe to attach to 32-bit processes</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>Brea_k</value>
+    <value>Brea_k All</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
     <value>_Breakpoints</value>
@@ -495,8 +495,8 @@
   <data name="DeleteCommand" xml:space="preserve">
     <value>_Delete</value>
   </data>
-  <data name="DetachCommand" xml:space="preserve">
-    <value>_Detach</value>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Detach A_ll</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
     <value>Disable All Breakpoi_nts</value>
@@ -915,8 +915,8 @@ Are you sure you want to expand it?</value>
   <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
     <value>Ctrl+Shift+{0}</value>
   </data>
-  <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
-    <value>Ctrl+Break</value>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Ctrl+C</value>
@@ -1301,5 +1301,8 @@ Are you sure you want to expand it?</value>
   </data>
   <data name="DbgAsm_DebugEngine" xml:space="preserve">
     <value>_Debug engine</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Ter_minate All</value>
   </data>
 </root>

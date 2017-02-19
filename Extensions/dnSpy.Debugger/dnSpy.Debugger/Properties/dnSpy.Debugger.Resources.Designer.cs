@@ -214,7 +214,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Brea_k.
+        ///   Looks up a localized string similar to Brea_k All.
         /// </summary>
         public static string BreakCommand {
             get {
@@ -1339,11 +1339,11 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Detach.
+        ///   Looks up a localized string similar to Detach A_ll.
         /// </summary>
-        public static string DetachCommand {
+        public static string DetachAllCommand {
             get {
-                return ResourceManager.GetString("DetachCommand", resourceCulture);
+                return ResourceManager.GetString("DetachAllCommand", resourceCulture);
             }
         }
         
@@ -2578,6 +2578,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+Break.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltBreak {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltBreak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Alt+C.
         /// </summary>
         public static string ShortCutKeyCtrlAltC {
@@ -2619,15 +2628,6 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyCtrlAltU {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlAltU", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ctrl+Break.
-        /// </summary>
-        public static string ShortCutKeyCtrlBreak {
-            get {
-                return ResourceManager.GetString("ShortCutKeyCtrlBreak", resourceCulture);
             }
         }
         
@@ -3105,6 +3105,15 @@ namespace dnSpy.Debugger.Properties {
         public static string SwitchToThreadNewTabCommand {
             get {
                 return ResourceManager.GetString("SwitchToThreadNewTabCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ter_minate All.
+        /// </summary>
+        public static string TerminateAllCommand {
+            get {
+                return ResourceManager.GetString("TerminateAllCommand", resourceCulture);
             }
         }
         

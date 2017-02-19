@@ -45,6 +45,7 @@ namespace dnSpy.Debugger.DbgUI {
 			this.startDebuggingOptionsProvider = startDebuggingOptionsProvider;
 		}
 
+		public override bool CanDebugProgram => true;
 		public override void DebugProgram() {
 			var options = startDebuggingOptionsProvider.Value.GetStartDebuggingOptions();
 			if (options == null)
@@ -53,6 +54,11 @@ namespace dnSpy.Debugger.DbgUI {
 			var errMsg = dbgManager.Value.Start(options);
 			if (errMsg != null)
 				messageBoxService.Show(errMsg);
+		}
+
+		public override bool CanAttachProgram => true;
+		public override void AttachProgram() {
+			//TODO:
 		}
 
 		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && !dbgManager.Value.IsRunning;
@@ -73,6 +79,9 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 			dbgManager.Value.DetachAll();
 		}
+
+		public override bool CanTerminateAll => CanExecutePauseOrRunningCommand;
+		public override void TerminateAll() => dbgManager.Value.TerminateAll();
 
 		public override bool CanRestart => CanExecutePauseOrRunningCommand;//TODO:
 		public override void Restart() {

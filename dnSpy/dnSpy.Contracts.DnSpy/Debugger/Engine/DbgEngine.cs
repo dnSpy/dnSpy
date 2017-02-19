@@ -76,6 +76,16 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract void StopDebugging();
 
 		/// <summary>
+		/// Terminates the debugged program. This is an asynchronous method.
+		/// 
+		/// This method gets called when the user chooses Terminate All from the Debug menu
+		/// 
+		/// When the program has been terminated or detached, message <see cref="DbgMessageDisconnected"/>
+		/// must be sent.
+		/// </summary>
+		public abstract void Terminate();
+
+		/// <summary>
 		/// true if the engine can detach from the debugged program without terminating it.
 		/// </summary>
 		public abstract bool CanDetach { get; }

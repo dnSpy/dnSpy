@@ -47,6 +47,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IMenuItemContext context) => debugger.Value.DebugProgram();
+			public override bool IsVisible(IMenuItemContext context) => !debugger.Value.IsDebugging && debugger.Value.CanDebugProgram;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StartWithoutDebuggingCommand", Icon = DsImagesAttribute.RunOutline, InputGestureText = "res:ShortCutKeyCtrlF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 10)]
@@ -68,9 +69,8 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger, false) {
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
-			}
+			public override void Execute(IMenuItemContext context) => debugger.Value.AttachProgram();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanAttachProgram;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:ContinueDebuggingCommand", Icon = DsImagesAttribute.Run, InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 0)]
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.DbgUI {
 			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanContinue;
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:BreakCommand", Icon = DsImagesAttribute.Pause, InputGestureText = "res:ShortCutKeyCtrlBreak", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:BreakCommand", Icon = DsImagesAttribute.Pause, InputGestureText = "res:ShortCutKeyCtrlAltBreak", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 10)]
 		sealed class BreakDebugMainMenuCommand : DebugMainMenuCommand {
 			[ImportingConstructor]
 			public BreakDebugMainMenuCommand(Lazy<Debugger> debugger)
@@ -106,10 +106,10 @@ namespace dnSpy.Debugger.DbgUI {
 			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanStopDebugging;
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DetachCommand", Icon = DsImagesAttribute.Cancel, Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 30)]
-		sealed class DetachDebugMainMenuCommand : DebugMainMenuCommand {
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DetachAllCommand", Icon = DsImagesAttribute.Cancel, Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 30)]
+		sealed class DetachAllDebugMainMenuCommand : DebugMainMenuCommand {
 			[ImportingConstructor]
-			public DetachDebugMainMenuCommand(Lazy<Debugger> debugger)
+			public DetachAllDebugMainMenuCommand(Lazy<Debugger> debugger)
 				: base(debugger, true) {
 			}
 
@@ -117,7 +117,18 @@ namespace dnSpy.Debugger.DbgUI {
 			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanDetachAll;
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:RestartCommand", Icon = DsImagesAttribute.Restart, InputGestureText = "res:ShortCutKeyCtrlShiftF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 40)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:TerminateAllCommand", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 40)]
+		sealed class TerminateAllDebugMainMenuCommand : DebugMainMenuCommand {
+			[ImportingConstructor]
+			public TerminateAllDebugMainMenuCommand(Lazy<Debugger> debugger)
+				: base(debugger, true) {
+			}
+
+			public override void Execute(IMenuItemContext context) => debugger.Value.TerminateAll();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanTerminateAll;
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:RestartCommand", Icon = DsImagesAttribute.Restart, InputGestureText = "res:ShortCutKeyCtrlShiftF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 50)]
 		sealed class RestartDebugMainMenuCommand : DebugMainMenuCommand {
 			[ImportingConstructor]
 			public RestartDebugMainMenuCommand(Lazy<Debugger> debugger)
@@ -126,6 +137,17 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IMenuItemContext context) => debugger.Value.Restart();
 			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanRestart;
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:AttachToProcessCommand", Icon = DsImagesAttribute.Process, InputGestureText = "res:ShortCutKeyCtrlAltP", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 70)]
+		sealed class Attach2DebugMainMenuCommand : DebugMainMenuCommand {
+			[ImportingConstructor]
+			public Attach2DebugMainMenuCommand(Lazy<Debugger> debugger)
+				: base(debugger, true) {
+			}
+
+			public override void Execute(IMenuItemContext context) => debugger.Value.AttachProgram();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanAttachProgram;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StepIntoCommand", Icon = DsImagesAttribute.StepInto, InputGestureText = "res:ShortCutKeyF11", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP, Order = 0)]
