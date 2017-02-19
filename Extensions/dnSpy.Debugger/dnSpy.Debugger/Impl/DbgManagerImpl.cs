@@ -283,7 +283,12 @@ namespace dnSpy.Debugger.Impl {
 				// It could've been disconnected
 				if (info == null)
 					return;
-				info.EngineState = EngineState.Paused;
+
+				if (e.ErrorMessage != null) {
+					//TODO: Log the error
+				}
+				else
+					info.EngineState = EngineState.Paused;
 			}
 			breakAllHelper?.OnBreak(engine);
 		}
@@ -292,6 +297,31 @@ namespace dnSpy.Debugger.Impl {
 			bool raiseIsRunningChanged;
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
+				cachedIsRunning = CalculateIsRunning_NoLock();
+				raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
+			}
+			if (raiseIsRunningChanged)
+				IsRunningChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		public override void RunAll() {
+			bool raiseIsRunningChanged;
+			lock (lockObj) {
+				var oldIsRunning = cachedIsRunning;
+
+				// If we're trying to break the processes, don't do a thing
+				if (breakAllHelper != null)
+					return;
+
+				// Make a copy of it in the unlikely event that an engine gets disconnected
+				// when we call Run() inside the lock
+				foreach (var info in engines.ToArray()) {
+					if (info.EngineState == EngineState.Paused) {
+						info.EngineState = EngineState.Running;
+						info.Engine.Run();
+					}
+				}
+
 				cachedIsRunning = CalculateIsRunning_NoLock();
 				raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
 			}

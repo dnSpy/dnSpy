@@ -22,6 +22,8 @@ using System;
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Manages all debug engines. All events can be raised in any thread.
+	/// If you need to hook events before debugging starts, you should export an <see cref="IDbgManagerStartListener"/>.
+	/// It gets called when <see cref="Start(StartDebuggingOptions)"/> gets called for the first time.
 	/// </summary>
 	public abstract class DbgManager {
 		/// <summary>
@@ -67,6 +69,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Pauses all debugged processes
 		/// </summary>
 		public abstract void BreakAll();
+
+		/// <summary>
+		/// Lets all programs run again. This is the inverse of <see cref="BreakAll"/>
+		/// </summary>
+		public abstract void RunAll();
 	}
 
 	/// <summary>

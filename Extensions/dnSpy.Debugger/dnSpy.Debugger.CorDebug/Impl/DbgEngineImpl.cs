@@ -157,7 +157,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		public override void Break() => ExecDebugThreadAsync(BreakCore);
-
 		void BreakCore() {
 			Dispatcher.VerifyAccess();
 			if (dnDebugger.ProcessState == DebuggerProcessState.Starting || dnDebugger.ProcessState == DebuggerProcessState.Running) {
@@ -171,6 +170,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 			else
 				SendMessage(new DbgMessageBreak());
+		}
+
+		public override void Run() => ExecDebugThreadAsync(RunCore);
+		void RunCore() {
+			Dispatcher.VerifyAccess();
+			if (dnDebugger.ProcessState == DebuggerProcessState.Paused)
+				dnDebugger.Continue();
 		}
 	}
 }

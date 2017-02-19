@@ -54,10 +54,7 @@ namespace dnSpy.Debugger.DbgUI {
 				messageBoxService.Show(errMsg);
 		}
 
-		public override void Continue() {
-			//TODO:
-		}
-
+		public override void Continue() => dbgManager.Value.RunAll();
 		public override void BreakAll() => dbgManager.Value.BreakAll();
 
 		public override void Stop() {

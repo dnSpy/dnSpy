@@ -56,6 +56,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// must be sent.
 		/// </summary>
 		public abstract void Break();
+
+		/// <summary>
+		/// Lets the program run again. This is an asynchronous method. No message is sent.
+		/// </summary>
+		public abstract void Run();
 	}
 
 	/// <summary>
