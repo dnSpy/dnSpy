@@ -390,8 +390,8 @@
   <data name="DebugAssemblyCommand" xml:space="preserve">
     <value>Depurar Assembly</value>
   </data>
-  <data name="DebugAssemblyCommand2" xml:space="preserve">
-    <value>Depurar um Assembly...</value>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>_Start Debugging...</value>
   </data>
   <data name="DebugCoreCLRAssemblyCommand" xml:space="preserve">
     <value>Depurar um Assembly CoreCLR...</value>
@@ -1324,5 +1324,8 @@ Tem certeza que deseja expandi-la?</value>
   </data>
   <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
     <value>Watch {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Opções...</value>
   </data>
 </root>

@@ -390,8 +390,8 @@
   <data name="DebugAssemblyCommand" xml:space="preserve">
     <value>_Отладить сборку</value>
   </data>
-  <data name="DebugAssemblyCommand2" xml:space="preserve">
-    <value>_Отладить сборку...</value>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>_Start Debugging...</value>
   </data>
   <data name="DebugCoreCLRAssemblyCommand" xml:space="preserve">
     <value>_Отладить сборку CoreCLR...</value>
@@ -1328,5 +1328,8 @@ HResult: 0x{3:X8}</value>
   </data>
   <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
     <value>Watch {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>_Параметры...</value>
   </data>
 </root>
