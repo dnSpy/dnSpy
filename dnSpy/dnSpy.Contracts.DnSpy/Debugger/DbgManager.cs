@@ -74,6 +74,23 @@ namespace dnSpy.Contracts.Debugger {
 		/// Lets all programs run again. This is the inverse of <see cref="BreakAll"/>
 		/// </summary>
 		public abstract void RunAll();
+
+		/// <summary>
+		/// Stops debugging. All programs started by the debugger will be terminated. All
+		/// other programs will be detached, if possible, else terminated.
+		/// </summary>
+		public abstract void StopDebuggingAll();
+
+		/// <summary>
+		/// Detaches all debugged programs, if possible. If it's not possible to detach a
+		/// program, it will be terminated.
+		/// </summary>
+		public abstract void DetachAll();
+
+		/// <summary>
+		/// true if <see cref="DetachAll"/> can be called without terminating any programs
+		/// </summary>
+		public abstract bool CanDetachWithoutTerminating { get; }
 	}
 
 	/// <summary>

@@ -328,5 +328,35 @@ namespace dnSpy.Debugger.Impl {
 			if (raiseIsRunningChanged)
 				IsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
+
+		public override void StopDebuggingAll() {
+			lock (lockObj) {
+				// Make a copy of it in the unlikely event that an engine gets disconnected
+				// when we call StopDebugging() inside the lock
+				foreach (var info in engines.ToArray())
+					info.Engine.StopDebugging();
+			}
+		}
+
+		public override void DetachAll() {
+			lock (lockObj) {
+				// Make a copy of it in the unlikely event that an engine gets disconnected
+				// when we call Detach() inside the lock
+				foreach (var info in engines.ToArray())
+					info.Engine.Detach();
+			}
+		}
+
+		public override bool CanDetachWithoutTerminating {
+			get {
+				lock (lockObj) {
+					foreach (var info in engines) {
+						if (!info.Engine.CanDetach)
+							return false;
+					}
+					return true;
+				}
+			}
+		}
 	}
 }

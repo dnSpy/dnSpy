@@ -102,8 +102,8 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger, true) {
 			}
 
-			public override void Execute(IMenuItemContext context) => debugger.Value.Stop();
-			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanStop;
+			public override void Execute(IMenuItemContext context) => debugger.Value.StopDebugging();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanStopDebugging;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DetachCommand", Icon = DsImagesAttribute.Cancel, Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 30)]

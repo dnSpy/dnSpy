@@ -61,6 +61,35 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Lets the program run again. This is an asynchronous method. No message is sent.
 		/// </summary>
 		public abstract void Run();
+
+		/// <summary>
+		/// Stops debugging. This is an asynchronous method.
+		/// 
+		/// This method gets called when the user presses the Stop Debugging button.
+		/// 
+		/// If the engine attached to the program, it should be detached, if possible. Otherwise
+		/// (eg. the program was started by the engine), the program should be terminated.
+		/// 
+		/// When the program has been terminated or detached, message <see cref="DbgMessageDisconnected"/>
+		/// must be sent.
+		/// </summary>
+		public abstract void StopDebugging();
+
+		/// <summary>
+		/// true if the engine can detach from the debugged program without terminating it.
+		/// </summary>
+		public abstract bool CanDetach { get; }
+
+		/// <summary>
+		/// Detaches from the debugged program. If it's not possible, the program must be terminated.
+		/// This is an asynchronous method.
+		/// 
+		/// This method gets called when the user chooses Detach All from the Debug menu.
+		/// 
+		/// When the program has been terminated or detached, message <see cref="DbgMessageDisconnected"/>
+		/// must be sent.
+		/// </summary>
+		public abstract void Detach();
 	}
 
 	/// <summary>

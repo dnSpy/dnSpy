@@ -25,8 +25,8 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void Continue();
 		public abstract bool CanBreakAll { get; }
 		public abstract void BreakAll();
-		public abstract bool CanStop { get; }
-		public abstract void Stop();
+		public abstract bool CanStopDebugging { get; }
+		public abstract void StopDebugging();
 		public abstract bool CanDetachAll { get; }
 		public abstract void DetachAll();
 		public abstract bool CanRestart { get; }

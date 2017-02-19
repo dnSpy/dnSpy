@@ -82,8 +82,8 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger) {
 			}
 
-			public override void Execute(IToolBarItemContext context) => debugger.Value.Stop();
-			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStop;
+			public override void Execute(IToolBarItemContext context) => debugger.Value.StopDebugging();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStopDebugging;
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Restart, ToolTip = "res:ToolBarRestartToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 30)]

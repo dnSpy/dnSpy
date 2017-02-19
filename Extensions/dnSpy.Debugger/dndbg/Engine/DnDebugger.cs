@@ -1573,6 +1573,8 @@ namespace dndbg.Engine {
 						Debug.Assert(hr == CordbgErrors.CORDBG_E_UNRECOVERABLE_ERROR);
 						bool b = NativeMethods.TerminateProcess(process.CorProcess.Handle, uint.MaxValue);
 						Debug.Assert(b);
+						// Make sure listeners get notified of the termination
+						ProcessesTerminated();
 					}
 				}
 				catch {

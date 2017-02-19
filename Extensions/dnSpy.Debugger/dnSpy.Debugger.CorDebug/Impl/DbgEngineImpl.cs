@@ -62,7 +62,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
 				hProcess_debuggee = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
-				dnDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
 				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId));
 				break;
 
@@ -84,7 +83,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Debug.Assert(sender != null && sender == dnDebugger);
 
 			if (dnDebugger.ProcessState == DebuggerProcessState.Terminated) {
-				if (hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
+				if (hProcess_debuggee == null || hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
 					exitCode = -1;
 				UnregisterEventsAndCloseProcessHandle();
 
@@ -121,6 +120,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					DisableSystemDebuggerDetection.Initialize(dnDebugger);
 
 				dnDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
+				dnDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
 				return;
 			}
 			catch (Exception ex) {
@@ -156,9 +156,20 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			debuggerThread.Terminate();
 		}
 
+		bool HasConnected_DebugThread {
+			get {
+				Dispatcher.VerifyAccess();
+				// If it's null, we haven't connected yet (most likely due to timeout, eg. trying to debug
+				// a .NET Framework program with the .NET Core engine)
+				return dnDebugger != null;
+			}
+		}
+
 		public override void Break() => ExecDebugThreadAsync(BreakCore);
 		void BreakCore() {
 			Dispatcher.VerifyAccess();
+			if (!HasConnected_DebugThread)
+				return;
 			if (dnDebugger.ProcessState == DebuggerProcessState.Starting || dnDebugger.ProcessState == DebuggerProcessState.Running) {
 				int hr = dnDebugger.TryBreakProcesses();
 				if (hr < 0)
@@ -175,8 +186,40 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public override void Run() => ExecDebugThreadAsync(RunCore);
 		void RunCore() {
 			Dispatcher.VerifyAccess();
+			if (!HasConnected_DebugThread)
+				return;
 			if (dnDebugger.ProcessState == DebuggerProcessState.Paused)
 				dnDebugger.Continue();
+		}
+
+		public override void StopDebugging() {
+			if (StartKind == DbgStartKind.Attach)
+				Detach();
+			else
+				ExecDebugThreadAsync(StopDebuggingCore);
+		}
+		void StopDebuggingCore() {
+			Dispatcher.VerifyAccess();
+			if (!HasConnected_DebugThread)
+				return;
+			if (dnDebugger.ProcessState != DebuggerProcessState.Terminated)
+				dnDebugger.TerminateProcesses();
+		}
+
+		public override bool CanDetach => true;
+
+		public override void Detach() => ExecDebugThreadAsync(DetachCore);
+		void DetachCore() {
+			Dispatcher.VerifyAccess();
+			if (!HasConnected_DebugThread)
+				return;
+			if (dnDebugger.ProcessState != DebuggerProcessState.Terminated) {
+				int hr = dnDebugger.TryDetach();
+				if (hr < 0) {
+					Debug.Assert(hr == CordbgErrors.CORDBG_E_UNRECOVERABLE_ERROR);
+					dnDebugger.TerminateProcesses();
+				}
+			}
 		}
 	}
 }

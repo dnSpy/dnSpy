@@ -63,15 +63,15 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void Continue() => dbgManager.Value.RunAll();
 		public override bool CanBreakAll => CanExecuteRunningCommand;
 		public override void BreakAll() => dbgManager.Value.BreakAll();
-
-		public override bool CanStop => CanExecutePauseOrRunningCommand;
-		public override void Stop() {
-			//TODO:
-		}
+		public override bool CanStopDebugging => CanExecutePauseOrRunningCommand;
+		public override void StopDebugging() => dbgManager.Value.StopDebuggingAll();
 
 		public override bool CanDetachAll => CanExecutePauseOrRunningCommand;
 		public override void DetachAll() {
-			//TODO:
+			if (!dbgManager.Value.CanDetachWithoutTerminating) {
+				//TODO: Show a msg box
+			}
+			dbgManager.Value.DetachAll();
 		}
 
 		public override bool CanRestart => CanExecutePauseOrRunningCommand;//TODO:
