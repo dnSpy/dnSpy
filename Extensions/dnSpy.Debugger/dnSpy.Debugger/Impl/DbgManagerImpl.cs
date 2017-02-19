@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 			try {
 				foreach (var lz in dbgEngineProviders) {
-					var engine = lz.Value.Start(options);
+					var engine = lz.Value.Create(options);
 					if (engine != null) {
 						bool raiseIsDebuggingChanged, raiseIsRunningChanged;
 						lock (lockObj) {
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.Impl {
 						if (raiseIsRunningChanged)
 							IsRunningChanged?.Invoke(this, EventArgs.Empty);
 						engine.Message += DbgEngine_Message;
-						engine.EnableMessages();
+						engine.Start(options);
 						return null;
 					}
 				}

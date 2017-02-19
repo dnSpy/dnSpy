@@ -30,13 +30,13 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgStartKind StartKind { get; }
 
 		/// <summary>
-		/// Called when the engine can start sending messages. This method is called shortly after
-		/// this instance gets created by a call to <see cref="DbgEngineProvider.Start(StartDebuggingOptions)"/>.
-		/// The engine typically starts the debugged program or attaches to it when this method is called.
-		/// It should send a <see cref="DbgMessageConnected"/> message when it has connected to the program or
+		/// Called when the engine can start or attach to the debugged process. This method is called shortly after
+		/// this instance gets created by a call to <see cref="DbgEngineProvider.Create(StartDebuggingOptions)"/>.
+		/// It must send a <see cref="DbgMessageConnected"/> message when it has connected to the program or
 		/// if it failed.
 		/// </summary>
-		public abstract void EnableMessages();
+		/// <param name="options">Same options that were passed to <see cref="DbgEngineProvider.Create(StartDebuggingOptions)"/></param>
+		public abstract void Start(StartDebuggingOptions options);
 
 		/// <summary>
 		/// Raised when there's a new message. It can be raised on any thread.
@@ -51,8 +51,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgRuntime CreateRuntime(DbgProcess process);
 
 		/// <summary>
-		/// Pauses the debugged executable, if it's not already paused. This is an asynchronous method.
-		/// Once the executable is paused (even if it already was paused), message <see cref="DbgMessageBreak"/>
+		/// Pauses the debugged program, if it's not already paused. This is an asynchronous method.
+		/// Once the program is paused (even if it already was paused), message <see cref="DbgMessageBreak"/>
 		/// must be sent.
 		/// </summary>
 		public abstract void Break();

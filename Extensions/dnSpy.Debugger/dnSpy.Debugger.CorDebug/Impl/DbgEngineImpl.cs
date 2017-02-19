@@ -44,6 +44,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			StartKind = startKind;
 			lockObj = new object();
 			debuggerThread = new DebuggerThread();
+			debuggerThread.CallDispatcherRun();
 		}
 
 		void ExecDebugThreadAsync(Action action) {
@@ -56,23 +57,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				Dispatcher.BeginInvoke(DispatcherPriority.Send, action, arg);
 		}
 
-		public override void EnableMessages() {
-			Debug.Assert(!messagesEnabled);
-			DbgMessageConnected msg;
-			lock (lockObj) {
-				messagesEnabled = true;
-				msg = connectedErrorMessage;
-				connectedErrorMessage = null;
-			}
-			if (msg != null)
-				SendMessage(msg);
-			debuggerThread.CallDispatcherRun();
-		}
-		volatile bool messagesEnabled;
-		DbgMessageConnected connectedErrorMessage;
-
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
-			Debug.Assert(messagesEnabled);
 			switch (e.Kind) {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
@@ -97,7 +82,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			Debug.Assert(sender != null && sender == dnDebugger);
-			Debug.Assert(messagesEnabled);
 
 			if (dnDebugger.ProcessState == DebuggerProcessState.Terminated) {
 				if (hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
@@ -109,14 +93,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		void SendMessage(DbgEngineMessage message) {
-			Debug.Assert(messagesEnabled);
-			Message?.Invoke(this, message);
-		}
+		void SendMessage(DbgEngineMessage message) => Message?.Invoke(this, message);
 
 		protected abstract CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options);
 
-		internal void Start(CorDebugStartDebuggingOptions options) =>
+		public override void Start(StartDebuggingOptions options) =>
 			ExecDebugThreadAsync(StartCore, options);
 
 		void StartCore(object arg) {
@@ -155,16 +136,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				else
 					errMsg = string.Format(dnSpy_Debugger_CorDebug_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, options?.Filename ?? "<???>", ex.Message);
 
-				DbgMessageConnected msg = null;
-				lock (lockObj) {
-					connectedErrorMessage = new DbgMessageConnected(errMsg);
-					if (messagesEnabled) {
-						msg = connectedErrorMessage;
-						connectedErrorMessage = null;
-					}
-				}
-				if (msg != null)
-					SendMessage(msg);
+				SendMessage(new DbgMessageConnected(errMsg));
 				return;
 			}
 		}

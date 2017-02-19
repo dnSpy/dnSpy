@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// </summary>
 	public abstract class DbgManager {
 		/// <summary>
-		/// Starts debugging. Returns a string if it failed to create a debug engine, or null on success.
+		/// Starts debugging. Returns an error string if it failed to create a debug engine, or null on success.
 		/// See <see cref="IDbgManagerStartListener"/> on how to get called the first time this method gets called.
 		/// </summary>
 		/// <param name="options">Options needed to start the program or attach to it</param>

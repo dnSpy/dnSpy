@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.Engine;
 namespace dnSpy.Debugger.CorDebug.Impl {
 	[ExportDbgEngineProvider]
 	sealed class DbgEngineProviderImpl : DbgEngineProvider {
-		public override DbgEngine Start(StartDebuggingOptions options) {
+		public override DbgEngine Create(StartDebuggingOptions options) {
 			if (options is DotNetFrameworkStartDebuggingOptions dnfOptions)
 				return StartDotNetFramework(dnfOptions);
 
@@ -34,16 +34,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return null;
 		}
 
-		DbgEngine StartDotNetFramework(DotNetFrameworkStartDebuggingOptions dnfOptions) {
-			var engine = new DotNetFrameworkDbgEngineImpl(DbgStartKind.Start);
-			engine.Start(dnfOptions);
-			return engine;
-		}
+		DbgEngine StartDotNetFramework(DotNetFrameworkStartDebuggingOptions dnfOptions) =>
+			new DotNetFrameworkDbgEngineImpl(DbgStartKind.Start);
 
-		DbgEngine StartDotNetCore(DotNetCoreStartDebuggingOptions dncOptions) {
-			var engine = new DotNetCoreDbgEngineImpl(DbgStartKind.Start);
-			engine.Start(dncOptions);
-			return engine;
-		}
+		DbgEngine StartDotNetCore(DotNetCoreStartDebuggingOptions dncOptions) =>
+			new DotNetCoreDbgEngineImpl(DbgStartKind.Start);
 	}
 }
