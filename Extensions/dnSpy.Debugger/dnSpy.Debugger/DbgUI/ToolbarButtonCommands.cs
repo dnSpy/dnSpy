@@ -19,7 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Debugger.Properties;
@@ -27,12 +27,10 @@ using dnSpy.Debugger.Properties;
 namespace dnSpy.Debugger.DbgUI {
 	static class ToolbarButtonCommands {
 		abstract class DebugToolBarButton : ToolBarButtonBase {
-			// Prevents the debugger from being loaded since IsVisible will be called early. We're
-			// never debugging when the program starts so there's no need to check IsDebugging.
-			[ExportAutoLoaded]
-			sealed class Loader : IAutoLoaded {
-				[ImportingConstructor]
-				Loader() => initd = true;
+			// Prevents the debugger from being loaded since IsVisible will be called early
+			[ExportDbgManagerStartListener]
+			sealed class DbgManagerStartListener : IDbgManagerStartListener {
+				public void OnStart(DbgManager dbgManager) => initd = true;
 			}
 			protected static bool initd;
 
