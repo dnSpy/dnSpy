@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
@@ -54,38 +55,54 @@ namespace dnSpy.Debugger.DbgUI {
 				messageBoxService.Show(errMsg);
 		}
 
+		bool CanExecutePauseCommand => dbgManager.Value.IsDebugging && !dbgManager.Value.IsRunning;
+		bool CanExecuteRunningCommand => dbgManager.Value.IsDebugging && dbgManager.Value.IsRunning;
+		bool CanExecutePauseOrRunningCommand => dbgManager.Value.IsDebugging;
+
+		public override bool CanContinue => CanExecutePauseCommand;
 		public override void Continue() => dbgManager.Value.RunAll();
+		public override bool CanBreakAll => CanExecuteRunningCommand;
 		public override void BreakAll() => dbgManager.Value.BreakAll();
 
+		public override bool CanStop => CanExecutePauseOrRunningCommand;
 		public override void Stop() {
 			//TODO:
 		}
 
+		public override bool CanDetachAll => CanExecutePauseOrRunningCommand;
 		public override void DetachAll() {
 			//TODO:
 		}
 
+		public override bool CanRestart => CanExecutePauseOrRunningCommand;//TODO:
 		public override void Restart() {
 			//TODO:
 		}
 
+		public override bool CanShowNextStatement => CanExecutePauseCommand;
 		public override void ShowNextStatement() {
 			//TODO:
 		}
 
+		public override bool CanStepInto => CanExecutePauseCommand;
 		public override void StepInto() {
 			//TODO:
 		}
 
+		public override bool CanStepOver => CanExecutePauseCommand;
 		public override void StepOver() {
 			//TODO:
 		}
 
+		public override bool CanStepOut => CanExecutePauseCommand;
 		public override void StepOut() {
 			//TODO:
 		}
 
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
+			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
+			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
+		}
 
 		void UI(Action action) {
 			var dispatcher = appWindow.MainWindow.Dispatcher;
@@ -116,5 +133,17 @@ namespace dnSpy.Debugger.DbgUI {
 		bool oldIsDebugging;
 
 		void SetRunningStatusMessage() => appWindow.StatusBar.Show(dnSpy_Debugger_Resources.StatusBar_Running);
+
+		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender;
+			UI(() => {
+				var newIsRunning = dbgManager.IsRunning;
+				if (newIsRunning == oldIsRunning)
+					return;
+				oldIsRunning = newIsRunning;
+				CommandManager.InvalidateRequerySuggested();
+			});
+		}
+		bool oldIsRunning;
 	}
 }

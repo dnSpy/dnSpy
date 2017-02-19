@@ -61,6 +61,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.Continue();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanContinue;
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Pause, ToolTip = "res:ToolBarBreakToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 10)]
@@ -71,6 +72,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.BreakAll();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanBreakAll;
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Stop, ToolTip = "res:ToolBarStopDebuggingToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 20)]
@@ -81,6 +83,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.Stop();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStop;
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Restart, ToolTip = "res:ToolBarRestartToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 30)]
@@ -91,6 +94,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.Restart();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanRestart;
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.GoToNext, ToolTip = "res:ToolBarShowNextStatementToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 0)]
@@ -101,6 +105,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.ShowNextStatement();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanShowNextStatement;
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.StepInto, ToolTip = "res:ToolBarStepIntoToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 10)]
@@ -111,6 +116,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.StepInto();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStepInto;
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.StepOver, ToolTip = "res:ToolBarStepOverToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 20)]
@@ -121,6 +127,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.StepOver();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStepOver;
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.StepOut, ToolTip = "res:ToolBarStepOutToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 30)]
@@ -131,6 +138,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.StepOut();
+			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStepOut;
 		}
 	}
 }

@@ -21,14 +21,23 @@ namespace dnSpy.Debugger.DbgUI {
 	abstract class Debugger {
 		public abstract bool IsDebugging { get; }
 		public abstract void DebugProgram();
+		public abstract bool CanContinue { get; }
 		public abstract void Continue();
+		public abstract bool CanBreakAll { get; }
 		public abstract void BreakAll();
+		public abstract bool CanStop { get; }
 		public abstract void Stop();
+		public abstract bool CanDetachAll { get; }
 		public abstract void DetachAll();
+		public abstract bool CanRestart { get; }
 		public abstract void Restart();
+		public abstract bool CanShowNextStatement { get; }
 		public abstract void ShowNextStatement();
+		public abstract bool CanStepInto { get; }
 		public abstract void StepInto();
+		public abstract bool CanStepOver { get; }
 		public abstract void StepOver();
+		public abstract bool CanStepOut { get; }
 		public abstract void StepOut();
 	}
 }
