@@ -33,8 +33,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public override DbgStartKind StartKind { get; }
 		public override event EventHandler<DbgEngineMessage> Message;
 
+		Dispatcher Dispatcher => debuggerThread.Dispatcher;
+
 		readonly DebuggerThread debuggerThread;
-		readonly Dispatcher debuggerDispatcher;
 		readonly object lockObj;
 		DnDebugger dnDebugger;
 		SafeHandle hProcess_debuggee;
@@ -42,25 +43,17 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		protected DbgEngineImpl(DbgStartKind startKind) {
 			StartKind = startKind;
 			lockObj = new object();
+			debuggerThread = new DebuggerThread();
+		}
 
-			DebuggerThread.Input threadInput = null;
-			try {
-				threadInput = new DebuggerThread.Input();
-				debuggerThread = new DebuggerThread(threadInput);
-				threadInput.AutoResetEvent.WaitOne();
-				threadInput.AutoResetEvent.Dispose();
-				threadInput.AutoResetEvent = null;
-				debuggerDispatcher = threadInput.Dispatcher;
-			}
-			catch {
-				debuggerThread?.Terminate(threadInput?.Dispatcher);
-				throw;
-			}
+		void ExecDebugThreadAsync(Action action) {
+			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+				Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
 		}
 
 		void ExecDebugThreadAsync(Action<object> action, object arg) {
-			if (!debuggerDispatcher.HasShutdownStarted && !debuggerDispatcher.HasShutdownFinished)
-				debuggerDispatcher.BeginInvoke(DispatcherPriority.Send, action, arg);
+			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+				Dispatcher.BeginInvoke(DispatcherPriority.Send, action, arg);
 		}
 
 		public override void EnableMessages() {
@@ -126,14 +119,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		internal void Start(CorDebugStartDebuggingOptions options) =>
 			ExecDebugThreadAsync(StartCore, options);
 
-		protected void StartCore(object arg) {
+		void StartCore(object arg) {
+			Dispatcher.VerifyAccess();
 			CorDebugStartDebuggingOptions options = null;
 			try {
-				if (debuggerDispatcher.HasShutdownStarted || debuggerDispatcher.HasShutdownFinished)
+				if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
 					throw new InvalidOperationException("Dispatcher has shut down");
 				options = (CorDebugStartDebuggingOptions)arg;
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
-					DebugMessageDispatcher = new WpfDebugMessageDispatcher(debuggerDispatcher),
+					DebugMessageDispatcher = new WpfDebugMessageDispatcher(Dispatcher),
 					CurrentDirectory = options.WorkingDirectory,
 					Filename = options.Filename,
 					CommandLine = options.CommandLine,
@@ -187,7 +181,24 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		protected override void CloseCore() {
 			UnregisterEventsAndCloseProcessHandle();
-			debuggerThread.Terminate(debuggerDispatcher);
+			debuggerThread.Terminate();
+		}
+
+		public override void Break() => ExecDebugThreadAsync(BreakCore);
+
+		void BreakCore() {
+			Dispatcher.VerifyAccess();
+			if (dnDebugger.ProcessState == DebuggerProcessState.Starting || dnDebugger.ProcessState == DebuggerProcessState.Running) {
+				int hr = dnDebugger.TryBreakProcesses();
+				if (hr < 0)
+					SendMessage(new DbgMessageBreak($"Couldn't break the process, hr=0x{hr:X8}"));
+				else {
+					Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
+					SendMessage(new DbgMessageBreak());
+				}
+			}
+			else
+				SendMessage(new DbgMessageBreak());
 		}
 	}
 }

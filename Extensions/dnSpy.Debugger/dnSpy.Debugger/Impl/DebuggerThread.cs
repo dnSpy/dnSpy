@@ -21,7 +21,7 @@ using System;
 using System.Threading;
 using System.Windows.Threading;
 
-namespace dnSpy.Debugger.CorDebug.Impl {
+namespace dnSpy.Debugger.Impl {
 	sealed class DebuggerThread {
 		public Dispatcher Dispatcher { get; private set; }
 

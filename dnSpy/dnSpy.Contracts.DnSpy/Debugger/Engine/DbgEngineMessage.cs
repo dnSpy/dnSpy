@@ -31,11 +31,32 @@ namespace dnSpy.Contracts.Debugger.Engine {
 	}
 
 	/// <summary>
+	/// Base class of messages created by a <see cref="DbgEngine"/> that can contain an error message
+	/// </summary>
+	public abstract class DbgEngineMessageWithPossibleErrorMessage : DbgEngineMessage {
+		/// <summary>
+		/// The error message or null if there's no error
+		/// </summary>
+		public string ErrorMessage { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		protected DbgEngineMessageWithPossibleErrorMessage() { }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="errorMessage">Error message</param>
+		protected DbgEngineMessageWithPossibleErrorMessage(string errorMessage) => ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
+	}
+
+	/// <summary>
 	/// <see cref="DbgEngineMessageKind.Connected"/> event. Should be the first event sent by the
 	/// debug engine. If it couldn't connect, no more messages need to be sent after this message
 	/// is sent.
 	/// </summary>
-	public sealed class DbgMessageConnected : DbgEngineMessage {
+	public sealed class DbgMessageConnected : DbgEngineMessageWithPossibleErrorMessage {
 		/// <summary>
 		/// Returns <see cref="DbgEngineMessageKind.Connected"/>
 		/// </summary>
@@ -47,11 +68,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public int ProcessId { get; }
 
 		/// <summary>
-		/// The error message or null if there's no error
-		/// </summary>
-		public string ErrorMessage { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="processId">Process id</param>
@@ -61,7 +77,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Constructor
 		/// </summary>
 		/// <param name="errorMessage">Error message</param>
-		public DbgMessageConnected(string errorMessage) => ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
+		public DbgMessageConnected(string errorMessage) : base(errorMessage) { }
 	}
 
 	/// <summary>
@@ -83,5 +99,26 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="exitCode">Exit code</param>
 		public DbgMessageDisconnected(int exitCode) => ExitCode = exitCode;
+	}
+
+	/// <summary>
+	/// <see cref="DbgEngineMessageKind.Break"/> event
+	/// </summary>
+	public sealed class DbgMessageBreak : DbgEngineMessageWithPossibleErrorMessage {
+		/// <summary>
+		/// Returns <see cref="DbgEngineMessageKind.Break"/>
+		/// </summary>
+		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.Break;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public DbgMessageBreak() { }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="errorMessage">Error message</param>
+		public DbgMessageBreak(string errorMessage) : base(errorMessage) { }
 	}
 }

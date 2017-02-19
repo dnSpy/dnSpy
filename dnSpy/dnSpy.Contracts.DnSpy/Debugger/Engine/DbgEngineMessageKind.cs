@@ -23,7 +23,8 @@ namespace dnSpy.Contracts.Debugger.Engine {
 	/// </summary>
 	public enum DbgEngineMessageKind {
 		/// <summary>
-		/// The engine has connected with the debugged process
+		/// The engine has connected to the debugged process. This message is the first
+		/// message sent by the <see cref="DbgEngine"/>, even on failure.
 		/// </summary>
 		Connected,
 
@@ -31,5 +32,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// The engine has been disconnected from the debugged process
 		/// </summary>
 		Disconnected,
+
+		/// <summary>
+		/// The debugged executable is paused due to a call to <see cref="DbgEngine.Break"/>
+		/// </summary>
+		Break,
 	}
 }

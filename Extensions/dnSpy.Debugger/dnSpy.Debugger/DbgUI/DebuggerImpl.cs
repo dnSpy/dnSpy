@@ -58,9 +58,7 @@ namespace dnSpy.Debugger.DbgUI {
 			//TODO:
 		}
 
-		public override void BreakAll() {
-			//TODO:
-		}
+		public override void BreakAll() => dbgManager.Value.BreakAll();
 
 		public override void Stop() {
 			//TODO:

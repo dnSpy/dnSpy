@@ -42,6 +42,17 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler IsDebuggingChanged;
 
 		/// <summary>
+		/// true if the processes are running, false if they're paused.
+		/// This property is valid only if <see cref="IsDebugging"/> is true.
+		/// </summary>
+		public abstract bool IsRunning { get; }
+
+		/// <summary>
+		/// Raised when <see cref="IsRunning"/> is changed
+		/// </summary>
+		public abstract event EventHandler IsRunningChanged;
+
+		/// <summary>
 		/// Gets all debugged processes. Can be empty even if <see cref="IsDebugging"/> is true
 		/// if the process hasn't been created yet.
 		/// </summary>
@@ -51,6 +62,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Raised when a process gets added or removed
 		/// </summary>
 		public abstract event EventHandler<ProcessesChangedEventArgs> ProcessesChanged;
+
+		/// <summary>
+		/// Pauses all debugged processes
+		/// </summary>
+		public abstract void BreakAll();
 	}
 
 	/// <summary>
