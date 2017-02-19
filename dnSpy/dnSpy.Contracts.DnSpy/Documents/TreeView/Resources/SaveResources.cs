@@ -28,6 +28,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
 using dnSpy.Contracts.Properties;
+using Ookii.Dialogs.Wpf;
 using WF = System.Windows.Forms;
 
 namespace dnSpy.Contracts.Documents.TreeView.Resources {
@@ -107,8 +108,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				yield return (info, dlg.FileName);
 			}
 			else {
-				var dlg = new WF.FolderBrowserDialog();
-				if (dlg.ShowDialog() != WF.DialogResult.OK)
+				var dlg = new VistaFolderBrowserDialog();
+				if (dlg.ShowDialog() != true)
 					yield break;
 				string baseDir = dlg.SelectedPath;
 				foreach (var info in infos) {

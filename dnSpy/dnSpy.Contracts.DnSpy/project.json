@@ -3,7 +3,8 @@
 		"System.ValueTuple": "4.3.0",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.26201",
 		"Microsoft.VisualStudio.Language.Intellisense": "15.0.26201",
-		"Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime": "15.0.25726-Preview5"
+		"Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime": "15.0.25726-Preview5",
+		"Ookii.Dialogs": "1.0.0"
 	},
 	"frameworks": {
 		"net46": { }
