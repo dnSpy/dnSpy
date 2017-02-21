@@ -21,7 +21,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.UI;
 using dnSpy.Contracts.MVVM;
 

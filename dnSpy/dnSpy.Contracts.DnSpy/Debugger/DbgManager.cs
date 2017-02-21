@@ -21,11 +21,17 @@ using System;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// Manages all debug engines. All events can be raised in any thread.
+	/// Manages all debug engines. All events are raised in the dispatcher thread.
 	/// If you need to hook events before debugging starts, you should export an <see cref="IDbgManagerStartListener"/>.
 	/// It gets called when <see cref="Start(StartDebuggingOptions)"/> gets called for the first time.
 	/// </summary>
 	public abstract class DbgManager {
+		/// <summary>
+		/// Gets the dispatcher. All debugger events are raised in this thread. <see cref="DbgObject.Close(DispatcherThread)"/>
+		/// is also called in this thread including disposing of data added by eg. <see cref="DbgObject.GetOrCreateData{T}()"/>.
+		/// </summary>
+		public abstract DispatcherThread DispatcherThread { get; }
+
 		/// <summary>
 		/// Starts debugging. Returns an error string if it failed to create a debug engine, or null on success.
 		/// See <see cref="IDbgManagerStartListener"/> on how to get called the first time this method gets called.

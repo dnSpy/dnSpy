@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Impl {
 						info.EngineInfo.Engine.Break();
 				}
 				if (!CheckIsDone_NoLock()) {
-					timer = new DispatcherTimer(DispatcherPriority.Send, owner.Dispatcher);
+					timer = new DispatcherTimer(DispatcherPriority.Send, owner.dispatcherThread.Dispatcher);
 					timer.Interval = TimeSpan.FromMilliseconds(breakTimeoutMilliseconds);
 					timer.Tick += Timer_Tick;
 					timer.Start();
@@ -90,8 +90,8 @@ namespace dnSpy.Debugger.Impl {
 				if (!IsDone_NoLock())
 					return false;
 				DoneStep1_NoLock(out bool canNotify);
-				if (canNotify && !owner.Dispatcher.HasShutdownStarted && !owner.Dispatcher.HasShutdownFinished)
-					owner.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => DoneStep2(success: true)));
+				if (canNotify)
+					owner.DispatcherThread.BeginInvoke(() => DoneStep2(success: true));
 				return true;
 			}
 

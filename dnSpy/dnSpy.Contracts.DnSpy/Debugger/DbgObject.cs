@@ -49,9 +49,27 @@ namespace dnSpy.Contracts.Debugger {
 		public event EventHandler Closed;
 
 		/// <summary>
-		/// Closes the instance. NOTE: Must only be called by the owner object!
+		/// Closes the instance asynchronously.
+		/// 
+		/// This method must only be called by the owner object.
 		/// </summary>
-		public void Close() {
+		/// <param name="dispatcherThread">Dispatcher thread</param>
+		public void CloseAsync(DispatcherThread dispatcherThread) {
+			if (dispatcherThread == null)
+				throw new ArgumentNullException(nameof(dispatcherThread));
+			dispatcherThread.BeginInvoke(() => Close(dispatcherThread));
+		}
+
+		/// <summary>
+		/// Closes the instance. This method must only be executed in the dispatcher thread. See also <see cref="CloseAsync(DispatcherThread)"/>
+		/// 
+		/// This method must only be called by the owner object.
+		/// </summary>
+		/// <param name="dispatcherThread">Dispatcher thread</param>
+		public void Close(DispatcherThread dispatcherThread) {
+			if (dispatcherThread == null)
+				throw new ArgumentNullException(nameof(dispatcherThread));
+			dispatcherThread.VerifyAccess();
 			Debug.Assert(!IsClosed);
 			if (Interlocked.Increment(ref isClosed) != 1)
 				return;
@@ -70,7 +88,7 @@ namespace dnSpy.Contracts.Debugger {
 
 		/// <summary>
 		/// Called by <see cref="Close"/> after it has raised <see cref="Closed"/> and before it disposes
-		/// of all data.
+		/// of all data. This method is called in the dispatcher thread (see <see cref="DbgManager.DispatcherThread"/>)
 		/// </summary>
 		protected abstract void CloseCore();
 

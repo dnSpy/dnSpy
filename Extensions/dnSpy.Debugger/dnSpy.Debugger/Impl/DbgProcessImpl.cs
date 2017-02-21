@@ -109,9 +109,10 @@ namespace dnSpy.Debugger.Impl {
 		public override int WriteMemory(ulong address, byte[] source, int sourceIndex, int size) => throw new NotImplementedException();//TODO:
 
 		internal void Add(DbgEngine engine, DbgRuntime runtime) {
-			lock (lockObj)
+			lock (lockObj) {
 				engineInfos.Add(new EngineInfo(engine, runtime));
-			RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: true));
+				DbgManager.DispatcherThread.BeginInvoke(() => RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: true)));
+			}
 		}
 
 		internal (DbgRuntime runtime, bool hasMoreRuntimes) Remove(DbgEngine engine) {
@@ -127,9 +128,9 @@ namespace dnSpy.Debugger.Impl {
 					}
 				}
 				hasMoreRuntimes = engineInfos.Count > 0;
+				if (runtime != null)
+					DbgManager.DispatcherThread.BeginInvoke(() => RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: false)));
 			}
-			if (runtime != null)
-				RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: false));
 			return (runtime, hasMoreRuntimes);
 		}
 
