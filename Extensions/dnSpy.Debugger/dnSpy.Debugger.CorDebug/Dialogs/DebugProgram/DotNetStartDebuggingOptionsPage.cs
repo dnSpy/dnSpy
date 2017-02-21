@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CorDebug;
 using dnSpy.Contracts.Debugger.UI;
 using dnSpy.Contracts.MVVM;
@@ -92,6 +93,28 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			set => BreakProcessKindVM.SelectedItem = value;
 		}
 
+		public bool IgnoreBreakInstructions {
+			get => ignoreBreakInstructions;
+			set {
+				if (ignoreBreakInstructions != value) {
+					ignoreBreakInstructions = value;
+					OnPropertyChanged(nameof(IgnoreBreakInstructions));
+				}
+			}
+		}
+		bool ignoreBreakInstructions;
+
+		public bool DisableManagedDebuggerDetection {
+			get => disableManagedDebuggerDetection;
+			set {
+				if (disableManagedDebuggerDetection != value) {
+					disableManagedDebuggerDetection = value;
+					OnPropertyChanged(nameof(DisableManagedDebuggerDetection));
+				}
+			}
+		}
+		bool disableManagedDebuggerDetection;
+
 		public override bool IsValid => isValid;
 		bool isValid;
 
@@ -105,10 +128,12 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 
 		protected abstract bool CalculateIsValid();
 
+		readonly DebuggerSettings debuggerSettings;
 		protected readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
-		protected DotNetStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory) {
+		protected DotNetStartDebuggingOptionsPage(DebuggerSettings debuggerSettings, IPickFilename pickFilename, IPickDirectory pickDirectory) {
+			this.debuggerSettings = debuggerSettings ?? throw new ArgumentNullException(nameof(debuggerSettings));
 			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
 			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
 		}
@@ -143,6 +168,25 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			// Must be init'd after Filename since it also overwrites this property
 			WorkingDirectory = options.WorkingDirectory;
 			BreakProcessKind = options.BreakProcessKind;
+			IgnoreBreakInstructions = options.IgnoreBreakInstructions;
+			DisableManagedDebuggerDetection = options.DisableManagedDebuggerDetection;
+		}
+
+		protected T InitializeDefault<T>(T options) where T : CorDebugStartDebuggingOptions {
+			options.BreakProcessKind = BreakProcessKind.None;
+			options.IgnoreBreakInstructions = debuggerSettings.IgnoreBreakInstructions;
+			options.DisableManagedDebuggerDetection = debuggerSettings.DisableManagedDebuggerDetection;
+			return options;
+		}
+
+		protected T GetOptions<T>(T options) where T : CorDebugStartDebuggingOptions {
+			options.Filename = Filename;
+			options.CommandLine = CommandLine;
+			options.WorkingDirectory = WorkingDirectory;
+			options.BreakProcessKind = BreakProcessKind;
+			options.IgnoreBreakInstructions = IgnoreBreakInstructions;
+			options.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
+			return options;
 		}
 
 		string IDataErrorInfo.Error => throw new NotImplementedException();

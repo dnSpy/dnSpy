@@ -19,24 +19,27 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.UI;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 	[Export(typeof(StartDebuggingOptionsPageProvider))]
 	sealed class StartDebuggingOptionsPageProviderImpl : StartDebuggingOptionsPageProvider {
+		readonly DebuggerSettings debuggerSettings;
 		readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
 		[ImportingConstructor]
-		StartDebuggingOptionsPageProviderImpl(IPickFilename pickFilename, IPickDirectory pickDirectory) {
+		StartDebuggingOptionsPageProviderImpl(DebuggerSettings debuggerSettings, IPickFilename pickFilename, IPickDirectory pickDirectory) {
+			this.debuggerSettings = debuggerSettings;
 			this.pickFilename = pickFilename;
 			this.pickDirectory = pickDirectory;
 		}
 
 		public override IEnumerable<StartDebuggingOptionsPage> Create(StartDebuggingOptionsPageContext context) {
-			yield return new DotNetFrameworkStartDebuggingOptionsPage(pickFilename, pickDirectory);
-			yield return new DotNetCoreStartDebuggingOptionsPage(pickFilename, pickDirectory);
+			yield return new DotNetFrameworkStartDebuggingOptionsPage(debuggerSettings, pickFilename, pickDirectory);
+			yield return new DotNetCoreStartDebuggingOptionsPage(debuggerSettings, pickFilename, pickDirectory);
 		}
 	}
 }

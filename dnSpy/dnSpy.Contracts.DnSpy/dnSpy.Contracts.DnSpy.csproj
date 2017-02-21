@@ -128,6 +128,7 @@
     <Compile Include="Debugger\DbgProcess.cs" />
     <Compile Include="Debugger\DbgRuntime.cs" />
     <Compile Include="Debugger\DbgThread.cs" />
+    <Compile Include="Debugger\DebuggerSettings.cs" />
     <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntime.cs" />
     <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntimeKind.cs" />
     <Compile Include="Debugger\DotNet\CorDebug\CorDebugRuntimeVersion.cs" />

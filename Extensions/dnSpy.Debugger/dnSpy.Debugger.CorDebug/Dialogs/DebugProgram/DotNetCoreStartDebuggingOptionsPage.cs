@@ -57,8 +57,8 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 
 		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
 
-		public DotNetCoreStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
-			: base(pickFilename, pickDirectory) {
+		public DotNetCoreStartDebuggingOptionsPage(DebuggerSettings debuggerSettings, IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(debuggerSettings, pickFilename, pickDirectory) {
 		}
 
 		void PickNewHostFilename() {
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			}
 		}
 
-		DotNetCoreStartDebuggingOptions CreateOptions() => new DotNetCoreStartDebuggingOptions { HostArguments = "exec" };
+		DotNetCoreStartDebuggingOptions CreateOptions() => InitializeDefault(new DotNetCoreStartDebuggingOptions { HostArguments = "exec" });
 
 		void Initialize(DotNetCoreStartDebuggingOptions options) {
 			base.Initialize(options);
@@ -110,14 +110,10 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		}
 
 		public override StartDebuggingOptionsInfo GetOptions() {
-			var options = new DotNetCoreStartDebuggingOptions {
+			var options = GetOptions(new DotNetCoreStartDebuggingOptions {
 				Host = HostFilename,
 				HostArguments = HostArguments,
-				Filename = Filename,
-				CommandLine = CommandLine,
-				WorkingDirectory = WorkingDirectory,
-				BreakProcessKind = BreakProcessKind,
-			};
+			});
 			return new StartDebuggingOptionsInfo(options, options.Filename);
 		}
 

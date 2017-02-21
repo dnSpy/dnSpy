@@ -60,6 +60,7 @@
       <DependentUpon>dnSpy.Debugger.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\DebuggerSettingsImpl.cs" />
     <Compile Include="TheExtension.cs" />
   </ItemGroup>
   <ItemGroup>
