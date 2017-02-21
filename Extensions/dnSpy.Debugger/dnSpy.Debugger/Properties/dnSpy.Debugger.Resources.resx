@@ -1125,38 +1125,38 @@ Are you sure you want to expand it?</value>
   <data name="ToggleBreakpointCommand" xml:space="preserve">
     <value>To_ggle Breakpoint</value>
   </data>
-  <data name="ToolBarBreakToolTip" xml:space="preserve">
-    <value>Break (Ctrl+Break)</value>
+  <data name="ToolBarBreakAllToolTip" xml:space="preserve">
+    <value>Break All ({0})</value>
   </data>
   <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
     <value>Continue</value>
   </data>
   <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
-    <value>Continue (F5)</value>
+    <value>Continue ({0})</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
     <value>Debug a Program ({0})</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
-    <value>Restart (Ctrl+Shift+F5)</value>
+    <value>Restart ({0})</value>
   </data>
   <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
-    <value>Show Next Statement (Alt+Num *)</value>
+    <value>Show Next Statement ({0})</value>
   </data>
   <data name="ToolBarStartDebuggingButton" xml:space="preserve">
     <value>Start</value>
   </data>
   <data name="ToolBarStepIntoToolTip" xml:space="preserve">
-    <value>Step Into (F11)</value>
+    <value>Step Into ({0})</value>
   </data>
   <data name="ToolBarStepOutToolTip" xml:space="preserve">
-    <value>Step Out (Shift+F11)</value>
+    <value>Step Out ({0})</value>
   </data>
   <data name="ToolBarStepOverToolTip" xml:space="preserve">
-    <value>Step Over (F10)</value>
+    <value>Step Over ({0})</value>
   </data>
   <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
-    <value>Stop Debugging (Shift+F5)</value>
+    <value>Stop Debugging ({0})</value>
   </data>
   <data name="UnknownExceptionType" xml:space="preserve">
     <value>&lt;Unknown Exception Type&gt;</value>

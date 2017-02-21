@@ -3379,11 +3379,11 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Break (Ctrl+Break).
+        ///   Looks up a localized string similar to Break All ({0}).
         /// </summary>
-        public static string ToolBarBreakToolTip {
+        public static string ToolBarBreakAllToolTip {
             get {
-                return ResourceManager.GetString("ToolBarBreakToolTip", resourceCulture);
+                return ResourceManager.GetString("ToolBarBreakAllToolTip", resourceCulture);
             }
         }
         
@@ -3397,7 +3397,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Continue (F5).
+        ///   Looks up a localized string similar to Continue ({0}).
         /// </summary>
         public static string ToolBarContinueDebuggingToolTip {
             get {
@@ -3415,7 +3415,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restart (Ctrl+Shift+F5).
+        ///   Looks up a localized string similar to Restart ({0}).
         /// </summary>
         public static string ToolBarRestartToolTip {
             get {
@@ -3424,7 +3424,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Next Statement (Alt+Num *).
+        ///   Looks up a localized string similar to Show Next Statement ({0}).
         /// </summary>
         public static string ToolBarShowNextStatementToolTip {
             get {
@@ -3442,7 +3442,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step Into (F11).
+        ///   Looks up a localized string similar to Step Into ({0}).
         /// </summary>
         public static string ToolBarStepIntoToolTip {
             get {
@@ -3451,7 +3451,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step Out (Shift+F11).
+        ///   Looks up a localized string similar to Step Out ({0}).
         /// </summary>
         public static string ToolBarStepOutToolTip {
             get {
@@ -3460,7 +3460,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step Over (F10).
+        ///   Looks up a localized string similar to Step Over ({0}).
         /// </summary>
         public static string ToolBarStepOverToolTip {
             get {
@@ -3469,7 +3469,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stop Debugging (Shift+F5).
+        ///   Looks up a localized string similar to Stop Debugging ({0}).
         /// </summary>
         public static string ToolBarStopDebuggingToolTip {
             get {
