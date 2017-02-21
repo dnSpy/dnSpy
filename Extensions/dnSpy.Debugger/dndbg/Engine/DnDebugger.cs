@@ -1503,8 +1503,8 @@ namespace dndbg.Engine {
 			if (!addStopState)
 				return;
 
-			DnThread thread = process.GetMainThread();
-			DnAppDomain appDomain = thread == null ? process.GetMainAppDomain() : thread.AppDomainOrNull;
+			var thread = process.GetMainThread();
+			var appDomain = thread == null ? process.GetMainAppDomain() : thread.AppDomainOrNull;
 			AddDebuggerState(new DebuggerState(null, process, appDomain, thread) {
 				PauseStates = new DebuggerPauseState[] {
 					new DebuggerPauseState(DebuggerPauseReason.UserBreak),
@@ -1565,6 +1565,7 @@ namespace dndbg.Engine {
 		void Dispose(bool disposing) => TerminateAllProcessesInternal();
 
 		void TerminateAllProcessesInternal() {
+			bool forceNotify = false;
 			foreach (var process in processes.GetAll()) {
 				try {
 					int hr = process.CorProcess.RawObject.Stop(uint.MaxValue);
@@ -1573,12 +1574,15 @@ namespace dndbg.Engine {
 						Debug.Assert(hr == CordbgErrors.CORDBG_E_UNRECOVERABLE_ERROR);
 						bool b = NativeMethods.TerminateProcess(process.CorProcess.Handle, uint.MaxValue);
 						Debug.Assert(b);
-						// Make sure listeners get notified of the termination
-						ProcessesTerminated();
+						forceNotify = true;
 					}
 				}
 				catch {
 				}
+			}
+			if (forceNotify) {
+				// Make sure listeners get notified of the termination
+				ProcessesTerminated();
 			}
 		}
 
