@@ -25,19 +25,31 @@ using System.Linq;
 
 namespace dnSpy.Settings {
 	sealed class SectionAttributes {
+		readonly object lockObj;
 		readonly Dictionary<string, string> attributes;
 
-		public Tuple<string, string>[] Attributes => attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
+		public Tuple<string, string>[] Attributes {
+			get {
+				lock (lockObj)
+					return attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
+			}
+		}
 
-		public SectionAttributes() => attributes = new Dictionary<string, string>(StringComparer.Ordinal);
+		public SectionAttributes() {
+			lockObj = new object();
+			attributes = new Dictionary<string, string>(StringComparer.Ordinal);
+		}
 
 		public T Attribute<T>(string name) {
 			Debug.Assert(name != null);
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
-			if (!attributes.TryGetValue(name, out string stringValue))
-				return default(T);
+			string stringValue;
+			lock (lockObj) {
+				if (!attributes.TryGetValue(name, out stringValue))
+					return default(T);
+			}
 
 			var c = TypeDescriptor.GetConverter(typeof(T));
 			try {
@@ -57,7 +69,8 @@ namespace dnSpy.Settings {
 
 			var c = TypeDescriptor.GetConverter(typeof(T));
 			var stringValue = c.ConvertToInvariantString(value);
-			attributes[name] = stringValue;
+			lock (lockObj)
+				attributes[name] = stringValue;
 		}
 
 		public void RemoveAttribute(string name) {
@@ -65,7 +78,8 @@ namespace dnSpy.Settings {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
-			attributes.Remove(name);
+			lock (lockObj)
+				attributes.Remove(name);
 		}
 	}
 }

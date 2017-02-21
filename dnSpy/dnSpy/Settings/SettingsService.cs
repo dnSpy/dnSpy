@@ -27,23 +27,29 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Settings {
 	[Export, Export(typeof(ISettingsService))]
 	sealed class SettingsService : ISettingsService {
+		readonly object lockObj;
 		readonly Dictionary<string, ISettingsSection> sections;
 
 		public ISettingsSection[] Sections => sections.Values.ToArray();
 
-		SettingsService() => sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
+		SettingsService() {
+			lockObj = new object();
+			sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
+		}
 
 		public ISettingsSection GetOrCreateSection(Guid guid) {
 			if (guid == Guid.Empty)
 				throw new ArgumentOutOfRangeException(nameof(guid));
 
 			var name = guid.ToString();
-			if (sections.TryGetValue(name, out var section))
-				return section;
+			lock (lockObj) {
+				if (sections.TryGetValue(name, out var section))
+					return section;
 
-			section = new SettingsSection(name);
-			sections[name] = section;
-			return section;
+				section = new SettingsSection(name);
+				sections[name] = section;
+				return section;
+			}
 		}
 
 		public void RemoveSection(Guid guid) {
@@ -51,7 +57,8 @@ namespace dnSpy.Settings {
 				throw new ArgumentOutOfRangeException(nameof(guid));
 
 			var name = guid.ToString();
-			sections.Remove(name);
+			lock (lockObj)
+				sections.Remove(name);
 		}
 
 		public void RemoveSection(ISettingsSection section) {
@@ -59,20 +66,24 @@ namespace dnSpy.Settings {
 			if (section == null)
 				throw new ArgumentNullException(nameof(section));
 
-			bool b = sections.TryGetValue(section.Name, out var other);
-			Debug.Assert(b && other == section);
-			if (!b || other != section)
-				return;
+			lock (lockObj) {
+				bool b = sections.TryGetValue(section.Name, out var other);
+				Debug.Assert(b && other == section);
+				if (!b || other != section)
+					return;
 
-			sections.Remove(section.Name);
+				sections.Remove(section.Name);
+			}
 		}
 
 		public ISettingsSection RecreateSection(Guid guid) {
 			if (guid == Guid.Empty)
 				throw new ArgumentOutOfRangeException(nameof(guid));
 
-			RemoveSection(guid);
-			return GetOrCreateSection(guid);
+			lock (lockObj) {
+				RemoveSection(guid);
+				return GetOrCreateSection(guid);
+			}
 		}
 	}
 }
