@@ -36,14 +36,15 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly IAppWindow appWindow;
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<StartDebuggingOptionsPageProvider>[] startDebuggingOptionsPageProviders;
+		readonly Lazy<GenericDebugEngineGuidProvider, IGenericDebugEngineGuidProviderMetadata>[] genericDebugEngineGuidProviders;
 		readonly StartDebuggingOptionsMru mru;
-		Guid lastSelectedPage;
 
 		[ImportingConstructor]
-		StartDebuggingOptionsProvider(IAppWindow appWindow, IDocumentTabService documentTabService, [ImportMany] IEnumerable<Lazy<StartDebuggingOptionsPageProvider>> startDebuggingOptionsPageProviders) {
+		StartDebuggingOptionsProvider(IAppWindow appWindow, IDocumentTabService documentTabService, [ImportMany] IEnumerable<Lazy<StartDebuggingOptionsPageProvider>> startDebuggingOptionsPageProviders, [ImportMany] IEnumerable<Lazy<GenericDebugEngineGuidProvider, IGenericDebugEngineGuidProviderMetadata>> genericDebugEngineGuidProviders) {
 			this.appWindow = appWindow;
 			this.documentTabService = documentTabService;
 			this.startDebuggingOptionsPageProviders = startDebuggingOptionsPageProviders.ToArray();
+			this.genericDebugEngineGuidProviders = genericDebugEngineGuidProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			mru = new StartDebuggingOptionsMru();
 		}
 
@@ -80,12 +81,20 @@ namespace dnSpy.Debugger.DbgUI {
 					page.InitializeDefaultOptions(filename, null);
 			}
 
+			// If there's an exact match ('oldOptions'), then prefer it.
+			// Otherwise ask code that knows what kind of exe it is, but prefer the last selected guid if there are multiple matches.
+			// Else use last page guid.
+			var selectedPageGuid =
+				oldOptions?.pageGuid ??
+				GetDefaultPageGuid(pages, filename, lastOptions?.pageGuid) ??
+				lastOptions?.pageGuid ??
+				Guid.Empty;
+
 			var dlg = new DebugProgramDlg();
-			var vm = new DebugProgramVM(pages, oldOptions?.pageGuid ?? lastOptions?.pageGuid ?? lastSelectedPage);
+			var vm = new DebugProgramVM(pages, selectedPageGuid);
 			dlg.DataContext = vm;
 			dlg.Owner = appWindow.MainWindow;
 			var res = dlg.ShowDialog();
-			lastSelectedPage = vm.SelectedPageGuid;
 			vm.Close();
 			if (res != true)
 				return null;
@@ -93,6 +102,36 @@ namespace dnSpy.Debugger.DbgUI {
 			if (info.Filename != null)
 				mru.Add(info.Filename, info.Options, vm.SelectedPageGuid);
 			return info.Options;
+		}
+
+		Guid? GetDefaultPageGuid(StartDebuggingOptionsPage[] pages, string filename, Guid? lastGuid) {
+			var engineGuids = new List<Guid>();
+			foreach (var lz in genericDebugEngineGuidProviders) {
+				var engineGuid = lz.Value.GetEngineGuid(filename);
+				if (engineGuid != null)
+					engineGuids.Add(engineGuid.Value);
+			}
+
+			Guid? firstResult = null;
+			double? firstOrder = null;
+			foreach (var engineGuid in engineGuids) {
+				foreach (var page in pages) {
+					if (page.SupportsDebugEngine(engineGuid, out double order)) {
+						// Always prefer the last used page if it matches again
+						if (page.Guid == lastGuid)
+							return lastGuid;
+
+						if (firstResult == null || order < firstOrder.Value) {
+							firstResult = page.Guid;
+							firstOrder = order;
+						}
+					}
+				}
+				// The order of the engine guids is important so exit as soon as we find a match
+				if (firstResult != null)
+					break;
+			}
+			return firstResult;
 		}
 	}
 }

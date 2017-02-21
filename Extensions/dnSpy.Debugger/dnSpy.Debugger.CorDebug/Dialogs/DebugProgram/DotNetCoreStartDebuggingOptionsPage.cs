@@ -121,6 +121,16 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			return new StartDebuggingOptionsInfo(options, options.Filename);
 		}
 
+		public override bool SupportsDebugEngine(Guid engineGuid, out double order) {
+			if (engineGuid == PredefinedGenericDebugEngineGuids.DotNetCore) {
+				order = PredefinedGenericDebugEngineOrders.DotNetCore_CorDebug;
+				return true;
+			}
+
+			order = 0;
+			return false;
+		}
+
 		protected override bool CalculateIsValid() =>
 			string.IsNullOrEmpty(Verify(nameof(HostFilename))) &&
 			string.IsNullOrEmpty(Verify(nameof(Filename)));

@@ -145,7 +145,9 @@
     <Compile Include="Debugger\UI\AttachProgramOptions.cs" />
     <Compile Include="Debugger\UI\AttachProgramOptionsProvider.cs" />
     <Compile Include="Debugger\UI\AttachProgramOptionsProviderFactory.cs" />
+    <Compile Include="Debugger\UI\GenericDebugEngineGuidProvider.cs" />
     <Compile Include="Debugger\UI\PredefinedArchitectureNames.cs" />
+    <Compile Include="Debugger\UI\PredefinedGenericDebugEngineGuids.cs" />
     <Compile Include="Debugger\UI\PredefinedRuntimeTypes.cs" />
     <Compile Include="Debugger\UI\PredefinedStartDebuggingOptionsPageDisplayOrders.cs" />
     <Compile Include="Debugger\UI\StartDebuggingOptionsPage.cs" />

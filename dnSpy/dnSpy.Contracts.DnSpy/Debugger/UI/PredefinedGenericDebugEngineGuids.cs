@@ -18,18 +18,20 @@
 */
 
 using System;
-using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Debugger.UI {
 	/// <summary>
-	/// Creates <see cref="StartDebuggingOptionsPage"/> instances. See also <see cref="GenericDebugEngineGuidProvider"/>
+	/// Predefined generic debug engine guids
 	/// </summary>
-	public abstract class StartDebuggingOptionsPageProvider {
+	public static class PredefinedGenericDebugEngineGuids {
 		/// <summary>
-		/// Creates new <see cref="StartDebuggingOptionsPage"/> instances
+		/// .NET Framework or compatible framework (eg. Mono)
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <returns></returns>
-		public abstract IEnumerable<StartDebuggingOptionsPage> Create(StartDebuggingOptionsPageContext context);
+		public static readonly Guid DotNetFramework = new Guid("0F99555D-5523-4AAE-BD4C-0451B9D50126");
+
+		/// <summary>
+		/// .NET Core
+		/// </summary>
+		public static readonly Guid DotNetCore = new Guid("7D294510-4730-433B-85C1-61EC0B4F6C3C");
 	}
 }

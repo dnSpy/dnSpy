@@ -51,8 +51,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="order">Order</param>
 		public ExportDbgManagerStartListenerAttribute(double order = double.MaxValue)
-			: base(typeof(IDbgManagerStartListener)) {
-		}
+			: base(typeof(IDbgManagerStartListener)) => Order = order;
 
 		/// <summary>
 		/// Order

@@ -71,8 +71,8 @@ namespace dnSpy.Contracts.Debugger.UI {
 		public abstract void InitializePreviousOptions(StartDebuggingOptions options);
 
 		/// <summary>
-		/// Initializes this instance to default options. If the current filename is not an EXE
-		/// file, then <paramref name="options"/> should be used to initialize this instance,
+		/// Initializes this instance to default options. If <paramref name="filename"/> is not
+		/// an EXE file, then <paramref name="options"/> should be used to initialize this instance,
 		/// else <paramref name="options"/> should be ignored.
 		/// </summary>
 		/// <param name="filename">Filename</param>
@@ -84,6 +84,16 @@ namespace dnSpy.Contracts.Debugger.UI {
 		/// </summary>
 		/// <returns></returns>
 		public abstract StartDebuggingOptionsInfo GetOptions();
+
+		/// <summary>
+		/// Returns true if this is a debug engine page that is compatible with a debug engine
+		/// (see eg. <see cref="PredefinedGenericDebugEngineGuids"/>)
+		/// </summary>
+		/// <param name="engineGuid">Generic debug engine guid (see <see cref="PredefinedGenericDebugEngineGuids"/>)</param>
+		/// <param name="order">Only used if the method returns true and is the order to use if more than
+		/// one instance returns true. (see <see cref="PredefinedGenericDebugEngineOrders"/>)</param>
+		/// <returns></returns>
+		public abstract bool SupportsDebugEngine(Guid engineGuid, out double order);
 
 		/// <summary>
 		/// Called when the dialog box gets closed
@@ -114,5 +124,20 @@ namespace dnSpy.Contracts.Debugger.UI {
 			Options = options ?? throw new ArgumentNullException(nameof(options));
 			Filename = filename;
 		}
+	}
+
+	/// <summary>
+	/// Returned by <see cref="StartDebuggingOptionsPage.SupportsDebugEngine(Guid, out double)"/>
+	/// </summary>
+	public static class PredefinedGenericDebugEngineOrders {
+		/// <summary>
+		/// CorDebug: .NET Framework
+		/// </summary>
+		public const double DotNetFramework_CorDebug = 1000000;
+
+		/// <summary>
+		/// CorDebug: .NET Core
+		/// </summary>
+		public const double DotNetCore_CorDebug = 1000000;
 	}
 }

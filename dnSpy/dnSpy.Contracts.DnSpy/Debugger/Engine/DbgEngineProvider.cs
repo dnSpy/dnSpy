@@ -50,8 +50,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// </summary>
 		/// <param name="order">Order</param>
 		public ExportDbgEngineProviderAttribute(double order = double.MaxValue)
-			: base(typeof(DbgEngineProvider)) {
-		}
+			: base(typeof(DbgEngineProvider)) => Order = order;
 
 		/// <summary>
 		/// Order
