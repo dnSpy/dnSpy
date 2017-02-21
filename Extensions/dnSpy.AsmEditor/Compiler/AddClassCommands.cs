@@ -98,20 +98,22 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, DocumentTreeNodeData[] nodes) =>
-			editCodeVMCreator.CanCreate(CompilationKind.AddClass) && nodes.Length == 1;
+			editCodeVMCreator.CanCreate(CompilationKind.AddClass) && nodes.Length == 1 && GetModuleNode(nodes[0]) != null;
+
+		static ModuleDocumentNode GetModuleNode(DocumentTreeNodeData node) {
+			if (node is AssemblyDocumentNode asmNode) {
+				asmNode.TreeNode.EnsureChildrenLoaded();
+				return asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
+			}
+			else
+				return node.GetModuleNode();
+		}
 
 		static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(editCodeVMCreator, nodes))
 				return;
 
-			var asmNode = nodes[0] as AssemblyDocumentNode;
-			ModuleDocumentNode modNode;
-			if (asmNode != null) {
-				asmNode.TreeNode.EnsureChildrenLoaded();
-				modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
-			}
-			else
-				modNode = nodes[0].GetModuleNode();
+			var modNode = GetModuleNode(nodes[0]);
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				return;
@@ -120,6 +122,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (module == null)
 				throw new InvalidOperationException();
 
+			AssemblyDocumentNode asmNode;
 			if (module.IsManifestModule)
 				asmNode = modNode.TreeNode.Parent?.Data as AssemblyDocumentNode;
 			else
