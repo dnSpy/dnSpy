@@ -121,6 +121,7 @@
     <Compile Include="Debugger\CorDebug\CorDebugStartDebuggingOptions.cs" />
     <Compile Include="Debugger\CorDebug\DotNetCoreStartDebuggingOptions.cs" />
     <Compile Include="Debugger\CorDebug\DotNetFrameworkStartDebuggingOptions.cs" />
+    <Compile Include="Debugger\DbgCollectionChangedEventArgs.cs" />
     <Compile Include="Debugger\DbgImageLayout.cs" />
     <Compile Include="Debugger\DbgManager.cs" />
     <Compile Include="Debugger\DbgModule.cs" />

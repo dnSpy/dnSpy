@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 		readonly List<EngineInfo> engineInfos;
 
-		public override event EventHandler<RuntimesChangedEventArgs> RuntimesChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgRuntime>> RuntimesChanged;
 		public override DbgRuntime[] Runtimes {
 			get {
 				lock (lockObj) {
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Impl {
 		internal void Add(DbgEngine engine, DbgRuntime runtime) {
 			lock (lockObj)
 				engineInfos.Add(new EngineInfo(engine, runtime));
-			RuntimesChanged?.Invoke(this, new RuntimesChangedEventArgs(runtime, added: true));
+			RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: true));
 		}
 
 		internal (DbgRuntime runtime, bool hasMoreRuntimes) Remove(DbgEngine engine) {
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.Impl {
 				hasMoreRuntimes = engineInfos.Count > 0;
 			}
 			if (runtime != null)
-				RuntimesChanged?.Invoke(this, new RuntimesChangedEventArgs(runtime, added: false));
+				RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: false));
 			return (runtime, hasMoreRuntimes);
 		}
 

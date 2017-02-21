@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Raised when <see cref="DebugTags"/> is changed
 		/// </summary>
-		public abstract event EventHandler<DebugTagsChangedEventArgs> DebugTagsChanged;
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<string>> DebugTagsChanged;
 
 		/// <summary>
 		/// Gets all debugged processes. Can be empty even if <see cref="IsDebugging"/> is true
@@ -71,9 +71,9 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgProcess[] Processes { get; }
 
 		/// <summary>
-		/// Raised when a process gets added or removed
+		/// Raised when <see cref="Processes"/> is changed
 		/// </summary>
-		public abstract event EventHandler<ProcessesChangedEventArgs> ProcessesChanged;
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgProcess>> ProcessesChanged;
 
 		/// <summary>
 		/// Pauses all debugged processes
@@ -106,55 +106,5 @@ namespace dnSpy.Contracts.Debugger {
 		/// true if <see cref="DetachAll"/> can be called without terminating any programs
 		/// </summary>
 		public abstract bool CanDetachWithoutTerminating { get; }
-	}
-
-	/// <summary>
-	/// <see cref="DbgManager.ProcessesChanged"/> event args
-	/// </summary>
-	public struct ProcessesChangedEventArgs {
-		/// <summary>
-		/// The process that got added or removed
-		/// </summary>
-		public DbgProcess Process { get; }
-
-		/// <summary>
-		/// true if the process was added, false if it was removed
-		/// </summary>
-		public bool Added { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="process">The process that got added or removed</param>
-		/// <param name="added">true if the process was added, false if it was removed</param>
-		public ProcessesChangedEventArgs(DbgProcess process, bool added) {
-			Process = process ?? throw new ArgumentNullException(nameof(process));
-			Added = added;
-		}
-	}
-
-	/// <summary>
-	/// <see cref="DbgManager.DebugTagsChanged"/> event args
-	/// </summary>
-	public struct DebugTagsChangedEventArgs {
-		/// <summary>
-		/// Debug tags, see <see cref="PredefinedDebugTags"/>
-		/// </summary>
-		public string[] DebugTags { get; }
-
-		/// <summary>
-		/// true if the tags were added, false if they were removed
-		/// </summary>
-		public bool Added { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="debugTags">Debug tags, see <see cref="PredefinedDebugTags"/></param>
-		/// <param name="added">true if the tags were added, false if they were removed</param>
-		public DebugTagsChangedEventArgs(string[] debugTags, bool added) {
-			DebugTags = debugTags ?? throw new ArgumentNullException(nameof(debugTags));
-			Added = added;
-		}
 	}
 }

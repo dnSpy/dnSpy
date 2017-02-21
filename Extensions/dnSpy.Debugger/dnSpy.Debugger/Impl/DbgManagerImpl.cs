@@ -29,7 +29,7 @@ using dnSpy.Contracts.Debugger.Engine;
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
 	sealed partial class DbgManagerImpl : DbgManager {
-		public override event EventHandler<ProcessesChangedEventArgs> ProcessesChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgProcess>> ProcessesChanged;
 		public override DbgProcess[] Processes {
 			get {
 				lock (lockObj)
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 		bool cachedIsRunning;
 
-		public override event EventHandler<DebugTagsChangedEventArgs> DebugTagsChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<string>> DebugTagsChanged;
 		public override string[] DebugTags {
 			get {
 				lock (lockObj)
@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.Impl {
 						if (raiseIsRunningChanged)
 							IsRunningChanged?.Invoke(this, EventArgs.Empty);
 						if (addedDebugTags.Length > 0)
-							DebugTagsChanged?.Invoke(this, new DebugTagsChangedEventArgs(addedDebugTags, added: true));
+							DebugTagsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<string>(addedDebugTags, added: true));
 						engine.Message += DbgEngine_Message;
 						engine.Start(options);
 						return null;
@@ -220,7 +220,7 @@ namespace dnSpy.Debugger.Impl {
 				process = new DbgProcessImpl(this, pid);
 				processes.Add(process);
 			}
-			ProcessesChanged?.Invoke(this, new ProcessesChangedEventArgs(process, added: true));
+			ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: true));
 			return process;
 		}
 
@@ -263,7 +263,7 @@ namespace dnSpy.Debugger.Impl {
 			DisposeEngine(engine, process);
 			// Raise them in reverse order (see Start())
 			if (removedDebugTags.Length != 0)
-				DebugTagsChanged?.Invoke(this, new DebugTagsChangedEventArgs(removedDebugTags, added: false));
+				DebugTagsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<string>(removedDebugTags, added: false));
 			if (raiseIsRunningChanged)
 				IsRunningChanged?.Invoke(this, EventArgs.Empty);
 			if (raiseIsDebuggingChanged)
@@ -283,7 +283,7 @@ namespace dnSpy.Debugger.Impl {
 					lock (lockObj)
 						disposeProcess = process.ExecuteLockedIfNoMoreRuntimes(() => processes.Remove(process), false);
 					if (disposeProcess) {
-						ProcessesChanged?.Invoke(this, new ProcessesChangedEventArgs(process, added: false));
+						ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: false));
 						process.Close();
 					}
 				}

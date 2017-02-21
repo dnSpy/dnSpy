@@ -40,9 +40,9 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgRuntime[] Runtimes { get; }
 
 		/// <summary>
-		/// Raised when a runtime gets added or removed
+		/// Raised when <see cref="Runtimes"/> is changed
 		/// </summary>
-		public abstract event EventHandler<RuntimesChangedEventArgs> RuntimesChanged;
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgRuntime>> RuntimesChanged;
 
 		/// <summary>
 		/// Gets the process bitness (32 or 64)
@@ -111,30 +111,5 @@ namespace dnSpy.Contracts.Debugger {
 		/// x64, 64-bit
 		/// </summary>
 		X64,
-	}
-
-	/// <summary>
-	/// <see cref="DbgProcess.RuntimesChanged"/> event args
-	/// </summary>
-	public struct RuntimesChangedEventArgs {
-		/// <summary>
-		/// The runtime that got added or removed
-		/// </summary>
-		public DbgRuntime Runtime { get; }
-
-		/// <summary>
-		/// true if the runtime was added, false if it was removed
-		/// </summary>
-		public bool Added { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="runtime">The runtime that got added or removed</param>
-		/// <param name="added">true if the runtime was added, false if it was removed</param>
-		public RuntimesChangedEventArgs(DbgRuntime runtime, bool added) {
-			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
-			Added = added;
-		}
 	}
 }
