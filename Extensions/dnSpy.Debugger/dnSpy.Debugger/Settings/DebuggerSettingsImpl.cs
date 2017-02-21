@@ -182,9 +182,9 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool ignoreBreakInstructions = false;
 
-		public DebuggerSettings Clone() => CopyTo(new DebuggerSettingsBase());
+		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
-		public DebuggerSettings CopyTo(DebuggerSettings other) {
+		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
 			other.UseHexadecimal = UseHexadecimal;
 			other.SyntaxHighlight = SyntaxHighlight;
 			other.PropertyEvalAndFunctionCalls = PropertyEvalAndFunctionCalls;
@@ -197,6 +197,7 @@ namespace dnSpy.Debugger.Settings {
 		}
 	}
 
+	[Export(typeof(DebuggerSettingsImpl))]
 	[Export(typeof(DebuggerSettings))]
 	sealed class DebuggerSettingsImpl : DebuggerSettingsBase {
 		static readonly Guid SETTINGS_GUID = new Guid("91F1ED94-1BEA-4853-9240-B542A7D022CA");

@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
@@ -431,14 +432,13 @@ namespace dnSpy.Debugger.DbgUI {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:Options", Icon = DsImagesAttribute.Settings, Group = MenuConstants.GROUP_APP_MENU_DEBUG_OPTIONS, Order = 0)]
 		sealed class OptionsDebugMainMenuCommand : DebugMainMenuCommand {
-			[ImportingConstructor]
-			public OptionsDebugMainMenuCommand(Lazy<Debugger> debugger)
-				: base(debugger, null) {
-			}
+			readonly IAppSettingsService appSettingsService;
 
-			public override void Execute(IMenuItemContext context) {
-				//TODO: Show debugger options
-			}
+			[ImportingConstructor]
+			public OptionsDebugMainMenuCommand(Lazy<Debugger> debugger, IAppSettingsService appSettingsService)
+				: base(debugger, null) => this.appSettingsService = appSettingsService;
+
+			public override void Execute(IMenuItemContext context) => appSettingsService.Show(Settings.DebuggerAppSettingsPage.PageGuid);
 		}
 	}
 }

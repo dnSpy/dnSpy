@@ -826,7 +826,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Syntax highlight.
+        ///   Looks up a localized string similar to Syntax highlight.
         /// </summary>
         public static string DbgSettings_SyntaxHighlight {
             get {

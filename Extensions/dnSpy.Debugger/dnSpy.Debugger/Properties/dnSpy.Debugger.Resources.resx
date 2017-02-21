@@ -1204,7 +1204,7 @@ Are you sure you want to expand it?</value>
     <value>Yes</value>
   </data>
   <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
-    <value>_Syntax highlight</value>
+    <value>Syntax highlight</value>
   </data>
   <data name="LoadModulesCommand" xml:space="preserve">
     <value>Open Modules</value>
