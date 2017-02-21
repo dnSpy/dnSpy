@@ -65,14 +65,54 @@ namespace dnSpy.Contracts.Debugger.UI {
 		public abstract bool IsValid { get; }
 
 		/// <summary>
+		/// Initializes this instance to previous options
+		/// </summary>
+		/// <param name="options">Options</param>
+		public abstract void InitializePreviousOptions(StartDebuggingOptions options);
+
+		/// <summary>
+		/// Initializes this instance to default options. If the current filename is not an EXE
+		/// file, then <paramref name="options"/> should be used to initialize this instance,
+		/// else <paramref name="options"/> should be ignored.
+		/// </summary>
+		/// <param name="filename">Filename</param>
+		/// <param name="options">Options or null</param>
+		public abstract void InitializeDefaultOptions(string filename, StartDebuggingOptions options);
+
+		/// <summary>
 		/// Gets all options. This method is only called if <see cref="IsValid"/> returns true
 		/// </summary>
 		/// <returns></returns>
-		public abstract StartDebuggingOptions GetOptions();
+		public abstract StartDebuggingOptionsInfo GetOptions();
 
 		/// <summary>
 		/// Called when the dialog box gets closed
 		/// </summary>
 		public virtual void OnClose() { }
+	}
+
+	/// <summary>
+	/// Contains the options and an optional filename
+	/// </summary>
+	public struct StartDebuggingOptionsInfo {
+		/// <summary>
+		/// Gets the options
+		/// </summary>
+		public StartDebuggingOptions Options { get; }
+
+		/// <summary>
+		/// Filename or null
+		/// </summary>
+		public string Filename { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="options">Options</param>
+		/// <param name="filename">Filename or null</param>
+		public StartDebuggingOptionsInfo(StartDebuggingOptions options, string filename = null) {
+			Options = options ?? throw new ArgumentNullException(nameof(options));
+			Filename = filename;
+		}
 	}
 }

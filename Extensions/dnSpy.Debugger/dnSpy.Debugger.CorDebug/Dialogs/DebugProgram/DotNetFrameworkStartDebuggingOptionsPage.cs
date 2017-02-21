@@ -31,10 +31,9 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		// Shouldn't be localized
 		public override string DisplayName => ".NET Framework";
 
-		readonly SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions;
-
-		public DotNetFrameworkStartDebuggingOptionsPage(DotNetFrameworkStartDebuggingOptions options, SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions, IPickFilename pickFilename, IPickDirectory pickDirectory)
-			: base(options, pickFilename, pickDirectory) => this.savedDotNetStartDebuggingOptions = savedDotNetStartDebuggingOptions ?? throw new ArgumentNullException(nameof(savedDotNetStartDebuggingOptions));
+		public DotNetFrameworkStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(pickFilename, pickDirectory) {
+		}
 
 		protected override void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
@@ -44,15 +43,42 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			Filename = newFilename;
 		}
 
-		public override StartDebuggingOptions GetOptions() {
+		public override void InitializePreviousOptions(StartDebuggingOptions options) {
+			var dnfOptions = options as DotNetFrameworkStartDebuggingOptions;
+			if (dnfOptions == null)
+				return;
+			Initialize(dnfOptions);
+		}
+
+		public override void InitializeDefaultOptions(string filename, StartDebuggingOptions options) => Initialize(GetDefaultOptions(filename, options));
+
+		DotNetFrameworkStartDebuggingOptions GetDefaultOptions(string filename, StartDebuggingOptions options) {
+			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
+			if (isExe) {
+				var dnfOptions = CreateOptions();
+				Initialize(filename, dnfOptions);
+				return dnfOptions;
+			}
+			else {
+				// If it's a DLL, use the old EXE options if available
+				if (options is DotNetFrameworkStartDebuggingOptions dnfOptions)
+					return dnfOptions;
+				return CreateOptions();
+			}
+		}
+
+		DotNetFrameworkStartDebuggingOptions CreateOptions() => new DotNetFrameworkStartDebuggingOptions();
+
+		void Initialize(DotNetFrameworkStartDebuggingOptions options) => base.Initialize(options);
+
+		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = new DotNetFrameworkStartDebuggingOptions {
 				Filename = Filename,
 				CommandLine = CommandLine,
 				WorkingDirectory = WorkingDirectory,
 				BreakProcessKind = BreakProcessKind,
 			};
-			savedDotNetStartDebuggingOptions.SetOptions(options);
-			return options;
+			return new StartDebuggingOptionsInfo(options, options.Filename);
 		}
 
 		protected override bool CalculateIsValid() => string.IsNullOrEmpty(Verify(nameof(Filename)));

@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.CorDebug {
 	/// <summary>
 	/// Debugging options that will start and debug an application when passed to <see cref="DbgManager.Start(StartDebuggingOptions)"/>.
@@ -32,5 +34,25 @@ namespace dnSpy.Contracts.Debugger.CorDebug {
 		/// Host arguments (eg. "exec" if .NET Core's dotnext.exe is used)
 		/// </summary>
 		public string HostArguments { get; set; }
+
+		/// <summary>
+		/// Clones this instance
+		/// </summary>
+		/// <returns></returns>
+		public DotNetCoreStartDebuggingOptions Clone() => CopyTo(new DotNetCoreStartDebuggingOptions());
+
+		/// <summary>
+		/// Copies this instance to <paramref name="other"/> and returns it
+		/// </summary>
+		/// <param name="other">Destination</param>
+		/// <returns></returns>
+		public DotNetCoreStartDebuggingOptions CopyTo(DotNetCoreStartDebuggingOptions other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			base.CopyTo(other);
+			other.Host = Host;
+			other.HostArguments = HostArguments;
+			return other;
+		}
 	}
 }

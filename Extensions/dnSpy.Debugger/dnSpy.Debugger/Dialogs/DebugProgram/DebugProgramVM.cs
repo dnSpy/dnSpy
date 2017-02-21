@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		readonly ObservableCollection<OptionsPageVM> optionsPages;
 
 		public object OptionsPages_SelectedItem {
-			get { return optionsPages_selectedItem; }
+			get => optionsPages_selectedItem;
 			set {
 				if (optionsPages_selectedItem == value)
 					return;
@@ -42,10 +42,13 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		}
 		OptionsPageVM optionsPages_selectedItem;
 
-		public StartDebuggingOptions StartDebuggingOptions {
+		public StartDebuggingOptionsInfo StartDebuggingOptions {
 			get {
 				Debug.Assert(optionsPages_selectedItem?.IsValid == true);
-				return optionsPages_selectedItem.StartDebuggingOptionsPage.GetOptions();
+				var info = optionsPages_selectedItem.StartDebuggingOptionsPage.GetOptions();
+				if (info.Options == null)
+					throw new InvalidOperationException();
+				return info;
 			}
 		}
 

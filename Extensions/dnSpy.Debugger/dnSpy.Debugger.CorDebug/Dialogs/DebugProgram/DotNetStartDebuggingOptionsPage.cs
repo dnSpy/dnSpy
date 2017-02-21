@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		public override object UIObject => this;
 
 		public string Filename {
-			get { return filename; }
+			get => filename;
 			set {
 				if (filename != value) {
 					filename = value;
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		string filename = string.Empty;
 
 		public string CommandLine {
-			get { return commandLine; }
+			get => commandLine;
 			set {
 				if (commandLine != value) {
 					commandLine = value;
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		string commandLine = string.Empty;
 
 		public string WorkingDirectory {
-			get { return workingDirectory; }
+			get => workingDirectory;
 			set {
 				if (workingDirectory != value) {
 					workingDirectory = value;
@@ -88,8 +88,8 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(breakProcessKindList);
 
 		public BreakProcessKind BreakProcessKind {
-			get { return (BreakProcessKind)BreakProcessKindVM.SelectedItem; }
-			set { BreakProcessKindVM.SelectedItem = value; }
+			get => (BreakProcessKind)BreakProcessKindVM.SelectedItem;
+			set => BreakProcessKindVM.SelectedItem = value;
 		}
 
 		public override bool IsValid => isValid;
@@ -108,16 +108,9 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		protected readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
-		protected DotNetStartDebuggingOptionsPage(CorDebugStartDebuggingOptions options, IPickFilename pickFilename, IPickDirectory pickDirectory) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
+		protected DotNetStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory) {
 			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
 			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
-
-			Filename = options.Filename;
-			CommandLine = options.CommandLine;
-			// Must be init'd after Filename since it also overwrites this property
-			WorkingDirectory = options.WorkingDirectory;
 		}
 
 		static string GetPath(string file) {
@@ -127,6 +120,11 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			catch {
 			}
 			return null;
+		}
+
+		protected static void Initialize(string filename, CorDebugStartDebuggingOptions options) {
+			options.Filename = filename;
+			options.WorkingDirectory = GetPath(options.Filename);
 		}
 
 		protected abstract void PickNewFilename();
@@ -139,7 +137,15 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			WorkingDirectory = newDir;
 		}
 
-		string IDataErrorInfo.Error { get { throw new NotImplementedException(); } }
+		protected void Initialize(CorDebugStartDebuggingOptions options) {
+			Filename = options.Filename;
+			CommandLine = options.CommandLine;
+			// Must be init'd after Filename since it also overwrites this property
+			WorkingDirectory = options.WorkingDirectory;
+			BreakProcessKind = options.BreakProcessKind;
+		}
+
+		string IDataErrorInfo.Error => throw new NotImplementedException();
 		string IDataErrorInfo.this[string columnName] => Verify(columnName);
 
 		protected static string VerifyFilename(string filename) {

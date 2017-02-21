@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		public override string DisplayName => ".NET Core";
 
 		public string HostFilename {
-			get { return hostFilename; }
+			get => hostFilename;
 			set {
 				if (hostFilename != value) {
 					hostFilename = value;
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 		string hostFilename = string.Empty;
 
 		public string HostArguments {
-			get { return hostArguments; }
+			get => hostArguments;
 			set {
 				if (hostArguments != value) {
 					hostArguments = value;
@@ -57,13 +57,8 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 
 		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
 
-		readonly SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions;
-
-		public DotNetCoreStartDebuggingOptionsPage(DotNetCoreStartDebuggingOptions options, SavedDotNetStartDebuggingOptions savedDotNetStartDebuggingOptions, IPickFilename pickFilename, IPickDirectory pickDirectory)
-			: base(options, pickFilename, pickDirectory) {
-			this.savedDotNetStartDebuggingOptions = savedDotNetStartDebuggingOptions ?? throw new ArgumentNullException(nameof(savedDotNetStartDebuggingOptions));
-			HostFilename = options.Host;
-			HostArguments = options.HostArguments;
+		public DotNetCoreStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(pickFilename, pickDirectory) {
 		}
 
 		void PickNewHostFilename() {
@@ -82,7 +77,39 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 			Filename = newFilename;
 		}
 
-		public override StartDebuggingOptions GetOptions() {
+		public override void InitializePreviousOptions(StartDebuggingOptions options) {
+			var dncOptions = options as DotNetCoreStartDebuggingOptions;
+			if (dncOptions == null)
+				return;
+			Initialize(dncOptions);
+		}
+
+		public override void InitializeDefaultOptions(string filename, StartDebuggingOptions options) => Initialize(GetDefaultOptions(filename, options));
+
+		DotNetCoreStartDebuggingOptions GetDefaultOptions(string filename, StartDebuggingOptions options) {
+			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
+			if (isExe) {
+				var dncOptions = CreateOptions();
+				Initialize(filename, dncOptions);
+				return dncOptions;
+			}
+			else {
+				// If it's a DLL, use the old EXE options if available
+				if (options is DotNetCoreStartDebuggingOptions dncOptions)
+					return dncOptions;
+				return CreateOptions();
+			}
+		}
+
+		DotNetCoreStartDebuggingOptions CreateOptions() => new DotNetCoreStartDebuggingOptions { HostArguments = "exec" };
+
+		void Initialize(DotNetCoreStartDebuggingOptions options) {
+			base.Initialize(options);
+			HostFilename = options.Host;
+			HostArguments = options.HostArguments;
+		}
+
+		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = new DotNetCoreStartDebuggingOptions {
 				Host = HostFilename,
 				HostArguments = HostArguments,
@@ -91,8 +118,7 @@ namespace dnSpy.Debugger.CorDebug.Dialogs.DebugProgram {
 				WorkingDirectory = WorkingDirectory,
 				BreakProcessKind = BreakProcessKind,
 			};
-			savedDotNetStartDebuggingOptions.SetOptions(options);
-			return options;
+			return new StartDebuggingOptionsInfo(options, options.Filename);
 		}
 
 		protected override bool CalculateIsValid() =>

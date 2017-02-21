@@ -36,6 +36,7 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly IAppWindow appWindow;
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<StartDebuggingOptionsPageProvider>[] startDebuggingOptionsPageProviders;
+		readonly StartDebuggingOptionsMru mru;
 		Guid lastSelectedPage;
 
 		[ImportingConstructor]
@@ -43,6 +44,7 @@ namespace dnSpy.Debugger.DbgUI {
 			this.appWindow = appWindow;
 			this.documentTabService = documentTabService;
 			this.startDebuggingOptionsPageProviders = startDebuggingOptionsPageProviders.ToArray();
+			mru = new StartDebuggingOptionsMru();
 		}
 
 		StartDebuggingOptionsPage[] GetStartDebuggingOptionsPages(StartDebuggingOptionsPageContext context) {
@@ -60,14 +62,26 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public StartDebuggingOptions GetStartDebuggingOptions() {
-			var context = new StartDebuggingOptionsPageContext(GetCurrentFilename());
+			var filename = GetCurrentFilename();
+			var context = new StartDebuggingOptionsPageContext(filename);
 			var pages = GetStartDebuggingOptionsPages(context);
 			Debug.Assert(pages.Length != 0, "No debug engines!");
 			if (pages.Length == 0)
 				return null;
 
+			var oldOptions = mru.TryGetOptions(filename);
+			var lastOptions = mru.TryGetLastOptions();
+			foreach (var page in pages) {
+				if (oldOptions?.pageGuid == page.Guid)
+					page.InitializePreviousOptions(oldOptions.Value.options);
+				else if (oldOptions == null && lastOptions?.pageGuid == page.Guid)
+					page.InitializeDefaultOptions(filename, lastOptions.Value.options);
+				else
+					page.InitializeDefaultOptions(filename, null);
+			}
+
 			var dlg = new DebugProgramDlg();
-			var vm = new DebugProgramVM(pages, lastSelectedPage);
+			var vm = new DebugProgramVM(pages, oldOptions?.pageGuid ?? lastOptions?.pageGuid ?? lastSelectedPage);
 			dlg.DataContext = vm;
 			dlg.Owner = appWindow.MainWindow;
 			var res = dlg.ShowDialog();
@@ -75,7 +89,10 @@ namespace dnSpy.Debugger.DbgUI {
 			vm.Close();
 			if (res != true)
 				return null;
-			return vm.StartDebuggingOptions;
+			var info = vm.StartDebuggingOptions;
+			if (info.Filename != null)
+				mru.Add(info.Filename, info.Options, vm.SelectedPageGuid);
+			return info.Options;
 		}
 	}
 }

@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.CorDebug {
 	/// <summary>
 	/// Debugging options base class shared by .NET Framework code and .NET Core code
@@ -51,5 +53,20 @@ namespace dnSpy.Contracts.Debugger.CorDebug {
 		/// true to disable detection of managed debuggers
 		/// </summary>
 		public bool DisableManagedDebuggerDetection { get; set; }
+
+		/// <summary>
+		/// Copies this instance to <paramref name="other"/>
+		/// </summary>
+		/// <param name="other">Destination</param>
+		protected void CopyTo(CorDebugStartDebuggingOptions other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			other.Filename = Filename;
+			other.CommandLine = CommandLine;
+			other.WorkingDirectory = WorkingDirectory;
+			other.BreakProcessKind = BreakProcessKind;
+			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
+			other.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
+		}
 	}
 }
