@@ -31,6 +31,7 @@ using dnSpy.Debugger.CorDebug.Properties;
 namespace dnSpy.Debugger.CorDebug.Impl {
 	abstract class DbgEngineImpl : DbgEngine {
 		public override DbgStartKind StartKind { get; }
+		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };
 		public override event EventHandler<DbgEngineMessage> Message;
 
 		Dispatcher Dispatcher => debuggerThread.Dispatcher;

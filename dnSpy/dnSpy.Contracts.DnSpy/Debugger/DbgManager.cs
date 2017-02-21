@@ -55,6 +55,16 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract event EventHandler IsRunningChanged;
 
 		/// <summary>
+		/// Gets all debug tags, see <see cref="PredefinedDebugTags"/>
+		/// </summary>
+		public abstract string[] DebugTags { get; }
+
+		/// <summary>
+		/// Raised when <see cref="DebugTags"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DebugTagsChangedEventArgs> DebugTagsChanged;
+
+		/// <summary>
 		/// Gets all debugged processes. Can be empty even if <see cref="IsDebugging"/> is true
 		/// if the process hasn't been created yet.
 		/// </summary>
@@ -119,6 +129,31 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="added">true if the process was added, false if it was removed</param>
 		public ProcessesChangedEventArgs(DbgProcess process, bool added) {
 			Process = process ?? throw new ArgumentNullException(nameof(process));
+			Added = added;
+		}
+	}
+
+	/// <summary>
+	/// <see cref="DbgManager.DebugTagsChanged"/> event args
+	/// </summary>
+	public struct DebugTagsChangedEventArgs {
+		/// <summary>
+		/// Debug tags, see <see cref="PredefinedDebugTags"/>
+		/// </summary>
+		public string[] DebugTags { get; }
+
+		/// <summary>
+		/// true if the tags were added, false if they were removed
+		/// </summary>
+		public bool Added { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="debugTags">Debug tags, see <see cref="PredefinedDebugTags"/></param>
+		/// <param name="added">true if the tags were added, false if they were removed</param>
+		public DebugTagsChangedEventArgs(string[] debugTags, bool added) {
+			DebugTags = debugTags ?? throw new ArgumentNullException(nameof(debugTags));
 			Added = added;
 		}
 	}

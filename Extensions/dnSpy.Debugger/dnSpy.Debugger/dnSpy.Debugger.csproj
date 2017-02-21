@@ -51,6 +51,7 @@
     <Compile Include="Dialogs\DebugProgram\OptionsPageVM.cs" />
     <Compile Include="Impl\DbgManagerImpl.BreakAllHelper.cs" />
     <Compile Include="Impl\DbgManagerImpl.cs" />
+    <Compile Include="Impl\DbgManagerImpl.TagsCollection.cs" />
     <Compile Include="Impl\DbgProcessImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Native\NativeMethods.cs" />

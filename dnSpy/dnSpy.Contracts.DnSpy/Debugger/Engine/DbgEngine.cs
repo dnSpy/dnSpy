@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract DbgStartKind StartKind { get; }
 
 		/// <summary>
+		/// Gets all debug tags, see <see cref="PredefinedDebugTags"/>
+		/// </summary>
+		public abstract string[] DebugTags { get; }
+
+		/// <summary>
 		/// Called when the engine can start or attach to the debugged process. This method is called shortly after
 		/// this instance gets created by a call to <see cref="DbgEngineProvider.Create(StartDebuggingOptions)"/>.
 		/// It must send a <see cref="DbgMessageConnected"/> message when it has connected to the program or
