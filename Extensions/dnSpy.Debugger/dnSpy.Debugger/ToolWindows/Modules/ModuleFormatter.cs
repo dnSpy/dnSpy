@@ -61,8 +61,13 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public void WriteVersion(ITextColorWriter output, DbgModule module) {
 			var versionString = module.Version;
-			if (versionString != null)
-				output.Write(BoxedTextColor.Text, versionString);
+			if (versionString != null) {
+				const int MAX_VER_LEN = 100;
+				if (versionString.Length <= MAX_VER_LEN)
+					output.Write(BoxedTextColor.Text, versionString);
+				else
+					output.Write(BoxedTextColor.Text, versionString.Substring(0, MAX_VER_LEN) + "[...]");
+			}
 		}
 
 		public void WriteTimestamp(ITextColorWriter output, DbgModule module) {
