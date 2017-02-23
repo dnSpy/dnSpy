@@ -38,13 +38,29 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		readonly DebuggerThread debuggerThread;
 		readonly object lockObj;
+		readonly DbgManager dbgManager;
 		DnDebugger dnDebugger;
 		SafeHandle hProcess_debuggee;
 
-		protected DbgEngineImpl(DbgStartKind startKind) {
+		DbgClrRuntimeImpl ClrRuntime {
+			get {
+				if (clrRuntime != null)
+					return clrRuntime;
+				lock (lockObj) {
+					if (clrRuntime != null)
+						return clrRuntime;
+					clrRuntime = new DbgClrRuntimeImpl(dbgManager, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+				}
+				return clrRuntime;
+			}
+		}
+		DbgClrRuntimeImpl clrRuntime;
+
+		protected DbgEngineImpl(DbgManager dbgManager, DbgStartKind startKind) {
 			StartKind = startKind;
 			lockObj = new object();
-			debuggerThread = new DebuggerThread();
+			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
+			debuggerThread = new DebuggerThread("CorDebug");
 			debuggerThread.CallDispatcherRun();
 		}
 
@@ -76,6 +92,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			if (dnDebugger != null) {
 				dnDebugger.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
 				dnDebugger.OnProcessStateChanged -= DnDebugger_OnProcessStateChanged;
+				dnDebugger.OnModuleAdded -= DnDebugger_OnModuleAdded;
 			}
 			hProcess_debuggee?.Close();
 		}
@@ -91,6 +108,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				SendMessage(new DbgMessageDisconnected(exitCode));
 				return;
 			}
+		}
+
+		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
+			if (e.Added)
+				ClrRuntime.AddModule(e.Module);
+			else
+				ClrRuntime.RemoveModule(e.Module);
 		}
 
 		void SendMessage(DbgEngineMessage message) => Message?.Invoke(this, message);
@@ -122,6 +146,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 				dnDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
 				dnDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
+				dnDebugger.OnModuleAdded += DnDebugger_OnModuleAdded;
 				return;
 			}
 			catch (Exception ex) {
@@ -149,8 +174,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		protected abstract CorDebugRuntimeKind CorDebugRuntimeKind { get; }
-		public override DbgRuntime CreateRuntime(DbgProcess process) =>
-			new DbgClrRuntimeImpl(process, CorDebugRuntimeKind, dnDebugger.DebuggeeVersion ?? string.Empty, dnDebugger.CLRPath, dnDebugger.RuntimeDirectory);
+
+		public override DbgRuntime CreateRuntime(DbgProcess process) {
+			var runtime = ClrRuntime;
+			if (runtime.Process != null)
+				throw new InvalidOperationException();
+			runtime.SetProcess(process);
+			return runtime;
+		}
 
 		protected override void CloseCore() {
 			UnregisterEventsAndCloseProcessHandle();

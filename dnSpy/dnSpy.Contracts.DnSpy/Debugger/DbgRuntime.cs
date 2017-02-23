@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// A runtime in a process
@@ -31,5 +33,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets all modules
 		/// </summary>
 		public abstract DbgModule[] Modules { get; }
+
+		/// <summary>
+		/// Raised when <see cref="Modules"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgModule>> ModulesChanged;
 	}
 }

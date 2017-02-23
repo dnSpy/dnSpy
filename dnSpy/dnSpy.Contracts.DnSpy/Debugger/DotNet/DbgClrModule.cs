@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
 	/// A .NET module in a process
@@ -28,20 +26,5 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 		/// Gets the assembly
 		/// </summary>
 		public abstract DbgClrAssembly Assembly { get; }
-
-		/// <summary>
-		/// true if it's a dynamic module (the application can add more types and members to the module at runtime)
-		/// </summary>
-		public abstract bool IsDynamic { get; }
-
-		/// <summary>
-		/// true if it's an optimized module
-		/// </summary>
-		public abstract bool IsOptimized { get; }
-
-		/// <summary>
-		/// Gets the version found in the metadata
-		/// </summary>
-		public abstract Version Version { get; }
 	}
 }

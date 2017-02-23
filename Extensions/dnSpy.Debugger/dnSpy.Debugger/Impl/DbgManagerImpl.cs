@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 			try {
 				foreach (var lz in dbgEngineProviders) {
-					var engine = lz.Value.Create(options);
+					var engine = lz.Value.Create(this, options);
 					if (engine != null) {
 						bool raiseIsDebuggingChanged, raiseIsRunningChanged;
 						string[] addedDebugTags;

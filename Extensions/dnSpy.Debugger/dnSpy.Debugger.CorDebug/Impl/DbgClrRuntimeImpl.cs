@@ -18,22 +18,31 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DbgClrRuntimeImpl : CorDebugRuntime {
-		public override DbgProcess Process { get; }
+		public override DbgProcess Process => process;
+		DbgProcess process;
 		public override CorDebugRuntimeVersion Version { get; }
 		public override string ClrFilename { get; }
 		public override string RuntimeDirectory { get; }
 
+		DispatcherThread DispatcherThread => dbgManager.DispatcherThread;
+
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgModule>> ModulesChanged;
 		public override DbgModule[] Modules {
 			get {
-				throw new NotImplementedException();//TODO:
+				lock (lockObj)
+					return clrModules.ToArray();
 			}
 		}
+		readonly List<DbgClrModuleImpl> clrModules;
 
 		public override DbgClrAppDomain[] AppDomains {
 			get {
@@ -41,17 +50,50 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
-		public DbgClrRuntimeImpl(DbgProcess process, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
-			if (version == null)
-				throw new ArgumentNullException(nameof(version));
-			Process = process ?? throw new ArgumentNullException(nameof(process));
-			Version = new CorDebugRuntimeVersion(kind, version);
+		readonly object lockObj;
+		readonly DbgManager dbgManager;
+
+		public DbgClrRuntimeImpl(DbgManager dbgManager, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
+			lockObj = new object();
+			clrModules = new List<DbgClrModuleImpl>();
+			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
+			Version = new CorDebugRuntimeVersion(kind, version ?? throw new ArgumentNullException(nameof(version)));
 			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
 			RuntimeDirectory = runtimeDir ?? throw new ArgumentNullException(nameof(runtimeDir));
 		}
 
+		internal void SetProcess(DbgProcess process) => this.process = process;
+
+		internal void AddModule(DnModule dnModule) {
+			var module = new DbgClrModuleImpl(this, dnModule);
+			lock (lockObj) {
+				clrModules.Add(module);
+				DispatcherThread.BeginInvoke(() => ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: true)));
+			}
+		}
+
+		internal void RemoveModule(DnModule dnModule) {
+			lock (lockObj) {
+				for (int i = 0; i < clrModules.Count; i++) {
+					var module = clrModules[i];
+					if (module.DnModule == dnModule) {
+						clrModules.RemoveAt(i);
+						DispatcherThread.BeginInvoke(() => ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: false)));
+						return;
+					}
+				}
+				Debug.Fail($"Couldn't remove module: {dnModule}");
+			}
+		}
+
 		protected override void CloseCore() {
-			//TODO: Dispose of all DbgObject instances
+			DbgModule[] modules;
+			lock (lockObj) {
+				modules = clrModules.ToArray();
+				clrModules.Clear();
+			}
+			foreach (var module in modules)
+				module.Close(DispatcherThread);
 		}
 	}
 }

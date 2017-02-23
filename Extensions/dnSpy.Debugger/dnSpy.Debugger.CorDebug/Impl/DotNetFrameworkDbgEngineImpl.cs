@@ -18,6 +18,7 @@
 */
 
 using dndbg.Engine;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
@@ -26,8 +27,8 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetFrameworkDbgEngineImpl : DbgEngineImpl {
 		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetFramework;
 
-		public DotNetFrameworkDbgEngineImpl(DbgStartKind startKind)
-			: base(startKind) {
+		public DotNetFrameworkDbgEngineImpl(DbgManager dbgManager, DbgStartKind startKind)
+			: base(dbgManager, startKind) {
 		}
 
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) =>

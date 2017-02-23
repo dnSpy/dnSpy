@@ -29,9 +29,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Creates a <see cref="DbgEngine"/> or returns null if <paramref name="options"/> is unsupported
 		/// </summary>
+		/// <param name="dbgManager">Debug manager</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgEngine Create(StartDebuggingOptions options);
+		public abstract DbgEngine Create(DbgManager dbgManager, StartDebuggingOptions options);
 	}
 
 	/// <summary>Metadata</summary>

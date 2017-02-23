@@ -28,8 +28,10 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		readonly Thread debuggerThread;
 		volatile bool terminate;
 		AutoResetEvent callDispatcherRunEvent;
+		readonly string threadName;
 
-		public DebuggerThread() {
+		public DebuggerThread(string threadName) {
+			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
 			debuggerThread = new Thread(() => DebuggerThreadProc(autoResetEvent));
@@ -48,7 +50,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void DebuggerThreadProc(AutoResetEvent autoResetEvent) {
-			Thread.CurrentThread.Name = "CorDebug";
+			Thread.CurrentThread.Name = threadName;
 			Dispatcher = Dispatcher.CurrentDispatcher;
 			autoResetEvent.Set();
 

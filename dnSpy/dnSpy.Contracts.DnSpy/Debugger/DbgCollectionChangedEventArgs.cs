@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Contains added or removed objects
 	/// </summary>
-	public struct DbgCollectionChangedEventArgs<T> {
+	public struct DbgCollectionChangedEventArgs<T> where T : class {
 		/// <summary>
 		/// The objects that got added or removed (see <see cref="Added"/>)
 		/// </summary>
@@ -62,9 +62,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="obj">The object that got added or removed (see <paramref name="added"/>)</param>
 		/// <param name="added">true if <paramref name="obj"/> was added, false if it was removed</param>
 		public DbgCollectionChangedEventArgs(T obj, bool added) {
-			if (obj == null)
-				throw new ArgumentNullException(nameof(obj));
-			Objects = new ReadOnlyCollection<T>(new[] { obj });
+			Objects = new ReadOnlyCollection<T>(new[] { obj ?? throw new ArgumentNullException(nameof(obj)) });
 			Added = added;
 		}
 	}

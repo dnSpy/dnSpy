@@ -18,16 +18,33 @@
 */
 
 using System;
+using System.ComponentModel;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// A module in a process
 	/// </summary>
-	public abstract class DbgModule : DbgObject {
+	public abstract class DbgModule : DbgObject, INotifyPropertyChanged {
+		/// <summary>
+		/// Raised when a property is changed
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Raises <see cref="PropertyChanged"/>
+		/// </summary>
+		/// <param name="propName">Name of property that got changed</param>
+		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
 		/// <summary>
 		/// Gets the runtime
 		/// </summary>
 		public abstract DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// true if it's an EXE file, false if it's a DLL file
+		/// </summary>
+		public abstract bool IsExe { get; }
 
 		/// <summary>
 		/// true if <see cref="Address"/> and <see cref="Size"/> are valid
@@ -66,9 +83,19 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract string RealFilename { get; }
 
 		/// <summary>
+		/// true if it's a dynamic module (the application can add more types and members to the module at runtime)
+		/// </summary>
+		public abstract bool IsDynamic { get; }
+
+		/// <summary>
 		/// true if it's an in-memory module
 		/// </summary>
 		public abstract bool IsInMemory { get; }
+
+		/// <summary>
+		/// true if it's an optimized module, false if it's an unoptimized module, and null if it's not known
+		/// </summary>
+		public abstract bool? IsOptimized { get; }
 
 		/// <summary>
 		/// Load order of this module
@@ -76,8 +103,13 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract int Order { get; }
 
 		/// <summary>
-		/// Timestamp of module (eg. as found in the PE header)
+		/// Timestamp of module (eg. as found in the PE header) or null
 		/// </summary>
-		public abstract DateTime Timestamp { get; }
+		public abstract DateTime? Timestamp { get; }
+
+		/// <summary>
+		/// Gets the version
+		/// </summary>
+		public abstract string Version { get; }
 	}
 }

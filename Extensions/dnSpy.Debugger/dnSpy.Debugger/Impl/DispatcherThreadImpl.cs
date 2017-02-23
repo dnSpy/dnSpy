@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Impl {
 		internal Dispatcher Dispatcher => debuggerThread.Dispatcher;
 
 		public DispatcherThreadImpl() {
-			debuggerThread = new DebuggerThread();
+			debuggerThread = new DebuggerThread("Debugger");
 			debuggerThread.CallDispatcherRun();
 		}
 
