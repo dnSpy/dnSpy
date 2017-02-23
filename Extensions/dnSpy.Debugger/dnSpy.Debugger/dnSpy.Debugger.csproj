@@ -65,6 +65,21 @@
     <Compile Include="Settings\DebuggerAppSettingsPage.cs" />
     <Compile Include="Settings\DebuggerSettingsImpl.cs" />
     <Compile Include="TheExtension.cs" />
+    <Compile Include="ToolWindows\FormatterObject.cs" />
+    <Compile Include="ToolWindows\FormatterUtils.cs" />
+    <Compile Include="ToolWindows\Modules\ModuleColumnConverter.cs" />
+    <Compile Include="ToolWindows\Modules\ModuleContext.cs" />
+    <Compile Include="ToolWindows\Modules\ModuleFormatter.cs" />
+    <Compile Include="ToolWindows\Modules\ModulesContent.cs" />
+    <Compile Include="ToolWindows\Modules\ModulesControl.xaml.cs">
+      <DependentUpon>ModulesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\Modules\ModulesToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Modules\ModulesVM.cs" />
+    <Compile Include="ToolWindows\Modules\ModuleVM.cs" />
+    <Compile Include="ToolWindows\PathUtils.cs" />
+    <Compile Include="UI\ContentTypeDefinitions.cs" />
+    <Compile Include="UI\DebuggerDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
@@ -115,6 +130,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\Modules\ModulesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

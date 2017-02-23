@@ -75,13 +75,9 @@ namespace dnSpy.Debugger.Modules {
 	}
 
 	sealed class ModulesCtxMenuContext {
-		public IModulesVM VM { get; }
 		public ModuleVM[] SelectedItems { get; }
 
-		public ModulesCtxMenuContext(IModulesVM vm, ModuleVM[] selItems) {
-			VM = vm;
-			SelectedItems = selItems;
-		}
+		public ModulesCtxMenuContext(ModuleVM[] selItems) => SelectedItems = selItems;
 	}
 
 	sealed class ModulesCtxMenuCommandProxy : MenuItemCommandProxy<ModulesCtxMenuContext> {
@@ -116,11 +112,10 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		internal ModulesCtxMenuContext Create() {
-			var vm = modulesContent.Value.ModulesVM;
 			var elems = modulesContent.Value.ListView.SelectedItems.OfType<ModuleVM>().ToArray();
 			Array.Sort(elems, (a, b) => a.Module.UniqueId.CompareTo(b.Module.UniqueId));
 
-			return new ModulesCtxMenuContext(vm, elems);
+			return new ModulesCtxMenuContext(elems);
 		}
 	}
 

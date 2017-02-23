@@ -25,19 +25,14 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Debugger.IMModules;
 
-namespace dnSpy.Debugger.Modules {
+namespace dnSpy.Debugger.ToolWindows.Modules {
 	interface IModulesContent : IUIObjectProvider {
-		void OnShow();
-		void OnClose();
-		void OnVisible();
-		void OnHidden();
 		void Focus();
 		ListView ListView { get; }
 	}
 
-	//[Export(typeof(IModulesContent))]
+	[Export(typeof(IModulesContent))]
 	sealed class ModulesContent : IModulesContent {
 		public object UIObject => modulesControl;
 		public IInputElement FocusedElement => modulesControl.ListView;
@@ -45,19 +40,13 @@ namespace dnSpy.Debugger.Modules {
 		public ListView ListView => modulesControl.ListView;
 
 		readonly ModulesControl modulesControl;
-		readonly IModulesVM vmModules;
 		readonly IDocumentTabService documentTabService;
-		readonly Lazy<IModuleLoader> moduleLoader;
-		readonly Lazy<IInMemoryModuleService> inMemoryModuleService;
 
 		[ImportingConstructor]
-		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, IDocumentTabService documentTabService, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleService> inMemoryModuleService) {
+		ModulesContent(IWpfCommandService wpfCommandService, IModulesVM modulesVM, IDocumentTabService documentTabService) {
 			modulesControl = new ModulesControl();
-			vmModules = modulesVM;
 			this.documentTabService = documentTabService;
-			this.moduleLoader = moduleLoader;
-			this.inMemoryModuleService = inMemoryModuleService;
-			modulesControl.DataContext = vmModules;
+			modulesControl.DataContext = modulesVM;
 			modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
@@ -66,13 +55,9 @@ namespace dnSpy.Debugger.Modules {
 
 		void ModulesControl_ModulesListViewDoubleClick(object sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			GoToModuleModulesCtxMenuCommand.ExecuteInternal(documentTabService, inMemoryModuleService, moduleLoader, modulesControl.ListView.SelectedItem as ModuleVM, newTab);
+			//TODO:
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(modulesControl.ListView);
-		public void OnClose() => vmModules.IsEnabled = false;
-		public void OnShow() => vmModules.IsEnabled = true;
-		public void OnHidden() => vmModules.IsVisible = false;
-		public void OnVisible() => vmModules.IsVisible = true;
 	}
 }

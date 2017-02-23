@@ -24,6 +24,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
@@ -240,27 +241,31 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:BreakpointsCommand", Icon = DsImagesAttribute.BreakpointsWindow, InputGestureText = "res:ShortCutKeyCtrlAltB", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 0)]
-		sealed class BreakpointsWindowCommand : DebugMainMenuCommand {
-			[ImportingConstructor]
-			public BreakpointsWindowCommand(Lazy<Debugger> debugger)
-				: base(debugger, null) {
+		abstract class DebugToolWindowMainMenuCommand : DebugMainMenuCommand {
+			readonly IDsToolWindowService toolWindowService;
+			readonly Guid guid;
+			protected DebugToolWindowMainMenuCommand(IDsToolWindowService toolWindowService, Guid guid, Lazy<Debugger> debugger, bool? mustBeDebugging)
+				: base(debugger, mustBeDebugging) {
+				this.toolWindowService = toolWindowService;
+				this.guid = guid;
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
+			public override void Execute(IMenuItemContext context) => toolWindowService.Show(guid);
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:BreakpointsCommand", Icon = DsImagesAttribute.BreakpointsWindow, InputGestureText = "res:ShortCutKeyCtrlAltB", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 0)]
+		sealed class BreakpointsWindowCommand : DebugToolWindowMainMenuCommand {
+			[ImportingConstructor]
+			public BreakpointsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, null) {
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ExceptionSettingsCommand", Icon = DsImagesAttribute.ExceptionSettings, InputGestureText = "res:ShortCutKeyCtrlAltE", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS, Order = 10)]
-		sealed class ExceptionSettingsWindowCommand : DebugMainMenuCommand {
+		sealed class ExceptionSettingsWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
-			public ExceptionSettingsWindowCommand(Lazy<Debugger> debugger)
-				: base(debugger, null) {
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
+			public ExceptionSettingsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, null) {
 			}
 		}
 
@@ -315,50 +320,34 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:LocalsCommand", Icon = DsImagesAttribute.LocalsWindow, InputGestureText = "res:ShortCutKeyAlt4", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_VALUES, Order = 20)]
-		sealed class LocalsWindowCommand : DebugMainMenuCommand {
+		sealed class LocalsWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
-			public LocalsWindowCommand(Lazy<Debugger> debugger)
-				: base(debugger, true) {
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
+			public LocalsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, true) {
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:CallStackCommand", Icon = DsImagesAttribute.CallStackWindow, InputGestureText = "res:ShortCutKeyCtrlAltC", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_INFO, Order = 0)]
-		sealed class CallStackWindowCommand : DebugMainMenuCommand {
+		sealed class CallStackWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
-			public CallStackWindowCommand(Lazy<Debugger> debugger)
-				: base(debugger, true) {
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
+			public CallStackWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, true) {
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ThreadsCommand", Icon = DsImagesAttribute.Thread, InputGestureText = "res:ShortCutKeyCtrlAltH", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_INFO, Order = 10)]
-		sealed class ThreadsWindowCommand : DebugMainMenuCommand {
+		sealed class ThreadsWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
-			public ThreadsWindowCommand(Lazy<Debugger> debugger)
-				: base(debugger, true) {
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
+			public ThreadsWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, true) {
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ModulesCommand", Icon = DsImagesAttribute.ModulesWindow, InputGestureText = "res:ShortCutKeyCtrlAltU", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_INFO, Order = 20)]
-		sealed class ModulesWindowCommand : DebugMainMenuCommand {
+		sealed class ModulesWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
-			public ModulesWindowCommand(Lazy<Debugger> debugger)
-				: base(debugger, true) {
-			}
-
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
+			public ModulesWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, ToolWindows.Modules.ModulesToolWindowContent.THE_GUID, debugger, true) {
 			}
 		}
 
@@ -432,13 +421,13 @@ namespace dnSpy.Debugger.DbgUI {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:Options", Icon = DsImagesAttribute.Settings, Group = MenuConstants.GROUP_APP_MENU_DEBUG_OPTIONS, Order = 0)]
 		sealed class OptionsDebugMainMenuCommand : DebugMainMenuCommand {
-			readonly IAppSettingsService appSettingsService;
+			readonly IDsToolWindowService toolWindowService;
 
 			[ImportingConstructor]
-			public OptionsDebugMainMenuCommand(Lazy<Debugger> debugger, IAppSettingsService appSettingsService)
-				: base(debugger, null) => this.appSettingsService = appSettingsService;
+			public OptionsDebugMainMenuCommand(Lazy<Debugger> debugger, IDsToolWindowService toolWindowService)
+				: base(debugger, null) => this.toolWindowService = toolWindowService;
 
-			public override void Execute(IMenuItemContext context) => appSettingsService.Show(Settings.DebuggerAppSettingsPage.PageGuid);
+			public override void Execute(IMenuItemContext context) => toolWindowService.Show(Settings.DebuggerAppSettingsPage.PageGuid);
 		}
 	}
 }

@@ -21,6 +21,13 @@
                     xmlns:p="clr-namespace:dnSpy.Debugger.Properties;assembly=dnSpy.Debugger.x"
                     xmlns:dbg="clr-namespace:dnSpy.Debugger.Settings">
 
+    <Style x:Key="DbgTableGridViewScrollViewerStyle"
+           BasedOn="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+           TargetType="{x:Type ScrollViewer}">
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    </Style>
+
     <DataTemplate DataType="{x:Type dbg:DebuggerAppSettingsPage}">
         <Grid Margin="5">
             <Grid.RowDefinitions>

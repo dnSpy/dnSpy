@@ -55,6 +55,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgMachine Machine { get; }
 
 		/// <summary>
+		/// Gets the filename or an empty string if it's unknown
+		/// </summary>
+		public abstract string Filename { get; }
+
+		/// <summary>
 		/// Gets all threads
 		/// </summary>
 		public abstract DbgThread[] Threads { get; }

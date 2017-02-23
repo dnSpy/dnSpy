@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.Impl {
 		public override int Id { get; }
 		public override int Bitness { get; }
 		public override DbgMachine Machine { get; }
+		public override string Filename { get; }
 
 		struct EngineInfo {
 			public DbgEngine Engine { get; }
@@ -78,6 +79,17 @@ namespace dnSpy.Debugger.Impl {
 
 			Bitness = GetBitness(hProcess.DangerousGetHandle());
 			Machine = GetMachine(Bitness);
+			Filename = GetProcessFilename(pid) ?? string.Empty;
+		}
+
+		static string GetProcessFilename(int pid) {
+			try {
+				var p = Process.GetProcessById(pid);
+				return p.MainModule.FileName;
+			}
+			catch {
+			}
+			return string.Empty;
 		}
 
 		static int GetBitness(IntPtr hProcess) {
