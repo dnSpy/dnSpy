@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.CorDebug {
+namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
 	/// Decides when to break after starting the debugged program
 	/// </summary>

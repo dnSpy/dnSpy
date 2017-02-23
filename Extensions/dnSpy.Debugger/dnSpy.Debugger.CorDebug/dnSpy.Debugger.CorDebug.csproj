@@ -72,6 +72,18 @@
     <Compile Include="TheExtension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj">
+      <Project>{a6d1aa27-abdd-4832-b4d0-94e4b175c98f}</Project>
+      <Name>dnSpy.Contracts.Debugger.DotNet.CorDebug</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
+      <Project>{eb01bd9d-767c-4313-aca6-eb2f0f18200a}</Project>
+      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
+      <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
+      <Name>dnSpy.Contracts.Debugger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
       <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
       <Name>dnSpy.Contracts.DnSpy</Name>

@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using DE = dndbg.Engine;
 
 namespace dnSpy.Debugger.CorDebug.Impl {

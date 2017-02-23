@@ -19,7 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.UI;
 using dnSpy.Contracts.MVVM;
 

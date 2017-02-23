@@ -67,6 +67,10 @@
     <Compile Include="TheExtension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
+      <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
+      <Name>dnSpy.Contracts.Debugger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
       <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
       <Name>dnSpy.Contracts.DnSpy</Name>
@@ -119,4 +123,5 @@
     <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\EmbedInteropTypes.targets" />
 </Project>

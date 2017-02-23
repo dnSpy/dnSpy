@@ -23,7 +23,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.CorDebug.Properties;

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C92217E8-A68E-4F8D-9B98-D7328E89DAF1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>dnSpy.Contracts.Debugger</RootNamespace>
+    <AssemblyName>dnSpy.Contracts.Debugger</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <Features>strict</Features>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\dnSpy.Contracts.Debugger.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\dnSpy.Contracts.Debugger.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="DbgAppDomain.cs" />
+    <Compile Include="DbgCollectionChangedEventArgs.cs" />
+    <Compile Include="DbgImageLayout.cs" />
+    <Compile Include="DbgManager.cs" />
+    <Compile Include="DbgModule.cs" />
+    <Compile Include="DbgObject.cs" />
+    <Compile Include="DbgProcess.cs" />
+    <Compile Include="DbgRuntime.cs" />
+    <Compile Include="DbgThread.cs" />
+    <Compile Include="DebuggerSettings.cs" />
+    <Compile Include="DispatcherThread.cs" />
+    <Compile Include="Engine\DbgEngine.cs" />
+    <Compile Include="Engine\DbgEngineMessage.cs" />
+    <Compile Include="Engine\DbgEngineMessageKind.cs" />
+    <Compile Include="Engine\DbgEngineProvider.cs" />
+    <Compile Include="IDbgManagerStartListener.cs" />
+    <Compile Include="PredefinedDebugTags.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StartDebuggingOptions.cs" />
+    <Compile Include="UI\AttachProgramOptions.cs" />
+    <Compile Include="UI\AttachProgramOptionsProvider.cs" />
+    <Compile Include="UI\AttachProgramOptionsProviderFactory.cs" />
+    <Compile Include="UI\GenericDebugEngineGuidProvider.cs" />
+    <Compile Include="UI\PredefinedArchitectureNames.cs" />
+    <Compile Include="UI\PredefinedGenericDebugEngineGuids.cs" />
+    <Compile Include="UI\PredefinedRuntimeTypes.cs" />
+    <Compile Include="UI\PredefinedStartDebuggingOptionsPageDisplayOrders.cs" />
+    <Compile Include="UI\StartDebuggingOptionsPage.cs" />
+    <Compile Include="UI\StartDebuggingOptionsPageContext.cs" />
+    <Compile Include="UI\StartDebuggingOptionsPageProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

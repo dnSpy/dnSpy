@@ -19,7 +19,7 @@
 
 using System;
 
-namespace dnSpy.Contracts.Debugger.CorDebug {
+namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
 	/// Debugging options base class shared by .NET Framework code and .NET Core code
 	/// </summary>

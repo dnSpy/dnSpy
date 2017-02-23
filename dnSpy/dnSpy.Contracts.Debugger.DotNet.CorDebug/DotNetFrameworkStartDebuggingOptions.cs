@@ -19,7 +19,7 @@
 
 using System;
 
-namespace dnSpy.Contracts.Debugger.CorDebug {
+namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
 	/// Debugging options that will start and debug an application when passed to <see cref="DbgManager.Start(StartDebuggingOptions)"/>.
 	/// This is used to debug .NET Framework assemblies.
