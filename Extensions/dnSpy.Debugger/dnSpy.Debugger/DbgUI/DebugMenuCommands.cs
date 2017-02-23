@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
 

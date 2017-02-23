@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public void WriteOptimized(ITextColorWriter output, DbgModule module) => output.WriteYesNoError(module.IsOptimized);
 		public void WriteDynamic(ITextColorWriter output, DbgModule module) => output.WriteYesNo(module.IsDynamic);
 		public void WriteInMemory(ITextColorWriter output, DbgModule module) => output.WriteYesNo(module.IsInMemory);
-		public void WriteProcess(ITextColorWriter output, DbgModule module) => output.Write(module.Runtime.Process, useHex);
+		public void WriteProcess(ITextColorWriter output, DbgModule module) => output.Write(module.Process, useHex);
 		public void WriteAppDomain(ITextColorWriter output, DbgModule module) => output.Write(module.AppDomain);
 
 		// Order is always in decimal (same as VS)
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		void WriteAddress(ITextColorWriter output, DbgModule module, ulong addr) {
 			// Addresses are always in hex
-			if (module.Runtime.Process.Bitness == 32)
+			if (module.Process.Bitness == 32)
 				output.Write(BoxedTextColor.Number, string.Format("{0:X8}", addr));
 			else
 				output.Write(BoxedTextColor.Number, string.Format("{0:X16}", addr));

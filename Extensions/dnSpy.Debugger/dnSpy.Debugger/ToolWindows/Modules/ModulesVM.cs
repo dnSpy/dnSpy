@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				UI(() => {
 					var coll = Collection;
 					for (int i = coll.Count - 1; i >= 0; i--) {
-						var moduleProcess = coll[i].Module.Runtime.Process;
+						var moduleProcess = coll[i].Module.Process;
 						foreach (var p in e.Objects) {
 							if (p == moduleProcess) {
 								RemoveModuleAt_UI(i);

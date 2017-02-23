@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.ToolWindows {
 		static bool HasSameNameAsProcess(DbgAppDomain ad) {
 			if (ad == null)
 				return false;
-			var fname = PathUtils.GetFilename(ad.Runtime.Process.Filename);
+			var fname = PathUtils.GetFilename(ad.Process.Filename);
 			return !string.IsNullOrEmpty(fname) && StringComparer.OrdinalIgnoreCase.Equals(fname, ad.Name);
 		}
 
