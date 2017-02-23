@@ -114,7 +114,7 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract int Order { get; }
 
 		/// <summary>
-		/// Timestamp of module (eg. as found in the PE header) or null
+		/// Timestamp (UTC) of module (eg. as found in the PE header) or null
 		/// </summary>
 		public abstract DateTime? Timestamp { get; }
 

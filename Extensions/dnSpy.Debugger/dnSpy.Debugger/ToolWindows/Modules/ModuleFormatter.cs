@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public void WriteTimestamp(ITextColorWriter output, DbgModule module) {
 			var date = module.Timestamp;
 			if (date != null) {
-				var dateString = date.Value.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
+				var dateString = date.Value.ToLocalTime().ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 				output.Write(BoxedTextColor.Text, dateString);
 			}
 		}
