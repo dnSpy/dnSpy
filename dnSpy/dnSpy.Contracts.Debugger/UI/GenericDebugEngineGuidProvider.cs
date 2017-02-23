@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Debugger.UI {
 	/// </summary>
 	public abstract class GenericDebugEngineGuidProvider {
 		/// <summary>
-		/// Gets the guid of an engine
+		/// Gets the guid of an engine (see <see cref="PredefinedGenericDebugEngineGuids"/>)
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
