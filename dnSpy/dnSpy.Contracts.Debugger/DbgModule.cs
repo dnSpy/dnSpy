@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
@@ -118,7 +119,7 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DateTime? Timestamp { get; }
 
 		/// <summary>
-		/// Gets the version
+		/// Gets the version, eg. the file version, see <see cref="FileVersionInfo"/>
 		/// </summary>
 		public abstract string Version { get; }
 	}

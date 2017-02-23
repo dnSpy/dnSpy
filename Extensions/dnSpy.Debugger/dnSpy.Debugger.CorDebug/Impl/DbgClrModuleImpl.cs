@@ -136,6 +136,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					var bytes = DnModule.Process.CorProcess.ReadMemory(Address, (int)Size);
 					if (bytes != null) {
 						try {
+							version = GetFileVersion(bytes);
 							using (var peImage = new PEImage(bytes))
 								InitializeExeFieldsFrom(peImage);
 						}
@@ -149,6 +150,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				}
 				else {
 					try {
+						version = GetFileVersion(Filename);
 						using (var peImage = new PEImage(Filename))
 							InitializeExeFieldsFrom(peImage);
 					}
@@ -169,10 +171,43 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			//TODO: Roslyn sets bit 31 if /deterministic is used (the low 31 bits is not a timestamp)
 			timestamp = Epoch.AddSeconds(peImage.ImageNTHeaders.FileHeader.TimeDateStamp);
 
-			using (var mod = ModuleDefMD.Load(peImage))
-				version = mod.Assembly?.Version.ToString();
+			if (string.IsNullOrEmpty(version)) {
+				using (var mod = ModuleDefMD.Load(peImage))
+					version = mod.Assembly?.Version.ToString();
+			}
 		}
 		static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+		static string GetFileVersion(string filename) {
+			if (!File.Exists(filename))
+				return string.Empty;
+			try {
+				var info = FileVersionInfo.GetVersionInfo(filename);
+				return info.FileVersion ?? string.Empty;
+			}
+			catch {
+			}
+			return string.Empty;
+		}
+
+		static string GetFileVersion(byte[] bytes) {
+			string tempFilename = null;
+			try {
+				tempFilename = Path.GetTempFileName();
+				File.WriteAllBytes(tempFilename, bytes);
+				return GetFileVersion(tempFilename);
+			}
+			catch {
+			}
+			finally {
+				try {
+					if (tempFilename != null)
+						File.Delete(tempFilename);
+				}
+				catch { }
+			}
+			return string.Empty;
+		}
 
 		protected override void CloseCore() { }
 	}
