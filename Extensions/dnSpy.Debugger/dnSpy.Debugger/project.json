@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"System.ValueTuple": "4.3.0",
+		"System.ValueTuple": "4.3.0"
 	},
 	"frameworks": {
 		"net46": { }
