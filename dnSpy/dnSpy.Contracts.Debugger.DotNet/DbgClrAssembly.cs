@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
 	/// A .NET assembly in a debugged process
@@ -30,6 +32,16 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 		/// <summary>
 		/// Gets all modules
 		/// </summary>
-		public abstract DbgClrModule Modules { get; }
+		public abstract DbgClrModule[] Modules { get; }
+
+		/// <summary>
+		/// Raised when <see cref="Modules"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgClrModule>> ModulesChanged;
+
+		/// <summary>
+		/// Gets the manifest module or null if it hasn't been loaded yet
+		/// </summary>
+		public abstract DbgClrModule ManifestModule { get; }
 	}
 }

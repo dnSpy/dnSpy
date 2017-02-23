@@ -31,9 +31,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DbgClrModuleImpl : DbgClrModule {
 		readonly object lockObj;
 
-		public override DbgClrAssembly Assembly => throw new NotImplementedException();//TODO:
+		public override DbgClrAssembly ClrAssembly => ClrAssemblyImpl;
 		public override DbgRuntime Runtime { get; }
-		public override DbgAppDomain AppDomain => Assembly.AppDomain;
+		public override DbgAppDomain AppDomain => ClrAssembly.AppDomain;
 		public override ulong Address { get; }
 		public override uint Size { get; }
 		public override DbgImageLayout ImageLayout { get; }
@@ -70,12 +70,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		string version;
 
 		internal DnModule DnModule { get; }
+		internal bool IsManifestModule { get; }
+		internal DbgClrAssemblyImpl ClrAssemblyImpl { get; }
 
-		readonly bool isManifestModule;
-
-		public DbgClrModuleImpl(DbgRuntime runtime, DnModule dnModule) {
+		public DbgClrModuleImpl(DbgRuntime runtime, DbgClrAssemblyImpl assembly, DnModule dnModule) {
 			lockObj = new object();
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
+			ClrAssemblyImpl = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			DnModule = dnModule ?? throw new ArgumentNullException(nameof(dnModule));
 			Address = dnModule.Address;
 			Size = dnModule.Size;
@@ -87,7 +88,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			IsInMemory = dnModule.IsInMemory;
 			IsOptimized = CalculateIsOptimized(dnModule);
 			Order = dnModule.UniqueId;
-			isManifestModule = dnModule.CorModule.IsManifestModule;
+			IsManifestModule = dnModule.CorModule.IsManifestModule;
 		}
 
 		static DbgImageLayout CalculateImageLayout(DnModule dnModule) {
@@ -143,7 +144,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 					}
 				}
 				else if (IsDynamic || IsInMemory) {
-					if (isManifestModule)
+					if (IsManifestModule)
 						version = new AssemblyNameInfo(DnModule.Assembly.FullName).Version.ToString();
 				}
 				else {

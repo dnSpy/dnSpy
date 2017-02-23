@@ -88,6 +88,10 @@ namespace dndbg.Engine {
 		void CallOnAppDomainAdded(DnAppDomain appDomain, bool added) =>
 			OnAppDomainAdded?.Invoke(this, new AppDomainDebuggerEventArgs(appDomain, added));
 
+		public event EventHandler<AssemblyDebuggerEventArgs> OnAssemblyAdded;
+		void CallOnAssemblyAdded(DnAssembly assembly, bool added) =>
+			OnAssemblyAdded?.Invoke(this, new AssemblyDebuggerEventArgs(assembly, added));
+
 		public event EventHandler<ModuleDebuggerEventArgs> OnModuleAdded;
 		void CallOnModuleAdded(DnModule module, bool added) =>
 			OnModuleAdded?.Invoke(this, new ModuleDebuggerEventArgs(module, added));
@@ -695,6 +699,7 @@ namespace dndbg.Engine {
 		void OnAssemblyUnloaded(DnAssembly assembly) {
 			if (assembly == null)
 				return;
+			CallOnAssemblyAdded(assembly, false);
 			foreach (var module in assembly.Modules)
 				OnModuleUnloaded(module);
 		}
@@ -910,8 +915,11 @@ namespace dndbg.Engine {
 				var laArgs = (LoadAssemblyDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, laArgs.AppDomain, null);
 				appDomain = TryGetValidAppDomain(laArgs.AppDomain);
-				if (appDomain != null)
-					appDomain.TryAdd(laArgs.Assembly);
+				if (appDomain != null) {
+					assembly = appDomain.TryAdd(laArgs.Assembly);
+					if (assembly != null)
+						CallOnAssemblyAdded(assembly, true);
+				}
 				break;
 
 			case DebugCallbackKind.UnloadAssembly:

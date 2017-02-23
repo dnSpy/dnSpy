@@ -23,14 +23,14 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 	/// </summary>
 	public abstract class DbgClrThread : DbgThread {
 		/// <summary>
-		/// Gets the app domain or null if none found
+		/// Gets the runtime
 		/// </summary>
-		/// <returns></returns>
-		public abstract DbgClrAppDomain TryGetAppDomain();
+		public DbgClrRuntime ClrRuntime => (DbgClrRuntime)Runtime;
 
 		/// <summary>
-		/// Gets the managed id of this thread
+		/// Gets the app domain or null if it's a process thread
 		/// </summary>
-		public abstract int ManagedId { get; }
+		/// <returns></returns>
+		public DbgClrAppDomain ClrAppDomain => (DbgClrAppDomain)AppDomain;
 	}
 }

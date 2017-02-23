@@ -93,6 +93,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.OnProcessStateChanged -= DnDebugger_OnProcessStateChanged;
 				dnDebugger.OnNameChanged -= DnDebugger_OnNameChanged;
 				dnDebugger.OnAppDomainAdded -= DnDebugger_OnAppDomainAdded;
+				dnDebugger.OnAssemblyAdded -= DnDebugger_OnAssemblyAdded;
 				dnDebugger.OnModuleAdded -= DnDebugger_OnModuleAdded;
 			}
 			hProcess_debuggee?.Close();
@@ -124,6 +125,13 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				ClrRuntime.AddAppDomain(e.AppDomain);
 			else
 				ClrRuntime.RemoveAppDomain(e.AppDomain);
+		}
+
+		void DnDebugger_OnAssemblyAdded(object sender, AssemblyDebuggerEventArgs e) {
+			if (e.Added)
+				ClrRuntime.AddAssembly(e.Assembly);
+			else
+				ClrRuntime.RemoveAssembly(e.Assembly);
 		}
 
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
@@ -164,6 +172,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
 				dnDebugger.OnNameChanged += DnDebugger_OnNameChanged;
 				dnDebugger.OnAppDomainAdded += DnDebugger_OnAppDomainAdded;
+				dnDebugger.OnAssemblyAdded += DnDebugger_OnAssemblyAdded;
 				dnDebugger.OnModuleAdded += DnDebugger_OnModuleAdded;
 				return;
 			}

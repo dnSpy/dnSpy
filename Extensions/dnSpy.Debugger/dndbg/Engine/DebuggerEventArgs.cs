@@ -35,6 +35,16 @@ namespace dndbg.Engine {
 		}
 	}
 
+	public sealed class AssemblyDebuggerEventArgs : DebuggerEventArgs {
+		public DnAssembly Assembly { get; }
+		public bool Added { get; }
+
+		public AssemblyDebuggerEventArgs(DnAssembly assembly, bool added) {
+			Assembly = assembly;
+			Added = added;
+		}
+	}
+
 	public sealed class ModuleDebuggerEventArgs : DebuggerEventArgs {
 		public DnModule Module { get; }
 		public bool Added { get; }

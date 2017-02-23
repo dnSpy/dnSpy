@@ -23,8 +23,18 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 	/// </summary>
 	public abstract class DbgClrModule : DbgModule {
 		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgClrRuntime ClrRuntime => (DbgClrRuntime)Runtime;
+
+		/// <summary>
+		/// Gets the app domain
+		/// </summary>
+		public DbgClrAppDomain ClrAppDomain => (DbgClrAppDomain)AppDomain;
+
+		/// <summary>
 		/// Gets the assembly
 		/// </summary>
-		public abstract DbgClrAssembly Assembly { get; }
+		public abstract DbgClrAssembly ClrAssembly { get; }
 	}
 }

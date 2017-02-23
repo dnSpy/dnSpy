@@ -28,9 +28,20 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
+		/// Gets the app domain or null if it's a process thread
+		/// </summary>
+		/// <returns></returns>
+		public abstract DbgAppDomain AppDomain { get; }
+
+		/// <summary>
 		/// Gets the thread kind
 		/// </summary>
 		public abstract DbgThreadKind Kind { get; }
+
+		/// <summary>
+		/// Gets the managed id of this thread or null if it's not a managed thread
+		/// </summary>
+		public abstract int? ManagedId { get; }
 	}
 
 	/// <summary>

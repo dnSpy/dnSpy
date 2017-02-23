@@ -17,10 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
 	/// .NET runtime in a process
 	/// </summary>
 	public abstract class DbgClrRuntime : DbgRuntime {
+		/// <summary>
+		/// Gets all assemblies
+		/// </summary>
+		public abstract DbgClrAssembly[] Assemblies { get; }
+
+		/// <summary>
+		/// Raised when <see cref="Assemblies"/> is changed
+		/// </summary>
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgClrAssembly>> AssembliesChanged;
 	}
 }
