@@ -17,36 +17,43 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
-	/// A runtime in a process
+	/// An application domain
 	/// </summary>
-	public abstract class DbgRuntime : DbgObject {
+	public abstract class DbgAppDomain : DbgObject, INotifyPropertyChanged {
 		/// <summary>
-		/// Gets the process
+		/// Raised when a property is changed
 		/// </summary>
-		public abstract DbgProcess Process { get; }
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Raises <see cref="PropertyChanged"/>
+		/// </summary>
+		/// <param name="propName">Name of property that got changed</param>
+		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public abstract DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// Gets the name of the app domain
+		/// </summary>
+		public abstract string Name { get; }
+
+		/// <summary>
+		/// Gets the app domain id
+		/// </summary>
+		public abstract int Id { get; }
 
 		/// <summary>
 		/// Gets all modules
 		/// </summary>
-		public abstract DbgModule[] Modules { get; }
-
-		/// <summary>
-		/// Raised when <see cref="Modules"/> is changed
-		/// </summary>
-		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgModule>> ModulesChanged;
-
-		/// <summary>
-		/// Gets all app domains
-		/// </summary>
-		public abstract DbgAppDomain[] AppDomains { get; }
-
-		/// <summary>
-		/// Raised when <see cref="AppDomains"/> is changed
-		/// </summary>
-		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>> AppDomainsChanged;
+		public DbgModule[] Modules => Runtime.Modules.Where(a => a.AppDomain == this).ToArray();
 	}
 }

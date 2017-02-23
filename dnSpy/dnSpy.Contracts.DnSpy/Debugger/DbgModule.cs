@@ -42,6 +42,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgRuntime Runtime { get; }
 
 		/// <summary>
+		/// Gets the app domain or null if it's a process module
+		/// </summary>
+		public abstract DbgAppDomain AppDomain { get; }
+
+		/// <summary>
 		/// true if it's an EXE file, false if it's a DLL file
 		/// </summary>
 		public abstract bool IsExe { get; }

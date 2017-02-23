@@ -84,6 +84,10 @@ namespace dndbg.Engine {
 		public void SetProcessTerminated() => forceProcessTerminated = true;
 		bool forceProcessTerminated;
 
+		public event EventHandler<AppDomainDebuggerEventArgs> OnAppDomainAdded;
+		void CallOnAppDomainAdded(DnAppDomain appDomain, bool added) =>
+			OnAppDomainAdded?.Invoke(this, new AppDomainDebuggerEventArgs(appDomain, added));
+
 		public event EventHandler<ModuleDebuggerEventArgs> OnModuleAdded;
 		void CallOnModuleAdded(DnModule module, bool added) =>
 			OnModuleAdded?.Invoke(this, new ModuleDebuggerEventArgs(module, added));
@@ -681,6 +685,7 @@ namespace dndbg.Engine {
 		void OnAppDomainUnloaded(DnAppDomain appDomain) {
 			if (appDomain == null)
 				return;
+			CallOnAppDomainAdded(appDomain, false);
 			foreach (var assembly in appDomain.Assemblies) {
 				OnAssemblyUnloaded(assembly);
 				appDomain.AssemblyUnloaded(assembly.CorAssembly.RawObject);
@@ -879,13 +884,16 @@ namespace dndbg.Engine {
 			case DebugCallbackKind.CreateAppDomain:
 				var cadArgs = (CreateAppDomainDebugCallbackEventArgs)e;
 				process = TryGetValidProcess(cadArgs.Process);
+				appDomain = null;
 				if (process != null && cadArgs.AppDomain != null) {
 					b = cadArgs.AppDomain.Attach() >= 0;
 					Debug.WriteLineIf(!b, string.Format("CreateAppDomain: could not attach to AppDomain: {0:X8}", cadArgs.AppDomain.GetHashCode()));
 					if (b)
-						process.TryAdd(cadArgs.AppDomain);
+						appDomain = process.TryAdd(cadArgs.AppDomain);
 				}
 				InitializeCurrentDebuggerState(e, cadArgs.Process, cadArgs.AppDomain, null);
+				if (appDomain != null)
+					CallOnAppDomainAdded(appDomain, true);
 				break;
 
 			case DebugCallbackKind.ExitAppDomain:

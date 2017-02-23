@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.CorDebug.Impl {
@@ -44,11 +43,14 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 		readonly List<DbgClrModuleImpl> clrModules;
 
-		public override DbgClrAppDomain[] AppDomains {
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>> AppDomainsChanged;
+		public override DbgAppDomain[] AppDomains {
 			get {
-				throw new NotImplementedException();//TODO:
+				lock (lockObj)
+					return clrAppDomains.ToArray();
 			}
 		}
+		readonly List<DbgClrAppDomainImpl> clrAppDomains;
 
 		readonly object lockObj;
 		readonly DbgManager dbgManager;
@@ -56,6 +58,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public DbgClrRuntimeImpl(DbgManager dbgManager, CorDebugRuntimeKind kind, string version, string clrPath, string runtimeDir) {
 			lockObj = new object();
 			clrModules = new List<DbgClrModuleImpl>();
+			clrAppDomains = new List<DbgClrAppDomainImpl>();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			Version = new CorDebugRuntimeVersion(kind, version ?? throw new ArgumentNullException(nameof(version)));
 			ClrFilename = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
@@ -86,14 +89,53 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			}
 		}
 
+		internal void UpdateAppDomainName(DnAppDomain dnAppDomain) {
+			lock (lockObj) {
+				foreach (var appDomain in clrAppDomains) {
+					if (appDomain.DnAppDomain == dnAppDomain) {
+						appDomain.SetName(dnAppDomain.Name);
+						return;
+					}
+				}
+				Debug.Fail($"Couldn't find app domain: {dnAppDomain}");
+			}
+		}
+
+		internal void AddAppDomain(DnAppDomain dnAppDomain) {
+			var appDomain = new DbgClrAppDomainImpl(dbgManager, this, dnAppDomain);
+			lock (lockObj) {
+				clrAppDomains.Add(appDomain);
+				DispatcherThread.BeginInvoke(() => AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: true)));
+			}
+		}
+
+		internal void RemoveAppDomain(DnAppDomain dnAppDomain) {
+			lock (lockObj) {
+				for (int i = 0; i < clrAppDomains.Count; i++) {
+					var appDomain = clrAppDomains[i];
+					if (appDomain.DnAppDomain == dnAppDomain) {
+						clrAppDomains.RemoveAt(i);
+						Debug.Assert(appDomain.Modules.Length == 0);
+						DispatcherThread.BeginInvoke(() => AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: false)));
+						return;
+					}
+				}
+				Debug.Fail($"Couldn't remove app domain: {dnAppDomain}");
+			}
+		}
+
 		protected override void CloseCore() {
 			DbgModule[] modules;
+			DbgAppDomain[] appDomains;
 			lock (lockObj) {
 				modules = clrModules.ToArray();
+				appDomains = clrAppDomains.ToArray();
 				clrModules.Clear();
 			}
 			foreach (var module in modules)
 				module.Close(DispatcherThread);
+			foreach (var appDomain in appDomains)
+				appDomain.Close(DispatcherThread);
 		}
 	}
 }

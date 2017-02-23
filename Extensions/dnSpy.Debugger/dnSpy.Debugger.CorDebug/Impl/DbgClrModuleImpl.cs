@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		public override DbgClrAssembly Assembly => throw new NotImplementedException();//TODO:
 		public override DbgRuntime Runtime { get; }
+		public override DbgAppDomain AppDomain => Assembly.AppDomain;
 		public override ulong Address { get; }
 		public override uint Size { get; }
 		public override DbgImageLayout ImageLayout { get; }

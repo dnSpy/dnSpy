@@ -52,6 +52,7 @@
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="Impl\BreakProcessKindHelpers.cs" />
+    <Compile Include="Impl\DbgClrAppDomainImpl.cs" />
     <Compile Include="Impl\DbgClrModuleImpl.cs" />
     <Compile Include="Impl\DbgClrRuntimeImpl.cs" />
     <Compile Include="Impl\DbgEngineImpl.cs" />

@@ -25,6 +25,16 @@ namespace dndbg.Engine {
 		public new static readonly DebuggerEventArgs Empty = new DebuggerEventArgs();
 	}
 
+	public sealed class AppDomainDebuggerEventArgs : DebuggerEventArgs {
+		public DnAppDomain AppDomain { get; }
+		public bool Added { get; }
+
+		public AppDomainDebuggerEventArgs(DnAppDomain appDomain, bool added) {
+			AppDomain = appDomain;
+			Added = added;
+		}
+	}
+
 	public sealed class ModuleDebuggerEventArgs : DebuggerEventArgs {
 		public DnModule Module { get; }
 		public bool Added { get; }

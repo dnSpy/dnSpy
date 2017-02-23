@@ -21,29 +21,9 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 	/// <summary>
 	/// A .NET app domain
 	/// </summary>
-	public abstract class DbgClrAppDomain : DbgObject {
+	public abstract class DbgClrAppDomain : DbgAppDomain {
 		/// <summary>
-		/// Gets the runtime
-		/// </summary>
-		public abstract DbgClrRuntime Runtime { get; }
-
-		/// <summary>
-		/// Gets the name of the app domain
-		/// </summary>
-		public abstract string Name { get; }
-
-		/// <summary>
-		/// Gets the app domain id
-		/// </summary>
-		public abstract int Id { get; }
-
-		/// <summary>
-		/// Gets all modules
-		/// </summary>
-		public abstract DbgClrModule[] Modules { get; }
-
-		/// <summary>
-		/// Gets the core module (eg. mscorlib)
+		/// Gets the core module (eg. mscorlib) or null if it hasn't been loaded yet
 		/// </summary>
 		public abstract DbgClrModule CorModule { get; }
 	}
