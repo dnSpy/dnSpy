@@ -17,11 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel;
+
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// A thread in a debugged process
 	/// </summary>
-	public abstract class DbgThread : DbgObject {
+	public abstract class DbgThread : DbgObject, INotifyPropertyChanged {
+		/// <summary>
+		/// Raised when a property is changed
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Raises <see cref="PropertyChanged"/>
+		/// </summary>
+		/// <param name="propName">Name of property that got changed</param>
+		protected void OnPropertyChanged(string propName) {
+			Process.DbgManager.DispatcherThread.VerifyAccess();
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		}
+
 		/// <summary>
 		/// Gets the runtime
 		/// </summary>
@@ -47,6 +63,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the managed id of this thread or null if it's not a managed thread
 		/// </summary>
 		public abstract int? ManagedId { get; }
+
+		/// <summary>
+		/// Gets the thread name
+		/// </summary>
+		public abstract string Name { get; }
 	}
 
 	/// <summary>

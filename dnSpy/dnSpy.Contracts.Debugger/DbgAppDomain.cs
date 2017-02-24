@@ -34,7 +34,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Raises <see cref="PropertyChanged"/>
 		/// </summary>
 		/// <param name="propName">Name of property that got changed</param>
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		protected void OnPropertyChanged(string propName) {
+			Process.DbgManager.DispatcherThread.VerifyAccess();
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		}
 
 		/// <summary>
 		/// Gets the runtime
