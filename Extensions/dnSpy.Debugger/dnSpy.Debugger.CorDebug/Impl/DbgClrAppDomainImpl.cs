@@ -42,21 +42,18 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		internal DnAppDomain DnAppDomain { get; }
 
-		readonly DbgManager dbgManager;
-
-		public DbgClrAppDomainImpl(DbgManager dbgManager, DbgClrRuntime runtime, DnAppDomain dnAppDomain) {
-			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
+		public DbgClrAppDomainImpl(DbgClrRuntime runtime, DnAppDomain dnAppDomain) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			DnAppDomain = dnAppDomain ?? throw new ArgumentNullException(nameof(dnAppDomain));
 			name = dnAppDomain.Name;
 			Id = dnAppDomain.Id;
 		}
 
-		internal void SetName(string name) {
+		internal void SetName_DbgThread(string name) {
 			if (this.name == name)
 				return;
 			this.name = name;
-			dbgManager.DispatcherThread.BeginInvoke(() => OnPropertyChanged(nameof(Name)));
+			OnPropertyChanged(nameof(Name));
 		}
 
 		protected override void CloseCore() { }

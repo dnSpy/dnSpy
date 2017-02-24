@@ -86,34 +86,39 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return null;
 		}
 
-		internal void AddModule(DnModule dnModule) {
+		internal void AddModule_DbgThread(DbgClrModuleImpl module) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			DbgClrAssemblyImpl assembly;
 			lock (lockObj) {
-				var assembly = TryGetAssembly_NoLock(dnModule.Assembly);
+				assembly = TryGetAssembly_NoLock(module.DnModule.Assembly);
 				Debug.Assert(assembly != null);
 				if (assembly == null)
 					return;
-				var module = new DbgClrModuleImpl(this, assembly, dnModule);
 				clrModules.Add(module);
-				DispatcherThread.BeginInvoke(() => ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: true)));
-				assembly.AddModule(module);
+				module.Initialize(assembly);
 			}
+			assembly.AddModule_DbgThread(module);
+			ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: true));
 		}
 
-		internal void RemoveModule(DnModule dnModule) {
+		internal void RemoveModule_DbgThread(DnModule dnModule) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			DbgClrModuleImpl removedModule = null;
 			lock (lockObj) {
 				for (int i = 0; i < clrModules.Count; i++) {
 					var module = clrModules[i];
 					if (module.DnModule == dnModule) {
 						clrModules.RemoveAt(i);
-						module.ClrAssemblyImpl.RemoveModule(module);
-						DispatcherThread.BeginInvoke(() => {
-							ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(module, added: false));
-							module.Close(DispatcherThread);
-						});
-						return;
+						removedModule = module;
+						break;
 					}
 				}
-				Debug.Fail($"Couldn't remove module: {dnModule}");
+			}
+			Debug.Assert(removedModule != null);
+			if (removedModule != null) {
+				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(removedModule, added: false));
+				removedModule.ClrAssemblyImpl.RemoveModule_DbgThread(removedModule);
+				removedModule.Close(DispatcherThread);
 			}
 		}
 
@@ -125,69 +130,73 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			return null;
 		}
 
-		internal void AddAssembly(DnAssembly dnAssembly) {
+		internal void AddAssembly_DbgThread(DnAssembly dnAssembly) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			DbgClrAssemblyImpl assembly;
 			lock (lockObj) {
 				var appDomain = TryGetAppDomain_NoLock(dnAssembly.AppDomain);
 				Debug.Assert(appDomain != null);
 				if (appDomain == null)
 					return;
-				var assembly = new DbgClrAssemblyImpl(dbgManager, appDomain, dnAssembly);
+				assembly = new DbgClrAssemblyImpl(appDomain, dnAssembly);
 				clrAssemblies.Add(assembly);
-				DispatcherThread.BeginInvoke(() => AssembliesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrAssembly>(assembly, added: true)));
 			}
+			AssembliesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrAssembly>(assembly, added: true));
 		}
 
-		internal void RemoveAssembly(DnAssembly dnAssembly) {
+		internal void RemoveAssembly_DbgThread(DnAssembly dnAssembly) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			DbgClrAssemblyImpl removedAssembly = null;
 			lock (lockObj) {
 				for (int i = 0; i < clrAssemblies.Count; i++) {
 					var assembly = clrAssemblies[i];
 					if (assembly.DnAssembly == dnAssembly) {
 						clrAssemblies.RemoveAt(i);
-						DispatcherThread.BeginInvoke(() => {
-							AssembliesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrAssembly>(assembly, added: false));
-							assembly.Close(DispatcherThread);
-						});
-						return;
+						removedAssembly = assembly;
+						break;
 					}
 				}
-				Debug.Fail($"Couldn't remove assembly: {dnAssembly}");
+			}
+			Debug.Assert(removedAssembly != null);
+			if (removedAssembly != null) {
+				AssembliesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrAssembly>(removedAssembly, added: false));
+				removedAssembly.Close(DispatcherThread);
 			}
 		}
 
-		internal void UpdateAppDomainName(DnAppDomain dnAppDomain) {
-			lock (lockObj) {
-				foreach (var appDomain in clrAppDomains) {
-					if (appDomain.DnAppDomain == dnAppDomain) {
-						appDomain.SetName(dnAppDomain.Name);
-						return;
-					}
-				}
-				Debug.Fail($"Couldn't find app domain: {dnAppDomain}");
-			}
+		internal void UpdateAppDomainName_DbgThread(DnAppDomain dnAppDomain, string newName) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			DbgClrAppDomainImpl foundAppDomain = null;
+			lock (lockObj)
+				foundAppDomain = TryGetAppDomain_NoLock(dnAppDomain);
+			Debug.Assert(foundAppDomain != null);
+			foundAppDomain?.SetName_DbgThread(newName ?? string.Empty);
 		}
 
-		internal void AddAppDomain(DnAppDomain dnAppDomain) {
-			var appDomain = new DbgClrAppDomainImpl(dbgManager, this, dnAppDomain);
-			lock (lockObj) {
+		internal void AddAppDomain_DbgThread(DbgClrAppDomainImpl appDomain) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			lock (lockObj)
 				clrAppDomains.Add(appDomain);
-				DispatcherThread.BeginInvoke(() => AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: true)));
-			}
+			AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: true));
 		}
 
-		internal void RemoveAppDomain(DnAppDomain dnAppDomain) {
+		internal void RemoveAppDomain_DbgThread(DnAppDomain dnAppDomain) {
+			dbgManager.DispatcherThread.VerifyAccess();
+			DbgClrAppDomainImpl removedAppDomain = null;
 			lock (lockObj) {
 				for (int i = 0; i < clrAppDomains.Count; i++) {
 					var appDomain = clrAppDomains[i];
 					if (appDomain.DnAppDomain == dnAppDomain) {
 						clrAppDomains.RemoveAt(i);
-						DispatcherThread.BeginInvoke(() => {
-							AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: false));
-							appDomain.Close(DispatcherThread);
-						});
-						return;
+						removedAppDomain = appDomain;
+						break;
 					}
 				}
-				Debug.Fail($"Couldn't remove app domain: {dnAppDomain}");
+			}
+			Debug.Assert(removedAppDomain != null);
+			if (removedAppDomain != null) {
+				AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(removedAppDomain, added: false));
+				removedAppDomain.Close(DispatcherThread);
 			}
 		}
 
@@ -203,6 +212,12 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				clrAssemblies.Clear();
 				clrAppDomains.Clear();
 			}
+			if (appDomains.Length != 0)
+				AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomains, added: false));
+			if (assemblies.Length != 0)
+				AssembliesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrAssembly>(assemblies, added: false));
+			if (modules.Length != 0)
+				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(modules, added: false));
 			foreach (var module in modules)
 				module.Close(DispatcherThread);
 			foreach (var assembly in assemblies)

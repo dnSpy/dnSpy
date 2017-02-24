@@ -99,6 +99,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			hProcess_debuggee?.Close();
 		}
 
+		void DbgThread(Action action) =>
+			dbgManager.DispatcherThread.BeginInvoke(action);
+
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			Debug.Assert(sender != null && sender == dnDebugger);
 
@@ -113,32 +116,44 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		}
 
 		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
+			// Must be read in the CLR dbg thread since it accesses a CLR dbg COM object
+			var appDomainName = e.AppDomain?.Name;
+			DbgThread(() => DnDebugger_OnNameChanged(e, appDomainName));
+		}
+
+		void DnDebugger_OnNameChanged(NameChangedDebuggerEventArgs e, string appDomainName) => DbgThread(() => {
 			if (e.AppDomain != null)
-				ClrRuntime.UpdateAppDomainName(e.AppDomain);
+				ClrRuntime.UpdateAppDomainName_DbgThread(e.AppDomain, appDomainName);
 			if (e.Thread != null) {
 				//TODO: Update thread name
 			}
-		}
+		});
 
 		void DnDebugger_OnAppDomainAdded(object sender, AppDomainDebuggerEventArgs e) {
-			if (e.Added)
-				ClrRuntime.AddAppDomain(e.AppDomain);
+			if (e.Added) {
+				// Must be created in the CLR dbg thread since it accesses a CLR dbg COM object
+				var appDomain = new DbgClrAppDomainImpl(ClrRuntime, e.AppDomain);
+				DbgThread(() => ClrRuntime.AddAppDomain_DbgThread(appDomain));
+			}
 			else
-				ClrRuntime.RemoveAppDomain(e.AppDomain);
+				DbgThread(() => ClrRuntime.RemoveAppDomain_DbgThread(e.AppDomain));
 		}
 
-		void DnDebugger_OnAssemblyAdded(object sender, AssemblyDebuggerEventArgs e) {
+		void DnDebugger_OnAssemblyAdded(object sender, AssemblyDebuggerEventArgs e) => DbgThread(() => {
 			if (e.Added)
-				ClrRuntime.AddAssembly(e.Assembly);
+				ClrRuntime.AddAssembly_DbgThread(e.Assembly);
 			else
-				ClrRuntime.RemoveAssembly(e.Assembly);
-		}
+				ClrRuntime.RemoveAssembly_DbgThread(e.Assembly);
+		});
 
 		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
-			if (e.Added)
-				ClrRuntime.AddModule(e.Module);
+			if (e.Added) {
+				// Must be created in the CLR dbg thread since it accesses a CLR dbg COM object
+				var module = new DbgClrModuleImpl(ClrRuntime, e.Module);
+				DbgThread(() => ClrRuntime.AddModule_DbgThread(module));
+			}
 			else
-				ClrRuntime.RemoveModule(e.Module);
+				DbgThread(() => ClrRuntime.RemoveModule_DbgThread(e.Module));
 		}
 
 		void SendMessage(DbgEngineMessage message) => Message?.Invoke(this, message);

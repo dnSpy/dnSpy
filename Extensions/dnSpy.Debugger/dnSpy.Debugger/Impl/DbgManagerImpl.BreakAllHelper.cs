@@ -57,14 +57,14 @@ namespace dnSpy.Debugger.Impl {
 				if (!CheckIsDone_NoLock()) {
 					timer = new DispatcherTimer(DispatcherPriority.Send, owner.dispatcherThread.Dispatcher);
 					timer.Interval = TimeSpan.FromMilliseconds(breakTimeoutMilliseconds);
-					timer.Tick += Timer_Tick;
+					timer.Tick += Timer_Tick_DbgThread;
 					timer.Start();
 				}
 			}
 
 			void DoneStep1_NoLock(out bool canNotify) {
 				if (timer != null) {
-					timer.Tick -= Timer_Tick;
+					timer.Tick -= Timer_Tick_DbgThread;
 					timer.Stop();
 					timer = null;
 				}
@@ -72,18 +72,19 @@ namespace dnSpy.Debugger.Impl {
 				owner.breakAllHelper = null;
 			}
 
-			void DoneStep2(bool success) {
+			void DoneStep2_DbgThread(bool success) {
+				owner.DispatcherThread.VerifyAccess();
 				// All of them could've been disconnected, and if so, there's nothing to do
 				if (infos.Count > 0)
-					owner.BreakCompleted(success);
+					owner.BreakCompleted_DbgThread(success);
 			}
 
-			void Timer_Tick(object sender, EventArgs e) {
+			void Timer_Tick_DbgThread(object sender, EventArgs e) {
 				bool canNotify;
 				lock (owner.lockObj)
 					DoneStep1_NoLock(out canNotify);
 				if (canNotify)
-					DoneStep2(success: false);
+					DoneStep2_DbgThread(success: false);
 			}
 
 			bool CheckIsDone_NoLock() {
@@ -91,7 +92,7 @@ namespace dnSpy.Debugger.Impl {
 					return false;
 				DoneStep1_NoLock(out bool canNotify);
 				if (canNotify)
-					owner.DispatcherThread.BeginInvoke(() => DoneStep2(success: true));
+					owner.DispatcherThread.BeginInvoke(() => DoneStep2_DbgThread(success: true));
 				return true;
 			}
 
@@ -103,14 +104,14 @@ namespace dnSpy.Debugger.Impl {
 				return true;
 			}
 
-			public void OnConnected_NoLock(EngineInfo engineInfo) {
+			public void OnConnected_DbgThread_NoLock(EngineInfo engineInfo) {
 				var info = new Info(engineInfo);
 				infos.Add(info);
 				info.EngineInfo.Engine.Break();
 				CheckIsDone_NoLock();
 			}
 
-			public void OnDisconnected_NoLock(DbgEngine engine) {
+			public void OnDisconnected_DbgThread_NoLock(DbgEngine engine) {
 				for (int i = 0; i < infos.Count; i++) {
 					if (infos[i].EngineInfo.Engine == engine) {
 						infos.RemoveAt(i);
@@ -120,7 +121,7 @@ namespace dnSpy.Debugger.Impl {
 				CheckIsDone_NoLock();
 			}
 
-			public void OnBreak(DbgEngine engine) {
+			public void OnBreak_DbgThread(DbgEngine engine) {
 				bool done, canNotify = false;
 				lock (owner.lockObj) {
 					foreach (var info in infos) {
@@ -134,7 +135,7 @@ namespace dnSpy.Debugger.Impl {
 						DoneStep1_NoLock(out canNotify);
 				}
 				if (done && canNotify)
-					DoneStep2(success: true);
+					DoneStep2_DbgThread(success: true);
 			}
 		}
 	}

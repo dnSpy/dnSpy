@@ -42,11 +42,24 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Executes code asynchronously in the dispatcher thread. This method returns immediately even if
 		/// it happens to be called in the dispatcher thread.
-		/// 
-		/// This method should be called inside the callers lock to prevent a start and an end event
-		/// from being handled in the wrong order.
 		/// </summary>
 		/// <param name="action">Code to execute</param>
 		public abstract void BeginInvoke(Action action);
+
+		/// <summary>
+		/// Executes the code synchronously in the dispatcher thread. This method returns as soon as
+		/// <paramref name="func"/> has been executed.
+		/// </summary>
+		/// <param name="func">Code to execute</param>
+		/// <returns></returns>
+		public abstract object Invoke(Func<object> func);
+
+		/// <summary>
+		/// Executes the code synchronously in the dispatcher thread. This method returns as soon as
+		/// <paramref name="action"/> has been executed.
+		/// </summary>
+		/// <param name="action">Code to execute</param>
+		/// <returns></returns>
+		public void Invoke(Action action) => Invoke(() => { action(); return null; });
 	}
 }

@@ -120,14 +120,13 @@ namespace dnSpy.Debugger.Impl {
 		public override int WriteMemory(ulong address, byte* source, int size) => throw new NotImplementedException();//TODO:
 		public override int WriteMemory(ulong address, byte[] source, int sourceIndex, int size) => throw new NotImplementedException();//TODO:
 
-		internal void Add(DbgEngine engine, DbgRuntime runtime) {
-			lock (lockObj) {
+		internal void Add_DbgThread(DbgEngine engine, DbgRuntime runtime) {
+			lock (lockObj)
 				engineInfos.Add(new EngineInfo(engine, runtime));
-				DbgManager.DispatcherThread.BeginInvoke(() => RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: true)));
-			}
+			RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: true));
 		}
 
-		internal (DbgRuntime runtime, bool hasMoreRuntimes) Remove(DbgEngine engine) {
+		internal (DbgRuntime runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
 			DbgRuntime runtime = null;
 			bool hasMoreRuntimes;
 			lock (lockObj) {
@@ -140,10 +139,13 @@ namespace dnSpy.Debugger.Impl {
 					}
 				}
 				hasMoreRuntimes = engineInfos.Count > 0;
-				if (runtime != null)
-					DbgManager.DispatcherThread.BeginInvoke(() => RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: false)));
 			}
 			return (runtime, hasMoreRuntimes);
+		}
+
+		internal void NotifyRuntimesChanged_DbgThread(DbgRuntime runtime) {
+			if (runtime != null)
+				RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: false));
 		}
 
 		internal bool ExecuteLockedIfNoMoreRuntimes(Func<bool> funcIfNoMoreRuntimes, bool defaultValue) {

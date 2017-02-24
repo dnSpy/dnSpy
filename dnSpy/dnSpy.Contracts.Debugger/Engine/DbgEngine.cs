@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract void Start(StartDebuggingOptions options);
 
 		/// <summary>
-		/// Raised when there's a new message. It can be raised on any thread.
+		/// Raised when there's a new message. It can be raised in any thread.
 		/// </summary>
 		public abstract event EventHandler<DbgEngineMessage> Message;
 

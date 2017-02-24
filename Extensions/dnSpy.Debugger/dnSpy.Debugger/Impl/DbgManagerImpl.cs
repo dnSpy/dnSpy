@@ -134,28 +134,26 @@ namespace dnSpy.Debugger.Impl {
 				foreach (var lz in dbgEngineProviders) {
 					var engine = lz.Value.Create(this, options);
 					if (engine != null) {
-						bool raiseIsDebuggingChanged, raiseIsRunningChanged;
-						string[] addedDebugTags;
-						lock (lockObj) {
-							var oldIsRunning = cachedIsRunning;
-							raiseIsDebuggingChanged = engines.Count == 0;
-							var engineInfo = new EngineInfo(engine);
-							engines.Add(engineInfo);
-							addedDebugTags = debugTags.Add(engineInfo.DebugTags);
-							cachedIsRunning = CalculateIsRunning_NoLock();
-							raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
-
-							if (raiseIsDebuggingChanged || raiseIsRunningChanged || addedDebugTags.Length > 0) {
-								DispatcherThread.BeginInvoke(() => {
-									if (raiseIsDebuggingChanged)
-										IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
-									if (raiseIsRunningChanged)
-										IsRunningChanged?.Invoke(this, EventArgs.Empty);
-									if (addedDebugTags.Length > 0)
-										DebugTagsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<string>(addedDebugTags, added: true));
-								});
+						DispatcherThread.Invoke(() => {
+							bool raiseIsDebuggingChanged, raiseIsRunningChanged;
+							string[] addedDebugTags;
+							lock (lockObj) {
+								var oldIsRunning = cachedIsRunning;
+								raiseIsDebuggingChanged = engines.Count == 0;
+								var engineInfo = new EngineInfo(engine);
+								engines.Add(engineInfo);
+								addedDebugTags = debugTags.Add(engineInfo.DebugTags);
+								cachedIsRunning = CalculateIsRunning_NoLock();
+								raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
 							}
-						}
+							if (raiseIsDebuggingChanged)
+								IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
+							if (raiseIsRunningChanged)
+								IsRunningChanged?.Invoke(this, EventArgs.Empty);
+							if (addedDebugTags.Length > 0)
+								DebugTagsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<string>(addedDebugTags, added: true));
+						});
+
 						engine.Message += DbgEngine_Message;
 						engine.Start(options);
 						return null;
@@ -188,21 +186,24 @@ namespace dnSpy.Debugger.Impl {
 			var engine = sender as DbgEngine;
 			if (engine == null)
 				throw new ArgumentOutOfRangeException(nameof(sender));
+			DispatcherThread.BeginInvoke(() => DbgEngine_Message_DbgThread(engine, e));
+		}
 
+		void DbgEngine_Message_DbgThread(DbgEngine engine, DbgEngineMessage e) {
+			DispatcherThread.VerifyAccess();
 			if (!IsOurEngine(engine))
 				return;
-
 			switch (e.MessageKind) {
 			case DbgEngineMessageKind.Connected:
-				OnConnected(engine, (DbgMessageConnected)e);
+				OnConnected_DbgThread(engine, (DbgMessageConnected)e);
 				break;
 
 			case DbgEngineMessageKind.Disconnected:
-				OnDisconnected(engine, (DbgMessageDisconnected)e);
+				OnDisconnected_DbgThread(engine, (DbgMessageDisconnected)e);
 				break;
 
 			case DbgEngineMessageKind.Break:
-				OnBreak(engine, (DbgMessageBreak)e);
+				OnBreak_DbgThread(engine, (DbgMessageBreak)e);
 				break;
 
 			default:
@@ -226,7 +227,8 @@ namespace dnSpy.Debugger.Impl {
 			return info;
 		}
 
-		DbgProcessImpl GetOrCreateProcess(int pid) {
+		DbgProcessImpl GetOrCreateProcess_DbgThread(int pid) {
+			DispatcherThread.VerifyAccess();
 			DbgProcessImpl process;
 			lock (lockObj) {
 				foreach (var p in processes) {
@@ -235,32 +237,37 @@ namespace dnSpy.Debugger.Impl {
 				}
 				process = new DbgProcessImpl(this, pid);
 				processes.Add(process);
-				DispatcherThread.BeginInvoke(() => ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: true)));
 			}
+			ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: true));
 			return process;
 		}
 
-		void OnConnected(DbgEngine engine, DbgMessageConnected e) {
+		void OnConnected_DbgThread(DbgEngine engine, DbgMessageConnected e) {
+			DispatcherThread.VerifyAccess();
 			if (e.ErrorMessage != null) {
 				//TODO: Show error msg
-				OnDisconnected(engine);
+				OnDisconnected_DbgThread(engine);
 				return;
 			}
 
-			var process = GetOrCreateProcess(e.ProcessId);
+			var process = GetOrCreateProcess_DbgThread(e.ProcessId);
 
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
 				info.Process = process;
 				info.EngineState = EngineState.Running;
-				breakAllHelper?.OnConnected_NoLock(info);
+				breakAllHelper?.OnConnected_DbgThread_NoLock(info);
 			}
-			process.Add(engine, engine.CreateRuntime(process));
+			process.Add_DbgThread(engine, engine.CreateRuntime(process));
 		}
 
-		void OnDisconnected(DbgEngine engine, DbgMessageDisconnected e) => OnDisconnected(engine);
+		void OnDisconnected_DbgThread(DbgEngine engine, DbgMessageDisconnected e) {
+			DispatcherThread.VerifyAccess();
+			OnDisconnected_DbgThread(engine);
+		}
 
-		void OnDisconnected(DbgEngine engine) {
+		void OnDisconnected_DbgThread(DbgEngine engine) {
+			DispatcherThread.VerifyAccess();
 			DbgProcess processToDispose = null;
 			DbgRuntime runtime = null;
 			bool raiseIsDebuggingChanged, raiseIsRunningChanged;
@@ -279,40 +286,37 @@ namespace dnSpy.Debugger.Impl {
 
 				engine.Message -= DbgEngine_Message;
 				if (process != null) {
-					var pinfo = process.Remove(engine);
+					var pinfo = process.Remove_DbgThread(engine);
 					runtime = pinfo.runtime;
 					Debug.Assert(runtime != null);
 
 					if (!pinfo.hasMoreRuntimes) {
 						bool disposeProcess;
 						disposeProcess = process.ExecuteLockedIfNoMoreRuntimes(() => processes.Remove(process), false);
-						if (disposeProcess) {
+						if (disposeProcess)
 							processToDispose = process;
-							DispatcherThread.BeginInvoke(() => ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: false)));
-						}
 					}
 				}
 
-				DispatcherThread.BeginInvoke(() => {
-					engine.Close(DispatcherThread);
-					runtime?.Close(DispatcherThread);
-					processToDispose?.Close(DispatcherThread);
-				});
-
-				if (raiseIsDebuggingChanged || raiseIsRunningChanged || removedDebugTags.Length != 0) {
-					DispatcherThread.BeginInvoke(() => {
-						// Raise them in reverse order (see Start())
-						if (removedDebugTags.Length != 0)
-							DebugTagsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<string>(removedDebugTags, added: false));
-						if (raiseIsRunningChanged)
-							IsRunningChanged?.Invoke(this, EventArgs.Empty);
-						if (raiseIsDebuggingChanged)
-							IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
-					});
-				}
-
-				breakAllHelper?.OnDisconnected_NoLock(engine);
+				breakAllHelper?.OnDisconnected_DbgThread_NoLock(engine);
 			}
+
+			process?.NotifyRuntimesChanged_DbgThread(runtime);
+
+			if (processToDispose != null)
+				ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(processToDispose, added: false));
+
+			engine.Close(DispatcherThread);
+			runtime?.Close(DispatcherThread);
+			processToDispose?.Close(DispatcherThread);
+
+			// Raise them in reverse order (see Start())
+			if (removedDebugTags.Length != 0)
+				DebugTagsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<string>(removedDebugTags, added: false));
+			if (raiseIsRunningChanged)
+				IsRunningChanged?.Invoke(this, EventArgs.Empty);
+			if (raiseIsDebuggingChanged)
+				IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public override void BreakAll() {
@@ -325,7 +329,8 @@ namespace dnSpy.Debugger.Impl {
 		}
 		BreakAllHelper breakAllHelper;
 
-		void OnBreak(DbgEngine engine, DbgMessageBreak e) {
+		void OnBreak_DbgThread(DbgEngine engine, DbgMessageBreak e) {
+			DispatcherThread.VerifyAccess();
 			lock (lockObj) {
 				var info = TryGetEngineInfo_NoLock(engine);
 				// It could've been disconnected
@@ -338,19 +343,27 @@ namespace dnSpy.Debugger.Impl {
 				else
 					info.EngineState = EngineState.Paused;
 			}
-			breakAllHelper?.OnBreak(engine);
+			breakAllHelper?.OnBreak_DbgThread(engine);
 		}
 
-		void BreakCompleted(bool success) {
+		void BreakCompleted_DbgThread(bool success) {
+			DispatcherThread.VerifyAccess();
+			bool raiseIsRunning;
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
 				cachedIsRunning = CalculateIsRunning_NoLock();
-				if (oldIsRunning != cachedIsRunning)
-					DispatcherThread.BeginInvoke(() => IsRunningChanged?.Invoke(this, EventArgs.Empty));
+				raiseIsRunning = oldIsRunning != cachedIsRunning;
 			}
+			if (raiseIsRunning)
+				IsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		public override void RunAll() {
+		public override void RunAll() =>
+			DispatcherThread.BeginInvoke(() => RunAll_DbgThread());
+
+		void RunAll_DbgThread() {
+			DispatcherThread.VerifyAccess();
+			bool raiseIsRunning;
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
 
@@ -368,9 +381,10 @@ namespace dnSpy.Debugger.Impl {
 				}
 
 				cachedIsRunning = CalculateIsRunning_NoLock();
-				if (oldIsRunning != cachedIsRunning)
-					DispatcherThread.BeginInvoke(() => IsRunningChanged?.Invoke(this, EventArgs.Empty));
+				raiseIsRunning = oldIsRunning != cachedIsRunning;
 			}
+			if (raiseIsRunning)
+				IsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public override void StopDebuggingAll() {

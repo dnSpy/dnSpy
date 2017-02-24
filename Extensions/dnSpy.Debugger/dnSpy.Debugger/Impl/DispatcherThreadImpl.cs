@@ -23,6 +23,7 @@ using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DispatcherThreadImpl : DispatcherThread {
+		const DispatcherPriority execPriority = DispatcherPriority.Send;
 		readonly DebuggerThread debuggerThread;
 
 		internal Dispatcher Dispatcher => debuggerThread.Dispatcher;
@@ -37,7 +38,13 @@ namespace dnSpy.Debugger.Impl {
 		public override void BeginInvoke(Action action) {
 			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
 				return;
-			Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+			Dispatcher.BeginInvoke(execPriority, action);
+		}
+
+		public override object Invoke(Func<object> func) {
+			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
+				throw new InvalidOperationException("Shutdown has started");
+			return Dispatcher.Invoke(execPriority, func);
 		}
 	}
 }

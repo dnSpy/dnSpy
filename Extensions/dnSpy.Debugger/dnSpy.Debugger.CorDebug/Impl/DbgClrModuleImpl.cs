@@ -71,12 +71,11 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 
 		internal DnModule DnModule { get; }
 		internal bool IsManifestModule { get; }
-		internal DbgClrAssemblyImpl ClrAssemblyImpl { get; }
+		internal DbgClrAssemblyImpl ClrAssemblyImpl { get; private set; }
 
-		public DbgClrModuleImpl(DbgRuntime runtime, DbgClrAssemblyImpl assembly, DnModule dnModule) {
+		public DbgClrModuleImpl(DbgRuntime runtime, DnModule dnModule) {
 			lockObj = new object();
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
-			ClrAssemblyImpl = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			DnModule = dnModule ?? throw new ArgumentNullException(nameof(dnModule));
 			Address = dnModule.Address;
 			Size = dnModule.Size;
@@ -89,7 +88,15 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			IsOptimized = CalculateIsOptimized(dnModule);
 			Order = dnModule.UniqueId;
 			IsManifestModule = dnModule.CorModule.IsManifestModule;
+
+			// If any one of these props is true, we have to use the CLR dbg COM object which can only be
+			// called from the CLR dbg thread. This ctor executes in the CLR dbg thread.
+			if (IsDynamic || IsInMemory)
+				InitializeExeFields();
 		}
+
+		internal void Initialize(DbgClrAssemblyImpl assembly) =>
+			ClrAssemblyImpl = assembly ?? throw new ArgumentNullException(nameof(assembly));
 
 		static DbgImageLayout CalculateImageLayout(DnModule dnModule) {
 			if (dnModule.IsDynamic)

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -53,38 +54,41 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		internal DnAssembly DnAssembly { get; }
 
 		readonly object lockObj;
-		readonly DbgManager dbgManager;
 
-		public DbgClrAssemblyImpl(DbgManager dbgManager, DbgClrAppDomain appDomain, DnAssembly dnAssembly) {
+		public DbgClrAssemblyImpl(DbgClrAppDomain appDomain, DnAssembly dnAssembly) {
 			lockObj = new object();
 			clrModules = new List<DbgClrModuleImpl>();
-			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			AppDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			DnAssembly = dnAssembly ?? throw new ArgumentNullException(nameof(dnAssembly));
 		}
 
-		internal void AddModule(DbgClrModuleImpl module) {
-			lock (lockObj) {
+		internal void AddModule_DbgThread(DbgClrModuleImpl module) {
+			lock (lockObj)
 				clrModules.Add(module);
-				dbgManager.DispatcherThread.BeginInvoke(() => ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrModule>(module, added: true)));
-			}
+			ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrModule>(module, added: true));
 		}
 
-		internal void RemoveModule(DbgClrModuleImpl module) {
+		internal void RemoveModule_DbgThread(DbgClrModuleImpl module) {
+			bool raiseEvent;
 			lock (lockObj) {
 				if (manifestModule == module)
 					manifestModule = null;
-				bool b = clrModules.Remove(module);
-				if (b)
-					dbgManager.DispatcherThread.BeginInvoke(() => ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrModule>(module, added: false)));
+				raiseEvent = clrModules.Remove(module);
 			}
+			Debug.Assert(raiseEvent || IsClosed);
+			if (raiseEvent)
+				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrModule>(module, added: false));
 		}
 
 		protected override void CloseCore() {
+			DbgClrModule[] modules;
 			lock (lockObj) {
 				manifestModule = null;
+				modules = clrModules.ToArray();
 				clrModules.Clear();
 			}
+			if (modules.Length != 0)
+				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgClrModule>(modules, added: false));
 		}
 	}
 }
