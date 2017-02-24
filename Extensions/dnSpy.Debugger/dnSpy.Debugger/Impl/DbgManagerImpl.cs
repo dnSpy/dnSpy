@@ -390,9 +390,13 @@ namespace dnSpy.Debugger.Impl {
 		public override void StopDebuggingAll() {
 			lock (lockObj) {
 				// Make a copy of it in the unlikely event that an engine gets disconnected
-				// when we call StopDebugging() inside the lock
-				foreach (var info in engines.ToArray())
-					info.Engine.StopDebugging();
+				// when we call Terminate()/Detach() inside the lock
+				foreach (var info in engines.ToArray()) {
+					if (info.Engine.StartKind == DbgStartKind.Start)
+						info.Engine.Terminate();
+					else
+						info.Engine.Detach();
+				}
 			}
 		}
 

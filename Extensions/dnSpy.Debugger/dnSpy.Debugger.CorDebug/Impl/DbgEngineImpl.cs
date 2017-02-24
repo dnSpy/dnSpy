@@ -266,13 +266,6 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				dnDebugger.Continue();
 		}
 
-		public override void StopDebugging() {
-			if (StartKind == DbgStartKind.Attach)
-				Detach();
-			else
-				Terminate();
-		}
-
 		public override void Terminate() => ExecDebugThreadAsync(TerminateCore);
 		void TerminateCore() {
 			Dispatcher.VerifyAccess();
