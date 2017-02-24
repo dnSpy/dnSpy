@@ -351,6 +351,14 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_WINDOWS_GUID, Header = "res:ProcessesCommand", Icon = DsImagesAttribute.Process, InputGestureText = "res:ShortCutKeyCtrlShiftAltP", Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_INFO, Order = 30)]
+		sealed class ProcessesWindowCommand : DebugToolWindowMainMenuCommand {
+			[ImportingConstructor]
+			public ProcessesWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
+				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, true) {
+			}
+		}
+
 		static class Constants {
 			public const string WATCH_GUID = "ED461E7B-3254-4C26-8F39-F23C308644BD";
 			public const string SHOW_IN_MEMORY_WINDOW_GUID = "C9EF4AD5-21C6-4185-B5C7-7DCF2DFA7BCD";

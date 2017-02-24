@@ -1332,4 +1332,10 @@ Are you sure you want to expand it?</value>
   <data name="Options" xml:space="preserve">
     <value>_Options...</value>
   </data>
+  <data name="ShortCutKeyCtrlShiftAltP" xml:space="preserve">
+    <value>Ctrl+Shift+Alt+P</value>
+  </data>
+  <data name="ProcessesCommand" xml:space="preserve">
+    <value>_Processes</value>
+  </data>
 </root>

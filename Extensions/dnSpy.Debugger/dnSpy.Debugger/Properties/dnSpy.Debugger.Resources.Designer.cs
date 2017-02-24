@@ -2452,6 +2452,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Processes.
+        /// </summary>
+        public static string ProcessesCommand {
+            get {
+                return ResourceManager.GetString("ProcessesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reload All Method Bodies.
         /// </summary>
         public static string ReloadAllMethodBodiesCommand {
@@ -2709,6 +2718,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyCtrlShift_DIGIT {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShift_DIGIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+Alt+P.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftAltP {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftAltP", resourceCulture);
             }
         }
         
