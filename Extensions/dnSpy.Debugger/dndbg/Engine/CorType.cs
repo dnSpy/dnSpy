@@ -26,7 +26,7 @@ using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorType : COMObject<ICorDebugType>, IEquatable<CorType> {
+	sealed class CorType : COMObject<ICorDebugType>, IEquatable<CorType> {
 		/// <summary>
 		/// Gets the element type
 		/// </summary>

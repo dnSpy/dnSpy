@@ -29,12 +29,12 @@ using dndbg.COM.CorDebug;
 using dndbg.COM.MetaHost;
 
 namespace dndbg.Engine {
-	public delegate void DebugCallbackEventHandler(DnDebugger dbg, DebugCallbackEventArgs e);
+	delegate void DebugCallbackEventHandler(DnDebugger dbg, DebugCallbackEventArgs e);
 
 	/// <summary>
 	/// Only call debugger methods in the dndbg thread since it's not thread safe
 	/// </summary>
-	public sealed class DnDebugger : IDisposable {
+	sealed class DnDebugger : IDisposable {
 		readonly IDebugMessageDispatcher debugMessageDispatcher;
 		readonly ICorDebug corDebug;
 		readonly DebuggerCollection<ICorDebugProcess, DnProcess> processes;

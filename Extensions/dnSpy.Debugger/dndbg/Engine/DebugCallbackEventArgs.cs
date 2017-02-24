@@ -23,7 +23,7 @@ using System.Diagnostics;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public enum DebugCallbackKind {
+	enum DebugCallbackKind {
 		Breakpoint,
 		StepComplete,
 		Break,
@@ -61,7 +61,7 @@ namespace dndbg.Engine {
 		CustomNotification,
 	}
 
-	public abstract class DebugCallbackEventArgs {
+	abstract class DebugCallbackEventArgs {
 		/// <summary>
 		/// true if the debugged process should be paused
 		/// </summary>
@@ -99,7 +99,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class BreakpointDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class BreakpointDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.Breakpoint;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -122,7 +122,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class StepCompleteDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class StepCompleteDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.StepComplete;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -141,7 +141,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class BreakDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class BreakDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.Break;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -155,7 +155,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class ExceptionDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class ExceptionDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.Exception;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -171,7 +171,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class EvalDebugCallbackEventArgs : DebugCallbackEventArgs {
+	abstract class EvalDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public bool CompletedSuccessfully => Kind == DebugCallbackKind.EvalComplete;
 		public bool WasException => Kind == DebugCallbackKind.EvalException;
 		public ICorDebugAppDomain AppDomain { get; }
@@ -189,7 +189,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class EvalCompleteDebugCallbackEventArgs : EvalDebugCallbackEventArgs {
+	sealed class EvalCompleteDebugCallbackEventArgs : EvalDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.EvalComplete;
 
 		public EvalCompleteDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
@@ -197,7 +197,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class EvalExceptionDebugCallbackEventArgs : EvalDebugCallbackEventArgs {
+	sealed class EvalExceptionDebugCallbackEventArgs : EvalDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.EvalException;
 
 		public EvalExceptionDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
@@ -205,7 +205,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class ProcessDebugCallbackEventArgs : DebugCallbackEventArgs {
+	abstract class ProcessDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugProcess Process { get; }
 		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
 
@@ -213,7 +213,7 @@ namespace dndbg.Engine {
 			: base(pProcess) => Process = pProcess;
 	}
 
-	public sealed class CreateProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
+	sealed class CreateProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.CreateProcess;
 
 		public CreateProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
@@ -221,7 +221,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class ExitProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
+	sealed class ExitProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.ExitProcess;
 
 		public ExitProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
@@ -229,7 +229,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class ThreadDebugCallbackEventArgs : DebugCallbackEventArgs {
+	abstract class ThreadDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
 		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
@@ -242,7 +242,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class CreateThreadDebugCallbackEventArgs : ThreadDebugCallbackEventArgs {
+	sealed class CreateThreadDebugCallbackEventArgs : ThreadDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.CreateThread;
 
 		public CreateThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
@@ -250,7 +250,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class ExitThreadDebugCallbackEventArgs : ThreadDebugCallbackEventArgs {
+	sealed class ExitThreadDebugCallbackEventArgs : ThreadDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.ExitThread;
 
 		public ExitThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
@@ -258,7 +258,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class ModuleDebugCallbackEventArgs : DebugCallbackEventArgs {
+	abstract class ModuleDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugModule Module { get; }
 		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
@@ -271,7 +271,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class LoadModuleDebugCallbackEventArgs : ModuleDebugCallbackEventArgs {
+	sealed class LoadModuleDebugCallbackEventArgs : ModuleDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.LoadModule;
 
 		public LoadModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
@@ -279,7 +279,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class UnloadModuleDebugCallbackEventArgs : ModuleDebugCallbackEventArgs {
+	sealed class UnloadModuleDebugCallbackEventArgs : ModuleDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.UnloadModule;
 
 		public UnloadModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
@@ -287,7 +287,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class ClassDebugCallbackEventArgs : DebugCallbackEventArgs {
+	abstract class ClassDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugClass Class { get; }
 		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
@@ -300,7 +300,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class LoadClassDebugCallbackEventArgs : ClassDebugCallbackEventArgs {
+	sealed class LoadClassDebugCallbackEventArgs : ClassDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.LoadClass;
 
 		public LoadClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
@@ -308,7 +308,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class UnloadClassDebugCallbackEventArgs : ClassDebugCallbackEventArgs {
+	sealed class UnloadClassDebugCallbackEventArgs : ClassDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.UnloadClass;
 
 		public UnloadClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
@@ -316,7 +316,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class DebuggerErrorDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class DebuggerErrorDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.DebuggerError;
 		public ICorDebugProcess Process { get; }
 		public int HError { get; }
@@ -332,7 +332,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class LogMessageDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class LogMessageDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.LogMessage;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -352,7 +352,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class LogSwitchDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class LogSwitchDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.LogSwitch;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -374,7 +374,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class AppDomainDebugCallbackEventArgs : DebugCallbackEventArgs {
+	abstract class AppDomainDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugProcess Process { get; }
 		public ICorDebugAppDomain AppDomain { get; }
 		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
@@ -387,7 +387,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class CreateAppDomainDebugCallbackEventArgs : AppDomainDebugCallbackEventArgs {
+	sealed class CreateAppDomainDebugCallbackEventArgs : AppDomainDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.CreateAppDomain;
 
 		public CreateAppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
@@ -395,7 +395,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class ExitAppDomainDebugCallbackEventArgs : AppDomainDebugCallbackEventArgs {
+	sealed class ExitAppDomainDebugCallbackEventArgs : AppDomainDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.ExitAppDomain;
 
 		public ExitAppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
@@ -403,7 +403,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class AssemblyDebugCallbackEventArgs : DebugCallbackEventArgs {
+	abstract class AssemblyDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugAssembly Assembly { get; }
 		public CorAppDomain CorAppDomain => AppDomain == null ? null : new CorAppDomain(AppDomain);
@@ -416,7 +416,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class LoadAssemblyDebugCallbackEventArgs : AssemblyDebugCallbackEventArgs {
+	sealed class LoadAssemblyDebugCallbackEventArgs : AssemblyDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.LoadAssembly;
 
 		public LoadAssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
@@ -424,7 +424,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class UnloadAssemblyDebugCallbackEventArgs : AssemblyDebugCallbackEventArgs {
+	sealed class UnloadAssemblyDebugCallbackEventArgs : AssemblyDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.UnloadAssembly;
 
 		public UnloadAssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
@@ -432,7 +432,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class ControlCTrapDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class ControlCTrapDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.ControlCTrap;
 		public ICorDebugProcess Process { get; }
 		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
@@ -441,7 +441,7 @@ namespace dndbg.Engine {
 			: base(pProcess) => Process = pProcess;
 	}
 
-	public sealed class NameChangeDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class NameChangeDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.NameChange;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -462,7 +462,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class UpdateModuleSymbolsDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class UpdateModuleSymbolsDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.UpdateModuleSymbols;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugModule Module { get; }
@@ -478,7 +478,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class EditAndContinueRemapDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class EditAndContinueRemapDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.EditAndContinueRemap;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -497,7 +497,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class BreakpointSetErrorDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class BreakpointSetErrorDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.BreakpointSetError;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -522,7 +522,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class FunctionRemapOpportunityDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class FunctionRemapOpportunityDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.FunctionRemapOpportunity;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -544,7 +544,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class ConnectionDebugCallbackEventArgs : DebugCallbackEventArgs {
+	abstract class ConnectionDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugProcess Process { get; }
 		public uint Id { get; }
 		public CorProcess CorProcess => Process == null ? null : new CorProcess(Process);
@@ -556,7 +556,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class CreateConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
+	sealed class CreateConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.CreateConnection;
 		public string Name { get; }
 
@@ -564,7 +564,7 @@ namespace dndbg.Engine {
 			: base(pProcess, dwConnectionId) => Name = pConnName;
 	}
 
-	public sealed class ChangeConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
+	sealed class ChangeConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.ChangeConnection;
 
 		public ChangeConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
@@ -572,7 +572,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class DestroyConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
+	sealed class DestroyConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.DestroyConnection;
 
 		public DestroyConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
@@ -580,7 +580,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class Exception2DebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class Exception2DebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.Exception2;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -603,7 +603,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class ExceptionUnwindDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class ExceptionUnwindDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.ExceptionUnwind;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -621,7 +621,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class FunctionRemapCompleteDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class FunctionRemapCompleteDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.FunctionRemapComplete;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }
@@ -638,7 +638,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class MDANotificationDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class MDANotificationDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.MDANotification;
 		public ICorDebugController Controller { get; }
 		public ICorDebugThread Thread { get; }
@@ -669,7 +669,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class CustomNotificationDebugCallbackEventArgs : DebugCallbackEventArgs {
+	sealed class CustomNotificationDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public override DebugCallbackKind Kind => DebugCallbackKind.CustomNotification;
 		public ICorDebugAppDomain AppDomain { get; }
 		public ICorDebugThread Thread { get; }

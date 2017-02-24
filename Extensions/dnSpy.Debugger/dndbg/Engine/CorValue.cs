@@ -25,7 +25,7 @@ using dndbg.COM.CorDebug;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorValue : COMObject<ICorDebugValue>, IEquatable<CorValue> {
+	sealed class CorValue : COMObject<ICorDebugValue>, IEquatable<CorValue> {
 		/// <summary>
 		/// true if it's a <see cref="ICorDebugGenericValue"/>
 		/// </summary>

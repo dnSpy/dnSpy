@@ -18,17 +18,17 @@
 */
 
 namespace dndbg.Engine {
-	public enum CLRType {
+	enum CLRType {
 		Desktop,
 		CoreCLR,
 	}
 
-	public abstract class CLRTypeAttachInfo {
+	abstract class CLRTypeAttachInfo {
 		public abstract CLRType CLRType { get; }
 		public abstract string Version { get; }
 	}
 
-	public sealed class DesktopCLRTypeAttachInfo : CLRTypeAttachInfo {
+	sealed class DesktopCLRTypeAttachInfo : CLRTypeAttachInfo {
 		public override CLRType CLRType => CLRType.Desktop;
 		public override string Version => DebuggeeVersion;
 
@@ -41,7 +41,7 @@ namespace dndbg.Engine {
 		public DesktopCLRTypeAttachInfo(string debuggeeVersion) => DebuggeeVersion = debuggeeVersion;
 	}
 
-	public sealed class CoreCLRTypeAttachInfo : CLRTypeAttachInfo {
+	sealed class CoreCLRTypeAttachInfo : CLRTypeAttachInfo {
 		public override CLRType CLRType => CLRType.CoreCLR;
 
 		public override string Version { get; }
@@ -55,7 +55,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class AttachProcessOptions {
+	sealed class AttachProcessOptions {
 		/// <summary>
 		/// Info needed to attach to the CLR
 		/// </summary>

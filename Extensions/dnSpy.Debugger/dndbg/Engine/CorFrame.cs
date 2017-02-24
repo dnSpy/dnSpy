@@ -26,7 +26,7 @@ using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame> {
+	sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame> {
 		/// <summary>
 		/// Gets the frame that this frame called or null
 		/// </summary>

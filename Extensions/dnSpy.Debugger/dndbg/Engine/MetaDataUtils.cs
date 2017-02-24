@@ -28,7 +28,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
-	public sealed class CorFieldInfo {
+	sealed class CorFieldInfo {
 		public CorType OwnerType { get; }
 		public uint Token { get; }
 		public string Name { get; }
@@ -54,7 +54,7 @@ namespace dndbg.Engine {
 		public override string ToString() => string.Format("{0:X8} {1} {2} {3}", Token, TypePrinterUtils.ToString(FieldType), Name, OwnerType);
 	}
 
-	public sealed class CorPropertyInfo {
+	sealed class CorPropertyInfo {
 		public CorType OwnerType { get; }
 		public uint Token { get; }
 		public uint GetToken { get; }
@@ -80,7 +80,7 @@ namespace dndbg.Engine {
 		public override string ToString() => string.Format("{0:X8} {1} {2}", Token, Name, OwnerType);
 	}
 
-	public sealed class CorMethodInfo {
+	sealed class CorMethodInfo {
 		public CorType OwnerType { get; }
 		public uint Token { get; }
 		public string Name { get; }
@@ -100,7 +100,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public struct TokenAndName {
+	struct TokenAndName {
 		public string Name { get; }
 		public uint Token { get; }
 
@@ -110,7 +110,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class MDParameters {
+	sealed class MDParameters {
 		readonly Dictionary<uint, MDParamInfo> dict = new Dictionary<uint, MDParamInfo>();
 
 		public void Add(MDParamInfo info) {
@@ -126,7 +126,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public struct MDParamInfo {
+	struct MDParamInfo {
 		public string Name { get; }
 		public uint Token { get; }
 		public uint Sequence { get; }

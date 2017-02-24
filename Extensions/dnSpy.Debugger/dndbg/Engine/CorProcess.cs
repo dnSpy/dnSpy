@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class CorProcess : COMObject<ICorDebugProcess>, IEquatable<CorProcess> {
+	sealed class CorProcess : COMObject<ICorDebugProcess>, IEquatable<CorProcess> {
 		/// <summary>
 		/// Returns the value of ICorDebugProcess::GetHelperThreadID(). Don't cache this value since
 		/// it can change. 0 is returned if the thread doesn't exist.

@@ -21,7 +21,7 @@ using System;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class CorFunctionBreakpoint : COMObject<ICorDebugFunctionBreakpoint>, IEquatable<CorFunctionBreakpoint> {
+	sealed class CorFunctionBreakpoint : COMObject<ICorDebugFunctionBreakpoint>, IEquatable<CorFunctionBreakpoint> {
 		/// <summary>
 		/// Gets the function or null
 		/// </summary>

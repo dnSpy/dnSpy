@@ -68,7 +68,7 @@ namespace dndbg.DotNet {
 	/// <summary>
 	/// A <see cref="ModuleDef"/> created from an <c>IMetaDataImport</c>
 	/// </summary>
-	public sealed class CorModuleDef : ModuleDef, ISignatureReaderHelper, IInstructionOperandResolver, ICorHasCustomAttribute {
+	sealed class CorModuleDef : ModuleDef, ISignatureReaderHelper, IInstructionOperandResolver, ICorHasCustomAttribute {
 		readonly IMetaDataImport mdi;
 		readonly IMetaDataImport2 mdi2;
 		readonly uint origRid;

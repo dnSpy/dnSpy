@@ -20,7 +20,7 @@
 using System;
 
 namespace dndbg.Engine {
-	public sealed class ILCodeBreakpointConditionContext : BreakpointConditionContext {
+	sealed class ILCodeBreakpointConditionContext : BreakpointConditionContext {
 		public override DnBreakpoint Breakpoint => ILCodeBreakpoint;
 		public DnILCodeBreakpoint ILCodeBreakpoint { get; }
 
@@ -28,7 +28,7 @@ namespace dndbg.Engine {
 			: base(debugger) => ILCodeBreakpoint = bp;
 	}
 
-	public sealed class DnILCodeBreakpoint : DnCodeBreakpoint {
+	sealed class DnILCodeBreakpoint : DnCodeBreakpoint {
 		internal Func<ILCodeBreakpointConditionContext, bool> Condition { get; }
 
 		internal DnILCodeBreakpoint(DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond)

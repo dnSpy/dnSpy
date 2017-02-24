@@ -21,7 +21,7 @@ using System;
 using dnlib.DotNet;
 
 namespace dndbg.DotNet {
-	public sealed class TypeUpdatedEventArgs : EventArgs {
+	sealed class TypeUpdatedEventArgs : EventArgs {
 		/// <summary>
 		/// true if the type has been loaded (the <c>LoadClass</c> event has been received), false
 		/// if the type can still get new members (fields, methods, properties, events, nested types)

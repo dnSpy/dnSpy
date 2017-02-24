@@ -21,7 +21,7 @@ using System;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class CorCode : COMObject<ICorDebugCode>, IEquatable<CorCode> {
+	sealed class CorCode : COMObject<ICorDebugCode>, IEquatable<CorCode> {
 		/// <summary>
 		/// true if it's IL code
 		/// </summary>

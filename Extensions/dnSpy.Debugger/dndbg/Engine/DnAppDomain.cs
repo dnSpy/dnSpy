@@ -27,7 +27,7 @@ namespace dndbg.Engine {
 	/// <summary>
 	/// A debugged AppDomain in a debugged process
 	/// </summary>
-	public sealed class DnAppDomain {
+	sealed class DnAppDomain {
 		readonly DebuggerCollection<ICorDebugAssembly, DnAssembly> assemblies;
 
 		public CorAppDomain CorAppDomain { get; }

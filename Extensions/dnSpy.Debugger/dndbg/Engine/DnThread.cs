@@ -24,7 +24,7 @@ namespace dndbg.Engine {
 	/// <summary>
 	/// A debugged .NET thread
 	/// </summary>
-	public sealed class DnThread {
+	sealed class DnThread {
 		public CorThread CorThread { get; }
 
 		/// <summary>

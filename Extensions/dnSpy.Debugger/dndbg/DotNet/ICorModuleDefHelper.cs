@@ -21,7 +21,7 @@ using dnlib.DotNet;
 using dnlib.IO;
 
 namespace dndbg.DotNet {
-	public interface ICorModuleDefHelper {
+	interface ICorModuleDefHelper {
 		/// <summary>
 		/// Gets the currently loaded core library (eg. mscorlib)
 		/// </summary>

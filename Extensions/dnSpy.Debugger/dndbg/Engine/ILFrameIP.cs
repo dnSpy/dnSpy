@@ -23,7 +23,7 @@ namespace dndbg.Engine {
 	/// <summary>
 	/// IL frame IP address
 	/// </summary>
-	public struct ILFrameIP {
+	struct ILFrameIP {
 		public uint Offset { get; }
 		public CorDebugMappingResult Mapping { get; }
 

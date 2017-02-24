@@ -25,7 +25,7 @@ namespace dndbg.Engine {
 	/// <summary>
 	/// A loaded module
 	/// </summary>
-	public sealed class DnModule {
+	sealed class DnModule {
 		/// <summary>
 		/// Gets the created module or null if none has been created
 		/// </summary>

@@ -18,14 +18,14 @@
 */
 
 namespace dndbg.Engine {
-	public abstract class BreakpointConditionContext {
+	abstract class BreakpointConditionContext {
 		public abstract DnBreakpoint Breakpoint { get; }
 		public DnDebugger Debugger { get; }
 
 		protected BreakpointConditionContext(DnDebugger debugger) => Debugger = debugger;
 	}
 
-	public abstract class DnBreakpoint {
+	abstract class DnBreakpoint {
 		/// <summary>
 		/// The user can set this property to any value. It's not used by the debugger.
 		/// </summary>

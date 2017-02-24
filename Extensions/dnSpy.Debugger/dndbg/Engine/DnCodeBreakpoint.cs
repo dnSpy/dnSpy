@@ -31,7 +31,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class DnCodeBreakpoint : DnBreakpoint {
+	abstract class DnCodeBreakpoint : DnBreakpoint {
 		public DnModuleId Module { get; }
 		public uint Token { get; }
 		public uint Offset { get; }

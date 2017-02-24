@@ -20,7 +20,7 @@
 using System;
 
 namespace dndbg.Engine {
-	public interface ICorValueHolder : IDisposable {
+	interface ICorValueHolder : IDisposable {
 		/// <summary>
 		/// true if the cached <see cref="dndbg.Engine.CorValue"/> is null or has been neutered
 		/// </summary>
@@ -44,7 +44,7 @@ namespace dndbg.Engine {
 	/// Holds a <see cref="CorValue"/> that gets neutered when Continue() is called. A new
 	/// <see cref="CorValue"/> is automatically fetched whenever that happens.
 	/// </summary>
-	public sealed class CorValueHolder : ICorValueHolder {
+	sealed class CorValueHolder : ICorValueHolder {
 		public bool IsNeutered => value == null || value.IsNeutered;
 
 		public CorValue CorValue {
@@ -83,7 +83,7 @@ namespace dndbg.Engine {
 	/// Holds a <see cref="dndbg.Engine.CorValue"/> that doesn't get neutered when Continue() is
 	/// called. The value is not owned by this class and won't get disposed by this class.
 	/// </summary>
-	public sealed class DummyCorValueHolder : ICorValueHolder {
+	sealed class DummyCorValueHolder : ICorValueHolder {
 		public CorValue CorValue { get; }
 		public bool IsNeutered => false;
 

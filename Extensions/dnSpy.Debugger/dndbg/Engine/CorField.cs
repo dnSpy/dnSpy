@@ -23,7 +23,7 @@ using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorField : IEquatable<CorField> {
+	sealed class CorField : IEquatable<CorField> {
 		/// <summary>
 		/// Gets the module or null
 		/// </summary>

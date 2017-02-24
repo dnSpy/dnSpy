@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace dndbg.Engine {
-	public static class CorDebugExtensions {
+	static class CorDebugExtensions {
 		public static T[] ToCorDebugArray<T>(this IEnumerable<COMObject<T>> objs) where T : class {
 			if (objs == null)
 				return null;

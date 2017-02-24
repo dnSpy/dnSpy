@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 
 namespace dndbg.Engine {
-	public sealed class DisableSystemDebuggerDetection {
+	sealed class DisableSystemDebuggerDetection {
 		public static void Initialize(DnDebugger debugger) => new DisableSystemDebuggerDetection(debugger);
 
 		DisableSystemDebuggerDetection(DnDebugger debugger) => debugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;

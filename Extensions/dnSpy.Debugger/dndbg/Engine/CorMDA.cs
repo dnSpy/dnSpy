@@ -22,7 +22,7 @@ using System.Text;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class CorMDA : COMObject<ICorDebugMDA>, IEquatable<CorMDA> {
+	sealed class CorMDA : COMObject<ICorDebugMDA>, IEquatable<CorMDA> {
 		/// <summary>
 		/// true if the thread on which the MDA was fired has slipped since the MDA was fired.
 		/// 

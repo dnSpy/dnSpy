@@ -18,7 +18,7 @@
 */
 
 namespace dndbg.Engine {
-	public enum DebuggerProcessState {
+	enum DebuggerProcessState {
 		/// <summary>
 		/// Creating the first process
 		/// </summary>

@@ -21,7 +21,7 @@ using System;
 
 namespace dndbg.Engine {
 	[Flags]
-	public enum ProcessCreationFlags : uint {
+	enum ProcessCreationFlags : uint {
 		DEBUG_PROCESS = 0x00000001,
 		DEBUG_ONLY_THIS_PROCESS = 0x00000002,
 		CREATE_SUSPENDED = 0x00000004,

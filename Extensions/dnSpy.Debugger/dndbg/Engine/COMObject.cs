@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 
 namespace dndbg.Engine {
-	public abstract class COMObject<T> : IEquatable<COMObject<T>> where T : class {
+	abstract class COMObject<T> : IEquatable<COMObject<T>> where T : class {
 		public T RawObject => obj;
 		protected readonly T obj;
 

@@ -21,7 +21,7 @@ using System;
 using dndbg.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorProcessReader : IProcessReader {
+	sealed class CorProcessReader : IProcessReader {
 		readonly CorProcess process;
 
 		public CorProcessReader(DnProcess process)

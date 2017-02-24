@@ -21,7 +21,7 @@ using System.ComponentModel;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public class DebugOptions : INotifyPropertyChanged {
+	class DebugOptions : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected void OnPropertyChanged(string propName) =>

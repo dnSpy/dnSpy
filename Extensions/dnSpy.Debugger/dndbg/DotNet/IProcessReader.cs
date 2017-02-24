@@ -21,7 +21,7 @@ namespace dndbg.DotNet {
 	/// <summary>
 	/// Reads memory from some process
 	/// </summary>
-	public interface IProcessReader {
+	interface IProcessReader {
 		/// <summary>
 		/// Reads bytes from the process and returns number of bytes read. This can be less than
 		/// <paramref name="count"/> if not all memory is readable

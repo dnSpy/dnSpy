@@ -21,11 +21,11 @@ using System;
 using dndbg.DotNet;
 
 namespace dndbg.Engine {
-	public class DebuggerEventArgs : EventArgs {
+	class DebuggerEventArgs : EventArgs {
 		public new static readonly DebuggerEventArgs Empty = new DebuggerEventArgs();
 	}
 
-	public sealed class AppDomainDebuggerEventArgs : DebuggerEventArgs {
+	sealed class AppDomainDebuggerEventArgs : DebuggerEventArgs {
 		public DnAppDomain AppDomain { get; }
 		public bool Added { get; }
 
@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class AssemblyDebuggerEventArgs : DebuggerEventArgs {
+	sealed class AssemblyDebuggerEventArgs : DebuggerEventArgs {
 		public DnAssembly Assembly { get; }
 		public bool Added { get; }
 
@@ -45,7 +45,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class ModuleDebuggerEventArgs : DebuggerEventArgs {
+	sealed class ModuleDebuggerEventArgs : DebuggerEventArgs {
 		public DnModule Module { get; }
 		public bool Added { get; }
 
@@ -55,7 +55,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class NameChangedDebuggerEventArgs : DebuggerEventArgs {
+	sealed class NameChangedDebuggerEventArgs : DebuggerEventArgs {
 		public DnAppDomain AppDomain { get; }
 		public DnThread Thread { get; }
 
@@ -65,7 +65,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class CorModuleDefCreatedEventArgs : DebuggerEventArgs {
+	sealed class CorModuleDefCreatedEventArgs : DebuggerEventArgs {
 		public DnModule Module { get; }
 		public CorModuleDef CorModuleDef { get; }
 

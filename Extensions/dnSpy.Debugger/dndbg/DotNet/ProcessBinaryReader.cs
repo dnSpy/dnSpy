@@ -24,7 +24,7 @@ using System.IO;
 using dnlib.IO;
 
 namespace dndbg.DotNet {
-	public sealed class ProcessBinaryReader : IBinaryReader {
+	sealed class ProcessBinaryReader : IBinaryReader {
 		const int CACHE_SIZE = 0x100;
 		readonly IProcessReader reader;
 		readonly ulong baseAddress;

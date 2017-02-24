@@ -22,7 +22,7 @@ using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorProperty : IEquatable<CorProperty> {
+	sealed class CorProperty : IEquatable<CorProperty> {
 		/// <summary>
 		/// Gets the module or null
 		/// </summary>

@@ -20,7 +20,7 @@
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public struct CorExceptionObjectStackFrame {
+	struct CorExceptionObjectStackFrame {
 		public CorModule Module { get; }
 		public ulong IP { get; }
 		public uint Token { get; }

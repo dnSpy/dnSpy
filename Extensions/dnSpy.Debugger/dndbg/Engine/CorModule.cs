@@ -28,7 +28,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
-	public sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule> {
+	sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule> {
 		/// <summary>
 		/// Gets the process or null
 		/// </summary>

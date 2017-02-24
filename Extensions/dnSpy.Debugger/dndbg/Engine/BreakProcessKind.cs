@@ -18,7 +18,7 @@
 */
 
 namespace dndbg.Engine {
-	public enum BreakProcessKind {
+	enum BreakProcessKind {
 		/// <summary>
 		/// Don't break
 		/// </summary>

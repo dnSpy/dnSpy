@@ -22,7 +22,7 @@ using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorEvent : IEquatable<CorEvent> {
+	sealed class CorEvent : IEquatable<CorEvent> {
 		/// <summary>
 		/// Gets the module or null
 		/// </summary>

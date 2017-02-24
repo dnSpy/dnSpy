@@ -20,7 +20,7 @@
 using System;
 
 namespace dndbg.Engine {
-	public enum DebugEventBreakpointKind {
+	enum DebugEventBreakpointKind {
 		CreateProcess,
 		ExitProcess,
 		CreateThread,
@@ -42,7 +42,7 @@ namespace dndbg.Engine {
 		CustomNotification,
 	}
 
-	public sealed class DebugEventBreakpointConditionContext : BreakpointConditionContext {
+	sealed class DebugEventBreakpointConditionContext : BreakpointConditionContext {
 		public override DnBreakpoint Breakpoint => DebugEventBreakpoint;
 		public DnDebugEventBreakpoint DebugEventBreakpoint { get; }
 		public DebugCallbackEventArgs EventArgs { get; }
@@ -54,7 +54,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class DnDebugEventBreakpoint : DnBreakpoint {
+	sealed class DnDebugEventBreakpoint : DnBreakpoint {
 		internal Func<DebugEventBreakpointConditionContext, bool> Condition { get; }
 		public DebugEventBreakpointKind EventKind { get; }
 

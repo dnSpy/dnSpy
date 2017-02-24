@@ -20,7 +20,7 @@
 using System;
 
 namespace dndbg.Engine {
-	public sealed class AnyDebugEventBreakpointConditionContext : BreakpointConditionContext {
+	sealed class AnyDebugEventBreakpointConditionContext : BreakpointConditionContext {
 		public override DnBreakpoint Breakpoint => AnyDebugEventBreakpoint;
 		public DnAnyDebugEventBreakpoint AnyDebugEventBreakpoint { get; }
 		public DebugCallbackEventArgs EventArgs { get; }
@@ -32,7 +32,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class DnAnyDebugEventBreakpoint : DnBreakpoint {
+	sealed class DnAnyDebugEventBreakpoint : DnBreakpoint {
 		internal Func<AnyDebugEventBreakpointConditionContext, bool> Condition { get; }
 
 		internal DnAnyDebugEventBreakpoint(Func<AnyDebugEventBreakpointConditionContext, bool> cond) => Condition = cond ?? defaultCond;

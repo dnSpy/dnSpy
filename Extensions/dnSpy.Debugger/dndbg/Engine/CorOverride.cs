@@ -18,7 +18,7 @@
 */
 
 namespace dndbg.Engine {
-	public sealed class CorOverride {
+	sealed class CorOverride {
 		/// <summary>
 		/// Gets the body function or null if it's not a <c>Method</c> token
 		/// </summary>

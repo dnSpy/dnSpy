@@ -29,7 +29,7 @@ namespace dndbg.Engine {
 	/// <summary>
 	/// A loaded assembly
 	/// </summary>
-	public sealed class DnAssembly {
+	sealed class DnAssembly {
 		readonly DebuggerCollection<ICorDebugModule, DnModule> modules;
 
 		public CorAssembly CorAssembly { get; }

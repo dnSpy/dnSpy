@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 #pragma warning disable 0108 // Member hides inherited member; missing new keyword
 namespace dndbg.COM.MetaData {
 	[Flags]
-	public enum CorPEKind {
+	enum CorPEKind {
 		/// <summary>not a PE file</summary>
 		peNot = 0x00000000,
 		/// <summary>flag IL_ONLY is set in COR header</summary>
@@ -37,11 +37,11 @@ namespace dndbg.COM.MetaData {
 		/// <summary>flags 32BITREQUIRED and 32BITPREFERRED are set in COR header</summary>
 		pe32BitPreferred = 0x00000010,
 	}
-	public struct COR_FIELD_OFFSET {
+	struct COR_FIELD_OFFSET {
 		public uint FieldToken;
 		public uint Offset;
 	}
-	public struct ASSEMBLYMETADATA {
+	struct ASSEMBLYMETADATA {
 		public ushort usMajorVersion;
 		public ushort usMinorVersion;
 		public ushort usBuildNumber;
@@ -54,7 +54,7 @@ namespace dndbg.COM.MetaData {
 		public uint ulOS;
 	}
 	[Guid("EE62470B-E94B-424e-9B7C-2F00C9249F93"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComImport]
-	public interface IMetaDataAssemblyImport {
+	interface IMetaDataAssemblyImport {
 		[PreserveSig]
 		int GetAssemblyProps(uint mda, IntPtr ppbPublicKey, IntPtr pcbPublicKey, IntPtr pulHashAlgId, IntPtr szName, uint cchName, IntPtr pchName, IntPtr pMetaData, IntPtr pdwAssemblyFlags);
 		[PreserveSig]
@@ -85,7 +85,7 @@ namespace dndbg.COM.MetaData {
 		int FindAssembliesByName([MarshalAs(UnmanagedType.LPWStr)] string szAppBase, [MarshalAs(UnmanagedType.LPWStr)] string szPrivateBin, [MarshalAs(UnmanagedType.LPWStr)] string szAssemblyName, IntPtr ppIUnk, uint cMax, IntPtr pcAssemblies);
 	}
 	[Guid("7DAC8207-D3AE-4C75-9B67-92801A497D44"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComImport]
-	public interface IMetaDataImport {
+	interface IMetaDataImport {
 		[PreserveSig]
 		int CloseEnum(IntPtr hEnum);
 		[PreserveSig]
@@ -191,7 +191,7 @@ namespace dndbg.COM.MetaData {
 		int IsGlobal([In] uint pd, [Out] out int pbGlobal);
 	}
 	[Guid("FCE5EFA0-8BBA-4f8e-A036-8F2022B08466"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComImport]
-	public interface IMetaDataImport2 : IMetaDataImport {
+	interface IMetaDataImport2 : IMetaDataImport {
 		// IMetaDataImport members
 		[PreserveSig]
 		int CloseEnum(IntPtr hEnum);

@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class CorThread : COMObject<ICorDebugThread>, IEquatable<CorThread> {
+	sealed class CorThread : COMObject<ICorDebugThread>, IEquatable<CorThread> {
 		/// <summary>
 		/// Gets the process or null
 		/// </summary>

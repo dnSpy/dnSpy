@@ -21,7 +21,7 @@ namespace dndbg.Engine {
 	/// <summary>
 	/// Identical to <c>COR_DEBUG_STEP_RANGE</c>
 	/// </summary>
-	public struct StepRange {
+	struct StepRange {
 		/// <summary>
 		/// Start offset relative to the beginning of the method
 		/// </summary>

@@ -18,12 +18,12 @@
 */
 
 namespace dndbg.Engine {
-	public abstract class CLRTypeDebugInfo {
+	abstract class CLRTypeDebugInfo {
 		public abstract CLRType CLRType { get; }
 		public abstract CLRTypeDebugInfo Clone();
 	}
 
-	public sealed class DesktopCLRTypeDebugInfo : CLRTypeDebugInfo {
+	sealed class DesktopCLRTypeDebugInfo : CLRTypeDebugInfo {
 		public override CLRType CLRType => CLRType.Desktop;
 
 		/// <summary>
@@ -41,7 +41,7 @@ namespace dndbg.Engine {
 		public override CLRTypeDebugInfo Clone() => new DesktopCLRTypeDebugInfo(DebuggeeVersion);
 	}
 
-	public sealed class CoreCLRTypeDebugInfo : CLRTypeDebugInfo {
+	sealed class CoreCLRTypeDebugInfo : CLRTypeDebugInfo {
 		/// <summary>
 		/// dbgshim.dll filename or null
 		/// </summary>
@@ -68,7 +68,7 @@ namespace dndbg.Engine {
 		public override CLRTypeDebugInfo Clone() => new CoreCLRTypeDebugInfo(DbgShimFilename, HostFilename, HostCommandLine);
 	}
 
-	public sealed class DebugProcessOptions {
+	sealed class DebugProcessOptions {
 		/// <summary>
 		/// Use desktop or CoreCLR?
 		/// </summary>

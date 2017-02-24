@@ -28,7 +28,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
-	public enum TypeColor {
+	enum TypeColor {
 		Unknown,
 		Space,
 		IPType,
@@ -73,11 +73,11 @@ namespace dndbg.Engine {
 		ToStringResult,
 	}
 
-	public interface ITypeOutput {
+	interface ITypeOutput {
 		void Write(string s, TypeColor type);
 	}
 
-	public sealed class StringBuilderTypeOutput : ITypeOutput {
+	sealed class StringBuilderTypeOutput : ITypeOutput {
 		readonly StringBuilder sb = new StringBuilder();
 
 		public void Write(string s, TypeColor type) => sb.Append(s);
@@ -85,7 +85,7 @@ namespace dndbg.Engine {
 	}
 
 	[Flags]
-	public enum TypePrinterFlags {
+	enum TypePrinterFlags {
 		ShowModuleNames				= 0x00000001,
 		ShowParameterTypes			= 0x00000002,
 		ShowParameterNames			= 0x00000004,

@@ -25,7 +25,7 @@ using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	[Serializable]
-	public class EvalException : Exception {
+	class EvalException : Exception {
 		public int HR { get; }
 
 		public EvalException()
@@ -47,7 +47,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public struct EvalResult {
+	struct EvalResult {
 		public bool WasException { get; }
 		public CorValue ResultOrException { get; }
 
@@ -57,10 +57,10 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public class EvalEventArgs : EventArgs {
+	class EvalEventArgs : EventArgs {
 	}
 
-	public sealed class DnEval : IDisposable {
+	sealed class DnEval : IDisposable {
 		readonly DnDebugger debugger;
 		readonly IDebugMessageDispatcher debugMessageDispatcher;
 		CorThread thread;

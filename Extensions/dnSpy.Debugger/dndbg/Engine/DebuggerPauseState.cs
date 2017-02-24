@@ -20,7 +20,7 @@
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public enum DebuggerPauseReason {
+	enum DebuggerPauseReason {
 		/// <summary>
 		/// Some unknown reason
 		/// </summary>
@@ -82,41 +82,41 @@ namespace dndbg.Engine {
 		UserReason = 0x10000000,
 	}
 
-	public class DebuggerPauseState {
+	class DebuggerPauseState {
 		public DebuggerPauseReason Reason { get; }
 
 		public DebuggerPauseState(DebuggerPauseReason reason) => Reason = reason;
 	}
 
-	public sealed class DebugEventBreakpointPauseState : DebuggerPauseState {
+	sealed class DebugEventBreakpointPauseState : DebuggerPauseState {
 		public DnDebugEventBreakpoint Breakpoint { get; }
 
 		public DebugEventBreakpointPauseState(DnDebugEventBreakpoint bp)
 			: base(DebuggerPauseReason.DebugEventBreakpoint) => Breakpoint = bp;
 	}
 
-	public sealed class AnyDebugEventBreakpointPauseState : DebuggerPauseState {
+	sealed class AnyDebugEventBreakpointPauseState : DebuggerPauseState {
 		public DnAnyDebugEventBreakpoint Breakpoint { get; }
 
 		public AnyDebugEventBreakpointPauseState(DnAnyDebugEventBreakpoint bp)
 			: base(DebuggerPauseReason.AnyDebugEventBreakpoint) => Breakpoint = bp;
 	}
 
-	public sealed class ILCodeBreakpointPauseState : DebuggerPauseState {
+	sealed class ILCodeBreakpointPauseState : DebuggerPauseState {
 		public DnILCodeBreakpoint Breakpoint { get; }
 
 		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp)
 			: base(DebuggerPauseReason.ILCodeBreakpoint) => Breakpoint = bp;
 	}
 
-	public sealed class NativeCodeBreakpointPauseState : DebuggerPauseState {
+	sealed class NativeCodeBreakpointPauseState : DebuggerPauseState {
 		public DnNativeCodeBreakpoint Breakpoint { get; }
 
 		public NativeCodeBreakpointPauseState(DnNativeCodeBreakpoint bp)
 			: base(DebuggerPauseReason.NativeCodeBreakpoint) => Breakpoint = bp;
 	}
 
-	public sealed class StepPauseState : DebuggerPauseState {
+	sealed class StepPauseState : DebuggerPauseState {
 		public CorDebugStepReason StepReason { get; }
 
 		public StepPauseState(CorDebugStepReason stepReason)

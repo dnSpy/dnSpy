@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class DebuggerState {
+	sealed class DebuggerState {
 		/// <summary>
 		/// Current process or null
 		/// </summary>

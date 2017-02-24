@@ -28,7 +28,7 @@ using dndbg.Engine;
 
 #pragma warning disable 0108 // Member hides inherited member; missing new keyword
 namespace dndbg.COM.CorDebug {
-	public enum CorDebugInterfaceVersion {
+	enum CorDebugInterfaceVersion {
 		CorDebugInvalidVersion = 0,
 		CorDebugVersion_1_0 = CorDebugInvalidVersion + 1,
 
@@ -127,7 +127,7 @@ namespace dndbg.COM.CorDebug {
 
 		CorDebugLatestVersion = CorDebugVersion_4_5
 	}
-	public enum CorElementType : uint {
+	enum CorElementType : uint {
 		End			= 0x00,
 		Void		= 0x01,
 		Boolean		= 0x02,
@@ -166,20 +166,20 @@ namespace dndbg.COM.CorDebug {
 		Sentinel	= 0x41,
 		Pinned		= 0x45,
 	}
-	public struct CodeChunkInfo {
+	struct CodeChunkInfo {
 		public ulong StartAddr;
 		public uint Length;
 		uint pad;
 	};
 	[StructLayout(LayoutKind.Sequential)]
-	public struct CorDebugExceptionObjectStackFrame {
+	struct CorDebugExceptionObjectStackFrame {
 		[MarshalAs(UnmanagedType.Interface)]
 		public ICorDebugModule pModule;
 		public ulong ip;
 		public uint methodDef;
 		public bool isLastForeignExceptionFrame;
 	}
-	public enum CorDebugJITCompilerFlags : uint {
+	enum CorDebugJITCompilerFlags : uint {
 		/// <summary>
 		/// Specifies that the compiler should track compilation data, and allows optimizations.
 		/// </summary>
@@ -193,14 +193,14 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		CORDEBUG_JIT_ENABLE_ENC = 0x7
 	}
-	public struct PROCESS_INFORMATION {
+	struct PROCESS_INFORMATION {
 		public IntPtr hProcess;
 		public IntPtr hThread;
 		public uint dwProcessId;
 		public uint dwThreadId;
 	}
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-	public struct STARTUPINFO {
+	struct STARTUPINFO {
 		public uint cb;
 		public string lpReserved;
 		public string lpDesktop;
@@ -220,40 +220,40 @@ namespace dndbg.COM.CorDebug {
 		public IntPtr hStdOutput;
 		public IntPtr hStdError;
 	}
-	public struct COR_HEAPINFO {
+	struct COR_HEAPINFO {
 		public int areGCStructuresValid;
 		public uint pointerSize;
 		public uint numHeaps;
 		public int concurrent;
 		public CorDebugGCType gcType;
 	}
-	public struct COR_IL_MAP {
+	struct COR_IL_MAP {
 		public uint oldOffset;
 		public uint newOffset;
 		public int fAccurate;
 	}
-	public struct COR_VERSION {
+	struct COR_VERSION {
 		public uint dwMajor;
 		public uint dwMinor;
 		public uint dwBuild;
 		public uint dwSubBuild;
 	}
-	public struct FILETIME {
+	struct FILETIME {
 		public uint dwLowDateTime;
 		public uint dwHighDateTime;
 	}
-	public struct LARGE_INTEGER {
+	struct LARGE_INTEGER {
 		public long QuadPart;
 	}
-	public struct SECURITY_ATTRIBUTES {
+	struct SECURITY_ATTRIBUTES {
 		public uint nLength;
 		public IntPtr lpSecurityDescriptor;
 		public int bInheritHandle;
 	}
-	public struct ULARGE_INTEGER {
+	struct ULARGE_INTEGER {
 		public ulong QuadPart;
 	}
-	public struct COR_ARRAY_LAYOUT {
+	struct COR_ARRAY_LAYOUT {
 		public COR_TYPEID componentID;
 		public uint componentType;
 		public uint firstElementOffset;
@@ -263,25 +263,25 @@ namespace dndbg.COM.CorDebug {
 		public uint numRanks;
 		public uint rankOffset;
 	}
-	public struct COR_FIELD {
+	struct COR_FIELD {
 		public uint token;
 		public uint offset;
 		public COR_TYPEID id;
 		public uint fieldType;
 	}
-	public struct COR_TYPE_LAYOUT {
+	struct COR_TYPE_LAYOUT {
 		public COR_TYPEID parentID;
 		public uint objectSize;
 		public uint numFields;
 		public uint boxOffset;
 		public uint type;
 	}
-	public struct COR_TYPEID {
+	struct COR_TYPEID {
 		public ulong token1;
 		public ulong token2;
 	}
 	[Flags]
-	public enum CorDebugChainReason {
+	enum CorDebugChainReason {
 		/// <summary>
 		/// No call chain has been initiated.
 		/// </summary>
@@ -335,21 +335,21 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		CHAIN_FUNC_EVAL = 2048
 	}
-	public enum CorDebugCodeInvokeKind {
+	enum CorDebugCodeInvokeKind {
 		CODE_INVOKE_KIND_NONE,
 		CODE_INVOKE_KIND_RETURN,
 		CODE_INVOKE_KIND_TAILCALL
 	}
-	public enum CorDebugCodeInvokePurpose {
+	enum CorDebugCodeInvokePurpose {
 		CODE_INVOKE_PURPOSE_NONE,
 		CODE_INVOKE_PURPOSE_NATIVE_TO_MANAGED_TRANSITION,
 		CODE_INVOKE_PURPOSE_CLASS_INIT,
 		CODE_INVOKE_PURPOSE_INTERFACE_DISPATCH
 	}
-	public enum CorDebugCreateProcessFlags {
+	enum CorDebugCreateProcessFlags {
 		DEBUG_NO_SPECIAL_OPTIONS
 	}
-	public enum CorDebugDebugEventKind {
+	enum CorDebugDebugEventKind {
 		DEBUG_EVENT_KIND_MODULE_LOADED = 1,
 		DEBUG_EVENT_KIND_MODULE_UNLOADED,
 		DEBUG_EVENT_KIND_MANAGED_EXCEPTION_FIRST_CHANCE,
@@ -357,7 +357,7 @@ namespace dndbg.COM.CorDebug {
 		DEBUG_EVENT_KIND_MANAGED_EXCEPTION_CATCH_HANDLER_FOUND,
 		DEBUG_EVENT_KIND_MANAGED_EXCEPTION_UNHANDLED
 	}
-	public enum CorDebugExceptionCallbackType {
+	enum CorDebugExceptionCallbackType {
 		/// <summary>
 		/// An exception was thrown.
 		/// </summary>
@@ -375,7 +375,7 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		DEBUG_EXCEPTION_UNHANDLED
 	}
-	public enum CorDebugExceptionFlags : uint {
+	enum CorDebugExceptionFlags : uint {
 		/// <summary>
 		/// There is no exception.
 		/// </summary>
@@ -389,7 +389,7 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		DEBUG_EXCEPTION_CAN_BE_INTERCEPTED
 	}
-	public enum CorDebugExceptionUnwindCallbackType {
+	enum CorDebugExceptionUnwindCallbackType {
 		/// <summary>
 		/// The beginning of the unwind process.
 		/// </summary>
@@ -399,11 +399,11 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		DEBUG_EXCEPTION_INTERCEPTED
 	}
-	public enum CorDebugGCType {
+	enum CorDebugGCType {
 		CorDebugWorkstationGC,
 		CorDebugServerGC
 	}
-	public enum CorDebugHandleType {
+	enum CorDebugHandleType {
 		/// <summary>
 		/// The handle is strong, which prevents an object from being reclaimed by garbage collection.
 		/// </summary>
@@ -415,7 +415,7 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		HANDLE_WEAK_TRACK_RESURRECTION
 	}
-	public enum CorDebugIntercept {
+	enum CorDebugIntercept {
 		INTERCEPT_NONE,
 		INTERCEPT_CLASS_INIT,
 		INTERCEPT_EXCEPTION_FILTER,
@@ -424,7 +424,7 @@ namespace dndbg.COM.CorDebug {
 		INTERCEPT_INTERCEPTION = 16,
 		INTERCEPT_ALL = 65535
 	}
-	public enum CorDebugInternalFrameType {
+	enum CorDebugInternalFrameType {
 		/// <summary>
 		/// A null value. The ICorDebugInternalFrame::GetFrameType method never returns this value.
 		/// </summary>
@@ -471,7 +471,7 @@ namespace dndbg.COM.CorDebug {
 		STUBFRAME_JIT_COMPILATION
 	}
 	[Flags]
-	public enum CorDebugMappingResult {
+	enum CorDebugMappingResult {
 		/// <summary>
 		/// The native code is in the prolog, so the value of the IP is 0.
 		/// </summary>
@@ -498,19 +498,19 @@ namespace dndbg.COM.CorDebug {
 		MAPPING_APPROXIMATE = 32
 	}
 	[Flags]
-	public enum CorDebugMDAFlags {
+	enum CorDebugMDAFlags {
 		/// <summary>
 		/// The thread on which the MDA was fired has slipped since the MDA was fired.
 		/// </summary>
 		MDA_FLAG_SLIP = 2
 	}
-	public enum CorDebugNGENPolicy {
+	enum CorDebugNGENPolicy {
 		/// <summary>
 		/// In a Windows 8.x Store app, the use of images from the local native image cache is disabled. In a desktop app, this setting has no effect.
 		/// </summary>
 		DISABLE_LOCAL_NIC = 1
 	}
-	public enum CorDebugPlatform {
+	enum CorDebugPlatform {
 		CORDB_PLATFORM_WINDOWS_X86,
 		CORDB_PLATFORM_WINDOWS_AMD64,
 		CORDB_PLATFORM_WINDOWS_IA64,
@@ -520,11 +520,11 @@ namespace dndbg.COM.CorDebug {
 		CORDB_PLATFORM_MAC_AMD64,
 		CORDB_PLATFORM_WINDOWS_ARM64
 	}
-	public enum CorDebugRecordFormat {
+	enum CorDebugRecordFormat {
 		FORMAT_WINDOWS_EXCEPTIONRECORD32 = 1,
 		FORMAT_WINDOWS_EXCEPTIONRECORD64
 	}
-	public enum CorDebugRegister {
+	enum CorDebugRegister {
 		REGISTER_INSTRUCTION_POINTER,
 		REGISTER_STACK_POINTER,
 		REGISTER_FRAME_POINTER,
@@ -631,15 +631,15 @@ namespace dndbg.COM.CorDebug {
 		REGISTER_ARM64_X28,
 		REGISTER_ARM64_LR
 	}
-	public enum CorDebugSetContextFlag {
+	enum CorDebugSetContextFlag {
 		SET_CONTEXT_FLAG_ACTIVE_FRAME = 1,
 		SET_CONTEXT_FLAG_UNWIND_FRAME
 	}
-	public enum CorDebugStateChange {
+	enum CorDebugStateChange {
 		PROCESS_RUNNING = 1,
 		FLUSH_ALL
 	}
-	public enum CorDebugStepReason {
+	enum CorDebugStepReason {
 		/// <summary>
 		/// Stepping completed normally, within the same function.
 		/// </summary>
@@ -669,7 +669,7 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		STEP_EXIT
 	}
-	public enum CorDebugThreadState {
+	enum CorDebugThreadState {
 		/// <summary>
 		/// The thread runs freely, unless a debug event occurs.
 		/// </summary>
@@ -679,7 +679,7 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		THREAD_SUSPEND
 	}
-	public enum CorDebugUnmappedStop {
+	enum CorDebugUnmappedStop {
 		STOP_NONE,
 		STOP_PROLOG,
 		STOP_EPILOG,
@@ -689,7 +689,7 @@ namespace dndbg.COM.CorDebug {
 		STOP_ALL = 65535
 	}
 	[Flags]
-	public enum CorDebugUserState {
+	enum CorDebugUserState {
 		/// <summary>
 		/// A termination of the thread has been requested.
 		/// </summary>
@@ -729,7 +729,7 @@ namespace dndbg.COM.CorDebug {
 		/// </summary>
 		USER_THREADPOOL = 256
 	}
-	public enum CorGCReferenceType {
+	enum CorGCReferenceType {
 		CorHandleStrong = 1,
 		CorHandleStrongPinning,
 		CorHandleWeakShort = 4,
@@ -748,7 +748,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("3D6F5F61-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebug {
+	interface ICorDebug {
 		void Initialize();
 		[PreserveSig]
 		int Terminate();
@@ -762,11 +762,11 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("ECCCCF2E-B286-4B3E-A983-860A8793D105"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebug2 {
+	interface ICorDebug2 {
 	}
 	[Guid("3D6F5F63-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAppDomain : ICorDebugController {
+	interface ICorDebugAppDomain : ICorDebugController {
 		void Stop([In] uint dwTimeoutIgnored);
 		[PreserveSig]
 		int Continue([In] int fIsOutOfBand);
@@ -805,7 +805,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("096E81D5-ECDA-4202-83F5-C65980A9EF75"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAppDomain2 {
+	interface ICorDebugAppDomain2 {
 		[PreserveSig]
 		int GetArrayOrPointerType([In] CorElementType elementType, [In] uint nRank, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugType pTypeArg, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
 		[PreserveSig]
@@ -813,18 +813,18 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("8CB96A16-B588-42E2-B71C-DD849FC2ECCC"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAppDomain3 {
+	interface ICorDebugAppDomain3 {
 		void GetCachedWinRTTypesForIIDs([In] uint cReqTypes, [In] ref Guid iidsToResolve, [MarshalAs(UnmanagedType.Interface)] out ICorDebugTypeEnum ppTypesEnum);
 		void GetCachedWinRTTypes([MarshalAs(UnmanagedType.Interface)] out ICorDebugGuidToTypeEnum ppGuidToTypeEnum);
 	}
 	[Guid("FB99CC40-83BE-4724-AB3B-768E796EBAC2"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAppDomain4 {
+	interface ICorDebugAppDomain4 {
 		void GetObjectForCCW([In] ulong ccwPointer, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppManagedObject);
 	}
 	[Guid("63CA1B24-4359-4883-BD57-13F815F58744"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAppDomainEnum : ICorDebugEnum {
+	interface ICorDebugAppDomainEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -834,7 +834,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("0405B0DF-A660-11D2-BD02-0000F80849BD"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugArrayValue : ICorDebugHeapValue {
+	interface ICorDebugArrayValue : ICorDebugHeapValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -860,7 +860,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("DF59507C-D47A-459E-BCE2-6427EAC8FD06"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAssembly {
+	interface ICorDebugAssembly {
 		[PreserveSig]
 		int GetProcess([MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 		[PreserveSig]
@@ -873,19 +873,19 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("426D1F9E-6DD4-44C8-AEC7-26CDBAF4E398"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAssembly2 {
+	interface ICorDebugAssembly2 {
 		[PreserveSig]
 		int IsFullyTrusted(out int pbFullyTrusted);
 	}
 	[Guid("76361AB2-8C86-4FE9-96F2-F73D8843570A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAssembly3 {
+	interface ICorDebugAssembly3 {
 		void GetContainerAssembly([MarshalAs(UnmanagedType.Interface)] ref ICorDebugAssembly ppAssembly);
 		void EnumerateContainedAssemblies([MarshalAs(UnmanagedType.Interface)] ref ICorDebugAssemblyEnum ppAssemblies);
 	}
 	[Guid("4A2A1EC9-85EC-4BFB-9F15-A89FDFE0FE83"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugAssemblyEnum : ICorDebugEnum {
+	interface ICorDebugAssemblyEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -895,7 +895,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("976A6278-134A-4A81-81A3-8F277943F4C3"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugBlockingObjectEnum : ICorDebugEnum {
+	interface ICorDebugBlockingObjectEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -904,7 +904,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAFC-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugBoxValue : ICorDebugHeapValue {
+	interface ICorDebugBoxValue : ICorDebugHeapValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -916,13 +916,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAE8-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugBreakpoint {
+	interface ICorDebugBreakpoint {
 		void Activate([In] int bActive);
 		void IsActive(out int pbActive);
 	}
 	[Guid("CC7BCB03-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugBreakpointEnum : ICorDebugEnum {
+	interface ICorDebugBreakpointEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -931,7 +931,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAEE-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugChain {
+	interface ICorDebugChain {
 		[PreserveSig]
 		int GetThread([MarshalAs(UnmanagedType.Interface)] out ICorDebugThread ppThread);
 		[PreserveSig]
@@ -957,7 +957,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCB08-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugChainEnum : ICorDebugEnum {
+	interface ICorDebugChainEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -967,7 +967,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAF5-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugClass {
+	interface ICorDebugClass {
 		[PreserveSig]
 		int GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule pModule);
 		[PreserveSig]
@@ -977,7 +977,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("B008EA8D-7AB1-43F7-BB20-FBB5A04038AE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugClass2 {
+	interface ICorDebugClass2 {
 		[PreserveSig]
 		int GetParameterizedType([In] CorElementType elementType, [In] int nTypeArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugType[] ppTypeArgs, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
 		[PreserveSig]
@@ -985,7 +985,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAF4-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugCode {
+	interface ICorDebugCode {
 		[PreserveSig]
 		int IsIL(out int pbIL);
 		[PreserveSig]
@@ -1004,7 +1004,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("5F696509-452F-4436-A3FE-4D11FE7E2347"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugCode2 {
+	interface ICorDebugCode2 {
 		[PreserveSig]
 		int GetCodeChunks([In] uint cbufSize, out uint pcnumChunks, IntPtr chunks);
 		[PreserveSig]
@@ -1012,12 +1012,12 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("D13D3E88-E1F2-4020-AA1D-3D162DCBE966"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugCode3 {
+	interface ICorDebugCode3 {
 		void GetReturnValueLiveOffset([In] uint ILoffset, [In] uint bufferSize, out uint pFetched, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode3 pOffsets);
 	}
 	[Guid("55E96461-9645-45E4-A2FF-0367877ABCDE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugCodeEnum : ICorDebugEnum {
+	interface ICorDebugCodeEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1026,13 +1026,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("5F69C5E5-3E12-42DF-B371-F9D761D6EE24"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugComObjectValue {
+	interface ICorDebugComObjectValue {
 		void GetCachedInterfaceTypes([In] int bIInspectableOnly, [MarshalAs(UnmanagedType.Interface)] out ICorDebugTypeEnum ppInterfacesEnum);
 		void GetCachedInterfacePointers([In] int bIInspectableOnly, [In] uint celt, out uint pceltFetched, out ulong ptrs);
 	}
 	[Guid("CC7BCB00-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugContext : ICorDebugObjectValue {
+	interface ICorDebugContext : ICorDebugObjectValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -1047,7 +1047,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("3D6F5F62-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugController {
+	interface ICorDebugController {
 		void Stop([In] uint dwTimeoutIgnored);
 		[PreserveSig]
 		int Continue([In] int fIsOutOfBand);
@@ -1065,14 +1065,14 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("FE06DC28-49FB-4636-A4A3-E80DB4AE116C"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugDataTarget {
+	interface ICorDebugDataTarget {
 		void GetPlatform(out CorDebugPlatform pTargetPlatform);
 		void ReadVirtual([In] ulong address, out byte pBuffer, [In] uint bytesRequested, out uint pBytesRead);
 		void GetThreadContext([In] uint dwThreadId, [In] uint contextFlags, [In] uint contextSize, out byte pContext);
 	}
 	[Guid("2EB364DA-605B-4E8D-B333-3394C4828D41"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugDataTarget2 {
+	interface ICorDebugDataTarget2 {
 		void GetImageFromPointer([In] ulong addr, out ulong pImageBase, out uint pSize);
 		void GetImageLocation([In] ulong baseAddress, [In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugDataTarget2 szName);
 		void GetSymbolProviderForImage([In] ulong imageBaseAddress, [MarshalAs(UnmanagedType.Interface)] out ICorDebugSymbolProvider ppSymProvider);
@@ -1081,18 +1081,18 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("D05E60C3-848C-4E7D-894E-623320FF6AFA"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugDataTarget3 {
+	interface ICorDebugDataTarget3 {
 		void GetLoadedModules([In] uint cRequestedModules, out uint pcFetchedModules, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugDataTarget3 pLoadedModules);
 	}
 	[Guid("41BD395D-DE99-48F1-BF7A-CC0F44A6D281"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugDebugEvent {
+	interface ICorDebugDebugEvent {
 		void GetEventKind(out CorDebugDebugEventKind pDebugEventKind);
 		void GetThread([MarshalAs(UnmanagedType.Interface)] out ICorDebugThread ppThread);
 	}
 	[Guid("8D600D41-F4F6-4CB3-B7EC-7BD164944036"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugEditAndContinueErrorInfo {
+	interface ICorDebugEditAndContinueErrorInfo {
 		void GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule ppModule);
 		void GetToken(out uint pToken);
 		void GetErrorCode([MarshalAs(UnmanagedType.Error)] out int pHr);
@@ -1100,7 +1100,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("6DC3FA01-D7CB-11D2-8A95-0080C792E5D8"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugEditAndContinueSnapshot {
+	interface ICorDebugEditAndContinueSnapshot {
 		void CopyMetaData([MarshalAs(UnmanagedType.Interface)] [In] IStream pIStream, out Guid pMvid);
 		void GetMvid(out Guid pMvid);
 		void GetRoDataRVA(out uint pRoDataRVA);
@@ -1111,7 +1111,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCB01-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugEnum {
+	interface ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1119,7 +1119,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("F0E18809-72B5-11D2-976F-00A0C9B4D50C"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugErrorInfoEnum : ICorDebugEnum {
+	interface ICorDebugErrorInfoEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1128,7 +1128,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAF6-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugEval {
+	interface ICorDebugEval {
 		[PreserveSig]
 		int CallFunction([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pFunction, [In] int nArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugValue[] ppArgs);
 		[PreserveSig]
@@ -1152,7 +1152,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("FB0D9CE7-BE66-4683-9D32-A42A04E2FD91"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugEval2 {
+	interface ICorDebugEval2 {
 		[PreserveSig]
 		int CallParameterizedFunction([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pFunction, [In] int nTypeArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugType[] ppTypeArgs, [In] int nArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugValue[] ppArgs);
 		[PreserveSig]
@@ -1170,7 +1170,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("AF79EC94-4752-419C-A626-5FB1CC1A5AB7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugExceptionDebugEvent : ICorDebugDebugEvent {
+	interface ICorDebugExceptionDebugEvent : ICorDebugDebugEvent {
 		void GetEventKind(out CorDebugDebugEventKind pDebugEventKind);
 		void GetThread([MarshalAs(UnmanagedType.Interface)] out ICorDebugThread ppThread);
 		void GetStackPointer(out ulong pStackPointer);
@@ -1179,7 +1179,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("ED775530-4DC4-41F7-86D0-9E2DEF7DFC66"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugExceptionObjectCallStackEnum : ICorDebugEnum {
+	interface ICorDebugExceptionObjectCallStackEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1189,13 +1189,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("AE4CA65D-59DD-42A2-83A5-57E8A08D8719"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugExceptionObjectValue {
+	interface ICorDebugExceptionObjectValue {
 		[PreserveSig]
 		int EnumerateExceptionCallStack([MarshalAs(UnmanagedType.Interface)] out ICorDebugExceptionObjectCallStackEnum ppCallStackEnum);
 	}
 	[Guid("CC7BCAEF-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugFrame {
+	interface ICorDebugFrame {
 		[PreserveSig]
 		int GetChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
 		[PreserveSig]
@@ -1215,7 +1215,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCB07-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugFrameEnum : ICorDebugEnum {
+	interface ICorDebugFrameEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1225,7 +1225,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAF3-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugFunction {
+	interface ICorDebugFunction {
 		[PreserveSig]
 		int GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule ppModule);
 		[PreserveSig]
@@ -1245,7 +1245,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("EF0C490B-94C3-4E4D-B629-DDC134C532D8"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugFunction2 {
+	interface ICorDebugFunction2 {
 		[PreserveSig]
 		int SetJMCStatus([In] int bIsJustMyCode);
 		[PreserveSig]
@@ -1256,13 +1256,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("09B70F28-E465-482D-99E0-81A165EB0532"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugFunction3 {
+	interface ICorDebugFunction3 {
 		[PreserveSig]
 		int GetActiveReJitRequestILCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugILCode ppReJitedILCode);
 	}
 	[Guid("CC7BCAE9-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugFunctionBreakpoint : ICorDebugBreakpoint {
+	interface ICorDebugFunctionBreakpoint : ICorDebugBreakpoint {
 		[PreserveSig]
 		int Activate([In] int bActive);
 		[PreserveSig]
@@ -1274,7 +1274,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("7F3C24D3-7E1D-4245-AC3A-F72F8859C80C"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugGCReferenceEnum : ICorDebugEnum {
+	interface ICorDebugGCReferenceEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1283,7 +1283,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAF8-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugGenericValue : ICorDebugValue {
+	interface ICorDebugGenericValue : ICorDebugValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -1295,7 +1295,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("6164D242-1015-4BD6-8CBE-D0DBD4B8275A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugGuidToTypeEnum : ICorDebugEnum {
+	interface ICorDebugGuidToTypeEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1304,7 +1304,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("029596E8-276B-46A1-9821-732E96BBB00B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugHandleValue : ICorDebugReferenceValue {
+	interface ICorDebugHandleValue : ICorDebugReferenceValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -1321,7 +1321,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("76D7DAB8-D044-11DF-9A15-7E29DFD72085"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugHeapEnum : ICorDebugEnum {
+	interface ICorDebugHeapEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1330,7 +1330,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("A2FA0F8E-D045-11DF-AC8E-CE2ADFD72085"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugHeapSegmentEnum : ICorDebugEnum {
+	interface ICorDebugHeapSegmentEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1339,7 +1339,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAFA-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugHeapValue : ICorDebugValue {
+	interface ICorDebugHeapValue : ICorDebugValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -1349,13 +1349,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("E3AC4D6C-9CB7-43E6-96CC-B21540E5083C"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugHeapValue2 {
+	interface ICorDebugHeapValue2 {
 		[PreserveSig]
 		int CreateHandle([In] CorDebugHandleType type, [MarshalAs(UnmanagedType.Interface)] out ICorDebugHandleValue ppHandle);
 	}
 	[Guid("A69ACAD8-2374-46E9-9FF8-B1F14120D296"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugHeapValue3 {
+	interface ICorDebugHeapValue3 {
 		[PreserveSig]
 		int GetThreadOwningMonitorLock([MarshalAs(UnmanagedType.Interface)] out ICorDebugThread ppThread, out uint pAcquisitionCount);
 		[PreserveSig]
@@ -1363,18 +1363,18 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("598D46C2-C877-42A7-89D2-3D0C7F1C1264"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugILCode {
+	interface ICorDebugILCode {
 		void GetEHClauses([In] uint cClauses, out uint pcClauses, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugILCode clauses);
 	}
 	[Guid("46586093-D3F5-4DB6-ACDB-955BCE228C15"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugILCode2 {
+	interface ICorDebugILCode2 {
 		void GetLocalVarSigToken(out uint pmdSig);
 		void GetInstrumentedILMap([In] uint cMap, out uint pcMap, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugILCode2 map);
 	}
 	[Guid("03E26311-4F76-11D3-88C6-006097945418"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugILFrame : ICorDebugFrame {
+	interface ICorDebugILFrame : ICorDebugFrame {
 		void GetChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
 		void GetCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
 		void GetFunction([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
@@ -1402,19 +1402,19 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("5D88A994-6C30-479B-890F-BCEF88B129A5"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugILFrame2 {
+	interface ICorDebugILFrame2 {
 		void RemapFunction([In] uint newILOffset);
 		[PreserveSig]
 		int EnumerateTypeParameters([MarshalAs(UnmanagedType.Interface)] out ICorDebugTypeEnum ppTyParEnum);
 	}
 	[Guid("9A9E2ED6-04DF-4FE0-BB50-CAB64126AD24"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugILFrame3 {
+	interface ICorDebugILFrame3 {
 		void GetReturnValueForILOffset(uint ILoffset, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppReturnValue);
 	}
 	[Guid("AD914A30-C6D1-4AC5-9C5E-577F3BAA8A45"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugILFrame4 {
+	interface ICorDebugILFrame4 {
 		[PreserveSig]
 		int EnumerateLocalVariablesEx([In] ILCodeKind flags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValueEnum ppValueEnum);
 		[PreserveSig]
@@ -1424,14 +1424,14 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("A074096B-3ADC-4485-81DA-68C7A4EA52DB"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugInstanceFieldSymbol {
+	interface ICorDebugInstanceFieldSymbol {
 		void GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
 		void GetSize(out uint pcbSize);
 		void GetOffset(out uint pcbOffset);
 	}
 	[Guid("B92CC7F7-9D2D-45C4-BC2B-621FCC9DFBF4"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugInternalFrame : ICorDebugFrame {
+	interface ICorDebugInternalFrame : ICorDebugFrame {
 		void GetChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
 		void GetCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
 		void GetFunction([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
@@ -1445,18 +1445,18 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("C0815BDC-CFAB-447E-A779-C116B454EB5B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugInternalFrame2 {
+	interface ICorDebugInternalFrame2 {
 		void GetAddress(out ulong pAddress);
 		void IsCloserToLeaf([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFrame pFrameToCompare, out int pIsCloser);
 	}
 	[Guid("817F343A-6630-4578-96C5-D11BC0EC5EE2"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugLoadedModule {
+	interface ICorDebugLoadedModule {
 		void GetBaseAddress(out ulong pAddress);
 		void GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
 		void GetSize(out uint pcBytes);
 	}
-	public enum LoggingLevelEnum {
+	enum LoggingLevelEnum {
 		LTraceLevel0 = 0,
 		LTraceLevel1,
 		LTraceLevel2,
@@ -1471,14 +1471,14 @@ namespace dndbg.COM.CorDebug {
 		LErrorLevel = 50,
 		LPanicLevel = 100
 	}
-	public enum LogSwitchCallReason {
+	enum LogSwitchCallReason {
 		SWITCH_CREATE,
 		SWITCH_MODIFY,
 		SWITCH_DELETE
 	}
 	[Guid("3D6F5F60-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugManagedCallback {
+	interface ICorDebugManagedCallback {
 		void Breakpoint([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pBreakpoint);
 		void StepComplete([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pStepper, [In] CorDebugStepReason reason);
 		void Break([In] IntPtr pAppDomain, [In] IntPtr thread);
@@ -1508,7 +1508,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("250E5EEA-DB5C-4C76-B6F3-8C46F12E3203"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugManagedCallback2 {
+	interface ICorDebugManagedCallback2 {
 		void FunctionRemapOpportunity([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pOldFunction, [In] IntPtr pNewFunction, [In] uint oldILOffset);
 		void CreateConnection([In] IntPtr pProcess, [In] uint dwConnectionId, [In] [MarshalAs(UnmanagedType.LPWStr)] string pConnName);
 		void ChangeConnection([In] IntPtr pProcess, [In] uint dwConnectionId);
@@ -1520,12 +1520,12 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("264EA0FC-2591-49AA-868E-835E6515323F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugManagedCallback3 {
+	interface ICorDebugManagedCallback3 {
 		void CustomNotification([In] IntPtr pThread, [In] IntPtr pAppDomain);
 	}
 	[Guid("CC726F2F-1DB7-459B-B0EC-05F01D841B42"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugMDA {
+	interface ICorDebugMDA {
 		[PreserveSig]
 		int GetName([In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
 		[PreserveSig]
@@ -1539,13 +1539,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("677888B3-D160-4B8C-A73B-D79E6AAA1D13"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugMemoryBuffer {
+	interface ICorDebugMemoryBuffer {
 		void GetStartAddress(out IntPtr address);
 		void GetSize(out uint pcbBufferLength);
 	}
 	[Guid("FAA8637B-3BBE-4671-8E26-3B59875B922A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugMergedAssemblyRecord {
+	interface ICorDebugMergedAssemblyRecord {
 		void GetSimpleName([In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugMergedAssemblyRecord szName);
 		void GetVersion(out ushort pMajor, out ushort pMinor, out ushort pBuild, out ushort pRevision);
 		void GetCulture([In] uint cchCulture, out uint pcchCulture, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugMergedAssemblyRecord szCulture);
@@ -1555,12 +1555,12 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("7CEF8BA9-2EF7-42BF-973F-4171474F87D9"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugMetaDataLocator {
+	interface ICorDebugMetaDataLocator {
 		void GetMetaData([MarshalAs(UnmanagedType.LPWStr)] [In] string wszImagePath, [In] uint dwImageTimeStamp, [In] uint dwImageSize, [In] uint cchPathBuffer, out uint pcchPathBuffer, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugMetaDataLocator wszPathBuffer);
 	}
 	[Guid("DBA2D8C1-E5C5-4069-8C13-10A7C6ABF43D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugModule {
+	interface ICorDebugModule {
 		[PreserveSig]
 		int GetProcess([MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 		[PreserveSig]
@@ -1595,7 +1595,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("7FCC5FB5-49C0-41DE-9938-3B88B5B9ADD7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugModule2 {
+	interface ICorDebugModule2 {
 		[PreserveSig]
 		int SetJMCStatus([In] int bIsJustMyCode, [In] uint cTokens, [In] IntPtr pTokens);
 		void ApplyChanges([In] uint cbMetadata, [In] IntPtr pbMetadata, [In] uint cbIL, [In] IntPtr pbIL);
@@ -1608,26 +1608,26 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("86F012BF-FF15-4372-BD30-B6F11CAAE1DD"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugModule3 {
+	interface ICorDebugModule3 {
 		void CreateReaderForInMemorySymbols([In] ref Guid riid, out IntPtr ppObj);
 	}
 	[Guid("CC7BCAEA-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugModuleBreakpoint : ICorDebugBreakpoint {
+	interface ICorDebugModuleBreakpoint : ICorDebugBreakpoint {
 		void Activate([In] int bActive);
 		void IsActive(out int pbActive);
 		void GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule ppModule);
 	}
 	[Guid("51A15E8D-9FFF-4864-9B87-F4FBDEA747A2"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugModuleDebugEvent : ICorDebugDebugEvent {
+	interface ICorDebugModuleDebugEvent : ICorDebugDebugEvent {
 		void GetEventKind(out CorDebugDebugEventKind pDebugEventKind);
 		void GetThread([MarshalAs(UnmanagedType.Interface)] out ICorDebugThread ppThread);
 		void GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule ppModule);
 	}
 	[Guid("CC7BCB09-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugModuleEnum : ICorDebugEnum {
+	interface ICorDebugModuleEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1637,7 +1637,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("A1B8A756-3CB6-4CCB-979F-3DF999673A59"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugMutableDataTarget : ICorDebugDataTarget {
+	interface ICorDebugMutableDataTarget : ICorDebugDataTarget {
 		void GetPlatform(out CorDebugPlatform pTargetPlatform);
 		void ReadVirtual([In] ulong address, out byte pBuffer, [In] uint bytesRequested, out uint pBytesRead);
 		void GetThreadContext([In] uint dwThreadId, [In] uint contextFlags, [In] uint contextSize, out byte pContext);
@@ -1647,7 +1647,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("03E26314-4F76-11D3-88C6-006097945418"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugNativeFrame : ICorDebugFrame {
+	interface ICorDebugNativeFrame : ICorDebugFrame {
 		void GetChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
 		void GetCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
 		void GetFunction([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
@@ -1671,14 +1671,14 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("35389FF1-3684-4C55-A2EE-210F26C60E5E"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugNativeFrame2 {
+	interface ICorDebugNativeFrame2 {
 		void IsChild(out int pIsChild);
 		void IsMatchingParentFrame([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugNativeFrame2 pPotentialParentFrame, out int pIsParent);
 		void GetStackParameterSize(out uint pSize);
 	}
 	[Guid("CC7BCB02-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugObjectEnum : ICorDebugEnum {
+	interface ICorDebugObjectEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1687,7 +1687,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("18AD3D6E-B7D2-11D2-BD04-0000F80849BD"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugObjectValue : ICorDebugValue {
+	interface ICorDebugObjectValue : ICorDebugValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -1705,12 +1705,12 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("49E4A320-4A9B-4ECA-B105-229FB7D5009F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugObjectValue2 {
+	interface ICorDebugObjectValue2 {
 		void GetVirtualMethodAndType([In] uint memberRef, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
 	}
 	[Guid("3D6F5F64-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugProcess : ICorDebugController {
+	interface ICorDebugProcess : ICorDebugController {
 		[PreserveSig]
 		int Stop([In] uint dwTimeoutIgnored);
 		[PreserveSig]
@@ -1761,7 +1761,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("AD1B3588-0EF0-4744-A496-AA09A9F80371"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugProcess2 {
+	interface ICorDebugProcess2 {
 		void GetThreadForTaskID([In] ulong taskid, [MarshalAs(UnmanagedType.Interface)] out ICorDebugThread2 ppThread);
 		[PreserveSig]
 		int GetVersion(out COR_VERSION version);
@@ -1775,13 +1775,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("2EE06488-C0D4-42B1-B26D-F3795EF606FB"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugProcess3 {
+	interface ICorDebugProcess3 {
 		[PreserveSig]
 		int SetEnableCustomNotification([MarshalAs(UnmanagedType.Interface)] ICorDebugClass pClass, int fEnable);
 	}
 	[Guid("21E9D9C0-FCB8-11DF-8CFF-0800200C9A66"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugProcess5 {
+	interface ICorDebugProcess5 {
 		void GetGCHeapInformation(out COR_HEAPINFO pHeapInfo);
 		void EnumerateHeap([MarshalAs(UnmanagedType.Interface)] out ICorDebugHeapEnum ppObjects);
 		void EnumerateHeapRegions([MarshalAs(UnmanagedType.Interface)] out ICorDebugHeapSegmentEnum ppRegions);
@@ -1799,7 +1799,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("11588775-7205-4CEB-A41A-93753C3153E9"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugProcess6 {
+	interface ICorDebugProcess6 {
 		void DecodeEvent([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess6 pRecord, [In] uint countBytes, [In] CorDebugRecordFormat format, [In] uint dwFlags, [In] uint dwThreadId, [MarshalAs(UnmanagedType.Interface)] out ICorDebugDebugEvent ppEvent);
 		void ProcessStateChanged([In] CorDebugStateChange change);
 		void GetCode([In] ulong codeAddress, [MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
@@ -1809,19 +1809,19 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("9B2C54E4-119F-4D6F-B402-527603266D69"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugProcess7 {
+	interface ICorDebugProcess7 {
 		[PreserveSig]
 		int SetWriteableMetadataUpdateMode(WriteableMetadataUpdateMode flags);
 	}
 	[Guid("2E6F28C1-85EB-4141-80AD-0A90944B9639"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugProcess8 {
+	interface ICorDebugProcess8 {
 		[PreserveSig]
 		int EnableExceptionCallbacksOutsideOfMyCode([In] int enableExceptionsOutsideOfJMC);
 	}
 	[Guid("CC7BCB05-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugProcessEnum : ICorDebugEnum {
+	interface ICorDebugProcessEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1830,7 +1830,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAF9-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugReferenceValue : ICorDebugValue {
+	interface ICorDebugReferenceValue : ICorDebugValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -1847,7 +1847,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCB0B-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugRegisterSet {
+	interface ICorDebugRegisterSet {
 		void GetRegistersAvailable(out ulong pAvailable);
 		void GetRegisters([In] ulong mask, [In] uint regCount, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugRegisterSet regBuffer);
 		void SetRegisters([In] ulong mask, [In] uint regCount, [In] ref ulong regBuffer);
@@ -1856,25 +1856,25 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("6DC7BA3F-89BA-4459-9EC1-9D60937B468D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugRegisterSet2 {
+	interface ICorDebugRegisterSet2 {
 		void GetRegistersAvailable([In] uint numChunks, out byte availableRegChunks);
 		void GetRegisters([In] uint maskCount, [In] ref byte mask, [In] uint regCount, out ulong regBuffer);
 		void SetRegisters([In] uint maskCount, [In] ref byte mask, [In] uint regCount, [In] ref ulong regBuffer);
 	}
 	[Guid("D5EBB8E2-7BBE-4C1D-98A6-A3C04CBDEF64"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugRemote {
+	interface ICorDebugRemote {
 		void CreateProcessEx([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugRemoteTarget pRemoteTarget, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 		void DebugActiveProcessEx([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugRemoteTarget pRemoteTarget, [In] uint dwProcessId, [In] int fWin32Attach, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 	}
 	[Guid("C3ED8383-5A49-4CF5-B4B7-01864D9E582D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugRemoteTarget {
+	interface ICorDebugRemoteTarget {
 		void GetHostName([In] uint cchHostName, out uint pcchHostName, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugRemoteTarget szHostName);
 	}
 	[Guid("879CAC0A-4A53-4668-B8E3-CB8473CB187F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugRuntimeUnwindableFrame : ICorDebugFrame {
+	interface ICorDebugRuntimeUnwindableFrame : ICorDebugFrame {
 		void GetChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
 		void GetCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
 		void GetFunction([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
@@ -1886,7 +1886,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("A0647DE9-55DE-4816-929C-385271C64CF7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugStackWalk {
+	interface ICorDebugStackWalk {
 		void GetContext([In] uint contextFlags, [In] uint contextBufSize, out uint contextSize, out byte contextBuf);
 		void SetContext([In] CorDebugSetContextFlag flag, [In] uint contextSize, [In] ref byte context);
 		void Next();
@@ -1894,14 +1894,14 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CBF9DA63-F68D-4BBB-A21C-15A45EAADF5B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugStaticFieldSymbol {
+	interface ICorDebugStaticFieldSymbol {
 		void GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
 		void GetSize(out uint pcbSize);
 		void GetAddress(out ulong pRVA);
 	}
 	[Guid("CC7BCAEC-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugStepper {
+	interface ICorDebugStepper {
 		[PreserveSig]
 		int IsActive(out int pbActive);
 		[PreserveSig]
@@ -1921,13 +1921,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("C5B6E9C3-E7D1-4A8E-873B-7F047F0706F7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugStepper2 {
+	interface ICorDebugStepper2 {
 		[PreserveSig]
 		int SetJMC([In] int fIsJMCStepper);
 	}
 	[Guid("CC7BCB04-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugStepperEnum : ICorDebugEnum {
+	interface ICorDebugStepperEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -1937,7 +1937,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("CC7BCAFD-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugStringValue : ICorDebugHeapValue {
+	interface ICorDebugStringValue : ICorDebugHeapValue {
 		void GetType(out uint pType);
 		void GetSize(out uint pSize);
 		void GetAddress(out ulong pAddress);
@@ -1951,7 +1951,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("3948A999-FD8A-4C38-A708-8A71E9B04DBB"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugSymbolProvider {
+	interface ICorDebugSymbolProvider {
 		void GetStaticFieldSymbols([In] uint cbSignature, [In] ref byte typeSig, [In] uint cRequestedSymbols, out uint pcFetchedSymbols, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugSymbolProvider pSymbols);
 		void GetInstanceFieldSymbols([In] uint cbSignature, [In] ref byte typeSig, [In] uint cRequestedSymbols, out uint pcFetchedSymbols, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugSymbolProvider pSymbols);
 		void GetMethodLocalSymbols([In] uint nativeRVA, [In] uint cRequestedSymbols, out uint pcFetchedSymbols, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugSymbolProvider pSymbols);
@@ -1966,13 +1966,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("F9801807-4764-4330-9E67-4F685094165E"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugSymbolProvider2 {
+	interface ICorDebugSymbolProvider2 {
 		void GetGenericDictionaryInfo([MarshalAs(UnmanagedType.Interface)] out ICorDebugMemoryBuffer ppMemoryBuffer);
 		void GetFrameProps([In] uint codeRva, out uint pCodeStartRva, out uint pParentFrameStartRva);
 	}
 	[Guid("938C6D66-7FB6-4F69-B389-425B8987329B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugThread {
+	interface ICorDebugThread {
 		[PreserveSig]
 		int GetProcess([MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 		[PreserveSig]
@@ -2006,7 +2006,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("2BD956D9-7B07-4BEF-8A98-12AA862417C5"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugThread2 {
+	interface ICorDebugThread2 {
 		void GetActiveFunctions([In] uint cFunctions, out uint pcFunctions, [MarshalAs(UnmanagedType.Interface)] [In] [Out] ICorDebugThread2 pFunctions);
 		void GetConnectionID(out uint pdwConnectionId);
 		[PreserveSig]
@@ -2018,20 +2018,20 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("F8544EC3-5E4E-46C7-8D3E-A52B8405B1F5"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugThread3 {
+	interface ICorDebugThread3 {
 		void CreateStackWalk([MarshalAs(UnmanagedType.Interface)] out ICorDebugStackWalk ppStackWalk);
 		void GetActiveInternalFrames([In] uint cInternalFrames, out uint pcInternalFrames, [MarshalAs(UnmanagedType.Interface)] [In] [Out] ICorDebugThread3 ppInternalFrames);
 	}
 	[Guid("1A1F204B-1C66-4637-823F-3EE6C744A69C"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugThread4 {
+	interface ICorDebugThread4 {
 		void HasUnhandledException();
 		void GetBlockingObjects([MarshalAs(UnmanagedType.Interface)] out ICorDebugBlockingObjectEnum ppBlockingObjectEnum);
 		void GetCurrentCustomDebuggerNotification([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppNotificationObject);
 	}
 	[Guid("CC7BCB06-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugThreadEnum : ICorDebugEnum {
+	interface ICorDebugThreadEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -2041,7 +2041,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("D613F0BB-ACE1-4C19-BD72-E4C08D5DA7F5"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugType {
+	interface ICorDebugType {
 		[PreserveSig]
 		int GetType(out CorElementType ty);
 		[PreserveSig]
@@ -2059,7 +2059,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("10F27499-9DF2-43CE-8333-A321D7C99CB4"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugTypeEnum : ICorDebugEnum {
+	interface ICorDebugTypeEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -2069,12 +2069,12 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("5263E909-8CB5-11D3-BD2F-0000F80849BD"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugUnmanagedCallback {
+	interface ICorDebugUnmanagedCallback {
 		void DebugEvent([In] UIntPtr pDebugEvent, [In] int fOutOfBand);
 	}
 	[Guid("CC7BCAF7-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugValue {
+	interface ICorDebugValue {
 		[PreserveSig]
 		int GetType(out CorElementType pType);
 		[PreserveSig]
@@ -2085,26 +2085,26 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("5E0B54E7-D88A-4626-9420-A691E0A78B49"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugValue2 {
+	interface ICorDebugValue2 {
 		[PreserveSig]
 		int GetExactType([MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
 	}
 	[Guid("565005FC-0F8A-4F3E-9EDB-83102B156595"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugValue3 {
+	interface ICorDebugValue3 {
 		[PreserveSig]
 		int GetSize64(out ulong pSize);
 	}
 	[Guid("CC7BCAEB-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugValueBreakpoint : ICorDebugBreakpoint {
+	interface ICorDebugValueBreakpoint : ICorDebugBreakpoint {
 		void Activate([In] int bActive);
 		void IsActive(out int pbActive);
 		void GetValue([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 	}
 	[Guid("CC7BCB0A-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugValueEnum : ICorDebugEnum {
+	interface ICorDebugValueEnum : ICorDebugEnum {
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
@@ -2115,7 +2115,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("707E8932-1163-48D9-8A93-F5B1F480FBB7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugVariableSymbol {
+	interface ICorDebugVariableSymbol {
 		void GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
 		void GetSize(out uint pcbValue);
 		void GetValue([In] uint offset, [In] uint cbContext, [In] ref byte context, [In] uint cbValue, out uint pcbValue, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugVariableSymbol pValue);
@@ -2124,11 +2124,11 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("F69126B7-C787-4F6B-AE96-A569786FC670"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ICorDebugVirtualUnwinder {
+	interface ICorDebugVirtualUnwinder {
 		void GetContext([In] uint contextFlags, [In] uint cbContextBuf, out uint contextSize, out byte contextBuf);
 		void Next();
 	}
-	public enum ILCodeKind {
+	enum ILCodeKind {
 		/// <summary>
 		/// The debugger does not have access to information from ReJIT instrumentation.
 		/// </summary>
@@ -2140,13 +2140,13 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Guid("0C733A30-2A1C-11CE-ADE5-00AA0044773D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface ISequentialStream {
+	interface ISequentialStream {
 		void RemoteRead(out byte pv, [In] uint cb, out uint pcbRead);
 		void RemoteWrite([In] ref byte pv, [In] uint cb, out uint pcbWritten);
 	}
 	[Guid("0000000C-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
-	public interface IStream : ISequentialStream {
+	interface IStream : ISequentialStream {
 		void RemoteRead(out byte pv, [In] uint cb, out uint pcbRead);
 		void RemoteWrite([In] ref byte pv, [In] uint cb, out uint pcbWritten);
 		void RemoteSeek([In] LARGE_INTEGER dlibMove, [In] uint dwOrigin, out ULARGE_INTEGER plibNewPosition);
@@ -2159,7 +2159,7 @@ namespace dndbg.COM.CorDebug {
 		void Stat(out tagSTATSTG pstatstg, [In] uint grfStatFlag);
 		void Clone([MarshalAs(UnmanagedType.Interface)] out IStream ppstm);
 	}
-	public struct tagSTATSTG {
+	struct tagSTATSTG {
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string pwcsName;
 		public uint type;
@@ -2173,7 +2173,7 @@ namespace dndbg.COM.CorDebug {
 		public uint grfStateBits;
 		public uint reserved;
 	}
-	public enum WriteableMetadataUpdateMode {
+	enum WriteableMetadataUpdateMode {
 		LegacyCompatPolicy,
 		AlwaysShowUpdates
 	}

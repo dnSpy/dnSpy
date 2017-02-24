@@ -27,7 +27,7 @@ using dndbg.COM.CorDebug;
 using Microsoft.Win32;
 
 namespace dndbg.Engine {
-	public struct CoreCLRInfo {
+	struct CoreCLRInfo {
 		public int ProcessId { get; }
 		public CoreCLRTypeAttachInfo CoreCLRTypeInfo { get; }
 
@@ -37,7 +37,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public static class CoreCLRHelper {
+	static class CoreCLRHelper {
 		const string DBGSHIM_FILENAME = "dbgshim.dll";
 		delegate int GetStartupNotificationEvent(uint debuggeePID, out IntPtr phStartupEvent);
 		delegate int CloseCLREnumeration(IntPtr pHandleArray, IntPtr pStringArray, uint dwArrayLength);

@@ -22,7 +22,7 @@ using System.Diagnostics;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class CorEval : COMObject<ICorDebugEval>, IEquatable<CorEval> {
+	sealed class CorEval : COMObject<ICorDebugEval>, IEquatable<CorEval> {
 		readonly ICorDebugEval2 eval2;
 
 		/// <summary>

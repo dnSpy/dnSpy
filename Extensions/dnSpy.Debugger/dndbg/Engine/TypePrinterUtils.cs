@@ -22,7 +22,7 @@ using dndbg.COM.CorDebug;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public static class TypePrinterUtils {
+	static class TypePrinterUtils {
 		public static T Write<T>(this T output, TypeSig type, TypePrinterFlags flags, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(type, typeGenArgs, methGenArgs);
 			return output;

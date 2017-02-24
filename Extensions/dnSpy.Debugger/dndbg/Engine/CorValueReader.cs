@@ -22,7 +22,7 @@ using System.Diagnostics;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public struct CorValueResult : IEquatable<CorValueResult> {
+	struct CorValueResult : IEquatable<CorValueResult> {
 		/// <summary>
 		/// The value. Only valid if <see cref="IsValid"/> is true, else it shouldn't be used
 		/// </summary>

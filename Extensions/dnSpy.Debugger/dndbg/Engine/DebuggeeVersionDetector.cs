@@ -24,7 +24,7 @@ using dndbg.COM.CorDebug;
 using dndbg.COM.MetaHost;
 
 namespace dndbg.Engine {
-	public static class DebuggeeVersionDetector {
+	static class DebuggeeVersionDetector {
 		public static string GetVersion(string filename) => TryGetVersion(filename) ?? RuntimeEnvironment.GetSystemVersion();
 
 		public static string TryGetVersion(string filename) {

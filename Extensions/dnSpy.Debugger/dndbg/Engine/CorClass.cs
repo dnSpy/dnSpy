@@ -26,7 +26,7 @@ using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorClass : COMObject<ICorDebugClass>, IEquatable<CorClass> {
+	sealed class CorClass : COMObject<ICorDebugClass>, IEquatable<CorClass> {
 		/// <summary>
 		/// Gets the token
 		/// </summary>

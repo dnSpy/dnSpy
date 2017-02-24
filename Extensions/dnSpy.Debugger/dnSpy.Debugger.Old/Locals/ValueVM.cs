@@ -1150,7 +1150,7 @@ namespace dnSpy.Debugger.Locals {
 			var n = name;
 			if (string.IsNullOrEmpty(n))
 				n = string.Format("V_{0}", Index);
-			output.Write(BoxedTextColor.Local, IdentifierEscaper.Escape(n));
+			output.Write(BoxedTextColor.Local, dnSpy.Contracts.Decompiler.IdentifierEscaper.Escape(n));
 		}
 	}
 
@@ -1177,7 +1177,7 @@ namespace dnSpy.Debugger.Locals {
 				var n = name;
 				if (string.IsNullOrEmpty(n))
 					n = string.Format("A_{0}", Index);
-				output.Write(BoxedTextColor.Parameter, IdentifierEscaper.Escape(n));
+				output.Write(BoxedTextColor.Parameter, dnSpy.Contracts.Decompiler.IdentifierEscaper.Escape(n));
 			}
 		}
 	}
@@ -1309,7 +1309,7 @@ namespace dnSpy.Debugger.Locals {
 			WriteName(output, name, GetTypeColor(), vm.OwnerType, vm.Overridden);
 
 		internal static void WriteName(ITextColorWriter output, string name, object typeColor, CorType ownerType, bool overridden) {
-			output.Write(typeColor, IdentifierEscaper.Escape(name));
+			output.Write(typeColor, dnSpy.Contracts.Decompiler.IdentifierEscaper.Escape(name));
 			if (overridden) {
 				output.Write(BoxedTextColor.Text, " ");
 				output.Write(BoxedTextColor.Punctuation, "(");
@@ -1464,7 +1464,7 @@ namespace dnSpy.Debugger.Locals {
 
 		public override void WriteName(ITextColorWriter output) {
 			if (!string.IsNullOrEmpty(name))
-				output.Write(isTypeVar ? BoxedTextColor.TypeGenericParameter : BoxedTextColor.MethodGenericParameter, IdentifierEscaper.Escape(name));
+				output.Write(isTypeVar ? BoxedTextColor.TypeGenericParameter : BoxedTextColor.MethodGenericParameter, dnSpy.Contracts.Decompiler.IdentifierEscaper.Escape(name));
 			else if (isTypeVar) {
 				output.Write(BoxedTextColor.Operator, "!");
 				output.Write(BoxedTextColor.Number, string.Format("{0}", index));

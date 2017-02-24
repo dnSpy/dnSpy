@@ -25,7 +25,7 @@ using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	public sealed class CorFunction : COMObject<ICorDebugFunction>, IEquatable<CorFunction> {
+	sealed class CorFunction : COMObject<ICorDebugFunction>, IEquatable<CorFunction> {
 		/// <summary>
 		/// Gets the module or null
 		/// </summary>

@@ -26,7 +26,7 @@ namespace dndbg.Engine {
 	/// <summary>
 	/// A debugged process
 	/// </summary>
-	public sealed class DnProcess {
+	sealed class DnProcess {
 		readonly DebuggerCollection<ICorDebugAppDomain, DnAppDomain> appDomains;
 		readonly DebuggerCollection<ICorDebugThread, DnThread> threads;
 

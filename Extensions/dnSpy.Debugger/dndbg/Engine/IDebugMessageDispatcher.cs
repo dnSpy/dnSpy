@@ -20,7 +20,7 @@
 using System;
 
 namespace dndbg.Engine {
-	public interface IDebugMessageDispatcher {
+	interface IDebugMessageDispatcher {
 		/// <summary>
 		/// Executes <see cref="action"/> in the dndbg thread. This is typically the GUI thread,
 		/// and must always be the same thread since the debugger isn't thread safe.

@@ -20,7 +20,7 @@
 using System;
 
 namespace dndbg.Engine {
-	public sealed class NativeCodeBreakpointConditionContext : BreakpointConditionContext {
+	sealed class NativeCodeBreakpointConditionContext : BreakpointConditionContext {
 		public override DnBreakpoint Breakpoint => NativeCodeBreakpoint;
 		public DnNativeCodeBreakpoint NativeCodeBreakpoint { get; }
 
@@ -28,7 +28,7 @@ namespace dndbg.Engine {
 			: base(debugger) => NativeCodeBreakpoint = bp;
 	}
 
-	public sealed class DnNativeCodeBreakpoint : DnCodeBreakpoint {
+	sealed class DnNativeCodeBreakpoint : DnCodeBreakpoint {
 		internal Func<NativeCodeBreakpointConditionContext, bool> Condition { get; }
 
 		internal DnNativeCodeBreakpoint(DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)

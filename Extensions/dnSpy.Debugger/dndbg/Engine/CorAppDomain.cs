@@ -23,7 +23,7 @@ using System.Text;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class CorAppDomain : COMObject<ICorDebugAppDomain>, IEquatable<CorAppDomain> {
+	sealed class CorAppDomain : COMObject<ICorDebugAppDomain>, IEquatable<CorAppDomain> {
 		/// <summary>
 		/// Gets the process or null
 		/// </summary>

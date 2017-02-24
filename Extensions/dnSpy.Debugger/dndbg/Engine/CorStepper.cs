@@ -21,7 +21,7 @@ using System;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class CorStepper : COMObject<ICorDebugStepper>, IEquatable<CorStepper> {
+	sealed class CorStepper : COMObject<ICorDebugStepper>, IEquatable<CorStepper> {
 		/// <summary>
 		/// true if the stepper is active
 		/// </summary>
