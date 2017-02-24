@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Native {
-	static class NativeMethods {
+	static unsafe class NativeMethods {
 		[DllImport("kernel32")]
 		public static extern SafeFileHandle OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 		public const int PROCESS_VM_OPERATION = 0x0008;
@@ -32,5 +32,13 @@ namespace dnSpy.Debugger.Native {
 		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
+
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool ReadProcessMemory(IntPtr hProcess, void* lpBaseAddress, void* lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesRead);
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool WriteProcessMemory(IntPtr hProcess, void* lpBaseAddress, void* lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesWritten);
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool VirtualProtectEx(IntPtr hProcess, void* lpAddress, IntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+		public const uint PAGE_EXECUTE_READWRITE = 0x40;
 	}
 }

@@ -65,42 +65,42 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgThread[] Threads { get; }
 
 		/// <summary>
-		/// Reads memory. Returns the number of bytes read.
+		/// Reads memory. Unreadable memory is returned as 0s.
 		/// </summary>
 		/// <param name="address">Address in the debugged process</param>
 		/// <param name="destination">Destination address</param>
 		/// <param name="size">Number of bytes to read</param>
 		/// <returns></returns>
-		public unsafe abstract int ReadMemory(ulong address, byte* destination, int size);
+		public unsafe abstract void ReadMemory(ulong address, byte* destination, int size);
 
 		/// <summary>
-		/// Reads memory. Returns the number of bytes read.
+		/// Reads memory. Unreadable memory is returned as 0s.
 		/// </summary>
 		/// <param name="address">Address in the debugged process</param>
 		/// <param name="destination">Destination buffer</param>
 		/// <param name="destinationIndex">Destination index</param>
 		/// <param name="size">Number of bytes to read</param>
 		/// <returns></returns>
-		public abstract int ReadMemory(ulong address, byte[] destination, int destinationIndex, int size);
+		public abstract void ReadMemory(ulong address, byte[] destination, int destinationIndex, int size);
 
 		/// <summary>
-		/// Writes memory. Returns the number of bytes written.
+		/// Writes memory.
 		/// </summary>
 		/// <param name="address">Address in the debugged process</param>
 		/// <param name="source">Source address</param>
 		/// <param name="size">Number of bytes to write</param>
 		/// <returns></returns>
-		public unsafe abstract int WriteMemory(ulong address, byte* source, int size);
+		public unsafe abstract void WriteMemory(ulong address, byte* source, int size);
 
 		/// <summary>
-		/// Writes memory. Returns the number of bytes written.
+		/// Writes memory.
 		/// </summary>
 		/// <param name="address">Address in the debugged process</param>
 		/// <param name="source">Source buffer</param>
 		/// <param name="sourceIndex">Source index</param>
 		/// <param name="size">Number of bytes to write</param>
 		/// <returns></returns>
-		public abstract int WriteMemory(ulong address, byte[] source, int sourceIndex, int size);
+		public abstract void WriteMemory(ulong address, byte[] source, int sourceIndex, int size);
 	}
 
 	/// <summary>

@@ -89,9 +89,9 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 			Order = dnModule.UniqueId;
 			IsManifestModule = dnModule.CorModule.IsManifestModule;
 
-			// If any one of these props is true, we have to use the CLR dbg COM object which can only be
+			// If IsDynamic is true, we have to use the CLR dbg COM object which can only be
 			// called from the CLR dbg thread. This ctor executes in the CLR dbg thread.
-			if (IsDynamic || IsInMemory)
+			if (IsDynamic)
 				InitializeExeFields();
 		}
 
@@ -139,21 +139,23 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 				timestamp = null;
 				version = null;
 
-				if (!IsDynamic && IsInMemory) {
-					var bytes = DnModule.Process.CorProcess.ReadMemory(Address, (int)Size);
+				if (IsDynamic) {
+					if (IsManifestModule)
+						version = new AssemblyNameInfo(DnModule.Assembly.FullName).Version.ToString();
+				}
+				else if (IsInMemory) {
+					Debug.Assert(ImageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
+					var bytes = new byte[Size];
+					Process.ReadMemory(Address, bytes, 0, bytes.Length);
 					if (bytes != null) {
 						try {
 							version = GetFileVersion(bytes);
-							using (var peImage = new PEImage(bytes))
+							using (var peImage = new PEImage(bytes, ImageLayout == DbgImageLayout.File ? dnlib.PE.ImageLayout.File : dnlib.PE.ImageLayout.Memory, true))
 								InitializeExeFieldsFrom(peImage);
 						}
 						catch {
 						}
 					}
-				}
-				else if (IsDynamic || IsInMemory) {
-					if (IsManifestModule)
-						version = new AssemblyNameInfo(DnModule.Assembly.FullName).Version.ToString();
 				}
 				else {
 					try {

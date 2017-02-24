@@ -55,6 +55,7 @@
     <Compile Include="Impl\DbgProcessImpl.cs" />
     <Compile Include="Impl\DebuggerThread.cs" />
     <Compile Include="Impl\DispatcherThreadImpl.cs" />
+    <Compile Include="Native\Memset.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Properties\dnSpy.Debugger.Resources.Designer.cs">
       <AutoGen>True</AutoGen>

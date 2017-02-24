@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
@@ -115,10 +116,104 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		public override int ReadMemory(ulong address, byte* destination, int size) => throw new NotImplementedException();//TODO:
-		public override int ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) => throw new NotImplementedException();//TODO:
-		public override int WriteMemory(ulong address, byte* source, int size) => throw new NotImplementedException();//TODO:
-		public override int WriteMemory(ulong address, byte[] source, int sourceIndex, int size) => throw new NotImplementedException();//TODO:
+		public unsafe override void ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) {
+			if (destination == null)
+				throw new ArgumentNullException(nameof(destination));
+			if (destinationIndex < 0)
+				throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+			if (size < 0)
+				throw new ArgumentOutOfRangeException(nameof(size));
+			if ((uint)(destinationIndex + size) > (uint)destination.Length)
+				throw new ArgumentOutOfRangeException(nameof(size));
+			if (size == 0)
+				return;
+			fixed (byte* p = &destination[destinationIndex])
+				ReadMemory(address, p, size);
+		}
+
+		public override void ReadMemory(ulong address, byte* destination, int size) {
+			if (hProcess.IsClosed || (Bitness == 32 && address > uint.MaxValue)) {
+				Clear(destination, size);
+				return;
+			}
+
+			ulong endAddr = Bitness == 32 ? (ulong)uint.MaxValue + 1 : 0UL;
+			uint count = (uint)size;
+			var hProcessLocal = hProcess.DangerousGetHandle();
+			ulong pageSize = (ulong)Environment.SystemPageSize;
+			while (count != 0) {
+				int len = (int)Math.Min((uint)pageSize, count);
+
+				ulong nextPage = (address + pageSize) & ~(pageSize - 1);
+				ulong pageSizeLeft = nextPage - address;
+				if ((ulong)len > pageSizeLeft)
+					len = (int)pageSizeLeft;
+
+				bool b = NativeMethods.ReadProcessMemory(hProcessLocal, (void*)address, destination, new IntPtr(len), out var sizeRead);
+
+				int read = !b ? 0 : (int)sizeRead.ToInt64();
+				Debug.Assert(read <= len);
+				Debug.Assert(read == 0 || read == len);
+				if (read != len)
+					Clear(destination + read, len - read);
+
+				address += (ulong)len;
+				count -= (uint)len;
+				destination += len;
+
+				if (address == endAddr) {
+					Clear(destination, (int)count);
+					break;
+				}
+			}
+		}
+
+		unsafe void Clear(byte* destination, int size) => Memset.Clear(destination, 0, size);
+
+		public unsafe override void WriteMemory(ulong address, byte[] source, int sourceIndex, int size) {
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			if (sourceIndex < 0)
+				throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+			if (size < 0)
+				throw new ArgumentOutOfRangeException(nameof(size));
+			if ((uint)(sourceIndex + size) > (uint)source.Length)
+				throw new ArgumentOutOfRangeException(nameof(size));
+			if (size == 0)
+				return;
+			fixed (byte* p = &source[sourceIndex])
+				WriteMemory(address, p, size);
+		}
+
+		public override void WriteMemory(ulong address, byte* source, int size) {
+			if (hProcess.IsClosed || (Bitness == 32 && address > uint.MaxValue))
+				return;
+
+			ulong endAddr = Bitness == 32 ? (ulong)uint.MaxValue + 1 : 0UL;
+			uint count = (uint)size;
+			var hProcessLocal = hProcess.DangerousGetHandle();
+			ulong pageSize = (ulong)Environment.SystemPageSize;
+			while (count != 0) {
+				int len = (int)Math.Min((uint)pageSize, count);
+
+				ulong nextPage = (address + pageSize) & ~(pageSize - 1);
+				ulong pageSizeLeft = nextPage - address;
+				if ((ulong)len > pageSizeLeft)
+					len = (int)pageSizeLeft;
+
+				bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcessLocal, (void*)address, new IntPtr(len), NativeMethods.PAGE_EXECUTE_READWRITE, out uint oldProtect);
+				NativeMethods.WriteProcessMemory(hProcessLocal, (void*)address, source, new IntPtr(len), out var sizeWritten);
+				if (restoreOldProtect)
+					NativeMethods.VirtualProtectEx(hProcessLocal, (void*)address, new IntPtr(len), oldProtect, out oldProtect);
+
+				address += (ulong)len;
+				count -= (uint)len;
+				source += len;
+
+				if (address == endAddr)
+					break;
+			}
+		}
 
 		internal void Add_DbgThread(DbgEngine engine, DbgRuntime runtime) {
 			lock (lockObj)
