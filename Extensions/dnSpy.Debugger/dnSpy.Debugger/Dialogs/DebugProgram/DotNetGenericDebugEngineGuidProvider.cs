@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 				using (var peImage = new PEImage(filename)) {
 					if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)
 						return null;
-					if (peImage.ImageNTHeaders.OptionalHeader.DataDirectories.Length < 14)
+					if (peImage.ImageNTHeaders.OptionalHeader.DataDirectories.Length <= 14)
 						return null;
 					var dd = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 					if (dd.VirtualAddress == 0 || dd.Size < 0x48)
