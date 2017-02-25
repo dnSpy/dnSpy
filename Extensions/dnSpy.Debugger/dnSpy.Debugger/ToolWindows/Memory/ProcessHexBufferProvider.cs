@@ -30,6 +30,10 @@ using dnSpy.Debugger.UI;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
+	interface IProcessHexBufferProviderListener {
+		void Initialize(ProcessHexBufferProvider processHexBufferProvider);
+	}
+
 	interface IHexBufferInfo {
 		/// <summary>
 		/// Gets the buffer
@@ -40,6 +44,16 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		/// Raised when the underlying stream has changed
 		/// </summary>
 		event EventHandler UnderlyingStreamChanged;
+
+		DbgProcess Process { get; }
+		event EventHandler UnderlyingProcessChanged;
+	}
+
+	struct HexBufferInfoCreatedEventArgs {
+		public IHexBufferInfo HexBufferInfo { get; }
+		public HexBufferInfoCreatedEventArgs(IHexBufferInfo hexBufferInfo) {
+			HexBufferInfo = hexBufferInfo ?? throw new ArgumentNullException(nameof(hexBufferInfo));
+		}
 	}
 
 	/// <summary>
@@ -55,6 +69,11 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		/// </summary>
 		/// <returns></returns>
 		public abstract IHexBufferInfo CreateBuffer();
+
+		/// <summary>
+		/// Raised when a new buffer has been created
+		/// </summary>
+		public abstract event EventHandler<HexBufferInfoCreatedEventArgs> HexBufferInfoCreated;
 
 		/// <summary>
 		/// Updates <paramref name="buffer"/> so it uses another process stream
@@ -99,6 +118,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		readonly List<ProcessInfo> processInfos;
 		readonly List<BufferState> bufferStates;
 
+		public override event EventHandler<HexBufferInfoCreatedEventArgs> HexBufferInfoCreated;
+
 		sealed class ProcessInfo {
 			public DbgProcess Process { get; }
 			public HexCachedBufferStream Stream { get; }
@@ -120,6 +141,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			DebuggerHexBufferStream DebuggerHexBufferStream { get; }
 			public DbgProcess Process { get; private set; }
 			public event EventHandler UnderlyingStreamChanged;
+			public event EventHandler UnderlyingProcessChanged;
 
 			public BufferState(HexBuffer buffer, DebuggerHexBufferStream debuggerHexBufferStream) {
 				Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
@@ -130,19 +152,24 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 				Process = process;
 				DebuggerHexBufferStream.UnderlyingStream = stream;
 				UnderlyingStreamChanged?.Invoke(this, EventArgs.Empty);
+				UnderlyingProcessChanged?.Invoke(this, EventArgs.Empty);
 			}
 
 			public void InvalidateSpan(NormalizedHexChangeCollection changes) => DebuggerHexBufferStream.Invalidate(changes);
 		}
 
 		[ImportingConstructor]
-		ProcessHexBufferProviderImpl(DbgManager dbgManager, DebuggerDispatcher debuggerDispatcher, HexBufferFactoryService hexBufferFactoryService, HexBufferStreamFactoryService hexBufferStreamFactoryService) {
+		ProcessHexBufferProviderImpl(DbgManager dbgManager, DebuggerDispatcher debuggerDispatcher, HexBufferFactoryService hexBufferFactoryService, HexBufferStreamFactoryService hexBufferStreamFactoryService, [ImportMany] IEnumerable<Lazy<IProcessHexBufferProviderListener>> processHexBufferProviderListeners) {
 			this.dbgManager = dbgManager;
 			this.debuggerDispatcher = debuggerDispatcher;
 			this.hexBufferFactoryService = hexBufferFactoryService;
 			this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
 			processInfos = new List<ProcessInfo>();
 			bufferStates = new List<BufferState>();
+
+			foreach (var listener in processHexBufferProviderListeners)
+				listener.Value.Initialize(this);
+
 			dbgManager.DispatcherThread.Invoke(() => {
 				dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
 				InitializeProcesses_DbgManager(dbgManager.Processes, added: true);
@@ -244,6 +271,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			buffer.ChangedLowPriority += Buffer_ChangedLowPriority;
 			var info = processInfos.FirstOrDefault();
 			bufferState.SetUnderlyingStream(info?.Stream, info?.Process);
+			HexBufferInfoCreated?.Invoke(this, new HexBufferInfoCreatedEventArgs(bufferState));
 			return bufferState;
 		}
 

@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="func">Code to execute</param>
 		/// <returns></returns>
-		public abstract object Invoke(Func<object> func);
+		public abstract T Invoke<T>(Func<T> func);
 
 		/// <summary>
 		/// Executes the code synchronously in the dispatcher thread. This method returns as soon as
@@ -60,6 +60,6 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="action">Code to execute</param>
 		/// <returns></returns>
-		public void Invoke(Action action) => Invoke(() => { action(); return null; });
+		public void Invoke(Action action) => Invoke<object>(() => { action(); return null; });
 	}
 }
