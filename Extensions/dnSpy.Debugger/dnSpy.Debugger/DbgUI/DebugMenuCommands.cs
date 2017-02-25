@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Windows.Input;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings.Dialog;
@@ -380,28 +379,25 @@ namespace dnSpy.Debugger.DbgUI {
 			public override bool IsVisible(IMenuItemContext context) => debugger.Value.IsDebugging;
 		}
 
-		sealed class CommandToMenuItem : MenuItemBase {
-			readonly ICommand cmd;
-
-			public CommandToMenuItem(ICommand cmd) => this.cmd = cmd;
-
-			public override void Execute(IMenuItemContext context) => cmd.Execute(context);
-			public override bool IsVisible(IMenuItemContext context) => cmd.CanExecute(context);
+		sealed class ProcessesWindowNCommand : DebugToolWindowMainMenuCommand {
+			public ProcessesWindowNCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger, Guid guid)
+				: base(toolWindowService, guid, debugger, true) {
+			}
 		}
 
 		[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_APP_MENU_DEBUG_WINDOWS_MEMORY, Order = 0)]
 		sealed class SubMenuMemoryWindowCommand : MenuItemBase, IMenuItemProvider {
-			static SubMenuMemoryWindowCommand() {
-				subCmds = Array.Empty<Tuple<IMenuItem, string, string>>();//TODO:
-				/*TODO:
-				subCmds = new Tuple<IMenuItem, string, string>[DebugRoutedCommands.ShowMemoryCommands.Length];
+			readonly (IMenuItem menuItem, string headerText, string inputGestureText)[] subCmds;
+
+			[ImportingConstructor]
+			SubMenuMemoryWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger, Lazy<ToolWindows.Memory.MemoryToolWindowContentProvider> memoryToolWindowContentProvider) {
+				subCmds = new (IMenuItem, string, string)[ToolWindows.Memory.MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
 				for (int i = 0; i < subCmds.Length; i++) {
 					var inputGestureText = GetInputGestureText(i);
-					var headerText = MemoryWindowsHelper.GetHeaderText(i);
-					var cmd = new CommandToMenuItem(DebugRoutedCommands.ShowMemoryCommands[i]);
-					subCmds[i] = Tuple.Create((IMenuItem)cmd, headerText, inputGestureText);
+					var headerText = ToolWindows.Memory.MemoryWindowsHelper.GetHeaderText(i);
+					var cmd = new ProcessesWindowNCommand(toolWindowService, debugger, memoryToolWindowContentProvider.Value.Contents[i].Guid);
+					subCmds[i] = (cmd, headerText, inputGestureText);
 				}
-				*/
 			}
 
 			static string GetInputGestureText(int i) {
@@ -411,8 +407,6 @@ namespace dnSpy.Debugger.DbgUI {
 					return string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrlShift_DIGIT, (i + 1) % 10);
 				return string.Empty;
 			}
-
-			static readonly Tuple<IMenuItem, string, string>[] subCmds;
 
 			public override void Execute(IMenuItemContext context) { }
 

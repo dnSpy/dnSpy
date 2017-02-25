@@ -68,6 +68,18 @@
     <Compile Include="TheExtension.cs" />
     <Compile Include="ToolWindows\FormatterObject.cs" />
     <Compile Include="ToolWindows\FormatterUtils.cs" />
+    <Compile Include="ToolWindows\Memory\BackgroundImageOptionDefinitions.cs" />
+    <Compile Include="ToolWindows\Memory\DebuggerHexBufferStream.cs" />
+    <Compile Include="ToolWindows\Memory\HexEditorOptionsDefinitions.cs" />
+    <Compile Include="ToolWindows\Memory\MemoryContent.cs" />
+    <Compile Include="ToolWindows\Memory\MemoryControl.xaml.cs">
+      <DependentUpon>MemoryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\Memory\MemoryToolWindowContentProvider.cs" />
+    <Compile Include="ToolWindows\Memory\MemoryVM.cs" />
+    <Compile Include="ToolWindows\Memory\MemoryWindowService.cs" />
+    <Compile Include="ToolWindows\Memory\MemoryWindowsHelper.cs" />
+    <Compile Include="ToolWindows\Memory\ProcessHexBufferProvider.cs" />
     <Compile Include="ToolWindows\Modules\ModuleColumnConverter.cs" />
     <Compile Include="ToolWindows\Modules\ModuleContext.cs" />
     <Compile Include="ToolWindows\Modules\ModuleFormatter.cs" />
@@ -79,6 +91,7 @@
     <Compile Include="ToolWindows\Modules\ModulesVM.cs" />
     <Compile Include="ToolWindows\Modules\ModuleVM.cs" />
     <Compile Include="ToolWindows\PathUtils.cs" />
+    <Compile Include="ToolWindows\SimpleProcessReader.cs" />
     <Compile Include="UI\ContentTypeDefinitions.cs" />
     <Compile Include="UI\DebuggerDispatcher.cs" />
   </ItemGroup>
@@ -131,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\Memory\MemoryControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

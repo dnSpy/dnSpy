@@ -62,13 +62,17 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			modulesList = new ObservableCollection<ModuleVM>();
 			this.moduleFormatterProvider = moduleFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			moduleContext = new ModuleContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
-				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-				ModuleFormatter = moduleFormatterProvider.Create(),
-			};
-			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
-			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+			// We could be in a random thread if IDbgManagerStartListener.OnStart() will be called after the ctor returns
+			moduleContext = debuggerDispatcher.Dispatcher.Invoke(() => {
+				var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
+				var modCtx = new ModuleContext(debuggerDispatcher.Dispatcher, classificationFormatMap, textElementProvider) {
+					SyntaxHighlight = debuggerSettings.SyntaxHighlight,
+					ModuleFormatter = moduleFormatterProvider.Create(),
+				};
+				classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
+				debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+				return modCtx;
+			}, DispatcherPriority.Send);
 		}
 
 		// UI thread
