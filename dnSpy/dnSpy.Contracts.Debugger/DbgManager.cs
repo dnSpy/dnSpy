@@ -33,6 +33,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DispatcherThread DispatcherThread { get; }
 
 		/// <summary>
+		/// Gets the debugging context that gets disposed when debugging stops. This is null if <see cref="IsDebugging"/> is false
+		/// </summary>
+		public abstract DbgDebuggingContext DebuggingContext { get; }
+
+		/// <summary>
 		/// Starts debugging. Returns an error string if it failed to create a debug engine, or null on success.
 		/// See <see cref="IDbgManagerStartListener"/> on how to get called the first time this method gets called.
 		/// </summary>

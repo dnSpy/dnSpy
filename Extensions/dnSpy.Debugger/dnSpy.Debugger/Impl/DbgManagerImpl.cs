@@ -40,6 +40,14 @@ namespace dnSpy.Debugger.Impl {
 		}
 		readonly List<DbgProcessImpl> processes;
 
+		public override DbgDebuggingContext DebuggingContext {
+			get {
+				lock (lockObj)
+					return debuggingContext;
+			}
+		}
+		DbgDebuggingContextImpl debuggingContext;
+
 		public override event EventHandler IsDebuggingChanged;
 		public override bool IsDebugging {
 			get {
@@ -145,6 +153,10 @@ namespace dnSpy.Debugger.Impl {
 								addedDebugTags = debugTags.Add(engineInfo.DebugTags);
 								cachedIsRunning = CalculateIsRunning_NoLock();
 								raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
+								if (raiseIsDebuggingChanged) {
+									Debug.Assert(debuggingContext == null);
+									debuggingContext = new DbgDebuggingContextImpl();
+								}
 							}
 							if (raiseIsDebuggingChanged)
 								IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
@@ -273,6 +285,7 @@ namespace dnSpy.Debugger.Impl {
 			bool raiseIsDebuggingChanged, raiseIsRunningChanged;
 			string[] removedDebugTags;
 			DbgProcessImpl process;
+			DbgDebuggingContext debuggingContextToClose = null;
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
 				var info = TryGetEngineInfo_NoLock(engine);
@@ -280,6 +293,11 @@ namespace dnSpy.Debugger.Impl {
 					engines.Remove(info);
 				process = info?.Process;
 				raiseIsDebuggingChanged = engines.Count == 0;
+				if (raiseIsDebuggingChanged) {
+					Debug.Assert(debuggingContext != null);
+					debuggingContextToClose = debuggingContext;
+					debuggingContext = null;
+				}
 				removedDebugTags = debugTags.Remove(info.DebugTags);
 				cachedIsRunning = CalculateIsRunning_NoLock();
 				raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
@@ -317,6 +335,7 @@ namespace dnSpy.Debugger.Impl {
 				IsRunningChanged?.Invoke(this, EventArgs.Empty);
 			if (raiseIsDebuggingChanged)
 				IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
+			debuggingContextToClose?.Close(DispatcherThread);
 		}
 
 		public override void BreakAll() {

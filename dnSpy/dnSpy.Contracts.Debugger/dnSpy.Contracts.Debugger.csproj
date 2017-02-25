@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="DbgAppDomain.cs" />
     <Compile Include="DbgCollectionChangedEventArgs.cs" />
+    <Compile Include="DbgDebuggingContext.cs" />
     <Compile Include="DbgImageLayout.cs" />
     <Compile Include="DbgManager.cs" />
     <Compile Include="DbgModule.cs" />
