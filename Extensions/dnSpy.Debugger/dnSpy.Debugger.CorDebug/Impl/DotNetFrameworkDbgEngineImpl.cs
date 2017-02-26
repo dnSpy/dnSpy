@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger.Engine;
 namespace dnSpy.Debugger.CorDebug.Impl {
 	sealed class DotNetFrameworkDbgEngineImpl : DbgEngineImpl {
 		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetFramework;
+		public override string Debugging => "CLR";
 
 		public DotNetFrameworkDbgEngineImpl(DbgManager dbgManager, DbgStartKind startKind)
 			: base(dbgManager, startKind) {

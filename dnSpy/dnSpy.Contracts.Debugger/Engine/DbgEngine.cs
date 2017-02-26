@@ -35,6 +35,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract string[] DebugTags { get; }
 
 		/// <summary>
+		/// What is being debugged. This is shown in the UI (eg. Processes window)
+		/// </summary>
+		public abstract string Debugging { get; }
+
+		/// <summary>
 		/// Called when the engine can start or attach to the debugged process. This method is called shortly after
 		/// this instance gets created by a call to <see cref="DbgEngineProvider.Create(DbgManager, StartDebuggingOptions)"/>.
 		/// It must send a <see cref="DbgMessageConnected"/> message when it has connected to the program or

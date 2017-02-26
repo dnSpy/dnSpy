@@ -180,6 +180,8 @@ namespace dnSpy.Debugger.Impl {
 			return "Couldn't create a debug engine";
 		}
 
+		void ExecOnDbgThread(Action action) => DispatcherThread.BeginInvoke(action);
+
 		bool IsOurEngine(DbgEngine engine) {
 			lock (lockObj) {
 				foreach (var info in engines) {
@@ -198,7 +200,7 @@ namespace dnSpy.Debugger.Impl {
 			var engine = sender as DbgEngine;
 			if (engine == null)
 				throw new ArgumentOutOfRangeException(nameof(sender));
-			DispatcherThread.BeginInvoke(() => DbgEngine_Message_DbgThread(engine, e));
+			ExecOnDbgThread(() => DbgEngine_Message_DbgThread(engine, e));
 		}
 
 		void DbgEngine_Message_DbgThread(DbgEngine engine, DbgEngineMessage e) {
@@ -239,7 +241,7 @@ namespace dnSpy.Debugger.Impl {
 			return info;
 		}
 
-		DbgProcessImpl GetOrCreateProcess_DbgThread(int pid) {
+		DbgProcessImpl GetOrCreateProcess_DbgThread(int pid, DbgStartKind startKind) {
 			DispatcherThread.VerifyAccess();
 			DbgProcessImpl process;
 			lock (lockObj) {
@@ -247,7 +249,8 @@ namespace dnSpy.Debugger.Impl {
 					if (p.Id == pid)
 						return p;
 				}
-				process = new DbgProcessImpl(this, pid);
+				bool shouldDetach = startKind == DbgStartKind.Attach;
+				process = new DbgProcessImpl(this, pid, CalculateProcessState(null), shouldDetach);
 				processes.Add(process);
 			}
 			ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: true));
@@ -262,15 +265,33 @@ namespace dnSpy.Debugger.Impl {
 				return;
 			}
 
-			var process = GetOrCreateProcess_DbgThread(e.ProcessId);
+			var process = GetOrCreateProcess_DbgThread(e.ProcessId, engine.StartKind);
 
+			DbgProcessState processState;
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
 				info.Process = process;
 				info.EngineState = EngineState.Running;
+				processState = CalculateProcessState(info.Process);
 				breakAllHelper?.OnConnected_DbgThread_NoLock(info);
 			}
-			process.Add_DbgThread(engine, engine.CreateRuntime(process));
+			process.Add_DbgThread(engine, engine.CreateRuntime(process), processState);
+		}
+
+		DbgProcessState CalculateProcessState(DbgProcess process) {
+			lock (lockObj) {
+				int count = 0;
+				if (process != null) {
+					foreach (var info in engines) {
+						if (info.Process != process)
+							continue;
+						count++;
+						if (info.EngineState != EngineState.Paused)
+							return DbgProcessState.Running;
+					}
+				}
+				return count == 0 ? DbgProcessState.Running : DbgProcessState.Paused;
+			}
 		}
 
 		void OnDisconnected_DbgThread(DbgEngine engine, DbgMessageDisconnected e) {
@@ -280,7 +301,7 @@ namespace dnSpy.Debugger.Impl {
 
 		void OnDisconnected_DbgThread(DbgEngine engine) {
 			DispatcherThread.VerifyAccess();
-			DbgProcess processToDispose = null;
+			DbgProcessImpl processToDispose = null;
 			DbgRuntime runtime = null;
 			bool raiseIsDebuggingChanged, raiseIsRunningChanged;
 			string[] removedDebugTags;
@@ -321,8 +342,10 @@ namespace dnSpy.Debugger.Impl {
 
 			process?.NotifyRuntimesChanged_DbgThread(runtime);
 
-			if (processToDispose != null)
+			if (processToDispose != null) {
+				processToDispose.UpdateState_DbgThread(DbgProcessState.Terminated);
 				ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(processToDispose, added: false));
+			}
 
 			engine.Close(DispatcherThread);
 			runtime?.Close(DispatcherThread);
@@ -350,6 +373,8 @@ namespace dnSpy.Debugger.Impl {
 
 		void OnBreak_DbgThread(DbgEngine engine, DbgMessageBreak e) {
 			DispatcherThread.VerifyAccess();
+			DbgProcessState processState;
+			DbgProcessImpl process;
 			lock (lockObj) {
 				var info = TryGetEngineInfo_NoLock(engine);
 				// It could've been disconnected
@@ -361,8 +386,11 @@ namespace dnSpy.Debugger.Impl {
 				}
 				else
 					info.EngineState = EngineState.Paused;
+				processState = CalculateProcessState(info.Process);
+				process = info.Process;
 			}
 			breakAllHelper?.OnBreak_DbgThread(engine);
+			process.UpdateState_DbgThread(processState);
 		}
 
 		void BreakCompleted_DbgThread(bool success) {
@@ -378,11 +406,12 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void RunAll() =>
-			DispatcherThread.BeginInvoke(() => RunAll_DbgThread());
+			ExecOnDbgThread(() => RunAll_DbgThread());
 
 		void RunAll_DbgThread() {
 			DispatcherThread.VerifyAccess();
 			bool raiseIsRunning;
+			var processes = new List<DbgProcessImpl>();
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
 
@@ -394,6 +423,8 @@ namespace dnSpy.Debugger.Impl {
 				// when we call Run() inside the lock
 				foreach (var info in engines.ToArray()) {
 					if (info.EngineState == EngineState.Paused) {
+						if (!processes.Contains(info.Process))
+							processes.Add(info.Process);
 						info.EngineState = EngineState.Running;
 						info.Engine.Run();
 					}
@@ -404,6 +435,8 @@ namespace dnSpy.Debugger.Impl {
 			}
 			if (raiseIsRunning)
 				IsRunningChanged?.Invoke(this, EventArgs.Empty);
+			foreach (var process in processes)
+				process.UpdateState_DbgThread(CalculateProcessState(process));
 		}
 
 		public override void StopDebuggingAll() {
@@ -411,10 +444,10 @@ namespace dnSpy.Debugger.Impl {
 				// Make a copy of it in the unlikely event that an engine gets disconnected
 				// when we call Terminate()/Detach() inside the lock
 				foreach (var info in engines.ToArray()) {
-					if (info.Engine.StartKind == DbgStartKind.Start)
-						info.Engine.Terminate();
-					else
+					if (info.Process.ShouldDetach)
 						info.Engine.Detach();
+					else
+						info.Engine.Terminate();
 				}
 			}
 		}
@@ -445,6 +478,28 @@ namespace dnSpy.Debugger.Impl {
 							return false;
 					}
 					return true;
+				}
+			}
+		}
+
+		internal void Detach(DbgProcessImpl process) {
+			lock (lockObj) {
+				// Make a copy of it in the unlikely event that an engine gets disconnected
+				// when we call Detach() inside the lock
+				foreach (var info in engines.ToArray()) {
+					if (info.Process == process)
+						info.Engine.Detach();
+				}
+			}
+		}
+
+		internal void Terminate(DbgProcessImpl process) {
+			lock (lockObj) {
+				// Make a copy of it in the unlikely event that an engine gets disconnected
+				// when we call Terminate() inside the lock
+				foreach (var info in engines.ToArray()) {
+					if (info.Process == process)
+						info.Engine.Terminate();
 				}
 			}
 		}

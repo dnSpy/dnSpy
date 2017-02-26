@@ -18,12 +18,27 @@
 */
 
 using System;
+using System.ComponentModel;
 
 namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// A debugged process
 	/// </summary>
-	public abstract class DbgProcess : DbgObject {
+	public abstract class DbgProcess : DbgObject, INotifyPropertyChanged {
+		/// <summary>
+		/// Raised when a property is changed
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Raises <see cref="PropertyChanged"/>
+		/// </summary>
+		/// <param name="propName">Name of property that got changed</param>
+		protected void OnPropertyChanged(string propName) {
+			DbgManager.DispatcherThread.VerifyAccess();
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		}
+
 		/// <summary>
 		/// Gets the owner debug manager
 		/// </summary>
@@ -55,9 +70,19 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgMachine Machine { get; }
 
 		/// <summary>
+		/// Gets the process state
+		/// </summary>
+		public abstract DbgProcessState State { get; }
+
+		/// <summary>
 		/// Gets the filename or an empty string if it's unknown
 		/// </summary>
 		public abstract string Filename { get; }
+
+		/// <summary>
+		/// What is being debugged. This is shown in the UI (eg. Processes window)
+		/// </summary>
+		public abstract string Debugging { get; }
 
 		/// <summary>
 		/// Gets all threads
@@ -101,6 +126,32 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="size">Number of bytes to write</param>
 		/// <returns></returns>
 		public abstract void WriteMemory(ulong address, byte[] source, int sourceIndex, int size);
+
+		/// <summary>
+		/// true if the process gets detached when debugging stops (<see cref="StopDebugging"/>),
+		/// false if the process gets terminated.
+		/// </summary>
+		public abstract bool ShouldDetach { get; set; }
+
+		/// <summary>
+		/// Stops debugging. This will either detach from the process or terminate it depending on <see cref="ShouldDetach"/>
+		/// </summary>
+		public void StopDebugging() {
+			if (ShouldDetach)
+				Detach();
+			else
+				Terminate();
+		}
+
+		/// <summary>
+		/// Detaches the process, if possible, else it will be terminated
+		/// </summary>
+		public abstract void Detach();
+
+		/// <summary>
+		/// Terminates the process
+		/// </summary>
+		public abstract void Terminate();
 	}
 
 	/// <summary>
@@ -116,5 +167,25 @@ namespace dnSpy.Contracts.Debugger {
 		/// x64, 64-bit
 		/// </summary>
 		X64,
+	}
+
+	/// <summary>
+	/// Process state
+	/// </summary>
+	public enum DbgProcessState {
+		/// <summary>
+		/// The process is running
+		/// </summary>
+		Running,
+
+		/// <summary>
+		/// The process is paused
+		/// </summary>
+		Paused,
+
+		/// <summary>
+		/// The process is terminated
+		/// </summary>
+		Terminated,
 	}
 }

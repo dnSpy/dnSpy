@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
@@ -27,18 +28,45 @@ using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Impl {
 	unsafe sealed class DbgProcessImpl : DbgProcess {
-		public override DbgManager DbgManager { get; }
+		public override DbgManager DbgManager => owner;
 		public override int Id { get; }
 		public override int Bitness { get; }
 		public override DbgMachine Machine { get; }
 		public override string Filename { get; }
 
+		public override DbgProcessState State => state;
+		DbgProcessState state;
+
+		public override string Debugging {
+			get {
+				lock (lockObj)
+					return debugging;
+			}
+		}
+		string debugging = string.Empty;
+		string CalculateDebugging_NoLock() {
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var sb = new StringBuilder();
+			foreach (var info in engineInfos) {
+				var desc = info.Debugging;
+				if (seen.Contains(desc))
+					continue;
+				seen.Add(desc);
+				if (sb.Length != 0)
+					sb.Append(", ");
+				sb.Append(desc);
+			}
+			return sb.ToString();
+		}
+
 		struct EngineInfo {
 			public DbgEngine Engine { get; }
 			public DbgRuntime Runtime { get; }
+			public string Debugging { get; }
 			public EngineInfo(DbgEngine engine, DbgRuntime runtime) {
 				Engine = engine;
 				Runtime = runtime;
+				Debugging = engine.Debugging ?? "???";
 			}
 		}
 		readonly List<EngineInfo> engineInfos;
@@ -64,13 +92,16 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		readonly object lockObj;
+		readonly DbgManagerImpl owner;
 		readonly SafeFileHandle hProcess;
 
-		public DbgProcessImpl(DbgManager owner, int pid) {
+		public DbgProcessImpl(DbgManagerImpl owner, int pid, DbgProcessState state, bool shouldDetach) {
 			lockObj = new object();
 			engineInfos = new List<EngineInfo>();
-			DbgManager = owner ?? throw new ArgumentNullException(nameof(owner));
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+			this.state = state;
 			Id = pid;
+			ShouldDetach = shouldDetach;
 
 			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE;
 			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
@@ -214,10 +245,31 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal void Add_DbgThread(DbgEngine engine, DbgRuntime runtime) {
-			lock (lockObj)
+		internal void Add_DbgThread(DbgEngine engine, DbgRuntime runtime, DbgProcessState newState) {
+			bool raiseStateChanged, raiseDebuggingChanged;
+			lock (lockObj) {
 				engineInfos.Add(new EngineInfo(engine, runtime));
+				var newDebugging = CalculateDebugging_NoLock();
+				raiseStateChanged = state != newState;
+				raiseDebuggingChanged = debugging != newDebugging;
+				state = newState;
+				debugging = newDebugging;
+			}
 			RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: true));
+			if (raiseStateChanged)
+				OnPropertyChanged(nameof(State));
+			if (raiseDebuggingChanged)
+				OnPropertyChanged(nameof(Debugging));
+		}
+
+		internal void UpdateState_DbgThread(DbgProcessState newState) {
+			bool raiseStateChanged;
+			lock (lockObj) {
+				raiseStateChanged = state != newState;
+				state = newState;
+			}
+			if (raiseStateChanged)
+				OnPropertyChanged(nameof(State));
 		}
 
 		internal (DbgRuntime runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
@@ -238,6 +290,14 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		internal void NotifyRuntimesChanged_DbgThread(DbgRuntime runtime) {
+			bool raiseDebuggingChanged;
+			lock (lockObj) {
+				var newDebugging = CalculateDebugging_NoLock();
+				raiseDebuggingChanged = debugging != newDebugging;
+				debugging = newDebugging;
+			}
+			if (raiseDebuggingChanged)
+				OnPropertyChanged(nameof(Debugging));
 			if (runtime != null)
 				RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: false));
 		}
@@ -261,5 +321,25 @@ namespace dnSpy.Debugger.Impl {
 			VerifyHasNoRuntimes();
 			hProcess.Dispose();
 		}
+
+		public override bool ShouldDetach {
+			get {
+				lock (lockObj)
+					return shouldDetach;
+			}
+			set {
+				bool raiseEvent;
+				lock (lockObj) {
+					raiseEvent = shouldDetach != value;
+					shouldDetach = value;
+				}
+				if (raiseEvent)
+					DbgManager.DispatcherThread.BeginInvoke(() => OnPropertyChanged(nameof(ShouldDetach)));
+			}
+		}
+		bool shouldDetach;
+
+		public override void Detach() => owner.Detach(this);
+		public override void Terminate() => owner.Terminate(this);
 	}
 }
