@@ -93,9 +93,20 @@
     <Compile Include="ToolWindows\Modules\ModulesVM.cs" />
     <Compile Include="ToolWindows\Modules\ModuleVM.cs" />
     <Compile Include="ToolWindows\PathUtils.cs" />
+    <Compile Include="ToolWindows\Processes\ProcessColumnConverter.cs" />
+    <Compile Include="ToolWindows\Processes\ProcessContext.cs" />
+    <Compile Include="ToolWindows\Processes\ProcessesControl.xaml.cs">
+      <DependentUpon>ProcessesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\Processes\ProcessesContent.cs" />
+    <Compile Include="ToolWindows\Processes\ProcessesToolWindowContent.cs" />
+    <Compile Include="ToolWindows\Processes\ProcessesVM.cs" />
+    <Compile Include="ToolWindows\Processes\ProcessFormatter.cs" />
+    <Compile Include="ToolWindows\Processes\ProcessVM.cs" />
     <Compile Include="ToolWindows\SimpleProcessReader.cs" />
     <Compile Include="UI\ContentTypeDefinitions.cs" />
     <Compile Include="UI\DebuggerDispatcher.cs" />
+    <Compile Include="UI\ToolTipHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
@@ -154,6 +165,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ToolWindows\Modules\ModulesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolWindows\Processes\ProcessesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

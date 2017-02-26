@@ -82,6 +82,12 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of debugger modules <see cref="ListView"/></summary>
 		public static readonly Guid GUID_DEBUGGER_MODULES_LISTVIEW = new Guid("F91D9EA8-614D-4B36-AE27-B4EA541F6992");
 
+		/// <summary>Guid of debugger processes control</summary>
+		public static readonly Guid GUID_DEBUGGER_PROCESSES_CONTROL = new Guid("418382F3-596E-485E-BF56-6FAF156EAA34");
+
+		/// <summary>Guid of debugger processes <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_PROCESSES_LISTVIEW = new Guid("A26EA8A2-64EE-4311-B365-789C26D86711");
+
 		/// <summary>Guid of debugger memory control</summary>
 		public static readonly Guid GUID_DEBUGGER_MEMORY_CONTROL = new Guid("D638F6E0-EA1E-4E2C-9969-A14751C800D1");
 

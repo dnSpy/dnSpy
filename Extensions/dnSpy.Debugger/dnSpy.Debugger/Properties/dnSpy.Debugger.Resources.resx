@@ -1126,37 +1126,37 @@ Are you sure you want to expand it?</value>
     <value>To_ggle Breakpoint</value>
   </data>
   <data name="ToolBarBreakAllToolTip" xml:space="preserve">
-    <value>Break All ({0})</value>
+    <value>Break All</value>
   </data>
   <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
     <value>Continue</value>
   </data>
   <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
-    <value>Continue ({0})</value>
+    <value>Continue</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>Debug a Program ({0})</value>
+    <value>Debug a Program</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
-    <value>Restart ({0})</value>
+    <value>Restart</value>
   </data>
   <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
-    <value>Show Next Statement ({0})</value>
+    <value>Show Next Statement</value>
   </data>
   <data name="ToolBarStartDebuggingButton" xml:space="preserve">
     <value>Start</value>
   </data>
   <data name="ToolBarStepIntoToolTip" xml:space="preserve">
-    <value>Step Into ({0})</value>
+    <value>Step Into</value>
   </data>
   <data name="ToolBarStepOutToolTip" xml:space="preserve">
-    <value>Step Out ({0})</value>
+    <value>Step Out</value>
   </data>
   <data name="ToolBarStepOverToolTip" xml:space="preserve">
-    <value>Step Over ({0})</value>
+    <value>Step Over</value>
   </data>
   <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
-    <value>Stop Debugging ({0})</value>
+    <value>Stop Debugging</value>
   </data>
   <data name="UnknownExceptionType" xml:space="preserve">
     <value>&lt;Unknown Exception Type&gt;</value>
@@ -1337,5 +1337,35 @@ Are you sure you want to expand it?</value>
   </data>
   <data name="ProcessesCommand" xml:space="preserve">
     <value>_Processes</value>
+  </data>
+  <data name="Window_Processes" xml:space="preserve">
+    <value>Processes</value>
+  </data>
+  <data name="Column_Debugging" xml:space="preserve">
+    <value>Debugging</value>
+  </data>
+  <data name="Column_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_State" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="Column_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Process_Paused" xml:space="preserve">
+    <value>Break</value>
+  </data>
+  <data name="Process_Running" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
+    <value>Attach to Process</value>
+  </data>
+  <data name="Processes_DetachToolTip" xml:space="preserve">
+    <value>Detach Process</value>
+  </data>
+  <data name="Processes_TerminateToolTip" xml:space="preserve">
+    <value>Terminate Process</value>
   </data>
 </root>

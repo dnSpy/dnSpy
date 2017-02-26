@@ -23,6 +23,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Debugger.Properties;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.DbgUI {
 	static class ToolbarButtonCommands {
@@ -50,7 +51,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override bool IsVisible(IToolBarItemContext context) => !initd || !debugger.Value.IsDebugging;
 			public override void Execute(IToolBarItemContext context) => debugger.Value.DebugProgram();
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarDebugAssemblyToolTip, dnSpy_Debugger_Resources.ShortCutKeyF5);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarDebugAssemblyToolTip, dnSpy_Debugger_Resources.ShortCutKeyF5);
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Run, Header = "res:ToolBarContinueDebuggingButton", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 0)]
@@ -62,7 +63,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.Continue();
 			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanContinue;
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarContinueDebuggingToolTip, dnSpy_Debugger_Resources.ShortCutKeyF5);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarContinueDebuggingToolTip, dnSpy_Debugger_Resources.ShortCutKeyF5);
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Pause, Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 10)]
@@ -74,7 +75,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.BreakAll();
 			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanBreakAll;
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarBreakAllToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlAltBreak);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarBreakAllToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlAltBreak);
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Stop, Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 20)]
@@ -86,7 +87,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.StopDebugging();
 			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStopDebugging;
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarStopDebuggingToolTip, dnSpy_Debugger_Resources.ShortCutKeyShiftF5);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarStopDebuggingToolTip, dnSpy_Debugger_Resources.ShortCutKeyShiftF5);
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.Restart, Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 30)]
@@ -98,7 +99,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.Restart();
 			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanRestart;
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarRestartToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlShiftF5);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarRestartToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlShiftF5);
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.GoToNext, Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 0)]
@@ -110,7 +111,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.ShowNextStatement();
 			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanShowNextStatement;
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarShowNextStatementToolTip, dnSpy_Debugger_Resources.ShortCutAltAsterisk);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarShowNextStatementToolTip, dnSpy_Debugger_Resources.ShortCutAltAsterisk);
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.StepInto, Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 10)]
@@ -122,7 +123,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.StepInto();
 			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStepInto;
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarStepIntoToolTip, dnSpy_Debugger_Resources.ShortCutKeyF11);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarStepIntoToolTip, dnSpy_Debugger_Resources.ShortCutKeyF11);
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.StepOver, Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 20)]
@@ -134,7 +135,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.StepOver();
 			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStepOver;
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarStepOverToolTip, dnSpy_Debugger_Resources.ShortCutKeyF10);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarStepOverToolTip, dnSpy_Debugger_Resources.ShortCutKeyF10);
 		}
 
 		[ExportToolBarButton(Icon = DsImagesAttribute.StepOut, Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 30)]
@@ -146,7 +147,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IToolBarItemContext context) => debugger.Value.StepOut();
 			public override bool IsEnabled(IToolBarItemContext context) => debugger.Value.CanStepOut;
-			public override string GetToolTip(IToolBarItemContext context) => string.Format(dnSpy_Debugger_Resources.ToolBarStepOutToolTip, dnSpy_Debugger_Resources.ShortCutKeyShiftF11);
+			public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.ToolBarStepOutToolTip, dnSpy_Debugger_Resources.ShortCutKeyShiftF11);
 		}
 	}
 }

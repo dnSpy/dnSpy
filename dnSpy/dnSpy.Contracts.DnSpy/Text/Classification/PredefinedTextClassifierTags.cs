@@ -253,6 +253,36 @@ namespace dnSpy.Contracts.Text.Classification {
 		public static readonly string ThreadsWindowUserState = "UserState";
 
 		/// <summary>
+		/// Processes window column: Name
+		/// </summary>
+		public static readonly string ProcessesWindowName = "Name";
+
+		/// <summary>
+		/// Processes window column: ID
+		/// </summary>
+		public static readonly string ProcessesWindowId = "ID";
+
+		/// <summary>
+		/// Processes window column: Title
+		/// </summary>
+		public static readonly string ProcessesWindowTitle = "Title";
+
+		/// <summary>
+		/// Processes window column: State
+		/// </summary>
+		public static readonly string ProcessesWindowState = "State";
+
+		/// <summary>
+		/// Processes window column: Debugging
+		/// </summary>
+		public static readonly string ProcessesWindowDebugging = "Debugging";
+
+		/// <summary>
+		/// Processes window column: Path
+		/// </summary>
+		public static readonly string ProcessesWindowPath = "Path";
+
+		/// <summary>
 		/// Options dialog text
 		/// </summary>
 		public static readonly string OptionsDialogText = "Text";

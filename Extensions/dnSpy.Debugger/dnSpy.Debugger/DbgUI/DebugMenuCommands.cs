@@ -354,7 +354,7 @@ namespace dnSpy.Debugger.DbgUI {
 		sealed class ProcessesWindowCommand : DebugToolWindowMainMenuCommand {
 			[ImportingConstructor]
 			public ProcessesWindowCommand(IDsToolWindowService toolWindowService, Lazy<Debugger> debugger)
-				: base(toolWindowService, Guid.Empty/*TODO:*/, debugger, true) {
+				: base(toolWindowService, ToolWindows.Processes.ProcessesToolWindowContent.THE_GUID, debugger, true) {
 			}
 		}
 

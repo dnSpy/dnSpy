@@ -213,6 +213,7 @@ namespace dnSpy.Contracts.Images {
 		public const string TemplatePrivate = nameof(TemplatePrivate);
 		public const string TemplateProtected = nameof(TemplateProtected);
 		public const string TemplateShortcut = nameof(TemplateShortcut);
+		public const string TerminateProcess = nameof(TerminateProcess);
 		public const string TextFile = nameof(TextFile);
 		public const string Thread = nameof(Thread);
 		public const string ToggleAllBreakpoints = nameof(ToggleAllBreakpoints);

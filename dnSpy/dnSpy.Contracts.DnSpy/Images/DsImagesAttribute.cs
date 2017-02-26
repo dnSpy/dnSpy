@@ -214,6 +214,7 @@ namespace dnSpy.Contracts.Images {
 		public const string TemplatePrivate = Prefix + DsImageStrings.TemplatePrivate;
 		public const string TemplateProtected = Prefix + DsImageStrings.TemplateProtected;
 		public const string TemplateShortcut = Prefix + DsImageStrings.TemplateShortcut;
+		public const string TerminateProcess = Prefix + DsImageStrings.TerminateProcess;
 		public const string TextFile = Prefix + DsImageStrings.TextFile;
 		public const string Thread = Prefix + DsImageStrings.Thread;
 		public const string ToggleAllBreakpoints = Prefix + DsImageStrings.ToggleAllBreakpoints;

@@ -55,6 +55,11 @@ namespace dnSpy.Debugger.UI {
 		static readonly ContentTypeDefinition ModulesWindow;
 
 		[Export]
+		[Name(ContentTypes.ProcessesWindow)]
+		[BaseDefinition(ContentTypes.Text)]
+		static readonly ContentTypeDefinition ProcessesWindow;
+
+		[Export]
 		[Name(ContentTypes.ThreadsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition ThreadsWindow;

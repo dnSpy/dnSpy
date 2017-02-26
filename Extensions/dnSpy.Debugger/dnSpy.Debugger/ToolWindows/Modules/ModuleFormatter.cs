@@ -93,9 +93,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void WriteAddress(ITextColorWriter output, DbgModule module, ulong addr) {
 			// Addresses are always in hex
 			if (module.Process.Bitness == 32)
-				output.Write(BoxedTextColor.Number, string.Format("{0:X8}", addr));
+				output.Write(BoxedTextColor.Number, addr.ToString("X8"));
 			else
-				output.Write(BoxedTextColor.Number, string.Format("{0:X16}", addr));
+				output.Write(BoxedTextColor.Number, addr.ToString("X16"));
 		}
 	}
 }

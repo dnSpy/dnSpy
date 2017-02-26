@@ -217,6 +217,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference TemplatePrivate { get; } = new ImageReference(assembly, DsImageStrings.TemplatePrivate);
 		public static ImageReference TemplateProtected { get; } = new ImageReference(assembly, DsImageStrings.TemplateProtected);
 		public static ImageReference TemplateShortcut { get; } = new ImageReference(assembly, DsImageStrings.TemplateShortcut);
+		public static ImageReference TerminateProcess { get; } = new ImageReference(assembly, DsImageStrings.TerminateProcess);
 		public static ImageReference TextFile { get; } = new ImageReference(assembly, DsImageStrings.TextFile);
 		public static ImageReference Thread { get; } = new ImageReference(assembly, DsImageStrings.Thread);
 		public static ImageReference ToggleAllBreakpoints { get; } = new ImageReference(assembly, DsImageStrings.ToggleAllBreakpoints);

@@ -50,17 +50,17 @@
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Resources>
-                <CheckBox Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowOnlyEnabledExceptions}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_ShowOnlyEnabledExceptions_ToolTip}">
+                <CheckBox Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" IsChecked="{Binding ShowOnlyEnabledExceptions}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_ShowOnlyEnabledExceptions_ToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Filter}"/>
                 </CheckBox>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding AddExceptionCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Add_ToolTip}">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding AddExceptionCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Add_ToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Add}"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding RemoveExceptionsCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Remove_ToolTip}">
+                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RemoveExceptionsCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Remove_ToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.RemoveCommand}"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding RestoreDefaultsCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_RestoreSettings_ToolTip}">
+                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding RestoreDefaultsCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_RestoreSettings_ToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.UndoCheckBoxList}"/>
                 </Button>
             </StackPanel>

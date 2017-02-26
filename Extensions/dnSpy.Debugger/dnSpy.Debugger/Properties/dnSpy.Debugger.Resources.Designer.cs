@@ -322,6 +322,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Debugging.
+        /// </summary>
+        public static string Column_Debugging {
+            get {
+                return ResourceManager.GetString("Column_Debugging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dynamic.
         /// </summary>
         public static string Column_DynamicModule {
@@ -336,6 +345,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Column_File {
             get {
                 return ResourceManager.GetString("Column_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ID.
+        /// </summary>
+        public static string Column_ID {
+            get {
+                return ResourceManager.GetString("Column_ID", resourceCulture);
             }
         }
         
@@ -457,6 +475,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to State.
+        /// </summary>
+        public static string Column_State {
+            get {
+                return ResourceManager.GetString("Column_State", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Affinity Mask.
         /// </summary>
         public static string Column_ThreadAffinityMask {
@@ -534,6 +561,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Column_Timestamp {
             get {
                 return ResourceManager.GetString("Column_Timestamp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title.
+        /// </summary>
+        public static string Column_Title {
+            get {
+                return ResourceManager.GetString("Column_Title", resourceCulture);
             }
         }
         
@@ -2452,6 +2488,51 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break.
+        /// </summary>
+        public static string Process_Paused {
+            get {
+                return ResourceManager.GetString("Process_Paused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running.
+        /// </summary>
+        public static string Process_Running {
+            get {
+                return ResourceManager.GetString("Process_Running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attach to Process.
+        /// </summary>
+        public static string Processes_AttachToProcessToolTip {
+            get {
+                return ResourceManager.GetString("Processes_AttachToProcessToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detach Process.
+        /// </summary>
+        public static string Processes_DetachToolTip {
+            get {
+                return ResourceManager.GetString("Processes_DetachToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Terminate Process.
+        /// </summary>
+        public static string Processes_TerminateToolTip {
+            get {
+                return ResourceManager.GetString("Processes_TerminateToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Processes.
         /// </summary>
         public static string ProcessesCommand {
@@ -3397,7 +3478,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Break All ({0}).
+        ///   Looks up a localized string similar to Break All.
         /// </summary>
         public static string ToolBarBreakAllToolTip {
             get {
@@ -3415,7 +3496,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Continue ({0}).
+        ///   Looks up a localized string similar to Continue.
         /// </summary>
         public static string ToolBarContinueDebuggingToolTip {
             get {
@@ -3424,7 +3505,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Debug a Program ({0}).
+        ///   Looks up a localized string similar to Debug a Program.
         /// </summary>
         public static string ToolBarDebugAssemblyToolTip {
             get {
@@ -3433,7 +3514,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restart ({0}).
+        ///   Looks up a localized string similar to Restart.
         /// </summary>
         public static string ToolBarRestartToolTip {
             get {
@@ -3442,7 +3523,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Next Statement ({0}).
+        ///   Looks up a localized string similar to Show Next Statement.
         /// </summary>
         public static string ToolBarShowNextStatementToolTip {
             get {
@@ -3460,7 +3541,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step Into ({0}).
+        ///   Looks up a localized string similar to Step Into.
         /// </summary>
         public static string ToolBarStepIntoToolTip {
             get {
@@ -3469,7 +3550,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step Out ({0}).
+        ///   Looks up a localized string similar to Step Out.
         /// </summary>
         public static string ToolBarStepOutToolTip {
             get {
@@ -3478,7 +3559,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step Over ({0}).
+        ///   Looks up a localized string similar to Step Over.
         /// </summary>
         public static string ToolBarStepOverToolTip {
             get {
@@ -3487,7 +3568,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stop Debugging ({0}).
+        ///   Looks up a localized string similar to Stop Debugging.
         /// </summary>
         public static string ToolBarStopDebuggingToolTip {
             get {
@@ -3609,6 +3690,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Window_Modules {
             get {
                 return ResourceManager.GetString("Window_Modules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processes.
+        /// </summary>
+        public static string Window_Processes {
+            get {
+                return ResourceManager.GetString("Window_Processes", resourceCulture);
             }
         }
         
