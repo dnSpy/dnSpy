@@ -64,11 +64,11 @@
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
-            ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding SelectedItems}"
+            ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
-            ItemsSource="{Binding Collection}">
+            ItemsSource="{Binding VM.AllItems}">
             <ListView.Resources>
                 <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource DbgTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
                 <local:ProcessColumnConverter x:Key="processColumnConverter" />

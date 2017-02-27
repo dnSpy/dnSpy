@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
@@ -34,7 +35,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		void OnHidden();
 		void Focus();
 		ListView ListView { get; }
-		IProcessesVM VM { get; }
+		ProcessesOperations Operations { get; }
 	}
 
 	[Export(typeof(IProcessesContent))]
@@ -43,18 +44,33 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public IInputElement FocusedElement => processesControl.ListView;
 		public FrameworkElement ZoomElement => processesControl;
 		public ListView ListView => processesControl.ListView;
-		public IProcessesVM VM => processesVM;
+		public ProcessesOperations Operations { get; }
 
 		readonly ProcessesControl processesControl;
 		readonly IDocumentTabService documentTabService;
 		readonly IProcessesVM processesVM;
 
+		sealed class ControlVM {
+			public IProcessesVM VM { get; }
+			ProcessesOperations Operations { get; }
+
+			public ICommand DetachCommand => new RelayCommand(a => Operations.DetachProcess(), a => Operations.CanDetachProcess);
+			public ICommand TerminateCommand => new RelayCommand(a => Operations.TerminateProcess(), a => Operations.CanTerminateProcess);
+			public ICommand AttachToProcessCommand => new RelayCommand(a => Operations.AttachToProcess(), a => Operations.CanAttachToProcess);
+
+			public ControlVM(IProcessesVM vm, ProcessesOperations operations) {
+				VM = vm;
+				Operations = operations;
+			}
+		}
+
 		[ImportingConstructor]
-		ProcessesContent(IWpfCommandService wpfCommandService, IProcessesVM processesVM, IDocumentTabService documentTabService) {
+		ProcessesContent(IWpfCommandService wpfCommandService, IProcessesVM processesVM, ProcessesOperations processesOperations, IDocumentTabService documentTabService) {
+			Operations = processesOperations;
 			processesControl = new ProcessesControl();
 			this.documentTabService = documentTabService;
 			this.processesVM = processesVM;
-			processesControl.DataContext = processesVM;
+			processesControl.DataContext = new ControlVM(processesVM, processesOperations);
 			processesControl.ProcessesListViewDoubleClick += ProcessesControl_ProcessesListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_PROCESSES_CONTROL, processesControl);

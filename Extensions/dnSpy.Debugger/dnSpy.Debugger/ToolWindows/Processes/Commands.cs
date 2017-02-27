@@ -33,14 +33,14 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		[ImportingConstructor]
 		ProcessesCommandsLoader(IWpfCommandService wpfCommandService, Lazy<IProcessesContent> processesContent) {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_PROCESSES_LISTVIEW);
-			cmds.Add(new RelayCommand(a => processesContent.Value.VM.Copy(), a => processesContent.Value.VM.CanCopy), ModifierKeys.Control, Key.C);
-			cmds.Add(new RelayCommand(a => processesContent.Value.VM.AttachToProcess(), a => processesContent.Value.VM.CanAttachToProcess), ModifierKeys.Control | ModifierKeys.Alt, Key.P);
+			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.Copy(), a => processesContent.Value.Operations.CanCopy), ModifierKeys.Control, Key.C);
+			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.AttachToProcess(), a => processesContent.Value.Operations.CanAttachToProcess), ModifierKeys.Control | ModifierKeys.Alt, Key.P);
 		}
 	}
 
 	sealed class ProcessesCtxMenuContext {
-		public IProcessesVM VM { get; }
-		public ProcessesCtxMenuContext(IProcessesVM vm) => VM = vm;
+		public ProcessesOperations Operations { get; }
+		public ProcessesCtxMenuContext(ProcessesOperations operations) => Operations = operations;
 	}
 
 	abstract class ProcessesCtxMenuCommand : MenuItemBase<ProcessesCtxMenuContext> {
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			return Create();
 		}
 
-		ProcessesCtxMenuContext Create() => new ProcessesCtxMenuContext(processesContent.Value.VM);
+		ProcessesCtxMenuContext Create() => new ProcessesCtxMenuContext(processesContent.Value.Operations);
 	}
 
 	[ExportMenuItem(Header = "res:CopyCommand", Icon = DsImagesAttribute.Copy, InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_PROCESSES_COPY, Order = 0)]
@@ -69,8 +69,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			: base(processesContent) {
 		}
 
-		public override void Execute(ProcessesCtxMenuContext context) => context.VM.Copy();
-		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.VM.CanCopy;
+		public override void Execute(ProcessesCtxMenuContext context) => context.Operations.Copy();
+		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.Operations.CanCopy;
 	}
 
 	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = DsImagesAttribute.Select, InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_PROCESSES_COPY, Order = 10)]
@@ -80,8 +80,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			: base(processesContent) {
 		}
 
-		public override void Execute(ProcessesCtxMenuContext context) => context.VM.SelectAll();
-		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.VM.CanSelectAll;
+		public override void Execute(ProcessesCtxMenuContext context) => context.Operations.SelectAll();
+		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.Operations.CanSelectAll;
 	}
 
 	[ExportMenuItem(Header = "res:DetachProcessCommand", Icon = DsImagesAttribute.Cancel, Group = MenuConstants.GROUP_CTX_DBG_PROCESSES_OPERATIONS, Order = 0)]
@@ -91,8 +91,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			: base(processesContent) {
 		}
 
-		public override void Execute(ProcessesCtxMenuContext context) => context.VM.DetachProcess();
-		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.VM.CanDetachProcess;
+		public override void Execute(ProcessesCtxMenuContext context) => context.Operations.DetachProcess();
+		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.Operations.CanDetachProcess;
 	}
 
 	[ExportMenuItem(Header = "res:TerminateProcessCommand", Icon = DsImagesAttribute.TerminateProcess, Group = MenuConstants.GROUP_CTX_DBG_PROCESSES_OPERATIONS, Order = 10)]
@@ -102,8 +102,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			: base(processesContent) {
 		}
 
-		public override void Execute(ProcessesCtxMenuContext context) => context.VM.TerminateProcess();
-		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.VM.CanTerminateProcess;
+		public override void Execute(ProcessesCtxMenuContext context) => context.Operations.TerminateProcess();
+		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.Operations.CanTerminateProcess;
 	}
 
 	[ExportMenuItem(Header = "res:DetachWhenDebuggingStoppedCommand", Group = MenuConstants.GROUP_CTX_DBG_PROCESSES_OPTIONS, Order = 0)]
@@ -113,9 +113,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			: base(processesContent) {
 		}
 
-		public override void Execute(ProcessesCtxMenuContext context) => context.VM.ToggleDetachWhenDebuggingStopped();
-		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.VM.CanToggleDetachWhenDebuggingStopped;
-		public override bool IsChecked(ProcessesCtxMenuContext context) => context.VM.DetachWhenDebuggingStopped;
+		public override void Execute(ProcessesCtxMenuContext context) => context.Operations.ToggleDetachWhenDebuggingStopped();
+		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.Operations.CanToggleDetachWhenDebuggingStopped;
+		public override bool IsChecked(ProcessesCtxMenuContext context) => context.Operations.DetachWhenDebuggingStopped;
 	}
 
 	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_PROCESSES_OPTIONS, Order = 10)]
@@ -125,9 +125,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			: base(processesContent) {
 		}
 
-		public override void Execute(ProcessesCtxMenuContext context) => context.VM.ToggleUseHexadecimal();
-		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.VM.CanToggleUseHexadecimal;
-		public override bool IsChecked(ProcessesCtxMenuContext context) => context.VM.UseHexadecimal;
+		public override void Execute(ProcessesCtxMenuContext context) => context.Operations.ToggleUseHexadecimal();
+		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.Operations.CanToggleUseHexadecimal;
+		public override bool IsChecked(ProcessesCtxMenuContext context) => context.Operations.UseHexadecimal;
 	}
 
 	[ExportMenuItem(Header = "res:AttachToProcessCommand", InputGestureText = "res:ShortCutKeyCtrlAltP", Icon = DsImagesAttribute.Process, Group = MenuConstants.GROUP_CTX_DBG_PROCESSES_OPERATIONS2, Order = 0)]
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			: base(processesContent) {
 		}
 
-		public override void Execute(ProcessesCtxMenuContext context) => context.VM.AttachToProcess();
-		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.VM.CanAttachToProcess;
+		public override void Execute(ProcessesCtxMenuContext context) => context.Operations.AttachToProcess();
+		public override bool IsEnabled(ProcessesCtxMenuContext context) => context.Operations.CanAttachToProcess;
 	}
 }

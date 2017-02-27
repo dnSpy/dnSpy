@@ -101,6 +101,7 @@
       <DependentUpon>ProcessesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolWindows\Processes\ProcessesContent.cs" />
+    <Compile Include="ToolWindows\Processes\ProcessesOperations.cs" />
     <Compile Include="ToolWindows\Processes\ProcessesToolWindowContent.cs" />
     <Compile Include="ToolWindows\Processes\ProcessesVM.cs" />
     <Compile Include="ToolWindows\Processes\ProcessFormatter.cs" />
