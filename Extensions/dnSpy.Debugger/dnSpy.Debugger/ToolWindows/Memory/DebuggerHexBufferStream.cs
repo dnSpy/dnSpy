@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			if (stream == newStream)
 				return;
 			UnregisterEvents();
-			stream?.Dispose();
+			// Don't dispose the old stream. The caller disposes it (it's a process stream)
 			stream = newStream;
 			RegisterEvents();
 			InvalidateAll();

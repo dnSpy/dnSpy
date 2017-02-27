@@ -2524,6 +2524,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Process.
+        /// </summary>
+        public static string ProcessCommand {
+            get {
+                return ResourceManager.GetString("ProcessCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attach to Process.
         /// </summary>
         public static string Processes_AttachToProcessToolTip {

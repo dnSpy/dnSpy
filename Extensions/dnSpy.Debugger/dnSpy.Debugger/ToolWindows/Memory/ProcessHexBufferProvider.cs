@@ -76,6 +76,13 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		public abstract event EventHandler<HexBufferInfoCreatedEventArgs> HexBufferInfoCreated;
 
 		/// <summary>
+		/// Checks whether <paramref name="buffer"/> is a buffer created by this class
+		/// </summary>
+		/// <param name="buffer">Buffer</param>
+		/// <returns></returns>
+		public abstract bool IsValidBuffer(HexBuffer buffer);
+
+		/// <summary>
 		/// Updates <paramref name="buffer"/> so it uses another process stream
 		/// </summary>
 		/// <param name="buffer">Buffer, created by <see cref="CreateBuffer"/></param>
@@ -299,6 +306,12 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			var bufferState = TryGetBufferState_UI(buffer);
 			bool b = bufferStates.Remove(bufferState);
 			Debug.Assert(b);
+		}
+
+		// UI thread
+		public override bool IsValidBuffer(HexBuffer buffer) {
+			debuggerDispatcher.Dispatcher.VerifyAccess();
+			return TryGetBufferState_UI(buffer) != null;
 		}
 
 		// UI thread

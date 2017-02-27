@@ -1380,4 +1380,7 @@ Are you sure you want to expand it?</value>
   <data name="TerminateProcessCommand" xml:space="preserve">
     <value>Ter_minate Process</value>
   </data>
+  <data name="ProcessCommand" xml:space="preserve">
+    <value>Process</value>
+  </data>
 </root>

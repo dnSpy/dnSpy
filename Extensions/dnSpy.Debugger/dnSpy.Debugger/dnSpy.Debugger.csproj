@@ -71,6 +71,7 @@
     <Compile Include="ToolWindows\FormatterUtils.cs" />
     <Compile Include="ToolWindows\Memory\BackgroundImageOptionDefinitions.cs" />
     <Compile Include="ToolWindows\Memory\BufferFileCreator.cs" />
+    <Compile Include="ToolWindows\Memory\Commands.cs" />
     <Compile Include="ToolWindows\Memory\DebuggerHexBufferStream.cs" />
     <Compile Include="ToolWindows\Memory\HexEditorOptionsDefinitions.cs" />
     <Compile Include="ToolWindows\Memory\MemoryContent.cs" />
