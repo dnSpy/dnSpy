@@ -41,9 +41,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		DsDocumentNode Find(HexBufferFile file) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
-			if (file.Name == string.Empty)
+			if (file.Filename == string.Empty)
 				return null;
-			var doc = documentTabService.DocumentTreeView.DocumentService.Find(new FilenameKey(file.Name));
+			var doc = documentTabService.DocumentTreeView.DocumentService.Find(new FilenameKey(file.Filename));
 			if (doc == null)
 				return null;
 			return documentTabService.DocumentTreeView.FindNode(doc);
