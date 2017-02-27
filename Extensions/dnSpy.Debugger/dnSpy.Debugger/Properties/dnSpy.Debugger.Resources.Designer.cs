@@ -1384,6 +1384,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Detach Process.
+        /// </summary>
+        public static string DetachProcessCommand {
+            get {
+                return ResourceManager.GetString("DetachProcessCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detach _When Debugging Stopped.
+        /// </summary>
+        public static string DetachWhenDebuggingStoppedCommand {
+            get {
+                return ResourceManager.GetString("DetachWhenDebuggingStoppedCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disable All Breakpoi_nts.
         /// </summary>
         public static string DisableAllBreakpointsCommand {
@@ -3258,6 +3276,15 @@ namespace dnSpy.Debugger.Properties {
         public static string TerminateAllCommand {
             get {
                 return ResourceManager.GetString("TerminateAllCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ter_minate Process.
+        /// </summary>
+        public static string TerminateProcessCommand {
+            get {
+                return ResourceManager.GetString("TerminateProcessCommand", resourceCulture);
             }
         }
         

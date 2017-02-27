@@ -65,9 +65,12 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 		string title;
 
-		public ProcessVM(DbgProcess process, IProcessContext context) {
+		internal int Order { get; }
+
+		public ProcessVM(DbgProcess process, IProcessContext context, int order) {
 			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
+			Order = order;
 			process.PropertyChanged += DbgProcess_PropertyChanged;
 		}
 

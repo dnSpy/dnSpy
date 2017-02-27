@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Utilities;
@@ -27,19 +26,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed partial class ProcessesControl : UserControl {
 		public ListView ListView => listView;
 
-		public ProcessesControl() {
-			DataContextChanged += (s, e) => UpdateSelectedItems();
-			InitializeComponent();
-			listView.SelectionChanged += (s, e) => UpdateSelectedItems();
-		}
-
-		ProcessVM[] SelectedItems => listView.SelectedItems.OfType<ProcessVM>().ToArray();
-
-		void UpdateSelectedItems() {
-			var vm = DataContext as IProcessesVM;
-			if (vm != null)
-				vm.SelectedItems = SelectedItems;
-		}
+		public ProcessesControl() => InitializeComponent();
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))

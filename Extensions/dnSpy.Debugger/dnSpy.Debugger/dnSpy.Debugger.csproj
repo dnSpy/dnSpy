@@ -93,6 +93,7 @@
     <Compile Include="ToolWindows\Modules\ModulesVM.cs" />
     <Compile Include="ToolWindows\Modules\ModuleVM.cs" />
     <Compile Include="ToolWindows\PathUtils.cs" />
+    <Compile Include="ToolWindows\Processes\Commands.cs" />
     <Compile Include="ToolWindows\Processes\ProcessColumnConverter.cs" />
     <Compile Include="ToolWindows\Processes\ProcessContext.cs" />
     <Compile Include="ToolWindows\Processes\ProcessesControl.xaml.cs">
@@ -106,6 +107,7 @@
     <Compile Include="ToolWindows\SimpleProcessReader.cs" />
     <Compile Include="UI\ContentTypeDefinitions.cs" />
     <Compile Include="UI\DebuggerDispatcher.cs" />
+    <Compile Include="UI\ListBoxSelectedItemsAP.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">

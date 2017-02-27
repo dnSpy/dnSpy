@@ -22,11 +22,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
+using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
@@ -35,9 +39,25 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	interface IProcessesVM {
-		ProcessVM[] SelectedItems { get; set; }
 		bool IsEnabled { get; set; }
 		bool IsVisible { get; set; }
+
+		bool CanCopy { get; }
+		void Copy();
+		bool CanSelectAll { get; }
+		void SelectAll();
+		bool CanDetachProcess { get; }
+		void DetachProcess();
+		bool CanTerminateProcess { get; }
+		void TerminateProcess();
+		bool CanAttachToProcess { get; }
+		void AttachToProcess();
+		bool CanToggleDetachWhenDebuggingStopped { get; }
+		void ToggleDetachWhenDebuggingStopped();
+		bool DetachWhenDebuggingStopped { get; set; }
+		bool CanToggleUseHexadecimal { get; }
+		void ToggleUseHexadecimal();
+		bool UseHexadecimal { get; set; }
 	}
 
 	[Export(typeof(IProcessesVM))]
@@ -46,11 +66,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public ObservableCollection<ProcessVM> Collection => processesList;
 		readonly ObservableCollection<ProcessVM> processesList;
 
-		public ProcessVM[] SelectedItems {
-			get => selectedItems;
-			set => selectedItems = value ?? Array.Empty<ProcessVM>();
-		}
-		ProcessVM[] selectedItems;
+		public ObservableCollection<ProcessVM> SelectedItems { get; }
 
 		public bool IsEnabled { get; set; }
 
@@ -72,14 +88,15 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public string TerminateToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_TerminateToolTip, null);
 		public string AttachToProcessToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_AttachToProcessToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlAltP);
 
-		public ICommand DetachCommand => new RelayCommand(a => DetachProcesses(), a => CanDetachProcesses);
-		public ICommand TerminateCommand => new RelayCommand(a => TerminateProcesses(), a => CanTerminateProcesses);
+		public ICommand DetachCommand => new RelayCommand(a => DetachProcess(), a => CanDetachProcess);
+		public ICommand TerminateCommand => new RelayCommand(a => TerminateProcess(), a => CanTerminateProcess);
 		public ICommand AttachToProcessCommand => new RelayCommand(a => AttachToProcess(), a => CanAttachToProcess);
 
 		readonly DbgManager dbgManager;
 		readonly ProcessContext processContext;
 		readonly ProcessFormatterProvider processFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
+		int processOrder;
 
 		[ImportingConstructor]
 		ProcessesVM(DbgManager dbgManager, DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ProcessFormatterProvider processFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
@@ -87,7 +104,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			processesList = new ObservableCollection<ProcessVM>();
 			this.processFormatterProvider = processFormatterProvider;
 			this.debuggerSettings = debuggerSettings;
-			selectedItems = Array.Empty<ProcessVM>();
+			SelectedItems = new ObservableCollection<ProcessVM>();
 			// We could be in a random thread if IDbgManagerStartListener.OnStart() gets called after the ctor returns
 			processContext = debuggerDispatcher.Dispatcher.Invoke(() => {
 				var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
@@ -158,7 +175,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			if (e.Added) {
 				UI(() => {
 					foreach (var p in e.Objects)
-						Collection.Add(new ProcessVM(p, processContext));
+						Collection.Add(new ProcessVM(p, processContext, processOrder++));
 				});
 			}
 			else {
@@ -181,26 +198,89 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
-		bool CanDetachProcesses => SelectedItems.Length != 0;
+		public bool CanCopy => SelectedItems.Count != 0;
 		// UI thread
-		void DetachProcesses() {
+		public void Copy() {
+			var output = new StringBuilderTextColorOutput();
+			var formatter = processContext.ProcessFormatter;
+			foreach (var vm in SelectedItems.OrderBy(a => a.Order)) {
+				formatter.WriteImage(output, vm);
+				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteName(output, vm.Process);
+				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteId(output, vm.Process);
+				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteTitle(output, vm);
+				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteState(output, vm.Process);
+				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteDebugging(output, vm.Process);
+				output.Write(BoxedTextColor.Text, "\t");
+				formatter.WritePath(output, vm.Process);
+				output.WriteLine();
+			}
+			var s = output.ToString();
+			if (s.Length > 0) {
+				try {
+					Clipboard.SetText(s);
+				}
+				catch (ExternalException) { }
+			}
+		}
+
+		// UI thread
+		public bool CanSelectAll => Collection.Count != 0;
+		// UI thread
+		public void SelectAll() {
+			SelectedItems.Clear();
+			foreach (var vm in Collection)
+				SelectedItems.Add(vm);
+		}
+
+		// UI thread
+		public bool CanDetachProcess => SelectedItems.Count != 0;
+		// UI thread
+		public void DetachProcess() {
 			foreach (var vm in SelectedItems)
 				vm.Process.Detach();
 		}
 
 		// UI thread
-		bool CanTerminateProcesses => SelectedItems.Length != 0;
+		public bool CanTerminateProcess => SelectedItems.Count != 0;
 		// UI thread
-		void TerminateProcesses() {
+		public void TerminateProcess() {
 			foreach (var vm in SelectedItems)
 				vm.Process.Terminate();
 		}
 
 		// UI thread
-		bool CanAttachToProcess => true;
+		public bool CanAttachToProcess => true;
 		// UI thread
-		void AttachToProcess() {
+		public void AttachToProcess() {
 			//TODO:
+		}
+
+		// UI thread
+		public bool CanToggleDetachWhenDebuggingStopped => SelectedItems.Count != 0;
+		// UI thread
+		public void ToggleDetachWhenDebuggingStopped() => DetachWhenDebuggingStopped = !DetachWhenDebuggingStopped;
+		// UI thread
+		public bool DetachWhenDebuggingStopped {
+			get => SelectedItems.Count != 0 && !SelectedItems.Any(a => !a.Process.ShouldDetach);
+			set {
+				foreach (var vm in SelectedItems)
+					vm.Process.ShouldDetach = value;
+			}
+		}
+
+		// UI thread
+		public bool CanToggleUseHexadecimal => true;
+		// UI thread
+		public void ToggleUseHexadecimal() => UseHexadecimal = !UseHexadecimal;
+		// UI thread
+		public bool UseHexadecimal {
+			get => debuggerSettings.UseHexadecimal;
+			set => debuggerSettings.UseHexadecimal = value;
 		}
 	}
 }

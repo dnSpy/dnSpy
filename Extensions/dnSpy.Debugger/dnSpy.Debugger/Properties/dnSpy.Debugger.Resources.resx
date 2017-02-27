@@ -1371,4 +1371,13 @@ Are you sure you want to expand it?</value>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Ctrl+F</value>
   </data>
+  <data name="DetachProcessCommand" xml:space="preserve">
+    <value>_Detach Process</value>
+  </data>
+  <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
+    <value>Detach _When Debugging Stopped</value>
+  </data>
+  <data name="TerminateProcessCommand" xml:space="preserve">
+    <value>Ter_minate Process</value>
+  </data>
 </root>

@@ -521,6 +521,18 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Debugger/Threads, Group: Commands</summary>
 		public const string GROUP_CTX_DBG_THREADS_CMDS = "2000,B7B20F2D-6FE1-4415-BC4A-D92B31EE9342";
 
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Copy</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_COPY = "0,CC3C28D9-E9F7-448B-9299-31038143439F";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Operations</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_OPERATIONS = "1000,276A37FE-50C8-4B56-BF56-4A0F414207DF";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Options</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_OPTIONS = "2000,09039E26-03A2-453C-B164-F43DF8154D3F";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Operations</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_OPERATIONS2 = "3000,1F9D28D0-282B-46BB-9E2D-59703E28A5FF";
+
 		/// <summary>Group: Context Menu, Type: REPL text editor, Group: Reset</summary>
 		public const string GROUP_CTX_REPL_RESET = "0,407111D9-B090-4151-83FF-2C01C3816DF3";
 

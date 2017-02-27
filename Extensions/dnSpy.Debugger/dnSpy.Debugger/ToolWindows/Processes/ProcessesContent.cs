@@ -34,6 +34,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		void OnHidden();
 		void Focus();
 		ListView ListView { get; }
+		IProcessesVM VM { get; }
 	}
 
 	[Export(typeof(IProcessesContent))]
@@ -42,6 +43,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public IInputElement FocusedElement => processesControl.ListView;
 		public FrameworkElement ZoomElement => processesControl;
 		public ListView ListView => processesControl.ListView;
+		public IProcessesVM VM => processesVM;
 
 		readonly ProcessesControl processesControl;
 		readonly IDocumentTabService documentTabService;

@@ -42,6 +42,11 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		internal static ProcessFormatter Create_DONT_USE(bool useHex) => new ProcessFormatter(useHex);
 
+		public void WriteImage(ITextColorWriter output, ProcessVM vm) {
+			if (vm.IsSelectedProcess)
+				output.Write(BoxedTextColor.Text, ">");
+		}
+
 		public void WriteName(ITextColorWriter output, DbgProcess process) => output.WriteFilename(PathUtils.GetFilename(process.Filename));
 		public void WriteTitle(ITextColorWriter output, ProcessVM vm) => output.Write(BoxedTextColor.String, vm.Title);
 		public void WriteState(ITextColorWriter output, DbgProcess process) => output.Write(BoxedTextColor.EnumField, GetStateText(process.State));
