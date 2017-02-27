@@ -34,6 +34,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Output.Settings;
 using dnSpy.Properties;
 using dnSpy.Text.Editor;
@@ -63,6 +64,10 @@ namespace dnSpy.Output {
 	sealed class OutputService : ViewModelBase, IOutputServiceInternal {
 		public ICommand ClearAllCommand => new RelayCommand(a => ClearAll(), a => CanClearAll);
 		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);
+
+		public string ClearAllToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Output_ClearAll_ToolTip, dnSpy_Resources.ShortCutKeyCtrlL);
+		public string SaveToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Output_Save_ToolTip, dnSpy_Resources.ShortCutKeyCtrlS);
+		public string WordWrapToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Output_WordWrap_ToolTip, dnSpy_Resources.ShortCutKeyCtrlECtrlW);
 
 		public bool WordWrap {
 			get { return (outputWindowOptionsService.Default.WordWrapStyle & WordWrapStyles.WordWrap) != 0; }

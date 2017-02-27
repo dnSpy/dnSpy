@@ -2641,6 +2641,15 @@ namespace dnSpy.Debugger.Old.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+F.
+        /// </summary>
+        public static string ShortCutKeyCtrlF {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+F10.
         /// </summary>
         public static string ShortCutKeyCtrlF10 {

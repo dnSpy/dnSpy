@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Globalization;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;

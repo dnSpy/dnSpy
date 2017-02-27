@@ -44,23 +44,23 @@
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Resources>
-                <Button Margin="5 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_Reset}">
+                <Button Margin="5 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetCommand}" ToolTip="{Binding ResetToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Restart}"/>
                 </Button>
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ClearCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_ClearScreen}">
+                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ClearCommand}" ToolTip="{Binding ClearScreenToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
                 </Button>
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding HistoryPreviousCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_HistoryPrevious}">
+                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding HistoryPreviousCommand}" ToolTip="{Binding HistoryPreviousToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.MoveUp}"/>
                 </Button>
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding HistoryNextCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_HistoryNext}">
+                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding HistoryNextCommand}" ToolTip="{Binding HistoryNextToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.DownloadNoColor}"/>
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding SaveCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Repl_Save_ToolTip}">
+                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding SaveCommand}" ToolTip="{Binding SaveToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Save}"/>
                 </Button>
-                <CheckBox Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" IsChecked="{Binding WordWrap}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Repl_WordWrap_ToolTip}">
+                <CheckBox Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" IsChecked="{Binding WordWrap}" ToolTip="{Binding WordWrapToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.WordWrap}"/>
                 </CheckBox>
             </StackPanel>

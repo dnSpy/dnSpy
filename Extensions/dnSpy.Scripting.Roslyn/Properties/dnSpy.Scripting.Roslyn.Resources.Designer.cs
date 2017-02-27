@@ -322,7 +322,7 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save (Ctrl+S).
+        ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string Repl_Save_ToolTip {
             get {
@@ -331,7 +331,7 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toggle Word Wrap (Ctrl+E, Ctrl+W).
+        ///   Looks up a localized string similar to Toggle Word Wrap.
         /// </summary>
         public static string Repl_WordWrap_ToolTip {
             get {
@@ -367,7 +367,7 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear Screen (Ctrl+L).
+        ///   Looks up a localized string similar to Clear Screen.
         /// </summary>
         public static string Script_ToolTip_ClearScreen {
             get {
@@ -376,7 +376,7 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to History Next (Alt+Down Arrow).
+        ///   Looks up a localized string similar to History Next.
         /// </summary>
         public static string Script_ToolTip_HistoryNext {
             get {
@@ -385,7 +385,7 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to History Previous (Alt+Up Arrow).
+        ///   Looks up a localized string similar to History Previous.
         /// </summary>
         public static string Script_ToolTip_HistoryPrevious {
             get {

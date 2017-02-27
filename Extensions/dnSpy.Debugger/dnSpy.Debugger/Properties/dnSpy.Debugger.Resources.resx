@@ -655,7 +655,7 @@ HResult: 0x{3:X8}</value>
     <value>Search</value>
   </data>
   <data name="Exceptions_Search_ToolTip" xml:space="preserve">
-    <value>Search for an exception (Ctrl+F)</value>
+    <value>Search for an exception</value>
   </data>
   <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
     <value>Show only enabled exceptions</value>
@@ -1367,5 +1367,8 @@ Are you sure you want to expand it?</value>
   </data>
   <data name="Processes_TerminateToolTip" xml:space="preserve">
     <value>Terminate Process</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
   </data>
 </root>

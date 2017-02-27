@@ -1816,7 +1816,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Search for an exception (Ctrl+F).
+        ///   Looks up a localized string similar to Search for an exception.
         /// </summary>
         public static string Exceptions_Search_ToolTip {
             get {
@@ -2763,6 +2763,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyCtrlEnter {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlEnter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+F.
+        /// </summary>
+        public static string ShortCutKeyCtrlF {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlF", resourceCulture);
             }
         }
         

@@ -5291,7 +5291,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo (Ctrl+Y).
+        ///   Looks up a localized string similar to Redo.
         /// </summary>
         public static string RedoToolBarToolTip {
             get {
@@ -5534,7 +5534,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save All (Ctrl+Shift+S).
+        ///   Looks up a localized string similar to Save All.
         /// </summary>
         public static string SaveAllToolBarToolTip {
             get {
@@ -7097,7 +7097,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo (Ctrl+Z).
+        ///   Looks up a localized string similar to Undo.
         /// </summary>
         public static string UndoToolBarToolTip {
             get {

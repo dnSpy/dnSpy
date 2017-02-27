@@ -29,6 +29,8 @@ using System.Windows.Input;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Utilities;
+using dnSpy.Debugger.Old.Properties;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Exceptions {
@@ -64,6 +66,12 @@ namespace dnSpy.Debugger.Exceptions {
 		public ICommand AddExceptionCommand => new RelayCommand(a => AddException(), a => CanAddException);
 		public ICommand RemoveExceptionsCommand => new RelayCommand(a => RemoveExceptions(), a => CanRemoveExceptions);
 		public ICommand RestoreDefaultsCommand => new RelayCommand(a => RestoreDefaults(), a => CanRestoreDefaults);
+
+		public string ShowOnlyEnabledExceptionsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_ShowOnlyEnabledExceptions_ToolTip, null);
+		public string AddToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_Add_ToolTip, null);
+		public string RemoveToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_Remove_ToolTip, null);
+		public string RestoreSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_RestoreSettings_ToolTip, null);
+		public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Exceptions_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
 
 		public bool ShowOnlyEnabledExceptions {
 			get { return showOnlyEnabledExceptions; }

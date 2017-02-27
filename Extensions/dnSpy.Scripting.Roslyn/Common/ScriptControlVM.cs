@@ -35,6 +35,7 @@ using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Roslyn.Shared.Text;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting.Roslyn.Properties;
@@ -63,6 +64,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected abstract string CodeFilenameNoExtension { get; }
 		protected abstract string CodeFileExtension { get; }
 		protected abstract string CodeFilterText { get; }
+
+		public string ResetToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_Reset, null);
+		public string ClearScreenToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_ClearScreen, dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlL);
+		public string HistoryPreviousToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_HistoryPrevious, dnSpy_Scripting_Roslyn_Resources.ShortCutKeyAltUp);
+		public string HistoryNextToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_HistoryNext, dnSpy_Scripting_Roslyn_Resources.ShortCutKeyAltDown);
+		public string SaveToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Scripting_Roslyn_Resources.Repl_Save_ToolTip, dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlS);
+		public string WordWrapToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Scripting_Roslyn_Resources.Repl_WordWrap_ToolTip, dnSpy_Scripting_Roslyn_Resources.ShortCutKeyCtrlECtrlW);
 
 		public ICommand ResetCommand => new RelayCommand(a => Reset(), a => CanReset);
 		public ICommand ClearCommand => new RelayCommand(a => ReplEditor.ClearScreen(), a => ReplEditor.CanClearScreen);

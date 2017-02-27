@@ -106,7 +106,6 @@
     <Compile Include="ToolWindows\SimpleProcessReader.cs" />
     <Compile Include="UI\ContentTypeDefinitions.cs" />
     <Compile Include="UI\DebuggerDispatcher.cs" />
-    <Compile Include="UI\ToolTipHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">

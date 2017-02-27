@@ -27,20 +27,24 @@ using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Contracts.Utilities;
+using dnSpy.Properties;
 
 namespace dnSpy.Documents.Tabs {
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateBackCommand", Icon = DsImagesAttribute.Backwards, Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 0)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = DsImagesAttribute.Backwards, Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 0)]
 	sealed class BrowseBackCommand : ToolBarButtonCommand {
 		public BrowseBackCommand()
 			: base(NavigationCommands.BrowseBack) {
 		}
+		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateBackCommand, dnSpy_Resources.ShortCutKeyBackspace);
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateForwardCommand", Icon = DsImagesAttribute.Forwards, Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = DsImagesAttribute.Forwards, Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
 	sealed class BrowseForwardCommand : ToolBarButtonCommand {
 		public BrowseForwardCommand()
 			: base(NavigationCommands.BrowseForward) {
 		}
+		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateForwardCommand, dnSpy_Resources.ShortCutKeyAltRightArrow);
 	}
 
 	[ExportAutoLoaded]

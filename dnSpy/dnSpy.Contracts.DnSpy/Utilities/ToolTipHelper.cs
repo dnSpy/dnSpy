@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Debugger.UI {
+namespace dnSpy.Contracts.Utilities {
 	static class ToolTipHelper {
 		public static string AddKeyboardShortcut(string tooltip, string shortcut) {
 			if (string.IsNullOrEmpty(shortcut))

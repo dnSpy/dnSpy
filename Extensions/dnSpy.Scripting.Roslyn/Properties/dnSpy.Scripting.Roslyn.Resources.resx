@@ -187,13 +187,13 @@
     <value>Resetting execution engine.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Clear Screen (Ctrl+L)</value>
+    <value>Clear Screen</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
-    <value>History Next (Alt+Down Arrow)</value>
+    <value>History Next</value>
   </data>
   <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
-    <value>History Previous (Alt+Up Arrow)</value>
+    <value>History Previous</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Reset</value>
@@ -277,13 +277,13 @@
     <value>_Word Wrap</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+    <value>Toggle Word Wrap</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>All Files</value>
   </data>
   <data name="Repl_Save_ToolTip" xml:space="preserve">
-    <value>Save (Ctrl+S)</value>
+    <value>Save</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
     <value>Text Files</value>

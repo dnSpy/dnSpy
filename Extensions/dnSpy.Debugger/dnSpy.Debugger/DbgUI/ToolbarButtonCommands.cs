@@ -22,8 +22,8 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
-using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.DbgUI {
 	static class ToolbarButtonCommands {

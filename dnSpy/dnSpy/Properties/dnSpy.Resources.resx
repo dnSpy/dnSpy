@@ -367,10 +367,10 @@
     <value>Move to P_revious Tab Group</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Navigate Backward (Backspace)</value>
+    <value>Navigate Backward</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Navigate Forward (Alt+Right)</value>
+    <value>Navigate Forward</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
     <value>The new data is not an image.</value>
@@ -475,7 +475,7 @@
     <value>Open List</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Open (Ctrl+O)</value>
+    <value>Open</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
     <value>Options</value>
@@ -517,7 +517,7 @@
     <value>_Search Assemblies</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Search Assemblies ({0})</value>
+    <value>Search Assemblies</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Searching...</value>
@@ -897,13 +897,13 @@
     <value>Output</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All (Ctrl+L)</value>
+    <value>Clear All</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
     <value>_Show output from:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Toggle Word Wrap (Ctrl+E, Ctrl+W)</value>
+    <value>Toggle Word Wrap</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
@@ -912,7 +912,7 @@
     <value>_Output</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Save (Ctrl+S)</value>
+    <value>Save</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
     <value>Clear Al_l</value>
@@ -1670,5 +1670,14 @@ Filter can be changed in Assembly Explorer options.</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
     <value>Colorize the text</value>
+  </data>
+  <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
+    <value>Alt+Right Arrow</value>
+  </data>
+  <data name="ShortCutKeyBackspace" xml:space="preserve">
+    <value>Backspace</value>
+  </data>
+  <data name="ShortCutKeyCtrlS" xml:space="preserve">
+    <value>Ctrl+S</value>
   </data>
 </root>

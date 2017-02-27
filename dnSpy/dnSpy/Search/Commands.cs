@@ -27,6 +27,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Properties;
 
 namespace dnSpy.Search {
@@ -62,7 +63,7 @@ namespace dnSpy.Search {
 		}
 
 		public override string GetToolTip(IToolBarItemContext context) =>
-			string.Format(dnSpy_Resources.SearchAssembliesToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlShiftK);
+			ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.SearchAssembliesToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlShiftK);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SearchAssembliesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftK", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]

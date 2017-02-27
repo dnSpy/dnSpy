@@ -895,6 +895,7 @@
     <Compile Include="TreeView\TreeViewSelectionChangedEventArgs.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\ProfileOptimizationHelper.cs" />
+    <Compile Include="Utilities\ToolTipHelper.cs" />
     <Compile Include="Utilities\UIUtilities.cs" />
   </ItemGroup>
   <ItemGroup>

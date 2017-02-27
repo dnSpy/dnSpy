@@ -1737,7 +1737,7 @@ Are you sure you want to close the window?</value>
     <value>Redo</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>Redo (Ctrl+Y)</value>
+    <value>Redo</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
     <value>R_emove and Add Pops</value>
@@ -1794,7 +1794,7 @@ Are you sure you want to close the window?</value>
     <value>Save A_ll...</value>
   </data>
   <data name="SaveAllToolBarToolTip" xml:space="preserve">
-    <value>Save All (Ctrl+Shift+S)</value>
+    <value>Save All</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
     <value>Save _Module...</value>
@@ -2022,7 +2022,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Undo</value>
   </data>
   <data name="UndoToolBarToolTip" xml:space="preserve">
-    <value>Undo (Ctrl+Z)</value>
+    <value>Undo</value>
   </data>
   <data name="UnsavedFile" xml:space="preserve">
     <value>There is an unsaved file.</value>

@@ -2433,7 +2433,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Navigate Backward (Backspace).
+        ///   Looks up a localized string similar to Navigate Backward.
         /// </summary>
         public static string NavigateBackCommand {
             get {
@@ -2442,7 +2442,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Navigate Forward (Alt+Right).
+        ///   Looks up a localized string similar to Navigate Forward.
         /// </summary>
         public static string NavigateForwardCommand {
             get {
@@ -2775,7 +2775,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open (Ctrl+O).
+        ///   Looks up a localized string similar to Open.
         /// </summary>
         public static string OpenToolBarToolTip {
             get {
@@ -2847,7 +2847,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear All (Ctrl+L).
+        ///   Looks up a localized string similar to Clear All.
         /// </summary>
         public static string Output_ClearAll_ToolTip {
             get {
@@ -2856,7 +2856,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save (Ctrl+S).
+        ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string Output_Save_ToolTip {
             get {
@@ -2874,7 +2874,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Toggle Word Wrap (Ctrl+E, Ctrl+W).
+        ///   Looks up a localized string similar to Toggle Word Wrap.
         /// </summary>
         public static string Output_WordWrap_ToolTip {
             get {
@@ -3144,7 +3144,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Search Assemblies ({0}).
+        ///   Looks up a localized string similar to Search Assemblies.
         /// </summary>
         public static string SearchAssembliesToolBarToolTip {
             get {
@@ -3666,11 +3666,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alt+Right Arrow.
+        /// </summary>
+        public static string ShortCutKeyAltRightArrow {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltRightArrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alt+U.
         /// </summary>
         public static string ShortCutKeyAltU {
             get {
                 return ResourceManager.GetString("ShortCutKeyAltU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backspace.
+        /// </summary>
+        public static string ShortCutKeyBackspace {
+            get {
+                return ResourceManager.GetString("ShortCutKeyBackspace", resourceCulture);
             }
         }
         
@@ -3905,6 +3923,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyCtrlO {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+S.
+        /// </summary>
+        public static string ShortCutKeyCtrlS {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlS", resourceCulture);
             }
         }
         

@@ -33,6 +33,7 @@ using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	[ExportAutoLoaded]
@@ -55,11 +56,12 @@ namespace dnSpy.AsmEditor.SaveModule {
 		void SaveAll_Execute() => documentSaver.Value.Save(GetDirtyDocs());
 	}
 
-	[ExportToolBarButton(Icon = DsImagesAttribute.SaveAll, ToolTip = "res:SaveAllToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
+	[ExportToolBarButton(Icon = DsImagesAttribute.SaveAll, Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
 	sealed class SaveAllToolbarCommand : ToolBarButtonCommand {
 		SaveAllToolbarCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {
 		}
+		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.SaveAllToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftS);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = DsImagesAttribute.SaveAll, InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 30)]
