@@ -3036,16 +3036,16 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Big endian (Alt+B).
+        ///   Looks up a localized string similar to Big endian.
         /// </summary>
-        public static string Search_BigEndian {
+        public static string Search_BigEndianToolTip {
             get {
-                return ResourceManager.GetString("Search_BigEndian", resourceCulture);
+                return ResourceManager.GetString("Search_BigEndianToolTip", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close (Esc).
+        ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string Search_CloseToolTip {
             get {
@@ -3054,7 +3054,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Find next (F3).
+        ///   Looks up a localized string similar to Find next.
         /// </summary>
         public static string Search_FindNextToolTip {
             get {
@@ -3063,7 +3063,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Find previous (Shift+F3).
+        ///   Looks up a localized string similar to Find previous.
         /// </summary>
         public static string Search_FindPreviousToolTip {
             get {
@@ -3072,7 +3072,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Match case (Alt+C).
+        ///   Looks up a localized string similar to Match case.
         /// </summary>
         public static string Search_MatchCaseToolTip {
             get {
@@ -3081,7 +3081,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Match whole word (Alt+W).
+        ///   Looks up a localized string similar to Match whole word.
         /// </summary>
         public static string Search_MatchWholeWordToolTip {
             get {
@@ -3090,7 +3090,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Replace all (Alt+A).
+        ///   Looks up a localized string similar to Replace all.
         /// </summary>
         public static string Search_ReplaceAllToolTip {
             get {
@@ -3099,7 +3099,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Replace next (Alt+R).
+        ///   Looks up a localized string similar to Replace next.
         /// </summary>
         public static string Search_ReplaceNextToolTip {
             get {
@@ -3117,7 +3117,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use Regular Expressions (Alt+E).
+        ///   Looks up a localized string similar to Use Regular Expressions.
         /// </summary>
         public static string Search_UseRegularExpressionsToolTip {
             get {
@@ -3648,6 +3648,42 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alt+A.
+        /// </summary>
+        public static string ShortCutKeyAltA {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+B.
+        /// </summary>
+        public static string ShortCutKeyAltB {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+C.
+        /// </summary>
+        public static string ShortCutKeyAltC {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+E.
+        /// </summary>
+        public static string ShortCutKeyAltE {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alt+H.
         /// </summary>
         public static string ShortCutKeyAltH {
@@ -3666,6 +3702,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alt+R.
+        /// </summary>
+        public static string ShortCutKeyAltR {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alt+Right Arrow.
         /// </summary>
         public static string ShortCutKeyAltRightArrow {
@@ -3680,6 +3725,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyAltU {
             get {
                 return ResourceManager.GetString("ShortCutKeyAltU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+W.
+        /// </summary>
+        public static string ShortCutKeyAltW {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltW", resourceCulture);
             }
         }
         
@@ -4080,11 +4134,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Esc.
+        /// </summary>
+        public static string ShortCutKeyEsc {
+            get {
+                return ResourceManager.GetString("ShortCutKeyEsc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to F12.
         /// </summary>
         public static string ShortCutKeyF12 {
             get {
                 return ResourceManager.GetString("ShortCutKeyF12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to F3.
+        /// </summary>
+        public static string ShortCutKeyF3 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyF3", resourceCulture);
             }
         }
         
@@ -4103,6 +4175,15 @@ namespace dnSpy.Properties {
         public static string ShortCutKeyShiftEsc {
             get {
                 return ResourceManager.GetString("ShortCutKeyShiftEsc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shift+F3.
+        /// </summary>
+        public static string ShortCutKeyShiftF3 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyShiftF3", resourceCulture);
             }
         }
         

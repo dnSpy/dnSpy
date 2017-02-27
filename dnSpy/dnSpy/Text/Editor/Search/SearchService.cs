@@ -33,6 +33,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Properties;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
@@ -105,6 +106,16 @@ namespace dnSpy.Text.Editor.Search {
 			if (restartSearch && canSearch)
 				RestartSearch();
 		}
+
+		public string ToggleReplaceModeToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_ToggleReplaceModeToolTip, null);
+		public string FindPreviousToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_FindPreviousToolTip, dnSpy_Resources.ShortCutKeyShiftF3);
+		public string FindNextToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_FindNextToolTip, dnSpy_Resources.ShortCutKeyF3);
+		public string CloseToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_CloseToolTip, dnSpy_Resources.ShortCutKeyEsc);
+		public string ReplaceNextToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_ReplaceNextToolTip, dnSpy_Resources.ShortCutKeyAltR);
+		public string ReplaceAllToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_ReplaceAllToolTip, dnSpy_Resources.ShortCutKeyAltA);
+		public string MatchCaseToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_MatchCaseToolTip, dnSpy_Resources.ShortCutKeyAltC);
+		public string MatchWholeWordToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_MatchWholeWordToolTip, dnSpy_Resources.ShortCutKeyAltW);
+		public string UseRegularExpressionsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_UseRegularExpressionsToolTip, dnSpy_Resources.ShortCutKeyAltE);
 
 		public ICommand CloseSearchUICommand => new RelayCommand(a => CloseSearchControl());
 		public ICommand FindNextCommand => new RelayCommand(a => FindNext(true));

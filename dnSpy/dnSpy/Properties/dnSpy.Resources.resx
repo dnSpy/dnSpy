@@ -1065,31 +1065,31 @@
     <value>Top Margin %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
-    <value>Find next (F3)</value>
+    <value>Find next</value>
   </data>
   <data name="Search_FindPreviousToolTip" xml:space="preserve">
-    <value>Find previous (Shift+F3)</value>
+    <value>Find previous</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case (Alt+C)</value>
+    <value>Match case</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word (Alt+W)</value>
+    <value>Match whole word</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all (Alt+A)</value>
+    <value>Replace all</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next (Alt+R)</value>
+    <value>Replace next</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions (Alt+E)</value>
+    <value>Use Regular Expressions</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>Toggle to switch between find and replace modes</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
-    <value>Close (Esc)</value>
+    <value>Close</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
     <value>Incremental Search</value>
@@ -1506,8 +1506,8 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="TextEditor" xml:space="preserve">
     <value>Text Editor</value>
   </data>
-  <data name="Search_BigEndian" xml:space="preserve">
-    <value>Big endian (Alt+B)</value>
+  <data name="Search_BigEndianToolTip" xml:space="preserve">
+    <value>Big endian</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
@@ -1679,5 +1679,32 @@ Filter can be changed in Assembly Explorer options.</value>
   </data>
   <data name="ShortCutKeyCtrlS" xml:space="preserve">
     <value>Ctrl+S</value>
+  </data>
+  <data name="ShortCutKeyAltA" xml:space="preserve">
+    <value>Alt+A</value>
+  </data>
+  <data name="ShortCutKeyAltB" xml:space="preserve">
+    <value>Alt+B</value>
+  </data>
+  <data name="ShortCutKeyAltC" xml:space="preserve">
+    <value>Alt+C</value>
+  </data>
+  <data name="ShortCutKeyAltE" xml:space="preserve">
+    <value>Alt+E</value>
+  </data>
+  <data name="ShortCutKeyAltW" xml:space="preserve">
+    <value>Alt+W</value>
+  </data>
+  <data name="ShortCutKeyEsc" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="ShortCutKeyShiftF3" xml:space="preserve">
+    <value>Shift+F3</value>
+  </data>
+  <data name="ShortCutKeyF3" xml:space="preserve">
+    <value>F3</value>
+  </data>
+  <data name="ShortCutKeyAltR" xml:space="preserve">
+    <value>Alt+R</value>
   </data>
 </root>
