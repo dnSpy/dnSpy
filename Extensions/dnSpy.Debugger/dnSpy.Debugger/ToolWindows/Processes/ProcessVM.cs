@@ -82,6 +82,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
+		internal void RefreshTitle() => Title = GetProcessTitle();
+
+		// UI thread
 		internal void RefreshThemeFields() {
 			OnPropertyChanged(nameof(NameObject));
 			OnPropertyChanged(nameof(IdObject));
@@ -100,6 +103,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		// UI thread
 		void DbgProcess_PropertyChanged_UI(string propertyName) {
+			if (!Context.IsVisible)
+				return;
 			switch (propertyName) {
 			case nameof(Process.Filename):
 				OnPropertyChanged(nameof(NameObject));
@@ -113,7 +118,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			case nameof(Process.State):
 				OnPropertyChanged(nameof(StateObject));
 				if (Process.State == DbgProcessState.Paused)
-					Title = GetProcessTitle();
+					RefreshTitle();
 				break;
 
 			case nameof(Process.Debugging):

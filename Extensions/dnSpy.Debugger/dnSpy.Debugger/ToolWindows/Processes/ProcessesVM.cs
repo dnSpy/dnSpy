@@ -35,6 +35,8 @@ using Microsoft.VisualStudio.Text.Classification;
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	interface IProcessesVM {
 		ProcessVM[] SelectedItems { get; set; }
+		bool IsEnabled { get; set; }
+		bool IsVisible { get; set; }
 	}
 
 	[Export(typeof(IProcessesVM))]
@@ -48,6 +50,22 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			set => selectedItems = value ?? Array.Empty<ProcessVM>();
 		}
 		ProcessVM[] selectedItems;
+
+		public bool IsEnabled { get; set; }
+
+		public bool IsVisible {
+			get => processContext.IsVisible;
+			set {
+				if (processContext.IsVisible != value) {
+					processContext.IsVisible = value;
+					if (processContext.IsVisible) {
+						RecreateFormatter();
+						RefreshTitles_UI();
+						RefreshThemeFields_UI();
+					}
+				}
+			}
+		}
 
 		public string DetachToolTip => dnSpy_Debugger_Resources.Processes_DetachToolTip;
 		public string TerminateToolTip => dnSpy_Debugger_Resources.Processes_TerminateToolTip;
@@ -100,14 +118,29 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
+		void RefreshTitles_UI() {
+			if (!processContext.IsVisible)
+				return;
+			foreach (var vm in Collection)
+				vm.RefreshTitle();
+		}
+
+		// UI thread
 		void RefreshThemeFields_UI() {
+			if (!processContext.IsVisible)
+				return;
 			foreach (var vm in Collection)
 				vm.RefreshThemeFields();
 		}
 
 		// UI thread
+		void RecreateFormatter() => processContext.ProcessFormatter = processFormatterProvider.Create();
+
+		// UI thread
 		void RefreshHexSettings_UI() {
-			processContext.ProcessFormatter = processFormatterProvider.Create();
+			if (!processContext.IsVisible)
+				return;
+			RecreateFormatter();
 			foreach (var vm in Collection)
 				vm.RefreshHexFields();
 		}

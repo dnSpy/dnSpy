@@ -28,6 +28,10 @@ using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	interface IProcessesContent : IUIObjectProvider {
+		void OnShow();
+		void OnClose();
+		void OnVisible();
+		void OnHidden();
 		void Focus();
 		ListView ListView { get; }
 	}
@@ -41,11 +45,13 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		readonly ProcessesControl processesControl;
 		readonly IDocumentTabService documentTabService;
+		readonly IProcessesVM processesVM;
 
 		[ImportingConstructor]
 		ProcessesContent(IWpfCommandService wpfCommandService, IProcessesVM processesVM, IDocumentTabService documentTabService) {
 			processesControl = new ProcessesControl();
 			this.documentTabService = documentTabService;
+			this.processesVM = processesVM;
 			processesControl.DataContext = processesVM;
 			processesControl.ProcessesListViewDoubleClick += ProcessesControl_ProcessesListViewDoubleClick;
 
@@ -59,5 +65,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		public void Focus() => UIUtilities.FocusSelector(processesControl.ListView);
+		public void OnClose() => processesVM.IsEnabled = false;
+		public void OnShow() => processesVM.IsEnabled = true;
+		public void OnHidden() => processesVM.IsVisible = false;
+		public void OnVisible() => processesVM.IsVisible = true;
 	}
 }

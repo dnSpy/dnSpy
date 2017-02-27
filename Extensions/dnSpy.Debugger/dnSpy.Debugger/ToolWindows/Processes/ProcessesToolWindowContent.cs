@@ -59,5 +59,22 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		public ProcessesToolWindowContent(Lazy<IProcessesContent> processesContent) => this.processesContent = processesContent;
 		public void Focus() => processesContent.Value.Focus();
+
+		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+			switch (visEvent) {
+			case ToolWindowContentVisibilityEvent.Added:
+				processesContent.Value.OnShow();
+				break;
+			case ToolWindowContentVisibilityEvent.Removed:
+				processesContent.Value.OnClose();
+				break;
+			case ToolWindowContentVisibilityEvent.Visible:
+				processesContent.Value.OnVisible();
+				break;
+			case ToolWindowContentVisibilityEvent.Hidden:
+				processesContent.Value.OnHidden();
+				break;
+			}
+		}
 	}
 }
