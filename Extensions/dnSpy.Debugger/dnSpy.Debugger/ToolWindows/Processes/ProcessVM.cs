@@ -120,8 +120,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 			case nameof(Process.State):
 				OnPropertyChanged(nameof(StateObject));
-				if (Process.State == DbgProcessState.Paused)
-					RefreshTitle();
 				break;
 
 			case nameof(Process.Debugging):

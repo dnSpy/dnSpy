@@ -64,6 +64,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		readonly ProcessFormatterProvider processFormatterProvider;
 		readonly DebuggerSettings debuggerSettings;
 		int processOrder;
+		bool refreshTitlesOnPause;
 
 		[ImportingConstructor]
 		ProcessesVM(DebuggerSettings debuggerSettings, DebuggerDispatcher debuggerDispatcher, ProcessFormatterProvider processFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
@@ -130,11 +131,26 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// random thread
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
+			dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
+			dbgManager.DelayedIsRunningChanged += DbgManager_DelayedIsRunningChanged;
+			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
+		}
 
 		// random thread
 		void UI(Action action) =>
 			processContext.Dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+
+		// DbgManager thread
+		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitlesOnPause = true);
+
+		// DbgManager thread
+		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
+			if (refreshTitlesOnPause && !((DbgManager)sender).IsRunning) {
+				refreshTitlesOnPause = false;
+				UI(() => RefreshTitles_UI());
+			}
+		}
 
 		// DbgManager thread
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
