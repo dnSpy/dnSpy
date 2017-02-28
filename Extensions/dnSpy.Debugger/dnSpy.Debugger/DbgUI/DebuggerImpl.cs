@@ -19,6 +19,8 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -43,6 +45,19 @@ namespace dnSpy.Debugger.DbgUI {
 			this.appWindow = appWindow;
 			this.dbgManager = dbgManager;
 			this.startDebuggingOptionsProvider = startDebuggingOptionsProvider;
+		}
+
+		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename() != null;
+		public override void StartWithoutDebugging() {
+			var filename = startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
+			if (!File.Exists(filename))
+				return;
+			try {
+				Process.Start(filename);
+			}
+			catch (Exception ex) {
+				messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.Error_StartWithoutDebuggingCouldNotStart, filename, ex.Message));
+			}
 		}
 
 		public override bool CanDebugProgram => true;

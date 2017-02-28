@@ -57,12 +57,11 @@ namespace dnSpy.Debugger.DbgUI {
 		sealed class StartWithoutDegbuggingDebugMainMenuCommand : DebugMainMenuCommand {
 			[ImportingConstructor]
 			public StartWithoutDegbuggingDebugMainMenuCommand(Lazy<Debugger> debugger)
-				: base(debugger, false) {
+				: base(debugger, null) {
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				//TODO:
-			}
+			public override void Execute(IMenuItemContext context) => debugger.Value.StartWithoutDebugging();
+			public override bool IsEnabled(IMenuItemContext context) => debugger.Value.CanStartWithoutDebugging;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:AttachToProcessCommand", Icon = DsImagesAttribute.Process, InputGestureText = "res:ShortCutKeyCtrlAltP", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 30)]

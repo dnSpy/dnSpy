@@ -62,6 +62,13 @@ namespace dnSpy.Debugger.DbgUI {
 			return string.Empty;
 		}
 
+		public string GetCurrentExecutableFilename() {
+			var filename = GetCurrentFilename();
+			if (PortableExecutableFileHelpers.IsExecutable(filename))
+				return filename;
+			return null;
+		}
+
 		public StartDebuggingOptions GetStartDebuggingOptions() {
 			var filename = GetCurrentFilename();
 			var context = new StartDebuggingOptionsPageContext(filename);

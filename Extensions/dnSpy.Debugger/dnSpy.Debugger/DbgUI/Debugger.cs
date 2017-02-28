@@ -20,6 +20,8 @@
 namespace dnSpy.Debugger.DbgUI {
 	abstract class Debugger {
 		public abstract bool IsDebugging { get; }
+		public abstract bool CanStartWithoutDebugging { get; }
+		public abstract void StartWithoutDebugging();
 		public abstract bool CanDebugProgram { get; }
 		public abstract void DebugProgram();
 		public abstract bool CanAttachProgram { get; }
