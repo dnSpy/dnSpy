@@ -27,8 +27,6 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Contracts.Utilities;
-using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -61,10 +59,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				}
 			}
 		}
-
-		public string DetachToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_DetachToolTip, null);
-		public string TerminateToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_TerminateToolTip, null);
-		public string AttachToProcessToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_AttachToProcessToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlAltP);
 
 		readonly ProcessContext processContext;
 		readonly ProcessFormatterProvider processFormatterProvider;

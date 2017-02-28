@@ -26,6 +26,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	interface IProcessesContent : IUIObjectProvider {
@@ -53,6 +54,10 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		sealed class ControlVM {
 			public IProcessesVM VM { get; }
 			ProcessesOperations Operations { get; }
+
+			public string DetachToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_DetachToolTip, null);
+			public string TerminateToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_TerminateToolTip, null);
+			public string AttachToProcessToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_AttachToProcessToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlAltP);
 
 			public ICommand DetachCommand => new RelayCommand(a => Operations.DetachProcess(), a => Operations.CanDetachProcess);
 			public ICommand TerminateCommand => new RelayCommand(a => Operations.TerminateProcess(), a => Operations.CanTerminateProcess);
