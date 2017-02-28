@@ -56,6 +56,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
+		public override event EventHandler DelayedIsRunningChanged;
 		public override event EventHandler IsRunningChanged;
 		public override bool IsRunning {
 			get {
@@ -127,6 +128,14 @@ namespace dnSpy.Debugger.Impl {
 			restartOptions = new List<StartDebuggingOptions>();
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.OrderBy(a => a.Metadata.Order).ToArray();
+			new DelayedIsRunningHelper(this);
+		}
+
+		// DbgManager thread
+		internal void RaiseDelayedIsRunningChanged_DbgThread() {
+			dispatcherThread.VerifyAccess();
+			if (IsRunning)
+				DelayedIsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public override string Start(StartDebuggingOptions options) {

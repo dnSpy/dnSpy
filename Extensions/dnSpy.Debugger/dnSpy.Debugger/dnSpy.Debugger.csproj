@@ -52,6 +52,7 @@
     <Compile Include="Impl\DbgDebuggingContextImpl.cs" />
     <Compile Include="Impl\DbgManagerImpl.BreakAllHelper.cs" />
     <Compile Include="Impl\DbgManagerImpl.cs" />
+    <Compile Include="Impl\DbgManagerImpl.DelayedIsRunningHelper.cs" />
     <Compile Include="Impl\DbgManagerImpl.StopDebuggingHelper.cs" />
     <Compile Include="Impl\DbgManagerImpl.TagsCollection.cs" />
     <Compile Include="Impl\DbgProcessImpl.cs" />

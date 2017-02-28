@@ -71,9 +71,14 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool IsRunning { get; }
 
 		/// <summary>
-		/// Raised when <see cref="IsRunning"/> is changed
+		/// Raised when <see cref="IsRunning"/> is changed, see also <see cref="DelayedIsRunningChanged"/>
 		/// </summary>
 		public abstract event EventHandler IsRunningChanged;
+
+		/// <summary>
+		/// Raised when the processes have been running for a little while, eg. 1 second.
+		/// </summary>
+		public abstract event EventHandler DelayedIsRunningChanged;
 
 		/// <summary>
 		/// Gets all debug tags, see <see cref="PredefinedDebugTags"/>
