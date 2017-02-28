@@ -28,37 +28,40 @@ using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	abstract class MemoryWindowService {
-		public abstract void Show(HexSpan span);
-		public abstract void Show(HexSpan span, int windowIndex);
+		public abstract void Show(int pid, HexSpan span);
+		public abstract void Show(int pid, HexSpan span, int windowIndex);
 	}
 
 	[Export(typeof(MemoryWindowService))]
 	sealed class MemoryWindowServiceImpl : MemoryWindowService {
 		readonly Lazy<MemoryToolWindowContentProvider> memoryToolWindowContentProvider;
 		readonly IDsToolWindowService toolWindowService;
+		readonly Lazy<ProcessHexBufferProvider> processHexBufferProvider;
 
 		[ImportingConstructor]
-		MemoryWindowServiceImpl(Lazy<MemoryToolWindowContentProvider> memoryToolWindowContentProvider, IDsToolWindowService toolWindowService) {
+		MemoryWindowServiceImpl(Lazy<MemoryToolWindowContentProvider> memoryToolWindowContentProvider, IDsToolWindowService toolWindowService, Lazy<ProcessHexBufferProvider> processHexBufferProvider) {
 			this.memoryToolWindowContentProvider = memoryToolWindowContentProvider;
 			this.toolWindowService = toolWindowService;
+			this.processHexBufferProvider = processHexBufferProvider;
 		}
 
-		public override void Show(HexSpan span) {
+		public override void Show(int pid, HexSpan span) {
 			var mc = GetMemoryToolWindowContent(span);
 			if (mc == null)
 				mc = memoryToolWindowContentProvider.Value.Contents[0].Content;
-			ShowInMemoryWindow(mc, span);
+			ShowInMemoryWindow(pid, mc, span);
 		}
 
-		public override void Show(HexSpan span, int windowIndex) {
+		public override void Show(int pid, HexSpan span, int windowIndex) {
 			var mc = GetMemoryToolWindowContent(windowIndex);
 			Debug.Assert(mc != null);
 			if (mc == null)
 				return;
-			ShowInMemoryWindow(mc, span);
+			ShowInMemoryWindow(pid, mc, span);
 		}
 
-		void ShowInMemoryWindow(MemoryToolWindowContent mc, HexSpan span) {
+		void ShowInMemoryWindow(int pid, MemoryToolWindowContent mc, HexSpan span) {
+			processHexBufferProvider.Value.SetProcessStream(mc.HexView.Buffer, pid);
 			MakeSureAddressCanBeShown(mc, span);
 			toolWindowService.Show(mc);
 			SelectAndMoveCaret(mc.HexView, span);

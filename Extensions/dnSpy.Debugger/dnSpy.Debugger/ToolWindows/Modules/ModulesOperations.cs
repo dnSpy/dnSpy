@@ -162,9 +162,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				Debug.Assert(end <= HexPosition.MaxEndPosition);
 				if (end <= HexPosition.MaxEndPosition) {
 					if (windowIndex != null)
-						memoryWindowService.Value.Show(HexSpan.FromBounds(start, end), windowIndex.Value);
+						memoryWindowService.Value.Show(vm.Module.Process.Id, HexSpan.FromBounds(start, end), windowIndex.Value);
 					else
-						memoryWindowService.Value.Show(HexSpan.FromBounds(start, end));
+						memoryWindowService.Value.Show(vm.Module.Process.Id, HexSpan.FromBounds(start, end));
 				}
 			}
 		}
