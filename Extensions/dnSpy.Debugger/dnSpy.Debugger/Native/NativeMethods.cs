@@ -40,5 +40,8 @@ namespace dnSpy.Debugger.Native {
 		[DllImport("kernel32", SetLastError = true)]
 		public static extern bool VirtualProtectEx(IntPtr hProcess, void* lpAddress, IntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
 		public const uint PAGE_EXECUTE_READWRITE = 0x40;
+
+		[DllImport("user32")]
+		public static extern bool SetForegroundWindow(IntPtr hWnd);
 	}
 }
