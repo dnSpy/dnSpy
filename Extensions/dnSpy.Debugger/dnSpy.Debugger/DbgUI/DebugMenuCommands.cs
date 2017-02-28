@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DbgUI {
 			public override bool IsVisible(IMenuItemContext context) => mustBeDebugging == null || debugger.Value.IsDebugging == mustBeDebugging;
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StartDebugging2", Icon = DsImagesAttribute.Run, InputGestureText = "res:ShortCutKeyF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StartDebugging2", Icon = DsImagesAttribute.Run, Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 0)]
 		sealed class DebugAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
 			[ImportingConstructor]
 			public DebugAssemblyDebugMainMenuCommand(Lazy<Debugger> debugger)
@@ -48,7 +48,9 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public override void Execute(IMenuItemContext context) => debugger.Value.DebugProgram();
-			public override bool IsVisible(IMenuItemContext context) => !debugger.Value.IsDebugging && debugger.Value.CanDebugProgram;
+			public override bool IsVisible(IMenuItemContext context) => debugger.Value.CanDebugProgram;
+			public override string GetInputGestureText(IMenuItemContext context) =>
+				debugger.Value.IsDebugging ? null : dnSpy_Debugger_Resources.ShortCutKeyF5;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StartWithoutDebuggingCommand", Icon = DsImagesAttribute.RunOutline, InputGestureText = "res:ShortCutKeyCtrlF5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 10)]
