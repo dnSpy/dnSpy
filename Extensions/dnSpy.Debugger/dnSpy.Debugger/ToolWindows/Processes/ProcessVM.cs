@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 					title = GetProcessTitle() ?? string.Empty;
 				return title;
 			}
-			set {
+			private set {
 				var newValue = value ?? string.Empty;
 				if (title != newValue) {
 					title = newValue;
@@ -76,8 +76,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		string GetProcessTitle() {
 			try {
-				var p = System.Diagnostics.Process.GetProcessById(Process.Id);
-				return p.MainWindowTitle;
+				using (var p = System.Diagnostics.Process.GetProcessById(Process.Id))
+					return p.MainWindowTitle;
 			}
 			catch {
 			}

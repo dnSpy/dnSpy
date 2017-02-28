@@ -90,12 +90,13 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		string GetProcessHeader(int pid) {
 			try {
-				var p = Process.GetProcessById(pid);
-				var title = Filter(p.MainWindowTitle, 200);
-				var name = p.MainModule.ModuleName;
-				if (string.IsNullOrWhiteSpace(title))
-					return $"{pid} {name}";
-				return $"{pid} {name} - {title}";
+				using (var p = Process.GetProcessById(pid)) {
+					var title = Filter(p.MainWindowTitle, 200);
+					var name = p.MainModule.ModuleName;
+					if (string.IsNullOrWhiteSpace(title))
+						return $"{pid} {name}";
+					return $"{pid} {name} - {title}";
+				}
 			}
 			catch {
 			}

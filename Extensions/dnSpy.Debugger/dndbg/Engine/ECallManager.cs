@@ -44,14 +44,15 @@ namespace dndbg.Engine {
 		}
 
 		public ECallManager(int pid, string clrPath) {
-			var process = Process.GetProcessById(pid);
-			FoundClrModule = false;
-			foreach (ProcessModule mod in process.Modules) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(clrPath, mod.FileName)) {
-					FoundClrModule = true;
-					Initialize(mod.FileName);
-					clrDllBaseAddress = (ulong)mod.BaseAddress.ToInt64();
-					break;
+			using (var process = Process.GetProcessById(pid)) {
+				FoundClrModule = false;
+				foreach (ProcessModule mod in process.Modules) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(clrPath, mod.FileName)) {
+						FoundClrModule = true;
+						Initialize(mod.FileName);
+						clrDllBaseAddress = (ulong)mod.BaseAddress.ToInt64();
+						break;
+					}
 				}
 			}
 			Debug.Assert(FoundClrModule, $"Couldn't find {clrPath}");

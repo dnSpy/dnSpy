@@ -72,14 +72,19 @@ namespace dnSpy.Debugger {
 			timer = new Timer(a => {
 				timer.Dispose();
 				if (id == isRunningId) {
-					if (dispatcher.HasShutdownStarted || dispatcher.HasShutdownFinished)
+					if (dispatcher.HasShutdownStarted || dispatcher.HasShutdownFinished) {
+						process.Dispose();
 						return;
+					}
 					dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
 						if (id == isRunningId) {
-							ProcessRunning?.Invoke(this, new DebuggedProcessRunningEventArgs(process));
+							using (process)
+								ProcessRunning?.Invoke(this, new DebuggedProcessRunningEventArgs(process));
 						}
 					}));
 				}
+				else
+					process.Dispose();
 			}, null, WAIT_TIME_MS, Timeout.Infinite);
 		}
 

@@ -1159,8 +1159,9 @@ namespace dndbg.Engine {
 		}
 
 		public static DnDebugger Attach(AttachProcessOptions options) {
-			var process = Process.GetProcessById(options.ProcessId);
-			var filename = process.MainModule.FileName;
+			string filename;
+			using (var process = Process.GetProcessById(options.ProcessId))
+				filename = process.MainModule.FileName;
 			var corDebug = CreateCorDebug(options, out string debuggeeVersion, out string clrPath);
 			if (corDebug == null)
 				throw new Exception("An ICorDebug instance couldn't be created");
@@ -1186,11 +1187,12 @@ namespace dndbg.Engine {
 			var clrType = (DesktopCLRTypeAttachInfo)options.CLRTypeAttachInfo;
 			debuggeeVersion = clrType.DebuggeeVersion;
 			ICLRRuntimeInfo rtInfo = null;
-			var process = Process.GetProcessById(options.ProcessId);
-			foreach (var t in GetCLRRuntimeInfos(process)) {
-				if (string.IsNullOrEmpty(clrType.DebuggeeVersion) || t.versionString == clrType.DebuggeeVersion) {
-					rtInfo = t.rtInfo;
-					break;
+			using (var process = Process.GetProcessById(options.ProcessId)) {
+				foreach (var t in GetCLRRuntimeInfos(process)) {
+					if (string.IsNullOrEmpty(clrType.DebuggeeVersion) || t.versionString == clrType.DebuggeeVersion) {
+						rtInfo = t.rtInfo;
+						break;
+					}
 				}
 			}
 			if (rtInfo == null)

@@ -115,8 +115,8 @@ namespace dnSpy.Debugger.Impl {
 
 		static string GetProcessFilename(int pid) {
 			try {
-				var p = Process.GetProcessById(pid);
-				return p.MainModule.FileName;
+				using (var p = Process.GetProcessById(pid))
+					return p.MainModule.FileName;
 			}
 			catch {
 			}
