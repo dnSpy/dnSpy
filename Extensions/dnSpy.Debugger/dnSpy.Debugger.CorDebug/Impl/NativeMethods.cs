@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.CorDebug.Impl {
 		public static extern bool GetExitCodeProcess(IntPtr hProcess, out int lpExitCode);
 
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern SafeFileHandle OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
+		public static extern SafeProcessHandle OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 		public const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
 		[DllImport("kernel32", SetLastError = true)]

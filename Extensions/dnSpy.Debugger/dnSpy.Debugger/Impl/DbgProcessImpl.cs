@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.Impl {
 
 		readonly object lockObj;
 		readonly DbgManagerImpl owner;
-		readonly SafeFileHandle hProcess;
+		readonly SafeProcessHandle hProcess;
 
 		public DbgProcessImpl(DbgManagerImpl owner, int pid, DbgProcessState state, bool shouldDetach) {
 			lockObj = new object();

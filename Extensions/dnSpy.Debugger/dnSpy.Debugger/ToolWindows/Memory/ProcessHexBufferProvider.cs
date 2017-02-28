@@ -130,8 +130,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		sealed class ProcessInfo {
 			public DbgProcess Process { get; }
 			public HexCachedBufferStream Stream { get; }
-			public SafeFileHandle ProcessHandle { get; }
-			public ProcessInfo(DbgProcess process, HexCachedBufferStream stream, SafeFileHandle processHandle) {
+			public SafeProcessHandle ProcessHandle { get; }
+			public ProcessInfo(DbgProcess process, HexCachedBufferStream stream, SafeProcessHandle processHandle) {
 				Process = process ?? throw new ArgumentNullException(nameof(process));
 				Stream = stream ?? throw new ArgumentNullException(nameof(stream));
 				ProcessHandle = processHandle;

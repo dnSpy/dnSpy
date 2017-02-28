@@ -24,7 +24,7 @@ using Microsoft.Win32.SafeHandles;
 namespace dnSpy.Debugger.Native {
 	static unsafe class NativeMethods {
 		[DllImport("kernel32")]
-		public static extern SafeFileHandle OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+		public static extern SafeProcessHandle OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 		public const int PROCESS_VM_OPERATION = 0x0008;
 		public const int PROCESS_VM_READ = 0x0010;
 		public const int PROCESS_VM_WRITE = 0x0020;
